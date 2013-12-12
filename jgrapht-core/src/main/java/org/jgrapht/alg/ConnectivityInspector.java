@@ -294,6 +294,32 @@ public class ConnectivityInspector<V, E>
             vertexToConnectedSet.put(v, currentConnectedSet);
         }
     }
+
+
+    /**
+     * Generates a complete graph of any size. A complete graph is a graph where
+     * every vertex shares an edge with every other vertex. If it is a directed
+     * graph, then edges must always exist in both directions.
+     * 
+     * @param g Directed or undirected graph to check.
+     * @return true if the graph is complete. 
+     */
+	public boolean isComplete(Graph<V, E> g) {
+        
+        List<V> vertices = new LinkedList<V>(g.vertexSet());
+        int div = 2;
+        
+        if (g instanceof DirectedGraph) {
+        	div = 1;
+        }
+        
+		if ((vertices.size() * (vertices.size() - 1) / div)
+                != g.edgeSet().size())
+            {
+                return false;
+            }
+        return true;
+	}
 }
 
 // End ConnectivityInspector.java
