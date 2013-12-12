@@ -297,7 +297,7 @@ public class ConnectivityInspector<V, E>
 
 
     /**
-     * Generates a complete graph of any size. A complete graph is a graph where
+     * A complete graph is a graph where
      * every vertex shares an edge with every other vertex. If it is a directed
      * graph, then edges must always exist in both directions.
      * 
