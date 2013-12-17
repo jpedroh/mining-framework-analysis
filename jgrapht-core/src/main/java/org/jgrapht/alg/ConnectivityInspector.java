@@ -305,20 +305,39 @@ public class ConnectivityInspector<V, E>
      * @return true if the graph is complete. 
      */
 	public boolean isComplete(Graph<V, E> g) {
-        
-        List<V> vertices = new LinkedList<V>(g.vertexSet());
-        int div = 2;
-        
-        if (g instanceof DirectedGraph) {
-        	div = 1;
-        }
-        
-		if ((vertices.size() * (vertices.size() - 1) / div)
-                != g.edgeSet().size())
-            {
-                return false;
-            }
-        return true;
+		return this.incompleteVertices(g).isEmpty();
+	}
+
+	/**
+	 *  Calculates the set of vertices that makes a graph incomplete.
+	 *  A complete graph is a graph where
+     * every vertex shares an edge with every other vertex. If it is a directed
+     * graph, then edges must always exist in both directions.
+     * 
+     * @param g Directed or undirected graph to check.
+	 * @return A set with vertices that have less edges than the necessary to 
+	 * be a complete graph.
+	 */
+	public Set<V> incompleteVertices(Graph<V, E> g) {
+		Set<V> set = new HashSet<V>();
+
+		int grade = (g.vertexSet().size() - 1);
+
+		if (g instanceof DirectedGraph) {
+			DirectedGraph<V, E> dg = (DirectedGraph<V, E>)g;
+			for (V v : g.vertexSet()) {
+				if (Graphs.successorListOf(dg, v).size() < grade) {
+					set.add(v);
+				}
+			}
+		} else {
+			for (V v : g.vertexSet()) {
+				if (g.edgesOf(v).size() < grade) {
+					set.add(v);
+				}
+			}
+		}
+		return set;
 	}
 }
 
