@@ -368,9 +368,9 @@ public class ConnectivityInspectorTest extends TestCase {
 		inspector = new ConnectivityInspector<String, DefaultEdge>(
 				g);
 
-		assertTrue(inspector.isComplete(g));
+		assertTrue(inspector.isComplete());
 		
-		assertTrue(inspector.incompleteVertices(g).isEmpty());
+		assertTrue(inspector.incompleteVertices().isEmpty());
 	}
 
 	public void testUndirectedGraphWithTwoVerticesAndNoEdges_isNot_Complete() {
@@ -379,9 +379,9 @@ public class ConnectivityInspectorTest extends TestCase {
 		inspector = 
 				new ConnectivityInspector<String, DefaultEdge>(g);
 
-		assertFalse(inspector.isComplete(g));
+		assertFalse(inspector.isComplete());
 		
-		Set<String> set = inspector.incompleteVertices(g);
+		Set<String> set = inspector.incompleteVertices();
 		
 		assertEquals(set.size(), g.vertexSet().size());
 		assertTrue(set.contains(V1));
@@ -394,16 +394,16 @@ public class ConnectivityInspectorTest extends TestCase {
 		g.addEdge(V1, V2);
 		inspector = new ConnectivityInspector<String, DefaultEdge>(g);
 
-		assertTrue(inspector.isComplete(g));
+		assertTrue(inspector.isComplete());
 	}
 
 	public void testDirectedGraphWithOneVertex_is_Complete() {
 		DirectedGraph<String, DefaultEdge> g = this.createDirectedGraph(1);
 		inspector = new ConnectivityInspector<String, DefaultEdge>(g);
 
-		assertTrue(inspector.isComplete(g));
+		assertTrue(inspector.isComplete());
 		
-		Set<String> set = inspector.incompleteVertices(g);
+		Set<String> set = inspector.incompleteVertices();
 		assertTrue(set.isEmpty());
 	}
 
@@ -412,9 +412,9 @@ public class ConnectivityInspectorTest extends TestCase {
 		g.addEdge(V1, V2);
 		inspector = new ConnectivityInspector<String, DefaultEdge>(g);
 
-		assertFalse(inspector.isComplete(g));
+		assertFalse(inspector.isComplete());
 		
-		Set<String> set = inspector.incompleteVertices(g);
+		Set<String> set = inspector.incompleteVertices();
 		assertEquals(1, set.size());
 		assertTrue(set.contains(V2));
 	}
@@ -425,9 +425,9 @@ public class ConnectivityInspectorTest extends TestCase {
 		g.addEdge(V2, V1);
 		inspector = new ConnectivityInspector<String, DefaultEdge>(g);
 
-		assertTrue(inspector.isComplete(g));
+		assertTrue(inspector.isComplete());
 
-		assertTrue(inspector.incompleteVertices(g).isEmpty());
+		assertTrue(inspector.incompleteVertices().isEmpty());
 	}
 
 	public void testDirectedGraphPartlyIncomplete() {
@@ -440,8 +440,8 @@ public class ConnectivityInspectorTest extends TestCase {
 		g.addEdge(V2, V1);
 		g.addEdge(V2, V3);
 	
-		Set<String> set = inspector.incompleteVertices(g);
-		assertTrue(set.contains(V3));
+		Set<String> set = inspector.incompleteVertices();
+		assertTrue(set.toString(), set.contains(V3));
 	}
 
 	public void testAllDirectedGeneratedCompleteGraphs_are_Complete() {
@@ -454,21 +454,12 @@ public class ConnectivityInspectorTest extends TestCase {
 			DirectedGraph<String, DefaultEdge> g = 
 					new SimpleDirectedGraph<String, DefaultEdge>(DefaultEdge.class);
 
-			generator.generateGraph(g, new VertexFactory<String>() 
-			{
-				private int i = 0;
-
-				public String createVertex() {
-					return "Vertex " + (++i);
-				}
-
-			}, 
-			null);
+			generator.generateGraph(g, new SimpleVertexFactory(),	null);
 
 			inspector = 
 					new ConnectivityInspector<String, DefaultEdge>(g);
 
-			assertTrue(inspector.isComplete(g));
+			assertTrue(inspector.isComplete());
 		}
 	}
 
@@ -482,23 +473,100 @@ public class ConnectivityInspectorTest extends TestCase {
 			UndirectedGraph<String, DefaultEdge> g = 
 					new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
 
-			generator.generateGraph(g, new VertexFactory<String>() 
-			{
-				private int i = 0;
-
-				public String createVertex() {
-					return "Vertex " + (++i);
-				}
-
-			}, 
-			null);
+			generator.generateGraph(g, new SimpleVertexFactory(),null);
 
 			inspector = 
 					new ConnectivityInspector<String, DefaultEdge>(g);
 
-			assertTrue(inspector.isComplete(g));
+			assertTrue(inspector.isComplete());
 		}
 	}
+	
+	public void testMultigraph_NoMultipleEdges() {
+		Multigraph<String, DefaultEdge> mg = new Multigraph<String, DefaultEdge>(DefaultEdge.class);
+		inspector = new ConnectivityInspector<String, DefaultEdge>(mg);
+
+		addVertices(3, mg);
+		assertEquals(3, mg.vertexSet().size());
+		mg.addEdge(V1, V2);
+		mg.addEdge(V1, V3);
+
+		assertEquals(false, inspector.isComplete());
+
+		mg.addEdge(V2, V3);
+		assertEquals(true, inspector.isComplete());
+	}
+
+	public void testMultigraph_WithMultipleEdges() {
+		Multigraph<String, DefaultEdge> mg = new Multigraph<String, DefaultEdge>(DefaultEdge.class);
+		inspector = new ConnectivityInspector<String, DefaultEdge>(mg);
+
+		// Empty graph is complete
+		assertTrue(inspector.isComplete());
+		
+		addVertices(3, mg);
+		
+		// All vertices are incomplete
+		assertEquals(3, inspector.incompleteVertices().size());
+		
+		mg.addEdge(V1, V2);
+		mg.addEdge(V1, V2);
+		mg.addEdge(V2, V1);
+		mg.addEdge(V1, V3);
+		mg.addEdge(V1, V3);
+
+		Set<String> incompleteVertices = inspector.incompleteVertices();
+		assertEquals(2, incompleteVertices.size());
+
+		mg.addEdge(V2, V3);
+		mg.addEdge(V2, V3);
+		incompleteVertices = inspector.incompleteVertices();
+		assertEquals(0, incompleteVertices.size());
+	}
+	
+	public void testSelfLoops_in_DefaultDirectedGraph() {
+		DefaultDirectedGraph<String, DefaultEdge> dg = 
+				new DefaultDirectedGraph<String, DefaultEdge>(DefaultEdge.class);
+		inspector = new ConnectivityInspector<String, DefaultEdge>(dg);
+		
+		// Empty graph is complete
+		assertTrue(inspector.isComplete());
+
+		addVertices(3, dg);
+		
+		// All vertices are incomplete
+		assertEquals(3, inspector.incompleteVertices().size());
+		
+		dg.addEdge(V1, V1);
+		dg.addEdge(V2, V2);
+		dg.addEdge(V3, V3);
+		
+		// All vertices are incomplete
+		assertEquals(3, inspector.incompleteVertices().size());
+		
+		dg.addEdge(V1, V2);
+		dg.addEdge(V1, V3);
+		
+		// V2 and V3 are incomplete
+		assertEquals(2, inspector.incompleteVertices().size());
+
+		dg.addEdge(V2, V3);
+		
+		// V2 and V3 are still incomplete
+		assertEquals(2, inspector.incompleteVertices().size());
+		
+		dg.addEdge(V2, V1);
+		
+		// V3 is incomplete
+		assertEquals(1, inspector.incompleteVertices().size());
+
+		dg.addEdge(V3, V1);
+		dg.addEdge(V3, V2);
+
+		assertEquals(0, inspector.incompleteVertices().size());
+
+	}
+
 
 	
 	// ~ Helper methods to create graphs
@@ -509,23 +577,34 @@ public class ConnectivityInspectorTest extends TestCase {
 		UndirectedGraph<String, DefaultEdge> g = 
 				new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
 		
-		for (int i = 0; i < vertices; i++) {
-			g.addVertex(Vertices[i]);
-		}
+		addVertices(vertices, g);
 		
 		return g;
 	}
 	
 	private DirectedGraph<String, DefaultEdge> createDirectedGraph(int vertices)
 	{
-		DirectedGraph<String, DefaultEdge> g = new SimpleDirectedGraph<String, DefaultEdge>(
-				DefaultEdge.class);
+		DirectedGraph<String, DefaultEdge> g = 
+				new SimpleDirectedGraph<String, DefaultEdge>(DefaultEdge.class);
 		
+		addVertices(vertices, g);
+		
+		return g;
+	}
+	
+	private void addVertices(int vertices, Graph<String, DefaultEdge> g) {
 		for (int i = 0; i < vertices; i++) {
 			g.addVertex(Vertices[i]);
 		}
-		
-		return g;
+	}
+
+	class SimpleVertexFactory implements VertexFactory<String> {
+		private int i = 0;
+
+		public String createVertex() {
+			return "Vertex " + (++i);
+		}
+
 	}
 }
 
