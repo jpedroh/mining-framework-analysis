@@ -43,6 +43,7 @@ import ws.wamp.jawampa.internal.IdGenerator;
 import ws.wamp.jawampa.internal.IdValidator;
 import ws.wamp.jawampa.internal.RealmConfig;
 import ws.wamp.jawampa.internal.UriValidator;
+import ws.wamp.jawampa.internal.Version;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -823,6 +824,7 @@ public class WampRouter {
         
         // Expose the roles that are configured for the realm
         ObjectNode welcomeDetails = objectMapper.createObjectNode();
+        welcomeDetails.put("agent", Version.getVersion());
         ObjectNode routerRoles = welcomeDetails.putObject("roles");
         for (WampRoles role : realm.config.roles) {
             ObjectNode roleNode = routerRoles.putObject(role.toString());
