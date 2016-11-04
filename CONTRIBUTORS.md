@@ -66,6 +66,33 @@ JGraphT wouldn't be the library it is today without the source contributions and
 - Nicolas Fortin
 - Peter Goldstein
 - Rodrigo López Dato
+- Anders Wallgren
+- Siarhei
+- Jan Altenbernd
+- Andrew Chen
+- Florian Buenzli
+- Thomas Tschager
+- Tomas Hruz
+- Philipp Hoppen
+- Chris Wensel
+- Wil Selwood
+- Mihhail Verhovtsov
+- Fabian Späh
+- Rita Dobler
+- Szabolcs Besenyei
+- Luiz Kill
+- Christophe Thiebaud
+- Jon Robinson
+- Thomas Breitbart
+- Sarah Komla-Ebri
+- Graeme Ahokas
+- Christoph Zauner
+- Andrew Gainer-Dewar
+- Benedikt Waldvogel
+- Victor Mikhaylov
+- Nils Olberg
+- [Daniel Gomez-Sanchez](https://github.com/magicDGS)
+- [Skuratovich Sergey](https://github.com/SSNikolaevich)
 
 (if we have missed your name on this list, please email us to get it fixed).
 

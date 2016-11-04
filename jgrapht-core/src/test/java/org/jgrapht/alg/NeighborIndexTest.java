@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2003-2016, by Barak Naveh and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,28 +15,13 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* ------------------------------
- * NeighborIndexTest.java
- * ------------------------------
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
- *
- * Original Author:  Charles Fry
- *
- * $Id$
- *
- * Changes
- * -------
- * 12-Dec-2005 : Initial revision (CF);
- *
- */
 package org.jgrapht.alg;
 
 import java.util.*;
 
-import junit.framework.*;
-
 import org.jgrapht.graph.*;
 
+import junit.framework.*;
 
 /**
  * .
@@ -50,32 +31,29 @@ import org.jgrapht.graph.*;
 public class NeighborIndexTest
     extends TestCase
 {
-    //~ Static fields/initializers ---------------------------------------------
+    // ~ Static fields/initializers ---------------------------------------------
 
     private static final String V1 = "v1";
     private static final String V2 = "v2";
     private static final String V3 = "v3";
 
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     public void testNeighborSet()
     {
         // We use Object instead of DefaultEdge for the edge type
         // in order to cover the case in
         // https://sourceforge.net/tracker/index.php?func=detail&aid=3486775&group_id=86459&atid=579687
-        ListenableUndirectedGraph<String, Object> g =
-            new ListenableUndirectedGraph<String, Object>(
-                Object.class);
+        ListenableUndirectedGraph<String, Object> g = new ListenableUndirectedGraph<>(Object.class);
         g.addVertex(V1);
         g.addVertex(V2);
 
         g.addEdge(V1, V2);
 
-        NeighborIndex<String, Object> index =
-            new NeighborIndex<String, Object>(g);
+        NeighborIndex<String, Object> index = new NeighborIndex<>(g);
         g.addGraphListener(index);
 
-        Set neighbors1 = index.neighborsOf(V1);
+        Set<String> neighbors1 = index.neighborsOf(V1);
 
         assertEquals(1, neighbors1.size());
         assertEquals(true, neighbors1.contains(V2));
@@ -83,7 +61,7 @@ public class NeighborIndexTest
         g.addVertex(V3);
         g.addEdge(V3, V1);
 
-        Set neighbors3 = index.neighborsOf(V3);
+        Set<String> neighbors3 = index.neighborsOf(V3);
 
         assertEquals(2, neighbors1.size());
         assertEquals(true, neighbors1.contains(V3));
@@ -105,20 +83,17 @@ public class NeighborIndexTest
 
     public void testDirectedNeighborSet()
     {
-        ListenableDirectedGraph<String, Object> g =
-            new ListenableDirectedGraph<String, Object>(
-                Object.class);
+        ListenableDirectedGraph<String, Object> g = new ListenableDirectedGraph<>(Object.class);
         g.addVertex(V1);
         g.addVertex(V2);
 
         g.addEdge(V1, V2);
 
-        DirectedNeighborIndex<String, Object> index =
-            new DirectedNeighborIndex<String, Object>(g);
+        DirectedNeighborIndex<String, Object> index = new DirectedNeighborIndex<>(g);
         g.addGraphListener(index);
 
-        Set p = index.predecessorsOf(V1);
-        Set s = index.successorsOf(V1);
+        Set<String> p = index.predecessorsOf(V1);
+        Set<String> s = index.successorsOf(V1);
 
         assertEquals(0, p.size());
         assertEquals(1, s.size());
@@ -127,7 +102,7 @@ public class NeighborIndexTest
         g.addVertex(V3);
         g.addEdge(V3, V1);
 
-        Set q = index.successorsOf(V3);
+        Set<String> q = index.successorsOf(V3);
 
         assertEquals(1, p.size());
         assertEquals(1, s.size());

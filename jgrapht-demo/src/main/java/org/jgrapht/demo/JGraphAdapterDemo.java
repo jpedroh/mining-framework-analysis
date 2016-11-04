@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2003-2016, by Barak Naveh and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,22 +15,6 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* ----------------------
- * JGraphAdapterDemo.java
- * ----------------------
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
- *
- * Original Author:  Barak Naveh
- * Contributor(s):   -
- *
- * $Id$
- *
- * Changes
- * -------
- * 03-Aug-2003 : Initial revision (BN);
- * 07-Nov-2003 : Adaptation to JGraph 3.0 (BN);
- *
- */
 package org.jgrapht.demo;
 
 import java.awt.*;
@@ -44,14 +24,11 @@ import javax.swing.*;
 
 import org.jgraph.*;
 import org.jgraph.graph.*;
-
 import org.jgrapht.*;
 import org.jgrapht.ext.*;
 import org.jgrapht.graph.*;
-
 // resolve ambiguity
 import org.jgrapht.graph.DefaultEdge;
-
 
 /**
  * A demo applet that shows how to use JGraph to visualize JGraphT graphs.
@@ -62,26 +39,20 @@ import org.jgrapht.graph.DefaultEdge;
 public class JGraphAdapterDemo
     extends JApplet
 {
-    
-
     private static final long serialVersionUID = 3256444702936019250L;
     private static final Color DEFAULT_BG_COLOR = Color.decode("#FAFBFF");
     private static final Dimension DEFAULT_SIZE = new Dimension(530, 320);
 
-    
-
     //
     private JGraphModelAdapter<String, DefaultEdge> jgAdapter;
 
-    
-
     /**
-     * An alternative starting point for this demo, to also allow running this
-     * applet as an application.
+     * An alternative starting point for this demo, to also allow running this applet as an
+     * application.
      *
      * @param args ignored.
      */
-    public static void main(String [] args)
+    public static void main(String[] args)
     {
         JGraphAdapterDemo applet = new JGraphAdapterDemo();
         applet.init();
@@ -97,15 +68,15 @@ public class JGraphAdapterDemo
     /**
      * {@inheritDoc}
      */
+    @Override
     public void init()
     {
         // create a JGraphT graph
         ListenableGraph<String, DefaultEdge> g =
-            new ListenableDirectedMultigraph<String, DefaultEdge>(
-                DefaultEdge.class);
+            new ListenableDirectedMultigraph<>(DefaultEdge.class);
 
         // create a visualization using JGraph, via an adapter
-        jgAdapter = new JGraphModelAdapter<String, DefaultEdge>(g);
+        jgAdapter = new JGraphModelAdapter<>(g);
 
         JGraph jgraph = new JGraph(jgAdapter);
 
@@ -157,29 +128,21 @@ public class JGraphAdapterDemo
         jg.setBackground(c);
     }
 
-    @SuppressWarnings("unchecked") // FIXME hb 28-nov-05: See FIXME below
+    @SuppressWarnings("unchecked") 
     private void positionVertexAt(Object vertex, int x, int y)
     {
         DefaultGraphCell cell = jgAdapter.getVertexCell(vertex);
         AttributeMap attr = cell.getAttributes();
         Rectangle2D bounds = GraphConstants.getBounds(attr);
 
-        Rectangle2D newBounds =
-            new Rectangle2D.Double(
-                x,
-                y,
-                bounds.getWidth(),
-                bounds.getHeight());
+        Rectangle2D newBounds = new Rectangle2D.Double(x, y, bounds.getWidth(), bounds.getHeight());
 
         GraphConstants.setBounds(attr, newBounds);
 
-        // TODO: Clean up generics once JGraph goes generic
         AttributeMap cellAttr = new AttributeMap();
         cellAttr.put(cell, attr);
         jgAdapter.edit(cellAttr, null, null, null);
     }
-
-    
 
     /**
      * a listenable directed multigraph that allows loops and parallel edges.
@@ -192,7 +155,7 @@ public class JGraphAdapterDemo
 
         ListenableDirectedMultigraph(Class<E> edgeClass)
         {
-            super(new DirectedMultigraph<V, E>(edgeClass));
+            super(new DirectedMultigraph<>(edgeClass));
         }
     }
 }

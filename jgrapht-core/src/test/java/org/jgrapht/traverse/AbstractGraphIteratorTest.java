@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2003-2016, by Liviu Rau and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,28 +15,11 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* ------------------------------
- * AbstractGraphIteratorTest.java
- * ------------------------------
- * (C) Copyright 2003-2008, by Liviu Rau and Contributors.
- *
- * Original Author:  Liviu Rau
- * Contributor(s):   Barak Naveh
- *
- * $Id$
- *
- * Changes
- * -------
- * 30-Jul-2003 : Initial revision (LR);
- * 06-Aug-2003 : Test traversal listener & extract a shared superclass (BN);
- *
- */
 package org.jgrapht.traverse;
 
 import org.jgrapht.*;
 import org.jgrapht.event.*;
 import org.jgrapht.graph.*;
-
 
 /**
  * A basis for testing {@link org.jgrapht.traverse.BreadthFirstIterator} and
@@ -52,11 +31,11 @@ import org.jgrapht.graph.*;
 public abstract class AbstractGraphIteratorTest
     extends EnhancedTestCase
 {
-    //~ Instance fields --------------------------------------------------------
+    // ~ Instance fields --------------------------------------------------------
 
     StringBuffer result;
 
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     /**
      * .
@@ -67,8 +46,7 @@ public abstract class AbstractGraphIteratorTest
 
         DirectedGraph<String, DefaultEdge> graph = createDirectedGraph();
 
-        AbstractGraphIterator<String, DefaultEdge> iterator =
-            createIterator(graph, "1");
+        AbstractGraphIterator<String, DefaultEdge> iterator = createIterator(graph, "1");
         MyTraversalListener listener = new MyTraversalListener();
         iterator.addTraversalListener(listener);
 
@@ -97,8 +75,7 @@ public abstract class AbstractGraphIteratorTest
     DirectedGraph<String, DefaultEdge> createDirectedGraph()
     {
         DirectedGraph<String, DefaultEdge> graph =
-            new DefaultDirectedWeightedGraph<String, DefaultEdge>(
-                DefaultWeightedEdge.class);
+            new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
 
         //
         String v1 = "1";
@@ -123,9 +100,9 @@ public abstract class AbstractGraphIteratorTest
 
         graph.addVertex("orphan");
 
-        // NOTE:  set weights on some of the edges to test traversals like
-        // ClosestFirstIterator where it matters.  For other traversals, it
-        // will be ignored.  Rely on the default edge weight being 1.
+        // NOTE: set weights on some of the edges to test traversals like
+        // ClosestFirstIterator where it matters. For other traversals, it
+        // will be ignored. Rely on the default edge weight being 1.
         graph.addEdge(v1, v2);
         Graphs.addEdge(graph, v1, v3, 100);
         Graphs.addEdge(graph, v2, v4, 1000);
@@ -143,10 +120,9 @@ public abstract class AbstractGraphIteratorTest
     }
 
     abstract AbstractGraphIterator<String, DefaultEdge> createIterator(
-        DirectedGraph<String, DefaultEdge> g,
-        String startVertex);
+        DirectedGraph<String, DefaultEdge> g, String startVertex);
 
-    //~ Inner Classes ----------------------------------------------------------
+    // ~ Inner Classes ----------------------------------------------------------
 
     /**
      * Internal traversal listener.
@@ -164,8 +140,8 @@ public abstract class AbstractGraphIteratorTest
         /**
          * @see TraversalListener#connectedComponentFinished(ConnectedComponentTraversalEvent)
          */
-        public void connectedComponentFinished(
-            ConnectedComponentTraversalEvent e)
+        @Override
+        public void connectedComponentFinished(ConnectedComponentTraversalEvent e)
         {
             switch (componentNumber) {
             case 1:
@@ -192,8 +168,8 @@ public abstract class AbstractGraphIteratorTest
         /**
          * @see TraversalListener#connectedComponentStarted(ConnectedComponentTraversalEvent)
          */
-        public void connectedComponentStarted(
-            ConnectedComponentTraversalEvent e)
+        @Override
+        public void connectedComponentStarted(ConnectedComponentTraversalEvent e)
         {
             componentNumber++;
         }
@@ -201,7 +177,8 @@ public abstract class AbstractGraphIteratorTest
         /**
          * @see TraversalListener#edgeTraversed(EdgeTraversalEvent)
          */
-        public void edgeTraversed(EdgeTraversalEvent<String, DefaultEdge> e)
+        @Override
+        public void edgeTraversed(EdgeTraversalEvent<DefaultEdge> e)
         {
             // to be tested...
         }
@@ -209,6 +186,7 @@ public abstract class AbstractGraphIteratorTest
         /**
          * @see TraversalListener#vertexTraversed(VertexTraversalEvent)
          */
+        @Override
         public void vertexTraversed(VertexTraversalEvent<String> e)
         {
             numComponentVertices++;
@@ -217,6 +195,7 @@ public abstract class AbstractGraphIteratorTest
         /**
          * @see TraversalListener#vertexTraversed(VertexTraversalEvent)
          */
+        @Override
         public void vertexFinished(VertexTraversalEvent<String> e)
         {
             finishString += e.getVertex() + ":";

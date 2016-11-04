@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2003-2016, by John V Sichi and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,27 +15,11 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* --------------------------
- * AsUndirectedGraphTest.java
- * --------------------------
- * (C) Copyright 2003-2008, by John V. Sichi and Contributors.
- *
- * Original Author:  John V. Sichi
- * Contributor(s):   -
- *
- * $Id$
- *
- * Changes
- * -------
- * 14-Aug-2003 : Initial revision (JVS);
- *
- */
 package org.jgrapht.graph;
 
 import java.util.*;
 
 import org.jgrapht.*;
-
 
 /**
  * A unit test for the AsDirectedGraph view.
@@ -49,7 +29,7 @@ import org.jgrapht.*;
 public class AsUndirectedGraphTest
     extends EnhancedTestCase
 {
-    //~ Instance fields --------------------------------------------------------
+    // ~ Instance fields --------------------------------------------------------
 
     private DirectedGraph<String, DefaultEdge> directed;
     private DefaultEdge loop;
@@ -59,7 +39,7 @@ public class AsUndirectedGraphTest
     private String v4 = "v4";
     private UndirectedGraph<String, DefaultEdge> undirected;
 
-    //~ Constructors -----------------------------------------------------------
+    // ~ Constructors -----------------------------------------------------------
 
     /**
      * @see junit.framework.TestCase#TestCase(java.lang.String)
@@ -69,7 +49,7 @@ public class AsUndirectedGraphTest
         super(name);
     }
 
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     /**
      * .
@@ -84,8 +64,7 @@ public class AsUndirectedGraphTest
         }
 
         assertEquals(
-            "([v1, v2, v3, v4], [{v1,v2}, {v2,v3}, {v2,v4}, {v4,v4}])",
-            undirected.toString());
+            "([v1, v2, v3, v4], [{v1,v2}, {v2,v3}, {v2,v4}, {v4,v4}])", undirected.toString());
     }
 
     /**
@@ -118,8 +97,7 @@ public class AsUndirectedGraphTest
     {
         Set<DefaultEdge> edges = undirected.getAllEdges(v3, v2);
         assertEquals(1, edges.size());
-        assertEquals(directed.getEdge(v2, v3),
-            edges.iterator().next());
+        assertEquals(directed.getEdge(v2, v3), edges.iterator().next());
 
         edges = undirected.getAllEdges(v4, v4);
         assertEquals(1, edges.size());
@@ -131,16 +109,10 @@ public class AsUndirectedGraphTest
      */
     public void testGetEdge()
     {
-        assertEquals(
-            directed.getEdge(v1, v2),
-            undirected.getEdge(v1, v2));
-        assertEquals(
-            directed.getEdge(v1, v2),
-            undirected.getEdge(v2, v1));
+        assertEquals(directed.getEdge(v1, v2), undirected.getEdge(v1, v2));
+        assertEquals(directed.getEdge(v1, v2), undirected.getEdge(v2, v1));
 
-        assertEquals(
-            directed.getEdge(v4, v4),
-            undirected.getEdge(v4, v4));
+        assertEquals(directed.getEdge(v4, v4), undirected.getEdge(v4, v4));
     }
 
     /**
@@ -166,12 +138,11 @@ public class AsUndirectedGraphTest
     /**
      * .
      */
+    @Override
     protected void setUp()
     {
-        directed =
-            new DefaultDirectedGraph<String, DefaultEdge>(
-                DefaultEdge.class);
-        undirected = new AsUndirectedGraph<String, DefaultEdge>(directed);
+        directed = new DefaultDirectedGraph<>(DefaultEdge.class);
+        undirected = new AsUndirectedGraph<>(directed);
 
         directed.addVertex(v1);
         directed.addVertex(v2);

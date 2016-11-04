@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2003-2016, by Michael Behrisch and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,29 +15,13 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* ------------------------
- * SubgraphTest.java
- * ------------------------
- * (C) Copyright 2003-2008, by Michael Behrisch and Contributors.
- *
- * Original Author:  Michael Behrisch
- * Contributor(s):   -
- *
- * $Id$
- *
- * Changes
- * -------
- * 21-Sep-2004 : Initial revision (MB);
- *
- */
 package org.jgrapht.graph;
 
 import java.util.*;
 
-import junit.framework.*;
-
 import org.jgrapht.*;
 
+import junit.framework.*;
 
 /**
  * Unit test for {@link Subgraph} class.
@@ -52,14 +32,14 @@ import org.jgrapht.*;
 public class SubgraphTest
     extends TestCase
 {
-    //~ Instance fields --------------------------------------------------------
+    // ~ Instance fields --------------------------------------------------------
 
     private String v1 = "v1";
     private String v2 = "v2";
     private String v3 = "v3";
     private String v4 = "v4";
 
-    //~ Constructors -----------------------------------------------------------
+    // ~ Constructors -----------------------------------------------------------
 
     /**
      * @see junit.framework.TestCase#TestCase(java.lang.String)
@@ -69,7 +49,7 @@ public class SubgraphTest
         super(name);
     }
 
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     /**
      * .
@@ -77,8 +57,7 @@ public class SubgraphTest
     public void testInducedSubgraphListener()
     {
         UndirectedGraph<String, DefaultEdge> g = init(true);
-        UndirectedSubgraph<String, DefaultEdge> sub =
-            new UndirectedSubgraph<String, DefaultEdge>(g, null, null);
+        UndirectedSubgraph<String, DefaultEdge> sub = new UndirectedSubgraph<>(g, null, null);
 
         assertEquals(g.vertexSet(), sub.vertexSet());
         assertEquals(g.edgeSet(), sub.edgeSet());
@@ -95,31 +74,26 @@ public class SubgraphTest
     public void testSubgraph()
     {
         UndirectedGraph<String, DefaultEdge> g = init(false);
-        UndirectedSubgraph<String, DefaultEdge> sub =
-            new UndirectedSubgraph<String, DefaultEdge>(g, null, null);
+        UndirectedSubgraph<String, DefaultEdge> sub = new UndirectedSubgraph<>(g, null, null);
 
         assertEquals(g.vertexSet(), sub.vertexSet());
         assertEquals(g.edgeSet(), sub.edgeSet());
 
-        Set<String> vset = new HashSet<String>(g.vertexSet());
+        Set<String> vset = new HashSet<>(g.vertexSet());
         g.removeVertex(v1);
         assertEquals(vset, sub.vertexSet()); // losing track
 
         g = init(false);
-        vset = new HashSet<String>();
+        vset = new HashSet<>();
         vset.add(v1);
-        sub = new UndirectedSubgraph<String, DefaultEdge>(g, vset, null);
+        sub = new UndirectedSubgraph<>(g, vset, null);
         assertEquals(vset, sub.vertexSet());
         assertEquals(0, sub.degreeOf(v1));
         assertEquals(Collections.EMPTY_SET, sub.edgeSet());
 
         vset.add(v2);
         vset.add(v3);
-        sub =
-            new UndirectedSubgraph<String, DefaultEdge>(
-                g,
-                vset,
-                new HashSet<DefaultEdge>(g.getAllEdges(v1, v2)));
+        sub = new UndirectedSubgraph<>(g, vset, new HashSet<>(g.getAllEdges(v1, v2)));
         assertEquals(vset, sub.vertexSet());
         assertEquals(1, sub.edgeSet().size());
     }
@@ -130,13 +104,12 @@ public class SubgraphTest
     public void testSubgraphListener()
     {
         UndirectedGraph<String, DefaultEdge> g = init(true);
-        UndirectedSubgraph<String, DefaultEdge> sub =
-            new UndirectedSubgraph<String, DefaultEdge>(g, null, null);
+        UndirectedSubgraph<String, DefaultEdge> sub = new UndirectedSubgraph<>(g, null, null);
 
         assertEquals(g.vertexSet(), sub.vertexSet());
         assertEquals(g.edgeSet(), sub.edgeSet());
 
-        Set<String> vset = new HashSet<String>(g.vertexSet());
+        Set<String> vset = new HashSet<>(g.vertexSet());
         g.removeVertex(v1);
         vset.remove(v1);
         assertEquals(vset, sub.vertexSet()); // not losing track
@@ -148,11 +121,9 @@ public class SubgraphTest
         UndirectedGraph<String, DefaultEdge> g;
 
         if (listenable) {
-            g = new ListenableUndirectedGraph<String, DefaultEdge>(
-                DefaultEdge.class);
+            g = new ListenableUndirectedGraph<>(DefaultEdge.class);
         } else {
-            g = new SimpleGraph<String, DefaultEdge>(
-                DefaultEdge.class);
+            g = new SimpleGraph<>(DefaultEdge.class);
         }
 
         g.addVertex(v1);
@@ -170,20 +141,15 @@ public class SubgraphTest
     public void testInducedSubgraphUnderlyingEdgeAddition()
     {
         ListenableGraph<Object, DefaultEdge> baseGraph =
-            new ListenableUndirectedGraph<Object, DefaultEdge>(
-                DefaultEdge.class);
+            new ListenableUndirectedGraph<>(DefaultEdge.class);
 
         baseGraph.addVertex(v1);
         baseGraph.addVertex(v2);
 
-        Set<Object> initialVertexes = new LinkedHashSet<Object>();
+        Set<Object> initialVertexes = new LinkedHashSet<>();
         initialVertexes.add(v1);
         Subgraph<Object, DefaultEdge, ListenableGraph<Object, DefaultEdge>> subgraph =
-            new Subgraph<Object,
-                DefaultEdge, ListenableGraph<Object, DefaultEdge>>(
-                baseGraph,
-                initialVertexes,
-                null);
+            new Subgraph<>(baseGraph, initialVertexes, null);
         baseGraph.addEdge(v1, v2);
 
         assertFalse(subgraph.containsEdge(v1, v2));

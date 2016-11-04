@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2005-2016, by John V Sichi and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,30 +15,14 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* ------------------------------
- * BronKerboschCliqueFinderTest.java
- * ------------------------------
- * (C) Copyright 2005-2008, by John V. Sichi and Contributors.
- *
- * Original Author:  John V. Sichi
- * Contributor(s):   -
- *
- * $Id$
- *
- * Changes
- * -------
- * 26-July-2005 : Initial revision (JVS);
- *
- */
 package org.jgrapht.alg;
 
 import java.util.*;
 
-import junit.framework.*;
-
 import org.jgrapht.*;
 import org.jgrapht.graph.*;
 
+import junit.framework.*;
 
 /**
  * .
@@ -52,7 +32,7 @@ import org.jgrapht.graph.*;
 public class BronKerboschCliqueFinderTest
     extends TestCase
 {
-    //~ Static fields/initializers ---------------------------------------------
+    // ~ Static fields/initializers ---------------------------------------------
 
     private static final String V1 = "v1";
     private static final String V2 = "v2";
@@ -63,7 +43,7 @@ public class BronKerboschCliqueFinderTest
     private static final String V7 = "v7";
     private static final String V8 = "v8";
 
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     /**
      * .
@@ -81,7 +61,7 @@ public class BronKerboschCliqueFinderTest
         g.addVertex(V7);
         g.addVertex(V8);
 
-        // biggest clique:  { V1, V2, V3, V4 }
+        // biggest clique: { V1, V2, V3, V4 }
         g.addEdge(V1, V2);
         g.addEdge(V1, V3);
         g.addEdge(V1, V4);
@@ -89,7 +69,7 @@ public class BronKerboschCliqueFinderTest
         g.addEdge(V2, V4);
         g.addEdge(V3, V4);
 
-        // smaller clique:  { V5, V6, V7 }
+        // smaller clique: { V5, V6, V7 }
         g.addEdge(V5, V6);
         g.addEdge(V5, V7);
         g.addEdge(V6, V7);
@@ -104,18 +84,16 @@ public class BronKerboschCliqueFinderTest
 
     public void testFindBiggest()
     {
-        SimpleGraph<String, DefaultEdge> g =
-            new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
+        SimpleGraph<String, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
         createGraph(g);
 
-        BronKerboschCliqueFinder<String, DefaultEdge> finder =
-            new BronKerboschCliqueFinder<String, DefaultEdge>(g);
+        BronKerboschCliqueFinder<String, DefaultEdge> finder = new BronKerboschCliqueFinder<>(g);
 
         Collection<Set<String>> cliques = finder.getBiggestMaximalCliques();
 
         assertEquals(1, cliques.size());
 
-        Set<String> expected = new HashSet<String>();
+        Set<String> expected = new HashSet<>();
         expected.add(V1);
         expected.add(V2);
         expected.add(V3);
@@ -128,46 +106,44 @@ public class BronKerboschCliqueFinderTest
 
     public void testFindAll()
     {
-        SimpleGraph<String, DefaultEdge> g =
-            new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
+        SimpleGraph<String, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
         createGraph(g);
 
-        BronKerboschCliqueFinder<String, DefaultEdge> finder =
-            new BronKerboschCliqueFinder<String, DefaultEdge>(g);
+        BronKerboschCliqueFinder<String, DefaultEdge> finder = new BronKerboschCliqueFinder<>(g);
 
         Collection<Set<String>> cliques = finder.getAllMaximalCliques();
 
         assertEquals(4, cliques.size());
 
-        Set<Set<String>> expected = new HashSet<Set<String>>();
+        Set<Set<String>> expected = new HashSet<>();
 
-        Set<String> set = new HashSet<String>();
+        Set<String> set = new HashSet<>();
         set.add(V1);
         set.add(V2);
         set.add(V3);
         set.add(V4);
         expected.add(set);
 
-        set = new HashSet<String>();
+        set = new HashSet<>();
         set.add(V5);
         set.add(V6);
         set.add(V7);
         expected.add(set);
 
-        set = new HashSet<String>();
+        set = new HashSet<>();
         set.add(V3);
         set.add(V4);
         set.add(V5);
         expected.add(set);
 
-        set = new HashSet<String>();
+        set = new HashSet<>();
         set.add(V7);
         set.add(V8);
         expected.add(set);
 
         // convert result from Collection to Set because we don't want
         // order to be significant
-        Set<Set<String>> actual = new HashSet<Set<String>>(cliques);
+        Set<Set<String>> actual = new HashSet<>(cliques);
 
         assertEquals(expected, actual);
     }

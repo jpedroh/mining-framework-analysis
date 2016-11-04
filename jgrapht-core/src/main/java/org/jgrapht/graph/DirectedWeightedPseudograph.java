@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2003-2016, by Barak Naveh and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2013, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,42 +15,24 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* -------------------------------
- * DirectedWeightedPseudograph.java
- * -------------------------------
- * (C) Copyright 2003-2013, by Barak Naveh and Contributors.
- *
- * Original Author:  Barak Naveh
- * Contributor(s):   Christian Hammer, Adam Gouge
- *
- * $Id$
- *
- * Changes
- * -------
- * 05-Aug-2003 : Initial revision (BN);
- * 06-Jun-2005 : Made generic (CH);
- * 28-May-2006 : Moved connectivity info from edge to graph (JVS);
- * 08-Apr-2013 : Added DirectedWeightedPseudograph (AG)
- */
 package org.jgrapht.graph;
 
 import org.jgrapht.*;
-
+import org.jgrapht.graph.builder.*;
 
 /**
- * A directed weighted pseudograph. A directed weighted pseudograph is a
- * non-simple directed graph in which both graph loops and multiple edges are
- * permitted, and edges have weights.
+ * A directed weighted pseudograph. A directed weighted pseudograph is a non-simple directed graph
+ * in which both graph loops and multiple edges are permitted, and edges have weights.
+ * 
+ * @param <V> the graph vertex type
+ * @param <E> the graph edge type
+ * 
  */
 public class DirectedWeightedPseudograph<V, E>
     extends DirectedPseudograph<V, E>
     implements WeightedGraph<V, E>
 {
-    
-
     private static final long serialVersionUID = 8762514879586423517L;
-
-    
 
     /**
      * Creates a new directed weighted pseudograph.
@@ -63,18 +41,45 @@ public class DirectedWeightedPseudograph<V, E>
      */
     public DirectedWeightedPseudograph(Class<? extends E> edgeClass)
     {
-        this(new ClassBasedEdgeFactory<V, E>(edgeClass));
+        this(new ClassBasedEdgeFactory<>(edgeClass));
     }
 
     /**
-     * Creates a new directed weighted pseudograph with the specified edge
-     * factory.
+     * Creates a new directed weighted pseudograph with the specified edge factory.
      *
      * @param ef the edge factory of the new graph.
      */
     public DirectedWeightedPseudograph(EdgeFactory<V, E> ef)
     {
         super(ef);
+    }
+
+    /**
+     * Create a builder for this kind of graph.
+     * 
+     * @param edgeClass class on which to base factory for edges
+     * @param <V> the graph vertex type
+     * @param <E> the graph edge type
+     * @return a builder for this kind of graph
+     */
+    public static <V, E> DirectedWeightedGraphBuilderBase<V, E,
+        ? extends DirectedWeightedPseudograph<V, E>, ?> builder(Class<? extends E> edgeClass)
+    {
+        return new DirectedWeightedGraphBuilder<>(new DirectedWeightedPseudograph<>(edgeClass));
+    }
+
+    /**
+     * Create a builder for this kind of graph.
+     * 
+     * @param ef the edge factory of the new graph
+     * @param <V> the graph vertex type
+     * @param <E> the graph edge type
+     * @return a builder for this kind of graph
+     */
+    public static <V, E> DirectedWeightedGraphBuilderBase<V, E,
+        ? extends DirectedWeightedPseudograph<V, E>, ?> builder(EdgeFactory<V, E> ef)
+    {
+        return new DirectedWeightedGraphBuilder<>(new DirectedWeightedPseudograph<>(ef));
     }
 }
 

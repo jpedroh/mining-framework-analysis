@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2003-2016, by Barak Naveh and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,29 +15,12 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* ------------------------
- * ListenableGraphTest.java
- * ------------------------
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
- *
- * Original Author:  Barak Naveh
- * Contributor(s):   -
- *
- * $Id$
- *
- * Changes
- * -------
- * 03-Aug-2003 : Initial revision (BN);
- * 10-Aug-2003 : Adaptation to new event model (BN);
- *
- */
 package org.jgrapht.graph;
-
-import junit.framework.*;
 
 import org.jgrapht.*;
 import org.jgrapht.event.*;
 
+import junit.framework.*;
 
 /**
  * Unit test for {@link ListenableGraph} class.
@@ -52,14 +31,14 @@ import org.jgrapht.event.*;
 public class ListenableGraphTest
     extends TestCase
 {
-    //~ Instance fields --------------------------------------------------------
+    // ~ Instance fields --------------------------------------------------------
 
     DefaultEdge lastAddedEdge;
     DefaultEdge lastRemovedEdge;
     Object lastAddedVertex;
     Object lastRemovedVertex;
 
-    //~ Constructors -----------------------------------------------------------
+    // ~ Constructors -----------------------------------------------------------
 
     /**
      * @see junit.framework.TestCase#TestCase(java.lang.String)
@@ -69,7 +48,7 @@ public class ListenableGraphTest
         super(name);
     }
 
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     /**
      * Tests GraphListener listener.
@@ -78,11 +57,8 @@ public class ListenableGraphTest
     {
         init();
 
-        ListenableGraph<Object, DefaultEdge> g =
-            new ListenableUndirectedGraph<Object, DefaultEdge>(
-                DefaultEdge.class);
-        GraphListener<Object, DefaultEdge> listener =
-            new MyGraphListner<DefaultEdge>();
+        ListenableGraph<Object, DefaultEdge> g = new ListenableUndirectedGraph<>(DefaultEdge.class);
+        GraphListener<Object, DefaultEdge> listener = new MyGraphListner<>();
         g.addGraphListener(listener);
 
         String v1 = "v1";
@@ -139,11 +115,8 @@ public class ListenableGraphTest
     {
         init();
 
-        ListenableGraph<Object, DefaultEdge> g =
-            new ListenableUndirectedGraph<Object, DefaultEdge>(
-                DefaultEdge.class);
-        VertexSetListener<Object> listener =
-            new MyGraphListner<DefaultEdge>();
+        ListenableGraph<Object, DefaultEdge> g = new ListenableUndirectedGraph<>(DefaultEdge.class);
+        VertexSetListener<Object> listener = new MyGraphListner<>();
         g.addVertexSetListener(listener);
 
         String v1 = "v1";
@@ -199,12 +172,10 @@ public class ListenableGraphTest
     public void testListenableDirectedWeightedGraph()
     {
         init();
-        
+
         ListenableDirectedWeightedGraph<Object, DefaultWeightedEdge> g =
-            new ListenableDirectedWeightedGraph<Object, DefaultWeightedEdge>(
-                DefaultWeightedEdge.class);
-        GraphListener<Object, DefaultWeightedEdge> listener =
-            new MyGraphListner<DefaultWeightedEdge>();
+            new ListenableDirectedWeightedGraph<>(DefaultWeightedEdge.class);
+        GraphListener<Object, DefaultWeightedEdge> listener = new MyGraphListner<>();
         g.addGraphListener(listener);
 
         String v1 = "v1";
@@ -224,7 +195,7 @@ public class ListenableGraphTest
         assertEquals(e, lastAddedEdge);
         assertEquals(null, lastRemovedEdge);
     }
-    
+
     private void init()
     {
         lastAddedEdge = null;
@@ -233,7 +204,7 @@ public class ListenableGraphTest
         lastRemovedVertex = null;
     }
 
-    //~ Inner Classes ----------------------------------------------------------
+    // ~ Inner Classes ----------------------------------------------------------
 
     /**
      * A listener on the tested graph.
@@ -247,6 +218,7 @@ public class ListenableGraphTest
         /**
          * @see GraphListener#edgeAdded(GraphEdgeChangeEvent)
          */
+        @Override
         public void edgeAdded(GraphEdgeChangeEvent<Object, E> e)
         {
             lastAddedEdge = e.getEdge();
@@ -255,6 +227,7 @@ public class ListenableGraphTest
         /**
          * @see GraphListener#edgeRemoved(GraphEdgeChangeEvent)
          */
+        @Override
         public void edgeRemoved(GraphEdgeChangeEvent<Object, E> e)
         {
             lastRemovedEdge = e.getEdge();
@@ -263,6 +236,7 @@ public class ListenableGraphTest
         /**
          * @see VertexSetListener#vertexAdded(GraphVertexChangeEvent)
          */
+        @Override
         public void vertexAdded(GraphVertexChangeEvent<Object> e)
         {
             lastAddedVertex = e.getVertex();
@@ -271,6 +245,7 @@ public class ListenableGraphTest
         /**
          * @see VertexSetListener#vertexRemoved(GraphVertexChangeEvent)
          */
+        @Override
         public void vertexRemoved(GraphVertexChangeEvent<Object> e)
         {
             lastRemovedVertex = e.getVertex();

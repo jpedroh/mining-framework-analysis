@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2003-2016, by Liviu Rau and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,30 +15,6 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* -----------------------
- * DepthFirstIterator.java
- * -----------------------
- * (C) Copyright 2003-2008, by Liviu Rau and Contributors.
- *
- * Original Author:  Liviu Rau
- * Contributor(s):   Barak Naveh
- *                   Christian Hammer
- *                   Welson Sun
- *                   Ross Judson
- *
- * $Id$
- *
- * Changes
- * -------
- * 29-Jul-2003 : Initial revision (LR);
- * 31-Jul-2003 : Fixed traversal across connected components (BN);
- * 06-Aug-2003 : Extracted common logic to TraverseUtils.XXFirstIterator (BN);
- * 31-Jan-2004 : Reparented and changed interface to parent class (BN);
- * 04-May-2004 : Made generic (CH)
- * 27-Aug-2006 : Added WHITE/GRAY/BLACK to fix bug reported by Welson Sun (JVS)
- * 28-Sep-2008 : Optimized using ArrayDeque per suggestion from Ross (JVS)
- *
- */
 package org.jgrapht.traverse;
 
 import java.util.*;
@@ -50,12 +22,13 @@ import java.util.*;
 import org.jgrapht.*;
 import org.jgrapht.util.*;
 
-
 /**
- * A depth-first iterator for a directed and an undirected graph. For this
- * iterator to work correctly the graph must not be modified during iteration.
- * Currently there are no means to ensure that, nor to fail-fast. The results of
- * such modifications are undefined.
+ * A depth-first iterator for a directed and an undirected graph. For this iterator to work
+ * correctly the graph must not be modified during iteration. Currently there are no means to ensure
+ * that, nor to fail-fast. The results of such modifications are undefined.
+ *
+ * @param <V> the graph vertex type
+ * @param <E> the graph edge type
  *
  * @author Liviu Rau
  * @author Barak Naveh
@@ -64,25 +37,19 @@ import org.jgrapht.util.*;
 public class DepthFirstIterator<V, E>
     extends CrossComponentIterator<V, E, CrossComponentIterator.VisitColor>
 {
-    
-
     /**
-     * Sentinel object. Unfortunately, we can't use null, because ArrayDeque
-     * won't accept those. And we don't want to rely on the caller to provide a
-     * sentinel object for us. So we have to play typecasting games.
+     * Sentinel object. Unfortunately, we can't use null, because ArrayDeque won't accept those. And
+     * we don't want to rely on the caller to provide a sentinel object for us. So we have to play
+     * typecasting games.
      */
     public static final Object SENTINEL = new Object();
-
-    
 
     /**
      * @see #getStack
      */
-    private Deque<Object> stack = new ArrayDeque<Object>();
+    private Deque<Object> stack = new ArrayDeque<>();
 
     private transient TypeUtil<V> vertexTypeDecl = null;
-
-    
 
     /**
      * Creates a new depth-first iterator for the specified graph.
@@ -95,11 +62,10 @@ public class DepthFirstIterator<V, E>
     }
 
     /**
-     * Creates a new depth-first iterator for the specified graph. Iteration
-     * will start at the specified start vertex and will be limited to the
-     * connected component that includes that vertex. If the specified start
-     * vertex is <code>null</code>, iteration will start at an arbitrary vertex
-     * and will not be limited, that is, will be able to traverse all the graph.
+     * Creates a new depth-first iterator for the specified graph. Iteration will start at the
+     * specified start vertex and will be limited to the connected component that includes that
+     * vertex. If the specified start vertex is <code>null</code>, iteration will start at an
+     * arbitrary vertex and will not be limited, that is, will be able to traverse all the graph.
      *
      * @param g the graph to be iterated.
      * @param startVertex the vertex iteration to be started.
@@ -109,11 +75,10 @@ public class DepthFirstIterator<V, E>
         super(g, startVertex);
     }
 
-    
-
     /**
      * @see CrossComponentIterator#isConnectedComponentExhausted()
      */
+    @Override
     protected boolean isConnectedComponentExhausted()
     {
         for (;;) {
@@ -125,7 +90,7 @@ public class DepthFirstIterator<V, E>
                 return false;
             }
 
-            // Found a sentinel:  pop it, record the finish time,
+            // Found a sentinel: pop it, record the finish time,
             // and then loop to check the rest of the stack.
 
             // Pop null we peeked at above.
@@ -139,6 +104,7 @@ public class DepthFirstIterator<V, E>
     /**
      * @see CrossComponentIterator#encounterVertex(Object, Object)
      */
+    @Override
     protected void encounterVertex(V vertex, E edge)
     {
         putSeenData(vertex, VisitColor.WHITE);
@@ -148,6 +114,7 @@ public class DepthFirstIterator<V, E>
     /**
      * @see CrossComponentIterator#encounterVertexAgain(Object, Object)
      */
+    @Override
     protected void encounterVertexAgain(V vertex, E edge)
     {
         VisitColor color = getSeenData(vertex);
@@ -159,7 +126,7 @@ public class DepthFirstIterator<V, E>
         }
 
         // Since we've encountered it before, and it's still WHITE, it
-        // *must* be on the stack.  Use removeLastOccurrence on the
+        // *must* be on the stack. Use removeLastOccurrence on the
         // assumption that for typical topologies and traversals,
         // it's likely to be nearer the top of the stack than
         // the bottom of the stack.
@@ -171,6 +138,7 @@ public class DepthFirstIterator<V, E>
     /**
      * @see CrossComponentIterator#provideNextVertex()
      */
+    @Override
     protected V provideNextVertex()
     {
         V v;
@@ -203,11 +171,10 @@ public class DepthFirstIterator<V, E>
     }
 
     /**
-     * Retrieves the LIFO stack of vertices which have been encountered but not
-     * yet visited (WHITE). This stack also contains <em>sentinel</em> entries
-     * representing vertices which have been visited but are still GRAY. A
-     * sentinel entry is a sequence (v, SENTINEL), whereas a non-sentinel entry
-     * is just (v).
+     * Retrieves the LIFO stack of vertices which have been encountered but not yet visited (WHITE).
+     * This stack also contains <em>sentinel</em> entries representing vertices which have been
+     * visited but are still GRAY. A sentinel entry is a sequence (v, SENTINEL), whereas a
+     * non-sentinel entry is just (v).
      *
      * @return stack
      */

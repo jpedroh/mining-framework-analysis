@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2003-2016, by Barak Naveh and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,28 +15,12 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* -----------------
- * HelloJGraphT.java
- * -----------------
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
- *
- * Original Author:  Barak Naveh
- * Contributor(s):   -
- *
- * $Id$
- *
- * Changes
- * -------
- * 27-Jul-2003 : Initial revision (BN);
- *
- */
 package org.jgrapht.demo;
 
 import java.net.*;
 
 import org.jgrapht.*;
 import org.jgrapht.graph.*;
-
 
 /**
  * A simple introduction to using JGraphT.
@@ -50,20 +30,16 @@ import org.jgrapht.graph.*;
  */
 public final class HelloJGraphT
 {
-    
-
     private HelloJGraphT()
     {
     } // ensure non-instantiability.
-
-    
 
     /**
      * The starting point for the demo.
      *
      * @param args ignored.
      */
-    public static void main(String [] args)
+    public static void main(String[] args)
     {
         UndirectedGraph<String, DefaultEdge> stringGraph = createStringGraph();
 
@@ -78,15 +54,13 @@ public final class HelloJGraphT
     }
 
     /**
-     * Creates a toy directed graph based on URL objects that represents link
-     * structure.
+     * Creates a toy directed graph based on URL objects that represents link structure.
      *
      * @return a graph based on URL objects.
      */
     private static DirectedGraph<URL, DefaultEdge> createHrefGraph()
     {
-        DirectedGraph<URL, DefaultEdge> g =
-            new DefaultDirectedGraph<URL, DefaultEdge>(DefaultEdge.class);
+        DirectedGraph<URL, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
 
         try {
             URL amazon = new URL("http://www.amazon.com");
@@ -109,14 +83,13 @@ public final class HelloJGraphT
     }
 
     /**
-     * Craete a toy graph based on String objects.
+     * Create a toy graph based on String objects.
      *
      * @return a graph based on String objects.
      */
     private static UndirectedGraph<String, DefaultEdge> createStringGraph()
     {
-        UndirectedGraph<String, DefaultEdge> g =
-            new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
+        UndirectedGraph<String, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
 
         String v1 = "v1";
         String v2 = "v2";

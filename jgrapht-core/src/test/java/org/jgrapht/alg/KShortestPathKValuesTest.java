@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2007-2016, by France Telecom and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2010, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,40 +15,22 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* -------------------------
- * KShortestPathKValuesTest.java
- * -------------------------
- * (C) Copyright 2007-2010, by France Telecom
- *
- * Original Author:  Guillaume Boulmier and Contributors.
- *
- * $Id$
- *
- * Changes
- * -------
- * 05-Jun-2007 : Initial revision (GB);
- * 06-Dec-2010 : Bugfixes (GB);
- *
- */
 package org.jgrapht.alg;
 
-import java.util.*;
-
-import junit.framework.*;
-
 import org.jgrapht.*;
+import org.jgrapht.graph.*;
 import org.jgrapht.util.*;
 
+import junit.framework.*;
 
 /**
  * @author Guillaume Boulmier
  * @since July 5, 2007
  */
-@SuppressWarnings("unchecked")
 public class KShortestPathKValuesTest
     extends TestCase
 {
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     /**
      * @param k
@@ -73,12 +51,9 @@ public class KShortestPathKValuesTest
     {
         KShortestPathCompleteGraph6 graph = new KShortestPathCompleteGraph6();
 
-        for (
-            int maxSize = 1;
-            maxSize <= calculateNbElementaryPathsForCompleteGraph(6);
-            maxSize++)
-        {
-            KShortestPaths finder = new KShortestPaths(graph, "vS", maxSize);
+        for (int maxSize = 1; maxSize <= calculateNbElementaryPathsForCompleteGraph(6); maxSize++) {
+            KShortestPaths<String, DefaultWeightedEdge> finder =
+                new KShortestPaths<>(graph, "vS", maxSize);
 
             assertEquals(finder.getPaths("v1").size(), maxSize);
             assertEquals(finder.getPaths("v2").size(), maxSize);
@@ -90,22 +65,19 @@ public class KShortestPathKValuesTest
 
     public void testNbReturnedPaths()
     {
-        KShortestPathCompleteGraph4 kSPCompleteGraph4 =
-            new KShortestPathCompleteGraph4();
+        KShortestPathCompleteGraph4 kSPCompleteGraph4 = new KShortestPathCompleteGraph4();
         verifyNbPathsForAllPairsOfVertices(kSPCompleteGraph4);
 
-        KShortestPathCompleteGraph5 kSPCompleteGraph5 =
-            new KShortestPathCompleteGraph5();
+        KShortestPathCompleteGraph5 kSPCompleteGraph5 = new KShortestPathCompleteGraph5();
         verifyNbPathsForAllPairsOfVertices(kSPCompleteGraph5);
 
-        KShortestPathCompleteGraph6 kSPCompleteGraph6 =
-            new KShortestPathCompleteGraph6();
+        KShortestPathCompleteGraph6 kSPCompleteGraph6 = new KShortestPathCompleteGraph6();
         verifyNbPathsForAllPairsOfVertices(kSPCompleteGraph6);
     }
 
     /**
-     * Compute the total number of paths between every pair of vertices in a
-     * complete graph with <code>n</code> vertices.
+     * Compute the total number of paths between every pair of vertices in a complete graph with
+     * <code>n</code> vertices.
      *
      * @param n
      *
@@ -120,27 +92,15 @@ public class KShortestPathKValuesTest
         return nbPaths;
     }
 
-    private void verifyNbPathsForAllPairsOfVertices(Graph graph)
+    private void verifyNbPathsForAllPairsOfVertices(Graph<String, DefaultWeightedEdge> graph)
     {
-        long nbPaths =
-            calculateNbElementaryPathsForCompleteGraph(
-                graph.vertexSet().size());
+        long nbPaths = calculateNbElementaryPathsForCompleteGraph(graph.vertexSet().size());
         int maxSize = Integer.MAX_VALUE;
 
-        for (
-            Iterator sourceIterator = graph.vertexSet().iterator();
-            sourceIterator.hasNext();)
-        {
-            Object sourceVertex = sourceIterator.next();
-
-            KShortestPaths finder =
-                new KShortestPaths(graph, sourceVertex,
-                    maxSize);
-            for (
-                Iterator targetIterator = graph.vertexSet().iterator();
-                targetIterator.hasNext();)
-            {
-                Object targetVertex = targetIterator.next();
+        for (String sourceVertex : graph.vertexSet()) {
+            KShortestPaths<String, DefaultWeightedEdge> finder =
+                new KShortestPaths<>(graph, sourceVertex, maxSize);
+            for (String targetVertex : graph.vertexSet()) {
                 if (targetVertex != sourceVertex) {
                     assertEquals(finder.getPaths(targetVertex).size(), nbPaths);
                 }

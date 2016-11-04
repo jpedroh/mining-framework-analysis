@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.jgrapht</groupId>
 		<artifactId>jgrapht</artifactId>
-		<version>0.9.1-SNAPSHOT</version>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>jgrapht-dist</artifactId>
 	<name>JGraphT - Distributable Archives</name>
@@ -20,7 +20,7 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -41,7 +41,7 @@
 			<artifactId>jgrapht-demo</artifactId>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -62,7 +62,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<profiles>
 		<profile>
 			<id>touchgraph</id>

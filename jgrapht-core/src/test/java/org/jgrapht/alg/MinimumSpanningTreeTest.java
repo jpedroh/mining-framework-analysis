@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2010-2016, by Tom Conerly and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://org.org.jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2010, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,36 +15,20 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* ------------------------------
- * MinimumSpanningTreeTest.java
- * ------------------------------
- * (C) Copyright 2010-2010, by Tom Conerly and Contributors.
- *
- * Original Author:  Tom Conerly
- * Contributor(s):   -
- *
- * Changes
- * -------
- * 02-Feb-2010 : Initial revision (TC);
- *
- */
 package org.jgrapht.alg;
 
-import junit.framework.TestCase;
-import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
-import org.jgrapht.alg.interfaces.MinimumSpanningTree;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleWeightedGraph;
+import java.util.*;
 
-import java.util.Arrays;
-import java.util.Collection;
+import org.jgrapht.*;
+import org.jgrapht.alg.interfaces.*;
+import org.jgrapht.graph.*;
 
+import junit.framework.*;
 
 public class MinimumSpanningTreeTest
     extends TestCase
 {
-    //~ Static fields/initializers ---------------------------------------------
+    // ~ Static fields/initializers ---------------------------------------------
 
     private static final String A = "A";
     private static final String B = "B";
@@ -59,91 +39,76 @@ public class MinimumSpanningTreeTest
     private static final String G = "G";
     private static final String H = "H";
 
-    //~ Instance fields --------------------------------------------------------
+    // ~ Instance fields --------------------------------------------------------
 
     private DefaultWeightedEdge AB;
     private DefaultWeightedEdge AC;
-    private DefaultWeightedEdge AE;
     private DefaultWeightedEdge BD;
-    private DefaultWeightedEdge CD;
     private DefaultWeightedEdge DE;
-    private DefaultWeightedEdge EF;
     private DefaultWeightedEdge EG;
     private DefaultWeightedEdge GH;
     private DefaultWeightedEdge FH;
 
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
-
-    public void testKruskal() {
-
-        testMinimumSpanningTreeBuilding(
-                new KruskalMinimumSpanningTree<String, DefaultWeightedEdge>(createSimpleConnectedWeightedGraph()),
-                Arrays.asList(AB, AC, BD, DE),
-                15.0
-        );
+    public void testKruskal()
+    {
 
         testMinimumSpanningTreeBuilding(
-                new KruskalMinimumSpanningTree<String, DefaultWeightedEdge>(createSimpleDisconnectedWeightedGraph()),
-                Arrays.asList(AB, AC, BD, EG, GH, FH),
-                60.0
-        );
+            new KruskalMinimumSpanningTree<>(createSimpleConnectedWeightedGraph()),
+            Arrays.asList(AB, AC, BD, DE), 15.0);
+
+        testMinimumSpanningTreeBuilding(
+            new KruskalMinimumSpanningTree<>(createSimpleDisconnectedWeightedGraph()),
+            Arrays.asList(AB, AC, BD, EG, GH, FH), 60.0);
 
         testKruskalMinimumSpanningTreeBuildingBackwardCompatibility(
-                new KruskalMinimumSpanningTree<String, DefaultWeightedEdge>(createSimpleConnectedWeightedGraph()),
-                Arrays.asList(AB, AC, BD, DE),
-                15.0
-        );
+            new KruskalMinimumSpanningTree<>(createSimpleConnectedWeightedGraph()),
+            Arrays.asList(AB, AC, BD, DE), 15.0);
 
     }
 
-    public void testPrim() {
+    public void testPrim()
+    {
 
         testMinimumSpanningTreeBuilding(
-                new PrimMinimumSpanningTree<String, DefaultWeightedEdge>(createSimpleConnectedWeightedGraph()),
-                Arrays.asList(AB, AC, BD, DE),
-                15.0
-        );
+            new PrimMinimumSpanningTree<>(createSimpleConnectedWeightedGraph()),
+            Arrays.asList(AB, AC, BD, DE), 15.0);
 
         testMinimumSpanningTreeBuilding(
-                new PrimMinimumSpanningTree<String, DefaultWeightedEdge>(createSimpleDisconnectedWeightedGraph()),
-                Arrays.asList(AB, AC, BD, EG, GH, FH),
-                60.0
-        );
+            new PrimMinimumSpanningTree<>(createSimpleDisconnectedWeightedGraph()),
+            Arrays.asList(AB, AC, BD, EG, GH, FH), 60.0);
 
     }
-
 
     protected <V, E> void testMinimumSpanningTreeBuilding(
-        final MinimumSpanningTree<V, DefaultWeightedEdge> mst,
-        final Collection<E> edgeSet,
-        final double weight) {
+        final MinimumSpanningTree<V, DefaultWeightedEdge> mst, final Collection<E> edgeSet,
+        final double weight)
+    {
 
-            assertEquals(weight, mst.getMinimumSpanningTreeTotalWeight());
-            assertTrue(mst.getMinimumSpanningTreeEdgeSet().containsAll(edgeSet));
+        assertEquals(weight, mst.getMinimumSpanningTreeTotalWeight());
+        assertTrue(mst.getMinimumSpanningTreeEdgeSet().containsAll(edgeSet));
 
     }
 
     protected <V, E> void testKruskalMinimumSpanningTreeBuildingBackwardCompatibility(
-            final KruskalMinimumSpanningTree<V, DefaultWeightedEdge> mst,
-            final Collection<E> edgeSet,
-            final double weight) {
+        final KruskalMinimumSpanningTree<V, DefaultWeightedEdge> mst, final Collection<E> edgeSet,
+        final double weight)
+    {
 
-        assertEquals(weight, mst.getSpanningTreeCost());
-        assertTrue(mst.getEdgeSet().containsAll(edgeSet));
+        assertEquals(weight, mst.getMinimumSpanningTreeTotalWeight());
+        assertTrue(mst.getMinimumSpanningTreeEdgeSet().containsAll(edgeSet));
 
     }
 
-    protected Graph<String, DefaultWeightedEdge> createSimpleDisconnectedWeightedGraph() {
+    protected Graph<String, DefaultWeightedEdge> createSimpleDisconnectedWeightedGraph()
+    {
 
-        Graph<String, DefaultWeightedEdge> g =
-                new SimpleWeightedGraph<String, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+        Graph<String, DefaultWeightedEdge> g = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
 
         /**
          *
-         * A -- B   E -- F
-         * |    |   |    |
-         * C -- D   G -- H
+         * A -- B E -- F | | | | C -- D G -- H
          *
          */
 
@@ -155,14 +120,14 @@ public class MinimumSpanningTreeTest
         AB = Graphs.addEdge(g, A, B, 5);
         AC = Graphs.addEdge(g, A, C, 10);
         BD = Graphs.addEdge(g, B, D, 15);
-        CD = Graphs.addEdge(g, C, D, 20);
+        Graphs.addEdge(g, C, D, 20);
 
         g.addVertex(E);
         g.addVertex(F);
         g.addVertex(G);
         g.addVertex(H);
 
-        EF = Graphs.addEdge(g, E, F, 20);
+        Graphs.addEdge(g, E, F, 20);
         EG = Graphs.addEdge(g, E, G, 15);
         GH = Graphs.addEdge(g, G, H, 10);
         FH = Graphs.addEdge(g, F, H, 5);
@@ -170,10 +135,10 @@ public class MinimumSpanningTreeTest
         return g;
     }
 
-    protected Graph<String, DefaultWeightedEdge> createSimpleConnectedWeightedGraph() {
+    protected Graph<String, DefaultWeightedEdge> createSimpleConnectedWeightedGraph()
+    {
 
-        Graph<String, DefaultWeightedEdge> g =
-            new SimpleWeightedGraph<String, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+        Graph<String, DefaultWeightedEdge> g = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
 
         double bias = 1;
 
@@ -186,9 +151,9 @@ public class MinimumSpanningTreeTest
         AB = Graphs.addEdge(g, A, B, bias * 2);
         AC = Graphs.addEdge(g, A, C, bias * 3);
         BD = Graphs.addEdge(g, B, D, bias * 5);
-        CD = Graphs.addEdge(g, C, D, bias * 20);
+        Graphs.addEdge(g, C, D, bias * 20);
         DE = Graphs.addEdge(g, D, E, bias * 5);
-        AE = Graphs.addEdge(g, A, E, bias * 100);
+        Graphs.addEdge(g, A, E, bias * 100);
 
         return g;
     }

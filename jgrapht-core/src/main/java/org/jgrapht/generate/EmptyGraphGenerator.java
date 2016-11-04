@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2003-2016, by John V Sichi and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,31 +15,18 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* -------------------
- * EmptyGraphGenerator.java
- * -------------------
- * (C) Copyright 2003-2008, by John V. Sichi and Contributors.
- *
- * Original Author:  John V. Sichi
- * Contributor(s):   -
- *
- * $Id$
- *
- * Changes
- * -------
- * 16-Sep-2003 : Initial revision (JVS);
- *
- */
 package org.jgrapht.generate;
 
 import java.util.*;
 
 import org.jgrapht.*;
 
-
 /**
- * Generates an <a href="http://mathworld.wolfram.com/EmptyGraph.html">empty
- * graph</a> of any size. An empty graph is a graph that has no edges.
+ * Generates an <a href="http://mathworld.wolfram.com/EmptyGraph.html">empty graph</a> of any size.
+ * An empty graph is a graph that has no edges.
+ *
+ * @param <V> the graph vertex type
+ * @param <E> the graph edge type
  *
  * @author John V. Sichi
  * @since Sep 16, 2003
@@ -51,11 +34,7 @@ import org.jgrapht.*;
 public class EmptyGraphGenerator<V, E>
     implements GraphGenerator<V, E, V>
 {
-    
-
     private int size;
-
-    
 
     /**
      * Construct a new EmptyGraphGenerator.
@@ -73,15 +52,12 @@ public class EmptyGraphGenerator<V, E>
         this.size = size;
     }
 
-    
-
     /**
      * {@inheritDoc}
      */
+    @Override
     public void generateGraph(
-        Graph<V, E> target,
-        VertexFactory<V> vertexFactory,
-        Map<String, V> resultMap)
+        Graph<V, E> target, VertexFactory<V> vertexFactory, Map<String, V> resultMap)
     {
         for (int i = 0; i < size; ++i) {
             target.addVertex(vertexFactory.createVertex());

@@ -159,16 +159,18 @@ code coverage.
 
 <li>Run all the JUnit tests via <code>mvn test</code>. Fix where necessary.
 
-<li>Run <code>mvn jalopy:format</code> to reformat the code.  
+<li>Reformat all code using Eclipse. 
 
 <li>Commit all work and push to github.
 
-<li>Run <code>mvn clean deploy</code> to push the latest snapshot to Sonatype.
+<li>Run <code>mvn -Dmaven.artifact.threads=1 clean deploy</code> to push the latest snapshot to Sonatype.
 
 <li>Run <code>mvn source:jar; mvn javadoc:jar; mvn release:prepare; mvn release:perform</code> to create the Maven artifacts and push them to Maven Central
 
-<li>Run <code>mvn javadoc:aggregate; mvn install</code> to produce the
-release archive distribution
+<li>Publish the release using the Sonatype UI
+
+<li>Run <code>mvn javadoc:aggregate; mvn install</code> from the new
+release branch to produce the release archive distribution
 
 <li>Upload the release archive distribution to SF and add it using the
 File Release System.
@@ -176,14 +178,16 @@ File Release System.
 <li>Update the website with the latest javadocs.
 
 <li>Update the website with links to the new downloads, version numbers,
-etc.  This involves uploading web/index.html (at least).
+etc.
 
-<li>Announce the new version in the wiki and mailing lists; also click
-the File Release System notification button.
+<li>Announce the new version in the mailing lists.
 
-<li>Update and commit the version number in HISTORY.md and all pom.xml files
-again to reflect the beginning of development for the next version.
-
+<li>Update and commit the version number in HISTORY.md
+to reflect the beginning of development for the next version.  Also
+update the version in jgrapht-touchgraph/pom.xml since for whatever
+reason, this one is not done automatically by maven.  Finally, remove 
+all existing deprecated methods.
+  
 </ol>
 
   <hr noshade size="2" style=
@@ -197,7 +201,7 @@ again to reflect the beginning of development for the next version.
       "http://www.w3.org/Icons/valid-html401" border="0" alt="Valid HTML 4.01!"
       height="31" width="88"></a></td>
 
-      <td width="80%" align="center"><small>© Copyright 2005-2013, by Barak Naveh
+      <td width="80%" align="center"><small>Â© Copyright 2005-2013, by Barak Naveh
       and Contributors. All rights reserved.</small></td>
 
       <td width="10%" align="right"><a href="http://sourceforge.net"><img src=

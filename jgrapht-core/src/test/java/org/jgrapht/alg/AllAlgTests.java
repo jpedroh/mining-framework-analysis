@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2003-2016, by Barak Naveh and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,83 +15,31 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* ----------------
- * AllAlgTests.java
- * ----------------
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
- *
- * Original Author:  Barak Naveh
- * Contributor(s):   -
- *
- * $Id$
- *
- * Changes
- * -------
- * 24-Jul-2003 : Initial revision (BN);
- *
- */
 package org.jgrapht.alg;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.jgrapht.experimental.isomorphism.IsomorphismInspectorTest;
-
+import org.jgrapht.alg.flow.*;
+import org.junit.runner.*;
+import org.junit.runners.*;
 
 /**
  * A TestSuite for all tests in this package.
  *
  * @author Barak Naveh
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ AStarShortestPathTest.class, AllDirectedPathsTest.class,
+    BellmanFordShortestPathTest.class, BiconnectivityInspectorTest.class,
+    BidirectionalDijkstraShortestPathTest.class, BlockCutpointGraphTest.class,
+    BronKerboschCliqueFinderTest.class, ChromaticNumberTest.class, ConnectivityInspectorTest.class,
+    CycleDetectorTest.class, DijkstraShortestPathTest.class, EdmondsKarpMFImplTest.class,
+    EdmondsKarpMinimumSTCutTest.class, EulerianCircuitTest.class,
+    FloydWarshallShortestPathsTest.class, HamiltonianCycleTest.class, KShortestPathCostTest.class,
+    KShortestPathKValuesTest.class, KSPDiscardsValidPathsTest.class, KSPExampleTest.class,
+    MinimumSpanningTreeTest.class, NaiveLcaFinderTest.class, NeighborIndexTest.class,
+    PushRelabelMFImplTest.class, PushRelabelMinimumSTCutTest.class, StoerWagnerMinimumCutTest.class,
+    StrongConnectivityAlgorithmTest.class, TarjanLowestCommonAncestorTest.class,
+    TransitiveClosureTest.class, VertexCoverTest.class, WeightedVertexCoverTest.class })
 public final class AllAlgTests
 {
-    //~ Constructors -----------------------------------------------------------
-
-    private AllAlgTests()
-    {
-    } // ensure non-instantiability.
-
-    //~ Methods ----------------------------------------------------------------
-
-    /**
-     * Creates a test suite for all tests in this package.
-     *
-     * @return a test suite for all tests in this package.
-     */
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite();
-
-        // $JUnit-BEGIN$
-        suite.addTest(new TestSuite(ConnectivityInspectorTest.class));
-        suite.addTest(new TestSuite(DijkstraShortestPathTest.class));
-        suite.addTest(new TestSuite(BellmanFordShortestPathTest.class));
-        suite.addTest(new TestSuite(FloydWarshallShortestPathsTest.class));
-        suite.addTest(new TestSuite(VertexCoversTest.class));
-        suite.addTest(new TestSuite(CycleDetectorTest.class));
-        suite.addTest(new TestSuite(BronKerboschCliqueFinderTest.class));
-        suite.addTest(new TestSuite(TransitiveClosureTest.class));
-        suite.addTest(new TestSuite(BiconnectivityInspectorTest.class));
-        suite.addTest(new TestSuite(BlockCutpointGraphTest.class));
-        suite.addTest(new TestSuite(KShortestPathCostTest.class));
-        suite.addTest(new TestSuite(KShortestPathKValuesTest.class));
-        suite.addTest(new TestSuite(KSPExampleTest.class));
-        suite.addTest(new TestSuite(KSPDiscardsValidPathsTest.class));
-        suite.addTestSuite(IsomorphismInspectorTest.class);
-        suite.addTest(new TestSuite(EdmondsKarpMaximumFlowTest.class));
-        suite.addTest(new TestSuite(ChromaticNumberTest.class));
-        suite.addTest(new TestSuite(EulerianCircuitTest.class));
-        suite.addTest(new TestSuite(HamiltonianCycleTest.class));
-        suite.addTest(new TestSuite(MinimumSpanningTreeTest.class));
-        suite.addTest(new TestSuite(StoerWagnerMinimumCutTest.class));
-        suite.addTest(new TestSuite(EdmondsBlossomShrinkingTest.class));
-        suite.addTest(new TestSuite(MinSourceSinkCutTest.class));
-        suite.addTest(new TestSuite(HopcroftKarpBipartiteMatchingTest.class));
-        suite.addTest(new TestSuite(KuhnMunkresMinimalWeightBipartitePerfectMatchingTest.class));
-        suite.addTest(new TestSuite(TarjanLowestCommonAncestorTest.class));
-        
-        // $JUnit-END$
-        return suite;
-    }
 }
-
 // End AllAlgTests.java

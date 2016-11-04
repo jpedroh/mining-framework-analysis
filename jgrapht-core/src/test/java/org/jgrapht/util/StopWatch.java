@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2005-2016, by Assaf Lehr and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,19 +15,6 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* -----------------
- * StopWatch.java
- * -----------------
- * (C) Copyright 2005-2008, by Assaf Lehr and Contributors.
- *
- * Original Author:  Assaf Lehr
- * Contributor(s):   -
- *
- * $Id$
- *
- * Changes
- * -------
- */
 package org.jgrapht.util;
 
 /**
@@ -40,11 +23,11 @@ package org.jgrapht.util;
  */
 public class StopWatch
 {
-    //~ Instance fields --------------------------------------------------------
+    // ~ Instance fields --------------------------------------------------------
 
     long beforeTime;
 
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     public void start()
     {
@@ -56,12 +39,10 @@ public class StopWatch
         long deltaTime = System.currentTimeMillis() - beforeTime;
         if (deltaTime > 9999) {
             double deltaTimeSec = deltaTime / 1000.0;
-            System.out.println(
-                "# Performence: " + deltaTimeSec + " full Seconds");
+            System.out.println("# Performence: " + deltaTimeSec + " full Seconds");
         } else {
             String timeDesc;
-            timeDesc =
-                (deltaTime <= 10) ? "<10ms [less than minumun measurement time]"
+            timeDesc = (deltaTime <= 10) ? "<10ms [less than minumun measurement time]"
                 : String.valueOf(deltaTime);
             System.out.println("# Performence:  in MiliSeconds:" + timeDesc);
         }

@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2007-2016, by France Telecom and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,57 +15,41 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* -------------------------
- * KSPExampleGraph.java
- * -------------------------
- * (C) Copyright 2007-2008, by France Telecom
- *
- * Original Author:  Guillaume Boulmier and Contributors.
- *
- * $Id$
- *
- * Changes
- * -------
- * 23-Sep-2007 : Initial revision (GB);
- *
- */
 package org.jgrapht.alg;
 
 import org.jgrapht.graph.*;
 
-
 /**
  * <img src="./KSPExample.png">
  */
-@SuppressWarnings("unchecked")
 public class KSPExampleGraph
-    extends SimpleWeightedGraph
+    extends SimpleWeightedGraph<String, DefaultWeightedEdge>
 {
-    //~ Static fields/initializers ---------------------------------------------
+    // ~ Static fields/initializers ---------------------------------------------
 
     /**
      */
     private static final long serialVersionUID = -1850978181764235655L;
 
-    //~ Instance fields --------------------------------------------------------
+    // ~ Instance fields --------------------------------------------------------
 
-    public Object edgeAD;
+    public DefaultWeightedEdge edgeAD;
 
-    public Object edgeBT;
+    public DefaultWeightedEdge edgeBT;
 
-    public Object edgeCB;
+    public DefaultWeightedEdge edgeCB;
 
-    public Object edgeCT;
+    public DefaultWeightedEdge edgeCT;
 
-    public Object edgeDE;
+    public DefaultWeightedEdge edgeDE;
 
-    public Object edgeEC;
+    public DefaultWeightedEdge edgeEC;
 
-    public Object edgeSA;
+    public DefaultWeightedEdge edgeSA;
 
-    public Object edgeST;
+    public DefaultWeightedEdge edgeST;
 
-    //~ Constructors -----------------------------------------------------------
+    // ~ Constructors -----------------------------------------------------------
 
     /**
      * <img src="./Picture1.jpg">
@@ -82,7 +62,7 @@ public class KSPExampleGraph
         addEdges();
     }
 
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     private void addEdges()
     {

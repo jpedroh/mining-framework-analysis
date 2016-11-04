@@ -1,4 +1,9 @@
-/* This program and the accompanying materials are dual-licensed under
+/*
+ * (C) Copyright 2013-2016, by Barak Naveh and Contributors.
+ *
+ * JGraphT : a free Java graph-theory library
+ *
+ * This program and the accompanying materials are dual-licensed under
  * either
  *
  * (a) the terms of the GNU Lesser General Public License version 2.1
@@ -12,9 +17,6 @@
  */
 package org.jgrapht.demo;
 
-import com.mxgraph.layout.*;
-import com.mxgraph.swing.*;
-
 import java.awt.*;
 
 import javax.swing.*;
@@ -23,34 +25,30 @@ import org.jgrapht.*;
 import org.jgrapht.ext.*;
 import org.jgrapht.graph.*;
 
+import com.mxgraph.layout.*;
+import com.mxgraph.swing.*;
 
 /**
- * A demo applet that shows how to use JGraphX to visualize JGraphT graphs.
- * Applet based on JGraphAdapterDemo.
+ * A demo applet that shows how to use JGraphX to visualize JGraphT graphs. Applet based on
+ * JGraphAdapterDemo.
  *
  * @since July 9, 2013
  */
 public class JGraphXAdapterDemo
     extends JApplet
 {
-    
-
     private static final long serialVersionUID = 2202072534703043194L;
     private static final Dimension DEFAULT_SIZE = new Dimension(530, 320);
 
-    
-
     private JGraphXAdapter<String, DefaultEdge> jgxAdapter;
 
-    
-
     /**
-     * An alternative starting point for this demo, to also allow running this
-     * applet as an application.
+     * An alternative starting point for this demo, to also allow running this applet as an
+     * application.
      *
      * @param args ignored.
      */
-    public static void main(String [] args)
+    public static void main(String[] args)
     {
         JGraphAdapterDemo applet = new JGraphAdapterDemo();
         applet.init();
@@ -66,15 +64,15 @@ public class JGraphXAdapterDemo
     /**
      * {@inheritDoc}
      */
+    @Override
     public void init()
     {
         // create a JGraphT graph
         ListenableGraph<String, DefaultEdge> g =
-            new ListenableDirectedGraph<String, DefaultEdge>(
-                DefaultEdge.class);
+            new ListenableDirectedGraph<String, DefaultEdge>(DefaultEdge.class);
 
         // create a visualization using JGraph, via an adapter
-        jgxAdapter = new JGraphXAdapter<String, DefaultEdge>(g);
+        jgxAdapter = new JGraphXAdapter<>(g);
 
         getContentPane().add(new mxGraphComponent(jgxAdapter));
         resize(DEFAULT_SIZE);
@@ -103,4 +101,4 @@ public class JGraphXAdapterDemo
     }
 }
 
-//End JGraphXAdapterDemo.java
+// End JGraphXAdapterDemo.java

@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2007-2016, by France Telecom and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,24 +15,9 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* -------------------------
- * Picture1Graph.java
- * -------------------------
- * (C) Copyright 2007-2008, by France Telecom
- *
- * Original Author:  Guillaume Boulmier and Contributors.
- *
- * $Id$
- *
- * Changes
- * -------
- * 05-Jun-2007 : Initial revision (GB);
- *
- */
 package org.jgrapht.alg;
 
 import org.jgrapht.graph.*;
-
 
 /**
  * <img src="./Picture1.jpg">
@@ -44,45 +25,44 @@ import org.jgrapht.graph.*;
  * @author Guillaume Boulmier
  * @since July 5, 2007
  */
-@SuppressWarnings("unchecked")
 public class Picture1Graph
-    extends SimpleDirectedWeightedGraph
+    extends SimpleDirectedWeightedGraph<String, DefaultWeightedEdge>
 {
-    //~ Static fields/initializers ---------------------------------------------
+    // ~ Static fields/initializers ---------------------------------------------
 
     /**
      */
     private static final long serialVersionUID = 5587737522611531029L;
 
-    //~ Instance fields --------------------------------------------------------
+    // ~ Instance fields --------------------------------------------------------
 
-    public Object e15;
+    public DefaultWeightedEdge e15;
 
-    public Object e25;
+    public DefaultWeightedEdge e25;
 
-    public Object e27;
+    public DefaultWeightedEdge e27;
 
-    public Object e37;
+    public DefaultWeightedEdge e37;
 
-    public Object e47;
+    public DefaultWeightedEdge e47;
 
-    public Object e56;
+    public DefaultWeightedEdge e56;
 
-    public Object e57;
+    public DefaultWeightedEdge e57;
 
-    public Object e67;
+    public DefaultWeightedEdge e67;
 
-    public Object eS1;
+    public DefaultWeightedEdge eS1;
 
-    public Object eS2;
+    public DefaultWeightedEdge eS2;
 
-    public Object eS3;
+    public DefaultWeightedEdge eS3;
 
-    public Object eS4;
+    public DefaultWeightedEdge eS4;
 
-    public Object eS7;
+    public DefaultWeightedEdge eS7;
 
-    //~ Constructors -----------------------------------------------------------
+    // ~ Constructors -----------------------------------------------------------
 
     /**
      * <img src="./Picture1.jpg">
@@ -95,7 +75,7 @@ public class Picture1Graph
         addEdges();
     }
 
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     private void addEdges()
     {

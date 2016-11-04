@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2008-2016, by John V Sichi and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,38 +15,23 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* -----------------
- * FibonacciHeapTest.java
- * -----------------
- * (C) Copyright 2008-2008, by John V. Sichi and Contributors.
- *
- * Original Author:  John V. Sichi
- * Contributor(s):   -
- *
- * $Id$
- *
- * Changes
- * -------
- * 20-Apr-2008 : Initial revision (JVS);
- */
 package org.jgrapht.util;
 
 import java.util.*;
 
 import junit.framework.*;
 
-
 public class FibonacciHeapTest
     extends TestCase
 {
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     // in honor of sf.net bug #1845376
     public void testAddRemoveOne()
     {
         String s = "A";
-        FibonacciHeapNode<String> n = new FibonacciHeapNode<String>(s);
-        FibonacciHeap<String> h = new FibonacciHeap<String>();
+        FibonacciHeapNode<String> n = new FibonacciHeapNode<>(s);
+        FibonacciHeap<String> h = new FibonacciHeap<>();
         assertTrue(h.isEmpty());
         h.insert(n, 1.0);
         assertFalse(h.isEmpty());
@@ -65,13 +46,13 @@ public class FibonacciHeapTest
         int k = 10000;
         String s = "A";
         double t = 0;
-        FibonacciHeap<String> h = new FibonacciHeap<String>();
+        FibonacciHeap<String> h = new FibonacciHeap<>();
         for (int i = 0; i < (k * 3); ++i) {
             // during first two-thirds, insert
             if (i < (k * 2)) {
                 double d = r.nextDouble();
                 t += d;
-                FibonacciHeapNode<String> n = new FibonacciHeapNode<String>(s);
+                FibonacciHeapNode<String> n = new FibonacciHeapNode<>(s);
                 h.insert(n, d);
             }
 

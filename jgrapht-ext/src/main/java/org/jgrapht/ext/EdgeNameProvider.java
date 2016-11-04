@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2005-2016, by Trevor Harmon and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,32 +15,42 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* ------------------
- * VertexNameProvider.java
- * ------------------
- * (C) Copyright 2005-2008, by Trevor Harmon.
- *
- * Original Author:  Trevor Harmon
- *
- */
 package org.jgrapht.ext;
 
 /**
- * Assigns a display name for each of the graph edes.
+ * Assigns a display name for each of the graph edges.
+ * 
+ * @param <E> the graph edge type
+ * 
+ * @deprecated in favor of {@link ComponentNameProvider}
  */
+@Deprecated
 public interface EdgeNameProvider<E>
+    extends ComponentNameProvider<E>
 {
-    
-
     /**
-     * Returns a unique name for an edge. This is useful when exporting a graph,
-     * as it ensures that all edges are assigned simple, consistent names.
+     * Returns a unique name for an edge. This is useful when exporting a graph, as it ensures that
+     * all edges are assigned simple, consistent names.
      *
      * @param edge the edge to be named
      *
      * @return the name of the edge
      */
-    public String getEdgeName(E edge);
+    String getEdgeName(E edge);
+
+    /**
+     * Returns a unique name for an edge. This is useful when exporting a graph, as it ensures that
+     * all edges are assigned simple, consistent names.
+     *
+     * @param edge the edge to be named
+     *
+     * @return the name of the edge
+     */
+    @Override
+    default String getName(E edge)
+    {
+        return this.getEdgeName(edge);
+    }
 }
 
 // End EdgeNameProvider.java

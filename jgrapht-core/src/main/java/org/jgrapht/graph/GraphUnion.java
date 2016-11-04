@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2009-2016, by Ilya Razenshteyn and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2009, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,59 +15,51 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* -------------------------
- * GraphUnion.java
- * -------------------------
- * (C) Copyright 2009-2009, by Ilya Razenshteyn
- *
- * Original Author:  Ilya Razenshteyn and Contributors.
- *
- * $Id$
- *
- * Changes
- * -------
- * 02-Feb-2009 : Initial revision (IR);
- *
- */
 package org.jgrapht.graph;
 
 import java.io.*;
-
 import java.util.*;
 
 import org.jgrapht.*;
 import org.jgrapht.util.*;
 
-
 /**
- * <p>Read-only union of two graphs: G<sub>1</sub> and G<sub>2</sub>. If
- * G<sub>1</sub> = (V<sub>1</sub>, E<sub>1</sub>) and G<sub>2</sub> =
- * (V<sub>2</sub>, E<sub>2</sub>) then their union G = (V, E), where V is the
- * union of V<sub>1</sub> and V<sub>2</sub>, and E is the union of E<sub>1</sub>
- * and E<sub>1</sub>.</p>
+ * <p>
+ * Read-only union of two graphs: G<sub>1</sub> and G<sub>2</sub>. If G<sub>1</sub> =
+ * (V<sub>1</sub>, E<sub>1</sub>) and G<sub>2</sub> = (V<sub>2</sub>, E<sub>2</sub>) then their
+ * union G = (V, E), where V is the union of V<sub>1</sub> and V<sub>2</sub>, and E is the union of
+ * E<sub>1</sub> and E<sub>1</sub>.
+ * </p>
  *
- * <p><tt>GraphUnion</tt> implements <tt>Graph</tt> interface. <tt>
- * GraphUnion</tt> uses <tt>WeightCombiner</tt> to choose policy for calculating
- * edge weight.</p>
+ * <p>
+ * <tt>GraphUnion</tt> implements <tt>Graph</tt> interface. <tt>
+ * GraphUnion</tt> uses <tt>WeightCombiner</tt> to choose policy for calculating edge weight.
+ * </p>
+ * 
+ * @param <V> the vertex type
+ * @param <E> the edge type
+ * @param <G> the graph type of the two graphs that are combined
+ * 
  */
 public class GraphUnion<V, E, G extends Graph<V, E>>
     extends AbstractGraph<V, E>
     implements Serializable
 {
-    
-
     private static final long serialVersionUID = -740199233080172450L;
 
     private static final String READ_ONLY = "union of graphs is read-only";
-
-    
 
     private G g1;
     private G g2;
     private WeightCombiner operator;
 
-    
-
+    /**
+     * Construct a new graph union.
+     * 
+     * @param g1 the first graph
+     * @param g2 the second graph
+     * @param operator the weight combiner (policy for edge weight calculation)
+     */
     public GraphUnion(G g1, G g2, WeightCombiner operator)
     {
         if (g1 == null) {
@@ -88,41 +76,39 @@ public class GraphUnion<V, E, G extends Graph<V, E>>
         this.operator = operator;
     }
 
+    /**
+     * Construct a new graph union. The union will use the {@link WeightCombiner#SUM} weight
+     * combiner.
+     * 
+     * @param g1 the first graph
+     * @param g2 the second graph
+     */
     public GraphUnion(G g1, G g2)
     {
         this(g1, g2, WeightCombiner.SUM);
     }
 
-    
-
+    @Override
     public Set<E> getAllEdges(V sourceVertex, V targetVertex)
     {
-        Set<E> res = new HashSet<E>();
-        if (g1.containsVertex(sourceVertex)
-            && g1.containsVertex(targetVertex))
-        {
+        Set<E> res = new LinkedHashSet<>();
+        if (g1.containsVertex(sourceVertex) && g1.containsVertex(targetVertex)) {
             res.addAll(g1.getAllEdges(sourceVertex, targetVertex));
         }
-        if (g2.containsVertex(sourceVertex)
-            && g2.containsVertex(targetVertex))
-        {
+        if (g2.containsVertex(sourceVertex) && g2.containsVertex(targetVertex)) {
             res.addAll(g2.getAllEdges(sourceVertex, targetVertex));
         }
         return Collections.unmodifiableSet(res);
     }
 
+    @Override
     public E getEdge(V sourceVertex, V targetVertex)
     {
         E res = null;
-        if (g1.containsVertex(sourceVertex)
-            && g1.containsVertex(targetVertex))
-        {
+        if (g1.containsVertex(sourceVertex) && g1.containsVertex(targetVertex)) {
             res = g1.getEdge(sourceVertex, targetVertex);
         }
-        if ((res == null)
-            && g2.containsVertex(sourceVertex)
-            && g2.containsVertex(targetVertex))
-        {
+        if ((res == null) && g2.containsVertex(sourceVertex) && g2.containsVertex(targetVertex)) {
             res = g2.getEdge(sourceVertex, targetVertex);
         }
         return res;
@@ -132,6 +118,7 @@ public class GraphUnion<V, E, G extends Graph<V, E>>
      * Throws <tt>UnsupportedOperationException</tt>, because <tt>
      * GraphUnion</tt> is read-only.
      */
+    @Override
     public EdgeFactory<V, E> getEdgeFactory()
     {
         throw new UnsupportedOperationException(READ_ONLY);
@@ -141,6 +128,7 @@ public class GraphUnion<V, E, G extends Graph<V, E>>
      * Throws <tt>UnsupportedOperationException</tt>, because <tt>
      * GraphUnion</tt> is read-only.
      */
+    @Override
     public E addEdge(V sourceVertex, V targetVertex)
     {
         throw new UnsupportedOperationException(READ_ONLY);
@@ -150,6 +138,7 @@ public class GraphUnion<V, E, G extends Graph<V, E>>
      * Throws <tt>UnsupportedOperationException</tt>, because <tt>
      * GraphUnion</tt> is read-only.
      */
+    @Override
     public boolean addEdge(V sourceVertex, V targetVertex, E e)
     {
         throw new UnsupportedOperationException(READ_ONLY);
@@ -159,32 +148,37 @@ public class GraphUnion<V, E, G extends Graph<V, E>>
      * Throws <tt>UnsupportedOperationException</tt>, because <tt>
      * GraphUnion</tt> is read-only.
      */
+    @Override
     public boolean addVertex(V v)
     {
         throw new UnsupportedOperationException(READ_ONLY);
     }
 
+    @Override
     public boolean containsEdge(E e)
     {
         return g1.containsEdge(e) || g2.containsEdge(e);
     }
 
+    @Override
     public boolean containsVertex(V v)
     {
         return g1.containsVertex(v) || g2.containsVertex(v);
     }
 
+    @Override
     public Set<E> edgeSet()
     {
-        Set<E> res = new HashSet<E>();
+        Set<E> res = new LinkedHashSet<>();
         res.addAll(g1.edgeSet());
         res.addAll(g2.edgeSet());
         return Collections.unmodifiableSet(res);
     }
 
+    @Override
     public Set<E> edgesOf(V vertex)
     {
-        Set<E> res = new HashSet<E>();
+        Set<E> res = new LinkedHashSet<>();
         if (g1.containsVertex(vertex)) {
             res.addAll(g1.edgesOf(vertex));
         }
@@ -198,6 +192,7 @@ public class GraphUnion<V, E, G extends Graph<V, E>>
      * Throws <tt>UnsupportedOperationException</tt>, because <tt>
      * GraphUnion</tt> is read-only.
      */
+    @Override
     public E removeEdge(V sourceVertex, V targetVertex)
     {
         throw new UnsupportedOperationException(READ_ONLY);
@@ -207,6 +202,7 @@ public class GraphUnion<V, E, G extends Graph<V, E>>
      * Throws <tt>UnsupportedOperationException</tt>, because <tt>
      * GraphUnion</tt> is read-only.
      */
+    @Override
     public boolean removeEdge(E e)
     {
         throw new UnsupportedOperationException(READ_ONLY);
@@ -216,19 +212,22 @@ public class GraphUnion<V, E, G extends Graph<V, E>>
      * Throws <tt>UnsupportedOperationException</tt>, because <tt>
      * GraphUnion</tt> is read-only.
      */
+    @Override
     public boolean removeVertex(V v)
     {
         throw new UnsupportedOperationException(READ_ONLY);
     }
 
+    @Override
     public Set<V> vertexSet()
     {
-        Set<V> res = new HashSet<V>();
+        Set<V> res = new HashSet<>();
         res.addAll(g1.vertexSet());
         res.addAll(g2.vertexSet());
         return Collections.unmodifiableSet(res);
     }
 
+    @Override
     public V getEdgeSource(E e)
     {
         if (g1.containsEdge(e)) {
@@ -240,6 +239,7 @@ public class GraphUnion<V, E, G extends Graph<V, E>>
         return null;
     }
 
+    @Override
     public V getEdgeTarget(E e)
     {
         if (g1.containsEdge(e)) {
@@ -251,6 +251,7 @@ public class GraphUnion<V, E, G extends Graph<V, E>>
         return null;
     }
 
+    @Override
     public double getEdgeWeight(E e)
     {
         if (g1.containsEdge(e) && g2.containsEdge(e)) {
@@ -266,6 +267,8 @@ public class GraphUnion<V, E, G extends Graph<V, E>>
     }
 
     /**
+     * Return G<sub>1</sub>
+     * 
      * @return G<sub>1</sub>
      */
     public G getG1()
@@ -274,6 +277,8 @@ public class GraphUnion<V, E, G extends Graph<V, E>>
     }
 
     /**
+     * Return G<sub>2</sub>
+     * 
      * @return G<sub>2</sub>
      */
     public G getG2()

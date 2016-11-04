@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2007-2016, by Lucas J Scharenbroich and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,127 +15,143 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* --------------------------
- * AsWeightedGraphTest.java
- * --------------------------
- * (C) Copyright 2007, by Lucas J. Scharenbroich and Contributors.
- *
- * Original Author:  Lucas J. Scharenbroich
- * Contributor(s):   John V. Sichi
- *
- * $Id$
- *
- * Changes
- * -------
- * 22-Sep-2007 : Initial revision (JVS);
- *
- */
 package org.jgrapht.graph;
 
 import java.util.*;
 
 import org.jgrapht.*;
 
-
 /**
- * A unit test for the AsWeightedGraph view.
+ * A unit test for the AsWeightedGraph view and the AsDirectedWeightedGraph view.
  *
  * @author Lucas J. Scharenbroich
+ * @author Joris Kinable
  */
 public class AsWeightedGraphTest
     extends EnhancedTestCase
 {
-    //~ Instance fields --------------------------------------------------------
+    // ~ Instance fields --------------------------------------------------------
 
-    public SimpleWeightedGraph<String, DefaultWeightedEdge> weightedGraph;
-    public SimpleGraph<String, DefaultEdge> unweightedGraph;
+    public WeightedGraph<String, DefaultWeightedEdge> weightedGraph;
+    public Graph<String, DefaultEdge> unweightedGraph;
 
-    //~ Methods ----------------------------------------------------------------
+    public SimpleDirectedWeightedGraph<String, DefaultWeightedEdge> directedWeightedGraph;
+    public DirectedGraph<String, DefaultEdge> directedUnweightedGraph;
 
+    // ~ Methods ----------------------------------------------------------------
+
+    @Override
     public void setUp()
     {
-        weightedGraph =
-            new SimpleWeightedGraph<String, DefaultWeightedEdge>(
-                DefaultWeightedEdge.class);
-        unweightedGraph =
-            new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
+        // Create a weighted, undirected graph
+        weightedGraph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
+        this.createdWeightedGraph(weightedGraph);
 
-        // Create a very simple graph
-        weightedGraph.addVertex("v1");
-        weightedGraph.addVertex("v2");
-        weightedGraph.addVertex("v3");
+        // Create an undirected graph without weights
+        unweightedGraph = new SimpleGraph<>(DefaultEdge.class);
+        this.createdUnweightedGraph(unweightedGraph);
 
-        unweightedGraph.addVertex("v1");
-        unweightedGraph.addVertex("v2");
-        unweightedGraph.addVertex("v3");
+        // Create a weighted, directed graph
+        directedWeightedGraph = new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class);
+        this.createdWeightedGraph(directedWeightedGraph);
 
-        weightedGraph.setEdgeWeight(weightedGraph.addEdge("v1", "v2"), 1.);
-        weightedGraph.setEdgeWeight(weightedGraph.addEdge("v2", "v3"), 2.);
-        weightedGraph.setEdgeWeight(weightedGraph.addEdge("v3", "v1"), 3.);
-
-        unweightedGraph.addEdge("v1", "v2");
-        unweightedGraph.addEdge("v2", "v3");
-        unweightedGraph.addEdge("v3", "v1");
+        // Create a directed graph without weights
+        directedUnweightedGraph = new SimpleDirectedGraph<>(DefaultEdge.class);
+        this.createdUnweightedGraph(directedUnweightedGraph);
     }
 
-    public void tearDown()
+    private void createdWeightedGraph(WeightedGraph<String, DefaultWeightedEdge> graph)
     {
+        graph.addVertex("v1");
+        graph.addVertex("v2");
+        graph.addVertex("v3");
+
+        graph.setEdgeWeight(graph.addEdge("v1", "v2"), 1.);
+        graph.setEdgeWeight(graph.addEdge("v2", "v3"), 2.);
+        graph.setEdgeWeight(graph.addEdge("v3", "v1"), 3.);
     }
 
-    public void test1()
+    private void createdUnweightedGraph(Graph<String, DefaultEdge> graph)
     {
-        Map<DefaultEdge, Double> weightMap1 =
-            new HashMap<DefaultEdge, Double>();
-        Map<DefaultWeightedEdge, Double> weightMap2 =
-            new HashMap<DefaultWeightedEdge, Double>();
+        graph.addVertex("v1");
+        graph.addVertex("v2");
+        graph.addVertex("v3");
 
-        DefaultEdge e1 = unweightedGraph.getEdge("v1", "v2");
-        DefaultEdge e2 = unweightedGraph.getEdge("v2", "v3");
-        DefaultEdge e3 = unweightedGraph.getEdge("v3", "v1");
+        graph.addEdge("v1", "v2");
+        graph.addEdge("v2", "v3");
+        graph.addEdge("v3", "v1");
+    }
 
-        DefaultWeightedEdge e4 = weightedGraph.getEdge("v1", "v2");
-        DefaultWeightedEdge e5 = weightedGraph.getEdge("v2", "v3");
-        DefaultWeightedEdge e6 = weightedGraph.getEdge("v3", "v1");
+    /*** Unweighted graphs ***/
 
-        weightMap1.put(e1, 9.0);
+    public void testUnweightedGraphs()
+    {
+        this.testUnweightedGraph(unweightedGraph);
+        this.testUnweightedGraph(directedUnweightedGraph);
+    }
 
-        weightMap2.put(e4, 9.0);
-        weightMap2.put(e6, 8.0);
+    public void testUnweightedGraph(Graph<String, DefaultEdge> graph)
+    {
+        DefaultEdge e1 = graph.getEdge("v1", "v2");
+        DefaultEdge e2 = graph.getEdge("v2", "v3");
+        DefaultEdge e3 = graph.getEdge("v3", "v1");
 
-        assertEquals(
-            unweightedGraph.getEdgeWeight(e1),
-            WeightedGraph.DEFAULT_EDGE_WEIGHT);
+        Map<DefaultEdge, Double> weightMap = new HashMap<>();
+        weightMap.put(e1, 9.0);
 
-        WeightedGraph<String, DefaultEdge> g1 =
-            new AsWeightedGraph<String, DefaultEdge>(
-                unweightedGraph,
-                weightMap1);
-        WeightedGraph<String, DefaultWeightedEdge> g2 =
-            new AsWeightedGraph<String, DefaultWeightedEdge>(
-                weightedGraph,
-                weightMap2);
+        assertEquals(graph.getEdgeWeight(e1), WeightedGraph.DEFAULT_EDGE_WEIGHT);
 
-        assertEquals(g1.getEdgeWeight(e1), 9.0);
-        assertEquals(g1.getEdgeWeight(e2), WeightedGraph.DEFAULT_EDGE_WEIGHT);
-        assertEquals(g1.getEdgeWeight(e3), WeightedGraph.DEFAULT_EDGE_WEIGHT);
+        WeightedGraph<String, DefaultEdge> graphView;
+        if (graph instanceof DirectedGraph)
+            graphView = new AsWeightedDirectedGraph<>(
+                (DirectedGraph<String, DefaultEdge>) graph, weightMap);
+        else
+            graphView = new AsWeightedGraph<>(graph, weightMap);
 
-        assertEquals(g2.getEdgeWeight(e4), 9.0);
-        assertEquals(g2.getEdgeWeight(e5), 2.0);
-        assertEquals(g2.getEdgeWeight(e6), 8.0);
+        assertEquals(graphView.getEdgeWeight(e1), 9.0);
+        assertEquals(graphView.getEdgeWeight(e2), WeightedGraph.DEFAULT_EDGE_WEIGHT);
+        assertEquals(graphView.getEdgeWeight(e3), WeightedGraph.DEFAULT_EDGE_WEIGHT);
 
-        g1.setEdgeWeight(e2, 5.0);
-        g2.setEdgeWeight(e5, 5.0);
+        graphView.setEdgeWeight(e2, 5.0);
+        assertEquals(graphView.getEdgeWeight(e2), 5.0);
+        assertEquals(graph.getEdgeWeight(e2), WeightedGraph.DEFAULT_EDGE_WEIGHT);
+    }
 
-        assertEquals(g1.getEdgeWeight(e2), 5.0);
-        assertEquals(
-            unweightedGraph.getEdgeWeight(e2),
-            WeightedGraph.DEFAULT_EDGE_WEIGHT);
+    /*** Weighted graphs ***/
 
-        assertEquals(g2.getEdgeWeight(e5), 5.0);
-        assertEquals(weightedGraph.getEdgeWeight(e5), 5.0);
+    public void testWeightedGraphs()
+    {
+        this.testWeightedGraph(weightedGraph);
+        this.testWeightedGraph(directedWeightedGraph);
+    }
+
+    public void testWeightedGraph(Graph<String, DefaultWeightedEdge> graph)
+    {
+        DefaultWeightedEdge e1 = graph.getEdge("v1", "v2");
+        DefaultWeightedEdge e2 = graph.getEdge("v2", "v3");
+        DefaultWeightedEdge e3 = graph.getEdge("v3", "v1");
+
+        Map<DefaultWeightedEdge, Double> weightMap = new HashMap<>();
+        weightMap.put(e1, 9.0);
+        weightMap.put(e3, 8.0);
+
+        WeightedGraph<String, DefaultWeightedEdge> graphView;
+        if (graph instanceof DirectedGraph)
+            graphView = new AsWeightedDirectedGraph<>(
+                (DirectedGraph<String, DefaultWeightedEdge>) graph, weightMap);
+        else
+            graphView = new AsWeightedGraph<>(graph, weightMap);
+
+        assertEquals(graphView.getEdgeWeight(e1), 9.0);
+        assertEquals(graphView.getEdgeWeight(e2), 2.0);
+        assertEquals(graphView.getEdgeWeight(e3), 8.0);
+
+        graphView.setEdgeWeight(e2, 5.0);
+        assertEquals(graphView.getEdgeWeight(e2), 5.0);
+        assertEquals(graph.getEdgeWeight(e2), 5.0);
 
         try {
-            double d = weightedGraph.getEdgeWeight(null);
+            graphView.getEdgeWeight(null);
             // should not get here
             assertFalse();
         } catch (NullPointerException ex) {

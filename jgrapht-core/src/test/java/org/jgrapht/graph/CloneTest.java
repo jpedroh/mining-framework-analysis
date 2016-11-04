@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2003-2016, by John V Sichi and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,25 +15,9 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* --------------
- * CloneTest.java
- * --------------
- * (C) Copyright 2003-2008, by John V. Sichi and Contributors.
- *
- * Original Author:  John V. Sichi
- * Contributor(s):   -
- *
- * $Id$
- *
- * Changes
- * -------
- * 06-Oct-2003 : Initial revision (JVS);
- *
- */
 package org.jgrapht.graph;
 
 import org.jgrapht.*;
-
 
 /**
  * A unit test for a cloning bug, adapted from a forum entry from Linda Buisman.
@@ -48,7 +28,7 @@ import org.jgrapht.*;
 public class CloneTest
     extends EnhancedTestCase
 {
-    //~ Constructors -----------------------------------------------------------
+    // ~ Constructors -----------------------------------------------------------
 
     /**
      * @see junit.framework.TestCase#TestCase(java.lang.String)
@@ -58,7 +38,7 @@ public class CloneTest
         super(name);
     }
 
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     /**
      * Test graph cloning.
@@ -66,8 +46,7 @@ public class CloneTest
     @SuppressWarnings("unchecked")
     public void testCloneSpecificsBug()
     {
-        SimpleGraph<String, DefaultEdge> g1 =
-            new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
+        SimpleGraph<String, DefaultEdge> g1 = new SimpleGraph<>(DefaultEdge.class);
         String one = "1";
         String two = "2";
         String three = "3";
@@ -77,10 +56,11 @@ public class CloneTest
         g1.addEdge(one, two);
         g1.addEdge(two, three);
 
-        SimpleGraph<String, DefaultEdge> g2 =
-            (SimpleGraph<String, DefaultEdge>) g1.clone(); // Type-safty
-                                                           // warning OK with
-                                                           // clone
+        SimpleGraph<String, DefaultEdge> g2 = (SimpleGraph<String, DefaultEdge>) g1.clone(); // Type-safty
+                                                                                             // warning
+                                                                                             // OK
+                                                                                             // with
+                                                                                             // clone
         assertEquals(2, g2.edgeSet().size());
         assertNotNull(g2.getEdge(one, two));
         assertTrue(g2.removeEdge(g2.getEdge(one, two)));
@@ -89,8 +69,7 @@ public class CloneTest
     }
 
     /**
-     * Tests usage of {@link ParanoidGraph} for detecting broken vertex
-     * implementations.
+     * Tests usage of {@link ParanoidGraph} for detecting broken vertex implementations.
      */
     public void testParanoidGraph()
     {
@@ -98,10 +77,8 @@ public class CloneTest
         BrokenVertex v2 = new BrokenVertex(2);
         BrokenVertex v3 = new BrokenVertex(1);
 
-        SimpleGraph<BrokenVertex, DefaultEdge> g =
-            new SimpleGraph<BrokenVertex, DefaultEdge>(DefaultEdge.class);
-        ParanoidGraph<BrokenVertex, DefaultEdge> pg =
-            new ParanoidGraph<BrokenVertex, DefaultEdge>(g);
+        SimpleGraph<BrokenVertex, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
+        ParanoidGraph<BrokenVertex, DefaultEdge> pg = new ParanoidGraph<>(g);
         pg.addVertex(v1);
         pg.addVertex(v2);
         try {
@@ -114,7 +91,7 @@ public class CloneTest
         }
     }
 
-    //~ Inner Classes ----------------------------------------------------------
+    // ~ Inner Classes ----------------------------------------------------------
 
     private class BrokenVertex
     {
@@ -125,12 +102,10 @@ public class CloneTest
             this.x = x;
         }
 
+        @Override
         public boolean equals(Object other)
         {
-            if (!(other instanceof BrokenVertex)) {
-                return false;
-            }
-            return x == ((BrokenVertex) other).x;
+            return other instanceof BrokenVertex && x == ((BrokenVertex) other).x;
         }
     }
 }

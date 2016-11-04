@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2007-2016, by France Telecom and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,27 +15,12 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* -------------------------
- * MaskVertexSet.java
- * -------------------------
- * (C) Copyright 2007-2008, by France Telecom
- *
- * Original Author:  Guillaume Boulmier and Contributors.
- *
- * $Id$
- *
- * Changes
- * -------
- * 05-Jun-2007 : Initial revision (GB);
- *
- */
 package org.jgrapht.graph;
 
 import java.util.*;
 
 import org.jgrapht.util.*;
 import org.jgrapht.util.PrefetchIterator.*;
-
 
 /**
  * Helper for {@link MaskSubgraph}.
@@ -50,40 +31,36 @@ import org.jgrapht.util.PrefetchIterator.*;
 class MaskVertexSet<V, E>
     extends AbstractSet<V>
 {
-    
-
     private MaskFunctor<V, E> mask;
 
-    private int size;
-
     private Set<V> vertexSet;
-
-    private transient TypeUtil<V> vertexTypeDecl = null;
-
-    
 
     public MaskVertexSet(Set<V> vertexSet, MaskFunctor<V, E> mask)
     {
         this.vertexSet = vertexSet;
         this.mask = mask;
-        this.size = -1;
     }
-
-    
 
     /**
      * @see java.util.Collection#contains(java.lang.Object)
      */
+    @Override
     public boolean contains(Object o)
     {
-        return
-            !this.mask.isVertexMasked(TypeUtil.uncheckedCast(o, vertexTypeDecl))
-            && this.vertexSet.contains(o);
+        // Force a cast to type V. This is nonsense, of course, but
+        // it's erased by the compiler anyway.
+        V v = TypeUtil.uncheckedCast(o, null);
+
+        // If o isn't a V, the first check will fail and
+        // short-circuit, so we never try to test the mask on
+        // non-vertex object inputs.
+        return vertexSet.contains(v) && !mask.isVertexMasked(v);
     }
 
     /**
      * @see java.util.Set#iterator()
      */
+    @Override
     public Iterator<V> iterator()
     {
         return new PrefetchIterator<V>(new MaskVertexSetNextElementFunctor());
@@ -92,19 +69,11 @@ class MaskVertexSet<V, E>
     /**
      * @see java.util.Set#size()
      */
+    @Override
     public int size()
     {
-        if (this.size == -1) {
-            this.size = 0;
-            for (Iterator<V> iter = iterator(); iter.hasNext();) {
-                iter.next();
-                this.size++;
-            }
-        }
-        return this.size;
+        return (int) vertexSet.stream().filter(v -> contains(v)).count();
     }
-
-    
 
     private class MaskVertexSetNextElementFunctor
         implements NextElementFunctor<V>
@@ -116,6 +85,7 @@ class MaskVertexSet<V, E>
             this.iter = MaskVertexSet.this.vertexSet.iterator();
         }
 
+        @Override
         public V nextElement()
             throws NoSuchElementException
         {

@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2003-2016, by Barak Naveh and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,57 +15,20 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* ---------------------
- * AllGenerateTests.java
- * ---------------------
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
- *
- * Original Author:  Barak Naveh
- * Contributor(s):   -
- *
- * $Id$
- *
- * Changes
- * -------
- * 24-Jul-2003 : Initial revision (BN);
- *
- */
 package org.jgrapht.generate;
 
-import junit.framework.*;
-
+import org.junit.runner.*;
+import org.junit.runners.*;
 
 /**
  * A TestSuite for all tests in this package.
  *
  * @author Barak Naveh
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ GraphGeneratorTest.class, GnmRandomGraphGeneratorTest.class,
+    GnpRandomGraphGeneratorTest.class })
 public final class AllGenerateTests
 {
-    //~ Constructors -----------------------------------------------------------
-
-    private AllGenerateTests()
-    {
-    } // ensure non-instantiability.
-
-    //~ Methods ----------------------------------------------------------------
-
-    /**
-     * Creates a test suite for all tests in this package.
-     *
-     * @return a test suite for all tests in this package.
-     */
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite();
-
-        // $JUnit-BEGIN$
-        suite.addTest(new TestSuite(GraphGeneratorTest.class));
-        suite.addTestSuite(RandomGraphGeneratorTest.class);
-
-        // $JUnit-END$
-        return suite;
-    }
 }
-
 // End AllGenerateTests.java

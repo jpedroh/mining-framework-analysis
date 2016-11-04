@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2010-2016, by Tom Conerly and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2010, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,25 +15,11 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* ------------------------------
- * UnionFindTest.java
- * ------------------------------
- * (C) Copyright 2010-2010, by Tom Conerly and Contributors.
- *
- * Original Author:  Tom Conerly
- * Contributor(s):   -
- *
- * Changes
- * -------
- * 02-Feb-2010 : Initial revision (TC);
- *
- */
 package org.jgrapht.alg.util;
 
 import java.util.*;
 
 import junit.framework.*;
-
 
 /**
  * .
@@ -47,7 +29,7 @@ import junit.framework.*;
 public class UnionFindTest
     extends TestCase
 {
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     /**
      * .
@@ -55,7 +37,7 @@ public class UnionFindTest
     public void testUnionFind()
     {
         TreeSet<String> set = new TreeSet<String>();
-        String [] strs = { "aaa", "bbb", "ccc", "ddd", "eee" };
+        String[] strs = { "aaa", "bbb", "ccc", "ddd", "eee" };
         ArrayList<ArrayList<String>> sets = new ArrayList<ArrayList<String>>();
         for (String str : strs) {
             set.add(str);
@@ -117,9 +99,7 @@ public class UnionFindTest
     }
 
     private void testIdentical(
-        String [] universe,
-        ArrayList<ArrayList<String>> sets,
-        UnionFind<String> uf)
+        String[] universe, ArrayList<ArrayList<String>> sets, UnionFind<String> uf)
     {
         for (String a : universe) {
             for (String b : universe) {

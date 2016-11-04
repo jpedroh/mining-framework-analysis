@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2010-2016, by Tom Conerly and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2010, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,54 +15,19 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* ----------------
- * AllAlgTests.java
- * ----------------
- * (C) Copyright 2010-2010, by Tom Conerly and Contributors.
- *
- * Original Author:  Tom Conerly
- * Contributor(s):
- *
- * Changes
- * -------
- * 2-Feb-2010 : Initial revision (TC);
- *
- */
 package org.jgrapht.alg.util;
 
-import junit.framework.*;
-
+import org.junit.runner.*;
+import org.junit.runners.*;
 
 /**
  * A TestSuite for all tests in this package.
  *
  * @author Tom Conerly
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ UnionFindTest.class, VertexDegreeComparatorTest.class })
 public final class AllAlgUtilTests
 {
-    //~ Constructors -----------------------------------------------------------
-
-    private AllAlgUtilTests()
-    {
-    } // ensure non-instantiability.
-
-    //~ Methods ----------------------------------------------------------------
-
-    /**
-     * Creates a test suite for all tests in this package.
-     *
-     * @return a test suite for all tests in this package.
-     */
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite();
-
-        // $JUnit-BEGIN$
-        suite.addTest(new TestSuite(UnionFindTest.class));
-
-        // $JUnit-END$
-        return suite;
-    }
 }
-
 // End AllAlgUtilTests.java

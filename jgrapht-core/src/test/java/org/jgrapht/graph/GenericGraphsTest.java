@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2006-2016, by HartmutBenz and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,25 +15,9 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* --------------------------
- * GenericGraphsTest.java
- * --------------------------
- * (C) Copyright 2006-2008, by HartmutBenz and Contributors.
- *
- * Original Author:  Hartmut Benz
- * Contributor(s):   John V. Sichi
- *
- * $Id$
- *
- * Changes
- * -------
- * ??-???-2006 : Initial revision (HB);
- *
- */
 package org.jgrapht.graph;
 
 import org.jgrapht.*;
-
 
 /**
  * A unit test for graph generic vertex/edge parameters.
@@ -47,14 +27,13 @@ import org.jgrapht.*;
 public class GenericGraphsTest
     extends EnhancedTestCase
 {
-    //~ Instance fields --------------------------------------------------------
+    // ~ Instance fields --------------------------------------------------------
 
     Graph<Object, ? extends DefaultEdge> objectGraph;
     Graph<FooVertex, FooEdge> fooFooGraph;
     Graph<BarVertex, BarEdge> barBarGraph;
-    Graph<FooVertex, BarEdge> fooBarGraph;
 
-    //~ Constructors -----------------------------------------------------------
+    // ~ Constructors -----------------------------------------------------------
 
     /**
      * @see junit.framework.TestCase#TestCase(java.lang.String)
@@ -64,7 +43,7 @@ public class GenericGraphsTest
         super(name);
     }
 
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     // ~ Methods ---------------------------------------------------------------
 
@@ -121,8 +100,7 @@ public class GenericGraphsTest
 
     public void testAlissaHacker()
     {
-        DirectedGraph<String, CustomEdge> g =
-            new DefaultDirectedGraph<String, CustomEdge>(CustomEdge.class);
+        DirectedGraph<String, CustomEdge> g = new DefaultDirectedGraph<>(CustomEdge.class);
         g.addVertex("a");
         g.addVertex("b");
         g.addEdge("a", "b");
@@ -146,36 +124,37 @@ public class GenericGraphsTest
     /**
      * .
      */
+    @Override
     protected void setUp()
     {
-        objectGraph =
-            new DefaultDirectedGraph<Object, DefaultEdge>(
-                DefaultEdge.class);
-        fooFooGraph = new SimpleGraph<FooVertex, FooEdge>(FooEdge.class);
-        barBarGraph = new SimpleGraph<BarVertex, BarEdge>(BarEdge.class);
+        objectGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
+        fooFooGraph = new SimpleGraph<>(FooEdge.class);
+        barBarGraph = new SimpleGraph<>(BarEdge.class);
     }
 
-    //~ Inner Classes ----------------------------------------------------------
+    // ~ Inner Classes ----------------------------------------------------------
 
     public static class CustomEdge
         extends DefaultEdge
     {
         private static final long serialVersionUID = 1L;
 
+        @Override
         public String toString()
         {
-            return "Alissa P. Hacker approves the edge from " + getSource()
-                + " to " + getTarget();
+            return "Alissa P. Hacker approves the edge from " + getSource() + " to " + getTarget();
         }
     }
 
     public static class EquivVertex
     {
+        @Override
         public boolean equals(Object o)
         {
             return true;
         }
 
+        @Override
         public int hashCode()
         {
             return 1;
@@ -192,11 +171,7 @@ public class GenericGraphsTest
 
         public EquivGraph()
         {
-            super(
-                new ClassBasedEdgeFactory<EquivVertex, DefaultEdge>(
-                    DefaultEdge.class),
-                true,
-                true);
+            super(new ClassBasedEdgeFactory<>(DefaultEdge.class), true, true);
         }
     }
 
@@ -236,10 +211,6 @@ public class GenericGraphsTest
             super("empty bar");
         }
 
-        public BarVertex(String s)
-        {
-            super(s);
-        }
     }
 }
 

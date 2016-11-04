@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2010-2016, by France Telecom and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2010, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,46 +15,27 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* -------------------------
- * KSPDiscardsValidPathsTest.java
- * -------------------------
- * (C) Copyright 2010-2010, by France Telecom
- *
- * Original Author:  Guillaume Boulmier and Contributors.
- *
- * $Id: MaskFunctor.java 645 2008-09-30 19:44:48Z perfecthash $
- *
- * Changes
- * -------
- * 06-Dec-2010 : Initial revision (GB);
- *
- */
 package org.jgrapht.alg;
-
-import junit.framework.*;
 
 import org.jgrapht.graph.*;
 
+import junit.framework.*;
 
-@SuppressWarnings("unchecked")
 public class KSPDiscardsValidPathsTest
     extends TestCase
 {
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     /**
-     * Example with a biconnected graph but not 3-connected. With a graph not
-     * 3-connected, the start vertex and the end vertex can be disconnected by 2
-     * paths.
+     * Example with a biconnected graph but not 3-connected. With a graph not 3-connected, the start
+     * vertex and the end vertex can be disconnected by 2 paths.
      */
     public void testNot3connectedGraph()
     {
         WeightedMultigraph<String, DefaultWeightedEdge> graph;
         KShortestPaths<String, DefaultWeightedEdge> paths;
 
-        graph =
-            new WeightedMultigraph<String, DefaultWeightedEdge>(
-                DefaultWeightedEdge.class);
+        graph = new WeightedMultigraph<>(DefaultWeightedEdge.class);
         graph.addVertex("S");
         graph.addVertex("T");
         graph.addVertex("A");
@@ -94,24 +71,22 @@ public class KSPDiscardsValidPathsTest
         this.addGraphEdge(graph, "K", "L", 1.0);
         this.addGraphEdge(graph, "L", "S", 1.0);
 
-        paths = new KShortestPaths<String, DefaultWeightedEdge>(graph, "S", 3);
+        paths = new KShortestPaths<>(graph, "S", 3);
 
-        Assert.assertTrue(paths.getPaths("T").size() == 3);
+        assertTrue(paths.getPaths("T").size() == 3);
     }
 
     /**
-     * JUnit test for the bug reported by Bruno Maoili. Example with a connected
-     * graph but not 2-connected. With a graph not 2-connected, the start vertex
-     * and the end vertex can be disconnected by 1 path.
+     * JUnit test for the bug reported by Bruno Maoili. Example with a connected graph but not
+     * 2-connected. With a graph not 2-connected, the start vertex and the end vertex can be
+     * disconnected by 1 path.
      */
     public void testBrunoMaoili()
     {
         WeightedMultigraph<String, DefaultWeightedEdge> graph;
         KShortestPaths<String, DefaultWeightedEdge> paths;
 
-        graph =
-            new WeightedMultigraph<String, DefaultWeightedEdge>(
-                DefaultWeightedEdge.class);
+        graph = new WeightedMultigraph<>(DefaultWeightedEdge.class);
         graph.addVertex("A");
         graph.addVertex("B");
         graph.addVertex("C");
@@ -126,21 +101,19 @@ public class KSPDiscardsValidPathsTest
         this.addGraphEdge(graph, "B", "E", 1.0);
         this.addGraphEdge(graph, "C", "D", 1.0);
 
-        paths = new KShortestPaths<String, DefaultWeightedEdge>(graph, "A", 2);
-        Assert.assertTrue(paths.getPaths("E").size() == 2);
+        paths = new KShortestPaths<>(graph, "A", 2);
+        assertTrue(paths.getPaths("E").size() == 2);
 
-        paths = new KShortestPaths<String, DefaultWeightedEdge>(graph, "A", 3);
-        Assert.assertTrue(paths.getPaths("E").size() == 3);
+        paths = new KShortestPaths<>(graph, "A", 3);
+        assertTrue(paths.getPaths("E").size() == 3);
 
-        paths = new KShortestPaths<String, DefaultWeightedEdge>(graph, "A", 4);
-        Assert.assertTrue(paths.getPaths("E").size() == 4);
+        paths = new KShortestPaths<>(graph, "A", 4);
+        assertTrue(paths.getPaths("E").size() == 4);
     }
 
     private void addGraphEdge(
-        WeightedMultigraph<String, DefaultWeightedEdge> graph,
-        String sourceVertex,
-        String targetVertex,
-        double weight)
+        WeightedMultigraph<String, DefaultWeightedEdge> graph, String sourceVertex,
+        String targetVertex, double weight)
     {
         DefaultWeightedEdge edge = new DefaultWeightedEdge();
 

@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2007-2016, by France Telecom and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,54 +15,38 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* -------------------------
- * KShortestPathCompleteGraph4.java
- * -------------------------
- * (C) Copyright 2007-2008, by France Telecom
- *
- * Original Author:  Guillaume Boulmier and Contributors.
- *
- * $Id$
- *
- * Changes
- * -------
- * 05-Jun-2007 : Initial revision (GB);
- *
- */
 package org.jgrapht.alg;
 
 import org.jgrapht.graph.*;
-
 
 /**
  * @author Guillaume Boulmier
  * @since July 5, 2007
  */
-@SuppressWarnings("unchecked")
 public class KShortestPathCompleteGraph4
-    extends SimpleWeightedGraph
+    extends SimpleWeightedGraph<String, DefaultWeightedEdge>
 {
-    //~ Static fields/initializers ---------------------------------------------
+    // ~ Static fields/initializers ---------------------------------------------
 
     /**
      */
     private static final long serialVersionUID = -4091707260999013100L;
 
-    //~ Instance fields --------------------------------------------------------
+    // ~ Instance fields --------------------------------------------------------
 
-    public Object e12;
+    public DefaultWeightedEdge e12;
 
-    public Object e13;
+    public DefaultWeightedEdge e13;
 
-    public Object e23;
+    public DefaultWeightedEdge e23;
 
-    public Object eS1;
+    public DefaultWeightedEdge eS1;
 
-    public Object eS2;
+    public DefaultWeightedEdge eS2;
 
-    public Object eS3;
+    public DefaultWeightedEdge eS3;
 
-    //~ Constructors -----------------------------------------------------------
+    // ~ Constructors -----------------------------------------------------------
 
     public KShortestPathCompleteGraph4()
     {
@@ -75,7 +55,7 @@ public class KShortestPathCompleteGraph4
         addEdges();
     }
 
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     private void addEdges()
     {

@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2010-2016, by John Sichi and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,39 +15,22 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* ------------------
- * ComponentAttributeProvider.java
- * ------------------
- * (C) Copyright 2010-2010, by John Sichi and Contributors.
- *
- * Original Author:  John Sichi
- *
- * $Id$
- *
- * Changes
- * -------
- * 12-Jun-2010 : Initial Version (JVS);
- *
- */
 package org.jgrapht.ext;
 
 import java.util.*;
 
-
 /**
  * Provides display attributes for vertices and/or edges in a graph.
  *
+ * @param <T> the type for which attributes are provided for
+ *
  * @author John Sichi
- * @version $Id$
  */
 public interface ComponentAttributeProvider<T>
 {
-    
-
     /**
-     * Returns a set of attribute key/value pairs for a vertex or edge. If order
-     * is important in the output, be sure to use an order-deterministic map
-     * implementation.
+     * Returns a set of attribute key/value pairs for a vertex or edge. If order is important in the
+     * output, be sure to use an order-deterministic map implementation.
      *
      * @param component vertex or edge for which attributes are to be obtained
      *

@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2013-2016, by Nikolay Ognyanov and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,54 +15,30 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* -------------------------
- * UndirectedCycleBaseTest.java
- * -------------------------
- * (C) Copyright 2013, by Nikolay Ognyanov
- *
- * Original Author: Nikolay Ognyanov
- * Contributor(s) :
- *
- * $Id$
- *
- * Changes
- * -------
- * 06-Sep-2013 : Initial revision (NO);
- */
 package org.jgrapht.alg.cycle;
 
 import static org.junit.Assert.assertTrue;
 
-import org.jgrapht.graph.ClassBasedEdgeFactory;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleGraph;
-import org.junit.Test;
+import org.jgrapht.graph.*;
+import org.junit.*;
 
 public class UndirectedCycleBaseTest
 {
-    private static int   MAX_SIZE = 10;
-    private static int[] RESULTS  = { 0, 0, 0, 1, 3, 6, 10, 15, 21, 28, 36 };
+    private static int MAX_SIZE = 10;
+    private static int[] RESULTS = { 0, 0, 0, 1, 3, 6, 10, 15, 21, 28, 36 };
 
     @Test
     public void test()
     {
-        PatonCycleBase<Integer, DefaultEdge> patonFinder =
-            new PatonCycleBase<Integer, DefaultEdge>();
+        PatonCycleBase<Integer, DefaultEdge> patonFinder = new PatonCycleBase<>();
 
         testAlgorithm(patonFinder);
     }
 
-    private void testAlgorithm(
-                               UndirectedCycleBase<Integer, DefaultEdge>
-                               finder)
+    private void testAlgorithm(UndirectedCycleBase<Integer, DefaultEdge> finder)
     {
-        SimpleGraph<Integer, DefaultEdge> graph = new SimpleGraph<Integer, DefaultEdge>
-            (
-             new ClassBasedEdgeFactory<Integer, DefaultEdge>
-             (
-              DefaultEdge.class
-             )
-            );
+        SimpleGraph<Integer, DefaultEdge> graph =
+            new SimpleGraph<>(new ClassBasedEdgeFactory<>(DefaultEdge.class));
         for (int i = 0; i < 7; i++) {
             graph.addVertex(i);
         }
@@ -93,13 +65,7 @@ public class UndirectedCycleBaseTest
         checkResult(finder, 6);
 
         for (int size = 1; size <= MAX_SIZE; size++) {
-            graph = new SimpleGraph<Integer, DefaultEdge>
-                (
-                 new ClassBasedEdgeFactory<Integer, DefaultEdge>
-                 (
-                  DefaultEdge.class
-                 )
-                );
+            graph = new SimpleGraph<>(new ClassBasedEdgeFactory<>(DefaultEdge.class));
             for (int i = 0; i < size; i++) {
                 graph.addVertex(i);
             }
@@ -115,9 +81,7 @@ public class UndirectedCycleBaseTest
         }
     }
 
-    private void checkResult(UndirectedCycleBase
-                             <Integer, DefaultEdge> finder,
-                             int size)
+    private void checkResult(UndirectedCycleBase<Integer, DefaultEdge> finder, int size)
     {
         assertTrue(finder.findCycleBase().size() == size);
     }

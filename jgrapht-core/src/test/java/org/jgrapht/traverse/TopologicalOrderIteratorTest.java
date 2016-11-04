@@ -1,11 +1,7 @@
-/* ==========================================
+/*
+ * (C) Copyright 2005-2016, by John V Sichi and Contributors.
+ *
  * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
  *
  * This program and the accompanying materials are dual-licensed under
  * either
@@ -19,28 +15,12 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* ---------------------------
- * TopologicalOrderIteratorTest.java
- * ---------------------------
- * (C) Copyright 2005-2008, by John V. Sichi and Contributors.
- *
- * Original Author:  John V. Sichi
- * Contributor(s):   -
- *
- * $Id$
- *
- * Changes
- * -------
- * 25-Apr-2005 : Initial revision (JVS);
- *
- */
 package org.jgrapht.traverse;
 
 import java.util.*;
 
 import org.jgrapht.*;
 import org.jgrapht.graph.*;
-
 
 /**
  * Tests for TopologicalOrderIterator.
@@ -51,18 +31,16 @@ import org.jgrapht.graph.*;
 public class TopologicalOrderIteratorTest
     extends EnhancedTestCase
 {
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     /**
      * .
      */
     public void testRecipe()
     {
-        DirectedGraph<String, DefaultEdge> graph =
-            new DefaultDirectedGraph<String, DefaultEdge>(
-                DefaultEdge.class);
+        DirectedGraph<String, DefaultEdge> graph = new DefaultDirectedGraph<>(DefaultEdge.class);
 
-        String [] v = new String[9];
+        String[] v = new String[9];
 
         v[0] = "preheat oven";
         v[1] = "sift dry ingredients";
@@ -98,8 +76,7 @@ public class TopologicalOrderIteratorTest
         graph.addEdge(v[7], v[8]);
         graph.addEdge(v[6], v[8]);
 
-        Iterator<String> iter =
-            new TopologicalOrderIterator<String, DefaultEdge>(graph);
+        Iterator<String> iter = new TopologicalOrderIterator<>(graph);
         int i = 0;
 
         while (iter.hasNext()) {
@@ -108,10 +85,9 @@ public class TopologicalOrderIteratorTest
         }
 
         // Test with a reversed view
-        DirectedGraph<String, DefaultEdge> reversed =
-            new EdgeReversedGraph<String, DefaultEdge>(graph);
+        DirectedGraph<String, DefaultEdge> reversed = new EdgeReversedGraph<>(graph);
 
-        iter = new TopologicalOrderIterator<String, DefaultEdge>(reversed);
+        iter = new TopologicalOrderIterator<>(reversed);
         i = v.length - 1;
 
         while (iter.hasNext()) {
@@ -125,11 +101,8 @@ public class TopologicalOrderIteratorTest
      */
     public void testEmptyGraph()
     {
-        DirectedGraph<String, DefaultEdge> graph =
-            new DefaultDirectedGraph<String, DefaultEdge>(
-                DefaultEdge.class);
-        Iterator<String> iter =
-            new TopologicalOrderIterator<String, DefaultEdge>(graph);
+        DirectedGraph<String, DefaultEdge> graph = new DefaultDirectedGraph<>(DefaultEdge.class);
+        Iterator<String> iter = new TopologicalOrderIterator<>(graph);
         assertFalse(iter.hasNext());
     }
 }
