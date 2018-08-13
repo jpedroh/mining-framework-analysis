@@ -50,7 +50,7 @@ public class DeltaSteppingShortestPathTest {
         assertEquals(7d, paths.getWeight(z),1e-9);
 
         ShortestPathAlgorithm.SingleSourcePaths<String, DefaultWeightedEdge> deltaPaths =
-                new DeltaSteppingShortestPath<>(graph, 9).getPaths(s);
+                new DeltaSteppingShortestPath<>(graph, 10).getPaths(s);
 
         assertEquals(0d, deltaPaths.getWeight(s),1e-9);
         assertEquals(8d, deltaPaths.getWeight(t),1e-9);
