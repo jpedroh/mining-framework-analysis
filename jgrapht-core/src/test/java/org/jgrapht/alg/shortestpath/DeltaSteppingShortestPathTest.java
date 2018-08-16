@@ -5,6 +5,7 @@ import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.DirectedWeightedPseudograph;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -41,7 +42,7 @@ public class DeltaSteppingShortestPathTest {
         Graphs.addEdge(graph, z, s, 7);
 
         ShortestPathAlgorithm.SingleSourcePaths<String, DefaultWeightedEdge> paths =
-                new DeltaSteppingShortestPath<>(graph).getPaths(s);
+                new DeltaSteppingShortestPath<>(graph, 1.0, false).getPaths(s);
 
         assertEquals(0d, paths.getWeight(s),1e-9);
         assertEquals(8d, paths.getWeight(t),1e-9);
@@ -50,7 +51,7 @@ public class DeltaSteppingShortestPathTest {
         assertEquals(7d, paths.getWeight(z),1e-9);
 
         ShortestPathAlgorithm.SingleSourcePaths<String, DefaultWeightedEdge> deltaPaths =
-                new DeltaSteppingShortestPath<>(graph, 10).getPaths(s);
+                new DeltaSteppingShortestPath<>(graph, 10.0, false).getPaths(s);
 
         assertEquals(0d, deltaPaths.getWeight(s),1e-9);
         assertEquals(8d, deltaPaths.getWeight(t),1e-9);
