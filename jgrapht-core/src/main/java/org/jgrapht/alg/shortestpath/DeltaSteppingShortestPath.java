@@ -7,12 +7,13 @@ import org.jgrapht.alg.util.Pair;
 import org.jgrapht.alg.util.UnorderedPair;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V, E> {
     private static final String NEGATIVE_EDGE_WEIGHT_NOT_ALLOWED = "Negative edge weight not allowed";
     private static final String CONTAINER_IS_EMPTY = "Container is empty";
-    private static final String DELTA_SHOULD_POSITIVE = "Delta should be positive";
+    private static final String DELTA_SHOULD_BE_POSITIVE = "Delta should be positive";
     private static final String EDGE_SET_IS_EMPTY = "Edge set is empty";
     private static final Double HASH_ARRAY_DEFAULT_VALUE = Double.POSITIVE_INFINITY;
 
@@ -33,7 +34,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      */
     public DeltaSteppingShortestPath(Graph<V, E> graph) {
         super(graph);
-        delta = findDelta();
+        delta = 0.0;
         useShortcuts = false;
         initializeFields();
     }
@@ -41,7 +42,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
     public DeltaSteppingShortestPath(Graph<V, E> graph, double delta, boolean useShortcuts) {
         super(graph);
         if (delta <= 0) {
-            throw new IllegalArgumentException(DELTA_SHOULD_POSITIVE);
+            throw new IllegalArgumentException(DELTA_SHOULD_BE_POSITIVE);
         }
         this.delta = delta;
         this.useShortcuts = useShortcuts;
@@ -49,11 +50,11 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
     }
 
     private void initializeFields() {
-        light = new HashMap<>();
-        heavy = new HashMap<>();
-        tent = new HashMap<>();
+        light = new ConcurrentHashMap<>();
+        heavy = new ConcurrentHashMap<>();
+        tent = new ConcurrentHashMap<>();
         bucketsContainer = new BucketsContainer<>(numOfBuckets());
-        distanceAndPredecessorMap = new HashMap<>();
+        distanceAndPredecessorMap = new ConcurrentHashMap<>();
     }
 
     private int numOfBuckets() {
@@ -61,19 +62,18 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
     }
 
     private void assertPositiveWeights() {
-        boolean allAdgesWithNonNegativeWeights = graph.edgeSet().stream()
-                .allMatch(e -> graph.getEdgeWeight(e) >= 0.0);
-        if (!allAdgesWithNonNegativeWeights) {
+        boolean allEdgesWithNonNegativeWeights = graph.edgeSet().parallelStream().allMatch(e -> graph.getEdgeWeight(e) >= 0.0);
+        if (!allEdgesWithNonNegativeWeights) {
             throw new IllegalArgumentException(NEGATIVE_EDGE_WEIGHT_NOT_ALLOWED);
         }
     }
 
     private Optional<Double> minEdgeWeight() {
-        return graph.edgeSet().stream().map(graph::getEdgeWeight).min(Double::compare);
+        return graph.edgeSet().parallelStream().map(graph::getEdgeWeight).min(Double::compare);
     }
 
     private Optional<Double> maxEdgeWeight() {
-        return graph.edgeSet().stream().map(graph::getEdgeWeight).max(Double::compare);
+        return graph.edgeSet().parallelStream().map(graph::getEdgeWeight).max(Double::compare);
     }
 
 
@@ -101,42 +101,51 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
             throw new IllegalArgumentException(GRAPH_MUST_CONTAIN_THE_SOURCE_VERTEX);
         }
         assertPositiveWeights();
-        if(useShortcuts){
+        if (delta == 0.0) {
+            delta = findDelta();
+        }
+        fillMaps();
+        if (useShortcuts) {
             computeShortestPathsWithShortcuts(source);
-        }else{
+        } else {
             computeShortestPaths(source);
         }
         return new TreeSingleSourcePathsImpl<>(graph, source, distanceAndPredecessorMap);
     }
 
-    private void computeShortestPaths(V source) {
-        for (V vertex : graph.vertexSet()) {
-            light.put(vertex, new HashSet<>());
-            heavy.put(vertex, new HashSet<>());
-            tent.put(vertex, Double.POSITIVE_INFINITY);
-
-            for (V successor : Graphs.successorListOf(graph, vertex)) {
-                E e = graph.getEdge(vertex, successor);
+    private void fillMaps() {
+        // parallel + load balance the nodes by out degree
+        for (V v : graph.vertexSet()) {
+            light.put(v, new HashSet<>());
+            heavy.put(v, new HashSet<>());
+            tent.put(v, Double.POSITIVE_INFINITY);
+            for (E e : graph.outgoingEdgesOf(v)) {
                 if (graph.getEdgeWeight(e) > delta) {
-                    heavy.get(vertex).add(e);
+                    heavy.get(v).add(e);
                 } else {
-                    light.get(vertex).add(e);
+                    light.get(v).add(e);
                 }
             }
         }
+    }
+
+    private void computeShortestPaths(V source) {
         relax(source, null, 0.0);
 
         while (!bucketsContainer.isEmpty()) {
             int i = bucketsContainer.firstNonEmptyBucket();
-            Set<V> r = new HashSet<>();
+            List<V> removed = new ArrayList<>();
             while (!bucketsContainer.bucketEmpty(i)) {
-                Set<Triple<V, E, Double>> lightRelaxRequests = findRequests(bucketsContainer.bucketElements(i), light);
-                r.addAll(bucketsContainer.bucketElements(i));
+                // consider finding and relaxing requests simultaneously
+                // in order not to start threads 2 times
+                List<Triple<V, E, Double>> lightRelaxRequests = findRequests(bucketsContainer.bucketElements(i), light);
+                removed.addAll(bucketsContainer.bucketElements(i));
                 bucketsContainer.clearBucket(i);
 
                 relaxRequests(lightRelaxRequests);
             }
-            Set<Triple<V, E, Double>> heavyRelaxRequests = findRequests(r, heavy);
+            // the same here
+            List<Triple<V, E, Double>> heavyRelaxRequests = findRequests(removed, heavy);
             relaxRequests(heavyRelaxRequests);
         }
     }
@@ -145,8 +154,10 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         throw new UnsupportedClassVersionError();
     }
 
-    private Set<Triple<V, E, Double>> findRequests(Collection<V> vertices, Map<V, Set<E>> edgesKind) {
-        Set<Triple<V, E, Double>> result = new HashSet<>();
+    private List<Triple<V, E, Double>> findRequests(List<V> vertices, Map<V, Set<E>> edgesKind) {
+        // make parallel on the vertices, map to list of
+        // opposite vertices and collect to result list
+        List<Triple<V, E, Double>> result = new ArrayList<>();
         for (V v : vertices) {
             for (E e : edgesKind.get(v)) {
                 V op = Graphs.getOppositeVertex(graph, e, v);
@@ -156,7 +167,8 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         return result;
     }
 
-    private void relaxRequests(Set<Triple<V, E, Double>> requests) {
+    private void relaxRequests(List<Triple<V, E, Double>> requests) {
+        // decide whether to go in parallel depending on the number of requests
         requests.forEach(triple -> relax(triple.getFirst(), triple.getSecond(), triple.getThird()));
     }
 
