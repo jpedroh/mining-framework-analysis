@@ -23,8 +23,8 @@ public class DeltaSteppingShortestPathPerformance {
     @Test
     public void runBenchmark() throws RunnerException {
         Options opt = new OptionsBuilder()
-//                .include(".*" + DeltaSteppingCompleteGraphBenchmark.class.getSimpleName() + ".*")
-                .include(".*" + DeltaSteppingSparseGraphBenchmark.class.getSimpleName() + ".*")
+                .include(".*" + DeltaSteppingCompleteGraphBenchmark.class.getSimpleName() + ".*")
+//                .include(".*" + DeltaSteppingSparseGraphBenchmark.class.getSimpleName() + ".*")
                 .mode(Mode.SingleShotTime)
                 .timeUnit(TimeUnit.MILLISECONDS)
                 .warmupIterations(5)

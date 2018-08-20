@@ -119,19 +119,13 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
             List<V> removed = new ArrayList<>();
             List<V> bucketElements = bucketElements(firstNonEmptyBucket);
             while (!bucketElements.isEmpty()) {
-                // consider finding and relaxing requests simultaneously
-                // in order not to start threads 2 times
-                List<Triple<V, E, Double>> lightRelaxRequests = findRequests(bucketElements, light);
                 removed.addAll(bucketElements);
                 clearBucket(firstNonEmptyBucket);
 
-                relaxRequests(lightRelaxRequests);
+                findAndRequests(bucketElements, light);
                 bucketElements = bucketElements(firstNonEmptyBucket);
             }
-            // the same here
-            List<Triple<V, E, Double>> heavyRelaxRequests = findRequests(removed, heavy);
-            relaxRequests(heavyRelaxRequests);
-
+            findAndRequests(removed, heavy);
             firstNonEmptyBucket = firstNonEmptyBucket();
         }
     }
@@ -189,22 +183,13 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
     }
 
 
-    private List<Triple<V, E, Double>> findRequests(List<V> vertices, Map<V, Set<E>> edgesKind) {
-        // make parallel on the vertices, map to list of
-        // opposite vertices and collect to result list
-        List<Triple<V, E, Double>> result = new ArrayList<>();
-        for (V v : vertices) {
+    private void findAndRequests(List<V> vertices, Map<V, Set<E>> edgesKind) {
+        vertices.parallelStream().forEach(v -> {
             for (E e : edgesKind.get(v)) {
-                V op = Graphs.getOppositeVertex(graph, e, v);
-                result.add(Triple.of(op, e, verticesDataMap.get(v).get().getSecond() + graph.getEdgeWeight(e)));
+                relax(Graphs.getOppositeVertex(graph, e, v), e,
+                        verticesDataMap.get(v).get().getSecond() + graph.getEdgeWeight(e));
             }
-        }
-        return result;
-    }
-
-    private void relaxRequests(List<Triple<V, E, Double>> requests) {
-        // try to avoid side-effects
-        requests.parallelStream().forEach(triple -> relax(triple.getFirst(), triple.getSecond(), triple.getThird()));
+        });
     }
 
     private void relax(V v, E e, double distance) {
