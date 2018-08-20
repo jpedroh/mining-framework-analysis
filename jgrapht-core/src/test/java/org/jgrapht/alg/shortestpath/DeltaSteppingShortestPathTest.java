@@ -40,22 +40,31 @@ public class DeltaSteppingShortestPathTest {
         Graphs.addEdge(graph, z, x, 6);
         Graphs.addEdge(graph, z, s, 7);
 
-        ShortestPathAlgorithm.SingleSourcePaths<String, DefaultWeightedEdge> paths =
-                new DeltaSteppingShortestPath<>(graph, 1.0, false).getPaths(s);
+        ShortestPathAlgorithm.SingleSourcePaths<String, DefaultWeightedEdge> paths1 =
+                new DeltaSteppingShortestPath<>(graph, 0.999, false).getPaths(s);
 
-        assertEquals(0d, paths.getWeight(s), 1e-9);
-        assertEquals(8d, paths.getWeight(t), 1e-9);
-        assertEquals(5d, paths.getWeight(y), 1e-9);
-        assertEquals(9d, paths.getWeight(x), 1e-9);
-        assertEquals(7d, paths.getWeight(z), 1e-9);
+        assertEquals(0d, paths1.getWeight(s), 1e-9);
+        assertEquals(8d, paths1.getWeight(t), 1e-9);
+        assertEquals(5d, paths1.getWeight(y), 1e-9);
+        assertEquals(9d, paths1.getWeight(x), 1e-9);
+        assertEquals(7d, paths1.getWeight(z), 1e-9);
 
-        ShortestPathAlgorithm.SingleSourcePaths<String, DefaultWeightedEdge> deltaPaths =
-                new DeltaSteppingShortestPath<>(graph, 10.0, false).getPaths(s);
+        ShortestPathAlgorithm.SingleSourcePaths<String, DefaultWeightedEdge> paths2 =
+                new DeltaSteppingShortestPath<>(graph, 5.0, false).getPaths(s);
 
-        assertEquals(0d, deltaPaths.getWeight(s), 1e-9);
-        assertEquals(8d, deltaPaths.getWeight(t), 1e-9);
-        assertEquals(5d, deltaPaths.getWeight(y), 1e-9);
-        assertEquals(9d, deltaPaths.getWeight(x), 1e-9);
-        assertEquals(7d, deltaPaths.getWeight(z), 1e-9);
+        assertEquals(0d, paths2.getWeight(s), 1e-9);
+        assertEquals(8d, paths2.getWeight(t), 1e-9);
+        assertEquals(5d, paths2.getWeight(y), 1e-9);
+        assertEquals(9d, paths2.getWeight(x), 1e-9);
+        assertEquals(7d, paths2.getWeight(z), 1e-9);
+
+        ShortestPathAlgorithm.SingleSourcePaths<String, DefaultWeightedEdge> path3 =
+                new DeltaSteppingShortestPath<>(graph, 11.0, false).getPaths(s);
+
+        assertEquals(0d, path3.getWeight(s), 1e-9);
+        assertEquals(8d, path3.getWeight(t), 1e-9);
+        assertEquals(5d, path3.getWeight(y), 1e-9);
+        assertEquals(9d, path3.getWeight(x), 1e-9);
+        assertEquals(7d, path3.getWeight(z), 1e-9);
     }
 }

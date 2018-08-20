@@ -7,25 +7,23 @@ import org.jgrapht.alg.util.Pair;
 import org.jgrapht.alg.util.UnorderedPair;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V, E> {
     private static final String NEGATIVE_EDGE_WEIGHT_NOT_ALLOWED = "Negative edge weight not allowed";
-    private static final String CONTAINER_IS_EMPTY = "Container is empty";
     private static final String DELTA_SHOULD_BE_POSITIVE = "Delta should be positive";
     private static final String EDGE_SET_IS_EMPTY = "Edge set is empty";
     private static final Double HASH_ARRAY_DEFAULT_VALUE = Double.POSITIVE_INFINITY;
 
     private double delta;
     private boolean useShortcuts;
+    private int numOfBuckets;
 
     private Map<V, Set<E>> light;
     private Map<V, Set<E>> heavy;
-    private Map<V, Double> tent;
 
-    private BucketsContainer<V> bucketsContainer;
-    private Map<V, Pair<Double, E>> distanceAndPredecessorMap;
+    private Map<V, AtomicReference<Triple<Integer, Double, E>>> verticesDataMap;
 
     /**
      * Constructs a new instance of the algorithm for a given graph.
@@ -50,15 +48,9 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
     }
 
     private void initializeFields() {
-        light = new ConcurrentHashMap<>();
-        heavy = new ConcurrentHashMap<>();
-        tent = new ConcurrentHashMap<>();
-        bucketsContainer = new BucketsContainer<>(numOfBuckets());
-        distanceAndPredecessorMap = new ConcurrentHashMap<>();
-    }
-
-    private int numOfBuckets() {
-        return maxEdgeWeight().map(max -> (int) (Math.ceil(max / delta) + 1)).orElse(0);
+        light = new HashMap<>();
+        heavy = new HashMap<>();
+        verticesDataMap = new HashMap<>();
     }
 
     private void assertPositiveWeights() {
@@ -69,11 +61,11 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
     }
 
     private Optional<Double> minEdgeWeight() {
-        return graph.edgeSet().parallelStream().map(graph::getEdgeWeight).min(Double::compare);
+        return graph.edgeSet().stream().map(graph::getEdgeWeight).min(Double::compare);
     }
 
     private Optional<Double> maxEdgeWeight() {
-        return graph.edgeSet().parallelStream().map(graph::getEdgeWeight).max(Double::compare);
+        return graph.edgeSet().stream().map(graph::getEdgeWeight).max(Double::compare);
     }
 
 
@@ -91,7 +83,6 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         return getPaths(source).getPath(sink);
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -105,20 +96,55 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
             delta = findDelta();
         }
         fillMaps();
+        numOfBuckets = numOfBuckets();
         if (useShortcuts) {
             computeShortestPathsWithShortcuts(source);
         } else {
             computeShortestPaths(source);
         }
-        return new TreeSingleSourcePathsImpl<>(graph, source, distanceAndPredecessorMap);
+        return new TreeSingleSourcePathsImpl<>(graph, source, verticesDataMap.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> Pair.of(entry.getValue().get().getSecond(), entry.getValue().get().getThird()))));
     }
+
+
+    private void computeShortestPaths(V source) {
+        relax(source, null, 0.0);
+
+        int firstNonEmptyBucket = 0;
+        while (firstNonEmptyBucket != -1) {
+            List<V> removed = new ArrayList<>();
+            List<V> bucketElements = bucketElements(firstNonEmptyBucket);
+            while (!bucketElements.isEmpty()) {
+                // consider finding and relaxing requests simultaneously
+                // in order not to start threads 2 times
+                List<Triple<V, E, Double>> lightRelaxRequests = findRequests(bucketElements, light);
+                removed.addAll(bucketElements);
+                clearBucket(firstNonEmptyBucket);
+
+                relaxRequests(lightRelaxRequests);
+                bucketElements = bucketElements(firstNonEmptyBucket);
+            }
+            // the same here
+            List<Triple<V, E, Double>> heavyRelaxRequests = findRequests(removed, heavy);
+            relaxRequests(heavyRelaxRequests);
+
+            firstNonEmptyBucket = firstNonEmptyBucket();
+        }
+    }
+
+    private void computeShortestPathsWithShortcuts(V source) {
+        throw new UnsupportedClassVersionError();
+    }
+
 
     private void fillMaps() {
         // parallel + load balance the nodes by out degree
         for (V v : graph.vertexSet()) {
             light.put(v, new HashSet<>());
             heavy.put(v, new HashSet<>());
-            tent.put(v, Double.POSITIVE_INFINITY);
+            verticesDataMap.putIfAbsent(v, new AtomicReference<>(Triple.of(-1, Double.POSITIVE_INFINITY, null)));
             for (E e : graph.outgoingEdgesOf(v)) {
                 if (graph.getEdgeWeight(e) > delta) {
                     heavy.get(v).add(e);
@@ -129,30 +155,37 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         }
     }
 
-    private void computeShortestPaths(V source) {
-        relax(source, null, 0.0);
 
-        while (!bucketsContainer.isEmpty()) {
-            int i = bucketsContainer.firstNonEmptyBucket();
-            List<V> removed = new ArrayList<>();
-            while (!bucketsContainer.bucketEmpty(i)) {
-                // consider finding and relaxing requests simultaneously
-                // in order not to start threads 2 times
-                List<Triple<V, E, Double>> lightRelaxRequests = findRequests(bucketsContainer.bucketElements(i), light);
-                removed.addAll(bucketsContainer.bucketElements(i));
-                bucketsContainer.clearBucket(i);
+    private int numOfBuckets() {
+        return maxEdgeWeight().map(max -> (int) (Math.ceil(max / delta) + 1)).orElse(0);
+    }
 
-                relaxRequests(lightRelaxRequests);
-            }
-            // the same here
-            List<Triple<V, E, Double>> heavyRelaxRequests = findRequests(removed, heavy);
-            relaxRequests(heavyRelaxRequests);
+    private int firstNonEmptyBucket() {
+        return verticesDataMap.values().stream()
+                .map(triple -> triple.get().getFirst())
+                .filter(bucketIndex -> bucketIndex >= 0)
+                .min(Integer::compare).orElse(-1);
+    }
+
+    private List<V> bucketElements(int bucket) {
+        return verticesDataMap.entrySet().stream()
+                .filter(entry -> entry.getValue().get().getFirst() == bucket)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private void clearBucket(int bucket) {
+        List<V> bucketElements = bucketElements(bucket);
+        for (V v : bucketElements) {
+            Triple<Integer, Double, E> data = verticesDataMap.get(v).get();
+            verticesDataMap.get(v).set(Triple.of(
+                    -1,
+                    data.getSecond(),
+                    data.getThird()
+            ));
         }
     }
 
-    private void computeShortestPathsWithShortcuts(V source) {
-        throw new UnsupportedClassVersionError();
-    }
 
     private List<Triple<V, E, Double>> findRequests(List<V> vertices, Map<V, Set<E>> edgesKind) {
         // make parallel on the vertices, map to list of
@@ -161,38 +194,33 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         for (V v : vertices) {
             for (E e : edgesKind.get(v)) {
                 V op = Graphs.getOppositeVertex(graph, e, v);
-                result.add(Triple.of(op, e, tent.get(v) + graph.getEdgeWeight(e)));
+                result.add(Triple.of(op, e, verticesDataMap.get(v).get().getSecond() + graph.getEdgeWeight(e)));
             }
         }
         return result;
     }
 
     private void relaxRequests(List<Triple<V, E, Double>> requests) {
-        // decide whether to go in parallel depending on the number of requests
-        requests.forEach(triple -> relax(triple.getFirst(), triple.getSecond(), triple.getThird()));
+        // try to avoid side-effects
+        requests.parallelStream().forEach(triple -> relax(triple.getFirst(), triple.getSecond(), triple.getThird()));
     }
 
     private void relax(V v, E e, double distance) {
-        if (distance < tent.get(v)) {
-            int currentBucket = bucketIndex(tent.get(v));
-            int newBucket = bucketIndex(distance);
-            if (currentBucket >= 0) {
-                bucketsContainer.remove(currentBucket, v);
+        boolean updated = false;
+        AtomicReference<Triple<Integer, Double, E>> dataReference = verticesDataMap.get(v);
+        Triple<Integer, Double, E> updatedData = Triple.of(bucketIndex(distance), distance, e);
+        while (!updated) {
+            Triple<Integer, Double, E> oldData = dataReference.get();
+            if (distance < oldData.getSecond()) {
+                updated = dataReference.compareAndSet(oldData, updatedData);
+            } else {
+                updated = true;
             }
-            bucketsContainer.add(newBucket, v);
-            tent.put(v, distance);
-            distanceAndPredecessorMap.put(v, Pair.of(distance, e));
         }
     }
 
     private int bucketIndex(double distance) {
-        int result;
-        if (distance == Double.POSITIVE_INFINITY) {
-            result = -1;
-        } else {
-            result = ((int) Math.round(distance / delta)) % bucketsContainer.size();
-        }
-        return result;
+        return ((int) Math.round(distance / delta)) % numOfBuckets;
     }
 
 
@@ -489,168 +517,6 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         @Override
         public int hashCode() {
             return Objects.hash(first, second, third, fourth);
-        }
-    }
-
-    static class BucketsContainer<BT> {
-        private final Bucket[] buckets;
-        private int numOfBuckets;
-        private int numOfNonEmptyBuckets;
-
-        BucketsContainer(int numOfBuckets) {
-            buckets = new Bucket[numOfBuckets];
-            this.numOfBuckets = numOfBuckets;
-        }
-
-        boolean add(int bucket, BT element) {
-            assertLegalBucketIndex(bucket);
-            if (buckets[bucket] == null) {
-                buckets[bucket] = new Bucket<BT>();
-            }
-
-            boolean wasEmpty = buckets[bucket].isEmpty();
-            @SuppressWarnings("unchecked") boolean added = buckets[bucket].add(element);
-            if (wasEmpty && added) {
-                numOfNonEmptyBuckets++;
-            }
-            return added;
-        }
-
-        boolean remove(int bucket, BT element) {
-            assertLegalBucketIndex(bucket);
-            boolean wasEmpty = buckets[bucket].isEmpty();
-            @SuppressWarnings("unchecked") boolean result = buckets[bucket].remove(element);
-            boolean becameEmpty = buckets[bucket].isEmpty();
-            if (!wasEmpty && becameEmpty) {
-                numOfNonEmptyBuckets--;
-            }
-            return result;
-        }
-
-        private void assertLegalBucketIndex(double bucket) {
-            if (bucket >= numOfBuckets) {
-                throw new IndexOutOfBoundsException("Bucket: " + bucket + ", size: " + numOfBuckets);
-            }
-        }
-
-        List<BT> bucketElements(int bucket) {
-            assertLegalBucketIndex(bucket);
-            @SuppressWarnings("unchecked") List<BT> result = buckets[bucket].elements();
-            return result;
-        }
-
-        void clearBucket(int bucket) {
-            assertLegalBucketIndex(bucket);
-            if (!buckets[bucket].isEmpty()) {
-                buckets[bucket].clear();
-                numOfNonEmptyBuckets--;
-            }
-        }
-
-        int firstNonEmptyBucket() {
-            if (isEmpty()) {
-                throw new RuntimeException(CONTAINER_IS_EMPTY);
-            }
-            int i = 0;
-            for (; i < numOfBuckets; i++) {
-                if (buckets[i] != null && !buckets[i].isEmpty()) {
-                    break;
-                }
-            }
-            return i;
-        }
-
-        boolean bucketEmpty(int bucket) {
-            assertLegalBucketIndex(bucket);
-            return buckets[bucket].isEmpty();
-        }
-
-        boolean isEmpty() {
-            return numOfNonEmptyBuckets == 0;
-        }
-
-        int size() {
-            return numOfBuckets;
-        }
-    }
-
-    static class Bucket<T> {
-        private Map<T, Node<T>> nodesMap;
-        private Node<T> head;
-        private int size;
-
-        Bucket() {
-            nodesMap = new HashMap<>();
-        }
-
-        boolean add(T element) {
-            Node<T> node = new Node<>(element);
-            linkFirst(node);
-            nodesMap.put(element, node);
-            size++;
-            return true;
-        }
-
-        private void linkFirst(Node<T> node) {
-            node.next = head;
-            head = node;
-        }
-
-
-        boolean remove(T element) {
-            boolean result = false;
-            Node<T> node = nodesMap.get(element);
-            if (node != null) {
-                unlink(node);
-                nodesMap.remove(element);
-                size--;
-                result = true;
-            }
-            return result;
-        }
-
-        private void unlink(Node<T> node) {
-            if (node.prev != null) {
-                node.prev.next = node.next;
-            }
-            if (node.next != null) {
-                node.next.prev = node.prev;
-            }
-            node.prev = null;
-            node.next = null;
-            if (node.equals(head)) {
-                head = null;
-            }
-        }
-
-        List<T> elements() {
-            List<T> result = new ArrayList<>();
-            Node<T> it = head;
-            while (it != null) {
-                result.add(it.value);
-                it = it.next;
-            }
-            return result;
-        }
-
-        boolean isEmpty() {
-            return size == 0;
-        }
-
-        void clear() {
-            head = null;
-            size = 0;
-            nodesMap.clear();
-        }
-
-        static class Node<NT> {
-            NT value;
-            Node<NT> prev;
-            Node<NT> next;
-
-            public Node(NT value) {
-                this.value = value;
-            }
         }
     }
 }
