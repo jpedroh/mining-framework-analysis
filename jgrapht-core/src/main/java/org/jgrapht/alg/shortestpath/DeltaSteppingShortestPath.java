@@ -4,6 +4,8 @@ import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.util.Pair;
+import org.jgrapht.alg.util.Quad;
+import org.jgrapht.alg.util.Triple;
 import org.jgrapht.alg.util.UnorderedPair;
 
 import java.util.*;
@@ -413,110 +415,5 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      */
     public static <V, E> GraphPath<V, E> findPathBetween(Graph<V, E> graph, V source, V sink) {
         return new DeltaSteppingShortestPath<>(graph).getPath(source, sink);
-    }
-
-    static class Triple<A, B, C> {
-        private final A first;
-        private final B second;
-        private final C third;
-
-        Triple(A first, B second, C third) {
-            this.first = first;
-            this.second = second;
-            this.third = third;
-        }
-
-        public A getFirst() {
-            return first;
-        }
-
-        public B getSecond() {
-            return second;
-        }
-
-        public C getThird() {
-            return third;
-        }
-
-        public static <A, B, C> Triple<A, B, C> of(A a, B b, C c) {
-            return new Triple<>(a, b, c);
-        }
-
-        @Override
-        public String toString() {
-            return "(" + this.first + "," + this.second + "," + this.third + ")";
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof Triple) {
-                @SuppressWarnings("unchecked") Triple<A, B, C> casted = (Triple<A, B, C>) obj;
-                return Objects.equals(first, casted.first)
-                        && Objects.equals(second, casted.second)
-                        && Objects.equals(third, casted.third);
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(first, second, third);
-        }
-    }
-
-    static class Quad<A, B, C, D> {
-        private final A first;
-        private final B second;
-        private final C third;
-        private final D fourth;
-
-        public Quad(A first, B second, C third, D fourth) {
-            this.first = first;
-            this.second = second;
-            this.third = third;
-            this.fourth = fourth;
-        }
-
-        public A getFirst() {
-            return first;
-        }
-
-        public B getSecond() {
-            return second;
-        }
-
-        public C getThird() {
-            return third;
-        }
-
-        public D getFourth() {
-            return fourth;
-        }
-
-        public static <A, B, C, D> Quad<A, B, C, D> of(A a, B b, C c, D d) {
-            return new Quad<>(a, b, c, d);
-        }
-
-        @Override
-        public String toString() {
-            return "(" + first + "," + second + "," + third + "," + fourth + ")";
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof DeltaSteppingShortestPath.Quad) {
-                @SuppressWarnings("unchecked") Quad<A, B, C, D> casted = (Quad<A, B, C, D>) obj;
-                return Objects.equals(first, casted.first)
-                        && Objects.equals(second, casted.second)
-                        && Objects.equals(third, casted.third)
-                        && Objects.equals(fourth, casted.fourth);
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(first, second, third, fourth);
-        }
     }
 }
