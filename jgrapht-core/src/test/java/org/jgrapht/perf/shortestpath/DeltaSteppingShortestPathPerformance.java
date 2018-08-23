@@ -3,6 +3,7 @@ package org.jgrapht.perf.shortestpath;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
+import org.jgrapht.alg.shortestpath.BellmanFordShortestPath;
 import org.jgrapht.alg.shortestpath.DeltaSteppingShortestPath;
 import org.jgrapht.generate.CompleteGraphGenerator;
 import org.jgrapht.graph.DefaultUndirectedWeightedGraph;
@@ -18,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 public class DeltaSteppingShortestPathPerformance {
-
 
     @Test
     public void runBenchmark() throws RunnerException {
@@ -39,13 +39,14 @@ public class DeltaSteppingShortestPathPerformance {
 
         @Benchmark
         public ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> runBenchmark(CompleteGraphData data) {
-            return new DeltaSteppingShortestPath<>(data.graph, 1.0 / data.graphsSize, false).getPaths(0);
+            return new DeltaSteppingShortestPath<>(data.graph, 1.0 / data.graphSize).getPaths(0);
         }
+
 
         @State(Scope.Benchmark)
         public static class CompleteGraphData {
             @Param({"1000"})
-            int graphsSize;
+            int graphSize;
             DefaultUndirectedWeightedGraph<Integer, DefaultWeightedEdge> graph;
 
             @Setup(Level.Trial)
@@ -59,7 +60,7 @@ public class DeltaSteppingShortestPathPerformance {
                         return i++;
                     }
                 });
-                CompleteGraphGenerator<Integer, DefaultWeightedEdge> generator = new CompleteGraphGenerator<>(graphsSize);
+                CompleteGraphGenerator<Integer, DefaultWeightedEdge> generator = new CompleteGraphGenerator<>(graphSize);
                 generator.generateGraph(graph, null);
                 graph.edgeSet().forEach(e -> graph.setEdgeWeight(e, Math.random()));
             }
@@ -70,16 +71,16 @@ public class DeltaSteppingShortestPathPerformance {
 
         @Benchmark
         public ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> runBenchmark(SparseGraphData data) {
-            return new DeltaSteppingShortestPath<>(data.graph, 1.0 / data.edgeDegree, false).getPaths(0);
+            return new DeltaSteppingShortestPath<>(data.graph, 1.0 / data.edgeDegree).getPaths(0);
         }
 
         @State(Scope.Benchmark)
         public static class SparseGraphData {
-            @Param({"10000"})
+            @Param({"100000"})
             int graphSize;
-            @Param({"16"})
-            public int edgeDegree;
-            public Graph<Integer, DefaultWeightedEdge> graph;
+            @Param({"4"})
+            int edgeDegree;
+            Graph<Integer, DefaultWeightedEdge> graph;
 
             @Setup(Level.Trial)
             public void generate() {
