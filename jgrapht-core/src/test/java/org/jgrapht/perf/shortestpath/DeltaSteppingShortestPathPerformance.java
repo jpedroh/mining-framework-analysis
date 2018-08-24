@@ -3,7 +3,6 @@ package org.jgrapht.perf.shortestpath;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
-import org.jgrapht.alg.shortestpath.BellmanFordShortestPath;
 import org.jgrapht.alg.shortestpath.DeltaSteppingShortestPath;
 import org.jgrapht.generate.CompleteGraphGenerator;
 import org.jgrapht.graph.DefaultUndirectedWeightedGraph;
@@ -24,7 +23,7 @@ public class DeltaSteppingShortestPathPerformance {
     public void runBenchmark() throws RunnerException {
         Options opt = new OptionsBuilder()
                 .include(".*" + DeltaSteppingCompleteGraphBenchmark.class.getSimpleName() + ".*")
-//                .include(".*" + DeltaSteppingSparseGraphBenchmark.class.getSimpleName() + ".*")
+                .include(".*" + DeltaSteppingSparseGraphBenchmark.class.getSimpleName() + ".*")
                 .mode(Mode.SingleShotTime)
                 .timeUnit(TimeUnit.MILLISECONDS)
                 .warmupIterations(5)
@@ -49,7 +48,7 @@ public class DeltaSteppingShortestPathPerformance {
             int graphSize;
             DefaultUndirectedWeightedGraph<Integer, DefaultWeightedEdge> graph;
 
-            @Setup(Level.Trial)
+            @Setup(Level.Iteration)
             public void generateGraph() {
                 this.graph = new DefaultUndirectedWeightedGraph<>(DefaultWeightedEdge.class);
                 graph.setVertexSupplier(new Supplier<Integer>() {
@@ -71,18 +70,18 @@ public class DeltaSteppingShortestPathPerformance {
 
         @Benchmark
         public ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> runBenchmark(SparseGraphData data) {
-            return new DeltaSteppingShortestPath<>(data.graph, 1.0 / data.edgeDegree).getPaths(0);
+            return new DeltaSteppingShortestPath<>(data.graph, 1.0).getPaths(0);
         }
 
         @State(Scope.Benchmark)
         public static class SparseGraphData {
-            @Param({"100000"})
+            @Param({"10000"})
             int graphSize;
-            @Param({"4"})
+            @Param({"50"})
             int edgeDegree;
             Graph<Integer, DefaultWeightedEdge> graph;
 
-            @Setup(Level.Trial)
+            @Setup(Level.Iteration)
             public void generate() {
                 this.graph = new DefaultUndirectedWeightedGraph<>(DefaultWeightedEdge.class);
 
