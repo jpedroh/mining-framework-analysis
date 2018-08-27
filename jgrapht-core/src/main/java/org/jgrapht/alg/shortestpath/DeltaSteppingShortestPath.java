@@ -28,17 +28,22 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
- * An implementation of <a href="https://people.csail.mit.edu/jshun/papers/MS03.pdf">delta-stepping
- * shortest path algorithm</a>.
+ * An implementation of the parallel version of the delta-stepping algorithm.
  *
  * <p>
- * The $\delta$-stepping algorithm maintains eligible nodes with tentative distances
- * in the bucket structure each bucket of which represents a distance range of size
- * $\delta$. During each phase, the algorithm removes all nodes of the first nonempty
- * bucket and relaxes all outgoing edges of weight at most $\delta$. Edges of higher
- * weight are only relaxed after their respective starting nodes are surely settled.
- * The choice of $\delta$ should provide a good trade-off between too many node
- * re-considerations on the one hand and too many bucket traversals on the other hand.
+ * The algorithm is described in the paper: U. Meyer, P. Sanders,
+ * $\Delta$-stepping: a parallelizable shortest path algorithm, Journal of Algorithms,
+ * Volume 49, Issue 1, 2003, Pages 114-152, ISSN 0196-6774,
+ * https://doi.org/10.1016/S0196-6774(03)00076-2.
+ *
+ * <p>
+ * The algorithm solves the single source shortest path problem in a graph with no
+ * negative weight edges. Its advantage of the {@link DijkstraShortestPath}
+ * algorithm is that it can benefit from multiple threads. While the Dijkstra`s
+ * algorithm is fully sequential and the {@link BellmanFordShortestPath} algorithm
+ * has high parallelism since all edges can be relaxed in parallel, the delta-stepping
+ * introduces parameter delta, which, when chooses optimally, yields still good parallelism
+ * and at the same time enables avoiding too many re-relaxations of the edges.
  *
  * <p>
  * To prevent the necessity to synchronize threads the bucket structure is implemented here
@@ -67,7 +72,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
     /**
      * The bucket width. A bucket with index $i$ therefore stores
      * a vertex v if and only if v is queued and tentative distance
-     * to v $\in[i\cdot\delta,(i+1)\cdot\delta]$
+     * to v $\in[i\cdot\Delta,(i+1)\cdot\Delta]$
      */
     private double delta;
     /**
@@ -80,7 +85,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      */
     private Map<V, Set<E>> light;
     /**
-     * Map with light edges for each vertex. An edge is
+     * Map with heavy edges for each vertex. An edge is
      * considered heavy if its weight is greater than {@link #delta}.
      */
     private Map<V, Set<E>> heavy;
@@ -105,14 +110,14 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
 
     /**
      * Constructs a new instance of the algorithm for a given graph.
-     * Initializes {@link #delta} to $0.0$ to preserve lazy computation stype.
+     * Initializes {@link #delta} to $0.0$ to preserve lazy computation style.
      *
      * @param graph graph
      */
     public DeltaSteppingShortestPath(Graph<V, E> graph) {
         super(graph);
         delta = 0.0;
-        initializeFields();
+        init();
     }
 
     /**
@@ -127,13 +132,13 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
             throw new IllegalArgumentException(DELTA_MUST_BE_POSITIVE);
         }
         this.delta = delta;
-        initializeFields();
+        init();
     }
 
     /**
      * Initializes {@link #light}, {@link #heavy} and {@link #verticesDataMap} fields.
      */
-    private void initializeFields() {
+    private void init() {
         light = new HashMap<>();
         heavy = new HashMap<>();
         verticesDataMap = new HashMap<>();
@@ -155,7 +160,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      *
      * @return max edge weight
      */
-    private Optional<Double> maxEdgeWeight() {
+    private Optional<Double> getMaxEdgeWeight() {
         return graph.edgeSet().stream().map(graph::getEdgeWeight).max(Double::compare);
     }
 
@@ -208,9 +213,9 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      * @return bucket width
      */
     private double findDelta() {
-        Optional<Double> maxEdgeWeight = maxEdgeWeight();
+        Optional<Double> maxEdgeWeight = getMaxEdgeWeight();
         if (maxEdgeWeight.isPresent()) {
-            int maxOutDegree = graph.vertexSet().stream().map(graph::outDegreeOf).max(Integer::compare).orElse(0);
+            int maxOutDegree = graph.vertexSet().stream().mapToInt(graph::outDegreeOf).max().orElse(0);
             return maxEdgeWeight.get() / maxOutDegree;
         } else {
             return 1.0;
@@ -308,7 +313,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      * @return num of buckets
      */
     private int numOfBuckets() {
-        return maxEdgeWeight().map(maxWeight -> (int) (Math.ceil(maxWeight / delta) + 1)).orElse(1);
+        return getMaxEdgeWeight().map(maxWeight -> (int) (Math.ceil(maxWeight / delta) + 1)).orElse(1);
     }
 
     /**
@@ -328,9 +333,9 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      */
     private int firstNonEmptyBucket() {
         return verticesDataMap.values().stream()
-                .map(triple -> triple.get().getFirst())
+                .mapToInt(triple -> triple.get().getFirst())
                 .filter(bucketIndex -> bucketIndex >= 0)
-                .min(Integer::compare).orElse(-1);
+                .min().orElse(-1);
     }
 
     /**

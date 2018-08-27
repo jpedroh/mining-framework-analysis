@@ -18,17 +18,23 @@
 package org.jgrapht.alg.shortestpath;
 
 import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
+import org.jgrapht.generate.GnpRandomGraphGenerator;
+import org.jgrapht.generate.GraphGenerator;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.DirectedWeightedPseudograph;
+import org.jgrapht.util.SupplierUtil;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.util.Arrays;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Test case for {@link DeltaSteppingShortestPath}.
@@ -51,7 +57,17 @@ public class DeltaSteppingShortestPathTest {
     public void testEmptyGraph() {
         Graph<String, DefaultWeightedEdge> graph = new DirectedWeightedPseudograph<>(DefaultWeightedEdge.class);
         graph.addVertex(s);
-//        exception.expect(IllegalArgumentException.class);
+
+        new DeltaSteppingShortestPath<>(graph).getPaths(s);
+    }
+
+    @Test
+    public void testNegativeWeightEdge() {
+        Graph<String, DefaultWeightedEdge> graph = new DirectedWeightedPseudograph<>(DefaultWeightedEdge.class);
+        Graphs.addAllVertices(graph, Arrays.asList(s, t));
+        Graphs.addEdge(graph, s, t, -10.0);
+
+        exception.expect(IllegalArgumentException.class);
         new DeltaSteppingShortestPath<>(graph).getPaths(s);
     }
 
@@ -67,7 +83,7 @@ public class DeltaSteppingShortestPathTest {
     }
 
     @Test
-    public void testGetPaths() {
+    public void testGetPaths1() {
         Graph<String, DefaultWeightedEdge> graph = create();
 
         ShortestPathAlgorithm.SingleSourcePaths<String, DefaultWeightedEdge> paths1 =
@@ -108,13 +124,26 @@ public class DeltaSteppingShortestPathTest {
     }
 
     @Test
-    public void testNegativeWeightEdge() {
-        Graph<String, DefaultWeightedEdge> graph = new DirectedWeightedPseudograph<>(DefaultWeightedEdge.class);
-        Graphs.addAllVertices(graph, Arrays.asList(s, t));
-        Graphs.addEdge(graph, s, t, -10.0);
+    public void testGetPaths2() {
+        int n = 1000;
+        int p = 100;
+        int numOfIterations = 100;
+        int source = 0;
 
-        exception.expect(IllegalArgumentException.class);
-        new DeltaSteppingShortestPath<>(graph).getPaths(s);
+        GraphGenerator<Integer, DefaultWeightedEdge, Integer> generator =
+                new GnpRandomGraphGenerator<>(n, p / n);
+        DirectedWeightedPseudograph<Integer, DefaultWeightedEdge> graph;
+        for (int i = 0; i < numOfIterations; i++) {
+            graph = new DirectedWeightedPseudograph<>(DefaultWeightedEdge.class);
+            graph.setVertexSupplier(SupplierUtil.createIntegerSupplier());
+            generator.generateGraph(graph);
+
+            ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> deltaSteppingShortestPaths =
+                    new DeltaSteppingShortestPath<>(graph).getPaths(source);
+            ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> dijkstraShortestPaths =
+                    new DijkstraShortestPath<>(graph).getPaths(source);
+            assertEqualPaths(deltaSteppingShortestPaths, dijkstraShortestPaths, graph.vertexSet());
+        }
     }
 
     private Graph<String, DefaultWeightedEdge> create() {
@@ -138,5 +167,19 @@ public class DeltaSteppingShortestPathTest {
         Graphs.addEdge(graph, z, s, 7);
 
         return graph;
+    }
+
+    private void assertEqualPaths(ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> paths1,
+                                  ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> paths2,
+                                  Set<Integer> vertexSet) {
+        for (Integer sink : vertexSet) {
+            GraphPath<Integer, DefaultWeightedEdge> path1 = paths1.getPath(sink);
+            GraphPath<Integer, DefaultWeightedEdge> path2 = paths2.getPath(sink);
+            if(path1 == null){
+                assertNull(path2);
+            }else{
+                assertEquals(paths1.getPath(sink).getEdgeList(), paths2.getPath(sink).getEdgeList());
+            }
+        }
     }
 }
