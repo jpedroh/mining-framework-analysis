@@ -46,21 +46,6 @@ import java.util.concurrent.TimeUnit;
 public class DeltaSteppingShortestPathPerformance {
 
     @Benchmark
-    public ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> testSparseDeltaStepping(SparseGraphData data) {
-        return new DeltaSteppingShortestPath<>(data.graph, 1.0).getPaths(0);
-    }
-
-    @Benchmark
-    public ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> testSparseDijkstra(SparseGraphData data) {
-        return new DijkstraShortestPath<>(data.graph).getPaths(0);
-    }
-
-    @Benchmark
-    public ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> testSparseBellmanFord(SparseGraphData data) {
-        return new BellmanFordShortestPath<>(data.graph).getPaths(0);
-    }
-
-    @Benchmark
     public ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> testDenseDeltaStepping(DenseGraphData data) {
         return new DeltaSteppingShortestPath<>(data.graph, 1.0 / data.graphSize).getPaths(0);
     }
@@ -72,6 +57,21 @@ public class DeltaSteppingShortestPathPerformance {
 
     @Benchmark
     public ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> testBellmanFordDense(DenseGraphData data) {
+        return new BellmanFordShortestPath<>(data.graph).getPaths(0);
+    }
+
+    @Benchmark
+    public ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> testSparseDeltaStepping(SparseGraphData data) {
+        return new DeltaSteppingShortestPath<>(data.graph, 1.0).getPaths(0);
+    }
+
+    @Benchmark
+    public ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> testSparseDijkstra(SparseGraphData data) {
+        return new DijkstraShortestPath<>(data.graph).getPaths(0);
+    }
+
+    @Benchmark
+    public ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> testSparseBellmanFord(SparseGraphData data) {
         return new BellmanFordShortestPath<>(data.graph).getPaths(0);
     }
 
