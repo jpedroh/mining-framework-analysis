@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit;
 public class DeltaSteppingShortestPathPerformance {
 
     @Benchmark
-    public ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> testSparse(SparseGraphData data) {
+    public ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> testSparseDeltaStepping(SparseGraphData data) {
         return new DeltaSteppingShortestPath<>(data.graph, 1.0).getPaths(0);
     }
 
@@ -61,7 +61,7 @@ public class DeltaSteppingShortestPathPerformance {
     }
 
     @Benchmark
-    public ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> testDense(DenseGraphData data) {
+    public ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> testDenseDeltaStepping(DenseGraphData data) {
         return new DeltaSteppingShortestPath<>(data.graph, 1.0 / data.graphSize).getPaths(0);
     }
 

@@ -31,10 +31,22 @@ import java.util.stream.Collectors;
  * An implementation of the parallel version of the delta-stepping algorithm.
  *
  * <p>
+ * The time complexity of the algorithm is
+ * $O(\frac{(|V| + |E| + n_{\Delta} + m_{\Delta})}{p} + \frac{L}{\Delta}\cdot d\cdot l_{\Delta}\cdot \log n)$, where,
+ * denoting $\Delta$-path as a path of total weight at most $\Delta$ with no edge repetition,
+ * <ul>
+ *      <li>$n_{\Delta}$ - number of vertices pairs (u,v), where u and v are connected by some $\Delta$-path.</li>
+ *      <li>$m_{\Delta}$ - number of vertices triples (u,$v^{\prime}$,v), where u and $v^{\prime}$ are connected
+ *      by some $\Delta$-path and edge ($v^{\prime}$,v) has weight at most $\Delta$.</li>
+ *      <li>$L$ - maximal weight of a shortest path from selected source to any sink.</li>
+ *      <li>$d$ - maximal edge degree.</li>
+ *      <li>$l_{\Delta}$ - maximal number of edges in a $\Delta$-path $+1$.</li>
+ * </ul>
+ *
+ * <p>
  * The algorithm is described in the paper: U. Meyer, P. Sanders,
  * $\Delta$-stepping: a parallelizable shortest path algorithm, Journal of Algorithms,
- * Volume 49, Issue 1, 2003, Pages 114-152, ISSN 0196-6774,
- * https://doi.org/10.1016/S0196-6774(03)00076-2.
+ * Volume 49, Issue 1, 2003, Pages 114-152, ISSN 0196-6774.
  *
  * <p>
  * The algorithm solves the single source shortest path problem in a graph with no
