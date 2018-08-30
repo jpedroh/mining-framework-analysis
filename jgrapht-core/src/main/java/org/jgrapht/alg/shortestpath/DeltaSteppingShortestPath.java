@@ -22,6 +22,7 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.util.Pair;
 import org.jgrapht.alg.util.Triple;
+import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -158,23 +159,23 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
     }
 
     /**
-     * Asserts that all edges in the {@link #graph} have positive weights.
-     */
-    private void assertPositiveWeights() {
-        boolean allEdgesWithNonNegativeWeights = graph.edgeSet().stream()
-                .map(graph::getEdgeWeight).allMatch(weight -> weight >= 0);
-        if (!allEdgesWithNonNegativeWeights) {
-            throw new IllegalArgumentException(NEGATIVE_EDGE_WEIGHT_NOT_ALLOWED);
-        }
-    }
-
-    /**
      * Calculates max edge weight in the {@link #graph}.
      *
      * @return max edge weight
      */
     private double getMaxEdgeWeight() {
-        return graph.edgeSet().stream().map(graph::getEdgeWeight).max(Double::compare).orElse(0.0);
+        double result = 0.0;
+        double weight;
+        for (E defaultWeightedEdge : graph.edgeSet()) {
+            weight = graph.getEdgeWeight(defaultWeightedEdge);
+            if (weight < 0) {
+                throw new IllegalArgumentException(NEGATIVE_EDGE_WEIGHT_NOT_ALLOWED);
+            }
+            if (weight > result) {
+                result = weight;
+            }
+        }
+        return result;
     }
 
     /**
@@ -199,8 +200,6 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         if (!graph.containsVertex(source)) {
             throw new IllegalArgumentException(GRAPH_MUST_CONTAIN_THE_SOURCE_VERTEX);
         }
-        assertPositiveWeights();
-
         maxEdgeWeight = getMaxEdgeWeight();
         if (delta == 0.0) {
             delta = findDelta();

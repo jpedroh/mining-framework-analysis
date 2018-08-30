@@ -74,6 +74,62 @@ public class DeltaSteppingShortestPathPerformance {
     public ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> testBellmanFordDense(DenseGraphData data) {
         return new BellmanFordShortestPath<>(data.graph).getPaths(0);
     }
+    @BenchmarkMode(Mode.SampleTime)
+    @Fork(value = 1, warmups = 0)
+    @Warmup(iterations = 3, time = 10)
+    @Measurement(iterations = 8, time = 10)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    public static class MaxEdgeWeightAssertPositiveWeightsBenchmark     {
+        @Benchmark
+        public Object[] testSequentialStreams(DenseGraphData data) {
+            Boolean allEdgesWithNonNegativeWeights = data.graph.edgeSet().stream().map(data.graph::getEdgeWeight).allMatch(weight -> weight >= 0);
+            if (!allEdgesWithNonNegativeWeights) {
+                throw new IllegalArgumentException("smth");
+            }
+            Double maxEdgeWeight = data.graph.edgeSet().stream().map(data.graph::getEdgeWeight).max(Double::compare).orElse(0.0);
+            return new Object[]{allEdgesWithNonNegativeWeights, maxEdgeWeight};
+        }
+
+        @Benchmark
+        public double testSequentialForeachInStream(DenseGraphData data) {
+            final double[] result = {0.0};
+            data.graph.edgeSet().stream().mapToDouble(data.graph::getEdgeWeight).forEach(weight -> {
+                if (weight < 0) {
+                    throw new IllegalArgumentException("smth");
+                }
+                if (weight > result[0]) {
+                    result[0] = weight;
+                }
+            });
+            return result[0];
+        }
+
+        @Benchmark
+        public double testSequentialForeachLoop(DenseGraphData data) {
+            double result = 0.0;
+            double weight;
+            for (DefaultWeightedEdge defaultWeightedEdge : data.graph.edgeSet()) {
+                weight = data.graph.getEdgeWeight(defaultWeightedEdge);
+                if (weight < 0) {
+                    throw new IllegalArgumentException("smth");
+                }
+                if (weight > result) {
+                    result = weight;
+                }
+            }
+            return result;
+        }
+
+        @Benchmark
+        public Object[] testTwoParallelStreams(DenseGraphData data) {
+            Boolean allEdgesWithNonNegativeWeights = data.graph.edgeSet().parallelStream().map(data.graph::getEdgeWeight).allMatch(weight -> weight >= 0);
+            if (!allEdgesWithNonNegativeWeights) {
+                throw new IllegalArgumentException("smth");
+            }
+            Double maxEdgeWeight = data.graph.edgeSet().parallelStream().map(data.graph::getEdgeWeight).max(Double::compare).orElse(0.0);
+            return new Object[]{allEdgesWithNonNegativeWeights, maxEdgeWeight};
+        }
+    }
 
     @State(Scope.Benchmark)
     public static class SparseGraphData {
