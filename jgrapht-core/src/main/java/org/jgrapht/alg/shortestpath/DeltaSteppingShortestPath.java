@@ -91,6 +91,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      * Num of buckets in the bucket structure.
      */
     private int numOfBuckets;
+    private double maxEdgeWeight;
     /**
      * Map with light edges for each vertex. An edge is considered
      * light if its weight is less than or equal to {@link #delta}.
@@ -172,8 +173,8 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      *
      * @return max edge weight
      */
-    private Optional<Double> getMaxEdgeWeight() {
-        return graph.edgeSet().stream().map(graph::getEdgeWeight).max(Double::compare);
+    private double getMaxEdgeWeight() {
+        return graph.edgeSet().stream().map(graph::getEdgeWeight).max(Double::compare).orElse(0.0);
     }
 
     /**
@@ -200,6 +201,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         }
         assertPositiveWeights();
 
+        maxEdgeWeight = getMaxEdgeWeight();
         if (delta == 0.0) {
             delta = findDelta();
         }
@@ -225,12 +227,11 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      * @return bucket width
      */
     private double findDelta() {
-        Optional<Double> maxEdgeWeight = getMaxEdgeWeight();
-        if (maxEdgeWeight.isPresent()) {
-            int maxOutDegree = graph.vertexSet().stream().mapToInt(graph::outDegreeOf).max().orElse(0);
-            return maxEdgeWeight.get() / maxOutDegree;
-        } else {
+        if (maxEdgeWeight == 0) {
             return 1.0;
+        } else {
+            int maxOutDegree = graph.vertexSet().stream().mapToInt(graph::outDegreeOf).max().orElse(0);
+            return maxEdgeWeight / maxOutDegree;
         }
     }
 
@@ -325,7 +326,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      * @return num of buckets
      */
     private int numOfBuckets() {
-        return getMaxEdgeWeight().map(maxWeight -> (int) (Math.ceil(maxWeight / delta) + 1)).orElse(1);
+        return (int) (Math.ceil(maxEdgeWeight / delta) + 1);
     }
 
     /**
