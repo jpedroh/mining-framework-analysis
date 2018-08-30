@@ -74,6 +74,7 @@ public class DeltaSteppingShortestPathPerformance {
     public ShortestPathAlgorithm.SingleSourcePaths<Integer, DefaultWeightedEdge> testBellmanFordDense(DenseGraphData data) {
         return new BellmanFordShortestPath<>(data.graph).getPaths(0);
     }
+
     @BenchmarkMode(Mode.SampleTime)
     @Fork(value = 1, warmups = 0)
     @Warmup(iterations = 3, time = 10)
@@ -128,6 +129,24 @@ public class DeltaSteppingShortestPathPerformance {
             }
             Double maxEdgeWeight = data.graph.edgeSet().parallelStream().map(data.graph::getEdgeWeight).max(Double::compare).orElse(0.0);
             return new Object[]{allEdgesWithNonNegativeWeights, maxEdgeWeight};
+        }
+    }
+
+    @BenchmarkMode(Mode.SampleTime)
+    @Fork(value = 1, warmups = 0)
+    @Warmup(iterations = 3, time = 10)
+    @Measurement(iterations = 8, time = 10)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    public static class MaxOutDegreeBenchmark{
+
+        @Benchmark
+        public int testSequentialStream(DenseGraphData data){
+            return data.graph.vertexSet().stream().mapToInt(data.graph::outDegreeOf).max().orElse(0);
+        }
+
+        @Benchmark
+        public int testParallelStream(DenseGraphData data){
+            return data.graph.vertexSet().parallelStream().mapToInt(data.graph::outDegreeOf).max().orElse(0);
         }
     }
 

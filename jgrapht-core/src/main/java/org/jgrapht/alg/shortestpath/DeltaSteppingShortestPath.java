@@ -229,7 +229,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         if (maxEdgeWeight == 0) {
             return 1.0;
         } else {
-            int maxOutDegree = graph.vertexSet().stream().mapToInt(graph::outDegreeOf).max().orElse(0);
+            int maxOutDegree = graph.vertexSet().parallelStream().mapToInt(graph::outDegreeOf).max().orElse(0);
             return maxEdgeWeight / maxOutDegree;
         }
     }
