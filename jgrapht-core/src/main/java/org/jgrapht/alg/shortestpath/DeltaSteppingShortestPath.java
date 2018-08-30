@@ -119,7 +119,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      * to avoid threads synchronisation. Thus a thread can safely update
      * the information using standard CAS function.
      */
-    private Map<V, AtomicReference<Triple<Integer, Double, E>>> verticesDataMap;
+    private Map<V, Triple<Integer, Double, E>> verticesDataMap;
 
     /**
      * Constructs a new instance of the algorithm for a given graph.
@@ -209,10 +209,10 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         computeShortestPaths(source);
 
         Map<V, Pair<Double, E>> distanceAndPredecessorMap = new HashMap<>();
-        for (Map.Entry<V, AtomicReference<Triple<Integer, Double, E>>> entry : verticesDataMap.entrySet()) {
+        for (Map.Entry<V, Triple<Integer, Double, E>> entry : verticesDataMap.entrySet()) {
             distanceAndPredecessorMap.put(entry.getKey(),
-                    Pair.of(entry.getValue().get().getSecond(),
-                            entry.getValue().get().getThird()));
+                    Pair.of(entry.getValue().getSecond(),
+                            entry.getValue().getThird()));
         }
         return new TreeSingleSourcePathsImpl<>(graph, source, distanceAndPredecessorMap);
     }
@@ -240,7 +240,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         graph.vertexSet().forEach(v -> {
             light.put(v, new HashSet<>());
             heavy.put(v, new HashSet<>());
-            verticesDataMap.putIfAbsent(v, new AtomicReference<>(Triple.of(-1, Double.POSITIVE_INFINITY, null)));
+            verticesDataMap.putIfAbsent(v, Triple.of(-1, Double.POSITIVE_INFINITY, null));
         });
         graph.vertexSet().parallelStream().forEach(v -> {
             for (E e : graph.outgoingEdgesOf(v)) {
@@ -289,7 +289,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         vertices.parallelStream().forEach(v -> {
             for (E e : edgesKind.get(v)) {
                 relax(Graphs.getOppositeVertex(graph, e, v), e,
-                        verticesDataMap.get(v).get().getSecond() + graph.getEdgeWeight(e));
+                        verticesDataMap.get(v).getSecond() + graph.getEdgeWeight(e));
             }
         });
     }
@@ -306,15 +306,10 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      */
     private void relax(V v, E e, double distance) {
         boolean updated = false;
-        AtomicReference<Triple<Integer, Double, E>> dataReference = verticesDataMap.get(v);
         Triple<Integer, Double, E> updatedData = Triple.of(bucketIndex(distance), distance, e);
         while (!updated) {
-            Triple<Integer, Double, E> oldData = dataReference.get();
-            if (distance < oldData.getSecond()) {
-                updated = dataReference.compareAndSet(oldData, updatedData);
-            } else {
-                updated = true;
-            }
+            Triple<Integer, Double, E> oldData = verticesDataMap.get(v);
+            updated = !(distance < oldData.getSecond()) || verticesDataMap.replace(v, oldData, updatedData);
         }
     }
 
@@ -345,7 +340,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      */
     private List<V> bucketElements(int bucket) {
         return verticesDataMap.entrySet().stream()
-                .filter(entry -> entry.getValue().get().getFirst() == bucket)
+                .filter(entry -> entry.getValue().getFirst() == bucket)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
@@ -359,8 +354,8 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
     private void clearBucket(int bucket) {
         List<V> bucketElements = bucketElements(bucket);
         for (V v : bucketElements) {
-            Triple<Integer, Double, E> data = verticesDataMap.get(v).get();
-            verticesDataMap.get(v).set(Triple.of(
+            Triple<Integer, Double, E> data = verticesDataMap.get(v);
+            verticesDataMap.put(v, Triple.of(
                     -1,
                     data.getSecond(),
                     data.getThird()

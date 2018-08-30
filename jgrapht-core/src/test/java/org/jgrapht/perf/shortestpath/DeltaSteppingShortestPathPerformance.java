@@ -23,13 +23,20 @@ import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
 import org.jgrapht.alg.shortestpath.BellmanFordShortestPath;
 import org.jgrapht.alg.shortestpath.DeltaSteppingShortestPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
+import org.jgrapht.alg.util.Triple;
 import org.jgrapht.generate.CompleteGraphGenerator;
 import org.jgrapht.graph.DefaultUndirectedWeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.util.SupplierUtil;
 import org.openjdk.jmh.annotations.*;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A benchmark comparing {@link DeltaSteppingShortestPath} to {@link org.jgrapht.alg.shortestpath.DijkstraShortestPath}
@@ -80,7 +87,7 @@ public class DeltaSteppingShortestPathPerformance {
     @Warmup(iterations = 3, time = 10)
     @Measurement(iterations = 8, time = 10)
     @OutputTimeUnit(TimeUnit.MILLISECONDS)
-    public static class MaxEdgeWeightAssertPositiveWeightsBenchmark     {
+    public static class MaxEdgeWeightAssertPositiveWeightsBenchmark {
         @Benchmark
         public Object[] testSequentialStreams(DenseGraphData data) {
             Boolean allEdgesWithNonNegativeWeights = data.graph.edgeSet().stream().map(data.graph::getEdgeWeight).allMatch(weight -> weight >= 0);
@@ -137,16 +144,67 @@ public class DeltaSteppingShortestPathPerformance {
     @Warmup(iterations = 3, time = 10)
     @Measurement(iterations = 8, time = 10)
     @OutputTimeUnit(TimeUnit.MILLISECONDS)
-    public static class MaxOutDegreeBenchmark{
+    public static class MaxOutDegreeBenchmark {
 
         @Benchmark
-        public int testSequentialStream(DenseGraphData data){
+        public int testSequentialStream(DenseGraphData data) {
             return data.graph.vertexSet().stream().mapToInt(data.graph::outDegreeOf).max().orElse(0);
         }
 
         @Benchmark
-        public int testParallelStream(DenseGraphData data){
+        public int testParallelStream(DenseGraphData data) {
             return data.graph.vertexSet().parallelStream().mapToInt(data.graph::outDegreeOf).max().orElse(0);
+        }
+    }
+
+    @BenchmarkMode(Mode.SampleTime)
+    @Fork(value = 1, warmups = 0)
+    @Warmup(iterations = 3, time = 10)
+    @Measurement(iterations = 8, time = 10)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    public static class FillMapsBenchmark {
+        @Benchmark
+        public Object[] testHashMap(DenseGraphData data) {
+            double delta = 1 / 1000;
+            Map<Integer, Set<DefaultWeightedEdge>> light = new HashMap<>();
+            Map<Integer, Set<DefaultWeightedEdge>> heavy = new HashMap<>();
+            Map<Integer, AtomicReference<Triple<Integer, Double, DefaultWeightedEdge>>> verticesDataMap = new HashMap<>();
+            data.graph.vertexSet().forEach(v -> {
+                light.put(v, new HashSet<>());
+                heavy.put(v, new HashSet<>());
+                verticesDataMap.putIfAbsent(v, new AtomicReference<>(Triple.of(-1, Double.POSITIVE_INFINITY, null)));
+            });
+            data.graph.vertexSet().parallelStream().forEach(v -> {
+                for (DefaultWeightedEdge e : data.graph.outgoingEdgesOf(v)) {
+                    if (data.graph.getEdgeWeight(e) > delta) {
+                        heavy.get(v).add(e);
+                    } else {
+                        light.get(v).add(e);
+                    }
+                }
+            });
+            return new Object[]{light, heavy, verticesDataMap};
+        }
+
+        @Benchmark
+        public Object[] testConcurrentHashMap(DenseGraphData data) {
+            double delta = 1 / 1000;
+            Map<Integer, Set<DefaultWeightedEdge>> light = new ConcurrentHashMap<>();
+            Map<Integer, Set<DefaultWeightedEdge>> heavy = new ConcurrentHashMap<>();
+            Map<Integer, Triple<Integer, Double, DefaultWeightedEdge>> verticesDataMap = new ConcurrentHashMap<>();
+            data.graph.vertexSet().parallelStream().forEach(v -> {
+                light.put(v, new HashSet<>());
+                heavy.put(v, new HashSet<>());
+                verticesDataMap.putIfAbsent(v,Triple.of(-1, Double.POSITIVE_INFINITY, null));
+                for (DefaultWeightedEdge e : data.graph.outgoingEdgesOf(v)) {
+                    if (data.graph.getEdgeWeight(e) > delta) {
+                        heavy.get(v).add(e);
+                    } else {
+                        light.get(v).add(e);
+                    }
+                }
+            });
+            return new Object[]{light, heavy, verticesDataMap};
         }
     }
 
