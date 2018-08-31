@@ -33,25 +33,25 @@ import java.util.stream.Collectors;
 
 /**
  * An implementation of the parallel version of the delta-stepping algorithm.
- * <p>
+ *
  * <p>
  * The time complexity of the algorithm is
  * $O(\frac{(|V| + |E| + n_{\Delta} + m_{\Delta})}{p} + \frac{L}{\Delta}\cdot d\cdot l_{\Delta}\cdot \log n)$, where,
  * denoting $\Delta$-path as a path of total weight at most $\Delta$ with no edge repetition,
  * <ul>
- * <li>$n_{\Delta}$ - number of vertices pairs (u,v), where u and v are connected by some $\Delta$-path.</li>
- * <li>$m_{\Delta}$ - number of vertices triples (u,$v^{\prime}$,v), where u and $v^{\prime}$ are connected
- * by some $\Delta$-path and edge ($v^{\prime}$,v) has weight at most $\Delta$.</li>
- * <li>$L$ - maximal weight of a shortest path from selected source to any sink.</li>
- * <li>$d$ - maximal edge degree.</li>
- * <li>$l_{\Delta}$ - maximal number of edges in a $\Delta$-path $+1$.</li>
+ *      <li>$n_{\Delta}$ - number of vertices pairs (u,v), where u and v are connected by some $\Delta$-path.</li>
+ *      <li>$m_{\Delta}$ - number of vertices triples (u,$v^{\prime}$,v), where u and $v^{\prime}$ are connected
+ *      by some $\Delta$-path and edge ($v^{\prime}$,v) has weight at most $\Delta$.</li>
+ *      <li>$L$ - maximal weight of a shortest path from selected source to any sink.</li>
+ *      <li>$d$ - maximal edge degree.</li>
+ *      <li>$l_{\Delta}$ - maximal number of edges in a $\Delta$-path $+1$.</li>
  * </ul>
- * <p>
+ *
  * <p>
  * The algorithm is described in the paper: U. Meyer, P. Sanders,
  * $\Delta$-stepping: a parallelizable shortest path algorithm, Journal of Algorithms,
  * Volume 49, Issue 1, 2003, Pages 114-152, ISSN 0196-6774.
- * <p>
+ *
  * <p>
  * The algorithm solves the single source shortest path problem in a graph with no
  * negative weight edges. Its advantage of the {@link DijkstraShortestPath}
@@ -60,7 +60,7 @@ import java.util.stream.Collectors;
  * has high parallelism since all edges can be relaxed in parallel, the delta-stepping
  * introduces parameter delta, which, when chooses optimally, yields still good parallelism
  * and at the same time enables avoiding too many re-relaxations of the edges.
- * <p>
+ *
  * <p>
  * To prevent the necessity to synchronize threads the bucket structure is implemented here
  * as a map of vertices to their bucket indices. Furthermore, every time a vertex is inserted
@@ -95,6 +95,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      * Num of buckets in the bucket structure.
      */
     private int numOfBuckets;
+    private double maxEdgeWeight;
     /**
      * Map with light edges for each vertex. An edge is considered
      * light if its weight is less than or equal to {@link #delta}.
@@ -108,7 +109,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
 
     /**
      * Map that stores information about each vertex.
-     * <p>
+     *
      * <p>
      * In each triple the first value stands for the bucket index of a
      * vertex or $-1$ if a vertex does not belong to any bucket. The second
@@ -116,13 +117,13 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      * of each triple stands for the predecessor of a vertex in the the
      * shortest path tree. The second and the third values of each triple will
      * be used at the end of the computation to construct shortest paths tree.
-     * <p>
+     *
      * <p>
      * Keeping vertex information in an {@link AtomicReference} objects allows
      * to avoid threads synchronisation. Thus a thread can safely update
      * the information using standard CAS function.
      */
-    private Map<V, AtomicReference<Triple<Integer, Double, E>>> verticesDataMap;
+    private Map<V, Triple<Integer, Double, E>> verticesDataMap;
 
     private ExecutorService executor;
     private ExecutorCompletionService<Void> completionService;
@@ -167,23 +168,23 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
     }
 
     /**
-     * Asserts that all edges in the {@link #graph} have positive weights.
-     */
-    private void assertPositiveWeights() {
-        boolean allEdgesWithNonNegativeWeights = graph.edgeSet().stream()
-                .map(graph::getEdgeWeight).allMatch(weight -> weight >= 0);
-        if (!allEdgesWithNonNegativeWeights) {
-            throw new IllegalArgumentException(NEGATIVE_EDGE_WEIGHT_NOT_ALLOWED);
-        }
-    }
-
-    /**
      * Calculates max edge weight in the {@link #graph}.
      *
      * @return max edge weight
      */
-    private Optional<Double> getMaxEdgeWeight() {
-        return graph.edgeSet().stream().map(graph::getEdgeWeight).max(Double::compare);
+    private double getMaxEdgeWeight() {
+        double result = 0.0;
+        double weight;
+        for (E defaultWeightedEdge : graph.edgeSet()) {
+            weight = graph.getEdgeWeight(defaultWeightedEdge);
+            if (weight < 0) {
+                throw new IllegalArgumentException(NEGATIVE_EDGE_WEIGHT_NOT_ALLOWED);
+            }
+            if (weight > result) {
+                result = weight;
+            }
+        }
+        return result;
     }
 
     /**
@@ -208,8 +209,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         if (!graph.containsVertex(source)) {
             throw new IllegalArgumentException(GRAPH_MUST_CONTAIN_THE_SOURCE_VERTEX);
         }
-        assertPositiveWeights();
-
+        maxEdgeWeight = getMaxEdgeWeight();
         if (delta == 0.0) {
             delta = findDelta();
         }
@@ -219,10 +219,10 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         computeShortestPaths(source);
 
         Map<V, Pair<Double, E>> distanceAndPredecessorMap = new HashMap<>();
-        for (Map.Entry<V, AtomicReference<Triple<Integer, Double, E>>> entry : verticesDataMap.entrySet()) {
+        for (Map.Entry<V, Triple<Integer, Double, E>> entry : verticesDataMap.entrySet()) {
             distanceAndPredecessorMap.put(entry.getKey(),
-                    Pair.of(entry.getValue().get().getSecond(),
-                            entry.getValue().get().getThird()));
+                    Pair.of(entry.getValue().getSecond(),
+                            entry.getValue().getThird()));
         }
         return new TreeSingleSourcePathsImpl<>(graph, source, distanceAndPredecessorMap);
     }
@@ -235,12 +235,11 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      * @return bucket width
      */
     private double findDelta() {
-        Optional<Double> maxEdgeWeight = getMaxEdgeWeight();
-        if (maxEdgeWeight.isPresent()) {
-            int maxOutDegree = graph.vertexSet().stream().mapToInt(graph::outDegreeOf).max().orElse(0);
-            return maxEdgeWeight.get() / maxOutDegree;
-        } else {
+        if (maxEdgeWeight == 0) {
             return 1.0;
+        } else {
+            int maxOutDegree = graph.vertexSet().parallelStream().mapToInt(graph::outDegreeOf).max().orElse(0);
+            return maxEdgeWeight / maxOutDegree;
         }
     }
 
@@ -251,7 +250,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         graph.vertexSet().forEach(v -> {
             light.put(v, new HashSet<>());
             heavy.put(v, new HashSet<>());
-            verticesDataMap.putIfAbsent(v, new AtomicReference<>(Triple.of(-1, Double.POSITIVE_INFINITY, null)));
+            verticesDataMap.putIfAbsent(v, Triple.of(-1, Double.POSITIVE_INFINITY, null));
         });
         graph.vertexSet().parallelStream().forEach(v -> {
             for (E e : graph.outgoingEdgesOf(v)) {
@@ -273,7 +272,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         relax(source, null, 0.0);
 
         int firstNonEmptyBucket = 0;
-        while (firstNonEmptyBucket != -1) {
+        while (firstNonEmptyBucket <= numOfBuckets) {
             List<V> removed = new ArrayList<>();
             List<V> bucketElements = bucketElements(firstNonEmptyBucket);
             while (!bucketElements.isEmpty()) {
@@ -284,7 +283,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
                 bucketElements = bucketElements(firstNonEmptyBucket);
             }
             findAndRelaxRequests(removed, heavy);
-            firstNonEmptyBucket = firstNonEmptyBucket();
+            firstNonEmptyBucket++;
         }
         executor.shutdown();
         try {
@@ -365,15 +364,10 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      */
     private void relax(V v, E e, double distance) {
         boolean updated = false;
-        AtomicReference<Triple<Integer, Double, E>> dataReference = verticesDataMap.get(v);
         Triple<Integer, Double, E> updatedData = Triple.of(bucketIndex(distance), distance, e);
         while (!updated) {
-            Triple<Integer, Double, E> oldData = dataReference.get();
-            if (distance < oldData.getSecond()) {
-                updated = dataReference.compareAndSet(oldData, updatedData);
-            } else {
-                updated = true;
-            }
+            Triple<Integer, Double, E> oldData = verticesDataMap.get(v);
+            updated = !(distance < oldData.getSecond()) || verticesDataMap.replace(v, oldData, updatedData);
         }
     }
 
@@ -383,7 +377,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      * @return num of buckets
      */
     private int numOfBuckets() {
-        return getMaxEdgeWeight().map(maxWeight -> (int) (Math.ceil(maxWeight / delta) + 1)).orElse(1);
+        return (int) (Math.ceil(maxEdgeWeight / delta) + 1);
     }
 
     /**
@@ -397,18 +391,6 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
     }
 
     /**
-     * Finds index of the first non-empty bucket.
-     *
-     * @return index of the first non-empty buckets
-     */
-    private int firstNonEmptyBucket() {
-        return verticesDataMap.values().stream()
-                .mapToInt(triple -> triple.get().getFirst())
-                .filter(bucketIndex -> bucketIndex >= 0)
-                .min().orElse(-1);
-    }
-
-    /**
      * Finds all elements of the given {@code bucket}.
      *
      * @param bucket bucket index
@@ -416,7 +398,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      */
     private List<V> bucketElements(int bucket) {
         return verticesDataMap.entrySet().stream()
-                .filter(entry -> entry.getValue().get().getFirst() == bucket)
+                .filter(entry -> entry.getValue().getFirst() == bucket)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
@@ -430,8 +412,8 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
     private void clearBucket(int bucket) {
         List<V> bucketElements = bucketElements(bucket);
         for (V v : bucketElements) {
-            Triple<Integer, Double, E> data = verticesDataMap.get(v).get();
-            verticesDataMap.get(v).set(Triple.of(
+            Triple<Integer, Double, E> data = verticesDataMap.get(v);
+            verticesDataMap.put(v, Triple.of(
                     -1,
                     data.getSecond(),
                     data.getThird()
