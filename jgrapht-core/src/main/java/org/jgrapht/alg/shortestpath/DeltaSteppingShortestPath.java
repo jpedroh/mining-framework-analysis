@@ -126,8 +126,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
 
     private ExecutorService executor;
     private ExecutorCompletionService<Void> completionService;
-    private int parallelism;
-    private static final int NUMBER_OF_TASKS_TO_PARALLELISM_RATIO = 20;
+    private static final int NUMBER_OF_REQUESTS_PER_RELAX_TAKS = 2500;
 
     /**
      * Constructs a new instance of the algorithm for a given graph.
@@ -163,8 +162,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         light = new HashMap<>();
         heavy = new HashMap<>();
         verticesDataMap = new HashMap<>();
-        parallelism = Runtime.getRuntime().availableProcessors();
-        executor = Executors.newFixedThreadPool(parallelism);
+        executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         completionService = new ExecutorCompletionService<>(executor);
     }
 
@@ -305,12 +303,11 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      * @param edgesKind vertex to edges map
      */
     private void findAndRelaxRequests(List<V> vertices, Map<V, Set<E>> edgesKind) {
-        List<Runnable> tasks = new ArrayList<>();
-        generateTasks(vertices.spliterator(), edgesKind, vertices.size() / (parallelism * NUMBER_OF_TASKS_TO_PARALLELISM_RATIO) + 1, tasks);
+        List<Runnable> tasks = generateRelaxTasks(vertices, edgesKind);
         for (Runnable task : tasks) {
             completionService.submit(task, null);
         }
-        for(int i = 0; i < tasks.size(); i++){
+        for (int i = 0; i < tasks.size(); i++) {
             try {
                 completionService.take();
             } catch (InterruptedException e) {
@@ -319,18 +316,39 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         }
     }
 
-    private void generateTasks(Spliterator<V> spliterator, Map<V, Set<E>> edgesKind, int threshold, List<Runnable> tasks) {
-        if (spliterator.estimateSize() <= threshold) {
-            tasks.add(() -> spliterator.forEachRemaining(v -> {
+    private List<Runnable> generateRelaxTasks(List<V> vertices, Map<V, Set<E>> edgesKind) {
+        List<Runnable> tasks = new ArrayList<>();
+        int begin = 0;
+        int end = 0;
+        while (begin < vertices.size()) {
+            int numOfRequests = 0;
+            while (numOfRequests < NUMBER_OF_REQUESTS_PER_RELAX_TAKS && end < vertices.size()) {
+                numOfRequests += edgesKind.get(vertices.get(end)).size();
+                end++;
+            }
+            if (numOfRequests != 0) {
+                tasks.add(new RelaxTask(vertices.subList(begin, end), edgesKind));
+            }
+            begin = end;
+        }
+        return tasks;
+    }
+
+    class RelaxTask implements Runnable {
+        private List<V> vertices;
+        Map<V, Set<E>> edgesKind;
+
+        RelaxTask(List<V> vertices, Map<V, Set<E>> edgesKind) {
+            this.vertices = vertices;
+            this.edgesKind = edgesKind;
+        }
+
+        @Override
+        public void run() {
+            for (V v : vertices) {
                 for (E e : edgesKind.get(v)) {
                     relax(Graphs.getOppositeVertex(graph, e, v), e, verticesDataMap.get(v).get().getSecond() + graph.getEdgeWeight(e));
                 }
-            }));
-        } else {
-            Spliterator<V> subSpliterator = spliterator.trySplit();
-            generateTasks(spliterator, edgesKind, threshold, tasks);
-            if (subSpliterator != null) {
-                generateTasks(subSpliterator, edgesKind, threshold, tasks);
             }
         }
     }

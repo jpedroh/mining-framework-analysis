@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Semen Chudakov
  */
-@BenchmarkMode(Mode.SampleTime)
+@BenchmarkMode(Mode.AverageTime)
 @Fork(value = 1, warmups = 0)
 @Warmup(iterations = 3, time = 10)
 @Measurement(iterations = 8, time = 10)
