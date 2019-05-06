@@ -14,9 +14,9 @@ import static org.junit.Assert.assertTrue;
 
 public class SerializationTestUtils
 {
-    private static String v1 = "v1";
-    private static String v2 = "v2";
-    private static String v3 = "v3";
+    private static final String v1 = "v1";
+    private static final String v2 = "v2";
+    private static final String v3 = "v3";
     private static final List<String> vertexList = Arrays.asList(v1, v2, v3);
 
     public static String getV1()
@@ -53,13 +53,6 @@ public class SerializationTestUtils
 
         obj = in.readObject();
         return obj;
-    }
-
-    public static void addAllVertices(Graph<String, DefaultEdge> graph, List<String> vertices)
-    {
-        for (String v : vertices) {
-            graph.addVertex(v);
-        }
     }
 
     public static <V, E> void assertContainsAllVertices(Graph<V, E> graph, List<V> vertices)
