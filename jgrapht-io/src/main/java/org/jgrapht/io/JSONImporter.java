@@ -30,37 +30,20 @@ import java.util.*;
  * Imports a graph from a JSON file.
  * 
  * <p>
- * For a description of the format see <a href="http://www.infosun.fmi.uni-passau.de/Graphlet/GML/">
- * http://www.infosun.fmi.uni-passau.de/Graphlet/GML/</a>.
- *
- * <p>
- * Below is small example of a graph in GML format.
+ * Below is small example of a graph in JSON format.
  * 
  * <pre>
- * graph [
- *   node [ 
- *     id 1
+ * {
+ *   "nodes": [
+ *     { "id": "1" },
+ *     { "id": "2", "label": "Node 2 label" },
+ *     { "id": "3" },
+ *   ],
+ *   "edges": [
+ *     { "source": "1", "target": "2", "weight": 2.0, "label": "Edge between 1 and 2" },
+ *     { "source": "2", "target": "3", "weight": 3.0, "label": "Edge between 2 and 3" }
  *   ]
- *   node [
- *     id 2
- *     label "Node 2 has an optional label"
- *   ]
- *   node [
- *     id 3
- *   ]
- *   edge [
- *     source 1
- *     target 2 
- *     weight 2.0
- *     label "Edge between 1 and 2"
- *   ]
- *   edge [
- *     source 2
- *     target 3
- *     weight 3.0
- *     label "Edge between 2 and 3"
- *   ]
- * ]
+ * } 
  * </pre>
  * 
  * <p>
@@ -441,7 +424,18 @@ public class JSONImporter<V, E>
 
             // other
             String other = ctx.getText();
-            return DefaultAttribute.createAttribute(other);
+            if (other != null) { 
+                if ("true".equals(other)) { 
+                    return DefaultAttribute.createAttribute(Boolean.TRUE);
+                } else if ("false".equals(other)) { 
+                    return DefaultAttribute.createAttribute(Boolean.FALSE);
+                } else if ("null".equals(other)) {
+                    return DefaultAttribute.NULL;
+                } else { 
+                    return DefaultAttribute.createAttribute(other);        
+                }
+            }
+            return DefaultAttribute.NULL;
         }
 
         private String unquote(String value)
@@ -475,7 +469,8 @@ public class JSONImporter<V, E>
                 return Long.valueOf(tn.getText(), 10).toString();
             } catch (NumberFormatException e) {
             }
-            return null;
+            
+            throw new IllegalArgumentException("Failed to read valid identifier");
         }
 
     }
