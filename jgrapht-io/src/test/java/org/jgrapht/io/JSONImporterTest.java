@@ -209,7 +209,7 @@ public class JSONImporterTest
                 (from, to, label, attributes) -> g.getEdgeSupplier().get());
         importer.importGraph(g, new StringReader(input));
     }
-    
+
     @Test
     public void testWeightsOnWeighted()
         throws ImportException
@@ -253,7 +253,7 @@ public class JSONImporterTest
         assertEquals(3.0, g.getEdgeWeight(g.getEdge("1", "3")), 1e-9);
         assertEquals(1.0, g.getEdgeWeight(g.getEdge("2", "3")), 1e-9);
     }
-    
+
     @Test
     public void testWeightsOnUnweighted()
         throws ImportException
@@ -297,7 +297,7 @@ public class JSONImporterTest
         assertEquals(1.0, g.getEdgeWeight(g.getEdge("1", "3")), 1e-9);
         assertEquals(1.0, g.getEdgeWeight(g.getEdge("2", "3")), 1e-9);
     }
-    
+
     @Test
     public void testNodeAttributes()
         throws ImportException
@@ -344,7 +344,7 @@ public class JSONImporterTest
         assertEquals(0, g.edgeSet().size());
         assertTrue(g.containsVertex("1"));
     }
-    
+
     @Test
     public void testEdgeAttributes()
         throws ImportException
@@ -369,24 +369,23 @@ public class JSONImporterTest
         VertexProvider<String> vp = (id, attributes) -> {
             return id;
         };
-        EdgeProvider<String, DefaultEdge> ep =
-            (from, to, label, attributes) -> {
-                if (from.equals("1") && to.equals("1")) { 
-                    assertTrue(attributes.get("label").getType().equals(AttributeType.STRING));
-                    assertTrue(attributes.get("label").getValue().equals("Label"));
-                    assertTrue(attributes.get("int").getType().equals(AttributeType.INT));
-                    assertTrue(attributes.get("int").getValue().equals("4"));
-                    assertTrue(attributes.get("double").getType().equals(AttributeType.DOUBLE));
-                    assertTrue(attributes.get("double").getValue().equals("0.5"));
-                    assertTrue(attributes.get("boolean").getType().equals(AttributeType.BOOLEAN));
-                    assertTrue(attributes.get("boolean").getValue().equals("true"));
-                    assertTrue(attributes.get("boolean1").getType().equals(AttributeType.BOOLEAN));
-                    assertTrue(attributes.get("boolean1").getValue().equals("false"));
-                    assertTrue(attributes.get("novalue").getType().equals(AttributeType.NULL));
-                    assertTrue(attributes.get("novalue").getValue().equals("null"));
-                }
-                return g.getEdgeSupplier().get();
-            };
+        EdgeProvider<String, DefaultEdge> ep = (from, to, label, attributes) -> {
+            if (from.equals("1") && to.equals("1")) {
+                assertTrue(attributes.get("label").getType().equals(AttributeType.STRING));
+                assertTrue(attributes.get("label").getValue().equals("Label"));
+                assertTrue(attributes.get("int").getType().equals(AttributeType.INT));
+                assertTrue(attributes.get("int").getValue().equals("4"));
+                assertTrue(attributes.get("double").getType().equals(AttributeType.DOUBLE));
+                assertTrue(attributes.get("double").getValue().equals("0.5"));
+                assertTrue(attributes.get("boolean").getType().equals(AttributeType.BOOLEAN));
+                assertTrue(attributes.get("boolean").getValue().equals("true"));
+                assertTrue(attributes.get("boolean1").getType().equals(AttributeType.BOOLEAN));
+                assertTrue(attributes.get("boolean1").getValue().equals("false"));
+                assertTrue(attributes.get("novalue").getType().equals(AttributeType.NULL));
+                assertTrue(attributes.get("novalue").getValue().equals("null"));
+            }
+            return g.getEdgeSupplier().get();
+        };
 
         JSONImporter<String, DefaultEdge> importer = new JSONImporter<>(vp, ep);
         importer.importGraph(g, new StringReader(input));
@@ -394,6 +393,95 @@ public class JSONImporterTest
         assertEquals(1, g.vertexSet().size());
         assertEquals(1, g.edgeSet().size());
         assertTrue(g.containsVertex("1"));
+    }
+
+    @Test
+    public void testNestedAttributes()
+        throws ImportException
+    {
+        // @formatter:off
+        String input = "{\n"
+                     + "  \"nodes\": [\n"
+                     + "  { \"id\":\"1\", \"custom\": { \"pi\": 3.14 } },\n"            
+                     + "  { \"id\":\"2\", \"array\": [ { \"obj\": 3.14 } ] }\n"
+                     + "  ],\n"
+                     + "  \"edges\": [\n"
+                     + "  { \"source\":\"1\", \"target\": \"2\", \"array\": [ { \"key1\": 1 }, { \"key2\": 2 } ] },\n"
+                     + "  { \"source\":\"2\", \"target\": \"1\", \"obj\": { \"key1\": [ { \"key1\": 1 }, { \"key2\": 2 } ] } }\n"
+                     + "  ]\n"
+                     + "}";
+        // @formatter:on
+
+        Graph<String,
+            DefaultEdge> g = GraphTypeBuilder
+                .undirected().allowingMultipleEdges(true).allowingSelfLoops(true).weighted(false)
+                .vertexSupplier(SupplierUtil.createStringSupplier())
+                .edgeSupplier(SupplierUtil.DEFAULT_EDGE_SUPPLIER).buildGraph();
+
+        VertexProvider<String> vp = (id, attributes) -> {
+            if (id.equals("1")) {
+                assertTrue(attributes.get("custom").getType().equals(AttributeType.UNKNOWN));
+                assertTrue(attributes.get("custom").getValue().equals("{\"pi\":3.14}"));
+            } else if (id.equals("2")) {
+                assertTrue(attributes.get("array").getType().equals(AttributeType.UNKNOWN));
+                assertTrue(attributes.get("array").getValue().equals("[{\"obj\":3.14}]"));
+            }
+            return id;
+        };
+        EdgeProvider<String, DefaultEdge> ep = (from, to, label, attributes) -> {
+            if (from.equals("1") && to.equals("2")) {
+                assertTrue(attributes.get("array").getType().equals(AttributeType.UNKNOWN));
+                assertTrue(attributes.get("array").getValue().equals("[{\"key1\":1},{\"key2\":2}]"));
+            } else if (from.equals("2") && to.equals("1")) {
+                assertTrue(attributes.get("obj").getType().equals(AttributeType.UNKNOWN));
+                assertTrue(attributes.get("obj").getValue().equals("{\"key1\":[{\"key1\":1},{\"key2\":2}]}"));
+            }
+            return g.getEdgeSupplier().get();
+        };
+
+        JSONImporter<String, DefaultEdge> importer = new JSONImporter<>(vp, ep);
+        importer.importGraph(g, new StringReader(input));
+
+        assertEquals(2, g.vertexSet().size());
+        assertEquals(2, g.edgeSet().size());
+        assertTrue(g.containsVertex("1"));
+        assertTrue(g.containsVertex("2"));
+    }
+    
+    @Test
+    public void testSingletons()
+        throws ImportException
+    {
+        // @formatter:off
+        String input = "{\n"
+                     + "  \"nodes\": [\n"    
+                     + "  { \"id\":\"1\" },\n"
+                     + "  { \"id\":\"2\" },\n"
+                     + "  { },\n"
+                     + "  { }\n"
+                     + "  ],\n"
+                     + "  \"edges\": [\n"    
+                     + "  { \"source\":\"1\", \"target\":\"2\" }\n"
+                     + "  ]\n"
+                     + "}";
+        // @formatter:on
+
+        Graph<String,
+            DefaultEdge> g = GraphTypeBuilder
+                .undirected().allowingMultipleEdges(true).allowingSelfLoops(true)
+                .vertexSupplier(SupplierUtil.createStringSupplier())
+                .edgeSupplier(SupplierUtil.DEFAULT_EDGE_SUPPLIER).buildGraph();
+
+        VertexProvider<String> vp = (label, attributes) -> label;
+        EdgeProvider<String, DefaultEdge> ep =
+            (from, to, label, attributes) -> g.getEdgeSupplier().get();
+
+        JSONImporter<String, DefaultEdge> importer = new JSONImporter<>(vp, ep);
+        importer.importGraph(g, new StringReader(input));
+
+        assertEquals(4, g.vertexSet().size());
+        assertEquals(1, g.edgeSet().size());
+
     }
 
 }
