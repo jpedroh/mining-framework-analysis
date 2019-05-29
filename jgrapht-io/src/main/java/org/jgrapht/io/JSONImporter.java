@@ -27,7 +27,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Imports a graph from a JSON file.
+ * Imports a graph from a <a href="https://tools.ietf.org/html/rfc8259">JSON</a> file.
  * 
  * <p>
  * Below is small example of a graph in JSON format.
@@ -68,7 +68,7 @@ import java.util.*;
  * }
  * </pre>
  * 
- * the points attribute of the edge is returned as a string containing "{"x":1.0,"y":2.0}". The same is 
+ * the points attribute of the edge is returned as a string containing {"x":1.0,"y":2.0}. The same is 
  * done for arrays or any other arbitrary nested structure. 
  * 
  * @param <V> the vertex type
