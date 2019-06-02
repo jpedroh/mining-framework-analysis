@@ -29,69 +29,48 @@ import java.util.*;
 import java.util.function.Supplier;
 
 /**
- * Imports a graph from a JSON file.
+ * Imports a graph from a <a href="https://tools.ietf.org/html/rfc8259">JSON</a> file.
  * 
- * <p>
- * For a description of the format see <a href="http://www.infosun.fmi.uni-passau.de/Graphlet/GML/">
- * http://www.infosun.fmi.uni-passau.de/Graphlet/GML/</a>.
- *
- * <p>
  * Below is a small example of a graph in GML format.
  * 
  * <pre>
- * graph [
- *   node [ 
- *     id 1
+ * {
+ *   "nodes": [
+ *     { "id": "1" },
+ *     { "id": "2", "label": "Node 2 label" },
+ *     { "id": "3" }
+ *   ],
+ *   "edges": [
+ *     { "source": "1", "target": "2", "weight": 2.0, "label": "Edge between 1 and 2" },
+ *     { "source": "2", "target": "3", "weight": 3.0, "label": "Edge between 2 and 3" }
  *   ]
- *   node [
- *     id 2
- *     label "Node 2 has an optional label"
- *   ]
- *   node [
- *     id 3
- *   ]
- *   edge [
- *     source 1
- *     target 2 
- *     weight 2.0
- *     label "Edge between 1 and 2"
- *   ]
- *   edge [
- *     source 2
- *     target 3
- *     weight 3.0
- *     label "Edge between 2 and 3"
- *   ]
- * ]
+ * } 
  * </pre>
  * 
  * <p>
  * In case the graph is weighted then the importer also reads edge weights. Otherwise edge weights
  * are ignored. The importer also supports reading additional string attributes such as label or
- * custom user attributes. String attributes are unescaped as if they are Java strings.
+ * custom user attributes.
  * 
  * <p>
  * The parser completely ignores elements from the input that are not related to vertices or edges
- * of the graph. Moreover, complicated nested structures are simply returned as a whole. For
- * example, in the following graph
+ * of the graph. Moreover, complicated nested structures which are inside vertices or edges are simply
+ * returned as a whole. For example, in the following graph
  * 
  * <pre>
- * graph [
- *   node [ 
- *     id 1
+ * {
+ *   "nodes": [
+ *     { "id": "1" },
+ *     { "id": "2" }
+ *   ],
+ *   "edges": [
+ *     { "source": "1", "target": "2", "points": { "x": 1.0, "y": 2.0 } }
  *   ]
- *   node [ 
- *     id 2
- *   ]
- *   edge [
- *     source 1
- *     target 2 
- *     points [ x 1.0 y 2.0 ]
- *   ]
- * ]
+ * }
  * </pre>
  * 
- * the points attribute of the edge is returned as a string containing "[ x 1.0 y 2.0 ]".
+ * the points attribute of the edge is returned as a string containing {"x":1.0,"y":2.0}. The same is 
+ * done for arrays or any other arbitrary nested structure. 
  * 
  * @param <V> the vertex type
  * @param <E> the edge type
@@ -211,7 +190,6 @@ public class JSONImporter<V, E>
         private String sourceId;
         private String targetId;
         private Map<String, Attribute> attributes;
-        private StringBuilder stringBuffer;
 
         // collected nodes and edges
         private Map<String, Node> nodes;
@@ -397,19 +375,21 @@ public class JSONImporter<V, E>
         {
             String name = pairNames.element();
 
-            if (insideNode) {
-                if (ID.equals(name)) {
-                    nodeId = readIdentifier(ctx);
-                } else {
-                    attributes.put(name, readAttribute(ctx));
-                }
-            } else if (insideEdge) {
-                if (SOURCE.equals(name)) {
-                    sourceId = readIdentifier(ctx);
-                } else if (TARGET.equals(name)) {
-                    targetId = readIdentifier(ctx);
-                } else {
-                    attributes.put(name, readAttribute(ctx));
+            if (objectLevel == 2 && arrayLevel < 2) { 
+                if (insideNode) {
+                    if (ID.equals(name)) {
+                        nodeId = readIdentifier(ctx);
+                    } else {
+                        attributes.put(name, readAttribute(ctx));
+                    }
+                } else if (insideEdge) {
+                    if (SOURCE.equals(name)) {
+                        sourceId = readIdentifier(ctx);
+                    } else if (TARGET.equals(name)) {
+                        targetId = readIdentifier(ctx);
+                    } else {
+                        attributes.put(name, readAttribute(ctx));
+                    }
                 }
             }
 
@@ -446,7 +426,18 @@ public class JSONImporter<V, E>
 
             // other
             String other = ctx.getText();
-            return DefaultAttribute.createAttribute(other);
+            if (other != null) { 
+                if ("true".equals(other)) { 
+                    return DefaultAttribute.createAttribute(Boolean.TRUE);
+                } else if ("false".equals(other)) { 
+                    return DefaultAttribute.createAttribute(Boolean.FALSE);
+                } else if ("null".equals(other)) {
+                    return DefaultAttribute.NULL;
+                } else { 
+                    return new DefaultAttribute<>(other, AttributeType.UNKNOWN);        
+                }
+            }
+            return DefaultAttribute.NULL;
         }
 
         private String unquote(String value)
@@ -480,7 +471,8 @@ public class JSONImporter<V, E>
                 return Long.valueOf(tn.getText(), 10).toString();
             } catch (NumberFormatException e) {
             }
-            return null;
+            
+            throw new IllegalArgumentException("Failed to read valid identifier");
         }
 
     }
