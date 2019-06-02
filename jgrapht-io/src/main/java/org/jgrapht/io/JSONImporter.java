@@ -22,9 +22,11 @@ import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
 import org.jgrapht.*;
 import org.jgrapht.io.JsonParser.JsonContext;
+import org.jgrapht.util.SupplierUtil;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Imports a graph from a JSON file.
@@ -34,7 +36,7 @@ import java.util.*;
  * http://www.infosun.fmi.uni-passau.de/Graphlet/GML/</a>.
  *
  * <p>
- * Below is small example of a graph in GML format.
+ * Below is a small example of a graph in GML format.
  * 
  * <pre>
  * graph [
@@ -231,10 +233,13 @@ public class JSONImporter<V, E>
             }
 
             // add singleton nodes
-            for (Node n : singletons) {
-                graph
-                    .addVertex(
-                        vertexProvider.buildVertex(UUID.randomUUID().toString(), n.attributes));
+            if (!singletons.isEmpty()) {
+                Supplier<String> singletonIdSupplier = SupplierUtil.createRandomUUIDStringSupplier();
+                for (Node n : singletons) {
+                    graph
+                        .addVertex(
+                            vertexProvider.buildVertex(singletonIdSupplier.get(), n.attributes));
+                }
             }
 
             // add edges
@@ -480,7 +485,7 @@ public class JSONImporter<V, E>
 
     }
 
-    private class Node
+    private static class Node
     {
         Map<String, Attribute> attributes;
 
@@ -490,7 +495,7 @@ public class JSONImporter<V, E>
         }
     }
 
-    private class PartialEdge
+    private static class PartialEdge
     {
         String source;
         String target;
