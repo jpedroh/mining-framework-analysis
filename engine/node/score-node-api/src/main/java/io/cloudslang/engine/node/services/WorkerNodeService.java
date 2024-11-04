@@ -1,285 +1,72 @@
-/*
- * Copyright © 2014-2017 EntIT Software LLC, a Micro Focus company (L.P.)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.cloudslang.engine.node.services;
-
 import com.google.common.collect.Multimap;
 import io.cloudslang.engine.node.entities.WorkerKeepAliveInfo;
 import io.cloudslang.engine.node.entities.WorkerNode;
 import io.cloudslang.score.api.nodes.WorkerStatus;
-
 import java.util.List;
 
-/**
- * Created by IntelliJ IDEA.
- * User:
- * Date: 08/11/12
- * <p>
- * A service responsible for handling a worker node record
- */
 public interface WorkerNodeService {
+  String keepAlive(String uuid);
 
-    /**
-     * Update the Worker Node entity with the current ack version for the keep alive mechanism
-     *
-     * @param uuid worker's unique identifier
-     *             Maintained for backward compatibility only
-     * @return the worker's recovery version (WRV)
-     */
-    String keepAlive(String uuid);
+  WorkerKeepAliveInfo newKeepAlive(String uuid);
 
-    /**
-     * Update the Worker Node entity with the current ack version for the keep alive mechanism
-     *
-     * @param uuid worker's unique identifier
-     * @return the WorkerKeepAliveInfo that contains the worker's recovery version (WRV) and the enable state
-     */
-    WorkerKeepAliveInfo newKeepAlive(String uuid);
+  void create(String uuid, String password, String hostName, String installDir);
 
-    /**
-     * Create a new worker
-     *
-     * @param uuid       worker's unique identifier
-     * @param password   worker's password
-     * @param hostName   worker's host
-     * @param installDir worker's installation directory
-     */
-    void create(String uuid, String password, String hostName, String installDir);
+  void updateWorkerToDeleted(String uuid);
 
-    /**
-     * update a worker record to IS_DELETED state
-     *
-     * @param uuid the uuid of the worker to mark deleted
-     */
-    void updateWorkerToDeleted(String uuid);
+  void updateWorkerToNotDeleted(String uuid);
 
-    /**
-     * update a worker record to its not deleted state
-     *
-     * @param uuid the uuid of the worker to mark as not deleted
-     */
-    void updateWorkerToNotDeleted(String uuid);
+  List<WorkerNode> readAllNotDeletedWorkers();
 
-    /**
-     * Reads all of the workers that are not marked with the IS_DELETED flag
-     *
-     * @return a List of {@link io.cloudslang.engine.node.entities.WorkerNode} that are ont marked with
-     * the IS_DELETED flag
-     */
-    List<WorkerNode> readAllNotDeletedWorkers();
+  String up(String uuid, String version, String versionId);
 
-    /**
-     * Notifies the orchestrator that a worker went up
-     *
-     * @param uuid      the the uuid of the worker that went up
-     * @param version   the version of the worker that went up
-     * @param versionId the versionId of the worker that went up
-     * @return a String of the current recovery version of the worker
-     */
-    String up(String uuid, String version, String versionId);
+  String up(String uuid);
 
-    /**
-     * Notifies the orchestrator that a worker went up
-     *
-     * @param uuid the the uuid of the worker that went up
-     * @return a String of the current recovery version of the worker
-     */
-    String up(String uuid);
+  WorkerNode readByUUID(String uuid);
 
-    /**
-     * find not deleted worker by uuid
-     *
-     * @param uuid the uuid of the worker to find
-     * @return a {@link io.cloudslang.engine.node.entities.WorkerNode} of the requested worker
-     */
-    WorkerNode readByUUID(String uuid);
+  boolean isActive(String workerUuid);
 
-    /**
-     * Returns active status of the worker according to the worker UUID
-     *
-     * @param workerUuid
-     * @return
-     */
-    boolean isActive(String workerUuid);
+  WorkerNode findByUuid(String uuid);
 
-    /**
-     * find worker without relating to the IS_DELETED property
-     *
-     * @param uuid the uuid of the worker to find
-     * @return a {@link io.cloudslang.engine.node.entities.WorkerNode} of the requested worker
-     */
-    WorkerNode findByUuid(String uuid);
+  List<WorkerNode> readAllWorkers();
 
-    /**
-     * Reads all of the workers records
-     *
-     * @return a List of all existing {@link io.cloudslang.engine.node.entities.WorkerNode}
-     */
-    List<WorkerNode> readAllWorkers();
+  List<String> readNonRespondingWorkers();
 
-    /**
-     * Read all of the worker that didn't send keep alive for a certain amount of time
-     *
-     * @return a List of String of the non-responding worker ids
-     */
-    List<String> readNonRespondingWorkers();
+  List<WorkerNode> readWorkersByActivation(boolean isActive);
 
-    /**
-     * read all worker that there activation status is as a given status
-     *
-     * @param isActive the requested activation status.
-     * @return a List of all {@link io.cloudslang.engine.node.entities.WorkerNode} the their
-     * activation status is as the given status
-     */
-    List<WorkerNode> readWorkersByActivation(boolean isActive);
+  void activate(String uuid);
 
-    /**
-     * activates a worker
-     *
-     * @param uuid the uuid of the worker to activate
-     */
-    void activate(String uuid);
+  void deactivate(String uuid);
 
-    /**
-     * deactivate a worker
-     *
-     * @param uuid the uuid of the worker to deactivate
-     */
-    void deactivate(String uuid);
+  void updateEnvironmentParams(String uuid, String os, String jvm, String dotNetVersion);
 
-    /**
-     * updates the environment params of a given worker
-     *
-     * @param uuid          the uuid of the worker to update
-     * @param os            the operating system the worker is running on
-     * @param jvm           the jvm version the worker is running on
-     * @param dotNetVersion the dot-net version the worker is using
-     */
-    void updateEnvironmentParams(String uuid, String os, String jvm, String dotNetVersion);
+  void updateStatus(String uuid, WorkerStatus status);
 
-    /**
-     * updates the status of a given worker
-     *
-     * @param uuid   the uuid of the worker to update
-     * @param status the status to update the given worker to
-     */
-    void updateStatus(String uuid, WorkerStatus status);
+  void updateWorkerBusynessValue(String uuid, int workerBusynessValue);
 
-    /**
-     * updates the status of a given worker in a separate transaction
-     *
-     * @param uuid   the uuid of the worker to update
-     * @param status the status to update the given worker to
-     */
-    void updateWorkerBusynessValue(String uuid, int workerBusynessValue);
-    void updateStatusInSeparateTransaction(String uuid, WorkerStatus status);
+  void updateStatusInSeparateTransaction(String uuid, WorkerStatus status);
 
-    /**
-     * updates the migration password field of a worker node
-     *
-     * @param uuid   the uuid of the worker to update
-     * @param password the migrated password to be used
-     */
-    void migratePassword(String uuid, String password);
+  List<String> readAllWorkerGroups();
 
-    /**
-     * Reads all of the worker groups
-     *
-     * @return a List of String of all existing worker groups
-     */
-    List<String> readAllWorkerGroups();
+  List<String> readWorkerGroups(String uuid);
 
-    /**
-     * Read all of the groups associated with a worker
-     *
-     * @param uuid the the uuid of the worker to find groups for
-     * @return a List of String of the associated group names
-     */
-    List<String> readWorkerGroups(String uuid);
+  void updateWorkerGroups(String uuid, String... groupNames);
 
-    /**
-     * updates the groups associated with a worker
-     *
-     * @param uuid       the uuid of the worker to update groups for
-     * @param groupNames the groups to associate with the worker
-     */
-    void updateWorkerGroups(String uuid, String... groupNames);
+  Multimap<String, String> readGroupWorkersMapActiveAndRunningAndVersion(String versionId);
 
-    /**
-     * Reads all of the worker that are active and running and their groups
-     *
-     * @param versionId - the version of workers
-     * @return A {@link com.google.common.collect.Multimap} of the
-     * active and running workers in specific version and their groups
-     */
-    Multimap<String, String> readGroupWorkersMapActiveAndRunningAndVersion(String versionId);
+  void addGroupToWorker(String workerUuid, String group);
 
-    /**
-     * adds group to be associated with a worker
-     *
-     * @param workerUuid the uuid of the worker to associate the group to
-     * @param group      the group to associate with the worker
-     */
-    void addGroupToWorker(String workerUuid, String group);
+  void removeGroupFromWorker(String workerUuid, String group);
 
-    /**
-     * removes a group association with a worker
-     *
-     * @param workerUuid the uuid of the worker to remove the group association from
-     * @param group      the group to remove its association from the worker
-     */
-    void removeGroupFromWorker(String workerUuid, String group);
+  List<String> readWorkerGroups(List<String> groups);
 
-    /**
-     * Reads all of the groups that matches the given group names
-     *
-     * @param groups the group names to match
-     * @return t List of String of the matched groups
-     */
-    List<String> readWorkerGroups(List<String> groups);
+  void updateBulkNumber(String workerUuid, String bulkNumber);
 
-    /**
-     * updates the worker recovery bulk number
-     *
-     * @param workerUuid the uuid of the worker to update
-     * @param bulkNumber the new recovery bulk number
-     */
-    void updateBulkNumber(String workerUuid, String bulkNumber);
+  void updateWRV(String workerUuid, String wrv);
 
-    /**
-     * updates the worker recovery version of a given worker
-     *
-     * @param workerUuid the uuid of the worker to update
-     * @param wrv        the new worker recovery version
-     */
-    void updateWRV(String workerUuid, String wrv);
+  List<String> readAllWorkersUuids();
 
-    /**
-     * Read all workers uuids
-     *
-     * @return a List of String of the worker uuids
-     */
-    List<String> readAllWorkersUuids();
+  void updateVersion(String workerUuid, String version, String versionId);
 
-    /**
-     * updates the worker version of a given worker
-     *
-     * @param workerUuid the uuid of the worker to update
-     * @param version    the worker's version
-     * @param versionId  comparable worker's version
-     */
-    void updateVersion(String workerUuid, String version, String versionId);
+  void migratePassword(String uuid, String password);
 }
