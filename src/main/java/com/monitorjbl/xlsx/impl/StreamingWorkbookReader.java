@@ -1,5 +1,4 @@
 package com.monitorjbl.xlsx.impl;
-
 import com.monitorjbl.xlsx.StreamingReader.Builder;
 import com.monitorjbl.xlsx.exceptions.OpenException;
 import com.monitorjbl.xlsx.exceptions.ReadException;
@@ -23,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
@@ -38,45 +36,39 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import static com.monitorjbl.xlsx.XmlUtils.document;
 import static com.monitorjbl.xlsx.XmlUtils.searchForNodeList;
-import static com.monitorjbl.xlsx.impl.TempFileUtil.writeInputStreamToFile;
 import static java.util.Arrays.asList;
+import static com.monitorjbl.xlsx.impl.TempFileUtil.writeInputStreamToFile;
 
 public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
   private static final Logger log = LoggerFactory.getLogger(StreamingWorkbookReader.class);
 
   private static final Supplier COMMENTS_NOT_ENABLED = new Supplier() {
-    @Override
-    public Object getContent() {
+    @Override public Object getContent() {
       throw new UnsupportedOperationException("Comments parsing is not enabled. Use StreamingReader.Builder.readComments().open(File);");
     }
   };
 
   private final List<StreamingSheet> sheets;
+
   private final List<Map<String, String>> sheetProperties = new ArrayList<>();
+
   private final Builder builder;
+
   private File tmp;
+
   private File sstCache;
+
   private OPCPackage pkg;
+
   private SharedStringsTable sst;
+
   private boolean use1904Dates = false;
+
   private StylesTable styles;
 
-  /**
-   * This constructor exists only so the StreamingReader can instantiate
-   * a StreamingWorkbook using its own reader implementation. Do not use
-   * going forward.
-   *
-   * @param sst      The SST data for this workbook
-   * @param sstCache The backing cache file for the SST data
-   * @param pkg      The POI package that should be closed when this workbook is closed
-   * @param reader   A single streaming reader instance
-   * @param builder  The builder containing all options
-   */
-  @Deprecated
-  public StreamingWorkbookReader(SharedStringsTable sst, File sstCache, OPCPackage pkg, StreamingSheetReader reader, Builder builder) {
+  @Deprecated public StreamingWorkbookReader(SharedStringsTable sst, File sstCache, OPCPackage pkg, StreamingSheetReader reader, Builder builder) {
     this.sst = sst;
     this.sstCache = sstCache;
     this.pkg = pkg;
@@ -98,13 +90,12 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
     try {
       f = writeInputStreamToFile(is, builder.getBufferSize());
       log.debug("Created temp file [" + f.getAbsolutePath() + "]");
-
       init(f);
       tmp = f;
-    } catch(IOException e) {
+    } catch (IOException e) {
       throw new ReadException("Unable to read input stream", e);
-    } catch(RuntimeException e) {
-      if(f != null) {
+    } catch (RuntimeException e) {
+      if (f != null) {
         f.delete();
       }
       throw e;
@@ -113,8 +104,7 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
 
   public void init(File f) {
     try {
-      if(builder.getPassword() != null) {
-        // Based on: https://poi.apache.org/encryption.html
+      if (builder.getPassword() != null) {
         POIFSFileSystem poifs = new POIFSFileSystem(f);
         EncryptionInfo info = new EncryptionInfo(poifs);
         Decryptor d = Decryptor.getInstance(info);
@@ -123,31 +113,28 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
       } else {
         pkg = OPCPackage.open(f);
       }
-
       XSSFReader reader = new XSSFReader(pkg);
-      if(builder.getSstCacheSize() > 0) {
+      if (builder.getSstCacheSize() > 0) {
         sstCache = Files.createTempFile("", "").toFile();
         log.debug("Created sst cache file [" + sstCache.getAbsolutePath() + "]");
         sst = BufferedStringsTable.getSharedStringsTable(sstCache, builder.getSstCacheSize(), pkg);
       } else {
         sst = reader.getSharedStringsTable();
       }
-
       styles = reader.getStylesTable();
       NodeList workbookPr = searchForNodeList(document(reader.getWorkbookData()), "/workbook/workbookPr");
-      if(workbookPr.getLength() == 1) {
+      if (workbookPr.getLength() == 1) {
         final Node date1904 = workbookPr.item(0).getAttributes().getNamedItem("date1904");
-        if(date1904 != null) {
+        if (date1904 != null) {
           use1904Dates = ("1".equals(date1904.getTextContent()));
         }
       }
-
       loadSheets(reader, sst, styles, pkg, builder.getRowCacheSize());
-    } catch(IOException e) {
+    } catch (IOException e) {
       throw new OpenException("Failed to open file", e);
-    } catch(OpenXML4JException | XMLStreamException e) {
+    } catch (OpenXML4JException | XMLStreamException e) {
       throw new ReadException("Unable to read workbook", e);
-    } catch(GeneralSecurityException e) {
+    } catch (GeneralSecurityException e) {
       throw new ReadException("Unable to read workbook - Decryption failed", e);
     }
   }
@@ -163,23 +150,16 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
     return styles;
   }
 
-  void loadSheets(XSSFReader reader, SharedStringsTable sst, StylesTable stylesTable, OPCPackage opcPackage, int rowCacheSize) throws IOException, InvalidFormatException,
-      XMLStreamException {
+  void loadSheets(XSSFReader reader, SharedStringsTable sst, StylesTable stylesTable, OPCPackage opcPackage, int rowCacheSize) throws IOException, InvalidFormatException, XMLStreamException {
     lookupSheetNames(reader);
-
-    //Some workbooks have multiple references to the same sheet. Need to filter
-    //them out before creating the XMLEventReader by keeping track of their URIs.
-    //The sheets are listed in order, so we must keep track of insertion order.
     SheetIterator iter = (SheetIterator) reader.getSheetsData();
     Map<URI, InputStream> sheetStreams = new LinkedHashMap<>();
-    while(iter.hasNext()) {
+    while (iter.hasNext()) {
       InputStream is = iter.next();
       sheetStreams.put(iter.getSheetPart().getPartName().getURI(), is);
     }
-
-    //Iterate over the loaded streams
     int i = 0;
-    for(URI uri : sheetStreams.keySet()) {
+    for (URI uri : sheetStreams.keySet()) {
       Supplier cts = getCommentsTable(opcPackage, uri);
       XMLEventReader parser = StaxHelper.newXMLInputFactory().createXMLEventReader(sheetStreams.get(uri));
       StreamingSheetReader streamingSheetReader = new StreamingSheetReader(sst, stylesTable, parser, use1904Dates, rowCacheSize);
@@ -193,10 +173,9 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
   void lookupSheetNames(XSSFReader reader) throws IOException, InvalidFormatException {
     sheetProperties.clear();
     NodeList nl = searchForNodeList(document(reader.getWorkbookData()), "/workbook/sheets/sheet");
-    for(int i = 0; i < nl.getLength(); i++) {
+    for (int i = 0; i < nl.getLength(); i++) {
       Map<String, String> props = new HashMap<>();
       props.put("name", nl.item(i).getAttributes().getNamedItem("name").getTextContent());
-
       Node state = nl.item(i).getAttributes().getNamedItem("state");
       props.put("state", state == null ? "visible" : state.getTextContent());
       sheetProperties.add(props);
@@ -211,27 +190,25 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
     return sheetProperties;
   }
 
-  @Override
-  public Iterator<Sheet> iterator() {
+  @Override public Iterator<Sheet> iterator() {
     return new StreamingSheetIterator(sheets.iterator());
   }
 
-  @Override
-  public void close() throws IOException {
+  @Override public void close() throws IOException {
     try {
-      for(StreamingSheet sheet : sheets) {
+      for (StreamingSheet sheet : sheets) {
         sheet.getReader().close();
       }
       pkg.revert();
-    } finally {
-      if(tmp != null) {
-        if(log.isDebugEnabled()) {
+    }  finally {
+      if (tmp != null) {
+        if (log.isDebugEnabled()) {
           log.debug("Deleting tmp file [" + tmp.getAbsolutePath() + "]");
         }
         tmp.delete();
       }
-      if(sst instanceof BufferedStringsTable) {
-        if(log.isDebugEnabled()) {
+      if (sst instanceof BufferedStringsTable) {
+        if (log.isDebugEnabled()) {
           log.debug("Deleting sst cache file [" + this.sstCache.getAbsolutePath() + "]");
         }
         ((BufferedStringsTable) sst).close();
@@ -247,25 +224,24 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
       this.iterator = iterator;
     }
 
-    @Override
-    public boolean hasNext() {
+    @Override public boolean hasNext() {
       return iterator.hasNext();
     }
 
-    @Override
-    public Sheet next() {
+    @Override public Sheet next() {
       return iterator.next();
     }
 
-    @Override
-    public void remove() {
+    @Override public void remove() {
       throw new RuntimeException("NotSupported");
     }
   }
 
   static class CommentsTableSupplier implements Supplier {
     private final OPCPackage opcPackage;
+
     private final URI sheetUri;
+
     private CommentsTable commentsTable;
 
     CommentsTableSupplier(OPCPackage opcPackage, URI sheetUri) {
@@ -273,8 +249,7 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
       this.sheetUri = sheetUri;
     }
 
-    @Override
-    public CommentsTable getContent() {
+    @Override public CommentsTable getContent() {
       if (commentsTable == null) {
         try {
           commentsTable = resolveCommentsTable();
@@ -286,13 +261,11 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
     }
 
     private CommentsTable resolveCommentsTable() throws IOException {
-      // selects comments file based on the described relation in the sheet relations file
-      // comments select cannot be done by index as files index vary depending if the given sheet has any comments or not
       ArrayList<PackagePart> relations = opcPackage.getPartsByContentType("application/vnd.openxmlformats-package.relationships+xml");
       String sheetName = sheetUri.getPath().substring(sheetUri.getPath().lastIndexOf('/'));
       for (PackagePart part : relations) {
         if (part.getPartName().getURI().toString().contains(sheetName)) {
-          NodeList commentsRelationNode = searchForNodeList(document(part.getInputStream()), "//Relationship[@Type='" + XSSFRelation.SHEET_COMMENTS.getRelation() + "']");
+          NodeList commentsRelationNode = searchForNodeList(document(part.getInputStream()), "//Relationship[@Type=\'" + XSSFRelation.SHEET_COMMENTS.getRelation() + "\']");
           if (commentsRelationNode.getLength() > 0) {
             String commentsPath = commentsRelationNode.item(0).getAttributes().getNamedItem("Target").getNodeValue();
             commentsPath = commentsPath.substring(commentsPath.lastIndexOf('/'));
@@ -305,8 +278,6 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
           }
         }
       }
-      // no comments file for the current sheet, no commnets in the sheet
-      // empty comments table that will return null for all requested comments
       return new CommentsTable();
     }
   }
