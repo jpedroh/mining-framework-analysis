@@ -1,98 +1,81 @@
-/*
- *      Copyright (C) 2012 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 package com.datastax.driver.core.querybuilder;
-
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import com.datastax.driver.core.TableMetadata;
 
 /**
  * A built SELECT statement.
  */
 public class Select extends BuiltStatement {
+  private static final List<Object> COUNT_ALL = Collections.<Object>singletonList(new Utils.FCall("count", new Utils.RawString("*")));
 
-    private static final List<Object> COUNT_ALL = Collections.<Object>singletonList(new Utils.FCall("count", new Utils.RawString("*")));
+  private final String table;
 
-    private final String table;
-    private final boolean isDistinct;
-    private final List<Object> columnNames;
-    private final Where where;
-    private List<Ordering> orderings;
-    private Object limit;
-    private boolean allowFiltering;
+  private final boolean isDistinct;
 
-    Select(String keyspace, String table, List<Object> columnNames, boolean isDistinct) {
-        super(keyspace);
-        this.table = table;
-        this.isDistinct = isDistinct;
-        this.columnNames = columnNames;
-        this.where = new Where(this);
+  private final List<Object> columnNames;
+
+  private final Where where;
+
+  private List<Ordering> orderings;
+
+  private Object limit;
+
+  private boolean allowFiltering;
+
+  Select(String keyspace, String table, List<Object> columnNames, boolean isDistinct) {
+    super(keyspace);
+    this.table = table;
+    this.isDistinct = isDistinct;
+    this.columnNames = columnNames;
+    this.where = new Where(this);
+  }
+
+  Select(TableMetadata table, List<Object> columnNames, boolean isDistinct) {
+    super(table);
+    this.table = escapeId(table.getName());
+    this.isDistinct = isDistinct;
+    this.columnNames = columnNames;
+    this.where = new Where(this);
+  }
+
+  @Override StringBuilder buildQueryString(List<Object> variables) {
+    StringBuilder builder = new StringBuilder();
+    builder.append("SELECT ");
+    if (isDistinct) {
+      builder.append("DISTINCT ");
     }
-
-    Select(TableMetadata table, List<Object> columnNames, boolean isDistinct) {
-        super(table);
-        this.table = escapeId(table.getName());
-        this.isDistinct = isDistinct;
-        this.columnNames = columnNames;
-        this.where = new Where(this);
+    if (columnNames == null) {
+      builder.append('*');
+    } else {
+      Utils.joinAndAppendNames(builder, ",", columnNames);
     }
-
-    @Override
-    StringBuilder buildQueryString(List<Object> variables) {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("SELECT ");
-        if (isDistinct)
-            builder.append("DISTINCT ");
-        if (columnNames == null) {
-            builder.append('*');
-        } else {
-            Utils.joinAndAppendNames(builder, ",", columnNames);
-        }
-        builder.append(" FROM ");
-        if (keyspace != null)
-            Utils.appendName(keyspace, builder).append('.');
-        Utils.appendName(table, builder);
-
-        if (!where.clauses.isEmpty()) {
-            builder.append(" WHERE ");
-            Utils.joinAndAppend(builder, " AND ", where.clauses, variables);
-        }
-
-        if (orderings != null) {
-            builder.append(" ORDER BY ");
-            Utils.joinAndAppend(builder, ",", orderings, variables);
-        }
-
-        if (limit != null) {
-            builder.append(" LIMIT ").append(limit);
-        }
-
-        if (allowFiltering) {
-            builder.append(" ALLOW FILTERING");
-        }
-
-        return builder;
+    builder.append(" FROM ");
+    if (keyspace != null) {
+      Utils.appendName(keyspace, builder).append('.');
     }
+    Utils.appendName(table, builder);
+    if (!where.clauses.isEmpty()) {
+      builder.append(" WHERE ");
+      Utils.joinAndAppend(builder, " AND ", where.clauses, variables);
+    }
+    if (orderings != null) {
+      builder.append(" ORDER BY ");
+      Utils.joinAndAppend(builder, ",", orderings, variables);
+    }
+    if (limit != null) {
+      builder.append(" LIMIT ").append(limit);
+    }
+    if (allowFiltering) {
+      builder.append(" ALLOW FILTERING");
+    }
+    return builder;
+  }
 
-    /**
+  /**
      * Adds a WHERE clause to this statement.
      *
      * This is a shorter/more readable version for {@code where().and(clause)}.
@@ -100,20 +83,20 @@ public class Select extends BuiltStatement {
      * @param clause the clause to add.
      * @return the where clause of this query to which more clause can be added.
      */
-    public Where where(Clause clause) {
-        return where.and(clause);
-    }
+  public Where where(Clause clause) {
+    return where.and(clause);
+  }
 
-    /**
+  /**
      * Returns a Where statement for this query without adding clause.
      *
      * @return the where clause of this query to which more clause can be added.
      */
-    public Where where() {
-        return where;
-    }
+  public Where where() {
+    return where;
+  }
 
-    /**
+  /**
      * Adds an ORDER BY clause to this statement.
      *
      * @param orderings the orderings to define for this query.
@@ -122,17 +105,18 @@ public class Select extends BuiltStatement {
      * @throws IllegalStateException if an ORDER BY clause has already been
      * provided.
      */
-    public Select orderBy(Ordering... orderings) {
-        if (this.orderings != null)
-            throw new IllegalStateException("An ORDER BY clause has already been provided");
-
-        this.orderings = Arrays.asList(orderings);
-        for (int i = 0; i < orderings.length; i++)
-            checkForBindMarkers(orderings[i]);
-        return this;
+  public Select orderBy(Ordering... orderings) {
+    if (this.orderings != null) {
+      throw new IllegalStateException("An ORDER BY clause has already been provided");
     }
+    this.orderings = Arrays.asList(orderings);
+    for (int i = 0; i < orderings.length; i++) {
+      checkForBindMarkers(orderings[i]);
+    }
+    return this;
+  }
 
-    /**
+  /**
      * Adds a LIMIT clause to this statement.
      *
      * @param limit the limit to set.
@@ -142,19 +126,19 @@ public class Select extends BuiltStatement {
      * @throws IllegalStateException if a LIMIT clause has already been
      * provided.
      */
-    public Select limit(int limit) {
-        if (limit <= 0)
-            throw new IllegalArgumentException("Invalid LIMIT value, must be strictly positive");
-
-        if (this.limit != null)
-            throw new IllegalStateException("A LIMIT value has already been provided");
-
-        this.limit = limit;
-        checkForBindMarkers(null);
-        return this;
+  public Select limit(int limit) {
+    if (limit <= 0) {
+      throw new IllegalArgumentException("Invalid LIMIT value, must be strictly positive");
     }
+    if (this.limit != null) {
+      throw new IllegalStateException("A LIMIT value has already been provided");
+    }
+    this.limit = limit;
+    checkForBindMarkers(null);
+    return this;
+  }
 
-    /**
+  /**
      * Adds a prepared LIMIT clause to this statement.
      *
      * @param marker the marker to use for the limit.
@@ -163,50 +147,46 @@ public class Select extends BuiltStatement {
      * @throws IllegalStateException if a LIMIT clause has already been
      * provided.
      */
-    public Select limit(BindMarker marker) {
-        if (this.limit != null)
-            throw new IllegalStateException("A LIMIT value has already been provided");
-
-        this.limit = marker;
-        checkForBindMarkers(marker);
-        return this;
+  public Select limit(BindMarker marker) {
+    if (this.limit != null) {
+      throw new IllegalStateException("A LIMIT value has already been provided");
     }
+    this.limit = marker;
+    checkForBindMarkers(marker);
+    return this;
+  }
 
-    /**
+  /**
      * Adds an ALLOW FILTERING directive to this statement.
      *
      * @return this statement.
      */
-    public Select allowFiltering() {
-        allowFiltering = true;
-        return this;
+  public Select allowFiltering() {
+    allowFiltering = true;
+    return this;
+  }
+
+  public static class Where extends BuiltStatement.ForwardingStatement<Select> {
+    private final List<Clause> clauses = new ArrayList<Clause>();
+
+    Where(Select statement) {
+      super(statement);
     }
 
     /**
-     * The WHERE clause of a SELECT statement.
-     */
-    public static class Where extends BuiltStatement.ForwardingStatement<Select> {
-
-        private final List<Clause> clauses = new ArrayList<Clause>();
-
-        Where(Select statement) {
-            super(statement);
-        }
-
-        /**
          * Adds the provided clause to this WHERE clause.
          *
          * @param clause the clause to add.
          * @return this WHERE clause.
          */
-        public Where and(Clause clause) {
-            clauses.add(clause);
-            statement.maybeAddRoutingKey(clause.name(), clause.firstValue());
-            checkForBindMarkers(clause);
-            return this;
-        }
+    public Where and(Clause clause) {
+      clauses.add(clause);
+      statement.maybeAddRoutingKey(clause.name(), clause.firstValue());
+      checkForBindMarkers(clause);
+      return this;
+    }
 
-        /**
+    /**
          * Adds an ORDER BY clause to the SELECT statement this WHERE clause if
          * part of.
          *
@@ -216,11 +196,11 @@ public class Select extends BuiltStatement {
          * @throws IllegalStateException if an ORDER BY clause has already been
          * provided.
          */
-        public Select orderBy(Ordering... orderings) {
-            return statement.orderBy(orderings);
-        }
+    public Select orderBy(Ordering... orderings) {
+      return statement.orderBy(orderings);
+    }
 
-        /**
+    /**
          * Adds a LIMIT clause to the SELECT statement this Where clause if
          * part of.
          *
@@ -231,11 +211,11 @@ public class Select extends BuiltStatement {
          * @throws IllegalStateException if a LIMIT clause has already been
          * provided.
          */
-        public Select limit(int limit) {
-            return statement.limit(limit);
-        }
+    public Select limit(int limit) {
+      return statement.limit(limit);
+    }
 
-        /**
+    /**
          * Adds a bind marker for the LIMIT clause to the SELECT statement this
          * Where clause if part of.
          *
@@ -245,99 +225,93 @@ public class Select extends BuiltStatement {
          * @throws IllegalStateException if a LIMIT clause has already been
          * provided.
          */
-        public Select limit(BindMarker limit) {
-            return statement.limit(limit);
-        }
+    public Select limit(BindMarker limit) {
+      return statement.limit(limit);
+    }
+  }
+
+  public static class Builder {
+    List<Object> columnNames;
+
+    boolean isDistinct;
+
+    Builder() {
+    }
+
+    Builder(List<Object> columnNames) {
+      this.columnNames = columnNames;
     }
 
     /**
-     * An in-construction SELECT statement.
-     */
-    public static class Builder {
-
-        List<Object> columnNames;
-        boolean isDistinct;
-
-        Builder() {}
-
-        Builder(List<Object> columnNames) {
-            this.columnNames = columnNames;
-        }
-
-        /**
          * Adds the table to select from.
          *
          * @param table the name of the table to select from.
          * @return a newly built SELECT statement that selects from {@code table}.
          */
-        public Select from(String table) {
-            return from(null, table);
-        }
+    public Select from(String table) {
+      return from(null, table);
+    }
 
-        /**
+    /**
          * Adds the table to select from.
          *
          * @param keyspace the name of the keyspace to select from.
          * @param table the name of the table to select from.
          * @return a newly built SELECT statement that selects from {@code keyspace.table}.
          */
-        public Select from(String keyspace, String table) {
-            return new Select(keyspace, table, columnNames, isDistinct);
-        }
+    public Select from(String keyspace, String table) {
+      return new Select(keyspace, table, columnNames, isDistinct);
+    }
 
-        /**
+    /**
          * Adds the table to select from.
          *
          * @param table the table to select from.
          * @return a newly built SELECT statement that selects from {@code table}.
          */
-        public Select from(TableMetadata table) {
-            return new Select(table, columnNames, isDistinct);
-        }
+    public Select from(TableMetadata table) {
+      return new Select(table, columnNames, isDistinct);
     }
+  }
 
+  public static abstract class Selection extends Builder {
     /**
-     * An Selection clause for an in-construction SELECT statement.
-     */
-    public static abstract class Selection extends Builder {
-
-        /**
          * Uses DISTINCT selection.
          *
          * @return this in-build SELECT statement.
          */
-        public Selection distinct() {
-            this.isDistinct = true;
-            return this;
-        }
+    public Selection distinct() {
+      this.isDistinct = true;
+      return this;
+    }
 
-        /**
+    /**
          * Selects all columns (i.e. "SELECT *  ...")
          *
          * @return an in-build SELECT statement.
          *
          * @throws IllegalStateException if some columns had already been selected for this builder.
          */
-        public abstract Builder all();
+    public abstract Builder all();
 
-        /**
+    /**
          * Selects the count of all returned rows (i.e. "SELECT count(*) ...").
          *
          * @return an in-build SELECT statement.
          *
          * @throws IllegalStateException if some columns had already been selected for this builder.
          */
-        public abstract Builder countAll();
+    public abstract Builder countAll();
 
-        /**
+    /**
          * Selects the provided column.
          *
          * @param name the new column name to add.
          * @return this in-build SELECT statement
          */
-        public abstract SelectionOrAlias column(String name);
+    public abstract SelectionOrAlias column(String name);
 
-        /**
+    /**
          * Selects the write time of provided column.
          * <p>
          * This is a shortcut for {@code fcall("writetime", QueryBuilder.column(name))}.
@@ -345,9 +319,9 @@ public class Select extends BuiltStatement {
          * @param name the name of the column to select the write time of.
          * @return this in-build SELECT statement
          */
-        public abstract SelectionOrAlias writeTime(String name);
+    public abstract SelectionOrAlias writeTime(String name);
 
-        /**
+    /**
          * Selects the ttl of provided column.
          * <p>
          * This is a shortcut for {@code fcall("ttl", QueryBuilder.column(name))}.
@@ -355,9 +329,9 @@ public class Select extends BuiltStatement {
          * @param name the name of the column to select the ttl of.
          * @return this in-build SELECT statement
          */
-        public abstract SelectionOrAlias ttl(String name);
+    public abstract SelectionOrAlias ttl(String name);
 
-        /**
+    /**
          * Creates a function call.
          * <p>
          * Please note that the parameters are interpreted as values, and so
@@ -372,95 +346,90 @@ public class Select extends BuiltStatement {
          * @param parameters the parameters for the function call.
          * @return this in-build SELECT statement
          */
-        public abstract SelectionOrAlias fcall(String name, Object... parameters);
+    public abstract SelectionOrAlias fcall(String name, Object... parameters);
+  }
+
+  public static class SelectionOrAlias extends Selection {
+    private Object previousSelection;
+
+    SelectionOrAlias() {
     }
 
     /**
-     * An Selection clause for an in-construction SELECT statement.
-     * <p>
-     * This only differs from {@link Selection} in that you can add an
-     * alias for the previously selected item through {@link SelectionOrAlias#as}.
-     */
-    public static class SelectionOrAlias extends Selection {
-
-        private Object previousSelection;
-
-        SelectionOrAlias() {}
-
-        /**
          * Adds an alias for the just selected item.
          *
          * @param alias the name of the alias to use.
          * @return this in-build SELECT statement
          */
-        public Selection as(String alias) {
-            assert previousSelection != null;
-            Object a = new Utils.Alias(previousSelection, alias);
-            previousSelection = null;
-            return addName(a);
-        }
+    public Selection as(String alias) {
+      assert previousSelection != null;
+      Object a = new Utils.Alias(previousSelection, alias);
+      previousSelection = null;
+      return addName(a);
+    }
 
-        // We don't return SelectionOrAlias on purpose
-        private Selection addName(Object name) {
-            if (columnNames == null)
-                columnNames = new ArrayList<Object>();
+    private Selection addName(Object name) {
+      if (columnNames == null) {
+        columnNames = new ArrayList<Object>();
+      }
+      columnNames.add(name);
+      return this;
+    }
 
-            columnNames.add(name);
-            return this;
-        }
+    private SelectionOrAlias queueName(Object name) {
+      if (previousSelection != null) {
+        addName(previousSelection);
+      }
+      previousSelection = name;
+      return this;
+    }
 
-        private SelectionOrAlias queueName(Object name) {
-            if (previousSelection != null)
-                addName(previousSelection);
-
-            previousSelection = name;
-            return this;
-        }
-
-        /**
+    /**
          * Selects all columns (i.e. "SELECT *  ...")
          *
          * @return an in-build SELECT statement.
          *
          * @throws IllegalStateException if some columns had already been selected for this builder.
          */
-        public Builder all() {
-            if (columnNames != null)
-                throw new IllegalStateException(String.format("Some columns (%s) have already been selected.", columnNames));
-            if (previousSelection != null)
-                throw new IllegalStateException(String.format("Some columns ([%s]) have already been selected.", previousSelection));
+    public Builder all() {
+      if (columnNames != null) {
+        throw new IllegalStateException(String.format("Some columns (%s) have already been selected.", columnNames));
+      }
+      if (previousSelection != null) {
+        throw new IllegalStateException(String.format("Some columns ([%s]) have already been selected.", previousSelection));
+      }
+      return (Builder) this;
+    }
 
-            return (Builder)this;
-        }
-
-        /**
+    /**
          * Selects the count of all returned rows (i.e. "SELECT count(*) ...").
          *
          * @return an in-build SELECT statement.
          *
          * @throws IllegalStateException if some columns had already been selected for this builder.
          */
-        public Builder countAll() {
-            if (columnNames != null)
-                throw new IllegalStateException(String.format("Some columns (%s) have already been selected.", columnNames));
-            if (previousSelection != null)
-                throw new IllegalStateException(String.format("Some columns ([%s]) have already been selected.", previousSelection));
+    public Builder countAll() {
+      if (columnNames != null) {
+        throw new IllegalStateException(String.format("Some columns (%s) have already been selected.", columnNames));
+      }
+      if (previousSelection != null) {
+        throw new IllegalStateException(String.format("Some columns ([%s]) have already been selected.", previousSelection));
+      }
+      columnNames = COUNT_ALL;
+      return (Builder) this;
+    }
 
-            columnNames = COUNT_ALL;
-            return (Builder)this;
-        }
-
-        /**
+    /**
          * Selects the provided column.
          *
          * @param name the new column name to add.
          * @return this in-build SELECT statement
          */
-        public SelectionOrAlias column(String name) {
-            return queueName(name);
-        }
+    public SelectionOrAlias column(String name) {
+      return queueName(name);
+    }
 
-        /**
+    /**
          * Selects the write time of provided column.
          * <p>
          * This is a shortcut for {@code fcall("writetime", QueryBuilder.column(name))}.
@@ -468,11 +437,11 @@ public class Select extends BuiltStatement {
          * @param name the name of the column to select the write time of.
          * @return this in-build SELECT statement
          */
-        public SelectionOrAlias writeTime(String name) {
-            return queueName(new Utils.FCall("writetime", new Utils.CName(name)));
-        }
+    public SelectionOrAlias writeTime(String name) {
+      return queueName(new Utils.FCall("writetime", new Utils.CName(name)));
+    }
 
-        /**
+    /**
          * Selects the ttl of provided column.
          * <p>
          * This is a shortcut for {@code fcall("ttl", QueryBuilder.column(name))}.
@@ -480,11 +449,11 @@ public class Select extends BuiltStatement {
          * @param name the name of the column to select the ttl of.
          * @return this in-build SELECT statement
          */
-        public SelectionOrAlias ttl(String name) {
-            return queueName(new Utils.FCall("ttl", new Utils.CName(name)));
-        }
+    public SelectionOrAlias ttl(String name) {
+      return queueName(new Utils.FCall("ttl", new Utils.CName(name)));
+    }
 
-        /**
+    /**
          * Creates a function call.
          * <p>
          * Please note that the parameters are interpreted as values, and so
@@ -495,35 +464,35 @@ public class Select extends BuiltStatement {
          * {@link QueryBuilder#column} method, and so 
          * {@code fcall("textToBlob", QueryBuilder.column(foo)}.
          */
-        public SelectionOrAlias fcall(String name, Object... parameters) {
-            return queueName(new Utils.FCall(name, parameters));
-        }
+    public SelectionOrAlias fcall(String name, Object... parameters) {
+      return queueName(new Utils.FCall(name, parameters));
+    }
 
-        /**
+    /**
          * Adds the table to select from.
          *
          * @param keyspace the name of the keyspace to select from.
          * @param table the name of the table to select from.
          * @return a newly built SELECT statement that selects from {@code keyspace.table}.
          */
-        @Override
-        public Select from(String keyspace, String table) {
-            if (previousSelection != null)
-                addName(previousSelection);
-            return super.from(keyspace, table);
-        }
+    @Override public Select from(String keyspace, String table) {
+      if (previousSelection != null) {
+        addName(previousSelection);
+      }
+      return super.from(keyspace, table);
+    }
 
-        /**
+    /**
          * Adds the table to select from.
          *
          * @param table the table to select from.
          * @return a newly built SELECT statement that selects from {@code table}.
          */
-        @Override
-        public Select from(TableMetadata table) {
-            if (previousSelection != null)
-                addName(previousSelection);
-            return super.from(table);
-        }
+    @Override public Select from(TableMetadata table) {
+      if (previousSelection != null) {
+        addName(previousSelection);
+      }
+      return super.from(table);
     }
+  }
 }

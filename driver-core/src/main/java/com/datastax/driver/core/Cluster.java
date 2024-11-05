@@ -1,20 +1,4 @@
-/*
- *      Copyright (C) 2012 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 package com.datastax.driver.core;
-
 import java.io.Closeable;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -23,17 +7,14 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.SetMultimap;
 import com.google.common.util.concurrent.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.datastax.driver.core.exceptions.AuthenticationException;
 import com.datastax.driver.core.exceptions.DriverInternalError;
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
@@ -59,18 +40,15 @@ import com.datastax.driver.core.policies.*;
  * subsequently.
  */
 public class Cluster implements Closeable {
+  private static final Logger logger = LoggerFactory.getLogger(Cluster.class);
 
-    private static final Logger logger = LoggerFactory.getLogger(Cluster.class);
+  private static final AtomicInteger CLUSTER_ID = new AtomicInteger(0);
 
-    // Some per-JVM number that allows to generate unique cluster names when
-    // multiple Cluster instance are created in the same JVM.
-    private static final AtomicInteger CLUSTER_ID = new AtomicInteger(0);
+  private static final int DEFAULT_THREAD_KEEP_ALIVE = 30;
 
-    private static final int DEFAULT_THREAD_KEEP_ALIVE = 30;
+  final Manager manager;
 
-    final Manager manager;
-
-    /**
+  /**
      * Constructs a new Cluster instance.
      * <p>
      * This constructor is mainly exposed so Cluster can be sub-classed as a means to make testing/mocking
@@ -82,11 +60,11 @@ public class Cluster implements Closeable {
      * @param contactPoints the list of contact points to use for the new cluster.
      * @param configuration the configuration for the new cluster.
      */
-    protected Cluster(String name, List<InetSocketAddress> contactPoints, Configuration configuration) {
-        this(name, contactPoints, configuration, Collections.<Host.StateListener>emptySet());
-    }
+  protected Cluster(String name, List<InetSocketAddress> contactPoints, Configuration configuration) {
+    this(name, contactPoints, configuration, Collections.<Host.StateListener>emptySet());
+  }
 
-    /**
+  /**
      * Constructs a new Cluster instance.
      * <p>
      * This constructor is mainly exposed so Cluster can be sub-classed as a means to make testing/mocking
@@ -96,24 +74,22 @@ public class Cluster implements Closeable {
      * @param initializer the initializer to use.
      * @see #buildFrom
      */
-    protected Cluster(Initializer initializer) {
-        this(initializer.getClusterName(),
-             checkNotEmpty(initializer.getContactPoints()),
-             initializer.getConfiguration(),
-             initializer.getInitialListeners());
-    }
+  protected Cluster(Initializer initializer) {
+    this(initializer.getClusterName(), checkNotEmpty(initializer.getContactPoints()), initializer.getConfiguration(), initializer.getInitialListeners());
+  }
 
-    private static List<InetSocketAddress> checkNotEmpty(List<InetSocketAddress> contactPoints) {
-        if (contactPoints.isEmpty())
-            throw new IllegalArgumentException("Cannot build a cluster without contact points");
-        return contactPoints;
+  private static List<InetSocketAddress> checkNotEmpty(List<InetSocketAddress> contactPoints) {
+    if (contactPoints.isEmpty()) {
+      throw new IllegalArgumentException("Cannot build a cluster without contact points");
     }
+    return contactPoints;
+  }
 
-    private Cluster(String name, List<InetSocketAddress> contactPoints, Configuration configuration, Collection<Host.StateListener> listeners) {
-        this.manager = new Manager(name, contactPoints, configuration, listeners);
-    }
+  private Cluster(String name, List<InetSocketAddress> contactPoints, Configuration configuration, Collection<Host.StateListener> listeners) {
+    this.manager = new Manager(name, contactPoints, configuration, listeners);
+  }
 
-    /**
+  /**
      * Initialize this Cluster instance.
      *
      * This method creates an initial connection to one of the contact points
@@ -140,17 +116,13 @@ public class Cluster implements Closeable {
      * can be reached.
      * @throws AuthenticationException if an authentication error occurs
      * while contacting the initial contact points.
-     * @throws IllegalStateException if the Cluster was closed prior to calling
-     * this method. This can occur either directly (through {@link #close()} or
-     * {@link #closeAsync()}), or as a result of an error while initializing the
-     * Cluster.
      */
-    public Cluster init() {
-        this.manager.init();
-        return this;
-    }
+  public Cluster init() {
+    this.manager.init();
+    return this;
+  }
 
-    /**
+  /**
      * Build a new cluster based on the provided initializer.
      * <p>
      * Note that for building a cluster pragmatically, Cluster.Builder
@@ -165,22 +137,22 @@ public class Cluster implements Closeable {
      * @throws IllegalArgumentException if the list of contact points provided
      * by {@code initializer} is empty or if not all those contact points have the same port.
      */
-    public static Cluster buildFrom(Initializer initializer) {
-        return new Cluster(initializer);
-    }
+  public static Cluster buildFrom(Initializer initializer) {
+    return new Cluster(initializer);
+  }
 
-    /**
+  /**
      * Creates a new {@link Cluster.Builder} instance.
      * <p>
      * This is a convenience method for {@code new Cluster.Builder()}.
      *
      * @return the new cluster builder.
      */
-    public static Cluster.Builder builder() {
-        return new Cluster.Builder();
-    }
+  public static Cluster.Builder builder() {
+    return new Cluster.Builder();
+  }
 
-    /**
+  /**
      * Creates a new session on this cluster but does not initialize it.
      * <p>
      * Because this method does not perform any initialization, it cannot fail.
@@ -198,44 +170,40 @@ public class Cluster implements Closeable {
      *
      * @return a new, non-initialized session on this cluster.
      */
-    public Session newSession() {
-        return manager.newSession();
-    }
+  public Session newSession() {
+    return manager.newSession();
+  }
 
-    /**
+  /**
      * Creates a new session on this cluster and initialize it.
      * <p>
      * Note that this method will initialize the newly created session, trying
-     * to connect to the Cassandra nodes before returning. If you only want to
-     * create a Session object without initializing it right away, see
+     * to connect to the Cassandra nodes before returning. If you only want
+     * to create a Session object without initializing it right away, see
      * {@link #newSession}.
      *
      * @return a new session on this cluster sets to no keyspace.
      *
-     * @throws NoHostAvailableException if the Cluster has not been initialized
-     * yet ({@link #init} has not be called and this is the first connect call)
-     * and no host amongst the contact points can be reached.
-     * @throws AuthenticationException if an authentication error occurs while
-     * contacting the initial contact points.
-     * @throws IllegalStateException if the Cluster was closed prior to calling
-     * this method. This can occur either directly (through {@link #close()} or
-     * {@link #closeAsync()}), or as a result of an error while initializing the
-     * Cluster.
+     * @throws NoHostAvailableException if the Cluster has not been initialized yet
+     * ({@link #init} has not be called and this is the first connect call) and
+     * no host amongst the contact points can be reached.
+     * @throws AuthenticationException if an authentication error occurs
+     * while contacting the initial contact points.
      */
-    public Session connect() {
-        init();
-        Session session = manager.newSession();
-        session.init();
-        return session;
-    }
+  public Session connect() {
+    init();
+    Session session = manager.newSession();
+    session.init();
+    return session;
+  }
 
-    /**
-     * Creates a new session on this cluster, initialize it and sets the
-     * keyspace to the provided one.
+  /**
+     * Creates a new session on this cluster, initialize it and sets the keyspace
+     * to the provided one.
      * <p>
      * Note that this method will initialize the newly created session, trying
-     * to connect to the Cassandra nodes before returning. If you only want to
-     * create a Session object without initializing it right away, see
+     * to connect to the Cassandra nodes before returning. If you only want
+     * to create a Session object without initializing it right away, see
      * {@link #newSession}.
      *
      * @param keyspace The name of the keyspace to use for the created
@@ -243,36 +211,31 @@ public class Cluster implements Closeable {
      * @return a new session on this cluster sets to keyspace
      * {@code keyspaceName}.
      *
-     * @throws NoHostAvailableException if the Cluster has not been initialized
-     * yet ({@link #init} has not be called and this is the first connect call)
-     * and no host amongst the contact points can be reached, or if no host can
-     * be contacted to set the {@code keyspace}.
-     * @throws AuthenticationException if an authentication error occurs while
-     * contacting the initial contact points.
-     * @throws IllegalStateException if the Cluster was closed prior to calling
-     * this method. This can occur either directly (through {@link #close()} or
-     * {@link #closeAsync()}), or as a result of an error while initializing the
-     * Cluster.
+     * @throws NoHostAvailableException if the Cluster has not been initialized yet
+     * ({@link #init} has not be called and this is the first connect call) and
+     * no host amongst the contact points can be reached, or if no host can be
+     * contacted to set the {@code keyspace}.
+     * @throws AuthenticationException if an authentication error occurs
+     * while contacting the initial contact points.
      */
-    public Session connect(String keyspace) {
-        long timeout = getConfiguration().getSocketOptions().getConnectTimeoutMillis();
-        Session session = connect();
-        try {
-            ResultSetFuture future = session.executeAsync("USE " + keyspace);
-            // Note: using the connection timeout isn't perfectly correct, we should probably change that someday
-            Uninterruptibles.getUninterruptibly(future, timeout, TimeUnit.MILLISECONDS);
-            return session;
-        } catch (TimeoutException e) {
-            throw new DriverInternalError(String.format("No responses after %d milliseconds while setting current keyspace. This should not happen, unless you have setup a very low connection timeout.", timeout));
-        } catch (ExecutionException e) {
-            throw DefaultResultSetFuture.extractCauseFromExecutionException(e);
-        } catch (RuntimeException e) {
-            session.close();
-            throw e;
-        }
+  public Session connect(String keyspace) {
+    long timeout = getConfiguration().getSocketOptions().getConnectTimeoutMillis();
+    Session session = connect();
+    try {
+      ResultSetFuture future = session.executeAsync("USE " + keyspace);
+      Uninterruptibles.getUninterruptibly(future, timeout, TimeUnit.MILLISECONDS);
+      return session;
+    } catch (TimeoutException e) {
+      throw new DriverInternalError(String.format("No responses after %d milliseconds while setting current keyspace. This should not happen, unless you have setup a very low connection timeout.", timeout));
+    } catch (ExecutionException e) {
+      throw DefaultResultSetFuture.extractCauseFromExecutionException(e);
+    } catch (RuntimeException e) {
+      session.close();
+      throw e;
     }
+  }
 
-    /**
+  /**
      * The name of this cluster object.
      * <p>
      * Note that this is not the Cassandra cluster name, but rather a name
@@ -286,11 +249,11 @@ public class Cluster implements Closeable {
      *
      * @return the name for this cluster instance.
      */
-    public String getClusterName() {
-        return manager.clusterName;
-    }
+  public String getClusterName() {
+    return manager.clusterName;
+  }
 
-    /**
+  /**
      * Returns read-only metadata on the connected cluster.
      * <p>
      * This includes the known nodes with their status as seen by the driver,
@@ -305,37 +268,33 @@ public class Cluster implements Closeable {
      * and no host amongst the contact points can be reached.
      * @throws AuthenticationException if an authentication error occurs
      * while contacting the initial contact points.
-     * @throws IllegalStateException if the Cluster was closed prior to calling
-     * this method. This can occur either directly (through {@link #close()} or
-     * {@link #closeAsync()}), or as a result of an error while initializing the
-     * Cluster.
      */
-    public Metadata getMetadata() {
-        manager.init();
-        return manager.metadata;
-    }
+  public Metadata getMetadata() {
+    manager.init();
+    return manager.metadata;
+  }
 
-    /**
+  /**
      * The cluster configuration.
      *
      * @return the cluster configuration.
      */
-    public Configuration getConfiguration() {
-        return manager.configuration;
-    }
+  public Configuration getConfiguration() {
+    return manager.configuration;
+  }
 
-    /**
+  /**
      * The cluster metrics.
      *
      * @return the cluster metrics, or {@code null} if metrics collection has
      * been disabled (that is if {@link Configuration#getMetricsOptions}
      * returns {@code null}).
      */
-    public Metrics getMetrics() {
-        return manager.metrics;
-    }
+  public Metrics getMetrics() {
+    return manager.metrics;
+  }
 
-    /**
+  /**
      * Registers the provided listener to be notified on hosts
      * up/down/added/removed events.
      * <p>
@@ -349,12 +308,12 @@ public class Cluster implements Closeable {
      * @param listener the new {@link Host.StateListener} to register.
      * @return this {@code Cluster} object;
      */
-    public Cluster register(Host.StateListener listener) {
-        manager.listeners.add(listener);
-        return this;
-    }
+  public Cluster register(Host.StateListener listener) {
+    manager.listeners.add(listener);
+    return this;
+  }
 
-    /**
+  /**
      * Unregisters the provided listener from being notified on hosts events.
      * <p>
      * This method is a no-op if {@code listener} hadn't previously be
@@ -363,12 +322,12 @@ public class Cluster implements Closeable {
      * @param listener the {@link Host.StateListener} to unregister.
      * @return this {@code Cluster} object;
      */
-    public Cluster unregister(Host.StateListener listener) {
-        manager.listeners.remove(listener);
-        return this;
-    }
+  public Cluster unregister(Host.StateListener listener) {
+    manager.listeners.remove(listener);
+    return this;
+  }
 
-    /**
+  /**
      * Registers the provided tracker to be updated with hosts read
      * latencies.
      * <p>
@@ -387,12 +346,12 @@ public class Cluster implements Closeable {
      * @param tracker the new {@link LatencyTracker} to register.
      * @return this {@code Cluster} object;
      */
-    public Cluster register(LatencyTracker tracker) {
-        manager.trackers.add(tracker);
-        return this;
-    }
+  public Cluster register(LatencyTracker tracker) {
+    manager.trackers.add(tracker);
+    return this;
+  }
 
-    /**
+  /**
      * Unregisters the provided latency tracking from being updated
      * with host read latencies.
      * <p>
@@ -402,12 +361,12 @@ public class Cluster implements Closeable {
      * @param tracker the {@link LatencyTracker} to unregister.
      * @return this {@code Cluster} object;
      */
-    public Cluster unregister(LatencyTracker tracker) {
-        manager.trackers.remove(tracker);
-        return this;
-    }
+  public Cluster unregister(LatencyTracker tracker) {
+    manager.trackers.remove(tracker);
+    return this;
+  }
 
-    /**
+  /**
      * Initiates a shutdown of this cluster instance.
      * <p>
      * This method is asynchronous and return a future on the completion
@@ -425,27 +384,27 @@ public class Cluster implements Closeable {
      *
      * @return a future on the completion of the shutdown process.
      */
-    public CloseFuture closeAsync() {
-        return manager.close();
-    }
+  public CloseFuture closeAsync() {
+    return manager.close();
+  }
 
-    /**
+  /**
      * Initiates a shutdown of this cluster instance and blocks until
      * that shutdown completes.
      * <p>
      * This method is a shortcut for {@code closeAsync().get()}.
      */
-    public void close() {
-        try {
-            closeAsync().get();
-        } catch (ExecutionException e) {
-            throw DefaultResultSetFuture.extractCauseFromExecutionException(e);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+  public void close() {
+    try {
+      closeAsync().get();
+    } catch (ExecutionException e) {
+      throw DefaultResultSetFuture.extractCauseFromExecutionException(e);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
     }
+  }
 
-    /**
+  /**
      * Whether this Cluster instance has been closed.
      * <p>
      * Note that this method returns true as soon as one of the close methods
@@ -457,23 +416,12 @@ public class Cluster implements Closeable {
      * @return {@code true} if this Cluster instance has been closed, {@code false}
      * otherwise.
      */
-    public boolean isClosed() {
-        return manager.closeFuture.get() != null;
-    }
+  public boolean isClosed() {
+    return manager.closeFuture.get() != null;
+  }
 
+  public interface Initializer {
     /**
-     * Initializer for {@link Cluster} instances.
-     * <p>
-     * If you want to create a new {@code Cluster} instance programmatically,
-     * then it is advised to use {@link Cluster.Builder} which can be obtained from the
-     * {@link Cluster#builder} method.
-     * <p>
-     * But it is also possible to implement a custom {@code Initializer} that
-     * retrieves initialization from a web-service or from a configuration file.
-     */
-    public interface Initializer {
-
-        /**
          * An optional name for the created cluster.
          * <p>
          * Such name is optional (a default name will be created otherwise) and is currently
@@ -483,17 +431,17 @@ public class Cluster implements Closeable {
          * @return the name for the created cluster or {@code null} to use an automatically
          * generated name.
          */
-        public String getClusterName();
+    public String getClusterName();
 
-        /**
+    /**
          * Returns the initial Cassandra hosts to connect to.
          *
          * @return the initial Cassandra contact points. See {@link Builder#addContactPoint}
          * for more details on contact points.
          */
-        public List<InetSocketAddress> getContactPoints();
+    public List<InetSocketAddress> getContactPoints();
 
-        /**
+    /**
          * The configuration to use for the new cluster.
          * <p>
          * Note that some configuration can be modified after the cluster
@@ -508,9 +456,9 @@ public class Cluster implements Closeable {
          *
          * @return the configuration to use for the new cluster.
          */
-        public Configuration getConfiguration();
+    public Configuration getConfiguration();
 
-        /**
+    /**
          * Optional listeners to register against the newly created cluster.
          * <p>
          * Note that contrary to listeners registered post Cluster creation,
@@ -520,55 +468,62 @@ public class Cluster implements Closeable {
          * @return a possibly empty collection of {@code Host.StateListener} to register
          * against the newly created cluster.
          */
-        public Collection<Host.StateListener> getInitialListeners();
+    public Collection<Host.StateListener> getInitialListeners();
+  }
+
+  public static class Builder implements Initializer {
+    private String clusterName;
+
+    private final List<InetSocketAddress> addresses = new ArrayList<InetSocketAddress>();
+
+    private final List<InetAddress> rawAddresses = new ArrayList<InetAddress>();
+
+    private int port = ProtocolOptions.DEFAULT_PORT;
+
+    private int protocolVersion = -1;
+
+    private AuthProvider authProvider = AuthProvider.NONE;
+
+    private LoadBalancingPolicy loadBalancingPolicy;
+
+    private ReconnectionPolicy reconnectionPolicy;
+
+    private RetryPolicy retryPolicy;
+
+    private AddressTranslater addressTranslater;
+
+    private ProtocolOptions.Compression compression = ProtocolOptions.Compression.NONE;
+
+    private SSLOptions sslOptions = null;
+
+    private boolean metricsEnabled = true;
+
+    private boolean jmxEnabled = true;
+
+    private PoolingOptions poolingOptions;
+
+    private SocketOptions socketOptions;
+
+    private QueryOptions queryOptions;
+
+    private Collection<Host.StateListener> listeners;
+
+    @Override public String getClusterName() {
+      return clusterName;
+    }
+
+    @Override public List<InetSocketAddress> getContactPoints() {
+      if (rawAddresses.isEmpty()) {
+        return addresses;
+      }
+      List<InetSocketAddress> allAddresses = new ArrayList<InetSocketAddress>(addresses);
+      for (InetAddress address : rawAddresses) {
+        allAddresses.add(new InetSocketAddress(address, port));
+      }
+      return allAddresses;
     }
 
     /**
-     * Helper class to build {@link Cluster} instances.
-     */
-    public static class Builder implements Initializer {
-
-        private String clusterName;
-        private final List<InetSocketAddress> addresses = new ArrayList<InetSocketAddress>();
-        private final List<InetAddress> rawAddresses = new ArrayList<InetAddress>();
-        private int port = ProtocolOptions.DEFAULT_PORT;
-        private int protocolVersion = -1;
-        private AuthProvider authProvider = AuthProvider.NONE;
-
-        private LoadBalancingPolicy loadBalancingPolicy;
-        private ReconnectionPolicy reconnectionPolicy;
-        private RetryPolicy retryPolicy;
-        private AddressTranslater addressTranslater;
-
-        private ProtocolOptions.Compression compression = ProtocolOptions.Compression.NONE;
-        private SSLOptions sslOptions = null;
-        private boolean metricsEnabled = true;
-        private boolean jmxEnabled = true;
-
-        private PoolingOptions poolingOptions;
-        private SocketOptions socketOptions;
-        private QueryOptions queryOptions;
-
-        private Collection<Host.StateListener> listeners;
-
-
-        @Override
-        public String getClusterName() {
-            return clusterName;
-        }
-
-        @Override
-        public List<InetSocketAddress> getContactPoints() {
-            if (rawAddresses.isEmpty())
-                return addresses;
-
-            List<InetSocketAddress> allAddresses = new ArrayList<InetSocketAddress>(addresses);
-            for (InetAddress address : rawAddresses)
-                allAddresses.add(new InetSocketAddress(address, port));
-            return allAddresses;
-        }
-
-        /**
          * An optional name for the create cluster.
          * <p>
          * Note: this is not related to the Cassandra cluster name (though you
@@ -583,12 +538,12 @@ public class Cluster implements Closeable {
          * @param name the cluster name to use for the created Cluster instance.
          * @return this Builder.
          */
-        public Builder withClusterName(String name) {
-            this.clusterName = name;
-            return this;
-        }
+    public Builder withClusterName(String name) {
+      this.clusterName = name;
+      return this;
+    }
 
-        /**
+    /**
          * The port to use to connect to the Cassandra host.
          * <p>
          * If not set through this method, the default port (9042) will be used
@@ -597,12 +552,12 @@ public class Cluster implements Closeable {
          * @param port the port to set.
          * @return this Builder.
          */
-        public Builder withPort(int port) {
-            this.port = port;
-            return this;
-        }
+    public Builder withPort(int port) {
+      this.port = port;
+      return this;
+    }
 
-        /**
+    /**
          * The native protocol version to use.
          * <p>
          * The driver supports both version 1 and 2 of the native protocol. Version 2
@@ -645,16 +600,15 @@ public class Cluster implements Closeable {
          * @throws IllegalArgumentException if {@code version} is neither 1, 2 or a
          * negative value.
          */
-        public Builder withProtocolVersion(int version) {
-            if (protocolVersion == 0 || protocolVersion > ProtocolOptions.NEWEST_SUPPORTED_PROTOCOL_VERSION)
-                throw new IllegalArgumentException(String.format("Unsupported protocol version %d; valid values must be between 1 and %d or negative (for auto-detect).",
-                                                                 protocolVersion,
-                                                                 ProtocolOptions.NEWEST_SUPPORTED_PROTOCOL_VERSION));
-            this.protocolVersion = version;
-            return this;
-        }
+    public Builder withProtocolVersion(int version) {
+      if (protocolVersion == 0 || protocolVersion > ProtocolOptions.NEWEST_SUPPORTED_PROTOCOL_VERSION) {
+        throw new IllegalArgumentException(String.format("Unsupported protocol version %d; valid values must be between 1 and %d or negative (for auto-detect).", protocolVersion, ProtocolOptions.NEWEST_SUPPORTED_PROTOCOL_VERSION));
+      }
+      this.protocolVersion = version;
+      return this;
+    }
 
-        /**
+    /**
          * Adds a contact point.
          * <p>
          * Contact points are addresses of Cassandra nodes that the driver uses
@@ -679,16 +633,16 @@ public class Cluster implements Closeable {
          * @throws SecurityException if a security manager is present and
          * permission to resolve the host name is denied.
          */
-        public Builder addContactPoint(String address) {
-            try {
-                this.rawAddresses.add(InetAddress.getByName(address));
-                return this;
-            } catch (UnknownHostException e) {
-                throw new IllegalArgumentException(e.getMessage());
-            }
-        }
+    public Builder addContactPoint(String address) {
+      try {
+        this.rawAddresses.add(InetAddress.getByName(address));
+        return this;
+      } catch (UnknownHostException e) {
+        throw new IllegalArgumentException(e.getMessage());
+      }
+    }
 
-        /**
+    /**
          * Adds contact points.
          * <p>
          * See {@link Builder#addContactPoint} for more details on contact
@@ -704,13 +658,14 @@ public class Cluster implements Closeable {
          *
          * @see Builder#addContactPoint
          */
-        public Builder addContactPoints(String... addresses) {
-            for (String address : addresses)
-                addContactPoint(address);
-            return this;
-        }
+    public Builder addContactPoints(String... addresses) {
+      for (String address : addresses) {
+        addContactPoint(address);
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Adds contact points.
          * <p>
          * See {@link Builder#addContactPoint} for more details on contact
@@ -721,12 +676,12 @@ public class Cluster implements Closeable {
          *
          * @see Builder#addContactPoint
          */
-        public Builder addContactPoints(InetAddress... addresses) {
-            Collections.addAll(this.rawAddresses, addresses);
-            return this;
-        }
+    public Builder addContactPoints(InetAddress... addresses) {
+      Collections.addAll(this.rawAddresses, addresses);
+      return this;
+    }
 
-        /**
+    /**
          * Adds contact points.
          *
          * See {@link Builder#addContactPoint} for more details on contact
@@ -737,12 +692,12 @@ public class Cluster implements Closeable {
          *
          * @see Builder#addContactPoint
          */
-        public Builder addContactPoints(Collection<InetAddress> addresses) {
-            this.rawAddresses.addAll(addresses);
-            return this;
-        }
+    public Builder addContactPoints(Collection<InetAddress> addresses) {
+      this.rawAddresses.addAll(addresses);
+      return this;
+    }
 
-        /**
+    /**
          * Adds contact points.
          * <p>
          * See {@link Builder#addContactPoint} for more details on contact
@@ -764,12 +719,12 @@ public class Cluster implements Closeable {
          *
          * @see Builder#addContactPoint
          */
-        public Builder addContactPointsWithPorts(Collection<InetSocketAddress> addresses) {
-            this.addresses.addAll(addresses);
-            return this;
-        }
+    public Builder addContactPointsWithPorts(Collection<InetSocketAddress> addresses) {
+      this.addresses.addAll(addresses);
+      return this;
+    }
 
-        /**
+    /**
          * Configures the load balancing policy to use for the new cluster.
          * <p>
          * If no load balancing policy is set through this method,
@@ -778,12 +733,12 @@ public class Cluster implements Closeable {
          * @param policy the load balancing policy to use.
          * @return this Builder.
          */
-        public Builder withLoadBalancingPolicy(LoadBalancingPolicy policy) {
-            this.loadBalancingPolicy = policy;
-            return this;
-        }
+    public Builder withLoadBalancingPolicy(LoadBalancingPolicy policy) {
+      this.loadBalancingPolicy = policy;
+      return this;
+    }
 
-        /**
+    /**
          * Configures the reconnection policy to use for the new cluster.
          * <p>
          * If no reconnection policy is set through this method,
@@ -792,12 +747,12 @@ public class Cluster implements Closeable {
          * @param policy the reconnection policy to use.
          * @return this Builder.
          */
-        public Builder withReconnectionPolicy(ReconnectionPolicy policy) {
-            this.reconnectionPolicy = policy;
-            return this;
-        }
+    public Builder withReconnectionPolicy(ReconnectionPolicy policy) {
+      this.reconnectionPolicy = policy;
+      return this;
+    }
 
-        /**
+    /**
          * Configures the retry policy to use for the new cluster.
          * <p>
          * If no retry policy is set through this method,
@@ -806,12 +761,12 @@ public class Cluster implements Closeable {
          * @param policy the retry policy to use.
          * @return this Builder.
          */
-        public Builder withRetryPolicy(RetryPolicy policy) {
-            this.retryPolicy = policy;
-            return this;
-        }
+    public Builder withRetryPolicy(RetryPolicy policy) {
+      this.retryPolicy = policy;
+      return this;
+    }
 
-        /**
+    /**
          * Configures the address translater to use for the new cluster.
          * <p>
          * See {@link AddressTranslater} for more detail on address translation,
@@ -821,12 +776,12 @@ public class Cluster implements Closeable {
          * @param translater the translater to use.
          * @return this Builder.
          */
-        public Builder withAddressTranslater(AddressTranslater translater) {
-            this.addressTranslater = translater;
-            return this;
-        }
+    public Builder withAddressTranslater(AddressTranslater translater) {
+      this.addressTranslater = translater;
+      return this;
+    }
 
-        /**
+    /**
          * Uses the provided credentials when connecting to Cassandra hosts.
          * <p>
          * This should be used if the Cassandra cluster has been configured to
@@ -838,12 +793,12 @@ public class Cluster implements Closeable {
          * @param password the password corresponding to {@code username}.
          * @return this Builder.
          */
-        public Builder withCredentials(String username, String password) {
-            this.authProvider = new PlainTextAuthProvider(username, password);
-            return this;
-        }
+    public Builder withCredentials(String username, String password) {
+      this.authProvider = new PlainTextAuthProvider(username, password);
+      return this;
+    }
 
-        /**
+    /**
          * Use the specified AuthProvider when connecting to Cassandra
          * hosts.
          * <p>
@@ -856,12 +811,12 @@ public class Cluster implements Closeable {
          * Cassandra hosts.
          * @return this Builder
          */
-        public Builder withAuthProvider(AuthProvider authProvider) {
-            this.authProvider = authProvider;
-            return this;
-        }
+    public Builder withAuthProvider(AuthProvider authProvider) {
+      this.authProvider = authProvider;
+      return this;
+    }
 
-        /**
+    /**
          * Sets the compression to use for the transport.
          *
          * @param compression the compression to set.
@@ -869,23 +824,23 @@ public class Cluster implements Closeable {
          *
          * @see ProtocolOptions.Compression
          */
-        public Builder withCompression(ProtocolOptions.Compression compression) {
-            this.compression = compression;
-            return this;
-        }
+    public Builder withCompression(ProtocolOptions.Compression compression) {
+      this.compression = compression;
+      return this;
+    }
 
-        /**
+    /**
          * Disables metrics collection for the created cluster (metrics are
          * enabled by default otherwise).
          *
          * @return this builder.
          */
-        public Builder withoutMetrics() {
-            this.metricsEnabled = false;
-            return this;
-        }
+    public Builder withoutMetrics() {
+      this.metricsEnabled = false;
+      return this;
+    }
 
-        /**
+    /**
          * Enables the use of SSL for the created {@code Cluster}.
          * <p>
          * Calling this method will use default SSL options (see {@link SSLOptions#SSLOptions()}).
@@ -898,24 +853,24 @@ public class Cluster implements Closeable {
          *
          * @return this builder.
          */
-        public Builder withSSL() {
-            this.sslOptions = new SSLOptions();
-            return this;
-        }
+    public Builder withSSL() {
+      this.sslOptions = new SSLOptions();
+      return this;
+    }
 
-        /**
+    /**
          * Enable the use of SSL for the created {@code Cluster} using the provided options.
          *
          * @param sslOptions the SSL options to use.
          *
          * @return this builder.
          */
-        public Builder withSSL(SSLOptions sslOptions) {
-            this.sslOptions = sslOptions;
-            return this;
-        }
+    public Builder withSSL(SSLOptions sslOptions) {
+      this.sslOptions = sslOptions;
+      return this;
+    }
 
-        /**
+    /**
          * Register the provided listeners in the newly created cluster.
          * <p>
          * Note: repeated calls to this method will override the previous ones.
@@ -923,12 +878,12 @@ public class Cluster implements Closeable {
          * @param listeners the listeners to register.
          * @return this builder.
          */
-        public Builder withInitialListeners(Collection<Host.StateListener> listeners) {
-            this.listeners = listeners;
-            return this;
-        }
+    public Builder withInitialListeners(Collection<Host.StateListener> listeners) {
+      this.listeners = listeners;
+      return this;
+    }
 
-        /**
+    /**
          * Disables JMX reporting of the metrics.
          * <p>
          * JMX reporting is enabled by default (see {@link Metrics}) but can be
@@ -937,12 +892,12 @@ public class Cluster implements Closeable {
          *
          * @return this builder.
          */
-        public Builder withoutJMXReporting() {
-            this.jmxEnabled = false;
-            return this;
-        }
+    public Builder withoutJMXReporting() {
+      this.jmxEnabled = false;
+      return this;
+    }
 
-        /**
+    /**
          * Sets the PoolingOptions to use for the newly created Cluster.
          * <p>
          * If no pooling options are set through this method, default pooling
@@ -951,12 +906,12 @@ public class Cluster implements Closeable {
          * @param options the pooling options to use.
          * @return this builder.
          */
-        public Builder withPoolingOptions(PoolingOptions options) {
-            this.poolingOptions = options;
-            return this;
-        }
+    public Builder withPoolingOptions(PoolingOptions options) {
+      this.poolingOptions = options;
+      return this;
+    }
 
-        /**
+    /**
          * Sets the SocketOptions to use for the newly created Cluster.
          * <p>
          * If no socket options are set through this method, default socket
@@ -965,12 +920,12 @@ public class Cluster implements Closeable {
          * @param options the socket options to use.
          * @return this builder.
          */
-        public Builder withSocketOptions(SocketOptions options) {
-            this.socketOptions = options;
-            return this;
-        }
+    public Builder withSocketOptions(SocketOptions options) {
+      this.socketOptions = options;
+      return this;
+    }
 
-        /**
+    /**
          * Sets the QueryOptions to use for the newly created Cluster.
          * <p>
          * If no query options are set through this method, default query
@@ -979,12 +934,12 @@ public class Cluster implements Closeable {
          * @param options the query options to use.
          * @return this builder.
          */
-        public Builder withQueryOptions(QueryOptions options) {
-            this.queryOptions = options;
-            return this;
-        }
+    public Builder withQueryOptions(QueryOptions options) {
+      this.queryOptions = options;
+      return this;
+    }
 
-        /**
+    /**
          * The configuration that will be used for the new cluster.
          * <p>
          * You <b>should not</b> modify this object directly because changes made
@@ -993,28 +948,16 @@ public class Cluster implements Closeable {
          *
          * @return the configuration to use for the new cluster.
          */
-        @Override
-        public Configuration getConfiguration() {
-            Policies policies = new Policies(
-                loadBalancingPolicy == null ? Policies.defaultLoadBalancingPolicy() : loadBalancingPolicy,
-                reconnectionPolicy == null ? Policies.defaultReconnectionPolicy() : reconnectionPolicy,
-                retryPolicy == null ? Policies.defaultRetryPolicy() : retryPolicy,
-                addressTranslater == null ? Policies.defaultAddressTranslater() : addressTranslater
-            );
-            return new Configuration(policies,
-                                     new ProtocolOptions(port, protocolVersion, sslOptions, authProvider).setCompression(compression),
-                                     poolingOptions == null ? new PoolingOptions() : poolingOptions,
-                                     socketOptions == null ? new SocketOptions() : socketOptions,
-                                     metricsEnabled ? new MetricsOptions(jmxEnabled) : null,
-                                     queryOptions == null ? new QueryOptions() : queryOptions);
-        }
+    @Override public Configuration getConfiguration() {
+      Policies policies = new Policies(loadBalancingPolicy == null ? Policies.defaultLoadBalancingPolicy() : loadBalancingPolicy, reconnectionPolicy == null ? Policies.defaultReconnectionPolicy() : reconnectionPolicy, retryPolicy == null ? Policies.defaultRetryPolicy() : retryPolicy, addressTranslater == null ? Policies.defaultAddressTranslater() : addressTranslater);
+      return new Configuration(policies, new ProtocolOptions(port, protocolVersion, sslOptions, authProvider).setCompression(compression), poolingOptions == null ? new PoolingOptions() : poolingOptions, socketOptions == null ? new SocketOptions() : socketOptions, metricsEnabled ? new MetricsOptions(jmxEnabled) : null, queryOptions == null ? new QueryOptions() : queryOptions);
+    }
 
-        @Override
-        public Collection<Host.StateListener> getInitialListeners() {
-            return listeners == null ? Collections.<Host.StateListener>emptySet() : listeners;
-        }
+    @Override public Collection<Host.StateListener> getInitialListeners() {
+      return listeners == null ? Collections.<Host.StateListener>emptySet() : listeners;
+    }
 
-        /**
+    /**
          * Builds the cluster with the configured set of initial contact points
          * and policies.
          * <p>
@@ -1022,846 +965,655 @@ public class Cluster implements Closeable {
          *
          * @return the newly built Cluster instance.
          */
-        public Cluster build() {
-            return Cluster.buildFrom(this);
-        }
+    public Cluster build() {
+      return Cluster.buildFrom(this);
+    }
+  }
+
+  private static ThreadFactory threadFactory(String nameFormat) {
+    return new ThreadFactoryBuilder().setNameFormat(nameFormat).build();
+  }
+
+  static long timeSince(long startNanos, TimeUnit destUnit) {
+    return destUnit.convert(System.nanoTime() - startNanos, TimeUnit.NANOSECONDS);
+  }
+
+  private static String generateClusterName() {
+    return "cluster" + CLUSTER_ID.incrementAndGet();
+  }
+
+  private static ListeningExecutorService makeExecutor(int threads, String name) {
+    ThreadPoolExecutor executor = new ThreadPoolExecutor(threads, threads, DEFAULT_THREAD_KEEP_ALIVE, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), threadFactory(name));
+    executor.allowCoreThreadTimeOut(true);
+    return MoreExecutors.listeningDecorator(executor);
+  }
+
+  class Manager implements Connection.DefaultResponseHandler {
+    final String clusterName;
+
+    private boolean isInit;
+
+    final List<InetSocketAddress> contactPoints;
+
+    final Set<SessionManager> sessions = new CopyOnWriteArraySet<SessionManager>();
+
+    final Metadata metadata;
+
+    final Configuration configuration;
+
+    final Metrics metrics;
+
+    final Connection.Factory connectionFactory;
+
+    final ControlConnection controlConnection;
+
+    final ConvictionPolicy.Factory convictionPolicyFactory = new ConvictionPolicy.Simple.Factory();
+
+    final ScheduledExecutorService reconnectionExecutor = Executors.newScheduledThreadPool(2, threadFactory("Reconnection-%d"));
+
+    final ScheduledExecutorService scheduledTasksExecutor = Executors.newScheduledThreadPool(1, threadFactory("Scheduled Tasks-%d"));
+
+    final ListeningExecutorService executor;
+
+    final ListeningExecutorService blockingExecutor;
+
+    final AtomicReference<CloseFuture> closeFuture = new AtomicReference<CloseFuture>();
+
+    final ConcurrentMap<MD5Digest, PreparedStatement> preparedQueries = new MapMaker().weakValues().makeMap();
+
+    final Set<Host.StateListener> listeners;
+
+    final Set<LatencyTracker> trackers = new CopyOnWriteArraySet<LatencyTracker>();
+
+    private Manager(String clusterName, List<InetSocketAddress> contactPoints, Configuration configuration, Collection<Host.StateListener> listeners) {
+      logger.debug("Starting new cluster with contact points " + contactPoints);
+      this.clusterName = clusterName == null ? generateClusterName() : clusterName;
+      this.configuration = configuration;
+      this.configuration.register(this);
+      this.executor = makeExecutor(Runtime.getRuntime().availableProcessors(), "Cassandra Java Driver worker-%d");
+      this.blockingExecutor = makeExecutor(2, "Cassandra Java Driver blocking tasks worker-%d");
+      this.metadata = new Metadata(this);
+      this.contactPoints = contactPoints;
+      this.connectionFactory = new Connection.Factory(this, configuration);
+      this.controlConnection = new ControlConnection(this);
+      this.metrics = configuration.getMetricsOptions() == null ? null : new Metrics(this);
+      this.listeners = new CopyOnWriteArraySet<Host.StateListener>(listeners);
     }
 
-    private static ThreadFactory threadFactory(String nameFormat) {
-        return new ThreadFactoryBuilder().setNameFormat(nameFormat).build();
+    synchronized void init() {
+      if (isClosed()) {
+        throw new IllegalStateException("Can\'t use this Cluster instance because it was previously closed");
+      }
+      if (isInit) {
+        return;
+      }
+      isInit = true;
+      for (InetSocketAddress address : contactPoints) {
+        Host host = metadata.add(address);
+        if (host != null) {
+          host.setUp();
+          for (Host.StateListener listener : listeners) {
+            listener.onAdd(host);
+          }
+        }
+      }
+      loadBalancingPolicy().init(Cluster.this, metadata.allHosts());
+      try {
+        while (true) {
+          try {
+            controlConnection.connect();
+            if (connectionFactory.protocolVersion < 0) {
+              connectionFactory.protocolVersion = ProtocolOptions.NEWEST_SUPPORTED_PROTOCOL_VERSION;
+            }
+            return;
+          } catch (UnsupportedProtocolVersionException e) {
+            assert connectionFactory.protocolVersion < 1;
+            if (e.versionUnsupported <= 1) {
+              throw new DriverInternalError("Got a node that don\'t even support the protocol version 1, this makes no sense", e);
+            }
+            logger.debug("{}: retrying with version {}", e.getMessage(), e.versionUnsupported - 1);
+            connectionFactory.protocolVersion = e.versionUnsupported - 1;
+          }
+        }
+      } catch (NoHostAvailableException e) {
+        close();
+        throw e;
+      }
     }
 
-    static long timeSince(long startNanos, TimeUnit destUnit) {
-        return destUnit.convert(System.nanoTime() - startNanos, TimeUnit.NANOSECONDS);
+    int protocolVersion() {
+      return connectionFactory.protocolVersion;
     }
 
-    private static String generateClusterName() {
-        return "cluster" + CLUSTER_ID.incrementAndGet();
+    Cluster getCluster() {
+      return Cluster.this;
     }
 
-    private static ListeningExecutorService makeExecutor(int threads, String name) {
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(threads,
-                                                             threads,
-                                                             DEFAULT_THREAD_KEEP_ALIVE,
-                                                             TimeUnit.SECONDS,
-                                                             new LinkedBlockingQueue<Runnable>(),
-                                                             threadFactory(name));
-
-        executor.allowCoreThreadTimeOut(true);
-        return MoreExecutors.listeningDecorator(executor);
+    LoadBalancingPolicy loadBalancingPolicy() {
+      return configuration.getPolicies().getLoadBalancingPolicy();
     }
 
-    /**
-     * The sessions and hosts managed by this a Cluster instance.
-     * <p>
-     * Note: the reason we create a Manager object separate from Cluster is
-     * that Manager is not publicly visible. For instance, we wouldn't want
-     * user to be able to call the {@link #onUp} and {@link #onDown} methods.
-     */
-    class Manager implements Connection.DefaultResponseHandler {
+    ReconnectionPolicy reconnectionPolicy() {
+      return configuration.getPolicies().getReconnectionPolicy();
+    }
 
-        final String clusterName;
-        private boolean isInit;
+    InetSocketAddress translateAddress(InetAddress address) {
+      InetSocketAddress sa = new InetSocketAddress(address, connectionFactory.getPort());
+      return configuration.getPolicies().getAddressTranslater().translate(sa);
+    }
 
-        // Initial contacts point
-        final List<InetSocketAddress> contactPoints;
-        final Set<SessionManager> sessions = new CopyOnWriteArraySet<SessionManager>();
+    private Session newSession() {
+      SessionManager session = new SessionManager(Cluster.this);
+      sessions.add(session);
+      return session;
+    }
 
-        final Metadata metadata;
-        final Configuration configuration;
-        final Metrics metrics;
+    void reportLatency(Host host, long latencyNanos) {
+      for (LatencyTracker tracker : trackers) {
+        tracker.update(host, latencyNanos);
+      }
+    }
 
-        final Connection.Factory connectionFactory;
-        final ControlConnection controlConnection;
+    boolean isClosed() {
+      return closeFuture.get() != null;
+    }
 
-        final ConvictionPolicy.Factory convictionPolicyFactory = new ConvictionPolicy.Simple.Factory();
+    private CloseFuture close() {
+      CloseFuture future = closeFuture.get();
+      if (future != null) {
+        return future;
+      }
+      logger.debug("Shutting down");
+      reconnectionExecutor.shutdownNow();
+      scheduledTasksExecutor.shutdownNow();
+      executor.shutdown();
+      if (metrics != null) {
+        metrics.shutdown();
+      }
+      List<CloseFuture> futures = new ArrayList<CloseFuture>(sessions.size() + 1);
+      futures.add(controlConnection.closeAsync());
+      for (Session session : sessions) {
+        futures.add(session.closeAsync());
+      }
+      future = new ClusterCloseFuture(futures);
+      return closeFuture.compareAndSet(null, future) ? future : closeFuture.get();
+    }
 
-        final ScheduledExecutorService reconnectionExecutor = Executors.newScheduledThreadPool(2, threadFactory("Reconnection-%d"));
-        // scheduledTasksExecutor is used to process C* notifications. So having it mono-threaded ensures notifications are
-        // applied in the order received.
-        final ScheduledExecutorService scheduledTasksExecutor = Executors.newScheduledThreadPool(1, threadFactory("Scheduled Tasks-%d"));
+    void logUnsupportedVersionProtocol(Host host) {
+      logger.warn("Detected added or restarted Cassandra host {} but ignoring it since it does not support the version 2 of the native " + "protocol which is currently in use. If you want to force the use of the version 1 of the native protocol, use " + "Cluster.Builder#usingProtocolVersion() when creating the Cluster instance.", host);
+    }
 
-        // Executor used for tasks that shouldn't be executed on an IO thread. Used for short-lived, generally non-blocking tasks
-        final ListeningExecutorService executor;
+    public ListenableFuture<?> triggerOnUp(final Host host) {
+      return executor.submit(new ExceptionCatchingRunnable() {
+        @Override public void runMayThrow() throws InterruptedException, ExecutionException {
+          onUp(host);
+        }
+      });
+    }
 
-        // An executor for tasks that might block some time, like creating new connection, but are generally not too critical.
-        final ListeningExecutorService blockingExecutor;
-
-        final AtomicReference<CloseFuture> closeFuture = new AtomicReference<CloseFuture>();
-
-        // All the queries that have been prepared (we keep them so we can re-prepared them when a node fail or a
-        // new one join the cluster).
-        // Note: we could move this down to the session level, but since prepared statement are global to a node,
-        // this would yield a slightly less clear behavior.
-        final ConcurrentMap<MD5Digest, PreparedStatement> preparedQueries = new MapMaker().weakValues().makeMap();
-
-        final Set<Host.StateListener> listeners;
-        final Set<LatencyTracker> trackers = new CopyOnWriteArraySet<LatencyTracker>();
-
-        private Manager(String clusterName, List<InetSocketAddress> contactPoints, Configuration configuration, Collection<Host.StateListener> listeners) {
-            logger.debug("Starting new cluster with contact points " + contactPoints);
-
-            this.clusterName = clusterName == null ? generateClusterName() : clusterName;
-            this.configuration = configuration;
-            this.configuration.register(this);
-
-            this.executor = makeExecutor(Runtime.getRuntime().availableProcessors(), "Cassandra Java Driver worker-%d");
-            this.blockingExecutor = makeExecutor(2, "Cassandra Java Driver blocking tasks worker-%d");
-
-            this.metadata = new Metadata(this);
-            this.contactPoints = contactPoints;
-            this.connectionFactory = new Connection.Factory(this, configuration);
-            this.controlConnection = new ControlConnection(this);
-
-            this.metrics = configuration.getMetricsOptions() == null ? null : new Metrics(this);
-            this.listeners = new CopyOnWriteArraySet<Host.StateListener>(listeners);
+    private void onUp(final Host host) throws InterruptedException, ExecutionException {
+      logger.trace("Host {} is UP", host);
+      if (isClosed()) {
+        return;
+      }
+      if (host.isUp()) {
+        return;
+      }
+      if (connectionFactory.protocolVersion == 2 && !supportsProtocolV2(host)) {
+        logUnsupportedVersionProtocol(host);
+        return;
+      }
+      ScheduledFuture<?> scheduledAttempt = host.reconnectionAttempt.getAndSet(null);
+      if (scheduledAttempt != null) {
+        logger.debug("Cancelling reconnection attempt since node is UP");
+        scheduledAttempt.cancel(false);
+      }
+      try {
+        prepareAllQueries(host);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      } catch (UnsupportedProtocolVersionException e) {
+        logUnsupportedVersionProtocol(host);
+        return;
+      }
+      for (SessionManager s : sessions) {
+        s.removePool(host);
+      }
+      loadBalancingPolicy().onUp(host);
+      controlConnection.onUp(host);
+      List<ListenableFuture<Boolean>> futures = new ArrayList<ListenableFuture<Boolean>>(sessions.size());
+      for (SessionManager s : sessions) {
+        futures.add(s.addOrRenewPool(host, false, blockingExecutor));
+      }
+      ListenableFuture<List<Boolean>> f = Futures.allAsList(futures);
+      Futures.addCallback(f, new FutureCallback<List<Boolean>>() {
+        public void onSuccess(List<Boolean> poolCreationResults) {
+          if (Iterables.any(poolCreationResults, Predicates.equalTo(false))) {
+            logger.debug("Connection pool cannot be created, not marking {} UP", host);
+            return;
+          }
+          host.setUp();
+          for (Host.StateListener listener : listeners) {
+            listener.onUp(host);
+          }
+          for (SessionManager s : sessions) {
+            s.updateCreatedPools(blockingExecutor);
+          }
         }
 
-        // Initialization is not too performance intensive and in practice there shouldn't be contention
-        // on it so synchronized is good enough.
-        synchronized void init() {
-            if (isClosed())
-                throw new IllegalStateException("Can't use this Cluster instance because it was previously closed");
-            if (isInit)
-                return;
-            isInit = true;
+        public void onFailure(Throwable t) {
+          if (!(t instanceof InterruptedException)) {
+            logger.error("Unexpected error while marking node UP: while this shouldn\'t happen, this shouldn\'t be critical", t);
+          }
+        }
+      });
+      f.get();
+    }
 
-            for (InetSocketAddress address : contactPoints) {
-                // We don't want to signal -- call onAdd() -- because nothing is ready
-                // yet (loadbalancing policy, control connection, ...). All we want is
-                // create the Host object so we can initialize the loadBalancing policy.
-                // But this also mean we should signal the external listeners manually.
-                // Note: we mark the initial contact point as UP, because we have no prior
-                // notion of their state and no real way to know until we connect to them
-                // (since the node status is not exposed by C* in the System tables). This
-                // may not be correct.
-                Host host = metadata.add(address);
-                if (host != null) {
-                    host.setUp();
-                    for (Host.StateListener listener : listeners)
-                        listener.onAdd(host);
-                }
+    public ListenableFuture<?> triggerOnDown(final Host host) {
+      return triggerOnDown(host, false);
+    }
+
+    public ListenableFuture<?> triggerOnDown(final Host host, final boolean isHostAddition) {
+      return executor.submit(new ExceptionCatchingRunnable() {
+        @Override public void runMayThrow() throws InterruptedException, ExecutionException {
+          onDown(host, isHostAddition);
+        }
+      });
+    }
+
+    private void onDown(final Host host, final boolean isHostAddition) throws InterruptedException, ExecutionException {
+      logger.trace("Host {} is DOWN", host);
+      if (isClosed()) {
+        return;
+      }
+      if (host.reconnectionAttempt.get() != null) {
+        return;
+      }
+      HostDistance distance = loadBalancingPolicy().distance(host);
+      boolean wasUp = host.isUp();
+      host.setDown();
+      loadBalancingPolicy().onDown(host);
+      controlConnection.onDown(host);
+      for (SessionManager s : sessions) {
+        s.onDown(host);
+      }
+      if (wasUp) {
+        for (Host.StateListener listener : listeners) {
+          listener.onDown(host);
+        }
+      }
+      if (distance == HostDistance.IGNORED) {
+        return;
+      }
+      logger.debug("{} is down, scheduling connection retries", host);
+      new AbstractReconnectionHandler(reconnectionExecutor, reconnectionPolicy().newSchedule(), host.reconnectionAttempt) {
+        protected Connection tryReconnect() throws ConnectionException, InterruptedException, UnsupportedProtocolVersionException {
+          return connectionFactory.open(host);
+        }
+
+        protected void onReconnection(Connection connection) {
+          logger.debug("Successful reconnection to {}, setting host UP", host);
+          controlConnection.refreshNodeInfo(host);
+          try {
+            if (isHostAddition) {
+              onAdd(host);
+            } else {
+              onUp(host);
             }
+          } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+          } catch (Exception e) {
+            logger.error("Unexpected error while setting node up", e);
+          }
+        }
 
-            loadBalancingPolicy().init(Cluster.this, metadata.allHosts());
+        protected boolean onConnectionException(ConnectionException e, long nextDelayMs) {
+          if (logger.isDebugEnabled()) {
+            logger.debug("Failed reconnection to {} ({}), scheduling retry in {} milliseconds", host, e.getMessage(), nextDelayMs);
+          }
+          return true;
+        }
 
-            try {
-                while (true) {
-                    try {
-                        controlConnection.connect();
-                        if (connectionFactory.protocolVersion < 0)
-                            connectionFactory.protocolVersion = ProtocolOptions.NEWEST_SUPPORTED_PROTOCOL_VERSION;
+        protected boolean onUnknownException(Exception e, long nextDelayMs) {
+          logger.error(String.format("Unknown error during control connection reconnection, scheduling retry in %d milliseconds", nextDelayMs), e);
+          return true;
+        }
+      }.start();
+    }
 
-                        return;
-                    } catch (UnsupportedProtocolVersionException e) {
-                        assert connectionFactory.protocolVersion < 1;
-                        // For now, all C* version supports the protocol version 1
-                        if (e.versionUnsupported <= 1)
-                            throw new DriverInternalError("Got a node that don't even support the protocol version 1, this makes no sense", e);
-                        logger.debug("{}: retrying with version {}", e.getMessage(), e.versionUnsupported - 1);
-                        connectionFactory.protocolVersion = e.versionUnsupported - 1;
-                    }
-                }
-            } catch (NoHostAvailableException e) {
-                close();
-                throw e;
+    public ListenableFuture<?> triggerOnAdd(final Host host) {
+      return executor.submit(new ExceptionCatchingRunnable() {
+        @Override public void runMayThrow() throws InterruptedException, ExecutionException {
+          onAdd(host);
+        }
+      });
+    }
+
+    private void onAdd(final Host host) throws InterruptedException, ExecutionException {
+      if (isClosed()) {
+        return;
+      }
+      logger.info("New Cassandra host {} added", host);
+      if (connectionFactory.protocolVersion == 2 && !supportsProtocolV2(host)) {
+        logUnsupportedVersionProtocol(host);
+        return;
+      }
+      loadBalancingPolicy().onAdd(host);
+      if (loadBalancingPolicy().distance(host) == HostDistance.IGNORED) {
+        host.setUp();
+        for (Host.StateListener listener : listeners) {
+          listener.onAdd(host);
+        }
+        return;
+      }
+      try {
+        prepareAllQueries(host);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      } catch (UnsupportedProtocolVersionException e) {
+        logUnsupportedVersionProtocol(host);
+        return;
+      }
+      controlConnection.onAdd(host);
+      List<ListenableFuture<Boolean>> futures = new ArrayList<ListenableFuture<Boolean>>(sessions.size());
+      for (SessionManager s : sessions) {
+        futures.add(s.addOrRenewPool(host, true, blockingExecutor));
+      }
+      ListenableFuture<List<Boolean>> f = Futures.allAsList(futures);
+      Futures.addCallback(f, new FutureCallback<List<Boolean>>() {
+        public void onSuccess(List<Boolean> poolCreationResults) {
+          if (Iterables.any(poolCreationResults, Predicates.equalTo(false))) {
+            logger.debug("Connection pool cannot be created, not marking {} UP", host);
+            return;
+          }
+          host.setUp();
+          for (Host.StateListener listener : listeners) {
+            listener.onAdd(host);
+          }
+          for (SessionManager s : sessions) {
+            s.updateCreatedPools(blockingExecutor);
+          }
+        }
+
+        public void onFailure(Throwable t) {
+          if (!(t instanceof InterruptedException)) {
+            logger.error("Unexpected error while adding node: while this shouldn\'t happen, this shouldn\'t be critical", t);
+          }
+        }
+      });
+      f.get();
+    }
+
+    public ListenableFuture<?> triggerOnRemove(final Host host) {
+      return executor.submit(new ExceptionCatchingRunnable() {
+        @Override public void runMayThrow() throws InterruptedException, ExecutionException {
+          onRemove(host);
+        }
+      });
+    }
+
+    private void onRemove(Host host) throws InterruptedException, ExecutionException {
+      if (isClosed()) {
+        return;
+      }
+      host.setDown();
+      logger.debug("Removing host {}", host);
+      loadBalancingPolicy().onRemove(host);
+      controlConnection.onRemove(host);
+      for (SessionManager s : sessions) {
+        s.onRemove(host);
+      }
+      for (Host.StateListener listener : listeners) {
+        listener.onRemove(host);
+      }
+    }
+
+    public boolean signalConnectionFailure(Host host, ConnectionException exception, boolean isHostAddition) {
+      boolean isDown = host.signalConnectionFailure(exception);
+      if (isDown) {
+        triggerOnDown(host, isHostAddition);
+      }
+      return isDown;
+    }
+
+    private boolean supportsProtocolV2(Host newHost) {
+      return newHost.getCassandraVersion() == null || newHost.getCassandraVersion().getMajor() >= 2;
+    }
+
+    public void removeHost(Host host) {
+      if (host == null) {
+        return;
+      }
+      if (metadata.remove(host)) {
+        logger.info("Cassandra host {} removed", host);
+        triggerOnRemove(host);
+      }
+    }
+
+    public void ensurePoolsSizing() {
+      for (SessionManager session : sessions) {
+        for (HostConnectionPool pool : session.pools.values()) {
+          pool.ensureCoreConnections();
+        }
+      }
+    }
+
+    public PreparedStatement addPrepared(PreparedStatement stmt) {
+      PreparedStatement previous = preparedQueries.putIfAbsent(stmt.getPreparedId().id, stmt);
+      if (previous != null) {
+        logger.warn("Re-preparing already prepared query {}. Please note that preparing the same query more than once is " + "generally an anti-pattern and will likely affect performance. Consider preparing the statement only once.", stmt.getQueryString());
+        return previous;
+      }
+      return stmt;
+    }
+
+    private void prepareAllQueries(Host host) throws InterruptedException, UnsupportedProtocolVersionException {
+      if (preparedQueries.isEmpty()) {
+        return;
+      }
+      logger.debug("Preparing {} prepared queries on newly up node {}", preparedQueries.size(), host);
+      try {
+        Connection connection = connectionFactory.open(host);
+        try {
+          try {
+            ControlConnection.waitForSchemaAgreement(connection, this);
+          } catch (ExecutionException e) {
+          }
+          SetMultimap<String, String> perKeyspace = HashMultimap.create();
+          for (PreparedStatement ps : preparedQueries.values()) {
+            String keyspace = ps.getQueryKeyspace() == null ? "" : ps.getQueryKeyspace();
+            perKeyspace.put(keyspace, ps.getQueryString());
+          }
+          for (String keyspace : perKeyspace.keySet()) {
+            if (!keyspace.isEmpty()) {
+              connection.setKeyspace(keyspace);
             }
-        }
-
-        int protocolVersion() {
-            return connectionFactory.protocolVersion;
-        }
-
-        Cluster getCluster() {
-            return Cluster.this;
-        }
-
-        LoadBalancingPolicy loadBalancingPolicy() {
-            return configuration.getPolicies().getLoadBalancingPolicy();
-        }
-
-        ReconnectionPolicy reconnectionPolicy() {
-            return configuration.getPolicies().getReconnectionPolicy();
-        }
-
-        InetSocketAddress translateAddress(InetAddress address) {
-            InetSocketAddress sa = new InetSocketAddress(address, connectionFactory.getPort());
-            return configuration.getPolicies().getAddressTranslater().translate(sa);
-        }
-
-        private Session newSession() {
-            SessionManager session = new SessionManager(Cluster.this);
-            sessions.add(session);
-            return session;
-        }
-
-        void reportLatency(Host host, long latencyNanos) {
-            for (LatencyTracker tracker : trackers) {
-                tracker.update(host, latencyNanos);
+            List<Connection.Future> futures = new ArrayList<Connection.Future>(preparedQueries.size());
+            for (String query : perKeyspace.get(keyspace)) {
+              futures.add(connection.write(new Requests.Prepare(query)));
             }
-        }
-
-        boolean isClosed() {
-            return closeFuture.get() != null;
-        }
-
-        private CloseFuture close() {
-
-            CloseFuture future = closeFuture.get();
-            if (future != null)
-                return future;
-
-            logger.debug("Shutting down");
-
-            // If we're shutting down, there is no point in waiting on scheduled reconnections, nor on notifications
-            // delivery so we use shutdownNow
-            reconnectionExecutor.shutdownNow();
-            scheduledTasksExecutor.shutdownNow();
-
-            // but for the worker executor, we want to let submitted tasks finish unless the shutdown is forced.
-            executor.shutdown();
-
-            // We also closes the metrics
-            if (metrics != null)
-                metrics.shutdown();
-
-            // Then we shutdown all connections
-            List<CloseFuture> futures = new ArrayList<CloseFuture>(sessions.size() + 1);
-            futures.add(controlConnection.closeAsync());
-            for (Session session : sessions)
-                futures.add(session.closeAsync());
-
-            future = new ClusterCloseFuture(futures);
-
-            // The rest will happen asynchronously, when all connections are successfully closed
-            return closeFuture.compareAndSet(null, future)
-                 ? future
-                 : closeFuture.get(); // We raced, it's ok, return the future that was actually set
-        }
-
-        void logUnsupportedVersionProtocol(Host host) {
-            logger.warn("Detected added or restarted Cassandra host {} but ignoring it since it does not support the version 2 of the native "
-                      + "protocol which is currently in use. If you want to force the use of the version 1 of the native protocol, use "
-                      + "Cluster.Builder#usingProtocolVersion() when creating the Cluster instance.", host);
-        }
-
-        public ListenableFuture<?> triggerOnUp(final Host host) {
-            return executor.submit(new ExceptionCatchingRunnable() {
-                @Override
-                public void runMayThrow() throws InterruptedException, ExecutionException {
-                    onUp(host);
-                }
-            });
-        }
-
-        // Use triggerOnUp unless you're sure you want to run this on the current thread.
-        private void onUp(final Host host) throws InterruptedException, ExecutionException {
-            logger.trace("Host {} is UP", host);
-
-            if (isClosed())
-                return;
-
-            if (host.isUp())
-                return;
-
-            if (connectionFactory.protocolVersion == 2 && !supportsProtocolV2(host)) {
-                logUnsupportedVersionProtocol(host);
-                return;
+            for (Connection.Future future : futures) {
+              try {
+                future.get();
+              } catch (ExecutionException e) {
+                logger.debug("Unexpected error while preparing queries on new/newly up host", e);
+              }
             }
+          }
+        }  finally {
+          connection.closeAsync();
+        }
+      } catch (ConnectionException e) {
+      } catch (AuthenticationException e) {
+      } catch (BusyConnectionException e) {
+      }
+    }
 
-            // If there is a reconnection attempt scheduled for that node, cancel it
-            ScheduledFuture<?> scheduledAttempt = host.reconnectionAttempt.getAndSet(null);
-            if (scheduledAttempt != null) {
-                logger.debug("Cancelling reconnection attempt since node is UP");
-                scheduledAttempt.cancel(false);
+    public void submitSchemaRefresh(final String keyspace, final String table) {
+      logger.trace("Submitting schema refresh");
+      executor.submit(new ExceptionCatchingRunnable() {
+        @Override public void runMayThrow() throws InterruptedException, ExecutionException {
+          controlConnection.refreshSchema(keyspace, table);
+        }
+      });
+    }
+
+    public void refreshSchemaAndSignal(final Connection connection, final DefaultResultSetFuture future, final ResultSet rs, final String keyspace, final String table) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Refreshing schema for {}{}", keyspace == null ? "" : keyspace, table == null ? "" : '.' + table);
+      }
+      executor.submit(new Runnable() {
+        @Override public void run() {
+          try {
+            if (!ControlConnection.waitForSchemaAgreement(connection, Cluster.Manager.this)) {
+              logger.warn("No schema agreement from live replicas after {} ms. The schema may not be up to date on some nodes.", ControlConnection.MAX_SCHEMA_AGREEMENT_WAIT_MS);
             }
+            ControlConnection.refreshSchema(connection, keyspace, table, Cluster.Manager.this);
+          } catch (Exception e) {
+            logger.error("Error during schema refresh ({}). The schema from Cluster.getMetadata() might appear stale. Asynchronously submitting job to fix.", e.getMessage());
+            submitSchemaRefresh(keyspace, table);
+          } finally {
+            future.setResult(rs);
+          }
+        }
+      });
+    }
 
-            try {
-                prepareAllQueries(host);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                // Don't propagate because we don't want to prevent other listener to run
-            } catch (UnsupportedProtocolVersionException e) {
-                logUnsupportedVersionProtocol(host);
-                return;
+    @Override public void handle(Message.Response response) {
+      if (!(response instanceof Responses.Event)) {
+        logger.error("Received an unexpected message from the server: {}", response);
+        return;
+      }
+      final ProtocolEvent event = ((Responses.Event) response).event;
+      logger.debug("Received event {}, scheduling delivery", response);
+      switch (event.type) {
+        case TOPOLOGY_CHANGE:
+        ProtocolEvent.TopologyChange tpc = (ProtocolEvent.TopologyChange) event;
+        InetSocketAddress tpAddr = translateAddress(tpc.node.getAddress());
+        switch (tpc.change) {
+          case NEW_NODE:
+          final Host newHost = metadata.add(tpAddr);
+          if (newHost != null) {
+            scheduledTasksExecutor.schedule(new ExceptionCatchingRunnable() {
+              @Override public void runMayThrow() throws InterruptedException, ExecutionException {
+                controlConnection.refreshNodeInfo(newHost);
+                onAdd(newHost);
+              }
+            }, 1, TimeUnit.SECONDS);
+          }
+          break;
+          case REMOVED_NODE:
+          removeHost(metadata.getHost(tpAddr));
+          break;
+          case MOVED_NODE:
+          executor.submit(new ExceptionCatchingRunnable() {
+            @Override public void runMayThrow() {
+              controlConnection.refreshNodeListAndTokenMap();
             }
-
-            // Session#onUp() expects the load balancing policy to have been updated first, so that
-            // Host distances are up to date. This mean the policy could return the node before the
-            // new pool have been created. This is harmless if there is no prior pool since RequestHandler
-            // will ignore the node, but we do want to make sure there is no prior pool so we don't
-            // query from a pool we will shutdown right away.
-            for (SessionManager s : sessions)
-                s.removePool(host);
-            loadBalancingPolicy().onUp(host);
-            controlConnection.onUp(host);
-
-            // Note that we can parallelize the pool creation on each session, but we shouldn't use executor
-            // since we're already running on it most probably (and so we could deadlock). Use the blockingExecutor
-            // instead, that's why it's for.
-            List<ListenableFuture<Boolean>> futures = new ArrayList<ListenableFuture<Boolean>>(sessions.size());
-            for (SessionManager s : sessions)
-                futures.add(s.addOrRenewPool(host, false, blockingExecutor));
-
-            // Only mark the node up once all session have re-added their pool (if the load-balancing
-            // policy says it should), so that Host.isUp() don't return true before we're reconnected
-            // to the node.
-            ListenableFuture<List<Boolean>> f = Futures.allAsList(futures);
-            Futures.addCallback(f, new FutureCallback<List<Boolean>>() {
-                public void onSuccess(List<Boolean> poolCreationResults) {
-                    // If any of the creation failed, they will have signaled a connection failure
-                    // which will trigger a reconnection to the node. So don't bother marking UP.
-                    if (Iterables.any(poolCreationResults, Predicates.equalTo(false))) {
-                        logger.debug("Connection pool cannot be created, not marking {} UP", host);
-                        return;
-                    }
-
-                    host.setUp();
-
-                    for (Host.StateListener listener : listeners)
-                        listener.onUp(host);
-
-                    // Now, check if there isn't pools to create/remove following the addition.
-                    // We do that now only so that it's not called before we've set the node up.
-                    for (SessionManager s : sessions)
-                        s.updateCreatedPools(blockingExecutor);
-                }
-
-                public void onFailure(Throwable t) {
-                    // That future is not really supposed to throw unexpected exceptions
-                    if (!(t instanceof InterruptedException))
-                        logger.error("Unexpected error while marking node UP: while this shouldn't happen, this shouldn't be critical", t);
-                }
-            });
-
-            f.get();
+          });
+          break;
         }
-
-        public ListenableFuture<?> triggerOnDown(final Host host) {
-            return triggerOnDown(host, false);
-        }
-
-        public ListenableFuture<?> triggerOnDown(final Host host, final boolean isHostAddition) {
-            return executor.submit(new ExceptionCatchingRunnable() {
-                @Override
-                public void runMayThrow() throws InterruptedException, ExecutionException {
-                    onDown(host, isHostAddition);
-                }
-            });
-        }
-
-        // Use triggerOnDown unless you're sure you want to run this on the current thread.
-        private void onDown(final Host host, final boolean isHostAddition) throws InterruptedException, ExecutionException {
-            logger.trace("Host {} is DOWN", host);
-
-            if (isClosed())
-                return;
-
-            // Note: we don't want to skip that method if !host.isUp() because we set isUp
-            // late in onUp, and so we can rely on isUp if there is an error during onUp.
-            // But if there is a reconnection attempt in progress already, then we know
-            // we've already gone through that method since the last successful onUp(), so
-            // we're good skipping it.
-            if (host.reconnectionAttempt.get() != null)
-                return;
-
-            // Remember if we care about this node at all. We must call this before
-            // we've signalled the load balancing policy, since most policy will always
-            // IGNORE down nodes anyway.
-            HostDistance distance = loadBalancingPolicy().distance(host);
-
-            boolean wasUp = host.isUp();
-            host.setDown();
-
-
-            loadBalancingPolicy().onDown(host);
-            controlConnection.onDown(host);
-            for (SessionManager s : sessions)
-                s.onDown(host);
-
-            // Contrarily to other actions of that method, there is no reason to notify listeners
-            // unless the host was UP at the beginning of this function since even if a onUp fail
-            // mid-method, listeners won't  have been notified of the UP.
-            if (wasUp) {
-                for (Host.StateListener listener : listeners)
-                    listener.onDown(host);
+        break;
+        case STATUS_CHANGE:
+        ProtocolEvent.StatusChange stc = (ProtocolEvent.StatusChange) event;
+        InetSocketAddress stAddr = translateAddress(stc.node.getAddress());
+        switch (stc.status) {
+          case UP:
+          final Host hostUp = metadata.getHost(stAddr);
+          if (hostUp == null) {
+            final Host h = metadata.add(stAddr);
+            if (h == null) {
+              return;
             }
-
-            // Don't start a reconnection if we ignore the node anyway (JAVA-314)
-            if (distance == HostDistance.IGNORED)
-                return;
-
-            // Note: we basically waste the first successful reconnection, but it's probably not a big deal
-            logger.debug("{} is down, scheduling connection retries", host);
-            new AbstractReconnectionHandler(reconnectionExecutor, reconnectionPolicy().newSchedule(), host.reconnectionAttempt) {
-
-                protected Connection tryReconnect() throws ConnectionException, InterruptedException, UnsupportedProtocolVersionException {
-                    return connectionFactory.open(host);
-                }
-
-                protected void onReconnection(Connection connection) {
-                    logger.debug("Successful reconnection to {}, setting host UP", host);
-                    // Make sure we have up-to-date infos on that host before adding it (so we typically
-                    // catch that an upgraded node uses a new cassandra version).
-                    controlConnection.refreshNodeInfo(host);
-                    try {
-                        if (isHostAddition)
-                            onAdd(host);
-                        else
-                            onUp(host);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    } catch (Exception e) {
-                        logger.error("Unexpected error while setting node up", e);
-                    }
-                }
-
-                protected boolean onConnectionException(ConnectionException e, long nextDelayMs) {
-                    if (logger.isDebugEnabled())
-                        logger.debug("Failed reconnection to {} ({}), scheduling retry in {} milliseconds", host, e.getMessage(), nextDelayMs);
-                    return true;
-                }
-
-                protected boolean onUnknownException(Exception e, long nextDelayMs) {
-                    logger.error(String.format("Unknown error during control connection reconnection, scheduling retry in %d milliseconds", nextDelayMs), e);
-                    return true;
-                }
-
-            }.start();
-        }
-
-        public ListenableFuture<?> triggerOnAdd(final Host host) {
-            return executor.submit(new ExceptionCatchingRunnable() {
-                @Override
-                public void runMayThrow() throws InterruptedException, ExecutionException {
-                    onAdd(host);
-                }
-            });
-        }
-
-        // Use triggerOnAdd unless you're sure you want to run this on the current thread.
-        private void onAdd(final Host host) throws InterruptedException, ExecutionException {
-            if (isClosed())
-                return;
-
-            logger.info("New Cassandra host {} added", host);
-
-            if (connectionFactory.protocolVersion == 2 && !supportsProtocolV2(host)) {
-                logUnsupportedVersionProtocol(host);
-                return;
-            }
-
-            // Adds to the load balancing first and foremost, as doing so might change the decision
-            // it will make for distance() on that node (not likely but we leave that possibility).
-            // This does mean the policy may start returning that node for query plan, but as long
-            // as no pools have been created (below) this will be ignored by RequestHandler so it's fine.
-            loadBalancingPolicy().onAdd(host);
-
-            // Next, if the host should be ignored, well, ignore it.
-            if (loadBalancingPolicy().distance(host) == HostDistance.IGNORED) {
-                // We still mark the node UP though as it should be (and notifiy the listeners).
-                // We'll mark it down if we have  a notification anyway and we've documented that especially
-                // for IGNORED hosts, the isUp() method was a best effort guess
-                host.setUp();
-                for (Host.StateListener listener : listeners)
-                    listener.onAdd(host);
-                return;
-            }
-
-            try {
-                prepareAllQueries(host);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                // Don't propagate because we don't want to prevent other listener to run
-            } catch (UnsupportedProtocolVersionException e) {
-                logUnsupportedVersionProtocol(host);
-                return;
-            }
-
-            controlConnection.onAdd(host);
-
-            List<ListenableFuture<Boolean>> futures = new ArrayList<ListenableFuture<Boolean>>(sessions.size());
-            for (SessionManager s : sessions)
-                futures.add(s.addOrRenewPool(host, true, blockingExecutor));
-
-            // Only mark the node up once all session have added their pool (if the load-balancing
-            // policy says it should), so that Host.isUp() don't return true before we're reconnected
-            // to the node.
-            ListenableFuture<List<Boolean>> f = Futures.allAsList(futures);
-            Futures.addCallback(f, new FutureCallback<List<Boolean>>() {
-                public void onSuccess(List<Boolean> poolCreationResults) {
-                    // If any of the creation failed, they will have signaled a connection failure
-                    // which will trigger a reconnection to the node. So don't bother marking UP.
-                    if (Iterables.any(poolCreationResults, Predicates.equalTo(false))) {
-                        logger.debug("Connection pool cannot be created, not marking {} UP", host);
-                        return;
-                    }
-
-                    host.setUp();
-
-                    for (Host.StateListener listener : listeners)
-                        listener.onAdd(host);
-
-                    // Now, check if there isn't pools to create/remove following the addition.
-                    // We do that now only so that it's not called before we've set the node up.
-                    for (SessionManager s : sessions)
-                        s.updateCreatedPools(blockingExecutor);
-                }
-
-                public void onFailure(Throwable t) {
-                    // That future is not really supposed to throw unexpected exceptions
-                    if (!(t instanceof InterruptedException))
-                        logger.error("Unexpected error while adding node: while this shouldn't happen, this shouldn't be critical", t);
-                }
-            });
-
-            f.get();
-        }
-
-        public ListenableFuture<?> triggerOnRemove(final Host host) {
-            return executor.submit(new ExceptionCatchingRunnable() {
-                @Override
-                public void runMayThrow() throws InterruptedException, ExecutionException {
-                    onRemove(host);
-                }
-            });
-        }
-
-        // Use triggerOnRemove unless you're sure you want to run this on the current thread.
-        private void onRemove(Host host) throws InterruptedException, ExecutionException {
-            if (isClosed())
-                return;
-
-            host.setDown();
-
-            logger.debug("Removing host {}", host);
-            loadBalancingPolicy().onRemove(host);
-            controlConnection.onRemove(host);
-            for (SessionManager s : sessions)
-                s.onRemove(host);
-
-            for (Host.StateListener listener : listeners)
-                listener.onRemove(host);
-        }
-
-        public boolean signalConnectionFailure(Host host, ConnectionException exception, boolean isHostAddition) {
-            boolean isDown = host.signalConnectionFailure(exception);
-            if (isDown)
-                triggerOnDown(host, isHostAddition);
-            return isDown;
-        }
-
-        private boolean supportsProtocolV2(Host newHost) {
-            return newHost.getCassandraVersion() == null || newHost.getCassandraVersion().getMajor() >= 2;
-        }
-
-        public void removeHost(Host host) {
-            if (host == null)
-                return;
-
-            if (metadata.remove(host)) {
-                logger.info("Cassandra host {} removed", host);
-                triggerOnRemove(host);
-            }
-        }
-
-        public void ensurePoolsSizing() {
-            for (SessionManager session : sessions) {
-                for (HostConnectionPool pool : session.pools.values())
-                    pool.ensureCoreConnections();
-            }
-        }
-
-        public PreparedStatement addPrepared(PreparedStatement stmt) {
-            PreparedStatement previous = preparedQueries.putIfAbsent(stmt.getPreparedId().id, stmt);
-            if (previous != null) {
-                logger.warn("Re-preparing already prepared query {}. Please note that preparing the same query more than once is "
-                          + "generally an anti-pattern and will likely affect performance. Consider preparing the statement only once.", stmt.getQueryString());
-
-                // The one object in the cache will get GCed once it's not referenced by the client anymore since we use a weak reference.
-                // So we need to make sure that the instance we do return to the user is the one that is in the cache.
-                return previous;
-            }
-            return stmt;
-        }
-
-        private void prepareAllQueries(Host host) throws InterruptedException, UnsupportedProtocolVersionException {
-            if (preparedQueries.isEmpty())
-                return;
-
-            logger.debug("Preparing {} prepared queries on newly up node {}", preparedQueries.size(), host);
-            try {
-                Connection connection = connectionFactory.open(host);
-
-                try
-                {
-                    try {
-                        ControlConnection.waitForSchemaAgreement(connection, this);
-                    } catch (ExecutionException e) {
-                        // As below, just move on
-                    }
-
-                    // Furthermore, along with each prepared query we keep the current keyspace at the time of preparation
-                    // as we need to make it is the same when we re-prepare on new/restarted nodes. Most query will use the
-                    // same keyspace so keeping it each time is slightly wasteful, but this doesn't really matter and is
-                    // simpler. Besides, we do avoid in prepareAllQueries to not set the current keyspace more than needed.
-
-                    // We need to make sure we prepared every query with the right current keyspace, i.e. the one originally
-                    // used for preparing it. However, since we are likely that all prepared query belong to only a handful
-                    // of different keyspace (possibly only one), and to avoid setting the current keyspace more than needed,
-                    // we first sort the query per keyspace.
-                    SetMultimap<String, String> perKeyspace = HashMultimap.create();
-                    for (PreparedStatement ps : preparedQueries.values()) {
-                        // It's possible for a query to not have a current keyspace. But since null doesn't work well as
-                        // map keys, we use the empty string instead (that is not a valid keyspace name).
-                        String keyspace = ps.getQueryKeyspace() == null ? "" : ps.getQueryKeyspace();
-                        perKeyspace.put(keyspace, ps.getQueryString());
-                    }
-
-                    for (String keyspace : perKeyspace.keySet())
-                    {
-                        // Empty string mean no particular keyspace to set
-                        if (!keyspace.isEmpty())
-                            connection.setKeyspace(keyspace);
-
-                        List<Connection.Future> futures = new ArrayList<Connection.Future>(preparedQueries.size());
-                        for (String query : perKeyspace.get(keyspace)) {
-                            futures.add(connection.write(new Requests.Prepare(query)));
-                        }
-                        for (Connection.Future future : futures) {
-                            try {
-                                future.get();
-                            } catch (ExecutionException e) {
-                                // This "might" happen if we drop a CF but haven't removed it's prepared queries (which we don't do
-                                // currently). It's not a big deal however as if it's a more serious problem it'll show up later when
-                                // the query is tried for execution.
-                                logger.debug("Unexpected error while preparing queries on new/newly up host", e);
-                            }
-                        }
-                    }
-                } finally {
-                    connection.closeAsync();
-                }
-            } catch (ConnectionException e) {
-                // Ignore, not a big deal
-            } catch (AuthenticationException e) {
-                // That's a bad news, but ignore at this point
-            } catch (BusyConnectionException e) {
-                // Ignore, not a big deal
-            }
-        }
-
-        public void submitSchemaRefresh(final String keyspace, final String table) {
-            logger.trace("Submitting schema refresh");
+            scheduledTasksExecutor.schedule(new ExceptionCatchingRunnable() {
+              @Override public void runMayThrow() throws InterruptedException, ExecutionException {
+                controlConnection.refreshNodeInfo(h);
+                onAdd(h);
+              }
+            }, 1, TimeUnit.SECONDS);
+          } else {
             executor.submit(new ExceptionCatchingRunnable() {
-                @Override
-                public void runMayThrow() throws InterruptedException, ExecutionException {
-                    controlConnection.refreshSchema(keyspace, table);
-                }
+              @Override public void runMayThrow() throws InterruptedException, ExecutionException {
+                controlConnection.refreshNodeInfo(hostUp);
+                onUp(hostUp);
+              }
             });
+          }
+          break;
+          case DOWN:
+          Host hostDown = metadata.getHost(stAddr);
+          if (hostDown != null) {
+            triggerOnDown(hostDown);
+          }
+          break;
         }
-
-        // refresh the schema using the provided connection, and notice the future with the provided resultset once done
-        public void refreshSchemaAndSignal(final Connection connection, final DefaultResultSetFuture future, final ResultSet rs, final String keyspace, final String table) {
-            if (logger.isDebugEnabled())
-                logger.debug("Refreshing schema for {}{}", keyspace == null ? "" : keyspace, table == null ? "" : '.' + table);
-
-            executor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        // Before refreshing the schema, wait for schema agreement so
-                        // that querying a table just after having created it don't fail.
-                        if (!ControlConnection.waitForSchemaAgreement(connection, Cluster.Manager.this))
-                            logger.warn("No schema agreement from live replicas after {} ms. The schema may not be up to date on some nodes.", ControlConnection.MAX_SCHEMA_AGREEMENT_WAIT_MS);
-                        ControlConnection.refreshSchema(connection, keyspace, table, Cluster.Manager.this);
-                    } catch (Exception e) {
-                        logger.error("Error during schema refresh ({}). The schema from Cluster.getMetadata() might appear stale. Asynchronously submitting job to fix.", e.getMessage());
-                        submitSchemaRefresh(keyspace, table);
-                    } finally {
-                        // Always sets the result
-                        future.setResult(rs);
-                    }
-                }
-            });
+        break;
+        case SCHEMA_CHANGE:
+        ProtocolEvent.SchemaChange scc = (ProtocolEvent.SchemaChange) event;
+        switch (scc.change) {
+          case CREATED:
+          if (scc.table.isEmpty()) {
+            submitSchemaRefresh(null, null);
+          } else {
+            submitSchemaRefresh(scc.keyspace, null);
+          }
+          break;
+          case DROPPED:
+          if (scc.table.isEmpty()) {
+            submitSchemaRefresh(null, null);
+          } else {
+            submitSchemaRefresh(scc.keyspace, null);
+          }
+          break;
+          case UPDATED:
+          if (scc.table.isEmpty()) {
+            submitSchemaRefresh(scc.keyspace, null);
+          } else {
+            submitSchemaRefresh(scc.keyspace, scc.table);
+          }
+          break;
         }
-
-        // Called when some message has been received but has been initiated from the server (streamId < 0).
-        // This is called on an I/O thread, so all blocking operation must be done on an executor.
-        @Override
-        public void handle(Message.Response response) {
-
-            if (!(response instanceof Responses.Event)) {
-                logger.error("Received an unexpected message from the server: {}", response);
-                return;
-            }
-
-            final ProtocolEvent event = ((Responses.Event)response).event;
-
-            logger.debug("Received event {}, scheduling delivery", response);
-
-            switch (event.type) {
-                case TOPOLOGY_CHANGE:
-                    ProtocolEvent.TopologyChange tpc = (ProtocolEvent.TopologyChange)event;
-                    InetSocketAddress tpAddr = translateAddress(tpc.node.getAddress());
-                    switch (tpc.change) {
-                        case NEW_NODE:
-                            final Host newHost = metadata.add(tpAddr);
-                            if (newHost != null) {
-                                // Cassandra tends to send notifications for new/up nodes a bit early (it is triggered once
-                                // gossip is up, but that is before the client-side server is up), so we add a somewhat random
-                                // 1 second delay (otherwise the connection will likely fail and have to be retry which is
-                                // wasteful). This probably should be fixed C* side, after which we'll be able to remove this.
-                                scheduledTasksExecutor.schedule(new ExceptionCatchingRunnable() {
-                                    @Override
-                                    public void runMayThrow() throws InterruptedException, ExecutionException {
-                                        // Make sure we have up-to-date infos on that host before adding it (so we typically
-                                        // catch that an upgraded node uses a new cassandra version).
-                                        controlConnection.refreshNodeInfo(newHost);
-                                        onAdd(newHost);
-                                    }
-                                }, 1, TimeUnit.SECONDS);
-                            }
-                            break;
-                        case REMOVED_NODE:
-                            removeHost(metadata.getHost(tpAddr));
-                            break;
-                        case MOVED_NODE:
-                            executor.submit(new ExceptionCatchingRunnable() {
-                                @Override
-                                public void runMayThrow() {
-                                    controlConnection.refreshNodeListAndTokenMap();
-                                }
-                            });
-                            break;
-                    }
-                    break;
-                case STATUS_CHANGE:
-                    ProtocolEvent.StatusChange stc = (ProtocolEvent.StatusChange)event;
-                    InetSocketAddress stAddr = translateAddress(stc.node.getAddress());
-                    switch (stc.status) {
-                        case UP:
-                            final Host hostUp = metadata.getHost(stAddr);
-                            if (hostUp == null) {
-                                final Host h = metadata.add(stAddr);
-                                // If hostUp is still null, it means we didn't knew about it the line before but
-                                // got beaten at adding it to the metadata by another thread. In that case, it's
-                                // fine to let the other thread win and ignore the notification here
-                                if (h == null)
-                                    return;
-
-                                // See NEW_NODE above
-                                scheduledTasksExecutor.schedule(new ExceptionCatchingRunnable() {
-                                    @Override
-                                    public void runMayThrow() throws InterruptedException, ExecutionException {
-                                        // Make sure we have up-to-date infos on that host before adding it (so we typically
-                                        // catch that an upgraded node uses a new cassandra version).
-                                        controlConnection.refreshNodeInfo(h);
-                                        onAdd(h);
-                                    }
-                                }, 1, TimeUnit.SECONDS);
-                            } else {
-                                executor.submit(new ExceptionCatchingRunnable() {
-                                    @Override
-                                    public void runMayThrow() throws InterruptedException, ExecutionException {
-                                        // Make sure we have up-to-date infos on that host before adding it (so we typically
-                                        // catch that an upgraded node uses a new cassandra version).
-                                        controlConnection.refreshNodeInfo(hostUp);
-                                        onUp(hostUp);
-                                    }
-                                });
-                            }
-                            break;
-                        case DOWN:
-                            // Note that there is a slight risk we can receive the event late and thus
-                            // mark the host down even though we already had reconnected successfully.
-                            // But it is unlikely, and don't have too much consequence since we'll try reconnecting
-                            // right away, so we favor the detection to make the Host.isUp method more reliable.
-                            Host hostDown = metadata.getHost(stAddr);
-                            if (hostDown != null)
-                                triggerOnDown(hostDown);
-                            break;
-                    }
-                    break;
-                case SCHEMA_CHANGE:
-                    ProtocolEvent.SchemaChange scc = (ProtocolEvent.SchemaChange)event;
-                    switch (scc.change) {
-                        case CREATED:
-                            if (scc.table.isEmpty())
-                                submitSchemaRefresh(null, null);
-                            else
-                                submitSchemaRefresh(scc.keyspace, null);
-                            break;
-                        case DROPPED:
-                            if (scc.table.isEmpty())
-                                submitSchemaRefresh(null, null);
-                            else
-                                submitSchemaRefresh(scc.keyspace, null);
-                            break;
-                        case UPDATED:
-                            if (scc.table.isEmpty())
-                                submitSchemaRefresh(scc.keyspace, null);
-                            else
-                                submitSchemaRefresh(scc.keyspace, scc.table);
-                            break;
-                    }
-                    break;
-            }
-        }
-
-        void refreshConnectedHosts() {
-            // Deal first with the control connection: if it's connected to a node that is not LOCAL, try
-            // reconnecting (thus letting the loadBalancingPolicy pick a better node)
-            Host ccHost = controlConnection.connectedHost();
-            if (ccHost == null || loadBalancingPolicy().distance(ccHost) != HostDistance.LOCAL)
-                controlConnection.reconnect();
-
-            for (SessionManager s : sessions)
-                s.updateCreatedPools(executor);
-        }
-
-        private class ClusterCloseFuture extends CloseFuture.Forwarding {
-
-            ClusterCloseFuture(List<CloseFuture> futures) {
-                super(futures);
-            }
-
-            @Override
-            public CloseFuture force() {
-                // The only ExecutorService we haven't forced yet is executor
-                executor.shutdownNow();
-                return super.force();
-            }
-
-            @Override
-            protected void onFuturesDone() {
-                /*
-                 * When we reach this, all sessions should be shutdown. We've also started a shutdown
-                 * of the thread pools used by this object. Remains 2 things before marking the shutdown
-                 * as done:
-                 *   1) we need to wait for the completion of the shutdown of the Cluster threads pools.
-                 *   2) we need to shutdown the Connection.Factory, i.e. the executors used by Netty.
-                 * But at least for 2), we must not do it on the current thread because that could be
-                 * a netty worker, which we're going to shutdown. So creates some thread for that.
-                 */
-                (new Thread("Shutdown-checker") {
-                    public void run() {
-                        connectionFactory.shutdown();
-
-                        // Just wait indefinitely on the the completion of the thread pools. Provided the user
-                        // call force(), we'll never really block forever.
-                        try {
-                            reconnectionExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-                            scheduledTasksExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-                            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-                            set(null);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            setException(e);
-                        }
-                    }
-                }).start();
-            }
-        }
+        break;
+      }
     }
+
+    void refreshConnectedHosts() {
+      Host ccHost = controlConnection.connectedHost();
+      if (ccHost == null || loadBalancingPolicy().distance(ccHost) != HostDistance.LOCAL) {
+        controlConnection.reconnect();
+      }
+      for (SessionManager s : sessions) {
+        s.updateCreatedPools(executor);
+      }
+    }
+
+    private class ClusterCloseFuture extends CloseFuture.Forwarding {
+      ClusterCloseFuture(List<CloseFuture> futures) {
+        super(futures);
+      }
+
+      @Override public CloseFuture force() {
+        executor.shutdownNow();
+        return super.force();
+      }
+
+      @Override protected void onFuturesDone() {
+        (new Thread("Shutdown-checker") {
+          public void run() {
+            connectionFactory.shutdown();
+            try {
+              reconnectionExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+              scheduledTasksExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+              executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+              set(null);
+            } catch (InterruptedException e) {
+              Thread.currentThread().interrupt();
+              setException(e);
+            }
+          }
+        }).start();
+      }
+    }
+  }
 }
