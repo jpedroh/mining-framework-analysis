@@ -1,22 +1,5 @@
-/*
- * Copyright 2013 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.google.jenkins.plugins.credentials.oauth;
-
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -43,29 +26,12 @@ final class RemotableGoogleCredentials extends GoogleRobotCredentials {
    * is {@code package-private}. This should only be called from {@link
    * GoogleRobotCredentials#forRemote}.
    */
-  @SuppressFBWarnings(
-      value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
-      justification = "False positive from what I can see in Ordering.natural().nullsFirst()")
-  public RemotableGoogleCredentials(
-      GoogleRobotCredentials credentials,
-      GoogleOAuth2ScopeRequirement requirement,
-      GoogleRobotCredentialsModule module)
-      throws GeneralSecurityException {
-    super(
-        credentials.getCredentialsScope() == null
-            ? CredentialsScope.GLOBAL
-            : credentials.getScope(),
-        "",
-        checkNotNull(credentials).getProjectId(),
-        checkNotNull(module));
-
+  @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "False positive from what I can see in Ordering.natural().nullsFirst()") public RemotableGoogleCredentials(GoogleRobotCredentials credentials, GoogleOAuth2ScopeRequirement requirement, GoogleRobotCredentialsModule module) throws GeneralSecurityException {
+    super(credentials.getCredentialsScope() == null ? CredentialsScope.GLOBAL : credentials.getScope(), "", checkNotNull(credentials).getProjectId(), checkNotNull(module));
     this.username = credentials.getUsername();
-
-    // Eagerly create the access token we will use on the remote machine.
     Credential credential = credentials.getGoogleCredential(checkNotNull(requirement));
     try {
       Long rawExpiration = credential.getExpiresInSeconds();
-
       if (Ordering.natural().nullsFirst().compare(rawExpiration, MINIMUM_DURATION_SECONDS) < 0) {
         if (!credential.refreshToken()) {
           throw new GeneralSecurityException(Messages.RemotableGoogleCredentials_NoAccessToken());
@@ -75,80 +41,43 @@ final class RemotableGoogleCredentials extends GoogleRobotCredentials {
       throw new GeneralSecurityException(Messages.RemotableGoogleCredentials_NoAccessToken(), e);
     }
     this.accessToken = checkNotNull(credential.getAccessToken());
-    this.expiration =
-        new DateTime()
-            .plusSeconds(checkNotNull(credential.getExpiresInSeconds()).intValue())
-            .getMillis();
+    this.expiration = new DateTime().plusSeconds(checkNotNull(credential.getExpiresInSeconds()).intValue()).getMillis();
   }
+
   /**
    * Construct a remotable credential. This should never be used directly - this constructor is only
    * for migrating old credentials that had no id and relied on the projectId during readResolve().
    */
-  private RemotableGoogleCredentials(
-      CredentialsScope scope,
-      String id,
-      String projectId,
-      GoogleRobotCredentialsModule module,
-      String username,
-      String accessToken,
-      long expiration) {
+  private RemotableGoogleCredentials(CredentialsScope scope, String id, String projectId, GoogleRobotCredentialsModule module, String username, String accessToken, long expiration) {
     super(scope, id, projectId, module);
     this.username = username;
     this.accessToken = accessToken;
     this.expiration = expiration;
   }
 
-  @SuppressFBWarnings(
-      value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
-      justification =
-          "for migrating older credentials that did not have a separate id field, and would really "
-              + "have a null id when attempted to deserialize. readResolve overwrites these nulls")
-  private Object readResolve() throws Exception {
-    return new RemotableGoogleCredentials(
-        getCredentialsScope() == null ? CredentialsScope.GLOBAL : getCredentialsScope(),
-        getId() == null ? getProjectId() : getId(),
-        getProjectId(),
-        getModule(),
-        username,
-        accessToken,
-        expiration);
+  @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", justification = "for migrating older credentials that did not have a separate id field, and would really " + "have a null id when attempted to deserialize. readResolve overwrites these nulls") private Object readResolve() throws Exception {
+    return new RemotableGoogleCredentials(getCredentialsScope() == null ? CredentialsScope.GLOBAL : getCredentialsScope(), getId() == null ? getProjectId() : getId(), getProjectId(), getModule(), username, accessToken, expiration);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public CredentialsScope getScope() {
+  @Override public CredentialsScope getScope() {
     return getCredentialsScope();
   }
 
   /** {@inheritDoc} */
-  @Override
-  public AbstractGoogleRobotCredentialsDescriptor getDescriptor() {
+  @Override public AbstractGoogleRobotCredentialsDescriptor getDescriptor() {
     throw new UnsupportedOperationException(Messages.RemotableGoogleCredentials_BadGetDescriptor());
   }
 
   /** {@inheritDoc} */
-  @Override
-  public String getUsername() {
+  @Override public String getUsername() {
     return username;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public Credential getGoogleCredential(GoogleOAuth2ScopeRequirement requirement)
-      throws GeneralSecurityException {
-    // Return a credential synthesized from our stored access token
-    // and expiration.
-    //
-    // TODO(mattmoor): Consider throwing an exception if the access token
-    // has expired.
+  @Override public Credential getGoogleCredential(GoogleOAuth2ScopeRequirement requirement) throws GeneralSecurityException {
     long lifetimeSeconds = (expiration - new DateTime().getMillis()) / 1000;
-
-    return new GoogleCredential.Builder()
-        .setTransport(getModule().getHttpTransport())
-        .setJsonFactory(getModule().getJsonFactory())
-        .build()
-        .setAccessToken(accessToken)
-        .setExpiresInSeconds(lifetimeSeconds);
+    return new GoogleCredential.Builder().setTransport(getModule().getHttpTransport()).setJsonFactory(getModule().getJsonFactory()).build().setAccessToken(accessToken).setExpiresInSeconds(lifetimeSeconds);
   }
 
   /** The identity of the credential. */

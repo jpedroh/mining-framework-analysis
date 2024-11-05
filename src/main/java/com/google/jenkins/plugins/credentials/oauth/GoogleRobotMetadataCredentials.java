@@ -1,20 +1,4 @@
-/*
- * Copyright 2013 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.google.jenkins.plugins.credentials.oauth;
-
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.NameWith;
 import com.cloudbees.plugins.credentials.domains.Domain;
@@ -45,9 +29,16 @@ import org.kohsuke.stapler.DataBoundConstructor;
  *
  * @author Matt Moore
  */
-@NameWith(value = GoogleRobotNameProvider.class, priority = 50)
-public final class GoogleRobotMetadataCredentials extends GoogleRobotCredentials
-    implements DomainRestrictedCredentials {
+@NameWith(value = GoogleRobotNameProvider.class, priority = 50) public final class GoogleRobotMetadataCredentials extends GoogleRobotCredentials implements DomainRestrictedCredentials {
+  /**
+   * Construct a set of service account credentials.
+   *
+   * @param projectId The Pantheon project id associated with this service account
+   * @param module The module for instantiating dependent objects, or null.
+   */
+  public GoogleRobotMetadataCredentials(String projectId, @Nullable GoogleRobotMetadataCredentialsModule module) throws Exception {
+    super("", projectId, module);
+  }
 
   /**
    * Construct a set of service account credentials with a specific id. It helps for updating
@@ -58,46 +49,23 @@ public final class GoogleRobotMetadataCredentials extends GoogleRobotCredentials
    * @param projectId The Pantheon project id associated with this service account
    * @param module The module for instantiating dependent objects, or null.
    */
-  @DataBoundConstructor
-  public GoogleRobotMetadataCredentials(
-      @CheckForNull CredentialsScope scope,
-      String id,
-      String projectId,
-      @Nullable GoogleRobotMetadataCredentialsModule module)
-      throws Exception {
+  @DataBoundConstructor public GoogleRobotMetadataCredentials(@CheckForNull CredentialsScope scope, String id, String projectId, @Nullable GoogleRobotMetadataCredentialsModule module) throws Exception {
     super(scope, id, projectId, module);
   }
 
-  @SuppressFBWarnings(
-      value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
-      justification =
-          "for migrating older credentials that did not have a separate id field, and would really "
-              + "have a null id when attempted to deserialize. readResolve overwrites these nulls")
-  private Object readResolve() throws Exception {
-    return new GoogleRobotMetadataCredentials(
-        getCredentialsScope() == null ? CredentialsScope.GLOBAL : getCredentialsScope(),
-        getId() == null ? getProjectId() : getId(),
-        getProjectId(),
-        getModule());
+  @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", justification = "for migrating older credentials that did not have a separate id field, and would really " + "have a null id when attempted to deserialize. readResolve overwrites these nulls") private Object readResolve() throws Exception {
+    return new GoogleRobotMetadataCredentials(getCredentialsScope() == null ? CredentialsScope.GLOBAL : getCredentialsScope(), getId() == null ? getProjectId() : getId(), getProjectId(), getModule());
   }
 
   /** {@inheritDoc} */
-  @Override
-  public GoogleRobotMetadataCredentialsModule getModule() {
-    // down-cast to our required type
+  @Override public GoogleRobotMetadataCredentialsModule getModule() {
     return (GoogleRobotMetadataCredentialsModule) super.getModule();
   }
 
   /** {@inheritDoc} */
-  @Override
-  public synchronized boolean matches(List<DomainRequirement> requirements) {
+  @Override public synchronized boolean matches(List<DomainRequirement> requirements) {
     if (metadataScopes == null) {
-      metadataScopes =
-          new Domain(
-              "metadata",
-              "",
-              ImmutableList.of(
-                  new GoogleOAuth2ScopeSpecification(getDescriptor().defaultScopes())));
+      metadataScopes = new Domain("metadata", "", ImmutableList.of(new GoogleOAuth2ScopeSpecification(getDescriptor().defaultScopes())));
     }
     return metadataScopes.test(requirements);
   }
@@ -105,13 +73,11 @@ public final class GoogleRobotMetadataCredentials extends GoogleRobotCredentials
   @Nullable private transient Domain metadataScopes;
 
   /** {@inheritDoc} */
-  @Override
-  public String getUsername() {
+  @Override public String getUsername() {
     try {
       return getModule().getMetadataReader().readMetadata(IDENTITY_PATH);
     } catch (ExecutorException | IOException e) {
-      throw new IllegalStateException(
-          Messages.GoogleRobotMetadataCredentials_DefaultIdentityError(), e);
+      throw new IllegalStateException(Messages.GoogleRobotMetadataCredentials_DefaultIdentityError(), e);
     }
   }
 
@@ -122,48 +88,31 @@ public final class GoogleRobotMetadataCredentials extends GoogleRobotCredentials
   private static final String IDENTITY_PATH = "/instance/service-accounts/default/email";
 
   /** {@inheritDoc} */
-  @Override
-  public CredentialsScope getScope() {
+  @Override public CredentialsScope getScope() {
     return getCredentialsScope();
   }
 
   /** {@inheritDoc} */
-  @Override
-  public ComputeCredential getGoogleCredential(GoogleOAuth2ScopeRequirement requirement)
-      throws GeneralSecurityException {
-    // Ideally GCE would allow us to down-scope the metadata credentials we are
-    // providing a given library.
+  @Override public ComputeCredential getGoogleCredential(GoogleOAuth2ScopeRequirement requirement) throws GeneralSecurityException {
     return new ComputeCredential(getModule().getHttpTransport(), getModule().getJsonFactory());
   }
 
   /** {@inheritDoc} */
-  @Override
-  public Descriptor getDescriptor() {
+  @Override public Descriptor getDescriptor() {
     return (Descriptor) super.getDescriptor();
   }
 
-  /** Descriptor for our unlimited service account extension. */
   public static class Descriptor extends AbstractGoogleRobotCredentialsDescriptor {
     /**
      * This factory method determines whether the host machine has an associated metadata server,
      * and if so registers the metadata-based robot credential.
      */
-    @Extension
-    @Nullable
-    public static Descriptor metadataDescriptor() throws IOException {
+    @Extension @Nullable public static Descriptor metadataDescriptor() throws IOException {
       if (disableForTesting) {
-        // For unit testing, we want to provide custom startup logic, in
-        // particular, we want to unconditionally instantiate it and do so with
-        // a module where we can mock out the MetadataReader's HttpTransport
-        // layer.
         return null;
       }
-
-      GoogleRobotMetadataCredentialsModule defaultModule =
-          new GoogleRobotMetadataCredentialsModule();
+      GoogleRobotMetadataCredentialsModule defaultModule = new GoogleRobotMetadataCredentialsModule();
       if (defaultModule.getMetadataReader().hasMetadata()) {
-        // Otherwise only instantiate the metadata credential if we are on a
-        // machine with metadata.
         return new Descriptor(defaultModule);
       }
       return null;
@@ -172,20 +121,17 @@ public final class GoogleRobotMetadataCredentials extends GoogleRobotCredentials
     /** Used by unit testing to take control of how the descriptor is instantiated by Jenkins. */
     @VisibleForTesting static boolean disableForTesting = false;
 
-    @VisibleForTesting
-    Descriptor(GoogleRobotMetadataCredentialsModule module) {
+    @VisibleForTesting Descriptor(GoogleRobotMetadataCredentialsModule module) {
       super(GoogleRobotMetadataCredentials.class, module);
     }
 
     /** {@inheritDoc} */
-    @Override
-    public String getDisplayName() {
+    @Override public String getDisplayName() {
       return Messages.GoogleRobotMetadataCredentials_DisplayName();
     }
 
     /** {@inheritDoc} */
-    @Override
-    public GoogleRobotMetadataCredentialsModule getModule() {
+    @Override public GoogleRobotMetadataCredentialsModule getModule() {
       return (GoogleRobotMetadataCredentialsModule) super.getModule();
     }
 
@@ -195,8 +141,7 @@ public final class GoogleRobotMetadataCredentials extends GoogleRobotCredentials
      *
      * @return the project associated with this GCE instance, or null.
      */
-    @Nullable
-    public String defaultProject() {
+    @Nullable public String defaultProject() {
       try {
         return getModule().getMetadataReader().readMetadata(PROJECT_ID_PATH);
       } catch (ExecutorException | IOException e) {
@@ -213,7 +158,6 @@ public final class GoogleRobotMetadataCredentials extends GoogleRobotCredentials
     public List<String> defaultScopes() {
       try {
         String scopes = getModule().getMetadataReader().readMetadata(SCOPES_PATH);
-
         return Lists.newArrayList(Splitter.on('\n').trimResults().omitEmptyStrings().split(scopes));
       } catch (ExecutorException | IOException e) {
         return ImmutableList.of();
