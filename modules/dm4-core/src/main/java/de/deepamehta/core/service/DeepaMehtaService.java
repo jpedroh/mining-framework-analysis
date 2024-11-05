@@ -1,5 +1,4 @@
 package de.deepamehta.core.service;
-
 import de.deepamehta.core.Association;
 import de.deepamehta.core.AssociationType;
 import de.deepamehta.core.RelatedAssociation;
@@ -14,10 +13,7 @@ import de.deepamehta.core.model.TopicTypeModel;
 import de.deepamehta.core.service.ResultList;
 import de.deepamehta.core.service.accesscontrol.AccessControl;
 import de.deepamehta.core.storage.spi.DeepaMehtaTransaction;
-
 import java.util.List;
-
-
 
 /**
  * Specification of the DeepaMehta core service -- the heart of DeepaMehta.
@@ -34,14 +30,9 @@ import java.util.List;
  * DeepaMehta core service is available through the <code>dms</code> object.
  */
 public interface DeepaMehtaService {
+  Topic getTopic(long topicId, boolean fetchComposite);
 
-
-
-    // === Topics ===
-
-    Topic getTopic(long topicId, boolean fetchComposite);
-
-    /**
+  /**
      * Looks up a single topic by exact value.
      * If no such topic exists <code>null</code> is returned.
      * If more than one topic is found a runtime exception is thrown.
@@ -52,9 +43,9 @@ public interface DeepaMehtaService {
      * IMPORTANT: Looking up a topic this way requires the corresponding type to be indexed with indexing mode
      * <code>dm4.core.key</code>.
      */
-    Topic getTopic(String key, SimpleValue value, boolean fetchComposite);
+  Topic getTopic(String key, SimpleValue value, boolean fetchComposite);
 
-    /**
+  /**
      * Looks up topics by key and value.
      * <p>
      * Wildcards like "*" in String values <i>are</i> interpreted.
@@ -62,11 +53,11 @@ public interface DeepaMehtaService {
      * IMPORTANT: Looking up topics this way requires the corresponding type to be indexed with indexing mode
      * <code>dm4.core.key</code>.
      */
-    List<Topic> getTopics(String key, SimpleValue value, boolean fetchComposite);
+  List<Topic> getTopics(String key, SimpleValue value, boolean fetchComposite);
 
-    ResultList<RelatedTopic> getTopics(String topicTypeUri, boolean fetchComposite, int maxResultSize);
+  ResultList<RelatedTopic> getTopics(String topicTypeUri, boolean fetchComposite, int maxResultSize);
 
-    /**
+  /**
      * Performs a fulltext search.
      * <p>
      * IMPORTANT: Searching topics this way requires the corresponding type to be indexed with indexing mode
@@ -75,153 +66,108 @@ public interface DeepaMehtaService {
      * @param   fieldUri    The URI of the data field to search. If null is provided all fields are searched. ### FIXDOC
      *                      ### TODO: rename parameter to "key"?
      */
-    List<Topic> searchTopics(String searchTerm, String fieldUri);
+  List<Topic> searchTopics(String searchTerm, String fieldUri);
 
-    Iterable<Topic> getAllTopics();
+  Iterable<Topic> getAllTopics();
 
-    // ---
+  Topic createTopic(TopicModel model);
 
-    Topic createTopic(TopicModel model);
+  Directives updateTopic(TopicModel model);
 
-    Directives updateTopic(TopicModel model);
+  Directives deleteTopic(long topicId);
 
-    Directives deleteTopic(long topicId);
+  Association getAssociation(long assocId, boolean fetchComposite);
 
-
-
-    // === Associations ===
-
-    Association getAssociation(long assocId, boolean fetchComposite);
-
-    /**
+  /**
      * Returns the association between two topics, qualified by association type and both role types.
      * If no such association exists <code>null</code> is returned.
      * If more than one association exist, a runtime exception is thrown.
      *
      * @param   assocTypeUri    Association type filter. Pass <code>null</code> to switch filter off.
      */
-    Association getAssociation(String assocTypeUri, long topic1Id, long topic2Id,
-                                                    String roleTypeUri1, String roleTypeUri2,
-                                                    boolean fetchComposite);
+  Association getAssociation(String assocTypeUri, long topic1Id, long topic2Id, String roleTypeUri1, String roleTypeUri2, boolean fetchComposite);
 
-    Association getAssociationBetweenTopicAndAssociation(String assocTypeUri, long topicId, long assocId,
-                                                    String topicRoleTypeUri, String assocRoleTypeUri,
-                                                    boolean fetchComposite);
+  Association getAssociationBetweenTopicAndAssociation(String assocTypeUri, long topicId, long assocId, String topicRoleTypeUri, String assocRoleTypeUri, boolean fetchComposite);
 
-    // ---
+  List<RelatedAssociation> getAssociations(String assocTypeUri);
 
-    List<RelatedAssociation> getAssociations(String assocTypeUri);
-
-    /**
+  /**
      * Returns all associations between two topics. If no such association exists an empty set is returned.
      */
-    List<Association> getAssociations(long topic1Id, long topic2Id);
+  List<Association> getAssociations(long topic1Id, long topic2Id);
 
-    /**
+  /**
      * Returns the associations between two topics. If no such association exists an empty set is returned.
      *
      * @param   assocTypeUri    Association type filter. Pass <code>null</code> to switch filter off.
      */
-    List<Association> getAssociations(long topic1Id, long topic2Id, String assocTypeUri);
+  List<Association> getAssociations(long topic1Id, long topic2Id, String assocTypeUri);
 
-    // ---
+  Iterable<Association> getAllAssociations();
 
-    Iterable<Association> getAllAssociations();
+  long[] getPlayerIds(long assocId);
 
-    long[] getPlayerIds(long assocId);
+  Association createAssociation(AssociationModel model);
 
-    // ---
+  Directives updateAssociation(AssociationModel model);
 
-    Association createAssociation(AssociationModel model);
+  Directives deleteAssociation(long assocId);
 
-    Directives updateAssociation(AssociationModel model);
+  List<String> getTopicTypeUris();
 
-    Directives deleteAssociation(long assocId);
+  TopicType getTopicType(String topicTypeUri);
 
+  List<TopicType> getAllTopicTypes();
 
+  TopicType createTopicType(TopicTypeModel model);
 
-    // === Topic Types ===
+  Directives updateTopicType(TopicTypeModel model);
 
-    List<String> getTopicTypeUris();
+  Directives deleteTopicType(String topicTypeUri);
 
-    TopicType getTopicType(String topicTypeUri);
+  List<String> getAssociationTypeUris();
 
-    List<TopicType> getAllTopicTypes();
+  AssociationType getAssociationType(String assocTypeUri);
 
-    // ---
+  List<AssociationType> getAllAssociationTypes();
 
-    TopicType createTopicType(TopicTypeModel model);
+  AssociationType createAssociationType(AssociationTypeModel model);
 
-    Directives updateTopicType(TopicTypeModel model);
+  Directives updateAssociationType(AssociationTypeModel model);
 
-    Directives deleteTopicType(String topicTypeUri);
+  Directives deleteAssociationType(String assocTypeUri);
 
+  Plugin getPlugin(String pluginUri);
 
+  List<PluginInfo> getPluginInfo();
 
-    // === Association Types ===
+  void fireEvent(DeepaMehtaEvent event, Object... params);
 
-    List<String> getAssociationTypeUris();
+  void deliverEvent(String pluginUri, DeepaMehtaEvent event, Object... params);
 
-    AssociationType getAssociationType(String assocTypeUri);
-
-    List<AssociationType> getAllAssociationTypes();
-
-    // ---
-
-    AssociationType createAssociationType(AssociationTypeModel model);
-
-    Directives updateAssociationType(AssociationTypeModel model);
-
-    Directives deleteAssociationType(String assocTypeUri);
-
-
-
-    // === Plugins ===
-
-    Plugin getPlugin(String pluginUri);
-
-    List<PluginInfo> getPluginInfo();
-
-
-
-    // === Events ===
-
-    void fireEvent(DeepaMehtaEvent event, Object... params);
-
-    void deliverEvent(String pluginUri, DeepaMehtaEvent event, Object... params);
-
-
-
-    // === Properties ===
-
-    /**
+  /**
      * @param   id  a topic ID, or an association ID
      */
-    Object getProperty(long id, String propUri);
+  Object getProperty(long id, String propUri);
 
-    /**
+  /**
      * @param   id  a topic ID, or an association ID
      */
-    boolean hasProperty(long id, String propUri);
+  boolean hasProperty(long id, String propUri);
 
-    // ---
+  List<Topic> getTopicsByProperty(String propUri, Object propValue);
 
-    List<Topic> getTopicsByProperty(String propUri, Object propValue);
+  List<Topic> getTopicsByPropertyRange(String propUri, Number from, Number to);
 
-    List<Topic> getTopicsByPropertyRange(String propUri, Number from, Number to);
+  List<Association> getAssociationsByProperty(String propUri, Object propValue);
 
-    List<Association> getAssociationsByProperty(String propUri, Object propValue);
+  List<Association> getAssociationsByPropertyRange(String propUri, Number from, Number to);
 
-    List<Association> getAssociationsByPropertyRange(String propUri, Number from, Number to);
+  DeepaMehtaTransaction beginTx();
 
+  TypeStorage getTypeStorage();
 
+  AccessControl getAccessControl();
 
-    // === Misc ===
-
-    DeepaMehtaTransaction beginTx();
-
-    TypeStorage getTypeStorage();       // ### TODO: drop this
-    AccessControl getAccessControl();   // ### TODO: drop this
-
-    Object getDatabaseVendorObject();
+  Object getDatabaseVendorObject();
 }

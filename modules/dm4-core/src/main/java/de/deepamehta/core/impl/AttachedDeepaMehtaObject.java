@@ -1,5 +1,4 @@
 package de.deepamehta.core.impl;
-
 import de.deepamehta.core.Association;
 import de.deepamehta.core.AssociationDefinition;
 import de.deepamehta.core.DeepaMehtaObject;
@@ -14,13 +13,9 @@ import de.deepamehta.core.model.TopicModel;
 import de.deepamehta.core.service.Directives;
 import de.deepamehta.core.service.ResultList;
 import de.deepamehta.core.storage.spi.DeepaMehtaTransaction;
-
 import org.codehaus.jettison.json.JSONObject;
-
 import java.util.List;
 import java.util.logging.Logger;
-
-
 
 /**
  * A DeepaMehta object model that is attached to the DB.
@@ -35,385 +30,224 @@ import java.util.logging.Logger;
  *  - storeXX()         Stores current value (model) to DB. ### FIXDOC
  */
 abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
+  private DeepaMehtaObjectModel model;
 
-    // ---------------------------------------------------------------------------------------------- Instance Variables
+  private AttachedCompositeValue childTopics;
 
-    private DeepaMehtaObjectModel model;            // underlying model
+  protected final EmbeddedService dms;
 
-    private AttachedCompositeValue childTopics;     // attached object cache
+  private Logger logger = Logger.getLogger(getClass().getName());
 
-    protected final EmbeddedService dms;
+  AttachedDeepaMehtaObject(DeepaMehtaObjectModel model, EmbeddedService dms) {
+    this.model = model;
+    this.dms = dms;
+    this.childTopics = new AttachedCompositeValue(model.getCompositeValueModel(), this, dms);
+  }
 
-    private Logger logger = Logger.getLogger(getClass().getName());
+  @Override public long getId() {
+    return model.getId();
+  }
 
-    // ---------------------------------------------------------------------------------------------------- Constructors
+  @Override public String getUri() {
+    return model.getUri();
+  }
 
-    AttachedDeepaMehtaObject(DeepaMehtaObjectModel model, EmbeddedService dms) {
-        this.model = model;
-        this.dms = dms;
-        this.childTopics = new AttachedCompositeValue(model.getCompositeValueModel(), this, dms);
+  @Override public void setUri(String uri) {
+    model.setUri(uri);
+    storeUri();
+  }
+
+  @Override public String getTypeUri() {
+    return model.getTypeUri();
+  }
+
+  @Override public void setTypeUri(String typeUri) {
+    model.setTypeUri(typeUri);
+    storeTypeUri();
+  }
+
+  @Override public SimpleValue getSimpleValue() {
+    return model.getSimpleValue();
+  }
+
+  @Override public void setSimpleValue(String value) {
+    setSimpleValue(new SimpleValue(value));
+  }
+
+  @Override public void setSimpleValue(int value) {
+    setSimpleValue(new SimpleValue(value));
+  }
+
+  @Override public void setSimpleValue(long value) {
+    setSimpleValue(new SimpleValue(value));
+  }
+
+  @Override public void setSimpleValue(boolean value) {
+    setSimpleValue(new SimpleValue(value));
+  }
+
+  @Override public void setSimpleValue(SimpleValue value) {
+    dms.valueStorage.setSimpleValue(getModel(), value);
+  }
+
+  @Override public AttachedCompositeValue getCompositeValue() {
+    return childTopics;
+  }
+
+  @Override public void setCompositeValue(CompositeValueModel comp, Directives directives) {
+    DeepaMehtaTransaction tx = dms.beginTx();
+    try {
+      getCompositeValue().update(comp, directives);
+      tx.success();
+    } catch (Exception e) {
+      logger.warning("ROLLBACK!");
+      throw new RuntimeException("Setting composite value failed (" + comp + ")", e);
+    } finally {
+      tx.finish();
     }
+  }
 
-    // -------------------------------------------------------------------------------------------------- Public Methods
+  @Override public void loadChildTopics() {
+    getCompositeValue().loadChildTopics();
+  }
 
+  @Override public void loadChildTopics(String childTypeUri) {
+    getCompositeValue().loadChildTopics(childTypeUri);
+  }
 
+  @Override public DeepaMehtaObjectModel getModel() {
+    return model;
+  }
 
-    // ***************************************
-    // *** DeepaMehtaObject Implementation ***
-    // ***************************************
+  @Override public void update(DeepaMehtaObjectModel newModel, Directives directives) {
+    updateUri(newModel.getUri());
+    updateTypeUri(newModel.getTypeUri());
+    updateValue(newModel, directives);
+  }
 
+  @Override public void updateChildTopic(TopicModel newChildTopic, AssociationDefinition assocDef, Directives directives) {
+    getCompositeValue().updateChildTopics(newChildTopic, null, assocDef, directives);
+  }
 
+  @Override public void updateChildTopics(List<TopicModel> newChildTopics, AssociationDefinition assocDef, Directives directives) {
+    getCompositeValue().updateChildTopics(null, newChildTopics, assocDef, directives);
+  }
 
-    // === Model ===
-
-    // --- ID ---
-
-    @Override
-    public long getId() {
-        return model.getId();
-    }
-
-    // --- URI ---
-
-    @Override
-    public String getUri() {
-        return model.getUri();
-    }
-
-    @Override
-    public void setUri(String uri) {
-        // update memory
-        model.setUri(uri);
-        // update DB
-        storeUri();         // abstract
-    }
-
-    // --- Type URI ---
-
-    @Override
-    public String getTypeUri() {
-        return model.getTypeUri();
-    }
-
-    @Override
-    public void setTypeUri(String typeUri) {
-        // update memory
-        model.setTypeUri(typeUri);
-        // update DB
-        storeTypeUri();     // abstract
-    }
-
-    // --- Simple Value ---
-
-    @Override
-    public SimpleValue getSimpleValue() {
-        return model.getSimpleValue();
-    }
-
-    // ---
-
-    @Override
-    public void setSimpleValue(String value) {
-        setSimpleValue(new SimpleValue(value));
-    }
-
-    @Override
-    public void setSimpleValue(int value) {
-        setSimpleValue(new SimpleValue(value));
-    }
-
-    @Override
-    public void setSimpleValue(long value) {
-        setSimpleValue(new SimpleValue(value));
-    }
-
-    @Override
-    public void setSimpleValue(boolean value) {
-        setSimpleValue(new SimpleValue(value));
-    }
-
-    @Override
-    public void setSimpleValue(SimpleValue value) {
-        dms.valueStorage.setSimpleValue(getModel(), value);
-    }
-
-    // --- Composite Value ---
-
-    @Override
-    public AttachedCompositeValue getCompositeValue() {
-        return childTopics;
-    }
-
-    @Override
-    public void setCompositeValue(CompositeValueModel comp, Directives directives) {
-        DeepaMehtaTransaction tx = dms.beginTx();   // ### TODO: only resource methods should create a transaction
-        try {
-            getCompositeValue().update(comp, directives);
-            tx.success();
-        } catch (Exception e) {
-            logger.warning("ROLLBACK!");
-            throw new RuntimeException("Setting composite value failed (" + comp + ")", e);
-        } finally {
-            tx.finish();
-        }
-    }
-
-    // ---
-
-    @Override
-    public void loadChildTopics() {
-        getCompositeValue().loadChildTopics();
-    }
-
-    @Override
-    public void loadChildTopics(String childTypeUri) {
-        getCompositeValue().loadChildTopics(childTypeUri);
-    }
-
-    // ---
-
-    @Override
-    public DeepaMehtaObjectModel getModel() {
-        return model;
-    }
-
-
-
-    // === Updating ===
-
-    @Override
-    public void update(DeepaMehtaObjectModel newModel, Directives directives) {
-        updateUri(newModel.getUri());
-        updateTypeUri(newModel.getTypeUri());
-        updateValue(newModel, directives);
-    }
-
-    // ---
-
-    @Override
-    public void updateChildTopic(TopicModel newChildTopic, AssociationDefinition assocDef,
-                                                           Directives directives) {
-        getCompositeValue().updateChildTopics(newChildTopic, null, assocDef, directives);
-    }
-
-    @Override
-    public void updateChildTopics(List<TopicModel> newChildTopics, AssociationDefinition assocDef,
-                                                                   Directives directives) {
-        getCompositeValue().updateChildTopics(null, newChildTopics, assocDef, directives);
-    }
-
-
-
-    // === Deletion ===
-
-    /**
+  /**
      * Deletes all sub-topics of this DeepaMehta object (associated via "dm4.core.composition", recursively) and
      * deletes all the remaining direct associations of this DeepaMehta object.
      * <p>
      * Note: deletion of the object itself is up to the subclasses.
      */
-    @Override
-    public void delete(Directives directives) {
-        // Note: directives must be not null.
-        // The subclass's delete() methods add DELETE_TOPIC and DELETE_ASSOCIATION directives to it respectively.
-        if (directives == null) {
-            throw new IllegalArgumentException("directives is null");
-        }
-        // 1) recursively delete sub-topics
-        ResultList<RelatedTopic> childTopics = getRelatedTopics("dm4.core.composition",
-            "dm4.core.parent", "dm4.core.child", null, false, false, 0);
-        for (Topic childTopic : childTopics) {
-            childTopic.delete(directives);
-        }
-        // 2) delete direct associations
-        for (Association assoc : getAssociations()) {       // getAssociations() is abstract
-            assoc.delete(directives);
-        }
+  @Override public void delete(Directives directives) {
+    if (directives == null) {
+      throw new IllegalArgumentException("directives is null");
     }
-
-
-
-    // === Traversal ===
-
-    // --- Topic Retrieval ---
-
-    @Override
-    public RelatedTopic getRelatedTopic(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri,
-                                                String othersTopicTypeUri, boolean fetchComposite,
-                                                boolean fetchRelatingComposite) {
-        RelatedTopicModel topic = fetchRelatedTopic(assocTypeUri, myRoleTypeUri, othersRoleTypeUri, othersTopicTypeUri);
-        // fetchRelatedTopic() is abstract
-        return topic != null ? dms.instantiateRelatedTopic(topic, fetchComposite, fetchRelatingComposite, true) : null;
-        // checkAccess=true
+    ResultList<RelatedTopic> childTopics = getRelatedTopics("dm4.core.composition", "dm4.core.parent", "dm4.core.child", null, false, false, 0);
+    for (Topic childTopic : childTopics) {
+      childTopic.delete(directives);
     }
-
-    @Override
-    public ResultList<RelatedTopic> getRelatedTopics(String assocTypeUri, int maxResultSize) {
-        return getRelatedTopics(assocTypeUri, null, null, null, false, false, maxResultSize);
+    for (Association assoc : getAssociations()) {
+      assoc.delete(directives);
     }
+  }
 
-    @Override
-    public ResultList<RelatedTopic> getRelatedTopics(String assocTypeUri, String myRoleTypeUri,
-                                            String othersRoleTypeUri, String othersTopicTypeUri,
-                                            boolean fetchComposite, boolean fetchRelatingComposite, int maxResultSize) {
-        ResultList<RelatedTopicModel> topics = fetchRelatedTopics(assocTypeUri, myRoleTypeUri, othersRoleTypeUri,
-            othersTopicTypeUri, maxResultSize);     // fetchRelatedTopics() is abstract
-        return dms.instantiateRelatedTopics(topics, fetchComposite, fetchRelatingComposite);
+  @Override public RelatedTopic getRelatedTopic(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, String othersTopicTypeUri, boolean fetchComposite, boolean fetchRelatingComposite) {
+    RelatedTopicModel topic = fetchRelatedTopic(assocTypeUri, myRoleTypeUri, othersRoleTypeUri, othersTopicTypeUri);
+    return topic != null ? dms.instantiateRelatedTopic(topic, fetchComposite, fetchRelatingComposite, true) : null;
+  }
+
+  @Override public ResultList<RelatedTopic> getRelatedTopics(String assocTypeUri, int maxResultSize) {
+    return getRelatedTopics(assocTypeUri, null, null, null, false, false, maxResultSize);
+  }
+
+  @Override public ResultList<RelatedTopic> getRelatedTopics(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, String othersTopicTypeUri, boolean fetchComposite, boolean fetchRelatingComposite, int maxResultSize) {
+    ResultList<RelatedTopicModel> topics = fetchRelatedTopics(assocTypeUri, myRoleTypeUri, othersRoleTypeUri, othersTopicTypeUri, maxResultSize);
+    return dms.instantiateRelatedTopics(topics, fetchComposite, fetchRelatingComposite);
+  }
+
+  @Override public Object getProperty(String propUri) {
+    return dms.getProperty(getId(), propUri);
+  }
+
+  @Override public boolean hasProperty(String propUri) {
+    return dms.hasProperty(getId(), propUri);
+  }
+
+  @Override public Object getDatabaseVendorObject() {
+    return dms.storageDecorator.getDatabaseVendorObject(getId());
+  }
+
+  @Override public JSONObject toJSON() {
+    return model.toJSON();
+  }
+
+  @Override public boolean equals(Object o) {
+    return ((AttachedDeepaMehtaObject) o).model.equals(model);
+  }
+
+  @Override public int hashCode() {
+    return model.hashCode();
+  }
+
+  @Override public String toString() {
+    return model.toString();
+  }
+
+  abstract String className();
+
+  abstract void addUpdateDirective(Directives directives);
+
+  abstract void storeUri();
+
+  abstract void storeTypeUri();
+
+  abstract RelatedTopicModel fetchRelatedTopic(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, String othersTopicTypeUri);
+
+  abstract ResultList<RelatedTopicModel> fetchRelatedTopics(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, String othersTopicTypeUri, int maxResultSize);
+
+  Type getType() {
+    return dms.valueStorage.getType(getModel());
+  }
+
+  private void updateUri(String newUri) {
+    if (newUri == null) {
+      return;
     }
-
-    // Note: this method is implemented in the subclasses (this is an abstract class):
-    //     getRelatedTopics(List assocTypeUris, ...)
-
-    // --- Association Retrieval ---
-
-    // Note: these methods are implemented in the subclasses (this is an abstract class):
-    //     getAssociation(...)
-    //     getAssociations()
-
-
-
-    // === Properties ===
-
-    @Override
-    public Object getProperty(String propUri) {
-        return dms.getProperty(getId(), propUri);
+    String uri = getUri();
+    if (!uri.equals(newUri)) {
+      logger.info("### Changing URI of " + className() + " " + getId() + " from \"" + uri + "\" -> \"" + newUri + "\"");
+      setUri(newUri);
     }
+  }
 
-    @Override
-    public boolean hasProperty(String propUri) {
-        return dms.hasProperty(getId(), propUri);
+  private void updateTypeUri(String newTypeUri) {
+    if (newTypeUri == null) {
+      return;
     }
-
-    // Note: these methods are implemented in the subclasses:
-    //     setProperty(...)
-    //     removeProperty(...)
-
-
-
-    // === Misc ===
-
-    @Override
-    public Object getDatabaseVendorObject() {
-        return dms.storageDecorator.getDatabaseVendorObject(getId());
+    String typeUri = getTypeUri();
+    if (!typeUri.equals(newTypeUri)) {
+      logger.info("### Changing type URI of " + className() + " " + getId() + " from \"" + typeUri + "\" -> \"" + newTypeUri + "\"");
+      setTypeUri(newTypeUri);
     }
+  }
 
-
-
-    // **********************************
-    // *** JSONEnabled Implementation ***
-    // **********************************
-
-
-
-    @Override
-    public JSONObject toJSON() {
-        return model.toJSON();
+  private void updateValue(DeepaMehtaObjectModel newModel, Directives directives) {
+    if (getType().getDataTypeUri().equals("dm4.core.composite")) {
+      getCompositeValue().update(newModel.getCompositeValueModel(), directives);
+    } else {
+      updateSimpleValue(newModel.getSimpleValue());
     }
+  }
 
-
-
-    // ****************
-    // *** Java API ***
-    // ****************
-
-
-
-    @Override
-    public boolean equals(Object o) {
-        return ((AttachedDeepaMehtaObject) o).model.equals(model);
+  private void updateSimpleValue(SimpleValue newValue) {
+    if (newValue == null) {
+      return;
     }
-
-    @Override
-    public int hashCode() {
-        return model.hashCode();
+    SimpleValue value = getSimpleValue();
+    if (!value.equals(newValue)) {
+      logger.info("### Changing simple value of " + className() + " " + getId() + " from \"" + value + "\" -> \"" + newValue + "\"");
+      setSimpleValue(newValue);
     }
-
-    @Override
-    public String toString() {
-        return model.toString();
-    }
-
-
-
-    // ----------------------------------------------------------------------------------------- Package Private Methods
-
-    abstract String className();
-
-    // ### TODO: Directive getUpdateDirective()
-    abstract void addUpdateDirective(Directives directives);
-
-    abstract void storeUri();
-
-    abstract void storeTypeUri();
-
-    // ---
-
-    abstract RelatedTopicModel fetchRelatedTopic(String assocTypeUri, String myRoleTypeUri,
-                                                String othersRoleTypeUri, String othersTopicTypeUri);
-
-    abstract ResultList<RelatedTopicModel> fetchRelatedTopics(String assocTypeUri, String myRoleTypeUri,
-                                                String othersRoleTypeUri, String othersTopicTypeUri, int maxResultSize);
-
-    // ---
-
-    // ### TODO: add to public interface
-    Type getType() {
-        return dms.valueStorage.getType(getModel());
-    }
-
-    // ------------------------------------------------------------------------------------------------- Private Methods
-
-
-
-    // === Update ===
-
-    private void updateUri(String newUri) {
-        // abort if no update is requested
-        if (newUri == null) {
-            return;
-        }
-        //
-        String uri = getUri();
-        if (!uri.equals(newUri)) {
-            logger.info("### Changing URI of " + className() + " " + getId() +
-                " from \"" + uri + "\" -> \"" + newUri + "\"");
-            setUri(newUri);
-        }
-    }
-
-    private void updateTypeUri(String newTypeUri) {
-        // abort if no update is requested
-        if (newTypeUri == null) {
-            return;
-        }
-        //
-        String typeUri = getTypeUri();
-        if (!typeUri.equals(newTypeUri)) {
-            logger.info("### Changing type URI of " + className() + " " + getId() +
-                " from \"" + typeUri + "\" -> \"" + newTypeUri + "\"");
-            setTypeUri(newTypeUri);
-        }
-    }
-
-    private void updateValue(DeepaMehtaObjectModel newModel, Directives directives) {
-        if (getType().getDataTypeUri().equals("dm4.core.composite")) {
-            getCompositeValue().update(newModel.getCompositeValueModel(), directives);
-        } else {
-            updateSimpleValue(newModel.getSimpleValue());
-        }
-    }
-
-    private void updateSimpleValue(SimpleValue newValue) {
-        // abort if no update is requested
-        if (newValue == null) {
-            return;
-        }
-        //
-        SimpleValue value = getSimpleValue();
-        if (!value.equals(newValue)) {
-            logger.info("### Changing simple value of " + className() + " " + getId() +
-                " from \"" + value + "\" -> \"" + newValue + "\"");
-            setSimpleValue(newValue);
-        }
-    }
+  }
 }
