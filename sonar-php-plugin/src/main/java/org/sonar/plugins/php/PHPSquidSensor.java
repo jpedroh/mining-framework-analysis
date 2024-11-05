@@ -1,24 +1,4 @@
-/*
- * SonarQube PHP Plugin
- * Copyright (C) 2010 SonarSource and Akram Ben Aissi
- * dev@sonar.codehaus.org
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
- */
 package org.sonar.plugins.php;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import org.sonar.api.batch.Sensor;
@@ -55,25 +35,32 @@ import org.sonar.squidbridge.api.SourceFunction;
 import org.sonar.squidbridge.indexer.QueryByParent;
 import org.sonar.squidbridge.indexer.QueryByType;
 import org.sonar.sslr.parser.LexerlessGrammar;
-
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
 public class PHPSquidSensor implements Sensor {
+  private static final Number[] FUNCTIONS_DISTRIB_BOTTOM_LIMITS = { 1, 2, 4, 6, 8, 10, 12 };
 
-  private static final Number[] FUNCTIONS_DISTRIB_BOTTOM_LIMITS = {1, 2, 4, 6, 8, 10, 12};
-  private static final Number[] FILES_DISTRIB_BOTTOM_LIMITS = {0, 5, 10, 20, 30, 60, 90};
+  private static final Number[] FILES_DISTRIB_BOTTOM_LIMITS = { 0, 5, 10, 20, 30, 60, 90 };
 
   private final AnnotationCheckFactory annotationCheckFactory;
+
   private final ResourcePerspectives resourcePerspectives;
+
   private final ModuleFileSystem fileSystem;
+
   private final FileLinesContextFactory fileLinesContextFactory;
+
   private AstScanner<LexerlessGrammar> scanner;
+
   private SensorContext context;
+
   private Project project;
+
   private Settings settings;
+
   private RulesProfile profile;
 
   public PHPSquidSensor(RulesProfile profile, ResourcePerspectives resourcePerspectives, ModuleFileSystem filesystem, FileLinesContextFactory fileLinesContextFactory, Settings settings) {
@@ -85,29 +72,24 @@ public class PHPSquidSensor implements Sensor {
     this.settings = settings;
   }
 
-  @Override
-  public boolean shouldExecuteOnProject(Project project) {
+  @Override public boolean shouldExecuteOnProject(Project project) {
     return !fileSystem.files(FileQuery.onSource().onLanguage(Php.KEY)).isEmpty();
   }
 
-  @Override
-  public void analyse(Project project, SensorContext context) {
+  @Override public void analyse(Project project, SensorContext context) {
     this.context = context;
     this.project = project;
-
     PHPSquid squid = new PHPSquid();
     List<SquidAstVisitor<LexerlessGrammar>> visitors = getCheckVisitors();
     visitors.add(new FileLinesVisitor(project, fileLinesContextFactory));
     visitors.add(new DependenciesVisitor(squid.getGraph()));
     this.scanner = PHPAstScanner.create(createConfiguration(), visitors.toArray(new SquidAstVisitor[visitors.size()]));
     scanner.scanFiles(getProjectMainFiles());
-
     save(scanner.getIndex().search(new QueryByType(SourceFile.class)));
     new Bridges(squid, scanner.getIndex(), settings).save(context, project, annotationCheckFactory, profile);
   }
 
-  @VisibleForTesting
-  org.sonar.api.resources.File getSonarResource(File file) {
+  @VisibleForTesting org.sonar.api.resources.File getSonarResource(File file) {
     return org.sonar.api.resources.File.fromIOFile(file, project);
   }
 
@@ -115,7 +97,6 @@ public class PHPSquidSensor implements Sensor {
     for (SourceCode squidSourceFile : squidSourceFiles) {
       SourceFile squidFile = (SourceFile) squidSourceFile;
       org.sonar.api.resources.File sonarFile = getSonarResource(new java.io.File(squidFile.getKey()));
-
       saveClassComplexity(sonarFile, squidFile);
       saveFilesComplexityDistribution(sonarFile, squidFile);
       saveFunctionsComplexityDistribution(sonarFile, squidFile);
@@ -163,17 +144,11 @@ public class PHPSquidSensor implements Sensor {
   private void saveViolations(org.sonar.api.resources.File sonarFile, SourceFile squidFile) {
     Collection<CheckMessage> messages = squidFile.getCheckMessages();
     if (messages != null) {
-
       for (CheckMessage message : messages) {
         ActiveRule rule = annotationCheckFactory.getActiveRule(message.getCheck());
         Issuable issuable = resourcePerspectives.as(Issuable.class, sonarFile);
-
         if (issuable != null) {
-          Issue issue = issuable.newIssueBuilder()
-            .ruleKey(RuleKey.of(rule.getRepositoryKey(), rule.getRuleKey()))
-            .line(message.getLine())
-            .message(message.getText(Locale.ENGLISH))
-            .build();
+          Issue issue = issuable.newIssueBuilder().ruleKey(RuleKey.of(rule.getRepositoryKey(), rule.getRuleKey())).line(message.getLine()).message(message.getText(Locale.ENGLISH)).build();
           issuable.addIssue(issue);
         }
       }
