@@ -1,303 +1,195 @@
 package com.cribbstechnologies.clients.mandrill.model;
-
 import java.util.List;
 import java.util.Map;
 
 public class MandrillMessage {
+  private String text;
 
-<<<<<<< HEAD
-	private String text;
-	private String subject;
-	private String from_email;
-	private String from_name;
-	private MandrillRecipient[] to;
-	private String bcc_address;
-	private boolean track_opens=false;
-	private boolean track_clicks=false;
-	private boolean auto_text=false;
-	private boolean url_strip_qs=false;
-	private String[] tags = new String[0];
-	private String[] google_analytics_domains = new String[0];
-	private String[] google_analytics_campaign = new String[0];
-    private List<MergeVar> global_merge_vars;
-	
-	private Map<String, String> headers;
-	
-	public String getSubject() {
-		return subject;
-	}
-	
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
-	
-	public String getFrom_email() {
-		return from_email;
-	}
-	
-	public void setFrom_email(String from_email) {
-		this.from_email = from_email;
-	}
-	
-	public String getFrom_name() {
-		return from_name;
-	}
-	
-	public void setFrom_name(String from_name) {
-		this.from_name = from_name;
-	}
-	
-	public MandrillRecipient[] getTo() {
-		return to;
-	}
-	
-	public void setTo(MandrillRecipient[] to) {
-		this.to = to;
-	}
-	
-	public String getBcc_address() {
-		return bcc_address;
-	}
-	
-	public void setBcc_address(String bcc) {
-		this.bcc_address = bcc;
-	}
+  private String subject;
 
-	public boolean isTrack_opens() {
-		return track_opens;
-	}
-	
-	public void setTrack_opens(boolean track_opens) {
-		this.track_opens = track_opens;
-	}
-	
-	public boolean isTrack_clicks() {
-		return track_clicks;
-	}
-	
-	public void setTrack_clicks(boolean track_clicks) {
-		this.track_clicks = track_clicks;
-	}
-	
-	public String[] getTags() {
-		return tags;
-	}
-	
-	public void setTags(String[] tags) {
-		this.tags = tags;
-	}
-	
-	public Map<String, String> getHeaders() {
-		return headers;
-	}
-	
-	public void setHeaders(Map<String, String> struct) {
-		this.headers = struct;
-	}
+  private String from_email;
 
-	public boolean isAuto_text() {
-		return auto_text;
-	}
+  private String from_name;
 
-	public void setAuto_text(boolean auto_text) {
-		this.auto_text = auto_text;
-	}
+  private MandrillRecipient[] to;
 
-	public boolean isUrl_strip_qs() {
-		return url_strip_qs;
-	}
+  private String bcc_address;
 
-	public void setUrl_strip_qs(boolean url_strip_qs) {
-		this.url_strip_qs = url_strip_qs;
-	}
+  private boolean track_opens = false;
 
-	public String[] getGoogle_analytics_domains() {
-		return google_analytics_domains;
-	}
+  private boolean track_clicks = false;
 
-	public void setGoogle_analytics_domains(String[] google_analytics_domains) {
-		this.google_analytics_domains = google_analytics_domains;
-	}
+  private boolean auto_text = false;
 
-	public String[] getGoogle_analytics_campaign() {
-		return google_analytics_campaign;
-	}
+  private boolean url_strip_qs = false;
 
-	public void setGoogle_analytics_campaign(String[] google_analytics_campaign) {
-		this.google_analytics_campaign = google_analytics_campaign;
-	}
+  private String[] tags = new String[0];
 
-	public String getText() {
-		return text;
-	}
+  private String[] google_analytics_domains = new String[0];
 
-	public void setText(String text) {
-		this.text = text;
-	}
-=======
-    private String text;
-    private String subject;
-    private String from_email;
-    private String from_name;
-    private String subaccount;
-    private MandrillRecipient[] to;
-    private boolean track_opens = false;
-    private boolean track_clicks = false;
-    private boolean auto_text = false;
-    private boolean url_strip_qs = false;
-    private boolean preserve_recipients = false;
-    private String[] tags = new String[0];
-    private String[] google_analytics_domains = new String[0];
-    private String[] google_analytics_campaign = new String[0];
-    private List<MergeVar> global_merge_vars;
-    List<MessageMergeVars> merge_vars;
-    List<MandrillAttachment> attachments;
->>>>>>> 4da8cd42c2f2c9a7191d65645100747c130c98a3
+  private String[] google_analytics_campaign = new String[0];
 
-    private Map<String, String> headers;
+  private List<MergeVar> global_merge_vars;
 
-    public List<MandrillAttachment> getAttachments() {
-        return this.attachments;
-    }
+  private Map<String, String> headers;
 
-    public String getFrom_email() {
-        return this.from_email;
-    }
+  public String getSubject() {
+    return this.subject;
+  }
 
-    public String getFrom_name() {
-        return this.from_name;
-    }
+  public void setSubject(String subject) {
+    this.subject = subject;
+  }
 
-    public List<MergeVar> getGlobal_merge_vars() {
-        return this.global_merge_vars;
-    }
+  public String getFrom_email() {
+    return this.from_email;
+  }
 
-    public String[] getGoogle_analytics_campaign() {
-        return this.google_analytics_campaign;
-    }
+  public void setFrom_email(String from_email) {
+    this.from_email = from_email;
+  }
 
-    public String[] getGoogle_analytics_domains() {
-        return this.google_analytics_domains;
-    }
+  public String getFrom_name() {
+    return this.from_name;
+  }
 
-    public Map<String, String> getHeaders() {
-        return this.headers;
-    }
+  public void setFrom_name(String from_name) {
+    this.from_name = from_name;
+  }
 
-    public List<MessageMergeVars> getMerge_vars() {
-        return this.merge_vars;
-    }
+  public MandrillRecipient[] getTo() {
+    return this.to;
+  }
 
-    public String getSubject() {
-        return this.subject;
-    }
+  public void setTo(MandrillRecipient[] to) {
+    this.to = to;
+  }
 
-    public String[] getTags() {
-        return this.tags;
-    }
+  public String getBcc_address() {
+    return bcc_address;
+  }
 
-    public String getText() {
-        return this.text;
-    }
+  public void setBcc_address(String bcc) {
+    this.bcc_address = bcc;
+  }
 
-    public MandrillRecipient[] getTo() {
-        return this.to;
-    }
+  public boolean isTrack_opens() {
+    return this.track_opens;
+  }
 
-    public boolean isAuto_text() {
-        return this.auto_text;
-    }
+  public void setTrack_opens(boolean track_opens) {
+    this.track_opens = track_opens;
+  }
 
-    public boolean isTrack_clicks() {
-        return this.track_clicks;
-    }
+  public boolean isTrack_clicks() {
+    return this.track_clicks;
+  }
 
-    public boolean isTrack_opens() {
-        return this.track_opens;
-    }
+  public void setTrack_clicks(boolean track_clicks) {
+    this.track_clicks = track_clicks;
+  }
 
-    public boolean isUrl_strip_qs() {
-        return this.url_strip_qs;
-    }
+  public String[] getTags() {
+    return this.tags;
+  }
 
-    public void setAttachments(List<MandrillAttachment> attachments) {
-        this.attachments = attachments;
-    }
+  public void setTags(String[] tags) {
+    this.tags = tags;
+  }
 
-    public void setAuto_text(boolean auto_text) {
-        this.auto_text = auto_text;
-    }
+  public Map<String, String> getHeaders() {
+    return this.headers;
+  }
 
-    public void setFrom_email(String from_email) {
-        this.from_email = from_email;
-    }
+  public void setHeaders(Map<String, String> struct) {
+    this.headers = struct;
+  }
 
-    public void setFrom_name(String from_name) {
-        this.from_name = from_name;
-    }
+  public boolean isAuto_text() {
+    return this.auto_text;
+  }
 
-    public void setGlobal_merge_vars(List<MergeVar> global_merge_vars) {
-        this.global_merge_vars = global_merge_vars;
-    }
+  public void setAuto_text(boolean auto_text) {
+    this.auto_text = auto_text;
+  }
 
-    public void setGoogle_analytics_campaign(String[] google_analytics_campaign) {
-        this.google_analytics_campaign = google_analytics_campaign;
-    }
+  public boolean isUrl_strip_qs() {
+    return this.url_strip_qs;
+  }
 
-    public void setGoogle_analytics_domains(String[] google_analytics_domains) {
-        this.google_analytics_domains = google_analytics_domains;
-    }
+  public void setUrl_strip_qs(boolean url_strip_qs) {
+    this.url_strip_qs = url_strip_qs;
+  }
 
-    public void setHeaders(Map<String, String> struct) {
-        this.headers = struct;
-    }
+  public String[] getGoogle_analytics_domains() {
+    return this.google_analytics_domains;
+  }
 
-    public void setMerge_vars(List<MessageMergeVars> merge_vars) {
-        this.merge_vars = merge_vars;
-    }
+  public void setGoogle_analytics_domains(String[] google_analytics_domains) {
+    this.google_analytics_domains = google_analytics_domains;
+  }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
+  public String[] getGoogle_analytics_campaign() {
+    return this.google_analytics_campaign;
+  }
 
-    public void setTags(String[] tags) {
-        this.tags = tags;
-    }
+  public void setGoogle_analytics_campaign(String[] google_analytics_campaign) {
+    this.google_analytics_campaign = google_analytics_campaign;
+  }
 
-    public void setText(String text) {
-        this.text = text;
-    }
+  public String getText() {
+    return this.text;
+  }
 
-    public void setTo(MandrillRecipient[] to) {
-        this.to = to;
-    }
+  public void setText(String text) {
+    this.text = text;
+  }
 
-    public void setTrack_clicks(boolean track_clicks) {
-        this.track_clicks = track_clicks;
-    }
+  public List<MergeVar> getGlobal_merge_vars() {
+    return this.global_merge_vars;
+  }
 
-    public void setTrack_opens(boolean track_opens) {
-        this.track_opens = track_opens;
-    }
+  public void setGlobal_merge_vars(List<MergeVar> global_merge_vars) {
+    this.global_merge_vars = global_merge_vars;
+  }
 
-    public void setUrl_strip_qs(boolean url_strip_qs) {
-        this.url_strip_qs = url_strip_qs;
-    }
+  private String subaccount;
 
-    public final boolean isPreserve_recipients() {
-        return preserve_recipients;
-    }
+  private boolean preserve_recipients = false;
 
-    public final void setPreserve_recipients(boolean preserve_recipients) {
-        this.preserve_recipients = preserve_recipients;
-    }
+  List<MessageMergeVars> merge_vars;
 
-    public final String getSubaccount() {
-        return subaccount;
-    }
+  List<MandrillAttachment> attachments;
 
-    public final void setSubaccount(String subaccount) {
-        this.subaccount = subaccount;
-    }
+  public List<MandrillAttachment> getAttachments() {
+    return this.attachments;
+  }
 
+  public List<MessageMergeVars> getMerge_vars() {
+    return this.merge_vars;
+  }
+
+  public void setAttachments(List<MandrillAttachment> attachments) {
+    this.attachments = attachments;
+  }
+
+  public void setMerge_vars(List<MessageMergeVars> merge_vars) {
+    this.merge_vars = merge_vars;
+  }
+
+  public final boolean isPreserve_recipients() {
+    return preserve_recipients;
+  }
+
+  public final void setPreserve_recipients(boolean preserve_recipients) {
+    this.preserve_recipients = preserve_recipients;
+  }
+
+  public final String getSubaccount() {
+    return subaccount;
+  }
+
+  public final void setSubaccount(String subaccount) {
+    this.subaccount = subaccount;
+  }
 }
