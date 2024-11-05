@@ -1,178 +1,66 @@
 package sortpom;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
-
 import java.io.File;
 
-/**
- * Common parent for both SortMojo and VerifyMojo
- */
 abstract class AbstractParentMojo extends AbstractMojo {
+  @Parameter(property = "sort.pomFile", defaultValue = "${project.file}") File pomFile;
 
-    /**
-     * This is the File instance that refers to the location of the pom that
-     * should be sorted.
-     */
-    @Parameter(property = "sort.pomFile", defaultValue = "${project.file}")
-    File pomFile;
+  @Parameter(property = "sort.createBackupFile", defaultValue = "true") boolean createBackupFile;
 
-    /**
-     * Should a backup copy be created for the sorted pom.
-     */
-    @Parameter(property = "sort.createBackupFile", defaultValue = "true")
-    boolean createBackupFile;
+  @Parameter(property = "sort.backupFileExtension", defaultValue = ".bak") String backupFileExtension;
 
-    /**
-     * Name of the file extension for the backup file.
-     */
-    @Parameter(property = "sort.backupFileExtension", defaultValue = ".bak")
-    String backupFileExtension;
+  @Parameter(property = "sort.encoding", defaultValue = "UTF-8") String encoding;
 
-    /**
-     * Encoding for the files.
-     */
-    @Parameter(property = "sort.encoding", defaultValue = "UTF-8")
-    String encoding;
+  @Parameter(property = "sort.lineSeparator", defaultValue = "${line.separator}") String lineSeparator;
 
-    /**
-     * Line separator for sorted pom. Can be either \n, \r or \r\n
-     */
-    @Parameter(property = "sort.lineSeparator", defaultValue = "${line.separator}")
-    String lineSeparator;
+  @Parameter(property = "sort.expandEmptyElements", defaultValue = "true") boolean expandEmptyElements;
 
-    /**
-     * Should empty xml elements be expanded or not. Example:
-     * &lt;configuration&gt;&lt;/configuration&gt; or &lt;configuration/&gt;
-     */
-    @Parameter(property = "sort.expandEmptyElements", defaultValue = "true")
-    boolean expandEmptyElements;
+  @Parameter(property = "sort.keepBlankLines", defaultValue = "false") boolean keepBlankLines;
 
-    /**
-     * Should non-expanded empty xml element have space before closing tag. Example:
-     * &lt;configuration /&gt; or &lt;configuration/&gt;
-     */
-    @Parameter(property = "sort.spaceBeforeCloseEmptyElement", defaultValue = "true")
-    boolean spaceBeforeCloseEmptyElement;
+  @Parameter(property = "sort.nrOfIndentSpace", defaultValue = "2") int nrOfIndentSpace;
 
-    /**
-     * Should blank lines in the pom-file be preserved. A maximum of one line is preserved between each tag.
-     */
-    @Parameter(property = "sort.keepBlankLines", defaultValue = "false")
-    boolean keepBlankLines;
+  @Parameter(property = "sort.indentBlankLines", defaultValue = "false") boolean indentBlankLines;
 
-    /**
-     * Number of space characters to use as indentation. A value of -1 indicates
-     * that tab character should be used instead.
-     */
-    @Parameter(property = "sort.nrOfIndentSpace", defaultValue = "2")
-    int nrOfIndentSpace;
+  @Parameter(property = "sort.predefinedSortOrder") String predefinedSortOrder;
 
-    /**
-     * Ignore line separators when comparing current POM with sorted one
-     */
-    @Parameter(property = "sort.ignoreLineSeparators", defaultValue = "true")
-    boolean ignoreLineSeparators;
+  @Parameter(property = "sort.sortOrderFile") String sortOrderFile;
 
-    /**
-     * Should blank lines (if preserved) have indentation.
-     */
-    @Parameter(property = "sort.indentBlankLines", defaultValue = "false")
-    boolean indentBlankLines;
+  @Parameter(property = "sort.sortDependencies") String sortDependencies;
 
-    /**
-     * Should the schema location attribute of project (top level xml element) be placed on a new line. The attribute
-     * will be indented (2 * nrOfIndentSpace + 1 space) characters. 
-     */
-    @Parameter(property = "sort.indentSchemaLocation", defaultValue = "false")
-    boolean indentSchemaLocation;
+  @Parameter(property = "sort.sortDependencyExclusions") String sortDependencyExclusions;
 
-    /**
-     * Choose between a number of predefined sort order files.
-     */
-    @Parameter(property = "sort.predefinedSortOrder")
-    String predefinedSortOrder;
+  @Parameter(property = "sort.sortPlugins") String sortPlugins;
 
-    /**
-     * Custom sort order file.
-     */
-    @Parameter(property = "sort.sortOrderFile")
-    String sortOrderFile;
+  @Parameter(property = "sort.sortProperties", defaultValue = "false") boolean sortProperties;
 
-    /**
-     * Comma-separated ordered list how dependencies should be sorted. Example: scope,groupId,artifactId.
-     * If scope is specified in the list then the scope ranking is COMPILE, PROVIDED, SYSTEM, RUNTIME, IMPORT and TEST.
-     * The list can be separated by ",;:"
-     */
-    @Parameter(property = "sort.sortDependencies")
-    String sortDependencies;
+  @Parameter(property = "sort.sortModules", defaultValue = "false") boolean sortModules;
 
-    /**
-     * Comma-separated ordered list how exclusions, for dependencies, should be sorted. Example: groupId,artifactId
-     * The list can be separated by ",;:"
-     */
-    @Parameter(property = "sort.sortDependencyExclusions")
-    String sortDependencyExclusions;
+  @Parameter(property = "sort.skip", defaultValue = "false") private boolean skip;
 
-    /**
-     * Comma-separated ordered list how plugins should be sorted. Example: groupId,artifactId
-     * The list can be separated by ",;:"
-     */
-    @Parameter(property = "sort.sortPlugins")
-    String sortPlugins;
+  @Parameter(property = "sort.keepTimestamp", defaultValue = "false") boolean keepTimestamp;
 
-    /**
-     * Should the Maven pom properties be sorted alphabetically. Affects both
-     * project/properties and project/profiles/profile/properties
-     */
-    @Parameter(property = "sort.sortProperties", defaultValue = "false")
-    boolean sortProperties;
+  final SortPomImpl sortPomImpl = new SortPomImpl();
 
-    /**
-     * Should the Maven pom sub modules be sorted alphabetically.
-     */
-    @Parameter(property = "sort.sortModules", defaultValue = "false")
-    boolean sortModules;
-
-    /**
-     * Should the Maven pom execution sections be sorted by phase and then alphabetically.
-     */
-    @Parameter(property = "sort.sortExecutions", defaultValue = "false")
-    boolean sortExecutions;
-
-    /**
-     * Set this to 'true' to bypass sortpom plugin
-     */
-    @Parameter(property = "sort.skip", defaultValue = "false")
-    private boolean skip;
-
-    /**
-     * Whether to keep the file timestamps of old POM file when creating new POM file.
-     */
-    @Parameter(property = "sort.keepTimestamp", defaultValue = "false")
-    boolean keepTimestamp;
-
-    final SortPomImpl sortPomImpl = new SortPomImpl();
-
-    /**
-     * Execute plugin.
-     *
-     * @throws org.apache.maven.plugin.MojoFailureException exception that will be handled by plugin framework
-     * @see org.apache.maven.plugin.Mojo#execute()
-     */
-    @Override
-    public void execute() throws MojoFailureException {
-        if (skip) {
-            getLog().info("Skipping Sortpom");
-        } else {
-            setup();
-            sortPom();
-        }
-
+  @Override public void execute() throws MojoFailureException {
+    if (skip) {
+      getLog().info("Skipping Sortpom");
+    } else {
+      setup();
+      sortPom();
     }
+  }
 
-    protected abstract void sortPom() throws MojoFailureException;
+  protected abstract void sortPom() throws MojoFailureException;
 
-    protected abstract void setup() throws MojoFailureException;
+  protected abstract void setup() throws MojoFailureException;
+
+  @Parameter(property = "sort.spaceBeforeCloseEmptyElement", defaultValue = "true") boolean spaceBeforeCloseEmptyElement;
+
+  @Parameter(property = "sort.ignoreLineSeparators", defaultValue = "true") boolean ignoreLineSeparators;
+
+  @Parameter(property = "sort.indentSchemaLocation", defaultValue = "false") boolean indentSchemaLocation;
+
+  @Parameter(property = "sort.sortExecutions", defaultValue = "false") boolean sortExecutions;
 }
