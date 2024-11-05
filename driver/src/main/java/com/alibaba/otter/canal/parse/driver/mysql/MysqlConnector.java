@@ -1,12 +1,9 @@
 package com.alibaba.otter.canal.parse.driver.mysql;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.alibaba.otter.canal.parse.driver.mysql.packets.HeaderPacket;
 import com.alibaba.otter.canal.parse.driver.mysql.packets.client.ClientAuthenticationPacket;
 import com.alibaba.otter.canal.parse.driver.mysql.packets.client.QuitCommandPacket;
@@ -25,312 +22,302 @@ import com.alibaba.otter.canal.parse.driver.mysql.utils.PacketManager;
  * @version 1.0.1
  */
 public class MysqlConnector {
+  private static final Logger logger = LoggerFactory.getLogger(MysqlConnector.class);
 
-    private static final Logger logger            = LoggerFactory.getLogger(MysqlConnector.class);
-    private InetSocketAddress   address;
-    private String              username;
-    private String              password;
+  private InetSocketAddress address;
 
-    private byte                charsetNumber     = 33;
-    private String              defaultSchema     = "retl";
-    private int                 soTimeout         = 30 * 1000;
-    private int connTimeout = 5 * 1000;
-    private int                 receiveBufferSize = 16 * 1024;
-    private int                 sendBufferSize    = 16 * 1024;
+  private String username;
 
-    private SocketChannel       channel;
-    private volatile boolean    dumping           = false;
-    // mysql connectinnId
-    private long                connectionId      = -1;
-    private AtomicBoolean       connected         = new AtomicBoolean(false);
+  private String password;
 
-    public MysqlConnector(){
-    }
+  private byte charsetNumber = 33;
 
-    public MysqlConnector(InetSocketAddress address, String username, String password){
-        this.address = address;
-        this.username = username;
-        this.password = password;
-    }
+  private String defaultSchema = "retl";
 
-    public MysqlConnector(InetSocketAddress address, String username, String password, byte charsetNumber,
-                          String defaultSchema){
-        this(address, username, password);
+  private int soTimeout = 30 * 1000;
 
-        this.charsetNumber = charsetNumber;
-        this.defaultSchema = defaultSchema;
-    }
+  private int connTimeout = 5 * 1000;
 
-    public void connect() throws IOException {
-        if (connected.compareAndSet(false, true)) {
-            try {
-                channel = SocketChannelPool.open(address);
-                logger.info("connect MysqlConnection to {}...", address);
-                negotiate(channel);
-            } catch (Exception e) {
-                disconnect();
-                throw new IOException("connect " + this.address + " failure", e);
-            }
-        } else {
-            logger.error("the channel can't be connected twice.");
-        }
-    }
+  private int receiveBufferSize = 16 * 1024;
 
-    public void reconnect() throws IOException {
+  private int sendBufferSize = 16 * 1024;
+
+  private SocketChannel channel;
+
+  private volatile boolean dumping = false;
+
+  private long connectionId = -1;
+
+  private AtomicBoolean connected = new AtomicBoolean(false);
+
+  public MysqlConnector() {
+  }
+
+  public MysqlConnector(InetSocketAddress address, String username, String password) {
+    this.address = address;
+    this.username = username;
+    this.password = password;
+  }
+
+  public MysqlConnector(InetSocketAddress address, String username, String password, byte charsetNumber, String defaultSchema) {
+    this(address, username, password);
+    this.charsetNumber = charsetNumber;
+    this.defaultSchema = defaultSchema;
+  }
+
+  public void connect() throws IOException {
+    if (connected.compareAndSet(false, true)) {
+      try {
+        channel = SocketChannelPool.open(address);
+        logger.info("connect MysqlConnection to {}...", address);
+        negotiate(channel);
+      } catch (Exception e) {
         disconnect();
-        connect();
+        throw new IOException("connect " + this.address + " failure", e);
+      }
+    } else {
+      logger.error("the channel can\'t be connected twice.");
     }
+  }
 
-    public void disconnect() throws IOException {
-        if (connected.compareAndSet(true, false)) {
-            try {
-                if (channel != null) {
-                    channel.close();
-                }
-                logger.info("disConnect MysqlConnection to {}...", address);
-            } catch (Exception e) {
-                throw new IOException("disconnect " + this.address + " failure", e);
-            }
+  public void reconnect() throws IOException {
+    disconnect();
+    connect();
+  }
 
-            // 执行一次quit
-            if (dumping && connectionId >= 0) {
-                MysqlConnector connector = null;
-                try {
-                    connector = this.fork();
-                    connector.connect();
-                    MysqlUpdateExecutor executor = new MysqlUpdateExecutor(connector);
-                    executor.update("KILL CONNECTION " + connectionId);
-                } catch (Exception e) {
-                    throw new IOException("KILL DUMP " + connectionId + " failure", e);
-                } finally {
-                    if (connector != null) {
-                        connector.disconnect();
-                    }
-                }
+  public void disconnect() throws IOException {
+    if (connected.compareAndSet(true, false)) {
+      try {
+        if (channel != null) {
+          channel.close();
+        }
+        logger.info("disConnect MysqlConnection to {}...", address);
+      } catch (Exception e) {
+        throw new IOException("disconnect " + this.address + " failure", e);
+      }
+      if (dumping && connectionId >= 0) {
+        MysqlConnector connector = null;
+        try {
+          connector = this.fork();
+          connector.connect();
+          MysqlUpdateExecutor executor = new MysqlUpdateExecutor(connector);
+          executor.update("KILL CONNECTION " + connectionId);
+        } catch (Exception e) {
+          throw new IOException("KILL DUMP " + connectionId + " failure", e);
+        } finally {
+          if (connector != null) {
+            connector.disconnect();
+          }
+        }
+        dumping = false;
+      }
+    } else {
+      logger.info("the channel {} is not connected", this.address);
+    }
+  }
 
-                dumping = false;
-            }
+  public boolean isConnected() {
+    return this.channel != null && this.channel.isConnected();
+  }
+
+  public MysqlConnector fork() {
+    MysqlConnector connector = new MysqlConnector();
+    connector.setCharsetNumber(getCharsetNumber());
+    connector.setDefaultSchema(getDefaultSchema());
+    connector.setAddress(getAddress());
+    connector.setPassword(password);
+    connector.setUsername(getUsername());
+    connector.setReceiveBufferSize(getReceiveBufferSize());
+    connector.setSendBufferSize(getSendBufferSize());
+    connector.setSoTimeout(getSoTimeout());
+    connector.setConnTimeout(connTimeout);
+    return connector;
+  }
+
+  public void quit() throws IOException {
+    QuitCommandPacket quit = new QuitCommandPacket();
+    byte[] cmdBody = quit.toBytes();
+    HeaderPacket quitHeader = new HeaderPacket();
+    quitHeader.setPacketBodyLength(cmdBody.length);
+    quitHeader.setPacketSequenceNumber((byte) 0x00);
+    PacketManager.writePkg(channel, quitHeader.toBytes(), cmdBody);
+  }
+
+  private void negotiate(SocketChannel channel) throws IOException {
+    HeaderPacket header = PacketManager.readHeader(channel, 4);
+    byte[] body = PacketManager.readBytes(channel, header.getPacketBodyLength());
+    if (body[0] < 0) {
+      if (body[0] == -1) {
+        ErrorPacket error = new ErrorPacket();
+        error.fromBytes(body);
+        throw new IOException("handshake exception:\n" + error.toString());
+      } else {
+        if (body[0] == -2) {
+          throw new IOException("Unexpected EOF packet at handshake phase.");
         } else {
-            logger.info("the channel {} is not connected", this.address);
+          throw new IOException("unpexpected packet with field_count=" + body[0]);
         }
+      }
     }
-
-    public boolean isConnected() {
-        return this.channel != null && this.channel.isConnected();
-    }
-
-    public MysqlConnector fork() {
-        MysqlConnector connector = new MysqlConnector();
-        connector.setCharsetNumber(getCharsetNumber());
-        connector.setDefaultSchema(getDefaultSchema());
-        connector.setAddress(getAddress());
-        connector.setPassword(password);
-        connector.setUsername(getUsername());
-        connector.setReceiveBufferSize(getReceiveBufferSize());
-        connector.setSendBufferSize(getSendBufferSize());
-        connector.setSoTimeout(getSoTimeout());
-        connector.setConnTimeout(connTimeout);
-        return connector;
-    }
-
-    public void quit() throws IOException {
-        QuitCommandPacket quit = new QuitCommandPacket();
-        byte[] cmdBody = quit.toBytes();
-
-        HeaderPacket quitHeader = new HeaderPacket();
-        quitHeader.setPacketBodyLength(cmdBody.length);
-        quitHeader.setPacketSequenceNumber((byte) 0x00);
-        PacketManager.writePkg(channel, quitHeader.toBytes(), cmdBody);
-    }
-
-    private void negotiate(SocketChannel channel) throws IOException {
-        HeaderPacket header = PacketManager.readHeader(channel, 4);
-        byte[] body = PacketManager.readBytes(channel, header.getPacketBodyLength());
-        if (body[0] < 0) {// check field_count
-            if (body[0] == -1) {
-                ErrorPacket error = new ErrorPacket();
-                error.fromBytes(body);
-                throw new IOException("handshake exception:\n" + error.toString());
-            } else if (body[0] == -2) {
-                throw new IOException("Unexpected EOF packet at handshake phase.");
-            } else {
-                throw new IOException("unpexpected packet with field_count=" + body[0]);
-            }
+    HandshakeInitializationPacket handshakePacket = new HandshakeInitializationPacket();
+    handshakePacket.fromBytes(body);
+    connectionId = handshakePacket.threadId;
+    logger.info("handshake initialization packet received, prepare the client authentication packet to send");
+    ClientAuthenticationPacket clientAuth = new ClientAuthenticationPacket();
+    clientAuth.setCharsetNumber(charsetNumber);
+    clientAuth.setUsername(username);
+    clientAuth.setPassword(password);
+    clientAuth.setServerCapabilities(handshakePacket.serverCapabilities);
+    clientAuth.setDatabaseName(defaultSchema);
+    clientAuth.setScrumbleBuff(joinAndCreateScrumbleBuff(handshakePacket));
+    byte[] clientAuthPkgBody = clientAuth.toBytes();
+    HeaderPacket h = new HeaderPacket();
+    h.setPacketBodyLength(clientAuthPkgBody.length);
+    h.setPacketSequenceNumber((byte) (header.getPacketSequenceNumber() + 1));
+    PacketManager.writePkg(channel, h.toBytes(), clientAuthPkgBody);
+    logger.info("client authentication packet is sent out.");
+    header = null;
+    header = PacketManager.readHeader(channel, 4);
+    body = null;
+    body = PacketManager.readBytes(channel, header.getPacketBodyLength());
+    assert body != null;
+    if (body[0] < 0) {
+      if (body[0] == -1) {
+        ErrorPacket err = new ErrorPacket();
+        err.fromBytes(body);
+        throw new IOException("Error When doing Client Authentication:" + err.toString());
+      } else {
+        if (body[0] == -2) {
+          auth323(channel, header.getPacketSequenceNumber(), handshakePacket.seed);
+        } else {
+          throw new IOException("unpexpected packet with field_count=" + body[0]);
         }
-        HandshakeInitializationPacket handshakePacket = new HandshakeInitializationPacket();
-        handshakePacket.fromBytes(body);
-        connectionId = handshakePacket.threadId; // 记录一下connection
-
-        logger.info("handshake initialization packet received, prepare the client authentication packet to send");
-
-        ClientAuthenticationPacket clientAuth = new ClientAuthenticationPacket();
-        clientAuth.setCharsetNumber(charsetNumber);
-
-        clientAuth.setUsername(username);
-        clientAuth.setPassword(password);
-        clientAuth.setServerCapabilities(handshakePacket.serverCapabilities);
-        clientAuth.setDatabaseName(defaultSchema);
-        clientAuth.setScrumbleBuff(joinAndCreateScrumbleBuff(handshakePacket));
-
-        byte[] clientAuthPkgBody = clientAuth.toBytes();
-        HeaderPacket h = new HeaderPacket();
-        h.setPacketBodyLength(clientAuthPkgBody.length);
-        h.setPacketSequenceNumber((byte) (header.getPacketSequenceNumber() + 1));
-
-        PacketManager.writePkg(channel, h.toBytes(), clientAuthPkgBody);
-        logger.info("client authentication packet is sent out.");
-
-        // check auth result
-        header = null;
-        header = PacketManager.readHeader(channel, 4);
-        body = null;
-        body = PacketManager.readBytes(channel, header.getPacketBodyLength());
-        assert body != null;
-        if (body[0] < 0) {
-            if (body[0] == -1) {
-                ErrorPacket err = new ErrorPacket();
-                err.fromBytes(body);
-                throw new IOException("Error When doing Client Authentication:" + err.toString());
-            } else if (body[0] == -2) {
-                auth323(channel, header.getPacketSequenceNumber(), handshakePacket.seed);
-                // throw new
-                // IOException("Unexpected EOF packet at Client Authentication.");
-            } else {
-                throw new IOException("unpexpected packet with field_count=" + body[0]);
-            }
-        }
+      }
     }
+  }
 
-    private void auth323(SocketChannel channel, byte packetSequenceNumber, byte[] seed) throws IOException {
-        // auth 323
-        Reply323Packet r323 = new Reply323Packet();
-        if (password != null && password.length() > 0) {
-            r323.seed = MySQLPasswordEncrypter.scramble323(password, new String(seed)).getBytes();
-        }
-        byte[] b323Body = r323.toBytes();
-
-        HeaderPacket h323 = new HeaderPacket();
-        h323.setPacketBodyLength(b323Body.length);
-        h323.setPacketSequenceNumber((byte) (packetSequenceNumber + 1));
-
-        PacketManager.writePkg(channel, h323.toBytes(), b323Body);
-        logger.info("client 323 authentication packet is sent out.");
-        // check auth result
-        HeaderPacket header = PacketManager.readHeader(channel, 4);
-        byte[] body = PacketManager.readBytes(channel, header.getPacketBodyLength());
-        assert body != null;
-        switch (body[0]) {
-            case 0:
-                break;
-            case -1:
-                ErrorPacket err = new ErrorPacket();
-                err.fromBytes(body);
-                throw new IOException("Error When doing Client Authentication:" + err.toString());
-            default:
-                throw new IOException("unpexpected packet with field_count=" + body[0]);
-        }
+  private void auth323(SocketChannel channel, byte packetSequenceNumber, byte[] seed) throws IOException {
+    Reply323Packet r323 = new Reply323Packet();
+    if (password != null && password.length() > 0) {
+      r323.seed = MySQLPasswordEncrypter.scramble323(password, new String(seed)).getBytes();
     }
-
-    private byte[] joinAndCreateScrumbleBuff(HandshakeInitializationPacket handshakePacket) throws IOException {
-        byte[] dest = new byte[handshakePacket.seed.length + handshakePacket.restOfScrambleBuff.length];
-        System.arraycopy(handshakePacket.seed, 0, dest, 0, handshakePacket.seed.length);
-        System.arraycopy(handshakePacket.restOfScrambleBuff,
-            0,
-            dest,
-            handshakePacket.seed.length,
-            handshakePacket.restOfScrambleBuff.length);
-        return dest;
+    byte[] b323Body = r323.toBytes();
+    HeaderPacket h323 = new HeaderPacket();
+    h323.setPacketBodyLength(b323Body.length);
+    h323.setPacketSequenceNumber((byte) (packetSequenceNumber + 1));
+    PacketManager.writePkg(channel, h323.toBytes(), b323Body);
+    logger.info("client 323 authentication packet is sent out.");
+    HeaderPacket header = PacketManager.readHeader(channel, 4);
+    byte[] body = PacketManager.readBytes(channel, header.getPacketBodyLength());
+    assert body != null;
+    switch (body[0]) {
+      case 0:
+      break;
+      case -1:
+      ErrorPacket err = new ErrorPacket();
+      err.fromBytes(body);
+      throw new IOException("Error When doing Client Authentication:" + err.toString());
+      default:
+      throw new IOException("unpexpected packet with field_count=" + body[0]);
     }
+  }
 
-    public InetSocketAddress getAddress() {
-        return address;
-    }
+  private byte[] joinAndCreateScrumbleBuff(HandshakeInitializationPacket handshakePacket) throws IOException {
+    byte[] dest = new byte[handshakePacket.seed.length + handshakePacket.restOfScrambleBuff.length];
+    System.arraycopy(handshakePacket.seed, 0, dest, 0, handshakePacket.seed.length);
+    System.arraycopy(handshakePacket.restOfScrambleBuff, 0, dest, handshakePacket.seed.length, handshakePacket.restOfScrambleBuff.length);
+    return dest;
+  }
 
-    public void setAddress(InetSocketAddress address) {
-        this.address = address;
-    }
+  public InetSocketAddress getAddress() {
+    return address;
+  }
 
-    public String getUsername() {
-        return username;
-    }
+  public void setAddress(InetSocketAddress address) {
+    this.address = address;
+  }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public byte getCharsetNumber() {
-        return charsetNumber;
-    }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    public void setCharsetNumber(byte charsetNumber) {
-        this.charsetNumber = charsetNumber;
-    }
+  public byte getCharsetNumber() {
+    return charsetNumber;
+  }
 
-    public String getDefaultSchema() {
-        return defaultSchema;
-    }
+  public void setCharsetNumber(byte charsetNumber) {
+    this.charsetNumber = charsetNumber;
+  }
 
-    public void setDefaultSchema(String defaultSchema) {
-        this.defaultSchema = defaultSchema;
-    }
+  public String getDefaultSchema() {
+    return defaultSchema;
+  }
 
-    public int getSoTimeout() {
-        return soTimeout;
-    }
+  public void setDefaultSchema(String defaultSchema) {
+    this.defaultSchema = defaultSchema;
+  }
 
-    public void setSoTimeout(int soTimeout) {
-        this.soTimeout = soTimeout;
-    }
+  public int getSoTimeout() {
+    return soTimeout;
+  }
 
-    public int getReceiveBufferSize() {
-        return receiveBufferSize;
-    }
+  public void setSoTimeout(int soTimeout) {
+    this.soTimeout = soTimeout;
+  }
 
-    public void setReceiveBufferSize(int receiveBufferSize) {
-        this.receiveBufferSize = receiveBufferSize;
-    }
+  public int getReceiveBufferSize() {
+    return receiveBufferSize;
+  }
 
-    public int getSendBufferSize() {
-        return sendBufferSize;
-    }
+  public void setReceiveBufferSize(int receiveBufferSize) {
+    this.receiveBufferSize = receiveBufferSize;
+  }
 
-    public void setSendBufferSize(int sendBufferSize) {
-        this.sendBufferSize = sendBufferSize;
-    }
+  public int getSendBufferSize() {
+    return sendBufferSize;
+  }
 
-    public SocketChannel getChannel() {
-        return channel;
-    }
+  public void setSendBufferSize(int sendBufferSize) {
+    this.sendBufferSize = sendBufferSize;
+  }
 
-    public void setChannel(SocketChannel channel) {
-        this.channel = channel;
-    }
+  public SocketChannel getChannel() {
+    return channel;
+  }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+  public void setChannel(SocketChannel channel) {
+    this.channel = channel;
+  }
 
-    public long getConnectionId() {
-        return connectionId;
-    }
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-    public void setConnectionId(long connectionId) {
-        this.connectionId = connectionId;
-    }
+  public long getConnectionId() {
+    return connectionId;
+  }
 
-    public boolean isDumping() {
-        return dumping;
-    }
+  public void setConnectionId(long connectionId) {
+    this.connectionId = connectionId;
+  }
 
-    public void setDumping(boolean dumping) {
-        this.dumping = dumping;
-    }
+  public boolean isDumping() {
+    return dumping;
+  }
 
-    public int getConnTimeout() {
-        return connTimeout;
-    }
+  public void setDumping(boolean dumping) {
+    this.dumping = dumping;
+  }
 
-    public void setConnTimeout(int connTimeout) {
-        this.connTimeout = connTimeout;
-    }
+  public int getConnTimeout() {
+    return connTimeout;
+  }
+
+  public void setConnTimeout(int connTimeout) {
+    this.connTimeout = connTimeout;
+  }
 }
