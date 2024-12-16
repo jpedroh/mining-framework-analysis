@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.commons.net.tftp;
 
 import java.io.BufferedInputStream;
@@ -33,9 +32,9 @@ import java.net.SocketTimeoutException;
 import java.time.Duration;
 import java.util.Enumeration;
 import java.util.HashSet;
-
 import org.apache.commons.net.io.FromNetASCIIOutputStream;
 import org.apache.commons.net.io.ToNetASCIIInputStream;
+
 
 /**
  * A fully multi-threaded TFTP server. Can handle multiple clients at the same time. Implements RFC 1350 and wrapping block numbers for large file support.
@@ -72,15 +71,14 @@ import org.apache.commons.net.io.ToNetASCIIInputStream;
  *
  * @since 2.0
  */
-public class TFTPServer implements Runnable, AutoCloseable {
-
+public class TFTPServer implements Runnable , AutoCloseable {
     public enum ServerMode {
-        GET_ONLY, PUT_ONLY, GET_AND_PUT
-    }
 
-    /*
-     * An ongoing transfer.
-     */
+        GET_ONLY,
+        PUT_ONLY,
+        GET_AND_PUT;}
+
+    /* An ongoing transfer. */
     private class TFTPTransfer implements Runnable {
         private final TFTPPacket tftpPacket;
 
@@ -92,27 +90,20 @@ public class TFTPServer implements Runnable, AutoCloseable {
             this.tftpPacket = tftpPacket;
         }
 
-        /*
-         * Makes sure that paths provided by TFTP clients do not get outside of the serverRoot directory.
-         */
+        /* Makes sure that paths provided by TFTP clients do not get outside of the serverRoot directory. */
         private File buildSafeFile(final File serverDirectory, final String fileName, final boolean createSubDirs) throws IOException {
             final File temp = new File(serverDirectory, fileName).getCanonicalFile();
-
             if (!isSubdirectoryOf(serverDirectory, temp)) {
                 throw new IOException("Cannot access files outside of TFTP server root.");
             }
-
             // ensure directory exists (if requested)
             if (createSubDirs) {
                 createDirectory(temp.getParentFile());
             }
-
             return temp;
         }
 
-        /*
-         * Creates subdirectories recursively.
-         */
+        /* Creates subdirectories recursively. */
         private void createDirectory(final File file) throws IOException {
             final File parent = file.getParentFile();
             if (parent == null) {
@@ -122,7 +113,6 @@ public class TFTPServer implements Runnable, AutoCloseable {
                 // recurse...
                 createDirectory(parent);
             }
-
             if (!parent.isDirectory()) {
                 throw new IOException("Invalid directory path - file in the way of requested folder");
             }
@@ -135,13 +125,10 @@ public class TFTPServer implements Runnable, AutoCloseable {
             }
         }
 
-        /*
-         * Handles a tftp read request.
-         */
+        /* Handles a tftp read request. */
         private void handleRead(final TFTPReadRequestPacket trrp) throws IOException, TFTPPacketException {
             if (mode == ServerMode.PUT_ONLY) {
-                transferTftp
-                        .bufferedSend(new TFTPErrorPacket(trrp.getAddress(), trrp.getPort(), TFTPErrorPacket.ILLEGAL_OPERATION, "Read not allowed by server."));
+                transferTftp.bufferedSend(new TFTPErrorPacket(trrp.getAddress(), trrp.getPort(), TFTPErrorPacket.ILLEGAL_OPERATION, "Read not allowed by server."));
                 return;
             }
             InputStream inputStream = null;
@@ -151,52 +138,41 @@ public class TFTPServer implements Runnable, AutoCloseable {
                 } catch (final FileNotFoundException e) {
                     transferTftp.bufferedSend(new TFTPErrorPacket(trrp.getAddress(), trrp.getPort(), TFTPErrorPacket.FILE_NOT_FOUND, e.getMessage()));
                     return;
-                } catch (final Exception e) {
+                } catch (final java.lang.Exception e) {
                     transferTftp.bufferedSend(new TFTPErrorPacket(trrp.getAddress(), trrp.getPort(), TFTPErrorPacket.UNDEFINED, e.getMessage()));
                     return;
                 }
-
                 if (trrp.getMode() == TFTP.NETASCII_MODE) {
                     inputStream = new ToNetASCIIInputStream(inputStream);
                 }
-
                 final byte[] temp = new byte[TFTPDataPacket.MAX_DATA_LENGTH];
-
                 TFTPPacket answer;
-
                 int block = 1;
                 boolean sendNext = true;
-
                 int readLength = TFTPDataPacket.MAX_DATA_LENGTH;
-
                 TFTPDataPacket lastSentData = null;
-
                 // We are reading a file, so when we read less than the
                 // requested bytes, we know that we are at the end of the file.
-                while (readLength == TFTPDataPacket.MAX_DATA_LENGTH && !shutdownTransfer) {
+                while ((readLength == TFTPDataPacket.MAX_DATA_LENGTH) && (!shutdownTransfer)) {
                     if (sendNext) {
                         readLength = inputStream.read(temp);
-                        if (readLength == -1) {
+                        if (readLength == (-1)) {
                             readLength = 0;
                         }
-
                         lastSentData = new TFTPDataPacket(trrp.getAddress(), trrp.getPort(), block, temp, 0, readLength);
-                        sendData(transferTftp, lastSentData); // send the data
+                        sendData(transferTftp, lastSentData);// send the data
+
                     }
-
                     answer = null;
-
                     int timeoutCount = 0;
-
-                    while (!shutdownTransfer && (answer == null || !answer.getAddress().equals(trrp.getAddress()) || answer.getPort() != trrp.getPort())) {
+                    while ((!shutdownTransfer) && (((answer == null) || (!answer.getAddress().equals(trrp.getAddress()))) || (answer.getPort() != trrp.getPort()))) {
                         // listen for an answer.
                         if (answer != null) {
                             // The answer that we got didn't come from the
                             // expected source, fire back an error, and continue
                             // listening.
                             log.println("TFTP Server ignoring message from unexpected source.");
-                            transferTftp.bufferedSend(
-                                    new TFTPErrorPacket(answer.getAddress(), answer.getPort(), TFTPErrorPacket.UNKNOWN_TID, "Unexpected Host or Port"));
+                            transferTftp.bufferedSend(new TFTPErrorPacket(answer.getAddress(), answer.getPort(), TFTPErrorPacket.UNKNOWN_TID, "Unexpected Host or Port"));
                         }
                         try {
                             answer = transferTftp.bufferedReceive();
@@ -210,22 +186,20 @@ public class TFTPServer implements Runnable, AutoCloseable {
                             transferTftp.bufferedSend(lastSentData);
                             continue;
                         }
-                    }
-
-                    if (answer == null || !(answer instanceof TFTPAckPacket)) {
+                    } 
+                    if ((answer == null) || (!(answer instanceof TFTPAckPacket))) {
                         if (!shutdownTransfer) {
-                            logError.println("Unexpected response from tftp client during transfer (" + answer + ").  Transfer aborted.");
+                            logError.println(("Unexpected response from tftp client during transfer (" + answer) + ").  Transfer aborted.");
                         }
                         break;
                     }
                     // once we get here, we know we have an answer packet
                     // from the correct host.
-                    final TFTPAckPacket ack = (TFTPAckPacket) answer;
+                    final TFTPAckPacket ack = ((TFTPAckPacket) (answer));
                     if (ack.getBlockNumber() != block) {
-                        /*
-                         * The origional tftp spec would have called on us to resend the previous data here, however, that causes the SAS Syndrome.
-                         * http://www.faqs.org/rfcs/rfc1123.html section 4.2.3.1 The modified spec says that we ignore a duplicate ack. If the packet was really
-                         * lost, we will time out on receive, and resend the previous data at that point.
+                        /* The origional tftp spec would have called on us to resend the previous data here, however, that causes the SAS Syndrome.
+                        http://www.faqs.org/rfcs/rfc1123.html section 4.2.3.1 The modified spec says that we ignore a duplicate ack. If the packet was really
+                        lost, we will time out on receive, and resend the previous data at that point.
                          */
                         sendNext = false;
                     } else {
@@ -237,7 +211,7 @@ public class TFTPServer implements Runnable, AutoCloseable {
                         }
                         sendNext = true;
                     }
-                }
+                } 
             } finally {
                 try {
                     if (inputStream != null) {
@@ -249,21 +223,16 @@ public class TFTPServer implements Runnable, AutoCloseable {
             }
         }
 
-        /*
-         * handle a TFTP write request.
-         */
+        /* handle a TFTP write request. */
         private void handleWrite(final TFTPWriteRequestPacket twrp) throws IOException, TFTPPacketException {
             OutputStream bos = null;
             try {
                 if (mode == ServerMode.GET_ONLY) {
-                    transferTftp.bufferedSend(
-                            new TFTPErrorPacket(twrp.getAddress(), twrp.getPort(), TFTPErrorPacket.ILLEGAL_OPERATION, "Write not allowed by server."));
+                    transferTftp.bufferedSend(new TFTPErrorPacket(twrp.getAddress(), twrp.getPort(), TFTPErrorPacket.ILLEGAL_OPERATION, "Write not allowed by server."));
                     return;
                 }
-
                 int lastBlock = 0;
                 final String fileName = twrp.getFilename();
-
                 try {
                     final File temp = buildSafeFile(serverWriteDirectory, fileName, true);
                     if (temp.exists()) {
@@ -271,36 +240,29 @@ public class TFTPServer implements Runnable, AutoCloseable {
                         return;
                     }
                     bos = new BufferedOutputStream(new FileOutputStream(temp));
-
                     if (twrp.getMode() == TFTP.NETASCII_MODE) {
                         bos = new FromNetASCIIOutputStream(bos);
                     }
-                } catch (final Exception e) {
+                } catch (final java.lang.Exception e) {
                     transferTftp.bufferedSend(new TFTPErrorPacket(twrp.getAddress(), twrp.getPort(), TFTPErrorPacket.UNDEFINED, e.getMessage()));
                     return;
                 }
-
                 TFTPAckPacket lastSentAck = new TFTPAckPacket(twrp.getAddress(), twrp.getPort(), 0);
-                sendData(transferTftp, lastSentAck); // send the data
+                sendData(transferTftp, lastSentAck);// send the data
 
                 while (true) {
                     // get the response - ensure it is from the right place.
                     TFTPPacket dataPacket = null;
-
                     int timeoutCount = 0;
-
-                    while (!shutdownTransfer
-                            && (dataPacket == null || !dataPacket.getAddress().equals(twrp.getAddress()) || dataPacket.getPort() != twrp.getPort())) {
+                    while ((!shutdownTransfer) && (((dataPacket == null) || (!dataPacket.getAddress().equals(twrp.getAddress()))) || (dataPacket.getPort() != twrp.getPort()))) {
                         // listen for an answer.
                         if (dataPacket != null) {
                             // The data that we got didn't come from the
                             // expected source, fire back an error, and continue
                             // listening.
                             log.println("TFTP Server ignoring message from unexpected source.");
-                            transferTftp.bufferedSend(
-                                    new TFTPErrorPacket(dataPacket.getAddress(), dataPacket.getPort(), TFTPErrorPacket.UNKNOWN_TID, "Unexpected Host or Port"));
+                            transferTftp.bufferedSend(new TFTPErrorPacket(dataPacket.getAddress(), dataPacket.getPort(), TFTPErrorPacket.UNKNOWN_TID, "Unexpected Host or Port"));
                         }
-
                         try {
                             dataPacket = transferTftp.bufferedReceive();
                         } catch (final SocketTimeoutException e) {
@@ -312,36 +274,33 @@ public class TFTPServer implements Runnable, AutoCloseable {
                             timeoutCount++;
                             continue;
                         }
-                    }
-
+                    } 
                     if (dataPacket instanceof TFTPWriteRequestPacket) {
                         // it must have missed our initial ack. Send another.
                         lastSentAck = new TFTPAckPacket(twrp.getAddress(), twrp.getPort(), 0);
                         transferTftp.bufferedSend(lastSentAck);
-                    } else if (dataPacket == null || !(dataPacket instanceof TFTPDataPacket)) {
+                    } else if ((dataPacket == null) || (!(dataPacket instanceof TFTPDataPacket))) {
                         if (!shutdownTransfer) {
-                            logError.println("Unexpected response from tftp client during transfer (" + dataPacket + ").  Transfer aborted.");
+                            logError.println(("Unexpected response from tftp client during transfer (" + dataPacket) + ").  Transfer aborted.");
                         }
                         break;
                     } else {
-                        final int block = ((TFTPDataPacket) dataPacket).getBlockNumber();
-                        final byte[] data = ((TFTPDataPacket) dataPacket).getData();
-                        final int dataLength = ((TFTPDataPacket) dataPacket).getDataLength();
-                        final int dataOffset = ((TFTPDataPacket) dataPacket).getDataOffset();
-
-                        if (block > lastBlock || lastBlock == 65535 && block == 0) {
+                        final int block = ((TFTPDataPacket) (dataPacket)).getBlockNumber();
+                        final byte[] data = ((TFTPDataPacket) (dataPacket)).getData();
+                        final int dataLength = ((TFTPDataPacket) (dataPacket)).getDataLength();
+                        final int dataOffset = ((TFTPDataPacket) (dataPacket)).getDataOffset();
+                        if ((block > lastBlock) || ((lastBlock == 65535) && (block == 0))) {
                             // it might resend a data block if it missed our ack
                             // - don't rewrite the block.
                             bos.write(data, dataOffset, dataLength);
                             lastBlock = block;
                         }
-
                         lastSentAck = new TFTPAckPacket(twrp.getAddress(), twrp.getPort(), block);
-                        sendData(transferTftp, lastSentAck); // send the data
+                        sendData(transferTftp, lastSentAck);// send the data
+
                         if (dataLength < TFTPDataPacket.MAX_DATA_LENGTH) {
                             // end of stream signal - The tranfer is complete.
                             bos.close();
-
                             // But my ack may be lost - so listen to see if I
                             // need to resend the ack.
                             for (int i = 0; i < maxTimeoutRetries; i++) {
@@ -352,11 +311,9 @@ public class TFTPServer implements Runnable, AutoCloseable {
                                     // shouldn't be sending any more packets.
                                     break;
                                 }
-
-                                if (dataPacket != null && (!dataPacket.getAddress().equals(twrp.getAddress()) || dataPacket.getPort() != twrp.getPort())) {
+                                if ((dataPacket != null) && ((!dataPacket.getAddress().equals(twrp.getAddress())) || (dataPacket.getPort() != twrp.getPort()))) {
                                     // make sure it was from the right client...
-                                    transferTftp.bufferedSend(new TFTPErrorPacket(dataPacket.getAddress(), dataPacket.getPort(), TFTPErrorPacket.UNKNOWN_TID,
-                                            "Unexpected Host or Port"));
+                                    transferTftp.bufferedSend(new TFTPErrorPacket(dataPacket.getAddress(), dataPacket.getPort(), TFTPErrorPacket.UNKNOWN_TID, "Unexpected Host or Port"));
                                 } else {
                                     // This means they sent us the last
                                     // datapacket again, must have missed our
@@ -364,12 +321,11 @@ public class TFTPServer implements Runnable, AutoCloseable {
                                     transferTftp.bufferedSend(lastSentAck);
                                 }
                             }
-
                             // all done.
                             break;
                         }
                     }
-                }
+                } 
             } finally {
                 if (bos != null) {
                     bos.close();
@@ -377,9 +333,7 @@ public class TFTPServer implements Runnable, AutoCloseable {
             }
         }
 
-        /*
-         * recursively check to see if one directory is a parent of another.
-         */
+        /* recursively check to see if one directory is a parent of another. */
         private boolean isSubdirectoryOf(final File parent, final File child) {
             final File childsParent = child.getParentFile();
             if (childsParent == null) {
@@ -395,33 +349,30 @@ public class TFTPServer implements Runnable, AutoCloseable {
         public void run() {
             try {
                 transferTftp = newTFTP();
-
                 transferTftp.beginBufferedOps();
                 transferTftp.setDefaultTimeout(socketTimeout);
-
                 transferTftp.open();
-
                 if (tftpPacket instanceof TFTPReadRequestPacket) {
-                    handleRead((TFTPReadRequestPacket) tftpPacket);
+                    handleRead(((TFTPReadRequestPacket) (tftpPacket)));
                 } else if (tftpPacket instanceof TFTPWriteRequestPacket) {
-                    handleWrite((TFTPWriteRequestPacket) tftpPacket);
+                    handleWrite(((TFTPWriteRequestPacket) (tftpPacket)));
                 } else {
-                    log.println("Unsupported TFTP request (" + tftpPacket + ") - ignored.");
+                    log.println(("Unsupported TFTP request (" + tftpPacket) + ") - ignored.");
                 }
-            } catch (final Exception e) {
+            } catch (final java.lang.Exception e) {
                 if (!shutdownTransfer) {
                     logError.println("Unexpected Error in during TFTP file transfer.  Transfer aborted. " + e);
                 }
             } finally {
                 try {
-                    if (transferTftp != null && transferTftp.isOpen()) {
+                    if ((transferTftp != null) && transferTftp.isOpen()) {
                         transferTftp.endBufferedOps();
                         transferTftp.close();
                     }
-                } catch (final Exception e) {
+                } catch (final java.lang.Exception e) {
                     // noop
                 }
-                synchronized (transfers) {
+                synchronized(transfers) {
                     transfers.remove(this);
                 }
             }
@@ -431,13 +382,14 @@ public class TFTPServer implements Runnable, AutoCloseable {
             shutdownTransfer = true;
             try {
                 transferTftp.close();
-            } catch (final RuntimeException e) {
+            } catch (final java.lang.RuntimeException e) {
                 // noop
             }
         }
     }
 
     private static final int DEFAULT_TFTP_PORT = 69;
+
     /* /dev/null output stream (default) */
     private static final PrintStream nullStream = new PrintStream(new OutputStream() {
         @Override
@@ -450,22 +402,31 @@ public class TFTPServer implements Runnable, AutoCloseable {
     });
 
     private final HashSet<TFTPTransfer> transfers = new HashSet<>();
+
     private volatile boolean shutdownServer;
+
     private TFTP serverTftp;
+
     private File serverReadDirectory;
+
     private File serverWriteDirectory;
+
     private final int port;
+
     private final InetAddress localAddress;
 
     private Exception serverException;
 
     private final ServerMode mode;
+
     // don't have access to a logger api, so we will log to these streams, which
     // by default are set to a no-op logger
     private PrintStream log;
 
     private PrintStream logError;
+
     private int maxTimeoutRetries = 3;
+
     private int socketTimeout;
 
     private Thread serverThread;
@@ -479,22 +440,29 @@ public class TFTPServer implements Runnable, AutoCloseable {
      *
      * GET_ONLY mode only allows gets, PUT_ONLY mode only allows puts, and GET_AND_PUT allows both. Modes are defined as int constants in this class.
      *
-     * @param serverReadDirectory  directory for GET requests
-     * @param serverWriteDirectory directory for PUT requests
-     * @param port                 The local port to bind to.
-     * @param localAddress            The local address to bind to.
-     * @param mode                 A value as specified above.
-     * @param log                  Stream to write log message to. If not provided, uses System.out
-     * @param errorLog             Stream to write error messages to. If not provided, uses System.err.
-     * @throws IOException if the server directory is invalid or does not exist.
+     * @param serverReadDirectory
+     * 		directory for GET requests
+     * @param serverWriteDirectory
+     * 		directory for PUT requests
+     * @param port
+     * 		The local port to bind to.
+     * @param localAddress
+     * 		The local address to bind to.
+     * @param mode
+     * 		A value as specified above.
+     * @param log
+     * 		Stream to write log message to. If not provided, uses System.out
+     * @param errorLog
+     * 		Stream to write error messages to. If not provided, uses System.err.
+     * @throws IOException
+     * 		if the server directory is invalid or does not exist.
      */
-    public TFTPServer(final File serverReadDirectory, final File serverWriteDirectory, final int port, final InetAddress localAddress, final ServerMode mode,
-            final PrintStream log, final PrintStream errorLog) throws IOException {
+    public TFTPServer(final File serverReadDirectory, final File serverWriteDirectory, final int port, final InetAddress localAddress, final ServerMode mode, final PrintStream log, final PrintStream errorLog) throws IOException {
         this.port = port;
         this.mode = mode;
         this.localAddress = localAddress;
-        this.log = log == null ? nullStream : log;
-        this.logError = errorLog == null ? nullStream : errorLog;
+        this.log = (log == null) ? nullStream : log;
+        this.logError = (errorLog == null) ? nullStream : errorLog;
         launch(serverReadDirectory, serverWriteDirectory);
     }
 
@@ -507,28 +475,35 @@ public class TFTPServer implements Runnable, AutoCloseable {
      *
      * GET_ONLY mode only allows gets, PUT_ONLY mode only allows puts, and GET_AND_PUT allows both. Modes are defined as int constants in this class.
      *
-     * @param serverReadDirectory  directory for GET requests
-     * @param serverWriteDirectory directory for PUT requests
-     * @param port                 the port to use
-     * @param localiface           The local network interface to bind to. The interface's first address wil be used.
-     * @param mode                 A value as specified above.
-     * @param log                  Stream to write log message to. If not provided, uses System.out
-     * @param errorLog             Stream to write error messages to. If not provided, uses System.err.
-     * @throws IOException if the server directory is invalid or does not exist.
+     * @param serverReadDirectory
+     * 		directory for GET requests
+     * @param serverWriteDirectory
+     * 		directory for PUT requests
+     * @param port
+     * 		the port to use
+     * @param localiface
+     * 		The local network interface to bind to. The interface's first address wil be used.
+     * @param mode
+     * 		A value as specified above.
+     * @param log
+     * 		Stream to write log message to. If not provided, uses System.out
+     * @param errorLog
+     * 		Stream to write error messages to. If not provided, uses System.err.
+     * @throws IOException
+     * 		if the server directory is invalid or does not exist.
      */
-    public TFTPServer(final File serverReadDirectory, final File serverWriteDirectory, final int port, final NetworkInterface localiface, final ServerMode mode,
-            final PrintStream log, final PrintStream errorLog) throws IOException {
+    public TFTPServer(final File serverReadDirectory, final File serverWriteDirectory, final int port, final NetworkInterface localiface, final ServerMode mode, final PrintStream log, final PrintStream errorLog) throws IOException {
         this.mode = mode;
         this.port = port;
         InetAddress inetAddress = null;
         if (localiface != null) {
             final Enumeration<InetAddress> ifaddrs = localiface.getInetAddresses();
-            if (ifaddrs != null && ifaddrs.hasMoreElements()) {
+            if ((ifaddrs != null) && ifaddrs.hasMoreElements()) {
                 inetAddress = ifaddrs.nextElement();
             }
         }
-        this.log = log == null ? nullStream : log;
-        this.logError = errorLog == null ? nullStream : errorLog;
+        this.log = (log == null) ? nullStream : log;
+        this.logError = (errorLog == null) ? nullStream : errorLog;
         this.localAddress = inetAddress;
         launch(serverReadDirectory, serverWriteDirectory);
     }
@@ -542,20 +517,26 @@ public class TFTPServer implements Runnable, AutoCloseable {
      *
      * GET_ONLY mode only allows gets, PUT_ONLY mode only allows puts, and GET_AND_PUT allows both. Modes are defined as int constants in this class.
      *
-     * @param serverReadDirectory  directory for GET requests
-     * @param serverWriteDirectory directory for PUT requests
-     * @param port                 the port to use
-     * @param mode                 A value as specified above.
-     * @param log                  Stream to write log message to. If not provided, uses System.out
-     * @param errorLog             Stream to write error messages to. If not provided, uses System.err.
-     * @throws IOException if the server directory is invalid or does not exist.
+     * @param serverReadDirectory
+     * 		directory for GET requests
+     * @param serverWriteDirectory
+     * 		directory for PUT requests
+     * @param port
+     * 		the port to use
+     * @param mode
+     * 		A value as specified above.
+     * @param log
+     * 		Stream to write log message to. If not provided, uses System.out
+     * @param errorLog
+     * 		Stream to write error messages to. If not provided, uses System.err.
+     * @throws IOException
+     * 		if the server directory is invalid or does not exist.
      */
-    public TFTPServer(final File serverReadDirectory, final File serverWriteDirectory, final int port, final ServerMode mode, final PrintStream log,
-            final PrintStream errorLog) throws IOException {
+    public TFTPServer(final File serverReadDirectory, final File serverWriteDirectory, final int port, final ServerMode mode, final PrintStream log, final PrintStream errorLog) throws IOException {
         this.port = port;
         this.mode = mode;
-        this.log = log == null ? nullStream : log;
-        this.logError = errorLog == null ? nullStream : errorLog;
+        this.log = (log == null) ? nullStream : log;
+        this.logError = (errorLog == null) ? nullStream : errorLog;
         this.localAddress = null;
         launch(serverReadDirectory, serverWriteDirectory);
     }
@@ -569,10 +550,14 @@ public class TFTPServer implements Runnable, AutoCloseable {
      *
      * GET_ONLY mode only allows gets, PUT_ONLY mode only allows puts, and GET_AND_PUT allows both. Modes are defined as int constants in this class.
      *
-     * @param serverReadDirectory  directory for GET requests
-     * @param serverWriteDirectory directory for PUT requests
-     * @param mode                 A value as specified above.
-     * @throws IOException if the server directory is invalid or does not exist.
+     * @param serverReadDirectory
+     * 		directory for GET requests
+     * @param serverWriteDirectory
+     * 		directory for PUT requests
+     * @param mode
+     * 		A value as specified above.
+     * @throws IOException
+     * 		if the server directory is invalid or does not exist.
      */
     public TFTPServer(final File serverReadDirectory, final File serverWriteDirectory, final ServerMode mode) throws IOException {
         this(serverReadDirectory, serverWriteDirectory, DEFAULT_TFTP_PORT, mode, null, null);

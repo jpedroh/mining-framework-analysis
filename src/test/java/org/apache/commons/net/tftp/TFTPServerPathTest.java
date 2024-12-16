@@ -16,12 +16,6 @@
  */
 package org.apache.commons.net.tftp;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.net.tftp.TFTPServer.ServerMode;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,20 +23,27 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
-
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.net.tftp.TFTPServer.ServerMode;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 /**
  * Basic tests to ensure that the TFTP Server is honoring its read/write mode, and preventing files from being read or written from outside of the assigned
  * roots.
  */
 public class TFTPServerPathTest {
-
     private static final int SERVER_PORT = 6901;
+
     private static final String FILE_PREFIX = "TFTPServerPathTest_";
+
     private static final String FILE_TO_READ_NAME = FILE_PREFIX + "source.txt";
+
     private static final String FILE_TO_WRITE_NAME = FILE_PREFIX + "out";
 
     private static Path createFileInDir(final Path directory, final String fileName) throws IOException {
@@ -60,10 +61,13 @@ public class TFTPServerPathTest {
     }
 
     private TFTPServer tftpServer;
+
     private Path serverDirectory;
 
     private TFTPClient tftpClient;
+
     private Path fileToRead;
+
     private Path fileToWrite;
 
     @BeforeEach
@@ -95,22 +99,18 @@ public class TFTPServerPathTest {
         tftpServer = startTftpServer(ServerMode.GET_ONLY);
         final String serverAddress = "localhost";
         final int serverPort = tftpServer.getPort();
-
         // write some data to verify read
         Files.write(fileToRead, "The quick brown fox jumps over the lazy dog".getBytes(StandardCharsets.UTF_8));
         final long fileToReadContentLength = Files.size(fileToRead);
-
         tftpClient = new TFTPClient();
         tftpClient.open();
         tftpClient.setSoTimeout(Duration.ofMillis(2000));
-
         // we can read file
         try (final OutputStream os = Files.newOutputStream(fileToWrite)) {
             final String writeFileName = fileToRead.getFileName().toString();
-            final int bytesRead = tftpClient.receiveFile(writeFileName, TFTP.BINARY_MODE, os, serverAddress, serverPort);
+            final int bytesRead = out.receiveFile(writeFileName, TFTP.BINARY_MODE, os, serverAddress, serverPort);
             assertEquals(fileToReadContentLength, bytesRead);
         }
-
         // but we cannot write to it
         try (final InputStream is = Files.newInputStream(fileToRead)) {
             final String readFileName = fileToRead.getFileName().toString();
@@ -125,18 +125,15 @@ public class TFTPServerPathTest {
         tftpServer = startTftpServer(ServerMode.PUT_ONLY);
         final String serverAddress = "localhost";
         final int serverPort = tftpServer.getPort();
-
         tftpClient = new TFTPClient();
         tftpClient.open();
         tftpClient.setSoTimeout(Duration.ofMillis(2000));
-
         // we cannot read file
         try (final OutputStream os = Files.newOutputStream(fileToWrite)) {
             final String readFileName = fileToRead.getFileName().toString();
             final IOException exception = assertThrows(IOException.class, () -> tftpClient.receiveFile(readFileName, TFTP.BINARY_MODE, os, serverAddress, serverPort));
             assertEquals("Error code 4 received: Read not allowed by server.", exception.getMessage());
         }
-
         // but we can write to it
         try (final InputStream is = Files.newInputStream(fileToRead)) {
             deleteFile(fileToWrite);
@@ -151,22 +148,18 @@ public class TFTPServerPathTest {
         tftpServer = startTftpServer(ServerMode.GET_AND_PUT);
         final String serverAddress = "localhost";
         final int serverPort = tftpServer.getPort();
-
         tftpClient = new TFTPClient();
         tftpClient.open();
         tftpClient.setSoTimeout(Duration.ofMillis(2000));
-
         // write some data to file
         final byte[] content = "TFTP write test!".getBytes(StandardCharsets.UTF_8);
         Files.write(fileToRead, content);
-
         // send file
         try (final InputStream is = Files.newInputStream(fileToRead)) {
             deleteFile(fileToWrite);
             final String writeFileName = fileToWrite.getFileName().toString();
             tftpClient.sendFile(writeFileName, TFTP.BINARY_MODE, is, serverAddress, serverPort);
         }
-
         // then verify it contents
         try (final OutputStream os = Files.newOutputStream(fileToWrite)) {
             final String readFileName = fileToRead.getFileName().toString();
@@ -181,15 +174,12 @@ public class TFTPServerPathTest {
         tftpServer = startTftpServer(ServerMode.GET_AND_PUT);
         final String serverAddress = "localhost";
         final int serverPort = tftpServer.getPort();
-
         tftpClient = new TFTPClient();
         tftpClient.open();
-
         try (final InputStream is = Files.newInputStream(fileToRead)) {
             final IOException exception = assertThrows(IOException.class, () -> tftpClient.sendFile("../foo", TFTP.BINARY_MODE, is, serverAddress, serverPort));
             assertEquals("Error code 0 received: Cannot access files outside of TFTP server root.", exception.getMessage());
             assertFalse(Files.exists(serverDirectory.resolve("foo")), "file created when it should not have been");
         }
     }
-
 }
