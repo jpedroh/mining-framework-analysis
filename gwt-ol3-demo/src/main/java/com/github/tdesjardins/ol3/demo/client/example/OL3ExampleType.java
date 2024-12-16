@@ -1,5 +1,7 @@
 package com.github.tdesjardins.ol3.demo.client.example;
 
+
+
 /**
  * Provided example types.
  *
@@ -21,18 +23,17 @@ public enum OL3ExampleType {
     OverlayExample(new OverlayExample()),
     SelectFeatureExample(new SelectFeaturesExample()),
     TileExample(new TileExample()),
+TileWmsExample(new TileWmsExample()),
     WmsExample(new WmsExample()),
     WmtsExample(new WmtsExample()),
     XyzExample(new XyzExample());
+    private transient Example example;
 
-	private transient Example example;
+    private OL3ExampleType(Example example) {
+        this.example = example;
+    }
 
-	OL3ExampleType(Example example) {
-		this.example = example;
-	}
-
-	public Example getExample() {
-		return this.example;
-	}
-
+    public Example getExample() {
+        return this.example;
+    }
 }

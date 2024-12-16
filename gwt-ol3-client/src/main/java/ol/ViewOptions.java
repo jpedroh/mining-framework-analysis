@@ -2,9 +2,9 @@ package ol;
 
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsProperty;
-
 import jsinterop.annotations.JsType;
 import ol.proj.Projection;
+
 
 /**
  * Options for creating a {@link ol.View}.
@@ -13,7 +13,6 @@ import ol.proj.Projection;
  */
 @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
 public class ViewOptions implements Options {
-
     @JsProperty
     public native void setCenter(Coordinate coordinate);
 
@@ -38,7 +37,8 @@ public class ViewOptions implements Options {
     /**
      * {@link #setProjection}
      *
-     * @param srsCode combination of authority and identifier such as "EPSG:4326"
+     * @param srsCode
+     * 		combination of authority and identifier such as "EPSG:4326"
      */
     @JsProperty
     public native void setProjection(String srsCode);

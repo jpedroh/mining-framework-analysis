@@ -1,8 +1,8 @@
 package ol;
 
+import com.google.gwt.core.client.JavaScriptObject;
 import javax.validation.constraints.NotNull;
 
-import com.google.gwt.core.client.JavaScriptObject;
 
 /**
  * An array of numbers representing an xy coordinate. Example: [16, 48].
@@ -10,7 +10,6 @@ import com.google.gwt.core.client.JavaScriptObject;
  * @author sbaumhekel
  */
 public class Coordinate extends JavaScriptObject {
-
     @Deprecated
     protected Coordinate() {
     }
@@ -18,13 +17,22 @@ public class Coordinate extends JavaScriptObject {
     /**
      * Creates an instance.
      *
-     * @param x X-coordinate (longitude)
-     * @param y Y-coordinate (latitude)
+     * @param x
+     * 		X-coordinate (longitude)
+     * @param y
+     * 		Y-coordinate (latitude)
      * @return {@link Coordinate}
      */
-    public static native Coordinate create(@NotNull double x, @NotNull double y) /*-{
+    /*-{
+<<<<<<< LEFT
+    	return [ x, y ];
+=======
         return [x, y];
-    }-*/;
+>>>>>>> RIGHT
+    }-*/
+    public static native Coordinate create(@NotNull
+    double x, @NotNull
+    double y);
 
     /**
      * Add `delta` to `coordinate`. `coordinate` is modified in place and
@@ -59,15 +67,15 @@ public class Coordinate extends JavaScriptObject {
     	return this[index];
     }-*/;
 
-	/**
-	 * Sets the value at a given index.
-	 *
-	 * @param index the index to be retrieved
-	 * @param value to set
-	 */
-	private final native double set(int index, double value) /*-{
-		this[index] = value;
-	}-*/;
+/**
+ * Sets the value at a given index.
+ *
+ * @param index the index to be retrieved
+ * @param value to set
+ */
+private final native double set(int index, double value) /*-{
+	this[index] = value;
+}-*/;
 
     /**
      * Gets the dimension of this coordinate.
@@ -90,17 +98,17 @@ public class Coordinate extends JavaScriptObject {
         return Double.NaN;
     }
 
-	/**
-	 * Sets the X-coordinate (longitude).
-	 *
-	 * @param x X-coordinate (longitude)
-	 */
-	public final double setX(double x) {
-		if (this.getDimension() > 0) {
-			return this.set(0, x);
-		}
-		return Double.NaN;
+/**
+ * Sets the X-coordinate (longitude).
+ *
+ * @param x X-coordinate (longitude)
+ */
+public final double setX(double x) {
+	if (this.getDimension() > 0) {
+		return this.set(0, x);
 	}
+	return Double.NaN;
+}
 
     /**
      * Gets the Y-coordinate (latitude).
@@ -114,17 +122,17 @@ public class Coordinate extends JavaScriptObject {
         return Double.NaN;
     }
 
-	/**
-	 * Sets the Y-coordinate (latitude).
-	 *
-	 * @param y Y-coordinate (latitude)
-	 */
-	public final double setY(double y) {
-		if (this.getDimension() > 1) {
-			return this.set(1, y);
-		}
-		return Double.NaN;
+/**
+ * Sets the Y-coordinate (latitude).
+ *
+ * @param y Y-coordinate (latitude)
+ */
+public final double setY(double y) {
+	if (this.getDimension() > 1) {
+		return this.set(1, y);
 	}
+	return Double.NaN;
+}
 
     /**
      * Gets the Y-coordinate (latitude).
@@ -194,5 +202,4 @@ public class Coordinate extends JavaScriptObject {
     public final native String toStringXY(int fractionDigits) /*-{
     	return $wnd.ol.coordinate.toStringXY(this, fractionDigits);
     }-*/;
-
 }

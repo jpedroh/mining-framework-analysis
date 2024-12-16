@@ -4,8 +4,10 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 import ol.Attribution;
+import ol.Constant;
 import ol.LogoOptions;
 import ol.proj.Projection;
+
 
 /**
  * Abstract base class; normally only used for creating subclasses and not
@@ -17,8 +19,7 @@ import ol.proj.Projection;
  *
  */
 @JsType(isNative = true)
-public class Source extends ol.Object {
-    
+public class Source extends java.lang.Object {
     /**
      * Get the attributions of the source.
      * 
@@ -26,13 +27,13 @@ public class Source extends ol.Object {
      */
     public native Attribution[] getAttributions();
 
-  	/**
-  	 * Get the logo of the source.
-  	 *
-  	 * @return {@link LogoOptions}
-  	 */
-  	public native LogoOptions getLogo();
-  	
+    /**
+     * Get the logo of the source.
+     *
+     * @return {@link LogoOptions}
+     */
+    public native LogoOptions getLogo();
+
     /**
      * Get the projection of the source.
      * 
@@ -51,19 +52,19 @@ public class Source extends ol.Object {
      * 
      * @return {ol.source.State} State.
      */
-  	@JsMethod(name = "getState")
+    @JsMethod(name = "getState")
     public native String getStateString();
 
-  	@JsOverlay
-  	public final State getState() {
-  		return Constant.of(State.class, getStateString());
-  	}
-  	
+@JsOverlay
+public final State getState() {
+	return Constant.of(State.class, getStateString());
+}
+
     /**
      * Refreshes the source and finally dispatches a 'change' event.
      */
     public native void refresh();
-    
+
     /**
      * Set the attributions of the source.
      * 
@@ -79,5 +80,4 @@ public class Source extends ol.Object {
      *            Projection.
      */
     public native void setProjection(Projection projection);
-    
 }

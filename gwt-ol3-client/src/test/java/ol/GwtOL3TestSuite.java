@@ -32,7 +32,10 @@ import ol.interaction.SnapTest;
 import ol.interaction.TranslateTest;
 import ol.layer.LayerGroupTest;
 import ol.proj.ProjectionTest;
+import ol.source.ImageArcGISRestTest;
+import ol.source.TileWMSTest;
 import ol.style.RegularShapeTest;
+
 
 /**
  * Testsuite for GwtOL3.
@@ -41,11 +44,8 @@ import ol.style.RegularShapeTest;
  *
  */
 public class GwtOL3TestSuite extends GWTTestSuite {
-
     public static TestSuite suite() {
-
         TestSuite suite = new TestSuite("Tests for GwtOL3-Wrapper");
-
         suite.addTestSuite(AttributionTest.class);
         suite.addTestSuite(CollectionTest.class);
         suite.addTestSuite(FeatureTest.class);
@@ -54,7 +54,6 @@ public class GwtOL3TestSuite extends GWTTestSuite {
         suite.addTestSuite(OverlayTest.class);
         suite.addTestSuite(SphereTest.class);
         suite.addTestSuite(ViewTest.class);
-
         // controls
         suite.addTestSuite(ol.control.AttributionTest.class);
         suite.addTestSuite(FullScreenTest.class);
@@ -63,15 +62,12 @@ public class GwtOL3TestSuite extends GWTTestSuite {
         suite.addTestSuite(ScaleLineTest.class);
         suite.addTestSuite(ZoomSliderTest.class);
         suite.addTestSuite(ZoomToExtentTest.class);
-
         // formats
         suite.addTestSuite(GeoJSONTest.class);
-
         // geometries
         suite.addTestSuite(CircleTest.class);
         suite.addTestSuite(GeometryCollectionTest.class);
         suite.addTestSuite(PointTest.class);
-
         // interactions
         suite.addTestSuite(DoubleClickZoomTest.class);
         suite.addTestSuite(DragAndDropTest.class);
@@ -91,28 +87,15 @@ public class GwtOL3TestSuite extends GWTTestSuite {
         suite.addTestSuite(SelectTest.class);
         suite.addTestSuite(SnapTest.class);
         suite.addTestSuite(TranslateTest.class);
-
         // layers
         suite.addTestSuite(LayerGroupTest.class);
-        
         //source
         suite.addTestSuite(ImageArcGISRestTest.class);
         suite.addTestSuite(TileWMSTest.class);
-
-        // source
-        suite.addTestSuite(ImageArcGISRestTest.class);
-
         // projection
         suite.addTestSuite(ProjectionTest.class);
-
         // style
         suite.addTestSuite(RegularShapeTest.class);
-
         return suite;
-
     }
-
 }
-
-
-import ol.source.ImageArcGISRestTest;
