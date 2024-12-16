@@ -1,10 +1,8 @@
-//
-// Getdown - application installer, patcher and launcher
-// Copyright (C) 2004-2018 Getdown authors
-// https://github.com/threerings/getdown/blob/master/LICENSE
-
 package com.threerings.getdown.data;
 
+import com.threerings.getdown.net.Connector;
+import com.threerings.getdown.util.*;
+import com.threerings.getdown.util.Base64;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -22,14 +20,9 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.threerings.getdown.net.Connector;
-import com.threerings.getdown.util.*;
-// avoid ambiguity with java.util.Base64 which we can't use as it's 1.8+
-import com.threerings.getdown.util.Base64;
-
 import static com.threerings.getdown.Log.log;
 import static java.nio.charset.StandardCharsets.UTF_8;
+
 
 /**
  * Parses and provide access to the information contained in the {@code getdown.txt}
@@ -589,11 +582,27 @@ public class Application
         return config;
     }
 
+<<<<<<< LEFT
+        // if we failed to read our config file, check for an appbase specified via a system
+        // property; we can use that to bootstrap ourselves back into operation
+        if (config == null) {
+            String appbase = _envc.appBase;
+            log.info("Using 'appbase' from bootstrap config", "appbase", appbase);
+            Map<String, Object> cdata = new HashMap<>();
+            cdata.put("appbase", appbase);
+            config = new Config(cdata);
+        }
+
+        // extract our version information
+        _version = config.getLong("version", -1L);
+
+=======
     /**
      * Reads the basic config info from {@code config} into this instance. This includes things
      * like the appbase and version.
      */
     public void initBase (Config config) throws IOException {
+>>>>>>> RIGHT
         // first determine our application base, this way if anything goes wrong later in the
         // process, our caller can use the appbase to download a new configuration file
         _appbase = config.getString("appbase");
@@ -608,9 +617,6 @@ public class Application
         if (!_appbase.endsWith("/")) {
             _appbase += "/";
         }
-
-        // extract our version information
-        _version = config.getLong("version", -1L);
 
         // if we are a versioned deployment, create a versioned appbase
         try {
