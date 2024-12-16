@@ -1,11 +1,10 @@
 package com.cronutils.parser;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinition;
 import com.cronutils.model.definition.CronDefinitionBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 
 public class CronParserCron4JIntegrationTest {
@@ -46,9 +45,23 @@ public class CronParserCron4JIntegrationTest {
         String cronExpr = "* * L * *";
     }
 
-    @Test //issue 202
-    public void testParseSunday() {
+<<<<<<< LEFT
+//@Test TODO issue 202
+=======
+//issue 202
+>>>>>>> RIGHT
+    @Test
+    public void testParseSunday() throws Exception 
+<<<<<<< LEFT
+{
         String cronExpr = "* * * * sun";
         cron4jParser.parse(cronExpr);
     }
+=======
+{
+        String cronExpr = "* * * * sun";
+        cron4jParser.parse(cronExpr);
+    }
+>>>>>>> RIGHT
+
 }
