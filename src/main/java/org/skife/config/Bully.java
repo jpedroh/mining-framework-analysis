@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-class Bully
-{
+
+class Bully {
     /** All explicit type conversions that config magic knows about. Every new bully will know about those. */
     private static final List<Coercible<?>> TYPE_COERCIBLES;
 
@@ -24,7 +24,6 @@ class Bully
     static {
         final List<Coercible<?>> typeCoercibles = new ArrayList<Coercible<?>>();
         final List<Coercible<?>> defaultCoercibles = new ArrayList<Coercible<?>>();
-
         typeCoercibles.add(DefaultCoercibles.BOOLEAN_COERCIBLE);
         typeCoercibles.add(DefaultCoercibles.BYTE_COERCIBLE);
         typeCoercibles.add(DefaultCoercibles.SHORT_COERCIBLE);
@@ -33,15 +32,12 @@ class Bully
         typeCoercibles.add(DefaultCoercibles.FLOAT_COERCIBLE);
         typeCoercibles.add(DefaultCoercibles.DOUBLE_COERCIBLE);
         typeCoercibles.add(DefaultCoercibles.STRING_COERCIBLE);
-
         // Look Brian, now it groks URIs. ;-)
         typeCoercibles.add(DefaultCoercibles.URI_COERCIBLE);
-
         defaultCoercibles.add(DefaultCoercibles.CASE_INSENSITIVE_ENUM_COERCIBLE);
         defaultCoercibles.add(DefaultCoercibles.VALUE_OF_COERCIBLE);
         defaultCoercibles.add(DefaultCoercibles.STRING_CTOR_COERCIBLE);
         defaultCoercibles.add(DefaultCoercibles.OBJECT_CTOR_COERCIBLE);
-
         TYPE_COERCIBLES = Collections.unmodifiableList(typeCoercibles);
         DEFAULT_COERCIBLES = Collections.unmodifiableList(defaultCoercibles);
     }
@@ -57,8 +53,7 @@ class Bully
      */
     private final List<Coercible<?>> coercibles = new ArrayList<Coercible<?>>();
 
-    public Bully()
-    {
+    public Bully() {
         coercibles.addAll(TYPE_COERCIBLES);
     }
 
@@ -73,24 +68,19 @@ class Bully
 
     public synchronized Object coerce(Type type, String value, Separator separator) {
         if (type instanceof Class) {
-            Class<?> clazz = (Class<?>)type;
-
+            Class<?> clazz = ((Class<?>) (type));
             if (clazz.isArray()) {
                 return coerceArray(clazz.getComponentType(), value, separator);
-            }
-            else {
+            } else {
                 return coerce(clazz, value);
             }
-        }
-        else if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType)type;
+        } else if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = ((ParameterizedType) (type));
             Type rawType = parameterizedType.getRawType();
-
             if (rawType instanceof Class<?>) {
                 Type[] args = parameterizedType.getActualTypeArguments();
-
-                if (args != null && args.length == 1 && args[0] instanceof Class<?>) {
-                    return coerceCollection((Class<?>)rawType, (Class<?>)args[0], value, separator);
+                if (((args != null) && (args.length == 1)) && (args[0] instanceof Class<?>)) {
+                    return coerceCollection(((Class<?>) (rawType)), ((Class<?>) (args[0])), value, separator);
                 }
             }
         }
@@ -100,14 +90,11 @@ class Bully
     private Object coerceArray(Class<?> elemType, String value, Separator separator) {
         if (value == null) {
             return null;
-        }
-        else if (value.length() == 0) {
+        } else if (value.length() == 0) {
             return Array.newInstance(elemType, 0);
-        }
-        else {
+        } else {
             String[] tokens = value.split(separator == null ? Separator.DEFAULT : separator.value());
             Object targetArray = Array.newInstance(elemType, tokens.length);
-
             for (int idx = 0; idx < tokens.length; idx++) {
                 Array.set(targetArray, idx, coerce(elemType, tokens[idx]));
             }
@@ -119,25 +106,19 @@ class Bully
     private Object coerceCollection(Class<?> containerType, Class<?> elemType, String value, Separator separator) {
         if (value == null) {
             return null;
-        }
-        else {
+        } else {
             Collection result = null;
-
             if (Set.class.equals(containerType)) {
                 result = new LinkedHashSet();
-            }
-            else if (Collection.class.equals(containerType) || List.class.equals(containerType)) {
+            } else if (Collection.class.equals(containerType) || List.class.equals(containerType)) {
                 result = new ArrayList();
-            }
-            else if (Collection.class.isAssignableFrom(containerType)) {
+            } else if (Collection.class.isAssignableFrom(containerType)) {
                 try {
                     final Constructor<?> ctor = containerType.getConstructor();
-
                     if (ctor != null) {
-                        result = (Collection)ctor.newInstance();
+                        result = ((Collection) (ctor.newInstance()));
                     }
-                }
-                catch (Exception ex) {
+                } catch (java.lang.Exception ex) {
                     // handled below
                 }
             }
