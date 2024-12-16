@@ -1,37 +1,5 @@
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
 package com.microsoft.aad.adal4j;
 
-import javax.net.ssl.SSLSocketFactory;
-import java.net.MalformedURLException;
-import java.net.Proxy;
-import java.net.URI;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.oauth2.sdk.AuthorizationCode;
 import com.nimbusds.oauth2.sdk.AuthorizationCodeGrant;
@@ -47,8 +15,19 @@ import com.nimbusds.oauth2.sdk.auth.PrivateKeyJWT;
 import com.nimbusds.oauth2.sdk.auth.Secret;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.token.RefreshToken;
+import java.net.MalformedURLException;
+import java.net.Proxy;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import javax.net.ssl.SSLSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * The main class representing the authority issuing tokens for resources. It
@@ -56,51 +35,50 @@ import org.slf4j.LoggerFactory;
  * Confidential Client and Client Certificate.
  */
 public class AuthenticationContext {
+    final Logger log = LoggerFactory.getLogger(AuthenticationContext.class);
 
-    final Logger log = LoggerFactory
-            .getLogger(AuthenticationContext.class);
     private final Logger piiLog = LoggerFactory
             .getLogger(LogHelper.PII_LOGGER_PREFIX + AuthenticationContext.class);
 
     final AuthenticationAuthority authenticationAuthority;
+
     String correlationId;
+
     private String authority;
+
     private final ExecutorService service;
+
     private final boolean validateAuthority;
+
     Proxy proxy;
+
     SSLSocketFactory sslSocketFactory;
 
     /**
      * Constructor to create the context with the address of the authority.
      *
      * @param authority
-     *            URL of the authenticating authority
+     * 		URL of the authenticating authority
      * @param validateAuthority
-     *            flag to enable/disable authority validation.
+     * 		flag to enable/disable authority validation.
      * @param service
-     *            ExecutorService to be used to execute the requests. Developer
-     *            is responsible for maintaining the lifetime of the
-     *            ExecutorService.
+     * 		ExecutorService to be used to execute the requests. Developer
+     * 		is responsible for maintaining the lifetime of the
+     * 		ExecutorService.
      * @throws MalformedURLException
-     *             thrown if URL is invalid
+     * 		thrown if URL is invalid
      */
-    public AuthenticationContext(final String authority,
-            final boolean validateAuthority, final ExecutorService service)
-            throws MalformedURLException {
-
+    public AuthenticationContext(final String authority, final boolean validateAuthority, final ExecutorService service) throws MalformedURLException {
         if (StringHelper.isBlank(authority)) {
             throw new IllegalArgumentException("authority is null or empty");
         }
-
         if (service == null) {
             throw new IllegalArgumentException("service is null");
         }
         this.service = service;
         this.validateAuthority = validateAuthority;
         this.authority = this.canonicalizeUri(authority);
-
-        authenticationAuthority = new AuthenticationAuthority(new URL(
-                this.getAuthority()), this.shouldValidateAuthority());
+        authenticationAuthority = new AuthenticationAuthority(new URL(this.getAuthority()), this.shouldValidateAuthority());
     }
 
     /**
@@ -153,42 +131,37 @@ public class AuthenticationContext {
      * Acquires a security token from the authority using a username/password flow.
      *
      * @param clientId
-     *            Name or ID of the client requesting the token.
+     * 		Name or ID of the client requesting the token.
      * @param resource
-     *            Identifier of the target resource that is the recipient of the
-     *            requested token.
+     * 		Identifier of the target resource that is the recipient of the
+     * 		requested token. If null, token is requested for the same
+     * 		resource refresh token was originally issued for. If passed,
+     * 		resource should match the original resource used to acquire
+     * 		refresh token unless token service supports refresh token for
+     * 		multiple resources.
      * @param username
-     *            Username of the managed or federated user.
+     * 		Username of the managed or federated user.
      * @param password
-     *            Password of the managed or federated user.
-     *            If null, integrated authentication will be used.
+     * 		Password of the managed or federated user.
      * @param callback
-     *            optional callback object for non-blocking execution.
+     * 		optional callback object for non-blocking execution.
      * @return A {@link Future} object representing the
-     *         {@link AuthenticationResult} of the call. It contains Access
-     *         Token, Refresh Token and the Access Token's expiration time.
+    {@link AuthenticationResult} of the call. It contains Access
+    Token, Refresh Token and the Access Token's expiration time.
      */
-    public Future<AuthenticationResult> acquireToken(final String resource,
-            final String clientId, final String username,
-            final String password, final AuthenticationCallback callback) {
+    public Future<AuthenticationResult> acquireToken(final String resource, final String clientId, final String username, final String password, final AuthenticationCallback callback) {
         if (StringHelper.isBlank(resource)) {
             throw new IllegalArgumentException("resource is null or empty");
         }
-
         if (StringHelper.isBlank(clientId)) {
             throw new IllegalArgumentException("clientId is null or empty");
         }
-
         if (StringHelper.isBlank(username)) {
             throw new IllegalArgumentException("username is null or empty");
         }
-
         ClientAuthenticationPost clientAuth = new ClientAuthenticationPost(ClientAuthenticationMethod.NONE, new ClientID(clientId));
-
         if (password != null) {
-            return this.acquireToken(new AdalAuthorizatonGrant(
-                    new ResourceOwnerPasswordCredentialsGrant(username, new Secret(
-                            password)), resource), clientAuth, callback);
+            return this.acquireToken(new AdalOauthAuthorizationGrant(new ResourceOwnerPasswordCredentialsGrant(username, new Secret(password)), resource), clientAuth, callback);
         } else {
             return this.acquireTokenIntegrated(username, resource, clientAuth, callback);
         }
@@ -209,27 +182,21 @@ public class AuthenticationContext {
      *         Token and the Access Token's expiration time. Refresh Token
      *         property will be null for this overload.
      */
-    public Future<AuthenticationResult> acquireToken(final String resource,
-            final ClientAssertion clientAssertion,
-            final AuthenticationCallback callback) {
-
+    public Future<AuthenticationResult> acquireToken(final String resource, final ClientAssertion clientAssertion, final AuthenticationCallback callback) {
         this.validateInput(resource, clientAssertion, true);
         final ClientAuthentication clientAuth = createClientAuthFromClientAssertion(clientAssertion);
-        final AdalOauthAuthorizationGrant authGrant = new AdalOauthAuthorizationGrant(
-                new ClientCredentialsGrant(), resource);
+        final AdalOauthAuthorizationGrant authGrant = new AdalOauthAuthorizationGrant(new ClientCredentialsGrant(), resource);
         return this.acquireToken(authGrant, clientAuth, callback);
     }
 
-    private Future<AuthenticationResult> acquireTokenIntegrated(String userName,
-            final String resource,
-            final ClientAuthentication clientAuth,
-            final AuthenticationCallback callback) {
-
+    private Future<AuthenticationResult> acquireTokenIntegrated(String userName, final String resource, final ClientAuthentication clientAuth, final AuthenticationCallback callback) {
         return service.submit(new Callable<AuthenticationResult>() {
-
             private String userName;
+
             private String resource;
+
             private ClientAuthentication clientAuth;
+
             private ClientDataHttpHeaders headers;
 
             @Override
@@ -237,20 +204,17 @@ public class AuthenticationContext {
                 AuthenticationResult result = null;
                 try {
                     AdalAuthorizatonGrant authGrant = new AdalAuthorizatonGrant(getAuthorizationGrantIntegrated(this.userName), this.resource);
-
                     // Make the OAuth2 call to get the access Token.
                     result = acquireTokenCommon(authGrant, this.clientAuth, this.headers);
                     logResult(result, headers);
                     if (callback != null) {
                         callback.onSuccess(result);
                     }
-                }
-                catch (final Exception ex) {
+                } catch (final java.lang.Exception ex) {
                     log.error(LogHelper.createMessage("Request to acquire token failed.", this.headers.getHeaderCorrelationIdValue()), ex);
                     if (callback != null) {
                         callback.onFailure(ex);
-                    }
-                    else {
+                    } else {
                         throw ex;
                     }
                 }
@@ -267,7 +231,6 @@ public class AuthenticationContext {
                 this.headers = headers;
                 return this;
             }
-
         }.init(userName, resource, clientAuth, new ClientDataHttpHeaders(this.getCorrelationId())));
     }
 
@@ -333,25 +296,16 @@ public class AuthenticationContext {
      *         property will be null for this overload.
      * @throws AuthenticationException {@link AuthenticationException}
      */
-    public Future<AuthenticationResult> acquireToken(final String resource,
-            final UserAssertion userAssertion, final ClientCredential credential,
-            final AuthenticationCallback callback) {
-
+    public Future<AuthenticationResult> acquireToken(final String resource, final UserAssertion userAssertion, final ClientCredential credential, final AuthenticationCallback callback) {
         this.validateInput(resource, credential, true);
         Map<String, String> params = new HashMap<String, String>();
         params.put("resource", resource);
         params.put("requested_token_use", "on_behalf_of");
         try {
-            AdalOauthAuthorizationGrant grant = new AdalOauthAuthorizationGrant(
-                    new JWTBearerGrant(
-                            SignedJWT.parse(userAssertion.getAssertion())), params);
-
-            final ClientAuthentication clientAuth = new ClientSecretPost(
-                    new ClientID(credential.getClientId()), new Secret(
-                            credential.getClientSecret()));
+            AdalOauthAuthorizationGrant grant = new AdalOauthAuthorizationGrant(new JWTBearerGrant(SignedJWT.parse(userAssertion.getAssertion())), params);
+            final ClientAuthentication clientAuth = new ClientSecretPost(new ClientID(credential.getClientId()), new Secret(credential.getClientSecret()));
             return this.acquireToken(grant, clientAuth, callback);
-        }
-        catch (final Exception e) {
+        } catch (final java.lang.Exception e) {
             throw new AuthenticationException(e);
         }
     }
@@ -371,15 +325,10 @@ public class AuthenticationContext {
      *         Token and the Access Token's expiration time. Refresh Token
      *         property will be null for this overload.
      */
-    public Future<AuthenticationResult> acquireToken(final String resource,
-            final ClientCredential credential,
-            final AuthenticationCallback callback) {
+    public Future<AuthenticationResult> acquireToken(final String resource, final ClientCredential credential, final AuthenticationCallback callback) {
         this.validateInput(resource, credential, true);
-        final ClientAuthentication clientAuth = new ClientSecretPost(
-                new ClientID(credential.getClientId()), new Secret(
-                        credential.getClientSecret()));
-        final AdalOauthAuthorizationGrant authGrant = new AdalOauthAuthorizationGrant(
-                new ClientCredentialsGrant(), resource);
+        final ClientAuthentication clientAuth = new ClientSecretPost(new ClientID(credential.getClientId()), new Secret(credential.getClientSecret()));
+        final AdalOauthAuthorizationGrant authGrant = new AdalOauthAuthorizationGrant(new ClientCredentialsGrant(), resource);
         return this.acquireToken(authGrant, clientAuth, callback);
     }
 
@@ -427,19 +376,10 @@ public class AuthenticationContext {
      *         {@link AuthenticationResult} of the call. It contains Access
      *         Token, Refresh Token and the Access Token's expiration time.
      */
-    public Future<AuthenticationResult> acquireTokenByAuthorizationCode(
-            final String authorizationCode, final String resource,
-            final String clientId, final URI redirectUri,
-            final AuthenticationCallback callback) {
-
-        final ClientAuthentication clientAuth = new ClientAuthenticationPost(
-                ClientAuthenticationMethod.NONE, new ClientID(clientId));
-
-        this.validateAuthCodeRequestInput(authorizationCode, redirectUri,
-                clientAuth, resource);
-        final AdalOauthAuthorizationGrant authGrant = new AdalOauthAuthorizationGrant(
-                new AuthorizationCodeGrant(new AuthorizationCode(
-                        authorizationCode), redirectUri), resource);
+    public Future<AuthenticationResult> acquireTokenByAuthorizationCode(final String authorizationCode, final String resource, final String clientId, final URI redirectUri, final AuthenticationCallback callback) {
+        final ClientAuthentication clientAuth = new ClientAuthenticationPost(ClientAuthenticationMethod.NONE, new ClientID(clientId));
+        this.validateAuthCodeRequestInput(authorizationCode, redirectUri, clientAuth, resource);
+        final AdalOauthAuthorizationGrant authGrant = new AdalOauthAuthorizationGrant(new AuthorizationCodeGrant(new AuthorizationCode(authorizationCode), redirectUri), resource);
         return this.acquireToken(authGrant, clientAuth, callback);
     }
 
@@ -489,17 +429,10 @@ public class AuthenticationContext {
      *         {@link AuthenticationResult} of the call. It contains Access
      *         Token, Refresh Token and the Access Token's expiration time.
      */
-    public Future<AuthenticationResult> acquireTokenByAuthorizationCode(
-            final String authorizationCode, final URI redirectUri,
-            final ClientAssertion clientAssertion, final String resource,
-            final AuthenticationCallback callback) {
-
-        this.validateAuthCodeRequestInput(authorizationCode, redirectUri,
-                clientAssertion, resource);
+    public Future<AuthenticationResult> acquireTokenByAuthorizationCode(final String authorizationCode, final URI redirectUri, final ClientAssertion clientAssertion, final String resource, final AuthenticationCallback callback) {
+        this.validateAuthCodeRequestInput(authorizationCode, redirectUri, clientAssertion, resource);
         final ClientAuthentication clientAuth = createClientAuthFromClientAssertion(clientAssertion);
-        final AdalOauthAuthorizationGrant authGrant = new AdalOauthAuthorizationGrant(
-                new AuthorizationCodeGrant(new AuthorizationCode(
-                        authorizationCode), redirectUri), resource);
+        final AdalOauthAuthorizationGrant authGrant = new AdalOauthAuthorizationGrant(new AuthorizationCodeGrant(new AuthorizationCode(authorizationCode), redirectUri), resource);
         return this.acquireToken(authGrant, clientAuth, callback);
     }
 
@@ -551,21 +484,11 @@ public class AuthenticationContext {
      *         {@link AuthenticationResult} of the call. It contains Access
      *         Token, Refresh Token and the Access Token's expiration time.
      */
-    public Future<AuthenticationResult> acquireTokenByAuthorizationCode(
-            final String authorizationCode, final URI redirectUri,
-            final ClientCredential credential, final String resource,
-            final AuthenticationCallback callback) {
-
-        this.validateAuthCodeRequestInput(authorizationCode, redirectUri,
-                credential, resource);
-        final ClientAuthentication clientAuth = new ClientSecretPost(
-                new ClientID(credential.getClientId()), new Secret(
-                        credential.getClientSecret()));
-        final AdalOauthAuthorizationGrant authGrant = new AdalOauthAuthorizationGrant(
-                new AuthorizationCodeGrant(new AuthorizationCode(
-                        authorizationCode), redirectUri), resource);
+    public Future<AuthenticationResult> acquireTokenByAuthorizationCode(final String authorizationCode, final URI redirectUri, final ClientCredential credential, final String resource, final AuthenticationCallback callback) {
+        this.validateAuthCodeRequestInput(authorizationCode, redirectUri, credential, resource);
+        final ClientAuthentication clientAuth = new ClientSecretPost(new ClientID(credential.getClientId()), new Secret(credential.getClientSecret()));
+        final AdalOauthAuthorizationGrant authGrant = new AdalOauthAuthorizationGrant(new AuthorizationCodeGrant(new AuthorizationCode(authorizationCode), redirectUri), resource);
         return this.acquireToken(authGrant, clientAuth, callback);
-
     }
 
     /**
@@ -647,11 +570,9 @@ public class AuthenticationContext {
      * message which should be displayed to the user.
      * @throws AuthenticationException thrown if the device code is not acquired successfully
      */
-    public Future<DeviceCode> acquireDeviceCode(final String clientId, final String resource,
-                                                final AuthenticationCallback<DeviceCode> callback) {
+    public Future<DeviceCode> acquireDeviceCode(final String clientId, final String resource, final AuthenticationCallback<DeviceCode> callback) {
         validateDeviceCodeRequestInput(clientId, resource);
-        return service.submit(
-                new AcquireDeviceCodeCallable(this, clientId, resource, callback));
+        return service.submit(new AcquireDeviceCodeCallable(this, clientId, resource, callback));
     }
 
     /**
@@ -667,17 +588,10 @@ public class AuthenticationContext {
      *                                 DeviceCode.interval - The minimum amount of time in seconds that the client
      *                                 SHOULD wait between polling requests to the token endpoin
      */
-    public Future<AuthenticationResult> acquireTokenByDeviceCode(
-            final DeviceCode deviceCode, final AuthenticationCallback callback)
-            throws AuthenticationException {
-
-        final ClientAuthentication clientAuth = new ClientAuthenticationPost(
-                ClientAuthenticationMethod.NONE, new ClientID(deviceCode.getClientId()));
-
+    public Future<AuthenticationResult> acquireTokenByDeviceCode(final DeviceCode deviceCode, final AuthenticationCallback callback) throws AuthenticationException {
+        final ClientAuthentication clientAuth = new ClientAuthenticationPost(ClientAuthenticationMethod.NONE, new ClientID(deviceCode.getClientId()));
         this.validateDeviceCodeRequestInput(deviceCode, clientAuth, deviceCode.getResource());
-
         final AdalDeviceCodeAuthorizationGrant deviceCodeGrant = new AdalDeviceCodeAuthorizationGrant(deviceCode, deviceCode.getResource());
-
         return this.acquireToken(deviceCodeGrant, clientAuth, callback);
     }
 
@@ -728,15 +642,10 @@ public class AuthenticationContext {
      *         {@link AuthenticationResult} of the call. It contains Access
      *         Token, Refresh Token and the Access Token's expiration time.
      */
-    public Future<AuthenticationResult> acquireTokenByRefreshToken(
-            final String refreshToken, final String clientId,
-            final ClientAssertion clientAssertion, final String resource,
-            final AuthenticationCallback callback) {
-        this.validateRefreshTokenRequestInput(refreshToken, clientId,
-                clientAssertion);
+    public Future<AuthenticationResult> acquireTokenByRefreshToken(final String refreshToken, final String clientId, final ClientAssertion clientAssertion, final String resource, final AuthenticationCallback callback) {
+        this.validateRefreshTokenRequestInput(refreshToken, clientId, clientAssertion);
         final ClientAuthentication clientAuth = createClientAuthFromClientAssertion(clientAssertion);
-        final AdalOauthAuthorizationGrant authGrant = new AdalOauthAuthorizationGrant(
-                new RefreshTokenGrant(new RefreshToken(refreshToken)), resource);
+        final AdalOauthAuthorizationGrant authGrant = new AdalOauthAuthorizationGrant(new RefreshTokenGrant(new RefreshToken(refreshToken)), resource);
         return this.acquireToken(authGrant, clientAuth, callback);
     }
 
@@ -782,15 +691,9 @@ public class AuthenticationContext {
      *         {@link AuthenticationResult} of the call. It contains Access
      *         Token, Refresh Token and the Access Token's expiration time.
      */
-    public Future<AuthenticationResult> acquireTokenByRefreshToken(
-            final String refreshToken, final ClientCredential credential,
-            final String resource, final AuthenticationCallback callback) {
-
-        final ClientAuthentication clientAuth = new ClientSecretPost(
-                new ClientID(credential.getClientId()), new Secret(
-                        credential.getClientSecret()));
-        final AdalOauthAuthorizationGrant authGrant = new AdalOauthAuthorizationGrant(
-                new RefreshTokenGrant(new RefreshToken(refreshToken)), resource);
+    public Future<AuthenticationResult> acquireTokenByRefreshToken(final String refreshToken, final ClientCredential credential, final String resource, final AuthenticationCallback callback) {
+        final ClientAuthentication clientAuth = new ClientSecretPost(new ClientID(credential.getClientId()), new Secret(credential.getClientSecret()));
+        final AdalOauthAuthorizationGrant authGrant = new AdalOauthAuthorizationGrant(new RefreshTokenGrant(new RefreshToken(refreshToken)), resource);
         return this.acquireToken(authGrant, clientAuth, callback);
     }
 
@@ -844,18 +747,8 @@ public class AuthenticationContext {
      *             thrown if {@link AsymmetricKeyCredential} fails to sign the
      *             JWT token.
      */
-    public Future<AuthenticationResult> acquireTokenByRefreshToken(
-            final String refreshToken,
-            final AsymmetricKeyCredential credential, final String resource,
-            final AuthenticationCallback callback)
-            throws AuthenticationException {
-
-        return acquireTokenByRefreshToken(
-                refreshToken,
-                credential.getClientId(),
-                JwtHelper.buildJwt(credential,
-                        this.authenticationAuthority.getSelfSignedJwtAudience()),
-                resource, callback);
+    public Future<AuthenticationResult> acquireTokenByRefreshToken(final String refreshToken, final AsymmetricKeyCredential credential, final String resource, final AuthenticationCallback callback) throws AuthenticationException {
+        return acquireTokenByRefreshToken(refreshToken, credential.getClientId(), JwtHelper.buildJwt(credential, this.authenticationAuthority.getSelfSignedJwtAudience()), resource, callback);
     }
 
     /**
@@ -882,27 +775,19 @@ public class AuthenticationContext {
         return acquireTokenByRefreshToken(refreshToken, clientId, (String)null, callback);
     }
 
-    private Future<AuthenticationResult> acquireToken(
-            final AdalAuthorizationGrant authGrant,
-            final ClientAuthentication clientAuth,
-            final AuthenticationCallback<AuthenticationResult> callback) {
-
-        return service.submit(
-                new AcquireTokenCallable(this, authGrant, clientAuth, callback));
+    private Future<AuthenticationResult> acquireToken(final AdalAuthorizationGrant authGrant, final ClientAuthentication clientAuth, final AuthenticationCallback<AuthenticationResult> callback) {
+        return service.submit(new AcquireTokenCallable(this, authGrant, clientAuth, callback));
     }
 
     private void validateDeviceCodeRequestInput(String clientId, String resource) {
         if (StringHelper.isBlank(clientId)) {
             throw new IllegalArgumentException("clientId is null or empty");
         }
-
         if (StringHelper.isBlank(resource)) {
             throw new IllegalArgumentException("resource is null or empty");
         }
-
-        if (AuthorityType.ADFS.equals(authenticationAuthority.getAuthorityType())){
-            throw new IllegalArgumentException(
-                    "Invalid authority type. Device Flow is not supported by ADFS authority");
+        if (AuthorityType.ADFS.equals(authenticationAuthority.getAuthorityType())) {
+            throw new IllegalArgumentException("Invalid authority type. Device Flow is not supported by ADFS authority");
         }
     }
 
@@ -930,14 +815,9 @@ public class AuthenticationContext {
      * @throws AuthenticationException
      *             thrown if the access token is not refreshed successfully
      */
-    public Future<AuthenticationResult> acquireTokenByRefreshToken(
-            final String refreshToken, final String clientId,
-            final String resource, final AuthenticationCallback callback) {
-
-        final ClientAuthentication clientAuth = new ClientAuthenticationPost(
-                ClientAuthenticationMethod.NONE, new ClientID(clientId));
-        final AdalOauthAuthorizationGrant authGrant = new AdalOauthAuthorizationGrant(
-                new RefreshTokenGrant(new RefreshToken(refreshToken)), resource);
+    public Future<AuthenticationResult> acquireTokenByRefreshToken(final String refreshToken, final String clientId, final String resource, final AuthenticationCallback callback) {
+        final ClientAuthentication clientAuth = new ClientAuthenticationPost(ClientAuthenticationMethod.NONE, new ClientID(clientId));
+        final AdalOauthAuthorizationGrant authGrant = new AdalOauthAuthorizationGrant(new RefreshTokenGrant(new RefreshToken(refreshToken)), resource);
         return this.acquireToken(authGrant, clientAuth, callback);
     }
 
@@ -954,27 +834,16 @@ public class AuthenticationContext {
         this.validateInput(null, credential, false);
     }
 
-    AuthenticationResult acquireTokenCommon(
-            final AdalAuthorizationGrant authGrant,
-            final ClientAuthentication clientAuth,
-            final ClientDataHttpHeaders headers) throws Exception {
-        String msg = LogHelper.createMessage(
-                String.format("Using Client Http Headers: %s", headers),
-                headers.getHeaderCorrelationIdValue());
+    AuthenticationResult acquireTokenCommon(final AdalAuthorizationGrant authGrant, final ClientAuthentication clientAuth, final ClientDataHttpHeaders headers) throws Exception {
+        String msg = LogHelper.createMessage(String.format("Using Client Http Headers: %s", headers), headers.getHeaderCorrelationIdValue());
         piiLog.debug(msg);
-
-        this.authenticationAuthority.doInstanceDiscovery(
-                headers.getReadonlyHeaderMap(), this.proxy,
-                this.sslSocketFactory);
+        this.authenticationAuthority.doInstanceDiscovery(headers.getReadonlyHeaderMap(), this.proxy, this.sslSocketFactory);
         final URL url = new URL(this.authenticationAuthority.getTokenUri());
-        final AdalTokenRequest request = new AdalTokenRequest(url, clientAuth,
-                authGrant, headers.getReadonlyHeaderMap(), this.proxy,
-                this.sslSocketFactory);
-        AuthenticationResult result = request
-                .executeOAuthRequestAndProcessResponse();
+        final AdalTokenRequest request = new AdalTokenRequest(url, clientAuth, authGrant, headers.getReadonlyHeaderMap(), this.proxy, this.sslSocketFactory);
+        AuthenticationResult result = request.executeOAuthRequestAndProcessResponse();
         return result;
     }
-  
+
     private ClientAuthentication createClientAuthFromClientAssertion(
             final ClientAssertion clientAssertion) {
 
@@ -1045,9 +914,7 @@ public class AuthenticationContext {
         this.validateInput(resource, clientCredential, false);
     }
 
-    private void validateDeviceCodeRequestInput(final DeviceCode deviceCode,
-                                                final Object credential,
-                                                final String resource) {
+    private void validateDeviceCodeRequestInput(final DeviceCode deviceCode, final Object credential, final String resource) {
         if (StringHelper.isBlank(deviceCode.getDeviceCode())) {
             throw new IllegalArgumentException("device code is null or empty");
         }
