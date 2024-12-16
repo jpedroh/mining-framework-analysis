@@ -12,9 +12,6 @@
  */
 package org.omnifaces.util;
 
-import static org.omnifaces.util.Faces.getApplication;
-import static org.omnifaces.util.Faces.getViewRoot;
-
 import javax.faces.application.Application;
 import javax.faces.component.UIViewRoot;
 import javax.faces.event.AbortProcessingException;
@@ -23,10 +20,12 @@ import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
 import javax.faces.event.SystemEvent;
 import javax.faces.event.SystemEventListener;
-
 import org.omnifaces.eventlistener.CallbackPhaseListener;
 import org.omnifaces.eventlistener.DefaultPhaseListener;
 import org.omnifaces.eventlistener.DefaultViewEventListener;
+import static org.omnifaces.util.Faces.getApplication;
+import static org.omnifaces.util.Faces.getViewRoot;
+
 
 /**
  * <p>
@@ -69,9 +68,13 @@ import org.omnifaces.eventlistener.DefaultViewEventListener;
  * @author Bauke Scholtz
  */
 public final class Events {
+	// Constants ------------------------------------------------------------------------------------------------------
+	// Constants ------------------------------------------------------------------------------------------------------
+
+	private static final String ERROR_UNSUBSCRIBE_TOO_LATE =
+		"The render response phase is too late to unsubscribe the view event listener. Do it in an earlier phase.";
 
 	// Constructors ---------------------------------------------------------------------------------------------------
-
 	private Events() {
 		// Hide constructor.
 	}
@@ -269,10 +272,8 @@ public final class Events {
 	}
 
 	// Helpers --------------------------------------------------------------------------------------------------------
-
 	private static <A> Callback.WithArgument<A> wrap(final Callback.Void callback) {
 		return new Callback.WithArgument<A>() {
-
 			@Override
 			public void invoke(A argument) {
 				callback.invoke();
@@ -282,7 +283,6 @@ public final class Events {
 
 	private static <A> Callback.SerializableWithArgument<A> wrap(final Callback.SerializableVoid callback) {
 		return new Callback.SerializableWithArgument<A>() {
-
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -294,7 +294,6 @@ public final class Events {
 
 	private static SystemEventListener createSystemEventListener(final Callback.SerializableWithArgument<SystemEvent> callback) {
 		return new DefaultViewEventListener() {
-
 			@Override
 			public void processEvent(SystemEvent event) throws AbortProcessingException {
 				callback.invoke(event);
@@ -325,5 +324,4 @@ public final class Events {
 			}
 		};
 	}
-
 }

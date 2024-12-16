@@ -12,23 +12,21 @@
  */
 package org.omnifaces.util.selectitems;
 
-import static org.omnifaces.util.Utils.isEmpty;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import javax.faces.component.UIComponent;
 import javax.faces.component.UISelectItem;
 import javax.faces.component.UISelectItems;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
-
 import org.omnifaces.el.ScopedRunner;
 import org.omnifaces.model.ExtendedSelectItem;
 import org.omnifaces.util.Callback;
+import static org.omnifaces.util.Utils.isEmpty;
+
 
 /**
  * Collection of utility methods for collecting {@link SelectItem} instances from various sources.
@@ -37,8 +35,8 @@ import org.omnifaces.util.Callback;
  *
  */
 public final class SelectItemsCollector {
-
-	private SelectItemsCollector() {}
+	private SelectItemsCollector() {
+	}
 
 	private static final String ERROR_UNKNOWN_SELECT_TYPE	 =
 			"A value expression of type '%s' is disallowed for a select item";
@@ -55,64 +53,44 @@ public final class SelectItemsCollector {
 	 * @return list of select items obtained from parent's children.
 	 */
 	public static List<SelectItem> collectFromParent(FacesContext context, UIComponent parent) {
-
 		List<SelectItem> selectItems = new ArrayList<SelectItem>();
-
 		// Iterate over all children of the parent component. Non-UISelectItem/s children are automatically skipped.
 		for (UIComponent child : parent.getChildren()) {
-
 			if (child instanceof UISelectItem) {
-
-				UISelectItem uiSelectItem = (UISelectItem) child;
+				UISelectItem uiSelectItem = ((UISelectItem) (child));
 				Object value = uiSelectItem.getValue();
-
 				if (value instanceof SelectItem) {
-
 					// A single SelectItem can be added directly without any further processing
-					selectItems.add((SelectItem)value);
+					selectItems.add(((SelectItem) (value)));
 				} else if (uiSelectItem.getValue() == null) {
-
 					// No value binding specified, create a select item out of the properties
 					// of the UI component.
 					selectItems.add(new ExtendedSelectItem(uiSelectItem));
 				} else {
-
 					// A value binding was specified, but of a type we don't support.
 					throw new IllegalArgumentException(String.format(ERROR_UNKNOWN_SELECT_TYPE, value.getClass().toString()));
 				}
-
 			} else if (child instanceof UISelectItems) {
-
-				UISelectItems uiSelectItems = (UISelectItems) child;
+				UISelectItems uiSelectItems = ((UISelectItems) (child));
 				Object value = uiSelectItems.getValue();
-
 				if (value instanceof SelectItem) {
-
 					// A single SelectItem can be added directly without any further processing
-					selectItems.add((SelectItem) value);
+					selectItems.add(((SelectItem) (value)));
 				} else if (value instanceof Object[]) {
-
 					// An array of objects is supposed to be transformed by the SelectItems iteration construct
-					selectItems.addAll(collectFromUISelectItemsIterator(context, uiSelectItems, Arrays.asList((Object[]) value)));
+					selectItems.addAll(collectFromUISelectItemsIterator(context, uiSelectItems, Arrays.asList(((Object[]) (value)))));
 				} else if (value instanceof Iterable) {
-
 					// An iterable (Collection, List, etc) is also supposed to be transformed by the SelectItems iteration construct
-					selectItems.addAll(collectFromUISelectItemsIterator(context, uiSelectItems, (Iterable<?>) value));
+					selectItems.addAll(collectFromUISelectItemsIterator(context, uiSelectItems, ((Iterable<?>) (value))));
 				} else if (value instanceof Map) {
-
 					// A map has its own algorithm for how it should be turned into a list of SelectItems
-					selectItems.addAll(SelectItemsBuilder.fromMap((Map<?, ?>)value));
-
+					selectItems.addAll(SelectItemsBuilder.fromMap(((Map<?, ?>) (value))));
 				} else {
-
 					// A value binding was specified, but of a type we don't support.
 					throw new IllegalArgumentException(String.format(ERROR_UNKNOWN_SELECT_TYPE, value.getClass().toString()));
 				}
-
 			}
-
 		}
-
 		return selectItems;
 	}
 
@@ -126,19 +104,14 @@ public final class SelectItemsCollector {
 	 * @return list of <code>SelectItem</code> obtained from the given parameters
 	 */
 	public static List<SelectItem> collectFromUISelectItemsIterator(FacesContext facesContext, UISelectItems uiSelectItems, Iterable<?> items) {
-
 		final List<SelectItem> selectItems = new ArrayList<SelectItem>();
-
 		final Map<String, Object> attributes = uiSelectItems.getAttributes();
-		String var = (String) attributes.get("var");
-
+		String var = ((String) (attributes.get("var")));
 		// Helper class that's used to set the item value in (EL) scope using the name set by "var" during the iteration.
 		// If during each iteration the value of this is changed, any value expressions in the attribute
 		// map referring it will resolve to that particular instance.
 		ScopedRunner scopedRunner = new ScopedRunner(facesContext);
-
 		for (final Object item : items) {
-
 			// If the item is already a SelectItem, take it directly.
 			// NOTE: I'm not 100% sure if this is right, since it now allows a collection to consist
 			// out of a mix of SelectItems and non-SelectItems. Should we maybe always process the iterator
@@ -146,34 +119,31 @@ public final class SelectItemsCollector {
 			// as SelectItems if the first element is a SelectItem and throw an exception as soon as we encounter
 			// a non-SelectItem?
 			if (item instanceof SelectItem) {
-				selectItems.add((SelectItem)item);
+				selectItems.add(((SelectItem) (item)));
 				continue;
 			}
-
 			if (!isEmpty(var)) {
 				scopedRunner.with(var, item);
 			}
-
 			// During each iteration, just resolve all attributes again.
 			scopedRunner.invoke(new Callback.Void() {
-				@Override
-				public void invoke() {
-					Object itemValue = getItemValue(attributes, item);
-					Object noSelectionValue = attributes.get("noSelectionValue");
-					boolean itemValueIsNoSelectionValue = noSelectionValue != null && noSelectionValue.equals(itemValue);
+			@Override public void invoke() {
 
-					selectItems.add(new SelectItem(
-						itemValue,
-						getItemLabel(attributes, itemValue),
-						getItemDescription(attributes),
-						getBooleanAttribute(attributes, "itemDisabled", false),
-						getBooleanAttribute(attributes, "itemLabelEscaped", true),
-						getBooleanAttribute(attributes, "noSelectionOption", false) || itemValueIsNoSelectionValue
-					));
-				}
+				Object itemValue = getItemValue(attributes, item);
+				Object noSelectionValue = attributes.get("noSelectionValue");
+				boolean itemValueIsNoSelectionValue = noSelectionValue != null && noSelectionValue.equals(itemValue);
+
+				selectItems.add(new SelectItem(
+					itemValue,
+					getItemLabel(attributes, itemValue),
+					getItemDescription(attributes),
+					getBooleanAttribute(attributes, "itemDisabled", false),
+					getBooleanAttribute(attributes, "itemLabelEscaped", true),
+					getBooleanAttribute(attributes, "noSelectionOption", false) || itemValueIsNoSelectionValue
+				));
+			}
 			});
 		}
-
 		return selectItems;
 	}
 
@@ -243,5 +213,4 @@ public final class SelectItemsCollector {
 
 		return value;
 	}
-
 }

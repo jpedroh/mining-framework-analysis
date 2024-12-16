@@ -12,20 +12,18 @@
  */
 package org.omnifaces.component.validator;
 
-import static java.util.Arrays.asList;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
-
 import javax.faces.component.FacesComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
-
 import org.omnifaces.util.Callback;
 import org.omnifaces.util.State;
 import org.omnifaces.validator.MultiFieldValidator;
+import static java.util.Arrays.asList;
+
 
 /**
  * <p>
@@ -55,25 +53,25 @@ import org.omnifaces.validator.MultiFieldValidator;
  * @see ValidatorFamily
  * @see MultiFieldValidator
  */
+// We don't care about the actual Comparable type.
 @FacesComponent(ValidateOrder.COMPONENT_TYPE)
-@SuppressWarnings({ "unchecked", "rawtypes" }) // We don't care about the actual Comparable type.
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ValidateOrder extends ValidateMultipleFields {
-
+	// Public constants -----------------------------------------------------------------------------------------------
 	// Public constants -----------------------------------------------------------------------------------------------
 
 	/** The standard component type. */
 	public static final String COMPONENT_TYPE = "org.omnifaces.component.validator.ValidateOrder";
 
 	// Private constants ----------------------------------------------------------------------------------------------
-
 	private enum Type {
+
 		LT(new Callback.ReturningWithArgument<Boolean, List<Comparable>>() {
 			@Override
 			public Boolean invoke(List<Comparable> values) {
 				return new ArrayList<Comparable>(new TreeSet<Comparable>(values)).equals(values);
 			}
 		}),
-
 		LTE(new Callback.ReturningWithArgument<Boolean, List<Comparable>>() {
 			@Override
 			public Boolean invoke(List<Comparable> values) {
@@ -82,7 +80,6 @@ public class ValidateOrder extends ValidateMultipleFields {
 				return sortedValues.equals(values);
 			}
 		}),
-
 		GT(new Callback.ReturningWithArgument<Boolean, List<Comparable>>() {
 			@Override
 			public Boolean invoke(List<Comparable> values) {
@@ -91,7 +88,6 @@ public class ValidateOrder extends ValidateMultipleFields {
 				return sortedValues.equals(values);
 			}
 		}),
-
 		GTE(new Callback.ReturningWithArgument<Boolean, List<Comparable>>() {
 			@Override
 			public Boolean invoke(List<Comparable> values) {
@@ -100,7 +96,6 @@ public class ValidateOrder extends ValidateMultipleFields {
 				return sortedValues.equals(values);
 			}
 		});
-
 		private Callback.ReturningWithArgument<Boolean, List<Comparable>> callback;
 
 		private Type(Callback.ReturningWithArgument<Boolean, List<Comparable>> callback) {
@@ -113,32 +108,35 @@ public class ValidateOrder extends ValidateMultipleFields {
 	}
 
 	private static final String DEFAULT_TYPE = Type.LT.name();
+
 	private static final String ERROR_INVALID_TYPE = "Invalid type '%s'. Only 'lt', 'lte', 'gt' and 'gte' are allowed.";
+
 	private static final String ERROR_VALUES_NOT_COMPARABLE = "All values must implement java.lang.Comparable.";
 
 	private enum PropertyKeys {
-		// Cannot be uppercased. They have to exactly match the attribute names.
-		type;
-	}
 
+		// Cannot be uppercased. They have to exactly match the attribute names.
+		type;}
+
+	// Variables ------------------------------------------------------------------------------------------------------
 	// Variables ------------------------------------------------------------------------------------------------------
 
 	private final State state = new State(getStateHelper());
 
 	// Actions --------------------------------------------------------------------------------------------------------
-
 	/**
 	 * Validate if all values are in specified order.
 	 */
 	@Override
 	public boolean validateValues(FacesContext context, List<UIInput> components, List<Object> values) {
 		try {
-			Object tmp = values; // https://bugs.eclipse.org/bugs/show_bug.cgi?id=158870
-			List<Comparable> comparableValues = new ArrayList<Comparable>((List<Comparable>) tmp);
-			comparableValues.removeAll(asList(null, "")); // Empty checking job is up to required="true".
+			Object tmp = values;// https://bugs.eclipse.org/bugs/show_bug.cgi?id=158870
+
+			List<Comparable> comparableValues = new ArrayList<Comparable>(((List<Comparable>) (tmp)));
+			comparableValues.removeAll(asList(null, ""));// Empty checking job is up to required="true".
+
 			return Type.valueOf(getType().toUpperCase()).validateOrder(comparableValues);
-		}
-		catch (ClassCastException e) {
+		} catch (java.lang.ClassCastException e) {
 			throw new IllegalArgumentException(ERROR_VALUES_NOT_COMPARABLE, e);
 		}
 	}
@@ -167,5 +165,4 @@ public class ValidateOrder extends ValidateMultipleFields {
 
 		state.put(PropertyKeys.type, type);
 	}
-
 }

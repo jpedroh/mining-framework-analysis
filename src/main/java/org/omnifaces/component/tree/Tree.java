@@ -12,11 +12,8 @@
  */
 package org.omnifaces.component.tree;
 
-import static org.omnifaces.util.Components.getClosestParent;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.el.ValueExpression;
 import javax.faces.component.FacesComponent;
 import javax.faces.component.NamingContainer;
@@ -29,7 +26,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.FacesEvent;
 import javax.faces.event.PhaseId;
-
 import org.omnifaces.component.EditableValueHolderStateHelper;
 import org.omnifaces.event.FacesEventWrapper;
 import org.omnifaces.model.tree.AbstractTreeModel;
@@ -38,6 +34,8 @@ import org.omnifaces.model.tree.SortedTreeModel;
 import org.omnifaces.model.tree.TreeModel;
 import org.omnifaces.util.Callback;
 import org.omnifaces.util.State;
+import static org.omnifaces.util.Components.getClosestParent;
+
 
 /**
  * <p>
@@ -106,40 +104,53 @@ import org.omnifaces.util.State;
  * @see ListTreeModel
  * @see SortedTreeModel
  */
+// For TreeModel. We don't care about its actual type anyway.
 @FacesComponent(Tree.COMPONENT_TYPE)
-@SuppressWarnings("rawtypes") // For TreeModel. We don't care about its actual type anyway.
+@SuppressWarnings("rawtypes")
 public class Tree extends TreeFamily implements NamingContainer {
-
+	// Public constants -----------------------------------------------------------------------------------------------
 	// Public constants -----------------------------------------------------------------------------------------------
 
 	/** The standard component type. */
 	public static final String COMPONENT_TYPE = "org.omnifaces.component.tree.Tree";
 
 	// Private constants ----------------------------------------------------------------------------------------------
+	// Private constants ----------------------------------------------------------------------------------------------
 
 	private static final String ERROR_EXPRESSION_DISALLOWED =
 		"A value expression is disallowed on 'var' and 'varNode' attributes of Tree.";
+
 	private static final String ERROR_INVALID_MODEL =
 		"Tree accepts only model of type TreeModel. Encountered model of type '%s'.";
+
 	private static final String ERROR_NESTING_DISALLOWED =
 		"Nesting Tree components is disallowed. Use TreeNode instead to markup specific levels.";
+
 	private static final String ERROR_NO_CHILDREN =
 		"Tree must have children of type TreeNode. Currently none are encountered.";
+
 	private static final String ERROR_INVALID_CHILD =
 		"Tree accepts only children of type TreeNode. Encountered child of type '%s'.";
+
 	private static final String ERROR_DUPLICATE_NODE =
 		"TreeNode with level '%s' is already declared. Choose a different level or remove it.";
 
 	private enum PropertyKeys {
-		// Cannot be uppercased. They have to exactly match the attribute names.
-		value, var, varNode;
-	}
 
+		// Cannot be uppercased. They have to exactly match the attribute names.
+		value,
+		var,
+		varNode;}
+
+	// Variables ------------------------------------------------------------------------------------------------------
 	// Variables ------------------------------------------------------------------------------------------------------
 
 	private final State state = new State(getStateHelper());
+
 	private TreeModel model;
+
 	private Map<Integer, TreeNode> nodes;
+
 	private TreeModel currentModelNode;
 
 	// Actions --------------------------------------------------------------------------------------------------------
@@ -212,7 +223,6 @@ public class Tree extends TreeFamily implements NamingContainer {
 		if (!isRendered()) {
 			return;
 		}
-
 		process(context, getModel(phaseId), new Callback.Returning<Void>() {
 			@Override
 			public Void invoke() {
@@ -233,7 +243,6 @@ public class Tree extends TreeFamily implements NamingContainer {
 		if (!isVisitable(context)) {
 			return false;
 		}
-
 		return process(context.getFacesContext(), getModel(PhaseId.ANY_PHASE), new Callback.Returning<Boolean>() {
 			@Override
 			public Boolean invoke() {
@@ -261,9 +270,8 @@ public class Tree extends TreeFamily implements NamingContainer {
 	public void broadcast(FacesEvent event) throws AbortProcessingException {
 		if (event instanceof TreeFacesEvent) {
 			FacesContext context = FacesContext.getCurrentInstance();
-			TreeFacesEvent treeEvent = (TreeFacesEvent) event;
+			TreeFacesEvent treeEvent = ((TreeFacesEvent) (event));
 			final FacesEvent wrapped = treeEvent.getWrapped();
-
 			process(context, treeEvent.getNode(), new Callback.Returning<Void>() {
 				@Override
 				public Void invoke() {
@@ -271,8 +279,7 @@ public class Tree extends TreeFamily implements NamingContainer {
 					return null;
 				}
 			});
-		}
-		else {
+		} else {
 			super.broadcast(event);
 		}
 	}
@@ -377,23 +384,19 @@ public class Tree extends TreeFamily implements NamingContainer {
 	 * multiple {@link TreeNode} components with the same level.
 	 */
 	private Map<Integer, TreeNode> getNodes(PhaseId phaseId) {
-		if (phaseId == PhaseId.RENDER_RESPONSE || nodes == null) {
+		if ((phaseId == PhaseId.RENDER_RESPONSE) || (nodes == null)) {
 			nodes = new HashMap<Integer, TreeNode>(getChildCount());
-
 			for (UIComponent child : getChildren()) {
 				if (child instanceof TreeNode) {
-					TreeNode node = (TreeNode) child;
-
+					TreeNode node = ((TreeNode) (child));
 					if (nodes.put(node.getLevel(), node) != null) {
 						throw new IllegalArgumentException(String.format(ERROR_DUPLICATE_NODE, node.getLevel()));
 					}
-				}
-				else {
+				} else {
 					throw new IllegalArgumentException(String.format(ERROR_INVALID_CHILD, child.getClass().getName()));
 				}
 			}
 		}
-
 		return nodes;
 	}
 
@@ -543,14 +546,12 @@ public class Tree extends TreeFamily implements NamingContainer {
 	}
 
 	// Nested classes -------------------------------------------------------------------------------------------------
-
 	/**
 	 * This faces event implementation remembers the current model node at the moment the faces event was queued.
 	 *
 	 * @author Bauke Scholtz
 	 */
 	private static class TreeFacesEvent extends FacesEventWrapper {
-
 		private static final long serialVersionUID = -7751061713837227515L;
 
 		private TreeModel node;
@@ -563,7 +564,5 @@ public class Tree extends TreeFamily implements NamingContainer {
 		public TreeModel getNode() {
 			return node;
 		}
-
 	}
-
 }

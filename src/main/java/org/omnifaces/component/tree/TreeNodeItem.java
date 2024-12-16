@@ -12,21 +12,19 @@
  */
 package org.omnifaces.component.tree;
 
-import static org.omnifaces.util.Components.getClosestParent;
-import static org.omnifaces.util.Components.shouldVisitSkipIteration;
-import static org.omnifaces.util.Components.validateHasParent;
-
 import java.io.IOException;
-
 import javax.faces.component.FacesComponent;
 import javax.faces.component.UIComponent;
 import javax.faces.component.visit.VisitCallback;
 import javax.faces.component.visit.VisitContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
-
 import org.omnifaces.model.tree.TreeModel;
 import org.omnifaces.util.Callback;
+import static org.omnifaces.util.Components.getClosestParent;
+import static org.omnifaces.util.Components.shouldVisitSkipIteration;
+import static org.omnifaces.util.Components.validateHasParent;
+
 
 /**
  * <p>
@@ -44,12 +42,13 @@ import org.omnifaces.util.Callback;
  */
 @FacesComponent(TreeNodeItem.COMPONENT_TYPE)
 public class TreeNodeItem extends TreeFamily {
-
+	// Public constants -----------------------------------------------------------------------------------------------
 	// Public constants -----------------------------------------------------------------------------------------------
 
 	/** The standard component type. */
 	public static final String COMPONENT_TYPE = "org.omnifaces.component.tree.TreeNodeItem";
 
+	// Private constants ----------------------------------------------------------------------------------------------
 	// Private constants ----------------------------------------------------------------------------------------------
 
 	private static final String ERROR_NESTING_DISALLOWED =
@@ -87,13 +86,13 @@ public class TreeNodeItem extends TreeFamily {
 	 * @param phaseId The current phase ID.
 	 * @see Tree#setCurrentModelNode(FacesContext, TreeModel)
 	 */
+	// For TreeModel. We don't care about its actual type anyway.
 	@Override
-	@SuppressWarnings({ "rawtypes", "unchecked" }) // For TreeModel. We don't care about its actual type anyway.
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected void process(final FacesContext context, final PhaseId phaseId) {
 		if (getChildCount() == 0) {
 			return;
 		}
-
 		process(context, new Callback.ReturningWithArgument<Void, Tree>() {
 			@Override
 			public Void invoke(Tree tree) {
@@ -119,17 +118,16 @@ public class TreeNodeItem extends TreeFamily {
 	 * @param callback The visit callback to work with.
 	 * @see Tree#setCurrentModelNode(FacesContext, TreeModel)
 	 */
+	// For TreeModel. We don't care about its actual type anyway.
 	@Override
-	@SuppressWarnings({ "rawtypes", "unchecked" }) // For TreeModel. We don't care about its actual type anyway.
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public boolean visitTree(final VisitContext context, final VisitCallback callback) {
 		if (shouldVisitSkipIteration(context)) {
 			return super.visitTree(context, callback);
 		}
-
-		if (!isVisitable(context) || getChildCount() == 0) {
+		if ((!isVisitable(context)) || (getChildCount() == 0)) {
 			return false;
 		}
-
 		return process(context.getFacesContext(), new Callback.ReturningWithArgument<Boolean, Tree>() {
 			@Override
 			public Boolean invoke(Tree tree) {
@@ -168,5 +166,4 @@ public class TreeNodeItem extends TreeFamily {
 			tree.setCurrentModelNode(context, originalModelNode);
 		}
 	}
-
 }
