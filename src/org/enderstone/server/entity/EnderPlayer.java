@@ -51,12 +51,11 @@ import org.enderstone.server.packet.play.PacketOutEntityHeadLook;
 import org.enderstone.server.packet.play.PacketOutEntityLook;
 import org.enderstone.server.packet.play.PacketOutEntityRelativeMove;
 import org.enderstone.server.packet.play.PacketOutEntityTeleport;
-import org.enderstone.server.packet.play.PacketOutPlayerAbilities;
 import org.enderstone.server.packet.play.PacketOutPlayerListHeaderFooter;
-import org.enderstone.server.packet.play.PacketOutPlayerListItem;
 import org.enderstone.server.packet.play.PacketOutPlayerListItem.Action;
 import org.enderstone.server.packet.play.PacketOutPlayerListItem.ActionAddPlayer;
 import org.enderstone.server.packet.play.PacketOutPlayerListItem.ActionRemovePlayer;
+import org.enderstone.server.packet.play.PacketOutPlayerListItem;
 import org.enderstone.server.packet.play.PacketOutPlayerPositionLook;
 import org.enderstone.server.packet.play.PacketOutRespawn;
 import org.enderstone.server.packet.play.PacketOutSetExperience;
@@ -67,9 +66,9 @@ import org.enderstone.server.packet.play.PacketOutUpdateHealth;
 import org.enderstone.server.permissions.Operator;
 import org.enderstone.server.regions.BlockId;
 import org.enderstone.server.regions.EnderChunk;
-import org.enderstone.server.regions.EnderWorld;
 import org.enderstone.server.regions.EnderWorld.ChunkInformer;
-import org.enderstone.server.regions.RegionSet;
+import org.enderstone.server.regions.EnderWorld;
+
 
 public class EnderPlayer extends Entity implements CommandSender, Player {
 
@@ -182,9 +181,7 @@ public class EnderPlayer extends Entity implements CommandSender, Player {
 		this.getNetworkManager().sendPacket(new PacketOutRespawn(0, (byte) 0, (byte) GameMode.SURVIVAL.getId(), "default"));
 		EnderWorld currentWorld = this.getWorld();
 		EnderLogger.warn("Switching player " + this.getPlayerName() + " from world " + currentWorld.worldName + " to " + toWorld.worldName + ".");
-		if (currentWorld.players.contains(this)) {
-			currentWorld.players.remove(this);
-		}
+		assert currentWorld.players.remove(this);
 		toWorld.players.add(this);
 		this.getLocation().cloneFrom(toWorld.getSpawn());
 		this.loadedChunks.clear();
@@ -458,6 +455,10 @@ public class EnderPlayer extends Entity implements CommandSender, Player {
 	public void teleport(Location newLocation) {
 		this.waitingForValidMoveAfterTeleport = 1;
 		Location oldLocation = this.getLocation();
+		
+		if(!oldLocation.getWorld().equals(newLocation.getWorld())){
+			this.switchWorld(newLocation.getWorld());
+		}
 		oldLocation.cloneFrom(newLocation);
 
 		this.getNetworkManager().sendPacket(new PacketOutPlayerPositionLook(newLocation.getX(), newLocation.getY(), newLocation.getZ(), newLocation.getYaw(), newLocation.getPitch(), (byte) 0b00000));
@@ -631,6 +632,67 @@ public class EnderPlayer extends Entity implements CommandSender, Player {
 	public InventoryHandler getInventoryHandler() {
 		return inventoryHandler;
 	}
+<<<<<<< LEFT
+
+	public RegionSet getLoadedChunks() {
+		return this.loadedChunks;
+	}
+
+	/**
+	 * Class used to store the client side settings from the user, the reason I
+	 * included setters and getters is that we can add a event or simulair to
+	 * the code later on
+	 *
+	 * @author ferrybig
+	 */
+	public final class ClientSettings {
+
+		private String locale = "en_US";
+		private byte renderDistance = 3;
+		private byte chatFlags = 0;
+		private boolean chatColors = true;
+		private int displayedSkinParts = 0;
+
+		public String getLocale() {
+			return locale;
+		}
+
+		public void setLocale(String locale) {
+			this.locale = locale;
+		}
+
+		public byte getRenderDistance() {
+			return renderDistance;
+		}
+
+		public void setRenderDistance(byte renderDistance) {
+			this.renderDistance = renderDistance;
+		}
+
+		public byte getChatFlags() {
+			return chatFlags;
+		}
+
+		public void setChatFlags(byte chatFlags) {
+			this.chatFlags = chatFlags;
+		}
+
+		public boolean isChatColors() {
+			return chatColors;
+		}
+
+		public void setChatColors(boolean chatColors) {
+			this.chatColors = chatColors;
+		}
+
+		public int getDisplayedSkinParts() {
+			return displayedSkinParts;
+		}
+
+		public void setDisplayedSkinParts(int displayedSkinParts) {
+			this.displayedSkinParts = displayedSkinParts;
+		}
+=======
 	
 	public void updateAbilities(){
 		int i = 0;
@@ -646,6 +708,7 @@ public class EnderPlayer extends Entity implements CommandSender, Player {
 		float fly = this.clientSettings.flySpeed;
 		float walk = this.clientSettings.walkSpeed;
 		this.networkManager.sendPacket(new PacketOutPlayerAbilities((byte) i, fly, walk));
+>>>>>>> RIGHT
 	}
 	
 	public enum PlayerDebugger
@@ -653,10 +716,6 @@ public class EnderPlayer extends Entity implements CommandSender, Player {
 		INVENTORY, PACKET, OTHER, 
 	}
 
-	public RegionSet getLoadedChunks() {
-		return this.loadedChunks;
-	}
-	
 	@Override
 	public void sendMessage(Message message, ChatPosition position) {
 		this.getNetworkManager().sendPacket(new PacketOutChatMessage(message, (byte) position.getId()));

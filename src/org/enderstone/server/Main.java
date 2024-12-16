@@ -67,16 +67,24 @@ import org.enderstone.server.regions.generators.FlatLandGenerator;
 import org.enderstone.server.regions.generators.TimTest;
 import org.enderstone.server.uuid.UUIDFactory;
 
-public class Main implements Runnable {
 
+public class Main implements Runnable {
 	public static final String NAME = "Enderstone";
+
 	public static final String VERSION = "1.0.0";
+
 	public static final String PROTOCOL_VERSION = "1.8";
+
 	public static final int EXCEPTED_SLEEP_TIME = 1000 / 20;
+
 	public static final int CANT_KEEP_UP_TIMEOUT = -10000;
+
 	public static final int MAX_VIEW_DISTANCE = 10;
+
 	public static final int MAX_SLEEP = 100;
+
 	public static final int DEFAULT_PROTOCOL = 47;
+
 	public static final Set<Integer> PROTOCOL = Collections.unmodifiableSet(new HashSet<Integer>() {
 		private static final long serialVersionUID = 1L;
 
@@ -84,18 +92,29 @@ public class Main implements Runnable {
 			this.add(47); // 1.8
 		}
 	});
-	public static final String[] AUTHORS = new String[]{"bigteddy98", "ferrybig", "timbayens"};
+
+	public static final String[] AUTHORS = new String[]{ "bigteddy98", "ferrybig", "timbayens" };
+
 	public static final Random random = new Random();
+
 	public volatile Thread mainThread;
+
 	public final List<Thread> listenThreads = new CopyOnWriteArrayList<>();
+
 	public boolean onlineMode = false;
+
 	public List<Operator> operators = new OperatorLoader().load();
 
 	public Properties prop = null;
+
 	public UUIDFactory uuidFactory = new UUIDFactory();
+
 	public String FAVICON = null;
+
 	public int port;
+
 	public volatile boolean isRunning = true;
+
 	public final CommandMap commands;
 
 	{
@@ -114,7 +133,9 @@ public class Main implements Runnable {
 	private static Main instance;
 
 	public final Set<EnderPlayer> onlinePlayers = new HashSet<>();
+
 	public final List<EnderWorld> worlds = new ArrayList<>();
+
 	private final List<Runnable> sendToMainThread = Collections.synchronizedList(new ArrayList<Runnable>());
 
 	public static Main getInstance() {
@@ -339,40 +360,44 @@ public class Main implements Runnable {
 	}
 
 	private int latestKeepAlive = 0;
+
 	private int latestChunkUpdate = 0;
+
 	private int latestHeal = 0;
+
 	private int latestFood = 0;
 
 	private void serverTick(long tick) {
-
-		if (latestFood++ % (20 * 20) == 0) { // every 20 seconds
+		if (((latestFood++) % (20 * 20)) == 0) {
+			// every 20 seconds
 			for (EnderPlayer ep : onlinePlayers) {
 				if (!ep.isDead()) {
 					if ((ep.getFood() - 1) >= 0) {
 						ep.setFood(ep.getFood() - 1);
 					} else {
-						ep.damage(1F);
+						ep.damage(1.0F);
 					}
 				}
 			}
 		}
-		if (latestHeal++ % (20 * 10) == 0) { // every 10 seconds
+		if (((latestHeal++) % (20 * 10)) == 0) {
+			// every 10 seconds
 			for (EnderPlayer ep : onlinePlayers) {
 				if (!ep.isDead()) {
-					if ((ep.getHealth() + 0.5F) <= ep.getMaxHealth() && ep.getFood() > 0) {
+					if (((ep.getHealth() + 0.5F) <= ep.getMaxHealth()) && (ep.getFood() > 0)) {
 						ep.setHealth(ep.getHealth() + 0.5F);
 					}
 				}
 			}
 		}
-		
-		if ((latestKeepAlive++ & 0b0011_1111) == 0) { // faster than % 64 == 0
+		if (((latestKeepAlive++) & 0b111111) == 0) {
+			// faster than % 64 == 0
 			for (EnderPlayer p : onlinePlayers) {
 				p.getNetworkManager().sendPacket(new PacketKeepAlive(p.keepAliveID = random.nextInt(Integer.MAX_VALUE)));
 			}
 		}
-
-		if ((latestChunkUpdate++ & 0b0001_1111) == 0) { // faster than % 31 == 0
+		if (((latestChunkUpdate++) & 0b11111) == 0) {
+		// faster than % 31 == 0
 			for (EnderPlayer p : onlinePlayers) {
 				if (p.isDead()) {
 					p.networkManager.forcePacketFlush();
@@ -385,13 +410,13 @@ public class Main implements Runnable {
 				world.updateEntities(onlinePlayers);
 			}
 		}
-
-		if ((tick & 0b0011_1111) == 0){ // faster than % 64 == 0
+		if ((tick & 0b111111) == 0) {
+			// faster than % 64 == 0
 			for (EnderPlayer p : onlinePlayers) {
 				p.getNetworkManager().sendPacket(new PacketOutUpdateTime(tick, this.getWorld(p).getTime()));
 			}
 		}
-		for(EnderWorld world : worlds){
+		for (EnderWorld world : worlds) {
 			world.serverTick();
 		}
 	}
@@ -455,10 +480,10 @@ public class Main implements Runnable {
 	public static boolean isCurrentThreadMainThread() {
 		return Main.getInstance().mainThread == Thread.currentThread();
 	}
-	
-	public EnderWorld getWorld(EnderPlayer player){
-		for(EnderWorld world : this.worlds){
-			if(world.players.contains(player)){
+
+	public EnderWorld getWorld(EnderPlayer player) {
+		for (EnderWorld world : this.worlds) {
+			if (world.players.contains(player)) {
 				return world;
 			}
 		}

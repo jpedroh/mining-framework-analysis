@@ -60,20 +60,28 @@ import org.enderstone.server.packet.play.PacketOutUpdateHealth;
 import org.enderstone.server.packet.play.PacketOutUpdateTime;
 import org.enderstone.server.regions.EnderWorld;
 
-public class NetworkManager extends ChannelHandlerAdapter {
 
+public class NetworkManager extends ChannelHandlerAdapter {
 	public ChannelHandlerContext ctx;
+
 	public EnderPlayer player;
+
 	public String wantedName;
+
 	private EncryptionSettings encryptionSettings;
+
 	public UUID uuid;
+
 	public PlayerTextureStore skinBlob;
+
 	public int clientVersion;
-	
+
 	public PacketHandshake latestHandshakePacket;
+
 	public volatile int handShakeStatus = -1;
 
 	private final Queue<Packet> packets = new LinkedList<>();
+
 	private volatile boolean isConnected = true;
 
 	public EncryptionSettings getEncryptionSettings() {
@@ -209,32 +217,32 @@ public class NetworkManager extends ChannelHandlerAdapter {
 	}
 
 	public void spawnPlayer() {
-		if (player != null)
+		if (player != null) {
 			throw new IllegalStateException();
+		}
 		if (this.uuid == null) {
 			this.disconnect("Illegal uuid", true);
 			return;
 		}
-		if (this.skinBlob == null)
-			this.skinBlob = PlayerTextureStore.DEFAULT_STORE; // Null oject
-																// design
-																// pattern
+		if (this.skinBlob == null) {
+			this.skinBlob = PlayerTextureStore.DEFAULT_STORE;
+		}// Null oject
 
+		// design
+		// pattern
 		final Object lock = new Object();
-		synchronized (lock) {
+		synchronized(lock) {
 			Main.getInstance().sendToMainThread(new Runnable() {
-
 				@Override
 				public void run() {
 					EnderWorld world = Main.getInstance().worlds.get(0);
-
-					EnderLogger.debug("Player " + wantedName + " spawning in world: " + world.worldName);
+					EnderLogger.debug((("Player " + wantedName) + " spawning in world: ") + world.worldName);
 					player = new EnderPlayer(world, wantedName, NetworkManager.this, uuid, skinBlob);
 					world.players.add(player);
 					Main.getInstance().onlinePlayers.add(player);
 					try {
 						sendPacket(new PacketOutLoginSucces(player.uuid.toString(), player.getPlayerName()));
-						sendPacket(new PacketOutJoinGame(player.getEntityId(), (byte) GameMode.SURVIVAL.getId(), (byte) 0, (byte) 1, (byte) 60, "default", false));
+						sendPacket(new PacketOutJoinGame(player.getEntityId(), ((byte) (GameMode.SURVIVAL.getId())), ((byte) (0)), ((byte) (1)), ((byte) (60)), "default", false));
 						sendPacket(new PacketOutUpdateTime(0, world.getTime()));
 						Location spawn = world.getSpawn();
 						Location loc = player.getLocation();
@@ -243,37 +251,35 @@ public class NetworkManager extends ChannelHandlerAdapter {
 						loc.setZ(spawn.getZ());
 						loc.setYaw(spawn.getYaw());
 						loc.setPitch(spawn.getPitch());
-
 						world.doChunkUpdatesForPlayer(player, player.chunkInformer, 1);
 						player.teleport(world.getSpawn());
 						player.onSpawn();
 						player.onRespawn();
 						sendPacket(new PacketOutSpawnPosition(spawn));
-						sendPacket(new PacketOutPlayerPositionLook(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch(), (byte) 0b00000));
+						sendPacket(new PacketOutPlayerPositionLook(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch(), ((byte) (0b0))));
 						sendPacket(new PacketOutUpdateHealth(player.getHealth(), player.clientSettings.food, player.clientSettings.foodSaturation));
-					} catch (Exception e) {
+					} catch (java.lang.Exception e) {
 						EnderLogger.exception(e);
 					} finally {
-						synchronized (lock) {
+						synchronized(lock) {
 							lock.notifyAll();
 						}
 					}
-
 				}
 			});
 			try {
 				lock.wait();
-			} catch (InterruptedException ex) {
+			} catch (java.lang.InterruptedException ex) {
 				Thread.currentThread().interrupt();
 			}
 		}
-
 	}
 
 	public class EncryptionSettings {
-
 		private String serverid;
+
 		private KeyPair keyPair;
+
 		private byte[] verifyToken;
 
 		public String getServerid() {
@@ -298,11 +304,11 @@ public class NetworkManager extends ChannelHandlerAdapter {
 	public void disconnect(String message) {
 		this.disconnect(message, true);
 	}
-	
+
 	public void disconnect(String message, boolean byError) {
 		this.disconnect(new SimpleMessage(message), byError);
 	}
-	
+
 	@Deprecated
 	public void disconnect(Message message) {
 		this.disconnect(message, true);
@@ -334,11 +340,12 @@ public class NetworkManager extends ChannelHandlerAdapter {
 			this.onDisconnect();
 		}
 	}
-	
+
 	public void enableCompression(){
 		this.ctx.pipeline().addBefore("packet_rw_converter", "packet_r_decompressor", new MinecraftDecompressionCodex(this));
 		this.ctx.pipeline().addBefore("packet_rw_converter", "packet_w_compressor", new MinecraftCompressionCodex(this));
 	}
+
 	public String digitalName()
 	{
 		InetSocketAddress address = (InetSocketAddress)ctx.channel().remoteAddress();
