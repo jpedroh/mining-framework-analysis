@@ -38,8 +38,6 @@ import hudson.tasks.test.TestObject;
 import hudson.tasks.test.TestResultProjectAction;
 import hudson.util.HeapSpaceStringConverter;
 import hudson.util.XStream2;
-import org.kohsuke.stapler.StaplerProxy;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -50,6 +48,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jenkins.tasks.SimpleBuildStep;
+import org.kohsuke.stapler.StaplerProxy;
+
 
 /**
  * {@link Action} that displays the JUnit test result.
@@ -61,23 +61,29 @@ import jenkins.tasks.SimpleBuildStep;
  * @author Kohsuke Kawaguchi
  */
 @SuppressFBWarnings(value = "UG_SYNC_SET_UNSYNC_GET", justification = "False positive")
-public class TestResultAction extends AbstractTestResultAction<TestResultAction> implements StaplerProxy, SimpleBuildStep.LastBuildAction {
+public class TestResultAction extends AbstractTestResultAction<TestResultAction> implements StaplerProxy , SimpleBuildStep.LastBuildAction {
     private transient WeakReference<TestResult> result;
 
     // Hudson < 1.25 didn't set these fields, so use Integer
     // so that we can distinguish between 0 tests vs not-computed-yet.
     private int failCount;
+
     private int skipCount;
+
     private Integer totalCount;
+
     private Double healthScaleFactor;
+
     private List<Data> testData = new ArrayList<Data>();
 
     @Deprecated
     public TestResultAction(AbstractBuild owner, TestResult result, BuildListener listener) {
-        this((Run) owner, result, listener);
+        this(((Run) (owner)), result, listener);
     }
 
     /**
+     *
+     *
      * @since 1.2-beta-1
      */
     public TestResultAction(Run owner, TestResult result, TaskListener listener) {
@@ -87,7 +93,7 @@ public class TestResultAction extends AbstractTestResultAction<TestResultAction>
 
     @Deprecated
     public TestResultAction(TestResult result, BuildListener listener) {
-        this((Run) null, result, listener);
+        this(((Run) (null)), result, listener);
     }
 
     @SuppressWarnings("deprecation")
@@ -198,7 +204,6 @@ public class TestResultAction extends AbstractTestResultAction<TestResultAction>
         return getResult().getSkippedTests();
     }
 
-
     /**
      * Loads a {@link TestResult} from disk.
      */
@@ -222,11 +227,14 @@ public class TestResultAction extends AbstractTestResultAction<TestResultAction>
         List<TestAction> result = new ArrayList<TestAction>();
         // Added check for null testData to avoid NPE from issue 4257.
         if (testData != null) {
-            synchronized (testData) {
-                for (Data data : testData)
-                    for (TestAction ta : data.getTestAction(object))
-                        if (ta != null)
+            synchronized(testData) {
+                for (Data data : testData) {
+                    for (TestAction ta : data.getTestAction(object)) {
+                        if (ta != null) {
                             result.add(ta);
+                        }
+                    }
+                }
             }
         }
         return Collections.unmodifiableList(result);
@@ -244,7 +252,7 @@ public class TestResultAction extends AbstractTestResultAction<TestResultAction>
      *
      */
     public void setData(List<Data> testData) {
-	      this.testData = testData;
+        this.testData = testData;
     }
 
     /**
@@ -279,13 +287,12 @@ public class TestResultAction extends AbstractTestResultAction<TestResultAction>
      * @see TestDataPublisher
      */
     public static abstract class Data {
-    	/**
-    	 * Returns all TestActions for the testObject.
+        /**
+         * Returns all TestActions for the testObject.
          *
-         * @return
-         *      Can be empty but never null. The caller must assume that the returned list is read-only.
-    	 */
-    	public abstract List<? extends TestAction> getTestAction(hudson.tasks.junit.TestObject testObject);
+         * @return Can be empty but never null. The caller must assume that the returned list is read-only.
+         */
+        public abstract List<? extends TestAction> getTestAction(TestObject testObject);
     }
 
     public Object readResolve() {
@@ -293,7 +300,7 @@ public class TestResultAction extends AbstractTestResultAction<TestResultAction>
     	if (testData == null) {
     		testData = new ArrayList<Data>(0);
     	}
-
+    	
     	return this;
     }
 
@@ -302,10 +309,9 @@ public class TestResultAction extends AbstractTestResultAction<TestResultAction>
     private static final XStream XSTREAM = new XStream2();
 
     static {
-        XSTREAM.alias("result",TestResult.class);
-        XSTREAM.alias("suite",SuiteResult.class);
-        XSTREAM.alias("case",CaseResult.class);
-        XSTREAM.registerConverter(new HeapSpaceStringConverter(),100);
+        XSTREAM.alias("result", TestResult.class);
+        XSTREAM.alias("suite", SuiteResult.class);
+        XSTREAM.alias("case", CaseResult.class);
+        XSTREAM.registerConverter(new HeapSpaceStringConverter(), 100);
     }
-
 }

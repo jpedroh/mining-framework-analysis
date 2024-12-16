@@ -23,23 +23,20 @@
  */
 package hudson.tasks.junit;
 
+import com.thoughtworks.xstream.XStream;
 import hudson.XmlFile;
 import hudson.util.HeapSpaceStringConverter;
 import hudson.util.XStream2;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.List;
-
 import org.junit.Test;
 import org.jvnet.hudson.test.Bug;
-
-import com.thoughtworks.xstream.XStream;
 import org.jvnet.hudson.test.Issue;
-
 import static org.junit.Assert.*;
+
 
 /**
  * Tests the JUnit result XML file parsing in {@link TestResult}.
@@ -59,7 +56,6 @@ public class TestResultTest {
     public void testIpsTests() throws Exception {
         TestResult testResult = new TestResult();
         testResult.parse(getDataFile("eclipse-plugin-test-report.xml"), null, null, null);
-
         Collection<SuiteResult> suites = testResult.getSuites();
         assertEquals("Wrong number of test suites", 16, suites.size());
         int testCaseCount = 0;
@@ -103,7 +99,7 @@ public class TestResultTest {
         assertFalse(failedCase.isPassed());
         assertEquals(5, failedCase.getFailedSince());
     }
-    
+
     /**
      * When test methods are parametrized, they can occur multiple times in the testresults XMLs.
      * Test that these are counted correctly.
@@ -116,25 +112,22 @@ public class TestResultTest {
         testResult.parse(getDataFile("JENKINS-13214/27540.xml"), null, null, null);
         testResult.parse(getDataFile("JENKINS-13214/29734.xml"), null, null, null);
         testResult.tally();
-        
         assertEquals("Wrong number of test suites", 1, testResult.getSuites().size());
         assertEquals("Wrong number of test cases", 3, testResult.getTotalCount());
     }
-    
+
     @Bug(12457)
     public void testTestSuiteDistributedOverMultipleFilesIsCountedAsOne() throws IOException, URISyntaxException {
         TestResult testResult = new TestResult();
         testResult.parse(getDataFile("JENKINS-12457/TestSuite_a1.xml"), null, null, null);
         testResult.parse(getDataFile("JENKINS-12457/TestSuite_a2.xml"), null, null, null);
         testResult.tally();
-        
         assertEquals("Wrong number of testsuites", 1, testResult.getSuites().size());
         assertEquals("Wrong number of test cases", 2, testResult.getTotalCount());
-        
-        // check duration: 157.980 (TestSuite_a1.xml) and 15.000 (TestSuite_a2.xml) = 172.98 
+        // check duration: 157.980 (TestSuite_a1.xml) and 15.000 (TestSuite_a2.xml) = 172.98
         assertEquals("Wrong duration for test result", 172.98, testResult.getDuration(), 0.1);
     }
-    
+
     /**
      * A common problem is that people parse TEST-*.xml as well as TESTS-TestSuite.xml.
      * See http://jenkins.361315.n4.nabble.com/Problem-with-duplicate-build-execution-td371616.html for discussion.
@@ -144,7 +137,6 @@ public class TestResultTest {
         testResult.parse(getDataFile("JENKINS-12457/TestSuite_b.xml"), null, null, null);
         testResult.parse(getDataFile("JENKINS-12457/TestSuite_b_duplicate.xml"), null, null, null);
         testResult.tally();
-        
         assertEquals("Wrong number of testsuites", 1, testResult.getSuites().size());
         assertEquals("Wrong number of test cases", 1, testResult.getTotalCount());
         assertEquals("Wrong duration for test result", 1.0, testResult.getDuration(), 0.01);
@@ -155,13 +147,11 @@ public class TestResultTest {
     public void testMerge() throws IOException, URISyntaxException {
         TestResult first = new TestResult();
         TestResult second = new TestResult();
-
         first.parse(getDataFile("JENKINS-41134/TestSuite_first.xml"), null, null, null);
         second.parse(getDataFile("JENKINS-41134/TestSuite_second.xml"), null, null, null);
         assertEquals("Fail count should be 0", 0, first.getFailCount());
         first.merge(second);
         assertEquals("Fail count should now be 1", 1, first.getFailCount());
-
         first = new TestResult();
         second = new TestResult();
         first.parse(getDataFile("JENKINS-41134/TestSuite_first.xml"), null, null, null);
@@ -200,9 +190,9 @@ public class TestResultTest {
     private static final XStream XSTREAM = new XStream2();
 
     static {
-        XSTREAM.alias("result",TestResult.class);
-        XSTREAM.alias("suite",SuiteResult.class);
-        XSTREAM.alias("case",CaseResult.class);
-        XSTREAM.registerConverter(new HeapSpaceStringConverter(),100);
+        XSTREAM.alias("result", TestResult.class);
+        XSTREAM.alias("suite", SuiteResult.class);
+        XSTREAM.alias("case", CaseResult.class);
+        XSTREAM.registerConverter(new HeapSpaceStringConverter(), 100);
     }
 }

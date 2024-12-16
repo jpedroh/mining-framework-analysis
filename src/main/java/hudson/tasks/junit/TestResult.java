@@ -29,7 +29,6 @@ import hudson.model.Run;
 import hudson.tasks.test.AbstractTestResultAction;
 import hudson.tasks.test.MetaTabulatedResult;
 import hudson.tasks.test.TestObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -44,7 +43,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import org.apache.tools.ant.DirectoryScanner;
 import org.dom4j.DocumentException;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
@@ -52,8 +52,6 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 
 /**
  * Root of all the test results for one build.
@@ -61,7 +59,6 @@ import javax.annotation.Nonnull;
  * @author Kohsuke Kawaguchi
  */
 public final class TestResult extends MetaTabulatedResult {
-
     /**
      * List of all {@link SuiteResult}s in this test.
      * This is the core data structure to be persisted in the disk.
@@ -71,23 +68,24 @@ public final class TestResult extends MetaTabulatedResult {
     /**
      * {@link #suites} keyed by their names for faster lookup.
      */
-    private transient Map<String,SuiteResult> suitesByName;
+    private transient Map<String, SuiteResult> suitesByName;
 
     /**
      * {@link #suites} keyed by their run ID and node ID for faster lookup. May be empty.
      */
-    private transient Map<String,Map<String,List<SuiteResult>>> suitesByRunAndNode;
+    private transient Map<String, Map<String, List<SuiteResult>>> suitesByRunAndNode;
 
     /**
      * TODO: javadoc
      */
-    private transient Map<String,Map<String,BlocksWithChildren>> testsByRunAndBlock;
+    private transient Map<String, Map<String, BlocksWithChildren>> testsByRunAndBlock;
 
     /**
      * Results tabulated by package.
      */
-    private transient Map<String,PackageResult> byPackages;
+    private transient Map<String, PackageResult> byPackages;
 
+    // set during the freeze phase
     // set during the freeze phase
     private transient AbstractTestResultAction parentAction;
 
@@ -121,6 +119,8 @@ public final class TestResult extends MetaTabulatedResult {
     }
 
     /**
+     *
+     *
      * @since 1.522
      */
     public TestResult(boolean keepLongStdio) {
@@ -140,14 +140,17 @@ public final class TestResult extends MetaTabulatedResult {
     /**
      * Collect reports from the given {@link DirectoryScanner}, while
      * filtering out all files that were created before the given time.
-     * @param keepLongStdio if true, retain a suite's complete stdout/stderr even if this is huge and the suite passed
-     * @param runId an optional {@link Run#getExternalizableId()} this test result was initially generated in.
-     * @param nodeId an optional {@link org.jenkinsci.plugins.workflow.graph.FlowNode#id} for mapping between suite results and step executions.
-     * @param enclosingBlocks Optional, possibly null list of enclosing {@link FlowNode#getId()}
+     *
+     * @param keepLongStdio
+     * 		if true, retain a suite's complete stdout/stderr even if this is huge and the suite passed
+     * @since 1.358
+     * @param nodeId
+     * 		an optional {@link org.jenkinsci.plugins.workflow.graph.FlowNode#id} for mapping between suite results and step executions.
+     * @param enclosingBlocks
+     * 		Optional, possibly null list of enclosing {@link FlowNode#getId()}
      * @since 1.21
      */
-    public TestResult(long buildTime, DirectoryScanner results, boolean keepLongStdio, String runId, String nodeId,
-                      List<String> enclosingBlocks) throws IOException {
+    public TestResult(long buildTime, DirectoryScanner results, boolean keepLongStdio, String runId, String nodeId, List<String> enclosingBlocks) throws IOException {
         this.keepLongStdio = keepLongStdio;
         parse(buildTime, results, runId, nodeId, enclosingBlocks);
     }
@@ -174,20 +177,25 @@ public final class TestResult extends MetaTabulatedResult {
     /**
      * Collect reports from the given {@link DirectoryScanner}, while
      * filtering out all files that were created before the given time.
-     * @param buildTime Build time.
-     * @param results Directory scanner.
-     * @param runId Optional {@link Run#getExternalizableId()}
-     * @param nodeId Optional {@link FlowNode#getId()}
-     * @param enclosingBlocks Optional, possibly null list of enclosing {@link FlowNode#getId()}
      *
-     * @throws IOException if an error occurs.
+     * @param buildTime
+     * 		Build time.
+     * @param results
+     * 		Directory scanner.
+     * @throws IOException
+     * 		if an error occurs.
+     * @param nodeId
+     * 		Optional {@link FlowNode#getId()}
+     * @param enclosingBlocks
+     * 		Optional, possibly null list of enclosing {@link FlowNode#getId()}
+     * @throws IOException
+     * 		if an error occurs.
      * @since 1.21
      */
-    public void parse(long buildTime, DirectoryScanner results, String runId, String nodeId, List<String> enclosingBlocks)
-            throws IOException {
+    public void parse(long buildTime, DirectoryScanner results, String runId, String nodeId, List<String> enclosingBlocks) throws IOException {
         String[] includedFiles = results.getIncludedFiles();
         File baseDir = results.getBasedir();
-        parse(buildTime,baseDir,runId,nodeId,enclosingBlocks,includedFiles);
+        parse(buildTime, baseDir, runId, nodeId, enclosingBlocks, includedFiles);
     }
 
     @Deprecated
@@ -199,45 +207,42 @@ public final class TestResult extends MetaTabulatedResult {
     /**
      * Collect reports from the given report files, while
      * filtering out all files that were created before the given time.
-     * @param buildTime Build time.
-     * @param baseDir Base directory.
-     * @param runId Optional, possibly null {@link Run#getExternalizableId()}
-     * @param nodeId Optional, possibly null {@link FlowNode#getId()}
-     * @param enclosingBlocks Optional, possibly null list of enclosing {@link FlowNode#getId()}
-     * @param reportFiles Report files.
      *
-     * @throws IOException if an error occurs.
+     * @param buildTime
+     * 		Build time.
+     * @param baseDir
+     * 		Base directory.
+     * @param reportFiles
+     * 		Report files.
+     * @throws IOException
+     * 		if an error occurs.
+     * @since 1.426
+     * @param reportFiles
+     * 		Report files.
+     * @throws IOException
+     * 		if an error occurs.
      * @since 1.21
      */
-    public void parse(long buildTime, File baseDir, String runId, String nodeId, List<String> enclosingBlocks,
-                      String[] reportFiles) throws IOException {
-
-        boolean parsed=false;
-
+    public void parse(long buildTime, File baseDir, String runId, String nodeId, List<String> enclosingBlocks, String[] reportFiles) throws IOException {
+        boolean parsed = false;
         for (String value : reportFiles) {
             File reportFile = new File(baseDir, value);
             // only count files that were actually updated during this build
-            if (buildTime-3000/*error margin*/ <= reportFile.lastModified()) {
+            if ((buildTime - 3000)/* error margin */
+             <= reportFile.lastModified()) {
                 parsePossiblyEmpty(reportFile, runId, nodeId, enclosingBlocks);
                 parsed = true;
             }
         }
-
-        if(!parsed) {
+        if (!parsed) {
             long localTime = System.currentTimeMillis();
-            if(localTime < buildTime-1000) /*margin*/
-                // build time is in the the future. clock on this slave must be running behind
-                throw new AbortException(
-                    "Clock on this slave is out of sync with the master, and therefore \n" +
-                    "I can't figure out what test results are new and what are old.\n" +
-                    "Please keep the slave clock in sync with the master.");
-
-            File f = new File(baseDir,reportFiles[0]);
-            throw new AbortException(
-                String.format(
-                "Test reports were found but none of them are new. Did leafNodes run? %n"+
-                "For example, %s is %s old%n", f,
-                Util.getTimeSpanString(buildTime-f.lastModified())));
+            /* margin */
+            // build time is in the the future. clock on this slave must be running behind
+            if (localTime < (buildTime - 1000)) {
+                throw new AbortException("Clock on this slave is out of sync with the master, and therefore \n" + ("I can\'t figure out what test results are new and what are old.\n" + "Please keep the slave clock in sync with the master."));
+            }
+            File f = new File(baseDir, reportFiles[0]);
+            throw new AbortException(String.format("Test reports were found but none of them are new. Did leafNodes run? %n" + "For example, %s is %s old%n", f, Util.getTimeSpanString(buildTime - f.lastModified())));
         }
     }
 
@@ -249,79 +254,67 @@ public final class TestResult extends MetaTabulatedResult {
     /**
      * Collect reports from the given report files
      *
-     * @param buildTime Build time.
-     * @param reportFiles Report files.
-     * @param runId Optional, possibly null {@link Run#getExternalizableId()}
-     * @param nodeId Optional, possibly null {@link FlowNode#getId()}
-     * @param enclosingBlocks Optional, possibly null list of enclosing {@link FlowNode#getId()}
-     *
-     * @throws IOException if an error occurs.
+     * @param buildTime
+     * 		Build time.
+     * @param reportFiles
+     * 		Report files.
+     * @throws IOException
+     * 		if an error occurs.
+     * @since 1.500
+     * @param enclosingBlocks
+     * 		Optional, possibly null list of enclosing {@link FlowNode#getId()}
+     * @throws IOException
+     * 		if an error occurs.
      * @since 1.21
      */
-    public void parse(long buildTime, Iterable<File> reportFiles, String runId, String nodeId, List<String> enclosingBlocks)
-            throws IOException {
-        boolean parsed=false;
-
+    public void parse(long buildTime, Iterable<File> reportFiles, String runId, String nodeId, List<String> enclosingBlocks) throws IOException {
+        boolean parsed = false;
         for (File reportFile : reportFiles) {
             // only count files that were actually updated during this build
-            if (buildTime-3000/*error margin*/ <= reportFile.lastModified()) {
+            if ((buildTime - 3000)/* error margin */
+             <= reportFile.lastModified()) {
                 parsePossiblyEmpty(reportFile, runId, nodeId, enclosingBlocks);
                 parsed = true;
             }
         }
-
-        if(!parsed) {
+        if (!parsed) {
             long localTime = System.currentTimeMillis();
-            if(localTime < buildTime-1000) /*margin*/
-                // build time is in the the future. clock on this slave must be running behind
-                throw new AbortException(
-                    "Clock on this slave is out of sync with the master, and therefore \n" +
-                    "I can't figure out what test results are new and what are old.\n" +
-                    "Please keep the slave clock in sync with the master.");
-
+            /* margin */
+            // build time is in the the future. clock on this slave must be running behind
+            if (localTime < (buildTime - 1000)) {
+                throw new AbortException("Clock on this slave is out of sync with the master, and therefore \n" + ("I can\'t figure out what test results are new and what are old.\n" + "Please keep the slave clock in sync with the master."));
+            }
             File f = reportFiles.iterator().next();
-            throw new AbortException(
-                String.format(
-                "Test reports were found but none of them are new. Did leafNodes run? %n"+
-                "For example, %s is %s old%n", f,
-                Util.getTimeSpanString(buildTime-f.lastModified())));
+            throw new AbortException(String.format("Test reports were found but none of them are new. Did leafNodes run? %n" + "For example, %s is %s old%n", f, Util.getTimeSpanString(buildTime - f.lastModified())));
         }
-        
     }
-    
+
     private void parsePossiblyEmpty(File reportFile, String runId, String nodeId, List<String> enclosingBlocks) throws IOException {
-        if(reportFile.length()==0) {
+        if (reportFile.length() == 0) {
             // this is a typical problem when JVM quits abnormally, like OutOfMemoryError during a test.
             SuiteResult sr = new SuiteResult(reportFile.getName(), "", "", runId, nodeId, enclosingBlocks);
-            sr.addCase(new CaseResult(sr,"[empty]","Test report file "+reportFile.getAbsolutePath()+" was length 0"));
+            sr.addCase(new CaseResult(sr, "[empty]", ("Test report file " + reportFile.getAbsolutePath()) + " was length 0"));
             add(sr);
         } else {
             parse(reportFile, runId, nodeId, enclosingBlocks);
         }
     }
-    
+
     private void add(SuiteResult sr) {
         for (SuiteResult s : suites) {
             // JENKINS-12457: If a testsuite is distributed over multiple files, merge it into a single SuiteResult:
-            if(s.getName().equals(sr.getName()) &&
-                    nullSafeEq(s.getId(),sr.getId()) &&
-                    nullSafeEq(s.getRunId(),sr.getRunId()) &&
-                    nullSafeEq(s.getNodeId(),sr.getNodeId()) &&
-                    nullSafeEq(s.getEnclosingBlocks(),sr.getEnclosingBlocks())) {
-            
+            if ((((s.getName().equals(sr.getName()) && nullSafeEq(s.getId(), sr.getId())) && nullSafeEq(s.getRunId(), sr.getRunId())) && nullSafeEq(s.getNodeId(), sr.getNodeId())) && nullSafeEq(s.getEnclosingBlocks(), sr.getEnclosingBlocks())) {
                 // However, a common problem is that people parse TEST-*.xml as well as TESTS-TestSuite.xml.
                 // In that case consider the result file as a duplicate and discard it.
                 // see http://jenkins.361315.n4.nabble.com/Problem-with-duplicate-build-execution-td371616.html for discussion.
-                if(strictEq(s.getTimestamp(),sr.getTimestamp())) {
+                if (strictEq(s.getTimestamp(), sr.getTimestamp())) {
                     return;
                 }
-
                 duration += sr.getDuration();
                 s.merge(sr);
                 return;
             }
         }
-
         suites.add(sr);
         duration += sr.getDuration();
     }
@@ -331,12 +324,13 @@ public final class TestResult extends MetaTabulatedResult {
      */
     void merge(TestResult other) {
         for (SuiteResult suite : other.suites) {
-            suite.setParent(null); // otherwise freeze ignores it
+            suite.setParent(null);// otherwise freeze ignores it
+
             add(suite);
         }
         tally();
     }
-    
+
     private boolean strictEq(Object lhs, Object rhs) {
         return lhs != null && rhs != null && lhs.equals(rhs);
     }
@@ -355,32 +349,37 @@ public final class TestResult extends MetaTabulatedResult {
 
     /**
      * Parses an additional report file.
-     * @param reportFile Report file to parse.
-     * @param runId Optional, possibly null {@link Run#getExternalizableId()}
-     * @param nodeId Optional, possibly null {@link FlowNode#getId()}
-     * @param enclosingBlocks Optional, possibly null list of enclosing {@link FlowNode#getId()}
      *
-     * @throws IOException if an error occurs.
+     * @param reportFile
+     * 		Report file to parse.
+     * @throws IOException
+     * 		if an error occurs.
+     * @param nodeId
+     * 		Optional, possibly null {@link FlowNode#getId()}
+     * @param enclosingBlocks
+     * 		Optional, possibly null list of enclosing {@link FlowNode#getId()}
+     * @throws IOException
+     * 		if an error occurs.
      * @since 1.21
      */
     public void parse(File reportFile, String runId, String nodeId, List<String> enclosingBlocks) throws IOException {
         try {
-            for (SuiteResult suiteResult : SuiteResult.parse(reportFile, keepLongStdio, runId, nodeId, enclosingBlocks))
+            for (SuiteResult suiteResult : SuiteResult.parse(reportFile, keepLongStdio, runId, nodeId, enclosingBlocks)) {
                 add(suiteResult);
-        } catch (InterruptedException e) {
-            throw new IOException("Failed to read "+reportFile,e);
-        } catch (RuntimeException e) {
-            throw new IOException("Failed to read "+reportFile,e);
+            }
+        } catch (java.lang.InterruptedException e) {
+            throw new IOException("Failed to read " + reportFile, e);
+        } catch (java.lang.RuntimeException e) {
+            throw new IOException("Failed to read " + reportFile, e);
         } catch (DocumentException e) {
             if (!reportFile.getPath().endsWith(".xml")) {
-                throw new IOException("Failed to read "+reportFile+"\n"+
-                    "Is this really a JUnit report file? Your configuration must be matching too many files",e);
+                throw new IOException((("Failed to read " + reportFile) + "\n") + "Is this really a JUnit report file? Your configuration must be matching too many files", e);
             } else {
                 SuiteResult sr = new SuiteResult(reportFile.getName(), "", "", null, null, null);
                 StringWriter writer = new StringWriter();
                 e.printStackTrace(new PrintWriter(writer));
-                String error = "Failed to read test report file "+reportFile.getAbsolutePath()+"\n"+writer.toString();
-                sr.addCase(new CaseResult(sr,"[failed-to-read]",error));
+                String error = (("Failed to read test report file " + reportFile.getAbsolutePath()) + "\n") + writer.toString();
+                sr.addCase(new CaseResult(sr, "[failed-to-read]", error));
                 add(sr);
             }
         }
@@ -477,7 +476,7 @@ public final class TestResult extends MetaTabulatedResult {
     public int getSkipCount() {
         return skippedTestsCounter;
     }
-    
+
     /**
      * Returns <tt>true</tt> if this doesn't have any any test results.
      *
@@ -634,7 +633,6 @@ public final class TestResult extends MetaTabulatedResult {
         return suites;
     }
 
-
     @Override
     public String getName() {
         return "junit";
@@ -701,57 +699,55 @@ public final class TestResult extends MetaTabulatedResult {
         return result;
     }
 
-     @Override
-     public void setParentAction(AbstractTestResultAction action) {
-        this.parentAction = action;
-        tally(); // I want to be sure to inform our children when we get an action.
-     }
+    @Override
+    public void setParentAction(AbstractTestResultAction action) {
+       this.parentAction = action;
+       tally(); // I want to be sure to inform our children when we get an action.
+    }
 
-     @Override
-     public AbstractTestResultAction getParentAction() {
-         return this.parentAction;
-     }
+    @Override
+    public AbstractTestResultAction getParentAction() {
+        return this.parentAction;
+    }
 
     /**
      * Recount my children.
      */
     @Override
     public void tally() {
-        /// Empty out data structures
+        // / Empty out data structures
         // TODO: free children? memmory leak?
-        suitesByName = new HashMap<String,SuiteResult>();
+        suitesByName = new HashMap<String, SuiteResult>();
         suitesByRunAndNode = new HashMap<>();
         testsByRunAndBlock = new HashMap<>();
         failedTests = new ArrayList<CaseResult>();
         skippedTests = null;
         passedTests = null;
-        byPackages = new TreeMap<String,PackageResult>();
-
+        byPackages = new TreeMap<String, PackageResult>();
         totalTests = 0;
         skippedTestsCounter = 0;
-
         // Ask all of our children to tally themselves
         for (SuiteResult s : suites) {
-            s.setParent(this); // kluge to prevent double-counting the results
-            suitesByName.put(s.getName(),s);
-            if (s.getRunId() != null && s.getNodeId() != null) {
+            s.setParent(this);// kluge to prevent double-counting the results
+
+            suitesByName.put(s.getName(), s);
+            if ((s.getRunId() != null) && (s.getNodeId() != null)) {
                 addSuiteByRunAndNode(s);
             }
-
             List<CaseResult> cases = s.getCases();
-
-            for (CaseResult cr: cases) {
+            for (CaseResult cr : cases) {
                 cr.setParentAction(this.parentAction);
                 cr.setParentSuiteResult(s);
                 cr.tally();
-                String pkg = cr.getPackageName(), spkg = safe(pkg);
+                String pkg = cr.getPackageName();
+                String spkg = safe(pkg);
                 PackageResult pr = byPackage(spkg);
-                if(pr==null)
-                    byPackages.put(spkg,pr=new PackageResult(this,pkg));
+                if (pr == null) {
+                    byPackages.put(spkg, pr = new PackageResult(this, pkg));
+                }
                 pr.add(cr);
             }
         }
-
         for (PackageResult pr : byPackages.values()) {
             pr.tally();
             skippedTestsCounter += pr.getSkipCount();
@@ -770,63 +766,57 @@ public final class TestResult extends MetaTabulatedResult {
      */
     public void freeze(TestResultAction parent) {
         this.parentAction = parent;
-        if(suitesByName==null) {
+        if (suitesByName == null) {
             // freeze for the first time
-            suitesByName = new HashMap<String,SuiteResult>();
+            suitesByName = new HashMap<String, SuiteResult>();
             suitesByRunAndNode = new HashMap<>();
             testsByRunAndBlock = new HashMap<>();
             totalTests = 0;
             failedTests = new ArrayList<CaseResult>();
             skippedTests = null;
             passedTests = null;
-            byPackages = new TreeMap<String,PackageResult>();
+            byPackages = new TreeMap<String, PackageResult>();
         }
-
         for (SuiteResult s : suites) {
-            if(!s.freeze(this))      // this is disturbing: has-a-parent is conflated with has-been-counted
+            // this is disturbing: has-a-parent is conflated with has-been-counted
+            if (!s.freeze(this)) {
                 continue;
-
-            suitesByName.put(s.getName(),s);
-
-            if (s.getRunId() != null && s.getNodeId() != null) {
+            }
+            suitesByName.put(s.getName(), s);
+            if ((s.getRunId() != null) && (s.getNodeId() != null)) {
                 addSuiteByRunAndNode(s);
             }
-
             totalTests += s.getCases().size();
-            for(CaseResult cr : s.getCases()) {
-                if(cr.isSkipped()) {
+            for (CaseResult cr : s.getCases()) {
+                if (cr.isSkipped()) {
                     skippedTestsCounter++;
                     if (skippedTests != null) {
                         skippedTests.add(cr);
                     }
-                } else if(!cr.isPassed()) {
+                } else if (!cr.isPassed()) {
                     failedTests.add(cr);
-                } else {
-                    if(passedTests != null) {
-                        passedTests.add(cr);
-                    }
+                } else if (passedTests != null) {
+                    passedTests.add(cr);
                 }
-
-                String pkg = cr.getPackageName(), spkg = safe(pkg);
+                String pkg = cr.getPackageName();
+                String spkg = safe(pkg);
                 PackageResult pr = byPackage(spkg);
-                if(pr==null)
-                    byPackages.put(spkg,pr=new PackageResult(this,pkg));
+                if (pr == null) {
+                    byPackages.put(spkg, pr = new PackageResult(this, pkg));
+                }
                 pr.add(cr);
             }
         }
-
-        Collections.sort(failedTests,CaseResult.BY_AGE);
-
-        if(passedTests != null) {
-            Collections.sort(passedTests,CaseResult.BY_AGE);
+        Collections.sort(failedTests, CaseResult.BY_AGE);
+        if (passedTests != null) {
+            Collections.sort(passedTests, CaseResult.BY_AGE);
         }
-
-        if(skippedTests != null) {
-            Collections.sort(skippedTests,CaseResult.BY_AGE);
+        if (skippedTests != null) {
+            Collections.sort(skippedTests, CaseResult.BY_AGE);
         }
-
-        for (PackageResult pr : byPackages.values())
+        for (PackageResult pr : byPackages.values()) {
             pr.freeze();
+        }
     }
 
     private void addSuiteByRunAndNode(SuiteResult s) {
@@ -902,10 +892,13 @@ public final class TestResult extends MetaTabulatedResult {
 
     public static class BlocksWithChildren implements Serializable {
         private final String blockId;
-        private final Map<String,BlocksWithChildren> childBlocks = new TreeMap<>();
+
+        private final Map<String, BlocksWithChildren> childBlocks = new TreeMap<>();
+
         private final Set<String> leafNodes = new TreeSet<>();
 
-        public BlocksWithChildren(@Nonnull String blockId) {
+        public BlocksWithChildren(@Nonnull
+        String blockId) {
             this.blockId = blockId;
         }
 
@@ -915,7 +908,7 @@ public final class TestResult extends MetaTabulatedResult {
         }
 
         @Nonnull
-        public Map<String,BlocksWithChildren> getChildBlocks() {
+        public Map<String, BlocksWithChildren> getChildBlocks() {
             return childBlocks;
         }
 
@@ -924,15 +917,18 @@ public final class TestResult extends MetaTabulatedResult {
             return leafNodes;
         }
 
-        public void addChildBlock(@Nonnull BlocksWithChildren child) {
+        public void addChildBlock(@Nonnull
+        BlocksWithChildren child) {
             childBlocks.put(child.getBlockId(), child);
         }
-        
-        public void addLeafNode(@Nonnull String leafNode)  {
+
+        public void addLeafNode(@Nonnull
+        String leafNode) {
             leafNodes.add(leafNode);
         }
 
-        public void merge(@Nonnull BlocksWithChildren toMerge) {
+        public void merge(@Nonnull
+        BlocksWithChildren toMerge) {
             if (toMerge.getBlockId().equals(blockId)) {
                 if (!this.equals(toMerge)) {
                     for (String childId : toMerge.getChildBlocks().keySet()) {
@@ -952,28 +948,23 @@ public final class TestResult extends MetaTabulatedResult {
             if (this == o) {
                 return true;
             }
-            if (o == null || getClass() != o.getClass()) {
+            if ((o == null) || (getClass() != o.getClass())) {
                 return false;
             }
             if (!super.equals(o)) {
                 return false;
             }
-            BlocksWithChildren that = (BlocksWithChildren) o;
-
-            return that.getBlockId().equals(getBlockId()) &&
-                    that.getChildBlocks().equals(getChildBlocks()) &&
-                    that.getLeafNodes().equals(getLeafNodes());
+            BlocksWithChildren that = ((BlocksWithChildren) (o));
+            return (that.getBlockId().equals(getBlockId()) && that.getChildBlocks().equals(getChildBlocks())) && that.getLeafNodes().equals(getLeafNodes());
         }
 
         @Nonnull
         public Set<String> nodesWithTests() {
             Set<String> nodes = new TreeSet<>();
-
             nodes.addAll(leafNodes);
             for (BlocksWithChildren child : childBlocks.values()) {
                 nodes.addAll(child.nodesWithTests());
             }
-
             return nodes;
         }
 
@@ -981,7 +972,9 @@ public final class TestResult extends MetaTabulatedResult {
          * Get an aggregated {@link TestResult} for all test results in this block and any children it may have.
          */
         @Nonnull
-        public TestResult toTestResult(@Nonnull String runId, @Nonnull TestResult fullResult) {
+        public TestResult toTestResult(@Nonnull
+        String runId, @Nonnull
+        TestResult fullResult) {
             TestResult result = new TestResult();
             for (BlocksWithChildren child : childBlocks.values()) {
                 TestResult childResult = child.toTestResult(runId, fullResult);
@@ -994,7 +987,6 @@ public final class TestResult extends MetaTabulatedResult {
                 result.add(s);
             }
             result.setParentAction(fullResult.parentAction);
-
             return result;
         }
 

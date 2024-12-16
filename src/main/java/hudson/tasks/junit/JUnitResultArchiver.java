@@ -43,27 +43,26 @@ import hudson.tasks.Recorder;
 import hudson.tasks.junit.TestResultAction.Data;
 import hudson.util.DescribableList;
 import hudson.util.FormValidation;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.types.FileSet;
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import jenkins.tasks.SimpleBuildStep;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.types.FileSet;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+
 
 /**
  * Generates HTML report from JUnit test result XML files.
  *
  * @author Kohsuke Kawaguchi
  */
-public class JUnitResultArchiver extends Recorder implements SimpleBuildStep, JUnitTask {
-
+public class JUnitResultArchiver extends Recorder implements SimpleBuildStep , JUnitTask {
     /**
      * {@link FileSet} "includes" string, like "foo/bar/*.xml"
      */
@@ -71,6 +70,7 @@ public class JUnitResultArchiver extends Recorder implements SimpleBuildStep, JU
 
     /**
      * If true, retain a suite's complete stdout/stderr even if this is huge and the suite passed.
+     *
      * @since 1.358
      */
     private boolean keepLongStdio;
@@ -78,6 +78,7 @@ public class JUnitResultArchiver extends Recorder implements SimpleBuildStep, JU
     /**
      * {@link TestDataPublisher}s configured for this archiver, to process the recorded data.
      * For compatibility reasons, can be null.
+     *
      * @since 1.320
      */
     private DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> testDataPublishers;
@@ -95,25 +96,17 @@ public class JUnitResultArchiver extends Recorder implements SimpleBuildStep, JU
     }
 
     @Deprecated
-    public JUnitResultArchiver(String testResults,
-            DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> testDataPublishers) {
+    public JUnitResultArchiver(String testResults, DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> testDataPublishers) {
         this(testResults, false, testDataPublishers);
     }
 
     @Deprecated
-    public JUnitResultArchiver(
-            String testResults,
-            boolean keepLongStdio,
-            DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> testDataPublishers) {
+    public JUnitResultArchiver(String testResults, boolean keepLongStdio, DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> testDataPublishers) {
         this(testResults, keepLongStdio, testDataPublishers, 1.0);
     }
 
     @Deprecated
-    public JUnitResultArchiver(
-            String testResults,
-            boolean keepLongStdio,
-            DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> testDataPublishers,
-            double healthScaleFactor) {
+    public JUnitResultArchiver(String testResults, boolean keepLongStdio, DescribableList<TestDataPublisher, Descriptor<TestDataPublisher>> testDataPublishers, double healthScaleFactor) {
         this.testResults = testResults;
         setKeepLongStdio(keepLongStdio);
         setTestDataPublishers(testDataPublishers == null ? Collections.<TestDataPublisher>emptyList() : testDataPublishers);
@@ -121,19 +114,16 @@ public class JUnitResultArchiver extends Recorder implements SimpleBuildStep, JU
         setAllowEmptyResults(false);
     }
 
-    private TestResult parse(String expandedTestResults, Run<?,?> run, @Nonnull FilePath workspace, Launcher launcher, TaskListener listener)
-            throws IOException, InterruptedException
-    {
+    private TestResult parse(String expandedTestResults, Run<?, ?> run, @Nonnull
+    FilePath workspace, Launcher launcher, TaskListener listener) throws IOException, InterruptedException {
         return parse(this, null, null, expandedTestResults, run, workspace, launcher, listener);
-
     }
 
-    private static TestResult parse(@Nonnull JUnitTask task, @CheckForNull String nodeId, List<String> enclosingBlocks,
-                                    String expandedTestResults, Run<?,?> run, @Nonnull FilePath workspace,
-                                    Launcher launcher, TaskListener listener)
-            throws IOException, InterruptedException {
-        return new JUnitParser(task.isKeepLongStdio(), task.isAllowEmptyResults())
-                .parseResult(expandedTestResults, run, nodeId, enclosingBlocks, workspace, launcher, listener);
+    private static TestResult parse(@Nonnull
+    JUnitTask task, @CheckForNull
+    String nodeId, List<String> enclosingBlocks, String expandedTestResults, Run<?, ?> run, @Nonnull
+    FilePath workspace, Launcher launcher, TaskListener listener) throws IOException, InterruptedException {
+        return new JUnitParser(task.isKeepLongStdio(), task.isAllowEmptyResults()).parseResult(expandedTestResults, run, nodeId, enclosingBlocks, workspace, launcher, listener);
     }
 
     @Deprecated
@@ -148,25 +138,20 @@ public class JUnitResultArchiver extends Recorder implements SimpleBuildStep, JU
     }
 
     @Override
-    public void perform(Run build, FilePath workspace, Launcher launcher,
-            TaskListener listener) throws InterruptedException, IOException {
+    public void perform(Run build, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
         TestResultAction action = parseAndAttach(this, null, null, build, workspace, launcher, listener);
-
-        if (action != null && action.getResult().getFailCount() > 0)
+        if ((action != null) && (action.getResult().getFailCount() > 0)) {
             build.setResult(Result.UNSTABLE);
+        }
     }
 
-    public static TestResultAction parseAndAttach(@Nonnull JUnitTask task, @CheckForNull String nodeId,
-                                                  List<String> enclosingBlocks, Run build, FilePath workspace,
-                                                  Launcher launcher, TaskListener listener)
-            throws InterruptedException, IOException {
+    public static TestResultAction parseAndAttach(@Nonnull
+    JUnitTask task, @CheckForNull
+    String nodeId, List<String> enclosingBlocks, Run build, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
         listener.getLogger().println(Messages.JUnitResultArchiver_Recording());
-
         final String testResults = build.getEnvironment(listener).expand(task.getTestResults());
-
         TestResult result = parse(task, nodeId, enclosingBlocks, testResults, build, workspace, launcher, listener);
-
-        synchronized (build) {
+        synchronized(build) {
             // TODO can the build argument be omitted now, or is it used prior to the call to addAction?
             TestResultAction action = build.getAction(TestResultAction.class);
             boolean appending;
@@ -178,7 +163,8 @@ public class JUnitResultArchiver extends Recorder implements SimpleBuildStep, JU
                 result.freeze(action);
                 action.mergeResult(result, listener);
             }
-            action.setHealthScaleFactor(task.getHealthScaleFactor()); // overwrites previous value if appending
+            // overwrites previous value if appending
+            action.setHealthScaleFactor(task.getHealthScaleFactor());
             if (result.isEmpty()) {
                 if (build.getResult() == Result.FAILURE) {
                     // most likely a build failed before it gets to the test phase.
@@ -193,7 +179,6 @@ public class JUnitResultArchiver extends Recorder implements SimpleBuildStep, JU
                 // most likely a configuration error in the job - e.g. false pattern to match the JUnit result files
                 throw new AbortException(Messages.JUnitResultArchiver_ResultIsEmpty());
             }
-
             // TODO: Move into JUnitParser [BUG 3123310]
             if (task.getTestDataPublishers() != null) {
                 for (TestDataPublisher tdp : task.getTestDataPublishers()) {
@@ -203,13 +188,11 @@ public class JUnitResultArchiver extends Recorder implements SimpleBuildStep, JU
                     }
                 }
             }
-
             if (appending) {
                 build.save();
             } else {
                 build.addAction(action);
             }
-
             return action;
         }
     }
@@ -290,7 +273,6 @@ public class JUnitResultArchiver extends Recorder implements SimpleBuildStep, JU
     @DataBoundSetter public final void setAllowEmptyResults(boolean allowEmptyResults) {
         this.allowEmptyResults = allowEmptyResults;
     }
-
 
     private static final long serialVersionUID = 1L;
 
