@@ -3,10 +3,10 @@ package uk.co.flax.luwak.termextractor;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 import uk.co.flax.luwak.termextractor.querytree.TreeWeightor;
 import uk.co.flax.luwak.termextractor.treebuilder.RegexpNGramTermQueryTreeBuilder;
 
-import static org.assertj.core.api.Assertions.assertThat;
 
 /*
  * Copyright (c) 2013 Lemur Consulting Ltd.
@@ -24,7 +24,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * limitations under the License.
  */
 public class TestExtractors {
-
     private static final QueryAnalyzer treeBuilder = new QueryAnalyzer();
 
     private static QueryAnalyzer getBuilder(QueryTreeBuilder<?>... queryTreeBuilder) {
@@ -51,20 +50,12 @@ public class TestExtractors {
     @Test
     @SuppressWarnings("deprecation")
     public void testRangeQueriesReturnAnyToken() {
-
-        LegacyNumericRangeQuery<Long> nrq = LegacyNumericRangeQuery.newLongRange("field", 0l, 10l, true, true);
-
-        assertThat(treeBuilder.collectTerms(nrq))
-                .hasSize(1)
-                .extracting("type")
-                .containsExactly(QueryTerm.Type.ANY);
-
+        LegacyNumericRangeQuery<Long> nrq = LegacyNumericRangeQuery.newLongRange("field", 0L, 10L, true, true);
+        assertThat(treeBuilder.collectTerms(nrq)).hasSize(1).extracting("type").containsExactly(QueryTerm.Type.ANY);
         BooleanQuery.Builder bq = new BooleanQuery.Builder();
         bq.add(nrq, BooleanClause.Occur.MUST);
         bq.add(new TermQuery(new Term("field", "term")), BooleanClause.Occur.MUST);
-
-        assertThat(treeBuilder.collectTerms(bq.build()))
-                .containsExactly(new QueryTerm("field", "term", QueryTerm.Type.EXACT));
+        assertThat(treeBuilder.collectTerms(bq.build())).containsExactly(new QueryTerm("field", "term", QueryTerm.Type.EXACT));
     }
 
     @Test
@@ -94,13 +85,10 @@ public class TestExtractors {
 
     @Test
     public void testBoostQueryExtractor() {
-
         BooleanQuery.Builder bq = new BooleanQuery.Builder();
         bq.add(new TermQuery(new Term("f", "q1")), BooleanClause.Occur.MUST);
         bq.add(new TermQuery(new Term("f", "q2")), BooleanClause.Occur.SHOULD);
-
-        Query boostQuery = new BoostQuery(bq.build(), 0.5f);
-        assertThat(treeBuilder.collectTerms(boostQuery))
-                .containsExactly(new QueryTerm("f", "q1", QueryTerm.Type.EXACT));
+        Query boostQuery = new BoostQuery(bq.build(), 0.5F);
+        assertThat(treeBuilder.collectTerms(boostQuery)).containsExactly(new QueryTerm("f", "q1", QueryTerm.Type.EXACT));
     }
 }

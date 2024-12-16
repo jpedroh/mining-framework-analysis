@@ -3,13 +3,13 @@ package uk.co.flax.luwak.termextractor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.apache.lucene.search.*;
 import uk.co.flax.luwak.presearcher.PresearcherComponent;
 import uk.co.flax.luwak.termextractor.querytree.QueryTree;
 import uk.co.flax.luwak.termextractor.querytree.TreeAdvancer;
 import uk.co.flax.luwak.termextractor.querytree.TreeWeightor;
 import uk.co.flax.luwak.termextractor.treebuilder.TreeBuilders;
+
 
 /**
  * Copyright (c) 2014 Lemur Consulting Ltd.
@@ -26,7 +26,6 @@ import uk.co.flax.luwak.termextractor.treebuilder.TreeBuilders;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
  * Class to analyze and extract terms from a lucene query, to be used by
  * a {@link uk.co.flax.luwak.Presearcher} in indexing.
@@ -35,7 +34,6 @@ import uk.co.flax.luwak.termextractor.treebuilder.TreeBuilders;
  * to choose which branches of a conjunction query to collect terms from.
  */
 public class QueryAnalyzer {
-
     private final List<QueryTreeBuilder<?>> queryTreeBuilders;
 
     public final TreeWeightor weightor;
@@ -56,8 +54,10 @@ public class QueryAnalyzer {
     /**
      * Create a QueryAnalyzer using provided QueryTreeBuilders, in addition to the default set
      *
-     * @param weightor a TreeWeightor to use for conjunctions
-     * @param queryTreeBuilders QueryTreeBuilders used to analyze queries
+     * @param weightor
+     * 		a TreeWeightor to use for conjunctions
+     * @param queryTreeBuilders
+     * 		QueryTreeBuilders used to analyze queries
      */
     public QueryAnalyzer(TreeWeightor weightor, QueryTreeBuilder<?>... queryTreeBuilders) {
         this(weightor, Arrays.asList(queryTreeBuilders));
@@ -67,7 +67,8 @@ public class QueryAnalyzer {
      * Create a QueryAnalyzer using the default TreeWeightor, and the provided QueryTreeBuilders,
      * in addition to the default set
      *
-     * @param queryTreeBuilders QueryTreeBuilders used to analyze queries
+     * @param queryTreeBuilders
+     * 		QueryTreeBuilders used to analyze queries
      */
     public QueryAnalyzer(QueryTreeBuilder<?>... queryTreeBuilders) {
         this(TreeWeightor.DEFAULT_WEIGHTOR, queryTreeBuilders);
@@ -112,8 +113,9 @@ public class QueryAnalyzer {
     @SuppressWarnings("unchecked")
     public QueryTree buildTree(Query luceneQuery) {
         QueryTreeBuilder builder = getTreeBuilderForQuery(luceneQuery.getClass());
-        if (builder == null)
+        if (builder == null) {
             throw new UnsupportedOperationException("Can't build query tree from query of type " + luceneQuery.getClass());
+        }
         return builder.buildTree(this, luceneQuery);
     }
 
@@ -149,5 +151,4 @@ public class QueryAnalyzer {
     public boolean advancePhase(QueryTree queryTree, TreeAdvancer advancer) {
         return queryTree.advancePhase(weightor, advancer);
     }
-
 }
