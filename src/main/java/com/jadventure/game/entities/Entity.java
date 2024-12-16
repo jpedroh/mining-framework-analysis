@@ -1,15 +1,15 @@
 package com.jadventure.game.entities;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.jadventure.game.GameBeans;
 import com.jadventure.game.QueueProvider;
 import com.jadventure.game.items.Item;
 import com.jadventure.game.items.ItemStack;
 import com.jadventure.game.items.Storage;
 import com.jadventure.game.repository.ItemRepository;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * superclass for all entities (includes player, monsters...)
@@ -274,6 +274,22 @@ public abstract class Entity {
             armour -= item.getProperty("armour");
             int diffArmour = armour - oldArmour;
             result.put("armour", String.valueOf(diffArmour));
+<<<<<<< LEFT
+=======
+        }
+        if (item.containsProperty("health")) {
+            int oldHealth = health;
+            health -= item.getProperty("health");
+            int diffHealth = health - oldHealth;
+            result.put("health", String.valueOf(diffHealth));
+        }
+        if (item.containsProperty("healthMax")) {
+            int oldHealthMax = armour;
+            healthMax -= item.getProperty("healthMax");
+            health = (health > healthMax) ? healthMax : health;
+            int diffHealthMax = healthMax - oldHealthMax;
+            result.put("healthMax", String.valueOf(diffHealthMax));
+>>>>>>> RIGHT
         }
         return result;
     }
