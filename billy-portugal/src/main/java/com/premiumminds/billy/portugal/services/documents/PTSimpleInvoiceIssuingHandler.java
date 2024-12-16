@@ -18,31 +18,28 @@
  */
 package com.premiumminds.billy.portugal.services.documents;
 
-import javax.inject.Inject;
-
 import com.premiumminds.billy.core.persistence.dao.DAOInvoiceSeries;
 import com.premiumminds.billy.core.services.exceptions.DocumentIssuingException;
 import com.premiumminds.billy.portugal.persistence.dao.DAOPTSimpleInvoice;
 import com.premiumminds.billy.portugal.persistence.entities.PTSimpleInvoiceEntity;
 import com.premiumminds.billy.portugal.services.documents.util.PTIssuingParams;
 import com.premiumminds.billy.portugal.services.entities.PTGenericInvoice.TYPE;
+import javax.inject.Inject;
 
-public class PTSimpleInvoiceIssuingHandler
-        extends PTGenericInvoiceIssuingHandler<PTSimpleInvoiceEntity, PTIssuingParams> {
 
-    public final static TYPE INVOICE_TYPE = TYPE.FS;
-    private final DAOPTSimpleInvoice daoSimpleInvoice;
+public class PTSimpleInvoiceIssuingHandler extends PTGenericInvoiceIssuingHandler<PTSimpleInvoiceEntity, PTIssuingParams> {
+	public final static TYPE			INVOICE_TYPE	= TYPE.FS;
 
-    @Inject
-    public PTSimpleInvoiceIssuingHandler(DAOInvoiceSeries daoInvoiceSeries, DAOPTSimpleInvoice daoSimpleInvoice) {
-        super(daoInvoiceSeries);
-        this.daoSimpleInvoice = daoSimpleInvoice;
-    }
+	private final DAOPTSimpleInvoice	daoSimpleInvoice;
 
-    @Override
-    public PTSimpleInvoiceEntity issue(PTSimpleInvoiceEntity document, PTIssuingParams parameters)
-            throws DocumentIssuingException {
-        return this.issue(document, parameters, this.daoSimpleInvoice, PTSimpleInvoiceIssuingHandler.INVOICE_TYPE);
-    }
+	@Inject
+	public PTSimpleInvoiceIssuingHandler(DAOInvoiceSeries daoInvoiceSeries, DAOPTSimpleInvoice daoSimpleInvoice) {
+		super(daoInvoiceSeries);
+		this.daoSimpleInvoice = daoSimpleInvoice;
+	}
 
+	@Override
+	public PTSimpleInvoiceEntity issue(PTSimpleInvoiceEntity document, PTIssuingParams parameters) throws DocumentIssuingException {
+		return issue(document, parameters, this.daoSimpleInvoice, PTSimpleInvoiceIssuingHandler.INVOICE_TYPE);
+	}
 }

@@ -18,12 +18,6 @@
  */
 package com.premiumminds.billy.spain.persistence.dao.jpa;
 
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.persistence.EntityManager;
-
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.premiumminds.billy.spain.persistence.dao.DAOESCreditNoteEntry;
 import com.premiumminds.billy.spain.persistence.entities.ESCreditNoteEntity;
@@ -33,45 +27,48 @@ import com.premiumminds.billy.spain.persistence.entities.jpa.JPAESCreditNoteEntr
 import com.premiumminds.billy.spain.persistence.entities.jpa.QJPAESCreditNoteEntity;
 import com.premiumminds.billy.spain.services.entities.ESCreditNoteEntry;
 import com.premiumminds.billy.spain.services.entities.ESInvoice;
+import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
 
-public class DAOESCreditNoteEntryImpl
-        extends AbstractDAOESGenericInvoiceEntryImpl<ESCreditNoteEntryEntity, JPAESCreditNoteEntryEntity>
-        implements DAOESCreditNoteEntry {
 
-    @Inject
-    public DAOESCreditNoteEntryImpl(Provider<EntityManager> emProvider) {
-        super(emProvider);
-    }
+public class DAOESCreditNoteEntryImpl extends AbstractDAOESGenericInvoiceEntryImpl<ESCreditNoteEntryEntity, JPAESCreditNoteEntryEntity> implements DAOESCreditNoteEntry {
+	@Inject
+	public DAOESCreditNoteEntryImpl(Provider<EntityManager> emProvider) {
+		super(emProvider);
+	}
 
-    @Override
-    public ESCreditNoteEntryEntity getEntityInstance() {
-        return new JPAESCreditNoteEntryEntity();
-    }
+	@Override
+	public ESCreditNoteEntryEntity getEntityInstance() {
+		return new JPAESCreditNoteEntryEntity();
+	}
 
-    @Override
-    protected Class<JPAESCreditNoteEntryEntity> getEntityClass() {
-        return JPAESCreditNoteEntryEntity.class;
-    }
+	@Override
+	protected Class<JPAESCreditNoteEntryEntity> getEntityClass() {
+		return JPAESCreditNoteEntryEntity.class;
+	}
 
-    @Override
-    public ESCreditNoteEntity checkCreditNote(ESInvoice invoice) {
+	@Override
+	public ESCreditNoteEntity checkCreditNote(ESInvoice invoice) {
 
-        QJPAESCreditNoteEntity creditNoteEntity = QJPAESCreditNoteEntity.jPAESCreditNoteEntity;
+		QJPAESCreditNoteEntity creditNoteEntity = QJPAESCreditNoteEntity.jPAESCreditNoteEntity;
 
-        JPAQuery query = new JPAQuery(this.getEntityManager());
+		JPAQuery query = new JPAQuery(this.getEntityManager());
 
-        query.from(creditNoteEntity);
+		query.from(creditNoteEntity);
 
-        List<JPAESCreditNoteEntity> allCns = query.list(creditNoteEntity);
+		List<JPAESCreditNoteEntity> allCns = query.list(creditNoteEntity);
 
-        // TODO make a query to do this
-        for (JPAESCreditNoteEntity cne : allCns) {
-            for (ESCreditNoteEntry cnee : cne.getEntries()) {
-                if (cnee.getReference().getNumber().compareTo(invoice.getNumber()) == 0) {
-                    return cne;
-                }
-            }
-        }
-        return null;
-    }
+		// TODO make a query to do this
+		for (JPAESCreditNoteEntity cne : allCns) {
+			for (ESCreditNoteEntry cnee : cne.getEntries()) {
+				if (cnee.getReference().getNumber()
+						.compareTo(invoice.getNumber()) == 0) {
+					return cne;
+				}
+			}
+		}
+		return null;
+	}
 }

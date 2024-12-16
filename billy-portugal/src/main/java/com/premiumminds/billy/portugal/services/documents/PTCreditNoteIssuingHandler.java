@@ -18,30 +18,28 @@
  */
 package com.premiumminds.billy.portugal.services.documents;
 
-import javax.inject.Inject;
-
 import com.premiumminds.billy.core.persistence.dao.DAOInvoiceSeries;
 import com.premiumminds.billy.core.services.exceptions.DocumentIssuingException;
 import com.premiumminds.billy.portugal.persistence.dao.DAOPTCreditNote;
 import com.premiumminds.billy.portugal.persistence.entities.PTCreditNoteEntity;
 import com.premiumminds.billy.portugal.services.documents.util.PTIssuingParams;
 import com.premiumminds.billy.portugal.services.entities.PTGenericInvoice.TYPE;
+import javax.inject.Inject;
+
 
 public class PTCreditNoteIssuingHandler extends PTGenericInvoiceIssuingHandler<PTCreditNoteEntity, PTIssuingParams> {
+	public final static TYPE		INVOICE_TYPE	= TYPE.NC;
 
-    public final static TYPE INVOICE_TYPE = TYPE.NC;
-    private final DAOPTCreditNote daoCreditNote;
+	private final DAOPTCreditNote	daoCreditNote;
 
-    @Inject
-    public PTCreditNoteIssuingHandler(DAOInvoiceSeries invoiceSeries, DAOPTCreditNote daoCreditNote) {
-        super(invoiceSeries);
-        this.daoCreditNote = daoCreditNote;
-    }
+	@Inject
+	public PTCreditNoteIssuingHandler(DAOInvoiceSeries invoiceSeries, DAOPTCreditNote daoCreditNote) {
+		super(invoiceSeries);
+		this.daoCreditNote = daoCreditNote;
+	}
 
-    @Override
-    public PTCreditNoteEntity issue(PTCreditNoteEntity document, PTIssuingParams parameters)
-            throws DocumentIssuingException {
-
-        return this.issue(document, parameters, this.daoCreditNote, PTCreditNoteIssuingHandler.INVOICE_TYPE);
-    }
+	@Override
+	public PTCreditNoteEntity issue(PTCreditNoteEntity document, PTIssuingParams parameters) throws DocumentIssuingException {
+		return issue(document, parameters, this.daoCreditNote, PTCreditNoteIssuingHandler.INVOICE_TYPE);
+	}
 }

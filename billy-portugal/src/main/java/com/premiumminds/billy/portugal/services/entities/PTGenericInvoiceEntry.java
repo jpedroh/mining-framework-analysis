@@ -18,8 +18,6 @@
  */
 package com.premiumminds.billy.portugal.services.entities;
 
-import javax.inject.Inject;
-
 import com.premiumminds.billy.core.services.entities.documents.GenericInvoiceEntry;
 import com.premiumminds.billy.portugal.persistence.dao.DAOPTGenericInvoice;
 import com.premiumminds.billy.portugal.persistence.dao.DAOPTGenericInvoiceEntry;
@@ -27,16 +25,14 @@ import com.premiumminds.billy.portugal.persistence.dao.DAOPTProduct;
 import com.premiumminds.billy.portugal.persistence.dao.DAOPTRegionContext;
 import com.premiumminds.billy.portugal.persistence.dao.DAOPTTax;
 import com.premiumminds.billy.portugal.services.builders.impl.PTGenericInvoiceEntryBuilderImpl;
+import javax.inject.Inject;
+
 
 public interface PTGenericInvoiceEntry extends GenericInvoiceEntry {
-
-    public static class Builder extends
-            PTGenericInvoiceEntryBuilderImpl<Builder, PTGenericInvoiceEntry, DAOPTGenericInvoiceEntry, DAOPTGenericInvoice> {
-
-        @Inject
-        public Builder(DAOPTGenericInvoiceEntry daoPTGenericInvoiceEntry, DAOPTGenericInvoice daoPTGenericInvoice,
-                DAOPTTax daoPTTax, DAOPTProduct daoPTProduct, DAOPTRegionContext daoPTRegionContext) {
-            super(daoPTGenericInvoiceEntry, daoPTGenericInvoice, daoPTTax, daoPTProduct, daoPTRegionContext);
-        }
-    }
+	public static class Builder extends PTGenericInvoiceEntryBuilderImpl<Builder, PTGenericInvoiceEntry, DAOPTGenericInvoiceEntry, DAOPTGenericInvoice> {
+		@Inject
+		public Builder(DAOPTGenericInvoiceEntry daoPTGenericInvoiceEntry, DAOPTGenericInvoice daoPTGenericInvoice, DAOPTTax daoPTTax, DAOPTProduct daoPTProduct, DAOPTRegionContext daoPTRegionContext) {
+			super(daoPTGenericInvoiceEntry, daoPTGenericInvoice, daoPTTax, daoPTProduct, daoPTRegionContext);
+		}
+	}
 }

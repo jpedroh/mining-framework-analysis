@@ -18,29 +18,25 @@
  */
 package com.premiumminds.billy.spain.services.documents;
 
-import javax.inject.Inject;
-
 import com.premiumminds.billy.core.persistence.dao.DAOInvoiceSeries;
 import com.premiumminds.billy.core.services.exceptions.DocumentIssuingException;
 import com.premiumminds.billy.spain.persistence.dao.DAOESCreditReceipt;
 import com.premiumminds.billy.spain.persistence.entities.ESCreditReceiptEntity;
 import com.premiumminds.billy.spain.services.documents.util.ESIssuingParams;
+import javax.inject.Inject;
 
-public class ESCreditReceiptIssuingHandler
-        extends ESGenericInvoiceIssuingHandler<ESCreditReceiptEntity, ESIssuingParams> {
 
-    private final DAOESCreditReceipt daoCreditReceipt;
+public class ESCreditReceiptIssuingHandler extends ESGenericInvoiceIssuingHandler<ESCreditReceiptEntity, ESIssuingParams> {
+	private final DAOESCreditReceipt daoCreditReceipt;
 
-    @Inject
-    public ESCreditReceiptIssuingHandler(DAOInvoiceSeries invoiceSeries, DAOESCreditReceipt daoCreditReceipt) {
-        super(invoiceSeries);
-        this.daoCreditReceipt = daoCreditReceipt;
-    }
+	@Inject
+	public ESCreditReceiptIssuingHandler(DAOInvoiceSeries invoiceSeries, DAOESCreditReceipt daoCreditReceipt) {
+		super(invoiceSeries);
+		this.daoCreditReceipt = daoCreditReceipt;
+	}
 
-    @Override
-    public ESCreditReceiptEntity issue(ESCreditReceiptEntity document, ESIssuingParams parameters)
-            throws DocumentIssuingException {
-
-        return this.issue(document, parameters, this.daoCreditReceipt);
-    }
+	@Override
+	public ESCreditReceiptEntity issue(ESCreditReceiptEntity document, ESIssuingParams parameters) throws DocumentIssuingException {
+		return issue(document, parameters, this.daoCreditReceipt);
+	}
 }

@@ -18,14 +18,6 @@
  */
 package com.premiumminds.billy.core.services.entities.documents;
 
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Currency;
-import java.util.Date;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import com.premiumminds.billy.core.persistence.dao.DAOBusiness;
 import com.premiumminds.billy.core.persistence.dao.DAOCustomer;
 import com.premiumminds.billy.core.persistence.dao.DAOGenericInvoice;
@@ -38,82 +30,86 @@ import com.premiumminds.billy.core.services.entities.Entity;
 import com.premiumminds.billy.core.services.entities.Payment;
 import com.premiumminds.billy.core.services.entities.ShippingPoint;
 import com.premiumminds.billy.core.services.entities.Supplier;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Currency;
+import java.util.Date;
+import java.util.List;
+import javax.inject.Inject;
+
 
 public interface GenericInvoice extends Entity {
+	public static enum CreditOrDebit {
 
-    public static enum CreditOrDebit {
-        CREDIT, DEBIT
-    }
+		CREDIT,
+		DEBIT;}
 
-    public static class Builder extends GenericInvoiceBuilderImpl<Builder, GenericInvoiceEntry, GenericInvoiceEntity> {
+	public static class Builder extends GenericInvoiceBuilderImpl<Builder, GenericInvoiceEntry, GenericInvoiceEntity> {
+		@Inject
+		public Builder(DAOGenericInvoice daoGenericInvoice, DAOBusiness daoBusiness, DAOCustomer daoCustomer, DAOSupplier daoSupplier) {
+			super(daoGenericInvoice, daoBusiness, daoCustomer, daoSupplier);
+		}
+	}
 
-        @Inject
-        public Builder(DAOGenericInvoice daoGenericInvoice, DAOBusiness daoBusiness, DAOCustomer daoCustomer,
-                DAOSupplier daoSupplier) {
-            super(daoGenericInvoice, daoBusiness, daoCustomer, daoSupplier);
-        }
-    }
+	public String getNumber();
 
-    public String getNumber();
+	public Integer getSeriesNumber();
 
-    public Integer getSeriesNumber();
+	public String getSeries();
 
-    public String getSeries();
+	public <T extends Business> T getBusiness();
 
-    public <T extends Business> T getBusiness();
+	public <T extends Customer> T getCustomer();
 
-    public <T extends Customer> T getCustomer();
+	public <T extends Supplier> T getSupplier();
 
-    public <T extends Supplier> T getSupplier();
+	public String getOfficeNumber();
 
-    public String getOfficeNumber();
+	public Date getDate();
 
-    public Date getDate();
+	public BigDecimal getAmountWithTax();
 
-    public BigDecimal getAmountWithTax();
+	public BigDecimal getAmountWithoutTax();
 
-    public BigDecimal getAmountWithoutTax();
+	public BigDecimal getTaxAmount();
 
-    public BigDecimal getTaxAmount();
+	public BigDecimal getDiscountsAmount();
 
-    public BigDecimal getDiscountsAmount();
+	public <T extends ShippingPoint> T getShippingOrigin();
 
-    public <T extends ShippingPoint> T getShippingOrigin();
+	public <T extends ShippingPoint> T getShippingDestination();
 
-    public <T extends ShippingPoint> T getShippingDestination();
+	public String getPaymentTerms();
 
-    public String getPaymentTerms();
+	public Boolean isSelfBilled();
 
-    public Boolean isSelfBilled();
+	public Boolean isCashVATEndorser();
 
-    public Boolean isCashVATEndorser();
+	public Boolean isThirdPartyBilled();
 
-    public Boolean isThirdPartyBilled();
+	public String getSourceId();
 
-    public String getSourceId();
+	public Date getGeneralLedgerDate();
 
-    public Date getGeneralLedgerDate();
+	public String getBatchId();
 
-    public String getBatchId();
+	public String getTransactionId();
 
-    public String getTransactionId();
+	public Collection<String> getReceiptNumbers();
 
-    public Collection<String> getReceiptNumbers();
+	public <T extends GenericInvoiceEntry> Collection<T> getEntries();
 
-    public <T extends GenericInvoiceEntry> Collection<T> getEntries();
+	public Currency getCurrency();
 
-    public Currency getCurrency();
+	public String getSettlementDescription();
 
-    public String getSettlementDescription();
+	public BigDecimal getSettlementDiscount();
 
-    public BigDecimal getSettlementDiscount();
+	public Date getSettlementDate();
 
-    public Date getSettlementDate();
+	public <T extends Payment> List<T> getPayments();
 
-    public <T extends Payment> List<T> getPayments();
+	public CreditOrDebit getCreditOrDebit();
 
-    public CreditOrDebit getCreditOrDebit();
-
-    public Integer getScale();
-
+	public Integer getScale();
 }

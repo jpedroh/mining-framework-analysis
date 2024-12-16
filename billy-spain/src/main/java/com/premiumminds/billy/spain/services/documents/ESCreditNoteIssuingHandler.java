@@ -18,29 +18,25 @@
  */
 package com.premiumminds.billy.spain.services.documents;
 
-import javax.inject.Inject;
-
 import com.premiumminds.billy.core.persistence.dao.DAOInvoiceSeries;
 import com.premiumminds.billy.core.services.exceptions.DocumentIssuingException;
 import com.premiumminds.billy.spain.persistence.dao.DAOESCreditNote;
 import com.premiumminds.billy.spain.persistence.entities.ESCreditNoteEntity;
 import com.premiumminds.billy.spain.services.documents.util.ESIssuingParams;
+import javax.inject.Inject;
+
 
 public class ESCreditNoteIssuingHandler extends ESGenericInvoiceIssuingHandler<ESCreditNoteEntity, ESIssuingParams> {
+	private final DAOESCreditNote	daoCreditNote;
 
-    private final DAOESCreditNote daoCreditNote;
+	@Inject
+	public ESCreditNoteIssuingHandler(DAOInvoiceSeries invoiceSeries, DAOESCreditNote daoCreditNote) {
+		super(invoiceSeries);
+		this.daoCreditNote = daoCreditNote;
+	}
 
-    @Inject
-    public ESCreditNoteIssuingHandler(DAOInvoiceSeries invoiceSeries, DAOESCreditNote daoCreditNote) {
-
-        super(invoiceSeries);
-        this.daoCreditNote = daoCreditNote;
-    }
-
-    @Override
-    public ESCreditNoteEntity issue(ESCreditNoteEntity document, ESIssuingParams parameters)
-            throws DocumentIssuingException {
-
-        return this.issue(document, parameters, this.daoCreditNote);
-    }
+	@Override
+	public ESCreditNoteEntity issue(ESCreditNoteEntity document, ESIssuingParams parameters) throws DocumentIssuingException {
+		return issue(document, parameters, this.daoCreditNote);
+	}
 }

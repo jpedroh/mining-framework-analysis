@@ -18,12 +18,6 @@
  */
 package com.premiumminds.billy.portugal.services.builders.impl;
 
-import java.util.Date;
-
-import javax.validation.ValidationException;
-
-import org.apache.commons.lang3.time.DateUtils;
-
 import com.premiumminds.billy.core.exceptions.BillyValidationException;
 import com.premiumminds.billy.core.persistence.entities.GenericInvoiceEntryEntity;
 import com.premiumminds.billy.core.services.builders.impl.GenericInvoiceEntryBuilderImpl;
@@ -37,43 +31,44 @@ import com.premiumminds.billy.portugal.persistence.dao.DAOPTTax;
 import com.premiumminds.billy.portugal.persistence.entities.PTInvoiceEntryEntity;
 import com.premiumminds.billy.portugal.services.builders.PTManualInvoiceEntryBuilder;
 import com.premiumminds.billy.portugal.services.entities.PTGenericInvoiceEntry;
+import java.util.Date;
+import javax.validation.ValidationException;
+import org.apache.commons.lang3.time.DateUtils;
 
-public class PTManualInvoiceEntryBuilderImpl<TBuilder extends PTManualInvoiceEntryBuilderImpl<TBuilder, TEntry>, TEntry extends PTGenericInvoiceEntry>
-        extends PTManualEntryBuilderImpl<TBuilder, TEntry, DAOPTInvoiceEntry, DAOPTInvoice>
-        implements PTManualInvoiceEntryBuilder<TBuilder, TEntry> {
 
-    public PTManualInvoiceEntryBuilderImpl(DAOPTInvoiceEntry daoPTEntry, DAOPTInvoice daoPTInvoice, DAOPTTax daoPTTax,
-            DAOPTProduct daoPTProduct, DAOPTRegionContext daoPTRegionContext) {
-        super(daoPTEntry, daoPTInvoice, daoPTTax, daoPTProduct, daoPTRegionContext);
-    }
+public class PTManualInvoiceEntryBuilderImpl<TBuilder extends PTManualInvoiceEntryBuilderImpl<TBuilder, TEntry>, TEntry extends PTGenericInvoiceEntry> extends PTManualEntryBuilderImpl<TBuilder, TEntry, DAOPTInvoiceEntry, DAOPTInvoice> implements PTManualInvoiceEntryBuilder<TBuilder, TEntry> {
+	public PTManualInvoiceEntryBuilderImpl(DAOPTInvoiceEntry daoPTEntry, DAOPTInvoice daoPTInvoice, DAOPTTax daoPTTax, DAOPTProduct daoPTProduct, DAOPTRegionContext daoPTRegionContext) {
+		super(daoPTEntry, daoPTInvoice, daoPTTax, daoPTProduct, daoPTRegionContext);
+	}
 
-    @Override
-    protected PTInvoiceEntryEntity getTypeInstance() {
-        return (PTInvoiceEntryEntity) super.getTypeInstance();
-    }
+	@Override
+	protected PTInvoiceEntryEntity getTypeInstance() {
+		return ((PTInvoiceEntryEntity) (super.getTypeInstance()));
+	}
 
-    @Override
-    protected void validateInstance() throws BillyValidationException {
-        this.getTypeInstance().setCreditOrDebit(CreditOrDebit.CREDIT);
-        this.validateValues();
-        super.validateInstance();
-    }
+	@Override
+	protected void validateInstance() throws BillyValidationException {
+		this.getTypeInstance().setCreditOrDebit(CreditOrDebit.CREDIT);
+		this.validateValues();
+		super.validateInstance();
+	}
 
-    @Override
-    protected void validateValues() throws BillyValidationException {
-        GenericInvoiceEntryEntity e = this.getTypeInstance();
-        for (Tax t : e.getProduct().getTaxes()) {
-            if (this.daoContext.isSubContext(t.getContext(), this.context)) {
-                Date taxDate = e.getTaxPointDate() == null ? new Date() : e.getTaxPointDate();
-                if (DateUtils.isSameDay(t.getValidTo(), taxDate) || t.getValidTo().after(taxDate)) {
-                    e.getTaxes().add(t);
-                }
-            }
-        }
-        if (e.getTaxes().isEmpty()) {
-            throw new ValidationException(
-                    GenericInvoiceEntryBuilderImpl.LOCALIZER.getString("exception.invalid_taxes"));
-        }
-    }
-
+	@Override
+	protected void validateValues() throws BillyValidationException {
+		GenericInvoiceEntryEntity e = this.getTypeInstance();
+		for (Tax t : e.getProduct().getTaxes()) {
+			if (this.daoContext.isSubContext(t.getContext(), this.context)) {
+				Date taxDate = e.getTaxPointDate() == null ? new Date() : e.getTaxPointDate();
+				if (DateUtils.isSameDay(t.getValidTo(), taxDate)
+						|| t.getValidTo().after(taxDate)) {
+					e.getTaxes().add(t);
+				}
+			}
+		}
+		if (e.getTaxes().isEmpty()) {
+			throw new ValidationException(
+					GenericInvoiceEntryBuilderImpl.LOCALIZER
+							.getString("exception.invalid_taxes"));
+		}
+	}
 }

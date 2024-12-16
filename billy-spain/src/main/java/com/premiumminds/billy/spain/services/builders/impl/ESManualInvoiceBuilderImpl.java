@@ -30,25 +30,21 @@ import com.premiumminds.billy.spain.services.builders.ESManualInvoiceBuilder;
 import com.premiumminds.billy.spain.services.entities.ESGenericInvoice;
 import com.premiumminds.billy.spain.services.entities.ESGenericInvoiceEntry;
 
-public class ESManualInvoiceBuilderImpl<TBuilder extends ESManualInvoiceBuilderImpl<TBuilder, TEntry, TDocument>, TEntry extends ESGenericInvoiceEntry, TDocument extends ESGenericInvoice>
-        extends ESManualBuilderImpl<TBuilder, TEntry, TDocument>
-        implements ESManualInvoiceBuilder<TBuilder, TEntry, TDocument> {
 
-    public <TDAO extends AbstractDAOESGenericInvoice<? extends TDocument>> ESManualInvoiceBuilderImpl(
-            TDAO daoESGenericInvoice, DAOESBusiness daoESBusiness, DAOESCustomer daoESCustomer,
-            DAOESSupplier daoESSupplier) {
-        super(daoESGenericInvoice, daoESBusiness, daoESCustomer, daoESSupplier);
-    }
+public class ESManualInvoiceBuilderImpl<TBuilder extends ESManualInvoiceBuilderImpl<TBuilder, TEntry, TDocument>, TEntry extends ESGenericInvoiceEntry, TDocument extends ESGenericInvoice> extends ESManualBuilderImpl<TBuilder, TEntry, TDocument> implements ESManualInvoiceBuilder<TBuilder, TEntry, TDocument> {
+	public <TDAO extends AbstractDAOESGenericInvoice<? extends TDocument>> ESManualInvoiceBuilderImpl(TDAO daoESGenericInvoice, DAOESBusiness daoESBusiness, DAOESCustomer daoESCustomer, DAOESSupplier daoESSupplier) {
+		super(daoESGenericInvoice, daoESBusiness, daoESCustomer, daoESSupplier);
+	}
 
-    @Override
-    protected ESInvoiceEntity getTypeInstance() {
-        return (ESInvoiceEntity) super.getTypeInstance();
-    }
+	@Override
+	protected ESInvoiceEntity getTypeInstance() {
+		return (ESInvoiceEntity) super.getTypeInstance();
+	}
 
-    @Override
-    protected void validateInstance() throws BillyValidationException {
-        ESGenericInvoiceEntity i = this.getTypeInstance();
-        i.setCreditOrDebit(CreditOrDebit.CREDIT);
-        super.validateInstance();
-    }
+	@Override
+	protected void validateInstance() throws BillyValidationException {
+		ESGenericInvoiceEntity i = this.getTypeInstance();
+		i.setCreditOrDebit(CreditOrDebit.CREDIT);
+		super.validateInstance();
+	}
 }

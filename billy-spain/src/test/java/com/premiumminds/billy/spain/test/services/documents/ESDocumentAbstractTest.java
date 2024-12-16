@@ -18,10 +18,6 @@
  */
 package com.premiumminds.billy.spain.test.services.documents;
 
-import java.util.Date;
-
-import org.junit.Before;
-
 import com.premiumminds.billy.core.exceptions.NotImplementedException;
 import com.premiumminds.billy.core.services.documents.DocumentIssuingHandler;
 import com.premiumminds.billy.core.services.exceptions.DocumentIssuingException;
@@ -34,68 +30,75 @@ import com.premiumminds.billy.spain.test.ESPersistencyAbstractTest;
 import com.premiumminds.billy.spain.test.util.ESInvoiceTestUtil;
 import com.premiumminds.billy.spain.test.util.ESReceiptTestUtil;
 import com.premiumminds.billy.spain.test.util.ESSimpleInvoiceTestUtil;
+import java.util.Date;
+import org.junit.Before;
+
 
 public class ESDocumentAbstractTest extends ESPersistencyAbstractTest {
+	protected ESIssuingParams parameters;
 
-    protected ESIssuingParams parameters;
+	// Credit Note
+	public enum INVOICE_TYPE {
 
-    public enum INVOICE_TYPE {
-        FT, // Invoice
-        RC, // Receipt
-        FS, // Simple Invoice
-        NC	// Credit Note
-    }
+		FT,
+		// Invoice
+		RC,
+		// Receipt
+		FS,
+		// Simple Invoice
+		NC;}
 
-    public enum SOURCE_BILLING {
-        APPLICATION, MANUAL
-    }
+	public enum SOURCE_BILLING {
 
-    @Before
-    public void setUpParamenters() {
-        this.parameters = new ESIssuingParamsImpl();
-        this.parameters.setEACCode("31400");
-    }
+		APPLICATION,
+		MANUAL;}
 
-    protected <T extends ESGenericInvoiceEntity> T newInvoice(INVOICE_TYPE type) {
-        return this.newInvoice(type, SOURCE_BILLING.APPLICATION);
-    }
+	@Before
+	public void setUpParamenters() {
+		this.parameters = new ESIssuingParamsImpl();
+		this.parameters.setEACCode("31400");
+	}
 
-    @SuppressWarnings("unchecked")
-    protected <T extends ESGenericInvoiceEntity> T newInvoice(INVOICE_TYPE type, SOURCE_BILLING source) {
+	protected <T extends ESGenericInvoiceEntity> T newInvoice(INVOICE_TYPE type) {
+		return this.newInvoice(type, SOURCE_BILLING.APPLICATION);
+	}
 
-        switch (type) {
-            case FT:
-                return (T) new ESInvoiceTestUtil(ESAbstractTest.injector).getInvoiceEntity(source);
-            case RC:
-                return (T) new ESReceiptTestUtil(ESAbstractTest.injector).getReceiptEntity();
-            case FS:
-                return (T) new ESSimpleInvoiceTestUtil(ESAbstractTest.injector).getSimpleInvoiceEntity();
-            case NC:
-                throw new NotImplementedException();
-            default:
-                return null;
-        }
-    }
+	@SuppressWarnings("unchecked")
+	protected <T extends ESGenericInvoiceEntity> T newInvoice(INVOICE_TYPE type, SOURCE_BILLING source) {
 
-    protected <T extends DocumentIssuingHandler<I, ESIssuingParams>, I extends ESGenericInvoiceEntity> void
-            issueNewInvoice(T handler, I invoice, String series) throws DocumentIssuingException {
-        DAOESInvoice dao = this.getInstance(DAOESInvoice.class);
-        try {
-            dao.beginTransaction();
-            invoice.initializeEntityDates();
-            this.issueNewInvoice(handler, invoice, series, new Date(invoice.getCreateTimestamp().getTime() + 100));
-            dao.commit();
-        } catch (DocumentIssuingException up) {
-            dao.rollback();
-            throw up;
-        }
-    }
+		switch (type) {
+			case FT:
+				return (T) new ESInvoiceTestUtil(ESAbstractTest.injector)
+						.getInvoiceEntity(source);
+			case RC:
+				return (T) new ESReceiptTestUtil(ESAbstractTest.injector)
+				.getReceiptEntity();
+			case FS:
+				return (T) new ESSimpleInvoiceTestUtil(ESAbstractTest.injector)
+						.getSimpleInvoiceEntity();
+			case NC:
+				throw new NotImplementedException();
+			default:
+				return null;
+		}
+	}
 
-    protected <T extends DocumentIssuingHandler<I, ESIssuingParams>, I extends ESGenericInvoiceEntity> void
-            issueNewInvoice(T handler, I invoice, String series, Date date) throws DocumentIssuingException {
-        this.parameters.setInvoiceSeries(series);
-        invoice.setDate(date);
-        handler.issue(invoice, this.parameters);
-    }
+	protected <T extends DocumentIssuingHandler<I, ESIssuingParams>, I extends ESGenericInvoiceEntity> void issueNewInvoice(T handler, I invoice, String series) throws DocumentIssuingException {
+		DAOESInvoice dao = this.getInstance(DAOESInvoice.class);
+		try {
+			dao.beginTransaction();
+			invoice.initializeEntityDates();
+			this.issueNewInvoice(handler, invoice, series, new Date(invoice.getCreateTimestamp().getTime() + 100));
+			dao.commit();
+		} catch (DocumentIssuingException up) {
+			dao.rollback();
+			throw up;
+		}
+	}
 
+	protected <T extends DocumentIssuingHandler<I, ESIssuingParams>, I extends ESGenericInvoiceEntity> void issueNewInvoice(T handler, I invoice, String series, Date date) throws DocumentIssuingException {
+		this.parameters.setInvoiceSeries(series);
+		invoice.setDate(date);
+		handler.issue(invoice, this.parameters);
+	}
 }

@@ -18,8 +18,6 @@
  */
 package com.premiumminds.billy.portugal.test.util;
 
-import java.util.Date;
-
 import com.google.inject.Injector;
 import com.premiumminds.billy.portugal.persistence.entities.PTCreditNoteEntity;
 import com.premiumminds.billy.portugal.persistence.entities.PTCreditNoteEntryEntity;
@@ -28,49 +26,51 @@ import com.premiumminds.billy.portugal.services.entities.PTCreditNote;
 import com.premiumminds.billy.portugal.services.entities.PTCreditNoteEntry;
 import com.premiumminds.billy.portugal.services.entities.PTGenericInvoice.SourceBilling;
 import com.premiumminds.billy.portugal.services.entities.PTGenericInvoice.TYPE;
+import java.util.Date;
+
 
 public class PTCreditNoteTestUtil {
+	private static final Boolean		BILLED		= false;
 
-    private static final Boolean BILLED = false;
-    private static final Boolean CANCELLED = false;
-    private static final Boolean SELFBILL = false;
-    private static final String SOURCEID = "SOURCE";
+	private static final Boolean		CANCELLED	= false;
 
-    private Injector injector;
-    private PTCreditNoteEntryTestUtil creditNoteEntry;
-    protected PTPaymentTestUtil payment;
+	private static final Boolean		SELFBILL	= false;
 
-    public PTCreditNoteTestUtil(Injector injector) {
-        this.injector = injector;
-        this.creditNoteEntry = new PTCreditNoteEntryTestUtil(injector);
-        this.payment = new PTPaymentTestUtil(injector);
-    }
+	private static final String			SOURCEID	= "SOURCE";
 
-    public PTCreditNoteEntity getCreditNoteEntity(TYPE type, PTInvoiceEntity reference) {
+	private Injector					injector;
 
-        PTCreditNoteEntity creditNote = (PTCreditNoteEntity) this.getCreditNoteBuilder(reference).build();
-        creditNote.setType(type);
+	private PTCreditNoteEntryTestUtil	creditNoteEntry;
 
-        PTCreditNoteEntryEntity creditNoteEntry = (PTCreditNoteEntryEntity) creditNote.getEntries().get(0);
-        creditNoteEntry.getDocumentReferences().add(creditNote);
+	protected PTPaymentTestUtil			payment;
 
-        return creditNote;
-    }
+	public PTCreditNoteTestUtil(Injector injector) {
+		this.injector = injector;
+		this.creditNoteEntry = new PTCreditNoteEntryTestUtil(injector);
+		this.payment = new PTPaymentTestUtil(injector);
+	}
 
-    public PTCreditNote.Builder getCreditNoteBuilder(PTInvoiceEntity reference) {
+	public PTCreditNoteEntity getCreditNoteEntity(TYPE type,
+			PTInvoiceEntity reference) {
 
-        PTCreditNote.Builder creditNoteBuilder = this.injector.getInstance(PTCreditNote.Builder.class);
+		PTCreditNoteEntity creditNote = (PTCreditNoteEntity) this
+				.getCreditNoteBuilder(reference).build();
+		creditNote.setType(type);
 
-        PTCreditNoteEntry.Builder creditNoteEntryBuilder = this.creditNoteEntry.getCreditNoteEntryBuilder(reference);
+		PTCreditNoteEntryEntity creditNoteEntry = (PTCreditNoteEntryEntity) creditNote
+				.getEntries().get(0);
+		creditNoteEntry.getDocumentReferences().add(creditNote);
 
-        return creditNoteBuilder.setBilled(PTCreditNoteTestUtil.BILLED).setCancelled(PTCreditNoteTestUtil.CANCELLED)
-                .setSelfBilled(PTCreditNoteTestUtil.SELFBILL).setDate(new Date())
-                .setSourceId(PTCreditNoteTestUtil.SOURCEID).addEntry(creditNoteEntryBuilder)
-                .setBusinessUID(reference.getBusiness().getUID()).setSourceBilling(SourceBilling.P)
-                .setCustomerUID(reference.getCustomer().getUID()).addPayment(this.payment.getPaymentBuilder());
-    }
+		return creditNote;
+	}
 
-    public PTCreditNoteEntity getCreditNoteEntity(PTInvoiceEntity reference) {
-        return this.getCreditNoteEntity(TYPE.NC, reference);
-    }
+	public PTCreditNote.Builder getCreditNoteBuilder(PTInvoiceEntity reference) {
+		PTCreditNote.Builder creditNoteBuilder = this.injector.getInstance(PTCreditNote.Builder.class);
+		PTCreditNoteEntry.Builder creditNoteEntryBuilder = this.creditNoteEntry.getCreditNoteEntryBuilder(reference);
+		return creditNoteBuilder.setBilled(PTCreditNoteTestUtil.BILLED).setCancelled(PTCreditNoteTestUtil.CANCELLED).setSelfBilled(PTCreditNoteTestUtil.SELFBILL).setDate(new Date()).setSourceId(PTCreditNoteTestUtil.SOURCEID).addEntry(creditNoteEntryBuilder).setBusinessUID(reference.getBusiness().getUID()).setSourceBilling(SourceBilling.P).setCustomerUID(reference.getCustomer().getUID()).addPayment(this.payment.getPaymentBuilder());
+	}
+
+	public PTCreditNoteEntity getCreditNoteEntity(PTInvoiceEntity reference) {
+		return this.getCreditNoteEntity(TYPE.NC, reference);
+	}
 }

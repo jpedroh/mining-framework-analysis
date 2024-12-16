@@ -18,30 +18,25 @@
  */
 package com.premiumminds.billy.spain.services.documents;
 
-import javax.inject.Inject;
-
 import com.premiumminds.billy.core.persistence.dao.DAOInvoiceSeries;
 import com.premiumminds.billy.core.services.exceptions.DocumentIssuingException;
 import com.premiumminds.billy.spain.persistence.dao.DAOESSimpleInvoice;
 import com.premiumminds.billy.spain.persistence.entities.ESSimpleInvoiceEntity;
 import com.premiumminds.billy.spain.services.documents.util.ESIssuingParams;
+import javax.inject.Inject;
 
-public class ESSimpleInvoiceIssuingHandler
-        extends ESGenericInvoiceIssuingHandler<ESSimpleInvoiceEntity, ESIssuingParams> {
 
-    private final DAOESSimpleInvoice daoSimpleInvoice;
+public class ESSimpleInvoiceIssuingHandler extends ESGenericInvoiceIssuingHandler<ESSimpleInvoiceEntity, ESIssuingParams> {
+	private final DAOESSimpleInvoice	daoSimpleInvoice;
 
-    @Inject
-    public ESSimpleInvoiceIssuingHandler(DAOInvoiceSeries daoInvoiceSeries, DAOESSimpleInvoice daoSimpleInvoice) {
-        super(daoInvoiceSeries);
-        this.daoSimpleInvoice = daoSimpleInvoice;
-    }
+	@Inject
+	public ESSimpleInvoiceIssuingHandler(DAOInvoiceSeries daoInvoiceSeries, DAOESSimpleInvoice daoSimpleInvoice) {
+		super(daoInvoiceSeries);
+		this.daoSimpleInvoice = daoSimpleInvoice;
+	}
 
-    @Override
-    public ESSimpleInvoiceEntity issue(ESSimpleInvoiceEntity document, ESIssuingParams parameters)
-            throws DocumentIssuingException {
-
-        return this.issue(document, parameters, this.daoSimpleInvoice);
-    }
-
+	@Override
+	public ESSimpleInvoiceEntity issue(ESSimpleInvoiceEntity document, ESIssuingParams parameters) throws DocumentIssuingException {
+		return issue(document, parameters, this.daoSimpleInvoice);
+	}
 }

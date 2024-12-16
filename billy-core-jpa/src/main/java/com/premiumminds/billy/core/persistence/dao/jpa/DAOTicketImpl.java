@@ -18,47 +18,42 @@
  */
 package com.premiumminds.billy.core.persistence.dao.jpa;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.premiumminds.billy.core.persistence.dao.DAOTicket;
 import com.premiumminds.billy.core.persistence.entities.TicketEntity;
 import com.premiumminds.billy.core.persistence.entities.jpa.JPATicketEntity;
 import com.premiumminds.billy.core.persistence.entities.jpa.QJPATicketEntity;
 import com.premiumminds.billy.core.services.UID;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+
 
 public class DAOTicketImpl extends AbstractDAO<TicketEntity, JPATicketEntity> implements DAOTicket {
+	@Inject
+	public DAOTicketImpl(Provider<EntityManager> emProvider) {
+		super(emProvider);
+	}
 
-    @Inject
-    public DAOTicketImpl(Provider<EntityManager> emProvider) {
-        super(emProvider);
-    }
+	@Override
+	protected Class<? extends JPATicketEntity> getEntityClass() {
+		return JPATicketEntity.class;
+	}
 
-    @Override
-    protected Class<? extends JPATicketEntity> getEntityClass() {
-        return JPATicketEntity.class;
-    }
+	@Override
+	public TicketEntity getEntityInstance() {
+		return new JPATicketEntity();
+	}
 
-    @Override
-    public TicketEntity getEntityInstance() {
-        return new JPATicketEntity();
-    }
-
-    @Override
-    public UID getObjectEntityUID(String ticketUID) throws NoResultException {
-        QJPATicketEntity ticket = QJPATicketEntity.jPATicketEntity;
-
-        JPAQuery query = new JPAQuery(this.getEntityManager());
-
-        TicketEntity ticketEntity = query.from(ticket).where(ticket.uid.eq(ticketUID)).uniqueResult(ticket);
-
-        if (ticketEntity == null) {
-            throw new NoResultException();
-        }
-
-        return ticketEntity.getObjectUID();
-    }
+	@Override
+	public UID getObjectEntityUID(String ticketUID) throws NoResultException {
+		QJPATicketEntity ticket = QJPATicketEntity.jPATicketEntity;
+		JPAQuery query = new JPAQuery(this.getEntityManager());
+		TicketEntity ticketEntity = query.from(ticket).where(ticket.uid.eq(ticketUID)).uniqueResult(ticket);
+		if (ticketEntity == null) {
+			throw new NoResultException();
+		}
+		return ticketEntity.getObjectUID();
+	}
 }

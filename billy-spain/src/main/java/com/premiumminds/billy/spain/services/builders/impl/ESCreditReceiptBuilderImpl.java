@@ -32,46 +32,53 @@ import com.premiumminds.billy.spain.services.builders.ESCreditReceiptBuilder;
 import com.premiumminds.billy.spain.services.entities.ESCreditReceipt;
 import com.premiumminds.billy.spain.services.entities.ESCreditReceiptEntry;
 
-public class ESCreditReceiptBuilderImpl<TBuilder extends ESCreditReceiptBuilderImpl<TBuilder, TEntry, TDocument>, TEntry extends ESCreditReceiptEntry, TDocument extends ESCreditReceipt>
-        extends ESGenericInvoiceBuilderImpl<TBuilder, TEntry, TDocument>
-        implements ESCreditReceiptBuilder<TBuilder, TEntry, TDocument> {
 
-    protected static final Localizer LOCALIZER = new Localizer("com/premiumminds/billy/core/i18n/FieldNames");
+public class ESCreditReceiptBuilderImpl<TBuilder extends ESCreditReceiptBuilderImpl<TBuilder, TEntry, TDocument>, TEntry extends ESCreditReceiptEntry, TDocument extends ESCreditReceipt> extends ESGenericInvoiceBuilderImpl<TBuilder, TEntry, TDocument> implements ESCreditReceiptBuilder<TBuilder, TEntry, TDocument> {
+	protected static final Localizer	LOCALIZER	= new Localizer(
+			"com/premiumminds/billy/core/i18n/FieldNames");
 
-    public <TDAO extends AbstractDAOESGenericInvoice<? extends TDocument>> ESCreditReceiptBuilderImpl(
-            TDAO daoESCreditReceipt, DAOESBusiness daoESBusiness, DAOESCustomer daoESCustomer,
-            DAOESSupplier daoESSupplier) {
-        super(daoESCreditReceipt, daoESBusiness, daoESCustomer, daoESSupplier);
-    }
+	public <TDAO extends AbstractDAOESGenericInvoice<? extends TDocument>> ESCreditReceiptBuilderImpl(TDAO daoESCreditReceipt, DAOESBusiness daoESBusiness, DAOESCustomer daoESCustomer, DAOESSupplier daoESSupplier) {
+		super(daoESCreditReceipt, daoESBusiness, daoESCustomer, daoESSupplier);
+	}
 
-    @Override
-    protected ESCreditReceiptEntity getTypeInstance() {
-        return (ESCreditReceiptEntity) super.getTypeInstance();
-    }
+	@Override
+	protected ESCreditReceiptEntity getTypeInstance() {
+		return (ESCreditReceiptEntity) super.getTypeInstance();
+	}
 
-    @Override
-    protected void validateInstance() throws BillyValidationException {
-        ESCreditReceiptEntity i = this.getTypeInstance();
-        i.setCreditOrDebit(CreditOrDebit.DEBIT);
-        super.validateInstance();
-    }
+	@Override
+	protected void validateInstance() throws BillyValidationException {
+		ESCreditReceiptEntity i = this.getTypeInstance();
+		i.setCreditOrDebit(CreditOrDebit.DEBIT);
+		super.validateInstance();
+	}
 
-    @Override
-    protected void validateESInstance(ESGenericInvoiceEntity i) {
-        super.validateDate();
+	@Override
+	protected void validateESInstance(ESGenericInvoiceEntity i) {
+		super.validateDate();
 
-        BillyValidator.mandatory(i.getSourceId(), ESGenericInvoiceBuilderImpl.LOCALIZER.getString("field.source"));
-        BillyValidator.mandatory(i.getDate(), ESGenericInvoiceBuilderImpl.LOCALIZER.getString("field.date"));
-        if (i.isSelfBilled() != null) {
-            BillyValidator.mandatory(i.isSelfBilled(),
-                    ESGenericInvoiceBuilderImpl.LOCALIZER.getString("field.self_billed"));
-        } else {
-            i.setSelfBilled(false);
-        }
-        BillyValidator.mandatory(i.isCancelled(), ESGenericInvoiceBuilderImpl.LOCALIZER.getString("field.cancelled"));
-        BillyValidator.mandatory(i.isBilled(), ESGenericInvoiceBuilderImpl.LOCALIZER.getString("field.billed"));
-        BillyValidator.notEmpty(i.getPayments(),
-                ESGenericInvoiceBuilderImpl.LOCALIZER.getString("field.payment_mechanism"));
-        return;
-    }
+		BillyValidator
+				.mandatory(i.getSourceId(),
+						ESGenericInvoiceBuilderImpl.LOCALIZER
+								.getString("field.source"));
+		BillyValidator.mandatory(i.getDate(),
+				ESGenericInvoiceBuilderImpl.LOCALIZER.getString("field.date"));
+		if(i.isSelfBilled() != null) {
+		BillyValidator.mandatory(i.isSelfBilled(),
+				ESGenericInvoiceBuilderImpl.LOCALIZER
+						.getString("field.self_billed"));
+		} else  {
+			i.setSelfBilled(false);
+		}
+		BillyValidator.mandatory(i.isCancelled(),
+				ESGenericInvoiceBuilderImpl.LOCALIZER
+						.getString("field.cancelled"));
+		BillyValidator
+				.mandatory(i.isBilled(), ESGenericInvoiceBuilderImpl.LOCALIZER
+						.getString("field.billed"));
+		BillyValidator.notEmpty(i.getPayments(),
+				ESGenericInvoiceBuilderImpl.LOCALIZER
+						.getString("field.payment_mechanism"));
+		return;
+	}
 }

@@ -18,13 +18,6 @@
  */
 package com.premiumminds.billy.portugal.persistence.dao.jpa;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.persistence.EntityManager;
-
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.premiumminds.billy.core.services.UID;
 import com.premiumminds.billy.portugal.persistence.dao.DAOPTInvoice;
@@ -32,37 +25,35 @@ import com.premiumminds.billy.portugal.persistence.entities.PTInvoiceEntity;
 import com.premiumminds.billy.portugal.persistence.entities.jpa.JPAPTInvoiceEntity;
 import com.premiumminds.billy.portugal.persistence.entities.jpa.QJPAPTBusinessEntity;
 import com.premiumminds.billy.portugal.persistence.entities.jpa.QJPAPTInvoiceEntity;
+import java.util.Date;
+import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
 
-public class DAOPTInvoiceImpl extends AbstractDAOPTGenericInvoiceImpl<PTInvoiceEntity, JPAPTInvoiceEntity>
-        implements DAOPTInvoice {
 
-    @Inject
-    public DAOPTInvoiceImpl(Provider<EntityManager> emProvider) {
-        super(emProvider);
-    }
+public class DAOPTInvoiceImpl extends AbstractDAOPTGenericInvoiceImpl<PTInvoiceEntity, JPAPTInvoiceEntity> implements DAOPTInvoice {
+	@Inject
+	public DAOPTInvoiceImpl(Provider<EntityManager> emProvider) {
+		super(emProvider);
+	}
 
-    @Override
-    public PTInvoiceEntity getEntityInstance() {
-        return new JPAPTInvoiceEntity();
-    }
+	@Override
+	public PTInvoiceEntity getEntityInstance() {
+		return new JPAPTInvoiceEntity();
+	}
 
-    @Override
-    protected Class<? extends JPAPTInvoiceEntity> getEntityClass() {
-        return JPAPTInvoiceEntity.class;
-    }
+	@Override
+	protected Class<? extends JPAPTInvoiceEntity> getEntityClass() {
+		return JPAPTInvoiceEntity.class;
+	}
 
-    @Override
-    public List<PTInvoiceEntity> getBusinessInvoicesForSAFTPT(UID uid, Date from, Date to) {
-
-        QJPAPTInvoiceEntity invoice = QJPAPTInvoiceEntity.jPAPTInvoiceEntity;
-
-        JPAQuery query = this.createQuery();
-
-        query.from(invoice).where(invoice.instanceOf(JPAPTInvoiceEntity.class).and(invoice.date.between(from, to))
-                .and(this.toDSL(invoice.business, QJPAPTBusinessEntity.class).uid.eq(uid.toString())));
-
-        List<PTInvoiceEntity> result = this.checkEntityList(query.list(invoice), PTInvoiceEntity.class);
-        return result;
-    }
-
+	@Override
+	public List<PTInvoiceEntity> getBusinessInvoicesForSAFTPT(UID uid, Date from, Date to) {
+		QJPAPTInvoiceEntity invoice = QJPAPTInvoiceEntity.jPAPTInvoiceEntity;
+		JPAQuery query = this.createQuery();
+		query.from(invoice).where(invoice.instanceOf(JPAPTInvoiceEntity.class).and(invoice.date.between(from, to)).and(this.toDSL(invoice.business, QJPAPTBusinessEntity.class).uid.eq(uid.toString())));
+		List<PTInvoiceEntity> result = this.checkEntityList(query.list(invoice), PTInvoiceEntity.class);
+		return result;
+	}
 }

@@ -18,12 +18,6 @@
  */
 package com.premiumminds.billy.spain.persistence.dao.jpa;
 
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.persistence.EntityManager;
-
 import com.mysema.query.jpa.JPASubQuery;
 import com.premiumminds.billy.core.services.UID;
 import com.premiumminds.billy.spain.persistence.dao.DAOESCreditNote;
@@ -34,42 +28,36 @@ import com.premiumminds.billy.spain.persistence.entities.jpa.QJPAESCreditNoteEnt
 import com.premiumminds.billy.spain.persistence.entities.jpa.QJPAESCreditNoteEntryEntity;
 import com.premiumminds.billy.spain.persistence.entities.jpa.QJPAESGenericInvoiceEntity;
 import com.premiumminds.billy.spain.services.entities.ESCreditNote;
+import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
 
-public class DAOESCreditNoteImpl extends AbstractDAOESGenericInvoiceImpl<ESCreditNoteEntity, JPAESCreditNoteEntity>
-        implements DAOESCreditNote {
 
-    @Inject
-    public DAOESCreditNoteImpl(Provider<EntityManager> emProvider) {
-        super(emProvider);
-    }
+public class DAOESCreditNoteImpl extends AbstractDAOESGenericInvoiceImpl<ESCreditNoteEntity, JPAESCreditNoteEntity> implements DAOESCreditNote {
+	@Inject
+	public DAOESCreditNoteImpl(Provider<EntityManager> emProvider) {
+		super(emProvider);
+	}
 
-    @Override
-    public ESCreditNoteEntity getEntityInstance() {
-        return new JPAESCreditNoteEntity();
-    }
+	@Override
+	public ESCreditNoteEntity getEntityInstance() {
+		return new JPAESCreditNoteEntity();
+	}
 
-    @Override
-    protected Class<JPAESCreditNoteEntity> getEntityClass() {
-        return JPAESCreditNoteEntity.class;
-    }
+	@Override
+	protected Class<JPAESCreditNoteEntity> getEntityClass() {
+		return JPAESCreditNoteEntity.class;
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<ESCreditNote> findByReferencedDocument(UID uidCompany, UID uidInvoice) {
-        QJPAESCreditNoteEntity creditNote = QJPAESCreditNoteEntity.jPAESCreditNoteEntity;
-        QJPAESCreditNoteEntryEntity entry = QJPAESCreditNoteEntryEntity.jPAESCreditNoteEntryEntity;
-        QJPAESGenericInvoiceEntity invoice = QJPAESGenericInvoiceEntity.jPAESGenericInvoiceEntity;
-
-        JPASubQuery invQ = new JPASubQuery().from(invoice).where(invoice.uid.eq(uidInvoice.toString()));
-
-        JPASubQuery entQ = new JPASubQuery().from(entry)
-                .where(this.toDSL(entry.reference, QJPAESGenericInvoiceEntity.class).uid.in(invQ.list(invoice.uid)));
-
-        return (List<ESCreditNote>) (List<?>) this.createQuery().from(creditNote)
-                .where(this.toDSL(creditNote.business, QJPAESBusinessEntity.class).uid.eq(uidCompany.toString())
-                        .and(this.toDSL(creditNote.entries.any(), QJPAESCreditNoteEntryEntity.class).uid
-                                .in(entQ.list(entry.uid))))
-                .list(creditNote);
-    }
-
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ESCreditNote> findByReferencedDocument(UID uidCompany, UID uidInvoice) {
+		QJPAESCreditNoteEntity creditNote = QJPAESCreditNoteEntity.jPAESCreditNoteEntity;
+		QJPAESCreditNoteEntryEntity entry = QJPAESCreditNoteEntryEntity.jPAESCreditNoteEntryEntity;
+		QJPAESGenericInvoiceEntity invoice = QJPAESGenericInvoiceEntity.jPAESGenericInvoiceEntity;
+		JPASubQuery invQ = new JPASubQuery().from(invoice).where(invoice.uid.eq(uidInvoice.toString()));
+		JPASubQuery entQ = new JPASubQuery().from(entry).where(this.toDSL(entry.reference, QJPAESGenericInvoiceEntity.class).uid.in(invQ.list(invoice.uid)));
+		return ((List<ESCreditNote>) ((List<?>) (this.createQuery().from(creditNote).where(this.toDSL(creditNote.business, QJPAESBusinessEntity.class).uid.eq(uidCompany.toString()).and(this.toDSL(creditNote.entries.any(), QJPAESCreditNoteEntryEntity.class).uid.in(entQ.list(entry.uid)))).list(creditNote))));
+	}
 }

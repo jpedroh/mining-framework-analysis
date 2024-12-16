@@ -29,24 +29,20 @@ import com.premiumminds.billy.spain.persistence.entities.ESReceiptEntryEntity;
 import com.premiumminds.billy.spain.services.builders.ESReceiptEntryBuilder;
 import com.premiumminds.billy.spain.services.entities.ESReceiptEntry;
 
-public class ESReceiptEntryBuilderImpl<TBuilder extends ESReceiptEntryBuilderImpl<TBuilder, TEntry>, TEntry extends ESReceiptEntry>
-        extends ESGenericInvoiceEntryBuilderImpl<TBuilder, TEntry, DAOESReceiptEntry, DAOESReceipt>
-        implements ESReceiptEntryBuilder<TBuilder, TEntry> {
 
-    public ESReceiptEntryBuilderImpl(DAOESReceiptEntry daoESReceiptEntry, DAOESReceipt daoESReceipt, DAOESTax daoESTax,
-            DAOESProduct daoESProduct, DAOESRegionContext daoESRegionContext) {
-        super(daoESReceiptEntry, daoESReceipt, daoESTax, daoESProduct, daoESRegionContext);
-    }
+public class ESReceiptEntryBuilderImpl<TBuilder extends ESReceiptEntryBuilderImpl<TBuilder, TEntry>, TEntry extends ESReceiptEntry> extends ESGenericInvoiceEntryBuilderImpl<TBuilder, TEntry, DAOESReceiptEntry, DAOESReceipt> implements ESReceiptEntryBuilder<TBuilder, TEntry> {
+	public ESReceiptEntryBuilderImpl(DAOESReceiptEntry daoESReceiptEntry, DAOESReceipt daoESReceipt, DAOESTax daoESTax, DAOESProduct daoESProduct, DAOESRegionContext daoESRegionContext) {
+		super(daoESReceiptEntry, daoESReceipt, daoESTax, daoESProduct, daoESRegionContext);
+	}
 
-    @Override
-    protected ESReceiptEntryEntity getTypeInstance() {
-        return (ESReceiptEntryEntity) super.getTypeInstance();
-    }
+	@Override
+	protected ESReceiptEntryEntity getTypeInstance() {
+		return ((ESReceiptEntryEntity) (super.getTypeInstance()));
+	}
 
-    @Override
-    protected void validateInstance() throws BillyValidationException {
-        this.getTypeInstance().setCreditOrDebit(CreditOrDebit.CREDIT);
-        super.validateInstance();
-    }
-
+	@Override
+	protected void validateInstance() throws BillyValidationException {
+		this.getTypeInstance().setCreditOrDebit(CreditOrDebit.CREDIT);
+		super.validateInstance();
+	}
 }

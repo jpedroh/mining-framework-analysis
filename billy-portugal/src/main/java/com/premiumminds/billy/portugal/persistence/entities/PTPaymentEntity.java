@@ -18,12 +18,11 @@
  */
 package com.premiumminds.billy.portugal.persistence.entities;
 
-import java.math.BigDecimal;
-
 import com.premiumminds.billy.core.persistence.entities.PaymentEntity;
 import com.premiumminds.billy.portugal.services.entities.PTPayment;
+import java.math.BigDecimal;
 
-public interface PTPaymentEntity extends PaymentEntity, PTPayment {
 
-    public void setPaymentAmount(BigDecimal amount);
+public interface PTPaymentEntity extends PaymentEntity , PTPayment {
+	public abstract void setPaymentAmount(BigDecimal amount);
 }

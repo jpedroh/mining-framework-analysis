@@ -18,17 +18,16 @@
  */
 package com.premiumminds.billy.spain.persistence.entities;
 
-import java.util.List;
-
 import com.premiumminds.billy.spain.services.entities.ESCreditNote;
 import com.premiumminds.billy.spain.services.entities.ESCreditNoteEntry;
 import com.premiumminds.billy.spain.services.entities.ESPayment;
+import java.util.List;
 
-public interface ESCreditNoteEntity extends ESGenericInvoiceEntity, ESCreditNote {
 
-    @Override
-    public List<ESCreditNoteEntry> getEntries();
+public interface ESCreditNoteEntity extends ESGenericInvoiceEntity , ESCreditNote {
+	@Override
+	public abstract List<ESCreditNoteEntry> getEntries();
 
-    @Override
-    public List<ESPayment> getPayments();
+	@Override
+	public abstract List<ESPayment> getPayments();
 }

@@ -22,8 +22,7 @@ import com.premiumminds.billy.spain.persistence.entities.ESCreditNoteEntity;
 import com.premiumminds.billy.spain.persistence.entities.ESCreditNoteEntryEntity;
 import com.premiumminds.billy.spain.services.entities.ESInvoice;
 
+
 public interface DAOESCreditNoteEntry extends AbstractDAOESGenericInvoiceEntry<ESCreditNoteEntryEntity> {
-
-    public ESCreditNoteEntity checkCreditNote(ESInvoice invoice);
-
+	ESCreditNoteEntity checkCreditNote(ESInvoice invoice);
 }

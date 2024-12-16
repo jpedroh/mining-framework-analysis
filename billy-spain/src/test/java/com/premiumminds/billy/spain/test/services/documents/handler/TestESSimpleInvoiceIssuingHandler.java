@@ -18,57 +18,53 @@
  */
 package com.premiumminds.billy.spain.test.services.documents.handler;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.premiumminds.billy.core.services.UID;
 import com.premiumminds.billy.core.services.exceptions.DocumentIssuingException;
 import com.premiumminds.billy.spain.exceptions.BillySimpleInvoiceException;
 import com.premiumminds.billy.spain.persistence.dao.DAOESSimpleInvoice;
 import com.premiumminds.billy.spain.persistence.entities.ESSimpleInvoiceEntity;
 import com.premiumminds.billy.spain.services.documents.ESSimpleInvoiceIssuingHandler;
-import com.premiumminds.billy.spain.services.entities.ESSimpleInvoice;
 import com.premiumminds.billy.spain.services.entities.ESSimpleInvoice.CLIENTTYPE;
+import com.premiumminds.billy.spain.services.entities.ESSimpleInvoice;
 import com.premiumminds.billy.spain.test.ESAbstractTest;
 import com.premiumminds.billy.spain.test.ESPersistencyAbstractTest;
 import com.premiumminds.billy.spain.test.services.documents.ESDocumentAbstractTest;
 import com.premiumminds.billy.spain.test.util.ESSimpleInvoiceTestUtil;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 
 public class TestESSimpleInvoiceIssuingHandler extends ESDocumentAbstractTest {
+	private String DEFAULT_SERIES = INVOICE_TYPE.FS + " " + ESPersistencyAbstractTest.DEFAULT_SERIES;
 
-    private String DEFAULT_SERIES = INVOICE_TYPE.FS + " " + ESPersistencyAbstractTest.DEFAULT_SERIES;
+	private ESSimpleInvoiceIssuingHandler handler;
 
-    private ESSimpleInvoiceIssuingHandler handler;
-    private UID issuedInvoiceUID;
+	private UID issuedInvoiceUID;
 
-    @Before
-    public void setUpNewSimpleInvoice() {
-        this.handler = this.getInstance(ESSimpleInvoiceIssuingHandler.class);
+	@Before
+	public void setUpNewSimpleInvoice() {
+		this.handler = this.getInstance(ESSimpleInvoiceIssuingHandler.class);
+		try {
+			ESSimpleInvoiceEntity invoice = this.newInvoice(INVOICE_TYPE.FS, SOURCE_BILLING.APPLICATION);
+			this.issueNewInvoice(this.handler, invoice, this.DEFAULT_SERIES);
+			this.issuedInvoiceUID = invoice.getUID();
+		} catch (DocumentIssuingException e) {
+			e.printStackTrace();
+		}
+	}
 
-        try {
-            ESSimpleInvoiceEntity invoice = this.newInvoice(INVOICE_TYPE.FS, SOURCE_BILLING.APPLICATION);
+	@Test
+	public void testIssuedInvoiceSimple() throws DocumentIssuingException {
+		ESSimpleInvoice issuedInvoice = ((ESSimpleInvoice) (this.getInstance(DAOESSimpleInvoice.class).get(this.issuedInvoiceUID)));
+		Assert.assertEquals(this.DEFAULT_SERIES, issuedInvoice.getSeries());
+		Assert.assertTrue(1 == issuedInvoice.getSeriesNumber());
+		String formatedNumber = this.DEFAULT_SERIES + "/1";
+		Assert.assertEquals(formatedNumber, issuedInvoice.getNumber());
+	}
 
-            this.issueNewInvoice(this.handler, invoice, this.DEFAULT_SERIES);
-            this.issuedInvoiceUID = invoice.getUID();
-        } catch (DocumentIssuingException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void testIssuedInvoiceSimple() throws DocumentIssuingException {
-        ESSimpleInvoice issuedInvoice = this.getInstance(DAOESSimpleInvoice.class).get(this.issuedInvoiceUID);
-
-        Assert.assertEquals(this.DEFAULT_SERIES, issuedInvoice.getSeries());
-        Assert.assertTrue(1 == issuedInvoice.getSeriesNumber());
-        String formatedNumber = this.DEFAULT_SERIES + "/1";
-        Assert.assertEquals(formatedNumber, issuedInvoice.getNumber());
-    }
-
-    @Test(expected = BillySimpleInvoiceException.class)
-    public void testBusinessSimpleInvoice() {
-        new ESSimpleInvoiceTestUtil(ESAbstractTest.injector).getSimpleInvoiceEntity(CLIENTTYPE.BUSINESS);
-    }
-
+	@Test(expected = BillySimpleInvoiceException.class)
+	public void testBusinessSimpleInvoice() {
+		new ESSimpleInvoiceTestUtil(ESAbstractTest.injector).getSimpleInvoiceEntity(CLIENTTYPE.BUSINESS);
+	}
 }

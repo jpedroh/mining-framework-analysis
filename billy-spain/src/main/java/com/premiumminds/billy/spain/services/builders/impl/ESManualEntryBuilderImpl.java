@@ -18,13 +18,6 @@
  */
 package com.premiumminds.billy.spain.services.builders.impl;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-import javax.validation.ValidationException;
-
-import org.apache.commons.lang3.time.DateUtils;
-
 import com.premiumminds.billy.core.exceptions.BillyValidationException;
 import com.premiumminds.billy.core.persistence.entities.GenericInvoiceEntryEntity;
 import com.premiumminds.billy.core.services.entities.Tax;
@@ -38,91 +31,85 @@ import com.premiumminds.billy.spain.persistence.dao.DAOESTax;
 import com.premiumminds.billy.spain.persistence.entities.ESGenericInvoiceEntryEntity;
 import com.premiumminds.billy.spain.services.builders.ESManualInvoiceEntryBuilder;
 import com.premiumminds.billy.spain.services.entities.ESGenericInvoiceEntry;
+import java.math.BigDecimal;
+import java.util.Date;
+import javax.validation.ValidationException;
+import org.apache.commons.lang3.time.DateUtils;
 
-public class ESManualEntryBuilderImpl<TBuilder extends ESManualEntryBuilderImpl<TBuilder, TEntry, TDAOEntry, TDAOInvoice>, TEntry extends ESGenericInvoiceEntry, TDAOEntry extends AbstractDAOESGenericInvoiceEntry<?>, TDAOInvoice extends AbstractDAOESGenericInvoice<?>>
-        extends ESGenericInvoiceEntryBuilderImpl<TBuilder, TEntry, TDAOEntry, TDAOInvoice>
-        implements ESManualInvoiceEntryBuilder<TBuilder, TEntry> {
 
-    public ESManualEntryBuilderImpl(TDAOEntry daoESEntry, TDAOInvoice daoESInvoice, DAOESTax daoESTax,
-            DAOESProduct daoESProduct, DAOESRegionContext daoESRegionContext) {
-        super(daoESEntry, daoESInvoice, daoESTax, daoESProduct, daoESRegionContext);
-    }
+public class ESManualEntryBuilderImpl<TBuilder extends ESManualEntryBuilderImpl<TBuilder, TEntry, TDAOEntry, TDAOInvoice>, TEntry extends ESGenericInvoiceEntry, TDAOEntry extends AbstractDAOESGenericInvoiceEntry<?>, TDAOInvoice extends AbstractDAOESGenericInvoice<?>> extends ESGenericInvoiceEntryBuilderImpl<TBuilder, TEntry, TDAOEntry, TDAOInvoice> implements ESManualInvoiceEntryBuilder<TBuilder, TEntry> {
+	public ESManualEntryBuilderImpl(TDAOEntry daoESEntry, TDAOInvoice daoESInvoice, DAOESTax daoESTax, DAOESProduct daoESProduct, DAOESRegionContext daoESRegionContext) {
+		super(daoESEntry, daoESInvoice, daoESTax, daoESProduct, daoESRegionContext);
+	}
 
-    @Override
-    protected void validateInstance() throws BillyValidationException {
-        this.validateValues();
+	@Override
+	protected void validateInstance() throws BillyValidationException {
+		this.validateValues();
+		ESGenericInvoiceEntryEntity i = this.getTypeInstance();
+		BillyValidator.mandatory(i.getQuantity(), ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.quantity"));
+		BillyValidator.mandatory(i.getUnitOfMeasure(), ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.unit"));
+		BillyValidator.mandatory(i.getProduct(), ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.product"));
+		BillyValidator.notEmpty(i.getTaxes(), ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.tax"));
+		BillyValidator.mandatory(i.getTaxAmount(), ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.tax"));
+		BillyValidator.mandatory(i.getTaxPointDate(), ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.tax_point_date"));
+	}
 
-        ESGenericInvoiceEntryEntity i = this.getTypeInstance();
-        BillyValidator.mandatory(i.getQuantity(),
-                ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.quantity"));
-        BillyValidator.mandatory(i.getUnitOfMeasure(),
-                ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.unit"));
-        BillyValidator.mandatory(i.getProduct(), ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.product"));
-        BillyValidator.notEmpty(i.getTaxes(), ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.tax"));
-        BillyValidator.mandatory(i.getTaxAmount(), ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.tax"));
-        BillyValidator.mandatory(i.getTaxPointDate(),
-                ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.tax_point_date"));
-    }
+	@Override
+	protected void validateValues() throws ValidationException {
+		GenericInvoiceEntryEntity e = this.getTypeInstance();
+		for (Tax t : e.getProduct().getTaxes()) {
+			if (this.daoContext.isSubContext(t.getContext(), this.context)) {
+				Date taxDate = (e.getTaxPointDate() == null) ? new Date() : e.getTaxPointDate();
+				if (DateUtils.isSameDay(t.getValidTo(), taxDate) || t.getValidTo().after(taxDate)) {
+					e.getTaxes().add(t);
+				}
+			}
+		}
+	}
 
-    @Override
-    protected void validateValues() throws ValidationException {
-        GenericInvoiceEntryEntity e = this.getTypeInstance();
+	@Override
+	@NotOnUpdate
+	public TBuilder setUnitTaxAmount(BigDecimal taxAmount) {
+		this.getTypeInstance().setTaxAmount(taxAmount);
+		return this.getBuilder();
+	}
 
-        for (Tax t : e.getProduct().getTaxes()) {
-            if (this.daoContext.isSubContext(t.getContext(), this.context)) {
-                Date taxDate = e.getTaxPointDate() == null ? new Date() : e.getTaxPointDate();
-                if (DateUtils.isSameDay(t.getValidTo(), taxDate) || t.getValidTo().after(taxDate)) {
-                    e.getTaxes().add(t);
-                }
-            }
-        }
-    }
+	@Override
+	@NotOnUpdate
+	public TBuilder setUnitAmount(AmountType type, BigDecimal amount) {
+		BillyValidator.notNull(type, ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.unit_amount_type"));
+		BillyValidator.notNull(amount, ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.unit_gross_amount"));
+		switch (type) {
+			case WITH_TAX :
+				this.getTypeInstance().setUnitAmountWithTax(amount);
+				break;
+			case WITHOUT_TAX :
+				this.getTypeInstance().setUnitAmountWithoutTax(amount);
+				break;
+		}
+		return this.getBuilder();
+	}
 
-    @Override
-    @NotOnUpdate
-    public TBuilder setUnitTaxAmount(BigDecimal taxAmount) {
-        this.getTypeInstance().setTaxAmount(taxAmount);
-        return this.getBuilder();
-    }
+	@Override
+	@NotOnUpdate
+	public TBuilder setAmount(AmountType type, BigDecimal amount) {
+		BillyValidator.notNull(type, ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.amount_type"));
+		BillyValidator.notNull(amount, ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.gross_amount"));
+		switch (type) {
+			case WITH_TAX :
+				this.getTypeInstance().setAmountWithTax(amount);
+				break;
+			case WITHOUT_TAX :
+				this.getTypeInstance().setAmountWithoutTax(amount);
+				break;
+		}
+		return this.getBuilder();
+	}
 
-    @Override
-    @NotOnUpdate
-    public TBuilder setUnitAmount(AmountType type, BigDecimal amount) {
-        BillyValidator.notNull(type, ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.unit_amount_type"));
-        BillyValidator.notNull(amount, ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.unit_gross_amount"));
-
-        switch (type) {
-            case WITH_TAX:
-                this.getTypeInstance().setUnitAmountWithTax(amount);
-                break;
-            case WITHOUT_TAX:
-                this.getTypeInstance().setUnitAmountWithoutTax(amount);
-                break;
-        }
-        return this.getBuilder();
-    }
-
-    @Override
-    @NotOnUpdate
-    public TBuilder setAmount(AmountType type, BigDecimal amount) {
-        BillyValidator.notNull(type, ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.amount_type"));
-        BillyValidator.notNull(amount, ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.gross_amount"));
-
-        switch (type) {
-            case WITH_TAX:
-                this.getTypeInstance().setAmountWithTax(amount);
-                break;
-            case WITHOUT_TAX:
-                this.getTypeInstance().setAmountWithoutTax(amount);
-                break;
-        }
-        return this.getBuilder();
-    }
-
-    @Override
-    @NotOnUpdate
-    public TBuilder setTaxAmount(BigDecimal taxAmount) {
-        this.getTypeInstance().setTaxAmount(taxAmount);
-        return this.getBuilder();
-    }
+	@Override
+	@NotOnUpdate
+	public TBuilder setTaxAmount(BigDecimal taxAmount) {
+		this.getTypeInstance().setTaxAmount(taxAmount);
+		return this.getBuilder();
+	}
 }

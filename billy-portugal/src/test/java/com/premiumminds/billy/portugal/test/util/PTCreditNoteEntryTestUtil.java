@@ -18,10 +18,6 @@
  */
 package com.premiumminds.billy.portugal.test.util;
 
-import java.math.BigDecimal;
-import java.util.Currency;
-import java.util.Date;
-
 import com.google.inject.Injector;
 import com.premiumminds.billy.core.services.builders.GenericInvoiceEntryBuilder.AmountType;
 import com.premiumminds.billy.portugal.persistence.dao.DAOPTProduct;
@@ -30,39 +26,36 @@ import com.premiumminds.billy.portugal.persistence.entities.PTProductEntity;
 import com.premiumminds.billy.portugal.services.entities.PTCreditNoteEntry;
 import com.premiumminds.billy.portugal.services.entities.PTRegionContext;
 import com.premiumminds.billy.portugal.util.Contexts;
+import java.math.BigDecimal;
+import java.util.Currency;
+import java.util.Date;
+
 
 public class PTCreditNoteEntryTestUtil {
+	private static final BigDecimal AMOUNT = new BigDecimal(20);
 
-    private static final BigDecimal AMOUNT = new BigDecimal(20);
-    private static final Currency CURRENCY = Currency.getInstance("EUR");
-    private static final BigDecimal QUANTITY = new BigDecimal(1);
-    private static final String REASON = "Rotten potatoes";
+	private static final Currency CURRENCY = Currency.getInstance("EUR");
 
-    private Injector injector;
-    private Contexts contexts;
-    private PTRegionContext context;
+	private static final BigDecimal QUANTITY = new BigDecimal(1);
 
-    public PTCreditNoteEntryTestUtil(Injector injector) {
-        this.injector = injector;
-        this.contexts = new Contexts(injector);
-    }
+	private static final String REASON = "Rotten potatoes";
 
-    public PTCreditNoteEntry.Builder getCreditNoteEntryBuilder(PTInvoiceEntity reference) {
-        PTCreditNoteEntry.Builder creditNoteEntryBuilder = this.injector.getInstance(PTCreditNoteEntry.Builder.class);
+	private Injector injector;
 
-        PTProductEntity newProduct = (PTProductEntity) this.injector.getInstance(DAOPTProduct.class)
-                .create(new PTProductTestUtil(this.injector).getProductEntity());
+	private Contexts contexts;
 
-        this.context = this.contexts.portugal().allRegions();
+	private PTRegionContext context;
 
-        creditNoteEntryBuilder.setUnitAmount(AmountType.WITH_TAX, PTCreditNoteEntryTestUtil.AMOUNT)
-                .setTaxPointDate(new Date()).setDescription(newProduct.getDescription())
-                .setQuantity(PTCreditNoteEntryTestUtil.QUANTITY).setUnitOfMeasure(newProduct.getUnitOfMeasure())
-                .setProductUID(newProduct.getUID()).setContextUID(this.context.getUID())
-                .setReason(PTCreditNoteEntryTestUtil.REASON).setReferenceUID(reference.getUID())
-                .setCurrency(Currency.getInstance("EUR"));
+	public PTCreditNoteEntryTestUtil(Injector injector) {
+		this.injector = injector;
+		this.contexts = new Contexts(injector);
+	}
 
-        return creditNoteEntryBuilder;
-    }
-
+	public PTCreditNoteEntry.Builder getCreditNoteEntryBuilder(PTInvoiceEntity reference) {
+		PTCreditNoteEntry.Builder creditNoteEntryBuilder = this.injector.getInstance(PTCreditNoteEntry.Builder.class);
+		PTProductEntity newProduct = ((PTProductEntity) (this.injector.getInstance(DAOPTProduct.class).create(new PTProductTestUtil(this.injector).getProductEntity())));
+		this.context = this.contexts.portugal().allRegions();
+		creditNoteEntryBuilder.setUnitAmount(AmountType.WITH_TAX, PTCreditNoteEntryTestUtil.AMOUNT).setTaxPointDate(new Date()).setDescription(newProduct.getDescription()).setQuantity(PTCreditNoteEntryTestUtil.QUANTITY).setUnitOfMeasure(newProduct.getUnitOfMeasure()).setProductUID(newProduct.getUID()).setContextUID(this.context.getUID()).setReason(PTCreditNoteEntryTestUtil.REASON).setReferenceUID(reference.getUID()).setCurrency(Currency.getInstance("EUR"));
+		return creditNoteEntryBuilder;
+	}
 }

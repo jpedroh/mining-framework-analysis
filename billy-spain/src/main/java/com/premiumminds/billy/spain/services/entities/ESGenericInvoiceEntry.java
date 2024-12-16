@@ -18,8 +18,6 @@
  */
 package com.premiumminds.billy.spain.services.entities;
 
-import javax.inject.Inject;
-
 import com.premiumminds.billy.core.services.entities.documents.GenericInvoiceEntry;
 import com.premiumminds.billy.spain.persistence.dao.DAOESGenericInvoice;
 import com.premiumminds.billy.spain.persistence.dao.DAOESGenericInvoiceEntry;
@@ -27,16 +25,14 @@ import com.premiumminds.billy.spain.persistence.dao.DAOESProduct;
 import com.premiumminds.billy.spain.persistence.dao.DAOESRegionContext;
 import com.premiumminds.billy.spain.persistence.dao.DAOESTax;
 import com.premiumminds.billy.spain.services.builders.impl.ESGenericInvoiceEntryBuilderImpl;
+import javax.inject.Inject;
+
 
 public interface ESGenericInvoiceEntry extends GenericInvoiceEntry {
-
-    public static class Builder extends
-            ESGenericInvoiceEntryBuilderImpl<Builder, ESGenericInvoiceEntry, DAOESGenericInvoiceEntry, DAOESGenericInvoice> {
-
-        @Inject
-        public Builder(DAOESGenericInvoiceEntry daoESGenericInvoiceEntry, DAOESGenericInvoice daoESGenericInvoice,
-                DAOESTax daoESTax, DAOESProduct daoESProduct, DAOESRegionContext daoESRegionContext) {
-            super(daoESGenericInvoiceEntry, daoESGenericInvoice, daoESTax, daoESProduct, daoESRegionContext);
-        }
-    }
+	public static class Builder extends ESGenericInvoiceEntryBuilderImpl<Builder, ESGenericInvoiceEntry, DAOESGenericInvoiceEntry, DAOESGenericInvoice> {
+		@Inject
+		public Builder(DAOESGenericInvoiceEntry daoESGenericInvoiceEntry, DAOESGenericInvoice daoESGenericInvoice, DAOESTax daoESTax, DAOESProduct daoESProduct, DAOESRegionContext daoESRegionContext) {
+			super(daoESGenericInvoiceEntry, daoESGenericInvoice, daoESTax, daoESProduct, daoESRegionContext);
+		}
+	}
 }

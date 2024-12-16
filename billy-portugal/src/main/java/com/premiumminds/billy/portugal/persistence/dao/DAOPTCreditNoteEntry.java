@@ -22,8 +22,7 @@ import com.premiumminds.billy.portugal.persistence.entities.PTCreditNoteEntity;
 import com.premiumminds.billy.portugal.persistence.entities.PTCreditNoteEntryEntity;
 import com.premiumminds.billy.portugal.services.entities.PTInvoice;
 
+
 public interface DAOPTCreditNoteEntry extends AbstractDAOPTGenericInvoiceEntry<PTCreditNoteEntryEntity> {
-
-    public PTCreditNoteEntity checkCreditNote(PTInvoice invoice);
-
+	PTCreditNoteEntity checkCreditNote(PTInvoice invoice);
 }

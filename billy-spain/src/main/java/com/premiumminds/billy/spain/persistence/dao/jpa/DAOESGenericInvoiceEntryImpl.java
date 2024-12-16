@@ -18,31 +18,27 @@
  */
 package com.premiumminds.billy.spain.persistence.dao.jpa;
 
+import com.premiumminds.billy.spain.persistence.dao.DAOESGenericInvoiceEntry;
+import com.premiumminds.billy.spain.persistence.entities.ESGenericInvoiceEntryEntity;
+import com.premiumminds.billy.spain.persistence.entities.jpa.JPAESGenericInvoiceEntryEntity;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
-import com.premiumminds.billy.spain.persistence.dao.DAOESGenericInvoiceEntry;
-import com.premiumminds.billy.spain.persistence.entities.ESGenericInvoiceEntryEntity;
-import com.premiumminds.billy.spain.persistence.entities.jpa.JPAESGenericInvoiceEntryEntity;
 
-public class DAOESGenericInvoiceEntryImpl
-        extends AbstractDAOESGenericInvoiceEntryImpl<ESGenericInvoiceEntryEntity, JPAESGenericInvoiceEntryEntity>
-        implements DAOESGenericInvoiceEntry {
+public class DAOESGenericInvoiceEntryImpl extends AbstractDAOESGenericInvoiceEntryImpl<ESGenericInvoiceEntryEntity, JPAESGenericInvoiceEntryEntity> implements DAOESGenericInvoiceEntry {
+	@Inject
+	public DAOESGenericInvoiceEntryImpl(Provider<EntityManager> emProvider) {
+		super(emProvider);
+	}
 
-    @Inject
-    public DAOESGenericInvoiceEntryImpl(Provider<EntityManager> emProvider) {
-        super(emProvider);
-    }
+	@Override
+	public ESGenericInvoiceEntryEntity getEntityInstance() {
+		return new JPAESGenericInvoiceEntryEntity();
+	}
 
-    @Override
-    public ESGenericInvoiceEntryEntity getEntityInstance() {
-        return new JPAESGenericInvoiceEntryEntity();
-    }
-
-    @Override
-    protected Class<? extends JPAESGenericInvoiceEntryEntity> getEntityClass() {
-        return JPAESGenericInvoiceEntryEntity.class;
-    }
-
+	@Override
+	protected Class<? extends JPAESGenericInvoiceEntryEntity> getEntityClass() {
+		return JPAESGenericInvoiceEntryEntity.class;
+	}
 }

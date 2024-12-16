@@ -18,17 +18,17 @@
  */
 package com.premiumminds.billy.portugal.persistence.dao;
 
-import java.util.Date;
-import java.util.List;
-
 import com.premiumminds.billy.core.services.UID;
 import com.premiumminds.billy.portugal.persistence.entities.PTCreditNoteEntity;
 import com.premiumminds.billy.portugal.services.entities.PTCreditNote;
+import java.util.Date;
+import java.util.List;
+
 
 public interface DAOPTCreditNote extends AbstractDAOPTGenericInvoice<PTCreditNoteEntity> {
+	public List<PTCreditNoteEntity> getBusinessCreditNotesForSAFTPT(UID uid,
+			Date from, Date to);
 
-    public List<PTCreditNoteEntity> getBusinessCreditNotesForSAFTPT(UID uid, Date from, Date to);
-
-    public List<PTCreditNote> findByReferencedDocument(UID uidCompany, UID uidInvoice);
-
+	public List<PTCreditNote> findByReferencedDocument(UID uidCompany,
+			UID uidInvoice);
 }

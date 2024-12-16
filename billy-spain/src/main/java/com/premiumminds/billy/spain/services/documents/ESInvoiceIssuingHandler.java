@@ -18,27 +18,25 @@
  */
 package com.premiumminds.billy.spain.services.documents;
 
-import javax.inject.Inject;
-
 import com.premiumminds.billy.core.persistence.dao.DAOInvoiceSeries;
 import com.premiumminds.billy.core.services.exceptions.DocumentIssuingException;
 import com.premiumminds.billy.spain.persistence.dao.DAOESInvoice;
 import com.premiumminds.billy.spain.persistence.entities.ESInvoiceEntity;
 import com.premiumminds.billy.spain.services.documents.util.ESIssuingParams;
+import javax.inject.Inject;
+
 
 public class ESInvoiceIssuingHandler extends ESGenericInvoiceIssuingHandler<ESInvoiceEntity, ESIssuingParams> {
+	private final DAOESInvoice	daoInvoice;
 
-    private final DAOESInvoice daoInvoice;
+	@Inject
+	public ESInvoiceIssuingHandler(DAOInvoiceSeries daoInvoiceSeries, DAOESInvoice daoInvoice) {
+		super(daoInvoiceSeries);
+		this.daoInvoice = daoInvoice;
+	}
 
-    @Inject
-    public ESInvoiceIssuingHandler(DAOInvoiceSeries daoInvoiceSeries, DAOESInvoice daoInvoice) {
-        super(daoInvoiceSeries);
-        this.daoInvoice = daoInvoice;
-    }
-
-    @Override
-    public ESInvoiceEntity issue(ESInvoiceEntity document, ESIssuingParams parameters) throws DocumentIssuingException {
-        return this.issue(document, parameters, this.daoInvoice);
-    }
-
+	@Override
+	public ESInvoiceEntity issue(ESInvoiceEntity document, ESIssuingParams parameters) throws DocumentIssuingException {
+		return issue(document, parameters, this.daoInvoice);
+	}
 }

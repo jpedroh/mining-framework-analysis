@@ -18,12 +18,6 @@
  */
 package com.premiumminds.billy.spain.services.builders.impl;
 
-import java.util.Date;
-
-import javax.validation.ValidationException;
-
-import org.apache.commons.lang3.time.DateUtils;
-
 import com.premiumminds.billy.core.exceptions.BillyValidationException;
 import com.premiumminds.billy.core.persistence.entities.GenericInvoiceEntryEntity;
 import com.premiumminds.billy.core.services.builders.impl.GenericInvoiceEntryBuilderImpl;
@@ -37,42 +31,44 @@ import com.premiumminds.billy.spain.persistence.dao.DAOESTax;
 import com.premiumminds.billy.spain.persistence.entities.ESInvoiceEntryEntity;
 import com.premiumminds.billy.spain.services.builders.ESManualInvoiceEntryBuilder;
 import com.premiumminds.billy.spain.services.entities.ESGenericInvoiceEntry;
+import java.util.Date;
+import javax.validation.ValidationException;
+import org.apache.commons.lang3.time.DateUtils;
 
-public class ESManualInvoiceEntryBuilderImpl<TBuilder extends ESManualInvoiceEntryBuilderImpl<TBuilder, TEntry>, TEntry extends ESGenericInvoiceEntry>
-        extends ESManualEntryBuilderImpl<TBuilder, TEntry, DAOESInvoiceEntry, DAOESInvoice>
-        implements ESManualInvoiceEntryBuilder<TBuilder, TEntry> {
 
-    public ESManualInvoiceEntryBuilderImpl(DAOESInvoiceEntry daoESEntry, DAOESInvoice daoESInvoice, DAOESTax daoESTax,
-            DAOESProduct daoESProduct, DAOESRegionContext daoESRegionContext) {
-        super(daoESEntry, daoESInvoice, daoESTax, daoESProduct, daoESRegionContext);
-    }
+public class ESManualInvoiceEntryBuilderImpl<TBuilder extends ESManualInvoiceEntryBuilderImpl<TBuilder, TEntry>, TEntry extends ESGenericInvoiceEntry> extends ESManualEntryBuilderImpl<TBuilder, TEntry, DAOESInvoiceEntry, DAOESInvoice> implements ESManualInvoiceEntryBuilder<TBuilder, TEntry> {
+	public ESManualInvoiceEntryBuilderImpl(DAOESInvoiceEntry daoESEntry, DAOESInvoice daoESInvoice, DAOESTax daoESTax, DAOESProduct daoESProduct, DAOESRegionContext daoESRegionContext) {
+		super(daoESEntry, daoESInvoice, daoESTax, daoESProduct, daoESRegionContext);
+	}
 
-    @Override
-    protected ESInvoiceEntryEntity getTypeInstance() {
-        return (ESInvoiceEntryEntity) super.getTypeInstance();
-    }
+	@Override
+	protected ESInvoiceEntryEntity getTypeInstance() {
+		return ((ESInvoiceEntryEntity) (super.getTypeInstance()));
+	}
 
-    @Override
-    protected void validateInstance() throws BillyValidationException {
-        this.getTypeInstance().setCreditOrDebit(CreditOrDebit.CREDIT);
-        this.validateValues();
-        super.validateInstance();
-    }
+	@Override
+	protected void validateInstance() throws BillyValidationException {
+		this.getTypeInstance().setCreditOrDebit(CreditOrDebit.CREDIT);
+		this.validateValues();
+		super.validateInstance();
+	}
 
-    @Override
-    protected void validateValues() throws BillyValidationException {
-        GenericInvoiceEntryEntity e = this.getTypeInstance();
-        for (Tax t : e.getProduct().getTaxes()) {
-            if (this.daoContext.isSubContext(t.getContext(), this.context)) {
-                Date taxDate = e.getTaxPointDate() == null ? new Date() : e.getTaxPointDate();
-                if (DateUtils.isSameDay(t.getValidTo(), taxDate) || t.getValidTo().after(taxDate)) {
-                    e.getTaxes().add(t);
-                }
-            }
-        }
-        if (e.getTaxes().isEmpty()) {
-            throw new ValidationException(
-                    GenericInvoiceEntryBuilderImpl.LOCALIZER.getString("exception.invalid_taxes"));
-        }
-    }
+	@Override
+	protected void validateValues() throws BillyValidationException {
+		GenericInvoiceEntryEntity e = this.getTypeInstance();
+		for (Tax t : e.getProduct().getTaxes()) {
+			if (this.daoContext.isSubContext(t.getContext(), this.context)) {
+				Date taxDate = e.getTaxPointDate() == null ? new Date() : e.getTaxPointDate();
+				if (DateUtils.isSameDay(t.getValidTo(), taxDate)
+						|| t.getValidTo().after(taxDate)) {
+					e.getTaxes().add(t);
+				}
+			}
+		}
+		if (e.getTaxes().isEmpty()) {
+			throw new ValidationException(
+					GenericInvoiceEntryBuilderImpl.LOCALIZER
+					.getString("exception.invalid_taxes"));
+		}
+	}
 }
