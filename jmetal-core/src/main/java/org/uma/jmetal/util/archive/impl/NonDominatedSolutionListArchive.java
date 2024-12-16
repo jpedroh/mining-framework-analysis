@@ -1,18 +1,12 @@
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU Lesser General Public License for more details.
-// 
-//  You should have received a copy of the GNU Lesser General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package org.uma.jmetal.util.archive.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 import org.uma.jmetal.problem.DoubleProblem;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.impl.AbstractDoubleProblem;
@@ -24,13 +18,6 @@ import org.uma.jmetal.util.comparator.DominanceComparator;
 import org.uma.jmetal.util.comparator.EqualSolutionsComparator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 /**
  * This class implements an archive containing non-dominated solutions
@@ -41,7 +28,9 @@ import java.util.function.Predicate;
 @SuppressWarnings("serial")
 public class NonDominatedSolutionListArchive<S extends Solution<?>> implements Archive<S> {
   private List<S> solutionList;
+
   private Comparator<S> dominanceComparator;
+
   private Comparator<S> equalSolutions = new EqualSolutionsComparator<S>();
 
   /**
@@ -56,7 +45,6 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
    */
   public NonDominatedSolutionListArchive(DominanceComparator<S> comparator) {
     dominanceComparator = comparator;
-
     solutionList = new ArrayList<>();
   }
 
@@ -68,41 +56,85 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
    * identical individual exists. The decision variables can be null if the solution is read from a
    * file; in that case, the domination tests are omitted
    */
-  @Override
   public boolean add(S solution) {
-    boolean solutionInserted = false ;
+    boolean solutionInserted = false;
     if (solutionList.size() == 0) {
-      solutionList.add(solution) ;
-      solutionInserted = true ;
+      solutionList.add(solution);
+      solutionInserted = true;
     } else {
       Iterator<S> iterator = solutionList.iterator();
       boolean isDominated = false;
-      
       boolean isContained = false;
-      while (((!isDominated) && (!isContained)) && (iterator.hasNext())) {
+      while (((!isDominated) && (!isContained)) && iterator.hasNext()) {
         S listIndividual = iterator.next();
         int flag = dominanceComparator.compare(solution, listIndividual);
-        if (flag == -1) {
+        if (flag == (-1)) {
           iterator.remove();
-        }  else if (flag == 1) {
-          isDominated = true; // dominated by one in the list
+        } else if (flag == 1) {
+          // dominated by one in the list
+          isDominated = true;
         } else if (flag == 0) {
           int equalflag = equalSolutions.compare(solution, listIndividual);
-          if (equalflag == 0) // solutions are equals
+          // solutions are equals
+          if (equalflag == 0) {
             isContained = true;
+          }
         }
+      } 
+      if ((!isDominated) && (!isContained)) {
+        solutionList.add(solution);
+        solutionInserted = true;
       }
-      
-      if (!isDominated && !isContained) {
-    	  solutionList.add(solution);
-    	  solutionInserted = true;
-      }
-      
       return solutionInserted;
     }
-
-    return solutionInserted ;
+    return solutionInserted;
   }
+
+<<<<<<< LEFT
+/*
+  @Override
+  public boolean add(S solution) {
+    boolean hasTheSolutionBeenInserted = false;
+    solutionList.removeIf(sol ->
+            ((dominanceComparator.compare(solution, sol) == -1) ||
+                    equalSolutions.compare(sol, solution) == 0)
+    );
+    S foundSolution = solutionList.stream()
+            .filter(sol -> dominanceComparator.compare(solution, sol) == 1)
+            .findFirst()
+            .orElse(null);
+
+    if (foundSolution == null) {
+      solutionList.add(solution);
+      hasTheSolutionBeenInserted = true;
+    }
+
+    return hasTheSolutionBeenInserted;
+  }
+*/
+=======
+/*
+  @Override
+  public boolean add(S solution) {
+    boolean hasTheSolutionBeenInserted = false;
+
+    boolean solutionIsInTheArchive = solutionList.stream()
+            .anyMatch(sol -> equalSolutions.compare(sol, solution) == 0);
+
+    if (!solutionIsInTheArchive) {
+      solutionList.removeIf(sol -> dominanceComparator.compare(solution, sol) == -1);
+      boolean aSolutionHasBeenFound = solutionList.stream()
+              .anyMatch(sol -> dominanceComparator.compare(solution, sol) == 1) ;
+
+      if (!aSolutionHasBeenFound) {
+        solutionList.add(solution);
+        hasTheSolutionBeenInserted = true;
+      }
+    }
+    return hasTheSolutionBeenInserted;
+  }
+*/
+>>>>>>> RIGHT
 
   @Override
   public List<S> getSolutionList() {
@@ -137,27 +169,22 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
       setNumberOfVariables(numberOfVariables);
       setNumberOfObjectives(2);
       setNumberOfConstraints(0);
-
-      List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables()) ;
-      List<Double> upperLimit = new ArrayList<>(getNumberOfVariables()) ;
-
-      for (int i = 0 ; i < getNumberOfVariables(); i++) {
+      List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables());
+      List<Double> upperLimit = new ArrayList<>(getNumberOfVariables());
+      for (int i = 0; i < getNumberOfVariables(); i++) {
         lowerLimit.add(0.0);
         upperLimit.add(1.0);
       }
-
       setLowerLimit(lowerLimit);
       setUpperLimit(upperLimit);
     }
 
     public void evaluate(DoubleSolution solution) {
       double[] f = new double[getNumberOfObjectives()];
-
-      f[0] = solution.getVariableValue(0)+0.0;
+      f[0] = solution.getVariableValue(0) + 0.0;
       double g = this.evalG(solution);
       double h = this.evalH(f[0], g);
       f[1] = h * g;
-
       solution.setObjective(0, f[0]);
       solution.setObjective(1, f[1]);
     }
@@ -165,7 +192,8 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
     /**
      * Returns the value of the ZDT1 function G.
      *
-     * @param solution Solution
+     * @param solution
+     * 		Solution
      */
     private double evalG(DoubleSolution solution) {
       double g = 0.0;
@@ -181,18 +209,20 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
     /**
      * Returns the value of the ZDT1 function H.
      *
-     * @param f First argument of the function H.
-     * @param g Second argument of the function H.
+     * @param f
+     * 		First argument of the function H.
+     * @param g
+     * 		Second argument of the function H.
      */
     public double evalH(double f, double g) {
-      double h ;
+      double h;
       h = 1.0 - Math.sqrt(f / g);
       return h;
     }
 
     @Override
     public DoubleSolution createSolution() {
-      return new ArrayDoubleSolution(this)  ;
+      return new ArrayDoubleSolution(this);
     }
   }
 }
