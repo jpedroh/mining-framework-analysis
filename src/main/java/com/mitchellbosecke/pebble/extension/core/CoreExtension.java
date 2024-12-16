@@ -54,14 +54,13 @@ import com.mitchellbosecke.pebble.tokenParser.MacroTokenParser;
 import com.mitchellbosecke.pebble.tokenParser.ParallelTokenParser;
 import com.mitchellbosecke.pebble.tokenParser.SetTokenParser;
 import com.mitchellbosecke.pebble.tokenParser.TokenParser;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CoreExtension extends AbstractExtension {
 
+public class CoreExtension extends AbstractExtension {
     @Override
     public List<TokenParser> getTokenParsers() {
         ArrayList<TokenParser> parsers = new ArrayList<>();
@@ -78,7 +77,6 @@ public class CoreExtension extends AbstractExtension {
         parsers.add(new SetTokenParser());
         parsers.add(new CacheTokenParser());
         parsers.add(new FromTokenParser());
-
         // verbatim tag is implemented directly in the LexerImpl
         return parsers;
     }
@@ -115,7 +113,6 @@ public class CoreExtension extends AbstractExtension {
         operators.add(new BinaryOperatorImpl("|", 100, FilterExpression.class, Associativity.LEFT));
         operators.add(new BinaryOperatorImpl("~", 110, ConcatenateExpression.class, Associativity.LEFT));
         operators.add(new BinaryOperatorImpl("..", 120, RangeExpression.class, Associativity.LEFT));
-
         return operators;
     }
 
