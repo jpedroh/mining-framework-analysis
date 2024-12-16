@@ -14,19 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package opennlp.tools.ml;
 
 import java.util.Map;
-
 import opennlp.tools.ml.model.DataIndexer;
 import opennlp.tools.ml.model.Event;
 import opennlp.tools.ml.model.MaxentModel;
 import opennlp.tools.util.ObjectStream;
 import opennlp.tools.util.TrainingParameters;
 
-public class MockEventTrainer implements EventTrainer {
 
+public class MockEventTrainer implements EventTrainer {
   public MaxentModel train(ObjectStream<Event> events) {
     return null;
   }
@@ -41,6 +39,7 @@ public class MockEventTrainer implements EventTrainer {
   }
 
   @Override
-  public void init(TrainingParameters trainingParams, Map<String, String> reportMap) {
+  public void init(TrainingParameters trainingParams,
+      Map<String, String> reportMap) {
   }
 }

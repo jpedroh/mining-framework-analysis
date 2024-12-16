@@ -14,18 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package opennlp.tools.ml;
 
 import java.util.Map;
-
 import opennlp.tools.commons.Sample;
 import opennlp.tools.ml.model.AbstractModel;
 import opennlp.tools.ml.model.SequenceStream;
 import opennlp.tools.util.TrainingParameters;
 
-public class MockSequenceTrainer implements EventModelSequenceTrainer {
 
+public class MockSequenceTrainer implements EventModelSequenceTrainer {
   public AbstractModel train(SequenceStream<? extends Sample> events) {
     return null;
   }
@@ -35,7 +33,7 @@ public class MockSequenceTrainer implements EventModelSequenceTrainer {
   }
 
   @Override
-  public void init(TrainingParameters trainParams, Map<String, String> reportMap) {
+  public void init(TrainingParameters trainParams,
+      Map<String, String> reportMap) {
   }
-  
 }

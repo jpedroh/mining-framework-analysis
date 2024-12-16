@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package opennlp.tools.formats.ad;
 
 import java.io.File;
@@ -23,16 +22,14 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
+import opennlp.tools.tokenize.TokenSample;
+import opennlp.tools.util.ObjectStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import opennlp.tools.tokenize.TokenSample;
-import opennlp.tools.util.ObjectStream;
 
 public class ADTokenSampleStreamTest {
-
   private final List<TokenSample> samples = new ArrayList<>();
 
   @Test
@@ -47,24 +44,15 @@ public class ADTokenSampleStreamTest {
 
   @BeforeEach
   void setup() throws IOException, URISyntaxException {
-    ADTokenSampleStreamFactory<ADTokenSampleStreamFactory.Parameters> factory =
-            new ADTokenSampleStreamFactory<>(ADTokenSampleStreamFactory.Parameters.class);
-
-    File dict = new File(Objects.requireNonNull(getClass().getClassLoader()
-        .getResource("opennlp/tools/tokenize/latin-detokenizer.xml")).toURI());
-    File data = new File(Objects.requireNonNull(getClass().getClassLoader()
-        .getResource("opennlp/tools/formats/ad.sample")).toURI());
-    String[] args = {"-data", data.getCanonicalPath(), "-encoding", "UTF-8",
-        "-lang", "por", "-detokenizer", dict.getCanonicalPath()};
+    ADTokenSampleStreamFactory<ADTokenSampleStreamFactory.Parameters> factory = new ADTokenSampleStreamFactory<>(ADTokenSampleStreamFactory.Parameters.class);
+    File dict = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("opennlp/tools/tokenize/latin-detokenizer.xml")).toURI());
+    File data = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("opennlp/tools/formats/ad.sample")).toURI());
+    String[] args = new java.lang.String[]{ "-data", data.getCanonicalPath(), "-encoding", "UTF-8", "-lang", "por", "-detokenizer", dict.getCanonicalPath() };
     ObjectStream<TokenSample> tokenSampleStream = factory.create(args);
-
     TokenSample sample = tokenSampleStream.read();
-
     while (sample != null) {
       samples.add(sample);
       sample = tokenSampleStream.read();
-    }
-
+    } 
   }
-
 }

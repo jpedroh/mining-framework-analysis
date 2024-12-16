@@ -14,31 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package opennlp.tools.util;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
-
+import opennlp.tools.ml.EventTrainer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import opennlp.tools.ml.EventTrainer;
 
 public class TrainingParametersTest {
-
   @Test
   void testConstructors() throws Exception {
-    TrainingParameters tp1 =
-        new TrainingParameters(build("key1=val1,key2=val2,key3=val3"));
-
-    TrainingParameters tp2 = new TrainingParameters(
-        new ByteArrayInputStream("key1=val1\nkey2=val2\nkey3=val3\n".getBytes())
-    );
-
+    TrainingParameters tp1 = new TrainingParameters(build("key1=val1,key2=val2,key3=val3"));
+    TrainingParameters tp2 = new TrainingParameters(new ByteArrayInputStream("key1=val1\nkey2=val2\nkey3=val3\n".getBytes()));
     TrainingParameters tp3 = new TrainingParameters(tp2);
-
     assertEquals(tp1, tp2);
     assertEquals(tp2, tp3);
   }
@@ -46,24 +37,19 @@ public class TrainingParametersTest {
   @Test
   void testDefault() {
     TrainingParameters tr = TrainingParameters.defaultParams();
-
     Assertions.assertEquals(4, tr.getObjectSettings().size());
     Assertions.assertEquals("MAXENT", tr.algorithm());
-    Assertions.assertEquals(EventTrainer.EVENT_VALUE,
-        tr.getStringParameter(TrainingParameters.TRAINER_TYPE_PARAM,
-            "v11"));  // use different defaults
-    Assertions.assertEquals(100,
-        tr.getIntParameter(TrainingParameters.ITERATIONS_PARAM,
-            200));  // use different defaults
-    Assertions.assertEquals(5,
-        tr.getIntParameter(TrainingParameters.CUTOFF_PARAM,
-            200));  // use different defaults
+            // use different defaults
+    Assertions.assertEquals(EventTrainer.EVENT_VALUE, tr.getStringParameter(TrainingParameters.TRAINER_TYPE_PARAM, "v11"));
+            // use different defaults
+    Assertions.assertEquals(100, tr.getIntParameter(TrainingParameters.ITERATIONS_PARAM, 200));
+            // use different defaults
+    Assertions.assertEquals(5, tr.getIntParameter(TrainingParameters.CUTOFF_PARAM, 200));
   }
 
   @Test
   void testGetAlgorithm() {
     TrainingParameters tp = build("Algorithm=Perceptron,n1.Algorithm=SVM");
-
     Assertions.assertEquals("Perceptron", tp.algorithm());
     Assertions.assertEquals("SVM", tp.algorithm("n1"));
   }
@@ -71,7 +57,6 @@ public class TrainingParametersTest {
   @Test
   void testGetAlgorithmCaseInsensitive() {
     TrainingParameters tp = build("ALGORITHM=Perceptron,n1.Algorithm=SVM");
-
     Assertions.assertEquals("Perceptron", tp.algorithm());
     Assertions.assertEquals("SVM", tp.algorithm("n1"));
   }
@@ -79,7 +64,6 @@ public class TrainingParametersTest {
   @Test
   void testGetSettings() {
     TrainingParameters tp = build("k1=v1,n1.k2=v2,n2.k3=v3,n1.k4=v4");
-
     assertEquals(buildMap("k1=v1"), tp.getObjectSettings());
     assertEquals(buildMap("k2=v2,k4=v4"), tp.getObjectSettings("n1"));
     assertEquals(buildMap("k3=v3"), tp.getObjectSettings("n2"));
@@ -89,7 +73,6 @@ public class TrainingParametersTest {
   @Test
   void testGetParameters() {
     TrainingParameters tp = build("k1=v1,n1.k2=v2,n2.k3=v3,n1.k4=v4");
-
     assertEquals(build("k1=v1"), tp.getParameters(null));
     assertEquals(build("k2=v2,k4=v4"), tp.getParameters("n1"));
     assertEquals(build("k3=v3"), tp.getParameters("n2"));
@@ -98,30 +81,27 @@ public class TrainingParametersTest {
 
   @Test
   void testPutGet() {
-    TrainingParameters tp =
-        build("k1=v1,int.k2=123,str.k2=v3,str.k3=v4,boolean.k4=false,double.k5=123.45,k21=234.5");
-
+    TrainingParameters tp = build("k1=v1,int.k2=123,str.k2=v3,str.k3=v4,boolean.k4=false,double.k5=123.45,k21=234.5");
     Assertions.assertEquals("v1", tp.getStringParameter("k1", "def"));
     Assertions.assertEquals("def", tp.getStringParameter("k2", "def"));
     Assertions.assertEquals("v3", tp.getStringParameter("str", "k2", "def"));
     Assertions.assertEquals("def", tp.getStringParameter("str", "k4", "def"));
-
     Assertions.assertEquals(-100, tp.getIntParameter("k11", -100));
     tp.put("k11", 234);
     Assertions.assertEquals(234, tp.getIntParameter("k11", -100));
     Assertions.assertEquals(123, tp.getIntParameter("int", "k2", -100));
     Assertions.assertEquals(-100, tp.getIntParameter("int", "k4", -100));
-
     Assertions.assertEquals(tp.getDoubleParameter("k21", -100), 0.001, 234.5);
     tp.put("k21", 345.6);
-    Assertions.assertEquals(tp.getDoubleParameter("k21", -100), 0.001, 345.6); // should be changed
+    // should be changed
+    Assertions.assertEquals(tp.getDoubleParameter("k21", -100), 0.001, 345.6);
     tp.putIfAbsent("k21", 456.7);
-    Assertions.assertEquals(tp.getDoubleParameter("k21", -100), 0.001, 345.6); // should be unchanged
+    // should be unchanged
+    Assertions.assertEquals(tp.getDoubleParameter("k21", -100), 0.001, 345.6);
     Assertions.assertEquals(tp.getDoubleParameter("double", "k5", -100), 0.001, 123.45);
-
-    Assertions.assertTrue(tp.getBooleanParameter("k31", true));
-    tp.put("k31", false);
     Assertions.assertFalse(tp.getBooleanParameter("k31", true));
+    tp.put("k31", false);
+    Assertions.assertTrue(tp.getBooleanParameter("k31", true));
     Assertions.assertFalse(tp.getBooleanParameter("boolean", "k4", true));
   }
 
@@ -133,7 +113,6 @@ public class TrainingParametersTest {
       String[] keyValue = pair.split("=");
       map.put(keyValue[0], keyValue[1]);
     }
-
     return map;
   }
 

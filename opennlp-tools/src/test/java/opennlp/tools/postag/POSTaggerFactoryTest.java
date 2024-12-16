@@ -14,17 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package opennlp.tools.postag;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import opennlp.tools.formats.ResourceAsStreamFactory;
 import opennlp.tools.postag.DummyPOSTaggerFactory.DummyPOSContextGenerator;
 import opennlp.tools.postag.DummyPOSTaggerFactory.DummyPOSDictionary;
@@ -35,12 +30,14 @@ import opennlp.tools.util.InvalidFormatException;
 import opennlp.tools.util.ObjectStream;
 import opennlp.tools.util.PlainTextByLineStream;
 import opennlp.tools.util.TrainingParameters;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 /**
  * Tests for the {@link POSTaggerFactory} class.
  */
 public class POSTaggerFactoryTest {
-
   private static ObjectStream<POSSample> createSampleStream()
       throws IOException {
     InputStreamFactory in = new ResourceAsStreamFactory(
@@ -58,23 +55,16 @@ public class POSTaggerFactoryTest {
 
   @Test
   void testPOSTaggerWithCustomFactory() throws IOException {
-    DummyPOSDictionary posDict = new DummyPOSDictionary(
-        POSDictionary.create(POSDictionaryTest.class
-            .getResourceAsStream("TagDictionaryCaseSensitive.xml")));
-
+    DummyPOSDictionary posDict = new DummyPOSDictionary(POSDictionary.create(POSDictionaryTest.class.getResourceAsStream("TagDictionaryCaseSensitive.xml")));
     POSModel posModel = trainPOSModel(new DummyPOSTaggerFactory(posDict));
-
     POSTaggerFactory factory = posModel.getFactory();
     Assertions.assertTrue(factory.getTagDictionary() instanceof DummyPOSDictionary);
     Assertions.assertTrue(factory.getPOSContextGenerator() instanceof DummyPOSContextGenerator);
     Assertions.assertTrue(factory.getSequenceValidator() instanceof DummyPOSSequenceValidator);
-
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     posModel.serialize(out);
     ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-
     POSModel fromSerialized = new POSModel(in);
-
     factory = fromSerialized.getFactory();
     Assertions.assertTrue(factory.getTagDictionary() instanceof DummyPOSDictionary);
     Assertions.assertTrue(factory.getPOSContextGenerator() instanceof DummyPOSContextGenerator);
@@ -83,21 +73,16 @@ public class POSTaggerFactoryTest {
 
   @Test
   void testPOSTaggerWithDefaultFactory() throws IOException {
-    POSDictionary posDict = POSDictionary.create(POSDictionaryTest.class
-        .getResourceAsStream("TagDictionaryCaseSensitive.xml"));
+    POSDictionary posDict = POSDictionary.create(POSDictionaryTest.class.getResourceAsStream("TagDictionaryCaseSensitive.xml"));
     POSModel posModel = trainPOSModel(new POSTaggerFactory(null, null, posDict));
-
     POSTaggerFactory factory = posModel.getFactory();
     Assertions.assertTrue(factory.getTagDictionary() instanceof POSDictionary);
     Assertions.assertNotNull(factory.getPOSContextGenerator());
     Assertions.assertTrue(factory.getSequenceValidator() instanceof DefaultPOSSequenceValidator);
-
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     posModel.serialize(out);
     ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-
     POSModel fromSerialized = new POSModel(in);
-
     factory = fromSerialized.getFactory();
     Assertions.assertTrue(factory.getTagDictionary() instanceof POSDictionary);
     Assertions.assertNotNull(factory.getPOSContextGenerator());
@@ -121,7 +106,7 @@ public class POSTaggerFactoryTest {
   @Test
   void testCreateWithHierarchy() {
     Assertions.assertThrows(InvalidFormatException.class, () -> {
-      BaseToolFactory.create(Object.class.getCanonicalName(), null);
+      BaseToolFactory.create(.class.getCanonicalName(), null);
     });
   }
 

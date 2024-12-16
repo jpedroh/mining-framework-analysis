@@ -14,22 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package opennlp.tools.cmdline;
 
 import java.security.Permission;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+
 public class CLITest {
-
   private static class ExitException extends SecurityException {
-
     private static final long serialVersionUID = 6144359372794123631L;
-    
+
     private final int status;
 
     public ExitException(int status) {
@@ -45,7 +42,6 @@ public class CLITest {
    * A <code>SecurityManager</code> which prevents System.exit anything else is allowed.
    */
   private static class NoExitSecurityManager extends SecurityManager {
-
     @Override
     public void checkPermission(Permission perm) {
     }
@@ -57,7 +53,6 @@ public class CLITest {
     @Override
     public void checkExit(int status) {
       super.checkExit(status);
-
       throw new ExitException(status);
     }
   }
@@ -74,10 +69,9 @@ public class CLITest {
    */
   @Test
   void testMainHelpMessage() {
-
     try {
-      CLI.main(new String[] {});
-    } catch (ExitException e) {
+      CLI.main(new String[]{  });
+    } catch (CLITest.ExitException e) {
       Assertions.assertEquals(0, e.status());
     }
   }
@@ -88,8 +82,8 @@ public class CLITest {
   @Test
   void testUnknownToolMessage() {
     try {
-      CLI.main(new String[] {"unknown name"});
-    } catch (ExitException e) {
+      CLI.main(new String[]{ "unknown name" });
+    } catch (CLITest.ExitException e) {
       Assertions.assertEquals(1, e.status());
     }
   }
@@ -100,8 +94,8 @@ public class CLITest {
   @Test
   void testToolParameterMessage() {
     try {
-      CLI.main(new String[] {"DoccatTrainer", "-param", "value"});
-    } catch (ExitException e) {
+      CLI.main(new String[]{ "DoccatTrainer", "-param", "value" });
+    } catch (CLITest.ExitException e) {
       Assertions.assertEquals(1, e.status());
     }
   }
@@ -112,24 +106,22 @@ public class CLITest {
   @Test
   void testUnknownFileMessage() {
     try {
-      CLI.main(new String[] {"Doccat", "unknown.model"});
-    } catch (ExitException e) {
+      CLI.main(new String[]{ "Doccat", "unknown.model" });
+    } catch (CLITest.ExitException e) {
       Assertions.assertEquals(-1, e.status());
     }
   }
-
 
   /**
    * Ensure all tools do not fail printing help message;
    */
   @Test
   void testHelpMessageOfTools() {
-
     for (String toolName : CLI.getToolNames()) {
       System.err.println("-> ToolName" + toolName);
       try {
-        CLI.main(new String[] {toolName, "help"});
-      } catch (ExitException e) {
+        CLI.main(new String[]{ toolName, "help" });
+      } catch (CLITest.ExitException e) {
         Assertions.assertEquals(0, e.status());
       }
     }
@@ -139,5 +131,4 @@ public class CLITest {
   void restoreSecurityManager() {
     System.setSecurityManager(originalSecurityManager);
   }
-
 }
