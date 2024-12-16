@@ -1,56 +1,55 @@
 package com.senseidb.clue;
 
+import com.senseidb.clue.commands.ClueCommand;
+import com.senseidb.clue.commands.HelpCommand;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.URI;
-
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.store.Directory;
 
-import com.senseidb.clue.commands.ClueCommand;
-import com.senseidb.clue.commands.HelpCommand;
 
 public class ClueApplication {
-  
   private final ClueContext ctx;
+
   private final ClueCommand helpCommand;
+
   private final Directory dir;
-  
+
   private static ClueConfiguration config;
-  
+
   static {
     try {
       config = ClueConfiguration.load();
-    } catch (Exception e) {
+    } catch (java.lang.Exception e) {
       throw new RuntimeException(e);
     }
   }
-  
+
   public ClueContext getContext() {
     return ctx;
   }
-  
+
   public ClueConfiguration getConfiguration() {
     return config;
   }
-  
+
   public ClueContext newContext(Directory dir, ClueConfiguration config, boolean interactiveMode) throws Exception {
     return new ClueContext(dir, config, interactiveMode);
   }
-  
-  public ClueApplication(String idxLocation, boolean interactiveMode) throws Exception{
+
+  public ClueApplication(String idxLocation, boolean interactiveMode) throws Exception {
     dir = config.getDirBuilder().build(new URI(idxLocation));
-    if (!DirectoryReader.indexExists(dir)){
-      System.out.println("lucene index does not exist at: "+idxLocation);
+    if (!DirectoryReader.indexExists(dir)) {
+      System.out.println("lucene index does not exist at: " + idxLocation);
       System.exit(1);
     }
-        
     ctx = newContext(dir, config, interactiveMode);
     helpCommand = ctx.getCommand(HelpCommand.CMD_NAME);
   }
-  
+
   public void handleCommand(String cmdName, String[] args, PrintStream out){
     ClueCommand cmd = ctx.getCommand(cmdName);
     if (cmd == null){
@@ -64,39 +63,37 @@ public class ClueApplication {
       e.printStackTrace();
     }
   }
-  
+
   public void run() throws IOException {
-    while(true){
+    while (true) {
       String line = ctx.readCommand();
-      if (line == null || line.isEmpty()) continue;
+      if ((line == null) || line.isEmpty()) {
+        continue;
+      }
       line = line.trim();
       String[] parts = line.split("\\s");
-      if (parts.length > 0){
+      if (parts.length > 0) {
         String cmd = parts[0];
         String[] cmdArgs = new String[parts.length - 1];
         System.arraycopy(parts, 1, cmdArgs, 0, cmdArgs.length);
         handleCommand(cmd, cmdArgs, System.out);
       }
-    }
+    } 
   }
-  
+
   public void shutdown() throws Exception {
     ctx.shutdown();
     dir.close();
   }
-  
-  
+
   public static void main(String[] args) throws Exception {
-    if (args.length < 1){
+    if (args.length < 1) {
       System.out.println("usage: <index location> <command> <command args>");
       System.exit(1);
     }
-        
     String idxLocation = args[0];
-    
     final ClueApplication app;
-    
-    if (args.length > 1){
+    if (args.length > 1) {
       String cmd = args[1];
       if ("readonly".equalsIgnoreCase(cmd)) {
         if (args.length > 2) {
@@ -109,8 +106,7 @@ public class ClueApplication {
           app.handleCommand(cmd, cmdArgs, System.out);
           app.shutdown();
         }
-      }
-      else {
+      } else {
         app = new ClueApplication(idxLocation, false);
         String[] cmdArgs;
         cmdArgs = new String[args.length - 2];
@@ -125,9 +121,9 @@ public class ClueApplication {
       public void run() {
         try {
           app.shutdown();
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
           e.printStackTrace();
-        } 
+        }
       }
     });
     app.run();
