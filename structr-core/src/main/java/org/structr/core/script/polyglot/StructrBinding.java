@@ -31,94 +31,84 @@ import org.structr.core.GraphObject;
 import org.structr.core.Services;
 import org.structr.core.app.StructrApp;
 import org.structr.core.function.Functions;
-import static org.structr.core.script.polyglot.PolyglotWrapper.wrap;
 import org.structr.core.script.polyglot.function.*;
 import org.structr.core.script.polyglot.wrappers.*;
 import org.structr.schema.action.ActionContext;
 import org.structr.schema.action.EvaluationHints;
 import org.structr.schema.action.Function;
+import static org.structr.core.script.polyglot.PolyglotWrapper.wrap;
+
 
 public class StructrBinding implements ProxyObject {
 	private final static Logger logger = LoggerFactory.getLogger(StructrBinding.class);
+
 	private final GraphObject entity;
+
 	private final ActionContext actionContext;
 
 	public StructrBinding(final ActionContext actionContext, final GraphObject entity) {
-
 		this.actionContext = actionContext;
-		this.entity        = entity;
+		this.entity = entity;
 	}
 
 	@Override
 	public Object getMember(String name) {
-
 		switch (name) {
-			case "get":
+			case "get" :
 				return getGetFunctionWrapper();
-			case "this":
+			case "this" :
 				return wrap(actionContext, entity);
-			case "me":
-				return wrap(actionContext,actionContext.getSecurityContext().getUser(false));
-			case "predicate":
+			case "me" :
+				return wrap(actionContext, actionContext.getSecurityContext().getUser(false));
+			case "predicate" :
 				return new PredicateBinding(actionContext, entity);
-			case "batch":
+			case "batch" :
 				logger.warn("The batch() function has been renamed to doInNewTransaction() to better communicate the sematics. Using batch() is deprecated as it will be removed in future versions.");
-			case "doInNewTransaction":
+			case "doInNewTransaction" :
 				return new DoInNewTransactionFunction(actionContext, entity);
-			case "includeJs":
+			case "includeJs" :
 				return new IncludeJSFunction(actionContext);
-			case "doPrivileged":
+			case "doPrivileged" :
 				return new DoPrivilegedFunction(actionContext);
-			case "request":
+			case "request" :
 				return new HttpServletRequestWrapper(actionContext, actionContext.getSecurityContext().getRequest());
-			case "session":
+			case "session" :
 				return new HttpSessionWrapper(actionContext, actionContext.getSecurityContext().getSession());
-			case "cache":
+			case "cache" :
 				return new CacheFunction(actionContext, entity);
-			case "vars":
-			case "requestStore":
+			case "vars" :
+			case "requestStore" :
 				return new PolyglotProxyMap(actionContext, actionContext.getRequestStore());
-			case "applicationStore":
+			case "applicationStore" :
 				return new PolyglotProxyMap(actionContext, Services.getInstance().getApplicationStore());
-			case "methodParameters":
+			case "methodParameters" :
 				return new PolyglotProxyMap(actionContext, actionContext.getContextStore().getTemporaryParameters());
-			default:
+			default :
 				Function<Object, Object> func = Functions.get(CaseHelper.toUnderscore(name, false));
 				if (func != null) {
-
 					return new FunctionWrapper(actionContext, entity, func);
 				}
-
 				if (actionContext.getConstant(name) != null) {
-					return wrap(actionContext,actionContext.getConstant(name));
+					return wrap(actionContext, actionContext.getConstant(name));
 				}
-
 				if (actionContext.getRequestStore().containsKey(name)) {
 					return wrap(actionContext, actionContext.getRequestStore().get(name));
 				}
-
 				final EvaluationHints hints = new EvaluationHints();
-				Object structrScriptResult  = null;
+				Object structrScriptResult = null;
 				try {
-
 					structrScriptResult = PolyglotWrapper.wrap(actionContext, actionContext.evaluate(entity, name, null, null, 0, hints, 1, 1));
 				} catch (FrameworkException ex) {
-
 					logger.error("Unexpected exception while trying to apply get function shortcut on script binding object.", ex);
 				}
-
 				if (structrScriptResult != null) {
-
 					return structrScriptResult;
 				}
-
 				// Try to do a static class lookup as last resort
 				final Class clazz = StructrApp.getConfiguration().getNodeEntityClass(name);
 				if (clazz != null) {
-
 					return new StaticTypeWrapper(actionContext, clazz);
 				}
-
 				return null;
 		}
 	}
@@ -151,35 +141,23 @@ public class StructrBinding implements ProxyObject {
 	}
 
 	private ProxyExecutable getGetFunctionWrapper() {
-
-		return arguments -> {
-
+		return ( arguments) -> {
 			try {
-				Object[] args = Arrays.stream(arguments).map(arg -> PolyglotWrapper.unwrap(actionContext, arg)).toArray();
-
+				Object[] args = Arrays.stream(arguments).map(( arg) -> PolyglotWrapper.unwrap(actionContext, arg)).toArray();
 				if (args.length == 1) {
-
 					// Special handling for request keyword, as it needs a wrapper
 					if (args[0].toString().equals("request")) {
-
 						return new HttpServletRequestWrapper(actionContext, actionContext.getSecurityContext().getRequest());
 					}
-
 					return PolyglotWrapper.wrap(actionContext, actionContext.evaluate(entity, args[0].toString(), null, null, 0, new EvaluationHints(), 1, 1));
 				} else if (args.length > 1) {
-
 					final Function<Object, Object> function = Functions.get("get");
-
 					return wrap(actionContext, function.apply(actionContext, entity, args));
 				}
-
-			} catch (FrameworkException ex) {
-
+			} catch ( ex) {
 				logger.error("Unexpected exception in StructrBinding.", ex);
 			}
-
 			return null;
 		};
 	}
-
 }

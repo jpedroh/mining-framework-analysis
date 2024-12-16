@@ -51,11 +51,6 @@ import org.structr.api.graph.Direction;
 import org.structr.api.graph.Identity;
 import org.structr.api.graph.Node;
 import org.structr.api.graph.PropagationDirection;
-import static org.structr.api.graph.PropagationDirection.In;
-import static org.structr.api.graph.PropagationDirection.Out;
-import static org.structr.api.graph.PropagationMode.Add;
-import static org.structr.api.graph.PropagationMode.Keep;
-import static org.structr.api.graph.PropagationMode.Remove;
 import org.structr.api.graph.PropertyContainer;
 import org.structr.api.graph.Relationship;
 import org.structr.api.graph.RelationshipType;
@@ -105,33 +100,49 @@ import org.structr.core.script.Scripting;
 import org.structr.schema.action.ActionContext;
 import org.structr.schema.action.EvaluationHints;
 import org.structr.schema.action.Function;
+import static org.structr.api.graph.PropagationDirection.In;
+import static org.structr.api.graph.PropagationDirection.Out;
+import static org.structr.api.graph.PropagationMode.Add;
+import static org.structr.api.graph.PropagationMode.Keep;
+import static org.structr.api.graph.PropagationMode.Remove;
+
 
 /**
  * Abstract base class for all node entities in Structr.
  */
-public abstract class AbstractNode implements NodeInterface, AccessControllable, CMISInfo, CMISItemInfo {
-
+public abstract class AbstractNode implements NodeInterface , AccessControllable , CMISInfo , CMISItemInfo {
 	private static final int permissionResolutionMaxLevel                                                     = Settings.ResolutionDepth.getValue();
+
 	private static final Logger logger                                                                        = LoggerFactory.getLogger(AbstractNode.class.getName());
-	private static final FixedSizeCache<String, Boolean> isGrantedResultCache                                 = new FixedSizeCache<String, Boolean>("Grant result cache", 100000);
-	private static final FixedSizeCache<String, Object> relationshipTemplateInstanceCache                     = new FixedSizeCache<>("Relationship template cache", 1000);
+
+	private static final FixedSizeCache<String, Boolean> isGrantedResultCache = new FixedSizeCache<String, Boolean>("Grant result cache", 100000);
+
+	private static final FixedSizeCache<String, Object> relationshipTemplateInstanceCache = new FixedSizeCache<>("Relationship template cache", 1000);
+
 	private static final Map<String, Map<String, PermissionResolutionResult>> globalPermissionResolutionCache = new HashMap<>();
 
 	public static final View defaultView = new View(AbstractNode.class, PropertyView.Public, id, type, name);
 
-	public static final View uiView = new View(AbstractNode.class, PropertyView.Ui,
-		id, name, owner, type, createdBy, hidden, createdDate, lastModifiedDate, visibleToPublicUsers, visibleToAuthenticatedUsers
-	);
+	public static final View uiView = new View(AbstractNode.class, PropertyView.Ui, id, name, owner, type, createdBy, hidden, createdDate, lastModifiedDate, visibleToPublicUsers, visibleToAuthenticatedUsers);
 
 	private Map<String, Object> tmpStorageContainer = null;
+
 	public boolean internalSystemPropertiesUnlocked = false;
+
 	private Identity rawPathSegmentId               = null;
+
 	private long sourceTransactionId                = -1;
+
 	private boolean readOnlyPropertiesUnlocked      = false;
+
 	protected String cachedUuid                     = null;
+
 	protected SecurityContext securityContext       = null;
+
 	protected Principal cachedOwnerNode             = null;
+
 	protected Class entityType                      = null;
+
 	protected Node dbNode                           = null;
 
 	public AbstractNode() {
@@ -468,14 +479,11 @@ public abstract class AbstractNode implements NodeInterface, AccessControllable,
 	}
 
 	private <T> T getProperty(final PropertyKey<T> key, boolean applyConverter, final Predicate<GraphObject> predicate) {
-
 		// early null check, this should not happen...
-		if (key == null || key.dbName() == null) {
+		if ((key == null) || (key.dbName() == null)) {
 			return null;
 		}
-
 		RuntimeUsageLog.log(this, key);
-
 		return key.getProperty(securityContext, this, applyConverter, predicate);
 	}
 
@@ -1036,7 +1044,6 @@ public abstract class AbstractNode implements NodeInterface, AccessControllable,
 			logger.info(buf.toString());
 		}
 	}
-
 
 	private boolean hasEffectivePermissions(final BFSInfo parent, final Principal principal, final Permission permission, final PermissionResolutionMask mask, final int level, final AlreadyTraversed alreadyTraversed, final Queue<BFSInfo> bfsNodes, final boolean doLog, final boolean isCreation) {
 
@@ -1638,91 +1645,63 @@ public abstract class AbstractNode implements NodeInterface, AccessControllable,
 
 	@Override
 	public final Object evaluate(final ActionContext actionContext, final String key, final String defaultValue, final EvaluationHints hints, final int row, final int column) throws FrameworkException {
-
 		hints.reportUsedKey(key, row, column);
-
 		switch (key) {
-
-			case "owner":
+			case "owner" :
 				hints.reportExistingKey(key);
 				return getOwnerNode();
-
-			case "_path":
+			case "_path" :
 				hints.reportExistingKey(key);
 				return getPath(actionContext.getSecurityContext());
-
-			default:
-
+			default :
 				// evaluate object value or return default
 				final PropertyKey propertyKey = StructrApp.getConfiguration().getPropertyKeyForJSONName(entityType, key, false);
 				if (propertyKey != null) {
-
 					hints.reportExistingKey(key);
-
 					final Object value = getProperty(propertyKey, actionContext.getPredicate());
 					if (value != null) {
-
 						return value;
 					}
 				}
-
 				final Object value = invokeMethod(actionContext.getSecurityContext(), key, Collections.EMPTY_MAP, false, hints);
 				if (value != null) {
-
 					return value;
 				}
-
 				return Function.numberOrString(defaultValue);
 		}
 	}
 
 	@Override
 	public final Object invokeMethod(final SecurityContext securityContext, final String methodName, final Map<String, Object> propertySet, final boolean throwExceptionForUnknownMethods, final EvaluationHints hints) throws FrameworkException {
-
 		final Method method = StructrApp.getConfiguration().getExportedMethodsForType(entityType).get(methodName);
 		if (method != null) {
-
 			hints.reportExistingKey(methodName);
-
 			try {
-
 				// new structure: first parameter is always securityContext and second parameter can be Map (for dynamically defined methods)
-				if (method.getParameterTypes().length == 2 && method.getParameterTypes()[0].isAssignableFrom(SecurityContext.class) && method.getParameterTypes()[1].equals(Map.class)) {
-					final Object[] args = new Object[] { securityContext };
+				if (((method.getParameterTypes().length == 2) && method.getParameterTypes()[0].isAssignableFrom(SecurityContext.class)) && method.getParameterTypes()[1].equals(Map.class)) {
+					final Object[] args = new Object[]{ securityContext };
 					return method.invoke(this, ArrayUtils.add(args, propertySet));
 				}
-
 				// second try: extracted parameter list
 				final Object[] args = extractParameters(propertySet, method.getParameterTypes());
-
 				return method.invoke(this, ArrayUtils.add(args, 0, securityContext));
-
 			} catch (InvocationTargetException itex) {
-
 				final Throwable cause = itex.getCause();
-
 				if (cause instanceof AssertException) {
-
-					final AssertException e = (AssertException)cause;
+					final AssertException e = ((AssertException) (cause));
 					throw new FrameworkException(e.getStatusCode(), e.getMessage());
 				}
-
 				if (cause instanceof FrameworkException) {
-
-					throw (FrameworkException)cause;
+					throw ((FrameworkException) (cause));
 				}
-
-			} catch (IllegalAccessException | IllegalArgumentException  t) {
-
+			} catch (java.lang.IllegalAccessException | java.lang.IllegalArgumentException t) {
 				logger.warn("Unable to invoke method {}: {}", methodName, t.getMessage());
 			}
 		}
-
 		// in the case of REST access we want to know if the method exists or not
 		if (throwExceptionForUnknownMethods) {
-			throw new FrameworkException(400, "Method " + methodName + " not found in type " + getType());
+			throw new FrameworkException(400, (("Method " + methodName) + " not found in type ") + getType());
 		}
-
 		return null;
 	}
 
@@ -1923,7 +1902,6 @@ public abstract class AbstractNode implements NodeInterface, AccessControllable,
 			secRel.removePermissions(permissions);
 		}
 	}
-
 
 	@Override
 	public final void setAllowed(Set<Permission> permissions, Principal principal) throws FrameworkException {
@@ -2202,25 +2180,23 @@ public abstract class AbstractNode implements NodeInterface, AccessControllable,
 	}
 
 	// ----- nested classes -----
-	private static class AceEntry extends CMISExtensionsData implements Ace, org.apache.chemistry.opencmis.commons.data.Principal {
-
+	private static class AceEntry extends CMISExtensionsData implements Ace , org.apache.chemistry.opencmis.commons.data.Principal {
 		private final List<String> permissions = new LinkedList<>();
-		private String principalId             = null;
+
+		private String principalId = null;
 
 		/**
 		 * Construct a new AceEntry from the given Security relationship. This
 		 * method assumes that is is called in a transaction.
 		 *
 		 * @param security
+		 * 		
 		 */
 		public AceEntry(final Security security) {
-
 			final Principal principal = security.getSourceNode();
 			if (principal != null) {
-
 				this.principalId = principal.getProperty(Principal.name);
 			}
-
 			permissions.addAll(security.getPermissions());
 		}
 
@@ -2252,55 +2228,49 @@ public abstract class AbstractNode implements NodeInterface, AccessControllable,
 	}
 
 	private static class AlreadyTraversed {
-
 		private Map<String, Set<String>> sets = new LinkedHashMap<>();
 
 		public boolean contains(final String key, final String uuid) {
-
 			Set<String> set = sets.get(key);
 			if (set == null) {
-
 				set = new HashSet<>();
 				sets.put(key, set);
 			}
-
 			return !set.add(uuid);
 		}
 
 		public int size(final String key) {
-
 			final Set<String> set = sets.get(key);
 			if (set != null) {
-
 				return set.size();
 			}
-
 			return 0;
 		}
 	}
 
 	private static class BFSInfo {
+		public AbstractNode node = null;
 
-		public AbstractNode node      = null;
-		public BFSInfo parent         = null;
-		public int level              = 0;
+		public BFSInfo parent = null;
+
+		public int level = 0;
 
 		public BFSInfo(final BFSInfo parent, final AbstractNode node) {
-
 			this.parent = parent;
-			this.node   = node;
-
+			this.node = node;
 			if (parent != null) {
-				this.level  = parent.level+1;
+				this.level = parent.level + 1;
 			}
 		}
 	}
 
 	private static class PermissionResolutionResult {
+		Boolean read = null;
 
-		Boolean read          = null;
-		Boolean write         = null;
-		Boolean delete        = null;
+		Boolean write = null;
+
+		Boolean delete = null;
+
 		Boolean accessControl = null;
 	}
 }

@@ -89,8 +89,8 @@ import org.structr.schema.action.EvaluationHints;
 import org.structr.util.Base64;
 import org.structr.web.auth.UiAuthenticator;
 import org.structr.web.common.FileHelper;
-import org.structr.web.common.RenderContext;
 import org.structr.web.common.RenderContext.EditMode;
+import org.structr.web.common.RenderContext;
 import org.structr.web.common.StringRenderBuffer;
 import org.structr.web.entity.AbstractFile;
 import org.structr.web.entity.File;
@@ -100,47 +100,54 @@ import org.structr.web.entity.User;
 import org.structr.web.entity.dom.DOMNode;
 import org.structr.web.entity.dom.Page;
 
+
 /**
  * Main servlet for content rendering.
  */
 public class HtmlServlet extends AbstractServletBase implements HttpServiceServlet {
-
 	private static final Logger logger = LoggerFactory.getLogger(HtmlServlet.class.getName());
 
 	public static final String CONFIRM_REGISTRATION_PAGE = "/confirm_registration";
+
 	public static final String RESET_PASSWORD_PAGE       = "/reset-password";
+
 	public static final String POSSIBLE_ENTRY_POINTS_KEY = "possibleEntryPoints";
+
 	public static final String DOWNLOAD_AS_FILENAME_KEY  = "filename";
+
 	public static final String RANGE_KEY                 = "range";
+
 	public static final String DOWNLOAD_AS_DATA_URL_KEY  = "as-data-url";
+
 	public static final String CONFIRM_KEY_KEY           = "key";
+
 	public static final String TARGET_PAGE_KEY           = "target";
+
 	public static final String ERROR_PAGE_KEY            = "onerror";
 
 	public static final String OBJECT_RESOLUTION_PROPERTIES = "HtmlServlet.resolveProperties";
 
 	private static final ThreadLocalMatcher threadLocalUUIDMatcher = new ThreadLocalMatcher("[a-fA-F0-9]{32}");
+
 	private static final ExecutorService threadPool                = Executors.newCachedThreadPool();
 
-	private final Pattern FilenameCleanerPattern                      = Pattern.compile("[\n\r]", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+	private final Pattern FilenameCleanerPattern = Pattern.compile("[\n\r]", (Pattern.CASE_INSENSITIVE | Pattern.MULTILINE) | Pattern.DOTALL);
+
 	private final StructrHttpServiceConfig config                     = new StructrHttpServiceConfig();
+
 	private final Set<String> possiblePropertyNamesForEntityResolving = new LinkedHashSet<>();
 
 	private boolean isAsync = false;
 
 	public HtmlServlet() {
-
 		// resolving properties
 		final String resolvePropertiesSource = Settings.HtmlResolveProperties.getValue();
 		for (final String src : resolvePropertiesSource.split("[, ]+")) {
-
 			final String name = src.trim();
 			if (StringUtils.isNotBlank(name)) {
-
 				possiblePropertyNamesForEntityResolving.add(name);
 			}
 		}
-
 		this.isAsync = Settings.Async.getValue();
 	}
 
@@ -1096,45 +1103,25 @@ public class HtmlServlet extends AbstractServletBase implements HttpServiceServl
 	 * @throws FrameworkException
 	 */
 	private Page findPage(final SecurityContext securityContext, final String path, final EditMode edit) throws FrameworkException {
-
 		final PropertyKey<String> pathKey = StructrApp.key(Page.class, "path");
 		final PropertyKey<String> nameKey = StructrApp.key(Page.class, "name");
-
 		final PropertyMap attributes = new PropertyMap(pathKey, path);
 		final String name = PathHelper.getName(path);
 		attributes.put(nameKey, name);
-
 		// Find pages by path or name
-		final List<Page> possiblePages = StructrApp.getInstance(securityContext).nodeQuery(Page.class)
-			.or()
-				.notBlank(pathKey)
-				.and(pathKey, path)
-				.parent()
-			.or()
-				.blank(pathKey)
-				.and(nameKey, name)
-				.parent()
-			.getAsList();
-
+		final List<Page> possiblePages = StructrApp.getInstance(securityContext).nodeQuery(Page.class).or().notBlank(pathKey).and(pathKey, path).parent().or().blank(pathKey).and(nameKey, name).parent().getAsList();
 		for (final Page page : possiblePages) {
-
 			if (EditMode.CONTENT.equals(edit) || isVisibleForSite(securityContext.getRequest(), page)) {
-
 				return page;
 			}
 		}
-
 		// Check direct access by UUID
 		if (name.length() == 32) {
-
 			final NodeInterface possiblePage = StructrApp.getInstance(securityContext).get(NodeInterface.class, name);
-
-			if (possiblePage != null && possiblePage instanceof Page && (EditMode.CONTENT.equals(edit) || isVisibleForSite(securityContext.getRequest(), (Page) possiblePage))) {
-
-				return (Page) possiblePage;
+			if (((possiblePage != null) && (possiblePage instanceof Page)) && (EditMode.CONTENT.equals(edit) || isVisibleForSite(securityContext.getRequest(), ((Page) (possiblePage))))) {
+				return ((Page) (possiblePage));
 			}
 		}
-
 		return null;
 	}
 
@@ -1522,167 +1509,113 @@ public class HtmlServlet extends AbstractServletBase implements HttpServiceServl
 	}
 
 	private void streamFile(final SecurityContext securityContext, final File file, HttpServletRequest request, HttpServletResponse response, final EditMode edit, final boolean sendContent) throws IOException {
-
 		if (!securityContext.isVisible(file)) {
-
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
-
-		final ServletOutputStream out         = response.getOutputStream();
-		final String downloadAsFilename       = request.getParameter(DOWNLOAD_AS_FILENAME_KEY);
+		final ServletOutputStream out = response.getOutputStream();
+		final String downloadAsFilename = request.getParameter(DOWNLOAD_AS_FILENAME_KEY);
 		final Map<String, Object> callbackMap = new LinkedHashMap<>();
-
 		// make edit mode available in callback method
 		callbackMap.put("editMode", edit);
-
 		if (downloadAsFilename != null) {
 			// remove any CR LF characters from the filename to prevent Header Splitting attacks
 			final String cleanedFilename = FilenameCleanerPattern.matcher(downloadAsFilename).replaceAll("");
-
 			// Set Content-Disposition header to suggest a default filename and force a "save-as" dialog
 			// See:
 			// http://en.wikipedia.org/wiki/MIME#Content-Disposition,
 			// http://tools.ietf.org/html/rfc2183
 			// http://tools.ietf.org/html/rfc1806
 			// http://tools.ietf.org/html/rfc2616#section-15.5 and http://tools.ietf.org/html/rfc2616#section-19.5.1
-			response.addHeader("Content-Disposition", "attachment; filename=\"" + cleanedFilename + "\"");
-
+			response.addHeader("Content-Disposition", ("attachment; filename=\"" + cleanedFilename) + "\"");
 			callbackMap.put("requestedFileName", downloadAsFilename);
 		}
-
 		boolean dontCache = file.getProperty(StructrApp.key(File.class, "dontCache"));
-
-		if (!EditMode.WIDGET.equals(edit) && notModifiedSince(request, response, file, dontCache)) {
-
+		if ((!EditMode.WIDGET.equals(edit)) && notModifiedSince(request, response, file, dontCache)) {
 			out.flush();
 			out.close();
-
 			callbackMap.put("statusCode", HttpServletResponse.SC_NOT_MODIFIED);
-
 		} else {
-
 			final String downloadAsDataUrl = request.getParameter(DOWNLOAD_AS_DATA_URL_KEY);
 			if (downloadAsDataUrl != null) {
-
 				final String encoded = FileHelper.getBase64String(file);
-
 				response.setContentLength(encoded.length());
 				response.setContentType("text/plain");
-
 				if (sendContent) {
 					IOUtils.write(encoded, out, "utf-8");
 				}
-
 				response.setStatus(HttpServletResponse.SC_OK);
-
 				out.flush();
 				out.close();
-
 				callbackMap.put("statusCode", HttpServletResponse.SC_OK);
-
 			} else {
-
 				// 2b: stream file to response
 				final InputStream in = file.getInputStream();
 				final String contentType = file.getContentType();
-
 				if (contentType != null) {
-
 					response.setContentType(contentType);
-
 				} else {
-
 					// Default
 					response.setContentType("application/octet-stream");
 				}
-
 				final String range = request.getHeader("Range");
-
 				try {
-
 					if (StringUtils.isNotEmpty(range)) {
-
 						final long len = file.getSize();
-						long start     = 0;
-						long end       = len - 1;
-
+						long start = 0;
+						long end = len - 1;
 						final Matcher matcher = Pattern.compile("bytes=(?<start>\\d*)-(?<end>\\d*)").matcher(range);
-
 						if (matcher.matches()) {
 							String startGroup = matcher.group("start");
-							start = startGroup.isEmpty() ? start : Long.valueOf(startGroup);
+							start = (startGroup.isEmpty()) ? start : Long.valueOf(startGroup);
 							start = Math.max(0, start);
-
 							String endGroup = matcher.group("end");
-							end = endGroup.isEmpty() ? end : Long.valueOf(endGroup);
-							end = end > len - 1 ? len - 1 : end;
+							end = (endGroup.isEmpty()) ? end : Long.valueOf(endGroup);
+							end = (end > (len - 1)) ? len - 1 : end;
 						}
-
-						long contentLength = end - start + 1;
-
+						long contentLength = (end - start) + 1;
 						// Tell the client that we support byte ranges
 						response.setHeader("Accept-Ranges", "bytes");
 						response.setHeader("Content-Range", String.format("bytes %s-%s/%s", start, end, len));
 						response.setHeader("Content-Length", Long.toString(contentLength));
-
 						response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
 						callbackMap.put("statusCode", HttpServletResponse.SC_PARTIAL_CONTENT);
-
 						if (sendContent) {
 							IOUtils.copyLarge(in, out, start, contentLength);
 						}
-
 					} else {
-
 						if (!file.isTemplate()) {
 							response.addHeader("Content-Length", Long.toString(file.getSize()));
 						}
-
 						if (sendContent) {
 							IOUtils.copyLarge(in, out);
 						}
-
 						final int status = response.getStatus();
-
 						response.setStatus(status);
-
 						callbackMap.put("statusCode", status);
 					}
-
-				} catch (Throwable t) {
-
+				} catch (java.lang.Throwable t) {
 				} finally {
-
 					if (out != null) {
-
 						try {
 							// 3: output content
 							out.flush();
 							out.close();
-
-						} catch (Throwable t) {
+						} catch (java.lang.Throwable t) {
 						}
 					}
-
 					if (in != null) {
 						in.close();
 					}
-
 					response.setStatus(response.getStatus());
 				}
 			}
 		}
-
-
 		// WIDGET mode means "opened in frontend", which we don't want to count as an external download
 		if (!EditMode.WIDGET.equals(edit)) {
-
 			// call onDownload callback
 			try {
-
 				file.invokeMethod(securityContext, "onDownload", callbackMap, false, new EvaluationHints());
-
 			} catch (FrameworkException fex) {
 				logger.warn("", fex);
 			}
@@ -1923,30 +1856,34 @@ public class HtmlServlet extends AbstractServletBase implements HttpServiceServl
 
 		return null;
 	}
+
 	// ----- nested classes -----
 	private enum AuthState {
-		NoBasicAuth, MustAuthenticate, Authenticated
-	}
+
+		NoBasicAuth,
+		MustAuthenticate,
+		Authenticated;}
 
 	private static class HttpBasicAuthResult {
-
 		// use singletons for the most common cases
 		public static final HttpBasicAuthResult MUST_AUTHENTICATE = new HttpBasicAuthResult(AuthState.MustAuthenticate);
-		public static final HttpBasicAuthResult NO_BASIC_AUTH     = new HttpBasicAuthResult(AuthState.NoBasicAuth);
+
+		public static final HttpBasicAuthResult NO_BASIC_AUTH = new HttpBasicAuthResult(AuthState.NoBasicAuth);
 
 		private SecurityContext securityContext = null;
-		private Linkable rootElement            = null;
-		private AuthState authState             = null;
+
+		private Linkable rootElement = null;
+
+		private AuthState authState = null;
 
 		public HttpBasicAuthResult(final AuthState authState) {
 			this(authState, null, null);
 		}
 
 		public HttpBasicAuthResult(final AuthState authState, final SecurityContext securityContext, final Linkable rootElement) {
-
 			this.securityContext = securityContext;
-			this.rootElement     = rootElement;
-			this.authState       = authState;
+			this.rootElement = rootElement;
+			this.authState = authState;
 		}
 
 		public SecurityContext getSecurityContext() {
