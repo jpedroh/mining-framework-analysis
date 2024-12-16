@@ -61,84 +61,112 @@ import net.md_5.bungee.tab.ServerUnique;
 import net.md_5.bungee.tab.TabList;
 import net.md_5.bungee.util.CaseInsensitiveSet;
 
-@RequiredArgsConstructor
-public final class UserConnection implements ProxiedPlayer
-{
 
+@RequiredArgsConstructor
+public final class UserConnection implements ProxiedPlayer {
     /*========================================================================*/
     @NonNull
     private final ProxyServer bungee;
+
     @NonNull
     private final ChannelWrapper ch;
+
     @Getter
     @NonNull
     private final String name;
+
     @Getter
     private final InitialHandler pendingConnection;
+
     /*========================================================================*/
     @Getter
     @Setter
     private ServerConnection server;
+
     @Getter
     @Setter
     private int dimension;
+
     @Getter
     @Setter
     private boolean dimensionChange = true;
+
     @Getter
     private final Collection<ServerInfo> pendingConnects = new HashSet<>();
+
     /*========================================================================*/
     @Getter
     @Setter
     private int sentPingId;
+
     @Getter
     @Setter
     private long sentPingTime;
+
     @Getter
     @Setter
     private int ping = 100;
+
     @Getter
     @Setter
     private ServerInfo reconnectServer;
+
     @Getter
     private TabList tabListHandler;
+
     @Getter
     @Setter
     private int gamemode;
+
     @Getter
     private int compressionThreshold = -1;
+
+    // Used for trying multiple servers in order
     // Used for trying multiple servers in order
     @Setter
     private Queue<String> serverJoinQueue;
+
     /*========================================================================*/
     private final Collection<String> groups = new CaseInsensitiveSet();
+
     private final Collection<String> permissions = new CaseInsensitiveSet();
+
     /*========================================================================*/
     @Getter
     @Setter
     private int clientEntityId;
+
     @Getter
     @Setter
     private int serverEntityId;
+
     @Getter
     private ClientSettings settings;
+
     @Getter
     private final Scoreboard serverSentScoreboard = new Scoreboard();
+
     @Getter
     private final Collection<UUID> sentBossBars = new HashSet<>();
+
     /*========================================================================*/
     @Getter
     private String displayName;
+
     @Getter
     private EntityMap entityRewrite;
+
     private Locale locale;
+
     /*========================================================================*/
     @Getter
     @Setter
     private ForgeClientHandler forgeClientHandler;
+
     @Getter
     @Setter
     private ForgeServerHandler forgeServerHandler;
+
     /*========================================================================*/
     private final Unsafe unsafe = new Unsafe()
     {
@@ -149,42 +177,33 @@ public final class UserConnection implements ProxiedPlayer
         }
     };
 
-    public void init()
-    {
-        this.entityRewrite = EntityMap.getEntityMap( getPendingConnection().getVersion() );
-
+    public void init() {
+        this.entityRewrite = EntityMap.getEntityMap(getPendingConnection().getVersion());
         this.displayName = name;
-
-        /*
-        switch ( getPendingConnection().getListener().getTabListType() )
+        /* switch ( getPendingConnection().getListener().getTabListType() )
         {
-            case "GLOBAL":
-                tabListHandler = new Global( this );
-                break;
-            case "SERVER":
-                tabListHandler = new ServerUnique( this );
-                break;
-            default:
-                tabListHandler = new GlobalPing( this );
-                break;
+        case "GLOBAL":
+        tabListHandler = new Global( this );
+        break;
+        case "SERVER":
+        tabListHandler = new ServerUnique( this );
+        break;
+        default:
+        tabListHandler = new GlobalPing( this );
+        break;
         }
          */
-        tabListHandler = new ServerUnique( this );
-
-        Collection<String> g = bungee.getConfigurationAdapter().getGroups( name );
-        g.addAll( bungee.getConfigurationAdapter().getGroups( getUniqueId().toString() ) );
-        for ( String s : g )
-        {
-            addGroups( s );
+        tabListHandler = new ServerUnique(this);
+        Collection<String> g = bungee.getConfigurationAdapter().getGroups(name);
+        g.addAll(bungee.getConfigurationAdapter().getGroups(getUniqueId().toString()));
+        for (String s : g) {
+            addGroups(s);
         }
-
-        forgeClientHandler = new ForgeClientHandler( this );
-
+        forgeClientHandler = new ForgeClientHandler(this);
         // No-config FML handshake marker.
         // Set whether the connection has a 1.8 FML marker in the handshake.
-        if (this.getPendingConnection().getExtraDataInHandshake().contains( ForgeConstants.FML_HANDSHAKE_TOKEN ))
-        {
-            forgeClientHandler.setFmlTokenInHandshake( true );
+        if (this.getPendingConnection().getExtraDataInHandshake().contains(ForgeConstants.FML_HANDSHAKE_TOKEN)) {
+            forgeClientHandler.setFmlTokenInHandshake(true);
         }
     }
 
@@ -200,12 +219,10 @@ public final class UserConnection implements ProxiedPlayer
     }
 
     @Override
-    public void setDisplayName(String name)
-    {
-        Preconditions.checkNotNull( name, "displayName" );
-        if( pendingConnection.getVersion() <= ProtocolConstants.MINECRAFT_1_7_6 )
-        {
-            Preconditions.checkArgument( name.length() <= 16, "Display name cannot be longer than 16 characters" );
+    public void setDisplayName(String name) {
+        Preconditions.checkNotNull(name, "displayName");
+        if (pendingConnection.getVersion() <= ProtocolConstants.MINECRAFT_1_7_6) {
+            Preconditions.checkArgument(name.length() <= 16, "Display name cannot be longer than 16 characters");
         }
         displayName = name;
     }
@@ -263,7 +280,7 @@ public final class UserConnection implements ProxiedPlayer
 
             if ( getServer() == null && !ch.isClosing() )
             {
-                throw new IllegalStateException( "Cancelled ServerConnectEvent with no server or disconnect." );
+                throw new IllegalStateException("Cancelled ServerConnectEvent with no server or disconnect.");
             }
             return;
         }
@@ -426,28 +443,22 @@ public final class UserConnection implements ProxiedPlayer
     }
 
     @Override
-    public void sendMessage(ChatMessageType position, BaseComponent... message)
-    {
+    public void sendMessage(ChatMessageType position, BaseComponent... message) {
         // Action bar doesn't display the new JSON formattings, legacy works - send it using this for now
-        if ( position == ChatMessageType.ACTION_BAR && pendingConnection.getVersion() >= ProtocolConstants.MINECRAFT_1_8 )
-        {
-            sendMessage( position, ComponentSerializer.toString( new TextComponent( BaseComponent.toLegacyText( message ) ) ) );
-        } else
-        {
-            sendMessage( position, ComponentSerializer.toString( message ) );
+        if ((position == ChatMessageType.ACTION_BAR) && (pendingConnection.getVersion() >= ProtocolConstants.MINECRAFT_1_8)) {
+            sendMessage(position, ComponentSerializer.toString(new TextComponent(BaseComponent.toLegacyText(message))));
+        } else {
+            sendMessage(position, ComponentSerializer.toString(message));
         }
     }
 
     @Override
-    public void sendMessage(ChatMessageType position, BaseComponent message)
-    {
+    public void sendMessage(ChatMessageType position, BaseComponent message) {
         // Action bar doesn't display the new JSON formattings, legacy works - send it using this for now
-        if ( position == ChatMessageType.ACTION_BAR && pendingConnection.getVersion() >= ProtocolConstants.MINECRAFT_1_8 )
-        {
-            sendMessage( position, ComponentSerializer.toString( new TextComponent( BaseComponent.toLegacyText( message ) ) ) );
-        } else
-        {
-            sendMessage( position, ComponentSerializer.toString( message ) );
+        if ((position == ChatMessageType.ACTION_BAR) && (pendingConnection.getVersion() >= ProtocolConstants.MINECRAFT_1_8)) {
+            sendMessage(position, ComponentSerializer.toString(new TextComponent(BaseComponent.toLegacyText(message))));
+        } else {
+            sendMessage(position, ComponentSerializer.toString(message));
         }
     }
 
@@ -621,26 +632,16 @@ public final class UserConnection implements ProxiedPlayer
     private static final String EMPTY_TEXT = ComponentSerializer.toString( new TextComponent( "" ) );
 
     @Override
-    public void setTabHeader(BaseComponent header, BaseComponent footer)
-    {
-        if ( pendingConnection.getVersion() >= ProtocolConstants.MINECRAFT_1_8 )
-        {
-            unsafe().sendPacket( new PlayerListHeaderFooter(
-                    ( header != null ) ? ComponentSerializer.toString( header ) : EMPTY_TEXT,
-                    ( footer != null ) ? ComponentSerializer.toString( footer ) : EMPTY_TEXT
-            ) );
+    public void setTabHeader(BaseComponent header, BaseComponent footer) {
+        if (pendingConnection.getVersion() >= ProtocolConstants.MINECRAFT_1_8) {
+            unsafe().sendPacket(new PlayerListHeaderFooter(header != null ? ComponentSerializer.toString(header) : EMPTY_TEXT, footer != null ? ComponentSerializer.toString(footer) : EMPTY_TEXT));
         }
     }
 
     @Override
-    public void setTabHeader(BaseComponent[] header, BaseComponent[] footer)
-    {
-        if ( pendingConnection.getVersion() >= ProtocolConstants.MINECRAFT_1_8 )
-        {
-            unsafe().sendPacket( new PlayerListHeaderFooter(
-                    ( header != null ) ? ComponentSerializer.toString( header ) : EMPTY_TEXT,
-                    ( footer != null ) ? ComponentSerializer.toString( footer ) : EMPTY_TEXT
-            ) );
+    public void setTabHeader(BaseComponent[] header, BaseComponent[] footer) {
+        if (pendingConnection.getVersion() >= ProtocolConstants.MINECRAFT_1_8) {
+            unsafe().sendPacket(new PlayerListHeaderFooter(header != null ? ComponentSerializer.toString(header) : EMPTY_TEXT, footer != null ? ComponentSerializer.toString(footer) : EMPTY_TEXT));
         }
     }
 
@@ -662,13 +663,11 @@ public final class UserConnection implements ProxiedPlayer
         return this.getPendingConnection().getExtraDataInHandshake();
     }
 
-    public void setCompressionThreshold(int compressionThreshold)
-    {
-        if ( !ch.isClosing() && this.compressionThreshold == -1 && getPendingConnection().getVersion() >= ProtocolConstants.MINECRAFT_1_8 && compressionThreshold >= 0 )
-        {
+    public void setCompressionThreshold(int compressionThreshold) {
+        if ((((!ch.isClosing()) && (this.compressionThreshold == (-1))) && (getPendingConnection().getVersion() >= ProtocolConstants.MINECRAFT_1_8)) && (compressionThreshold >= 0)) {
             this.compressionThreshold = compressionThreshold;
-            unsafe.sendPacket( new SetCompression( compressionThreshold ) );
-            ch.setCompressionThreshold( compressionThreshold );
+            unsafe.sendPacket(new SetCompression(compressionThreshold));
+            ch.setCompressionThreshold(compressionThreshold);
         }
     }
 

@@ -89,90 +89,100 @@ import net.md_5.bungee.scheduler.BungeeScheduler;
 import net.md_5.bungee.util.CaseInsensitiveMap;
 import org.fusesource.jansi.AnsiConsole;
 
+
 /**
  * Main BungeeCord proxy class.
  */
-public class BungeeCord extends ProxyServer
-{
-
+public class BungeeCord extends ProxyServer {
     /**
      * Current operation state.
      */
     public volatile boolean isRunning;
+
     /**
      * Configuration.
      */
     @Getter
     public final Configuration config = new Configuration();
+
     /**
      * Localization bundle.
      */
     private ResourceBundle baseBundle;
+
     private ResourceBundle customBundle;
+
     public EventLoopGroup eventLoops;
+
     /**
      * locations.yml save thread.
      */
     private final Timer saveThread = new Timer( "Reconnect Saver" );
+
     private final Timer metricsThread = new Timer( "Metrics Thread" );
+
     /**
      * Server socket listener.
      */
     private final Collection<Channel> listeners = new HashSet<>();
+
     /**
      * Fully qualified connections.
      */
     private final Map<String, UserConnection> connections = new CaseInsensitiveMap<>();
+
     // Used to help with packet rewriting
     private final Map<UUID, UserConnection> connectionsByOfflineUUID = new HashMap<>();
+
     private final Map<UUID, UserConnection> connectionsByUUID = new HashMap<>();
+
     private final ReadWriteLock connectionLock = new ReentrantReadWriteLock();
+
     /**
      * Plugin manager.
      */
     @Getter
     public final PluginManager pluginManager = new PluginManager( this );
+
     @Getter
     @Setter
     private ReconnectHandler reconnectHandler;
+
     @Getter
     @Setter
     private ConfigurationAdapter configurationAdapter = new YamlConfig();
+
     private final Collection<String> pluginChannels = new HashSet<>();
+
     @Getter
     private final File pluginsFolder = new File( "plugins" );
+
     @Getter
     private final BungeeScheduler scheduler = new BungeeScheduler();
+
     @Getter
     private final ConsoleReader consoleReader;
+
     @Getter
     private final Logger logger;
-    public final Gson gson = new GsonBuilder()
-            .registerTypeAdapter( BaseComponent.class, new ComponentSerializer() )
-            .registerTypeAdapter( TextComponent.class, new TextComponentSerializer() )
-            .registerTypeAdapter( TranslatableComponent.class, new TranslatableComponentSerializer() )
-            .registerTypeAdapter( ServerPing.PlayerInfo.class, new PlayerInfoSerializer( ProtocolConstants.MINECRAFT_1_7_6 ) )
-            .registerTypeAdapter( Favicon.class, Favicon.getFaviconTypeAdapter() ).create();
-    public final Gson gsonLegacy = new GsonBuilder()
-            .registerTypeAdapter( BaseComponent.class, new ComponentSerializer() )
-            .registerTypeAdapter( TextComponent.class, new TextComponentSerializer() )
-            .registerTypeAdapter( TranslatableComponent.class, new TranslatableComponentSerializer() )
-            .registerTypeAdapter( ServerPing.PlayerInfo.class, new PlayerInfoSerializer( ProtocolConstants.MINECRAFT_1_7_2 ) )
-            .registerTypeAdapter( Favicon.class, Favicon.getFaviconTypeAdapter() ).create();
+
+    public final Gson gson = new GsonBuilder().registerTypeAdapter(BaseComponent.class, new ComponentSerializer()).registerTypeAdapter(TextComponent.class, new TextComponentSerializer()).registerTypeAdapter(TranslatableComponent.class, new TranslatableComponentSerializer()).registerTypeAdapter(ServerPing.PlayerInfo.class, new PlayerInfoSerializer(ProtocolConstants.MINECRAFT_1_7_6)).registerTypeAdapter(Favicon.class, Favicon.getFaviconTypeAdapter()).create();
+
+    public final Gson gsonLegacy = new GsonBuilder().registerTypeAdapter(BaseComponent.class, new ComponentSerializer()).registerTypeAdapter(TextComponent.class, new TextComponentSerializer()).registerTypeAdapter(TranslatableComponent.class, new TranslatableComponentSerializer()).registerTypeAdapter(ServerPing.PlayerInfo.class, new PlayerInfoSerializer(ProtocolConstants.MINECRAFT_1_7_2)).registerTypeAdapter(Favicon.class, Favicon.getFaviconTypeAdapter()).create();
+
     @Getter
     private ConnectionThrottle connectionThrottle;
+
     private final ModuleManager moduleManager = new ModuleManager();
 
-    
     {
         // TODO: Proper fallback when we interface the manager
-        getPluginManager().registerCommand( null, new CommandReload() );
-        getPluginManager().registerCommand( null, new CommandEnd() );
-        getPluginManager().registerCommand( null, new CommandIP() );
-        getPluginManager().registerCommand( null, new CommandBungee() );
-        getPluginManager().registerCommand( null, new CommandPerms() );
-
-        registerChannel( "BungeeCord" );
+        getPluginManager().registerCommand(null, new CommandReload());
+        getPluginManager().registerCommand(null, new CommandEnd());
+        getPluginManager().registerCommand(null, new CommandIP());
+        getPluginManager().registerCommand(null, new CommandBungee());
+        getPluginManager().registerCommand(null, new CommandPerms());
+        registerChannel("BungeeCord");
     }
 
     public static BungeeCord getInstance()
@@ -181,29 +191,21 @@ public class BungeeCord extends ProxyServer
     }
 
     @SuppressFBWarnings("DM_DEFAULT_ENCODING")
-    public BungeeCord() throws IOException
-    {
+    public BungeeCord() throws IOException {
         // Java uses ! to indicate a resource inside of a jar/zip/other container. Running Bungee from within a directory that has a ! will cause this to muck up.
-        Preconditions.checkState( new File( "." ).getAbsolutePath().indexOf( '!' ) == -1, "Cannot use BungeeCord in directory with ! in path." );
-
-        System.setSecurityManager( new BungeeSecurityManager() );
-
-        try
-        {
-            baseBundle = ResourceBundle.getBundle( "messages" );
-        } catch ( MissingResourceException ex )
-        {
-            baseBundle = ResourceBundle.getBundle( "messages", Locale.ENGLISH );
+        Preconditions.checkState(new File(".").getAbsolutePath().indexOf('!') == (-1), "Cannot use BungeeCord in directory with ! in path.");
+        System.setSecurityManager(new BungeeSecurityManager());
+        try {
+            baseBundle = ResourceBundle.getBundle("messages");
+        } catch (MissingResourceException ex) {
+            baseBundle = ResourceBundle.getBundle("messages", Locale.ENGLISH);
         }
-        File file = new File( "messages.properties" );
-        if ( file.isFile() )
-        {
-            try ( FileReader rd = new FileReader( file ) )
-            {
-                customBundle = new PropertyResourceBundle( rd );
+        File file = new File("messages.properties");
+        if (file.isFile()) {
+            try (final FileReader rd = new FileReader(file)) {
+                customBundle = new PropertyResourceBundle(rd);
             }
         }
-
         // This is a workaround for quite possibly the weirdest bug I have ever encountered in my life!
         // When jansi attempts to extract its natives, by default it tries to extract a specific version,
         // using the loading class's implementation version. Normally this works completely fine,
@@ -212,31 +214,23 @@ public class BungeeCord extends ProxyServer
         // For example test-test works fine, but test-test-test does not! In order to avoid this all together but
         // still keep our versions the same as they were, we set the override property to the essentially garbage version
         // BungeeCord. This version is only used when extracting the libraries to their temp folder.
-        System.setProperty( "library.jansi.version", "BungeeCord" );
-
+        System.setProperty("library.jansi.version", "BungeeCord");
         AnsiConsole.systemInstall();
         consoleReader = new ConsoleReader();
-        consoleReader.setExpandEvents( false );
-
-        logger = new BungeeLogger( "BungeeCord", "proxy.log", consoleReader );
-        System.setErr( new PrintStream( new LoggingOutputStream( logger, Level.SEVERE ), true ) );
-        System.setOut( new PrintStream( new LoggingOutputStream( logger, Level.INFO ), true ) );
-
-        if ( !Boolean.getBoolean( "net.md_5.bungee.native.disable" ) )
-        {
-            if ( EncryptionUtil.nativeFactory.load() )
-            {
-                logger.info( "Using mbed TLS based native cipher." );
-            } else
-            {
-                logger.info( "Using standard Java JCE cipher." );
+        consoleReader.setExpandEvents(false);
+        logger = new BungeeLogger("BungeeCord", "proxy.log", consoleReader);
+        System.setErr(new PrintStream(new LoggingOutputStream(logger, Level.SEVERE), true));
+        System.setOut(new PrintStream(new LoggingOutputStream(logger, Level.INFO), true));
+        if (!Boolean.getBoolean("net.md_5.bungee.native.disable")) {
+            if (EncryptionUtil.nativeFactory.load()) {
+                logger.info("Using mbed TLS based native cipher.");
+            } else {
+                logger.info("Using standard Java JCE cipher.");
             }
-            if ( CompressFactory.zlib.load() )
-            {
-                logger.info( "Using zlib based native compressor." );
-            } else
-            {
-                logger.info( "Using standard Java compressor." );
+            if (CompressFactory.zlib.load()) {
+                logger.info("Using zlib based native compressor.");
+            } else {
+                logger.info("Using standard Java compressor.");
             }
         }
     }
@@ -376,84 +370,61 @@ public class BungeeCord extends ProxyServer
     }
 
     @Override
-    public void stop(final String reason)
-    {
-        new Thread( "Shutdown Thread" )
-        {
+    public void stop(final String reason) {
+        new Thread("Shutdown Thread") {
             @Override
             @SuppressFBWarnings("DM_EXIT")
             @SuppressWarnings("TooBroadCatch")
-            public void run()
-            {
+            public void run() {
                 BungeeCord.this.isRunning = false;
-
                 stopListeners();
-                getLogger().info( "Closing pending connections" );
-
+                getLogger().info("Closing pending connections");
                 connectionLock.readLock().lock();
-                try
-                {
-                    getLogger().log( Level.INFO, "Disconnecting {0} connections", connections.size() );
-                    for ( UserConnection user : connections.values() )
-                    {
-                        user.disconnect( reason );
+                try {
+                    getLogger().log(Level.INFO, "Disconnecting {0} connections", connections.size());
+                    for (UserConnection user : connections.values()) {
+                        user.disconnect(reason);
                     }
-                } finally
-                {
+                } finally {
                     connectionLock.readLock().unlock();
                 }
-
-                try
-                {
-                    Thread.sleep( 500 );
-                } catch ( InterruptedException ex )
-                {
+                try {
+                    Thread.sleep(500);
+                } catch (java.lang.InterruptedException ex) {
                 }
-
-                if ( reconnectHandler != null )
-                {
-                    getLogger().info( "Saving reconnect locations" );
+                if (reconnectHandler != null) {
+                    getLogger().info("Saving reconnect locations");
                     reconnectHandler.save();
                     reconnectHandler.close();
                 }
                 saveThread.cancel();
                 metricsThread.cancel();
-
                 // TODO: Fix this shit
-                getLogger().info( "Disabling plugins" );
-                for ( Plugin plugin : Lists.reverse( new ArrayList<>( pluginManager.getPlugins() ) ) )
-                {
-                    try
-                    {
+                getLogger().info("Disabling plugins");
+                for (Plugin plugin : Lists.reverse(new ArrayList<>(pluginManager.getPlugins()))) {
+                    try {
                         plugin.onDisable();
-                        for ( Handler handler : plugin.getLogger().getHandlers() )
-                        {
+                        for (Handler handler : plugin.getLogger().getHandlers()) {
                             handler.close();
                         }
-                    } catch ( Throwable t )
-                    {
-                        getLogger().log( Level.SEVERE, "Exception disabling plugin " + plugin.getDescription().getName(), t );
+                    } catch (java.lang.Throwable t) {
+                        getLogger().log(Level.SEVERE, "Exception disabling plugin " + plugin.getDescription().getName(), t);
                     }
-                    getScheduler().cancel( plugin );
+                    getScheduler().cancel(plugin);
                     plugin.getExecutorService().shutdownNow();
                 }
-
-                getLogger().info( "Closing IO threads" );
+                getLogger().info("Closing IO threads");
                 eventLoops.shutdownGracefully();
-                try
-                {
-                    eventLoops.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS );
-                } catch ( InterruptedException ex )
-                {
+                try {
+                    eventLoops.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+                } catch (java.lang.InterruptedException ex) {
                 }
-
-                getLogger().info( "Thank you and goodbye" );
+                getLogger().info("Thank you and goodbye");
                 // Need to close loggers after last message!
-                for ( Handler handler : getLogger().getHandlers() )
-                {
+                for (Handler handler : getLogger().getHandlers()) {
                     handler.close();
                 }
-                System.exit( 0 );
+                System.exit(0);
             }
         }.start();
     }
@@ -479,8 +450,7 @@ public class BungeeCord extends ProxyServer
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return config.getCustomServerName();
     }
 
