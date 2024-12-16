@@ -15,19 +15,17 @@
  *****************************************************************************/
 package org.codehaus.jparsec;
 
-import org.codehaus.jparsec.annotations.Private;
-import org.codehaus.jparsec.error.ParserException;
-import org.codehaus.jparsec.functors.Map;
-import org.codehaus.jparsec.functors.Map2;
-import org.codehaus.jparsec.functors.Maps;
-import org.codehaus.jparsec.util.Checks;
-
 import java.io.IOException;
 import java.nio.CharBuffer;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
+import org.codehaus.jparsec.annotations.Private;
+import org.codehaus.jparsec.error.ParserException;
+import org.codehaus.jparsec.functors.Map2;
+import org.codehaus.jparsec.functors.Map;
+import org.codehaus.jparsec.functors.Maps;
+import org.codehaus.jparsec.util.Checks;
 import static org.codehaus.jparsec.util.Checks.checkArgument;
 
 
@@ -62,7 +60,6 @@ import static org.codehaus.jparsec.util.Checks.checkArgument;
  * @author Ben Yu
  */
 public abstract class Parser<T> {
-
   /**
    * An atomic mutable reference to {@link Parser}. Is useful to work around circular dependency between parser
    * objects.
@@ -476,14 +473,6 @@ public abstract class Parser<T> {
   }
 
   /**
-   * A {@link Parser} that, when run successfully, calls a handler with the source and location of the parse.
-   */
-  public final <U> Parser<T> locate(LocatableHandler<U> handler) {
-    return new LocatableParser2<T, U>(this, handler);
-  }
-
-  
-  /**
    * A {@link Parser} that takes as input the {@link Token} collection returned by {@code lexer}, and runs {@code
    * this} to parse the tokens.
    * <p/>
@@ -612,5 +601,4 @@ public abstract class Parser<T> {
       return (ParserException) e;
     return new ParserException(e, null, ctxt.module, ctxt.locator.locate(ctxt.getIndex()));
   }
-
 }
