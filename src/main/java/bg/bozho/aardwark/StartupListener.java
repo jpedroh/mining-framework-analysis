@@ -1,5 +1,6 @@
 package bg.bozho.aardwark;
 
+import com.google.common.collect.Lists;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,11 +29,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.cli.MavenCli;
 import org.apache.maven.model.Dependency;
@@ -41,19 +40,29 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 @WebListener
 public class StartupListener implements ServletContextListener {
-
     private static final Logger logger = LoggerFactory.getLogger(StartupListener.class);
 
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("HH:mm:ss dd.MM.yyyy");
+
     private ExecutorService executor;
+
     private WatchService watcher;
+
     private FileSystem fs = FileSystems.getDefault();
+
     private Map<String, Path> webappPaths = new HashMap<>();
+
     private Map<String, Path> projectPaths = new HashMap<>();
+
     // a map holding mapping from watch keys to paths and related metadata,
     // because each WatchEvent contains only the file name, and not the path to
     // the file
@@ -65,36 +74,36 @@ public class StartupListener implements ServletContextListener {
     private Map<WatchKey, WatchableDirectory> watched = new HashMap<>();
 
     public void contextInitialized(ServletContextEvent sce) {
-
         // supporting multiple projects
         List<String> projectDirs = getProjectDirectories(sce);
-
         for (String projectDir : projectDirs) {
             try {
                 Model model = readMavenModel(projectDir);
-
+                if (model == null) {
+                    logger.error(((("No maven project found under path " + projectDir) + ". Make sure you have configured aardWARk properly ") + "(by setting the path in the war name, after aardwark-, ") + "or via a propertie sfile) and also that the target directory exists");
+                    continue;
+                }
                 watcher = fs.newWatchService();
                 String webappName = getTargetWebapp(model);
                 Path projectPath = fs.getPath(projectDir);
                 projectPaths.put(webappName, projectPath);
                 Path webappPath = fs.getPath(sce.getServletContext().getRealPath("/")).getParent().resolve(webappName);
                 webappPaths.put(webappName, webappPath);
-
                 // if the webapp does not exist, assume ROOT is used
                 if (Files.notExists(webappPath)) {
-                    logger.warn("No webapp found under " + webappPath.toString() + ". Using ROOT instead.");
+                    logger.warn(("No webapp found under " + webappPath.toString()) + ". Using ROOT instead.");
                     webappPath = webappPath.getParent().resolve("ROOT");
                 }
-
                 executor = Executors.newSingleThreadExecutor();
-
                 // copy once on startup
-                copyDependencies(webappName, model);
-
+                // TODO pass model and check parent and dependent projects' poms for changes, in addition to the current project pom
+                if (dependencyCopyingNeeded(webappName, projectPath)) {
+                    copyDependencies(webappName, model);
+                } else {
+                    logger.info("No need to copy project dependencies, as the pom file hasn't been modified since the last copy");
+                }
                 copyClassesAndResources(webappName, model);
-
                 watchProject(webappName, projectPath, model, false);
-
                 // also watch dependent projects that are within the same workspace,
                 // so that their classes are copied as well (rather than their
                 // jars). TODO remove these jars from the copied dependencies?
@@ -113,13 +122,46 @@ public class StartupListener implements ServletContextListener {
                     Model currentProjectModel = readMavenModel(currentPath.toString());
                     watchDependentProjects(webappName, currentProjectModel, dependencies, currentPath);
                     currentModel = currentProjectModel;
-                }
-
+                } 
                 startWatching();
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to watch file system", e);
             }
         }
+    }
+
+    /**
+     * Determine if dependency copying is needed, by comparing the last modified date of the pom to the last dependency copy (stored in the tomcat temp dir)
+     * @param webappName
+     * @return true if dependencies should be copied.
+     */
+    private boolean dependencyCopyingNeeded(String webappName, Path projectPath) {
+        try {
+            Path metaFile = getDependencyCopyMetaFile(webappName);
+            List<String> lines = Files.readAllLines(metaFile, Charset.forName("UTF-8"));
+            if (!lines.isEmpty() && !lines.get(0).isEmpty()) {
+                DateTime lastCopy = dateTimeFormatter.parseDateTime(lines.get(0));
+                DateTime lastModified = new DateTime(Files.getLastModifiedTime(projectPath.resolve("pom.xml")).toMillis());
+                if (lastCopy.isBefore(lastModified)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return true;
+            }
+        } catch (IOException e) {
+            logger.warn("Cannot create temp file for tracking dependency copying. This may result in slower startup times", e);
+            return true;
+        }
+    }
+
+    private Path getDependencyCopyMetaFile(String webappName) throws IOException {
+        Path metaFile = fs.getPath(System.getProperty("java.io.tmpdir"), webappName + ".tmp");
+        if (Files.notExists(metaFile)) {
+            metaFile = Files.createTempFile(webappName, "tmp");
+        }
+        return metaFile;
     }
 
     private void copyClassesAndResources(String webappName, Model model) throws IOException {
@@ -166,18 +208,19 @@ public class StartupListener implements ServletContextListener {
         }
     }
 
-    private void watchProject(final String webappName, final Path projectPath, final Model model, final boolean dependencyProject)
-            throws IOException {
-
+    private void watchProject(final String webappName, final Path projectPath, final Model model, final boolean dependencyProject) throws IOException {
         Files.walkFileTree(projectPath, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                WatchKey key = dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
-                        StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
-                watched.put(key, new WatchableDirectory(dir, projectPath, dependencyProject, model, webappName));
+                watchDirectory(webappName, projectPath, model, dependencyProject, dir);
                 return FileVisitResult.CONTINUE;
             }
         });
+    }
+
+    private void watchDirectory(final String webappName, final Path projectPath, final Model model, final boolean dependencyProject, Path dir) throws IOException {
+        WatchKey key = dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
+        watched.put(key, new WatchableDirectory(dir, projectPath, dependencyProject, model, webappName));
     }
 
     private void startWatching() {
@@ -191,33 +234,47 @@ public class StartupListener implements ServletContextListener {
                         WatchableDirectory watchableDirectory = watched.get(key);
                         for (WatchEvent<?> event : events) {
                             try {
-                                Path filename = (Path) event.context();
+                                Path filename = ((Path) (event.context()));
                                 Path eventPath = watchableDirectory.getDirectory().resolve(filename);
                                 Path target = determineTarget(watchableDirectory.getWebappName(), eventPath, watchableDirectory.getProjectPath());
                                 if (target != null) {
-                                    if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE || event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
-                                        // make sure directory structure is in place
-                                        target.toFile().getParentFile().mkdirs();
-                                        if (!Files.isDirectory(target)) {
+                                    if (Files.isDirectory(eventPath) && (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY)) {
+                                        continue;// skip MODIFY events for directories - they do not convey any information
+
+                                    }
+                                    if (Files.notExists(eventPath) && (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY)) {
+                                        continue;// MODIFY may be triggered for deleted directories
+
+                                    }
+                                    if ((event.kind() == StandardWatchEventKinds.ENTRY_CREATE) || (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY)) {
+                                        if (!Files.isDirectory(eventPath)) {
+                                            // make sure directory structure is in place
+                                            target.getParent().toFile().mkdirs();
                                             Files.copy(eventPath, target, StandardCopyOption.REPLACE_EXISTING);
+                                        } else if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
+                                            target.toFile().mkdirs();
+                                            // if this is a new directory, watch it as well
+                                            watchDirectory(watchableDirectory.getWebappName(), watchableDirectory.getProjectPath(), watchableDirectory.getMavenModel(), false, eventPath);
                                         }
                                     }
-                                    if (event.kind() == StandardWatchEventKinds.ENTRY_DELETE && !Files.isDirectory(target)) {
-                                        Files.deleteIfExists(determineTarget(watchableDirectory.getWebappName(), eventPath, watchableDirectory.getProjectPath()));
+                                    if (event.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
+                                        Files.deleteIfExists(target);
                                     }
                                 }
                             } catch (IOException ex) {
                                 logger.warn("Exception while watching directory", ex);
                             }
                         }
-                        if (!key.reset()) { // reset, in order to receive further events
-                            watched.remove(key); // the directory is no longer accessible
+                        if (!key.reset()) {
+                            // reset, in order to receive further events
+                            watched.remove(key);// the directory is no longer accessible
+
                         }
-                    }
-                } catch (InterruptedException ex) {
+                    } 
+                } catch (java.lang.InterruptedException ex) {
                     logger.warn("Watching thread interrupted", ex);
                     // return - the executor has been shutdown
-                } catch (Exception ex) {
+                } catch (java.lang.Exception ex) {
                     logger.error("Exception occurred", ex);
                 }
             }
@@ -278,19 +335,19 @@ public class StartupListener implements ServletContextListener {
                 libFile.delete();
             }
         }
-
         logger.info("Copying maven dependencies. This may take some time, as some dependencies may have to be downloaded from a remote repository.");
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(baos);
         MavenCli cli = new MavenCli();
-        cli.doMain(new String[] {"dependency:copy-dependencies", "-DoutputDirectory=" + lib.toString()}, projectPaths.get(webappName).toString(), out, out);
+        cli.doMain(new String[]{ "dependency:copy-dependencies", "-DoutputDirectory=" + lib.toString() }, projectPaths.get(webappName).toString(), out, out);
         out.close();
         String output = baos.toString("UTF-8");
         if (output.contains("FAILURE")) {
             logger.warn("Problem with copying dependencies: " + output);
         }
         logger.info("Copying dependencies successful");
+        // 
+        Files.write(getDependencyCopyMetaFile(webappName), Lists.newArrayList(dateTimeFormatter.print(new DateTime())), Charset.forName("UTF-8"));
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
@@ -318,9 +375,13 @@ public class StartupListener implements ServletContextListener {
 
     public static class WatchableDirectory {
         private Path directory;
+
         private Path projectPath;
+
         private boolean dependencyProject;
+
         private Model mavenModel;
+
         private String webappName;
 
         public WatchableDirectory(Path dir, Path projectPath, boolean dependencyProject, Model mavenModel, String webappName) {
