@@ -1,17 +1,15 @@
 package com.github.oxo42.stateless4j;
 
-import com.github.oxo42.stateless4j.delegates.Action;
 import com.github.oxo42.stateless4j.delegates.Action1;
+import com.github.oxo42.stateless4j.delegates.Action;
 import com.github.oxo42.stateless4j.triggers.TriggerWithParameters1;
-
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class InitialStateTests {
 
+public class InitialStateTests {
     private boolean executed = false;
 
     @Test
@@ -65,27 +63,15 @@ public class InitialStateTests {
     @Test
     public void testInitialStateEntryActionWithParameterNotExecuted() {
         final State initial = State.B;
-
         StateMachineConfig<State, Trigger> config = new StateMachineConfig<>();
-
-        TriggerWithParameters1<Object, State, Trigger> trigger =
-                config.setTriggerParameters(Trigger.X, Object.class);
-
-        config.configure(initial)
-                .onEntryFrom(
-                        trigger,
-                        new Action1<Object>() {
-
-                            @Override
-                            public void doIt(Object arg1) {
-                                executed = true;
-                            }
-                        },
-                        Object.class
-                );
-
+        TriggerWithParameters1<Object, State, Trigger> trigger = config.setTriggerParameters(Trigger.X, java.lang.Object.class);
+        config.configure(initial).onEntryFrom(trigger, new Action1<Object>() {
+            @Override
+            public void doIt(Object arg1) {
+                executed = true;
+            }
+        }, java.lang.Object.class);
         config.enableEntryActionOfInitialState();
-
         StateMachine<State, Trigger> sm = new StateMachine<>(initial, config);
         assertEquals(initial, sm.getState());
         assertFalse(executed);

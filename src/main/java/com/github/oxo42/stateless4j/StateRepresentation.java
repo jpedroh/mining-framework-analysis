@@ -4,20 +4,26 @@ import com.github.oxo42.stateless4j.delegates.Action1;
 import com.github.oxo42.stateless4j.delegates.Action2;
 import com.github.oxo42.stateless4j.transitions.Transition;
 import com.github.oxo42.stateless4j.triggers.TriggerBehaviour;
-
 import java.util.*;
 
-public class StateRepresentation<S, T> {
 
+public class StateRepresentation<S, T> {
     public static final String ACTION_IS_NULL = "action is null";
+
     public static final String TRANSITION_IS_NULL = "transition is null";
+
     private final S state;
 
     private final Map<T, List<TriggerBehaviour<S, T>>> triggerBehaviours = new HashMap<>();
+
     private final List<Action2<Transition<S, T>, Object[]>> entryActions = new ArrayList<>();
+
     private final List<Action1<Transition<S, T>>> exitActions = new ArrayList<>();
+
     private final List<StateRepresentation<S, T>> substates = new ArrayList<>();
-    private StateRepresentation<S, T> superstate; // null
+
+    // null
+    private StateRepresentation<S, T> superstate;
 
     public StateRepresentation(S state) {
         this.state = state;
@@ -61,12 +67,11 @@ public class StateRepresentation<S, T> {
 
     public void addEntryAction(final T trigger, final Action2<Transition<S, T>, Object[]> action) {
         assert action != null : ACTION_IS_NULL;
-
         entryActions.add(new Action2<Transition<S, T>, Object[]>() {
             @Override
             public void doIt(Transition<S, T> t, Object[] args) {
                 T trans_trigger = t.getTrigger();
-                if (trans_trigger != null && trans_trigger.equals(trigger)) {
+                if ((trans_trigger != null) && trans_trigger.equals(trigger)) {
                     action.doIt(t, args);
                 }
             }
@@ -90,21 +95,18 @@ public class StateRepresentation<S, T> {
 
     public void enter(Transition<S, T> transition, Object... entryArgs) {
         assert transition != null : TRANSITION_IS_NULL;
-
         if (transition.isReentry()) {
             executeEntryActions(transition, entryArgs);
         } else if (!includes(transition.getSource())) {
             if (superstate != null) {
                 superstate.enter(transition, entryArgs);
             }
-
             executeEntryActions(transition, entryArgs);
         }
     }
 
     public void exit(Transition<S, T> transition) {
         assert transition != null : TRANSITION_IS_NULL;
-
         if (transition.isReentry()) {
             executeExitActions(transition);
         } else if (!includes(transition.getDestination())) {
