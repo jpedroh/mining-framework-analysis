@@ -19,15 +19,13 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-
 package com.adobe.epubcheck.api;
 
+import com.adobe.epubcheck.messages.MessageId;
 import java.util.Collections;
 import java.util.Locale;
-
 import org.junit.Test;
 
-import com.adobe.epubcheck.messages.MessageId;
 
 public class Epub30CheckExpandedTest extends AbstractEpubCheckTest
 {
@@ -134,11 +132,20 @@ public class Epub30CheckExpandedTest extends AbstractEpubCheckTest
   }
 
   @Test
+<<<<<<< LEFT
   public void testFallbackNoneForObject()
+=======
+  public void testValidateEPUBPLoremBindingsWithNativeFallback()
+>>>>>>> RIGHT
   {
+<<<<<<< LEFT
     // tests that an object with no fallback is reported as an error
     Collections.addAll(expectedErrors, MessageId.MED_002);
     testValidateDocument("invalid/fallback-object-none");
+=======
+    // tests that an object element with both bindings and native fallback is allowed
+    testValidateDocument("valid/lorem-bindings-withnativefallback");
+>>>>>>> RIGHT
   }
 
   @Test
@@ -441,6 +448,8 @@ public class Epub30CheckExpandedTest extends AbstractEpubCheckTest
   }
 
   @Test
+<<<<<<< LEFT
+=======
   public void testValidateEPUB30_svgSwitch()
   {
     // tests that svg:switch doesn't trigger the OPF 'switch' property check
@@ -448,6 +457,13 @@ public class Epub30CheckExpandedTest extends AbstractEpubCheckTest
   }
 
   @Test
+  public void testValidateEPUB30_videoAudioTrigger()
+  {
+    testValidateDocument("valid/cc-shared-culture/", "valid/cc-shared-culture.txt");
+  }
+
+  @Test
+>>>>>>> RIGHT
   public void testValidateEPUB30_InvalidLinks()
   {
     Collections.addAll(expectedErrors, MessageId.RSC_007, MessageId.RSC_012, MessageId.RSC_012,

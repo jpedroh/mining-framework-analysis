@@ -19,20 +19,7 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-
 package com.adobe.epubcheck.nav;
-
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
 
 import com.adobe.epubcheck.api.EPUBProfile;
 import com.adobe.epubcheck.messages.MessageId;
@@ -44,14 +31,26 @@ import com.adobe.epubcheck.util.Messages;
 import com.adobe.epubcheck.util.URLResourceProvider;
 import com.adobe.epubcheck.util.ValidationReport;
 import com.adobe.epubcheck.util.outWriter;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
-public class NavCheckerTest
-{
 
+public class NavCheckerTest {
   private static String basepath = "/30/single/nav/";
+
   private List<MessageId> expectedWarnings = new LinkedList<MessageId>();
+
   private List<MessageId> expectedErrors = new LinkedList<MessageId>();
+
   private List<MessageId> expectedFatals = new LinkedList<MessageId>();
+
   private final Messages messages = Messages.getInstance();
 
   public void testValidateDocument(String fileName)
@@ -113,10 +112,9 @@ public class NavCheckerTest
   {
     testValidateDocument("valid/minimal.xhtml");
   }
-  
+
   @Test
-  public void testValidateDocumentNavWithoutType()
-  {
+  public void testValidateDocumentNavWithoutType() {
     // Warn about the presence of a `nav` with no `epub:type`
     Collections.addAll(expectedWarnings, MessageId.RSC_017);
     testValidateDocument("invalid/nav-no-type.xhtml");
@@ -129,8 +127,7 @@ public class NavCheckerTest
   }
 
   @Test
-  public void testValidateDocumentNoTocNav()
-  {
+  public void testValidateDocumentNoTocNav() {
     // Error saying exactly one 'toc' nav must be present
     Collections.addAll(expectedErrors, MessageId.RSC_005);
     // Warning about the nav not having an epub:type 
@@ -190,7 +187,7 @@ public class NavCheckerTest
     Collections.addAll(expectedWarnings, MessageId.RSC_017, MessageId.RSC_017);
     testValidateDocument("invalid/nav-landmarks-duplicates.xhtml");
   }
-  
+
   @Test
   public void testValidateDocumentNavLandmarksNoDuplicates()
   {
@@ -220,16 +217,14 @@ public class NavCheckerTest
   }
 
   @Test
-  public void testValidateDocumentNavReqHeading()
-  {
+  public void testValidateDocumentNavReqHeading() {
     Collections.addAll(expectedErrors, MessageId.RSC_005);
     testValidateDocument("invalid/req-heading.xhtml");
   }
-  
+
   @Test
   public void testValid_issuet538()
   {
     testValidateDocument("valid/issue538.xhtml");
   }
-
 }

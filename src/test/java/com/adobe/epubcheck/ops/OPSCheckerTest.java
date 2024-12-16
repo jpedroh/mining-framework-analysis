@@ -19,21 +19,7 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-
 package com.adobe.epubcheck.ops;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
 
 import com.adobe.epubcheck.api.EPUBProfile;
 import com.adobe.epubcheck.messages.MessageId;
@@ -44,16 +30,28 @@ import com.adobe.epubcheck.util.FileResourceProvider;
 import com.adobe.epubcheck.util.GenericResourceProvider;
 import com.adobe.epubcheck.util.Messages;
 import com.adobe.epubcheck.util.URLResourceProvider;
-import com.adobe.epubcheck.util.ValidationReport;
 import com.adobe.epubcheck.util.ValidationReport.ItemReport;
+import com.adobe.epubcheck.util.ValidationReport;
 import com.adobe.epubcheck.util.outWriter;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class OPSCheckerTest
-{
 
+public class OPSCheckerTest {
   List<MessageId> expectedErrors = new LinkedList<MessageId>();
+
   List<MessageId> expectedWarnings = new LinkedList<MessageId>();
+
   List<MessageId> expectedFatals = new LinkedList<MessageId>();
+
   private final Messages messages = Messages.getInstance();
 
   public void testValidateDocument(String fileName, String mimeType, EPUBVersion version)
@@ -113,14 +111,11 @@ public class OPSCheckerTest
     }
     else
     {
-      try
-      {
+      try {
         URL fileURL = this.getClass().getResource(basepath + fileName);
-        String filePath = fileURL != null ? new File(fileURL.toURI()).getAbsolutePath()
-            : basepath + fileName;
+        String filePath = fileURL != null ? new File(fileURL.toURI()).getAbsolutePath() : basepath + fileName;
         resourceProvider = new FileResourceProvider(filePath);
-      } catch (URISyntaxException e)
-      {
+      } catch (URISyntaxException e) {
         throw new IllegalStateException("Cannot find test file", e);
       }
     }
@@ -190,10 +185,8 @@ public class OPSCheckerTest
   }
 
   @Test
-  public void testValidateXHTMLGlobalAttrs001()
-  {
-    testValidateDocument("xhtml/valid/global-attrs-001.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+  public void testValidateXHTMLGlobalAttrs001() {
+    testValidateDocument("xhtml/valid/global-attrs-001.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
@@ -233,7 +226,7 @@ public class OPSCheckerTest
     testValidateDocument("xhtml/invalid/xml11.xhtml", "application/xhtml+xml",
         EPUBVersion.VERSION_3);
   }
-  
+
   @Test
   public void testValidateXHTMLOPSSVG001()
   {
@@ -242,11 +235,9 @@ public class OPSCheckerTest
   }
 
   @Test
-  public void testValidateXHTMLOPSSVG002()
-  {
+  public void testValidateXHTMLOPSSVG002() {
     // assure that epub:type is allowed on svg elements
-    testValidateDocument("xhtml/valid/ops-svg-002.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/valid/ops-svg-002.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
@@ -305,90 +296,74 @@ public class OPSCheckerTest
     testValidateDocument("xhtml/invalid/style-001.xhtml", "application/xhtml+xml",
         EPUBVersion.VERSION_3);
   }
-  
+
   @Test
-  public void testValidateXHTMLStyleInBody()
-  {
+  public void testValidateXHTMLStyleInBody() {
     // one error for the style element, one for the scoped attribute
     Collections.addAll(expectedErrors, MessageId.RSC_005, MessageId.RSC_005);
-    testValidateDocument("xhtml/invalid/style-in-body.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/style-in-body.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
-  public void testValidateXHTMLSwitchIsDeprecated()
-  {
+  public void testValidateXHTMLSwitchIsDeprecated() {
     // tests that epub:switch is deprecated
     Collections.addAll(expectedWarnings, MessageId.RSC_017);
-    testValidateDocument("xhtml/invalid/switch-deprecated.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/switch-deprecated.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
-  
+
   @Test
-  public void testValidateXHTMLSwitchMathCase()
-  {
+  public void testValidateXHTMLSwitchMathCase() {
     // tests that MathML within an epub:switch is validated
     Collections.addAll(expectedErrors, MessageId.RSC_005);
     // raises a warning as epub:switch is deprecated
     Collections.addAll(expectedWarnings, MessageId.RSC_017);
-    testValidateDocument("xhtml/invalid/switch-invalid-mathml.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/switch-invalid-mathml.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
-  public void testValidateXHTMLSwitchWithDefaultBeforeCase()
-  {
+  public void testValidateXHTMLSwitchWithDefaultBeforeCase() {
     // tests that epub:default preceding epub:case is an error
     // one error for epub:default too soon, one error for epub:case too late
     Collections.addAll(expectedErrors, MessageId.RSC_005, MessageId.RSC_005);
     // raises a warning as epub:switch is deprecated
     Collections.addAll(expectedWarnings, MessageId.RSC_017);
-    testValidateDocument("xhtml/invalid/switch-default-before-case.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/switch-default-before-case.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
-  public void testValidateXHTMLSwitchWithTwoDefaults()
-  {
+  public void testValidateXHTMLSwitchWithTwoDefaults() {
     // tests that more than one epub:default is an error
     Collections.addAll(expectedErrors, MessageId.RSC_005);
     // raises a warning as epub:switch is deprecated
     Collections.addAll(expectedWarnings, MessageId.RSC_017);
-    testValidateDocument("xhtml/invalid/switch-default-twice.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/switch-default-twice.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
-  public void testValidateXHTMLSwitchWithNoCase()
-  {
+  public void testValidateXHTMLSwitchWithNoCase() {
     // tests that a missing epub:case is an error
     Collections.addAll(expectedErrors, MessageId.RSC_005);
     // raises a warning as epub:switch is deprecated
     Collections.addAll(expectedWarnings, MessageId.RSC_017);
-    testValidateDocument("xhtml/invalid/switch-no-case.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/switch-no-case.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
-  public void testValidateXHTMLSwitchWithNoDefault()
-  {
+  public void testValidateXHTMLSwitchWithNoDefault() {
     // tests that a missing epub:default is an error
     Collections.addAll(expectedErrors, MessageId.RSC_005);
     // raises a warning as epub:switch is deprecated
     Collections.addAll(expectedWarnings, MessageId.RSC_017);
-    testValidateDocument("xhtml/invalid/switch-no-default.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/switch-no-default.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
-  public void testValidateXHTMLSwitchWithNoRequiredNamespace()
-  {
+  public void testValidateXHTMLSwitchWithNoRequiredNamespace() {
     // tests that a missing required-namespace attribute on epub:case is an error
     Collections.addAll(expectedErrors, MessageId.RSC_005);
     // raises a warning as epub:switch is deprecated
     Collections.addAll(expectedWarnings, MessageId.RSC_017);
-    testValidateDocument("xhtml/invalid/switch-no-requirednamespace.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/switch-no-requirednamespace.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
@@ -397,7 +372,6 @@ public class OPSCheckerTest
     testValidateDocument("xhtml/valid/tables-001.xhtml", "application/xhtml+xml",
         EPUBVersion.VERSION_3);
   }
-  
 
   @Test
   public void testValidateXHTMLTableBorderAttribute()
@@ -407,11 +381,9 @@ public class OPSCheckerTest
   }
 
   @Test
-  public void testValidateXHTMLTableBorderAttributeInvalid()
-  {
+  public void testValidateXHTMLTableBorderAttributeInvalid() {
     Collections.addAll(expectedErrors, MessageId.RSC_005);
-    testValidateDocument("xhtml/invalid/table-border.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/table-border.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
@@ -420,34 +392,28 @@ public class OPSCheckerTest
     testValidateDocument("xhtml/valid/text-001.xhtml", "application/xhtml+xml",
         EPUBVersion.VERSION_3);
   }
-  
+
   @Test
-  public void testValidateXHTMLTitleMissing()
-  {
+  public void testValidateXHTMLTitleMissing() {
     Collections.addAll(expectedWarnings, MessageId.RSC_017);
-    testValidateDocument("xhtml/invalid/title-missing.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/title-missing.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
-  public void testValidateXHTMLTrigger()
-  {
+  public void testValidateXHTMLTrigger() {
     // tests that epub:trigger is deprecated
     Collections.addAll(expectedWarnings, MessageId.RSC_017);
-    testValidateDocument("xhtml/invalid/trigger-deprecated.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/trigger-deprecated.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
-  public void testValidateXHTMLTriggerWithBadRefs()
-  {
+  public void testValidateXHTMLTriggerWithBadRefs() {
     // tests that epub:trigger ref points to an existing ID
     // tests that epub:trigger ev:observer points to an existing ID
     Collections.addAll(expectedErrors, MessageId.RSC_005, MessageId.RSC_005);
     // two warnings are raised since epub:trigger is deprecated 
     Collections.addAll(expectedWarnings, MessageId.RSC_017, MessageId.RSC_017);
-    testValidateDocument("xhtml/invalid/trigger-badrefs.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/trigger-badrefs.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
@@ -478,8 +444,7 @@ public class OPSCheckerTest
   }
 
   @Test
-  public void testValidateXHTML_SCH001()
-  {
+  public void testValidateXHTML_SCH001() {
     // Collections.addAll(expectedErrors, MessageId.RSC_005, MessageId.MED_002,
     // MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005,
     // MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005,
@@ -498,32 +463,16 @@ public class OPSCheckerTest
     // MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005,
     // MessageId.RSC_005);
     // mgy not sure what happened here, removed the first entry to make it pass
-    Collections.addAll(expectedErrors, MessageId.MED_002, MessageId.RSC_005, MessageId.RSC_005,
-        MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005,
-        MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005,
-        MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005,
-        MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005,
-        MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005,
-        MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005,
-        MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005,
-        MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005,
-        MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005,
-        MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005,
-        MessageId.RSC_005);
-
-    testValidateDocument("xhtml/invalid/sch-001.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3, false, new ExtraReportTest()
-        {
-          @Override
-          public void test(ValidationReport testReport)
-          {
-            for (ItemReport error : testReport.errorList)
-            {
-              assertTrue("Error '" + error.message + "' has no line number.", error.line != -1);
-              assertTrue("Error '" + error.message + "' has no column number.", error.column != -1);
-            }
-          }
-        });
+    Collections.addAll(expectedErrors, MessageId.MED_002, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005);
+    testValidateDocument("xhtml/invalid/sch-001.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3, false, new ExtraReportTest() {
+      @Override
+      public void test(ValidationReport testReport) {
+        for (ItemReport error : testReport.errorList) {
+          assertTrue(("Error '" + error.message) + "' has no line number.", error.line != (-1));
+          assertTrue(("Error '" + error.message) + "' has no column number.", error.column != (-1));
+        }
+      }
+    });
   }
 
   @Test
@@ -729,29 +678,23 @@ public class OPSCheckerTest
   }
 
   @Test
-  public void testValidateXHTMLSVGForeignObject()
-  {
+  public void testValidateXHTMLSVGForeignObject() {
     // foreignObject allowed outside switch, and <body> allowed inside
-    testValidateDocument("xhtml/valid/svg-foreignobject.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/valid/svg-foreignobject.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
-  public void testValidateXHTMLSVGForeignObjectBody()
-  {
+  public void testValidateXHTMLSVGForeignObjectBody() {
     // foreignObject with disallowed flow content
     Collections.addAll(expectedErrors, MessageId.RSC_005);
-    testValidateDocument("xhtml/invalid/svg-foreignobject-body.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/svg-foreignobject-body.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
-  public void testValidateXHTMLSVGForeignObjectNotFlow()
-  {
+  public void testValidateXHTMLSVGForeignObjectNotFlow() {
     // foreignObject with disallowed flow content
     Collections.addAll(expectedErrors, MessageId.RSC_005);
-    testValidateDocument("xhtml/invalid/svg-foreignobject-not-flow.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/svg-foreignobject-not-flow.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
@@ -854,11 +797,9 @@ public class OPSCheckerTest
   }
 
   @Test
-  public void testValidateXHTML301AriaDescribedAt()
-  {
+  public void testValidateXHTML301AriaDescribedAt() {
     expectedErrors.add(MessageId.RSC_005);
-    testValidateDocument("xhtml/invalid/aria-describedAt.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/aria-describedAt.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
@@ -976,13 +917,10 @@ public class OPSCheckerTest
   }
 
   @Test
-  public void testMathMLWithContentMathML()
-  {
+  public void testMathMLWithContentMathML() {
     Collections.addAll(expectedErrors, MessageId.RSC_005, MessageId.RSC_005);
-    testValidateDocument("xhtml/invalid/mathml-contentmathml.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/mathml-contentmathml.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
-
 
   @Test
   public void testMathMLAnnotation()
@@ -990,14 +928,14 @@ public class OPSCheckerTest
     testValidateDocument("xhtml/valid/mathml-annotation-tex.xhtml", "application/xhtml+xml",
         EPUBVersion.VERSION_3);
   }
-  
+
   @Test
   public void testMathMLAnnotationXMLWithMathMLContent()
   {
     testValidateDocument("xhtml/valid/mathml-annotationxml-mathml-content.xhtml", "application/xhtml+xml",
         EPUBVersion.VERSION_3);
   }
-  
+
   @Test
   public void testMathMLAnnotationXMLWithMathMLPresentation()
   {
@@ -1006,37 +944,29 @@ public class OPSCheckerTest
   }
 
   @Test
-  public void testMathMLAnnotationXMLWithMathMLAsXHTML()
-  {
+  public void testMathMLAnnotationXMLWithMathMLAsXHTML() {
     // one error for mtext not allowed in annotation-xml
     // one side-effect error for the annotation mtext not being in math
     Collections.addAll(expectedErrors, MessageId.RSC_005, MessageId.RSC_005);
-    testValidateDocument("xhtml/invalid/mathml-annotationxml-mathml-in-xhtml.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/mathml-annotationxml-mathml-in-xhtml.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
-  public void testMathMLAnnotationXMLWithMathMLAndNoNameAttr()
-  {
+  public void testMathMLAnnotationXMLWithMathMLAndNoNameAttr() {
     Collections.addAll(expectedErrors, MessageId.RSC_005);
-    testValidateDocument("xhtml/invalid/mathml-annotationxml-mathml-noname.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/mathml-annotationxml-mathml-noname.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
-  public void testMathMLAnnotationXMLWithMathMLAndInvalidNameAttr()
-  {
+  public void testMathMLAnnotationXMLWithMathMLAndInvalidNameAttr() {
     Collections.addAll(expectedErrors, MessageId.RSC_005);
-    testValidateDocument("xhtml/invalid/mathml-annotationxml-mathml-invalidname.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/mathml-annotationxml-mathml-invalidname.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
-  public void testMathMLAnnotationXMLWithMathMLAndInvalidEncodingAttr()
-  {
+  public void testMathMLAnnotationXMLWithMathMLAndInvalidEncodingAttr() {
     Collections.addAll(expectedErrors, MessageId.RSC_005);
-    testValidateDocument("xhtml/invalid/mathml-annotationxml-mathml-invalidencoding.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/mathml-annotationxml-mathml-invalidencoding.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
@@ -1047,11 +977,9 @@ public class OPSCheckerTest
   }
 
   @Test
-  public void testMathMLAnnotationXMLWithXHTMLAndNoNameAttr()
-  {
+  public void testMathMLAnnotationXMLWithXHTMLAndNoNameAttr() {
     Collections.addAll(expectedErrors, MessageId.RSC_005);
-    testValidateDocument("xhtml/invalid/mathml-annotationxml-xhtml-noname.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/mathml-annotationxml-xhtml-noname.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
@@ -1118,8 +1046,8 @@ public class OPSCheckerTest
   @Test
   public void testValidateXHTMLEmptyClass_EPUB2_Valid()
   {
-    testValidateDocument("xhtml/valid/empty-class-attribute-is-valid_issue733.xhtml",
-        "application/xhtml+xml", EPUBVersion.VERSION_2);
+    testValidateDocument("xhtml/valid/empty-class-attribute-is-valid_issue733.xhtml", "application/xhtml+xml",
+        EPUBVersion.VERSION_2);
   }
 
   @Test
@@ -1128,7 +1056,7 @@ public class OPSCheckerTest
     testValidateDocument("xhtml/valid/issue777-empty-lang.xhtml", "application/xhtml+xml",
         EPUBVersion.VERSION_3);
   }
-  
+
   @Test
   public void testObsoleteContextMenuAttribute()
   {
@@ -1136,53 +1064,41 @@ public class OPSCheckerTest
     testValidateDocument("xhtml/invalid/obsolete-contextmenu.xhtml", "application/xhtml+xml",
         EPUBVersion.VERSION_3);
   }
-  
+
   @Test
-  public void testObsoleteDropzoneAttribute()
-  {
+  public void testObsoleteDropzoneAttribute() {
     Collections.addAll(expectedErrors, MessageId.RSC_005);
-    testValidateDocument("xhtml/invalid/obsolete-dropzone.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/obsolete-dropzone.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
-  
+
   @Test
-  public void testObsoleteKeygenElement()
-  {
+  public void testObsoleteKeygenElement() {
     Collections.addAll(expectedErrors, MessageId.RSC_005);
-    testValidateDocument("xhtml/invalid/obsolete-keygen.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/obsolete-keygen.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
-  
+
   @Test
-  public void testObsoleteMenus()
-  {
+  public void testObsoleteMenus() {
     Collections.addAll(expectedErrors, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005);
-    testValidateDocument("xhtml/invalid/obsolete-menus.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/obsolete-menus.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
-  
+
   @Test
-  public void testObsoletePubdateAttribute()
-  {
+  public void testObsoletePubdateAttribute() {
     Collections.addAll(expectedErrors, MessageId.RSC_005);
-    testValidateDocument("xhtml/invalid/obsolete-pubdate.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/obsolete-pubdate.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
-  
+
   @Test
-  public void testObsoleteSeamessIframe()
-  {
+  public void testObsoleteSeamessIframe() {
     Collections.addAll(expectedErrors, MessageId.RSC_005);
-    testValidateDocument("xhtml/invalid/obsolete-seamless-iframe.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/obsolete-seamless-iframe.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
-  
+
   @Test
-  public void testContentModel_TimeInTime()
-  {
+  public void testContentModel_TimeInTime() {
     Collections.addAll(expectedErrors, MessageId.RSC_005);
-    testValidateDocument("xhtml/invalid/time-in-time.xhtml", "application/xhtml+xml",
-        EPUBVersion.VERSION_3);
+    testValidateDocument("xhtml/invalid/time-in-time.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
 
   @Test
@@ -1199,7 +1115,7 @@ public class OPSCheckerTest
     // tests that internal entity declarations are allowed
     testValidateDocument("xhtml/valid/entities-internal.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
-  
+
   @Test
   public void testEntitiesMissingSemicolon()
   {
@@ -1208,7 +1124,7 @@ public class OPSCheckerTest
     Collections.addAll(expectedErrors, MessageId.RSC_005);
     testValidateDocument("xhtml/invalid/entities-missing-semicolon.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
-  
+
   @Test
   public void testEntitiesUnknown()
   {
@@ -1217,5 +1133,4 @@ public class OPSCheckerTest
     Collections.addAll(expectedErrors, MessageId.RSC_005);
     testValidateDocument("xhtml/invalid/entities-unknown.xhtml", "application/xhtml+xml", EPUBVersion.VERSION_3);
   }
-
 }
