@@ -22,13 +22,11 @@
  *                 Miron Aseev
  * 
  */
-
 package org.la4j.vector;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Random;
-
 import org.la4j.factory.Factory;
 import org.la4j.matrix.Matrices;
 import org.la4j.matrix.Matrix;
@@ -37,10 +35,12 @@ import org.la4j.vector.functor.VectorFunction;
 import org.la4j.vector.functor.VectorPredicate;
 import org.la4j.vector.functor.VectorProcedure;
 import org.la4j.vector.operation.VectorOperations;
+import org.la4j.vector.sparse.SparseVector;
+
 
 public abstract class AbstractVector implements Vector {
-
     private static final String DEFAULT_DELIMITER = ", ";
+
     private static final NumberFormat DEFAULT_FORMATTER = new DecimalFormat("0.000");
 
     protected int length;
@@ -49,7 +49,6 @@ public abstract class AbstractVector implements Vector {
 
     protected AbstractVector(Factory factory, int length) {
         ensureLengthIsCorrect(length);
-
         this.factory = factory;
         this.length = length;
     }
@@ -108,7 +107,6 @@ public abstract class AbstractVector implements Vector {
         ensureFactoryIsNotNull(factory);
         ensureArgumentIsNotNull(vector, "vector");
         ensureVectorIsSimilar(vector);
-
         return pipeTo(VectorOperations.ooPlaceVectorToVectorAddition(factory), vector);
     }
 
@@ -116,7 +114,6 @@ public abstract class AbstractVector implements Vector {
     public void addInPlace(Vector vector) {
         ensureArgumentIsNotNull(vector, "vector");
         ensureVectorIsSimilar(vector);
-
         pipeTo(VectorOperations.inPlaceVectorToVectorAddition(), vector);
     }
 
@@ -128,7 +125,6 @@ public abstract class AbstractVector implements Vector {
     @Override
     public Vector multiply(double value, Factory factory) {
         ensureFactoryIsNotNull(factory);
-
         return pipeTo(VectorOperations.ooPlaceVectorByValueMultiplication(value, factory));
     }
 
@@ -145,15 +141,12 @@ public abstract class AbstractVector implements Vector {
     @Override
     public Vector hadamardProduct(Vector vector, Factory factory) {
         ensureFactoryIsNotNull(factory);
-        ensureArgumentIsNotNull(vector,  "vector");
+        ensureArgumentIsNotNull(vector, "vector");
         ensureVectorIsSimilar(vector);
-
         Vector result = blank(factory);
-
         for (int i = 0; i < length; i++) {
             result.set(i, get(i) * vector.get(i));
         }
-
         return result;
     }
 
@@ -208,13 +201,10 @@ public abstract class AbstractVector implements Vector {
         ensureFactoryIsNotNull(factory);
         ensureArgumentIsNotNull(vector, "vector");
         ensureVectorIsSimilar(vector);
-
         Vector result = blank(factory);
-
         for (int i = 0; i < length; i++) {
             result.set(i, get(i) - vector.get(i));
         }
-
         return result;
     }
 
@@ -237,33 +227,11 @@ public abstract class AbstractVector implements Vector {
     public double sum() {
         return fold(Vectors.asSumAccumulator(0.0));
     }
-    
-    /**
-     * Helper class for performing a sparse / dense vector product
-     */
-    private static final class SparseDot implements VectorProcedure
-    {
-        public Vector other;
-        double result;
-
-        public SparseDot(Vector other)
-        {
-            this.other = other;
-            result = 0;
-        }
-
-        @Override
-        public void apply(int i, double value)
-        {
-            result += other.get(i)*value;
-        }
-    }
 
     @Override
     public double innerProduct(Vector vector) {
         ensureArgumentIsNotNull(vector, "vector");
         ensureVectorIsSimilar(vector);
-
         return pipeTo(VectorOperations.ooPlaceInnerProduct(), vector);
     }
 
@@ -308,11 +276,9 @@ public abstract class AbstractVector implements Vector {
     @Override
     public Vector copy(Factory factory) {
         ensureFactoryIsNotNull(factory);
-
         if (factory == this.factory) {
             return copy();
         }
-
         return factory.createVector(this);
     }
 
@@ -625,10 +591,51 @@ public abstract class AbstractVector implements Vector {
         }
     }
 
+    /**
+     * Helper class for performing a sparse / dense vector product
+     */
+    private static final class SparseDot implements VectorProcedure {
+        public Vector other;
+
+        double result;
+
+        public SparseDot(Vector other) {
+            this.other = other;
+            result = 0;
+        }
+
+        @Override
+        public void apply(int i, double value) {
+            result += other.get(i) * value;
+        }
+    }
+
     protected void ensureVectorIsSimilar(Vector that) {
         if (length != that.length()) {
             fail("Wong vector length: " + that.length() + ". Should be: " + length + ".");
         }
+<<<<<<< LEFT
+=======
+
+        //Check for sparse vectors. Case of sparse dot sparse not handled, but this is better than before
+        if(vector instanceof SparseVector){
+            SparseVector svector = (SparseVector) vector;
+            SparseDot sparseDot = new SparseDot(this);
+            svector.eachNonZero(sparseDot);
+            return sparseDot.result;
+        }
+        else if(this instanceof SparseVector) {
+            return vector.innerProduct(this);//lazy for less code
+        }
+        //else base case, dense dot dense
+        double result = 0.0;
+        
+        for (int i = 0; i < length; i++) {
+            result += get(i) * vector.get(i);
+        }
+
+        return result;
+>>>>>>> RIGHT
     }
 
     protected void ensureArgumentIsNotNull(Object argument, String name) {
