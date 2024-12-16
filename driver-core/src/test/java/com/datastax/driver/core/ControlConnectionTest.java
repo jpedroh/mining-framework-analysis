@@ -1,17 +1,15 @@
 package com.datastax.driver.core;
 
-import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.testng.annotations.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.datastax.driver.core.policies.DelegatingLoadBalancingPolicy;
 import com.datastax.driver.core.policies.LoadBalancingPolicy;
 import com.datastax.driver.core.policies.Policies;
 import com.datastax.driver.core.policies.ReconnectionPolicy;
+import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class ControlConnectionTest {
     @Test(groups = "short")
@@ -101,7 +99,7 @@ public class ControlConnectionTest {
                 ccm.remove();
         }
     }
-    
+
     /**
      * Ensures that if the host that the Control Connection is connected to is removed/decommissioned that the
      * Control Connection is reestablished to another host.
@@ -120,8 +118,8 @@ public class ControlConnectionTest {
             ccm = CCMBridge.create("test", 3);
 
             cluster = Cluster.builder()
-                .addContactPoint(CCMBridge.ipOfNode(1))
-                .build();
+                    .addContactPoint(CCMBridge.ipOfNode(1))
+                    .build();
             cluster.init();
 
             // Ensure the control connection host is that of the first node.
@@ -143,8 +141,7 @@ public class ControlConnectionTest {
         }
     }
 
-   static class QueryPlanCountingPolicy extends DelegatingLoadBalancingPolicy {
-
+    static class QueryPlanCountingPolicy extends DelegatingLoadBalancingPolicy {
         final AtomicInteger counter = new AtomicInteger();
 
         public QueryPlanCountingPolicy(LoadBalancingPolicy delegate) {
