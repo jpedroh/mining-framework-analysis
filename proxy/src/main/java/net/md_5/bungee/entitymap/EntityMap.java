@@ -11,42 +11,47 @@ import lombok.NoArgsConstructor;
 import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.ProtocolConstants;
 
+
 /**
  * Class to rewrite integers within packets.
  */
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public abstract class EntityMap
-{
-
+public abstract class EntityMap {
     private final boolean[] clientboundInts = new boolean[ 256 ];
+
     private final boolean[] clientboundVarInts = new boolean[ 256 ];
 
     private final boolean[] serverboundInts = new boolean[ 256 ];
+
     private final boolean[] serverboundVarInts = new boolean[ 256 ];
 
     // Returns the correct entity map for the protocol version
-    public static EntityMap getEntityMap(int version)
-    {
-        switch ( version )
-        {
-            case ProtocolConstants.MINECRAFT_1_8:
+    public static EntityMap getEntityMap(int version) {
+        switch (version) {
+            case ProtocolConstants.MINECRAFT_1_8 :
                 return EntityMap_1_8.INSTANCE;
-            case ProtocolConstants.MINECRAFT_1_9:
-            case ProtocolConstants.MINECRAFT_1_9_1:
-            case ProtocolConstants.MINECRAFT_1_9_2:
+            case ProtocolConstants.MINECRAFT_1_9 :
+            case ProtocolConstants.MINECRAFT_1_9_1 :
+            case ProtocolConstants.MINECRAFT_1_9_2 :
                 return EntityMap_1_9.INSTANCE;
-            case ProtocolConstants.MINECRAFT_1_9_4:
+            case ProtocolConstants.MINECRAFT_1_9_4 :
                 return EntityMap_1_9_4.INSTANCE;
-            case ProtocolConstants.MINECRAFT_1_10:
+            case ProtocolConstants.MINECRAFT_1_10 :
                 return EntityMap_1_10.INSTANCE;
-            case ProtocolConstants.MINECRAFT_1_11:
-            case ProtocolConstants.MINECRAFT_1_11_1:
+            case ProtocolConstants.MINECRAFT_1_11 :
+            case ProtocolConstants.MINECRAFT_1_11_1 :
                 return EntityMap_1_11.INSTANCE;
-            case ProtocolConstants.MINECRAFT_1_12:
+            case ProtocolConstants.MINECRAFT_1_12 :
                 return EntityMap_1_12.INSTANCE;
-            case ProtocolConstants.MINECRAFT_1_12_1:
-            case ProtocolConstants.MINECRAFT_1_12_2:
-            default:
+            case ProtocolConstants.MINECRAFT_1_12_1 :
+            default :
+<<<<<<< LEFT
+                return EntityMap_1_12_1.INSTANCE;
+=======
+ProtocolConstants.MINECRAFT_1_12_1
+>>>>>>> RIGHT
+
+            case ProtocolConstants.MINECRAFT_1_12_2 :
                 return EntityMap_1_12_1.INSTANCE;
         }
         // throw new RuntimeException( "Version " + version + " has no entity map" );
