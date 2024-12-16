@@ -13,27 +13,25 @@
  */
 package net.logstash.logback.encoder;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-
-import net.logstash.logback.composite.CompositeJsonFormatter;
-import net.logstash.logback.composite.JsonProviders;
-import net.logstash.logback.decorate.JsonFactoryDecorator;
-import net.logstash.logback.decorate.JsonGeneratorDecorator;
-import net.logstash.logback.util.ReusableByteBuffer;
-import net.logstash.logback.util.ReusableByteBufferPool;
-
 import ch.qos.logback.core.encoder.Encoder;
 import ch.qos.logback.core.encoder.EncoderBase;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import ch.qos.logback.core.pattern.PatternLayoutBase;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import net.logstash.logback.composite.CompositeJsonFormatter;
+import net.logstash.logback.composite.JsonProviders;
+import net.logstash.logback.decorate.JsonFactoryDecorator;
+import net.logstash.logback.decorate.JsonGeneratorDecorator;
 import net.logstash.logback.encoder.wrapper.EncodedPayloadWrapper;
 import net.logstash.logback.encoder.wrapper.LumberjackPayloadWrapper;
+import net.logstash.logback.util.ReusableByteBuffer;
+import net.logstash.logback.util.ReusableByteBufferPool;
 
-public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware>
-        extends EncoderBase<Event> implements StreamingEncoder<Event> {
+
+public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware> extends EncoderBase<Event> implements StreamingEncoder<Event> {
     private static final byte[] EMPTY_BYTES = new byte[0];
 
     /**
@@ -53,7 +51,9 @@ public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware
     private ReusableByteBufferPool bufferPool;
 
     private Encoder<Event> prefix;
+
     private Encoder<Event> suffix;
+
     private EncodedPayloadWrapper payloadWrapper;
 
     private final CompositeJsonFormatter<Event> formatter;
@@ -76,11 +76,9 @@ public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware
         if (!isStarted()) {
             throw new IllegalStateException("Encoder is not started");
         }
-
         encode(prefix, event, outputStream);
         formatter.writeEventToOutputStream(event, outputStream);
         encode(suffix, event, outputStream);
-
         outputStream.write(lineSeparatorBytes);
     }
 
@@ -89,11 +87,10 @@ public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware
         if (!isStarted()) {
             throw new IllegalStateException("Encoder is not started");
         }
-
         ReusableByteBuffer buffer = bufferPool.acquire();
         try {
             encode(event, buffer);
-            return buffer.toByteArray();
+            return wrapEncoded(buffer.toByteArray());
         } catch (IOException e) {
             addWarn("Error encountered while encoding log event. Event: " + event, e);
             return EMPTY_BYTES;
@@ -123,15 +120,12 @@ public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware
         if (isStarted()) {
             return;
         }
-
         super.start();
         this.bufferPool = new ReusableByteBufferPool(this.minBufferSize);
         formatter.setContext(getContext());
         formatter.start();
         charset = Charset.forName(formatter.getEncoding());
-        lineSeparatorBytes = this.lineSeparator == null
-                ? EMPTY_BYTES
-                : this.lineSeparator.getBytes(charset);
+        lineSeparatorBytes = (this.lineSeparator == null) ? EMPTY_BYTES : this.lineSeparator.getBytes(charset);
         startWrapped(prefix);
         startWrapped(suffix);
     }
@@ -180,7 +174,7 @@ public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware
     }
 
     private void stopWrapped(Encoder<Event> wrapped) {
-        if (wrapped != null && wrapped.isStarted()) {
+        if ((wrapped != null) && wrapped.isStarted()) {
             wrapped.stop();
         }
     }
@@ -271,7 +265,7 @@ public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware
      * unnecessary memory allocations and reduce pressure on the garbage collector.
      *
      * <p>Note: changes to the buffer size will not be taken into account after the encoder
-     *          is started.
+     * is started.
      */
     public void setMinBufferSize(int minBufferSize) {
         this.minBufferSize = minBufferSize;
@@ -284,6 +278,7 @@ public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware
     public Encoder<Event> getPrefix() {
         return prefix;
     }
+
     public void setPrefix(Encoder<Event> prefix) {
         this.prefix = prefix;
     }
@@ -291,6 +286,7 @@ public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware
     public Encoder<Event> getSuffix() {
         return suffix;
     }
+
     public void setSuffix(Encoder<Event> suffix) {
         this.suffix = suffix;
     }
@@ -298,6 +294,7 @@ public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware
     public EncodedPayloadWrapper getPayloadWrapper() {
         return payloadWrapper;
     }
+
     public void setPayloadWrapper(EncodedPayloadWrapper wrapper) {
         this.payloadWrapper = wrapper;
     }
