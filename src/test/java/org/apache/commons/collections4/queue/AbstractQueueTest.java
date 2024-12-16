@@ -16,10 +16,6 @@
  */
 package org.apache.commons.collections4.queue;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,8 +24,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Queue;
-
 import org.apache.commons.collections4.collection.AbstractCollectionTest;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 /**
  * Abstract test class for {@link java.util.Queue} methods and contracts.
@@ -45,11 +44,11 @@ import org.apache.commons.collections4.collection.AbstractCollectionTest;
  * @since 4.0
  */
 public abstract class AbstractQueueTest<E> extends AbstractCollectionTest<E> {
-
     /**
      * JUnit constructor.
      *
-     * @param testName  the test class name
+     * @param testName
+     * 		the test class name
      */
     public AbstractQueueTest(final String testName) {
         super(testName);
@@ -172,38 +171,28 @@ public abstract class AbstractQueueTest<E> extends AbstractCollectionTest<E> {
      */
     public void testQueueElement() {
         resetEmpty();
-
         Exception exception = assertThrows(NoSuchElementException.class, () -> {
             getCollection().element();
         });
         if (null != exception.getMessage()) {
             assertTrue(exception.getMessage().contains("queue is empty"));
         }
-
         resetFull();
-
         assertTrue(getConfirmed().contains(getCollection().element()));
-
         if (!isRemoveSupported()) {
             return;
         }
-
         final int max = getFullElements().length;
         for (int i = 0; i < max; i++) {
             final E element = getCollection().element();
-
             if (!isNullSupported()) {
                 assertNotNull(element);
             }
-
             assertTrue(getConfirmed().contains(element));
-
             getCollection().remove(element);
             getConfirmed().remove(element);
-
             verify();
         }
-
         exception = assertThrows(NoSuchElementException.class, () -> {
             getCollection().element();
         });
@@ -254,18 +243,14 @@ public abstract class AbstractQueueTest<E> extends AbstractCollectionTest<E> {
         if (!isRemoveSupported()) {
             return;
         }
-
         resetEmpty();
-
         Exception exception = assertThrows(NoSuchElementException.class, () -> {
             getCollection().remove();
         });
         if (null != exception.getMessage()) {
             assertTrue(exception.getMessage().contains("queue is empty"));
         }
-
         resetFull();
-
         final int max = getFullElements().length;
         for (int i = 0; i < max; i++) {
             final E element = getCollection().remove();
@@ -273,7 +258,6 @@ public abstract class AbstractQueueTest<E> extends AbstractCollectionTest<E> {
             assertTrue("remove should return correct element", success);
             verify();
         }
-
         exception = assertThrows(NoSuchElementException.class, () -> {
             getCollection().element();
         });
@@ -347,17 +331,15 @@ public abstract class AbstractQueueTest<E> extends AbstractCollectionTest<E> {
     public void testEmptyQueueCompatibility() throws IOException, ClassNotFoundException {
         /**
          * Create canonical objects with this code
-        Queue queue = makeEmptyQueue();
-        if (!(queue instanceof Serializable)) return;
-
-        writeExternalFormToDisk((Serializable) queue, getCanonicalEmptyCollectionName(queue));
-        */
-
+         * Queue queue = makeEmptyQueue();
+         * if (!(queue instanceof Serializable)) return;
+         *
+         * writeExternalFormToDisk((Serializable) queue, getCanonicalEmptyCollectionName(queue));
+         */
         // test to make sure the canonical form has been preserved
         final Queue<E> queue = makeObject();
-        if (queue instanceof Serializable && !skipSerializedCanonicalTests()
-                && isTestSerialization()) {
-            final Queue<E> queue2 = (Queue<E>) readExternalFormFromDisk(getCanonicalEmptyCollectionName(queue));
+        if (((queue instanceof Serializable) && (!skipSerializedCanonicalTests())) && isTestSerialization()) {
+            final Queue<E> queue2 = ((Queue<E>) (readExternalFormFromDisk(getCanonicalEmptyCollectionName(queue))));
             assertEquals("Queue is empty", 0, queue2.size());
         }
     }
@@ -370,18 +352,16 @@ public abstract class AbstractQueueTest<E> extends AbstractCollectionTest<E> {
     public void testFullQueueCompatibility() throws IOException, ClassNotFoundException {
         /**
          * Create canonical objects with this code
-        Queue queue = makeFullQueue();
-        if (!(queue instanceof Serializable)) return;
-
-        writeExternalFormToDisk((Serializable) queue, getCanonicalFullCollectionName(queue));
-        */
-
+         * Queue queue = makeFullQueue();
+         * if (!(queue instanceof Serializable)) return;
+         *
+         * writeExternalFormToDisk((Serializable) queue, getCanonicalFullCollectionName(queue));
+         */
         // test to make sure the canonical form has been preserved
         final Queue<E> queue = makeFullCollection();
-        if (queue instanceof Serializable && !skipSerializedCanonicalTests() && isTestSerialization()) {
-            final Queue<E> queue2 = (Queue<E>) readExternalFormFromDisk(getCanonicalFullCollectionName(queue));
+        if (((queue instanceof Serializable) && (!skipSerializedCanonicalTests())) && isTestSerialization()) {
+            final Queue<E> queue2 = ((Queue<E>) (readExternalFormFromDisk(getCanonicalFullCollectionName(queue))));
             assertEquals("Queues are not the right size", queue.size(), queue2.size());
         }
     }
-
 }

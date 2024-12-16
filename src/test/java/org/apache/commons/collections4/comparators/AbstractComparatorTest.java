@@ -16,10 +16,6 @@
  */
 package org.apache.commons.collections4.comparators;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
@@ -27,9 +23,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.apache.commons.collections4.AbstractObjectTest;
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 
 /**
  * Abstract test class for testing the Comparator interface.
@@ -38,11 +37,11 @@ import org.junit.Test;
  * They also declare certain aspects of the tests.
  */
 public abstract class AbstractComparatorTest<T> extends AbstractObjectTest {
-
     /**
      * JUnit constructor.
      *
-     * @param testName  the test class name
+     * @param testName
+     * 		the test class name
      */
     public AbstractComparatorTest(final String testName) {
         super(testName);
@@ -112,9 +111,7 @@ public abstract class AbstractComparatorTest<T> extends AbstractObjectTest {
     public void testEmptyListSort() {
         final List<T> list = new LinkedList<>();
         sortObjects(list, makeObject());
-
         final List<T> list2 = new LinkedList<>();
-
         assertEquals(list2, list);
     }
 
@@ -124,13 +121,10 @@ public abstract class AbstractComparatorTest<T> extends AbstractObjectTest {
     @Test
     public void testReverseListSort() {
         final Comparator<T> comparator = makeObject();
-
         final List<T> randomList = getComparableObjectsOrdered();
         reverseObjects(randomList);
         sortObjects(randomList, comparator);
-
         final List<T> orderedList = getComparableObjectsOrdered();
-
         assertEquals(orderedList, randomList);
     }
 
@@ -140,20 +134,16 @@ public abstract class AbstractComparatorTest<T> extends AbstractObjectTest {
     @Test
     public void testRandomListSort() {
         final Comparator<T> comparator = makeObject();
-
         final List<T> randomList = getComparableObjectsOrdered();
         randomizeObjects(randomList);
         sortObjects(randomList, comparator);
-
         final List<T> orderedList = getComparableObjectsOrdered();
-
         /* debug
         Iterator i = randomList.iterator();
         while (i.hasNext()) {
             System.out.println(i.next());
         }
         */
-
         assertEquals(orderedList, randomList);
     }
 
@@ -187,35 +177,26 @@ public abstract class AbstractComparatorTest<T> extends AbstractObjectTest {
     public void testComparatorCompatibility() throws IOException, ClassNotFoundException {
         if (!skipSerializedCanonicalTests()) {
             Comparator<T> comparator = null;
-
             // test to make sure the canonical form has been preserved
             try {
-                comparator = (Comparator<T>) readExternalFormFromDisk(getCanonicalComparatorName(makeObject()));
+                comparator = ((Comparator<T>) (readExternalFormFromDisk(getCanonicalComparatorName(makeObject()))));
             } catch (final FileNotFoundException exception) {
-
                 final boolean autoCreateSerialized = false;
-
                 if (autoCreateSerialized) {
                     comparator = makeObject();
                     final String fileName = getCanonicalComparatorName(comparator);
-                    writeExternalFormToDisk((Serializable) comparator, fileName);
-                    fail("Serialized form could not be found.  A serialized version "
-                            + "has now been written (and should be added to CVS): " + fileName);
+                    writeExternalFormToDisk(((Serializable) (comparator)), fileName);
+                    fail(("Serialized form could not be found.  A serialized version " + "has now been written (and should be added to CVS): ") + fileName);
                 } else {
-                    fail("The Serialized form could be located to test serialization "
-                            + "compatibility: " + exception.getMessage());
+                    fail(("The Serialized form could be located to test serialization " + "compatibility: ") + exception.getMessage());
                 }
             }
-
-
             // make sure the canonical form produces the ordering we currently
             // expect
             final List<T> randomList = getComparableObjectsOrdered();
             reverseObjects(randomList);
             sortObjects(randomList, comparator);
-
             final List<T> orderedList = getComparableObjectsOrdered();
-
             assertEquals(orderedList, randomList);
         }
     }

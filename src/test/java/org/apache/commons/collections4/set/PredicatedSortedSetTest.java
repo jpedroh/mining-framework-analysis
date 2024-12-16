@@ -16,21 +16,19 @@
  */
 package org.apache.commons.collections4.set;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import junit.framework.Test;
-
 import org.apache.commons.collections4.BulkTest;
 import org.apache.commons.collections4.Predicate;
 import org.apache.commons.collections4.functors.TruePredicate;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 /**
  * Extension of {@link AbstractSortedSetTest} for exercising the
@@ -38,8 +36,13 @@ import org.apache.commons.collections4.functors.TruePredicate;
  *
  * @since 3.0
  */
+//    public void testCreate() throws Exception {
+//        resetEmpty();
+//        writeExternalFormToDisk((java.io.Serializable) getCollection(), "src/test/resources/data/test/PredicatedSortedSet.emptyCollection.version4.obj");
+//        resetFull();
+//        writeExternalFormToDisk((java.io.Serializable) getCollection(), "src/test/resources/data/test/PredicatedSortedSet.fullCollection.version4.obj");
+//    }
 public class PredicatedSortedSetTest<E> extends AbstractSortedSetTest<E> {
-
     public PredicatedSortedSetTest(final String testName) {
         super(testName);
     }
@@ -62,8 +65,7 @@ public class PredicatedSortedSetTest<E> extends AbstractSortedSetTest<E> {
         return PredicatedSortedSet.predicatedSortedSet(set, truePredicate);
     }
 
-    protected Predicate<E> testPredicate =
-        o -> o instanceof String && ((String) o).startsWith("A");
+    protected Predicate<E> testPredicate = ( o) -> (o instanceof String) && ((String) (o)).startsWith("A");
 
     protected PredicatedSortedSet<E> makeTestSet() {
         return PredicatedSortedSet.predicatedSortedSet(new TreeSet<E>(), testPredicate);
@@ -78,10 +80,10 @@ public class PredicatedSortedSetTest<E> extends AbstractSortedSetTest<E> {
     public void testIllegalAdd() {
         final SortedSet<E> set = makeTestSet();
         final String testString = "B";
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            set.add((E) testString);
+        Exception exception = assertThrows(java.lang.IllegalArgumentException.class, () -> {
+            set.add(((E) (testString)));
         });
-        assertTrue(exception.getMessage().contains("Cannot add Object 'B'"));
+        assertTrue(exception.getMessage().contains("Cannot add Object \'B\'"));
         assertTrue(!set.contains(testString));
     }
 
@@ -89,14 +91,14 @@ public class PredicatedSortedSetTest<E> extends AbstractSortedSetTest<E> {
     public void testIllegalAddAll() {
         final SortedSet<E> set = makeTestSet();
         final Set<E> elements = new TreeSet<>();
-        elements.add((E) "Aone");
-        elements.add((E) "Atwo");
-        elements.add((E) "Bthree");
-        elements.add((E) "Afour");
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        elements.add(((E) ("Aone")));
+        elements.add(((E) ("Atwo")));
+        elements.add(((E) ("Bthree")));
+        elements.add(((E) ("Afour")));
+        Exception exception = assertThrows(java.lang.IllegalArgumentException.class, () -> {
             set.addAll(elements);
         });
-        assertTrue(exception.getMessage().contains("Cannot add Object 'Bthree'"));
+        assertTrue(exception.getMessage().contains("Cannot add Object \'Bthree\'"));
         assertTrue(!set.contains("Aone"));
         assertTrue(!set.contains("Atwo"));
         assertTrue(!set.contains("Bthree"));
@@ -113,12 +115,4 @@ public class PredicatedSortedSetTest<E> extends AbstractSortedSetTest<E> {
     public String getCompatibilityVersion() {
         return "4";
     }
-
-//    public void testCreate() throws Exception {
-//        resetEmpty();
-//        writeExternalFormToDisk((java.io.Serializable) getCollection(), "src/test/resources/data/test/PredicatedSortedSet.emptyCollection.version4.obj");
-//        resetFull();
-//        writeExternalFormToDisk((java.io.Serializable) getCollection(), "src/test/resources/data/test/PredicatedSortedSet.fullCollection.version4.obj");
-//    }
-
 }

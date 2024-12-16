@@ -16,13 +16,6 @@
  */
 package org.apache.commons.collections4.list;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -35,10 +28,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
-
 import org.apache.commons.collections4.BulkTest;
 import org.apache.commons.collections4.collection.AbstractCollectionTest;
 import org.apache.commons.collections4.iterators.AbstractListIteratorTest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 /**
  * Abstract test class for {@link java.util.List} methods and contracts.
@@ -53,11 +52,11 @@ import org.apache.commons.collections4.iterators.AbstractListIteratorTest;
  *
  */
 public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
-
     /**
      * JUnit constructor.
      *
-     * @param testName  the test class name
+     * @param testName
+     * 		the test class name
      */
     public AbstractListTest(final String testName) {
         super(testName);
@@ -187,33 +186,28 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
         if (!isAddSupported()) {
             return;
         }
-
         final List<E> list;
         final E element = getOtherElements()[0];
-
         list = makeObject();
-        Exception exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        Exception exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.add(Integer.MIN_VALUE, element);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.add(-1, element);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.add(1, element);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.add(Integer.MAX_VALUE, element);
         });
         if (null != exception.getMessage()) {
@@ -229,26 +223,21 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
         if (!isAddSupported()) {
             return;
         }
-
         final List<E> list = makeFullCollection();
         final E element = getOtherElements()[0];
-
-        Exception exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        Exception exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.add(Integer.MIN_VALUE, element);
         });
         assertNotNull(exception.getMessage());
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.add(-1, element);
         });
         assertNotNull(exception.getMessage());
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.add(list.size() + 1, element);
         });
         assertNotNull(exception.getMessage());
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.add(Integer.MAX_VALUE, element);
         });
         assertNotNull(exception.getMessage());
@@ -381,32 +370,27 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
      */
     public void testListGetByIndexBoundsChecking() {
         final List<E> list = makeObject();
-
-        Exception exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        Exception exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.get(Integer.MIN_VALUE);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.get(-1);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.get(0);
         });
         assertNotNull(exception.getMessage());
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.get(1);
         });
         assertNotNull(exception.getMessage());
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.get(Integer.MAX_VALUE);
         });
         if (null != exception.getMessage()) {
@@ -420,27 +404,23 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
      */
     public void testListGetByIndexBoundsChecking2() {
         final List<E> list = makeFullCollection();
-
-        Exception exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        Exception exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.get(Integer.MIN_VALUE);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.get(-1);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.get(getFullElements().length);
         });
         assertNotNull(exception.getMessage());
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.get(Integer.MAX_VALUE);
         });
         assertNotNull(exception.getMessage());
@@ -500,45 +480,39 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
         if (!isSetSupported()) {
             return;
         }
-
         final List<E> list = makeObject();
         final E element = getOtherElements()[0];
-
-        Exception exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        Exception exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.set(Integer.MIN_VALUE, element);
         });
         if (null != exception.getMessage()) {
             assertTrue(exception.getMessage().contains("-2147483648"));
         }
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.set(-1, element);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.set(0, element);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.set(1, element);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.set(Integer.MAX_VALUE, element);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
     }
-
 
     /**
      *  Tests bounds checking for {@link List#set(int,Object)} on a
@@ -548,34 +522,29 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
         if (!isSetSupported()) {
             return;
         }
-
         final List<E> list = makeFullCollection();
         final E element = getOtherElements()[0];
-
-        Exception exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        Exception exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.set(Integer.MIN_VALUE, element);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.set(-1, element);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.set(getFullElements().length, element);
         });
         assertNotNull(exception.getMessage());
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.set(Integer.MAX_VALUE, element);
         });
         assertNotNull(exception.getMessage());
     }
-
 
     /**
      *  Test {@link List#set(int,Object)}.
@@ -606,9 +575,8 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
         if (isSetSupported()) {
             return;
         }
-
         resetFull();
-        Exception exception = assertThrows(UnsupportedOperationException.class, () -> {
+        Exception exception = assertThrows(java.lang.UnsupportedOperationException.class, () -> {
             getCollection().set(0, getFullElements()[0]);
         });
         if (null != exception.getMessage()) {
@@ -627,34 +595,28 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
         if (!isRemoveSupported()) {
             return;
         }
-
         final List<E> list = makeObject();
-
-        Exception exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        Exception exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.remove(Integer.MIN_VALUE);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.remove(-1);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.remove(0);
         });
         assertNotNull(exception.getMessage());
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.remove(1);
         });
         assertNotNull(exception.getMessage());
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.remove(Integer.MAX_VALUE);
         });
         assertNotNull(exception.getMessage());
@@ -668,38 +630,32 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
         if (!isRemoveSupported()) {
             return;
         }
-
         final List<E> list = makeFullCollection();
-
-        Exception exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        Exception exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.remove(Integer.MIN_VALUE);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.remove(-1);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.remove(getFullElements().length);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
-
-        exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+        exception = assertThrows(java.lang.IndexOutOfBoundsException.class, () -> {
             list.remove(Integer.MAX_VALUE);
         });
         if (null != exception.getMessage()) {
             assertNotNull(exception.getMessage());
         }
     }
-
 
     /**
      *  Tests {@link List#remove(int)}.
@@ -806,11 +762,12 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
         assertEquals(zero, getCollection().get(0));
         assertEquals(one, getCollection().get(1));
         assertEquals(two, getCollection().get(2));
+        it.remove();// removed element at index 1 (one)
 
-        it.remove(); // removed element at index 1 (one)
         assertEquals(zero, getCollection().get(0));
         assertEquals(two, getCollection().get(1));
-        final E zero3 = it.previous();  // do previous after remove
+        final E zero3 = it.previous();// do previous after remove
+
         assertEquals(zero, zero3);
         assertFalse(it.hasPrevious());
         assertEquals(getCollection().size() > 2, it.hasNext());
@@ -835,11 +792,12 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
         assertEquals(one, getCollection().get(1));
         assertEquals(two, getCollection().get(2));
         final E three = getCollection().get(3);
+        it.remove();// removed element at index 2 (two)
 
-        it.remove(); // removed element at index 2 (two)
         assertEquals(zero, getCollection().get(0));
         assertEquals(one, getCollection().get(1));
-        final E three2 = it.next();  // do next after remove
+        final E three2 = it.next();// do next after remove
+
         assertEquals(three, three2);
         assertEquals(getCollection().size() > 3, it.hasNext());
         assertTrue(it.hasPrevious());
@@ -863,11 +821,12 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
         assertEquals(zero, getCollection().get(0));
         assertEquals(one, getCollection().get(1));
         assertEquals(two, getCollection().get(2));
+        it.remove();// removed element at index 2 (two)
 
-        it.remove(); // removed element at index 2 (two)
         assertEquals(zero, getCollection().get(0));
         assertEquals(one, getCollection().get(1));
-        final E one2 = it.previous();  // do previous after remove
+        final E one2 = it.previous();// do previous after remove
+
         assertEquals(one, one2);
         assertTrue(it.hasNext());
         assertTrue(it.hasPrevious());
@@ -883,22 +842,17 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
     private void forwardTest(final ListIterator<E> iter, int i) {
         final List<E> list = getCollection();
         final int max = getFullElements().length;
-
         while (i < max) {
             assertTrue(iter.hasNext());
-            assertEquals("Iterator.nextIndex should work",
-                i, iter.nextIndex());
-            assertEquals("Iterator.previousIndex should work",
-                i - 1, iter.previousIndex());
+            assertEquals("Iterator.nextIndex should work", i, iter.nextIndex());
+            assertEquals("Iterator.previousIndex should work", i - 1, iter.previousIndex());
             final Object o = iter.next();
             assertEquals("Iterator returned correct element", list.get(i), o);
             i++;
-        }
-
+        } 
         assertTrue(!iter.hasNext());
         assertEquals("nextIndex should be size", max, iter.nextIndex());
         assertEquals("previousIndex should be size - 1", max - 1, iter.previousIndex());
-
         Exception exception = assertThrows(NoSuchElementException.class, () -> {
             iter.next();
         });
@@ -915,25 +869,19 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
      */
     private void backwardTest(final ListIterator<E> iter, int i) {
         final List<E> list = getCollection();
-
         while (i > 0) {
             assertTrue(iter.hasPrevious());
-            assertEquals("Iterator.nextIndex should work, i:" + i,
-                i, iter.nextIndex());
-            assertEquals("Iterator.previousIndex should work, i:" + i,
-                i - 1, iter.previousIndex());
+            assertEquals("Iterator.nextIndex should work, i:" + i, i, iter.nextIndex());
+            assertEquals("Iterator.previousIndex should work, i:" + i, i - 1, iter.previousIndex());
             final E o = iter.previous();
-            assertEquals("Iterator returned correct element",
-                list.get(i - 1), o);
+            assertEquals("Iterator returned correct element", list.get(i - 1), o);
             i--;
-        }
-
+        } 
         assertTrue(!iter.hasPrevious());
         final int nextIndex = iter.nextIndex();
         assertEquals("nextIndex should be 0", 0, nextIndex);
         final int prevIndex = iter.previousIndex();
         assertEquals("previousIndex should be -1", -1, prevIndex);
-
         Exception exception = assertThrows(NoSuchElementException.class, () -> {
             iter.previous();
         });
@@ -941,7 +889,6 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
             assertTrue(exception.getMessage().contains("Already at start of list."));
         }
     }
-
 
     /**
      *  Tests the {@link ListIterator#add(Object)} method of the list
@@ -1038,17 +985,15 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
     public void testEmptyListCompatibility() throws IOException, ClassNotFoundException {
         /**
          * Create canonical objects with this code
-        List list = makeEmptyList();
-        if (!(list instanceof Serializable)) return;
-
-        writeExternalFormToDisk((Serializable) list, getCanonicalEmptyCollectionName(list));
-        */
-
+         * List list = makeEmptyList();
+         * if (!(list instanceof Serializable)) return;
+         *
+         * writeExternalFormToDisk((Serializable) list, getCanonicalEmptyCollectionName(list));
+         */
         // test to make sure the canonical form has been preserved
         final List<E> list = makeObject();
-        if (list instanceof Serializable && !skipSerializedCanonicalTests()
-                && isTestSerialization()) {
-            final List<E> list2 = (List<E>) readExternalFormFromDisk(getCanonicalEmptyCollectionName(list));
+        if (((list instanceof Serializable) && (!skipSerializedCanonicalTests())) && isTestSerialization()) {
+            final List<E> list2 = ((List<E>) (readExternalFormFromDisk(getCanonicalEmptyCollectionName(list))));
             assertEquals("List is empty", 0, list2.size());
             assertEquals(list, list2);
         }
@@ -1062,16 +1007,15 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
     public void testFullListCompatibility() throws IOException, ClassNotFoundException {
         /**
          * Create canonical objects with this code
-        List list = makeFullList();
-        if (!(list instanceof Serializable)) return;
-
-        writeExternalFormToDisk((Serializable) list, getCanonicalFullCollectionName(list));
-        */
-
+         * List list = makeFullList();
+         * if (!(list instanceof Serializable)) return;
+         *
+         * writeExternalFormToDisk((Serializable) list, getCanonicalFullCollectionName(list));
+         */
         // test to make sure the canonical form has been preserved
         final List<E> list = makeFullCollection();
-        if (list instanceof Serializable && !skipSerializedCanonicalTests() && isTestSerialization()) {
-            final List<E> list2 = (List<E>) readExternalFormFromDisk(getCanonicalFullCollectionName(list));
+        if (((list instanceof Serializable) && (!skipSerializedCanonicalTests())) && isTestSerialization()) {
+            final List<E> list2 = ((List<E>) (readExternalFormFromDisk(getCanonicalFullCollectionName(list))));
             if (list2.size() == 4) {
                 // old serialized tests
                 return;
@@ -1100,7 +1044,6 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
     }
 
     public static class BulkTestSubList<E> extends AbstractListTest<E> {
-
         private final AbstractListTest<E> outer;
 
         public BulkTestSubList(final AbstractListTest<E> outer) {
@@ -1112,7 +1055,7 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
         @SuppressWarnings("unchecked")
         public E[] getFullElements() {
             final List<E> l = Arrays.asList(outer.getFullElements());
-            return (E[]) l.subList(3, l.size() - 3).toArray();
+            return ((E[]) (l.subList(3, l.size() - 3).toArray()));
         }
 
         @Override
@@ -1273,10 +1216,8 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
         if (m.getName().equals("equals")) {
             return;
         }
-
         final E element = getOtherElements()[0];
         final Collection<E> c = Collections.singleton(element);
-
         final Class<?>[] types = m.getParameterTypes();
         final Object[] params = new Object[types.length];
         for (int i = 0; i < params.length; i++) {
@@ -1284,14 +1225,13 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
                 params[i] = Integer.valueOf(0);
             } else if (types[i] == Collection.class) {
                 params[i] = c;
-            } else if (types[i] == Object.class) {
+            } else if (types[i] == java.lang.Object.class) {
                 params[i] = element;
-            } else if (types[i] == Object[].class) {
+            } else if (types[i] == java.lang.Object[].class) {
                 params[i] = new Object[0];
             }
         }
-
-        Exception exception = assertThrows(Exception.class, () -> {
+        Exception exception = assertThrows(java.lang.Exception.class, () -> {
             m.invoke(list, params);
         });
         assertNull(exception.getMessage());

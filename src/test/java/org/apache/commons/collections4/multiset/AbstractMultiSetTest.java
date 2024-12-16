@@ -16,10 +16,6 @@
  */
 package org.apache.commons.collections4.multiset;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,11 +27,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
-
 import org.apache.commons.collections4.BulkTest;
 import org.apache.commons.collections4.MultiSet;
 import org.apache.commons.collections4.collection.AbstractCollectionTest;
 import org.apache.commons.collections4.set.AbstractSetTest;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 /**
  * Abstract test class for {@link org.apache.commons.collections4.MultiSet MultiSet}
@@ -60,11 +59,11 @@ import org.apache.commons.collections4.set.AbstractSetTest;
  * @since 4.1
  */
 public abstract class AbstractMultiSetTest<T> extends AbstractCollectionTest<T> {
-
     /**
      * JUnit constructor.
      *
-     * @param testName  the test class name
+     * @param testName
+     * 		the test class name
      */
     public AbstractMultiSetTest(final String testName) {
         super(testName);
@@ -139,15 +138,14 @@ public abstract class AbstractMultiSetTest<T> extends AbstractCollectionTest<T> 
         if (!isAddSupported()) {
             return;
         }
-
         final MultiSet<T> multiset = makeObject();
-        multiset.add((T) "A");
+        multiset.add(((T) ("A")));
         assertTrue(multiset.contains("A"));
         assertEquals("Should have count of 1", 1, multiset.getCount("A"));
-        multiset.add((T) "A");
+        multiset.add(((T) ("A")));
         assertTrue(multiset.contains("A"));
         assertEquals("Should have count of 2", 2, multiset.getCount("A"));
-        multiset.add((T) "B");
+        multiset.add(((T) ("B")));
         assertTrue(multiset.contains("A"));
         assertTrue(multiset.contains("B"));
     }
@@ -343,17 +341,15 @@ public abstract class AbstractMultiSetTest<T> extends AbstractCollectionTest<T> 
         if (!isAddSupported()) {
             return;
         }
-
         final MultiSet<T> multiset = makeObject();
-        multiset.add((T) "A");
-        multiset.add((T) "A");
-        multiset.add((T) "B");
+        multiset.add(((T) ("A")));
+        multiset.add(((T) ("A")));
+        multiset.add(((T) ("B")));
         assertEquals("MultiSet should have 3 items", 3, multiset.size());
         final Iterator<T> i = multiset.iterator();
-
         boolean foundA = false;
         while (i.hasNext()) {
-            final String element = (String) i.next();
+            final String element = ((String) (i.next()));
             // ignore the first A, remove the second via Iterator.remove()
             if (element.equals("A")) {
                 if (!foundA) {
@@ -362,8 +358,7 @@ public abstract class AbstractMultiSetTest<T> extends AbstractCollectionTest<T> 
                     i.remove();
                 }
             }
-        }
-
+        } 
         assertTrue(multiset.contains("A"));
         assertEquals("MultiSet should have 2 items", 2, multiset.size());
         assertEquals("MultiSet should have 1 'A'", 1, multiset.getCount("A"));
@@ -374,11 +369,10 @@ public abstract class AbstractMultiSetTest<T> extends AbstractCollectionTest<T> 
         if (!isAddSupported()) {
             return;
         }
-
         final MultiSet<T> multiset = makeObject();
-        multiset.add((T) "A");
-        multiset.add((T) "A");
-        multiset.add((T) "B");
+        multiset.add(((T) ("A")));
+        multiset.add(((T) ("A")));
+        multiset.add(((T) ("B")));
         final Iterator<T> it = multiset.iterator();
         it.next();
         multiset.remove("A");
@@ -393,11 +387,10 @@ public abstract class AbstractMultiSetTest<T> extends AbstractCollectionTest<T> 
         if (!isAddSupported()) {
             return;
         }
-
         final MultiSet<T> multiset = makeObject();
-        multiset.add((T) "A");
-        multiset.add((T) "A");
-        multiset.add((T) "B");
+        multiset.add(((T) ("A")));
+        multiset.add(((T) ("A")));
+        multiset.add(((T) ("B")));
         final Iterator<T> it = multiset.iterator();
         it.next();
         it.next();
@@ -413,18 +406,17 @@ public abstract class AbstractMultiSetTest<T> extends AbstractCollectionTest<T> 
         if (!isAddSupported()) {
             return;
         }
-
         final MultiSet<T> multiset = makeObject();
-        multiset.add((T) "A");
-        multiset.add((T) "A");
-        multiset.add((T) "B");
+        multiset.add(((T) ("A")));
+        multiset.add(((T) ("A")));
+        multiset.add(((T) ("B")));
         final Iterator<T> it = multiset.iterator();
         it.next();
         it.next();
         assertEquals(3, multiset.size());
         it.remove();
         assertEquals(2, multiset.size());
-        Exception exception = assertThrows(IllegalStateException.class, () -> {
+        Exception exception = assertThrows(java.lang.IllegalStateException.class, () -> {
             it.remove();
         });
         assertNull(exception.getMessage());
@@ -666,15 +658,15 @@ public abstract class AbstractMultiSetTest<T> extends AbstractCollectionTest<T> 
         @Override
         public void resetEmpty() {
             AbstractMultiSetTest.this.resetEmpty();
-            TestMultiSetUniqueSet.this.setCollection(AbstractMultiSetTest.this.getCollection().uniqueSet());
-            TestMultiSetUniqueSet.this.setConfirmed(new HashSet<>(AbstractMultiSetTest.this.getConfirmed()));
+            this.setCollection(AbstractMultiSetTest.this.getCollection().uniqueSet());
+            this.setConfirmed(new HashSet<>(AbstractMultiSetTest.this.getConfirmed()));
         }
 
         @Override
         public void resetFull() {
             AbstractMultiSetTest.this.resetFull();
-            TestMultiSetUniqueSet.this.setCollection(AbstractMultiSetTest.this.getCollection().uniqueSet());
-            TestMultiSetUniqueSet.this.setConfirmed(new HashSet<>(AbstractMultiSetTest.this.getConfirmed()));
+            this.setCollection(AbstractMultiSetTest.this.getCollection().uniqueSet());
+            this.setConfirmed(new HashSet<>(AbstractMultiSetTest.this.getConfirmed()));
         }
 
         @Override
@@ -684,7 +676,6 @@ public abstract class AbstractMultiSetTest<T> extends AbstractCollectionTest<T> 
     }
 
     //-----------------------------------------------------------------------
-
     /**
      * Compare the current serialized form of the MultiSet
      * against the canonical version in SCM.
@@ -692,8 +683,8 @@ public abstract class AbstractMultiSetTest<T> extends AbstractCollectionTest<T> 
     public void testEmptyMultiSetCompatibility() throws IOException, ClassNotFoundException {
         // test to make sure the canonical form has been preserved
         final MultiSet<T> multiset = makeObject();
-        if (multiset instanceof Serializable && !skipSerializedCanonicalTests() && isTestSerialization()) {
-            final MultiSet<?> multiset2 = (MultiSet<?>) readExternalFormFromDisk(getCanonicalEmptyCollectionName(multiset));
+        if (((multiset instanceof Serializable) && (!skipSerializedCanonicalTests())) && isTestSerialization()) {
+            final MultiSet<?> multiset2 = ((MultiSet<?>) (readExternalFormFromDisk(getCanonicalEmptyCollectionName(multiset))));
             assertTrue(multiset2.size() == 0);
             assertEquals(multiset, multiset2);
         }
@@ -706,8 +697,8 @@ public abstract class AbstractMultiSetTest<T> extends AbstractCollectionTest<T> 
     public void testFullMultiSetCompatibility() throws IOException, ClassNotFoundException {
         // test to make sure the canonical form has been preserved
         final MultiSet<T> multiset = makeFullCollection();
-        if (multiset instanceof Serializable && !skipSerializedCanonicalTests() && isTestSerialization()) {
-            final MultiSet<?> multiset2 = (MultiSet<?>) readExternalFormFromDisk(getCanonicalFullCollectionName(multiset));
+        if (((multiset instanceof Serializable) && (!skipSerializedCanonicalTests())) && isTestSerialization()) {
+            final MultiSet<?> multiset2 = ((MultiSet<?>) (readExternalFormFromDisk(getCanonicalFullCollectionName(multiset))));
             assertEquals("MultiSet is the right size", multiset.size(), multiset2.size());
             assertEquals(multiset, multiset2);
         }

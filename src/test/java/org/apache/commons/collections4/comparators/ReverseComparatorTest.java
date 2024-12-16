@@ -24,15 +24,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.junit.Test;
+
 
 /**
  * Tests for ReverseComparator.
  *
  */
 public class ReverseComparatorTest extends AbstractComparatorTest<Integer> {
-
     public ReverseComparatorTest(final String testName) {
         super(testName);
     }
@@ -81,16 +80,13 @@ public class ReverseComparatorTest extends AbstractComparatorTest<Integer> {
     @Test
     public void testSerializeDeserializeThenCompare() throws Exception {
         final Comparator<?> comp = new ReverseComparator<>(new ComparableComparator<String>());
-
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         final ObjectOutputStream out = new ObjectOutputStream(buffer);
         out.writeObject(comp);
         out.close();
-
         final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()));
         final Object dest = in.readObject();
         in.close();
         assertEquals(comp, dest);
     }
-
 }

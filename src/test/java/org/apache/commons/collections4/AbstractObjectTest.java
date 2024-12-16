@@ -28,6 +28,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 
+
 /**
  * Abstract test class for {@link java.lang.Object} methods and contracts.
  * <p>
@@ -37,16 +38,17 @@ import java.io.Serializable;
  * If your {@link Object} fails one of these tests by design,
  * you may still use this base set of cases.  Simply override the
  * test case (method) your {@link Object} fails.
+ *
  */
 public abstract class AbstractObjectTest extends BulkTest {
-
     /** Current major release for Collections */
     public static final int COLLECTIONS_MAJOR_VERSION = 4;
 
     /**
      * JUnit constructor.
      *
-     * @param testName  the test class name
+     * @param testName
+     * 		the test class name
      */
     public AbstractObjectTest(final String testName) {
         super(testName);
@@ -141,7 +143,7 @@ public abstract class AbstractObjectTest extends BulkTest {
 
     public void testSerializeDeserializeThenCompare() throws Exception {
         final Object obj = makeObject();
-        if (obj instanceof Serializable && isTestSerialization()) {
+        if ((obj instanceof Serializable) && isTestSerialization()) {
             final Object dest = serializeDeserialize(obj);
             if (isEqualsCheckable()) {
                 assertEquals(obj, dest);
@@ -170,7 +172,7 @@ public abstract class AbstractObjectTest extends BulkTest {
      * If the test object is serializable, confirm that a canonical form exists.
      */
     public void testCanonicalEmptyCollectionExists() {
-        if (supportsEmptyCollections() && isTestSerialization() && !skipSerializedCanonicalTests()) {
+        if ((supportsEmptyCollections() && isTestSerialization()) && (!skipSerializedCanonicalTests())) {
             final Object object = makeObject();
             if (object instanceof Serializable) {
                 final String name = getCanonicalEmptyCollectionName(object);
@@ -184,7 +186,7 @@ public abstract class AbstractObjectTest extends BulkTest {
      * If the test object is serializable, confirm that a canonical form exists.
      */
     public void testCanonicalFullCollectionExists() {
-        if (supportsFullCollections() && isTestSerialization() && !skipSerializedCanonicalTests()) {
+        if ((supportsFullCollections() && isTestSerialization()) && (!skipSerializedCanonicalTests())) {
             final Object object = makeObject();
             if (object instanceof Serializable) {
                 final String name = getCanonicalFullCollectionName(object);
@@ -208,7 +210,7 @@ public abstract class AbstractObjectTest extends BulkTest {
      * with earlier Collections versions.
      *
      * @return The version, or {@code null} if this object shouldn't be
-     * tested for compatibility with previous versions.
+    tested for compatibility with previous versions.
      */
     public String getCompatibilityVersion() {
         return "4";
@@ -246,9 +248,12 @@ public abstract class AbstractObjectTest extends BulkTest {
      * the basis for compatibility tests using
      * readExternalFormFromDisk(String path)
      *
-     * @param o Object to serialize
-     * @param path path to write the serialized Object
+     * @param o
+     * 		Object to serialize
+     * @param path
+     * 		path to write the serialized Object
      * @throws IOException
+     * 		
      */
     protected void writeExternalFormToDisk(final Serializable o, final String path) throws IOException {
         final FileOutputStream fileStream = new FileOutputStream(path);
@@ -278,10 +283,13 @@ public abstract class AbstractObjectTest extends BulkTest {
      * Useful for creating compatibility tests between
      * different SCM versions of the same class
      *
-     * @param path path to the serialized Object
+     * @param path
+     * 		path to the serialized Object
      * @return the Object at the given path
      * @throws IOException
+     * 		
      * @throws ClassNotFoundException
+     * 		
      */
     protected Object readExternalFormFromDisk(final String path) throws IOException, ClassNotFoundException {
         final FileInputStream stream = new FileInputStream(path);
@@ -321,5 +329,4 @@ public abstract class AbstractObjectTest extends BulkTest {
         final ObjectOutputStream oStream = new ObjectOutputStream(stream);
         oStream.writeObject(o);
     }
-
 }

@@ -27,16 +27,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
-
 import org.apache.commons.collections4.Bag;
 import org.apache.commons.collections4.BulkTest;
 import org.apache.commons.collections4.collection.AbstractCollectionTest;
 import org.apache.commons.collections4.set.AbstractSetTest;
-
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 /**
  * Abstract test class for {@link org.apache.commons.collections4.Bag Bag} methods and contracts.
@@ -65,11 +64,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  */
 public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
-
     /**
      * JUnit constructor.
      *
-     * @param testName  the test class name
+     * @param testName
+     * 		the test class name
      */
     public AbstractBagTest(final String testName) {
         super(testName);
@@ -378,11 +377,10 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
         if (!isAddSupported()) {
             return;
         }
-
         final Bag<T> bag = makeObject();
-        bag.add((T) "A");
-        bag.add((T) "A");
-        bag.add((T) "B");
+        bag.add(((T) ("A")));
+        bag.add(((T) ("A")));
+        bag.add(((T) ("B")));
         final Iterator<T> it = bag.iterator();
         it.next();
         bag.remove("A");
@@ -397,11 +395,10 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
         if (!isAddSupported()) {
             return;
         }
-
         final Bag<T> bag = makeObject();
-        bag.add((T) "A");
-        bag.add((T) "A");
-        bag.add((T) "B");
+        bag.add(((T) ("A")));
+        bag.add(((T) ("A")));
+        bag.add(((T) ("B")));
         final Iterator<T> it = bag.iterator();
         it.next();
         it.next();
@@ -417,18 +414,17 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
         if (!isAddSupported()) {
             return;
         }
-
         final Bag<T> bag = makeObject();
-        bag.add((T) "A");
-        bag.add((T) "A");
-        bag.add((T) "B");
+        bag.add(((T) ("A")));
+        bag.add(((T) ("A")));
+        bag.add(((T) ("B")));
         final Iterator<T> it = bag.iterator();
         it.next();
         it.next();
         assertEquals(3, bag.size());
         it.remove();
         assertEquals(2, bag.size());
-        Exception exception = assertThrows(IllegalStateException.class, () -> {
+        Exception exception = assertThrows(java.lang.IllegalStateException.class, () -> {
             it.remove();
         });
         assertNull(exception.getMessage());
@@ -518,22 +514,21 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
         if (!isAddSupported()) {
             return;
         }
-
         final Bag<T> bag = makeObject();
         final Bag<T> bag2 = makeObject();
         assertEquals(bag, bag2);
-        bag.add((T) "A");
+        bag.add(((T) ("A")));
         assertNotEquals(bag, bag2);
-        bag2.add((T) "A");
+        bag2.add(((T) ("A")));
         assertEquals(bag, bag2);
-        bag.add((T) "A");
-        bag.add((T) "B");
-        bag.add((T) "B");
-        bag.add((T) "C");
-        bag2.add((T) "A");
-        bag2.add((T) "B");
-        bag2.add((T) "B");
-        bag2.add((T) "C");
+        bag.add(((T) ("A")));
+        bag.add(((T) ("B")));
+        bag.add(((T) ("B")));
+        bag.add(((T) ("C")));
+        bag2.add(((T) ("A")));
+        bag2.add(((T) ("B")));
+        bag2.add(((T) ("B")));
+        bag2.add(((T) ("C")));
         assertEquals(bag, bag2);
     }
 
@@ -542,22 +537,21 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
         if (!isAddSupported()) {
             return;
         }
-
         final Bag<T> bag = makeObject();
         final Bag<T> bag2 = new HashBag<>();
         assertEquals(bag, bag2);
-        bag.add((T) "A");
+        bag.add(((T) ("A")));
         assertNotEquals(bag, bag2);
-        bag2.add((T) "A");
+        bag2.add(((T) ("A")));
         assertEquals(bag, bag2);
-        bag.add((T) "A");
-        bag.add((T) "B");
-        bag.add((T) "B");
-        bag.add((T) "C");
-        bag2.add((T) "A");
-        bag2.add((T) "B");
-        bag2.add((T) "B");
-        bag2.add((T) "C");
+        bag.add(((T) ("A")));
+        bag.add(((T) ("B")));
+        bag.add(((T) ("B")));
+        bag.add(((T) ("C")));
+        bag2.add(((T) ("A")));
+        bag2.add(((T) ("B")));
+        bag2.add(((T) ("B")));
+        bag2.add(((T) ("C")));
         assertEquals(bag, bag2);
     }
 
@@ -654,15 +648,15 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
         @Override
         public void resetEmpty() {
             AbstractBagTest.this.resetEmpty();
-            TestBagUniqueSet.this.setCollection(AbstractBagTest.this.getCollection().uniqueSet());
-            TestBagUniqueSet.this.setConfirmed(new HashSet<>(AbstractBagTest.this.getConfirmed()));
+            this.setCollection(AbstractBagTest.this.getCollection().uniqueSet());
+            this.setConfirmed(new HashSet<>(AbstractBagTest.this.getConfirmed()));
         }
 
         @Override
         public void resetFull() {
             AbstractBagTest.this.resetFull();
-            TestBagUniqueSet.this.setCollection(AbstractBagTest.this.getCollection().uniqueSet());
-            TestBagUniqueSet.this.setConfirmed(new HashSet<>(AbstractBagTest.this.getConfirmed()));
+            this.setCollection(AbstractBagTest.this.getCollection().uniqueSet());
+            this.setConfirmed(new HashSet<>(AbstractBagTest.this.getConfirmed()));
         }
 
         @Override
@@ -672,7 +666,6 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
     }
 
     //-----------------------------------------------------------------------
-
     /**
      * Compare the current serialized form of the Bag
      * against the canonical version in SCM.
@@ -680,8 +673,8 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
     public void testEmptyBagCompatibility() throws IOException, ClassNotFoundException {
         // test to make sure the canonical form has been preserved
         final Bag<T> bag = makeObject();
-        if (bag instanceof Serializable && !skipSerializedCanonicalTests() && isTestSerialization()) {
-            final Bag<?> bag2 = (Bag<?>) readExternalFormFromDisk(getCanonicalEmptyCollectionName(bag));
+        if (((bag instanceof Serializable) && (!skipSerializedCanonicalTests())) && isTestSerialization()) {
+            final Bag<?> bag2 = ((Bag<?>) (readExternalFormFromDisk(getCanonicalEmptyCollectionName(bag))));
             assertTrue("Bag is empty", bag2.isEmpty());
             assertEquals(bag, bag2);
         }
@@ -694,8 +687,8 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
     public void testFullBagCompatibility() throws IOException, ClassNotFoundException {
         // test to make sure the canonical form has been preserved
         final Bag<T> bag = makeFullCollection();
-        if (bag instanceof Serializable && !skipSerializedCanonicalTests() && isTestSerialization()) {
-            final Bag<?> bag2 = (Bag<?>) readExternalFormFromDisk(getCanonicalFullCollectionName(bag));
+        if (((bag instanceof Serializable) && (!skipSerializedCanonicalTests())) && isTestSerialization()) {
+            final Bag<?> bag2 = ((Bag<?>) (readExternalFormFromDisk(getCanonicalFullCollectionName(bag))));
             assertEquals("Bag is the right size", bag.size(), bag2.size());
             assertEquals(bag, bag2);
         }

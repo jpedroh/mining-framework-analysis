@@ -14,30 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.commons.collections4.properties;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
-
-
 import org.apache.commons.collections4.BulkTest;
 import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.Parameterized;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 
 @RunWith(Parameterized.class)
 public abstract class AbstractPropertiesFactoryTest<T extends Properties> {
-
     @Parameters(name = "{0}")
     public static Object[][] getParameters() {
         return new Object[][] { { ".properties" }, { ".xml" } };
@@ -45,14 +41,16 @@ public abstract class AbstractPropertiesFactoryTest<T extends Properties> {
     }
 
     private final AbstractPropertiesFactory<T> factory;
+
     private final String pathString;
+
     private final String fileExtention;
 
     protected AbstractPropertiesFactoryTest(final AbstractPropertiesFactory<T> factory, final String fileExtension) {
         super();
         this.factory = factory;
         this.fileExtention = fileExtension;
-        this.pathString = BulkTest.TEST_PROPERTIES_PATH + "test" + fileExtention;
+        this.pathString = (BulkTest.TEST_PROPERTIES_PATH + "test") + fileExtention;
     }
 
     private void assertContents(final T properties) {
