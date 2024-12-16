@@ -15,24 +15,26 @@
  */
 package ninja.servlet;
 
+import com.google.inject.Inject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
 import java.net.URI;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-
+import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import ninja.ContentTypes;
 import ninja.Context;
 import ninja.Cookie;
 import ninja.Result;
@@ -45,20 +47,14 @@ import ninja.session.FlashScope;
 import ninja.session.Session;
 import ninja.utils.*;
 import ninja.validation.Validation;
-
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
-import com.google.inject.Inject;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import ninja.ContentTypes;
-import org.apache.commons.lang3.StringUtils;
 
 public class ContextImpl implements Context.Impl {
-
     private ServletContext servletContext;
 
     private HttpServletRequest httpServletRequest;
@@ -68,34 +64,31 @@ public class ContextImpl implements Context.Impl {
     private Route route;
 
     private AsyncStrategy asyncStrategy;
+
     private final Object asyncLock = new Object();
 
     private final BodyParserEngineManager bodyParserEngineManager;
 
     private final FlashScope flashScope;
-    
+
     private final NinjaProperties ninjaProperties;
 
     private final Session session;
+
     private final ResultHandler resultHandler;
+
     private final Validation validation;
 
     // In Async mode, these values will be set to null, so save them
     private String requestPath;
+
     private String contextPath;
 
     @Inject
     Logger logger;
 
     @Inject
-    public ContextImpl(
-            BodyParserEngineManager bodyParserEngineManager,
-            FlashScope flashCookie,
-            NinjaProperties ninjaProperties,
-            ResultHandler resultHandler,
-            Session sessionCookie,
-            Validation validation) {
-
+    public ContextImpl(BodyParserEngineManager bodyParserEngineManager, FlashScope flashCookie, NinjaProperties ninjaProperties, ResultHandler resultHandler, Session sessionCookie, Validation validation) {
         this.bodyParserEngineManager = bodyParserEngineManager;
         this.flashScope = flashCookie;
         this.ninjaProperties = ninjaProperties;
@@ -104,21 +97,15 @@ public class ContextImpl implements Context.Impl {
         this.validation = validation;
     }
 
-    public void init(ServletContext servletContext,
-            HttpServletRequest httpServletRequest,
-            HttpServletResponse httpServletResponse) {
+    public void init(ServletContext servletContext, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         this.servletContext = servletContext;
         this.httpServletRequest = httpServletRequest;
         this.httpServletResponse = httpServletResponse;
-
         enforceCorrectEncodingOfRequest();
-
         // init flash scope:
         flashScope.init(this);
-
         // init session scope:
         session.init(this);
-
         contextPath = httpServletRequest.getContextPath();
         requestPath = performGetRequestPath();
     }
@@ -354,11 +341,9 @@ public class ContextImpl implements Context.Impl {
         
         return remoteAddr;
     }
-    
-    private String calculateRemoteAddrAndTakeIntoAccountXForwardHeader() {
-        
-        String remoteAddr = getHeader(X_FORWARD_HEADER);
 
+    private String calculateRemoteAddrAndTakeIntoAccountXForwardHeader() {
+        String remoteAddr = getHeader(X_FORWARD_HEADER);
         if (remoteAddr != null) {
             if (remoteAddr.contains(",")) {
                 // sometimes the header is of form client ip,proxy 1 ip,proxy 2 ip,...,proxy n ip,
@@ -374,7 +359,6 @@ public class ContextImpl implements Context.Impl {
         } else {
             remoteAddr = httpServletRequest.getRemoteAddr();
         }
-        
         return remoteAddr;
     }
 
