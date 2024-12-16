@@ -5,7 +5,7 @@
  * License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
-<<<<<<< HEAD
+<<<<<<< LEFT
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS"
  * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language
@@ -19,34 +19,32 @@
  * specific language governing permissions and limitations under the License.
  *
  * Copyright @2011-2012 the original author or authors.
->>>>>>> refs/heads/github-71
+>>>>>>> RIGHT
  */
 package org.fest.assertions.api;
 
 import java.io.File;
 import java.nio.charset.Charset;
-
 import org.fest.assertions.internal.Files;
 import org.fest.util.FilesException;
 import org.fest.util.VisibleForTesting;
+
 
 /**
  * Assertion methods for <code>{@link File}</code>s.
  * <p>
  * To create a new instance of this class, invoke <code>{@link Assertions#assertThat(File)}</code>.
  * </p>
- * 
+ *
  * @author David DIDIER
  * @author Yvonne Wang
  * @author Alex Ruiz
  * @author Olivier Michallat
- * @author Olivier Demeijer
  */
 public class FileAssert extends AbstractAssert<FileAssert, File> {
-
   @VisibleForTesting
   Files files = Files.instance();
-  
+
   @VisibleForTesting
   Charset charset = Charset.defaultCharset();
 
@@ -150,7 +148,7 @@ public class FileAssert extends AbstractAssert<FileAssert, File> {
     files.assertHasBinaryContent(info, actual, expected);
     return this;
   }
-  
+
   /**
    * Specifies the name of the charset to use for text-based assertions on the file's contents. 
    * 
@@ -175,7 +173,7 @@ public class FileAssert extends AbstractAssert<FileAssert, File> {
     this.charset = charset;
     return this;
   }
-  
+
   /**
    * Verifies that the text content of the actual {@code File} is <b>exactly</b> equal to the given one.<br/>
    * The charset to use when reading the file should be provided with {@link #usingCharset(Charset)} or
@@ -193,7 +191,7 @@ public class FileAssert extends AbstractAssert<FileAssert, File> {
     files.assertHasContent(info, actual, expected, charset);
     return this;
   }
-  
+
   /**
    * 
    * Verifies that the actual {@code File} can be modified by the application.
@@ -218,4 +216,15 @@ public class FileAssert extends AbstractAssert<FileAssert, File> {
     return this;
   }
 
+  /**
+   * 
+   * Verifies that the actual {@code File} can be executed by the application.
+   * @return {@code this} assertion object.
+   * @throws AssertionError if the actual {@code File} is {@code null}.
+   * @throws AssertionError if the actual {@code File} can not be executed by the application.
+   */
+  public FileAssert canExecute() {
+    files.assertCanExecute(info, actual);
+    return this;
+  }
 }
