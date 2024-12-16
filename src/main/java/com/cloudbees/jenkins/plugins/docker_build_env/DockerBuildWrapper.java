@@ -19,15 +19,6 @@ import hudson.remoting.Callable;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.BuildWrapperDescriptor;
 import hudson.util.ListBoxModel;
-import jenkins.authentication.tokens.api.AuthenticationTokens;
-import jenkins.model.Jenkins;
-import jenkins.security.MasterToSlaveCallable;
-import org.jenkinsci.plugins.docker.commons.credentials.DockerRegistryToken;
-import org.jenkinsci.plugins.docker.commons.credentials.DockerServerEndpoint;
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,15 +29,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import jenkins.authentication.tokens.api.AuthenticationTokens;
+import jenkins.model.Jenkins;
+import jenkins.security.MasterToSlaveCallable;
+import org.jenkinsci.plugins.docker.commons.credentials.DockerRegistryToken;
+import org.jenkinsci.plugins.docker.commons.credentials.DockerServerEndpoint;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 import static org.apache.commons.lang.StringUtils.isEmpty;
+
 
 /**
  * Decorate Launcher so that every command executed by a build step is actually ran inside docker container.
  * @author <a href="mailto:nicolas.deloof@gmail.com">Nicolas De Loof</a>
  */
 public class DockerBuildWrapper extends BuildWrapper {
-
     private final DockerImageSelector selector;
 
     private final String dockerInstallation;
@@ -78,17 +76,14 @@ public class DockerBuildWrapper extends BuildWrapper {
     private final boolean noCache;
 
     @DataBoundConstructor
-    public DockerBuildWrapper(DockerImageSelector selector, String dockerInstallation, DockerServerEndpoint dockerHost, String dockerRegistryCredentials, boolean verbose, boolean privileged,
-                              List<Volume> volumes, String group, String command,
-                              boolean forcePull,
-                              String net, String memory, String cpu, String filterEnvVariables, boolean noCache) {
+    public DockerBuildWrapper(DockerImageSelector selector, String dockerInstallation, DockerServerEndpoint dockerHost, String dockerRegistryCredentials, boolean verbose, boolean privileged, List<Volume> volumes, String group, String command, boolean forcePull, String net, String memory, String cpu, String filterEnvVariables, boolean noCache) {
         this.selector = selector;
         this.dockerInstallation = dockerInstallation;
         this.dockerHost = dockerHost;
         this.dockerRegistryCredentials = dockerRegistryCredentials;
         this.verbose = verbose;
         this.privileged = privileged;
-        this.volumes = volumes != null ? volumes : Collections.<Volume>emptyList();
+        this.volumes = (volumes != null) ? volumes : Collections.<Volume>emptyList();
         this.group = group;
         this.command = command;
         this.forcePull = forcePull;
@@ -148,7 +143,7 @@ public class DockerBuildWrapper extends BuildWrapper {
     public String getFilterEnvVariables() {
         return filterEnvVariables;
     }
-  
+
     public boolean isNoCache() {
         return noCache;
     }
@@ -156,53 +151,40 @@ public class DockerBuildWrapper extends BuildWrapper {
     @Override
     public Launcher decorateLauncher(final AbstractBuild build, final Launcher launcher, final BuildListener listener) throws IOException, InterruptedException, Run.RunnerAbortedException {
         final Docker docker = new Docker(dockerHost, dockerInstallation, dockerRegistryCredentials, build, launcher, listener, verbose, privileged, filterEnvVariables);
-
         final BuiltInContainer runInContainer = new BuiltInContainer(docker);
         build.addAction(runInContainer);
-
         DockerDecoratedLauncher decorated = new DockerDecoratedLauncher(selector, launcher, runInContainer, build, whoAmI(launcher));
         return decorated;
     }
 
     @Override
     public Environment setUp(AbstractBuild build, final Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
-
         // setUp is executed after checkout, so hook here to prepare and run Docker image to host the build
-
         BuiltInContainer runInContainer = build.getAction(BuiltInContainer.class);
-
         // mount slave root in Docker container so build process can access project workspace, tools, as well as jars copied by maven plugin.
         final String root = Computer.currentComputer().getNode().getRootPath().getRemote();
         runInContainer.bindMount(root);
-
         // mount tmpdir so we can access temporary file created to run shell build steps (and few others)
         String tmp = build.getWorkspace().act(GetTmpdir);
         runInContainer.bindMount(tmp);
-
         // mount ToolIntallers installation directory so installed tools are available inside container
-
         for (Volume volume : volumes) {
             runInContainer.bindMount(volume.getHostPath(), volume.getPath());
         }
-
         runInContainer.getDocker().setupCredentials(build);
-
         if (runInContainer.container == null) {
             if (runInContainer.image == null) {
                 try {
                     runInContainer.image = selector.prepareDockerImage(runInContainer.getDocker(), build, listener, forcePull, noCache);
-                } catch (InterruptedException e) {
+                } catch (java.lang.InterruptedException e) {
                     throw new RuntimeException("Interrupted");
                 }
             }
-
             runInContainer.container = startBuildContainer(runInContainer, build, listener);
-            listener.getLogger().println("Docker container " + runInContainer.container + " started to host the build");
+            listener.getLogger().println(("Docker container " + runInContainer.container) + " started to host the build");
         }
-
         // We are all set, DockerDecoratedLauncher now can wrap launcher commands with docker-exec
         runInContainer.enable();
-
         return new Environment() {
             @Override
             public boolean tearDown(AbstractBuild build, BuildListener listener) throws IOException, InterruptedException {
@@ -210,8 +192,6 @@ public class DockerBuildWrapper extends BuildWrapper {
             }
         };
     }
-
-
 
     private String startBuildContainer(BuiltInContainer runInContainer, AbstractBuild build, BuildListener listener) throws IOException {
         try {
@@ -265,7 +245,6 @@ public class DockerBuildWrapper extends BuildWrapper {
 
     @Extension
     public static class DescriptorImpl extends BuildWrapperDescriptor {
-
         @Override
         public String getDisplayName() {
             return "Build inside a Docker container";
@@ -280,20 +259,11 @@ public class DockerBuildWrapper extends BuildWrapper {
             return true;
         }
 
-        public ListBoxModel doFillDockerRegistryCredentialsItems(@AncestorInPath Item item, @QueryParameter String uri) {
-            return new StandardListBoxModel()
-                    .withEmptySelection()
-                    .withMatching(AuthenticationTokens.matcher(DockerRegistryToken.class),
-                            CredentialsProvider.lookupCredentials(
-                                    StandardCredentials.class,
-                                    item,
-                                    null,
-                                    Collections.<DomainRequirement>emptyList()
-                            )
-                    );
-
+        public ListBoxModel doFillDockerRegistryCredentialsItems(@AncestorInPath
+        Item item, @QueryParameter
+        String uri) {
+            return new StandardListBoxModel().withEmptySelection().withMatching(AuthenticationTokens.matcher(DockerRegistryToken.class), CredentialsProvider.lookupCredentials(StandardCredentials.class, item, null, Collections.<DomainRequirement>emptyList()));
         }
-
     }
 
     private static Callable<String, IOException> GetTmpdir = new MasterToSlaveCallable<String, IOException>() {
@@ -303,9 +273,9 @@ public class DockerBuildWrapper extends BuildWrapper {
         }
     };
 
-
     private static final Logger LOGGER = Logger.getLogger(DockerBuildWrapper.class.getName());
 
+    // --- backward compatibility
     // --- backward compatibility
 
     private transient boolean exposeDocker;
