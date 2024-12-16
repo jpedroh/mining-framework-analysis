@@ -1,33 +1,30 @@
-package ${package};
+package $;
 
 import org.apache.ibatis.logging.LogFactory;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
+import org.camunda.bpm.scenario.ProcessScenario;
+import org.camunda.bpm.scenario.Scenario;
+import org.camunda.bpm.scenario.run.ProcessRunner.ExecutableRunner;
 import org.camunda.bpm.spring.boot.starter.test.helper.StandaloneInMemoryTestConfiguration;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.camunda.bpm.scenario.ProcessScenario;
-import org.camunda.bpm.scenario.Scenario;
-import org.camunda.bpm.scenario.run.ProcessRunner.ExecutableRunner;
-
 import org.mockito.Mock;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
-
 import org.mockito.MockitoAnnotations;
-
-import static org.junit.Assert.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 import static org.assertj.core.api.Assertions.*;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 
 /**
@@ -36,6 +33,13 @@ import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 public class ProcessScenarioTest {
+
+<<<<<<< LEFT
+  @Autowired
+  private ProcessEngine processEngine;
+=======
+  private static final String PROCESS_DEFINITION_KEY = "${artifactId}";
+>>>>>>> RIGHT
 
   static {
     LogFactory.useSlf4jLogging(); // MyBatis

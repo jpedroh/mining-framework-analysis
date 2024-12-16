@@ -1,4 +1,4 @@
-package ${package};
+package $;
 
 import org.apache.ibatis.logging.LogFactory;
 import org.camunda.bpm.engine.test.Deployment;
@@ -11,16 +11,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
+import static org.assertj.core.api.Assertions.*;
+import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
-import static org.junit.Assert.*;
-import static org.assertj.core.api.Assertions.*;
-import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 
 /**
  * Test case starting an in-memory database-backed Process Engine.
@@ -28,6 +27,13 @@ import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 public class ProcessScenarioTest {
+
+<<<<<<< LEFT
+  @Autowired
+  private ProcessEngine processEngine;
+=======
+  private static final String PROCESS_DEFINITION_KEY = "${artifactId}";
+>>>>>>> RIGHT
 
   static {
     LogFactory.useSlf4jLogging(); // MyBatis
