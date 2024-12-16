@@ -28,17 +28,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import groovy.lang.Binding;
 import hudson.DescriptorExtensionList;
 import hudson.Extension;
-import static hudson.Util.fixEmpty;
-import static hudson.Util.fixEmptyAndTrim;
-import static hudson.Util.fixNull;
-
 import hudson.Util;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.model.User;
 import hudson.tasks.MailAddressResolver;
-import hudson.tasks.Mailer;
 import hudson.tasks.Mailer.UserProperty;
+import hudson.tasks.Mailer;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.Scrambler;
@@ -51,9 +47,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
-import java.net.URI;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -70,7 +66,6 @@ import javax.naming.directory.BasicAttributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.ldap.Control;
-
 import jenkins.model.IdStrategy;
 import jenkins.model.Jenkins;
 import jenkins.security.plugins.ldap.FromGroupSearchLDAPGroupMembershipStrategy;
@@ -100,6 +95,10 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.springframework.dao.DataAccessException;
 import org.springframework.web.context.WebApplicationContext;
+import static hudson.Util.fixEmpty;
+import static hudson.Util.fixEmptyAndTrim;
+import static hudson.Util.fixNull;
+
 
 /**
  * {@link SecurityRealm} implementation that uses LDAP for authentication.
@@ -469,6 +468,7 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         this(server, rootDN, userSearchBase, userSearch, groupSearchBase, groupSearchFilter, groupMembershipStrategy, managerDN, managerPasswordSecret, inhibitInferRootDN, disableMailAddressResolver, cache, environmentProperties, displayNameAttributeName, mailAddressAttributeName, IdStrategy.CASE_INSENSITIVE, IdStrategy.CASE_INSENSITIVE);
     }
 
+<<<<<<< LEFT
     /**
      * @deprecated retained for backwards binary compatibility.
      */
@@ -481,12 +481,29 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
     @DataBoundConstructor
     public LDAPSecurityRealm(List<LDAPConfiguration> configurations, boolean disableMailAddressResolver, CacheConfiguration cache, IdStrategy userIdStrategy, IdStrategy groupIdStrategy) {
         this.configurations = configurations;
+=======
+    @DataBoundConstructor
+    public LDAPSecurityRealm(String server, String rootDN, String userSearchBase, String userSearch, String groupSearchBase, String groupSearchFilter, LDAPGroupMembershipStrategy groupMembershipStrategy, String managerDN, Secret managerPasswordSecret, boolean inhibitInferRootDN, boolean disableMailAddressResolver, CacheConfiguration cache, EnvironmentProperty[] environmentProperties, String displayNameAttributeName, String mailAddressAttributeName, IdStrategy userIdStrategy, IdStrategy groupIdStrategy) {
+        this.server = server.trim();
+        this.managerDN = fixEmpty(managerDN);
+        this.managerPasswordSecret = managerPasswordSecret;
+        this.inhibitInferRootDN = inhibitInferRootDN;
+        if(!inhibitInferRootDN && fixEmptyAndTrim(rootDN)==null) rootDN= fixNull(inferRootDN(server));
+        this.rootDN = rootDN.trim();
+        this.userSearchBase = fixNull(userSearchBase).trim();
+        userSearch = fixEmptyAndTrim(userSearch);
+        this.userSearch = userSearch!=null ? userSearch : DescriptorImpl.DEFAULT_USER_SEARCH;
+        this.groupSearchBase = fixEmptyAndTrim(groupSearchBase);
+        this.groupSearchFilter = fixEmptyAndTrim(groupSearchFilter);
+        this.groupMembershipStrategy = groupMembershipStrategy == null ? new FromGroupSearchLDAPGroupMembershipStrategy("") : groupMembershipStrategy;
+>>>>>>> RIGHT
         this.disableMailAddressResolver = disableMailAddressResolver;
         this.cache = cache;
         this.userIdStrategy = userIdStrategy;
         this.groupIdStrategy = groupIdStrategy;
     }
 
+<<<<<<< LEFT
     private static List<LDAPConfiguration> createLdapConfiguration(String server, String rootDN, String userSearchBase, String userSearch, String groupSearchBase, String groupSearchFilter, LDAPGroupMembershipStrategy groupMembershipStrategy, String managerDN, Secret managerPasswordSecret, boolean inhibitInferRootDN, EnvironmentProperty[] environmentProperties, String displayNameAttributeName, String mailAddressAttributeName) {
         LDAPConfiguration conf = new LDAPConfiguration(server, rootDN, inhibitInferRootDN, managerDN, managerPasswordSecret);
         conf.setUserSearchBase(userSearchBase);
@@ -508,6 +525,8 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         return configurations != null && !configurations.isEmpty();
     }
 
+=======
+>>>>>>> RIGHT
     private Object readResolve() {
         if (managerPassword != null) {
             managerPasswordSecret = Secret.fromString(Scrambler.descramble(managerPassword));
@@ -1196,7 +1215,72 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             return IdStrategy.CASE_INSENSITIVE;
         }
 
+<<<<<<< LEFT
 
+=======
+        // note that this works better in 1.528+ (JENKINS-19124)
+        public FormValidation doCheckServer(@QueryParameter String value, @QueryParameter String managerDN, @QueryParameter Secret managerPasswordSecret) {
+            String server = value;
+            String managerPassword = Secret.toString(managerPasswordSecret);
+
+            final Jenkins jenkins = Jenkins.getInstance();
+            if (jenkins == null) {
+                return FormValidation.error("Jenkins is not ready. Cannot validate the field");
+            }
+            if(!jenkins.hasPermission(Jenkins.ADMINISTER))
+                return FormValidation.ok();
+
+            try {
+                Hashtable<String,String> props = new Hashtable<String,String>();
+                if(managerDN!=null && managerDN.trim().length() > 0  && !"undefined".equals(managerDN)) {
+                    props.put(Context.SECURITY_PRINCIPAL,managerDN);
+                }
+                if(managerPassword!=null && managerPassword.trim().length() > 0 && !"undefined".equals(managerPassword)) {
+                    props.put(Context.SECURITY_CREDENTIALS,managerPassword);
+                }
+                props.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+                props.put(Context.PROVIDER_URL, toProviderUrl(server, ""));
+
+                DirContext ctx = new InitialDirContext(props);
+                ctx.getAttributes("");
+                return FormValidation.ok();   // connected
+            } catch (NamingException e) {
+                // trouble-shoot
+                Matcher m = Pattern.compile("(ldaps?://)?([^:]+)(?:\\:(\\d+))?(\\s+(ldaps?://)?([^:]+)(?:\\:(\\d+))?)*").matcher(server.trim());
+                if(!m.matches())
+                    return FormValidation.error(Messages.LDAPSecurityRealm_SyntaxOfServerField());
+
+                try {
+                    InetAddress adrs = InetAddress.getByName(m.group(2));
+                    int port = m.group(1)!=null ? 636 : 389;
+                    if(m.group(3)!=null)
+                        port = Integer.parseInt(m.group(3));
+                    Socket s = new Socket(adrs,port);
+                    s.close();
+                } catch (UnknownHostException x) {
+                    return FormValidation.error(Messages.LDAPSecurityRealm_UnknownHost(x.getMessage()));
+                } catch (IOException x) {
+                    return FormValidation.error(x,Messages.LDAPSecurityRealm_UnableToConnect(server, x.getMessage()));
+                }
+
+                // otherwise we don't know what caused it, so fall back to the general error report
+                // getMessage() alone doesn't offer enough
+                return FormValidation.error(e,Messages.LDAPSecurityRealm_UnableToConnect(server, e));
+            } catch (NumberFormatException x) {
+                // The getLdapCtxInstance method throws this if it fails to parse the port number
+                return FormValidation.error(Messages.LDAPSecurityRealm_InvalidPortNumber());
+            }
+        }
+
+        public DescriptorExtensionList<LDAPGroupMembershipStrategy, Descriptor<LDAPGroupMembershipStrategy>> getGroupMembershipStrategies() {
+            final Jenkins jenkins = Jenkins.getInstance();
+            if (jenkins != null) {
+                return jenkins.getDescriptorList(LDAPGroupMembershipStrategy.class);
+            } else {
+                return DescriptorExtensionList.createDescriptorList((Jenkins)null, LDAPGroupMembershipStrategy.class);
+            }
+        }
+>>>>>>> RIGHT
     }
 
     /**
