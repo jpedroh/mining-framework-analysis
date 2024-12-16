@@ -107,7 +107,6 @@ import org.sonar.plugins.php.api.tree.statement.UseClauseTree;
 import org.sonar.plugins.php.api.tree.statement.UseStatementTree;
 import org.sonar.plugins.php.api.tree.statement.UseTraitDeclarationTree;
 import org.sonar.plugins.php.api.tree.statement.WhileStatementTree;
-
 import static org.sonar.php.api.PHPKeyword.ABSTRACT;
 import static org.sonar.php.api.PHPKeyword.ARRAY;
 import static org.sonar.php.api.PHPKeyword.CALLABLE;
@@ -140,8 +139,8 @@ import static org.sonar.php.api.PHPPunctuator.DOUBLEARROW;
 import static org.sonar.php.api.PHPPunctuator.DOUBLECOLON;
 import static org.sonar.php.api.PHPPunctuator.ELLIPSIS;
 import static org.sonar.php.api.PHPPunctuator.EQU;
-import static org.sonar.php.api.PHPPunctuator.EQUAL;
 import static org.sonar.php.api.PHPPunctuator.EQUAL2;
+import static org.sonar.php.api.PHPPunctuator.EQUAL;
 import static org.sonar.php.api.PHPPunctuator.GE;
 import static org.sonar.php.api.PHPPunctuator.GT;
 import static org.sonar.php.api.PHPPunctuator.INC;
@@ -152,8 +151,8 @@ import static org.sonar.php.api.PHPPunctuator.LPARENTHESIS;
 import static org.sonar.php.api.PHPPunctuator.LT;
 import static org.sonar.php.api.PHPPunctuator.MINUS;
 import static org.sonar.php.api.PHPPunctuator.MOD;
-import static org.sonar.php.api.PHPPunctuator.NOTEQUAL;
 import static org.sonar.php.api.PHPPunctuator.NOTEQUAL2;
+import static org.sonar.php.api.PHPPunctuator.NOTEQUAL;
 import static org.sonar.php.api.PHPPunctuator.NOTEQUALBIS;
 import static org.sonar.php.api.PHPPunctuator.NS_SEPARATOR;
 import static org.sonar.php.api.PHPPunctuator.PLUS;
@@ -167,9 +166,13 @@ import static org.sonar.php.api.PHPPunctuator.SR;
 import static org.sonar.php.api.PHPPunctuator.STAR;
 import static org.sonar.php.api.PHPPunctuator.STAR_STAR;
 
-public class PHPGrammar {
 
+/**
+   * [ END ] Expression
+   */
+public class PHPGrammar {
   private final GrammarBuilder<InternalSyntaxToken> b;
+
   private final TreeFactory f;
 
   public PHPGrammar(GrammarBuilder<InternalSyntaxToken> b, TreeFactory f) {
@@ -291,7 +294,6 @@ public class PHPGrammar {
         b.zeroOrMore(CLASS_MEMBER()),
         b.token(RCURLYBRACE)));
   }
-
 
   public ClassMemberTree CLASS_MEMBER() {
     return b.<ClassMemberTree>nonterminal(PHPLexicalGrammar.CLASS_MEMBER).is(
@@ -667,7 +669,6 @@ public class PHPGrammar {
         INTERFACE_DECLARATION(),
         STATEMENT()));
   }
-
 
   public GlobalStatementTree GLOBAL_STATEMENT() {
     return b.<GlobalStatementTree>nonterminal(PHPLexicalGrammar.GLOBAL_STATEMENT).is(
@@ -1535,28 +1536,11 @@ public class PHPGrammar {
   }
 
   public ExpressionTree SPECIAL_CALL() {
-    return b.<ExpressionTree>nonterminal(PHPLexicalGrammar.SPECIAL_CALL).is(
-      f.memberExpression(
-        b.firstOf(
-          f.nullLiteral(b.token(PHPLexicalGrammar.NULL)),
-          ARRAY_INITIALIZER(),
-          STRING_LITERAL()),
-        FUNCTION_CALL_ARGUMENT_LIST()
-      )
-    );
+    return b.<ExpressionTree>nonterminal(PHPLexicalGrammar.SPECIAL_CALL).is(f.memberExpression(b.firstOf(f.nullLiteral(b.token(PHPLexicalGrammar.NULL)), ARRAY_INITIALIZER(), STRING_LITERAL()), FUNCTION_CALL_ARGUMENT_LIST()));
   }
 
   public ExpressionTree MEMBER_EXPRESSION() {
-    return b.<ExpressionTree>nonterminal(PHPLexicalGrammar.MEMBER_EXPRESSION).is(
-      f.memberExpression(
-        PRIMARY_EXPRESSION(),
-        b.zeroOrMore(
-          b.firstOf(
-            OBJECT_MEMBER_ACCESS(),
-            CLASS_MEMBER_ACCESS(),
-            DIMENSIONAL_OFFSET(),
-            FUNCTION_CALL_ARGUMENT_LIST()))
-      ));
+    return b.<ExpressionTree>nonterminal(PHPLexicalGrammar.MEMBER_EXPRESSION).is(f.memberExpression(PRIMARY_EXPRESSION(), b.zeroOrMore(b.firstOf(OBJECT_MEMBER_ACCESS(), CLASS_MEMBER_ACCESS(), DIMENSIONAL_OFFSET(), FUNCTION_CALL_ARGUMENT_LIST()))));
   }
 
   public MemberAccessTree OBJECT_MEMBER_ACCESS() {
@@ -1728,26 +1712,6 @@ public class PHPGrammar {
   }
 
   public ExpressionTree POSTFIX_EXPRESSION() {
-    return b.<ExpressionTree>nonterminal(PHPLexicalGrammar.POSTFIX_EXPR).is(
-      f.postfixExpression(
-        b.firstOf(
-          SPECIAL_CALL(),
-          f.combinedScalarOffset(ARRAY_INITIALIZER(), b.zeroOrMore(DIMENSIONAL_OFFSET())),
-          FUNCTION_EXPRESSION(),
-          ARROW_FUNCTION_EXPRESSION(),
-          COMMON_SCALAR(),
-          MEMBER_EXPRESSION(),
-          NEW_EXPRESSION(),
-          EXIT_EXPRESSION(),
-          INTERNAL_FUNCTION()),
-        b.optional(b.firstOf(
-          b.token(INC),
-          b.token(DEC),
-          f.newTuple(b.token(INSTANCEOF), MEMBER_EXPRESSION())))));
+    return b.<ExpressionTree>nonterminal(PHPLexicalGrammar.POSTFIX_EXPR).is(f.postfixExpression(b.firstOf(SPECIAL_CALL(), f.combinedScalarOffset(ARRAY_INITIALIZER(), b.zeroOrMore(DIMENSIONAL_OFFSET())), FUNCTION_EXPRESSION(), ARROW_FUNCTION_EXPRESSION(), COMMON_SCALAR(), MEMBER_EXPRESSION(), NEW_EXPRESSION(), EXIT_EXPRESSION(), INTERNAL_FUNCTION()), b.optional(b.firstOf(b.token(INC), b.token(DEC), f.newTuple(b.token(INSTANCEOF), MEMBER_EXPRESSION())))));
   }
-
-  /**
-   * [ END ] Expression
-   */
-
 }
