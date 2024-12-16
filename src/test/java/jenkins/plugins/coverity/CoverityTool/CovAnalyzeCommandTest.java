@@ -10,64 +10,43 @@
  *******************************************************************************/
 package jenkins.plugins.coverity.CoverityTool;
 
+import java.io.File;
+import java.io.IOException;
 import jenkins.plugins.coverity.CoverityPublisher;
 import jenkins.plugins.coverity.InvocationAssistance;
 import jenkins.plugins.coverity.TaOptionBlock;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-
 import static org.junit.Assert.assertEquals;
 
-public class CovAnalyzeCommandTest extends CommandTestBase {
 
+public class CovAnalyzeCommandTest extends CommandTestBase {
     @Test
     public void addMisraConfigurationTest() throws IOException, InterruptedException {
         File misraConfigFile = new File("misraConfigFile");
-        try{
+        try {
             misraConfigFile.createNewFile();
-
-            InvocationAssistance invocationAssistance = new InvocationAssistance(
-                    false, StringUtils.EMPTY, false, StringUtils.EMPTY, false, false,
-                    StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                    true, misraConfigFile.getPath(), StringUtils.EMPTY, null, false, false,
-                    StringUtils.EMPTY, StringUtils.EMPTY, null, false
-            );
-            CoverityPublisher publisher = new CoverityPublisher(
-                    null, invocationAssistance, false, false, false, false, false,
-                    null, null
-            );
-
+            InvocationAssistance invocationAssistance = new InvocationAssistance(false, StringUtils.EMPTY, false, StringUtils.EMPTY, false, false, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, true, misraConfigFile.getPath(), StringUtils.EMPTY, null, false, false, StringUtils.EMPTY, StringUtils.EMPTY, null, false);
+            CoverityPublisher publisher = new CoverityPublisher(null, invocationAssistance, false, false, false, false, false, null, null);
             ICommand covAnalyzeCommand = new CovAnalyzeCommand(build, launcher, listener, publisher, StringUtils.EMPTY, envVars);
-            setExpectedArguments(new String[] {"cov-analyze", "--dir", "TestDir", "--misra-config", misraConfigFile.getPath()});
+            setExpectedArguments(new String[]{ "cov-analyze", "--dir", "TestDir", "--misra-config", misraConfigFile.getPath() });
             covAnalyzeCommand.runCommand();
             consoleLogger.verifyLastMessage("[Coverity] cov-analyze command line arguments: " + actualArguments.toString());
-        }finally {
+        } finally {
             misraConfigFile.delete();
         }
     }
 
     @Test
     public void addMisraConfigurationTest_WithEmptyMisraConfigFilePath() throws IOException, InterruptedException {
-        InvocationAssistance invocationAssistance = new InvocationAssistance(
-                false, StringUtils.EMPTY, false, StringUtils.EMPTY, false, false,
-                StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                true, StringUtils.EMPTY, StringUtils.EMPTY, null, false, false,
-                StringUtils.EMPTY, StringUtils.EMPTY, null, false
-        );
-        CoverityPublisher publisher = new CoverityPublisher(
-                null, invocationAssistance, false, false, false, false, false,
-                null, null
-        );
-
+        InvocationAssistance invocationAssistance = new InvocationAssistance(false, StringUtils.EMPTY, false, StringUtils.EMPTY, false, false, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, true, StringUtils.EMPTY, StringUtils.EMPTY, null, false, false, StringUtils.EMPTY, StringUtils.EMPTY, null, false);
+        CoverityPublisher publisher = new CoverityPublisher(null, invocationAssistance, false, false, false, false, false, null, null);
         ICommand covAnalyzeCommand = new CovAnalyzeCommand(build, launcher, listener, publisher, StringUtils.EMPTY, envVars);
-        try{
+        try {
             covAnalyzeCommand.runCommand();
             Assert.fail("RuntimeException should have been thrown");
-        }catch(RuntimeException e) {
+        } catch (java.lang.RuntimeException e) {
             assertEquals("Misra configuration file is required to run Misra analysis.", e.getMessage());
         }
     }
@@ -75,64 +54,36 @@ public class CovAnalyzeCommandTest extends CommandTestBase {
     @Test
     public void addMisraConfigurationTest_WithInvalidMisraConfigFilePath() throws IOException, InterruptedException {
         File misraConfigFile = new File("misraConfigFile");
-
-        InvocationAssistance invocationAssistance = new InvocationAssistance(
-                false, StringUtils.EMPTY, false, StringUtils.EMPTY, false, false,
-                StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                true, misraConfigFile.getPath(), StringUtils.EMPTY, null, false, false,
-                StringUtils.EMPTY, StringUtils.EMPTY, null, false
-        );
-        CoverityPublisher publisher = new CoverityPublisher(
-                null, invocationAssistance, false, false, false, false, false,
-                null, null
-        );
-
+        InvocationAssistance invocationAssistance = new InvocationAssistance(false, StringUtils.EMPTY, false, StringUtils.EMPTY, false, false, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, true, misraConfigFile.getPath(), StringUtils.EMPTY, null, false, false, StringUtils.EMPTY, StringUtils.EMPTY, null, false);
+        CoverityPublisher publisher = new CoverityPublisher(null, invocationAssistance, false, false, false, false, false, null, null);
         ICommand covAnalyzeCommand = new CovAnalyzeCommand(build, launcher, listener, publisher, StringUtils.EMPTY, envVars);
-        try{
+        try {
             covAnalyzeCommand.runCommand();
             Assert.fail("RuntimeException should have been thrown");
-        }catch (RuntimeException e) {
-            assertEquals("Could not find MISRA configuration file at \"" + misraConfigFile.getAbsolutePath() + "\"", e.getMessage());
+        } catch (java.lang.RuntimeException e) {
+            assertEquals(("Could not find MISRA configuration file at \"" + misraConfigFile.getAbsolutePath()) + "\"", e.getMessage());
         }
     }
 
     @Test
     public void additionalArgumentsTest() throws IOException, InterruptedException {
-        InvocationAssistance invocationAssistance = new InvocationAssistance(
-                false, StringUtils.EMPTY, false, StringUtils.EMPTY, false, false,
-                StringUtils.EMPTY, "additionalArgs", StringUtils.EMPTY, StringUtils.EMPTY,
-                false, StringUtils.EMPTY, StringUtils.EMPTY, null, false, false,
-                StringUtils.EMPTY, StringUtils.EMPTY, null, false
-        );
-        CoverityPublisher publisher = new CoverityPublisher(
-                null, invocationAssistance, false, false, false, false, false,
-                null, null
-        );
-
+        InvocationAssistance invocationAssistance = new InvocationAssistance(false, StringUtils.EMPTY, false, StringUtils.EMPTY, false, false, StringUtils.EMPTY, "additionalArgs", StringUtils.EMPTY, StringUtils.EMPTY, false, StringUtils.EMPTY, StringUtils.EMPTY, null, false, false, StringUtils.EMPTY, StringUtils.EMPTY, null, false);
+        CoverityPublisher publisher = new CoverityPublisher(null, invocationAssistance, false, false, false, false, false, null, null);
         ICommand covAnalyzeCommand = new CovAnalyzeCommand(build, launcher, listener, publisher, StringUtils.EMPTY, envVars);
-        setExpectedArguments(new String[] {"cov-analyze", "--dir", "TestDir", "additionalArgs"});
+        setExpectedArguments(new String[]{ "cov-analyze", "--dir", "TestDir", "additionalArgs" });
         covAnalyzeCommand.runCommand();
         consoleLogger.verifyLastMessage("[Coverity] cov-analyze command line arguments: " + actualArguments.toString());
     }
 
     @Test
     public void additionalArgumentsTest_WithParseException() throws IOException, InterruptedException {
-        InvocationAssistance invocationAssistance = new InvocationAssistance(
-                false, StringUtils.EMPTY, false, StringUtils.EMPTY, false, false,
-                StringUtils.EMPTY, "\'", StringUtils.EMPTY, StringUtils.EMPTY,
-                false, StringUtils.EMPTY, StringUtils.EMPTY, null, false, false,
-                StringUtils.EMPTY, StringUtils.EMPTY, null, false
-        );
-        CoverityPublisher publisher = new CoverityPublisher(
-                null, invocationAssistance, false, false, false, false, false,
-                null, null
-        );
-
+        InvocationAssistance invocationAssistance = new InvocationAssistance(false, StringUtils.EMPTY, false, StringUtils.EMPTY, false, false, StringUtils.EMPTY, "\'", StringUtils.EMPTY, StringUtils.EMPTY, false, StringUtils.EMPTY, StringUtils.EMPTY, null, false, false, StringUtils.EMPTY, StringUtils.EMPTY, null, false);
+        CoverityPublisher publisher = new CoverityPublisher(null, invocationAssistance, false, false, false, false, false, null, null);
         ICommand covAnalyzeCommand = new CovAnalyzeCommand(build, launcher, listener, publisher, StringUtils.EMPTY, envVars);
-        try{
+        try {
             covAnalyzeCommand.runCommand();
             Assert.fail("RuntimeException should have been thrown");
-        }catch(RuntimeException e) {
+        } catch (java.lang.RuntimeException e) {
             assertEquals("ParseException occurred during tokenizing the cov analyze additional arguments.", e.getMessage());
         }
     }
@@ -140,53 +91,28 @@ public class CovAnalyzeCommandTest extends CommandTestBase {
     @Test
     public void addTestAdvisorConfigurationTest_WithEmptyStripPath() throws IOException, InterruptedException {
         File taPolicyFile = new File("taPolicyFile");
-        try{
+        try {
             taPolicyFile.createNewFile();
-
-            TaOptionBlock taOptionBlock = new TaOptionBlock(
-                    StringUtils.EMPTY, false, false, false,
-                    StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                    StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                    false, false, false,
-                    taPolicyFile.getPath(), "Path2Strip",
-                    StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, false
-            );
-
-            CoverityPublisher publisher = new CoverityPublisher(
-                    null, null, false, false, false, false, false,
-                    taOptionBlock, null
-            );
-
+            TaOptionBlock taOptionBlock = new TaOptionBlock(StringUtils.EMPTY, false, false, false, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, false, false, false, taPolicyFile.getPath(), "Path2Strip", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, false);
+            CoverityPublisher publisher = new CoverityPublisher(null, null, false, false, false, false, false, taOptionBlock, null);
             ICommand covAnalyzeCommand = new CovAnalyzeCommand(build, launcher, listener, publisher, StringUtils.EMPTY, envVars);
-            setExpectedArguments(new String[] {"cov-analyze", "--dir", "TestDir", "--test-advisor", "--test-advisor-policy", taPolicyFile.getPath(), "--strip-path", "Path2Strip"});
+            setExpectedArguments(new String[]{ "cov-analyze", "--dir", "TestDir", "--test-advisor", "--test-advisor-policy", taPolicyFile.getPath(), "--strip-path", "Path2Strip" });
             covAnalyzeCommand.runCommand();
             consoleLogger.verifyLastMessage("[Coverity] cov-analyze command line arguments: " + actualArguments.toString());
-        }finally {
+        } finally {
             taPolicyFile.delete();
         }
     }
 
     @Test
     public void addTestAdvisorConfigurationTest_WithEmptyTaPolicyFilePath() throws IOException, InterruptedException {
-        TaOptionBlock taOptionBlock = new TaOptionBlock(
-                StringUtils.EMPTY, false, false, false,
-                StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                false, false, false,
-                StringUtils.EMPTY, StringUtils.EMPTY,
-                StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, false
-        );
-
-        CoverityPublisher publisher = new CoverityPublisher(
-                null, null, false, false, false, false, false,
-                taOptionBlock, null
-        );
-
+        TaOptionBlock taOptionBlock = new TaOptionBlock(StringUtils.EMPTY, false, false, false, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, false, false, false, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, false);
+        CoverityPublisher publisher = new CoverityPublisher(null, null, false, false, false, false, false, taOptionBlock, null);
         ICommand covAnalyzeCommand = new CovAnalyzeCommand(build, launcher, listener, publisher, StringUtils.EMPTY, envVars);
-        try{
+        try {
             covAnalyzeCommand.runCommand();
             Assert.fail("RuntimeException should have been thrown");
-        }catch(RuntimeException e) {
+        } catch (java.lang.RuntimeException e) {
             assertEquals("Test Advisor Policy File is required to run the Test Advisor.", e.getMessage());
         }
     }
@@ -194,37 +120,20 @@ public class CovAnalyzeCommandTest extends CommandTestBase {
     @Test
     public void addTestAdvisorConfigurationTest_WithInvalidTaPolicyFilePath() throws IOException, InterruptedException {
         File taPolicyFile = new File("taPolicyFile");
-
-        TaOptionBlock taOptionBlock = new TaOptionBlock(
-                StringUtils.EMPTY, false, false, false,
-                StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                false, false, false,
-                taPolicyFile.getPath(), "Path2Strip",
-                StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, false
-        );
-
-        CoverityPublisher publisher = new CoverityPublisher(
-                null, null, false, false, false, false, false,
-                taOptionBlock, null
-        );
-
+        TaOptionBlock taOptionBlock = new TaOptionBlock(StringUtils.EMPTY, false, false, false, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, false, false, false, taPolicyFile.getPath(), "Path2Strip", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, false);
+        CoverityPublisher publisher = new CoverityPublisher(null, null, false, false, false, false, false, taOptionBlock, null);
         ICommand covAnalyzeCommand = new CovAnalyzeCommand(build, launcher, listener, publisher, StringUtils.EMPTY, envVars);
-        try{
+        try {
             covAnalyzeCommand.runCommand();
             Assert.fail("RuntimeException should have been thrown");
-        }catch(RuntimeException e) {
-            assertEquals("Could not find test policy file at \"" + taPolicyFile.getAbsolutePath() + "\"", e.getMessage());
+        } catch (java.lang.RuntimeException e) {
+            assertEquals(("Could not find test policy file at \"" + taPolicyFile.getAbsolutePath()) + "\"", e.getMessage());
         }
     }
 
     @Test
     public void cannotExecuteTest() throws IOException, InterruptedException {
-        CoverityPublisher publisher = new CoverityPublisher(
-                null, null, false, false, false, false, false,
-                null, null
-        );
-
+        CoverityPublisher publisher = new CoverityPublisher(null, null, false, false, false, false, false, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, null, null, null);
         ICommand covAnalyzeCommand = new CovAnalyzeCommand(build, launcher, listener, publisher, StringUtils.EMPTY, envVars);
         covAnalyzeCommand.runCommand();
         consoleLogger.verifyLastMessage("[Coverity] Skipping command because it can't be executed");
