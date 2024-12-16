@@ -1,10 +1,10 @@
 package com.github.javafaker;
 
+import com.github.javafaker.service.FakeValuesService;
+import com.github.javafaker.service.RandomService;
 import java.util.Locale;
 import java.util.Random;
 
-import com.github.javafaker.service.FakeValuesService;
-import com.github.javafaker.service.RandomService;
 
 /**
  * Provides utility methods for generating fake strings, such as names, phone
@@ -14,84 +14,161 @@ import com.github.javafaker.service.RandomService;
  */
 public class Faker {
     private final RandomService randomService;
+
     private final FakeValuesService fakeValuesService;
 
     private final Ancient ancient;
+
     private final App app;
+
     private final Artist artist;
+
     private final Avatar avatar;
+
     private final Aviation aviation;
+
     private final Lorem lorem;
+
     private final Music music;
+
     private final Name name;
+
     private final Number number;
+
     private final Internet internet;
+
     private final PhoneNumber phoneNumber;
+
     private final Pokemon pokemon;
+
     private final Address address;
+
     private final Business business;
+
     private final Book book;
+
     private final ChuckNorris chuckNorris;
+
     private final Color color;
+
     private final Commerce commerce;
+
     private final Country country;
+
     private final Currency currency;
+
     private final Company company;
+
     private final Crypto crypto;
+
     private final IdNumber idNumber;
+
     private final Hacker hacker;
+
     private final Options options;
+
     private final Code code;
+
     private final Finance finance;
+
     private final Food food;
+
     private final GameOfThrones gameOfThrones;
+
     private final DateAndTime dateAndTime;
+
     private final Demographic demographic;
+
     private final Dog dog;
+
     private final Educator educator;
+
     private final ElderScrolls elderScrolls;
+
     private final Shakespeare shakespeare;
+
     private final SlackEmoji slackEmoji;
+
     private final Space space;
+
     private final Superhero superhero;
+
     private final Bool bool;
+
     private final Team team;
+
     private final Beer beer;
+
     private final University university;
+
     private final Cat cat;
+
     private final File file;
+
     private final Stock stock;
+
     private final LordOfTheRings lordOfTheRings;
+
     private final Zelda zelda;
+
     private final HarryPotter harryPotter;
+
     private final RockBand rockBand;
+
     private final Esports esports;
+
     private final Friends friends;
+
     private final Hipster hipster;
+
     private final Job job;
+
     private final TwinPeaks twinPeaks;
+
     private final RickAndMorty rickAndMorty;
+
     private final Yoda yoda;
+
     private final Matz matz;
+
     private final Witcher witcher;
+
     private final DragonBall dragonBall;
+
     private final FunnyName funnyName;
+
     private final HitchhikersGuideToTheGalaxy hitchhikersGuideToTheGalaxy;
+
     private final Hobbit hobbit;
+
     private final HowIMetYourMother howIMetYourMother;
+
     private final LeagueOfLegends leagueOfLegends;
+
     private final Overwatch overwatch;
+
     private final Robin robin;
+
     private final StarTrek starTrek;
+
     private final Weather weather;
+
     private final Lebowski lebowski;
+
     private final Medical medical;
+
     private final Animal animal;
+
     private final BackToTheFuture backToTheFuture;
+
     private final PrincessBride princessBride;
+
     private final Buffy buffy;
+
     private final Relationships relationships;
+
     private final Nation nation;
+
     private final Dune dune;
 
     public Faker() {
@@ -109,7 +186,6 @@ public class Faker {
     public Faker(Locale locale, Random random) {
         this.randomService = new RandomService(random);
         this.fakeValuesService = new FakeValuesService(locale, randomService);
-
         this.ancient = new Ancient(this);
         this.app = new App(this);
         this.artist = new Artist(this);
@@ -608,7 +684,7 @@ public class Faker {
     public Dune dune() {
         return dune;
     }
-    
+
     public String resolve(String key) {
         return this.fakeValuesService.resolve(key, this, this);
     }

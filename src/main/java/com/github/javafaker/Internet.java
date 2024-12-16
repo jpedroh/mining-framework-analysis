@@ -1,16 +1,14 @@
 package com.github.javafaker;
 
-import static org.apache.commons.lang3.StringUtils.join;
-import static org.apache.commons.lang3.StringUtils.stripAccents;
-
+import com.github.javafaker.service.FakerIDN;
+import com.github.javafaker.service.RandomService;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-
 import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.join;
+import static org.apache.commons.lang3.StringUtils.stripAccents;
 
-import com.github.javafaker.service.FakerIDN;
-import com.github.javafaker.service.RandomService;
 
 public class Internet {
     private final Faker faker;
@@ -52,17 +50,7 @@ public class Internet {
     }
 
     public String url() {
-        return join(
-                "www",
-                ".",
-                FakerIDN.toASCII(
-                        faker.name().firstName().toLowerCase().replaceAll("'", "") +
-                                "-" +
-                                domainWord()
-                ),
-                ".",
-                domainSuffix()
-        );
+        return join("www", ".", FakerIDN.toASCII((faker.name().firstName().toLowerCase().replaceAll("'", "") + "-") + domainWord()), ".", domainSuffix());
     }
 
     /**
@@ -139,7 +127,7 @@ public class Internet {
             return faker.lorem().characters(minimumLength, maximumLength, includeUppercase, includeDigit);
         }
     }
-    
+
     /**
      * <p>Returns a MAC address in the following format: 6-bytes in MM:MM:MM:SS:SS:SS format.</p>
      * @return a correctly formatted MAC address
@@ -302,7 +290,7 @@ public class Internet {
     public String uuid() {
         return UUID.randomUUID().toString();
     }
-          
+
     private <T> T random(T[] src) {
         return src[faker.random().nextInt(src.length)];
     }
@@ -323,6 +311,7 @@ public class Internet {
     }
 
     public enum UserAgent {
+
         AOL("aol"),
         CHROME("chrome"),
         FIREFOX("firefox"),
@@ -330,17 +319,16 @@ public class Internet {
         NETSCAPE("netscape"),
         OPERA("opera"),
         SAFARI("safari");
-
-        //Browser's name in corresponding yaml (internet.yml) file.
+        // Browser's name in corresponding yaml (internet.yml) file.
         private String browserName;
 
-        UserAgent(String browserName) {
+        private UserAgent(String browserName) {
             this.browserName = browserName;
         }
 
         private static UserAgent any() {
             UserAgent[] agents = UserAgent.values();
-            int randomIndex = (int)(Math.random() * agents.length);
+            int randomIndex = ((int) (Math.random() * agents.length));
             return agents[randomIndex];
         }
 

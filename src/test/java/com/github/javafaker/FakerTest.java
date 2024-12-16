@@ -1,22 +1,19 @@
 package com.github.javafaker;
 
+import com.github.javafaker.repeating.Repeat;
+import java.util.Locale;
+import java.util.Random;
+import org.junit.Test;
 import static com.github.javafaker.matchers.MatchesRegularExpression.matchesRegularExpression;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
 
-import java.util.Locale;
-import java.util.Random;
-
-import org.junit.Test;
-
-import com.github.javafaker.repeating.Repeat;
 
 public class FakerTest extends AbstractFakerTest {
-
     @Test
     public void bothifyShouldGenerateLettersAndNumbers() {
         assertThat(faker.bothify("????##@gmail.com"), matchesRegularExpression("\\w{4}\\d{2}@gmail.com"));
@@ -29,7 +26,7 @@ public class FakerTest extends AbstractFakerTest {
 
     @Test
     public void letterifyShouldGenerateUpperCaseLetters() {
-        assertThat(faker.bothify("????",true), matchesRegularExpression("[A-Z]{4}"));
+        assertThat(faker.bothify("????", true), matchesRegularExpression("[A-Z]{4}"));
     }
 
     @Test
@@ -112,17 +109,17 @@ public class FakerTest extends AbstractFakerTest {
         assertThat(faker.regexify("\\.\\*\\?\\+"), matchesRegularExpression("\\.\\*\\?\\+"));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = java.lang.RuntimeException.class)
     public void badExpressionTooManyArgs() {
         faker.expression("#{regexify 'a','a'}");
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = java.lang.RuntimeException.class)
     public void badExpressionTooFewArgs() {
         faker.expression("#{regexify}");
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = java.lang.RuntimeException.class)
     public void badExpressionCouldntCoerce() {
         faker.expression("#{number.number_between 'x','10'}");
     }
@@ -130,7 +127,7 @@ public class FakerTest extends AbstractFakerTest {
     @Test
     public void expression() {
         assertThat(faker.expression("#{regexify '(a|b){2,3}'}"), matchesRegularExpression("(a|b){2,3}"));
-        assertThat(faker.expression("#{regexify '\\.\\*\\?\\+'}"), matchesRegularExpression("\\.\\*\\?\\+"));
+        assertThat(faker.expression("#{regexify \'\\.\\*\\?\\+\'}"), matchesRegularExpression("\\.\\*\\?\\+"));
         assertThat(faker.expression("#{bothify '????','true'}"), matchesRegularExpression("[A-Z]{4}"));
         assertThat(faker.expression("#{bothify '????','false'}"), matchesRegularExpression("[a-z]{4}"));
         assertThat(faker.expression("#{letterify '????','true'}"), matchesRegularExpression("[A-Z]{4}"));
@@ -149,10 +146,8 @@ public class FakerTest extends AbstractFakerTest {
     public void regexifyShouldGenerateSameValueForFakerWithSameSeed() {
         long seed = 1L;
         String regex = "\\d";
-
         String firstResult = new Faker(new Random(seed)).regexify(regex);
         String secondResult = new Faker(new Random(seed)).regexify(regex);
-
         assertThat(secondResult, is(firstResult));
     }
 
@@ -161,7 +156,7 @@ public class FakerTest extends AbstractFakerTest {
         assertThat(faker.resolve("address.city_prefix"), not(isEmptyString()));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = java.lang.RuntimeException.class)
     public void resolveShouldThrowExceptionWhenPropertyDoesntExist() {
         final String resolve = faker.resolve("address.nothing");
         assertThat(resolve, is(nullValue()));

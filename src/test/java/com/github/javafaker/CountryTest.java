@@ -1,22 +1,19 @@
 package com.github.javafaker;
 
+import com.github.javafaker.repeating.Repeat;
+import org.junit.Test;
 import static com.github.javafaker.matchers.IsStringWithContents.isStringWithContents;
 import static com.github.javafaker.matchers.MatchesRegularExpression.matchesRegularExpression;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThat;
 
-import org.junit.Test;
-
-import com.github.javafaker.repeating.Repeat;
 
 public class CountryTest extends AbstractFakerTest {
-
     @Test
     @Repeat(times=10)
     public void testFlag() {
         String flag = faker.country().flag();
         assertThat(flag, matchesRegularExpression("^http:\\/\\/flags.fmcdn\\.net\\/data\\/flags\\/w580\\/[a-zA-Z0-9_]+\\.png$"));
     }
-
 
     @Test
     public void testCode2() {
@@ -35,7 +32,7 @@ public class CountryTest extends AbstractFakerTest {
 
     @Test
     public void testCurrency() {
-        assertThat(faker.country().currency(), matchesRegularExpression("([A-Za-zÀ-ÿ'’()-]+ ?)+"));
+        assertThat(faker.country().currency(), matchesRegularExpression("([A-Za-zÀ-ÿ\'’()-]+ ?)+"));
     }
 
     @Test

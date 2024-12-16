@@ -1,9 +1,16 @@
 package com.github.javafaker;
 
+import com.github.javafaker.repeating.Repeat;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.Locale;
+import org.apache.commons.validator.routines.EmailValidator;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 import static com.github.javafaker.matchers.CountOfCharactersMatcher.countOf;
 import static com.github.javafaker.matchers.MatchesRegularExpression.matchesRegularExpression;
 import static java.lang.Integer.parseInt;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.greaterThan;
@@ -14,20 +21,10 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
+import static org.junit.Assert.assertThat;
 
-import java.util.List;
-import java.util.Locale;
-
-import org.apache.commons.validator.routines.EmailValidator;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-
-import com.github.javafaker.repeating.Repeat;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 public class InternetTest extends AbstractFakerTest {
-
     @Test
     public void testEmailAddress() {
         String emailAddress = faker.internet().emailAddress();
@@ -196,10 +193,8 @@ public class InternetTest extends AbstractFakerTest {
     public void testIpV4Cidr() {
         assertThat(faker.internet().ipV4Cidr(), countOf('.', is(3)));
         assertThat(faker.internet().ipV4Cidr(), countOf('/', is(1)));
-        
         for (int i = 0; i < 1000; i++) {
-            assertThat(parseInt(faker.internet().ipV4Cidr().split("/")[1]),
-                    both(greaterThanOrEqualTo(1)).and(lessThan(32)));
+            assertThat(parseInt(faker.internet().ipV4Cidr().split("/")[1]), both(greaterThanOrEqualTo(1)).and(lessThan(32)));
         }
     }
 
@@ -255,10 +250,8 @@ public class InternetTest extends AbstractFakerTest {
     public void testIpV6Cidr() {
         assertThat(faker.internet().ipV6Cidr(), countOf(':', is(7)));
         assertThat(faker.internet().ipV6Cidr(), countOf('/', is(1)));
-
         for (int i = 0; i < 1000; i++) {
-            assertThat(parseInt(faker.internet().ipV6Cidr().split("/")[1]),
-                    both(greaterThanOrEqualTo(1)).and(lessThan(128)));
+            assertThat(parseInt(faker.internet().ipV6Cidr().split("/")[1]), both(greaterThanOrEqualTo(1)).and(lessThan(128)));
         }
     }
 
@@ -302,5 +295,4 @@ public class InternetTest extends AbstractFakerTest {
         //Test faker.internet().userAgentAny() for random user_agent retrieval.
         assertThat(faker.internet().userAgentAny(), not(isEmptyOrNullString()));
     }
-    
 }

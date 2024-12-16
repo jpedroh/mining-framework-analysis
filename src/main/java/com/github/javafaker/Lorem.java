@@ -1,12 +1,11 @@
 package com.github.javafaker;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.apache.commons.lang3.StringUtils.join;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
 
 public class Lorem {
     private final Faker faker;
@@ -14,7 +13,7 @@ public class Lorem {
     protected Lorem(Faker faker) {
         this.faker = faker;
     }
-    
+
     public char character() {
         return character(false);
     }
@@ -171,6 +170,6 @@ public class Lorem {
     }
 
     private static final char[] letters;
-    private static final char[] characters;
 
+    private static final char[] characters;
 }

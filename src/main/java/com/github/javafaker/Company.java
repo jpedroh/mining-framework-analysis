@@ -1,16 +1,13 @@
 package com.github.javafaker;
 
-import static org.apache.commons.lang3.StringUtils.join;
-
+import com.github.javafaker.service.FakerIDN;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.join;
 
-import com.github.javafaker.service.FakerIDN;
 
 public class Company {
-
     private final Faker faker;
 
     protected Company(Faker faker) {
@@ -70,13 +67,7 @@ public class Company {
     }
 
     public String url() {
-        return join(
-                "www",
-                ".",
-                FakerIDN.toASCII(domainName()),
-                ".",
-                domainSuffix()
-        );
+        return join("www", ".", FakerIDN.toASCII(domainName()), ".", domainSuffix());
     }
 
     private String domainName(){

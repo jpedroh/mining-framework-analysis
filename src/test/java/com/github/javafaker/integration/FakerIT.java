@@ -1,19 +1,7 @@
 package com.github.javafaker.integration;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.startsWith;
-import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.reflections.ReflectionUtils.getAllMethods;
-import static org.reflections.ReflectionUtils.withModifier;
-import static org.reflections.ReflectionUtils.withParametersCount;
-import static org.reflections.ReflectionUtils.withReturnType;
-
+import com.github.javafaker.Faker;
+import com.google.common.collect.Maps;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -25,27 +13,38 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.core.IsNot.not;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.reflections.ReflectionUtils.getAllMethods;
+import static org.reflections.ReflectionUtils.withModifier;
+import static org.reflections.ReflectionUtils.withParametersCount;
+import static org.reflections.ReflectionUtils.withReturnType;
 
-import com.github.javafaker.Faker;
-import com.google.common.collect.Maps;
 
 /**
  * The purpose of these tests is to ensure that the Locales have been properly configured
  * and that methods return values. The unit tests should ensure what the values returned
  * are correct. These tests just ensure that the methods can be invoked.
  */
-@RunWith(value = Parameterized.class)
+@RunWith(Parameterized.class)
 public class FakerIT {
-
     private static final Logger logger = LoggerFactory.getLogger(FakerIT.class);
+
     private final Locale locale;
+
     private final Faker faker;
 
     /**
@@ -55,18 +54,18 @@ public class FakerIT {
      * exceptions like this into this collection.
      */
     private static final Map<Locale, List<String>> exceptions = Maps.newHashMap();
+
     static {
         // 'it' has an empty suffix list so it never returns a value
         exceptions.put(new Locale("it"), Arrays.asList("Name.suffix"));
         exceptions.put(new Locale("es-mx"), Arrays.asList("Address.cityPrefix", "Address.citySuffix"));
         exceptions.put(new Locale("pt"), Arrays.asList("Address.cityPrefix", "Address.citySuffix"));
-        exceptions.put(new Locale("uk"), Arrays.asList("Address.stateAbbr", "Address.streetSuffix",
-                "Address.cityPrefix", "Address.citySuffix"));
+        exceptions.put(new Locale("uk"), Arrays.asList("Address.stateAbbr", "Address.streetSuffix", "Address.cityPrefix", "Address.citySuffix"));
     }
 
     public FakerIT(Locale locale, Random random) {
         this.locale = locale;
-        if (locale != null && random != null) {
+        if ((locale != null) && (random != null)) {
             faker = new Faker(locale, random);
         } else if (locale != null) {
             faker = new Faker(locale);
@@ -178,23 +177,18 @@ public class FakerIT {
 
     private void testAllMethodsThatReturnStringsActuallyReturnStrings(Object object) throws Exception {
         @SuppressWarnings("unchecked")
-        Set<Method> methodsThatReturnStrings = getAllMethods(object.getClass(),
-                withModifier(Modifier.PUBLIC),
-                withReturnType(String.class),
-                withParametersCount(0));
-
+        Set<Method> methodsThatReturnStrings = getAllMethods(object.getClass(), withModifier(Modifier.PUBLIC), withReturnType(java.lang.String.class), withParametersCount(0));
         for (Method method : methodsThatReturnStrings) {
             if (isExcepted(object, method)) {
                 continue;
             }
             final Object returnValue = method.invoke(object);
             logger.info("{} {}.{} = {}", locale, object.getClass().getSimpleName().toLowerCase(), method.getName(), returnValue);
-            String failureReason = method + " on " + object;
-            assertThat(failureReason, returnValue, is(instanceOf(String.class)));
-            final String returnValueAsString = (String) returnValue;
+            String failureReason = (method + " on ") + object;
+            assertThat(failureReason, returnValue, is(instanceOf(java.lang.String.class)));
+            final String returnValueAsString = ((String) (returnValue));
             assertThat(failureReason, returnValueAsString, not(isEmptyOrNullString()));
-            assertThat(failureReason + " is a slash encoded regex", returnValueAsString,
-                       not(allOf(startsWith("/"), endsWith("/"))));
+            assertThat(failureReason + " is a slash encoded regex", returnValueAsString, not(allOf(startsWith("/"), endsWith("/"))));
         }
     }
 
@@ -209,17 +203,12 @@ public class FakerIT {
         assertThat(faker.bothify("####???"), is(notNullValue()));
         assertThat(faker.letterify("????"), is(notNullValue()));
         assertThat(faker.numerify("####"), is(notNullValue()));
-
         assertThat(faker.lorem().paragraph(1), is(notNullValue()));
         assertThat(faker.lorem().paragraphs(1), is(notNullValue()));
-
         assertThat(faker.lorem().sentence(1), is(notNullValue()));
         assertThat(faker.lorem().sentences(1), is(notNullValue()));
-
         assertThat(faker.address().streetAddress(), is(notNullValue()));
-
         assertThat(faker.lorem().words(), is(notNullValue()));
         assertThat(faker.lorem().words(1), is(notNullValue()));
     }
-
 }

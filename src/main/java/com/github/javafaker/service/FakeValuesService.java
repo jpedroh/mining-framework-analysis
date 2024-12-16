@@ -1,5 +1,10 @@
 package com.github.javafaker.service;
 
+import com.github.javafaker.Address;
+import com.github.javafaker.Faker;
+import com.github.javafaker.Name;
+import com.github.javafaker.service.files.EnFile;
+import com.mifmif.common.regex.Generex;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,22 +17,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.github.javafaker.Address;
-import com.github.javafaker.Faker;
-import com.github.javafaker.Name;
-import com.github.javafaker.service.files.EnFile;
-import com.mifmif.common.regex.Generex;
 
 public class FakeValuesService {
-    private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#\\{([a-z0-9A-Z_.]+)\\s?(?:'([^']+)')?(?:,'([^']+)')*}");
+    private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#\\{([a-z0-9A-Z_.]+)\\s?(?:\'([^\']+)\')?(?:,\'([^\']+)\')*}");
 
     private final Logger log = Logger.getLogger("faker");
 
     private final List<FakeValuesInterface> fakeValuesList;
+
     private final RandomService randomService;
 
     /**
@@ -49,19 +49,19 @@ public class FakeValuesService {
      * </p>
      *
      * @param locale
+     * 		
      * @param randomService
+     * 		
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public FakeValuesService(Locale locale, RandomService randomService) {
         if (locale == null) {
             throw new IllegalArgumentException("locale is required");
         }
         this.randomService = randomService;
         locale = normalizeLocale(locale);
-
         final List<Locale> locales = localeChain(locale);
         final List<FakeValuesInterface> all = new ArrayList(locales.size());
-
         for (final Locale l : locales) {
             boolean isEnglish = l.equals(Locale.ENGLISH);
             if (isEnglish) {
@@ -74,7 +74,6 @@ public class FakeValuesService {
                 all.add(new FakeValues(locale));
             }
         }
-
         this.fakeValuesList = Collections.unmodifiableList(all);
     }
 
@@ -108,7 +107,6 @@ public class FakeValuesService {
      */
     private Locale normalizeLocale(Locale locale) {
         final String[] parts = locale.toString().split("[-_]");
-
         if (parts.length == 1) {
             return new Locale(parts[0]);
         } else {
@@ -124,8 +122,9 @@ public class FakeValuesService {
      */
     public Object fetch(String key) {
         List<?> valuesArray = new ArrayList<Object>();
-        if (fetchObject(key) instanceof ArrayList)
-            valuesArray = (ArrayList<?>)fetchObject(key);
+        if (fetchObject(key) instanceof ArrayList) {
+            valuesArray = ((ArrayList<?>) (fetchObject(key)));
+        }
         return valuesArray == null ? null : valuesArray.get(randomService.nextInt(valuesArray.size()));
     }
 
@@ -158,9 +157,11 @@ public class FakeValuesService {
     @SuppressWarnings("unchecked")
     public String safeFetch(String key, String defaultIfNull) {
         Object o = fetchObject(key);
-        if (o == null) return defaultIfNull;
+        if (o == null) {
+            return defaultIfNull;
+        }
         if (o instanceof List) {
-            List<String> values = (List<String>) o;
+            List<String> values = ((List<String>) (o));
             if (values.isEmpty()) {
                 return defaultIfNull;
             }
@@ -168,7 +169,7 @@ public class FakeValuesService {
         } else if (isSlashDelimitedRegex(o.toString())) {
             return String.format("#{regexify '%s'}", trimRegexSlashes(o.toString()));
         } else {
-            return (String) o;
+            return ((String) (o));
         }
     }
 
@@ -181,16 +182,15 @@ public class FakeValuesService {
      */
     public Object fetchObject(String key) {
         String[] path = key.split("\\.");
-
         Object result = null;
         for (FakeValuesInterface fakeValuesInterface : fakeValuesList) {
             Object currentValue = fakeValuesInterface;
-            for (int p = 0; currentValue != null && p < path.length; p++) {
+            for (int p = 0; (currentValue != null) && (p < path.length); p++) {
                 String currentPath = path[p];
                 if (currentValue instanceof Map) {
-                    currentValue = ((Map<?,?>) currentValue).get(currentPath);
-                } else  {
-                    currentValue = ((FakeValuesInterface) currentValue).get(currentPath);
+                    currentValue = ((Map<?, ?>) (currentValue)).get(currentPath);
+                } else {
+                    currentValue = ((FakeValuesInterface) (currentValue)).get(currentPath);
                 }
             }
             result = currentValue;
@@ -418,7 +418,6 @@ public class FakeValuesService {
         return resolved;
     }
 
-
     /**
      * @param expression input expression
      * @return true if s is non null and is a slash delimited regex (ex. {@code /[ab]/})
@@ -456,7 +455,6 @@ public class FakeValuesService {
                 .substring(1)
                 .toLowerCase();
     }
-
 
     /**
      * Given a directive like 'firstName', attempts to resolve it to a method.  For example if obj is an instance of
@@ -509,7 +507,6 @@ public class FakeValuesService {
             return null;
         }
     }
-
 
     /**
      * Find an accessor by name ignoring case.
@@ -574,7 +571,6 @@ public class FakeValuesService {
      * shot, returning both when successful.  This saves us from doing it more than once (coercing args).
      */
     private static class MethodAndCoercedArgs {
-
         private final Method method;
 
         private final List<Object> coerced;

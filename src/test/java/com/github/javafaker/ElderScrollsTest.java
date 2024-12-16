@@ -1,15 +1,12 @@
-
-
 package com.github.javafaker;
 
+import org.junit.Test;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThat;
 
-import org.junit.Test;
 
-public class ElderScrollsTest extends AbstractFakerTest  {
-
+public class ElderScrollsTest extends AbstractFakerTest {
     @Test
     public void testCity() {
         assertThat(faker.elderScrolls().city(), not(isEmptyOrNullString()));
