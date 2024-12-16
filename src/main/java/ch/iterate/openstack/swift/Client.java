@@ -1,9 +1,32 @@
 /*
  * See COPYING for license information.
  */
-
 package ch.iterate.openstack.swift;
 
+import ch.iterate.openstack.swift.exception.AuthorizationException;
+import ch.iterate.openstack.swift.exception.ContainerExistsException;
+import ch.iterate.openstack.swift.exception.ContainerNotEmptyException;
+import ch.iterate.openstack.swift.exception.ContainerNotFoundException;
+import ch.iterate.openstack.swift.exception.GenericException;
+import ch.iterate.openstack.swift.exception.NotFoundException;
+import ch.iterate.openstack.swift.handler.*;
+import ch.iterate.openstack.swift.method.Authentication10UsernameKeyRequest;
+import ch.iterate.openstack.swift.method.Authentication11UsernameKeyRequest;
+import ch.iterate.openstack.swift.method.Authentication20UsernamePasswordRequest;
+import ch.iterate.openstack.swift.method.AuthenticationRequest;
+import ch.iterate.openstack.swift.model.AccountInfo;
+import ch.iterate.openstack.swift.model.CDNContainer;
+import ch.iterate.openstack.swift.model.Container;
+import ch.iterate.openstack.swift.model.ContainerInfo;
+import ch.iterate.openstack.swift.model.ContainerMetadata;
+import ch.iterate.openstack.swift.model.ObjectMetadata;
+import ch.iterate.openstack.swift.model.Region;
+import ch.iterate.openstack.swift.model.StorageObject;
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
+import java.util.concurrent.*;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.http.HttpEntity;
@@ -35,38 +58,12 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.*;
-import java.util.concurrent.*;
-
-import ch.iterate.openstack.swift.exception.AuthorizationException;
-import ch.iterate.openstack.swift.exception.ContainerExistsException;
-import ch.iterate.openstack.swift.exception.ContainerNotEmptyException;
-import ch.iterate.openstack.swift.exception.ContainerNotFoundException;
-import ch.iterate.openstack.swift.exception.GenericException;
-import ch.iterate.openstack.swift.exception.NotFoundException;
-import ch.iterate.openstack.swift.handler.*;
-import ch.iterate.openstack.swift.method.Authentication10UsernameKeyRequest;
-import ch.iterate.openstack.swift.method.Authentication11UsernameKeyRequest;
-import ch.iterate.openstack.swift.method.Authentication20UsernamePasswordRequest;
-import ch.iterate.openstack.swift.method.AuthenticationRequest;
-import ch.iterate.openstack.swift.model.AccountInfo;
-import ch.iterate.openstack.swift.model.CDNContainer;
-import ch.iterate.openstack.swift.model.Container;
-import ch.iterate.openstack.swift.model.ContainerInfo;
-import ch.iterate.openstack.swift.model.ContainerMetadata;
-import ch.iterate.openstack.swift.model.ObjectMetadata;
-import ch.iterate.openstack.swift.model.Region;
-import ch.iterate.openstack.swift.model.StorageObject;
 
 /**
  * An OpenStack Swift client interface.  Here follows a basic example of logging in, creating a container and an
@@ -106,11 +103,14 @@ import ch.iterate.openstack.swift.model.StorageObject;
  * @author lvaughn
  */
 public class Client {
-
     private String username;
+
     private String password;
+
     private String tenantId;
+
     private AuthVersion authVersion = AuthVersion.v10;
+
     private URI authenticationURL;
 
     private AuthenticationResponse authenticationResponse;
@@ -118,7 +118,10 @@ public class Client {
     private HttpClient client;
 
     /**
-     * @param connectionTimeOut The connection timeout, in ms.
+     *
+     *
+     * @param connectionTimeOut
+     * 		The connection timeout, in ms.
      */
     public Client(final int connectionTimeOut) {
         this(new DefaultHttpClient() {
@@ -132,17 +135,18 @@ public class Client {
             @Override
             protected ClientConnectionManager createClientConnectionManager() {
                 SchemeRegistry schemeRegistry = new SchemeRegistry();
-                schemeRegistry.register(
-                        new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
-                schemeRegistry.register(
-                        new Scheme("https", 443, SSLSocketFactory.getSocketFactory()));
+                schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
+                schemeRegistry.register(new Scheme("https", 443, SSLSocketFactory.getSocketFactory()));
                 return new PoolingClientConnectionManager(schemeRegistry);
             }
         });
     }
 
     /**
-     * @param client The HttpClient to talk to Swift
+     *
+     *
+     * @param client
+     * 		The HttpClient to talk to Swift
      */
     public Client(HttpClient client) {
         this.client = client;
@@ -156,6 +160,7 @@ public class Client {
     }
 
     public enum AuthVersion {
+
         /**
          * Legacy authentication. ReSTful calls no longer use HTTP headers for request or response parameters.
          * Parameters are now sent via the XML or JSON message body.
@@ -165,8 +170,7 @@ public class Client {
          * Legacy authentication. Service endpoint URLs are now capable of specifying a region.
          */
         v11,
-        v20
-    }
+        v20;}
 
     /**
      * @param authVersion Version
@@ -609,7 +613,6 @@ public class Client {
         return this.execute(method, new ContainerInfoHandler(region, container));
     }
 
-
     /**
      * Creates a container
      *
@@ -714,7 +717,6 @@ public class Client {
         }
     }
 
-
     /**
      * Gets current CDN sharing status of the container
      *
@@ -742,7 +744,6 @@ public class Client {
         final CDNContainer info = this.getCDNContainerInfo(region, container);
         return info.isEnabled();
     }
-
 
     /**
      * Creates a path (but not any of the sub portions of the path)
@@ -794,9 +795,11 @@ public class Client {
     /**
      * Gets list of all of the containers associated with this account.
      *
-     * @param region  The name of the storage region
      * @return A list of containers
-     * @throws GenericException Unexpected response
+     * @throws GenericException
+     * 		Unexpected response
+     * @throws GenericException
+     * 		Unexpected response
      */
     public List<CDNContainer> listCdnContainerInfo(Region region) throws IOException {
         return listCdnContainerInfo(region, -1, null);
@@ -805,8 +808,8 @@ public class Client {
     /**
      * Gets list of all of the containers associated with this account.
      *
-     * @param region  The name of the storage region
-     * @param limit   The maximum number of container names to return
+     * @param limit  The maximum number of container names to return
+     * @param marker All of the names will come after <code>marker</code> lexicographically.
      * @return A list of containers
      * @throws GenericException Unexpected response
      */
@@ -826,10 +829,10 @@ public class Client {
     public List<CDNContainer> listCdnContainerInfo(Region region, int limit, String marker) throws IOException {
         LinkedList<NameValuePair> params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("format", "xml"));
-        if(limit > 0) {
+        if (limit > 0) {
             params.add(new BasicNameValuePair("limit", String.valueOf(limit)));
         }
-        if(marker != null) {
+        if (marker != null) {
             params.add(new BasicNameValuePair("marker", marker));
         }
         HttpGet method = new HttpGet(region.getCDNManagementUrl(params));
@@ -839,13 +842,19 @@ public class Client {
     /**
      * Create a Dynamic Large Object manifest on the server, including metadata
      *
-     * @param region        The name of the storage region
-     * @param container     The name of the container
-     * @param contentType   The MIME type of the file
-     * @param name          The name of the file on the server
-     * @param commonPrefix  Set manifest header content here (the shared prefix of objects that make up the dynamic large object)
-     * @return the ETAG of the large object if response code is 201
-     * @throws GenericException Unexpected response
+     * @param container
+     * 		The name of the container
+     * @param contentType
+     * 		The MIME type of the file
+     * @param name
+     * 		The name of the file on the server
+     * @param manifest
+     * 		Set manifest content here
+     * @return True if response code is 201
+     * @throws GenericException
+     * 		Unexpected response
+     * @throws GenericException
+     * 		Unexpected response
      */
     public String createDLOManifestObject(Region region, String container, String contentType, String name, String commonPrefix) throws IOException {
         return createDLOManifestObject(region, container, contentType, name, commonPrefix, new HashMap<String, String>());
@@ -854,14 +863,21 @@ public class Client {
     /**
      * Create a Dynamic Large Object manifest on the server, including metadata
      *
-     * @param region        The name of the storage region
-     * @param container     The name of the container
-     * @param contentType   The MIME type of the file
-     * @param name          The name of the file on the server
-     * @param commonPrefix  Set manifest header content here (the shared prefix of objects that make up the dynamic large object)
-     * @param metadata      A map with the metadata as key names and values as the metadata values
-     * @return the ETAG of the large object if response code is 201
-     * @throws GenericException Unexpected response
+     * @param container
+     * 		The name of the container
+     * @param contentType
+     * 		The MIME type of the file
+     * @param name
+     * 		The name of the file on the server
+     * @param manifest
+     * 		Set manifest content here
+     * @param metadata
+     * 		A map with the metadata as key names and values as the metadata values
+     * @return True if response code is 201
+     * @throws GenericException
+     * 		Unexpected response
+     * @throws GenericException
+     * 		Unexpected response
      */
     public String createDLOManifestObject(Region region, String container, String contentType, String name, String commonPrefix, Map<String, String> metadata) throws IOException {
         byte[] arr = new byte[0];
@@ -870,14 +886,13 @@ public class Client {
         ByteArrayEntity entity = new ByteArrayEntity(arr);
         entity.setContentType(contentType);
         method.setEntity(entity);
-        for(Map.Entry<String, String> key : this.renameObjectMetadata(metadata).entrySet()) {
+        for (Map.Entry<String, String> key : this.renameObjectMetadata(metadata).entrySet()) {
             method.setHeader(key.getKey(), key.getValue());
         }
         Response response = this.execute(method, new DefaultResponseHandler());
-        if(response.getStatusCode() == HttpStatus.SC_CREATED) {
+        if (response.getStatusCode() == HttpStatus.SC_CREATED) {
             return response.getResponseHeader(HttpHeaders.ETAG).getValue();
-        }
-        else {
+        } else {
             throw new GenericException(response);
         }
     }
@@ -910,15 +925,14 @@ public class Client {
             manifestEntity.setContentType(contentType);
             HttpPut method = new HttpPut(url);
             method.setEntity(manifestEntity);
-            for(Map.Entry<String, String> key : this.renameObjectMetadata(metadata).entrySet()) {
+            for (Map.Entry<String, String> key : this.renameObjectMetadata(metadata).entrySet()) {
                 method.setHeader(key.getKey(), key.getValue());
             }
             method.setHeader(Constants.X_STATIC_LARGE_OBJECT, "true");
             Response response = this.execute(method, new DefaultResponseHandler());
-            if(response.getStatusCode() == HttpStatus.SC_CREATED) {
+            if (response.getStatusCode() == HttpStatus.SC_CREATED) {
                 manifestEtag = response.getResponseHeader(HttpHeaders.ETAG).getValue();
-            }
-            else {
+            } else {
                 throw new GenericException(response);
             }
         } catch (URISyntaxException ex) {
@@ -1015,14 +1029,21 @@ public class Client {
      * not know the entire length of your content when you start to write it.  Nor do you have to hold it entirely in memory
      * at the same time.
      *
-     * @param region      The name of the storage region
-     * @param container   The name of the container
-     * @param data        Any object that implements InputStream
-     * @param contentType The MIME type of the file
-     * @param name        The name of the file on the server
-     * @param metadata    A map with the metadata as key names and values as the metadata values
-     * @return the file ETAG if response code is 201
-     * @throws GenericException Unexpected response
+     * @param container
+     * 		The name of the container
+     * @param data
+     * 		Any object that implements InputStream
+     * @param contentType
+     * 		The MIME type of the file
+     * @param name
+     * 		The name of the file on the server
+     * @param metadata
+     * 		A map with the metadata as key names and values as the metadata values
+     * @return True if response code is 201
+     * @throws GenericException
+     * 		Unexpected response
+     * @throws GenericException
+     * 		Unexpected response
      */
     public String storeObject(Region region, String container, InputStream data, String contentType, String name, Map<String, String> metadata) throws IOException {
         HttpPut method = new HttpPut(region.getStorageUrl(container, name));
@@ -1030,43 +1051,50 @@ public class Client {
         entity.setChunked(true);
         entity.setContentType(contentType);
         method.setEntity(entity);
-        for(Map.Entry<String, String> key : this.renameObjectMetadata(metadata).entrySet()) {
+        for (Map.Entry<String, String> key : this.renameObjectMetadata(metadata).entrySet()) {
             method.setHeader(key.getKey(), key.getValue());
         }
         Response response = this.execute(method, new DefaultResponseHandler());
-        if(response.getStatusCode() == HttpStatus.SC_CREATED) {
+        if (response.getStatusCode() == HttpStatus.SC_CREATED) {
             return response.getResponseHeader(HttpHeaders.ETAG).getValue();
-        }
-        else {
+        } else {
             throw new GenericException(response);
         }
     }
 
     /**
-     * @param region      The name of the storage region
-     * @param container The name of the container
-     * @param name      The name of the object
-     * @param entity    The name of the request entity (make sure to set the Content-Type
-     * @param metadata  The metadata for the object
-     * @param md5sum    The 32 character hex encoded MD5 sum of the data
+     *
+     *
+     * @param container
+     * 		The name of the container
+     * @param name
+     * 		The name of the object
+     * @param entity
+     * 		The name of the request entity (make sure to set the Content-Type
+     * @param metadata
+     * 		The metadata for the object
+     * @param md5sum
+     * 		The 32 character hex encoded MD5 sum of the data
      * @return The ETAG if the save was successful, null otherwise
-     * @throws GenericException There was a protocol level error talking to CloudFiles
+     * @throws GenericException
+     * 		There was a protocol level error talking to CloudFiles
+     * @throws GenericException
+     * 		There was a protocol level error talking to CloudFiles
      */
     public String storeObject(Region region, String container, String name, HttpEntity entity, Map<String, String> metadata, String md5sum) throws IOException {
         HttpPut method = new HttpPut(region.getStorageUrl(container, name));
         method.setEntity(entity);
-        if(md5sum != null) {
+        if (md5sum != null) {
             method.setHeader(HttpHeaders.ETAG, md5sum);
         }
         method.setHeader(entity.getContentType());
-        for(Map.Entry<String, String> key : this.renameObjectMetadata(metadata).entrySet()) {
+        for (Map.Entry<String, String> key : this.renameObjectMetadata(metadata).entrySet()) {
             method.setHeader(key.getKey(), key.getValue());
         }
         Response response = this.execute(method, new DefaultResponseHandler());
-        if(response.getStatusCode() == HttpStatus.SC_CREATED) {
+        if (response.getStatusCode() == HttpStatus.SC_CREATED) {
             return response.getResponseHeader(HttpHeaders.ETAG).getValue();
-        }
-        else {
+        } else {
             throw new GenericException(response);
         }
     }
@@ -1419,9 +1447,9 @@ public class Client {
         method.setHeader(HttpHeaders.CONTENT_TYPE, "text/plain");
         // Newline separated list of url encoded objects to delete
         StringBuilder body = new StringBuilder();
-        for(String object : objects) {
+        for (String object : objects) {
             final String path = region.getStorageUrl(container, object).getRawPath();
-            body.append(path.substring(region.getStorageUrl().getRawPath().length() + 1)).append('\n');
+            body.append(path.substring(region.getStorageUrl().getRawPath().length() + 1) + "\n").append('\n');
         }
         method.setEntity(new StringEntity(body.toString(), "UTF-8"));
         this.execute(method, new DefaultResponseHandler());
