@@ -21,8 +21,8 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
-public class JSON {
 
+public class JSON {
     public static void main(String[] args) throws Exception {
         ArrayList<String> bookTitles = getBookTitles();
         printToConsole(bookTitles);
@@ -30,9 +30,9 @@ public class JSON {
     }
 
     private static void saveToFiles(ArrayList<String> bookTitles) throws IOException {
-        JSONArray bookTitleList = initializeBookList(bookTitles);
+        JSONArray outputList = initializeBookList(bookTitles);
         saveAsRawJsonFile(bookTitleList);
-        saveAsIndentedJsonFile(bookTitleList);        
+        saveAsIndentedJsonFile(bookTitleList);
     }
 
     private static JSONArray initializeBookList(ArrayList<String> bookTitles) {
@@ -40,7 +40,7 @@ public class JSON {
         for (String title : bookTitles) {
             bookTitleList.add(title);
         }
-        return bookTitleList;       
+        return outputList;
     }
 
     private static void saveAsIndentedJsonFile(JSONArray outputList) throws IOException {
