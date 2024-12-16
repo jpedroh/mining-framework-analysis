@@ -18,24 +18,25 @@
  */
 package org.structr.web.function;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import org.apache.commons.io.IOUtils;
 import org.structr.common.error.FrameworkException;
 import org.structr.core.app.StructrApp;
 import org.structr.core.property.PropertyKey;
 import org.structr.core.property.PropertyMap;
 import org.structr.core.property.StringProperty;
-import org.structr.storage.StorageProviderFactory;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.schema.action.ActionContext;
+import org.structr.storage.StorageProviderFactory;
 import org.structr.web.common.FileHelper;
 import org.structr.web.entity.File;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 public class CopyFileContentsFunction extends UiAdvancedFunction {
-
 	public static final String ERROR_MESSAGE_COPY_FILE_CONTENTS = "Usage: ${ copy_file_contents(sourceFile, targetFile) }";
+
 	public static final String ERROR_MESSAGE_COPY_FILE_CONTENTS_JS = "Usage: ${{ Structr.copy_file_contents(sourceFile, targetFile); }}";
 
 	@Override
@@ -50,57 +51,44 @@ public class CopyFileContentsFunction extends UiAdvancedFunction {
 
 	@Override
 	public Object apply(final ActionContext ctx, final Object caller, Object[] sources) throws FrameworkException {
-
 		try {
-
 			assertArrayHasMinLengthAndAllElementsNotNull(sources, 2);
-
-			final Object toCopy       = sources[0];
+			final Object toCopy = sources[0];
 			final Object toBeReplaced = sources[1];
-
-			if (toCopy instanceof File && toBeReplaced instanceof File) {
-
-				File nodeToCopy = (File) toCopy;
-				File nodeToBeReplaced = (File) toBeReplaced;
-
-				try (final InputStream is = StorageProviderFactory.getStorageProvider(nodeToCopy).getInputStream(); final OutputStream os = StorageProviderFactory.getStorageProvider(nodeToBeReplaced).getOutputStream()) {
-
+			if ((toCopy instanceof File) && (toBeReplaced instanceof File)) {
+				File nodeToCopy = ((File) (toCopy));
+				File nodeToBeReplaced = ((File) (toBeReplaced));
+				try (
+<<<<<<< LEFT
+final InputStream is = StorageProviderFactory.getStorageProvider(nodeToCopy).getInputStream(); final OutputStream os = StorageProviderFactory.getStorageProvider(nodeToBeReplaced).getOutputStream()
+=======
+final InputStream is = StorageProviderFactory.getStorageProvider(nodeToCopy).getInputStream(); final OutputStream os = StorageProviderFactory.getStorageProvider(nodeToBeReplaced).getOutputStream()
+>>>>>>> RIGHT
+				) {
 					IOUtils.copy(is, os);
-
 					final PropertyKey<Integer> versionKey = StructrApp.key(File.class, "version");
-					final PropertyKey<Long> checksumKey   = StructrApp.key(File.class, "checksum");
-					final PropertyKey<Long> sizeKey       = StructrApp.key(File.class, "size");
-					final PropertyMap changedProperties   = new PropertyMap();
-
+					final PropertyKey<Long> checksumKey = StructrApp.key(File.class, "checksum");
+					final PropertyKey<Long> sizeKey = StructrApp.key(File.class, "size");
+					final PropertyMap changedProperties = new PropertyMap();
 					changedProperties.put(checksumKey, FileHelper.getChecksum(nodeToBeReplaced));
 					changedProperties.put(versionKey, 0);
 					changedProperties.put(new StringProperty("contentType"), nodeToCopy.getProperty(new StringProperty("contentType")));
-
 					long fileSize = FileHelper.getSize(nodeToBeReplaced);
 					if (fileSize > 0) {
-
 						changedProperties.put(sizeKey, fileSize);
 					}
-
 					nodeToBeReplaced.unlockSystemPropertiesOnce();
 					nodeToBeReplaced.setProperties(nodeToBeReplaced.getSecurityContext(), changedProperties);
-
 					return nodeToBeReplaced;
-
 				} catch (IOException | FrameworkException ex) {
-
 					logger.error("Error: Could not copy file due to exception.", ex);
 					return "Error: Could not copy file due to exception.";
 				}
-
 			} else {
-
 				logger.warn("Error: entities are not instances of File. Parameters: {}", getParametersAsString(sources));
 				return "Error: entities are not nodes.";
 			}
-
-		} catch (IllegalArgumentException e) {
-
+		} catch (java.lang.IllegalArgumentException e) {
 			logParameterError(caller, sources, e.getMessage(), ctx.isJavaScriptContext());
 			return usage(ctx.isJavaScriptContext());
 		}

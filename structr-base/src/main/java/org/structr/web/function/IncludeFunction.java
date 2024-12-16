@@ -18,6 +18,10 @@
  */
 package org.structr.web.function;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.structr.common.SecurityContext;
@@ -29,25 +33,22 @@ import org.structr.core.app.App;
 import org.structr.core.app.StructrApp;
 import org.structr.core.graph.NodeInterface;
 import org.structr.core.property.PropertyKey;
-import org.structr.storage.StorageProviderFactory;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.schema.action.ActionContext;
+import org.structr.storage.StorageProviderFactory;
 import org.structr.web.common.RenderContext;
 import org.structr.web.datasource.FunctionDataSource;
 import org.structr.web.entity.File;
 import org.structr.web.entity.dom.DOMNode;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.List;
 
 /**
  * Convenience method to render named nodes. If more than one node is found, an error message is returned that informs the user that this is not allowed and can result in unexpected
  * behavior (instead of including the node).
  */
 public class IncludeFunction extends UiCommunityFunction {
-
 	public static final String ERROR_MESSAGE_INCLUDE    = "Usage: ${include(name)}. Example: ${include(\"Main Template\")}";
+
 	public static final String ERROR_MESSAGE_INCLUDE_JS = "Usage: ${{Structr.include(name)}}. Example: ${{Structr.include(\"Main Template\")}}";
 
 	@Override
@@ -153,91 +154,61 @@ public class IncludeFunction extends UiCommunityFunction {
 	}
 
 	protected String renderNode(final SecurityContext securityContext, final ActionContext ctx, final RenderContext innerCtx, final Object[] sources, final App app, final DOMNode node, final boolean useBuffer) throws FrameworkException {
-
 		if (node != null) {
-
-			if (sources.length == 3 && sources[1] instanceof Iterable && sources[2] instanceof String ) {
-
-				final Iterable<GraphObject> iterable = FunctionDataSource.map((Iterable)sources[1]);
-				final String dataKey                 = (String)sources[2];
-
+			if (((sources.length == 3) && (sources[1] instanceof Iterable)) && (sources[2] instanceof String)) {
+				final Iterable<GraphObject> iterable = FunctionDataSource.map(((Iterable) (sources[1])));
+				final String dataKey = ((String) (sources[2]));
 				innerCtx.setListSource(iterable);
 				node.renderNodeList(securityContext, innerCtx, 0, dataKey);
-
 			} else {
-
 				node.render(innerCtx, 0);
 			}
-
 			if (innerCtx.appLibRendered()) {
-				((RenderContext)ctx).setAppLibRendered(true);
+				((RenderContext) (ctx)).setAppLibRendered(true);
 			}
-
 		} else {
-
-			final File file = app.nodeQuery(File.class).andName((String)sources[0]).getFirst();
-
+			final File file = app.nodeQuery(File.class).andName(((String) (sources[0]))).getFirst();
 			if (file != null) {
-
-				final String name        = file.getProperty(NodeInterface.name);
+				final String name = file.getProperty(NodeInterface.name);
 				final String contentType = file.getContentType();
-				final String charset     = StringUtils.substringAfterLast(contentType, "charset=");
-				final String extension   = StringUtils.substringAfterLast(name, ".");
-
-				if (contentType == null || StringUtils.isBlank(extension)) {
-
-					logger.warn("No valid file type detected. Please make sure {} has a valid content type set or file extension. Parameters: {}", new Object[] { name, getParametersAsString(sources) });
-					return "No valid file type detected. Please make sure " + name + " has a valid content type set or file extension.";
-
+				final String charset = StringUtils.substringAfterLast(contentType, "charset=");
+				final String extension = StringUtils.substringAfterLast(name, ".");
+				if ((contentType == null) || StringUtils.isBlank(extension)) {
+					logger.warn("No valid file type detected. Please make sure {} has a valid content type set or file extension. Parameters: {}", new Object[]{ name, getParametersAsString(sources) });
+					return ("No valid file type detected. Please make sure " + name) + " has a valid content type set or file extension.";
 				}
-
 				if (contentType.startsWith("text/css")) {
-
-					return "<link href=\"" + file.getPath() + "\" rel=\"stylesheet\">";
-
+					return ("<link href=\"" + file.getPath()) + "\" rel=\"stylesheet\">";
 				} else if (contentType.contains("/javascript")) {
-
-					return "<script src=\"" + file.getPath() + "\"></script>";
-
+					return ("<script src=\"" + file.getPath()) + "\"></script>";
 				} else if (contentType.startsWith("image/svg")) {
-
 					try (final InputStream is = file.getInputStream()) {
-
-						final byte[] buffer = new byte[Long.valueOf(StorageProviderFactory.getStorageProvider(file).size()).intValue()];
+						final byte[] buffer = new byte[Long.valueOf(
+<<<<<<< LEFT
+StorageProviderFactory.getStorageProvider(file).size()
+=======
+StorageProviderFactory.getStorageProvider(file).size()
+>>>>>>> RIGHT
+						).intValue()];
 						IOUtils.read(is, buffer);
 						return StringUtils.toEncodedString(buffer, Charset.forName(charset));
-
 					} catch (IOException ex) {
-
 						logger.warn("Exception for parameters: {}", getParametersAsString(sources));
 						logger.error("", ex);
-
 					}
-
-					return "<img alt=\"" + name + "\" src=\"" + file.getPath() + "\">";
-
+					return ((("<img alt=\"" + name) + "\" src=\"") + file.getPath()) + "\">";
 				} else if (contentType.startsWith("image/")) {
-
-					return "<img alt=\"" + name + "\" src=\"" + file.getPath() + "\">";
-
+					return ((("<img alt=\"" + name) + "\" src=\"") + file.getPath()) + "\">";
 				} else {
-
-					logger.warn("Don't know how to render content type or extension of {}. Parameters: {}", new Object[] { name, getParametersAsString(sources) });
-					return "Don't know how to render content type or extension of  " + name + ".";
-
+					logger.warn("Don't know how to render content type or extension of {}. Parameters: {}", new Object[]{ name, getParametersAsString(sources) });
+					return ("Don't know how to render content type or extension of  " + name) + ".";
 				}
-
 			}
-
 		}
-
 		if (useBuffer) {
-
 			// output was written to RenderContext async buffer
 			return null;
-
 		} else {
-
 			// output needs to be returned as a function result
 			return StringUtils.join(innerCtx.getBuffer().getQueue(), "");
 		}

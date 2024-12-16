@@ -18,6 +18,13 @@
  */
 package org.structr.text;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.detect.DefaultDetector;
@@ -43,34 +50,27 @@ import org.structr.core.app.StructrApp;
 import org.structr.core.entity.Person;
 import org.structr.core.entity.Principal;
 import org.structr.core.graph.Tx;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.storage.StorageProviderFactory;
 import org.structr.web.entity.File;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  *
  *
  */
 public class FulltextIndexingAgent extends Agent<String> {
-
 	private static final Logger logger = LoggerFactory.getLogger(FulltextIndexingAgent.class.getName());
+
 	static final Map<String, Set<String>> languageStopwordMap = new LinkedHashMap<>();
+
 	public static final String TASK_NAME                              = "FulltextIndexing";
 
 	private final Detector detector;
 
 	public FulltextIndexingAgent() {
-
 		setName(TASK_NAME);
 		setDaemon(true);
-
 		detector = new DefaultDetector(MimeTypes.getDefaultMimeTypes());
 	}
 
@@ -310,43 +310,35 @@ public class FulltextIndexingAgent extends Agent<String> {
 	}
 
 	private long getFileSize(final Indexable indexable) {
-
 		if (indexable instanceof File) {
-
-			final File file     = (File)indexable;
-			final Long fileSize = StorageProviderFactory.getStorageProvider(file).size();
-
+			final File file = ((File) (indexable));
+			final Long fileSize = 
+<<<<<<< LEFT
+StorageProviderFactory.getStorageProvider(file)
+=======
+StorageProviderFactory.getStorageProvider(file)
+>>>>>>> RIGHT
+			.size();
 			if (fileSize != null) {
-
 				return fileSize;
 			}
-
 		}
-
 		return -1L;
 	}
 
 	static {
-
 		try (final ZipInputStream zis = new ZipInputStream(new BufferedInputStream(FulltextIndexingAgent.class.getResourceAsStream("/stopwords/stop-words.zip")))) {
-
 			for (ZipEntry entry = zis.getNextEntry(); entry != null; entry = zis.getNextEntry()) {
-
 				if (!entry.isDirectory()) {
-
 					final String entryName = entry.getName();
 					if (entryName.contains("_") && entryName.endsWith(".txt")) {
-
-						final int langPos     = entryName.lastIndexOf("_") + 1;
+						final int langPos = entryName.lastIndexOf("_") + 1;
 						final String language = entryName.substring(langPos, langPos + 2);
-
 						Set<String> stopwordSet = languageStopwordMap.get(language);
 						if (stopwordSet == null) {
-
 							stopwordSet = new LinkedHashSet<>();
 							languageStopwordMap.put(language, stopwordSet);
 						}
-
 						// read stopword set
 						for (final String word : IOUtils.readLines(zis)) {
 							stopwordSet.add(word.trim());
@@ -354,9 +346,7 @@ public class FulltextIndexingAgent extends Agent<String> {
 					}
 				}
 			}
-
 		} catch (IOException ioex) {
-
 			logger.warn("", ioex);
 		}
 	}

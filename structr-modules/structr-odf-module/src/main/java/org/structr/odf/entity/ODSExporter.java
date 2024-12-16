@@ -18,6 +18,9 @@
  */
 package org.structr.odf.entity;
 
+import java.net.URI;
+import java.util.*;
+import java.util.Map.Entry;
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
 import org.odftoolkit.odfdom.doc.table.OdfTableCell;
@@ -35,35 +38,26 @@ import org.structr.core.app.App;
 import org.structr.core.app.StructrApp;
 import org.structr.core.entity.AbstractNode;
 import org.structr.core.property.StringProperty;
-import org.structr.storage.StorageProviderFactory;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.schema.SchemaService;
+import org.structr.storage.StorageProviderFactory;
 import org.structr.transform.VirtualType;
 import org.structr.web.entity.File;
 
-import java.net.URI;
-import java.util.*;
-import java.util.Map.Entry;
 
 /**
  *
  */
 public interface ODSExporter extends ODFExporter {
-
-	static class Impl { static {
-
-		final JsonSchema schema   = SchemaService.getDynamicSchema();
-		final JsonObjectType type = schema.addType("ODSExporter");
-
-		type.setImplements(URI.create("https://structr.org/v1.1/definitions/ODSExporter"));
-		type.setExtends(URI.create("#/definitions/ODFExporter"));
-
-		type.addMethod("exportAttributes")
-			.addParameter("ctx", SecurityContext.class.getName())
-			.addParameter("uuid", String.class.getName())
-			.setSource(ODSExporter.class.getName() + ".exportAttributes(this, uuid, ctx);")
-			.addException(FrameworkException.class.getName())
-			.setDoExport(true);
-	}}
+	static class Impl {
+		static {
+			final JsonSchema schema = SchemaService.getDynamicSchema();
+			final JsonObjectType type = schema.addType("ODSExporter");
+			type.setImplements(URI.create("https://structr.org/v1.1/definitions/ODSExporter"));
+			type.setExtends(URI.create("#/definitions/ODFExporter"));
+			type.addMethod("exportAttributes").addParameter("ctx", SecurityContext.class.getName()).addParameter("uuid", java.lang.String.class.getName()).setSource(ODSExporter.class.getName() + ".exportAttributes(this, uuid, ctx);").addException(FrameworkException.class.getName()).setDoExport(true);
+		}
+	}
 
 	static void writeCollectionToCells(final OdfTable sheet, final OdfTableCell startCell, final Collection col) {
 
@@ -139,57 +133,50 @@ public interface ODSExporter extends ODFExporter {
 	}
 
 	public static void exportAttributes(final ODSExporter thisNode, final String uuid, final SecurityContext securityContext) throws FrameworkException {
-
-		final File output                     = thisNode.getResultDocument();
-		final VirtualType transformation      = thisNode.getTransformationProvider();
-
+		final File output = thisNode.getResultDocument();
+		final VirtualType transformation = thisNode.getTransformationProvider();
 		try {
-
 			final App app = StructrApp.getInstance();
 			final ResultStream result = app.nodeQuery(AbstractNode.class).and(GraphObject.id, uuid).getResultStream();
 			final ResultStream transformedResult = transformation.transformOutput(securityContext, AbstractNode.class, result);
-
 			Map<String, Object> nodeProperties = new HashMap<>();
-			GraphObjectMap node = (GraphObjectMap) Iterables.first(transformedResult);
-			node.getPropertyKeys(null).forEach(
-				p -> nodeProperties.put(p.dbName(), node.getProperty(p))
-			);
-
-			OdfSpreadsheetDocument spreadsheet = OdfSpreadsheetDocument.loadDocument(StorageProviderFactory.getStorageProvider(output).getInputStream());
+			GraphObjectMap node = ((GraphObjectMap) (Iterables.first(transformedResult)));
+			node.getPropertyKeys(null).forEach(( p) -> nodeProperties.put(p.dbName(), node.getProperty(p)));
+			OdfSpreadsheetDocument spreadsheet = OdfSpreadsheetDocument.loadDocument(
+<<<<<<< LEFT
+StorageProviderFactory
+=======
+StorageProviderFactory
+>>>>>>> RIGHT
+			.getStorageProvider(output).getInputStream());
 			OdfTable sheet = spreadsheet.getTableList().get(0);
-
 			Iterator<Entry<String, Object>> it = nodeProperties.entrySet().iterator();
-
 			while (it.hasNext()) {
-
 				Entry<String, Object> currentEntry = it.next();
 				String address = currentEntry.getKey();
 				Object val = currentEntry.getValue();
-
 				if (val instanceof Collection) {
-
-					Collection col = (Collection) val;
+					Collection col = ((Collection) (val));
 					writeCollectionToCells(sheet, sheet.getCellByPosition(address), col);
-
 				} else if (val instanceof String[]) {
-
-					String[] arr = (String[]) val;
+					String[] arr = ((String[]) (val));
 					List<String> list = new ArrayList<>(Arrays.asList(arr));
 					writeCollectionToCells(sheet, sheet.getCellByPosition(address), list);
-
 				} else {
 					writeObjectToCell(sheet.getCellByPosition(address), val);
 				}
-
-			}
-
-			spreadsheet.save(StorageProviderFactory.getStorageProvider(output).getOutputStream());
+			} 
+			spreadsheet.save(
+<<<<<<< LEFT
+StorageProviderFactory
+=======
+StorageProviderFactory
+>>>>>>> RIGHT
+			.getStorageProvider(output).getOutputStream());
 			spreadsheet.close();
-
-		} catch (Exception e) {
+		} catch (java.lang.Exception e) {
 			final Logger logger = LoggerFactory.getLogger(ODSExporter.class);
 			logger.error("Error while exporting to ODS", e);
 		}
 	}
-
 }

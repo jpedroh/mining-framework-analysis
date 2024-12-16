@@ -18,6 +18,10 @@
  */
 package org.structr.files.ssh;
 
+import java.nio.file.attribute.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.structr.api.util.Iterables;
@@ -25,27 +29,23 @@ import org.structr.common.error.FrameworkException;
 import org.structr.core.app.StructrApp;
 import org.structr.core.entity.Group;
 import org.structr.core.graph.Tx;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.storage.StorageProviderFactory;
 import org.structr.web.entity.AbstractFile;
 import org.structr.web.entity.File;
 import org.structr.web.entity.Folder;
 
-import java.nio.file.attribute.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  *
  */
 public class StructrPosixFileAttributes implements PosixFileAttributes {
-
 	private static final Logger logger = LoggerFactory.getLogger(StructrPosixFileAttributes.class.getName());
 
 	final AbstractFile file;
 
 	StructrPosixFileAttributes(final StructrSSHFile path) {
-		file = ((StructrSSHFile) path).getActualFile();
+		file = ((StructrSSHFile) (path)).getActualFile();
 	}
 
 	@Override
@@ -168,16 +168,19 @@ public class StructrPosixFileAttributes implements PosixFileAttributes {
 
 	@Override
 	public long size() {
-
 		long size = 0;
-
-		try (Tx tx = StructrApp.getInstance().tx()) {
-			size = StorageProviderFactory.getStorageProvider(file).size();
+		try (final Tx tx = StructrApp.getInstance().tx()) {
+			size = 
+<<<<<<< LEFT
+StorageProviderFactory
+=======
+StorageProviderFactory
+>>>>>>> RIGHT
+			.getStorageProvider(file).size();
 			tx.success();
 		} catch (FrameworkException fex) {
 			logger.error("", fex);
 		}
-
 		return size;
 	}
 
@@ -194,5 +197,4 @@ public class StructrPosixFileAttributes implements PosixFileAttributes {
 
 		return uuid;
 	}
-
 }

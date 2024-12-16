@@ -18,10 +18,6 @@
  */
 package org.structr.files.ssh.filesystem;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.structr.storage.util.VirtualFileChannel;
-
 import java.io.IOException;
 import java.net.URI;
 import java.nio.channels.FileChannel;
@@ -33,12 +29,16 @@ import java.nio.file.attribute.FileAttributeView;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.structr.core.storage.util.VirtualFileChannel;
+import org.structr.storage.util.VirtualFileChannel;
+
 
 /**
  *
  */
 public class StructrFilesystemProvider extends FileSystemProvider {
-
 	private static final Logger logger = LoggerFactory.getLogger(StructrFilesystemProvider.class.getName());
 
 	@Override

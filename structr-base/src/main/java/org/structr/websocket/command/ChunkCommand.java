@@ -18,6 +18,7 @@
  */
 package org.structr.websocket.command;
 
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.structr.common.Permission;
@@ -25,6 +26,7 @@ import org.structr.common.SecurityContext;
 import org.structr.common.error.FrameworkException;
 import org.structr.core.graph.NodeInterface;
 import org.structr.core.graph.TransactionCommand;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.storage.StorageProviderFactory;
 import org.structr.util.Base64;
 import org.structr.web.common.FileHelper;
@@ -33,102 +35,69 @@ import org.structr.websocket.StructrWebSocket;
 import org.structr.websocket.message.MessageBuilder;
 import org.structr.websocket.message.WebSocketMessage;
 
-import java.io.IOException;
 
 /**
  *
  */
 public class ChunkCommand extends AbstractCommand {
-
 	private static final Logger logger = LoggerFactory.getLogger(ChunkCommand.class.getName());
 
 	static {
-
 		StructrWebSocket.addCommand(ChunkCommand.class);
-
 	}
 
 	@Override
 	public void processMessage(final WebSocketMessage webSocketData) {
-
 		setDoTransactionNotifications(true);
-
 		final SecurityContext securityContext = getWebSocket().getSecurityContext();
-
 		try {
-
-			final String uuid  = webSocketData.getId();
+			final String uuid = webSocketData.getId();
 			int sequenceNumber = webSocketData.getNodeDataIntegerValue("chunkId");
-			int chunkSize      = webSocketData.getNodeDataIntegerValue("chunkSize");
-			int chunks         = webSocketData.getNodeDataIntegerValue("chunks");
-			Object rawData     = webSocketData.getNodeData().get("chunk");
-
-			byte[] data        = new byte[0];
-
+			int chunkSize = webSocketData.getNodeDataIntegerValue("chunkSize");
+			int chunks = webSocketData.getNodeDataIntegerValue("chunks");
+			Object rawData = webSocketData.getNodeData().get("chunk");
+			byte[] data = new byte[0];
 			if (rawData != null) {
-
 				if (rawData instanceof String) {
-
 					logger.debug("Raw data: {}", rawData);
-
-					data = Base64.decode(((String) rawData));
-
+					data = Base64.decode(((String) (rawData)));
 					logger.debug("Decoded data: {}", data);
-
 				}
-
 			}
-
-			final File file = (File) getNode(uuid);
+			final File file = ((File) (getNode(uuid)));
 			if (file.isTemplate()) {
-
-				logger.warn("No write permission, file is in template mode: {}", new Object[] {file.toString()});
+				logger.warn("No write permission, file is in template mode: {}", new Object[]{ file.toString() });
 				getWebSocket().send(MessageBuilder.status().message("No write permission, file is in template mode").code(400).build(), true);
 				return;
-
 			}
-
 			if (!file.isGranted(Permission.write, securityContext)) {
-
-				logger.warn("No write permission for {} on {}", new Object[] {getWebSocket().getCurrentUser().toString(), file.toString()});
+				logger.warn("No write permission for {} on {}", new Object[]{ getWebSocket().getCurrentUser().toString(), file.toString() });
 				getWebSocket().send(MessageBuilder.status().message("No write permission").code(400).build(), true);
 				return;
-
 			}
-
 			getWebSocket().handleFileChunk(uuid, sequenceNumber, chunkSize, data, chunks);
-
-			if (sequenceNumber+1 == chunks) {
-
+			if ((sequenceNumber + 1) == chunks) {
 				FileHelper.updateMetadata(file);
-
 				file.increaseVersion();
-
 				getWebSocket().removeFileUploadHandler(uuid);
-
-				logger.debug("File upload finished. Checksum: {}, size: {}", new Object[]{ file.getChecksum(), StorageProviderFactory.getStorageProvider(file).size()});
-
+				logger.debug("File upload finished. Checksum: {}, size: {}", new Object[]{ file.getChecksum(), 
+<<<<<<< LEFT
+StorageProviderFactory.getStorageProvider(file)
+=======
+StorageProviderFactory.getStorageProvider(file)
+>>>>>>> RIGHT
+				.size() });
 			}
-
-			final long currentSize = (long)(sequenceNumber * chunkSize) + data.length;
-
+			final long currentSize = ((long) (sequenceNumber * chunkSize)) + data.length;
 			// This should trigger setting of lastModifiedDate in any case
-			getWebSocket().send(MessageBuilder.status().code(200).message("{\"id\":\"" + file.getUuid() + "\", \"name\":\"" + file.getName() + "\",\"size\":" + currentSize + "}").build(), true);
-
-			if (sequenceNumber+1 == chunks) {
-
-				TransactionCommand.registerNodeCallback((NodeInterface) file, callback);
-
+			getWebSocket().send(MessageBuilder.status().code(200).message(((((("{\"id\":\"" + file.getUuid()) + "\", \"name\":\"") + file.getName()) + "\",\"size\":") + currentSize) + "}").build(), true);
+			if ((sequenceNumber + 1) == chunks) {
+				TransactionCommand.registerNodeCallback(((NodeInterface) (file)), callback);
 			}
-
 		} catch (IOException | FrameworkException ex) {
-
 			String msg = ex.toString();
-
 			// return error message
-			getWebSocket().send(MessageBuilder.status().code(400).message("Could not process chunk data: ".concat((msg != null)
-				? msg
-				: "")).build(), true);
+			getWebSocket().send(MessageBuilder.status().code(400).message("Could not process chunk data: ".concat(msg != null ? msg : "")).build(), true);
 		}
 	}
 
@@ -137,6 +106,3 @@ public class ChunkCommand extends AbstractCommand {
 		return "CHUNK";
 	}
 }
-/**
- * { "command" : "CHUNK", "id" : <uuid>, "data" : { "chunk" : "ölasdkfjoifhp9wea8hisaghsakjgf", "chunkId" : 3 } }
- */

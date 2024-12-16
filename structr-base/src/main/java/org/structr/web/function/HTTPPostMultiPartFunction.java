@@ -18,6 +18,10 @@
  */
 package org.structr.web.function;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -33,21 +37,19 @@ import org.structr.core.GraphObjectMap;
 import org.structr.core.property.GenericProperty;
 import org.structr.core.property.IntProperty;
 import org.structr.core.property.StringProperty;
-import org.structr.storage.StorageProviderFactory;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.rest.common.HttpHelper;
 import org.structr.schema.action.ActionContext;
+import org.structr.storage.StorageProviderFactory;
 import org.structr.web.entity.AbstractFile;
 import org.structr.web.entity.File;
 import org.structr.web.entity.Folder;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class HTTPPostMultiPartFunction extends UiAdvancedFunction {
-    public static final String ERROR_MESSAGE_POST    = "Usage: ${POST_multi_part(URL, parts [, responseContentType])}. Example: ${POST('http://localhost:8082/structr/upload', '{name:\"Test\", file: find(\"AbstractFile\", \"name\", \"TestFile.txt\")}')}";
-    public static final String ERROR_MESSAGE_POST_JS = "Usage: ${{Structr.POSTMultiPart(URL, parts[, responseContentType])}}. Example: ${{Structr.POST('http://localhost:8082/structr/rest/folders', '{name:\"Test\", file: find(\"AbstractFile\", \"name\", \"TestFile.txt\")}')}}";
+    public static final String ERROR_MESSAGE_POST = "Usage: ${POST_multi_part(URL, parts [, responseContentType])}. Example: ${POST(\'http://localhost:8082/structr/upload\', \'{name:\"Test\", file: find(\"AbstractFile\", \"name\", \"TestFile.txt\")}\')}";
+
+    public static final String ERROR_MESSAGE_POST_JS = "Usage: ${{Structr.POSTMultiPart(URL, parts[, responseContentType])}}. Example: ${{Structr.POST(\'http://localhost:8082/structr/rest/folders\', \'{name:\"Test\", file: find(\"AbstractFile\", \"name\", \"TestFile.txt\")}\')}}";
 
     @Override
     public String getName() {
@@ -126,41 +128,35 @@ public class HTTPPostMultiPartFunction extends UiAdvancedFunction {
     }
 
     private MultipartEntityBuilder addInputStreamToMultiPartBuilder(MultipartEntityBuilder builder, AbstractFile abstractFile, final String partKey) {
-
         if (abstractFile instanceof File) {
-
-            final File file = (File) abstractFile;
-            InputStreamBody inputStreamBody = new InputStreamBody(StorageProviderFactory.getStorageProvider(file).getInputStream(), ContentType.create(file.getContentType()), file.getName());
+            final File file = ((File) (abstractFile));
+            InputStreamBody inputStreamBody = new InputStreamBody(
+<<<<<<< LEFT
+StorageProviderFactory.getStorageProvider(file)
+=======
+StorageProviderFactory.getStorageProvider(file)
+>>>>>>> RIGHT
+            .getInputStream(), ContentType.create(file.getContentType()), file.getName());
             builder.addPart(partKey, inputStreamBody);
-
         } else if (abstractFile instanceof Folder) {
-
-            final Folder folder = (Folder) abstractFile;
+            final Folder folder = ((Folder) (abstractFile));
             for (File folderFile : folder.getFiles()) {
-               builder = addInputStreamToMultiPartBuilder(builder, folder, partKey);
+                builder = addInputStreamToMultiPartBuilder(builder, folder, partKey);
             }
         }
-
         return builder;
     }
 
     private MultipartEntityBuilder addPartToBuilder(MultipartEntityBuilder builder, final String partKey, final Object partValue) throws UnsupportedEncodingException {
-
         if (partValue instanceof ArrayList) {
-
-            for (Object collectionPart : (ArrayList) partValue) {
+            for (Object collectionPart : ((ArrayList) (partValue))) {
                 builder = addPartToBuilder(builder, partKey, collectionPart);
             }
-
         } else if (partValue instanceof AbstractFile) {
-
-            builder = this.addInputStreamToMultiPartBuilder(builder, (AbstractFile) partValue, partKey);
-
+            builder = this.addInputStreamToMultiPartBuilder(builder, ((AbstractFile) (partValue)), partKey);
         } else {
-
-            builder.addPart(partKey, new StringBody((String) partValue));
+            builder.addPart(partKey, new StringBody(((String) (partValue))));
         }
-
         return builder;
     }
 

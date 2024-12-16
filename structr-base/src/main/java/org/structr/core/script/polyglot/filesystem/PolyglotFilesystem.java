@@ -18,6 +18,13 @@
  */
 package org.structr.core.script.polyglot.filesystem;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.*;
+import java.nio.file.attribute.FileAttribute;
+import java.util.Map;
+import java.util.Set;
 import org.graalvm.polyglot.io.FileSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,17 +33,11 @@ import org.structr.core.app.App;
 import org.structr.core.app.StructrApp;
 import org.structr.core.graph.Tx;
 import org.structr.core.property.PropertyKey;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.storage.StorageProviderFactory;
 import org.structr.web.entity.AbstractFile;
 import org.structr.web.entity.File;
 
-import java.io.IOException;
-import java.net.URI;
-import java.nio.channels.SeekableByteChannel;
-import java.nio.file.*;
-import java.nio.file.attribute.FileAttribute;
-import java.util.Map;
-import java.util.Set;
 
 public class PolyglotFilesystem implements FileSystem {
 	private static final Logger logger = LoggerFactory.getLogger(PolyglotFilesystem.class);
@@ -56,9 +57,7 @@ public class PolyglotFilesystem implements FileSystem {
 
 	@Override
 	public Path parsePath(String path) {
-
 		if (path != null) {
-
 			return Path.of(path);
 		}
 		return null;
@@ -82,22 +81,22 @@ public class PolyglotFilesystem implements FileSystem {
 	public SeekableByteChannel newByteChannel(Path path, Set<? extends OpenOption> options, FileAttribute<?>... attrs) throws IOException {
 		final App app = StructrApp.getInstance();
 		try (final Tx tx = app.tx()) {
-
 			PropertyKey pathKey = StructrApp.getConfiguration().getPropertyKeyForDatabaseName(AbstractFile.class, "path");
-			File file = (File)app.nodeQuery(File.class).and(pathKey, path.toString()).getFirst();
-
+			File file = ((File) (app.nodeQuery(File.class).and(pathKey, path.toString()).getFirst()));
 			if (file != null) {
-
 				tx.success();
-				return StorageProviderFactory.getStorageProvider(file).getSeekableByteChannel();
+				return 
+<<<<<<< LEFT
+StorageProviderFactory
+=======
+StorageProviderFactory
+>>>>>>> RIGHT
+				.getStorageProvider(file).getSeekableByteChannel();
 			}
-
 			tx.success();
 		} catch (FrameworkException ex) {
-
 			logger.error("Unexpected exception while trying to parse virtual filesystem path", ex);
 		}
-
 		return Files.newByteChannel(path, options, attrs);
 	}
 

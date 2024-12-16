@@ -18,25 +18,24 @@
  */
 package org.structr.test.web.advanced;
 
+import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.structr.common.error.FrameworkException;
 import org.structr.core.app.StructrApp;
 import org.structr.core.graph.NodeAttribute;
 import org.structr.core.graph.Tx;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.storage.StorageProviderFactory;
 import org.structr.test.web.StructrUiTest;
 import org.structr.web.entity.Image;
 import org.testng.annotations.Test;
-
-import java.util.List;
-import java.util.Optional;
-
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.fail;
 
-public class ImageUploadTest extends StructrUiTest {
 
+public class ImageUploadTest extends StructrUiTest {
 	private static final Logger logger = LoggerFactory.getLogger(ImageUploadTest.class.getName());
 
 	private static final String Base64ImageData =
@@ -44,72 +43,55 @@ public class ImageUploadTest extends StructrUiTest {
 
 	@Test
 	public void test01ImageUploadBase64() {
-
 		try (final Tx tx = app.tx()) {
-
-			app.create(Image.class,
-				new NodeAttribute<>(StructrApp.key(Image.class, "name"),      "test01.png"),
-				new NodeAttribute<>(StructrApp.key(Image.class, "imageData"), Base64ImageData)
-			);
-
+			app.create(Image.class, new NodeAttribute<>(StructrApp.key(Image.class, "name"), "test01.png"), new NodeAttribute<>(StructrApp.key(Image.class, "imageData"), Base64ImageData));
 			tx.success();
-
 		} catch (FrameworkException fex) {
 			fail("Unexpected exception.");
 		}
-
 		try (final Tx tx = app.tx()) {
-
 			final List<Image> images = app.nodeQuery(Image.class).getAsList();
-
 			assertEquals("There should be exactly one image", 1, images.size());
-
 			final Image image = images.get(0);
-
-			assertEquals("File size of the image does not match", Optional.of(Long.valueOf(1707)), Optional.of(StorageProviderFactory.getStorageProvider(image).size()));
-			assertEquals("Width of the image does not match",        Integer.valueOf(100), image.getWidth());
-			assertEquals("Height of the image does not match",       Integer.valueOf(59),  image.getHeight());
-			assertEquals("Content type of the image does not match", "image/png",          image.getContentType());
-
+			assertEquals("File size of the image does not match", Optional.of(Long.valueOf(1707)), Optional.of(
+<<<<<<< LEFT
+StorageProviderFactory.getStorageProvider(image).size()
+=======
+StorageProviderFactory.getStorageProvider(image).size()
+>>>>>>> RIGHT
+			));
+			assertEquals("Width of the image does not match", Integer.valueOf(100), image.getWidth());
+			assertEquals("Height of the image does not match", Integer.valueOf(59), image.getHeight());
+			assertEquals("Content type of the image does not match", "image/png", image.getContentType());
 			tx.success();
-
 		} catch (FrameworkException fex) {
 			fail("Unexpected exception.");
 		}
 	}
 
-
 	@Test
 	public void test02ImageUploadBase64WithContentType() {
-
 		try (final Tx tx = app.tx()) {
-
-			app.create(Image.class,
-				new NodeAttribute<>(StructrApp.key(Image.class, "name"),      "test01.png"),
-				new NodeAttribute<>(StructrApp.key(Image.class, "imageData"), "data:image/jpeg;base64," + Base64ImageData)
-			);
-
+			app.create(Image.class, new NodeAttribute<>(StructrApp.key(Image.class, "name"), "test01.png"), new NodeAttribute<>(StructrApp.key(Image.class, "imageData"), "data:image/jpeg;base64," + Base64ImageData));
 			tx.success();
-
 		} catch (FrameworkException fex) {
 			fail("Unexpected exception.");
 		}
-
 		try (final Tx tx = app.tx()) {
-
 			final List<Image> images = app.nodeQuery(Image.class).getAsList();
-
 			assertEquals("There should be exactly one image", 1, images.size());
-
 			final Image image = images.get(0);
-
-			assertEquals("File size of the image does not match", java.util.Optional.ofNullable(Long.valueOf(1707)),   java.util.Optional.of(StorageProviderFactory.getStorageProvider(image).size()));
-			assertEquals("Width of the image does not match",        Integer.valueOf(100), image.getWidth());
-			assertEquals("Height of the image does not match",       Integer.valueOf(59),  image.getHeight());
-			assertEquals("Content type of the image does not match", "image/jpeg",         image.getContentType());
-
+			assertEquals("File size of the image does not match", Optional.ofNullable(Long.valueOf(1707)), Optional.of(
+<<<<<<< LEFT
+StorageProviderFactory.getStorageProvider(image).size()
+=======
+StorageProviderFactory.getStorageProvider(image).size()
+>>>>>>> RIGHT
+			));
+			assertEquals("Width of the image does not match", Integer.valueOf(100), image.getWidth());
+			assertEquals("Height of the image does not match", Integer.valueOf(59), image.getHeight());
+			assertEquals("Content type of the image does not match", "image/jpeg", image.getContentType());
 			tx.success();
-
 		} catch (FrameworkException fex) {
 			fail("Unexpected exception.");
 		}

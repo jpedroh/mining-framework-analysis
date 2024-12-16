@@ -20,13 +20,17 @@ package org.structr.web.function;
 
 import com.steadystate.css.parser.CSSOMParser;
 import com.steadystate.css.parser.SACParserCSS3;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.structr.common.error.FrameworkException;
 import org.structr.core.app.App;
 import org.structr.core.app.StructrApp;
 import org.structr.core.graph.NodeInterface;
-import org.structr.storage.StorageProviderFactory;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.schema.action.ActionContext;
+import org.structr.storage.StorageProviderFactory;
 import org.structr.web.entity.File;
 import org.structr.web.entity.css.CssDeclaration;
 import org.structr.web.entity.css.CssRule;
@@ -36,13 +40,10 @@ import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleSheet;
 
-import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.List;
 
 public class ImportCssFunction extends UiAdvancedFunction {
-
 	public static final String ERROR_MESSAGE_IMPORT_CSS    = "Usage: ${import_css(file)}. Example: ${import_css(cssFile)}";
+
 	public static final String ERROR_MESSAGE_IMPORT_CSS_JS = "Usage: ${{Structr.importCss(file)}}. Example: ${{Structr.importCss(cssFile)}}";
 
 	@Override
@@ -57,49 +58,44 @@ public class ImportCssFunction extends UiAdvancedFunction {
 
 	@Override
 	public Object apply(final ActionContext ctx, final Object caller, Object[] sources) throws FrameworkException {
-
 		assertArrayHasMinLengthAndAllElementsNotNull(sources, 1);
-
 		if (sources[0] instanceof File) {
-
-			final File file = (File) sources[0];
-
-			if (StorageProviderFactory.getStorageProvider(file).size() == 0) {
+			final File file = ((File) (sources[0]));
+			if (
+<<<<<<< LEFT
+StorageProviderFactory.getStorageProvider(file)
+=======
+StorageProviderFactory.getStorageProvider(file)
+>>>>>>> RIGHT
+			.size() == 0) {
 				return "";
 			}
-
-			try (final InputStreamReader reader = new InputStreamReader(StorageProviderFactory.getStorageProvider(file).getInputStream())) {
-
+			try (final InputStreamReader reader = new InputStreamReader(
+<<<<<<< LEFT
+StorageProviderFactory.getStorageProvider(file)
+=======
+StorageProviderFactory.getStorageProvider(file)
+>>>>>>> RIGHT
+			.getInputStream())) {
 				logger.info("Parsing CSS from {}..", file.getName());
-
-				final InputSource source       = new InputSource(reader);
-				final CSSOMParser parser       = new CSSOMParser(new SACParserCSS3());
+				final InputSource source = new InputSource(reader);
+				final CSSOMParser parser = new CSSOMParser(new SACParserCSS3());
 				final CSSStyleSheet styleSheet = parser.parseStyleSheet(source, null, null);
-				final CSSRuleList rules        = styleSheet.getCssRules();
-				int count                      = 0;
-
+				final CSSRuleList rules = styleSheet.getCssRules();
+				int count = 0;
 				logger.info("{} rules", styleSheet.getCssRules().getLength());
-
-				for (int i=0; i<rules.getLength(); i++) {
-
+				for (int i = 0; i < rules.getLength(); i++) {
 					final CSSRule rule = rules.item(i);
-
 					importCSSRule(rule);
-
 					count++;
 				}
-
 				logger.info("{} rules imported", count);
-
 				return true;
-
-			} catch (final Exception e) {
-
+			} catch (final java.lang.Exception e) {
 				logParameterError(caller, sources, ctx.isJavaScriptContext());
 				return usage(ctx.isJavaScriptContext());
 			}
 		}
-
 		return usage(ctx.isJavaScriptContext());
 	}
 

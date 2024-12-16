@@ -18,6 +18,8 @@
  */
 package org.structr.odf.entity;
 
+import java.net.URI;
+import java.util.*;
 import org.odftoolkit.simple.TextDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,107 +34,87 @@ import org.structr.core.GraphObjectMap;
 import org.structr.core.app.App;
 import org.structr.core.app.StructrApp;
 import org.structr.core.entity.AbstractNode;
-import org.structr.storage.StorageProviderFactory;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.schema.SchemaService;
+import org.structr.storage.StorageProviderFactory;
 import org.structr.transform.VirtualType;
 import org.structr.web.entity.File;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.net.URI;
-import java.util.*;
 
 /**
  * Reads a nodes attributes and tries to replace matching attributes in the
  * given ODT-File template.
  */
 public interface ODTExporter extends ODFExporter {
-
-	static class Impl { static {
-
-		final JsonSchema schema   = SchemaService.getDynamicSchema();
-		final JsonObjectType type = schema.addType("ODTExporter");
-
-		type.setImplements(URI.create("https://structr.org/v1.1/definitions/ODTExporter"));
-		type.setExtends(URI.create("#/definitions/ODFExporter"));
-
-		type.addMethod("exportAttributes")
-			.addParameter("ctx", SecurityContext.class.getName())
-			.addParameter("uuid", String.class.getName())
-			.setSource(ODTExporter.class.getName() + ".exportAttributes(this, uuid, ctx);")
-			.addException(FrameworkException.class.getName())
-			.setDoExport(true);
-	}}
+	static class Impl {
+		static {
+			final JsonSchema schema = SchemaService.getDynamicSchema();
+			final JsonObjectType type = schema.addType("ODTExporter");
+			type.setImplements(URI.create("https://structr.org/v1.1/definitions/ODTExporter"));
+			type.setExtends(URI.create("#/definitions/ODFExporter"));
+			type.addMethod("exportAttributes").addParameter("ctx", SecurityContext.class.getName()).addParameter("uuid", java.lang.String.class.getName()).setSource(ODTExporter.class.getName() + ".exportAttributes(this, uuid, ctx);").addException(FrameworkException.class.getName()).setDoExport(true);
+		}
+	}
 
 	static final String ODT_FIELD_TAG_NAME        = "text:user-field-decl";
+
 	static final String ODT_FIELD_ATTRIBUTE_NAME  = "text:name";
+
 	static final String ODT_FIELD_ATTRIBUTE_VALUE = "office:string-value";
 
-	static void exportAttributes(final ODTExporter thisNode, final String uuid, final SecurityContext securityContext) throws FrameworkException {
-
-		final File output                     = thisNode.getResultDocument();
-		final VirtualType transformation      = thisNode.getTransformationProvider();
-
+	public static void exportAttributes(final ODTExporter thisNode, final String uuid, final SecurityContext securityContext) throws FrameworkException {
+		final File output = thisNode.getResultDocument();
+		final VirtualType transformation = thisNode.getTransformationProvider();
 		try {
-
 			final App app = StructrApp.getInstance(securityContext);
 			final ResultStream result = app.nodeQuery(AbstractNode.class).and(GraphObject.id, uuid).getResultStream();
 			final ResultStream transformedResult = transformation.transformOutput(securityContext, AbstractNode.class, result);
-
 			Map<String, Object> nodeProperties = new HashMap<>();
-			GraphObjectMap node = (GraphObjectMap) Iterables.first(transformedResult);
-			node.getPropertyKeys(null).forEach(
-				p -> nodeProperties.put(p.dbName(), node.getProperty(p))
-			);
-
-			TextDocument text = TextDocument.loadDocument(StorageProviderFactory.getStorageProvider(output).getInputStream());
-
+			GraphObjectMap node = ((GraphObjectMap) (Iterables.first(transformedResult)));
+			node.getPropertyKeys(null).forEach(( p) -> nodeProperties.put(p.dbName(), node.getProperty(p)));
+			TextDocument text = TextDocument.loadDocument(
+<<<<<<< LEFT
+StorageProviderFactory
+=======
+StorageProviderFactory
+>>>>>>> RIGHT
+			.getStorageProvider(output).getInputStream());
 			NodeList nodes = text.getContentRoot().getElementsByTagName(ODT_FIELD_TAG_NAME);
 			for (int i = 0; i < nodes.getLength(); i++) {
-
 				Node currentNode = nodes.item(i);
 				NamedNodeMap attrs = currentNode.getAttributes();
 				Node fieldName = attrs.getNamedItem(ODT_FIELD_ATTRIBUTE_NAME);
 				Object nodeFieldValue = nodeProperties.get(fieldName.getNodeValue());
 				Node currentContent = attrs.getNamedItem(ODT_FIELD_ATTRIBUTE_VALUE);
-
 				if (nodeFieldValue != null) {
 					if (nodeFieldValue instanceof String[]) {
-
-						String[] arr = (String[]) nodeFieldValue;
+						String[] arr = ((String[]) (nodeFieldValue));
 						List<String> list = new ArrayList<>(Arrays.asList(arr));
-
 						StringBuilder sb = new StringBuilder();
-						list.forEach(
-							s -> sb.append(s + "\n")
-						);
-
+						list.forEach(( s) -> sb.append(s + "\n"));
 						currentContent.setNodeValue(sb.toString());
-
 					} else if (nodeFieldValue instanceof Collection) {
-
-						Collection col = (Collection) nodeFieldValue;
+						Collection col = ((Collection) (nodeFieldValue));
 						StringBuilder sb = new StringBuilder();
-						col.forEach(
-							s -> sb.append(s + "\n")
-						);
-
+						col.forEach(( s) -> sb.append(s + "\n"));
 						currentContent.setNodeValue(sb.toString());
-
 					} else {
-
 						currentContent.setNodeValue(nodeFieldValue.toString());
-
 					}
 				}
-
 			}
-
-			text.save(StorageProviderFactory.getStorageProvider(output).getOutputStream());
+			text.save(
+<<<<<<< LEFT
+StorageProviderFactory
+=======
+StorageProviderFactory
+>>>>>>> RIGHT
+			.getStorageProvider(output).getOutputStream());
 			text.close();
-
-		} catch (Exception e) {
+		} catch (java.lang.Exception e) {
 			final Logger logger = LoggerFactory.getLogger(ODTExporter.class);
 			logger.error("Error while exporting to ODT", e);
 		}

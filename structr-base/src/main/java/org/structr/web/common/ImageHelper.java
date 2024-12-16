@@ -26,6 +26,16 @@ import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 import com.twelvemonkeys.image.AffineTransformOp;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -45,25 +55,15 @@ import org.structr.core.entity.AbstractNode;
 import org.structr.core.entity.Relation;
 import org.structr.core.property.PropertyKey;
 import org.structr.core.property.PropertyMap;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.storage.StorageProviderFactory;
 import org.structr.util.Base64;
 import org.structr.web.entity.File;
 import org.structr.web.entity.Image;
 import org.structr.web.property.ThumbnailProperty;
 
-import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
 
 public abstract class ImageHelper extends FileHelper {
-
 	private static final Logger logger = LoggerFactory.getLogger(ImageHelper.class.getName());
 
 	/**
@@ -251,7 +251,6 @@ public abstract class ImageHelper extends FileHelper {
 	public static int getThumbnailHeight(final Image originalImage, final int maxWidth, final int maxHeight, final boolean crop) {
 		return getThumbnailHeight(originalImage.getHeight(), getScaleRatio(originalImage.getWidth(), originalImage.getHeight(), maxWidth, maxHeight, crop));
 	}
-
 
 	public static Thumbnail createThumbnail(final Image originalImage, final int maxWidth, final int maxHeight) {
 		return createThumbnail(originalImage, maxWidth, maxHeight, false);
@@ -462,22 +461,22 @@ public abstract class ImageHelper extends FileHelper {
 	}
 
 	public static Thumbnail createThumbnailForPdf(final File originalFile, final int page, final int maxWidth, final int maxHeight, final String formatString) {
-
-		final Thumbnail.Format format = formatString != null ? Thumbnail.Format.valueOf(formatString) : Thumbnail.defaultFormat;
-
+		final Thumbnail.Format format = (formatString != null) ? Thumbnail.Format.valueOf(formatString) : Thumbnail.defaultFormat;
 		try {
-
-			final PDDocument pdfDocument  = PDDocument.load(StorageProviderFactory.getStorageProvider(originalFile).getInputStream());
+			final PDDocument pdfDocument = PDDocument.load(
+<<<<<<< LEFT
+StorageProviderFactory.getStorageProvider(originalFile)
+=======
+StorageProviderFactory.getStorageProvider(originalFile)
+>>>>>>> RIGHT
+			.getInputStream());
 			final PDFRenderer pdfRenderer = new PDFRenderer(pdfDocument);
-
 			// Create thumbnail of page
 			final BufferedImage source = pdfRenderer.renderImage(page);
 			return createThumbnailFromBufferedImage(source, null, null, null, maxWidth, maxHeight, null);
-
-		} catch (final Throwable t) {
+		} catch (final java.lang.Throwable t) {
 			logger.warn("Unable to create PDDocument from original file with ID {}.", originalFile.getUuid(), t);
 		}
-
 		return null;
 	}
 
@@ -922,91 +921,80 @@ public abstract class ImageHelper extends FileHelper {
 		return getVariantName(originalImageName, tnWidth, tnHeight, "_thumb_");
 	}
 
-	//~--- inner classes --------------------------------------------------
-
+	// ~--- inner classes --------------------------------------------------
 	public static class Base64URIData {
-
 		private String contentType;
+
 		private String data;
 
-		//~--- constructors -------------------------------------------
-
+		// ~--- constructors -------------------------------------------
 		public Base64URIData(final String rawData) {
-
 			final String[] parts = StringUtils.split(rawData, ",");
-
-			data        = parts[1];
+			data = parts[1];
 			contentType = StringUtils.substringBetween(parts[0], "data:", ";base64");
-
 		}
 
-		//~--- get methods --------------------------------------------
-
+		// ~--- get methods --------------------------------------------
 		public String getContentType() {
-
 			return contentType;
-
 		}
 
 		public String getData() {
-
 			return data;
-
 		}
 
 		public byte[] getBinaryData() {
-
 			return Base64.decode(data);
-
 		}
-
 	}
 
-
 	public static class Thumbnail {
-
-
 		public static enum Format {
-			png, jpg, jpeg, gif, tiff;
-		}
+
+			png,
+			jpg,
+			jpeg,
+			gif,
+			tiff;}
 
 		public static Format defaultFormat = Format.jpeg;
 
-		//~--- fields -------------------------------------------------
-
+		// ~--- fields -------------------------------------------------
 		private byte[] bytes;
+
 		private int height;
+
 		private int width;
+
 		private Format format;
 
-		//~--- constructors -------------------------------------------
-
-		public Thumbnail() {}
+		// ~--- constructors -------------------------------------------
+		public Thumbnail() {
+		}
 
 		public Thumbnail(final byte[] bytes) {
 			this.bytes = bytes;
 		}
 
 		public Thumbnail(final int width, final int height) {
-			this.width  = width;
+			this.width = width;
 			this.height = height;
 		}
 
 		public Thumbnail(final byte[] bytes, final int width, final int height) {
-			this.bytes  = bytes;
-			this.width  = width;
+			this.bytes = bytes;
+			this.width = width;
 			this.height = height;
 		}
 
 		public Thumbnail(final byte[] bytes, final int width, final int height, final String formatString) {
-			this.bytes  = bytes;
-			this.width  = width;
+			this.bytes = bytes;
+			this.width = width;
 			this.height = height;
 			this.format = Format.valueOf(formatString);
 		}
 
-		//~--- get methods --------------------------------------------
-
+		// ~--- get methods --------------------------------------------
 		public byte[] getBytes() {
 			return bytes;
 		}
@@ -1027,8 +1015,7 @@ public abstract class ImageHelper extends FileHelper {
 			return format.name();
 		}
 
-		//~--- set methods --------------------------------------------
-
+		// ~--- set methods --------------------------------------------
 		public void setBytes(final byte[] bytes) {
 			this.bytes = bytes;
 		}
@@ -1048,7 +1035,5 @@ public abstract class ImageHelper extends FileHelper {
 		public void setFormatByString(final String formatString) {
 			this.format = Format.valueOf(formatString);
 		}
-
 	}
-
 }

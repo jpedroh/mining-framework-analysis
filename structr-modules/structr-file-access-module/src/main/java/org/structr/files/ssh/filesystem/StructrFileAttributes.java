@@ -18,6 +18,9 @@
  */
 package org.structr.files.ssh.filesystem;
 
+import java.io.IOException;
+import java.nio.file.attribute.*;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.structr.api.util.Iterables;
@@ -28,30 +31,28 @@ import org.structr.core.entity.AbstractNode;
 import org.structr.core.entity.Group;
 import org.structr.core.entity.Principal;
 import org.structr.core.graph.Tx;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.storage.StorageProviderFactory;
 import org.structr.web.entity.AbstractFile;
 import org.structr.web.entity.File;
 import org.structr.web.entity.Folder;
 
-import java.io.IOException;
-import java.nio.file.attribute.*;
-import java.util.*;
 
 /**
  *
  */
-public class  StructrFileAttributes implements PosixFileAttributes, DosFileAttributes, PosixFileAttributeView {
-
+public class StructrFileAttributes implements PosixFileAttributes , DosFileAttributes , PosixFileAttributeView {
 	private static final Logger logger              = LoggerFactory.getLogger(StructrFileAttributes.class.getName());
-	public static final Set<String> SUPPORTED_VIEWS = new LinkedHashSet<>(Arrays.asList(new String[] { "owner", "dos", "basic", "posix", "permissions" } ));
+
+	public static final Set<String> SUPPORTED_VIEWS = new LinkedHashSet<>(Arrays.asList(new String[]{ "owner", "dos", "basic", "posix", "permissions" }));
 
 	private SecurityContext securityContext = null;
+
 	private AbstractFile file               = null;
 
 	public StructrFileAttributes(final SecurityContext securityContext, final AbstractFile file) {
-
 		this.securityContext = securityContext;
-		this.file            = file;
+		this.file = file;
 	}
 
 	@Override
@@ -213,29 +214,27 @@ public class  StructrFileAttributes implements PosixFileAttributes, DosFileAttri
 
 	@Override
 	public long size() {
-
 		if (file == null) {
 			return 0L;
 		}
-
 		long size = 0;
-
-		try (Tx tx = StructrApp.getInstance(securityContext).tx()) {
-
+		try (final Tx tx = StructrApp.getInstance(securityContext).tx()) {
 			if (file instanceof File) {
-
-				final Number s = StorageProviderFactory.getStorageProvider(file).size();
+				final Number s = 
+<<<<<<< LEFT
+StorageProviderFactory
+=======
+StorageProviderFactory
+>>>>>>> RIGHT
+				.getStorageProvider(file).size();
 				if (s != null) {
-
 					size = s.longValue();
 				}
 			}
-
 			tx.success();
 		} catch (FrameworkException fex) {
 			logger.error("", fex);
 		}
-
 		return size;
 	}
 

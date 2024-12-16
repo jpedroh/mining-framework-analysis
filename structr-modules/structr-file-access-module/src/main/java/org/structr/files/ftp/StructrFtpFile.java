@@ -18,6 +18,10 @@
  */
 package org.structr.files.ftp;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
 import org.apache.ftpserver.ftplet.FtpFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,20 +29,16 @@ import org.structr.common.SecurityContext;
 import org.structr.common.error.FrameworkException;
 import org.structr.core.app.StructrApp;
 import org.structr.core.graph.Tx;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.storage.StorageProviderFactory;
 import org.structr.web.entity.File;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
 
 /**
  *
  *
  */
 public class StructrFtpFile extends AbstractStructrFtpFile {
-
 	private static final Logger logger = LoggerFactory.getLogger(StructrFtpFile.class.getName());
 
 	public StructrFtpFile(final SecurityContext securityContext, final File file) {
@@ -57,17 +57,18 @@ public class StructrFtpFile extends AbstractStructrFtpFile {
 
 	@Override
 	public long getSize() {
-
-		try (Tx tx = StructrApp.getInstance(securityContext).tx()) {
-
-			final Long size = StorageProviderFactory.getStorageProvider(structrFile).size();
-
+		try (final Tx tx = StructrApp.getInstance(securityContext).tx()) {
+			final Long size = 
+<<<<<<< LEFT
+StorageProviderFactory.getStorageProvider(structrFile)
+=======
+StorageProviderFactory.getStorageProvider(structrFile)
+>>>>>>> RIGHT
+			.size();
 			tx.success();
-
 			return size == null ? 0L : size;
-
-		} catch (FrameworkException fex) {}
-
+		} catch (FrameworkException fex) {
+		}
 		return 0L;
 	}
 
@@ -123,5 +124,4 @@ public class StructrFtpFile extends AbstractStructrFtpFile {
 	public Object getPhysicalFile() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
-
 }

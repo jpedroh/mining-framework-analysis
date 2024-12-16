@@ -18,6 +18,15 @@
  */
 package org.structr.files.ssh;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.*;
+import java.nio.file.attribute.*;
+import java.nio.file.spi.FileSystemProvider;
+import java.util.*;
 import org.apache.sshd.common.session.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,48 +37,36 @@ import org.structr.core.app.StructrApp;
 import org.structr.core.entity.AbstractNode;
 import org.structr.core.graph.NodeAttribute;
 import org.structr.core.graph.Tx;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.storage.StorageProviderFactory;
 import org.structr.web.entity.AbstractFile;
 import org.structr.web.entity.File;
 import org.structr.web.entity.Folder;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
-import java.nio.channels.SeekableByteChannel;
-import java.nio.file.*;
-import java.nio.file.attribute.*;
-import java.nio.file.spi.FileSystemProvider;
-import java.util.*;
 
 /**
  *
  */
 public class StructrSSHFileSystem extends FileSystem {
-
 	private static final Logger logger = LoggerFactory.getLogger(StructrSSHFileSystem.class.getName());
 
 	private StructrSSHFile rootFolder       = null;
+
 	private Session        session          = null;
+
 	private SecurityContext securityContext = null;
 
 	public StructrSSHFileSystem(final SecurityContext securityContext, final Session session) {
-
 		this.securityContext = securityContext;
-		this.session         = session;
-		this.rootFolder      = new StructrSSHFile(securityContext);
-
+		this.session = session;
+		this.rootFolder = new StructrSSHFile(securityContext);
 		this.rootFolder.setFileSystem(this);
 	}
 
 	@Override
 	public FileSystemProvider provider() {
-
 		logger.info("x");
-
 		return new FileSystemProvider() {
-
 			@Override
 			public OutputStream newOutputStream(Path path, OpenOption... options) throws IOException {
 
@@ -149,27 +146,24 @@ public class StructrSSHFileSystem extends FileSystem {
 
 			@Override
 			public SeekableByteChannel newByteChannel(Path path, Set<? extends OpenOption> options, FileAttribute<?>... attrs) throws IOException {
-
 				logger.info("x");
-
 				SeekableByteChannel channel = null;
-
-				final File fileNode = (File) ((StructrSSHFile) path).getActualFile();
-
+				final File fileNode = ((File) (((StructrSSHFile) (path)).getActualFile()));
 				if (fileNode != null) {
-
-					try (Tx tx = StructrApp.getInstance(securityContext).tx()) {
-						
-						channel             = StorageProviderFactory.getStorageProvider(fileNode).getSeekableByteChannel();
-
+					try (final Tx tx = StructrApp.getInstance(securityContext).tx()) {
+						channel = 
+<<<<<<< LEFT
+StorageProviderFactory.getStorageProvider(fileNode)
+=======
+StorageProviderFactory.getStorageProvider(fileNode)
+>>>>>>> RIGHT
+						.getSeekableByteChannel();
 						tx.success();
-
 					} catch (FrameworkException fex) {
 						logger.error("", fex);
 						throw new IOException(fex);
 					}
 				}
-
 				return channel;
 			}
 
@@ -400,9 +394,7 @@ public class StructrSSHFileSystem extends FileSystem {
 
 				return newFile;
 			}
-
 		};
-
 	}
 
 	@Override
@@ -494,5 +486,4 @@ public class StructrSSHFileSystem extends FileSystem {
 		logger.info("Method not implemented yet");
 		return null;
 	}
-
 }

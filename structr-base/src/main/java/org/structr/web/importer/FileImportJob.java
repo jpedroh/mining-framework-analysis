@@ -18,6 +18,13 @@
  */
 package org.structr.web.importer;
 
+import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,36 +37,38 @@ import org.structr.core.entity.Principal;
 import org.structr.core.graph.TransactionCommand;
 import org.structr.core.graph.Tx;
 import org.structr.core.scheduler.ScheduledJob;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.storage.StorageProviderFactory;
 import org.structr.web.entity.File;
 
-import java.io.InputStream;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
 
 abstract class FileImportJob extends ScheduledJob {
-
 	private static final Logger logger = LoggerFactory.getLogger(FileImportJob.class);
 
 	protected String fileUuid;
+
 	protected String filePath;
+
 	protected String fileName;
+
 	protected Long fileSize;
+
 	protected Integer processedChunks  = 0;
+
 	protected Integer processedObjects = 0;
 
-	public FileImportJob (final File file, final Principal user, final Map<String, Object> configuration, final ContextStore ctxStore) {
-
+	public FileImportJob(final File file, final Principal user, final Map<String, Object> configuration, final ContextStore ctxStore) {
 		super(file.getUuid(), user, configuration, ctxStore);
-
 		this.fileUuid = file.getUuid();
 		this.filePath = file.getPath();
 		this.fileName = file.getName();
-		this.fileSize = StorageProviderFactory.getStorageProvider(file).size();
+		this.fileSize = 
+<<<<<<< LEFT
+StorageProviderFactory.getStorageProvider(file)
+=======
+StorageProviderFactory.getStorageProvider(file)
+>>>>>>> RIGHT
+		.size();
 	}
 
 	public String getFileUuid () {

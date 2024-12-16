@@ -18,6 +18,15 @@
  */
 package org.structr.files.ssh.filesystem.path.file;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.channels.Channel;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.FileAttributeView;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.structr.common.error.FrameworkException;
@@ -26,29 +35,21 @@ import org.structr.core.app.StructrApp;
 import org.structr.core.entity.AbstractNode;
 import org.structr.core.graph.NodeAttribute;
 import org.structr.core.graph.Tx;
-import org.structr.storage.StorageProviderFactory;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.files.ssh.filesystem.StructrFileAttributes;
 import org.structr.files.ssh.filesystem.StructrFilesystem;
 import org.structr.files.ssh.filesystem.StructrPath;
+import org.structr.storage.StorageProviderFactory;
 import org.structr.web.common.FileHelper;
 import org.structr.web.entity.AbstractFile;
 import org.structr.web.entity.File;
 import org.structr.web.entity.Folder;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.channels.SeekableByteChannel;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.FileAttributeView;
-import java.util.*;
 
 /**
  *
  */
 public class StructrFilePath extends StructrPath {
-
 	private static final Logger logger = LoggerFactory.getLogger(StructrFilePath.class.getName());
 
 	public StructrFilePath(final StructrFilesystem fs, final StructrPath parent, final String name) {
@@ -112,78 +113,73 @@ public class StructrFilePath extends StructrPath {
 
 	@Override
 	public SeekableByteChannel newChannel(final Set<? extends OpenOption> options, final FileAttribute<?>... attrs) throws IOException {
-
-		AbstractFile actualFile   = getActualFile();
-		SeekableByteChannel channel       = null;
-
-		final boolean create      = options.contains(StandardOpenOption.CREATE);
-		final boolean createNew   = options.contains(StandardOpenOption.CREATE_NEW);
-		final boolean write       = options.contains(StandardOpenOption.WRITE);
-		final boolean truncate    = options.contains(StandardOpenOption.TRUNCATE_EXISTING);
-		final boolean append      = options.contains(StandardOpenOption.APPEND);
-
+		AbstractFile actualFile = getActualFile();
+		SeekableByteChannel channel = null;
+		final boolean create = options.contains(StandardOpenOption.CREATE);
+		final boolean createNew = options.contains(StandardOpenOption.CREATE_NEW);
+		final boolean write = options.contains(StandardOpenOption.WRITE);
+		final boolean truncate = options.contains(StandardOpenOption.TRUNCATE_EXISTING);
+		final boolean append = options.contains(StandardOpenOption.APPEND);
 		if (write) {
-
 			try (final Tx tx = StructrApp.getInstance(fs.getSecurityContext()).tx()) {
-
 				// creation of a new file requested (=> create a new schema method)
 				if (create || createNew) {
-
 					// if CREATE_NEW, file must not exist, otherwise an error should be thrown
-					if (createNew && actualFile != null) {
-						throw new java.nio.file.FileAlreadyExistsException(toString());
+					if (createNew && (actualFile != null)) {
+						throw new FileAlreadyExistsException(toString());
 					}
-
 					// only create new file when it does not already exist
 					if (actualFile == null) {
-
 						try {
-
 							actualFile = createNewFile();
 							setParentFolder(actualFile);
-
 						} catch (FrameworkException fex) {
 							logger.warn("", fex);
 						}
 					}
 				}
-
-				if (actualFile != null && actualFile instanceof File) {
-
-					final File file = (File)actualFile;
-
-					channel = StorageProviderFactory.getStorageProvider(file).getSeekableByteChannel(append, truncate);
+				if ((actualFile != null) && (actualFile instanceof File)) {
+					final File file = ((File) (actualFile));
+					channel = 
+<<<<<<< LEFT
+StorageProviderFactory.getStorageProvider(file)
+=======
+StorageProviderFactory.getStorageProvider(file)
+>>>>>>> RIGHT
+					.getSeekableByteChannel(
+<<<<<<< LEFT
+append, truncate
+=======
+append, truncate
+>>>>>>> RIGHT
+					);
 				}
-
 				tx.success();
-
 			} catch (FrameworkException fex) {
-
-				logger.warn("Unable to open file channel for writing of {}: {}", new Object[] { actualFile.getPath(), fex.getMessage() });
+				logger.warn("Unable to open file channel for writing of {}: {}", new Object[]{ actualFile.getPath(), fex.getMessage() });
 			}
-
+		} else if ((actualFile != null) && (actualFile instanceof File)) {
+			try (final Tx tx = StructrApp.getInstance(fs.getSecurityContext()).tx()) {
+				channel = 
+<<<<<<< LEFT
+StorageProviderFactory
+=======
+StorageProviderFactory
+>>>>>>> RIGHT
+				.getStorageProvider(actualFile).getSeekableByteChannel(append, 
+<<<<<<< LEFT
+truncate
+=======
+truncate
+>>>>>>> RIGHT
+				);
+				tx.success();
+			} catch (FrameworkException fex) {
+				logger.warn("Unable to open file channel for reading of {}: {}", new Object[]{ actualFile.getPath(), fex.getMessage() });
+			}
 		} else {
-
-			if (actualFile != null && actualFile instanceof File) {
-
-				try (final Tx tx = StructrApp.getInstance(fs.getSecurityContext()).tx()) {
-
-					channel = StorageProviderFactory.getStorageProvider(actualFile).getSeekableByteChannel(append, truncate);
-
-					tx.success();
-
-				} catch (FrameworkException fex) {
-
-					logger.warn("Unable to open file channel for reading of {}: {}", new Object[] { actualFile.getPath(), fex.getMessage() });
-
-				}
-
-			} else {
-
-				throw new FileNotFoundException("File " + actualFile.getPath() + " does not exist.");
-			}
+			throw new FileNotFoundException(("File " + actualFile.getPath()) + " does not exist.");
 		}
-
 		return channel;
 	}
 
@@ -274,38 +270,27 @@ public class StructrFilePath extends StructrPath {
 
 	@Override
 	public void move(final Path target, final CopyOption... options) throws IOException {
-
 		if (target instanceof StructrFilePath) {
-
-			final App app                       = StructrApp.getInstance(fs.getSecurityContext());
-			final StructrFilePath other    = (StructrFilePath)target;
-			final AbstractFile otherFile        = other.getActualFile();
-			final AbstractFile thisFile         = getActualFile();
-			final String targetName             = target.getFileName().toString();
-
+			final App app = StructrApp.getInstance(fs.getSecurityContext());
+			final StructrFilePath other = ((StructrFilePath) (target));
+			final AbstractFile otherFile = other.getActualFile();
+			final AbstractFile thisFile = getActualFile();
+			final String targetName = target.getFileName().toString();
 			try (final Tx tx = app.tx()) {
-
 				final Path otherParent = other.getParent();
-
 				if (otherParent instanceof StructrFilesPath) {
-
 					// rename & move (parent is null: root path)
 					thisFile.setParent(null);
 					thisFile.setProperty(AbstractNode.name, targetName);
 				} else {
-
-					final StructrFilePath parent  = (StructrFilePath)other.getParent();
-					final Folder newParentFolder  = (Folder)parent.getActualFile();
-
+					final StructrFilePath parent = ((StructrFilePath) (other.getParent()));
+					final Folder newParentFolder = ((Folder) (parent.getActualFile()));
 					// rename & move
 					thisFile.setParent(newParentFolder);
 					thisFile.setProperty(AbstractNode.name, targetName);
 				}
-
 				tx.success();
-
 			} catch (FrameworkException fex) {
-
 				logger.warn("", fex);
 			}
 		}

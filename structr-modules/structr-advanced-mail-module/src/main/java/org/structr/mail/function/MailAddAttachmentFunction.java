@@ -18,21 +18,22 @@
  */
 package org.structr.mail.function;
 
+import java.net.MalformedURLException;
 import org.apache.commons.mail.EmailAttachment;
 import org.structr.common.AdvancedMailContainer;
 import org.structr.common.DynamicMailAttachment;
 import org.structr.common.error.FrameworkException;
-import org.structr.storage.StorageProviderFactory;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.mail.AdvancedMailModule;
 import org.structr.mail.DynamicFileDataSource;
 import org.structr.schema.action.ActionContext;
+import org.structr.storage.StorageProviderFactory;
 import org.structr.web.entity.File;
 
-import java.net.MalformedURLException;
 
 public class MailAddAttachmentFunction extends AdvancedMailModuleFunction {
+	public final String ERROR_MESSAGE = "Usage: ${mail_add_attachment(file[, name])}";
 
-	public final String ERROR_MESSAGE    = "Usage: ${mail_add_attachment(file[, name])}";
 	public final String ERROR_MESSAGE_JS = "Usage: ${{ Structr.mail_add_attachment(file[, name]) }}";
 
 	public MailAddAttachmentFunction(final AdvancedMailModule parent) {
@@ -97,21 +98,20 @@ public class MailAddAttachmentFunction extends AdvancedMailModuleFunction {
 	}
 
 	public static void addAttachment(final AdvancedMailContainer amc, final File fileNode, final String attachmentName) throws MalformedURLException {
-
 		final DynamicMailAttachment attachment = new DynamicMailAttachment();
 		attachment.setName(attachmentName);
 		attachment.setDisposition(EmailAttachment.ATTACHMENT);
-
 		if (fileNode.isTemplate()) {
-
 			attachment.setDataSource(new DynamicFileDataSource(fileNode));
-
 		} else {
-
-			attachment.setDataSource(StorageProviderFactory.getStorageProvider(fileNode));
-
+			attachment.setDataSource(
+<<<<<<< LEFT
+StorageProviderFactory.getStorageProvider(fileNode)
+=======
+StorageProviderFactory.getStorageProvider(fileNode)
+>>>>>>> RIGHT
+			);
 		}
-
 		amc.addAttachment(attachment);
 	}
 }

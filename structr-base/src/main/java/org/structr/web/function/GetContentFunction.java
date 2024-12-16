@@ -18,20 +18,21 @@
  */
 package org.structr.web.function;
 
-import org.structr.common.error.ArgumentCountException;
-import org.structr.common.error.ArgumentNullException;
-import org.structr.common.error.FrameworkException;
-import org.structr.storage.StorageProviderFactory;
-import org.structr.schema.action.ActionContext;
-import org.structr.web.entity.File;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
+import org.structr.common.error.ArgumentCountException;
+import org.structr.common.error.ArgumentNullException;
+import org.structr.common.error.FrameworkException;
+import org.structr.core.storage.StorageProviderFactory;
+import org.structr.schema.action.ActionContext;
+import org.structr.storage.StorageProviderFactory;
+import org.structr.web.entity.File;
+
 
 public class GetContentFunction extends UiAdvancedFunction {
+	public static final String ERROR_MESSAGE_GET_CONTENT = "Usage: ${get_content(file[, encoding = \"UTF-8\"])}. Example: ${get_content(first(find(\'File\', \'name\', \'test.txt\')))}";
 
-	public static final String ERROR_MESSAGE_GET_CONTENT    = "Usage: ${get_content(file[, encoding = \"UTF-8\"])}. Example: ${get_content(first(find('File', 'name', 'test.txt')))}";
 	public static final String ERROR_MESSAGE_GET_CONTENT_JS = "Usage: ${{Structr.getContent(file[, encoding = \"UTF-8\"])}}. Example: ${{Structr.getContent(fileNode)}}";
 
 	@Override
@@ -46,42 +47,33 @@ public class GetContentFunction extends UiAdvancedFunction {
 
 	@Override
 	public Object apply(final ActionContext ctx, final Object caller, final Object[] sources) throws FrameworkException {
-
 		try {
-
 			assertArrayHasMinLengthAndAllElementsNotNull(sources, 1);
-
 			if (sources[0] instanceof File) {
-
-				final File file = (File)sources[0];
-
-				if (StorageProviderFactory.getStorageProvider(file).size() == 0) {
+				final File file = ((File) (sources[0]));
+				if (
+<<<<<<< LEFT
+StorageProviderFactory.getStorageProvider(file)
+=======
+StorageProviderFactory.getStorageProvider(file)
+>>>>>>> RIGHT
+				.size() == 0) {
 					return "";
 				}
-
-				final String encoding = (sources.length == 2 && sources[1] != null) ? sources[1].toString() : "UTF-8";
-
+				final String encoding = ((sources.length == 2) && (sources[1] != null)) ? sources[1].toString() : "UTF-8";
 				try (final InputStream is = file.getInputStream()) {
-
 					return new Scanner(is, encoding).useDelimiter("\\A").next();
-
 				} catch (IOException e) {
-
 					logParameterError(caller, sources, ctx.isJavaScriptContext());
 					return usage(ctx.isJavaScriptContext());
 				}
 			}
-
 		} catch (ArgumentNullException pe) {
-
 			// silently ignore null arguments
-
 		} catch (ArgumentCountException pe) {
-
 			logParameterError(caller, sources, pe.getMessage(), ctx.isJavaScriptContext());
 			return usage(ctx.isJavaScriptContext());
 		}
-
 		return null;
 	}
 

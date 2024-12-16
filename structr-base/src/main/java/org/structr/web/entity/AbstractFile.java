@@ -18,7 +18,11 @@
  */
 package org.structr.web.entity;
 
-
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.structr.api.config.Settings;
@@ -44,95 +48,79 @@ import org.structr.web.common.FileHelper;
 import org.structr.web.property.MethodProperty;
 import org.structr.web.property.PathProperty;
 
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 
 /**
  * Base class for filesystem objects in structr.
  */
+	// ----- nested classes -----
 public interface AbstractFile extends LinkedTreeNode<AbstractFile> {
-
-	static class Impl { static {
-
-		final JsonSchema schema     = SchemaService.getDynamicSchema();
-		final JsonObjectType folder = (JsonObjectType)schema.addType("Folder");
-		final JsonObjectType type   = schema.addType("AbstractFile");
-
-		type.setIsAbstract();
-		type.setImplements(URI.create("https://structr.org/v1.1/definitions/AbstractFile"));
-		type.setExtends(URI.create("https://structr.org/v1.1/definitions/LinkedTreeNodeImpl?typeParameters=org.structr.web.entity.AbstractFile"));
-		type.setCategory("ui");
-
-		type.addStringProperty("name", PropertyView.Public).setIndexed(true).setRequired(true).setFormat("[^\\\\/\\\\x00]+");
-
-		type.addCustomProperty("isMounted", MethodProperty.class.getName(), PropertyView.Public, PropertyView.Ui).setTypeHint("Boolean").setFormat(AbstractFile.class.getName() + ", isMounted");
-		type.addBooleanProperty("includeInFrontendExport",                  PropertyView.Ui).setIndexed(true);
-		type.addBooleanProperty("isExternal",                               PropertyView.Public, PropertyView.Ui).setIndexed(true);
-		type.addLongProperty("lastSeenMounted",                             PropertyView.Public, PropertyView.Ui);
-		type.addStringProperty("storageProvider",                           PropertyView.Public, PropertyView.Ui);
-
-		type.addBooleanProperty("hasParent").setIndexed(true);
-
-		type.addCustomProperty("path", PathProperty.class.getName(), PropertyView.Public, PropertyView.Ui).setTypeHint("String").setIndexed(true);
-
-		type.addPropertyGetter("hasParent", Boolean.TYPE);
-		type.addPropertyGetter("parent", Folder.class);
-		type.addPropertyGetter("path", String.class);
-		type.addPropertyGetter("storageProvider", String.class);
-
-		type.addPropertySetter("hasParent", Boolean.TYPE);
-
-		type.overrideMethod("getPositionProperty",         false, "return FolderCONTAINSAbstractFile.positionProperty;");
-
-		type.overrideMethod("onCreation",                  true,  AbstractFile.class.getName() + ".onCreation(this, arg0, arg1);");
-		type.overrideMethod("onModification",              true,  AbstractFile.class.getName() + ".onModification(this, arg0, arg1, arg2);");
-		type.overrideMethod("getSiblingLinkType",          false, "return AbstractFileCONTAINS_NEXT_SIBLINGAbstractFile.class;");
-		type.overrideMethod("getChildLinkType",            false, "return FolderCONTAINSAbstractFile.class;");
-		type.overrideMethod("isExternal",                  false, "return getProperty(isExternalProperty);");
-		type.overrideMethod("isBinaryDataAccessible",      false, "return !isExternal() || isMounted();")
-//			.addParameter("ctx", SecurityContext.class.getName())
-			.setDoExport(true);
-		type.overrideMethod("isMounted",                   false, "return " + AbstractFile.class.getName() + ".isMounted(this);");
-		type.overrideMethod("getFolderPath",               false, "return " + AbstractFile.class.getName() + ".getFolderPath(this);");
-		type.overrideMethod("includeInFrontendExport",     false, "return " + AbstractFile.class.getName() + ".includeInFrontendExport(this);");
-
-		type.addMethod("setParent")
-			.setSource("setProperty(parentProperty, (Folder)parent);")
-			.addException(FrameworkException.class.getName())
-			.addParameter("parent", "org.structr.web.entity.Folder");
-
-		final JsonReferenceType parentRel  = folder.relate(type, "CONTAINS", Cardinality.OneToMany, "parent", "children");
-		final JsonReferenceType siblingRel = type.relate(type, "CONTAINS_NEXT_SIBLING", Cardinality.OneToOne,  "previousSibling", "nextSibling");
-
-		type.addIdReferenceProperty("parentId",      parentRel.getSourceProperty());
-		type.addIdReferenceProperty("nextSiblingId", siblingRel.getTargetProperty());
-
-		// sort position of children in page
-		parentRel.addIntegerProperty("position");
-
-		// view configuration
-		type.addViewProperty(PropertyView.Public, "visibleToAuthenticatedUsers");
-		type.addViewProperty(PropertyView.Public, "visibleToPublicUsers");
-
-		type.addViewProperty(PropertyView.Ui, "parent");
-	}}
+	static class Impl {
+		static {
+			final JsonSchema schema = SchemaService.getDynamicSchema();
+			final JsonObjectType folder = ((JsonObjectType) (schema.addType("Folder")));
+			final JsonObjectType type = schema.addType("AbstractFile");
+			type.setIsAbstract();
+			type.setImplements(URI.create("https://structr.org/v1.1/definitions/AbstractFile"));
+			type.setExtends(URI.create("https://structr.org/v1.1/definitions/LinkedTreeNodeImpl?typeParameters=org.structr.web.entity.AbstractFile"));
+			type.setCategory("ui");
+			type.addStringProperty("name", PropertyView.Public).setIndexed(true).setRequired(true).setFormat("[^\\\\/\\\\x00]+");
+			type.addCustomProperty("isMounted", MethodProperty.class.getName(), PropertyView.Public, PropertyView.Ui).setTypeHint("Boolean").setFormat(AbstractFile.class.getName() + ", isMounted");
+			type.addBooleanProperty("includeInFrontendExport", PropertyView.Ui).setIndexed(true);
+			type.addBooleanProperty("isExternal", PropertyView.Public, PropertyView.Ui).setIndexed(true);
+			type.addLongProperty("lastSeenMounted", PropertyView.Public, PropertyView.Ui);
+			type.addStringProperty("storageProvider", PropertyView.Public, PropertyView.Ui);
+			type.addBooleanProperty("hasParent").setIndexed(true);
+			type.addCustomProperty("path", PathProperty.class.getName(), PropertyView.Public, PropertyView.Ui).setTypeHint("String").setIndexed(true);
+			type.addPropertyGetter("hasParent", Boolean.TYPE);
+			type.addPropertyGetter("parent", Folder.class);
+			type.addPropertyGetter("path", java.lang.String.class);
+			type.addPropertyGetter("storageProvider", java.lang.String.class);
+			type.addPropertySetter("hasParent", Boolean.TYPE);
+			type.overrideMethod("getPositionProperty", false, "return FolderCONTAINSAbstractFile.positionProperty;");
+			type.overrideMethod("onCreation", true, AbstractFile.class.getName() + ".onCreation(this, arg0, arg1);");
+			type.overrideMethod("onModification", true, AbstractFile.class.getName() + ".onModification(this, arg0, arg1, arg2);");
+			type.overrideMethod("getSiblingLinkType", false, "return AbstractFileCONTAINS_NEXT_SIBLINGAbstractFile.class;");
+			type.overrideMethod("getChildLinkType", false, "return FolderCONTAINSAbstractFile.class;");
+			type.overrideMethod("isExternal", false, "return getProperty(isExternalProperty);");
+			// .addParameter("ctx", SecurityContext.class.getName())
+			type.overrideMethod("isBinaryDataAccessible", false, "return !isExternal() || isMounted();").setDoExport(true);
+			type.overrideMethod("isMounted", false, ("return " + AbstractFile.class.getName()) + ".isMounted(this);");
+			type.overrideMethod("getFolderPath", false, ("return " + AbstractFile.class.getName()) + ".getFolderPath(this);");
+			type.overrideMethod("includeInFrontendExport", false, ("return " + AbstractFile.class.getName()) + ".includeInFrontendExport(this);");
+			type.addMethod("setParent").setSource("setProperty(parentProperty, (Folder)parent);").addException(FrameworkException.class.getName()).addParameter("parent", "org.structr.web.entity.Folder");
+			final JsonReferenceType parentRel = folder.relate(type, "CONTAINS", Cardinality.OneToMany, "parent", "children");
+			final JsonReferenceType siblingRel = type.relate(type, "CONTAINS_NEXT_SIBLING", Cardinality.OneToOne, "previousSibling", "nextSibling");
+			type.addIdReferenceProperty("parentId", parentRel.getSourceProperty());
+			type.addIdReferenceProperty("nextSiblingId", siblingRel.getTargetProperty());
+			// sort position of children in page
+			parentRel.addIntegerProperty("position");
+			// view configuration
+			type.addViewProperty(PropertyView.Public, "visibleToAuthenticatedUsers");
+			type.addViewProperty(PropertyView.Public, "visibleToPublicUsers");
+			type.addViewProperty(PropertyView.Ui, "parent");
+		}
+	}
 
 	void setParent(final Folder parent) throws FrameworkException;
+
 	void setHasParent(final boolean hasParent) throws FrameworkException;
+
 	Folder getParent();
 
 	String getPath();
+
 	String getFolderPath();
 
-	String getStorageProvider();
+	public abstract String getStorageProvider();
 
 	boolean isMounted();
+
 	boolean isExternal();
+
 	boolean getHasParent();
+
 	boolean isBinaryDataAccessible(final SecurityContext securityContext);
+
 	boolean includeInFrontendExport();
 
 	static void onCreation(final AbstractFile thisFile, final SecurityContext securityContext, final ErrorBuffer errorBuffer) throws FrameworkException {
@@ -252,8 +240,7 @@ public interface AbstractFile extends LinkedTreeNode<AbstractFile> {
 		return valid;
 	}
 
-	static boolean renameMountedAbstractFile (final Folder thisFolder, final AbstractFile file, final String path, final String previousName) {
-
+	public static boolean renameMountedAbstractFile(final Folder thisFolder, final AbstractFile file, final String path, final String previousName) {
 		// ToDo: Implement renameMountedAbstractFile for new fs layer
 		throw new UnsupportedOperationException("Not implemented for new fs abstraction layer");
 		/*
@@ -397,5 +384,4 @@ public interface AbstractFile extends LinkedTreeNode<AbstractFile> {
 			: null;
 
 	}
-	// ----- nested classes -----
 }

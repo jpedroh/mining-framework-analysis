@@ -18,6 +18,8 @@
  */
 package org.structr.files.external;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.structr.common.SecurityContext;
@@ -28,48 +30,46 @@ import org.structr.core.entity.GenericNode;
 import org.structr.core.graph.NodeAttribute;
 import org.structr.core.property.PropertyKey;
 import org.structr.core.property.PropertyMap;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.storage.StorageProviderFactory;
 import org.structr.web.common.FileHelper;
 import org.structr.web.entity.AbstractFile;
 import org.structr.web.entity.File;
 import org.structr.web.entity.Folder;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 /**
  * Implementation of the watch event listener interface that syncs
  * the discovered files with the database.
  */
 public class FileSyncWatchEventListener implements WatchEventListener {
-
 	private static final Logger logger = LoggerFactory.getLogger(FileSyncWatchEventListener.class);
 
 	@Override
 	public boolean onDiscover(final Path root, final Path context, final Path path) throws FrameworkException {
-
 		// skip root directory
 		if (context.equals(path)) {
 			return true;
 		}
-
 		final FolderAndFile obj = handle(root, root.relativize(path), path, true);
-		if (obj != null && obj.file != null && obj.file instanceof File) {
-
-			final File fileNode       = (File)obj.file;
+		if (((obj != null) && (obj.file != null)) && (obj.file instanceof File)) {
+			final File fileNode = ((File) (obj.file));
 			final java.io.File fileOnDisk = path.toFile();
-			final long size               = fileOnDisk.length();
-			final long lastModified       = fileOnDisk.lastModified();
-			final Long fileNodeSize       = StorageProviderFactory.getStorageProvider(fileNode).size();
-			final Long fileNodeDate       = fileNode.getProperty(StructrApp.key(File.class, "fileModificationDate"));
-
+			final long size = fileOnDisk.length();
+			final long lastModified = fileOnDisk.lastModified();
+			final Long fileNodeSize = 
+<<<<<<< LEFT
+StorageProviderFactory.getStorageProvider(fileNode)
+=======
+StorageProviderFactory.getStorageProvider(fileNode)
+>>>>>>> RIGHT
+			.size();
+			final Long fileNodeDate = fileNode.getProperty(StructrApp.key(File.class, "fileModificationDate"));
 			// update metadata only when size or modification time has changed
-			if (fileNodeSize == null || fileNodeDate == null || size != fileNodeSize || lastModified != fileNodeDate) {
-
+			if ((((fileNodeSize == null) || (fileNodeDate == null)) || (size != fileNodeSize)) || (lastModified != fileNodeDate)) {
 				obj.handle();
 			}
 		}
-
 		return true;
 	}
 
@@ -191,50 +191,28 @@ public class FileSyncWatchEventListener implements WatchEventListener {
 	}
 
 	private class FolderAndFile {
-
 		public AbstractFile file = null;
+
 		public Folder rootFolder = null;
 
 		public FolderAndFile(final Folder rootFolder, final AbstractFile file) {
 			this.rootFolder = rootFolder;
-			this.file       = file;
+			this.file = file;
 		}
 
 		void handle() throws FrameworkException {
-
 			final PropertyKey<Boolean> doFulltextIndexing = StructrApp.key(Folder.class, "mountDoFulltextIndexing");
-			final PropertyKey<Long> lastSeenMounted       = StructrApp.key(AbstractFile.class, "lastSeenMounted");
-
+			final PropertyKey<Long> lastSeenMounted = StructrApp.key(AbstractFile.class, "lastSeenMounted");
 			if (file instanceof File) {
-
-				final File fileBase = (File)file;
-
-				if (rootFolder != null && rootFolder.getProperty(doFulltextIndexing)) {
+				final File fileBase = ((File) (file));
+				if ((rootFolder != null) && rootFolder.getProperty(doFulltextIndexing)) {
 					StructrApp.getInstance().getFulltextIndexer().addToFulltextIndex(fileBase);
 				}
-
 				FileHelper.updateMetadata(fileBase, new PropertyMap(lastSeenMounted, System.currentTimeMillis()), true);
-
 			} else if (file instanceof AbstractFile) {
-
-				final AbstractFile abstractFile = (AbstractFile)file;
-
+				final AbstractFile abstractFile = ((AbstractFile) (file));
 				abstractFile.setProperty(lastSeenMounted, System.currentTimeMillis());
 			}
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

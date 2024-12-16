@@ -18,12 +18,20 @@
  */
 package org.structr.web.importer;
 
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Comment;
 import org.jsoup.nodes.*;
+import org.jsoup.nodes.Comment;
 import org.jsoup.parser.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,15 +52,16 @@ import org.structr.core.graph.Tx;
 import org.structr.core.property.PropertyKey;
 import org.structr.core.property.PropertyMap;
 import org.structr.core.property.StringProperty;
-import org.structr.storage.StorageProviderFactory;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.rest.common.HttpHelper;
 import org.structr.schema.action.Actions;
 import org.structr.schema.importer.SchemaJsonImporter;
+import org.structr.storage.StorageProviderFactory;
 import org.structr.web.common.FileHelper;
 import org.structr.web.common.ImageHelper;
 import org.structr.web.diff.*;
-import org.structr.web.entity.File;
 import org.structr.web.entity.*;
+import org.structr.web.entity.File;
 import org.structr.web.entity.dom.*;
 import org.structr.web.entity.html.Body;
 import org.structr.web.entity.html.Head;
@@ -61,56 +70,62 @@ import org.structr.web.maintenance.DeployCommand;
 import org.structr.web.property.CustomHtmlAttributeProperty;
 import org.structr.websocket.command.CreateComponentCommand;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * The importer creates a new page by downloading and parsing markup from a URL.
  */
 public class Importer {
-
 	private static final Logger logger = LoggerFactory.getLogger(Importer.class.getName());
 
 	private static final Set<String> hrefElements       = new LinkedHashSet<>(Arrays.asList(new String[]{"link"}));
-	private static final Set<String> ignoreElementNames = new LinkedHashSet<>(Arrays.asList(new String[]{"#declaration", "#doctype"}));
-	private static final Set<String> srcElements        = new LinkedHashSet<>(Arrays.asList(new String[]{"img", "script", "audio", "video", "input", "source", "track"}));
+
+	private static final Set<String> ignoreElementNames = new LinkedHashSet<>(Arrays.asList(new String[]{ "#declaration", "#doctype" }));
+
+	private static final Set<String> srcElements = new LinkedHashSet<>(Arrays.asList(new String[]{ "img", "script", "audio", "video", "input", "source", "track" }));
 
 	private static final Map<String, String> contentTypeForExtension = new HashMap<>();
 
 	private static App app;
 
 	private final static String DATA_STRUCTR_PREFIX = "data-structr-";
+
 	private final static String DATA_META_PREFIX    = "data-structr-meta-";
 
 	static {
-
 		contentTypeForExtension.put("css", "text/css");
-		contentTypeForExtension.put("js",  "text/javascript");
+		contentTypeForExtension.put("js", "text/javascript");
 		contentTypeForExtension.put("xml", "text/xml");
 		contentTypeForExtension.put("php", "application/x-php");
-
 	}
 
 	private final StringBuilder commentSource    = new StringBuilder();
+
 	private final SecurityContext securityContext;
+
 	private final boolean includeInExport;
+
 	private final boolean publicVisible;
+
 	private final boolean authVisible;
+
 	private CommentHandler commentHandler;
+
 	private boolean relativeVisibility = false;
+
 	private boolean withTemplate       = false;
+
 	private boolean isDeployment       = false;
+
 	private Document parsedDocument    = null;
+
 	private final String name;
+
 	private URL originalUrl;
+
 	private String address;
+
 	private String code;
+
 	private String tableChildElement;
 
 	private Map<String, Linkable> alreadyDownloaded = new HashMap<>();
@@ -123,13 +138,21 @@ public class Importer {
 	 * The importer will create a page with the given name. Visibility can be controlled by publicVisible and authVisible.
 	 *
 	 * @param securityContext
+	 * 		
 	 * @param code
+	 * 		
 	 * @param address
+	 * 		
 	 * @param name
+	 * 		
 	 * @param publicVisible
+	 * 		
 	 * @param authVisible
+	 * 		
 	 * @param includeInExport
+	 * 		
 	 * @param relativeVisibility
+	 * 		
 	 */
 	public Importer(final SecurityContext securityContext, final String code, final String address, final String name, final boolean publicVisible, final boolean authVisible, final boolean includeInExport, final boolean relativeVisibility) {
 		this(securityContext, code, address, name, publicVisible, authVisible, includeInExport, relativeVisibility, false);
@@ -141,37 +164,41 @@ public class Importer {
 	 * The importer will create a page with the given name. Visibility can be controlled by publicVisible and authVisible.
 	 *
 	 * @param securityContext
+	 * 		
 	 * @param code
+	 * 		
 	 * @param address
+	 * 		
 	 * @param name
+	 * 		
 	 * @param publicVisible
+	 * 		
 	 * @param authVisible
+	 * 		
 	 * @param includeInExport
+	 * 		
 	 * @param relativeVisibility
+	 * 		
 	 * @param withTemplate
+	 * 		
 	 */
 	public Importer(final SecurityContext securityContext, final String code, final String address, final String name, final boolean publicVisible, final boolean authVisible, final boolean includeInExport, final boolean relativeVisibility, final boolean withTemplate) {
-
-		this.code               = code;
-		this.address            = address;
-		this.name               = name;
-		this.securityContext    = securityContext;
-		this.publicVisible      = publicVisible;
-		this.authVisible        = authVisible;
-		this.includeInExport    = includeInExport;
+		this.code = code;
+		this.address = address;
+		this.name = name;
+		this.securityContext = securityContext;
+		this.publicVisible = publicVisible;
+		this.authVisible = authVisible;
+		this.includeInExport = includeInExport;
 		this.relativeVisibility = relativeVisibility;
-		this.withTemplate       = withTemplate;
-
-		if (address != null && !address.endsWith("/") && !address.endsWith(".html")) {
+		this.withTemplate = withTemplate;
+		if (((address != null) && (!address.endsWith("/"))) && (!address.endsWith(".html"))) {
 			this.address = this.address.concat("/");
 		}
-
 		// only do this if address is non-null
 		if (this.address != null) {
-
 			try {
 				originalUrl = new URL(this.address);
-
 			} catch (MalformedURLException ex) {
 				logger.info("Cannot convert '{}' to URL - is the protocol ok? Trying to resume anyway...", this.address);
 			}
@@ -1251,84 +1278,57 @@ public class Importer {
 	 * Check whether a file with given path and checksum already exists
 	 */
 	private File fileExists(final String path, final long checksum) throws FrameworkException {
-
 		final PropertyKey<Long> checksumKey = StructrApp.key(File.class, "checksum");
-		final PropertyKey<String> pathKey   = StructrApp.key(File.class, "path");
-
+		final PropertyKey<String> pathKey = StructrApp.key(File.class, "path");
 		return app.nodeQuery(File.class).and(pathKey, path).and(checksumKey, checksum).getFirst();
 	}
 
 	private Linkable downloadFile(final String downloadAddress, final URL base) {
-
 		URL downloadUrl = null;
-
 		try {
-
 			downloadUrl = new URL(base, downloadAddress);
-
 		} catch (MalformedURLException ex) {
-
 			logger.error("Could not resolve address {}", address != null ? address.concat("/") : "");
 			return null;
 		}
-
 		final String alreadyDownloadedKey = downloadUrl.getPath();
-
 		// Don't download the same file twice
 		if (alreadyDownloaded.containsKey(alreadyDownloadedKey)) {
 			return alreadyDownloaded.get(alreadyDownloadedKey);
 		}
-
 		long size;
 		long checksum;
 		String contentType;
-		java.io.File tmpFile;
-
+		File tmpFile;
 		try {
 			// create temporary file on disk
 			final Path tmpFilePath = Files.createTempFile("structr", "download");
-			tmpFile                = tmpFilePath.toFile();
-
+			tmpFile = tmpFilePath.toFile();
 		} catch (IOException ioex) {
-
 			logger.error("Unable to create temporary file for download, aborting.");
 			return null;
 		}
-
 		try {
-
 			logger.info("Starting download from {}", downloadUrl);
-
 			copyURLToFile(downloadUrl.toString(), tmpFile);
-
 		} catch (IOException ioe) {
-
-			if (originalUrl == null || address == null) {
-
+			if ((originalUrl == null) || (address == null)) {
 				logger.info("Cannot download from {} without base address", downloadAddress);
 				return null;
-
 			}
-
-			logger.warn("Unable to download from {} {}", new Object[]{originalUrl, downloadAddress});
-
+			logger.warn("Unable to download from {} {}", new Object[]{ originalUrl, downloadAddress });
 			try {
 				// Try alternative baseUrl with trailing "/"
 				if (address.endsWith("/")) {
-
 					// don't append a second slash!
-					logger.info("Starting download from alternative URL {} {} {}", new Object[]{originalUrl, address, downloadAddress});
+					logger.info("Starting download from alternative URL {} {} {}", new Object[]{ originalUrl, address, downloadAddress });
 					downloadUrl = new URL(new URL(originalUrl, address), downloadAddress);
-
 				} else {
-
 					// append a slash
-					logger.info("Starting download from alternative URL {} {} {}", new Object[]{originalUrl, address.concat("/"), downloadAddress});
+					logger.info("Starting download from alternative URL {} {} {}", new Object[]{ originalUrl, address.concat("/"), downloadAddress });
 					downloadUrl = new URL(new URL(originalUrl, address.concat("/")), downloadAddress);
 				}
-
 				copyURLToFile(downloadUrl.toString(), tmpFile);
-
 			} catch (MalformedURLException ex) {
 				logger.error("Could not resolve address {}", address.concat("/"));
 				return null;
@@ -1336,122 +1336,80 @@ public class Importer {
 				logger.warn("Unable to download from {}", address.concat("/"));
 				return null;
 			}
-
 			logger.info("Starting download from alternative URL {}", downloadUrl);
-
 		}
-
-		//downloadAddress = StringUtils.substringBefore(downloadAddress, "?");
+		// downloadAddress = StringUtils.substringBefore(downloadAddress, "?");
 		final String downloadName = cleanFileName(StringUtils.substringBefore(downloadUrl.getFile(), "?"));
-		final String fileName     = PathHelper.getName(downloadName);
-
+		final String fileName = PathHelper.getName(downloadName);
 		if (StringUtils.isBlank(fileName)) {
-
 			logger.warn("Can't figure out filename from download address {}, aborting.", downloadAddress);
-
 			return null;
 		}
-
 		// TODO: Add security features like null/integrity/virus checking before copying it to
 		// the files repo
 		try {
-
 			contentType = FileHelper.getContentMimeType(tmpFile, fileName);
-			checksum    = FileHelper.getChecksum(tmpFile);
-			size        = tmpFile.length();
-
+			checksum = FileHelper.getChecksum(tmpFile);
+			size = tmpFile.length();
 		} catch (IOException ioe) {
-
 			logger.warn("Unable to determine MIME type, size or checksum of {}", tmpFile);
 			return null;
 		}
-
-
-		logger.info("Download URL: {}, address: {}, cleaned address: {}, filename: {}",
-			new Object[]{downloadUrl, address, StringUtils.substringBeforeLast(address, "/"), fileName});
-
+		logger.info("Download URL: {}, address: {}, cleaned address: {}, filename: {}", new Object[]{ downloadUrl, address, StringUtils.substringBeforeLast(address, "/"), fileName });
 		String relativePath = StringUtils.substringAfter(downloadUrl.toString(), StringUtils.substringBeforeLast(address, "/"));
 		if (StringUtils.isBlank(relativePath)) {
-
 			relativePath = downloadAddress;
 		}
-
 		final String path;
-		final String httpPrefix     = "http://";
-		final String httpsPrefix    = "https://";
+		final String httpPrefix = "http://";
+		final String httpsPrefix = "https://";
 		final String flexiblePrefix = "//";
-
 		if (downloadAddress.startsWith(httpsPrefix)) {
-
-			path = StringUtils.substringBefore((StringUtils.substringAfter(downloadAddress, httpsPrefix)), "/");
-
+			path = StringUtils.substringBefore(StringUtils.substringAfter(downloadAddress, httpsPrefix), "/");
 		} else if (downloadAddress.startsWith(httpPrefix)) {
-
-			path = StringUtils.substringBefore((StringUtils.substringAfter(downloadAddress, httpPrefix)), "/");
-
+			path = StringUtils.substringBefore(StringUtils.substringAfter(downloadAddress, httpPrefix), "/");
 		} else if (downloadAddress.startsWith(flexiblePrefix)) {
-
-			path = StringUtils.substringBefore((StringUtils.substringAfter(downloadAddress, flexiblePrefix)), "/");
-
+			path = StringUtils.substringBefore(StringUtils.substringAfter(downloadAddress, flexiblePrefix), "/");
 		} else {
-
 			path = StringUtils.substringBeforeLast(relativePath, "/");
 		}
-
-
 		logger.info("Relative path: {}, final path: {}", relativePath, path);
-
 		if (contentType.equals("text/plain")) {
-
 			contentType = StringUtils.defaultIfBlank(contentTypeForExtension.get(StringUtils.substringAfterLast(fileName, ".")), "text/plain");
 		}
-
 		try {
-
-			final String fullPath = path + "/" + fileName;
-
-
+			final String fullPath = (path + "/") + fileName;
 			File fileNode = fileExists(PathHelper.removeRelativeParts(fullPath), checksum);
 			if (fileNode == null) {
-
 				if (ImageHelper.isImageType(fileName)) {
-
 					fileNode = createImageNode(fullPath, contentType, size, checksum);
-
 				} else {
-
 					fileNode = createFileNode(fullPath, contentType, size, checksum);
 				}
-
-				try (final FileInputStream is = new FileInputStream(tmpFile); final OutputStream os = StorageProviderFactory.getStorageProvider(fileNode).getOutputStream()) {
+				try (final FileInputStream is = new FileInputStream(tmpFile);
+<<<<<<< LEFT
+final OutputStream os = StorageProviderFactory.getStorageProvider(fileNode).getOutputStream()
+=======
+final OutputStream os = StorageProviderFactory.getStorageProvider(fileNode).getOutputStream()
+>>>>>>> RIGHT
+				) {
 					// Copy contents of tmpFile to file in structr fs
 					IOUtils.copy(is, os);
-
 					if (contentType.equals("text/css")) {
-
 						processCssFileNode(fileNode, downloadUrl);
 					}
-
-					// set export flag according to user preference
+				// set export flag according to user preference
 					fileNode.setProperty(StructrApp.key(File.class, "includeInFrontendExport"), includeInExport);
 				}
-
 			} else {
-
 				tmpFile.delete();
 			}
-
 			alreadyDownloaded.put(alreadyDownloadedKey, fileNode);
 			return fileNode;
-
-		} catch (final FrameworkException | IOException ex) {
-
+		} catch (FrameworkException | IOException ex) {
 			logger.warn("Could not create file node.", ex);
-
 		}
-
 		return null;
-
 	}
 
 	private File createFileNode(final String path, final String contentType, final long size, final long checksum) throws FrameworkException {
@@ -1459,45 +1417,29 @@ public class Importer {
 	}
 
 	private File createFileNode(final String path, final String contentType, final long size, final long checksum, final Class fileClass) throws FrameworkException {
-
-		final PropertyKey<Integer> versionKey    = StructrApp.key(File.class, "version");
-		final PropertyKey<Folder> parentKey      = StructrApp.key(File.class, "parent");
+		final PropertyKey<Integer> versionKey = StructrApp.key(File.class, "version");
+		final PropertyKey<Folder> parentKey = StructrApp.key(File.class, "parent");
 		final PropertyKey<String> contentTypeKey = StructrApp.key(File.class, "contentType");
-		final PropertyKey<Long> checksumKey      = StructrApp.key(File.class, "checksum");
-		final PropertyKey<Long> sizeKey          = StructrApp.key(File.class, "size");
-		final Folder parentFolder                = FileHelper.createFolderPath(securityContext, PathHelper.getFolderPath(path));
-
+		final PropertyKey<Long> checksumKey = StructrApp.key(File.class, "checksum");
+		final PropertyKey<Long> sizeKey = StructrApp.key(File.class, "size");
+		final Folder parentFolder = FileHelper.createFolderPath(securityContext, PathHelper.getFolderPath(path));
 		if (parentFolder != null) {
-
 			// set export flag according to user preference
 			parentFolder.setProperty(StructrApp.key(File.class, "includeInFrontendExport"), includeInExport);
 		}
-
-		return app.create(fileClass != null ? fileClass : File.class,
-			new NodeAttribute(AbstractNode.name, PathHelper.getName(path)),
-			new NodeAttribute(parentKey,      parentFolder),
-			new NodeAttribute(contentTypeKey, contentType),
-			new NodeAttribute(sizeKey,        size),
-			new NodeAttribute(checksumKey,    checksum),
-			new NodeAttribute(versionKey,     1),
-			new NodeAttribute(AbstractNode.visibleToPublicUsers, publicVisible),
-			new NodeAttribute(AbstractNode.visibleToAuthenticatedUsers, authVisible));
+		return app.create(fileClass != null ? fileClass : File.class, new NodeAttribute(AbstractNode.name, PathHelper.getName(path)), new NodeAttribute(parentKey, parentFolder), new NodeAttribute(contentTypeKey, contentType), new NodeAttribute(sizeKey, size), new NodeAttribute(checksumKey, checksum), new NodeAttribute(versionKey, 1), new NodeAttribute(AbstractNode.visibleToPublicUsers, publicVisible), new NodeAttribute(AbstractNode.visibleToAuthenticatedUsers, authVisible));
 	}
 
 	private Image createImageNode(final String path, final String contentType, final long size, final long checksum) throws FrameworkException {
-		return (Image) createFileNode(path, contentType, size, checksum, Image.class);
+		return ((Image) (createFileNode(path, contentType, size, checksum, Image.class)));
 	}
 
 	private void processCssFileNode(final File fileNode, final URL base) throws IOException {
-
 		final StringWriter sw = new StringWriter();
-
 		try (final InputStream is = fileNode.getInputStream()) {
 			IOUtils.copy(is, sw, "UTF-8");
 		}
-
 		processCss(sw.toString(), base);
-
 	}
 
 	private void processCss(final String css, final URL base) throws IOException {
