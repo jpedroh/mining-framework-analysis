@@ -4,9 +4,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import de.is24.deadcode4j.AnalysisContext;
 import de.is24.deadcode4j.analyzer.javassist.ClassPoolAccessor;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import japa.parser.JavaParser;
-import japa.parser.TokenMgrError;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.ImportDeclaration;
 import japa.parser.ast.Node;
@@ -16,12 +13,9 @@ import japa.parser.ast.expr.NameExpr;
 import japa.parser.ast.expr.QualifiedNameExpr;
 import japa.parser.ast.type.*;
 import japa.parser.ast.visitor.VoidVisitorAdapter;
-
+import java.util.*;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.*;
-import java.util.*;
-
 import static com.google.common.base.Optional.absent;
 import static com.google.common.base.Optional.of;
 import static com.google.common.collect.Lists.newLinkedList;
@@ -31,8 +25,7 @@ import static de.is24.deadcode4j.Utils.getOrAddMappedSet;
 import static de.is24.deadcode4j.Utils.or;
 import static de.is24.deadcode4j.analyzer.javassist.ClassPoolAccessor.classPoolAccessorFor;
 import static java.util.Collections.emptySet;
-import static java.util.Map.Entry;
-import static org.apache.commons.io.IOUtils.closeQuietly;
+
 
 /**
  * Analyzes Java files and reports dependencies to classes that are not part of the byte code due to type erasure.
@@ -42,12 +35,14 @@ import static org.apache.commons.io.IOUtils.closeQuietly;
  */
 @SuppressWarnings("PMD.TooManyStaticImports")
 public class TypeErasureAnalyzer extends JavaFileAnalyzer {
-
-    @Override
-    protected void analyzeCompilationUnit(@Nonnull final AnalysisContext analysisContext, @Nonnull final CompilationUnit compilationUnit) {
+    protected void analyzeCompilationUnit(@Nonnull
+    final AnalysisContext analysisContext, @Nonnull
+    final CompilationUnit compilationUnit) {
         compilationUnit.accept(new TypeRecordingVisitor() {
             private final ClassPoolAccessor classPoolAccessor = classPoolAccessorFor(analysisContext);
+
             private final Deque<Set<String>> definedTypeParameters = newLinkedList();
+
             private final Map<String, Set<String>> typeReferences = newHashMap();
 
             @Override
@@ -188,14 +183,7 @@ public class TypeErasureAnalyzer extends JavaFileAnalyzer {
                 for (Entry<String, Set<String>> typeReference : this.typeReferences.entrySet()) {
                     String referencedType = typeReference.getKey();
                     @SuppressWarnings("unchecked")
-                    Optional<String> resolvedClass = or(
-                            resolveFullyQualifiedClass(),
-                            resolveInnerType(),
-                            resolveImport(),
-                            resolvePackageType(),
-                            resolveAsteriskImports(),
-                            resolveJavaLangType()
-                    ).apply(referencedType);
+                    Optional<String> resolvedClass = or(resolveFullyQualifiedClass(), resolveInnerType(), resolveImport(), resolvePackageType(), resolveAsteriskImports(), resolveJavaLangType()).apply(referencedType);
                     assert resolvedClass != null;
                     if (resolvedClass.isPresent()) {
                         for (String depender : typeReference.getValue()) {
@@ -331,15 +319,14 @@ public class TypeErasureAnalyzer extends JavaFileAnalyzer {
                 }
                 return buffy;
             }
-
-
         }, null);
     }
 
     private static class TypeRecordingVisitor extends VoidVisitorAdapter<Void> {
-
         private final LinkedList<String> typeHierarchy = newLinkedList();
+
         private final Set<String> typeNames = newHashSet();
+
         private String outerMostType;
 
         @Override
@@ -400,5 +387,4 @@ public class TypeErasureAnalyzer extends JavaFileAnalyzer {
             return typeNames;
         }
     }
-
 }
