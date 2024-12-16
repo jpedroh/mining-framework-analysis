@@ -16,10 +16,6 @@
  */
 package org.apache.commons.lang3;
 
-import org.apache.commons.lang3.mutable.MutableInt;
-import org.apache.commons.lang3.text.WordUtils;
-import org.junit.jupiter.api.Test;
-
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -27,11 +23,27 @@ import java.lang.reflect.Modifier;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.regex.PatternSyntaxException;
+import org.apache.commons.lang3.mutable.MutableInt;
+import org.apache.commons.lang3.text.WordUtils;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for methods of {@link org.apache.commons.lang3.StringUtils}
@@ -607,25 +619,6 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testLazyDefault_StringStringSupplier() {
-        assertEquals("NULL", StringUtils.lazyDefaultString(null, () -> "NULL"));
-        assertEquals("", StringUtils.lazyDefaultString("", () -> "NULL"));
-        assertEquals("abc", StringUtils.lazyDefaultString("abc", () -> "NULL"));
-        assertNull(null, StringUtils.lazyDefaultString(null, () -> null));
-        assertNull(null, StringUtils.lazyDefaultString(null, null));
-        //Checking laziness
-        MutableInt numberOfCalls = new MutableInt(0);
-        Supplier<String> countingDefaultSupplier = () -> {
-            numberOfCalls.increment();
-            return "NULL";
-        };
-        StringUtils.lazyDefaultString("abc", countingDefaultSupplier);
-        assertEquals(0, numberOfCalls.getValue());
-        StringUtils.lazyDefaultString(null, countingDefaultSupplier);
-        assertEquals(1, numberOfCalls.getValue());
-    }
-
-    @Test
     public void testDefaultIfBlank_CharBuffers() {
         assertEquals("NULL", StringUtils.defaultIfBlank(CharBuffer.wrap(""), CharBuffer.wrap("NULL")).toString());
         assertEquals("NULL", StringUtils.defaultIfBlank(CharBuffer.wrap(" "), CharBuffer.wrap("NULL")).toString());
@@ -670,34 +663,6 @@ public class StringUtilsTest {
         assertEquals("abc", s);
     }
 
-
-    @Test
-    public void testLazyDefaultIfBlank_StringStringSupplier() {
-        assertEquals("NULL", StringUtils.lazyDefaultIfBlank(null, () -> "NULL"));
-        assertEquals("NULL", StringUtils.lazyDefaultIfBlank("", () -> "NULL"));
-        assertEquals("NULL", StringUtils.lazyDefaultIfBlank(" ", () -> "NULL"));
-        assertEquals("abc", StringUtils.lazyDefaultIfBlank("abc", () -> "NULL"));
-        assertNull(StringUtils.lazyDefaultIfBlank("", () -> null));
-        assertNull(StringUtils.lazyDefaultIfBlank("", null));
-        // Tests compatibility for the API return type
-        final String s = StringUtils.lazyDefaultIfBlank("abc", () -> "NULL");
-        assertEquals("abc", s);
-        //Checking laziness
-        MutableInt numberOfCalls = new MutableInt(0);
-        Supplier<String> countingDefaultSupplier = () -> {
-            numberOfCalls.increment();
-            return "NULL";
-        };
-        StringUtils.lazyDefaultIfBlank("abc", countingDefaultSupplier);
-        assertEquals(0, numberOfCalls.getValue());
-        StringUtils.lazyDefaultIfBlank("", countingDefaultSupplier);
-        assertEquals(1, numberOfCalls.getValue());
-        StringUtils.lazyDefaultIfBlank(" ", countingDefaultSupplier);
-        assertEquals(2, numberOfCalls.getValue());
-        StringUtils.lazyDefaultIfBlank(null, countingDefaultSupplier);
-        assertEquals(3, numberOfCalls.getValue());
-    }
-
     @Test
     public void testDefaultIfEmpty_CharBuffers() {
         assertEquals("NULL", StringUtils.defaultIfEmpty(CharBuffer.wrap(""), CharBuffer.wrap("NULL")).toString());
@@ -739,31 +704,6 @@ public class StringUtilsTest {
         final String s = StringUtils.defaultIfEmpty("abc", "NULL");
         assertEquals("abc", s);
     }
-
-    @Test
-    public void testLazyDefaultIfEmpty_StringStringSupplier() {
-        assertEquals("NULL", StringUtils.lazyDefaultIfEmpty(null, () -> "NULL"));
-        assertEquals("NULL", StringUtils.lazyDefaultIfEmpty("", () -> "NULL"));
-        assertEquals("abc", StringUtils.lazyDefaultIfEmpty("abc", () -> "NULL"));
-        assertNull(StringUtils.lazyDefaultIfEmpty("", () -> null));
-        assertNull(StringUtils.lazyDefaultIfEmpty("", null));
-        // Tests compatibility for the API return type
-        final String s = StringUtils.lazyDefaultIfEmpty("abc", () -> "NULL");
-        assertEquals("abc", s);
-        //Checking laziness
-        MutableInt numberOfCalls = new MutableInt(0);
-        Supplier<String> countingDefaultSupplier = () -> {
-            numberOfCalls.increment();
-            return "NULL";
-        };
-        StringUtils.lazyDefaultIfEmpty("abc", countingDefaultSupplier);
-        assertEquals(0, numberOfCalls.getValue());
-        StringUtils.lazyDefaultIfEmpty("", countingDefaultSupplier);
-        assertEquals(1, numberOfCalls.getValue());
-        StringUtils.lazyDefaultIfEmpty(null, countingDefaultSupplier);
-        assertEquals(2, numberOfCalls.getValue());
-    }
-
 
     @Test
     public void testDeleteWhitespace_String() {
@@ -2965,6 +2905,775 @@ public class StringUtilsTest {
      * @see StringUtils#toString(byte[], String)
      */
     @Test
+<<<<<<< LEFT
+    public void testReplace_StringStringArrayStringArrayBoolean() {
+        //JAVADOC TESTS START
+        assertNull(StringUtils.replaceEachRepeatedly(null, new String[]{"a"}, new String[]{"b"}));
+        assertEquals(StringUtils.replaceEachRepeatedly("", new String[]{"a"}, new String[]{"b"}), "");
+        assertEquals(StringUtils.replaceEachRepeatedly("aba", null, null), "aba");
+        assertEquals(StringUtils.replaceEachRepeatedly("aba", new String[0], null), "aba");
+        assertEquals(StringUtils.replaceEachRepeatedly("aba", null, new String[0]), "aba");
+        assertEquals(StringUtils.replaceEachRepeatedly("aba", new String[0], null), "aba");
+
+        assertEquals(StringUtils.replaceEachRepeatedly("aba", new String[]{"a"}, new String[]{""}), "b");
+        assertEquals(StringUtils.replaceEachRepeatedly("aba", new String[]{null}, new String[]{"a"}), "aba");
+        assertEquals(StringUtils.replaceEachRepeatedly("abcde", new String[]{"ab", "d"}, new String[]{"w", "t"}), "wcte");
+        assertEquals(StringUtils.replaceEachRepeatedly("abcde", new String[]{"ab", "d"}, new String[]{"d", "t"}), "tcte");
+
+        assertThrows(
+                IllegalStateException.class,
+                () -> StringUtils.replaceEachRepeatedly("abcde", new String[]{"ab", "d"}, new String[]{"d", "ab"}),
+                "Should be a circular reference");
+
+        //JAVADOC TESTS END
+    }
+
+    @Test
+    public void testReplaceChars_StringCharChar() {
+        assertNull(StringUtils.replaceChars(null, 'b', 'z'));
+        assertEquals("", StringUtils.replaceChars("", 'b', 'z'));
+        assertEquals("azcza", StringUtils.replaceChars("abcba", 'b', 'z'));
+        assertEquals("abcba", StringUtils.replaceChars("abcba", 'x', 'z'));
+    }
+
+    @Test
+    public void testReplaceChars_StringStringString() {
+        assertNull(StringUtils.replaceChars(null, null, null));
+        assertNull(StringUtils.replaceChars(null, "", null));
+        assertNull(StringUtils.replaceChars(null, "a", null));
+        assertNull(StringUtils.replaceChars(null, null, ""));
+        assertNull(StringUtils.replaceChars(null, null, "x"));
+
+        assertEquals("", StringUtils.replaceChars("", null, null));
+        assertEquals("", StringUtils.replaceChars("", "", null));
+        assertEquals("", StringUtils.replaceChars("", "a", null));
+        assertEquals("", StringUtils.replaceChars("", null, ""));
+        assertEquals("", StringUtils.replaceChars("", null, "x"));
+
+        assertEquals("abc", StringUtils.replaceChars("abc", null, null));
+        assertEquals("abc", StringUtils.replaceChars("abc", null, ""));
+        assertEquals("abc", StringUtils.replaceChars("abc", null, "x"));
+
+        assertEquals("abc", StringUtils.replaceChars("abc", "", null));
+        assertEquals("abc", StringUtils.replaceChars("abc", "", ""));
+        assertEquals("abc", StringUtils.replaceChars("abc", "", "x"));
+
+        assertEquals("ac", StringUtils.replaceChars("abc", "b", null));
+        assertEquals("ac", StringUtils.replaceChars("abc", "b", ""));
+        assertEquals("axc", StringUtils.replaceChars("abc", "b", "x"));
+
+        assertEquals("ayzya", StringUtils.replaceChars("abcba", "bc", "yz"));
+        assertEquals("ayya", StringUtils.replaceChars("abcba", "bc", "y"));
+        assertEquals("ayzya", StringUtils.replaceChars("abcba", "bc", "yzx"));
+
+        assertEquals("abcba", StringUtils.replaceChars("abcba", "z", "w"));
+        assertSame("abcba", StringUtils.replaceChars("abcba", "z", "w"));
+
+        // Javadoc examples:
+        assertEquals("jelly", StringUtils.replaceChars("hello", "ho", "jy"));
+        assertEquals("ayzya", StringUtils.replaceChars("abcba", "bc", "yz"));
+        assertEquals("ayya", StringUtils.replaceChars("abcba", "bc", "y"));
+        assertEquals("ayzya", StringUtils.replaceChars("abcba", "bc", "yzx"));
+
+        // From http://issues.apache.org/bugzilla/show_bug.cgi?id=25454
+        assertEquals("bcc", StringUtils.replaceChars("abc", "ab", "bc"));
+        assertEquals("q651.506bera", StringUtils.replaceChars("d216.102oren",
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789",
+                "nopqrstuvwxyzabcdefghijklmNOPQRSTUVWXYZABCDEFGHIJKLM567891234"));
+    }
+
+    @Test
+    public void testOverlay_StringStringIntInt() {
+        assertNull(StringUtils.overlay(null, null, 2, 4));
+        assertNull(StringUtils.overlay(null, null, -2, -4));
+
+        assertEquals("", StringUtils.overlay("", null, 0, 0));
+        assertEquals("", StringUtils.overlay("", "", 0, 0));
+        assertEquals("zzzz", StringUtils.overlay("", "zzzz", 0, 0));
+        assertEquals("zzzz", StringUtils.overlay("", "zzzz", 2, 4));
+        assertEquals("zzzz", StringUtils.overlay("", "zzzz", -2, -4));
+
+        assertEquals("abef", StringUtils.overlay("abcdef", null, 2, 4));
+        assertEquals("abef", StringUtils.overlay("abcdef", null, 4, 2));
+        assertEquals("abef", StringUtils.overlay("abcdef", "", 2, 4));
+        assertEquals("abef", StringUtils.overlay("abcdef", "", 4, 2));
+        assertEquals("abzzzzef", StringUtils.overlay("abcdef", "zzzz", 2, 4));
+        assertEquals("abzzzzef", StringUtils.overlay("abcdef", "zzzz", 4, 2));
+
+        assertEquals("zzzzef", StringUtils.overlay("abcdef", "zzzz", -1, 4));
+        assertEquals("zzzzef", StringUtils.overlay("abcdef", "zzzz", 4, -1));
+        assertEquals("zzzzabcdef", StringUtils.overlay("abcdef", "zzzz", -2, -1));
+        assertEquals("zzzzabcdef", StringUtils.overlay("abcdef", "zzzz", -1, -2));
+        assertEquals("abcdzzzz", StringUtils.overlay("abcdef", "zzzz", 4, 10));
+        assertEquals("abcdzzzz", StringUtils.overlay("abcdef", "zzzz", 10, 4));
+        assertEquals("abcdefzzzz", StringUtils.overlay("abcdef", "zzzz", 8, 10));
+        assertEquals("abcdefzzzz", StringUtils.overlay("abcdef", "zzzz", 10, 8));
+    }
+
+    @Test
+    public void testRepeat_StringInt() {
+        assertNull(StringUtils.repeat(null, 2));
+        assertEquals("", StringUtils.repeat("ab", 0));
+        assertEquals("", StringUtils.repeat("", 3));
+        assertEquals("aaa", StringUtils.repeat("a", 3));
+        assertEquals("", StringUtils.repeat("a", -2));
+        assertEquals("ababab", StringUtils.repeat("ab", 3));
+        assertEquals("abcabcabc", StringUtils.repeat("abc", 3));
+        final String str = StringUtils.repeat("a", 10000);  // bigger than pad limit
+        assertEquals(10000, str.length());
+        assertTrue(StringUtils.containsOnly(str, 'a'));
+    }
+
+    @Test
+    public void testRepeat_StringStringInt() {
+        assertNull(StringUtils.repeat(null, null, 2));
+        assertNull(StringUtils.repeat(null, "x", 2));
+        assertEquals("", StringUtils.repeat("", null, 2));
+
+        assertEquals("", StringUtils.repeat("ab", "", 0));
+        assertEquals("", StringUtils.repeat("", "", 2));
+
+        assertEquals("xx", StringUtils.repeat("", "x", 3));
+
+        assertEquals("?, ?, ?", StringUtils.repeat("?", ", ", 3));
+    }
+
+    @Test
+    public void testRepeat_CharInt() {
+        assertEquals("zzz", StringUtils.repeat('z', 3));
+        assertEquals("", StringUtils.repeat('z', 0));
+        assertEquals("", StringUtils.repeat('z', -2));
+    }
+
+    @Test
+    public void testChop() {
+
+        final String[][] chopCases = {
+                {FOO_UNCAP + "\r\n", FOO_UNCAP},
+                {FOO_UNCAP + "\n", FOO_UNCAP},
+                {FOO_UNCAP + "\r", FOO_UNCAP},
+                {FOO_UNCAP + " \r", FOO_UNCAP + " "},
+                {"foo", "fo"},
+                {"foo\nfoo", "foo\nfo"},
+                {"\n", ""},
+                {"\r", ""},
+                {"\r\n", ""},
+                {null, null},
+                {"", ""},
+                {"a", ""},
+        };
+        for (final String[] chopCase : chopCases) {
+            final String original = chopCase[0];
+            final String expectedResult = chopCase[1];
+            assertEquals(expectedResult, StringUtils.chop(original), "chop(String) failed");
+        }
+    }
+
+    @Test
+    public void testChomp() {
+
+        final String[][] chompCases = {
+                {FOO_UNCAP + "\r\n", FOO_UNCAP},
+                {FOO_UNCAP + "\n", FOO_UNCAP},
+                {FOO_UNCAP + "\r", FOO_UNCAP},
+                {FOO_UNCAP + " \r", FOO_UNCAP + " "},
+                {FOO_UNCAP, FOO_UNCAP},
+                {FOO_UNCAP + "\n\n", FOO_UNCAP + "\n"},
+                {FOO_UNCAP + "\r\n\r\n", FOO_UNCAP + "\r\n"},
+                {"foo\nfoo", "foo\nfoo"},
+                {"foo\n\rfoo", "foo\n\rfoo"},
+                {"\n", ""},
+                {"\r", ""},
+                {"a", "a"},
+                {"\r\n", ""},
+                {"", ""},
+                {null, null},
+                {FOO_UNCAP + "\n\r", FOO_UNCAP + "\n"}
+        };
+        for (final String[] chompCase : chompCases) {
+            final String original = chompCase[0];
+            final String expectedResult = chompCase[1];
+            assertEquals(expectedResult, StringUtils.chomp(original), "chomp(String) failed");
+        }
+
+        assertEquals("foo", StringUtils.chomp("foobar", "bar"), "chomp(String, String) failed");
+        assertEquals("foobar", StringUtils.chomp("foobar", "baz"), "chomp(String, String) failed");
+        assertEquals("foo", StringUtils.chomp("foo", "foooo"), "chomp(String, String) failed");
+        assertEquals("foobar", StringUtils.chomp("foobar", ""), "chomp(String, String) failed");
+        assertEquals("foobar", StringUtils.chomp("foobar", null), "chomp(String, String) failed");
+        assertEquals("", StringUtils.chomp("", "foo"), "chomp(String, String) failed");
+        assertEquals("", StringUtils.chomp("", null), "chomp(String, String) failed");
+        assertEquals("", StringUtils.chomp("", ""), "chomp(String, String) failed");
+        assertNull(StringUtils.chomp(null, "foo"), "chomp(String, String) failed");
+        assertNull(StringUtils.chomp(null, null), "chomp(String, String) failed");
+        assertNull(StringUtils.chomp(null, ""), "chomp(String, String) failed");
+        assertEquals("", StringUtils.chomp("foo", "foo"), "chomp(String, String) failed");
+        assertEquals(" ", StringUtils.chomp(" foo", "foo"), "chomp(String, String) failed");
+        assertEquals("foo ", StringUtils.chomp("foo ", "foo"), "chomp(String, String) failed");
+    }
+
+    //-----------------------------------------------------------------------
+    @Test
+    public void testRightPad_StringInt() {
+        assertNull(StringUtils.rightPad(null, 5));
+        assertEquals("     ", StringUtils.rightPad("", 5));
+        assertEquals("abc  ", StringUtils.rightPad("abc", 5));
+        assertEquals("abc", StringUtils.rightPad("abc", 2));
+        assertEquals("abc", StringUtils.rightPad("abc", -1));
+    }
+
+    @Test
+    public void testRightPad_StringIntChar() {
+        assertNull(StringUtils.rightPad(null, 5, ' '));
+        assertEquals("     ", StringUtils.rightPad("", 5, ' '));
+        assertEquals("abc  ", StringUtils.rightPad("abc", 5, ' '));
+        assertEquals("abc", StringUtils.rightPad("abc", 2, ' '));
+        assertEquals("abc", StringUtils.rightPad("abc", -1, ' '));
+        assertEquals("abcxx", StringUtils.rightPad("abc", 5, 'x'));
+        final String str = StringUtils.rightPad("aaa", 10000, 'a');  // bigger than pad length
+        assertEquals(10000, str.length());
+        assertTrue(StringUtils.containsOnly(str, 'a'));
+    }
+
+    @Test
+    public void testRightPad_StringIntString() {
+        assertNull(StringUtils.rightPad(null, 5, "-+"));
+        assertEquals("     ", StringUtils.rightPad("", 5, " "));
+        assertNull(StringUtils.rightPad(null, 8, null));
+        assertEquals("abc-+-+", StringUtils.rightPad("abc", 7, "-+"));
+        assertEquals("abc-+~", StringUtils.rightPad("abc", 6, "-+~"));
+        assertEquals("abc-+", StringUtils.rightPad("abc", 5, "-+~"));
+        assertEquals("abc", StringUtils.rightPad("abc", 2, " "));
+        assertEquals("abc", StringUtils.rightPad("abc", -1, " "));
+        assertEquals("abc  ", StringUtils.rightPad("abc", 5, null));
+        assertEquals("abc  ", StringUtils.rightPad("abc", 5, ""));
+    }
+
+    //-----------------------------------------------------------------------
+    @Test
+    public void testLeftPad_StringInt() {
+        assertNull(StringUtils.leftPad(null, 5));
+        assertEquals("     ", StringUtils.leftPad("", 5));
+        assertEquals("  abc", StringUtils.leftPad("abc", 5));
+        assertEquals("abc", StringUtils.leftPad("abc", 2));
+    }
+
+    @Test
+    public void testLeftPad_StringIntChar() {
+        assertNull(StringUtils.leftPad(null, 5, ' '));
+        assertEquals("     ", StringUtils.leftPad("", 5, ' '));
+        assertEquals("  abc", StringUtils.leftPad("abc", 5, ' '));
+        assertEquals("xxabc", StringUtils.leftPad("abc", 5, 'x'));
+        assertEquals("\uffff\uffffabc", StringUtils.leftPad("abc", 5, '\uffff'));
+        assertEquals("abc", StringUtils.leftPad("abc", 2, ' '));
+        final String str = StringUtils.leftPad("aaa", 10000, 'a');  // bigger than pad length
+        assertEquals(10000, str.length());
+        assertTrue(StringUtils.containsOnly(str, 'a'));
+    }
+
+    @Test
+    public void testLeftPad_StringIntString() {
+        assertNull(StringUtils.leftPad(null, 5, "-+"));
+        assertNull(StringUtils.leftPad(null, 5, null));
+        assertEquals("     ", StringUtils.leftPad("", 5, " "));
+        assertEquals("-+-+abc", StringUtils.leftPad("abc", 7, "-+"));
+        assertEquals("-+~abc", StringUtils.leftPad("abc", 6, "-+~"));
+        assertEquals("-+abc", StringUtils.leftPad("abc", 5, "-+~"));
+        assertEquals("abc", StringUtils.leftPad("abc", 2, " "));
+        assertEquals("abc", StringUtils.leftPad("abc", -1, " "));
+        assertEquals("  abc", StringUtils.leftPad("abc", 5, null));
+        assertEquals("  abc", StringUtils.leftPad("abc", 5, ""));
+    }
+
+    @Test
+    public void testLengthString() {
+        assertEquals(0, StringUtils.length(null));
+        assertEquals(0, StringUtils.length(""));
+        assertEquals(0, StringUtils.length(StringUtils.EMPTY));
+        assertEquals(1, StringUtils.length("A"));
+        assertEquals(1, StringUtils.length(" "));
+        assertEquals(8, StringUtils.length("ABCDEFGH"));
+    }
+
+    @Test
+    public void testLengthStringBuffer() {
+        assertEquals(0, StringUtils.length(new StringBuffer("")));
+        assertEquals(0, StringUtils.length(new StringBuffer(StringUtils.EMPTY)));
+        assertEquals(1, StringUtils.length(new StringBuffer("A")));
+        assertEquals(1, StringUtils.length(new StringBuffer(" ")));
+        assertEquals(8, StringUtils.length(new StringBuffer("ABCDEFGH")));
+    }
+
+    @Test
+    public void testLengthStringBuilder() {
+        assertEquals(0, StringUtils.length(new StringBuilder("")));
+        assertEquals(0, StringUtils.length(new StringBuilder(StringUtils.EMPTY)));
+        assertEquals(1, StringUtils.length(new StringBuilder("A")));
+        assertEquals(1, StringUtils.length(new StringBuilder(" ")));
+        assertEquals(8, StringUtils.length(new StringBuilder("ABCDEFGH")));
+    }
+
+    @Test
+    public void testLength_CharBuffer() {
+        assertEquals(0, StringUtils.length(CharBuffer.wrap("")));
+        assertEquals(1, StringUtils.length(CharBuffer.wrap("A")));
+        assertEquals(1, StringUtils.length(CharBuffer.wrap(" ")));
+        assertEquals(8, StringUtils.length(CharBuffer.wrap("ABCDEFGH")));
+    }
+
+    //-----------------------------------------------------------------------
+    @Test
+    public void testCenter_StringInt() {
+        assertNull(StringUtils.center(null, -1));
+        assertNull(StringUtils.center(null, 4));
+        assertEquals("    ", StringUtils.center("", 4));
+        assertEquals("ab", StringUtils.center("ab", 0));
+        assertEquals("ab", StringUtils.center("ab", -1));
+        assertEquals("ab", StringUtils.center("ab", 1));
+        assertEquals("    ", StringUtils.center("", 4));
+        assertEquals(" ab ", StringUtils.center("ab", 4));
+        assertEquals("abcd", StringUtils.center("abcd", 2));
+        assertEquals(" a  ", StringUtils.center("a", 4));
+        assertEquals("  a  ", StringUtils.center("a", 5));
+    }
+
+    @Test
+    public void testCenter_StringIntChar() {
+        assertNull(StringUtils.center(null, -1, ' '));
+        assertNull(StringUtils.center(null, 4, ' '));
+        assertEquals("    ", StringUtils.center("", 4, ' '));
+        assertEquals("ab", StringUtils.center("ab", 0, ' '));
+        assertEquals("ab", StringUtils.center("ab", -1, ' '));
+        assertEquals("ab", StringUtils.center("ab", 1, ' '));
+        assertEquals("    ", StringUtils.center("", 4, ' '));
+        assertEquals(" ab ", StringUtils.center("ab", 4, ' '));
+        assertEquals("abcd", StringUtils.center("abcd", 2, ' '));
+        assertEquals(" a  ", StringUtils.center("a", 4, ' '));
+        assertEquals("  a  ", StringUtils.center("a", 5, ' '));
+        assertEquals("xxaxx", StringUtils.center("a", 5, 'x'));
+    }
+
+    @Test
+    public void testCenter_StringIntString() {
+        assertNull(StringUtils.center(null, 4, null));
+        assertNull(StringUtils.center(null, -1, " "));
+        assertNull(StringUtils.center(null, 4, " "));
+        assertEquals("    ", StringUtils.center("", 4, " "));
+        assertEquals("ab", StringUtils.center("ab", 0, " "));
+        assertEquals("ab", StringUtils.center("ab", -1, " "));
+        assertEquals("ab", StringUtils.center("ab", 1, " "));
+        assertEquals("    ", StringUtils.center("", 4, " "));
+        assertEquals(" ab ", StringUtils.center("ab", 4, " "));
+        assertEquals("abcd", StringUtils.center("abcd", 2, " "));
+        assertEquals(" a  ", StringUtils.center("a", 4, " "));
+        assertEquals("yayz", StringUtils.center("a", 4, "yz"));
+        assertEquals("yzyayzy", StringUtils.center("a", 7, "yz"));
+        assertEquals("  abc  ", StringUtils.center("abc", 7, null));
+        assertEquals("  abc  ", StringUtils.center("abc", 7, ""));
+    }
+
+    //-----------------------------------------------------------------------
+    @Test
+    public void testRotate_StringInt() {
+        assertNull(StringUtils.rotate(null, 1));
+        assertEquals("", StringUtils.rotate("", 1));
+        assertEquals("abcdefg", StringUtils.rotate("abcdefg", 0));
+        assertEquals("fgabcde", StringUtils.rotate("abcdefg", 2));
+        assertEquals("cdefgab", StringUtils.rotate("abcdefg", -2));
+        assertEquals("abcdefg", StringUtils.rotate("abcdefg", 7));
+        assertEquals("abcdefg", StringUtils.rotate("abcdefg", -7));
+        assertEquals("fgabcde", StringUtils.rotate("abcdefg", 9));
+        assertEquals("cdefgab", StringUtils.rotate("abcdefg", -9));
+        assertEquals("efgabcd", StringUtils.rotate("abcdefg", 17));
+        assertEquals("defgabc", StringUtils.rotate("abcdefg", -17));
+    }
+
+    //-----------------------------------------------------------------------
+    @Test
+    public void testReverse_String() {
+        assertNull(StringUtils.reverse(null));
+        assertEquals("", StringUtils.reverse(""));
+        assertEquals("sdrawkcab", StringUtils.reverse("backwards"));
+    }
+
+    @Test
+    public void testReverseDelimited_StringChar() {
+        assertNull(StringUtils.reverseDelimited(null, '.'));
+        assertEquals("", StringUtils.reverseDelimited("", '.'));
+        assertEquals("c.b.a", StringUtils.reverseDelimited("a.b.c", '.'));
+        assertEquals("a b c", StringUtils.reverseDelimited("a b c", '.'));
+        assertEquals("", StringUtils.reverseDelimited("", '.'));
+    }
+
+    //-----------------------------------------------------------------------
+    @Test
+    public void testDefault_String() {
+        assertEquals("", StringUtils.defaultString(null));
+        assertEquals("", StringUtils.defaultString(""));
+        assertEquals("abc", StringUtils.defaultString("abc"));
+    }
+
+    @Test
+    public void testDefault_StringString() {
+        assertEquals("NULL", StringUtils.defaultString(null, "NULL"));
+        assertEquals("", StringUtils.defaultString("", "NULL"));
+        assertEquals("abc", StringUtils.defaultString("abc", "NULL"));
+    }
+
+    @Test
+    public void testLazyDefault_StringStringSupplier() {
+        assertEquals("NULL", StringUtils.lazyDefaultString(null, () -> "NULL"));
+        assertEquals("", StringUtils.lazyDefaultString("", () -> "NULL"));
+        assertEquals("abc", StringUtils.lazyDefaultString("abc", () -> "NULL"));
+        assertNull(null, StringUtils.lazyDefaultString(null, () -> null));
+        assertNull(null, StringUtils.lazyDefaultString(null, null));
+        //Checking laziness
+        MutableInt numberOfCalls = new MutableInt(0);
+        Supplier<String> countingDefaultSupplier = () -> {
+            numberOfCalls.increment();
+            return "NULL";
+        };
+        StringUtils.lazyDefaultString("abc", countingDefaultSupplier);
+        assertEquals(0, numberOfCalls.getValue());
+        StringUtils.lazyDefaultString(null, countingDefaultSupplier);
+        assertEquals(1, numberOfCalls.getValue());
+    }
+
+    @Test
+    public void testDefaultIfEmpty_StringString() {
+        assertEquals("NULL", StringUtils.defaultIfEmpty(null, "NULL"));
+        assertEquals("NULL", StringUtils.defaultIfEmpty("", "NULL"));
+        assertEquals("abc", StringUtils.defaultIfEmpty("abc", "NULL"));
+        assertNull(StringUtils.defaultIfEmpty("", null));
+        // Tests compatibility for the API return type
+        final String s = StringUtils.defaultIfEmpty("abc", "NULL");
+        assertEquals("abc", s);
+    }
+
+    @Test
+    public void testLazyDefaultIfEmpty_StringStringSupplier() {
+        assertEquals("NULL", StringUtils.lazyDefaultIfEmpty(null, () -> "NULL"));
+        assertEquals("NULL", StringUtils.lazyDefaultIfEmpty("", () -> "NULL"));
+        assertEquals("abc", StringUtils.lazyDefaultIfEmpty("abc", () -> "NULL"));
+        assertNull(StringUtils.lazyDefaultIfEmpty("", () -> null));
+        assertNull(StringUtils.lazyDefaultIfEmpty("", null));
+        // Tests compatibility for the API return type
+        final String s = StringUtils.lazyDefaultIfEmpty("abc", ()->"NULL");
+        assertEquals("abc", s);
+        //Checking laziness
+        MutableInt numberOfCalls = new MutableInt(0);
+        Supplier<String> countingDefaultSupplier = () -> {
+            numberOfCalls.increment();
+            return "NULL";
+        };
+        StringUtils.lazyDefaultIfEmpty("abc", countingDefaultSupplier);
+        assertEquals(0, numberOfCalls.getValue());
+        StringUtils.lazyDefaultIfEmpty("", countingDefaultSupplier);
+        assertEquals(1, numberOfCalls.getValue());
+        StringUtils.lazyDefaultIfEmpty(null, countingDefaultSupplier);
+        assertEquals(2, numberOfCalls.getValue());
+    }
+
+    @Test
+    public void testDefaultIfBlank_StringString() {
+        assertEquals("NULL", StringUtils.defaultIfBlank(null, "NULL"));
+        assertEquals("NULL", StringUtils.defaultIfBlank("", "NULL"));
+        assertEquals("NULL", StringUtils.defaultIfBlank(" ", "NULL"));
+        assertEquals("abc", StringUtils.defaultIfBlank("abc", "NULL"));
+        assertNull(StringUtils.defaultIfBlank("", null));
+        // Tests compatibility for the API return type
+        final String s = StringUtils.defaultIfBlank("abc", "NULL");
+        assertEquals("abc", s);
+    }
+
+    @Test
+    public void testLazyDefaultIfBlank_StringString() {
+        assertEquals("NULL", StringUtils.lazyDefaultIfBlank(null, () -> "NULL"));
+        assertEquals("NULL", StringUtils.lazyDefaultIfBlank("", () -> "NULL"));
+        assertEquals("NULL", StringUtils.lazyDefaultIfBlank(" ", () -> "NULL"));
+        assertEquals("abc", StringUtils.lazyDefaultIfBlank("abc", () -> "NULL"));
+        assertNull(StringUtils.lazyDefaultIfBlank("", () -> null));
+        assertNull(StringUtils.lazyDefaultIfBlank("", null));
+        // Tests compatibility for the API return type
+        final String s = StringUtils.lazyDefaultIfBlank("abc", () -> "NULL");
+        assertEquals("abc", s);
+        //Checking laziness
+        MutableInt numberOfCalls = new MutableInt(0);
+        Supplier<String> countingDefaultSupplier = () -> {
+            numberOfCalls.increment();
+            return "NULL";
+        };
+        StringUtils.lazyDefaultIfBlank("abc", countingDefaultSupplier);
+        assertEquals(0, numberOfCalls.getValue());
+        StringUtils.lazyDefaultIfBlank("", countingDefaultSupplier);
+        assertEquals(1, numberOfCalls.getValue());
+        StringUtils.lazyDefaultIfBlank(" ", countingDefaultSupplier);
+        assertEquals(2, numberOfCalls.getValue());
+        StringUtils.lazyDefaultIfBlank(null, countingDefaultSupplier);
+        assertEquals(3, numberOfCalls.getValue());
+    }
+
+    @Test
+    public void testDefaultIfEmpty_StringBuilders() {
+        assertEquals("NULL", StringUtils.defaultIfEmpty(new StringBuilder(""), new StringBuilder("NULL")).toString());
+        assertEquals("abc", StringUtils.defaultIfEmpty(new StringBuilder("abc"), new StringBuilder("NULL")).toString());
+        assertNull(StringUtils.defaultIfEmpty(new StringBuilder(""), null));
+        // Tests compatibility for the API return type
+        final StringBuilder s = StringUtils.defaultIfEmpty(new StringBuilder("abc"), new StringBuilder("NULL"));
+        assertEquals("abc", s.toString());
+    }
+
+    @Test
+    public void testDefaultIfBlank_StringBuilders() {
+        assertEquals("NULL", StringUtils.defaultIfBlank(new StringBuilder(""), new StringBuilder("NULL")).toString());
+        assertEquals("NULL", StringUtils.defaultIfBlank(new StringBuilder(" "), new StringBuilder("NULL")).toString());
+        assertEquals("abc", StringUtils.defaultIfBlank(new StringBuilder("abc"), new StringBuilder("NULL")).toString());
+        assertNull(StringUtils.defaultIfBlank(new StringBuilder(""), null));
+        // Tests compatibility for the API return type
+        final StringBuilder s = StringUtils.defaultIfBlank(new StringBuilder("abc"), new StringBuilder("NULL"));
+        assertEquals("abc", s.toString());
+    }
+
+    @Test
+    public void testDefaultIfEmpty_StringBuffers() {
+        assertEquals("NULL", StringUtils.defaultIfEmpty(new StringBuffer(""), new StringBuffer("NULL")).toString());
+        assertEquals("abc", StringUtils.defaultIfEmpty(new StringBuffer("abc"), new StringBuffer("NULL")).toString());
+        assertNull(StringUtils.defaultIfEmpty(new StringBuffer(""), null));
+        // Tests compatibility for the API return type
+        final StringBuffer s = StringUtils.defaultIfEmpty(new StringBuffer("abc"), new StringBuffer("NULL"));
+        assertEquals("abc", s.toString());
+    }
+
+    @Test
+    public void testDefaultIfBlank_StringBuffers() {
+        assertEquals("NULL", StringUtils.defaultIfBlank(new StringBuffer(""), new StringBuffer("NULL")).toString());
+        assertEquals("NULL", StringUtils.defaultIfBlank(new StringBuffer(" "), new StringBuffer("NULL")).toString());
+        assertEquals("abc", StringUtils.defaultIfBlank(new StringBuffer("abc"), new StringBuffer("NULL")).toString());
+        assertNull(StringUtils.defaultIfBlank(new StringBuffer(""), null));
+        // Tests compatibility for the API return type
+        final StringBuffer s = StringUtils.defaultIfBlank(new StringBuffer("abc"), new StringBuffer("NULL"));
+        assertEquals("abc", s.toString());
+    }
+
+    @Test
+    public void testDefaultIfEmpty_CharBuffers() {
+        assertEquals("NULL", StringUtils.defaultIfEmpty(CharBuffer.wrap(""), CharBuffer.wrap("NULL")).toString());
+        assertEquals("abc", StringUtils.defaultIfEmpty(CharBuffer.wrap("abc"), CharBuffer.wrap("NULL")).toString());
+        assertNull(StringUtils.defaultIfEmpty(CharBuffer.wrap(""), null));
+        // Tests compatibility for the API return type
+        final CharBuffer s = StringUtils.defaultIfEmpty(CharBuffer.wrap("abc"), CharBuffer.wrap("NULL"));
+        assertEquals("abc", s.toString());
+    }
+
+    @Test
+    public void testDefaultIfBlank_CharBuffers() {
+        assertEquals("NULL", StringUtils.defaultIfBlank(CharBuffer.wrap(""), CharBuffer.wrap("NULL")).toString());
+        assertEquals("NULL", StringUtils.defaultIfBlank(CharBuffer.wrap(" "), CharBuffer.wrap("NULL")).toString());
+        assertEquals("abc", StringUtils.defaultIfBlank(CharBuffer.wrap("abc"), CharBuffer.wrap("NULL")).toString());
+        assertNull(StringUtils.defaultIfBlank(CharBuffer.wrap(""), null));
+        // Tests compatibility for the API return type
+        final CharBuffer s = StringUtils.defaultIfBlank(CharBuffer.wrap("abc"), CharBuffer.wrap("NULL"));
+        assertEquals("abc", s.toString());
+    }
+
+    //-----------------------------------------------------------------------
+    @Test
+    public void testAbbreviate_StringInt() {
+        assertNull(StringUtils.abbreviate(null, 10));
+        assertEquals("", StringUtils.abbreviate("", 10));
+        assertEquals("short", StringUtils.abbreviate("short", 10));
+        assertEquals("Now is ...", StringUtils.abbreviate("Now is the time for all good men to come to the aid of their party.", 10));
+
+        final String raspberry = "raspberry peach";
+        assertEquals("raspberry p...", StringUtils.abbreviate(raspberry, 14));
+        assertEquals("raspberry peach", StringUtils.abbreviate("raspberry peach", 15));
+        assertEquals("raspberry peach", StringUtils.abbreviate("raspberry peach", 16));
+        assertEquals("abc...", StringUtils.abbreviate("abcdefg", 6));
+        assertEquals("abcdefg", StringUtils.abbreviate("abcdefg", 7));
+        assertEquals("abcdefg", StringUtils.abbreviate("abcdefg", 8));
+        assertEquals("a...", StringUtils.abbreviate("abcdefg", 4));
+        assertEquals("", StringUtils.abbreviate("", 4));
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> StringUtils.abbreviate("abc", 3),
+                "StringUtils.abbreviate expecting IllegalArgumentException");
+    }
+
+    @Test
+    public void testAbbreviate_StringStringInt() {
+        assertNull(StringUtils.abbreviate(null, null, 10));
+        assertNull(StringUtils.abbreviate(null, "...", 10));
+        assertEquals("paranaguacu", StringUtils.abbreviate("paranaguacu", null, 10));
+        assertEquals("", StringUtils.abbreviate("", "...", 2));
+        assertEquals("wai**", StringUtils.abbreviate("waiheke", "**", 5));
+        assertEquals("And af,,,,", StringUtils.abbreviate("And after a long time, he finally met his son.", ",,,,", 10));
+
+        final String raspberry = "raspberry peach";
+        assertEquals("raspberry pe..", StringUtils.abbreviate(raspberry, "..", 14));
+        assertEquals("raspberry peach", StringUtils.abbreviate("raspberry peach", "---*---", 15));
+        assertEquals("raspberry peach", StringUtils.abbreviate("raspberry peach", ".", 16));
+        assertEquals("abc()(", StringUtils.abbreviate("abcdefg", "()(", 6));
+        assertEquals("abcdefg", StringUtils.abbreviate("abcdefg", ";", 7));
+        assertEquals("abcdefg", StringUtils.abbreviate("abcdefg", "_-", 8));
+        assertEquals("abc.", StringUtils.abbreviate("abcdefg", ".", 4));
+        assertEquals("", StringUtils.abbreviate("", 4));
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> StringUtils.abbreviate("abcdefghij", "...", 3),
+                "StringUtils.abbreviate expecting IllegalArgumentException");
+    }
+
+    @Test
+    public void testAbbreviate_StringIntInt() {
+        assertNull(StringUtils.abbreviate(null, 10, 12));
+        assertEquals("", StringUtils.abbreviate("", 0, 10));
+        assertEquals("", StringUtils.abbreviate("", 2, 10));
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> StringUtils.abbreviate("abcdefghij", 0, 3),
+                "StringUtils.abbreviate expecting IllegalArgumentException");
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> StringUtils.abbreviate("abcdefghij", 5, 6),
+                "StringUtils.abbreviate expecting IllegalArgumentException");
+
+        final String raspberry = "raspberry peach";
+        assertEquals("raspberry peach", StringUtils.abbreviate(raspberry, 11, 15));
+
+        assertNull(StringUtils.abbreviate(null, 7, 14));
+        assertAbbreviateWithOffset("abcdefg...", -1, 10);
+        assertAbbreviateWithOffset("abcdefg...", 0, 10);
+        assertAbbreviateWithOffset("abcdefg...", 1, 10);
+        assertAbbreviateWithOffset("abcdefg...", 2, 10);
+        assertAbbreviateWithOffset("abcdefg...", 3, 10);
+        assertAbbreviateWithOffset("abcdefg...", 4, 10);
+        assertAbbreviateWithOffset("...fghi...", 5, 10);
+        assertAbbreviateWithOffset("...ghij...", 6, 10);
+        assertAbbreviateWithOffset("...hijk...", 7, 10);
+        assertAbbreviateWithOffset("...ijklmno", 8, 10);
+        assertAbbreviateWithOffset("...ijklmno", 9, 10);
+        assertAbbreviateWithOffset("...ijklmno", 10, 10);
+        assertAbbreviateWithOffset("...ijklmno", 10, 10);
+        assertAbbreviateWithOffset("...ijklmno", 11, 10);
+        assertAbbreviateWithOffset("...ijklmno", 12, 10);
+        assertAbbreviateWithOffset("...ijklmno", 13, 10);
+        assertAbbreviateWithOffset("...ijklmno", 14, 10);
+        assertAbbreviateWithOffset("...ijklmno", 15, 10);
+        assertAbbreviateWithOffset("...ijklmno", 16, 10);
+        assertAbbreviateWithOffset("...ijklmno", Integer.MAX_VALUE, 10);
+    }
+
+    private void assertAbbreviateWithOffset(final String expected, final int offset, final int maxWidth) {
+        final String abcdefghijklmno = "abcdefghijklmno";
+        final String message = "abbreviate(String,int,int) failed";
+        final String actual = StringUtils.abbreviate(abcdefghijklmno, offset, maxWidth);
+        if (offset >= 0 && offset < abcdefghijklmno.length()) {
+            assertTrue(actual.indexOf((char) ('a' + offset)) != -1,
+                    message + " -- should contain offset character");
+        }
+        assertTrue(actual.length() <= maxWidth,
+                message + " -- should not be greater than maxWidth");
+        assertEquals(expected, actual, message);
+    }
+
+    @Test
+    public void testAbbreviate_StringStringIntInt() {
+        assertNull(StringUtils.abbreviate(null, null, 10, 12));
+        assertNull(StringUtils.abbreviate(null, "...", 10, 12));
+        assertEquals("", StringUtils.abbreviate("", null, 0, 10));
+        assertEquals("", StringUtils.abbreviate("", "...", 2, 10));
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> StringUtils.abbreviate("abcdefghij", "::", 0, 2),
+                "StringUtils.abbreviate expecting IllegalArgumentException");
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> StringUtils.abbreviate("abcdefghij", "!!!", 5, 6),
+                "StringUtils.abbreviate expecting IllegalArgumentException");
+
+        final String raspberry = "raspberry peach";
+        assertEquals("raspberry peach", StringUtils.abbreviate(raspberry, "--", 12, 15));
+
+        assertNull(StringUtils.abbreviate(null, ";", 7, 14));
+        assertAbbreviateWithAbbrevMarkerAndOffset("abcdefgh;;", ";;", -1, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("abcdefghi.", ".", 0, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("abcdefgh++", "++", 1, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("abcdefghi*", "*", 2, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("abcdef{{{{", "{{{{", 4, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("abcdef____", "____", 5, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("==fghijk==", "==", 5, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("___ghij___", "___", 6, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("/ghijklmno", "/", 7, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("/ghijklmno", "/", 8, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("/ghijklmno", "/", 9, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("///ijklmno", "///", 10, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("//hijklmno", "//", 10, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("//hijklmno", "//", 11, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("...ijklmno", "...", 12, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("/ghijklmno", "/", 13, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("/ghijklmno", "/", 14, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("999ijklmno", "999", 15, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("_ghijklmno", "_", 16, 10);
+        assertAbbreviateWithAbbrevMarkerAndOffset("+ghijklmno", "+", Integer.MAX_VALUE, 10);
+    }
+
+    private void assertAbbreviateWithAbbrevMarkerAndOffset(final String expected, final String abbrevMarker, final int offset, final int maxWidth) {
+        final String abcdefghijklmno = "abcdefghijklmno";
+        final String message = "abbreviate(String,String,int,int) failed";
+        final String actual = StringUtils.abbreviate(abcdefghijklmno, abbrevMarker, offset, maxWidth);
+        if (offset >= 0 && offset < abcdefghijklmno.length()) {
+            assertTrue(actual.indexOf((char) ('a' + offset)) != -1,
+                    message + " -- should contain offset character");
+        }
+        assertTrue(actual.length() <= maxWidth,
+                message + " -- should not be greater than maxWidth");
+        assertEquals(expected, actual, message);
+    }
+
+    @Test
+    public void testAbbreviateMiddle() {
+        // javadoc examples
+        assertNull(StringUtils.abbreviateMiddle(null, null, 0));
+        assertEquals("abc", StringUtils.abbreviateMiddle("abc", null, 0));
+        assertEquals("abc", StringUtils.abbreviateMiddle("abc", ".", 0));
+        assertEquals("abc", StringUtils.abbreviateMiddle("abc", ".", 3));
+        assertEquals("ab.f", StringUtils.abbreviateMiddle("abcdef", ".", 4));
+
+        // JIRA issue (LANG-405) example (slightly different than actual expected result)
+        assertEquals(
+                "A very long text with un...f the text is complete.",
+                StringUtils.abbreviateMiddle(
+                        "A very long text with unimportant stuff in the middle but interesting start and " +
+                                "end to see if the text is complete.", "...", 50));
+
+        // Test a much longer text :)
+        final String longText = "Start text" + StringUtils.repeat("x", 10000) + "Close text";
+        assertEquals(
+                "Start text->Close text",
+                StringUtils.abbreviateMiddle(longText, "->", 22));
+
+        // Test negative length
+        assertEquals("abc", StringUtils.abbreviateMiddle("abc", ".", -1));
+
+        // Test boundaries
+        // Fails to change anything as method ensures first and last char are kept
+        assertEquals("abc", StringUtils.abbreviateMiddle("abc", ".", 1));
+        assertEquals("abc", StringUtils.abbreviateMiddle("abc", ".", 2));
+
+        // Test length of n=1
+        assertEquals("a", StringUtils.abbreviateMiddle("a", ".", 1));
+
+        // Test smallest length that can lead to success
+        assertEquals("a.d", StringUtils.abbreviateMiddle("abcd", ".", 3));
+
+        // More from LANG-405
+        assertEquals("a..f", StringUtils.abbreviateMiddle("abcdef", "..", 4));
+        assertEquals("ab.ef", StringUtils.abbreviateMiddle("abcdef", ".", 5));
+=======
     public void testToString() throws UnsupportedEncodingException {
         final String expectedString = "The quick brown fox jumps over the lazy dog.";
         byte[] expectedBytes = expectedString.getBytes(Charset.defaultCharset());
@@ -2976,6 +3685,7 @@ public class StringUtilsTest {
         final String encoding = "UTF-16";
         expectedBytes = expectedString.getBytes(Charset.forName(encoding));
         assertEquals(expectedString, StringUtils.toString(expectedBytes, encoding));
+>>>>>>> RIGHT
     }
 
     //-----------------------------------------------------------------------
