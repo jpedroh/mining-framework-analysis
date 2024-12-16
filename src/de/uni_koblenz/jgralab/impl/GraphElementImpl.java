@@ -32,7 +32,6 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.impl;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -40,6 +39,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
+
 
 /**
  * TODO add comment
@@ -52,7 +52,7 @@ public abstract class GraphElementImpl implements GraphElementBase {
 
 	protected GraphElementImpl(Graph graph) {
 		assert graph != null;
-		this.graph = (GraphBaseImpl) graph;
+		this.graph = ((GraphBaseImpl) (graph));
 	}
 
 	protected GraphBaseImpl graph;
@@ -92,11 +92,9 @@ public abstract class GraphElementImpl implements GraphElementBase {
 	 * @param name
 	 *            of the changing Attribute
 	 */
-	public void ecaAttributeChanging(String name, Object oldValue,
-			Object newValue) {
-		if (!graph.isLoading() && graph.getECARuleManagerIfThere() != null) {
-			graph.getECARuleManager().fireBeforeChangeAttributeEvents(this,
-					name, oldValue, newValue);
+	public void ecaAttributeChanging(String name, Object oldValue, Object newValue) {
+		if ((!graph.isLoading()) && (graph.getECARuleManagerIfThere() != null)) {
+			this.graph.getECARuleManagerIfThere().fireBeforeChangeAttributeEvents(this, name, oldValue, newValue);
 		}
 	}
 
@@ -106,11 +104,9 @@ public abstract class GraphElementImpl implements GraphElementBase {
 	 * @param name
 	 *            of the changed Attribute
 	 */
-	public void ecaAttributeChanged(String name, Object oldValue,
-			Object newValue) {
-		if (!graph.isLoading() && graph.getECARuleManagerIfThere()!=null) {
-			graph.getECARuleManager().fireAfterChangeAttributeEvents(this,
-					name, oldValue, newValue);
+	public void ecaAttributeChanged(String name, Object oldValue, Object newValue) {
+		if ((!graph.isLoading()) && (graph.getECARuleManagerIfThere() != null)) {
+			this.graph.getECARuleManagerIfThere().fireAfterChangeAttributeEvents(this, name, oldValue, newValue);
 		}
 	}
 

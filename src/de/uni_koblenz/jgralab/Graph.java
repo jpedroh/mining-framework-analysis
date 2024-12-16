@@ -32,11 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab;
-
-import java.util.Comparator;
-import java.util.List;
 
 import de.uni_koblenz.jgralab.eca.ECARuleManagerInterface;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -45,6 +41,9 @@ import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
 import de.uni_koblenz.jgralab.trans.Savepoint;
 import de.uni_koblenz.jgralab.trans.Transaction;
+import java.util.Comparator;
+import java.util.List;
+
 
 /**
  * The interface Graph is the base of all JGraLab graphs. It provides access to
@@ -57,7 +56,6 @@ import de.uni_koblenz.jgralab.trans.Transaction;
  * @author ist@uni-koblenz.de
  */
 public interface Graph extends AttributedElement {
-
 	/**
 	 * Creates a vertex the specified class <code>cls</code> and adds the new
 	 * vertex to this Graph.
@@ -458,7 +456,7 @@ public interface Graph extends AttributedElement {
 	public int getGraphStructureChangedListenerCount();
 
 	public ECARuleManagerInterface getECARuleManager();
-	
+
 	public ECARuleManagerInterface getECARuleManagerIfThere();
 
 	public TraversalContext setTraversalContext(TraversalContext tc);
