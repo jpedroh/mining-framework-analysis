@@ -1,36 +1,17 @@
 package com.splunk.logging;
 
-/**
- * @copyright
- *
- * Copyright 2013-2015 Splunk, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"): you may
- * not use this file except in compliance with the License. You may obtain
- * a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- */
-
 import com.google.gson.*;
 import com.splunk.logging.hec.MetadataTags;
 import com.splunk.logging.serialization.EventInfoTypeAdapter;
 import com.splunk.logging.serialization.HecJsonSerializer;
-import okhttp3.*;
-
-import javax.net.ssl.*;
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.cert.CertificateException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import javax.net.ssl.*;
+import okhttp3.*;
 
 
 /**
@@ -38,52 +19,76 @@ import java.util.stream.Collectors;
  */
 public class HttpEventCollectorSender extends TimerTask implements HttpEventCollectorMiddleware.IHttpSender {
     private static final String ChannelQueryParam = "channel";
+
     private static final String AuthorizationHeaderTag = "Authorization";
+
     private static final String AuthorizationHeaderScheme = "Splunk %s";
+
     private static final String HttpEventCollectorUriPath = "/services/collector/event/1.0";
+
     private static final String HttpRawCollectorUriPath = "/services/collector/raw";
+
     private static final String JsonHttpContentType = "application/json; profile=urn:splunk:event:1.0; charset=utf-8";
+
     private static final String PlainTextHttpContentType = "plain/text; charset=utf-8";
+
     private static final String SendModeSequential = "sequential";
+
     private static final String SendModeSParallel = "parallel";
+
     private TimeoutSettings timeoutSettings = new TimeoutSettings();
-    private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(HttpEventCollectorEventInfo.class, new EventInfoTypeAdapter())
-            .create();
+
+    private static final Gson gson = new GsonBuilder().registerTypeAdapter(HttpEventCollectorEventInfo.class, new EventInfoTypeAdapter()).create();
 
     private final HecJsonSerializer serializer;
-
 
     /**
      * Sender operation mode. Parallel means that all HTTP requests are
      * asynchronous and may be indexed out of order. Sequential mode guarantees
      * sequential order of the indexed events.
      */
-    public enum SendMode
-    {
-        Sequential,
-        Parallel
-    };
+    public enum SendMode {
 
+        Sequential,
+        Parallel;}
+
+    // 10 seconds
     /**
      * Recommended default values for events batching.
      */
     public static final int DefaultBatchInterval = 10 * 1000; // 10 seconds
+
+    // 10KB
     public static final int DefaultBatchSize = 10 * 1024; // 10KB
+
+    // 10 events
     public static final int DefaultBatchCount = 10; // 10 events
 
     private HttpUrl url;
+
     private String token;
+
     private String channel;
+
     private String type;
+
     private long maxEventsBatchCount;
+
     private long maxEventsBatchSize;
+
     private Timer timer;
+
     private List<HttpEventCollectorEventInfo> eventsBatch = new LinkedList<HttpEventCollectorEventInfo>();
+
+    // estimated total size of events batch
     private long eventsBatchSize = 0; // estimated total size of events batch
+
     private static OkHttpClient httpClient = null;
+
     private boolean disableCertificateValidation = false;
+
     private SendMode sendMode = SendMode.Sequential;
+
     private HttpEventCollectorMiddleware middleware = new HttpEventCollectorMiddleware();
 
     /**
@@ -97,55 +102,45 @@ public class HttpEventCollectorSender extends TimerTask implements HttpEventColl
      * @param channel unique GUID for the client to send raw events to the server
      * @param type event data type
      */
-    public HttpEventCollectorSender(
-            final String Url, final String token, final String channel, final String type,
-            long delay, long maxEventsBatchCount, long maxEventsBatchSize,
-            String sendModeStr,
-            Map<String, String> metadata, TimeoutSettings timeoutSettings) {
+    public HttpEventCollectorSender(final String Url, final String token, final String channel, final String type, long delay, long maxEventsBatchCount, long maxEventsBatchSize, String sendModeStr, Map<String, String> metadata, TimeoutSettings timeoutSettings) {
         this.token = token;
         this.channel = channel;
         this.type = type;
         if (timeoutSettings != null) {
             this.timeoutSettings = timeoutSettings;
         }
-
         if ("Raw".equalsIgnoreCase(type)) {
-            if (channel == null || channel.trim().equals("")) {
+            if ((channel == null) || channel.trim().equals("")) {
                 throw new IllegalArgumentException("Channel cannot be null or empty");
             }
-            HttpUrl.Builder urlBuilder = HttpUrl.parse(Url + HttpRawCollectorUriPath)
-                    .newBuilder()
-                    .addQueryParameter(ChannelQueryParam, channel);
+            HttpUrl.Builder urlBuilder = HttpUrl.parse(Url + HttpRawCollectorUriPath).newBuilder().addQueryParameter(ChannelQueryParam, channel);
             metadata.forEach(urlBuilder::addQueryParameter);
             this.url = urlBuilder.build();
         } else {
             this.url = HttpUrl.parse(Url + HttpEventCollectorUriPath);
         }
-
         // when size configuration setting is missing it's treated as "infinity",
         // i.e., any value is accepted.
-        if (maxEventsBatchCount == 0 && maxEventsBatchSize > 0) {
+        if ((maxEventsBatchCount == 0) && (maxEventsBatchSize > 0)) {
             maxEventsBatchCount = Long.MAX_VALUE;
-        } else if (maxEventsBatchSize == 0 && maxEventsBatchCount > 0) {
+        } else if ((maxEventsBatchSize == 0) && (maxEventsBatchCount > 0)) {
             maxEventsBatchSize = Long.MAX_VALUE;
         }
         this.maxEventsBatchCount = maxEventsBatchCount;
         this.maxEventsBatchSize = maxEventsBatchSize;
-
         serializer = new HecJsonSerializer(metadata);
         final String format = metadata.get(MetadataTags.MESSAGEFORMAT);
         // Get MessageFormat enum from format string. Do this once per instance in constructor to avoid expensive operation in
         // each event sender call
-
         if (sendModeStr != null) {
-            if (sendModeStr.equals(SendModeSequential))
+            if (sendModeStr.equals(SendModeSequential)) {
                 this.sendMode = SendMode.Sequential;
-            else if (sendModeStr.equals(SendModeSParallel))
+            } else if (sendModeStr.equals(SendModeSParallel)) {
                 this.sendMode = SendMode.Parallel;
-            else
+            } else {
                 throw new IllegalArgumentException("Unknown send mode: " + sendModeStr);
+            }
         }
-
         if (delay > 0) {
             // start heartbeat timer
             timer = new Timer(true);
@@ -251,7 +246,6 @@ public class HttpEventCollectorSender extends TimerTask implements HttpEventColl
         }
     }
 
-
     private void stopHttpClient() {
         if (httpClient != null) {
             httpClient.dispatcher().executorService().shutdown();
@@ -333,17 +327,13 @@ public class HttpEventCollectorSender extends TimerTask implements HttpEventColl
         });
     }
 
-    public void postEvents(final List<HttpEventCollectorEventInfo> events,
-                           final HttpEventCollectorMiddleware.IHttpSenderCallback callback) {
-        startHttpClient(); // make sure http client is started
+    public void postEvents(final List<HttpEventCollectorEventInfo> events, final HttpEventCollectorMiddleware.IHttpSenderCallback callback) {
+        startHttpClient();// make sure http client is started
+
         // create http request
-        Request.Builder requestBldr = new Request.Builder()
-                .url(url)
-                .addHeader(AuthorizationHeaderTag, String.format(AuthorizationHeaderScheme, token));
+        Request.Builder requestBldr = new Request.Builder().url(url).addHeader(AuthorizationHeaderTag, String.format(AuthorizationHeaderScheme, token));
         if ("Raw".equalsIgnoreCase(type)) {
-            String lineSeparatedEvents = events.stream()
-                    .map(HttpEventCollectorEventInfo::getMessage)
-                    .collect(Collectors.joining(System.lineSeparator()));
+            String lineSeparatedEvents = events.stream().map(HttpEventCollectorEventInfo::getMessage).collect(Collectors.joining(System.lineSeparator()));
             requestBldr.post(RequestBody.create(MediaType.parse(PlainTextHttpContentType), lineSeparatedEvents));
         } else {
             // convert events list into a string
@@ -353,15 +343,14 @@ public class HttpEventCollectorSender extends TimerTask implements HttpEventColl
             }
             requestBldr.post(RequestBody.create(MediaType.parse(JsonHttpContentType), eventsBatchString.toString()));
         }
-
         httpClient.newCall(requestBldr.build()).enqueue(new Callback() {
             @Override
             public void onResponse(Call call, final Response response) {
                 String reply = "";
                 int httpStatusCode = response.code();
                 // read reply only in case of a server error
-                try (ResponseBody body = response.body()) {
-                    if (httpStatusCode != 200 && body != null) {
+                try (final ResponseBody body = response.body()) {
+                    if ((httpStatusCode != 200) && (body != null)) {
                         try {
                             reply = body.string();
                         } catch (IOException e) {
@@ -381,16 +370,24 @@ public class HttpEventCollectorSender extends TimerTask implements HttpEventColl
 
     public static class TimeoutSettings {
         public static final long DEFAULT_CONNECT_TIMEOUT = 30000;
-        public static final long DEFAULT_WRITE_TIMEOUT = 0; // 0 means no timeout
+
+        public static final long DEFAULT_WRITE_TIMEOUT = 0;// 0 means no timeout
+
+
         public static final long DEFAULT_CALL_TIMEOUT = 0;
+
         public static final long DEFAULT_READ_TIMEOUT = 0;
 
         public long connectTimeout = DEFAULT_CONNECT_TIMEOUT;
+
         public long callTimeout = DEFAULT_CALL_TIMEOUT;
+
         public long readTimeout = DEFAULT_READ_TIMEOUT;
+
         public long writeTimeout = DEFAULT_WRITE_TIMEOUT;
 
-        public TimeoutSettings() {}
+        public TimeoutSettings() {
+        }
 
         public TimeoutSettings(long connectTimeout, long callTimeout, long readTimeout, long writeTimeout) {
             this.connectTimeout = connectTimeout;
