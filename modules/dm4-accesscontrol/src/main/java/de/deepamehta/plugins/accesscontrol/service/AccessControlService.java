@@ -1,27 +1,23 @@
 package de.deepamehta.plugins.accesscontrol.service;
 
-import de.deepamehta.plugins.accesscontrol.model.Permissions;
-import de.deepamehta.plugins.accesscontrol.model.Role;
 import de.deepamehta.core.DeepaMehtaObject;
 import de.deepamehta.core.Topic;
 import de.deepamehta.core.service.PluginService;
-
+import de.deepamehta.plugins.accesscontrol.model.Permissions;
+import de.deepamehta.plugins.accesscontrol.model.Role;
 
 
 public interface AccessControlService extends PluginService {
-
     /**
      * Checks weather the credentials in the authorization string match an existing User Account,
      * and if so, creates an HTTP session. ### FIXDOC
      *
-     * @param   authHeader  the authorization string containing the credentials. ### FIXDOC
-     *                      Formatted like a "Authorization" HTTP header value. That is, "Basic " appended by the
-     *                      Base64 encoded form of "{username}:{password}".
-     *
-     * @return  The username of the matched User Account (a Topic of type "Username" /
-     *          <code>dm4.accesscontrol.username</code>), or <code>null</code> if there is no matching User Account.
+     * @return The username of the matched User Account (a Topic of type "Username" /
+    <code>dm4.accesscontrol.username</code>), or <code>null</code> if there is no matching User Account.
+     * @return The username of the matched User Account (a Topic of type "Username" /
+    <code>dm4.accesscontrol.username</code>), or <code>null</code> if there is no matching User Account.
      */
-    Topic login();
+    public abstract Topic login();
 
     /**
      * @return  A <code>true</code> value instructs the webclient to shutdown. That is, its GUI must no longer be
@@ -54,8 +50,9 @@ public interface AccessControlService extends PluginService {
 
     // ---
 
-    void createACLEntry(long topicId,            Role role, Permissions permissions);
-    void createACLEntry(DeepaMehtaObject object, Role role, Permissions permissions);
+    void createACLEntry(long topicId, Role role, Permissions permissions);
+
+    public abstract void createACLEntry(DeepaMehtaObject object, Role role, Permissions permissions);
 
     // ---
 
