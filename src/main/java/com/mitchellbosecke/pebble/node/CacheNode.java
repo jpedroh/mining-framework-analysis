@@ -17,15 +17,14 @@ import com.mitchellbosecke.pebble.node.expression.Expression;
 import com.mitchellbosecke.pebble.template.EvaluationContextImpl;
 import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
 import com.mitchellbosecke.pebble.tokenParser.CacheTokenParser;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.CompletionException;
-
 import static java.util.Objects.isNull;
+
 
 /**
  * Node for the cache tag
@@ -33,14 +32,12 @@ import static java.util.Objects.isNull;
  * @author Eric Bussieres
  */
 public class CacheNode extends AbstractRenderableNode {
-
     /**
      * Key to be used in the cache
      *
      * @author Eric Bussieres
      */
     private class CacheKey extends BaseTagCacheKey {
-
         private final Locale locale;
 
         private final String name;
@@ -52,7 +49,7 @@ public class CacheNode extends AbstractRenderableNode {
         }
 
         /**
-         * {@inheritDoc}
+         * {@inheritDoc }
          *
          * @see java.lang.Object#equals(java.lang.Object)
          */
@@ -67,7 +64,7 @@ public class CacheNode extends AbstractRenderableNode {
             if (this.getClass() != obj.getClass()) {
                 return false;
             }
-            CacheKey other = (CacheKey) obj;
+            CacheKey other = ((CacheKey) (obj));
             if (!this.getOuterType().equals(other.getOuterType())) {
                 return false;
             }
@@ -89,7 +86,7 @@ public class CacheNode extends AbstractRenderableNode {
         }
 
         /**
-         * {@inheritDoc}
+         * {@inheritDoc }
          *
          * @see java.lang.Object#hashCode()
          */
@@ -97,9 +94,9 @@ public class CacheNode extends AbstractRenderableNode {
         public int hashCode() {
             final int prime = 31;
             int result = super.hashCode();
-            result = prime * result + this.getOuterType().hashCode();
-            result = prime * result + ((this.locale == null) ? 0 : this.locale.hashCode());
-            result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
+            result = (prime * result) + this.getOuterType().hashCode();
+            result = (prime * result) + (this.locale == null ? 0 : this.locale.hashCode());
+            result = (prime * result) + (this.name == null ? 0 : this.name.hashCode());
             return result;
         }
 
@@ -124,37 +121,34 @@ public class CacheNode extends AbstractRenderableNode {
     }
 
     @Override
-    public void render(final PebbleTemplateImpl self, Writer writer, final EvaluationContextImpl context)
-            throws PebbleException, IOException {
+    public void render(final PebbleTemplateImpl self, Writer writer, final EvaluationContextImpl context) throws PebbleException, IOException {
         try {
             final String body;
             Cache tagCache = context.getTagCache();
-            if(isNull(tagCache)){ //No cache
+            if (isNull(tagCache)) {
+                // No cache
                 body = render(self, context);
-            }
-            else {
-                CacheKey key = new CacheKey((String) this.name.evaluate(self, context), context.getLocale());
-                body = (String) context.getTagCache().get(key, k -> {
+            } else {
+                CacheKey key = new CacheKey(((String) (this.name.evaluate(self, context))), context.getLocale());
+                body = ((String) (context.getTagCache().get(key, ( k) -> {
                     try {
                         return render(self, context);
-                    } catch (PebbleException e) {
-                        throw new RuntimePebbleException(e);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                    } catch ( e) {
+                        throw new <e>RuntimePebbleException();
+                    } catch ( e) {
+                        throw new <e>RuntimeException();
                     }
-                });
+                })));
             }
             writer.write(body);
         } catch (CompletionException e) {
-            throw new PebbleException(e, "Could not render cache block [" + this.name + "]");
+            throw new PebbleException(e, ("Could not render cache block [" + this.name) + "]");
         }
     }
 
-    private String render(final PebbleTemplateImpl self, final EvaluationContext context) throws PebbleException, IOException {
+    private String render(final PebbleTemplateImpl self, final EvaluationContext context) throws IOException, PebbleException {
         StringWriter tempWriter = new StringWriter();
-        CacheNode.this.body.render(self, tempWriter, context);
-
+        this.body.render(self, tempWriter, context);
         return tempWriter.toString();
     }
-
 }

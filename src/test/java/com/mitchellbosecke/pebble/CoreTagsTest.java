@@ -12,22 +12,18 @@ package com.mitchellbosecke.pebble;
 
 import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.error.RuntimePebbleException;
-import com.mitchellbosecke.pebble.extension.InvocationCountingFunction;
-import com.mitchellbosecke.pebble.extension.TestingExtension;
 import com.mitchellbosecke.pebble.loader.StringLoader;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.*;
 import java.util.concurrent.Executors;
-
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
-public class CoreTagsTest extends AbstractTest {
 
+public class CoreTagsTest extends AbstractTest {
     public static final String LINE_SEPARATOR = System.lineSeparator();
 
     @Test
@@ -137,8 +133,6 @@ public class CoreTagsTest extends AbstractTest {
         template.evaluate(writer, context);
         assertEquals("yes", writer.toString());
     }
-
-
 
     @Test
     public void testFlush() throws PebbleException, IOException {
@@ -361,8 +355,6 @@ public class CoreTagsTest extends AbstractTest {
         assertEquals("yes", writer.toString());
     }
 
-
-
     @Test
     public void testCache() throws PebbleException, IOException {
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(false).build();
@@ -431,20 +423,16 @@ public class CoreTagsTest extends AbstractTest {
     @Test(expected = RuntimePebbleException.class)
     public void testCacheWithNoName() throws PebbleException, IOException {
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(false).build();
-
         String source = "{% cache %}{% if foobar %}true{% else %}false{% endif %}{% endcache %}";
         PebbleTemplate template = pebble.getTemplate(source);
-
         Map<String, Object> context = new HashMap<>();
         context.put("foobar", true);
-
         Writer writer = new StringWriter();
         template.evaluate(writer, context);
         assertEquals("true", writer.toString());
     }
 
     public static class SimpleObjectA {
-
         private String value;
 
         public String getValue() {
@@ -463,7 +451,6 @@ public class CoreTagsTest extends AbstractTest {
      * @author mbosecke
      */
     public static class SimpleObjectB {
-
         private String value;
 
         public String getValue() {
@@ -554,8 +541,6 @@ public class CoreTagsTest extends AbstractTest {
         assertEquals("\t<input name=\"company\" value=\"forcorp\" type=\"text\" />" + LINE_SEPARATOR,
                 writer.toString());
     }
-
-
 
     @Test
     public void testDynamicInclude() throws PebbleException, IOException {
@@ -728,7 +713,6 @@ public class CoreTagsTest extends AbstractTest {
 
     }
 
-
     /**
      * The for loop will add variables into the evaluation context during
      * runtime and there was an issue where the evaluation context wasn't thread
@@ -811,7 +795,6 @@ public class CoreTagsTest extends AbstractTest {
         assertEquals("beginning first", writer.toString());
     }
 
-
     /**
      * Issue #159
      * @throws PebbleException
@@ -830,11 +813,10 @@ public class CoreTagsTest extends AbstractTest {
     }
 
     public class SlowObject {
-
         public String first() {
             try {
                 Thread.sleep(200);
-            } catch (InterruptedException e) {
+            } catch (java.lang.InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -844,7 +826,7 @@ public class CoreTagsTest extends AbstractTest {
         public String second() {
             try {
                 Thread.sleep(200);
-            } catch (InterruptedException e) {
+            } catch (java.lang.InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -854,7 +836,7 @@ public class CoreTagsTest extends AbstractTest {
         public String third() {
             try {
                 Thread.sleep(200);
-            } catch (InterruptedException e) {
+            } catch (java.lang.InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -864,7 +846,7 @@ public class CoreTagsTest extends AbstractTest {
         public String fourth() {
             try {
                 Thread.sleep(400);
-            } catch (InterruptedException e) {
+            } catch (java.lang.InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -873,7 +855,6 @@ public class CoreTagsTest extends AbstractTest {
     }
 
     public class User {
-
         private final String username;
 
         public User(String username) {
@@ -886,7 +867,6 @@ public class CoreTagsTest extends AbstractTest {
     }
 
     public class Classroom {
-
         private List<User> users = new ArrayList<>();
 
         public List<User> getUsers() {
@@ -899,7 +879,6 @@ public class CoreTagsTest extends AbstractTest {
     }
 
     public class FlushAwareWriter extends StringWriter {
-
         private List<String> buffers = new ArrayList<>();
 
         @Override

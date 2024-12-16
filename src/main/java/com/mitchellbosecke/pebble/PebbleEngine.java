@@ -8,7 +8,6 @@
  ******************************************************************************/
 package com.mitchellbosecke.pebble;
 
-
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.mitchellbosecke.pebble.cache.BaseTagCacheKey;
@@ -35,7 +34,6 @@ import com.mitchellbosecke.pebble.parser.Parser;
 import com.mitchellbosecke.pebble.parser.ParserImpl;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
 import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
-
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,8 +41,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
-
 import static java.util.Objects.isNull;
+
 
 /**
  * The main class used for compiling templates. The PebbleEngine is responsible
@@ -54,7 +52,6 @@ import static java.util.Objects.isNull;
  * @author Mitchell
  */
 public class PebbleEngine {
-
     private final Loader<?> loader;
 
     private final Syntax syntax;
@@ -79,10 +76,7 @@ public class PebbleEngine {
      * @param syntax     the syntax to use for parsing the templates.
      * @param extensions The userProvidedExtensions which should be loaded.
      */
-    private PebbleEngine(Loader<?> loader, Syntax syntax, boolean strictVariables, Locale defaultLocale,
-                         Cache<BaseTagCacheKey, Object> tagCache, Cache<Object, PebbleTemplate> templateCache,
-                         ExecutorService executorService, Collection<? extends Extension> extensions) {
-
+    private PebbleEngine(Loader<?> loader, Syntax syntax, boolean strictVariables, Locale defaultLocale, Cache<BaseTagCacheKey, Object> tagCache, Cache<Object, PebbleTemplate> templateCache, ExecutorService executorService, Collection<? extends Extension> extensions) {
         this.loader = loader;
         this.syntax = syntax;
         this.strictVariables = strictVariables;
@@ -102,71 +96,56 @@ public class PebbleEngine {
      * @throws PebbleException Thrown if an error occurs while parsing the template.
      */
     public PebbleTemplate getTemplate(final String templateName) throws PebbleException {
-
-        /*
-         * template name will be null if user uses the extends tag with an
-         * expression that evaluates to null
+        /* template name will be null if user uses the extends tag with an
+        expression that evaluates to null
          */
         if (templateName == null) {
             return null;
         }
-
         if (this.loader == null) {
             throw new LoaderException(null, "Loader has not yet been specified.");
         }
-
         final PebbleEngine self = this;
         PebbleTemplate result;
-
         try {
             final Object cacheKey = this.loader.createCacheKey(templateName);
-
-            if(isNull(templateCache)){
+            if (isNull(templateCache)) {
                 result = getPebbleTemplate(self, templateName, cacheKey);
-            }
-            else {
-                result = templateCache.get(cacheKey, k -> {
+            } else {
+                result = templateCache.get(cacheKey, ( k) -> {
                     try {
                         return getPebbleTemplate(self, templateName, cacheKey);
-                    } catch (PebbleException e) {
-                        throw new RuntimePebbleException(e);
+                    } catch ( e) {
+                        throw new <e>RuntimePebbleException();
                     }
                 });
             }
         } catch (CompletionException e) {
-            /*
-             * The completion exception is probably caused by a PebbleException
-             * being thrown in the above function. We will unravel it and throw
-             * the original PebbleException which is more helpful to the end
-             * user.
+            /* The completion exception is probably caused by a PebbleException
+            being thrown in the above function. We will unravel it and throw
+            the original PebbleException which is more helpful to the end
+            user.
              */
-            if (e.getCause() != null && e.getCause() instanceof RuntimePebbleException) {
-                RuntimePebbleException runtimePebbleException = (RuntimePebbleException) e.getCause();
-                throw (PebbleException) runtimePebbleException.getCause();
+            if ((e.getCause() != null) && (e.getCause() instanceof RuntimePebbleException)) {
+                RuntimePebbleException runtimePebbleException = ((RuntimePebbleException) (e.getCause()));
+                throw ((PebbleException) (runtimePebbleException.getCause()));
             } else {
                 throw new PebbleException(e, String.format("An error occurred while compiling %s", templateName));
             }
         }
-
         return result;
     }
 
     private PebbleTemplate getPebbleTemplate(final PebbleEngine self, final String templateName, final Object cacheKey) throws LoaderException, ParserException {
-        LexerImpl lexer = new LexerImpl(syntax, extensionRegistry.getUnaryOperators().values(),
-                extensionRegistry.getBinaryOperators().values());
+        LexerImpl lexer = new LexerImpl(syntax, extensionRegistry.getUnaryOperators().values(), extensionRegistry.getBinaryOperators().values());
         Reader templateReader = self.retrieveReaderFromLoader(self.loader, cacheKey);
         TokenStream tokenStream = lexer.tokenize(templateReader, templateName);
-
-        Parser parser = new ParserImpl(extensionRegistry.getUnaryOperators(),
-                extensionRegistry.getBinaryOperators(), extensionRegistry.getTokenParsers());
+        Parser parser = new ParserImpl(extensionRegistry.getUnaryOperators(), extensionRegistry.getBinaryOperators(), extensionRegistry.getTokenParsers());
         RootNode root = parser.parse(tokenStream);
-
         PebbleTemplateImpl instance = new PebbleTemplateImpl(self, root, templateName);
-
         for (NodeVisitorFactory visitorFactory : extensionRegistry.getNodeVisitors()) {
             visitorFactory.createVisitor(instance).visit(root);
         }
-
         return instance;
     }
 
@@ -263,7 +242,6 @@ public class PebbleEngine {
      * A builder to configure and construct an instance of a PebbleEngine.
      */
     public static class Builder {
-
         private Loader<?> loader;
 
         private List<Extension> userProvidedExtensions = new ArrayList<>();
@@ -290,7 +268,6 @@ public class PebbleEngine {
          * Creates the builder.
          */
         public Builder() {
-
         }
 
         /**
@@ -471,14 +448,12 @@ public class PebbleEngine {
          * @return A PebbleEngine object that can be used to create PebbleTemplate objects.
          */
         public PebbleEngine build() {
-
             // core extensions
             List<Extension> extensions = new ArrayList<>();
             extensions.add(new CoreExtension());
             extensions.add(escaperExtension);
             extensions.add(new I18nExtension());
             extensions.addAll(this.userProvidedExtensions);
-
             // default loader
             if (loader == null) {
                 List<Loader<?>> defaultLoadingStrategies = new ArrayList<>();
@@ -486,19 +461,15 @@ public class PebbleEngine {
                 defaultLoadingStrategies.add(new FileLoader());
                 loader = new DelegatingLoader(defaultLoadingStrategies);
             }
-
             // default locale
             if (defaultLocale == null) {
                 defaultLocale = Locale.getDefault();
             }
-
-
             if (cacheActive) {
                 // default caches
                 if (templateCache == null) {
                     templateCache = Caffeine.newBuilder().maximumSize(200).build();
                 }
-
                 if (tagCache == null) {
                     tagCache = Caffeine.newBuilder().maximumSize(200).build();
                 }
@@ -506,13 +477,10 @@ public class PebbleEngine {
                 templateCache = null;
                 tagCache = null;
             }
-
-            if(syntax == null) {
+            if (syntax == null) {
                 syntax = new Syntax.Builder().setEnableNewLineTrimming(enableNewLineTrimming).build();
             }
-
-            return new PebbleEngine(loader, syntax, strictVariables, defaultLocale, tagCache, templateCache,
-                    executorService, extensions);
+            return new PebbleEngine(loader, syntax, strictVariables, defaultLocale, tagCache, templateCache, executorService, extensions);
         }
     }
 }

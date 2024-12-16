@@ -13,23 +13,21 @@ import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.error.RuntimePebbleException;
 import com.mitchellbosecke.pebble.loader.StringLoader;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
-
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class ArraySyntaxTest extends AbstractTest {
 
+public class ArraySyntaxTest extends AbstractTest {
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
 
@@ -99,12 +97,9 @@ public class ArraySyntaxTest extends AbstractTest {
     public void testIncompleteArraySyntax() throws PebbleException, IOException {
         //Arrange
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(false).build();
-
         String source = "{{ [,] }}";
-
         thrown.expect(RuntimePebbleException.class);
         thrown.expectCause(instanceOf(ParserException.class));
-
         //Act + Assert
         pebble.getTemplate(source);
     }
@@ -455,15 +450,11 @@ public class ArraySyntaxTest extends AbstractTest {
     public void testAdditionOverloading3() throws PebbleException, IOException {
         //Arrange
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(false).build();
-
         String source = "{% set arr = 1 + [0,1] %}{{ arr }}";
         PebbleTemplate template = pebble.getTemplate(source);
-
         Writer writer = new StringWriter();
-
         thrown.expect(PebbleException.class);
         thrown.expectMessage(startsWith("Could not perform addition"));
-
         //Act + Assert
         template.evaluate(writer, new HashMap<>());
     }
@@ -498,15 +489,11 @@ public class ArraySyntaxTest extends AbstractTest {
     public void testSubtractionOverloading3() throws PebbleException, IOException {
         //Arrange
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(false).build();
-
         String source = "{% set arr = 1 - [0,2] %}{{ arr }}";
         PebbleTemplate template = pebble.getTemplate(source);
-
         Writer writer = new StringWriter();
-
         thrown.expect(PebbleException.class);
         thrown.expectMessage(startsWith("Could not perform subtraction"));
-
         //Act + Assert
         template.evaluate(writer, new HashMap<>());
     }
@@ -617,12 +604,9 @@ public class ArraySyntaxTest extends AbstractTest {
 
     @Test
     public void testContainsOperator4() throws PebbleException, IOException {
-
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(false).build();
-
         String source = "{% if [0,1,2] contains 10 %}true{% else %}false{% endif %}";
         PebbleTemplate template = pebble.getTemplate(source);
-
         Writer writer = new StringWriter();
         template.evaluate(writer, new HashMap<String, Object>());
         assertEquals("false", writer.toString());
@@ -630,12 +614,9 @@ public class ArraySyntaxTest extends AbstractTest {
 
     @Test
     public void testContainsOperator5() throws PebbleException, IOException {
-
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(false).build();
-
         String source = "{% if [0,1,2] contains 1 and not ([0,1] contains 0) %}true{% else %}false{% endif %}";
         PebbleTemplate template = pebble.getTemplate(source);
-
         Writer writer = new StringWriter();
         template.evaluate(writer, new HashMap<String, Object>());
         assertEquals("false", writer.toString());
@@ -811,5 +792,4 @@ public class ArraySyntaxTest extends AbstractTest {
         template.evaluate(writer, context);
         assertEquals("Bob", writer.toString());
     }
-
 }
