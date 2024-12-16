@@ -55,15 +55,9 @@ import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.github.steveice10.packetlib.codec.BasePacketCodecHelper;
+import com.nukkitx.math.vector.Vector4f;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.text.Component;
-import org.cloudburstmc.math.vector.Vector3f;
-import org.cloudburstmc.math.vector.Vector3i;
-import org.cloudburstmc.math.vector.Vector4f;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -79,16 +73,27 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.ObjIntConsumer;
 import java.util.function.ToIntFunction;
+import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.Component;
+import org.cloudburstmc.math.vector.Vector3f;
+import org.cloudburstmc.math.vector.Vector3i;
+import org.jetbrains.annotations.Nullable;
+
 
 @RequiredArgsConstructor
 public class MinecraftCodecHelper extends BasePacketCodecHelper {
     private static final int POSITION_X_SIZE = 38;
+
     private static final int POSITION_Y_SIZE = 12;
+
     private static final int POSITION_Z_SIZE = 38;
+
     private static final int POSITION_Y_SHIFT = 0xFFF;
+
     private static final int POSITION_WRITE_SHIFT = 0x3FFFFFF;
 
     private final Int2ObjectMap<LevelEvent> levelEvents;
+
     private final Map<String, BuiltinSound> soundNames;
 
     protected CompoundTag registry;
@@ -264,11 +269,9 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public Vector3i readPosition(ByteBuf buf) {
         long val = buf.readLong();
-
-        int x = (int) (val >> POSITION_X_SIZE);
-        int y = (int) (val << 52 >> 52);
-        int z = (int) (val << 26 >> POSITION_Z_SIZE);
-
+        int x = ((int) (val >> POSITION_X_SIZE));
+        int y = ((int) ((val << 52) >> 52));
+        int z = ((int) ((val << 26) >> POSITION_Z_SIZE));
         return Vector3i.from(x, y, z);
     }
 
@@ -276,15 +279,13 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         long x = pos.getX() & POSITION_WRITE_SHIFT;
         long y = pos.getY() & POSITION_Y_SHIFT;
         long z = pos.getZ() & POSITION_WRITE_SHIFT;
-
-        buf.writeLong(x << POSITION_X_SIZE | z << POSITION_Y_SIZE | y);
+        buf.writeLong(((x << POSITION_X_SIZE) | (z << POSITION_Y_SIZE)) | y);
     }
 
     public Vector3f readRotation(ByteBuf buf) {
         float x = buf.readFloat();
         float y = buf.readFloat();
         float z = buf.readFloat();
-
         return Vector3f.from(x, y, z);
     }
 
@@ -503,11 +504,11 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     public PositionSource readPositionSource(ByteBuf buf) {
         PositionSourceType type = PositionSourceType.from(this.readResourceLocation(buf));
         switch (type) {
-            case BLOCK:
+            case BLOCK :
                 return new BlockPositionSource(this.readPosition(buf));
-            case ENTITY:
+            case ENTITY :
                 return new EntityPositionSource(this.readVarInt(buf), buf.readFloat());
-            default:
+            default :
                 throw new IllegalStateException("Unknown position source type!");
         }
     }
@@ -515,12 +516,11 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     public void writePositionSource(ByteBuf buf, PositionSource positionSource) {
         this.writeResourceLocation(buf, positionSource.getType().getResourceLocation());
         if (positionSource instanceof BlockPositionSource) {
-            this.writePosition(buf, ((BlockPositionSource) positionSource).getPosition());
+            this.writePosition(buf, ((BlockPositionSource) (positionSource)).getPosition());
         } else if (positionSource instanceof EntityPositionSource) {
-            this.writeVarInt(buf, ((EntityPositionSource) positionSource).getEntityId());
-            buf.writeFloat(((EntityPositionSource) positionSource).getYOffset());
+            this.writeVarInt(buf, ((EntityPositionSource) (positionSource)).getEntityId());
+            buf.writeFloat(((EntityPositionSource) (positionSource)).getYOffset());
         }
-
         throw new IllegalStateException("Unknown position source type!");
     }
 
