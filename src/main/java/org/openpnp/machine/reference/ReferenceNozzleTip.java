@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
-
 import org.openpnp.ConfigurationListener;
 import org.openpnp.gui.MainFrame;
 import org.openpnp.gui.support.Icons;
@@ -31,6 +30,7 @@ import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.core.Commit;
 
+
 public class ReferenceNozzleTip extends AbstractNozzleTip {
     @Attribute(required = false)
     private int pickDwellMilliseconds;
@@ -43,31 +43,30 @@ public class ReferenceNozzleTip extends AbstractNozzleTip {
 
     @Element(required = false)
     private double changerStartToMidSpeed = 1D;
-    
+
     @Element(required = false)
     private Location changerMidLocation = new Location(LengthUnit.Millimeters);
-    
+
     @Element(required = false)
     private double changerMidToMid2Speed = 1D;
-    
+
     @Element(required = false)
     private Location changerMidLocation2 = new Location(LengthUnit.Millimeters);
-    
+
     @Element(required = false)
     private double changerMid2ToEndSpeed = 1D;
-    
+
     @Element(required = false)
     private Location changerEndLocation = new Location(LengthUnit.Millimeters);
-    
-    
+
     @Element(required = false)
     private ReferenceNozzleTipCalibration calibration = new ReferenceNozzleTipCalibration();
 
     public enum VacuumMeasurementMethod {
-        None, 
+
+        None,
         Absolute,
         Difference;
-        
         public boolean isDifferenceMethod() {
             // there might be more difference methods in the future, so make this easy
             return this == Difference;
@@ -78,13 +77,13 @@ public class ReferenceNozzleTip extends AbstractNozzleTip {
     VacuumMeasurementMethod methodPartOn = null;
 
     @Element(required = false)
-    boolean partOnCheckAfterPick = true; 
+    boolean partOnCheckAfterPick = true;
 
     @Element(required = false)
-    boolean partOnCheckAlign = true; 
+    boolean partOnCheckAlign = true;
 
     @Element(required = false)
-    boolean partOnCheckBeforePlace = true; 
+    boolean partOnCheckBeforePlace = true;
 
     @Attribute(required = false)
     private boolean establishPartOnLevel;
@@ -108,14 +107,14 @@ public class ReferenceNozzleTip extends AbstractNozzleTip {
     private boolean establishPartOffLevel;
 
     @Element(required = false)
-    boolean partOffCheckAfterPlace = true; 
+    boolean partOffCheckAfterPlace = true;
 
     @Element(required = false)
-    boolean partOffCheckBeforePick = true; 
+    boolean partOffCheckBeforePick = true;
 
     @Element(required = false)
     private double vacuumLevelPartOffLow;
-    
+
     @Element(required = false)
     private double vacuumLevelPartOffHigh;
 
@@ -136,13 +135,13 @@ public class ReferenceNozzleTip extends AbstractNozzleTip {
 
     @Attribute(required = false)
     private boolean isPushAndDragAllowed = false;
-    
+
     @Element(required = false)
     protected String changerActuatorPostStepOne;
 
     @Element(required = false)
     protected String changerActuatorPostStepTwo;
-    
+
     @Element(required = false)
     protected String changerActuatorPostStepThree;
 
@@ -161,8 +160,7 @@ public class ReferenceNozzleTip extends AbstractNozzleTip {
                     if (vacuumLevelPartOnLow < vacuumLevelPartOnHigh) {
                         // was enabled
                         methodPartOn = VacuumMeasurementMethod.Absolute;
-                    }
-                    else {
+                    } else {
                         methodPartOn = VacuumMeasurementMethod.None;
                     }
                 }
@@ -171,23 +169,18 @@ public class ReferenceNozzleTip extends AbstractNozzleTip {
                     partOffProbingMilliseconds = pickDwellMilliseconds;
                     try {
                         // also add the nozzle's pick dwell time
-                        Nozzle nozzle = Configuration.get()
-                                .getMachine()
-                                .getDefaultHead()
-                                .getDefaultNozzle();
+                        Nozzle nozzle = Configuration.get().getMachine().getDefaultHead().getDefaultNozzle();
                         if (nozzle instanceof ReferenceNozzle) {
-                            ReferenceNozzle refNozzle = (ReferenceNozzle) nozzle;
+                            ReferenceNozzle refNozzle = ((ReferenceNozzle) (nozzle));
                             partOffProbingMilliseconds += refNozzle.getPickDwellMilliseconds();
-                        } 
-                    }
-                    catch (Exception e) {
+                        }
+                    } catch (java.lang.Exception e) {
                         Logger.info("Cannot fully upgrade partOffProbingMilliseconds time", e);
                     }
                     if (vacuumLevelPartOffLow < vacuumLevelPartOffHigh) {
                         // was enabled
                         methodPartOff = VacuumMeasurementMethod.Absolute;
-                    }
-                    else {
+                    } else {
                         methodPartOff = VacuumMeasurementMethod.None;
                     }
                 }
@@ -285,7 +278,7 @@ public class ReferenceNozzleTip extends AbstractNozzleTip {
         this.changerEndLocation = changerEndLocation;
         firePropertyChange("changerEndLocation", oldValue, changerEndLocation);
     }
-    
+
     public double getChangerStartToMidSpeed() {
         return changerStartToMidSpeed;
     }
@@ -335,7 +328,7 @@ public class ReferenceNozzleTip extends AbstractNozzleTip {
         this.changerActuatorPostStepTwo = changerActuatorPostStepTwo;
         firePropertyChange("changerActuatorPostStepTwo", oldValue, changerActuatorPostStepTwo);
     }
-    
+
     public String getChangerActuatorPostStepThree() {
         return changerActuatorPostStepThree;
     }
@@ -353,8 +346,8 @@ public class ReferenceNozzleTip extends AbstractNozzleTip {
                     // Note this also includes support for the "unloaded" nozzle tip stand-in to calibrate the
                     // naked nozzle. But it will default to the first naked nozzle
                     // See also: ReferenceNozzleTipCalibration.getUiCalibrationNozzle().
-                    if (this == ((ReferenceNozzle)nozzle).getCalibrationNozzleTip()) {
-                        return ((ReferenceNozzle)nozzle);
+                    if (this == ((ReferenceNozzle) (nozzle)).getCalibrationNozzleTip()) {
+                        return ((ReferenceNozzle) (nozzle));
                     }
                 }
             }
@@ -621,17 +614,26 @@ public class ReferenceNozzleTip extends AbstractNozzleTip {
     }
 
     // Recorded vacuum readings 
+    // Recorded vacuum readings 
     private Double vacuumLevelPartOnReading = null;
+
     private Double vacuumDifferencePartOnReading = null;
+
     private Double vacuumLevelPartOffReading = null;
+
     private Double vacuumDifferencePartOffReading = null;
+
     private SimpleGraph vacuumPartOnGraph = null;
+
     private SimpleGraph vacuumPartOffGraph = null;
 
-    public static final String PRESSURE = "P"; 
-    public static final String BOOLEAN = "B"; 
-    public static final String VACUUM = "V"; 
-    public static final String VALVE_ON = "ON"; 
+    public static final String PRESSURE = "P";
+
+    public static final String BOOLEAN = "B";
+
+    public static final String VACUUM = "V";
+
+    public static final String VALVE_ON = "ON";
 
     protected final SimpleGraph startNewVacuumGraph(double vacuumLevel, boolean valveSwitchingOn) {
         // start a new graph 
@@ -691,6 +693,7 @@ public class ReferenceNozzleTip extends AbstractNozzleTip {
             });
         }
     };
+
     public Action deleteAction = new AbstractAction("Delete Nozzle Tip") {
         {
             putValue(SMALL_ICON, Icons.nozzleTipRemove);
@@ -700,9 +703,7 @@ public class ReferenceNozzleTip extends AbstractNozzleTip {
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            int ret = JOptionPane.showConfirmDialog(MainFrame.get(),
-                    "Are you sure you want to delete " + getName() + "?",
-                    "Delete " + getName() + "?", JOptionPane.YES_NO_OPTION);
+            int ret = JOptionPane.showConfirmDialog(MainFrame.get(), ("Are you sure you want to delete " + getName()) + "?", ("Delete " + getName()) + "?", JOptionPane.YES_NO_OPTION);
             if (ret == JOptionPane.YES_OPTION) {
                 Configuration.get().getMachine().removeNozzleTip(ReferenceNozzleTip.this);
             }
