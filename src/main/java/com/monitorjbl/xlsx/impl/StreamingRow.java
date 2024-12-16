@@ -1,21 +1,25 @@
 package com.monitorjbl.xlsx.impl;
 
 import com.monitorjbl.xlsx.exceptions.NotSupportedException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class StreamingRow implements Row {
   private int rowIndex;
+
   private boolean isHidden;
+
   private final float rowHeight;
+
   private final CellStyle rowStyle;
+
   private TreeMap<Integer, Cell> cellMap = new TreeMap<>();
 
   public StreamingRow(int rowIndex, boolean isHidden) {
@@ -37,17 +41,17 @@ public class StreamingRow implements Row {
     this.cellMap = cellMap;
   }
 
- /* Supported */
+/* Supported */
 
-  /**
-   * Get row number this row represents
-   *
-   * @return the row number (0 based)
-   */
-  @Override
-  public int getRowNum() {
-    return rowIndex;
-  }
+ /**
+  * Get row number this row represents
+  *
+  * @return the row number (0 based)
+  */
+ @Override
+ public int getRowNum() {
+   return rowIndex;
+ }
 
   /**
    * @return Cell iterator of the physically defined cells for this row.
@@ -135,16 +139,16 @@ public class StreamingRow implements Row {
   }
 
   /**
-   * {@inheritDoc}
+   * {@inheritDoc }
    */
   @Override
   public short getHeight() {
     // the same conversion from XSSFRow
-    return (short) (getHeightInPoints() * 20);
+    return ((short) (getHeightInPoints() * 20));
   }
 
   /**
-   * {@inheritDoc}
+   * {@inheritDoc }
    */
   @Override
   public float getHeightInPoints() {
@@ -152,7 +156,7 @@ public class StreamingRow implements Row {
   }
 
   /**
-   * {@inheritDoc}
+   * {@inheritDoc }
    */
   @Override
   public boolean isFormatted() {
@@ -160,7 +164,7 @@ public class StreamingRow implements Row {
   }
 
   /**
-   * {@inheritDoc}
+   * {@inheritDoc }
    */
   @Override
   public CellStyle getRowStyle() {
@@ -174,14 +178,6 @@ public class StreamingRow implements Row {
    */
   @Override
   public Cell createCell(int column) {
-    throw new NotSupportedException();
-  }
-
-  /**
-   * Not supported
-   */
-  @Override
-  public Cell createCell(int column, int type) {
     throw new NotSupportedException();
   }
 
@@ -229,6 +225,14 @@ public class StreamingRow implements Row {
    * Not supported
    */
   @Override
+  public void setHeightInPoints(float height) {
+    throw new NotSupportedException();
+  }
+
+  /**
+   * Not supported
+   */
+  @Override
   public void setRowStyle(CellStyle style) {
     throw new NotSupportedException();
   }
@@ -264,5 +268,4 @@ public class StreamingRow implements Row {
   public void shiftCellsLeft(int firstShiftColumnIndex, int lastShiftColumnIndex, int step) {
     throw new NotSupportedException();
   }
-
 }

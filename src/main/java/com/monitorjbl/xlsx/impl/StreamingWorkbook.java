@@ -1,6 +1,10 @@
 package com.monitorjbl.xlsx.impl;
 
 import com.monitorjbl.xlsx.exceptions.MissingSheetException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.List;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -15,12 +19,8 @@ import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.model.StylesTable;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.List;
 
-public class StreamingWorkbook implements Workbook, AutoCloseable {
+public class StreamingWorkbook implements Workbook , AutoCloseable {
   private final StreamingWorkbookReader reader;
 
   public StreamingWorkbook(StreamingWorkbookReader reader) {
@@ -270,7 +270,9 @@ public class StreamingWorkbook implements Workbook, AutoCloseable {
    * Not supported
    */
   @Override
-  public Font getFontAt(int i) { throw new UnsupportedOperationException(); }
+  public Font getFontAt(int i) {
+    throw new UnsupportedOperationException();
+  }
 
   /**
    * Not supported

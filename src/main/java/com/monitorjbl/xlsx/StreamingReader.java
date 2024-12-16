@@ -3,10 +3,19 @@ package com.monitorjbl.xlsx;
 import com.monitorjbl.xlsx.exceptions.MissingSheetException;
 import com.monitorjbl.xlsx.exceptions.OpenException;
 import com.monitorjbl.xlsx.exceptions.ReadException;
-import com.monitorjbl.xlsx.sst.BufferedStringsTable;
 import com.monitorjbl.xlsx.impl.StreamingSheetReader;
 import com.monitorjbl.xlsx.impl.StreamingWorkbook;
 import com.monitorjbl.xlsx.impl.StreamingWorkbookReader;
+import com.monitorjbl.xlsx.sst.BufferedStringsTable;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.security.GeneralSecurityException;
+import java.util.Iterator;
+import java.util.Objects;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLStreamException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -23,30 +32,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.security.GeneralSecurityException;
-import java.util.Iterator;
-import java.util.Objects;
-
 import static com.monitorjbl.xlsx.XmlUtils.document;
 import static com.monitorjbl.xlsx.XmlUtils.searchForNodeList;
 import static com.monitorjbl.xlsx.impl.TempFileUtil.writeInputStreamToFile;
+
 
 /**
  * Streaming Excel workbook implementation. Most advanced features of POI are not supported.
  * Use this only if your application can handle iterating through an entire workbook, row by
  * row.
  */
-public class StreamingReader implements Iterable<Row>, AutoCloseable {
+public class StreamingReader implements Iterable<Row> , AutoCloseable {
   private static final Logger log = LoggerFactory.getLogger(StreamingReader.class);
 
   private File tmp;
+
   private final StreamingWorkbookReader workbook;
 
   public StreamingReader(StreamingWorkbookReader workbook) {
@@ -77,9 +77,9 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
     try {
       workbook.close();
     } finally {
-      if(tmp != null) {
+      if (tmp != null) {
         if (log.isDebugEnabled()) {
-          log.debug("Deleting tmp file [" + tmp.getAbsolutePath() + "]");
+          log.debug(("Deleting tmp file [" + tmp.getAbsolutePath()) + "]");
         }
         tmp.delete();
       }
@@ -92,11 +92,17 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
 
   public static class Builder {
     private int rowCacheSize = 10;
+
     private int bufferSize = 1024;
+
     private int sheetIndex = 0;
+
     private int sstCacheSize = -1;
+
     private String sheetName;
+
     private String password;
+
     private boolean loadComments = false;
 
     public int getRowCacheSize() {
@@ -304,14 +310,13 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
       File f = null;
       try {
         f = writeInputStreamToFile(is, bufferSize);
-        log.debug("Created temp file [" + f.getAbsolutePath() + "]");
-
+        log.debug(("Created temp file [" + f.getAbsolutePath()) + "]");
         StreamingReader r = read(f);
         r.tmp = f;
         return r;
-      } catch(IOException e) {
+      } catch (IOException e) {
         throw new ReadException("Unable to read input stream", e);
-      } catch(RuntimeException e) {
+      } catch (java.lang.RuntimeException e) {
         f.delete();
         throw e;
       }
@@ -413,5 +418,4 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
       return sheet;
     }
   }
-
 }

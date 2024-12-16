@@ -1,8 +1,8 @@
 package com.monitorjbl.xlsx.impl;
 
+import com.monitorjbl.xlsx.exceptions.NotSupportedException;
 import java.util.Calendar;
 import java.util.Date;
-
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -20,7 +20,6 @@ import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 
-import com.monitorjbl.xlsx.exceptions.NotSupportedException;
 
 public class StreamingCell implements Cell {
 
@@ -61,6 +60,7 @@ public class StreamingCell implements Cell {
     this.use1904Dates = use1904Dates;
   }
 
+<<<<<<< LEFT
   String getRawCachedFormulaResultType() {
     return cachedFormulaResultType;
   }
@@ -73,6 +73,8 @@ public class StreamingCell implements Cell {
     this.commentsTableSupplier = commentsTableSupplier;
   }
 
+=======
+>>>>>>> RIGHT
   public void setContentSupplier(Supplier contentsSupplier) {
     this.contentsSupplier = contentsSupplier;
   }
@@ -329,6 +331,7 @@ public class StreamingCell implements Cell {
     }
   }
 
+<<<<<<< LEFT
   /**
    * Retrieve cell comment if set and comment parsing is enabled otherwise null will be returned
    *
@@ -354,10 +357,14 @@ public class StreamingCell implements Cell {
     return new CellAddress(rowIndex, columnIndex);
   }
 
+  /* Not supported */
+
   /**
    * Not supported
    */
+=======
   @Deprecated
+>>>>>>> RIGHT
   @Override
   public CellType getCachedFormulaResultTypeEnum() {
     return getCachedFormulaResultType();

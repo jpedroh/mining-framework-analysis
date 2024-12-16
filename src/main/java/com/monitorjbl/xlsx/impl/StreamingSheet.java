@@ -1,6 +1,10 @@
 package com.monitorjbl.xlsx.impl;
 
-import org.apache.poi.ss.util.PaneInformation;
+import com.monitorjbl.xlsx.exceptions.NotSupportedException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import org.apache.poi.ss.usermodel.AutoFilter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellRange;
@@ -19,19 +23,13 @@ import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.PaneInformation;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import com.monitorjbl.xlsx.exceptions.NotSupportedException;
 
 public class StreamingSheet implements Sheet {
-
   private static final Supplier NOT_SUPPORTED_SUPPLIER = new Supplier() {
     @Override
     public Object getContent() {
@@ -40,7 +38,9 @@ public class StreamingSheet implements Sheet {
   };
 
   private Supplier commentsTableSupplier = NOT_SUPPORTED_SUPPLIER;
+
   private final String name;
+
   private final StreamingSheetReader reader;
 
   public StreamingSheet(String name, StreamingSheetReader reader) {
@@ -94,14 +94,14 @@ public class StreamingSheet implements Sheet {
   }
 
   /**
-   * {@inheritDoc}
+   * {@inheritDoc }
    */
   @Override
   public Comment getCellComment(CellAddress address) {
     int row = address.getRow();
     int column = address.getColumn();
     CellAddress ref = new CellAddress(row, column);
-    CommentsTable commentsTable = (CommentsTable) this.commentsTableSupplier.getContent();
+    CommentsTable commentsTable = ((CommentsTable) (this.commentsTableSupplier.getContent()));
     CTComment ctComment = commentsTable.getCTComment(ref);
     if (ctComment == null) {
       return null;
