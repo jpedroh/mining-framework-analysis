@@ -18,14 +18,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-
 package org.xhtmlrenderer.simple;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -37,13 +35,13 @@ import org.xhtmlrenderer.css.extend.TreeResolver;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 
+
 /**
  * Handles a general XML document
  *
  * @author Torbjoern Gannholm
  */
 public class NoNamespaceHandler implements NamespaceHandler {
-
     static final String _namespace = "http://www.w3.org/XML/1998/namespace";
 
     public String getNamespace() {
@@ -53,7 +51,7 @@ public class NoNamespaceHandler implements NamespaceHandler {
     public String getAttributeValue(org.w3c.dom.Element e, String attrName) {
         return e.getAttribute(attrName);
     }
-    
+
     public String getAttributeValue(Element e, String namespaceURI, String attrName) {
         if (namespaceURI == TreeResolver.NO_NAMESPACE) {
             return e.getAttribute(attrName);
@@ -85,8 +83,8 @@ public class NoNamespaceHandler implements NamespaceHandler {
         return null;
     }
 
-    public String getLang(org.w3c.dom.Element e) {
-        if(e == null) {
+    public String getLang(Element e) {
+        if (e == null) {
             return "";
         }
         return e.getAttribute("lang");
@@ -103,7 +101,7 @@ public class NoNamespaceHandler implements NamespaceHandler {
     public String getLinkUri(org.w3c.dom.Element e) {
         return null;
     }
-    
+
     public String getLinkTitle(org.w3c.dom.Element e) {
         return null;
     }
@@ -111,7 +109,7 @@ public class NoNamespaceHandler implements NamespaceHandler {
     public String getDocumentTitle(org.w3c.dom.Document doc) {
         return null;
     }
-    
+
     public String getAnchorName(Element e) {
         return null;
     }
@@ -123,15 +121,19 @@ public class NoNamespaceHandler implements NamespaceHandler {
     public String getImageSourceURI(Element e) {
         return null;
     }
-    
+
     public boolean isFormElement(Element e) {
         return false;
     }
 
     private Pattern _typePattern = Pattern.compile("type\\s?=\\s?");
+
     private Pattern _hrefPattern = Pattern.compile("href\\s?=\\s?");
+
     private Pattern _titlePattern = Pattern.compile("title\\s?=\\s?");
+
     private Pattern _alternatePattern = Pattern.compile("alternate\\s?=\\s?");
+
     private Pattern _mediaPattern = Pattern.compile("media\\s?=\\s?");
 
     public StylesheetInfo[] getStylesheets(org.w3c.dom.Document doc) {
@@ -192,5 +194,4 @@ public class NoNamespaceHandler implements NamespaceHandler {
     public StylesheetInfo getDefaultStylesheet(StylesheetFactory factory) {
         return null;
     }
-
 }

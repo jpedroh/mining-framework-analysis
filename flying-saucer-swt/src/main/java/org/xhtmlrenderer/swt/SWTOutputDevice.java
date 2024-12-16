@@ -24,19 +24,19 @@ import java.awt.RenderingHints.Key;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Color;
+import org.xhtmlrenderer.css.parser.FSColor;
+import org.xhtmlrenderer.css.parser.FSRGBColor;
 import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.extend.OutputDevice;
 import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.render.*;
 import org.xhtmlrenderer.simple.xhtml.swt.SWTFormControl;
-import org.xhtmlrenderer.css.parser.FSColor;
-import org.xhtmlrenderer.css.parser.FSRGBColor;
+
 
 /**
  * Implementation of {@link OutputDevice} for SWT.
@@ -45,13 +45,18 @@ import org.xhtmlrenderer.css.parser.FSRGBColor;
  * 
  */
 public class SWTOutputDevice extends AbstractOutputDevice {
-
     private final GC _gc;
+
     private Path _clippingPath = null;
+
     private Area _clippingArea = null;
+
     private Color _color = null;
+
     private java.awt.Color _awt_color = null;
+
     private Transform _transform = null;
+
     private Stroke _stroke = null;
 
     public SWTOutputDevice(GC gc) {
@@ -179,14 +184,12 @@ public class SWTOutputDevice extends AbstractOutputDevice {
         _gc.drawRectangle(x, y, width, height);
     }
 
+public void draw(Shape s) {
+       Path p = convertToPath(s);
+       _gc.drawPath(p);
+       p.dispose();
+}
 
-
-	public void draw(Shape s) {
-        Path p = convertToPath(s);
-        _gc.drawPath(p);
-        p.dispose();
-	}
-	
     public void fill(Shape s) {
         Path p = convertToPath(s);
         _gc.fillPath(p);
@@ -251,10 +254,7 @@ public class SWTOutputDevice extends AbstractOutputDevice {
 
     public void setStroke(Stroke s) {
         _stroke = s;
-
-        /*
-         * Code borrowed from SwingWT
-         */
+        /* Code borrowed from SwingWT */
         if (s == null) {
             _gc.setLineWidth(1);
             _gc.setLineCap(SWT.CAP_SQUARE);
@@ -262,51 +262,45 @@ public class SWTOutputDevice extends AbstractOutputDevice {
             _gc.setLineDash(null);
             return;
         }
-
         if (!(s instanceof BasicStroke)) {
             return;
         }
-
-        BasicStroke bs = (BasicStroke) s;
-
+        BasicStroke bs = ((BasicStroke) (s));
         // Setup the line width
-        _gc.setLineWidth((int) bs.getLineWidth());
-
+        _gc.setLineWidth(((int) (bs.getLineWidth())));
         // Setup the line cap
         int gcCap = SWT.CAP_SQUARE;
         switch (bs.getEndCap()) {
-        case BasicStroke.CAP_BUTT:
-            gcCap = SWT.CAP_FLAT;
-            break;
-        case BasicStroke.CAP_ROUND:
-            gcCap = SWT.CAP_ROUND;
-            break;
-        case BasicStroke.CAP_SQUARE:
-            gcCap = SWT.CAP_SQUARE;
-            break;
+            case BasicStroke.CAP_BUTT :
+                gcCap = SWT.CAP_FLAT;
+                break;
+            case BasicStroke.CAP_ROUND :
+                gcCap = SWT.CAP_ROUND;
+                break;
+            case BasicStroke.CAP_SQUARE :
+                gcCap = SWT.CAP_SQUARE;
+                break;
         }
         _gc.setLineCap(gcCap);
-
         // Setup the line Join
         int gcJoin = SWT.JOIN_MITER;
         switch (bs.getLineJoin()) {
-        case BasicStroke.JOIN_BEVEL:
-            gcJoin = SWT.JOIN_BEVEL;
-            break;
-        case BasicStroke.JOIN_MITER:
-            gcJoin = SWT.JOIN_MITER;
-            break;
-        case BasicStroke.JOIN_ROUND:
-            gcJoin = SWT.JOIN_ROUND;
+            case BasicStroke.JOIN_BEVEL :
+                gcJoin = SWT.JOIN_BEVEL;
+                break;
+            case BasicStroke.JOIN_MITER :
+                gcJoin = SWT.JOIN_MITER;
+                break;
+            case BasicStroke.JOIN_ROUND :
+                gcJoin = SWT.JOIN_ROUND;
         }
         _gc.setLineJoin(gcJoin);
-
-        float d[] = bs.getDashArray();
+        float[] d = bs.getDashArray();
         int[] dashes = null;
         if (d != null) {
             dashes = new int[d.length];
             for (int i = 0; i < d.length; i++) {
-                dashes[i] = (int) d[i];
+                dashes[i] = ((int) (d[i]));
             }
         }
         _gc.setLineDash(dashes);
@@ -402,28 +396,27 @@ public class SWTOutputDevice extends AbstractOutputDevice {
         return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-	@Override
-	public void closeOpenTags() {
-		// TODO Auto-generated method stub
-		
-	}
+@Override
+public void closeOpenTags() {
+	// TODO Auto-generated method stub
+	
+}
 
-	@Override
-	public void drawImageNoAccessible(FSImage fsImage, int x, int y) {
-		// TODO Auto-generated method stub
-		
-	}
+@Override
+public void drawImageNoAccessible(FSImage fsImage, int x, int y) {
+	// TODO Auto-generated method stub
+	
+}
 
-	@Override
-	public void drawImageAsHorizontalBandAccessible(FSImage image, int left, int top, int bottom) {
-		// TODO Auto-generated method stub
-		
-	}
+@Override
+public void drawImageAsHorizontalBandAccessible(FSImage image, int left, int top, int bottom) {
+	// TODO Auto-generated method stub
+	
+}
 
-	@Override
-	public void drawImageAsVerticalBandAccessible(FSImage image, int left, int top, int bottom) {
-		// TODO Auto-generated method stub
-		
-	}
-
+@Override
+public void drawImageAsVerticalBandAccessible(FSImage image, int left, int top, int bottom) {
+	// TODO Auto-generated method stub
+	
+}
 }

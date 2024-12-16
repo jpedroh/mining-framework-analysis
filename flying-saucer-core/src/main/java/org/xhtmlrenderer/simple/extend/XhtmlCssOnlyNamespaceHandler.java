@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -39,18 +38,19 @@ import org.xhtmlrenderer.simple.NoNamespaceHandler;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.XRLog;
 
+
 /**
  * Handles xhtml but only css styling is honored,
  * no presentational html attributes (see css 2.1 spec, 6.4.4)
  */
 public class XhtmlCssOnlyNamespaceHandler extends NoNamespaceHandler {
-
     /**
      * Description of the Field
      */
     final static String _namespace = "http://www.w3.org/1999/xhtml";
 
     private static StylesheetInfo _defaultStylesheet;
+
     private static boolean _defaultStylesheetError = false;
 
     private final Map _metadata = null;
@@ -177,7 +177,7 @@ public class XhtmlCssOnlyNamespaceHandler extends NoNamespaceHandler {
         }
         return href;
     }
-    
+
     /**
      * Gets the linkTitle attribute of the XhtmlNamespaceHandler object
      *
@@ -471,14 +471,14 @@ public class XhtmlCssOnlyNamespaceHandler extends NoNamespaceHandler {
         return metadata;
     }
 
-    public String getLang(org.w3c.dom.Element e) {
-        if(e == null) {
+    public String getLang(Element e) {
+        if (e == null) {
             return "";
         }
         String lang = e.getAttribute("lang");
-        if("".equals(lang)) {
-            lang = (String) this.getMetaInfo(e.getOwnerDocument()).get("Content-Language");
-            if(lang == null) {
+        if ("".equals(lang)) {
+            lang = ((String) (this.getMetaInfo(e.getOwnerDocument()).get("Content-Language")));
+            if (lang == null) {
                 lang = "";
             }
         }

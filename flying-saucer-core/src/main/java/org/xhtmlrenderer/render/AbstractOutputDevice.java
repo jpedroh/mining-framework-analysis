@@ -24,7 +24,6 @@ import java.awt.Shape;
 import java.awt.geom.Area;
 import java.util.Iterator;
 import java.util.List;
-
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -43,16 +42,16 @@ import org.xhtmlrenderer.extend.OutputDevice;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.Uu;
 
+
 /**
  * An abstract implementation of an {@link OutputDevice}.  It provides complete
  * implementations for many <code>OutputDevice</code> methods.
  */
 public abstract class AbstractOutputDevice implements OutputDevice {
-
     private FontSpecification _fontSpec;
 
     protected abstract void drawLine(int x1, int y1, int x2, int y2);
-    
+
     public void drawText(RenderingContext c, InlineText inlineText) {
         InlineLayoutBox iB = inlineText.getParent();
         String text = inlineText.getSubstring();
@@ -171,11 +170,11 @@ public abstract class AbstractOutputDevice implements OutputDevice {
     }
 
     private FSImage getBackgroundImage(RenderingContext c, CalculatedStyle style) {
-        if (! style.isIdent(CSSName.BACKGROUND_IMAGE, IdentValue.NONE)) {
+        if (!style.isIdent(CSSName.BACKGROUND_IMAGE, IdentValue.NONE)) {
             String uri = style.getStringProperty(CSSName.BACKGROUND_IMAGE);
             try {
                 return c.getUac().getImageResource(uri).getImage();
-            } catch (Exception ex) {
+            } catch (java.lang.Exception ex) {
                 Uu.p(ex);
             }
         }
@@ -198,107 +197,72 @@ public abstract class AbstractOutputDevice implements OutputDevice {
         paintBackground0(c, box.getStyle(), backgroundBounds, backgroundBounds, border);
     }
 
-    private void paintBackground0(
-            RenderingContext c, CalculatedStyle style,
-            Rectangle backgroundBounds, Rectangle bgImageContainer,
-            BorderPropertySet border) {
+    private void paintBackground0(RenderingContext c, CalculatedStyle style, Rectangle backgroundBounds, Rectangle bgImageContainer, BorderPropertySet border) {
         if (!Configuration.isTrue("xr.renderer.draw.backgrounds", true)) {
             return;
         }
-
         FSColor backgroundColor = style.getBackgroundColor();
         FSImage backgroundImage = getBackgroundImage(c, style);
-
         // If the image width or height is zero, then there's nothing to draw.
         // Also prevents infinte loop when trying to tile an image with zero size.
-        if (backgroundImage == null || backgroundImage.getHeight() == 0 || backgroundImage.getWidth() == 0) {
+        if (((backgroundImage == null) || (backgroundImage.getHeight() == 0)) || (backgroundImage.getWidth() == 0)) {
             backgroundImage = null;
         }
-
-        if ( (backgroundColor == null || backgroundColor == FSRGBColor.TRANSPARENT) &&
-                backgroundImage == null) {
+        if (((backgroundColor == null) || (backgroundColor == FSRGBColor.TRANSPARENT)) && (backgroundImage == null)) {
             return;
         }
-        
         Area borderBounds = new Area(BorderPainter.generateBorderBounds(backgroundBounds, border, false));
-
         Shape oldclip = getClip();
-        if(oldclip != null) {
+        if (oldclip != null) {
             // we need to respect the clip sent to us, get the intersection between the old and the new
-        	borderBounds.intersect(new Area(oldclip));
+            borderBounds.intersect(new Area(oldclip));
         }
-        
-        if (backgroundColor != null && backgroundColor != FSRGBColor.TRANSPARENT) {
+        if ((backgroundColor != null) && (backgroundColor != FSRGBColor.TRANSPARENT)) {
             setColor(backgroundColor);
             fill(borderBounds);
         }
-
         if (backgroundImage != null) {
             setClip(borderBounds);
-
             Rectangle localBGImageContainer = bgImageContainer;
             if (style.isFixedBackground()) {
                 localBGImageContainer = c.getViewportRectangle();
             }
-
             int xoff = localBGImageContainer.x;
             int yoff = localBGImageContainer.y;
-
             if (border != null) {
-                xoff += (int)border.left();
-                yoff += (int)border.top();
+                xoff += ((int) (border.left()));
+                yoff += ((int) (border.top()));
             }
-
             scaleBackgroundImage(c, style, localBGImageContainer, backgroundImage);
-
             float imageWidth = backgroundImage.getWidth();
             float imageHeight = backgroundImage.getHeight();
-
             BackgroundPosition position = style.getBackgroundPosition();
-            xoff += calcOffset(
-                    c, style, position.getHorizontal(), localBGImageContainer.width, imageWidth);
-            yoff += calcOffset(
-                    c, style, position.getVertical(), localBGImageContainer.height, imageHeight);
-
+            xoff += calcOffset(c, style, position.getHorizontal(), localBGImageContainer.width, imageWidth);
+            yoff += calcOffset(c, style, position.getVertical(), localBGImageContainer.height, imageHeight);
             boolean hrepeat = style.isHorizontalBackgroundRepeat();
             boolean vrepeat = style.isVerticalBackgroundRepeat();
-
-            if (! hrepeat && ! vrepeat) {
-                Rectangle imageBounds = new Rectangle(xoff, yoff, (int)imageWidth, (int)imageHeight);
+            if ((!hrepeat) && (!vrepeat)) {
+                Rectangle imageBounds = new Rectangle(xoff, yoff, ((int) (imageWidth)), ((int) (imageHeight)));
                 if (imageBounds.intersects(backgroundBounds)) {
                     drawImage(backgroundImage, xoff, yoff);
                 }
             } else if (hrepeat && vrepeat) {
-                paintTiles(
-                        backgroundImage,
-                        adjustTo(backgroundBounds.x, xoff, (int)imageWidth),
-                        adjustTo(backgroundBounds.y, yoff, (int)imageHeight),
-                        backgroundBounds.x + backgroundBounds.width,
-                        backgroundBounds.y + backgroundBounds.height);
+                paintTiles(backgroundImage, adjustTo(backgroundBounds.x, xoff, ((int) (imageWidth))), adjustTo(backgroundBounds.y, yoff, ((int) (imageHeight))), backgroundBounds.x + backgroundBounds.width, backgroundBounds.y + backgroundBounds.height);
             } else if (hrepeat) {
-                xoff = adjustTo(backgroundBounds.x, xoff, (int)imageWidth);
-                Rectangle imageBounds = new Rectangle(xoff, yoff, (int)imageWidth, (int)imageHeight);
+                xoff = adjustTo(backgroundBounds.x, xoff, ((int) (imageWidth)));
+                Rectangle imageBounds = new Rectangle(xoff, yoff, ((int) (imageWidth)), ((int) (imageHeight)));
                 if (imageBounds.intersects(backgroundBounds)) {
-                	//PDF/UA
-                    paintHorizontalBandAccessible(
-                            backgroundImage,
-                            xoff,
-                            yoff,
-                            backgroundBounds.x + backgroundBounds.width);
+                //PDF/UA
+                    paintHorizontalBandAccessible(backgroundImage, xoff, yoff, backgroundBounds.x + backgroundBounds.width);
                 }
             } else if (vrepeat) {
-                yoff = adjustTo(backgroundBounds.y, yoff, (int)imageHeight);
-                Rectangle imageBounds = new Rectangle(xoff, yoff, (int)imageWidth, (int)imageHeight);
+                yoff = adjustTo(backgroundBounds.y, yoff, ((int) (imageHeight)));
+                Rectangle imageBounds = new Rectangle(xoff, yoff, ((int) (imageWidth)), ((int) (imageHeight)));
                 if (imageBounds.intersects(backgroundBounds)) {
-                	//PDF/UA
-                    paintVerticalBandAccessible(
-                            backgroundImage,
-                            xoff,
-                            yoff,
-                            backgroundBounds.y + backgroundBounds.height);
+                //PDF/UA
+                    paintVerticalBandAccessible(backgroundImage, xoff, yoff, backgroundBounds.y + backgroundBounds.height);
                 }
             }
-
             setClip(oldclip);
         }
     }
@@ -350,7 +314,7 @@ public abstract class AbstractOutputDevice implements OutputDevice {
     private void paintVerticalBandAccessible(FSImage image, int left, int top, int bottom) {
         drawImageAsVerticalBandAccessible(image, left, top, bottom);
     }
-    
+
     private void paintHorizontalBandAccessible(FSImage image, int left, int top, int right) {
     	drawImageAsHorizontalBandAccessible(image, left, top, right);
     }
@@ -423,7 +387,7 @@ public abstract class AbstractOutputDevice implements OutputDevice {
      * @return current FontSpecification.
      */
     public FontSpecification getFontSpecification() {
-	return _fontSpec;
+    	return _fontSpec;
     }
 
     /**
@@ -432,6 +396,6 @@ public abstract class AbstractOutputDevice implements OutputDevice {
      * @param fs current FontSpecification.
      */
     public void setFontSpecification(FontSpecification fs) {
-	_fontSpec = fs;
+    	_fontSpec = fs;
     }
 }

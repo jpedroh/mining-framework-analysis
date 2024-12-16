@@ -19,13 +19,32 @@
  */
 package org.xhtmlrenderer.pdf;
 
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Image;
+import com.lowagie.text.pdf.CMYKColor;
+import com.lowagie.text.pdf.PdfAction;
+import com.lowagie.text.pdf.PdfAnnotation;
+import com.lowagie.text.pdf.PdfArray;
+import com.lowagie.text.pdf.PdfBorderArray;
+import com.lowagie.text.pdf.PdfBorderDictionary;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfDestination;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfIndirectReference;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfOutline;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfString;
+import com.lowagie.text.pdf.PdfTextArray;
+import com.lowagie.text.pdf.PdfWriter;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints.Key;
 import java.awt.Shape;
 import java.awt.Stroke;
-import java.awt.RenderingHints.Key;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
@@ -42,12 +61,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.constants.CSSName;
@@ -76,25 +94,6 @@ import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.XRLog;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Image;
-import com.lowagie.text.pdf.CMYKColor;
-import com.lowagie.text.pdf.PdfAction;
-import com.lowagie.text.pdf.PdfAnnotation;
-import com.lowagie.text.pdf.PdfArray;
-import com.lowagie.text.pdf.PdfBorderArray;
-import com.lowagie.text.pdf.PdfBorderDictionary;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfDestination;
-import com.lowagie.text.pdf.PdfDictionary;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfIndirectReference;
-import com.lowagie.text.pdf.PdfName;
-import com.lowagie.text.pdf.PdfOutline;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfString;
-import com.lowagie.text.pdf.PdfTextArray;
-import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * This class is largely based on {@link com.lowagie.text.pdf.PdfGraphics2D}.
@@ -103,7 +102,9 @@ import com.lowagie.text.pdf.PdfWriter;
  */
 public class ITextOutputDevice extends AbstractOutputDevice implements OutputDevice {
     private static final int FILL = 1;
+
     private static final int STROKE = 2;
+
     private static final int CLIP = 3;
 
     private static AffineTransform IDENTITY = new AffineTransform();
@@ -113,6 +114,7 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
     private static final boolean ROUND_RECT_DIMENSIONS_DOWN = Configuration.isTrue("xr.pdf.round.rect.dimensions.down", false);
 
     private PdfContentByte _currentPage;
+
     private float _pageHeight;
 
     private ITextFSFont _font;
@@ -122,15 +124,19 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
     private Color _color = Color.BLACK;
 
     private Color _fillColor;
+
     private Color _strokeColor;
 
     private Stroke _stroke = null;
+
     private Stroke _originalStroke = null;
+
     private Stroke _oldStroke = null;
 
     private Area _clip;
 
     private SharedContext _sharedContext;
+
     private float _dotsPerPoint;
 
     private PdfWriter _writer;
@@ -257,12 +263,11 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
             NamespaceHandler handler = _sharedContext.getNamespaceHandler();
             String uri = handler.getLinkUri(elem);
             if (uri != null) {
-                if (uri.length() > 1 && uri.charAt(0) == '#') {
+                if ((uri.length() > 1) && (uri.charAt(0) == '#')) {
                     String anchor = uri.substring(1);
                     Box target = _sharedContext.getBoxById(anchor);
                     if (target != null) {
                         PdfDestination dest = createDestination(c, target);
-
                         if (dest != null) {
                             PdfAction action = new PdfAction();
                             if (!"".equals(handler.getAttributeValue(elem, "onclick"))) {
@@ -271,36 +276,29 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
                                 action.put(PdfName.S, PdfName.GOTO);
                                 action.put(PdfName.D, dest);
                             }
-
                             com.lowagie.text.Rectangle targetArea = checkLinkArea(c, box);
                             if (targetArea == null) {
                                 return;
                             }
-
                             targetArea.setBorder(0);
                             targetArea.setBorderWidth(0);
-
-                            PdfAnnotation annot = new PdfAnnotation(_writer, targetArea.getLeft(), targetArea.getBottom(),
-                                    targetArea.getRight(), targetArea.getTop(), action);
+                            PdfAnnotation annot = new PdfAnnotation(_writer, targetArea.getLeft(), targetArea.getBottom(), targetArea.getRight(), targetArea.getTop(), action);
                             annot.put(PdfName.SUBTYPE, PdfName.LINK);
-                            annot.setBorderStyle(new PdfBorderDictionary(0.0f, 0));
-                            annot.setBorder(new PdfBorderArray(0.0f, 0.0f, 0));
+                            annot.setBorderStyle(new PdfBorderDictionary(0.0F, 0));
+                            annot.setBorder(new PdfBorderArray(0.0F, 0.0F, 0));
                             _writer.addAnnotation(annot);
                         }
                     }
                 } else {
                     PdfAction action = new PdfAction(uri);
-
                     com.lowagie.text.Rectangle targetArea = checkLinkArea(c, box);
                     if (targetArea == null) {
                         return;
                     }
-                    PdfAnnotation annot = new PdfAnnotation(_writer, targetArea.getLeft(), targetArea.getBottom(), targetArea.getRight(),
-                            targetArea.getTop(), action);
+                    PdfAnnotation annot = new PdfAnnotation(_writer, targetArea.getLeft(), targetArea.getBottom(), targetArea.getRight(), targetArea.getTop(), action);
                     annot.put(PdfName.SUBTYPE, PdfName.LINK);
-
-                    annot.setBorderStyle(new PdfBorderDictionary(0.0f, 0));
-                    annot.setBorder(new PdfBorderArray(0.0f, 0.0f, 0));
+                    annot.setBorderStyle(new PdfBorderDictionary(0.0F, 0));
+                    annot.setBorder(new PdfBorderArray(0.0F, 0.0F, 0));
                     _writer.addAnnotation(annot);
                 }
             }
@@ -478,11 +476,12 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
         if (Configuration.isTrue("xr.renderer.replace-missing-characters", false)) {
             s = replaceMissingCharacters(s);
         }
-        if (s.length() == 0)
+        if (s.length() == 0) {
             return;
+        }
         PdfContentByte cb = _currentPage;
         ensureFillColor();
-        AffineTransform at = (AffineTransform) getTransform().clone();
+        AffineTransform at = ((AffineTransform) (getTransform().clone()));
         at.translate(x, y);
         AffineTransform inverse = normalizeMatrix(at);
         AffineTransform flipper = AffineTransform.getScaleInstance(1, -1);
@@ -496,26 +495,26 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
         FontDescription desc = _font.getFontDescription();
         float fontSize = _font.getSize2D() / _dotsPerPoint;
         cb.setFontAndSize(desc.getFont(), fontSize);
-        float b = (float) mx[1];
-        float c = (float) mx[2];
+        float b = ((float) (mx[1]));
+        float c = ((float) (mx[2]));
         FontSpecification fontSpec = getFontSpecification();
         if (fontSpec != null) {
             int need = ITextFontResolver.convertWeightToInt(fontSpec.fontWeight);
             int have = desc.getWeight();
-
             if (need > have) {
                 cb.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE);
-                float lineWidth = fontSize * 0.04f; // 4% of font size
+                float lineWidth = fontSize * 0.04F;// 4% of font size
+
                 cb.setLineWidth(lineWidth);
                 resetMode = true;
                 ensureStrokeColor();
             }
-            if ((fontSpec.fontStyle == IdentValue.ITALIC) && (desc.getStyle() != IdentValue.ITALIC) && (desc.getStyle() != IdentValue.OBLIQUE)) {
-                b = 0f;
-                c = 0.21256f;
+            if (((fontSpec.fontStyle == IdentValue.ITALIC) && (desc.getStyle() != IdentValue.ITALIC)) && (desc.getStyle() != IdentValue.OBLIQUE)) {
+                b = 0.0F;
+                c = 0.21256F;
             }
         }
-        cb.setTextMatrix((float) mx[0], b, c, (float) mx[3], (float) mx[4], (float) mx[5]);
+        cb.setTextMatrix(((float) (mx[0])), b, c, ((float) (mx[3])), ((float) (mx[4])), ((float) (mx[5])));
         if (info == null) {
             cb.showText(s);
         } else {
@@ -598,9 +597,9 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
 
     private void followPath(Shape s, int drawType) {
         PdfContentByte cb = _currentPage;
-        if (s == null)
+        if (s == null) {
             return;
-
+        }
         if (drawType == STROKE) {
             if (!(_stroke instanceof BasicStroke)) {
                 s = _stroke.createStrokedShape(s);
@@ -615,7 +614,6 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
         } else if (drawType == FILL) {
             ensureFillColor();
         }
-
         PathIterator points;
         if (drawType == CLIP) {
             points = s.getPathIterator(IDENTITY);
@@ -629,51 +627,51 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
             int segtype = points.currentSegment(coords);
             normalizeY(coords);
             switch (segtype) {
-            case PathIterator.SEG_CLOSE:
-                cb.closePath();
-                break;
-
-            case PathIterator.SEG_CUBICTO:
-                cb.curveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
-                break;
-
-            case PathIterator.SEG_LINETO:
-                cb.lineTo(coords[0], coords[1]);
-                break;
-
-            case PathIterator.SEG_MOVETO:
-                cb.moveTo(coords[0], coords[1]);
-                break;
-
-            case PathIterator.SEG_QUADTO:
-            	XRLog.render(Level.INFO, "Quad to " + coords[0] + " " + coords[1] + " " + coords[2] + " " + coords[3]);
-                cb.curveTo(coords[0], coords[1], coords[2], coords[3]);
-                break;
+                case PathIterator.SEG_CLOSE :
+                    cb.closePath();
+                    break;
+                case PathIterator.SEG_CUBICTO :
+                    cb.curveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
+                    break;
+                case PathIterator.SEG_LINETO :
+                    cb.lineTo(coords[0], coords[1]);
+                    break;
+                case PathIterator.SEG_MOVETO :
+                    cb.moveTo(coords[0], coords[1]);
+                    break;
+                case PathIterator.SEG_QUADTO :
+                    XRLog.render(Level.INFO, (((((("Quad to " + coords[0]) + " ") + coords[1]) + " ") + coords[2]) + " ") + coords[3]);
+                    cb.curveTo(coords[0], coords[1], coords[2], coords[3]);
+                    break;
             }
             points.next();
-        }
-
+        } 
         switch (drawType) {
-        case FILL:
-            if (traces > 0) {
-                if (points.getWindingRule() == PathIterator.WIND_EVEN_ODD)
-                    cb.eoFill();
-                else
-                    cb.fill();
-            }
-            break;
-        case STROKE:
-            if (traces > 0)
-                cb.stroke();
-            break;
-        default: // drawType==CLIP
-            if (traces == 0)
-                cb.rectangle(0, 0, 0, 0);
-            if (points.getWindingRule() == PathIterator.WIND_EVEN_ODD)
-                cb.eoClip();
-            else
-                cb.clip();
-            cb.newPath();
+            case FILL :
+                if (traces > 0) {
+                    if (points.getWindingRule() == PathIterator.WIND_EVEN_ODD) {
+                        cb.eoFill();
+                    } else {
+                        cb.fill();
+                    }
+                }
+                break;
+            case STROKE :
+                if (traces > 0) {
+                    cb.stroke();
+                }
+                break;
+            default :
+                // drawType==CLIP
+                if (traces == 0) {
+                    cb.rectangle(0, 0, 0, 0);
+                }
+                if (points.getWindingRule() == PathIterator.WIND_EVEN_ODD) {
+                    cb.eoClip();
+                } else {
+                    cb.clip();
+                }
+                cb.newPath();
         }
     }
 
@@ -977,7 +975,7 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
         String href = bookmark.getHRef();
         PdfDestination target = null;
         Box box = bookmark.getBox();
-        if (href.length() > 0 && href.charAt(0) == '#') {
+        if ((href.length() > 0) && (href.charAt(0) == '#')) {
             box = _sharedContext.getBoxById(href.substring(1));
         }
         if (box != null) {
@@ -985,7 +983,7 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
             int distanceFromTop = page.getMarginBorderPadding(c, CalculatedStyle.TOP);
             distanceFromTop += box.getAbsY() - page.getTop();
             target = new PdfDestination(PdfDestination.XYZ, 0, normalizeY(distanceFromTop / _dotsPerPoint), 0);
-            target.addPage(_writer.getPageReference(_startPageNo + page.getPageNo() + 1));
+            target.addPage(_writer.getPageReference((_startPageNo + page.getPageNo()) + 1));
         }
         if (target == null) {
             target = _defaultDestination;
@@ -1028,7 +1026,9 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
 
     static class Bookmark {
         private String _name;
+
         private String _HRef;
+
         private Box    _box;
 
         private List _children;
@@ -1222,6 +1222,7 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
     // section of an xhtml document.
     private static class Metadata {
         private String _name;
+
         private String _content;
 
         public Metadata(String name, String content) {
@@ -1333,27 +1334,27 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
         return result;
     }
 
-	@Override
-	public void closeOpenTags() {
-		// TODO Auto-generated method stub
-		
-	}
+@Override
+public void closeOpenTags() {
+	// TODO Auto-generated method stub
+	
+}
 
-	@Override
-	public void drawImageNoAccessible(FSImage fsImage, int x, int y) {
-		// TODO Auto-generated method stub
-		
-	}
+@Override
+public void drawImageNoAccessible(FSImage fsImage, int x, int y) {
+	// TODO Auto-generated method stub
+	
+}
 
-	@Override
-	public void drawImageAsHorizontalBandAccessible(FSImage image, int left, int top, int bottom) {
-		// TODO Auto-generated method stub
-		
-	}
+@Override
+public void drawImageAsHorizontalBandAccessible(FSImage image, int left, int top, int bottom) {
+	// TODO Auto-generated method stub
+	
+}
 
-	@Override
-	public void drawImageAsVerticalBandAccessible(FSImage image, int left, int top, int bottom) {
-		// TODO Auto-generated method stub
-		
-	}
+@Override
+public void drawImageAsVerticalBandAccessible(FSImage image, int left, int top, int bottom) {
+	// TODO Auto-generated method stub
+	
+}
 }

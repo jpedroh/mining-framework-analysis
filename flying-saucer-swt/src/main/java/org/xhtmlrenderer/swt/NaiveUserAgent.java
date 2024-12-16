@@ -27,7 +27,6 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
-
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
@@ -38,6 +37,7 @@ import org.xhtmlrenderer.resource.XMLResource;
 import org.xhtmlrenderer.util.ImageUtil;
 import org.xhtmlrenderer.util.XRLog;
 
+
 /**
  * Naive user agent, copy of org.xhtmlrenderer.swing.NaiveUserAgent (but
  * modified for SWT, of course).
@@ -46,13 +46,12 @@ import org.xhtmlrenderer.util.XRLog;
  *
  */
 public class NaiveUserAgent implements UserAgentCallback {
-
     /**
      * an LRU cache
      */
     private int _imageCacheCapacity = 16;
-    private LinkedHashMap _imageCache = new LinkedHashMap(_imageCacheCapacity,
-            0.75f, true);
+
+    private LinkedHashMap _imageCache = new LinkedHashMap(_imageCacheCapacity, 0.75F, true);
 
     private String _baseURL;
 
@@ -130,7 +129,7 @@ public class NaiveUserAgent implements UserAgentCallback {
         }
         return ir;
     }
-    
+
     /**
      * Factory method to generate ImageResources from a given Image. May be
      * overridden in subclass.
@@ -144,7 +143,7 @@ public class NaiveUserAgent implements UserAgentCallback {
     protected ImageResource createImageResource(String uri, InputStream is) {
         return new ImageResource(uri, new SWTFSImage(new Image(_device, is), this, uri));
     }
-    
+
     private ImageResource loadEmbeddedBase64ImageResource(final String uri) {
         byte[] image = ImageUtil.getEmbeddedBase64Image(uri);
         if (image != null) {
@@ -196,25 +195,29 @@ public class NaiveUserAgent implements UserAgentCallback {
     }
 
     public String resolveURI(String uri) {
-        if (uri == null) return null;
-
-        if (_baseURL == null) {//first try to set a base URL
+        if (uri == null) {
+            return null;
+        }
+        if (_baseURL == null) {
+            // first try to set a base URL
             try {
                 URI result = new URI(uri);
-                if (result.isAbsolute()) setBaseURL(result.toString());
+                if (result.isAbsolute()) {
+                    setBaseURL(result.toString());
+                }
             } catch (URISyntaxException e) {
                 XRLog.exception("The default NaiveUserAgent could not use the URL as base url: " + uri, e);
             }
-            if (_baseURL == null) { // still not set -> fallback to current working directory
+            if (_baseURL == null) {
+                // still not set -> fallback to current working directory
                 try {
                     setBaseURL(new File(".").toURI().toURL().toExternalForm());
-                } catch (Exception e1) {
+                } catch (java.lang.Exception e1) {
                     XRLog.exception("The default NaiveUserAgent doesn't know how to resolve the base URL for " + uri);
                     return null;
                 }
             }
         }
-
         // _baseURL is guaranteed to be non-null at this point.
         // test if the URI is valid; if not, try to assign the base url as its parent
         Throwable t;
@@ -223,9 +226,9 @@ public class NaiveUserAgent implements UserAgentCallback {
             if (result.isAbsolute()) {
                 return result.toString();
             }
-            XRLog.load(uri + " is not a URL; may be relative. Testing using parent URL " + _baseURL);
+            XRLog.load(Level.FINE, (uri + " is not a URL; may be relative. Testing using parent URL ") + _baseURL);
             URI baseURI = new URI(_baseURL);
-            if(!baseURI.isOpaque()) {
+            if (!baseURI.isOpaque()) {
                 // uri.resolve(child) only works for opaque URIs.
                 // Otherwise it would simply return child.
                 return baseURI.resolve(result).toString();
@@ -239,7 +242,7 @@ public class NaiveUserAgent implements UserAgentCallback {
         } catch (URISyntaxException e) {
             t = e;
         }
-        XRLog.exception("The default NaiveUserAgent cannot resolve the URL " + uri + " with base URL " + _baseURL, t);
+        XRLog.exception((("The default NaiveUserAgent cannot resolve the URL " + uri) + " with base URL ") + _baseURL, t);
         return null;
     }
 
