@@ -1,17 +1,18 @@
 package com.github.davidmoten.rx;
 
+import com.github.davidmoten.rx.operators.OperatorFileTailer;
+import com.github.davidmoten.rx.operators.OperatorWatchServiceEvents;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
 import java.nio.file.WatchEvent.Kind;
+import java.nio.file.WatchEvent;
 import java.nio.file.WatchService;
 import java.util.concurrent.TimeUnit;
-
-import rx.Observable;
 import rx.Observable.OnSubscribe;
+import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action0;
 import rx.functions.Action1;
@@ -19,14 +20,11 @@ import rx.functions.Func1;
 import rx.observables.GroupedObservable;
 import rx.observables.StringObservable;
 
-import com.github.davidmoten.rx.operators.OperatorFileTailer;
-import com.github.davidmoten.rx.operators.OperatorWatchServiceEvents;
 
 /**
  * Observable utility methods related to {@link File}.
  */
 public final class FileObservable {
-
     public static final int DEFAULT_MAX_BYTES_PER_EMISSION = 8192;
 
     /**
@@ -51,15 +49,11 @@ public final class FileObservable {
      *            don't know what to put here.
      * @return
      */
-    public final static Observable<byte[]> tailFile(File file, long startPosition,
-            long sampleTimeMs, int chunkSize) {
-        Observable<Object> events = from(file, StandardWatchEventKinds.ENTRY_CREATE,
-                StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.OVERFLOW)
+    public static final Observable<byte[]> tailFile(File file, long startPosition, long sampleTimeMs, int chunkSize) {
+        Observable<Object> events = // get lines once on subscription so we tail the lines
+        // in the file at startup
         // don't care about the event details, just that there is one
-                .cast(Object.class)
-                // get lines once on subscription so we tail the lines
-                // in the file at startup
-                .startWith(new Object());
+        from(file, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.OVERFLOW).cast(java.lang.Object.class).startWith(new Object());
         return tailFile(file, startPosition, sampleTimeMs, chunkSize, events);
     }
 
@@ -72,25 +66,23 @@ public final class FileObservable {
      * entries) does not prompt an inordinate number of file reads to pick up
      * changes. File create events are not sampled and are always passed
      * through.
-     * 
+     *
      * @param file
-     *            the file to tail
+     * 		the file to tail
      * @param startPosition
-     *            start tailing file at position in bytes
+     * 		start tailing file at position in bytes
      * @param sampleTimeMs
-     *            sample time in millis for MODIFY and OVERFLOW events
+     * 		sample time in millis
      * @param chunkSize
-     *            max array size of each element emitted by the Observable. Is
-     *            also used as the buffer size for reading from the file. Try
-     *            {@link FileObservable#DEFAULT_MAX_BYTES_PER_EMISSION} if you
-     *            don't know what to put here.
-     * @return
+     * 		max array size of each element emitted by the Observable. Is
+     * 		also used as the buffer size for reading from the file. Try
+     * 		{@link FileObservable#DEFAULT_MAX_BYTES_PER_EMISSION} if you
+     * 		don't know what to put here.
+     * @return 
      */
-    public final static Observable<byte[]> tailFile(File file, long startPosition,
-            long sampleTimeMs, int chunkSize, Observable<?> events) {
-        return sampleModifyOrOverflowEventsOnly(events, sampleTimeMs)
-        // tail file triggered by events
-                .lift(new OperatorFileTailer(file, startPosition, chunkSize));
+    public static final Observable<byte[]> tailFile(File file, long startPosition, long sampleTimeMs, int chunkSize, Observable<?> events) {
+        return // tail file triggered by events
+        sampleModifyOrOverflowEventsOnly(events, sampleTimeMs).lift(new OperatorFileTailer(file, startPosition, chunkSize));
     }
 
     /**
@@ -102,21 +94,19 @@ public final class FileObservable {
      * very frequent entries) does not prompt an inordinate number of file reads
      * to pick up changes. File create events are not sampled and are always
      * passed through.
-     * 
+     *
      * @param file
-     *            the file to tail
+     * 		the file to tail
      * @param startPosition
-     *            start tailing file at position in bytes
+     * 		start tailing file at position in bytes
      * @param sampleTimeMs
-     *            sample time in millis for MODIFY and OVERFLOW events
+     * 		sample time in millis
      * @param charset
-     *            the character set to use to decode the bytes to a string
-     * @return
+     * 		the character set to use to decode the bytes to a string
+     * @return 
      */
-    public final static Observable<String> tailTextFile(File file, long startPosition,
-            long sampleTimeMs, Charset charset) {
-        return toLines(tailFile(file, startPosition, sampleTimeMs, DEFAULT_MAX_BYTES_PER_EMISSION),
-                charset);
+    public static final Observable<String> tailTextFile(File file, long startPosition, long sampleTimeMs, Charset charset) {
+        return toLines(tailFile(file, startPosition, sampleTimeMs, DEFAULT_MAX_BYTES_PER_EMISSION), charset);
     }
 
     /**
@@ -168,7 +158,7 @@ public final class FileObservable {
      * @return
      */
     @SafeVarargs
-    public final static Observable<WatchEvent<?>> from(final File file, Kind<?>... kinds) {
+    public static final Observable<WatchEvent<?>> from(final File file, Kind<?>... kinds) {
         return from(file, null, kinds);
     }
 
@@ -187,21 +177,18 @@ public final class FileObservable {
      * @param kinds
      * @return
      */
-    public final static Observable<WatchEvent<?>> from(final File file,
-            final Action0 onWatchStarted, Kind<?>... kinds) {
-        return watchService(file, kinds)
+    public static final Observable<WatchEvent<?>> from(final File file, final Action0 onWatchStarted, Kind<?>... kinds) {
+        return // restrict to events related to the file
+        // emit events from the WatchService
         // when watch service created call onWatchStarted
-                .doOnNext(new Action1<WatchService>() {
-                    @Override
-                    public void call(WatchService w) {
-                        if (onWatchStarted != null)
-                            onWatchStarted.call();
-                    }
-                })
-                // emit events from the WatchService
-                .flatMap(TO_WATCH_EVENTS)
-                // restrict to events related to the file
-                .filter(onlyRelatedTo(file));
+        watchService(file, kinds).doOnNext(new Action1<WatchService>() {
+            @Override
+            public void call(WatchService w) {
+                if (onWatchStarted != null) {
+                    onWatchStarted.call();
+                }
+            }
+        }).flatMap(TO_WATCH_EVENTS).filter(onlyRelatedTo(file));
     }
 
     /**
@@ -253,26 +240,25 @@ public final class FileObservable {
      *            the file to restrict events to
      * @return
      */
-    private final static Func1<WatchEvent<?>, Boolean> onlyRelatedTo(final File file) {
+    private static final Func1<WatchEvent<?>, Boolean> onlyRelatedTo(final File file) {
         return new Func1<WatchEvent<?>, Boolean>() {
-
             @Override
             public Boolean call(WatchEvent<?> event) {
-
                 final boolean ok;
-                if (file.isDirectory())
+                if (file.isDirectory()) {
                     ok = true;
-                else if (StandardWatchEventKinds.OVERFLOW.equals(event.kind()))
+                } else if (StandardWatchEventKinds.OVERFLOW.equals(event.kind())) {
                     ok = true;
-                else {
+                } else {
                     Object context = event.context();
-                    if (context != null && context instanceof Path) {
-                        Path p = (Path) context;
+                    if ((context != null) && (context instanceof Path)) {
+                        Path p = ((Path) (context));
                         Path basePath = getBasePath(file);
                         File pFile = new File(basePath.toFile(), p.toString());
                         ok = pFile.getAbsolutePath().equals(file.getAbsolutePath());
-                    } else
+                    } else {
                         ok = false;
+                    }
                 }
                 return ok;
             }
@@ -283,16 +269,14 @@ public final class FileObservable {
         return StringObservable.split(StringObservable.decode(bytes, charset), "\n");
     }
 
-    private final static Func1<WatchService, Observable<WatchEvent<?>>> TO_WATCH_EVENTS = new Func1<WatchService, Observable<WatchEvent<?>>>() {
-
+    private static final Func1<WatchService, Observable<WatchEvent<?>>> TO_WATCH_EVENTS = new Func1<WatchService, Observable<WatchEvent<?>>>() {
         @Override
         public Observable<WatchEvent<?>> call(WatchService watchService) {
             return from(watchService);
         }
     };
 
-    private static Observable<Object> sampleModifyOrOverflowEventsOnly(Observable<?> events,
-            final long sampleTimeMs) {
+    private static Observable<Object> sampleModifyOrOverflowEventsOnly(Observable<?> events, final long sampleTimeMs) {
         return events
         // group by true if is modify or overflow, false otherwise
                 .groupBy(IS_MODIFY_OR_OVERFLOW)
@@ -300,35 +284,34 @@ public final class FileObservable {
                 .flatMap(sampleIfTrue(sampleTimeMs));
     }
 
-    private static Func1<GroupedObservable<Boolean, ?>, Observable<?>> sampleIfTrue(
-            final long sampleTimeMs) {
+    private static Func1<GroupedObservable<Boolean, ?>, Observable<?>> sampleIfTrue(final long sampleTimeMs) {
         return new Func1<GroupedObservable<Boolean, ?>, Observable<?>>() {
-
             @Override
             public Observable<?> call(GroupedObservable<Boolean, ?> group) {
                 // if is modify or overflow WatchEvent
-                if (group.getKey())
+                if (group.getKey()) {
                     return group.sample(sampleTimeMs, TimeUnit.MILLISECONDS);
-                else
+                } else {
                     return group;
+                }
             }
         };
     }
 
     private static Func1<Object, Boolean> IS_MODIFY_OR_OVERFLOW = new Func1<Object, Boolean>() {
-
         @Override
         public Boolean call(Object event) {
             if (event instanceof WatchEvent) {
-                WatchEvent<?> w = (WatchEvent<?>) event;
+                WatchEvent<?> w = ((WatchEvent<?>) (event));
                 String kind = w.kind().name();
-                if (kind.equals(StandardWatchEventKinds.ENTRY_MODIFY.name())
-                        || kind.equals(StandardWatchEventKinds.OVERFLOW.name())) {
+                if (kind.equals(StandardWatchEventKinds.ENTRY_MODIFY.name()) || kind.equals(StandardWatchEventKinds.OVERFLOW.name())) {
                     return true;
-                } else
+                } else {
                     return false;
-            } else
+                }
+            } else {
                 return false;
+            }
         }
     };
 
@@ -337,13 +320,18 @@ public final class FileObservable {
     }
 
     public static class Builder {
-
         private File file = null;
+
         private long startPosition = 0;
+
         private long sampleTimeMs = 500;
+
         private int chunkSize = 8192;
+
         private Charset charset = Charset.defaultCharset();
+
         private Observable<?> source = null;
+
         private Action0 onWatchStarted = new Action0() {
             @Override
             public void call() {
@@ -392,8 +380,9 @@ public final class FileObservable {
          * only applied to file updates (MODIFY and OVERFLOW), file creation
          * events are always passed through. File deletion events are ignored
          * (in fact are not requested of NIO).
-         * 
+         *
          * @param sampleTimeMs
+         * 		
          * @return this
          */
         public Builder sampleTimeMs(long sampleTimeMs) {
@@ -443,7 +432,6 @@ public final class FileObservable {
         }
 
         public Observable<byte[]> tail() {
-
             return tailFile(file, startPosition, sampleTimeMs, chunkSize, getSource());
         }
 
@@ -452,14 +440,11 @@ public final class FileObservable {
         }
 
         private Observable<?> getSource() {
-            if (source == null)
-                return from(file, onWatchStarted, StandardWatchEventKinds.ENTRY_CREATE,
-                        StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.OVERFLOW);
-            else
+            if (source == null) {
+                return from(file, onWatchStarted, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.OVERFLOW);
+            } else {
                 return source;
-
+            }
         }
-
     }
-
 }
