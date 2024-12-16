@@ -31,7 +31,6 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -42,20 +41,19 @@ import javax.crypto.spec.DHParameterSpec;
 import javax.crypto.spec.DHPublicKeySpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-
 import net.java.otr4j.io.SerializationUtils;
-
 import org.bouncycastle.util.BigIntegers;
+
 
 /**
  * 
  * @author George Politis
  */
 public class OtrCryptoEngineImpl implements OtrCryptoEngine {
-
 	private static final String KEY_PAIR_GENERATOR_ALGORITHM_DH = "DH";
 
 	private static final String CIPHER_ALGORITHM = "AES/CTR/NoPadding";
+
 	private static final String CIPHER_NAME = "AES";
 
 	private static final String DSA_SIGNATURE_ALGORITHM = "NONEwithDSAinP1363Format";
@@ -204,8 +202,7 @@ public class OtrCryptoEngineImpl implements OtrCryptoEngine {
 	 * @throws OtrCryptoException Invalid or illegal key or counter provided.
 	 */
 	@Override
-	public byte[] aesDecrypt(byte[] key, byte[] ctr, byte[] b) throws OtrCryptoException
-	{
+	public byte[] aesDecrypt(byte[] key, byte[] ctr, byte[] b) throws OtrCryptoException {
 		try {
 			return aesCipher(Cipher.DECRYPT_MODE, key, ctr).doFinal(b);
 		} catch (IllegalBlockSizeException e) {
@@ -216,8 +213,7 @@ public class OtrCryptoEngineImpl implements OtrCryptoEngine {
 	}
 
 	@Override
-	public byte[] aesEncrypt(byte[] key, byte[] ctr, byte[] b) throws OtrCryptoException
-	{
+	public byte[] aesEncrypt(byte[] key, byte[] ctr, byte[] b) throws OtrCryptoException {
 		try {
 			return aesCipher(Cipher.ENCRYPT_MODE, key, ctr).doFinal(b);
 		} catch (IllegalBlockSizeException e) {
@@ -230,8 +226,7 @@ public class OtrCryptoEngineImpl implements OtrCryptoEngine {
 	private Cipher aesCipher(final int mode, final byte[] key, final byte[] ctr) throws OtrCryptoException {
 		try {
 			final Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
-			cipher.init(mode, new SecretKeySpec(key, CIPHER_NAME),
-					new IvParameterSpec(ctr == null ? new byte[AES_CTR_BYTE_LENGTH] : ctr));
+			cipher.init(mode, new SecretKeySpec(key, CIPHER_NAME), new IvParameterSpec(ctr == null ? new byte[AES_CTR_BYTE_LENGTH] : ctr));
 			return cipher;
 		} catch (NoSuchAlgorithmException e) {
 			throw new IllegalStateException("BUG: AES cipher is not supported by Java run-time.", e);
@@ -262,15 +257,14 @@ public class OtrCryptoEngineImpl implements OtrCryptoEngine {
 	}
 
 	@Override
-	public byte[] sign(byte[] b, PrivateKey privatekey) throws OtrCryptoException
-	{
-		if (!(privatekey instanceof DSAPrivateKey))
+	public byte[] sign(byte[] b, PrivateKey privatekey) throws OtrCryptoException {
+		if (!(privatekey instanceof DSAPrivateKey)) {
 			throw new IllegalArgumentException("Illegal type of private key provided. Only DSA private keys are supported.");
+		}
 		try {
 			Signature signer = Signature.getInstance(DSA_SIGNATURE_ALGORITHM);
 			signer.initSign(privatekey);
-			final byte[] data = b.length == DSA_RAW_DATA_LENGTH ? b
-					: bytesModQ(((DSAPrivateKey) privatekey).getParams().getQ(), b);
+			final byte[] data = (b.length == DSA_RAW_DATA_LENGTH) ? b : bytesModQ(((DSAPrivateKey) (privatekey)).getParams().getQ(), b);
 			signer.update(data);
 			return signer.sign();
 		} catch (NoSuchAlgorithmException e) {
@@ -283,15 +277,14 @@ public class OtrCryptoEngineImpl implements OtrCryptoEngine {
 	}
 
 	@Override
-	public boolean verify(byte[] b, PublicKey pubKey, byte[] rs) throws OtrCryptoException
-	{
-		if (!(pubKey instanceof DSAPublicKey))
+	public boolean verify(byte[] b, PublicKey pubKey, byte[] rs) throws OtrCryptoException {
+		if (!(pubKey instanceof DSAPublicKey)) {
 			throw new IllegalArgumentException("Illegal type of public key provided. Only DSA public keys are supported.");
+		}
 		try {
 			Signature signer = Signature.getInstance(DSA_SIGNATURE_ALGORITHM);
 			signer.initVerify(pubKey);
-			final byte[] data = b.length == DSA_RAW_DATA_LENGTH ? b
-					: bytesModQ(((DSAPublicKey)pubKey).getParams().getQ(), b);
+			final byte[] data = (b.length == DSA_RAW_DATA_LENGTH) ? b : bytesModQ(((DSAPublicKey) (pubKey)).getParams().getQ(), b);
 			signer.update(data);
 			return signer.verify(rs);
 		} catch (NoSuchAlgorithmException e) {
