@@ -13,10 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cloudfoundry.operations.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import org.cloudfoundry.client.CloudFoundryClient;
 import org.cloudfoundry.client.v2.applications.ApplicationEntity;
 import org.cloudfoundry.client.v2.applications.ApplicationResource;
@@ -82,23 +92,10 @@ import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuples;
-
-import java.io.IOException;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
-
 import static org.cloudfoundry.util.tuple.TupleUtils.function;
 
-public final class DefaultServices implements Services {
 
+public final class DefaultServices implements Services {
     private static final int CF_ROUTE_SERVICE_ALREADY_BOUND = 130008;
 
     private static final int CF_SERVICE_ALREADY_BOUND = 90003;
@@ -119,307 +116,95 @@ public final class DefaultServices implements Services {
 
     @Override
     public Mono<Void> bind(BindServiceInstanceRequest request) {
-        return Mono
-            .zip(this.cloudFoundryClient, this.spaceId)
-            .flatMap(function((cloudFoundryClient, spaceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                getApplicationId(cloudFoundryClient, request.getApplicationName(), spaceId),
-                getSpaceServiceInstanceId(cloudFoundryClient, request.getServiceInstanceName(), spaceId)
-            )))
-            .flatMap(function((cloudFoundryClient, applicationId, serviceInstanceId) -> createServiceBinding(cloudFoundryClient, applicationId, serviceInstanceId, request.getParameters())))
-            .then()
-            .transform(OperationsLogging.log("Bind Service Instance"))
-            .checkpoint();
+        return Mono.zip(this.cloudFoundryClient, this.spaceId).flatMap(function(( cloudFoundryClient, spaceId) -> Mono.zip(Mono.just(cloudFoundryClient), getApplicationId(cloudFoundryClient, request.getApplicationName(), spaceId), getSpaceServiceInstanceId(cloudFoundryClient, request.getServiceInstanceName(), spaceId)))).flatMap(function(( cloudFoundryClient, applicationId, serviceInstanceId) -> createServiceBinding(cloudFoundryClient, applicationId, serviceInstanceId, request.getParameters()))).then().transform(OperationsLogging.log("Bind Service Instance")).checkpoint();
     }
 
     @Override
     public Mono<Void> bindRoute(BindRouteServiceInstanceRequest request) {
-        return Mono
-            .zip(this.cloudFoundryClient, this.organizationId, this.spaceId)
-            .flatMap(function((cloudFoundryClient, organizationId, spaceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                getDomainId(cloudFoundryClient, request.getDomainName(), organizationId),
-                Mono.just(spaceId)
-            )))
-            .flatMap(function((cloudFoundryClient, domainId, spaceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                getRouteId(cloudFoundryClient, request.getDomainName(), domainId, request.getHostname(), request.getPath()),
-                getSpaceServiceInstanceId(cloudFoundryClient, request.getServiceInstanceName(), spaceId)
-            )))
-            .flatMap(function((cloudFoundryClient, routeId, userProvidedServiceInstanceId) -> createRouteBinding(cloudFoundryClient, routeId, userProvidedServiceInstanceId, request.getParameters())))
-            .then()
-            .transform(OperationsLogging.log("Bind Route to Service Instance"))
-            .checkpoint();
+        return Mono.zip(this.cloudFoundryClient, this.organizationId, this.spaceId).flatMap(function(( cloudFoundryClient, organizationId, spaceId) -> Mono.zip(Mono.just(cloudFoundryClient), getDomainId(cloudFoundryClient, request.getDomainName(), organizationId), Mono.just(spaceId)))).flatMap(function(( cloudFoundryClient, domainId, spaceId) -> Mono.zip(Mono.just(cloudFoundryClient), getRouteId(cloudFoundryClient, request.getDomainName(), domainId, request.getHostname(), request.getPath()), getSpaceServiceInstanceId(cloudFoundryClient, request.getServiceInstanceName(), spaceId)))).flatMap(function(( cloudFoundryClient, routeId, userProvidedServiceInstanceId) -> createRouteBinding(cloudFoundryClient, routeId, userProvidedServiceInstanceId, request.getParameters()))).then().transform(OperationsLogging.log("Bind Route to Service Instance")).checkpoint();
     }
 
     @Override
     public Mono<Void> createInstance(CreateServiceInstanceRequest request) {
-        return Mono
-            .zip(this.cloudFoundryClient, this.spaceId)
-            .flatMap(function((cloudFoundryClient, spaceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                Mono.just(spaceId),
-                getServiceIdByName(cloudFoundryClient, spaceId, request.getServiceName())
-            )))
-            .flatMap(function((cloudFoundryClient, spaceId, serviceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                Mono.just(spaceId),
-                getServicePlanIdByName(cloudFoundryClient, serviceId, request.getPlanName())
-            )))
-            .flatMap(function((cloudFoundryClient, spaceId, planId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                Mono.just(request.getCompletionTimeout()),
-                createServiceInstance(cloudFoundryClient, spaceId, planId, request)
-            )))
-            .flatMap(function(DefaultServices::waitForInstanceAction))
-            .transform(OperationsLogging.log("Create Service Instance"))
-            .checkpoint();
+        return Mono.zip(this.cloudFoundryClient, this.spaceId).flatMap(function(( cloudFoundryClient, spaceId) -> Mono.zip(Mono.just(cloudFoundryClient), Mono.just(spaceId), getServiceIdByName(cloudFoundryClient, spaceId, request.getServiceName())))).flatMap(function(( cloudFoundryClient, spaceId, serviceId) -> Mono.zip(Mono.just(cloudFoundryClient), Mono.just(spaceId), getServicePlanIdByName(cloudFoundryClient, serviceId, request.getPlanName())))).flatMap(function(( cloudFoundryClient, spaceId, planId) -> Mono.zip(Mono.just(cloudFoundryClient), Mono.just(request.getCompletionTimeout()), createServiceInstance(cloudFoundryClient, spaceId, planId, request)))).flatMap(function(DefaultServices::waitForInstanceAction)).transform(OperationsLogging.log("Create Service Instance")).checkpoint();
     }
 
     @Override
     public Mono<Void> createServiceKey(CreateServiceKeyRequest request) {
-        return Mono
-            .zip(this.cloudFoundryClient, this.spaceId)
-            .flatMap(function((cloudFoundryClient, spaceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                getSpaceServiceInstanceId(cloudFoundryClient, request.getServiceInstanceName(), spaceId)
-            )))
-            .flatMap(function((cloudFoundryClient, serviceInstanceId) -> requestCreateServiceKey(cloudFoundryClient, serviceInstanceId, request.getServiceKeyName(), request.getParameters())))
-            .then()
-            .transform(OperationsLogging.log("Create Service Key"))
-            .checkpoint();
+        return Mono.zip(this.cloudFoundryClient, this.spaceId).flatMap(function(( cloudFoundryClient, spaceId) -> Mono.zip(Mono.just(cloudFoundryClient), getSpaceServiceInstanceId(cloudFoundryClient, request.getServiceInstanceName(), spaceId)))).flatMap(function(( cloudFoundryClient, serviceInstanceId) -> requestCreateServiceKey(cloudFoundryClient, serviceInstanceId, request.getServiceKeyName(), request.getParameters()))).then().transform(OperationsLogging.log("Create Service Key")).checkpoint();
     }
 
     @Override
     public Mono<Void> createUserProvidedInstance(CreateUserProvidedServiceInstanceRequest request) {
-        return Mono
-            .zip(this.cloudFoundryClient, this.spaceId)
-            .flatMap(function((cloudFoundryClient, spaceId) -> requestCreateUserProvidedServiceInstance(cloudFoundryClient, request.getName(), request.getCredentials(), request.getRouteServiceUrl(),
-                spaceId, request.getSyslogDrainUrl(), request.getTags())))
-            .then()
-            .transform(OperationsLogging.log("Create User Provided Service Instance"))
-            .checkpoint();
+        return Mono.zip(this.cloudFoundryClient, this.spaceId).flatMap(function(( cloudFoundryClient, spaceId) -> requestCreateUserProvidedServiceInstance(cloudFoundryClient, request.getName(), request.getCredentials(), request.getRouteServiceUrl(), spaceId, request.getSyslogDrainUrl(), request.getTags()))).then().transform(OperationsLogging.log("Create User Provided Service Instance")).checkpoint();
     }
 
     @Override
     public Mono<Void> deleteInstance(DeleteServiceInstanceRequest request) {
-        return Mono
-            .zip(this.cloudFoundryClient, this.spaceId)
-            .flatMap(function((cloudFoundryClient, spaceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                Mono.just(request.getCompletionTimeout()),
-                getSpaceServiceInstance(cloudFoundryClient, request.getName(), spaceId)
-            )))
-            .flatMap(function(DefaultServices::deleteServiceInstance))
-            .transform(OperationsLogging.log("Delete Service Instance"))
-            .checkpoint();
+        return Mono.zip(this.cloudFoundryClient, this.spaceId).flatMap(function(( cloudFoundryClient, spaceId) -> Mono.zip(Mono.just(cloudFoundryClient), Mono.just(request.getCompletionTimeout()), getSpaceServiceInstance(cloudFoundryClient, request.getName(), spaceId)))).flatMap(function(DefaultServices::deleteServiceInstance)).transform(OperationsLogging.log("Delete Service Instance")).checkpoint();
     }
 
     @Override
     public Mono<Void> deleteServiceKey(DeleteServiceKeyRequest request) {
-        return Mono
-            .zip(this.cloudFoundryClient, this.spaceId)
-            .flatMap(function((cloudFoundryClient, spaceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                getSpaceServiceInstanceId(cloudFoundryClient, request.getServiceInstanceName(), spaceId)
-            )))
-            .flatMap(function((cloudFoundryClient, serviceInstanceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                getServiceKey(cloudFoundryClient, serviceInstanceId, request.getServiceKeyName())
-                    .map(ResourceUtils::getId)
-            )))
-            .flatMap(function(DefaultServices::requestDeleteServiceKey))
-            .transform(OperationsLogging.log("Delete Service Key"))
-            .checkpoint();
+        return Mono.zip(this.cloudFoundryClient, this.spaceId).flatMap(function(( cloudFoundryClient, spaceId) -> Mono.zip(Mono.just(cloudFoundryClient), getSpaceServiceInstanceId(cloudFoundryClient, request.getServiceInstanceName(), spaceId)))).flatMap(function(( cloudFoundryClient, serviceInstanceId) -> Mono.zip(Mono.just(cloudFoundryClient), getServiceKey(cloudFoundryClient, serviceInstanceId, request.getServiceKeyName()).map(ResourceUtils::getId)))).flatMap(function(DefaultServices::requestDeleteServiceKey)).transform(OperationsLogging.log("Delete Service Key")).checkpoint();
     }
 
     @Override
     public Mono<ServiceInstance> getInstance(GetServiceInstanceRequest request) {
-        return Mono
-            .zip(this.cloudFoundryClient, this.spaceId)
-            .flatMap(function((cloudFoundryClient, spaceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                getSpaceServiceInstance(cloudFoundryClient, request.getName(), spaceId)
-            )))
-            .flatMap(function((cloudFoundryClient, resource) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                Mono.just(resource),
-                getServicePlanEntity(cloudFoundryClient, ResourceUtils.getEntity(resource).getServicePlanId())
-            )))
-            .flatMap(function((cloudFoundryClient, resource, servicePlanEntity) -> Mono.zip(
-                Mono.just(resource),
-                Mono.just(Optional.ofNullable(servicePlanEntity.getName())),
-                getBoundApplications(cloudFoundryClient, ResourceUtils.getId(resource)),
-                getServiceEntity(cloudFoundryClient, Optional.ofNullable(servicePlanEntity.getServiceId()))
-            )))
-            .map(function(DefaultServices::toServiceInstance))
-            .transform(OperationsLogging.log("Get Service Instance"))
-            .checkpoint();
+        return Mono.zip(this.cloudFoundryClient, this.spaceId).flatMap(function(( cloudFoundryClient, spaceId) -> Mono.zip(Mono.just(cloudFoundryClient), getSpaceServiceInstance(cloudFoundryClient, request.getName(), spaceId)))).flatMap(function(( cloudFoundryClient, resource) -> Mono.zip(Mono.just(cloudFoundryClient), Mono.just(resource), getServicePlanEntity(cloudFoundryClient, ResourceUtils.getEntity(resource).getServicePlanId())))).flatMap(function(( cloudFoundryClient, resource, servicePlanEntity) -> Mono.zip(Mono.just(resource), Mono.just(Optional.ofNullable(servicePlanEntity.getName())), getBoundApplications(cloudFoundryClient, ResourceUtils.getId(resource)), getServiceEntity(cloudFoundryClient, Optional.ofNullable(servicePlanEntity.getServiceId()))))).map(function(DefaultServices::toServiceInstance)).transform(OperationsLogging.log("Get Service Instance")).checkpoint();
     }
 
     @Override
     public Mono<ServiceKey> getServiceKey(GetServiceKeyRequest request) {
-        return Mono
-            .zip(this.cloudFoundryClient, this.spaceId)
-            .flatMap(function((cloudFoundryClient, spaceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                getSpaceServiceInstanceId(cloudFoundryClient, request.getServiceInstanceName(), spaceId)
-            )))
-            .flatMap(function((cloudFoundryClient, serviceInstanceId) -> getServiceKey(cloudFoundryClient, serviceInstanceId, request.getServiceKeyName())))
-            .map(DefaultServices::toServiceKey)
-            .transform(OperationsLogging.log("Get Service Key"))
-            .checkpoint();
+        return Mono.zip(this.cloudFoundryClient, this.spaceId).flatMap(function(( cloudFoundryClient, spaceId) -> Mono.zip(Mono.just(cloudFoundryClient), getSpaceServiceInstanceId(cloudFoundryClient, request.getServiceInstanceName(), spaceId)))).flatMap(function(( cloudFoundryClient, serviceInstanceId) -> getServiceKey(cloudFoundryClient, serviceInstanceId, request.getServiceKeyName()))).map(DefaultServices::toServiceKey).transform(OperationsLogging.log("Get Service Key")).checkpoint();
     }
 
     @Override
     public Flux<ServiceInstanceSummary> listInstances() {
-        return Mono
-            .zip(this.cloudFoundryClient, this.spaceId)
-            .flatMap(function((cloudFoundryClient, spaceId) -> cloudFoundryClient.spaces()
-                .getSummary(GetSpaceSummaryRequest.builder()
-                    .spaceId(spaceId)
-                    .build())))
-            .flatMapMany(DefaultServices::toServiceInstanceSummary)
-            .transform(OperationsLogging.log("List Service Instances"))
-            .checkpoint();
+        return Mono.zip(this.cloudFoundryClient, this.spaceId).flatMap(function(( cloudFoundryClient, spaceId) -> cloudFoundryClient.spaces().getSummary(GetSpaceSummaryRequest.builder().spaceId(spaceId).build()))).flatMapMany(DefaultServices::toServiceInstanceSummary).transform(OperationsLogging.log("List Service Instances")).checkpoint();
     }
 
     @Override
     public Flux<ServiceKey> listServiceKeys(ListServiceKeysRequest request) {
-        return Mono
-            .zip(this.cloudFoundryClient, this.spaceId)
-            .flatMap(function((cloudFoundryClient, spaceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                getSpaceServiceInstanceId(cloudFoundryClient, request.getServiceInstanceName(), spaceId)
-            )))
-            .flatMapMany(function((cloudFoundryClient, serviceInstanceId) -> requestListServiceInstanceServiceKeys(cloudFoundryClient, serviceInstanceId)))
-            .map(DefaultServices::toServiceKey)
-            .transform(OperationsLogging.log("List Service Keys"))
-            .checkpoint();
+        return Mono.zip(this.cloudFoundryClient, this.spaceId).flatMap(function(( cloudFoundryClient, spaceId) -> Mono.zip(Mono.just(cloudFoundryClient), getSpaceServiceInstanceId(cloudFoundryClient, request.getServiceInstanceName(), spaceId)))).flatMapMany(function(( cloudFoundryClient, serviceInstanceId) -> requestListServiceInstanceServiceKeys(cloudFoundryClient, serviceInstanceId))).map(DefaultServices::toServiceKey).transform(OperationsLogging.log("List Service Keys")).checkpoint();
     }
 
     @Override
     public Flux<ServiceOffering> listServiceOfferings(ListServiceOfferingsRequest request) {
-        return Mono
-            .zip(this.cloudFoundryClient, this.spaceId)
-            .flatMapMany(function((cloudFoundryClient, spaceId) -> Optional
-                .ofNullable(request.getServiceName())
-                .map(serviceName -> getSpaceService(cloudFoundryClient, spaceId, serviceName).flux())
-                .orElse(requestListServices(cloudFoundryClient, spaceId))
-                .map(resource -> Tuples.of(cloudFoundryClient, resource))
-            ))
-            .flatMap(function((cloudFoundryClient, resource) -> Mono.zip(
-                Mono.just(resource),
-                getServicePlans(cloudFoundryClient, ResourceUtils.getId(resource))
-            )))
-            .map(function(DefaultServices::toServiceOffering))
-            .transform(OperationsLogging.log("List Service Offerings"))
-            .checkpoint();
+        return Mono.zip(this.cloudFoundryClient, this.spaceId).flatMapMany(function(( cloudFoundryClient, spaceId) -> Optional.ofNullable(request.getServiceName()).map(( serviceName) -> getSpaceService(cloudFoundryClient, spaceId, serviceName).flux()).orElse(requestListServices(cloudFoundryClient, spaceId)).map(( resource) -> Tuples.of(cloudFoundryClient, resource)))).flatMap(function(( cloudFoundryClient, resource) -> Mono.zip(Mono.just(resource), getServicePlans(cloudFoundryClient, ResourceUtils.getId(resource))))).map(function(DefaultServices::toServiceOffering)).transform(OperationsLogging.log("List Service Offerings")).checkpoint();
     }
 
     @Override
     public Mono<Void> renameInstance(RenameServiceInstanceRequest request) {
-        return Mono
-            .zip(this.cloudFoundryClient, this.spaceId)
-            .flatMap(function((cloudFoundryClient, spaceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                getSpaceServiceInstance(cloudFoundryClient, request.getName(), spaceId)
-            )))
-            .flatMap(function((cloudFoundryClient, serviceInstance) -> renameServiceInstance(cloudFoundryClient, serviceInstance, request.getNewName())))
-            .then()
-            .transform(OperationsLogging.log("Rename Service Instance"))
-            .checkpoint();
+        return Mono.zip(this.cloudFoundryClient, this.spaceId).flatMap(function(( cloudFoundryClient, spaceId) -> Mono.zip(Mono.just(cloudFoundryClient), getSpaceServiceInstance(cloudFoundryClient, request.getName(), spaceId)))).flatMap(function(( cloudFoundryClient, serviceInstance) -> renameServiceInstance(cloudFoundryClient, serviceInstance, request.getNewName()))).then().transform(OperationsLogging.log("Rename Service Instance")).checkpoint();
     }
 
     @Override
     public Mono<Void> unbind(UnbindServiceInstanceRequest request) {
-        return Mono
-            .zip(this.cloudFoundryClient, this.spaceId)
-            .flatMap(function((cloudFoundryClient, spaceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                getApplicationId(cloudFoundryClient, request.getApplicationName(), spaceId),
-                getSpaceServiceInstanceId(cloudFoundryClient, request.getServiceInstanceName(), spaceId)
-            )))
-            .flatMap(function((cloudFoundryClient, applicationId, serviceInstanceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                Mono.just(request.getCompletionTimeout()),
-                getServiceBindingId(cloudFoundryClient, applicationId, serviceInstanceId, request.getServiceInstanceName())
-            )))
-            .flatMap(function(DefaultServices::deleteServiceBinding))
-            .then()
-            .transform(OperationsLogging.log("Unbind Service Instance"))
-            .checkpoint();
+        return Mono.zip(this.cloudFoundryClient, this.spaceId).flatMap(function(( cloudFoundryClient, spaceId) -> Mono.zip(Mono.just(cloudFoundryClient), getApplicationId(cloudFoundryClient, request.getApplicationName(), spaceId), getSpaceServiceInstanceId(cloudFoundryClient, request.getServiceInstanceName(), spaceId)))).flatMap(function(( cloudFoundryClient, applicationId, serviceInstanceId) -> Mono.zip(Mono.just(cloudFoundryClient), Mono.just(request.getCompletionTimeout()), getServiceBindingId(cloudFoundryClient, applicationId, serviceInstanceId, request.getServiceInstanceName())))).flatMap(function(DefaultServices::deleteServiceBinding)).then().transform(OperationsLogging.log("Unbind Service Instance")).checkpoint();
     }
 
     @Override
     public Mono<Void> unbindRoute(UnbindRouteServiceInstanceRequest request) {
-        return Mono
-            .zip(this.cloudFoundryClient, this.organizationId, this.spaceId)
-            .flatMap(function((cloudFoundryClient, organizationId, spaceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                getDomainId(cloudFoundryClient, request.getDomainName(), organizationId),
-                Mono.just(spaceId)
-            )))
-            .flatMap(function((cloudFoundryClient, domainId, spaceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                getRouteId(cloudFoundryClient, request.getDomainName(), domainId, request.getHostname(), request.getPath()),
-                getSpaceServiceInstanceId(cloudFoundryClient, request.getServiceInstanceName(), spaceId)
-            )))
-            .flatMap(function(DefaultServices::requestRemoveRoute))
-            .then()
-            .transform(OperationsLogging.log("Unbind Route from Service Instance"))
-            .checkpoint();
+        return Mono.zip(this.cloudFoundryClient, this.organizationId, this.spaceId).flatMap(function(( cloudFoundryClient, organizationId, spaceId) -> Mono.zip(Mono.just(cloudFoundryClient), getDomainId(cloudFoundryClient, request.getDomainName(), organizationId), Mono.just(spaceId)))).flatMap(function(( cloudFoundryClient, domainId, spaceId) -> Mono.zip(Mono.just(cloudFoundryClient), getRouteId(cloudFoundryClient, request.getDomainName(), domainId, request.getHostname(), request.getPath()), getSpaceServiceInstanceId(cloudFoundryClient, request.getServiceInstanceName(), spaceId)))).flatMap(function(DefaultServices::requestRemoveRoute)).then().transform(OperationsLogging.log("Unbind Route from Service Instance")).checkpoint();
     }
 
     @Override
     public Mono<Void> updateInstance(UpdateServiceInstanceRequest request) {
-        return Mono
-            .zip(this.cloudFoundryClient, this.organizationId, this.spaceId)
-            .flatMap(function((cloudFoundryClient, organizationId, spaceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                Mono.just(organizationId),
-                getSpaceServiceInstance(cloudFoundryClient, request.getServiceInstanceName(), spaceId)
-            )))
-            .flatMap(function((cloudFoundryClient, organizationId, serviceInstance) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                Mono.just(ResourceUtils.getId(serviceInstance)),
-                getOptionalValidatedServicePlanId(cloudFoundryClient, request.getPlanName(), serviceInstance, organizationId)
-            )))
-            .flatMap(function((cloudFoundryClient, serviceInstanceId, servicePlanId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                Mono.just(request.getCompletionTimeout()),
-                requestUpdateServiceInstance(cloudFoundryClient, request, serviceInstanceId, servicePlanId.orElse(null)))))
-            .flatMap(function(DefaultServices::waitForInstanceAction))
-            .then()
-            .transform(OperationsLogging.log("Update Service Instance"))
-            .checkpoint();
+        return Mono.zip(this.cloudFoundryClient, this.organizationId, this.spaceId).flatMap(function(( cloudFoundryClient, organizationId, spaceId) -> Mono.zip(Mono.just(cloudFoundryClient), Mono.just(organizationId), getSpaceServiceInstance(cloudFoundryClient, request.getServiceInstanceName(), spaceId)))).flatMap(function(( cloudFoundryClient, organizationId, serviceInstance) -> Mono.zip(Mono.just(cloudFoundryClient), Mono.just(ResourceUtils.getId(serviceInstance)), getOptionalValidatedServicePlanId(cloudFoundryClient, request.getPlanName(), serviceInstance, organizationId)))).flatMap(function(( cloudFoundryClient, serviceInstanceId, servicePlanId) -> Mono.when(Mono.just(cloudFoundryClient), Mono.just(request.getCompletionTimeout()), requestUpdateServiceInstance(cloudFoundryClient, request, serviceInstanceId, servicePlanId.orElse(null))))).then(function(DefaultServices::waitForInstanceAction)).then().transform(OperationsLogging.log("Update Service Instance")).checkpoint();
     }
 
     @Override
     public Mono<Void> updateUserProvidedInstance(UpdateUserProvidedServiceInstanceRequest request) {
-        return Mono
-            .zip(this.cloudFoundryClient, this.spaceId)
-            .flatMap(function((cloudFoundryClient, spaceId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                getSpaceUserProvidedServiceInstanceId(cloudFoundryClient, request.getUserProvidedServiceInstanceName(), spaceId)
-            )))
-            .flatMap(function((cloudFoundryClient, userProvidedServiceInstanceId) -> updateUserProvidedServiceInstance(cloudFoundryClient, request, userProvidedServiceInstanceId)))
-            .then()
-            .transform(OperationsLogging.log("Update User Provided Service Instance"))
-            .checkpoint();
+        return Mono.zip(this.cloudFoundryClient, this.spaceId).flatMap(function(( cloudFoundryClient, spaceId) -> Mono.zip(Mono.just(cloudFoundryClient), getSpaceUserProvidedServiceInstanceId(cloudFoundryClient, request.getUserProvidedServiceInstanceName(), spaceId)))).flatMap(function(( cloudFoundryClient, userProvidedServiceInstanceId) -> updateUserProvidedServiceInstance(cloudFoundryClient, request, userProvidedServiceInstanceId))).then().transform(OperationsLogging.log("Update User Provided Service Instance")).checkpoint();
     }
 
     private static Mono<Optional<String>> checkVisibility(CloudFoundryClient cloudFoundryClient, String organizationId, ServicePlanResource resource) {
         String servicePlanId = ResourceUtils.getId(resource);
-
         if (resource.getEntity().getPubliclyVisible()) {
             return Mono.just(Optional.of(servicePlanId));
         }
-
-        return requestListServicePlanVisibilities(cloudFoundryClient, organizationId, servicePlanId)
-            .next()
-            .switchIfEmpty(ExceptionUtils.illegalArgument("Service Plan %s is not visible to your organization", resource.getEntity().getName()))
-            .thenReturn(Optional.of(servicePlanId));
+        return requestListServicePlanVisibilities(cloudFoundryClient, organizationId, servicePlanId).next().switchIfEmpty(ExceptionUtils.illegalArgument("Service Plan %s is not visible to your organization", resource.getEntity().getName())).thenReturn(Optional.of(servicePlanId));
     }
 
     private static Mono<AssociateUserProvidedServiceInstanceRouteResponse> createRouteBinding(CloudFoundryClient cloudFoundryClient, String routeId, String userProvidedServiceInstanceId,
@@ -439,24 +224,21 @@ public final class DefaultServices implements Services {
     }
 
     private static Mono<Void> deleteServiceBinding(CloudFoundryClient cloudFoundryClient, Duration completionTimeout, String serviceBindingId) {
-        return requestDeleteServiceBinding(cloudFoundryClient, serviceBindingId)
-            .flatMap(job -> JobUtils.waitForCompletion(cloudFoundryClient, completionTimeout, job));
+        return requestDeleteServiceBinding(cloudFoundryClient, serviceBindingId).flatMap(( job) -> JobUtils.waitForCompletion(cloudFoundryClient, completionTimeout, job));
     }
 
     private static Mono<Void> deleteServiceInstance(CloudFoundryClient cloudFoundryClient, Duration completionTimeout, UnionServiceInstanceResource serviceInstance) {
         if (isUserProvidedService(serviceInstance)) {
             return requestDeleteUserProvidedServiceInstance(cloudFoundryClient, ResourceUtils.getId(serviceInstance));
         } else {
-            return requestDeleteServiceInstance(cloudFoundryClient, ResourceUtils.getId(serviceInstance))
-                .flatMap(response -> {
-                    Object entity = response.getEntity();
-                    if (entity instanceof JobEntity) {
-                        return JobUtils.waitForCompletion(cloudFoundryClient, completionTimeout, (JobEntity) response.getEntity());
-                    } else {
-                        return LastOperationUtils.waitForCompletion(completionTimeout, () -> requestGetServiceInstance(cloudFoundryClient, ResourceUtils.getId(serviceInstance))
-                            .map(r -> ResourceUtils.getEntity(r).getLastOperation()));
-                    }
-                });
+            return requestDeleteServiceInstance(cloudFoundryClient, ResourceUtils.getId(serviceInstance)).flatMap(( response) -> {
+                Object entity = response.getEntity();
+                if (entity instanceof JobEntity) {
+                    return JobUtils.waitForCompletion(cloudFoundryClient, completionTimeout, ((JobEntity) (response.getEntity())));
+                } else {
+                    return LastOperationUtils.waitForCompletion(completionTimeout, () -> requestGetServiceInstance(cloudFoundryClient, ResourceUtils.getId(serviceInstance)).map(( r) -> ResourceUtils.getEntity(r).getLastOperation()));
+                }
+            });
         }
     }
 
@@ -499,27 +281,15 @@ public final class DefaultServices implements Services {
         }
     }
 
-    private static Mono<Optional<String>> getOptionalValidatedServicePlanId(CloudFoundryClient cloudFoundryClient, String planName, UnionServiceInstanceResource serviceInstance,
-                                                                            String organizationId) {
-        if (planName == null || planName.isEmpty()) {
+    private static Mono<Optional<String>> getOptionalValidatedServicePlanId(CloudFoundryClient cloudFoundryClient, String planName, UnionServiceInstanceResource serviceInstance, String organizationId) {
+        if ((planName == null) || planName.isEmpty()) {
             return Mono.just(Optional.empty());
         }
-
         String servicePlanId = serviceInstance.getEntity().getServicePlanId();
-
-        if (servicePlanId == null || servicePlanId.isEmpty()) {
+        if ((servicePlanId == null) || servicePlanId.isEmpty()) {
             return ExceptionUtils.illegalArgument("Plan does not exist for the %s service", serviceInstance.getEntity().getName());
         }
-
-        return getServiceId(cloudFoundryClient, servicePlanId)
-            .flatMap(serviceId -> requestGetService(cloudFoundryClient, serviceId))
-            .filter(DefaultServices::isPlanUpdateable)
-            .switchIfEmpty(ExceptionUtils.illegalArgument("Plan for the %s service cannot be updated", serviceInstance.getEntity().getName()))
-            .flatMapMany(response -> requestListServicePlans(cloudFoundryClient, ResourceUtils.getId(response)))
-            .filter(resource -> planName.equals(resource.getEntity().getName()))
-            .singleOrEmpty()
-            .switchIfEmpty(ExceptionUtils.illegalArgument("New service plan %s not found", planName))
-            .flatMap(resource -> checkVisibility(cloudFoundryClient, organizationId, resource));
+        return getServiceId(cloudFoundryClient, servicePlanId).flatMap(( serviceId) -> requestGetService(cloudFoundryClient, serviceId)).filter(DefaultServices::isPlanUpdateable).switchIfEmpty(ExceptionUtils.illegalArgument("Plan for the %s service cannot be updated", serviceInstance.getEntity().getName())).flatMapMany(( response) -> requestListServicePlans(cloudFoundryClient, ResourceUtils.getId(response))).filter(( resource) -> planName.equals(resource.getEntity().getName())).singleOrEmpty().switchIfEmpty(ExceptionUtils.illegalArgument("New service plan %s not found", planName)).flatMap(( resource) -> checkVisibility(cloudFoundryClient, organizationId, resource));
     }
 
     private static Mono<String> getPrivateDomainId(CloudFoundryClient cloudFoundryClient, String domain, String organizationId) {
@@ -553,11 +323,7 @@ public final class DefaultServices implements Services {
     }
 
     private static Mono<ServiceEntity> getServiceEntity(CloudFoundryClient cloudFoundryClient, Optional<String> serviceId) {
-        return Mono
-            .justOrEmpty(serviceId)
-            .flatMap(serviceId1 -> requestGetService(cloudFoundryClient, serviceId1))
-            .map(ResourceUtils::getEntity)
-            .switchIfEmpty(Mono.just(ServiceEntity.builder().build()));
+        return Mono.justOrEmpty(serviceId).flatMap(( serviceId1) -> requestGetService(cloudFoundryClient, serviceId1)).map(ResourceUtils::getEntity).switchIfEmpty(Mono.just(ServiceEntity.builder().build()));
     }
 
     private static Mono<String> getServiceId(CloudFoundryClient cloudFoundryClient, String servicePlanId) {
@@ -577,11 +343,7 @@ public final class DefaultServices implements Services {
     }
 
     private static Mono<ServicePlanEntity> getServicePlanEntity(CloudFoundryClient cloudFoundryClient, String servicePlanId) {
-        return Mono
-            .justOrEmpty(servicePlanId)
-            .flatMap(servicePlanId1 -> requestGetServicePlan(cloudFoundryClient, servicePlanId1))
-            .map(ResourceUtils::getEntity)
-            .switchIfEmpty(Mono.just(ServicePlanEntity.builder().build()));
+        return Mono.justOrEmpty(servicePlanId).flatMap(( servicePlanId1) -> requestGetServicePlan(cloudFoundryClient, servicePlanId1)).map(ResourceUtils::getEntity).switchIfEmpty(Mono.just(ServicePlanEntity.builder().build()));
     }
 
     private static Mono<String> getServicePlanIdByName(CloudFoundryClient cloudFoundryClient, String serviceId, String plan) {
@@ -921,17 +683,8 @@ public final class DefaultServices implements Services {
                     .build()));
     }
 
-    private static Mono<UpdateServiceInstanceResponse> requestUpdateServiceInstance(CloudFoundryClient cloudFoundryClient, UpdateServiceInstanceRequest request, String serviceInstanceId,
-                                                                                    String servicePlanId) {
-        return cloudFoundryClient.serviceInstances()
-            .update(org.cloudfoundry.client.v2.serviceinstances
-                .UpdateServiceInstanceRequest.builder()
-                .acceptsIncomplete(true)
-                .parameters(request.getParameters())
-                .serviceInstanceId(serviceInstanceId)
-                .servicePlanId(servicePlanId)
-                .tags(request.getTags())
-                .build());
+    private static Mono<UpdateServiceInstanceResponse> requestUpdateServiceInstance(CloudFoundryClient cloudFoundryClient, UpdateServiceInstanceRequest request, String serviceInstanceId, String servicePlanId) {
+        return cloudFoundryClient.serviceInstances().update(org.cloudfoundry.client.v2.serviceinstances.UpdateServiceInstanceRequest.builder().acceptsIncomplete(true).parameters(request.getParameters()).serviceInstanceId(serviceInstanceId).servicePlanId(servicePlanId).tags(request.getTags()).build());
     }
 
     private static Mono<UpdateUserProvidedServiceInstanceResponse> requestUserProvidedServiceInstanceUpdate(CloudFoundryClient cloudFoundryClient, String serviceInstanceId, String newName) {
@@ -1047,9 +800,6 @@ public final class DefaultServices implements Services {
     }
 
     private static Mono<Void> waitForInstanceAction(CloudFoundryClient cloudFoundryClient, Duration completionTimeout, AbstractServiceInstanceResource serviceInstance) {
-        return LastOperationUtils
-            .waitForCompletion(completionTimeout, () -> requestGetServiceInstance(cloudFoundryClient, ResourceUtils.getId(serviceInstance))
-                .map(response -> ResourceUtils.getEntity(response).getLastOperation()));
+        return LastOperationUtils.waitForCompletion(completionTimeout, () -> requestGetServiceInstance(cloudFoundryClient, ResourceUtils.getId(serviceInstance)).map(( response) -> ResourceUtils.getEntity(response).getLastOperation()));
     }
-
 }
