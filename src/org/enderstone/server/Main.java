@@ -73,19 +73,30 @@ import org.enderstone.server.regions.generators.SimpleGenerator;
 import org.enderstone.server.util.NettyThreadFactory;
 import org.enderstone.server.uuid.UUIDFactory;
 
-public class Main implements Runnable {
 
+public class Main implements Runnable {
 	public static final String NAME = "Enderstone";
+
 	public static final String VERSION = "1.0.0";
+
 	public static final String PROTOCOL_VERSION = "1.8";
+
 	public static final int EXCEPTED_TICK_RATE = 20;
+
 	public static final int EXCEPTED_SLEEP_TIME = 1000 / EXCEPTED_TICK_RATE;
+
 	public static final int CANT_KEEP_UP_TIMEOUT = -10000;
+
 	public static final int MAX_VIEW_DISTANCE = 10;
+
 	public static final int MAX_NETTY_BOSS_THREADS = 4;
+
 	public static final int MAX_NETTY_WORKER_THREADS = 8;
+
 	public static final int MAX_SLEEP = 100;
+
 	public static final int DEFAULT_PROTOCOL = 47;
+
 	public static final Set<Integer> SUPPORTED_PROTOCOLS = Collections.unmodifiableSet(new HashSet<Integer>() {
 		private static final long serialVersionUID = 1L;
 
@@ -93,27 +104,42 @@ public class Main implements Runnable {
 			this.add(47); // 1.8
 		}
 	});
-	public static final String[] AUTHORS = new String[] { "Sander Gielisse [sander2798]", "Fernando van Loenhout [ferrybig]" };
+
+	public static final String[] AUTHORS = new String[]{ "Sander Gielisse [sander2798]", "Fernando van Loenhout [ferrybig]" };
+
 	public static final String[] TOP_CONTRIBUTORS = new String[] { "Gyroninja" };
+
 	public static final Random random = new Random();
+
 	public volatile Thread mainThread;
+
 	public final List<Thread> listenThreads = new CopyOnWriteArrayList<>();
+
 	public boolean onlineMode = false;
 
 	public Properties prop = null;
+
 	public volatile String motd;
+
 	public volatile int maxPlayers = 20;
+
 	public UUIDFactory uuidFactory = new UUIDFactory();
+
 	public String FAVICON = null;
+
 	public int port;
+
 	public boolean doPhysics = true;
+
 	public volatile boolean isRunning = true;
+
 	private long tick = 0;
+
 	public final CommandMap commands;
 
 	{
 		commands = new CommandMap();
-
+		commands.registerCommand(new AiCommand());
 		commands.registerCommand(new CraftingDebugCommand());
 		commands.registerCommand(new DebugCommand());
 		commands.registerCommand(new GameModeCommand());
@@ -126,20 +152,25 @@ public class Main implements Runnable {
 		commands.registerCommand(new TellCommand());
 		commands.registerCommand(new VersionCommand());
 		commands.registerCommand(new WorldCommand());
-		commands.registerCommand(new CraftingDebugCommand());
-		commands.registerCommand(new LagCommand());
 	}
 
 	private static Main instance;
+
 	/**
 	 * This array is used to store the last lag of the server, it can be used by plugins to calculate the lag
 	 */
 	private final long[] lastTickSlices = new long[128];
+
 	private int lastTickPointer = 0;
 
+	// high performance solution for getting the onlinePlayers.size() from an async thread
 	public volatile int playerCount = 0; // high performance solution for getting the onlinePlayers.size() from an async thread
+
 	public final Set<EnderPlayer> onlinePlayers = new HashSet<>();
+
 	public final List<EnderWorld> worlds = new ArrayList<>();
+
+	// don't forget to synchronize
 	private final List<Runnable> sendToMainThread = new ArrayList<Runnable>(); // don't forget to synchronize
 
 	public static Main getInstance() {
@@ -385,6 +416,7 @@ public class Main implements Runnable {
 	}
 
 	private long latestKeepAlive = 0;
+
 	private long latestChunkUpdate = 0;
 
 	private void serverTick(long tick) {
@@ -450,13 +482,14 @@ public class Main implements Runnable {
 				try {
 					t.join();
 					joined = true;
-				} catch (InterruptedException ex) {
+				} catch (java.lang.InterruptedException ex) {
 					interrupted = true;
 				}
-			} while (!joined);
+			} while (!joined );
 		}
-		if (interrupted)
+		if (interrupted) {
 			Thread.currentThread().interrupt();
+		}
 	}
 
 	public EnderPlayer getPlayer(int entityId) {
