@@ -14,19 +14,16 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 package com.ning.billing.recurly.model;
 
+import com.google.common.base.Objects;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.joda.time.DateTime;
 
-import com.google.common.base.Objects;
 
 @XmlRootElement(name = "subscription")
 public class Subscription extends AbstractSubscription {
-
     @XmlElement(name = "account")
     private Account account;
 
@@ -82,18 +79,19 @@ public class Subscription extends AbstractSubscription {
     private String couponCode;
 
     //Purchase Order Number
+    //Purchase Order Number
     @XmlElement(name = "po_number")
     private String poNumber;
-    
+
     @XmlElement(name = "terms_and_conditions")
     private String termsAndConditions;
-    
+
     @XmlElement(name = "customer_notes")
     private String customerNotes;
 
     @XmlElement(name = "first_renewal_date")
     private DateTime firstRenewalDate;
-    
+
     @XmlElement(name = "bulk")
     private Boolean bulk;
 
@@ -246,7 +244,7 @@ public class Subscription extends AbstractSubscription {
     public DateTime getFirstRenewalDate() {
         return firstRenewalDate;
     }
-    
+
     public String getCustomerNotes() {
         return customerNotes;
     }
@@ -254,7 +252,7 @@ public class Subscription extends AbstractSubscription {
     public void setCustomerNotes(Object customerNotes) {
         this.customerNotes = stringOrNull(customerNotes);
     }
-    
+
     public String getTermsAndConditions() {
         return termsAndConditions;
     }
@@ -270,12 +268,12 @@ public class Subscription extends AbstractSubscription {
     public void setCouponCode(final String couponCode) {
         this.couponCode = couponCode;
     }
-    
+
     public void setBulk(final Object bulk) {
         this.bulk = booleanOrNull(bulk);
     }
 
-	@Override
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("Subscription");
@@ -304,11 +302,13 @@ public class Subscription extends AbstractSubscription {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        final Subscription that = (Subscription) o;
-
+        if (this == o) {
+            return true;
+        }
+        if ((o == null) || (getClass() != o.getClass())) {
+            return false;
+        }
+        final Subscription that = ((Subscription) (o));
         if (account != null ? !account.equals(that.account) : that.account != null) {
             return false;
         }
@@ -372,38 +372,14 @@ public class Subscription extends AbstractSubscription {
         if (firstRenewalDate != null ? firstRenewalDate.compareTo(that.firstRenewalDate) != 0 : that.firstRenewalDate != null) {
             return false;
         }
-
         if (bulk != null ? !bulk.equals(that.bulk) : that.bulk != null) {
             return false;
         }
-
         return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(
-                account,
-                plan,
-                uuid,
-                state,
-                unitAmountInCents,
-                currency,
-                quantity,
-                activatedAt,
-                canceledAt,
-                expiresAt,
-                currentPeriodStartedAt,
-                currentPeriodEndsAt,
-                trialStartedAt,
-                trialEndsAt,
-                addOns,
-                pendingSubscription,
-                startsAt,
-                collectionMethod,
-                netTerms,
-                poNumber
-
-        );
+        return Objects.hashCode(account, plan, uuid, state, unitAmountInCents, currency, quantity, activatedAt, canceledAt, expiresAt, currentPeriodStartedAt, currentPeriodEndsAt, trialStartedAt, trialEndsAt, addOns, pendingSubscription, startsAt, collectionMethod, netTerms, poNumber);
     }
 }

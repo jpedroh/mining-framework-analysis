@@ -14,20 +14,18 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 package com.ning.billing.recurly.model;
 
+import com.google.common.base.Objects;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
 import org.joda.time.DateTime;
-import com.google.common.base.Objects;
+
 
 @XmlRootElement(name = "plan")
 public class Plan extends RecurlyObject {
-
     @XmlTransient
     public static final String PLANS_RESOURCE = "/plans";
 
@@ -82,13 +80,13 @@ public class Plan extends RecurlyObject {
 
     @XmlElement(name = "created_at")
     private DateTime createdAt;
-    
+
     @XmlElement(name = "tax_code")
     private String taxCode;
 
     @XmlElement(name = "unit_amount_in_cents")
     private RecurlyUnitCurrency unitAmountInCents;
-    
+
     @XmlElement(name = "setup_fee_in_cents")
     private RecurlyUnitCurrency setupFeeInCents;
 
@@ -244,7 +242,7 @@ public class Plan extends RecurlyObject {
         this.taxCode = stringOrNull(taxCode);
     }
 
-	public AddOns getAddOns() {
+    public AddOns getAddOns() {
         return this.addOns;
     }
 
@@ -282,11 +280,13 @@ public class Plan extends RecurlyObject {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        final Plan plan = (Plan) o;
-
+        if (this == o) {
+            return true;
+        }
+        if ((o == null) || (getClass() != o.getClass())) {
+            return false;
+        }
+        final Plan plan = ((Plan) (o));
         if (bypassHostedConfirmation != plan.bypassHostedConfirmation) {
             return false;
         }
@@ -302,7 +302,7 @@ public class Plan extends RecurlyObject {
         if (cancelLink != null ? !cancelLink.equals(plan.cancelLink) : plan.cancelLink != null) {
             return false;
         }
-        if (createdAt != null ? createdAt.compareTo(plan.createdAt) != 0: plan.createdAt != null) {
+        if (createdAt != null ? createdAt.compareTo(plan.createdAt) != 0 : plan.createdAt != null) {
             return false;
         }
         if (description != null ? !description.equals(plan.description) : plan.description != null) {
@@ -347,33 +347,11 @@ public class Plan extends RecurlyObject {
         if (unitName != null ? !unitName.equals(plan.unitName) : plan.unitName != null) {
             return false;
         }
-
         return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(
-                addOns,
-                planCode,
-                name,
-                description,
-                successLink,
-                cancelLink,
-                displayDonationAmounts,
-                displayQuantity,
-                displayPhoneNumber,
-                bypassHostedConfirmation,
-                unitName,
-                planIntervalUnit,
-                planIntervalLength,
-                taxCode,
-                trialIntervalUnit,
-                trialIntervalLength,
-                accountingCode,
-                createdAt,
-                unitAmountInCents,
-                setupFeeInCents
-        );
+        return Objects.hashCode(addOns, planCode, name, description, successLink, cancelLink, displayDonationAmounts, displayQuantity, displayPhoneNumber, bypassHostedConfirmation, unitName, planIntervalUnit, planIntervalLength, trialIntervalUnit, trialIntervalLength, accountingCode, createdAt, unitAmountInCents, setupFeeInCents);
     }
 }

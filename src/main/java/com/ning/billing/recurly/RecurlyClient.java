@@ -14,28 +14,15 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 package com.ning.billing.recurly;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.security.GeneralSecurityException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.util.NoSuchElementException;
-import java.util.Properties;
-import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.annotation.Nullable;
-import javax.xml.bind.DatatypeConverter;
-
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Objects;
+import com.google.common.base.StandardSystemProperty;
+import com.google.common.io.CharSource;
+import com.google.common.io.Resources;
+import com.google.common.net.HttpHeaders;
 import com.ning.billing.recurly.model.Account;
 import com.ning.billing.recurly.model.Accounts;
 import com.ning.billing.recurly.model.AddOn;
@@ -57,46 +44,59 @@ import com.ning.billing.recurly.model.Redemption;
 import com.ning.billing.recurly.model.Redemptions;
 import com.ning.billing.recurly.model.RefundOption;
 import com.ning.billing.recurly.model.Subscription;
-import com.ning.billing.recurly.model.SubscriptionUpdate;
 import com.ning.billing.recurly.model.SubscriptionNotes;
+import com.ning.billing.recurly.model.SubscriptionUpdate;
 import com.ning.billing.recurly.model.Subscriptions;
 import com.ning.billing.recurly.model.Transaction;
 import com.ning.billing.recurly.model.Transactions;
-
 import com.ning.billing.recurly.util.http.SslUtils;
+import com.ning.http.client.AsyncHttpClient;
+import com.ning.http.client.AsyncHttpClientConfig;
+import com.ning.http.client.Response;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.security.GeneralSecurityException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.annotation.Nullable;
+import javax.xml.bind.DatatypeConverter;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.AsyncHttpClientConfig;
-import com.ning.http.client.Response;
-
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Objects;
-import com.google.common.base.StandardSystemProperty;
-import com.google.common.io.CharSource;
-import com.google.common.io.Resources;
-import com.google.common.net.HttpHeaders;
 
 public class RecurlyClient {
-
     private static final Logger log = LoggerFactory.getLogger(RecurlyClient.class);
 
     public static final String RECURLY_DEBUG_KEY = "recurly.debug";
+
     public static final String RECURLY_PAGE_SIZE_KEY = "recurly.page.size";
+
     public static final String RECURLY_API_VERSION = "2.1";
 
     private static final Integer DEFAULT_PAGE_SIZE = 20;
+
     private static final String PER_PAGE = "per_page=";
 
     private static final String X_RECORDS_HEADER_NAME = "X-Records";
+
     private static final String LINK_HEADER_NAME = "Link";
 
     private static final String GIT_PROPERTIES_FILE = "com/ning/billing/recurly/git.properties";
+
     @VisibleForTesting
     static final String GIT_COMMIT_ID_DESCRIBE_SHORT = "git.commit.id.describe-short";
+
     private static final Pattern TAG_FROM_GIT_DESCRIBE_PATTERN = Pattern.compile("recurly-java-library-([0-9]*\\.[0-9]*\\.[0-9]*)(-[0-9]*)?");
 
     public static final String FETCH_RESOURCE = "/recurly_js/result";
@@ -129,11 +129,15 @@ public class RecurlyClient {
     }
 
     // TODO: should we make it static?
+    // TODO: should we make it static?
     private final XmlMapper xmlMapper;
+
     private final String userAgent;
 
     private final String key;
+
     private final String baseUrl;
+
     private AsyncHttpClient client;
 
     public RecurlyClient(final String apiKey) {
@@ -391,7 +395,6 @@ public class RecurlyClient {
                       Subscription.class);
     }
 
-
     /**
      * Update to a particular {@link Subscription}'s notes by it's UUID
      * <p>
@@ -624,13 +627,20 @@ public class RecurlyClient {
 
     /**
      * Update a Plan's info
+<<<<<<< LEFT
+     * <p/>
+     *
+     * @param plan The plan to create on recurly
+     * @return the plan object as identified by the passed in ID
+=======
      * <p>
      *
      * @param plan The plan to update on recurly
      * @return the updated plan object
+>>>>>>> RIGHT
      */
     public Plan updatePlan(final Plan plan) {
-        return doPUT(Plan.PLANS_RESOURCE + "/" + plan.getPlanCode(), plan, Plan.class);
+        return doPUT((Plan.PLANS_RESOURCE + "/") + plan.getPlanCode(), plan, Plan.class);
     }
 
     /**
@@ -780,12 +790,12 @@ public class RecurlyClient {
     /**
      * Lookup the first coupon redemption on an account.
      *
-     * @param accountCode recurly account id
+     * @param accountCode
+     * 		recurly account id
      * @return the coupon redemption for this account on success, null otherwise
      */
     public Redemption getCouponRedemptionByAccount(final String accountCode) {
-        return doGET(Accounts.ACCOUNTS_RESOURCE + "/" + accountCode + Redemption.REDEMPTION_RESOURCE,
-                     Redemption.class);
+        return doGET(((Accounts.ACCOUNTS_RESOURCE + "/") + accountCode) + Redemption.REDEMPTION_RESOURCE, Redemption.class);
     }
 
     /**
@@ -802,14 +812,13 @@ public class RecurlyClient {
     /**
      * Lookup the first coupon redemption on an invoice.
      *
-     * @param invoiceNumber invoice number
+     * @param invoiceNumber
+     * 		invoice number
      * @return the coupon redemption for this invoice on success, null otherwise
      */
     public Redemption getCouponRedemptionByInvoice(final Integer invoiceNumber) {
-        return doGET(Invoices.INVOICES_RESOURCE + "/" + invoiceNumber + Redemption.REDEMPTION_RESOURCE,
-                Redemption.class);
+        return doGET(((Invoices.INVOICES_RESOURCE + "/") + invoiceNumber) + Redemption.REDEMPTION_RESOURCE, Redemption.class);
     }
-
 
     /**
      * Lookup all coupon redemptions on an invoice.
@@ -825,10 +834,11 @@ public class RecurlyClient {
     /**
      * Deletes a coupon redemption from an account.
      *
-     * @param accountCode recurly account id
+     * @param accountCode
+     * 		recurly account id
      */
     public void deleteCouponRedemption(final String accountCode) {
-        doDELETE(Accounts.ACCOUNTS_RESOURCE + "/" + accountCode + Redemption.REDEMPTION_RESOURCE);
+        doDELETE(((Accounts.ACCOUNTS_RESOURCE + "/") + accountCode) + Redemption.REDEMPTION_RESOURCE);
     }
 
     /**
@@ -976,33 +986,23 @@ public class RecurlyClient {
         }
     }
 
-    private <T> T callRecurly(final AsyncHttpClient.BoundRequestBuilder builder, @Nullable final Class<T> clazz)
-            throws IOException, ExecutionException, InterruptedException {
-        final Response response = builder.addHeader("Authorization", "Basic " + key)
-                                         .addHeader("Accept", "application/xml")
-                                         .addHeader("Content-Type", "application/xml; charset=utf-8")
-                                         .addHeader("X-Api-Version", RECURLY_API_VERSION)
-                                         .addHeader(HttpHeaders.USER_AGENT, userAgent)
-                                         .setBodyEncoding("UTF-8")
-                                         .execute()
-                                         .get();
-
+    private <T> T callRecurly(final AsyncHttpClient.BoundRequestBuilder builder, @Nullable
+    final Class<T> clazz) throws IOException, ExecutionException, InterruptedException {
+        final Response response = builder.addHeader("Authorization", "Basic " + key).addHeader("Accept", "application/xml").addHeader("Content-Type", "application/xml; charset=utf-8").addHeader("X-Api-Version", RECURLY_API_VERSION).addHeader(HttpHeaders.USER_AGENT, userAgent).setBodyEncoding("UTF-8").execute().get();
         final InputStream in = response.getResponseBodyAsStream();
         try {
             final String payload = convertStreamToString(in);
             if (debug()) {
                 log.info("Msg from Recurly API :: {}", payload);
             }
-
             // Handle errors payload
             if (response.getStatusCode() >= 300) {
                 log.warn("Recurly error whilst calling: {}\n{}", response.getUri(), payload);
-
                 if (response.getStatusCode() == 422) {
                     final Errors errors;
                     try {
                         errors = xmlMapper.readValue(payload, Errors.class);
-                    } catch (Exception e) {
+                    } catch (java.lang.Exception e) {
                         // 422 is returned for transaction errors (see https://recurly.readme.io/v2.0/page/transaction-errors)
                         // as well as bad input payloads
                         log.debug("Unable to extract error", e);
@@ -1013,35 +1013,30 @@ public class RecurlyClient {
                     RecurlyAPIError recurlyError = null;
                     try {
                         recurlyError = xmlMapper.readValue(payload, RecurlyAPIError.class);
-                    } catch (Exception e) {
+                    } catch (java.lang.Exception e) {
                         log.debug("Unable to extract error", e);
                     }
                     throw new RecurlyAPIException(recurlyError);
                 }
             }
-
             if (clazz == null) {
                 return null;
             }
-
             final T obj = xmlMapper.readValue(payload, clazz);
             if (obj instanceof RecurlyObject) {
-                ((RecurlyObject) obj).setRecurlyClient(this);
+                ((RecurlyObject) (obj)).setRecurlyClient(this);
             } else if (obj instanceof RecurlyObjects) {
-                final RecurlyObjects recurlyObjects = (RecurlyObjects) obj;
+                final RecurlyObjects recurlyObjects = ((RecurlyObjects) (obj));
                 recurlyObjects.setRecurlyClient(this);
-
                 // Set the RecurlyClient on all objects for later use
                 for (final Object object : recurlyObjects) {
-                    ((RecurlyObject) object).setRecurlyClient(this);
+                    ((RecurlyObject) (object)).setRecurlyClient(this);
                 }
-
                 // Set the total number of records
                 final String xRecords = response.getHeader(X_RECORDS_HEADER_NAME);
                 if (xRecords != null) {
                     recurlyObjects.setNbRecords(Integer.valueOf(xRecords));
                 }
-
                 // Set links for pagination
                 final String linkHeader = response.getHeader(LINK_HEADER_NAME);
                 if (linkHeader != null) {
@@ -1077,12 +1072,10 @@ public class RecurlyClient {
 
     private AsyncHttpClient createHttpClient() throws KeyManagementException, NoSuchAlgorithmException {
         final AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
-
         // Don't limit the number of connections per host
         // See https://github.com/ning/async-http-client/issues/issue/28
         builder.setMaxConnectionsPerHost(-1);
         builder.setSSLContext(SslUtils.getInstance().getSSLContext());
-
         return new AsyncHttpClient(builder.build());
     }
 
