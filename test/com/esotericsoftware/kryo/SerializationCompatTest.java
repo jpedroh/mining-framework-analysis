@@ -1,4 +1,5 @@
 /* Copyright (c) 2008-2020, Nathan Sweet
+ * Copyright (C) 2020, Oracle and/or its affiliates.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -16,12 +17,7 @@
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
-
 package com.esotericsoftware.kryo;
-
-import static com.esotericsoftware.kryo.ReflectionAssert.*;
-import static java.lang.Integer.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.esotericsoftware.kryo.SerializationCompatTestData.TestData;
 import com.esotericsoftware.kryo.SerializationCompatTestData.TestDataJava8;
@@ -31,7 +27,6 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
 import com.esotericsoftware.minlog.Log;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -40,10 +35,13 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.objenesis.strategy.StdInstantiatorStrategy;
+import static com.esotericsoftware.kryo.ReflectionAssert.*;
+import static java.lang.Integer.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 /** Test for serialization compatibility: data serialized with an older version (same major version) must be deserializable with
  * this newer (same major) version. Serialization compatibility is checked for each type that has a default serializer
@@ -73,26 +71,35 @@ class SerializationCompatTest extends KryoTestCase {
 	private static final boolean DELETE_FAILED_TEST_FILES = false;
 
 	private static final int JAVA_VERSION;
+
 	static {
 		// java.version is e.g. "1.8.0", "9.0.4", or "14"
 		String[] strVersions = System.getProperty("java.version").split("\\.");
 		if (strVersions.length == 1) {
 			JAVA_VERSION = parseInt(strVersions[0]);
 		} else {
-			int[] versions = new int[] {parseInt(strVersions[0]), parseInt(strVersions[1])};
-			JAVA_VERSION = versions[0] > 1 ? versions[0] : versions[1];
+			int[] versions = new int[]{ parseInt(strVersions[0]), parseInt(strVersions[1]) };
+			JAVA_VERSION = (versions[0] > 1) ? versions[0] : versions[1];
 		}
 	}
-	private static final int EXPECTED_DEFAULT_SERIALIZER_COUNT = JAVA_VERSION < 11
-			? 57 : JAVA_VERSION < 14 ? 67 : 68;  // Also change Kryo#defaultSerializers.
+
+	// Also change Kryo#defaultSerializers.
+	private static final int EXPECTED_DEFAULT_SERIALIZER_COUNT = (JAVA_VERSION < 11) ? 58 : JAVA_VERSION < 14 ? 68 : 68;
+
 	private static final List<TestDataDescription> TEST_DATAS = new ArrayList<>();
 
 	static {
 		TEST_DATAS.add(new TestDataDescription<>(new TestData(), 1940, 1958));
-		if (JAVA_VERSION >= 8) TEST_DATAS.add(new TestDataDescription<>(new TestDataJava8(), 2098, 2116));
-		if (JAVA_VERSION >= 11) TEST_DATAS.add(new TestDataDescription<>(createTestData(11), 2182, 2210));
-		if (JAVA_VERSION >= 14) TEST_DATAS.add(new TestDataDescription<>(createTestData(14), 1948, 1966));
-	};
+		if (JAVA_VERSION >= 8) {
+			TEST_DATAS.add(new TestDataDescription<>(new TestDataJava8(), 2098, 2116));
+		}
+		if (JAVA_VERSION >= 11) {
+			TEST_DATAS.add(new TestDataDescription<>(createTestData(11), 2182, 2210));
+		}
+		if (JAVA_VERSION >= 14) {
+			TEST_DATAS.add(new TestDataDescription<>(createTestData(14), 1948, 1966));
+		}
+	}
 
 	private static TestData createTestData(int version) {
 		try {
@@ -103,7 +110,7 @@ class SerializationCompatTest extends KryoTestCase {
 	}
 
 	@BeforeEach
-	public void setUp () throws Exception {
+	public void setUp() throws Exception {
 		super.setUp();
 		kryo.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
 		kryo.setReferences(true);
@@ -116,39 +123,38 @@ class SerializationCompatTest extends KryoTestCase {
 	}
 
 	@Test
-	void testDefaultSerializers () throws Exception {
+	void testDefaultSerializers() throws Exception {
 		Field defaultSerializersField = Kryo.class.getDeclaredField("defaultSerializers");
 		defaultSerializersField.setAccessible(true);
-		List defaultSerializers = (List)defaultSerializersField.get(kryo);
-		assertEquals(EXPECTED_DEFAULT_SERIALIZER_COUNT, defaultSerializers.size(),
-				"The registered default serializers have changed.\n" //
-						+ "Because serialization compatibility shall be checked for default serializers, you must extend " //
-						+ "SerializationCompatTestData.TestData to have a field for the type of the new default serializer.\n" //
-						+ "After that's done, you must create new versions of 'test/resources/data*' because the new TestData instance will " //
-						+ "no longer be equals the formerly written/serialized one.");
+		List defaultSerializers = ((List) (defaultSerializersField.get(kryo)));
+		assertEquals(EXPECTED_DEFAULT_SERIALIZER_COUNT, defaultSerializers.size(), "The registered default serializers have changed.\n"// 
+		 + ((("Because serialization compatibility shall be checked for default serializers, you must extend "// 
+		 + "SerializationCompatTestData.TestData to have a field for the type of the new default serializer.\n")// 
+		 + "After that's done, you must create new versions of 'test/resources/data*' because the new TestData instance will ")// 
+		 + "no longer be equals the formerly written/serialized one."));
 	}
 
 	@Test
-	void testStandard () throws Exception {
+	void testStandard() throws Exception {
 		runTests("standard", new Function1<File, Input>() {
-			public Input apply (File file) throws FileNotFoundException {
+			public Input apply(File file) throws FileNotFoundException {
 				return new Input(new FileInputStream(file));
 			}
 		}, new Function1<File, Output>() {
-			public Output apply (File file) throws Exception {
+			public Output apply(File file) throws Exception {
 				return new Output(new FileOutputStream(file));
 			}
 		});
 	}
 
 	@Test
-	void testByteBuffer () throws Exception {
+	void testByteBuffer() throws Exception {
 		runTests("bytebuffer", new Function1<File, Input>() {
-			public Input apply (File file) throws FileNotFoundException {
+			public Input apply(File file) throws FileNotFoundException {
 				return new ByteBufferInput(new FileInputStream(file));
 			}
 		}, new Function1<File, Output>() {
-			public Output apply (File file) throws Exception {
+			public Output apply(File file) throws Exception {
 				return new ByteBufferOutput(new FileOutputStream(file));
 			}
 		});
@@ -216,21 +222,23 @@ class SerializationCompatTest extends KryoTestCase {
 		kryo.writeObject(out, description.testData);
 	}
 
-	protected void doAssertEquals (final Object one, final Object another) {
+	protected void doAssertEquals(final Object one, final Object another) {
 		try {
 			assertReflectionEquals(one, another);
-		} catch (Exception e) {
+		} catch (java.lang.Exception e) {
 			fail("Test failed: " + e);
 		}
 	}
 
 	private interface Function1<A, B> {
-		B apply (A input) throws Exception;
+		public abstract B apply(A input) throws Exception;
 	}
 
 	private static class TestDataDescription<T extends TestData> {
 		final T testData;
+
 		final int length;
+
 		final int noGenericsLength;
 
 		TestDataDescription(T testData, int length, int noGenericsLength) {
@@ -239,11 +247,11 @@ class SerializationCompatTest extends KryoTestCase {
 			this.noGenericsLength = noGenericsLength;
 		}
 
-		Class<T> testDataClass () {
-			return (Class<T>)testData.getClass();
+		Class<T> testDataClass() {
+			return ((Class<T>) (testData.getClass()));
 		}
 
-		String classSimpleName () {
+		String classSimpleName() {
 			return testData.getClass().getSimpleName();
 		}
 	}
