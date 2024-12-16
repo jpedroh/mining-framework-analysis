@@ -7,34 +7,12 @@
  */
 package org.dspace.app.rest;
 
-import static com.jayway.jsonpath.JsonPath.read;
-import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
-import static java.util.Arrays.asList;
-import static java.util.UUID.fromString;
-import static org.dspace.app.rest.matcher.HalMatcher.matchLinks;
-import static org.dspace.app.rest.matcher.MetadataMatcher.matchMetadata;
-import static org.dspace.app.rest.matcher.MetadataMatcher.matchMetadataDoesNotExist;
-import static org.dspace.app.rest.matcher.MetadataMatcher.matchMetadataNotEmpty;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.springframework.data.rest.webmvc.RestMediaTypes.TEXT_URI_LIST;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import com.jayway.jsonpath.JsonPath;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-
-import com.jayway.jsonpath.JsonPath;
 import org.dspace.app.rest.model.MetadataValueRest;
 import org.dspace.app.rest.model.patch.AddOperation;
 import org.dspace.app.rest.model.patch.Operation;
@@ -56,6 +34,27 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
+import static com.jayway.jsonpath.JsonPath.read;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
+import static java.util.Arrays.asList;
+import static java.util.UUID.fromString;
+import static org.dspace.app.rest.matcher.HalMatcher.matchLinks;
+import static org.dspace.app.rest.matcher.MetadataMatcher.matchMetadata;
+import static org.dspace.app.rest.matcher.MetadataMatcher.matchMetadataDoesNotExist;
+import static org.dspace.app.rest.matcher.MetadataMatcher.matchMetadataNotEmpty;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.data.rest.webmvc.RestMediaTypes.TEXT_URI_LIST;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 /**
  * Integration tests for {@link ResearcherProfileRestRepository}.
@@ -64,7 +63,6 @@ import org.springframework.test.web.servlet.MvcResult;
  *
  */
 public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegrationTest {
-
     @Autowired
     private ConfigurationService configurationService;
 
@@ -83,36 +81,14 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
         context.turnOffAuthorisationSystem();
-
-        user = EPersonBuilder.createEPerson(context)
-            .withEmail("user@example.com")
-            .withPassword(password)
-            .build();
-
-        anotherUser = EPersonBuilder.createEPerson(context)
-            .withEmail("anotherUser@example.com")
-            .withPassword(password)
-            .build();
-
-        parentCommunity = CommunityBuilder.createCommunity(context)
-            .withName("Parent Community")
-            .build();
-
-        personCollection = CollectionBuilder.createCollection(context, parentCommunity)
-            .withName("Profile Collection")
-            .withEntityType("Person")
-            .withSubmitterGroup(user)
-            .withTemplateItem()
-            .build();
-
+        user = EPersonBuilder.createEPerson(context).withEmail("user@example.com").withPassword(password).build();
+        anotherUser = EPersonBuilder.createEPerson(context).withEmail("anotherUser@example.com").withPassword(password).build();
+        parentCommunity = CommunityBuilder.createCommunity(context).withName("Parent Community").build();
+        personCollection = CollectionBuilder.createCollection(context, parentCommunity).withName("Profile Collection").withEntityType("Person").withSubmitterGroup(user).withTemplateItem().build();
         configurationService.setProperty("researcher-profile.collection.uuid", personCollection.getID().toString());
-
         context.setCurrentUser(user);
-
         context.restoreAuthSystemState();
-
     }
 
     /**
@@ -268,19 +244,10 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
 
     @Test
     public void testCreateAndReturnWithPublicProfile() throws Exception {
-
         configurationService.setProperty("researcher-profile.set-new-profile-private", false);
         String id = user.getID().toString();
-
         String authToken = getAuthToken(user.getEmail(), password);
-
-        getClient(authToken).perform(post("/api/eperson/profiles/")
-            .contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.id", is(id)))
-            .andExpect(jsonPath("$.visible", is(true)))
-            .andExpect(jsonPath("$.type", is("profile")))
-            .andExpect(jsonPath("$", matchLinks("http://localhost/api/eperson/profiles/" + id, "item", "eperson")));
+        getClient(authToken).perform(post("/api/eperson/profiles/").contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isCreated()).andExpect(jsonPath("$.id", is(id))).andExpect(jsonPath("$.visible", is(true))).andExpect(jsonPath("$.type", is("profile"))).andExpect(jsonPath("$", matchLinks("http://localhost/api/eperson/profiles/" + id, "item", "eperson")));
     }
 
     /**
@@ -358,21 +325,10 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
      */
     @Test
     public void testCreateAndReturnWithProfileAlreadyAssociated() throws Exception {
-
         String id = user.getID().toString();
         String authToken = getAuthToken(user.getEmail(), password);
-
-        getClient(authToken).perform(post("/api/eperson/profiles/")
-            .contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.id", is(id)))
-            .andExpect(jsonPath("$.visible", is(false)))
-            .andExpect(jsonPath("$.type", is("profile")));
-
-        getClient(authToken).perform(post("/api/eperson/profiles/")
-            .contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isUnprocessableEntity());
-
+        getClient(authToken).perform(post("/api/eperson/profiles/").contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isCreated()).andExpect(jsonPath("$.id", is(id))).andExpect(jsonPath("$.visible", is(false))).andExpect(jsonPath("$.type", is("profile")));
+        getClient(authToken).perform(post("/api/eperson/profiles/").contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isUnprocessableEntity());
     }
 
     /**
@@ -921,70 +877,24 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
     public void researcherProfileClaim() throws Exception {
         String id = user.getID().toString();
         String name = user.getName();
-
         context.turnOffAuthorisationSystem();
-
-        final Item person = ItemBuilder.createItem(context, personCollection)
-                                      .withTitle("Test User 1")
-                                      .build();
-
-        final Item otherPerson = ItemBuilder.createItem(context, personCollection)
-                                       .withTitle("Test User 2")
-                                       .build();
-
+        final Item person = ItemBuilder.createItem(context, personCollection).withTitle("Test User 1").build();
+        final Item otherPerson = ItemBuilder.createItem(context, personCollection).withTitle("Test User 2").build();
         context.restoreAuthSystemState();
-
         String authToken = getAuthToken(user.getEmail(), password);
-
-        getClient(authToken).perform(post("/api/eperson/profiles/")
-                                         .contentType(TEXT_URI_LIST)
-                                         .content("http://localhost:8080/server/api/core/items/" + person.getID().toString()))
-                            .andExpect(status().isCreated())
-                            .andExpect(jsonPath("$.id", is(id)))
-                            .andExpect(jsonPath("$.type", is("profile")))
-                            .andExpect(jsonPath("$", matchLinks("http://localhost/api/eperson/profiles/" + user.getID(),
-                                                                "item", "eperson")));
-
-        getClient(authToken).perform(get("/api/eperson/profiles/{id}", id))
-                            .andExpect(status().isOk());
-
-        getClient(authToken).perform(get("/api/eperson/profiles/{id}/item", id))
-                            .andExpect(status().isOk())
-                            .andExpect(jsonPath("$.type", is("item")))
-                            .andExpect(jsonPath("$.metadata", matchMetadata("dspace.object.owner", name, id, 0)))
-                            .andExpect(jsonPath("$.metadata", matchMetadata("dspace.entity.type", "Person", 0)));
-
-        getClient(authToken).perform(get("/api/eperson/profiles/{id}/eperson", id))
-                            .andExpect(status().isOk())
-                            .andExpect(jsonPath("$.type", is("eperson")))
-                            .andExpect(jsonPath("$.name", is(name)));
-
+        getClient(authToken).perform(post("/api/eperson/profiles/").contentType(TEXT_URI_LIST).content("http://localhost:8080/server/api/core/items/" + person.getID().toString())).andExpect(status().isCreated()).andExpect(jsonPath("$.id", is(id))).andExpect(jsonPath("$.type", is("profile"))).andExpect(jsonPath("$", matchLinks("http://localhost/api/eperson/profiles/" + user.getID(), "item", "eperson")));
+        getClient(authToken).perform(get("/api/eperson/profiles/{id}", id)).andExpect(status().isOk());
+        getClient(authToken).perform(get("/api/eperson/profiles/{id}/item", id)).andExpect(status().isOk()).andExpect(jsonPath("$.type", is("item"))).andExpect(jsonPath("$.metadata", matchMetadata("dspace.object.owner", name, id, 0))).andExpect(jsonPath("$.metadata", matchMetadata("dspace.entity.type", "Person", 0)));
+        getClient(authToken).perform(get("/api/eperson/profiles/{id}/eperson", id)).andExpect(status().isOk()).andExpect(jsonPath("$.type", is("eperson"))).andExpect(jsonPath("$.name", is(name)));
         // trying to claim another profile
-        getClient(authToken).perform(post("/api/eperson/profiles/")
-                                         .contentType(TEXT_URI_LIST)
-                                         .content("http://localhost:8080/server/api/core/items/" + otherPerson.getID().toString()))
-                            .andExpect(status().isUnprocessableEntity());
-
+        getClient(authToken).perform(post("/api/eperson/profiles/").contentType(TEXT_URI_LIST).content("http://localhost:8080/server/api/core/items/" + otherPerson.getID().toString())).andExpect(status().isUnprocessableEntity());
         // other person trying to claim same profile
         context.turnOffAuthorisationSystem();
-        EPerson ePerson = EPersonBuilder.createEPerson(context)
-                                        .withCanLogin(true)
-                                        .withEmail("foo@bar.baz")
-                                        .withPassword(password)
-                                        .withNameInMetadata("Test", "User")
-                                        .build();
-
+        EPerson ePerson = EPersonBuilder.createEPerson(context).withCanLogin(true).withEmail("foo@bar.baz").withPassword(password).withNameInMetadata("Test", "User").build();
         context.restoreAuthSystemState();
-
         final String ePersonToken = getAuthToken(ePerson.getEmail(), password);
-
-        getClient(ePersonToken).perform(post("/api/eperson/profiles/")
-                                         .contentType(TEXT_URI_LIST)
-                                         .content("http://localhost:8080/server/api/core/items/" + person.getID().toString()))
-                            .andExpect(status().isBadRequest());
-
-        getClient(authToken).perform(delete("/api/eperson/profiles/{id}", id))
-                            .andExpect(status().isNoContent());
+        getClient(ePersonToken).perform(post("/api/eperson/profiles/").contentType(TEXT_URI_LIST).content("http://localhost:8080/server/api/core/items/" + person.getID().toString())).andExpect(status().isBadRequest());
+        getClient(authToken).perform(delete("/api/eperson/profiles/{id}", id)).andExpect(status().isNoContent());
     }
 
     @Test
@@ -1075,18 +985,10 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
 
     @Test
     public void testCloneFromExternalProfileAlreadyAssociated() throws Exception {
-
         String id = user.getID().toString();
         String authToken = getAuthToken(user.getEmail(), password);
-
-        getClient(authToken).perform(post("/api/eperson/profiles/").contentType(MediaType.APPLICATION_JSON_VALUE))
-                            .andExpect(status().isCreated()).andExpect(jsonPath("$.id", is(id)))
-                            .andExpect(jsonPath("$.visible", is(false))).andExpect(jsonPath("$.type", is("profile")));
-
-        getClient(authToken)
-            .perform(post("/api/eperson/profiles/").contentType(TEXT_URI_LIST)
-                                                .content("http://localhost:8080/server/api/core/items/" + id))
-            .andExpect(status().isUnprocessableEntity());
+        getClient(authToken).perform(post("/api/eperson/profiles/").contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isCreated()).andExpect(jsonPath("$.id", is(id))).andExpect(jsonPath("$.visible", is(false))).andExpect(jsonPath("$.type", is("profile")));
+        getClient(authToken).perform(post("/api/eperson/profiles/").contentType(TEXT_URI_LIST).content("http://localhost:8080/server/api/core/items/" + id)).andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -1594,11 +1496,8 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
         return itemService.find(context, itemIdRef.get());
     }
 
-    private String getItemIdByProfileId(String token, String id) throws SQLException, Exception {
-        MvcResult result = getClient(token).perform(get("/api/eperson/profiles/{id}/item", id))
-                                           .andExpect(status().isOk())
-                                           .andReturn();
-
+    private String getItemIdByProfileId(String token, String id) throws Exception, SQLException {
+        MvcResult result = getClient(token).perform(get("/api/eperson/profiles/{id}/item", id)).andExpect(status().isOk()).andReturn();
         return readAttributeFromResponse(result, "$.id");
     }
 
@@ -1609,5 +1508,4 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
     private <T> T readAttributeFromResponse(MvcResult result, String attribute) throws UnsupportedEncodingException {
         return JsonPath.read(result.getResponse().getContentAsString(), attribute);
     }
-
 }

@@ -31,6 +31,7 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+
 /**
  * Spring Security configuration for DSpace Server Webapp
  *
@@ -42,9 +43,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableConfigurationProperties(SecurityProperties.class)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
-
     public static final String ADMIN_GRANT = "ADMIN";
+
     public static final String AUTHENTICATED_GRANT = "AUTHENTICATED";
+
     public static final String ANONYMOUS_GRANT = "ANONYMOUS";
 
     @Autowired
@@ -77,83 +79,39 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/api/authn/login");
     }
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // Configure authentication requirements for ${dspace.server.url}/api/ URL only
         // NOTE: REST API is hardcoded to respond on /api/. Other modules (OAI, SWORD, IIIF, etc) use other root paths.
-        http.requestMatchers()
-            .antMatchers("/api/**", "/iiif/**")
-            .and()
-            // Enable Spring Security authorization on these paths
-            .authorizeRequests()
-                // Allow POST by anyone on the login endpoint
-                .antMatchers(HttpMethod.POST,"/api/authn/login").permitAll()
-                // Everyone can call GET on the status endpoint (used to check your authentication status)
-                .antMatchers(HttpMethod.GET, "/api/authn/status").permitAll()
-            .and()
-            // Tell Spring to not create Sessions
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-            // Anonymous requests should have the "ANONYMOUS" security grant
-            .anonymous().authorities(ANONYMOUS_GRANT).and()
-            // Wire up the HttpServletRequest with the current SecurityContext values
-            .servletApi().and()
-            // Enable CORS for Spring Security (see CORS settings in Application and ApplicationConfig)
-            .cors().and()
-            // Enable CSRF protection with custom csrfTokenRepository and custom sessionAuthenticationStrategy
-            // (both are defined below as methods).
-            // While we primarily use JWT in headers, CSRF protection is needed because we also support JWT via Cookies
-            .csrf()
-                .csrfTokenRepository(this.csrfTokenRepository())
-                .sessionAuthenticationStrategy(this.sessionAuthenticationStrategy())
-            .and()
-            .exceptionHandling()
-                // Return 401 on authorization failures with a correct WWWW-Authenticate header
-                .authenticationEntryPoint(new DSpace401AuthenticationEntryPoint(restAuthenticationService))
-                // Custom handler for AccessDeniedExceptions, including CSRF exceptions
-                .accessDeniedHandler(accessDeniedHandler)
-            .and()
-
-            // Logout configuration
-            .logout()
-                // On logout, clear the "session" salt
-                .addLogoutHandler(customLogoutHandler)
-                // Configure the logout entry point & require POST
-                .logoutRequestMatcher(new AntPathRequestMatcher("/api/authn/logout", HttpMethod.POST.name()))
-                // When logout is successful, return OK (204) status
-                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT))
-                // Everyone can call this endpoint
-                .permitAll()
-            .and()
-
-            // Add a filter before any request to handle DSpace IP-based authorization/authentication
-            // (e.g. anonymous users may be added to special DSpace groups if they are in a given IP range)
-            .addFilterBefore(new AnonymousAdditionalAuthorizationFilter(authenticationManager(), authenticationService),
-                             StatelessAuthenticationFilter.class)
-            // Add a filter before our login endpoints to do the authentication based on the data in the HTTP request
-            .addFilterBefore(new StatelessLoginFilter("/api/authn/login", authenticationManager(),
-                                                      restAuthenticationService),
-                             LogoutFilter.class)
-            // Add a filter before our shibboleth endpoints to do the authentication based on the data in the
-            // HTTP request
-            .addFilterBefore(new ShibbolethLoginFilter("/api/authn/shibboleth", authenticationManager(),
-                                                       restAuthenticationService),
-                             LogoutFilter.class)
-            //Add a filter before our ORCID endpoints to do the authentication based on the data in the
-            // HTTP request
-            .addFilterBefore(new OrcidAuthenticationFilter("/api/authn/orcid", authenticationManager(),
-                                                       restAuthenticationService),
-                             LogoutFilter.class)
-            //Add a filter before our OIDC endpoints to do the authentication based on the data in the
-            // HTTP request
-            .addFilterBefore(new OidcLoginFilter("/api/authn/oidc", authenticationManager(),
-                                                      restAuthenticationService),
-                             LogoutFilter.class)
             // Add a custom Token based authentication filter based on the token previously given to the client
             // before each URL
-            .addFilterBefore(new StatelessAuthenticationFilter(authenticationManager(), restAuthenticationService,
-                                                               ePersonRestAuthenticationProvider, requestService),
-                             StatelessLoginFilter.class);
+            //Add a filter before our OIDC endpoints to do the authentication based on the data in the
+            // HTTP request
+            //Add a filter before our ORCID endpoints to do the authentication based on the data in the
+            // HTTP request
+            // Add a filter before our shibboleth endpoints to do the authentication based on the data in the
+            // HTTP request
+            // Add a filter before our login endpoints to do the authentication based on the data in the HTTP request
+            // Add a filter before any request to handle DSpace IP-based authorization/authentication
+            // (e.g. anonymous users may be added to special DSpace groups if they are in a given IP range)
+                // Everyone can call this endpoint
+                // When logout is successful, return OK (204) status
+                // Configure the logout entry point & require POST
+                // On logout, clear the "session" salt
+            // Logout configuration
+                // Custom handler for AccessDeniedExceptions, including CSRF exceptions
+                // Return 401 on authorization failures with a correct WWWW-Authenticate header
+        // Enable CSRF protection with custom csrfTokenRepository and custom sessionAuthenticationStrategy
+        // (both are defined below as methods).
+        // While we primarily use JWT in headers, CSRF protection is needed because we also support JWT via Cookies
+        // Enable CORS for Spring Security (see CORS settings in Application and ApplicationConfig)
+        // Wire up the HttpServletRequest with the current SecurityContext values
+        // Anonymous requests should have the "ANONYMOUS" security grant
+        // Tell Spring to not create Sessions
+        // Everyone can call GET on the status endpoint (used to check your authentication status)
+        // Allow POST by anyone on the login endpoint
+        // Enable Spring Security authorization on these paths
+        http.requestMatchers().antMatchers("/api/**", "/iiif/**").and().authorizeRequests().antMatchers(HttpMethod.POST, "/api/authn/login").permitAll().antMatchers(HttpMethod.GET, "/api/authn/status").permitAll().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().anonymous().authorities(ANONYMOUS_GRANT).and().servletApi().and().cors().and().csrf().csrfTokenRepository(this.csrfTokenRepository()).sessionAuthenticationStrategy(this.sessionAuthenticationStrategy()).and().exceptionHandling().authenticationEntryPoint(new DSpace401AuthenticationEntryPoint(restAuthenticationService)).accessDeniedHandler(accessDeniedHandler).and().logout().addLogoutHandler(customLogoutHandler).logoutRequestMatcher(new AntPathRequestMatcher("/api/authn/logout", HttpMethod.POST.name())).logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT)).permitAll().and().addFilterBefore(new AnonymousAdditionalAuthorizationFilter(authenticationManager(), authenticationService), StatelessAuthenticationFilter.class).addFilterBefore(new StatelessLoginFilter("/api/authn/login", authenticationManager(), restAuthenticationService), LogoutFilter.class).addFilterBefore(new ShibbolethLoginFilter("/api/authn/shibboleth", authenticationManager(), restAuthenticationService), LogoutFilter.class).addFilterBefore(new OrcidAuthenticationFilter("/api/authn/orcid", authenticationManager(), restAuthenticationService), LogoutFilter.class).addFilterBefore(new OidcLoginFilter("/api/authn/oidc", authenticationManager(), restAuthenticationService), LogoutFilter.class).addFilterBefore(new StatelessAuthenticationFilter(authenticationManager(), restAuthenticationService, ePersonRestAuthenticationProvider, requestService), StatelessLoginFilter.class);
     }
 
     @Override
@@ -188,5 +146,4 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private SessionAuthenticationStrategy sessionAuthenticationStrategy() {
         return new DSpaceCsrfAuthenticationStrategy(csrfTokenRepository());
     }
-
 }
