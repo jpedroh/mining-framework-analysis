@@ -1,9 +1,5 @@
 package de.deepamehta.plugins.workspaces;
 
-import de.deepamehta.plugins.workspaces.service.WorkspacesService;
-import de.deepamehta.plugins.facets.model.FacetValue;
-import de.deepamehta.plugins.facets.service.FacetsService;
-
 import de.deepamehta.core.Association;
 import de.deepamehta.core.AssociationType;
 import de.deepamehta.core.DeepaMehtaObject;
@@ -21,25 +17,28 @@ import de.deepamehta.core.service.event.IntroduceTopicTypeListener;
 import de.deepamehta.core.service.event.PostCreateAssociationListener;
 import de.deepamehta.core.service.event.PostCreateTopicListener;
 import de.deepamehta.core.storage.spi.DeepaMehtaTransaction;
-
+import de.deepamehta.plugins.facets.model.FacetValue;
+import de.deepamehta.plugins.facets.service.FacetsService;
+import de.deepamehta.plugins.workspaces.service.WorkspacesService;
 import java.util.logging.Logger;
 
 
-
-public class WorkspacesPlugin extends PluginActivator implements WorkspacesService, IntroduceTopicTypeListener,
-                                                                                    IntroduceAssociationTypeListener,
-                                                                                    PostCreateTopicListener,
-                                                                                    PostCreateAssociationListener {
-
+public class WorkspacesPlugin extends PluginActivator implements WorkspacesService , IntroduceTopicTypeListener , IntroduceAssociationTypeListener , PostCreateTopicListener , PostCreateAssociationListener {
+    // ------------------------------------------------------------------------------------------------------- Constants
     // ------------------------------------------------------------------------------------------------------- Constants
 
     private static final String DEFAULT_WORKSPACE_NAME = "DeepaMehta";
+
+    // ### TODO: "dm4.workspaces..."
     private static final String DEFAULT_WORKSPACE_URI = "de.workspaces.deepamehta";     // ### TODO: "dm4.workspaces..."
+
     private static final String DEFAULT_WORKSPACE_TYPE_URI = "dm4.workspaces.type.public";
 
     // Property URIs
+    // Property URIs
     private static final String PROP_WORKSPACE_ID = "dm4.workspaces.workspace_id";
 
+    // ---------------------------------------------------------------------------------------------- Instance Variables
     // ---------------------------------------------------------------------------------------------- Instance Variables
 
     @Inject
@@ -48,22 +47,16 @@ public class WorkspacesPlugin extends PluginActivator implements WorkspacesServi
     private Logger logger = Logger.getLogger(getClass().getName());
 
     // -------------------------------------------------------------------------------------------------- Public Methods
-
-
-
     // ****************************************
     // *** WorkspacesService Implementation ***
     // ****************************************
-
-
-
     @Override
     public Topic getAssignedWorkspace(long id) {
         if (!dms.hasProperty(id, PROP_WORKSPACE_ID)) {
             return null;
         }
-        //
-        long workspaceId = (Long) dms.getProperty(id, PROP_WORKSPACE_ID);
+        // 
+        long workspaceId = ((Long) (dms.getProperty(id, PROP_WORKSPACE_ID)));
         return dms.getTopic(workspaceId);
     }
 
@@ -100,24 +93,15 @@ public class WorkspacesPlugin extends PluginActivator implements WorkspacesServi
     }
 
     // ---
-
     @Override
     public Topic createWorkspace(String name, String uri, String workspaceTypeUri) {
-        logger.info("Creating workspace \"" + name + "\"");
-        return dms.createTopic(new TopicModel(uri, "dm4.workspaces.workspace", new ChildTopicsModel()
-            .put("dm4.workspaces.name", name)
-            .putRef("dm4.workspaces.type", workspaceTypeUri)
-        ));
+        logger.info(("Creating workspace \"" + name) + "\"");
+        return dms.createTopic(new TopicModel(uri, "dm4.workspaces.workspace", new ChildTopicsModel().put("dm4.workspaces.name", name).putRef("dm4.workspaces.type", workspaceTypeUri)));
     }
-
-
 
     // ****************************
     // *** Hook Implementations ***
     // ****************************
-
-
-
     /**
      * Creates the "Default" workspace.
      */
@@ -125,8 +109,6 @@ public class WorkspacesPlugin extends PluginActivator implements WorkspacesServi
     public void postInstall() {
         createWorkspace(DEFAULT_WORKSPACE_NAME, DEFAULT_WORKSPACE_URI, DEFAULT_WORKSPACE_TYPE_URI);
     }
-
-
 
     // ********************************
     // *** Listener Implementations ***
@@ -228,8 +210,6 @@ public class WorkspacesPlugin extends PluginActivator implements WorkspacesServi
         }
     }
 
-
-
     // ------------------------------------------------------------------------------------------------- Private Methods
 
     private long workspaceId() {
@@ -258,16 +238,16 @@ public class WorkspacesPlugin extends PluginActivator implements WorkspacesServi
     }
 
     // ---
-
     private void _assignToWorkspace(DeepaMehtaObject object, long workspaceId) {
         // 1) create assignment association
         // Note 1: we are refering to an existing workspace. So we must add a topic reference.
         // Note 2: workspace_facet is a multi-facet. So we must call addRef() (as opposed to putRef()).
         FacetValue value = new FacetValue("dm4.workspaces.workspace").addRef(workspaceId);
         facetsService.updateFacet(object, "dm4.workspaces.workspace_facet", value);
-        //
+        // 
         // 2) store assignment property
-        object.setProperty(PROP_WORKSPACE_ID, workspaceId, false);      // addToIndex=false
+        object.setProperty(PROP_WORKSPACE_ID, workspaceId, false);// addToIndex=false
+
     }
 
     // --- Helper ---

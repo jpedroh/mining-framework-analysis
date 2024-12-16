@@ -17,28 +17,27 @@ import de.deepamehta.core.model.TopicRoleModel;
 import de.deepamehta.core.service.Directive;
 import de.deepamehta.core.service.Directives;
 import de.deepamehta.core.service.ResultList;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.logging.Logger;
-
 
 
 /**
  * An association model that is attached to the DB.
  */
 class AttachedAssociation extends AttachedDeepaMehtaObject implements Association {
-
+    // ---------------------------------------------------------------------------------------------- Instance Variables
+    // attached object cache
     // ---------------------------------------------------------------------------------------------- Instance Variables
 
     private Role role1;     // attached object cache
+
+    // attached object cache
     private Role role2;     // attached object cache
 
     private Logger logger = Logger.getLogger(getClass().getName());
 
     // ---------------------------------------------------------------------------------------------------- Constructors
-
     AttachedAssociation(AssociationModel model, EmbeddedService dms) {
         super(model, dms);
         // init attached object cache
@@ -83,8 +82,6 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
         dms.fireEvent(CoreEvent.POST_UPDATE_ASSOCIATION, this, oldModel);
     }
 
-
-
     // === Deletion ===
 
     @Override
@@ -125,8 +122,6 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
             throw new RuntimeException("Deleting association failed (" + this + ")", e);
         }
     }
-
-
 
     // **********************************
     // *** Association Implementation ***
@@ -217,8 +212,6 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
         return (AssociationModel) super.getModel();
     }
 
-
-
     // ***************************************
     // *** DeepaMehtaObject Implementation ***
     // ***************************************
@@ -238,13 +231,11 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
     }
 
     // --- Association Retrieval ---
-
     @Override
-    public RelatedAssociation getRelatedAssociation(String assocTypeUri, String myRoleTypeUri,
-                                                    String othersRoleTypeUri, String othersAssocTypeUri) {
-        RelatedAssociationModel assoc = dms.storageDecorator.fetchAssociationRelatedAssociation(getId(),
-            assocTypeUri, myRoleTypeUri, othersRoleTypeUri, othersAssocTypeUri);
-        return assoc != null ? dms.instantiateRelatedAssociation(assoc, true) : null;   // checkAccess=true
+    public RelatedAssociation getRelatedAssociation(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, String othersAssocTypeUri) {
+        RelatedAssociationModel assoc = dms.storageDecorator.fetchAssociationRelatedAssociation(getId(), assocTypeUri, myRoleTypeUri, othersRoleTypeUri, othersAssocTypeUri);
+        // checkAccess=true
+        return assoc != null ? dms.instantiateRelatedAssociation(assoc, true) : null;
     }
 
     @Override
@@ -256,13 +247,11 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
     }
 
     // ---
-
     @Override
-    public Association getAssociation(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri,
-                                                                                   long othersTopicId) {
-        AssociationModel assoc = dms.storageDecorator.fetchAssociationBetweenTopicAndAssociation(assocTypeUri,
-            othersTopicId, getId(), othersRoleTypeUri, myRoleTypeUri);
-        return assoc != null ? dms.instantiateAssociation(assoc, true) : null;   // checkAccess=true
+    public Association getAssociation(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, long othersTopicId) {
+        AssociationModel assoc = dms.storageDecorator.fetchAssociationBetweenTopicAndAssociation(assocTypeUri, othersTopicId, getId(), othersRoleTypeUri, myRoleTypeUri);
+        // checkAccess=true
+        return assoc != null ? dms.instantiateAssociation(assoc, true) : null;
     }
 
     @Override
@@ -270,10 +259,7 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
         return dms.instantiateAssociations(dms.storageDecorator.fetchAssociationAssociations(getId()));
     }
 
-
-
     // === Properties ===
-
     @Override
     public void setProperty(String propUri, Object propValue, boolean addToIndex) {
         dms.storageDecorator.storeAssociationProperty(getId(), propUri, propValue, addToIndex);
@@ -284,8 +270,6 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
         dms.storageDecorator.removeAssociationProperty(getId(), propUri);
     }
 
-
-
     // ----------------------------------------------------------------------------------------- Package Private Methods
 
     /**
@@ -294,8 +278,6 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
     AssociationType getAssociationType() {
         return (AssociationType) getType();
     }
-
-
 
     // === Implementation of the abstract methods ===
 
@@ -336,8 +318,6 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
         return dms.storageDecorator.fetchAssociationRelatedTopics(getId(), assocTypeUri, myRoleTypeUri,
             othersRoleTypeUri, othersTopicTypeUri, maxResultSize);
     }
-
-
 
     // ------------------------------------------------------------------------------------------------- Private Methods
 

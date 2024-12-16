@@ -12,7 +12,16 @@ import de.deepamehta.core.model.TopicModel;
 import de.deepamehta.core.model.TopicRoleModel;
 import de.deepamehta.core.storage.spi.DeepaMehtaStorage;
 import de.deepamehta.core.storage.spi.DeepaMehtaTransaction;
-
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -22,73 +31,87 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
-import static org.neo4j.helpers.collection.MapUtil.stringMap;
 import org.neo4j.index.lucene.QueryContext;
 import org.neo4j.index.lucene.ValueContext;
-
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause.Occur;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
-
-import java.util.ArrayList;
 import static java.util.Arrays.asList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
+import static org.neo4j.helpers.collection.MapUtil.stringMap;
 
 
 public class Neo4jStorage implements DeepaMehtaStorage {
-
+    // ------------------------------------------------------------------------------------------------------- Constants
+    // --- DB Property Keys ---
     // ------------------------------------------------------------------------------------------------------- Constants
 
     // --- DB Property Keys ---
     private static final String KEY_NODE_TYPE = "node_type";
+
     private static final String KEY_VALUE     = "value";
 
     // --- Content Index Keys ---
+    // used as property key as well
+    // --- Content Index Keys ---
     private static final String KEY_URI      = "uri";                       // used as property key as well
+
+    // used as property key as well
     private static final String KEY_TPYE_URI = "type_uri";                  // used as property key as well
+
     private static final String KEY_FULLTEXT = "_fulltext_";
 
     // --- Association Metadata Index Keys ---
+    // --- Association Metadata Index Keys ---
     private static final String KEY_ASSOC_ID       = "assoc_id";
+
     private static final String KEY_ASSOC_TPYE_URI = "assoc_type_uri";
+
+    // role 1 & 2
+    // "1" or "2" is appended programatically
     // role 1 & 2
     private static final String KEY_ROLE_TPYE_URI   = "role_type_uri_";     // "1" or "2" is appended programatically
+
+    // "1" or "2" is appended programatically
     private static final String KEY_PLAYER_TPYE     = "player_type_";       // "1" or "2" is appended programatically
+
+    // "1" or "2" is appended programatically
     private static final String KEY_PLAYER_ID       = "player_id_";         // "1" or "2" is appended programatically
+
+    // "1" or "2" is appended programatically
     private static final String KEY_PLAYER_TYPE_URI = "player_type_uri_";   // "1" or "2" is appended programatically
 
     // ---------------------------------------------------------------------------------------------- Instance Variables
+    // ---------------------------------------------------------------------------------------------- Instance Variables
 
             GraphDatabaseService neo4j = null;
+
     private RelationtypeCache relTypeCache;
-    
+
+    // topic URI, topic type URI, topic value (index mode KEY), properties
     private Index<Node> topicContentExact;      // topic URI, topic type URI, topic value (index mode KEY), properties
+
+    // topic value (index modes FULLTEXT or FULLTEXT_KEY)
     private Index<Node> topicContentFulltext;   // topic value (index modes FULLTEXT or FULLTEXT_KEY)
+
+    // assoc URI, assoc type URI, assoc value (index mode KEY), properties
     private Index<Node> assocContentExact;      // assoc URI, assoc type URI, assoc value (index mode KEY), properties
+
+    // assoc value (index modes FULLTEXT or FULLTEXT_KEY)
     private Index<Node> assocContentFulltext;   // assoc value (index modes FULLTEXT or FULLTEXT_KEY)
+
     private Index<Node> assocMetadata;
 
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     // ---------------------------------------------------------------------------------------------------- Constructors
-
     Neo4jStorage(String databasePath) {
         try {
             this.neo4j = new GraphDatabaseFactory().newEmbeddedDatabase(databasePath);
             this.relTypeCache = new RelationtypeCache(neo4j);
             // indexes
-            this.topicContentExact    = createExactIndex("topic-content-exact");
+            this.topicContentExact = createExactIndex("topic-content-exact");
             this.topicContentFulltext = createFulltextIndex("topic-content-fulltext");
-            this.assocContentExact    = createExactIndex("assoc-content-exact");
+            this.assocContentExact = createExactIndex("assoc-content-exact");
             this.assocContentFulltext = createFulltextIndex("assoc-content-fulltext");
             this.assocMetadata = createExactIndex("assoc-metadata");
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             if (neo4j != null) {
                 shutdown();
             }
@@ -211,8 +234,6 @@ public class Neo4jStorage implements DeepaMehtaStorage {
         removeTopicFromIndex(topicNode);
     }
 
-
-
     // === Associations ===
 
     @Override
@@ -248,10 +269,7 @@ public class Neo4jStorage implements DeepaMehtaStorage {
     @Override
     public long[] fetchPlayerIds(long assocId) {
         List<Relationship> rels = fetchRelationships(fetchAssociationNode(assocId));
-        long[] playerIds = {
-            playerId(rels.get(0)),
-            playerId(rels.get(1))
-        };
+        long[] playerIds = new long[]{ playerId(rels.get(0)), playerId(rels.get(1)) };
         return playerIds;
     }
 
@@ -345,8 +363,6 @@ public class Neo4jStorage implements DeepaMehtaStorage {
         removeAssociationFromIndex(assocNode);  
     }
 
-
-
     // === Traversal ===
 
     @Override
@@ -425,10 +441,7 @@ public class Neo4jStorage implements DeepaMehtaStorage {
         ), id);
     }
 
-
-
     // === Properties ===
-
     @Override
     public Object fetchProperty(long id, String propUri) {
         return fetchNode(id).getProperty(propUri);
@@ -490,8 +503,6 @@ public class Neo4jStorage implements DeepaMehtaStorage {
         assocNode.removeProperty(propUri);
         removeAssociationPropertyFromIndex(assocNode, propUri);
     }
-
-
 
     // === DB ===
 
@@ -602,8 +613,6 @@ public class Neo4jStorage implements DeepaMehtaStorage {
     private Object getIndexValue(SimpleValue value, SimpleValue indexValue) {
         return indexValue != null ? indexValue.value() : value.value();
     }
-
-
 
     // === Indexing ===
 
@@ -834,20 +843,11 @@ public class Neo4jStorage implements DeepaMehtaStorage {
         }
     }
 
-
-
     // === Helper ===
-
     // --- Neo4j -> DeepaMehta Bridge ---
-
     TopicModel buildTopic(Node topicNode) {
-        return new TopicModel(
-            topicNode.getId(),
-            uri(topicNode),
-            typeUri(topicNode),
-            simpleValue(topicNode),
-            null    // childTopics=null
-        );
+        return // childTopics=null
+        new TopicModel(topicNode.getId(), uri(topicNode), typeUri(topicNode), simpleValue(topicNode), null);
     }
 
     private List<TopicModel> buildTopics(Iterable<Node> topicNodes) {
@@ -859,17 +859,10 @@ public class Neo4jStorage implements DeepaMehtaStorage {
     }
 
     // ---
-
     AssociationModel buildAssociation(Node assocNode) {
         List<RoleModel> roleModels = buildRoleModels(assocNode);
-        return new AssociationModel(
-            assocNode.getId(),
-            uri(assocNode),
-            typeUri(assocNode),
-            roleModels.get(0), roleModels.get(1),
-            simpleValue(assocNode),
-            null    // childTopics=null
-        );
+        return // childTopics=null
+        new AssociationModel(assocNode.getId(), uri(assocNode), typeUri(assocNode), roleModels.get(0), roleModels.get(1), simpleValue(assocNode), null);
     }
 
     private List<AssociationModel> buildAssociations(Iterable<Node> assocNodes) {
@@ -890,8 +883,6 @@ public class Neo4jStorage implements DeepaMehtaStorage {
         }
         return roleModels;
     }
-
-
 
     // --- DeepaMehta -> Neo4j Bridge ---
 
@@ -922,24 +913,19 @@ public class Neo4jStorage implements DeepaMehtaStorage {
         }
     }
 
-
-
     // --- Neo4j Helper ---
-
     private Relationship fetchRelationship(Node assocNode, long playerId) {
         List<Relationship> rels = fetchRelationships(assocNode);
         boolean match1 = playerId(rels.get(0)) == playerId;
         boolean match2 = playerId(rels.get(1)) == playerId;
         if (match1 && match2) {
-            throw new RuntimeException("Ambiguity: both players have ID " + playerId + " in association " +
-                assocNode.getId());
+            throw new RuntimeException((("Ambiguity: both players have ID " + playerId) + " in association ") + assocNode.getId());
         } else if (match1) {
             return rels.get(0);
         } else if (match2) {
             return rels.get(1);
         } else {
-            throw new IllegalArgumentException("ID " + playerId + " is not a player in association " +
-                assocNode.getId());
+            throw new IllegalArgumentException((("ID " + playerId) + " is not a player in association ") + assocNode.getId());
         }
     }
 
@@ -1038,8 +1024,6 @@ public class Neo4jStorage implements DeepaMehtaStorage {
     private SimpleValue simpleValue(Node node) {
         return new SimpleValue(node.getProperty(KEY_VALUE));
     }
-
-
 
     // --- DeepaMehta Helper ---
 

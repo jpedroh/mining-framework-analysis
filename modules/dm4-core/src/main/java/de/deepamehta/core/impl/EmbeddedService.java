@@ -28,13 +28,10 @@ import de.deepamehta.core.service.TypeStorage;
 import de.deepamehta.core.service.accesscontrol.AccessControl;
 import de.deepamehta.core.service.accesscontrol.AccessControlException;
 import de.deepamehta.core.storage.spi.DeepaMehtaTransaction;
-
-import org.osgi.framework.BundleContext;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-
+import org.osgi.framework.BundleContext;
 
 
 /**

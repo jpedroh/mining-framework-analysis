@@ -12,12 +12,9 @@ import de.deepamehta.core.model.RelatedTopicModel;
 import de.deepamehta.core.model.SimpleValue;
 import de.deepamehta.core.model.TopicModel;
 import de.deepamehta.core.service.ResultList;
-
-import org.codehaus.jettison.json.JSONObject;
-
 import java.util.List;
 import java.util.logging.Logger;
-
+import org.codehaus.jettison.json.JSONObject;
 
 
 /**
@@ -33,19 +30,20 @@ import java.util.logging.Logger;
  *  - storeXX()         Stores current value (model) to DB. ### FIXDOC
  */
 abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
-
+    // ---------------------------------------------------------------------------------------------- Instance Variables
+    // underlying model
     // ---------------------------------------------------------------------------------------------- Instance Variables
 
-    private DeepaMehtaObjectModel model;        // underlying model
+    private DeepaMehtaObjectModel model;            // underlying model
 
-    private AttachedChildTopics childTopics;    // attached object cache
+    // attached object cache
+    private AttachedChildTopics childTopics;
 
     protected final EmbeddedService dms;
 
     private Logger logger = Logger.getLogger(getClass().getName());
 
     // ---------------------------------------------------------------------------------------------------- Constructors
-
     AttachedDeepaMehtaObject(DeepaMehtaObjectModel model, EmbeddedService dms) {
         this.model = model;
         this.dms = dms;
@@ -136,7 +134,6 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     }
 
     // --- Child Topics ---
-
     @Override
     public AttachedChildTopics getChildTopics() {
         return childTopics;
@@ -146,13 +143,12 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     public void setChildTopics(ChildTopicsModel childTopics) {
         try {
             getChildTopics().update(childTopics);
-        } catch (Exception e) {
-            throw new RuntimeException("Setting the child topics failed (" + childTopics + ")", e);
+        } catch (java.lang.Exception e) {
+            throw new RuntimeException(("Setting the child topics failed (" + childTopics) + ")", e);
         }
     }
 
     // ---
-
     @Override
     public DeepaMehtaObject loadChildTopics() {
         getChildTopics().loadChildTopics();
@@ -172,8 +168,6 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
         return model;
     }
 
-
-
     // === Updating ===
 
     @Override
@@ -184,7 +178,6 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     }
 
     // ---
-
     @Override
     public void updateChildTopic(TopicModel newChildTopic, AssociationDefinition assocDef) {
         getChildTopics().updateChildTopics(newChildTopic, null, assocDef);
@@ -194,8 +187,6 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     public void updateChildTopics(List<TopicModel> newChildTopics, AssociationDefinition assocDef) {
         getChildTopics().updateChildTopics(null, newChildTopics, assocDef);
     }
-
-
 
     // === Deletion ===
 
@@ -219,18 +210,14 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
         }
     }
 
-
-
     // === Traversal ===
-
     // --- Topic Retrieval ---
-
     @Override
-    public RelatedTopic getRelatedTopic(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri,
-                                                                                   String othersTopicTypeUri) {
+    public RelatedTopic getRelatedTopic(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, String othersTopicTypeUri) {
         RelatedTopicModel topic = fetchRelatedTopic(assocTypeUri, myRoleTypeUri, othersRoleTypeUri, othersTopicTypeUri);
         // fetchRelatedTopic() is abstract
-        return topic != null ? dms.instantiateRelatedTopic(topic, true) : null;     // checkAccess=true
+        // checkAccess=true
+        return topic != null ? dms.instantiateRelatedTopic(topic, true) : null;
     }
 
     @Override
@@ -248,17 +235,11 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
 
     // Note: this method is implemented in the subclasses (this is an abstract class):
     //     getRelatedTopics(List assocTypeUris, ...)
-
     // --- Association Retrieval ---
-
     // Note: these methods are implemented in the subclasses (this is an abstract class):
-    //     getAssociation(...)
-    //     getAssociations()
-
-
-
+    // getAssociation(...)
+    // getAssociations()
     // === Properties ===
-
     @Override
     public Object getProperty(String propUri) {
         return dms.getProperty(getId(), propUri);
@@ -272,17 +253,11 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     // Note: these methods are implemented in the subclasses:
     //     setProperty(...)
     //     removeProperty(...)
-
-
-
     // === Misc ===
-
     @Override
     public Object getDatabaseVendorObject() {
         return dms.storageDecorator.getDatabaseVendorObject(getId());
     }
-
-
 
     // **********************************
     // *** JSONEnabled Implementation ***
@@ -294,8 +269,6 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     public JSONObject toJSON() {
         return model.toJSON();
     }
-
-
 
     // ****************
     // *** Java API ***
@@ -317,8 +290,6 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     public String toString() {
         return model.toString();
     }
-
-
 
     // ----------------------------------------------------------------------------------------- Package Private Methods
 

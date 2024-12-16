@@ -5,15 +5,10 @@ import de.deepamehta.core.model.DeepaMehtaObjectModel;
 import de.deepamehta.core.model.SimpleValue;
 import de.deepamehta.core.model.TopicModel;
 import de.deepamehta.core.service.ResultList;
-
 import java.util.List;
 
 
-
-public interface DeepaMehtaObject extends Identifiable, JSONEnabled {
-
-
-
+public interface DeepaMehtaObject extends Identifiable , JSONEnabled {
     // === Model ===
 
     // --- ID ---
@@ -37,27 +32,29 @@ public interface DeepaMehtaObject extends Identifiable, JSONEnabled {
     SimpleValue getSimpleValue();
 
     void setSimpleValue(String value);
+
     void setSimpleValue(int value);
+
     void setSimpleValue(long value);
+
     void setSimpleValue(boolean value);
+
     void setSimpleValue(SimpleValue value);
 
     // --- Child Topics ---
+    public abstract ChildTopics getChildTopics();
 
-    ChildTopics getChildTopics();
-
-    void setChildTopics(ChildTopicsModel childTopics);
+    public abstract void setChildTopics(ChildTopicsModel childTopics);
 
     // ---
 
     DeepaMehtaObject loadChildTopics();
+
     DeepaMehtaObject loadChildTopics(String childTypeUri);
 
     // ---
 
     DeepaMehtaObjectModel getModel();
-
-
 
     // === Updating ===
 
@@ -66,9 +63,8 @@ public interface DeepaMehtaObject extends Identifiable, JSONEnabled {
     // ---
 
     void updateChildTopic(TopicModel newChildTopic, AssociationDefinition assocDef);
+
     void updateChildTopics(List<TopicModel> newChildTopics, AssociationDefinition assocDef);
-
-
 
     // === Deletion ===
 
@@ -79,8 +75,6 @@ public interface DeepaMehtaObject extends Identifiable, JSONEnabled {
      * - all the remaining direct associations, e.g. "dm4.core.instantiation"
      */
     void delete();
-
-
 
     // === Traversal ===
 
@@ -107,7 +101,7 @@ public interface DeepaMehtaObject extends Identifiable, JSONEnabled {
      * @param   maxResultSize       Result size limit. Pass 0 for no limit.
      */
     ResultList<RelatedTopic> getRelatedTopics(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri,
-                                              String othersTopicTypeUri, int maxResultSize);
+                                    String othersTopicTypeUri, int maxResultSize);
 
     /**
      * @param   assocTypeUris       may *not* be null
@@ -116,7 +110,7 @@ public interface DeepaMehtaObject extends Identifiable, JSONEnabled {
      * @param   othersTopicTypeUri  may be null
      */
     ResultList<RelatedTopic> getRelatedTopics(List assocTypeUris, String myRoleTypeUri, String othersRoleTypeUri,
-                                              String othersTopicTypeUri, int maxResultSize);
+                                    String othersTopicTypeUri, int maxResultSize);
 
     // --- Association Retrieval ---
 
@@ -139,12 +133,9 @@ public interface DeepaMehtaObject extends Identifiable, JSONEnabled {
                                                           String othersRoleTypeUri, String othersAssocTypeUri);
 
     // ---
-
-    Association getAssociation(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, long othersTopicId);
+    public abstract Association getAssociation(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, long othersTopicId);
 
     List<Association> getAssociations();
-
-
 
     // === Properties ===
 
@@ -155,8 +146,6 @@ public interface DeepaMehtaObject extends Identifiable, JSONEnabled {
     void setProperty(String propUri, Object propValue, boolean addToIndex);
 
     void removeProperty(String propUri);
-
-
 
     // === Misc ===
 

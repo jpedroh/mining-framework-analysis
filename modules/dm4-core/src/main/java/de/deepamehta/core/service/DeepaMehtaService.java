@@ -14,9 +14,7 @@ import de.deepamehta.core.model.TopicTypeModel;
 import de.deepamehta.core.service.ResultList;
 import de.deepamehta.core.service.accesscontrol.AccessControl;
 import de.deepamehta.core.storage.spi.DeepaMehtaTransaction;
-
 import java.util.List;
-
 
 
 /**
@@ -34,9 +32,6 @@ import java.util.List;
  * DeepaMehta core service is available through the <code>dms</code> object.
  */
 public interface DeepaMehtaService {
-
-
-
     // === Topics ===
 
     Topic getTopic(long topicId);
@@ -87,8 +82,6 @@ public interface DeepaMehtaService {
 
     void deleteTopic(long topicId);
 
-
-
     // === Associations ===
 
     Association getAssociation(long assocId);
@@ -107,8 +100,7 @@ public interface DeepaMehtaService {
                                                     String topicRoleTypeUri, String assocRoleTypeUri);
 
     // ---
-
-    ResultList<RelatedAssociation> getAssociations(String assocTypeUri);
+    public abstract ResultList<RelatedAssociation> getAssociations(String assocTypeUri);
 
     /**
      * Returns all associations between two topics. If no such association exists an empty set is returned.
@@ -136,8 +128,6 @@ public interface DeepaMehtaService {
 
     void deleteAssociation(long assocId);
 
-
-
     // === Topic Types ===
 
     List<String> getTopicTypeUris();
@@ -153,8 +143,6 @@ public interface DeepaMehtaService {
     void updateTopicType(TopicTypeModel model);
 
     void deleteTopicType(String topicTypeUri);
-
-
 
     // === Association Types ===
 
@@ -172,13 +160,9 @@ public interface DeepaMehtaService {
 
     void deleteAssociationType(String assocTypeUri);
 
-
-
     // === Role Types ===
 
     Topic createRoleType(TopicModel model);
-
-
 
     // === Plugins ===
 
@@ -186,15 +170,11 @@ public interface DeepaMehtaService {
 
     List<PluginInfo> getPluginInfo();
 
-
-
     // === Events ===
 
     void fireEvent(DeepaMehtaEvent event, Object... params);
 
     void deliverEvent(String pluginUri, DeepaMehtaEvent event, Object... params);
-
-
 
     // === Properties ===
 
@@ -209,8 +189,7 @@ public interface DeepaMehtaService {
     boolean hasProperty(long id, String propUri);
 
     // ---
-
-    List<Topic> getTopicsByProperty(String propUri, Object propValue);
+    public abstract List<Topic> getTopicsByProperty(String propUri, Object propValue);
 
     List<Topic> getTopicsByPropertyRange(String propUri, Number from, Number to);
 
@@ -218,13 +197,13 @@ public interface DeepaMehtaService {
 
     List<Association> getAssociationsByPropertyRange(String propUri, Number from, Number to);
 
-
-
     // === Misc ===
 
     DeepaMehtaTransaction beginTx();
 
-    TypeStorage getTypeStorage();       // ### TODO: drop this
+    // ### TODO: drop this
+    public abstract TypeStorage getTypeStorage();
+
     AccessControl getAccessControl();   // ### TODO: drop this
 
     Object getDatabaseVendorObject();
