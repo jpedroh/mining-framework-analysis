@@ -17,14 +17,14 @@
  */
 package com.sun.syndication.feed.synd;
 
+import com.sun.syndication.feed.impl.ObjectBean;
+import com.sun.syndication.feed.module.DCSubject;
+import com.sun.syndication.feed.module.DCSubjectImpl;
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.syndication.feed.impl.ObjectBean;
-import com.sun.syndication.feed.module.DCSubject;
-import com.sun.syndication.feed.module.DCSubjectImpl;
 
 /**
  * Bean for categories of SyndFeedImpl feeds and entries.
@@ -33,17 +33,20 @@ import com.sun.syndication.feed.module.DCSubjectImpl;
  * @author Alejandro Abdelnur
  * 
  */
-public class SyndCategoryImpl implements Serializable, SyndCategory {
+public class SyndCategoryImpl implements Serializable , SyndCategory {
     private static final long serialVersionUID = -2151815243404151131L;
+
     private final ObjectBean objBean;
+
     private final DCSubject subject;
 
     /**
      * For implementations extending SyndContentImpl to be able to use the
      * ObjectBean functionality with extended interfaces.
      * <p>
-     * 
-     * @param subject the DC subject to wrap.
+     *
+     * @param subject
+     * 		the DC subject to wrap.
      */
     SyndCategoryImpl(final DCSubject subject) {
         objBean = new ObjectBean(SyndCategory.class, this);
@@ -121,7 +124,6 @@ public class SyndCategoryImpl implements Serializable, SyndCategory {
     /**
      * Default constructor. All properties are set to <b>null</b>.
      * <p>
-     * 
      */
     public SyndCategoryImpl() {
         this(new DCSubjectImpl());
@@ -174,7 +176,6 @@ public class SyndCategoryImpl implements Serializable, SyndCategory {
     public void setTaxonomyUri(final String taxonomyUri) {
         subject.setTaxonomyUri(taxonomyUri);
     }
-
 }
 
 /**
@@ -208,9 +209,9 @@ class SyndCategoryListFacade extends AbstractList<SyndCategory> {
     /**
      * Creates a facade list of categories on top the given subject list.
      * <P>
-     * 
-     * @param subjects the list of subjects to create the facade.
-     * 
+     *
+     * @param subjects
+     * 		the list of subjects to create the facade.
      */
     public SyndCategoryListFacade(final List<DCSubject> subjects) {
         this.subjects = subjects;
@@ -253,7 +254,7 @@ class SyndCategoryListFacade extends AbstractList<SyndCategory> {
      */
     @Override
     public SyndCategory set(final int index, final SyndCategory obj) {
-        final SyndCategoryImpl sCat = (SyndCategoryImpl) obj;
+        final SyndCategoryImpl sCat = ((SyndCategoryImpl) (obj));
         DCSubject subject;
         if (sCat != null) {
             subject = sCat.getSubject();
@@ -278,7 +279,7 @@ class SyndCategoryListFacade extends AbstractList<SyndCategory> {
      */
     @Override
     public void add(final int index, final SyndCategory obj) {
-        final SyndCategoryImpl sCat = (SyndCategoryImpl) obj;
+        final SyndCategoryImpl sCat = ((SyndCategoryImpl) (obj));
         DCSubject subject;
         if (sCat != null) {
             subject = sCat.getSubject();
@@ -333,5 +334,4 @@ class SyndCategoryListFacade extends AbstractList<SyndCategory> {
         }
         return sList;
     }
-
 }

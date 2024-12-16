@@ -16,18 +16,17 @@
  */
 package com.sun.syndication.feed.atom;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.jdom2.Element;
-
 import com.sun.syndication.feed.impl.ObjectBean;
 import com.sun.syndication.feed.module.Extendable;
 import com.sun.syndication.feed.module.Module;
 import com.sun.syndication.feed.module.impl.ModuleUtils;
 import com.sun.syndication.feed.synd.SyndPerson;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import org.jdom2.Element;
+
 
 /**
  * Bean for entry elements of Atom feeds.
@@ -36,31 +35,51 @@ import com.sun.syndication.feed.synd.SyndPerson;
  * @author Alejandro Abdelnur
  * @author Dave Johnson (updated for Atom 1.0)
  */
-public class Entry implements Cloneable, Serializable, Extendable {
+public class Entry implements Cloneable , Serializable , Extendable {
     private static final long serialVersionUID = 4874483180016783939L;
+
     private Content summary;
+
     private Content title;
+
+    // Atom 0.3 only
     private Date created; // Atom 0.3 only
+
+    // AKA issued
     private Date published; // AKA issued
+
+    // AKA modified
     private Date updated; // AKA modified
+
     private Feed source;
+
     private List<Link> alternateLinks;
+
     private List<SyndPerson> authors;
+
     private List<Category> categories;
+
     private List<Content> contents;
+
     private List<SyndPerson> contributors;
+
     private List<Element> foreignMarkup;
+
     private List<Module> modules;
+
     private List<Link> otherLinks;
+
     private final ObjectBean objBean;
+
     private String id;
+
     private String rights;
+
     private String xmlBase;
 
     /**
      * Default constructor. All properties are set to <b>null</b>.
      * <p>
-     * 
      */
     public Entry() {
         objBean = new ObjectBean(this.getClass(), this);

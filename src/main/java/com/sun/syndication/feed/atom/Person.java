@@ -16,15 +16,15 @@
  */
 package com.sun.syndication.feed.atom;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.sun.syndication.feed.impl.ObjectBean;
 import com.sun.syndication.feed.module.Extendable;
 import com.sun.syndication.feed.module.Module;
 import com.sun.syndication.feed.module.impl.ModuleUtils;
 import com.sun.syndication.feed.synd.SyndPerson;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Bean for person elements of Atom feeds.
@@ -33,22 +33,25 @@ import com.sun.syndication.feed.synd.SyndPerson;
  * @author Alejandro Abdelnur
  * @author Dave Johnson (updated for Atom 1.0)
  */
-public class Person implements SyndPerson, Cloneable, Serializable, Extendable {
-
+public class Person implements SyndPerson , Cloneable , Serializable , Extendable {
     private static final long serialVersionUID = 8853656713347735541L;
 
     private final ObjectBean objBean;
 
     private String name;
+
+    // since Atom 1.0 (was called url)
     private String uri; // since Atom 1.0 (was called url)
+
     private String uriResolved;
+
     private String email;
+
     private List<Module> modules;
 
     /**
      * Default constructor. All properties are set to <b>null</b>.
      * <p>
-     * 
      */
     public Person() {
         objBean = new ObjectBean(this.getClass(), this);
@@ -246,5 +249,4 @@ public class Person implements SyndPerson, Cloneable, Serializable, Extendable {
     public Module getModule(final String uri) {
         return ModuleUtils.getModule(modules, uri);
     }
-
 }

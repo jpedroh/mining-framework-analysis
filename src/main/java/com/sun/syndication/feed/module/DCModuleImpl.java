@@ -16,6 +16,9 @@
  */
 package com.sun.syndication.feed.module;
 
+import com.sun.syndication.feed.CopyFrom;
+import com.sun.syndication.feed.impl.CopyFromHelper;
+import com.sun.syndication.feed.impl.ObjectBean;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -25,9 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.sun.syndication.feed.CopyFrom;
-import com.sun.syndication.feed.impl.CopyFromHelper;
-import com.sun.syndication.feed.impl.ObjectBean;
 
 /**
  * Dublin Core ModuleImpl, default implementation.
@@ -40,21 +40,37 @@ import com.sun.syndication.feed.impl.ObjectBean;
  */
 public class DCModuleImpl extends ModuleImpl implements DCModule {
     private static final long serialVersionUID = -6502372914221178645L;
+
     private final ObjectBean objBean;
+
     private List<String> title;
+
     private List<String> creator;
+
     private List<DCSubject> subject;
+
     private List<String> description;
+
     private List<String> publisher;
+
     private List<String> contributors;
+
     private List<Date> date;
+
     private List<String> type;
+
     private List<String> format;
+
     private List<String> identifier;
+
     private List<String> source;
+
     private List<String> language;
+
     private List<String> relation;
+
     private List<String> coverage;
+
     private List<String> rights;
 
     /**
@@ -92,7 +108,6 @@ public class DCModuleImpl extends ModuleImpl implements DCModule {
     /**
      * Default constructor. All properties are set to <b>null</b>.
      * <p>
-     * 
      */
     public DCModuleImpl() {
         super(DCModule.class, URI);
@@ -137,7 +152,7 @@ public class DCModuleImpl extends ModuleImpl implements DCModule {
      */
     @Override
     public String getTitle() {
-        if (title != null && title.size() > 0) {
+        if ((title != null) && (title.size() > 0)) {
             return title.get(0);
         } else {
             return null;
@@ -196,7 +211,7 @@ public class DCModuleImpl extends ModuleImpl implements DCModule {
      */
     @Override
     public String getCreator() {
-        if (creator != null && creator.size() > 0) {
+        if ((creator != null) && (creator.size() > 0)) {
             return creator.get(0);
         } else {
             return null;
@@ -255,7 +270,7 @@ public class DCModuleImpl extends ModuleImpl implements DCModule {
      */
     @Override
     public DCSubject getSubject() {
-        if (subject != null && subject.size() > 0) {
+        if ((subject != null) && (subject.size() > 0)) {
             return subject.get(0);
         } else {
             return null;
@@ -314,7 +329,7 @@ public class DCModuleImpl extends ModuleImpl implements DCModule {
      */
     @Override
     public String getDescription() {
-        if (description != null && description.size() > 0) {
+        if ((description != null) && (description.size() > 0)) {
             return description.get(0);
         } else {
             return null;
@@ -374,7 +389,7 @@ public class DCModuleImpl extends ModuleImpl implements DCModule {
      */
     @Override
     public String getPublisher() {
-        if (publisher != null && publisher.size() > 0) {
+        if ((publisher != null) && (publisher.size() > 0)) {
             return publisher.get(0);
         } else {
             return null;
@@ -434,7 +449,7 @@ public class DCModuleImpl extends ModuleImpl implements DCModule {
      */
     @Override
     public String getContributor() {
-        if (contributors != null && contributors.size() > 0) {
+        if ((contributors != null) && (contributors.size() > 0)) {
             return contributors.get(0);
         } else {
             return null;
@@ -494,7 +509,7 @@ public class DCModuleImpl extends ModuleImpl implements DCModule {
      */
     @Override
     public Date getDate() {
-        if (date != null && date.size() > 0) {
+        if ((date != null) && (date.size() > 0)) {
             return date.get(0);
         } else {
             return null;
@@ -553,7 +568,7 @@ public class DCModuleImpl extends ModuleImpl implements DCModule {
      */
     @Override
     public String getType() {
-        if (type != null && type.size() > 0) {
+        if ((type != null) && (type.size() > 0)) {
             return type.get(0);
         } else {
             return null;
@@ -612,7 +627,7 @@ public class DCModuleImpl extends ModuleImpl implements DCModule {
      */
     @Override
     public String getFormat() {
-        if (format != null && format.size() > 0) {
+        if ((format != null) && (format.size() > 0)) {
             return format.get(0);
         } else {
             return null;
@@ -671,7 +686,7 @@ public class DCModuleImpl extends ModuleImpl implements DCModule {
      */
     @Override
     public String getIdentifier() {
-        if (identifier != null && identifier.size() > 0) {
+        if ((identifier != null) && (identifier.size() > 0)) {
             return identifier.get(0);
         } else {
             return null;
@@ -731,7 +746,7 @@ public class DCModuleImpl extends ModuleImpl implements DCModule {
      */
     @Override
     public String getSource() {
-        if (source != null && source.size() > 0) {
+        if ((source != null) && (source.size() > 0)) {
             return source.get(0);
         } else {
             return null;
@@ -790,7 +805,7 @@ public class DCModuleImpl extends ModuleImpl implements DCModule {
      */
     @Override
     public String getLanguage() {
-        if (language != null && language.size() > 0) {
+        if ((language != null) && (language.size() > 0)) {
             return language.get(0);
         } else {
             return null;
@@ -850,7 +865,7 @@ public class DCModuleImpl extends ModuleImpl implements DCModule {
      */
     @Override
     public String getRelation() {
-        if (relation != null && relation.size() > 0) {
+        if ((relation != null) && (relation.size() > 0)) {
             return relation.get(0);
         } else {
             return null;
@@ -910,7 +925,7 @@ public class DCModuleImpl extends ModuleImpl implements DCModule {
      */
     @Override
     public String getCoverage() {
-        if (coverage != null && coverage.size() > 0) {
+        if ((coverage != null) && (coverage.size() > 0)) {
             return coverage.get(0);
         } else {
             return null;
@@ -970,7 +985,7 @@ public class DCModuleImpl extends ModuleImpl implements DCModule {
      */
     @Override
     public String getRights() {
-        if (rights != null && rights.size() > 0) {
+        if ((rights != null) && (rights.size() > 0)) {
             return rights.get(0);
         } else {
             return null;
@@ -1059,25 +1074,23 @@ public class DCModuleImpl extends ModuleImpl implements DCModule {
 
     static {
         final Map<String, Class<?>> basePropInterfaceMap = new HashMap<String, Class<?>>();
-        basePropInterfaceMap.put("titles", String.class);
-        basePropInterfaceMap.put("creators", String.class);
+        basePropInterfaceMap.put("titles", java.lang.String.class);
+        basePropInterfaceMap.put("creators", java.lang.String.class);
         basePropInterfaceMap.put("subjects", DCSubject.class);
-        basePropInterfaceMap.put("descriptions", String.class);
-        basePropInterfaceMap.put("publishers", String.class);
-        basePropInterfaceMap.put("contributors", String.class);
+        basePropInterfaceMap.put("descriptions", java.lang.String.class);
+        basePropInterfaceMap.put("publishers", java.lang.String.class);
+        basePropInterfaceMap.put("contributors", java.lang.String.class);
         basePropInterfaceMap.put("dates", Date.class);
-        basePropInterfaceMap.put("types", String.class);
-        basePropInterfaceMap.put("formats", String.class);
-        basePropInterfaceMap.put("identifiers", String.class);
-        basePropInterfaceMap.put("sources", String.class);
-        basePropInterfaceMap.put("languages", String.class);
-        basePropInterfaceMap.put("relations", String.class);
-        basePropInterfaceMap.put("coverages", String.class);
-        basePropInterfaceMap.put("rightsList", String.class);
-
+        basePropInterfaceMap.put("types", java.lang.String.class);
+        basePropInterfaceMap.put("formats", java.lang.String.class);
+        basePropInterfaceMap.put("identifiers", java.lang.String.class);
+        basePropInterfaceMap.put("sources", java.lang.String.class);
+        basePropInterfaceMap.put("languages", java.lang.String.class);
+        basePropInterfaceMap.put("relations", java.lang.String.class);
+        basePropInterfaceMap.put("coverages", java.lang.String.class);
+        basePropInterfaceMap.put("rightsList", java.lang.String.class);
         final Map<Class<? extends CopyFrom<?>>, Class<?>> basePropClassImplMap = new HashMap<Class<? extends CopyFrom<?>>, Class<?>>();
         basePropClassImplMap.put(DCSubject.class, DCSubjectImpl.class);
-
         COPY_FROM_HELPER = new CopyFromHelper(DCModule.class, basePropInterfaceMap, basePropClassImplMap);
     }
 }

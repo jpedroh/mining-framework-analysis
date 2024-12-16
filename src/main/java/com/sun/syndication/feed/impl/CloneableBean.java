@@ -26,9 +26,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Set;
+
 
 /**
  * Provides deep <b>Bean</b> clonning support.
@@ -41,12 +42,23 @@ import java.util.Set;
  * @author Alejandro Abdelnur
  * 
  */
-public class CloneableBean implements Serializable, Cloneable {
+    // THIS IS NOT NEEDED, BASIC TYPES ARE INMUTABLE, TUCU 20040710
+    /**
+     * private Object cloneBasicType(Object value) throws Exception { Class
+     * pClass = value.getClass(); Class[] defType = (Class[])
+     * CONSTRUCTOR_BASIC_TYPES.get(pClass); Constructor cons =
+     * pClass.getDeclaredConstructor(defType); value = cons.newInstance(new
+     * Object[]{value}); return value; }
+     **/
+public class CloneableBean implements Serializable , Cloneable {
     private static final long serialVersionUID = -6520053043831187823L;
+
     private static final Class<?>[] NO_PARAMS_DEF = new Class[0];
+
     private static final Object[] NO_PARAMS = new Object[0];
 
     private final Object obj;
+
     private Set<String> ignoreProperties;
 
     /**
@@ -54,7 +66,6 @@ public class CloneableBean implements Serializable, Cloneable {
      * <p>
      * To be used by classes extending CloneableBean only.
      * <p>
-     * 
      */
     protected CloneableBean() {
         obj = this;
@@ -107,7 +118,7 @@ public class CloneableBean implements Serializable, Cloneable {
     public CloneableBean(final Object obj, final Set<String> ignoreProperties) {
         this.obj = obj;
         if (ignoreProperties == null) {
-            this.ignoreProperties = Collections.<String>emptySet();
+            this.ignoreProperties = Collections.emptySet();
         } else {
             this.ignoreProperties = ignoreProperties;
         }
@@ -153,45 +164,46 @@ public class CloneableBean implements Serializable, Cloneable {
                 for (int i = 0; i < pds.length; i++) {
                     final Method pReadMethod = pds[i].getReadMethod();
                     final Method pWriteMethod = pds[i].getWriteMethod();
-                    if (pReadMethod != null && pWriteMethod != null && // ensure
-                                                                       // it has
-                                                                       // getter
-                                                                       // and
-                                                                       // setter
-                                                                       // methods
-                            !ignoreProperties.contains(pds[i].getName()) && // is
-                            // not
-                            // in
-                            // the
-                            // list
-                            // of
-                            // properties
-                            // to
-                            // ignore
-                            pReadMethod.getDeclaringClass() != Object.class && // filter
-                                                                               // Object.class
-                                                                               // getter
-                                                                               // methods
-                            pReadMethod.getParameterTypes().length == 0) { // filter
-                                                                           // getter
-                                                                           // methods
-                                                                           // that
-                                                                           // take
-                                                                           // parameters
+                    if (// filter
+                    (// is
+                    (((pReadMethod != null) && (pWriteMethod != null))// ensure
+                     && // it has
+                                                                    // getter
+                                                                    // and
+                                                                    // setter
+                                                                    // methods
+                    (!ignoreProperties.contains(pds[i].getName()))) && // not
+                    // in
+                    // the
+                    // list
+                    // of
+                    // properties
+                    // to
+                    // ignore
+                    (pReadMethod.getDeclaringClass() != java.lang.Object.class)) && // Object.class
+                    // getter
+                    // methods
+                    (pReadMethod.getParameterTypes().length == 0)) {
+                        // filter
+                        // getter
+                        // methods
+                        // that
+                        // take
+                        // parameters
                         Object value = pReadMethod.invoke(obj, NO_PARAMS);
                         if (value != null) {
                             value = doClone(value);
-                            pWriteMethod.invoke(clonedBean, new Object[] { value });
+                            pWriteMethod.invoke(clonedBean, new Object[]{ value });
                         }
                     }
                 }
             }
-        } catch (final CloneNotSupportedException cnsEx) {
+        } catch (final java.lang.CloneNotSupportedException cnsEx) {
             throw cnsEx;
-        } catch (final Exception ex) {
+        } catch (final java.lang.Exception ex) {
             System.out.println(ex);
             ex.printStackTrace(System.out);
-            throw new CloneNotSupportedException("Cannot clone a " + obj.getClass() + " object");
+            throw new CloneNotSupportedException(("Cannot clone a " + obj.getClass()) + " object");
         }
         return clonedBean;
     }
@@ -201,22 +213,22 @@ public class CloneableBean implements Serializable, Cloneable {
         if (value != null) {
             final Class<?> vClass = value.getClass();
             if (vClass.isArray()) {
-                value = (T) cloneArray((T[]) value);
+                value = ((T) (cloneArray(((T[]) (value)))));
             } else if (value instanceof Collection) {
-                value = (T) cloneCollection((Collection<Object>) value);
+                value = ((T) (cloneCollection(((Collection<Object>) (value)))));
             } else if (value instanceof Map) {
-                value = (T) cloneMap((Map<Object, Object>) value);
+                value = ((T) (cloneMap(((Map<Object, Object>) (value)))));
             } else if (isBasicType(vClass)) {
                 // NOTHING SPECIAL TO DO HERE, THEY ARE INMUTABLE
             } else if (value instanceof Cloneable) {
                 final Method cloneMethod = vClass.getMethod("clone", NO_PARAMS_DEF);
                 if (Modifier.isPublic(cloneMethod.getModifiers())) {
-                    value = (T) cloneMethod.invoke(value, NO_PARAMS);
+                    value = ((T) (cloneMethod.invoke(value, NO_PARAMS)));
                 } else {
-                    throw new CloneNotSupportedException("Cannot clone a " + value.getClass() + " object, clone() is not public");
+                    throw new CloneNotSupportedException(("Cannot clone a " + value.getClass()) + " object, clone() is not public");
                 }
             } else {
-                throw new CloneNotSupportedException("Cannot clone a " + vClass.getName() + " object");
+                throw new CloneNotSupportedException(("Cannot clone a " + vClass.getName()) + " object");
             }
         }
         return value;
@@ -226,7 +238,7 @@ public class CloneableBean implements Serializable, Cloneable {
         final Class<?> elementClass = array.getClass().getComponentType();
         final int length = Array.getLength(array);
         @SuppressWarnings("unchecked")
-        final T[] newArray = (T[]) Array.newInstance(elementClass, length);
+        final T[] newArray = ((T[]) (Array.newInstance(elementClass, length)));
         for (int i = 0; i < length; i++) {
             Array.set(newArray, i, doClone(Array.get(array, i)));
         }
@@ -235,66 +247,56 @@ public class CloneableBean implements Serializable, Cloneable {
 
     private <T> Collection<T> cloneCollection(final Collection<T> collection) throws Exception {
         @SuppressWarnings("unchecked")
-        final Class<Collection<T>> mClass = (Class<Collection<T>>) collection.getClass();
-        final Collection<T> newColl = (Collection<T>) mClass.newInstance();
+        final Class<Collection<T>> mClass = ((Class<Collection<T>>) (collection.getClass()));
+        final Collection<T> newColl = ((Collection<T>) (mClass.newInstance()));
         final Iterator<T> i = collection.iterator();
         while (i.hasNext()) {
             newColl.add(doClone(i.next()));
-        }
+        } 
         return newColl;
     }
 
     private <S, T> Map<S, T> cloneMap(final Map<S, T> map) throws Exception {
         @SuppressWarnings("unchecked")
-        final Class<Map<S, T>> mClass = (Class<Map<S, T>>) map.getClass();
-        final Map<S, T> newMap = (Map<S, T>) mClass.newInstance();
+        final Class<Map<S, T>> mClass = ((Class<Map<S, T>>) (map.getClass()));
+        final Map<S, T> newMap = ((Map<S, T>) (mClass.newInstance()));
         final Iterator<Entry<S, T>> entries = map.entrySet().iterator();
         while (entries.hasNext()) {
-            final Map.Entry<S, T> entry = (Map.Entry<S, T>) entries.next();
+            final Map.Entry<S, T> entry = ((Map.Entry<S, T>) (entries.next()));
             newMap.put(doClone(entry.getKey()), doClone(entry.getValue()));
-        }
+        } 
         return newMap;
     }
 
     private static final Set<Class<?>> BASIC_TYPES = new HashSet<Class<?>>();
 
     static {
-        BASIC_TYPES.add(Boolean.class);
-        BASIC_TYPES.add(Byte.class);
-        BASIC_TYPES.add(Character.class);
-        BASIC_TYPES.add(Double.class);
-        BASIC_TYPES.add(Float.class);
-        BASIC_TYPES.add(Integer.class);
-        BASIC_TYPES.add(Long.class);
-        BASIC_TYPES.add(Short.class);
-        BASIC_TYPES.add(String.class);
+        BASIC_TYPES.add(java.lang.Boolean.class);
+        BASIC_TYPES.add(java.lang.Byte.class);
+        BASIC_TYPES.add(java.lang.Character.class);
+        BASIC_TYPES.add(java.lang.Double.class);
+        BASIC_TYPES.add(java.lang.Float.class);
+        BASIC_TYPES.add(java.lang.Integer.class);
+        BASIC_TYPES.add(java.lang.Long.class);
+        BASIC_TYPES.add(java.lang.Short.class);
+        BASIC_TYPES.add(java.lang.String.class);
     }
 
     private static final Map<Class<?>, Class<?>[]> CONSTRUCTOR_BASIC_TYPES = new HashMap<Class<?>, Class<?>[]>();
 
     static {
-        CONSTRUCTOR_BASIC_TYPES.put(Boolean.class, new Class[] { Boolean.TYPE });
-        CONSTRUCTOR_BASIC_TYPES.put(Byte.class, new Class[] { Byte.TYPE });
-        CONSTRUCTOR_BASIC_TYPES.put(Character.class, new Class[] { Character.TYPE });
-        CONSTRUCTOR_BASIC_TYPES.put(Double.class, new Class[] { Double.TYPE });
-        CONSTRUCTOR_BASIC_TYPES.put(Float.class, new Class[] { Float.TYPE });
-        CONSTRUCTOR_BASIC_TYPES.put(Integer.class, new Class[] { Integer.TYPE });
-        CONSTRUCTOR_BASIC_TYPES.put(Long.class, new Class[] { Long.TYPE });
-        CONSTRUCTOR_BASIC_TYPES.put(Short.class, new Class[] { Short.TYPE });
-        CONSTRUCTOR_BASIC_TYPES.put(String.class, new Class[] { String.class });
+        CONSTRUCTOR_BASIC_TYPES.put(java.lang.Boolean.class, new Class[]{ Boolean.TYPE });
+        CONSTRUCTOR_BASIC_TYPES.put(java.lang.Byte.class, new Class[]{ Byte.TYPE });
+        CONSTRUCTOR_BASIC_TYPES.put(java.lang.Character.class, new Class[]{ Character.TYPE });
+        CONSTRUCTOR_BASIC_TYPES.put(java.lang.Double.class, new Class[]{ Double.TYPE });
+        CONSTRUCTOR_BASIC_TYPES.put(java.lang.Float.class, new Class[]{ Float.TYPE });
+        CONSTRUCTOR_BASIC_TYPES.put(java.lang.Integer.class, new Class[]{ Integer.TYPE });
+        CONSTRUCTOR_BASIC_TYPES.put(java.lang.Long.class, new Class[]{ Long.TYPE });
+        CONSTRUCTOR_BASIC_TYPES.put(java.lang.Short.class, new Class[]{ Short.TYPE });
+        CONSTRUCTOR_BASIC_TYPES.put(java.lang.String.class, new Class[]{ java.lang.String.class });
     }
 
     private boolean isBasicType(final Class<?> vClass) {
         return BASIC_TYPES.contains(vClass);
     }
-
-    // THIS IS NOT NEEDED, BASIC TYPES ARE INMUTABLE, TUCU 20040710
-    /**
-     * private Object cloneBasicType(Object value) throws Exception { Class
-     * pClass = value.getClass(); Class[] defType = (Class[])
-     * CONSTRUCTOR_BASIC_TYPES.get(pClass); Constructor cons =
-     * pClass.getDeclaredConstructor(defType); value = cons.newInstance(new
-     * Object[]{value}); return value; }
-     **/
-
 }

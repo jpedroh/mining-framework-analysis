@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+
 /**
  * A helper class that parses Dates out of Strings with date time in RFC822 and
  * W3CDateTime formats plus the variants Atom (0.3) and RSS (0.9, 0.91, 0.92,
@@ -36,7 +37,6 @@ import java.util.TimeZone;
  * 
  */
 public class DateParser {
-
     private static String[] ADDITIONAL_MASKS;
 
     static {
@@ -49,7 +49,7 @@ public class DateParser {
     // the mask
     // so we have to check the most complete format first, then it fails with
     // exception
-    private static final String[] RFC822_MASKS = { "EEE, dd MMM yy HH:mm:ss z", "EEE, dd MMM yy HH:mm z", "dd MMM yy HH:mm:ss z", "dd MMM yy HH:mm z" };
+    private static final String[] RFC822_MASKS = new java.lang.String[]{ "EEE, dd MMM yy HH:mm:ss z", "EEE, dd MMM yy HH:mm z", "dd MMM yy HH:mm:ss z", "dd MMM yy HH:mm z" };
 
     // order is like this because the SimpleDateFormat.parse does not fail with
     // exception
@@ -57,18 +57,16 @@ public class DateParser {
     // the mask
     // so we have to check the most complete format first, then it fails with
     // exception
-    private static final String[] W3CDATETIME_MASKS = { "yyyy-MM-dd'T'HH:mm:ss.SSSz", "yyyy-MM-dd't'HH:mm:ss.SSSz", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-            "yyyy-MM-dd't'HH:mm:ss.SSS'z'", "yyyy-MM-dd'T'HH:mm:ssz", "yyyy-MM-dd't'HH:mm:ssz", "yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd't'HH:mm:ssZ",
-            "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd't'HH:mm:ss'z'", "yyyy-MM-dd'T'HH:mmz", // together
-                                                                                           // with
-                                                                                           // logic
-                                                                                           // in
-                                                                                           // the
-                                                                                           // parseW3CDateTime
-                                                                                           // they
-            "yyyy-MM'T'HH:mmz", // handle W3C dates without time forcing them to
-                                // be GMT
-            "yyyy'T'HH:mmz", "yyyy-MM-dd't'HH:mmz", "yyyy-MM-dd'T'HH:mm'Z'", "yyyy-MM-dd't'HH:mm'z'", "yyyy-MM-dd", "yyyy-MM", "yyyy" };
+    private static final String[] W3CDATETIME_MASKS = new java.lang.String[]{ "yyyy-MM-dd'T'HH:mm:ss.SSSz", "yyyy-MM-dd't'HH:mm:ss.SSSz", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "yyyy-MM-dd't'HH:mm:ss.SSS'z'", "yyyy-MM-dd'T'HH:mm:ssz", "yyyy-MM-dd't'HH:mm:ssz", "yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd't'HH:mm:ssZ", "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd't'HH:mm:ss'z'", "yyyy-MM-dd'T'HH:mmz"// together
+    , // with
+    // logic
+    // in
+    // the
+    // parseW3CDateTime
+    // they
+    "yyyy-MM'T'HH:mmz"// handle W3C dates without time forcing them to
+    , // be GMT
+    "yyyy'T'HH:mmz", "yyyy-MM-dd't'HH:mmz", "yyyy-MM-dd'T'HH:mm'Z'", "yyyy-MM-dd't'HH:mm'z'", "yyyy-MM-dd", "yyyy-MM", "yyyy" };
 
     /**
      * The masks used to validate and parse the input to this Atom date. These
@@ -76,15 +74,15 @@ public class DateParser {
      * are invalid according to the spec are indicated.
      */
     @SuppressWarnings("unused")
-    private static final String[] masks = { "yyyy-MM-dd'T'HH:mm:ss.SSSz", "yyyy-MM-dd't'HH:mm:ss.SSSz", // invalid
-            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "yyyy-MM-dd't'HH:mm:ss.SSS'z'", // invalid
-            "yyyy-MM-dd'T'HH:mm:ssz", "yyyy-MM-dd't'HH:mm:ssz", // invalid
-            "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd't'HH:mm:ss'z'", // invalid
-            "yyyy-MM-dd'T'HH:mmz", // invalid
-            "yyyy-MM-dd't'HH:mmz", // invalid
-            "yyyy-MM-dd'T'HH:mm'Z'", // invalid
-            "yyyy-MM-dd't'HH:mm'z'", // invalid
-            "yyyy-MM-dd", "yyyy-MM", "yyyy" };
+    private static final String[] masks = new java.lang.String[]{ "yyyy-MM-dd'T'HH:mm:ss.SSSz", "yyyy-MM-dd't'HH:mm:ss.SSSz"// invalid
+    , "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "yyyy-MM-dd't'HH:mm:ss.SSS'z'"// invalid
+    , "yyyy-MM-dd'T'HH:mm:ssz", "yyyy-MM-dd't'HH:mm:ssz"// invalid
+    , "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd't'HH:mm:ss'z'"// invalid
+    , "yyyy-MM-dd'T'HH:mmz"// invalid
+    , "yyyy-MM-dd't'HH:mmz"// invalid
+    , "yyyy-MM-dd'T'HH:mm'Z'"// invalid
+    , "yyyy-MM-dd't'HH:mm'z'"// invalid
+    , "yyyy-MM-dd", "yyyy-MM", "yyyy" };
 
     /**
      * Private constructor to avoid DateParser instances creation.
@@ -111,7 +109,7 @@ public class DateParser {
         }
         ParsePosition pp = null;
         Date d = null;
-        for (int i = 0; d == null && i < masks.length; i++) {
+        for (int i = 0; (d == null) && (i < masks.length); i++) {
             final DateFormat df = new SimpleDateFormat(masks[i], Locale.US);
             // df.setLenient(false);
             df.setLenient(true);
@@ -122,7 +120,7 @@ public class DateParser {
                     d = null;
                 }
                 // System.out.println("pp["+pp.getIndex()+"] s["+sDate+" m["+masks[i]+"] d["+d+"]");
-            } catch (final Exception ex1) {
+            } catch (final java.lang.Exception ex1) {
                 // System.out.println("s: "+sDate+" m: "+masks[i]+" d: "+null);
             }
         }
@@ -271,5 +269,4 @@ public class DateParser {
         dateFormater.setTimeZone(TimeZone.getTimeZone("GMT"));
         return dateFormater.format(date);
     }
-
 }

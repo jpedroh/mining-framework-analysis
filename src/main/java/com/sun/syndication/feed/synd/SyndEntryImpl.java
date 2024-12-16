@@ -16,18 +16,6 @@
  */
 package com.sun.syndication.feed.synd;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.jdom2.Element;
-
 import com.sun.syndication.feed.CopyFrom;
 import com.sun.syndication.feed.impl.CopyFromHelper;
 import com.sun.syndication.feed.impl.ObjectBean;
@@ -38,6 +26,17 @@ import com.sun.syndication.feed.module.SyModule;
 import com.sun.syndication.feed.module.SyModuleImpl;
 import com.sun.syndication.feed.module.impl.ModuleUtils;
 import com.sun.syndication.feed.synd.impl.URINormalizer;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.jdom2.Element;
+
 
 /**
  * Bean for entries of SyndFeedImpl feeds.
@@ -46,27 +45,47 @@ import com.sun.syndication.feed.synd.impl.URINormalizer;
  * @author Alejandro Abdelnur
  * 
  */
-public class SyndEntryImpl implements Serializable, SyndEntry {
+public class SyndEntryImpl implements Serializable , SyndEntry {
     private static final long serialVersionUID = 1944144041409866698L;
-    private final ObjectBean objBean;
-    private String uri;
-    private String link;
-    private Date updatedDate;
-    private SyndContent title;
-    private SyndContent description;
-    private List<SyndLink> links;
-    private List<SyndContent> contents; // deprecated by Atom 1.0
-    private List<Module> modules;
-    private List<SyndEnclosure> enclosures;
-    private List<SyndPerson> authors;
-    private List<SyndPerson> contributors;
-    private SyndFeed source;
-    private List<Element> foreignMarkup;
-    private Object wireEntry; // com.sun.syndication.feed.atom.Entry or
-                              // com.sun.syndication.feed.rss.Item
 
+    private final ObjectBean objBean;
+
+    private String uri;
+
+    private String link;
+
+    private Date updatedDate;
+
+    private SyndContent title;
+
+    private SyndContent description;
+
+    private List<SyndLink> links;
+
+    // deprecated by Atom 1.0
+    private List<SyndContent> contents; // deprecated by Atom 1.0
+
+    private List<Module> modules;
+
+    private List<SyndEnclosure> enclosures;
+
+    private List<SyndPerson> authors;
+
+    private List<SyndPerson> contributors;
+
+    private SyndFeed source;
+
+    private List<Element> foreignMarkup;
+
+    // com.sun.syndication.feed.atom.Entry or
+    private Object wireEntry; // com.sun.syndication.feed.atom.Entry or
+
+                            // com.sun.syndication.feed.rss.Item
     // ISSUE: some converters assume this is never null
-    private List<SyndCategory> categories = new ArrayList<SyndCategory>();
+                            // com.sun.syndication.feed.rss.Item
+
+                                // ISSUE: some converters assume this is never null
+                                private List<SyndCategory> categories = new ArrayList<SyndCategory>();
 
     private static final Set<String> IGNORE_PROPERTIES = new HashSet<String>();
 
@@ -503,21 +522,19 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
 
     static {
         final Map<String, Class<?>> basePropInterfaceMap = new HashMap<String, Class<?>>();
-        basePropInterfaceMap.put("uri", String.class);
-        basePropInterfaceMap.put("title", String.class);
-        basePropInterfaceMap.put("link", String.class);
-        basePropInterfaceMap.put("uri", String.class);
+        basePropInterfaceMap.put("uri", java.lang.String.class);
+        basePropInterfaceMap.put("title", java.lang.String.class);
+        basePropInterfaceMap.put("link", java.lang.String.class);
+        basePropInterfaceMap.put("uri", java.lang.String.class);
         basePropInterfaceMap.put("description", SyndContent.class);
         basePropInterfaceMap.put("contents", SyndContent.class);
         basePropInterfaceMap.put("enclosures", SyndEnclosure.class);
         basePropInterfaceMap.put("modules", Module.class);
-
         final Map<Class<? extends CopyFrom<?>>, Class<?>> basePropClassImplMap = new HashMap<Class<? extends CopyFrom<?>>, Class<?>>();
         basePropClassImplMap.put(SyndContent.class, SyndContentImpl.class);
         basePropClassImplMap.put(SyndEnclosure.class, SyndEnclosureImpl.class);
         basePropClassImplMap.put(DCModule.class, DCModuleImpl.class);
         basePropClassImplMap.put(SyModule.class, SyModuleImpl.class);
-
         COPY_FROM_HELPER = new CopyFromHelper(SyndEntry.class, basePropInterfaceMap, basePropClassImplMap);
     }
 

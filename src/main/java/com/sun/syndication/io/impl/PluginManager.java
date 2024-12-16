@@ -16,6 +16,10 @@
  */
 package com.sun.syndication.io.impl;
 
+import com.sun.syndication.io.DelegatingModuleGenerator;
+import com.sun.syndication.io.DelegatingModuleParser;
+import com.sun.syndication.io.WireFeedGenerator;
+import com.sun.syndication.io.WireFeedParser;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,10 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.sun.syndication.io.DelegatingModuleGenerator;
-import com.sun.syndication.io.DelegatingModuleParser;
-import com.sun.syndication.io.WireFeedGenerator;
-import com.sun.syndication.io.WireFeedParser;
 
 /**
  * <p>
@@ -36,18 +36,23 @@ import com.sun.syndication.io.WireFeedParser;
  */
 public abstract class PluginManager<T> {
     private final String[] propertyValues;
+
     private Map<String, T> pluginsMap;
+
     private List<T> pluginsList;
+
     private final List<String> keys;
+
     private final WireFeedParser parentParser;
+
     private final WireFeedGenerator parentGenerator;
 
     /**
      * Creates a PluginManager
      * <p>
-     * 
-     * @param propertyKey property key defining the plugins classes
-     * 
+     *
+     * @param propertyKey
+     * 		property key defining the plugins classes
      */
     protected PluginManager(final String propertyKey) {
         this(propertyKey, null, null);
@@ -82,7 +87,6 @@ public abstract class PluginManager<T> {
     }
 
     // PRIVATE - LOADER PART
-
     private void loadPlugins() {
         final List<T> finalPluginsList = new ArrayList<T>();
         pluginsList = new ArrayList<T>();
@@ -94,33 +98,33 @@ public abstract class PluginManager<T> {
                 className = classe.getName();
                 final T plugin = classe.newInstance();
                 if (plugin instanceof DelegatingModuleParser) {
-                    ((DelegatingModuleParser) plugin).setFeedParser(parentParser);
+                    ((DelegatingModuleParser) (plugin)).setFeedParser(parentParser);
                 }
                 if (plugin instanceof DelegatingModuleGenerator) {
-                    ((DelegatingModuleGenerator) plugin).setFeedGenerator(parentGenerator);
+                    ((DelegatingModuleGenerator) (plugin)).setFeedGenerator(parentGenerator);
                 }
-
                 pluginsMap.put(getKey(plugin), plugin);
-                pluginsList.add(plugin); // to preserve the order of
-                                         // definition
+                // to preserve the order of
+                pluginsList.add(plugin);
+                                        // definition
                 // in the rome.properties files
             }
             Iterator<T> i = pluginsMap.values().iterator();
             while (i.hasNext()) {
-                finalPluginsList.add(i.next()); // to remove overridden plugin
+                // to remove overridden plugin
+                finalPluginsList.add(i.next());
                                                 // impls
-            }
-
+            } 
             i = pluginsList.iterator();
             while (i.hasNext()) {
                 final Object plugin = i.next();
                 if (!finalPluginsList.contains(plugin)) {
                     i.remove();
                 }
-            }
-        } catch (final Exception ex) {
+            } 
+        } catch (final java.lang.Exception ex) {
             throw new RuntimeException("could not instantiate plugin " + className, ex);
-        } catch (final ExceptionInInitializerError er) {
+        } catch (final java.lang.ExceptionInInitializerError er) {
             throw new RuntimeException("could not instantiate plugin " + className, er);
         }
     }
@@ -140,23 +144,22 @@ public abstract class PluginManager<T> {
      *             failure is ON.
      * 
      */
-    @SuppressWarnings("unchecked")
     private Class<T>[] getClasses() throws ClassNotFoundException {
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final List<Class<T>> classes = new ArrayList<Class<T>>();
         final boolean useLoadClass = Boolean.valueOf(System.getProperty("rome.pluginmanager.useloadclass", "false")).booleanValue();
         for (final String propertyValue : propertyValues) {
-            final Class<T> mClass;
+            final Class mClass;
             if (useLoadClass) {
-                mClass = (Class<T>) classLoader.loadClass(propertyValue);
+                mClass = classLoader.loadClass(propertyValue);
             } else {
-                mClass = (Class<T>) Class.forName(propertyValue, true, classLoader);
+                mClass = Class.forName(propertyValue, true, classLoader);
             }
             classes.add(mClass);
         }
-        final Class<T>[] array = (Class<T>[]) new Class[classes.size()];
+        @SuppressWarnings("unchecked")
+        final Class<T>[] array = ((Class<T>[]) (new Class[classes.size()]));
         classes.toArray(array);
         return array;
     }
-
 }

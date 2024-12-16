@@ -16,11 +16,11 @@
  */
 package com.sun.syndication.feed.atom;
 
+import com.sun.syndication.feed.impl.ObjectBean;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.sun.syndication.feed.impl.ObjectBean;
 
 /**
  * Bean for content elements of Atom feeds.
@@ -29,13 +29,15 @@ import com.sun.syndication.feed.impl.ObjectBean;
  * @author Alejandro Abdelnur
  * @author Dave Johnson (updated for Atom 1.0)
  */
-public class Content implements Cloneable, Serializable {
+public class Content implements Cloneable , Serializable {
     private static final long serialVersionUID = 2036205883043031310L;
 
     private final ObjectBean objBean;
 
     private String type;
+
     private String value;
+
     private String src;
 
     /** @since Atom 1.0 */
@@ -57,7 +59,9 @@ public class Content implements Cloneable, Serializable {
     public static final String ESCAPED = "escaped";
 
     private String mode;
+
     private static final Set<String> MODES = new HashSet<String>();
+
     static {
         MODES.add(XML);
         MODES.add(BASE64);
@@ -67,7 +71,6 @@ public class Content implements Cloneable, Serializable {
     /**
      * Default constructor. All properties are set to <b>null</b>.
      * <p>
-     * 
      */
     public Content() {
         objBean = new ObjectBean(this.getClass(), this);
@@ -178,8 +181,8 @@ public class Content implements Cloneable, Serializable {
         if (mode != null) {
             mode = mode.toLowerCase();
         }
-        if (mode == null || !MODES.contains(mode)) {
-            throw new IllegalArgumentException("Invalid mode [" + mode + "]");
+        if ((mode == null) || (!MODES.contains(mode))) {
+            throw new IllegalArgumentException(("Invalid mode [" + mode) + "]");
         }
         this.mode = mode;
     }

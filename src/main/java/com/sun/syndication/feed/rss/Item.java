@@ -17,17 +17,16 @@
  */
 package com.sun.syndication.feed.rss;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.jdom2.Element;
-
 import com.sun.syndication.feed.impl.ObjectBean;
 import com.sun.syndication.feed.module.Extendable;
 import com.sun.syndication.feed.module.Module;
 import com.sun.syndication.feed.module.impl.ModuleUtils;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import org.jdom2.Element;
+
 
 /**
  * Bean for items of RSS feeds.
@@ -41,29 +40,44 @@ import com.sun.syndication.feed.module.impl.ModuleUtils;
  * @author Alejandro Abdelnur
  * 
  */
-public class Item implements Cloneable, Serializable, Extendable {
+public class Item implements Cloneable , Serializable , Extendable {
     private static final long serialVersionUID = 3741763947754555947L;
+
     private final ObjectBean objBean;
+
     private String title;
+
     private String link;
+
     private String uri;
+
     private Description description;
+
     private Content content;
+
     private Source source;
+
     private List<Enclosure> enclosures;
+
     private List<Category> categories;
+
     private Guid guid;
+
     private String comments;
+
     private String author;
+
     private Date pubDate;
+
     private Date expirationDate;
+
     private List<Module> modules;
+
     private List<Element> foreignMarkup;
 
     /**
      * Default constructor. All properties are set to <b>null</b>.
      * <p>
-     * 
      */
     public Item() {
         objBean = new ObjectBean(this.getClass(), this);
@@ -508,5 +522,4 @@ public class Item implements Cloneable, Serializable, Extendable {
     public void setForeignMarkup(final List<Element> foreignMarkup) {
         this.foreignMarkup = foreignMarkup;
     }
-
 }

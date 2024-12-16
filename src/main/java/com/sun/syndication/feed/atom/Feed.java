@@ -16,14 +16,14 @@
  */
 package com.sun.syndication.feed.atom;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import com.sun.syndication.feed.WireFeed;
 import com.sun.syndication.feed.module.Module;
 import com.sun.syndication.feed.module.impl.ModuleUtils;
 import com.sun.syndication.feed.synd.SyndPerson;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 
 /**
  * Bean for Atom feeds.
@@ -36,30 +36,50 @@ import com.sun.syndication.feed.synd.SyndPerson;
  */
 public class Feed extends WireFeed {
     private static final long serialVersionUID = -9175445106675422528L;
+
     private String xmlBase;
+
     private List<Category> categories;
+
     private List<SyndPerson> authors;
+
     private List<SyndPerson> contributors;
+
     private Generator generator;
+
     private String icon;
+
     private String id;
+
     private String logo;
+
+    // AKA copyright
     private String rights; // AKA copyright
+
+    // AKA tagline
     private Content subtitle; // AKA tagline
+
     private Content title;
+
+    // AKA modified
     private Date updated; // AKA modified
+
     private List<Link> alternateLinks;
+
     private List<Link> otherLinks;
+
     private List<Entry> entries;
 
     private List<Module> modules;
 
+    // Atom 0.3 only
     private Content info; // Atom 0.3 only
+
+    // Atom 0.3 only
     private String language; // Atom 0.3 only
 
     /**
      * Default constructor, for bean cloning purposes only.
-     * 
      */
     public Feed() {
     }
@@ -68,9 +88,9 @@ public class Feed extends WireFeed {
      * Feed Constructor. All properties, except the type, are set to
      * <b>null</b>.
      * <p>
-     * 
-     * @param type the type of the Atom feed.
-     * 
+     *
+     * @param type
+     * 		the type of the Atom feed.
      */
     public Feed(final String type) {
         super(type);
@@ -156,7 +176,10 @@ public class Feed extends WireFeed {
      *         list if none.
      */
     public List<Link> getAlternateLinks() {
-        return alternateLinks == null ? (alternateLinks = new ArrayList<Link>()) : alternateLinks;
+        if (alternateLinks == null) {
+            alternateLinks = new ArrayList<Link>();
+        }
+        return alternateLinks;
     }
 
     /**
@@ -178,7 +201,10 @@ public class Feed extends WireFeed {
      *         ones), an empty list if none.
      */
     public List<Link> getOtherLinks() {
-        return otherLinks == null ? (otherLinks = new ArrayList<Link>()) : otherLinks;
+        if (otherLinks == null) {
+            otherLinks = new ArrayList<Link>();
+        }
+        return otherLinks;
     }
 
     /**
@@ -381,7 +407,10 @@ public class Feed extends WireFeed {
      * 
      */
     public List<Entry> getEntries() {
-        return entries == null ? (entries = new ArrayList<Entry>()) : entries;
+        if (entries == null) {
+            entries = new ArrayList<Entry>();
+        }
+        return entries;
     }
 
     /**
@@ -406,7 +435,10 @@ public class Feed extends WireFeed {
      */
     @Override
     public List<Module> getModules() {
-        return modules == null ? (modules = new ArrayList<Module>()) : modules;
+        if (modules == null) {
+            modules = new ArrayList<Module>();
+        }
+        return modules;
     }
 
     /**
@@ -442,7 +474,10 @@ public class Feed extends WireFeed {
      * @since Atom 1.0
      */
     public List<Category> getCategories() {
-        return categories == null ? (categories = new ArrayList<Category>()) : categories;
+        if (categories == null) {
+            categories = new ArrayList<Category>();
+        }
+        return categories;
     }
 
     /**

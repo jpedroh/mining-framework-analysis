@@ -16,9 +16,9 @@
  */
 package com.sun.syndication.feed.atom;
 
+import com.sun.syndication.feed.impl.ObjectBean;
 import java.io.Serializable;
 
-import com.sun.syndication.feed.impl.ObjectBean;
 
 /**
  * Bean for category elements of Atom feeds.
@@ -26,20 +26,22 @@ import com.sun.syndication.feed.impl.ObjectBean;
  * 
  * @author Dave Johnson (added for Atom 1.0)
  */
-public class Category implements Cloneable, Serializable {
+public class Category implements Cloneable , Serializable {
     private static final long serialVersionUID = -2034251366664065410L;
 
     private final ObjectBean objBean;
 
     private String term;
+
     private String scheme;
+
     private String schemeResolved;
+
     private String label;
 
     /**
      * Default constructor. All properties are set to <b>null</b>.
      * <p>
-     * 
      */
     public Category() {
         objBean = new ObjectBean(this.getClass(), this);

@@ -17,6 +17,9 @@
  */
 package com.sun.syndication.feed.rss;
 
+import com.sun.syndication.feed.WireFeed;
+import com.sun.syndication.feed.module.Module;
+import com.sun.syndication.feed.module.impl.ModuleUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -24,9 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.sun.syndication.feed.WireFeed;
-import com.sun.syndication.feed.module.Module;
-import com.sun.syndication.feed.module.impl.ModuleUtils;
 
 /**
  * Bean for RSS feeds.
@@ -40,12 +40,19 @@ import com.sun.syndication.feed.module.impl.ModuleUtils;
  */
 public class Channel extends WireFeed {
     private static final long serialVersionUID = 745207486449728472L;
+
     public static final String SUNDAY = "sunday";
+
     public static final String MONDAY = "monday";
+
     public static final String TUESDAY = "tuesday";
+
     public static final String WEDNESDAY = "wednesday";
+
     public static final String THURSDAY = "thursday";
+
     public static final String FRIDAY = "friday";
+
     public static final String SATURDAY = "saturday";
 
     private static final Set<String> DAYS;
@@ -63,31 +70,51 @@ public class Channel extends WireFeed {
     }
 
     private String title;
+
     private String description;
+
     private String link;
+
     private String uri;
+
     private Image image;
+
     private List<Item> items;
+
     private TextInput textInput;
+
     private String language;
+
     private String rating;
+
     private String copyright;
+
     private Date pubDate;
+
     private Date lastBuildDate;
+
     private String docs;
+
     private String managingEditor;
+
     private String webMaster;
+
     private List<Integer> skipHours;
+
     private List<String> skipDays;
+
     private Cloud cloud;
+
     private List<Category> categories;
+
     private String generator;
+
     private int ttl = -1;
+
     private List<Module> modules;
 
     /**
      * Default constructor, for bean cloning purposes only.
-     * 
      */
     public Channel() {
     }
@@ -96,9 +123,9 @@ public class Channel extends WireFeed {
      * Channel Constructor. All properties, except the type, are set to
      * <b>null</b>.
      * <p>
-     * 
-     * @param type the type of the RSS feed.
-     * 
+     *
+     * @param type
+     * 		the type of the RSS feed.
      */
     public Channel(final String type) {
         super(type);
@@ -671,5 +698,4 @@ public class Channel extends WireFeed {
     public Module getModule(final String uri) {
         return ModuleUtils.getModule(modules, uri);
     }
-
 }

@@ -16,9 +16,9 @@
  */
 package com.sun.syndication.feed.atom;
 
+import com.sun.syndication.feed.impl.ObjectBean;
 import java.io.Serializable;
 
-import com.sun.syndication.feed.impl.ObjectBean;
 
 /**
  * Bean for link elements of Atom feeds.
@@ -27,23 +27,28 @@ import com.sun.syndication.feed.impl.ObjectBean;
  * @author Alejandro Abdelnur
  * @author Dave Johnson (updated for Atom 1.0)
  */
-public class Link implements Cloneable, Serializable {
+public class Link implements Cloneable , Serializable {
     private static final long serialVersionUID = 670365139518027828L;
 
     private final ObjectBean objBean;
 
     private String href;
+
     private String hrefResolved;
+
     private String rel = "alternate";
+
     private String type;
+
     private String hreflang;
+
     private String title;
+
     private long length;
 
     /**
      * Default constructor. All properties are set to <b>null</b>.
      * <p>
-     * 
      */
     public Link() {
         objBean = new ObjectBean(this.getClass(), this);

@@ -16,6 +16,8 @@
  */
 package com.sun.syndication.io;
 
+import com.sun.syndication.feed.WireFeed;
+import com.sun.syndication.io.impl.FeedGenerators;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,15 +25,12 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
-
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.output.DOMOutputter;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
-import com.sun.syndication.feed.WireFeed;
-import com.sun.syndication.io.impl.FeedGenerators;
 
 /**
  * Generates an XML document (String, File, OutputStream, Writer, W3C DOM
@@ -49,8 +48,8 @@ public class WireFeedOutput {
     private static Map<ClassLoader, FeedGenerators> clMap = new WeakHashMap<ClassLoader, FeedGenerators>();
 
     private static FeedGenerators getFeedGenerators() {
-        synchronized (WireFeedOutput.class) {
-            FeedGenerators generators = (FeedGenerators) clMap.get(Thread.currentThread().getContextClassLoader());
+        synchronized(WireFeedOutput.class) {
+            FeedGenerators generators = ((FeedGenerators) (clMap.get(Thread.currentThread().getContextClassLoader())));
             if (generators == null) {
                 generators = new FeedGenerators();
                 clMap.put(Thread.currentThread().getContextClassLoader(), generators);
@@ -75,7 +74,6 @@ public class WireFeedOutput {
     /**
      * Creates a FeedOuput instance.
      * <p>
-     * 
      */
     public WireFeedOutput() {
     }
@@ -334,5 +332,4 @@ public class WireFeedOutput {
         }
         return generator.generate(feed);
     }
-
 }

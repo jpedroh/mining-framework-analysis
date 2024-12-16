@@ -16,23 +16,6 @@
  */
 package com.sun.syndication.io.impl;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import org.jdom2.Attribute;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.Namespace;
-import org.jdom2.Parent;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.output.XMLOutputter;
-
 import com.sun.syndication.feed.WireFeed;
 import com.sun.syndication.feed.atom.Category;
 import com.sun.syndication.feed.atom.Content;
@@ -45,6 +28,22 @@ import com.sun.syndication.feed.synd.SyndPerson;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.WireFeedInput;
 import com.sun.syndication.io.WireFeedOutput;
+import java.io.IOException;
+import java.io.Reader;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Pattern;
+import org.jdom2.Attribute;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
+import org.jdom2.Parent;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
+
 
 /**
  * Parser for Atom 1.0
@@ -53,6 +52,7 @@ import com.sun.syndication.io.WireFeedOutput;
  */
 public class Atom10Parser extends BaseWireFeedParser {
     private static final String ATOM_10_URI = "http://www.w3.org/2005/Atom";
+
     private static final Namespace ATOM_10_NS = Namespace.getNamespace(ATOM_10_URI);
 
     private static boolean resolveURIs = false;
@@ -134,8 +134,7 @@ public class Atom10Parser extends BaseWireFeedParser {
     }
 
     private Feed parseFeedMetadata(final String baseURI, final Element eFeed) {
-        final com.sun.syndication.feed.atom.Feed feed = new com.sun.syndication.feed.atom.Feed(getType());
-
+        final Feed feed = new Feed(getType());
         Element e = eFeed.getChild("title", getAtomNamespace());
         if (e != null) {
             final Content c = new Content();
@@ -143,24 +142,19 @@ public class Atom10Parser extends BaseWireFeedParser {
             c.setType(getAttributeValue(e, "type"));
             feed.setTitleEx(c);
         }
-
         List<Element> eList = eFeed.getChildren("link", getAtomNamespace());
         feed.setAlternateLinks(parseAlternateLinks(feed, null, baseURI, eList));
         feed.setOtherLinks(parseOtherLinks(feed, null, baseURI, eList));
-
         final List<Element> cList = eFeed.getChildren("category", getAtomNamespace());
         feed.setCategories(parseCategories(baseURI, cList));
-
         eList = eFeed.getChildren("author", getAtomNamespace());
         if (eList.size() > 0) {
             feed.setAuthors(parsePersons(baseURI, eList));
         }
-
         eList = eFeed.getChildren("contributor", getAtomNamespace());
         if (eList.size() > 0) {
             feed.setContributors(parsePersons(baseURI, eList));
         }
-
         e = eFeed.getChild("subtitle", getAtomNamespace());
         if (e != null) {
             final Content subtitle = new Content();
@@ -168,12 +162,10 @@ public class Atom10Parser extends BaseWireFeedParser {
             subtitle.setType(getAttributeValue(e, "type"));
             feed.setSubtitle(subtitle);
         }
-
         e = eFeed.getChild("id", getAtomNamespace());
         if (e != null) {
             feed.setId(e.getText());
         }
-
         e = eFeed.getChild("generator", getAtomNamespace());
         if (e != null) {
             final Generator gen = new Generator();
@@ -188,27 +180,22 @@ public class Atom10Parser extends BaseWireFeedParser {
             }
             feed.setGenerator(gen);
         }
-
         e = eFeed.getChild("rights", getAtomNamespace());
         if (e != null) {
             feed.setRights(parseTextConstructToString(e));
         }
-
         e = eFeed.getChild("icon", getAtomNamespace());
         if (e != null) {
             feed.setIcon(e.getText());
         }
-
         e = eFeed.getChild("logo", getAtomNamespace());
         if (e != null) {
             feed.setLogo(e.getText());
         }
-
         e = eFeed.getChild("updated", getAtomNamespace());
         if (e != null) {
             feed.setUpdated(DateParser.parseDate(e.getText()));
         }
-
         return feed;
     }
 
@@ -253,7 +240,7 @@ public class Atom10Parser extends BaseWireFeedParser {
         for (int i = 0; i < eLinks.size(); i++) {
             final Element eLink = eLinks.get(i);
             final Link link = parseLink(feed, entry, baseURI, eLink);
-            if (link.getRel() == null || "".equals(link.getRel().trim()) || "alternate".equals(link.getRel())) {
+            if (((link.getRel() == null) || "".equals(link.getRel().trim())) || "alternate".equals(link.getRel())) {
                 links.add(link);
             }
         }
@@ -331,7 +318,7 @@ public class Atom10Parser extends BaseWireFeedParser {
         if (type == null) {
             type = Content.TEXT;
         }
-        if (type.equals(Content.XHTML) || type.indexOf("/xml") != -1 || type.indexOf("+xml") != -1) {
+        if ((type.equals(Content.XHTML) || (type.indexOf("/xml") != (-1))) || (type.indexOf("+xml") != (-1))) {
             // XHTML content needs special handling
             final XMLOutputter outputter = new XMLOutputter();
             final List<org.jdom2.Content> eContent = e.getContent();
@@ -339,12 +326,12 @@ public class Atom10Parser extends BaseWireFeedParser {
             while (i.hasNext()) {
                 final org.jdom2.Content c = i.next();
                 if (c instanceof Element) {
-                    final Element eC = (Element) c;
+                    final Element eC = ((Element) (c));
                     if (eC.getNamespace().equals(getAtomNamespace())) {
-                        ((Element) c).setNamespace(Namespace.NO_NAMESPACE);
+                        ((Element) (c)).setNamespace(Namespace.NO_NAMESPACE);
                     }
                 }
-            }
+            } 
             value = outputter.outputString(eContent);
         } else {
             // Everything else comes in verbatim
@@ -368,12 +355,10 @@ public class Atom10Parser extends BaseWireFeedParser {
 
     protected Entry parseEntry(final Feed feed, final Element eEntry, final String baseURI) {
         final Entry entry = new Entry();
-
         final String xmlBase = eEntry.getAttributeValue("base", Namespace.XML_NAMESPACE);
         if (xmlBase != null) {
             entry.setXmlBase(xmlBase);
         }
-
         Element e = eEntry.getChild("title", getAtomNamespace());
         if (e != null) {
             final Content c = new Content();
@@ -381,64 +366,51 @@ public class Atom10Parser extends BaseWireFeedParser {
             c.setType(getAttributeValue(e, "type"));
             entry.setTitleEx(c);
         }
-
         List<Element> eList = eEntry.getChildren("link", getAtomNamespace());
         entry.setAlternateLinks(parseAlternateLinks(feed, entry, baseURI, eList));
         entry.setOtherLinks(parseOtherLinks(feed, entry, baseURI, eList));
-
         eList = eEntry.getChildren("author", getAtomNamespace());
         if (eList.size() > 0) {
             entry.setAuthors(parsePersons(baseURI, eList));
         }
-
         eList = eEntry.getChildren("contributor", getAtomNamespace());
         if (eList.size() > 0) {
             entry.setContributors(parsePersons(baseURI, eList));
         }
-
         e = eEntry.getChild("id", getAtomNamespace());
         if (e != null) {
             entry.setId(e.getText());
         }
-
         e = eEntry.getChild("updated", getAtomNamespace());
         if (e != null) {
             entry.setUpdated(DateParser.parseDate(e.getText()));
         }
-
         e = eEntry.getChild("published", getAtomNamespace());
         if (e != null) {
             entry.setPublished(DateParser.parseDate(e.getText()));
         }
-
         e = eEntry.getChild("summary", getAtomNamespace());
         if (e != null) {
             entry.setSummary(parseContent(e));
         }
-
         e = eEntry.getChild("content", getAtomNamespace());
         if (e != null) {
             final List<Content> contents = new ArrayList<Content>();
             contents.add(parseContent(e));
             entry.setContents(contents);
         }
-
         e = eEntry.getChild("rights", getAtomNamespace());
         if (e != null) {
             entry.setRights(e.getText());
         }
-
         final List<Element> cList = eEntry.getChildren("category", getAtomNamespace());
         entry.setCategories(parseCategories(baseURI, cList));
-
         // TODO: SHOULD handle Atom entry source element
         e = eEntry.getChild("source", getAtomNamespace());
         if (e != null) {
             entry.setSource(parseFeedMetadata(baseURI, e));
         }
-
         entry.setModules(parseItemModules(eEntry));
-
         final List<Element> foreignMarkup = extractForeignMarkup(eEntry, entry, getAtomNamespace());
         if (foreignMarkup.size() > 0) {
             entry.setForeignMarkup(foreignMarkup);
@@ -482,7 +454,6 @@ public class Atom10Parser extends BaseWireFeedParser {
 
     // Once following relative URI methods are made public in the ROME
     // Atom10Parser, then use them instead and delete these.
-
     // Fix for issue #34 "valid IRI href attributes are stripped for atom:link"
     // URI's that didn't start with http were being treated as relative URIs.
     // So now consider an absolute URI to be any alpha-numeric string followed
@@ -514,30 +485,27 @@ public class Atom10Parser extends BaseWireFeedParser {
             if (".".equals(url) || "./".equals(url)) {
                 url = "";
             }
-
-            if (url.startsWith("/") && baseURI != null) {
+            if (url.startsWith("/") && (baseURI != null)) {
                 String base = null;
                 final int slashslash = baseURI.indexOf("//");
                 final int nextslash = baseURI.indexOf("/", slashslash + 2);
-                if (nextslash != -1) {
+                if (nextslash != (-1)) {
                     base = baseURI.substring(0, nextslash);
                 }
                 return formURI(base, url);
             }
-
             // Relative URI with parent
-            if (parent != null && parent instanceof Element) {
-
+            if ((parent != null) && (parent instanceof Element)) {
                 // Do we have an xml:base?
-                String xmlbase = ((Element) parent).getAttributeValue("base", Namespace.XML_NAMESPACE);
-                if (xmlbase != null && xmlbase.trim().length() > 0) {
+                String xmlbase = ((Element) (parent)).getAttributeValue("base", Namespace.XML_NAMESPACE);
+                if ((xmlbase != null) && (xmlbase.trim().length() > 0)) {
                     if (isAbsoluteURI(xmlbase)) {
                         // Absolute xml:base, so form URI right now
                         if (url.startsWith("/")) {
                             // Host relative URI
                             final int slashslash = xmlbase.indexOf("//");
                             final int nextslash = xmlbase.indexOf("/", slashslash + 2);
-                            if (nextslash != -1) {
+                            if (nextslash != (-1)) {
                                 xmlbase = xmlbase.substring(0, nextslash);
                             }
                             return formURI(xmlbase, url);
@@ -549,15 +517,14 @@ public class Atom10Parser extends BaseWireFeedParser {
                         return formURI(xmlbase, url);
                     } else {
                         // Relative xml:base, so walk up tree
-                        return resolveURI(baseURI, parent.getParent(), stripTrailingSlash(xmlbase) + "/" + stripStartingSlash(url));
+                        return resolveURI(baseURI, parent.getParent(), (stripTrailingSlash(xmlbase) + "/") + stripStartingSlash(url));
                     }
                 }
                 // No xml:base so walk up tree
                 return resolveURI(baseURI, parent.getParent(), url);
-
                 // Relative URI with no parent (i.e. top of tree), so form URI
                 // right now
-            } else if (parent == null || parent instanceof Document) {
+            } else if ((parent == null) || (parent instanceof Document)) {
                 return formURI(baseURI, url);
             }
         }
@@ -623,7 +590,7 @@ public class Atom10Parser extends BaseWireFeedParser {
             for (final String part : parts) {
                 if ("..".equals(part)) {
                     final int last = base.lastIndexOf("/");
-                    if (last != -1) {
+                    if (last != (-1)) {
                         base = base.substring(0, last);
                         append = append.substring(3, append.length());
                     } else {
@@ -632,7 +599,7 @@ public class Atom10Parser extends BaseWireFeedParser {
                 }
             }
         }
-        return base + "/" + append;
+        return (base + "/") + append;
     }
 
     /**

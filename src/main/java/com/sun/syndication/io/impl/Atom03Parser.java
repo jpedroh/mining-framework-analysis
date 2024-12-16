@@ -16,15 +16,6 @@
  */
 package com.sun.syndication.io.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-import org.jdom2.output.XMLOutputter;
-
 import com.sun.syndication.feed.WireFeed;
 import com.sun.syndication.feed.atom.Content;
 import com.sun.syndication.feed.atom.Entry;
@@ -33,11 +24,20 @@ import com.sun.syndication.feed.atom.Link;
 import com.sun.syndication.feed.atom.Person;
 import com.sun.syndication.feed.synd.SyndPerson;
 import com.sun.syndication.io.FeedException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.output.XMLOutputter;
+
 
 /**
  */
 public class Atom03Parser extends BaseWireFeedParser {
     private static final String ATOM_03_URI = "http://purl.org/atom/ns#";
+
     private static final Namespace ATOM_03_NS = Namespace.getNamespace(ATOM_03_URI);
 
     public Atom03Parser() {
@@ -79,40 +79,32 @@ public class Atom03Parser extends BaseWireFeedParser {
     }
 
     protected WireFeed parseFeed(final Element eFeed) {
-
         final com.sun.syndication.feed.atom.Feed feed = new com.sun.syndication.feed.atom.Feed(getType());
-
         Element e = eFeed.getChild("title", getAtomNamespace());
         if (e != null) {
             feed.setTitleEx(parseContent(e));
         }
-
         List<Element> eList = eFeed.getChildren("link", getAtomNamespace());
         feed.setAlternateLinks(parseAlternateLinks(eList));
         feed.setOtherLinks(parseOtherLinks(eList));
-
         e = eFeed.getChild("author", getAtomNamespace());
         if (e != null) {
             final List<SyndPerson> authors = new ArrayList<SyndPerson>();
             authors.add(parsePerson(e));
             feed.setAuthors(authors);
         }
-
         eList = eFeed.getChildren("contributor", getAtomNamespace());
         if (eList.size() > 0) {
             feed.setContributors(parsePersons(eList));
         }
-
         e = eFeed.getChild("tagline", getAtomNamespace());
         if (e != null) {
             feed.setTagline(parseContent(e));
         }
-
         e = eFeed.getChild("id", getAtomNamespace());
         if (e != null) {
             feed.setId(e.getText());
         }
-
         e = eFeed.getChild("generator", getAtomNamespace());
         if (e != null) {
             final Generator gen = new Generator();
@@ -127,29 +119,23 @@ public class Atom03Parser extends BaseWireFeedParser {
             }
             feed.setGenerator(gen);
         }
-
         e = eFeed.getChild("copyright", getAtomNamespace());
         if (e != null) {
             feed.setCopyright(e.getText());
         }
-
         e = eFeed.getChild("info", getAtomNamespace());
         if (e != null) {
             feed.setInfo(parseContent(e));
         }
-
         e = eFeed.getChild("modified", getAtomNamespace());
         if (e != null) {
             feed.setModified(DateParser.parseDate(e.getText()));
         }
-
         feed.setModules(parseFeedModules(eFeed));
-
         eList = eFeed.getChildren("entry", getAtomNamespace());
         if (eList.size() > 0) {
             feed.setEntries(parseEntries(eList));
         }
-
         final List<Element> foreignMarkup = extractForeignMarkup(eFeed, feed, getAtomNamespace());
         if (foreignMarkup.size() > 0) {
             feed.setForeignMarkup(foreignMarkup);
@@ -184,10 +170,8 @@ public class Atom03Parser extends BaseWireFeedParser {
                 if ("alternate".equals(rel)) {
                     links.add(parseLink(eLink));
                 }
-            } else {
-                if (!"alternate".equals(rel)) {
-                    links.add(parseLink(eLink));
-                }
+            } else if (!"alternate".equals(rel)) {
+                links.add(parseLink(eLink));
             }
         }
         if (links.size() > 0) {
@@ -245,7 +229,8 @@ public class Atom03Parser extends BaseWireFeedParser {
         }
         String mode = getAttributeValue(e, "mode");
         if (mode == null) {
-            mode = Content.XML; // default to xml content
+            mode = Content.XML;// default to xml content
+
         }
         if (mode.equals(Content.ESCAPED)) {
             // do nothing XML Parser took care of this
@@ -259,15 +244,14 @@ public class Atom03Parser extends BaseWireFeedParser {
             while (i.hasNext()) {
                 final org.jdom2.Content c = i.next();
                 if (c instanceof Element) {
-                    final Element eC = (Element) c;
+                    final Element eC = ((Element) (c));
                     if (eC.getNamespace().equals(getAtomNamespace())) {
-                        ((Element) c).setNamespace(Namespace.NO_NAMESPACE);
+                        ((Element) (c)).setNamespace(Namespace.NO_NAMESPACE);
                     }
                 }
-            }
+            } 
             value = outputter.outputString(eContent);
         }
-
         final Content content = new Content();
         content.setType(type);
         content.setMode(mode);
@@ -290,53 +274,43 @@ public class Atom03Parser extends BaseWireFeedParser {
 
     private Entry parseEntry(final Element eEntry) {
         final Entry entry = new Entry();
-
         Element e = eEntry.getChild("title", getAtomNamespace());
         if (e != null) {
             entry.setTitleEx(parseContent(e));
         }
-
         List<Element> eList = eEntry.getChildren("link", getAtomNamespace());
         entry.setAlternateLinks(parseAlternateLinks(eList));
         entry.setOtherLinks(parseOtherLinks(eList));
-
         e = eEntry.getChild("author", getAtomNamespace());
         if (e != null) {
             final List<SyndPerson> authors = new ArrayList<SyndPerson>();
             authors.add(parsePerson(e));
             entry.setAuthors(authors);
         }
-
         eList = eEntry.getChildren("contributor", getAtomNamespace());
         if (eList.size() > 0) {
             entry.setContributors(parsePersons(eList));
         }
-
         e = eEntry.getChild("id", getAtomNamespace());
         if (e != null) {
             entry.setId(e.getText());
         }
-
         e = eEntry.getChild("modified", getAtomNamespace());
         if (e != null) {
             entry.setModified(DateParser.parseDate(e.getText()));
         }
-
         e = eEntry.getChild("issued", getAtomNamespace());
         if (e != null) {
             entry.setIssued(DateParser.parseDate(e.getText()));
         }
-
         e = eEntry.getChild("created", getAtomNamespace());
         if (e != null) {
             entry.setCreated(DateParser.parseDate(e.getText()));
         }
-
         e = eEntry.getChild("summary", getAtomNamespace());
         if (e != null) {
             entry.setSummary(parseContent(e));
         }
-
         eList = eEntry.getChildren("content", getAtomNamespace());
         if (eList.size() > 0) {
             final List<Content> content = new ArrayList<Content>();
@@ -345,14 +319,11 @@ public class Atom03Parser extends BaseWireFeedParser {
             }
             entry.setContents(content);
         }
-
         entry.setModules(parseItemModules(eEntry));
-
         final List<Element> foreignMarkup = extractForeignMarkup(eEntry, entry, getAtomNamespace());
         if (foreignMarkup.size() > 0) {
             entry.setForeignMarkup(foreignMarkup);
         }
         return entry;
     }
-
 }

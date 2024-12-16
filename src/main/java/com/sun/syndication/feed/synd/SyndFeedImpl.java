@@ -16,18 +16,6 @@
  */
 package com.sun.syndication.feed.synd;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.jdom2.Element;
-
 import com.sun.syndication.feed.CopyFrom;
 import com.sun.syndication.feed.WireFeed;
 import com.sun.syndication.feed.impl.CopyFromHelper;
@@ -40,6 +28,17 @@ import com.sun.syndication.feed.module.SyModuleImpl;
 import com.sun.syndication.feed.module.impl.ModuleUtils;
 import com.sun.syndication.feed.synd.impl.Converters;
 import com.sun.syndication.feed.synd.impl.URINormalizer;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.jdom2.Element;
+
 
 /**
  * Bean for all types of feeds.
@@ -51,26 +50,39 @@ import com.sun.syndication.feed.synd.impl.URINormalizer;
  * @author Alejandro Abdelnur
  * 
  */
-public class SyndFeedImpl implements Serializable, SyndFeed {
+public class SyndFeedImpl implements Serializable , SyndFeed {
     private static final long serialVersionUID = -2529165503200548045L;
 
     private final ObjectBean objBean;
 
     private String encoding;
+
     private String uri;
+
     private SyndContent title;
+
     private SyndContent description;
+
     private String feedType;
+
     private String link;
+
     private List<SyndLink> links;
+
     private SyndImage image;
+
     private List<SyndEntry> entries;
+
     private List<Module> modules;
+
     private List<SyndPerson> authors;
+
     private List<SyndPerson> contributors;
+
     private List<Element> foreignMarkup;
 
     private WireFeed wireFeed = null;
+
     private boolean preserveWireFeed = false;
 
     private static final Converters CONVERTERS = new Converters();
@@ -84,7 +96,6 @@ public class SyndFeedImpl implements Serializable, SyndFeed {
      * properties can be ignored as the will be copied as part of the module
      * cloning.
      */
-
     public static final Set<String> CONVENIENCE_PROPERTIES = Collections.unmodifiableSet(IGNORE_PROPERTIES);
 
     static {
@@ -125,7 +136,6 @@ public class SyndFeedImpl implements Serializable, SyndFeed {
     /**
      * Default constructor. All properties are set to <b>null</b>.
      * <p>
-     * 
      */
     public SyndFeedImpl() {
         this(null);
@@ -135,10 +145,10 @@ public class SyndFeedImpl implements Serializable, SyndFeed {
      * Creates a SyndFeedImpl and populates all its properties out of the given
      * RSS Channel or Atom Feed properties.
      * <p>
-     * 
-     * @param feed the RSS Channel or the Atom Feed to populate the properties
-     *            from.
-     * 
+     *
+     * @param feed
+     * 		the RSS Channel or the Atom Feed to populate the properties
+     * 		from.
      */
     public SyndFeedImpl(final WireFeed feed) {
         this(feed, false);
@@ -154,21 +164,18 @@ public class SyndFeedImpl implements Serializable, SyndFeed {
      */
     public SyndFeedImpl(final WireFeed feed, final boolean preserveWireFeed) {
         this(SyndFeed.class, IGNORE_PROPERTIES);
-
         if (preserveWireFeed) {
             wireFeed = feed;
             this.preserveWireFeed = preserveWireFeed;
         }
-
         if (feed != null) {
             feedType = feed.getFeedType();
             final Converter converter = CONVERTERS.getConverter(feedType);
             if (converter == null) {
-                throw new IllegalArgumentException("Invalid feed type [" + feedType + "]");
+                throw new IllegalArgumentException(("Invalid feed type [" + feedType) + "]");
             }
             converter.copyInto(feed, this);
         }
-
     }
 
     /**
@@ -793,27 +800,26 @@ public class SyndFeedImpl implements Serializable, SyndFeed {
     }
 
     // TODO We need to find out how to refactor this one in a nice reusable way.
+    // TODO We need to find out how to refactor this one in a nice reusable way.
 
     private static final CopyFromHelper COPY_FROM_HELPER;
 
     static {
         final Map<String, Class<?>> basePropInterfaceMap = new HashMap<String, Class<?>>();
-        basePropInterfaceMap.put("feedType", String.class);
-        basePropInterfaceMap.put("encoding", String.class);
-        basePropInterfaceMap.put("uri", String.class);
-        basePropInterfaceMap.put("title", String.class);
-        basePropInterfaceMap.put("link", String.class);
-        basePropInterfaceMap.put("description", String.class);
+        basePropInterfaceMap.put("feedType", java.lang.String.class);
+        basePropInterfaceMap.put("encoding", java.lang.String.class);
+        basePropInterfaceMap.put("uri", java.lang.String.class);
+        basePropInterfaceMap.put("title", java.lang.String.class);
+        basePropInterfaceMap.put("link", java.lang.String.class);
+        basePropInterfaceMap.put("description", java.lang.String.class);
         basePropInterfaceMap.put("image", SyndImage.class);
         basePropInterfaceMap.put("entries", SyndEntry.class);
         basePropInterfaceMap.put("modules", Module.class);
-
         final Map<Class<? extends CopyFrom<?>>, Class<?>> basePropClassImplMap = new HashMap<Class<? extends CopyFrom<?>>, Class<?>>();
         basePropClassImplMap.put(SyndEntry.class, SyndEntryImpl.class);
         basePropClassImplMap.put(SyndImage.class, SyndImageImpl.class);
         basePropClassImplMap.put(DCModule.class, DCModuleImpl.class);
         basePropClassImplMap.put(SyModule.class, SyModuleImpl.class);
-
         COPY_FROM_HELPER = new CopyFromHelper(SyndFeed.class, basePropInterfaceMap, basePropClassImplMap);
     }
 

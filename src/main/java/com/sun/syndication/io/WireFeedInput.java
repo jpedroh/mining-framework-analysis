@@ -16,6 +16,9 @@
  */
 package com.sun.syndication.io;
 
+import com.sun.syndication.feed.WireFeed;
+import com.sun.syndication.io.impl.FeedParsers;
+import com.sun.syndication.io.impl.XmlFixerReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,7 +28,6 @@ import java.io.Reader;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
-
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.DOMBuilder;
@@ -37,9 +39,6 @@ import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 
-import com.sun.syndication.feed.WireFeed;
-import com.sun.syndication.io.impl.FeedParsers;
-import com.sun.syndication.io.impl.XmlFixerReader;
 
 /**
  * Parses an XML document (File, InputStream, Reader, W3C SAX InputSource, W3C
@@ -56,11 +55,10 @@ import com.sun.syndication.io.impl.XmlFixerReader;
  * 
  */
 public class WireFeedInput {
-
     private static Map<ClassLoader, FeedParsers> clMap = new WeakHashMap<ClassLoader, FeedParsers>();
 
     private static FeedParsers getFeedParsers() {
-        synchronized (WireFeedInput.class) {
+        synchronized(WireFeedInput.class) {
             FeedParsers parsers = clMap.get(Thread.currentThread().getContextClassLoader());
             if (parsers == null) {
                 parsers = new FeedParsers();
@@ -71,12 +69,13 @@ public class WireFeedInput {
     }
 
     private static final InputSource EMPTY_INPUTSOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
+
     private static final EntityResolver RESOLVER = new EmptyEntityResolver();
 
     private static class EmptyEntityResolver implements EntityResolver {
         @Override
         public InputSource resolveEntity(final String publicId, final String systemId) {
-            if (systemId != null && systemId.endsWith(".dtd")) {
+            if ((systemId != null) && systemId.endsWith(".dtd")) {
                 return EMPTY_INPUTSOURCE;
             }
             return null;
@@ -103,7 +102,6 @@ public class WireFeedInput {
     /**
      * Creates a WireFeedInput instance with input validation turned off.
      * <p>
-     * 
      */
     public WireFeedInput() {
         this(false);
@@ -112,13 +110,14 @@ public class WireFeedInput {
     /**
      * Creates a WireFeedInput instance.
      * <p>
-     * 
-     * @param validate indicates if the input should be validated. NOT
-     *            IMPLEMENTED YET (validation does not happen)
-     * 
+     *
+     * @param validate
+     * 		indicates if the input should be validated. NOT
+     * 		IMPLEMENTED YET (validation does not happen)
      */
     public WireFeedInput(final boolean validate) {
-        this.validate = false; // TODO FIX THIS THINGY
+        this.validate = false;// TODO FIX THIS THINGY
+
         xmlHealerOn = true;
     }
 
@@ -313,11 +312,10 @@ public class WireFeedInput {
             saxBuilder = new SAXBuilder(XMLReaders.NONVALIDATING);
         }
         saxBuilder.setEntityResolver(RESOLVER);
-
-        //
+        // 
         // This code is needed to fix the security problem outlined in
         // http://www.securityfocus.com/archive/1/297714
-        //
+        // 
         // Unfortunately there isn't an easy way to check if an XML parser
         // supports a particular feature, so
         // we need to set it and catch the exception if it fails. We also need
@@ -326,7 +324,7 @@ public class WireFeedInput {
         // the features don't get set until
         // we are already building the document, by which time it's too late to
         // fix the problem.
-        //
+        // 
         // Crimson is one parser which is known not to support these features.
         try {
             final XMLReader parser = saxBuilder.createParser();
@@ -338,7 +336,6 @@ public class WireFeedInput {
             } catch (final SAXNotSupportedException e) {
                 // ignore
             }
-
             try {
                 parser.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
                 saxBuilder.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
@@ -347,7 +344,6 @@ public class WireFeedInput {
             } catch (final SAXNotSupportedException e) {
                 // ignore
             }
-
             try {
                 parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
                 saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
@@ -356,11 +352,9 @@ public class WireFeedInput {
             } catch (final SAXNotSupportedException e) {
                 // ignore
             }
-
         } catch (final JDOMException e) {
             throw new IllegalStateException("JDOM could not create a SAX parser");
         }
-
         saxBuilder.setExpandEntities(false);
         return saxBuilder;
     }

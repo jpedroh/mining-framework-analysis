@@ -1,23 +1,21 @@
 package com.sun.syndication.io.impl;
 
+import com.sun.syndication.feed.module.Module;
+import com.sun.syndication.io.WireFeedGenerator;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.Parent;
 
-import com.sun.syndication.feed.module.Module;
-import com.sun.syndication.io.WireFeedGenerator;
 
 /**
  * @author Alejandro Abdelnur
  */
 public abstract class BaseWireFeedGenerator implements WireFeedGenerator {
-
     /**
      * [TYPE].feed.ModuleParser.classes= [className] ...
      */
@@ -34,9 +32,13 @@ public abstract class BaseWireFeedGenerator implements WireFeedGenerator {
     private static final String PERSON_MODULE_GENERATORS_POSFIX_KEY = ".person.ModuleGenerator.classes";
 
     private final String type;
+
     private final ModuleGenerators feedModuleGenerators;
+
     private final ModuleGenerators itemModuleGenerators;
+
     private final ModuleGenerators personModuleGenerators;
+
     private final Namespace[] allModuleNamespaces;
 
     protected BaseWireFeedGenerator(final String type) {
@@ -48,15 +50,15 @@ public abstract class BaseWireFeedGenerator implements WireFeedGenerator {
         Iterator<Namespace> i = feedModuleGenerators.getAllNamespaces().iterator();
         while (i.hasNext()) {
             allModuleNamespaces.add(i.next());
-        }
+        } 
         i = itemModuleGenerators.getAllNamespaces().iterator();
         while (i.hasNext()) {
             allModuleNamespaces.add(i.next());
-        }
+        } 
         i = personModuleGenerators.getAllNamespaces().iterator();
         while (i.hasNext()) {
             allModuleNamespaces.add(i.next());
-        }
+        } 
         this.allModuleNamespaces = new Namespace[allModuleNamespaces.size()];
         allModuleNamespaces.toArray(this.allModuleNamespaces);
     }
@@ -88,13 +90,13 @@ public abstract class BaseWireFeedGenerator implements WireFeedGenerator {
         if (foreignMarkup != null) {
             final Iterator<Element> elems = foreignMarkup.iterator();
             while (elems.hasNext()) {
-                final Element elem = (Element) elems.next();
+                final Element elem = ((Element) (elems.next()));
                 final Parent parent = elem.getParent();
                 if (parent != null) {
                     parent.removeContent(elem);
                 }
                 e.addContent(elem);
-            }
+            } 
         }
     }
 
@@ -113,17 +115,16 @@ public abstract class BaseWireFeedGenerator implements WireFeedGenerator {
     protected static void purgeUnusedNamespaceDeclarations(final Element root) {
         final Set<String> usedPrefixes = new HashSet<String>();
         collectUsedPrefixes(root, usedPrefixes);
-
         final List<Namespace> list = root.getAdditionalNamespaces();
         final List<Namespace> additionalNamespaces = new ArrayList<Namespace>();
-        additionalNamespaces.addAll(list); // the duplication will prevent a
-                                           // ConcurrentModificationException
-                                           // below
-
+        // the duplication will prevent a
+        additionalNamespaces.addAll(list);
+                                        // ConcurrentModificationException
+                                        // below
         for (int i = 0; i < additionalNamespaces.size(); i++) {
             final Namespace ns = additionalNamespaces.get(i);
             final String prefix = ns.getPrefix();
-            if (prefix != null && prefix.length() > 0 && !usedPrefixes.contains(prefix)) {
+            if (((prefix != null) && (prefix.length() > 0)) && (!usedPrefixes.contains(prefix))) {
                 root.removeNamespaceDeclaration(ns);
             }
         }
@@ -131,14 +132,14 @@ public abstract class BaseWireFeedGenerator implements WireFeedGenerator {
 
     private static void collectUsedPrefixes(final Element el, final Set<String> collector) {
         final String prefix = el.getNamespacePrefix();
-        if (prefix != null && prefix.length() > 0 && !collector.contains(prefix)) {
+        if (((prefix != null) && (prefix.length() > 0)) && (!collector.contains(prefix))) {
             collector.add(prefix);
         }
         final List<Element> kids = el.getChildren();
         for (int i = 0; i < kids.size(); i++) {
-            collectUsedPrefixes((Element) kids.get(i), collector); // recursion
-                                                                   // - worth it
+            // recursion
+            collectUsedPrefixes(((Element) (kids.get(i))), collector);
+                                                                // - worth it
         }
     }
-
 }

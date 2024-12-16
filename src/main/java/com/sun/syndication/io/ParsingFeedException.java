@@ -18,6 +18,7 @@ package com.sun.syndication.io;
 
 import org.jdom2.input.JDOMParseException;
 
+
 /**
  * Exception thrown by WireFeedInput instance if it can not parse a feed.
  * <p>
@@ -26,15 +27,14 @@ import org.jdom2.input.JDOMParseException;
  * 
  */
 public class ParsingFeedException extends FeedException {
-
     private static final long serialVersionUID = -4791878470117677698L;
 
     /**
      * Creates a FeedException with a message.
      * <p>
-     * 
-     * @param msg exception message.
-     * 
+     *
+     * @param msg
+     * 		exception message.
      */
     public ParsingFeedException(final String msg) {
         super(msg);
@@ -43,10 +43,11 @@ public class ParsingFeedException extends FeedException {
     /**
      * Creates a FeedException with a message and a root cause exception.
      * <p>
-     * 
-     * @param msg exception message.
-     * @param rootCause root cause exception.
-     * 
+     *
+     * @param msg
+     * 		exception message.
+     * @param rootCause
+     * 		root cause exception.
      */
     public ParsingFeedException(final String msg, final Throwable rootCause) {
         super(msg, rootCause);
@@ -64,7 +65,7 @@ public class ParsingFeedException extends FeedException {
      */
     public int getLineNumber() {
         if (getCause() instanceof JDOMParseException) {
-            return ((JDOMParseException) getCause()).getLineNumber();
+            return ((JDOMParseException) (getCause())).getLineNumber();
         } else {
             return -1;
         }
@@ -82,10 +83,9 @@ public class ParsingFeedException extends FeedException {
      */
     public int getColumnNumber() {
         if (getCause() instanceof JDOMParseException) {
-            return ((JDOMParseException) getCause()).getColumnNumber();
+            return ((JDOMParseException) (getCause())).getColumnNumber();
         } else {
             return -1;
         }
     }
-
 }

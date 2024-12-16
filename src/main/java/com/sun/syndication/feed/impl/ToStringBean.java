@@ -22,9 +22,10 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Stack;
+
 
 /**
  * Provides deep <b>Bean</b> toString support.
@@ -55,6 +56,7 @@ public class ToStringBean implements Serializable {
     private static final Object[] NO_PARAMS = new Object[0];
 
     private final Class<?> beanClass;
+
     private final Object obj;
 
     /**
@@ -148,24 +150,25 @@ public class ToStringBean implements Serializable {
                 for (final PropertyDescriptor pd : pds) {
                     final String pName = pd.getName();
                     final Method pReadMethod = pd.getReadMethod();
-                    if (pReadMethod != null && // ensure it has a getter method
-                            pReadMethod.getDeclaringClass() != Object.class && // filter
-                                                                               // Object.class
-                                                                               // getter
-                                                                               // methods
-                            pReadMethod.getParameterTypes().length == 0) { // filter
-                                                                           // getter
-                                                                           // methods
-                                                                           // that
-                                                                           // take
-                                                                           // parameters
+                    if (((pReadMethod != null)// ensure it has a getter method
+                     && (pReadMethod.getDeclaringClass() != java.lang.Object.class))// filter
+                     && // Object.class
+                    // getter
+                    // methods
+                    (pReadMethod.getParameterTypes().length == 0)) {
+                        // filter
+                        // getter
+                        // methods
+                        // that
+                        // take
+                        // parameters
                         final Object value = pReadMethod.invoke(obj, NO_PARAMS);
-                        printProperty(sb, prefix + "." + pName, value);
+                        printProperty(sb, (prefix + ".") + pName, value);
                     }
                 }
             }
-        } catch (final Exception ex) {
-            sb.append("\n\nEXCEPTION: Could not complete " + obj.getClass() + ".toString(): " + ex.getMessage() + "\n");
+        } catch (final java.lang.Exception ex) {
+            sb.append(((("\n\nEXCEPTION: Could not complete " + obj.getClass()) + ".toString(): ") + ex.getMessage()) + "\n");
         }
         return sb.toString();
     }
@@ -177,53 +180,61 @@ public class ToStringBean implements Serializable {
             printArrayProperty(sb, prefix, value);
         } else if (value instanceof Map) {
             @SuppressWarnings("unchecked")
-            final Map<Object, Object> map = (Map<Object, Object>) value;
+            final Map<Object, Object> map = ((Map<Object, Object>) (value));
             final Iterator<Entry<Object, Object>> i = map.entrySet().iterator();
             if (i.hasNext()) {
                 while (i.hasNext()) {
                     final Map.Entry<Object, Object> me = i.next();
-                    final String ePrefix = prefix + "[" + me.getKey() + "]";
+                    final String ePrefix = ((prefix + "[") + me.getKey()) + "]";
                     final Object eValue = me.getValue();
-
                     // NEW
                     final String[] tsInfo = new String[2];
                     tsInfo[0] = ePrefix;
                     final Stack<String[]> stack = PREFIX_TL.get();
                     stack.push(tsInfo);
-                    final String s = eValue != null ? eValue.toString() : "null";
+                    final String s;
+                    if (eValue != null) {
+                        s = eValue.toString();
+                    } else {
+                        s = "null";
+                    }
                     stack.pop();
                     if (tsInfo[1] == null) {
                         sb.append(ePrefix).append("=").append(s).append("\n");
                     } else {
                         sb.append(s);
                     }
-                }
+                } 
             } else {
                 sb.append(prefix).append("=[]\n");
             }
         } else if (value instanceof Collection) {
             @SuppressWarnings("unchecked")
-            final Collection<Object> collection = (Collection<Object>) value;
+            final Collection<Object> collection = ((Collection<Object>) (value));
             final Iterator<Object> i = collection.iterator();
             if (i.hasNext()) {
                 int c = 0;
                 while (i.hasNext()) {
-                    final String cPrefix = prefix + "[" + c++ + "]";
+                    final String cPrefix = ((prefix + "[") + (c++)) + "]";
                     final Object cValue = i.next();
-
                     // NEW
                     final String[] tsInfo = new String[2];
                     tsInfo[0] = cPrefix;
                     final Stack<String[]> stack = PREFIX_TL.get();
                     stack.push(tsInfo);
-                    final String s = cValue != null ? cValue.toString() : "null";
+                    final String s;
+                    if (cValue != null) {
+                        s = cValue.toString();
+                    } else {
+                        s = "null";
+                    }
                     stack.pop();
                     if (tsInfo[1] == null) {
                         sb.append(cPrefix).append("=").append(s).append("\n");
                     } else {
                         sb.append(s);
                     }
-                }
+                } 
             } else {
                 sb.append(prefix).append("=[]\n");
             }
@@ -249,5 +260,4 @@ public class ToStringBean implements Serializable {
             printProperty(sb, prefix + "[" + i + "]", obj);
         }
     }
-
 }

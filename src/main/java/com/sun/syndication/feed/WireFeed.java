@@ -17,16 +17,15 @@
  */
 package com.sun.syndication.feed;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jdom2.Element;
-
 import com.sun.syndication.feed.impl.ObjectBean;
 import com.sun.syndication.feed.module.Extendable;
 import com.sun.syndication.feed.module.Module;
 import com.sun.syndication.feed.module.impl.ModuleUtils;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import org.jdom2.Element;
+
 
 /**
  * Parent class of the RSS (Channel) and Atom (Feed) feed beans.
@@ -42,18 +41,22 @@ import com.sun.syndication.feed.module.impl.ModuleUtils;
  * @author Alejandro Abdelnur
  * 
  */
-public abstract class WireFeed implements Cloneable, Serializable, Extendable {
+public abstract class WireFeed implements Cloneable , Serializable , Extendable {
     private static final long serialVersionUID = -3608120400805691829L;
+
     private final ObjectBean objBean;
+
     private String feedType;
+
     private String encoding;
+
     private List<Module> modules;
+
     private List<Element> foreignMarkup;
 
     /**
      * Default constructor, for bean cloning purposes only.
      * <p>
-     * 
      */
     protected WireFeed() {
         objBean = new ObjectBean(this.getClass(), this);
@@ -62,9 +65,9 @@ public abstract class WireFeed implements Cloneable, Serializable, Extendable {
     /**
      * Creates a feed for a given type.
      * <p>
-     * 
-     * @param type of the feed to create.
-     * 
+     *
+     * @param type
+     * 		of the feed to create.
      */
     protected WireFeed(final String type) {
         this();
