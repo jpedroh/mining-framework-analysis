@@ -37,9 +37,10 @@ import com.github.javaparser.metamodel.NonEmptyProperty;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.Generated;
 import static com.github.javaparser.utils.Utils.assertNonEmpty;
 import static com.github.javaparser.utils.Utils.assertNotNull;
-import javax.annotation.Generated;
+
 
 /**
  * A name that may consist of multiple identifiers.
@@ -53,8 +54,7 @@ import javax.annotation.Generated;
  * @author Julio Vilmar Gesser
  * @see SimpleName
  */
-public class Name extends Node implements NodeWithIdentifier<Name>, NodeWithAnnotations<Name> {
-
+public class Name extends Node implements NodeWithIdentifier<Name> , NodeWithAnnotations<Name> {
     @NonEmptyProperty
     private String identifier;
 
@@ -108,7 +108,7 @@ public class Name extends Node implements NodeWithIdentifier<Name>, NodeWithAnno
     public Name setIdentifier(final String identifier) {
         assertNonEmpty(identifier);
         if (identifier == this.identifier) {
-            return (Name) this;
+            return ((Name) (this));
         }
         notifyPropertyChange(ObservableProperty.IDENTIFIER, this.identifier, identifier);
         this.identifier = identifier;
@@ -147,11 +147,12 @@ public class Name extends Node implements NodeWithIdentifier<Name>, NodeWithAnno
     @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
     public Name setQualifier(final Name qualifier) {
         if (qualifier == this.qualifier) {
-            return (Name) this;
+            return ((Name) (this));
         }
         notifyPropertyChange(ObservableProperty.QUALIFIER, this.qualifier, qualifier);
-        if (this.qualifier != null)
+        if (this.qualifier != null) {
             this.qualifier.setParentNode(null);
+        }
         this.qualifier = qualifier;
         setAsParentNodeOf(qualifier);
         return this;
@@ -160,8 +161,9 @@ public class Name extends Node implements NodeWithIdentifier<Name>, NodeWithAnno
     @Override
     @Generated("com.github.javaparser.generator.core.node.RemoveMethodGenerator")
     public boolean remove(Node node) {
-        if (node == null)
+        if (node == null) {
             return false;
+        }
         for (int i = 0; i < annotations.size(); i++) {
             if (annotations.get(i) == node) {
                 annotations.remove(i);
@@ -179,7 +181,7 @@ public class Name extends Node implements NodeWithIdentifier<Name>, NodeWithAnno
 
     @Generated("com.github.javaparser.generator.core.node.RemoveMethodGenerator")
     public Name removeQualifier() {
-        return setQualifier((Name) null);
+        return setQualifier(((Name) (null)));
     }
 
     @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
@@ -191,11 +193,12 @@ public class Name extends Node implements NodeWithIdentifier<Name>, NodeWithAnno
     public Name setAnnotations(final NodeList<AnnotationExpr> annotations) {
         assertNotNull(annotations);
         if (annotations == this.annotations) {
-            return (Name) this;
+            return ((Name) (this));
         }
         notifyPropertyChange(ObservableProperty.ANNOTATIONS, this.annotations, annotations);
-        if (this.annotations != null)
+        if (this.annotations != null) {
             this.annotations.setParentNode(null);
+        }
         this.annotations = annotations;
         setAsParentNodeOf(annotations);
         return this;
@@ -210,7 +213,7 @@ public class Name extends Node implements NodeWithIdentifier<Name>, NodeWithAnno
     @Override
     @Generated("com.github.javaparser.generator.core.node.CloneGenerator")
     public Name clone() {
-        return (Name) accept(new CloneVisitor(), null);
+        return ((Name) (accept(new CloneVisitor(), null)));
     }
 
     @Override

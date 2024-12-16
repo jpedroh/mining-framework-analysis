@@ -33,13 +33,12 @@ import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.metamodel.IntersectionTypeMetaModel;
 import com.github.javaparser.metamodel.JavaParserMetaModel;
 import com.github.javaparser.metamodel.NonEmptyProperty;
-
 import java.util.Arrays;
 import java.util.List;
-
+import javax.annotation.Generated;
 import static com.github.javaparser.utils.Utils.assertNotNull;
 import static java.util.stream.Collectors.joining;
-import javax.annotation.Generated;
+
 
 /**
  * Represents a set of types. A given value of this type has to be assignable to at all of the element types.
@@ -54,7 +53,6 @@ import javax.annotation.Generated;
  * @since 3.0.0
  */
 public class IntersectionType extends Type implements NodeWithAnnotations<IntersectionType> {
-
     @NonEmptyProperty
     private NodeList<ReferenceType> elements;
 
@@ -90,11 +88,12 @@ public class IntersectionType extends Type implements NodeWithAnnotations<Inters
     public IntersectionType setElements(final NodeList<ReferenceType> elements) {
         assertNotNull(elements);
         if (elements == this.elements) {
-            return (IntersectionType) this;
+            return ((IntersectionType) (this));
         }
         notifyPropertyChange(ObservableProperty.ELEMENTS, this.elements, elements);
-        if (this.elements != null)
+        if (this.elements != null) {
             this.elements.setParentNode(null);
+        }
         this.elements = elements;
         setAsParentNodeOf(elements);
         return this;
@@ -114,8 +113,9 @@ public class IntersectionType extends Type implements NodeWithAnnotations<Inters
     @Override
     @Generated("com.github.javaparser.generator.core.node.RemoveMethodGenerator")
     public boolean remove(Node node) {
-        if (node == null)
+        if (node == null) {
             return false;
+        }
         for (int i = 0; i < elements.size(); i++) {
             if (elements.get(i) == node) {
                 elements.remove(i);
@@ -133,7 +133,7 @@ public class IntersectionType extends Type implements NodeWithAnnotations<Inters
     @Override
     @Generated("com.github.javaparser.generator.core.node.CloneGenerator")
     public IntersectionType clone() {
-        return (IntersectionType) accept(new CloneVisitor(), null);
+        return ((IntersectionType) (accept(new CloneVisitor(), null)));
     }
 
     @Override

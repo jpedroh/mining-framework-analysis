@@ -26,8 +26,8 @@ import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.AnnotationExpr;
-import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.expr.AssignExpr.Operator;
+import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithJavadoc;
 import com.github.javaparser.ast.nodeTypes.NodeWithVariables;
@@ -49,11 +49,11 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
-
+import javax.annotation.Generated;
 import static com.github.javaparser.ast.Modifier.*;
 import static com.github.javaparser.ast.NodeList.nodeList;
 import static com.github.javaparser.utils.Utils.assertNotNull;
-import javax.annotation.Generated;
+
 
 /**
  * The declaration of a field in a class. "private static int a=15*15;" in this example: <code>class X { private static
@@ -61,8 +61,7 @@ import javax.annotation.Generated;
  *
  * @author Julio Vilmar Gesser
  */
-public final class FieldDeclaration extends BodyDeclaration<FieldDeclaration> implements NodeWithJavadoc<FieldDeclaration>, NodeWithVariables<FieldDeclaration>, NodeWithAccessModifiers<FieldDeclaration>, NodeWithStaticModifier<FieldDeclaration>, NodeWithFinalModifier<FieldDeclaration> {
-
+public final class FieldDeclaration extends BodyDeclaration<FieldDeclaration> implements NodeWithJavadoc<FieldDeclaration> , NodeWithVariables<FieldDeclaration> , NodeWithAccessModifiers<FieldDeclaration> , NodeWithStaticModifier<FieldDeclaration> , NodeWithFinalModifier<FieldDeclaration> {
     private EnumSet<Modifier> modifiers;
 
     @NonEmptyProperty
@@ -97,9 +96,12 @@ public final class FieldDeclaration extends BodyDeclaration<FieldDeclaration> im
     /**
      * Creates a {@link FieldDeclaration}.
      *
-     * @param modifiers modifiers
-     * @param type type
-     * @param name field name
+     * @param modifiers
+     * 		modifiers
+     * @param type
+     * 		type
+     * @param name
+     * 		field name
      */
     public FieldDeclaration(EnumSet<Modifier> modifiers, Type type, String name) {
         this(assertNotNull(modifiers), new VariableDeclarator(type, assertNotNull(name)));
@@ -135,7 +137,7 @@ public final class FieldDeclaration extends BodyDeclaration<FieldDeclaration> im
     public FieldDeclaration setModifiers(final EnumSet<Modifier> modifiers) {
         assertNotNull(modifiers);
         if (modifiers == this.modifiers) {
-            return (FieldDeclaration) this;
+            return ((FieldDeclaration) (this));
         }
         notifyPropertyChange(ObservableProperty.MODIFIERS, this.modifiers, modifiers);
         this.modifiers = modifiers;
@@ -146,11 +148,12 @@ public final class FieldDeclaration extends BodyDeclaration<FieldDeclaration> im
     public FieldDeclaration setVariables(final NodeList<VariableDeclarator> variables) {
         assertNotNull(variables);
         if (variables == this.variables) {
-            return (FieldDeclaration) this;
+            return ((FieldDeclaration) (this));
         }
         notifyPropertyChange(ObservableProperty.VARIABLES, this.variables, variables);
-        if (this.variables != null)
+        if (this.variables != null) {
             this.variables.setParentNode(null);
+        }
         this.variables = variables;
         setAsParentNodeOf(variables);
         return this;
@@ -236,8 +239,9 @@ public final class FieldDeclaration extends BodyDeclaration<FieldDeclaration> im
     @Override
     @Generated("com.github.javaparser.generator.core.node.RemoveMethodGenerator")
     public boolean remove(Node node) {
-        if (node == null)
+        if (node == null) {
             return false;
+        }
         for (int i = 0; i < variables.size(); i++) {
             if (variables.get(i) == node) {
                 variables.remove(i);
@@ -250,7 +254,7 @@ public final class FieldDeclaration extends BodyDeclaration<FieldDeclaration> im
     @Override
     @Generated("com.github.javaparser.generator.core.node.CloneGenerator")
     public FieldDeclaration clone() {
-        return (FieldDeclaration) accept(new CloneVisitor(), null);
+        return ((FieldDeclaration) (accept(new CloneVisitor(), null)));
     }
 
     @Override

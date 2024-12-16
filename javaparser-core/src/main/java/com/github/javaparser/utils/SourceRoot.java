@@ -4,9 +4,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.printer.PrettyPrinter;
 import com.github.javaparser.printer.PrettyPrinterConfiguration;
-
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -18,12 +16,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import static com.github.javaparser.ParseStart.COMPILATION_UNIT;
 import static com.github.javaparser.Providers.provider;
 import static com.github.javaparser.utils.CodeGenerationUtils.fileInPackageRelativePath;
 import static com.github.javaparser.utils.CodeGenerationUtils.packageAbsolutePath;
 import static com.github.javaparser.utils.SourceRoot.Callback.Result.SAVE;
+
 
 /**
  * A collection of Java source files located in one directory and its subdirectories on the file system.
@@ -31,18 +29,28 @@ import static com.github.javaparser.utils.SourceRoot.Callback.Result.SAVE;
  */
 public class SourceRoot {
     public interface Callback {
-        enum Result {SAVE, DONT_SAVE}
+        enum Result {
+
+            SAVE,
+            DONT_SAVE;}
 
         /**
-         * @param localPath the path to the file that was parsed, relative to the source root path.
-         * @param absolutePath the absolute path to the file that was parsed.
-         * @param result the result of of parsing the file.
+         *
+         *
+         * @param localPath
+         * 		the path to the file that was parsed, relative to the source root path.
+         * @param absolutePath
+         * 		the absolute path to the file that was parsed.
+         * @param result
+         * 		the result of of parsing the file.
          */
-        Result process(Path localPath, Path absolutePath, ParseResult<CompilationUnit> result) throws IOException;
+        public abstract Result process(Path localPath, Path absolutePath, ParseResult<CompilationUnit> result) throws IOException;
     }
 
     private final Path root;
+
     private final Map<Path, ParseResult<CompilationUnit>> cache = new HashMap<>();
+
     private JavaParser javaParser = new JavaParser();
 
     public SourceRoot(Path root) {
@@ -63,7 +71,7 @@ public class SourceRoot {
         Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                if (!attrs.isDirectory() && file.toString().endsWith(".java")) {
+                if ((!attrs.isDirectory()) && file.toString().endsWith(".java")) {
                     Path relative = root.relativize(file.getParent());
                     tryToParse(relative.toString(), file.getFileName().toString());
                 }
@@ -84,11 +92,11 @@ public class SourceRoot {
         Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path absolutePath, BasicFileAttributes attrs) throws IOException {
-                if (!attrs.isDirectory() && absolutePath.toString().endsWith(".java")) {
+                if ((!attrs.isDirectory()) && absolutePath.toString().endsWith(".java")) {
                     Path localPath = root.relativize(absolutePath);
                     Log.trace("Parsing %s", localPath);
                     final ParseResult<CompilationUnit> result = javaParser.parse(COMPILATION_UNIT, provider(absolutePath));
-                    result.getResult().ifPresent(cu -> cu.setStorage(absolutePath));
+                    result.getResult().ifPresent(( cu) -> cu.setStorage(absolutePath));
                     if (callback.process(localPath, absolutePath, result) == SAVE) {
                         if (result.getResult().isPresent()) {
                             save(result.getResult().get(), path);
@@ -134,10 +142,6 @@ public class SourceRoot {
         cu.setStorage(path);
         cu.getStorage().get().save();
         return this;
-    private void save(CompilationUnit cu, Path path) throws IOException {
-        Files.createDirectories(path.getParent());
-        final String code = new PrettyPrinter(new PrettyPrinterConfiguration().setEndOfLineCharacter("\n")).print(cu);
-        Files.write(path, code.getBytes(UTF8));
     }
 
     /**
@@ -153,10 +157,7 @@ public class SourceRoot {
      * or have been added manually.
      */
     public List<CompilationUnit> getCompilationUnits() {
-        return cache.values().stream()
-                .filter(ParseResult::isSuccessful)
-                .map(p -> p.getResult().get())
-                .collect(Collectors.toList());
+        return cache.values().stream().filter(ParseResult::isSuccessful).map(( p) -> p.getResult().get()).collect(Collectors.toList());
     }
 
     /**
@@ -171,7 +172,7 @@ public class SourceRoot {
         final Path path = root.resolve(relativePath);
         Log.trace("Parsing %s", path);
         final ParseResult<CompilationUnit> result = javaParser.parse(COMPILATION_UNIT, provider(path));
-        result.getResult().ifPresent(cu -> cu.setStorage(path));
+        result.getResult().ifPresent(( cu) -> cu.setStorage(path));
         cache.put(relativePath, result);
         return result;
     }
