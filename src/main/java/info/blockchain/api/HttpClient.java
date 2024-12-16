@@ -4,8 +4,9 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
+
 
 /**
  * This is a utility class for performing API calls using GET and POST requests. It is
@@ -19,10 +20,10 @@ public class HttpClient implements HttpClientInterface {
 
     private static HttpClientInterface instance;
 
-    public synchronized static HttpClientInterface getInstance () {
+    public static synchronized HttpClientInterface getInstance() {
         if (instance == null) {
             // Thread Safe. Might be costly operation in some case
-            synchronized (HttpClient.class) {
+            synchronized(HttpClient.class) {
                 if (instance == null) {
                     instance = new HttpClient();
                 }
@@ -43,7 +44,7 @@ public class HttpClient implements HttpClientInterface {
      * @return String response
      * @throws APIException If the server returns an error
      */
-    public String get (String resource, Map<String, String> params) throws APIException, IOException {
+    public String get(String resource, Map<String, String> params) throws APIException, IOException {
         return openURL(BASE_URL, resource, params, "GET");
     }
 
@@ -54,41 +55,40 @@ public class HttpClient implements HttpClientInterface {
     /**
      * Perform a POST request on a Blockchain.info API resource.
      *
-     * @param resource Resource path after https://blockchain.info/api/
-     * @param params   Map containing request parameters
+     * @param resource
+     * 		Resource path after https://blockchain.info/api/
+     * @param params
+     * 		Map containing request parameters
      * @return String response
-     * @throws APIException If the server returns an error
-     * @throws IOException  If the server is not reachable
+     * @throws APIException
+     * 		If the server returns an error
+     * @throws IOException
+     * 		If the server is not reachable
      */
-    public String post (String resource, Map<String, String> params) throws APIException, IOException {
+    public String post(String resource, Map<String, String> params) throws APIException, IOException {
         return openURL(BASE_URL, resource, params, "POST");
     }
 
-    private static String openURL (String baseURL, String resource, Map<String, String> params, String requestMethod) throws APIException, IOException {
+    private static String openURL(String baseURL, String resource, Map<String, String> params, String requestMethod) throws APIException, IOException {
         String encodedParams = urlEncodeParams(params);
         URL url = null;
         APIException apiException = null;
         IOException ioException = null;
-
         String responseStr = null;
-
         if (requestMethod.equals("GET")) {
             if (encodedParams.isEmpty()) {
                 url = new URL(BASE_URL + resource);
             } else {
-                url = new URL(BASE_URL + resource + '?' + encodedParams);
-            }            
+                url = new URL(((baseURL + resource) + '?') + encodedParams);
+            }
         } else if (requestMethod.equals("POST")) {
             url = new URL(baseURL + resource);
         }
-
         HttpURLConnection conn = null;
-
         try {
-            conn = (HttpURLConnection) url.openConnection();
+            conn = ((HttpURLConnection) (url.openConnection()));
             conn.setRequestMethod(requestMethod);
             conn.setConnectTimeout(TIMEOUT_MS);
-
             if (requestMethod.equals("POST")) {
                 byte[] postBytes = encodedParams.getBytes("UTF-8");
                 conn.setDoOutput(true);
@@ -97,7 +97,6 @@ public class HttpClient implements HttpClientInterface {
                 conn.getOutputStream().write(postBytes);
                 conn.getOutputStream().close();
             }
-
             if (conn.getResponseCode() != 200) {
                 apiException = new APIException(inputStreamToString(conn.getErrorStream()));
             } else {
@@ -111,18 +110,15 @@ public class HttpClient implements HttpClientInterface {
                     conn.getErrorStream().close();
                 }
                 conn.getInputStream().close();
-            } catch (Exception ex) {
+            } catch (java.lang.Exception ex) {
             }
-
             if (ioException != null) {
                 throw ioException;
             }
-
             if (apiException != null) {
                 throw apiException;
             }
         }
-
         return responseStr;
     }
 
@@ -149,18 +145,14 @@ public class HttpClient implements HttpClientInterface {
         return result;
     }
 
-    private static String inputStreamToString (InputStream is) throws IOException {
+    private static String inputStreamToString(InputStream is) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-
         StringBuilder responseStringBuilder = new StringBuilder();
         String line = "";
-
         while ((line = reader.readLine()) != null) {
             responseStringBuilder.append(line);
-        }
-
+        } 
         reader.close();
-
         return responseStringBuilder.toString();
     }
 }
