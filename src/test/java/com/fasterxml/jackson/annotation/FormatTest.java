@@ -3,6 +3,7 @@ package com.fasterxml.jackson.annotation;
 import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
+
 /**
  * Tests to verify that it is possibly to merge {@link JsonFormat.Value}
  * instances for overrides.
@@ -169,6 +170,8 @@ public class FormatTest extends TestBase
         assertFalse(dunno.equals(lenient));
     }
 
+<<<<<<< LEFT
+=======
     public void testCaseInsensitiveValues() {
         JsonFormat.Value empty = JsonFormat.Value.empty();
         assertNull(empty.getFeature(Feature.ACCEPT_CASE_INSENSITIVE_VALUES));
@@ -192,6 +195,7 @@ public class FormatTest extends TestBase
         assertTrue(JsonFormat.Shape.OBJECT.isStructured());
     }
 
+>>>>>>> RIGHT
     public void testFeatures() {
         JsonFormat.Features f1 = JsonFormat.Features.empty();
         JsonFormat.Features f2 = f1.with(Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)

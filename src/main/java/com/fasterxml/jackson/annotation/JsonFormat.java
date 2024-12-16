@@ -4,6 +4,7 @@ import java.lang.annotation.*;
 import java.util.Locale;
 import java.util.TimeZone;
 
+
 /**
  * General-purpose annotation used for configuring details of how
  * values of properties are to be serialized.
@@ -11,44 +12,42 @@ import java.util.TimeZone;
  * have specific universal interpretation: instead, effect depends on datatype
  * of property being annotated (or more specifically, deserializer
  * and serializer being used).
- *<p>
+ * <p>
  * Common uses include choosing between alternate representations -- for example,
  * whether {@link java.util.Date} is to be serialized as number (Java timestamp)
  * or String (such as ISO-8601 compatible time value) -- as well as configuring
  * exact details with {@link #pattern} property.
- *<p>
+ * <p>
  * As of Jackson 3.0, known special handling includes:
- *<ul>
+ * <ul>
  * <li>{@link java.util.Date}: Shape can  be {@link Shape#STRING} or {@link Shape#NUMBER};
- *    pattern may contain {@link java.text.SimpleDateFormat}-compatible pattern definition.
- *   </li>
+ * pattern may contain {@link java.text.SimpleDateFormat}-compatible pattern definition.
+ * </li>
  * <li>Can be used on Classes (types) as well, for modified default behavior, possibly
- *   overridden by per-property annotation
- *   </li>
+ * overridden by per-property annotation
+ * </li>
  * <li>{@link java.lang.Enum}s: Shapes {@link Shape#STRING} and {@link Shape#NUMBER} can be
- *    used to change between numeric (index) and textual (name or <code>toString()</code>);
- *    but it is also possible to use {@link Shape#OBJECT} to serialize (but not deserialize)
- *    {@link java.lang.Enum}s as JSON Objects (as if they were POJOs). NOTE: serialization
- *     as JSON Object only works with class annotation; 
- *    will not work as per-property annotation.
- *   </li>
+ * used to change between numeric (index) and textual (name or <code>toString()</code>);
+ * but it is also possible to use {@link Shape#OBJECT} to serialize (but not deserialize)
+ * {@link java.lang.Enum}s as JSON Objects (as if they were POJOs). NOTE: serialization
+ * as JSON Object only works with class annotation;
+ * will not work as per-property annotation.
+ * </li>
  * <li>{@link java.util.Collection}s can be serialized as (and deserialized from) JSON Objects,
- *    if {@link Shape#OBJECT} is used. NOTE: can ONLY be used as class annotation;
- *    will not work as per-property annotation.
- *   </li>
+ * if {@link Shape#OBJECT} is used. NOTE: can ONLY be used as class annotation;
+ * will not work as per-property annotation.
+ * </li>
  * <li>{@link java.lang.Number} subclasses can be serialized as full objects if
- *    {@link Shape#OBJECT} is used. Otherwise the default behavior of serializing to a
- *    scalar number value will be preferred. NOTE: can ONLY be used as class annotation;
- *    will not work as per-property annotation.
- *   </li>
- *</ul>
+ * {@link Shape#OBJECT} is used. Otherwise the default behavior of serializing to a
+ * scalar number value will be preferred. NOTE: can ONLY be used as class annotation;
+ * will not work as per-property annotation.
+ * </li>
+ * </ul>
  */
-@Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER,
-    ElementType.TYPE})
+@Target({ ElementType.ANNOTATION_TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @JacksonAnnotation
-public @interface JsonFormat
-{
+public @interface JsonFormat {
     /**
      * Value that indicates that default {@link java.util.Locale}
      * (from deserialization or serialization context) should be used:
@@ -60,12 +59,12 @@ public @interface JsonFormat
      * Value that indicates that default {@link java.util.TimeZone}
      * (from deserialization or serialization context) should be used:
      * annotation does not define value to use.
-     *<p>
+     * <p>
      * NOTE: default here does NOT mean JVM defaults but Jackson databindings
      * default, usually UTC, but may be changed on <code>ObjectMapper</code>.
      */
-    public final static String DEFAULT_TIMEZONE = "##default";
-    
+    public static final String DEFAULT_TIMEZONE = "##default";
+
     /**
      * Datatype-specific additional piece of configuration that may be used
      * to further refine formatting aspects. This may, for example, determine
@@ -91,7 +90,7 @@ public @interface JsonFormat
      * set to another locale.
      */
     public String locale() default DEFAULT_LOCALE;
-    
+
     /**
      * {@link java.util.TimeZone} to use for serialization (if needed).
      * Special value of {@link #DEFAULT_TIMEZONE}
@@ -105,91 +104,79 @@ public @interface JsonFormat
      * Property that indicates whether "lenient" handling should be enabled or
      * disabled. This is relevant mostly for deserialization of some textual
      * datatypes, especially date/time types.
-     *<p>
+     * <p>
      * Note that underlying default setting depends on datatype (or more precisely
      * deserializer for it): for most date/time types, default is for leniency
      * to be enabled.
      */
-    public OptBoolean lenient() default OptBoolean.DEFAULT;
+    OptBoolean lenient() default OptBoolean.DEFAULT;
 
     /**
      * Set of {@link JsonFormat.Feature}s to explicitly enable with respect
      * to handling of annotated property. This will have precedence over possible
      * global configuration.
      */
-    public JsonFormat.Feature[] with() default { };
+    JsonFormat.Feature[] with() default {  };
 
     /**
      * Set of {@link JsonFormat.Feature}s to explicitly disable with respect
      * to handling of annotated property. This will have precedence over possible
      * global configuration.
      */
-    public JsonFormat.Feature[] without() default { };
+    JsonFormat.Feature[] without() default {  };
 
     /*
     /**********************************************************
     /* Value enumeration(s), value class(es)
     /**********************************************************
      */
-
     /**
      * Value enumeration used for indicating preferred Shape; translates
      * loosely to JSON types, with some extra values to indicate less precise
      * choices (i.e. allowing one of multiple actual shapes)
      */
-    public enum Shape
-    {
-        // // // Concrete physical shapes, scalars
+    public enum Shape {
 
+        // // // Concrete physical shapes, scalars
         /**
          * Value that indicates that (JSON) boolean type
          * (true, false) should be used.
          */
         BOOLEAN,
-
         /**
          * Value that indicates that a numeric (JSON) type should be used
          * (but does not specify whether integer or floating-point representation
          * should be used)
          */
         NUMBER,
-
         /**
          * Value that indicates that floating-point numeric type should be used
          */
         NUMBER_FLOAT,
-
         /**
          * Value that indicates that integer number type should be used
          * (and not {@link #NUMBER_FLOAT}).
          */
         NUMBER_INT,
-
         /**
          * Value that indicates that (JSON) String type should be used.
          */
         STRING,
-
         /**
          * Value that indicates shape should not be structural (that is, not
          * {@link #ARRAY} or {@link #OBJECT}, but can be any other shape.
          */
         SCALAR,
-        
         // // // Concrete physical shapes, structured
-
         /**
          * Value that indicates that (JSON) Array type should be used.
          */
         ARRAY,
-
         /**
          * Value that indicates that (JSON) Object type should be used.
          */
         OBJECT,
-
         // // // Additional logical meta-types
-
         /**
          * Marker enum value that indicates "whatever" choice, meaning that annotation
          * does NOT specify shape to use.
@@ -197,7 +184,6 @@ public @interface JsonFormat
          * specifically instructs use of the "natural" shape for datatype.
          */
         ANY,
-
         /**
          * Marker enum value that indicates the "default" choice for given datatype;
          * for example, JSON String for {@link java.lang.String}, or JSON Number
@@ -206,7 +192,6 @@ public @interface JsonFormat
          * explicit choice that overrides possible default settings.
          */
         NATURAL,
-
         /**
          * Marker enum value that indicates not only shape of {@link #OBJECT} but further
          * handling as POJO, where applicable. Mostly makes difference at Java Object level
@@ -214,24 +199,25 @@ public @interface JsonFormat
          *
          * @since 3.0
          */
-        POJO,
-        
-        ;
-
+        POJO;
         public boolean isNumeric() {
             return (this == NUMBER) || (this == NUMBER_INT) || (this == NUMBER_FLOAT);
         }
 
-        /** @since 3.0 */
+        /**
+         * @since 2.6
+         */
         public static boolean isNumeric(Shape shapeOrNull) {
             return (shapeOrNull != null) && shapeOrNull.isNumeric();
         }
 
         public boolean isStructured() {
-            return (this == OBJECT) || (this == ARRAY) || (this == POJO);
+            return ((this == OBJECT) || (this == ARRAY)) || (this == POJO);
         }
 
-        /** @since 3.0 */
+        /**
+         * @since 2.7
+         */
         public static boolean isStructured(Shape shapeOrNull) {
             return (shapeOrNull != null) && shapeOrNull.isStructured();
         }
@@ -241,7 +227,7 @@ public @interface JsonFormat
      * Set of features that can be enabled/disabled for property annotated.
      * These often relate to specific <code>SerializationFeature</code>
      * or <code>DeserializationFeature</code>, as noted by entries.
-     *<p>
+     * <p>
      * Note that whether specific setting has an effect depends on whether
      * <code>JsonSerializer</code> / <code>JsonDeserializer</code> being used
      * takes the format setting into account. If not, please file an issue
@@ -249,80 +235,74 @@ public @interface JsonFormat
      * (if you know which one; if not, just use `jackson-databind`).
      */
     public enum Feature {
+
         /**
          * Override for <code>DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY</code>
          * which will allow deserialization of JSON non-array values into single-element
          * Java arrays and {@link java.util.Collection}s.
          */
         ACCEPT_SINGLE_VALUE_AS_ARRAY,
-
         /**
          * Override for <code>MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES</code>.
          * Only affects deserialization, has no effect on serialization.
-         *<p>
+         * <p>
          * NOTE: starting with 2.9 can also effect Enum handling (and potentially other
          * places where case-insensitive property values are accepted).
          */
         ACCEPT_CASE_INSENSITIVE_PROPERTIES,
-
         /**
          * Override for <code>MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES</code>.
          * Only affects deserialization, has no effect on serialization.
-         * 
+         *
          * @since 2.10
          */
         ACCEPT_CASE_INSENSITIVE_VALUES,
-
         /**
          * Override for <code>SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS</code>,
          * similar constraints apply.
          */
         WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS,
-
         /**
          * Override for <code>SerializationFeature.WRITE_DATES_WITH_ZONE_ID</code>,
          * similar constraints apply.
          */
         WRITE_DATES_WITH_ZONE_ID,
-
         /**
          * Override for <code>SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED</code>
          * which will force serialization of single-element arrays and {@link java.util.Collection}s
          * as that single element and excluding array wrapper.
          */
         WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED,
-
         /**
          * Override for <code>SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS</code>,
          * enabling of which will force sorting of {@link java.util.Map} keys before
          * serialization.
          */
         WRITE_SORTED_MAP_ENTRIES,
-
         /**
          * Override for <code>DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIMEZONE</code>
          * that specifies whether context provided timezone
          * <code>DeserializationContext.getTimeZone()</code> should be used to adjust Date/Time
          * values on deserialization, even if value itself contains timezone informatio
-         *<p>
+         * <p>
          * NOTE: due to limitations of "old" JDK date/time types (that is,
          * {@link java.util.Date} and {@link java.util.Calendar}), this setting is only
          * applicable to <code>Joda</code> and <code>Java 8 date/time</code> values,
          * but not to <code>java.util.Date</code> or <code>java.util.Calendar</code>.
          */
-        ADJUST_DATES_TO_CONTEXT_TIME_ZONE
-    }
+        ADJUST_DATES_TO_CONTEXT_TIME_ZONE;}
 
     /**
      * Helper class that encapsulates information equivalent to {@link java.lang.Boolean}
      * valued {@link java.util.EnumMap}.
      */
-    public static class Features
-    {
-        private final int _enabled, _disabled;
+    public static class Features {
+        private final int _enabled;
 
-        private final static Features EMPTY = new Features(0, 0);
-        
+        private final int _disabled;
+
+        private static final Features EMPTY = new Features(0, 0);
+
         private Features(int e, int d) {
             _enabled = e;
             _disabled = d;
@@ -331,11 +311,11 @@ public @interface JsonFormat
         public static Features empty() {
             return EMPTY;
         }
-        
+
         public static Features construct(JsonFormat f) {
             return construct(f.with(), f.without());
         }
-        
+
         public static Features construct(Feature[] enabled, Feature[] disabled)
         {
             int e = 0;
@@ -428,16 +408,15 @@ public @interface JsonFormat
      * Helper class used to contain information from a single {@link JsonFormat}
      * annotation.
      */
-    public static class Value
-        implements JacksonAnnotationValue<JsonFormat>,
-            java.io.Serializable
-    {
+    public static class Value implements JacksonAnnotationValue<JsonFormat> , java.io.Serializable {
         private static final long serialVersionUID = 1L;
 
         private final static Value EMPTY = new Value();
 
         private final String _pattern;
+
         private final Shape _shape;
+
         private final Locale _locale;
 
         private final String _timezoneStr;
@@ -447,31 +426,22 @@ public @interface JsonFormat
         private final Features _features;
 
         // lazily constructed when created from annotations
+        // lazily constructed when created from annotations
         private transient TimeZone _timezone;
-        
+
         public Value() {
             this("", Shape.ANY, "", "", Features.empty(), null);
         }
-        
+
         public Value(JsonFormat ann) {
-            this(ann.pattern(), ann.shape(), ann.locale(), ann.timezone(),
-                    Features.construct(ann), ann.lenient().asBoolean());
+            this(ann.pattern(), ann.shape(), ann.locale(), ann.timezone(), Features.construct(ann), ann.lenient().asBoolean());
         }
 
-        public Value(String p, Shape sh, String localeStr, String tzStr, Features f,
-                Boolean lenient)
-        {
-            this(p, sh,
-                    (localeStr == null || localeStr.length() == 0 || DEFAULT_LOCALE.equals(localeStr)) ?
-                            null : new Locale(localeStr),
-                    (tzStr == null || tzStr.length() == 0 || DEFAULT_TIMEZONE.equals(tzStr)) ?
-                            null : tzStr,
-                    null, f, lenient);
+        public Value(String p, Shape sh, String localeStr, String tzStr, Features f, Boolean lenient) {
+            this(p, sh, ((localeStr == null) || (localeStr.length() == 0)) || DEFAULT_LOCALE.equals(localeStr) ? null : new Locale(localeStr), ((tzStr == null) || (tzStr.length() == 0)) || DEFAULT_TIMEZONE.equals(tzStr) ? null : tzStr, null, f, lenient);
         }
 
-        public Value(String p, Shape sh, Locale l, TimeZone tz, Features f,
-                Boolean lenient)
-        {
+        public Value(String p, Shape sh, Locale l, TimeZone tz, Features f, Boolean lenient) {
             _pattern = p;
             _shape = (sh == null) ? Shape.ANY : sh;
             _locale = l;
@@ -481,9 +451,7 @@ public @interface JsonFormat
             _lenient = lenient;
         }
 
-        public Value(String p, Shape sh, Locale l, String tzStr, TimeZone tz, Features f,
-                Boolean lenient)
-        {
+        public Value(String p, Shape sh, Locale l, String tzStr, TimeZone tz, Features f, Boolean lenient) {
             _pattern = p;
             _shape = (sh == null) ? Shape.ANY : sh;
             _locale = l;
@@ -493,7 +461,7 @@ public @interface JsonFormat
             _lenient = lenient;
         }
 
-        public final static Value empty() {
+        public static final Value empty() {
             return EMPTY;
         }
 
@@ -506,32 +474,30 @@ public @interface JsonFormat
          * Note that one or both of value instances may be `null`, directly;
          * if both are `null`, result will also be `null`; otherwise never null.
          */
-        public static Value merge(Value base, Value overrides)
-        {
-            return (base == null) ? overrides
-                    : base.withOverrides(overrides);
+        public static Value merge(Value base, Value overrides) {
+            return base == null ? overrides : base.withOverrides(overrides);
         }
 
-        public static Value mergeAll(Value... values)
-        {
+        public static Value mergeAll(Value... values) {
             Value result = null;
             for (Value curr : values) {
                 if (curr != null) {
-                    result = (result == null)  ? curr : result.withOverrides(curr);
+                    result = (result == null) ? curr : result.withOverrides(curr);
                 }
             }
             return result;
         }
 
-        public final static Value from(JsonFormat ann) {
-            return (ann == null) ? EMPTY : new Value(ann);
+        public static final Value from(JsonFormat ann) {
+            return ann == null ? EMPTY : new Value(ann);
         }
 
         public final Value withOverrides(Value overrides) {
-            if ((overrides == null) || (overrides == EMPTY) || (overrides == this)) {
+            if (((overrides == null) || (overrides == EMPTY)) || (overrides == this)) {
                 return this;
             }
-            if (this == EMPTY) { // cheesy, but probably common enough
+            if (this == EMPTY) {
+                // cheesy, but probably common enough
                 return overrides;
             }
             String p = overrides._pattern;
@@ -556,12 +522,11 @@ public @interface JsonFormat
             if (lenient == null) {
                 lenient = _lenient;
             }
-
             // timezone not merged, just choose one
             String tzStr = overrides._timezoneStr;
             TimeZone tz;
-            
-            if ((tzStr == null) || tzStr.isEmpty()) { // no overrides, use space
+            if ((tzStr == null) || tzStr.isEmpty()) {
+                // no overrides, use space
                 tzStr = _timezoneStr;
                 tz = _timezone;
             } else {
@@ -579,81 +544,60 @@ public @interface JsonFormat
         }
 
         public static Value forLeniency(boolean lenient) {
-            return new Value(null, null, null, null, null, Features.empty(),
-                    Boolean.valueOf(lenient));
+            return new Value(null, null, null, null, null, Features.empty(), Boolean.valueOf(lenient));
         }
 
         public Value withPattern(String p) {
-            return new Value(p, _shape, _locale, _timezoneStr, _timezone,
-                    _features, _lenient);
+            return new Value(p, _shape, _locale, _timezoneStr, _timezone, _features, _lenient);
         }
 
         public Value withShape(Shape s) {
             if (s == _shape) {
                 return this;
             }
-            return new Value(_pattern, s, _locale, _timezoneStr, _timezone,
-                    _features, _lenient);
+            return new Value(_pattern, s, _locale, _timezoneStr, _timezone, _features, _lenient);
         }
 
         public Value withLocale(Locale l) {
-            return new Value(_pattern, _shape, l, _timezoneStr, _timezone,
-                    _features, _lenient);
+            return new Value(_pattern, _shape, l, _timezoneStr, _timezone, _features, _lenient);
         }
 
         public Value withTimeZone(TimeZone tz) {
-            return new Value(_pattern, _shape, _locale, null, tz,
-                    _features, _lenient);
+            return new Value(_pattern, _shape, _locale, null, tz, _features, _lenient);
         }
 
         public Value withLenient(Boolean lenient) {
             if (lenient == _lenient) {
                 return this;
             }
-            return new Value(_pattern, _shape, _locale, _timezoneStr, _timezone,
-                    _features, lenient);
+            return new Value(_pattern, _shape, _locale, _timezoneStr, _timezone, _features, lenient);
         }
 
         public Value withFeature(JsonFormat.Feature f) {
             Features newFeats = _features.with(f);
-            return (newFeats == _features) ? this :
-                new Value(_pattern, _shape, _locale, _timezoneStr, _timezone,
-                        newFeats, _lenient);
+            return newFeats == _features ? this : new Value(_pattern, _shape, _locale, _timezoneStr, _timezone, newFeats, _lenient);
         }
 
         public Value withoutFeature(JsonFormat.Feature f) {
             Features newFeats = _features.without(f);
-            return (newFeats == _features) ? this :
-                new Value(_pattern, _shape, _locale, _timezoneStr, _timezone,
-                        newFeats, _lenient);
+            return newFeats == _features ? this : new Value(_pattern, _shape, _locale, _timezoneStr, _timezone, newFeats, _lenient);
         }
 
         @Override
         public Class<JsonFormat> valueFor() {
             return JsonFormat.class;
         }
-        
+
         public String getPattern() { return _pattern; }
+
         public Shape getShape() { return _shape; }
+
         public Locale getLocale() { return _locale; }
 
-        /**
-         * @return {@code Boolean.TRUE} if explicitly set to true; {@code Boolean.FALSE}
-         *   if explicit set to false; or {@code null} if not set either way (assuming
-         *   "default leniency" for the context)
-         */
         public Boolean getLenient() {
             return _lenient;
         }
 
-        /**
-         * Convenience method equivalent to
-         *<pre>
-         *   Boolean.TRUE.equals(getLenient())
-         *</pre>
-         * that is, returns {@code true} if (and only if) leniency has been explicitly
-         * set to {code true}; but not if it is undefined.
-         */
         public boolean isLenient() {
             return Boolean.TRUE.equals(_lenient);
         }
@@ -669,7 +613,7 @@ public @interface JsonFormat
             }
             return _timezoneStr;
         }
-        
+
         public TimeZone getTimeZone() {
             TimeZone tz = _timezone;
             if (tz == null) {
@@ -682,16 +626,20 @@ public @interface JsonFormat
             return tz;
         }
 
-        public boolean hasShape() { return _shape != Shape.ANY; }
+        public boolean hasShape() {
+            return _shape != Shape.ANY;
+        }
 
         public boolean hasPattern() {
             return (_pattern != null) && (_pattern.length() > 0);
         }
 
-        public boolean hasLocale() { return _locale != null; }
+        public boolean hasLocale() {
+            return _locale != null;
+        }
 
         public boolean hasTimeZone() {
-            return (_timezone != null) || (_timezoneStr != null && !_timezoneStr.isEmpty());
+            return (_timezone != null) || ((_timezoneStr != null) && (!_timezoneStr.isEmpty()));
         }
 
         /**
