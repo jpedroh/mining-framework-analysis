@@ -11,6 +11,15 @@
  ******************************************************************************/
 package com.salesforce.webdev.sitecrawler;
 
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.util.Cookie;
+import com.salesforce.webdev.sitecrawler.beans.CrawlProgress;
+import com.salesforce.webdev.sitecrawler.beans.CrawlerConfiguration;
+import com.salesforce.webdev.sitecrawler.navigation.NavigateThread;
+import com.salesforce.webdev.sitecrawler.scheduler.LocalScheduler;
+import com.salesforce.webdev.sitecrawler.scheduler.Organizer;
+import com.salesforce.webdev.sitecrawler.scheduler.Scheduler;
+import com.salesforce.webdev.sitecrawler.utils.URLCleaner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,21 +31,11 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.util.Cookie;
-import com.salesforce.webdev.sitecrawler.beans.CrawlProgress;
-import com.salesforce.webdev.sitecrawler.beans.CrawlerConfiguration;
-import com.salesforce.webdev.sitecrawler.navigation.NavigateThread;
-import com.salesforce.webdev.sitecrawler.scheduler.LocalScheduler;
-import com.salesforce.webdev.sitecrawler.scheduler.Organizer;
-import com.salesforce.webdev.sitecrawler.scheduler.Scheduler;
-import com.salesforce.webdev.sitecrawler.utils.URLCleaner;
 
 /**
  * <p>This class is the central hub and referee between our network spider (NavigateThread) and our page (/HTML) parser (ProcessPage).</p>
@@ -48,7 +47,6 @@ import com.salesforce.webdev.sitecrawler.utils.URLCleaner;
  * 
  */
 public class SiteCrawler {
-
     /**
      * <p>Logger</p>
      */
@@ -71,7 +69,7 @@ public class SiteCrawler {
 
     /**
      * <p>This restricts what kind of pages are considered "parsable" pages.</p>
-     * 
+     *
      * <p>By default, this contains a default list (/, JSP, HTM and HTML extensions).</p>
      */
     private Collection<String> allowedSuffixes = new ArrayList<String>();
@@ -112,27 +110,28 @@ public class SiteCrawler {
     private int threadLimit = Runtime.getRuntime().availableProcessors();
 
     private Scheduler scheduler = new LocalScheduler(this);
+
     private Organizer organizer = new Organizer(scheduler);
 
     /**
      * <p>This is the ratio of I/O threads vs processing of downloaded pages. Defaults to <code>2.0</code>.</p>
-     * 
+     *
      * <p>Example, if this is set to "2.0", that means it's X (say, 12) download threads VS 2X (24 in that case) parse threads).</p>
      */
     private double downloadVsProcessRatio = 2;
 
     /**
      * <p>This determines the amount of heap used for storing unprocessed pages. Should be between 0 and 1.</p>
-     * 
+     *
      * <p>Example, if the max heap (Xmx) is set to 8Gb, a ratio of 0.4 means roughly 3276 (8 * 1024 * 0.4) Mb of heap taken for storing downloading pages.</p>
      */
     private double maxProcessWaitingRatio = 0.4;
 
     /**
      * <p>If there are more pages then this waiting to be processing, we pause the crawling to avoid exhausting the memory.</p>
-     * 
+     *
      * <p>Keep in mind that each page/process waiting costs about 1Mb in memory. So, a value of 500 means a <em>heap requirement of 500Mb</em>.</p>
-     * 
+     *
      * <p>This is partly controlled by {@link #maxProcessWaitingRatio}.</p>
      */
     private int maxProcessWaiting;
@@ -166,6 +165,7 @@ public class SiteCrawler {
      * <p>If the crawler is running or not.</p>
      */
     private boolean running = false;
+
     /**
      * <p>This tells all the other threads to stop processing information!.</p>
      */
@@ -190,10 +190,12 @@ public class SiteCrawler {
      * <p>Sitecrawler option.</p>
      */
     private boolean disableRedirects = false;
+
     /**
      * <p>Sitecrawler option.</p>
      */
     private boolean enabledJavascript = false;
+
     /**
      * <p>Sitecrawler option.</p>
      */
@@ -206,12 +208,15 @@ public class SiteCrawler {
 
     /**
      * <p>Set up the SiteCrawler, initiate the WebClient (default values: no javascript, CSS, use insecure SSL and thrown exceptions of it finds a failing Status Code).</p>
-     * 
+     *
      * <p>This also sets up the a pool of {@link WebClient}s, based on {@link #threadLimit}.</p>
-     * 
-     * @param baseUrl The base Url, starting with the protocol, NOT ending with a / (so: "http://www.site.com"). Cannot be null
-     * @param baseUrlSecure The base secure Url, starting with the protocol, NOT ending with a / (so: "https://www.site.com"). Can be null
-     * @param actions list of {@link SiteCrawlerAction}s, these are the actions that will be called, either when an Exception happens, or when any page is successfully loaded
+     *
+     * @param baseUrl
+     * 		The base Url, starting with the protocol, NOT ending with a / (so: "http://www.site.com"). Cannot be null
+     * @param baseUrlSecure
+     * 		The base secure Url, starting with the protocol, NOT ending with a / (so: "https://www.site.com"). Can be null
+     * @param actions
+     * 		list of {@link SiteCrawlerAction}s, these are the actions that will be called, either when an Exception happens, or when any page is successfully loaded
      */
     public SiteCrawler(String baseUrl, String baseUrlSecure, SiteCrawlerAction... actions) {
         this(baseUrl, baseUrlSecure, Collections.unmodifiableList(Arrays.asList(actions)));
@@ -383,7 +388,7 @@ public class SiteCrawler {
         String excludePath = prependBaseUrlIfNeeded(url);
         boolean ex = isExcluded(excludePath);
         boolean sc = isScheduled(url);
-        if (!ex && !sc) {
+        if ((!ex) && (!sc)) {
             toVisit.add(url);
         }
     }
@@ -498,7 +503,7 @@ public class SiteCrawler {
 
     /**
      * <p>Remove all cookies from all {@link WebClient}s in the pool.<p> <p>Used to return a boolean (true if cleared, false if there is no pool (yet?))
-     * 
+     *
      * @return true (backwards compatible)
      */
     public boolean clearCookies() {
@@ -568,15 +573,12 @@ public class SiteCrawler {
                 toVisit.add(baseUrlSecure);
             }
         }
-
-        scheduler.unpause();
-        Object[] args = { toVisit.size(), actions.size(), actions };
+        Object[] args = new java.lang.Object[]{ toVisit.size(), actions.size(), actions };
         logger.info("Starting crawl with the {} defined endpoints and {} plugins: {}", args);
         this.running = true;
         init();
-
+        scheduler.unpause();
         startCrawler();
-
         scheduler.pause();
         shutdown();
     }
@@ -616,9 +618,7 @@ public class SiteCrawler {
         // This should stop the consumers! Since we already called the waitFor*Consumer() methods, this should
         // stop the processing cleanly (and allow awaitTermination to end successfully and quickly)
         this.continueProcessing = false;
-
         scheduler.shutdown();
-
     }
 
     /**
@@ -734,7 +734,6 @@ public class SiteCrawler {
     private void startCrawler() {
         while (shouldContinueCrawling()) {
             updateCrawlProgress();
-
             String url;
             try {
                 // Cannot be ".take()" since that might block forever.
@@ -744,29 +743,25 @@ public class SiteCrawler {
                     continue;
                 }
                 url = prependBaseUrlIfNeeded(url);
-            } catch (InterruptedException e) {
+            } catch (java.lang.InterruptedException e) {
                 logger.error("We were interrupted waiting for the next link, exiting...", e);
                 Thread.currentThread().interrupt();
                 return;
             }
-
             // What if this URL has been excluded? Well, we simply skip over it :)
             if (isExcluded(url)) {
                 logger.trace("This URL is excluded: {}", url);
                 continue;
             }
-
             organizer.submitUrl(url);
             linksScheduled.getAndIncrement();
-
             visited.add(url);
             String cleanUrl = urlCleaner.getCleanedUrl(url);
             if (null != cleanUrl) {
                 visited.add(cleanUrl);
             }
             visitedCounter.getAndIncrement();
-        }
-
+        } 
         logger.info("Done crawling, {} links visited. (crosscheck: {})", visitedCounter.get(), actuallyVisited.get());
     }
 
@@ -861,35 +856,30 @@ public class SiteCrawler {
         boolean startsWithBaseUrl = false;
         boolean startsWithBaseUrlSecure = false;
         boolean allGood = false;
-        if (null != baseUrl && url.startsWith(baseUrl)) {
+        if ((null != baseUrl) && url.startsWith(baseUrl)) {
             logger.trace("[isExcluded] startsWithBaseUrl: {}", url);
             startsWithBaseUrl = true;
         }
-
-        if (null != baseUrlSecure && url.startsWith(baseUrlSecure)) {
+        if ((null != baseUrlSecure) && url.startsWith(baseUrlSecure)) {
             logger.trace("[isExcluded] startsWith baseUrlSecure: {}", url);
             startsWithBaseUrlSecure = true;
         }
-
         // What about relative (from the base) URLs? We can have "/foo.bar", just not "//foo.bar"
-        if (url.length() > 1 && url.startsWith("/") && !url.startsWith("//")) {
+        if (((url.length() > 1) && url.startsWith("/")) && (!url.startsWith("//"))) {
             logger.trace("[isExcluded] This is a relative url, pointing to the BASE: {}", url);
             allGood = true;
         }
-
         // What about relative (from current path) URL? We can have "foo.bar", just not "//foo.bar"
         // That is not a use-case we currently support (but might need to, for desk.com)
         // if (url.length() > 1 && !url.startsWith("//")) {
         // logger.trace("This is a relative url, pointing RELATIVALlY (starting with c): {}", url);
         // allGood = true;
         // }
-
         // If it doesn't start with either of the baseUrls (or they are simply not set), we don't allow the URL
-        if (!startsWithBaseUrl && !startsWithBaseUrlSecure && !allGood) {
+        if (((!startsWithBaseUrl) && (!startsWithBaseUrlSecure)) && (!allGood)) {
             logger.trace("[isExcluded] !startsWithBaseUrl && !startsWithBaseUrlSecure && !allGood: {}", url);
             return true;
         }
-
         boolean hasAllowedSuffix = false;
         String suffix = url.split("\\?")[0].toLowerCase();
         for (String allowedSuffix : allowedSuffixes) {
@@ -903,34 +893,28 @@ public class SiteCrawler {
             logger.trace("[isExcluded] requireAllowedSuffixes = false, so setting hasAllowedSuffix to true");
             hasAllowedSuffix = true;
         }
-
         if (!hasAllowedSuffix) {
             logger.trace("[isExcluded] not allowing suffix {} for {}", suffix, url);
             return true;
         }
-
         if (visited.contains(url)) {
             logger.trace("[isExcluded] We already visited [{}], skipping it.", url);
             return true;
         }
-
         if (listContainsSubstring(blocked, url)) {
             logger.trace("[isExcluded] This URL is blocked [{}], skipping it.", url);
             return true;
         }
-
-        if (!allowed.isEmpty() && !listContainsSubstring(allowed, url)) {
+        if ((!allowed.isEmpty()) && (!listContainsSubstring(allowed, url))) {
             logger.trace("[isExcluded] This URL is not allowed [{}], skipping it.", url);
             return true;
         }
-
         // Also check the cleaned URL
         String cleanUrl = urlCleaner.getCleanedUrl(url);
-        if (null != cleanUrl && visited.contains(cleanUrl)) {
+        if ((null != cleanUrl) && visited.contains(cleanUrl)) {
             logger.trace("[isExcluded] The cleaned URL is blocked [{}], skipping it.", url);
             return true;
         }
-
         return false;
     }
 
