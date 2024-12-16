@@ -34,17 +34,6 @@
  */
 package de.uni_koblenz.jgralab.graphvalidator;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
@@ -59,15 +48,25 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 
 /**
  * A <code>GraphValidator</code> can be used to check if all {@link Constraint}s
  * specified in the {@link Schema} of a given {@link Graph} are fulfilled.
- *
+ * 
  * @author Tassilo Horn <horn@uni-koblenz.de>
  */
 public class GraphValidator {
-
 	private Graph graph;
 
 	/**
@@ -93,8 +92,8 @@ public class GraphValidator {
 	/**
 	 * Checks if all multiplicities specified for the {@link EdgeClass}
 	 * <code>ec</code> are fulfilled.
-	 *
-	 *
+	 * 
+	 * 
 	 * @param ec
 	 *            an {@link EdgeClass}
 	 * @return a set of {@link MultiplicityConstraintViolation} describing which
@@ -143,7 +142,7 @@ public class GraphValidator {
 
 	/**
 	 * Validates all constraints of the graph.
-	 *
+	 * 
 	 * @see GraphValidator#validateMultiplicities(EdgeClass)
 	 * @see GraphValidator#validateConstraints(AttributedElementClass)
 	 * @return a set of {@link ConstraintViolation} objects, one for each
@@ -151,12 +150,10 @@ public class GraphValidator {
 	 */
 	public SortedSet<ConstraintViolation> validate() {
 		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<ConstraintViolation>();
-
 		// Check if all multiplicities are correct
 		for (EdgeClass ec : graph.getGraphClass().getEdgeClasses()) {
 			brokenConstraints.addAll(validateMultiplicities(ec));
 		}
-
 		// check if all greql constraints are met
 		List<AttributedElementClass<?, ?>> aecs = new ArrayList<AttributedElementClass<?, ?>>();
 		aecs.add(graph.getSchema().getGraphClass());
@@ -171,37 +168,29 @@ public class GraphValidator {
 	/**
 	 * Checks if all {@link Constraint}s attached to the
 	 * {@link AttributedElementClass} <code>aec</code> are fulfilled.
-	 *
+	 * 
 	 * @param aec
 	 *            an {@link AttributedElementClass}
 	 * @return a set of {@link ConstraintViolation} objects
 	 */
-	public SortedSet<ConstraintViolation> validateConstraints(
-			AttributedElementClass<?, ?> aec) {
+	public SortedSet<ConstraintViolation> validateConstraints(AttributedElementClass<?, ?> aec) {
 		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<ConstraintViolation>();
 		for (Constraint constraint : aec.getConstraints()) {
 			String query = constraint.getPredicate();
-			GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(new QueryImpl(query), graph,
-					null, null);
+			GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(new QueryImpl(query), graph, null, null);
 			try {
-
-				if (!eval.<Boolean> getSingleResult()) {
+				if (!eval.<Boolean>getSingleResult()) {
 					if (constraint.getOffendingElementsQuery() != null) {
 						String oeq = constraint.getOffendingElementsQuery();
-						GreqlEvaluatorImpl eval1 = new GreqlEvaluatorImpl(
-								new QueryImpl(oeq), graph, null, null);
-						Set<AttributedElement> resultSet = eval1
-								.<AttributedElement> getResultSet();
-						brokenConstraints.add(new GReQLConstraintViolation(aec,
-								constraint, resultSet));
+						GreqlEvaluatorImpl eval1 = new GreqlEvaluatorImpl(new QueryImpl(oeq), graph, null, null);
+						Set<AttributedElement> resultSet = eval1.<AttributedElement>getResultSet();
+						brokenConstraints.add(new GReQLConstraintViolation(aec, constraint, resultSet));
 					} else {
-						brokenConstraints.add(new GReQLConstraintViolation(aec,
-								constraint, null));
+						brokenConstraints.add(new GReQLConstraintViolation(aec, constraint, null));
 					}
 				}
 			} catch (GreqlException e) {
-				brokenConstraints.add(new BrokenGReQLConstraintViolation(aec,
-						constraint, query));
+				brokenConstraints.add(new BrokenGReQLConstraintViolation(aec, constraint, query));
 			}
 		}
 		return brokenConstraints;
@@ -210,7 +199,7 @@ public class GraphValidator {
 	/**
 	 * Do just like {@link GraphValidator#validate()}, but generate a HTML
 	 * report saved to <code>fileName</code>, too.
-	 *
+	 * 
 	 * @param fileName
 	 *            the name of the HTML report file
 	 * @return a set of {@link ConstraintViolation} objects, one for each
@@ -287,7 +276,7 @@ public class GraphValidator {
 				int no = 1;
 				String cssClass = "";
 				for (ConstraintViolation ci : brokenConstraints) {
-					if ((no % 2) == 0) {
+					if (no % 2 == 0) {
 						cssClass = "other";
 					} else {
 						cssClass = "";

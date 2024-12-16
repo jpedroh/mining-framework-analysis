@@ -32,14 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.greql2.funlib.graph;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
@@ -53,36 +46,32 @@ import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.funlib.NeedsEvaluatorArgument;
 import de.uni_koblenz.jgralab.greql2.types.pathsearch.PathSystemMarkerEntry;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
+
 
 @NeedsEvaluatorArgument
 public class PathSystem extends Function {
-
-	@Description(params = {"startVertex","fa"}, description = 
-			"Returns a path system with the given root vertex, which is structured according to the given path description.",
-			categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
+	@Description(params = { "startVertex", "fa" }, description = "Returns a path system with the given root vertex, which is structured according to the given path description.", categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
 	public PathSystem() {
 		super(1000, 1, 1.0);
 	}
 
-	public de.uni_koblenz.jgralab.greql2.types.PathSystem evaluate(
-			InternalGreqlEvaluator evaluator, Vertex startVertex, NFA nfa) {
+	public de.uni_koblenz.jgralab.greql2.types.PathSystem evaluate(InternalGreqlEvaluator evaluator, Vertex startVertex, NFA nfa) {
 		return evaluate(evaluator, startVertex, nfa.getDFA());
 	}
 
-	public de.uni_koblenz.jgralab.greql2.types.PathSystem evaluate(
-			InternalGreqlEvaluator evaluator, Vertex startVertex, DFA dfa) {
-
+	public de.uni_koblenz.jgralab.greql2.types.PathSystem evaluate(InternalGreqlEvaluator evaluator, Vertex startVertex, DFA dfa) {
 		@SuppressWarnings("unchecked")
-		GraphMarker<PathSystemMarkerEntry>[] marker = new GraphMarker[dfa.stateList
-				.size()];
+		GraphMarker<PathSystemMarkerEntry>[] marker = new GraphMarker[dfa.stateList.size()];
 		for (int i = 0; i < dfa.stateList.size(); i++) {
-			marker[i] = new GraphMarker<PathSystemMarkerEntry>(
-					startVertex.getGraph());
+			marker[i] = new GraphMarker<PathSystemMarkerEntry>(startVertex.getGraph());
 		}
-		Set<PathSystemMarkerEntry> leaves = markVerticesOfPathSystem(evaluator,
-				marker, startVertex, dfa);
-		de.uni_koblenz.jgralab.greql2.types.PathSystem resultPathSystem = createPathSystemFromMarkings(
-				marker, startVertex, leaves);
+		Set<PathSystemMarkerEntry> leaves = markVerticesOfPathSystem(evaluator, marker, startVertex, dfa);
+		de.uni_koblenz.jgralab.greql2.types.PathSystem resultPathSystem = createPathSystemFromMarkings(marker, startVertex, leaves);
 		return resultPathSystem;
 	}
 
@@ -130,18 +119,15 @@ public class PathSystem extends Function {
 	 *             if something went wrong, several EvaluateException can be
 	 *             thrown
 	 */
-	private Set<PathSystemMarkerEntry> markVerticesOfPathSystem(
-			InternalGreqlEvaluator evaluator,
-			GraphMarker<PathSystemMarkerEntry>[] marker, Vertex startVertex,
-			DFA dfa) {
+	private Set<PathSystemMarkerEntry> markVerticesOfPathSystem(InternalGreqlEvaluator evaluator, GraphMarker<PathSystemMarkerEntry>[] marker, Vertex startVertex, DFA dfa) {
 		Set<PathSystemMarkerEntry> finalEntries = new HashSet<PathSystemMarkerEntry>();
 		Queue<PathSystemMarkerEntry> queue = new LinkedList<PathSystemMarkerEntry>();
-		PathSystemMarkerEntry currentEntry = markVertex(marker, startVertex,
-				dfa.initialState, null /* no parent vertex */, null /*
-																	 * no parent
-																	 * edge
-																	 */,
-				null /* no parent state */, 0);
+		PathSystemMarkerEntry currentEntry = /* no parent vertex */
+		/* no parent
+		edge
+		 */
+		/* no parent state */
+		markVertex(marker, startVertex, dfa.initialState, null, null, null, 0);
 		if (dfa.initialState.isFinal) {
 			finalEntries.add(currentEntry);
 		}
@@ -149,23 +135,13 @@ public class PathSystem extends Function {
 		while (!queue.isEmpty()) {
 			currentEntry = queue.poll();
 			Vertex currentVertex = currentEntry.vertex;
-
 			for (Edge inc : currentVertex.incidences()) {
 				for (Transition currentTransition : currentEntry.state.outTransitions) {
-					Vertex nextVertex = currentTransition.getNextVertex(
-							currentVertex, inc);
-
-					if (!isMarked(marker, nextVertex,
-							currentTransition.endState)) {
-						if (currentTransition.accepts(currentVertex, inc,
-								evaluator)) {
-							Edge traversedEdge = currentTransition
-									.consumesEdge() ? inc : null;
-							PathSystemMarkerEntry newEntry = markVertex(marker,
-									nextVertex, currentTransition.endState,
-									currentVertex, traversedEdge,
-									currentEntry.state,
-									currentEntry.distanceToRoot + 1);
+					Vertex nextVertex = currentTransition.getNextVertex(currentVertex, inc);
+					if (!isMarked(marker, nextVertex, currentTransition.endState)) {
+						if (currentTransition.accepts(currentVertex, inc, evaluator)) {
+							Edge traversedEdge = (currentTransition.consumesEdge()) ? inc : null;
+							PathSystemMarkerEntry newEntry = markVertex(marker, nextVertex, currentTransition.endState, currentVertex, traversedEdge, currentEntry.state, currentEntry.distanceToRoot + 1);
 							if (currentTransition.endState.isFinal) {
 								finalEntries.add(newEntry);
 							}
@@ -174,8 +150,7 @@ public class PathSystem extends Function {
 					}
 				}
 			}
-		}
-
+		} 
 		return finalEntries;
 	}
 
@@ -253,5 +228,4 @@ public class PathSystem extends Function {
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
-
 }

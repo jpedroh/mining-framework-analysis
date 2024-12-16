@@ -34,21 +34,6 @@
  */
 package de.uni_koblenz.jgralab.gretl;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.pcollections.Empty;
-import org.pcollections.PMap;
-
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
@@ -64,22 +49,35 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.NamedElementImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.pcollections.Empty;
+import org.pcollections.PMap;
+
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  */
 public class Context {
-
 	private static Logger logger = JGraLab.getLogger(Context.class.getPackage()
 			.getName());
+
 	public static final String DEFAULT_SOURCE_GRAPH_ALIAS = "default";
+
 	public static final String DEFAULT_TARGET_GRAPH_ALIAS = "target";
 
-	private static final Pattern QUERY_GRAPH_ALIAS_PATTERN = Pattern.compile(
-			"\\p{Space}*(#(\\p{Alnum}+)#\\p{Space}*).*", Pattern.DOTALL);
+	private static final Pattern QUERY_GRAPH_ALIAS_PATTERN = Pattern.compile("\\p{Space}*(#(\\p{Alnum}+)#\\p{Space}*).*", Pattern.DOTALL);
 
-	private final Map<String, Graph> sourceGraphs = new HashMap<String, Graph>(
-			1);
+	private final Map<String, Graph> sourceGraphs = new HashMap<String, Graph>(1);
 
 	Schema targetSchema = null;
 
@@ -93,8 +91,9 @@ public class Context {
 	Graph targetGraph = null;
 
 	public enum TransformationPhase {
-		SCHEMA, GRAPH
-	}
+
+		SCHEMA,
+		GRAPH;}
 
 	TransformationPhase phase = TransformationPhase.SCHEMA;
 
@@ -106,6 +105,7 @@ public class Context {
 	}
 
 	private String targetSchemaName;
+
 	private String targetGraphClassName;
 
 	/**
@@ -126,6 +126,7 @@ public class Context {
 	private Map<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>> archMap = new HashMap<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>>();
 
 	private final Map<String, Object> greqlExtraVars = new HashMap<String, Object>();
+
 	private final Set<String> greqlImports = new HashSet<String>();
 
 	final void setGReQLVariable(String name, Object val) {
@@ -165,7 +166,7 @@ public class Context {
 
 	/**
 	 * Creates a new Context object
-	 *
+	 * 
 	 * @param targetSchemaName
 	 *            The name of the target schema
 	 * @param targetGraphClassName
@@ -174,15 +175,13 @@ public class Context {
 	public Context(String targetSchemaName, String targetGraphClassName) {
 		this.targetSchemaName = targetSchemaName;
 		this.targetGraphClassName = targetGraphClassName;
-
 		// Check if the target schema is already present and we can thus skip
 		// the SCHEMA phase.
 		try {
-			Class<?> schemaClass = SchemaClassManager
-					.instance(targetSchemaName).loadClass(targetSchemaName);
+			Class<?> schemaClass = SchemaClassManager.instance(targetSchemaName).loadClass(targetSchemaName);
 			Method schemaInstanceMethod = schemaClass.getMethod("instance");
-			targetSchema = (Schema) schemaInstanceMethod.invoke(null);
-		} catch (Exception e) {
+			targetSchema = ((Schema) (schemaInstanceMethod.invoke(null)));
+		} catch (java.lang.Exception e) {
 			// Failing is ok here.
 		}
 	}
@@ -193,7 +192,6 @@ public class Context {
 	public Context(Schema targetSchema) {
 		this.targetSchema = targetSchema;
 		targetSchemaName = targetSchema.getQualifiedName();
-
 	}
 
 	/**
@@ -241,7 +239,7 @@ public class Context {
 	/**
 	 * Ensures that theres a function for this attributed element class, even
 	 * though this function may be empty.
-	 *
+	 * 
 	 * @param aec
 	 *            the AttributedElementClass for which to ensure the
 	 *            archMap/imgMap mappings
@@ -266,14 +264,12 @@ public class Context {
 
 	public final void printImgMappings() {
 		System.out.println("Image Mappings:");
-		for (Entry<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>> e : imgMap
-				.entrySet()) {
+		for (Entry<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>> e : imgMap.entrySet()) {
 			AttributedElementClass<?, ?> aec = e.getKey();
 			PMap<Object, AttributedElement<?, ?>> img = e.getValue();
 			System.out.println("Mappings for: " + aec.getQualifiedName());
 			for (Entry<Object, AttributedElement<?, ?>> entry : img.entrySet()) {
-				System.out.println("    " + entry.getKey() + " ==> "
-						+ entry.getValue());
+				System.out.println((("    " + entry.getKey()) + " ==> ") + entry.getValue());
 			}
 		}
 	}
@@ -287,11 +283,8 @@ public class Context {
 		}
 	}
 
-	private final void addMappingsToSuperClasses(
-			final GraphElementClass<?, ?> subClass, final Object archetype,
-			final GraphElement<?, ?> image) {
-		for (AttributedElementClass<?, ?> superClass : subClass
-				.getAllSuperClasses()) {
+	private final void addMappingsToSuperClasses(final GraphElementClass<?, ?> subClass, final Object archetype, final GraphElement<?, ?> image) {
+		for (AttributedElementClass<?, ?> superClass : subClass.getAllSuperClasses()) {
 			addMappingToClass(superClass, archetype, image);
 		}
 	}
@@ -442,7 +435,7 @@ public class Context {
 	 * Swap this context object. E.g. make the current target graph the default
 	 * source graph and reinitialize all member vars such as archMap/imgMap.
 	 * This is mainly useful for chaining multiple transformations.
-	 *
+	 * 
 	 * @return this context object itself
 	 */
 	public final Context swap() {
@@ -481,38 +474,33 @@ public class Context {
 	 * Reset this context, so that the same context can be passed to another
 	 * transformation. This means, everything except the source graph is
 	 * cleared.
-	 *
+	 * 
 	 * @return the context
 	 */
 	public final Context reset(boolean forgetTargetSchema) {
 		// reinitialize outermost/phase
 		outermost = true;
 		phase = TransformationPhase.SCHEMA;
-
 		// forget target graph and schema
 		targetGraph = null;
 		if (forgetTargetSchema) {
 			targetSchema = null;
 		}
-
 		// clear archMap/imgMap
 		archMap.clear();
 		imgMap.clear();
-
 		// reset the GreqlEvaluator index cache, they prevent garbage
 		// collection!
 		GreqlEvaluatorImpl.resetGraphIndizes();
-
 		// clear imports/extra vars
 		greqlExtraVars.clear();
 		greqlImports.clear();
-
 		return this;
 	}
 
 	/**
 	 * Sets the (default) source graph for the transformation
-	 *
+	 * 
 	 * @param sourceGraph
 	 *            the source graph
 	 */
@@ -522,7 +510,7 @@ public class Context {
 
 	/**
 	 * adds a source graph for the transformation
-	 *
+	 * 
 	 * @param alias
 	 *            the alias to access this source graph (used as prefix #name#
 	 *            in semantic expressions)
@@ -577,7 +565,7 @@ public class Context {
 	/**
 	 * returns the target graph of the transformation if no target graph exists,
 	 * it will be created
-	 *
+	 * 
 	 * @return the target graph
 	 */
 	public final Graph getTargetGraph() {
@@ -636,8 +624,9 @@ public class Context {
 	}
 
 	public enum GReTLVariableType {
-		ARCH, IMG
-	}
+
+		ARCH,
+		IMG;}
 
 	public static String toGReTLVarNotation(String qualifiedName,
 			GReTLVariableType type) {
@@ -675,28 +664,22 @@ public class Context {
 		if (phase == TransformationPhase.SCHEMA) {
 			return null;
 		}
-
 		if (semanticExpression.isEmpty()) {
 			logger.severe("The given semantic expression is empty!  Fix that!");
 			return null;
 		}
-
 		PMap<String, Object> greqlMapping = getGreqlVariablesNeededByQuery(semanticExpression);
 		StringBuilder sb = new StringBuilder();
-
 		if (sourceGraphs.values().contains(graph)) {
 			sb.append(getGreqlImportString(graph));
 		}
-
 		sb.append(getGreqlUsingString(greqlMapping));
 		sb.append(semanticExpression);
 		String query = sb.toString();
 		logger.finest("GReQL: " + semanticExpression);
-
-		GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(new QueryImpl(query), graph,
-				greqlMapping, null);
+		GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(new QueryImpl(query), graph, greqlMapping, null);
 		eval.startEvaluation();
-		return (T) eval.getResult();
+		return ((T) (eval.getResult()));
 	}
 
 	private final PMap<String, Object> getGreqlVariablesNeededByQuery(
@@ -756,5 +739,4 @@ public class Context {
 	public final void restoreTrace(String fileName) {
 		// TODO: Implement me!!!
 	}
-
 }

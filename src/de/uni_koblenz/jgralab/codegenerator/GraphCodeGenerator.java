@@ -32,30 +32,26 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.codegenerator;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
+
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
-public class GraphCodeGenerator extends
-		AttributedElementCodeGenerator<GraphClass, Graph> {
-
-	public GraphCodeGenerator(GraphClass graphClass, String schemaPackageName,
-			String schemaName, CodeGeneratorConfiguration config) {
+public class GraphCodeGenerator extends AttributedElementCodeGenerator<GraphClass, Graph> {
+	public GraphCodeGenerator(GraphClass graphClass, String schemaPackageName, String schemaName, CodeGeneratorConfiguration config) {
 		super(graphClass, schemaPackageName, config);
 		rootBlock.setVariable("graphElementClass", "Graph");
 		rootBlock.setVariable("schemaElementClass", "GraphClass");
@@ -76,7 +72,7 @@ public class GraphCodeGenerator extends
 
 	@Override
 	protected CodeBlock createBody() {
-		CodeList code = (CodeList) super.createBody();
+		CodeList code = ((CodeList) (super.createBody()));
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
@@ -85,10 +81,8 @@ public class GraphCodeGenerator extends
 				addImports("#jgImplTransPackage#.#baseClassName#");
 			}
 			if (currentCycle.isDbImpl()) {
-				addImports("#jgImplDbPackage#.#baseClassName#",
-						"#jgImplDbPackage#.GraphDatabase");
+				addImports("#jgImplDbPackage#.#baseClassName#", "#jgImplDbPackage#.GraphDatabase");
 			}
-
 			rootBlock.setVariable("baseClassName", "GraphImpl");
 		}
 		code.add(createGraphElementClassMethods());
@@ -169,7 +163,6 @@ public class GraphCodeGenerator extends
 
 	private CodeBlock createGraphElementClassMethods() {
 		CodeList code = new CodeList();
-
 		GraphClass gc = aec;
 		TreeSet<GraphElementClass<?, ?>> sortedClasses = new TreeSet<GraphElementClass<?, ?>>();
 		sortedClasses.addAll(gc.getGraphElementClasses());
@@ -179,31 +172,20 @@ public class GraphCodeGenerator extends
 			}
 			CodeList gecCode = new CodeList();
 			code.addNoIndent(gecCode);
-
-			gecCode.addNoIndent(new CodeSnippet(
-					true,
-					"// ------------------------ Code for #ecQualifiedName# ------------------------"));
-
+			gecCode.addNoIndent(new CodeSnippet(true, "// ------------------------ Code for #ecQualifiedName# ------------------------"));
 			gecCode.setVariable("ecSimpleName", gec.getSimpleName());
 			gecCode.setVariable("ecUniqueName", gec.getUniqueName());
 			gecCode.setVariable("ecQualifiedName", gec.getQualifiedName());
 			gecCode.setVariable("ecSchemaVariableName", gec.getVariableName());
-			gecCode.setVariable("ecJavaClassName", schemaRootPackageName + "."
-					+ gec.getQualifiedName());
-			gecCode.setVariable("ecType",
-					(gec instanceof VertexClass ? "Vertex" : "Edge"));
-			gecCode.setVariable("ecTypeInComment",
-					(gec instanceof VertexClass ? "vertex" : "edge"));
-			gecCode.setVariable("ecTypeAecConstant",
-					(gec instanceof VertexClass ? "VC" : "EC"));
+			gecCode.setVariable("ecJavaClassName", (schemaRootPackageName + ".") + gec.getQualifiedName());
+			gecCode.setVariable("ecType", gec instanceof VertexClass ? "Vertex" : "Edge");
+			gecCode.setVariable("ecTypeInComment", gec instanceof VertexClass ? "vertex" : "edge");
+			gecCode.setVariable("ecTypeAecConstant", gec instanceof VertexClass ? "VC" : "EC");
 			gecCode.setVariable("ecCamelName", camelCase(gec.getUniqueName()));
-			gecCode.setVariable("ecImplName", (gec.isAbstract() ? "**ERROR**"
-					: camelCase(gec.getQualifiedName()) + "Impl"));
-
+			gecCode.setVariable("ecImplName", gec.isAbstract() ? "**ERROR**" : camelCase(gec.getQualifiedName()) + "Impl");
 			gecCode.addNoIndent(createGetFirstMethods(gec));
 			gecCode.addNoIndent(createFactoryMethods(gec));
 		}
-
 		return code;
 	}
 
@@ -300,23 +282,19 @@ public class GraphCodeGenerator extends
 
 	private CodeBlock createEdgeIteratorMethods() {
 		GraphClass gc = aec;
-
 		CodeList code = new CodeList();
 		if (!config.hasTypeSpecificMethodsSupport()) {
 			return code;
 		}
-
 		for (EdgeClass edge : gc.getEdgeClasses()) {
 			if (currentCycle.isStdOrDbImplOrTransImpl()) {
 				addImports("#jgImplPackage#.EdgeIterable");
 			}
 			CodeSnippet s = new CodeSnippet(true);
 			code.addNoIndent(s);
-
 			s.setVariable("edgeUniqueName", camelCase(edge.getUniqueName()));
 			s.setVariable("edgeQualifiedName", edge.getQualifiedName());
-			s.setVariable("edgeJavaClassName", schemaRootPackageName + "."
-					+ edge.getQualifiedName());
+			s.setVariable("edgeJavaClassName", (schemaRootPackageName + ".") + edge.getQualifiedName());
 			// getFooIncidences()
 			if (currentCycle.isAbstract()) {
 				s.add("/**");
@@ -336,15 +314,12 @@ public class GraphCodeGenerator extends
 
 	private CodeBlock createVertexIteratorMethods() {
 		GraphClass gc = aec;
-
 		CodeList code = new CodeList();
 		if (!config.hasTypeSpecificMethodsSupport()) {
 			return code;
 		}
-
 		Set<VertexClass> vertexClassSet = new HashSet<VertexClass>();
 		vertexClassSet.addAll(gc.getVertexClasses());
-
 		for (VertexClass vertex : vertexClassSet) {
 			if (vertex.isDefaultGraphElementClass()) {
 				continue;
@@ -352,12 +327,10 @@ public class GraphCodeGenerator extends
 			if (currentCycle.isStdOrDbImplOrTransImpl()) {
 				addImports("#jgImplPackage#.VertexIterable");
 			}
-
 			CodeSnippet s = new CodeSnippet(true);
 			code.addNoIndent(s);
 			s.setVariable("vertexQualifiedName", vertex.getQualifiedName());
-			s.setVariable("vertexJavaClassName",
-					"#schemaPackage#." + vertex.getQualifiedName());
+			s.setVariable("vertexJavaClassName", "#schemaPackage#." + vertex.getQualifiedName());
 			s.setVariable("vertexCamelName", camelCase(vertex.getUniqueName()));
 			if (currentCycle.isAbstract()) {
 				s.add("/**");

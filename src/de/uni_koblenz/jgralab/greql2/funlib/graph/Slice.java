@@ -32,19 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.greql2.funlib.graph;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-
-import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
@@ -61,6 +49,16 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.funlib.NeedsEvaluatorArgument;
 import de.uni_koblenz.jgralab.greql2.types.pathsearch.PathSystemMarkerEntry;
 import de.uni_koblenz.jgralab.greql2.types.pathsearch.PathSystemQueueEntry;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+import org.pcollections.PSet;
+
 
 @NeedsEvaluatorArgument
 public class Slice extends Function {
@@ -70,55 +68,35 @@ public class Slice extends Function {
 
 	private Graph graph;
 
-	@Description(params = {"v", "nfa"}, description = 
-			"Returns a slice, starting at the given root vertex and "
-			 + " being structured according to the given path description.",
-			 categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
-	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(
-			InternalGreqlEvaluator evaluator, Vertex v, NFA nfa) {
+	@Description(params = { "v", "nfa" }, description = "Returns a slice, starting at the given root vertex and " + " being structured according to the given path description.", categories = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
+	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(InternalGreqlEvaluator evaluator, Vertex v, NFA nfa) {
 		return evaluate(evaluator, v, nfa.getDFA());
 	}
 
-	@Description(params = {"v", "dfa"}, description = 
-			"Returns a slice, starting at the given root vertex and "
-			 + " being structured according to the given path description.",
-			 categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
-	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(
-			InternalGreqlEvaluator evaluator, Vertex v, DFA dfa) {
-		return evaluate(evaluator, JGraLab.<Vertex> set().plus(v), dfa);
+	@Description(params = { "v", "dfa" }, description = "Returns a slice, starting at the given root vertex and " + " being structured according to the given path description.", categories = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
+	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(InternalGreqlEvaluator evaluator, Vertex v, DFA dfa) {
+		return evaluate(evaluator, JGraLab.<Vertex>set().plus(v), dfa);
 	}
 
-	@Description(params = {"roots", "nfa"}, description = 
-			"Returns a slice, starting at the given root vertices and "
-			 + " being structured according to the given path description.",
-			 categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
-	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(
-			InternalGreqlEvaluator evaluator, PSet<Vertex> roots, NFA nfa) {
+	@Description(params = { "roots", "nfa" }, description = "Returns a slice, starting at the given root vertices and " + " being structured according to the given path description.", categories = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
+	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(InternalGreqlEvaluator evaluator, PSet<Vertex> roots, NFA nfa) {
 		return evaluate(evaluator, roots, nfa.getDFA());
 	}
 
-	@Description(params = {"roots", "dfa"}, description = 
-			"Returns a slice, starting at the given root vertices and "
-			 + " being structured according to the given path description.",
-			 categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
-	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(
-			InternalGreqlEvaluator evaluator, PSet<Vertex> roots, DFA dfa) {
+	@Description(params = { "roots", "dfa" }, description = "Returns a slice, starting at the given root vertices and " + " being structured according to the given path description.", categories = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
+	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(InternalGreqlEvaluator evaluator, PSet<Vertex> roots, DFA dfa) {
 		Set<Vertex> sliCritVertices = new HashSet<Vertex>();
-
 		for (Vertex v : roots) {
 			if (graph == null) {
 				graph = v.getGraph();
 			}
 			sliCritVertices.add(v);
 		}
-
-		marker = new ArrayList<GraphMarker<Map<Edge, PathSystemMarkerEntry>>>(
-				dfa.stateList.size());
+		marker = new ArrayList<GraphMarker<Map<Edge, PathSystemMarkerEntry>>>(dfa.stateList.size());
 		for (int i = 0; i < dfa.stateList.size(); i++) {
 			marker.add(new GraphMarker<Map<Edge, PathSystemMarkerEntry>>(graph));
 		}
-		List<Vertex> leaves = markVerticesOfSlice(evaluator, sliCritVertices,
-				dfa);
+		List<Vertex> leaves = markVerticesOfSlice(evaluator, sliCritVertices, dfa);
 		return createSliceFromMarkings(graph, sliCritVertices, leaves);
 	}
 
@@ -206,22 +184,20 @@ public class Slice extends Function {
 	 *             if something went wrong, several EvaluateException can be
 	 *             thrown
 	 */
-	private List<Vertex> markVerticesOfSlice(InternalGreqlEvaluator evaluator,
-			Set<Vertex> sliCritVertices, DFA dfa) {
+	private List<Vertex> markVerticesOfSlice(InternalGreqlEvaluator evaluator, Set<Vertex> sliCritVertices, DFA dfa) {
 		// GreqlEvaluator.errprintln("Start marking vertices of slice");
 		ArrayList<Vertex> finalVertices = new ArrayList<Vertex>();
 		Queue<PathSystemQueueEntry> queue = new LinkedList<PathSystemQueueEntry>();
 		PathSystemQueueEntry currentEntry;
-
 		// fill queue with vertices in slicing criterion and mark these vertices
 		for (Vertex v : sliCritVertices) {
-			currentEntry = new PathSystemQueueEntry(v, dfa.initialState, null,
-					null, 0);
+			currentEntry = new PathSystemQueueEntry(v, dfa.initialState, null, null, 0);
 			queue.offer(currentEntry);
-			markVertex(v, dfa.initialState, null /* no parent state */,
-					null /* no parent vertex */, null /* no parent state */, 0);
+			/* no parent state */
+			/* no parent vertex */
+			/* no parent state */
+			markVertex(v, dfa.initialState, null, null, null, 0);
 		}
-
 		while (!queue.isEmpty()) {
 			currentEntry = queue.poll();
 			if (currentEntry.state.isFinal) {
@@ -229,32 +205,22 @@ public class Slice extends Function {
 			}
 			for (Edge inc : currentEntry.vertex.incidences()) {
 				for (Transition currentTransition : currentEntry.state.outTransitions) {
-					Vertex nextVertex = currentTransition.getNextVertex(
-							currentEntry.vertex, inc);
-					if (!isMarked(nextVertex, currentTransition.endState, inc)
-							&& currentTransition.accepts(currentEntry.vertex,
-									inc, evaluator)) {
-						Edge traversedEdge = currentTransition.consumesEdge() ? inc
-								: null;
-						/*
-						 * if the vertex is not marked with the state, add it to
-						 * the queue for further processing - the parent edge
-						 * doesn't matter but only the state
+					Vertex nextVertex = currentTransition.getNextVertex(currentEntry.vertex, inc);
+					if ((!isMarked(nextVertex, currentTransition.endState, inc)) && currentTransition.accepts(currentEntry.vertex, inc, evaluator)) {
+						Edge traversedEdge = (currentTransition.consumesEdge()) ? inc : null;
+						/* if the vertex is not marked with the state, add it to
+						the queue for further processing - the parent edge
+						doesn't matter but only the state
 						 */
 						if (!isMarked(nextVertex, currentTransition.endState)) {
-							queue.add(new PathSystemQueueEntry(nextVertex,
-									currentTransition.endState, traversedEdge,
-									currentEntry.state, 0));
+							queue.add(new PathSystemQueueEntry(nextVertex, currentTransition.endState, traversedEdge, currentEntry.state, 0));
 						}
 						/* mark the vertex with all reachability information */
-						markVertex(nextVertex, currentTransition.endState,
-								currentEntry.vertex, traversedEdge,
-								currentEntry.state, 0);
+						markVertex(nextVertex, currentTransition.endState, currentEntry.vertex, traversedEdge, currentEntry.state, 0);
 					}
 				}
 			}
-		}
-
+		} 
 		return finalVertices;
 	}
 
@@ -419,5 +385,4 @@ public class Slice extends Function {
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
-
 }

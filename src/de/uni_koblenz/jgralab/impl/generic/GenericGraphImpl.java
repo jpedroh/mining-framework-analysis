@@ -34,9 +34,6 @@
  */
 package de.uni_koblenz.jgralab.impl.generic;
 
-import java.io.IOException;
-import java.util.Map;
-
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
@@ -60,18 +57,20 @@ import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.IntegerDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
-import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import java.io.IOException;
+import java.util.Map;
+
 
 /**
  * A generic {@link Graph}-Implementation that can represent TGraphs of
  * arbitrary {@link Schema}s.
  */
-public class GenericGraphImpl extends GraphImpl implements
-		InternalAttributesArrayAccess {
-
+public class GenericGraphImpl extends GraphImpl implements InternalAttributesArrayAccess {
 	private GraphClass type;
+
 	private Object[] attributes;
 
 	protected GenericGraphImpl(GraphClass type, String id, int vmax, int emax) {
@@ -159,23 +158,15 @@ public class GenericGraphImpl extends GraphImpl implements
 		if (type.getAttribute(name).getDomain().isConformGenericValue(data)) {
 			if (hasECARuleManager()) {
 				T oldValue = getAttribute(name);
-				getECARuleManager().fireBeforeChangeAttributeEvents(this, name,
-						oldValue, data);
+				getECARuleManager().fireBeforeChangeAttributeEvents(this, name, oldValue, data);
 				attributes[i] = data;
-				getECARuleManager().fireAfterChangeAttributeEvents(this, name,
-						oldValue, data);
+				getECARuleManager().fireAfterChangeAttributeEvents(this, name, oldValue, data);
 			} else {
 				attributes[i] = data;
 			}
 		} else {
 			Domain d = type.getAttribute(name).getDomain();
-			throw new ClassCastException(("Expected "
-					+ ((d instanceof RecordDomain) ? RecordImpl.class.getName()
-							: d.getJavaAttributeImplementationTypeName(d
-									.getPackageName()))
-					+ " object, but received " + data) == null ? (data
-					.getClass().getName() + " object instead") : data
-					+ " instead");
+			throw new ClassCastException(((("Expected " + (d instanceof RecordDomain ? RecordImpl.class.getName() : d.getJavaAttributeImplementationTypeName(d.getPackageName()))) + " object, but received ") + data) == null ? data.getClass().getName() + " object instead" : data + " instead");
 		}
 	}
 
@@ -226,7 +217,7 @@ public class GenericGraphImpl extends GraphImpl implements
 	 * Returns the default value for attributes in the generic implementation if
 	 * there is no explicitly defined default value, according to the
 	 * attribute's domain.
-	 *
+	 * 
 	 * @param domain
 	 *            The attribute's domain.
 	 * @return The default value for attributes of the domain.
@@ -348,10 +339,5 @@ public class GenericGraphImpl extends GraphImpl implements
 	public Iterable<Edge> edges(Class<? extends Edge> edgeClass) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
-	}
-
-	@Override
-	public void invokeOnAttributesArray(OnAttributesFunction fn) {
-		attributes = fn.invoke(this, attributes);
 	}
 }

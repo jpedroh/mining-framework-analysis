@@ -34,22 +34,6 @@
  */
 package de.uni_koblenz.jgralabtest.instancetest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Random;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
@@ -67,10 +51,10 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.A;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.B;
-import de.uni_koblenz.jgralabtest.schemas.vertextest.C;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.C2;
-import de.uni_koblenz.jgralabtest.schemas.vertextest.D;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.C;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.D2;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.D;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.F;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.G;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.H;
@@ -78,11 +62,25 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.J;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.K;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestGraph;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.Random;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.Parameterized;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 
 @RunWith(Parameterized.class)
 public class LoadTest extends InstanceTest {
-
 	private static final String TESTGRAPH_FILENAME = "testgraph.tg";
+
 	private static final String TESTGRAPH_PATH = "testit/testdata/";
 
 	public LoadTest(ImplementationType implementationType, String dbURL) {
@@ -117,7 +115,6 @@ public class LoadTest extends InstanceTest {
 	// LoadTest t = new LoadTest();
 	// t.testFreeElementList();
 	// }
-
 	private Graph createTestGraph() throws Exception {
 		if (implementationType == ImplementationType.STANDARD) {
 			String query = "from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"";
@@ -127,18 +124,14 @@ public class LoadTest extends InstanceTest {
 		int edgeClasses = 7;
 		int vertexCountPerClass = 5;
 		int edgeCountPerClass = 5;
-
-		VertexTestGraph g = createVertexTestGraph(vertexClasses
-				* vertexCountPerClass, edgeClasses * edgeCountPerClass);
+		VertexTestGraph g = createVertexTestGraph(vertexClasses * vertexCountPerClass, edgeClasses * edgeCountPerClass);
 		createTransaction(g);
-
 		A[] as = new A[vertexCountPerClass];
 		B[] bs = new B[vertexCountPerClass];
 		C[] cs = new C[vertexCountPerClass];
 		D[] ds = new D[vertexCountPerClass];
 		C2[] c2s = new C2[vertexCountPerClass];
 		D2[] d2s = new D2[vertexCountPerClass];
-
 		// create some vertices
 		for (int i = 0; i < vertexCountPerClass; i++) {
 			as[i] = g.createA();
@@ -148,7 +141,6 @@ public class LoadTest extends InstanceTest {
 			c2s[i] = g.createC2();
 			d2s[i] = g.createD2();
 		}
-
 		Random r = new Random();
 		// create edge arrays
 		// E[] es = new E[edgeCountPerClass];
@@ -158,14 +150,12 @@ public class LoadTest extends InstanceTest {
 		// I[] is = new I[edgeCountPerClass];
 		// J[] js = new J[edgeCountPerClass];
 		// K[] ks = new K[edgeCountPerClass];
-
 		// iterate and select alpha and omega randomly
 		for (int i = 0; i < edgeCountPerClass; i++) {
 			// E
 			A alphaA = as[r.nextInt(vertexCountPerClass)];
 			B omegaB = bs[r.nextInt(vertexCountPerClass)];
 			g.createE(alphaA, omegaB);
-
 			// F
 			C alphaC = cs[r.nextInt(vertexCountPerClass)];
 			D omegaD;
@@ -173,33 +163,28 @@ public class LoadTest extends InstanceTest {
 			if (omegaD.getDegree(F.class, EdgeDirection.IN) > 3) {
 				g.createF(alphaC, omegaD);
 			}
-
 			// G
 			alphaC = cs[r.nextInt(vertexCountPerClass)];
 			omegaD = ds[r.nextInt(vertexCountPerClass)];
 			if (omegaD.getDegree(G.class, EdgeDirection.IN) > 3) {
 				g.createG(alphaC, omegaD);
 			}
-
 			// H
 			alphaA = as[r.nextInt(vertexCountPerClass)];
 			omegaB = bs[r.nextInt(vertexCountPerClass)];
 			if (omegaD.getDegree(H.class, EdgeDirection.IN) > 4) {
 				g.createH(alphaA, omegaB);
 			}
-
 			// I
 			alphaA = as[r.nextInt(vertexCountPerClass)];
 			A omegaA = as[r.nextInt(vertexCountPerClass)];
 			g.createI(alphaA, omegaA);
-
 			// J
 			C2 alphaC2 = c2s[r.nextInt(vertexCountPerClass)];
 			D2 omegaD2 = d2s[r.nextInt(vertexCountPerClass)];
 			if (omegaD2.getDegree(J.class, EdgeDirection.IN) > 3) {
 				g.createJ(alphaC2, omegaD2);
 			}
-
 			// K
 			alphaA = as[r.nextInt(vertexCountPerClass)];
 			omegaB = bs[r.nextInt(vertexCountPerClass)];
@@ -207,33 +192,30 @@ public class LoadTest extends InstanceTest {
 				g.createK(alphaA, omegaB);
 			}
 		}
-
 		for (int i = 0; i < vertexCountPerClass; i++) {
 			B currentB = bs[i];
 			while (currentB.getDegree(H.class, EdgeDirection.IN) < 1) {
 				A alphaA = as[r.nextInt(vertexCountPerClass)];
 				g.createH(alphaA, currentB);
-			}
+			} 
 			while (currentB.getDegree(K.class, EdgeDirection.IN) < 2) {
 				A alphaA = as[r.nextInt(vertexCountPerClass)];
 				g.createK(alphaA, currentB);
-			}
-
+			} 
 			D currentD = ds[i];
 			while (currentD.getDegree(F.class, EdgeDirection.IN) < 1) {
 				C alphaC = cs[r.nextInt(vertexCountPerClass)];
 				g.createF(alphaC, currentD);
-			}
+			} 
 			while (currentD.getDegree(G.class, EdgeDirection.IN) < 1) {
 				C alphaC = cs[r.nextInt(vertexCountPerClass)];
 				g.createG(alphaC, currentD);
-			}
-
+			} 
 			D2 currentD2 = d2s[i];
 			while (currentD2.getDegree(J.class, EdgeDirection.IN) < 1) {
 				C2 alphaC2 = c2s[r.nextInt(vertexCountPerClass)];
 				g.createJ(alphaC2, currentD2);
-			}
+			} 
 		}
 		commit(g);
 		return g;
@@ -269,29 +251,22 @@ public class LoadTest extends InstanceTest {
 			// g1 is always without transaction support
 			g1 = createTestGraph();
 			createReadOnlyTransaction(g1);
-			GraphIO.saveGraphToFile(g1, TESTGRAPH_PATH + TESTGRAPH_FILENAME,
-					null);
+			GraphIO.saveGraphToFile(g1, TESTGRAPH_PATH + TESTGRAPH_FILENAME, null);
 			commit(g1);
 			switch (implementationType) {
-			case STANDARD:
-				g2 = Greql2Schema.instance().loadGreql2Graph(
-						TESTGRAPH_PATH + TESTGRAPH_FILENAME,
-						ImplementationType.STANDARD);
-				break;
-			case TRANSACTION:
-				g2 = VertexTestSchema.instance().loadVertexTestGraph(
-						TESTGRAPH_PATH + TESTGRAPH_FILENAME,
-						ImplementationType.TRANSACTION);
-				break;
-			case DATABASE:
-				g2 = GraphIO.loadGraphFromFile(TESTGRAPH_PATH
-						+ TESTGRAPH_FILENAME, null);
-				break;
-			default:
-				fail("Implementation " + implementationType
-						+ " not yet supported by this test.");
+				case STANDARD :
+					g2 = Greql2Schema.instance().loadGreql2Graph(TESTGRAPH_PATH + TESTGRAPH_FILENAME, ImplementationType.STANDARD);
+					break;
+				case TRANSACTION :
+					g2 = VertexTestSchema.instance().loadVertexTestGraph(TESTGRAPH_PATH + TESTGRAPH_FILENAME, ImplementationType.TRANSACTION);
+					break;
+				case DATABASE :
+					g2 = GraphIO.loadGraphFromFile(TESTGRAPH_PATH + TESTGRAPH_FILENAME, null);
+					break;
+				default :
+					fail(("Implementation " + implementationType) + " not yet supported by this test.");
 			}
-		} catch (Exception ex) {
+		} catch (java.lang.Exception ex) {
 			ex.printStackTrace();
 		}
 		createReadOnlyTransaction(g2);
@@ -300,52 +275,44 @@ public class LoadTest extends InstanceTest {
 		checkEqualEdgeList(g1, g2);
 		commit(g2);
 		commit(g1);
-
 		createTransaction(g2);
 		createTransaction(g1);
 		fillVertexList(g1, g2);
 		commit(g2);
 		commit(g1);
-
 		createReadOnlyTransaction(g2);
 		createReadOnlyTransaction(g1);
 		checkEqualVertexList(g1, g2);
 		checkEqualEdgeList(g1, g2);
 		commit(g2);
 		commit(g1);
-
 		createTransaction(g2);
 		createTransaction(g1);
 		removeVertices(g1, g2);
 		commit(g2);
 		commit(g1);
-
 		createReadOnlyTransaction(g2);
 		createReadOnlyTransaction(g1);
 		checkEqualVertexList(g1, g2);
 		checkEqualEdgeList(g1, g2);
 		commit(g2);
 		commit(g1);
-
 		createTransaction(g2);
 		createTransaction(g1);
 		fillVertexList(g1, g2);
 		commit(g2);
 		commit(g1);
-
 		createReadOnlyTransaction(g2);
 		createReadOnlyTransaction(g1);
 		checkEqualVertexList(g1, g2);
 		checkEqualEdgeList(g1, g2);
 		commit(g2);
 		commit(g1);
-
 		createTransaction(g2);
 		createTransaction(g1);
 		removeVertices(g1, g2);
 		commit(g2);
 		commit(g1);
-
 		createReadOnlyTransaction(g2);
 		createReadOnlyTransaction(g1);
 		checkEqualVertexList(g1, g2);
@@ -395,13 +362,11 @@ public class LoadTest extends InstanceTest {
 	private void fillVertexList(Graph g1, Graph g2) {
 		GraphClass gc = g1.getGraphClass();
 		for (int i = 0; i < 100; i++) {
-			VertexClass vertexClass = gc.getVertexClasses().get(
-					i % gc.getVertexClasses().size());
+			VertexClass vertexClass = gc.getVertexClasses().get(i % gc.getVertexClasses().size());
 			if (vertexClass.isAbstract()) {
 				continue;
 			}
 			g1.createVertex(vertexClass);
-
 			g2.createVertex(vertexClass);
 		}
 	}

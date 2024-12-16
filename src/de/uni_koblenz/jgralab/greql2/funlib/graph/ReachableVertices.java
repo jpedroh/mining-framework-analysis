@@ -32,12 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.greql2.funlib.graph;
-
-import java.util.HashSet;
-
-import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.JGraLab;
@@ -50,26 +45,23 @@ import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.funlib.NeedsEvaluatorArgument;
 import de.uni_koblenz.jgralab.greql2.types.pathsearch.VertexStateQueue;
+import java.util.HashSet;
+import org.pcollections.PSet;
+
 
 @NeedsEvaluatorArgument
 public class ReachableVertices extends Function {
-	
-	@Description(params = {"v","dfa"}, description = 
-			"Returns all vertices that are reachable from the given vertex by a path matching the the given path description.",
-			categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
+	@Description(params = { "v", "dfa" }, description = "Returns all vertices that are reachable from the given vertex by a path matching the the given path description.", categories = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
 	public ReachableVertices() {
 		super(100, 10, 1.0);
 	}
 
-	public PSet<Vertex> evaluate(InternalGreqlEvaluator evaluator, Vertex v,
-			DFA dfa) {
+	public PSet<Vertex> evaluate(InternalGreqlEvaluator evaluator, Vertex v, DFA dfa) {
 		return search(evaluator, v, dfa);
 	}
 
-	public static PSet<Vertex> search(InternalGreqlEvaluator evaluator,
-			Vertex v, DFA dfa) {
+	public static PSet<Vertex> search(InternalGreqlEvaluator evaluator, Vertex v, DFA dfa) {
 		PSet<Vertex> resultSet = JGraLab.set();
-
 		@SuppressWarnings("unchecked")
 		HashSet<Vertex>[] markedElements = new HashSet[dfa.stateList.size()];
 		// BitSet[] markedElements = new BitSet[dfa.stateList.size()];
@@ -86,24 +78,20 @@ public class ReachableVertices extends Function {
 			if (state.isFinal) {
 				resultSet = resultSet.plus(vertex);
 			}
-			for (Edge inc = vertex.getFirstIncidence(); inc != null; inc = inc
-					.getNextIncidence()) {
+			for (Edge inc = vertex.getFirstIncidence(); inc != null; inc = inc.getNextIncidence()) {
 				int size = state.outTransitions.size();
 				for (int i = 0; i < size; i++) {
 					Transition currentTransition = state.outTransitions.get(i);
-					Vertex nextVertex = currentTransition.getNextVertex(vertex,
-							inc);
-					if (!markedElements[currentTransition.endState.number]
-							.contains(nextVertex)) {
+					Vertex nextVertex = currentTransition.getNextVertex(vertex, inc);
+					if (!markedElements[currentTransition.endState.number].contains(nextVertex)) {
 						if (currentTransition.accepts(vertex, inc, evaluator)) {
-							markedElements[currentTransition.endState.number]
-									.add(nextVertex);
+							markedElements[currentTransition.endState.number].add(nextVertex);
 							queue.put(nextVertex, currentTransition.endState);
 						}
 					}
 				}
 			}
-		}
+		} 
 		return resultSet;
 	}
 }
