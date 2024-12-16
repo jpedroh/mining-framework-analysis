@@ -1,21 +1,23 @@
 /* Redline Smalltalk, Copyright (c) James C. Ladd. All rights reserved. See LICENSE in the root of this distribution */
 package st.redline;
 
+import java.math.BigInteger;
+import java.util.*;
 import st.redline.compiler.AbstractMethod;
 import st.redline.compiler.Block;
 import st.redline.compiler.BlockAnalyser;
 import st.redline.compiler.MethodAnalyser;
 
-import java.math.BigInteger;
-import java.util.*;
 
 public class Primitives {
-
 	protected static boolean bootstrapping = false;
 
 	private static final ThreadLocal<Stack<String>> packageRegistry = new ThreadLocal<Stack<String>>();
+
 	private static final Map<String, AbstractMethod> methodsToBeCompiled = new HashMap<String, AbstractMethod>();
+
 	private static final Map<String, Block> blocksToBeCompiled = new HashMap<String, Block>();
+
 	private static final Map<String, ProtoBlock> blocksRegistry = new HashMap<String, ProtoBlock>();
 
 	public static ProtoObject p1(ProtoObject receiver, ThisContext thisContext, ProtoObject arg1, ProtoObject arg2, ProtoObject arg3, ProtoObject arg4, ProtoObject arg5, ProtoObject arg6, ProtoObject arg7) {
@@ -71,7 +73,6 @@ public class Primitives {
 	public static ProtoObject p10(ProtoObject receiver, ThisContext thisContext, ProtoObject arg1, ProtoObject arg2, ProtoObject arg3, ProtoObject arg4, ProtoObject arg5, ProtoObject arg6, ProtoObject arg7) {
 		return instanceLike(receiver).javaValue(((BigInteger) receiver.javaValue()).divide((BigInteger) arg1.javaValue()));
 	}
-
 
 	public static ProtoObject p21(ProtoObject receiver, ThisContext thisContext, ProtoObject arg1, ProtoObject arg2, ProtoObject arg3, ProtoObject arg4, ProtoObject arg5, ProtoObject arg6, ProtoObject arg7) {
 		return instanceLike(receiver).javaValue(((BigInteger) receiver.javaValue()).add((BigInteger) arg1.javaValue()));
@@ -129,7 +130,7 @@ public class Primitives {
 
 	public static ProtoObject p60(ProtoObject receiver, ThisContext thisContext, ProtoObject arg1, ProtoObject arg2, ProtoObject arg3, ProtoObject arg4, ProtoObject arg5, ProtoObject arg6, ProtoObject arg7) {
 		// basicAt: / at:
-//		System.out.println("** p60 at: " + arg1.javaValue());
+	//		System.out.println("** p60 at: " + arg1.javaValue());
 		ProtoObject[] slots = (ProtoObject[]) receiver.javaValue();
 		int index = ((BigInteger) arg1.javaValue()).intValue();
 		if (index == 0)
@@ -138,7 +139,7 @@ public class Primitives {
 	}
 
 	public static ProtoObject p61(ProtoObject receiver, ThisContext thisContext, ProtoObject arg1, ProtoObject arg2, ProtoObject arg3, ProtoObject arg4, ProtoObject arg5, ProtoObject arg6, ProtoObject arg7) {
-//		System.out.println("** p61 at: " + arg1.javaValue() + " put: " + arg2);
+	//		System.out.println("** p61 at: " + arg1.javaValue() + " put: " + arg2);
 		// basicAt:put: / at:put:
 		ProtoObject[] slots = (ProtoObject[]) receiver.javaValue();
 		int index = ((BigInteger) arg1.javaValue()).intValue();
@@ -261,7 +262,7 @@ public class Primitives {
 
 	public static ProtoObject putAt(ProtoObject receiver, ProtoObject value, int index) throws ClassNotFoundException {
 		// answers receiver.
-//		System.out.println("putAt() " + receiver + " put: " + value + " at: " + index);
+	//		System.out.println("putAt() " + receiver + " put: " + value + " at: " + index);
 		ProtoObject slot = createInteger(receiver, index);
 		send(receiver, slot, value, "at:put:", null);
 		return receiver;
@@ -323,7 +324,7 @@ public class Primitives {
 	}
 
 	public static ProtoObject createSubclass(ProtoObject superclass, String name) {
-//		System.out.println("createSubclass() of " + superclass + " called " + name + "  **  " + superclass.cls());
+	//		System.out.println("createSubclass() of " + superclass + " called " + name + "  **  " + superclass.cls());
 		ProtoObject classClass = new ProtoObject(ProtoObject.METACLASS_INSTANCE);
 		classClass.superclass0(superclass.cls());
 		ProtoObject cls = new ProtoObject(classClass);
@@ -333,19 +334,19 @@ public class Primitives {
 	}
 
 	public static ProtoObject createEigenSubclass(ProtoObject superclass, String name, ProtoObject loader) throws ClassNotFoundException {
-//		System.out.println("createEigenSubclass() of " + superclass + " called " + name + "  **  " + superclass.cls() + " " + loader);
+	//		System.out.println("createEigenSubclass() of " + superclass + " called " + name + "  **  " + superclass.cls() + " " + loader);
 		ProtoObject cls = createSubclass(superclass, name);
 		if (cls.cls().superclass() == null)
 			cls.cls().superclass(resolveObject(superclass, "ProtoObject"));
 		return cls;
 	}
 
-    public static ProtoObject createCharacter(ProtoObject receiver, String value) throws ClassNotFoundException {
-        return createWith("Character", receiver, value);
-    }
+				public static ProtoObject createCharacter(ProtoObject receiver, String value) throws ClassNotFoundException {
+				    return createWith("Character", receiver, value);
+				}
 
 	public static ProtoObject registerAs(ProtoObject receiver, String name) {
-//		System.out.println("registerAs() " + String.valueOf(name) + " " + receiver);
+	//		System.out.println("registerAs() " + String.valueOf(name) + " " + receiver);
 		return receiver.registerAs(name);
 	}
 
@@ -354,12 +355,12 @@ public class Primitives {
 	}
 
 	public static ProtoObject resolveObject(ProtoObject receiver, String className) throws ClassNotFoundException {
-//		System.out.println("resolveObject() " + receiver + " " + className);
+	//		System.out.println("resolveObject() " + receiver + " " + className);
 		return receiver.resolveObject(className);
 	}
 
 	public static void packageAtPut(ProtoObject receiver, String name, String javaPackageName) {
-//		System.out.println("packageAtPut() " + receiver + " " + name + " " + javaPackageName);
+	//		System.out.println("packageAtPut() " + receiver + " " + name + " " + javaPackageName);
 		receiver.packageAtPut(name, javaPackageName);
 	}
 
@@ -429,47 +430,50 @@ public class Primitives {
 
 	public static void registerBlockToBeCompiledAs(Block block, String name) {
 //		System.out.println("registerBlockToBeCompiledAs() " + name);
-		if (blocksToBeCompiled.containsKey(name))
+		if (blocksToBeCompiled.containsKey(name)) {
 			throw new IllegalStateException("Block to be compiled registered twice: " + name);
+		}
 		blocksToBeCompiled.put(name, block);
 	}
 
 	public static ProtoBlock compileBlock(ProtoObject receiver, String fullBlockName, String blockName, String className, String packageName, int countOfArguments, boolean isClassMethod) {
 		// TODO.JCL clean this up.
-//		System.out.println("primitiveCompileBlock() " + receiver + " " + fullBlockName + " " + blockName + " " + className + " " + packageName + " " + countOfArguments + " " + isClassMethod);
+		// System.out.println("primitiveCompileBlock() " + receiver + " " + fullBlockName + " " + blockName + " " + className + " " + packageName + " " + countOfArguments + " " + isClassMethod);
 		if (blocksRegistry.containsKey(fullBlockName)) {
-//			System.out.println("** existing block ** " + fullBlockName);
+			// System.out.println("** existing block ** " + fullBlockName);
 			return blocksRegistry.get(fullBlockName);
 		}
 		Block blockToBeCompiled = blocksToBeCompiled.remove(fullBlockName);
-		if (blockToBeCompiled == null)
-			throw new IllegalStateException("Block to be compiled '" + fullBlockName + "' not found.");
-		BlockAnalyser blockAnalyser = new BlockAnalyser(className + '$' + blockName, packageName, countOfArguments, isClassMethod, blockToBeCompiled.analyser());
+		if (blockToBeCompiled == null) {
+			throw new IllegalStateException(("Block to be compiled '" + fullBlockName) + "' not found.");
+		}
+		BlockAnalyser blockAnalyser = new BlockAnalyser((className + '$') + blockName, packageName, countOfArguments, isClassMethod, blockToBeCompiled.analyser());
 		blockToBeCompiled.accept(blockAnalyser);
-		Class blockClass = ((SmalltalkClassLoader) Thread.currentThread().getContextClassLoader()).defineClass(blockAnalyser.classBytes());
+		Class blockClass = ((SmalltalkClassLoader) (Thread.currentThread().getContextClassLoader())).defineClass(blockAnalyser.classBytes());
 		try {
 //			System.out.println("** Instantiating block ** " + fullBlockName);
-			ProtoBlock block = (ProtoBlock) blockClass.newInstance();
+			ProtoBlock block = ((ProtoBlock) (blockClass.newInstance()));
 			blocksRegistry.put(fullBlockName, block);
 			return block;
-		} catch (Exception e) {
+		} catch (java.lang.Exception e) {
 			throw RedlineException.withCause(e);
 		}
 	}
 
 	public static void compileMethod(ProtoObject receiver, String fullMethodName, String methodName, String className, String packageName, int countOfArguments, boolean isClassMethod) {
 		// TODO.JCL clean this up.
-//		System.out.println("primitiveCompileMethod() " + receiver + " " + fullMethodName + " " + methodName + " " + className + " " + packageName + " " + countOfArguments + " " + isClassMethod);
+		// System.out.println("primitiveCompileMethod() " + receiver + " " + fullMethodName + " " + methodName + " " + className + " " + packageName + " " + countOfArguments + " " + isClassMethod);
 		AbstractMethod methodToBeCompiled = methodsToBeCompiled.remove(fullMethodName);
-		if (methodToBeCompiled == null)
-			throw new IllegalStateException("Method to be compiled '" + fullMethodName + "' not found.");
-		MethodAnalyser methodAnalyser = new MethodAnalyser(className + '$' + methodName, packageName, countOfArguments, isClassMethod, methodToBeCompiled.analyser());
+		if (methodToBeCompiled == null) {
+			throw new IllegalStateException(("Method to be compiled '" + fullMethodName) + "' not found.");
+		}
+		MethodAnalyser methodAnalyser = new MethodAnalyser((className + '$') + methodName, packageName, countOfArguments, isClassMethod, methodToBeCompiled.analyser());
 		methodToBeCompiled.accept(methodAnalyser);
-		Class methodClass = ((SmalltalkClassLoader) Thread.currentThread().getContextClassLoader()).defineClass(methodAnalyser.classBytes());
+		Class methodClass = ((SmalltalkClassLoader) (Thread.currentThread().getContextClassLoader())).defineClass(methodAnalyser.classBytes());
 		ProtoMethod method;
 		try {
-			method = (ProtoMethod) methodClass.newInstance();
-		} catch (Exception e) {
+			method = ((ProtoMethod) (methodClass.newInstance()));
+		} catch (java.lang.Exception e) {
 			throw RedlineException.withCause(e);
 		}
 		receiver.methodAtPut(methodName, method);
@@ -510,7 +514,7 @@ public class Primitives {
 	}
 
 	public static ProtoObject variableAt(ProtoObject receiver, String name, boolean isClassMethod) throws ClassNotFoundException {
-//		System.out.println("variableAt() " + receiver + " " + name + " " + isClassMethod);
+	//		System.out.println("variableAt() " + receiver + " " + name + " " + isClassMethod);
 		ProtoObject value;
 		if ((value = receiver.variableAt(name)) != null)
 			return value;
@@ -528,7 +532,7 @@ public class Primitives {
 	}
 
 	private static ProtoMethod methodFor(ProtoObject object, String selector, ProtoObject[] methodForResult) {
-//		System.out.println("methodFor() " + selector + " from " + object);
+	//		System.out.println("methodFor() " + selector + " from " + object);
 		if (object == null)
 			return null;
 		ProtoMethod method;
@@ -556,7 +560,7 @@ public class Primitives {
 	}
 
 	public static ProtoObject send(ProtoObject receiver, ProtoObject arg1, String selector, ThisContext thisContext) {
-//		System.out.println("send " + receiver + " " + selector + " " + thisContext + " arg: " + arg1 );
+	//		System.out.println("send " + receiver + " " + selector + " " + thisContext + " arg: " + arg1 );
 		ProtoMethod method = receiver.cls().methodAt(selector);
 		if (method != null)
 			return method.applyTo(receiver, new ThisContext(receiver.cls()), arg1);
@@ -568,7 +572,7 @@ public class Primitives {
 	}
 
 	public static ProtoObject send(ProtoObject receiver, ProtoObject arg1, ProtoObject arg2, String selector, ThisContext thisContext) {
-//		System.out.println("send " + receiver + " " + selector + " " + " " + thisContext + " arg1: " + arg1 + " arg2: " + arg2);
+	//		System.out.println("send " + receiver + " " + selector + " " + " " + thisContext + " arg1: " + arg1 + " arg2: " + arg2);
 		ProtoMethod method = receiver.cls().methodAt(selector);
 		if (method != null)
 			return method.applyTo(receiver, new ThisContext(receiver.cls()), arg1, arg2);
@@ -580,7 +584,7 @@ public class Primitives {
 	}
 
 	public static ProtoObject send(ProtoObject receiver, ProtoObject arg1, ProtoObject arg2, ProtoObject arg3, String selector, ThisContext thisContext) {
-//		System.out.println("send " + receiver + " " + selector + " " + " " + classMethodWasFoundIn + " arg: " + arg1 );
+	//		System.out.println("send " + receiver + " " + selector + " " + " " + classMethodWasFoundIn + " arg: " + arg1 );
 		ProtoMethod method = receiver.cls().methodAt(selector);
 		if (method != null)
 			return method.applyTo(receiver, new ThisContext(receiver.cls()), arg1, arg2, arg3);
@@ -592,7 +596,7 @@ public class Primitives {
 	}
 
 	public static ProtoObject send(ProtoObject receiver, ProtoObject arg1, ProtoObject arg2, ProtoObject arg3, ProtoObject arg4, String selector, ThisContext thisContext) {
-//		System.out.println("send " + receiver + " " + selector + " " + " " + classMethodWasFoundIn + " arg: " + arg1 );
+	//		System.out.println("send " + receiver + " " + selector + " " + " " + classMethodWasFoundIn + " arg: " + arg1 );
 		ProtoMethod method = receiver.cls().methodAt(selector);
 		if (method != null)
 			return method.applyTo(receiver, new ThisContext(receiver.cls()), arg1, arg2, arg3, arg4);
@@ -637,7 +641,7 @@ public class Primitives {
 	}
 
 	public static ProtoObject superSend(ProtoObject receiver, String selector, ThisContext thisContext) {
-//		System.out.println("superSend " + receiver + " " + selector + " " + classMethodWasFoundIn);
+	//		System.out.println("superSend " + receiver + " " + selector + " " + classMethodWasFoundIn);
 		ProtoMethod method = thisContext.classMethodFoundIn.superclass().methodAt(selector);
 		if (method != null)
 			return method.applyTo(receiver, new ThisContext(thisContext.classMethodFoundIn.superclass()));
@@ -649,7 +653,7 @@ public class Primitives {
 	}
 
 	public static ProtoObject superSend(ProtoObject receiver, ProtoObject arg1, String selector, ThisContext thisContext) {
-//		System.out.println("superSend " + receiver + " " + selector + " " + " " + classMethodWasFoundIn + " arg: " + arg1 );
+	//		System.out.println("superSend " + receiver + " " + selector + " " + " " + classMethodWasFoundIn + " arg: " + arg1 );
 		ProtoMethod method = thisContext.classMethodFoundIn.superclass().methodAt(selector);
 		if (method != null)
 			return method.applyTo(receiver, new ThisContext(thisContext.classMethodFoundIn.superclass()), arg1);

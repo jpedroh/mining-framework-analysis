@@ -6,25 +6,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-
 import st.redline.Primitives;
 import st.redline.ProtoObject;
 
-public class Analyser implements NodeVisitor {
 
+public class Analyser implements NodeVisitor {
 	public static final Primitives primitives = new Primitives();
 
 	protected final String className;
+
 	protected final String packageName;
 
 	protected ClassBytecodeWriter classBytecodeWriter;
+
 	private boolean sendToSuper = false;
+
 	private AbstractMethod currentMethod;
+
 	protected int countOfArguments;
+
 	protected boolean isClassMethod = false;
+
 	private Map<String, Temporary> temporariesRegistry;
+
 	private int arrayDepth;
+
 	private int blockDepth;
+
 	private int blockSequence;
 
 	public Analyser(String className, String packageName) {
@@ -80,7 +88,7 @@ public class Analyser implements NodeVisitor {
 	}
 
 	public void visit(Temporary temporary, int index, String value, int line) {
-//		System.out.println("visitTemporary() " + value);
+		// System.out.println("visitTemporary() " + value);
 		temporariesRegistry.put(value, temporary);
 	}
 
@@ -199,7 +207,7 @@ public class Analyser implements NodeVisitor {
 	}
 
 	public void visit(AssignmentExpression assignmentExpression) {
-//		System.out.println("TODO AssignmentExpression() " + assignmentExpression);
+	//		System.out.println("TODO AssignmentExpression() " + assignmentExpression);
 	}
 
 	public void visit(SimpleExpression simpleExpression) {
@@ -265,7 +273,7 @@ public class Analyser implements NodeVisitor {
 	}
 
 	public void visit(PrimaryExpression primaryExpression) {
-//		System.out.println("TODO PrimaryExpression() " + primaryExpression);
+	//		System.out.println("TODO PrimaryExpression() " + primaryExpression);
 	}
 
 	public void visit(PrimaryStatements primaryStatements) {
@@ -277,7 +285,7 @@ public class Analyser implements NodeVisitor {
 	}
 
 	public void visit(Symbol symbol, String value, int line) {
-//		System.out.println("TODO Symbol() " + value);
+	//		System.out.println("TODO Symbol() " + value);
 		classBytecodeWriter.callPrimitiveSymbol(value, line);
 		if (insideArray())
 			classBytecodeWriter.callPrimitivePutAt(symbol.index(), line);
@@ -303,17 +311,17 @@ public class Analyser implements NodeVisitor {
 	}
 
 	public void visit(LiteralSymbol literalSymbol, String value, int line) {
-//		System.out.println("LiteralSymbol() " + value);
+	//		System.out.println("LiteralSymbol() " + value);
 		classBytecodeWriter.callPrimitiveSymbol(value, line);
 	}
 
 	public void visit(LiteralArray literalArray) {
-//		System.out.println("LiteralArray() begin");
+	//		System.out.println("LiteralArray() begin");
 		arrayDepth = 0;
 	}
 
 	public void visitEnd(LiteralArray literalArray) {
-//		System.out.println("LiteralArray() end");
+	//		System.out.println("LiteralArray() end");
 	}
 
 	public void visit(ArrayConstantElement arrayConstantElement) {
@@ -321,14 +329,14 @@ public class Analyser implements NodeVisitor {
 	}
 
 	public void visit(CharacterConstant characterConstant, String value, int line) {
-//		System.out.println("CharacterConstant() " + value);
+	//		System.out.println("CharacterConstant() " + value);
 		classBytecodeWriter.callPrimitiveCharacter(value.substring(1), line);
 		if (insideArray())
 			classBytecodeWriter.callPrimitivePutAt(characterConstant.index(), line);
 	}
 
 	public void visit(StringConstant stringConstant, String value, int line) {
-//		System.out.println("StringConstant() " + value + " at: " + stringConstant.index());
+	//		System.out.println("StringConstant() " + value + " at: " + stringConstant.index());
 		if (value.charAt(0) == '\'')
 			classBytecodeWriter.callPrimitiveString(value.substring(1, value.length() - 1), line);
 		else
@@ -342,7 +350,7 @@ public class Analyser implements NodeVisitor {
 	}
 
 	public void visit(LiteralString literalString, String value, int line) {
-//		System.out.println("LiteralString() " + value);
+	//		System.out.println("LiteralString() " + value);
 		if (value.charAt(0) == '\'')
 			classBytecodeWriter.callPrimitiveString(value.substring(1, value.length() - 1), line);
 		else
@@ -354,7 +362,7 @@ public class Analyser implements NodeVisitor {
 	}
 
 	public void visit(NumberConstant numberConstant, String value, int line) {
-//		System.out.println("NumberConstant() " + value + " at: " + numberConstant.index());
+	//		System.out.println("NumberConstant() " + value + " at: " + numberConstant.index());
 		// NumberConstants happen within an array context.
 		if (insideArray()) {
 			classBytecodeWriter.callPrimitiveInteger(numberConstant.value(), line); // put:
@@ -365,13 +373,13 @@ public class Analyser implements NodeVisitor {
 	}
 
 	public void visit(LiteralNumber literalNumber, String value, int line) {
-//		System.out.println("LiteralNumber() " + value + " " + line);
+	//		System.out.println("LiteralNumber() " + value + " " + line);
 		// LiteralNumbers happen outside an array context.
 		classBytecodeWriter.callPrimitiveInteger(literalNumber.value(), line);
 	}
 
 	public void visit(Block block) {
-//		System.out.println("Block() begin " + block + " " + blockDepth);
+	//		System.out.println("Block() begin " + block + " " + blockDepth);
 		blockDepth++;
 		blockSequence++;
 		String blockName = "B" + blockSequence;
@@ -394,7 +402,7 @@ public class Analyser implements NodeVisitor {
 	}
 
 	public void visitEnd(Block block) {
-//		System.out.println("Block() end " + block);
+	//		System.out.println("Block() end " + block);
 		blockDepth--;
 	}
 
