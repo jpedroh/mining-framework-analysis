@@ -1,17 +1,17 @@
 package com.jadventure.game.prompts;
 
+import com.jadventure.game.DeathException;
+import com.jadventure.game.QueueProvider;
 import com.jadventure.game.entities.Player;
 import com.jadventure.game.monsters.Monster;
 import com.jadventure.game.monsters.MonsterFactory;
 import com.jadventure.game.navigation.Direction;
 import com.jadventure.game.navigation.ILocation;
-import com.jadventure.game.QueueProvider;
-import com.jadventure.game.DeathException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+
 
 /**
  * CommandCollection contains the declaration of the methods mapped to game commands
@@ -21,39 +21,23 @@ import java.util.Random;
  * Command(command, aliases, description)
  */
 public enum CommandCollection {
-    INSTANCE;
 
+    INSTANCE;
     public Player player;
 
-    private String helpText = "\nActions\n" +
-"-------------------------------------------------------------\n" + 
-"goto (g)<direction>: Go in a direction.\n" +
-"inspect (i)<item>:   Inspects an item.\n" +
-"pick (p)<item>:      Picks up an item.\n" +
-"drop (d)<item>:      Drops an item.\n" +
-"equip (e)<item>:     Equips an item.\n" +
-"unequip (ue)<item>:  Unequips an item.\n" +
-"attack (a)<monster>: Attacks an monster.\n" +
-"lookaround (la):     Prints out what is around you.\n" +
-"monster (m):         Prints out the monsters around you.\n\n" +
-"Player\n" +
-"-------------------------------------------------------------\n" + 
-"view (v)<s/e/b>:     Views your stats, equipped items or backpack respectively.\n" +
-"Game\n" +
-"-------------------------------------------------------------\n" + 
-"save (s):            Save your progress.\n" +
-"exit:                Exit the game and return to the main menu.\n" + 
-"debug:               Starts debuggung.\n";
+    private String helpText = "\nActions\n" + ((((((((((((((((("-------------------------------------------------------------\n" + "goto (g)<direction>: Go in a direction.\n") + "inspect (i)<item>:   Inspects an item.\n") + "pick (p)<item>:      Picks up an item.\n") + "drop (d)<item>:      Drops an item.\n") + "equip (e)<item>:     Equips an item.\n") + "unequip (ue)<item>:  Unequips an item.\n") + "attack (a)<monster>: Attacks an monster.
+    ") + "lookaround (la):     Prints out what is around you.\n") + "monster (m):         Prints out the monsters around you.\n\n") + "Player\n") + "-------------------------------------------------------------\n") + "view (v)<s/e/b>:     Views your stats, equipped items or backpack respectively.\n") + "Game\n") + "-------------------------------------------------------------\n") + "save (s):            Save your progress.\n") + "exit:                Exit the game and return to the main menu.\n") + "debug:               Starts debuggung.\n");
 
-    private HashMap<String, String> directionLinks = new HashMap<String,String>()
-    {{
-         put("n", "north");
-         put("s", "south");
-         put("e", "east");
-         put("w", "west");
-         put("u", "up");
-         put("d", "down");
-    }};
+    private HashMap<String, String> directionLinks = new HashMap<String, String>() {
+        {
+            put("n", "north");
+            put("s", "south");
+            put("e", "east");
+            put("w", "west");
+            put("u", "up");
+            put("d", "down");
+        }
+    };
 
     public static CommandCollection getInstance() {
         return INSTANCE;
@@ -64,8 +48,7 @@ public enum CommandCollection {
     }
 
     // command methods here
-
-    @Command(command="stats", aliases="st", description="Returns player's status")
+    @Command(command = "stats", aliases = "st", description = "Returns player's status")
     @SuppressWarnings("UnusedDeclaration")
     public void command_st() {
         player.getStats();
@@ -111,16 +94,14 @@ public enum CommandCollection {
         new DebugPrompt(player);
     }
 
-    @Command(command="goto", aliases="g", description="Goto a direction")
+    @Command(command = "goto", aliases = "g", description = "Goto a direction")
     @SuppressWarnings("UnusedDeclaration")
     public void command_g(String arg) throws DeathException {
         ILocation location = player.getLocation();
-
         try {
             arg = directionLinks.get(arg);
             Direction direction = Direction.valueOf(arg.toUpperCase());
             Map<Direction, ILocation> exits = location.getExits();
-
             if (exits.containsKey(direction)) {
                 ILocation newLocation = exits.get(Direction.valueOf(arg.toUpperCase()));
                 player.setLocation(newLocation);
@@ -139,16 +120,16 @@ public enum CommandCollection {
                     if (monsters.size() > 0) {
                         int posMonster = random.nextInt(monsters.size());
                         String monster = monsters.get(posMonster).monsterType;
-                        QueueProvider.offer("A " + monster + " is attacking you!");
+                        QueueProvider.offer(("A " + monster) + " is attacking you!");
                         player.attack(monster);
                     }
                 }
             } else {
                 QueueProvider.offer("The is no exit that way.");
             }
-        } catch (IllegalArgumentException ex) {
+        } catch (java.lang.IllegalArgumentException ex) {
             QueueProvider.offer("That direction doesn't exist");
-        } catch (NullPointerException ex) {
+        } catch (java.lang.NullPointerException ex) {
             QueueProvider.offer("That direction doesn't exist");
         }
     }

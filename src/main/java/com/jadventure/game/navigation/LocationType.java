@@ -1,5 +1,7 @@
 package com.jadventure.game.navigation;
 
+
+
 /*
  * A enum list of all the locationtypes.
  * For now, it only includes environments
@@ -10,6 +12,11 @@ public enum LocationType {
 	SWAMP,
 	MOUNTAIN,
 	PLAINS,
-    WALL,
+<<<<<<< LEFT
+	CAVE,
+    WALL;
+=======
+        WALL,
 	CAVE;
+>>>>>>> RIGHT
 }
