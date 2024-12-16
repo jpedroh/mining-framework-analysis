@@ -15,22 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.unigram.docvalidator.server.api;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.unigram.docvalidator.parser.DocumentParserFactory;
-import org.unigram.docvalidator.parser.Parser;
-import org.unigram.docvalidator.server.DocumentValidatorServer;
-import org.unigram.docvalidator.model.Document;
-import org.unigram.docvalidator.model.DocumentCollection;
-import org.unigram.docvalidator.util.DocumentValidatorException;
-import org.unigram.docvalidator.util.ValidationError;
-
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -38,16 +27,25 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.unigram.docvalidator.model.Document;
+import org.unigram.docvalidator.model.DocumentCollection;
+import org.unigram.docvalidator.parser.DocumentParserFactory;
+import org.unigram.docvalidator.parser.Parser;
+import org.unigram.docvalidator.server.DocumentValidatorServer;
+import org.unigram.docvalidator.util.DocumentValidatorException;
+import org.unigram.docvalidator.util.ValidationError;
+
 
 /**
  * Resource to validate documents.
  */
 @Path("/document")
 public class DocumentValidateResource {
-
   private static final Logger LOG = LogManager.getLogger(
     DocumentValidateResource.class
   );
@@ -55,38 +53,26 @@ public class DocumentValidateResource {
   @Path("/validate")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public Response validateDocument(@QueryParam("doc") @DefaultValue("")
-                                     String document) throws
-    JSONException, DocumentValidatorException, UnsupportedEncodingException {
-
+  public Response validateDocument(@QueryParam("doc")
+  @DefaultValue("")
+  String document) throws JSONException, DocumentValidatorException, UnsupportedEncodingException {
     LOG.info("Validating document");
-
     DocumentValidatorServer server = DocumentValidatorServer.getInstance();
     JSONObject json = new JSONObject();
-
     json.put("document", document);
-
-    Parser parser = DocumentParserFactory.generate(
-        Parser.Type.PLAIN, server.getDocumentValidatorResource());
-    Document fileContent = parser.generateDocument(new
-        ByteArrayInputStream(document.getBytes("UTF-8")));
-
+    Parser parser = DocumentParserFactory.generate(Parser.Type.PLAIN, server.getDocumentValidatorResource());
+    Document fileContent = parser.generateDocument(new ByteArrayInputStream(document.getBytes("UTF-8")));
     DocumentCollection d = new DocumentCollection();
     d.addDocument(fileContent);
-
     List<ValidationError> errors = server.getValidator().check(d);
-
     JSONArray jsonErrors = new JSONArray();
-
     for (ValidationError error : errors) {
       JSONObject jsonError = new JSONObject();
       jsonError.put("sentence", error.getSentence().content);
       jsonError.put("message", error.getMessage());
       jsonErrors.put(jsonError);
     }
-
     json.put("errors", jsonErrors);
-
     return Response.ok().entity(json).build();
   }
 }

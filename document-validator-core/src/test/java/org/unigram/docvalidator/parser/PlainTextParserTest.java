@@ -17,6 +17,11 @@
  */
 package org.unigram.docvalidator.parser;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,31 +31,23 @@ import org.unigram.docvalidator.model.Section;
 import org.unigram.docvalidator.util.DVResource;
 import org.unigram.docvalidator.util.DocumentValidatorException;
 import org.unigram.docvalidator.util.ValidationConfigurationLoader;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class PlainTextParserTest {
 
+public class PlainTextParserTest {
   private Parser parser = null;
 
-    private List<Paragraph> extractParagraphs(Section section) {
+  private List<Paragraph> extractParagraphs(Section section) {
     List<Paragraph> paragraphs = new ArrayList<Paragraph>();
-      for (Paragraph paragraph1 : section.getParagraphs()) {
-        paragraphs.add(paragraph1);
-      }
+    for (Paragraph paragraph1 : section.getParagraphs()) {
+      paragraphs.add(paragraph1);
+    }
     return paragraphs;
   }
 
   private int calcLineNum(Section section) {
     int lineNum = 0;
-
     for (Paragraph paragraph : section.getParagraphs()) {
       lineNum += paragraph.getNumberOfSentences();
     }
@@ -73,21 +70,12 @@ public class PlainTextParserTest {
     return doc;
   }
 
-  private String sampleConfiguraitonStr = "" +
-    "<?xml version=\"1.0\"?>" +
-    "<component name=\"Validator\">" +
-    "  <component name=\"SentenceIterator\">" +
-    "    <component name=\"LineLength\">" +
-    "      <property name=\"max_length\" value=\"10\"/>" +
-    "    </component>" +
-    "  </component>" +
-    "</component>";
+  private String sampleConfiguraitonStr = "" + ((((((("<?xml version=\"1.0\"?>" + "<component name=\"Validator\">") + "  <component name=\"SentenceIterator\">") + "    <component name=\"LineLength\">") + "      <property name=\"max_length\" value=\"10\"/>") + "    </component>") + "  </component>") + "</component>");
 
   @Before
   public void setup() {
     InputStream stream = IOUtils.toInputStream(this.sampleConfiguraitonStr);
-      DVResource resource = new DVResource(ValidationConfigurationLoader.loadConfiguration(stream));
-
+    DVResource resource = new DVResource(ValidationConfigurationLoader.loadConfiguration(stream));
     try {
       parser = DocumentParserFactory.generate(Parser.Type.PLAIN, resource);
     } catch (DocumentValidatorException e1) {
@@ -110,7 +98,7 @@ public class PlainTextParserTest {
     sampleText += "Tama Home.\n";
     Document doc = generateDocument(sampleText);
     Section section = doc.getLastSection();
-    assertEquals(7 ,calcLineNum(section));
+    assertEquals(7, calcLineNum(section));
     assertEquals(3, extractParagraphs(section).size());
   }
 
@@ -119,16 +107,14 @@ public class PlainTextParserTest {
     String sampleText = "Tokyu is a good railway company. ";
     sampleText += "The company is reliable. In addition it is rich. ";
     sampleText += "I like the company. Howerver someone does not like it.";
-    String[] expectedResult = {"Tokyu is a good railway company.",
-        " The company is reliable.", " In addition it is rich.",
-        " I like the company.", " Howerver someone does not like it."};
+    String[] expectedResult = new java.lang.String[]{ "Tokyu is a good railway company.", " The company is reliable.", " In addition it is rich.", " I like the company.", " Howerver someone does not like it." };
     Document doc = generateDocument(sampleText);
     Section section = doc.getLastSection();
     List<Paragraph> paragraphs = extractParagraphs(section);
     assertEquals(1, paragraphs.size());
-    assertEquals(5 ,calcLineNum(section));
-    Paragraph paragraph = paragraphs.get(paragraphs.size()-1);
-    for (int i=0; i<expectedResult.length; i++) {
+    assertEquals(5, calcLineNum(section));
+    Paragraph paragraph = paragraphs.get(paragraphs.size() - 1);
+    for (int i = 0; i < expectedResult.length; i++) {
       assertEquals(expectedResult[i], paragraph.getSentence(i).content);
     }
     assertEquals(0, section.getHeaderContent(0).position);
@@ -139,15 +125,14 @@ public class PlainTextParserTest {
   public void testGenerateDocumentWithMultipleSentenceContainsVariousStopCharacters() {
     String sampleText = "Is Tokyu a good railway company? ";
     sampleText += "Yes it is. In addition it is rich!";
-    String[] expectedResult = {"Is Tokyu a good railway company?",
-        " Yes it is.", " In addition it is rich!"};
+    String[] expectedResult = new java.lang.String[]{ "Is Tokyu a good railway company?", " Yes it is.", " In addition it is rich!" };
     Document doc = generateDocument(sampleText);
     Section section = doc.getLastSection();
     List<Paragraph> paragraphs = extractParagraphs(section);
     assertEquals(1, paragraphs.size());
-    assertEquals(3 ,calcLineNum(section));
-    Paragraph paragraph = paragraphs.get(paragraphs.size()-1);
-    for (int i=0; i<expectedResult.length; i++) {
+    assertEquals(3, calcLineNum(section));
+    Paragraph paragraph = paragraphs.get(paragraphs.size() - 1);
+    for (int i = 0; i < expectedResult.length; i++) {
       assertEquals(expectedResult[i], paragraph.getSentence(i).content);
     }
     assertEquals(0, section.getHeaderContent(0).position);
@@ -161,7 +146,7 @@ public class PlainTextParserTest {
     Section section = doc.getLastSection();
     List<Paragraph> paragraphs = extractParagraphs(section);
     assertEquals(1, paragraphs.size());
-    assertEquals(0 ,calcLineNum(section));
+    assertEquals(0, calcLineNum(section));
   }
 
   @Test(expected = DocumentValidatorException.class)

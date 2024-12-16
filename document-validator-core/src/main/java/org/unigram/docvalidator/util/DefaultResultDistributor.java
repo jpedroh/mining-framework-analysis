@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
+
 /**
  * An implementation of ResultDistributor which flush the result into
  * given output stream.
@@ -39,8 +40,7 @@ public class DefaultResultDistributor implements ResultDistributor {
     try {
       writer = new PrintStream(os, true, "UTF-8");
     } catch (UnsupportedEncodingException e) {
-      throw new IllegalStateException("Specified output stream is illegal: "
-          + e.getMessage());
+      throw new IllegalStateException("Specified output stream is illegal: " + e.getMessage());
     }
     myFormatter = new PlainFormatter();
   }
@@ -57,8 +57,7 @@ public class DefaultResultDistributor implements ResultDistributor {
     try {
       writer = new PrintStream(ps, true, "UTF-8");
     } catch (UnsupportedEncodingException e) {
-      throw new IllegalStateException("Specified output stream is illegal: "
-          + e.getMessage());
+      throw new IllegalStateException("Specified output stream is illegal: " + e.getMessage());
     }
     myFormatter = new PlainFormatter();
   }
@@ -105,5 +104,4 @@ public class DefaultResultDistributor implements ResultDistributor {
   private Formatter myFormatter;
 
   private PrintStream writer;
-
 }

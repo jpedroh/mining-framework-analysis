@@ -18,28 +18,24 @@
 package org.unigram.docvalidator;
 
 import org.junit.Test;
-import org.unigram.docvalidator.model.Document;
 import org.unigram.docvalidator.model.DocumentCollection;
 import org.unigram.docvalidator.util.DocumentValidatorException;
-
 import static org.junit.Assert.*;
 import static org.unigram.docvalidator.parser.Parser.Type.*;
+
 
 public class SampleDocumentGeneratorTest {
   @Test
   public void testGenerateSimplePlainDocument() throws DocumentValidatorException {
     String sampleText = "";
     sampleText += "Gekioko pun pun maru means very very angry.\n";
-    DocumentCollection doc = SampleDocumentGenerator.generateOneFileDocument(sampleText,
-        WIKI);
+    DocumentCollection doc = SampleDocumentGenerator.generateOneFileDocument(sampleText, WIKI);
     assertNotNull(doc);
     assertEquals(1, doc.size());
     assertEquals(1, doc.getFile(0).getNumberOfSections());
     assertEquals(1, doc.getFile(0).getSection(0).getNumberOfParagraphs());
-    assertEquals(1, doc.getFile(0).getSection(0).getParagraph(0)
-        .getNumberOfSentences());
-    assertEquals("Gekioko pun pun maru means very very angry.", doc.getFile(0).getSection(0)
-        .getParagraph(0).getSentence(0).content);
+    assertEquals(1, doc.getFile(0).getSection(0).getParagraph(0).getNumberOfSentences());
+    assertEquals("Gekioko pun pun maru means very very angry.", doc.getFile(0).getSection(0).getParagraph(0).getSentence(0).content);
   }
 
   @Test
@@ -47,17 +43,14 @@ public class SampleDocumentGeneratorTest {
     String sampleText = "";
     sampleText += "h1. About Gekioko.\n";
     sampleText += "Gekioko pun pun maru means very very angry.\n";
-    DocumentCollection doc = SampleDocumentGenerator.generateOneFileDocument(sampleText,
-        WIKI);
+    DocumentCollection doc = SampleDocumentGenerator.generateOneFileDocument(sampleText, WIKI);
     assertNotNull(doc);
     assertEquals(1, doc.size());
     assertEquals(2, doc.getFile(0).getNumberOfSections());
     assertEquals("About Gekioko.", doc.getFile(0).getSection(1).getHeaderContent(0).content);
     assertEquals(1, doc.getFile(0).getSection(1).getNumberOfParagraphs());
-    assertEquals(1, doc.getFile(0).getSection(1).getParagraph(0)
-        .getNumberOfSentences());
-    assertEquals("Gekioko pun pun maru means very very angry.", doc.getFile(0).getSection(1)
-        .getParagraph(0).getSentence(0).content);
+    assertEquals(1, doc.getFile(0).getSection(1).getParagraph(0).getNumberOfSentences());
+    assertEquals("Gekioko pun pun maru means very very angry.", doc.getFile(0).getSection(1).getParagraph(0).getSentence(0).content);
   }
 
   @Test
@@ -65,20 +58,17 @@ public class SampleDocumentGeneratorTest {
     String sampleText = "";
     sampleText += "# About Gekioko.\n";
     sampleText += "Gekioko pun pun maru means very very angry.\n";
-    DocumentCollection doc = SampleDocumentGenerator.generateOneFileDocument(sampleText,
-        MARKDOWN);
+    DocumentCollection doc = SampleDocumentGenerator.generateOneFileDocument(sampleText, MARKDOWN);
     assertNotNull(doc);
     assertEquals(1, doc.size());
     assertEquals(2, doc.getFile(0).getNumberOfSections());
     assertEquals("About Gekioko.", doc.getFile(0).getSection(1).getHeaderContent(0).content);
     assertEquals(1, doc.getFile(0).getSection(1).getNumberOfParagraphs());
-    assertEquals(1, doc.getFile(0).getSection(1).getParagraph(0)
-        .getNumberOfSentences());
-    assertEquals("Gekioko pun pun maru means very very angry.", doc.getFile(0).getSection(1)
-        .getParagraph(0).getSentence(0).content);
+    assertEquals(1, doc.getFile(0).getSection(1).getParagraph(0).getNumberOfSentences());
+    assertEquals("Gekioko pun pun maru means very very angry.", doc.getFile(0).getSection(1).getParagraph(0).getSentence(0).content);
   }
 
-  @Test(expected=NullPointerException.class)
+  @Test(expected = java.lang.NullPointerException.class)
   public void testInputNullDocument() throws DocumentValidatorException {
     SampleDocumentGenerator.generateOneFileDocument(null, MARKDOWN);
   }
