@@ -16,20 +16,19 @@
  * 
  * For more information about OpenPnP visit http://openpnp.org
  */
-
 package org.openpnp.spi;
 
 import org.openpnp.gui.support.Wizard;
 import org.openpnp.model.AxesLocation;
 import org.openpnp.spi.base.AbstractActuator;
 
+
 /**
  * Defines a simple interface to some type of device that can be actuated on the machine or on a
  * head. This is a minimal interface and it is expected that concrete implementations may have many
  * other capabilities exposed in their specific implementations.
  */
-public interface Actuator
-        extends HeadMountable, WizardConfigurable, PropertySheetHolder {
+public interface Actuator extends HeadMountable , WizardConfigurable , PropertySheetHolder {
     /**
      * @return the driver through which this Actuator is controlled. 
      */
@@ -38,11 +37,11 @@ public interface Actuator
     public void setDriver(Driver driver);
 
     public enum ActuatorValueType {
+
         Double,
         Boolean,
         String,
-        Profile
-    }
+        Profile;}
 
     /**
      * Declares the primary value type of the Actuator. This will allow the GUI to present the proper control for value editing.   
@@ -133,7 +132,7 @@ public interface Actuator
      */
     public String read() throws Exception;
 
-    public <T> String read(T value) throws Exception;
+    public abstract <T> String read(T value) throws Exception;
 
     boolean isCoordinatedBeforeActuate();
 
@@ -142,27 +141,31 @@ public interface Actuator
     boolean isCoordinatedBeforeRead();
 
     /**
-     * The InterlockMonitor controls an actuator to perform an interlock functions in the course of machine motion. 
-     * It can actuate its actuator according to specific axis positions or movements. Or it can read its actuator to 
+     * The InterlockMonitor controls an actuator to perform an interlock functions in the course of machine motion.
+     * It can actuate its actuator according to specific axis positions or movements. Or it can read its actuator to
      * confirm the safety of axis movement or lock against it, avoiding potentially dangerous machine motion.
-     *
      */
     public static interface InterlockMonitor {
         /**
          * This method is called before and after a move is executed by the motion planner. All interlock action must be performed here.
-         * 
+         *
          * @param actuator
-         * @param location0 Move start location 
-         * @param location1 Move end location
-         * @param beforeMove true if called before the move, false if called after the move.
-         * @param speed Move effective speed
-         * @return true if the interlock conditions applied. 
-         * @throws Exception 
-         * 
+         * 		
+         * @param location0
+         * 		Move start location
+         * @param location1
+         * 		Move end location
+         * @param beforeMove
+         * 		true if called before the move, false if called after the move.
+         * @param speed
+         * 		Move effective speed
+         * @return true if the interlock conditions applied.
+         * @throws Exception
+         * 		
          */
-        boolean interlockActuation(Actuator actuator, AxesLocation location0, AxesLocation location1, boolean beforeMove, double speed) throws Exception;
+        public abstract boolean interlockActuation(Actuator actuator, AxesLocation location0, AxesLocation location1, boolean beforeMove, double speed) throws Exception;
 
-        Wizard getConfigurationWizard(AbstractActuator actuator);
+        public abstract Wizard getConfigurationWizard(AbstractActuator actuator);
     }
 
     public InterlockMonitor getInterlockMonitor();

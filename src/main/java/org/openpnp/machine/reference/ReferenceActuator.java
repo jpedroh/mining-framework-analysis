@@ -16,16 +16,13 @@
  * 
  * For more information about OpenPnP visit http://openpnp.org
  */
-
 package org.openpnp.machine.reference;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
-
 import org.openpnp.ConfigurationListener;
 import org.openpnp.gui.MainFrame;
 import org.openpnp.gui.support.Icons;
@@ -47,24 +44,26 @@ import org.pmw.tinylog.Logger;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 
-public class ReferenceActuator extends AbstractActuator implements ReferenceHeadMountable {
 
+public class ReferenceActuator extends AbstractActuator implements ReferenceHeadMountable {
     @Element
     private Location headOffsets = new Location(LengthUnit.Millimeters);
 
     public enum MachineStateActuation {
+
         LeaveAsIs,
         AssumeUnknown,
         AssumeActuatedOff,
         AssumeActuatedOn,
         ActuateOff,
-        ActuateOn
-    };
+        ActuateOn;}
 
     @Attribute(required = false)
     protected MachineStateActuation enabledActuation = MachineStateActuation.AssumeUnknown;
+
     @Attribute(required = false)
     protected MachineStateActuation homedActuation = MachineStateActuation.LeaveAsIs;
+
     @Attribute(required = false)
     protected MachineStateActuation disabledActuation = MachineStateActuation.LeaveAsIs;
 
@@ -76,10 +75,9 @@ public class ReferenceActuator extends AbstractActuator implements ReferenceHead
     protected Length safeZ = null;
 
     protected Object lastActuationValue;
-    
+
     public ReferenceActuator() {
         Configuration.get().addListener(new ConfigurationListener.Adapter() {
-
             @Override
             public void configurationLoaded(Configuration configuration) throws Exception {
                 Configuration.get().getMachine().addListener(new MachineListener.Adapter() {
@@ -87,12 +85,14 @@ public class ReferenceActuator extends AbstractActuator implements ReferenceHead
                     public void machineEnabled(Machine machine) {
                         actuateMachineState(machine, getEnabledActuation(), true);
                     }
+
                     @Override
                     public void machineHomed(Machine machine, boolean isHomed) {
                         if (isHomed) {
                             actuateMachineState(machine, getHomedActuation(), true);
                         }
                     }
+
                     @Override
                     public void machineAboutToBeDisabled(Machine machine, String reason) {
                         actuateMachineState(machine, getDisabledActuation(), false);
@@ -139,7 +139,7 @@ public class ReferenceActuator extends AbstractActuator implements ReferenceHead
     public int getIndex() {
         return index;
     }
-    
+
     public void setIndex(int index) {
         this.index = index;
     }
@@ -156,7 +156,7 @@ public class ReferenceActuator extends AbstractActuator implements ReferenceHead
         Object oldValue = this.lastActuationValue;
         this.lastActuationValue = lastActuationValue;
         firePropertyChange("lastActuationValue", oldValue, lastActuationValue);
-        if (oldValue == null || !oldValue.equals(lastActuationValue)) {
+        if ((oldValue == null) || (!oldValue.equals(lastActuationValue))) {
             getMachine().fireMachineActuatorActivity(this);
         }
     }
@@ -172,7 +172,7 @@ public class ReferenceActuator extends AbstractActuator implements ReferenceHead
     }
 
     public ReferenceActuatorProfiles getActuatorProfiles() {
-        if (actuatorProfiles == null && getValueType() == ActuatorValueType.Profile)
+        if (actuatorProfiles == null && getValueType() == ActuatorValueType.Profile) 
         { actuatorProfiles = new ReferenceActuatorProfiles();
         }
         return actuatorProfiles;
@@ -207,21 +207,21 @@ public class ReferenceActuator extends AbstractActuator implements ReferenceHead
     public void actuateMachineState(Machine machine, MachineStateActuation machineStateActuation, boolean deferred) {
         // Need to execute this now, before the machine is being disabled.
         switch (machineStateActuation) {
-            case LeaveAsIs:
+            case LeaveAsIs :
                 break;
-            case AssumeUnknown:
+            case AssumeUnknown :
                 setLastActuationValue(null);
                 break;
-            case AssumeActuatedOff:
+            case AssumeActuatedOff :
                 setLastActuationValue(getDefaultOffValue());
                 break;
-            case AssumeActuatedOn:
+            case AssumeActuatedOn :
                 setLastActuationValue(getDefaultOnValue());
                 break;
-            case ActuateOff:
+            case ActuateOff :
                 tryActuateBoolean(machine, false, deferred);
                 break;
-            case ActuateOn:
+            case ActuateOn :
                 tryActuateBoolean(machine, true, deferred);
                 break;
         }
@@ -231,12 +231,12 @@ public class ReferenceActuator extends AbstractActuator implements ReferenceHead
         try {
             assertOnOffDefined();
             if (deferred) {
-                UiUtils.submitUiMachineTask(() -> {
+                UiUtils.submitUiMachineTask(() -> { 
                     actuate(value ? getDefaultOnValue() : getDefaultOffValue());
                 });
             }
             else {
-                machine.execute(() -> {
+                machine.execute(() -> { 
                     actuate(value ? getDefaultOnValue() : getDefaultOffValue());
                     return true;
                 }, true, 0);
@@ -255,8 +255,7 @@ public class ReferenceActuator extends AbstractActuator implements ReferenceHead
         Logger.debug("{}.actuate({})", getName(), on);
         if (getValueType() == ActuatorValueType.Profile) {
             actuateProfile(on);
-        }
-        else {
+        } else {
             driveActuation(on);
             setLastActuationValue(on);
         }
@@ -346,7 +345,8 @@ public class ReferenceActuator extends AbstractActuator implements ReferenceHead
     }
 
     @Override
-    public void home() throws Exception {}
+    public void home() throws Exception {
+    }
 
     @Override
     public Wizard getConfigurationWizard() {
@@ -380,7 +380,7 @@ public class ReferenceActuator extends AbstractActuator implements ReferenceHead
     public Action[] getPropertySheetHolderActions() {
         return new Action[] { deleteAction };
     }
-    
+
     public Action deleteAction = new AbstractAction("Delete Actuator") {
         {
             putValue(SMALL_ICON, Icons.delete);
@@ -390,14 +390,11 @@ public class ReferenceActuator extends AbstractActuator implements ReferenceHead
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            int ret = JOptionPane.showConfirmDialog(MainFrame.get(),
-                    "Are you sure you want to delete " + getName() + "?",
-                    "Delete " + getName() + "?", JOptionPane.YES_NO_OPTION);
+            int ret = JOptionPane.showConfirmDialog(MainFrame.get(), ("Are you sure you want to delete " + getName()) + "?", ("Delete " + getName()) + "?", JOptionPane.YES_NO_OPTION);
             if (ret == JOptionPane.YES_OPTION) {
                 if (getHead() != null) {
                     getHead().removeActuator(ReferenceActuator.this);
-                }
-                else {
+                } else {
                     Configuration.get().getMachine().removeActuator(ReferenceActuator.this);
                 }
             }

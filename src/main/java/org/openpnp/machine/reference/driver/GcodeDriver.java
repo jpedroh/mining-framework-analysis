@@ -1,40 +1,37 @@
+<<<<<<< LEFT
+=======
 /*
  * Copyright (C) 2011 Jason von Nieda <jason@vonnieda.org>
- *
+ * 
  * This file is part of OpenPnP.
- *
+ * 
  * OpenPnP is free software: you can redistribute it and/or modify it under the terms of the GNU
  * General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * 
  * OpenPnP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
  * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License along with OpenPnP. If not, see
  * <http://www.gnu.org/licenses/>.
- *
+ * 
  * For more information about OpenPnP visit http://openpnp.org
  */
-
+>>>>>>> RIGHT
 package org.openpnp.machine.reference.driver;
 
+import com.google.common.base.Joiner;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.openpnp.gui.support.PropertySheetWizardAdapter;
 import org.openpnp.machine.reference.ReferenceActuator;
 import org.openpnp.machine.reference.ReferenceHeadMountable;
@@ -42,8 +39,8 @@ import org.openpnp.machine.reference.ReferenceMachine;
 import org.openpnp.machine.reference.ReferenceNozzle;
 import org.openpnp.machine.reference.axis.ReferenceCamClockwiseAxis;
 import org.openpnp.machine.reference.axis.ReferenceCamCounterClockwiseAxis;
-import org.openpnp.machine.reference.axis.ReferenceControllerAxis;
 import org.openpnp.machine.reference.axis.ReferenceControllerAxis.BacklashCompensationMethod;
+import org.openpnp.machine.reference.axis.ReferenceControllerAxis;
 import org.openpnp.machine.reference.axis.ReferenceLinearTransformAxis;
 import org.openpnp.machine.reference.axis.ReferenceMappedAxis;
 import org.openpnp.machine.reference.driver.wizards.GcodeDriverConsole;
@@ -68,8 +65,8 @@ import org.openpnp.spi.MotionPlanner.CompletionType;
 import org.openpnp.spi.Nozzle;
 import org.openpnp.spi.base.AbstractAxis;
 import org.openpnp.spi.base.AbstractCamera;
-import org.openpnp.spi.base.AbstractHead;
 import org.openpnp.spi.base.AbstractHead.VisualHomingMethod;
+import org.openpnp.spi.base.AbstractHead;
 import org.openpnp.spi.base.AbstractHeadMountable;
 import org.openpnp.spi.base.AbstractSingleTransformedAxis;
 import org.openpnp.spi.base.AbstractTransformedAxis;
@@ -83,11 +80,11 @@ import org.simpleframework.xml.ElementMap;
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.core.Commit;
 
-import com.google.common.base.Joiner;
 
 @Root
 public class GcodeDriver extends AbstractReferenceDriver implements Named {
     public enum CommandType {
+
         COMMAND_CONFIRM_REGEX,
         POSITION_REPORT_REGEX,
         COMMAND_ERROR_REGEX,
@@ -118,8 +115,8 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
         @Deprecated
         ACTUATOR_READ_WITH_DOUBLE_COMMAND(true, "Id", "Name", "Index", "DoubleValue", "IntegerValue"),
         ACTUATOR_READ_REGEX(true);
-
         final boolean headMountable;
+
         final String[] variableNames;
 
         private CommandType() {
@@ -127,7 +124,7 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
         }
 
         private CommandType(boolean headMountable) {
-            this(headMountable, new String[] {});
+            this(headMountable, new String[]{  });
         }
 
         private CommandType(String... variableNames) {
@@ -189,7 +186,6 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
         }
 
         private Command() {
-
         }
     }
 
@@ -254,17 +250,18 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
 
     @Attribute(required = false)
     boolean usingLetterVariables = true;
-    
+
+    // 1 Minute is considered an "eternity" for a controller.
     @Attribute(required = false) 
     int infinityTimeoutMilliseconds = 60000; // 1 Minute is considered an "eternity" for a controller.
 
-    @Element(required = false, data=true) 
-    String detectedFirmware = null; 
+    @Element(required = false, data = true)
+    String detectedFirmware = null;
 
-    @Element(required = false, data=true) 
-    String reportedAxes = null; 
+    @Element(required = false, data = true)
+    String reportedAxes = null;
 
-    @Element(required = false, data=true)
+    @Element(required = false, data = true)
     String configuredAxes = null;
 
     @ElementList(required = false, inline = true)
@@ -279,11 +276,14 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
     protected List<Axis> axes = null;
 
     private ReaderThread readerThread;
+
     volatile boolean disconnectRequested;
+
     protected boolean connected;
-    
-    static public class Line {
+
+    public static class Line {
         final String line;
+
         final double transmissionTime;
 
         public Line(String line) {
@@ -297,6 +297,8 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
         }
 
         /**
+         *
+         *
          * @return The real-time in seconds (since application start) when this Line was sent or received.
          */
         public double getTransmissionTime() {
@@ -310,10 +312,13 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
     }
 
     protected LinkedBlockingQueue<Line> responseQueue = new LinkedBlockingQueue<>();
+
     protected LinkedBlockingQueue<AxesLocation> reportedLocationsQueue = new LinkedBlockingQueue<>();
+
     protected LinkedBlockingQueue<Line> receivedConfirmationsQueue = new LinkedBlockingQueue<>();
 
     protected Line errorResponse;
+
     private boolean motionPending;
 
     private PrintWriter gcodeLogger;
@@ -321,15 +326,10 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
     @Commit
     public void commit() {
         super.commit();
-
         for (Command command : commands) {
-            if(command.type == CommandType.ACTUATOR_READ_WITH_DOUBLE_COMMAND) {
-                Command actuatorReadCommand = getExactCommand(
-                        command.headMountableId,
-                        CommandType.ACTUATOR_READ_COMMAND
-                );
-
-                if(actuatorReadCommand == null) {
+            if (command.type == CommandType.ACTUATOR_READ_WITH_DOUBLE_COMMAND) {
+                Command actuatorReadCommand = getExactCommand(command.headMountableId, CommandType.ACTUATOR_READ_COMMAND);
+                if (actuatorReadCommand == null) {
                     command.type = CommandType.ACTUATOR_READ_COMMAND;
                 }
             }
@@ -357,28 +357,19 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
         disconnectRequested = false;
         getCommunications().connect();
         connected = false;
-
         // Wait a bit while the controller starts up
         Thread.sleep(connectWaitTimeMilliseconds);
-
         connectThreads();
-
         // Consume any startup messages
         try {
             while (!receiveResponses().isEmpty()) {
-
-            }
+            } 
+        } catch (java.lang.Exception e) {
         }
-        catch (Exception e) {
-
-        }
-
         // Disable the machine
         setEnabled(false);
-
         // Send startup Gcode
         sendGcode(getCommand(null, CommandType.CONNECT_COMMAND));
-
         connected = true;
     }
 
@@ -398,28 +389,25 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
 
     @Override
     public void setEnabled(boolean enabled) throws Exception {
-        if (enabled && !connected) {
+        if (enabled && (!connected)) {
             connect();
         }
         if (connected) {
             if (enabled) {
                 sendGcode(getCommand(null, CommandType.ENABLE_COMMAND));
-            }
-            else {
+            } else {
                 try {
                     sendGcode(getCommand(null, CommandType.DISABLE_COMMAND));
                     drainCommandQueue(getTimeoutAtMachineSpeed());
-                }
-                catch (Exception e) {
+                } catch (java.lang.Exception e) {
                     // When the connection is lost, we have IO errors. We should still be able to go on
                     // disabling the machine.
                     Logger.warn(e);
                 }
             }
         }
-
-        if (connected && !enabled) {
-            if (isInSimulationMode() || !connectionKeepAlive) {
+        if (connected && (!enabled)) {
+            if (isInSimulationMode() || (!connectionKeepAlive)) {
                 disconnect();
             }
         }
@@ -432,20 +420,18 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
         String command = getCommand(null, CommandType.HOME_COMMAND);
         // legacy head support
         Head head = machine.getDefaultHead();
-        command = substituteVariable(command, "Id", head.getId()); 
+        command = substituteVariable(command, "Id", head.getId());
         command = substituteVariable(command, "Name", head.getName());
         long timeout = -1;
         sendGcode(command, timeout);
-
         // Check home complete response against user's regex
         String homeCompleteRegex = getCommand(null, CommandType.HOME_COMPLETE_REGEX);
         if (homeCompleteRegex != null) {
-            receiveResponses(homeCompleteRegex, timeout, (responses) -> { 
-                throw new Exception("Timed out waiting for home to complete."); 
+            receiveResponses(homeCompleteRegex, timeout, ( responses) -> {
+                throw new Exception("Timed out waiting for home to complete.");
             });
         }
-
-        AxesLocation homeLocation = new AxesLocation(machine, this, (axis) -> (axis.getHomeCoordinate()));
+        AxesLocation homeLocation = new AxesLocation(machine, this, ( axis) -> axis.getHomeCoordinate());
         homeLocation.setToDriverCoordinates(this);
     }
 
@@ -540,7 +526,6 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
         }
     }
 
-
     @Override
     public AxesLocation getReportedLocation(long timeout) throws Exception {
         String command = getCommand(null, CommandType.GET_POSITION_COMMAND);
@@ -572,17 +557,15 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
      */
     public Command getExactCommand(String headMountableId, CommandType type) {
         for (Command c : commands) {
-            if(c.type != type) {
+            if (c.type != type) {
                 continue;
             }
-
-            if(c.headMountableId != null && c.headMountableId.equals(headMountableId)) {
+            if ((c.headMountableId != null) && c.headMountableId.equals(headMountableId)) {
                 return c;
-            } else if(c.headMountableId == null && headMountableId == null) {
+            } else if ((c.headMountableId == null) && (headMountableId == null)) {
                 return c;
             }
         }
-
         return null;
     }
 
@@ -637,114 +620,105 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
     }
 
     @Override
-    public void moveTo(ReferenceHeadMountable hm, MoveToCommand move)
-            throws Exception {
+    public void moveTo(ReferenceHeadMountable hm, MoveToCommand move) throws Exception {
         // Get the axes that are actually moving.
         AxesLocation movedAxesLocation = move.getMovedAxesLocation();
         AxesLocation allAxesLocation = move.getLocation1();
         Double feedRate = move.getFeedRatePerMinute();
         Double acceleration = move.getAccelerationPerSecond2();
         Double jerk = move.getJerkPerSecond3();
-        double driverDistance = movedAxesLocation.getEuclideanMetric(this, (axis) -> 
-            movedAxesLocation.getLengthCoordinate(axis).convertToUnits(getUnits()).getValue() - axis.getDriverCoordinate()).third;
-
+        double driverDistance = movedAxesLocation.getEuclideanMetric(this, ( axis) -> movedAxesLocation.getLengthCoordinate(axis).convertToUnits(getUnits()).getValue() - axis.getDriverCoordinate()).third;
         // Start composing the command, will decide later, whether we actually send it.
         String command = getCommand(hm, CommandType.MOVE_TO_COMMAND);
         if (command == null) {
             return;
         }
         if (hasVariable(command, "BacklashFeedRate")) {
-            throw new Exception(getName()+" configuration upgrade needed: Please remove the extra backlash compensation move from your MOVE_TO_COMMAND. "
-                    +"Backlash compensation is now done outside of the drivers.");
+            throw new Exception((getName() + " configuration upgrade needed: Please remove the extra backlash compensation move from your MOVE_TO_COMMAND. ") + "Backlash compensation is now done outside of the drivers.");
         }
-
         command = substituteVariable(command, "Id", hm.getId());
         command = substituteVariable(command, "Name", hm.getName());
         command = substituteVariable(command, "FeedRate", feedRate);
         command = substituteVariable(command, "Acceleration", acceleration);
         command = substituteVariable(command, "Jerk", jerk);
-
-        ReferenceMachine machine = (ReferenceMachine) hm.getHead().getMachine();
+        ReferenceMachine machine = ((ReferenceMachine) (hm.getHead().getMachine()));
         // Get a map of the axes of ...
-        AxesLocation mappedAxes = (this.usingLetterVariables ?
-                allAxesLocation                // ... all the axes in case of using letter variables
-                : hm.getMappedAxes(machine))   // ... just the HeadMountable in case of using type variables
-                .drivenBy(this);               // ... but just those driven by this driver.
+        AxesLocation mappedAxes = // ... just the HeadMountable in case of using type variables
+        (this.usingLetterVariables ? allAxesLocation// ... all the axes in case of using letter variables
+         : hm.getMappedAxes(machine)).drivenBy(this);// ... but just those driven by this driver.
+
         // Go through all the axes variables and handle them.
         boolean doesMove = false;
         for (String variable : getAxisVariables(machine)) {
-            // Note, if the axis is included in the location, this means it actually changes the coordinate in resolution steps. 
-            // The resolution stepping is used to suppress artificial coordinate changes due to floating point artifacts from transformations etc. 
+            // Note, if the axis is included in the location, this means it actually changes the coordinate in resolution steps.
+            // The resolution stepping is used to suppress artificial coordinate changes due to floating point artifacts from transformations etc.
             // If set up correctly, this also suppresses "rounded-to-nothing" moves due to MOVE_TO_COMMANDs format specifier (usually %.4f).
             ControllerAxis axis = movedAxesLocation.getAxisByVariable(this, variable);
             if (axis == null) {
                 // Axis not moved. Might still be forced.
-
-                // If the command has forced-output coordinate variables "XF", "YF", "ZF" etc., 
+                // If the command has forced-output coordinate variables "XF", "YF", "ZF" etc.,
                 // always include the corresponding axis in the command.
-                // This may be employed for axes, where OpenPNP cannot keep track when an axis has physically 
-                // moved behind its back. By always forcing the axis coordinate output, the controller will take care 
-                // of restoring the axis position, if necessary.  
-                // As we are always moving in absolute coordinates this has no ill effect if it results in no 
-                // position change after all. 
-                // Note, there is no need for separate backlash compensation variables, as these are always 
-                // substituted alongside. 
-                if (hasVariable(command, variable+"F")) {
-                    // Force it! Must get it from the mappedAxes. If the mappedAxes do not have it, it is 
-                    // still suppressed (this never happens when using letter variables). 
+                // This may be employed for axes, where OpenPNP cannot keep track when an axis has physically
+                // moved behind its back. By always forcing the axis coordinate output, the controller will take care
+                // of restoring the axis position, if necessary.
+                // As we are always moving in absolute coordinates this has no ill effect if it results in no
+                // position change after all.
+                // Note, there is no need for separate backlash compensation variables, as these are always
+                // substituted alongside.
+                if (hasVariable(command, variable + "F")) {
+                    // Force it! Must get it from the mappedAxes. If the mappedAxes do not have it, it is
+                    // still suppressed (this never happens when using letter variables).
                     axis = mappedAxes.getAxisByVariable(this, variable);
                 }
             }
             if (axis != null) {
-                // The move is definitely on. 
+                // The move is definitely on.
                 doesMove = true;
                 // TODO: discuss whether we should round to axis resolution here.
                 double coordinate;
                 if (axis.getType() == Type.Rotation) {
                     // Never convert rotation to driver units.
                     coordinate = allAxesLocation.getCoordinate(axis);
-                }
-                else {
+                } else {
                     coordinate = allAxesLocation.getCoordinate(axis, getUnits());
                 }
-                double previousCoordinate = axis.getDriverCoordinate(); 
-                int direction = ((Double)coordinate).compareTo(previousCoordinate);
+                double previousCoordinate = axis.getDriverCoordinate();
+                int direction = ((Double) (coordinate)).compareTo(previousCoordinate);
                 // Substitute the axis variables.
                 command = substituteVariable(command, variable, coordinate);
-                command = substituteVariable(command, variable+"F", coordinate);
-                command = substituteVariable(command, variable+"L", axis.getLetter());
-                if (hasVariable(command, "BacklashOffset"+variable)) {
-                    throw new Exception(getName()+" configuration upgrade needed: Please remove the extra backlash compensation move from your MOVE_TO_COMMAND. "
-                            +"Backlash compensation is now done outside of the drivers.");
+                command = substituteVariable(command, variable + "F", coordinate);
+                command = substituteVariable(command, variable + "L", axis.getLetter());
+                if (hasVariable(command, "BacklashOffset" + variable)) {
+                    throw new Exception((getName() + " configuration upgrade needed: Please remove the extra backlash compensation move from your MOVE_TO_COMMAND. ") + "Backlash compensation is now done outside of the drivers.");
                 }
-                command = substituteVariable(command, variable+"Decreasing", direction < 0 ? true : null);
-                command = substituteVariable(command, variable+"Increasing", direction > 0 ? true : null);
-                if (isSupportingPreMove() && axis instanceof ReferenceControllerAxis) {
+                command = substituteVariable(command, variable + "Decreasing", direction < 0 ? true : null);
+                command = substituteVariable(command, variable + "Increasing", direction > 0 ? true : null);
+                if (isSupportingPreMove() && (axis instanceof ReferenceControllerAxis)) {
                     // Check for a pre-move command.
-                    String preMoveCommand = ((ReferenceControllerAxis) axis).getPreMoveCommand();
-                    if (preMoveCommand != null && !preMoveCommand.isEmpty()) {
+                    String preMoveCommand = ((ReferenceControllerAxis) (axis)).getPreMoveCommand();
+                    if ((preMoveCommand != null) && (!preMoveCommand.isEmpty())) {
                         preMoveCommand = substituteVariable(preMoveCommand, "Coordinate", previousCoordinate);
                         sendGcode(preMoveCommand);
                     }
                 }
                 // Axis specific jerk limits are needed on TinyG.
                 double axisDistance = coordinate - previousCoordinate;
-                double axisJerk = (jerk != null ? jerk : 0)*Math.abs(axisDistance)/driverDistance;
-                command = substituteVariable(command, variable+"Jerk", axisJerk > 1 ? axisJerk : null);
-                command = substituteVariable(command, variable+"JerkMupm3", axisJerk > 4.63 ? axisJerk*1e-6*Math.pow(60, 3) : null); // TinyG: Megaunits/min^3 
+                double axisJerk = ((jerk != null ? jerk : 0) * Math.abs(axisDistance)) / driverDistance;
+                command = substituteVariable(command, variable + "Jerk", axisJerk > 1 ? axisJerk : null);
+                command = substituteVariable(command, variable + "JerkMupm3", axisJerk > 4.63 ? (axisJerk * 1.0E-6) * Math.pow(60, 3) : null);// TinyG: Megaunits/min^3
+
                 // Store the new driver coordinate on the axis.
                 axis.setDriverCoordinate(coordinate);
-            }
-            else {
+            } else {
                 // Delete the unused axis variables.
                 command = substituteVariable(command, variable, null);
-                command = substituteVariable(command, variable+"F", null);
-                command = substituteVariable(command, variable+"L", null); 
-                command = substituteVariable(command, "BacklashOffset"+variable, null);
-                command = substituteVariable(command, variable+"Decreasing", null);
-                command = substituteVariable(command, variable+"Increasing", null);
-                command = substituteVariable(command, variable+"Jerk", null);
-                command = substituteVariable(command, variable+"JerkMupm3", null);  
+                command = substituteVariable(command, variable + "F", null);
+                command = substituteVariable(command, variable + "L", null);
+                command = substituteVariable(command, "BacklashOffset" + variable, null);
+                command = substituteVariable(command, variable + "Decreasing", null);
+                command = substituteVariable(command, variable + "Increasing", null);
+                command = substituteVariable(command, variable + "Jerk", null);
+                command = substituteVariable(command, variable + "JerkMupm3", null);
             }
         }
         if (doesMove) {
@@ -760,40 +734,33 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
     }
 
     protected void drainCommandQueue(long timeout) throws InterruptedException {
-        // This does nothing in the plain GcodeDriver. It will be overridden in the GcodeAsyncDriver.
+        // This does nothing in the plain GcodeDriver. It will be overridden in the GcodeAsyncDriver. 
     }
 
     @Override
-    public void waitForCompletion(ReferenceHeadMountable hm, 
-            CompletionType completionType) throws Exception {
-        if (!(completionType.isUnconditionalCoordination() 
-                || isMotionPending())) {
+    public void waitForCompletion(ReferenceHeadMountable hm, CompletionType completionType) throws Exception {
+        if (!(completionType.isUnconditionalCoordination() || isMotionPending())) {
             return;
         }
         String command = getCommand(hm, CommandType.MOVE_TO_COMPLETE_COMMAND);
         if (command != null) {
-            sendGcode(command, completionType == CompletionType.WaitForStillstandIndefinitely ?
-                    -1 : getTimeoutAtMachineSpeed());
+            sendGcode(command, completionType == CompletionType.WaitForStillstandIndefinitely ? -1 : getTimeoutAtMachineSpeed());
         }
-
         if (completionType.isEnforcingStillstand()) {
             if (isMotionPending()) {
-                /*
-                 * If moveToCompleteRegex is specified we need to wait until we match the regex in a
-                 * response before continuing. We first search the initial responses from the
-                 * command for the regex. If it's not found we then collect responses for up to
-                 * timeoutMillis while searching the responses for the regex. As soon as it is
-                 * matched we continue. If it's not matched within the timeout we throw an
-                 * Exception.
-                 *
-                 * AFAIK, this was used on TinyG and it is now obsolete with new firmware :
-                 * https://makr.zone/tinyg-new-g-code-commands-for-openpnp-use/577/
+                /* If moveToCompleteRegex is specified we need to wait until we match the regex in a
+                response before continuing. We first search the initial responses from the
+                command for the regex. If it's not found we then collect responses for up to
+                timeoutMillis while searching the responses for the regex. As soon as it is
+                matched we continue. If it's not matched within the timeout we throw an
+                Exception.
+
+                AFAIK, this was used on TinyG and it is now obsolete with new firmware :  
+                https://makr.zone/tinyg-new-g-code-commands-for-openpnp-use/577/
                  */
                 String moveToCompleteRegex = getCommand(hm, CommandType.MOVE_TO_COMPLETE_REGEX);
                 if (moveToCompleteRegex != null) {
-                    receiveResponses(moveToCompleteRegex, completionType == CompletionType.WaitForStillstandIndefinitely ?
-                            -1 : getTimeoutAtMachineSpeed(),
-                            (responses) -> {
+                    receiveResponses(moveToCompleteRegex, completionType == CompletionType.WaitForStillstandIndefinitely ? -1 : getTimeoutAtMachineSpeed(), ( responses) -> {
                         throw new Exception("Timed out waiting for move to complete.");
                     });
                 }
@@ -854,24 +821,23 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
          */
         String command = getCommand(actuator, CommandType.ACTUATOR_READ_COMMAND);
         String regex = getCommand(actuator, CommandType.ACTUATOR_READ_REGEX);
-        if (command != null && regex != null) {
+        if ((command != null) && (regex != null)) {
             command = substituteVariable(command, "Id", actuator.getId());
             command = substituteVariable(command, "Name", actuator.getName());
             command = substituteVariable(command, "Index", actuator.getIndex());
             if (parameter != null) {
-                if (parameter instanceof Double) { // Backwards compatibility
-                    Double doubleParameter = (Double) parameter;
+                if (parameter instanceof Double) {
+                    // Backwards compatibility
+                    Double doubleParameter = ((Double) (parameter));
                     command = substituteVariable(command, "DoubleValue", doubleParameter);
-                    command = substituteVariable(command, "IntegerValue", (int) doubleParameter.doubleValue());
+                    command = substituteVariable(command, "IntegerValue", ((int) (doubleParameter.doubleValue())));
                 }
-
                 command = substituteVariable(command, "Value", parameter);
             }
             sendGcode(command);
-            List<Line> responses = receiveResponses(regex, timeoutMilliseconds, (r) -> {
+            List<Line> responses = receiveResponses(regex, timeoutMilliseconds, ( r) -> {
                 throw new Exception(String.format("Actuator \"%s\" read error: No matching responses found.", actuator.getName()));
             });
-
             Pattern pattern = Pattern.compile(regex);
             for (Line line : responses) {
                 Matcher matcher = pattern.matcher(line.getLine());
@@ -879,21 +845,16 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
                     Logger.trace("actuatorRead response: {}", line);
                     try {
                         return matcher.group("Value");
-                    }
-                    catch (IllegalArgumentException e) {
-                        throw new Exception(String.format("Actuator \"%s\" read error: Regex is missing \"Value\" capturing group. See https://github.com/openpnp/openpnp/wiki/GcodeDriver#actuator_read_regex",
-                                actuator.getName()), e);
-                    }
-                    catch (Exception e) {
-                        throw new Exception(String.format("Actuator \"%s\" read error: Failed to parse response. See https://github.com/openpnp/openpnp/wiki/GcodeDriver#actuator_read_regex",
-                                actuator.getName()), e);
+                    } catch (java.lang.IllegalArgumentException e) {
+                        throw new Exception(String.format("Actuator \"%s\" read error: Regex is missing \"Value\" capturing group. See https://github.com/openpnp/openpnp/wiki/GcodeDriver#actuator_read_regex", actuator.getName()), e);
+                    } catch (java.lang.Exception e) {
+                        throw new Exception(String.format("Actuator \"%s\" read error: Failed to parse response. See https://github.com/openpnp/openpnp/wiki/GcodeDriver#actuator_read_regex", actuator.getName()), e);
                     }
                 }
             }
             // This should not happen, as the regex is pre-matched in receiveResponses().
             throw new Exception(String.format("Actuator \"%s\" read error: Regex matching response vanished.", actuator.getName()));
-        }
-        else {
+        } else {
             throw new Exception(String.format("Actuator \"%s\" read error: Driver configuration is missing ACTUATOR_READ_COMMAND or ACTUATOR_READ_REGEX.", actuator.getName()));
         }
     }
@@ -906,16 +867,12 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
     public synchronized void disconnect() {
         disconnectRequested = true;
         connected = false;
-
         disconnectThreads();
-
         try {
             getCommunications().disconnect();
-        }
-        catch (Exception e) {
+        } catch (java.lang.Exception e) {
             Logger.error("disconnect()", e);
         }
-
         closeGcodeLogger();
     }
 
@@ -1033,7 +990,7 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
 
     @FunctionalInterface
     public interface TimeoutAction {
-        List<Line> apply(List<Line> responses) throws Exception;
+        public abstract List<Line> apply(List<Line> responses) throws Exception;
     }
 
     public List<Line> receiveResponses(String regex, long timeout, 
@@ -1193,16 +1150,13 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
                         return;
                     }
                     receivedLine = receivedLine.trim();
-                }
-                catch (TimeoutException ex) {
+                } catch (TimeoutException ex) {
                     continue;
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     if (disconnectRequested) {
                         Logger.trace("Read error while disconnecting", e);
                         return;
-                    }
-                    else {
+                    } else {
                         Logger.error("Read error", e);
                         return;
                     }
@@ -1213,7 +1167,7 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
                 processResponse(line);
                 // Add to the responseQueue for further processing by the caller.
                 responseQueue.offer(line);
-            }
+            } 
             Logger.trace("[{}] disconnectRequested, bye-bye.", getCommunications().getConnectionName());
         }
     }
@@ -1287,7 +1241,7 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
         return true;
     }
 
-    static protected String substituteVariable(String command, String name, Object value) {
+    protected static String substituteVariable(String command, String name, Object value) {
         return TextUtils.substituteVar(command, name, value);
     }
 
@@ -1309,16 +1263,9 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
         return false;
     }
 
-
-
     @Override
     public PropertySheet[] getPropertySheets() {
-        return new PropertySheet[] {
-                new PropertySheetWizardAdapter(super.getConfigurationWizard()),
-                new PropertySheetWizardAdapter(new GcodeDriverSettings(this), "Driver Settings"),
-                new PropertySheetWizardAdapter(new GcodeDriverGcodes(this), "Gcode"),
-                new PropertySheetWizardAdapter(new GcodeDriverConsole(this), "Console"),
-        };
+        return new PropertySheet[]{ new PropertySheetWizardAdapter(super.getConfigurationWizard()), new PropertySheetWizardAdapter(new GcodeDriverSettings(this), "Driver Settings"), new PropertySheetWizardAdapter(new GcodeDriverGcodes(this), "Gcode"), new PropertySheetWizardAdapter(new GcodeDriverConsole(this), "Console") };
     }
 
     @Override
@@ -1445,9 +1392,7 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
     }
 
     public String getFirmwareConfiguration() {
-        return detectedFirmware+"\n\n"
-                +(reportedAxes != null ? reportedAxes : "")+"\n\n"
-                +(configuredAxes != null ? configuredAxes : "");
+        return (((detectedFirmware + "\n\n") + (reportedAxes != null ? reportedAxes : "")) + "\n\n") + (configuredAxes != null ? configuredAxes : "");
     }
 
     public void setFirmwareConfiguration(String configuredAxes) {
@@ -1480,14 +1425,13 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
         if (!wasConnected) {
             connect();
         }
-
         try {
             sendCommand("M115");
             String firmware = receiveSingleResponse("^FIRMWARE.*");
             if (firmware != null) {
                 setDetectedFirmware(firmware);
             }
-            if (!getAxisVariables((ReferenceMachine) Configuration.get().getMachine()).isEmpty()) {
+            if (!getAxisVariables(((ReferenceMachine) (Configuration.get().getMachine()))).isEmpty()) {
                 sendCommand("M114");
                 String reportedAxes = receiveSingleResponse(".*[XYZABCDEUVW]:-?\\d+\\.\\d+.*");
                 if (reportedAxes != null) {
@@ -1499,23 +1443,19 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
                                 if (axisConfig != null) {
                                     setConfiguredAxes(axisConfig);
                                 }
-                            }
-                            else {
+                            } else {
                                 setConfiguredAxes(null);
                             }
-                        }
-                        catch (Exception e) {
+                        } catch (java.lang.Exception e) {
                             // ignore
                         }
                     }
                     setReportedAxes(reportedAxes);
                 }
-            }
-            else {
+            } else {
                 setReportedAxes("");
             }
-        }
-        finally {
+        } finally {
             if (!wasConnected) {
                 disconnect();
             }
@@ -1533,9 +1473,8 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
                 String value;
                 int pos = matcher.end();
                 if (matcher.find()) {
-                    value = detectedFirmware.substring(pos, matcher.start()-1);
-                }
-                else {
+                    value = detectedFirmware.substring(pos, matcher.start() - 1);
+                } else {
                     value = detectedFirmware.substring(pos);
                 }
                 value = value.replace("%3A", ":");
@@ -1545,7 +1484,7 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
                 }
                 return value.trim();
             }
-        }
+        } 
         return defaultValue;
     }
 
@@ -1878,7 +1817,6 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
 
     @Deprecated
     private static class Axis {
-
         @Attribute
         private String name;
 
@@ -1902,8 +1840,7 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
     }
 
     @Deprecated
-    public interface AxisTransform {
-    }
+    public interface AxisTransform {}
 
     /**
      * An AxisTransform for heads with dual linear Z axes powered by one motor. The two Z axes are
@@ -1914,7 +1851,6 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
     public static class NegatingTransform implements AxisTransform {
         @Element
         private String negatedHeadMountableId;
-
     }
 
     @Deprecated
@@ -1930,12 +1866,11 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
 
         @Attribute(required = false)
         private double camWheelGap = 2;
-
     }
 
     @Deprecated
     public static class OffsetTransform implements AxisTransform {
-        @ElementMap(required=false)
+        @ElementMap(required = false)
         HashMap<String, Double> offsetsByHeadMountableId = new HashMap<>();
 
         public OffsetTransform() {
@@ -1944,7 +1879,6 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
 
     @Deprecated
     public static class ScalingTransform implements AxisTransform {
-
         @Attribute(required = false)
         private double scaleFactor = 1;
     }

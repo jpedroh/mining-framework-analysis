@@ -18,15 +18,14 @@
  * 
  * For more information about OpenPnP visit http://openpnp.org
  */
-
 package org.openpnp.machine.reference.driver;
 
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.openpnp.machine.reference.ReferenceMachine;
 import org.openpnp.machine.reference.axis.ReferenceControllerAxis;
 import org.openpnp.machine.reference.driver.AbstractReferenceDriver.CommunicationsType;
@@ -35,12 +34,12 @@ import org.openpnp.machine.reference.driver.GcodeDriver.CommandType;
 import org.openpnp.machine.reference.driver.SerialPortCommunications.FlowControl;
 import org.openpnp.model.AxesLocation;
 import org.openpnp.model.Configuration;
-import org.openpnp.model.Solutions;
 import org.openpnp.model.Solutions.Severity;
+import org.openpnp.model.Solutions;
 import org.openpnp.spi.Actuator;
 import org.openpnp.spi.ControllerAxis;
-import org.openpnp.spi.Driver;
 import org.openpnp.spi.Driver.MotionControlType;
+import org.openpnp.spi.Driver;
 import org.openpnp.spi.Head;
 import org.openpnp.spi.HeadMountable;
 import org.openpnp.spi.Machine;
@@ -51,6 +50,7 @@ import org.simpleframework.xml.core.Persister;
 import org.simpleframework.xml.stream.Format;
 import org.simpleframework.xml.stream.HyphenStyle;
 import org.simpleframework.xml.stream.Style;
+
 
 /**
  * This helper class implements the Troubleshooting for the GcodeDriver and GcodeAsyncDriver. 
@@ -66,23 +66,16 @@ class GcodeDriverSolutions implements Solutions.Subject {
 
     @Override
     public void findIssues(List<Solutions.Issue> issues) {
-        ReferenceMachine machine = (ReferenceMachine) Configuration.get().getMachine();
+        ReferenceMachine machine = ((ReferenceMachine) (Configuration.get().getMachine()));
         boolean hasAxes = !gcodeDriver.getAxisVariables(machine).isEmpty();
         if (!(gcodeDriver instanceof GcodeAsyncDriver)) {
-            Solutions.Issue issue = new Solutions.Issue(
-                    gcodeDriver, 
-                    "Use the GcodeAsyncDriver for advanced features. Accept or Dismiss to continue.", 
-                    "Convert to GcodeAsyncDriver.", 
-                    Severity.Fundamental,
-                    "https://github.com/openpnp/openpnp/wiki/GcodeAsyncDriver") {
-
+            Solutions.Issue issue = new Solutions.Issue(gcodeDriver, "Use the GcodeAsyncDriver for advanced features. Accept or Dismiss to continue.", "Convert to GcodeAsyncDriver.", Severity.Fundamental, "https://github.com/openpnp/openpnp/wiki/GcodeAsyncDriver") {
                 @Override
                 public void setState(Solutions.State state) throws Exception {
                     if (confirmStateChange(state)) {
                         if (state == Solutions.State.Solved) {
                             convertToAsync(gcodeDriver);
-                        }
-                        else if (getState() == Solutions.State.Solved) {
+                        } else if (getState() == Solutions.State.Solved) {
                             // Place the old one back (from the captured gcodeDriver).
                             replaceDriver(gcodeDriver);
                         }
@@ -92,16 +85,15 @@ class GcodeDriverSolutions implements Solutions.Subject {
             };
             issues.add(issue);
             if (!machine.isSolutionsIssueDismissed(issue)) {
-                return; // No further troubleshooting until this is decided.
+                return;// No further troubleshooting until this is decided.
+
             }
         }
-
         if (machine.isEnabled() && gcodeDriver.isSpeakingGcode()) {
             try {
                 gcodeDriver.detectFirmware(true);
-            }
-            catch (Exception e) {
-                Logger.warn(gcodeDriver.getName()+" failure to detect firmware", e);
+            } catch (java.lang.Exception e) {
+                Logger.warn(gcodeDriver.getName() + " failure to detect firmware", e);
             }
         }
         Integer firmwareAxesCount = null;
@@ -112,16 +104,7 @@ class GcodeDriverSolutions implements Solutions.Subject {
         boolean isMarlin = false;
         boolean isDuet = false;
         if (gcodeDriver.getDetectedFirmware() == null) {
-            issues.add(new Solutions.Issue(
-                    gcodeDriver, 
-                    "Firmware was not dected ("+
-                            (machine.isEnabled() ? 
-                                    (gcodeDriver.isSpeakingGcode() ? "failure, check log" : "controller may not speak Gcode") 
-                                    : "machine is disabled")+"). The M115 command must be supported by the controller.", 
-                            "Retry the detection by connecting to the controller.", 
-                            Severity.Fundamental,
-                    "https://www.reprap.org/wiki/G-code#M115:_Get_Firmware_Version_and_Capabilities") {
-
+            issues.add(new Solutions.Issue(gcodeDriver, ("Firmware was not dected (" + (machine.isEnabled() ? gcodeDriver.isSpeakingGcode() ? "failure, check log" : "controller may not speak Gcode" : "machine is disabled")) + "). The M115 command must be supported by the controller.", "Retry the detection by connecting to the controller.", Severity.Fundamental, "https://www.reprap.org/wiki/G-code#M115:_Get_Firmware_Version_and_Capabilities") {
                 @Override
                 public void setState(Solutions.State state) throws Exception {
                     if (confirmStateChange(state)) {
@@ -132,165 +115,93 @@ class GcodeDriverSolutions implements Solutions.Subject {
                     }
                 }
             });
-        }
-        else {
-            if (gcodeDriver.getFirmwareProperty("FIRMWARE_NAME", "").contains("Smoothieware")) {
-                isSmoothie = true;
-                isGrblSyntax = (gcodeDriver.getFirmwareProperty("X-GRBL_MODE", "").contentEquals("1"));
-                firmwareAxesCount = Integer.valueOf(gcodeDriver.getFirmwareProperty("X-AXES", "0"));
-                firmwarePrimaryAxesCount = Integer.valueOf(gcodeDriver.getFirmwareProperty("X-PAXES", "3"));
-                if (firmwarePrimaryAxesCount == firmwareAxesCount) {
-                    // OK.
-                }
-                else {
-                    issues.add(new Solutions.PlainIssue(
-                            gcodeDriver, 
-                            "There is a better Smoothieware firmware available. "+gcodeDriver.getDetectedFirmware(), 
-                            "Please upgrade to the special PnP version. See info link.", 
-                            Severity.Error, 
-                            "https://github.com/openpnp/openpnp/wiki/Motion-Controller-Firmwares#smoothieware"));
-                }
+        } else if (gcodeDriver.getFirmwareProperty("FIRMWARE_NAME", "").contains("Smoothieware")) {
+            isSmoothie = true;
+            isGrblSyntax = gcodeDriver.getFirmwareProperty("X-GRBL_MODE", "").contentEquals("1");
+            firmwareAxesCount = Integer.valueOf(gcodeDriver.getFirmwareProperty("X-AXES", "0"));
+            firmwarePrimaryAxesCount = Integer.valueOf(gcodeDriver.getFirmwareProperty("X-PAXES", "3"));
+            if (firmwarePrimaryAxesCount == firmwareAxesCount) {
+                // OK.
+            } else {
+                issues.add(new Solutions.PlainIssue(gcodeDriver, "There is a better Smoothieware firmware available. " + gcodeDriver.getDetectedFirmware(), "Please upgrade to the special PnP version. See info link.", Severity.Error, "https://github.com/openpnp/openpnp/wiki/Motion-Controller-Firmwares#smoothieware"));
             }
-            else if (gcodeDriver.getFirmwareProperty("FIRMWARE_NAME", "").contains("Duet")) {
-                isDuet = true;
-                String firmwareVersion = gcodeDriver.getFirmwareProperty("FIRMWARE_VERSION", "0.0");
-                Integer major = null;
-                Integer minor = null;
+        } else if (gcodeDriver.getFirmwareProperty("FIRMWARE_NAME", "").contains("Duet")) {
+            isDuet = true;
+            String firmwareVersion = gcodeDriver.getFirmwareProperty("FIRMWARE_VERSION", "0.0");
+            Integer major = null;
+            Integer minor = null;
+            try {
+                Matcher matcher = Pattern.compile("(?<major>-?\\d+)\\.(?<minor>-?\\d+).*").matcher(firmwareVersion);
+                matcher.matches();
+                major = Integer.parseUnsignedInt(matcher.group("major"));
+                minor = Integer.parseUnsignedInt(matcher.group("minor"));
+            } catch (java.lang.Exception e) {
+                Logger.warn(e);
+            }
+            if ((((major == null) || (minor == null)) || (major < 3)) || ((major == 3) && (minor < 3))) {
+                issues.add(new Solutions.PlainIssue(gcodeDriver, "Duet3D firmware was improved for OpenPnP, please use version 3.3beta or newer. Current version is " + firmwareVersion, "Get the new version through the linked web page.", Severity.Error, "https://github.com/openpnp/openpnp/wiki/Motion-Controller-Firmwares#duet"));
+            }
+            if (gcodeDriver.getConfiguredAxes() != null) {
                 try {
-                    Matcher matcher =
-                            Pattern.compile("(?<major>-?\\d+)\\.(?<minor>-?\\d+).*").matcher(firmwareVersion);
+                    Matcher matcher = Pattern.compile(".*\\s(?<axes>-?\\d+)\\saxes\\svisible.*").matcher(gcodeDriver.getConfiguredAxes());
                     matcher.matches();
-                    major = Integer.parseUnsignedInt(matcher.group("major"));
-                    minor = Integer.parseUnsignedInt(matcher.group("minor"));
+                    firmwareAxesCount = Integer.parseUnsignedInt(matcher.group("axes"));
+                } catch (java.lang.NumberFormatException e) {
+                    // ignore
                 }
-                catch (Exception e) {
-                    Logger.warn(e);
-                }
-                if (major == null || minor == null
-                        || major < 3 || (major == 3 && minor < 3)) {
-                    issues.add(new Solutions.PlainIssue(
-                            gcodeDriver,
-                            "Duet3D firmware was improved for OpenPnP, please use version 3.3beta or newer. Current version is "+firmwareVersion,
-                            "Get the new version through the linked web page.",
-                            Severity.Error,
-                            "https://github.com/openpnp/openpnp/wiki/Motion-Controller-Firmwares#duet"));
-                }
-                if (gcodeDriver.getConfiguredAxes() != null) {
-                    try {
-                        Matcher matcher =
-                                Pattern.compile(".*\\s(?<axes>-?\\d+)\\saxes\\svisible.*").matcher(gcodeDriver.getConfiguredAxes());
-                        matcher.matches();
-                        firmwareAxesCount = Integer.parseUnsignedInt(matcher.group("axes"));
-                    }
-                    catch (NumberFormatException e) {
-                        // ignore
-                    }
-                    if (gcodeDriver.getConfiguredAxes().contains("(r)")) {
-                        issues.add(new Solutions.PlainIssue(
-                                gcodeDriver,
-                                "Axes should be configured as linear in feedrate calculations on the Duet controller. See the linked web page.",
-                                "Use the M584 S0 option in your config.g file.",
-                                Severity.Error,
-                                "https://duet3d.dozuki.com/Wiki/Gcode#Section_M584_Set_drive_mapping"));
-                    }
-                    else {
-                        firmwarePrimaryAxesCount = firmwareAxesCount;
-                    }
-                }
-            }
-            else if (gcodeDriver.getDetectedFirmware().contains("Marlin")) {
-                isMarlin = true;
-                firmwareAxesCount = Integer.valueOf(gcodeDriver.getFirmwareProperty("AXIS_COUNT", "0"));
-                if (firmwareAxesCount > 3) { 
+                if (gcodeDriver.getConfiguredAxes().contains("(r)")) {
+                    issues.add(new Solutions.PlainIssue(gcodeDriver, "Axes should be configured as linear in feedrate calculations on the Duet controller. See the linked web page.", "Use the M584 S0 option in your config.g file.", Severity.Error, "https://duet3d.dozuki.com/Wiki/Gcode#Section_M584_Set_drive_mapping"));
+                } else {
                     firmwarePrimaryAxesCount = firmwareAxesCount;
                 }
-                else {
-                    issues.add(new Solutions.PlainIssue(
-                            gcodeDriver, 
-                            "There is a better Marlin firmware available. "+gcodeDriver.getDetectedFirmware(), 
-                            "Please upgrade to the special PnP version. See info link.", 
-                            Severity.Error, 
-                            "https://github.com/openpnp/openpnp/wiki/Motion-Controller-Firmwares#marlin-20"));
-                }
             }
-            else if (gcodeDriver.getDetectedFirmware().contains("TinyG")) {
+        } else if (gcodeDriver.getDetectedFirmware().contains("Marlin")) {
+            isMarlin = true;
+            firmwareAxesCount = Integer.valueOf(gcodeDriver.getFirmwareProperty("AXIS_COUNT", "0"));
+            if (firmwareAxesCount > 3) {
+                firmwarePrimaryAxesCount = firmwareAxesCount;
+            } else {
+                issues.add(new Solutions.PlainIssue(gcodeDriver, "There is a better Marlin firmware available. " + gcodeDriver.getDetectedFirmware(), "Please upgrade to the special PnP version. See info link.", Severity.Error, "https://github.com/openpnp/openpnp/wiki/Motion-Controller-Firmwares#marlin-20"));
+            }
+        } else if (gcodeDriver.getDetectedFirmware().contains("TinyG")) {
                 // Having a response already means we have a new firmware.
-                isTinyG = true;
-            }
-            else if (gcodeDriver.getDetectedFirmware().contains("GcodeServer")) {
-                // Built-in.
-            }
-
-            else { 
-                issues.add(new Solutions.PlainIssue(
-                        gcodeDriver, 
-                        "Unknown firmware. "+gcodeDriver.getDetectedFirmware(), 
-                        "Check out firmwares known to be well supported. See info link.", 
-                        Severity.Warning, 
-                        "https://github.com/openpnp/openpnp/wiki/Motion-Controller-Firmwares"));
-            }
+            isTinyG = true;
+        } else if (gcodeDriver.getDetectedFirmware().contains("GcodeServer")) {
+            // Built-in.
+        } else {
+            issues.add(new Solutions.PlainIssue(gcodeDriver, "Unknown firmware. " + gcodeDriver.getDetectedFirmware(), "Check out firmwares known to be well supported. See info link.", Severity.Warning, "https://github.com/openpnp/openpnp/wiki/Motion-Controller-Firmwares"));
         }
-
         if (gcodeDriver instanceof GcodeAsyncDriver) {
-            boolean locationConfirmation = ((GcodeAsyncDriver)gcodeDriver).isReportedLocationConfirmation();
-            boolean confirmationFlowControl = ((GcodeAsyncDriver)gcodeDriver).isConfirmationFlowControl();
+            boolean locationConfirmation = ((GcodeAsyncDriver) (gcodeDriver)).isReportedLocationConfirmation();
+            boolean confirmationFlowControl = ((GcodeAsyncDriver) (gcodeDriver)).isConfirmationFlowControl();
             boolean locationConfirmationRecommended = hasAxes;
             if (locationConfirmationRecommended != locationConfirmation) {
-                issues.add(new Solutions.Issue(
-                        gcodeDriver, 
-                        (locationConfirmationRecommended
-                                ? (confirmationFlowControl
-                                        ? "Location Confirmation recommended for extra features in homing, contact probing, etc."
-                                                : "Location Confirmation required when Confirmation Flow Control is off. Supports extra features in homing, contact probing, etc.")
-                                        : "Location Confirmation usually not available when no axes present."),
-                        (locationConfirmationRecommended ? "Enable Location Confirmation" : "Disable Location Confirmation"),
-                        (confirmationFlowControl ? Severity.Suggestion : Severity.Error),
-                        "https://github.com/openpnp/openpnp/wiki/GcodeAsyncDriver#advanced-settings") {
-
+                issues.add(new Solutions.Issue(gcodeDriver, locationConfirmationRecommended ? confirmationFlowControl ? "Location Confirmation recommended for extra features in homing, contact probing, etc." : "Location Confirmation required when Confirmation Flow Control is off. Supports extra features in homing, contact probing, etc." : "Location Confirmation usually not available when no axes present.", locationConfirmationRecommended ? "Enable Location Confirmation" : "Disable Location Confirmation", confirmationFlowControl ? Severity.Suggestion : Severity.Error, "https://github.com/openpnp/openpnp/wiki/GcodeAsyncDriver#advanced-settings") {
                     @Override
                     public void setState(Solutions.State state) throws Exception {
                         if (confirmStateChange(state)) {
-                            ((GcodeAsyncDriver) gcodeDriver)
-                            .setReportedLocationConfirmation(locationConfirmation ^ (state == Solutions.State.Solved));
+                            ((GcodeAsyncDriver) (gcodeDriver)).setReportedLocationConfirmation(locationConfirmation ^ (state == Solutions.State.Solved));
                             super.setState(state);
                         }
                     }
                 });
             }
-            boolean confirmationFlowControlRecommended = isTinyG || ! hasAxes;
+            boolean confirmationFlowControlRecommended = isTinyG || (!hasAxes);
             if (confirmationFlowControlRecommended != confirmationFlowControl) {
-                issues.add(new Solutions.Issue(
-                        gcodeDriver,
-                        (confirmationFlowControl ?
-                                "Disable Confirmation Flow Control for full asynchronous operation."
-                                : "Enable Confirmation Flow Control" + (hasAxes ? "" : ", controller has no axes") + (isTinyG ? ", TinyG detected" : "") + "."),
-                        (confirmationFlowControl ?
-                                "Disable Confirmation Flow Control."
-                                :"Enable Confirmation Flow Control."),
-                        Severity.Suggestion,
-                        "https://github.com/openpnp/openpnp/wiki/GcodeAsyncDriver#advanced-settings") {
-
+                issues.add(new Solutions.Issue(gcodeDriver, confirmationFlowControl ? "Disable Confirmation Flow Control for full asynchronous operation." : (("Enable Confirmation Flow Control" + (hasAxes ? "" : ", controller has no axes")) + (isTinyG ? ", TinyG detected" : "")) + ".", confirmationFlowControl ? "Disable Confirmation Flow Control." : "Enable Confirmation Flow Control.", Severity.Suggestion, "https://github.com/openpnp/openpnp/wiki/GcodeAsyncDriver#advanced-settings") {
                     @Override
                     public void setState(Solutions.State state) throws Exception {
                         if (confirmStateChange(state)) {
-                            ((GcodeAsyncDriver) gcodeDriver)
-                            .setConfirmationFlowControl(confirmationFlowControl ^ (state == Solutions.State.Solved));
+                            ((GcodeAsyncDriver) (gcodeDriver)).setConfirmationFlowControl(confirmationFlowControl ^ (state == Solutions.State.Solved));
                             super.setState(state);
                         }
                     }
                 });
             }
         }
-
-        if (hasAxes) { 
+        if (hasAxes) {
             if (gcodeDriver.isSupportingPreMove()) {
-                issues.add(new Solutions.Issue(
-                        gcodeDriver, 
-                        "Disallow Pre-Move Commands for advanced features. Accept or Dismiss to continue.", 
-                        "Disable Allow Letter Pre-Move Commands.", 
-                        Severity.Fundamental,
-                        "https://github.com/openpnp/openpnp/wiki/Advanced-Motion-Control#migration-from-a-previous-version") {
-
+                issues.add(new Solutions.Issue(gcodeDriver, "Disallow Pre-Move Commands for advanced features. Accept or Dismiss to continue.", "Disable Allow Letter Pre-Move Commands.", Severity.Fundamental, "https://github.com/openpnp/openpnp/wiki/Advanced-Motion-Control#migration-from-a-previous-version") {
                     @Override
                     public void setState(Solutions.State state) throws Exception {
                         if (confirmStateChange(state)) {
@@ -299,119 +210,74 @@ class GcodeDriverSolutions implements Solutions.Subject {
                         }
                     }
                 });
-            }
-            else if (!gcodeDriver.isUsingLetterVariables()) {
-                issues.add(new Solutions.Issue(
-                        gcodeDriver, 
-                        "Use Axis Letter Variables for simpler use and advanced features.", 
-                        "Enable Letter Variables.", 
-                        Severity.Fundamental,
-                        "https://github.com/openpnp/openpnp/wiki/Advanced-Motion-Control#migration-from-a-previous-version") {
-
+            } else if (!gcodeDriver.isUsingLetterVariables()) {
+                issues.add(new Solutions.Issue(gcodeDriver, "Use Axis Letter Variables for simpler use and advanced features.", "Enable Letter Variables.", Severity.Fundamental, "https://github.com/openpnp/openpnp/wiki/Advanced-Motion-Control#migration-from-a-previous-version") {
                     @Override
                     public void setState(Solutions.State state) throws Exception {
                         if (confirmStateChange(state)) {
-                            gcodeDriver.setUsingLetterVariables((state == Solutions.State.Solved));
+                            gcodeDriver.setUsingLetterVariables(state == Solutions.State.Solved);
                             super.setState(state);
                         }
                     }
                 });
             }
-
             final MotionControlType oldMotionControlType = gcodeDriver.getMotionControlType();
-            final MotionControlType newMotionControlType = isTinyG ?
-                    MotionControlType.SimpleSCurve : MotionControlType.ModeratedConstantAcceleration;
-            if (gcodeDriver.getMotionControlType().isUnpredictable() 
-                    || (isTinyG && newMotionControlType != oldMotionControlType)) {
-                issues.add(new Solutions.Issue(
-                        gcodeDriver, 
-                        (isTinyG ? "Choose "+newMotionControlType.name()+" for proper TinyG operation." :
-                                "Choose an advanced Motion Control Type for your controller type."), 
-                        "Set to "+newMotionControlType.name()+".", 
-                        (isTinyG ? Severity.Error : Severity.Suggestion),
-                        "https://github.com/openpnp/openpnp/wiki/GcodeAsyncDriver#gcodedriver-new-settings") {
-
+            final MotionControlType newMotionControlType = (isTinyG) ? MotionControlType.SimpleSCurve : MotionControlType.ModeratedConstantAcceleration;
+            if (gcodeDriver.getMotionControlType().isUnpredictable() || (isTinyG && (newMotionControlType != oldMotionControlType))) {
+                issues.add(new Solutions.Issue(gcodeDriver, isTinyG ? ("Choose " + newMotionControlType.name()) + " for proper TinyG operation." : "Choose an advanced Motion Control Type for your controller type.", ("Set to " + newMotionControlType.name()) + ".", isTinyG ? Severity.Error : Severity.Suggestion, "https://github.com/openpnp/openpnp/wiki/GcodeAsyncDriver#gcodedriver-new-settings") {
                     @Override
                     public void setState(Solutions.State state) throws Exception {
                         if (confirmStateChange(state)) {
-                            gcodeDriver.setMotionControlType((state == Solutions.State.Solved) ? 
-                                    newMotionControlType : oldMotionControlType);
+                            gcodeDriver.setMotionControlType(state == Solutions.State.Solved ? newMotionControlType : oldMotionControlType);
                             super.setState(state);
                         }
                     }
                 });
-            }
-            else if (gcodeDriver.getMaxFeedRate() > 0) {
-                issues.add(new Solutions.Issue(
-                        gcodeDriver, 
-                        "Axis velocity limited by driver Maximum Feed Rate. ", 
-                        "Remove driver Maximum Feed Rate.", 
-                        Severity.Suggestion,
-                        "https://github.com/openpnp/openpnp/wiki/GcodeAsyncDriver#gcodedriver-new-settings") {
+            } else if (gcodeDriver.getMaxFeedRate() > 0) {
+                issues.add(new Solutions.Issue(gcodeDriver, "Axis velocity limited by driver Maximum Feed Rate. ", "Remove driver Maximum Feed Rate.", Severity.Suggestion, "https://github.com/openpnp/openpnp/wiki/GcodeAsyncDriver#gcodedriver-new-settings") {
                     final int oldMaxFeedRate = gcodeDriver.getMaxFeedRate();
 
                     @Override
                     public void setState(Solutions.State state) throws Exception {
                         if (confirmStateChange(state)) {
-                            gcodeDriver.setMaxFeedRate((state == Solutions.State.Solved) ? 0 : oldMaxFeedRate);
+                            gcodeDriver.setMaxFeedRate(state == Solutions.State.Solved ? 0 : oldMaxFeedRate);
                             super.setState(state);
                         }
                     }
                 });
             }
         }
-
-        if (gcodeDriver.isSpeakingGcode() && !gcodeDriver.isCompressGcode()) {
-            issues.add(new Solutions.Issue(
-                    gcodeDriver, 
-                    "Compress Gcode for superior communications speed.", 
-                    "Enable Compress Gcode.", 
-                    Severity.Suggestion,
-                    "https://github.com/openpnp/openpnp/wiki/GcodeAsyncDriver#gcodedriver-new-settings") {
-
+        if (gcodeDriver.isSpeakingGcode() && (!gcodeDriver.isCompressGcode())) {
+            issues.add(new Solutions.Issue(gcodeDriver, "Compress Gcode for superior communications speed.", "Enable Compress Gcode.", Severity.Suggestion, "https://github.com/openpnp/openpnp/wiki/GcodeAsyncDriver#gcodedriver-new-settings") {
                 @Override
                 public void setState(Solutions.State state) throws Exception {
                     if (confirmStateChange(state)) {
-                        gcodeDriver.setCompressGcode((state == Solutions.State.Solved));
+                        gcodeDriver.setCompressGcode(state == Solutions.State.Solved);
                         super.setState(state);
                     }
                 }
             });
         }
-        if (gcodeDriver.isSpeakingGcode() && !gcodeDriver.isRemoveComments()) {
-            issues.add(new Solutions.Issue(
-                    gcodeDriver, 
-                    "Remove Gcode comments for superior communications speed.", 
-                    "Enable Remove Comments.", 
-                    Severity.Suggestion,
-                    "https://github.com/openpnp/openpnp/wiki/GcodeAsyncDriver#gcodedriver-new-settings") {
-
+        if (gcodeDriver.isSpeakingGcode() && (!gcodeDriver.isRemoveComments())) {
+            issues.add(new Solutions.Issue(gcodeDriver, "Remove Gcode comments for superior communications speed.", "Enable Remove Comments.", Severity.Suggestion, "https://github.com/openpnp/openpnp/wiki/GcodeAsyncDriver#gcodedriver-new-settings") {
                 @Override
                 public void setState(Solutions.State state) throws Exception {
                     if (confirmStateChange(state)) {
-                        gcodeDriver.setRemoveComments((state == Solutions.State.Solved));
+                        gcodeDriver.setRemoveComments(state == Solutions.State.Solved);
                         super.setState(state);
                     }
                 }
             });
         }
-
-        if (gcodeDriver.communicationsType == CommunicationsType.serial && gcodeDriver.serial != null) {
+        if ((gcodeDriver.communicationsType == CommunicationsType.serial) && (gcodeDriver.serial != null)) {
             final FlowControl oldFlowControl = gcodeDriver.serial.getFlowControl();
-            final FlowControl newFlowControl = isTinyG ? FlowControl.XonXoff : FlowControl.RtsCts;
+            final FlowControl newFlowControl = (isTinyG) ? FlowControl.XonXoff : FlowControl.RtsCts;
             if (oldFlowControl != newFlowControl) {
-                issues.add(new Solutions.Issue(
-                        gcodeDriver, 
-                        "Change of serial port Flow Control recommended.",
-                        "Set "+newFlowControl.name()+" on serial port.",
-                        (gcodeDriver.serial.getFlowControl() == FlowControl.Off || isTinyG ? Severity.Warning : Severity.Suggestion),
-                        "https://en.wikipedia.org/wiki/Flow_control_(data)#Hardware_flow_control") {
-
+                issues.add(new Solutions.Issue(gcodeDriver, "Change of serial port Flow Control recommended.", ("Set " + newFlowControl.name()) + " on serial port.", (gcodeDriver.serial.getFlowControl() == FlowControl.Off) || isTinyG ? Severity.Warning : Severity.Suggestion, "https://en.wikipedia.org/wiki/Flow_control_(data)#Hardware_flow_control") {
                     @Override
                     public void setState(Solutions.State state) throws Exception {
                         if (confirmStateChange(state)) {
-                            gcodeDriver.serial.setFlowControl((state == Solutions.State.Solved) ? 
-                                    newFlowControl : oldFlowControl);
+                            gcodeDriver.serial.setFlowControl(state == Solutions.State.Solved ? newFlowControl : oldFlowControl);
                             super.setState(state);
                         }
                     }
@@ -419,13 +285,7 @@ class GcodeDriverSolutions implements Solutions.Subject {
             }
         }
         if (gcodeDriver.isConnectionKeepAlive()) {
-            issues.add(new Solutions.Issue(
-                    gcodeDriver, 
-                    "Use Keep-Alive only when necessary. It may cause hard to diagnose problems.", 
-                    "Disable Connection Keep-Alive.", 
-                    Severity.Warning,
-                    null) {
-
+            issues.add(new Solutions.Issue(gcodeDriver, "Use Keep-Alive only when necessary. It may cause hard to diagnose problems.", "Disable Connection Keep-Alive.", Severity.Warning, null) {
                 @Override
                 public void setState(Solutions.State state) throws Exception {
                     if (confirmStateChange(state)) {
@@ -435,53 +295,35 @@ class GcodeDriverSolutions implements Solutions.Subject {
                 }
             });
         }
-
         boolean lettersOk = gcodeDriver.isUsingLetterVariables();
-        for (ControllerAxis axis : new AxesLocation(machine)
-                .drivenBy(gcodeDriver).getControllerAxes()) {
+        for (ControllerAxis axis : new AxesLocation(machine).drivenBy(gcodeDriver).getControllerAxes()) {
             // Note: some of the axis solutions are handled in the axes themselves. 
             if (axis.getLetter().isEmpty()) {
                 lettersOk = false;
-            }
-            else if (axis instanceof ReferenceControllerAxis) {
-                if (firmwarePrimaryAxesCount != null && firmwarePrimaryAxesCount == firmwareAxesCount) {
+            } else if (axis instanceof ReferenceControllerAxis) {
+                if ((firmwarePrimaryAxesCount != null) && (firmwarePrimaryAxesCount == firmwareAxesCount)) {
                     // Check rotation axes have the linear switch set.
                     if (axis.isRotationalOnController()) {
-                        final boolean oldInvertLinearRotational = ((ReferenceControllerAxis) axis).isInvertLinearRotational();
-                        issues.add(new Solutions.Issue(
-                                axis, 
-                                "Axis should be treated as a linear for detected firmware (all-primary axes mode).", 
-                                (oldInvertLinearRotational ? "Disable" : "Enable")+" Switch Linear ↔ Rotational.", 
-                                Severity.Error,
-                                "https://github.com/openpnp/openpnp/wiki/Machine-Axes#controller-settings") {
-
+                        final boolean oldInvertLinearRotational = ((ReferenceControllerAxis) (axis)).isInvertLinearRotational();
+                        issues.add(new Solutions.Issue(axis, "Axis should be treated as a linear for detected firmware (all-primary axes mode).", (oldInvertLinearRotational ? "Disable" : "Enable") + " Switch Linear ↔ Rotational.", Severity.Error, "https://github.com/openpnp/openpnp/wiki/Machine-Axes#controller-settings") {
                             @Override
                             public void setState(Solutions.State state) throws Exception {
                                 if (confirmStateChange(state)) {
-                                    ((ReferenceControllerAxis) axis).setInvertLinearRotational(
-                                            (state == Solutions.State.Solved) ^ oldInvertLinearRotational);
+                                    ((ReferenceControllerAxis) (axis)).setInvertLinearRotational((state == Solutions.State.Solved) ^ oldInvertLinearRotational);
                                     super.setState(state);
                                 }
                             }
                         });
                     }
-                } 
-                else if("XYZABC".contains(axis.getLetter())) {
+                } else if ("XYZABC".contains(axis.getLetter())) {
                     boolean rotational = "ABC".contains(axis.getLetter());
                     if (rotational ^ axis.isRotationalOnController()) {
-                        final boolean oldInvertLinearRotational = ((ReferenceControllerAxis) axis).isInvertLinearRotational();
-                        issues.add(new Solutions.Issue(
-                                axis, 
-                                "Axis should be treated as "+(rotational ? "rotational" : "linear")+" according to its letter.", 
-                                (oldInvertLinearRotational ? "Disable" : "Enable")+" Switch Linear ↔ Rotational.", 
-                                Severity.Warning,
-                                "https://github.com/openpnp/openpnp/wiki/Machine-Axes#controller-settings-rotational-axis") {
-
+                        final boolean oldInvertLinearRotational = ((ReferenceControllerAxis) (axis)).isInvertLinearRotational();
+                        issues.add(new Solutions.Issue(axis, ("Axis should be treated as " + (rotational ? "rotational" : "linear")) + " according to its letter.", (oldInvertLinearRotational ? "Disable" : "Enable") + " Switch Linear ↔ Rotational.", Severity.Warning, "https://github.com/openpnp/openpnp/wiki/Machine-Axes#controller-settings-rotational-axis") {
                             @Override
                             public void setState(Solutions.State state) throws Exception {
                                 if (confirmStateChange(state)) {
-                                    ((ReferenceControllerAxis) axis).setInvertLinearRotational(
-                                            (state == Solutions.State.Solved) ^ oldInvertLinearRotational);
+                                    ((ReferenceControllerAxis) (axis)).setInvertLinearRotational((state == Solutions.State.Solved) ^ oldInvertLinearRotational);
                                     super.setState(state);
                                 }
                             }
@@ -490,87 +332,74 @@ class GcodeDriverSolutions implements Solutions.Subject {
                 }
             }
         }
-        if (lettersOk) { 
-            for (CommandType commandType : gcodeDriver.isSpeakingGcode() ?
-                    CommandType.values() 
-                    : new CommandType[] { CommandType.CONNECT_COMMAND }) {
+        if (lettersOk) {
+            for (CommandType commandType : gcodeDriver.isSpeakingGcode() ? CommandType.values() : new CommandType[]{ CommandType.CONNECT_COMMAND }) {
                 String command = gcodeDriver.getCommand(null, commandType);
                 String commandBuilt = null;
                 boolean disallowHeadMountables = false;
                 boolean commandModified = false;
                 switch (commandType) {
-                    case CONNECT_COMMAND:
+                    case CONNECT_COMMAND :
                         if (command == null) {
-                            commandBuilt = 
-                                    "G21 ; Set millimeters mode \n"
-                                            +"G90 ; Set absolute positioning mode";
+                            commandBuilt = "G21 ; Set millimeters mode \n" + "G90 ; Set absolute positioning mode";
                             if (isTinyG) {
-                                commandBuilt = 
-                                        "$ex=1\n" // XonXoff
-                                        +"$sv=0\n" // Non-verbose
-                                        +commandBuilt;
+                                commandBuilt = // Non-verbose
+                                (// XonXoff
+                                "$ex=1\n" + "$sv=0\n") + commandBuilt;
                             }
-                        }
-                        else if (isTinyG) {
+                        } else if (isTinyG) {
                             commandModified = true;
                             if (command.contains("$ex=2")) {
                                 commandBuilt = command.replace("$ex=2", "$ex=1");
-                            }
-                            else if (command.contains("$ex=0")) {
+                            } else if (command.contains("$ex=0")) {
                                 commandBuilt = command.replace("$ex=0", "$ex=1");
-                            }
-                            else if (!command.contains("$ex=1")){
-                                commandBuilt = "$ex=1\n"
-                                        +command;
+                            } else if (!command.contains("$ex=1")) {
+                                commandBuilt = "$ex=1\n" + command;
                             }
                         }
                         break;
-                    case COMMAND_CONFIRM_REGEX:
+                    case COMMAND_CONFIRM_REGEX :
                         if (isTinyG) {
                             commandBuilt = "^tinyg .* ok.*";
-                        }
-                        else {
+                        } else {
                             commandBuilt = "^ok.*";
                         }
                         break;
-                    case COMMAND_ERROR_REGEX:
+                    case COMMAND_ERROR_REGEX :
                         if (isTinyG) {
                             commandBuilt = "^tinyg .* err:.*";
-                        }
-                        else {
-                            //commandBuilt = "^!!*";
+                        } else {
+                            // commandBuilt = "^!!*";
                         }
                         break;
-                    case HOME_COMMAND:
+                    case HOME_COMMAND :
                         if (command == null) {
                             if (isGrblSyntax) {
                                 commandBuilt = "$H ; Home all axes";
-                            }
-                            else if (isTinyG) {
+                            } else if (isTinyG) {
                                 commandBuilt = "G28.2 ";
                                 for (String variable : gcodeDriver.getAxisVariables(machine)) {
-                                    commandBuilt += variable+"0 "; // In TinyG you need to indicate the axis and only 0 is possible. 
+                                    commandBuilt += variable + "0 ";// In TinyG you need to indicate the axis and only 0 is possible.
+
                                 }
                                 commandBuilt += "; Home all axes";
-                            }
-                            else {
+                            } else {
                                 commandBuilt = "G28 ; Home all axes";
                             }
                         }
                         break;
-                    case MOVE_TO_COMMAND:
+                    case MOVE_TO_COMMAND :
                         if (hasAxes) {
                             if (isTinyG) {
-                                // Apply jerk limits per axis. 
+                                // Apply jerk limits per axis.
                                 commandBuilt = "M201.3 ";
                                 for (String variable : gcodeDriver.getAxisVariables(machine)) {
-                                    commandBuilt += "{"+variable+"Jerk:"+variable+"%.0f} ";
+                                    commandBuilt += ((("{" + variable) + "Jerk:") + variable) + "%.0f} ";
                                 }
                                 // This needs a new-line: "It is an error to put a G-code from group 1 and a G-code from group 0 on the same line if both of
                                 // them use axis words." (RS274/NGC Interpreter - Version 3, §3.4)
                                 commandBuilt += "\n";
-                            }
-                            else {
+                            } else {
                                 // Apply acceleration limit.
                                 commandBuilt = "{Acceleration:M204 S%.2f} ";
                                 if (isMarlin) {
@@ -580,75 +409,70 @@ class GcodeDriverSolutions implements Solutions.Subject {
                             }
                             commandBuilt += "G1 ";
                             for (String variable : gcodeDriver.getAxisVariables(machine)) {
-                                commandBuilt += "{"+variable+":"+variable+"%.4f} ";
+                                commandBuilt += ((("{" + variable) + ":") + variable) + "%.4f} ";
                             }
                             commandBuilt += "{FeedRate:F%.2f} ; move to target";
-                        }
-                        else if (command != null) {
+                        } else if (command != null) {
                             commandBuilt = "";
                         }
                         disallowHeadMountables = true;
                         break;
-                    case MOVE_TO_COMPLETE_COMMAND:
+                    case MOVE_TO_COMPLETE_COMMAND :
                         // This is provided even if there are no axes on the driver. M400 may still be useful for actuator coordination.
-                        if (command == null 
-                        && gcodeDriver.getCommand(null, CommandType.MOVE_TO_COMPLETE_REGEX) == null) {
+                        if ((command == null) && (gcodeDriver.getCommand(null, CommandType.MOVE_TO_COMPLETE_REGEX) == null)) {
                             commandBuilt = "M400 ; Wait for moves to complete before returning";
                         }
                         break;
-                    case MOVE_TO_COMPLETE_REGEX:
+                    case MOVE_TO_COMPLETE_REGEX :
                         if (command != null) {
                             // Make it obsolete with the new (detected) firmware.
                             commandBuilt = "";
                         }
                         break;
-                    case SET_GLOBAL_OFFSETS_COMMAND:
+                    case SET_GLOBAL_OFFSETS_COMMAND :
                         if (hasAxes) {
                             if (isTinyG) {
                                 commandBuilt = "G28.3 ";
-                            }
-                            else {
+                            } else {
                                 commandBuilt = "G92 ";
                             }
                             for (String variable : gcodeDriver.getAxisVariables(machine)) {
-                                commandBuilt += "{"+variable+":"+variable+"%.4f} ";
+                                commandBuilt += ((("{" + variable) + ":") + variable) + "%.4f} ";
                             }
                             commandBuilt += "; reset coordinates";
-                        }
-                        else if (command != null) {
+                        } else if (command != null) {
                             commandBuilt = "";
                         }
                         break;
-                    case POST_VISION_HOME_COMMAND:
+                    case POST_VISION_HOME_COMMAND :
                         if (command != null) {
                             commandBuilt = "";
                         }
                         break;
-                    case GET_POSITION_COMMAND:
+                    case GET_POSITION_COMMAND :
                         if (hasAxes) {
-                            commandBuilt = "M114 ; get position"; 
-                        }
-                        else if (command != null) {
+                            commandBuilt = "M114 ; get position";
+                        } else if (command != null) {
                             commandBuilt = "";
                         }
                         break;
-                    case POSITION_REPORT_REGEX:
+                    case POSITION_REPORT_REGEX :
                         if (hasAxes) {
                             // We need to parse the report in standard Gcode axis order. This might not cover all the controllers, but it's what we can do.
-                            final String[] cgodeAxisLetters = new String[] { "X", "Y", "Z", "U", "V", "W", "A", "B", "C", "D", "E" };
+                            final String[] cgodeAxisLetters = new String[]{ "X", "Y", "Z", "U", "V", "W", "A", "B", "C", "D", "E" };
                             commandBuilt = "^.*";
                             int axisIndex = 0;
                             int lastAxisIndex = 26;
                             String pattern = "";
-                            for (String axisLetter: cgodeAxisLetters) {
+                            for (String axisLetter : cgodeAxisLetters) {
                                 for (String variable : gcodeDriver.getAxisVariables(machine)) {
                                     if (variable.equals(axisLetter)) {
-                                        if (lastAxisIndex < axisIndex-1) {
+                                        if (lastAxisIndex < (axisIndex - 1)) {
                                             // Skipped some axes, add a wild.card.
                                             commandBuilt += ".*";
                                         }
-                                        commandBuilt += variable+":(?<"+variable+">-?\\d+\\.\\d+) ";
-                                        pattern += variable+" ";
+                                        commandBuilt += ((variable + ":(?<") + variable) + ">-?\\d+\\.\\d+) ";
+                                        pattern += variable + " ";
                                         lastAxisIndex = axisIndex;
                                     }
                                 }
@@ -656,42 +480,25 @@ class GcodeDriverSolutions implements Solutions.Subject {
                             }
                             commandBuilt = commandBuilt.trim();
                             commandBuilt += ".*";
-                            if (gcodeDriver.getReportedAxes() != null 
-                                    && !gcodeDriver.getReportedAxes().matches(commandBuilt)) {
-                                issues.add(new Solutions.PlainIssue(
-                                        gcodeDriver, 
-                                        "The driver does not report axes in the expected "+pattern+" pattern: "+gcodeDriver.getReportedAxes(), 
-                                        (isSmoothie ? "Check axis letters and make sure use a proper 6-axis configuration without extruders."
-                                                : "Check axis letters and make sure the controller is capable to use extra axes (i.e. not extruders)."), 
-                                        Severity.Error,
-                                        (isSmoothie ? "http://smoothieware.org/6axis"
-                                                : "https://github.com/openpnp/openpnp/wiki/Motion-Controller-Firmwares")));
+                            if ((gcodeDriver.getReportedAxes() != null) && (!gcodeDriver.getReportedAxes().matches(commandBuilt))) {
+                                issues.add(new Solutions.PlainIssue(gcodeDriver, (("The driver does not report axes in the expected " + pattern) + " pattern: ") + gcodeDriver.getReportedAxes(), isSmoothie ? "Check axis letters and make sure use a proper 6-axis configuration without extruders." : "Check axis letters and make sure the controller is capable to use extra axes (i.e. not extruders).", Severity.Error, isSmoothie ? "http://smoothieware.org/6axis" : "https://github.com/openpnp/openpnp/wiki/Motion-Controller-Firmwares"));
                             }
-                        }
-                        else if (command != null) {
+                        } else if (command != null) {
                             commandBuilt = "";
                         }
                         break;
                 }
-                suggestGcodeCommand(gcodeDriver, null, issues, commandType, commandBuilt, commandModified,
-                        disallowHeadMountables);
+                suggestGcodeCommand(gcodeDriver, null, issues, commandType, commandBuilt, commandModified, disallowHeadMountables);
             }
         }
-
         for (Command command : gcodeDriver.commands) {
             if (command.type != CommandType.ACTUATOR_READ_WITH_DOUBLE_COMMAND) {
                 continue;
             }
-
-            Command readCommand = gcodeDriver.getExactCommand(
-                    command.headMountableId,
-                    CommandType.ACTUATOR_READ_COMMAND
-            );
-
+            Command readCommand = gcodeDriver.getExactCommand(command.headMountableId, CommandType.ACTUATOR_READ_COMMAND);
             if (readCommand == null) {
                 continue;
             }
-
             String headMountable;
             if (command.headMountableId == null) {
                 headMountable = "the default head mountable";
@@ -700,19 +507,10 @@ class GcodeDriverSolutions implements Solutions.Subject {
             } else {
                 headMountable = "head mountable id " + command.headMountableId;
             }
-            issues.add(new Solutions.Issue(
-                    gcodeDriver,
-                    "Both ACTUATOR_READ_COMMAND and ACTUATOR_READ_WITH_DOUBLE_COMMAND are set for " +
-                            headMountable +
-                            " but the latter is deprecated",
-                    "Accept to replace ACTUATOR_READ_COMMAND with ACTUATOR_READ_WITH_DOUBLE_COMMAND. Dismiss to remove read with double.",
-                    Severity.Suggestion,
-                    "<some url goes here>"
-            ) {
+            issues.add(new Solutions.Issue(gcodeDriver, ("Both ACTUATOR_READ_COMMAND and ACTUATOR_READ_WITH_DOUBLE_COMMAND are set for " + headMountable) + " but the latter is deprecated", "Accept to replace ACTUATOR_READ_COMMAND with ACTUATOR_READ_WITH_DOUBLE_COMMAND. Dismiss to remove read with double.", Severity.Suggestion, "<some url goes here>") {
                 @Override
                 public void setState(Solutions.State state) throws Exception {
                     super.setState(state);
-
                     if (state.equals(Solutions.State.Solved)) {
                         gcodeDriver.commands.remove(readCommand);
                         command.type = CommandType.ACTUATOR_READ_COMMAND;
@@ -726,32 +524,22 @@ class GcodeDriverSolutions implements Solutions.Subject {
 
     /**
      * Add a solution for the given gcodeDriver to the issues, to suggest the given suggestedCommand instead of the currentCommand.
-     *
+     *  
      * @param gcodeDriver
      * @param issues
      * @param commandType
      * @param currentCommand
      * @param suggestedCommand
-     * @param disallowHeadMountables Set true to disallow the commandType on HeadMountables. This is used when switching to axis letter variables.
+     * @param disallowHeadMountables Set true to disallow the commandType on HeadMountables. This is used when switching to axis letter variables.  
      */
-    public static void suggestGcodeCommand(GcodeDriver gcodeDriver, HeadMountable headMountable, List<Solutions.Issue> issues,
-            CommandType commandType, String suggestedCommand, boolean commandModified,
-            boolean disallowHeadMountables) {
+    public static void suggestGcodeCommand(GcodeDriver gcodeDriver, HeadMountable headMountable, List<Solutions.Issue> issues, CommandType commandType, String suggestedCommand, boolean commandModified, boolean disallowHeadMountables) {
         String currentCommand = gcodeDriver.getCommand(headMountable, commandType);
-        if (suggestedCommand != null && !suggestedCommand.equals(currentCommand)) {
-            issues.add(new Solutions.Issue(
-                    (headMountable != null ? headMountable : gcodeDriver),
-                    commandType.name()+(suggestedCommand.isEmpty() ? " obsolete." : (commandModified ? " modification suggested." : " suggested."))
-                    + (gcodeDriver.isSpeakingGcode() ? "" : " Accept if this is a true Gcode controller."),
-                    (suggestedCommand.isEmpty() ? "Delete it." : suggestedCommand),
-                    suggestedCommand.isEmpty() ? Severity.Warning
-                            : (gcodeDriver.isSpeakingGcode() ? Severity.Suggestion : Severity.Fundamental),
-                    "https://github.com/openpnp/openpnp/wiki/Advanced-Motion-Control#migration-from-a-previous-version") {
-
+        if ((suggestedCommand != null) && (!suggestedCommand.equals(currentCommand))) {
+            issues.add(new Solutions.Issue(headMountable != null ? headMountable : gcodeDriver, (commandType.name() + (suggestedCommand.isEmpty() ? " obsolete." : commandModified ? " modification suggested." : " suggested.")) + (gcodeDriver.isSpeakingGcode() ? "" : " Accept if this is a true Gcode controller."), suggestedCommand.isEmpty() ? "Delete it." : suggestedCommand, suggestedCommand.isEmpty() ? Severity.Warning : gcodeDriver.isSpeakingGcode() ? Severity.Suggestion : Severity.Fundamental, "https://github.com/openpnp/openpnp/wiki/Advanced-Motion-Control#migration-from-a-previous-version") {
                 @Override
                 public void setState(Solutions.State state) throws Exception {
                     if (confirmStateChange(state)) {
-                        gcodeDriver.setCommand(headMountable, commandType, (state == Solutions.State.Solved) ? suggestedCommand : currentCommand);
+                        gcodeDriver.setCommand(headMountable, commandType, state == Solutions.State.Solved ? suggestedCommand : currentCommand);
                         super.setState(state);
                     }
                 }
@@ -762,17 +550,11 @@ class GcodeDriverSolutions implements Solutions.Subject {
                 for (HeadMountable hm : head.getHeadMountables()) {
                     Command commandHeadMountable = gcodeDriver.getCommand(hm, commandType, false);
                     if (commandHeadMountable != null) {
-                        issues.add(new Solutions.Issue(
-                                gcodeDriver,
-                                hm.getClass().getSimpleName()+" "+hm.getName()+" "+commandType+" obsolete with Letter Variables.",
-                                "Remove the command.",
-                                Severity.Error,
-                                "https://github.com/openpnp/openpnp/wiki/Advanced-Motion-Control#migration-from-a-previous-version") {
-
+                        issues.add(new Solutions.Issue(gcodeDriver, ((((hm.getClass().getSimpleName() + " ") + hm.getName()) + " ") + commandType) + " obsolete with Letter Variables.", "Remove the command.", Severity.Error, "https://github.com/openpnp/openpnp/wiki/Advanced-Motion-Control#migration-from-a-previous-version") {
                             @Override
                             public void setState(Solutions.State state) throws Exception {
                                 if (confirmStateChange(state)) {
-                                    gcodeDriver.setCommand(hm, commandType, (state == Solutions.State.Solved) ? null : commandHeadMountable.getCommand());
+                                    gcodeDriver.setCommand(hm, commandType, state == Solutions.State.Solved ? null : commandHeadMountable.getCommand());
                                     super.setState(state);
                                 }
                             }
@@ -805,22 +587,20 @@ class GcodeDriverSolutions implements Solutions.Subject {
         serOut.write(gcodeDriver, sw);
         String gcodeDriverSerialized = sw.toString();
         // Patch it.
-        gcodeDriverSerialized.replace(
-                gcodeDriver.getClass().getCanonicalName(), 
-                GcodeAsyncDriver.class.getCanonicalName());
+        gcodeDriverSerialized.replace(gcodeDriver.getClass().getCanonicalName(), GcodeAsyncDriver.class.getCanonicalName());
         // De-serialize it.
         Serializer serIn = createSerializer();
         StringReader sr = new StringReader(gcodeDriverSerialized);
         GcodeAsyncDriver asyncDriver = serIn.read(GcodeAsyncDriver.class, sr);
         // Triple the timeout as asynchronously executed move sequences can be longer than single moves.
-        asyncDriver.setTimeoutMilliseconds(asyncDriver.getTimeoutMilliseconds()*3);
+        asyncDriver.setTimeoutMilliseconds(asyncDriver.getTimeoutMilliseconds() * 3);
         replaceDriver(asyncDriver);
     }
 
     /**
-     * Convert an existing NullDriver to a GcodeAsyncDriver while keeping the Id and
-     * Axis/Actuator assignments.
-     *
+     * Convert an existing NullDriver to a GcodeAsyncDriver while keeping the Id and 
+     * Axis/Actuator assignments. 
+     * 
      * @param nullDriver
      * @throws Exception
      */
@@ -836,7 +616,7 @@ class GcodeDriverSolutions implements Solutions.Subject {
     /**
      * Replace a driver with the same Id at the same place in the machine driver list.
      * 
-     * @param driver
+     * @param gcodeDriver
      * @throws Exception
      */
     public static void replaceDriver(Driver driver) throws Exception {
@@ -860,7 +640,7 @@ class GcodeDriverSolutions implements Solutions.Subject {
         // Add the new one.
         machine.addDriver(driver);
         // Permutate it back to the old list place (cumbersome but works).
-        for (int p = list.size()-index; p > 1; p--) {
+        for (int p = list.size() - index; p > 1; p--) {
             machine.permutateDriver(driver, -1);
         }
         // Replace the driver in the Machine Setup.
