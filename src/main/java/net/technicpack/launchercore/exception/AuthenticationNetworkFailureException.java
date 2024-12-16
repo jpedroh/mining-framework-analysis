@@ -16,29 +16,30 @@
  * as well as a copy of the GNU Lesser General Public License,
  * along with Technic Launcher Core.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package net.technicpack.launchercore.exception;
 
 import java.io.IOException;
 
+
 public class AuthenticationNetworkFailureException extends IOException {
 	private Throwable cause;
-    private static final long serialVersionUID = 5887385045789342851L;
 
-    private String targetSite;
+				private static final long serialVersionUID = 5887385045789342851L;
+
+				private String targetSite;
 
 	public AuthenticationNetworkFailureException(String targetSite) {
-        this.targetSite = targetSite;
+		this.targetSite = targetSite;
 	}
 
 	public AuthenticationNetworkFailureException(String targetSite, Throwable cause) {
-        this(targetSite);
+		this(targetSite);
 		this.cause = cause;
 	}
 
 	@Override
 	public String getMessage() {
-		return "An error was raised while attempting to communicate with " + targetSite +".";
+		return ("An error was raised while attempting to communicate with " + targetSite) + ".";
 	}
 
 	@Override
@@ -46,5 +47,5 @@ public class AuthenticationNetworkFailureException extends IOException {
 		return cause;
 	}
 
-    public String getTargetSite() { return targetSite; }
+				public String getTargetSite() { return targetSite; }
 }

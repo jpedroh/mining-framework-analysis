@@ -1,3 +1,5 @@
+<<<<<<< LEFT
+=======
 /*
  * This file is part of Technic Launcher Core.
  * Copyright (C) 2013 Syndicate, LLC
@@ -16,38 +18,45 @@
  * as well as a copy of the GNU Lesser General Public License,
  * along with Technic Launcher Core.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+>>>>>>> RIGHT
 package net.technicpack.launchercore.install.tasks;
 
+import java.io.File;
+import java.io.IOException;
 import net.technicpack.launchercore.install.ITasksQueue;
 import net.technicpack.launchercore.install.InstallTasksQueue;
 import net.technicpack.launchercore.install.verifiers.IFileVerifier;
 import net.technicpack.utilslib.IZipFileFilter;
 
-import java.io.File;
-import java.io.IOException;
 
 public class EnsureFileTask implements IInstallTask {
 	private final File cacheLocation;
+
 	private final File zipExtractLocation;
+
 	private final String sourceUrl;
+
 	private final String friendlyFileName;
-    private final IFileVerifier fileVerifier;
-    private final ITasksQueue downloadTaskQueue;
-    private final ITasksQueue copyTaskQueue;
-    private final IZipFileFilter filter;
+
+				private final IFileVerifier fileVerifier;
+
+	private final ITasksQueue downloadTaskQueue;
+
+	private final ITasksQueue copyTaskQueue;
+
+	private final IZipFileFilter filter;
 
 	public EnsureFileTask(File fileLocation, IFileVerifier fileVerifier, File zipExtractLocation, String sourceUrl, ITasksQueue downloadTaskQueue, ITasksQueue copyTaskQueue) {
 		this(fileLocation, fileVerifier, zipExtractLocation, sourceUrl, fileLocation.getName(), downloadTaskQueue, copyTaskQueue, null);
 	}
 
-    public EnsureFileTask(File fileLocation, IFileVerifier fileVerifier, File zipExtractLocation, String sourceUrl, ITasksQueue downloadTaskQueue, ITasksQueue copyTaskQueue, IZipFileFilter filter) {
-        this(fileLocation, fileVerifier, zipExtractLocation, sourceUrl, fileLocation.getName(), downloadTaskQueue, copyTaskQueue, filter);
-    }
+	public EnsureFileTask(File fileLocation, IFileVerifier fileVerifier, File zipExtractLocation, String sourceUrl, ITasksQueue downloadTaskQueue, ITasksQueue copyTaskQueue, IZipFileFilter filter) {
+		this(fileLocation, fileVerifier, zipExtractLocation, sourceUrl, fileLocation.getName(), downloadTaskQueue, copyTaskQueue, filter);
+	}
 
-    public EnsureFileTask(File fileLocation, IFileVerifier fileVerifier, File zipExtractLocation, String sourceUrl, String friendlyFileName, ITasksQueue downloadTaskQueue, ITasksQueue copyTaskQueue) {
-        this(fileLocation, fileVerifier, zipExtractLocation, sourceUrl, friendlyFileName, downloadTaskQueue, copyTaskQueue, null);
-    }
+	public EnsureFileTask(File fileLocation, IFileVerifier fileVerifier, File zipExtractLocation, String sourceUrl, String friendlyFileName, ITasksQueue downloadTaskQueue, ITasksQueue copyTaskQueue) {
+		this(fileLocation, fileVerifier, zipExtractLocation, sourceUrl, friendlyFileName, downloadTaskQueue, copyTaskQueue, null);
+	}
 
 	public EnsureFileTask(File fileLocation, IFileVerifier fileVerifier, File zipExtractLocation, String sourceUrl, String friendlyFileName, ITasksQueue downloadTaskQueue, ITasksQueue copyTaskQueue, IZipFileFilter fileFilter) {
 		this.cacheLocation = fileLocation;
@@ -55,9 +64,9 @@ public class EnsureFileTask implements IInstallTask {
 		this.sourceUrl = sourceUrl;
 		this.fileVerifier = fileVerifier;
 		this.friendlyFileName = friendlyFileName;
-        this.downloadTaskQueue = downloadTaskQueue;
-        this.copyTaskQueue = copyTaskQueue;
-        this.filter = fileFilter;
+		this.downloadTaskQueue = downloadTaskQueue;
+		this.copyTaskQueue = copyTaskQueue;
+		this.filter = fileFilter;
 	}
 
 	@Override
@@ -72,10 +81,11 @@ public class EnsureFileTask implements IInstallTask {
 
 	@Override
 	public void runTask(InstallTasksQueue queue) throws IOException {
-		if (this.zipExtractLocation != null)
+		if (this.zipExtractLocation != null) {
 			copyTaskQueue.addNextTask(new UnzipFileTask(this.cacheLocation, this.zipExtractLocation, this.filter));
-
-		if (sourceUrl != null && (!this.cacheLocation.exists() || (fileVerifier != null && !fileVerifier.isFileValid(this.cacheLocation))))
+		}
+		if ((sourceUrl != null) && ((!this.cacheLocation.exists()) || ((fileVerifier != null) && (!fileVerifier.isFileValid(this.cacheLocation))))) {
 			downloadTaskQueue.addNextTask(new DownloadFileTask(this.sourceUrl, this.cacheLocation, this.fileVerifier, this.friendlyFileName));
+		}
 	}
 }

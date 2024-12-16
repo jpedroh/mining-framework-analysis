@@ -1,3 +1,5 @@
+<<<<<<< LEFT
+=======
 /*
  * This file is part of Technic Launcher Core.
  * Copyright (C) 2013 Syndicate, LLC
@@ -16,17 +18,17 @@
  * as well as a copy of the GNU Lesser General Public License,
  * along with Technic Launcher Core.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+>>>>>>> RIGHT
 package net.technicpack.launchercore.install.tasks;
 
+import java.io.IOException;
 import net.technicpack.launchercore.install.InstallTasksQueue;
 import net.technicpack.launchercore.util.DownloadListener;
 
-import java.io.IOException;
 
-public abstract class ListenerTask implements IInstallTask, DownloadListener {
-
+public abstract class ListenerTask implements IInstallTask , DownloadListener {
 	private float taskProgress;
+
 	private InstallTasksQueue queue;
 
 	public ListenerTask() {

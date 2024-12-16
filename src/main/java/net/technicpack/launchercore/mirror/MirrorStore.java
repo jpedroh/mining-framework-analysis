@@ -1,42 +1,45 @@
+<<<<<<< LEFT
+=======
 /**
  * This file is part of Technic Launcher Core.
  * Copyright (C) 2013 Syndicate, LLC
- * <p/>
+ *
  * Technic Launcher Core is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * <p/>
+ *
  * Technic Launcher Core is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * <p/>
+ *
  * You should have received a copy of the GNU General Public License,
  * as well as a copy of the GNU Lesser General Public License,
  * along with Technic Launcher Core.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+>>>>>>> RIGHT
 package net.technicpack.launchercore.mirror;
-
-import net.technicpack.launchercore.exception.DownloadException;
-import net.technicpack.launchercore.auth.UserModel;
-import net.technicpack.launchercore.mirror.download.Download;
-import net.technicpack.launchercore.mirror.secure.SecureToken;
-import net.technicpack.launchercore.mirror.secure.rest.ISecureMirror;
-import net.technicpack.launchercore.util.DownloadListener;
-import net.technicpack.launchercore.install.verifiers.IFileVerifier;
-import net.technicpack.utilslib.Utils;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
+import net.technicpack.launchercore.auth.UserModel;
+import net.technicpack.launchercore.exception.DownloadException;
+import net.technicpack.launchercore.install.verifiers.IFileVerifier;
+import net.technicpack.launchercore.mirror.download.Download;
+import net.technicpack.launchercore.mirror.secure.SecureToken;
+import net.technicpack.launchercore.mirror.secure.rest.ISecureMirror;
+import net.technicpack.launchercore.util.DownloadListener;
+import net.technicpack.utilslib.Utils;
+import org.apache.commons.io.FileUtils;
+
 
 public class MirrorStore {
     Map<String, SecureToken> secureMirrors = new HashMap<String, SecureToken>();
+
     private UserModel userModel;
 
     public MirrorStore(UserModel userModel) {
@@ -45,30 +48,24 @@ public class MirrorStore {
 
     public void addSecureMirror(String host, ISecureMirror mirror) {
         SecureToken token = new SecureToken(this.userModel, mirror);
-
         secureMirrors.put(host.toLowerCase(), token);
     }
 
     public URL getFullUrl(String url) throws DownloadException {
         URL urlObject = null;
-
         try {
             urlObject = new URL(url);
         } catch (MalformedURLException ex) {
             throw new DownloadException("Invalid URL: " + url, ex);
         }
-
         String host = urlObject.getHost().toLowerCase();
-
         if (secureMirrors.containsKey(host)) {
             SecureToken token = secureMirrors.get(host);
-
             String downloadKey = token.queryForSecureToken();
-
-            if (downloadKey != null)
+            if (downloadKey != null) {
                 return addDownloadKey(urlObject, token.getDownloadHost(), downloadKey, userModel.getClientToken());
+            }
         }
-
         return urlObject;
     }
 
@@ -109,7 +106,7 @@ public class MirrorStore {
         File outputFile = null;
         Download download = null;
         while (tries > 0) {
-            Utils.getLogger().info("Starting download of " + url + ", with " + tries + " tries remaining");
+            Utils.getLogger().info(((("Starting download of " + url) + ", with ") + tries) + " tries remaining");
             tries--;
             download = new Download(getFullUrl(url), name, output);
             download.setListener(listener);
@@ -118,21 +115,18 @@ public class MirrorStore {
                 if (download.getOutFile() != null) {
                     download.getOutFile().delete();
                 }
-
-                if (Thread.interrupted())
+                if (Thread.interrupted()) {
                     throw new InterruptedException();
-
-                System.err.println("Download of " + url + " Failed!");
+                }
+                System.err.println(("Download of " + url) + " Failed!");
                 if (listener != null) {
-                    listener.stateChanged("Download failed, retries remaining: " + tries, 0F);
+                    listener.stateChanged("Download failed, retries remaining: " + tries, 0.0F);
                 }
-            } else {
-                if (download.getOutFile().exists() && (verifier == null || verifier.isFileValid(download.getOutFile()))) {
-                    outputFile = download.getOutFile();
-                    break;
-                }
+            } else if (download.getOutFile().exists() && ((verifier == null) || verifier.isFileValid(download.getOutFile()))) {
+                outputFile = download.getOutFile();
+                break;
             }
-        }
+        } 
         if (outputFile == null) {
             throw new DownloadException("Failed to download " + url, download != null ? download.getException() : null);
         }
@@ -169,12 +163,12 @@ public class MirrorStore {
             textUrl += "&";
         }
 
-        textUrl += "t=" + downloadKey + "&c=" + clientId;
+        textUrl += "t="+downloadKey+"&c="+clientId;
 
         try {
             return new URL(textUrl);
         } catch (MalformedURLException ex) {
-            throw new Error("Code error: managed to take valid url " + url.toString() + " and turn it into invalid URL " + textUrl);
+            throw new Error("Code error: managed to take valid url "+url.toString() + " and turn it into invalid URL "+textUrl);
         }
     }
 }

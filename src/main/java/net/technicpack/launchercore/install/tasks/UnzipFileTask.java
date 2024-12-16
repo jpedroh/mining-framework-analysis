@@ -1,3 +1,5 @@
+<<<<<<< LEFT
+=======
 /*
  * This file is part of Technic Launcher Core.
  * Copyright (C) 2013 Syndicate, LLC
@@ -16,26 +18,28 @@
  * as well as a copy of the GNU Lesser General Public License,
  * along with Technic Launcher Core.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+>>>>>>> RIGHT
 package net.technicpack.launchercore.install.tasks;
-
-import net.technicpack.launchercore.install.InstallTasksQueue;
-import net.technicpack.utilslib.IZipFileFilter;
-import net.technicpack.utilslib.ZipUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.zip.ZipException;
+import net.technicpack.launchercore.install.InstallTasksQueue;
+import net.technicpack.utilslib.IZipFileFilter;
+import net.technicpack.utilslib.ZipUtils;
+
 
 public class UnzipFileTask extends ListenerTask {
 	private File zipFile;
+
 	private File destination;
-    private IZipFileFilter filter;
+
+	private IZipFileFilter filter;
 
 	public UnzipFileTask(File zipFile, File destination, IZipFileFilter filter) {
 		this.zipFile = zipFile;
 		this.destination = destination;
-        this.filter = filter;
+		this.filter = filter;
 	}
 
 	@Override
@@ -46,15 +50,12 @@ public class UnzipFileTask extends ListenerTask {
 	@Override
 	public void runTask(InstallTasksQueue queue) throws IOException, InterruptedException {
 		super.runTask(queue);
-
 		if (!zipFile.exists()) {
-			throw new ZipException("Attempting to extract file "+zipFile.getName()+", but it did not exist.");
+			throw new ZipException(("Attempting to extract file " + zipFile.getName()) + ", but it did not exist.");
 		}
-
 		if (!destination.exists()) {
 			destination.mkdirs();
 		}
-
 		ZipUtils.unzipFile(zipFile, destination, filter, this);
 	}
 }

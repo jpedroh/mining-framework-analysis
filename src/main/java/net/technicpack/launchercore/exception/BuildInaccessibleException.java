@@ -1,3 +1,5 @@
+<<<<<<< LEFT
+=======
 /*
  * This file is part of Technic Launcher Core.
  * Copyright (C) 2013 Syndicate, LLC
@@ -16,44 +18,46 @@
  * as well as a copy of the GNU Lesser General Public License,
  * along with Technic Launcher Core.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+>>>>>>> RIGHT
 package net.technicpack.launchercore.exception;
 
 import java.io.IOException;
 
+
 public class BuildInaccessibleException extends IOException {
-    private String packDisplayName;
-    private String build;
-    private Throwable cause;
-    private static final long serialVersionUID = -4905270588640056830L;
+	private String packDisplayName;
 
-    public BuildInaccessibleException(String displayName, String build) {
-        this.packDisplayName = displayName;
-        this.build = build;
-    }
+	private String build;
 
-    public BuildInaccessibleException(String displayName, String build, Throwable cause) {
-        this(displayName, build);
-        this.cause = cause;
-    }
+	private Throwable cause;
 
-    @Override
-    public String getMessage() {
-        if (this.cause != null) {
-            Throwable rootCause = this.cause;
+	private static final long serialVersionUID = -4905270588640056830L;
 
-            while (rootCause.getCause() != null) {
-                rootCause = rootCause.getCause();
-            }
+	public BuildInaccessibleException(String displayName, String build) {
+		this.packDisplayName = displayName;
+		this.build = build;
+	}
 
-            return "An error was raised while attempting to read pack info for modpack " + packDisplayName + ", build " + build + ": " + rootCause.getMessage();
-        } else {
-            return "The pack host returned unrecognizable garbage while attempting to read pack info for modpack " + packDisplayName + ", build " + build + ".";
-        }
-    }
+	public BuildInaccessibleException(String displayName, String build, Throwable cause) {
+		this(displayName, build);
+		this.cause = cause;
+	}
 
-    @Override
-    public synchronized Throwable getCause() {
-        return cause;
-    }
+	@Override
+	public String getMessage() {
+		if (this.cause != null) {
+			Throwable rootCause = this.cause;
+			while (rootCause.getCause() != null) {
+				rootCause = rootCause.getCause();
+			} 
+			return (((("An error was raised while attempting to read pack info for modpack " + packDisplayName) + ", build ") + build) + ": ") + rootCause.getMessage();
+		} else {
+			return ((("The pack host returned unrecognizable garbage while attempting to read pack info for modpack " + packDisplayName) + ", build ") + build) + ".";
+		}
+	}
+
+	@Override
+	public synchronized Throwable getCause() {
+		return cause;
+	}
 }

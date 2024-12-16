@@ -16,15 +16,14 @@
  * as well as a copy of the GNU Lesser General Public License,
  * along with Technic Launcher Core.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package net.technicpack.launchercore.launch;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class ProcessMonitorThread extends Thread {
 
+public class ProcessMonitorThread extends Thread {
 	private final GameProcess process;
 
 	public ProcessMonitorThread(GameProcess process) {
@@ -36,31 +35,28 @@ public class ProcessMonitorThread extends Thread {
 		InputStreamReader reader = new InputStreamReader(this.process.getProcess().getInputStream());
 		BufferedReader buf = new BufferedReader(reader);
 		String line = null;
-
 		while (true) {
 			try {
 				while ((line = buf.readLine()) != null) {
 					System.out.println(" " + line);
-				}
+				} 
 			} catch (IOException ex) {
-//				Logger.getLogger(ProcessMonitorThread.class.getName()).log(Level.SEVERE, null, ex);
+				// Logger.getLogger(ProcessMonitorThread.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {
 				try {
 					buf.close();
 				} catch (IOException ex) {
-//					Logger.getLogger(ProcessMonitorThread.class.getName()).log(Level.SEVERE, null, ex);
-				} finally
-                {
-                    try {
-                        process.getProcess().waitFor();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                }
+					// Logger.getLogger(ProcessMonitorThread.class.getName()).log(Level.SEVERE, null, ex);
+				} finally {
+					try {
+						process.getProcess().waitFor();
+					} catch (java.lang.InterruptedException e) {
+						e.printStackTrace();
+					}
+					break;
+				}
 			}
-		}
-
+		} 
 		if (process.getExitListener() != null) {
 			process.getExitListener().onProcessExit();
 		}

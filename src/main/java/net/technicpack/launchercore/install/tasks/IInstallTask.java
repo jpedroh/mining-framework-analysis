@@ -1,3 +1,5 @@
+<<<<<<< LEFT
+=======
 /*
  * This file is part of Technic Launcher Core.
  * Copyright (C) 2013 Syndicate, LLC
@@ -16,16 +18,17 @@
  * as well as a copy of the GNU Lesser General Public License,
  * along with Technic Launcher Core.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+>>>>>>> RIGHT
 package net.technicpack.launchercore.install.tasks;
 
+import java.io.IOException;
 import net.technicpack.launchercore.install.InstallTasksQueue;
 
-import java.io.IOException;
 
 public interface IInstallTask {
 	String getTaskDescription();
+
 	float getTaskProgress();
 
-	void runTask(InstallTasksQueue queue) throws IOException, InterruptedException;
+	public abstract void runTask(InstallTasksQueue queue) throws IOException, InterruptedException;
 }
