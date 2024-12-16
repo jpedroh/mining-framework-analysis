@@ -18,7 +18,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.relayrides.pushy.apns;
 
 import io.netty.bootstrap.Bootstrap;
@@ -39,18 +38,16 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
-
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * <p>A connection to an APNs gateway. An {@code ApnsConnection} is responsible for sending push notifications to the
@@ -65,35 +62,42 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:jon@relayrides.com">Jon Chambers</a>
  */
 public class ApnsConnection<T extends ApnsPushNotification> {
-
 	private final ApnsEnvironment environment;
+
 	private final SSLContext sslContext;
+
 	private final NioEventLoopGroup eventLoopGroup;
+
 	private final ApnsConnectionListener<T> listener;
 
 	private static final AtomicInteger connectionCounter = new AtomicInteger(0);
+
 	private final String name;
 
 	private ChannelFuture connectFuture;
+
 	private volatile boolean handshakeCompleted = false;
+
 	private boolean closeOnRegistration;
 
 	private int sequenceNumber = 0;
 
 	private final Object pendingWriteMonitor = new Object();
+
 	private int pendingWriteCount = 0;
 
 	private SendableApnsPushNotification<KnownBadPushNotification> shutdownNotification;
 
 	private boolean rejectionReceived = false;
+
 	private final SentNotificationBuffer<T> sentNotificationBuffer = new SentNotificationBuffer<T>(4096);
 
 	private static final Logger log = LoggerFactory.getLogger(ApnsConnection.class);
 
 	private class RejectedNotificationDecoder extends ByteToMessageDecoder {
-
 		// Per Apple's docs, APNS errors will have a one-byte "command", a one-byte status, and a 4-byte notification ID
 		private static final int EXPECTED_BYTES = 6;
+
 		private static final byte EXPECTED_COMMAND = 8;
 
 		@Override
@@ -101,23 +105,19 @@ public class ApnsConnection<T extends ApnsPushNotification> {
 			if (in.readableBytes() >= EXPECTED_BYTES) {
 				final byte command = in.readByte();
 				final byte code = in.readByte();
-
 				final int notificationId = in.readInt();
-
 				if (command != EXPECTED_COMMAND) {
 					log.error("Unexpected command: {}", command);
 				}
-
 				final RejectedNotificationReason errorCode = RejectedNotificationReason.getByErrorCode(code);
-
 				out.add(new RejectedNotification(notificationId, errorCode));
 			}
 		}
 	}
 
 	private class ApnsPushNotificationEncoder extends MessageToByteEncoder<SendableApnsPushNotification<T>> {
-
 		private static final byte ENHANCED_PUSH_NOTIFICATION_COMMAND = 1;
+
 		private static final int EXPIRE_IMMEDIATELY = 0;
 
 		private final Charset utf8 = Charset.forName("UTF-8");
@@ -126,29 +126,24 @@ public class ApnsConnection<T extends ApnsPushNotification> {
 		protected void encode(final ChannelHandlerContext context, final SendableApnsPushNotification<T> sendablePushNotification, final ByteBuf out) throws Exception {
 			out.writeByte(ENHANCED_PUSH_NOTIFICATION_COMMAND);
 			out.writeInt(sendablePushNotification.getSequenceNumber());
-
 			if (sendablePushNotification.getPushNotification().getDeliveryInvalidationTime() != null) {
 				out.writeInt(this.getTimestampInSeconds(sendablePushNotification.getPushNotification().getDeliveryInvalidationTime()));
 			} else {
 				out.writeInt(EXPIRE_IMMEDIATELY);
 			}
-
 			out.writeShort(sendablePushNotification.getPushNotification().getToken().length);
 			out.writeBytes(sendablePushNotification.getPushNotification().getToken());
-
 			final byte[] payloadBytes = sendablePushNotification.getPushNotification().getPayload().getBytes(utf8);
-
 			out.writeShort(payloadBytes.length);
 			out.writeBytes(payloadBytes);
 		}
 
 		private int getTimestampInSeconds(final Date date) {
-			return (int)(date.getTime() / 1000);
+			return ((int) (date.getTime() / 1000));
 		}
 	}
 
 	private class ApnsConnectionHandler extends SimpleChannelInboundHandler<RejectedNotification> {
-
 		private final ApnsConnection<T> apnsConnection;
 
 		public ApnsConnectionHandler(final ApnsConnection<T> clientThread) {
@@ -158,8 +153,7 @@ public class ApnsConnection<T extends ApnsPushNotification> {
 		@Override
 		public void channelRegistered(final ChannelHandlerContext context) throws Exception {
 			super.channelRegistered(context);
-
-			synchronized (this.apnsConnection.connectFuture) {
+			synchronized(this.apnsConnection.connectFuture) {
 				if (this.apnsConnection.closeOnRegistration) {
 					log.debug("Channel registered for {}, but shutting down immediately.", this.apnsConnection.name);
 					context.channel().eventLoop().execute(this.apnsConnection.getImmediateShutdownRunnable());
@@ -169,43 +163,28 @@ public class ApnsConnection<T extends ApnsPushNotification> {
 
 		@Override
 		protected void channelRead0(final ChannelHandlerContext context, final RejectedNotification rejectedNotification) {
-			log.debug("APNs gateway rejected notification with sequence number {} from {} ({}).",
-					rejectedNotification.getSequenceNumber(), this.apnsConnection.name, rejectedNotification.getReason());
-
+			log.debug("APNs gateway rejected notification with sequence number {} from {} ({}).", rejectedNotification.getSequenceNumber(), this.apnsConnection.name, rejectedNotification.getReason());
 			this.apnsConnection.rejectionReceived = true;
 			this.apnsConnection.sentNotificationBuffer.clearNotificationsBeforeSequenceNumber(rejectedNotification.getSequenceNumber());
-
-			final boolean isKnownBadRejection = this.apnsConnection.shutdownNotification != null &&
-					rejectedNotification.getSequenceNumber() == this.apnsConnection.shutdownNotification.getSequenceNumber();
-
+			final boolean isKnownBadRejection = (this.apnsConnection.shutdownNotification != null) && (rejectedNotification.getSequenceNumber() == this.apnsConnection.shutdownNotification.getSequenceNumber());
 			// We only want to notify listeners of an actual rejection if something actually went wrong. We don't want
 			// to notify listeners if a known-bad notification was rejected because that's an expected case, and we
 			// don't want to notify listeners if the gateway is shutting down the connection, but still processed the
 			// named notification successfully.
-			if (!isKnownBadRejection && !RejectedNotificationReason.SHUTDOWN.equals(rejectedNotification.getReason())) {
-				final T notification = this.apnsConnection.sentNotificationBuffer.getNotificationWithSequenceNumber(
-						rejectedNotification.getSequenceNumber());
-
+			if ((!isKnownBadRejection) && (!RejectedNotificationReason.SHUTDOWN.equals(rejectedNotification.getReason()))) {
+				final T notification = this.apnsConnection.sentNotificationBuffer.getNotificationWithSequenceNumber(rejectedNotification.getSequenceNumber());
 				if (notification != null) {
-					this.apnsConnection.listener.handleRejectedNotification(
-							this.apnsConnection, notification, rejectedNotification.getReason());
+					this.apnsConnection.listener.handleRejectedNotification(this.apnsConnection, notification, rejectedNotification.getReason());
 				} else {
-					log.error("{} failed to find rejected notification with sequence number {}; this may mean the " +
-							"sent notification buffer is too small. Please report this as a bug.",
-							this.apnsConnection.name, rejectedNotification.getSequenceNumber());
+					log.error("{} failed to find rejected notification with sequence number {}; this may mean the " + "sent notification buffer is too small. Please report this as a bug.", this.apnsConnection.name, rejectedNotification.getSequenceNumber());
 				}
 			}
-
 			// Regardless of the cause, we ALWAYS want to notify listeners that some sent notifications were not
 			// processed by the gateway (assuming there are some such notifications).
-			final Collection<T> unprocessedNotifications =
-					this.apnsConnection.sentNotificationBuffer.getAllNotificationsAfterSequenceNumber(
-							rejectedNotification.getSequenceNumber());
-
+			final Collection<T> unprocessedNotifications = this.apnsConnection.sentNotificationBuffer.getAllNotificationsAfterSequenceNumber(rejectedNotification.getSequenceNumber());
 			if (!unprocessedNotifications.isEmpty()) {
 				this.apnsConnection.listener.handleUnprocessedNotifications(this.apnsConnection, unprocessedNotifications);
 			}
-
 			this.apnsConnection.sentNotificationBuffer.clearAllNotifications();
 		}
 
@@ -220,7 +199,6 @@ public class ApnsConnection<T extends ApnsPushNotification> {
 		@Override
 		public void channelInactive(final ChannelHandlerContext context) throws Exception {
 			super.channelInactive(context);
-
 			// Channel closure implies that the connection attempt had fully succeeded, so we only want to notify
 			// listeners if the handshake has completed. Otherwise, we'll notify listeners of a connection failure (as
 			// opposed to closure) elsewhere.
@@ -232,9 +210,7 @@ public class ApnsConnection<T extends ApnsPushNotification> {
 		@Override
 		public void channelWritabilityChanged(final ChannelHandlerContext context) throws Exception {
 			super.channelWritabilityChanged(context);
-
-			this.apnsConnection.listener.handleConnectionWritabilityChange(
-					this.apnsConnection, context.channel().isWritable());
+			this.apnsConnection.listener.handleConnectionWritabilityChange(this.apnsConnection, context.channel().isWritable());
 		}
 	}
 
@@ -242,23 +218,24 @@ public class ApnsConnection<T extends ApnsPushNotification> {
 	 * Constructs a new APNs connection. The connection connects to the APNs gateway in the given environment with the
 	 * credentials and key/trust managers in the given SSL context.
 	 *
-	 * @param environment the environment in which this connection will operate
-	 * @param sslContext an SSL context with the keys/certificates and trust managers this connection should use when
-	 * communicating with the APNs gateway
-	 * @param eventLoopGroup the event loop group this connection should use for asynchronous network operations
-	 * @param listener the listener to which this connection will report lifecycle events; must not be {@code null}
+	 * @param environment
+	 * 		the environment in which this connection will operate
+	 * @param sslContext
+	 * 		an SSL context with the keys/certificates and trust managers this connection should use when
+	 * 		communicating with the APNs gateway
+	 * @param eventLoopGroup
+	 * 		the event loop group this connection should use for asynchronous network operations
+	 * @param listener
+	 * 		the listener to which this connection will report lifecycle events; must not be {@code null}
 	 */
 	public ApnsConnection(final ApnsEnvironment environment, final SSLContext sslContext, final NioEventLoopGroup eventLoopGroup, final ApnsConnectionListener<T> listener) {
-
 		if (listener == null) {
 			throw new NullPointerException("Listener must not be null.");
 		}
-
 		this.environment = environment;
 		this.sslContext = sslContext;
 		this.eventLoopGroup = eventLoopGroup;
 		this.listener = listener;
-
 		this.name = String.format("ApnsConnection-%d", ApnsConnection.connectionCounter.getAndIncrement());
 	}
 
@@ -353,7 +330,7 @@ public class ApnsConnection<T extends ApnsPushNotification> {
 	 * @param notification the notification to send
 	 *
 	 * @see ApnsConnectionListener#handleWriteFailure(ApnsConnection, ApnsPushNotification, Throwable)
-	 * @see ApnsConnectionListener#handleRejectedNotification(ApnsConnection, ApnsPushNotification, RejectedNotificationReason)
+	 * @see ApnsConnectionListener#handleRejectedNotification(ApnsConnection, ApnsPushNotification, RejectedNotificationReason, java.util.Collection)
 	 */
 	public synchronized void sendNotification(final T notification) {
 		final ApnsConnection<T> apnsConnection = this;
@@ -377,7 +354,7 @@ public class ApnsConnection<T extends ApnsPushNotification> {
 					public void operationComplete(final ChannelFuture writeFuture) {
 						if (writeFuture.isSuccess()) {
 							log.trace("{} successfully wrote notification {}", apnsConnection.name,
-									sendableNotification.getSequenceNumber());
+								sendableNotification.getSequenceNumber());
 
 							if (apnsConnection.rejectionReceived) {
 								// Even though the write succeeded, we know for sure that this notification was never
@@ -389,7 +366,7 @@ public class ApnsConnection<T extends ApnsPushNotification> {
 							}
 						} else {
 							log.trace("{} failed to write notification {}",
-									apnsConnection.name, sendableNotification, writeFuture.cause());
+								apnsConnection.name, sendableNotification, writeFuture.cause());
 
 							// Assume this is a temporary failure (we know it's not a permanent rejection because we didn't
 							// even manage to write the notification to the wire) and re-enqueue for another send attempt.
@@ -411,23 +388,35 @@ public class ApnsConnection<T extends ApnsPushNotification> {
 	}
 
 	/**
+<<<<<<< LEFT
 	 * <p>Waits for all pending write operations to finish. When this method exits normally (i.e. when it does
 	 * not throw an {@code InterruptedException}), All pending writes will have either finished successfully or failed
 	 * and passed to this connection's listener via the
+=======
+	 * <p>Waits for all pending write operations to finish. When this method exits normally (i.e. when it does not throw
+	 * an {@code InterruptedException}), all pending writes will have either finished successfully or been dispatched to
+	 * this connection's listener via the
+>>>>>>> RIGHT
 	 * {@link ApnsConnectionListener#handleWriteFailure(ApnsConnection, ApnsPushNotification, Throwable)} method.</p>
 	 *
+<<<<<<< LEFT
 	 * <p>It is <em>not</em> guaranteed that all write operations will have finished by the time a connection has
 	 * closed. Applications that need to know when all writes have finished should call this method after a connection
 	 * closes, but must not do so in an IO thread (i.e. the thread that called the
 	 * {@link ApnsConnectionListener#handleConnectionClosure(ApnsConnection)} method.</p>
+=======
+	 * <p>Pending write operations are <em>not</em> guaranteed to have finished by the time a connection closes. Callers
+	 * that need to know that all writes have completed should call this method after the channel has closed (but they
+	 * must do so in a separate thread).</p>
+>>>>>>> RIGHT
 	 *
 	 * @throws InterruptedException if interrupted while waiting for pending read/write operations to finish
 	 */
-	public void waitForPendingWritesToFinish() throws InterruptedException {
-		synchronized (this.pendingWriteMonitor) {
+	protected void waitForPendingWritesToFinish() throws InterruptedException {
+		synchronized(this.pendingWriteMonitor) {
 			while (this.pendingWriteCount > 0) {
 				this.pendingWriteMonitor.wait();
-			}
+			} 
 		}
 	}
 
@@ -444,7 +433,7 @@ public class ApnsConnection<T extends ApnsPushNotification> {
 	 * <p>Calling this method before establishing a connection with the APNs gateway or while a graceful shutdown
 	 * attempt is already in progress has no effect.</p>
 	 *
-	 * @see ApnsConnectionListener#handleRejectedNotification(ApnsConnection, ApnsPushNotification, RejectedNotificationReason)
+	 * @see ApnsConnectionListener#handleRejectedNotification(ApnsConnection, ApnsPushNotification, RejectedNotificationReason, java.util.Collection)
 	 * @see ApnsConnectionListener#handleConnectionClosure(ApnsConnection)
 	 */
 	public synchronized void shutdownGracefully() {
@@ -473,10 +462,10 @@ public class ApnsConnection<T extends ApnsPushNotification> {
 							public void operationComplete(final ChannelFuture future) {
 								if (future.isSuccess()) {
 									log.trace("{} successfully wrote known-bad notification {}",
-											apnsConnection.name, apnsConnection.shutdownNotification.getSequenceNumber());
+										apnsConnection.name, apnsConnection.shutdownNotification.getSequenceNumber());
 								} else {
 									log.trace("{} failed to write known-bad notification {}",
-											apnsConnection.name, apnsConnection.shutdownNotification, future.cause());
+										apnsConnection.name, apnsConnection.shutdownNotification, future.cause());
 
 									// Try again!
 									apnsConnection.shutdownNotification = null;
@@ -516,7 +505,7 @@ public class ApnsConnection<T extends ApnsPushNotification> {
 	 */
 	public synchronized void shutdownImmediately() {
 		if (this.connectFuture != null) {
-			synchronized (this.connectFuture) {
+			synchronized(this.connectFuture) {
 				if (this.connectFuture.channel().isRegistered()) {
 					this.connectFuture.channel().eventLoop().execute(this.getImmediateShutdownRunnable());
 				} else {
