@@ -16,9 +16,9 @@
  */
 package net.tridentsdk.base;
 
+import javax.annotation.concurrent.Immutable;
 import net.tridentsdk.util.Int2ReferenceOpenHashMap;
 
-import javax.annotation.concurrent.Immutable;
 
 /**
  * This class represents the set of all substances of which
@@ -29,6 +29,8 @@ import javax.annotation.concurrent.Immutable;
  */
 @Immutable
 public enum Substance {
+
+    // TODO add more substances
     // TODO add more substances
     AIR(0),
     STONE(1),
@@ -38,12 +40,12 @@ public enum Substance {
     PLANKS(5),
     SAPLING(6),
     BEDROCK(7);
-
     /**
      * The ID number that is used for identifying the
      * substance.
      */
     private final int id;
+
     /**
      * The substance name
      */
@@ -53,9 +55,10 @@ public enum Substance {
      * Creates a new substance entry with the given
      * substance ID value.
      *
-     * @param id the substance ID
+     * @param id
+     * 		the substance ID
      */
-    Substance(int id) {
+    private Substance(int id) {
         this.id = id;
         this.name = "minecraft:" + this.name().toLowerCase();
     }
@@ -65,8 +68,8 @@ public enum Substance {
      * substances can contain 400+ entries and that is not
      * worth using O(n) iteration.
      */
-    private static final Int2ReferenceOpenHashMap<Substance> SUBSTANCE_MAP =
-            new Int2ReferenceOpenHashMap<>();
+    private static final Int2ReferenceOpenHashMap<Substance> SUBSTANCE_MAP = new Int2ReferenceOpenHashMap<>();
+
     static {
         for (Substance s : values()) {
             SUBSTANCE_MAP.put(s.id, s);
@@ -95,12 +98,11 @@ public enum Substance {
      * @param id the ID value of the substance to find
      * @return the substance
      */
-    public static Substance of(int id){
+    public static Substance of(int id) {
         Substance substance = SUBSTANCE_MAP.get(id);
         if (substance == null) {
-            throw new IndexOutOfBoundsException("Provided Substance ID (" + id + ") is out of bounds");
+            throw new IndexOutOfBoundsException(("Provided Substance ID (" + id) + ") is out of bounds");
         }
-
         return substance;
     }
 }

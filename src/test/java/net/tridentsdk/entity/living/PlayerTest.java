@@ -16,6 +16,9 @@
  */
 package net.tridentsdk.entity.living;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.tridentsdk.base.Position;
@@ -27,19 +30,14 @@ import net.tridentsdk.ui.tablist.TabList;
 import net.tridentsdk.world.World;
 import net.tridentsdk.world.opt.GameMode;
 import org.junit.Test;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
-
 import static org.junit.Assert.assertEquals;
+
 
 /**
  * @author TridentSDK
  * @since 0.5-alpha
  */
 public class PlayerTest {
-
     @Test
     public void testSendMessageDefault() {
         List<SentMessage> messages = new LinkedList<>();
@@ -48,7 +46,6 @@ public class PlayerTest {
         player.sendMessage(component, ChatType.CHAT);
         player.sendMessage(component);
         player.sendMessage("hi there");
-
         assertEquals(messages.get(0).getMessage(), component);
         assertEquals(messages.get(0).getType(), ChatType.CHAT);
         assertEquals(messages.get(1).getMessage(), component);
@@ -60,12 +57,12 @@ public class PlayerTest {
     @Data
     private final class SentMessage {
         private final ChatComponent message;
+
         private final ChatType type;
     }
 
     @AllArgsConstructor
     private final class DummyPlayer implements Player {
-
         private final List<SentMessage> sentMessages;
 
         @Override
@@ -167,7 +164,5 @@ public class PlayerTest {
         public void updateBossBars() {
 
         }
-
     }
-
 }

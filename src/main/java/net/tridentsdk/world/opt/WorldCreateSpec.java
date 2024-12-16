@@ -18,6 +18,7 @@ package net.tridentsdk.world.opt;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
+
 /**
  * The options for creating a new world.
  *
@@ -31,8 +32,9 @@ import javax.annotation.concurrent.NotThreadSafe;
  * @author TridentSDK
  * @since 0.4-alpha
  */
-@NotThreadSafe // TODO help
+// TODO help
 // TODO implement, this should be a builder
+@NotThreadSafe
 public class WorldCreateSpec {
     /**
      * The default instance of the world creator

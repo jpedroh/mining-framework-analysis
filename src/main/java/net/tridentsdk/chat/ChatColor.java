@@ -16,10 +16,10 @@
  */
 package net.tridentsdk.chat;
 
-import lombok.Getter;
-
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+import lombok.Getter;
+
 
 /**
  * Represents the different colors that can be sent in chat.
@@ -29,116 +29,95 @@ import javax.annotation.concurrent.Immutable;
  */
 @Immutable
 public enum ChatColor {
+
     /**
      * Black, &#167;0
      */
     BLACK('0'),
-
     /**
      * Dark Blue, &#167;1
      */
     DARK_BLUE('1'),
-
     /**
      * Dark Green, &#167;2
      */
     DARK_GREEN('2'),
-
     /**
      * Dark Aqua, &#167;3
      */
     DARK_AQUA('3'),
-
     /**
      * Dark Red, &#167;4
      */
     DARK_RED('4'),
-
     /**
      * Dark Purple, &#167;5
      */
     DARK_PURPLE('5'),
-
     /**
      * Gold, &#167;6
      */
     GOLD('6'),
-
     /**
      * Gray, &#167;7
      */
     GRAY('7'),
-
     /**
      * Gray, &#167;8
      */
     DARK_GRAY('8'),
-
     /**
      * Blue, &#167;9
      */
     BLUE('9'),
-
     /**
      * Green, &#167;a
      */
     GREEN('a'),
-
     /**
      * Aqua, &#167;b
      */
     AQUA('b'),
-
     /**
      * Red, &#167;c
      */
     RED('c'),
-
     /**
      * Light Purple, &#167;d
      */
     LIGHT_PURPLE('d'),
-
     /**
      * Yellow, &#167;e
      */
     YELLOW('e'),
-
     /**
      * White, &#167;f
      */
     WHITE('f'),
-
     /**
      * Obfuscated, &#167;k
      */
     OBFUSCATED('k'),
-
     /**
      * Bold, &#167;l
      */
     BOLD('l'),
-
     /**
      * Strikethrough, &#167;m
      */
     STRIKETHROUGH('m'),
-
     /**
      * Underline, &#167;n
      */
     UNDERLINE('n'),
-
     /**
      * Italic, &#167;o
      */
     ITALIC('o'),
-
     /**
      * Reset, &#167;r
      */
     RESET('r');
-
     @Getter
     private final char colorChar;
 
@@ -147,9 +126,10 @@ public enum ChatColor {
      * which represents the canonical control sequence
      * for that particular color.
      *
-     * @param colorChar the color character
+     * @param colorChar
+     * 		the color character
      */
-    ChatColor(char colorChar) {
+    private ChatColor(char colorChar) {
         this.colorChar = colorChar;
     }
 
@@ -196,7 +176,6 @@ public enum ChatColor {
                 return color;
             }
         }
-
         throw new IllegalArgumentException("no color with character " + colorChar);
     }
 }
