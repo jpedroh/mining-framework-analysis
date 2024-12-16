@@ -13,70 +13,97 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ninja.utils;
 
-public interface NinjaConstant {
 
+
+public interface NinjaConstant {
+    // /////////////////////////////////////////////////
+    // The 3 basic modes for ninja.
+    // they should be set as system property: -Dninja.mode=test
+    // and so on
     // /////////////////////////////////////////////////
     // The 3 basic modes for ninja.
     // they should be set as system property: -Dninja.mode=test
     // and so on
     String MODE_KEY_NAME = "ninja.mode";
+
+    // and the values for the modes:
     // and the values for the modes:
     String MODE_TEST = "test";
+
     String MODE_DEV = "dev";
+
     String MODE_PROD = "prod";
-    
+
+    // /////////////////////////////////////////////////
+    // The basic directories used in all convention
+    // over configuration operations:
     // /////////////////////////////////////////////////
     // The basic directories used in all convention
     // over configuration operations:
     String VIEWS_DIR = "views";
+
     String CONTROLLERS_DIR = "controllers";
+
     String MODELS_DIR = "models";
 
     // location of the default views for errors:
+    // location of the default views for errors:
     String LOCATION_VIEW_FTL_HTML_NOT_FOUND = "views/system/404notFound.ftl.html";
+
     String LOCATION_VIEW_FTL_HTML_BAD_REQUEST = "views/system/400badRequest.ftl.html";
+
     String LOCATION_VIEW_FTL_HTML_INTERNAL_SERVER_ERROR = "views/system/500internalServerError.ftl.html";
+
     String LOCATION_VIEW_FTL_HTML_UNAUTHORIZED = "views/system/401unauthorized.ftl.html";
+
     String LOCATION_VIEW_FTL_HTML_FORBIDDEN = "views/system/403forbidden.ftl.html";
-    
+
     String LOCATION_VIEW_HTML_NOT_FOUND_KEY = "application.views.404notFound";
+
     String LOCATION_VIEW_HTML_BAD_REQUEST_KEY = "application.views.400badRequest";
+
     String LOCATION_VIEW_HTML_INTERNAL_SERVER_ERROR_KEY = "application.views.500internalServerError";
+
     String LOCATION_VIEW_HTML_UNAUTHORIZED_KEY = "application.views.401unauthorized";
+
     String LOCATION_VIEW_HTML_FORBIDDEN_KEY = "application.views.403forbidden";
-    
+
+    // i18n keys and default messages of Ninja
+    // create the keys in your own messages.properties file to customize the message
     // i18n keys and default messages of Ninja
     // create the keys in your own messages.properties file to customize the message
     String I18N_NINJA_SYSTEM_BAD_REQUEST_TEXT_KEY = "ninja.system.bad_request.text";
+
     String I18N_NINJA_SYSTEM_BAD_REQUEST_TEXT_DEFAULT = "Oops. That''s a bad request and all we know.";
-    
+
     String I18N_NINJA_SYSTEM_INTERNAL_SERVER_ERROR_TEXT_KEY = "ninja.system.internal_server_error.text";
+
     String I18N_NINJA_SYSTEM_INTERNAL_SERVER_ERROR_TEXT_DEFAULT = "Oops. That''s an internal server error and all we know.";
-    
+
     String I18N_NINJA_SYSTEM_NOT_FOUND_TEXT_KEY = "ninja.system.not_found.text";
+
     String I18N_NINJA_SYSTEM_NOT_FOUND_TEXT_DEFAULT = "Oops. The requested route cannot be found.";
 
     String I18N_NINJA_SYSTEM_UNAUTHORIZED_REQUEST_TEXT_KEY = "ninja.system.unauthorized.text";
+
     String I18N_NINJA_SYSTEM_UNAUTHORIZED_REQUEST_TEXT_DEFAULT = "Oops. You are unauthorized.";
 
     String I18N_NINJA_SYSTEM_FORBIDDEN_REQUEST_TEXT_KEY = "ninja.system.forbidden.text";
+
     String I18N_NINJA_SYSTEM_FORBIDDEN_REQUEST_TEXT_DEFAULT = "Oops. That''s forbidden and all we know.";
-    
-                   
 
     /**
      * Comma separated list in application.conf. Determines which languages are
      * loaded for the application.
-     * 
+     *
      * Something like
-     * 
+     *
      * ninja.application.languages=de,en
      */
-    final String applicationLanguages = "application.languages";
-    
+    public static final String applicationLanguages = "application.languages";
+
     /**
      * A cookie that helps Ninja to set a default language.
      * Usually resolves to a cookie called NINJA_LANG.
@@ -99,7 +126,7 @@ public interface NinjaConstant {
      * Enables session/cookie sharing between subdomains. For example, to make cookies valid for
      * all domains ending with ‘.example.com’, e.g. foo.example.com and bar.example.com:
      */
-    final String applicationCookieDomain = "application.cookie.domain";
+    public static final String applicationCookieDomain = "application.cookie.domain";
 
     /**
      * Encryption of session cookies. Specify a boolean value. False by default.
@@ -142,14 +169,14 @@ public interface NinjaConstant {
      * eliminate the threat of session cookie theft via cross-site scripting
      * (XSS).
      */
-    final String sessionHttpOnly = "application.session.http_only";
+    public static final String sessionHttpOnly = "application.session.http_only";
 
     /**
      * Indicates if uploaded files should be handled fully in-memory without
      * saving to file system. Can be {@code true} or {@code false}, defaults to
      * {@code false}.
      */
-    final String FILE_UPLOADS_IN_MEMORY = "file.uploads.in_memory";
+    public static final String FILE_UPLOADS_IN_MEMORY = "file.uploads.in_memory";
 
     /**
      * The maximum allowed size of a single uploaded file.
@@ -164,20 +191,25 @@ public interface NinjaConstant {
      *
      * @see org.apache.commons.fileupload.FileUploadBase#sizeMax
      */
-    final String FILE_UPLOADS_MAX_REQUEST_SIZE = "file.uploads.total.size.max";
+    public static final String FILE_UPLOADS_MAX_REQUEST_SIZE = "file.uploads.total.size.max";
 
     /**
      * Directory where uploaded files are saved. Defaults to system's temporary
      * directory, i.e. "java.io.tmpdir" system property is consulted
      */
-    final String FILE_UPLOADS_DIRECTORY = "file.uploads.directory";
+    public static final String FILE_UPLOADS_DIRECTORY = "file.uploads.directory";
 
     // /////////////////////////////////////////////////
     // Diagnostic mode - extension to dev mode where
     // ninja.Ninja is forced with ninja.diagnostics.NinjaDiagnostic
+    // /////////////////////////////////////////////////
+    // Diagnostic mode - extension to dev mode where
+    // ninja.Ninja is forced with ninja.diagnostics.NinjaDiagnostic
     String DIAGNOSTICS_KEY_NAME = "application.diagnostics";
-    
-    
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Cache configuration
+    ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
     // Cache configuration
     ///////////////////////////////////////////////////////////////////////////
@@ -185,19 +217,18 @@ public interface NinjaConstant {
      * Constant used to bind custom cache implementation.
      */
     public final String CACHE_IMPLEMENTATION = "cache.implementation";
-    
-    
+
     /**
      * Either a single host or a list of hosts (space separated)
      * 
      */
     public final String MEMCACHED_HOST = "memcached.host";
-    
+
     /**
      * Username for memcached (OPTIONAL)
      */
     public final String MEMCACHED_USER =  "memcached.user";
-    
+
     /**
      * Password for memcached (OPTIONAL)
      */
@@ -220,38 +251,38 @@ public interface NinjaConstant {
 
     /** yea. utf-8 */
     final String UTF_8 = "utf-8";
-    
+
     /** Value to set max age in header. E.g. Cache-Control:max-age=XXXXXX */
     final String HTTP_CACHE_CONTROL = "http.cache_control";
-    
+
     /** Default value for Cache-Control http header when not set in application.conf */
     final String HTTP_CACHE_CONTROL_DEFAULT = "3600";
-    
+
     /** Enable / disable etag E.g. ETag:"f0680fd3" */
     final String HTTP_USE_ETAG = "http.useETag";
-    
+
     /** Default value / etag enabled by default. */
     final boolean HTTP_USE_ETAG_DEFAULT = true;
-    
+
     /**
      * Database stuff and JPA
      */    
     /** run migrations on startup of application */
     final String NINJA_MIGRATION_RUN = "ninja.migration.run";
-    
+
     /** The name of the persistence unit to use */
     String PERSISTENCE_UNIT_NAME = "ninja.jpa.persistence_unit_name";
-    
+
     /** eg. jdbc:hsqldb:mem:. */
     String DB_CONNECTION_URL = "db.connection.url";
-    
+
     /** Username for db connection */
     String DB_CONNECTION_USERNAME = "db.connection.username";
-    
+
     /** Password for db connection */
     String DB_CONNECTION_PASSWORD = "db.connection.password";
-    
+
     String NINJA_JSONP_CALLBACK_PARAMETER = "ninja.jsonp.callbackParameter";
-    
+
     String AUTHENTICITY_TOKEN = "authenticityToken";
 }
