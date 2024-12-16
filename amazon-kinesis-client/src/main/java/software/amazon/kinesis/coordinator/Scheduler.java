@@ -12,9 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package software.amazon.kinesis.coordinator;
 
+import com.google.common.annotations.VisibleForTesting;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -26,9 +26,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import com.google.common.annotations.VisibleForTesting;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import software.amazon.kinesis.checkpoint.CheckpointConfig;
 import software.amazon.kinesis.checkpoint.ShardRecordProcessorCheckpointer;
 import software.amazon.kinesis.common.InitialPositionInStreamExtended;
+import software.amazon.kinesis.leases.HierarchicalShardSyncer;
 import software.amazon.kinesis.leases.Lease;
 import software.amazon.kinesis.leases.LeaseCoordinator;
 import software.amazon.kinesis.leases.LeaseManagementConfig;
@@ -47,7 +45,6 @@ import software.amazon.kinesis.leases.ShardInfo;
 import software.amazon.kinesis.leases.ShardPrioritization;
 import software.amazon.kinesis.leases.ShardSyncTask;
 import software.amazon.kinesis.leases.ShardSyncTaskManager;
-import software.amazon.kinesis.leases.HierarchicalShardSyncer;
 import software.amazon.kinesis.leases.dynamodb.DynamoDBLeaseCoordinator;
 import software.amazon.kinesis.leases.exceptions.LeasingException;
 import software.amazon.kinesis.lifecycle.LifecycleConfig;
@@ -69,6 +66,7 @@ import software.amazon.kinesis.retrieval.AggregatorUtil;
 import software.amazon.kinesis.retrieval.RecordsPublisher;
 import software.amazon.kinesis.retrieval.RetrievalConfig;
 
+
 /**
  *
  */
@@ -76,44 +74,76 @@ import software.amazon.kinesis.retrieval.RetrievalConfig;
 @Accessors(fluent = true)
 @Slf4j
 public class Scheduler implements Runnable {
-
     private SchedulerLog slog = new SchedulerLog();
 
     private final CheckpointConfig checkpointConfig;
+
     private final CoordinatorConfig coordinatorConfig;
+
     private final LeaseManagementConfig leaseManagementConfig;
+
     private final LifecycleConfig lifecycleConfig;
+
     private final MetricsConfig metricsConfig;
+
     private final ProcessorConfig processorConfig;
+
     private final RetrievalConfig retrievalConfig;
 
     private final String applicationName;
+
     private final int maxInitializationAttempts;
+
     private final Checkpointer checkpoint;
+
     private final long shardConsumerDispatchPollIntervalMillis;
+
+    // Backoff time when polling to check if application has finished processing
+    // parent shards
     // Backoff time when polling to check if application has finished processing
     // parent shards
     private final long parentShardPollIntervalMillis;
+
     private final ExecutorService executorService;
+
+    // private final GetRecordsRetrievalStrategy getRecordsRetrievalStrategy;
     // private final GetRecordsRetrievalStrategy getRecordsRetrievalStrategy;
     private final LeaseCoordinator leaseCoordinator;
+
     private final ShardSyncTaskManager shardSyncTaskManager;
+
     private final ShardPrioritization shardPrioritization;
+
     private final boolean cleanupLeasesUponShardCompletion;
+
     private final boolean skipShardSyncAtWorkerInitializationIfLeasesExist;
+
     private final GracefulShutdownCoordinator gracefulShutdownCoordinator;
+
     private final WorkerStateChangeListener workerStateChangeListener;
+
     private final InitialPositionInStreamExtended initialPosition;
+
     private final MetricsFactory metricsFactory;
+
     private final long failoverTimeMillis;
+
     private final long taskBackoffTimeMillis;
+
     private final String streamName;
+
     private final long listShardsBackoffTimeMillis;
+
     private final int maxListShardsRetryAttempts;
+
     private final LeaseRefresher leaseRefresher;
+
     private final ShardDetector shardDetector;
+
     private final boolean ignoreUnexpetedChildShards;
+
     private final AggregatorUtil aggregatorUtil;
+
     private final HierarchicalShardSyncer hierarchicalShardSyncer;
 
     // Holds consumers for shards the worker is currently tracking. Key is shard
@@ -121,7 +151,9 @@ public class Scheduler implements Runnable {
     private ConcurrentMap<ShardInfo, ShardConsumer> shardInfoShardConsumerMap = new ConcurrentHashMap<>();
 
     private volatile boolean shutdown;
+
     private volatile long shutdownStartTimeMillis;
+
     private volatile boolean shutdownComplete = false;
 
     private final Object lock = new Object();
@@ -130,16 +162,18 @@ public class Scheduler implements Runnable {
      * Used to ensure that only one requestedShutdown is in progress at a time.
      */
     private Future<Boolean> gracefulShutdownFuture;
+
     @VisibleForTesting
     protected boolean gracefuleShutdownStarted = false;
 
-    public Scheduler(@NonNull final CheckpointConfig checkpointConfig,
-                     @NonNull final CoordinatorConfig coordinatorConfig,
-                     @NonNull final LeaseManagementConfig leaseManagementConfig,
-                     @NonNull final LifecycleConfig lifecycleConfig,
-                     @NonNull final MetricsConfig metricsConfig,
-                     @NonNull final ProcessorConfig processorConfig,
-                     @NonNull final RetrievalConfig retrievalConfig) {
+    public Scheduler(@NonNull
+    final CheckpointConfig checkpointConfig, @NonNull
+    final CoordinatorConfig coordinatorConfig, @NonNull
+    final LeaseManagementConfig leaseManagementConfig, @NonNull
+    final LifecycleConfig lifecycleConfig, @NonNull
+    final MetricsConfig metricsConfig, @NonNull
+    final ProcessorConfig processorConfig, @NonNull
+    final RetrievalConfig retrievalConfig) {
         this.checkpointConfig = checkpointConfig;
         this.coordinatorConfig = coordinatorConfig;
         this.leaseManagementConfig = leaseManagementConfig;
@@ -147,50 +181,40 @@ public class Scheduler implements Runnable {
         this.metricsConfig = metricsConfig;
         this.processorConfig = processorConfig;
         this.retrievalConfig = retrievalConfig;
-
         this.applicationName = this.coordinatorConfig.applicationName();
         this.maxInitializationAttempts = this.coordinatorConfig.maxInitializationAttempts();
         this.metricsFactory = this.metricsConfig.metricsFactory();
-        this.leaseCoordinator = this.leaseManagementConfig.leaseManagementFactory()
-                .createLeaseCoordinator(this.metricsFactory);
+        this.leaseCoordinator = this.leaseManagementConfig.leaseManagementFactory().createLeaseCoordinator(this.metricsFactory);
         this.leaseRefresher = this.leaseCoordinator.leaseRefresher();
-
-        //
+        // 
         // TODO: Figure out what to do with lease manage <=> checkpoint relationship
-        //
-        this.checkpoint = this.checkpointConfig.checkpointFactory().createCheckpointer(this.leaseCoordinator,
-                this.leaseRefresher);
-
-        //
+        // 
+        this.checkpoint = this.checkpointConfig.checkpointFactory().createCheckpointer(this.leaseCoordinator, this.leaseRefresher);
+        // 
         // TODO: Move this configuration to lifecycle
-        //
+        // 
         this.shardConsumerDispatchPollIntervalMillis = this.coordinatorConfig.shardConsumerDispatchPollIntervalMillis();
         this.parentShardPollIntervalMillis = this.coordinatorConfig.parentShardPollIntervalMillis();
         this.executorService = this.coordinatorConfig.coordinatorFactory().createExecutorService();
-
-        this.shardSyncTaskManager = this.leaseManagementConfig.leaseManagementFactory()
-                .createShardSyncTaskManager(this.metricsFactory);
+        this.shardSyncTaskManager = this.leaseManagementConfig.leaseManagementFactory().createShardSyncTaskManager(this.metricsFactory);
         this.shardPrioritization = this.coordinatorConfig.shardPrioritization();
         this.cleanupLeasesUponShardCompletion = this.leaseManagementConfig.cleanupLeasesUponShardCompletion();
-        this.skipShardSyncAtWorkerInitializationIfLeasesExist =
-                this.coordinatorConfig.skipShardSyncAtWorkerInitializationIfLeasesExist();
+        this.skipShardSyncAtWorkerInitializationIfLeasesExist = this.coordinatorConfig.skipShardSyncAtWorkerInitializationIfLeasesExist();
         if (coordinatorConfig.gracefulShutdownCoordinator() != null) {
             this.gracefulShutdownCoordinator = coordinatorConfig.gracefulShutdownCoordinator();
         } else {
-            this.gracefulShutdownCoordinator = this.coordinatorConfig.coordinatorFactory()
-                    .createGracefulShutdownCoordinator();
+            this.gracefulShutdownCoordinator = this.coordinatorConfig.coordinatorFactory().createGracefulShutdownCoordinator();
         }
         if (coordinatorConfig.workerStateChangeListener() != null) {
             this.workerStateChangeListener = coordinatorConfig.workerStateChangeListener();
         } else {
-            this.workerStateChangeListener = this.coordinatorConfig.coordinatorFactory()
-                    .createWorkerStateChangeListener();
+            this.workerStateChangeListener = this.coordinatorConfig.coordinatorFactory().createWorkerStateChangeListener();
         }
         this.initialPosition = retrievalConfig.initialPositionInStreamExtended();
         this.failoverTimeMillis = this.leaseManagementConfig.failoverTimeMillis();
         this.taskBackoffTimeMillis = this.lifecycleConfig.taskBackoffTimeMillis();
-//        this.retryGetRecordsInSeconds = this.retrievalConfig.retryGetRecordsInSeconds();
-//        this.maxGetRecordsThreadPool = this.retrievalConfig.maxGetRecordsThreadPool();
+        // this.retryGetRecordsInSeconds = this.retrievalConfig.retryGetRecordsInSeconds();
+        // this.maxGetRecordsThreadPool = this.retrievalConfig.maxGetRecordsThreadPool();
         this.streamName = this.retrievalConfig.streamName();
         this.listShardsBackoffTimeMillis = this.retrievalConfig.listShardsBackoffTimeInMillis();
         this.maxListShardsRetryAttempts = this.retrievalConfig.maxListShardsRetryAttempts();
@@ -556,35 +580,13 @@ public class Scheduler implements Runnable {
         return consumer;
     }
 
-    protected ShardConsumer buildConsumer(@NonNull final ShardInfo shardInfo,
-            @NonNull final ShardRecordProcessorFactory shardRecordProcessorFactory) {
+    protected ShardConsumer buildConsumer(@NonNull
+    final ShardInfo shardInfo, @NonNull
+    final ShardRecordProcessorFactory shardRecordProcessorFactory) {
         RecordsPublisher cache = retrievalConfig.retrievalFactory().createGetRecordsCache(shardInfo, metricsFactory);
-        ShardRecordProcessorCheckpointer checkpointer = coordinatorConfig.coordinatorFactory().createRecordProcessorCheckpointer(shardInfo,
-                        checkpoint);
-        ShardConsumerArgument argument = new ShardConsumerArgument(shardInfo,
-                streamName,
-                leaseRefresher,
-                executorService,
-                cache,
-                shardRecordProcessorFactory.shardRecordProcessor(),
-                checkpoint,
-                checkpointer,
-                parentShardPollIntervalMillis,
-                taskBackoffTimeMillis,
-                skipShardSyncAtWorkerInitializationIfLeasesExist,
-                listShardsBackoffTimeMillis,
-                maxListShardsRetryAttempts,
-                processorConfig.callProcessRecordsEvenForEmptyRecordList(),
-                shardConsumerDispatchPollIntervalMillis,
-                initialPosition,
-                cleanupLeasesUponShardCompletion,
-                ignoreUnexpetedChildShards,
-                shardDetector,
-                aggregatorUtil,
-                hierarchicalShardSyncer,
-                metricsFactory);
-        return new ShardConsumer(cache, executorService, shardInfo, lifecycleConfig.logWarningForTaskAfterMillis(),
-                argument, lifecycleConfig.taskExecutionListener(),lifecycleConfig.readTimeoutsToIgnoreBeforeWarning());
+        ShardRecordProcessorCheckpointer checkpointer = coordinatorConfig.coordinatorFactory().createRecordProcessorCheckpointer(shardInfo, checkpoint);
+        ShardConsumerArgument argument = new ShardConsumerArgument(shardInfo, streamName, leaseRefresher, executorService, cache, shardRecordProcessorFactory.shardRecordProcessor(), checkpoint, checkpointer, parentShardPollIntervalMillis, taskBackoffTimeMillis, skipShardSyncAtWorkerInitializationIfLeasesExist, listShardsBackoffTimeMillis, maxListShardsRetryAttempts, processorConfig.callProcessRecordsEvenForEmptyRecordList(), shardConsumerDispatchPollIntervalMillis, initialPosition, cleanupLeasesUponShardCompletion, ignoreUnexpetedChildShards, shardDetector, aggregatorUtil, hierarchicalShardSyncer, metricsFactory);
+        return new ShardConsumer(cache, executorService, shardInfo, lifecycleConfig.logWarningForTaskAfterMillis(), argument, lifecycleConfig.taskExecutionListener(), lifecycleConfig.readTimeoutsToIgnoreBeforeWarning());
     }
 
     /**
@@ -619,9 +621,10 @@ public class Scheduler implements Runnable {
      */
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     private static class SchedulerLog {
-
         private long reportIntervalMillis = TimeUnit.MINUTES.toMillis(1);
+
         private long nextReportTime = System.currentTimeMillis() + reportIntervalMillis;
+
         private boolean infoReporting;
 
         void info(Object message) {
@@ -644,7 +647,8 @@ public class Scheduler implements Runnable {
                 if (log.isInfoEnabled()) {
                     infoReporting = false;
                     nextReportTime = System.currentTimeMillis() + reportIntervalMillis;
-                } // else is DEBUG or TRACE so leave reporting true
+                }// else is DEBUG or TRACE so leave reporting true
+
             } else if (nextReportTime <= System.currentTimeMillis()) {
                 infoReporting = true;
             }

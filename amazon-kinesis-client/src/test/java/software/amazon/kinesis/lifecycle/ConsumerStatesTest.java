@@ -14,20 +14,9 @@
  */
 package software.amazon.kinesis.lifecycle;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static software.amazon.kinesis.lifecycle.ConsumerStates.ShardConsumerState;
-
 import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
-
 import org.hamcrest.Condition;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -38,15 +27,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.kinesis.checkpoint.ShardRecordProcessorCheckpointer;
 import software.amazon.kinesis.common.InitialPositionInStream;
 import software.amazon.kinesis.common.InitialPositionInStreamExtended;
+import software.amazon.kinesis.leases.HierarchicalShardSyncer;
 import software.amazon.kinesis.leases.LeaseRefresher;
 import software.amazon.kinesis.leases.ShardDetector;
 import software.amazon.kinesis.leases.ShardInfo;
-import software.amazon.kinesis.leases.HierarchicalShardSyncer;
 import software.amazon.kinesis.lifecycle.events.ProcessRecordsInput;
 import software.amazon.kinesis.metrics.MetricsFactory;
 import software.amazon.kinesis.processor.Checkpointer;
@@ -54,70 +42,99 @@ import software.amazon.kinesis.processor.RecordProcessorCheckpointer;
 import software.amazon.kinesis.processor.ShardRecordProcessor;
 import software.amazon.kinesis.retrieval.AggregatorUtil;
 import software.amazon.kinesis.retrieval.RecordsPublisher;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static software.amazon.kinesis.lifecycle.ConsumerStates.ShardConsumerState;
+
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConsumerStatesTest {
     private static final String STREAM_NAME = "TestStream";
+
     private static final InitialPositionInStreamExtended INITIAL_POSITION_IN_STREAM = InitialPositionInStreamExtended
             .newInitialPosition(InitialPositionInStream.TRIM_HORIZON);
 
     private ShardConsumer consumer;
+
     private ShardConsumerArgument argument;
 
     @Mock
     private ShardRecordProcessor shardRecordProcessor;
+
     @Mock
     private ShardRecordProcessorCheckpointer recordProcessorCheckpointer;
+
     @Mock
     private ExecutorService executorService;
+
     @Mock
     private ShardInfo shardInfo;
+
     @Mock
     private LeaseRefresher leaseRefresher;
+
     @Mock
     private Checkpointer checkpointer;
+
     @Mock
     private ShutdownNotification shutdownNotification;
+
     @Mock
     private InitialPositionInStreamExtended initialPositionInStream;
+
     @Mock
     private RecordsPublisher recordsPublisher;
+
     @Mock
     private KinesisAsyncClient kinesisClient;
+
     @Mock
     private ShardDetector shardDetector;
+
     @Mock
     private HierarchicalShardSyncer hierarchicalShardSyncer;
+
     @Mock
     private MetricsFactory metricsFactory;
+
     @Mock
     private ProcessRecordsInput processRecordsInput;
+
     @Mock
     private TaskExecutionListener taskExecutionListener;
 
     private long parentShardPollIntervalMillis = 0xCAFE;
+
     private boolean cleanupLeasesOfCompletedShards = true;
+
     private long taskBackoffTimeMillis = 0xBEEF;
+
     private ShutdownReason reason = ShutdownReason.SHARD_END;
+
     private boolean skipShardSyncAtWorkerInitializationIfLeasesExist = true;
+
     private long listShardsBackoffTimeInMillis = 50L;
+
     private int maxListShardsRetryAttempts = 10;
+
     private boolean shouldCallProcessRecordsEvenForEmptyRecordList = true;
+
     private boolean ignoreUnexpectedChildShards = false;
+
     private long idleTimeInMillis = 1000L;
+
     private Optional<Long> logWarningForTaskAfterMillis = Optional.empty();
 
     @Before
     public void setup() {
-        argument = new ShardConsumerArgument(shardInfo, STREAM_NAME, leaseRefresher, executorService, recordsPublisher,
-                shardRecordProcessor, checkpointer, recordProcessorCheckpointer, parentShardPollIntervalMillis,
-                taskBackoffTimeMillis, skipShardSyncAtWorkerInitializationIfLeasesExist, listShardsBackoffTimeInMillis,
-                maxListShardsRetryAttempts, shouldCallProcessRecordsEvenForEmptyRecordList, idleTimeInMillis,
-                INITIAL_POSITION_IN_STREAM, cleanupLeasesOfCompletedShards, ignoreUnexpectedChildShards, shardDetector,
-                new AggregatorUtil(), hierarchicalShardSyncer, metricsFactory);
-        consumer = spy(new ShardConsumer(recordsPublisher, executorService, shardInfo, logWarningForTaskAfterMillis,
-                argument, taskExecutionListener, 0));
-
+        argument = new ShardConsumerArgument(shardInfo, STREAM_NAME, leaseRefresher, executorService, recordsPublisher, shardRecordProcessor, checkpointer, recordProcessorCheckpointer, parentShardPollIntervalMillis, taskBackoffTimeMillis, skipShardSyncAtWorkerInitializationIfLeasesExist, listShardsBackoffTimeInMillis, maxListShardsRetryAttempts, shouldCallProcessRecordsEvenForEmptyRecordList, idleTimeInMillis, INITIAL_POSITION_IN_STREAM, cleanupLeasesOfCompletedShards, ignoreUnexpectedChildShards, shardDetector, new AggregatorUtil(), hierarchicalShardSyncer, metricsFactory);
+        consumer = spy(new ShardConsumer(recordsPublisher, executorService, shardInfo, logWarningForTaskAfterMillis, argument, taskExecutionListener, 0));
         when(shardInfo.shardId()).thenReturn("shardId-000000000000");
         when(recordProcessorCheckpointer.checkpointer()).thenReturn(checkpointer);
     }
@@ -256,8 +273,7 @@ public class ConsumerStatesTest {
         consumer.gracefulShutdown(shutdownNotification);
         ConsumerTask task = state.createTask(argument, consumer, null);
 
-        assertThat(task,
-                shutdownReqTask(ShardRecordProcessor.class, "shardRecordProcessor", equalTo(shardRecordProcessor)));
+        assertThat(task, shutdownReqTask(ShardRecordProcessor.class, "shardRecordProcessor", equalTo(shardRecordProcessor)));
         assertThat(task, shutdownReqTask(RecordProcessorCheckpointer.class, "recordProcessorCheckpointer",
                 equalTo(recordProcessorCheckpointer)));
         assertThat(task,
@@ -304,8 +320,7 @@ public class ConsumerStatesTest {
         ConsumerTask task = state.createTask(argument, consumer, null);
 
         assertThat(task, shutdownTask(ShardInfo.class, "shardInfo", equalTo(shardInfo)));
-        assertThat(task,
-                shutdownTask(ShardRecordProcessor.class, "shardRecordProcessor", equalTo(shardRecordProcessor)));
+        assertThat(task, shutdownTask(ShardRecordProcessor.class, "shardRecordProcessor", equalTo(shardRecordProcessor)));
         assertThat(task, shutdownTask(ShardRecordProcessorCheckpointer.class, "recordProcessorCheckpointer",
                 equalTo(recordProcessorCheckpointer)));
         assertThat(task, shutdownTask(ShutdownReason.class, "reason", equalTo(reason)));
@@ -319,7 +334,8 @@ public class ConsumerStatesTest {
         assertThat(state.successTransition(), equalTo(ShardConsumerState.SHUTDOWN_COMPLETE.consumerState()));
 
         for (ShutdownReason reason : ShutdownReason.values()) {
-            assertThat(state.shutdownTransition(reason), equalTo(ShardConsumerState.SHUTDOWN_COMPLETE.consumerState()));
+            assertThat(state.shutdownTransition(reason),
+                    equalTo(ShardConsumerState.SHUTDOWN_COMPLETE.consumerState()));
         }
 
         assertThat(state.state(), equalTo(ShardConsumerState.SHUTTING_DOWN));
@@ -382,22 +398,22 @@ public class ConsumerStatesTest {
         return new ReflectionPropertyMatcher<>(taskTypeClass, valueTypeClass, matcher, propertyName);
     }
 
-    private static class ReflectionPropertyMatcher<TaskType, ValueType>
-            extends TypeSafeDiagnosingMatcher<ConsumerTask> {
-
+    private static class ReflectionPropertyMatcher<TaskType, ValueType> extends TypeSafeDiagnosingMatcher<ConsumerTask> {
         private final Class<TaskType> taskTypeClass;
+
         private final Class<ValueType> valueTypeClazz;
+
         private final Matcher<ValueType> matcher;
+
         private final String propertyName;
+
         private final Field matchingField;
 
-        private ReflectionPropertyMatcher(Class<TaskType> taskTypeClass, Class<ValueType> valueTypeClass,
-                Matcher<ValueType> matcher, String propertyName) {
+        private ReflectionPropertyMatcher(Class<TaskType> taskTypeClass, Class<ValueType> valueTypeClass, Matcher<ValueType> matcher, String propertyName) {
             this.taskTypeClass = taskTypeClass;
             this.valueTypeClazz = valueTypeClass;
             this.matcher = matcher;
             this.propertyName = propertyName;
-
             Field[] fields = taskTypeClass.getDeclaredFields();
             Field matching = null;
             for (Field field : fields) {
@@ -406,45 +422,38 @@ public class ConsumerStatesTest {
                 }
             }
             this.matchingField = matching;
-
         }
 
         @Override
         protected boolean matchesSafely(ConsumerTask item, Description mismatchDescription) {
-
             return Condition.matched(item, mismatchDescription).and(new Condition.Step<ConsumerTask, TaskType>() {
                 @Override
                 public Condition<TaskType> apply(ConsumerTask value, Description mismatch) {
                     if (taskTypeClass.equals(value.getClass())) {
                         return Condition.matched(taskTypeClass.cast(value), mismatch);
                     }
-                    mismatch.appendText("Expected task type of ").appendText(taskTypeClass.getName())
-                            .appendText(" but was ").appendText(value.getClass().getName());
+                    mismatch.appendText("Expected task type of ").appendText(taskTypeClass.getName()).appendText(" but was ").appendText(value.getClass().getName());
                     return Condition.notMatched();
                 }
             }).and(new Condition.Step<TaskType, Object>() {
                 @Override
                 public Condition<Object> apply(TaskType value, Description mismatch) {
                     if (matchingField == null) {
-                        mismatch.appendText("Field ").appendText(propertyName).appendText(" not present in ")
-                                .appendText(taskTypeClass.getName());
+                        mismatch.appendText("Field ").appendText(propertyName).appendText(" not present in ").appendText(taskTypeClass.getName());
                         return Condition.notMatched();
                     }
-
                     try {
                         return Condition.matched(getValue(value), mismatch);
-                    } catch (RuntimeException re) {
+                    } catch ( re) {
                         mismatch.appendText("Failure while retrieving value for ").appendText(propertyName);
                         return Condition.notMatched();
                     }
-
                 }
             }).and(new Condition.Step<Object, ValueType>() {
                 @Override
                 public Condition<ValueType> apply(Object value, Description mismatch) {
-                    if (value != null && !valueTypeClazz.isAssignableFrom(value.getClass())) {
-                        mismatch.appendText("Expected a value of type ").appendText(valueTypeClazz.getName())
-                                .appendText(" but was ").appendText(value.getClass().getName());
+                    if ((value != null) && (!valueTypeClazz.isAssignableFrom(value.getClass()))) {
+                        mismatch.appendText("Expected a value of type ").appendText(valueTypeClazz.getName()).appendText(" but was ").appendText(value.getClass().getName());
                         return Condition.notMatched();
                     }
                     return Condition.matched(valueTypeClazz.cast(value), mismatch);
@@ -454,21 +463,16 @@ public class ConsumerStatesTest {
 
         @Override
         public void describeTo(Description description) {
-            description
-                    .appendText(
-                            "A " + taskTypeClass.getName() + " task with the property " + propertyName + " matching ")
-                    .appendDescriptionOf(matcher);
+            description.appendText(((("A " + taskTypeClass.getName()) + " task with the property ") + propertyName) + " matching ").appendDescriptionOf(matcher);
         }
 
         private Object getValue(TaskType task) {
-
             matchingField.setAccessible(true);
             try {
                 return matchingField.get(task);
-            } catch (IllegalAccessException e) {
+            } catch (java.lang.IllegalAccessException e) {
                 throw new RuntimeException("Failed to retrieve the value for " + matchingField.getName());
             }
         }
     }
-
 }

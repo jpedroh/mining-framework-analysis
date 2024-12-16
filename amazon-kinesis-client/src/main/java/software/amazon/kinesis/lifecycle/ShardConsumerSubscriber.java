@@ -1,16 +1,35 @@
 /*
+<<<<<<< LEFT
  * Copyright 2019 Amazon.com, Inc. or its affiliates.
  * Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
+=======
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+>>>>>>> RIGHT
  *
+<<<<<<< LEFT
  *     http://www.apache.org/licenses/LICENSE-2.0
+=======
+ * Licensed under the Amazon Software License (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+>>>>>>> RIGHT
  *
+<<<<<<< LEFT
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+=======
+ * http://aws.amazon.com/asl/
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+>>>>>>> RIGHT
  */
 package software.amazon.kinesis.lifecycle;
 
@@ -18,6 +37,9 @@ import com.google.common.annotations.VisibleForTesting;
 import io.reactivex.Flowable;
 import io.reactivex.Scheduler;
 import io.reactivex.schedulers.Schedulers;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.concurrent.ExecutorService;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -28,48 +50,52 @@ import software.amazon.kinesis.retrieval.RecordsPublisher;
 import software.amazon.kinesis.retrieval.RecordsRetrieved;
 import software.amazon.kinesis.retrieval.RetryableRetrievalException;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.concurrent.ExecutorService;
 
 @Slf4j
 @Accessors(fluent = true)
 class ShardConsumerSubscriber implements Subscriber<RecordsRetrieved> {
     private final RecordsPublisher recordsPublisher;
+
     private final Scheduler scheduler;
+
     private final int bufferSize;
+
     private final ShardConsumer shardConsumer;
+
     private final int readTimeoutsToIgnoreBeforeWarning;
+
     private volatile int readTimeoutSinceLastRead = 0;
 
     @VisibleForTesting
     final Object lockObject = new Object();
+
     private Instant lastRequestTime = null;
+
     private RecordsRetrieved lastAccepted = null;
 
     private Subscription subscription;
+
     @Getter
     private volatile Instant lastDataArrival;
+
     @Getter
     private volatile Throwable dispatchFailure;
+
     @Getter(AccessLevel.PACKAGE)
     private volatile Throwable retrievalFailure;
 
     @Deprecated
-    ShardConsumerSubscriber(RecordsPublisher recordsPublisher, ExecutorService executorService, int bufferSize,
-                            ShardConsumer shardConsumer) {
-        this(recordsPublisher,executorService,bufferSize,shardConsumer, LifecycleConfig.DEFAULT_READ_TIMEOUTS_TO_IGNORE);
+    ShardConsumerSubscriber(RecordsPublisher recordsPublisher, ExecutorService executorService, int bufferSize, ShardConsumer shardConsumer) {
+        this(recordsPublisher, executorService, bufferSize, shardConsumer, LifecycleConfig.DEFAULT_READ_TIMEOUTS_TO_IGNORE);
     }
 
-    ShardConsumerSubscriber(RecordsPublisher recordsPublisher, ExecutorService executorService, int bufferSize,
-            ShardConsumer shardConsumer, int readTimeoutsToIgnoreBeforeWarning) {
+    ShardConsumerSubscriber(RecordsPublisher recordsPublisher, ExecutorService executorService, int bufferSize, ShardConsumer shardConsumer, int readTimeoutsToIgnoreBeforeWarning) {
         this.recordsPublisher = recordsPublisher;
         this.scheduler = Schedulers.from(executorService);
         this.bufferSize = bufferSize;
         this.shardConsumer = shardConsumer;
         this.readTimeoutsToIgnoreBeforeWarning = readTimeoutsToIgnoreBeforeWarning;
     }
-
 
     void startSubscriptions() {
         synchronized (lockObject) {
@@ -101,8 +127,7 @@ class ShardConsumerSubscriber implements Subscriber<RecordsRetrieved> {
         Throwable oldFailure = null;
         if (retrievalFailure != null) {
             synchronized (lockObject) {
-                String logMessage = String.format("%s: Failure occurred in retrieval.  Restarting data requests",
-                        shardConsumer.shardInfo().shardId());
+                String logMessage = String.format("%s: Failure occurred in retrieval.  Restarting data requests", shardConsumer.shardInfo().shardId());
                 if (retrievalFailure instanceof RetryableRetrievalException) {
                     log.debug(logMessage, retrievalFailure.getCause());
                 } else {
@@ -148,33 +173,30 @@ class ShardConsumerSubscriber implements Subscriber<RecordsRetrieved> {
     @Override
     public void onNext(RecordsRetrieved input) {
         try {
-            synchronized (lockObject) {
+            synchronized(lockObject) {
                 lastRequestTime = null;
             }
             lastDataArrival = Instant.now();
-            shardConsumer.handleInput(input.processRecordsInput().toBuilder().cacheExitTime(Instant.now()).build(),
-                    subscription);
-
-        } catch (Throwable t) {
+            shardConsumer.handleInput(input.processRecordsInput().toBuilder().cacheExitTime(Instant.now()).build(), subscription);
+        } catch (java.lang.Throwable t) {
             log.warn("{}: Caught exception from handleInput", shardConsumer.shardInfo().shardId(), t);
-            synchronized (lockObject) {
+            synchronized(lockObject) {
                 dispatchFailure = t;
             }
         } finally {
             subscription.request(1);
-            synchronized (lockObject) {
+            synchronized(lockObject) {
                 lastAccepted = input;
                 lastRequestTime = Instant.now();
             }
         }
-
         readTimeoutSinceLastRead = 0;
     }
 
     @Override
     public void onError(Throwable t) {
-        synchronized (lockObject) {
-            if (t instanceof RetryableRetrievalException && t.getMessage().contains("ReadTimeout")) {
+        synchronized(lockObject) {
+            if ((t instanceof RetryableRetrievalException) && t.getMessage().contains("ReadTimeout")) {
                 readTimeoutSinceLastRead++;
                 if (readTimeoutSinceLastRead > readTimeoutsToIgnoreBeforeWarning) {
                     logOnErrorReadTimeoutWarning(t);
@@ -182,17 +204,13 @@ class ShardConsumerSubscriber implements Subscriber<RecordsRetrieved> {
             } else {
                 logOnErrorWarning(t);
             }
-
             subscription.cancel();
             retrievalFailure = t;
         }
     }
 
     protected void logOnErrorWarning(Throwable t) {
-        log.warn(
-                "{}: onError().  Cancelling subscription, and marking self as failed. KCL will "
-                        + "recreate the subscription as neccessary to continue processing.",
-                shardConsumer.shardInfo().shardId(), t);
+        log.warn("{}: onError().  Cancelling subscription, and marking self as failed. KCL will " + "recreate the subscription as neccessary to continue processing.", shardConsumer.shardInfo().shardId(), t);
     }
 
     protected void logOnErrorReadTimeoutWarning(Throwable t) {

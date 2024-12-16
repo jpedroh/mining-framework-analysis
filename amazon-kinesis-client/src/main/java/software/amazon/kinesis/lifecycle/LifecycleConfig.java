@@ -12,14 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package software.amazon.kinesis.lifecycle;
 
 import java.util.Optional;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
 import software.amazon.kinesis.retrieval.AggregatorUtil;
+
 
 /**
  * Used by the KCL to configure the lifecycle.
@@ -28,6 +27,7 @@ import software.amazon.kinesis.retrieval.AggregatorUtil;
 @Accessors(fluent = true)
 public class LifecycleConfig {
     public static final int DEFAULT_READ_TIMEOUTS_TO_IGNORE = 0;
+
     /**
      * Logs warn message if as task is held in  a task for more than the set time.
      *
