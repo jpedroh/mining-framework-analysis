@@ -8,8 +8,13 @@
  */
 package ltd.newbee.mall.service.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import ltd.newbee.mall.common.NewBeeMallCategoryLevelEnum;
-
+import ltd.newbee.mall.common.NewBeeMallException;
 import ltd.newbee.mall.common.ServiceResultEnum;
 import ltd.newbee.mall.controller.vo.NewBeeMallSearchGoodsVO;
 import ltd.newbee.mall.dao.GoodsCategoryMapper;
@@ -17,18 +22,13 @@ import ltd.newbee.mall.dao.NewBeeMallGoodsMapper;
 import ltd.newbee.mall.entity.GoodsCategory;
 import ltd.newbee.mall.entity.GoodsImageEntity;
 import ltd.newbee.mall.entity.GoodsInfo;
-
+import ltd.newbee.mall.entity.GoodsPageEntity;
 import ltd.newbee.mall.entity.GoodsQa;
 import ltd.newbee.mall.entity.GoodsReview;
 import ltd.newbee.mall.entity.InsertGoodsQaLike;
 import ltd.newbee.mall.entity.InsertGoodsReview;
 import ltd.newbee.mall.entity.InsertGoodsReviewLike;
 import ltd.newbee.mall.entity.InsertSearchHistoryEntity;
-
-import ltd.newbee.mall.entity.GoodsPageEntity;
-import ltd.newbee.mall.entity.GoodsQa;
-import ltd.newbee.mall.entity.GoodsReview;
-
 import ltd.newbee.mall.entity.NewBeeMallGoods;
 import ltd.newbee.mall.entity.RecentChkHistory;
 import ltd.newbee.mall.entity.SearchHistoryEntity;
@@ -36,25 +36,17 @@ import ltd.newbee.mall.service.NewBeeMallGoodsService;
 import ltd.newbee.mall.util.BeanUtil;
 import ltd.newbee.mall.util.PageQueryUtil;
 import ltd.newbee.mall.util.PageResult;
-
 import ltd.newbee.mall.util.SearchPageParams;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class NewBeeMallGoodsServiceImpl implements NewBeeMallGoodsService {
-
     @Autowired
     private NewBeeMallGoodsMapper goodsMapper;
+
     @Autowired
     private GoodsCategoryMapper goodsCategoryMapper;
 
@@ -151,153 +143,136 @@ public class NewBeeMallGoodsServiceImpl implements NewBeeMallGoodsService {
         return pageResult;
     }
 
-	@Override
-	public GoodsInfo getGoodsInfoByPK(Long id) {
-		
-		return goodsMapper.getGoodsInfoByPK(id);
-	}
-
-	@Override
-	public ArrayList<GoodsImageEntity> getGoodsImageByPk(Long id) {
-		
-		return goodsMapper.getGoodsImageByPk(id);
-	}
-
-	@Override
-	public ArrayList<NewBeeMallGoods> getGoodsPage(Map<String,Object>params2) {
-
-			return goodsMapper.getGoodsPage(params2);
-		}
-
-	@Override
-
-	public ArrayList<GoodsQa> getGoodsQa(Map<String,Object>params) {
-		
-		return goodsMapper.getGoodsQa(params);
-    }
-
-	@Override
-	public GoodsQa getGoodsQaPage(Long count2) {
-		
-		return getGoodsQaPage(count2);
-	}
-
-	@Override
-	public ArrayList<GoodsReview> getGoodsReview(Map<String, Object> params) {
-		
-		return goodsMapper.getGoodsReview(params);
-	}
-
-	@Override
-	public Double getRateAvg(Long goodsId) {
-		
-		return goodsMapper.getRateAvg(goodsId);
-	}
-
-	@Override
-	public Long getReviewCount(Long goodsId) {
+@Override
+public GoodsInfo getGoodsInfoByPK(Long id) {
 	
-		return goodsMapper.getReviewCount(goodsId);
-	}
+	return goodsMapper.getGoodsInfoByPK(id);
+}
 
-	@Override
-	public Long[] getRateCount(Long goodsId) {
-		
-		return goodsMapper.getRateCount(goodsId);
-	}
-
-
-	@Override
-	public int insertGoodsReview(GoodsReview review) {
-		
-		return goodsMapper.insertGoodsReview(review);
-	}
-
-	@Override
-	public ArrayList<String> getSearchHistory() {
+@Override
+public ArrayList<GoodsImageEntity> getGoodsImageByPk(Long id) {
 	
-		return goodsMapper.getSearchHistory();
+	return goodsMapper.getGoodsImageByPk(id);
+}
+
+@Override
+public ArrayList<NewBeeMallGoods> getGoodsPage(Map<String,Object>params2) {
+
+		return goodsMapper.getGoodsPage(params2);
 	}
 
-	@Override
-	public int insertSearchHistory(InsertSearchHistoryEntity history) {
-		
-		return goodsMapper.insertSearchHistory(history);
-	}
+@Override
 
-	@Override
-	public ArrayList<String> getGoodsName(String keyword) {
-		
-		return goodsMapper.getGoodsName(keyword);
-	}
-
-	@Override
-	public ArrayList<RecentChkHistory> getRecentChkHistory() {
-		
-		return goodsMapper.getRecentChkHistory();
-	}
-
-	@Override
-	public Long getGoodsQaCount(Long goodsId) {
-		
-		return goodsMapper.getGoodsQaCount(goodsId);
-	}
-
-	@Override
-	public int insertGoodsQa(GoodsQa goodsQa) {
-		
-		return goodsMapper.insertGoodsQa(goodsQa);
-	}
-
-	@Override
-	public Long getMaxQaId(Long goodsId) {
-		
-		return goodsMapper.getMaxQaId(goodsId);
-	}
-
-	@Override
-	public int getQaLikeUserId(Map<String, Object> params) {
-		
-		return goodsMapper.getQaLikeUserId(params);
-	}
-
-	@Override
-	public int insertGoodsQaLike(InsertGoodsQaLike qa) {
-		
-		return goodsMapper.insertGoodsQaLike(qa);
-	}
-
-	@Override
-	public int insertGoodsReviewLike(InsertGoodsReviewLike reviewLike) {
-		
-		return goodsMapper.insertGoodsReviewLike(reviewLike);
-	}
-
-	@Override
-	public int getReviewLikeUserId(Map<String, Object> params) {
-		
-		return goodsMapper.getReviewLikeUserId(params);
-	}
-
-	@Override
-	public Long getMaxReviewId(Long goodsId) {
-		
-		return goodsMapper.getMaxReviewId(goodsId);
-	}
-
-
-
-
-
-
-	}
+public ArrayList<GoodsQa> getGoodsQa(Map<String,Object>params) {
 	
+	return goodsMapper.getGoodsQa(params);
+   }
 
+@Override
+public GoodsQa getGoodsQaPage(Long count2) {
 	
+	return getGoodsQaPage(count2);
+}
 
+@Override
+public ArrayList<GoodsReview> getGoodsReview(Map<String, Object> params) {
 	
+	return goodsMapper.getGoodsReview(params);
+}
 
-
-
+@Override
+public Double getRateAvg(Long goodsId) {
 	
+	return goodsMapper.getRateAvg(goodsId);
+}
 
+@Override
+public Long getReviewCount(Long goodsId) {
+
+	return goodsMapper.getReviewCount(goodsId);
+}
+
+@Override
+public Long[] getRateCount(Long goodsId) {
+	
+	return goodsMapper.getRateCount(goodsId);
+}
+
+@Override
+public int insertGoodsReview(GoodsReview review) {
+	
+	return goodsMapper.insertGoodsReview(review);
+}
+
+@Override
+public ArrayList<String> getSearchHistory() {
+
+	return goodsMapper.getSearchHistory();
+}
+
+@Override
+public int insertSearchHistory(InsertSearchHistoryEntity history) {
+	
+	return goodsMapper.insertSearchHistory(history);
+}
+
+@Override
+public ArrayList<String> getGoodsName(String keyword) {
+	
+	return goodsMapper.getGoodsName(keyword);
+}
+
+@Override
+public ArrayList<RecentChkHistory> getRecentChkHistory() {
+	
+	return goodsMapper.getRecentChkHistory();
+}
+
+@Override
+public Long getGoodsQaCount(Long goodsId) {
+	
+	return goodsMapper.getGoodsQaCount(goodsId);
+}
+
+@Override
+public int insertGoodsQa(GoodsQa goodsQa) {
+	
+	return goodsMapper.insertGoodsQa(goodsQa);
+}
+
+@Override
+public Long getMaxQaId(Long goodsId) {
+	
+	return goodsMapper.getMaxQaId(goodsId);
+}
+
+@Override
+public int getQaLikeUserId(Map<String, Object> params) {
+	
+	return goodsMapper.getQaLikeUserId(params);
+}
+
+@Override
+public int insertGoodsQaLike(InsertGoodsQaLike qa) {
+	
+	return goodsMapper.insertGoodsQaLike(qa);
+}
+
+@Override
+public int insertGoodsReviewLike(InsertGoodsReviewLike reviewLike) {
+	
+	return goodsMapper.insertGoodsReviewLike(reviewLike);
+}
+
+@Override
+public int getReviewLikeUserId(Map<String, Object> params) {
+	
+	return goodsMapper.getReviewLikeUserId(params);
+}
+
+@Override
+public Long getMaxReviewId(Long goodsId) {
+	
+	return goodsMapper.getMaxReviewId(goodsId);
+}
+}
