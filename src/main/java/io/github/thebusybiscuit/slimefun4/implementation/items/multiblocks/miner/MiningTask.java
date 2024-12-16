@@ -1,11 +1,17 @@
 package io.github.thebusybiscuit.slimefun4.implementation.items.multiblocks.miner;
 
+import io.github.bakedlibs.dough.blocks.BlockPosition;
+import io.github.bakedlibs.dough.inventory.InvUtils;
+import io.github.bakedlibs.dough.items.ItemUtils;
+import io.github.bakedlibs.dough.protection.Interaction;
+import io.github.bakedlibs.dough.scheduling.TaskQueue;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.papermc.lib.PaperLib;
 import java.util.UUID;
 import java.util.logging.Level;
-
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-
+import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineFuel;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -23,15 +29,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import io.github.bakedlibs.dough.blocks.BlockPosition;
-import io.github.bakedlibs.dough.inventory.InvUtils;
-import io.github.bakedlibs.dough.items.ItemUtils;
-import io.github.bakedlibs.dough.protection.Interaction;
-import io.github.bakedlibs.dough.scheduling.TaskQueue;
-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
-import io.papermc.lib.PaperLib;
-
-import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineFuel;
 
 /**
  * This represents a running instance of an {@link IndustrialMiner}.
@@ -43,35 +40,38 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineFuel;
  *
  */
 class MiningTask implements Runnable {
-
     private final IndustrialMiner miner;
+
     private final UUID owner;
 
     private final Block chest;
+
     private final Block[] pistons;
 
     private final BlockPosition start;
+
     private final BlockPosition end;
+
     private final int height;
 
     private boolean running = false;
+
     private int fuelLevel = 0;
+
     private int ores = 0;
 
     private int x;
+
     private int z;
 
     @ParametersAreNonnullByDefault
     MiningTask(IndustrialMiner miner, UUID owner, Block chest, Block[] pistons, Block start, Block end) {
         this.miner = miner;
         this.owner = owner;
-
         this.chest = chest;
         this.pistons = pistons;
-
         this.start = new BlockPosition(start);
         this.end = new BlockPosition(end);
-
         this.height = start.getY();
         this.x = start.getX();
         this.z = start.getZ();
@@ -119,18 +119,14 @@ class MiningTask implements Runnable {
      * This method starts the warm-up animation for the {@link IndustrialMiner}.
      */
     private void warmUp() {
-        /*
-         * This is our warm up animation.
-         * The pistons will push after another in decreasing intervals
+        /* This is our warm up animation.
+        The pistons will push after another in decreasing intervals
          */
         TaskQueue queue = new TaskQueue();
-
         queue.thenRun(4, () -> setPistonState(pistons[0], true));
         queue.thenRun(10, () -> setPistonState(pistons[0], false));
-
         queue.thenRun(8, () -> setPistonState(pistons[1], true));
         queue.thenRun(10, () -> setPistonState(pistons[1], false));
-
         /*
          * Fixes #3336
          * Trigger each piston once, so that the structure is validated.
@@ -138,32 +134,24 @@ class MiningTask implements Runnable {
          */
         queue.thenRun(() -> {
             consumeFuel();
-
             if (fuelLevel <= 0) {
                 // This Miner has not got enough fuel to run.
                 stop(MinerStoppingReason.NO_FUEL);
                 return;
             }
         });
-
         queue.thenRun(6, () -> setPistonState(pistons[0], true));
         queue.thenRun(9, () -> setPistonState(pistons[0], false));
-
         queue.thenRun(4, () -> setPistonState(pistons[1], true));
         queue.thenRun(7, () -> setPistonState(pistons[1], false));
-
         queue.thenRun(3, () -> setPistonState(pistons[0], true));
         queue.thenRun(5, () -> setPistonState(pistons[0], false));
-
         queue.thenRun(2, () -> setPistonState(pistons[1], true));
         queue.thenRun(4, () -> setPistonState(pistons[1], false));
-
         queue.thenRun(1, () -> setPistonState(pistons[0], true));
         queue.thenRun(3, () -> setPistonState(pistons[0], false));
-
         queue.thenRun(1, () -> setPistonState(pistons[1], true));
         queue.thenRun(2, () -> setPistonState(pistons[1], false));
-
         queue.thenRun(1, this);
         queue.execute(Slimefun.instance());
     }
@@ -174,50 +162,39 @@ class MiningTask implements Runnable {
             // Don't continue if the machine has stopped
             return;
         }
-
         TaskQueue queue = new TaskQueue();
-
         queue.thenRun(1, () -> setPistonState(pistons[0], true));
         queue.thenRun(3, () -> setPistonState(pistons[0], false));
-
         queue.thenRun(1, () -> setPistonState(pistons[1], true));
         queue.thenRun(3, () -> setPistonState(pistons[1], false));
-
         queue.thenRun(() -> {
             try {
                 Block furnace = chest.getRelative(BlockFace.DOWN);
                 furnace.getWorld().playEffect(furnace.getLocation(), Effect.STEP_SOUND, Material.STONE);
-
                 World world = start.getWorld();
                 for (int y = height; y > world.getMinHeight(); y--) {
                     Block b = world.getBlockAt(x, y, z);
-
                     if (!Slimefun.getProtectionManager().hasPermission(Bukkit.getOfflinePlayer(owner), b, Interaction.BREAK_BLOCK)) {
                         stop(MinerStoppingReason.NO_PERMISSION);
                         return;
                     }
-
                     if (miner.canMine(b) && push(miner.getOutcome(b.getType()))) {
                         furnace.getWorld().playEffect(furnace.getLocation(), Effect.STEP_SOUND, b.getType());
-                        furnace.getWorld().playSound(furnace.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.2F, 1F);
-
+                        furnace.getWorld().playSound(furnace.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.2F, 1.0F);
                         b.setType(Material.AIR);
                         fuelLevel--;
                         ores++;
-
                         // Repeat the same column when we hit an ore.
                         Slimefun.runSync(this, 4);
                         return;
                     }
                 }
-
                 nextColumn();
-            } catch (Exception e) {
+            } catch ( e) {
                 Slimefun.logger().log(Level.SEVERE, e, () -> "An Error occurred while running an Industrial Miner at " + new BlockPosition(chest));
                 stop();
             }
         });
-
         queue.execute(Slimefun.instance());
     }
 
@@ -387,5 +364,4 @@ class MiningTask implements Runnable {
 
         block.getWorld().playSound(block.getLocation(), extended ? Sound.BLOCK_PISTON_EXTEND : Sound.BLOCK_PISTON_CONTRACT, 0.1F, 1F);
     }
-
 }
