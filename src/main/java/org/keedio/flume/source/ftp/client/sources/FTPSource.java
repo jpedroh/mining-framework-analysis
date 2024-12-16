@@ -3,30 +3,29 @@
  */
 package org.keedio.flume.source.ftp.client.sources;
 
-import org.keedio.flume.source.ftp.client.KeedioSource;
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
-
+import org.apache.commons.net.ftp.FTPReply;
+import org.keedio.flume.source.ftp.client.KeedioSource;
 import org.keedio.flume.source.ftp.client.filters.KeedioFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.commons.net.ftp.FTPReply;
 
-import java.io.IOException;
-import java.util.Arrays;
-import org.apache.commons.net.ftp.FTP;
 
 /**
  *
  * @author Luis Lázaro lalazaro@keedio.com Keedio
  */
+//endclass
 public class FTPSource extends KeedioSource<FTPFile> {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(FTPSource.class);
+
     private FTPClient ftpClient = new FTPClient();
 
     /**
@@ -93,21 +92,21 @@ public class FTPSource extends KeedioSource<FTPFile> {
             ftpClient.changeWorkingDirectory(dir);        
     }
 
-    @Override
     /**
      * @return list with objects in directory
      * @param current directory
      */
+    @Override
     public List<FTPFile> listElements(String dir) throws IOException {
         FTPFile[] subFiles = getFtpClient().listFiles(dir);
         return Arrays.asList(subFiles);
     }
 
-    @Override
     /**
      * @param Object
      * @return InputStream
      */
+    @Override
     public InputStream getInputStream(FTPFile file) throws IOException {
         if (isFlushLines()) {
             this.setFileType(FTP.ASCII_FILE_TYPE);
@@ -234,5 +233,4 @@ public class FTPSource extends KeedioSource<FTPFile> {
         list = Arrays.asList(subFiles);
         return list;
     }
-
-} //endclass
+}

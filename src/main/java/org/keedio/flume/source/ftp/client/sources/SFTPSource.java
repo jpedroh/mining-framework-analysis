@@ -3,12 +3,12 @@
  */
 package org.keedio.flume.source.ftp.client.sources;
 
+import com.jcraft.jsch.*;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.*;
 import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
 import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,19 +20,24 @@ import org.keedio.flume.source.ftp.client.filters.KeedioFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  *
  * @author Luis Lázaro lalazaro@keedio.com Keedio
  */
 public class SFTPSource extends KeedioSource<ChannelSftp.LsEntry> {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(SFTPSource.class);
 
     private String knownHosts;
+
     private JSch jsch;
+
     private Session sessionSftp;
+
     private Channel channel;
+
     private ChannelSftp sftpClient;
+
     private String strictHostKeyChecking;
 
     /**
@@ -68,16 +73,14 @@ public class SFTPSource extends KeedioSource<ChannelSftp.LsEntry> {
                 channel = sessionSftp.openChannel("sftp");
                 channel.connect();
                 if (channel.isConnected()) {
-                    sftpClient = (ChannelSftp) channel;
+                    sftpClient = ((ChannelSftp) (channel));
                 }
             }
-
             if (getWorkingDirectory() != null) {
                 sftpClient.cd(getWorkingDirectory());
             }
-
         } catch (JSchException e) {
-            if (!(sessionSftp.isConnected())) {
+            if (!sessionSftp.isConnected()) {
                 LOGGER.info("JSchException ", e);
                 this.setConnected(false);
             }
@@ -236,13 +239,13 @@ public class SFTPSource extends KeedioSource<ChannelSftp.LsEntry> {
         return file.getAttrs().isDir();
     }
 
-    @Override
     /**
      * There is no attribute to check isfile in SftpATTRS
      *
      * @return boolean
      * @param file to check
      */
+    @Override
     public boolean isFile(ChannelSftp.LsEntry file) {
         boolean isfile;
         if ((!isDirectory(file)) && (!isLink(file))) {
@@ -303,24 +306,22 @@ public class SFTPSource extends KeedioSource<ChannelSftp.LsEntry> {
         return link;
     }
 
-    @Override
     /**
      *
      * @return String directory retrieved for server on connect
      */
+    @Override
     public String getDirectoryserver() throws IOException {
         String printWorkingDirectory = "";
         try {
             printWorkingDirectory = sftpClient.getHome();
         } catch (SftpException e) {
-            LOGGER.error("Error getting printworkingdirectory for server -sftpsource",e);
+            LOGGER.error("Error getting printworkingdirectory for server -sftpsource", e);
             throw new IOException(e.getMessage());
         }
-        
-        if (getWorkingDirectory() != null){
-            return printWorkingDirectory + "/" + getWorkingDirectory();
+        if (getWorkingDirectory() != null) {
+            return (printWorkingDirectory + "/") + getWorkingDirectory();
         }
-        
         return printWorkingDirectory;
     }
 
@@ -356,6 +357,4 @@ public class SFTPSource extends KeedioSource<ChannelSftp.LsEntry> {
         }
         return listFiltered;
     }
-    
-  
 }
