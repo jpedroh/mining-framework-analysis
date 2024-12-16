@@ -1,24 +1,33 @@
 package de.akquinet.jbosscc.needle.configuration;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
-
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
 import de.akquinet.jbosscc.needle.injection.InjectionProviderInstancesSupplier;
 import de.akquinet.jbosscc.needle.mock.MockProvider;
+import java.lang.annotation.Annotation;
+import java.util.Set;
+
 
 public final class NeedleConfiguration {
-
     private Set<Class<Annotation>> customInjectionAnnotations;
+
     private Set<Class<InjectionProvider<?>>> customInjectionProviderClasses;
-    private Set<Class<InjectionProviderInstancesSupplier>> customInjectionProviderInstancesSupplierClasses;
+
     private String persistenceunitName;
+
     private String hibernateCfgFilename;
+
     private Class<? extends MockProvider> mockProviderClass;
+
+    public static final String CUSTOM_INSTANCES_SUPPLIER_CLASSES_KEY = "custom.instances.supplier.classes";
+
     private String dbOperationClassName;
+
     private String jdbcUrl;
+
     private String jdbcDriver;
+
     private String jdbcUser;
+
     private String jdbcPassword;
 
     /**
@@ -61,6 +70,10 @@ public final class NeedleConfiguration {
         this.dbOperationClassName = dbOperationClassName;
     }
 
+    public Set<Class<InjectionProviderInstancesSupplier>> getCustomInjectionProviderInstancesSupplierClasses() {
+        return customInjectionProviderInstancesSupplierClasses;
+    }
+
     public String getJdbcUrl() {
         return jdbcUrl;
     }
@@ -72,15 +85,15 @@ public final class NeedleConfiguration {
     public String getJdbcDriver() {
         return jdbcDriver;
     }
-    
+
     public void setJdbcDriver(final String jdbcDriver) {
-        this.jdbcDriver =jdbcDriver;
+        this.jdbcDriver = jdbcDriver;
     }
 
     public String getJdbcUser() {
         return jdbcUser;
     }
-    
+
     public void setJdbcUser(final String jdbcUser) {
         this.jdbcUser = jdbcUser;
     }
@@ -88,14 +101,14 @@ public final class NeedleConfiguration {
     public String getJdbcPassword() {
         return jdbcPassword;
     }
-    
+
     public void setJdbcPassword(final String jdbcPassword) {
         this.jdbcPassword = jdbcPassword;
     }
 
     /**
      * Returns the configured mock provider class
-     * 
+     *
      * @return mock provider class name or null
      */
     public Class<? extends MockProvider> getMockProviderClass() {
@@ -131,14 +144,6 @@ public final class NeedleConfiguration {
     public void setHibernateCfgFilename(final String hibernateCfgFilename) {
         this.hibernateCfgFilename = hibernateCfgFilename;
     }
-    
-    public Set<Class<InjectionProviderInstancesSupplier>> getCustomInjectionProviderInstancesSupplierClasses() {
-        return customInjectionProviderInstancesSupplierClasses;
-    }
-    
-    public void setCustomInjectionProviderInstancesSupplierClasses(final Set<Class<InjectionProviderInstancesSupplier>> supplier){
-        this.customInjectionProviderInstancesSupplierClasses = supplier;
-    } 
 
     @Override
     public String toString() {
@@ -146,10 +151,7 @@ public final class NeedleConfiguration {
         builder.append("\nPU_NAME=").append(getPersistenceunitName());
         builder.append("\nCFG_FILE=").append(getHibernateCfgFilename());
         builder.append("\nDB_OPERATION=").append(getDBOperationClassName());
-        builder.append("\nMOCK_PROVIDER=").append(getMockProviderClass());
-
+        builder.append("\nMOCK_PROVIDER=").append(mockProviderClass != null ? mockProviderClass.getName() : null);
         return builder.toString();
     }
-
-    
 }

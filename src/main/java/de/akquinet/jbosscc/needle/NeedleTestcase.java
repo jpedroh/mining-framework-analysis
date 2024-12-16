@@ -1,16 +1,5 @@
 package de.akquinet.jbosscc.needle;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map.Entry;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.akquinet.jbosscc.needle.annotation.InjectInto;
 import de.akquinet.jbosscc.needle.annotation.InjectIntoMany;
 import de.akquinet.jbosscc.needle.annotation.ObjectUnderTest;
@@ -24,6 +13,16 @@ import de.akquinet.jbosscc.needle.mock.MockAnnotationProcessor;
 import de.akquinet.jbosscc.needle.mock.MockProvider;
 import de.akquinet.jbosscc.needle.mock.SpyAnnotationProcessor;
 import de.akquinet.jbosscc.needle.reflection.ReflectionUtil;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map.Entry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Abstract test case to process and initialize all fields annotated with
@@ -38,17 +37,17 @@ import de.akquinet.jbosscc.needle.reflection.ReflectionUtil;
  * <li>Field injection</li>
  * <li>Method injection</li>
  * </ol>
- * 
+ *
  * @see ObjectUnderTest
  * @see InjectInto
  * @see InjectIntoMany
  * @see InjectionProvider
  */
 public abstract class NeedleTestcase {
-
     private static final Logger LOG = LoggerFactory.getLogger(NeedleTestcase.class);
 
     private final InjectionAnnotationProcessor injectionIntoAnnotationProcessor = new InjectionAnnotationProcessor();
+
     private final TestcaseInjectionProcessor testcaseInjectionProcessor = new TestcaseInjectionProcessor();
 
     private final MockAnnotationProcessor mockAnnotationProcessor = new MockAnnotationProcessor();
@@ -62,9 +61,9 @@ public abstract class NeedleTestcase {
     /**
      * Create an instance of {@link NeedleTestcase} with optional additional
      * injection provider.
-     * 
+     *
      * @param injectionProvider
-     *            optional additional injection provider
+     * 		optional additional injection provider
      * @see InjectionProvider
      */
     protected NeedleTestcase(final InjectionProvider<?>... injectionProvider) {
@@ -81,21 +80,17 @@ public abstract class NeedleTestcase {
      * of dependencies will be executed. After initialization,
      * {@link InjectIntoMany} and {@link InjectInto} annotations are processed
      * for optional additional injections.
-     * 
+     *
      * @param test
-     *            an instance of the test
+     * 		an instance of the test
      * @throws Exception
-     *             thrown if an initialization error occurs.
+     * 		thrown if an initialization error occurs.
      */
     protected final void initTestcase(final Object test) throws Exception {
         LOG.info("init testcase {}", test);
-
         context = new NeedleContext(test);
-
         spyAnnotationProcessor = new SpyAnnotationProcessor(configuration.getMockProvider());
-
         final List<Field> fields = context.getAnnotatedTestcaseFields(ObjectUnderTest.class);
-
         LOG.debug("found fields {}", fields);
         for (final Field field : fields) {
             LOG.debug("found field {}", field.getName());
@@ -103,19 +98,17 @@ public abstract class NeedleTestcase {
             try {
                 final Object instance = setInstanceIfNotNull(field, objectUnderTestAnnotation, test);
                 initInstance(instance);
-            } catch (final InstantiationException e) {
+            } catch (final java.lang.InstantiationException e) {
                 LOG.error(e.getMessage(), e);
-            } catch (final IllegalAccessException e) {
+            } catch (final java.lang.IllegalAccessException e) {
                 LOG.error(e.getMessage(), e);
             }
         }
-
         mockAnnotationProcessor.process(context, configuration);
         injectionIntoAnnotationProcessor.process(context);
         testcaseInjectionProcessor.process(context, configuration);
         beforePostConstruct();
         configuration.getPostConstructProcessor().process(context);
-
     }
 
     /**
@@ -131,7 +124,7 @@ public abstract class NeedleTestcase {
      * annotations are supported.
      * 
      * @param instance
-     *            the instance to initialize.
+     *        the instance to initialize.
      * @throws ObjectUnderTestInstantiationException
      */
     protected final void initInstance(final Object instance) {
@@ -165,7 +158,8 @@ public abstract class NeedleTestcase {
 
             try {
                 ReflectionUtil.invokeMethod(method, instance, arguments);
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 LOG.warn("could not invoke method", e);
             }
 
@@ -204,7 +198,8 @@ public abstract class NeedleTestcase {
                 try {
                     ReflectionUtil.setField(field, instance, injection.getValue());
 
-                } catch (final Exception e) {
+                }
+                catch (final Exception e) {
                     LOG.error(e.getMessage(), e);
                 }
             }
@@ -251,11 +246,11 @@ public abstract class NeedleTestcase {
 
     }
 
-    private void setField(final Field field, final Object test, final Object instance)
-            throws ObjectUnderTestInstantiationException {
+    private void setField(final Field field, final Object test, final Object instance) throws ObjectUnderTestInstantiationException {
         try {
             ReflectionUtil.setField(field, test, instance);
-        } catch (final Exception e) {
+        }
+        catch (final Exception e) {
             throw new ObjectUnderTestInstantiationException(e);
         }
     }
@@ -267,13 +262,16 @@ public abstract class NeedleTestcase {
 
             return implementation.newInstance();
 
-        } catch (final NoSuchMethodException e) {
+        }
+        catch (final NoSuchMethodException e) {
             throw new ObjectUnderTestInstantiationException("could not create an instance of object under test "
                     + implementation + ",implementation has no public no-arguments constructor", e);
-        } catch (final InstantiationException e) {
+        }
+        catch (final InstantiationException e) {
 
             throw new ObjectUnderTestInstantiationException(e);
-        } catch (final IllegalAccessException e) {
+        }
+        catch (final IllegalAccessException e) {
             throw new ObjectUnderTestInstantiationException(e);
         }
 
@@ -305,7 +303,8 @@ public abstract class NeedleTestcase {
 
             try {
                 return constructor.newInstance(arguments);
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 throw new ObjectUnderTestInstantiationException(e);
             }
 
@@ -329,13 +328,12 @@ public abstract class NeedleTestcase {
      * injected with the given key.
      * 
      * @param key
-     *            the key of the injected object, see
-     *            {@link InjectionProvider#getKey(InjectionTargetInformation)}
+     *        the key of the injected object, see {@link InjectionProvider#getKey(InjectionTargetInformation)}
      * @return the injected object or null
      */
     @SuppressWarnings("unchecked")
     public <X> X getInjectedObject(final Object key) {
-        return (X) context.getInjectedObject(key);
+        return (X)context.getInjectedObject(key);
     }
 
     /**
@@ -345,11 +343,11 @@ public abstract class NeedleTestcase {
      */
     @SuppressWarnings("unchecked")
     public <X extends MockProvider> X getMockProvider() {
-        return (X) configuration.getMockProvider();
+        return (X)configuration.getMockProvider();
     }
 
     private interface InjectionTargetInformationFactory {
-        InjectionTargetInformation create(Class<?> parameterType, int parameterIndex);
+        public abstract InjectionTargetInformation create(Class<?> parameterType, int parameterIndex);
     }
 
     private Entry<Object, Object> inject(final InjectionTargetInformation injectionTargetInformation) {
