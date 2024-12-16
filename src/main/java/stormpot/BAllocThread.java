@@ -22,43 +22,54 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 
+
 final class BAllocThread<T extends Poolable> implements Runnable {
   /**
    * The amount of time, in nanoseconds, to wait for more work when the
    * shutdown process has deallocated all the dead and live slots it could
    * get its hands on, but there are still (claimed) slots left.
    */
-  private final static long shutdownPauseNanos =
-      TimeUnit.MILLISECONDS.toNanos(10);
+  private static final long shutdownPauseNanos = TimeUnit.MILLISECONDS.toNanos(10);
 
   private final BlockingQueue<BSlot<T>> live;
+
   private final DisregardBPile<T> disregardPile;
+
   private final Reallocator<T> allocator;
+
   private final BSlot<T> poisonPill;
+
   private final MetricsRecorder metricsRecorder;
+
   private final Expiration<? super T> expiration;
+
   private final boolean backgroundExpirationEnabled;
+
   private final PreciseLeakDetector leakDetector;
+
   private final CountDownLatch completionLatch;
+
   private final BlockingQueue<BSlot<T>> dead;
+
   private final AtomicInteger poisonedSlots;
 
   // Single reader: this. Many writers.
+  // Single reader: this. Many writers.
   private volatile int targetSize;
+
   private volatile boolean shutdown;
 
   // Many readers. Single writer: this.
+  // Many readers. Single writer: this.
   private volatile long allocationCount;
+
   private volatile long failedAllocationCount;
 
   private int size;
+
   private boolean didAnythingLastIteration;
 
-  public BAllocThread(
-      BlockingQueue<BSlot<T>> live,
-      DisregardBPile<T> disregardPile,
-      Config<T> config,
-      BSlot<T> poisonPill) {
+  public BAllocThread(BlockingQueue<BSlot<T>> live, DisregardBPile<T> disregardPile, Config<T> config, BSlot<T> poisonPill) {
     this.live = live;
     this.disregardPile = disregardPile;
     this.allocator = config.getAdaptedReallocator();
@@ -67,13 +78,13 @@ final class BAllocThread<T extends Poolable> implements Runnable {
     this.poisonPill = poisonPill;
     this.expiration = config.getExpiration();
     this.backgroundExpirationEnabled = config.isBackgroundExpirationEnabled();
-    this.leakDetector = config.isPreciseLeakDetectionEnabled() ?
-        new PreciseLeakDetector() : null;
+    this.leakDetector = (config.isPreciseLeakDetectionEnabled()) ? new PreciseLeakDetector() : null;
     this.completionLatch = new CountDownLatch(1);
     this.dead = new LinkedTransferQueue<>();
     this.poisonedSlots = new AtomicInteger();
     this.size = 0;
-    this.didAnythingLastIteration = true; // start out busy
+    this.didAnythingLastIteration = true;// start out busy
+
   }
 
   @Override
@@ -99,9 +110,8 @@ final class BAllocThread<T extends Poolable> implements Runnable {
   }
 
   private void replenishPool() throws InterruptedException {
-    boolean weHaveWorkToDo = size != targetSize || poisonedSlots.get() > 0;
-    long deadPollTimeout = weHaveWorkToDo?
-        (didAnythingLastIteration? 0 : 10) : 50;
+    boolean weHaveWorkToDo = (size != targetSize) || (poisonedSlots.get() > 0);
+    long deadPollTimeout = (weHaveWorkToDo) ? didAnythingLastIteration ? 0 : 10 : 50;
     didAnythingLastIteration = false;
     if (size < targetSize) {
       increaseSizeByAllocating();
@@ -112,17 +122,15 @@ final class BAllocThread<T extends Poolable> implements Runnable {
     } else if (slot != null) {
       reallocateDeadSlot(slot);
     }
-
     if (shutdown) {
       // Prior allocations might notice that we've been shut down. In that
       // case, we need to skip the eager reallocation of poisoned slots.
       return;
     }
-
     if (poisonedSlots.get() > 0) {
       // Proactively seek out and try to heal poisoned slots
       proactivelyHealPoison();
-    } else if (backgroundExpirationEnabled && !weHaveWorkToDo) {
+    } else if (backgroundExpirationEnabled && (!weHaveWorkToDo)) {
       backgroundExpirationCheck();
     }
   }
@@ -178,12 +186,13 @@ final class BAllocThread<T extends Poolable> implements Runnable {
       if (slot.isLive() && slot.live2claim()) {
         boolean expired;
         try {
-          expired = slot.poison != null || expiration.hasExpired(slot);
-        } catch (Exception ignore) {
+          expired = (slot.poison != null) || expiration.hasExpired(slot);
+        } catch (java.lang.Exception ignore) {
           expired = true;
         }
         if (expired) {
-          slot.claim2dead(); // Not strictly necessary
+          slot.claim2dead();// Not strictly necessary
+
           dead.offer(slot);
           didAnythingLastIteration = true;
         } else {
@@ -231,7 +240,7 @@ final class BAllocThread<T extends Poolable> implements Runnable {
       } else {
         allocationCount++;
       }
-    } catch (Exception e) {
+    } catch (java.lang.Exception e) {
       poisonedSlots.getAndIncrement();
       failedAllocationCount++;
       slot.poison = e;
@@ -259,7 +268,8 @@ final class BAllocThread<T extends Poolable> implements Runnable {
       } else {
         poisonedSlots.getAndDecrement();
       }
-    } catch (Exception ignore) { // NOPMD
+    } catch (java.lang.Exception ignore) {
+      // NOPMD
       // Ignored as per specification
     }
     slot.poison = null;
@@ -282,7 +292,7 @@ final class BAllocThread<T extends Poolable> implements Runnable {
         } else {
           allocationCount++;
         }
-      } catch (Exception e) {
+      } catch (java.lang.Exception e) {
         poisonedSlots.getAndIncrement();
         failedAllocationCount++;
         slot.poison = e;
