@@ -53,6 +53,7 @@ import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+
 /**
  * Scan-based valve.
  *
@@ -65,7 +66,6 @@ import lombok.ToString;
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = { "limit", "attributes" })
 public final class ScanValve implements Valve {
-
     /**
      * Limit to use for every query.
      */
@@ -86,80 +86,46 @@ public final class ScanValve implements Valve {
 
     /**
      * Public ctor.
-     * @param lmt Limit
-     * @param attrs Attributes to pre-load
+     *
+     * @param lmt
+     * 		Limit
+     * @param attrs
+     * 		Attributes to pre-load
      */
     private ScanValve(final int lmt, final Iterable<String> attrs) {
         this.limit = lmt;
-        this.attributes = Iterables.toArray(attrs, String.class);
+        this.attributes = Iterables.toArray(attrs, java.lang.String.class);
     }
 
     // @checkstyle ParameterNumber (5 lines)
     @Override
-    public Dosage fetch(final Credentials credentials,
-        final String table, final Map<String, Condition> conditions,
-        final Collection<String> keys) throws IOException {
+    public Dosage fetch(final Credentials credentials, final String table, final Map<String, Condition> conditions, final Collection<String> keys) throws IOException {
         final AmazonDynamoDB aws = credentials.aws();
         try {
-            final Collection<String> attrs = new HashSet<String>(
-                Arrays.asList(this.attributes)
-            );
+            final Collection<String> attrs = new HashSet<String>(Arrays.asList(this.attributes));
             attrs.addAll(keys);
-            final ScanRequest request = new ScanRequest()
-                .withTableName(table)
-                .withAttributesToGet(attrs)
-                .withReturnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
-                .withScanFilter(conditions)
-                .withLimit(this.limit);
+            final ScanRequest request = new ScanRequest().withTableName(table).withAttributesToGet(attrs).withReturnConsumedCapacity(ReturnConsumedCapacity.TOTAL).withScanFilter(conditions).withLimit(this.limit);
             final long start = System.currentTimeMillis();
             final ScanResult result = aws.scan(request);
-            Logger.info(
-                this,
-                "#items(): loaded %d item(s) from '%s' using %s, %s, in %[ms]s",
-                result.getCount(), table, conditions,
-                new PrintableConsumedCapacity(
-                    result.getConsumedCapacity()
-                ).print(),
-                System.currentTimeMillis() - start
-            );
+            Logger.info(this, "#items(): loaded %d item(s) from '%s' using %s, %s, in %[ms]s", result.getCount(), table, conditions, new PrintableConsumedCapacity(result.getConsumedCapacity()).print(), System.currentTimeMillis() - start);
             return new ScanValve.NextDosage(credentials, request, result);
         } catch (final AmazonClientException ex) {
-            throw new IOException(
-                String.format(
-                    "failed to fetch from \"%s\" by %s and %s",
-                    table, conditions, keys
-                ),
-                ex
-            );
+            throw new IOException(String.format("failed to fetch from \"%s\" by %s and %s", table, conditions, keys), ex);
         } finally {
             aws.shutdown();
         }
     }
 
     @Override
-    public int count(final Credentials credentials, final String table,
-        final Map<String, Condition> conditions) throws IOException {
+    public int count(final Credentials credentials, final String table, final Map<String, Condition> conditions) throws IOException {
         final AmazonDynamoDB aws = credentials.aws();
         try {
-            final ScanRequest request = new ScanRequest()
-                .withTableName(table)
-                .withReturnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
-                .withScanFilter(conditions)
-                .withSelect(Select.COUNT)
-                .withLimit(Integer.MAX_VALUE);
+            final ScanRequest request = new ScanRequest().withTableName(table).withReturnConsumedCapacity(ReturnConsumedCapacity.TOTAL).withScanFilter(conditions).withSelect(Select.COUNT).withLimit(Integer.MAX_VALUE);
             final long start = System.currentTimeMillis();
-            final ScanResult result = aws.scan(request);
-            final int count = result.getCount();
-            Logger.info(
-                this,
+            final ScanResult rslt = aws.scan(request);
+            final int count = rslt.getCount();
                 // @checkstyle LineLength (1 line)
-                "#total(): COUNT=%d in '%s' using %s, %s, in %[ms]s",
-                count, request.getTableName(), request.getFilterExpression(),
-                new PrintableConsumedCapacity(
-                    result.getConsumedCapacity()
-                ).print(),
-                System.currentTimeMillis() - start
-            );
+            Logger.info(this, "#total(): COUNT=%d in '%s' using %s, %s, in %[ms]s", count, request.getTableName(), request.getFilterExpression(), AwsTable.print(rslt.getConsumedCapacity()), System.currentTimeMillis() - start);
             return count;
         } finally {
             aws.shutdown();
@@ -216,58 +182,55 @@ public final class ScanValve implements Valve {
          * AWS client.
          */
         private final transient Credentials credentials;
+
         /**
          * Query request.
          */
         private final transient ScanRequest request;
+
         /**
          * Query request.
          */
         private final transient ScanResult result;
+
         /**
          * Public ctor.
-         * @param creds Credentials
-         * @param rqst Query request
-         * @param rslt Query result
+         *
+         * @param creds
+         * 		Credentials
+         * @param rqst
+         * 		Query request
+         * @param rslt
+         * 		Query result
          */
-        NextDosage(final Credentials creds, final ScanRequest rqst,
-            final ScanResult rslt) {
+        NextDosage(final Credentials creds, final ScanRequest rqst, final ScanResult rslt) {
             this.credentials = creds;
             this.request = rqst;
             this.result = rslt;
         }
+
         @Override
         public List<Map<String, AttributeValue>> items() {
             return this.result.getItems();
         }
+
         @Override
         public boolean hasNext() {
             return this.result.getLastEvaluatedKey() != null;
         }
+
         @Override
         public Dosage next() {
             if (!this.hasNext()) {
-                throw new IllegalStateException(
-                    "nothing left in the iterator"
-                );
+                throw new IllegalStateException("nothing left in the iterator");
             }
             final AmazonDynamoDB aws = this.credentials.aws();
             try {
-                final ScanRequest rqst = this.request.withExclusiveStartKey(
-                    this.result.getLastEvaluatedKey()
-                );
+                final ScanRequest rqst = this.request.withExclusiveStartKey(this.result.getLastEvaluatedKey());
                 final long start = System.currentTimeMillis();
                 final ScanResult rslt = aws.scan(rqst);
-                Logger.info(
-                    this,
                     // @checkstyle LineLength (1 line)
-                    "#next(): loaded %d item(s) from '%s' using %s, %s, in %[ms]s",
-                    rslt.getCount(), rqst.getTableName(), rqst.getScanFilter(),
-                    new PrintableConsumedCapacity(
-                        rslt.getConsumedCapacity()
-                    ).print(),
-                    System.currentTimeMillis() - start
-                );
+                Logger.info(this, "#next(): loaded %d item(s) from '%s' using %s, %s, in %[ms]s", rslt.getCount(), rqst.getTableName(), rqst.getScanFilter(), new PrintableConsumedCapacity(rslt.getConsumedCapacity()).print(), System.currentTimeMillis() - start);
                 return new ScanValve.NextDosage(this.credentials, rqst, rslt);
             } finally {
                 aws.shutdown();

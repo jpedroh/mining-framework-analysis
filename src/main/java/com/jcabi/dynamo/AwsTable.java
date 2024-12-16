@@ -53,6 +53,7 @@ import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+
 /**
  * Single table in Dynamo, through AWS SDK.
  *
@@ -66,7 +67,6 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode(of = { "credentials", "reg", "self" })
 final class AwsTable implements Table {
-
     /**
      * AWS credentials.
      */
@@ -84,20 +84,22 @@ final class AwsTable implements Table {
 
     /**
      * Public ctor.
-     * @param creds Credentials
-     * @param region Region
-     * @param table Table name
+     *
+     * @param creds
+     * 		Credentials
+     * @param region
+     * 		Region
+     * @param table
+     * 		Table name
      */
-    AwsTable(final Credentials creds, final Region region,
-        final String table) {
+    AwsTable(final Credentials creds, final Region region, final String table) {
         this.credentials = creds;
         this.reg = region;
         this.self = table;
     }
 
     @Override
-    public Item put(final Map<String, AttributeValue> attributes)
-        throws IOException {
+    public Item put(final Map<String, AttributeValue> attributes) throws IOException {
         final AmazonDynamoDB aws = this.credentials.aws();
         try {
             final PutItemRequest request = new PutItemRequest();
@@ -107,29 +109,10 @@ final class AwsTable implements Table {
             request.setReturnConsumedCapacity(ReturnConsumedCapacity.TOTAL);
             final PutItemResult result = aws.putItem(request);
             final long start = System.currentTimeMillis();
-            Logger.info(
-                this, "#put('%[text]s'): created item in '%s', %s, in %[ms]s",
-                attributes, this.self,
-                new PrintableConsumedCapacity(
-                    result.getConsumedCapacity()
-                ).print(),
-                System.currentTimeMillis() - start
-            );
-            return new AwsItem(
-                this.credentials,
-                this.frame(),
-                this.self,
-                new Attributes(attributes).only(this.keys()),
-                new Array<String>(this.keys())
-            );
+            Logger.info(this, "#put('%[text]s'): created item in '%s', %s, in %[ms]s", attributes, this.self, new PrintableConsumedCapacity(result.getConsumedCapacity()).print(), System.currentTimeMillis() - start);
+            return new AwsItem(this.credentials, this.frame(), this.self, new Attributes(attributes).only(this.keys()), new Array<String>(this.keys()));
         } catch (final AmazonClientException ex) {
-            throw new IOException(
-                String.format(
-                    "failed to put into \"%s\" with %s",
-                    this.self, attributes
-                ),
-                ex
-            );
+            throw new IOException(String.format("failed to put into \"%s\" with %s", this.self, attributes), ex);
         } finally {
             aws.shutdown();
         }
@@ -187,8 +170,7 @@ final class AwsTable implements Table {
     }
 
     @Override
-    public void delete(final Map<String, AttributeValue> attributes)
-        throws IOException {
+    public void delete(final Map<String, AttributeValue> attributes) throws IOException {
         final AmazonDynamoDB aws = this.credentials.aws();
         try {
             final DeleteItemRequest request = new DeleteItemRequest();
@@ -198,23 +180,9 @@ final class AwsTable implements Table {
             request.setReturnConsumedCapacity(ReturnConsumedCapacity.TOTAL);
             final DeleteItemResult result = aws.deleteItem(request);
             final long start = System.currentTimeMillis();
-            Logger.info(
-                this,
-                "#delete('%[text]s'): deleted item in '%s', %s, in %[ms]s",
-                attributes, this.self,
-                new PrintableConsumedCapacity(
-                    result.getConsumedCapacity()
-                ).print(),
-                System.currentTimeMillis() - start
-            );
+            Logger.info(this, "#delete('%[text]s'): deleted item in '%s', %s, in %[ms]s", attributes, this.self, new PrintableConsumedCapacity(result.getConsumedCapacity()).print(), System.currentTimeMillis() - start);
         } catch (final AmazonClientException ex) {
-            throw new IOException(
-                String.format(
-                    "failed to delete at \"%s\" by keys %s",
-                    this.self, attributes
-                ),
-                ex
-            );
+            throw new IOException(String.format("failed to delete at \"%s\" by keys %s", this.self, attributes), ex);
         } finally {
             aws.shutdown();
         }
