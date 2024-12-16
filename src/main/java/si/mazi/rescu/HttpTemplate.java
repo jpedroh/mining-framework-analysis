@@ -24,10 +24,6 @@ package si.mazi.rescu;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import si.mazi.rescu.utils.AssertUtil;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,12 +32,15 @@ import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import si.mazi.rescu.utils.AssertUtil;
+
 
 /**
  * Various HTTP utility methods
  */
 class HttpTemplate {
-
     public final static String CHARSET_UTF_8 = "UTF-8";
 
     private final Logger log = LoggerFactory.getLogger(HttpTemplate.class);
@@ -52,7 +51,9 @@ class HttpTemplate {
      * Default request header fields
      */
     private Map<String, String> defaultHttpHeaders = new HashMap<String, String>();
+
     private final int readTimeout = Config.getHttpReadTimeout();
+
     private final Proxy proxy;
 
     /**
@@ -61,14 +62,13 @@ class HttpTemplate {
     public HttpTemplate() {
         objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         defaultHttpHeaders.put("Accept-Charset", CHARSET_UTF_8);
         defaultHttpHeaders.put("Content-Type", "application/x-www-form-urlencoded");
         defaultHttpHeaders.put("Accept", "application/json");
         // User agent provides statistics for servers, but some use it for content negotiation so fake good agents
-        defaultHttpHeaders.put("User-Agent", "ResCU JDK/6 AppleWebKit/535.7 Chrome/16.0.912.36 Safari/535.7"); // custom User-Agent
+        defaultHttpHeaders.put("User-Agent", "ResCU JDK/6 AppleWebKit/535.7 Chrome/16.0.912.36 Safari/535.7");// custom User-Agent
 
-        if (Config.getProxyPort() == null || Config.getProxyHost() == null) {
+        if ((Config.getProxyPort() == null) || (Config.getProxyHost() == null)) {
             proxy = Proxy.NO_PROXY;
         } else {
             proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(Config.getProxyHost(), Config.getProxyPort()));
@@ -89,42 +89,35 @@ class HttpTemplate {
      * @param exceptionType
      * @return String - the fetched JSON String
      */
-    public <T> T executeRequest(String urlString, Class<T> returnType, String requestBody, Map<String, String> httpHeaders, HttpMethod method, String contentType, Class<? extends RuntimeException> exceptionType)
-            throws IOException {
-
+    public <T> T executeRequest(String urlString, Class<T> returnType, String requestBody, Map<String, String> httpHeaders, HttpMethod method, String contentType, Class<? extends RuntimeException> exceptionType) throws IOException {
         log.debug("Executing {} request at {}", method, urlString);
         log.trace("Request body = {}", requestBody);
         log.trace("Request headers = {}", httpHeaders);
-
         AssertUtil.notNull(urlString, "urlString cannot be null");
         AssertUtil.notNull(httpHeaders, "httpHeaders should not be null");
-
         if (contentType != null) {
             httpHeaders.put("Content-Type", contentType);
         }
-
-        int contentLength = requestBody == null ? 0 : requestBody.length();
+        int contentLength = (requestBody == null) ? 0 : requestBody.length();
         HttpURLConnection connection = configureURLConnection(method, urlString, httpHeaders, contentLength);
-
         if (contentLength > 0) {
             // Write the request body
             connection.getOutputStream().write(requestBody.getBytes(CHARSET_UTF_8));
         }
-
         int httpStatus = connection.getResponseCode();
         log.debug("Request http status = {}", httpStatus);
-       
-        switch(httpStatus) {
-        case 200:
-        case 201:
-        	InputStream inputStream = connection.getInputStream();
-        	String responseString = readInputStreamAsEncodedString(inputStream, connection);
-            log.trace("Response body: {}", responseString);           
-            return objectMapper.readValue(responseString, returnType);
-        case 204:      	
-        	return null;       	
-        	default:
-        		String httpBody = readInputStreamAsEncodedString(connection.getErrorStream(), connection);
+        switch (httpStatus) {
+            case 200 :
+            case 201 :
+                InputStream inputStream = connection.getInputStream();
+                String responseString = readInputStreamAsEncodedString(inputStream, connection);
+                log.trace("Response body: {}", responseString);
+                return objectMapper.readValue(responseString, returnType);
+            case 204 :
+                return null;
+            default :
+            // not a 2xx response code
+                String httpBody = readInputStreamAsEncodedString(connection.getErrorStream(), connection);
                 log.trace("Http call returned {}; response body:\n{}", httpStatus, httpBody);
                 if (exceptionType != null) {
                     RuntimeException exception = null;
@@ -137,7 +130,7 @@ class HttpTemplate {
                         throw exception;
                     }
                 }
-                throw new IOException(String.format("HTTP status code was %d; response body: %s", httpStatus, httpBody));    	
+                throw new IOException(String.format("HTTP status code was %d; response body: %s", httpStatus, httpBody));
         }
     }
 
@@ -211,24 +204,24 @@ class HttpTemplate {
         if (inputStream == null) {
             return null;
         }
-
         BufferedReader reader = null;
         try {
             String responseEncoding = getResponseEncoding(connection);
             if (izGzipped(connection)) {
                 inputStream = new GZIPInputStream(inputStream);
             }
-            final InputStreamReader in = responseEncoding != null ? new InputStreamReader(inputStream, responseEncoding) : new InputStreamReader(inputStream);
+            final InputStreamReader in = (responseEncoding != null) ? new InputStreamReader(inputStream, responseEncoding) : new InputStreamReader(inputStream);
             reader = new BufferedReader(in);
             StringBuilder sb = new StringBuilder();
-            for (String line; (line = reader.readLine()) != null; ) {
+            for (String line; (line = reader.readLine()) != null;) {
                 sb.append(line);
             }
             return sb.toString();
         } finally {
             inputStream.close();
-            if (reader != null) 
-            	reader.close();
+            if (reader != null) {
+                reader.close();
+            }
         }
     }
 
@@ -257,5 +250,4 @@ class HttpTemplate {
         }
         return charset;
     }
-
 }
