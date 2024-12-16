@@ -12,21 +12,6 @@
  */
 package org.omnifaces.util;
 
-import static java.util.Arrays.asList;
-import static java.util.regex.Pattern.quote;
-import static javax.faces.component.visit.VisitContext.createVisitContext;
-import static javax.faces.component.visit.VisitResult.ACCEPT;
-import static org.omnifaces.util.Faces.getContext;
-import static org.omnifaces.util.Faces.getELContext;
-import static org.omnifaces.util.Faces.getFaceletContext;
-import static org.omnifaces.util.Faces.getViewRoot;
-import static org.omnifaces.util.Faces.setContext;
-import static org.omnifaces.util.FacesLocal.getRenderKit;
-import static org.omnifaces.util.FacesLocal.normalizeViewId;
-import static org.omnifaces.util.Renderers.RENDERER_TYPE_JS;
-import static org.omnifaces.util.Utils.isEmpty;
-import static org.omnifaces.util.Utils.isOneInstanceOf;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -36,7 +21,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.faces.FacesException;
@@ -72,9 +56,23 @@ import javax.faces.event.MethodExpressionActionListener;
 import javax.faces.render.RenderKit;
 import javax.faces.view.ViewDeclarationLanguage;
 import javax.faces.view.facelets.FaceletContext;
-
 import org.omnifaces.component.ParamHolder;
 import org.omnifaces.component.SimpleParam;
+import static java.util.Arrays.asList;
+import static java.util.regex.Pattern.quote;
+import static javax.faces.component.visit.VisitContext.createVisitContext;
+import static javax.faces.component.visit.VisitResult.ACCEPT;
+import static org.omnifaces.util.Faces.getContext;
+import static org.omnifaces.util.Faces.getELContext;
+import static org.omnifaces.util.Faces.getFaceletContext;
+import static org.omnifaces.util.Faces.getViewRoot;
+import static org.omnifaces.util.Faces.setContext;
+import static org.omnifaces.util.FacesLocal.getRenderKit;
+import static org.omnifaces.util.FacesLocal.normalizeViewId;
+import static org.omnifaces.util.Renderers.RENDERER_TYPE_JS;
+import static org.omnifaces.util.Utils.isEmpty;
+import static org.omnifaces.util.Utils.isOneInstanceOf;
+
 
 /**
  * <p>
@@ -127,18 +125,15 @@ import org.omnifaces.component.SimpleParam;
  * @author Arjan Tijms
  */
 public final class Components {
-
 	// Constants ------------------------------------------------------------------------------------------------------
+	private static final String ERROR_INVALID_PARENT = "Component '%s' must have a parent of type '%s', but it cannot be found.";
 
-	private static final String ERROR_INVALID_PARENT =
-		"Component '%s' must have a parent of type '%s', but it cannot be found.";
-	private static final String ERROR_INVALID_DIRECT_PARENT =
-		"Component '%s' must have a direct parent of type '%s', but it cannot be found.";
+	private static final String ERROR_INVALID_DIRECT_PARENT = "Component '%s' must have a direct parent of type '%s', but it cannot be found.";
+
 	private static final String ERROR_CHILDREN_DISALLOWED =
 		"Component '%s' must have no children. Encountered children of types '%s'.";
 
 	// Constructors ---------------------------------------------------------------------------------------------------
-
 	private Components() {
 		// Hide constructor.
 	}
@@ -359,17 +354,30 @@ public final class Components {
 	}
 
 	/**
+<<<<<<< LEFT
 	 * Returns <code>true</code> if the given visit context contains the visit hint that iteration should be skipped.
 	 * @param context The involved visit context.
 	 * @return <code>true</code> if the given visit context contains the visit hint that iteration should be skipped.
 	 * @since 1.3
+=======
+	 * Create and include the composite component of the given library and resource name as child of the given UI
+	 * component parent and return the created composite component.
+	 * This has the same effect as using <code>xmlns:my="http://xmlns.jcp.org/jsf/composite/libraryName</code> and
+	 * <code>&lt;my:tagName&gt;</code>. The given component ID must be unique relative to the current naming
+	 * container parent and is mandatory for functioning of input components inside the composite, if any.
+	 * @param parent The parent component to include the composite component in.
+	 * @param libraryName The library name of the composite component (path after "http://xmlns.jcp.org/jsf/composite/").
+	 * @param tagName The tag name of the composite component.
+	 * @param id The component ID of the composite component.
+	 * @return The created composite component, which can if necessary be used to set more custom attributes on it.
+	 * @since 1.5
+>>>>>>> RIGHT
 	 */
 	public static boolean shouldVisitSkipIteration(VisitContext context) {
 		try {
 			// JSF 2.1.
 			return context.getHints().contains(VisitHint.valueOf("SKIP_ITERATION"));
-		}
-		catch (IllegalArgumentException e) {
+		} catch (java.lang.IllegalArgumentException e) {
 			// JSF 2.0.
 			return context.getFacesContext().getAttributes().get("javax.faces.visit.SKIP_ITERATION") == Boolean.TRUE;
 		}
@@ -419,11 +427,14 @@ public final class Components {
 	 *
 	 */
 	public static class ForEach {
-
 		private FacesContext facesContext;
+
 		private UIComponent root;
+
 		private Collection<String> ids;
+
 		private Set<VisitHint> hints;
+
 		private Class<?>[] types;
 
 		public ForEach() {
@@ -572,8 +583,8 @@ public final class Components {
 		}
 
 		private static class TypesVisitCallback implements VisitCallback {
-
 			private Class<?>[] types;
+
 			private VisitCallback next;
 
 			public TypesVisitCallback(Class<?>[] types, VisitCallback next) {
@@ -590,7 +601,6 @@ public final class Components {
 			}
 		}
 	}
-
 
 	// Manipulation ---------------------------------------------------------------------------------------------------
 
@@ -615,41 +625,43 @@ public final class Components {
 	 * This has the same effect as using <code>xmlns:my="http://xmlns.jcp.org/jsf/composite/libraryName</code> and
 	 * <code>&lt;my:tagName&gt;</code>. The given component ID must be unique relative to the current naming
 	 * container parent and is mandatory for functioning of input components inside the composite, if any.
-	 * @param parent The parent component to include the composite component in.
-	 * @param libraryName The library name of the composite component (path after "http://xmlns.jcp.org/jsf/composite/").
-	 * @param tagName The tag name of the composite component.
-	 * @param id The component ID of the composite component.
+	 *
+	 * @param parent
+	 * 		The parent component to include the composite component in.
+	 * @param libraryName
+	 * 		The library name of the composite component (path after "http://xmlns.jcp.org/jsf/composite/").
+	 * @param tagName
+	 * 		The tag name of the composite component.
+	 * @param id
+	 * 		The component ID of the composite component.
+	 * @param attributes
+	 * 		The attributes to be set on the composite component.
 	 * @return The created composite component, which can if necessary be used to set more custom attributes on it.
-	 * @since 1.5
 	 */
 	public static UIComponent includeCompositeComponent(UIComponent parent, String libraryName, String tagName, String id) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		Application application = context.getApplication();
 		FaceletContext faceletContext = FacesLocal.getFaceletContext(context);
-
 		// This basically creates <ui:component> based on <composite:interface>.
 		Resource resource = application.getResourceHandler().createResource(tagName, libraryName);
 		UIComponent composite = application.createComponent(context, resource);
-		composite.setId(id); // Mandatory for the case composite is part of UIForm! Otherwise JSF can't find inputs.
-
+		// Mandatory for the case composite is part of UIForm! Otherwise JSF can't find inputs.
+		composite.setId(id);
 		// This basically creates <composite:implementation>.
 		UIComponent implementation = application.createComponent(UIPanel.COMPONENT_TYPE);
 		implementation.setRendererType("javax.faces.Group");
 		composite.getFacets().put(UIComponent.COMPOSITE_FACET_NAME, implementation);
-
 		// Now include the composite component file in the given parent.
 		parent.getChildren().add(composite);
-		parent.pushComponentToEL(context, composite); // This makes #{cc} available.
+		parent.pushComponentToEL(context, composite);// This makes #{cc} available.
+
 		try {
 			faceletContext.includeFacelet(implementation, resource.getURL());
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new FacesException(e);
-		}
-		finally {
+		} finally {
 			parent.popComponentFromEL(context);
 		}
-
 		return composite;
 	}
 
@@ -1009,20 +1021,16 @@ public final class Components {
 	public static List<ParamHolder> getParams(UIComponent component) {
 		if (component.getChildCount() > 0) {
 			List<ParamHolder> params = new ArrayList<ParamHolder>(component.getChildCount());
-
 			for (UIComponent child : component.getChildren()) {
 				if (child instanceof UIParameter) {
-					UIParameter param = (UIParameter) child;
-
-					if (!isEmpty(param.getName()) && !param.isDisable()) {
+					UIParameter param = ((UIParameter) (child));
+					if ((!isEmpty(param.getName())) && (!param.isDisable())) {
 						params.add(new SimpleParam(param));
 					}
 				}
 			}
-
 			return Collections.unmodifiableList(params);
-		}
-		else {
+		} else {
 			return Collections.emptyList();
 		}
 	}
@@ -1231,7 +1239,6 @@ public final class Components {
 	}
 
 	// Inner classes --------------------------------------------------------------------------------------------------
-
 	/**
 	 * This faces context wrapper allows returning the given temporary view on {@link #getViewRoot()} and its
 	 * associated renderer in {@link #getRenderKit()}. This can then be used in cases when a different view needs to be
@@ -1242,8 +1249,8 @@ public final class Components {
 	 * @author Bauke Scholtz
 	 */
 	private static class TemporaryViewFacesContext extends FacesContextWrapper {
-
 		private FacesContext wrapped;
+
 		private UIViewRoot temporaryView;
 
 		public TemporaryViewFacesContext(FacesContext wrapped, UIViewRoot temporaryView) {
@@ -1265,7 +1272,5 @@ public final class Components {
 		public FacesContext getWrapped() {
 			return wrapped;
 		}
-
 	}
-
 }
