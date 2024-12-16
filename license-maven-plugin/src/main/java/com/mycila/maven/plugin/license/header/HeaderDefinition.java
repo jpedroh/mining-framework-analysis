@@ -15,9 +15,9 @@
  */
 package com.mycila.maven.plugin.license.header;
 
+import com.mycila.maven.plugin.license.util.StringUtils;
 import java.util.regex.Pattern;
 
-import com.mycila.maven.plugin.license.util.StringUtils;
 
 /**
  * The <code>HeaderDefinition</code> class defines what is needed to output a header text into the of the given file
@@ -28,16 +28,25 @@ import com.mycila.maven.plugin.license.util.StringUtils;
  */
 public final class HeaderDefinition {
   private final String type;
+
   private String firstLine = "";
+
   private String beforeEachLine = "";
+
   private String endLine = "";
+
   private String afterEachLine = "";
+
   private Boolean allowBlankLines;
 
   private Pattern skipLinePattern;
+
   private Pattern firstLineDetectionPattern;
+
   private Pattern otherLineDetectionPattern;
+
   private Pattern lastLineDetectionPattern;
+
   private Boolean multiLine;
 
   private boolean padLines = false;
@@ -58,15 +67,10 @@ public final class HeaderDefinition {
    * @param lastLineDetectionPattern  The pattern to detect the last line of a previous header.
    * @throws IllegalArgumentException If the type name is null.
    */
-  public HeaderDefinition(String type,
-                          String firstLine, String beforeEachLine,
-                          String endLine, String afterEachLine,
-                          String skipLinePattern,
-                          String firstLineDetectionPattern, String lastLineDetectionPattern,
-                          boolean allowBlankLines, boolean multiLine, boolean padLines) {
-     this(type, firstLine, beforeEachLine, endLine, afterEachLine, skipLinePattern, firstLineDetectionPattern, null, lastLineDetectionPattern, allowBlankLines, isMultiline, padLines);
-  }  
-  
+  public HeaderDefinition(String type, String firstLine, String beforeEachLine, String endLine, String afterEachLine, String skipLinePattern, String firstLineDetectionPattern, String lastLineDetectionPattern, boolean allowBlankLines, boolean isMultiline, boolean padLines) {
+    this(type, firstLine, beforeEachLine, endLine, afterEachLine, skipLinePattern, firstLineDetectionPattern, null, lastLineDetectionPattern, allowBlankLines, isMultiline, padLines);
+  }
+
   /**
    * Constructs a new <code>HeaderDefinition</code> object with every header definition properties.
    *
@@ -84,12 +88,7 @@ public final class HeaderDefinition {
    * @param lastLineDetectionPattern  The pattern to detect the last line of a previous header.
    * @throws IllegalArgumentException If the type name is null.
    */
-  public HeaderDefinition(String type,
-                          String firstLine, String beforeEachLine,
-                          String endLine, String afterEachLine,
-                          String skipLinePattern,
-                          String firstLineDetectionPattern, String otherLineDetectionPattern, String lastLineDetectionPattern,
-                          boolean allowBlankLines, boolean isMultiline, boolean padLines) {
+  public HeaderDefinition(String type, String firstLine, String beforeEachLine, String endLine, String afterEachLine, String skipLinePattern, String firstLineDetectionPattern, String otherLineDetectionPattern, String lastLineDetectionPattern, boolean allowBlankLines, boolean multiLine, boolean padLines) {
     this(type);
     this.firstLine = firstLine;
     this.beforeEachLine = beforeEachLine;
@@ -102,9 +101,11 @@ public final class HeaderDefinition {
     this.allowBlankLines = allowBlankLines;
     this.multiLine = multiLine;
     this.padLines = padLines;
-    if (!"unknown".equals(type)) validate();
-    if (allowBlankLines && !multiLine) {
-      throw new IllegalArgumentException("Header style " + type + " is configured to allow blank lines, so it should be set as a multi-line header style");
+    if (!"unknown".equals(type)) {
+      validate();
+    }
+    if (allowBlankLines && (!multiLine)) {
+      throw new IllegalArgumentException(("Header style " + type) + " is configured to allow blank lines, so it should be set as a multi-line header style");
     }
   }
 
@@ -112,8 +113,10 @@ public final class HeaderDefinition {
    * Constructs a new <code>HeaderDefinition</code> with only initializing the header type. You must then set all the
    * other definitions properties manually in order to have a coherent object.
    *
-   * @param type The type name for this header definition.
-   * @throws IllegalArgumentException If the type name is null.
+   * @param type
+   * 		The type name for this header definition.
+   * @throws IllegalArgumentException
+   * 		If the type name is null.
    * @see #check(String, String)
    * @see #setPropertyFromString(String, String)
    */
@@ -171,12 +174,12 @@ public final class HeaderDefinition {
    * Tells if the given content line is the first line of a possible header of this definition kind.
    *
    * @param line The line to test.
-   * @return true if the first line of a header has been recognized or false.
+   * @return true if the first line of a header have been recognized or false.
    */
   public boolean isFirstHeaderLine(String line) {
     return firstLineDetectionPattern != null && line != null && firstLineDetectionPattern.matcher(line).matches();
   }
-  
+
   /**
    * Tells if the given content line is another than the first line of a possible header of this definition kind.
    *
@@ -194,7 +197,7 @@ public final class HeaderDefinition {
         return line.startsWith(StringUtils.rtrim(beforeEachLine));
      }
   }
-  
+
   /**
    * Tells if the given content line is the last line of a possible header of this definition kind.
    *
@@ -220,29 +223,29 @@ public final class HeaderDefinition {
    */
   public void setPropertyFromString(String property, String value) {
     if (isEmpty(value)) {
-      throw new IllegalArgumentException("The value cannot be empty for XML tag " + property + " for type " + type);
+      throw new IllegalArgumentException((("The value cannot be empty for XML tag " + property) + " for type ") + type);
     }
-    if ("firstLine".equalsIgnoreCase(property))
+    if ("firstLine".equalsIgnoreCase(property)) {
       firstLine = value;
-    else if ("allowBlankLines".equalsIgnoreCase(property))
+    } else if ("allowBlankLines".equalsIgnoreCase(property)) {
       allowBlankLines = Boolean.valueOf(value);
-    else if ("multiLine".equalsIgnoreCase(property) || "isMultiline".equalsIgnoreCase(property))
+    } else if ("multiLine".equalsIgnoreCase(property) || "isMultiline".equalsIgnoreCase(property)) {
       multiLine = Boolean.valueOf(value);
-    else if ("beforeEachLine".equalsIgnoreCase(property))
+    } else if ("beforeEachLine".equalsIgnoreCase(property)) {
       beforeEachLine = value;
-    else if ("endLine".equalsIgnoreCase(property))
+    } else if ("endLine".equalsIgnoreCase(property)) {
       endLine = value;
-    else if ("afterEachLine".equalsIgnoreCase(property))
+    } else if ("afterEachLine".equalsIgnoreCase(property)) {
       afterEachLine = value;
-    else if ("skipLine".equalsIgnoreCase(property))
+    } else if ("skipLine".equalsIgnoreCase(property)) {
       skipLinePattern = compile(value);
-    else if ("padLines".equalsIgnoreCase(property))
+    } else if ("padLines".equalsIgnoreCase(property)) {
       padLines = Boolean.parseBoolean(value);
-    else if ("firstLineDetectionPattern".equalsIgnoreCase(property))
+    } else if ("firstLineDetectionPattern".equalsIgnoreCase(property)) {
       firstLineDetectionPattern = compile(value);
-    else if ("lastLineDetectionPattern".equalsIgnoreCase(property))
+    } else if ("lastLineDetectionPattern".equalsIgnoreCase(property)) {
       lastLineDetectionPattern = compile(value);
-
+    }
   }
 
   /**
