@@ -1,17 +1,16 @@
 package com.fasterxml.jackson.core.read;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
-
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.json.JsonFactory;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING) // easier to read on IDE
-public class NonStandardNumberParsingTest
-    extends com.fasterxml.jackson.core.BaseTest
-{
+
+// easier to read on IDE
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class NonStandardNumberParsingTest extends BaseTest {
     private final JsonFactory JSON_F = JsonFactory.builder()
             .enable(JsonReadFeature.ALLOW_LEADING_PLUS_SIGN_FOR_NUMBERS)
             .enable(JsonReadFeature.ALLOW_LEADING_DECIMAL_POINT_FOR_NUMBERS)
@@ -87,7 +86,7 @@ public class NonStandardNumberParsingTest
      */
     public void testLeadingDotInDecimal() {
         for (int mode : ALL_MODES) {
-            try (JsonParser p = createParser(mode, " .123 ")) {
+            try (final JsonParser p = createParser(mode, " .123 ")) {
                 p.nextToken();
                 fail("Should not pass");
             } catch (StreamReadException e) {
@@ -101,13 +100,13 @@ public class NonStandardNumberParsingTest
      */
     public void testLeadingPlusSignInDecimalDefaultFail() throws Exception {
         for (int mode : ALL_MODES) {
-            try (JsonParser p = createParser(mode, " +123 ")) {
+            try (final JsonParser p = createParser(mode, " +123 ")) {
                 p.nextToken();
                 fail("Should not pass");
             } catch (StreamReadException e) {
                 verifyException(e, "Unexpected character ('+' (code 43)) in numeric value: JSON spec does not allow numbers to have plus signs: enable `JsonReadFeature.ALLOW_LEADING_PLUS_SIGN_FOR_NUMBERS` to allow");
             }
-            try (JsonParser p = createParser(mode, " +0.123 ")) {
+            try (final JsonParser p = createParser(mode, " +0.123 ")) {
                 p.nextToken();
                 fail("Should not pass");
             } catch (StreamReadException e) {
@@ -143,7 +142,7 @@ public class NonStandardNumberParsingTest
 
     public void testLeadingDotInDecimalAllowedReader() {
         _testLeadingDotInDecimalAllowed(JSON_F, MODE_READER);
-      _testLeadingDotInDecimalAllowed(jsonFactory(), MODE_READER_THROTTLED);
+        _testLeadingDotInDecimalAllowed(jsonFactory(), MODE_READER_THROTTLED);
     }
 
     public void testTrailingDotInDecimalAllowedDataInput() {
@@ -169,7 +168,7 @@ public class NonStandardNumberParsingTest
         _testLeadingPlusSignInDecimalAllowed(jsonFactory(), MODE_INPUT_STREAM_THROTTLED);
     }
 
-    public void testLeadingPlusSignInDecimalAllowedReader(){
+    public void testLeadingPlusSignInDecimalAllowedReader() {
         _testLeadingPlusSignInDecimalAllowed(jsonFactory(), MODE_READER);
         _testLeadingPlusSignInDecimalAllowed(jsonFactory(), MODE_READER_THROTTLED);
     }
@@ -188,9 +187,8 @@ public class NonStandardNumberParsingTest
         _testLeadingDotInNegativeDecimalAllowed(jsonFactory(), MODE_READER_THROTTLED);
     }
 
-    private void _testLeadingDotInDecimalAllowed(JsonFactory f, int mode)
-    {
-        try (JsonParser p = createParser(f, mode, " .125 ")) {
+    private void _testLeadingDotInDecimalAllowed(JsonFactory f, int mode) {
+        try (final JsonParser p = createParser(f, mode, " .125 ")) {
             assertEquals(JsonToken.VALUE_NUMBER_FLOAT, p.nextToken());
             assertEquals(0.125, p.getValueAsDouble());
             assertEquals("0.125", p.getDecimalValue().toString());
@@ -198,21 +196,20 @@ public class NonStandardNumberParsingTest
         }
     }
 
-    private void _testLeadingPlusSignInDecimalAllowed(JsonFactory f, int mode)
-    {
-        try (JsonParser p = createParser(f, mode, " +125 ")) {
+    private void _testLeadingPlusSignInDecimalAllowed(JsonFactory f, int mode) {
+        try (final JsonParser p = createParser(f, mode, " +125 ")) {
             assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());
             assertEquals(125.0, p.getValueAsDouble());
             assertEquals("125", p.getDecimalValue().toString());
             assertEquals("125", p.getText());
         }
-        try (JsonParser p = createParser(f, mode, " +0.125 ")) {
+        try (final JsonParser p = createParser(f, mode, " +0.125 ")) {
             assertEquals(JsonToken.VALUE_NUMBER_FLOAT, p.nextToken());
             assertEquals(0.125, p.getValueAsDouble());
             assertEquals("0.125", p.getDecimalValue().toString());
             assertEquals("0.125", p.getText());
         }
-        try (JsonParser p = createParser(f, mode, " +.125 ")) {
+        try (final JsonParser p = createParser(f, mode, " +.125 ")) {
             assertEquals(JsonToken.VALUE_NUMBER_FLOAT, p.nextToken());
             assertEquals(0.125, p.getValueAsDouble());
             assertEquals("0.125", p.getDecimalValue().toString());
@@ -220,9 +217,8 @@ public class NonStandardNumberParsingTest
         }
     }
 
-    private void _testTrailingDotInDecimalAllowed(JsonFactory f, int mode)
-    {
-        try (JsonParser p = createParser(f, mode, " 125. ")) {
+    private void _testTrailingDotInDecimalAllowed(JsonFactory f, int mode) {
+        try (final JsonParser p = createParser(f, mode, " 125. ")) {
             assertEquals(JsonToken.VALUE_NUMBER_FLOAT, p.nextToken());
             assertEquals(125.0, p.getValueAsDouble());
             assertEquals("125", p.getDecimalValue().toString());
@@ -230,9 +226,8 @@ public class NonStandardNumberParsingTest
         }
     }
 
-    private void _testLeadingDotInNegativeDecimalAllowed(JsonFactory f, int mode)
-    {
-        try (JsonParser p = createParser(f, mode, " -.125 ")) {
+    private void _testLeadingDotInNegativeDecimalAllowed(JsonFactory f, int mode) {
+        try (final JsonParser p = createParser(f, mode, " -.125 ")) {
             assertEquals(JsonToken.VALUE_NUMBER_FLOAT, p.nextToken());
             assertEquals(-0.125, p.getValueAsDouble());
             assertEquals("-0.125", p.getDecimalValue().toString());
