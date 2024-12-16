@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cloudfoundry;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.time.Duration;
 import org.cloudfoundry.client.CloudFoundryClient;
 import org.cloudfoundry.client.v2.applications.ApplicationInstanceInfo;
 import org.cloudfoundry.client.v2.applications.ApplicationInstancesRequest;
@@ -50,33 +52,19 @@ import org.springframework.core.io.ClassPathResource;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.time.Duration;
-
 import static org.cloudfoundry.util.DelayUtils.exponentialBackOff;
 import static org.cloudfoundry.util.tuple.TupleUtils.function;
 
-public final class ServiceBrokerUtils {
 
-    public static Mono<ServiceBrokerUtils.ServiceBrokerMetadata> createServiceBroker(CloudFoundryClient cloudFoundryClient, NameFactory nameFactory, String planName, String serviceBrokerName,
-                                                                                     String serviceName, String spaceId, Boolean spaceScoped) {
+public final class ServiceBrokerUtils {
+    public static Mono<ServiceBrokerUtils.ServiceBrokerMetadata> createServiceBroker(CloudFoundryClient cloudFoundryClient, NameFactory nameFactory, String planName, String serviceBrokerName, String serviceName, String spaceId, Boolean spaceScoped) {
         Path application;
         try {
             application = new ClassPathResource("test-service-broker.jar").getFile().toPath();
         } catch (IOException e) {
             throw Exceptions.propagate(e);
         }
-
-        return getSharedDomain(cloudFoundryClient)
-            .flatMap(domain -> pushServiceBrokerApplication(cloudFoundryClient, application, domain, nameFactory, planName, serviceName, spaceId))
-            .flatMap(applicationMetadata -> requestCreateServiceBroker(cloudFoundryClient, applicationMetadata, serviceBrokerName, spaceScoped)
-                .delayUntil(response -> Mono.zip(
-                    makeServicePlanPubliclyVisible(cloudFoundryClient, serviceName, spaceScoped),
-                    makeServicePlanPubliclyVisible(cloudFoundryClient, serviceName + "-shareable", spaceScoped)
-                ))
-                .map(response -> new ServiceBrokerMetadata(applicationMetadata, ResourceUtils.getId(response))));
+        return getSharedDomain(cloudFoundryClient).flatMap(( domain) -> pushServiceBrokerApplication(cloudFoundryClient, application, domain, nameFactory, planName, serviceName, spaceId)).flatMap(( applicationMetadata) -> requestCreateServiceBroker(cloudFoundryClient, applicationMetadata, serviceBrokerName, spaceScoped).delayUntil(( response) -> makeServicePlanPubliclyVisible(cloudFoundryClient, serviceName, spaceScoped)).map(( response) -> new ServiceBrokerMetadata(applicationMetadata, ResourceUtils.getId(response))));
     }
 
     public static Mono<Void> deleteServiceBroker(CloudFoundryClient cloudFoundryClient, String applicationId) {
@@ -86,20 +74,10 @@ public final class ServiceBrokerUtils {
                 .build());
     }
 
-    public static Mono<ApplicationMetadata> pushServiceBrokerApplication(CloudFoundryClient cloudFoundryClient, Path application, SharedDomainResource domain, NameFactory nameFactory, String planName,
-                                                                         String serviceName, String spaceId) {
+    public static Mono<ApplicationMetadata> pushServiceBrokerApplication(CloudFoundryClient cloudFoundryClient, Path application, SharedDomainResource domain, NameFactory nameFactory, String planName, String serviceName, String spaceId) {
         String applicationName = nameFactory.getApplicationName();
         String hostName = nameFactory.getHostName();
-
-        return Mono
-            .zip(
-                createApplicationId(cloudFoundryClient, spaceId, applicationName),
-                createRouteId(cloudFoundryClient, ResourceUtils.getId(domain), spaceId, hostName)
-            )
-            .flatMap(function((applicationId, routeId) -> requestAssociateApplicationRoute(cloudFoundryClient, applicationId, routeId)
-                .thenReturn(applicationId)))
-            .flatMap(applicationId -> createRunningServiceBrokerApplication(cloudFoundryClient, application, applicationId, planName, serviceName)
-                .map(ignore -> new ApplicationMetadata(applicationId, spaceId, String.format("https://%s.%s", hostName, ResourceUtils.getEntity(domain).getName()))));
+        return Mono.zip(createApplicationId(cloudFoundryClient, spaceId, applicationName), createRouteId(cloudFoundryClient, ResourceUtils.getId(domain), spaceId, hostName)).flatMap(function(( applicationId, routeId) -> requestAssociateApplicationRoute(cloudFoundryClient, applicationId, routeId).thenReturn(applicationId))).flatMap(( applicationId) -> createRunningServiceBrokerApplication(cloudFoundryClient, application, applicationId, planName, serviceName).map(( ignore) -> new ApplicationMetadata(applicationId, spaceId, String.format("https://%s.%s", hostName, ResourceUtils.getEntity(domain).getName()))));
     }
 
     private static Mono<String> createApplicationId(CloudFoundryClient cloudFoundryClient, String spaceId, String applicationName) {
@@ -113,15 +91,7 @@ public final class ServiceBrokerUtils {
     }
 
     private static Mono<String> createRunningServiceBrokerApplication(CloudFoundryClient cloudFoundryClient, Path application, String applicationId, String planName, String serviceName) {
-        return requestUploadApplication(cloudFoundryClient, applicationId, application)
-            .flatMap(job -> JobUtils.waitForCompletion(cloudFoundryClient, Duration.ofMinutes(5), job))
-            .then(requestUpdateApplication(cloudFoundryClient, applicationId, planName, serviceName, "STARTED"))
-            .then(getApplicationPackageState(cloudFoundryClient, applicationId)
-                .filter(state -> "STAGED".equals(state) || "FAILED".equals(state))
-                .repeatWhenEmpty(exponentialBackOff(Duration.ofSeconds(1), Duration.ofSeconds(15), Duration.ofMinutes(5))))
-            .then(getApplicationInstanceState(cloudFoundryClient, applicationId)
-                .filter("RUNNING"::equals)
-                .repeatWhenEmpty(exponentialBackOff(Duration.ofSeconds(1), Duration.ofSeconds(15), Duration.ofMinutes(5))));
+        return requestUploadApplication(cloudFoundryClient, applicationId, application).flatMap(( job) -> JobUtils.waitForCompletion(cloudFoundryClient, Duration.ofMinutes(5), job)).then(requestUpdateApplication(cloudFoundryClient, applicationId, planName, serviceName, "STARTED")).then(getApplicationPackageState(cloudFoundryClient, applicationId).filter(( state) -> "STAGED".equals(state) || "FAILED".equals(state)).repeatWhenEmpty(exponentialBackOff(Duration.ofSeconds(1), Duration.ofSeconds(15), Duration.ofMinutes(5)))).then(getApplicationInstanceState(cloudFoundryClient, applicationId).filter("RUNNING"::equals).repeatWhenEmpty(exponentialBackOff(Duration.ofSeconds(1), Duration.ofSeconds(15), Duration.ofMinutes(5))));
     }
 
     private static Mono<String> getApplicationInstanceState(CloudFoundryClient cloudFoundryClient, String applicationId) {
@@ -158,10 +128,7 @@ public final class ServiceBrokerUtils {
         if (spaceScoped) {
             return Mono.empty();
         }
-
-        return getServiceId(cloudFoundryClient, serviceName)
-            .flatMap(serviceId -> getServicePlanId(cloudFoundryClient, serviceId))
-            .flatMap(planId -> requestUpdateServicePlan(cloudFoundryClient, planId, true));
+        return getServiceId(cloudFoundryClient, serviceName).flatMap(( serviceId) -> getServicePlanId(cloudFoundryClient, serviceId)).flatMap(( planId) -> requestUpdateServicePlan(cloudFoundryClient, planId, true));
     }
 
     private static Mono<ApplicationInstancesResponse> requestApplicationInstances(CloudFoundryClient cloudFoundryClient, String applicationId) {
@@ -270,7 +237,6 @@ public final class ServiceBrokerUtils {
     }
 
     public static final class ApplicationMetadata {
-
         public final String applicationId;
 
         public final String spaceId;
@@ -282,11 +248,9 @@ public final class ServiceBrokerUtils {
             this.spaceId = spaceId;
             this.uri = uri;
         }
-
     }
 
     public static final class ServiceBrokerMetadata {
-
         public final ServiceBrokerUtils.ApplicationMetadata applicationMetadata;
 
         public final String serviceBrokerId;
@@ -295,7 +259,5 @@ public final class ServiceBrokerUtils {
             this.applicationMetadata = applicationMetadata;
             this.serviceBrokerId = serviceBrokerId;
         }
-
     }
-
 }

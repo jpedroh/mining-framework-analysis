@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cloudfoundry;
 
 import com.github.zafarkhaja.semver.Version;
+import java.time.Duration;
+import java.util.Map;
+import java.util.function.Supplier;
+import javax.net.ssl.SSLException;
 import org.cloudfoundry.client.CloudFoundryClient;
 import org.cloudfoundry.client.v2.applications.ApplicationResource;
 import org.cloudfoundry.client.v2.applications.DeleteApplicationRequest;
@@ -103,33 +106,16 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuples;
-
-import javax.net.ssl.SSLException;
-import java.time.Duration;
-import java.util.Map;
-import java.util.function.Supplier;
-
 import static org.cloudfoundry.CloudFoundryVersion.PCF_1_12;
 import static org.cloudfoundry.CloudFoundryVersion.PCF_2_1;
 import static org.cloudfoundry.util.tuple.TupleUtils.function;
 import static org.cloudfoundry.util.tuple.TupleUtils.predicate;
 
-final class CloudFoundryCleaner {
 
+final class CloudFoundryCleaner {
     private static final Logger LOGGER = LoggerFactory.getLogger("cloudfoundry-client.test");
 
-    private static final Map<String, Boolean> STANDARD_FEATURE_FLAGS = FluentMap.<String, Boolean>builder()
-        .entry("app_bits_upload", true)
-        .entry("app_scaling", true)
-        .entry("diego_docker", true)
-        .entry("private_domain_creation", true)
-        .entry("route_creation", true)
-        .entry("service_instance_creation", true)
-        .entry("service_instance_sharing", true)
-        .entry("set_roles_by_username", true)
-        .entry("unset_roles_by_username", true)
-        .entry("user_org_creation", false)
-        .build();
+    private static final Map<String, Boolean> STANDARD_FEATURE_FLAGS = FluentMap.<String, Boolean>builder().entry("app_bits_upload", true).entry("app_scaling", true).entry("diego_docker", true).entry("private_domain_creation", true).entry("route_creation", true).entry("service_instance_creation", true).entry("service_instance_sharing", true).entry("set_roles_by_username", true).entry("unset_roles_by_username", true).entry("user_org_creation", false).build();
 
     private final CloudFoundryClient cloudFoundryClient;
 
@@ -150,57 +136,18 @@ final class CloudFoundryCleaner {
     }
 
     void clean() {
-        Flux.empty()
-            .thenMany(Mono.when( // Before Routes
-                cleanServiceInstances(this.cloudFoundryClient, this.nameFactory, this.serverVersion),
-                cleanUserProvidedServiceInstances(this.cloudFoundryClient, this.nameFactory)
-            ))
-            .thenMany(Mono.when( // No prerequisites
-                cleanBuildpacks(this.cloudFoundryClient, this.nameFactory),
-                cleanClients(this.uaaClient, this.nameFactory),
-                cleanFeatureFlags(this.cloudFoundryClient),
-                cleanGroups(this.uaaClient, this.nameFactory),
-                cleanIdentityProviders(this.uaaClient, this.nameFactory),
-                cleanIdentityZones(this.uaaClient, this.nameFactory),
-                cleanNetworkingPolicies(this.networkingClient, this.nameFactory, this.serverVersion),
-                cleanRoutes(this.cloudFoundryClient, this.nameFactory),
-                cleanSecurityGroups(this.cloudFoundryClient, this.nameFactory),
-                cleanServiceBrokers(this.cloudFoundryClient, this.nameFactory),
-                cleanSpaceQuotaDefinitions(this.cloudFoundryClient, this.nameFactory),
-                cleanStacks(this.cloudFoundryClient, this.nameFactory),
-                cleanUsers(this.cloudFoundryClient, this.nameFactory)
-            ))
-            .thenMany(Mono.when(
-                cleanApplicationsV2(this.cloudFoundryClient, this.nameFactory), // After Routes, cannot run with other cleanApps
-                cleanUsers(this.uaaClient, this.nameFactory) // After CF Users
-            ))
-            .thenMany(Mono.when( // After Routes/Applications
-                cleanPrivateDomains(this.cloudFoundryClient, this.nameFactory),
-                cleanSharedDomains(this.cloudFoundryClient, this.nameFactory),
-                cleanSpaces(this.cloudFoundryClient, this.nameFactory)
-            ))
-            .thenMany(cleanOrganizations(this.cloudFoundryClient, this.nameFactory)) // After Spaces
-            .thenMany(cleanOrganizationQuotaDefinitions(this.cloudFoundryClient, this.nameFactory)) // After Organizations
-            .retry(5, t -> t instanceof SSLException)
-            .doOnSubscribe(s -> LOGGER.debug(">> CLEANUP <<"))
-            .doOnComplete(() -> LOGGER.debug("<< CLEANUP >>"))
-            .then()
-            .block(Duration.ofMinutes(30));
+            // After Organizations
+            // After Spaces
+        Flux.empty().thenMany(// Before Routes
+        Mono.when(cleanServiceInstances(this.cloudFoundryClient, this.nameFactory, this.serverVersion), cleanUserProvidedServiceInstances(this.cloudFoundryClient, this.nameFactory))).thenMany(// No prerequisites
+        Mono.when(cleanBuildpacks(this.cloudFoundryClient, this.nameFactory), cleanClients(this.uaaClient, this.nameFactory), cleanFeatureFlags(this.cloudFoundryClient), cleanGroups(this.uaaClient, this.nameFactory), cleanIdentityProviders(this.uaaClient, this.nameFactory), cleanIdentityZones(this.uaaClient, this.nameFactory), cleanNetworkingPolicies(this.networkingClient, this.nameFactory, this.serverVersion), cleanRoutes(this.cloudFoundryClient, this.nameFactory), cleanSecurityGroups(this.cloudFoundryClient, this.nameFactory), cleanServiceBrokers(this.cloudFoundryClient, this.nameFactory), cleanSpaceQuotaDefinitions(this.cloudFoundryClient, this.nameFactory), cleanStacks(this.cloudFoundryClient, this.nameFactory), cleanUsers(this.cloudFoundryClient, this.nameFactory))).thenMany(// After Routes, cannot run with other cleanApps
+        // After CF Users
+        Mono.when(cleanApplicationsV2(this.cloudFoundryClient, this.nameFactory), cleanUsers(this.uaaClient, this.nameFactory))).thenMany(// After Routes/Applications
+        Mono.when(cleanPrivateDomains(this.cloudFoundryClient, this.nameFactory), cleanSharedDomains(this.cloudFoundryClient, this.nameFactory), cleanSpaces(this.cloudFoundryClient, this.nameFactory))).thenMany(cleanOrganizations(this.cloudFoundryClient, this.nameFactory)).thenMany(cleanOrganizationQuotaDefinitions(this.cloudFoundryClient, this.nameFactory)).retry(5, ( t) -> t instanceof SSLException).doOnSubscribe(( s) -> LOGGER.debug(">> CLEANUP <<")).doOnComplete(() -> LOGGER.debug("<< CLEANUP >>")).then().block(Duration.ofMinutes(30));
     }
 
     private static Flux<Void> cleanApplicationsV2(CloudFoundryClient cloudFoundryClient, NameFactory nameFactory) {
-        return PaginationUtils
-            .requestClientV2Resources(page -> cloudFoundryClient.applicationsV2()
-                .list(ListApplicationsRequest.builder()
-                    .page(page)
-                    .build()))
-            .filter(application -> nameFactory.isApplicationName(ResourceUtils.getEntity(application).getName()))
-            .delayUntil(application -> removeApplicationServiceBindings(cloudFoundryClient, application))
-            .flatMap(application -> cloudFoundryClient.applicationsV2()
-                .delete(DeleteApplicationRequest.builder()
-                    .applicationId(ResourceUtils.getId(application))
-                    .build())
-                .doOnError(t -> LOGGER.error("Unable to delete V2 application {}", ResourceUtils.getEntity(application).getName(), t)));
+        return PaginationUtils.requestClientV2Resources(( page) -> cloudFoundryClient.applicationsV2().list(ListApplicationsRequest.builder().page(page).build())).filter(( application) -> nameFactory.isApplicationName(ResourceUtils.getEntity(application).getName())).delayUntil(( application) -> removeApplicationServiceBindings(cloudFoundryClient, application)).flatMap(( application) -> cloudFoundryClient.applicationsV2().delete(DeleteApplicationRequest.builder().applicationId(ResourceUtils.getId(application)).build()).doOnError(( t) -> LOGGER.error("Unable to delete V2 application {}", ResourceUtils.getEntity(application).getName(), t)));
     }
 
     private static Flux<Void> cleanBuildpacks(CloudFoundryClient cloudFoundryClient, NameFactory nameFactory) {
@@ -431,35 +378,14 @@ final class CloudFoundryCleaner {
     }
 
     private static Flux<Void> cleanServiceInstances(CloudFoundryClient cloudFoundryClient, NameFactory nameFactory, Version serverVersion) {
-        return PaginationUtils
-            .requestClientV2Resources(page -> cloudFoundryClient.serviceInstances()
-                .list(ListServiceInstancesRequest.builder()
-                    .page(page)
-                    .build()))
-            .filter(serviceInstance -> nameFactory.isServiceInstanceName(ResourceUtils.getEntity(serviceInstance).getName()))
-            .delayUntil(serviceInstance -> removeRouteAssociations(cloudFoundryClient, serviceInstance))
-            .delayUntil(serviceInstance -> removeServiceInstanceServiceBindings(cloudFoundryClient, serviceInstance))
-            .delayUntil(serviceInstance -> removeServiceKeys(cloudFoundryClient, serviceInstance))
-            .delayUntil(serviceInstance -> removeServiceShares(cloudFoundryClient, serviceInstance, serverVersion))
-            .flatMap(serviceInstance -> cloudFoundryClient.serviceInstances()
-                .delete(DeleteServiceInstanceRequest.builder()
-                    .async(true)
-                    .serviceInstanceId(ResourceUtils.getId(serviceInstance))
-                    .build())
-                .flatMap(response -> {
-                    Object entity = response.getEntity();
-                    if (entity instanceof JobEntity) {
-                        return JobUtils.waitForCompletion(cloudFoundryClient, Duration.ofMinutes(5), (JobEntity) response.getEntity());
-                    } else {
-                        return LastOperationUtils
-                            .waitForCompletion(Duration.ofMinutes(5), () -> cloudFoundryClient.serviceInstances()
-                                .get(GetServiceInstanceRequest.builder()
-                                    .serviceInstanceId(ResourceUtils.getId(serviceInstance))
-                                    .build())
-                                .map(r -> ResourceUtils.getEntity(r).getLastOperation()));
-                    }
-                })
-                .doOnError(t -> LOGGER.error("Unable to delete service instance {}", ResourceUtils.getEntity(serviceInstance).getName(), t)));
+        return PaginationUtils.requestClientV2Resources(( page) -> cloudFoundryClient.serviceInstances().list(ListServiceInstancesRequest.builder().page(page).build())).filter(( serviceInstance) -> nameFactory.isServiceInstanceName(ResourceUtils.getEntity(serviceInstance).getName())).delayUntil(( serviceInstance) -> removeRouteAssociations(cloudFoundryClient, serviceInstance)).delayUntil(( serviceInstance) -> removeServiceInstanceServiceBindings(cloudFoundryClient, serviceInstance)).delayUntil(( serviceInstance) -> removeServiceKeys(cloudFoundryClient, serviceInstance)).flatMap(( serviceInstance) -> removeServiceShares(cloudFoundryClient, serviceInstance, serverVersion).thenMany(Flux.just(serviceInstance))).flatMap(( serviceInstance) -> cloudFoundryClient.serviceInstances().delete(DeleteServiceInstanceRequest.builder().async(true).serviceInstanceId(ResourceUtils.getId(serviceInstance)).build()).flatMap(( response) -> {
+            Object entity = response.getEntity();
+            if (entity instanceof JobEntity) {
+                return JobUtils.waitForCompletion(cloudFoundryClient, Duration.ofMinutes(5), ((JobEntity) (response.getEntity())));
+            } else {
+                return LastOperationUtils.waitForCompletion(Duration.ofMinutes(5), () -> cloudFoundryClient.serviceInstances().get(GetServiceInstanceRequest.builder().serviceInstanceId(ResourceUtils.getId(serviceInstance)).build()).map(( r) -> ResourceUtils.getEntity(r).getLastOperation()));
+            }
+        }).doOnError(( t) -> LOGGER.error("Unable to delete service instance {}", ResourceUtils.getEntity(serviceInstance).getName(), t)));
     }
 
     private static Flux<Void> cleanSharedDomains(CloudFoundryClient cloudFoundryClient, NameFactory nameFactory) {
@@ -527,19 +453,7 @@ final class CloudFoundryCleaner {
     }
 
     private static Flux<Void> cleanUserProvidedServiceInstances(CloudFoundryClient cloudFoundryClient, NameFactory nameFactory) {
-        return PaginationUtils
-            .requestClientV2Resources(page -> cloudFoundryClient.userProvidedServiceInstances()
-                .list(ListUserProvidedServiceInstancesRequest.builder()
-                    .page(page)
-                    .build()))
-            .filter(userProvidedServiceInstance -> nameFactory.isServiceInstanceName(ResourceUtils.getEntity(userProvidedServiceInstance).getName()))
-            .delayUntil(userProvidedServiceInstance -> removeRouteAssociations(cloudFoundryClient, userProvidedServiceInstance))
-            .delayUntil(userProvidedServiceInstance -> removeUserProvidedServiceInstanceServiceBindings(cloudFoundryClient, userProvidedServiceInstance))
-            .flatMap(userProvidedServiceInstance -> cloudFoundryClient.userProvidedServiceInstances()
-                .delete(DeleteUserProvidedServiceInstanceRequest.builder()
-                    .userProvidedServiceInstanceId(ResourceUtils.getId(userProvidedServiceInstance))
-                    .build())
-                .doOnError(t -> LOGGER.error("Unable to delete user provided service instance {}", ResourceUtils.getEntity(userProvidedServiceInstance).getName(), t)));
+        return PaginationUtils.requestClientV2Resources(( page) -> cloudFoundryClient.userProvidedServiceInstances().list(ListUserProvidedServiceInstancesRequest.builder().page(page).build())).filter(( userProvidedServiceInstance) -> nameFactory.isServiceInstanceName(ResourceUtils.getEntity(userProvidedServiceInstance).getName())).delayUntil(( userProvidedServiceInstance) -> removeRouteAssociations(cloudFoundryClient, userProvidedServiceInstance)).delayUntil(( userProvidedServiceInstance) -> removeUserProvidedServiceInstanceServiceBindings(cloudFoundryClient, userProvidedServiceInstance)).flatMap(( userProvidedServiceInstance) -> cloudFoundryClient.userProvidedServiceInstances().delete(DeleteUserProvidedServiceInstanceRequest.builder().userProvidedServiceInstanceId(ResourceUtils.getId(userProvidedServiceInstance)).build()).doOnError(( t) -> LOGGER.error("Unable to delete user provided service instance {}", ResourceUtils.getEntity(userProvidedServiceInstance).getName(), t)));
     }
 
     private static Flux<Void> cleanUsers(CloudFoundryClient cloudFoundryClient, NameFactory nameFactory) {
@@ -708,5 +622,4 @@ final class CloudFoundryCleaner {
                 .spaceId(spaceId)
                 .build());
     }
-
 }
