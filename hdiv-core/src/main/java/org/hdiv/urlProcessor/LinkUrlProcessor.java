@@ -16,7 +16,6 @@
 package org.hdiv.urlProcessor;
 
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hdiv.dataComposer.IDataComposer;
@@ -24,13 +23,13 @@ import org.hdiv.util.Constants;
 import org.hdiv.util.HDIVUtil;
 import org.hdiv.util.Method;
 
+
 /**
  * UrlProcessor for link and redirect urls.
  * 
  * @author Gotzon Illarramendi
  */
 public class LinkUrlProcessor extends AbstractUrlProcessor {
-
 	/**
 	 * Commons Logging instance.
 	 */
@@ -57,7 +56,6 @@ public class LinkUrlProcessor extends AbstractUrlProcessor {
 	 * @return processed url
 	 */
 	public String processUrl(final HttpServletRequest request, String url, final String encoding) {
-
 		IDataComposer dataComposer = HDIVUtil.getDataComposer(request);
 		if (dataComposer == null) {
 			// IDataComposer not initialized on request, request is out of filter
@@ -71,17 +69,12 @@ public class LinkUrlProcessor extends AbstractUrlProcessor {
 		if (isHdivStateNecessary(urlData)) {
 			// the url needs protection
 			dataComposer.beginRequest(Method.GET, urlData.getUrlWithoutContextPath());
-
 			urlData.setUrlParams(dataComposer.composeParams(urlData.getUrlParams(), Method.GET, encoding));
-
 			// Hdiv state param value
 			String stateParam = dataComposer.endRequest();
 			// Url with confidential values and hdiv state param
-
 			url = getProcessedUrlWithHdivState(hdivParameter, urlData, stateParam);
 		}
-
 		return url;
 	}
-
 }

@@ -19,7 +19,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayDeque;
 import java.util.Deque;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hdiv.context.RequestContext;
@@ -31,6 +30,7 @@ import org.hdiv.state.scope.StateScope;
 import org.hdiv.state.scope.StateScopeManager;
 import org.hdiv.util.Constants;
 import org.hdiv.util.Method;
+
 
 /**
  * <p>
@@ -47,7 +47,6 @@ import org.hdiv.util.Method;
  * @author Roberto Velasco
  */
 public class DataComposerMemory extends AbstractDataComposer {
-
 	/**
 	 * Commons Logging instance.
 	 */
@@ -183,24 +182,19 @@ public class DataComposerMemory extends AbstractDataComposer {
 	 * @return Identifier composed by the page identifier and the state identifier.
 	 */
 	public String endRequest() {
-
 		IState state = getStates().pop();
-
 		// Add to scope
 		StateScope stateScope = stateScopeManager.getStateScopeByName(getCurrentScope());
 		if (stateScope != null) {
 			// Its custom Scope
 			return stateScope.addState(context, state, getStateSuffix(state.getMethod()));
 		}
-
 		// Add to page scope
 		page.addState(state);
-
 		// Save Page in session if this is the first state to add
 		if (page.getStatesCount() == 1) {
 			session.addPartialPage(context, page);
 		}
-
 		return toId(state);
 	}
 
@@ -259,5 +253,4 @@ public class DataComposerMemory extends AbstractDataComposer {
 	public void setStateScopeManager(final StateScopeManager stateScopeManager) {
 		this.stateScopeManager = stateScopeManager;
 	}
-
 }

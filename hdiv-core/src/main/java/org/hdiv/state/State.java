@@ -20,18 +20,17 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.hdiv.exception.HDIVException;
 import org.hdiv.util.Constants;
 import org.hdiv.util.Method;
+
 
 /**
  * Data structure to store all data related with one request (parameters, parameter values, ...)
  *
  * @author Roberto Velasco
  */
-public class State implements IState, Serializable {
-
+public class State implements IState , Serializable {
 	/**
 	 * Universal version identifier. Deserialization uses this number to ensure that a loaded class corresponds exactly
 	 * to a serialized object.
@@ -237,5 +236,4 @@ public class State implements IState, Serializable {
 		sb.append("method: ").append(method == null ? Method.GET : method);
 		return super.toString();
 	}
-
 }

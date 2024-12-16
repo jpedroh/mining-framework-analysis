@@ -16,7 +16,6 @@
 package org.hdiv.session;
 
 import javax.servlet.http.HttpSession;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hdiv.context.RequestContext;
@@ -30,13 +29,13 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.util.Assert;
 
+
 /**
  * Facade to access to attributes in {@link HttpSession}.
- * 
+ *
  * @author Roberto Velasco
  */
-public class SessionHDIV implements ISession, BeanFactoryAware {
-
+public class SessionHDIV implements ISession , BeanFactoryAware {
 	/**
 	 * Commons Logging instance.
 	 */
@@ -63,28 +62,21 @@ public class SessionHDIV implements ISession, BeanFactoryAware {
 	 * @return Returns the pageId.
 	 */
 	public final int getPageId(final RequestContext context) {
-
 		HttpSession session = context.getRequest().getSession();
-
-		PageIdGenerator pageIdGenerator = (PageIdGenerator) session.getAttribute(pageIdGeneratorName);
+		PageIdGenerator pageIdGenerator = ((PageIdGenerator) (session.getAttribute(pageIdGeneratorName)));
 		if (pageIdGenerator == null) {
 			pageIdGenerator = beanFactory.getBean(PageIdGenerator.class);
 		}
 		if (pageIdGenerator == null) {
 			throw new HDIVException("session.nopageidgenerator");
 		}
-
 		int id = pageIdGenerator.getNextPageId();
-
 		// PageId must be greater than 0
 		if (id <= 0) {
-			throw new HDIVException("Incorrect PageId generated [" + id + "]. PageId must be greater than 0.");
+			throw new HDIVException(("Incorrect PageId generated [" + id) + "]. PageId must be greater than 0.");
 		}
-
 		session.setAttribute(pageIdGeneratorName, pageIdGenerator);
-
 		return id;
-
 	}
 
 	/**
@@ -98,8 +90,7 @@ public class SessionHDIV implements ISession, BeanFactoryAware {
 	public IPage getPage(final RequestContext context, final int pageId) {
 		try {
 			return cache.findPage(new SimpleCacheKey(context, pageId));
-		}
-		catch (final IllegalStateException e) {
+		} catch (final java.lang.IllegalStateException e) {
 			throw new HDIVException(HDIVErrorCodes.PAGE_ID_INCORRECT, e);
 		}
 	}
@@ -134,8 +125,7 @@ public class SessionHDIV implements ISession, BeanFactoryAware {
 	public IState getState(final RequestContext context, final int pageId, final int stateId) {
 		try {
 			return getPage(context, pageId).getState(stateId);
-		}
-		catch (final Exception e) {
+		} catch (final java.lang.Exception e) {
 			throw new HDIVException(HDIVErrorCodes.PAGE_ID_INCORRECT, e);
 		}
 	}
@@ -169,8 +159,7 @@ public class SessionHDIV implements ISession, BeanFactoryAware {
 	public String getAttribute(final RequestContext context, final String name) {
 		Assert.notNull(context);
 		Assert.notNull(name);
-
-		return (String) context.getSession().getAttribute(name);
+		return ((String) (context.getSession().getAttribute(name)));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -178,31 +167,25 @@ public class SessionHDIV implements ISession, BeanFactoryAware {
 		Assert.notNull(context);
 		Assert.notNull(name);
 		Assert.notNull(requiredType);
-
 		Object result = context.getSession().getAttribute(name);
 		if (result == null) {
 			return null;
-		}
-		else if (requiredType.isInstance(result)) {
-			return (T) result;
-		}
-		else {
-			throw new IllegalArgumentException(
-					"Attibute with name '" + name + "' is not of required type " + requiredType.getCanonicalName());
+		} else if (requiredType.isInstance(result)) {
+			return ((T) (result));
+		} else {
+			throw new IllegalArgumentException((("Attibute with name \'" + name) + "' is not of required type ") + requiredType.getCanonicalName());
 		}
 	}
 
 	public void setAttribute(final RequestContext context, final String name, final Object value) {
 		Assert.notNull(context);
 		Assert.notNull(name);
-
 		context.getSession().setAttribute(name, value);
 	}
 
 	public void removeAttribute(final RequestContext context, final String name) {
 		Assert.notNull(context);
 		Assert.notNull(name);
-
 		context.getSession().removeAttribute(name);
 	}
 
@@ -226,8 +209,7 @@ public class SessionHDIV implements ISession, BeanFactoryAware {
 	public void removeEndedPages(final RequestContext context, final String conversationId) {
 		if (cache instanceof HTTPSessionCache) {
 			cache.removeEndedPages(context, conversationId);
-		}
-		else {
+		} else {
 			log.error("Remove ended pages not supported by cache:" + cache);
 		}
 	}

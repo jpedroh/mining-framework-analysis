@@ -19,9 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.hdiv.dataComposer.IDataComposer;
 import org.hdiv.urlProcessor.FormUrlProcessor;
 import org.hdiv.urlProcessor.LinkUrlProcessor;
@@ -29,13 +27,13 @@ import org.hdiv.util.HDIVUtil;
 import org.hdiv.util.Method;
 import org.springframework.web.servlet.support.RequestDataValueProcessor;
 
+
 /**
  * {@link RequestDataValueProcessor} implementation for HDIV.
  * 
  * @author Gotzon Illarramendi
  */
 public class HdivRequestDataValueProcessor implements RequestDataValueProcessor {
-
 	protected LinkUrlProcessor linkUrlProcessor;
 
 	protected FormUrlProcessor formUrlProcessor;
@@ -52,7 +50,6 @@ public class HdivRequestDataValueProcessor implements RequestDataValueProcessor 
 	protected List<String> noEditableTypes = new ArrayList<String>();
 
 	public HdivRequestDataValueProcessor() {
-
 		// Initialize no editable types list
 		initNoEditableTypes();
 	}
@@ -168,29 +165,23 @@ public class HdivRequestDataValueProcessor implements RequestDataValueProcessor 
 	 * @return hidden field name/value
 	 */
 	public Map<String, String> getExtraHiddenFields(final HttpServletRequest request) {
-
 		IDataComposer dataComposer = HDIVUtil.getDataComposer(request);
 		Map<String, String> extraFields = new HashMap<String, String>();
-
 		if (innerRequestDataValueProcessor != null) {
 			Map<String, String> innerExtras = innerRequestDataValueProcessor.getExtraHiddenFields(request);
 			if (innerExtras != null) {
 				extraFields.putAll(innerExtras);
 			}
 		}
-
-		if (dataComposer == null || dataComposer.isRequestStarted() == false) {
+		if ((dataComposer == null) || (dataComposer.isRequestStarted() == false)) {
 			return extraFields;
 		}
-
 		String requestId = dataComposer.endRequest();
-
-		if (requestId != null && requestId.length() > 0) {
+		if ((requestId != null) && (requestId.length() > 0)) {
 			String hdivStateParam = HDIVUtil.getHdivStateParameterName(request);
 			if (hdivStateParam != null) {
 				extraFields.put(hdivStateParam, requestId);
 			}
-
 			// Publish the state in request to make it accessible on jsp
 			request.setAttribute(FormUrlProcessor.FORM_STATE_ID, requestId);
 		}
@@ -258,5 +249,4 @@ public class HdivRequestDataValueProcessor implements RequestDataValueProcessor 
 	public RequestDataValueProcessor getInnerRequestDataValueProcessor() {
 		return innerRequestDataValueProcessor;
 	}
-
 }

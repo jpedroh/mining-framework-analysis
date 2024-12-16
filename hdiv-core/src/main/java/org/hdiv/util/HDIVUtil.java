@@ -19,12 +19,10 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Random;
 import java.util.regex.Pattern;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestWrapper;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hdiv.application.IApplication;
@@ -38,6 +36,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+
 /**
  * Class containing utility methods for access HDIV components: IDataComposer, IDataValidator, IApplication, ISession.
  * <p>
@@ -49,7 +48,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @author Gotzon Illarramendi
  */
 public class HDIVUtil {
-
 	/**
 	 * Commons Logging instance.
 	 */
@@ -376,8 +374,7 @@ public class HDIVUtil {
 	 * @since 3.0.1
 	 */
 	public static String getHdivStateParameterName(HttpServletRequest request) {
-
-		return (String) request.getAttribute(Constants.HDIV_PARAMETER);
+		return ((String) (request.getAttribute(Constants.HDIV_PARAMETER)));
 	}
 
 	/**
@@ -555,5 +552,4 @@ public class HDIVUtil {
 		}
 		return wac;
 	}
-
 }

@@ -1,5 +1,9 @@
 /**
+<<<<<<< LEFT
  * Copyright 2005-2016 hdiv.org
+=======
+ * Copyright 2005-2015 hdiv.org
+>>>>>>> RIGHT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +23,8 @@ import org.hdiv.util.Method;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class UrlDataTest {
 
+public class UrlDataTest {
 	@Test
 	public void testShortURLIsJS() {
 		UrlData data = new UrlData("short", Method.GET);
@@ -28,5 +32,4 @@ public class UrlDataTest {
 		data = new UrlData("javascript:", Method.GET);
 		Assert.assertTrue(data.isJS());
 	}
-
 }

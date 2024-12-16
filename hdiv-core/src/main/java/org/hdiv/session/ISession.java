@@ -16,10 +16,10 @@
 package org.hdiv.session;
 
 import javax.servlet.http.HttpSession;
-
 import org.hdiv.context.RequestContext;
 import org.hdiv.state.IPage;
 import org.hdiv.state.IState;
+
 
 /**
  * Facade to access to attributes in {@link HttpSession}.
@@ -27,7 +27,6 @@ import org.hdiv.state.IState;
  * @author Roberto Velasco
  */
 public interface ISession {
-
 	/**
 	 * It adds a new page to the user session. To do this it adds a new page identifier to the cache and if it has
 	 * reached the maximum size allowed, the oldest page is deleted from the session and from the cache itself.
@@ -53,7 +52,7 @@ public interface ISession {
 	void addPartialPage(RequestContext context, int pageId, IPage page);
 
 	@Deprecated
-	void removeEndedPages(RequestContext context, String conversationId);
+	public abstract void removeEndedPages(RequestContext context, String conversationId);
 
 	/**
 	 * Obtains the state identifier <code>stateId</code> related to the page identifier <code>pageId</code>.
@@ -87,12 +86,14 @@ public interface ISession {
 
 	/**
 	 * Get an attribute from session.
-	 * @param context Context holder for request-specific state.
-	 * @param name Attribute name.
+	 *
+	 * @author Roberto Velasco
+	 * @param name
+	 * 		Attribute name.
 	 * @return Attribute value or null if the attribute doesn't exist.
 	 * @since HDIV 3.0.1
 	 */
-	public String getAttribute(RequestContext context, String name);
+	public abstract String getAttribute(RequestContext context, String name);
 
 	/**
 	 * Get an attribute from session.

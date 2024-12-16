@@ -19,8 +19,8 @@ import org.hdiv.AbstractHDIVTestCase;
 import org.hdiv.util.HDIVUtil;
 import org.hdiv.util.Method;
 
-public class UriTemplateTest extends AbstractHDIVTestCase {
 
+public class UriTemplateTest extends AbstractHDIVTestCase {
 	private LinkUrlProcessor linkUrlProcessor;
 
 	private String urlWithoutUriTemplate;
@@ -58,9 +58,8 @@ public class UriTemplateTest extends AbstractHDIVTestCase {
 	public void testGetProcessedUrlWithHdivState() {
 		UrlData urlData = create(url);
 		String stateParam = "1-12-123123123123";
-		String urlProcessed = linkUrlProcessor.getProcessedUrlWithHdivState(HDIVUtil.getHdivStateParameterName(getMockRequest()), urlData,
-				stateParam);
-		assertEquals(urlWithoutUriTemplate + "?_HDIV_STATE_=" + stateParam + uriTemplate.replace("?", "&"), urlProcessed);
+		String urlProcessed = linkUrlProcessor.getProcessedUrlWithHdivState(HDIVUtil.getHdivStateParameterName(getMockRequest()), urlData, stateParam);
+		assertEquals(((urlWithoutUriTemplate + "?_HDIV_STATE_=") + stateParam) + uriTemplate.replace("?", "&"), urlProcessed);
 	}
 
 	public void testJSURLData() {

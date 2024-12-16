@@ -19,6 +19,7 @@ import org.hdiv.filter.ValidatorHelperResult;
 import org.hdiv.idGenerator.PageIdGenerator;
 import org.hdiv.session.IStateCache;
 
+
 /**
  * <p>
  * Global constants.
@@ -28,7 +29,6 @@ import org.hdiv.session.IStateCache;
  * @since HDIV 1.1.1
  */
 public class Constants {
-
 	/**
 	 * The request attributes key under HDIV should store errors produced in the editable fields.
 	 */
@@ -106,5 +106,4 @@ public class Constants {
 	 * @since 2.1.13
 	 */
 	public static final String AJAX_REQUEST = "org.hdiv.ajaxrequest";
-
 }

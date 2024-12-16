@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.hdiv.application.ApplicationHDIV;
 import org.hdiv.components.support.OutcomeTargetComponentProcessor;
 import org.hdiv.components.support.OutputLinkComponentProcessor;
@@ -92,11 +91,11 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+
 /**
  * BeanDefinitionParser for &lt;hdiv:config&gt; element.
  */
 public class ConfigBeanDefinitionParser implements BeanDefinitionParser {
-
 	public static final String CONFIG_BEAN_NAME = HDIVConfig.class.getName();
 
 	public static final String PATTERN_MATCHER_FACTORY_NAME = PatternMatcherFactory.class.getName();
@@ -115,37 +114,24 @@ public class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 	protected static final String MIN_SPRING_VERSION = "4.0.0.RELEASE";
 
 	/* Framework present flags */
+	protected final boolean springMvcPresent = ClassUtils.isPresent("org.springframework.web.servlet.DispatcherServlet", ConfigBeanDefinitionParser.class.getClassLoader());
 
-	protected final boolean springMvcPresent = ClassUtils.isPresent("org.springframework.web.servlet.DispatcherServlet",
-			ConfigBeanDefinitionParser.class.getClassLoader());
+	protected final boolean grailsPresent = ClassUtils.isPresent("org.codehaus.groovy.grails.web.servlet.GrailsDispatcherServlet", ConfigBeanDefinitionParser.class.getClassLoader());
 
-	protected final boolean grailsPresent = ClassUtils.isPresent("org.codehaus.groovy.grails.web.servlet.GrailsDispatcherServlet",
-			ConfigBeanDefinitionParser.class.getClassLoader());
+	protected final boolean jsfPresent = ClassUtils.isPresent("javax.faces.webapp.FacesServlet", ConfigBeanDefinitionParser.class.getClassLoader());
 
-	protected final boolean jsfPresent = ClassUtils.isPresent("javax.faces.webapp.FacesServlet",
-			ConfigBeanDefinitionParser.class.getClassLoader());
+	protected final boolean jsf1Present = !ClassUtils.isPresent("javax.faces.component.UIOutcomeTarget", ConfigBeanDefinitionParser.class.getClassLoader());
 
-	protected final boolean jsf1Present = !ClassUtils.isPresent("javax.faces.component.UIOutcomeTarget",
-			ConfigBeanDefinitionParser.class.getClassLoader());
+	protected final boolean thymeleafPresent = ClassUtils.isPresent("org.thymeleaf.spring3.SpringTemplateEngine", ConfigBeanDefinitionParser.class.getClassLoader()) || ClassUtils.isPresent("org.thymeleaf.spring4.SpringTemplateEngine", ConfigBeanDefinitionParser.class.getClassLoader());
 
-	protected final boolean thymeleafPresent = ClassUtils.isPresent("org.thymeleaf.spring3.SpringTemplateEngine",
-			ConfigBeanDefinitionParser.class.getClassLoader())
-			|| ClassUtils.isPresent("org.thymeleaf.spring4.SpringTemplateEngine", ConfigBeanDefinitionParser.class.getClassLoader());
-
-	protected static final boolean springSecurityPresent = ClassUtils.isPresent(
-			"org.springframework.security.web.servlet.support.csrf.CsrfRequestDataValueProcessor",
-			ConfigBeanDefinitionParser.class.getClassLoader());
+	protected static final boolean springSecurityPresent = ClassUtils.isPresent("org.springframework.security.web.servlet.support.csrf.CsrfRequestDataValueProcessor", ConfigBeanDefinitionParser.class.getClassLoader());
 
 	/* HDIV module present flags */
+	protected final boolean springMvcModulePresent = ClassUtils.isPresent("org.hdiv.web.servlet.support.HdivRequestDataValueProcessor", ConfigBeanDefinitionParser.class.getClassLoader());
 
-	protected final boolean springMvcModulePresent = ClassUtils.isPresent("org.hdiv.web.servlet.support.HdivRequestDataValueProcessor",
-			ConfigBeanDefinitionParser.class.getClassLoader());
+	protected final boolean struts1ModulePresent = ClassUtils.isPresent("org.hdiv.action.HDIVRequestProcessor", ConfigBeanDefinitionParser.class.getClassLoader());
 
-	protected final boolean struts1ModulePresent = ClassUtils.isPresent("org.hdiv.action.HDIVRequestProcessor",
-			ConfigBeanDefinitionParser.class.getClassLoader());
-
-	protected final boolean jsfModulePresent = ClassUtils.isPresent("org.hdiv.filter.JsfValidatorHelper",
-			ConfigBeanDefinitionParser.class.getClassLoader());
+	protected final boolean jsfModulePresent = ClassUtils.isPresent("org.hdiv.filter.JsfValidatorHelper", ConfigBeanDefinitionParser.class.getClassLoader());
 
 	/**
 	 * List of StartPage objects
@@ -357,28 +343,22 @@ public class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 		RootBeanDefinition bean = new RootBeanDefinition(DefaultStateScopeManager.class);
 		bean.setSource(source);
 		bean.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
-
 		ManagedList<RuntimeBeanReference> defs = new ManagedList<RuntimeBeanReference>();
 		defs.add(this.createUserSessionStateScope(element, source, parserContext));
 		defs.add(this.createSimpleBean(element, source, parserContext, AppStateScope.class));
-
 		RootBeanDefinition listBean = new RootBeanDefinition(ListFactoryBean.class);
 		listBean.setSource(source);
 		listBean.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
 		listBean.getPropertyValues().addPropertyValue("sourceList", defs);
-
 		bean.getConstructorArgumentValues().addGenericArgumentValue(listBean);
-
 		return this.registerBean(bean, StateScopeManager.class.getName(), parserContext);
 	}
 
-	protected RuntimeBeanReference createUserSessionStateScope(Element element, Object source,
-			ParserContext parserContext) {
+	protected RuntimeBeanReference createUserSessionStateScope(Element element, Object source, ParserContext parserContext) {
 		RootBeanDefinition bean = new RootBeanDefinition(UserSessionStateScope.class);
 		bean.setSource(source);
 		bean.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
 		bean.getPropertyValues().addPropertyValue("session", this.sessionRef);
-
 		return this.registerBean(bean, UserSessionStateScope.class.getName(), parserContext);
 	}
 
@@ -414,13 +394,11 @@ public class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 	}
 
 	protected RuntimeBeanReference createRequestInitializer(Element element, Object source, ParserContext parserContext) {
-
 		RootBeanDefinition bean = new RootBeanDefinition(DefaultRequestInitializer.class);
 		bean.setSource(source);
 		bean.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
 		bean.getPropertyValues().addPropertyValue("config", this.configRef);
 		bean.getPropertyValues().addPropertyValue("session", this.sessionRef);
-
 		return this.registerBean(bean, RequestInitializer.class.getName(), parserContext);
 	}
 
@@ -882,5 +860,4 @@ public class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 		}
 		return list;
 	}
-
 }

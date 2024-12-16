@@ -17,9 +17,7 @@ package org.hdiv.web.servlet.support;
 
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.hdiv.AbstractHDIVTestCase;
 import org.hdiv.context.RequestContext;
 import org.hdiv.dataComposer.DataComposerFactory;
@@ -29,8 +27,8 @@ import org.hdiv.state.IState;
 import org.hdiv.state.StateUtil;
 import org.hdiv.util.HDIVUtil;
 
-public class ThymeleafHdivRequestDataValueProcessorTest extends AbstractHDIVTestCase {
 
+public class ThymeleafHdivRequestDataValueProcessorTest extends AbstractHDIVTestCase {
 	private ThymeleafHdivRequestDataValueProcessor dataValueProcessor;
 
 	private DataComposerFactory dataComposerFactory;
@@ -124,49 +122,36 @@ public class ThymeleafHdivRequestDataValueProcessorTest extends AbstractHDIVTest
 	}
 
 	public void testProcessFormThymeleafOrder() {
-
 		HttpServletRequest request = this.getMockRequest();
 		RequestContext context = this.getRequestContext();
 		IDataComposer dataComposer = this.dataComposerFactory.newInstance(request);
 		HDIVUtil.setDataComposer(dataComposer, request);
-
 		dataComposer.startPage();
-
 		String action = "/testAction.do";
-
 		// 1. the action url
 		String result = this.dataValueProcessor.processAction(request, action);
 		// Post urls are not modified
 		assertEquals(action, result);
-
 		// 2. Hidden field
 		Map<String, String> extraParams = this.dataValueProcessor.getExtraHiddenFields(request);
-
 		assertNotNull(extraParams);
 		assertTrue(extraParams.size() == 1);
 		String hdivStateParam = HDIVUtil.getHdivStateParameterName(request);
 		String stateValue = extraParams.get(hdivStateParam);
 		assertNotNull(stateValue);
-
 		// 3. form parameters
 		String val = this.dataValueProcessor.processFormFieldValue(request, "param", "value", "select");
 		assertEquals("0", val);
-
 		val = this.dataValueProcessor.processFormFieldValue(request, "param1", "value1", "text");
 		assertEquals("value1", val);
-
 		dataComposer.endPage();
-
 		// Restore state
 		IState state = stateUtil.restoreState(context, stateValue);
 		assertNotNull(state);
-
 		IParameter param = state.getParameter("param");
 		List<String> values = param.getValues();
 		assertTrue(values.size() == 1);
-
 		String value = values.get(0);
 		assertEquals("value", value);
-
 	}
 }

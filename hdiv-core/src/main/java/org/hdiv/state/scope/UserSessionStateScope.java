@@ -16,9 +16,9 @@
 package org.hdiv.state.scope;
 
 import javax.servlet.http.HttpSession;
-
 import org.hdiv.context.RequestContext;
 import org.hdiv.session.ISession;
+
 
 /**
  * <p>
@@ -31,7 +31,6 @@ import org.hdiv.session.ISession;
  * @since 2.1.7
  */
 public class UserSessionStateScope extends AbstractStateScope {
-
 	public UserSessionStateScope() {
 		super(StateScopeType.USER_SESSION);
 	}
@@ -57,5 +56,4 @@ public class UserSessionStateScope extends AbstractStateScope {
 	public void setSession(final ISession session) {
 		this.session = session;
 	}
-
 }

@@ -20,18 +20,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hdiv.context.RequestContext;
 import org.hdiv.session.ISession;
 import org.hdiv.util.Constants;
 import org.springframework.util.Assert;
+
 
 /**
  * A wrapper for HTTP servlet response.
@@ -41,7 +40,6 @@ import org.springframework.util.Assert;
  * @since HDIV 1.1
  */
 public class ResponseWrapper extends HttpServletResponseWrapper {
-
 	/**
 	 * Commons Logging instance.
 	 */
@@ -86,15 +84,10 @@ public class ResponseWrapper extends HttpServletResponseWrapper {
 	 * @param originalResponse response
 	 */
 	public ResponseWrapper(final HttpServletRequest request, final HttpServletResponse originalResponse) {
-
 		super(originalResponse);
-
-
 		Assert.notNull(request);
 		Assert.notNull(originalResponse);
-
 		this.requestContext = new RequestContext(request);
-
 		if (log.isDebugEnabled()) {
 			log.debug("New ResponseWrapper instance.");
 		}
@@ -229,18 +222,11 @@ public class ResponseWrapper extends HttpServletResponseWrapper {
 	 */
 	@SuppressWarnings("unchecked")
 	protected void updateSessionCookies() {
-
-		Map<String, SavedCookie> sessionOriginalCookies = this.session.getAttribute(this.requestContext,
-				Constants.HDIV_COOKIES_KEY, Map.class);
-
-		if (sessionOriginalCookies != null && sessionOriginalCookies.size() > 0) {
-
-
+		Map<String, SavedCookie> sessionOriginalCookies = this.session.getAttribute(this.requestContext, Constants.HDIV_COOKIES_KEY, Map.class);
+		if ((sessionOriginalCookies != null) && (sessionOriginalCookies.size() > 0)) {
 			sessionOriginalCookies.putAll(this.cookies);
 			this.session.setAttribute(this.requestContext, Constants.HDIV_COOKIES_KEY, sessionOriginalCookies);
-
-		}
-		else {
+		} else {
 			this.session.setAttribute(this.requestContext, Constants.HDIV_COOKIES_KEY, this.cookies);
 		}
 	}
@@ -249,7 +235,6 @@ public class ResponseWrapper extends HttpServletResponseWrapper {
 	 * Removes from user's session the cookies added by the application.
 	 */
 	protected void removeCookiesFromSession() {
-
 		this.session.removeAttribute(this.requestContext, Constants.HDIV_COOKIES_KEY);
 	}
 
@@ -282,5 +267,4 @@ public class ResponseWrapper extends HttpServletResponseWrapper {
 	public void setSession(ISession session) {
 		this.session = session;
 	}
-
 }

@@ -18,7 +18,6 @@ package org.hdiv.taglib.html;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
-
 import org.apache.struts.Globals;
 import org.apache.struts.taglib.TagUtils;
 import org.apache.struts.taglib.html.FormTag;
@@ -26,6 +25,7 @@ import org.hdiv.dataComposer.IDataComposer;
 import org.hdiv.urlProcessor.FormUrlProcessor;
 import org.hdiv.util.Constants;
 import org.hdiv.util.HDIVUtil;
+
 
 /**
  * Renders an HTML <b>&lt;form&gt;</b> element whose contents are described by the body content of this tag. The form
@@ -38,7 +38,6 @@ import org.hdiv.util.HDIVUtil;
  * @see org.apache.struts.taglib.html.FormTag
  */
 public class FormTagHDIV extends FormTag {
-
     /**
      * Universal version identifier. Deserialization uses this number to ensure that a loaded class corresponds exactly
      * to a serialized object.
@@ -101,14 +100,12 @@ public class FormTagHDIV extends FormTag {
      * Adds HDIV state as parameter.
      */
     protected void addHDIVParameter() throws JspException {
-
-        final HttpServletRequest request = (HttpServletRequest) this.pageContext.getRequest();
+        final HttpServletRequest request = ((HttpServletRequest) (this.pageContext.getRequest()));
         final IDataComposer dataComposer = HDIVUtil.getDataComposer(request);
         if (!dataComposer.isRequestStarted()) {
             return;
         }
         final String requestId = dataComposer.endRequest();
-
         if (requestId.length() > 0) {
             final String hdivParameter = HDIVUtil.getHdivStateParameterName(request);
             TagUtils.getInstance().write(pageContext, this.generateHiddenTag(hdivParameter, requestId));
@@ -133,5 +130,4 @@ public class FormTagHDIV extends FormTag {
 
         return hdivParameter.toString();
     }
-
 }

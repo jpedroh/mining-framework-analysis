@@ -17,9 +17,7 @@ package org.hdiv.dataComposer;
 
 import java.util.Arrays;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.hdiv.config.HDIVConfig;
 import org.hdiv.config.Strategy;
 import org.hdiv.context.RequestContext;
@@ -33,6 +31,7 @@ import org.hdiv.state.scope.StateScopeManager;
 import org.hdiv.util.Constants;
 import org.hdiv.util.HDIVUtil;
 
+
 /**
  * DataComposer object factory, more efficient than to use the Spring factory.
  *
@@ -40,7 +39,6 @@ import org.hdiv.util.HDIVUtil;
  * @since HDIV 2.1.0
  */
 public class DataComposerFactory {
-
 	private static final int DEFAULT_ALLOWED_LENGTH = 4000;
 
 	/**
@@ -112,17 +110,11 @@ public class DataComposerFactory {
 	 * @param context current request context
 	 */
 	protected void initDataComposer(final IDataComposer dataComposer, final RequestContext context) {
-
 		HttpServletRequest request = context.getRequest();
-
 		String hdivStateParamName = HDIVUtil.getHdivStateParameterName(request);
-
 		String hdivState = request.getParameter(hdivStateParamName);
-
 		String preState = getModifyStateParameterValue(dataComposer, request);
-
-		if (preState != null && preState.length() > 0) {
-
+		if ((preState != null) && (preState.length() > 0)) {
 			// We are modifying an existing state, preload dataComposer with it
 			int pageId = stateUtil.getPageId(preState);
 			IState state = stateUtil.restoreState(context, preState);
@@ -135,28 +127,21 @@ public class DataComposerFactory {
 			if (state != null) {
 				dataComposer.beginRequest(state);
 			}
-
-		}
-		else if (reuseExistingPage(request)) {
-
-			if (hdivState != null && hdivState.length() > 0) {
+		} else if (reuseExistingPage(request)) {
+			if ((hdivState != null) && (hdivState.length() > 0)) {
 				int pageId = stateUtil.getPageId(hdivState);
 				if (pageId > 0) {
 					IPage page = session.getPage(context, pageId);
 					dataComposer.startPage(page);
-				}
-				else {
+				} else {
 					dataComposer.startPage(hdivState);
 				}
-			}
-			else {
+			} else {
 				dataComposer.startPage(hdivState);
 			}
-		}
-		else {
+		} else {
 			dataComposer.startPage(hdivState);
 		}
-
 		// Detect if request url is configured as a long living page
 		String url = request.getRequestURI().substring(request.getContextPath().length());
 		String scope = config.isLongLivingPages(url);
@@ -173,9 +158,8 @@ public class DataComposerFactory {
 	 * @return parameter value.
 	 */
 	protected String getModifyStateParameterValue(final IDataComposer dataComposer, final HttpServletRequest request) {
-
 		String paramName = HDIVUtil.getModifyHdivStateParameterName(request);
-		String preState = paramName != null ? request.getParameter(paramName) : null;
+		String preState = (paramName != null) ? request.getParameter(paramName) : null;
 		return preState;
 	}
 
@@ -275,5 +259,4 @@ public class DataComposerFactory {
 	public void setExcludePageReuseHeaders(final List<String> excludePageReuseHeaders) {
 		this.excludePageReuseHeaders = excludePageReuseHeaders;
 	}
-
 }

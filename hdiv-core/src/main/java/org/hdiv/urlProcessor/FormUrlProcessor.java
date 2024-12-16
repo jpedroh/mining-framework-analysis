@@ -16,7 +16,6 @@
 package org.hdiv.urlProcessor;
 
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hdiv.dataComposer.IDataComposer;
@@ -24,13 +23,13 @@ import org.hdiv.util.Constants;
 import org.hdiv.util.HDIVUtil;
 import org.hdiv.util.Method;
 
+
 /**
  * UrlProcessor for form action urls.
  *
  * @author Gotzon Illarramendi
  */
 public class FormUrlProcessor extends AbstractUrlProcessor {
-
 	public static final String FORM_STATE_ID = "hdivFormStateId";
 
 	/**
@@ -63,11 +62,9 @@ public class FormUrlProcessor extends AbstractUrlProcessor {
 	 * @return processed url
 	 */
 	public String processUrl(final HttpServletRequest request, String url, Method method) {
-
 		if (method == null) {
 			method = Method.POST;
 		}
-
 		IDataComposer dataComposer = HDIVUtil.getDataComposer(request);
 		if (dataComposer == null) {
 			// IDataComposer not initialized on request, request is out of filter
@@ -81,19 +78,14 @@ public class FormUrlProcessor extends AbstractUrlProcessor {
 		if (isHdivStateNecessary(urlData)) {
 			// the url needs protection
 			String stateId = dataComposer.beginRequest(method, urlData.getUrlWithoutContextPath());
-
 			// Publish the state in request to make it accessible on jsp
 			request.setAttribute(FORM_STATE_ID, stateId);
-
 			// Process url params
 			String processedParams = dataComposer.composeParams(urlData.getUrlParams(), method, Constants.ENCODING_UTF_8);
 			urlData.setUrlParams(processedParams);
-
 			// Action url with confidential values
 			url = getProcessedUrl(urlData);
 		}
-
 		return url;
-
 	}
 }

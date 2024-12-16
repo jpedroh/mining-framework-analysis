@@ -23,7 +23,6 @@ import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hdiv.config.HDIVConfig;
@@ -34,13 +33,13 @@ import org.hdiv.util.HDIVUtilJsf;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
 
+
 /**
  * PhaseListener that takes care of HDIV configuration, mostly objects that are stored in application context.
  * 
  * @author Gotzon Illarramendi
  */
 public class ConfigPhaseListener implements PhaseListener {
-
 	private static final long serialVersionUID = -3803869221110488120L;
 
 	private static final Log log = LogFactory.getLog(ConfigPhaseListener.class);
@@ -139,16 +138,11 @@ public class ConfigPhaseListener implements PhaseListener {
 	 * @param context request context
 	 */
 	private void checkSupportedFeatures(FacesContext context) {
-
 		ExternalContext externalContext = context.getExternalContext();
-		ServletContext servletContext = (ServletContext) externalContext.getContext();
-
+		ServletContext servletContext = ((ServletContext) (externalContext.getContext()));
 		HDIVConfig config = HDIVUtil.getHDIVConfig(servletContext);
-
 		if (Boolean.TRUE.equals(config.getConfidentiality())) {
 			throw new HDIVException("Confidentiality is not implemented in HDIV for JSF, disable it in hdiv-config.xml");
 		}
-
 	}
-
 }

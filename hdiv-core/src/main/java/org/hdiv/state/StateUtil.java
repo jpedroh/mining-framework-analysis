@@ -16,7 +16,6 @@
 package org.hdiv.state;
 
 import java.util.regex.Pattern;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hdiv.config.HDIVConfig;
@@ -28,13 +27,13 @@ import org.hdiv.state.scope.StateScope;
 import org.hdiv.state.scope.StateScopeManager;
 import org.hdiv.util.HDIVErrorCodes;
 
+
 /**
  * Class containing utility methods for state.
  *
  * @author Roberto Velasco
  */
 public class StateUtil {
-
 	/**
 	 * Commons Logging instance.
 	 */

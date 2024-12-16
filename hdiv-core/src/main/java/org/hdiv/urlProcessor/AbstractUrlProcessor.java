@@ -23,9 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.hdiv.config.HDIVConfig;
 import org.hdiv.regex.PatternMatcher;
 import org.hdiv.util.Constants;
@@ -34,6 +32,7 @@ import org.hdiv.util.Method;
 import org.springframework.util.Assert;
 import org.springframework.web.util.HtmlUtils;
 
+
 /**
  * This class contains methods to process urls.
  *
@@ -41,7 +40,6 @@ import org.springframework.web.util.HtmlUtils;
  * @since HDIV 2.1.0
  */
 public abstract class AbstractUrlProcessor {
-
 	/**
 	 * Hdiv configuration.
 	 */
@@ -180,50 +178,40 @@ public abstract class AbstractUrlProcessor {
 	 * @return Map
 	 */
 	public Map<String, String[]> getUrlParamsAsMap(final HttpServletRequest request, final String urlParams) {
-
 		Map<String, String[]> params = new LinkedHashMap<String, String[]>();
-
 		if (urlParams == null) {
 			return params;
 		}
-
 		String value = urlParams.replaceAll("&amp;", "&");
-
 		String hdivParameter = HDIVUtil.getHdivStateParameterName(request);
-
 		StringTokenizer st = new StringTokenizer(value, "&");
 		while (st.hasMoreTokens()) {
 			String token = st.nextToken();
 			int index = token.indexOf('=');
 			String param = "";
 			String val = "";
-			if (index > -1) {
+			if (index > (-1)) {
 				param = token.substring(0, index);
 				val = token.substring(index + 1);
-			}
-			else {
+			} else {
 				param = token;
 			}
-
 			// Decode parameter value
 			val = getDecodedValue(val, Constants.ENCODING_UTF_8);
-
 			// Ignore Hdiv state parameter
 			if (!param.equals(hdivParameter)) {
 				// Add value to array or create it
 				String[] values = params.get(param);
 				if (values == null) {
-					values = new String[] { val };
-				}
-				else {
+					values = new String[]{ val };
+				} else {
 					int l = values.length;
 					values = Arrays.copyOf(values, l + 1);
 					values[l] = val;
 				}
 				params.put(param, values);
 			}
-		}
-
+		} 
 		return params;
 	}
 
@@ -291,6 +279,7 @@ public abstract class AbstractUrlProcessor {
 		if (stateParam == null || stateParam.length() <= 0) {
 			return sb.toString();
 		}
+
 		char separator = (urlData.containsParams()) ? '&' : '?';
 
 		sb.append(separator).append(hdivParameter).append('=').append(stateParam);
@@ -558,5 +547,4 @@ public abstract class AbstractUrlProcessor {
 	public void setConfig(final HDIVConfig config) {
 		this.config = config;
 	}
-
 }

@@ -17,11 +17,10 @@ package org.hdiv.state;
 
 import java.util.Collection;
 import java.util.List;
-
 import org.hdiv.util.Method;
 
-public interface IState {
 
+public interface IState {
 	/**
 	 * Adds a new parameter to the state <code>this</code>. If it is a required parameter <code>parameter</code>, it is
 	 * also added to the required parameters.
@@ -93,5 +92,4 @@ public interface IState {
 	 * @param method HTTP method for this request
 	 */
 	void setMethod(Method method);
-
 }

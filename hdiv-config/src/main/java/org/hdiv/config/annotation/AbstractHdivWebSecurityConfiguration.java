@@ -19,16 +19,15 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.hdiv.application.ApplicationHDIV;
 import org.hdiv.application.IApplication;
 import org.hdiv.config.HDIVConfig;
 import org.hdiv.config.StartPage;
-import org.hdiv.config.annotation.ValidationConfigurer.ValidationConfig;
 import org.hdiv.config.annotation.ValidationConfigurer.ValidationConfig.EditableValidationConfigurer;
+import org.hdiv.config.annotation.ValidationConfigurer.ValidationConfig;
 import org.hdiv.config.annotation.builders.SecurityConfigBuilder;
-import org.hdiv.config.validations.DefaultValidationParser;
 import org.hdiv.config.validations.DefaultValidationParser.ValidationParam;
+import org.hdiv.config.validations.DefaultValidationParser;
 import org.hdiv.dataComposer.DataComposerFactory;
 import org.hdiv.dataValidator.DataValidator;
 import org.hdiv.dataValidator.IDataValidator;
@@ -78,13 +77,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
+
 /**
  * Main abstract class for {@link Configuration} support. Creates all internal bean instances.
  *
  * @since 3.0.0
  */
 public abstract class AbstractHdivWebSecurityConfiguration {
-
 	/**
 	 * Override this method to configure HDIV
 	 *

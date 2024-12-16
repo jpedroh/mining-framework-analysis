@@ -18,15 +18,14 @@ package org.hdiv.filter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.hdiv.config.HDIVConfig;
 import org.hdiv.logs.IUserData;
 import org.hdiv.util.Constants;
 import org.hdiv.util.HDIVErrorCodes;
+
 
 /**
  * Default implementation of {@link ValidatorErrorHandler}.
@@ -35,7 +34,6 @@ import org.hdiv.util.HDIVErrorCodes;
  * @since 2.1.4
  */
 public class DefaultValidatorErrorHandler implements ValidatorErrorHandler {
-
 	/**
 	 * Hdiv general configuration
 	 */
@@ -55,33 +53,25 @@ public class DefaultValidatorErrorHandler implements ValidatorErrorHandler {
 	 * @since 2.1.13
 	 */
 	public void handleValidatorError(HttpServletRequest request, HttpServletResponse response, List<ValidatorError> errors) {
-
 		if (this.isPageNotFoundError(errors)) {
 			// Page not found in session
-
 			HttpSession session = request.getSession(false);
-
-			if (session == null || session.isNew()) {
+			if ((session == null) || session.isNew()) {
 				// New session, maybe expired session
 				// Redirect to login page instead of error page
 				this.redirectToLoginPage(request, response);
-			}
-			else {
+			} else {
 				ValidatorError error = errors.get(0);
 				String username = error.getUserName();
-				if (username == null || username == IUserData.ANONYMOUS) {
+				if ((username == null) || (username == IUserData.ANONYMOUS)) {
 					// Not logged, so send to login page
 					this.redirectToLoginPage(request, response);
-				}
-				else {
+				} else {
 					// Logged, send to home
 					this.redirectToHomePage(request, response);
 				}
 			}
-
-		}
-		else {
-
+		} else {
 			// Redirect to general error page
 			redirectToErrorPage(request, response);
 		}
@@ -195,5 +185,4 @@ public class DefaultValidatorErrorHandler implements ValidatorErrorHandler {
 	public void setConfig(HDIVConfig config) {
 		this.config = config;
 	}
-
 }

@@ -16,7 +16,6 @@
 package org.hdiv.session;
 
 import java.util.List;
-
 import org.hdiv.AbstractHDIVTestCase;
 import org.hdiv.context.RequestContext;
 import org.hdiv.state.IPage;
@@ -28,8 +27,8 @@ import org.hdiv.state.State;
 import org.hdiv.util.Constants;
 import org.hdiv.util.HDIVUtil;
 
-public class SessionTest extends AbstractHDIVTestCase {
 
+public class SessionTest extends AbstractHDIVTestCase {
 	private ISession session;
 
 	@Override
@@ -200,10 +199,7 @@ public class SessionTest extends AbstractHDIVTestCase {
 
 	}
 
-	class Test1Bean {
-	}
+	class Test1Bean {}
 
-	class Test2Bean {
-	}
-
+	class Test2Bean {}
 }

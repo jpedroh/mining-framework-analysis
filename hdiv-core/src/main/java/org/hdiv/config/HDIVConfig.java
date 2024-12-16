@@ -21,15 +21,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.hdiv.regex.PatternMatcher;
 import org.hdiv.regex.PatternMatcherFactory;
 import org.hdiv.state.IPage;
 import org.hdiv.util.HDIVUtil;
 import org.hdiv.util.Method;
 import org.hdiv.validator.EditableDataValidationProvider;
+
 
 /**
  * Class containing HDIV configuration initialized from Spring Factory.
@@ -39,7 +38,6 @@ import org.hdiv.validator.EditableDataValidationProvider;
  * @author Gotzon Illarramendi
  */
 public class HDIVConfig implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 
 	private static final Strategy DEFAULT_STRATEGY = Strategy.MEMORY;
@@ -112,7 +110,7 @@ public class HDIVConfig implements Serializable {
 	/**
 	 * if <code>avoidValidationInUrlsWithoutParams</code> is true, HDIV validation will not be applied in urls without
 	 * parameters.
-	 * 
+	 *
 	 * @since HDIV 2.1.0
 	 */
 	protected boolean avoidValidationInUrlsWithoutParams = false;
@@ -158,7 +156,7 @@ public class HDIVConfig implements Serializable {
 
 	/**
 	 * If debug mode is enabled, the attacks are logged but the requests are not stopped.
-	 * 
+	 *
 	 * @since HDIV 2.1.1
 	 */
 	protected boolean debugMode = false;
@@ -179,7 +177,7 @@ public class HDIVConfig implements Serializable {
 
 	/**
 	 * Pages whose link and forms never expire.
-	 * 
+	 *
 	 * @since 2.1.7
 	 */
 	protected Map<PatternMatcher, String> longLivingPages = new HashMap<PatternMatcher, String>();
@@ -279,9 +277,8 @@ public class HDIVConfig implements Serializable {
 	 * @return boolean
 	 */
 	public boolean isParameterWithoutConfidentiality(final HttpServletRequest request, final String paramName) {
-
 		String modifyHdivStateParameterName = HDIVUtil.getModifyHdivStateParameterName(request);
-		if (modifyHdivStateParameterName != null && modifyHdivStateParameterName.equals(paramName)) {
+		if ((modifyHdivStateParameterName != null) && modifyHdivStateParameterName.equals(paramName)) {
 			return true;
 		}
 		return false;

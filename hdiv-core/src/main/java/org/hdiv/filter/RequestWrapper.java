@@ -24,19 +24,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hdiv.context.RequestContext;
 import org.hdiv.session.ISession;
 import org.hdiv.util.Constants;
 import org.springframework.util.Assert;
+
 
 /**
  * A wrapper for HTTP servlet request.
@@ -46,7 +45,6 @@ import org.springframework.util.Assert;
  * @see javax.servlet.http.HttpServletRequestWrapper
  */
 public class RequestWrapper extends HttpServletRequestWrapper {
-
 	/**
 	 * Commons Logging instance.
 	 */
@@ -115,11 +113,8 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 	 * @param servletRequest request
 	 */
 	public RequestWrapper(final HttpServletRequest servletRequest) {
-
 		super(servletRequest);
-
 		Assert.notNull(servletRequest);
-
 		if (log.isDebugEnabled()) {
 			log.debug("New RequestWrapper instance.");
 		}
@@ -133,18 +128,14 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 	 */
 	@Override
 	public String[] getParameterValues(final String parameter) {
-
 		// non validated parameters are obtained from the original request
 		if (!parameters.containsKey(parameter)) {
 			return super.getParameterValues(parameter);
 		}
-
 		Object data = parameters.get(parameter);
-
 		if (data.getClass().isArray()) {
-			return (String[]) data;
-		}
-		else {
+			return ((String[]) (data));
+		} else {
 			String[] array = parameters.get(parameter);
 			return array;
 		}
@@ -158,19 +149,15 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 	 */
 	@Override
 	public String getParameter(final String parameter) {
-
 		// non validated parameters are obtained from the original request
 		if (!parameters.containsKey(parameter)) {
 			return super.getParameter(parameter);
 		}
-
 		Object data = parameters.get(parameter);
-
 		if (data.getClass().isArray()) {
-			String[] array = (String[]) data;
+			String[] array = ((String[]) (data));
 			return array[0];
-		}
-		else {
+		} else {
 			String[] values = parameters.get(parameter);
 			return values.length > 0 ? values[0] : null;
 		}
@@ -182,23 +169,16 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 	 */
 	@Override
 	public Enumeration<String> getParameterNames() {
-
 		Enumeration<String> baseParams = super.getParameterNames();
-
 		if (!isMultipart) {
 			return baseParams;
 		}
-
 		Vector<String> list = new Vector<String>();
-
 		while (baseParams.hasMoreElements()) {
 			list.add(baseParams.nextElement());
-		}
-
+		} 
 		Collection<String> multipartParams = parameters.keySet();
-
 		list.addAll(multipartParams);
-
 		return Collections.enumeration(list);
 	}
 
@@ -213,12 +193,9 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 	@Override
 	@SuppressWarnings("unchecked")
 	public String getHeader(final String name) {
-
 		String cookieHeader = super.getHeader(name);
-		if (name.equalsIgnoreCase(COOKIE) && confidentiality && cookiesConfidentiality) {
-
+		if ((name.equalsIgnoreCase(COOKIE) && confidentiality) && cookiesConfidentiality) {
 			Map<String, SavedCookie> sessionCookies = session.getAttribute(requestContext, Constants.HDIV_COOKIES_KEY, Map.class);
-
 			if (sessionCookies != null) {
 				return replaceCookieString(cookieHeader, sessionCookies);
 			}
@@ -237,22 +214,17 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 	@Override
 	@SuppressWarnings("unchecked")
 	public Enumeration<String> getHeaders(final String name) {
-
 		Enumeration<String> headerValues = super.getHeaders(name);
-
-		if (name.equalsIgnoreCase(COOKIE) && confidentiality && cookiesConfidentiality) {
-
+		if ((name.equalsIgnoreCase(COOKIE) && confidentiality) && cookiesConfidentiality) {
 			Vector<String> values = new Vector<String>();
 			Map<String, SavedCookie> sessionCookies = session.getAttribute(requestContext, Constants.HDIV_COOKIES_KEY, Map.class);
-
 			if (sessionCookies != null) {
 				while (headerValues.hasMoreElements()) {
 					String element = headerValues.nextElement();
 					String replaced = replaceCookieString(element, sessionCookies);
 					values.add(replaced);
-				}
-			}
-			else {
+				} 
+			} else {
 				return headerValues;
 			}
 			return values.elements();
@@ -269,21 +241,16 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 	 * @since HDIV 1.1.1
 	 */
 	protected String replaceCookieString(final String cookieHeader, final Map<String, SavedCookie> sessionCookies) {
-
 		String header = cookieHeader.trim();
-
 		// Cookie fields are separated by ';'
 		StringTokenizer tokens = new StringTokenizer(cookieHeader, ";");
-
 		while (tokens.hasMoreTokens()) {
 			// field name is separated from value by '='
 			StringTokenizer t = new StringTokenizer(tokens.nextToken(), "=");
 			String name = t.nextToken().trim();
-
 			if (name.equals(Constants.JSESSIONID)) {
 				continue;
 			}
-
 			if (sessionCookies.containsKey(name)) {
 				if (t.hasMoreTokens()) {
 					String value = t.nextToken().trim();
@@ -291,7 +258,7 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 					header = header.replaceFirst("=" + value, "=" + savedCookie.getValue());
 				}
 			}
-		}
+		} 
 		return header;
 	}
 
@@ -302,9 +269,7 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 	 * @param value value
 	 */
 	public void addParameter(final String name, final String[] value) {
-
 		parameters.put(name, value);
-
 		if (isMultipart) {
 			addTextParameter(name, value);
 		}
@@ -318,10 +283,8 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 	 */
 	@Override
 	public Map<String, String[]> getParameterMap() {
-
 		Map<String, String[]> map = new HashMap<String, String[]>(super.getRequest().getParameterMap());
 		map.putAll(parameters);
-
 		return map;
 	}
 
@@ -332,8 +295,7 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 	}
 
 	@Override
-	public AsyncContext startAsync(final ServletRequest servletRequest, final ServletResponse servletResponse)
-			throws IllegalStateException {
+	public AsyncContext startAsync(final ServletRequest servletRequest, final ServletResponse servletResponse) throws IllegalStateException {
 		isAsyncRequest = true;
 		return super.startAsync(servletRequest, servletResponse);
 	}
@@ -431,5 +393,4 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 	public void setSession(final ISession session) {
 		this.session = session;
 	}
-
 }
