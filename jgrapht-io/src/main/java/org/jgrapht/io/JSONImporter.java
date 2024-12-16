@@ -17,6 +17,9 @@
  */
 package org.jgrapht.io;
 
+import java.io.*;
+import java.util.*;
+import java.util.function.Supplier;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
@@ -24,14 +27,20 @@ import org.jgrapht.*;
 import org.jgrapht.io.JsonParser.JsonContext;
 import org.jgrapht.util.SupplierUtil;
 
-import java.io.*;
-import java.util.*;
-import java.util.function.Supplier;
 
 /**
  * Imports a graph from a <a href="https://tools.ietf.org/html/rfc8259">JSON</a> file.
  * 
+ * <p>
+<<<<<<< LEFT
+ * For a description of the format see <a href="http://www.infosun.fmi.uni-passau.de/Graphlet/GML/">
+ * http://www.infosun.fmi.uni-passau.de/Graphlet/GML/</a>.
+ *
+ * <p>
  * Below is a small example of a graph in GML format.
+=======
+ * Below is small example of a graph in JSON format.
+>>>>>>> RIGHT
  * 
  * <pre>
  * {
@@ -77,20 +86,16 @@ import java.util.function.Supplier;
  * 
  * @author Dimitrios Michail
  */
-public class JSONImporter<V, E>
-    extends
-    AbstractBaseImporter<V, E>
-    implements
-    GraphImporter<V, E>
-{
+public class JSONImporter<V, E> extends AbstractBaseImporter<V, E> implements GraphImporter<V, E> {
     /**
      * Constructs a new importer.
-     * 
-     * @param vertexProvider provider for the generation of vertices. Must not be null.
-     * @param edgeProvider provider for the generation of edges. Must not be null.
+     *
+     * @param vertexProvider
+     * 		provider for the generation of vertices. Must not be null.
+     * @param edgeProvider
+     * 		provider for the generation of edges. Must not be null.
      */
-    public JSONImporter(VertexProvider<V> vertexProvider, EdgeProvider<V, E> edgeProvider)
-    {
+    public JSONImporter(VertexProvider<V> vertexProvider, EdgeProvider<V, E> edgeProvider) {
         super(vertexProvider, edgeProvider);
     }
 
@@ -146,61 +151,66 @@ public class JSONImporter<V, E>
         }
     }
 
-    private class ThrowingErrorListener
-        extends
-        BaseErrorListener
-    {
+    private class ThrowingErrorListener extends BaseErrorListener {
         @Override
-        public void syntaxError(
-            Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine,
-            String msg, RecognitionException e)
-            throws ParseCancellationException
-        {
-            throw new ParseCancellationException(
-                "line " + line + ":" + charPositionInLine + " " + msg);
+        public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) throws ParseCancellationException {
+            throw new ParseCancellationException((((("line " + line) + ":") + charPositionInLine) + " ") + msg);
         }
     }
 
     // create graph from parse tree
-    private class CreateGraphJsonListener
-        extends
-        JsonBaseListener
-    {
+    private class CreateGraphJsonListener extends JsonBaseListener {
         private static final String GRAPH = "graph";
+
         private static final String NODES = "nodes";
+
         private static final String EDGES = "edges";
+
         private static final String ID = "id";
 
         private static final String WEIGHT = "weight";
+
         private static final String SOURCE = "source";
+
         private static final String TARGET = "target";
 
         // current state of parser
+        // current state of parser
         private int objectLevel;
+
         private int arrayLevel;
+
         private boolean insideNodes;
+
         private boolean insideNodesArray;
+
         private boolean insideNode;
+
         private boolean insideEdges;
+
         private boolean insideEdgesArray;
+
         private boolean insideEdge;
+
         private Deque<String> pairNames;
 
         private String nodeId;
+
         private String sourceId;
+
         private String targetId;
+
         private Map<String, Attribute> attributes;
 
         // collected nodes and edges
         private Map<String, Node> nodes;
+
         private List<Node> singletons;
+
         private List<PartialEdge> edges;
 
-        public void updateGraph(Graph<V, E> graph)
-            throws ImportException
-        {
+        public void updateGraph(Graph<V, E> graph) throws ImportException {
             boolean isWeighted = graph.getType().isWeighted();
-
             // add nodes
             Map<String, V> map = new HashMap<>();
             for (String id : nodes.keySet()) {
@@ -209,34 +219,26 @@ public class JSONImporter<V, E>
                 map.put(id, vertex);
                 graph.addVertex(vertex);
             }
-
             // add singleton nodes
             if (!singletons.isEmpty()) {
                 Supplier<String> singletonIdSupplier = SupplierUtil.createRandomUUIDStringSupplier();
                 for (Node n : singletons) {
-                    graph
-                        .addVertex(
-                            vertexProvider.buildVertex(singletonIdSupplier.get(), n.attributes));
+                    graph.addVertex(vertexProvider.buildVertex(singletonIdSupplier.get(), n.attributes));
                 }
             }
-
             // add edges
             for (PartialEdge pe : edges) {
-                String label = "e_" + pe.source + "_" + pe.target;
-                
+                String label = (("e_" + pe.source) + "_") + pe.target;
                 V from = map.get(pe.source);
                 if (from == null) {
-                    throw new ImportException("Node " + pe.source + " does not exist");
+                    throw new ImportException(("Node " + pe.source) + " does not exist");
                 }
-                
                 V to = map.get(pe.target);
                 if (to == null) {
-                    throw new ImportException("Node " + pe.target + " does not exist");
+                    throw new ImportException(("Node " + pe.target) + " does not exist");
                 }
-                
                 E e = edgeProvider.buildEdge(from, to, label, pe.attributes);
                 graph.addEdge(from, to, e);
-
                 if (isWeighted) {
                     Attribute weight = pe.attributes.get(WEIGHT);
                     if (weight != null) {
@@ -250,18 +252,15 @@ public class JSONImporter<V, E>
         }
 
         @Override
-        public void enterJson(JsonParser.JsonContext ctx)
-        {
+        public void enterJson(JsonParser.JsonContext ctx) {
             objectLevel = 0;
             arrayLevel = 0;
-
             insideNodes = false;
             insideNodesArray = false;
             insideNode = false;
             insideEdges = false;
             insideEdgesArray = false;
             insideEdge = false;
-
             nodes = new LinkedHashMap<>();
             singletons = new ArrayList<>();
             edges = new ArrayList<PartialEdge>();
@@ -288,21 +287,18 @@ public class JSONImporter<V, E>
         }
 
         @Override
-        public void exitObj(JsonParser.ObjContext ctx)
-        {
-            if (objectLevel == 2 && arrayLevel == 1) {
+        public void exitObj(JsonParser.ObjContext ctx) {
+            if ((objectLevel == 2) && (arrayLevel == 1)) {
                 if (insideNodesArray) {
                     if (nodeId == null) {
                         singletons.add(new Node(attributes));
-                    } else {
-                        if (nodes.put(nodeId, new Node(attributes)) != null) {
-                            throw new IllegalArgumentException("Duplicate node id " + nodeId);
-                        }
+                    } else if (nodes.put(nodeId, new Node(attributes)) != null) {
+                        throw new IllegalArgumentException("Duplicate node id " + nodeId);
                     }
                     insideNode = false;
                     attributes = null;
                 } else if (insideEdgesArray) {
-                    if (sourceId != null && targetId != null) {
+                    if ((sourceId != null) && (targetId != null)) {
                         edges.add(new PartialEdge(sourceId, targetId, attributes));
                     } else if (sourceId == null) {
                         throw new IllegalArgumentException("Edge with missing source detected");
@@ -371,11 +367,9 @@ public class JSONImporter<V, E>
         }
 
         @Override
-        public void enterValue(JsonParser.ValueContext ctx)
-        {
+        public void enterValue(JsonParser.ValueContext ctx) {
             String name = pairNames.element();
-
-            if (objectLevel == 2 && arrayLevel < 2) { 
+            if ((objectLevel == 2) && (arrayLevel < 2)) {
                 if (insideNode) {
                     if (ID.equals(name)) {
                         nodeId = readIdentifier(ctx);
@@ -392,49 +386,45 @@ public class JSONImporter<V, E>
                     }
                 }
             }
-
         }
 
-        private Attribute readAttribute(JsonParser.ValueContext ctx)
-        {
+        private Attribute readAttribute(JsonParser.ValueContext ctx) {
             // string
             String stringValue = readString(ctx);
             if (stringValue != null) {
                 return DefaultAttribute.createAttribute(stringValue);
             }
-
             // number
             TerminalNode tn = ctx.NUMBER();
             if (tn != null) {
                 String value = tn.getText();
                 try {
                     return DefaultAttribute.createAttribute(Integer.parseInt(value, 10));
-                } catch (NumberFormatException e) {
+                } catch (java.lang.NumberFormatException e) {
                     // ignore
                 }
                 try {
                     return DefaultAttribute.createAttribute(Long.parseLong(value, 10));
-                } catch (NumberFormatException e) {
+                } catch (java.lang.NumberFormatException e) {
                     // ignore
                 }
                 try {
                     return DefaultAttribute.createAttribute(Double.parseDouble(value));
-                } catch (NumberFormatException e) {
+                } catch (java.lang.NumberFormatException e) {
                     // ignore
                 }
             }
-
             // other
             String other = ctx.getText();
-            if (other != null) { 
-                if ("true".equals(other)) { 
+            if (other != null) {
+                if ("true".equals(other)) {
                     return DefaultAttribute.createAttribute(Boolean.TRUE);
-                } else if ("false".equals(other)) { 
+                } else if ("false".equals(other)) {
                     return DefaultAttribute.createAttribute(Boolean.FALSE);
                 } else if ("null".equals(other)) {
                     return DefaultAttribute.NULL;
-                } else { 
-                    return new DefaultAttribute<>(other, AttributeType.UNKNOWN);        
+                } else {
+                    return new DefaultAttribute<>(other, AttributeType.UNKNOWN);
                 }
             }
             return DefaultAttribute.NULL;
@@ -457,8 +447,7 @@ public class JSONImporter<V, E>
             return unquote(tn.getText());
         }
 
-        private String readIdentifier(JsonParser.ValueContext ctx)
-        {
+        private String readIdentifier(JsonParser.ValueContext ctx) {
             TerminalNode tn = ctx.STRING();
             if (tn != null) {
                 return unquote(tn.getText());
@@ -469,36 +458,31 @@ public class JSONImporter<V, E>
             }
             try {
                 return Long.valueOf(tn.getText(), 10).toString();
-            } catch (NumberFormatException e) {
+            } catch (java.lang.NumberFormatException e) {
             }
-            
             throw new IllegalArgumentException("Failed to read valid identifier");
         }
-
     }
 
-    private static class Node
-    {
+    private static class Node {
         Map<String, Attribute> attributes;
 
-        public Node(Map<String, Attribute> attributes)
-        {
+        public Node(Map<String, Attribute> attributes) {
             this.attributes = attributes;
         }
     }
 
-    private static class PartialEdge
-    {
+    private static class PartialEdge {
         String source;
+
         String target;
+
         Map<String, Attribute> attributes;
 
-        public PartialEdge(String source, String target, Map<String, Attribute> attributes)
-        {
+        public PartialEdge(String source, String target, Map<String, Attribute> attributes) {
             this.source = source;
             this.target = target;
             this.attributes = attributes;
         }
     }
-
 }
