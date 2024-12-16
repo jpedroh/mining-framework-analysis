@@ -4,26 +4,23 @@
  *
  * Copyright (c) 2010-2013, Sebastian Staudt
  */
-
 package com.github.koraktor.steamcondenser.steam.community;
 
+import com.github.koraktor.steamcondenser.exceptions.WebApiException;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.logging.Level;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.koraktor.steamcondenser.exceptions.WebApiException;
 
 /**
  * This abstract class provides functionality for accessing Steam's Web API
@@ -33,8 +30,7 @@ import com.github.koraktor.steamcondenser.exceptions.WebApiException;
  *
  * @author Sebastian Staudt
  */
-abstract public class WebApi {
-
+public abstract class WebApi {
     protected static final Logger LOG = LoggerFactory.getLogger(WebApi.class);
 
     protected static String apiKey;
@@ -263,60 +259,48 @@ abstract public class WebApi {
      *        "json", "vdf", or "xml").
      * @throws WebApiException In case of any request failure
      */
-    public static String load(String format, String apiInterface, String method, int version, Map<String, Object> params)
-            throws WebApiException {
-        String protocol = secure ? "https" : "http";
+    public static String load(String format, String apiInterface, String method, int version, Map<String, Object> params) throws WebApiException {
+        String protocol = (secure) ? "https" : "http";
         String url = String.format("%s://api.steampowered.com/%s/%s/v%04d/?", protocol, apiInterface, method, version);
-
-        if(params == null) {
+        if (params == null) {
             params = new HashMap<String, Object>();
         }
         params.put("format", format);
         if (apiKey != null) {
             params.put("key", apiKey);
         }
-
         boolean first = true;
-        for(Map.Entry<String, Object> param : params.entrySet()) {
-            if(first) {
+        for (Map.Entry<String, Object> param : params.entrySet()) {
+            if (first) {
                 first = false;
             } else {
                 url += '&';
             }
-
             url += String.format("%s=%s", param.getKey(), param.getValue());
         }
-
-        if (LOG.isInfoEnabled()) {
-            String debugUrl = (apiKey == null) ?
-                url : url.replace(apiKey, "SECRET");
+        if (LOG.isLoggable(Level.INFO)) {
+            String debugUrl = (apiKey == null) ? url : url.replace(apiKey, "SECRET");
             LOG.info("Querying Steam Web API: " + debugUrl);
         }
-
         String data;
         try {
             DefaultHttpClient httpClient = new DefaultHttpClient();
             httpClient.getParams().setBooleanParameter(ClientPNames.HANDLE_AUTHENTICATION, false);
             HttpGet request = new HttpGet(url);
             HttpResponse response = httpClient.execute(request);
-
             Integer statusCode = response.getStatusLine().getStatusCode();
-            if(!statusCode.toString().startsWith("20")) {
-                if(statusCode == 401) {
+            if (!statusCode.toString().startsWith("20")) {
+                if (statusCode == 401) {
                     throw new WebApiException(WebApiException.Cause.UNAUTHORIZED);
                 }
-
                 throw new WebApiException(WebApiException.Cause.HTTP_ERROR, statusCode, response.getStatusLine().getReasonPhrase());
             }
-
             data = EntityUtils.toString(response.getEntity());
         } catch (WebApiException e) {
             throw e;
-        } catch(Exception e) {
+        } catch (java.lang.Exception e) {
             throw new WebApiException("Could not communicate with the Web API.", e);
         }
-
         return data;
     }
-
 }

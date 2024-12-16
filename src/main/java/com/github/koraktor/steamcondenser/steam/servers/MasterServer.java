@@ -2,11 +2,18 @@
  * This code is free software; you can redistribute it and/or modify it under
  * the terms of the new BSD License.
  *
+<<<<<<< LEFT
+ * Copyright (c) 2008-2012, Sebastian Staudt
+=======
  * Copyright (c) 2008-2013, Sebastian Staudt
+>>>>>>> RIGHT
  */
-
 package com.github.koraktor.steamcondenser.steam.servers;
 
+import com.github.koraktor.steamcondenser.exceptions.SteamCondenserException;
+import com.github.koraktor.steamcondenser.steam.packets.A2M_GET_SERVERS_BATCH2_Paket;
+import com.github.koraktor.steamcondenser.steam.packets.M2A_SERVER_BATCH_Paket;
+import com.github.koraktor.steamcondenser.steam.sockets.MasterServerSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Vector;
@@ -14,10 +21,6 @@ import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.koraktor.steamcondenser.exceptions.SteamCondenserException;
-import com.github.koraktor.steamcondenser.steam.packets.A2M_GET_SERVERS_BATCH2_Paket;
-import com.github.koraktor.steamcondenser.steam.packets.M2A_SERVER_BATCH_Paket;
-import com.github.koraktor.steamcondenser.steam.sockets.MasterServerSocket;
 
 /**
  * This class represents a Steam master server and can be used to get game
@@ -30,7 +33,6 @@ import com.github.koraktor.steamcondenser.steam.sockets.MasterServerSocket;
  * @author Sebastian Staudt
  */
 public class MasterServer extends Server {
-
     protected static final Logger LOG = LoggerFactory.getLogger(MasterServer.class);
 
     /**
@@ -105,10 +107,12 @@ public class MasterServer extends Server {
     /**
      * Creates a new instance of a master server object
      *
-     * @param address Either an IP address, a DNS name or one of them combined
-     *        with the port number. If a port number is given, e.g.
-     *        'server.example.com:27016' it will override the second argument.
-     * @throws SteamCondenserException if initializing the socket fails
+     * @param address
+     * 		Either an IP address, a DNS name or one of them combined
+     * 		with the port number. If a port number is given, e.g.
+     * 		'server.example.com:27016' it will override the second argument.
+     * @throws SteamCondenserException
+     * 		if initializing the socket fails
      */
     public MasterServer(String address) throws SteamCondenserException {
         super(address, null);
@@ -117,24 +121,28 @@ public class MasterServer extends Server {
     /**
      * Creates a new instance of a master server object
      *
-     * @param address Either an IP address, a DNS name or one of them combined
-     *        with the port number. If a port number is given, e.g.
-     *        'server.example.com:27016' it will override the second argument.
-     * @param port The port the server is listening on
-     * @throws SteamCondenserException if initializing the socket fails
+     * @param address
+     * 		Either an IP address, a DNS name or one of them combined
+     * 		with the port number. If a port number is given, e.g.
+     * 		'server.example.com:27016' it will override the second argument.
+     * @param port
+     * 		The port the server is listening on
+     * @throws SteamCondenserException
+     * 		if initializing the socket fails
      */
-    public MasterServer(String address, Integer port)
-            throws SteamCondenserException {
+    public MasterServer(String address, Integer port) throws SteamCondenserException {
         super(address, port);
     }
 
     /**
      * Creates a new instance of a GoldSrc server object
      *
-     * @param address Either an IP address, a DNS name or one of them combined
-     *        with the port number. If a port number is given, e.g.
-     *        'server.example.com:27016' it will override the second argument.
-     * @throws SteamCondenserException if initializing the socket fails
+     * @param address
+     * 		Either an IP address, a DNS name or one of them combined
+     * 		with the port number. If a port number is given, e.g.
+     * 		'server.example.com:27016' it will override the second argument.
+     * @throws SteamCondenserException
+     * 		if initializing the socket fails
      */
     public MasterServer(InetAddress address) throws SteamCondenserException {
         super(address, null);
@@ -143,14 +151,16 @@ public class MasterServer extends Server {
     /**
      * Creates a new instance of a master server object
      *
-     * @param address Either an IP address, a DNS name or one of them combined
-     *        with the port number. If a port number is given, e.g.
-     *        'server.example.com:27016' it will override the second argument.
-     * @param port The port the server is listening on
-     * @throws SteamCondenserException if initializing the socket fails
+     * @param address
+     * 		Either an IP address, a DNS name or one of them combined
+     * 		with the port number. If a port number is given, e.g.
+     * 		'server.example.com:27016' it will override the second argument.
+     * @param port
+     * 		The port the server is listening on
+     * @throws SteamCondenserException
+     * 		if initializing the socket fails
      */
-    public MasterServer(InetAddress address, Integer port)
-            throws SteamCondenserException {
+    public MasterServer(InetAddress address, Integer port) throws SteamCondenserException {
         super(address, port);
     }
 
@@ -234,53 +244,48 @@ public class MasterServer extends Server {
      * @throws TimeoutException if too many timeouts occur while querying the
      *         master server
      */
-    public Vector<InetSocketAddress> getServers(byte regionCode, String filter, boolean force)
-            throws SteamCondenserException, TimeoutException {
-        int failCount    = 0;
+    public Vector<InetSocketAddress> getServers(byte regionCode, String filter, boolean force) throws SteamCondenserException, TimeoutException {
+        int failCount = 0;
         boolean finished = false;
-        int portNumber   = 0;
-        String hostName  = "0.0.0.0";
+        int portNumber = 0;
+        String hostName = "0.0.0.0";
         Vector<String> serverStringArray;
         Vector<InetSocketAddress> serverArray = new Vector<InetSocketAddress>();
-
-        while(true) {
+        while (true) {
             try {
                 failCount = 0;
                 do {
-                    this.socket.send(new A2M_GET_SERVERS_BATCH2_Paket(regionCode, hostName + ":" + portNumber, filter));
+                    this.socket.send(new A2M_GET_SERVERS_BATCH2_Paket(regionCode, (hostName + ":") + portNumber, filter));
                     try {
-                        serverStringArray = ((M2A_SERVER_BATCH_Paket) this.socket.getReply()).getServers();
-
-                        for(String serverString : serverStringArray) {
+                        serverStringArray = ((M2A_SERVER_BATCH_Paket) (this.socket.getReply())).getServers();
+                        for (String serverString : serverStringArray) {
                             hostName = serverString.substring(0, serverString.lastIndexOf(":"));
                             portNumber = Integer.valueOf(serverString.substring(serverString.lastIndexOf(":") + 1));
-
-                            if(!hostName.equals("0.0.0.0") && portNumber != 0) {
+                            if ((!hostName.equals("0.0.0.0")) && (portNumber != 0)) {
                                 serverArray.add(new InetSocketAddress(hostName, portNumber));
                             } else {
                                 finished = true;
                             }
                         }
                         failCount = 0;
-                    } catch(TimeoutException e) {
-                        failCount ++;
-                        if(failCount == retries) {
+                    } catch (TimeoutException e) {
+                        failCount++;
+                        if (failCount == retries) {
                             throw e;
                         }
-                        LOG.info("Request to master server " + this.ipAddress + " timed out, retrying...");
+                        LOG.info(("Request to master server " + this.ipAddress) + " timed out, retrying...");
                     }
-                } while(!finished);
+                } while (!finished );
                 break;
-            } catch(TimeoutException e) {
+            } catch (TimeoutException e) {
                 if (force) {
                     break;
-                } else if(this.rotateIp()) {
+                } else if (this.rotateIp()) {
                     throw e;
                 }
-                LOG.info("Request to master server failed, retrying " + this.ipAddress + "...");
+                LOG.info(("Request to master server failed, retrying " + this.ipAddress) + "...");
             }
-        }
-
+        } 
         return serverArray;
     }
 
@@ -292,5 +297,4 @@ public class MasterServer extends Server {
     public void initSocket() throws SteamCondenserException {
         this.socket = new MasterServerSocket(this.ipAddress, this.port);
     }
-
 }
