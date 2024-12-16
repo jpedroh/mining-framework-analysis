@@ -12,6 +12,25 @@
  */
 package org.omnifaces.util;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Map;
+import java.util.Set;
+import javax.faces.application.Application;
+import javax.faces.application.ResourceHandler;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.omnifaces.filter.CacheControlFilter;
 import static java.util.regex.Pattern.quote;
 import static javax.faces.application.ProjectStage.Development;
 import static javax.faces.application.ProjectStage.PROJECT_STAGE_JNDI_NAME;
@@ -24,27 +43,6 @@ import static org.omnifaces.util.Utils.isEmpty;
 import static org.omnifaces.util.Utils.startsWithOneOf;
 import static org.omnifaces.util.Utils.unmodifiableSet;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.faces.application.Application;
-import javax.faces.application.ResourceHandler;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.omnifaces.filter.CacheControlFilter;
 
 /**
  * <p>
@@ -72,19 +70,18 @@ import org.omnifaces.filter.CacheControlFilter;
  * @since 1.6
  */
 public final class Servlets {
-
 	// Constants ------------------------------------------------------------------------------------------------------
-
 	private static final Set<String> FACES_AJAX_HEADERS = unmodifiableSet("partial/ajax", "partial/process");
+
 	private static final String FACES_AJAX_REDIRECT_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 		+ "<partial-response><redirect url=\"%s\"></redirect></partial-response>";
 
+	// Variables ------------------------------------------------------------------------------------------------------
 	// Variables ------------------------------------------------------------------------------------------------------
 
 	private static Boolean facesDevelopment;
 
 	// Constructors ---------------------------------------------------------------------------------------------------
-
 	private Servlets() {
 		// Hide constructor.
 	}
@@ -247,23 +244,19 @@ public final class Servlets {
 	public static Map<String, List<String>> toParameterMap(String queryString) {
 		String[] parameters = queryString.split(quote("&"));
 		Map<String, List<String>> parameterMap = new LinkedHashMap<String, List<String>>(parameters.length);
-
 		for (String parameter : parameters) {
 			if (parameter.contains("=")) {
 				String[] pair = parameter.split(quote("="));
 				String key = decodeURL(pair[0]);
-				String value = (pair.length > 1 && !isEmpty(pair[1])) ? decodeURL(pair[1]) : "";
+				String value = ((pair.length > 1) && (!isEmpty(pair[1]))) ? decodeURL(pair[1]) : "";
 				List<String> values = parameterMap.get(key);
-
 				if (values == null) {
 					values = new ArrayList<String>(1);
 					parameterMap.put(key, values);
 				}
-
 				values.add(value);
 			}
 		}
-
 		return parameterMap;
 	}
 
@@ -385,19 +378,15 @@ public final class Servlets {
 	 * @see HttpServletResponse#addCookie(Cookie)
 	 * @since 2.0
 	 */
-	public static void addResponseCookie(HttpServletRequest request, HttpServletResponse response,
-		String name, String value, String domain, String path, int maxAge)
-	{
+	public static void addResponseCookie(HttpServletRequest request, HttpServletResponse response, String name, String value, String domain, String path, int maxAge) {
 		Cookie cookie = new Cookie(name, encodeURL(value));
-
-		if (domain != null && !domain.equals("localhost")) { // Chrome doesn't like domain:"localhost" on cookies.
+		if ((domain != null) && (!domain.equals("localhost"))) {
+		// Chrome doesn't like domain:"localhost" on cookies.
 			cookie.setDomain(domain);
 		}
-
 		if (path != null) {
 			cookie.setPath(path);
 		}
-
 		cookie.setMaxAge(maxAge);
 		cookie.setSecure(request.isSecure());
 		response.addCookie(cookie);
@@ -520,19 +509,14 @@ public final class Servlets {
 	 * redeclare it in the action method. The servletcontainer will handle it.
 	 * @since 2.0
 	 */
-	public static void facesRedirect
-		(HttpServletRequest request, HttpServletResponse response, String url, String ... paramValues)
-			throws IOException
-	{
+	public static void facesRedirect(HttpServletRequest request, HttpServletResponse response, String url, String... paramValues) throws IOException {
 		String redirectURL = prepareRedirectURL(request, url, paramValues);
-
 		if (isFacesAjaxRequest(request)) {
 			CacheControlFilter.setNoCacheHeaders(response);
 			response.setContentType("text/xml");
 			response.setCharacterEncoding(UTF_8.name());
 			response.getWriter().printf(FACES_AJAX_REDIRECT_XML, redirectURL);
-		}
-		else {
+		} else {
 			response.sendRedirect(redirectURL);
 		}
 	}
@@ -561,5 +545,4 @@ public final class Servlets {
 
 		return String.format(redirectURL, encodedParams);
 	}
-
 }

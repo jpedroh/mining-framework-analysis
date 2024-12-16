@@ -12,11 +12,6 @@
  */
 package org.omnifaces.util;
 
-import static javax.servlet.http.HttpServletResponse.SC_MOVED_PERMANENTLY;
-import static org.omnifaces.util.Servlets.prepareRedirectURL;
-import static org.omnifaces.util.Utils.encodeURL;
-import static org.omnifaces.util.Utils.isAnyEmpty;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,11 +26,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
-
 import javax.el.ELContext;
 import javax.el.ELResolver;
 import javax.el.ValueExpression;
@@ -57,8 +51,12 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.omnifaces.component.ParamHolder;
+import static javax.servlet.http.HttpServletResponse.SC_MOVED_PERMANENTLY;
+import static org.omnifaces.util.Servlets.prepareRedirectURL;
+import static org.omnifaces.util.Utils.encodeURL;
+import static org.omnifaces.util.Utils.isAnyEmpty;
+
 
 /**
  * <p>
@@ -104,21 +102,23 @@ import org.omnifaces.component.ParamHolder;
  * @see Servlets
  */
 public final class FacesLocal {
-
+	// Constants ------------------------------------------------------------------------------------------------------
 	// Constants ------------------------------------------------------------------------------------------------------
 
 	private static final String DEFAULT_MIME_TYPE = "application/octet-stream";
+
 	private static final int DEFAULT_SENDFILE_BUFFER_SIZE = 10240;
+
 	private static final String SENDFILE_HEADER = "%s;filename=\"%2$s\"; filename*=UTF-8''%2$s";
+
 	private static final String ERROR_NO_VIEW = "There is no view.";
-	private static final String[] FACELET_CONTEXT_KEYS = {
-		FaceletContext.FACELET_CONTEXT_KEY, // Compiletime constant, may fail when compiled against EE6 and run on EE7.
-		"com.sun.faces.facelets.FACELET_CONTEXT", // JSF 2.0/2.1.
-		"javax.faces.FACELET_CONTEXT" // JSF 2.2.
-	};
+
+	private static final String[] FACELET_CONTEXT_KEYS = new java.lang.String[]{ FaceletContext.FACELET_CONTEXT_KEY// Compiletime constant, may fail when compiled against EE6 and run on EE7.
+	, "com.sun.faces.facelets.FACELET_CONTEXT"// JSF 2.0/2.1.
+	, "javax.faces.FACELET_CONTEXT"// JSF 2.2.
+	 };
 
 	// Constructors ---------------------------------------------------------------------------------------------------
-
 	private FacesLocal() {
 		// Hide constructor.
 	}
@@ -289,23 +289,18 @@ public final class FacesLocal {
 	 */
 	public static Map<String, List<String>> getViewParameterMap(FacesContext context) {
 		Collection<UIViewParameter> viewParameters = getViewParameters(context);
-
 		if (viewParameters.isEmpty()) {
 			return Collections.<String, List<String>>emptyMap();
 		}
-
 		Map<String, List<String>> parameterMap = new HashMap<String, List<String>>();
-
 		for (UIViewParameter viewParameter : viewParameters) {
 			String value = viewParameter.getStringValue(context);
-
 			if (value != null) {
 				// <f:viewParam> doesn't support multiple values anyway, so having multiple <f:viewParam> on the
 				// same request parameter shouldn't end up in repeated parameters in action URL.
 				parameterMap.put(viewParameter.getName(), Collections.singletonList(value));
 			}
 		}
-
 		return parameterMap;
 	}
 
@@ -400,19 +395,15 @@ public final class FacesLocal {
 		Application application = context.getApplication();
 		List<Locale> supportedLocales = new ArrayList<Locale>();
 		Locale defaultLocale = application.getDefaultLocale();
-
 		if (defaultLocale != null) {
 			supportedLocales.add(defaultLocale);
 		}
-
 		for (Iterator<Locale> iter = application.getSupportedLocales(); iter.hasNext();) {
 			Locale supportedLocale = iter.next();
-
 			if (!supportedLocale.equals(defaultLocale)) {
 				supportedLocales.add(supportedLocale);
 			}
 		}
-
 		return supportedLocales;
 	}
 
@@ -480,17 +471,13 @@ public final class FacesLocal {
 	 * {@inheritDoc}
 	 * @see Faces#getBookmarkableURL(String, Map, boolean)
 	 */
-	public static String getBookmarkableURL
-		(FacesContext context, String viewId, Map<String, List<String>> params, boolean includeViewParams)
-	{
+	public static String getBookmarkableURL(FacesContext context, String viewId, Map<String, List<String>> params, boolean includeViewParams) {
 		Map<String, List<String>> map = new HashMap<String, List<String>>();
-
 		if (params != null) {
 			for (Entry<String, List<String>> param : params.entrySet()) {
 				addParamToMapIfNecessary(map, param.getKey(), param.getValue());
 			}
 		}
-
 		return context.getApplication().getViewHandler().getBookmarkableURL(context, viewId, map, includeViewParams);
 	}
 
@@ -514,17 +501,13 @@ public final class FacesLocal {
 	 * {@inheritDoc}
 	 * @see Faces#getBookmarkableURL(String, Collection, boolean)
 	 */
-	public static String getBookmarkableURL
-		(FacesContext context, String viewId, Collection<? extends ParamHolder> params, boolean includeViewParams)
-	{
+	public static String getBookmarkableURL(FacesContext context, String viewId, Collection<? extends ParamHolder> params, boolean includeViewParams) {
 		Map<String, List<String>> map = new HashMap<String, List<String>>();
-
 		if (params != null) {
 			for (ParamHolder param : params) {
 				addParamToMapIfNecessary(map, param.getName(), param.getValue());
 			}
 		}
-
 		return context.getApplication().getViewHandler().getBookmarkableURL(context, viewId, map, includeViewParams);
 	}
 
@@ -532,14 +515,11 @@ public final class FacesLocal {
 		if (isAnyEmpty(name, value)) {
 			return;
 		}
-
 		List<String> values = map.get(name);
-
 		if (values == null) {
 			values = new ArrayList<String>(1);
 			map.put(name, values);
 		}
-
 		values.add(value.toString());
 	}
 
@@ -981,17 +961,15 @@ public final class FacesLocal {
 	public static void addResponseCookie(FacesContext context, String name, String value, String domain, String path, int maxAge) {
 		ExternalContext externalContext = context.getExternalContext();
 		Map<String, Object> properties = new HashMap<String, Object>();
-
-		if (domain != null && !domain.equals("localhost")) { // Chrome doesn't like domain:"localhost" on cookies.
+		if ((domain != null) && (!domain.equals("localhost"))) {
+		// Chrome doesn't like domain:"localhost" on cookies.
 			properties.put("domain", domain);
 		}
-
 		if (path != null) {
 			properties.put("path", path);
 		}
-
 		properties.put("maxAge", maxAge);
-		properties.put("secure", ((HttpServletRequest) externalContext.getRequest()).isSecure());
+		properties.put("secure", ((HttpServletRequest) (externalContext.getRequest())).isSecure());
 		externalContext.addResponseCookie(name, encodeURL(value), properties);
 	}
 
@@ -1422,5 +1400,4 @@ public final class FacesLocal {
 
 		context.responseComplete();
 	}
-
 }

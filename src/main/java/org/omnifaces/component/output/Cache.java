@@ -12,6 +12,22 @@
  */
 package org.omnifaces.component.output;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import javax.faces.component.FacesComponent;
+import javax.faces.component.visit.VisitContext;
+import javax.faces.context.FacesContext;
+import javax.faces.context.ResponseWriter;
+import javax.faces.event.PreRenderViewEvent;
+import javax.faces.event.SystemEvent;
+import org.omnifaces.component.output.cache.CacheFactory;
+import org.omnifaces.component.output.cache.CacheInitializerListener;
+import org.omnifaces.component.output.cache.el.CacheValue;
+import org.omnifaces.filter.OnDemandResponseBufferFilter;
+import org.omnifaces.servlet.BufferedHttpServletResponse;
+import org.omnifaces.util.Callback;
+import org.omnifaces.util.State;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static javax.faces.event.PhaseId.RENDER_RESPONSE;
@@ -26,24 +42,6 @@ import static org.omnifaces.util.Events.subscribeToRequestAfterPhase;
 import static org.omnifaces.util.Events.subscribeToViewEvent;
 import static org.omnifaces.util.Faces.getRequestAttribute;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-
-import javax.faces.component.FacesComponent;
-import javax.faces.component.visit.VisitContext;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import javax.faces.event.PreRenderViewEvent;
-import javax.faces.event.SystemEvent;
-
-import org.omnifaces.component.output.cache.CacheFactory;
-import org.omnifaces.component.output.cache.CacheInitializerListener;
-import org.omnifaces.component.output.cache.el.CacheValue;
-import org.omnifaces.filter.OnDemandResponseBufferFilter;
-import org.omnifaces.servlet.BufferedHttpServletResponse;
-import org.omnifaces.util.Callback;
-import org.omnifaces.util.State;
 
 /**
  * <p>
@@ -70,8 +68,8 @@ import org.omnifaces.util.State;
  * For example:
  * <pre>
  * &lt;context-param&gt;
- *     &lt;param-name&gt;org.omnifaces.CACHE_PROVIDER&lt;/param-name&gt;
- *     &lt;param-value&gt;com.example.MyProvider&lt;/param-value&gt;
+ * &lt;param-name&gt;org.omnifaces.CACHE_PROVIDER&lt;/param-name&gt;
+ * &lt;param-value&gt;com.example.MyProvider&lt;/param-value&gt;
  * &lt;/context-param&gt;
  * </pre>
  * <p>
@@ -125,90 +123,68 @@ import org.omnifaces.util.State;
  * </td></tr>
  * </table>
  *
- * <h3>Servlet 2.5 configuration</h3>
- * <p>
- * If no custom caching provider or global settings are used, no specific configuration is needed. Otherwise
- * <code>org.omnifaces.component.output.cache.CacheInitializerListener</code> needs to be installed as a listener in
- * <code>web.xml</code>:
- * <pre>
- * &lt;listener&gt;
- *     &lt;listener-class&gt;org.omnifaces.component.output.cache.CacheInitializerListener&lt;/listener-class&gt;
- * &lt;/listener&gt;
- * </pre>
- * <p>
- * In case the alternative caching method via buffering is used,
- * <code>org.omnifaces.servlet.BufferedHttpServletResponse</code> needs to be installed as a Servlet Filter in
- * <code>web.xml</code>, filtering either the <code>FacesServlet</code> itself or any page on which the alternative
- * caching method is required.
- *
  * @since 1.1
  * @author Arjan Tijms
  * @see CacheValue
  */
 @FacesComponent(Cache.COMPONENT_TYPE)
 public class Cache extends OutputFamily {
-
 	public static final String COMPONENT_TYPE = "org.omnifaces.component.output.Cache";
+
 	public static final String VALUE_SET = "org.omnifaces.cache.VALUE_SET";
+
 	public static final String DEFAULT_SCOPE = "session";
+
 	public static final String START_CONTENT_MARKER = "<!-- START CACHE FOR %s -->";
+
 	public static final String END_CONTENT_MARKER = "<!-- END CACHE FOR %s -->";
 
-	private static final String ERROR_NO_BUFFERED_RESPONSE = String.format(
-		"No buffered response found in request, but 'useBuffer' set to true. Check setting the '%s' context parameter or installing the '%s' filter manually.",
-		CacheInitializerListener.CACHE_INSTALL_BUFFER_FILTER, OnDemandResponseBufferFilter.class
-	);
+	private static final String ERROR_NO_BUFFERED_RESPONSE = String.format("No buffered response found in request, but 'useBuffer' set to true. Check setting the '%s' context parameter or installing the '%s' filter manually.", CacheInitializerListener.CACHE_INSTALL_BUFFER_FILTER, OnDemandResponseBufferFilter.class);
+
 	private static final Class<? extends SystemEvent> PRE_RENDER = PreRenderViewEvent.class;
 
 	private final State state = new State(getStateHelper());
 
 	enum PropertyKeys {
-		key, scope, time, useBuffer, reset, disabled
-	}
+
+		key,
+		scope,
+		time,
+		useBuffer,
+		reset,
+		disabled;}
 
 	public Cache() {
-
 		final FacesContext context = FacesContext.getCurrentInstance();
-
 		// Execute the following code in PreRenderView, since at construction time the "useBuffer" and "key" attributes
 		// have not been set, and there is no @PostContruct for UIComponents.
 		subscribeToViewEvent(PRE_RENDER, new Callback.SerializableVoid() {
-
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void invoke() {
-
-				if (!isDisabled() && isUseBuffer() && !hasCachedValue(context)) {
-
+				if (((!isDisabled()) && isUseBuffer()) && (!hasCachedValue(context))) {
 					final BufferedHttpServletResponse bufferedHttpServletResponse = getRequestAttribute(BUFFERED_RESPONSE);
-
 					if (bufferedHttpServletResponse == null) {
 						throw new IllegalStateException(ERROR_NO_BUFFERED_RESPONSE);
 					}
-
 					// Start buffering the response from now on
 					bufferedHttpServletResponse.setPassThrough(false);
-
 					// After the RENDER_RESPONSE phase, copy the area we need to cache from the response buffer
 					// and insert it into our cache
 					subscribeToRequestAfterPhase(RENDER_RESPONSE, new Callback.Void() {
 						@Override
 						public void invoke() {
 							String content = null;
-
 							try {
 								content = getContentFromBuffer(bufferedHttpServletResponse.getBufferAsString());
-							}
-							catch (IOException e) {
+							} catch (IOException e) {
 								throw new IllegalStateException(e);
 							}
-
 							if (content != null) {
 								cacheContent(context, content);
 							}
 						}
-
 					});
 				}
 			}
@@ -372,7 +348,6 @@ public class Cache extends OutputFamily {
 		return null;
 	}
 
-
 	// Attribute getters/setters --------------------------------------------------------------------------------------
 
 	public String getKey() {
@@ -432,5 +407,4 @@ public class Cache extends OutputFamily {
 	public void setDisabled(Boolean disabledValue) {
 		state.put(disabled, disabledValue);
 	}
-
 }
