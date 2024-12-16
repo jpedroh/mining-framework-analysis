@@ -15,6 +15,8 @@
  */
 package org.owasp.esapi;
 
+
+
 /**
  * The Logger interface defines a set of methods that can be used to log
  * security events. It supports a hierarchy of logging levels which can be configured at runtime to determine
@@ -91,336 +93,335 @@ package org.owasp.esapi;
  * @since June 1, 2007
  */
 public interface Logger {
+	// All implied static final as this is an interface
+	/**
+	 * A security type of log event that has succeeded. This is one of 6 predefined
+	 * ESAPI logging events. New events can be added.
+	 */
+	public static final EventType SECURITY_SUCCESS = new EventType("SECURITY SUCCESS", true);
 
-    // All implied static final as this is an interface
-    
-    /**
-     * A security type of log event that has succeeded. This is one of 6 predefined
-     * ESAPI logging events. New events can be added.
-     */
-    EventType SECURITY_SUCCESS = new EventType( "SECURITY SUCCESS", true);
+	/**
+	 * A security type of log event that has failed. This is one of 6 predefined
+	 * ESAPI logging events. New events can be added.
+	 */
+	public static final EventType SECURITY_FAILURE = new EventType("SECURITY FAILURE", false);
 
-    /**
-     * A security type of log event that has failed. This is one of 6 predefined
-     * ESAPI logging events. New events can be added.
-     */
-    EventType SECURITY_FAILURE = new EventType( "SECURITY FAILURE", false);
+	/**
+	 * A security type of log event that is associated with an audit trail of some type,
+	 * but the log event is not specifically something that has either succeeded or failed
+	 * or that is irrelevant in the case of this logged message.
+	 */
+	// CHECKME: Should the Boolean for this be 'null' or 'true'? See EVENT_UNSPECIFIED.
+	public static final EventType SECURITY_AUDIT = new EventType("SECURITY AUDIT", null);
 
-    /**
-     * A security type of log event that is associated with an audit trail of some type,
-     * but the log event is not specifically something that has either succeeded or failed
-     * or that is irrelevant in the case of this logged message.
-     */
-    // CHECKME: Should the Boolean for this be 'null' or 'true'? See EVENT_UNSPECIFIED.
-    EventType SECURITY_AUDIT = new EventType( "SECURITY AUDIT", null);
+	/**
+	 * A non-security type of log event that has succeeded. This is one of 6 predefined
+	 * ESAPI logging events. New events can be added.
+	 */
+	public static final EventType EVENT_SUCCESS = new EventType("EVENT SUCCESS", true);
 
-    /**
-     * A non-security type of log event that has succeeded. This is one of 6 predefined
-     * ESAPI logging events. New events can be added.
-     */
-    EventType EVENT_SUCCESS = new EventType( "EVENT SUCCESS", true);
-    
-    /**
-     * A non-security type of log event that has failed. This is one of 6 predefined
-     * ESAPI logging events. New events can be added.
-     */
-    EventType EVENT_FAILURE = new EventType( "EVENT FAILURE", false);
+	/**
+	 * A non-security type of log event that has failed. This is one of 6 predefined
+	 * ESAPI logging events. New events can be added.
+	 */
+	public static final EventType EVENT_FAILURE = new EventType("EVENT FAILURE", false);
 
-    /**
-     * A non-security type of log event that is unspecified. This is one of 6 predefined
-     * ESAPI logging events. New events can be added.
-     */
-    EventType EVENT_UNSPECIFIED = new EventType( "EVENT UNSPECIFIED", null);
+	/**
+	 * A non-security type of log event that is unspecified. This is one of 6 predefined
+	 * ESAPI logging events. New events can be added.
+	 */
+	public static final EventType EVENT_UNSPECIFIED = new EventType("EVENT UNSPECIFIED", null);
 
-    /**
-     * Defines the type of log event that is being generated. The Logger interface defines 6 types of Log events:
-     * SECURITY_SUCCESS, SECURITY_FAILURE, EVENT_SUCCESS, EVENT_FAILURE, EVENT_UNSPECIFIED.
-     * Your implementation can extend or change this list if desired. 
-     */
-    class EventType {
-        
-        private String type;
-        private Boolean success = null;
-        
-        public EventType (String name, Boolean newSuccess) {
-            this.type = name;
-            this.success = newSuccess;
-        }
-        
-        public Boolean isSuccess() {
-            return success;
-        }
-        
-        /**
-         * Convert the {@code EventType} to a string.
-         * @return The event type name.
-         */
-        @Override
-        public String toString() {
-            return this.type;
-        }
-    }
-    
-    /*
-     * The Logger interface defines 6 logging levels: FATAL, ERROR, WARNING, INFO, DEBUG, TRACE. It also 
-     * supports ALL, which logs all events, and OFF, which disables all logging.
-     * Your implementation can extend or change this list if desired. 
-     */
-    
-    /** OFF indicates that no messages should be logged. This level is initialized to Integer.MAX_VALUE. */
-    int OFF = Integer.MAX_VALUE;
+	/**
+	 * Defines the type of log event that is being generated. The Logger interface defines 6 types of Log events:
+	 * SECURITY_SUCCESS, SECURITY_FAILURE, EVENT_SUCCESS, EVENT_FAILURE, EVENT_UNSPECIFIED.
+	 * Your implementation can extend or change this list if desired.
+	 */
+	class EventType {
+		private String type;
 
-    /** FATAL indicates that only FATAL messages should be logged. This level is initialized to 1000. */
-    int FATAL = 1000;
+		private Boolean success = null;
 
-    /** ERROR indicates that ERROR messages and above should be logged. 
-     * This level is initialized to 800. */
-    int ERROR = 800;
+		public EventType(String name, Boolean newSuccess) {
+			this.type = name;
+			this.success = newSuccess;
+		}
 
-    /** WARNING indicates that WARNING messages and above should be logged. 
-     * This level is initialized to 600. */
-    int WARNING = 600;
+		public Boolean isSuccess() {
+			return success;
+		}
 
-    /** INFO indicates that INFO messages and above should be logged. 
-     * This level is initialized to 400. */
-    int INFO = 400;
+		/**
+		 * Convert the {@code EventType} to a string.
+		 *
+		 * @return The event type name.
+		 */
+		@Override
+		public String toString() {
+			return this.type;
+		}
+	}
 
-    /** DEBUG indicates that DEBUG messages and above should be logged. 
-     * This level is initialized to 200. */
-    int DEBUG = 200;
+	/* The Logger interface defines 6 logging levels: FATAL, ERROR, WARNING, INFO, DEBUG, TRACE. It also 
+	supports ALL, which logs all events, and OFF, which disables all logging.
+	Your implementation can extend or change this list if desired.
+	 */
+	/**
+	 * OFF indicates that no messages should be logged. This level is initialized to Integer.MAX_VALUE.
+	 */
+	public static final int OFF = Integer.MAX_VALUE;
 
-    /** TRACE indicates that TRACE messages and above should be logged. 
-     * This level is initialized to 100. */
-    int TRACE = 100;
+/** FATAL indicates that only FATAL messages should be logged. This level is initialized to 1000. */
+int FATAL = 1000;
 
-    /** ALL indicates that all messages should be logged. This level is initialized to Integer.MIN_VALUE. */
-    int ALL = Integer.MIN_VALUE;
-    
+/** ERROR indicates that ERROR messages and above should be logged. 
+ * This level is initialized to 800. */
+   int ERROR = 800;
 
-    /**
-     * Dynamically set the ESAPI logging severity level. All events of this level and higher will be logged from 
-     * this point forward for all logs. All events below this level will be discarded.
-     * 
-     * @param level The level to set the logging level to. 
-     */
-    void setLevel(int level);
-    
-    /** Retrieve the current ESAPI logging level for this logger.
-     * 
-     * @return The current logging level.
-     */
-    int getESAPILevel();
-    
-    /**
-     * Log a fatal event if 'fatal' level logging is enabled.
-     * 
-     * @param type 
-     *         the type of event
-     * @param message 
-     *         the message to log
-     */
-    void fatal(EventType type, String message);
-    
-    /**
-     * Log a fatal level security event if 'fatal' level logging is enabled 
-     * and also record the stack trace associated with the event.
-     * 
-     * @param type 
-     *         the type of event
-     * @param message 
-     *         the message to log
-     * @param throwable 
-     *         the exception to be logged
-     */
-    void fatal(EventType type, String message, Throwable throwable);
+		/** WARNING indicates that WARNING messages and above should be logged. 
+		 * This level is initialized to 600. */
+		int WARNING = 600;
 
-    /**
-     * Allows the caller to determine if messages logged at this level
-     * will be discarded, to avoid performing expensive processing.
-     * 
-     * @return true if fatal level messages will be output to the log
-     */
-    boolean isFatalEnabled();
+		/** INFO indicates that INFO messages and above should be logged. 
+		 * This level is initialized to 400. */
+		int INFO = 400;
 
-    /**
-     * Log an error level security event if 'error' level logging is enabled.
-     * 
-     * @param type 
-     *         the type of event 
-     * @param message 
-     *         the message to log
-     */
-    void error(EventType type, String message);
-    
-    /**
-     * Log an error level security event if 'error' level logging is enabled 
-     * and also record the stack trace associated with the event.
-     * 
-     * @param type 
-     *         the type of event
-     * @param message 
-     *         the message to log
-     * @param throwable 
-     *         the exception to be logged
-     */
-    void error(EventType type, String message, Throwable throwable);
+		/** DEBUG indicates that DEBUG messages and above should be logged. 
+		 * This level is initialized to 200. */
+		int DEBUG = 200;
 
-    /**
-     * Allows the caller to determine if messages logged at this level
-     * will be discarded, to avoid performing expensive processing.
-     * 
-     * @return true if error level messages will be output to the log
-     */
-    boolean isErrorEnabled();
+		/** TRACE indicates that TRACE messages and above should be logged. 
+		 * This level is initialized to 100. */
+		int TRACE = 100;
 
-    /**
-     * Log a warning level security event if 'warning' level logging is enabled.
-     * 
-     * @param type 
-     *         the type of event 
-     * @param message 
-     *         the message to log
-     */
-    void warning(EventType type, String message);
-    
-    /**
-     * Log a warning level security event if 'warning' level logging is enabled 
-     * and also record the stack trace associated with the event.
-     * 
-     * @param type 
-     *         the type of event 
-     * @param message 
-     *         the message to log
-     * @param throwable 
-     *         the exception to be logged
-     */
-    void warning(EventType type, String message, Throwable throwable);
+		/** ALL indicates that all messages should be logged. This level is initialized to Integer.MIN_VALUE. */
+		int ALL = Integer.MIN_VALUE;
 
-    /**
-     * Allows the caller to determine if messages logged at this level
-     * will be discarded, to avoid performing expensive processing.
-     * 
-     * @return true if warning level messages will be output to the log
-     */
-    boolean isWarningEnabled();
+		/**
+		 * Dynamically set the ESAPI logging severity level. All events of this level and higher will be logged from 
+		 * this point forward for all logs. All events below this level will be discarded.
+		 * 
+		 * @param level The level to set the logging level to. 
+		 */
+		void setLevel(int level);
 
-    /**
-     * Log an info level security event if 'info' level logging is enabled.
-     * 
-     * @param type 
-     *         the type of event 
-     * @param message 
-     *         the message to log
-     */
-    void info(EventType type, String message);
-    
-    /**
-     * Log an info level security event if 'info' level logging is enabled 
-     * and also record the stack trace associated with the event.
-     * 
-     * @param type 
-     *         the type of event
-     * @param message 
-     *         the message to log
-     * @param throwable 
-     *         the exception to be logged
-     */
-    void info(EventType type, String message, Throwable throwable);
+	/**
+	 * Retrieve the current ESAPI logging level for this logger.
+	 *
+	 * @return The current logging level.
+	 */
+	public abstract int getESAPILevel();
 
-    /**
-     * Allows the caller to determine if messages logged at this level
-     * will be discarded, to avoid performing expensive processing.
-     * 
-     * @return true if info level messages will be output to the log
-     */
-    boolean isInfoEnabled();
+/**
+    * Log a fatal event if 'fatal' level logging is enabled.
+    * 
+    * @param type 
+    * 		the type of event
+    * @param message 
+    * 		the message to log
+    */
+void fatal(EventType type, String message);
 
-    /**
-     * Log a debug level security event if 'debug' level logging is enabled.
-     * 
-     * @param type 
-     *         the type of event
-     * @param message 
-     *         the message to log
-     */
-    void debug(EventType type, String message);
-    
-    /**
-     * Log a debug level security event if 'debug' level logging is enabled 
-     * and also record the stack trace associated with the event.
-     * 
-     * @param type 
-     *         the type of event
-     * @param message 
-     *         the message to log
-     * @param throwable 
-     *         the exception to be logged
-     */
-    void debug(EventType type, String message, Throwable throwable);
+/**
+    * Log a fatal level security event if 'fatal' level logging is enabled 
+    * and also record the stack trace associated with the event.
+    * 
+    * @param type 
+    * 		the type of event
+    * @param message 
+    * 		the message to log
+    * @param throwable 
+    * 		the exception to be logged
+    */
+void fatal(EventType type, String message, Throwable throwable);
 
-    /**
-     * Allows the caller to determine if messages logged at this level
-     * will be discarded, to avoid performing expensive processing.
-     * 
-     * @return true if debug level messages will be output to the log
-     */
-    boolean isDebugEnabled();
+/**
+ * Allows the caller to determine if messages logged at this level
+ * will be discarded, to avoid performing expensive processing.
+ * 
+ * @return true if fatal level messages will be output to the log
+ */
+boolean isFatalEnabled();
 
-    /**
-     * Log a trace level security event if 'trace' level logging is enabled.
-     * 
-     * @param type 
-     *         the type of event
-     * @param message 
-     *         the message to log
-     */
-    void trace(EventType type, String message);
-    
-    /**
-     * Log a trace level security event if 'trace' level logging is enabled 
-     * and also record the stack trace associated with the event.
-     * 
-     * @param type 
-     *         the type of event 
-     * @param message 
-     *         the message to log
-     * @param throwable 
-     *         the exception to be logged
-     */
-    void trace(EventType type, String message, Throwable throwable);
+/**
+    * Log an error level security event if 'error' level logging is enabled.
+    * 
+    * @param type 
+    * 		the type of event 
+    * @param message 
+    * 		the message to log
+    */
+void error(EventType type, String message);
 
-    /**
-     * Allows the caller to determine if messages logged at this level
-     * will be discarded, to avoid performing expensive processing.
-     * 
-     * @return true if trace level messages will be output to the log
-     */
-    boolean isTraceEnabled();
+/**
+    * Log an error level security event if 'error' level logging is enabled 
+    * and also record the stack trace associated with the event.
+    * 
+    * @param type 
+    * 		the type of event
+    * @param message 
+    * 		the message to log
+    * @param throwable 
+    * 		the exception to be logged
+    */
+void error(EventType type, String message, Throwable throwable);
 
-    /**
-     * Log an event regardless of what logging level is enabled.
-     * <br>
-     * Note that logging will not occur if the underlying logging implementation has logging disabled.
-     * 
-     * @param type 
-     *         the type of event
-     * @param message 
-     *         the message to log
-     */
-    void always(EventType type, String message);
-    
-    /**
-     * Log an event regardless of what logging level is enabled
-     * and also record the stack trace associated with the event.
-     * <br>
-     * Note that logging will not occur if the underlying logging implementation has logging disabled.
-     * 
-     * @param type 
-     *         the type of event 
-     * @param message 
-     *         the message to log
-     * @param throwable 
-     *         the exception to be logged
-     */
-    void always(EventType type, String message, Throwable throwable);
+/**
+ * Allows the caller to determine if messages logged at this level
+ * will be discarded, to avoid performing expensive processing.
+ * 
+ * @return true if error level messages will be output to the log
+ */
+boolean isErrorEnabled();
+
+/**
+    * Log a warning level security event if 'warning' level logging is enabled.
+    * 
+    * @param type 
+    * 		the type of event 
+    * @param message 
+    * 		the message to log
+    */
+void warning(EventType type, String message);
+
+/**
+    * Log a warning level security event if 'warning' level logging is enabled 
+    * and also record the stack trace associated with the event.
+    * 
+    * @param type 
+    * 		the type of event 
+    * @param message 
+    * 		the message to log
+    * @param throwable 
+    * 		the exception to be logged
+    */
+void warning(EventType type, String message, Throwable throwable);
+
+/**
+ * Allows the caller to determine if messages logged at this level
+ * will be discarded, to avoid performing expensive processing.
+ * 
+ * @return true if warning level messages will be output to the log
+ */
+boolean isWarningEnabled();
+
+/**
+    * Log an info level security event if 'info' level logging is enabled.
+    * 
+    * @param type 
+    * 		the type of event 
+    * @param message 
+    * 		the message to log
+    */
+void info(EventType type, String message);
+
+/**
+    * Log an info level security event if 'info' level logging is enabled 
+    * and also record the stack trace associated with the event.
+    * 
+    * @param type 
+    * 		the type of event
+    * @param message 
+    * 		the message to log
+    * @param throwable 
+    * 		the exception to be logged
+    */
+void info(EventType type, String message, Throwable throwable);
+
+/**
+ * Allows the caller to determine if messages logged at this level
+ * will be discarded, to avoid performing expensive processing.
+ * 
+ * @return true if info level messages will be output to the log
+ */
+boolean isInfoEnabled();
+
+/**
+    * Log a debug level security event if 'debug' level logging is enabled.
+    * 
+    * @param type 
+    * 		the type of event
+    * @param message 
+    * 		the message to log
+    */
+void debug(EventType type, String message);
+
+/**
+    * Log a debug level security event if 'debug' level logging is enabled 
+    * and also record the stack trace associated with the event.
+    * 
+    * @param type 
+    * 		the type of event
+    * @param message 
+    * 		the message to log
+    * @param throwable 
+    * 		the exception to be logged
+    */
+void debug(EventType type, String message, Throwable throwable);
+
+/**
+ * Allows the caller to determine if messages logged at this level
+ * will be discarded, to avoid performing expensive processing.
+ * 
+ * @return true if debug level messages will be output to the log
+ */
+boolean isDebugEnabled();
+
+/**
+    * Log a trace level security event if 'trace' level logging is enabled.
+    * 
+    * @param type 
+    * 		the type of event
+    * @param message 
+    * 		the message to log
+    */
+void trace(EventType type, String message);
+
+/**
+    * Log a trace level security event if 'trace' level logging is enabled 
+    * and also record the stack trace associated with the event.
+    * 
+    * @param type 
+    * 		the type of event 
+    * @param message 
+    * 		the message to log
+    * @param throwable 
+    * 		the exception to be logged
+    */
+void trace(EventType type, String message, Throwable throwable);
+
+/**
+ * Allows the caller to determine if messages logged at this level
+ * will be discarded, to avoid performing expensive processing.
+ * 
+ * @return true if trace level messages will be output to the log
+ */
+boolean isTraceEnabled();
+
+/**
+    * Log an event regardless of what logging level is enabled.
+    * <br>
+    * Note that logging will not occur if the underlying logging implementation has logging disabled.
+    * 
+    * @param type 
+    * 		the type of event
+    * @param message 
+    * 		the message to log
+    */
+void always(EventType type, String message);
+
+/**
+    * Log an event regardless of what logging level is enabled
+    * and also record the stack trace associated with the event.
+    * <br>
+    * Note that logging will not occur if the underlying logging implementation has logging disabled.
+    * 
+    * @param type 
+    * 		the type of event 
+    * @param message 
+    * 		the message to log
+    * @param throwable 
+    * 		the exception to be logged
+    */
+void always(EventType type, String message, Throwable throwable);
 }

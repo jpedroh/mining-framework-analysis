@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -29,7 +28,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.fileupload.FileUploadException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
@@ -42,6 +40,7 @@ import org.owasp.esapi.waf.configuration.ConfigurationParser;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 import org.owasp.esapi.waf.rules.Rule;
+
 
 /**
  * This is the main class for the ESAPI Web Application Firewall (WAF). It is a
@@ -57,11 +56,12 @@ import org.owasp.esapi.waf.rules.Rule;
  *
  */
 public class ESAPIWebApplicationFirewallFilter implements Filter {
-
 	private AppGuardianConfiguration appGuardConfig;
 
 	private static final String CONFIGURATION_FILE_PARAM = "configuration";
+
 	private static final String LOGGING_FILE_PARAM = "log_settings";
+
 	private static final String POLLING_TIME_PARAM = "polling_time";
 
 	private static final int DEFAULT_POLLING_TIME = 30000;
@@ -72,6 +72,9 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 	private long lastConfigReadTime;
 
+	// private static final String FAUX_SESSION_COOKIE = "FAUXSC";
+	// private static final String SESSION_COOKIE_CANARY =
+	// "org.owasp.esapi.waf.canary";
 	// private static final String FAUX_SESSION_COOKIE = "FAUXSC";
 	// private static final String SESSION_COOKIE_CANARY =
 	// "org.owasp.esapi.waf.canary";
@@ -130,51 +133,35 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 	 * <code>doFilter()</code> method.
 	 */
 	public void init(FilterConfig fc) throws ServletException {
-
-		/*
-		 * This variable is saved so that we can retrieve it later to re-invoke
-		 * this function.
+		/* This variable is saved so that we can retrieve it later to re-invoke
+		this function.
 		 */
 		this.fc = fc;
-
 		logger.debug(Logger.EVENT_SUCCESS, ">> Initializing WAF");
 		/*
 		 * Pull logging file.
 		 */
-
 		/*
 		 * Pull main configuration file.
 		 */
-
 		configurationFilename = fc.getInitParameter(CONFIGURATION_FILE_PARAM);
-
 		configurationFilename = fc.getServletContext().getRealPath(configurationFilename);
-
-		if (configurationFilename == null || !new File(configurationFilename).exists()) {
-			throw new ServletException(
-					"[ESAPI WAF] Could not find configuration file at resolved path: " + configurationFilename);
+		if ((configurationFilename == null) || (!new File(configurationFilename).exists())) {
+			throw new ServletException("[ESAPI WAF] Could not find configuration file at resolved path: " + configurationFilename);
 		}
-
-		/*
-		 * Find out polling time from a parameter. If none is provided, use the
-		 * default (10 seconds).
+		/* Find out polling time from a parameter. If none is provided, use the
+		default (10 seconds).
 		 */
-
 		String sPollingTime = fc.getInitParameter(POLLING_TIME_PARAM);
-
 		if (sPollingTime != null) {
 			pollingTime = Long.parseLong(sPollingTime);
 		} else {
 			pollingTime = DEFAULT_POLLING_TIME;
 		}
-
-		/*
-		 * Open up configuration file and populate the AppGuardian configuration
-		 * object.
+		/* Open up configuration file and populate the AppGuardian configuration
+		object.
 		 */
-
 		FileInputStream inputStream = null;
-
 		try {
 			String webRootDir = fc.getServletContext().getRealPath("/");
 			inputStream = new FileInputStream(configurationFilename);
@@ -489,5 +476,4 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 		}
 	}
-
 }
