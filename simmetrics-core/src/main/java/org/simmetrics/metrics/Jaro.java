@@ -21,10 +21,10 @@
  */
 package org.simmetrics.metrics;
 
+import org.simmetrics.StringMetric;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-import org.simmetrics.StringMetric;
 
 /**
  * Jaro algorithm providing a similarity measure between two strings.
@@ -41,52 +41,39 @@ import org.simmetrics.StringMetric;
  *
  */
 public class Jaro implements StringMetric {
-
 	@Override
 	public float compare(final String a, final String b) {
-
 		if (a.isEmpty() && b.isEmpty()) {
-			return 1.0f;
+			return 1.0F;
 		}
-
 		if (a.isEmpty() || b.isEmpty()) {
-			return 0.0f;
+			return 0.0F;
 		}
-
 		// Intentional integer division to round down.
-		final int halfLength = max(0, max(a.length(), b.length()) / 2 - 1);
-
+		final int halfLength = max(0, (max(a.length(), b.length()) / 2) - 1);
 		// Second argument of getCommonCharacters is modified. So we can reuse
 		// the first argument.
 		final char[] charsA = a.toCharArray();
-		final char[] commonA = getCommonCharacters(charsA, b.toCharArray(),
-				halfLength);
-		final char[] commonB = getCommonCharacters(b.toCharArray(), charsA,
-				halfLength);
-
+		final char[] commonA = getCommonCharacters(charsA, b.toCharArray(), halfLength);
+		final char[] commonB = getCommonCharacters(b.toCharArray(), charsA, halfLength);
 		// commonA and commonB will always contain the same multi-set of
 		// characters. Because getCommonCharacters has been optimized, commonA
 		// and commonB are zero-padded. So in this loop we count transposition
 		// and use commonCharacters to determine the length of the multi-set.
 		float transpositions = 0;
 		int commonCharacters = 0;
-		for (int length = commonA.length; commonCharacters < length
-				&& commonA[commonCharacters] > 0; commonCharacters++) {
+		for (int length = commonA.length; (commonCharacters < length) && (commonA[commonCharacters] > 0); commonCharacters++) {
 			if (commonA[commonCharacters] != commonB[commonCharacters]) {
 				transpositions++;
 			}
 		}
-
 		if (commonCharacters == 0) {
-			return 0.0f;
+			return 0.0F;
 		}
-		
-		float aCommonRatio = commonCharacters / (float) a.length();
-		float bCommonRatio = commonCharacters / (float) b.length();
-		float transpositionRatio = (commonCharacters - transpositions / 2.0f)
-				/ commonCharacters;
-
-		return (aCommonRatio + bCommonRatio + transpositionRatio) / 3.0f;
+		float aCommonRatio = commonCharacters / ((float) (a.length()));
+		float bCommonRatio = commonCharacters / ((float) (b.length()));
+		float transpositionRatio = (commonCharacters - (transpositions / 2.0F)) / commonCharacters;
+		return ((aCommonRatio + bCommonRatio) + transpositionRatio) / 3.0F;
 	}
 
 	/*
@@ -105,8 +92,7 @@ public class Jaro implements StringMetric {
 		for (int i = 0, length = charsA.length; i < length; i++) {
 			final char character = charsA[i];
 
-			int index = indexOf(character, charsB, i - separation, i
-					+ separation + 1);
+			int index = indexOf(character, charsB, i - separation, i + separation + 1);
 			if (index > -1) {
 				common[commonIndex++] = character;
 				charsB[index] = (char) 0;
