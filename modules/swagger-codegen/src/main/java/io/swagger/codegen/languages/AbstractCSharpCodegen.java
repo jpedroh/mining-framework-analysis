@@ -3,33 +3,46 @@ package io.swagger.codegen.languages;
 import io.swagger.codegen.*;
 import io.swagger.codegen.utils.ModelUtils;
 import io.swagger.models.properties.*;
+import java.io.File;
+import java.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.util.*;
 
 public abstract class AbstractCSharpCodegen extends DefaultCodegen implements CodegenConfig {
-
     protected boolean optionalAssemblyInfoFlag = true;
+
     protected boolean optionalProjectFileFlag = true;
+
     protected boolean optionalEmitDefaultValue = false;
+
     protected boolean optionalMethodArgumentFlag = true;
+
     protected boolean useDateTimeOffsetFlag = false;
+
     protected boolean useCollection = false;
+
     protected boolean returnICollection = false;
+
     protected boolean netCoreProjectFileFlag = false;
 
     protected String modelPropertyNaming = "PascalCase";
 
     protected String packageVersion = "1.0.0";
+
     protected String packageName = "IO.Swagger";
+
     protected String packageTitle = "Swagger Library";
+
     protected String packageProductName = "SwaggerLibrary";
+
     protected String packageDescription = "A library generated from a Swagger doc";
+
     protected String packageCompany = "Swagger";
+
     protected String packageCopyright = "No Copyright";
+
     protected String packageAuthors = "Swagger";
 
     protected String interfacePrefix = "I";
@@ -38,92 +51,37 @@ public abstract class AbstractCSharpCodegen extends DefaultCodegen implements Co
 
     // TODO: Add option for test folder output location. Nice to allow e.g. ./test instead of ./src.
     //       This would require updating relative paths (e.g. path to main project file in test project file)
+    // TODO: Add option for test folder output location. Nice to allow e.g. ./test instead of ./src.
+    //       This would require updating relative paths (e.g. path to main project file in test project file)
     protected String testFolder = sourceFolder;
 
     protected Set<String> collectionTypes;
+
     protected Set<String> mapTypes;
 
     protected Logger LOGGER = LoggerFactory.getLogger(AbstractCSharpCodegen.class);
 
     public AbstractCSharpCodegen() {
         super();
-
         supportsInheritance = true;
-
         // C# does not use import mapping
         importMapping.clear();
-
-        outputFolder = "generated-code" + File.separator + this.getName();
+        outputFolder = ("generated-code" + File.separator) + this.getName();
         embeddedTemplateDir = templateDir = this.getName();
-
-        collectionTypes = new HashSet<String>(
-                Arrays.asList(
-                        "IList", "List",
-                        "ICollection", "Collection",
-                        "IEnumerable")
-        );
-
-        mapTypes = new HashSet<String>(
-                Arrays.asList("IDictionary")
-        );
-
-        setReservedWordsLowerCase(
-                Arrays.asList(
-                        // set "client" as a reserved word to avoid conflicts with IO.Swagger.Client
-                        // this is a workaround and can be removed if c# api client is updated to use
-                        // fully qualified name
-                        "client", "parameter",
-                        // local variable names in API methods (endpoints)
-                        "localVarPath", "localVarPathParams", "localVarQueryParams", "localVarHeaderParams", 
-                        "localVarFormParams", "localVarFileParams", "localVarStatusCode", "localVarResponse",
-                        "localVarPostBody", "localVarHttpHeaderAccepts", "localVarHttpHeaderAccept",
-                        "localVarHttpContentTypes", "localVarHttpContentType",
-                        "localVarStatusCode",
-                        // C# reserved words
-                        "abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked",
-                        "class", "const", "continue", "decimal", "default", "delegate", "do", "double", "else",
-                        "enum", "event", "explicit", "extern", "false", "finally", "fixed", "float", "for",
-                        "foreach", "goto", "if", "implicit", "in", "int", "interface", "internal", "is", "lock",
-                        "long", "namespace", "new", "null", "object", "operator", "out", "override", "params",
-                        "private", "protected", "public", "readonly", "ref", "return", "sbyte", "sealed",
-                        "short", "sizeof", "stackalloc", "static", "string", "struct", "switch", "this", "throw",
-                        "true", "try", "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort", "using",
-                        "virtual", "void", "volatile", "while")
-        );
-
+        collectionTypes = new HashSet<String>(Arrays.asList("IList", "List", "ICollection", "Collection", "IEnumerable"));
+        mapTypes = new HashSet<String>(Arrays.asList("IDictionary"));
+        setReservedWordsLowerCase(// set "client" as a reserved word to avoid conflicts with IO.Swagger.Client
+        // this is a workaround and can be removed if c# api client is updated to use
+        // fully qualified name
+        // local variable names in API methods (endpoints)
+        // C# reserved words
+        Arrays.asList("client", "parameter", "localVarPath", "localVarPathParams", "localVarQueryParams", "localVarHeaderParams", "localVarFormParams", "localVarFileParams", "localVarStatusCode", "localVarResponse", "localVarPostBody", "localVarHttpHeaderAccepts", "localVarHttpHeaderAccept", "localVarHttpContentTypes", "localVarHttpContentType", "localVarStatusCode", "abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked", "class", "const", "continue", "decimal", "default", "delegate", "do", "double", "else", "enum", "event", "explicit", "extern", "false", "finally", "fixed", "float", "for", "foreach", "goto", "if", "implicit", "in", "int", "interface", "internal", "is", "lock", "long", "namespace", "new", "null", "object", "operator", "out", "override", "params", "private", "protected", "public", "readonly", "ref", "return", "sbyte", "sealed", "short", "sizeof", "stackalloc", "static", "string", "struct", "switch", "this", "throw", "true", "try", "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort", "using", "virtual", "void", "volatile", "while"));
         // TODO: Either include fully qualified names here or handle in DefaultCodegen via lastIndexOf(".") search
-        languageSpecificPrimitives = new HashSet<String>(
-                Arrays.asList(
-                        "String",
-                        "string",
-                        "bool?",
-                        "double?",
-                        "decimal?",
-                        "int?",
-                        "long?",
-                        "float?",
-                        "byte[]",
-                        "ICollection",
-                        "Collection",
-                        "List",
-                        "Dictionary",
-                        "DateTime?",
-                        "DateTimeOffset?",
-                        "String",
-                        "Boolean",
-                        "Double",
-                        "Int32",
-                        "Int64",
-                        "Float",
-                        "Guid?",
-                        "System.IO.Stream", // not really a primitive, we include it to avoid model import
-                        "Object")
-        );
-
+        languageSpecificPrimitives = new HashSet<String>(// not really a primitive, we include it to avoid model import
+        Arrays.asList("String", "string", "bool?", "double?", "decimal?", "int?", "long?", "float?", "byte[]", "ICollection", "Collection", "List", "Dictionary", "DateTime?", "DateTimeOffset?", "String", "Boolean", "Double", "Int32", "Int64", "Float", "Guid?", "System.IO.Stream", "Object"));
         instantiationTypes.put("array", "List");
         instantiationTypes.put("list", "List");
         instantiationTypes.put("map", "Dictionary");
-
         // Nullable types here assume C# 2 support is not part of base
         typeMapping = new HashMap<String, String>();
         typeMapping.put("string", "string");
@@ -324,103 +282,15 @@ public abstract class AbstractCSharpCodegen extends DefaultCodegen implements Co
     /**
      * Invoked by {@link DefaultGenerator} after all models have been post-processed, allowing for a last pass of codegen-specific model cleanup.
      *
-     * @param objs Current state of codegen object model.
+     * @param objs
+     * 		Current state of codegen object model.
      * @return An in-place modified state of the codegen object model.
      */
     @Override
     public Map<String, Object> postProcessAllModels(Map<String, Object> objs) {
-        final Map<String, Object> processed =  super.postProcessAllModels(objs);
+        final Map<String, Object> processed = super.postProcessAllModels(objs);
         postProcessEnumRefs(processed);
         return processed;
-    }
-
-    /**
-     * C# differs from other languages in that Enums are not _true_ objects; enums are compiled to integral types.
-     * So, in C#, an enum is considers more like a user-defined primitive.
-     *
-     * When working with enums, we can't always assume a RefModel is a nullable type (where default(YourType) == null),
-     * so this post processing runs through all models to find RefModel'd enums. Then, it runs through all vars and modifies
-     * those vars referencing RefModel'd enums to work the same as inlined enums rather than as objects.
-     * @param models
-     */
-    @SuppressWarnings({ "unchecked" })
-    private void postProcessEnumRefs(final Map<String, Object> models) {
-        Map<String, CodegenModel> enumRefs = new HashMap<String, CodegenModel>();
-        for (Map.Entry<String, Object> entry : models.entrySet()) {
-            CodegenModel model = ModelUtils.getModelByName(entry.getKey(), models);
-            if (model.isEnum) {
-                enumRefs.put(entry.getKey(), model);
-            }
-        }
-
-        for (Map.Entry<String, Object> entry : models.entrySet()) {
-            String swaggerName = entry.getKey();
-            CodegenModel model = ModelUtils.getModelByName(swaggerName, models);
-            if (model != null) {
-                for (CodegenProperty var : model.allVars) {
-                    if (enumRefs.containsKey(var.datatype)) {
-                        // Handle any enum properties referred to by $ref.
-                        // This is different in C# than most other generators, because enums in C# are compiled to integral types,
-                        // while enums in many other languages are true objects.
-                        CodegenModel refModel = enumRefs.get(var.datatype);
-                        var.allowableValues = refModel.allowableValues;
-                        var.isEnum = true;
-
-                        updateCodegenPropertyEnum(var);
-
-                        // We do these after updateCodegenPropertyEnum to avoid generalities that don't mesh with C#.
-                        var.isPrimitiveType = true;
-                    }
-                }
-
-                // We're looping all models here.
-                if (model.isEnum) {
-                    // We now need to make allowableValues.enumVars look like the context of CodegenProperty
-                    Boolean isString = false;
-                    Boolean isInteger = false;
-                    Boolean isLong = false;
-                    Boolean isByte = false;
-
-                    if (model.dataType.startsWith("byte")) {
-                        // C# Actually supports byte and short enums, swagger spec only supports byte.
-                        isByte = true;
-                        model.vendorExtensions.put("x-enum-byte", true);
-                    } else if (model.dataType.startsWith("int32")) {
-                        isInteger = true;
-                        model.vendorExtensions.put("x-enum-integer", true);
-                    } else if (model.dataType.startsWith("int64")) {
-                        isLong = true;
-                        model.vendorExtensions.put("x-enum-long", true);
-                    } else {
-                        // C# doesn't support non-integral enums, so we need to treat everything else as strings (e.g. to not lose precision or data integrity)
-                        isString = true;
-                        model.vendorExtensions.put("x-enum-string", true);
-                    }
-
-                    // Since we iterate enumVars for modelnnerEnum and enumClass templates, and CodegenModel is missing some of CodegenProperty's properties,
-                    // we can take advantage of Mustache's contextual lookup to add the same "properties" to the model's enumVars scope rather than CodegenProperty's scope.
-                    List<Map<String, String>> enumVars = (ArrayList<Map<String, String>>)model.allowableValues.get("enumVars");
-                    List<Map<String, Object>> newEnumVars = new ArrayList<Map<String, Object>>();
-                    for (Map<String, String> enumVar : enumVars) {
-                        Map<String, Object> mixedVars = new HashMap<String, Object>();
-                        mixedVars.putAll(enumVar);
-
-                        mixedVars.put("isString", isString);
-                        mixedVars.put("isLong", isLong);
-                        mixedVars.put("isInteger", isInteger);
-                        mixedVars.put("isByte", isByte);
-
-                        newEnumVars.add(mixedVars);
-                    }
-
-                    if (!newEnumVars.isEmpty()) {
-                        model.allowableValues.put("enumVars", newEnumVars);
-                    }
-                }
-            } else {
-                LOGGER.warn("Expected to retrieve model %s by name, but no model was found. Check your -Dmodels inclusions.", swaggerName);
-            }
-        }
     }
 
     /**
@@ -585,7 +455,7 @@ public abstract class AbstractCSharpCodegen extends DefaultCodegen implements Co
         }
 
         return name;
-    }   
+    }
 
     @Override
     public String escapeReservedWord(String name) {           
@@ -792,11 +662,11 @@ public abstract class AbstractCSharpCodegen extends DefaultCodegen implements Co
     public void setPackageVersion(String packageVersion) {
         this.packageVersion = packageVersion;
     }
-    
+
     public void setPackageTitle(String packageTitle) {
         this.packageTitle = packageTitle;
     }
-    
+
     public void setPackageProductName(String packageProductName) {
         this.packageProductName = packageProductName;
     }
@@ -804,11 +674,11 @@ public abstract class AbstractCSharpCodegen extends DefaultCodegen implements Co
     public void setPackageDescription(String packageDescription) {
         this.packageDescription = packageDescription;
     }
-    
+
     public void setPackageCompany(String packageCompany) {
         this.packageCompany = packageCompany;
     }
-    
+
     public void setPackageCopyright(String packageCopyright) {
         this.packageCopyright = packageCopyright;
     }
@@ -816,7 +686,7 @@ public abstract class AbstractCSharpCodegen extends DefaultCodegen implements Co
     public void setPackageAuthors(String packageAuthors) {
         this.packageAuthors = packageAuthors;
     }
-    
+
     public void setSourceFolder(String sourceFolder) {
         this.sourceFolder = sourceFolder;
     }
@@ -885,5 +755,117 @@ public abstract class AbstractCSharpCodegen extends DefaultCodegen implements Co
     @Override
     public String escapeUnsafeCharacters(String input) {
         return input.replace("*/", "*_/").replace("/*", "/_*").replace("--", "- -");
+    }
+
+    /**
+     * C# differs from other languages in that Enums are not _true_ objects; enums are compiled to integral types.
+     * So, in C#, an enum is considers more like a user-defined primitive.
+     *
+     * When working with enums, we can't always assume a RefModel is a nullable type (where default(YourType) == null),
+     * so this post processing runs through all models to find RefModel'd enums. Then, it runs through all vars and modifies
+     * those vars referencing RefModel'd enums to work the same as inlined enums rather than as objects.
+     *
+     * @param models
+     * 		
+     */
+    @SuppressWarnings({ "unchecked" })
+    private void postProcessEnumRefs(final Map<String, Object> models) {
+        Map<String, CodegenModel> enumRefs = new HashMap<String, CodegenModel>();
+        for (Map.Entry<String, Object> entry : models.entrySet()) {
+            CodegenModel model = ModelUtils.getModelByName(entry.getKey(), models);
+            if (model.isEnum) {
+                enumRefs.put(entry.getKey(), model);
+            }
+        }
+        for (Map.Entry<String, Object> entry : models.entrySet()) {
+            String swaggerName = entry.getKey();
+            CodegenModel model = ModelUtils.getModelByName(swaggerName, models);
+<<<<<<< LEFT
+            if (model != null) {
+                for (CodegenProperty var : model.allVars) {
+                    if (enumRefs.containsKey(var.datatype)) {
+                        // Handle any enum properties referred to by $ref.
+                        // This is different in C# than most other generators, because enums in C# are compiled to integral types,
+                        // while enums in many other languages are true objects.
+                        CodegenModel refModel = enumRefs.get(var.datatype);
+                        var.allowableValues = refModel.allowableValues;
+                        updateCodegenPropertyEnum(var);
+
+                        // We do these after updateCodegenPropertyEnum to avoid generalities that don't mesh with C#.
+                        var.isPrimitiveType = true;
+                        var.isEnum = true;
+                    }
+                }
+            } else {
+                LOGGER.warn("Expected to retrieve model %s by name, but no model was found. Check your -Dmodels inclusions.", swaggerName);
+            }
+=======
+            if (model != null) {
+                for (CodegenProperty var : model.allVars) {
+                    if (enumRefs.containsKey(var.datatype)) {
+                        // Handle any enum properties referred to by $ref.
+                        // This is different in C# than most other generators, because enums in C# are compiled to integral types,
+                        // while enums in many other languages are true objects.
+                        CodegenModel refModel = enumRefs.get(var.datatype);
+                        var.allowableValues = refModel.allowableValues;
+                        var.isEnum = true;
+
+                        updateCodegenPropertyEnum(var);
+
+                        // We do this after updateCodegenPropertyEnum to avoid generalities that don't mesh with C#.
+                        var.isPrimitiveType = true;
+                    }
+                }
+
+                // We're looping all models here.
+                if (model.isEnum) {
+                    // We now need to make allowableValues.enumVars look like the context of CodegenProperty
+                    Boolean isString = false;
+                    Boolean isInteger = false;
+                    Boolean isLong = false;
+                    Boolean isByte = false;
+
+                    if (model.dataType.startsWith("byte")) {
+                        // C# Actually supports byte and short enums, swagger spec only supports byte.
+                        isByte = true;
+                        model.vendorExtensions.put("x-enum-byte", true);
+                    } else if (model.dataType.startsWith("int32")) {
+                        isInteger = true;
+                        model.vendorExtensions.put("x-enum-integer", true);
+                    } else if (model.dataType.startsWith("int64")) {
+                        isLong = true;
+                        model.vendorExtensions.put("x-enum-long", true);
+                    } else {
+                        // C# doesn't support non-integral enums, so we need to treat everything else as strings (e.g. to not lose precision or data integrity)
+                        isString = true;
+                        model.vendorExtensions.put("x-enum-string", true);
+                    }
+
+                    // Since we iterate enumVars for modelnnerEnum and enumClass templates, and CodegenModel is missing some of CodegenProperty's properties,
+                    // we can take advantage of Mustache's contextual lookup to add the same "properties" to the model's enumVars scope rather than CodegenProperty's scope.
+                    List<Map<String, String>> enumVars = (ArrayList<Map<String, String>>)model.allowableValues.get("enumVars");
+                    List<Map<String, Object>> newEnumVars = new ArrayList<Map<String, Object>>();
+                    for (Map<String, String> enumVar : enumVars) {
+                        Map<String, Object> mixedVars = new HashMap<String, Object>();
+                        mixedVars.putAll(enumVar);
+
+                        mixedVars.put("isString", isString);
+                        mixedVars.put("isLong", isLong);
+                        mixedVars.put("isInteger", isInteger);
+                        mixedVars.put("isByte", isByte);
+
+                        newEnumVars.add(mixedVars);
+                    }
+
+                    if (!newEnumVars.isEmpty()) {
+                        model.allowableValues.put("enumVars", newEnumVars);
+                    }
+                }
+            } else {
+                LOGGER.warn("Expected to retrieve model %s by name, but no model was found. Check your -Dmodels inclusions.", swaggerName);
+            }
+>>>>>>> RIGHT
+
+        }
     }
 }
