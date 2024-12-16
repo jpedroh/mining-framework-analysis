@@ -1,26 +1,5 @@
 package com.smartsheet.api.internal;
 
-/*
- * #[license]
- * Smartsheet SDK for Java
- * %%
- * Copyright (C) 2014 Smartsheet
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * %[license]
- */
-
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.smartsheet.api.AuthorizationException;
@@ -41,15 +20,6 @@ import com.smartsheet.api.models.CopyOrMoveRowDirective;
 import com.smartsheet.api.models.CopyOrMoveRowResult;
 import com.smartsheet.api.models.PagedResult;
 import com.smartsheet.api.models.Result;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -62,6 +32,15 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * This is the base class of the Smartsheet REST API resources.
@@ -76,34 +55,40 @@ public abstract class AbstractResources {
 
 	/** The Constant BUFFER_SIZE. */
 	private final static int BUFFER_SIZE = 4098;
-	private Map<String, String> headers;
 
+	private Map<String, String> headers;
 
 	/**
 	 * The Enum ErrorCode.
 	 */
 	public enum ErrorCode {
-		BAD_REQUEST(400, InvalidRequestException.class), 
+
+		BAD_REQUEST(400, InvalidRequestException.class),
 		NOT_AUTHORIZED(401, AuthorizationException.class),
 		FORBIDDEN(403, AuthorizationException.class),
 		NOT_FOUND(404, ResourceNotFoundException.class),
 		METHOD_NOT_SUPPORTED(405, InvalidRequestException.class),
 		INTERNAL_SERVER_ERROR(500, InvalidRequestException.class),
-		SERVICE_UNAVAILABLE(503,ServiceUnavailableException.class);
-		
-		/** The error code. */
+		SERVICE_UNAVAILABLE(503, ServiceUnavailableException.class);
+		/**
+		 * The error code.
+		 */
 		int errorCode;
 
-		/** The Exception class. */
+		/**
+		 * The Exception class.
+		 */
 		Class<? extends SmartsheetRestException> exceptionClass;
 
 		/**
 		 * Instantiates a new error code.
 		 *
-		 * @param errorCode the error code
-		 * @param exceptionClass the Exception class
+		 * @param errorCode
+		 * 		the error code
+		 * @param exceptionClass
+		 * 		the Exception class
 		 */
-		ErrorCode(int errorCode, Class<? extends SmartsheetRestException> exceptionClass) {
+		private ErrorCode(int errorCode, Class<? extends SmartsheetRestException> exceptionClass) {
 			this.errorCode = errorCode;
 			this.exceptionClass = exceptionClass;
 		}
@@ -111,7 +96,8 @@ public abstract class AbstractResources {
 		/**
 		 * Gets the error code.
 		 *
-		 * @param errorNumber the error number
+		 * @param errorNumber
+		 * 		the error number
 		 * @return the error code
 		 */
 		public static ErrorCode getErrorCode(int errorNumber) {
@@ -120,7 +106,6 @@ public abstract class AbstractResources {
 					return code;
 				}
 			}
-
 			return null;
 		}
 
@@ -128,35 +113,38 @@ public abstract class AbstractResources {
 		 * Gets the exception.
 		 *
 		 * @return the exception
-		 * @throws InstantiationException the instantiation exception
-		 * @throws IllegalAccessException the illegal access exception
+		 * @throws InstantiationException
+		 * 		the instantiation exception
+		 * @throws IllegalAccessException
+		 * 		the illegal access exception
 		 */
 		public SmartsheetRestException getException() throws InstantiationException, IllegalAccessException {
 			return exceptionClass.newInstance();
 		}
-		
+
 		/**
 		 * Gets the exception.
 		 *
-		 * @param error the error
+		 * @param error
+		 * 		the error
 		 * @return the exception
-		 * @throws SmartsheetException the smartsheet exception
+		 * @throws SmartsheetException
+		 * 		the smartsheet exception
 		 */
-		public SmartsheetRestException getException(com.smartsheet.api.models.Error error) throws SmartsheetException  {
-			
+		public SmartsheetRestException getException(com.smartsheet.api.models.Error error) throws SmartsheetException {
 			try {
 				return exceptionClass.getConstructor(com.smartsheet.api.models.Error.class).newInstance(error);
-			} catch (IllegalArgumentException e) {
+			} catch (java.lang.IllegalArgumentException e) {
 				throw new SmartsheetException(e);
-			} catch (SecurityException e) {
+			} catch (java.lang.SecurityException e) {
 				throw new SmartsheetException(e);
-			} catch (InstantiationException e) {
+			} catch (java.lang.InstantiationException e) {
 				throw new SmartsheetException(e);
-			} catch (IllegalAccessException e) {
+			} catch (java.lang.IllegalAccessException e) {
 				throw new SmartsheetException(e);
 			} catch (InvocationTargetException e) {
 				throw new SmartsheetException(e);
-			} catch (NoSuchMethodException e) {
+			} catch (java.lang.NoSuchMethodException e) {
 				throw new SmartsheetException(e);
 			}
 		}
@@ -172,11 +160,11 @@ public abstract class AbstractResources {
 	/**
 	 * Constructor.
 	 *
-	 * @param smartsheet the smartsheet
+	 * @param smartsheet
+	 * 		the smartsheet
 	 */
 	protected AbstractResources(SmartsheetImpl smartsheet) {
 		Util.throwIfNull(smartsheet);
-		
 		this.smartsheet = smartsheet;
 	}
 
@@ -202,24 +190,21 @@ public abstract class AbstractResources {
 	 * @return the resource
 	 * @throws SmartsheetException the smartsheet exception
 	 */
-	protected <T> T getResource(String path, Class<T> objectClass) throws SmartsheetException  {
+	protected <T> T getResource(String path, Class<T> objectClass) throws SmartsheetException {
 		Util.throwIfNull(path, objectClass);
-		
-		if(path.isEmpty()) {
+		if (path.isEmpty()) {
 			com.smartsheet.api.models.Error error = new com.smartsheet.api.models.Error();
 			error.setMessage("An empty path was provided.");
 			throw new ResourceNotFoundException(error);
 		}
-		
-		HttpRequest  request = createHttpRequest(smartsheet.getBaseURI().resolve(path), HttpMethod.GET);
-
+		HttpRequest request = createHttpRequest(smartsheet.getBaseURI().resolve(path), HttpMethod.GET);
 		T obj = null;
 		String content = null;
 		try {
 			HttpResponse response = this.smartsheet.getHttpClient().request(request);
 			InputStream inputStream = response.getEntity().getContent();
 			switch (response.getStatusCode()) {
-				case 200:
+				case 200 :
 					try {
 						if (log.isInfoEnabled()) {
 							ByteArrayOutputStream contentCopyStream = new ByteArrayOutputStream();
@@ -238,7 +223,7 @@ public abstract class AbstractResources {
 						throw new SmartsheetException(e);
 					}
 					break;
-				default:
+				default :
 					handleError(response);
 			}
 		} catch (JSONSerializerException jsx) {
@@ -272,9 +257,7 @@ public abstract class AbstractResources {
 	protected <T, S> T createResource(String path, Class<T> objectClass, S object) throws SmartsheetException {
 		Util.throwIfNull(path, object, objectClass);
 		Util.throwIfEmpty(path);
-
 		HttpRequest request = createHttpRequest(smartsheet.getBaseURI().resolve(path), HttpMethod.POST);
-
 		ByteArrayOutputStream objectBytesStream = new ByteArrayOutputStream();
 		this.smartsheet.getJsonSerializer().serialize(object, objectBytesStream);
 		HttpEntity entity = new HttpEntity();
@@ -282,14 +265,13 @@ public abstract class AbstractResources {
 		entity.setContent(new ByteArrayInputStream(objectBytesStream.toByteArray()));
 		entity.setContentLength(objectBytesStream.size());
 		request.setEntity(entity);
-
 		T obj = null;
 		String content = null;
 		try {
 			HttpResponse response = this.smartsheet.getHttpClient().request(request);
 			InputStream inputStream = response.getEntity().getContent();
 			switch (response.getStatusCode()) {
-				case 200:
+				case 200 :
 					// Can't be here as the stream has not ...???
 					try {
 						if (log.isInfoEnabled()) {
@@ -309,13 +291,12 @@ public abstract class AbstractResources {
 						throw new SmartsheetException(e);
 					}
 					break;
-				default:
+				default :
 					handleError(response);
 			}
 		} finally {
 			smartsheet.getHttpClient().releaseConnection();
 		}
-
 		return obj;
 	}
 
@@ -755,7 +736,6 @@ public abstract class AbstractResources {
 		return obj;
 	}
 
-
 	/**
 	 * Create an HttpRequest.
 	 * <p>
@@ -785,6 +765,7 @@ public abstract class AbstractResources {
 		}
 		return httpPost;
 	}
+
 	public Attachment attachFile(String url, InputStream inputStream, String contentType, long contentLength, String attachmentName)
 			throws SmartsheetException {
 		Util.throwIfNull(inputStream, contentType);
@@ -865,7 +846,6 @@ public abstract class AbstractResources {
 		return attachment;
 	}
 
-
 	/**
 	 * Handles an error HttpResponse (non-200) returned by Smartsheet REST API.
 	 * 
@@ -903,7 +883,7 @@ public abstract class AbstractResources {
 			throw new SmartsheetException(e);
 		}
 	}
-	
+
 	/**
 	 * Gets the smartsheet.
 	 *
@@ -930,26 +910,22 @@ public abstract class AbstractResources {
 	 * @return the report as file
 	 * @throws SmartsheetException the smartsheet exception
 	 */
-	public void getResourceAsFile(String path, String fileType, OutputStream outputStream)
-			throws SmartsheetException {
+	public void getResourceAsFile(String path, String fileType, OutputStream outputStream) throws SmartsheetException {
 		Util.throwIfNull(outputStream, fileType);
-
 		HttpRequest request;
 		request = createHttpRequest(this.getSmartsheet().getBaseURI().resolve(path), HttpMethod.GET);
 		request.getHeaders().put("Accept", fileType);
-
 		try {
 			HttpResponse response = getSmartsheet().getHttpClient().request(request);
-
 			switch (response.getStatusCode()) {
-				case 200:
+				case 200 :
 					try {
 						copyStream(response.getEntity().getContent(), outputStream);
 					} catch (IOException e) {
 						throw new SmartsheetException(e);
 					}
 					break;
-				default:
+				default :
 					handleError(response);
 			}
 		} finally {
@@ -980,7 +956,6 @@ public abstract class AbstractResources {
 			output.write(buffer, 0, len);
 		}
 	}
-
 
 	/**
 	 * @return a map of headers to be used when making requests.
