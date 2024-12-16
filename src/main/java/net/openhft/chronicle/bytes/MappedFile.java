@@ -13,16 +13,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package net.openhft.chronicle.bytes;
-
-import net.openhft.chronicle.core.OS;
-import net.openhft.chronicle.core.ReferenceCounted;
-import net.openhft.chronicle.core.ReferenceCounter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,6 +25,14 @@ import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import net.openhft.chronicle.core.OS;
+import net.openhft.chronicle.core.ReferenceCounted;
+import net.openhft.chronicle.core.ReferenceCounter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * A memory mapped files which can be randomly accessed in chunks.
@@ -52,7 +51,10 @@ public class MappedFile implements ReferenceCounted {
     private final ReferenceCounter refCount = ReferenceCounter.onReleased(this::performRelease);
     private final AtomicBoolean closed = new AtomicBoolean();
     private final long capacity;
+<<<<<<< LEFT
+=======
     @NotNull
+>>>>>>> RIGHT
     private final File file;
 
     MappedFile(@NotNull File file, long chunkSize, long overlapSize) throws FileNotFoundException {
@@ -62,6 +64,7 @@ public class MappedFile implements ReferenceCounted {
         this.chunkSize = OS.mapAlign(chunkSize);
         this.overlapSize = overlapSize == 0 ? 0 : OS.mapAlign(overlapSize);
         capacity = 1L << 40;
+        this.file = file;
     }
 
     public File file() {
@@ -241,5 +244,17 @@ public class MappedFile implements ReferenceCounted {
 
     public long capacity() {
         return capacity;
+    }
+
+    public long overlapSize() {
+        return overlapSize;
+    }
+
+    public long chunkSize() {
+        return chunkSize;
+    }
+
+    public File file() {
+        return file;
     }
 }
