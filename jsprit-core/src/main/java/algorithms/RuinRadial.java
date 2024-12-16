@@ -16,6 +16,11 @@
  ******************************************************************************/
 package algorithms;
 
+import basics.Job;
+import basics.VehicleRoutingProblem;
+import basics.algo.RuinListener;
+import basics.algo.RuinListeners;
+import basics.route.VehicleRoute;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,16 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeSet;
-
 import org.apache.log4j.Logger;
-
 import util.RandomNumberGeneration;
 import util.StopWatch;
-import basics.Job;
-import basics.VehicleRoutingProblem;
-import basics.algo.RuinListener;
-import basics.algo.RuinListeners;
-import basics.route.VehicleRoute;
 
 
 /**
@@ -48,23 +46,19 @@ import basics.route.VehicleRoute;
  *
  */
 final class RuinRadial implements RuinStrategy {
-	
 	static interface JobNeighborhoods {
-		
-		public Iterator<Job> getNearestNeighborsIterator(int nNeighbors, Job neighborTo);
-		
+		public abstract Iterator<Job> getNearestNeighborsIterator(int nNeighbors, Job neighborTo);
 	}
-	
-	static class NeighborhoodIterator implements Iterator<Job>{
 
-		private static Logger log = Logger.getLogger(NeighborhoodIterator.class);
-		
+	static class NeighborhoodIterator implements Iterator<Job> {
+		private static Logger log = Logger.getLogger(RuinRadial.NeighborhoodIterator.class);
+
 		private Iterator<ReferencedJob> jobIter;
-		
+
 		private int nJobs;
-		
+
 		private int jobCount = 0;
-		
+
 		public NeighborhoodIterator(Iterator<ReferencedJob> jobIter, int nJobs) {
 			super();
 			this.jobIter = jobIter;
@@ -73,9 +67,11 @@ final class RuinRadial implements RuinStrategy {
 
 		@Override
 		public boolean hasNext() {
-			if(jobCount < nJobs){
+			if (jobCount < nJobs) {
 				boolean hasNext = jobIter.hasNext();
-				if(!hasNext) log.warn("more jobs are requested then iterator can iterate over. probably the number of neighbors memorized in JobNeighborhoods is too small");
+				if (!hasNext) {
+					log.warn("more jobs are requested then iterator can iterate over. probably the number of neighbors memorized in JobNeighborhoods is too small");
+				}
 				return hasNext;
 			}
 			return false;
@@ -92,83 +88,78 @@ final class RuinRadial implements RuinStrategy {
 		public void remove() {
 			jobIter.remove();
 		}
-		
 	}
-	
-	static class JobNeighborhoodsImpl implements JobNeighborhoods {
 
+	static class JobNeighborhoodsImpl implements JobNeighborhoods {
 		private static Logger logger = Logger.getLogger(JobNeighborhoodsImpl.class);
-		
+
 		private VehicleRoutingProblem vrp;
-		
+
 		private Map<String, TreeSet<ReferencedJob>> distanceNodeTree = new HashMap<String, TreeSet<ReferencedJob>>();
-		
-		private JobDistance jobDistance;
-		
+
+	private JobDistance jobDistance;
+
 		public JobNeighborhoodsImpl(VehicleRoutingProblem vrp, JobDistance jobDistance) {
 			super();
 			this.vrp = vrp;
 			this.jobDistance = jobDistance;
 			logger.info("intialise " + this);
 		}
-		
+
 		public Iterator<Job> getNearestNeighborsIterator(int nNeighbors, Job neighborTo){
 			TreeSet<ReferencedJob> tree = distanceNodeTree.get(neighborTo.getId());
 			Iterator<ReferencedJob> descendingIterator = tree.iterator();
 			return new NeighborhoodIterator(descendingIterator, nNeighbors);
 		}
-		
+
 		public void initialise(){
 			logger.info("calculates and memorizes distances from EACH job to EACH job --> n^2 calculations");
 			calculateDistancesFromJob2Job();
 		}
-		
+
 		private void calculateDistancesFromJob2Job() {
 			logger.info("preprocess distances between locations ...");
 			StopWatch stopWatch = new StopWatch();
 			stopWatch.start();
 			int nuOfDistancesStored = 0;
 			for (Job i : vrp.getJobs().values()) {
-				TreeSet<ReferencedJob> treeSet = new TreeSet<ReferencedJob>(
-						new Comparator<ReferencedJob>() {
-							@Override
-							public int compare(ReferencedJob o1, ReferencedJob o2) {
-								if (o1.getDistance() <= o2.getDistance()) {
-									return -1;
-								} else {
-									return 1;
-								}
-							}
-						});
+				TreeSet<ReferencedJob> treeSet = new TreeSet<ReferencedJob>(new Comparator<ReferencedJob>() {
+					@Override
+					public int compare(ReferencedJob o1, ReferencedJob o2) {
+						if (o1.getDistance() <= o2.getDistance()) {
+							return -1;
+						} else {
+							return 1;
+						}
+					}
+				});
 				distanceNodeTree.put(i.getId(), treeSet);
 				for (Job j : vrp.getJobs().values()) {
-					if(i==j) continue;
+					if (i == j) {
+						continue;
+					}
 					double distance = jobDistance.getDistance(i, j);
 					ReferencedJob refNode = new ReferencedJob(j, distance);
 					treeSet.add(refNode);
 					nuOfDistancesStored++;
 				}
-
 			}
 			stopWatch.stop();
-			logger.info("preprocessing comp-time: " + stopWatch + "; nuOfDistances stored: " + nuOfDistancesStored + "; estimated memory: " + 
-					(distanceNodeTree.keySet().size()*64+nuOfDistancesStored*92) + " bytes");
+			logger.info(((((("preprocessing comp-time: " + stopWatch) + "; nuOfDistances stored: ") + nuOfDistancesStored) + "; estimated memory: ") + ((distanceNodeTree.keySet().size() * 64) + (nuOfDistancesStored * 92))) + " bytes");
 		}
-		
 	}
 
 	static class JobNeighborhoodsImplWithCapRestriction implements JobNeighborhoods {
-
 		private static Logger logger = Logger.getLogger(JobNeighborhoodsImpl.class);
-		
+
 		private VehicleRoutingProblem vrp;
-		
+
 		private Map<String, TreeSet<ReferencedJob>> distanceNodeTree = new HashMap<String, TreeSet<ReferencedJob>>();
-		
+
 		private JobDistance jobDistance;
-		
+
 		private int capacity;
-		
+
 		public JobNeighborhoodsImplWithCapRestriction(VehicleRoutingProblem vrp, JobDistance jobDistance, int capacity) {
 			super();
 			this.vrp = vrp;
@@ -176,69 +167,64 @@ final class RuinRadial implements RuinStrategy {
 			this.capacity = capacity;
 			logger.info("intialise " + this);
 		}
-		
-		public Iterator<Job> getNearestNeighborsIterator(int nNeighbors, Job neighborTo){
+
+		public Iterator<Job> getNearestNeighborsIterator(int nNeighbors, Job neighborTo) {
 			TreeSet<ReferencedJob> tree = distanceNodeTree.get(neighborTo.getId());
 			Iterator<ReferencedJob> descendingIterator = tree.iterator();
 			return new NeighborhoodIterator(descendingIterator, nNeighbors);
 		}
-		
+
 		public void initialise(){
 			logger.info("calculates distances from EACH job to EACH job --> n^2="+Math.pow(vrp.getJobs().values().size(), 2) + " calculations, but 'only' "+(vrp.getJobs().values().size()*capacity)+ " are cached.");
 			calculateDistancesFromJob2Job();
 		}
-		
+
 		private void calculateDistancesFromJob2Job() {
 			logger.info("preprocess distances between locations ...");
 			StopWatch stopWatch = new StopWatch();
 			stopWatch.start();
 			int nuOfDistancesStored = 0;
 			for (Job i : vrp.getJobs().values()) {
-				TreeSet<ReferencedJob> treeSet = new TreeSet<ReferencedJob>(
-						new Comparator<ReferencedJob>() {
-							@Override
-							public int compare(ReferencedJob o1, ReferencedJob o2) {
-								if (o1.getDistance() <= o2.getDistance()) {
-									return -1;
-								} else {
-									return 1;
-								}
-							}
-						});
+				TreeSet<ReferencedJob> treeSet = new TreeSet<ReferencedJob>(new Comparator<ReferencedJob>() {
+					@Override
+					public int compare(ReferencedJob o1, ReferencedJob o2) {
+						if (o1.getDistance() <= o2.getDistance()) {
+							return -1;
+						} else {
+							return 1;
+						}
+					}
+				});
 				distanceNodeTree.put(i.getId(), treeSet);
 				for (Job j : vrp.getJobs().values()) {
-					if(i==j) continue;
-					double distance = jobDistance.getDistance(i, j);
+					if (i == j) {
+						continue;
+					}
+					double distance = jobDistance.calculateDistance(i, j);
 					ReferencedJob refNode = new ReferencedJob(j, distance);
-					if(treeSet.size() < capacity){
+					if (treeSet.size() < capacity) {
 						treeSet.add(refNode);
 						nuOfDistancesStored++;
-					}
-					else{
-						if(treeSet.last().getDistance() > distance){
-							treeSet.pollLast();
-							treeSet.add(refNode);
-						}
+					} else if (treeSet.last().getDistance() > distance) {
+						treeSet.pollLast();
+						treeSet.add(refNode);
 					}
 				}
 				assert treeSet.size() <= capacity : "treeSet.size() is bigger than specified capacity";
-
 			}
 			stopWatch.stop();
-			logger.info("preprocessing comp-time: " + stopWatch + "; nuOfDistances stored: " + nuOfDistancesStored + "; estimated memory: " + 
-					(distanceNodeTree.keySet().size()*64+nuOfDistancesStored*92) + " bytes");
+			logger.info(((((("preprocessing comp-time: " + stopWatch) + "; nuOfDistances stored: ") + nuOfDistancesStored) + "; estimated memory: ") + ((distanceNodeTree.keySet().size() * 64) + (nuOfDistancesStored * 92))) + " bytes");
 		}
-		
+
 		@Override
 		public String toString() {
 			return "[name=neighborhoodWithCapRestriction][capacity="+capacity+"]";
 		}
-		
 	}
-	
-	
+
 	static class ReferencedJob {
 		private Job job;
+
 		private double distance;
 
 		public ReferencedJob(Job job, double distance) {
@@ -265,9 +251,9 @@ final class RuinRadial implements RuinStrategy {
 	private Random random = RandomNumberGeneration.getRandom();
 
 	private RuinListeners ruinListeners;
-	
+
 	private JobNeighborhoods jobNeighborhoods;
-	
+
 	public void setRandom(Random random) {
 		this.random = random;
 	}
@@ -284,46 +270,13 @@ final class RuinRadial implements RuinStrategy {
 		this.vrp = vrp;
 		this.fractionOfAllNodes2beRuined = fraction2beRemoved;
 		ruinListeners = new RuinListeners();
-		int nJobsToMemorize = (int) Math.ceil(vrp.getJobs().values().size()*fraction2beRemoved);
+		int nJobsToMemorize = ((int) (Math.ceil(vrp.getJobs().values().size() * fraction2beRemoved)));
 		JobNeighborhoodsImplWithCapRestriction jobNeighborhoodsImpl = new JobNeighborhoodsImplWithCapRestriction(vrp, jobDistance, nJobsToMemorize);
 		jobNeighborhoodsImpl.initialise();
 		jobNeighborhoods = jobNeighborhoodsImpl;
 		logger.info("intialise " + this);
-//<<<<<<< HEAD
-//	}
-//
-//	private void calculateDistancesFromJob2Job() {
-//		logger.info("preprocess distances between locations ...");
-//		StopWatch stopWatch = new StopWatch();
-//		stopWatch.start();
-//		int nuOfDistancesStored = 0;
-//		for (Job i : vrp.getJobs().values()) {
-//			TreeSet<ReferencedJob> treeSet = new TreeSet<ReferencedJob>(
-//					new Comparator<ReferencedJob>() {
-//						@Override
-//						public int compare(ReferencedJob o1, ReferencedJob o2) {
-//							if (o1.getDistance() <= o2.getDistance()) {
-//								return 1;
-//							} else {
-//								return -1;
-//							}
-//						}
-//					});
-//			distanceNodeTree.put(i.getId(), treeSet);
-//			for (Job j : vrp.getJobs().values()) {
-//				double distance = jobDistance.getDistance(i, j);
-//				ReferencedJob refNode = new ReferencedJob(j, distance);
-//				treeSet.add(refNode);
-//				nuOfDistancesStored++;
-//			}
-//		}
-//		stopWatch.stop();
-//		logger.info("preprocessing comp-time: " + stopWatch + "; nuOfDistances stored: " + nuOfDistancesStored + "; estimated memory: " + 
-//				(distanceNodeTree.keySet().size()*64+nuOfDistancesStored*92) + " bytes");
-//=======
-//>>>>>>> refs/heads/master
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[name=radialRuin][fraction="+fractionOfAllNodes2beRuined+"]";
@@ -335,7 +288,7 @@ final class RuinRadial implements RuinStrategy {
 	 */
 	@Override
 	public Collection<Job> ruin(Collection<VehicleRoute> vehicleRoutes) {
-		if(vehicleRoutes.isEmpty()){
+		if (vehicleRoutes.isEmpty()) {
 			return Collections.emptyList();
 		}
 		int nOfJobs2BeRemoved = getNuOfJobs2BeRemoved();
@@ -343,35 +296,35 @@ final class RuinRadial implements RuinStrategy {
 			return Collections.emptyList();
 		}
 		Job randomJob = pickRandomJob();
-		Collection<Job> unassignedJobs = ruin(vehicleRoutes,randomJob,nOfJobs2BeRemoved);
+		Collection<Job> unassignedJobs = ruin(vehicleRoutes, randomJob, nOfJobs2BeRemoved);
 		return unassignedJobs;
 	}
-	
+
 	/**
 	 * Removes targetJob and its neighborhood and returns the removed jobs.
 	 */
-	public Collection<Job> ruin(Collection<VehicleRoute> vehicleRoutes, Job targetJob, int nOfJobs2BeRemoved){
+	public Collection<Job> ruin(Collection<VehicleRoute> vehicleRoutes, Job targetJob, int nOfJobs2BeRemoved) {
 		ruinListeners.ruinStarts(vehicleRoutes);
 		List<Job> unassignedJobs = new ArrayList<Job>();
 		int nNeighbors = nOfJobs2BeRemoved - 1;
-		removeJob(targetJob,vehicleRoutes);
+		removeJob(targetJob, vehicleRoutes);
 		unassignedJobs.add(targetJob);
-		Iterator<Job> neighborhoodIterator =  jobNeighborhoods.getNearestNeighborsIterator(nNeighbors, targetJob);
-		while(neighborhoodIterator.hasNext()){
+		Iterator<Job> neighborhoodIterator = jobNeighborhoods.getNearestNeighborsIterator(nNeighbors, targetJob);
+		while (neighborhoodIterator.hasNext()) {
 			Job job = neighborhoodIterator.next();
-			removeJob(job,vehicleRoutes);
+			removeJob(job, vehicleRoutes);
 			unassignedJobs.add(job);
-		}
+		} 
 		ruinListeners.ruinEnds(vehicleRoutes, unassignedJobs);
 		return unassignedJobs;
 	}
-	
+
 	private void removeJob(Job job, Collection<VehicleRoute> vehicleRoutes) {
 		boolean removed = false;
 		for (VehicleRoute route : vehicleRoutes) {
-			removed = route.getTourActivities().removeJob(job);; 
+			removed = route.getTourActivities().removeJob(job);
 			if (removed) {
-				ruinListeners.removed(job,route);
+				ruinListeners.removed(job, route);
 				break;
 			}
 		}
@@ -403,6 +356,4 @@ final class RuinRadial implements RuinStrategy {
 	public Collection<RuinListener> getListeners() {
 		return ruinListeners.getListeners();
 	}
-
-
 }

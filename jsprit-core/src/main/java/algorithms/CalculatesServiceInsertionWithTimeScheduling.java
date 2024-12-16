@@ -16,31 +16,33 @@
  ******************************************************************************/
 package algorithms;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import org.apache.log4j.Logger;
-
 import basics.Job;
 import basics.route.Driver;
 import basics.route.Vehicle;
 import basics.route.VehicleRoute;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import org.apache.log4j.Logger;
 
 
-class CalculatesServiceInsertionWithTimeScheduling implements JobInsertionCostsCalculator{
-
-
+/**
+ * This is experimental. It ignores vehicles' earliestStartTime.
+ * 
+ * @author schroeder
+ *
+ */
+class CalculatesServiceInsertionWithTimeScheduling implements JobInsertionCostsCalculator {
 	private static Logger log = Logger.getLogger(CalculatesServiceInsertionWithTimeScheduling.class);
-	
+
 	private JobInsertionCostsCalculator jic;
-	
+
 	private Random random = new Random();
-	
+
 	private int nOfDepartureTimes = 3;
-	
+
 	private double timeSlice = 900.0;
-	
+
 	public CalculatesServiceInsertionWithTimeScheduling(JobInsertionCostsCalculator jic, double timeSlice, int neighbors) {
 		super();
 		this.jic = jic;
@@ -48,7 +50,7 @@ class CalculatesServiceInsertionWithTimeScheduling implements JobInsertionCostsC
 		this.nOfDepartureTimes = neighbors;
 		log.info("initialise " + this);
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[name=calculatesServiceInsertionWithTimeScheduling][timeSlice="+timeSlice+"][#timeSlice="+nOfDepartureTimes+"]";
@@ -58,37 +60,35 @@ class CalculatesServiceInsertionWithTimeScheduling implements JobInsertionCostsC
 	public InsertionData getInsertionData(VehicleRoute currentRoute, Job jobToInsert, Vehicle newVehicle, double newVehicleDepartureTime, Driver newDriver, double bestKnownScore) {
 		List<Double> vehicleDepartureTimes = new ArrayList<Double>();
 		double currentStart;
-		if(currentRoute.getStart() == null){
+		if (currentRoute.getStart() == null) {
 			currentStart = newVehicleDepartureTime;
+		} else {
+			currentStart = currentRoute.getStart().getEndTime();
 		}
-		else currentStart = currentRoute.getStart().getEndTime();
-		
 		vehicleDepartureTimes.add(currentStart);
 		double earliestDeparture = newVehicle.getEarliestDeparture();
 		double latestEnd = newVehicle.getLatestArrival();
-		
-		for(int i=0;i<nOfDepartureTimes;i++){
-			double neighborStartTime_earlier = currentStart - (i+1)*timeSlice;
+		for (int i = 0; i < nOfDepartureTimes; i++) {
+			double neighborStartTime_earlier = currentStart - ((i + 1) * timeSlice);
 //			if(neighborStartTime_earlier > earliestDeparture) {
-				vehicleDepartureTimes.add(neighborStartTime_earlier);
+			vehicleDepartureTimes.add(neighborStartTime_earlier);
 //			}
-			double neighborStartTime_later = currentStart + (i+1)*timeSlice;
+			double neighborStartTime_later = currentStart + ((i + 1) * timeSlice);
 //			if(neighborStartTime_later < latestEnd) {
-				vehicleDepartureTimes.add(neighborStartTime_later);
+			vehicleDepartureTimes.add(neighborStartTime_later);
 //			}
 		}
-	
 		InsertionData bestIData = null;
-		for(Double departureTime : vehicleDepartureTimes){
+		for (Double departureTime : vehicleDepartureTimes) {
 			InsertionData iData = jic.getInsertionData(currentRoute, jobToInsert, newVehicle, departureTime, newDriver, bestKnownScore);
-			if(bestIData == null) bestIData = iData;
-			else if(iData.getInsertionCost() < bestIData.getInsertionCost()){
+			if (bestIData == null) {
+				bestIData = iData;
+			} else if (iData.getInsertionCost() < bestIData.getInsertionCost()) {
 				iData.setVehicleDepartureTime(departureTime);
 				bestIData = iData;
 			}
 		}
-//		log.info(bestIData);
+		// log.info(bestIData);
 		return bestIData;
 	}
-
 }
