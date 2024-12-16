@@ -16,19 +16,15 @@
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
-
 package com.esotericsoftware.kryo;
-
-import static com.esotericsoftware.kryo.util.Util.*;
-import static com.esotericsoftware.minlog.Log.*;
 
 import com.esotericsoftware.kryo.SerializerFactory.FieldSerializerFactory;
 import com.esotericsoftware.kryo.SerializerFactory.ReflectionSerializerFactory;
 import com.esotericsoftware.kryo.SerializerFactory.SingletonSerializerFactory;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.kryo.serializers.ClosureSerializer;
 import com.esotericsoftware.kryo.serializers.ClosureSerializer.Closure;
+import com.esotericsoftware.kryo.serializers.ClosureSerializer;
 import com.esotericsoftware.kryo.serializers.CollectionSerializer;
 import com.esotericsoftware.kryo.serializers.DefaultArraySerializers.BooleanArraySerializer;
 import com.esotericsoftware.kryo.serializers.DefaultArraySerializers.ByteArraySerializer;
@@ -86,9 +82,9 @@ import com.esotericsoftware.kryo.serializers.TimeSerializers;
 import com.esotericsoftware.kryo.util.DefaultClassResolver;
 import com.esotericsoftware.kryo.util.DefaultGenerics;
 import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
-import com.esotericsoftware.kryo.util.Generics;
 import com.esotericsoftware.kryo.util.Generics.GenericType;
 import com.esotericsoftware.kryo.util.Generics.GenericsHierarchy;
+import com.esotericsoftware.kryo.util.Generics;
 import com.esotericsoftware.kryo.util.IdentityMap;
 import com.esotericsoftware.kryo.util.IntArray;
 import com.esotericsoftware.kryo.util.MapReferenceResolver;
@@ -96,7 +92,6 @@ import com.esotericsoftware.kryo.util.MinimalGenerics;
 import com.esotericsoftware.kryo.util.NoGenerics;
 import com.esotericsoftware.kryo.util.ObjectMap;
 import com.esotericsoftware.kryo.util.Util;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
@@ -121,73 +116,111 @@ import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListMap;
-
 import org.objenesis.instantiator.ObjectInstantiator;
 import org.objenesis.strategy.InstantiatorStrategy;
 import org.objenesis.strategy.SerializingInstantiatorStrategy;
 import org.objenesis.strategy.StdInstantiatorStrategy;
+import static com.esotericsoftware.kryo.util.Util.*;
+import static com.esotericsoftware.minlog.Log.*;
+
 
 /** Maps classes to serializers so object graphs can be serialized automatically.
  * @author Nathan Sweet */
 public class Kryo {
 	public static final byte NULL = 0;
+
 	public static final byte NOT_NULL = 1;
 
 	private static final int REF = -1;
+
 	private static final int NO_REF = -2;
+
 	private static final int DEFAULT_SERIALIZER_SIZE = 68;
 
 	private SerializerFactory defaultSerializer = new FieldSerializerFactory();
+
 	private final ArrayList<DefaultSerializerEntry> defaultSerializers = new ArrayList(DEFAULT_SERIALIZER_SIZE);
+
 	private final int lowPriorityDefaultSerializerCount;
 
 	private final ClassResolver classResolver;
+
 	private int nextRegisterID;
+
 	private ClassLoader classLoader = getClass().getClassLoader();
+
 	private InstantiatorStrategy strategy = new DefaultInstantiatorStrategy();
+
 	private boolean registrationRequired = true;
+
 	private boolean warnUnregisteredClasses;
 
-	private int depth, maxDepth = Integer.MAX_VALUE;
+	private int depth;
+
+	private int maxDepth = Integer.MAX_VALUE;
+
 	private boolean autoReset = true;
+
 	private volatile Thread thread;
-	private ObjectMap context, graphContext;
+
+	private ObjectMap context;
+
+	private ObjectMap graphContext;
 
 	private ReferenceResolver referenceResolver;
+
 	private final IntArray readReferenceIds = new IntArray(0);
-	private boolean references, copyReferences = true;
+
+	private boolean references;
+
+	private boolean copyReferences = true;
+
 	private Object readObject;
 
 	private int copyDepth;
+
 	private boolean copyShallow;
+
 	private IdentityMap originalToCopy;
+
 	private Object needsCopyReference;
+
 	private Generics generics = new DefaultGenerics(this);
 
-	/** Creates a new Kryo with a {@link DefaultClassResolver} and references disabled. */
-	public Kryo () {
+	/**
+	 * Creates a new Kryo with a {@link DefaultClassResolver} and references disabled.
+	 */
+	public Kryo() {
 		this(new DefaultClassResolver(), null);
 	}
 
-	/** Creates a new Kryo with a {@link DefaultClassResolver}.
-	 * @param referenceResolver May be null to disable references. */
-	public Kryo (ReferenceResolver referenceResolver) {
+	/**
+	 * Creates a new Kryo with a {@link DefaultClassResolver}.
+	 *
+	 * @param referenceResolver
+	 * 		May be null to disable references.
+	 */
+	public Kryo(ReferenceResolver referenceResolver) {
 		this(new DefaultClassResolver(), referenceResolver);
 	}
 
-	/** @param referenceResolver May be null to disable references. */
-	public Kryo (ClassResolver classResolver, ReferenceResolver referenceResolver) {
-		if (classResolver == null) throw new IllegalArgumentException("classResolver cannot be null.");
-
+	/**
+	 *
+	 *
+	 * @param referenceResolver
+	 * 		May be null to disable references.
+	 */
+	public Kryo(ClassResolver classResolver, ReferenceResolver referenceResolver) {
+		if (classResolver == null) {
+			throw new IllegalArgumentException("classResolver cannot be null.");
+		}
 		this.classResolver = classResolver;
 		classResolver.setKryo(this);
-
 		this.referenceResolver = referenceResolver;
 		if (referenceResolver != null) {
 			referenceResolver.setKryo(this);
 			references = true;
 		}
-
 		addDefaultSerializer(byte[].class, ByteArraySerializer.class);
 		addDefaultSerializer(char[].class, CharArraySerializer.class);
 		addDefaultSerializer(short[].class, ShortArraySerializer.class);
@@ -196,17 +229,17 @@ public class Kryo {
 		addDefaultSerializer(float[].class, FloatArraySerializer.class);
 		addDefaultSerializer(double[].class, DoubleArraySerializer.class);
 		addDefaultSerializer(boolean[].class, BooleanArraySerializer.class);
-		addDefaultSerializer(String[].class, StringArraySerializer.class);
-		addDefaultSerializer(Object[].class, ObjectArraySerializer.class);
+		addDefaultSerializer(java.lang.String[].class, StringArraySerializer.class);
+		addDefaultSerializer(java.lang.Object[].class, ObjectArraySerializer.class);
 		addDefaultSerializer(BigInteger.class, BigIntegerSerializer.class);
 		addDefaultSerializer(BigDecimal.class, BigDecimalSerializer.class);
-		addDefaultSerializer(Class.class, ClassSerializer.class);
+		addDefaultSerializer(java.lang.Class.class, ClassSerializer.class);
 		addDefaultSerializer(Date.class, DateSerializer.class);
-		addDefaultSerializer(Enum.class, EnumSerializer.class);
+		addDefaultSerializer(java.lang.Enum.class, EnumSerializer.class);
 		addDefaultSerializer(EnumSet.class, EnumSetSerializer.class);
 		addDefaultSerializer(Currency.class, CurrencySerializer.class);
-		addDefaultSerializer(StringBuffer.class, StringBufferSerializer.class);
-		addDefaultSerializer(StringBuilder.class, StringBuilderSerializer.class);
+		addDefaultSerializer(java.lang.StringBuffer.class, StringBufferSerializer.class);
+		addDefaultSerializer(java.lang.StringBuilder.class, StringBuilderSerializer.class);
 		addDefaultSerializer(Collections.EMPTY_LIST.getClass(), CollectionsEmptyListSerializer.class);
 		addDefaultSerializer(Collections.EMPTY_MAP.getClass(), CollectionsEmptyMapSerializer.class);
 		addDefaultSerializer(Collections.EMPTY_SET.getClass(), CollectionsEmptySetSerializer.class);
@@ -236,10 +269,9 @@ public class Kryo {
 			addDefaultSerializer("java.lang.Record", RecordSerializer.class);
 		}
 		lowPriorityDefaultSerializerCount = defaultSerializers.size();
-
 		// Primitives and string. Primitive wrappers automatically use the same registration as primitives.
 		register(int.class, new IntSerializer());
-		register(String.class, new StringSerializer());
+		register(java.lang.String.class, new StringSerializer());
 		register(float.class, new FloatSerializer());
 		register(boolean.class, new BooleanSerializer());
 		register(byte.class, new ByteSerializer());
@@ -554,31 +586,40 @@ public class Kryo {
 	 * using the {@link Kryo#addDefaultSerializer(Class, Class) default serializer}.
 	 * @throws IllegalArgumentException if the class is not registered and {@link Kryo#setRegistrationRequired(boolean)} is true.
 	 * @see ClassResolver#getRegistration(Class) */
-	public Registration getRegistration (Class type) {
-		if (type == null) throw new IllegalArgumentException("type cannot be null.");
-
+	public Registration getRegistration(Class type) {
+		if (type == null) {
+			throw new IllegalArgumentException("type cannot be null.");
+		}
 		Registration registration = classResolver.getRegistration(type);
 		if (registration == null) {
 			if (isProxy(type)) {
 				// If a Proxy class, treat it like an InvocationHandler because the concrete class for a proxy is generated.
 				registration = getRegistration(InvocationHandler.class);
-			} else if (!type.isEnum() && Enum.class.isAssignableFrom(type) && type != Enum.class) {
+			} else if (((!type.isEnum()) && java.lang.Enum.class.isAssignableFrom(type)) && (type != java.lang.Enum.class)) {
 				// This handles an enum value that is an inner class, eg: enum A {b{}}
 				while (true) {
 					type = type.getSuperclass();
-					if (type == null) break;
+					if (type == null) {
+						break;
+					}
 					if (type.isEnum()) {
 						registration = classResolver.getRegistration(type);
 						break;
 					}
-				}
-			} else if (EnumSet.class.isAssignableFrom(type))
+				} 
+			} else if (EnumSet.class.isAssignableFrom(type)) {
 				registration = classResolver.getRegistration(EnumSet.class);
-			else if (isClosure(type)) //
-				registration = classResolver.getRegistration(ClosureSerializer.Closure.class);
+			} else // 
+			if (isClosure(type)) {
+				registration = classResolver.getRegistration(Closure.class);
+			}
 			if (registration == null) {
-				if (registrationRequired) throw new IllegalArgumentException(unregisteredClassMessage(type));
-				if (WARN && warnUnregisteredClasses) warn(unregisteredClassMessage(type));
+				if (registrationRequired) {
+					throw new IllegalArgumentException(unregisteredClassMessage(type));
+				}
+				if (WARN && warnUnregisteredClasses) {
+					warn(unregisteredClassMessage(type));
+				}
 				registration = classResolver.registerImplicit(type);
 			}
 		}
@@ -1269,8 +1310,10 @@ public class Kryo {
 	 * <p>
 	 * This can be overridden to support alternative proxy checks. The default implementation delegates to
 	 * {@link Proxy#isProxyClass(Class)}. */
-	public boolean isProxy (Class type) {
-		if (type == null) throw new IllegalArgumentException("type cannot be null.");
+	public boolean isProxy(Class type) {
+		if (type == null) {
+			throw new IllegalArgumentException("type cannot be null.");
+		}
 		return Proxy.isProxyClass(type);
 	}
 
@@ -1301,7 +1344,7 @@ public class Kryo {
 	 * Note that this setting affects the (de)serialization stream, i.e. the serializer and the deserializer need to use the same
 	 * setting in order to be compatible.
 	 * @param optimizedGenerics whether to optimize generics (default is true) */
-	public void setOptimizedGenerics (boolean optimizedGenerics) {
+	public void setOptimizedGenerics(boolean optimizedGenerics) {
 		setGenericsStrategy(optimizedGenerics ? GenericsStrategy.DEFAULT : GenericsStrategy.NONE);
 	}
 
@@ -1310,11 +1353,12 @@ public class Kryo {
 	 * TODO JavaDoc
 	 * 
 	 * @param strategy the strategy for processing generics information */
-	public void setGenericsStrategy (GenericsStrategy strategy) {
+	public void setGenericsStrategy(GenericsStrategy strategy) {
 		this.generics = strategy.createInstance(this);
 	}
 
 	public enum GenericsStrategy {
+
 		DEFAULT {
 			public Generics createInstance (Kryo kryo) {
 				return new DefaultGenerics(kryo);
@@ -1325,20 +1369,20 @@ public class Kryo {
 				return new MinimalGenerics(kryo);
 			}
 		},
-		NONE {
-			public Generics createInstance (Kryo kryo) {
+		NONE() {
+			public Generics createInstance(Kryo kryo) {
 				return NoGenerics.INSTANCE;
 			}
 		};
-
 		public abstract Generics createInstance (Kryo kryo);
 	}
 
 	static final class DefaultSerializerEntry {
 		final Class type;
+
 		final SerializerFactory serializerFactory;
 
-		DefaultSerializerEntry (Class type, SerializerFactory serializerFactory) {
+		DefaultSerializerEntry(Class type, SerializerFactory serializerFactory) {
 			this.type = type;
 			this.serializerFactory = serializerFactory;
 		}

@@ -16,16 +16,12 @@
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
-
 package com.esotericsoftware.kryo.serializers;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoTestCase;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,9 +35,10 @@ import java.util.Random;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 /** @author Nathan Sweet */
 @SuppressWarnings("synthetic-access")
@@ -105,23 +102,19 @@ class MapSerializerTest extends KryoTestCase {
 	}
 
 	@Test
-	void testGenerics () {
-		kryo.register(HasGenerics.class);
-		kryo.register(Integer[].class);
+	void testGenerics() {
+		kryo.register(MapSerializerTest.HasGenerics.class);
+		kryo.register(java.lang.Integer[].class);
 		kryo.register(HashMap.class);
-
 		HasGenerics test = new HasGenerics();
-		test.map.put("moo", new Integer[] {1, 2});
-
+		test.map.put("moo", new Integer[]{ 1, 2 });
 		output = new Output(4096);
 		kryo.writeClassAndObject(output, test);
 		output.flush();
-
 		final byte[] bytes = output.toBytes();
 		assertEquals(bytes.length, 13);
-		
 		input = new Input(bytes);
-		HasGenerics test2 = (HasGenerics)kryo.readClassAndObject(input);
+		HasGenerics test2 = ((HasGenerics) (kryo.readClassAndObject(input)));
 		assertArrayEquals(test.map.get("moo"), test2.map.get("moo"));
 	}
 
@@ -145,34 +138,34 @@ class MapSerializerTest extends KryoTestCase {
 		assertEquals(map, deserialized);
 	}
 
-    @Test
-    void testConcurrentSkipListMapSerializer() {
-        ConcurrentSkipListMap map = new ConcurrentSkipListMap();
-        kryo.register(ConcurrentSkipListMap.class);
-        map.put(9, "456");
-        map.put(3, "abc");
-        map.put(1, 122);
-        roundTrip(20, map);
+				@Test
+				void testConcurrentSkipListMapSerializer() {
+				    ConcurrentSkipListMap map = new ConcurrentSkipListMap();
+				    kryo.register(ConcurrentSkipListMap.class);
+				    map.put(9, "456");
+				    map.put(3, "abc");
+				    map.put(1, 122);
+				    roundTrip(20, map);
 
-        kryo.register(KeyThatIsntComparable.class);
-        kryo.register(KeyComparator.class);
-        ConcurrentSkipListMap cMap = new ConcurrentSkipListMap<>(new KeyComparator());
-        KeyThatIsntComparable key1 = new KeyThatIsntComparable();
-        KeyThatIsntComparable key2 = new KeyThatIsntComparable();
-        key1.value = "311";
-        cMap.put(key1, "257");
-        key2.value = "213";
-        cMap.put(key2, "455");
-        roundTrip(19, cMap);
+				    kryo.register(KeyThatIsntComparable.class);
+				    kryo.register(KeyComparator.class);
+				    ConcurrentSkipListMap cMap = new ConcurrentSkipListMap<>(new KeyComparator());
+				    KeyThatIsntComparable key1 = new KeyThatIsntComparable();
+				    KeyThatIsntComparable key2 = new KeyThatIsntComparable();
+				    key1.value = "311";
+				    cMap.put(key1, "257");
+				    key2.value = "213";
+				    cMap.put(key2, "455");
+				    roundTrip(19, cMap);
 
-        kryo.register(ConcurrentSkipListMapSubclass.class);
-        ConcurrentSkipListMapSubclass cSubMap = new ConcurrentSkipListMapSubclass();
-        cSubMap.put("1", 77);
-        cSubMap.put("2", 68);
-        cSubMap.put("3", 63);
-        cSubMap.put("4", 22);
-        roundTrip(25, cSubMap);
-    }
+				    kryo.register(ConcurrentSkipListMapSubclass.class);
+				    ConcurrentSkipListMapSubclass cSubMap = new ConcurrentSkipListMapSubclass();
+				    cSubMap.put("1", 77);
+				    cSubMap.put("2", 68);
+				    cSubMap.put("3", 63);
+				    cSubMap.put("4", 22);
+				    roundTrip(25, cSubMap);
+				}
 
 	@Test
 	void testTreeMap () {
@@ -269,23 +262,25 @@ class MapSerializerTest extends KryoTestCase {
 	static class ArrayListKeys {
 		private HashMap<ArrayList<Integer>, ArrayList<String>> map = new HashMap();
 
-		public boolean equals (Object obj) {
+		public boolean equals(Object obj) {
 			return EqualsBuilder.reflectionEquals(this, obj);
 		}
 	}
 
 	static class HasMultipleReferenceToSameMap {
 		private Map<Integer, String> mapOne = new HashMap();
+
 		private Map<Integer, String> mapTwo = this.mapOne;
 	}
 
 	public static class HasGenerics {
 		public HashMap<String, Integer[]> map = new HashMap();
+
 		public HashMap<String, ?> map2 = new HashMap();
 	}
 
 	public static class KeyComparator implements Comparator<KeyThatIsntComparable> {
-		public int compare (KeyThatIsntComparable o1, KeyThatIsntComparable o2) {
+		public int compare(KeyThatIsntComparable o1, KeyThatIsntComparable o2) {
 			return o1.value.compareTo(o2.value);
 		}
 	}
@@ -293,32 +288,35 @@ class MapSerializerTest extends KryoTestCase {
 	public static class KeyThatIsntComparable {
 		public String value;
 
-		public KeyThatIsntComparable () {
+		public KeyThatIsntComparable() {
 		}
 
-		public KeyThatIsntComparable (String value) {
+		public KeyThatIsntComparable(String value) {
 			this.value = value;
 		}
 	}
 
 	public static class TreeMapSubclass<K, V> extends TreeMap<K, V> {
-		public TreeMapSubclass () {
+		public TreeMapSubclass() {
 		}
 
-		public TreeMapSubclass (Comparator<? super K> comparator) {
+		public TreeMapSubclass(Comparator<? super K> comparator) {
 			super(comparator);
 		}
 	}
 
-    public static class ConcurrentSkipListMapSubclass<K, V> extends ConcurrentSkipListMap<K, V> {
-        public ConcurrentSkipListMapSubclass() {}
+	public static class ConcurrentSkipListMapSubclass<K, V> extends ConcurrentSkipListMap<K, V> {
+		public ConcurrentSkipListMapSubclass() {
+		}
 
-        public ConcurrentSkipListMapSubclass(Comparator<? super K> comparator) {
-            super(comparator);
-        }
-    }
+		public ConcurrentSkipListMapSubclass(Comparator<? super K> comparator) {
+			super(comparator);
+		}
+	}
 
 	public static enum SomeEnum {
-		a, b, c
-	}
+
+		a,
+		b,
+		c;}
 }

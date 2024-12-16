@@ -16,17 +16,13 @@
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
-
 package com.esotericsoftware.kryo.serializers;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoTestCase;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers.StringSerializer;
 import com.esotericsoftware.kryo.serializers.MapSerializerTest.KeyComparator;
 import com.esotericsoftware.kryo.serializers.MapSerializerTest.KeyThatIsntComparable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,8 +31,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 /** @author Nathan Sweet */
 class CollectionSerializerTest extends KryoTestCase {
@@ -125,10 +122,10 @@ class CollectionSerializerTest extends KryoTestCase {
 	}
 
 	public static class TreeSetSubclass<E> extends TreeSet<E> {
-		public TreeSetSubclass () {
+		public TreeSetSubclass() {
 		}
 
-		public TreeSetSubclass (Comparator<? super E> comparator) {
+		public TreeSetSubclass(Comparator<? super E> comparator) {
 			super(comparator);
 		}
 	}
@@ -137,9 +134,13 @@ class CollectionSerializerTest extends KryoTestCase {
 		public List<String> list = new ArrayList<>();
 
 		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
-			HasGenerics that = (HasGenerics) o;
+			if (this == o) {
+				return true;
+			}
+			if ((o == null) || (getClass() != o.getClass())) {
+				return false;
+			}
+			HasGenerics that = ((HasGenerics) (o));
 			return Objects.equals(list, that.list);
 		}
 	}

@@ -16,33 +16,36 @@
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
-
 package com.esotericsoftware.kryo.util;
 
 import com.esotericsoftware.kryo.Kryo;
-
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+
 
 /** Stores the generic type arguments and actual classes for type variables in the current location in the object graph.
  * @author Nathan Sweet */
 public final class DefaultGenerics extends BaseGenerics {
-
 	private int argumentsSize;
+
 	private Type[] arguments = new Type[16];
 
-	public DefaultGenerics (Kryo kryo) {
+	public DefaultGenerics(Kryo kryo) {
 		super(kryo);
 	}
 
 	@Override
-	public int pushTypeVariables (GenericsHierarchy hierarchy, GenericType[] args) {
-		// Do not store type variables if hierarchy is empty, or we do not have arguments for all root parameters, or we have more
+	public int pushTypeVariables(GenericsHierarchy hierarchy, GenericType[] args) {
+<<<<<<< LEFT
+// Do not store type variables if hierarchy is empty, or we do not have arguments for all root parameters.
+=======
+// Do not store type variables if hierarchy is empty, or we do not have arguments for all root parameters, or we have more
+>>>>>>> RIGHT
 		// arguments than the hierarchy has parameters.
-		if (hierarchy.total == 0 || hierarchy.rootTotal > args.length || args.length > hierarchy.counts.length) return 0;
-
+		if (((hierarchy.total == 0) || (hierarchy.rootTotal > args.length)) || (args.length > hierarchy.counts.length)) {
+			return 0;
+		}
 		int startSize = this.argumentsSize;
-
 		// Ensure arguments capacity.
 		int sizeNeeded = startSize + hierarchy.total;
 		if (sizeNeeded > arguments.length) {
@@ -50,18 +53,19 @@ public final class DefaultGenerics extends BaseGenerics {
 			System.arraycopy(arguments, 0, newArray, 0, startSize);
 			arguments = newArray;
 		}
-
 		// Resolve and store the type arguments.
 		int[] counts = hierarchy.counts;
 		TypeVariable[] params = hierarchy.parameters;
 		for (int i = 0, p = 0, n = args.length; i < n; i++) {
 			GenericType arg = args[i];
 			Class resolved = arg.resolve(this);
-			if (resolved == null) continue;
+			if (resolved == null) {
+				continue;
+			}
 			int count = counts[i];
-			if (arg == null)
+			if (arg == null) {
 				p += count;
-			else {
+			} else {
 				for (int nn = p + count; p < nn; p++) {
 					arguments[argumentsSize] = params[p];
 					arguments[argumentsSize + 1] = resolved;
@@ -69,7 +73,6 @@ public final class DefaultGenerics extends BaseGenerics {
 				}
 			}
 		}
-
 		return argumentsSize - startSize;
 	}
 
@@ -100,5 +103,4 @@ public final class DefaultGenerics extends BaseGenerics {
 		}
 		return buffer.toString();
 	}
-
 }
