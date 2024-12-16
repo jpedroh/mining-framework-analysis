@@ -1,9 +1,5 @@
 package com.mercadopago.client.merchantorder;
 
-import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
-import static com.mercadopago.serialization.Serializer.deserializeElementsResourcesPageFromJson;
-import static com.mercadopago.serialization.Serializer.deserializeFromJson;
-
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.MercadoPagoClient;
@@ -21,6 +17,10 @@ import com.mercadopago.serialization.Serializer;
 import java.lang.reflect.Type;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
+import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
+import static com.mercadopago.serialization.Serializer.deserializeElementsResourcesPageFromJson;
+import static com.mercadopago.serialization.Serializer.deserializeFromJson;
+
 
 /** MerchantOrderClient class. */
 public class MerchantOrderClient extends MercadoPagoClient {
@@ -28,7 +28,9 @@ public class MerchantOrderClient extends MercadoPagoClient {
 
   private static final String URL_WITH_ID = "/merchant_orders/%s";
 
-  /** Default constructor. Uses the default http client used by the SDK. */
+  /**
+   * Default constructor. Uses the default http client used by the SDK.
+   */
   public MerchantOrderClient() {
     this(MercadoPagoConfig.getHttpClient());
   }
@@ -52,9 +54,7 @@ public class MerchantOrderClient extends MercadoPagoClient {
    * @param id merchant order id
    * @return merchant order information
    * @throws MPException an error if the request fails
-   * @see <a
-   *     href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders_id/get">api
-   *     docs</a>
+   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders_id/get">api docs</a>
    */
   public MerchantOrder get(Long id) throws MPException, MPApiException {
     return this.get(id, null);
@@ -67,24 +67,14 @@ public class MerchantOrderClient extends MercadoPagoClient {
    * @param requestOptions metadata to customize the request
    * @return merchant order information
    * @throws MPException an error if the request fails
-   * @see <a
-   *     href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders_id/get">api
-   *     docs</a>
+   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders_id/get">api docs</a>
    */
-  public MerchantOrder get(Long id, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public MerchantOrder get(Long id, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending get merchant order request");
-
-    MPRequest mpRequest =
-        MPRequest.builder()
-            .uri(String.format(URL_WITH_ID, id.toString()))
-            .method(HttpMethod.GET)
-            .build();
-
+    MPRequest mpRequest = MPRequest.builder().uri(String.format(URL_WITH_ID, id.toString())).method(HttpMethod.GET).build();
     MPResponse response = send(mpRequest, requestOptions);
     MerchantOrder result = deserializeFromJson(MerchantOrder.class, response.getContent());
     result.setResponse(response);
-
     return result;
   }
 
@@ -94,12 +84,9 @@ public class MerchantOrderClient extends MercadoPagoClient {
    * @param request attributes used to create merchant order
    * @return merchant order information
    * @throws MPException an error if the request fails
-   * @see <a
-   *     href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders/post">api
-   *     docs</a>
+   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders/post">api docs</a>
    */
-  public MerchantOrder create(MerchantOrderCreateRequest request)
-      throws MPException, MPApiException {
+  public MerchantOrder create(MerchantOrderCreateRequest request) throws MPException, MPApiException {
     return this.create(request, null);
   }
 
@@ -110,25 +97,14 @@ public class MerchantOrderClient extends MercadoPagoClient {
    * @param requestOptions metadata to customize the request
    * @return merchant order information
    * @throws MPException an error if the request fails
-   * @see <a
-   *     href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders/post">api
-   *     docs</a>
+   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders/post">api docs</a>
    */
-  public MerchantOrder create(MerchantOrderCreateRequest request, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public MerchantOrder create(MerchantOrderCreateRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending create merchant order request");
-
-    MPRequest mpRequest =
-        MPRequest.builder()
-            .uri("/merchant_orders")
-            .method(HttpMethod.POST)
-            .payload(Serializer.serializeToJson(request))
-            .build();
-
+    MPRequest mpRequest = MPRequest.builder().uri("/merchant_orders").method(HttpMethod.POST).payload(Serializer.serializeToJson(request)).build();
     MPResponse response = send(mpRequest, requestOptions);
     MerchantOrder result = deserializeFromJson(MerchantOrder.class, response.getContent());
     result.setResponse(response);
-
     return result;
   }
 
@@ -139,12 +115,9 @@ public class MerchantOrderClient extends MercadoPagoClient {
    * @param id merchant order id
    * @return merchant order information
    * @throws MPException an error if the request fails
-   * @see <a
-   *     href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders_id/put">api
-   *     docs</a>
+   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders_id/put">api docs</a>
    */
-  public MerchantOrder update(Long id, MerchantOrderUpdateRequest request)
-      throws MPException, MPApiException {
+  public MerchantOrder update(Long id, MerchantOrderUpdateRequest request) throws MPException, MPApiException {
     return this.update(id, request, null);
   }
 
@@ -156,26 +129,14 @@ public class MerchantOrderClient extends MercadoPagoClient {
    * @param requestOptions metadata to customize the request
    * @return merchant order response
    * @throws MPException an error if the request fails
-   * @see <a
-   *     href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders_id/put">api
-   *     docs</a>
+   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders_id/put">api docs</a>
    */
-  public MerchantOrder update(
-      Long id, MerchantOrderUpdateRequest request, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public MerchantOrder update(Long id, MerchantOrderUpdateRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending update merchant order request");
-
-    MPRequest mpRequest =
-        MPRequest.builder()
-            .uri(String.format(URL_WITH_ID, id.toString()))
-            .method(HttpMethod.PUT)
-            .payload(Serializer.serializeToJson(request))
-            .build();
-
+    MPRequest mpRequest = MPRequest.builder().uri(String.format(URL_WITH_ID, id.toString())).method(HttpMethod.PUT).payload(Serializer.serializeToJson(request)).build();
     MPResponse response = send(mpRequest, requestOptions);
     MerchantOrder result = deserializeFromJson(MerchantOrder.class, response.getContent());
     result.setResponse(response);
-
     return result;
   }
 
@@ -185,12 +146,9 @@ public class MerchantOrderClient extends MercadoPagoClient {
    * @param request attributes used to search merchant order
    * @return list of results
    * @throws MPException an error if the request fails
-   * @see <a
-   *     href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders_search/get">api
-   *     docs</a>
+   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders_search/get">api docs</a>
    */
-  public MPElementsResourcesPage<MerchantOrder> search(MPSearchRequest request)
-      throws MPException, MPApiException {
+  public MPElementsResourcesPage<MerchantOrder> search(MPSearchRequest request) throws MPException, MPApiException {
     return this.search(request, null);
   }
 
@@ -201,21 +159,14 @@ public class MerchantOrderClient extends MercadoPagoClient {
    * @param requestOptions metadata to customize the request
    * @return list of results
    * @throws MPException an error if the request fails
-   * @see <a
-   *     href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders_search/get">api
-   *     docs</a>
+   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders_search/get">api docs</a>
    */
-  public MPElementsResourcesPage<MerchantOrder> search(
-      MPSearchRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
+  public MPElementsResourcesPage<MerchantOrder> search(MPSearchRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending search merchant order request");
-
     MPResponse response = search("/merchant_orders/search", request, requestOptions);
-
     Type responseType = new TypeToken<MPElementsResourcesPage<MerchantOrder>>() {}.getType();
-    MPElementsResourcesPage<MerchantOrder> result =
-        deserializeElementsResourcesPageFromJson(responseType, response.getContent());
+    MPElementsResourcesPage<MerchantOrder> result = deserializeElementsResourcesPageFromJson(responseType, response.getContent());
     result.setResponse(response);
-
     return result;
   }
 }

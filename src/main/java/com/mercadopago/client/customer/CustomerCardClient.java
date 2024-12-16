@@ -1,7 +1,5 @@
 package com.mercadopago.client.customer;
 
-import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
-
 import com.google.gson.JsonObject;
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.MercadoPagoClient;
@@ -17,12 +15,139 @@ import com.mercadopago.resources.customer.CustomerCard;
 import com.mercadopago.serialization.Serializer;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
+import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
+
 
 /** Client responsible for performing customer card actions. */
 public class CustomerCardClient extends MercadoPagoClient {
+  /**
+   * Get card of customer.
+   *
+   * @param customerId id of the customer
+   * @param cardId id of the card being retrieved
+   * @param requestOptions metadata to customize the request
+   * @return customer card retrieved
+   * @throws MPException any error retrieving the customer card
+   */
+  public CustomerCard get(String customerId, String cardId, MPRequestOptions requestOptions)
+<<<<<<< LEFT
+      throws MPException {
+    LOGGER.info("Sending get customer card request");
+
+=======
+      throws MPException, MPApiException {
+>>>>>>> RIGHT
+    MPResponse response =
+        send(
+            String.format("/v1/customers/%s/cards/%s", customerId, cardId),
+            HttpMethod.GET,
+            null,
+            null,
+            requestOptions);
+
+    CustomerCard card = Serializer.deserializeFromJson(CustomerCard.class, response.getContent());
+    card.setResponse(response);
+    return card;
+  }
+
+  /**
+   * Add card for customer.
+   *
+   * @param customerId id of the customer
+   * @param request attributes used to perform the request
+   * @param requestOptions metadata to customize the request
+   * @return the customer card just added
+   * @throws MPException any error creating the customer card
+   */
+  public CustomerCard create(
+      String customerId, CustomerCardCreateRequest request, MPRequestOptions requestOptions)
+<<<<<<< LEFT
+      throws MPException {
+    LOGGER.info("Sending create customer card request");
+
+=======
+      throws MPException, MPApiException {
+>>>>>>> RIGHT
+    JsonObject payload = Serializer.serializeToJson(request);
+    MPRequest mpRequest =
+        MPRequest.buildRequest(
+            String.format("/v1/customers/%s/cards", customerId),
+            HttpMethod.POST,
+            payload,
+            null,
+            requestOptions);
+    MPResponse response = send(mpRequest);
+
+    CustomerCard card = Serializer.deserializeFromJson(CustomerCard.class, response.getContent());
+    card.setResponse(response);
+    return card;
+  }
+
+  /**
+   * Remove card for customer.
+   *
+   * @param customerId id of the customer
+   * @param cardId id of the card being retrieved
+   * @param requestOptions metadata to customize the request
+   * @return the customer card just removed
+   * @throws MPException any error removing the customer card
+   */
+  public CustomerCard delete(String customerId, String cardId, MPRequestOptions requestOptions)
+<<<<<<< LEFT
+      throws MPException {
+    LOGGER.info("Sending delete customer card request");
+=======
+      throws MPException, MPApiException {
+>>>>>>> RIGHT
+
+    MPResponse response =
+        send(
+            String.format("/v1/customers/%s/cards/%s", customerId, cardId),
+            HttpMethod.DELETE,
+            null,
+            null,
+            requestOptions);
+
+    CustomerCard card = Serializer.deserializeFromJson(CustomerCard.class, response.getContent());
+    card.setResponse(response);
+    return card;
+  }
+
+  /**
+   * List all cards of customer.
+   *
+   * @param customerId id of the customer
+   * @param requestOptions metadata to customize the request
+   * @return list of customer cards retrieved
+   * @throws MPException any error listing customer cards
+   */
+  public MPResourceList<CustomerCard> listAll(String customerId, MPRequestOptions requestOptions)
+<<<<<<< LEFT
+      throws MPException {
+    LOGGER.info("Sending list all customer cards request");
+
+=======
+      throws MPException, MPApiException {
+>>>>>>> RIGHT
+    MPResponse response =
+        list(
+            String.format("/v1/customers/%s/cards", customerId),
+            HttpMethod.GET,
+            null,
+            null,
+            requestOptions);
+
+    MPResourceList<CustomerCard> cards =
+        Serializer.deserializeListFromJson(CustomerCard.class, response.getContent());
+    cards.setResponse(response);
+    return cards;
+  }
+
   private static final Logger LOGGER = Logger.getLogger(CustomerCardClient.class.getName());
 
-  /** Default constructor. Uses the default http client used by the SDK */
+  /**
+   * Default constructor. Uses the default http client used by the SDK
+   */
   public CustomerCardClient() {
     this(MercadoPagoConfig.getHttpClient());
   }
@@ -53,30 +178,6 @@ public class CustomerCardClient extends MercadoPagoClient {
   }
 
   /**
-   * Get card of customer.
-   *
-   * @param customerId id of the customer
-   * @param cardId id of the card being retrieved
-   * @param requestOptions metadata to customize the request
-   * @return customer card retrieved
-   * @throws MPException any error retrieving the customer card
-   */
-  public CustomerCard get(String customerId, String cardId, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
-    MPResponse response =
-        send(
-            String.format("/v1/customers/%s/cards/%s", customerId, cardId),
-            HttpMethod.GET,
-            null,
-            null,
-            requestOptions);
-
-    CustomerCard card = Serializer.deserializeFromJson(CustomerCard.class, response.getContent());
-    card.setResponse(response);
-    return card;
-  }
-
-  /**
    * Add card for customer.
    *
    * @param customerId id of the customer
@@ -84,37 +185,8 @@ public class CustomerCardClient extends MercadoPagoClient {
    * @return the customer card just added
    * @throws MPException any error creating the customer card
    */
-  public CustomerCard create(String customerId, CustomerCardCreateRequest request)
-      throws MPException, MPApiException {
+  public CustomerCard create(String customerId, CustomerCardCreateRequest request) throws MPException, MPApiException {
     return this.create(customerId, request, null);
-  }
-
-  /**
-   * Add card for customer.
-   *
-   * @param customerId id of the customer
-   * @param request attributes used to perform the request
-   * @param requestOptions metadata to customize the request
-   * @return the customer card just added
-   * @throws MPException any error creating the customer card
-   */
-  public CustomerCard create(
-      String customerId, CustomerCardCreateRequest request, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
-    LOGGER.info("Sending create customer card request");
-    JsonObject payload = Serializer.serializeToJson(request);
-    MPRequest mpRequest =
-        MPRequest.buildRequest(
-            String.format("/v1/customers/%s/cards", customerId),
-            HttpMethod.POST,
-            payload,
-            null,
-            requestOptions);
-    MPResponse response = send(mpRequest);
-
-    CustomerCard card = Serializer.deserializeFromJson(CustomerCard.class, response.getContent());
-    card.setResponse(response);
-    return card;
   }
 
   /**
@@ -130,65 +202,13 @@ public class CustomerCardClient extends MercadoPagoClient {
   }
 
   /**
-   * Remove card for customer.
-   *
-   * @param customerId id of the customer
-   * @param cardId id of the card being retrieved
-   * @param requestOptions metadata to customize the request
-   * @return the customer card just removed
-   * @throws MPException any error removing the customer card
-   */
-  public CustomerCard delete(String customerId, String cardId, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
-    LOGGER.info("Sending delete customer card request");
-
-    MPResponse response =
-        send(
-            String.format("/v1/customers/%s/cards/%s", customerId, cardId),
-            HttpMethod.DELETE,
-            null,
-            null,
-            requestOptions);
-
-    CustomerCard card = Serializer.deserializeFromJson(CustomerCard.class, response.getContent());
-    card.setResponse(response);
-    return card;
-  }
-
-  /**
    * List all cards of customer.
    *
    * @param customerId id of the customer
    * @return list of customer cards retrieved
    * @throws MPException any error listing customer cards
    */
-  public MPResourceList<CustomerCard> listAll(String customerId)
-      throws MPException, MPApiException {
+  public MPResourceList<CustomerCard> listAll(String customerId) throws MPException, MPApiException {
     return this.listAll(customerId, null);
-  }
-
-  /**
-   * List all cards of customer.
-   *
-   * @param customerId id of the customer
-   * @param requestOptions metadata to customize the request
-   * @return list of customer cards retrieved
-   * @throws MPException any error listing customer cards
-   */
-  public MPResourceList<CustomerCard> listAll(String customerId, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
-    LOGGER.info("Sending list all customer cards request");
-    MPResponse response =
-        list(
-            String.format("/v1/customers/%s/cards", customerId),
-            HttpMethod.GET,
-            null,
-            null,
-            requestOptions);
-
-    MPResourceList<CustomerCard> cards =
-        Serializer.deserializeListFromJson(CustomerCard.class, response.getContent());
-    cards.setResponse(response);
-    return cards;
   }
 }

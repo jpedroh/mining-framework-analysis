@@ -1,8 +1,5 @@
 package com.mercadopago.client.identificationtype;
 
-import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
-import static com.mercadopago.serialization.Serializer.deserializeListFromJson;
-
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.MercadoPagoClient;
 import com.mercadopago.core.MPRequestOptions;
@@ -15,12 +12,17 @@ import com.mercadopago.net.MPResponse;
 import com.mercadopago.resources.identificationtype.IdentificationType;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
+import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
+import static com.mercadopago.serialization.Serializer.deserializeListFromJson;
+
 
 /** Client with methods of Identification Type APIs. */
 public class IdentificationTypeClient extends MercadoPagoClient {
   private static final Logger LOGGER = Logger.getLogger(IdentificationTypeClient.class.getName());
 
-  /** Default constructor. Uses the default http client used by the SDK. */
+  /**
+   * Default constructor. Uses the default http client used by the SDK.
+   */
   public IdentificationTypeClient() {
     this(MercadoPagoConfig.getHttpClient());
   }
@@ -43,9 +45,7 @@ public class IdentificationTypeClient extends MercadoPagoClient {
    *
    * @return list of identification types
    * @throws MPException an error if the request fails
-   * @see <a
-   *     href="https://www.mercadopago.com.br/developers/en/reference/identification_types/_identification_types/get">api
-   *     docs</a>
+   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/identification_types/_identification_types/get">api docs</a>
    */
   public MPResourceList<IdentificationType> list() throws MPException, MPApiException {
     return this.list(null);
@@ -57,21 +57,13 @@ public class IdentificationTypeClient extends MercadoPagoClient {
    * @param requestOptions metadata to customize the request
    * @return list of identification types
    * @throws MPException an error if the request fails
-   * @see <a
-   *     href="https://www.mercadopago.com.br/developers/en/reference/identification_types/_identification_types/get">api
-   *     docs</a>
+   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/identification_types/_identification_types/get">api docs</a>
    */
-  public MPResourceList<IdentificationType> list(MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public MPResourceList<IdentificationType> list(MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending list identification types");
-
-    MPResponse response =
-        list("/v1/identification_types", HttpMethod.GET, null, null, requestOptions);
-
-    MPResourceList<IdentificationType> identificationTypes =
-        deserializeListFromJson(IdentificationType.class, response.getContent());
+    MPResponse response = list("/v1/identification_types", HttpMethod.GET, null, null, requestOptions);
+    MPResourceList<IdentificationType> identificationTypes = deserializeListFromJson(IdentificationType.class, response.getContent());
     identificationTypes.setResponse(response);
-
     return identificationTypes;
   }
 }
