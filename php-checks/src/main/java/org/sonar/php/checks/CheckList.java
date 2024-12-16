@@ -86,8 +86,8 @@ import org.sonar.php.checks.wordpress.WordPressUnfilteredHtmlCheck;
 import org.sonar.php.utils.collections.ListUtils;
 import org.sonar.php.utils.collections.SetUtils;
 
-public class CheckList {
 
+public class CheckList {
   public static final String REPOSITORY_KEY = "php";
 
   private CheckList() {
@@ -331,18 +331,7 @@ public class CheckList {
   }
 
   public static Set<Class<?>> getRegexChecks() {
-    return SetUtils.immutableSetOf(
-      AnchorPrecedenceCheck.class,
-      DuplicatesInCharacterClassCheck.class,
-      EmptyStringRepetitionCheck.class,
-      ImpossibleBackReferenceCheck.class,
-      ImpossibleBoundariesCheck.class,
-      GraphemeClustersInClassesCheck.class,
-      PossessiveQuantifierContinuationCheck.class,
-      RedundantRegexAlternativesCheck.class,
-      SingleCharacterAlternationCheck.class,
-      StringReplaceCheck.class
-    );
+    return SetUtils.immutableSetOf(AnchorPrecedenceCheck.class, DuplicatesInCharacterClassCheck.class, EmptyStringRepetitionCheck.class, ImpossibleBackReferenceCheck.class, ImpossibleBoundariesCheck.class, GraphemeClustersInClassesCheck.class, PossessiveQuantifierContinuationCheck.class, RedundantRegexAlternativesCheck.class, SingleCharacterAlternationCheck.class, StringReplaceCheck.class);
   }
 
   public static List<Class<?>> getPhpChecks() {
