@@ -1,8 +1,20 @@
 /** Copyright 2012, Adam L. Davis. */
 package com.adamldavis.z;
 
-import static java.util.Arrays.asList;
-
+import com.adamldavis.swing.Swutil;
+import com.adamldavis.z.SmoothAnimator.AnimationType;
+import com.adamldavis.z.ZNode.ZNodeType;
+import com.adamldavis.z.ZNodeLink.LinkType;
+import com.adamldavis.z.api.APIFactory;
+import com.adamldavis.z.api.Editor;
+import com.adamldavis.z.editor.Playground;
+import com.adamldavis.z.editor.ZCodeEditor;
+import com.adamldavis.z.editor.ZEdit;
+import com.adamldavis.z.git.GitLogDiffsMap;
+import com.adamldavis.z.gui.ZMenu;
+import com.adamldavis.z.gui.swing.ZDisplay;
+import com.adamldavis.z.tasks.ZTask;
+import com.adamldavis.z.tasks.ZTaskList;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -33,29 +45,13 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static java.util.Arrays.asList;
 
-import com.adamldavis.swing.Swutil;
-import com.adamldavis.z.SmoothAnimator.AnimationType;
-import com.adamldavis.z.ZNode.ZNodeType;
-import com.adamldavis.z.ZNodeLink.LinkType;
-import com.adamldavis.z.api.APIFactory;
-import com.adamldavis.z.api.Editor;
-import com.adamldavis.z.editor.Playground;
-import com.adamldavis.z.editor.ZCodeEditor;
-import com.adamldavis.z.editor.ZEdit;
-import com.adamldavis.z.git.GitLogDiffsMap;
-import com.adamldavis.z.gui.ZMenu;
-import com.adamldavis.z.gui.swing.ZDisplay;
-import com.adamldavis.z.tasks.ZTask;
-import com.adamldavis.z.tasks.ZTaskList;
-import com.adamldavis.z.util.ThreadingUtil;
 
 /**
  * Main class of Z program.
@@ -63,28 +59,46 @@ import com.adamldavis.z.util.ThreadingUtil;
  * @author Adam Davis
  * 
  */
-public class Z implements MouseListener, MouseWheelListener,
-		MouseMotionListener, KeyListener, Runnable {
-
-	/** Direction from "dependencies" to "sub-modules". */
+public class Z implements MouseListener , MouseWheelListener , MouseMotionListener , KeyListener , Runnable {
+	/**
+	 * Direction from "dependencies" to "sub-modules".
+	 */
 	public enum Direction {
-		LR, RL, UP, DOWN
-	};
 
-	/** organization of nodes. */
+		LR,
+		RL,
+		UP,
+		DOWN;}
+
+	/**
+	 * organization of nodes.
+	 */
 	public enum NodeLayout {
-		BLOOM, RANDOM, GRID
-	}
 
-	/** How to order nodes. */
+		BLOOM,
+		RANDOM,
+		GRID;}
+
+	/**
+	 * How to order nodes.
+	 */
 	public enum SortOrder {
-		DEFAULT, ALPHA, TIME, SIZE
-	}
 
-	/** what's happening right now. */
+		DEFAULT,
+		ALPHA,
+		TIME,
+		SIZE;}
+
+	/**
+	 * what's happening right now.
+	 */
 	public enum State {
-		NORMAL, SELECTING, ANIMATING, EDITING, TIME_TRAVEL
-	}
+
+		NORMAL,
+		SELECTING,
+		ANIMATING,
+		EDITING,
+		TIME_TRAVEL;}
 
 	private static final Logger log = LoggerFactory.getLogger(Z.class);
 
@@ -98,8 +112,10 @@ public class Z implements MouseListener, MouseWheelListener,
 
 	APIFactory apiFactory;
 
+	Point point1;
+
 	/* Mouse points on screen. */
-	Point point1, point2;
+	Point point2;
 
 	State state = State.NORMAL;
 
@@ -113,8 +129,7 @@ public class Z implements MouseListener, MouseWheelListener,
 
 	UserSettings settings = new UserSettings();
 
-	final ZMenu zMenu = new ZMenu(Z.this, new ActionListener() {
-
+	final ZMenu zMenu = new ZMenu(this, new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (selectedNode != null) {
@@ -177,9 +192,8 @@ public class Z implements MouseListener, MouseWheelListener,
 			}
 		}, 33, 33);
 		try {
-			UIManager.setLookAndFeel(UIManager
-					.getCrossPlatformLookAndFeelClassName());
-		} catch (Exception e) {
+			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		} catch (java.lang.Exception e) {
 			log.error(e.getMessage(), e);
 		}
 	}
@@ -515,35 +529,36 @@ public class Z implements MouseListener, MouseWheelListener,
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (!links.isEmpty())
+		if (!links.isEmpty()) {
 			return;
+		}
 		switch (e.getKeyChar()) {
-		case 's':
+			case 's' :
 			// TODO: Search!!!!
-			String name = display.showInputDialog("Search", "Z");
-			ZTask activeTask = taskList.getActiveTask();
-			for (ZNode node : getZNodes()) {
-				if (node.getName().startsWith(name)) {
-					log.info("found {}", node.getName());
-					if (activeTask != null) {
-						activeTask.add(node);
+				String name = display.showInputDialog("Search", "Z");
+				ZTask activeTask = taskList.getActiveTask();
+				for (ZNode node : getZNodes()) {
+					if (node.getName().startsWith(name)) {
+						log.info("found {}", node.getName());
+						if (activeTask != null) {
+							activeTask.add(node);
+						}
 					}
 				}
-			}
-			break;
-		case 'm':
-			if (selectedNode.getNodeType() == ZNodeType.CLASS) {
-				addMethodLinks();
-			}
-			break;
-		case 'p':
-			// TODO: add polymorphic links
-		case 'i':
-		case 'r':
-			// TODO: add import/require links
-		case 'h':
-		case 'f':
-			addFieldLinks();
+				break;
+			case 'm' :
+				if (selectedNode.getNodeType() == ZNodeType.CLASS) {
+					addMethodLinks();
+				}
+				break;
+			case 'p' :
+				// TODO: add polymorphic links
+			case 'i' :
+			case 'r' :
+				// TODO: add import/require links
+			case 'h' :
+			case 'f' :
+				addFieldLinks();
 		}
 	}
 
@@ -594,23 +609,23 @@ public class Z implements MouseListener, MouseWheelListener,
 	public void mouseClicked(MouseEvent e) {
 		final Point p = e.getPoint();
 		ZNode z = findZNodeAt(p);
-
 		if (z == null) {
 			zMenu.setVisible(false);
 			if (e.getButton() == MouseEvent.BUTTON3) {
 				activateMenu(e);
-			} else if (p.y >= display.getHeight() - 40) {
+			} else if (p.y >= (display.getHeight() - 40)) {
 				final ZTask task = taskList.getTaskAt(p.x, 20);
-				if (task == null)
+				if (task == null) {
 					showNewEditor(selectedNode);
-				else
+				} else {
 					selectTask(task);
+				}
 			} else if (selectedNode == null) {
 				selectedNode = createNewZ(p, ZNodeType.MODULE);
 			} else {
 				createNewZ(p, ZNodeType.DEPENDENCY);
 			}
-		} else if (e.getButton() == MouseEvent.BUTTON1 && !e.isControlDown()) {
+		} else if ((e.getButton() == MouseEvent.BUTTON1) && (!e.isControlDown())) {
 			clicked(z);
 		}
 	}
@@ -700,10 +715,10 @@ public class Z implements MouseListener, MouseWheelListener,
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		if (e.isControlDown()) {
 			log.debug("zoom:" + e.getWheelRotation());
-			if (e.getWheelRotation() > 0 && scale > 0.125f) {
-				scale /= 2f;
-			} else if (e.getWheelRotation() < 0 && scale < 32) {
-				scale *= 2f;
+			if ((e.getWheelRotation() > 0) && (scale > 0.125F)) {
+				scale /= 2.0F;
+			} else if ((e.getWheelRotation() < 0) && (scale < 32)) {
+				scale *= 2.0F;
 			}
 			log.debug("Scale:" + scale);
 			if (!edit.getEditors().isEmpty()) {
@@ -716,10 +731,8 @@ public class Z implements MouseListener, MouseWheelListener,
 
 	@Override
 	public void run() {
-		if ((state == State.ANIMATING && aniCount.incrementAndGet() >= 100)
-				|| (state == State.TIME_TRAVEL && aniCount.addAndGet(1) >= 999)
-				|| (state == State.SELECTING && aniCount.addAndGet(2) >= 100)) {
-			if (state == State.ANIMATING || state == State.TIME_TRAVEL) {
+		if ((((state == State.ANIMATING) && (aniCount.incrementAndGet() >= 100)) || ((state == State.TIME_TRAVEL) && (aniCount.addAndGet(1) >= 999))) || ((state == State.SELECTING) && (aniCount.addAndGet(2) >= 100))) {
+			if ((state == State.ANIMATING) || (state == State.TIME_TRAVEL)) {
 				state = State.NORMAL;
 				links.clear();
 			} else if (state == State.SELECTING) {
@@ -736,62 +749,45 @@ public class Z implements MouseListener, MouseWheelListener,
 		if (count.get() >= 20) {
 			count.set(0);
 		}
-		final float time = aniCount.get() / 100f;
-
+		final float time = aniCount.get() / 100.0F;
 		if (getState() == State.SELECTING) {
 			Editor ed = edit.getEditors().get(0);
 			ZNode editorNode = edit.getNode(ed);
-			Editor previousEd = edit.getEditors().size() == 1 ? null : edit
-					.getEditors().get(1);
+			Editor previousEd = (edit.getEditors().size() == 1) ? null : edit.getEditors().get(1);
 			int y = 8;
 			if (previousEd != null) {
 				JPanel previousPanel = previousEd.getEditorPanel();
 				y += previousPanel.getY() + previousPanel.getHeight();
 			}
-			ed.setScale(0.25f + 0.75f * time);
-			final Point2D point = animator.animate(editorNode.getLocation(),
-					new Point2D.Float(8, y), time, AnimationType.COSINE);
-			ed.getEditorPanel().setLocation((int) point.getX(),
-					(int) point.getY());
-		} else if (getState() == State.ANIMATING)
-			synchronized (zNodes) {
+			ed.setScale(0.25F + (0.75F * time));
+			final Point2D point = animator.animate(editorNode.getLocation(), new Point2D.Float(8, y), time, AnimationType.COSINE);
+			ed.getEditorPanel().setLocation(((int) (point.getX())), ((int) (point.getY())));
+		} else if (getState() == State.ANIMATING) {
+			synchronized(zNodes) {
 				for (ZNode node : zNodes) {
 					if (pointMap.containsKey(node)) {
-						node.getLocation().setLocation(
-								animator.animate(node.getLocation(),
-										pointMap.get(node), time,
-										AnimationType.COSINE));
+						node.getLocation().setLocation(animator.animate(node.getLocation(), pointMap.get(node), time, AnimationType.COSINE));
 					}
 					if (sizeMap.containsKey(node)) {
 						final Float size = sizeMap.get(node);
 						final Float currentSize = node.getSize();
-						node.setSize((float) animator.animate(
-								new Point2D.Float(currentSize, 0),
-								new Point2D.Float(size, 0), time,
-								AnimationType.COSINE).getX());
+						node.setSize(((float) (animator.animate(new Point2D.Float(currentSize, 0), new Point2D.Float(size, 0), time, AnimationType.COSINE).getX())));
 					}
 				}
 			}
-		else if (getState() == State.TIME_TRAVEL
-				&& aniCount.get() * diffsMap.getLogSize() / 1000 > (aniCount
-						.get() - 1) * diffsMap.getLogSize() / 1000)
-			synchronized (zNodes) {
-				final Collection<ZNodeLink> nodeLinks = diffsMap.getNodeLinks(
-						aniCount.get() * diffsMap.getLogSize() / 1000, zNodes);
+		} else if ((getState() == State.TIME_TRAVEL) && (((aniCount.get() * diffsMap.getLogSize()) / 1000) > (((aniCount.get() - 1) * diffsMap.getLogSize()) / 1000))) {
+			synchronized(zNodes) {
+				final Collection<ZNodeLink> nodeLinks = diffsMap.getNodeLinks((aniCount.get() * diffsMap.getLogSize()) / 1000, zNodes);
 				if (!nodeLinks.isEmpty()) {
 					links.clear();
 					links.addAll(nodeLinks);
 				}
 			}
-		else if (getState() == State.TIME_TRAVEL) {
+		} else if (getState() == State.TIME_TRAVEL) {
 			if (diffsMap.author != null) {
 				ZNode node = diffsMap.author;
-				float t = aniCount.get() % 100 / 100f;
-
-				node.getLocation().setLocation(
-						animator.animate(node.getLocation(),
-								diffsMap.authorLocation, t,
-								AnimationType.COSINE));
+				float t = (aniCount.get() % 100) / 100.0F;
+				node.getLocation().setLocation(animator.animate(node.getLocation(), diffsMap.authorLocation, t, AnimationType.COSINE));
 			}
 		}
 	}
@@ -799,7 +795,7 @@ public class Z implements MouseListener, MouseWheelListener,
 	private void updateEditorSize(Editor editor) {
 		ZNode editorNode = edit.getNode(editor);
 		int width = display.getWidth() - 50;
-		int height = 50 + editorNode.getCodeLineSize() * 14;
+		int height = 50 + (editorNode.getCodeLineSize() * 14);
 		editor.getEditorPanel().setPreferredSize(new Dimension(width, height));
 	}
 
@@ -821,7 +817,7 @@ public class Z implements MouseListener, MouseWheelListener,
 		if (task.getNodes().isEmpty()) {
 			clicked(selectedNode);
 		} else {
-			synchronized (zNodes) {
+			synchronized(zNodes) {
 				zNodes.clear();
 				zNodes.addAll(task.getNodes());
 			}
@@ -852,18 +848,15 @@ public class Z implements MouseListener, MouseWheelListener,
 		removeListeners();
 		final Editor editor = edit.getEditorFor(z, apiFactory);
 		display.getContentPane().add(edit.getScrollPane());
-		edit.getPane().setMaximumSize(
-				new Dimension(display.getWidth(), Integer.MAX_VALUE));
-
+		edit.getPane().setMaximumSize(new Dimension(display.getWidth(), Integer.MAX_VALUE));
 		final KeyListener keyAdapter = new KeyListener() {
-
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					endEditing();
-				} else if (e.getKeyCode() == KeyEvent.VK_S && e.isControlDown()) {
-					((ZCodeEditor) editor).save();
-				} else if (e.getKeyCode() == KeyEvent.VK_W && e.isControlDown()) {
+				} else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isControlDown()) {
+					((ZCodeEditor) (editor)).save();
+				} else if ((e.getKeyCode() == KeyEvent.VK_W) && e.isControlDown()) {
 					// close just this editor.
 					edit.remove(editor);
 					edit.getPane().remove(editor.getEditorPanel());
@@ -892,22 +885,22 @@ public class Z implements MouseListener, MouseWheelListener,
 						@Override
 						public void run() {
 							try {
-								Thread.sleep(100); // 1/10 second
-							} catch (InterruptedException e) {
+								Thread.sleep(100);// 10 second
+
+							} catch (java.lang.InterruptedException e) {
 							}
-							((ZCodeEditor) editor).save();
+							((ZCodeEditor) (editor)).save();
 							Swutil.flashMessage(display, "Saved " + z.getName());
 						}
 					});
 				}
 			}
 		};
-		((ZCodeEditor) editor).addKeyListener(keyAdapter);
-		final int size = (int) z.getSize();
+		((ZCodeEditor) (editor)).addKeyListener(keyAdapter);
+		final int size = ((int) (z.getSize()));
 		editor.getEditorPanel().setSize(new Dimension(2 * size, size));
-		editor.getEditorPanel().setLocation((int) z.getLocation().x - size / 2,
-				(int) z.getLocation().y - size / 2);
-		editor.setScale(0.25f);
+		editor.getEditorPanel().setLocation(((int) (z.getLocation().x)) - (size / 2), ((int) (z.getLocation().y)) - (size / 2));
+		editor.setScale(0.25F);
 		state = State.SELECTING;
 		aniCount.set(10);
 		edit.updatePaneSize();
@@ -920,7 +913,7 @@ public class Z implements MouseListener, MouseWheelListener,
 				edit.getScrollPane().doLayout();
 				// edit.getPane().doLayout();
 			}
-		}).start();
+		});
 	}
 
 	private void endEditing() {
@@ -992,8 +985,7 @@ public class Z implements MouseListener, MouseWheelListener,
 
 	public void showPlayground() {
 		state = State.EDITING;
-		Playground pg = Playground.builder(apiFactory).build(
-				display.getContentPane());
+		Playground pg = Playground.builder(apiFactory).build(display.getContentPane());
 		removeListeners();
 		display.stop();
 		display.doLayout();
@@ -1014,5 +1006,4 @@ public class Z implements MouseListener, MouseWheelListener,
 			}
 		});
 	}
-
 }
