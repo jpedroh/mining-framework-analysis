@@ -18,8 +18,8 @@ package org.atmosphere.gwt20.client;
 import com.google.gwt.core.client.JavaScriptObject;
 import java.util.Collections;
 import java.util.List;
-
 import org.atmosphere.gwt20.client.AtmosphereRequestConfig.Transport;
+
 
 /**
  *
@@ -103,7 +103,7 @@ public final class AtmosphereResponse extends JavaScriptObject {
         return this.state;
     }-*/;
     
-<<<<<<< HEAD
+<<<<<<< LEFT
 =======
 
     public Transport getTransport() {
@@ -116,5 +116,5 @@ public final class AtmosphereResponse extends JavaScriptObject {
 
     protected AtmosphereResponse() {
     }
->>>>>>> ac485fa2ff1644f6fb602640526e0618bee6bac5
+>>>>>>> RIGHT
 }
