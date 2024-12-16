@@ -23,25 +23,27 @@
  * 
  * -----------------------------------------------------------------------------------------
  */
-
 package org.movsim.simulator.roadnetwork;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import javax.annotation.CheckForNull;
-
 import org.jgrapht.graph.DefaultWeightedEdge;
+import org.movsim.SimulationScan;
 import org.movsim.roadmappings.RoadMapping;
 import org.movsim.simulator.roadnetwork.boundaries.AbstractTrafficSource;
 import org.movsim.simulator.roadnetwork.boundaries.SimpleRamp;
 import org.movsim.simulator.roadnetwork.boundaries.TrafficSink;
 import org.movsim.simulator.roadnetwork.controller.GradientProfile;
-import org.movsim.simulator.roadnetwork.controller.RoadObject;
 import org.movsim.simulator.roadnetwork.controller.RoadObject.RoadObjectType;
+import org.movsim.simulator.roadnetwork.controller.RoadObject;
 import org.movsim.simulator.roadnetwork.controller.RoadObjects;
 import org.movsim.simulator.roadnetwork.controller.SpeedLimit;
 import org.movsim.simulator.roadnetwork.controller.TrafficLight;
@@ -53,10 +55,6 @@ import org.movsim.utilities.XYDataPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterators;
 
 /**
  * <p>
@@ -92,63 +90,87 @@ import com.google.common.collect.Iterators;
  */
 // TODO avoid iterating also over Vehicle.Type.OBSTACLE at lane ends.
 public class RoadSegment extends DefaultWeightedEdge implements Iterable<Vehicle> {
-
     private static final long serialVersionUID = -2991922063982378462L;
 
     private static final Logger LOG = LoggerFactory.getLogger(RoadSegment.class);
 
     static final int ID_NOT_SET = -1;
+
     static final int INITIAL_ID = 1;
+
     private static int nextId = INITIAL_ID;
 
     private RoadSegmentDirection directionType = RoadSegmentDirection.FORWARD;
 
     /** the nodeId is an internally used unique identifier for the road. */
     private final int id;
+
     /** the userId is the nodeId specified in the .xodr and .xml files. */
     private String userId;
+
     /** road name specified in the openDrive .xodr network file. */
     private String roadName;
 
     private final double roadLength;
+
     private final int laneCount;
+
     private final LaneSegment laneSegments[];
 
     // TODO extend Node idea to keep information of connecting roadSegments
+    // TODO extend Node idea to keep information of connecting roadSegments
     private int sizeSourceRoadSegments = -1;
+
     private int sizeSinkRoadSegments = -1;
 
     private final RoadObjects roadObjects;
+
     private final SignalPoints signalPoints = new SignalPoints();
 
     /** will be initialized lazily */
     private final LaneSegment overtakingSegment;
+
     private boolean overtakingSegmentInitialized = false;
 
     // Sources and Sinks
+    // Sources and Sinks
     private AbstractTrafficSource trafficSource;
+
     private TrafficSink sink;
+
     private RoadMapping roadMapping;
 
     private RoadSegment peerRoadSegment;
 
     private Node origin = new NodeImpl("origin");
+
     private Node destination = new NodeImpl("destination");
 
     /** simple ramp (source) with dropping mechanism */
     private SimpleRamp simpleRamp;
 
-    /** dynamic ff speed, considering speed limits. */
+    /**
+     * dynamic ff speed, considering speed limits.
+     */
     private double meanFreeFlowSpeed = -1;
 
-    /** static freeflow speed as maximum speed that is allowed. */
+    /**
+     * static freeflow speed as maximum speed that is allowed.
+     */
     private double freeFlowSpeed = RoadTypeSpeeds.INSTANCE.getDefaultFreeFlowSpeed();
 
     public static class TestCar {
-        public double s = 0.0; // distance
-        public double vdiff = 0.0; // approaching rate
-        public double vel = 0.0; // velocity
-        public double acc = 0.0; // acceleration
+        public double s = 0.0;// distance
+
+
+        public double vdiff = 0.0;// approaching rate
+
+
+        public double vel = 0.0;// velocity
+
+
+        public double acc = 0.0;// acceleration
+
     }
 
     /**
@@ -169,11 +191,11 @@ public class RoadSegment extends DefaultWeightedEdge implements Iterable<Vehicle
 
     /**
      * Constructor.
-     * 
+     *
      * @param roadLength
-     *            road length, in meters.
+     * 		road length, in meters.
      * @param laneCount
-     *            number of lanes in this road segment
+     * 		number of lanes in this road segment
      */
     public RoadSegment(double roadLength, int laneCount) {
         assert roadLength > 0.0;
@@ -190,8 +212,7 @@ public class RoadSegment extends DefaultWeightedEdge implements Iterable<Vehicle
         overtakingSegment = new LaneSegment(this, Lanes.OVERTAKING);
     }
 
-    public RoadSegment(double roadLength, int laneCount, RoadMapping roadMapping,
-            RoadSegmentDirection roadSegmentDirection) {
+    public RoadSegment(double roadLength, int laneCount, RoadMapping roadMapping, RoadSegmentDirection roadSegmentDirection) {
         this(roadLength, laneCount);
         this.directionType = roadSegmentDirection;
         this.roadMapping = Preconditions.checkNotNull(roadMapping);
@@ -652,10 +673,11 @@ public class RoadSegment extends DefaultWeightedEdge implements Iterable<Vehicle
      *         empty and with assumed maximum travel time in standstill
      */
     public double instantaneousTravelTime() {
-        return calcInstantaneousTravelTime();
-        //return roadLength / meanSpeed();
-
+        //return calcInstantaneousTravelTime();
+        return roadLength / meanSpeed();
     }
+
+    int i = 0;
 
     public double calcInstantaneousTravelTime() {
 
@@ -1126,9 +1148,11 @@ public class RoadSegment extends DefaultWeightedEdge implements Iterable<Vehicle
     }
 
     @SuppressWarnings("synthetic-access")
-    private class VehicleIterator implements Iterator<Vehicle>, Iterable<Vehicle> {
+    private class VehicleIterator implements Iterator<Vehicle> , Iterable<Vehicle> {
         int laneIndex;
+
         int index;
+
         int count;
 
         public VehicleIterator() {
@@ -1145,7 +1169,7 @@ public class RoadSegment extends DefaultWeightedEdge implements Iterable<Vehicle
                     return true;
                 }
                 ++nextLane;
-            }
+            } 
             final int vc = getVehicleCount();
             if (vc != count) {
                 assert false;
@@ -1169,7 +1193,7 @@ public class RoadSegment extends DefaultWeightedEdge implements Iterable<Vehicle
                     return laneSegments[laneIndex].getVehicle(index++);
                 }
                 ++nextLane;
-            }
+            } 
             return null;
         }
 
@@ -1392,5 +1416,4 @@ public class RoadSegment extends DefaultWeightedEdge implements Iterable<Vehicle
     void setFreeFlowSpeed(double freeFlowSpeed) {
         this.freeFlowSpeed = freeFlowSpeed;
     }
-
 }
