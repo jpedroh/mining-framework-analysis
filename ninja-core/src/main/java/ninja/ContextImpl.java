@@ -1,13 +1,13 @@
 package ninja;
 
+import com.google.common.collect.Iterables;
+import com.google.inject.Inject;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import ninja.async.AsyncStrategy;
 import ninja.async.AsyncStrategyFactoryHolder;
 import ninja.bodyparser.BodyParserEngine;
@@ -17,10 +17,8 @@ import ninja.session.SessionCookie;
 import ninja.template.TemplateEngine;
 import ninja.template.TemplateEngineManager;
 
-import com.google.inject.Inject;
 
 public class ContextImpl implements Context {
-
 	private HttpServletRequest httpServletRequest;
 
 	private HttpServletResponse httpServletResponse;
@@ -28,14 +26,16 @@ public class ContextImpl implements Context {
 	private Router router;
 
 	// * if set this template is used. otherwise the default mapping **/
+	// * if set this template is used. otherwise the default mapping **/
 	private String templateName = null;
 
 	private HTTP_STATUS httpStatus;
 
 	public String contentType;
 
-    private AsyncStrategy asyncStrategy;
-    private final Object asyncLock = new Object();
+				private AsyncStrategy asyncStrategy;
+
+				private final Object asyncLock = new Object();
 
 	private final TemplateEngineManager templateEngineManager;
 
@@ -46,17 +46,12 @@ public class ContextImpl implements Context {
 	private final SessionCookie sessionCookie;
 
 	@Inject
-	public ContextImpl(BodyParserEngineManager bodyParserEngineManager,
-			FlashCookie flashCookie, Router router,
-			SessionCookie sessionCookie,
-			TemplateEngineManager templateEngineManager) {
-
+	public ContextImpl(BodyParserEngineManager bodyParserEngineManager, FlashCookie flashCookie, Router router, SessionCookie sessionCookie, TemplateEngineManager templateEngineManager) {
 		this.bodyParserEngineManager = bodyParserEngineManager;
 		this.flashCookie = flashCookie;
 		this.router = router;
 		this.sessionCookie = sessionCookie;
 		this.templateEngineManager = templateEngineManager;
-
 		this.httpStatus = HTTP_STATUS.ok200;
 	}
 
@@ -105,33 +100,33 @@ public class ContextImpl implements Context {
 
 	}
 
-    @Override
-    public String getParameter(String key) {
-        return httpServletRequest.getParameter(key);
-    }
+				@Override
+				public String getParameter(String key) {
+				    return httpServletRequest.getParameter(key);
+				}
 
-    @Override
-    public Map<String, String[]> getParameters() {
-        return httpServletRequest.getParameterMap();
-    }
+				@Override
+				public Map<String, String[]> getParameters() {
+				    return httpServletRequest.getParameterMap();
+				}
 
-    @Override
-    public String getHeader(String name) {
-        return httpServletRequest.getHeader(name);
-    }
+				@Override
+				public String getHeader(String name) {
+				    return httpServletRequest.getHeader(name);
+				}
 
-    @Override
-    public Map<String, String> getHeaders() {
-        Map<String, String> headers = new HashMap<String, String>();
-        Enumeration<String> enumeration = httpServletRequest.getHeaderNames();
-        while (enumeration.hasMoreElements()) {
-            String name = enumeration.nextElement();
-            headers.put(name, httpServletRequest.getHeader(name));
-        }
-        return headers;
-    }
+				@Override
+				public Map<String, String> getHeaders() {
+				    Map<String, String> headers = new HashMap<String, String>();
+				    Enumeration<String> enumeration = httpServletRequest.getHeaderNames();
+				    while (enumeration.hasMoreElements()) {
+				        String name = enumeration.nextElement();
+				        headers.put(name, httpServletRequest.getHeader(name));
+				    }
+				    return headers;
+				}
 
-    @Override
+	@Override
 	public void redirect(String url) {
 
 		try {
@@ -152,18 +147,12 @@ public class ContextImpl implements Context {
 
 	@Override
 	public void render(Object object) {
-
 		finalizeResponseHeaders(contentType);
-
-		TemplateEngine templateEngine = templateEngineManager
-				.getTemplateEngineForContentType(contentType);
-
-        if (templateEngine == null) {
-            throw new IllegalArgumentException("No template engine found for content type " + contentType);
-        }
-
+		TemplateEngine templateEngine = templateEngineManager.getTemplateEngineForContentType(contentType);
+		if (templateEngine == null) {
+			throw new IllegalArgumentException("No template engine found for content type " + contentType);
+		}
 		templateEngine.invoke(this, object);
-
 	}
 
 	@Override
@@ -191,7 +180,6 @@ public class ContextImpl implements Context {
 				.getTemplateEngineForContentType(ContentTypes.APPLICATION_JSON);
 
 		templateEngine.invoke(this, object);
-
 
 	}
 
@@ -259,39 +247,39 @@ public class ContextImpl implements Context {
 		return sessionCookie;
 	}
 
-    @Override
-    public String getRequestUri() {
-        return getHttpServletRequest().getRequestURI();
-    }
+				@Override
+				public String getRequestUri() {
+				    return getHttpServletRequest().getRequestURI();
+				}
 
-    @Override
-    public void handleAsync() {
-        synchronized (asyncLock) {
-            if (asyncStrategy == null) {
-                asyncStrategy = AsyncStrategyFactoryHolder.INSTANCE.createStrategy(httpServletRequest);
-                asyncStrategy.handleAsync();
-            }
-        }
-    }
+				@Override
+				public void handleAsync() {
+				    synchronized (asyncLock) {
+				        if (asyncStrategy == null) {
+				            asyncStrategy = AsyncStrategyFactoryHolder.INSTANCE.createStrategy(httpServletRequest);
+				            asyncStrategy.handleAsync();
+				        }
+				    }
+				}
 
-    @Override
-    public void requestComplete() {
-        synchronized (asyncLock) {
-            if (asyncStrategy == null) {
-                throw new IllegalStateException("Request complete called on non async request");
-            }
-            asyncStrategy.requestComplete();
-        }
-    }
+				@Override
+				public void requestComplete() {
+				    synchronized (asyncLock) {
+				        if (asyncStrategy == null) {
+				            throw new IllegalStateException("Request complete called on non async request");
+				        }
+				        asyncStrategy.requestComplete();
+				    }
+				}
 
-    /**
-     * Used to indicate that the controller has finished executing
-     */
-    public void controllerReturned() {
-        synchronized (asyncLock) {
-            if (asyncStrategy != null) {
-                asyncStrategy.controllerReturned();
-            }
-        }
-    }
+				/**
+				 * Used to indicate that the controller has finished executing
+				 */
+				public void controllerReturned() {
+				    synchronized (asyncLock) {
+				        if (asyncStrategy != null) {
+				            asyncStrategy.controllerReturned();
+				        }
+				    }
+				}
 }
