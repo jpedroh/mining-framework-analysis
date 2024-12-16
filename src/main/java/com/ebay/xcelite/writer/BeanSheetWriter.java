@@ -26,17 +26,16 @@ import com.ebay.xcelite.options.XceliteOptions;
 import com.ebay.xcelite.policies.MissingCellPolicy;
 import com.ebay.xcelite.sheet.XceliteSheet;
 import com.ebay.xcelite.styles.CellStylesBank;
+import java.lang.reflect.Field;
+import java.util.*;
 import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.reflections.ReflectionUtils;
-
-import java.lang.reflect.Field;
-import java.util.*;
-
 import static org.reflections.ReflectionUtils.withName;
+
 
 /**
  * An concrete implementation of the {@link SheetWriter} interface that writes
@@ -58,20 +57,25 @@ import static org.reflections.ReflectionUtils.withName;
  * @author kharel (kharel@ebay.com)
  * @since 1.0
  */
-
 public class BeanSheetWriter<T> extends AbstractSheetWriter<T> {
     private final LinkedHashSet<Col> columns;
+
     private final Col anyColumn;
+
     private Row headerRow;
+
     private int rowIndex = 0;
+
     public boolean expectsHeaderRow(){return true;}
 
     /**
      * Construct a {@link BeanSheetWriter} on the given {@link XceliteSheet sheet}
      * for writing objects of class `T`.
      *
-     * @param sheet the sheet to construct the SheetWriter on.
-     * @param type Class of the objects to write
+     * @param sheet
+     * 		the sheet to construct the SheetWriter on.
+     * @param type
+     * 		Class of the objects to write
      */
     public BeanSheetWriter(XceliteSheet sheet, Class<T> type) {
         super(sheet);
@@ -87,9 +91,12 @@ public class BeanSheetWriter<T> extends AbstractSheetWriter<T> {
      * Values from the options parameter are copied over, later changes to the
      * options object will not affect the options of this writer.
      *
-     * @param sheet the sheet to construct the SheetWriter on.
-     * @param options options for this SheetWriter.
-     * @param type Class of the objects to write
+     * @param sheet
+     * 		the sheet to construct the SheetWriter on.
+     * @param options
+     * 		options for this SheetWriter.
+     * @param type
+     * 		Class of the objects to write
      */
     public BeanSheetWriter(XceliteSheet sheet, XceliteOptions options, Class<T> type) {
         super(sheet, options);
@@ -144,48 +151,50 @@ public class BeanSheetWriter<T> extends AbstractSheetWriter<T> {
     @SneakyThrows
     private void writeData(Collection<T> data) {
         Set<Col> columnsToAdd = new TreeSet();
-        for (T t: data) {
+        for (T t : data) {
             if (anyColumn != null) {
                 appendAnyColumns(t, columnsToAdd);
             }
         }
         addColumns(columnsToAdd, true);
-        for (T t: data) {
+        for (T t : data) {
             if (null == t) {
-                switch(options.getMissingRowPolicy()) {
-                    case SKIP: {
-                        continue;
-                    }
-                    case NULL: {
-                        sheet.getNativeSheet().createRow(rowIndex++);
-                        continue;
-                    }
-                    case EMPTY_OBJECT: {
-                        if (options.getMissingCellPolicy().equals(MissingCellPolicy.RETURN_BLANK_AS_NULL)) {
+                switch (options.getMissingRowPolicy()) {
+                    case SKIP :
+                        {
+                            continue;
+                        }
+                    case NULL :
+                        {
                             sheet.getNativeSheet().createRow(rowIndex++);
                             continue;
-                        } else {
-                            Class clazz = getBeansClass(data);
-                            t = (T) clazz.newInstance();
                         }
-                        break;
-                    }
-                    case THROW: {
-                        throw new PolicyViolationException("Null object found and " +
-                                "MissingRowPolicy.THROW active. Object index: "+rowIndex);
-                    }
+                    case EMPTY_OBJECT :
+                        {
+                            if (options.getMissingCellPolicy().equals(MissingCellPolicy.RETURN_BLANK_AS_NULL)) {
+                                sheet.getNativeSheet().createRow(rowIndex++);
+                                continue;
+                            } else {
+                                Class clazz = getBeansClass(data);
+                                t = ((T) (clazz.newInstance()));
+                            }
+                            break;
+                        }
+                    case THROW :
+                        {
+                            throw new PolicyViolationException(("Null object found and " + "MissingRowPolicy.THROW active. Object index: ") + rowIndex);
+                        }
                 }
-
             }
             Row row = sheet.getNativeSheet().createRow(rowIndex++);
             int i = 0;
-            for (Col col: columns) {
+            for (Col col : columns) {
                 Set<Field> fields = ReflectionUtils.getAllFields(t.getClass(), withName(col.getFieldName()));
                 Field field = fields.iterator().next();
                 field.setAccessible(true);
                 Object fieldValueObj;
                 if (col.isAnyColumn()) {
-                    Map<String, Object> anyColumnMap = (Map<String, Object>) field.get(t);
+                    Map<String, Object> anyColumnMap = ((Map<String, Object>) (field.get(t)));
                     fieldValueObj = anyColumnMap.get(col.getName());
                 } else {
                     fieldValueObj = field.get(t);
@@ -197,7 +206,6 @@ public class BeanSheetWriter<T> extends AbstractSheetWriter<T> {
             }
         }
     }
-
 
     @SuppressWarnings("unchecked")
     @SneakyThrows

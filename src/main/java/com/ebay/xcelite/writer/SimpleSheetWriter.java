@@ -20,14 +20,13 @@ import com.ebay.xcelite.options.XceliteOptions;
 import com.ebay.xcelite.policies.MissingCellPolicy;
 import com.ebay.xcelite.sheet.XceliteSheet;
 import com.ebay.xcelite.styles.CellStylesBank;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -65,8 +64,11 @@ public class SimpleSheetWriter extends AbstractSheetWriter<Collection<Object>> {
      * the given {@link XceliteOptions options}. Values from the options parameter
      * are copied over, later changes to the options object will not affect the
      * options of this writer.
-     * @param sheet the sheet to construct the SimpleSheetWriter on.
-     * @param options options for this SimpleSheetWriter.
+     *
+     * @param sheet
+     * 		the sheet to construct the SimpleSheetWriter on.
+     * @param options
+     * 		options for this SimpleSheetWriter.
      */
     public SimpleSheetWriter(XceliteSheet sheet, XceliteOptions options) {
         super(sheet, options);
@@ -74,7 +76,11 @@ public class SimpleSheetWriter extends AbstractSheetWriter<Collection<Object>> {
 
     @Override
     public void write(Collection<Collection<Object>> data) {
+<<<<<<< LEFT
+        final AtomicInteger i = new AtomicInteger(0);
+=======
         int rowIndex = 0;
+>>>>>>> RIGHT
 
         for (Collection<Object> row: data) {
             if (null == row) {
