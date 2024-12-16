@@ -21,6 +21,8 @@ import io.jsonwebtoken.Header;
 import io.jsonwebtoken.JweHeader;
 import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.lang.Bytes;
 import io.jsonwebtoken.impl.lang.CompactMediaTypeIdConverter;
 import io.jsonwebtoken.impl.lang.Function;
@@ -55,41 +57,50 @@ import io.jsonwebtoken.security.SignatureAlgorithm;
 import io.jsonwebtoken.security.SignatureAlgorithms;
 import io.jsonwebtoken.security.SignatureException;
 import io.jsonwebtoken.security.SignatureRequest;
-
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.Provider;
 import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Map;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
 
 public class DefaultJwtBuilder implements JwtBuilder {
-
     protected Provider provider;
+
     protected SecureRandom secureRandom;
 
     protected Header<?> header;
+
     protected Claims claims;
+
     protected byte[] content;
 
     private SignatureAlgorithm<Key, ?> sigAlg = SignatureAlgorithms.NONE;
+
     private Function<SignatureRequest<Key>, byte[]> signFunction;
 
+    // MUST be Symmetric AEAD per https://tools.ietf.org/html/rfc7516#section-4.1.2
     private AeadAlgorithm enc; // MUST be Symmetric AEAD per https://tools.ietf.org/html/rfc7516#section-4.1.2
+
     private Function<AeadRequest, AeadResult> encFunction;
 
     private KeyAlgorithm<Key, ?> keyAlg;
+
     private Function<KeyRequest<Key>, KeyResult> keyAlgFunction;
 
     private Key key;
 
     protected Serializer<Map<String, ?>> serializer;
+
     protected Function<Map<String, ?>, byte[]> headerSerializer;
+
     protected Function<Map<String, ?>, byte[]> claimsSerializer;
 
     protected Encoder<byte[], String> base64UrlEncoder = Encoders.BASE64URL;
+
     protected CompressionCodec compressionCodec;
 
     @Override
@@ -114,9 +125,9 @@ public class DefaultJwtBuilder implements JwtBuilder {
             public byte[] apply(Map<String, ?> stringMap) {
                 try {
                     return serializer.serialize(stringMap);
-                } catch (Exception e) {
+                } catch (java.lang.Exception e) {
                     String fmt = String.format("Unable to serialize %s to JSON.", which);
-                    String msg = fmt + " Cause: " + e.getMessage();
+                    String msg = (fmt + " Cause: ") + e.getMessage();
                     throw new SerializationException(msg);
                 }
             }
@@ -188,38 +199,21 @@ public class DefaultJwtBuilder implements JwtBuilder {
         return signWith(key, alg);
     }
 
-    @Override
-    public <K extends Key> JwtBuilder signWith(K key, final SignatureAlgorithm<K, ?> alg) throws InvalidKeyException {
-        Assert.notNull(key, "Key argument cannot be null.");
-        Assert.notNull(alg, "SignatureAlgorithm cannot be null.");
-        String id = Assert.hasText(alg.getId(), "SignatureAlgorithm id cannot be null or empty.");
-        if (SignatureAlgorithms.NONE.getId().equalsIgnoreCase(id)) {
-            String msg = "The 'none' SignatureAlgorithm cannot be used to sign JWTs.";
-            throw new IllegalArgumentException(msg);
-        }
-        this.key = key;
         //noinspection unchecked
-        this.sigAlg = (SignatureAlgorithm<Key, ?>) alg;
-        this.signFunction = Functions.wrap(new Function<SignatureRequest<Key>, byte[]>() {
-            @Override
-            public byte[] apply(SignatureRequest<Key> request) {
-                return sigAlg.sign(request);
-            }
-        }, SignatureException.class, "Unable to compute %s signature.", id);
-        return this;
-    }
-
-    @SuppressWarnings({"deprecation", "unchecked"}) // TODO: remove method for 1.0
+    // TODO: remove method for 1.0
+    @SuppressWarnings({ "deprecation", "unchecked" })
     @Override
-    public JwtBuilder signWith(Key key, io.jsonwebtoken.SignatureAlgorithm alg) throws InvalidKeyException {
+    public JwtBuilder signWith(Key key, SignatureAlgorithm alg) throws InvalidKeyException {
         Assert.notNull(alg, "SignatureAlgorithm cannot be null.");
-        alg.assertValidSigningKey(key); //since 0.10.0 for https://github.com/jwtk/jjwt/issues/334
-        return signWith(key, (SignatureAlgorithm<Key, ?>) SignatureAlgorithmsBridge.forId(alg.getValue()));
+        //since 0.10.0 for https://github.com/jwtk/jjwt/issues/334
+        alg.assertValidSigningKey(key);
+        return signWith(key, ((SignatureAlgorithm<Key, ?>) (SignatureAlgorithmsBridge.forId(alg.getValue()))));
     }
 
-    @SuppressWarnings("deprecation") // TODO: remove method for 1.0
+    // TODO: remove method for 1.0
+    @SuppressWarnings("deprecation")
     @Override
-    public JwtBuilder signWith(io.jsonwebtoken.SignatureAlgorithm alg, byte[] secretKeyBytes) throws InvalidKeyException {
+    public JwtBuilder signWith(SignatureAlgorithm alg, byte[] secretKeyBytes) throws InvalidKeyException {
         Assert.notNull(alg, "SignatureAlgorithm cannot be null.");
         Assert.notEmpty(secretKeyBytes, "secret key byte array cannot be null or empty.");
         Assert.isTrue(alg.isHmac(), "Key bytes may only be specified for HMAC signatures.  If using RSA or Elliptic Curve, use the signWith(SignatureAlgorithm, Key) method instead.");
@@ -227,25 +221,27 @@ public class DefaultJwtBuilder implements JwtBuilder {
         return signWith(key, alg);
     }
 
-    @SuppressWarnings("deprecation") // TODO: remove method for 1.0
+    // TODO: remove method for 1.0
+    @SuppressWarnings("deprecation")
     @Override
-    public JwtBuilder signWith(io.jsonwebtoken.SignatureAlgorithm alg, String base64EncodedSecretKey) throws InvalidKeyException {
+    public JwtBuilder signWith(SignatureAlgorithm alg, String base64EncodedSecretKey) throws InvalidKeyException {
         Assert.hasText(base64EncodedSecretKey, "base64-encoded secret key cannot be null or empty.");
         Assert.isTrue(alg.isHmac(), "Base64-encoded key bytes may only be specified for HMAC signatures.  If using RSA or Elliptic Curve, use the signWith(SignatureAlgorithm, Key) method instead.");
         byte[] bytes = Decoders.BASE64.decode(base64EncodedSecretKey);
         return signWith(alg, bytes);
     }
 
-    @SuppressWarnings("deprecation") // TODO: remove method for 1.0
+    // TODO: remove method for 1.0
+    @SuppressWarnings("deprecation")
     @Override
-    public JwtBuilder signWith(io.jsonwebtoken.SignatureAlgorithm alg, Key key) {
+    public JwtBuilder signWith(SignatureAlgorithm alg, Key key) {
         return signWith(key, alg);
     }
 
     @Override
     public JwtBuilder encryptWith(AeadAlgorithm enc, SecretKey key) {
         if (key instanceof PasswordKey) {
-            return encryptWith(enc, (PasswordKey) key, new Pbes2HsAkwAlgorithm(enc.getKeyBitLength()));
+            return encryptWith(enc, ((PasswordKey) (key)), new Pbes2HsAkwAlgorithm(enc.getKeyBitLength()));
         }
         return encryptWith(enc, key, KeyAlgorithms.DIRECT);
     }
@@ -260,11 +256,9 @@ public class DefaultJwtBuilder implements JwtBuilder {
                 return enc.encrypt(request);
             }
         }, "%s encryption failed.", encId);
-
         this.key = Assert.notNull(key, "Key cannot be null.");
-
         //noinspection unchecked
-        this.keyAlg = (KeyAlgorithm<Key, ?>) Assert.notNull(keyAlg, "KeyAlgorithm cannot be null.");
+        this.keyAlg = ((KeyAlgorithm<Key, ?>) (Assert.notNull(keyAlg, "KeyAlgorithm cannot be null.")));
         final String algId = Assert.hasText(keyAlg.getId(), "KeyAlgorithm id cannot be null or empty.");
         final KeyAlgorithm<Key, ?> alg = this.keyAlg;
         String cekMsg = "Unable to obtain content encryption key from key management algorithm '%s'.";
@@ -273,8 +267,7 @@ public class DefaultJwtBuilder implements JwtBuilder {
             public KeyResult apply(KeyRequest<Key> request) {
                 return alg.getEncryptionKey(request);
             }
-        }, SecurityException.class, cekMsg, algId);
-
+        }, java.lang.SecurityException.class, cekMsg, algId);
         return this;
     }
 
@@ -287,7 +280,7 @@ public class DefaultJwtBuilder implements JwtBuilder {
 
     @Override
     public JwtBuilder setPayload(String payload) {
-        byte[] bytes = payload != null ? payload.getBytes(StandardCharsets.UTF_8) : null;
+        byte[] bytes = (payload != null) ? payload.getBytes(StandardCharsets.UTF_8) : null;
         return setContent(bytes);
     }
 
@@ -369,63 +362,57 @@ public class DefaultJwtBuilder implements JwtBuilder {
     @Override
     public JwtBuilder claim(String name, Object value) {
         Assert.hasText(name, "Claim property name cannot be null or empty.");
-        if (value instanceof String && !Strings.hasText((String) value)) {
+        if ((value instanceof String) && (!Strings.hasText(((String) (value))))) {
             value = null;
         }
         if (this.claims == null) {
             if (value != null) {
                 ensureClaims().put(name, value);
             }
+        } else if (value == null) {
+            this.claims.remove(name);
         } else {
-            if (value == null) {
-                this.claims.remove(name);
-            } else {
-                this.claims.put(name, value);
-            }
+            this.claims.put(name, value);
         }
         return this;
     }
 
     @Override
     public String compact() {
-
         final boolean jwe = encFunction != null;
-
-        if (jwe && signFunction != null) {
+        if (jwe && (signFunction != null)) {
             String msg = "Both 'signWith' and 'encryptWith' cannot be specified - choose either.";
             throw new IllegalStateException(msg);
         }
-
         if (Objects.isEmpty(content) && Collections.isEmpty(claims)) {
-            if (jwe) { // JWE payload can never be empty:
+            if (jwe) {
+                // JWE payload can never be empty:
                 String msg = "Encrypted JWTs must have either 'claims' or non-empty 'content'.";
                 throw new IllegalStateException(msg);
-            } else { //JWS or Unprotected JWT payloads can be empty
+            } else {
+            //JWS or Unprotected JWT payloads can be empty
                 content = Bytes.EMPTY;
             }
         }
-        if (!Objects.isEmpty(content) && !Collections.isEmpty(claims)) {
+        if ((!Objects.isEmpty(content)) && (!Collections.isEmpty(claims))) {
             throw new IllegalStateException("Both 'content' and 'claims' cannot both be specified. Choose either one.");
         }
-
         Header<?> header = ensureHeader();
-
-        if (this.serializer == null) { // try to find one based on the services available
-            //noinspection unchecked
+        if (this.serializer == null) {
+            // try to find one based on the services available
+            // noinspection unchecked
             serializeToJsonWith(Services.loadFirst(Serializer.class));
         }
-
         byte[] payload = content;
         if (!Collections.isEmpty(claims)) {
             payload = claimsSerializer.apply(claims);
         }
-        if (!Objects.isEmpty(payload) && compressionCodec != null) {
+        if ((!Objects.isEmpty(payload)) && (compressionCodec != null)) {
             payload = compressionCodec.compress(payload);
             header.setCompressionAlgorithm(compressionCodec.getId());
         }
-
         if (jwe) {
-            JweHeader jweHeader = header instanceof JweHeader ? (JweHeader) header : new DefaultJweHeader(header);
+            JweHeader jweHeader = (header instanceof JweHeader) ? ((JweHeader) (header)) : new DefaultJweHeader(header);
             return encrypt(jweHeader, payload);
         } else {
             return compact(header, payload);
@@ -433,77 +420,63 @@ public class DefaultJwtBuilder implements JwtBuilder {
     }
 
     private String compact(Header<?> header, byte[] payload) {
+        Assert.stateNotNull(sigAlg, "SignatureAlgorithm is required.");// invariant
 
-        Assert.stateNotNull(sigAlg, "SignatureAlgorithm is required."); // invariant
-
-        if (this.key != null && !(header instanceof JwsHeader)) {
+        if ((this.key != null) && (!(header instanceof JwsHeader))) {
             header = new DefaultJwsHeader(header);
         }
-
         header.setAlgorithm(sigAlg.getId());
-
         byte[] headerBytes = headerSerializer.apply(header);
         String base64UrlEncodedHeader = base64UrlEncoder.encode(headerBytes);
         String base64UrlEncodedBody = base64UrlEncoder.encode(payload);
-
-        String jwt = base64UrlEncodedHeader + DefaultJwtParser.SEPARATOR_CHAR + base64UrlEncodedBody;
-
-        if (this.key != null) { //jwt must be signed:
+        String jwt = (base64UrlEncodedHeader + io.jsonwebtoken.DefaultJwtParser.SEPARATOR_CHAR) + base64UrlEncodedBody;
+        if (this.key != null) {
+        //jwt must be signed:
             Assert.stateNotNull(key, "Signing key cannot be null.");
             Assert.stateNotNull(signFunction, "signFunction cannot be null.");
             byte[] data = jwt.getBytes(StandardCharsets.US_ASCII);
             SignatureRequest<Key> request = new DefaultSignatureRequest<>(provider, secureRandom, data, key);
             byte[] signature = signFunction.apply(request);
             String base64UrlSignature = base64UrlEncoder.encode(signature);
-            jwt += DefaultJwtParser.SEPARATOR_CHAR + base64UrlSignature;
+            jwt += io.jsonwebtoken.DefaultJwtParser.SEPARATOR_CHAR + base64UrlSignature;
         } else {
             // no signature (unprotected JWT), but must terminate w/ a period, see
             // https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25#section-6.1
-            jwt += DefaultJwtParser.SEPARATOR_CHAR;
+            jwt += io.jsonwebtoken.DefaultJwtParser.SEPARATOR_CHAR;
         }
-
         return jwt;
     }
 
     private String encrypt(JweHeader header, byte[] payload) {
+        // set by encryptWith*
+        Assert.stateNotNull(key, "Key is required.");
+        Assert.stateNotNull(enc, "Encryption algorithm is required.");// set by encryptWith*
 
-        Assert.stateNotNull(key, "Key is required."); // set by encryptWith*
-        Assert.stateNotNull(enc, "Encryption algorithm is required."); // set by encryptWith*
         Assert.stateNotNull(encFunction, "Encryption function cannot be null.");
-        Assert.stateNotNull(keyAlg, "KeyAlgorithm is required."); //set by encryptWith*
+        Assert.stateNotNull(keyAlg, "KeyAlgorithm is required.");// set by encryptWith*
+
         Assert.stateNotNull(keyAlgFunction, "KeyAlgorithm function cannot be null.");
-        Assert.notEmpty(payload, "JWE payload bytes cannot be empty."); // JWE invariant (JWS can be empty however)
+        Assert.notEmpty(payload, "JWE payload bytes cannot be empty.");// JWE invariant (JWS can be empty however)
 
         KeyRequest<Key> keyRequest = new DefaultKeyRequest<>(this.provider, this.secureRandom, this.key, header, enc);
         KeyResult keyResult = keyAlgFunction.apply(keyRequest);
-
         Assert.stateNotNull(keyRequest, "KeyAlgorithm must return a KeyResult.");
         SecretKey cek = Assert.notNull(keyResult.getKey(), "KeyResult must return a content encryption key.");
         byte[] encryptedCek = Assert.notNull(keyResult.getContent(), "KeyResult must return an encrypted key byte array, even if empty.");
-
         header.put(AbstractHeader.ALGORITHM.getId(), keyAlg.getId());
         header.put(DefaultJweHeader.ENCRYPTION_ALGORITHM.getId(), enc.getId());
-
         byte[] headerBytes = this.headerSerializer.apply(header);
         final String base64UrlEncodedHeader = base64UrlEncoder.encode(headerBytes);
         byte[] aad = base64UrlEncodedHeader.getBytes(StandardCharsets.US_ASCII);
-
         AeadRequest encRequest = new DefaultAeadRequest(provider, secureRandom, payload, cek, aad);
         AeadResult encResult = encFunction.apply(encRequest);
-
         byte[] iv = Assert.notEmpty(encResult.getInitializationVector(), "Encryption result must have a non-empty initialization vector.");
         byte[] ciphertext = Assert.notEmpty(encResult.getContent(), "Encryption result must have non-empty ciphertext (result.getData()).");
         byte[] tag = Assert.notEmpty(encResult.getDigest(), "Encryption result must have a non-empty authentication tag.");
-
         String base64UrlEncodedEncryptedCek = base64UrlEncoder.encode(encryptedCek);
         String base64UrlEncodedIv = base64UrlEncoder.encode(iv);
         String base64UrlEncodedCiphertext = base64UrlEncoder.encode(ciphertext);
         String base64UrlEncodedTag = base64UrlEncoder.encode(tag);
-
-        return base64UrlEncodedHeader + DefaultJwtParser.SEPARATOR_CHAR +
-                base64UrlEncodedEncryptedCek + DefaultJwtParser.SEPARATOR_CHAR +
-                base64UrlEncodedIv + DefaultJwtParser.SEPARATOR_CHAR +
-                base64UrlEncodedCiphertext + DefaultJwtParser.SEPARATOR_CHAR +
-                base64UrlEncodedTag;
+        return (((((((base64UrlEncodedHeader + DefaultJwtParser.SEPARATOR_CHAR) + base64UrlEncodedEncryptedCek) + DefaultJwtParser.SEPARATOR_CHAR) + base64UrlEncodedIv) + DefaultJwtParser.SEPARATOR_CHAR) + base64UrlEncodedCiphertext) + DefaultJwtParser.SEPARATOR_CHAR) + base64UrlEncodedTag;
     }
 }

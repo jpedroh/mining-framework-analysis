@@ -23,18 +23,23 @@ import io.jsonwebtoken.lang.Assert;
 import io.jsonwebtoken.lang.Collections;
 import io.jsonwebtoken.lang.Objects;
 import io.jsonwebtoken.lang.Strings;
-
 import java.lang.reflect.Array;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class JwtMap implements Map<String, Object>, FieldReadable, Nameable {
 
+public class JwtMap implements Map<String, Object> , FieldReadable , Nameable {
     protected final Map<String, Field<?>> FIELDS;
-    protected final Map<String, Object> values; // canonical values formatted per RFC requirements
-    protected final Map<String, Object> idiomaticValues; // the values map with any RFC values converted to Java type-safe values where possible
+
+    // canonical values formatted per RFC requirements
+    protected final Map<String, Object> values;
+
+    // the values map with any RFC values converted to Java type-safe values where possible
+    protected final Map<String, Object> idiomaticValues;
 
     public JwtMap(Set<Field<?>> fieldSet) {
         Assert.notEmpty(fieldSet, "Fields cannot be null or empty.");
@@ -59,11 +64,7 @@ public class JwtMap implements Map<String, Object>, FieldReadable, Nameable {
     }
 
     public static boolean isReduceableToNull(Object v) {
-        return v == null ||
-                (v instanceof String && !Strings.hasText((String) v)) ||
-                (v instanceof Collection && Collections.isEmpty((Collection<?>) v)) ||
-                (v instanceof Map && Collections.isEmpty((Map<?, ?>) v)) ||
-                (v.getClass().isArray() && Array.getLength(v) == 0);
+        return ((((v == null) || ((v instanceof String) && (!Strings.hasText(((String) (v)))))) || ((v instanceof Collection) && Collections.isEmpty(((Collection<?>) (v))))) || ((v instanceof Map) && Collections.isEmpty(((Map<?, ?>) (v))))) || (v.getClass().isArray() && (Array.getLength(v) == 0));
     }
 
     protected Object idiomaticGet(String key) {
@@ -72,7 +73,7 @@ public class JwtMap implements Map<String, Object>, FieldReadable, Nameable {
 
     @SuppressWarnings("unchecked")
     protected <T> T idiomaticGet(Field<T> field) {
-        return (T) this.idiomaticValues.get(field.getId());
+        return ((T) (this.idiomaticValues.get(field.getId())));
     }
 
     @SuppressWarnings("unchecked")
@@ -84,7 +85,8 @@ public class JwtMap implements Map<String, Object>, FieldReadable, Nameable {
         if (value == null) {
             return null;
         }
-        return (T) value; // should always be the field type - if not, it's a misuse of the API
+        return ((T) (value));// should always be the field type - if not, it's a misuse of the API
+
     }
 
     @Override
@@ -128,7 +130,7 @@ public class JwtMap implements Map<String, Object>, FieldReadable, Nameable {
     public Object put(String name, Object value) {
         name = Assert.notNull(Strings.clean(name), "Member name cannot be null or empty.");
         if (value instanceof String) {
-            value = Strings.clean((String) value);
+            value = Strings.clean(((String) (value)));
         }
         return idiomaticPut(name, value);
     }
@@ -136,11 +138,14 @@ public class JwtMap implements Map<String, Object>, FieldReadable, Nameable {
     // ensures that if a property name matches an RFC-specified name, that value can be represented
     // as an idiomatic type-safe Java value in addition to the canonical RFC/encoded value.
     private Object idiomaticPut(String name, Object value) {
-        Assert.stateNotNull(name, "Name cannot be null."); // asserted by caller
+        // asserted by caller
+        Assert.stateNotNull(name, "Name cannot be null.");
         Field<?> field = FIELDS.get(name);
-        if (field != null) { //Setting a JWA-standard property - let's ensure we can represent it idiomatically:
+        if (field != null) {
+        //Setting a JWA-standard property - let's ensure we can represent it idiomatically:
             return apply(field, value);
-        } else { //non-standard/custom property:
+        } else {
+        //non-standard/custom property:
             return nullSafePut(name, value);
         }
     }
@@ -155,21 +160,20 @@ public class JwtMap implements Map<String, Object>, FieldReadable, Nameable {
     }
 
     protected <T> Object apply(Field<T> field, Object rawValue) {
-
         final String id = field.getId();
-
         if (isReduceableToNull(rawValue)) {
             return remove(id);
         }
+        T idiomaticValue;// preferred Java format
 
-        T idiomaticValue; // preferred Java format
-        Object canonicalValue; // as required by the RFC
+        Object canonicalValue;// as required by the RFC
+
         try {
             idiomaticValue = field.applyFrom(rawValue);
             Assert.notNull(idiomaticValue, "Converter's resulting idiomaticValue cannot be null.");
             canonicalValue = field.applyTo(idiomaticValue);
             Assert.notNull(canonicalValue, "Converter's resulting canonicalValue cannot be null.");
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             StringBuilder sb = new StringBuilder(100);
             sb.append("Invalid ").append(getName()).append(" ").append(field).append(" value");
             if (field.isSecret()) {

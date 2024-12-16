@@ -26,11 +26,11 @@ import io.jsonwebtoken.impl.lang.Registry;
 import io.jsonwebtoken.impl.lang.Services;
 import io.jsonwebtoken.lang.Assert;
 import io.jsonwebtoken.lang.Strings;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
 
 /**
  * Default implementation of {@link CompressionCodecResolver} that supports the following:
@@ -55,13 +55,8 @@ import java.util.Set;
  * @see GzipCompressionCodec
  * @since 0.6.0
  */
-public class DefaultCompressionCodecResolver implements CompressionCodecResolver, Locator<CompressionCodec> {
-
-    private static final String MISSING_COMPRESSION_MESSAGE = "Unable to find an implementation for compression " +
-            "algorithm [%s] using java.util.ServiceLoader or via any specified extra CompressionCodec instances. " +
-            "Ensure you include a backing implementation .jar in the classpath, for example jjwt-impl.jar, or " +
-            "your own .jar for custom implementations, or use the JwtParser.addCompressionCodecs configuration " +
-            "method.";
+public class DefaultCompressionCodecResolver implements CompressionCodecResolver , Locator<CompressionCodec> {
+    private static final String MISSING_COMPRESSION_MESSAGE = "Unable to find an implementation for compression " + ((("algorithm [%s] using java.util.ServiceLoader or via any specified extra CompressionCodec instances. " + "Ensure you include a backing implementation .jar in the classpath, for example jjwt-impl.jar, or ") + "your own .jar for custom implementations, or use the JwtParser.addCompressionCodecs configuration ") + "method.");
 
     private final Registry<String, CompressionCodec> codecs;
 
@@ -73,7 +68,8 @@ public class DefaultCompressionCodecResolver implements CompressionCodecResolver
         Assert.notNull(extraCodecs, "extraCodecs cannot be null.");
         Set<CompressionCodec> codecs = new LinkedHashSet<>(Services.loadAll(CompressionCodec.class));
         codecs.addAll(extraCodecs);
-        codecs.add(CompressionCodecs.DEFLATE); // standard ones are added last so they can't be accidentally replaced
+        // standard ones are added last so they can't be accidentally replaced
+        codecs.add(CompressionCodecs.DEFLATE);
         codecs.add(CompressionCodecs.GZIP);
         this.codecs = new IdRegistry<>(codecs);
     }
