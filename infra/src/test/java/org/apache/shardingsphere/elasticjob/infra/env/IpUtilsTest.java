@@ -14,11 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.shardingsphere.elasticjob.infra.env;
-
-import org.apache.shardingsphere.elasticjob.test.util.ReflectionUtils;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -28,7 +24,8 @@ import java.net.NetworkInterface;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
-
+import org.apache.shardingsphere.elasticjob.test.util.ReflectionUtils;
+import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -37,13 +34,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+
 class IpUtilsTest {
-    
+    @Test
+<<<<<<< LEFT
+    void assertGetHostName() {
+=======
+    void assertGetHostName() throws ReflectiveOperationException {
+>>>>>>> RIGHT
+        assertNotNull(IpUtils.getHostName());
+        assertThat(ReflectionUtils.getStaticFieldValue(IpUtils.class, "cachedHostName"), is(IpUtils.getHostName()));
+    }
+
     @Test
     void assertGetIp() {
         assertNotNull(IpUtils.getIp());
     }
-    
+
     @Test
     void assertPreferredNetworkInterface() throws ReflectiveOperationException {
         System.setProperty(IpUtils.PREFERRED_NETWORK_INTERFACE, "eth0");
@@ -51,11 +58,11 @@ class IpUtilsTest {
         declaredMethod.setAccessible(true);
         NetworkInterface mockNetworkInterface = mock(NetworkInterface.class);
         when(mockNetworkInterface.getDisplayName()).thenReturn("eth0");
-        boolean result = (boolean) declaredMethod.invoke("isPreferredNetworkInterface", mockNetworkInterface);
+        boolean result = ((boolean) (declaredMethod.invoke("isPreferredNetworkInterface", mockNetworkInterface)));
         assertTrue(result);
         System.clearProperty(IpUtils.PREFERRED_NETWORK_INTERFACE);
     }
-    
+
     @Test
     void assertPreferredNetworkAddress() throws ReflectiveOperationException {
         Method declaredMethod = IpUtils.class.getDeclaredMethod("isPreferredAddress", InetAddress.class);
@@ -63,18 +70,18 @@ class IpUtilsTest {
         InetAddress inetAddress = mock(InetAddress.class);
         System.setProperty(IpUtils.PREFERRED_NETWORK_IP, "192.168");
         when(inetAddress.getHostAddress()).thenReturn("192.168.0.100");
-        assertTrue((boolean) declaredMethod.invoke("isPreferredAddress", inetAddress));
+        assertTrue(((boolean) (declaredMethod.invoke("isPreferredAddress", inetAddress))));
         when(inetAddress.getHostAddress()).thenReturn("10.10.0.100");
-        assertFalse((boolean) declaredMethod.invoke("isPreferredAddress", inetAddress));
+        assertFalse(((boolean) (declaredMethod.invoke("isPreferredAddress", inetAddress))));
         System.clearProperty(IpUtils.PREFERRED_NETWORK_IP);
         System.setProperty(IpUtils.PREFERRED_NETWORK_IP, "10.10.*");
         when(inetAddress.getHostAddress()).thenReturn("10.10.0.100");
-        assertTrue((boolean) declaredMethod.invoke("isPreferredAddress", inetAddress));
+        assertTrue(((boolean) (declaredMethod.invoke("isPreferredAddress", inetAddress))));
         when(inetAddress.getHostAddress()).thenReturn("10.0.0.100");
-        assertFalse((boolean) declaredMethod.invoke("isPreferredAddress", inetAddress));
+        assertFalse(((boolean) (declaredMethod.invoke("isPreferredAddress", inetAddress))));
         System.clearProperty(IpUtils.PREFERRED_NETWORK_IP);
     }
-    
+
     @Test
     void assertGetFirstNetworkInterface() throws IOException, ReflectiveOperationException {
         InetAddress address1 = mock(Inet4Address.class);
@@ -108,10 +115,4 @@ class IpUtilsTest {
         assertThat(declaredMethod.invoke("getFirstNetworkInterface", validNetworkInterfaces), is(networkInterface1));
         System.clearProperty(IpUtils.PREFERRED_NETWORK_IP);
     }
-    
-    @Test
-    void assertGetHostName() {
-        assertNotNull(IpUtils.getHostName());
-        assertThat(ReflectionUtils.getStaticFieldValue(IpUtils.class, "cachedHostName"), is(IpUtils.getHostName()));
-    } 
 }
