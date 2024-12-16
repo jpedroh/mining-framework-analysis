@@ -3,16 +3,14 @@ package tech.tablesaw.aggregate;
 import tech.tablesaw.api.BooleanColumn;
 import tech.tablesaw.api.ColumnType;
 
+
 /**
  * A partial implementation of aggregate functions to summarize over a boolean column
  */
-public abstract class BooleanAggregateFunction extends AggregateFunction<Boolean, BooleanColumn> {
-
+public abstract class BooleanAggregateFunction<C extends Column<?>> extends AggregateFunction<Boolean, C> {
     public BooleanAggregateFunction(String name) {
         super(name);
     }
-
-    abstract public Boolean summarize(BooleanColumn column);
 
     @Override
     public boolean isCompatableColumn(ColumnType type) {

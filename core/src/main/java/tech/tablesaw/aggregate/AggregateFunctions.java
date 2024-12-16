@@ -1,5 +1,7 @@
 package tech.tablesaw.aggregate;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.moment.Kurtosis;
@@ -10,14 +12,9 @@ import tech.tablesaw.api.DateTimeColumn;
 import tech.tablesaw.api.NumberColumn;
 import tech.tablesaw.columns.Column;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class AggregateFunctions {
-
-
     public static DateTimeAggregateFunction earliestDateTime = new DateTimeAggregateFunction("Earliest Date-Time") {
-
         @Override
         public LocalDateTime summarize(DateTimeColumn column) {
             return column.min();
@@ -41,7 +38,6 @@ public class AggregateFunctions {
     };
 
     public static DateTimeAggregateFunction latestDateTime = new DateTimeAggregateFunction("Latest Date-Time") {
-
         @Override
         public LocalDateTime summarize(DateTimeColumn column) {
             return column.max();
@@ -143,13 +139,12 @@ public class AggregateFunctions {
         public Double summarize(NumberColumn column) {
             return column.size() < 2 ? NumberColumn.MISSING_VALUE : (column.getDouble(column.size() - 1) - column.getDouble(0)) / column.getDouble(0);
         }
-    };    
- 
+    };
+
     /**
      * A function that calculates the count of values in the column excluding missing values
      */
     public static CountFunction countNonMissing = new CountFunction("Count") {
-
         @Override
         public Integer summarize(Column<?> column) {
             return column.size() - column.countMissing();
@@ -165,7 +160,6 @@ public class AggregateFunctions {
      * A function that calculates the count of values in the column excluding missing values
      */
     public static CountFunction countMissing = new CountFunction("Missing Values") {
-
         @Override
         public Integer summarize(Column<?> column) {
             return column.countMissing();
@@ -176,7 +170,6 @@ public class AggregateFunctions {
      * A function that returns the number of non-missing unique values in the column param
      */
     public static CountFunction countUnique = new CountFunction("Count Unique") {
-
         @Override
         public Integer summarize(Column<?> doubles) {
             return removeMissing(doubles.unique()).size();
@@ -206,7 +199,6 @@ public class AggregateFunctions {
     };
 
     public static final NumericAggregateFunction median = new NumericAggregateFunction("Median") {
-
         @Override
         public Double summarize(NumberColumn column) {
             return percentile(column, 50.0);
@@ -214,7 +206,6 @@ public class AggregateFunctions {
     };
 
     public static final CountFunction countWithMissing = new CountFunction("Count (incl. missing)") {
-
         @Override
         public Integer summarize(Column<?> column) {
             return column.size();
@@ -222,7 +213,6 @@ public class AggregateFunctions {
     };
 
     public static final NumericAggregateFunction quartile1 = new NumericAggregateFunction("First Quartile") {
-
         @Override
         public Double summarize(NumberColumn column) {
             return percentile(column, 25.0);
@@ -230,7 +220,6 @@ public class AggregateFunctions {
     };
 
     public static final NumericAggregateFunction quartile3 = new NumericAggregateFunction("Third Quartile") {
-
         @Override
         public Double summarize(NumberColumn column) {
             return percentile(column, 75.0);
@@ -238,7 +227,6 @@ public class AggregateFunctions {
     };
 
     public static final NumericAggregateFunction percentile90 = new NumericAggregateFunction("90th Percentile") {
-
         @Override
         public Double summarize(NumberColumn column) {
             return percentile(column, 90.0);
@@ -246,7 +234,6 @@ public class AggregateFunctions {
     };
 
     public static final NumericAggregateFunction percentile95 = new NumericAggregateFunction("95th Percentile") {
-
         @Override
         public Double summarize(NumberColumn column) {
             return percentile(column, 95.0);
@@ -254,7 +241,6 @@ public class AggregateFunctions {
     };
 
     public static final NumericAggregateFunction percentile99 = new NumericAggregateFunction("99th Percentile") {
-
         @Override
         public Double summarize(NumberColumn column) {
             return percentile(column, 99.0);
@@ -314,7 +300,6 @@ public class AggregateFunctions {
      * Returns the quadratic mean, aka, the root-mean-square
      */
     public static final NumericAggregateFunction quadraticMean = new NumericAggregateFunction("Quadratic Mean") {
-
         @Override
         public Double summarize(NumberColumn column) {
             return new DescriptiveStatistics(removeMissing(column)).getQuadraticMean();
