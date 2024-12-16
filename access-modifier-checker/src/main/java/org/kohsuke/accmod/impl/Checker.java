@@ -23,10 +23,21 @@
  */
 package org.kohsuke.accmod.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import org.apache.maven.plugin.logging.Log;
+import org.jvnet.hudson.annotation_indexer.Index;
 import org.kohsuke.accmod.AccessRestriction;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.impl.Restrictions.Parser;
@@ -39,20 +50,8 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import org.jvnet.hudson.annotation_indexer.Index;
-
 import static org.objectweb.asm.ClassReader.SKIP_FRAMES;
+
 
 /**
  * Performs check.
@@ -83,7 +82,7 @@ public class Checker {
      * <li>internal name of a type + '.' + method name + method descriptor
      * </ul>
      */
-    private final Map<String,Restrictions> restrictions = new HashMap<>();
+    private final Map<String, Restrictions> restrictions = new HashMap<>();
 
     private final AccessRestrictionFactory factory;
 
@@ -91,14 +90,12 @@ public class Checker {
 
     private int line;
 
-    public Checker(ClassLoader dependencies, ErrorListener errorListener, Properties properties,
-            Log log) throws IOException {
+    public Checker(ClassLoader dependencies, ErrorListener errorListener, Properties properties, Log log) throws IOException {
         this.dependencies = dependencies;
         this.errorListener = errorListener;
         this.properties = properties;
         this.factory = new AccessRestrictionFactory(dependencies);
         this.log = log;
-
         // load access restrictions
         loadAccessRestrictions();
     }
@@ -137,16 +134,15 @@ public class Checker {
      * Loads an additional restriction from the specified "META-INF/services/annotations/org.kohsuke.accmod.Restricted" file.
      *
      * @param isInTheInspectedModule
-     *      This value shows up in {@link RestrictedElement#isInTheInspectedModule()}.
+     * 		This value shows up in {@link RestrictedElement#isInTheInspectedModule()}.
      */
     public void loadRestrictions(ClassLoader cl, final boolean isInTheInspectedModule) throws IOException {
         for (String className : Index.listClassNames(Restricted.class, cl)) {
-            InputStream is = dependencies.getResourceAsStream(className.replace('.','/') + ".class");
-            if (is==null) {
-                errorListener.onWarning(null,null,"Failed to find class file for "+ className);
+            InputStream is = dependencies.getResourceAsStream(className.replace('.', '/') + ".class");
+            if (is == null) {
+                errorListener.onWarning(null, null, "Failed to find class file for " + className);
                 continue;
             }
-
             try {
                 new ClassReader(is).accept(new ClassVisitor(Opcodes.ASM9) {
                     private String className;
@@ -193,14 +189,16 @@ public class Checker {
                                 }
 
                                 @Override
-                                public String toString() { return keyName; }
+                                public String toString() {
+                                    return keyName;
+                                }
                             };
                             return new Parser(target) {
                                 @Override
                                 public void visitEnd() {
                                     try {
-                                        restrictions.put(keyName,build(factory));
-                                    } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+                                        restrictions.put(keyName, build(factory));
+                                    } catch (java.lang.ClassNotFoundException | java.lang.IllegalAccessException | java.lang.InstantiationException e) {
                                         failure(e);
                                     }
                                 }
@@ -226,7 +224,7 @@ public class Checker {
      * Inspects a class for the restriction violations.
      */
     public void checkClass(File clazz) throws IOException {
-        try (FileInputStream in = new FileInputStream(clazz)) {
+        try (final FileInputStream in = new FileInputStream(clazz)) {
             ClassReader cr = new ClassReader(in);
             cr.accept(new RestrictedClassVisitor(), SKIP_FRAMES);
         }
@@ -277,9 +275,15 @@ public class Checker {
 
     private class RestrictedClassVisitor extends ClassVisitor {
         private String className;
-        private String methodName, methodDesc;
+
+        private String methodName;
+
+        private String methodDesc;
+
         private String superName;
+
         private String[] interfaces;
+
         private RestrictedAnnotationVisitor annotationVisitor = new RestrictedAnnotationVisitor();
 
         private Set<Type> getSkippedTypes() {
@@ -343,7 +347,7 @@ public class Checker {
         private final Location currentLocation = new Location() {
             @Override
             public String getClassName() {
-                return className.replace('/','.');
+                return className.replace('/', '.');
             }
 
             @Override
@@ -363,7 +367,7 @@ public class Checker {
 
             @Override
             public String toString() {
-                return className+':'+line;
+                return (className + ':') + line;
             }
 
             @Override
@@ -391,10 +395,12 @@ public class Checker {
     }
 
     private class RestrictedMethodVisitor extends MethodVisitor {
-
         private final Set<Type> skippedTypesFromParent;
+
         private Location currentLocation;
+
         private RestrictedAnnotationVisitor annotationVisitor = new RestrictedAnnotationVisitor();
+
         private final String currentClass;
 
         private Set<Type> getSkippedTypes() {
@@ -405,8 +411,7 @@ public class Checker {
 
         public RestrictedMethodVisitor(Location currentLocation, String currentClass, Set<Type> skippedTypes) {
             super(Opcodes.ASM9);
-            log.debug(String.format("New method visitor at %s#%s",
-                    currentLocation.getClassName(), currentLocation.getMethodName()));
+            log.debug(String.format("New method visitor at %s#%s", currentLocation.getClassName(), currentLocation.getMethodName()));
             this.currentLocation = currentLocation;
             this.skippedTypesFromParent = skippedTypes;
             this.currentClass = currentClass;
@@ -420,14 +425,13 @@ public class Checker {
         @Override
         public void visitTypeInsn(int opcode, String type) {
             switch (opcode) {
-            case Opcodes.NEW:
-                if (sameClassFile(currentClass, type)) {
-                    return;
-                }
-
-                for (Restrictions r : getRestrictions(type, getSkippedTypes())) {
-                    r.instantiated(currentLocation, errorListener);
-                }
+                case Opcodes.NEW :
+                    if (sameClassFile(currentClass, type)) {
+                        return;
+                    }
+                    for (Restrictions r : getRestrictions(type, getSkippedTypes())) {
+                        r.instantiated(currentLocation, errorListener);
+                    }
             }
         }
 
@@ -478,7 +482,6 @@ public class Checker {
     }
 
     private class RestrictedAnnotationVisitor extends AnnotationVisitor {
-
         private Set<Type> skippedRestrictedClasses = new HashSet<>();
 
         public RestrictedAnnotationVisitor() {
@@ -492,12 +495,10 @@ public class Checker {
         @Override
         public AnnotationVisitor visitArray(String name) {
             return new AnnotationVisitor(Opcodes.ASM9) {
-
                 @Override
                 public void visit(String name, Object value) {
-                    Type type = value instanceof Type ? (Type) value : Type.getType(value.getClass());
-                    log.debug(String.format("Skipping @%s class: %s",
-                            Restricted.class.getSimpleName(), type.getClassName()));
+                    Type type = (value instanceof Type) ? ((Type) (value)) : Type.getType(value.getClass());
+                    log.debug(String.format("Skipping @%s class: %s", Restricted.class.getSimpleName(), type.getClassName()));
                     skippedRestrictedClasses.add(type);
                     super.visit(name, value);
                 }
