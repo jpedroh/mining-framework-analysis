@@ -19,24 +19,9 @@
  * (b) the terms of the Eclipse Public License v1.0 as published by
  * the Eclipse Foundation.
  */
-/* -------------------------
- * MaskSubgraph.java
- * -------------------------
- * (C) Copyright 2007-2008, by France Telecom
- *
- * Original Author:  Guillaume Boulmier and Contributors.
- *
- * $Id$
- *
- * Changes
- * -------
- * 05-Jun-2007 : Initial revision (GB);
- *
- */
 package org.jgrapht.graph;
 
 import java.util.*;
-
 import org.jgrapht.*;
 
 
@@ -51,9 +36,7 @@ import org.jgrapht.*;
  * @author Guillaume Boulmier
  * @since July 5, 2007
  */
-public class MaskSubgraph<V, E>
-    extends AbstractGraph<V, E>
-{
+public class MaskSubgraph<V, E> extends AbstractGraph<V, E> {
     private static final String UNMODIFIABLE = "this graph is unmodifiable";
 
     private Graph<V, E> base;
@@ -71,12 +54,10 @@ public class MaskSubgraph<V, E>
      * @param mask vertices and edges to exclude in the subgraph. If a
      * vertex/edge is masked, it is as if it is not in the subgraph.
      */
-    public MaskSubgraph(Graph<V, E> base, MaskFunctor<V, E> mask)
-    {
+    public MaskSubgraph(Graph<V, E> base, MaskFunctor<V, E> mask) {
         super();
         this.base = base;
         this.mask = mask;
-
         this.vertices = new MaskVertexSet<>(base.vertexSet(), mask);
         this.edges = new MaskEdgeSet<>(base, base.edgeSet(), mask);
     }
@@ -107,8 +88,8 @@ public class MaskSubgraph<V, E>
         return edgeSet().contains(e);
     }
 
-    @Override public boolean containsVertex(V v)
-    {
+    @Override
+    public boolean containsVertex(V v) {
         return vertexSet().contains(v);
     }
 
@@ -125,27 +106,19 @@ public class MaskSubgraph<V, E>
         return this.edges;
     }
 
-    @Override public Set<E> edgesOf(V vertex)
-    {
+    @Override
+    public Set<E> edgesOf(V vertex) {
         assertVertexExist(vertex);
-
-        return new MaskEdgeSet<>(
-                this.base,
-                this.base.edgesOf(vertex),
-                this.mask);
+        return new MaskEdgeSet<>(this.base, this.base.edgesOf(vertex), this.mask);
     }
 
-    @Override public Set<E> getAllEdges(V sourceVertex, V targetVertex)
-    {
+    @Override
+    public Set<E> getAllEdges(V sourceVertex, V targetVertex) {
         if (containsVertex(sourceVertex) && containsVertex(targetVertex)) {
-            return new MaskEdgeSet<>(
-                    this.base,
-                    this.base.getAllEdges(
-                            sourceVertex,
-                            targetVertex),
-                    this.mask);
-        }else
+            return new MaskEdgeSet<>(this.base, this.base.getAllEdges(sourceVertex, targetVertex), this.mask);
+        } else {
             return null;
+        }
     }
 
     @Override public E getEdge(V sourceVertex, V targetVertex)
@@ -188,14 +161,9 @@ public class MaskSubgraph<V, E>
     /**
      * @see DirectedGraph#incomingEdgesOf(Object)
      */
-    public Set<E> incomingEdgesOf(V vertex)
-    {
+    public Set<E> incomingEdgesOf(V vertex) {
         assertVertexExist(vertex);
-
-        return new MaskEdgeSet<>(
-                this.base,
-                ((DirectedGraph<V, E>) this.base).incomingEdgesOf(vertex),
-                this.mask);
+        return new MaskEdgeSet<>(this.base, ((DirectedGraph<V, E>) (this.base)).incomingEdgesOf(vertex), this.mask);
     }
 
     /**
@@ -217,14 +185,9 @@ public class MaskSubgraph<V, E>
     /**
      * @see DirectedGraph#outgoingEdgesOf(Object)
      */
-    public Set<E> outgoingEdgesOf(V vertex)
-    {
+    public Set<E> outgoingEdgesOf(V vertex) {
         assertVertexExist(vertex);
-
-        return new MaskEdgeSet<>(
-                this.base,
-                ((DirectedGraph<V, E>) this.base).outgoingEdgesOf(vertex),
-                this.mask);
+        return new MaskEdgeSet<>(this.base, ((DirectedGraph<V, E>) (this.base)).outgoingEdgesOf(vertex), this.mask);
     }
 
     /**
@@ -280,5 +243,3 @@ public class MaskSubgraph<V, E>
         return this.vertices;
     }
 }
-
-// End MaskSubgraph.java
