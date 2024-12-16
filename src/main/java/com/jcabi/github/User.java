@@ -38,27 +38,37 @@ import javax.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+
 /**
  * Github user.
+ *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @checkstyle MultipleStringLiterals (500 lines)
- * @todo #1:1hr Fetch list of emails of a user. Let's implement
- *  a new method emails() that returns an instance of class UserEmails with
- *  a few methods: 1) iterate() returning a list of strings, 2) add(String),
- *  and 3) remove(String). Let's use the
- *  new response format suggested by Github:
- *  http://developer.github.com/v3/users/emails/#list-email-addresses-for-a-user
- *  This new UserEmails interface should be implemented by GhUserEmails,
- *  tested in a unit and integration tests. Besides that, we should
- *  implement MkUserEmails class.
+ * @since 0.1
  * @see <a href="http://developer.github.com/v3/users/">User API</a>
+ * @unknown #1:1hr Fetch list of emails of a user. Let's implement
+a new method emails() that returns an instance of class UserEmails with
+a few methods: 1) iterate() returning a list of strings, 2) add(String),
+and 3) remove(String). Let's use the
+new response format suggested by Github:
+http://developer.github.com/v3/users/emails/#list-email-addresses-for-a-user
+This new UserEmails interface should be implemented by GhUserEmails,
+tested in a unit and integration tests. Besides that, we should
+implement MkUserEmails class.
+ * @unknown #1:1hr Public keys of a user. Let's implement a new method
+keys(), which should return an instance of interface PublicKeys. This
+interface should have at least methods 1) iterate() to list all public
+keys of a user, 2) get(String) to get a single public key, 3) remove(String)
+to remove a key. Every key should be an instance of interface PublicKey,
+extending JsonReadable and JsonPatchable. All of the new classes should
+be implemented with GhPublicKeys and GhPublicKey classes. We should
+create integration and unit tests, and implement MkPublicKeys
+and MkPublicKey classes.
  * @since 0.1
  */
 @Immutable
 @SuppressWarnings("PMD.TooManyMethods")
-public interface User extends JsonReadable, JsonPatchable {
-
+public interface User extends JsonReadable , JsonPatchable {
     /**
      * Github we're in.
      * @return Github
@@ -91,13 +101,13 @@ public interface User extends JsonReadable, JsonPatchable {
 
     /**
      * Smart user with extra features.
+     * @see <a href="http://developer.github.com/v3/users/#get-a-single-user">Get a Single User</a>
      * @todo #1:30min Implement methods to retrieve all values provided
      *  by Github for a single user, see:
      *  http://developer.github.com/v3/users/#get-a-single-user
      *  At the moment we implement just a few, but every data
      *  items should have its own method. Of course, every new item should
      *  be tested by a new unit test method.
-     * @see <a href="http://developer.github.com/v3/users/#get-a-single-user">Get a Single User</a>
      */
     @Immutable
     @ToString
@@ -111,7 +121,9 @@ public interface User extends JsonReadable, JsonPatchable {
 
         /**
          * Public ctor.
-         * @param usr User
+         *
+         * @param usr
+         * 		User
          */
         public Smart(final User usr) {
             this.user = usr;
@@ -154,21 +166,18 @@ public interface User extends JsonReadable, JsonPatchable {
         public String name() throws IOException {
             final JsonObject json = this.json();
             if (!json.containsKey("name")) {
-                throw new IllegalStateException(
-                    String.format(
-                        // @checkstyle LineLength (1 line)
-                        "User %s doesn't have a name specified in his/her Github account; use #hasName() first.",
-                        this.login()
-                    )
-                );
+                throw new IllegalStateException(// @checkstyle LineLength (1 line)
+                String.format("User %s doesn't have a name specified in his/her Github account; use #hasName() first.", this.login()));
             }
             return json.getString("name");
         }
 
         /**
          * Check if user has name.
+         *
          * @return True if user has name
-         * @throws IOException If it fails
+         * @throws IOException
+         * 		If it fails
          */
         public boolean hasName() throws IOException {
             return this.json().containsKey("name");
@@ -216,7 +225,6 @@ public interface User extends JsonReadable, JsonPatchable {
             return this.user.organizations();
         }
 
-
         @Override
         public PublicKeys keys() {
             return this.user.keys();
@@ -231,7 +239,5 @@ public interface User extends JsonReadable, JsonPatchable {
         public void patch(final JsonObject json) throws IOException {
             this.user.patch(json);
         }
-
     }
-
 }

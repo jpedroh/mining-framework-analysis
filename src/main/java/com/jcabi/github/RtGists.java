@@ -44,6 +44,7 @@ import javax.json.JsonStructure;
 import javax.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 
+
 /**
  * Github gists.
  *
@@ -58,7 +59,6 @@ import lombok.EqualsAndHashCode;
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = { "ghub", "request" })
 final class RtGists implements Gists {
-
     /**
      * API entry point.
      */
@@ -76,8 +76,11 @@ final class RtGists implements Gists {
 
     /**
      * Public ctor.
-     * @param github Github
-     * @param req Request
+     *
+     * @param github
+     * 		Github
+     * @param req
+     * 		Request
      */
     RtGists(final Github github, final Request req) {
         this.entry = req;
@@ -97,25 +100,13 @@ final class RtGists implements Gists {
 
     @Override
     public Gist create(@NotNull(message = "list of files can't be NULL")
-        final Map<String, String> files) throws IOException {
+    final Map<String, String> files) throws IOException {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         for (final Map.Entry<String, String> file : files.entrySet()) {
-            builder = builder.add(
-                file.getKey(),
-                Json.createObjectBuilder().add("content", file.getValue())
-            );
+            builder = builder.add(file.getKey(), Json.createObjectBuilder().add("content", file.getValue()));
         }
-        final JsonStructure json = Json.createObjectBuilder()
-            .add("files", builder)
-            .build();
-        return this.get(
-            this.request.method(Request.POST)
-                .body().set(json).back()
-                .fetch().as(RestResponse.class)
-                .assertStatus(HttpURLConnection.HTTP_CREATED)
-                .as(JsonResponse.class)
-                .json().readObject().getString("id")
-        );
+        final JsonStructure json = Json.createObjectBuilder().add("files", builder).build();
+        return this.get(this.request.method(Request.POST).body().set(json).back().fetch().as(RestResponse.class).assertStatus(HttpURLConnection.HTTP_CREATED).as(JsonResponse.class).json().readObject().getString("id"));
     }
 
     @Override

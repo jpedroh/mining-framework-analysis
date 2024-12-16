@@ -49,6 +49,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+
 /**
  * Test case for {@link RtHooks}.
  * @author Paul Polishchuk (ppol@ua.fm)
@@ -58,25 +59,16 @@ import org.mockito.Mockito;
  */
 @Immutable
 public final class RtHooksTest {
-
     /**
      * RtHooks can fetch empty list of hooks.
      * @throws Exception if some problem inside
      */
     @Test
     public void canFetchEmptyListOfHooks() throws Exception {
-        final MkContainer container = new MkGrizzlyContainer().next(
-            new MkAnswer.Simple(HttpURLConnection.HTTP_OK, "[]")
-        ).start();
-        final Hooks hooks = new RtHooks(
-            new JdkRequest(container.home()),
-            RtHooksTest.repo()
-        );
+        final MkContainer container = new MkGrizzlyContainer().next(new MkAnswer.Simple(HttpURLConnection.HTTP_OK, "[]")).start();
+        final Hooks hooks = new RtHooks(new JdkRequest(container.home()), RtHooksTest.repo());
         try {
-            MatcherAssert.assertThat(
-                hooks.iterate(),
-                Matchers.emptyIterable()
-            );
+            MatcherAssert.assertThat(hooks.iterate(), Matchers.emptyIterable());
         } finally {
             container.stop();
         }
@@ -98,10 +90,43 @@ public final class RtHooksTest {
 
     /**
      * RtHooks can fetch single hook.
-     * @throws Exception if some problem inside
+     *
+     * @todo #122 RtHooks should be able to get a single Hook. Let's implement
+     *  a test here and a method get() of RtHooks.
+     *  The method should fetch a single hook.
+     *  See how it's done in other classes, using Rexsl request/response.
+     *  When done, remove this puzzle and Ignore annotation from the method.
      */
     @Test
-    public void canFetchSingleHook() throws Exception {
+    public void canFetchSingleHook() throws 
+<<<<<<< LEFT
+Exception
+=======
+Exception
+>>>>>>> RIGHT
+     
+<<<<<<< LEFT
+{
+        final String name = "hook name";
+        final MkContainer container = new MkGrizzlyContainer().next(
+            new MkAnswer.Simple(
+                HttpURLConnection.HTTP_OK,
+                RtHooksTest.hook(name).toString()
+            )
+        ).start();
+        final Hooks hooks = new RtHooks(
+            new JdkRequest(container.home()),
+            RtHooksTest.repo()
+        );
+        final Hook hook = hooks.get(1);
+        MatcherAssert.assertThat(
+            new Hook.Smart(hook).name(),
+            Matchers.equalTo(name)
+        );
+        container.stop();
+    }
+=======
+{
         final String name = "hook name";
         final MkContainer container = new MkGrizzlyContainer().next(
             new MkAnswer.Simple(
@@ -123,37 +148,31 @@ public final class RtHooksTest {
         );
         container.stop();
     }
+>>>>>>> RIGHT
+
 
     /**
      * RtHooks can create a hook.
      *
-     * @throws Exception if something goes wrong.
+     * @todo #122 RtHooks should be able to create a Hook. Let's implement
+     *  a test here and a method create() of RtHooks. The method should create
+     *  a hook on some event for some service.
+     *  See how it's done in other classes, using Rexsl request/response.
+     *  When done, remove this puzzle and Ignore annotation from the method.
      */
     @Test
     public void canCreateHook() throws Exception {
         final String name = "hook name";
-        final ConcurrentHashMap<String, String> config =
-            new ConcurrentHashMap<String, String>(2);
+        final ConcurrentHashMap<String, String> config = new ConcurrentHashMap<String, String>(2);
         config.put("url", "http://example.com");
         config.put("content_type", "json");
         final String body = RtHooksTest.hook(name, config).toString();
-        final MkContainer container = new MkGrizzlyContainer().next(
-            new MkAnswer.Simple(HttpURLConnection.HTTP_CREATED, body)
-        ).next(new MkAnswer.Simple(HttpURLConnection.HTTP_OK, body)).start();
-        final Hooks hooks = new RtHooks(
-            new JdkRequest(container.home()),
-            RtHooksTest.repo()
-        );
+        final MkContainer container = new MkGrizzlyContainer().next(new MkAnswer.Simple(HttpURLConnection.HTTP_CREATED, body)).next(new MkAnswer.Simple(HttpURLConnection.HTTP_OK, body)).start();
+        final Hooks hooks = new RtHooks(new JdkRequest(container.home()), RtHooksTest.repo());
         try {
             final Hook hook = hooks.create(name, config);
-            MatcherAssert.assertThat(
-                container.take().method(),
-                Matchers.equalTo(Request.POST)
-            );
-            MatcherAssert.assertThat(
-                new Hook.Smart(hook).name(),
-                Matchers.equalTo(name)
-            );
+            MatcherAssert.assertThat(container.take().method(), Matchers.equalTo(Request.POST));
+            MatcherAssert.assertThat(new Hook.Smart(hook).name(), Matchers.equalTo(name));
         } finally {
             container.stop();
         }
@@ -162,31 +181,36 @@ public final class RtHooksTest {
     /**
      * RtHooks can delete a hook.
      *
-     * @throws Exception if something goes wrong.
+     * @todo #122 RtHooks should be able to delete a Hook. Let's implement
+     *  a test here and a method remove() of RtHooks. The method should remove
+     *  a hook by it's id.
+     *  See how it's done in other classes, using Rexsl request/response.
+     *  When done, remove this puzzle and Ignore annotation from the method.
      */
     @Test
     public void canDeleteHook() throws Exception {
-        final MkContainer container = new MkGrizzlyContainer().next(
-            new MkAnswer.Simple(HttpURLConnection.HTTP_NO_CONTENT, "")
-        ).start();
-        final Hooks hooks = new RtHooks(
-            new JdkRequest(container.home()),
-            RtHooksTest.repo()
-        );
+        final MkContainer container = new MkGrizzlyContainer().next(new MkAnswer.Simple(HttpURLConnection.HTTP_NO_CONTENT, "")).start();
+        final Hooks hooks = new RtHooks(new JdkRequest(container.home()), RtHooksTest.repo());
         hooks.remove(1);
         try {
             final MkQuery query = container.take();
-            MatcherAssert.assertThat(
-                query.method(),
-                Matchers.equalTo(Request.DELETE)
-            );
-            MatcherAssert.assertThat(
-                query.body(),
-                Matchers.isEmptyString()
-            );
+            MatcherAssert.assertThat(query.method(), Matchers.equalTo(Request.DELETE));
+            MatcherAssert.assertThat(query.body(), Matchers.isEmptyString());
         } finally {
             container.stop();
         }
+    }
+
+    /**
+     * Create and return JsonObject to test.
+     * @param name Name of the hook
+     * @return JsonObject
+     * @throws Exception If some problem inside
+     */
+    private static JsonObject hook(final String name) throws Exception {
+        return Json.createObjectBuilder()
+            .add("name", name)
+            .build();
     }
 
     /**

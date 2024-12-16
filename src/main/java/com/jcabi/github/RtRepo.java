@@ -37,21 +37,21 @@ import javax.json.JsonObject;
 import javax.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 
+
 /**
  * Github repository.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 0.1
- * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
- * @checkstyle ClassFanOutComplexity (5 lines)
+ * @unknown ClassDataAbstractionCouplingCheck (500 lines)
+ * @unknown ClassFanOutComplexity (5 lines)
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = { "ghub", "entry", "coords" })
 @SuppressWarnings("PMD.TooManyMethods")
 final class RtRepo implements Repo {
-
     /**
      * Github.
      */
@@ -74,19 +74,19 @@ final class RtRepo implements Repo {
 
     /**
      * Public ctor.
-     * @param github Github
-     * @param req Request
-     * @param crd Coordinate of the repo
+     *
+     * @param github
+     * 		Github
+     * @param req
+     * 		Request
+     * @param crd
+     * 		Coordinate of the repo
      */
     RtRepo(final Github github, final Request req, final Coordinates crd) {
         this.ghub = github;
         this.entry = req;
         this.coords = crd;
-        this.request = this.entry.uri()
-            .path("/repos")
-            .path(this.coords.user())
-            .path(this.coords.repo())
-            .back();
+        this.request = this.entry.uri().path("/repos").path(this.coords.user()).path(this.coords.repo()).back();
     }
 
     @Override

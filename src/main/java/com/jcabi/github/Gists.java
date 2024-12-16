@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 
+
 /**
  * Github gists.
  *
@@ -48,7 +49,6 @@ import javax.validation.constraints.NotNull;
  */
 @Immutable
 public interface Gists {
-
     /**
      * Github we're in.
      * @return Github
@@ -58,15 +58,14 @@ public interface Gists {
 
     /**
      * Create a new gist.
-     *
-     * @param files Names and content of files
+     * @param files Names of files
      * @return Gist
      * @throws IOException If there is any I/O problem
      * @see <a href="http://developer.github.com/v3/gists/#create-a-gist">Create a Gist</a>
      */
     @NotNull(message = "gist is never NULL")
-    Gist create(@NotNull(message = "list of files can't be NULL")
-        Map<String, String> files) throws IOException;
+    public abstract Gist create(@NotNull(message = "list of files can't be NULL")
+    Map<String, String> files) throws IOException;
 
     /**
      * Get gist by name.

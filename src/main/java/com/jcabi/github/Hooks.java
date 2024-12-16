@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 
+
 /**
  * Github hooks.
  *
@@ -44,7 +45,6 @@ import javax.validation.constraints.NotNull;
  */
 @Immutable
 public interface Hooks {
-
     /**
      * Owner of them.
      * @return Repo
@@ -62,21 +62,25 @@ public interface Hooks {
 
     /**
      * Remove hook by ID.
-     * @param number ID of the label to remove
-     * @throws IOException If there is any I/O problem
+     *
+     * @param number
+     * 		ID of the label to remove
+     * @throws IOException
+     * 		If there is any I/O problem
      * @see <a href="http://developer.github.com/v3/repos/hooks/#delete-a-hook">List</a>
      */
-    void remove(int number) throws IOException;
+    public abstract void remove(int number) throws IOException;
 
     /**
      * Get specific hook by number.
-     * @param number Hook number
+     *
+     * @param number
+     * 		Hook number
      * @return Hook
      * @see <a href="http://developer.github.com/v3/repos/hooks/#get-single-hook">Get single hook</a>
      */
     @NotNull(message = "hook is never NULL")
-    Hook get(int number);
-
+    public abstract Hook get(int number);
 
     /**
      * Create new hook.

@@ -38,6 +38,7 @@ import org.hamcrest.Matchers;
 import org.junit.Ignore;
 import org.junit.Test;
 
+
 /**
  * Test case for {@link MkGists}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
@@ -45,22 +46,16 @@ import org.junit.Test;
  * @checkstyle MultipleStringLiterals (500 lines)
  */
 public final class MkGistsTest {
-
     /**
      * MkGists can work with gists.
      * @throws Exception If some problem inside
      */
     @Test
     public void worksWithMockedGists() throws Exception {
-        final Gist gist = new MkGithub().gists().create(
-            Collections.singletonMap("test-file-name.txt", "none")
-        );
+        final Gist gist = new MkGithub().gists().create(Collections.singletonMap("test-file-name.txt", "none"));
         final String file = "t.txt";
         gist.write(file, "hello, everybody!");
-        MatcherAssert.assertThat(
-            gist.read(file),
-            Matchers.startsWith("hello, ")
-        );
+        MatcherAssert.assertThat(gist.read(file), Matchers.startsWith("hello, "));
     }
 
     /**
@@ -86,6 +81,7 @@ public final class MkGistsTest {
             Matchers.not(Matchers.hasItem(createdGist))
         );
     }
+
     /**
      * MkGists can work several gists.
      * Test to check issue #128
@@ -94,23 +90,13 @@ public final class MkGistsTest {
     @Test
     public void worksWithSeveralGists() throws Exception {
         final Gists gists = new MkGithub().gists();
-        final Gist gist = gists.create(
-            Collections.singletonMap("test-file-name.txt", "none")
-        );
-        final Gist othergist = gists.create(
-            Collections.singletonMap("test-file-name2.txt", "")
-        );
+        final Gist gist = gists.create(Collections.singletonMap("test-file-name.txt", "none"));
+        final Gist othergist = gists.create(Collections.singletonMap("test-file-name2.txt", ""));
         final String file = "t.txt";
         gist.write(file, "hello, everybody!");
         othergist.write(file, "bye, everybody!");
-        MatcherAssert.assertThat(
-            gist.read(file),
-            Matchers.startsWith("hello, ")
-        );
-        MatcherAssert.assertThat(
-            othergist.read(file),
-            Matchers.startsWith("bye, ")
-        );
+        MatcherAssert.assertThat(gist.read(file), Matchers.startsWith("hello, "));
+        MatcherAssert.assertThat(othergist.read(file), Matchers.startsWith("bye, "));
     }
 
     /**
@@ -119,18 +105,10 @@ public final class MkGistsTest {
      */
     @Test
     public void testStar() throws Exception {
-        final Gist gist = new MkGithub().gists().create(
-            Collections.singletonMap("file-name.txt", "")
-        );
-        MatcherAssert.assertThat(
-            gist.starred(),
-            Matchers.equalTo(false)
-        );
+        final Gist gist = new MkGithub().gists().create(Collections.singletonMap("file-name.txt", ""));
+        MatcherAssert.assertThat(gist.starred(), Matchers.equalTo(false));
         gist.star();
-        MatcherAssert.assertThat(
-            gist.starred(),
-            Matchers.equalTo(true)
-        );
+        MatcherAssert.assertThat(gist.starred(), Matchers.equalTo(true));
     }
 
     /**
@@ -140,13 +118,7 @@ public final class MkGistsTest {
     @Test
     public void createGistWithEmptyFile() throws IOException {
         final String filename = "file.txt";
-        final Gist gist = new MkGithub().gists().create(
-            Collections.singletonMap(filename, "")
-        );
-        MatcherAssert.assertThat(
-            gist.read(filename),
-            Matchers.isEmptyString()
-        );
+        final Gist gist = new MkGithub().gists().create(Collections.singletonMap(filename, ""));
+        MatcherAssert.assertThat(gist.read(filename), Matchers.isEmptyString());
     }
-
 }

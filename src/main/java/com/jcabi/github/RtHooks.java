@@ -44,8 +44,10 @@ import javax.json.JsonStructure;
 import javax.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 
+
 /**
  * Github hooks.
+ *
  * @author Paul Polishchuk (ppol@ua.fm)
  * @version $Id$
  * @since 0.8
@@ -57,12 +59,12 @@ public final class RtHooks implements Hooks {
     /**
      * API entry point.
      */
-    private final transient Request entry;
+    private transient final Request entry;
 
     /**
      * RESTful request.
      */
-    private final transient Request request;
+    private transient final Request request;
 
     /**
      * Repository.
@@ -71,18 +73,16 @@ public final class RtHooks implements Hooks {
 
     /**
      * Public ctor.
-     * @param req Request
-     * @param repo Repository
+     *
+     * @param repo
+     * 		Repository
+     * @param repo
+     * 		Repository
      */
     public RtHooks(final Request req, final Repo repo) {
         this.entry = req;
         final Coordinates coords = repo.coordinates();
-        this.request = this.entry.uri()
-            .path("/repos")
-            .path(coords.user())
-            .path(coords.repo())
-            .path("/hooks")
-            .back();
+        this.request = this.entry.uri().path("/repos").path(coords.user()).path(coords.repo()).path("/hooks").back();
         this.owner = repo;
     }
 
@@ -98,11 +98,7 @@ public final class RtHooks implements Hooks {
 
     @Override
     public void remove(final int number) throws IOException {
-        this.request.method(Request.DELETE)
-            .uri().path(Integer.toString(number)).back()
-            .fetch()
-            .as(RestResponse.class)
-            .assertStatus(HttpURLConnection.HTTP_NO_CONTENT);
+        this.request.method(Request.DELETE).uri().path(Integer.toString(number)).back().fetch().as(RestResponse.class).assertStatus(HttpURLConnection.HTTP_NO_CONTENT);
     }
 
     @Override

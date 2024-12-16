@@ -41,6 +41,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.xembly.Directives;
 
+
 /**
  * Mock Github gists.
  *
@@ -53,7 +54,6 @@ import org.xembly.Directives;
 @ToString
 @EqualsAndHashCode(of = { "storage", "self" })
 final class MkGists implements Gists {
-
     /**
      * Storage.
      */
@@ -66,16 +66,18 @@ final class MkGists implements Gists {
 
     /**
      * Public ctor.
-     * @param stg Storage
-     * @param login User to login
-     * @throws IOException If there is any I/O problem
+     *
+     * @param stg
+     * 		Storage
+     * @param login
+     * 		User to login
+     * @throws IOException
+     * 		If there is any I/O problem
      */
     MkGists(final MkStorage stg, final String login) throws IOException {
         this.storage = stg;
         this.self = login;
-        this.storage.apply(
-            new Directives().xpath("/github").addIf("gists")
-        );
+        this.storage.apply(new Directives().xpath("/github").addIf("gists"));
     }
 
     @Override
@@ -88,19 +90,10 @@ final class MkGists implements Gists {
         this.storage.lock();
         final String number;
         try {
-            number = Integer.toString(
-                1 + this.storage.xml().xpath(
-                    String.format("%s/gist/id/text()", this.xpath())
-                ).size()
-            );
-            final Directives dirs = new Directives().xpath(this.xpath())
-                .add("gist")
-                .add("id").set(number).up()
-                .add("files");
+            number = Integer.toString(1 + this.storage.xml().xpath(String.format("%s/gist/id/text()", this.xpath())).size());
+            final Directives dirs = new Directives().xpath(this.xpath()).add("gist").add("id").set(number).up().add("files");
             for (final Map.Entry<String, String> file : files.entrySet()) {
-                dirs.add("file")
-                    .add("filename").set(file.getKey()).up()
-                    .add("raw_content").set(file.getValue()).up().up();
+                dirs.add("file").add("filename").set(file.getKey()).up().add("raw_content").set(file.getValue()).up().up();
             }
             this.storage.apply(dirs);
         } finally {

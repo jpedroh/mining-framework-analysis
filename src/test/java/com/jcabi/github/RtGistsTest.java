@@ -42,6 +42,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
+
 /**
  * Test case for {@link RtGists}.
  *
@@ -49,7 +50,6 @@ import org.junit.Test;
  * @version $Id$
  */
 public final class RtGistsTest {
-
     /**
      * RtGists can create new files.
      *
@@ -57,25 +57,11 @@ public final class RtGistsTest {
      */
     @Test
     public void canCreateFiles() throws Exception {
-        final MkContainer container = new MkGrizzlyContainer().next(
-            new MkAnswer.Simple(
-                HttpURLConnection.HTTP_CREATED,
-                "{\"id\":\"1\"}"
-            )
-        ).start();
-        final RtGists gists = new RtGists(
-            new MkGithub(),
-            new ApacheRequest(container.home())
-        );
+        final MkContainer container = new MkGrizzlyContainer().next(new MkAnswer.Simple(HttpURLConnection.HTTP_CREATED, "{\"id\":\"1\"}")).start();
+        final RtGists gists = new RtGists(new MkGithub(), new ApacheRequest(container.home()));
         try {
-            MatcherAssert.assertThat(
-                gists.create(Collections.singletonMap("test", "")),
-                Matchers.notNullValue()
-            );
-            MatcherAssert.assertThat(
-                container.take().body(),
-                Matchers.startsWith("{\"files\":{\"test\":{\"content\":")
-            );
+            MatcherAssert.assertThat(gists.create(Collections.singletonMap("test", "")), Matchers.notNullValue());
+            MatcherAssert.assertThat(container.take().body(), Matchers.startsWith("{\"files\":{\"test\":{\"content\":"));
         } finally {
             container.stop();
         }
@@ -131,6 +117,7 @@ public final class RtGistsTest {
             container.stop();
         }
     }
+
     /**
      * RtGists can remove a gist by name.
      * @throws Exception - if something goes wrong.
