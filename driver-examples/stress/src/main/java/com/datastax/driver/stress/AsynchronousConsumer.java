@@ -15,33 +15,30 @@
  */
 package com.datastax.driver.stress;
 
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.ResultSetFuture;
+import com.datastax.driver.core.Session;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import java.util.Iterator;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.ResultSetFuture;
-import com.datastax.driver.core.Session;
-
 import static com.google.common.util.concurrent.Uninterruptibles.awaitUninterruptibly;
 
-public class AsynchronousConsumer implements Consumer {
 
+public class AsynchronousConsumer implements Consumer {
     private static final ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);
 
     private final Session session;
+
     private final QueryGenerator requests;
+
     private final Reporter reporter;
 
-    public AsynchronousConsumer(Session session,
-                                QueryGenerator requests,
-                                Reporter reporter) {
+    public AsynchronousConsumer(Session session, QueryGenerator requests, Reporter reporter) {
         this.session = session;
         this.requests = requests;
         this.reporter = reporter;
@@ -58,12 +55,10 @@ public class AsynchronousConsumer implements Consumer {
     }
 
     private void request() {
-
         if (!requests.hasNext()) {
             shutdown();
             return;
         }
-
         handle(requests.next());
     }
 
@@ -73,9 +68,7 @@ public class AsynchronousConsumer implements Consumer {
     }
 
     protected void handle(QueryGenerator.Request request) {
-
         final Reporter.Context ctx = reporter.newRequest();
-
         ResultSetFuture resultSetFuture = request.executeAsync(session);
         Futures.addCallback(resultSetFuture, new FutureCallback<ResultSet>() {
             @Override

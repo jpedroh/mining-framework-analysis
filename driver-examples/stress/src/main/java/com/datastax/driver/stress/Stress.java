@@ -15,15 +15,13 @@
  */
 package com.datastax.driver.stress;
 
-import java.io.IOException;
-import java.util.*;
-
 import com.datastax.driver.core.*;
 import com.datastax.driver.core.exceptions.*;
-
+import java.io.IOException;
+import java.util.*;
+import joptsimple.*;
 import org.apache.log4j.PropertyConfigurator;
 
-import joptsimple.*;
 
 /**
  * A simple stress tool to demonstrate the use of the driver.
@@ -33,32 +31,29 @@ import joptsimple.*;
  *   stress read -n 10000
  */
 public class Stress {
-
     private static final Map<String, QueryGenerator.Builder> generators = new HashMap<String, QueryGenerator.Builder>();
+
     static {
         PropertyConfigurator.configure(System.getProperty("log4j.configuration", "./conf/log4j.properties"));
-
-        QueryGenerator.Builder[] gs = new QueryGenerator.Builder[] {
-            Generators.INSERTER,
-            Generators.READER
-        };
-
-        for (QueryGenerator.Builder b : gs)
+        QueryGenerator[] gs = new QueryGenerator.Builder[]{ Generators.INSERTER, Generators.READER };
+        for (QueryGenerator.Builder b : gs) {
             register(b.name(), b);
+        }
     }
 
     private static OptionParser defaultParser() {
-        OptionParser parser = new OptionParser() {{
-            accepts("h", "Show this help message");
-            accepts("n", "Number of requests to perform (default: unlimited)").withRequiredArg().ofType(Integer.class);
-            accepts("t", "Level of concurrency to use").withRequiredArg().ofType(Integer.class).defaultsTo(50);
-            accepts("async", "Make asynchronous requests instead of blocking ones");
-            accepts("ip", "The hosts ip to connect to").withRequiredArg().ofType(String.class).defaultsTo("127.0.0.1");
-            accepts("report-file", "The name of csv file to use for reporting results").withRequiredArg().ofType(String.class).defaultsTo("last.csv");
-            accepts("print-delay", "The delay in seconds at which to report on the console").withRequiredArg().ofType(Integer.class).defaultsTo(5);
-        }};
-        String msg = "Where <generator> can be one of " + generators.keySet() + "\n"
-                   + "You can get more help on a particular generator with: stress <generator> -h";
+        OptionParser parser = new OptionParser() {
+            {
+                accepts("h", "Show this help message");
+                accepts("n", "Number of requests to perform (default: unlimited)").withRequiredArg().ofType(java.lang.Integer.class);
+                accepts("t", "Level of concurrency to use").withRequiredArg().ofType(java.lang.Integer.class).defaultsTo(50);
+                accepts("async", "Make asynchronous requests instead of blocking ones");
+                accepts("ip", "The hosts ip to connect to").withRequiredArg().ofType(java.lang.String.class).defaultsTo("127.0.0.1");
+                accepts("report-file", "The name of csv file to use for reporting results").withRequiredArg().ofType(java.lang.String.class).defaultsTo("last.csv");
+                accepts("print-delay", "The delay in seconds at which to report on the console").withRequiredArg().ofType(java.lang.Integer.class).defaultsTo(5);
+            }
+        };
+        String msg = (("Where <generator> can be one of " + generators.keySet()) + "\n") + "You can get more help on a particular generator with: stress <generator> -h";
         parser.formatHelpWith(Help.formatFor("<generator>", msg));
         return parser;
     }
@@ -72,7 +67,9 @@ public class Stress {
 
     private static class Stresser {
         private final QueryGenerator.Builder genBuilder;
+
         private final OptionParser parser;
+
         private final OptionSet options;
 
         private Stresser(QueryGenerator.Builder genBuilder, OptionParser parser, OptionSet options) {
@@ -159,9 +156,10 @@ public class Stress {
     }
 
     public static class Help implements HelpFormatter {
-
         private final HelpFormatter defaultFormatter;
+
         private final String generator;
+
         private final String header;
 
         private Help(HelpFormatter defaultFormatter, String generator, String header) {
@@ -173,14 +171,13 @@ public class Stress {
         public static Help formatFor(String generator, String header) {
             // It's a pain in the ass to get the real console width in JAVA so hardcode it. But it's the 21th
             // century, we're not stuck at 80 characters anymore.
-            int width = 120; 
+            int width = 120;
             return new Help(new BuiltinHelpFormatter(width, 4), generator, header);
         }
 
         @Override
         public String format(Map<String, ? extends OptionDescriptor> options) {
             StringBuilder sb = new StringBuilder();
-
             sb.append("Usage: stress ").append(generator).append(" [<option>]*").append("\n\n");
             sb.append(header).append("\n\n");
             sb.append(defaultFormatter.format(options));
@@ -189,74 +186,55 @@ public class Stress {
     }
 
     public static void main(String[] args) throws Exception {
-
         Stresser stresser = Stresser.forCommandLineArguments(args);
         OptionSet options = stresser.getOptions();
-
-        int requests = options.has("n") ? (Integer)options.valueOf("n") : -1;
-        int concurrency = (Integer)options.valueOf("t");
-
-        String reportFileName = (String)options.valueOf("report-file");
-
+        int requests = (options.has("n")) ? ((Integer) (options.valueOf("n"))) : -1;
+        int concurrency = ((Integer) (options.valueOf("t")));
+        String reportFileName = ((String) (options.valueOf("report-file")));
         boolean async = options.has("async");
-
-        int iterations = (requests  == -1 ? -1 : requests / concurrency);
+        int iterations = (requests == (-1)) ? -1 : requests / concurrency;
         System.out.println("Initializing stress test:");
-        System.out.println("  request count: " + (requests == -1 ? "unlimited" : requests));
-        System.out.println("  concurrency:   " + concurrency + " (" + iterations + " requests/thread)");
+        System.out.println("  request count: " + (requests == (-1) ? "unlimited" : requests));
+        System.out.println(((("  concurrency:   " + concurrency) + " (") + iterations) + " requests/thread)");
         System.out.println("  mode:          " + (async ? "asynchronous" : "blocking"));
-
         try {
             // Create session to hosts
             Cluster cluster = new Cluster.Builder().addContactPoints(String.valueOf(options.valueOf("ip"))).build();
-
             final int maxRequestsPerConnection = 128;
-            int maxConnections = concurrency / maxRequestsPerConnection + 1;
-
+            int maxConnections = (concurrency / maxRequestsPerConnection) + 1;
             PoolingOptions pools = cluster.getConfiguration().getPoolingOptions();
             pools.setMaxSimultaneousRequestsPerConnectionThreshold(HostDistance.LOCAL, concurrency);
             pools.setCoreConnectionsPerHost(HostDistance.LOCAL, maxConnections);
             pools.setMaxConnectionsPerHost(HostDistance.LOCAL, maxConnections);
             pools.setCoreConnectionsPerHost(HostDistance.REMOTE, maxConnections);
             pools.setMaxConnectionsPerHost(HostDistance.REMOTE, maxConnections);
-
             Session session = cluster.connect();
-
             Metadata metadata = cluster.getMetadata();
             System.out.println(String.format("Connected to cluster '%s' on %s.", metadata.getClusterName(), metadata.getAllHosts()));
-
             System.out.println("Preparing test...");
             stresser.prepare(session);
-
-            Reporter reporter = new Reporter((Integer)options.valueOf("print-delay"), reportFileName, args, requests);
-
+            Reporter reporter = new Reporter(((Integer) (options.valueOf("print-delay"))), reportFileName, args, requests);
             Consumer[] consumers = new Consumer[concurrency];
             for (int i = 0; i < concurrency; i++) {
                 QueryGenerator generator = stresser.newGenerator(i, session, iterations);
-                consumers[i] = async ? new AsynchronousConsumer(session, generator, reporter) :
-                                       new BlockingConsumer(session, generator, reporter);
+                consumers[i] = (async) ? new AsynchronousConsumer(session, generator, reporter) : new BlockingConsumer(session, generator, reporter);
             }
-
             System.out.println("Starting to stress test...");
             System.out.println();
-
             reporter.start();
-
-            for (Consumer consumer : consumers)
+            for (Consumer consumer : consumers) {
                 consumer.start();
-
-            for (Consumer consumer : consumers)
+            }
+            for (Consumer consumer : consumers) {
                 consumer.join();
-
+            }
             reporter.stop();
-
             System.out.println("Stress test successful.");
             System.exit(0);
-
         } catch (NoHostAvailableException e) {
             System.err.println("No alive hosts to use: " + e.getMessage());
             System.exit(1);
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             System.err.println("Unexpected error: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);

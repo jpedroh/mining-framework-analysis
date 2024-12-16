@@ -15,15 +15,13 @@
  */
 package com.datastax.driver.stress;
 
-import java.util.Iterator;
-
 import com.datastax.driver.core.*;
-
+import java.util.Iterator;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
-public abstract class QueryGenerator implements Iterator<QueryGenerator.Request> {
 
+public abstract class QueryGenerator implements Iterator<QueryGenerator.Request> {
     protected final int iterations;
 
     protected QueryGenerator(int iterations) {
@@ -38,19 +36,20 @@ public abstract class QueryGenerator implements Iterator<QueryGenerator.Request>
 
     public interface Builder {
         public String name();
+
         public OptionParser addOptions(OptionParser parser);
-        public void prepare(OptionSet options, Session session);
+
+        public abstract void prepare(OptionSet options, Session session);
+
         public QueryGenerator create(int id, int iterations, OptionSet options, Session session);
     }
 
     public interface Request {
-
         public ResultSet execute(Session session);
 
         public ResultSetFuture executeAsync(Session session);
 
         public static class SimpleQuery implements Request {
-
             private final Statement statement;
 
             public SimpleQuery(Statement statement) {
@@ -67,7 +66,6 @@ public abstract class QueryGenerator implements Iterator<QueryGenerator.Request>
         }
 
         public static class PreparedQuery implements Request {
-
             private final BoundStatement query;
 
             public PreparedQuery(BoundStatement query) {
