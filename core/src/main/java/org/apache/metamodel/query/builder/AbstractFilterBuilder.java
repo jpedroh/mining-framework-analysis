@@ -20,11 +20,11 @@ package org.apache.metamodel.query.builder;
 
 import java.util.Collection;
 import java.util.Date;
-
 import org.apache.metamodel.query.FilterItem;
 import org.apache.metamodel.query.OperatorType;
 import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.Column;
+
 
 /**
  * Abstract implementation of {@link FilterBuilder} interface. All built filters
@@ -32,7 +32,6 @@ import org.apache.metamodel.schema.Column;
  * be implemented by concrete implementations.
  */
 public abstract class AbstractFilterBuilder<B> implements FilterBuilder<B> {
-
     private final SelectItem _selectItem;
 
     public AbstractFilterBuilder(SelectItem selectItem) {
@@ -457,7 +456,6 @@ public abstract class AbstractFilterBuilder<B> implements FilterBuilder<B> {
         }
         return applyFilter(new FilterItem(_selectItem, OperatorType.NOT_LIKE, string));
     }
-
 
     @Override
     public B gt(Column column) {

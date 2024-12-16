@@ -31,9 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import javax.sql.DataSource;
-
 import org.apache.metamodel.AbstractDataContext;
 import org.apache.metamodel.BatchUpdateScript;
 import org.apache.metamodel.MetaModelException;
@@ -69,41 +67,57 @@ import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * DataContextStrategy to use for JDBC-compliant databases
  */
 public class JdbcDataContext extends AbstractDataContext implements UpdateableDataContext {
-
     public static final String SYSTEM_PROPERTY_BATCH_UPDATES = "metamodel.jdbc.batch.updates";
+
     public static final String SYSTEM_PROPERTY_CONVERT_LOBS = "metamodel.jdbc.convert.lobs";
 
     public static final String SYSTEM_PROPERTY_COMPILED_QUERY_POOL_MAX_SIZE = "metamodel.jdbc.compiledquery.pool.max.size";
+
     public static final String SYSTEM_PROPERTY_COMPILED_QUERY_POOL_MIN_EVICTABLE_IDLE_TIME_MILLIS = "metamodel.jdbc.compiledquery.pool.idle.timeout";
+
     public static final String SYSTEM_PROPERTY_COMPILED_QUERY_POOL_TIME_BETWEEN_EVICTION_RUNS_MILLIS = "metamodel.jdbc.compiledquery.pool.eviction.period.millis";
 
     public static final String DATABASE_PRODUCT_POSTGRESQL = "PostgreSQL";
+
     public static final String DATABASE_PRODUCT_MYSQL = "MySQL";
+
     public static final String DATABASE_PRODUCT_HSQLDB = "HSQL Database Engine";
+
     public static final String DATABASE_PRODUCT_H2 = "H2";
+
     public static final String DATABASE_PRODUCT_SQLSERVER = "Microsoft SQL Server";
+
     public static final String DATABASE_PRODUCT_DB2 = "DB2";
+
     public static final String DATABASE_PRODUCT_DB2_PREFIX = "DB2/";
+
     public static final String DATABASE_PRODUCT_ORACLE = "Oracle";
+
     public static final String DATABASE_PRODUCT_HIVE = "Apache Hive";
+
     public static final String DATABASE_PRODUCT_SQLITE = "SQLite";
 
-    public static final ColumnType COLUMN_TYPE_CLOB_AS_STRING = new ColumnTypeImpl("CLOB", SuperColumnType.LITERAL_TYPE,
-            String.class, true);
-    public static final ColumnType COLUMN_TYPE_BLOB_AS_BYTES = new ColumnTypeImpl("BLOB", SuperColumnType.BINARY_TYPE,
-            byte[].class, true);
+    public static final ColumnType COLUMN_TYPE_CLOB_AS_STRING = new ColumnTypeImpl("CLOB", SuperColumnType.LITERAL_TYPE, java.lang.String.class, true);
+
+    public static final ColumnType COLUMN_TYPE_BLOB_AS_BYTES = new ColumnTypeImpl("BLOB", SuperColumnType.BINARY_TYPE, byte[].class, true);
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcDataContext.class);
 
     private final FetchSizeCalculator _fetchSizeCalculator;
+
     private final Connection _connection;
+
     private final DataSource _dataSource;
+
     private final TableType[] _tableTypes;
+
     private final String _catalogName;
+
     private final boolean _singleConnection;
 
     private final MetadataLoader _metadataLoader;
@@ -112,7 +126,9 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
      * Defines the way that queries are written once dispatched to the database
      */
     private IQueryRewriter _queryRewriter;
+
     private final String _databaseProductName;
+
     private final String _databaseVersion;
 
     /**
@@ -122,20 +138,23 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
      * represents a catalog.
      */
     private final String _identifierQuoteString;
+
     private final boolean _supportsBatchUpdates;
+
     private final boolean _isDefaultAutoCommit;
+
     private final boolean _usesCatalogsAsSchemas;
 
     /**
      * Creates the strategy based on a data source, some table types and an
      * optional catalogName
-     * 
+     *
      * @param dataSource
-     *            the datasource objcet to use for making connections
+     * 		the datasource objcet to use for making connections
      * @param tableTypes
-     *            the types of tables to include
+     * 		the types of tables to include
      * @param catalogName
-     *            a catalog name to use, can be null
+     * 		a catalog name to use, can be null
      */
     public JdbcDataContext(DataSource dataSource, TableType[] tableTypes, String catalogName) {
         this(dataSource, null, tableTypes, catalogName);
@@ -144,13 +163,13 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
     /**
      * Creates the strategy based on a {@link Connection}, some table types and
      * an optional catalogName
-     * 
+     *
      * @param connection
-     *            the database connection
+     * 		the database connection
      * @param tableTypes
-     *            the types of tables to include
+     * 		the types of tables to include
      * @param catalogName
-     *            a catalog name to use, can be null
+     * 		a catalog name to use, can be null
      */
     public JdbcDataContext(Connection connection, TableType[] tableTypes, String catalogName) {
         this(null, connection, tableTypes, catalogName);
@@ -172,35 +191,27 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
         _connection = connection;
         _tableTypes = tableTypes;
         _catalogName = catalogName;
-
         if (_dataSource == null) {
             _singleConnection = true;
         } else {
             _singleConnection = false;
         }
-
         // available memory for fetching is so far fixed at 16 megs.
-        _fetchSizeCalculator = new FetchSizeCalculator(16 * 1024 * 1024);
-
+        _fetchSizeCalculator = new FetchSizeCalculator((16 * 1024) * 1024);
         boolean supportsBatchUpdates = false;
         String identifierQuoteString = null;
         String databaseProductName = null;
         String databaseVersion = null;
         boolean usesCatalogsAsSchemas = false;
-
         final Connection con = getConnection();
-
         try {
             _isDefaultAutoCommit = con.getAutoCommit();
         } catch (SQLException e) {
             throw JdbcUtils.wrapException(e, "determine auto-commit behaviour");
         }
-
         try {
             DatabaseMetaData metaData = con.getMetaData();
-
             supportsBatchUpdates = supportsBatchUpdates(metaData);
-
             try {
                 identifierQuoteString = metaData.getIdentifierQuoteString();
                 if (identifierQuoteString != null) {
@@ -209,7 +220,6 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
             } catch (SQLException e) {
                 logger.warn("could not retrieve identifier quote string from database metadata", e);
             }
-
             usesCatalogsAsSchemas = usesCatalogsAsSchemas(metaData);
             try {
                 databaseProductName = metaData.getDatabaseProductName();
@@ -233,8 +243,7 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
             setQueryRewriter(new OracleQueryRewriter(this));
         } else if (DATABASE_PRODUCT_SQLSERVER.equals(_databaseProductName)) {
             setQueryRewriter(new SQLServerQueryRewriter(this));
-        } else if (DATABASE_PRODUCT_DB2.equals(_databaseProductName)
-                || (_databaseProductName != null && _databaseProductName.startsWith(DATABASE_PRODUCT_DB2_PREFIX))) {
+        } else if (DATABASE_PRODUCT_DB2.equals(_databaseProductName) || ((_databaseProductName != null) && _databaseProductName.startsWith(DATABASE_PRODUCT_DB2_PREFIX))) {
             setQueryRewriter(new DB2QueryRewriter(this));
         } else if (DATABASE_PRODUCT_HSQLDB.equals(_databaseProductName)) {
             setQueryRewriter(new HsqldbQueryRewriter(this));
@@ -247,7 +256,6 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
         } else {
             setQueryRewriter(new DefaultQueryRewriter(this));
         }
-
         _supportsBatchUpdates = supportsBatchUpdates;
         _identifierQuoteString = identifierQuoteString;
         _usesCatalogsAsSchemas = usesCatalogsAsSchemas;
@@ -256,9 +264,9 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
 
     /**
      * Creates the strategy based on a {@link Connection}
-     * 
+     *
      * @param connection
-     *            the database connection
+     * 		the database connection
      */
     public JdbcDataContext(Connection connection) {
         this(connection, TableType.DEFAULT_TABLE_TYPES, null);
@@ -266,9 +274,9 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
 
     /**
      * Creates the strategy based on a {@link DataSource}
-     * 
+     *
      * @param dataSource
-     *            the data source
+     * 		the data source
      */
     public JdbcDataContext(DataSource dataSource) {
         this(dataSource, TableType.DEFAULT_TABLE_TYPES, null);
@@ -555,7 +563,6 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
         FileHelper.safeClose(rs, st);
     }
 
-
     /**
      * Convenience method to get the available catalogNames using this
      * connection.
@@ -564,7 +571,6 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
      */
     public String[] getCatalogNames() {
         Connection connection = getConnection();
-
         // Retrieve metadata
         DatabaseMetaData metaData = null;
         ResultSet rs = null;
@@ -573,7 +579,6 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
         } catch (SQLException e) {
             throw JdbcUtils.wrapException(e, "retrieve metadata");
         }
-
         // Retrieve catalogs
         logger.debug("Retrieving catalogs");
         List<String> catalogs = new ArrayList<>();
@@ -583,7 +588,7 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
                 String catalogName = rs.getString(1);
                 logger.debug("Found catalogName: {}", catalogName);
                 catalogs.add(catalogName);
-            }
+            } 
         } catch (SQLException e) {
             logger.error("Error retrieving catalog metadata", e);
         } finally {
@@ -643,19 +648,16 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
         boolean found = false;
         String result = null;
         String[] schemaNames = getSchemaNames();
-
         // First strategy: If there's only one schema available, that must
         // be it
         if (schemaNames.length == 1) {
             result = schemaNames[0];
             found = true;
         }
-
         if (!found) {
             Connection connection = getConnection();
             try {
                 DatabaseMetaData metaData = connection.getMetaData();
-
                 // Second strategy: Find default schema name by examining the
                 // URL
                 if (!found) {
@@ -667,7 +669,7 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
                             throw e;
                         }
                     }
-                    if (url != null && url.length() > 0) {
+                    if ((url != null) && (url.length() > 0)) {
                         if (schemaNames.length > 0) {
                             StringTokenizer st = new StringTokenizer(url, "/\\:");
                             int tokenCount = st.countTokens();
@@ -676,10 +678,9 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
                                     st.nextToken();
                                 }
                                 String lastToken = st.nextToken();
-
-                                for (int i = 0; i < schemaNames.length && !found; i++) {
+                                for (int i = 0; (i < schemaNames.length) && (!found); i++) {
                                     String schemaName = schemaNames[i];
-                                    if (lastToken.indexOf(schemaName) != -1) {
+                                    if (lastToken.indexOf(schemaName) != (-1)) {
                                         result = schemaName;
                                         found = true;
                                     }
@@ -688,7 +689,6 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
                         }
                     }
                 }
-
                 // Third strategy: Check for schema equal to username
                 if (!found) {
                     String username = null;
@@ -700,7 +700,7 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
                         }
                     }
                     if (username != null) {
-                        for (int i = 0; i < schemaNames.length && !found; i++) {
+                        for (int i = 0; (i < schemaNames.length) && (!found); i++) {
                             if (username.equalsIgnoreCase(schemaNames[i])) {
                                 result = schemaNames[i];
                                 found = true;
@@ -708,13 +708,11 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
                         }
                     }
                 }
-
             } catch (SQLException e) {
                 throw JdbcUtils.wrapException(e, "determine default schema name");
             } finally {
                 closeIfNecessary(connection);
             }
-
             // Fourth strategy: Find default schema name by vendor-specific
             // hacks
             if (!found) {
@@ -763,7 +761,7 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
         ResultSet rs = metaData.getTables(_catalogName, null, null, JdbcUtils.getTableTypesAsStrings(_tableTypes));
         while (rs.next()) {
             schemas.add(rs.getString("TABLE_SCHEM"));
-        }
+        } 
         return schemas;
     }
 
@@ -789,7 +787,6 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
         try {
             DatabaseMetaData metaData = connection.getMetaData();
             Collection<String> result = new ArrayList<>();
-
             if (DATABASE_PRODUCT_SQLSERVER.equals(_databaseProductName)) {
                 result = getSchemaSQLServerNames(metaData);
             } else if (_usesCatalogsAsSchemas) {
@@ -804,14 +801,12 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
                     String schemaName = rs.getString(1);
                     logger.debug("Found schemaName: {}", schemaName);
                     result.add(schemaName);
-                }
+                } 
                 rs.close();
             }
-
             if (DATABASE_PRODUCT_MYSQL.equals(_databaseProductName)) {
                 result.remove("information_schema");
             }
-
             // If still no schemas are found, add a schema with a null-name
             if (result.isEmpty()) {
                 logger.info("No schemas or catalogs found. Creating unnamed schema.");
@@ -844,30 +839,27 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
     @Override
     public UpdateSummary executeUpdate(final UpdateScript update) {
         final JdbcUpdateCallback updateCallback;
-
-        if (_supportsBatchUpdates && update instanceof BatchUpdateScript) {
+        if (_supportsBatchUpdates && (update instanceof BatchUpdateScript)) {
             updateCallback = new JdbcBatchUpdateCallback(this);
         } else {
             updateCallback = new JdbcSimpleUpdateCallback(this);
         }
-
         try {
             if (isSingleConnection() && isDefaultAutoCommit()) {
                 // if auto-commit is going to be switched off and on during
                 // updates, then the update needs to be synchronized, to avoid
                 // race-conditions when switching off and on.
-                synchronized (_connection) {
+                synchronized(_connection) {
                     update.run(updateCallback);
                 }
             } else {
                 update.run(updateCallback);
             }
             updateCallback.close(true);
-        } catch (RuntimeException e) {
+        } catch (java.lang.RuntimeException e) {
             updateCallback.close(false);
             throw e;
         }
-        
         return updateCallback.getUpdateSummary();
     }
 

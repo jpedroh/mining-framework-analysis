@@ -18,14 +18,16 @@
  */
 package org.apache.metamodel.salesforce;
 
+import com.sforce.soap.partner.Connector;
+import com.sforce.soap.partner.PartnerConnection;
+import com.sforce.soap.partner.QueryResult;
+import com.sforce.ws.ConnectionException;
+import com.sforce.ws.ConnectorConfig;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import com.sforce.ws.ConnectorConfig;
-
 import org.apache.metamodel.MetaModelException;
 import org.apache.metamodel.QueryPostprocessDataContext;
 import org.apache.metamodel.UpdateScript;
@@ -46,10 +48,6 @@ import org.apache.metamodel.schema.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sforce.soap.partner.Connector;
-import com.sforce.soap.partner.PartnerConnection;
-import com.sforce.soap.partner.QueryResult;
-import com.sforce.ws.ConnectionException;
 
 /**
  * A datacontext that uses the Salesforce API.
@@ -62,13 +60,18 @@ import com.sforce.ws.ConnectionException;
  * >SOQL reference</a>.
  */
 public class SalesforceDataContext extends QueryPostprocessDataContext implements UpdateableDataContext {
-
     public static final TimeZone SOQL_TIMEZONE = TimeZone.getTimeZone("UTC");
+
     public static final String SOQL_DATE_FORMAT_IN = "yyyy-MM-dd";
+
     public static final String SOQL_DATE_FORMAT_OUT = "yyyy-MM-dd";
+
     public static final String SOQL_DATE_TIME_FORMAT_IN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+
     public static final String SOQL_DATE_TIME_FORMAT_OUT = "yyyy-MM-dd'T'HH:mm:ssZZZ";
+
     public static final String SOQL_TIME_FORMAT_IN = "HH:mm:ss.SSS";
+
     public static final String SOQL_TIME_FORMAT_OUT = "HH:mm:ssZZZ";
 
     private static final Logger logger = LoggerFactory.getLogger(SalesforceDataContext.class);
@@ -99,10 +102,9 @@ public class SalesforceDataContext extends QueryPostprocessDataContext implement
     /**
      * Creates a {@code SalesforceDataContext} instance , configured with given
      * salesforce connection.
-     * 
+     *
      * @param connection
-     *            salesforce connection (cannot be {@code null}).
-     * 
+     * 		salesforce connection (cannot be {@code null}).
      */
     public SalesforceDataContext(PartnerConnection connection) {
         if (connection == null) {

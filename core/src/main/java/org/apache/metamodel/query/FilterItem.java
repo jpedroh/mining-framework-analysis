@@ -24,7 +24,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.metamodel.data.IRowFilter;
 import org.apache.metamodel.data.Row;
 import org.apache.metamodel.schema.Column;
@@ -35,6 +34,7 @@ import org.apache.metamodel.util.FormatHelper;
 import org.apache.metamodel.util.ObjectComparator;
 import org.apache.metamodel.util.WildcardPattern;
 
+
 /**
  * Represents a filter in a query that resides either within a WHERE clause or a
  * HAVING clause
@@ -43,24 +43,29 @@ import org.apache.metamodel.util.WildcardPattern;
  * @see OperatorType
  * @see LogicalOperator
  */
-public class FilterItem extends BaseObject implements QueryItem, Cloneable, IRowFilter {
-
+public class FilterItem extends BaseObject implements QueryItem , Cloneable , IRowFilter {
     private static final long serialVersionUID = 2435322742894653227L;
 
     private Query _query;
+
     private final SelectItem _selectItem;
+
     private final OperatorType _operator;
+
     private final Object _operand;
+
     private final List<FilterItem> _childItems;
+
     private final LogicalOperator _logicalOperator;
+
     private final String _expression;
+
     private transient Set<?> _inValues;
 
     /**
      * Private constructor, used for cloning
      */
-    private FilterItem(SelectItem selectItem, OperatorType operator, Object operand, List<FilterItem> orItems,
-                       String expression, LogicalOperator logicalOperator) {
+    private FilterItem(SelectItem selectItem, OperatorType operator, Object operand, List<FilterItem> orItems, String expression, LogicalOperator logicalOperator) {
         _selectItem = selectItem;
         _operator = operator;
         _operand = validateOperand(operand);
@@ -100,14 +105,12 @@ public class FilterItem extends BaseObject implements QueryItem, Cloneable, IRow
     public FilterItem(SelectItem selectItem, OperatorType operator, Object operand) throws IllegalArgumentException {
         this(selectItem, operator, operand, null, null, null);
         if (_operand == null) {
-            require("Can only use EQUALS or DIFFERENT_FROM operator with null-operand",
-                    _operator == OperatorType.DIFFERENT_FROM || _operator == OperatorType.EQUALS_TO);
+            require("Can only use EQUALS or DIFFERENT_FROM operator with null-operand", (_operator == OperatorType.DIFFERENT_FROM) || (_operator == OperatorType.EQUALS_TO));
         }
-        if (_operator == OperatorType.LIKE || _operator == OperatorType.NOT_LIKE) {
+        if ((_operator == OperatorType.LIKE) || (_operator == OperatorType.NOT_LIKE)) {
             ColumnType type = _selectItem.getColumn().getType();
             if (type != null) {
-                require("Can only use LIKE operator with strings", type.isLiteral()
-                        && (_operand instanceof String || _operand instanceof SelectItem));
+                require("Can only use LIKE operator with strings", type.isLiteral() && ((_operand instanceof String) || (_operand instanceof SelectItem)));
             }
         }
         require("SelectItem cannot be null", _selectItem != null);
@@ -122,12 +125,11 @@ public class FilterItem extends BaseObject implements QueryItem, Cloneable, IRow
      * they are translated directly into SQL.
      *
      * @param expression
-     *            An expression to use for the filter, for example
-     *            "YEAR(my_date) = 2008".
+     * 		An expression to use for the filter, for example
+     * 		"YEAR(my_date) = 2008".
      */
     public FilterItem(String expression) {
         this(null, null, null, null, expression, null);
-
         require("Expression cannot be null", _expression != null);
     }
 
@@ -137,7 +139,7 @@ public class FilterItem extends BaseObject implements QueryItem, Cloneable, IRow
      * as true, then the composite filter will be evaluated as true
      *
      * @param items
-     *            a list of items to include in the composite
+     * 		a list of items to include in the composite
      */
     public FilterItem(List<FilterItem> items) {
         this(LogicalOperator.OR, items);
@@ -148,13 +150,12 @@ public class FilterItem extends BaseObject implements QueryItem, Cloneable, IRow
      * filter item will be combined according to the {@link LogicalOperator}.
      *
      * @param logicalOperator
-     *            the logical operator to apply
+     * 		the logical operator to apply
      * @param items
-     *            a list of items to include in the composite
+     * 		a list of items to include in the composite
      */
     public FilterItem(LogicalOperator logicalOperator, List<FilterItem> items) {
         this(null, null, null, items, null, logicalOperator);
-
         require("Child items cannot be null", _childItems != null);
         require("Child items cannot be empty", !_childItems.isEmpty());
     }
@@ -164,9 +165,9 @@ public class FilterItem extends BaseObject implements QueryItem, Cloneable, IRow
      * filter item will be combined according to the {@link LogicalOperator}.
      *
      * @param logicalOperator
-     *            the logical operator to apply
+     * 		the logical operator to apply
      * @param items
-     *            an array of items to include in the composite
+     * 		an array of items to include in the composite
      */
     public FilterItem(LogicalOperator logicalOperator, FilterItem... items) {
         this(logicalOperator, Arrays.asList(items));
@@ -178,7 +179,7 @@ public class FilterItem extends BaseObject implements QueryItem, Cloneable, IRow
      * then the compound filter will be evaluated as true
      *
      * @param items
-     *            an array of items to include in the composite
+     * 		an array of items to include in the composite
      */
     public FilterItem(FilterItem... items) {
         this(Arrays.asList(items));
@@ -294,8 +295,7 @@ public class FilterItem extends BaseObject implements QueryItem, Cloneable, IRow
         sb.append(' ');
         sb.append(operator.toSql());
         sb.append(' ');
-
-        if (operator == OperatorType.IN || operator == OperatorType.NOT_IN) {
+        if ((operator == OperatorType.IN) || (operator == OperatorType.NOT_IN)) {
             operand = CollectionUtils.toList(operand);
         }
         return operand;
@@ -373,11 +373,11 @@ public class FilterItem extends BaseObject implements QueryItem, Cloneable, IRow
         } else if (_operator == OperatorType.LESS_THAN_OR_EQUAL) {
             return comparator.compare(selectItemValue, operandValue) <= 0;
         } else if (_operator == OperatorType.LIKE) {
-            WildcardPattern matcher = new WildcardPattern((String) operandValue, '%');
-            return matcher.matches((String) selectItemValue);
+            WildcardPattern matcher = new WildcardPattern(((String) (operandValue)), '%');
+            return matcher.matches(((String) (selectItemValue)));
         } else if (_operator == OperatorType.NOT_LIKE) {
-            WildcardPattern matcher = new WildcardPattern((String) operandValue, '%');
-            return !matcher.matches((String) selectItemValue);
+            WildcardPattern matcher = new WildcardPattern(((String) (operandValue)), '%');
+            return !matcher.matches(((String) (selectItemValue)));
         } else if (_operator == OperatorType.IN) {
             Set<?> inValues = getInValues();
             return inValues.contains(selectItemValue);

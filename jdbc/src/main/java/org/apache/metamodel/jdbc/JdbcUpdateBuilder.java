@@ -21,7 +21,6 @@ package org.apache.metamodel.jdbc;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
-
 import org.apache.metamodel.MetaModelException;
 import org.apache.metamodel.jdbc.dialects.IQueryRewriter;
 import org.apache.metamodel.query.FilterItem;
@@ -34,23 +33,24 @@ import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * {@link RowUpdationBuilder} that issues an SQL UPDATE statement
  */
 final class JdbcUpdateBuilder extends AbstractRowUpdationBuilder {
-
     private static final Logger logger = LoggerFactory.getLogger(JdbcUpdateBuilder.class);
 
     private final boolean _inlineValues;
+
     private final JdbcUpdateCallback _updateCallback;
+
     private final IQueryRewriter _queryRewriter;
 
     public JdbcUpdateBuilder(JdbcUpdateCallback updateCallback, Table table, IQueryRewriter queryRewriter) {
         this(updateCallback, table, queryRewriter, false);
     }
 
-    public JdbcUpdateBuilder(JdbcUpdateCallback updateCallback, Table table, IQueryRewriter queryRewriter,
-            boolean inlineValues) {
+    public JdbcUpdateBuilder(JdbcUpdateCallback updateCallback, Table table, IQueryRewriter queryRewriter, boolean inlineValues) {
         super(table);
         _updateCallback = updateCallback;
         _queryRewriter = queryRewriter;
@@ -71,21 +71,17 @@ final class JdbcUpdateBuilder extends AbstractRowUpdationBuilder {
                 int valueCounter = 1;
                 for (int i = 0; i < columns.length; i++) {
                     boolean explicitNull = explicitNulls[i];
-                    if (values[i] != null || explicitNull) {
+                    if ((values[i] != null) || explicitNull) {
                         _queryRewriter.setStatementParameter(st, valueCounter, columns[i], values[i]);
-
                         valueCounter++;
                     }
                 }
-
                 List<FilterItem> whereItems = getWhereItems();
                 for (FilterItem whereItem : whereItems) {
                     if (JdbcUtils.isPreparedParameterCandidate(whereItem)) {
                         final Object operand = whereItem.getOperand();
                         final Column column = whereItem.getSelectItem().getColumn();
-
                         _queryRewriter.setStatementParameter(st, valueCounter, column, operand);
-
                         valueCounter++;
                     }
                 }

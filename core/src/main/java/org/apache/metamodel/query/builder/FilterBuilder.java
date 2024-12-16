@@ -20,8 +20,8 @@ package org.apache.metamodel.query.builder;
 
 import java.util.Collection;
 import java.util.Date;
-
 import org.apache.metamodel.schema.Column;
+
 
 /**
  * Interface for builder callbacks that "respond" to filter condition building.
@@ -30,7 +30,6 @@ import org.apache.metamodel.schema.Column;
  *            the builder type to return once filter has been created.
  */
 public interface FilterBuilder<B> {
-
     /**
      * Not null
      */

@@ -21,7 +21,6 @@ package org.apache.metamodel.jdbc;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Arrays;
-
 import org.apache.metamodel.insert.AbstractRowInsertionBuilder;
 import org.apache.metamodel.insert.RowInsertionBuilder;
 import org.apache.metamodel.jdbc.dialects.IQueryRewriter;
@@ -32,27 +31,26 @@ import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * {@link RowInsertionBuilder} that issues an SQL INSERT statement
  */
 final class JdbcInsertBuilder extends AbstractRowInsertionBuilder<JdbcUpdateCallback> {
-
 	private static final Logger logger = LoggerFactory.getLogger(JdbcInsertBuilder.class);
 
 	private final boolean _inlineValues;
+
 	private final IQueryRewriter _queryRewriter;
 
 	public JdbcInsertBuilder(JdbcUpdateCallback updateCallback, Table table, IQueryRewriter queryRewriter) {
 		this(updateCallback, table, false, queryRewriter);
 	}
 
-	public JdbcInsertBuilder(JdbcUpdateCallback updateCallback, Table table, boolean isInlineValues,
-			IQueryRewriter queryRewriter) {
+	public JdbcInsertBuilder(JdbcUpdateCallback updateCallback, Table table, boolean isInlineValues, IQueryRewriter queryRewriter) {
 		super(updateCallback, table);
 		if (!(table instanceof JdbcTable)) {
 			throw new IllegalArgumentException("Not a valid JDBC table: " + table);
 		}
-
 		_inlineValues = isInlineValues;
 		_queryRewriter = queryRewriter;
 	}
@@ -75,8 +73,8 @@ final class JdbcInsertBuilder extends AbstractRowInsertionBuilder<JdbcUpdateCall
 				int valueCounter = 1;
 				for (int i = 0; i < columns.length; i++) {
 					boolean explicitNull = explicitNulls[i];
-					if (values[i] != null || explicitNull) {
-					    _queryRewriter.setStatementParameter(st, valueCounter, columns[i], values[i]);
+					if ((values[i] != null) || explicitNull) {
+						_queryRewriter.setStatementParameter(st, valueCounter, columns[i], values[i]);
 						valueCounter++;
 					}
 				}
@@ -90,7 +88,7 @@ final class JdbcInsertBuilder extends AbstractRowInsertionBuilder<JdbcUpdateCall
 			}
 		}
 	}
-	
+
 	protected String createSqlStatement() {
 	    return createSqlStatement(_inlineValues);
 	}

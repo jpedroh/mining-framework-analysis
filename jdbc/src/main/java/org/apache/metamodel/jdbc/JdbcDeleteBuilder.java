@@ -21,7 +21,6 @@ package org.apache.metamodel.jdbc;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
-
 import org.apache.metamodel.MetaModelException;
 import org.apache.metamodel.delete.AbstractRowDeletionBuilder;
 import org.apache.metamodel.delete.RowDeletionBuilder;
@@ -33,23 +32,24 @@ import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * {@link RowDeletionBuilder} that issues an SQL DELETE FROM statement
  */
 final class JdbcDeleteBuilder extends AbstractRowDeletionBuilder {
-
     private static final Logger logger = LoggerFactory.getLogger(JdbcDeleteBuilder.class);
 
     private final JdbcUpdateCallback _updateCallback;
+
     private final IQueryRewriter _queryRewriter;
+
     private final boolean _inlineValues;
 
     public JdbcDeleteBuilder(JdbcUpdateCallback updateCallback, Table table, IQueryRewriter queryRewriter) {
         this(updateCallback, table, queryRewriter, false);
     }
 
-    public JdbcDeleteBuilder(JdbcUpdateCallback updateCallback, Table table, IQueryRewriter queryRewriter,
-            boolean inlineValues) {
+    public JdbcDeleteBuilder(JdbcUpdateCallback updateCallback, Table table, IQueryRewriter queryRewriter, boolean inlineValues) {
         super(table);
         _updateCallback = updateCallback;
         _queryRewriter = queryRewriter;
@@ -59,7 +59,6 @@ final class JdbcDeleteBuilder extends AbstractRowDeletionBuilder {
     @Override
     public void execute() throws MetaModelException {
         String sql = createSqlStatement();
-
         logger.debug("Delete statement created: {}", sql);
         final boolean reuseStatement = !_inlineValues;
         final PreparedStatement st = _updateCallback.getPreparedStatement(sql, reuseStatement, false);
@@ -92,5 +91,4 @@ final class JdbcDeleteBuilder extends AbstractRowDeletionBuilder {
         sb.append(JdbcUtils.createWhereClause(getWhereItems(), _queryRewriter, _inlineValues));
         return sb.toString();
     }
-
 }

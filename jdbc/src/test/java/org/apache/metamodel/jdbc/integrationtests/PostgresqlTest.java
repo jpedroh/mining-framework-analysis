@@ -24,12 +24,10 @@ import java.sql.DatabaseMetaData;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-
 import javax.swing.table.TableModel;
-
 import org.apache.metamodel.BatchUpdateScript;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.UpdateCallback;
@@ -54,6 +52,7 @@ import org.apache.metamodel.schema.Relationship;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.junit.Ignore;
+
 
 /**
  * Test case that tests postgresql interaction. The test requires the
@@ -481,6 +480,7 @@ public class PostgresqlTest extends AbstractJdbIntegrationTest {
         }
     }
 
+<<<<<<< LEFT
     public void testGetGeneratedKeys() throws Exception {
         if (!isConfigured()) {
             return;
@@ -516,7 +516,9 @@ public class PostgresqlTest extends AbstractJdbIntegrationTest {
         assertEquals("[1, 2]", generatedKeys.get().toString());
         
     }
-
+    
+=======
+>>>>>>> RIGHT
     public void testBlob() throws Exception {
         if (!isConfigured()) {
             return;

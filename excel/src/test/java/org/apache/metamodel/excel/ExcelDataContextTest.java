@@ -21,7 +21,7 @@ package org.apache.metamodel.excel;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-
+import junit.framework.TestCase;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.UpdateCallback;
@@ -40,10 +40,8 @@ import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Month;
 
-import junit.framework.TestCase;
 
 public class ExcelDataContextTest extends TestCase {
-
     /**
      * Creates a copy of a particular file - to avoid changing of Excel files
      * under source control
@@ -78,15 +76,12 @@ public class ExcelDataContextTest extends TestCase {
     public void testEmptyFile() throws Exception {
         File file = copyOf("src/test/resources/empty_file.xls");
         ExcelDataContext dc = new ExcelDataContext(file);
-
         assertNull(dc.getSpreadsheetReaderDelegateClass());
         assertEquals(1, dc.getDefaultSchema().getTableCount());
-
         Table table = dc.getDefaultSchema().getTables()[0];
         assertEquals("sheet", table.getName());
         assertEquals(0, table.getColumnCount());
-
-        assertSame(file, ((FileResource) dc.getResource()).getFile());
+        assertSame(file, ((FileResource) (dc.getResource())).getFile());
     }
 
     public void testEmptyFileNoHeaderLine() throws Exception {

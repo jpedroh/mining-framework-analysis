@@ -20,13 +20,12 @@ package org.apache.metamodel.query.builder;
 
 import java.util.Collection;
 import java.util.Date;
-
 import org.apache.metamodel.query.FilterItem;
 import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.Column;
 
-abstract class AbstractQueryFilterBuilder<B> extends GroupedQueryBuilderCallback implements FilterBuilder<B> {
 
+abstract class AbstractQueryFilterBuilder<B> extends GroupedQueryBuilderCallback implements FilterBuilder<B> {
     protected final AbstractFilterBuilder<B> _filterBuilder;
 
     public AbstractQueryFilterBuilder(SelectItem selectItem, GroupedQueryBuilder queryBuilder) {
@@ -70,7 +69,6 @@ abstract class AbstractQueryFilterBuilder<B> extends GroupedQueryBuilderCallback
     public B notIn(String... strings) {
         return _filterBuilder.notIn(strings);
     }
-
 
     @Override
     public B isNull() {
@@ -407,5 +405,4 @@ abstract class AbstractQueryFilterBuilder<B> extends GroupedQueryBuilderCallback
     public B gt(Object obj) {
         return greaterThan(obj);
     }
-
 }
