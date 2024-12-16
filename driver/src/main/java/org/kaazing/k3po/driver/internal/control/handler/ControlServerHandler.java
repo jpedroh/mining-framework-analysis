@@ -13,13 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kaazing.k3po.driver.internal.control.handler;
-
-import static java.lang.String.format;
-import static java.lang.Thread.currentThread;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.nio.file.FileSystems.newFileSystem;
 
 import java.io.IOException;
 import java.net.URI;
@@ -33,7 +27,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
@@ -53,14 +46,19 @@ import org.kaazing.k3po.driver.internal.control.PrepareMessage;
 import org.kaazing.k3po.driver.internal.control.PreparedMessage;
 import org.kaazing.k3po.driver.internal.control.StartedMessage;
 import org.kaazing.k3po.lang.internal.parser.ScriptParseException;
+import static java.lang.String.format;
+import static java.lang.Thread.currentThread;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.FileSystems.newFileSystem;
+
 
 public class ControlServerHandler extends ControlUpstreamHandler {
-
     private static final Map<String, Object> EMPTY_ENVIRONMENT = Collections.<String, Object>emptyMap();
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(ControlServerHandler.class);
 
     private Robot robot;
+
     private ChannelFutureListener whenAbortedOrFinished;
 
     private final ChannelFuture channelClosedFuture = Channels.future(null);
@@ -88,44 +86,34 @@ public class ControlServerHandler extends ControlUpstreamHandler {
 
     @Override
     public void prepareReceived(final ChannelHandlerContext ctx, MessageEvent evt) throws Exception {
-
-        final PrepareMessage prepare = (PrepareMessage) evt.getMessage();
-
+        final PrepareMessage prepare = ((PrepareMessage) (evt.getMessage()));
         // enforce control protocol version
         String version = prepare.getVersion();
         if (!"2.0".equals(version)) {
             sendVersionError(ctx);
             return;
         }
-
         List<String> scriptNames = prepare.getNames();
         if (logger.isDebugEnabled()) {
             logger.debug("preparing script(s) " + scriptNames);
         }
-
         robot = new Robot();
         whenAbortedOrFinished = whenAbortedOrFinished(ctx);
-
         ChannelFuture prepareFuture;
         try {
-
             final String aggregatedScript = aggregateScript(scriptNames, scriptLoader);
-
             if (scriptLoader != null) {
                 Thread currentThread = currentThread();
                 ClassLoader contextClassLoader = currentThread.getContextClassLoader();
                 try {
                     currentThread.setContextClassLoader(scriptLoader);
                     prepareFuture = robot.prepare(aggregatedScript);
-                }
-                finally {
+                } finally {
                     currentThread.setContextClassLoader(contextClassLoader);
                 }
-            }
-            else {
+            } else {
                 prepareFuture = robot.prepare(aggregatedScript);
             }
-
             prepareFuture.addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(final ChannelFuture f) {
@@ -135,7 +123,7 @@ public class ControlServerHandler extends ControlUpstreamHandler {
                     Channels.write(ctx, Channels.future(null), prepared);
                 }
             });
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             sendErrorMessage(ctx, e);
             return;
         }
@@ -144,16 +132,13 @@ public class ControlServerHandler extends ControlUpstreamHandler {
     /*
      * Public static because it is used in test utils
      */
-    public static String aggregateScript(List<String> scriptNames, ClassLoader scriptLoader) throws URISyntaxException,
-            IOException {
+    public static String aggregateScript(List<String> scriptNames, ClassLoader scriptLoader) throws URISyntaxException, IOException {
         final StringBuilder aggregatedScript = new StringBuilder();
         for (String scriptName : scriptNames) {
             String scriptNameWithExtension = format("%s.rpt", scriptName);
             Path scriptPath = Paths.get(scriptNameWithExtension);
             String script = null;
-
             assert !scriptPath.isAbsolute();
-
             // resolve relative scripts in local file system
             if (scriptLoader != null) {
                 // resolve relative scripts from class loader to support
@@ -165,18 +150,16 @@ public class ControlServerHandler extends ControlUpstreamHandler {
                         Path resourcePath = Paths.get(resourceURI);
                         script = readScript(resourcePath);
                     } else {
-                        try (FileSystem fileSystem = newFileSystem(resourceURI, EMPTY_ENVIRONMENT)) {
+                        try (final FileSystem fileSystem = newFileSystem(resourceURI, EMPTY_ENVIRONMENT)) {
                             Path resourcePath = Paths.get(resourceURI);
                             script = readScript(resourcePath);
                         }
                     }
                 }
             }
-
             if (script == null) {
                 throw new RuntimeException("Script not found: " + scriptPath);
             }
-
             aggregatedScript.append(script);
         }
         return aggregatedScript.toString();

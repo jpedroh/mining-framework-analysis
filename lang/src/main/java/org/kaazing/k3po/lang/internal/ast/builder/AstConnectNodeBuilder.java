@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kaazing.k3po.lang.internal.ast.builder;
 
 import org.kaazing.k3po.lang.internal.ast.AstConnectNode;
 import org.kaazing.k3po.lang.internal.ast.AstScriptNode;
 import org.kaazing.k3po.lang.internal.ast.value.AstLocation;
 
-public final class AstConnectNodeBuilder extends AbstractAstConnectNodeBuilder<AstConnectNode> {
 
+public final class AstConnectNodeBuilder extends AbstractAstConnectNodeBuilder<AstConnectNode> {
     public AstConnectNodeBuilder() {
         this(new AstConnectNode());
     }
@@ -155,9 +154,7 @@ public final class AstConnectNodeBuilder extends AbstractAstConnectNodeBuilder<A
         super(node, node);
     }
 
-    public static final class ScriptNested<R extends AbstractAstNodeBuilder<? extends AstScriptNode, ?>> extends
-            AbstractAstConnectNodeBuilder<R> {
-
+    public static final class ScriptNested<R extends AbstractAstNodeBuilder<? extends AstScriptNode, ?>> extends AbstractAstConnectNodeBuilder<R> {
         public ScriptNested(R builder) {
             super(new AstConnectNode(), builder);
         }
@@ -293,7 +290,5 @@ public final class AstConnectNodeBuilder extends AbstractAstConnectNodeBuilder<A
             scriptNode.getStreams().add(node);
             return result;
         }
-
     }
-
 }

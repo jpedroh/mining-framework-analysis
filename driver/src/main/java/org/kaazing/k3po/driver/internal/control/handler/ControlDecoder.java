@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kaazing.k3po.driver.internal.control.handler;
-
-import static org.jboss.netty.util.CharsetUtil.UTF_8;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.Channel;
@@ -31,18 +28,24 @@ import org.kaazing.k3po.driver.internal.control.NotifyMessage;
 import org.kaazing.k3po.driver.internal.control.PrepareMessage;
 import org.kaazing.k3po.driver.internal.control.PreparedMessage;
 import org.kaazing.k3po.driver.internal.control.StartMessage;
+import static org.jboss.netty.util.CharsetUtil.UTF_8;
+
 
 public class ControlDecoder extends ReplayingDecoder<ControlDecoder.State> {
-
     enum State {
-        READ_INITIAL, READ_HEADER, READ_CONTENT
-    }
+
+        READ_INITIAL,
+        READ_HEADER,
+        READ_CONTENT;}
 
     private final int maxInitialLineLength;
+
     private final int maxHeaderLineLength;
+
     private final int maxContentLength;
 
     private ControlMessage message;
+
     private int contentLength;
 
     public ControlDecoder() {
@@ -51,11 +54,9 @@ public class ControlDecoder extends ReplayingDecoder<ControlDecoder.State> {
 
     public ControlDecoder(int maxInitialLineLength, int maxHeaderLineLength, int maxContentLength) {
         super(false);
-
         this.maxInitialLineLength = maxInitialLineLength;
         this.maxHeaderLineLength = maxHeaderLineLength;
         this.maxContentLength = maxContentLength;
-
         setState(State.READ_INITIAL);
     }
 
@@ -126,139 +127,125 @@ public class ControlDecoder extends ReplayingDecoder<ControlDecoder.State> {
     }
 
     private ControlMessage createMessage(String initialLine) {
-
         ControlMessage.Kind messageKind = ControlMessage.Kind.valueOf(initialLine);
         switch (messageKind) {
-        case PREPARE:
-            return new PrepareMessage();
-        case START:
-            return new StartMessage();
-        case ABORT:
-            return new AbortMessage();
-        case NOTIFY:
-            return new NotifyMessage();
-        case AWAIT:
-            return new AwaitMessage();
-        default:
-            throw new IllegalArgumentException(String.format("Unrecognized message kind: %s", messageKind));
+            case PREPARE :
+                return new PrepareMessage();
+            case START :
+                return new StartMessage();
+            case ABORT :
+                return new AbortMessage();
+            case NOTIFY :
+                return new NotifyMessage();
+            case AWAIT :
+                return new AwaitMessage();
+            default :
+                throw new IllegalArgumentException(String.format("Unrecognized message kind: %s", messageKind));
         }
     }
 
     private State readHeader(ChannelBuffer buffer) {
-
         int readableBytes = buffer.readableBytes();
         if (readableBytes == 0) {
             return null;
         }
-
         int endOfLineSearchFrom = buffer.readerIndex();
         // int endOfLineSearchTo = endOfLineSearchFrom + Math.min(readableBytes, maxHeaderLineLength);
         int endOfLineSearchTo = Math.min(readableBytes, maxHeaderLineLength);
-        int endOfLineAt = buffer.indexOf(endOfLineSearchFrom, endOfLineSearchTo + 1, (byte) 0x0a);
-
+        int endOfLineAt = buffer.indexOf(endOfLineSearchFrom, endOfLineSearchTo + 1, ((byte) (0xa)));
         // end-of-line not found
-        if (endOfLineAt == -1) {
+        if (endOfLineAt == (-1)) {
             if (readableBytes >= maxHeaderLineLength) {
                 throw new IllegalArgumentException("Header line too long");
             }
             return null;
         }
-
         if (endOfLineAt == endOfLineSearchFrom) {
             byte endOfLine = buffer.readByte();
-            assert endOfLine == 0x0a;
-
+            assert endOfLine == 0xa;
             if (contentLength == 0) {
                 return State.READ_INITIAL;
             }
-
             switch (message.getKind()) {
-            case PREPARE:
-            case FINISHED:
-            case ERROR:
-                // content for these message kinds
-                return State.READ_CONTENT;
-            default:
-                return State.READ_INITIAL;
+                case PREPARE :
+                case FINISHED :
+                case ERROR :
+                    // content for these message kinds
+                    return State.READ_CONTENT;
+                default :
+                    return State.READ_INITIAL;
             }
         }
-
         // end-of-line found
         int colonSearchFrom = buffer.readerIndex();
         // int colonSearchTo = colonSearchFrom + Math.min(readableBytes, endOfLineAt);
         int colonSearchTo = Math.min(readableBytes, endOfLineAt);
-        int colonAt = buffer.indexOf(colonSearchFrom, colonSearchTo + 1, (byte) 0x3a);
-
+        int colonAt = buffer.indexOf(colonSearchFrom, colonSearchTo + 1, ((byte) (0x3a)));
         // colon not found
-        if (colonAt == -1) {
+        if (colonAt == (-1)) {
             throw new IllegalArgumentException("Colon not found in header line");
         }
-
         // colon found
         int headerNameLength = colonAt - colonSearchFrom;
         StringBuilder headerNameBuilder = new StringBuilder(headerNameLength);
         for (int i = 0; i < headerNameLength; i++) {
-            headerNameBuilder.append((char) buffer.readByte());
+            headerNameBuilder.append(((char) (buffer.readByte())));
         }
         String headerName = headerNameBuilder.toString();
-
         byte colon = buffer.readByte();
         assert colon == 0x3a;
-
-        int headerValueLength = endOfLineAt - colonAt - 1;
+        int headerValueLength = (endOfLineAt - colonAt) - 1;
         StringBuilder headerValueBuilder = new StringBuilder(headerValueLength);
         for (int i = 0; i < headerValueLength; i++) {
-            headerValueBuilder.append((char) buffer.readByte());
+            headerValueBuilder.append(((char) (buffer.readByte())));
         }
         String headerValue = headerValueBuilder.toString();
-
         // add kind-specific headers
         switch (message.getKind()) {
-        case PREPARE:
-            PrepareMessage prepareMessage = (PrepareMessage) message;
-            switch (headerName) {
-            case "version":
-                prepareMessage.setVersion(headerValue);
-                break;
-            case "name":
-                prepareMessage.getNames().add(headerValue);
-                break;
-            }
-            break;
-        case PREPARED:
-        case ERROR:
-        case FINISHED:
-            switch (headerName) {
-            case "content-length":
-                contentLength = Integer.parseInt(headerValue);
-                if (contentLength > maxContentLength) {
-                    throw new IllegalArgumentException("Content too long");
+            case PREPARE :
+                PrepareMessage prepareMessage = ((PrepareMessage) (message));
+                switch (headerName) {
+                    case "version" :
+                        prepareMessage.setVersion(headerValue);
+                        break;
+                    case "name" :
+                        prepareMessage.getNames().add(headerValue);
+                        break;
                 }
                 break;
-            }
-            break;
-        case NOTIFY:
-            NotifyMessage notifyMessage = (NotifyMessage) message;
-            switch (headerName) {
-            case "barrier":
-                notifyMessage.setBarrier(headerValue);
+            case PREPARED :
+            case ERROR :
+            case FINISHED :
+                switch (headerName) {
+                    case "content-length" :
+                        contentLength = Integer.parseInt(headerValue);
+                        if (contentLength > maxContentLength) {
+                            throw new IllegalArgumentException("Content too long");
+                        }
+                        break;
+                }
                 break;
-            }
-            break;
-        case AWAIT:
-            AwaitMessage awaitMessage = (AwaitMessage) message;
-            switch (headerName) {
-            case "barrier":
-                awaitMessage.setBarrier(headerValue);
+            case NOTIFY :
+                NotifyMessage notifyMessage = ((NotifyMessage) (message));
+                switch (headerName) {
+                    case "barrier" :
+                        notifyMessage.setBarrier(headerValue);
+                        break;
+                }
                 break;
-            }
-            break;
-        default:
-            break;
+            case AWAIT :
+                AwaitMessage awaitMessage = ((AwaitMessage) (message));
+                switch (headerName) {
+                    case "barrier" :
+                        awaitMessage.setBarrier(headerValue);
+                        break;
+                }
+                break;
+            default :
+                break;
         }
-
         byte endOfLine = buffer.readByte();
-        assert endOfLine == 0x0a;
+        assert endOfLine == 0xa;
         return State.READ_HEADER;
     }
 
