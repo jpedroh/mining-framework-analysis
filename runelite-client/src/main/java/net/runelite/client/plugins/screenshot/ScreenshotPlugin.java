@@ -59,16 +59,7 @@ import net.runelite.api.events.ScriptCallbackEvent;
 import net.runelite.api.events.WidgetLoaded;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetID;
-import static net.runelite.api.widgets.WidgetID.BARROWS_REWARD_GROUP_ID;
-import static net.runelite.api.widgets.WidgetID.CHAMBERS_OF_XERIC_REWARD_GROUP_ID;
-import static net.runelite.api.widgets.WidgetID.CLUE_SCROLL_REWARD_GROUP_ID;
-import static net.runelite.api.widgets.WidgetID.DIALOG_SPRITE_GROUP_ID;
-import static net.runelite.api.widgets.WidgetID.KINGDOM_GROUP_ID;
-import static net.runelite.api.widgets.WidgetID.LEVEL_UP_GROUP_ID;
-import static net.runelite.api.widgets.WidgetID.QUEST_COMPLETED_GROUP_ID;
-import static net.runelite.api.widgets.WidgetID.THEATRE_OF_BLOOD_REWARD_GROUP_ID;
 import net.runelite.api.widgets.WidgetInfo;
-import static net.runelite.client.RuneLite.SCREENSHOT_DIR;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.PlayerLootReceived;
@@ -86,65 +77,95 @@ import net.runelite.client.util.ImageCapture;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.LinkBrowser;
 import net.runelite.client.util.Text;
+import static net.runelite.api.widgets.WidgetID.BARROWS_REWARD_GROUP_ID;
+import static net.runelite.api.widgets.WidgetID.CHAMBERS_OF_XERIC_REWARD_GROUP_ID;
+import static net.runelite.api.widgets.WidgetID.CLUE_SCROLL_REWARD_GROUP_ID;
+import static net.runelite.api.widgets.WidgetID.DIALOG_SPRITE_GROUP_ID;
+import static net.runelite.api.widgets.WidgetID.KINGDOM_GROUP_ID;
+import static net.runelite.api.widgets.WidgetID.LEVEL_UP_GROUP_ID;
+import static net.runelite.api.widgets.WidgetID.QUEST_COMPLETED_GROUP_ID;
+import static net.runelite.api.widgets.WidgetID.THEATRE_OF_BLOOD_REWARD_GROUP_ID;
+import static net.runelite.client.RuneLite.SCREENSHOT_DIR;
 
-@PluginDescriptor(
-	name = "Screenshot",
-	description = "Enable the manual and automatic taking of screenshots",
-	tags = {"external", "images", "imgur", "integration", "notifications"}
-)
+
+@PluginDescriptor(name = "Screenshot", description = "Enable the manual and automatic taking of screenshots", tags = { "external", "images", "imgur", "integration", "notifications" })
 @Slf4j
-public class ScreenshotPlugin extends Plugin
-{
+public class ScreenshotPlugin extends Plugin {
 	private static final String COLLECTION_LOG_TEXT = "New item added to your collection log: ";
+
 	private static final String CHEST_LOOTED_MESSAGE = "You find some treasure in the chest!";
+
 	private static final Map<Integer, String> CHEST_LOOT_EVENTS = ImmutableMap.of(12127, "The Gauntlet");
+
 	private static final int GAUNTLET_REGION = 7512;
+
 	private static final int CORRUPTED_GAUNTLET_REGION = 7768;
+
 	private static final Pattern NUMBER_PATTERN = Pattern.compile("([0-9]+)");
+
 	private static final Pattern LEVEL_UP_PATTERN = Pattern.compile(".*Your ([a-zA-Z]+) (?:level is|are)? now (\\d+)\\.");
+
 	private static final Pattern BOSSKILL_MESSAGE_PATTERN = Pattern.compile("Your (.+) kill count is: <col=ff0000>(\\d+)</col>.");
+
 	private static final Pattern VALUABLE_DROP_PATTERN = Pattern.compile(".*Valuable drop: ([^<>]+?\\(((?:\\d+,?)+) coins\\))(?:</col>)?");
+
 	private static final Pattern UNTRADEABLE_DROP_PATTERN = Pattern.compile(".*Untradeable drop: ([^<>]+)(?:</col>)?");
+
 	private static final Pattern DUEL_END_PATTERN = Pattern.compile("You have now (won|lost) ([0-9]+) duels?\\.");
+
 	private static final Pattern QUEST_PATTERN_1 = Pattern.compile(".+?ve\\.*? (?<verb>been|rebuilt|.+?ed)? ?(?:the )?'?(?<quest>.+?)'?(?: [Qq]uest)?[!.]?$");
+
 	private static final Pattern QUEST_PATTERN_2 = Pattern.compile("'?(?<quest>.+?)'?(?: [Qq]uest)? (?<verb>[a-z]\\w+?ed)?(?: f.*?)?[!.]?$");
+
 	private static final ImmutableList<String> RFD_TAGS = ImmutableList.of("Another Cook", "freed", "defeated", "saved");
+
 	private static final ImmutableList<String> WORD_QUEST_IN_NAME_TAGS = ImmutableList.of("Another Cook", "Doric", "Heroes", "Legends", "Observatory", "Olaf", "Waterfall");
-	private static final ImmutableList<String> PET_MESSAGES = ImmutableList.of("You have a funny feeling like you're being followed",
-		"You feel something weird sneaking into your backpack",
-		"You have a funny feeling like you would have been followed");
+
+	private static final ImmutableList<String> PET_MESSAGES = ImmutableList.of("You have a funny feeling like you're being followed", "You feel something weird sneaking into your backpack", "You have a funny feeling like you would have been followed");
+
 	private static final Pattern BA_HIGH_GAMBLE_REWARD_PATTERN = Pattern.compile("(?<reward>.+)!<br>High level gamble count: <col=7f0000>(?<gambleCount>.+)</col>");
-	private static final Set<Integer> REPORT_BUTTON_TLIS = ImmutableSet.of(
-		WidgetID.FIXED_VIEWPORT_GROUP_ID,
-		WidgetID.RESIZABLE_VIEWPORT_OLD_SCHOOL_BOX_GROUP_ID,
-		WidgetID.RESIZABLE_VIEWPORT_BOTTOM_LINE_GROUP_ID);
+
+	private static final Set<Integer> REPORT_BUTTON_TLIS = ImmutableSet.of(WidgetID.FIXED_VIEWPORT_GROUP_ID, WidgetID.RESIZABLE_VIEWPORT_OLD_SCHOOL_BOX_GROUP_ID, WidgetID.RESIZABLE_VIEWPORT_BOTTOM_LINE_GROUP_ID);
+
 	private static final String SD_KINGDOM_REWARDS = "Kingdom Rewards";
+
 	private static final String SD_BOSS_KILLS = "Boss Kills";
+
 	private static final String SD_CLUE_SCROLL_REWARDS = "Clue Scroll Rewards";
+
 	private static final String SD_FRIENDS_CHAT_KICKS = "Friends Chat Kicks";
+
 	private static final String SD_PETS = "Pets";
+
 	private static final String SD_CHEST_LOOT = "Chest Loot";
+
 	private static final String SD_VALUABLE_DROPS = "Valuable Drops";
+
 	private static final String SD_UNTRADEABLE_DROPS = "Untradeable Drops";
+
 	private static final String SD_DUELS = "Duels";
+
 	private static final String SD_COLLECTION_LOG = "Collection Log";
+
 	private static final String SD_PVP_KILLS = "PvP Kills";
+
 	private static final String SD_DEATHS = "Deaths";
 
 	private String clueType;
+
 	private Integer clueNumber;
 
-	enum KillType
-	{
+	enum KillType {
+
 		BARROWS,
 		COX,
 		COX_CM,
 		TOB,
 		TOB_SM,
-		TOB_HM
-	}
+		TOB_HM;}
 
 	private KillType killType;
+
 	private Integer killCountNumber;
 
 	private boolean shouldTakeScreenshot;
@@ -292,19 +313,13 @@ public class ScreenshotPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onActorDeath(ActorDeath actorDeath)
-	{
+	public void onActorDeath(ActorDeath actorDeath) {
 		Actor actor = actorDeath.getActor();
-		if (actor instanceof Player)
-		{
-			Player player = (Player) actor;
-			if (player == client.getLocalPlayer() && config.screenshotPlayerDeath())
-			{
+		if (actor instanceof Player) {
+			Player player = ((Player) (actor));
+			if ((player == client.getLocalPlayer()) && config.screenshotPlayerDeath()) {
 				takeScreenshot("Death", SD_DEATHS);
-			}
-			else if (player != client.getLocalPlayer() && (player.isFriendsChatMember() || player.isFriend()) && config.screenshotFriendDeath() && player.getCanvasTilePoly() != null
-				|| player != client.getLocalPlayer() && player.isClanMember() && config.screenshotClanDeath() && player.getCanvasTilePoly() != null)
-			{
+			} else if ((((player != client.getLocalPlayer()) && (((player.isFriendsChatMember() || player.isFriend()) && config.screenshotFriendDeath()) || (player.isClanMember() && config.screenshotClanDeath()))) && (player.getCanvasTilePoly() != null)) || ((((player != client.getLocalPlayer()) && player.isClanMember()) && config.screenshotClanDeath()) && (player.getCanvasTilePoly() != null))) {
 				takeScreenshot("Death " + player.getName(), SD_DEATHS);
 			}
 		}
@@ -717,7 +732,6 @@ public class ScreenshotPlugin extends Plugin
 
 		return "High Gamble(count not found)";
 	}
-
 
 	/**
 	 * Saves a screenshot of the client window to the screenshot folder as a PNG,
