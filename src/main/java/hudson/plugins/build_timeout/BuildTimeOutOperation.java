@@ -21,26 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package hudson.plugins.build_timeout;
 
-import jenkins.model.Jenkins;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.ExtensionPoint;
 import hudson.model.AbstractBuild;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Describable;
+import jenkins.model.Jenkins;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Defines an operation performed when timeout occurs.
  * They are called "Timeout Actions", but the class is BuildTimeOutOperation
  * not to be confused with {@link Action}
  */
-public abstract class BuildTimeOutOperation
-        implements ExtensionPoint, Describable<BuildTimeOutOperation> {
-    
+public abstract class BuildTimeOutOperation implements ExtensionPoint , Describable<BuildTimeOutOperation> {
     /**
      * Perform operation.
      * 
@@ -49,8 +46,10 @@ public abstract class BuildTimeOutOperation
      * @param effectiveTimeout  timeout (milliseconds)
      * @return false not to run subsequent operations. It also mark the build as failure.
      */
-    public abstract boolean perform(@NonNull AbstractBuild<?,?> build, @NonNull BuildListener listener, long effectiveTimeout);
-    
+    public abstract boolean perform(@NonNull
+    AbstractBuild<?, ?> build, @NonNull
+    BuildListener listener, long effectiveTimeout);
+
     /**
      * @see hudson.model.Describable#getDescriptor()
      */
