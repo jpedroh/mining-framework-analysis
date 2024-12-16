@@ -16,6 +16,11 @@
  */
 package org.onebusaway.gtfs_transformer.factory;
 
+import java.io.*;
+import java.net.URL;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,16 +54,10 @@ import org.onebusaway.gtfs_transformer.updates.TrimTripTransformStrategy.TrimOpe
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.URL;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class TransformFactory {
-
   private static Logger _log = LoggerFactory.getLogger(TransformFactory.class);
-  
+
   private static final String ARG_OBJ = "obj";
 
   private static final String ARG_UPDATE = "update";
@@ -81,16 +80,14 @@ public class TransformFactory {
 
   private static final String ARG_COLLECTION = "collection";
 
-  private static final Set<String> _excludeForObjectSpec = new HashSet<String>(
-      Arrays.asList(ARG_FILE, ARG_CLASS));
+  private static final Set<String> _excludeForObjectSpec = new HashSet<String>(Arrays.asList(ARG_FILE, ARG_CLASS));
 
-  private static final Set<String> _excludeForMatchSpec = new HashSet<String>(
-      Arrays.asList(ARG_FILE, ARG_CLASS, ARG_COLLECTION));
+  private static final Set<String> _excludeForMatchSpec = new HashSet<String>(Arrays.asList(ARG_FILE, ARG_CLASS, ARG_COLLECTION));
 
   private static Pattern _anyMatcher = Pattern.compile("^any\\((.*)\\)$");
-  
+
   private static Pattern _pathMatcher = Pattern.compile("^path\\((.*)\\)$");
-  
+
   private static Pattern _replaceMatcher = Pattern.compile("^s/(.*)/(.*)/$");
 
   private final GtfsTransformer _transformer;
@@ -105,8 +102,7 @@ public class TransformFactory {
     _transformer = transformer;
     addEntityPackage("org.onebusaway.gtfs.model");
     _schemaCache.addEntitySchemasFromGtfsReader(_transformer.getReader());
-    _propertyMethodResolver = new PropertyMethodResolverImpl(
-        _transformer.getDao(), _schemaCache);
+    _propertyMethodResolver = new PropertyMethodResolverImpl(_transformer.getDao(), _schemaCache);
   }
 
   public void addEntityPackage(String entityPackage) {
@@ -131,32 +127,22 @@ public class TransformFactory {
     addModificationsFromReader(reader);
   }
 
-  public void addModificationsFromReader(BufferedReader reader)
-      throws IOException, TransformSpecificationException {
-
+  public void addModificationsFromReader(BufferedReader reader) throws IOException, TransformSpecificationException {
     String line = null;
-
     while ((line = reader.readLine()) != null) {
-
       try {
-
         line = line.trim();
-
-        if (line.length() == 0 || line.startsWith("#") || line.equals("{{{")
-            || line.equals("}}}"))
+        if ((((line.length() == 0) || line.startsWith("#")) || line.equals("{{{")) || line.equals("}}}")) {
           continue;
-
+        }
         JSONObject json = new JSONObject(line);
-
         if (!json.has(ARG_OP)) {
           throw new TransformSpecificationMissingArgumentException(line, ARG_OP);
         }
         String opType = json.getString(ARG_OP);
-
         if (opType.equals("add")) {
           handleAddOperation(line, json);
-        } else if (opType.equals(ARG_UPDATE) || opType.equals("change")
-            || opType.equals("modify")) {
+        } else if ((opType.equals(ARG_UPDATE) || opType.equals("change")) || opType.equals("modify")) {
           handleUpdateOperation(line, json);
         } else if (opType.equals("remove") || opType.equals("delete")) {
           handleRemoveOperation(line, json);
@@ -170,7 +156,7 @@ public class TransformFactory {
           handleStopTimesOperation(line, json);
         } else if (opType.equals("calendar_extension")) {
           handleTransformOperation(line, json, new CalendarExtensionStrategy());
-        }else if (opType.equals("thirty_day_calendar_extension")) {
+        } else if (opType.equals("thirty_day_calendar_extension")) {
           handleTransformOperation(line, json, new ThirtyDayCalendarExtensionStrategy());
         } else if (opType.equals("calendar_simplification")) {
           handleTransformOperation(line, json, new CalendarSimplicationStrategy());
@@ -178,176 +164,120 @@ public class TransformFactory {
           handleTransformOperation(line, json, new DeduplicateServiceIdsStrategy());
         } else if (opType.equals("shift_negative_stop_times")) {
           handleTransformOperation(line, json, new ShiftNegativeStopTimesUpdateStrategy());
-        } else if (opType.equals("shape_direction")) { 
+        } else if (opType.equals("shape_direction")) {
           handleTransformOperation(line, json, new ShapeDirectionTransformStrategy());
         } else if (opType.equals("remove_non_revenue_stops")) {
           handleTransformOperation(line, json, new RemoveNonRevenueStopsStrategy());
-        }
-        else if (opType.equals("remove_non_revenue_stops_excluding_terminals")) {
+        } else if (opType.equals("remove_non_revenue_stops_excluding_terminals")) {
           handleTransformOperation(line, json, new RemoveNonRevenueStopsExcludingTerminalsStrategy());
-        }
-        else if (opType.equals("update_trip_headsign_by_destination")) {
+        } else if (opType.equals("update_trip_headsign_by_destination")) {
           handleTransformOperation(line, json, new UpdateTripHeadsignByDestinationStrategy());
-        }
-        else if (opType.equals("update_trip_headsign_exclude_nonreference")) {
+        } else if (opType.equals("update_trip_headsign_exclude_nonreference")) {
           handleTransformOperation(line, json, new UpdateTripHeadsignExcludeNonreference());
-        }
-        else if (opType.equals("update_trip_headsign_by_reference")) {
+        } else if (opType.equals("update_trip_headsign_by_reference")) {
           handleTransformOperation(line, json, new UpdateTripHeadsignByReference());
-        }
-        else if (opType.equals("update_trip_headsign_if_null")) {
+        } else if (opType.equals("update_trip_headsign_if_null")) {
           handleTransformOperation(line, json, new UpdateTripHeadsignIfNull());
-        }
-        else if (opType.equals("update_trip_headsign_railroad_convention")) {
-              handleTransformOperation(line, json, new UpdateTripHeadsignRailRoadConvention());
-        }
-        else if (opType.equals("merge_stop_names_from_reference")) {
+        } else if (opType.equals("update_trip_headsign_railroad_convention")) {
+          handleTransformOperation(line, json, new UpdateTripHeadsignRailRoadConvention());
+        } else if (opType.equals("merge_stop_names_from_reference")) {
           handleTransformOperation(line, json, new MergeStopNamesFromReferenceStrategy());
-        }
-        else if (opType.equals("merge_stop_ids_from_reference")) {
+        } else if (opType.equals("merge_stop_ids_from_reference")) {
           handleTransformOperation(line, json, new MergeStopIdsFromReferenceStrategy());
-        }
-        else if (opType.equals("update_stop_ids_from_control")) {
+        } else if (opType.equals("update_stop_ids_from_control")) {
           handleTransformOperation(line, json, new UpdateStopIdFromControlStrategy());
-        }
-        else if (opType.equals("update_wrong_way_concurrencies")) {
+        } else if (opType.equals("update_wrong_way_concurrencies")) {
           handleTransformOperation(line, json, new UpdateWrongWayConcurrencies());
-        }
-        else if (opType.equals("update_stop_ids_from_file")) {
+        } else if (opType.equals("update_stop_ids_from_file")) {
           handleTransformOperation(line, json, new UpdateStopIdsFromFile());
-        }
-        else if (opType.equals("update_stop_ids_from_reference")) {
-            handleTransformOperation(line, json, new UpdateStopIdFromReferenceStrategy());
-        }
-        else if (opType.equals("merge_route_from_reference_by_longname")) {
+        } else if (opType.equals("update_stop_ids_from_reference")) {
+          handleTransformOperation(line, json, new UpdateStopIdFromReferenceStrategy());
+        } else if (opType.equals("merge_route_from_reference_by_longname")) {
           handleTransformOperation(line, json, new MergeRouteFromReferenceStrategyByLongName());
-        }
-        else if (opType.equals("merge_route_from_reference_by_id")) {
+        } else if (opType.equals("merge_route_from_reference_by_id")) {
           handleTransformOperation(line, json, new MergeRouteFromReferenceStrategyById());
-        }
-        else if (opType.equals("merge_route_from_reference")) {
+        } else if (opType.equals("merge_route_from_reference")) {
           handleTransformOperation(line, json, new MergeRouteFromReferenceStrategy());
-        }
-        else if (opType.equals("merge_route_five")) {
+        } else if (opType.equals("merge_route_five")) {
           handleTransformOperation(line, json, new MergeRouteFive());
-        }
-        else if (opType.equals("update_calendar_dates_for_dups")) {
+        } else if (opType.equals("update_calendar_dates_for_dups")) {
           handleTransformOperation(line, json, new UpdateCalendarDatesForDuplicateTrips());
-        }
-        else if (opType.equals("update_trip_id_by_id")) {
+        } else if (opType.equals("update_trip_id_by_id")) {
           handleTransformOperation(line, json, new UpdateTripIdById());
-        }
-        else if (opType.equals("update_stop_id_by_id")) {
+        } else if (opType.equals("update_stop_id_by_id")) {
           handleTransformOperation(line, json, new UpdateStopIdById());
-        }
-        else if (opType.equals("update_route_name")) {
+        } else if (opType.equals("update_route_name")) {
           handleTransformOperation(line, json, new UpdateRouteNames());
-        }
-        else if (opType.equals("validate_gtfs")) {
+        } else if (opType.equals("validate_gtfs")) {
           handleTransformOperation(line, json, new ValidateGTFS());
-        }
-        else if (opType.equals("count_and_test")) {
+        } else if (opType.equals("count_and_test")) {
           handleTransformOperation(line, json, new CountAndTest());
-        }
-        else if (opType.equals("count_and_test_bus")) {
+        } else if (opType.equals("count_and_test_bus")) {
           handleTransformOperation(line, json, new CountAndTestBus());
-        }
-        else if (opType.equals("count_and_test_subway")) {
+        } else if (opType.equals("count_and_test_subway")) {
           handleTransformOperation(line, json, new CountAndTestSubway());
-        }
-        else if (opType.equals("verify_route_service")) {
+        } else if (opType.equals("verify_route_service")) {
           handleTransformOperation(line, json, new VerifyRouteService());
-        }
-        else if (opType.equals("verify_bus_service")) {
+        } else if (opType.equals("verify_bus_service")) {
           handleTransformOperation(line, json, new VerifyBusService());
-        }
-        else if (opType.equals("update_stoptimes_for_time")) {
+        } else if (opType.equals("update_stoptimes_for_time")) {
           handleTransformOperation(line, json, new UpdateStopTimesForTime());
-        }
-        else if (opType.equals("update_trips_for_sdon")) {
+        } else if (opType.equals("update_trips_for_sdon")) {
           handleTransformOperation(line, json, new UpdateTripsForSdon());
-        }
-        else if (opType.equals("last_stop_to_headsign")){
+        } else if (opType.equals("last_stop_to_headsign")) {
           handleTransformOperation(line, json, new LastStopToHeadsignStrategy());
-        }
-        else if (opType.equals("remove_current_service")){
+        } else if (opType.equals("remove_current_service")) {
           handleTransformOperation(line, json, new RemoveCurrentService());
-        }
-        else if (opType.equals("check_for_future_service")){
+        } else if (opType.equals("check_for_future_service")) {
           handleTransformOperation(line, json, new CheckForFutureService());
-        }
-        else if (opType.equals("check_for_plausible_stop_times")){
-          handleTransformOperation(line,json, new CheckForPlausibleStopTimes());
-        }
-        else if (opType.equals("check_for_stop_times_without_stops")){
-          handleTransformOperation(line,json, new CheckForPlausibleStopTimes());
-        }
-        else if (opType.equals("check_for_lengthy_route_names")){
-          handleTransformOperation(line,json, new CheckForLengthyRouteNames());
-        }
-        else if (opType.equals("ensure_direction_id_exists")){
-          handleTransformOperation(line,json, new EnsureDirectionIdExists());
-        }
-        else if (opType.equals("ensure_route_long_name_exists")){
-          handleTransformOperation(line,json, new EnsureRouteLongNameExists());
-        }
-        else if (opType.equals("anomaly_check_future_trip_counts")){
-          handleTransformOperation(line,json, new AnomalyCheckFutureTripCounts());
-        }
-        else if (opType.equals("verify_future_route_service")){
+        } else if (opType.equals("check_for_plausible_stop_times")) {
+          handleTransformOperation(line, json, new CheckForPlausibleStopTimes());
+        } else if (opType.equals("check_for_stop_times_without_stops")) {
+          handleTransformOperation(line, json, new CheckForPlausibleStopTimes());
+        } else if (opType.equals("check_for_lengthy_route_names")) {
+          handleTransformOperation(line, json, new CheckForLengthyRouteNames());
+        } else if (opType.equals("ensure_direction_id_exists")) {
+          handleTransformOperation(line, json, new EnsureDirectionIdExists());
+        } else if (opType.equals("ensure_route_long_name_exists")) {
+          handleTransformOperation(line, json, new EnsureRouteLongNameExists());
+        } else if (opType.equals("anomaly_check_future_trip_counts")) {
+          handleTransformOperation(line, json, new AnomalyCheckFutureTripCounts());
+        } else if (opType.equals("verify_future_route_service")) {
           handleTransformOperation(line, json, new VerifyFutureRouteService());
-        }
-        else if (opType.equals("verify_reference_service")){
+        } else if (opType.equals("verify_reference_service")) {
           handleTransformOperation(line, json, new VerifyReferenceService());
-        }
-        else if (opType.equals("sanitize_for_api_access")){
+        } else if (opType.equals("sanitize_for_api_access")) {
           handleTransformOperation(line, json, new SanitizeForApiAccess());
-        }
-        else if (opType.equals("add_omny_subway_data")) {
+        } else if (opType.equals("add_omny_subway_data")) {
           handleTransformOperation(line, json, new AddOmnySubwayData());
-        }
-        else if (opType.equals("add_omny_lirr_data")) {
+        } else if (opType.equals("add_omny_lirr_data")) {
           handleTransformOperation(line, json, new AddOmnyLIRRData());
-        }
-        else if (opType.equals("add_omny_bus_data")) {
+        } else if (opType.equals("add_omny_bus_data")) {
           handleTransformOperation(line, json, new AddOmnyBusData());
-        }
-        else if (opType.equals("verify_route_ids")) {
+        } else if (opType.equals("verify_route_ids")) {
           handleTransformOperation(line, json, new VerifyRouteIds());
-        }
-        else if (opType.equals("KCMSuite")){
+        } else if (opType.equals("KCMSuite")) {
           String baseUrl = "https://raw.github.com/wiki/camsys/onebusaway-application-modules";
-
           handleTransformOperation(line, json, new RemoveMergedTripsStrategy());
           handleTransformOperation(line, json, new RemoveRepeatedStopTimesStrategy());
           handleTransformOperation(line, json, new RemoveEmptyBlockTripsStrategy());
           handleTransformOperation(line, json, new EnsureStopTimesIncreaseUpdateStrategy());
-
-          configureStopNameUpdates(_transformer, baseUrl
-                  + "/KingCountyMetroStopNameModifications.md");
-
-
+          configureStopNameUpdates(_transformer, baseUrl + "/KingCountyMetroStopNameModifications.md");
           try {
-            GtfsTransformerLibrary.configureTransformation(_transformer, baseUrl
-                    + "/KingCountyMetroModifications.md");
+            GtfsTransformerLibrary.configureTransformation(_transformer, baseUrl + "/KingCountyMetroModifications.md");
           } catch (TransformSpecificationException e) {
             throw new RuntimeException(e);
           }
-
           _transformer.addTransform(new LocalVsExpressUpdateStrategy());
-        }
-        else if (opType.equals("transform")) {
+        } else if (opType.equals("transform")) {
           handleTransformOperation(line, json);
         } else {
-          throw new TransformSpecificationException("unknown transform op \""
-              + opType + "\"", line);
+          throw new TransformSpecificationException(("unknown transform op \"" + opType) + "\"", line);
         }
-
       } catch (JSONException ex) {
-        throw new TransformSpecificationException("error parsing json", ex,
-            line);
+        throw new TransformSpecificationException("error parsing json", ex, line);
       }
-    }
+    } 
   }
 
   /****
@@ -821,15 +751,12 @@ public class TransformFactory {
     }
   }
 
-  private class EntitySourceImpl implements
-      AddEntitiesTransformStrategy.EntityFactory {
-
+  private class EntitySourceImpl implements AddEntitiesTransformStrategy.EntityFactory {
     private final Class<?> _entityType;
 
     private final Map<String, ValueSetter> _propertySetters;
 
-    public EntitySourceImpl(Class<?> entityType,
-        Map<String, ValueSetter> propertySetters) {
+    public EntitySourceImpl(Class<?> entityType, Map<String, ValueSetter> propertySetters) {
       _entityType = entityType;
       _propertySetters = propertySetters;
     }
@@ -846,17 +773,6 @@ public class TransformFactory {
       return instance;
     }
   }
-
-
-
-
-
-
-
-
-
-
-
 
 //  private void configureCalendarUpdates(GtfsTransformer transformer, String path) {
 //
