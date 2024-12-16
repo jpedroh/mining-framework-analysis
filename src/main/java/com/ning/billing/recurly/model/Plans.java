@@ -13,15 +13,17 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 package com.ning.billing.recurly.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-@XmlRootElement(name = "plans")
-public class Plans extends RecurlyObjects<Plan> {
 
+@XmlRootElement(name = "plans")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Plans extends RecurlyObjects<Plan> {
     @XmlTransient
     public static final String PLANS_RESOURCE = "/plans";
 }

@@ -13,30 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 package com.ning.billing.recurly;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.ExecutionException;
-import java.util.List;
-
-import javax.annotation.Nullable;
-import javax.xml.bind.DatatypeConverter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.ning.billing.recurly.model.Accounts;
-import com.ning.billing.recurly.model.Plan;
-import com.ning.billing.recurly.model.Plans;
-import com.ning.billing.recurly.model.Account;
-import com.ning.billing.recurly.model.BillingInfo;
-import com.ning.billing.recurly.model.RecurlyObject;
-import com.ning.http.client.AsyncCompletionHandler;
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.AsyncHttpClientConfig;
-import com.ning.http.client.Response;
 
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -44,15 +21,35 @@ import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
+import com.ning.billing.recurly.model.Account;
+import com.ning.billing.recurly.model.Accounts;
+import com.ning.billing.recurly.model.BillingInfo;
+import com.ning.billing.recurly.model.Plan;
+import com.ning.billing.recurly.model.Plans;
+import com.ning.billing.recurly.model.RecurlyObject;
+import com.ning.http.client.AsyncCompletionHandler;
+import com.ning.http.client.AsyncHttpClient;
+import com.ning.http.client.AsyncHttpClientConfig;
+import com.ning.http.client.Response;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import javax.annotation.Nullable;
+import javax.xml.bind.DatatypeConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class RecurlyClient {
-
     private static final Logger log = LoggerFactory.getLogger(RecurlyClient.class);
 
     private final XmlMapper xmlMapper = new XmlMapper();
 
     private final String key;
+
     private final String baseUrl;
+
     private AsyncHttpClient client;
 
     public RecurlyClient(final String apiKey) {
@@ -62,10 +59,9 @@ public class RecurlyClient {
     public RecurlyClient(final String apiKey, final String host, final int port, final String version) {
         this.key = DatatypeConverter.printBase64Binary(apiKey.getBytes());
         this.baseUrl = String.format("https://%s:%d/%s", host, port, version);
-
         final AnnotationIntrospector primary = new JacksonAnnotationIntrospector();
         final AnnotationIntrospector secondary = new JaxbAnnotationIntrospector();
-        final AnnotationIntrospector pair = new AnnotationIntrospector.Pair(primary, secondary);
+        final AnnotationIntrospector pair = new Pair(primary, secondary);
         xmlMapper.setAnnotationIntrospector(pair);
         xmlMapper.registerModule(new JodaModule());
         xmlMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -160,8 +156,8 @@ public class RecurlyClient {
      * Recurly recommends requiring CVV from your customers when collecting new or updated billing information.
      *
      * @param billingInfo billing info object to create or update
-     * @return the newly created or update billing info object on success, null otherwise 
-    */
+     * @return the newly created or update billing info object on success, null otherwise
+     */
     public BillingInfo createOrUpdateBillingInfo(final BillingInfo billingInfo) {
         final String accountCode = billingInfo.getAccount().getAccountCode();
         // Unset it to avoid confusing Recurly
@@ -227,7 +223,6 @@ public class RecurlyClient {
         return doGET(Plans.PLANS_RESOURCE, Plans.class);
     }
 
-
     ///////////////////////////////////////////////////////////////////////////
 
 
@@ -278,34 +273,30 @@ public class RecurlyClient {
         }
     }
 
-    private <T> T callRecurly(final AsyncHttpClient.BoundRequestBuilder builder, @Nullable final Class<T> clazz) throws IOException, ExecutionException, InterruptedException {
-        return builder.addHeader("Authorization", "Basic " + key)
-                      .addHeader("Accept", "application/xml")
-                      .addHeader("Content-Type", "application/xml; charset=utf-8")
-                      .execute(new AsyncCompletionHandler<T>() {
-                          @Override
-                          public T onCompleted(final Response response) throws Exception {
-                              if (response.getStatusCode() >= 300) {
-                                  log.warn("Recurly error: {}", response.getResponseBody());
-                                  return null;
-                              }
-
-                              if (clazz == null) {
-                                  return null;
-                              }
-
-                              final InputStream in = response.getResponseBodyAsStream();
-                              try {
-                                  String payload = convertStreamToString(in);
-                                  System.out.println("**** MESSAGE ****");
-                                  System.out.println(payload);
-                                  T obj = xmlMapper.readValue(payload, clazz);
-                                  return obj;
-                              } finally {
-                                  closeStream(in);
-                              }
-                          }
-                      }).get();
+    private <T> T callRecurly(final AsyncHttpClient.BoundRequestBuilder builder, @Nullable
+    final Class<T> clazz) throws IOException, ExecutionException, InterruptedException {
+        return builder.addHeader("Authorization", "Basic " + key).addHeader("Accept", "application/xml").addHeader("Content-Type", "application/xml; charset=utf-8").execute(new AsyncCompletionHandler<T>() {
+            @Override
+            public T onCompleted(final Response response) throws Exception {
+                if (response.getStatusCode() >= 300) {
+                    log.warn("Recurly error: {}", response.getResponseBody());
+                    return null;
+                }
+                if (clazz == null) {
+                    return null;
+                }
+                final InputStream in = response.getResponseBodyAsStream();
+                try {
+                    String payload = convertStreamToString(in);
+                    System.out.println("**** MESSAGE ****");
+                    System.out.println(payload);
+                    T obj = xmlMapper.readValue(payload, clazz);
+                    return obj;
+                } finally {
+                    closeStream(in);
+                }
+            }
+        }).get();
     }
 
     private String convertStreamToString(java.io.InputStream is) {
