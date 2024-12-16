@@ -1,39 +1,43 @@
 package com.huaban.analysis.jieba;
 
 import java.io.BufferedReader;
-import java.io.Reader;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Set;
 
 
 public class WordDictionary {
     private static WordDictionary singleton;
+
     private static final String MAIN_DICT = "/dict.txt";
+
     private static String USER_DICT_SUFFIX = ".dict";
 
     public final Map<String, Double> freqs = new HashMap<String, Double>();
-    public final Set<String> loadedPath = new HashSet<String>();
-    private Double minFreq = Double.MAX_VALUE;
-    private Double total = 0.0;
-    private DictSegment _dict;
 
+    public final Set<String> loadedPath = new HashSet<String>();
+
+    private Double minFreq = Double.MAX_VALUE;
+
+    private Double total = 0.0;
+
+    private DictSegment _dict;
 
     private WordDictionary() {
         this.loadDict();
     }
-
 
     public static WordDictionary getInstance() {
         if (singleton == null) {
@@ -46,7 +50,6 @@ public class WordDictionary {
         }
         return singleton;
     }
-
 
     /**
      * for ES to initialize the user dictionary.
@@ -75,8 +78,7 @@ public class WordDictionary {
             }
         }
     }
-    
-    
+
     /**
      * let user just use their own dict instead of the default dict
      */
@@ -84,7 +86,6 @@ public class WordDictionary {
     	_dict = new DictSegment((char) 0);
     	freqs.clear();
     }
-
 
     public void loadDict() {
         _dict = new DictSegment((char) 0);
@@ -128,7 +129,6 @@ public class WordDictionary {
         }
     }
 
-
     private String addWord(String word) {
         if (null != word && !"".equals(word.trim())) {
             String key = word.trim().toLowerCase(Locale.getDefault());
@@ -139,82 +139,72 @@ public class WordDictionary {
             return null;
     }
 
-
-
     public void loadUserDict(Path userDict, Charset charset) {
         try {
             BufferedReader br = Files.newBufferedReader(userDict, charset);
             loadUserDict(br);
             System.out.println(String.format(Locale.getDefault(), "user dict %s load finished", userDict.toString()));
-        } catch(IOException e) {
+        } catch (IOException e) {
             System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", userDict.toString()));
         }
     }
-
 
     public void loadUserDict(Path userDict) {
         try {
             BufferedReader br = Files.newBufferedReader(userDict, StandardCharsets.UTF_8);
             loadUserDict(br);
             System.out.println(String.format(Locale.getDefault(), "user dict %s load finished", userDict.toString()));
-        } catch(IOException e) {
-             System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", userDict.toString()));
+        } catch (IOException e) {
+            System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", userDict.toString()));
         }
     }
-
 
     public void loadUserDict(Reader reader) throws IOException {
         BufferedReader br = null;
         try {
-            if(reader instanceof BufferedReader) {
-                br = (BufferedReader)reader;
+            if (reader instanceof BufferedReader) {
+                br = ((BufferedReader) (reader));
             } else {
                 br = new BufferedReader(reader);
-            }       
+            }
             long s = System.currentTimeMillis();
             int count = 0;
             while (br.ready()) {
                 String line = br.readLine();
                 String[] tokens = line.split("[\t ]+");
-
                 if (tokens.length < 1) {
                     // Ignore empty line
                     continue;
                 }
-
                 String word = tokens[0];
-
-                double freq = 3.0d;
-                if (tokens.length == 2)
+                double freq = 3.0;
+                if (tokens.length == 2) {
                     freq = Double.valueOf(tokens[1]);
-                word = addWord(word); 
+                }
+                word = addWord(word);
                 freqs.put(word, Math.log(freq / total));
                 count++;
-            }
-            System.out.println(String.format(Locale.getDefault(), "load finished, tot words:%d, time elapsed:%dms",  count, System.currentTimeMillis() - s));
+            } 
+            System.out.println(String.format(Locale.getDefault(), "load finished, tot words:%d, time elapsed:%dms", count, System.currentTimeMillis() - s));
         } catch (IOException e) {
-            throw e;        
+            throw e;
         } finally {
             try {
-                if(reader != null) {
+                if (reader != null) {
                     reader.close();
                 }
-            } catch(IOException e) {
-
+            } catch (IOException e) {
             }
         }
     }
-
 
     public DictSegment getTrie() {
         return this._dict;
     }
 
-
     public boolean containsWord(String word) {
         return freqs.containsKey(word);
     }
-
 
     public Double getFreq(String key) {
         if (containsWord(key))
