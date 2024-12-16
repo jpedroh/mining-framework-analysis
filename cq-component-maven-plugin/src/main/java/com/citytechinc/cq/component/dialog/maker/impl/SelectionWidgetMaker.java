@@ -1,19 +1,5 @@
 package com.citytechinc.cq.component.dialog.maker.impl;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import org.codehaus.plexus.util.StringUtils;
-
-import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtField;
-import javassist.NotFoundException;
-
 import com.citytechinc.cq.component.annotations.DialogField;
 import com.citytechinc.cq.component.annotations.widgets.Selection;
 import com.citytechinc.cq.component.dialog.DialogElement;
@@ -24,6 +10,18 @@ import com.citytechinc.cq.component.dialog.impl.WidgetCollection;
 import com.citytechinc.cq.component.dialog.maker.AbstractWidgetMaker;
 import com.citytechinc.cq.component.dialog.maker.WidgetMaker;
 import com.citytechinc.cq.component.maven.util.WidgetConfigHolder;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import javassist.CannotCompileException;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtField;
+import javassist.NotFoundException;
+import org.codehaus.plexus.util.StringUtils;
+
 
 /**
  * Builds a SelectionWidget from an annotated field. This maker will operate with or without a stacked
@@ -33,18 +31,12 @@ import com.citytechinc.cq.component.maven.util.WidgetConfigHolder;
  *
  */
 public class SelectionWidgetMaker extends AbstractWidgetMaker {
-
 	/* (non-Javadoc)
 	 * @see com.citytechinc.cq.component.dialog.maker.AbstractWidgetMaker#make(java.lang.String, java.lang.reflect.Field, javassist.CtField, java.lang.Class, javassist.CtClass, java.util.Map, java.util.Map, java.lang.ClassLoader, javassist.ClassPool, boolean)
 	 */
-	public DialogElement make(String xtype, Field widgetField, CtField ctWidgetField, Class<?> containingClass,
-		CtClass ctContainingClass, Map<Class<?>, WidgetConfigHolder> xtypeMap, Map<String, WidgetMaker> xTypeToWidgetMakerMap,
-		ClassLoader classLoader, ClassPool classPool, boolean useDotSlashInName) throws ClassNotFoundException,
-		InvalidComponentFieldException, CannotCompileException, NotFoundException {
-
-		DialogField dialogFieldAnnotation = (DialogField) ctWidgetField.getAnnotation(DialogField.class);
-		Selection selectionAnnotation = (Selection) ctWidgetField.getAnnotation(Selection.class);
-
+	public DialogElement make(String xtype, Field widgetField, CtField ctWidgetField, Class<?> containingClass, CtClass ctContainingClass, Map<Class<?>, WidgetConfigHolder> xtypeMap, Map<String, WidgetMaker> xTypeToWidgetMakerMap, ClassLoader classLoader, ClassPool classPool, boolean useDotSlashInName) throws ClassNotFoundException, InvalidComponentFieldException, CannotCompileException, NotFoundException {
+		DialogField dialogFieldAnnotation = ((DialogField) (ctWidgetField.getAnnotation(DialogField.class)));
+		Selection selectionAnnotation = ((Selection) (ctWidgetField.getAnnotation(Selection.class)));
 		String name = getNameForField(dialogFieldAnnotation, widgetField, useDotSlashInName);
 		String fieldName = getFieldNameForField(dialogFieldAnnotation, widgetField);
 		String fieldLabel = getFieldLabelForField(dialogFieldAnnotation, widgetField);
@@ -53,23 +45,16 @@ public class SelectionWidgetMaker extends AbstractWidgetMaker {
 		Map<String, String> additionalProperties = getAdditionalPropertiesForField(dialogFieldAnnotation);
 		String defaultValue = getDefaultValueForField(dialogFieldAnnotation);
 		boolean hideLabel = dialogFieldAnnotation.hideLabel();
-
-		List<DialogElement> options = buildSelectionOptionsForField(ctWidgetField, selectionAnnotation, classLoader,
-			classPool);
+		List<DialogElement> options = buildSelectionOptionsForField(ctWidgetField, selectionAnnotation, classLoader, classPool);
 		String selectionType = getSelectionTypeForField(ctWidgetField, selectionAnnotation);
 		String optionsUrl = getOptionsUrlForField(ctWidgetField, selectionAnnotation);
 		String optionsProvider = getOptionsProviderForField(ctWidgetField, selectionAnnotation);
 		String sortDir = getSortDirForField(ctWidgetField, selectionAnnotation);
-
 		List<DialogElement> optionsList = null;
-
 		if (StringUtils.isEmpty(optionsUrl)) {
-			optionsList = Arrays.asList(new DialogElement[] { new WidgetCollection(options, "options") });
+			optionsList = Arrays.asList(new DialogElement[]{ new WidgetCollection(options, "options") });
 		}
-
-		return new SelectionWidget(selectionType, name, fieldLabel, fieldName, fieldDescription, isRequired, hideLabel,
-			defaultValue, additionalProperties, optionsList, optionsUrl, optionsProvider, sortDir);
-
+		return new SelectionWidget(selectionType, name, fieldLabel, fieldName, fieldDescription, isRequired, hideLabel, defaultValue, additionalProperties, optionsList, optionsUrl, optionsProvider, sortDir);
 	}
 
 	private static final String getOptionsUrlForField(CtField widgetField, Selection fieldAnnotation) {
@@ -174,5 +159,4 @@ public class SelectionWidgetMaker extends AbstractWidgetMaker {
 		return new Option(text, value, qtip);
 
 	}
-
 }

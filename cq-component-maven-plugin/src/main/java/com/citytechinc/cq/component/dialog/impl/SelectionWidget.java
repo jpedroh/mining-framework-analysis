@@ -1,30 +1,30 @@
 package com.citytechinc.cq.component.dialog.impl;
 
-import java.util.List;
-import java.util.Map;
-
 import com.citytechinc.cq.component.annotations.config.Widget;
 import com.citytechinc.cq.component.annotations.widgets.Selection;
 import com.citytechinc.cq.component.dialog.AbstractWidget;
 import com.citytechinc.cq.component.dialog.DialogElement;
 import com.citytechinc.cq.component.dialog.maker.impl.SelectionWidgetMaker;
+import java.util.List;
+import java.util.Map;
 
-@Widget(annotationClass =Selection.class, makerClass =SelectionWidgetMaker.class, xtype = SelectionWidget.XTYPE)
+
+@Widget(annotationClass = Selection.class, makerClass = SelectionWidgetMaker.class, xtypes = SelectionWidget.XTYPE)
 public class SelectionWidget extends AbstractWidget {
-
 	public static final String XTYPE = "selection";
+
 	private static final String PRIMARY_TYPE = "cq:Widget";
+
 	private final String type;
+
 	private final String options;
+
 	private final String optionsProvider;
+
 	private final String sortDir;
 
-	public SelectionWidget(String type, String name, String fieldLabel, String fieldName, String fieldDescription,
-		Boolean required, boolean hideLabel, String defaultValue, Map<String, String> additionalProperties,
-		List<DialogElement> options, String optionsUrl, String optionsProvider, String sortDir) {
-		super(XTYPE, fieldLabel, fieldDescription, !required, hideLabel, defaultValue, name, PRIMARY_TYPE, null,
-			fieldName, additionalProperties, options);
-
+	public SelectionWidget(String type, String name, String fieldLabel, String fieldName, String fieldDescription, Boolean required, boolean hideLabel, String defaultValue, Map<String, String> additionalProperties, List<DialogElement> options, String optionsUrl, String optionsProvider, String sortDir) {
+		super(XTYPE, fieldLabel, fieldDescription, !required, hideLabel, defaultValue, name, PRIMARY_TYPE, null, fieldName, additionalProperties, options);
 		this.type = type;
 		this.options = optionsUrl;
 		this.optionsProvider = optionsProvider;
