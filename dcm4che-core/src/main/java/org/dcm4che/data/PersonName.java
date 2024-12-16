@@ -35,40 +35,46 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-
 package org.dcm4che.data;
 
 import java.util.StringTokenizer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * @author Gunter Zeilinger <gunterze@gmail.com>
  */
 public class PersonName {
-
     private static final Logger LOG = LoggerFactory.getLogger(PersonName.class);
 
     public static enum Component {
-        FamilyName, GivenName, MiddleName, NamePrefix, NameSuffix
-    };
+
+        FamilyName,
+        GivenName,
+        MiddleName,
+        NamePrefix,
+        NameSuffix;}
 
     public static enum Group {
-        Alphabetic, Ideographic, Phonetic
-    };
+
+        Alphabetic,
+        Ideographic,
+        Phonetic;}
 
     private final String[] fields = new String[15];
-    
-    public PersonName() {}
+
+    public PersonName() {
+    }
 
     public PersonName(String s) {
         this(s, false);
     }
 
     public PersonName(String s, boolean lenient) {
-        if (s != null)
+        if (s != null) {
             parse(s, lenient);
+        }
     }
 
     private void parse(String s, boolean lenient) {
@@ -144,7 +150,6 @@ public class PersonName {
         return new String(ch); 
     }
 
-
     public String getNormalizedString(Group g, String defVal) {
         int totLen = 0;
         for (Component c : Component.values()) {
@@ -171,16 +176,15 @@ public class PersonName {
     }
 
     public String getNormalizedQueryString(Group g) {
-        if (!contains(g))
+        if (!contains(g)) {
             return "*";
-
+        }
         int totLen = 0;
         for (Component c : Component.values()) {
             String s = get(g, c);
-            totLen += s != null ? s.length() : 1;
+            totLen += (s != null) ? s.length() : 1;
         }
-
-        char[] ch = new char[totLen+4];
+        char[] ch = new char[totLen + 4];
         int wpos = 0;
         for (Component c : Component.values()) {
             String s = get(g, c);
@@ -191,17 +195,11 @@ public class PersonName {
             } else {
                 ch[wpos++] = '*';
             }
-            if (wpos < ch.length)
+            if (wpos < ch.length) {
                 ch[wpos++] = '^';
+            }
         }
-        return (totLen == 5
-                && ch[0] == '*'
-                && ch[2] == '*'
-                && ch[4] == '*'
-                && ch[6] == '*'
-                && ch[8] == '*')
-            ? "*"
-            : new String(ch); 
+        return (((((totLen == 5) && (ch[0] == '*')) && (ch[2] == '*')) && (ch[4] == '*')) && (ch[6] == '*')) && (ch[8] == '*') ? "*" : new String(ch);
     }
 
     public String get(Component c) {
@@ -211,7 +209,6 @@ public class PersonName {
     public String get(Group g, Component c) {
         return fields[g.ordinal() * 5 + c.ordinal()];
     }
-
 
     public void set(Component c, String s) {
         set(Group.Alphabetic, c, s);
@@ -226,23 +223,27 @@ public class PersonName {
     }
 
     public boolean isEmpty() {
-        for (Group g : Group.values())
-            if (contains(g))
+        for (Group g : Group.values()) {
+            if (contains(g)) {
                 return false;
+            }
+        }
         return true;
     }
 
     public boolean contains(Group g) {
-        for (Component c : Component.values())
-            if (contains(g, c))
+        for (Component c : Component.values()) {
+            if (contains(g, c)) {
                 return false;
+            }
+        }
         return true;
     }
 
     public boolean contains(Group g, Component c) {
         return get(g, c) != null;
     }
-    
+
     public boolean containst(Component c) {
         return contains(Group.Alphabetic, c);
     }
