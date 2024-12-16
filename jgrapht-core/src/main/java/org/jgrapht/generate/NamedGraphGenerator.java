@@ -18,11 +18,11 @@
 package org.jgrapht.generate;
 
 import java.util.*;
-
 import org.jgrapht.*;
 import org.jgrapht.graph.*;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
+
 
 /**
  * Collection of commonly used named graphs
@@ -32,46 +32,41 @@ import org.jgrapht.util.SupplierUtil;
  * @param <V> graph vertex type
  * @param <E> graph edge type
  */
-public class NamedGraphGenerator<V, E>
-{
+public class NamedGraphGenerator<V, E> {
     @Deprecated
     private VertexFactory<V> vertexFactory;
-    
+
     private Map<Integer, V> vertexMap;
 
     /**
      * Constructs a new generator for named graphs
      */
-    public NamedGraphGenerator()
-    {
+    public NamedGraphGenerator() {
         vertexMap = new HashMap<>();
     }
-    
+
     /**
      * Constructs a new generator for named graphs
-     * 
-     * @param vertexFactory factory for vertices
+     *
+     * @param vertexFactory
+     * 		factory for vertices
      * @deprecated In favor of suppliers
      */
     @Deprecated
-    public NamedGraphGenerator(VertexFactory<V> vertexFactory)
-    {
+    public NamedGraphGenerator(VertexFactory<V> vertexFactory) {
         this.vertexFactory = vertexFactory;
         vertexMap = new HashMap<>();
     }
 
     // -------------Doyle Graph-----------//
-    /** Generate the Doyle Graph
+    /**
+     * Generate the Doyle Graph
+     *
      * @see #generateDoyleGraph
      * @return Doyle Graph
      */
-    public static Graph<Integer, DefaultEdge> doyleGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> doyleGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateDoyleGraph(g);
         return g;
     }
@@ -113,28 +108,20 @@ public class NamedGraphGenerator<V, E>
     }
 
     // -------------Generalized Petersen Graph-----------//
-
     /**
      * @see GeneralizedPetersenGraphGenerator
      * @param n Generalized Petersen graphs $GP(n,k)$
      * @param k Generalized Petersen graphs $GP(n,k)$
      * @return Generalized Petersen Graph
      */
-    public static Graph<Integer, DefaultEdge> generalizedPetersenGraph(int n, int k)
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> generalizedPetersenGraph(int n, int k) {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateGeneralizedPetersenGraph(g, n, k);
         return g;
     }
 
-    private void generateGeneralizedPetersenGraph(Graph<V, E> targetGraph, int n, int k)
-    {
-        GeneralizedPetersenGraphGenerator<V, E> gpgg =
-            new GeneralizedPetersenGraphGenerator<>(n, k);
+    private void generateGeneralizedPetersenGraph(Graph<V, E> targetGraph, int n, int k) {
+        GeneralizedPetersenGraphGenerator<V, E> gpgg = new GeneralizedPetersenGraphGenerator<>(n, k);
         gpgg.generateGraph(targetGraph);
     }
 
@@ -285,16 +272,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Bull Graph-----------//
     /**
-     * @see #generateBullGraph
-     * @return Bull Graph
+     * @see #generateButterflyGraph
+     * @return Butterfly Graph
      */
-    public static Graph<Integer, DefaultEdge> bullGraph()
-    {
-        Graph<Integer,
-        DefaultEdge> g = GraphTypeBuilder
-            .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-            .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-            .buildGraph();
+    public static Graph<Integer, DefaultEdge> bullGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateBullGraph(g);
         return g;
     }
@@ -320,16 +302,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Butterfly Graph-----------//
     /**
-     * @see #generateButterflyGraph
-     * @return Butterfly Graph
+     * @see #generateClawGraph
+     * @return Claw Graph
      */
-    public static Graph<Integer, DefaultEdge> butterflyGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> butterflyGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateButterflyGraph(g);
         return g;
     }
@@ -343,24 +320,17 @@ public class NamedGraphGenerator<V, E>
      *        the result will be a disconnected graph since generated elements will not be connected
      *        to existing elements
      */
-    public void generateButterflyGraph(Graph<V, E> targetGraph)
-    {
-        new WindmillGraphsGenerator<V, E>(WindmillGraphsGenerator.Mode.DUTCHWINDMILL, 2, 3)
-            .generateGraph(targetGraph);
+    public void generateButterflyGraph(Graph<V, E> targetGraph) {
+        new WindmillGraphsGenerator<V, E>(WindmillGraphsGenerator.Mode.DUTCHWINDMILL, 2, 3).generateGraph(targetGraph);
     }
 
     // -------------Claw Graph-----------//
     /**
-     * @see #generateClawGraph
-     * @return Claw Graph
+     * @see #generateBuckyBallGraph
+     * @return Bucky ball Graph
      */
-    public static Graph<Integer, DefaultEdge> clawGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> clawGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateClawGraph(g);
         return g;
     }
@@ -373,23 +343,17 @@ public class NamedGraphGenerator<V, E>
      *        the result will be a disconnected graph since generated elements will not be connected
      *        to existing elements
      */
-    public void generateClawGraph(Graph<V, E> targetGraph)
-    {
+    public void generateClawGraph(Graph<V, E> targetGraph) {
         new StarGraphGenerator<V, E>(4).generateGraph(targetGraph);
     }
 
     // -------------Bucky ball Graph-----------//
     /**
-     * @see #generateBuckyBallGraph
-     * @return Bucky ball Graph
+     * @see #generateBullGraph
+     * @return Bull Graph
      */
-    public static Graph<Integer, DefaultEdge> buckyBallGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> buckyBallGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateBuckyBallGraph(g);
         return g;
     }
@@ -426,16 +390,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Clebsch Graph-----------//
     /**
-     * @see #generateClebschGraph
-     * @return Clebsch Graph
+     * @see #generateGrötzschGraph
+     * @return Grötzsch Graph
      */
-    public static Graph<Integer, DefaultEdge> clebschGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> clebschGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateClebschGraph(g);
         return g;
     }
@@ -467,16 +426,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Grötzsch Graph-----------//
     /**
-     * @see #generateGrötzschGraph
-     * @return Grötzsch Graph
+     * @see #generateBidiakisCubeGraph
+     * @return Bidiakis cube Graph
      */
-    public static Graph<Integer, DefaultEdge> grötzschGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> grötzschGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateGrötzschGraph(g);
         return g;
     }
@@ -507,16 +461,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Bidiakis cube Graph-----------//
     /**
-     * @see #generateBidiakisCubeGraph
-     * @return Bidiakis cube Graph
+     * @see #generateBlanusaFirstSnarkGraph
+     * @return First Blanusa Snark Graph
      */
-    public static Graph<Integer, DefaultEdge> bidiakisCubeGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> bidiakisCubeGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateBidiakisCubeGraph(g);
         return g;
     }
@@ -544,16 +493,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------First Blanusa Snark Graph-----------//
     /**
-     * @see #generateBlanusaFirstSnarkGraph
-     * @return First Blanusa Snark Graph
+     * @see #generateBlanusaSecondSnarkGraph
+     * @return Second Blanusa Snark Graph
      */
-    public static Graph<Integer, DefaultEdge> blanusaFirstSnarkGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> blanusaFirstSnarkGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateBlanusaFirstSnarkGraph(g);
         return g;
     }
@@ -579,16 +523,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Second Blanusa Snark Graph-----------//
     /**
-     * @see #generateBlanusaSecondSnarkGraph
-     * @return Second Blanusa Snark Graph
+     * @see #generateDoubleStarSnarkGraph
+     * @return Double Star Snark Graph
      */
-    public static Graph<Integer, DefaultEdge> blanusaSecondSnarkGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> blanusaSecondSnarkGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateBlanusaSecondSnarkGraph(g);
         return g;
     }
@@ -614,16 +553,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Double Star Snark Graph-----------//
     /**
-     * @see #generateDoubleStarSnarkGraph
-     * @return Double Star Snark Graph
+     * @see #generateBrinkmannGraph
+     * @return Brinkmann Graph
      */
-    public static Graph<Integer, DefaultEdge> doubleStarSnarkGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> doubleStarSnarkGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateDoubleStarSnarkGraph(g);
         return g;
     }
@@ -652,16 +586,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Brinkmann Graph-----------//
     /**
-     * @see #generateBrinkmannGraph
-     * @return Brinkmann Graph
+     * @see #generateGossetGraph
+     * @return Gosset Graph
      */
-    public static Graph<Integer, DefaultEdge> brinkmannGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> brinkmannGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateBrinkmannGraph(g);
         return g;
     }
@@ -689,16 +618,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Gosset Graph-----------//
     /**
-     * @see #generateGossetGraph
-     * @return Gosset Graph
+     * @see #generateClebschGraph
+     * @return Clebsch Graph
      */
-    public static Graph<Integer, DefaultEdge> gossetGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> gossetGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateGossetGraph(g);
         return g;
     }
@@ -825,16 +749,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Chvatal Graph-----------//
     /**
-     * @see #generateChvatalGraph
-     * @return Chvatal Graph
+     * @see #generateKittellGraph
+     * @return Kittell Graph
      */
-    public static Graph<Integer, DefaultEdge> chvatalGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> chvatalGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateChvatalGraph(g);
         return g;
     }
@@ -861,16 +780,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Kittell Graph-----------//
     /**
-     * @see #generateKittellGraph
-     * @return Kittell Graph
+     * @see #generateCoxeterGraph
+     * @return Coxeter Graph
      */
-    public static Graph<Integer, DefaultEdge> kittellGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> kittellGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateKittellGraph(g);
         return g;
     }
@@ -903,16 +817,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Coxeter Graph-----------//
     /**
-     * @see #generateCoxeterGraph
-     * @return Coxeter Graph
+     * @see #generateDiamondGraph
+     * @return Diamond Graph
      */
-    public static Graph<Integer, DefaultEdge> coxeterGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> coxeterGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateCoxeterGraph(g);
         return g;
     }
@@ -940,16 +849,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Diamond Graph-----------//
     /**
-     * @see #generateDiamondGraph
-     * @return Diamond Graph
+     * @see #generateEllinghamHorton54Graph
+     * @return Ellingham-Horton 54 Graph
      */
-    public static Graph<Integer, DefaultEdge> diamondGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> diamondGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateDiamondGraph(g);
         return g;
     }
@@ -972,16 +876,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Ellingham-Horton 54 Graph-----------//
     /**
-     * @see #generateEllinghamHorton54Graph
-     * @return Ellingham-Horton 54 Graph
+     * @see #generateEllinghamHorton78Graph
+     * @return Ellingham-Horton 78 Graph
      */
-    public static Graph<Integer, DefaultEdge> ellinghamHorton54Graph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> ellinghamHorton54Graph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateEllinghamHorton54Graph(g);
         return g;
     }
@@ -1016,16 +915,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Ellingham-Horton 78 Graph-----------//
     /**
-     * @see #generateEllinghamHorton78Graph
-     * @return Ellingham-Horton 78 Graph
+     * @see #generateErreraGraph
+     * @return Errera Graph
      */
-    public static Graph<Integer, DefaultEdge> ellinghamHorton78Graph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> ellinghamHorton78Graph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateEllinghamHorton78Graph(g);
         return g;
     }
@@ -1065,16 +959,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Errera Graph-----------//
     /**
-     * @see #generateErreraGraph
-     * @return Errera Graph
+     * @see #generateFolkmanGraph
+     * @return Folkman Graph
      */
-    public static Graph<Integer, DefaultEdge> erreraGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> erreraGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateErreraGraph(g);
         return g;
     }
@@ -1102,16 +991,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Folkman Graph-----------//
     /**
-     * @see #generateFolkmanGraph
-     * @return Folkman Graph
+     * @see #generateFranklinGraph
+     * @return Franklin Graph
      */
-    public static Graph<Integer, DefaultEdge> folkmanGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> folkmanGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateFolkmanGraph(g);
         return g;
     }
@@ -1139,16 +1023,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Franklin Graph-----------//
     /**
-     * @see #generateFranklinGraph
-     * @return Franklin Graph
+     * @see #generateGoldnerHararyGraph
+     * @return Goldner-Harary Graph
      */
-    public static Graph<Integer, DefaultEdge> franklinGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> franklinGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateFranklinGraph(g);
         return g;
     }
@@ -1173,16 +1052,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Frucht Graph-----------//
     /**
-     * @see #generateFruchtGraph
-     * @return Frucht Graph
+     * @see #generateHeawoodGraph
+     * @return Heawood Graph
      */
-    public static Graph<Integer, DefaultEdge> fruchtGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> fruchtGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateFruchtGraph(g);
         return g;
     }
@@ -1207,16 +1081,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Goldner-Harary Graph-----------//
     /**
-     * @see #generateGoldnerHararyGraph
-     * @return Goldner-Harary Graph
+     * @see #generateHerschelGraph
+     * @return Herschel Graph
      */
-    public static Graph<Integer, DefaultEdge> goldnerHararyGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> goldnerHararyGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateGoldnerHararyGraph(g);
         return g;
     }
@@ -1243,16 +1112,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Heawood Graph-----------//
     /**
-     * @see #generateHeawoodGraph
-     * @return Heawood Graph
+     * @see #generateHoffmanGraph
+     * @return Hoffman Graph
      */
-    public static Graph<Integer, DefaultEdge> heawoodGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> heawoodGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateHeawoodGraph(g);
         return g;
     }
@@ -1278,16 +1142,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Herschel Graph-----------//
     /**
-     * @see #generateHerschelGraph
-     * @return Herschel Graph
+     * @see #generateKrackhardtKiteGraph
+     * @return Krackhardt kite Graph
      */
-    public static Graph<Integer, DefaultEdge> herschelGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> herschelGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateHerschelGraph(g);
         return g;
     }
@@ -1313,16 +1172,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Hoffman Graph-----------//
     /**
-     * @see #generateHoffmanGraph
-     * @return Hoffman Graph
+     * @see #generateKlein3RegularGraph
+     * @return Klein 3-regular Graph
      */
-    public static Graph<Integer, DefaultEdge> hoffmanGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> hoffmanGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateHoffmanGraph(g);
         return g;
     }
@@ -1349,16 +1203,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Krackhardt kite Graph-----------//
     /**
-     * @see #generateKrackhardtKiteGraph
-     * @return Krackhardt kite Graph
+     * @see #generateFruchtGraph
+     * @return Frucht Graph
      */
-    public static Graph<Integer, DefaultEdge> krackhardtKiteGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> krackhardtKiteGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateKrackhardtKiteGraph(g);
         return g;
     }
@@ -1384,16 +1233,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Klein 3-regular Graph-----------//
     /**
-     * @see #generateKlein3RegularGraph
-     * @return Klein 3-regular Graph
+     * @see #generateKlein7RegularGraph
+     * @return Klein 7-regular Graph
      */
-    public static Graph<Integer, DefaultEdge> klein3RegularGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> klein3RegularGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateKlein3RegularGraph(g);
         return g;
     }
@@ -1427,16 +1271,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Klein 7-regular Graph-----------//
     /**
-     * @see #generateKlein7RegularGraph
-     * @return Klein 7-regular Graph
+     * @see #generateMoserSpindleGraph
+     * @return Moser spindle Graph
      */
-    public static Graph<Integer, DefaultEdge> klein7RegularGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> klein7RegularGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateKlein7RegularGraph(g);
         return g;
     }
@@ -1449,38 +1288,23 @@ public class NamedGraphGenerator<V, E>
      *        the result will be a disconnected graph since generated elements will not be connected
      *        to existing elements
      */
-    public void generateKlein7RegularGraph(Graph<V, E> targetGraph)
-    {
+    public void generateKlein7RegularGraph(Graph<V, E> targetGraph) {
         vertexMap.clear();
-        int arr[] = { 0, 1, 2, 3, 4, 5, 6 };
-        addCycle( targetGraph, arr );
-        int[][] edges = { { 0, 2 }, { 0, 6 }, { 0, 10 }, { 0, 11 }, { 0, 12 }, { 0, 18 },
-            { 1, 3 }, { 1, 9 }, { 1, 11 }, { 1, 20 }, { 1, 22 }, { 2, 4 }, { 2, 10 }, { 2, 15 }, 
-            { 2, 19 }, { 3, 5 }, { 3, 7 }, { 3, 14 }, { 3, 22 }, { 4, 6 }, { 4, 8 }, { 4, 19 }, 
-            { 4, 21 }, { 5, 7 }, { 5, 11 },{ 5, 17 }, { 5, 23 }, { 6, 8 }, { 6, 11 }, { 6, 16 }, 
-            { 6, 18 }, { 7, 9 }, { 7, 14 }, { 7, 15 }, { 7, 16 }, { 7, 17 }, { 8, 10 }, 
-            { 8, 13 }, { 8, 14 }, { 8, 16 }, { 8, 21 }, { 9, 11 }, { 9, 13 }, { 9, 15 }, 
-            { 9, 16 }, { 9, 20 }, { 10, 12 }, { 10, 13 }, { 10, 14 }, { 10, 15 }, { 11, 13 }, 
-            { 11, 23 }, { 12, 14 }, { 12, 17 }, { 12, 18 }, { 12, 22 }, { 12, 23 }, { 13, 15 }, 
-            { 13, 21 }, { 13, 23 }, { 14, 16 }, { 14, 22 }, { 15, 17 }, { 15, 19 }, { 16, 18 }, 
-            { 16, 20 }, { 17, 18 }, { 17, 19 }, { 17, 23 }, { 18, 19 }, { 18, 20 }, { 19, 20 }, 
-            { 19, 21 }, { 20, 21 }, { 20, 22 }, { 21, 22 }, { 21, 23 }, { 22, 23 } };
-        for (int[] edge : edges)
+        int[] arr = new int[]{ 0, 1, 2, 3, 4, 5, 6 };
+        addCycle(targetGraph, arr);
+        int[][] edges = new int[][]{ new int[]{ 0, 2 }, new int[]{ 0, 6 }, new int[]{ 0, 10 }, new int[]{ 0, 11 }, new int[]{ 0, 12 }, new int[]{ 0, 18 }, new int[]{ 1, 3 }, new int[]{ 1, 9 }, new int[]{ 1, 11 }, new int[]{ 1, 20 }, new int[]{ 1, 22 }, new int[]{ 2, 4 }, new int[]{ 2, 10 }, new int[]{ 2, 15 }, new int[]{ 2, 19 }, new int[]{ 3, 5 }, new int[]{ 3, 7 }, new int[]{ 3, 14 }, new int[]{ 3, 22 }, new int[]{ 4, 6 }, new int[]{ 4, 8 }, new int[]{ 4, 19 }, new int[]{ 4, 21 }, new int[]{ 5, 7 }, new int[]{ 5, 11 }, new int[]{ 5, 17 }, new int[]{ 5, 23 }, new int[]{ 6, 8 }, new int[]{ 6, 11 }, new int[]{ 6, 16 }, new int[]{ 6, 18 }, new int[]{ 7, 9 }, new int[]{ 7, 14 }, new int[]{ 7, 15 }, new int[]{ 7, 16 }, new int[]{ 7, 17 }, new int[]{ 8, 10 }, new int[]{ 8, 13 }, new int[]{ 8, 14 }, new int[]{ 8, 16 }, new int[]{ 8, 21 }, new int[]{ 9, 11 }, new int[]{ 9, 13 }, new int[]{ 9, 15 }, new int[]{ 9, 16 }, new int[]{ 9, 20 }, new int[]{ 10, 12 }, new int[]{ 10, 13 }, new int[]{ 10, 14 }, new int[]{ 10, 15 }, new int[]{ 11, 13 }, new int[]{ 11, 23 }, new int[]{ 12, 14 }, new int[]{ 12, 17 }, new int[]{ 12, 18 }, new int[]{ 12, 22 }, new int[]{ 12, 23 }, new int[]{ 13, 15 }, new int[]{ 13, 21 }, new int[]{ 13, 23 }, new int[]{ 14, 16 }, new int[]{ 14, 22 }, new int[]{ 15, 17 }, new int[]{ 15, 19 }, new int[]{ 16, 18 }, new int[]{ 16, 20 }, new int[]{ 17, 18 }, new int[]{ 17, 19 }, new int[]{ 17, 23 }, new int[]{ 18, 19 }, new int[]{ 18, 20 }, new int[]{ 19, 20 }, new int[]{ 19, 21 }, new int[]{ 20, 21 }, new int[]{ 20, 22 }, new int[]{ 21, 22 }, new int[]{ 21, 23 }, new int[]{ 22, 23 } };
+        for (int[] edge : edges) {
             addEdge(targetGraph, edge[0], edge[1]);
+        }
     }
 
     // -------------Moser spindle Graph-----------//
     /**
-     * @see #generateMoserSpindleGraph
-     * @return Moser spindle Graph
+     * @see #generatePoussinGraph
+     * @return Poussin Graph
      */
-    public static Graph<Integer, DefaultEdge> moserSpindleGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> moserSpindleGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateMoserSpindleGraph(g);
         return g;
     }
@@ -1504,16 +1328,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Pappus Graph-----------//
     /**
-     * @see #generatePappusGraph
-     * @return Pappus Graph
+     * @see #generateSchläfliGraph
+     * @return Schläfli Graph
      */
-    public static Graph<Integer, DefaultEdge> pappusGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> pappusGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generatePappusGraph(g);
         return g;
     }
@@ -1539,16 +1358,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Poussin Graph-----------//
     /**
-     * @see #generatePoussinGraph
-     * @return Poussin Graph
+     * @see #generatePappusGraph
+     * @return Pappus Graph
      */
-    public static Graph<Integer, DefaultEdge> poussinGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> poussinGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generatePoussinGraph(g);
         return g;
     }
@@ -1561,33 +1375,25 @@ public class NamedGraphGenerator<V, E>
      *        the result will be a disconnected graph since generated elements will not be connected
      *        to existing elements
      */
-    public void generatePoussinGraph(Graph<V, E> targetGraph)
-    {
+    public void generatePoussinGraph(Graph<V, E> targetGraph) {
         vertexMap.clear();
-        int arr[] = { 0, 1, 2, 3, 4, 5, 6 };
-        addCycle( targetGraph, arr );
-        int arr1[] = { 9, 10, 11, 12, 13, 14 };
-        addCycle( targetGraph, arr1 );
-        int[][] edges = { { 0, 2 }, { 0, 4 }, { 0, 5 }, { 1, 6 }, { 1, 7 }, { 2, 4 }, 
-            { 2, 7 }, { 2, 8 }, { 3, 5 }, { 3, 8 }, { 3, 9 }, { 3, 13 }, { 5, 9 }, 
-            { 5, 10 }, { 6, 7 }, { 6, 10 }, { 6, 11 }, { 7, 8 }, { 7, 11 }, { 7, 12 }, 
-            { 8, 12 }, { 8, 13 }, { 9, 13 }, { 10, 14 }, { 11, 14 }, { 12, 14 }};
-        for (int[] edge : edges)
+        int[] arr = new int[]{ 0, 1, 2, 3, 4, 5, 6 };
+        addCycle(targetGraph, arr);
+        int[] arr1 = new int[]{ 9, 10, 11, 12, 13, 14 };
+        addCycle(targetGraph, arr1);
+        int[][] edges = new int[][]{ new int[]{ 0, 2 }, new int[]{ 0, 4 }, new int[]{ 0, 5 }, new int[]{ 1, 6 }, new int[]{ 1, 7 }, new int[]{ 2, 4 }, new int[]{ 2, 7 }, new int[]{ 2, 8 }, new int[]{ 3, 5 }, new int[]{ 3, 8 }, new int[]{ 3, 9 }, new int[]{ 3, 13 }, new int[]{ 5, 9 }, new int[]{ 5, 10 }, new int[]{ 6, 7 }, new int[]{ 6, 10 }, new int[]{ 6, 11 }, new int[]{ 7, 8 }, new int[]{ 7, 11 }, new int[]{ 7, 12 }, new int[]{ 8, 12 }, new int[]{ 8, 13 }, new int[]{ 9, 13 }, new int[]{ 10, 14 }, new int[]{ 11, 14 }, new int[]{ 12, 14 } };
+        for (int[] edge : edges) {
             addEdge(targetGraph, edge[0], edge[1]);
+        }
     }
 
     // -------------Schläfli Graph-----------//
     /**
-     * @see #generateSchläfliGraph
-     * @return Schläfli Graph
+     * @see #generateTietzeGraph
+     * @return Tietze Graph
      */
-    public static Graph<Integer, DefaultEdge> schläfliGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> schläfliGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateSchläfliGraph(g);
         return g;
     }
@@ -1638,16 +1444,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Tietze Graph-----------//
     /**
-     * @see #generateTietzeGraph
-     * @return Tietze Graph
+     * @see #generateTutteGraph
+     * @return Tutte Graph
      */
-    public static Graph<Integer, DefaultEdge> tietzeGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> tietzeGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateTietzeGraph(g);
         return g;
     }
@@ -1660,15 +1461,14 @@ public class NamedGraphGenerator<V, E>
      *        the result will be a disconnected graph since generated elements will not be connected
      *        to existing elements
      */
-    public void generateTietzeGraph(Graph<V, E> targetGraph)
-    {
+    public void generateTietzeGraph(Graph<V, E> targetGraph) {
         vertexMap.clear();
-        int arr[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-        addCycle( targetGraph, arr );
-        int[][] edges = { { 0, 9 }, { 1, 5 }, { 2, 7 }, { 3, 10 }, { 4, 8 }, { 6, 11 }, 
-            { 9, 10 }, { 9, 11 }, { 10, 11 } };
-        for (int[] edge : edges)
+        int[] arr = new int[]{ 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+        addCycle(targetGraph, arr);
+        int[][] edges = new int[][]{ new int[]{ 0, 9 }, new int[]{ 1, 5 }, new int[]{ 2, 7 }, new int[]{ 3, 10 }, new int[]{ 4, 8 }, new int[]{ 6, 11 }, new int[]{ 9, 10 }, new int[]{ 9, 11 }, new int[]{ 10, 11 } };
+        for (int[] edge : edges) {
             addEdge(targetGraph, edge[0], edge[1]);
+        }
     }
 
     // -------------Thomsen Graph-----------//
@@ -1676,13 +1476,8 @@ public class NamedGraphGenerator<V, E>
      * @see #generateThomsenGraph
      * @return Thomsen Graph
      */
-    public static Graph<Integer, DefaultEdge> thomsenGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> thomsenGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateThomsenGraph(g);
         return g;
     }
@@ -1707,16 +1502,11 @@ public class NamedGraphGenerator<V, E>
 
     // -------------Tutte Graph-----------//
     /**
-     * @see #generateTutteGraph
-     * @return Tutte Graph
+     * @see #generateChvatalGraph
+     * @return Chvatal Graph
      */
-    public static Graph<Integer, DefaultEdge> tutteGraph()
-    {
-        Graph<Integer,
-            DefaultEdge> g = GraphTypeBuilder
-                .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
-                .buildGraph();
+    public static Graph<Integer, DefaultEdge> tutteGraph() {
+        Graph<Integer, DefaultEdge> g = GraphTypeBuilder.undirected().allowingMultipleEdges(false).allowingSelfLoops(false).vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class).buildGraph();
         new NamedGraphGenerator<Integer, DefaultEdge>().generateTutteGraph(g);
         return g;
     }
@@ -1747,16 +1537,15 @@ public class NamedGraphGenerator<V, E>
     }
 
     // --------------Helper methods-----------------/
-    private V addVertex(Graph<V, E> targetGraph, int i)
-    {
+    private V addVertex(Graph<V, E> targetGraph, int i) {
         if (!vertexMap.containsKey(i)) {
-            if (vertexFactory != null) { 
+            if (vertexFactory != null) {
                 V v = vertexFactory.createVertex();
                 vertexMap.put(i, v);
                 targetGraph.addVertex(v);
-            } else { 
+            } else {
                 V v = targetGraph.addVertex();
-                if (v == null) { 
+                if (v == null) {
                     throw new IllegalArgumentException("Invalid vertex supplier");
                 }
                 vertexMap.put(i, v);

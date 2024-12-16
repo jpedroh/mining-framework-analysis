@@ -17,10 +17,10 @@
  */
 package org.jgrapht.alg;
 
+import java.util.*;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphTests;
 
-import java.util.*;
 
 /**
  * Find the Lowest Common Ancestor of a directed graph.
@@ -37,7 +37,7 @@ import java.util.*;
  * 1. Start at each of nodes you wish to find the lca for (a and b)
  * 2. Create sets aSet containing a, and bSet containing b
  * 3. If either set intersects with the union of the other sets previous values (i.e. the set of notes visited) then
- *    that intersection is LCA. if there are multiple intersections then the earliest one added is the LCA.
+ * that intersection is LCA. if there are multiple intersections then the earliest one added is the LCA.
  * 4. Repeat from step 3, with aSet now the parents of everything in aSet, and bSet the parents of everything in bSet
  * 5. If there are no more parents to descend to then there is no LCA
  * </pre>
@@ -59,22 +59,22 @@ import java.util.*;
  * and b. Of course we may have to wait longer if the path to a is of length n, but the path to
  * b&gt;n. at the first loop we have a path of 0 length from the nodes we are considering as LCA to
  * their respective children which we wish to find the LCA for.
- * 
- * @param <V> the graph vertex type
- * @param <E> the graph edge type
- * 
+ *
+ * @param <V>
+ * 		the graph vertex type
+ * @param <E>
+ * 		the graph edge type
  */
-public class NaiveLcaFinder<V, E>
-{
+public class NaiveLcaFinder<V, E> {
     private Graph<V, E> graph;
 
     /**
      * Create a new instance of the naive LCA finder.
-     * 
-     * @param graph the input graph
+     *
+     * @param graph
+     * 		the input graph
      */
-    public NaiveLcaFinder(Graph<V, E> graph)
-    {
+    public NaiveLcaFinder(Graph<V, E> graph) {
         this.graph = GraphTests.requireDirected(graph, "Graph must be directed");
     }
 
@@ -102,45 +102,38 @@ public class NaiveLcaFinder<V, E>
      * @return the set of all LCAs of a and b, or empty set if there is no LCA.
      */
     @SuppressWarnings("unchecked")
-    public Set<V> findLcas(V a, V b)
-    {
+    public Set<V> findLcas(V a, V b) {
         Set<V>[] visitedSets = new Set[2];
         // set of nodes visited from a
         visitedSets[0] = new LinkedHashSet<>();
         // set of nodes visited from b
         visitedSets[1] = new LinkedHashSet<>();
-
         doubleBfs(a, b, visitedSets);
         // all common ancestors of both a and b
         Set<V> intersection;
-
         // optimization trick: save the intersection using the smaller set
         if (visitedSets[0].size() < visitedSets[1].size()) {
             visitedSets[0].retainAll(visitedSets[1]);
             intersection = visitedSets[0];
-        }
-        else{
+        } else {
             visitedSets[1].retainAll(visitedSets[0]);
             intersection = visitedSets[1];
         }
-
-        /*
-         * Find the set of all non-leaves by iterating through the
-         * set of common ancestors. When we encounter a node which is
-         * still part of the SLCA(a, b) we remove its parent(s).
+        /* Find the set of all non-leaves by iterating through the
+        set of common ancestors. When we encounter a node which is
+        still part of the SLCA(a, b) we remove its parent(s).
          */
         Set<V> nonLeaves = new LinkedHashSet<>();
-        for (V node: intersection){
-            for (E edge: graph.incomingEdgesOf(node)) {
+        for (V node : intersection) {
+            for (E edge : graph.incomingEdgesOf(node)) {
                 if (graph.getEdgeTarget(edge).equals(node)) {
                     V source = graph.getEdgeSource(edge);
-
-                    if (intersection.contains(source))
+                    if (intersection.contains(source)) {
                         nonLeaves.add(source);
+                    }
                 }
             }
         }
-
         // perform the actual removal of non-leaves
         intersection.removeAll(nonLeaves);
         return intersection;
@@ -152,32 +145,28 @@ public class NaiveLcaFinder<V, E>
      * our search (we know that its ancestors won't be part of the SLCA(x, y) set).
      */
     @SuppressWarnings("unchecked")
-    private void doubleBfs(V a, V b, Set<V>[] visitedSets){
+    private void doubleBfs(V a, V b, Set<V>[] visitedSets) {
         Queue<V>[] queues = new Queue[2];
         queues[0] = new ArrayDeque<>();
         queues[1] = new ArrayDeque<>();
-
         queues[0].add(a);
         queues[1].add(b);
-
         visitedSets[0].add(a);
         visitedSets[1].add(b);
-
-        for (int ind = 0; !queues[0].isEmpty() || !queues[1].isEmpty(); ind ^= 1) {
+        for (int ind = 0; (!queues[0].isEmpty()) || (!queues[1].isEmpty()); ind ^= 1) {
             if (!queues[ind].isEmpty()) {
                 V node = queues[ind].poll();
-
-                if (!visitedSets[0].contains(node) || !visitedSets[1].contains(node))
+                if ((!visitedSets[0].contains(node)) || (!visitedSets[1].contains(node))) {
                     for (E edge : graph.incomingEdgesOf(node)) {
                         if (graph.getEdgeTarget(edge).equals(node)) {
                             V source = graph.getEdgeSource(edge);
-
                             if (!visitedSets[ind].contains(source)) {
                                 queues[ind].add(source);
                                 visitedSets[ind].add(source);
                             }
                         }
                     }
+                }
             }
         }
     }
@@ -248,16 +237,14 @@ public class NaiveLcaFinder<V, E>
      * first element from the iterator returned from $y$, after all the elements of $x$ have been
      * removed. this allows an orderedSet to be passed in to give predictable results.
      *
-     * @param x set containing vertex
-     * @param y set containing vertex, which may be ordered to give predictable results
-     *
-     * @return the first element of $y$ that is also in $x$, or null if no such element
+     * @param x
+     * 		set containing vertex
+     * @param y
+     * 		set containing vertex, which may be ordered to give predictable results
+     * @return the first element of y that is also in x, or null if no such element
      */
-    private V overlappingMember(Set<V> x, Set<V> y)
-    {
+    private V overlappingMember(Set<V> x, Set<V> y) {
         y.retainAll(x);
         return y.iterator().next();
     }
 }
-
-// End NaiveLcaFinder.java

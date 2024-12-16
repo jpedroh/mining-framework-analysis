@@ -18,12 +18,12 @@
 package org.jgrapht.alg.spanning;
 
 import java.util.*;
-
 import org.jgrapht.*;
 import org.jgrapht.alg.interfaces.*;
 import org.jgrapht.graph.*;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.*;
+
 
 /**
  * Greedy algorithm for $(2k-1)$-multiplicative spanner construction (for any integer
@@ -49,37 +49,39 @@ import org.jgrapht.util.*;
  * If the graph is weighted the algorithm runs in $O(m (n^{1+1/k} + n \log n))$ time by using Dijkstra's
  * algorithm. Edge weights must be non-negative.
  *
- * @param <V> the graph vertex type
- * @param <E> the graph edge type
- *
+ * @param <V>
+ * 		the graph vertex type
+ * @param <E>
+ * 		the graph edge type
  * @author Dimitrios Michail
  * @since July 15, 2016
  */
-public class GreedyMultiplicativeSpanner<V, E>
-    implements SpannerAlgorithm<E>
-{
+public class GreedyMultiplicativeSpanner<V, E> implements SpannerAlgorithm<E> {
     private final Graph<V, E> graph;
+
     private final int k;
+
     private static final int MAX_K = 1 << 29;
 
     /**
      * Constructs instance to compute a $(2k-1)$-spanner of an undirected graph.
-     * 
-     * @param graph an undirected graph
-     * @param k positive integer.
-     * 
-     * @throws IllegalArgumentException if the graph is not undirected
-     * @throws IllegalArgumentException if k is not positive
+     *
+     * @param graph
+     * 		an undirected graph
+     * @param k
+     * 		positive integer.
+     * @throws IllegalArgumentException
+     * 		if the graph is not undirected
+     * @throws IllegalArgumentException
+     * 		if k is not positive
      */
-    public GreedyMultiplicativeSpanner(Graph<V, E> graph, int k)
-    {
+    public GreedyMultiplicativeSpanner(Graph<V, E> graph, int k) {
         this.graph = Objects.requireNonNull(graph, "Graph cannot be null");
         if (!graph.getType().isUndirected()) {
             throw new IllegalArgumentException("graph is not undirected");
         }
         if (k <= 0) {
-            throw new IllegalArgumentException(
-                "k should be positive in (2k-1)-spanner construction");
+            throw new IllegalArgumentException("k should be positive in (2k-1)-spanner construction");
         }
         this.k = Math.min(k, MAX_K);
     }
@@ -95,35 +97,30 @@ public class GreedyMultiplicativeSpanner<V, E>
     }
 
     // base algorithm implementation
-    private abstract class SpannerAlgorithmBase
-    {
+    private abstract class SpannerAlgorithmBase {
         public abstract boolean isSpannerReachable(V s, V t, double distance);
 
         public abstract void addSpannerEdge(V s, V t, double weight);
 
-        public Spanner<E> run()
-        {
+        public Spanner<E> run() {
             // sort edges
             ArrayList<E> allEdges = new ArrayList<>(graph.edgeSet());
             allEdges.sort(Comparator.comparingDouble(graph::getEdgeWeight));
-
             // check precondition
             double minWeight = graph.getEdgeWeight(allEdges.get(0));
             if (minWeight < 0.0) {
                 throw new IllegalArgumentException("Illegal edge weight: negative");
             }
-
             // run main loop
             Set<E> edgeList = new LinkedHashSet<>();
-            double edgeListWeight = 0d;
-
+            double edgeListWeight = 0.0;
             for (E e : allEdges) {
                 V s = graph.getEdgeSource(e);
                 V t = graph.getEdgeTarget(e);
-
-                if (!s.equals(t)) { // self-loop?
+                if (!s.equals(t)) {
+                    // self-loop?
                     double eWeight = graph.getEdgeWeight(e);
-                    if (!isSpannerReachable(s, t, (2 * k - 1) * eWeight)) {
+                    if (!isSpannerReachable(s, t, ((2 * k) - 1) * eWeight)) {
                         edgeList.add(e);
                         edgeListWeight += eWeight;
                         addSpannerEdge(s, t, eWeight);
@@ -132,23 +129,20 @@ public class GreedyMultiplicativeSpanner<V, E>
             }
             return new SpannerImpl<>(edgeList, edgeListWeight);
         }
-
     }
 
-    private class UnweightedSpannerAlgorithm
-        extends SpannerAlgorithmBase
-    {
+    private class UnweightedSpannerAlgorithm extends SpannerAlgorithmBase {
         protected Graph<V, E> spanner;
+
         protected Map<V, Integer> vertexDistance;
+
         protected Deque<V> queue;
+
         protected Deque<V> touchedVertices;
 
-        public UnweightedSpannerAlgorithm()
-        {
-            spanner = GraphTypeBuilder
-                .<V, E> undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
-                .edgeSupplier(graph.getEdgeSupplier()).buildGraph();
-            touchedVertices = new ArrayDeque<V>(graph.vertexSet().size());
+        public UnweightedSpannerAlgorithm() {
+            spanner = GraphTypeBuilder.<V, E>undirected().allowingMultipleEdges(false).allowingSelfLoops(false).edgeSupplier(graph.getEdgeSupplier()).buildGraph();
+            touchedVertices = new ArrayDeque<>(graph.vertexSet().size());
             for (V v : graph.vertexSet()) {
                 spanner.addVertex(v);
                 touchedVertices.push(v);
@@ -211,15 +205,14 @@ public class GreedyMultiplicativeSpanner<V, E>
         }
     }
 
-    private class WeightedSpannerAlgorithm
-        extends SpannerAlgorithmBase
-    {
+    private class WeightedSpannerAlgorithm extends SpannerAlgorithmBase {
         protected Graph<V, DefaultWeightedEdge> spanner;
+
         protected FibonacciHeap<V> heap;
+
         protected Map<V, FibonacciHeapNode<V>> nodes;
 
-        public WeightedSpannerAlgorithm()
-        {
+        public WeightedSpannerAlgorithm() {
             this.spanner = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
             for (V v : graph.vertexSet()) {
                 spanner.addVertex(v);
@@ -229,35 +222,30 @@ public class GreedyMultiplicativeSpanner<V, E>
         }
 
         @Override
-        public boolean isSpannerReachable(V s, V t, double distance)
-        {
+        public boolean isSpannerReachable(V s, V t, double distance) {
             // init
             heap.clear();
             nodes.clear();
-
             FibonacciHeapNode<V> sNode = new FibonacciHeapNode<V>(s);
             nodes.put(s, sNode);
-            heap.insert(sNode, 0d);
-
+            heap.insert(sNode, 0.0);
             while (!heap.isEmpty()) {
                 FibonacciHeapNode<V> uNode = heap.removeMin();
                 double uDistance = uNode.getKey();
                 V u = uNode.getData();
-
                 if (uDistance > distance) {
                     return false;
                 }
-
-                if (u.equals(t)) { // found
+                if (u.equals(t)) {
+                    // found
                     return true;
                 }
-
                 for (DefaultWeightedEdge e : spanner.edgesOf(u)) {
                     V v = Graphs.getOppositeVertex(spanner, e, u);
                     FibonacciHeapNode<V> vNode = nodes.get(v);
                     double vDistance = uDistance + spanner.getEdgeWeight(e);
-
-                    if (vNode == null) { // no distance
+                    if (vNode == null) {
+                    // no distance
                         vNode = new FibonacciHeapNode<>(v);
                         nodes.put(v, vNode);
                         heap.insert(vNode, vDistance);
@@ -265,9 +253,7 @@ public class GreedyMultiplicativeSpanner<V, E>
                         heap.decreaseKey(vNode, vDistance);
                     }
                 }
-
-            }
-
+            } 
             return false;
         }
 
@@ -276,7 +262,5 @@ public class GreedyMultiplicativeSpanner<V, E>
         {
             Graphs.addEdge(spanner, s, t, weight);
         }
-
     }
-
 }

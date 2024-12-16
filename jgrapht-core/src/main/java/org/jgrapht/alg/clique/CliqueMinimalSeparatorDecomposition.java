@@ -19,10 +19,10 @@ package org.jgrapht.alg.clique;
 
 import java.util.*;
 import java.util.Map.*;
-
 import org.jgrapht.*;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+
 
 /**
  * Clique Minimal Separator Decomposition using MCS-M+ and Atoms algorithm as described in Berry et
@@ -43,8 +43,7 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
  * @author Tomas Hruz (tomas.hruz@inf.ethz.ch)
  * @author Philipp Hoppen
  */
-public class CliqueMinimalSeparatorDecomposition<V, E>
-{
+public class CliqueMinimalSeparatorDecomposition<V, E> {
     /**
      * Source graph to operate on
      */
@@ -91,10 +90,10 @@ public class CliqueMinimalSeparatorDecomposition<V, E>
      * g</code>. Loops and multiple (parallel) edges are removed, i.e. the graph is transformed to a
      * simple graph.
      *
-     * @param g The graph to decompose.
+     * @param g
+     * 		The graph to decompose.
      */
-    public CliqueMinimalSeparatorDecomposition(Graph<V, E> g)
-    {
+    public CliqueMinimalSeparatorDecomposition(Graph<V, E> g) {
         this.graph = GraphTests.requireUndirected(g);
         this.fillEdges = new HashSet<>();
     }
@@ -104,24 +103,17 @@ public class CliqueMinimalSeparatorDecomposition<V, E>
      * described in Berry et al. (2010), DOI:10.3390/a3020197
      * <a href="http://www.mdpi.com/1999-4893/3/2/197"> http://www.mdpi.com/1999-4893/3/2/197</a>
      */
-    private void computeMinimalTriangulation()
-    {
+    private void computeMinimalTriangulation() {
         // initialize chordGraph with same vertices as graph
-        chordalGraph = GraphTypeBuilder
-            .<V, E> undirected().edgeSupplier(graph.getEdgeSupplier())
-            .vertexSupplier(graph.getVertexSupplier()).allowingMultipleEdges(false)
-            .allowingSelfLoops(false).buildGraph();
-        
+        chordalGraph = GraphTypeBuilder.<V, E>undirected().edgeSupplier(graph.getEdgeSupplier()).vertexSupplier(graph.getVertexSupplier()).allowingMultipleEdges(false).allowingSelfLoops(false).buildGraph();
         for (V v : graph.vertexSet()) {
             chordalGraph.addVertex(v);
         }
-
         // initialize g' as subgraph of graph (same vertices and edges)
         final Graph<V, E> gprime = copyAsSimpleGraph(graph);
         int s = -1;
         generators = new ArrayList<>();
         meo = new LinkedList<>();
-
         final Map<V, Integer> vertexLabels = new HashMap<>();
         for (V v : gprime.vertexSet()) {
             vertexLabels.put(v, 0);
@@ -129,26 +121,20 @@ public class CliqueMinimalSeparatorDecomposition<V, E>
         for (int i = 1, n = graph.vertexSet().size(); i <= n; i++) {
             V v = getMaxLabelVertex(vertexLabels);
             LinkedList<V> Y = new LinkedList<>(Graphs.neighborListOf(gprime, v));
-
             if (vertexLabels.get(v) <= s) {
                 generators.add(v);
             }
-
             s = vertexLabels.get(v);
-
             // Mark x reached and all other vertices of gprime unreached
             HashSet<V> reached = new HashSet<>();
             reached.add(v);
-
             // mark neighborhood of x reached and add to reach(label(y))
             HashMap<Integer, HashSet<V>> reach = new HashMap<>();
-
             // mark y reached and add y to reach
             for (V y : Y) {
                 reached.add(y);
                 addToReach(vertexLabels.get(y), y, reach);
             }
-
             for (int j = 0; j < graph.vertexSet().size(); j++) {
                 if (!reach.containsKey(j)) {
                     continue;
@@ -157,7 +143,6 @@ public class CliqueMinimalSeparatorDecomposition<V, E>
                     // remove a vertex y from reach(j)
                     V y = reach.get(j).iterator().next();
                     reach.get(j).remove(y);
-
                     for (V z : Graphs.neighborListOf(gprime, y)) {
                         if (!reached.contains(z)) {
                             reached.add(z);
@@ -171,14 +156,12 @@ public class CliqueMinimalSeparatorDecomposition<V, E>
                             }
                         }
                     }
-                }
+                } 
             }
-
             for (V y : Y) {
                 chordalGraph.addEdge(v, y);
                 vertexLabels.put(y, vertexLabels.get(y) + 1);
             }
-
             meo.addLast(v);
             gprime.removeVertex(v);
             vertexLabels.remove(v);
@@ -228,40 +211,31 @@ public class CliqueMinimalSeparatorDecomposition<V, E>
      * algorithm Atoms as described in Berry et al. (2010), DOI:10.3390/a3020197,
      * <a href="http://www.mdpi.com/1999-4893/3/2/197"> http://www.mdpi.com/1999-4893/3/2/197</a>
      */
-    private void computeAtoms()
-    {
+    private void computeAtoms() {
         if (chordalGraph == null) {
             computeMinimalTriangulation();
         }
-
         separators = new HashSet<>();
-
         // initialize g' as subgraph of graph (same vertices and edges)
         Graph<V, E> gprime = copyAsSimpleGraph(graph);
-
         // initialize h' as subgraph of chordalGraph (same vertices and edges)
         Graph<V, E> hprime = copyAsSimpleGraph(chordalGraph);
-
         atoms = new HashSet<>();
-
         Iterator<V> iterator = meo.descendingIterator();
         while (iterator.hasNext()) {
             V v = iterator.next();
             if (generators.contains(v)) {
                 Set<V> separator = new HashSet<>(Graphs.neighborListOf(hprime, v));
-
                 if (isClique(graph, separator)) {
                     if (separator.size() > 0) {
                         if (separators.contains(separator)) {
-                            fullComponentCount
-                                .put(separator, fullComponentCount.get(separator) + 1);
+                            fullComponentCount.put(separator, fullComponentCount.get(separator) + 1);
                         } else {
                             fullComponentCount.put(separator, 2);
                             separators.add(separator);
                         }
                     }
                     Graph<V, E> tmpGraph = copyAsSimpleGraph(gprime);
-
                     tmpGraph.removeAllVertices(separator);
                     ConnectivityInspector<V, E> con = new ConnectivityInspector<>(tmpGraph);
                     if (con.isConnected()) {
@@ -272,16 +246,14 @@ public class CliqueMinimalSeparatorDecomposition<V, E>
                             gprime.removeAllVertices(component);
                             component.addAll(separator);
                             atoms.add(new HashSet<>(component));
-                            assert (component.size() > 0);
+                            assert component.size() > 0;
                             break;
                         }
                     }
                 }
             }
-
             hprime.removeVertex(v);
-        }
-
+        } 
         if (gprime.vertexSet().size() > 0) {
             atoms.add(new HashSet<>(gprime.vertexSet()));
         }
@@ -315,14 +287,8 @@ public class CliqueMinimalSeparatorDecomposition<V, E>
      *
      * @return A copy of the graph projected to a SimpleGraph.
      */
-    private static <V, E> Graph<V, E> copyAsSimpleGraph(Graph<V, E> graph)
-    {
-        Graph<V,
-            E> copy = GraphTypeBuilder
-                .<V, E> undirected().edgeSupplier(graph.getEdgeSupplier())
-                .vertexSupplier(graph.getVertexSupplier()).allowingMultipleEdges(false)
-                .allowingSelfLoops(false).buildGraph();
-
+    private static <V, E> Graph<V, E> copyAsSimpleGraph(Graph<V, E> graph) {
+        Graph<V, E> copy = GraphTypeBuilder.<V, E>undirected().edgeSupplier(graph.getEdgeSupplier()).vertexSupplier(graph.getVertexSupplier()).allowingMultipleEdges(false).allowingSelfLoops(false).buildGraph();
         if (graph.getType().isSimple()) {
             Graphs.addGraph(copy, graph);
         } else {
@@ -331,7 +297,7 @@ public class CliqueMinimalSeparatorDecomposition<V, E>
             for (E e : graph.edgeSet()) {
                 V v1 = graph.getEdgeSource(e);
                 V v2 = graph.getEdgeTarget(e);
-                if (!v1.equals(v2) && !copy.containsEdge(e)) {
+                if ((!v1.equals(v2)) && (!copy.containsEdge(e))) {
                     copy.addEdge(v1, v2);
                 }
             }
@@ -462,5 +428,3 @@ public class CliqueMinimalSeparatorDecomposition<V, E>
         return graph;
     }
 }
-
-// End CliqueMinimalSeparatorDecomposition.java
