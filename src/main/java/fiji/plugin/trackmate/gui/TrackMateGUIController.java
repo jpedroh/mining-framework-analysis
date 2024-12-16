@@ -1,40 +1,5 @@
 package fiji.plugin.trackmate.gui;
 
-import static fiji.plugin.trackmate.visualization.TrackMateModelView.DEFAULT_HIGHLIGHT_COLOR;
-import static fiji.plugin.trackmate.visualization.TrackMateModelView.DEFAULT_SPOT_COLOR;
-import static fiji.plugin.trackmate.visualization.TrackMateModelView.DEFAULT_TRACK_DISPLAY_DEPTH;
-import static fiji.plugin.trackmate.visualization.TrackMateModelView.DEFAULT_TRACK_DISPLAY_MODE;
-import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_COLOR;
-import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_COLORMAP;
-import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_DISPLAY_SPOT_AS_ROIS;
-import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_DISPLAY_SPOT_NAMES;
-import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_HIGHLIGHT_COLOR;
-import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_SPOTS_VISIBLE;
-import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_SPOT_COLORING;
-import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_SPOT_RADIUS_RATIO;
-import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_TRACKS_VISIBLE;
-import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_TRACK_COLORING;
-import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_TRACK_DISPLAY_DEPTH;
-import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_TRACK_DISPLAY_MODE;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.JButton;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import org.scijava.object.ObjectService;
-
 import fiji.plugin.trackmate.Logger;
 import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.SelectionModel;
@@ -89,10 +54,40 @@ import fiji.plugin.trackmate.visualization.trackscheme.SpotImageUpdater;
 import fiji.plugin.trackmate.visualization.trackscheme.TrackScheme;
 import ij.IJ;
 import ij.Prefs;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.JButton;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import org.scijava.object.ObjectService;
+import static fiji.plugin.trackmate.visualization.TrackMateModelView.DEFAULT_HIGHLIGHT_COLOR;
+import static fiji.plugin.trackmate.visualization.TrackMateModelView.DEFAULT_SPOT_COLOR;
+import static fiji.plugin.trackmate.visualization.TrackMateModelView.DEFAULT_TRACK_DISPLAY_DEPTH;
+import static fiji.plugin.trackmate.visualization.TrackMateModelView.DEFAULT_TRACK_DISPLAY_MODE;
+import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_COLOR;
+import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_COLORMAP;
+import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_DISPLAY_SPOT_AS_ROIS;
+import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_DISPLAY_SPOT_NAMES;
+import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_HIGHLIGHT_COLOR;
+import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_SPOTS_VISIBLE;
+import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_SPOT_COLORING;
+import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_SPOT_RADIUS_RATIO;
+import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_TRACKS_VISIBLE;
+import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_TRACK_COLORING;
+import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_TRACK_DISPLAY_DEPTH;
+import static fiji.plugin.trackmate.visualization.TrackMateModelView.KEY_TRACK_DISPLAY_MODE;
 
-public class TrackMateGUIController implements ActionListener
-{
 
+public class TrackMateGUIController implements ActionListener {
 	/*
 	 * FIELDS
 	 */
@@ -182,57 +177,37 @@ public class TrackMateGUIController implements ActionListener
 	/*
 	 * CONSTRUCTOR
 	 */
-
-	public TrackMateGUIController( final TrackMate trackmate )
-	{
-
+	public TrackMateGUIController(final TrackMate trackmate) {
 		// I can't stand the metal look. If this is a problem, contact me
 		// (jeanyves.tinevez@gmail.com)
-		if ( IJ.isMacOSX() || IJ.isWindows() )
-		{
-			try
-			{
-				UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
-			}
-			catch ( final ClassNotFoundException e )
-			{
+		if (IJ.isMacOSX() || IJ.isWindows()) {
+			try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} catch (final java.lang.ClassNotFoundException e) {
 				e.printStackTrace();
-			}
-			catch ( final InstantiationException e )
-			{
+			} catch (final java.lang.InstantiationException e) {
 				e.printStackTrace();
-			}
-			catch ( final IllegalAccessException e )
-			{
+			} catch (final java.lang.IllegalAccessException e) {
 				e.printStackTrace();
-			}
-			catch ( final UnsupportedLookAndFeelException e )
-			{
+			} catch (final UnsupportedLookAndFeelException e) {
 				e.printStackTrace();
 			}
 		}
-
 		this.trackmate = trackmate;
-		trackmate.setNumThreads( Prefs.getThreads() );
-
-		/*
-		 * Instantiate GUI
-		 */
-
-		this.gui = new TrackMateWizard( this );
+		trackmate.setNumThreads(Prefs.getThreads());
+		/* Instantiate GUI */
+		this.gui = new TrackMateWizard(this);
 		this.logger = gui.getLogger();
-
 		/*
 		 * Add this TrackMate instance to the ObjectService
 		 */
-		final ObjectService objectService = TMUtils.getContext().service( ObjectService.class );
-		if ( objectService != null )
-			objectService.addObject( trackmate );
-
+		final ObjectService objectService = TMUtils.getContext().service(ObjectService.class);
+		if (objectService != null) {
+			objectService.addObject(trackmate);
+		}
 		// Feature updater
-		final ModelFeatureUpdater modelFeatureUpdater = new ModelFeatureUpdater( trackmate.getModel(), trackmate.getSettings() );
-		modelFeatureUpdater.setNumThreads( trackmate.getNumThreads() );
-
+		final ModelFeatureUpdater modelFeatureUpdater = new ModelFeatureUpdater(trackmate.getModel(), trackmate.getSettings());
+		modelFeatureUpdater.setNumThreads(trackmate.getNumThreads());
 		// Feature colorers
 		this.spotColorGenerator = createSpotColorGenerator();
 		this.edgeColorGenerator = createEdgeColorGenerator();
@@ -240,35 +215,28 @@ public class TrackMateGUIController implements ActionListener
 		this.manualEdgeColorGenerator = createManualEdgeColorGenerator();
 		this.manualSpotColorGenerator = createManualSpotColorGenerator();
 		this.spotColorGeneratorPerTrackFeature = createSpotColorGeneratorPerTrackFeature();
-
 		// 0.
 		this.guimodel = new TrackMateGUIModel();
-		this.guimodel.setDisplaySettings( createDisplaySettings( trackmate.getModel() ) );
-		this.displaySettingsListener = new DisplaySettingsListener()
-		{
+		this.guimodel.setDisplaySettings(createDisplaySettings(trackmate.getModel()));
+		this.displaySettingsListener = new DisplaySettingsListener() {
 			@Override
-			public void displaySettingsChanged( final DisplaySettingsEvent event )
-			{
-				guimodel.getDisplaySettings().put( event.getKey(), event.getNewValue() );
-				for ( final TrackMateModelView view : guimodel.views )
-				{
-					view.setDisplaySettings( event.getKey(), event.getNewValue() );
+			public void displaySettingsChanged(final DisplaySettingsEvent event) {
+				guimodel.getDisplaySettings().put(event.getKey(), event.getNewValue());
+				for (final TrackMateModelView view : guimodel.views) {
+					view.setDisplaySettings(event.getKey(), event.getNewValue());
 					view.refresh();
 				}
 			}
 		};
-
 		// 1.
 		createSelectionModel();
 		// 2.
 		createProviders();
 		// 3.
 		registeredDescriptors = createDescriptors();
-
-		trackmate.getModel().setLogger( logger );
-		gui.setVisible( true );
-		gui.addActionListener( this );
-
+		trackmate.getModel().setLogger(logger);
+		gui.setVisible(true);
+		gui.addActionListener(this);
 		init();
 	}
 
@@ -344,40 +312,31 @@ public class TrackMateGUIController implements ActionListener
 	 * @param stateKey
 	 *            the target state string.
 	 */
-	public void setGUIStateString( final String stateKey )
-	{
-		for ( final WizardPanelDescriptor descriptor : registeredDescriptors )
-		{
-
-			if ( stateKey.equals( descriptor.getKey() ) )
-			{
-
-				if ( descriptor.equals( spotFilterDescriptor ) )
-				{
-					/*
-					 * Special case: we need this otherwise the component of
-					 * this descriptor is not instantiated.
+	public void setGUIStateString(final String stateKey) {
+		for (final WizardPanelDescriptor descriptor : registeredDescriptors) {
+			if (stateKey.equals(descriptor.getKey())) {
+				if (descriptor.equals(spotFilterDescriptor)) {
+					/* Special case: we need this otherwise the component of
+					this descriptor is not instantiated.
 					 */
 					spotFilterDescriptor.aboutToDisplayPanel();
 				}
-
 				guimodel.currentDescriptor = descriptor;
-				gui.show( descriptor );
-				if ( null == nextDescriptor( descriptor ) )
-					gui.setNextButtonEnabled( false );
-				else
-					gui.setNextButtonEnabled( true );
-
-				if ( null == previousDescriptor( descriptor ) )
-					gui.setPreviousButtonEnabled( false );
-				else
-					gui.setPreviousButtonEnabled( true );
-
+				gui.show(descriptor);
+				if (null == nextDescriptor(descriptor)) {
+					gui.setNextButtonEnabled(false);
+				} else {
+					gui.setNextButtonEnabled(true);
+				}
+				if (null == previousDescriptor(descriptor)) {
+					gui.setPreviousButtonEnabled(false);
+				} else {
+					gui.setPreviousButtonEnabled(true);
+				}
 				descriptor.displayingPanel();
 			}
 		}
-
-		logger.error( "Cannot move to state " + stateKey + ". Unknown state.\n" );
+		logger.error(("Cannot move to state " + stateKey) + ". Unknown state.\n");
 	}
 
 	/**
@@ -488,9 +447,8 @@ public class TrackMateGUIController implements ActionListener
 		return generator;
 	}
 
-	protected void createProviders()
-	{
-		spotAnalyzerProvider = new SpotAnalyzerProvider( trackmate.getSettings().imp );
+	protected void createProviders() {
+		spotAnalyzerProvider = new SpotAnalyzerProvider(trackmate.getSettings().imp);
 		edgeAnalyzerProvider = new EdgeAnalyzerProvider();
 		trackAnalyzerProvider = new TrackAnalyzerProvider();
 		detectorProvider = new DetectorProvider();
@@ -502,249 +460,172 @@ public class TrackMateGUIController implements ActionListener
 	/**
 	 * Creates the map of next descriptor for each descriptor.
 	 */
-	protected Collection< WizardPanelDescriptor > createDescriptors()
-	{
-
-		/*
-		 * Logging panel: receive message, share with the TrackMateModel
-		 */
+	protected Collection<WizardPanelDescriptor> createDescriptors() {
+		/* Logging panel: receive message, share with the TrackMateModel */
 		final LogPanel logPanel = gui.getLogPanel();
-		logPanelDescriptor = new LogPanelDescriptor( logPanel );
-
-		/*
-		 * Start panel
-		 */
-		startDialoDescriptor = new StartDialogDescriptor( this )
-		{
+		logPanelDescriptor = new LogPanelDescriptor(logPanel);
+		/* Start panel */
+		startDialoDescriptor = new StartDialogDescriptor(this) {
 			@Override
-			public void aboutToHidePanel()
-			{
+			public void aboutToHidePanel() {
 				super.aboutToHidePanel();
 				// Reset the default save location.
 				SomeDialogDescriptor.file = null;
 			}
 
 			@Override
-			public void displayingPanel()
-			{
+			public void displayingPanel() {
 				super.displayingPanel();
-				if ( startDialoDescriptor.isImpValid() )
-				{
+				if (startDialoDescriptor.isImpValid()) {
 					// Ensure we reset default save location
-					gui.setNextButtonEnabled( true );
-				}
-				else
-				{
-					gui.setNextButtonEnabled( false );
+					gui.setNextButtonEnabled(true);
+				} else {
+					gui.setNextButtonEnabled(false);
 				}
 			}
 		};
-		/*
-		 * Listen if the selected imp is valid and toggle next button
-		 * accordingly.
+		/* Listen if the selected imp is valid and toggle next button
+		accordingly.
 		 */
-		startDialoDescriptor.addActionListener( new ActionListener()
-		{
+		startDialoDescriptor.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed( final ActionEvent e )
-			{
+			public void actionPerformed(final ActionEvent e) {
 				// Ensure we reset default save location
-				if ( startDialoDescriptor.isImpValid() )
-					gui.setNextButtonEnabled( true );
-				else
-					gui.setNextButtonEnabled( false );
-			}
-		} );
-
-		/*
-		 * Choose detector
-		 */
-		detectorChoiceDescriptor = new DetectorChoiceDescriptor( detectorProvider, trackmate, this );
-
-		/*
-		 * Configure chosen detector
-		 */
-		detectorConfigurationDescriptor = new DetectorConfigurationDescriptor( trackmate, this );
-
-		/*
-		 * Execute and report detection progress
-		 */
-		detectionDescriptor = new DetectionDescriptor( this );
-
-		/*
-		 * Initial spot filter: discard obvious spurious spot based on quality.
-		 */
-		initFilterDescriptor = new InitFilterDescriptor( trackmate, this );
-
-		/*
-		 * Select and render a view
-		 */
-		// We need the GUI model to register the created view there.
-		viewChoiceDescriptor = new ViewChoiceDescriptor( viewProvider, guimodel, this );
-
-		/*
-		 * Spot filtering
-		 */
-		spotFilterDescriptor = new SpotFilterDescriptor( trackmate, spotColorGenerator, this );
-		// display color changed
-		spotFilterDescriptor.addActionListener( new ActionListener()
-		{
-
-			@Override
-			public void actionPerformed( final ActionEvent event )
-			{
-				if ( event == spotFilterDescriptor.getComponent().COLOR_FEATURE_CHANGED )
-				{
-
-					final FeatureColorGenerator< Spot > newValue;
-					@SuppressWarnings( "unchecked" )
-					final FeatureColorGenerator< Spot > oldValue = ( FeatureColorGenerator< Spot > ) guimodel.getDisplaySettings().get( KEY_SPOT_COLORING );
-					if ( null == spotFilterDescriptor.getComponent() )
-						return;
-
-					switch ( spotFilterDescriptor.getComponent().getColorCategory() )
-					{
-					case DEFAULT:
-						newValue = spotColorGenerator;
-						spotColorGenerator.setFeature( null );
-						break;
-					case TRACKS:
-						newValue = spotColorGeneratorPerTrackFeature;
-						spotColorGeneratorPerTrackFeature.setFeature( spotFilterDescriptor.getComponent().getColorFeature() );
-						break;
-					default:
-						newValue = spotColorGenerator;
-						spotColorGenerator.setFeature( spotFilterDescriptor.getComponent().getColorFeature() );
-						break;
-					}
-					final DisplaySettingsEvent dsEvent = new DisplaySettingsEvent( spotFilterDescriptor.getComponent(), KEY_SPOT_COLORING, newValue, oldValue );
-					displaySettingsListener.displaySettingsChanged( dsEvent );
+				if (startDialoDescriptor.isImpValid()) {
+					gui.setNextButtonEnabled(true);
+				} else {
+					gui.setNextButtonEnabled(false);
 				}
 			}
-		} );
-		// Filtered
-		spotFilterDescriptor.addChangeListener( new ChangeListener()
-		{
+		});
+		/* Choose detector */
+		detectorChoiceDescriptor = new DetectorChoiceDescriptor(detectorProvider, trackmate, this);
+		/* Configure chosen detector */
+		detectorConfigurationDescriptor = new DetectorConfigurationDescriptor(trackmate, this);
+		/* Execute and report detection progress */
+		detectionDescriptor = new DetectionDescriptor(this);
+		/* Initial spot filter: discard obvious spurious spot based on quality. */
+		initFilterDescriptor = new InitFilterDescriptor(trackmate, this);
+		/* Select and render a view */
+		// We need the GUI model to register the created view there.
+		viewChoiceDescriptor = new ViewChoiceDescriptor(viewProvider, guimodel, this);
+		/* Spot filtering */
+		spotFilterDescriptor = new SpotFilterDescriptor(trackmate, spotColorGenerator, this);
+		// display color changed
+		spotFilterDescriptor.addActionListener(new ActionListener() {
 			@Override
-			public void stateChanged( final ChangeEvent event )
-			{
+			public void actionPerformed(final ActionEvent event) {
+				if (event == spotFilterDescriptor.getComponent().COLOR_FEATURE_CHANGED) {
+					final FeatureColorGenerator<Spot> newValue;
+					@SuppressWarnings("unchecked")
+					final FeatureColorGenerator<Spot> oldValue = ((FeatureColorGenerator<Spot>) (guimodel.getDisplaySettings().get(KEY_SPOT_COLORING)));
+					if (null == spotFilterDescriptor.getComponent()) {
+						return;
+					}
+					switch (spotFilterDescriptor.getComponent().getColorCategory()) {
+						case DEFAULT :
+							newValue = spotColorGenerator;
+							spotColorGenerator.setFeature(null);
+							break;
+						case TRACKS :
+							newValue = spotColorGeneratorPerTrackFeature;
+							spotColorGeneratorPerTrackFeature.setFeature(spotFilterDescriptor.getComponent().getColorFeature());
+							break;
+						default :
+							newValue = spotColorGenerator;
+							spotColorGenerator.setFeature(spotFilterDescriptor.getComponent().getColorFeature());
+							break;
+					}
+					final DisplaySettingsEvent dsEvent = new DisplaySettingsEvent(spotFilterDescriptor.getComponent(), KEY_SPOT_COLORING, newValue, oldValue);
+					displaySettingsListener.displaySettingsChanged(dsEvent);
+				}
+			}
+		});
+		// Filtered
+		spotFilterDescriptor.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(final ChangeEvent event) {
 				// We set the thresholds field of the model but do not touch its
 				// selected spot field yet.
-				trackmate.getSettings().setSpotFilters( spotFilterDescriptor.getComponent().getFeatureFilters() );
-				trackmate.execSpotFiltering( false );
+				trackmate.getSettings().setSpotFilters(spotFilterDescriptor.getComponent().getFeatureFilters());
+				trackmate.execSpotFiltering(false);
 			}
-		} );
-
-		/*
-		 * Choose a tracker
-		 */
-		trackerChoiceDescriptor = new TrackerChoiceDescriptor( trackerProvider, trackmate, this );
-
-		/*
-		 * Configure chosen tracker
-		 */
-		trackerConfigurationDescriptor = new TrackerConfigurationDescriptor( trackerProvider, trackmate, this );
-
-		/*
-		 * Execute tracking
-		 */
-		trackingDescriptor = new TrackingDescriptor( this );
-
-		/*
-		 * Track filtering
-		 */
-		trackFilterDescriptor = new TrackFilterDescriptor( trackmate, trackColorGenerator, this );
-		trackFilterDescriptor.addActionListener( new ActionListener()
-		{
+		});
+		/* Choose a tracker */
+		trackerChoiceDescriptor = new TrackerChoiceDescriptor(trackerProvider, trackmate, this);
+		/* Configure chosen tracker */
+		trackerConfigurationDescriptor = new TrackerConfigurationDescriptor(trackerProvider, trackmate, this);
+		/* Execute tracking */
+		trackingDescriptor = new TrackingDescriptor(this);
+		/* Track filtering */
+		trackFilterDescriptor = new TrackFilterDescriptor(trackmate, trackColorGenerator, this);
+		trackFilterDescriptor.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed( final ActionEvent event )
-			{
-				if ( trackFilterDescriptor.getComponent().getColorCategory().equals( ColorByFeatureGUIPanel.Category.DEFAULT ) )
-					trackColorGenerator.setFeature( null );
-				else
-					trackColorGenerator.setFeature( trackFilterDescriptor.getComponent().getColorFeature() );
-
-				for ( final TrackMateModelView view : guimodel.views )
-				{
-					view.setDisplaySettings( TrackMateModelView.KEY_TRACK_COLORING, trackColorGenerator );
+			public void actionPerformed(final ActionEvent event) {
+				if (trackFilterDescriptor.getComponent().getColorCategory().equals(ColorByFeatureGUIPanel.Category.DEFAULT)) {
+					trackColorGenerator.setFeature(null);
+				} else {
+					trackColorGenerator.setFeature(trackFilterDescriptor.getComponent().getColorFeature());
+				}
+				for (final TrackMateModelView view : guimodel.views) {
+					view.setDisplaySettings(TrackMateModelView.KEY_TRACK_COLORING, trackColorGenerator);
 					view.refresh();
 				}
 			}
-		} );
-		trackFilterDescriptor.addChangeListener( new ChangeListener()
-		{
+		});
+		trackFilterDescriptor.addChangeListener(new ChangeListener() {
 			@Override
-			public void stateChanged( final ChangeEvent event )
-			{
+			public void stateChanged(final ChangeEvent event) {
 				// We set the thresholds field of the model but do not touch its
 				// selected spot field yet.
-				trackmate.getSettings().setTrackFilters( trackFilterDescriptor.getComponent().getFeatureFilters() );
-				trackmate.execTrackFiltering( false );
+				trackmate.getSettings().setTrackFilters(trackFilterDescriptor.getComponent().getFeatureFilters());
+				trackmate.execTrackFiltering(false);
 			}
-		} );
-
-		/*
-		 * Finished, let's change the display settings.
-		 */
-		configureViewsDescriptor = new ConfigureViewsDescriptor( trackmate, spotColorGenerator, edgeColorGenerator, trackColorGenerator, spotColorGeneratorPerTrackFeature, manualSpotColorGenerator, manualEdgeColorGenerator, this );
-		configureViewsDescriptor.getComponent().addActionListener( new ActionListener()
-		{
+		});
+		/* Finished, let's change the display settings. */
+		configureViewsDescriptor = new ConfigureViewsDescriptor(trackmate, spotColorGenerator, edgeColorGenerator, trackColorGenerator, spotColorGeneratorPerTrackFeature, manualSpotColorGenerator, manualEdgeColorGenerator, this);
+		configureViewsDescriptor.getComponent().addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed( final ActionEvent event )
-			{
-				if ( event == configureViewsDescriptor.getComponent().TRACK_SCHEME_BUTTON_PRESSED )
+			public void actionPerformed(final ActionEvent event) {
+				if (event == configureViewsDescriptor.getComponent().TRACK_SCHEME_BUTTON_PRESSED) {
 					launchTrackScheme();
-				else if ( event == configureViewsDescriptor.getComponent().DO_ANALYSIS_BUTTON_PRESSED )
-					launchDoAnalysis( false );
-				else if ( event == configureViewsDescriptor.getComponent().DO_ANALYSIS_BUTTON_WITH_SHIFT_PRESSED )
-					launchDoAnalysis( true );
-				else
-					System.out.println( "[TrackMateGUIController] Caught unknown event: " + event );
+				} else if (event == configureViewsDescriptor.getComponent().DO_ANALYSIS_BUTTON_PRESSED) {
+					launchDoAnalysis(false);
+				} else if (event == configureViewsDescriptor.getComponent().DO_ANALYSIS_BUTTON_WITH_SHIFT_PRESSED) {
+					launchDoAnalysis(true);
+				} else {
+					System.out.println("[TrackMateGUIController] Caught unknown event: " + event);
+				}
 			}
-		} );
-		configureViewsDescriptor.getComponent().addDisplaySettingsChangeListener( displaySettingsListener );
-
-		/*
-		 * Export and graph features.
-		 */
-		grapherDescriptor = new GrapherDescriptor( trackmate, this );
-
-		/*
-		 * Offer to take some actions on the data.
-		 */
-		actionChooserDescriptor = new ActionChooserDescriptor( actionProvider, trackmate, this );
-
-		/*
-		 * Save descriptor
-		 */
-		saveDescriptor = new SaveDescriptor( this );
-
-		/*
-		 * Load descriptor
-		 */
-		loadDescriptor = new LoadDescriptor( this );
-
-		/*
-		 * Store created descriptors
-		 */
-		final ArrayList< WizardPanelDescriptor > descriptors = new ArrayList<>( 16 );
-		descriptors.add( actionChooserDescriptor );
-		descriptors.add( configureViewsDescriptor );
-		descriptors.add( detectorChoiceDescriptor );
-		descriptors.add( detectorConfigurationDescriptor );
-		descriptors.add( detectionDescriptor );
-		descriptors.add( grapherDescriptor );
-		descriptors.add( initFilterDescriptor );
-		descriptors.add( loadDescriptor );
-		descriptors.add( logPanelDescriptor );
-		descriptors.add( saveDescriptor );
-		descriptors.add( spotFilterDescriptor );
-		descriptors.add( startDialoDescriptor );
-		descriptors.add( trackFilterDescriptor );
-		descriptors.add( trackerChoiceDescriptor );
-		descriptors.add( trackerConfigurationDescriptor );
-		descriptors.add( trackingDescriptor );
-		descriptors.add( viewChoiceDescriptor );
+		});
+		configureViewsDescriptor.getComponent().addDisplaySettingsChangeListener(displaySettingsListener);
+		/* Export and graph features. */
+		grapherDescriptor = new GrapherDescriptor(trackmate, this);
+		/* Offer to take some actions on the data. */
+		actionChooserDescriptor = new ActionChooserDescriptor(actionProvider, trackmate, this);
+		/* Save descriptor */
+		saveDescriptor = new SaveDescriptor(this);
+		/* Load descriptor */
+		loadDescriptor = new LoadDescriptor(this);
+		/* Store created descriptors */
+		final ArrayList<WizardPanelDescriptor> descriptors = new ArrayList<>(16);
+		descriptors.add(actionChooserDescriptor);
+		descriptors.add(configureViewsDescriptor);
+		descriptors.add(detectorChoiceDescriptor);
+		descriptors.add(detectorConfigurationDescriptor);
+		descriptors.add(detectionDescriptor);
+		descriptors.add(grapherDescriptor);
+		descriptors.add(initFilterDescriptor);
+		descriptors.add(loadDescriptor);
+		descriptors.add(logPanelDescriptor);
+		descriptors.add(saveDescriptor);
+		descriptors.add(spotFilterDescriptor);
+		descriptors.add(startDialoDescriptor);
+		descriptors.add(trackFilterDescriptor);
+		descriptors.add(trackerChoiceDescriptor);
+		descriptors.add(trackerConfigurationDescriptor);
+		descriptors.add(trackingDescriptor);
+		descriptors.add(viewChoiceDescriptor);
 		return descriptors;
 	}
 
@@ -753,184 +634,104 @@ public class TrackMateGUIController implements ActionListener
 		return startDialoDescriptor;
 	}
 
-	protected WizardPanelDescriptor nextDescriptor( final WizardPanelDescriptor currentDescriptor )
-	{
-
-		if ( currentDescriptor == startDialoDescriptor )
-		{
+	protected WizardPanelDescriptor nextDescriptor(final WizardPanelDescriptor currentDescriptor) {
+		if (currentDescriptor == startDialoDescriptor) {
 			return detectorChoiceDescriptor;
-
-		}
-		else if ( currentDescriptor == detectorChoiceDescriptor )
-		{
+		} else if (currentDescriptor == detectorChoiceDescriptor) {
 			return detectorConfigurationDescriptor;
-
-		}
-		else if ( currentDescriptor == detectorConfigurationDescriptor )
-		{
-			if ( trackmate.getSettings().detectorFactory.getKey().equals( ManualDetectorFactory.DETECTOR_KEY ) )
-			{
-				if ( viewProvider.getVisibleKeys().size() == 1 )
+		} else if (currentDescriptor == detectorConfigurationDescriptor) {
+			if (trackmate.getSettings().detectorFactory.getKey().equals(ManualDetectorFactory.DETECTOR_KEY)) {
+				if (viewProvider.getVisibleKeys().size() == 1) {
 					return spotFilterDescriptor;
-				else
+				} else {
+<<<<<<< LEFT
 					return viewChoiceDescriptor;
-			}
-			else
-			{
+=======
+					return viewChoiceDescriptor;
+>>>>>>> RIGHT
+
+				}
+			} else {
 				return detectionDescriptor;
 			}
-
-		}
-		else if ( currentDescriptor == detectionDescriptor )
-		{
+		} else if (currentDescriptor == detectionDescriptor) {
 			return initFilterDescriptor;
-
-		}
-		else if ( currentDescriptor == initFilterDescriptor )
-		{
+		} else if (currentDescriptor == initFilterDescriptor) {
 			// Skip choice of view if we just have one.
-			if ( viewProvider.getVisibleKeys().size() == 1 )
+			if (viewProvider.getVisibleKeys().size() == 1) {
 				return spotFilterDescriptor;
-			else
+			} else {
+<<<<<<< LEFT
 				return viewChoiceDescriptor;
+=======
+				return viewChoiceDescriptor;
+>>>>>>> RIGHT
 
-		}
-		else if ( currentDescriptor == viewChoiceDescriptor )
-		{
+			}
+		} else if (currentDescriptor == viewChoiceDescriptor) {
 			return spotFilterDescriptor;
-
-		}
-		else if ( currentDescriptor == spotFilterDescriptor )
-		{
+		} else if (currentDescriptor == spotFilterDescriptor) {
 			return trackerChoiceDescriptor;
-
-		}
-		else if ( currentDescriptor == trackerChoiceDescriptor )
-		{
-			if ( null == trackmate.getSettings().trackerFactory || trackmate.getSettings().trackerFactory.getKey().equals( ManualTrackerFactory.TRACKER_KEY ) )
+		} else if (currentDescriptor == trackerChoiceDescriptor) {
+			if ((null == trackmate.getSettings().trackerFactory) || trackmate.getSettings().trackerFactory.getKey().equals(ManualTrackerFactory.TRACKER_KEY)) {
 				return trackFilterDescriptor;
-
+			}
 			return trackerConfigurationDescriptor;
-
-		}
-		else if ( currentDescriptor == trackerConfigurationDescriptor )
-		{
+		} else if (currentDescriptor == trackerConfigurationDescriptor) {
 			return trackingDescriptor;
-
-		}
-		else if ( currentDescriptor == trackingDescriptor )
-		{
+		} else if (currentDescriptor == trackingDescriptor) {
 			return trackFilterDescriptor;
-
-		}
-		else if ( currentDescriptor == trackFilterDescriptor )
-		{
+		} else if (currentDescriptor == trackFilterDescriptor) {
 			return configureViewsDescriptor;
-
-		}
-		else if ( currentDescriptor == configureViewsDescriptor )
-		{
+		} else if (currentDescriptor == configureViewsDescriptor) {
 			return grapherDescriptor;
-
-		}
-		else if ( currentDescriptor == grapherDescriptor )
-		{
+		} else if (currentDescriptor == grapherDescriptor) {
 			return actionChooserDescriptor;
-
-		}
-		else if ( currentDescriptor == actionChooserDescriptor )
-		{
+		} else if (currentDescriptor == actionChooserDescriptor) {
 			return null;
-
-		}
-		else
-		{
-			throw new IllegalArgumentException( "Next descriptor for " + currentDescriptor + " is unknown." );
+		} else {
+			throw new IllegalArgumentException(("Next descriptor for " + currentDescriptor) + " is unknown.");
 		}
 	}
 
-	protected WizardPanelDescriptor previousDescriptor( final WizardPanelDescriptor currentDescriptor )
-	{
-
-		if ( currentDescriptor == startDialoDescriptor )
-		{
+	protected WizardPanelDescriptor previousDescriptor(final WizardPanelDescriptor currentDescriptor) {
+		if (currentDescriptor == startDialoDescriptor) {
 			return null;
-
-		}
-		else if ( currentDescriptor == detectorChoiceDescriptor )
-		{
+		} else if (currentDescriptor == detectorChoiceDescriptor) {
 			return startDialoDescriptor;
-
-		}
-		else if ( currentDescriptor == detectorConfigurationDescriptor )
-		{
+		} else if (currentDescriptor == detectorConfigurationDescriptor) {
 			return detectorChoiceDescriptor;
-
-		}
-		else if ( currentDescriptor == detectionDescriptor )
-		{
+		} else if (currentDescriptor == detectionDescriptor) {
 			return detectorConfigurationDescriptor;
-
-		}
-		else if ( currentDescriptor == initFilterDescriptor )
-		{
+		} else if (currentDescriptor == initFilterDescriptor) {
 			return detectorConfigurationDescriptor;
-
-		}
-		else if ( currentDescriptor == viewChoiceDescriptor )
-		{
+		} else if (currentDescriptor == viewChoiceDescriptor) {
 			return detectorConfigurationDescriptor;
-
-		}
-		else if ( currentDescriptor == spotFilterDescriptor )
-		{
-			if ( viewProvider.getVisibleKeys().size() == 1 )
+		} else if (currentDescriptor == spotFilterDescriptor) {
+			if (viewProvider.getVisibleKeys().size() == 1) {
 				return detectorConfigurationDescriptor;
-			else
+			} else {
 				return viewChoiceDescriptor;
-
-		}
-		else if ( currentDescriptor == trackerChoiceDescriptor )
-		{
+			}
+		} else if (currentDescriptor == trackerChoiceDescriptor) {
 			return spotFilterDescriptor;
-
-		}
-		else if ( currentDescriptor == trackerConfigurationDescriptor )
-		{
+		} else if (currentDescriptor == trackerConfigurationDescriptor) {
 			return trackerChoiceDescriptor;
-
-		}
-		else if ( currentDescriptor == trackingDescriptor )
-		{
+		} else if (currentDescriptor == trackingDescriptor) {
 			return trackerConfigurationDescriptor;
-
-		}
-		else if ( currentDescriptor == trackFilterDescriptor )
-		{
-			if ( null == trackmate.getSettings().trackerFactory || trackmate.getSettings().trackerFactory.getKey().equals( ManualTrackerFactory.TRACKER_KEY ) )
+		} else if (currentDescriptor == trackFilterDescriptor) {
+			if ((null == trackmate.getSettings().trackerFactory) || trackmate.getSettings().trackerFactory.getKey().equals(ManualTrackerFactory.TRACKER_KEY)) {
 				return trackerChoiceDescriptor;
-
+			}
 			return trackerConfigurationDescriptor;
-
-		}
-		else if ( currentDescriptor == configureViewsDescriptor )
-		{
+		} else if (currentDescriptor == configureViewsDescriptor) {
 			return trackFilterDescriptor;
-
-		}
-		else if ( currentDescriptor == grapherDescriptor )
-		{
+		} else if (currentDescriptor == grapherDescriptor) {
 			return configureViewsDescriptor;
-
-		}
-		else if ( currentDescriptor == actionChooserDescriptor )
-		{
+		} else if (currentDescriptor == actionChooserDescriptor) {
 			return grapherDescriptor;
-
-		}
-		else
-		{
-			throw new IllegalArgumentException( "Previous descriptor for " + currentDescriptor + " is unknown." );
+		} else {
+			throw new IllegalArgumentException(("Previous descriptor for " + currentDescriptor) + " is unknown.");
 		}
 	}
 
@@ -975,21 +776,20 @@ public class TrackMateGUIController implements ActionListener
 	 *            display settings.
 	 * @return a map of display settings mappings.
 	 */
-	protected Map< String, Object > createDisplaySettings( final Model model )
-	{
-		final Map< String, Object > displaySettings = new HashMap<>();
-		displaySettings.put( KEY_COLOR, DEFAULT_SPOT_COLOR );
-		displaySettings.put( KEY_HIGHLIGHT_COLOR, DEFAULT_HIGHLIGHT_COLOR );
-		displaySettings.put( KEY_SPOTS_VISIBLE, true );
-		displaySettings.put( KEY_DISPLAY_SPOT_NAMES, false );
-		displaySettings.put( KEY_DISPLAY_SPOT_AS_ROIS, true );
-		displaySettings.put( KEY_SPOT_COLORING, spotColorGenerator );
-		displaySettings.put( KEY_SPOT_RADIUS_RATIO, 1.0d );
-		displaySettings.put( KEY_TRACKS_VISIBLE, true );
-		displaySettings.put( KEY_TRACK_DISPLAY_MODE, DEFAULT_TRACK_DISPLAY_MODE );
-		displaySettings.put( KEY_TRACK_DISPLAY_DEPTH, DEFAULT_TRACK_DISPLAY_DEPTH );
-		displaySettings.put( KEY_TRACK_COLORING, trackColorGenerator );
-		displaySettings.put( KEY_COLORMAP, TrackMateOptionUtils.getOptions().getPaintScale() );
+	protected Map<String, Object> createDisplaySettings(final Model model) {
+		final Map<String, Object> displaySettings = new HashMap<>();
+		displaySettings.put(KEY_COLOR, DEFAULT_SPOT_COLOR);
+		displaySettings.put(KEY_HIGHLIGHT_COLOR, DEFAULT_HIGHLIGHT_COLOR);
+		displaySettings.put(KEY_SPOTS_VISIBLE, true);
+		displaySettings.put(KEY_DISPLAY_SPOT_NAMES, false);
+		displaySettings.put(KEY_DISPLAY_SPOT_AS_ROIS, true);
+		displaySettings.put(KEY_SPOT_COLORING, spotColorGenerator);
+		displaySettings.put(KEY_SPOT_RADIUS_RATIO, 1.0);
+		displaySettings.put(KEY_TRACKS_VISIBLE, true);
+		displaySettings.put(KEY_TRACK_DISPLAY_MODE, DEFAULT_TRACK_DISPLAY_MODE);
+		displaySettings.put(KEY_TRACK_DISPLAY_DEPTH, DEFAULT_TRACK_DISPLAY_DEPTH);
+		displaySettings.put(KEY_TRACK_COLORING, trackColorGenerator);
+		displaySettings.put(KEY_COLORMAP, TrackMateOptionUtils.getOptions().getPaintScale());
 		return displaySettings;
 	}
 
@@ -1137,26 +937,24 @@ public class TrackMateGUIController implements ActionListener
 		panelDescriptor.displayingPanel();
 	}
 
-	private void previous()
-	{
+	private void previous() {
 		// Move to previous panel, but do not execute its forward-navigation
 		// actions.
 		final WizardPanelDescriptor olDescriptor = guimodel.currentDescriptor;
-		final WizardPanelDescriptor panelDescriptor = previousDescriptor( olDescriptor );
+		final WizardPanelDescriptor panelDescriptor = previousDescriptor(olDescriptor);
 		// Execute its backward-navigation actions.
 		panelDescriptor.comingBackToPanel();
 		// Do whatever we do when the panel is shown.
 		panelDescriptor.displayingPanel();
-		gui.show( panelDescriptor );
+		gui.show(panelDescriptor);
 		guimodel.currentDescriptor = panelDescriptor;
-
 		// Check if the new panel has a next panel. If not, disable the next
 		// button
-		if ( null == previousDescriptor( panelDescriptor ) )
-			gui.setPreviousButtonEnabled( false );
-
+		if (null == previousDescriptor(panelDescriptor)) {
+			gui.setPreviousButtonEnabled(false);
+		}
 		// Re-enable the previous button, in case it was disabled
-		gui.setNextButtonEnabled( true );
+		gui.setNextButtonEnabled(true);
 	}
 
 	private void load()
@@ -1182,12 +980,13 @@ public class TrackMateGUIController implements ActionListener
 		 * tracker, stores the settings currently displayed in TrackMate.
 		 */
 
-		if ( guimodel.currentDescriptor.equals( trackerConfigurationDescriptor )
-				|| guimodel.currentDescriptor.equals( detectorConfigurationDescriptor ) )
+		if (guimodel.currentDescriptor.equals( trackerConfigurationDescriptor )
+				|| guimodel.currentDescriptor.equals( detectorConfigurationDescriptor ))
 		{
 			// This will flush currently displayed settings to TrackMate.
 			guimodel.currentDescriptor.aboutToHidePanel();
 		}
+
 
 		// Move to save state and execute
 		saveDescriptor.aboutToDisplayPanel();
@@ -1239,34 +1038,28 @@ public class TrackMateGUIController implements ActionListener
 		gui.setLogButtonEnabled( guimodel.logButtonState );
 	}
 
-	private void launchTrackScheme()
-	{
+	private void launchTrackScheme() {
 		final JButton button = configureViewsDescriptor.getComponent().getTrackSchemeButton();
-		button.setEnabled( false );
-		new Thread( "Launching TrackScheme thread" )
-		{
+		button.setEnabled(false);
+		new Thread("Launching TrackScheme thread") {
 			@Override
-			public void run()
-			{
-				final TrackScheme trackscheme = new TrackScheme( trackmate.getModel(), selectionModel );
-				final SpotImageUpdater thumbnailUpdater = new SpotImageUpdater( trackmate.getSettings() );
-				trackscheme.setSpotImageUpdater( thumbnailUpdater );
-				for ( final String settingKey : guimodel.getDisplaySettings().keySet() )
-					trackscheme.setDisplaySettings( settingKey, guimodel.getDisplaySettings().get( settingKey ) );
-
+			public void run() {
+				final TrackScheme trackscheme = new TrackScheme(trackmate.getModel(), selectionModel);
+				final SpotImageUpdater thumbnailUpdater = new SpotImageUpdater(trackmate.getSettings());
+				trackscheme.setSpotImageUpdater(thumbnailUpdater);
+				for (final String settingKey : guimodel.getDisplaySettings().keySet()) {
+					trackscheme.setDisplaySettings(settingKey, guimodel.getDisplaySettings().get(settingKey));
+				}
 				trackscheme.render();
-				guimodel.addView( trackscheme );
+				guimodel.addView(trackscheme);
 				// De-register
-				trackscheme.getGUI().addWindowListener( new WindowAdapter()
-				{
+				trackscheme.getGUI().addWindowListener(new WindowAdapter() {
 					@Override
-					public void windowClosing( final WindowEvent e )
-					{
-						guimodel.removeView( trackscheme );
+					public void windowClosing(final WindowEvent e) {
+						guimodel.removeView(trackscheme);
 					}
-				} );
-
-				button.setEnabled( true );
+				});
+				button.setEnabled(true);
 			}
 		}.start();
 	}
@@ -1304,5 +1097,4 @@ public class TrackMateGUIController implements ActionListener
 			}
 		}.start();
 	}
-
 }
