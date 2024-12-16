@@ -16,62 +16,23 @@
  */
 package cc.redpen.parser.markdown;
 
-import cc.redpen.DocumentValidatorException;
-import cc.redpen.parser.SentenceExtractor;
+import cc.redpen.RedPenException;
 import cc.redpen.model.Document;
 import cc.redpen.model.DocumentCollection;
 import cc.redpen.model.Section;
 import cc.redpen.model.Sentence;
-import org.parboiled.common.StringUtils;
-import org.pegdown.Printer;
-import org.pegdown.ast.AbbreviationNode;
-import org.pegdown.ast.AutoLinkNode;
-import org.pegdown.ast.BlockQuoteNode;
-import org.pegdown.ast.BulletListNode;
-import org.pegdown.ast.CodeNode;
-import org.pegdown.ast.DefinitionListNode;
-import org.pegdown.ast.DefinitionNode;
-import org.pegdown.ast.DefinitionTermNode;
-import org.pegdown.ast.ExpImageNode;
-import org.pegdown.ast.ExpLinkNode;
-import org.pegdown.ast.HeaderNode;
-import org.pegdown.ast.HtmlBlockNode;
-import org.pegdown.ast.InlineHtmlNode;
-import org.pegdown.ast.ListItemNode;
-import org.pegdown.ast.MailLinkNode;
-import org.pegdown.ast.Node;
-import org.pegdown.ast.OrderedListNode;
-import org.pegdown.ast.ParaNode;
-import org.pegdown.ast.QuotedNode;
-import org.pegdown.ast.RefImageNode;
-import org.pegdown.ast.RefLinkNode;
-import org.pegdown.ast.ReferenceNode;
-import org.pegdown.ast.RootNode;
-import org.pegdown.ast.SimpleNode;
-import org.pegdown.ast.SpecialTextNode;
-import org.pegdown.ast.StrikeNode;
-import org.pegdown.ast.StrongEmphSuperNode;
-import org.pegdown.ast.SuperNode;
-import org.pegdown.ast.TableBodyNode;
-import org.pegdown.ast.TableCaptionNode;
-import org.pegdown.ast.TableCellNode;
-import org.pegdown.ast.TableColumnNode;
-import org.pegdown.ast.TableHeaderNode;
-import org.pegdown.ast.TableNode;
-import org.pegdown.ast.TableRowNode;
-import org.pegdown.ast.TextNode;
-import org.pegdown.ast.VerbatimNode;
-import org.pegdown.ast.Visitor;
-import org.pegdown.ast.WikiLinkNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import cc.redpen.parser.SentenceExtractor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import org.parboiled.common.StringUtils;
+import org.pegdown.Printer;
+import org.pegdown.ast.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static org.parboiled.common.Preconditions.checkArgNotNull;
+
 
 /**
  * Using Pegdown Parser. <br/>
@@ -79,35 +40,28 @@ import static org.parboiled.common.Preconditions.checkArgNotNull;
  * @see <a herf="https://github.com/sirthias/pegdown">pegdown</a>
  */
 public class ToFileContentSerializer implements Visitor {
-
   private static final Logger LOG =
       LoggerFactory.getLogger(ToFileContentSerializer.class);
+
+  private final Map<String, ReferenceNode> references = new HashMap<String, ReferenceNode>();
+
+  private final Map<String, String> abbreviations = new HashMap<String, String>();
 
   private DocumentCollection.Builder builder = null;
 
   private SentenceExtractor sentenceExtractor;
 
-  private final Map<String, ReferenceNode> references =
-      new HashMap<String, ReferenceNode>();
-
-  private final Map<String, String> abbreviations =
-      new HashMap<String, String>();
-
   private int itemDepth = 0;
-
-  protected void visitChildren(SuperNode node) {
-    for (Node child : node.getChildren()) {
-      child.accept(this);
-    }
-  }
 
   private List<Integer> lineList = null;
 
   // TODO multi period character not supported
+  // TODO multi period character not supported
   private String period;
 
-  private List<CandidateSentence> candidateSentences =
-      new ArrayList<CandidateSentence>();
+  private List<CandidateSentence> candidateSentences = new ArrayList<CandidateSentence>();
+
+  private Printer printer = new Printer();
 
   /**
    * Constructor.
@@ -116,12 +70,16 @@ public class ToFileContentSerializer implements Visitor {
    * @param listOfLineNumber the list of line number
    * @param extractor        utility object to extract a sentence list
    */
-  public ToFileContentSerializer(DocumentCollection.Builder docBuilder,
-                                 List<Integer> listOfLineNumber,
-                                 SentenceExtractor extractor) {
+  public ToFileContentSerializer(DocumentCollection.Builder docBuilder, List<Integer> listOfLineNumber, SentenceExtractor extractor) {
     this.builder = docBuilder;
     this.lineList = listOfLineNumber;
     this.sentenceExtractor = extractor;
+  }
+
+  protected void visitChildren(SuperNode node) {
+    for (Node child : node.getChildren()) {
+      child.accept(this);
+    }
   }
 
   /**
@@ -133,14 +91,13 @@ public class ToFileContentSerializer implements Visitor {
    * @throws cc.redpen.DocumentValidatorException
    * Fail to traverse markdown tree
    */
-  public Document toFileContent(RootNode astRoot)
-      throws DocumentValidatorException {
+  public Document toFileContent(RootNode astRoot) throws RedPenException {
     try {
       checkArgNotNull(astRoot, "astRoot");
       astRoot.accept(this);
-    } catch (NullPointerException e) {
+    } catch (java.lang.NullPointerException e) {
       LOG.error("Fail to traverse RootNode.");
-      throw new DocumentValidatorException("Fail to traverse RootNode.", e);
+      throw new RedPenException("Fail to traverse RootNode.", e);
     }
     return builder.getLastDocument();
   }
@@ -174,8 +131,6 @@ public class ToFileContentSerializer implements Visitor {
     return lineNum;
   }
 
-  private Printer printer = new Printer();
-
   private String printChildrenToString(SuperNode node) {
     // FIXME validate usecase
     Printer priorPrinter = printer;
@@ -192,22 +147,18 @@ public class ToFileContentSerializer implements Visitor {
     Sentence currentSentence = null;
     List<String> remainLinks = new ArrayList<>();
     int lineNum = -1;
-
     for (CandidateSentence candidateSentence : candidateSentences) {
       lineNum = candidateSentence.getLineNum();
       // extract sentences in input line
       List<Sentence> currentSentences = new ArrayList<>();
-      remainStr = sentenceExtractor.extract(
-          remainStr + candidateSentence.getSentence(),
-          currentSentences, lineNum);
-
+      remainStr = sentenceExtractor.extract(remainStr + candidateSentence.getSentence(), currentSentences, lineNum);
       if (currentSentences.size() > 0) {
-        currentSentence = addExtractedSentences(newSentences,
-            remainLinks, currentSentences);
+        currentSentence = addExtractedSentences(newSentences, remainLinks, currentSentences);
         remainLinks = new ArrayList<>();
       }
-
-      if (candidateSentence.getLink() == null) {continue;}
+      if (candidateSentence.getLink() == null) {
+        continue;
+      }
       if (currentSentence != null) {
         currentSentence.links.add(candidateSentence.getLink());
       } else {
@@ -222,11 +173,10 @@ public class ToFileContentSerializer implements Visitor {
     return newSentences;
   }
 
-  private Sentence addExtractedSentences(List<Sentence> newSentences,
-      List<String> remainLinks, List<Sentence> currentSentences) {
+  private Sentence addExtractedSentences(List<Sentence> newSentences, List<String> remainLinks, List<Sentence> currentSentences) {
     Sentence currentSentence;
     newSentences.addAll(currentSentences);
-    currentSentence = currentSentences.get(currentSentences.size()-1);
+    currentSentence = currentSentences.get(currentSentences.size() - 1);
     for (String remainLink : remainLinks) {
       currentSentence.links.add(remainLink);
     }
@@ -258,38 +208,31 @@ public class ToFileContentSerializer implements Visitor {
   private void appendSection(HeaderNode headerNode) {
     // 1. remain sentence flush to current section
     fixSentence();
-
     // 2. retrieve children for header content create;
     visitChildren(headerNode);
     List<Sentence> headerContents = createSentenceList();
-
     // To deal with a header content as a paragraph
     if (headerContents.size() > 0) {
       headerContents.get(0).isFirstSentence = true;
     }
-
     // 3. create new Section
     Section currentSection = builder.getLastSection();
     builder.addSection(headerNode.getLevel(), headerContents);
-    //FIXME move this validate process to addChild
+    // FIXME move this validate process to addChild
     if (!addChild(currentSection, builder.getLastSection())) {
-      LOG.warn("Failed to add parent for a Section: "
-          + builder.getLastSection().getHeaderContents().get(0));
+      LOG.warn("Failed to add parent for a Section: " + builder.getLastSection().getHeaderContents().get(0));
     }
   }
 
   @Override
   public void visit(AbbreviationNode abbreviationNode) {
     // current not implement
-
   }
 
   @Override
   public void visit(AutoLinkNode autoLinkNode) {
     // TODO GitHub Markdown Extension
-    addCandidateSentence(
-        lineNumberFromStartIndex(autoLinkNode.getStartIndex()),
-        autoLinkNode.getText(), autoLinkNode.getText());
+    addCandidateSentence(lineNumberFromStartIndex(autoLinkNode.getStartIndex()), autoLinkNode.getText(), autoLinkNode.getText());
   }
 
   @Override
@@ -299,8 +242,7 @@ public class ToFileContentSerializer implements Visitor {
 
   @Override
   public void visit(CodeNode codeNode) {
-    addCandidateSentence(lineNumberFromStartIndex(
-        codeNode.getStartIndex()), codeNode.getText());
+    addCandidateSentence(lineNumberFromStartIndex(codeNode.getStartIndex()), codeNode.getText());
   }
 
   @Override
@@ -314,8 +256,7 @@ public class ToFileContentSerializer implements Visitor {
     String linkName = printChildrenToString(expLinkNode);
     // FIXME how to handle url, if linkName includes period character?
     // TODO temporary implementation
-    CandidateSentence lastCandidateSentence =
-        candidateSentences.get(candidateSentences.size() - 1);
+    CandidateSentence lastCandidateSentence = candidateSentences.get(candidateSentences.size() - 1);
     lastCandidateSentence.setLink(expLinkNode.url);
   }
 
@@ -327,7 +268,7 @@ public class ToFileContentSerializer implements Visitor {
   // list part
   @Override
   public void visit(BulletListNode bulletListNode) {
-    //FIXME test and validate
+    // FIXME test and validate
     // TODO handle bulletListNode and orderdListNode
     if (itemDepth == 0) {
       fixSentence();
@@ -356,17 +297,15 @@ public class ToFileContentSerializer implements Visitor {
     itemDepth--;
   }
 
-
   @Override
   public void visit(ListItemNode listItemNode) {
     visitChildren(listItemNode);
     List<Sentence> sentences = createSentenceList();
     // TODO for nested ListNode process
-    if (sentences != null && sentences.size() > 0) {
+    if ((sentences != null) && (sentences.size() > 0)) {
       builder.addListElement(itemDepth, sentences);
     }
   }
-
 
   @Override
   public void visit(ParaNode paraNode) {
@@ -379,13 +318,13 @@ public class ToFileContentSerializer implements Visitor {
   public void visit(RootNode rootNode) {
     // create refNode reference map
     for (ReferenceNode refNode : rootNode.getReferences()) {
-      //visitChildren(refNode);
-      //TODO need to decide reference node handling
+      // visitChildren(refNode);
+      // TODO need to decide reference node handling
     }
     // create abbrNode reference map
     for (AbbreviationNode abbrNode : rootNode.getAbbreviations()) {
-      //visitChildren(abbrNode);
-      //TODO need to decide abbreviation node handling
+      // visitChildren(abbrNode);
+      // TODO need to decide abbreviation node handling
     }
     visitChildren(rootNode);
   }
@@ -394,39 +333,33 @@ public class ToFileContentSerializer implements Visitor {
   public void visit(SimpleNode simpleNode) {
     //TODO validate detail
     switch (simpleNode.getType()) {
-      case Linebreak:
+      case Linebreak :
         break;
-      case Nbsp:
+      case Nbsp :
         break;
-      case HRule:
+      case HRule :
         break;
-      case Apostrophe:
-        addCandidateSentence(
-            lineNumberFromStartIndex(simpleNode.getStartIndex()), "'");
+      case Apostrophe :
+        addCandidateSentence(lineNumberFromStartIndex(simpleNode.getStartIndex()), "'");
         break;
-      case Ellipsis:
-        addCandidateSentence(
-            lineNumberFromStartIndex(simpleNode.getStartIndex()), "...");
+      case Ellipsis :
+        addCandidateSentence(lineNumberFromStartIndex(simpleNode.getStartIndex()), "...");
         break;
-      case Emdash:
-        addCandidateSentence(
-            lineNumberFromStartIndex(simpleNode.getStartIndex()), "–");
+      case Emdash :
+        addCandidateSentence(lineNumberFromStartIndex(simpleNode.getStartIndex()), "–");
         break;
-      case Endash:
-        addCandidateSentence(
-            lineNumberFromStartIndex(simpleNode.getStartIndex()), "—");
+      case Endash :
+        addCandidateSentence(lineNumberFromStartIndex(simpleNode.getStartIndex()), "—");
         break;
-      default:
-        LOG.warn("Illegal SimpleNode:[" + simpleNode.toString() + "]");
+      default :
+        LOG.warn(("Illegal SimpleNode:[" + simpleNode.toString()) + "]");
     }
   }
 
   @Override
   public void visit(SpecialTextNode specialTextNode) {
     // TODO to sentence
-    addCandidateSentence(
-        lineNumberFromStartIndex(
-            specialTextNode.getStartIndex()), specialTextNode.getText());
+    addCandidateSentence(lineNumberFromStartIndex(specialTextNode.getStartIndex()), specialTextNode.getText());
   }
 
   @Override
@@ -439,14 +372,11 @@ public class ToFileContentSerializer implements Visitor {
     visitChildren(strongEmphSuperNode);
   }
 
-
   @Override
   public void visit(TextNode textNode) {
     // to sentence, if sentence breaker appear
     // append remain sentence, if sentence breaker not appear
-    addCandidateSentence(
-        lineNumberFromStartIndex(
-            textNode.getStartIndex()), textNode.getText());
+    addCandidateSentence(lineNumberFromStartIndex(textNode.getStartIndex()), textNode.getText());
     // for printChildrenToString
     printer.print(textNode.getText());
   }
@@ -459,15 +389,14 @@ public class ToFileContentSerializer implements Visitor {
     // TODO remove tag
   }
 
-
   @Override
   public void visit(QuotedNode quotedNode) {
-    //TODO quoted not implement
+    // TODO quoted not implement
   }
 
   @Override
   public void visit(ReferenceNode referenceNode) {
-    //TODO reference node not implement
+    // TODO reference node not implement
   }
 
   @Override
@@ -484,13 +413,11 @@ public class ToFileContentSerializer implements Visitor {
     String url = getRefLinkUrl(refLinkNode.referenceKey, linkName);
     // FIXME how to handle url, if linkName include period character?
     // TODO temporary implementation
-    CandidateSentence lastCandidateSentence =
-        candidateSentences.get(candidateSentences.size() - 1);
+    CandidateSentence lastCandidateSentence = candidateSentences.get(candidateSentences.size() - 1);
     if (StringUtils.isNotEmpty(url)) {
       lastCandidateSentence.setLink(url);
     } else {
-      lastCandidateSentence.setSentence(
-          "[" + lastCandidateSentence.getSentence() + "]");
+      lastCandidateSentence.setSentence(("[" + lastCandidateSentence.getSentence()) + "]");
     }
   }
 
@@ -588,5 +515,4 @@ public class ToFileContentSerializer implements Visitor {
   public void visit(TableRowNode tableRowNode) {
     // TODO not implement
   }
-
 }
