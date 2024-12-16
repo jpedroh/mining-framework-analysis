@@ -16,8 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package javax.mail;
+
+
 
 /**
  * @version $Rev$ $Date$
@@ -35,10 +36,10 @@ public interface UIDFolder {
      * last UID that was seen and using:
      * <blockquote><pre>
      *
-     * 	Folder f = store.getFolder("whatever");
-     *	UIDFolder uf = (UIDFolder)f;
-     *	Message[] newMsgs =
-     *		uf.getMessagesByUID(lastSeenUID + 1, UIDFolder.MAXUID);
+     * Folder f = store.getFolder("whatever");
+     * UIDFolder uf = (UIDFolder)f;
+     * Message[] newMsgs =
+     * uf.getMessagesByUID(lastSeenUID + 1, UIDFolder.MAXUID);
      *
      * </pre></blockquote><p>
      *
@@ -114,24 +115,6 @@ public interface UIDFolder {
     public abstract long getUID(Message message) throws MessagingException;
 
     /**
-     * Returns the predicted UID that will be assigned to the
-     * next message that is appended to this folder.
-     * Messages might be appended to the folder after this value
-     * is retrieved, causing this value to be out of date.
-     * This value might only be updated when a folder is first opened.
-     * Note that messages may have been appended to the folder
-     * while it was open and thus this value may be out of
-     * date. <p>
-     *
-     * If the value is unknown, -1 is returned.  <p>
-     *
-     * @return  the UIDNEXT value, or -1 if unknown
-     * @exception       MessagingException for failures
-     * @since   JavaMail 1.6
-     */
-    public long getUIDNext() throws MessagingException;
-
-    /**
      * Special profile item used for fetching UID information.
      */
     public static class FetchProfileItem extends FetchProfile.Item {
@@ -141,4 +124,31 @@ public interface UIDFolder {
             super(name);
         }
     }
+
+    /**
+     * Returns the predicted UID that will be assigned to the
+     * next message that is appended to this folder.
+     * Messages might be appended to the folder after this value
+     * is retrieved, causing this value to be out of date.
+     * This value might only be updated when a folder is first opened.
+     * Note that messages may have been appended to the folder
+     * while it was open and thus this value may be out of
+<<<<<<< LEFT
+     * date.
+     *
+     * If the value is unknown, -1 is returned.
+     *
+     * @return  the UIDNEXT value, or -1 if unknown
+     * @exception       MessagingException
+=======
+     * date. <p>
+     *
+     * If the value is unknown, -1 is returned.  <p>
+     *
+     * @return  the UIDNEXT value, or -1 if unknown
+     * @exception       MessagingException for failures
+>>>>>>> RIGHT
+     * @since   JavaMail 1.6
+     */
+    public abstract long getUIDNext() throws MessagingException;
 }
