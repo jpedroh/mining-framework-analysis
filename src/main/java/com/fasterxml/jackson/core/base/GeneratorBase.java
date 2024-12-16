@@ -5,39 +5,44 @@ import com.fasterxml.jackson.core.json.DupDetector;
 import com.fasterxml.jackson.core.json.JsonWriteContext;
 import com.fasterxml.jackson.core.json.PackageVersion;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+
 
 /**
  * This base class implements part of API that a JSON generator exposes
  * to applications, adds shared internal methods that sub-classes
  * can use and adds some abstract methods sub-classes must implement.
  */
-public abstract class GeneratorBase extends JsonGenerator
-{
+public abstract class GeneratorBase extends JsonGenerator {
     public final static int SURR1_FIRST = 0xD800;
+
     public final static int SURR1_LAST = 0xDBFF;
+
     public final static int SURR2_FIRST = 0xDC00;
+
     public final static int SURR2_LAST = 0xDFFF;
 
     /**
      * Set of feature masks related to features that need updates of other
      * local configuration or state.
      */
-    protected final static int DERIVED_FEATURES_MASK =
-            StreamWriteFeature.WRITE_NUMBERS_AS_STRINGS.getMask()
-            | StreamWriteFeature.STRICT_DUPLICATE_DETECTION.getMask()
-            ;
+    protected static final int DERIVED_FEATURES_MASK = StreamWriteFeature.WRITE_NUMBERS_AS_STRINGS.getMask() | StreamWriteFeature.STRICT_DUPLICATE_DETECTION.getMask();
 
+    // // // Constants for validation messages (since 2.6)
     // // // Constants for validation messages (since 2.6)
 
     protected final static String WRITE_BINARY = "write a binary value";
+
     protected final static String WRITE_BOOLEAN = "write a boolean value";
+
     protected final static String WRITE_NULL = "write a null";
+
     protected final static String WRITE_NUMBER = "write a number";
+
     protected final static String WRITE_RAW = "write a raw (unencoded) value";
+
     protected final static String WRITE_STRING = "write a string";
 
     /**
@@ -46,14 +51,13 @@ public abstract class GeneratorBase extends JsonGenerator
      * attack whereupon simple eng-notation with big scale is used to generate
      * huge "plain" serialization. See [core#315] for details.
      */
-    protected final static int MAX_BIG_DECIMAL_SCALE = 9999;
-    
+    protected static final int MAX_BIG_DECIMAL_SCALE = 9999;
+
     /*
     /**********************************************************
     /* Configuration
     /**********************************************************
      */
-
     /**
      * Context object used both to pass some initial settings and to allow
      * triggering of Object serialization through generator.
@@ -81,7 +85,6 @@ public abstract class GeneratorBase extends JsonGenerator
     /* State
     /**********************************************************
      */
-
     /**
      * Object that keeps track of the current contextual state
      * of the generator.
@@ -100,13 +103,11 @@ public abstract class GeneratorBase extends JsonGenerator
     /* Life-cycle
     /**********************************************************
      */
-
     protected GeneratorBase(ObjectWriteContext writeCtxt, int features) {
         super();
         _objectWriteContext = writeCtxt;
         _streamWriteFeatures = features;
-        DupDetector dups = StreamWriteFeature.STRICT_DUPLICATE_DETECTION.enabledIn(features)
-                ? DupDetector.rootDetector(this) : null;
+        DupDetector dups = (StreamWriteFeature.STRICT_DUPLICATE_DETECTION.enabledIn(features)) ? DupDetector.rootDetector(this) : null;
         _outputContext = JsonWriteContext.createRootContext(dups);
         _cfgNumbersAsStrings = StreamWriteFeature.WRITE_NUMBERS_AS_STRINGS.enabledIn(features);
     }
@@ -133,7 +134,7 @@ public abstract class GeneratorBase extends JsonGenerator
 
     @Override
     public void setCurrentValue(Object v) {
-        if (_outputContext != null) {
+        if (_writeContext != null) {
             _outputContext.setCurrentValue(v);
         }
     }
@@ -143,15 +144,20 @@ public abstract class GeneratorBase extends JsonGenerator
     /* Configuration
     /**********************************************************
      */
+    @Override
+    public final boolean isEnabled(StreamWriteFeature f) {
+        return (_streamWriteFeatures & f.getMask()) != 0;
+    }
 
-    @Override public final boolean isEnabled(StreamWriteFeature f) { return (_streamWriteFeatures & f.getMask()) != 0; }
-    @Override public int streamWriteFeatures() { return _streamWriteFeatures; }
+    @Override
+    public int streamWriteFeatures() {
+        return _streamWriteFeatures;
+    }
 
     @Override
     public int formatWriteFeatures() { return 0; }
 
     //public JsonGenerator configure(Feature f, boolean state) { }
-
     @Override
     public JsonGenerator enable(StreamWriteFeature f) {
         final int mask = f.getMask();
@@ -161,7 +167,8 @@ public abstract class GeneratorBase extends JsonGenerator
             if (f == StreamWriteFeature.WRITE_NUMBERS_AS_STRINGS) {
                 _cfgNumbersAsStrings = true;
             } else if (f == StreamWriteFeature.STRICT_DUPLICATE_DETECTION) {
-                if (_outputContext.getDupDetector() == null) { // but only if disabled currently
+                if (_outputContext.getDupDetector() == null) {
+                // but only if disabled currently
                     _outputContext = _outputContext.withDupDetector(DupDetector.rootDetector(this));
                 }
             }
@@ -188,21 +195,25 @@ public abstract class GeneratorBase extends JsonGenerator
     /* Public API, accessors
     /**********************************************************
      */
+    @Override
+    public TokenStreamContext getOutputContext() {
+        return _outputContext;
+    }
 
-    @Override public TokenStreamContext getOutputContext() { return _outputContext; }
-    @Override public ObjectWriteContext getObjectWriteContext() { return _objectWriteContext; }
+    @Override
+    public ObjectWriteContext getObjectWriteContext() {
+        return _objectWriteContext;
+    }
 
     /*
     /**********************************************************
     /* Public API, write methods, structural
     /**********************************************************
      */
-
     //public void writeStartArray() throws IOException
     //public void writeEndArray() throws IOException
     //public void writeStartObject() throws IOException
-    //public void writeEndObject() throws IOException
-
+    // public void writeEndObject() throws IOException
     @Override
     public void writeStartArray(Object forValue, int size) throws IOException {
         writeStartArray(size);
@@ -212,15 +223,14 @@ public abstract class GeneratorBase extends JsonGenerator
     }
 
     @Override
-    public void writeStartObject(Object forValue) throws IOException
-    {
+    public void writeStartObject(Object forValue) throws IOException {
         writeStartObject();
         if ((_outputContext != null) && (forValue != null)) {
             _outputContext.setCurrentValue(forValue);
         }
     }
 
-/*
+    /*
     /**********************************************************
     /* Public API, write methods, textual
     /**********************************************************
@@ -277,25 +287,21 @@ public abstract class GeneratorBase extends JsonGenerator
     /* Public API, write methods, primitive
     /**********************************************************
      */
-
     // Not implemented at this level, added as placeholders
-
-     /*
-    public abstract void writeNumber(int i)
-    public abstract void writeNumber(long l)
-    public abstract void writeNumber(double d)
-    public abstract void writeNumber(float f)
-    public abstract void writeNumber(BigDecimal dec)
-    public abstract void writeBoolean(boolean state)
-    public abstract void writeNull()
-    */
-
+    /*
+        public abstract void writeNumber(int i)
+        public abstract void writeNumber(long l)
+        public abstract void writeNumber(double d)
+        public abstract void writeNumber(float f)
+        public abstract void writeNumber(BigDecimal dec)
+        public abstract void writeBoolean(boolean state)
+        public abstract void writeNull()
+        */
     /*
     /**********************************************************
     /* Public API, write methods, POJOs, trees
     /**********************************************************
      */
-
     @Override
     public void writeObject(Object value) throws IOException {
         if (value == null) {
@@ -326,7 +332,9 @@ public abstract class GeneratorBase extends JsonGenerator
      */
 
     @Override public abstract void flush() throws IOException;
+
     @Override public void close() throws IOException { _closed = true; }
+
     @Override public boolean isClosed() { return _closed; }
 
     /*
@@ -367,10 +375,8 @@ public abstract class GeneratorBase extends JsonGenerator
         if (StreamWriteFeature.WRITE_BIGDECIMAL_AS_PLAIN.enabledIn(_streamWriteFeatures)) {
             // 24-Aug-2016, tatu: [core#315] prevent possible DoS vector
             int scale = value.scale();
-            if ((scale < -MAX_BIG_DECIMAL_SCALE) || (scale > MAX_BIG_DECIMAL_SCALE)) {
-                _reportError(String.format(
-"Attempt to write plain `java.math.BigDecimal` (see JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN) with illegal scale (%d): needs to be between [-%d, %d]",
-scale, MAX_BIG_DECIMAL_SCALE, MAX_BIG_DECIMAL_SCALE));
+            if ((scale < (-MAX_BIG_DECIMAL_SCALE)) || (scale > MAX_BIG_DECIMAL_SCALE)) {
+                _reportError(String.format("Attempt to write plain `java.math.BigDecimal` (see JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN) with illegal scale (%d): needs to be between [-%d, %d]", scale, MAX_BIG_DECIMAL_SCALE, MAX_BIG_DECIMAL_SCALE));
             }
             return value.toPlainString();
         }
@@ -382,15 +388,13 @@ scale, MAX_BIG_DECIMAL_SCALE, MAX_BIG_DECIMAL_SCALE));
     /* UTF-8 related helper method(s)
     /**********************************************************
      */
-
-    protected final int _decodeSurrogate(int surr1, int surr2) throws IOException
-    {
+    protected final int _decodeSurrogate(int surr1, int surr2) throws IOException {
         // First is known to be valid, but how about the other?
-        if (surr2 < SURR2_FIRST || surr2 > SURR2_LAST) {
-            String msg = "Incomplete surrogate pair: first char 0x"+Integer.toHexString(surr1)+", second 0x"+Integer.toHexString(surr2);
+        if ((surr2 < SURR2_FIRST) || (surr2 > SURR2_LAST)) {
+            String msg = (("Incomplete surrogate pair: first char 0x" + Integer.toHexString(surr1)) + ", second 0x") + Integer.toHexString(surr2);
             _reportError(msg);
         }
-        int c = 0x10000 + ((surr1 - SURR1_FIRST) << 10) + (surr2 - SURR2_FIRST);
+        int c = (0x10000 + ((surr1 - SURR1_FIRST) << 10)) + (surr2 - SURR2_FIRST);
         return c;
     }
 }
