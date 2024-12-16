@@ -17,7 +17,6 @@ package com.amashchenko.maven.plugin.gitflow;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -29,13 +28,13 @@ import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 
+
 /**
  * The git flow release start mojo.
- *
+ * 
  */
 @Mojo(name = "release-start", aggregator = true)
 public class GitFlowReleaseStartMojo extends AbstractGitFlowMojo {
-
     /**
      * Whether to use the same name of the release branch for every release.
      * Default is <code>false</code>, i.e. project version will be added to
@@ -115,86 +114,76 @@ public class GitFlowReleaseStartMojo extends AbstractGitFlowMojo {
 
     /**
      * Start a release branch from this commit (SHA).
-     *
+     * 
      * @since 1.7.0
      */
     @Parameter(property = "fromCommit")
     private String fromCommit;
 
     /**
+     * Name of the created release branch.<br>
+     * The effective branch name will be a composite of this branch name and the <code>releaseBranchPrefix</code>.<br>
+     */
+    @Parameter(property = "branchName", defaultValue = "")
+    private String branchNameSuffix;
+
+    /**
      * Whether to use snapshot in release.
-     * 
+     *
      * @since 1.10.0
      */
     @Parameter(property = "useSnapshotInRelease", defaultValue = "false")
     private boolean useSnapshotInRelease;
-  
-    /**
-     * Name of the created release branch.<br>
-     * The effective branch name will be a composite of this branch name and the <code>releaseBranchPrefix</code>.
-     */
-    @Parameter(property = "branchName")
-    private String branchNameSuffix;
-  
+
     /** {@inheritDoc} */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         validateConfiguration();
-
         try {
             // set git flow configuration
             initGitFlowConfig();
-
             // check uncommitted changes
             checkUncommittedChanges();
-
             // git for-each-ref --count=1 refs/heads/release/*
-            final String releaseBranch = gitFindBranches(
-                    gitFlowConfig.getReleaseBranchPrefix(), true);
-
+            final String releaseBranch = gitFindBranches(gitFlowConfig.getReleaseBranchPrefix(), true);
             if (StringUtils.isNotBlank(releaseBranch)) {
-                throw new MojoFailureException(
-                        "Release branch already exists. Cannot start release.");
+                throw new MojoFailureException("Release branch already exists. Cannot start release.");
             }
-
             if (fetchRemote) {
                 // checkout from remote if doesn't exist
                 gitFetchRemoteAndCreate(gitFlowConfig.getDevelopmentBranch());
-
                 // fetch and check remote
                 gitFetchRemoteAndCompare(gitFlowConfig.getDevelopmentBranch());
             }
-
             final String startPoint;
             if (StringUtils.isNotBlank(fromCommit) && notSameProdDevName()) {
                 startPoint = fromCommit;
             } else {
                 startPoint = gitFlowConfig.getDevelopmentBranch();
             }
-
             // need to be in develop to check snapshots and to get
             // correct project version
             gitCheckout(startPoint);
-
             // check snapshots dependencies
             if (!allowSnapshots) {
                 checkSnapshotDependencies();
             }
-
-            if (commitDevelopmentVersionAtStart && !notSameProdDevName()) {
-                getLog().warn(
-                        "The commitDevelopmentVersionAtStart will not have effect. It can be enabled only when there are separate branches for development and production.");
+            if (commitDevelopmentVersionAtStart && (!notSameProdDevName())) {
+                getLog().warn("The commitDevelopmentVersionAtStart will not have effect. It can be enabled only when there are separate branches for development and production.");
                 commitDevelopmentVersionAtStart = false;
             }
-
             // get release version
             final String releaseVersion = getReleaseVersion();
-
             // get release branch
             String branchName = gitFlowConfig.getReleaseBranchPrefix();
-            if (StringUtils.isNotBlank(branchNameSuffix)) {
+<<<<<<< LEFT
+            if(StringUtils.isNotBlank(branchNameSuffix)){
                 branchName += branchNameSuffix;
             } else if (!sameBranchName) {
+                branchName += releaseVersion;
+            }
+=======
+            if (!sameBranchName) {
                 branchName += releaseVersion;
             }
 
@@ -208,45 +197,35 @@ public class GitFlowReleaseStartMojo extends AbstractGitFlowMojo {
                         "The useSnapshotInRelease parameter is set from the command line. Don't forget to use it in the finish goal as well."
                                 + " It is better to define it in the project's pom file.");
             }
+>>>>>>> RIGHT
 
             if (commitDevelopmentVersionAtStart) {
                 // mvn versions:set ...
                 // git commit -a -m ...
-                commitProjectVersion(projectVersion,
-                        commitMessages.getReleaseStartMessage()); 
-
+                commitProjectVersion(projectVersion, commitMessages.getReleaseStartMessage());
                 // git branch release/... develop
                 gitCreateBranch(branchName, startPoint);
-
-                final String nextSnapshotVersion =
-                        getNextSnapshotVersion(releaseVersion);
-
+                final String nextSnapshotVersion = getNextSnapshotVersion(releaseVersion);
                 // mvn versions:set ...
                 // git commit -a -m ...
                 commitProjectVersion(nextSnapshotVersion, commitMessages.getReleaseVersionUpdateMessage());
-
                 // git checkout release/...
                 gitCheckout(branchName);
             } else {
                 // git checkout -b release/... develop
                 gitCreateAndCheckout(branchName, startPoint);
-
                 // mvn versions:set ...
                 // git commit -a -m ...
-                commitProjectVersion(projectVersion,
-                        commitMessages.getReleaseStartMessage());
+                commitProjectVersion(projectVersion, commitMessages.getReleaseStartMessage());
             }
-
             if (installProject) {
                 // mvn clean install
                 mvnCleanInstall();
             }
-
             if (pushRemote) {
                 if (commitDevelopmentVersionAtStart) {
                     gitPush(gitFlowConfig.getDevelopmentBranch(), false);
                 }
-
                 gitPush(branchName, false);
             }
         } catch (CommandLineException e) {
@@ -283,46 +262,36 @@ public class GitFlowReleaseStartMojo extends AbstractGitFlowMojo {
     private String getReleaseVersion() throws MojoFailureException, VersionParseException, CommandLineException {
         // get current project version from pom
         final String currentVersion = getCurrentProjectVersion();
-
         String defaultVersion = null;
         if (tychoBuild) {
             defaultVersion = currentVersion;
         } else {
             // get default release version
-            defaultVersion = new GitFlowVersionInfo(currentVersion)
-                    .getReleaseVersionString();
+            defaultVersion = new GitFlowVersionInfo(currentVersion).getReleaseVersionString();
         }
-
         if (defaultVersion == null) {
-            throw new MojoFailureException(
-                    "Cannot get default project version.");
+            throw new MojoFailureException("Cannot get default project version.");
         }
-
         String version = null;
         if (settings.isInteractiveMode()) {
             try {
                 while (version == null) {
-                    version = prompter.prompt("What is release version? ["
-                            + defaultVersion + "]");
-
-                    if (!"".equals(version)
-                            && (!GitFlowVersionInfo.isValidVersion(version) || !validBranchName(version))) {
+                    version = prompter.prompt(("What is release version? [" + defaultVersion) + "]");
+                    if ((!"".equals(version)) && ((!GitFlowVersionInfo.isValidVersion(version)) || (!validBranchName(version)))) {
                         getLog().info("The version is not valid.");
                         version = null;
                     }
-                }
+                } 
             } catch (PrompterException e) {
                 throw new MojoFailureException("release-start", e);
             }
         } else {
             version = releaseVersion;
         }
-
         if (StringUtils.isBlank(version)) {
             getLog().info("Version is blank. Using default version.");
             version = defaultVersion;
         }
-
         return version;
     }
 
