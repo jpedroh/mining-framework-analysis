@@ -13,27 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ninja;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import com.google.inject.Injector;
+import com.google.inject.Provider;
+import java.util.Map;
 import ninja.utils.NinjaProperties;
-
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
-import com.google.inject.Injector;
-import com.google.inject.Provider;
-
-import java.util.Map;
 
 /**
  * => Most tests are done via class RoutesTest in project
@@ -41,7 +38,6 @@ import java.util.Map;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class RouterImplTest {
-
     Router router;
 
     @Mock
@@ -58,18 +54,14 @@ public class RouterImplTest {
 
     @Before
     public void before() {
-
         when(testControllerProvider.get()).thenReturn(new TestController());
-        when(injector.getProvider(TestController.class)).thenReturn(testControllerProvider);
+        when(injector.getProvider(RouterImplTest.TestController.class)).thenReturn(testControllerProvider);
         router = new RouterImpl(injector, ninjaProperties);
-
         // add route:
-        router.GET().route("/testroute").with(TestController.class, "index");
-        router.GET().route("/user/{email}/{id: .*}").with(TestController.class, "user");
-        router.GET().route("/u{userId: .*}/entries/{entryId: .*}").with(TestController.class, "entry");
-
+        router.GET().route("/testroute").with(RouterImplTest.TestController.class, "index");
+        router.GET().route("/user/{email}/{id: .*}").with(RouterImplTest.TestController.class, "user");
+        router.GET().route("/u{userId: .*}/entries/{entryId: .*}").with(RouterImplTest.TestController.class, "entry");
         router.GET().route("/.*").with(Results.redirect("/"));
-
         router.compileRoutes();
     }
 
@@ -192,25 +184,16 @@ public class RouterImplTest {
 
     // Just a dummy TestController for mocking...
     public static class TestController {
-
         public Result index() {
-
             return Results.ok();
-
         }
 
         public Result user() {
-
             return Results.ok();
-
         }
 
         public Result entry() {
-
             return Results.ok();
-
         }
-
     }
-
 }

@@ -13,90 +13,121 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ninja;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-
+import java.util.Map;
 import ninja.exceptions.InternalServerErrorException;
 import ninja.utils.DateUtil;
 import ninja.utils.NoHttpBody;
 import ninja.utils.ResponseStreams;
 import ninja.utils.SwissKnife;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class Result {
-    
     private final Logger logger = LoggerFactory.getLogger(Result.class);
 
     // /////////////////////////////////////////////////////////////////////////
     // HTTP Status codes (for convenience)
     // /////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
+    // HTTP Status codes (for convenience)
+    // /////////////////////////////////////////////////////////////////////////
     public static final int SC_200_OK = 200;
+
     public static final int SC_201_CREATED = 201;
+
     public static final int SC_204_NO_CONTENT = 204;
 
     // for redirects:
+    // for redirects:
     public static final int SC_300_MULTIPLE_CHOICES = 300;
+
     public static final int SC_301_MOVED_PERMANENTLY = 301;
+
     public static final int SC_302_FOUND = 302;
+
     public static final int SC_303_SEE_OTHER = 303;
+
     public static final int SC_304_NOT_MODIFIED = 304;
+
     public static final int SC_307_TEMPORARY_REDIRECT = 307;
 
     public static final int SC_400_BAD_REQUEST = 400;
+
     public static final int SC_401_UNAUTHORIZED = 401;
+
     public static final int SC_403_FORBIDDEN = 403;
+
     public static final int SC_404_NOT_FOUND = 404;
 
     public static final int SC_500_INTERNAL_SERVER_ERROR = 500;
+
     public static final int SC_501_NOT_IMPLEMENTED = 501;
 
     // /////////////////////////////////////////////////////////////////////////
     // Some MIME types (for convenience)
     // /////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
+    // Some MIME types (for convenience)
+    // /////////////////////////////////////////////////////////////////////////
     public static final String TEXT_HTML = "text/html";
+
     public static final String TEXT_PLAIN = "text/plain";
+
     public static final String APPLICATION_JSON = "application/json";
+
     /* @deprecated Naming mistake - Please use APPLICATION_JSON instead! */
     @Deprecated
     public static final String APPLICATON_JSON = APPLICATION_JSON;
+
     public static final String APPLICATION_JSONP = "application/javascript";
+
     /* @deprecated Naming mistake - Please use APPLICATION_JSONP instead! */
     @Deprecated
     public static final String APPLICATON_JSONP = APPLICATION_JSONP;
+
     public static final String APPLICATION_XML = "application/xml";
+
     public static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
 
     // This is a marker. Returning something like
     // Result.html().render(NO_HTTP_BODY) will cause all body rendering
     // to be bypassed. This effectively means you'll return only headers and no body
     // useful for "no content" style responses.
+    // This is a marker. Returning something like
+    // Result.html().render(NO_HTTP_BODY) will cause all body rendering
+    // to be bypassed. This effectively means you'll return only headers and no body
+    // useful for "no content" style responses.
     public static final NoHttpBody NO_HTTP_BODY = new NoHttpBody();
-    
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Finally we got to the core of this class...
+    // /////////////////////////////////////////////////////////////////////////
     // /////////////////////////////////////////////////////////////////////////
     // Finally we got to the core of this class...
     // /////////////////////////////////////////////////////////////////////////
     /* Used as redirection header */
     public static final String LOCATION = "Location";
+
     public static final String CACHE_CONTROL = "Cache-Control";
+
     public static final String CACHE_CONTROL_DEFAULT_NOCACHE_VALUE = "no-cache, no-store, max-age=0, must-revalidate";
-    
+
     public static final String DATE = "Date";
+
     public static final String EXPIRES = "Expires";
 
     public static final String WWW_AUTHENTICATE = "WWW-Authenticate";
@@ -113,14 +144,14 @@ public class Result {
      * Something like: "text/html" or "application/json"
      */
     private String contentType;
-    
+
     /**
      * If content type is not set AND supported type does not match accept
      * header of request this fallback will be used. If it is not set 
      * a bad request exception will be thrown.
      */
     private Optional<String> fallbackContentType = Optional.absent();
-    
+
     /**
      * A list of content types this result will handle. If you got a general
      * person object you can render it via application/json and application/xml
@@ -128,13 +159,12 @@ public class Result {
      * 
      */
     private final List<String> supportedContentTypes = Lists.newArrayList();
-    
+
     /**
-     * A newly created Result will handle those three result types out of 
+     * A newly created Result will handle those three result types out of
      * the box.
      */
-    private final static List<String> DEFAULT_SUPPORTED_CONTENT_TYPES
-            = ImmutableList.of(TEXT_HTML, APPLICATION_JSON, APPLICATION_XML);
+    private static final List<String> DEFAULT_SUPPORTED_CONTENT_TYPES = ImmutableList.of(TEXT_HTML, APPLICATION_JSON, APPLICATION_XML);
 
     /**
      * Something like: "utf-8" => will be appended to the content-type. eg
@@ -149,21 +179,19 @@ public class Result {
     private String template;
 
     /**
-     * A result. Sets utf-8 as charset and status code by default. 
+     * A result. Sets utf-8 as charset and status code by default.
      * Refer to {@link Result#SC_200_OK}, {@link Result#SC_204_NO_CONTENT} and so on
-     * for some short cuts to predefined results. 
-     * 
-     * @param statusCode The status code to set for the result. 
-     *                    Shortcuts to the code at: {@link Result#SC_200_OK}
+     * for some short cuts to predefined results.
+     *
+     * @param statusCode
+     * 		The status code to set for the result.
+     * 		Shortcuts to the code at: {@link Result#SC_200_OK}
      */
     public Result(int statusCode) {
-
         this.statusCode = statusCode;
         this.charset = "utf-8";
-
         this.headers = Maps.newHashMap();
         this.cookies = Lists.newArrayList();
-
     }
 
     public Object getRenderable() {
@@ -230,7 +258,7 @@ public class Result {
         
         return this;
     }
-    
+
     /**
      * Replaces the object being passed by this result to the rendering engine
      * with this map. It will overwrite any previously set render(...) calls.
@@ -242,7 +270,7 @@ public class Result {
         this.renderable = mapToRender;        
         return this;        
     }
-    
+
     /**
      * Handles following cases:
      * 1) If this.renderable is null: a new HashMap is generated and this entry being added
@@ -304,7 +332,7 @@ public class Result {
         
         
     }
-    
+
     /**
      * Sets this renderable as object to render. Usually this renderable
      * does rendering itself and will not call any templating engine. 
@@ -316,7 +344,7 @@ public class Result {
         this.renderable = renderable;        
         return this;        
     }
-    
+
     /**
      * Implicitly generates a hashmap as object being rendered and adds
      * this key, value pair. If the object being rendered is already a hashmap
@@ -333,7 +361,6 @@ public class Result {
         return this;
         
     }
-    
 
     /**
      * This method directly renders the String to the output. It completely
@@ -365,16 +392,16 @@ public class Result {
      */
     @Deprecated
     public Result renderRaw(final String string) {
- 
+     
         Renderable renderable = new Renderable() {
- 
+     
             @Override
             public void render(Context context, Result result) {
                 
                 if (result.getContentType() == null) {
                     result.contentType(Result.TEXT_PLAIN);
                 }
- 
+     
                 ResponseStreams resultJsonCustom = context
                         .finalizeHeaders(result);
                 
@@ -388,16 +415,16 @@ public class Result {
                             "Error rendering raw String via renderRaw(...)", 
                             ioException);
                 }
- 
+     
             }
         };
- 
+     
         render(renderable);
- 
+     
         return this;
         
     }
-    
+
     /**
      * This method directly renders the byte array to the output. It
      * completely bypasses any rendering engine.
@@ -414,7 +441,7 @@ public class Result {
      * @return A result that will render the string directly to the output stream.
      */
     public Result renderRaw(final byte [] bytes) {
- 
+     
         Renderable renderable = new Renderable() {
                     
             @Override
@@ -436,10 +463,10 @@ public class Result {
         };
                     
         render(renderable);
- 
+     
         return this;
 
-   }
+       }
 
     public String getContentType() {
         return contentType;
@@ -489,7 +516,7 @@ public class Result {
         this.contentType = contentType;
         return this;
     }
-    
+
     /**
      * Will add a content type to the list of supported content types.
      * Calling that method two times with different content types will add both
@@ -502,7 +529,7 @@ public class Result {
         supportedContentTypes.add(contentTypeSupportedByThisResult);
         return this;
     }
-    
+
     /**
      * Will add the content types to the list of supported content types.
      * 
@@ -514,7 +541,7 @@ public class Result {
         supportedContentTypes.addAll(Arrays.asList(contentTypesSupportedByThisResult));
         return this;
     }
-    
+
     /**
      * Returns immutable list of supported content types by this request.
      *
@@ -529,7 +556,7 @@ public class Result {
             return ImmutableList.copyOf(supportedContentTypes);
         }
     }
-    
+
     /**
      * 
      * @return The fallback content type. This will be the content type used
@@ -539,7 +566,7 @@ public class Result {
     public Optional<String> fallbackContentType() {
         return fallbackContentType;
     }
-    
+
     /**
      * 
      * @param fallbackContentType The content type to use as fallback when
@@ -561,7 +588,7 @@ public class Result {
         headers.put(headerName, headerContent);
         return this;
     }
-    
+
     /**
      * Returns cookie with that name or null.
      * 
@@ -673,6 +700,7 @@ public class Result {
 
         return this;
     }
+
     /**
      * Set the content type of this result to {@link Result#TEXT_HTML}.
      * 
@@ -702,7 +730,7 @@ public class Result {
         contentType = APPLICATION_JSONP;
         return this;
     }
-    
+
     /**
      * Set the content type of this result to {@link Result#TEXT_PLAIN}.
      *
@@ -715,14 +743,14 @@ public class Result {
 
     /**
      * Set the content type of this result to {@link Result#APPLICATION_XML}.
-     * 
-     * @return the same result where you executed this method on. But the content type is now {@link Result#APPLICATION_XML}.
+     *
+     * @return the same result where you executed this method on. But the content type is now {@link Result#APPLICATON_XML}.
      */
     public Result xml() {
         contentType = APPLICATION_XML;
         return this;
     }
-    
+
     /**
      * This function sets
      * 
@@ -745,7 +773,7 @@ public class Result {
         
         return this;
         
-    } 
+    }
 
     private void assertObjectNoRenderableOrThrowException(Object object) {
         if (object instanceof Renderable) {
@@ -754,5 +782,41 @@ public class Result {
                 "Adding more items to render is not supported.");
             
         }
+    }
+
+    /**
+     * Copy the result, creating a new result
+     *
+     * @return this new result
+     */
+    public Result copy() {
+        Result result = new Result(statusCode);
+
+        for (Cookie cookie : result.getCookies()) {
+            result.addCookie(cookie);
+        }
+
+        Map<String, String> headers = getHeaders();
+        for (Map.Entry<String,String> entry : headers.entrySet()) {
+            result.addHeader(entry.getKey(), entry.getValue());
+        }
+
+        result.contentType(getContentType());
+        result.charset(getCharset());
+        result.template(getTemplate());
+        result.jsonView(getJsonView());
+        result.render(getRenderable());
+
+        List<String> supportedContentTypes = supportedContentTypes();
+        for (String supportedContentType : supportedContentTypes) {
+            result.supportedContentType(supportedContentType);
+        }
+
+        Optional<String> fallbackContentType = fallbackContentType();
+        if (fallbackContentType.isPresent()) {
+            result.fallbackContentType(fallbackContentType.get());
+        }
+
+        return result;
     }
 }

@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ninja;
 
+import com.google.inject.Provider;
 import ninja.params.ControllerMethodInvoker;
 
-import com.google.inject.Provider;
 
 /**
  * The end of the filter chain
@@ -27,19 +26,17 @@ import com.google.inject.Provider;
  */
 class FilterChainEnd implements FilterChain {
     private Provider<?> controllerProvider;
+
     private ControllerMethodInvoker controllerMethodInvoker;
 
-    FilterChainEnd(Provider<?> controllerProvider,
-                   ControllerMethodInvoker controllerMethodInvoker) {
+    FilterChainEnd(Provider<?> controllerProvider, ControllerMethodInvoker controllerMethodInvoker) {
         this.controllerProvider = controllerProvider;
         this.controllerMethodInvoker = controllerMethodInvoker;
     }
 
     @Override
     public Result next(Context context) {
-        Result controllerResult = (Result) controllerMethodInvoker.invoke(
-                controllerProvider.get(), context);
-
+        Result controllerResult = ((Result) (controllerMethodInvoker.invoke(controllerProvider.get(), context)));
         if (controllerResult instanceof AsyncResult) {
             // Make sure handle async has been called
             context.handleAsync();
@@ -48,7 +45,6 @@ class FilterChainEnd implements FilterChain {
                 controllerResult = newResult;
             }
         }
-
         return controllerResult;
     }
 }
