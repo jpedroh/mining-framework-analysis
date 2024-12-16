@@ -15,20 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.openhft.chronicle.bytes;
-
-import net.openhft.chronicle.bytes.internal.BytesInternal;
-import net.openhft.chronicle.bytes.internal.EmbeddedBytes;
-import net.openhft.chronicle.core.Maths;
-import net.openhft.chronicle.core.annotation.NonNegative;
-import net.openhft.chronicle.core.annotation.UsedViaReflection;
-import net.openhft.chronicle.core.io.IORuntimeException;
-import net.openhft.chronicle.core.io.ReferenceOwner;
-import net.openhft.chronicle.core.util.ObjectUtils;
-import net.openhft.chronicle.core.util.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,10 +27,21 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ReadOnlyBufferException;
 import java.nio.charset.StandardCharsets;
-
+import net.openhft.chronicle.bytes.internal.BytesInternal;
+import net.openhft.chronicle.bytes.internal.EmbeddedBytes;
+import net.openhft.chronicle.core.Maths;
+import net.openhft.chronicle.core.annotation.NonNegative;
+import net.openhft.chronicle.core.annotation.UsedViaReflection;
+import net.openhft.chronicle.core.io.IORuntimeException;
+import net.openhft.chronicle.core.io.ReferenceOwner;
+import net.openhft.chronicle.core.util.ObjectUtils;
+import net.openhft.chronicle.core.util.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import static net.openhft.chronicle.bytes.internal.ReferenceCountedUtil.throwExceptionIfReleased;
 import static net.openhft.chronicle.core.util.Longs.requireNonNegative;
 import static net.openhft.chronicle.core.util.ObjectUtils.requireNonNull;
+
 
 /**
  * Bytes is a view of a region of memory within a {@link BytesStore }
@@ -63,20 +61,18 @@ import static net.openhft.chronicle.core.util.ObjectUtils.requireNonNull;
  * object that has been released, might result in an {@link IllegalStateException} being thrown.
  *
  * @see BytesStore
- * @param <U> Underlying type
+ * @param <Underlying> Underlying type
  *
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
-public interface Bytes<U> extends
-        BytesStore<Bytes<U>, U>,
-        BytesIn<U>,
-        BytesOut<U> {
-
+@SuppressWarnings({ "rawtypes", "unchecked" })
+public interface Bytes<U> extends BytesStore<Bytes<U>, U> , BytesIn<U> , BytesOut<U> {
+    // 8 EiB - 16
     /**
      * The max capacity a Bytes can ever have.
      */
     long MAX_CAPACITY = Long.MAX_VALUE & ~0xF; // 8 EiB - 16
 
+    // 2 GiB - 16
     /**
      * The max capacity a Bytes can ever have if it is allocated on heap.
      */
@@ -180,33 +176,39 @@ public interface Bytes<U> extends
      * the provided {@code groupName} effectively turning the groups of fields into a memory segment.
      * <p>
      * Here is an example of field groups:
-     * <pre>{@code
-     *     static class Padding extends Parent {
-     *         {@literal @}FieldGroup("p")
-     *         // 128 bytes
-     *         transient long p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15;
-     *     }
+     * <pre>{@code static class Padding extends Parent {
+     * {@literal @}FieldGroup("p")
+     * // 128 bytes
+     * transient long p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15;
+     * }
      * }</pre>
      *
-     * @param object    non-null object whose fields are to be reflected
-     * @param groupName of the field group, non-null
+     * @unknown // 128 bytes
+    transient long p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15;
+    }
+    }</pre>
+     * @param object
+     * 		non-null object whose fields are to be reflected
+     * @param groupName
+     * 		of the field group, non-null
      * @return a new Bytes view of fields
-     * @throws NullPointerException if the provided {@code object} or the provided {@code groupName} is {@code null}
      */
-    static <T> Bytes<T> forFieldGroup(@NotNull final T object,
-                                      @NotNull final String groupName) {
+    public static <T> Bytes<T> forFieldGroup(@NotNull
+    final T object, @NotNull
+    final String groupName) {
         requireNonNull(object);
         requireNonNull(groupName);
-        @NotNull BytesStore<?, T> bs = BytesStore.forFields(object, groupName, 1);
+        @NotNull
+        BytesStore<?, T> bs = BytesStore.forFields(object, groupName, 1);
         try {
             final EmbeddedBytes<T> bytes = EmbeddedBytes.wrap(bs);
             return bytes.writeLimit(bs.writeLimit());
-        } catch (IllegalArgumentException | IllegalStateException e) {
+        } catch (java.lang.IllegalArgumentException | java.lang.IllegalStateException e) {
             throw new AssertionError(e);
         } finally {
             try {
                 bs.release(INIT);
-            } catch (IllegalStateException ise) {
+            } catch (java.lang.IllegalStateException ise) {
                 throw new AssertionError(ise);
             }
         }
@@ -675,35 +677,33 @@ public interface Bytes<U> extends
      * @throws NullPointerException if the provided {@code buffer} is {@code null} or if the provided {@code maxLen} is negative
      */
     @NotNull
-    static String toString(@NotNull final Bytes<?> buffer,
-                           final long maxLen) throws
-            BufferUnderflowException, IllegalStateException, IllegalArgumentException {
+    public static String toString(@NotNull
+    final Bytes<?> buffer, final long maxLen) throws BufferUnderflowException, IllegalStateException, IllegalArgumentException {
         requireNonNegative(maxLen);
-        if (buffer.refCount() < 1)
-            // added because something is crashing the JVM
+        // added because something is crashing the JVM
+        if (buffer.refCount() < 1) {
             return "<unknown>";
-
+        }
         ReferenceOwner toString = ReferenceOwner.temporary("toString");
         buffer.reserve(toString);
         try {
-
-            if (buffer.readRemaining() == 0)
+            if (buffer.readRemaining() == 0) {
                 return "";
-
+            }
             final long length = Math.min(maxLen + 1, buffer.readRemaining());
-
-            @NotNull final StringBuilder builder = new StringBuilder();
+            @NotNull
+            final StringBuilder builder = new StringBuilder();
             try {
-                buffer.readWithLength(length, b -> {
+                buffer.readWithLength(length, ( b) -> {
                     while (buffer.readRemaining() > 0) {
                         if (builder.length() >= maxLen) {
                             builder.append("...");
                             break;
                         }
-                        builder.append((char) buffer.readByte());
-                    }
+                        builder.append(((char) (buffer.readByte())));
+                    } 
                 });
-            } catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 builder.append(' ').append(e);
             }
             return builder.toString();
@@ -799,17 +799,16 @@ public interface Bytes<U> extends
      * @throws NullPointerException if the provided {@code source} or the provided {@code source} is {@code null}
      * @deprecated for removal in x.23
      */
-    @Deprecated(/* suggest for removal in x.23 as this is supposed to be used only by other methods in this interface and can be internalised */)
-    static int indexOf(final @NotNull BytesStore source,
-                       final @NotNull BytesStore other,
-                       int fromSourceOffset) throws IllegalStateException {
+    @java.lang.Deprecated
+    public static int indexOf(@NotNull
+    final BytesStore source, @NotNull
+    final BytesStore other, int fromSourceOffset) throws IllegalStateException {
         throwExceptionIfReleased(source);
         throwExceptionIfReleased(other);
         long sourceOffset = source.readPosition();
         long otherOffset = other.readPosition();
         long sourceCount = source.readRemaining();
         long otherCount = other.readRemaining();
-
         if (fromSourceOffset >= sourceCount) {
             return Math.toIntExact(otherCount == 0 ? sourceCount : -1);
         }
@@ -822,21 +821,18 @@ public interface Bytes<U> extends
         try {
             byte firstByte = other.readByte(otherOffset);
             long max = sourceOffset + (sourceCount - otherCount);
-
             for (long i = sourceOffset + fromSourceOffset; i <= max; i++) {
                 /* Look for first character. */
                 if (source.readByte(i) != firstByte) {
-                    while (++i <= max && source.readByte(i) != firstByte) ;
+                    while (((++i) <= max) && (source.readByte(i) != firstByte));
                 }
-
                 /* Found first character, now look at the rest of v2 */
                 if (i <= max) {
                     long j = i + 1;
-                    long end = j + otherCount - 1;
-                    for (long k = otherOffset + 1; j < end && source.readByte(j) == other.readByte(k); j++, k++) {
+                    long end = (j + otherCount) - 1;
+                    for (long k = otherOffset + 1; (j < end) && (source.readByte(j) == other.readByte(k)); j++ , k++) {
                         // Do nothing
                     }
-
                     if (j == end) {
                         /* Found whole string. */
                         return Math.toIntExact(i - sourceOffset);
@@ -860,15 +856,13 @@ public interface Bytes<U> extends
      * @throws IllegalStateException if the underlying BytesStore has been released
      */
     @NotNull
-    default Bytes<U> unchecked(boolean unchecked)
-            throws IllegalStateException {
+    public default Bytes<U> unchecked(boolean unchecked) throws IllegalStateException {
         throwExceptionIfReleased(this);
         if (unchecked) {
-            if (isElastic())
+            if (isElastic()) {
                 BytesUtil.WarnUncheckedElasticBytes.warn();
-            Bytes<U> underlyingBytes = start() == 0 && bytesStore().isDirectMemory()
-                    ? new UncheckedNativeBytes<>(this)
-                    : new UncheckedBytes<>(this);
+            }
+            Bytes<U> underlyingBytes = ((start() == 0) && bytesStore().isDirectMemory()) ? new UncheckedNativeBytes<>(this) : new UncheckedBytes<>(this);
             release(INIT);
             return underlyingBytes;
         }
@@ -892,7 +886,7 @@ public interface Bytes<U> extends
      * lower than the point it can safely write.
      */
     @Override
-    default long safeLimit() {
+    public default long safeLimit() {
         return bytesStore().safeLimit();
     }
 
@@ -917,8 +911,7 @@ public interface Bytes<U> extends
      * @return a copy of this Bytes object
      */
     @Override
-    BytesStore<Bytes<U>, U> copy()
-            throws IllegalStateException;
+    public abstract BytesStore<Bytes<U>, U> copy() throws IllegalStateException;
 
     /**
      * Creates and returns a new String representing the contents of this Bytes object in hexadecimal form encoding
@@ -927,7 +920,7 @@ public interface Bytes<U> extends
      * @return a new hex String
      */
     @NotNull
-    default String toHexString() {
+    public default String toHexString() {
         return toHexString(1024);
     }
 
@@ -942,7 +935,7 @@ public interface Bytes<U> extends
      * @throws IllegalArgumentException if the provided {@code maxLength} is negative.
      */
     @NotNull
-    default String toHexString(long maxLength) {
+    public default String toHexString(long maxLength) {
         return toHexString(readPosition(), maxLength);
     }
 
@@ -956,13 +949,12 @@ public interface Bytes<U> extends
      * @throws IllegalArgumentException if the provided {@code maxLength}  or provided {@code maxLength} is negative.
      */
     @NotNull
-    default String toHexString(long offset, long maxLength) {
+    public default String toHexString(long offset, long maxLength) {
         requireNonNegative(offset);
         requireNonNegative(maxLength);
-
         final long maxLength2 = Math.min(maxLength, readLimit() - offset);
         final String ret = BytesInternal.toHexString(this, offset, maxLength2);
-        return maxLength2 < readLimit() - offset ? ret + "... truncated" : ret;
+        return maxLength2 < (readLimit() - offset) ? ret + "... truncated" : ret;
     }
 
     /**
@@ -981,11 +973,12 @@ public interface Bytes<U> extends
      * @throws IllegalArgumentException if the buffer is not elastic and there is not enough space or if the
      *                                  provided {@code desiredCapacity} is negative;
      */
-    default void ensureCapacity(@NonNegative long desiredCapacity)
-            throws IllegalArgumentException, IllegalStateException {
+    public default void ensureCapacity(@NonNegative
+    long desiredCapacity) throws IllegalArgumentException, IllegalStateException {
         requireNonNegative(desiredCapacity);
-        if (desiredCapacity > capacity())
+        if (desiredCapacity > capacity()) {
             throw new IllegalArgumentException(isElastic() ? "todo" : "not elastic");
+        }
     }
 
     /**
@@ -999,13 +992,10 @@ public interface Bytes<U> extends
      */
     @NotNull
     @Override
-    default Bytes<U> bytesForRead()
-            throws IllegalStateException {
+    public default Bytes<U> bytesForRead() throws IllegalStateException {
         try {
-            return isClear()
-                    ? BytesStore.super.bytesForRead()
-                    : new SubBytes<>(this, readPosition(), readLimit() + start());
-        } catch (IllegalArgumentException | BufferUnderflowException e) {
+            return isClear() ? BytesStore.super.bytesForRead() : new SubBytes<>(this, readPosition(), readLimit() + start());
+        } catch (java.lang.IllegalArgumentException | BufferUnderflowException e) {
             throw new AssertionError(e);
         }
     }
@@ -1026,8 +1016,8 @@ public interface Bytes<U> extends
      * @return if this Bytes object contents equals the provided {@code other}
      * @throws IllegalStateException if this Bytes object has been previously released
      */
-    default boolean isEqual(@Nullable String other)
-            throws IllegalStateException {
+    public default boolean isEqual(@Nullable
+    String other) throws IllegalStateException {
         return StringUtils.isEqual(this, other);
     }
 
@@ -1038,8 +1028,7 @@ public interface Bytes<U> extends
      * @throws IllegalStateException if this Bytes object has been previously released
      */
     @NotNull
-    Bytes<U> compact()
-            throws IllegalStateException;
+    public abstract Bytes<U> compact() throws IllegalStateException;
 
     /**
      * Copies bytes from this Bytes object to another provided {@code targetByteStore}.
@@ -1077,7 +1066,7 @@ public interface Bytes<U> extends
      * @return if this Bytes object is using memory that can be shared across processes
      */
     @Override
-    default boolean sharedMemory() {
+    public default boolean sharedMemory() {
         return bytesStore().sharedMemory();
     }
 
@@ -1089,14 +1078,12 @@ public interface Bytes<U> extends
      * @param fromOffset the offset from the target bytes
      * @param count      the number of bytes to un-write
      */
-    default void unwrite(long fromOffset, int count)
-            throws BufferUnderflowException, BufferOverflowException, IllegalStateException {
+    public default void unwrite(long fromOffset, int count) throws BufferUnderflowException, BufferOverflowException, IllegalStateException {
         long wp = writePosition();
-
-        if (wp < fromOffset)
+        if (wp < fromOffset) {
             return;
-
-        write(fromOffset, this, fromOffset + count, wp - fromOffset - count);
+        }
+        write(fromOffset, this, fromOffset + count, (wp - fromOffset) - count);
         writePosition(wp - count);
     }
 
@@ -1111,8 +1098,7 @@ public interface Bytes<U> extends
      * @throws IllegalStateException    if this Bytes object was previously released
      */
     @NotNull
-    default BigDecimal readBigDecimal()
-            throws ArithmeticException, BufferUnderflowException, IllegalStateException {
+    public default BigDecimal readBigDecimal() throws ArithmeticException, BufferUnderflowException, IllegalStateException {
         throwExceptionIfReleased(this);
         return new BigDecimal(readBigInteger(), Maths.toUInt31(readStopBit()));
     }
@@ -1127,8 +1113,7 @@ public interface Bytes<U> extends
      * @throws IllegalStateException    if this Bytes object was previously released
      */
     @NotNull
-    default BigInteger readBigInteger()
-            throws ArithmeticException, BufferUnderflowException, IllegalStateException {
+    public default BigInteger readBigInteger() throws ArithmeticException, BufferUnderflowException, IllegalStateException {
         throwExceptionIfReleased(this);
         int length = Maths.toUInt31(readStopBit());
         if (length == 0) {
@@ -1160,8 +1145,8 @@ public interface Bytes<U> extends
      * @return index of equal contents or -1
      * @throws NullPointerException if the provided {@code source} is {@code null}
      */
-    default long indexOf(@NotNull Bytes source)
-            throws IllegalStateException {
+    public default long indexOf(@NotNull
+    Bytes source) throws IllegalStateException {
         return indexOf(this, source, 0);
     }
 
@@ -1183,18 +1168,17 @@ public interface Bytes<U> extends
      * @return index of equal contents or -1
      * @throws NullPointerException if the provided {@code source } is {@code null}
      */
-    default int indexOf(@NotNull BytesStore source, int fromIndex)
-            throws IllegalStateException {
+    public default int indexOf(@NotNull
+    BytesStore source, int fromIndex) throws IllegalStateException {
         return indexOf(this, source, fromIndex);
     }
 
     @Override
     @NotNull
-    Bytes<U> clear()
-            throws IllegalStateException;
+    public abstract Bytes<U> clear() throws IllegalStateException;
 
     @Override
-    default boolean readWrite() {
+    public default boolean readWrite() {
         return bytesStore().readWrite();
     }
 
@@ -1213,11 +1197,12 @@ public interface Bytes<U> extends
      * @throws IllegalArgumentException if the provided {@code length} is negative.
      * @throws NullPointerException     if the provided {@code bytesOut} is {@code null}.
      */
-    default void readWithLength(long length, @NotNull BytesOut<U> bytesOut)
-            throws BufferUnderflowException, IORuntimeException, BufferOverflowException, IllegalStateException {
+    public default void readWithLength(long length, @NotNull
+    BytesOut<U> bytesOut) throws BufferUnderflowException, IORuntimeException, BufferOverflowException, IllegalStateException {
         requireNonNegative(length);
-        if (length > readRemaining())
+        if (length > readRemaining()) {
             throw new BufferUnderflowException();
+        }
         long limit0 = readLimit();
         long limit = readPosition() + length;
         boolean lenient = lenient();
@@ -1248,13 +1233,10 @@ public interface Bytes<U> extends
      * @throws NullPointerException     if the provided {@code clazz} is {@code null}
      * @see #writeMarshallableLength16(WriteBytesMarshallable)
      */
-    default <T extends ReadBytesMarshallable> T readMarshallableLength16(@NotNull final Class<T> clazz,
-                                                                         @Nullable final T using)
-            throws BufferUnderflowException, IllegalStateException {
-
-        final T object = (using == null)
-                ? ObjectUtils.newInstance(clazz)
-                : using;
+    public default <T extends ReadBytesMarshallable> T readMarshallableLength16(@NotNull
+    final Class<T> clazz, @Nullable
+    final T using) throws BufferUnderflowException, IllegalStateException {
+        final T object = (using == null) ? ObjectUtils.newInstance(clazz) : using;
         int length = readUnsignedShort();
         long limit = readLimit();
         long end = readPosition() + length;
@@ -1284,19 +1266,19 @@ public interface Bytes<U> extends
      * @throws NullPointerException     if the provided {@code marshallable} is {@code null}
      * @see #readMarshallableLength16(Class, ReadBytesMarshallable)
      */
-    default void writeMarshallableLength16(@NotNull final WriteBytesMarshallable marshallable)
-            throws IllegalArgumentException, BufferOverflowException, IllegalStateException, BufferUnderflowException {
+    public default void writeMarshallableLength16(@NotNull
+    final WriteBytesMarshallable marshallable) throws IllegalArgumentException, BufferOverflowException, IllegalStateException, BufferUnderflowException {
         requireNonNull(marshallable);
         long position = writePosition();
-
         try {
             writeUnsignedShort(0);
             marshallable.writeMarshallable(this);
-            long length = writePosition() - position - 2;
-            if (length >= 1 << 16)
-                throw new IllegalStateException("Marshallable " + marshallable.getClass() + " too long was " + length);
-            writeUnsignedShort(position, (int) length);
-        } catch (ArithmeticException e) {
+            long length = (writePosition() - position) - 2;
+            if (length >= (1 << 16)) {
+                throw new IllegalStateException((("Marshallable " + marshallable.getClass()) + " too long was ") + length);
+            }
+            writeUnsignedShort(position, ((int) (length)));
+        } catch (java.lang.ArithmeticException e) {
             throw new AssertionError(e);
         }
     }
@@ -1311,15 +1293,16 @@ public interface Bytes<U> extends
      * @throws IllegalStateException    if this Bytes object or the provided {@code bytesOut} has been previously released
      * @throws NullPointerException     if the provided {@code InputStream} is {@code null}.
      */
-    default Bytes write(@NotNull final InputStream inputStream)
-            throws IOException, BufferOverflowException, IllegalStateException {
+    public default Bytes write(@NotNull
+    final InputStream inputStream) throws IOException, BufferOverflowException, IllegalStateException {
         requireNonNull(inputStream);
-        for (; ; ) {
+        for (; ;) {
             int read;
             read = inputStream.read();
-            if (read == -1)
+            if (read == (-1)) {
                 break;
-            writeByte((byte) read);
+            }
+            writeByte(((byte) (read)));
         }
         return this;
     }

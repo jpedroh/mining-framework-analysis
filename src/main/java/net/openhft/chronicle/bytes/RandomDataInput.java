@@ -15,20 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.openhft.chronicle.bytes;
 
+import java.nio.BufferUnderflowException;
+import java.nio.ByteBuffer;
 import net.openhft.chronicle.bytes.internal.BytesInternal;
 import net.openhft.chronicle.core.Maths;
 import net.openhft.chronicle.core.io.IORuntimeException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.nio.BufferUnderflowException;
-import java.nio.ByteBuffer;
-
 import static net.openhft.chronicle.bytes.internal.ReferenceCountedUtil.throwExceptionIfReleased;
 import static net.openhft.chronicle.core.util.ObjectUtils.requireNonNull;
+
 
 /**
  * This allows random access to the underling bytes.  This instance can be used across threads as it is stateless.
@@ -306,13 +304,14 @@ public interface RandomDataInput extends RandomCommon {
      * @throws BufferUnderflowException if the offset is outside the limits of the Bytes
      * @throws IllegalStateException    if released
      */
-    default int copyTo(@NotNull byte[] bytes)
-            throws BufferUnderflowException, IllegalStateException {
+    public default int copyTo(@NotNull
+    byte[] bytes) throws BufferUnderflowException, IllegalStateException {
         requireNonNull(bytes);
         throwExceptionIfReleased(this);
-        int len = (int) Math.min(bytes.length, readRemaining());
-        for (int i = 0; i < len; i++)
+        int len = ((int) (Math.min(bytes.length, readRemaining())));
+        for (int i = 0; i < len; i++) {
             bytes[i] = readByte(start() + i);
+        }
         return len;
     }
 
@@ -324,17 +323,19 @@ public interface RandomDataInput extends RandomCommon {
      *
      * @throws IllegalStateException if released
      */
-    default int copyTo(@NotNull ByteBuffer bb)
-            throws BufferUnderflowException, IllegalStateException {
+    public default int copyTo(@NotNull
+    ByteBuffer bb) throws BufferUnderflowException, IllegalStateException {
         requireNonNull(bb);
         throwExceptionIfReleased(this);
         int pos = bb.position();
-        int len = (int) Math.min(bb.remaining(), readRemaining());
+        int len = ((int) (Math.min(bb.remaining(), readRemaining())));
         int i;
-        for (i = 0; i < len - 7; i += 8)
+        for (i = 0; i < (len - 7); i += 8) {
             bb.putLong(pos + i, readLong(start() + i));
-        for (; i < len; i++)
+        }
+        for (; i < len; i++) {
             bb.put(pos + i, readByte(start() + i));
+        }
         return len;
     }
 
@@ -457,40 +458,40 @@ public interface RandomDataInput extends RandomCommon {
      *
      * @param offset the offset in this {@code RandomDataInput} to read char sequence from
      * @param sb     the buffer to read char sequence into (truncated first)
-     * @param <T>    buffer type, must be {@code StringBuilder} or {@code Bytes}
+     * @param <ACS>  buffer type, must be {@code StringBuilder} or {@code Bytes}
      * @return offset after the normal read char sequence, or -1 - offset, if char sequence is
      * {@code null}
      * @see RandomDataOutput#writeUtf8(long, CharSequence)
      * @throws IllegalStateException    if released
      */
-    default <T extends Appendable & CharSequence> long readUtf8(long offset, @NotNull T sb)
-            throws IORuntimeException, IllegalArgumentException, BufferUnderflowException, ArithmeticException, IllegalStateException {
+    public default <T extends Appendable & CharSequence> long readUtf8(long offset, @NotNull
+    T sb) throws IORuntimeException, IllegalArgumentException, BufferUnderflowException, ArithmeticException, IllegalStateException {
         AppendableUtil.setLength(sb, 0);
         // TODO insert some bounds check here
-
         long utfLen;
         if ((utfLen = readByte(offset++)) < 0) {
-            utfLen &= 0x7FL;
+            utfLen &= 0x7fL;
             long b;
             int count = 7;
             while ((b = readByte(offset++)) < 0) {
-                utfLen |= (b & 0x7FL) << count;
+                utfLen |= (b & 0x7fL) << count;
                 count += 7;
-            }
+            } 
             if (b != 0) {
-                if (count > 56)
-                    throw new IORuntimeException(
-                            "Cannot read more than 9 stop bits of positive value");
-                utfLen |= (b << count);
+                if (count > 56) {
+                    throw new IORuntimeException("Cannot read more than 9 stop bits of positive value");
+                }
+                utfLen |= b << count;
             } else {
-                if (count > 63)
-                    throw new IORuntimeException(
-                            "Cannot read more than 10 stop bits of negative value");
+                if (count > 63) {
+                    throw new IORuntimeException("Cannot read more than 10 stop bits of negative value");
+                }
                 utfLen = ~utfLen;
             }
         }
-        if (utfLen == -1)
+        if (utfLen == (-1)) {
             return ~offset;
+        }
         int len = Maths.toUInt31(utfLen);
         BytesInternal.parseUtf8(this, offset, sb, true, len);
         return offset + utfLen;
@@ -508,47 +509,44 @@ public interface RandomDataInput extends RandomCommon {
      * @param offset     the offset in this {@code RandomDataInput} to read char sequence from
      * @param sb         the buffer to read char sequence into (truncated first)
      * @param maxUtf8Len the maximum allowed length of the char sequence in Utf8 encoding
-     * @param <T>        buffer type, must be {@code StringBuilder} or {@code Bytes}
+     * @param <ACS>      buffer type, must be {@code StringBuilder} or {@code Bytes}
      * @return offset after the normal read char sequence, or -1 - offset, if char sequence is
      * {@code null}
      * @throws IllegalStateException    if released
      * @see RandomDataOutput#writeUtf8Limited(long, CharSequence, int)
      */
-    default <T extends Appendable & CharSequence> long readUtf8Limited(long offset,
-                                                                       final @NotNull T sb,
-                                                                       final int maxUtf8Len)
-            throws IORuntimeException, IllegalArgumentException, BufferUnderflowException,
-            IllegalStateException {
+    public default <T extends Appendable & CharSequence> long readUtf8Limited(long offset, @NotNull
+    final T sb, final int maxUtf8Len) throws IORuntimeException, IllegalArgumentException, BufferUnderflowException, IllegalStateException {
         AppendableUtil.setLength(sb, 0);
         // TODO insert some bounds check here
-
         long utfLen;
         if ((utfLen = readByte(offset++)) < 0) {
-            utfLen &= 0x7FL;
+            utfLen &= 0x7fL;
             long b;
             int count = 7;
             while ((b = readByte(offset++)) < 0) {
-                utfLen |= (b & 0x7FL) << count;
+                utfLen |= (b & 0x7fL) << count;
                 count += 7;
-            }
+            } 
             if (b != 0) {
-                if (count > 56)
-                    throw new IORuntimeException(
-                            "Cannot read more than 9 stop bits of positive value");
-                utfLen |= (b << count);
+                if (count > 56) {
+                    throw new IORuntimeException("Cannot read more than 9 stop bits of positive value");
+                }
+                utfLen |= b << count;
             } else {
-                if (count > 63)
-                    throw new IORuntimeException(
-                            "Cannot read more than 10 stop bits of negative value");
+                if (count > 63) {
+                    throw new IORuntimeException("Cannot read more than 10 stop bits of negative value");
+                }
                 utfLen = ~utfLen;
             }
         }
-        if (utfLen == -1)
+        if (utfLen == (-1)) {
             return ~offset;
-        if (utfLen > maxUtf8Len)
-            throw new IllegalStateException("Attempted to read a char sequence of " +
-                    "utf8 size " + utfLen + ", when only " + maxUtf8Len + " allowed");
-        BytesInternal.parseUtf8(this, offset, sb, true, (int) utfLen);
+        }
+        if (utfLen > maxUtf8Len) {
+            throw new IllegalStateException((((("Attempted to read a char sequence of " + "utf8 size ") + utfLen) + ", when only ") + maxUtf8Len) + " allowed");
+        }
+        BytesInternal.parseUtf8(this, offset, sb, true, ((int) (utfLen)));
         return offset + utfLen;
     }
 
@@ -606,8 +604,7 @@ public interface RandomDataInput extends RandomCommon {
         }
     }
 
-    default ByteBuffer toTemporaryDirectByteBuffer()
-            throws IllegalArgumentException, ArithmeticException, IllegalStateException {
+    public default ByteBuffer toTemporaryDirectByteBuffer() throws IllegalArgumentException, ArithmeticException, IllegalStateException {
         throwExceptionIfReleased(this);
         int len = Maths.toUInt31(readRemaining());
         try {
