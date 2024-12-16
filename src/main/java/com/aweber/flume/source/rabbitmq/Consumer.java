@@ -1,52 +1,66 @@
 package com.aweber.flume.source.rabbitmq;
 
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.QueueingConsumer;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.QueueingConsumer;
-
 import org.apache.flume.CounterGroup;
 import org.apache.flume.Event;
 import org.apache.flume.channel.ChannelProcessor;
 import org.apache.flume.event.EventBuilder;
 import org.apache.flume.instrumentation.SourceCounter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Consumer implements Runnable {
 
+public class Consumer implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(Consumer.class);
 
     private static final String COUNTER_ACK = "rabbitmq.ack";
+
     private static final String COUNTER_EXCEPTION = "rabbitmq.exception";
+
     private static final String COUNTER_REJECT = "rabbitmq.reject";
 
     volatile boolean shutdown = false;
+
     private Connection connection;
+
     private Channel channel;
+
     private ChannelProcessor channelProcessor;
+
     private CounterGroup counterGroup;
+
     private SourceCounter sourceCounter;
 
     private String hostname;
+
     private int port;
+
     private boolean sslEnabled = false;
+
     private String virtualHost;
+
     private String username;
+
     private String password;
+
     private String queue;
+
     private boolean autoAck = false;
+
     private boolean requeuing = false;
+
     private int prefetchCount = 0;
+
     private int timeout = -1;
 
     public Consumer() {
@@ -112,7 +126,6 @@ public class Consumer implements Runnable {
         return this;
     }
 
-
     public Consumer setPrefetchCount(int prefetchCount) {
         this.prefetchCount = prefetchCount;
         return this;
@@ -127,9 +140,7 @@ public class Consumer implements Runnable {
     public void run() {
         QueueingConsumer consumer;
         QueueingConsumer.Delivery delivery;
-
         ConnectionFactory factory = new ConnectionFactory();
-
         // Connect to RabbitMQ
         try {
             connection = createRabbitMQConnection(factory);
@@ -137,10 +148,8 @@ public class Consumer implements Runnable {
             logger.error("Error creating RabbitMQ connection: {}", ex);
             return;
         }
-
         // Keep track of how many connections were opened
         sourceCounter.setOpenConnectionCount(sourceCounter.getOpenConnectionCount() + 1);
-
         // Open the channel
         try {
             channel = connection.createChannel();
@@ -148,7 +157,6 @@ public class Consumer implements Runnable {
             logger.error("Error creating RabbitMQ channel: {}", ex);
             return;
         }
-
         // Set QoS Prefetching if enabled, exiting if it fails
         if (prefetchCount > 0) {
             if (!setQoS()) {
@@ -156,10 +164,8 @@ public class Consumer implements Runnable {
                 return;
             }
         }
-
         // Create the new consumer and set the consumer tag
         consumer = new QueueingConsumer(channel);
-
         try {
             channel.basicConsume(queue, autoAck, consumer);
         } catch (IOException ex) {
@@ -168,7 +174,6 @@ public class Consumer implements Runnable {
             this.close();
             return;
         }
-
         // Loop until shutdown is called
         while (!shutdown) {
             // Get the next message from the stack
@@ -177,36 +182,31 @@ public class Consumer implements Runnable {
                 if (timeout < 0) {
                     delivery = consumer.nextDelivery();
                 } else {
-                    delivery = consumer.nextDelivery(timeout); // returns null on timeout
+                    delivery = consumer.nextDelivery(timeout);// returns null on timeout
+
                 }
-            } catch (InterruptedException ex) {
+            } catch (java.lang.InterruptedException ex) {
                 logger.error("Consumer interrupted for {}, exiting: {}", this, ex);
                 break;
             }
             // Process the delivery if any
             if (delivery != null) {
                 sourceCounter.incrementEventReceivedCount();
-
                 try {
                     channelProcessor.processEvent(parseMessage(delivery));
-                } catch (Exception ex) {
+                } catch (java.lang.Exception ex) {
                     logger.error("Error writing to channel for {}, message rejected {}", this, ex);
                     rejectMessage(getDeliveryTag(delivery));
                     continue;
                 }
                 sourceCounter.incrementEventAcceptedCount();
-                if (!autoAck) ackMessage(getDeliveryTag(delivery));
+                if (!autoAck) {
+                    ackMessage(getDeliveryTag(delivery));
+                }
             }
-
-            sourceCounter.incrementEventAcceptedCount();
-            if (!autoAck) {
-                ackMessage(getDeliveryTag(delivery));
-            }
-        }
-
+        } 
         // Tell RabbitMQ that the consumer is stopping
         cancelConsumer(consumer.getConsumerTag());
-
         // Cancel consumer
         this.close();
     }
@@ -267,7 +267,6 @@ public class Consumer implements Runnable {
 
     private Map<String, String> buildHeaders(AMQP.BasicProperties props) {
         Map<String, String> headers = new HashMap<String, String>();
-
         String appId = props.getAppId();
         String contentEncoding = props.getContentEncoding();
         String contentType = props.getContentType();
@@ -280,47 +279,44 @@ public class Consumer implements Runnable {
         Date timestamp = props.getTimestamp();
         String type = props.getType();
         String userId = props.getUserId();
-
-        if (appId != null && !appId.isEmpty()) {
+        if ((appId != null) && (!appId.isEmpty())) {
             headers.put("app-id", appId);
         }
-        if (contentEncoding != null && !contentEncoding.isEmpty()) {
+        if ((contentEncoding != null) && (!contentEncoding.isEmpty())) {
             headers.put("content-encoding", contentEncoding);
         }
-        if (contentType != null && !contentType.isEmpty()) {
+        if ((contentType != null) && (!contentType.isEmpty())) {
             headers.put("content-type", contentType);
         }
-        if (correlationId != null && !correlationId.isEmpty()) {
+        if ((correlationId != null) && (!correlationId.isEmpty())) {
             headers.put("correlation-id", correlationId);
         }
         if (deliveryMode != null) {
             headers.put("delivery-mode", String.valueOf(deliveryMode));
         }
-        if (expiration != null && !expiration.isEmpty()) {
+        if ((expiration != null) && (!expiration.isEmpty())) {
             headers.put("expiration", expiration);
         }
-        if (messageId != null && !messageId.isEmpty()) {
+        if ((messageId != null) && (!messageId.isEmpty())) {
             headers.put("message-id", messageId);
         }
         if (priority != null) {
             headers.put("priority", String.valueOf(priority));
         }
-        if (replyTo != null && !replyTo.isEmpty()) {
+        if ((replyTo != null) && (!replyTo.isEmpty())) {
             headers.put("replyTo", replyTo);
         }
         if (timestamp != null) {
             headers.put("timestamp", String.valueOf(timestamp.getTime()));
         }
-        if (type != null && !type.isEmpty()) {
+        if ((type != null) && (!type.isEmpty())) {
             headers.put("type", type);
         }
-        if (userId != null && !userId.isEmpty()) {
+        if ((userId != null) && (!userId.isEmpty())) {
             headers.put("user-id", userId);
         }
-
         Map<String, Object> userHeaders = props.getHeaders();
-
-        if (userHeaders != null && userHeaders.size() > 0) {
+        if ((userHeaders != null) && (userHeaders.size() > 0)) {
             for (String key : userHeaders.keySet()) {
                 Object value = userHeaders.get(key);
                 if (value != null) {
@@ -331,7 +327,6 @@ public class Consumer implements Runnable {
                 }
             }
         }
-
         return headers;
     }
 
@@ -377,5 +372,4 @@ public class Consumer implements Runnable {
         }
         return factory.newConnection();
     }
-
 }
