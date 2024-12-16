@@ -3,6 +3,7 @@ package com.fasterxml.jackson.annotation;
 import java.lang.annotation.*;
 import java.util.Objects;
 
+
 /**
  * Annotation used for configuring details of if and how type information is
  * used with JSON serialization and deserialization, to preserve information
@@ -57,35 +58,31 @@ import java.util.Objects;
  * it is necessary to either use "type name" as type id, or to
  * limit possible types using other means.
  */
-@Target({ElementType.ANNOTATION_TYPE, ElementType.TYPE,
-    ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
+@Target({ ElementType.ANNOTATION_TYPE, ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 @JacksonAnnotation
-public @interface JsonTypeInfo
-{
+public @interface JsonTypeInfo {
     /*
     /**********************************************************
     /* Value enumerations used for properties
     /**********************************************************
      */
-
     /**
      * Definition of different type identifiers that can be included in JSON
      * during serialization, and used for deserialization.
      */
     public enum Id {
+
         /**
          * This means that no explicit type metadata is included, and typing is
          * purely done using contextual information possibly augmented with other
          * annotations.
          */
         NONE(null),
-
         /**
          * Means that fully-qualified Java class name is used as the type identifier.
          */
         CLASS("@class"),
-
         /**
          * Means that Java class name with minimal path is used as the type identifier.
          * Minimal means that only the class name, and that part of preceding Java
@@ -95,12 +92,12 @@ public @interface JsonTypeInfo
          * For example, for supertype "com.foo.Base", and concrete type
          * "com.foo.Impl", only ".Impl" would be included; and for "com.foo.impl.Impl2"
          * only ".impl.Impl2" would be included.
-         *<br>
+         * <br>
          * <b>NOTE</b>: leading dot ('.') MUST be used to denote partial (minimal) name;
          * if it is missing, value is assumed to be fully-qualified name. Fully-qualified
          * name is used in cases where subtypes are not in same package (or sub-package
          * thereof) as base class.
-         *<p>
+         * <p>
          * If all related classes are in the same Java package, this option can reduce
          * amount of type information overhead, especially for small types.
          * However, please note that using this alternative is inherently risky since it
@@ -110,13 +107,11 @@ public @interface JsonTypeInfo
          * useful reference point), this may not always work as expected.
          */
         MINIMAL_CLASS("@c"),
-
         /**
          * Means that logical type name is used as type information; name will then need
          * to be separately resolved to actual concrete type (Class).
          */
         NAME("@type"),
-
         /**
          * Means that no serialized typing-property is used. Types are <i>deduced</i> based
          * on the fields available. Deduction is limited to the <i>names</i> of fields
@@ -127,18 +122,15 @@ public @interface JsonTypeInfo
          * <p>
          * On serialization, no type ID is written, and only regular properties are included.
          *
-         * @since 2.12
+         * @since 2.12.0.
          */
         DEDUCTION(null),
-
         /**
          * Means that typing mechanism uses customized handling, with possibly
          * custom configuration. This means that semantics of other properties is
          * not defined by Jackson package, but by the custom implementation.
          */
-        CUSTOM(null)
-        ;
-
+        CUSTOM(null);
         private final String _defaultPropertyName;
 
         private Id(String defProp) {
@@ -154,6 +146,7 @@ public @interface JsonTypeInfo
      * May or may not be used for custom types ({@link Id#CUSTOM}).
      */
     public enum As {
+
         /**
          * Inclusion mechanism that uses a single configurable property, included
          * along with actual data (POJO properties) as a separate meta-property.
@@ -161,20 +154,18 @@ public @interface JsonTypeInfo
          * Default choice for inclusion.
          */
         PROPERTY,
-
         /**
          * Inclusion mechanism that wraps typed JSON value (POJO
          * serialized as JSON) in
          * a JSON Object that has a single entry,
          * where field name is serialized type identifier,
          * and value is the actual JSON value.
-         *<p>
+         * <p>
          * Note: can only be used if type information can be serialized as
          * String. This is true for standard type metadata types, but not
          * necessarily for custom types.
          */
         WRAPPER_OBJECT,
-
         /**
          * Inclusion mechanism that wraps typed JSON value (POJO
          * serialized as JSON) in
@@ -183,7 +174,6 @@ public @interface JsonTypeInfo
          * as JSON Object.
          */
         WRAPPER_ARRAY,
-
         /**
          * Inclusion mechanism similar to <code>PROPERTY</code>, except that
          * property is included one-level higher in hierarchy, i.e. as sibling
@@ -191,13 +181,12 @@ public @interface JsonTypeInfo
          * Note that this mechanism <b>can only be used for properties</b>, not
          * for types (classes). Trying to use it for classes will result in
          * inclusion strategy of basic <code>PROPERTY</code> instead.
-         *<p>
+         * <p>
          * Note also that this mechanism <b>can not be used for container values</b>
          * (arrays, {@link java.util.Collection}s, {@link java.util.Map}s); it only
          * works for scalar and POJO values.
          */
         EXTERNAL_PROPERTY,
-
         /**
          * Inclusion mechanism similar to <code>PROPERTY</code> with respect
          * to deserialization; but one that is produced by a "regular" accessible
@@ -205,35 +194,27 @@ public @interface JsonTypeInfo
          * will do nothing, and expects a property with defined name to be output
          * using some other mechanism (like default POJO property serialization, or
          * custom serializer).
-         *<p>
+         * <p>
          * Note that this behavior is quite similar to that of using {@link JsonTypeId}
          * annotation;
          * except that here <code>TypeSerializer</code> is basically suppressed;
          * whereas with {@link JsonTypeId}, output of regular property is suppressed.
          * This mostly matters with respect to output order; this choice is the only
          * way to ensure specific placement of type id during serialization.
-<<<<<<< HEAD
-=======
-         *
-         * @since 2.3 but databind <b>only since 2.5</b>.
->>>>>>> 2.16
          */
-        EXISTING_PROPERTY
-        ;
-    }
+        EXISTING_PROPERTY;}
 
     /*
     /**********************************************************
     /* Annotation properties
     /**********************************************************
      */
-
     /**
      * Specifies kind of type metadata to use when serializing type information
      * for instances of annotated type  and its subtypes; as well as what is expected
      * during deserialization.
      */
-    public Id use();
+    Id use();
 
     /**
      * Specifies mechanism to use for including type metadata (if any; for
@@ -265,222 +246,91 @@ public @interface JsonTypeInfo
      * but not when specifying explicit class to use).
      * Property has no effect on choice of type id used for serialization;
      * it is only used in deciding what to do for otherwise unmappable cases.
-     *<p>
+     * <p>
      * Note that while this property allows specification of the default
      * implementation to use, it does not help with structural issues that
      * may arise if type information is missing. This means that most often
      * this is used with type-name -based resolution, to cover cases
      * where new subtypes are added, but base type is not changed to
      * reference new subtypes.
-     *<p>
+     * <p>
      * There are certain special values that indicate alternate behavior:
-     *<ul>
+     * <ul>
      * <li>{@link java.lang.Void} means that objects with unmappable (or missing)
-     *    type are to be mapped to null references.
-     *  </li>
+     * type are to be mapped to null references.
+     * </li>
      * <li>Placeholder value of {@link JsonTypeInfo} (that is, this annotation type
-     *    itself} means "there is no default implementation" (in which
-     *   case an error results from unmappable type). Actually works for ALL
-     *   annotation types (since they can not be instantiated)
-     *  </li>
+     * itself} means "there is no default implementation" (in which
+     * case an error results from unmappable type). Actually works for ALL
+     * annotation types (since they can not be instantiated)
+     * </li>
      * </ul>
      */
-    public Class<?> defaultImpl() default JsonTypeInfo.class;
+    Class<?> defaultImpl() default JsonTypeInfo.class;
 
     /**
      * Property that defines whether type identifier value will be passed
      * as part of JSON stream to deserializer (true), or handled and
      * removed by <code>TypeDeserializer</code> (false).
      * Property has no effect on serialization.
-     *<p>
+     * <p>
      * Default value is false, meaning that Jackson handles and removes
      * the type identifier from JSON content that is passed to
      * <code>JsonDeserializer</code>.
      */
-    public boolean visible() default false;
+    boolean visible() default false;
 
     // 19-Dec-2014, tatu: Was hoping to implement for 2.5, but didn't quite make it.
-    //   Hope for better luck with 3.0 or later
-
+<<<<<<< LEFT
+//   Hope for better luck with 3.0 or later
+=======
+//   Hope for better luck in future
+>>>>>>> RIGHT
+    /*
+     * Property that defines whether type serializer is allowed to omit writing
+     * of type id, in case that value written has type same as {@link #defaultImpl()}.
+     * If true, omission is allowed (although writer may or may not be able to do that);
+     * if false, type id should always be written still.
+     */
     // public boolean skipWritingDefault() default false;
+    /*
+    /**********************************************************
+    /* Helper classes
+    /**********************************************************
+     */
+    /**
+     * This marker class that is only to be used with <code>defaultImpl</code>
+     * annotation property, to indicate that there is no default implementation
+     * specified.
+     *
+     * @deprecated Since 2.5, use any Annotation type (such as {@link JsonTypeInfo}),
+     *    if such behavior is needed; this is rarely necessary.
+     */
+    @Deprecated
+    public static abstract class None {}
 
     /**
      * Specifies whether the type ID should be strictly required during polymorphic
      * deserialization of its subtypes.
      * <p>
      * If set to {@link OptBoolean#TRUE}, an {@code InvalidTypeIdException} will
-     * be thrown if no type information is provided. 
+     * be thrown if no type information is provided.
      * If set to {@link OptBoolean#FALSE}, deserialization may proceed without
-     * type information if the  subtype is a legitimate target (non-abstract). 
-     * If set to {@link OptBoolean#DEFAULT}, the global configuration of 
+     * type information if the  subtype is a legitimate target (non-abstract).
+     * If set to {@link OptBoolean#DEFAULT}, the global configuration of
      * {@code MapperFeature#REQUIRE_TYPE_ID_FOR_SUBTYPES} is used for type ID handling.
      * <p>
      * NOTE: This setting is specific to this type and will <strong>always override</strong>
      * the global configuration of {@code MapperFeature.REQUIRE_TYPE_ID_FOR_SUBTYPES}.
-     */
-    public OptBoolean requireTypeIdForSubtypes() default OptBoolean.DEFAULT;
+     *
+     * @since 2.5
+    public boolean skipWritingDefault() default false;
+    /*
 
     /*
-    /**********************************************************************
-    /* Value class used to enclose information, allow for
-    /* merging of layered configuration settings.
-    /**********************************************************************
+    /**********************************************************
+    /* Helper classes
+    /**********************************************************
      */
-
-    public static class Value
-        implements JacksonAnnotationValue<JsonTypeInfo>,
-            java.io.Serializable
-    {
-        private static final long serialVersionUID = 1L;
-
-        // should not really be needed usually but make sure defalts to `NONE`; other
-        // values of less interest
-        protected final static Value EMPTY = new Value(Id.NONE, As.PROPERTY, null, null, false);
-
-        protected final Id _idType;
-        protected final As _inclusionType;
-        protected final String _propertyName;
-
-        protected final Class<?> _defaultImpl;
-        protected final boolean _idVisible;
-
-        /*
-        /**********************************************************************
-        /* Construction
-        /**********************************************************************
-         */
-
-        protected Value(Id idType, As inclusionType,
-                String propertyName, Class<?> defaultImpl, boolean idVisible)
-        {
-            _defaultImpl = defaultImpl;
-            _idType = idType;
-            _inclusionType = inclusionType;
-            _propertyName = propertyName;
-            _idVisible = idVisible;
-        }
-
-        public static Value construct(Id idType, As inclusionType,
-                String propertyName, Class<?> defaultImpl, boolean idVisible)
-        {
-            // couple of overrides we need to apply here. First: if no propertyName specified,
-            // use Id-specific property name
-            if ((propertyName == null) || propertyName.isEmpty()) {
-                if (idType != null) {
-                    propertyName = idType.getDefaultPropertyName();
-                } else {
-                    propertyName = "";
-                }
-            }
-            // Although we can not do much here for special handling of `Void`, we can convert
-            // annotation types as `null` (== no default implementation)
-            if ((defaultImpl == null) || defaultImpl.isAnnotation()) {
-                defaultImpl = null;
-            }
-            return new Value(idType, inclusionType, propertyName, defaultImpl, idVisible);
-        }
-
-        public static Value from(JsonTypeInfo src) {
-            if (src == null) {
-                return null;
-            }
-            return construct(src.use(), src.include(),
-                    src.property(), src.defaultImpl(), src.visible());
-        }
-
-        /*
-        /**********************************************************************
-        /* Mutators
-        /**********************************************************************
-         */
-
-        public Value withDefaultImpl(Class<?> impl) {
-            return (impl == _defaultImpl) ? this :
-                new Value(_idType, _inclusionType, _propertyName, impl, _idVisible);
-        }
-
-        public Value withIdType(Id idType) {
-            return (idType == _idType) ? this :
-                new Value(idType, _inclusionType, _propertyName, _defaultImpl, _idVisible);
-        }
-
-        public Value withInclusionType(As inclusionType) {
-            return (inclusionType == _inclusionType) ? this :
-                new Value(_idType, inclusionType, _propertyName, _defaultImpl, _idVisible);
-        }
-
-        public Value withPropertyName(String propName) {
-            return (propName == _propertyName) ? this :
-                new Value(_idType, _inclusionType, propName, _defaultImpl, _idVisible);
-        }
-
-        public Value withIdVisible(boolean visible) {
-            return (visible == _idVisible) ? this :
-                new Value(_idType, _inclusionType, _propertyName, _defaultImpl, visible);
-        }
-
-        /*
-        /**********************************************************************
-        /* Simple accessors
-        /**********************************************************************
-         */
-
-        @Override
-        public Class<JsonTypeInfo> valueFor() {
-            return JsonTypeInfo.class;
-        }
-
-        public Class<?> getDefaultImpl() { return _defaultImpl; }
-        public Id getIdType() { return _idType; }
-        public As getInclusionType() { return _inclusionType; }
-        public String getPropertyName() { return _propertyName; }
-        public boolean getIdVisible() { return _idVisible; }
-
-        /**
-         * Static helper method for simple(r) checking of whether there's a Value instance
-         * that indicates that polymorphic handling is (to be) enabled.
-         */
-        public static boolean isEnabled(JsonTypeInfo.Value v) {
-            return (v != null) &&
-                (v._idType != null) && (v._idType != Id.NONE);
-        }
-
-        /*
-        /**********************************************************************
-        /* Standard methods
-        /**********************************************************************
-         */
-
-        @Override
-        public String toString() {
-            return String.format("JsonTypeInfo.Value(idType=%s,includeAs=%s,propertyName=%s,defaultImpl=%s,idVisible=%s)",
-                    _idType, _inclusionType, _propertyName,
-                    ((_defaultImpl == null) ? "NULL" : _defaultImpl.getName()),
-                    _idVisible);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(_idType, _inclusionType, _propertyName, _defaultImpl)
-                + (_idVisible ? 11 : -17);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o == this) return true;
-            if (o == null) return false;
-            return (o.getClass() == getClass())
-                    && _equals(this, (Value) o);
-        }
-
-        private static boolean _equals(Value a, Value b)
-        {
-            return (a._idType == b._idType)
-                    && (a._inclusionType == b._inclusionType)
-                    && (a._defaultImpl == b._defaultImpl)
-                    && (a._idVisible == b._idVisible)
-                    && Objects.equals(a._propertyName, b._propertyName)
-            ;
-        }
-    }
+    OptBoolean requireTypeIdForSubtypes() default OptBoolean.DEFAULT;
 }
