@@ -5,11 +5,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
-
 import org.eclipse.winery.model.tosca.TServiceTemplate;
-
 import org.opentosca.container.core.model.csar.Csar;
 import org.opentosca.container.core.model.csar.CsarId;
 import org.opentosca.container.core.next.model.DeploymentTest;
@@ -24,12 +21,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+
 @Component
 public class DeploymentTestService {
-
     private static final Logger logger = LoggerFactory.getLogger(DeploymentTestService.class);
 
     private final DeploymentTestRepository deploymentTestRepository;
+
     private final CsarStorageService csarStorage;
 
     private final ExecutorService pool = Executors.newFixedThreadPool(5);
@@ -39,8 +37,7 @@ public class DeploymentTestService {
     private final TestExecutor executor;
 
     @Inject
-    public DeploymentTestService(DeploymentTestRepository deploymentTestRepository, TestExecutor executor,
-                                 CsarStorageService csarStorage, PlanInstanceRepository planInstanceRepository) {
+    public DeploymentTestService(DeploymentTestRepository deploymentTestRepository, TestExecutor executor, CsarStorageService csarStorage, PlanInstanceRepository planInstanceRepository) {
         logger.debug("Instantiating DeploymentTestService");
         this.planInstanceRepository = planInstanceRepository;
         this.executor = executor;
@@ -55,8 +52,7 @@ public class DeploymentTestService {
      * @param correlationId The correlation ID of a plan
      */
     public void runAfterPlan(final CsarId csarId, final String correlationId) {
-        logger.info("Trigger deployment test after plan has been finished; correlation_id={}, csar={}", correlationId,
-            csarId);
+        logger.info("Trigger deployment test after plan has been finished; correlation_id={}, csar={}", correlationId, csarId);
         this.pool.submit(() -> {
             final long sleep = 1000;
             final long timeout = TimeUnit.MINUTES.toMillis(45);
@@ -67,7 +63,7 @@ public class DeploymentTestService {
                 try {
                     pi = planInstanceRepository.findByCorrelationId(correlationId);
                     finished = pi.getState().equals(PlanInstanceState.FINISHED);
-                } catch (final Exception e) {
+                } catch (final java.lang.Exception e) {
                     finished = false;
                 }
                 if (finished) {
@@ -80,10 +76,10 @@ public class DeploymentTestService {
                 }
                 try {
                     Thread.sleep(sleep);
-                } catch (final InterruptedException e) {
+                } catch (final java.lang.InterruptedException e) {
                 }
                 waited += sleep;
-            }
+            } 
         });
     }
 
@@ -105,16 +101,12 @@ public class DeploymentTestService {
      * @return The created Verification object
      */
     public DeploymentTest run(final CsarId csarId, final ServiceTemplateInstance serviceTemplateInstance) {
-
-        logger.info("Trigger deployment test for service template instance \"{}\" of CSAR \"{}\"",
-            serviceTemplateInstance.getId(), csarId);
-
+        logger.info("Trigger deployment test for service template instance \"{}\" of CSAR \"{}\"", serviceTemplateInstance.getId(), csarId);
         // Prepare
         final DeploymentTest result = new DeploymentTest();
         result.setServiceTemplateInstance(serviceTemplateInstance);
         result.setState(DeploymentTestState.STARTED);
         final DeploymentTest storedResult = deploymentTestRepository.save(result);
-
         // Execute
         this.pool.submit(() -> {
             logger.info("Executing deployment test...");
@@ -128,14 +120,13 @@ public class DeploymentTestService {
                 future.join();
                 logger.info("Jobs has been finished");
                 storedResult.setState(DeploymentTestState.FINISHED);
-            } catch (final Exception e) {
+            } catch (final java.lang.Exception e) {
                 logger.error("Jobs completed with exception: {}", e.getMessage(), e);
                 storedResult.setState(DeploymentTestState.FAILED);
             }
             deploymentTestRepository.save(storedResult);
         });
         logger.info("Deployment test is running in background...");
-
         return result;
     }
 }

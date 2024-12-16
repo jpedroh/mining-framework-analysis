@@ -1,5 +1,8 @@
 package org.opentosca.deployment.checks;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -10,18 +13,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 import javax.inject.Named;
-
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.eclipse.winery.model.ids.definitions.PolicyTemplateId;
 import org.eclipse.winery.model.tosca.TNodeTemplate;
 import org.eclipse.winery.model.tosca.TPolicyTemplate;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import org.apache.camel.CamelContext;
 import org.opentosca.container.core.model.csar.Csar;
 import org.opentosca.container.core.next.model.DeploymentTestResult;
 import org.opentosca.container.core.next.model.NodeTemplateInstance;
@@ -33,26 +31,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+
 @Component
 public class TestExecutor {
-
     private static final Logger logger = LoggerFactory.getLogger(TestExecutor.class);
 
     private final List<TestExecutionPlugin> plugins;
 
     private final ExecutorService jobExecutor;
+
     private final ExecutorService testExecutor;
 
     @Inject
     @Deprecated
-    public TestExecutor(@Named("deployment-checks-camel-context") CamelContext camelContext) {
-        this(Lists.newArrayList(new HttpTest(), new ManagementOperationTest(camelContext), new TcpPingTest()
-            // new PortBindingTest(),
+    public TestExecutor() {
+        this(// new PortBindingTest(),
             // new SqlConnectionTest()
-        ));
+        Lists.newArrayList(new HttpTest(), new ManagementOperationTest(new DefaultCamelContext()), new TcpPingTest()));
     }
 
-    //  @Inject
+    // @Inject
     public TestExecutor(List<TestExecutionPlugin> plugins) {
         this.plugins = plugins;
         ThreadFactory threadFactory;
