@@ -1,17 +1,15 @@
 package tech.tablesaw.api;
 
-import org.junit.Test;
-
 import java.io.IOException;
 import java.time.LocalDate;
-
+import org.junit.Test;
 import static org.junit.Assert.*;
+
 
 /**
  * TODO All the methods on this class should be tested carefully
  */
 public class RowTest {
-
     @Test
     public void columnNames() throws IOException {
         Table table = Table.read().csv("../data/bush.csv");
@@ -63,11 +61,9 @@ public class RowTest {
         Row row = new Row(table);
         while (row.hasNext()) {
             row.next();
-            assertEquals((int) table.numberColumn(1).getDouble(row.getRowNumber()),
-                    row.getInt(1));
-            assertEquals((int) table.numberColumn("approval").getDouble(row.getRowNumber()),
-                    row.getInt("approval"));
-        }
+            assertEquals(((int) (table.numberColumn(1).getDouble(row.getRowNumber()))), row.getInt(1));
+            assertEquals(((int) (table.numberColumn("approval").getDouble(row.getRowNumber()))), row.getInt("approval"));
+        } 
     }
 
     @Test
@@ -89,10 +85,8 @@ public class RowTest {
         Row row = new Row(table);
         while (row.hasNext()) {
             row.next();
-            assertEquals(table.dateColumn(0).getIntInternal(row.getRowNumber()),
-                    row.getPackedDate(0));
-            assertEquals(table.dateColumn("date").getIntInternal(row.getRowNumber()),
-                    row.getPackedDate("date"));
-        }
+            assertEquals(table.dateColumn(0).getIntInternal(row.getRowNumber()), row.getPackedDate(0));
+            assertEquals(table.dateColumn("date").getIntInternal(row.getRowNumber()), row.getPackedDate("date"));
+        } 
     }
 }

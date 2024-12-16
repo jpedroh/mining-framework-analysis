@@ -1,7 +1,5 @@
 package tech.tablesaw.api;
 
-import tech.tablesaw.columns.Column;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -9,17 +7,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import tech.tablesaw.columns.Column;
+
 
 public class Row implements Iterator<Row> {
-
     private int rowNumber;
+
     private final Table table;
+
     private final String[] columnNames;
+
     private final Map<String, DateColumn> dateColumnMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+
     private final Map<String, DoubleColumn> doubleColumnMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+
     private final Map<String, StringColumn> stringColumnMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+
     private final Map<String, BooleanColumn> booleanColumnMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+
     private final Map<String, DateTimeColumn> dateTimeColumnMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+
     private final Map<String, TimeColumn> timeColumnMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     private final Map<String, Column> columnMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -30,22 +37,20 @@ public class Row implements Iterator<Row> {
         rowNumber = -1;
         for (Column column : table.columns()) {
             if (column instanceof DoubleColumn) {
-                doubleColumnMap.put(column.name(), (DoubleColumn) column);
+                doubleColumnMap.put(column.name(), ((DoubleColumn) (column)));
             }
             if (column instanceof BooleanColumn) {
-                booleanColumnMap.put(column.name(), (BooleanColumn) column);
+                booleanColumnMap.put(column.name(), ((BooleanColumn) (column)));
             }
             if (column instanceof StringColumn) {
-                stringColumnMap.put(column.name(), (StringColumn) column);
+                stringColumnMap.put(column.name(), ((StringColumn) (column)));
             }
             if (column instanceof DateColumn) {
-                dateColumnMap.put(column.name(), (DateColumn) column);
-
+                dateColumnMap.put(column.name(), ((DateColumn) (column)));
             } else if (column instanceof DateTimeColumn) {
-                dateTimeColumnMap.put(column.name(), (DateTimeColumn) column);
-
+                dateTimeColumnMap.put(column.name(), ((DateTimeColumn) (column)));
             } else if (column instanceof TimeColumn) {
-                timeColumnMap.put(column.name(), (TimeColumn) column);
+                timeColumnMap.put(column.name(), ((TimeColumn) (column)));
             }
             columnMap.put(column.name(), column);
         }

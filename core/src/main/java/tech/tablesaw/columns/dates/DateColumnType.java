@@ -1,6 +1,7 @@
 package tech.tablesaw.columns.dates;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import java.time.LocalDate;
 import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.DateColumn;
 import tech.tablesaw.api.Row;
@@ -9,13 +10,11 @@ import tech.tablesaw.columns.Column;
 import tech.tablesaw.columns.StringParser;
 import tech.tablesaw.io.csv.CsvReadOptions;
 
-import java.time.LocalDate;
 
 public class DateColumnType extends AbstractColumnType<LocalDate> {
-
     public static final DateStringParser DEFAULT_PARSER = new DateStringParser(ColumnType.LOCAL_DATE);
-    public static final DateColumnType INSTANCE =
-            new DateColumnType(Integer.MIN_VALUE, 4, "LOCAL_DATE", "Date");
+
+    public static final DateColumnType INSTANCE = new DateColumnType(Integer.MIN_VALUE, 4, "LOCAL_DATE", "Date");
 
     private DateColumnType(Comparable<?> missingValue, int byteSize, String name, String printerFriendlyName) {
         super(missingValue, byteSize, name, printerFriendlyName);
@@ -38,8 +37,8 @@ public class DateColumnType extends AbstractColumnType<LocalDate> {
 
     @Override
     public void copy(IntArrayList rows, Column<LocalDate> oldColumn, Column<LocalDate> newColumn) {
-        DateColumn oldDate = (DateColumn) oldColumn;
-        DateColumn newDate = (DateColumn) newColumn;
+        DateColumn oldDate = ((DateColumn) (oldColumn));
+        DateColumn newDate = ((DateColumn) (newColumn));
         for (int index : rows) {
             newDate.appendInternal(oldDate.getIntInternal(index));
         }
@@ -47,7 +46,7 @@ public class DateColumnType extends AbstractColumnType<LocalDate> {
 
     @Override
     public void copyFromRows(IntArrayList rows, Column<LocalDate> newColumn, Row row) {
-        DateColumn newDate = (DateColumn) newColumn;
+        DateColumn newDate = ((DateColumn) (newColumn));
         for (int index : rows) {
             row.at(index);
             int packedDate = row.getPackedDate(newColumn.name());

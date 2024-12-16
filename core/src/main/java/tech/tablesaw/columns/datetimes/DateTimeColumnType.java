@@ -1,6 +1,7 @@
 package tech.tablesaw.columns.datetimes;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import java.time.LocalDateTime;
 import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.DateTimeColumn;
 import tech.tablesaw.api.Row;
@@ -9,13 +10,11 @@ import tech.tablesaw.columns.Column;
 import tech.tablesaw.columns.StringParser;
 import tech.tablesaw.io.csv.CsvReadOptions;
 
-import java.time.LocalDateTime;
 
 public class DateTimeColumnType extends AbstractColumnType<LocalDateTime> {
-
     public static final DateTimeStringParser DEFAULT_PARSER = new DateTimeStringParser(ColumnType.LOCAL_DATE_TIME);
-    public static final DateTimeColumnType INSTANCE =
-            new DateTimeColumnType(Long.MIN_VALUE, 8, "LOCAL_DATE_TIME", "DateTime");
+
+    public static final DateTimeColumnType INSTANCE = new DateTimeColumnType(Long.MIN_VALUE, 8, "LOCAL_DATE_TIME", "DateTime");
 
     private DateTimeColumnType(Comparable<?> missingValue, int byteSize, String name, String printerFriendlyName) {
         super(missingValue, byteSize, name, printerFriendlyName);
@@ -38,8 +37,8 @@ public class DateTimeColumnType extends AbstractColumnType<LocalDateTime> {
 
     @Override
     public void copy(IntArrayList rows, Column<LocalDateTime> oldColumn, Column<LocalDateTime> newColumn) {
-        DateTimeColumn oldDateTime = (DateTimeColumn) oldColumn;
-        DateTimeColumn newDateTime = (DateTimeColumn) newColumn;
+        DateTimeColumn oldDateTime = ((DateTimeColumn) (oldColumn));
+        DateTimeColumn newDateTime = ((DateTimeColumn) (newColumn));
         for (int index : rows) {
             newDateTime.appendInternal(oldDateTime.getLongInternal(index));
         }
@@ -47,13 +46,11 @@ public class DateTimeColumnType extends AbstractColumnType<LocalDateTime> {
 
     @Override
     public void copyFromRows(IntArrayList rows, Column<LocalDateTime> newColumn, Row row) {
-        DateTimeColumn dateTimes = (DateTimeColumn) newColumn;
+        DateTimeColumn dateTimes = ((DateTimeColumn) (newColumn));
         for (int index : rows) {
             row.at(index);
             long packedDateTime = row.getPackedDateTime(newColumn.name());
-            newDateTime.appendInternal(packedDateTime);
-            PackedDateTime dateTime = row.getPackedDateTime(newColumn.name());
-            dateTimes.appendInternal(dateTime.getPackedValue());
+            dateTimes.appendInternal(packedDateTime);
         }
     }
 
