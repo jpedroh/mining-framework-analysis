@@ -35,13 +35,14 @@ import com.willwinder.universalgcodesender.gcode.processors.SpindleOnDweller;
 import com.willwinder.universalgcodesender.gcode.processors.WhitespaceProcessor;
 import com.willwinder.universalgcodesender.i18n.Localization;
 import com.willwinder.universalgcodesender.utils.ControllerSettings.ProcessorConfig;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+
 /**
+ *
  * @author wwinder
  */
 public class CommandProcessorLoader {
@@ -96,33 +97,26 @@ public class CommandProcessorLoader {
      * }
      * ]
      */
-    static private List<ProcessorConfig> getConfigFrom(String jsonConfig) {
+    private static List<ProcessorConfig> getConfigFrom(String jsonConfig) {
         List<ProcessorConfig> list = new ArrayList<>();
         JsonArray json = JsonParser.parseString(jsonConfig).getAsJsonArray();
         for (JsonElement entry : json) {
             JsonObject object = entry.getAsJsonObject();
-
             boolean optional = true;
             boolean enabled = true;
             JsonObject args = null;
-
-            if (object.has("optional") && !object.get("optional").isJsonNull()) {
+            if (object.has("optional") && (!object.get("optional").isJsonNull())) {
                 optional = object.get("optional").getAsBoolean();
             }
-
-            if (object.has("enabled") && !object.get("enabled").isJsonNull()) {
+            if (object.has("enabled") && (!object.get("enabled").isJsonNull())) {
                 enabled = object.get("enabled").getAsBoolean();
             }
-
-            if (object.has("args") && !object.get("args").isJsonNull()) {
+            if (object.has("args") && (!object.get("args").isJsonNull())) {
                 args = object.get("args").getAsJsonObject();
             }
-
             String name = object.get("name").getAsString();
-
             list.add(new ProcessorConfig(name, enabled, optional, args));
         }
-
         return list;
     }
 
@@ -188,67 +182,62 @@ public class CommandProcessorLoader {
      * }
      * ]
      */
-    static public List<CommandProcessor> initializeWithProcessors(String jsonConfig) {
+    public static List<CommandProcessor> initializeWithProcessors(String jsonConfig) {
         return initializeWithProcessors(getConfigFrom(jsonConfig));
     }
 
-    static public List<CommandProcessor> initializeWithProcessors(List<ProcessorConfig> config) {
+    public static List<CommandProcessor> initializeWithProcessors(List<ProcessorConfig> config) {
         List<CommandProcessor> list = new ArrayList<>();
         for (ProcessorConfig pc : config) {
             // Check if the processor is enabled.
-            if (pc.optional && !pc.enabled) {
+            if (pc.optional && (!pc.enabled)) {
                 continue;
             }
-
             getProcessor(pc).ifPresent(list::add);
         }
-
         return list;
     }
 
     /**
      * Helper to instantiate a processor by name and call the getHelp method.
-     *
-     * @param pc processor config
-     * @return a help text for the given processor
+     * @param pc
+     * @return 
      */
-    static public String getHelpForConfig(ProcessorConfig pc) {
-        return getProcessor(pc).map(CommandProcessor::getHelp)
-                .orElse(Localization.getString("settings.processors.loadError")
-                        + ": " + Localization.getString(pc.name));
+    public static String getHelpForConfig(ProcessorConfig pc) {
+        return getProcessor(pc).map(CommandProcessor::getHelp).orElse((Localization.getString("settings.processors.loadError") + ": ") + Localization.getString(pc.name));
     }
 
     private static Optional<CommandProcessor> getProcessor(ProcessorConfig pc) {
         switch (pc.name) {
-            case "ArcExpander":
+            case "ArcExpander" :
                 double length = pc.args.get("segmentLengthMM").getAsDouble();
                 return Optional.of(new ArcExpander(true, length));
-            case "CommandLengthProcessor":
+            case "CommandLengthProcessor" :
                 int commandLength = pc.args.get("commandLength").getAsInt();
                 return Optional.of(new CommandLengthProcessor(commandLength));
-            case "CommentProcessor":
+            case "CommentProcessor" :
                 return Optional.of(new CommentProcessor());
-            case "DecimalProcessor":
+            case "DecimalProcessor" :
                 int decimals = pc.args.get("decimals").getAsInt();
                 return Optional.of(new DecimalProcessor(decimals));
-            case "FeedOverrideProcessor":
+            case "FeedOverrideProcessor" :
                 double override = pc.args.get("speedOverridePercent").getAsDouble();
                 return Optional.of(new FeedOverrideProcessor(override));
-            case "M30Processor":
+            case "M30Processor" :
                 return Optional.of(new M30Processor());
-            case "PatternRemover":
+            case "PatternRemover" :
                 String pattern = pc.args.get("pattern").getAsString();
                 return Optional.of(new PatternRemover(pattern));
-            case "WhitespaceProcessor":
+            case "WhitespaceProcessor" :
                 return Optional.of(new WhitespaceProcessor());
-            case "SpindleOnDweller":
+            case "SpindleOnDweller" :
                 double duration = pc.args.get("duration").getAsDouble();
                 return Optional.of(new SpindleOnDweller(duration));
-            case "LineSplitter":
+            case "LineSplitter" :
                 return Optional.of(new LineSplitter(pc.args.get("segmentLengthMM").getAsDouble()));
-            case "EmptyLineRemoverProcessor":
-                return Optional.of(new EmptyLineRemoverProcessor());
-            default:
+            case "EmptyLineRemoverProcessor" :
+                return new EmptyLineRemoverProcessor();
+            default :
                 LOGGER.severe("Unknown processor: " + pc.name);
                 return Optional.empty();
         }
