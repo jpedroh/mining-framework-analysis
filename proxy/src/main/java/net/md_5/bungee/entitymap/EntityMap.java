@@ -11,61 +11,60 @@ import lombok.NoArgsConstructor;
 import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.ProtocolConstants;
 
+
 /**
  * Class to rewrite integers within packets.
  */
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public abstract class EntityMap
-{
-
+public abstract class EntityMap {
     private final boolean[] clientboundInts = new boolean[ 256 ];
+
     private final boolean[] clientboundVarInts = new boolean[ 256 ];
 
     private final boolean[] serverboundInts = new boolean[ 256 ];
+
     private final boolean[] serverboundVarInts = new boolean[ 256 ];
 
     // Returns the correct entity map for the protocol version
-    public static EntityMap getEntityMap(int version)
-    {
-        switch ( version )
-        {
-            case ProtocolConstants.MINECRAFT_1_7_2:
+    public static EntityMap getEntityMap(int version) {
+        switch (version) {
+            case ProtocolConstants.MINECRAFT_1_7_2 :
                 return EntityMap_1_7_2.INSTANCE;
-            case ProtocolConstants.MINECRAFT_1_7_6:
+            case ProtocolConstants.MINECRAFT_1_7_6 :
                 return EntityMap_1_7_6.INSTANCE;
-            case ProtocolConstants.MINECRAFT_1_8:
+            case ProtocolConstants.MINECRAFT_1_8 :
                 return EntityMap_1_8.INSTANCE;
-            case ProtocolConstants.MINECRAFT_1_9:
-            case ProtocolConstants.MINECRAFT_1_9_1:
-            case ProtocolConstants.MINECRAFT_1_9_2:
+            case ProtocolConstants.MINECRAFT_1_9 :
+            case ProtocolConstants.MINECRAFT_1_9_1 :
+            case ProtocolConstants.MINECRAFT_1_9_2 :
                 return EntityMap_1_9.INSTANCE;
-            case ProtocolConstants.MINECRAFT_1_9_4:
+            case ProtocolConstants.MINECRAFT_1_9_4 :
                 return EntityMap_1_9_4.INSTANCE;
-            case ProtocolConstants.MINECRAFT_1_10:
+            case ProtocolConstants.MINECRAFT_1_10 :
                 return EntityMap_1_10.INSTANCE;
-            case ProtocolConstants.MINECRAFT_1_11:
-            case ProtocolConstants.MINECRAFT_1_11_1:
+            case ProtocolConstants.MINECRAFT_1_11 :
+            case ProtocolConstants.MINECRAFT_1_11_1 :
                 return EntityMap_1_11.INSTANCE;
-            case ProtocolConstants.MINECRAFT_1_12:
+            case ProtocolConstants.MINECRAFT_1_12 :
                 return EntityMap_1_12.INSTANCE;
-            case ProtocolConstants.MINECRAFT_1_12_1:
-            case ProtocolConstants.MINECRAFT_1_12_2:
+            case ProtocolConstants.MINECRAFT_1_12_1 :
+            case ProtocolConstants.MINECRAFT_1_12_2 :
                 return EntityMap_1_12_1.INSTANCE;
-            case ProtocolConstants.MINECRAFT_1_13:
-            case ProtocolConstants.MINECRAFT_1_13_1:
-            case ProtocolConstants.MINECRAFT_1_13_2:
+            case ProtocolConstants.MINECRAFT_1_13 :
+            case ProtocolConstants.MINECRAFT_1_13_1 :
+            case ProtocolConstants.MINECRAFT_1_13_2 :
                 return EntityMap_1_13.INSTANCE;
-            case ProtocolConstants.MINECRAFT_1_14:
-            case ProtocolConstants.MINECRAFT_1_14_1:
-            case ProtocolConstants.MINECRAFT_1_14_2:
-            case ProtocolConstants.MINECRAFT_1_14_3:
-            case ProtocolConstants.MINECRAFT_1_14_4:
+            case ProtocolConstants.MINECRAFT_1_14 :
+            case ProtocolConstants.MINECRAFT_1_14_1 :
+            case ProtocolConstants.MINECRAFT_1_14_2 :
+            case ProtocolConstants.MINECRAFT_1_14_3 :
+            case ProtocolConstants.MINECRAFT_1_14_4 :
                 return EntityMap_1_14.INSTANCE;
-            case ProtocolConstants.MINECRAFT_1_15:
-            case ProtocolConstants.MINECRAFT_1_15_1:
+            case ProtocolConstants.MINECRAFT_1_15 :
+            case ProtocolConstants.MINECRAFT_1_15_1 :
                 return EntityMap_1_15.INSTANCE;
         }
-        throw new RuntimeException( "Version " + version + " has no entity map" );
+        throw new RuntimeException(("Version " + version) + " has no entity map");
     }
 
     protected void addRewrite(int id, ProtocolConstants.Direction direction, boolean varint)
@@ -316,21 +315,17 @@ public abstract class EntityMap
     }
 
     // Handles simple packets
-    private static void rewrite(ByteBuf packet, int oldId, int newId, boolean[] ints, boolean[] varints)
-    {
+    private static void rewrite(ByteBuf packet, int oldId, int newId, boolean[] ints, boolean[] varints) {
         int readerIndex = packet.readerIndex();
-        int packetId = DefinedPacket.readVarInt( packet );
+        int packetId = DefinedPacket.readVarInt(packet);
         int packetIdLength = packet.readerIndex() - readerIndex;
-
-        if(packetId>=0) {
-            if ( ints[ packetId ] )
-            {
-                rewriteInt( packet, oldId, newId, readerIndex + packetIdLength );
-            } else if ( varints[ packetId ] )
-            {
-                rewriteVarInt( packet, oldId, newId, readerIndex + packetIdLength );
+        if (packetId >= 0) {
+            if (ints[packetId]) {
+                rewriteInt(packet, oldId, newId, readerIndex + packetIdLength);
+            } else if (varints[packetId]) {
+                rewriteVarInt(packet, oldId, newId, readerIndex + packetIdLength);
             }
         }
-        packet.readerIndex( readerIndex );
+        packet.readerIndex(readerIndex);
     }
 }
