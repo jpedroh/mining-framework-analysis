@@ -5,10 +5,10 @@ import com.cronutils.model.Cron;
 import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinition;
 import com.cronutils.model.definition.CronDefinitionBuilder;
+import java.util.Locale;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Locale;
 
 /*
  * Copyright 2015 jmrozanec
@@ -91,7 +91,7 @@ public class CronParserQuartzIntegrationTest {
      * Issue #27: month ranges string mapping
      */
     @Test
-    public void testMonthRangeStringMapping(){
+    public void testMonthRangeStringMapping() {
         parser.parse("0 0 0 * JUL-AUG ? *");
         parser.parse("0 0 0 * JAN-FEB ? *");
     }
@@ -100,7 +100,7 @@ public class CronParserQuartzIntegrationTest {
      * Issue #27: month string mapping
      */
     @Test
-    public void testSingleMonthStringMapping(){
+    public void testSingleMonthStringMapping() {
         parser.parse("0 0 0 * JAN ? *");
     }
 
@@ -108,7 +108,7 @@ public class CronParserQuartzIntegrationTest {
      * Issue #27: day of week string ranges mapping
      */
     @Test
-    public void testDoWRangeStringMapping(){
+    public void testDoWRangeStringMapping() {
         parser.parse("0 0 0 ? * MON-FRI *");
     }
 
@@ -116,7 +116,7 @@ public class CronParserQuartzIntegrationTest {
      * Issue #27: day of week string mapping
      */
     @Test
-    public void testSingleDoWStringMapping(){
+    public void testSingleDoWStringMapping() {
         parser.parse("0 0 0 ? * MON *");
     }
 
@@ -124,7 +124,7 @@ public class CronParserQuartzIntegrationTest {
      * Issue #27: July month as string is parsed as some special char occurrence
      */
     @Test
-    public void testJulyMonthAsStringConsideredSpecialChar(){
+    public void testJulyMonthAsStringConsideredSpecialChar() {
         parser.parse("0 0 0 * JUL ? *");
     }
 
@@ -133,7 +133,7 @@ public class CronParserQuartzIntegrationTest {
      */
     @Test
     public void testSunToSat() {
-    // FAILS SUN-SAT: SUN = 7 and SAT = 6
+        // FAILS SUN-SAT: SUN = 7 and SAT = 6
         parser.parse("0 0 12 ? * SUN-SAT");
     }
 
@@ -159,7 +159,7 @@ public class CronParserQuartzIntegrationTest {
      * Issue #60: Parser exception when parsing cron:
      */
     @Test
-    public void testDescribeExpression(){
+    public void testDescribeExpression() {
         String expression = "0 * * ? * 1,5";
         CronDefinition definition = CronDefinitionBuilder.instanceDefinitionFor(CronType.QUARTZ);
         CronParser parser = new CronParser(definition);
@@ -168,18 +168,18 @@ public class CronParserQuartzIntegrationTest {
     }
 
     /**
-     * Issue #63: Parser exception when parsing cron:
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void testDoMAndDoWParametersInvalidForQuartz(){
-        parser.parse("0 30 17 4 1 * 2016");
-    }
-
-    /**
      * Issue #78: ExecutionTime.forCron fails on intervals
      */
     @Test
     public void testIntervalSeconds() {
         parser.parse("0/2 * * * * ?");
+    }
+
+    /**
+     * Issue #63: Parser exception when parsing cron:
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testDoMAndDoWParametersInvalidForQuartz(){
+        parser.parse("0 30 17 4 1 * 2016");
     }
 }
