@@ -4,9 +4,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 import nl.kb.europeananewspaper.NerAnnotater.App;
 import nl.kb.europeananewspaper.NerAnnotater.container.ContainerContext;
+
 
 /**
  * Generates a list of result handlers for the configured output formats on a
@@ -17,27 +17,22 @@ import nl.kb.europeananewspaper.NerAnnotater.container.ContainerContext;
  */
 public class ResultHandlerFactory {
 	/**
+	 *
 	 */
-	
-	static Map<Class<? extends ResultHandler>, ResultHandler> registeredHandlers=new LinkedHashMap<Class<? extends ResultHandler>, ResultHandler>();
-	
-	
+	static Map<Class<? extends ResultHandler>, ResultHandler> registeredHandlers = new LinkedHashMap<Class<? extends ResultHandler>, ResultHandler>();
+
 	/**
 	 * @param context
 	 * @param name 
 	 * @return array of ResultHandlers according to the configuration
 	 */
-	public static ResultHandler[] createResultHandlers(
-			final ContainerContext context, final String name) {
-
+	public static ResultHandler[] createResultHandlers(final ContainerContext context, final String name) {
 		String[] outputFormats = App.getOutputFormats();
-
 		ArrayList<ResultHandler> result = new ArrayList<ResultHandler>();
-
 		for (String outputFormat : outputFormats) {
 			if (outputFormat.equals("log")) {
 				LogResultHandler logResultHandler = new LogResultHandler();
-				registeredHandlers.put(LogResultHandler.class,logResultHandler);
+				registeredHandlers.put(LogResultHandler.class, logResultHandler);
 				result.add(logResultHandler);
 			} else if (outputFormat.equals("csv")) {
 				CsvResultHandler csvResultHandler = new CsvResultHandler(context, name);
@@ -60,22 +55,19 @@ public class ResultHandlerFactory {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}
-
-			else {
-				throw new IllegalArgumentException("Unknown output format: "
-						+ outputFormat);
+			} else {
+				throw new IllegalArgumentException("Unknown output format: " + outputFormat);
 			}
 		}
-		return result
-				.toArray(new ResultHandler[result.size()]);
+		return result.toArray(new ResultHandler[result.size()]);
 	}
-	
+
 	/**
 	 * 
 	 */
 	public static void shutdownResultHandlers() {
-		for (@SuppressWarnings("rawtypes") Class c: registeredHandlers.keySet()) {
+		for (@SuppressWarnings("rawtypes")
+		Class c : registeredHandlers.keySet()) {
 			registeredHandlers.get(c).globalShutdown();
 		}
 	}

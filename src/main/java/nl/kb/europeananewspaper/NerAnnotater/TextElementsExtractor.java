@@ -1,21 +1,19 @@
 package nl.kb.europeananewspaper.NerAnnotater;
 
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.util.CoreMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
-
 import nl.kb.europeananewspaper.NerAnnotater.alto.AltoStringID;
 import nl.kb.europeananewspaper.NerAnnotater.alto.ContinuationAltoStringID;
 import nl.kb.europeananewspaper.NerAnnotater.alto.HyphenatedLineBreak;
 import nl.kb.europeananewspaper.NerAnnotater.alto.OriginalContent;
-
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.util.CoreMap;
 
 /**
  * Converter from ALTO elements to tokens for Stanford NER
@@ -24,7 +22,6 @@ import edu.stanford.nlp.util.CoreMap;
  * 
  */
 public class TextElementsExtractor {
-
 	private static final Logger logger = Logger
 			.getLogger("TextElementsExtractor.class");
 
@@ -123,7 +120,6 @@ public class TextElementsExtractor {
 
 	private static String calcuateAltoStringID(Element word) {
 		Element parent = word.parent();
-
 		String parentHpos = nullsafe(parent.attr("HPOS"));
 		String parentVpos = nullsafe(parent.attr("VPOS"));
 		String parentWidth = nullsafe(parent.attr("WIDTH"));
@@ -142,7 +138,6 @@ public class TextElementsExtractor {
 		params.add(optionalStringVpos);
 		params.add(optionalStringHeight);
 		params.add(optionalStringWidth);
-
 		return StringUtil.join(params, ":");
 	}
 

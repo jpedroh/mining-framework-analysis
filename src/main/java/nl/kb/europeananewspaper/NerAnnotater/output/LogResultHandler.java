@@ -2,6 +2,7 @@ package nl.kb.europeananewspaper.NerAnnotater.output;
 
 import org.jsoup.nodes.Document;
 
+
 /**
  * Output handler that writes the result of the NER process to stdout
  * 
@@ -35,8 +36,18 @@ public class LogResultHandler implements ResultHandler {
 
 	}
 
-    public void startDocument() {
+<<<<<<< LEFT
 
+    @Override
+	public void startDocument() {
+=======
+    @Override
+    public void globalShutdown() {
+        // TODO Auto-generated method stub
+    }
+
+    public void startDocument() {
+>>>>>>> RIGHT
 		// TODO Auto-generated method stub
 
 	}
