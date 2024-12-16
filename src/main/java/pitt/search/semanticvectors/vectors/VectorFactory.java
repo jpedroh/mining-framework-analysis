@@ -32,12 +32,11 @@
    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-
 package pitt.search.semanticvectors.vectors;
 
 import java.util.Random;
-
 import pitt.search.semanticvectors.vectors.ComplexVector.Mode;
+
 
 /**
  * Class for building vectors, designed to be used externally.
@@ -46,12 +45,14 @@ import pitt.search.semanticvectors.vectors.ComplexVector.Mode;
  */
 public class VectorFactory {
   private static final BinaryVector binaryInstance = new BinaryVector(0);
+
   private static final RealVector realInstance = new RealVector(0);
+
   private static final BipolarVector bipolarInstance = new BipolarVector(0);
-  private static final ComplexVector complexInstance =
-    new ComplexVector(0, ComplexVector.Mode.POLAR_SPARSE);
-  private static final ComplexVector complexFlatInstance =
-      new ComplexVector(0, ComplexVector.Mode.CARTESIAN);
+
+  private static final ComplexVector complexInstance = new ComplexVector(0, Mode.POLAR_SPARSE);
+
+  private static final ComplexVector complexFlatInstance = new ComplexVector(0, Mode.CARTESIAN);
 
   /**
    * createZeroVector returns a vector set to zero. It can be used externally, but
@@ -60,23 +61,23 @@ public class VectorFactory {
    */
   public static Vector createZeroVector(VectorType type, int dimension) {
     switch (type) {
-      case BINARY:
+      case BINARY :
         return new BinaryVector(dimension);
       //case BIPOLAR:
         //  return new BipolarVector(dimension);
-      case REAL:
+      case REAL :
         return new RealVector(dimension);
-      case COMPLEX:
+      case COMPLEX :
         return new ComplexVector(dimension, Mode.POLAR_SPARSE);
-      case COMPLEXFLAT:
+      case COMPLEXFLAT :
         return new ComplexVector(dimension, Mode.POLAR_SPARSE);
-      case PERMUTATION:
-    	return new PermutationVector(dimension);
-      default:
+      case PERMUTATION :
+        return new PermutationVector(dimension);
+      default :
         throw new IllegalArgumentException("Unrecognized VectorType: " + type);
     }
   }
-  
+
   /**
    * Generates an appropriate random vector.
    * 
@@ -86,31 +87,29 @@ public class VectorFactory {
    * @param random random number generator; passed in to enable deterministic testing
    * @return vector generated with appropriate type, dimension and number of nonzero entries
    */
-  public static Vector generateRandomVector(
-      VectorType type, int dimension, int numEntries, Random random) {
-	 
-	  if (2 * numEntries > dimension && !type.equals(VectorType.COMPLEX) && !(numEntries == dimension)) {
-      throw new RuntimeException("Requested " + numEntries + " to be filled in sparse "
-          + "vector of dimension " + dimension + ". This is not sparse and may cause problems.");
+  public static Vector generateRandomVector(VectorType type, int dimension, int numEntries, Random random) {
+    if ((((2 * numEntries) > dimension) && (!type.equals(VectorType.COMPLEX))) && (!(numEntries == dimension))) {
+      throw new RuntimeException((((("Requested " + numEntries) + " to be filled in sparse ") + "vector of dimension ") + dimension) + ". This is not sparse and may cause problems.");
     }
     switch (type) {
-    case BINARY:
-      return binaryInstance.generateRandomVector(dimension, numEntries, random);
-    case BIPOLAR:
+      case BINARY :
+        return binaryInstance.generateRandomVector(dimension, numEntries, random);
+      case BIPOLAR :
         return bipolarInstance.generateRandomVector(dimension, numEntries, random);
-    case REAL:
-      return realInstance.generateRandomVector(dimension, numEntries, random);
-    case PERMUTATION:
+      case REAL :
+        return realInstance.generateRandomVector(dimension, numEntries, random);
+      case PERMUTATION :
         return new PermutationVector(PermutationUtils.getRandomPermutation(VectorType.REAL, dimension));
-      case COMPLEX:
-      if (!ComplexVector.getDominantMode().equals(Mode.HERMITIAN)) 
-    	  ComplexVector.setDominantMode(Mode.POLAR_DENSE);
-      return complexInstance.generateRandomVector(dimension, numEntries, random);
-    case COMPLEXFLAT:
-      ComplexVector.setDominantMode(Mode.CARTESIAN);
-      return complexInstance.generateRandomVector(dimension, numEntries, random);
-    default:
-      throw new IllegalArgumentException("Unrecognized VectorType: " + type);
+      case COMPLEX :
+        if (!ComplexVector.getDominantMode().equals(Mode.HERMITIAN)) {
+          ComplexVector.setDominantMode(Mode.POLAR_DENSE);
+        }
+        return complexInstance.generateRandomVector(dimension, numEntries, random);
+      case COMPLEXFLAT :
+        ComplexVector.setDominantMode(Mode.CARTESIAN);
+        return complexInstance.generateRandomVector(dimension, numEntries, random);
+      default :
+        throw new IllegalArgumentException("Unrecognized VectorType: " + type);
     }
   }
 

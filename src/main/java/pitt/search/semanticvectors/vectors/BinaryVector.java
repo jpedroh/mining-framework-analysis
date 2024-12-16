@@ -7,7 +7,6 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
-
 import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
@@ -28,87 +27,92 @@ import org.apache.lucene.util.FixedBitSet;
  * @author Trevor Cohen
  */
 public class BinaryVector implements Vector {
-  
-	
-	  /**
-	   * Enumeration of normalization options.
-	   */
-	  public enum BinaryNormalizationMethod {
-	    /**
-	     * Set to one if more ones than zeros recorded in the voting record for 
-	     * this dimension (zeros are recorded implicitly, by counting total votes),
-	     * and split at random (50% chance of 1) if the same number of ones and zeros.
-	     * Otherwise zero.
-	     */
-	    SPATTERCODE,
-	    /**
-	     * The probability of a one is equal to the probability of the proportion of 1 to 0
-	     * votes for this dimension, assuming a Gaussian distribution
-	     */
-	    PROBABILISTIC
-	  }
-	
-	  public static BinaryNormalizationMethod NORMALIZE_METHOD = BinaryNormalizationMethod.SPATTERCODE;
-	  public static void setNormalizationMethod(BinaryNormalizationMethod normalizationMethod) {
-	    logger.info("Globally setting binary vector NORMALIZATION_METHOD to: '" + normalizationMethod + "'");
-	    NORMALIZE_METHOD = normalizationMethod;
-	  }
-	
+  /**
+   * Enumeration of normalization options.
+   */
+  public enum BinaryNormalizationMethod {
+
+    /**
+     * Set to one if more ones than zeros recorded in the voting record for
+     * this dimension (zeros are recorded implicitly, by counting total votes),
+     * and split at random (50% chance of 1) if the same number of ones and zeros.
+     * Otherwise zero.
+     */
+    SPATTERCODE,
+    /**
+     * The probability of a one is equal to the probability of the proportion of 1 to 0
+     * votes for this dimension, assuming a Gaussian distribution
+     */
+    PROBABILISTIC;}
+
+  public static BinaryNormalizationMethod NORMALIZE_METHOD = BinaryNormalizationMethod.SPATTERCODE;
+
+  public static void setNormalizationMethod(BinaryNormalizationMethod normalizationMethod) {
+    logger.info("Globally setting binary vector NORMALIZATION_METHOD to: '" + normalizationMethod + "'");
+    NORMALIZE_METHOD = normalizationMethod;
+  }
+
   public static final Logger logger = Logger.getLogger(BinaryVector.class.getCanonicalName());
 
   /** Returns {@link VectorType#BINARY} */
   public VectorType getVectorType() { return VectorType.BINARY; }
 
   // TODO: Determing proper interface for default constants.
+  // TODO: Determing proper interface for default constants.
   /**
    * Number of decimal places to consider in weighted superpositions of binary vectors.
    * Higher precision requires additional memory during training.
    */
   public static final int BINARY_VECTOR_DECIMAL_PLACES = 2;
+
   public static final boolean BINARY_BINDING_WITH_PERMUTE = false;
 
-
   private static int DEBUG_PRINT_LENGTH = 64;
+
   private Random random;
+
   private final int dimension;
 
   /**
    * Elemental representation for binary vectors. 
    */
   protected FixedBitSet bitSet;
+
   private boolean isSparse;
+
   private AtomicBoolean unTallied = new AtomicBoolean(true);
 
-  /** 
+  /**
    * Representation of voting record for superposition. Each FixedBitSet object contains one bit
    * of the count for the vote in each dimension. The count for any given dimension is derived from
    * all of the bits in that dimension across the FixedBitSets in the voting record.
-   * 
+   *
    * The precision of the voting record (in number of decimal places) is defined upon initialization.
    * By default, if the first weight added is an integer, rounding occurs to the nearest integer.
    * Otherwise, rounding occurs to the second binary place.
-   */ 
+   */
   private ArrayList<FixedBitSet> votingRecord;
 
   /** BINARY_VECTOR_DECIMAL_PLACESum of the weights with which vectors have been added into the voting record */
   AtomicInteger totalNumberOfVotes = new AtomicInteger(0);
+
+  // TODO(widdows) Understand and comment this.
   // TODO(widdows) Understand and comment this.
   int minimum = 0;
 
+  // Used only for temporary internal storage.
   // Used only for temporary internal storage.
   private FixedBitSet tempSet;
 
   public BinaryVector(int dimension) {
     // Check "multiple-of-64" constraint, to facilitate permutation of 64-bit chunks
-    if (dimension % 64 != 0) {
-      throw new IllegalArgumentException("Dimension should be a multiple of 64: "
-          + dimension + " will lead to trouble!");
+    if ((dimension % 64) != 0) {
+      throw new IllegalArgumentException(("Dimension should be a multiple of 64: " + dimension) + " will lead to trouble!");
     }
     this.dimension = dimension;
     this.bitSet = new FixedBitSet(dimension);
     this.isSparse = true;
     this.random = new Random();
-
   }
 
   /**
@@ -117,61 +121,64 @@ public class BinaryVector implements Vector {
   @SuppressWarnings("unchecked")
   public BinaryVector copy() {
     BinaryVector copy = new BinaryVector(dimension);
-    copy.bitSet = (FixedBitSet) bitSet.clone();
-    if (!isSparse)
-      copy.votingRecord = (ArrayList<FixedBitSet>) votingRecord.clone();
+    copy.bitSet = ((FixedBitSet) (bitSet.clone()));
+    if (!isSparse) {
+      copy.votingRecord = ((ArrayList<FixedBitSet>) (votingRecord.clone()));
+    }
+    if (tempSet != null) {
+      copy.tempSet = tempSet.clone();
+    }
+    copy.minimum = minimum;
+    copy.totalNumberOfVotes = new AtomicInteger(totalNumberOfVotes.intValue());
+    copy.unTallied = new AtomicBoolean(unTallied.get());
+    copy.isSparse = isSparse;
     return copy;
   }
 
   public String toString() {
     StringBuilder debugString = new StringBuilder("");
-    
     if (isSparse) {
-      debugString.append("  Sparse.  First " + DEBUG_PRINT_LENGTH + " values are:\n");
-      for (int x = 0; x < DEBUG_PRINT_LENGTH; x++) debugString.append(bitSet.get(x) ? "1 " : "0 ");
-      debugString.append("\nCardinality " + bitSet.cardinality()+"\n");
-    }
-    else {
-    	
-      debugString.append("  Dense.  First " + DEBUG_PRINT_LENGTH + " values are:\n");
-    
-      for (int x = 0; x < DEBUG_PRINT_LENGTH; x++) debugString.append(bitSet.get(x) ? "1" : "0");
+      debugString.append(("  Sparse.  First " + DEBUG_PRINT_LENGTH) + " values are:\n");
+      for (int x = 0; x < DEBUG_PRINT_LENGTH; x++) {
+        debugString.append(bitSet.get(x) ? "1 " : "0 ");
+      }
+      debugString.append(("\nCardinality " + bitSet.cardinality()) + "\n");
+    } else {
+      debugString.append(("  Dense.  First " + DEBUG_PRINT_LENGTH) + " values are:\n");
+      for (int x = 0; x < DEBUG_PRINT_LENGTH; x++) {
+        debugString.append(bitSet.get(x) ? "1" : "0");
+      }
       // output voting record for first DEBUG_PRINT_LENGTH dimension
-   
-      
       debugString.append("\nVOTING RECORD: \n");
-      for (int y =0; y < votingRecord.size(); y++)
-      {
-        for (int x = 0; x < DEBUG_PRINT_LENGTH; x++) debugString.append(votingRecord.get(y).get(x) ? "1 " : "0 ");
+      for (int y = 0; y < votingRecord.size(); y++) {
+        for (int x = 0; x < DEBUG_PRINT_LENGTH; x++) {
+          debugString.append(votingRecord.get(y).get(x) ? "1 " : "0 ");
+        }
         debugString.append("\n");
       }
-      
       // Calculate actual values for first 20 dimension
       double[] actualvals = new double[DEBUG_PRINT_LENGTH];
       debugString.append("COUNTS    : ");
-
-      for (int x =0; x < votingRecord.size(); x++) {
+      for (int x = 0; x < votingRecord.size(); x++) {
         for (int y = 0; y < DEBUG_PRINT_LENGTH; y++) {
-          if (votingRecord.get(x).get(y)) actualvals[y] += Math.pow(2, x);
+          if (votingRecord.get(x).get(y)) {
+            actualvals[y] += Math.pow(2, x);
+          }
         }
       }
-
       for (int x = 0; x < DEBUG_PRINT_LENGTH; x++) {
-        debugString.append((int) ((minimum + actualvals[x]) / Math.pow(10, BINARY_VECTOR_DECIMAL_PLACES)) + " ");
+        debugString.append(((int) ((minimum + actualvals[x]) / Math.pow(10, BINARY_VECTOR_DECIMAL_PLACES))) + " ");
       }
-
       // TODO - output count from first DEBUG_PRINT_LENGTH dimension
       debugString.append("\nNORMALIZED: ");
       this.normalize();
-      for (int x = 0; x < DEBUG_PRINT_LENGTH; x++) debugString.append(bitSet.get(x) + " ");
+      for (int x = 0; x < DEBUG_PRINT_LENGTH; x++) {
+        debugString.append(bitSet.get(x) + " ");
+      }
       debugString.append("\n");
-
-
-
-      debugString.append("\nCardinality " + bitSet.cardinality()+"\n");
-      debugString.append("Votes " + totalNumberOfVotes+"\n");
-      debugString.append("Minimum " + minimum + "\n");
-      
+      debugString.append(("\nCardinality " + bitSet.cardinality()) + "\n");
+      debugString.append(("Votes " + totalNumberOfVotes.get()) + "\n");
+      debugString.append(("Minimum " + minimum) + "\n");
       debugString.append("\n");
     }
     return debugString.toString();
@@ -209,38 +216,36 @@ public class BinaryVector implements Vector {
    * @return representation of basic binary vector.
    */
   public BinaryVector generateRandomVector(int dimension, int numEntries, Random random) {
-	    // Check "multiple-of-64" constraint, to facilitate permutation of 64-bit chunks
-	    if (dimension % 64 != 0) {
-	      throw new IllegalArgumentException("Dimension should be a multiple of 64: "
-	          + dimension + " will lead to trouble!");
-	    }
-	    // Check for balance between 1's and 0's
-	    if (numEntries != dimension / 2) {
-	      logger.severe("Attempting to create binary vector with unequal number of zeros and ones."
-	          + " Unlikely to produce meaningful results. Therefore, seedlength has been set to "
-	          + " dimension/2, as recommended for binary vectors");
-	      numEntries = dimension / 2;
-	    }
+     // Check "multiple-of-64" constraint, to facilitate permutation of 64-bit chunks
+     if (dimension % 64 != 0) {
+       throw new IllegalArgumentException("Dimension should be a multiple of 64: "
+           + dimension + " will lead to trouble!");
+     }
+     // Check for balance between 1's and 0's
+     if (numEntries != dimension / 2) {
+       logger.severe("Attempting to create binary vector with unequal number of zeros and ones."
+           + " Unlikely to produce meaningful results. Therefore, seedlength has been set to "
+           + " dimension/2, as recommended for binary vectors");
+       numEntries = dimension / 2;
+     }
 
-	    BinaryVector randomVector = new BinaryVector(dimension);
-	    randomVector.bitSet = new FixedBitSet(dimension);
-	    
-	    ArrayList<Integer> dimensions = new ArrayList<Integer>();
-	    
-	    for (int q=0; q< dimension; q++)
-	    	dimensions.add(q);
-	    
-	    Collections.shuffle(dimensions, random);
+     BinaryVector randomVector = new BinaryVector(dimension);
+     randomVector.bitSet = new FixedBitSet(dimension);
+     
+     ArrayList<Integer> dimensions = new ArrayList<Integer>();
+     
+     for (int q=0; q< dimension; q++)
+     	dimensions.add(q);
+     
+     Collections.shuffle(dimensions, random);
 
-	    for (int r=0; r < numEntries; r++)
-	   {
-	    	int testPlace = dimensions.get(r);
-	        randomVector.bitSet.set(testPlace);
-	    }
-	    return randomVector;
-	  }
-  
- 
+     for (int r=0; r < numEntries; r++)
+    {
+     	int testPlace = dimensions.get(r);
+         randomVector.bitSet.set(testPlace);
+     }
+     return randomVector;
+   }
 
   @Override
   /**
@@ -330,28 +335,32 @@ public class BinaryVector implements Vector {
    */
   protected synchronized void superposeBitSet(FixedBitSet incomingBitSet, double weight) {
     // If fractional weights are used, encode all weights as integers (1000 x double value).
-    weight = (int) Math.round(weight * Math.pow(10, BINARY_VECTOR_DECIMAL_PLACES));
-    if (weight == 0) return;
-
+    weight = ((int) (Math.round(weight * Math.pow(10, BINARY_VECTOR_DECIMAL_PLACES))));
+    if (weight == 0) {
+      return;
+    }
     // Keep track of number (or cumulative weight) of votes.
-    totalNumberOfVotes.set(totalNumberOfVotes.get() + (int) weight);
-
+    if ((((long) (totalNumberOfVotes.get())) + ((long) (weight))) > Integer.MAX_VALUE) {
+      System.err.println("Overflow error");
+      System.err.println(this);
+    } else {
+      totalNumberOfVotes.set(totalNumberOfVotes.get() + ((int) (weight)));
+    }
     // Decompose superposition task such that addition of some power of 2 (e.g. 64) is accomplished
     // by beginning the process at the relevant row (e.g. 7) instead of starting multiple (e.g. 64)
     // superposition processes at the first row.
-    int logFloorOfWeight = (int) (Math.floor(Math.log(weight)/Math.log(2)));
-
-    if (logFloorOfWeight < votingRecord.size() - 1) {
+    int logFloorOfWeight = ((int) (Math.floor(Math.log(weight) / Math.log(2))));
+    if (logFloorOfWeight < (votingRecord.size() - 1)) {
       while (logFloorOfWeight > 0) {
-        superposeBitSetFromRowFloor(incomingBitSet, logFloorOfWeight);	
-        weight = weight - (int) Math.pow(2,logFloorOfWeight);
-        logFloorOfWeight = (int) (Math.floor(Math.log(weight)/Math.log(2)));	
-      }
+        superposeBitSetFromRowFloor(incomingBitSet, logFloorOfWeight);
+        weight = weight - ((int) (Math.pow(2, logFloorOfWeight)));
+        logFloorOfWeight = ((int) (Math.floor(Math.log(weight) / Math.log(2))));
+      } 
     }
-
     // Add remaining component of weight incrementally.
-    for (int x = 0; x < weight; x++)
+    for (int x = 0; x < weight; x++) {
       superposeBitSetFromRowFloor(incomingBitSet, 0);
+    }
   }
 
   /**
@@ -428,12 +437,12 @@ public class BinaryVector implements Vector {
       String inbinary = reverse(Integer.toBinaryString(target));
       tempSet.xor(tempSet);
        try {
-	  tempSet.xor(votingRecord.get(inbinary.indexOf("1"))); //this requires error checking, it is throwing an index out of bounds exception
-	      }
-	      catch (Exception e)
-	      {
-	    	  e.printStackTrace();
-	      }
+   tempSet.xor(votingRecord.get(inbinary.indexOf("1"))); //this requires error checking, it is throwing an index out of bounds exception
+       }
+       catch (Exception e)
+       {
+     	  e.printStackTrace();
+       }
       for (int q =0; q < votingRecord.size(); q++) {
         if (q < inbinary.length() && inbinary.charAt(q) == '1')
           tempSet.and(votingRecord.get(q));	
@@ -458,40 +467,40 @@ public class BinaryVector implements Vector {
   }
 
   protected synchronized FixedBitSet concludeVote(int target) {
-    int target2 = (int) Math.ceil((double) target / (double) 2);
+    int target2 = ((int) (Math.ceil(((double) (target)) / ((double) (2)))));
     target2 = target2 - minimum;
-
     // Unlikely other than in testing: minimum more than half the votes
     if (target2 < 0) {
       FixedBitSet ans = new FixedBitSet(dimension);
       ans.set(0, dimension);
       return ans;
     }
-
-    boolean even = (target % 2 == 0);
+    boolean even = (target % 2) == 0;
     FixedBitSet result = concludeVote(target2, votingRecord.size() - 1);
-
     if (even) {
       setTempSetToExactMatches(target2);
       boolean switcher = true;
       // 50% chance of being true with split vote.
       int q = tempSet.nextSetBit(0);
-      while (q != DocIdSetIterator.NO_MORE_DOCS)
-      	{
-    	 	  switcher = !switcher;
-          if (switcher) tempSet.clear(q);
-          if (q+1 >= tempSet.length()) q = DocIdSetIterator.NO_MORE_DOCS;
-          else q = tempSet.nextSetBit(q+1);
-         
-      	}
-      		result.andNot(tempSet);
+      while (q != DocIdSetIterator.NO_MORE_DOCS) {
+        switcher = !switcher;
+        if (switcher) {
+          tempSet.clear(q);
+        }
+        if ((q + 1) >= tempSet.length()) {
+          q = DocIdSetIterator.NO_MORE_DOCS;
+        } else {
+          q = tempSet.nextSetBit(q + 1);
+        }
+      } 
+      result.andNot(tempSet);
     }
     return result;
   }
 
   protected synchronized FixedBitSet concludeVote(int target, int row_ceiling) {
     /**
-	  logger.info("Entering conclude vote, target " + target + " row_ceiling " + row_ceiling + 
+   logger.info("Entering conclude vote, target " + target + " row_ceiling " + row_ceiling + 
     		"voting record " + votingRecord.size() + 
     		" minimum "+ minimum + " index "+  Math.log(target)/Math.log(2) +
          " vector\n" + toString());
@@ -740,7 +749,6 @@ public class BinaryVector implements Vector {
     minimum = 0;
   }
 
-
   /**
    * approximation of error function, equation 7.1.27 from
    * Abramowitz, M. and Stegun, I. A. (Eds.). "Repeated Integrals of the Error Function." S 7.2 
@@ -776,7 +784,7 @@ public class BinaryVector implements Vector {
    * Counts votes without normalizing vector (i.e. voting record is not altered). Used in SemanticVectorCollider.
    */
   public synchronized void tallyVotes() {
-	if (isSparse) elementalToSemantic();
+  	if (isSparse) elementalToSemantic();
     if (unTallied.get()) //only count if there are votes since the last tally
      try {  this.bitSet = concludeVote();
      		unTallied.set(false); } catch (Exception e) {e.printStackTrace();}
@@ -821,7 +829,6 @@ public class BinaryVector implements Vector {
     }
   }
 
-  
   @Override
   /**
    * Reads a (dense) version of a vector from a Lucene input stream. 
@@ -923,8 +930,7 @@ public class BinaryVector implements Vector {
 
   // Available for testing and copying.
   protected BinaryVector(FixedBitSet inSet) {
-    this.dimension = (int) inSet.length();
-
+    this.dimension = ((int) (inSet.length()));
     this.bitSet = inSet;
   }
 
@@ -941,22 +947,18 @@ public class BinaryVector implements Vector {
 
   //access bitset directly
   public FixedBitSet getCoordinates() {
-	// TODO Auto-generated method stub
-	return this.bitSet;
+    // TODO Auto-generated method stub
+    return this.bitSet;
+  }
+
+//access bitset directly
+protected void setCoordinates(FixedBitSet incomingBitSet) {
+// TODO Auto-generated method stub
+this.bitSet = incomingBitSet;
 }
 
-	//access bitset directly
-	protected void setCoordinates(FixedBitSet incomingBitSet) {
-	// TODO Auto-generated method stub
-	this.bitSet = incomingBitSet;
+//set DEBUG_PRINT_LENGTTH
+public static void setDebugPrintLength(int length){
+DEBUG_PRINT_LENGTH = length;	
 }
-	
-	//set DEBUG_PRINT_LENGTTH
-	public static void setDebugPrintLength(int length){
-	DEBUG_PRINT_LENGTH = length;	
-	}
-
-	
-	
 }
-
