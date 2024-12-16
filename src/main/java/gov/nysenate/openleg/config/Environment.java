@@ -1,12 +1,12 @@
 package gov.nysenate.openleg.config;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 
 /**
  * The Environment class contains various configuration options to be used throughout the application.
@@ -17,8 +17,7 @@ import java.time.LocalDateTime;
  * have setters to allow for changes while the application is running.
  */
 @Component
-public class Environment
-{
+public class Environment {
     /** The database schema where the legislative data is stored. */
     @Value("${env.schema:master}") private String schema;
 
@@ -34,11 +33,12 @@ public class Environment
     @Value("${env.archive}") private String archiveDirPath;
 
     private File baseDir;
+
     private File stagingDir;
+
     private File archiveDir;
 
     private File scrapedStagingDir;
-
 
     private LocalDateTime deployedDateTime;
 
@@ -50,6 +50,7 @@ public class Environment
     /** --- Admin Auth --- */
 
     @Value("${default.admin.user}") private String defaultAdminName;
+
     @Value("${default.admin.password}") private String defaultAdminPass;
 
     /** --- Search Index settings --- */
@@ -63,7 +64,8 @@ public class Environment
     @Value("${sobi.process.enabled:true}")
     private boolean sobiProcessEnabled;
 
-    @Value("${data.process.enabled}") private boolean processingEnabled;
+    @Value("${data.process.enabled}")
+    private boolean processingEnabled;
 
     /** Allows for the option to enable/disable logging. */
     @Value("${data.process.log.enabled}") private boolean processLoggingEnabled;
@@ -71,8 +73,11 @@ public class Environment
     /** Enable batch processing of SOBI files. */
     @Value("${sobi.batch.process.enabled}") private boolean sobiBatchEnabled;
 
-    /** If SOBI batch is enabled, this specifies the maximum batch size. */
-    @Value("${sobi.batch.process.size}") private int sobiBatchSize;
+    /**
+     * If SOBI batch is enabled, this specifies the maximum batch size.
+     */
+    @Value("${sobi.batch.process.size}")
+    private int sobiBatchSize;
 
     /** --- Scheduling Settings --- */
 
@@ -85,6 +90,7 @@ public class Environment
     /** --- Spotcheck Settings --- */
 
     @Value("${spotcheck.alert.grace.period}") private int rawAlertGracePeriod;
+
     private Duration spotcheckAlertGracePeriod;
 
     /** Allows bills to be automatically added to the scrape queue if true */
@@ -107,15 +113,22 @@ public class Environment
     @Value("${spotcheck.website.bill.data_queue_size:500}")
     private int sensiteBillDataQueueSize;
 
-    /** --- Email Settings --- */
+    /**
+     * --- Email Settings ---
+     */
+    /**
+     * Imaps host, username, and password for the application's email account
+     */
+    @Value("${checkmail.host}")
+    private String emailHost;
 
-    /** Imaps host, username, and password for the application's email account*/
-    @Value("${checkmail.host}") private String emailHost;
     @Value("${checkmail.user}") private String emailUser;
+
     @Value("${checkmail.pass}") private String emailPass;
 
     /** Incoming emails are stored in the receiving folder and archived in the processed folder */
     @Value("${checkmail.receiving}") private String emailReceivingFolder;
+
     @Value("${checkmail.processed}") private String emailProcessedFolder;
 
     /** The return address on outbound emails */
@@ -136,9 +149,11 @@ public class Environment
     /** The base url of the NYSenate.gov public website */
     @Value ("${nysenate.gov.url:https://www.NYSenate.gov}") private String senSiteUrl;
 
-    /** --- Constructors --- */
-
-    public Environment() {}
+    /**
+     * --- Constructors ---
+     */
+    public Environment() {
+    }
 
     @PostConstruct
     private void init() {
