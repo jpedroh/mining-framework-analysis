@@ -12,9 +12,6 @@
  ******************************************************************************/
 package algorithms;
 
-import org.apache.log4j.Logger;
-
-import util.Neighborhood;
 import algorithms.StateManager.State;
 import basics.Job;
 import basics.Service;
@@ -29,23 +26,23 @@ import basics.route.TourActivity;
 import basics.route.Vehicle;
 import basics.route.VehicleImpl.NoVehicle;
 import basics.route.VehicleRoute;
+import org.apache.log4j.Logger;
+import util.Neighborhood;
 
 
-
-final class CalculatesServiceInsertion implements JobInsertionCalculator{
-	
+final class CalculatesServiceInsertion implements JobInsertionCalculator {
 	private static final Logger logger = Logger.getLogger(CalculatesServiceInsertion.class);
-	
+
 	private StateManager states;
-	
+
 	private VehicleRoutingTransportCosts routingCosts;
-	
+
 	private VehicleRoutingActivityCosts activityCosts;
-	
+
 	private Start start;
-	
+
 	private End end;
-	
+
 	private HardConstraint hardConstraint = new HardConstraint() {
 		
 		@Override
@@ -53,41 +50,39 @@ final class CalculatesServiceInsertion implements JobInsertionCalculator{
 			return true;
 		}
 	};
-	
+
 	private Neighborhood neighborhood = new Neighborhood() {
-		
 		@Override
 		public boolean areNeighbors(String location1, String location2) {
 			return true;
 		}
 	};
-	
+
 	void setHardConstraint(HardConstraint hardConstraint){
 		this.hardConstraint = hardConstraint;
 	}
-	
+
 	public void setNeighborhood(Neighborhood neighborhood) {
 		this.neighborhood = neighborhood;
 		logger.info("initialise neighborhood " + neighborhood);
 	}
 
-
-	public void setStates(StateManager activityStates2){
+	public void setStates(StateManager activityStates2) {
 		this.states = activityStates2;
 	}
-	
+
 	public CalculatesServiceInsertion(VehicleRoutingTransportCosts vehicleRoutingTransportCosts, VehicleRoutingActivityCosts vehicleRoutingActivityCosts) {
 		super();
 		this.routingCosts = vehicleRoutingTransportCosts;
 		this.activityCosts = vehicleRoutingActivityCosts;
 		logger.info("initialise " + this);
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[name=calculatesServiceInsertion]";
 	}
-	
+
 	/**
 	 * Calculates the marginal cost of inserting job i locally. This is based on the
 	 * assumption that cost changes can entirely covered by only looking at the predecessor i-1 and its successor i+1.
@@ -95,36 +90,34 @@ final class CalculatesServiceInsertion implements JobInsertionCalculator{
 	 */
 	@Override
 	public InsertionData calculate(final VehicleRoute currentRoute, final Job jobToInsert, final Vehicle newVehicle, double newVehicleDepartureTime, final Driver newDriver, final double bestKnownCosts) {
-		if(jobToInsert == null) throw new IllegalStateException("jobToInsert is missing.");
-		if(newVehicle == null || newVehicle instanceof NoVehicle) throw new IllegalStateException("newVehicle is missing.");
-		
+		if (jobToInsert == null) {
+			throw new IllegalStateException("jobToInsert is missing.");
+		}
+		if ((newVehicle == null) || (newVehicle instanceof NoVehicle)) {
+			throw new IllegalStateException("newVehicle is missing.");
+		}
 		InsertionFacts iFacts = new InsertionFacts(currentRoute, jobToInsert, newVehicle, newDriver, newVehicleDepartureTime);
-		if(!hardConstraint.fulfilled(new InsertionScenario(iFacts, null))){
+		if (!hardConstraint.fulfilled(new InsertionScenario(iFacts, null))) {
 			return InsertionData.noInsertionFound();
 		}
-		
 		TourActivities tour = currentRoute.getTourActivities();
 		double bestCost = bestKnownCosts;
-		Service service = (Service)jobToInsert;
-
+		Service service = ((Service) (jobToInsert));
 		int insertionIndex = InsertionData.NO_INDEX;
-		
 		TourActivity deliveryAct2Insert = ServiceActivity.newInstance(service);
-		
 		initialiseStartAndEnd(newVehicle, newVehicleDepartureTime);
-		
 		TourActivity prevAct = start;
 		double prevCostInOriginalTour = 0.0;
 		int actIndex = 0;
 //		logger.debug(prevAct.toString());
-		for(TourActivity nextAct : tour.getActivities()){
+		for (TourActivity nextAct : tour.getActivities()) {
 //			logger.debug(prevAct.toString() + " arrTime=" + prevAct.getArrTime() + " endTime=" + prevAct.getEndTime());
 //			logger.debug(deliveryAct2Insert.toString() + " arrTime=" + deliveryAct2Insert.getArrTime() + " endTime=" + deliveryAct2Insert.getEndTime());
 //			logger.debug(nextAct.toString() + " arrTime=" + nextAct.getArrTime() + " endTime=" + nextAct.getEndTime());
-			double nextCostInOriginalTour = states.getActivityState(nextAct,StateTypes.COSTS).toDouble();
-			if(neighborhood.areNeighbors(deliveryAct2Insert.getLocationId(), prevAct.getLocationId()) && neighborhood.areNeighbors(deliveryAct2Insert.getLocationId(), nextAct.getLocationId())){
+			double nextCostInOriginalTour = states.getActivityState(nextAct, StateTypes.COSTS).toDouble();
+			if (neighborhood.areNeighbors(deliveryAct2Insert.getLocationId(), prevAct.getLocationId()) && neighborhood.areNeighbors(deliveryAct2Insert.getLocationId(), nextAct.getLocationId())) {
 				double mc = calculate(prevAct, nextAct, deliveryAct2Insert, newDriver, newVehicle, bestCost, nextCostInOriginalTour - prevCostInOriginalTour);
-				if(mc < bestCost){
+				if (mc < bestCost) {
 					bestCost = mc;
 					insertionIndex = actIndex;
 				}
@@ -137,16 +130,15 @@ final class CalculatesServiceInsertion implements JobInsertionCalculator{
 //		logger.debug(prevAct.toString() + " arrTime=" + prevAct.getArrTime() + " endTime=" + prevAct.getEndTime());
 //		logger.debug(deliveryAct2Insert.toString() + " arrTime=" + deliveryAct2Insert.getArrTime() + " endTime=" + deliveryAct2Insert.getEndTime());
 //		logger.debug(nextAct.toString() + " arrTime=" + nextAct.getArrTime() + " endTime=" + nextAct.getEndTime());
-		if(neighborhood.areNeighbors(deliveryAct2Insert.getLocationId(), prevAct.getLocationId()) && neighborhood.areNeighbors(deliveryAct2Insert.getLocationId(), nextAct.getLocationId())){
+		if (neighborhood.areNeighbors(deliveryAct2Insert.getLocationId(), prevAct.getLocationId()) && neighborhood.areNeighbors(deliveryAct2Insert.getLocationId(), nextAct.getLocationId())) {
 			double oldRouteCosts = states.getRouteState(currentRoute, StateTypes.COSTS).toDouble();
 			double mc = calculate(prevAct, nextAct, deliveryAct2Insert, newDriver, newVehicle, bestCost, oldRouteCosts - prevCostInOriginalTour);
-			if(mc < bestCost){
+			if (mc < bestCost) {
 				bestCost = mc;
 				insertionIndex = actIndex;
 			}
-		}			
-
-		if(insertionIndex == InsertionData.NO_INDEX) {
+		}
+		if (insertionIndex == InsertionData.NO_INDEX) {
 			return InsertionData.noInsertionFound();
 		}
 		InsertionData insertionData = new InsertionData(bestCost, InsertionData.NO_INDEX, insertionIndex, newVehicle, newDriver);
@@ -189,9 +181,9 @@ final class CalculatesServiceInsertion implements JobInsertionCalculator{
 		
 		double act_costs_newAct = activityCosts.getActivityCost(newAct, newAct_arrTime, driver, vehicle);
 		
-//		if((tp_costs_prevAct_newAct + act_costs_newAct - costWithoutNewJob) > bestKnownCosts){
-//			return Double.MAX_VALUE;
-//		}
+	//		if((tp_costs_prevAct_newAct + act_costs_newAct - costWithoutNewJob) > bestKnownCosts){
+	//			return Double.MAX_VALUE;
+	//		}
 		
 		double tp_costs_newAct_nextAct = routingCosts.getTransportCost(newAct.getLocationId(), nextAct.getLocationId(), newAct_endTime, driver, vehicle);
 		double tp_time_newAct_nextAct = routingCosts.getTransportTime(newAct.getLocationId(), nextAct.getLocationId(), newAct_endTime, driver, vehicle);
@@ -199,7 +191,7 @@ final class CalculatesServiceInsertion implements JobInsertionCalculator{
 		double nextAct_arrTime = newAct_endTime + tp_time_newAct_nextAct;
 		double act_costs_nextAct = activityCosts.getActivityCost(nextAct, nextAct_arrTime, driver, vehicle);
 		
-//		logger.debug("nextActArrTime="+nextAct_arrTime);
+	//		logger.debug("nextActArrTime="+nextAct_arrTime);
 		
 		double totalCosts = tp_costs_prevAct_newAct + tp_costs_newAct_nextAct + act_costs_newAct + act_costs_nextAct; 
 		
@@ -212,12 +204,11 @@ final class CalculatesServiceInsertion implements JobInsertionCalculator{
 		return totalCosts - costWithoutNewJob;
 		
 	}
-	
+
 	private double getLatestOperationStart(TourActivity act) {
-		if(act instanceof End) {
+		if (act instanceof End) {
 			return end.getTheoreticalLatestOperationStartTime();
 		}
 		return states.getActivityState(act, StateTypes.LATEST_OPERATION_START_TIME).toDouble();
-
 	}
 }

@@ -12,10 +12,6 @@
  ******************************************************************************/
 package algorithms;
 
-import org.apache.log4j.Logger;
-
-import util.Neighborhood;
-
 import algorithms.RouteStates.ActivityState;
 import algorithms.StateManager.State;
 import algorithms.StateManager.States;
@@ -30,88 +26,91 @@ import basics.route.Start;
 import basics.route.TourActivities;
 import basics.route.TourActivity;
 import basics.route.Vehicle;
-import basics.route.VehicleRoute;
 import basics.route.VehicleImpl.NoVehicle;
+import basics.route.VehicleRoute;
+import org.apache.log4j.Logger;
+import util.Neighborhood;
 
 
-
-final class CalculatesServiceInsertionWithTriangleInequality implements JobInsertionCalculator{
-	
+final class CalculatesServiceInsertionWithTriangleInequality implements JobInsertionCalculator {
 	class Marginals {
 		private double marginalCosts;
+
 		private double marginalTime;
+
 		public Marginals(double marginalCosts, double marginalTime) {
 			super();
 			this.marginalCosts = marginalCosts;
 			this.marginalTime = marginalTime;
 		}
+
 		/**
+		 *
+		 *
 		 * @return the marginalCosts
 		 */
 		public double getMarginalCosts() {
 			return marginalCosts;
 		}
+
 		/**
+		 *
+		 *
 		 * @return the marginalTime
 		 */
 		public double getMarginalTime() {
 			return marginalTime;
 		}
-		
 	}
-	
+
 	private static final Logger logger = Logger.getLogger(CalculatesServiceInsertionWithTriangleInequality.class);
-	
+
 	private StateManager routeStates;
-	
+
 	private VehicleRoutingTransportCosts routingCosts;
-	
+
 	private Start start;
-	
+
 	private End end;
-	
+
 	private HardConstraint hardConstraint = new HardConstraint() {
-		
 		@Override
 		public boolean fulfilled(InsertionScenario iScenario) {
 			return true;
 		}
 	};
-	
+
 	public void setHardConstraint(HardConstraint hardConstraint){
 		this.hardConstraint = hardConstraint;
 	}
-	
+
 	private Neighborhood neighborhood = new Neighborhood() {
-		
 		@Override
 		public boolean areNeighbors(String location1, String location2) {
 			return true;
 		}
 	};
-	
-	
-	
+
 	public void setNeighborhood(Neighborhood neighborhood) {
 		this.neighborhood = neighborhood;
 		logger.info("initialise neighborhood " + neighborhood);
 	}
 
-	public void setActivityStates(StateManager activityStates2){
+	public void setActivityStates(StateManager activityStates2) {
 		this.routeStates = activityStates2;
 	}
-	
+
 	public CalculatesServiceInsertionWithTriangleInequality(VehicleRoutingTransportCosts vehicleRoutingTransportCosts, VehicleRoutingActivityCosts vehicleRoutingActivityCosts) {
 		super();
 		this.routingCosts = vehicleRoutingTransportCosts;
 		logger.info("initialise " + this);
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[name=calculatesServiceInsertion]";
 	}
-	
+
 	/**
 	 * Calculates the marginal cost of inserting job i locally. This is based on the
 	 * assumption that cost changes can entirely covered by only looking at the predecessor i-1 and its successor i+1.
@@ -167,7 +166,7 @@ final class CalculatesServiceInsertionWithTriangleInequality implements JobInser
 	}
 
 	private int getCurrentLoad(VehicleRoute currentRoute) {
-		return (int) routeStates.getRouteState(currentRoute, StateTypes.LOAD).toDouble();
+		return ((int) (routeStates.getRouteState(currentRoute, StateTypes.LOAD).toDouble()));
 	}
 
 	private void initialiseStartAndEnd(final Vehicle newVehicle, double newVehicleDepartureTime) {

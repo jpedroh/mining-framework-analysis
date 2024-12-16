@@ -20,24 +20,11 @@
  ******************************************************************************/
 package algorithms;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Collection;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.junit.Before;
-import org.junit.Test;
-
-import util.Coordinate;
-import util.ManhattanDistanceCalculator;
 import basics.Job;
 import basics.Service;
 import basics.costs.VehicleRoutingTransportCosts;
 import basics.route.Driver;
+import basics.route.DriverImpl.NoDriver;
 import basics.route.DriverImpl;
 import basics.route.ServiceActivity;
 import basics.route.TimeWindow;
@@ -45,18 +32,26 @@ import basics.route.TourActivities;
 import basics.route.TourActivity;
 import basics.route.Vehicle;
 import basics.route.VehicleRoute;
-import basics.route.DriverImpl.NoDriver;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import util.Coordinate;
+import util.ManhattanDistanceCalculator;
 
 
 public class TestCalculatesServiceInsertionOnRouteLevel {
-	
 	CalculatesServiceInsertionOnRouteLevel serviceInsertion;
-	
+
 	VehicleRoutingTransportCosts costs;
-	
+
 	Vehicle vehicle;
-	
+
 	Vehicle newVehicle;
 
 	private Service first;
@@ -68,40 +63,33 @@ public class TestCalculatesServiceInsertionOnRouteLevel {
 	private StateManagerImpl states;
 
 	private NoDriver driver;
-	
+
 	private UpdateStates updateStates;
-	
+
 	@Before
-	public void setup(){
+	public void setup() {
 		Logger.getRootLogger().setLevel(Level.DEBUG);
-		
 		costs = mock(VehicleRoutingTransportCosts.class);
 		vehicle = mock(Vehicle.class);
 		when(vehicle.getCapacity()).thenReturn(1000);
 		when(vehicle.getLocationId()).thenReturn("0,0");
 		when(vehicle.getEarliestDeparture()).thenReturn(0.0);
 		when(vehicle.getLatestArrival()).thenReturn(100.0);
-		
 		newVehicle = mock(Vehicle.class);
 		when(newVehicle.getCapacity()).thenReturn(1000);
 		when(newVehicle.getLocationId()).thenReturn("0,0");
 		when(newVehicle.getEarliestDeparture()).thenReturn(0.0);
 		when(newVehicle.getLatestArrival()).thenReturn(100.0);
-		
 		driver = DriverImpl.noDriver();
-
 		costs = new VehicleRoutingTransportCosts() {
-
 			@Override
-			public double getBackwardTransportTime(String fromId, String toId,
-					double arrivalTime, Driver driver, Vehicle vehicle) {
+			public double getBackwardTransportTime(String fromId, String toId, double arrivalTime, Driver driver, Vehicle vehicle) {
 				// TODO Auto-generated method stub
 				return 0;
 			}
 
 			@Override
-			public double getBackwardTransportCost(String fromId, String toId,
-					double arrivalTime, Driver driver, Vehicle vehicle) {
+			public double getBackwardTransportCost(String fromId, String toId, double arrivalTime, Driver driver, Vehicle vehicle) {
 				// TODO Auto-generated method stub
 				return 0;
 			}
@@ -112,29 +100,23 @@ public class TestCalculatesServiceInsertionOnRouteLevel {
 				String[] toTokens = toId.split(",");
 				double fromX = Double.parseDouble(fromTokens[0]);
 				double fromY = Double.parseDouble(fromTokens[1]);
-
 				double toX = Double.parseDouble(toTokens[0]);
 				double toY = Double.parseDouble(toTokens[1]);
-
 				double dist = ManhattanDistanceCalculator.calculateDistance(new Coordinate(fromX, fromY), new Coordinate(toX, toY));
-				if(veh == vehicle){
+				if (veh == vehicle) {
 					return dist;
-				}
-				else if(veh == newVehicle){
-					return 2*dist;
+				} else if (veh == newVehicle) {
+					return 2 * dist;
 				}
 				throw new IllegalStateException();
 			}
 
 			@Override
-			public double getTransportTime(String fromId, String toId,
-					double departureTime, Driver driver, Vehicle vehicle) {
+			public double getTransportTime(String fromId, String toId, double departureTime, Driver driver, Vehicle vehicle) {
 				// TODO Auto-generated method stub
 				return 0;
 			}
 		};
-
-		
 		first = Service.Builder.newInstance("1", 0).setLocationId("0,10").setTimeWindow(TimeWindow.newInstance(0.0, 100.0)).build();
 		second = Service.Builder.newInstance("3", 0).setLocationId("10,0").setTimeWindow(TimeWindow.newInstance(0.0, 100.0)).build();
 		third = Service.Builder.newInstance("2", 0).setLocationId("10,10").setTimeWindow(TimeWindow.newInstance(0.0, 100.0)).build();
@@ -142,26 +124,20 @@ public class TestCalculatesServiceInsertionOnRouteLevel {
 		jobs.add(first);
 		jobs.add(second);
 		jobs.add(third);
-		
 		states = new StateManagerImpl();
-		
 		ExampleActivityCostFunction activityCosts = new ExampleActivityCostFunction();
-		serviceInsertion = new CalculatesServiceInsertionOnRouteLevel(costs,activityCosts);
+		serviceInsertion = new CalculatesServiceInsertionOnRouteLevel(costs, activityCosts);
 		serviceInsertion.setNuOfActsForwardLooking(4);
 		serviceInsertion.setStates(states);
-		
 		updateStates = new UpdateStates(states, costs, activityCosts);
-		
-		
-		
 	}
-	
+
 	public TourActivity getActivityMock(String id, double earliestOperationStart, double currCost){
 		TourActivity act = mock(TourActivity.class);
 		when(act.getLocationId()).thenReturn(id);
 		return act;
 	}
-	
+
 	@Test
 	public void whenInsertingTheFirstJobInAnEmptyTourWithVehicle_itCalculatesMarginalCostChanges(){
 		TourActivities tour = new TourActivities();
@@ -173,7 +149,7 @@ public class TestCalculatesServiceInsertionOnRouteLevel {
 		assertEquals(20.0, iData.getInsertionCost(), 0.2);
 		assertEquals(0, iData.getDeliveryInsertionIndex());
 	}
-	
+
 	@Test
 	public void whenInsertingThirdJobWithVehicle_itCalculatesMarginalCostChanges(){
 		TourActivities tour = new TourActivities();
@@ -187,7 +163,7 @@ public class TestCalculatesServiceInsertionOnRouteLevel {
 		assertEquals(0.0, iData.getInsertionCost(), 0.2);
 		assertEquals(1, iData.getDeliveryInsertionIndex());
 	}
-	
+
 	@Test
 	public void whenInsertingThirdJobWithNewVehicle_itCalculatesMarginalCostChanges(){
 		TourActivities tour = new TourActivities();
@@ -201,7 +177,7 @@ public class TestCalculatesServiceInsertionOnRouteLevel {
 		assertEquals(40.0, iData.getInsertionCost(), 0.2);
 		assertEquals(1, iData.getDeliveryInsertionIndex());
 	}
-	
+
 	@Test
 	public void whenInsertingASecondJobWithAVehicle_itCalculatesLocalMarginalCostChanges(){
 		TourActivities tour = new TourActivities();
@@ -215,7 +191,7 @@ public class TestCalculatesServiceInsertionOnRouteLevel {
 		assertEquals(0.0, iData.getInsertionCost(), 0.2);
 		assertEquals(2, iData.getDeliveryInsertionIndex());
 	}
-	
+
 	@Test
 	public void whenInsertingASecondJobWithANewVehicle_itCalculatesLocalMarginalCostChanges(){
 		TourActivities tour = new TourActivities();
@@ -229,5 +205,4 @@ public class TestCalculatesServiceInsertionOnRouteLevel {
 		assertEquals(40.0, iData.getInsertionCost(), 0.2);
 		assertEquals(2, iData.getDeliveryInsertionIndex());
 	}
-	
 }
