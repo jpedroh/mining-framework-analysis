@@ -26,17 +26,16 @@ import com.ebay.xcelite.exceptions.XceliteException;
 import com.ebay.xcelite.options.XceliteOptions;
 import com.ebay.xcelite.policies.MissingCellPolicy;
 import com.ebay.xcelite.sheet.XceliteSheet;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.reflections.ReflectionUtils;
-
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import static org.reflections.ReflectionUtils.withName;
+
 
 /**
  * Implementation of the {@link SheetReader} interface that returns the contents
@@ -56,21 +55,30 @@ import static org.reflections.ReflectionUtils.withName;
  */
 public class BeanSheetReader<T> extends AbstractSheetReader<T> {
     private final Col anyColumn;
+
     private final ColumnsMapper mapper;
+
     private final Class<T> type;
+
     private Map<Integer, String> headerColumns;
 
+    //private Iterator<Row> rowIterator;
     @Override
-    public boolean expectsHeaderRow(){return true;}
+    public boolean expectsHeaderRow() {
+        return true;
+    }
 
     /**
      * Construct a BeanSheetReader with custom options. The Reader will create
      * a copy of the options object, therefore later changes of this object will not
      * influence the behavior of this reader
      *
-     * @param sheet the {@link XceliteSheet} to read from
-     * @param options the {@link XceliteOptions} to configure the reader
-     * @param type class of the beans
+     * @param sheet
+     * 		the {@link XceliteSheet} to read from
+     * @param options
+     * 		the {@link XceliteOptions} to configure the reader
+     * @param type
+     * 		class of the beans
      */
     public BeanSheetReader(XceliteSheet sheet, XceliteOptions options, Class<T> type) {
         super(sheet, options);
@@ -84,8 +92,11 @@ public class BeanSheetReader<T> extends AbstractSheetReader<T> {
 
     /**
      * Construct a BeanSheetReader with options from the {@link XceliteSheet}
-     * @param sheet the {@link XceliteSheet} to read from
-     * @param type class of the beans
+     *
+     * @param sheet
+     * 		the {@link XceliteSheet} to read from
+     * @param type
+     * 		class of the beans
      */
     public BeanSheetReader(XceliteSheet sheet, Class<T> type) {
         this(sheet, sheet.getOptions(), type);
@@ -95,22 +106,18 @@ public class BeanSheetReader<T> extends AbstractSheetReader<T> {
     @Override
     public T fillObject(Row row) {
         T object = getNewObject();
-
         for (int i = 0; i < headerColumns.keySet().size(); i++) {
             String columnName = headerColumns.get(i);
             checkHasThrowPolicyMustThrow(row, i);
             Cell cell = row.getCell(i, MissingCellPolicy.toPoiMissingCellPolicy(options.getMissingCellPolicy()));
-
             Col col = mapper.getColumn(columnName);
             if (col != null) {
                 Field field = getField(object.getClass(), col.getFieldName());
                 writeToField(field, object, cell, col);
-            } else {
-                if (anyColumn != null) {
-                    Field field = getField(object.getClass(), anyColumn.getFieldName());
-                    if (!isColumnInIgnoreList(field, columnName)) {
-                        writeToAnyColumnField(field, object, cell, columnName);
-                    }
+            } else if (anyColumn != null) {
+                Field field = getField(object.getClass(), anyColumn.getFieldName());
+                if (!isColumnInIgnoreList(field, columnName)) {
+                    writeToAnyColumnField(field, object, cell, columnName);
                 }
             }
         }
@@ -133,22 +140,21 @@ public class BeanSheetReader<T> extends AbstractSheetReader<T> {
         Collection<String> declaredHeaders = mapper.getDeclaredHeaderNames();
         Collection<String> headers = headerColumns.values();
         if (!options.isHeaderParsingIsCaseSensitive()) {
-            headers = headers.stream().map(n -> {
-                n = (n == null)? null: n.toLowerCase();
-                return n;}
-            ).collect(Collectors.toList());
-            declaredHeaders =   declaredHeaders.stream().map(n -> {
-                n = (n == null)? null: n.toLowerCase();
-                return n;}
-            ).collect(Collectors.toList());
+            headers = headers.stream().map(( n) -> {
+                n = (n == null) ? null : n.toLowerCase();
+                return n;
+            }).collect(Collectors.toList());
+            declaredHeaders = declaredHeaders.stream().map(( n) -> {
+                n = (n == null) ? null : n.toLowerCase();
+                return n;
+            }).collect(Collectors.toList());
         }
-
         if (!headers.containsAll(declaredHeaders)) {
             declaredHeaders.removeAll(headers);
-            declaredHeaders = declaredHeaders.stream().filter((h) -> {
+            declaredHeaders = declaredHeaders.stream().filter(( h) -> {
                 Col col = mapper.getColumn(h);
                 Field field = getField(this.type, col.getFieldName());
-                return (!field.getAnnotation(com.ebay.xcelite.annotations.Column.class).optional());
+                return !field.getAnnotation(com.ebay.xcelite.annotations.Column.class).optional();
             }).collect(Collectors.toSet());
             if (declaredHeaders.size() > 0) {
                 throw new ColumnNotFoundException(declaredHeaders.stream().limit(10).collect(Collectors.joining(", ")));
@@ -169,25 +175,23 @@ public class BeanSheetReader<T> extends AbstractSheetReader<T> {
     private void writeToAnyColumnField(Field field, T object, Cell cell, String columnName) {
         field.setAccessible(true);
         Object cellValue = readValueFromCell(cell);
-        if (cellValue == null && (field.getType().equals(Boolean.class) || field.getType().equals(boolean.class))) {
+        if ((cellValue == null) && (field.getType().equals(java.lang.Boolean.class) || field.getType().equals(boolean.class))) {
             cellValue = Boolean.FALSE;
         }
         AnyColumn annotation = field.getAnnotation(AnyColumn.class);
         if (field.get(object) == null) {
-            Map<String, Object> map = (Map<String, Object>) annotation.as().newInstance();
+            Map<String, Object> map = ((Map<String, Object>) (annotation.as().newInstance()));
             field.set(object, map);
         }
-        Map<String, Object> map = (Map<String, Object>) field.get(object);
-
+        Map<String, Object> map = ((Map<String, Object>) (field.get(object)));
         if (cellValue != null) {
             if (!annotation.converter().equals(NoConverterClass.class)) {
-                ColumnValueConverter<Object, ?> converter =
-                        (ColumnValueConverter<Object, ?>) annotation.converter().newInstance();
+                ColumnValueConverter<Object, ?> converter = ((ColumnValueConverter<Object, ?>) (annotation.converter().newInstance()));
                 cellValue = converter.deserialize(cellValue);
             }
         }
-        if (options.isAnyColumnCreatesCollection()){
-            List holder = (List)map.get(columnName);
+        if (options.isAnyColumnCreatesCollection()) {
+            List holder = ((List) (map.get(columnName)));
             if (null == holder) {
                 holder = new ArrayList();
             }
@@ -251,8 +255,9 @@ public class BeanSheetReader<T> extends AbstractSheetReader<T> {
                 String cellValue = null;
                 if (null != cell) {
                     cellValue = cell.getStringCellValue();
-                    if ((null == cellValue) || (cellValue.isEmpty()))
+                    if ((null == cellValue) || cellValue.isEmpty()) {
                         cellValue = null;
+                    }
                 }
                 headerColumns.put(i, cellValue);
             }
@@ -277,12 +282,13 @@ public class BeanSheetReader<T> extends AbstractSheetReader<T> {
 
     @Override
     @SneakyThrows
-    T getNewObject(){
+    T getNewObject() {
         return type.newInstance();
     }
 
     private class ColumnsMapper {
         private final Map<String, Col> columnsMap;
+
         private final Map<String, Col> lowerCaseColumnsMap;
 
         ColumnsMapper(Set<Col> columns) {

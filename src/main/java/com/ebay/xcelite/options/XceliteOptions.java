@@ -5,6 +5,7 @@ import com.ebay.xcelite.policies.MissingRowPolicy;
 import com.ebay.xcelite.policies.TrailingEmptyRowPolicy;
 import lombok.EqualsAndHashCode;
 
+
 /**
  * Configuration class for setting options of a {@link com.ebay.xcelite.Xcelite}
  * object and sheet readers/writers.
@@ -12,19 +13,26 @@ import lombok.EqualsAndHashCode;
  * @author Johannes
  * @since 1.2
  */
-
 @EqualsAndHashCode
 public class XceliteOptions {
     private Boolean hasHeaderRow = null;
+
     private boolean headerParsingIsCaseSensitive = true;
+
     private Integer headerRowIndex = 0;
+
     private Integer firstDataRowIndex = 0;
+
     private MissingCellPolicy missingCellPolicy = MissingCellPolicy.RETURN_BLANK_AS_NULL;
+
     private MissingRowPolicy missingRowPolicy = MissingRowPolicy.NULL;
+
     private TrailingEmptyRowPolicy trailingEmptyRowPolicy = TrailingEmptyRowPolicy.SKIP;
+
     private boolean anyColumnCreatesCollection = false;
 
-    public XceliteOptions() {}
+    public XceliteOptions() {
+    }
 
     /**
      * Copy constructor
@@ -52,7 +60,6 @@ public class XceliteOptions {
     public Integer getHeaderRowIndex() {
         return headerRowIndex;
     }
-
 
     /**
      * Sets the row index of the row defining the header names (
@@ -201,7 +208,7 @@ public class XceliteOptions {
      * Used to specify the policy to handle null and trailing blank rows following
      * data blocks for readers and trailing null objects for writers.
      *
-     * @param trailingEmptyRowPolicy set policy for trailing null and blank rows
+     * @param trailingEmptyRowPolicy set olicy for trailing null and blank rows
      *
      * @since 1.2
      */
@@ -252,5 +259,4 @@ public class XceliteOptions {
     public void setAnyColumnCreatesCollection(boolean anyColumnCreatesCollection) {
         this.anyColumnCreatesCollection = anyColumnCreatesCollection;
     }
-
 }

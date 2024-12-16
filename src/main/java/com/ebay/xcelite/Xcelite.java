@@ -17,17 +17,17 @@ package com.ebay.xcelite;
 
 import com.ebay.xcelite.exceptions.XceliteException;
 import com.ebay.xcelite.options.XceliteOptions;
-import com.ebay.xcelite.sheet.*;
+import com.ebay.xcelite.sheet.XceliteSheet;
+import com.ebay.xcelite.sheet.XceliteSheetImpl;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-
 import static java.util.Optional.ofNullable;
+
 
 /**
  * Main class of the Xcelite package. A Xcelite object is constructed on an Excel
@@ -39,9 +39,9 @@ import static java.util.Optional.ofNullable;
  * created Nov 9, 2013
  */
 public class Xcelite {
-
     private final Workbook workbook;
 
+    //TODO Version 2.0: remove this member variable together with write();
     //TODO Version 2.0: remove this member variable together with write();
     private File file;
 
@@ -137,9 +137,7 @@ public class Xcelite {
      * @return XceliteSheet object
      */
     public XceliteSheet getSheet(int sheetIndex) {
-        return ofNullable(workbook.getSheetAt(sheetIndex))
-                .map(s -> new XceliteSheetImpl(s, options))
-                .orElseThrow(() -> new XceliteException(String.format("Could not find sheet at index %s", sheetIndex)));
+        return ofNullable(workbook.getSheetAt(sheetIndex)).map(( s) -> new XceliteSheetImpl(s, options)).orElseThrow(() -> new XceliteException(String.format("Could not find sheet at index %s", sheetIndex)));
     }
 
     /**
@@ -151,9 +149,7 @@ public class Xcelite {
      * @return XceliteSheet object
      */
     public XceliteSheet getSheet(String sheetName) {
-        return ofNullable(workbook.getSheet(sheetName))
-                .map(s -> new XceliteSheetImpl(s, options))
-                .orElseThrow(() -> new XceliteException(String.format("Could not find sheet named \"%s\"", sheetName)));
+        return ofNullable(workbook.getSheet(sheetName)).map(( s) -> new XceliteSheetImpl(s, options)).orElseThrow(() -> new XceliteException(String.format("Could not find sheet named \"%s\"", sheetName)));
     }
 
     /**
@@ -167,11 +163,8 @@ public class Xcelite {
         if (workbook.getNumberOfSheets() == 0) {
             throw new XceliteException("Could not find any sheet");
         }
-
         List<XceliteSheet> xceliteSheets = new ArrayList<>();
-        workbook.sheetIterator().forEachRemaining(
-                sheet -> xceliteSheets.add(new XceliteSheetImpl(sheet)));
-
+        workbook.sheetIterator().forEachRemaining(( sheet) -> xceliteSheets.add(new XceliteSheetImpl(sheet)));
         return xceliteSheets;
     }
 

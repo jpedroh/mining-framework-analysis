@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ebay.xcelite.reader;
 
 import com.ebay.xcelite.Xcelite;
@@ -26,48 +25,30 @@ import com.ebay.xcelite.options.XceliteOptions;
 import com.ebay.xcelite.policies.MissingCellPolicy;
 import com.ebay.xcelite.reader.SheetReader;
 import com.ebay.xcelite.sheet.XceliteSheet;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 /**
  *
  * @author Thanthathon.b
  */
 class AnyColumnTest {
+    private String[] columnNames = new String[]{ "NAME", "SURNAME", "BIRTHDATE", "SEXID", "SEX" };
 
-    private String[] columnNames = new String[]{
-            "NAME", "SURNAME", "BIRTHDATE", "SEXID", "SEX"
-    };
+    private static Object[][] testData = new java.lang.Object[][]{ new java.lang.Object[]{ "Crystal", "Maiden", "01/02/1990", 2.0, "Female" }, new java.lang.Object[]{ "Witch", "Doctor", "01/01/1990", 1.0, "Male" } };
 
-    private static Object[][] testData = {
-            {"Crystal", "Maiden", "01/02/1990", 2.0, "Female"},
-            {"Witch", "Doctor", "01/01/1990", 1.0, "Male"}
-    };
+    private static String[] employeeProjects1 = new java.lang.String[]{ null, "Testing", "Website Relaunch", null, null };
 
-    private static String[] employeeProjects1 = {
-            null,
-            "Testing",
-            "Website Relaunch",
-            null,
-            null
-    };
-    private static String[][] employeeProjects2 = {
-            {"Website Relaunch", "Testing", null},
-            {null, "Migration", "Testing"},
-            {"Testing", null, "Website Relaunch"},
-            {null, null, null},
-            {null, "Website Relaunch", null}
-    };
+    private static String[][] employeeProjects2 = new java.lang.String[][]{ new java.lang.String[]{ "Website Relaunch", "Testing", null }, new java.lang.String[]{ null, "Migration", "Testing" }, new java.lang.String[]{ "Testing", null, "Website Relaunch" }, new java.lang.String[]{ null, null, null }, new java.lang.String[]{ null, "Website Relaunch", null } };
 
     @Test
     @DisplayName("Must correctly parse header row with @AnyColumn annotated column headers")
@@ -108,18 +89,15 @@ class AnyColumnTest {
         Executable testClosure = () -> {
             Xcelite xcelite = new Xcelite(new File("src/test/resources/UPPERCASE.xlsx"));
             XceliteSheet sheet = xcelite.getSheet(0);
-            SheetReader<AnyColumnBeanDoneWrong> beanReader = sheet.getBeanReader(AnyColumnBeanDoneWrong.class);
+            SheetReader<AnyColumnBeanDoneWrong> beanReader = sheet.getBeanReader(.class);
             Collection<AnyColumnBeanDoneWrong> datasets = beanReader.read();
             int cnt = 0;
             for (AnyColumnBeanDoneWrong row : datasets) {
-                new ArrayList<>(Arrays.asList(testData[cnt++]));
+                new ArrayList<>(Arrays.asList(AnyColumnTest.testData[cnt++]));
                 new ArrayList(row.getColumns().values());
             }
         };
-
-        assertThrows(XceliteException.class, testClosure, "Should have thrown an exception" +
-                " because of multiple @AnyColumn annotations");
-
+        assertThrows(XceliteException.class, testClosure, "Should have thrown an exception" + " because of multiple @AnyColumn annotations");
     }
 
     /**
@@ -172,6 +150,7 @@ class AnyColumnTest {
             cnt++;
         }
     }
+
     @Test
     @DisplayName("Must throw an exception because of @AnyColumn annotation on wrong type")
     @SuppressWarnings("unchecked")

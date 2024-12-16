@@ -19,16 +19,15 @@ import com.ebay.xcelite.exceptions.EmptyRowException;
 import com.ebay.xcelite.options.XceliteOptions;
 import com.ebay.xcelite.sheet.XceliteSheet;
 import com.ebay.xcelite.sheet.XceliteSheetImpl;
-import lombok.SneakyThrows;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
+import lombok.SneakyThrows;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import static com.ebay.xcelite.policies.MissingRowPolicy.SKIP;
+
 
 /**
  * Implementation of the {@link SheetReader} interface that returns the contents
@@ -47,15 +46,19 @@ import static com.ebay.xcelite.policies.MissingRowPolicy.SKIP;
  */
 public class SimpleSheetReader extends AbstractSheetReader<Collection<Object>> {
     @Override
-    public boolean expectsHeaderRow(){return false;}
+    public boolean expectsHeaderRow() {
+        return false;
+    }
 
     /**
      * Construct a SimpleSheetReader with custom options. The Reader will create
      * a copy of the options object, therefore later changes of this object will not
      * influence the behavior of this reader
      *
-     * @param sheet the {@link XceliteSheet} to read from
-     * @param options the {@link XceliteOptions} to configure the reader
+     * @param sheet
+     * 		the {@link XceliteSheet} to read from
+     * @param options
+     * 		the {@link XceliteOptions} to configure the reader
      */
     public SimpleSheetReader(XceliteSheet sheet, XceliteOptions options) {
         super(sheet, options);
@@ -63,7 +66,9 @@ public class SimpleSheetReader extends AbstractSheetReader<Collection<Object>> {
 
     /**
      * Construct a SimpleSheetReader with options from the {@link XceliteSheet}
-     * @param sheet the {@link XceliteSheet} to read from
+     *
+     * @param sheet
+     * 		the {@link XceliteSheet} to read from
      */
     public SimpleSheetReader(XceliteSheet sheet) {
         this(sheet, sheet.getOptions());
@@ -73,31 +78,31 @@ public class SimpleSheetReader extends AbstractSheetReader<Collection<Object>> {
      * No-Op for SimpleSheetReader, we don't handle headers
      */
     @Override
-    void buildHeader(Row row) {}
+    void buildHeader(Row row) {
+    }
 
     /**
      * No-Op for SimpleSheetReader, we don't handle headers
      */
     @Override
-    void validateColumns() {}
-
+    void validateColumns() {
+    }
 
     @SneakyThrows
     @Override
     public Collection<Object> fillObject(Row excelRow) {
         Collection<Object> row = getNewObject();
         Iterator<Cell> cellIterator = excelRow.cellIterator();
-
         while (cellIterator.hasNext()) {
             Object value = readValueFromCell(cellIterator.next());
             row.add(value);
-        }
+        } 
         return row;
     }
 
     @Override
     @SneakyThrows
-    Collection<Object> getNewObject(){
+    Collection<Object> getNewObject() {
         return new ArrayList<>();
     }
 }
