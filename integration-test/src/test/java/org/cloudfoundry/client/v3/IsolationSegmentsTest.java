@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cloudfoundry.client.v3;
 
+import java.time.Duration;
+import java.util.concurrent.TimeoutException;
 import org.cloudfoundry.AbstractIntegrationTest;
 import org.cloudfoundry.CloudFoundryVersion;
 import org.cloudfoundry.IfCloudFoundryVersion;
@@ -48,15 +49,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
-import java.time.Duration;
-import java.util.concurrent.TimeoutException;
-
 import static org.cloudfoundry.util.tuple.TupleUtils.function;
+
 
 @IfCloudFoundryVersion(greaterThanOrEqualTo = CloudFoundryVersion.PCF_1_11)
 public final class IsolationSegmentsTest extends AbstractIntegrationTest {
-
     @Autowired
     private CloudFoundryClient cloudFoundryClient;
 
@@ -64,26 +61,7 @@ public final class IsolationSegmentsTest extends AbstractIntegrationTest {
     public void addOrganizationEntitlement() throws TimeoutException, InterruptedException {
         String isolationSegmentName = this.nameFactory.getIsolationSegmentName();
         String organizationName = this.nameFactory.getOrganizationName();
-
-        Mono.zip(
-            createIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName),
-            createOrganizationId(this.cloudFoundryClient, organizationName)
-        )
-            .flatMap(function((isolationSegmentId, organizationId) -> Mono.zip(
-                Mono.just(organizationId),
-                this.cloudFoundryClient.isolationSegments()
-                    .addOrganizationEntitlement(AddIsolationSegmentOrganizationEntitlementRequest.builder()
-                        .data(Relationship.builder()
-                            .id(organizationId)
-                            .build())
-                        .isolationSegmentId(isolationSegmentId)
-                        .build())
-                    .map(response -> response.getData().get(0).getId()))
-            ))
-            .as(StepVerifier::create)
-            .consumeNextWith(tupleEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        Mono.zip(createIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName), createOrganizationId(this.cloudFoundryClient, organizationName)).flatMap(function(( isolationSegmentId, organizationId) -> Mono.zip(Mono.just(organizationId), this.cloudFoundryClient.isolationSegments().addOrganizationEntitlement(AddIsolationSegmentOrganizationEntitlementRequest.builder().data(Relationship.builder().id(organizationId).build()).isolationSegmentId(isolationSegmentId).build()).map(( response) -> response.getData().get(0).getId())))).as(StepVerifier::create).consumeNextWith(tupleEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
@@ -106,32 +84,13 @@ public final class IsolationSegmentsTest extends AbstractIntegrationTest {
     @Test
     public void delete() throws TimeoutException, InterruptedException {
         String isolationSegmentName = this.nameFactory.getIsolationSegmentName();
-
-        createIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName)
-            .flatMap(isolationSegmentId -> this.cloudFoundryClient.isolationSegments()
-                .delete(DeleteIsolationSegmentRequest.builder()
-                    .isolationSegmentId(isolationSegmentId)
-                    .build()))
-            .thenMany(requestListIsolationSegments(this.cloudFoundryClient, isolationSegmentName))
-            .as(StepVerifier::create)
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        createIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName).flatMap(( isolationSegmentId) -> this.cloudFoundryClient.isolationSegments().delete(DeleteIsolationSegmentRequest.builder().isolationSegmentId(isolationSegmentId).build())).thenMany(requestListIsolationSegments(this.cloudFoundryClient, isolationSegmentName)).as(StepVerifier::create).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void get() throws TimeoutException, InterruptedException {
         String isolationSegmentName = this.nameFactory.getIsolationSegmentName();
-
-        createIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName)
-            .flatMap(isolationSegmentId -> this.cloudFoundryClient.isolationSegments()
-                .get(GetIsolationSegmentRequest.builder()
-                    .isolationSegmentId(isolationSegmentId)
-                    .build())
-                .map(GetIsolationSegmentResponse::getName))
-            .as(StepVerifier::create)
-            .expectNext(isolationSegmentName)
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        createIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName).flatMap(( isolationSegmentId) -> this.cloudFoundryClient.isolationSegments().get(GetIsolationSegmentRequest.builder().isolationSegmentId(isolationSegmentId).build()).map(GetIsolationSegmentResponse::getName)).as(StepVerifier::create).expectNext(isolationSegmentName).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
@@ -154,53 +113,14 @@ public final class IsolationSegmentsTest extends AbstractIntegrationTest {
     public void listEntitledOrganizations() throws TimeoutException, InterruptedException {
         String isolationSegmentName = this.nameFactory.getIsolationSegmentName();
         String organizationName = this.nameFactory.getOrganizationName();
-
-        createOrganizationId(this.cloudFoundryClient, organizationName)
-            .flatMap(organizationId -> Mono.zip(
-                createEntitledIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName, organizationId),
-                Mono.just(organizationId)
-            ))
-            .flatMapMany(function((isolationSegmentId, organizationId) -> Mono.zip(
-                Mono.just(organizationId),
-                PaginationUtils.requestClientV3Resources(page -> this.cloudFoundryClient.isolationSegments()
-                    .listEntitledOrganizations(ListIsolationSegmentEntitledOrganizationsRequest.builder()
-                        .isolationSegmentId(isolationSegmentId)
-                        .page(page)
-                        .build()))
-                    .map(OrganizationResource::getId)
-                    .single()
-            )))
-            .as(StepVerifier::create)
-            .consumeNextWith(tupleEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        createOrganizationId(this.cloudFoundryClient, organizationName).flatMap(( organizationId) -> Mono.zip(createEntitledIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName, organizationId), Mono.just(organizationId))).flatMapMany(function(( isolationSegmentId, organizationId) -> Mono.zip(Mono.just(organizationId), PaginationUtils.requestClientV3Resources(( page) -> this.cloudFoundryClient.isolationSegments().listEntitledOrganizations(ListIsolationSegmentEntitledOrganizationsRequest.builder().isolationSegmentId(isolationSegmentId).page(page).build())).map(OrganizationResource::getId).single()))).as(StepVerifier::create).consumeNextWith(tupleEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void listEntitledOrganizationsFilterByName() throws TimeoutException, InterruptedException {
         String isolationSegmentName = this.nameFactory.getIsolationSegmentName();
         String organizationName = this.nameFactory.getOrganizationName();
-
-        createOrganizationId(this.cloudFoundryClient, organizationName)
-            .flatMap(organizationId -> Mono.zip(
-                createEntitledIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName, organizationId),
-                Mono.just(organizationId)
-            ))
-            .flatMapMany(function((isolationSegmentId, organizationId) -> Mono.zip(
-                Mono.just(organizationId),
-                PaginationUtils.requestClientV3Resources(page -> this.cloudFoundryClient.isolationSegments()
-                    .listEntitledOrganizations(ListIsolationSegmentEntitledOrganizationsRequest.builder()
-                        .isolationSegmentId(isolationSegmentId)
-                        .name(organizationName)
-                        .page(page)
-                        .build()))
-                    .map(OrganizationResource::getId)
-                    .single()
-            )))
-            .as(StepVerifier::create)
-            .consumeNextWith(tupleEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        createOrganizationId(this.cloudFoundryClient, organizationName).flatMap(( organizationId) -> Mono.zip(createEntitledIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName, organizationId), Mono.just(organizationId))).flatMapMany(function(( isolationSegmentId, organizationId) -> Mono.zip(Mono.just(organizationId), PaginationUtils.requestClientV3Resources(( page) -> this.cloudFoundryClient.isolationSegments().listEntitledOrganizations(ListIsolationSegmentEntitledOrganizationsRequest.builder().isolationSegmentId(isolationSegmentId).name(organizationName).page(page).build())).map(OrganizationResource::getId).single()))).as(StepVerifier::create).consumeNextWith(tupleEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
@@ -240,21 +160,7 @@ public final class IsolationSegmentsTest extends AbstractIntegrationTest {
     public void listFilterByOrganizationId() throws TimeoutException, InterruptedException {
         String isolationSegmentName = this.nameFactory.getIsolationSegmentName();
         String organizationName = this.nameFactory.getOrganizationName();
-
-        createOrganizationId(this.cloudFoundryClient, organizationName)
-            .flatMap(organizationId -> createEntitledIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName, organizationId)
-                .then(Mono.just(organizationId)))
-            .flatMapMany(organizationId -> PaginationUtils
-                .requestClientV3Resources(page -> this.cloudFoundryClient.isolationSegments()
-                    .list(ListIsolationSegmentsRequest.builder()
-                        .organizationId(organizationId)
-                        .page(page)
-                        .build())))
-            .filter(resource -> isolationSegmentName.equals(resource.getName()))
-            .as(StepVerifier::create)
-            .expectNextCount(1)
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        createOrganizationId(this.cloudFoundryClient, organizationName).delayUntil(( organizationId) -> createEntitledIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName, organizationId)).flatMapMany(( organizationId) -> PaginationUtils.requestClientV3Resources(( page) -> this.cloudFoundryClient.isolationSegments().list(ListIsolationSegmentsRequest.builder().organizationId(organizationId).page(page).build()))).filter(( resource) -> isolationSegmentName.equals(resource.getName())).as(StepVerifier::create).expectNextCount(1).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
@@ -262,33 +168,7 @@ public final class IsolationSegmentsTest extends AbstractIntegrationTest {
         String isolationSegmentName = this.nameFactory.getIsolationSegmentName();
         String organizationName = this.nameFactory.getOrganizationName();
         String spaceName = this.nameFactory.getSpaceName();
-
-        createOrganizationId(this.cloudFoundryClient, organizationName)
-            .flatMap(organizationId -> Mono.zip(
-                Mono.just(organizationId),
-                createSpaceId(this.cloudFoundryClient, organizationId, spaceName)
-            ))
-            .flatMap(function((organizationId, spaceId) -> Mono.zip(
-                createEntitledIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName, organizationId),
-                Mono.just(organizationId),
-                Mono.just(spaceId)
-            )))
-            .flatMap(function((isolationSegmentId, organizationId, spaceId) -> Mono.zip(
-                requestAssignIsolationSegment(this.cloudFoundryClient, isolationSegmentId, spaceId)
-                    .then(Mono.just(isolationSegmentId)),
-                Mono.just(organizationId)
-            )))
-            .flatMapMany(function((isolationSegmentId, organizationId) -> Mono.zip(
-                Mono.just(organizationId),
-                this.cloudFoundryClient.isolationSegments()
-                    .listOrganizationsRelationship(ListIsolationSegmentOrganizationsRelationshipRequest.builder()
-                        .isolationSegmentId(isolationSegmentId)
-                        .build())
-                    .map(response -> response.getData().get(0).getId()))))
-            .as(StepVerifier::create)
-            .consumeNextWith(tupleEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        createOrganizationId(this.cloudFoundryClient, organizationName).flatMap(( organizationId) -> Mono.when(Mono.just(organizationId), createSpaceId(this.cloudFoundryClient, organizationId, spaceName))).then(function(( organizationId, spaceId) -> Mono.zip(createEntitledIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName, organizationId), Mono.just(organizationId), Mono.just(spaceId)))).flatMap(function(( isolationSegmentId, organizationId, spaceId) -> Mono.zip(requestAssignIsolationSegment(this.cloudFoundryClient, isolationSegmentId, spaceId).then(Mono.just(isolationSegmentId)), Mono.just(organizationId)))).flatMapMany(function(( isolationSegmentId, organizationId) -> Mono.zip(Mono.just(organizationId), this.cloudFoundryClient.isolationSegments().listOrganizationsRelationship(ListIsolationSegmentOrganizationsRelationshipRequest.builder().isolationSegmentId(isolationSegmentId).build()).map(( response) -> response.getData().get(0).getId())))).as(StepVerifier::create).consumeNextWith(tupleEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
@@ -296,78 +176,25 @@ public final class IsolationSegmentsTest extends AbstractIntegrationTest {
         String isolationSegmentName = this.nameFactory.getIsolationSegmentName();
         String organizationName = this.nameFactory.getOrganizationName();
         String spaceName = this.nameFactory.getSpaceName();
-
-        createOrganizationId(this.cloudFoundryClient, organizationName)
-            .flatMap(organizationId -> Mono.zip(
-                Mono.just(organizationId),
-                createSpaceId(this.cloudFoundryClient, organizationId, spaceName)
-            ))
-            .flatMap(function((organizationId, spaceId) -> Mono.zip(
-                createEntitledIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName, organizationId),
-                Mono.just(spaceId)
-            )))
-            .delayUntil(function((isolationSegmentId, spaceId) -> requestAssignIsolationSegment(this.cloudFoundryClient, isolationSegmentId, spaceId)))
-            .flatMapMany(function((isolationSegmentId, spaceId) -> Mono.zip(
-                Mono.just(spaceId),
-                this.cloudFoundryClient.isolationSegments()
-                    .listSpacesRelationship(ListIsolationSegmentSpacesRelationshipRequest.builder()
-                        .isolationSegmentId(isolationSegmentId)
-                        .build())
-                    .map(response -> response.getData().get(0).getId()))))
-            .as(StepVerifier::create)
-            .consumeNextWith(tupleEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        createOrganizationId(this.cloudFoundryClient, organizationName).flatMap(( organizationId) -> Mono.when(Mono.just(organizationId), createSpaceId(this.cloudFoundryClient, organizationId, spaceName))).then(function(( organizationId, spaceId) -> Mono.zip(createEntitledIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName, organizationId), Mono.just(spaceId)))).delayUntil(function(( isolationSegmentId, spaceId) -> requestAssignIsolationSegment(this.cloudFoundryClient, isolationSegmentId, spaceId))).flatMapMany(function(( isolationSegmentId, spaceId) -> Mono.zip(Mono.just(spaceId), this.cloudFoundryClient.isolationSegments().listSpacesRelationship(ListIsolationSegmentSpacesRelationshipRequest.builder().isolationSegmentId(isolationSegmentId).build()).map(( response) -> response.getData().get(0).getId())))).as(StepVerifier::create).consumeNextWith(tupleEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void removeOrganizationEntitlement() throws TimeoutException, InterruptedException {
         String isolationSegmentName = this.nameFactory.getIsolationSegmentName();
         String organizationName = this.nameFactory.getOrganizationName();
-
-        Mono.zip(
-            createIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName),
-            createOrganizationId(this.cloudFoundryClient, organizationName)
-        )
-            .delayUntil(function((isolationSegmentId, organizationId) -> requestAddOrganizationEntitlement(this.cloudFoundryClient, isolationSegmentId, organizationId)))
-            .flatMap(function((isolationSegmentId, organizationId) -> this.cloudFoundryClient.isolationSegments()
-                .removeOrganizationEntitlement(RemoveIsolationSegmentOrganizationEntitlementRequest.builder()
-                    .isolationSegmentId(isolationSegmentId)
-                    .organizationId(organizationId)
-                    .build())
-                .then(Mono.just(isolationSegmentId))))
-            .flatMapMany(isolationSegmentId -> PaginationUtils
-                .requestClientV3Resources(page -> this.cloudFoundryClient.isolationSegments()
-                    .listEntitledOrganizations(ListIsolationSegmentEntitledOrganizationsRequest.builder()
-                        .isolationSegmentId(isolationSegmentId)
-                        .build())))
-            .as(StepVerifier::create)
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        Mono.zip(createIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName), createOrganizationId(this.cloudFoundryClient, organizationName)).delayUntil(function(( isolationSegmentId, organizationId) -> requestAddOrganizationEntitlement(this.cloudFoundryClient, isolationSegmentId, organizationId))).flatMap(function(( isolationSegmentId, organizationId) -> this.cloudFoundryClient.isolationSegments().removeOrganizationEntitlement(RemoveIsolationSegmentOrganizationEntitlementRequest.builder().isolationSegmentId(isolationSegmentId).organizationId(organizationId).build()).then(Mono.just(isolationSegmentId)))).flatMapMany(( isolationSegmentId) -> PaginationUtils.requestClientV3Resources(( page) -> this.cloudFoundryClient.isolationSegments().listEntitledOrganizations(ListIsolationSegmentEntitledOrganizationsRequest.builder().isolationSegmentId(isolationSegmentId).build()))).as(StepVerifier::create).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void update() throws TimeoutException, InterruptedException {
         String isolationSegmentName1 = this.nameFactory.getIsolationSegmentName();
         String isolationSegmentName2 = this.nameFactory.getIsolationSegmentName();
-
-        createIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName1)
-            .flatMap(isolationSegmentId -> this.cloudFoundryClient.isolationSegments()
-                .update(UpdateIsolationSegmentRequest.builder()
-                    .isolationSegmentId(isolationSegmentId)
-                    .name(isolationSegmentName2)
-                    .build()))
-            .thenMany(requestListIsolationSegments(this.cloudFoundryClient, isolationSegmentName2))
-            .map(IsolationSegmentResource::getName)
-            .as(StepVerifier::create)
-            .expectNext(isolationSegmentName2)
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        createIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName1).flatMap(( isolationSegmentId) -> this.cloudFoundryClient.isolationSegments().update(UpdateIsolationSegmentRequest.builder().isolationSegmentId(isolationSegmentId).name(isolationSegmentName2).build())).thenMany(requestListIsolationSegments(this.cloudFoundryClient, isolationSegmentName2)).map(IsolationSegmentResource::getName).as(StepVerifier::create).expectNext(isolationSegmentName2).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     private static Mono<String> createEntitledIsolationSegmentId(CloudFoundryClient cloudFoundryClient, String isolationSegmentName, String organizationId) {
-        return createIsolationSegmentId(cloudFoundryClient, isolationSegmentName)
-            .delayUntil(isolationSegmentId -> requestAddIsolationSegmentOrganizationEntitlement(cloudFoundryClient, isolationSegmentId, organizationId));
+        return createIsolationSegmentId(cloudFoundryClient, isolationSegmentName).delayUntil(( isolationSegmentId) -> requestAddIsolationSegmentOrganizationEntitlement(cloudFoundryClient, isolationSegmentId, organizationId));
     }
 
     private static Mono<String> createIsolationSegmentId(CloudFoundryClient cloudFoundryClient, String isolationSegmentName) {
@@ -445,5 +272,4 @@ public final class IsolationSegmentsTest extends AbstractIntegrationTest {
                 .page(page)
                 .build()));
     }
-
 }
