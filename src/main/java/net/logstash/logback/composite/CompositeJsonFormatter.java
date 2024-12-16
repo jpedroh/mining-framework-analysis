@@ -13,22 +13,12 @@
  */
 package net.logstash.logback.composite;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.lang.ref.SoftReference;
-
-import net.logstash.logback.decorate.JsonFactoryDecorator;
-import net.logstash.logback.decorate.JsonGeneratorDecorator;
-import net.logstash.logback.decorate.NullJsonFactoryDecorator;
-import net.logstash.logback.decorate.NullJsonGeneratorDecorator;
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.spi.ContextAware;
 import ch.qos.logback.core.spi.ContextAwareBase;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import ch.qos.logback.core.spi.LifeCycle;
-
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -37,6 +27,15 @@ import com.fasterxml.jackson.core.util.BufferRecycler;
 import com.fasterxml.jackson.core.util.ByteArrayBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.lang.ref.SoftReference;
+import net.logstash.logback.decorate.JsonFactoryDecorator;
+import net.logstash.logback.decorate.JsonGeneratorDecorator;
+import net.logstash.logback.decorate.NullJsonFactoryDecorator;
+import net.logstash.logback.decorate.NullJsonGeneratorDecorator;
+
 
 /**
  * Formats logstash Events as JSON using {@link JsonProvider}s.
@@ -66,7 +65,29 @@ public abstract class CompositeJsonFormatter<Event extends DeferredProcessingAwa
     /**
      * Used to create the necessary {@link JsonGenerator}s for generating JSON.
      */
-    private JsonFactory jsonFactory;
+<<<<<<< LEFT
+    private JsonFactory jsonFactory = new ObjectMapper()
+        /*
+         * Assume empty beans are ok.
+         */
+        .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+        .getFactory()
+        /*
+         * When generators are flushed, don't flush the underlying outputStream.
+         * 
+         * This allows some streaming optimizations when using an encoder.
+         * 
+         * The encoder generally determines when the stream should be flushed
+         * by an 'immediateFlush' property.
+         * 
+         * The 'immediateFlush' property of the encoder can be set to false
+         * when the appender performs the flushes at appropriate times
+         * (such as the end of a batch in the AbstractLogstashTcpSocketAppender).
+         */
+        .disable(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM);
+=======
+    private MappingJsonFactory jsonFactory;
+>>>>>>> RIGHT
 
     /**
      * Decorates the {@link #jsonFactory}.
@@ -118,7 +139,7 @@ public abstract class CompositeJsonFormatter<Event extends DeferredProcessingAwa
         return started;
     }
 
-    private JsonFactory createJsonFactory() {
+    private MappingJsonFactory createJsonFactory() {
         ObjectMapper objectMapper = new ObjectMapper()
                 /*
                  * Assume empty beans are ok.
@@ -129,7 +150,7 @@ public abstract class CompositeJsonFormatter<Event extends DeferredProcessingAwa
             objectMapper.findAndRegisterModules();
         }
 
-        JsonFactory jsonFactory = objectMapper
+        MappingJsonFactory jsonFactory = (MappingJsonFactory) objectMapper
                 .getFactory()
                 /*
                  * When generators are flushed, don't flush the underlying outputStream.
