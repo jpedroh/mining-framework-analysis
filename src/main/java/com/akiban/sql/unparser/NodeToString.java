@@ -23,200 +23,198 @@
  * USE OF THE SOFTWARE, THE TERMS AND CONDITIONS OF SUCH OTHER AGREEMENT SHALL
  * PREVAIL OVER ANY CONFLICTING TERMS OR CONDITIONS IN THIS AGREEMENT.
  */
-
 package com.akiban.sql.unparser;
 
-import com.akiban.sql.parser.*;
-
 import com.akiban.sql.StandardException;
+import com.akiban.sql.parser.*;
 import com.akiban.sql.types.DataTypeDescriptor;
 
-public class NodeToString
-{
+
+public class NodeToString {
     public NodeToString() {
     }
 
     public String toString(QueryTreeNode node) throws StandardException {
         switch (node.getNodeType()) {
-        case NodeTypes.CREATE_TABLE_NODE:
-            return createTableNode((CreateTableNode)node);
-        case NodeTypes.CREATE_VIEW_NODE:
-            return createViewNode((CreateViewNode)node);
-        case NodeTypes.DROP_TABLE_NODE:
-        case NodeTypes.DROP_VIEW_NODE:
-        case NodeTypes.DROP_TRIGGER_NODE:
-            return qualifiedDDLNode((DDLStatementNode)node);
-        case NodeTypes.DROP_INDEX_NODE:
-            return dropIndexNode((DropIndexNode)node);
-        case NodeTypes.EXPLAIN_STATEMENT_NODE:
-            return explainStatementNode((ExplainStatementNode)node);
-        case NodeTypes.TRANSACTION_CONTROL_NODE:
-            return transactionControlNode((TransactionControlNode)node);
-        case NodeTypes.SET_TRANSACTION_ISOLATION_NODE:
-            return setTransactionIsolationNode((SetTransactionIsolationNode)node);
-        case NodeTypes.SET_TRANSACTION_ACCESS_NODE:
-            return setTransactionAccessNode((SetTransactionAccessNode)node);
-        case NodeTypes.SET_CONFIGURATION_NODE:
-            return setConfigurationNode((SetConfigurationNode)node);
-        case NodeTypes.TABLE_ELEMENT_LIST:
-            return tableElementList((TableElementList)node);
-        case NodeTypes.COLUMN_DEFINITION_NODE:
-            return columnDefinitionNode((ColumnDefinitionNode)node);
-        case NodeTypes.CONSTRAINT_DEFINITION_NODE:
-            return constraintDefinitionNode((ConstraintDefinitionNode)node);
-        case NodeTypes.FK_CONSTRAINT_DEFINITION_NODE:
-            return fkConstraintDefinitionNode((FKConstraintDefinitionNode)node);
-        case NodeTypes.CREATE_INDEX_NODE:
-            return createIndexNode((CreateIndexNode)node);
-        case NodeTypes.INDEX_COLUMN_LIST:
-            return indexColumnList((IndexColumnList)node);
-        case NodeTypes.INDEX_COLUMN:
-            return indexColumn((IndexColumn)node);
-        case NodeTypes.RENAME_NODE:
-            return renameNode((RenameNode)node);
-        case NodeTypes.CURSOR_NODE:
-            return cursorNode((CursorNode)node);
-        case NodeTypes.SELECT_NODE:
-            return selectNode((SelectNode)node);
-        case NodeTypes.INSERT_NODE:
-            return insertNode((InsertNode)node);
-        case NodeTypes.UPDATE_NODE:
-            return updateNode((UpdateNode)node);
-        case NodeTypes.DELETE_NODE:
-            return deleteNode((DeleteNode)node);
-        case NodeTypes.SUBQUERY_NODE:
-            return subqueryNode((SubqueryNode)node);
-        case NodeTypes.RESULT_COLUMN_LIST:
-            return resultColumnList((ResultColumnList)node);
-        case NodeTypes.RESULT_COLUMN:
-            return resultColumn((ResultColumn)node);
-        case NodeTypes.ALL_RESULT_COLUMN:
-            return allResultColumn((AllResultColumn)node);
-        case NodeTypes.FROM_LIST:
-            return fromList((FromList)node);
-        case NodeTypes.JOIN_NODE:
-        case NodeTypes.HALF_OUTER_JOIN_NODE:
-            return joinNode((JoinNode)node);
-        case NodeTypes.UNION_NODE:
-            return unionNode((UnionNode)node);
-        case NodeTypes.GROUP_BY_LIST:
-            return groupByList((GroupByList)node);
-        case NodeTypes.ORDER_BY_LIST:
-            return orderByList((OrderByList)node);
-        case NodeTypes.VALUE_NODE_LIST:
-            return valueNodeList((ValueNodeList)node);
-        case NodeTypes.FROM_BASE_TABLE:
-            return fromBaseTable((FromBaseTable)node);
-        case NodeTypes.FROM_SUBQUERY:
-            return fromSubquery((FromSubquery)node);
-        case NodeTypes.TABLE_NAME:
-            return tableName((TableName)node);
-        case NodeTypes.COLUMN_REFERENCE:
-            return columnReference((ColumnReference)node);
-        case NodeTypes.VIRTUAL_COLUMN_NODE:
-            return virtualColumnNode((VirtualColumnNode)node);
-        case NodeTypes.ROW_RESULT_SET_NODE:
-            return rowResultSetNode((RowResultSetNode)node);
-        case NodeTypes.ROWS_RESULT_SET_NODE:
-            return rowsResultSetNode((RowsResultSetNode)node);
-        case NodeTypes.GROUP_BY_COLUMN:
-            return groupByColumn((GroupByColumn)node);
-        case NodeTypes.ORDER_BY_COLUMN:
-            return orderByColumn((OrderByColumn)node);
-        case NodeTypes.AND_NODE:
-        case NodeTypes.OR_NODE:
-            return binaryLogicalOperatorNode((BinaryLogicalOperatorNode)node);
-        case NodeTypes.BINARY_EQUALS_OPERATOR_NODE:
-        case NodeTypes.BINARY_NOT_EQUALS_OPERATOR_NODE:
-        case NodeTypes.BINARY_GREATER_THAN_OPERATOR_NODE:
-        case NodeTypes.BINARY_GREATER_EQUALS_OPERATOR_NODE:
-        case NodeTypes.BINARY_LESS_THAN_OPERATOR_NODE:
-        case NodeTypes.BINARY_LESS_EQUALS_OPERATOR_NODE:
-            return binaryComparisonOperatorNode((BinaryComparisonOperatorNode)node);
-        case NodeTypes.BINARY_PLUS_OPERATOR_NODE:
-        case NodeTypes.BINARY_TIMES_OPERATOR_NODE:
-        case NodeTypes.BINARY_DIVIDE_OPERATOR_NODE:
-        case NodeTypes.BINARY_DIV_OPERATOR_NODE:
-        case NodeTypes.BINARY_MINUS_OPERATOR_NODE:
-            return binaryArithmeticOperatorNode((BinaryArithmeticOperatorNode)node);
-        case NodeTypes.CONCATENATION_OPERATOR_NODE:
-            return concatenationOperatorNode((ConcatenationOperatorNode)node);
-        case NodeTypes.NOT_NODE:
-            return notNode((NotNode)node);
-        case NodeTypes.IS_NULL_NODE:
-        case NodeTypes.IS_NOT_NULL_NODE:
-            return isNullNode((IsNullNode)node);
-        case NodeTypes.IS_NODE:
-            return isNode((IsNode)node);
-        case NodeTypes.UNARY_DATE_TIMESTAMP_OPERATOR_NODE:
-          return unaryDateTimestampOperatorNode((UnaryDateTimestampOperatorNode)node);
-        case NodeTypes.LIKE_OPERATOR_NODE:
-            return likeEscapeOperatorNode((LikeEscapeOperatorNode)node);
-        case NodeTypes.IN_LIST_OPERATOR_NODE:
-            return inListOperatorNode((InListOperatorNode)node);
-        case NodeTypes.ROW_CTOR_NODE:
-            return rowCtorNode((RowConstructorNode)node);
-        case NodeTypes.BETWEEN_OPERATOR_NODE:
-            return betweenOperatorNode((BetweenOperatorNode)node);
-        case NodeTypes.CONDITIONAL_NODE:
-            return conditionalNode((ConditionalNode)node);
-        case NodeTypes.COALESCE_FUNCTION_NODE:
-            return coalesceFunctionNode((CoalesceFunctionNode)node);
-        case NodeTypes.AGGREGATE_NODE:
-            return aggregateNode((AggregateNode)node);
-        case NodeTypes.UNTYPED_NULL_CONSTANT_NODE:
-        case NodeTypes.SQL_BOOLEAN_CONSTANT_NODE:
-        case NodeTypes.BOOLEAN_CONSTANT_NODE:
-        case NodeTypes.BIT_CONSTANT_NODE:
-        case NodeTypes.VARBIT_CONSTANT_NODE:
-        case NodeTypes.CHAR_CONSTANT_NODE:
-        case NodeTypes.DECIMAL_CONSTANT_NODE:
-        case NodeTypes.DOUBLE_CONSTANT_NODE:
-        case NodeTypes.FLOAT_CONSTANT_NODE:
-        case NodeTypes.INT_CONSTANT_NODE:
-        case NodeTypes.LONGINT_CONSTANT_NODE:
-        case NodeTypes.LONGVARBIT_CONSTANT_NODE:
-        case NodeTypes.LONGVARCHAR_CONSTANT_NODE:
-        case NodeTypes.SMALLINT_CONSTANT_NODE:
-        case NodeTypes.TINYINT_CONSTANT_NODE:
-        case NodeTypes.USERTYPE_CONSTANT_NODE:
-        case NodeTypes.VARCHAR_CONSTANT_NODE:
-        case NodeTypes.BLOB_CONSTANT_NODE:
-        case NodeTypes.CLOB_CONSTANT_NODE:
-        case NodeTypes.XML_CONSTANT_NODE:
-            return constantNode((ConstantNode)node);
-        case NodeTypes.PARAMETER_NODE:
-            return parameterNode((ParameterNode)node);
-        case NodeTypes.USER_NODE:
-            return "USER";
-        case NodeTypes.CURRENT_USER_NODE:
-            return "CURRENT_USER";
-        case NodeTypes.SESSION_USER_NODE:
-            return "SESSION_USER";
-        case NodeTypes.SYSTEM_USER_NODE:
-            return "SYSTEM_USER";
-        case NodeTypes.CURRENT_ISOLATION_NODE:
-            return "CURRENT ISOLATION";
-        case NodeTypes.IDENTITY_VAL_NODE:
-            return "IDENTITY_VAL_LOCAL()";
-        case NodeTypes.CURRENT_SCHEMA_NODE:
-            return "CURRENT SCHEMA";
-        case NodeTypes.CURRENT_ROLE_NODE:
-            return "CURRENT_ROLE";
-        case NodeTypes.CURRENT_DATETIME_OPERATOR_NODE:
-            return currentDatetimeOperatorNode((CurrentDatetimeOperatorNode)node);
-        case NodeTypes.CAST_NODE:
-            return castNode((CastNode)node);
-        case NodeTypes.JAVA_TO_SQL_VALUE_NODE:
-            return javaToSQLValueNode((JavaToSQLValueNode)node);
-        case NodeTypes.SQL_TO_JAVA_VALUE_NODE:
-            return sqlToJavaValueNode((SQLToJavaValueNode)node);
-        case NodeTypes.STATIC_METHOD_CALL_NODE:
-            return methodCallNode((MethodCallNode)node);
-        case NodeTypes.SPECIAL_INDEX_FUNC_NODE:
-            return zorderFuncNode((SpecialIndexFuncNode)node);
-        default:
-            return "**UNKNOWN(" + node.getNodeType() +")**";
+            case NodeTypes.CREATE_TABLE_NODE :
+                return createTableNode(((CreateTableNode) (node)));
+            case NodeTypes.CREATE_VIEW_NODE :
+                return createViewNode(((CreateViewNode) (node)));
+            case NodeTypes.DROP_TABLE_NODE :
+            case NodeTypes.DROP_VIEW_NODE :
+            case NodeTypes.DROP_TRIGGER_NODE :
+                return qualifiedDDLNode(((DDLStatementNode) (node)));
+            case NodeTypes.DROP_INDEX_NODE :
+                return dropIndexNode(((DropIndexNode) (node)));
+            case NodeTypes.EXPLAIN_STATEMENT_NODE :
+                return explainStatementNode(((ExplainStatementNode) (node)));
+            case NodeTypes.TRANSACTION_CONTROL_NODE :
+                return transactionControlNode(((TransactionControlNode) (node)));
+            case NodeTypes.SET_TRANSACTION_ISOLATION_NODE :
+                return setTransactionIsolationNode(((SetTransactionIsolationNode) (node)));
+            case NodeTypes.SET_TRANSACTION_ACCESS_NODE :
+                return setTransactionAccessNode(((SetTransactionAccessNode) (node)));
+            case NodeTypes.SET_CONFIGURATION_NODE :
+                return setConfigurationNode(((SetConfigurationNode) (node)));
+            case NodeTypes.TABLE_ELEMENT_LIST :
+                return tableElementList(((TableElementList) (node)));
+            case NodeTypes.COLUMN_DEFINITION_NODE :
+                return columnDefinitionNode(((ColumnDefinitionNode) (node)));
+            case NodeTypes.CONSTRAINT_DEFINITION_NODE :
+                return constraintDefinitionNode(((ConstraintDefinitionNode) (node)));
+            case NodeTypes.FK_CONSTRAINT_DEFINITION_NODE :
+                return fkConstraintDefinitionNode(((FKConstraintDefinitionNode) (node)));
+            case NodeTypes.CREATE_INDEX_NODE :
+                return createIndexNode(((CreateIndexNode) (node)));
+            case NodeTypes.INDEX_COLUMN_LIST :
+                return indexColumnList(((IndexColumnList) (node)));
+            case NodeTypes.INDEX_COLUMN :
+                return indexColumn(((IndexColumn) (node)));
+            case NodeTypes.RENAME_NODE :
+                return renameNode(((RenameNode) (node)));
+            case NodeTypes.CURSOR_NODE :
+                return cursorNode(((CursorNode) (node)));
+            case NodeTypes.SELECT_NODE :
+                return selectNode(((SelectNode) (node)));
+            case NodeTypes.INSERT_NODE :
+                return insertNode(((InsertNode) (node)));
+            case NodeTypes.UPDATE_NODE :
+                return updateNode(((UpdateNode) (node)));
+            case NodeTypes.DELETE_NODE :
+                return deleteNode(((DeleteNode) (node)));
+            case NodeTypes.SUBQUERY_NODE :
+                return subqueryNode(((SubqueryNode) (node)));
+            case NodeTypes.RESULT_COLUMN_LIST :
+                return resultColumnList(((ResultColumnList) (node)));
+            case NodeTypes.RESULT_COLUMN :
+                return resultColumn(((ResultColumn) (node)));
+            case NodeTypes.ALL_RESULT_COLUMN :
+                return allResultColumn(((AllResultColumn) (node)));
+            case NodeTypes.FROM_LIST :
+                return fromList(((FromList) (node)));
+            case NodeTypes.JOIN_NODE :
+            case NodeTypes.HALF_OUTER_JOIN_NODE :
+                return joinNode(((JoinNode) (node)));
+            case NodeTypes.UNION_NODE :
+                return unionNode(((UnionNode) (node)));
+            case NodeTypes.GROUP_BY_LIST :
+                return groupByList(((GroupByList) (node)));
+            case NodeTypes.ORDER_BY_LIST :
+                return orderByList(((OrderByList) (node)));
+            case NodeTypes.VALUE_NODE_LIST :
+                return valueNodeList(((ValueNodeList) (node)));
+            case NodeTypes.FROM_BASE_TABLE :
+                return fromBaseTable(((FromBaseTable) (node)));
+            case NodeTypes.FROM_SUBQUERY :
+                return fromSubquery(((FromSubquery) (node)));
+            case NodeTypes.TABLE_NAME :
+                return tableName(((TableName) (node)));
+            case NodeTypes.COLUMN_REFERENCE :
+                return columnReference(((ColumnReference) (node)));
+            case NodeTypes.VIRTUAL_COLUMN_NODE :
+                return virtualColumnNode(((VirtualColumnNode) (node)));
+            case NodeTypes.ROW_RESULT_SET_NODE :
+                return rowResultSetNode(((RowResultSetNode) (node)));
+            case NodeTypes.ROWS_RESULT_SET_NODE :
+                return rowsResultSetNode(((RowsResultSetNode) (node)));
+            case NodeTypes.GROUP_BY_COLUMN :
+                return groupByColumn(((GroupByColumn) (node)));
+            case NodeTypes.ORDER_BY_COLUMN :
+                return orderByColumn(((OrderByColumn) (node)));
+            case NodeTypes.AND_NODE :
+            case NodeTypes.OR_NODE :
+                return binaryLogicalOperatorNode(((BinaryLogicalOperatorNode) (node)));
+            case NodeTypes.BINARY_EQUALS_OPERATOR_NODE :
+            case NodeTypes.BINARY_NOT_EQUALS_OPERATOR_NODE :
+            case NodeTypes.BINARY_GREATER_THAN_OPERATOR_NODE :
+            case NodeTypes.BINARY_GREATER_EQUALS_OPERATOR_NODE :
+            case NodeTypes.BINARY_LESS_THAN_OPERATOR_NODE :
+            case NodeTypes.BINARY_LESS_EQUALS_OPERATOR_NODE :
+                return binaryComparisonOperatorNode(((BinaryComparisonOperatorNode) (node)));
+            case NodeTypes.BINARY_PLUS_OPERATOR_NODE :
+            case NodeTypes.BINARY_TIMES_OPERATOR_NODE :
+            case NodeTypes.BINARY_DIVIDE_OPERATOR_NODE :
+            case NodeTypes.BINARY_DIV_OPERATOR_NODE :
+            case NodeTypes.BINARY_MINUS_OPERATOR_NODE :
+                return binaryArithmeticOperatorNode(((BinaryArithmeticOperatorNode) (node)));
+            case NodeTypes.CONCATENATION_OPERATOR_NODE :
+                return concatenationOperatorNode(((ConcatenationOperatorNode) (node)));
+            case NodeTypes.NOT_NODE :
+                return notNode(((NotNode) (node)));
+            case NodeTypes.IS_NULL_NODE :
+            case NodeTypes.IS_NOT_NULL_NODE :
+                return isNullNode(((IsNullNode) (node)));
+            case NodeTypes.IS_NODE :
+                return isNode(((IsNode) (node)));
+            case NodeTypes.UNARY_DATE_TIMESTAMP_OPERATOR_NODE :
+                return unaryDateTimestampOperatorNode(((UnaryDateTimestampOperatorNode) (node)));
+            case NodeTypes.LIKE_OPERATOR_NODE :
+                return likeEscapeOperatorNode(((LikeEscapeOperatorNode) (node)));
+            case NodeTypes.IN_LIST_OPERATOR_NODE :
+                return inListOperatorNode(((InListOperatorNode) (node)));
+            case NodeTypes.ROW_CTOR_NODE :
+                return rowCtorNode(((RowConstructorNode) (node)));
+            case NodeTypes.BETWEEN_OPERATOR_NODE :
+                return betweenOperatorNode(((BetweenOperatorNode) (node)));
+            case NodeTypes.CONDITIONAL_NODE :
+                return conditionalNode(((ConditionalNode) (node)));
+            case NodeTypes.COALESCE_FUNCTION_NODE :
+                return coalesceFunctionNode(((CoalesceFunctionNode) (node)));
+            case NodeTypes.AGGREGATE_NODE :
+                return aggregateNode(((AggregateNode) (node)));
+            case NodeTypes.UNTYPED_NULL_CONSTANT_NODE :
+            case NodeTypes.SQL_BOOLEAN_CONSTANT_NODE :
+            case NodeTypes.BOOLEAN_CONSTANT_NODE :
+            case NodeTypes.BIT_CONSTANT_NODE :
+            case NodeTypes.VARBIT_CONSTANT_NODE :
+            case NodeTypes.CHAR_CONSTANT_NODE :
+            case NodeTypes.DECIMAL_CONSTANT_NODE :
+            case NodeTypes.DOUBLE_CONSTANT_NODE :
+            case NodeTypes.FLOAT_CONSTANT_NODE :
+            case NodeTypes.INT_CONSTANT_NODE :
+            case NodeTypes.LONGINT_CONSTANT_NODE :
+            case NodeTypes.LONGVARBIT_CONSTANT_NODE :
+            case NodeTypes.LONGVARCHAR_CONSTANT_NODE :
+            case NodeTypes.SMALLINT_CONSTANT_NODE :
+            case NodeTypes.TINYINT_CONSTANT_NODE :
+            case NodeTypes.USERTYPE_CONSTANT_NODE :
+            case NodeTypes.VARCHAR_CONSTANT_NODE :
+            case NodeTypes.BLOB_CONSTANT_NODE :
+            case NodeTypes.CLOB_CONSTANT_NODE :
+            case NodeTypes.XML_CONSTANT_NODE :
+                return constantNode(((ConstantNode) (node)));
+            case NodeTypes.PARAMETER_NODE :
+                return parameterNode(((ParameterNode) (node)));
+            case NodeTypes.USER_NODE :
+                return "USER";
+            case NodeTypes.CURRENT_USER_NODE :
+                return "CURRENT_USER";
+            case NodeTypes.SESSION_USER_NODE :
+                return "SESSION_USER";
+            case NodeTypes.SYSTEM_USER_NODE :
+                return "SYSTEM_USER";
+            case NodeTypes.CURRENT_ISOLATION_NODE :
+                return "CURRENT ISOLATION";
+            case NodeTypes.IDENTITY_VAL_NODE :
+                return "IDENTITY_VAL_LOCAL()";
+            case NodeTypes.CURRENT_SCHEMA_NODE :
+                return "CURRENT SCHEMA";
+            case NodeTypes.CURRENT_ROLE_NODE :
+                return "CURRENT_ROLE";
+            case NodeTypes.CURRENT_DATETIME_OPERATOR_NODE :
+                return currentDatetimeOperatorNode(((CurrentDatetimeOperatorNode) (node)));
+            case NodeTypes.CAST_NODE :
+                return castNode(((CastNode) (node)));
+            case NodeTypes.JAVA_TO_SQL_VALUE_NODE :
+                return javaToSQLValueNode(((JavaToSQLValueNode) (node)));
+            case NodeTypes.SQL_TO_JAVA_VALUE_NODE :
+                return sqlToJavaValueNode(((SQLToJavaValueNode) (node)));
+            case NodeTypes.STATIC_METHOD_CALL_NODE :
+                return methodCallNode(((MethodCallNode) (node)));
+            case NodeTypes.SPECIAL_INDEX_FUNC_NODE :
+                return zorderFuncNode(((SpecialIndexFuncNode) (node)));
+            default :
+                return ("**UNKNOWN(" + node.getNodeType()) + ")**";
         }
     }
 
@@ -290,21 +288,19 @@ public class NodeToString
 
     protected String createIndexNode(CreateIndexNode node) throws StandardException {
         StringBuilder str = new StringBuilder("CREATE ");
-        if (node.getUniqueness())
+        if (node.getUniqueness()) {
             str.append("UNIQUE ");
+        }
         str.append("INDEX");
         str.append(" ");
-        
-        switch (node.getExistenceCheck())
-        {
-            case IF_EXISTS:
+        switch (node.getExistenceCheck()) {
+            case IF_EXISTS :
                 str.append("IF EXISTS ");
                 break;
-            case IF_NOT_EXISTS:
+            case IF_NOT_EXISTS :
                 str.append("IF NOT EXISTS ");
-                break;  
+                break;
         }
-
         str.append(toString(node.getIndexName()));
         str.append(" ON ");
         str.append(node.getIndexTableName());
@@ -516,7 +512,7 @@ public class NodeToString
     protected String resultColumnList(ResultColumnList node) throws StandardException {
         return nodeList(node);
     }
-    
+
     protected String resultColumn(ResultColumn node) throws StandardException {
         if (node.getReference() != null)
             return toString(node.getReference());
@@ -740,7 +736,7 @@ public class NodeToString
         return functionCall(node.getFunctionName(),
                                                 node.getArgumentsList());
     }
-    
+
     protected String constantNode(ConstantNode node) throws StandardException {
         Object value = node.getValue();
         if (value == null)
@@ -777,7 +773,7 @@ public class NodeToString
             " " + node.getOperator().toUpperCase() + " " +
             maybeParens(node.getRightOperand());
     }
-    
+
     protected String functionCall(String functionName, ValueNodeList args)
             throws StandardException {
         return functionName + "(" + nodeList(args, true) + ")";
@@ -880,12 +876,12 @@ public class NodeToString
             throws StandardException {
         return node.statementToString();
     }
-    
+
     protected String setTransactionIsolationNode(SetTransactionIsolationNode node)
             throws StandardException {
         return node.statementToString() + " " + node.getIsolationLevel().getSyntax();
     }
-    
+
     protected String setTransactionAccessNode(SetTransactionAccessNode node)
             throws StandardException {
         return node.statementToString() + " " + node.getAccessMode().getSyntax();
@@ -919,9 +915,7 @@ public class NodeToString
 
         return bd.substring(0, bd.length() -2); // delete the last (<COMMA> <SPACE>)
     }
-    
-     
-    
+
     protected void doPrint(QueryTreeNode node, StringBuilder bd) throws StandardException
     {
         if (node instanceof RowConstructorNode)
@@ -929,7 +923,7 @@ public class NodeToString
         else
             bd.append(toString(node));
     }
-    
+
     protected String zorderFuncNode (SpecialIndexFuncNode node)
     {
         return node.getFunctionType() + "(" 
