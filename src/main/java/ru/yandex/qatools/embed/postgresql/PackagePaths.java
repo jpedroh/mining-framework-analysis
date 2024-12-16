@@ -8,12 +8,13 @@ import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.embed.process.distribution.IVersion;
 import de.flapdoodle.embed.process.io.directories.IDirectory;
 
+
 /**
  * Paths builder
  */
 public class PackagePaths implements IPackageResolver {
-
     private final Command command;
+
     private final IDirectory tempDir;
 
     public PackagePaths(Command command, IDirectory tempDir) {
@@ -33,25 +34,19 @@ public class PackagePaths implements IPackageResolver {
     public FileSet getFileSet(Distribution distribution) {
         String cmdPattern;
         switch (distribution.getPlatform()) {
-            case Linux:
-            case OS_X:
+            case Linux :
+            case OS_X :
                 cmdPattern = command.commandName();
                 break;
-            case Windows:
+            case Windows :
                 cmdPattern = command.commandName() + ".exe";
                 break;
-            default:
-                throw new IllegalArgumentException("Unknown Platform "
-                        + distribution.getPlatform());
+            default :
+                throw new IllegalArgumentException("Unknown Platform " + distribution.getPlatform());
         }
         try {
-            return FileSet.builder()
-                    .addEntry(FileType.Executable, tempDir.asFile().getPath(),
-                            "^.*pgsql\\\\bin\\\\"+ cmdPattern+ "$")
-                                    .addEntry(FileType.Executable, tempDir.asFile().getPath(),
-                            "^.*pgsql/bin/" + cmdPattern + "$")
-                    .build();
-        } catch (Exception e) {
+            return FileSet.builder().addEntry(FileType.Executable, tempDir.asFile().getPath(), ("^.*pgsql\\\\bin\\\\" + cmdPattern) + "$").addEntry(FileType.Executable, tempDir.asFile().getPath(), ("^.*pgsql/bin/" + cmdPattern) + "$").build();
+        } catch (java.lang.Exception e) {
             throw new RuntimeException(e);
         }
     }

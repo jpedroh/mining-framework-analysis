@@ -7,15 +7,13 @@ import de.flapdoodle.embed.process.extract.IExtractedFileSet;
 import de.flapdoodle.embed.process.io.Slf4jLevel;
 import de.flapdoodle.embed.process.io.Slf4jStreamProcessor;
 import de.flapdoodle.embed.process.runtime.Starter;
+import java.lang.reflect.Constructor;
+import java.util.HashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.yandex.qatools.embed.postgresql.config.PostgresConfig;
 import ru.yandex.qatools.embed.postgresql.config.RuntimeConfigBuilder;
 import ru.yandex.qatools.embed.postgresql.ext.LogWatchStreamProcessor;
-
-import java.lang.reflect.Constructor;
-import java.util.HashSet;
-
 import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -23,9 +21,9 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Starter for every pg process
  */
-public class PostgresStarter<E extends AbstractPGExecutable<PostgresConfig, P>, P extends AbstractPGProcess<E, P>>
-        extends Starter<PostgresConfig, E, P> {
+public class PostgresStarter<E extends AbstractPGExecutable<PostgresConfig, P>, P extends AbstractPGProcess<E, P>> extends Starter<PostgresConfig, E, P> {
     private static final Logger LOGGER = LoggerFactory.getLogger(PostgresStarter.class);
+
     final Class<E> execClass;
 
     public PostgresStarter(final Class<E> execClass, final IRuntimeConfig runtimeConfig) {
@@ -50,8 +48,7 @@ public class PostgresStarter<E extends AbstractPGExecutable<PostgresConfig, P>, 
                 .processOutput(new ProcessOutput(logWatch, logWatch, logWatch)).build();
     }
 
-    public static <E extends AbstractPGExecutable<PostgresConfig, P>, P extends AbstractPGProcess<E, P>>
-    PostgresStarter<E, P> getCommand(Command command, IRuntimeConfig config) {
+    public static <E extends AbstractPGExecutable<PostgresConfig, P>, P extends AbstractPGProcess<E, P>> PostgresStarter<E, P> getCommand(Command command, IRuntimeConfig config) {
         return new PostgresStarter<>(command.executableClass(), config);
     }
 
@@ -61,17 +58,13 @@ public class PostgresStarter<E extends AbstractPGExecutable<PostgresConfig, P>, 
     }
 
     @Override
-    protected E newExecutable(PostgresConfig config, Distribution distribution,
-                              IRuntimeConfig runtime, IExtractedFileSet exe) {
+    protected E newExecutable(PostgresConfig config, Distribution distribution, IRuntimeConfig runtime, IExtractedFileSet exe) {
         try {
-            Constructor<E> c = execClass.getConstructor(
-                    Distribution.class, PostgresConfig.class,
-                    IRuntimeConfig.class, IExtractedFileSet.class
-            );
+            Constructor<E> c = execClass.getConstructor(Distribution.class, PostgresConfig.class, IRuntimeConfig.class, IExtractedFileSet.class);
             return c.newInstance(distribution, config, runtime, exe);
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             LOGGER.warn("Exception while trying to create executable", e);
-            throw new RuntimeException("Failed to initialize the executable (" + e.getMessage() + ")", e);
+            throw new RuntimeException(("Failed to initialize the executable (" + e.getMessage()) + ")", e);
         }
     }
 }

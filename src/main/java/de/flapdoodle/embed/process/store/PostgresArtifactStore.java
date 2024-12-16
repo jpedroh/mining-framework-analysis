@@ -11,14 +11,13 @@ import de.flapdoodle.embed.process.extract.IExtractedFileSet;
 import de.flapdoodle.embed.process.extract.IExtractor;
 import de.flapdoodle.embed.process.extract.ITempNaming;
 import de.flapdoodle.embed.process.io.directories.IDirectory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.EnumSet;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static org.apache.commons.io.FileUtils.deleteQuietly;
+
 
 /**
  * @author Ilya Sadykov
@@ -26,9 +25,13 @@ import static org.apache.commons.io.FileUtils.deleteQuietly;
  */
 public class PostgresArtifactStore implements IMutableArtifactStore {
     private static final Logger LOGGER = LoggerFactory.getLogger(PostgresArtifactStore.class);
+
     private IDownloadConfig downloadConfig;
+
     private IDirectory tempDirFactory;
+
     private ITempNaming executableNaming;
+
     private IDownloader downloader;
 
     PostgresArtifactStore(IDownloadConfig downloadConfig, IDirectory tempDirFactory, ITempNaming executableNaming, IDownloader downloader) {
@@ -46,15 +49,15 @@ public class PostgresArtifactStore implements IMutableArtifactStore {
     public void removeFileSet(Distribution distribution, IExtractedFileSet all) {
         for (FileType type : EnumSet.complementOf(EnumSet.of(FileType.Executable))) {
             for (File file : all.files(type)) {
-                if (file.exists() && !deleteQuietly(file))
+                if (file.exists() && (!deleteQuietly(file))) {
                     LOGGER.trace("Could not delete {} NOW: {}", type, file);
+                }
             }
         }
         File exe = all.executable();
-        if (exe.exists() && !deleteQuietly(exe)) {
+        if (exe.exists() && (!deleteQuietly(exe))) {
             LOGGER.trace("Could not delete executable NOW: {}", exe);
         }
-
         if (all.baseDirIsGenerated()) {
             if (!deleteQuietly(all.baseDir())) {
                 LOGGER.trace("Could not delete generatedBaseDir: {}", all.baseDir());
@@ -87,9 +90,8 @@ public class PostgresArtifactStore implements IMutableArtifactStore {
         IExtractor extractor = Extractors.getExtractor(archiveType);
         try {
             final FileSet fileSet = packageResolver.getFileSet(distribution);
-            return extractor.extract(downloadConfig, artifact,
-                    new PostgresFilesToExtract(tempDirFactory, executableNaming, fileSet, distribution));
-        } catch (Exception e) {
+            return extractor.extract(downloadConfig, artifact, new PostgresFilesToExtract(tempDirFactory, executableNaming, fileSet, distribution));
+        } catch (java.lang.Exception e) {
             LOGGER.error("Failed to extract file set:", e);
             return new EmptyFileSet();
         }
