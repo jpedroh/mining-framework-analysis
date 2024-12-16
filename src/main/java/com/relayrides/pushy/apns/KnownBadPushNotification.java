@@ -18,18 +18,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.relayrides.pushy.apns;
 
 import java.util.Date;
 
+
 /**
  * <p>A deliberately-malformed push notification used to trigger a remote shutdown of an APNs connection.</p>
- * 
+ *
  * @author <a href="mailto:jon@relayrides.com">Jon Chambers</a>
  */
 class KnownBadPushNotification implements ApnsPushNotification {
-
 	/*
 	 * (non-Javadoc)
 	 * @see com.relayrides.pushy.apns.ApnsPushNotification#getToken()
