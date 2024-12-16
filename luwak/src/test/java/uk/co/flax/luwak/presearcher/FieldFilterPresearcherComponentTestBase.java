@@ -1,18 +1,17 @@
 package uk.co.flax.luwak.presearcher;
 
-import java.io.IOException;
-
 import com.google.common.collect.ImmutableMap;
+import java.io.IOException;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import static org.assertj.core.api.Fail.fail;
+import static uk.co.flax.luwak.assertions.MatchesAssert.assertThat;
 import uk.co.flax.luwak.*;
 import uk.co.flax.luwak.matchers.SimpleMatcher;
 import uk.co.flax.luwak.termextractor.weights.TermWeightor;
 
-import static org.assertj.core.api.Fail.fail;
-import static uk.co.flax.luwak.assertions.MatchesAssert.assertThat;
 
 /**
  * Copyright (c) 2014 Lemur Consulting Ltd.
@@ -30,7 +29,6 @@ import static uk.co.flax.luwak.assertions.MatchesAssert.assertThat;
  * limitations under the License.
  */
 public abstract class FieldFilterPresearcherComponentTestBase extends PresearcherTestBase {
-
     public static final Analyzer ANALYZER = new StandardAnalyzer();
 
     @Test
@@ -153,5 +151,4 @@ public abstract class FieldFilterPresearcherComponentTestBase extends Presearche
         System.out.println(matches.match("1", "enDoc").presearcherMatches);
 
     }
-
 }

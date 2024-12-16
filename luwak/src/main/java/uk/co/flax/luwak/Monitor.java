@@ -5,21 +5,21 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.spans.SpanCollector;
-import uk.co.flax.luwak.util.RewriteException;
-import uk.co.flax.luwak.util.SpanExtractor;
-import uk.co.flax.luwak.util.SpanRewriter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefBuilder;
 import uk.co.flax.luwak.presearcher.PresearcherMatches;
 import uk.co.flax.luwak.util.ForceNoBulkScoringQuery;
+import uk.co.flax.luwak.util.RewriteException;
+import uk.co.flax.luwak.util.SpanExtractor;
+import uk.co.flax.luwak.util.SpanRewriter;
+
 
 /*
  * Copyright (c) 2015 Lemur Consulting Ltd.
@@ -36,15 +36,62 @@ import uk.co.flax.luwak.util.ForceNoBulkScoringQuery;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
  * A Monitor contains a set of MonitorQuery objects, and runs them against
  * passed-in InputDocuments.
  */
 public class Monitor implements Closeable {
+    private class PresearcherQueryCollector<T extends QueryMatch> extends StandardQueryCollector<T> {
+
+        public final Map<String, StringBuilder> matchingTerms = new HashMap<>();
+
+        private PresearcherQueryCollector(CandidateMatcher<T> matcher) {
+            super(matcher);
+        }
+
+        public PresearcherMatches<T> getMatches() {
+            return new PresearcherMatches<>(matchingTerms, matcher.getMatches());
+        }
+
+        @Override
+        public boolean needsScores() {
+            return true;
+        }
+
+        @Override
+        public void matchQuery(final String id, QueryCacheEntry query, QueryIndex.DataValues dataValues) throws IOException {
+
+            SpanCollector collector = new SpanCollector() {
+                @Override
+                public void collectLeaf(PostingsEnum postingsEnum, int position, Term term) throws IOException {
+                    matchingTerms.computeIfAbsent(id, i -> new StringBuilder())
+                            .append(" ")
+                            .append(term.field())
+                            .append(":")
+                            .append(term.bytes().utf8ToString());
+                }
+
+                @Override
+                public void reset() {
+
+                }
+            };
+
+            SpanExtractor.collect(dataValues.scorer, collector, false);
+
+            super.matchQuery(id, query, dataValues);
+        }
+
+        @Override
+        public boolean needsScores() {
+            return true;
+        }
+    }
 
     protected final MonitorQueryParser queryParser;
+
     protected final Presearcher presearcher;
+
     protected final QueryDecomposer decomposer;
 
     private final QueryIndex queryIndex;
@@ -54,12 +101,16 @@ public class Monitor implements Closeable {
     protected long slowLogLimit = 2000000;
 
     private final long commitBatchSize;
+
     private final boolean storeQueries;
 
     public static final class FIELDS {
         public static final String id = "_id";
+
         public static final String del = "_del";
+
         public static final String hash = "_hash";
+
         public static final String mq = "_mq";
     }
 
@@ -73,43 +124,45 @@ public class Monitor implements Closeable {
      * Note that when the Monitor is closed, both the IndexWriter and its underlying
      * Directory will also be closed.
      *
-     * @param queryParser the query parser to use
-     * @param presearcher the presearcher to use
-     * @param indexWriter an indexWriter for the query index
-     * @param configuration the MonitorConfiguration
-     * @throws IOException on IO errors
+     * @param queryParser
+     * 		the query parser to use
+     * @param presearcher
+     * 		the presearcher to use
+     * @param indexWriter
+     * 		an indexWriter for the query index
+     * @param configuration
+     * 		the MonitorConfiguration
+     * @throws IOException
+     * 		on IO errors
      */
-    public Monitor(MonitorQueryParser queryParser, Presearcher presearcher,
-                   IndexWriter indexWriter, QueryIndexConfiguration configuration) throws IOException {
-
+    public Monitor(MonitorQueryParser queryParser, Presearcher presearcher, IndexWriter indexWriter, QueryIndexConfiguration configuration) throws IOException {
         this.queryParser = queryParser;
         this.presearcher = presearcher;
         this.decomposer = configuration.getQueryDecomposer();
-        
         this.queryIndex = new QueryIndex(indexWriter);
-
         this.storeQueries = configuration.storeQueries();
         prepareQueryCache(this.storeQueries);
-
         long purgeFrequency = configuration.getPurgeFrequency();
         this.purgeExecutor = Executors.newSingleThreadScheduledExecutor();
         this.purgeExecutor.scheduleAtFixedRate(() -> {
             try {
                 purgeCache();
-            }
-            catch (Throwable e) {
+            } catch ( e) {
                 afterPurgeError(e);
             }
         }, purgeFrequency, purgeFrequency, configuration.getPurgeFrequencyUnits());
-
         this.commitBatchSize = configuration.getQueryUpdateBufferSize();
     }
 
     /**
      * Create a new Monitor instance, using a RAMDirectory and the default configuration
-     * @param queryParser the query parser to use
-     * @param presearcher the presearcher to use
-     * @throws IOException on IO errors
+     *
+     * @param queryParser
+     * 		the query parser to use
+     * @param presearcher
+     * 		the presearcher to use
+     * @throws IOException
+     * 		on IO errors
      */
     public Monitor(MonitorQueryParser queryParser, Presearcher presearcher) throws IOException {
         this(queryParser, presearcher, defaultIndexWriter(new RAMDirectory()), new QueryIndexConfiguration());
@@ -117,10 +170,15 @@ public class Monitor implements Closeable {
 
     /**
      * Create a new Monitor instance using a RAMDirectory
-     * @param queryParser the query parser to use
-     * @param presearcher the presearcher to use
-     * @param config the monitor configuration
-     * @throws IOException on IO errors
+     *
+     * @param queryParser
+     * 		the query parser to use
+     * @param presearcher
+     * 		the presearcher to use
+     * @param config
+     * 		the monitor configuration
+     * @throws IOException
+     * 		on IO errors
      */
     public Monitor(MonitorQueryParser queryParser, Presearcher presearcher, QueryIndexConfiguration config) throws IOException {
         this(queryParser, presearcher, defaultIndexWriter(new RAMDirectory()), config);
@@ -128,10 +186,15 @@ public class Monitor implements Closeable {
 
     /**
      * Create a new Monitor instance, using the default QueryDecomposer and IndexWriter configuration
-     * @param queryParser the query parser to use
-     * @param presearcher the presearcher to use
-     * @param directory the directory where the queryindex is stored
-     * @throws IOException on IO errors
+     *
+     * @param queryParser
+     * 		the query parser to use
+     * @param presearcher
+     * 		the presearcher to use
+     * @param directory
+     * 		the directory where the queryindex is stored
+     * @throws IOException
+     * 		on IO errors
      */
     public Monitor(MonitorQueryParser queryParser, Presearcher presearcher, Directory directory) throws IOException {
         this(queryParser, presearcher, defaultIndexWriter(directory), new QueryIndexConfiguration());
@@ -139,11 +202,17 @@ public class Monitor implements Closeable {
 
     /**
      * Create a new Monitor instance
-     * @param queryParser the query parser to use
-     * @param presearcher the presearcher to use
-     * @param directory the directory where the queryindex is to be stored
-     * @param config the monitor configuration
-     * @throws IOException on IO errors
+     *
+     * @param queryParser
+     * 		the query parser to use
+     * @param presearcher
+     * 		the presearcher to use
+     * @param directory
+     * 		the directory where the queryindex is to be stored
+     * @param config
+     * 		the monitor configuration
+     * @throws IOException
+     * 		on IO errors
      */
     public Monitor(MonitorQueryParser queryParser, Presearcher presearcher, Directory directory, QueryIndexConfiguration config) throws IOException {
         this(queryParser, presearcher, defaultIndexWriter(directory), config);
@@ -151,10 +220,15 @@ public class Monitor implements Closeable {
 
     /**
      * Create a new Monitor instance, using the default QueryDecomposer
-     * @param queryParser the query parser to use
-     * @param presearcher the presearcher to use
-     * @param indexWriter a {@link IndexWriter} for the Monitor's query index
-     * @throws IOException on IO errors
+     *
+     * @param queryParser
+     * 		the query parser to use
+     * @param presearcher
+     * 		the presearcher to use
+     * @param indexWriter
+     * 		a {@link IndexWriter} for the Monitor's query index
+     * @throws IOException
+     * 		on IO errors
      */
     public Monitor(MonitorQueryParser queryParser, Presearcher presearcher, IndexWriter indexWriter) throws IOException {
         this(queryParser, presearcher, indexWriter, new QueryIndexConfiguration());
@@ -194,14 +268,19 @@ public class Monitor implements Closeable {
      * Statistics for the query cache and query index
      */
     public static class QueryCacheStats {
-
-        /** Total number of queries in the query index */
+        /**
+         * Total number of queries in the query index
+         */
         public final int queries;
 
-        /** Total number of queries int the query cache */
+        /**
+         * Total number of queries int the query cache
+         */
         public final int cachedQueries;
 
-        /** Time the query cache was last purged */
+        /**
+         * Time the query cache was last purged
+         */
         public final long lastPurged;
 
         public QueryCacheStats(int queries, int cachedQueries, long lastPurged) {
@@ -295,7 +374,7 @@ public class Monitor implements Closeable {
             }
         }
     }
-    
+
     /**
      * Remove unused queries from the query cache.
      *
@@ -463,7 +542,6 @@ public class Monitor implements Closeable {
     }
 
     private class PresearcherQueryBuilder implements QueryIndex.QueryBuilder {
-
         final LeafReader batchIndexReader;
 
         private PresearcherQueryBuilder(LeafReader batchIndexReader) {
@@ -545,8 +623,8 @@ public class Monitor implements Closeable {
 
     // For each query selected by the presearcher, pass on to a CandidateMatcher
     private static class StandardQueryCollector<T extends QueryMatch> implements QueryIndex.QueryCollector {
-
         final CandidateMatcher<T> matcher;
+
         int queryCount = 0;
 
         private StandardQueryCollector(CandidateMatcher<T> matcher) {
@@ -555,17 +633,16 @@ public class Monitor implements Closeable {
 
         @Override
         public void matchQuery(String id, QueryCacheEntry query, QueryIndex.DataValues dataValues) throws IOException {
-            if (query == null)
+            if (query == null) {
                 return;
+            }
             try {
                 queryCount++;
                 matcher.matchQuery(id, query.matchQuery, query.metadata);
-            }
-            catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 matcher.reportError(new MatchError(id, e));
             }
         }
-
     }
 
     /**
@@ -606,48 +683,4 @@ public class Monitor implements Closeable {
     public <T extends QueryMatch> PresearcherMatches<T> debug(InputDocument doc, MatcherFactory<T> factory) throws IOException {
         return debug(DocumentBatch.of(doc), factory);
     }
-
-    private class PresearcherQueryCollector<T extends QueryMatch> extends StandardQueryCollector<T> {
-
-        public final Map<String, StringBuilder> matchingTerms = new HashMap<>();
-
-        private PresearcherQueryCollector(CandidateMatcher<T> matcher) {
-            super(matcher);
-        }
-
-        public PresearcherMatches<T> getMatches() {
-            return new PresearcherMatches<>(matchingTerms, matcher.getMatches());
-        }
-
-        @Override
-        public boolean needsScores() {
-            return true;
-        }
-
-        @Override
-        public void matchQuery(final String id, QueryCacheEntry query, QueryIndex.DataValues dataValues) throws IOException {
-
-            SpanCollector collector = new SpanCollector() {
-                @Override
-                public void collectLeaf(PostingsEnum postingsEnum, int position, Term term) throws IOException {
-                    matchingTerms.computeIfAbsent(id, i -> new StringBuilder())
-                            .append(" ")
-                            .append(term.field())
-                            .append(":")
-                            .append(term.bytes().utf8ToString());
-                }
-
-                @Override
-                public void reset() {
-
-                }
-            };
-
-            SpanExtractor.collect(dataValues.scorer, collector, false);
-
-            super.matchQuery(id, query, dataValues);
-        }
-
-    }
-
 }
