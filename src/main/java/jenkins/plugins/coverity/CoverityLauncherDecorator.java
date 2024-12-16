@@ -10,10 +10,14 @@
  *******************************************************************************/
 package jenkins.plugins.coverity;
 
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.LauncherDecorator;
 import hudson.model.*;
+import java.io.File;
+import org.apache.commons.io.FilenameUtils;
+
 
 /**
  * This makes sure that all commands executed (when invocation assistance is enabled) are run through cov-build.
@@ -40,57 +44,46 @@ public class CoverityLauncherDecorator extends LauncherDecorator {
     @Override
     public Launcher decorate(Launcher launcher, Node node) {
         Executor executor = Executor.currentExecutor();
-        if(executor == null) {
+        if (executor == null) {
             return launcher;
         }
-
         Queue.Executable exec = executor.getCurrentExecutable();
-        if(!(exec instanceof AbstractBuild)) {
+        if (!(exec instanceof AbstractBuild)) {
             return launcher;
         }
-        AbstractBuild build = (AbstractBuild) exec;
-
+        AbstractBuild build = ((AbstractBuild) (exec));
         AbstractProject project = build.getProject();
-
-        CoverityPublisher publisher = (CoverityPublisher) project.getPublishersList().get(CoverityPublisher.class);
-
-        if(publisher == null) {
+        CoverityPublisher publisher = ((CoverityPublisher) (project.getPublishersList().get(CoverityPublisher.class)));
+        if (publisher == null) {
             return launcher;
         }
-
         CoverityVersion version = CheckConfig.checkNode(publisher, build, launcher, launcher.getListener()).getVersion();
-
         TaOptionBlock ta = publisher.getTaOptionBlock();
         ScmOptionBlock scm = publisher.getScmOptionBlock();
         InvocationAssistance invocationAssistance = publisher.getInvocationAssistance();
-
         boolean isUsingTA = false;
         boolean isUsingMisra = false;
-        if(ta != null){
+        if (ta != null) {
             String taCheck = ta.checkTaConfig();
-            if(!taCheck.equals("Pass")){
+            if (!taCheck.equals("Pass")) {
                 throw new RuntimeException(taCheck);
             }
             isUsingTA = true;
         }
-
-        if(invocationAssistance != null){
+        if (invocationAssistance != null) {
             String taCheck = invocationAssistance.checkIAConfig();
-            if(!taCheck.equals("Pass")){
+            if (!taCheck.equals("Pass")) {
                 throw new RuntimeException(taCheck);
             }
             isUsingMisra = invocationAssistance.getIsUsingMisra();
         }
-
-        if(isUsingTA && isUsingMisra){
-            String errorText = "Errors with your \"Perform Coverity build/analyze/commit\" options: \n " +
-                    "[Error] MISRA and Test Advisor options are not compatible. \n";
+        if (isUsingTA && isUsingMisra) {
+            String errorText = "Errors with your \"Perform Coverity build/analyze/commit\" options: \n " + "[Error] MISRA and Test Advisor options are not compatible. \n";
             throw new RuntimeException(errorText);
         }
-        
-        if(scm != null){
+        if (scm != null) {
             String scmCheck = scm.checkScmConfig(version);
-            if(!scmCheck.equals("Pass")){
+            if (!scmCheck.equals("Pass")) {
                 throw new RuntimeException(scmCheck);
             }
         }

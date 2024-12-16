@@ -10,9 +10,9 @@
  *******************************************************************************/
 package jenkins.plugins.coverity;
 
+import com.coverity.ws.v9.CovRemoteServiceException_Exception;
 import com.coverity.ws.v9.StreamDataObj;
 import com.coverity.ws.v9.StreamFilterSpecDataObj;
-import com.coverity.ws.v9.CovRemoteServiceException_Exception;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -25,6 +25,15 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.logging.Logger;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.xml.ws.WebServiceException;
 import jenkins.plugins.coverity.CoverityTool.CoverityToolHandler;
 import jenkins.plugins.coverity.ws.CimCache;
 import net.sf.json.JSON;
@@ -37,16 +46,6 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.xml.ws.WebServiceException;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * This publisher optionally invokes cov-analyze/cov-analyze-java and cov-commit-defects. Afterwards the latest list of
@@ -54,23 +53,28 @@ import java.util.logging.Logger;
  * flagged as failed and a mail is sent.
  */
 public class CoverityPublisher extends Recorder {
-
     private static final Logger logger = Logger.getLogger(CoverityPublisher.class.getName());
 
     // deprecated fields which were removed in plugin version 1.2
+    // deprecated fields which were removed in plugin version 1.2
     private transient String cimInstance;
+
     private transient String project;
+
     private transient String stream;
+
     private transient DefectFilters defectFilters;
 
     /**
      * List of CIM streams configured
      */
     private List<CIMStream> cimStreams;
+
     /**
      * Configuration for the invocation assistance feature. Null if this should not be used.
      */
     private final InvocationAssistance invocationAssistance;
+
     /**
      * Should the build be marked as failed if defects are present ?
      */
@@ -85,10 +89,12 @@ public class CoverityPublisher extends Recorder {
      * Should the intermediate directory be preserved after each build?
      */
     private final boolean keepIntDir;
+
     /**
      * Should defects be fetched after each build? Enabling this prevents the build from being failed due to defects.
      */
     private final boolean skipFetchingDefects;
+
     /**
      * Hide the chart to make page loads faster
      */
@@ -105,15 +111,7 @@ public class CoverityPublisher extends Recorder {
     private boolean unstableBuild;
 
     @DataBoundConstructor
-    public CoverityPublisher(List<CIMStream> cimStreams,
-                             InvocationAssistance invocationAssistance,
-                             boolean failBuild,
-                             boolean unstable,
-                             boolean keepIntDir,
-                             boolean skipFetchingDefects,
-                             boolean hideChart,
-                             TaOptionBlock taOptionBlock,
-                             ScmOptionBlock scmOptionBlock) {
+    public CoverityPublisher(List<CIMStream> cimStreams, InvocationAssistance invocationAssistance, boolean failBuild, boolean unstable, boolean keepIntDir, boolean skipFetchingDefects, boolean hideChart, TaOptionBlock taOptionBlock, ScmOptionBlock scmOptionBlock) {
         this.cimStreams = cimStreams;
         this.invocationAssistance = invocationAssistance;
         this.failBuild = failBuild;
@@ -228,7 +226,7 @@ public class CoverityPublisher extends Recorder {
     public boolean isUnstable(){
         return unstable;
     }
-    
+
     public boolean isUnstableBuild(){
             return unstableBuild;
     }
@@ -302,15 +300,15 @@ public class CoverityPublisher extends Recorder {
 
     public void deleteIntermediateDirectory(BuildListener listener, CoverityTempDir temp) {
         if (temp != null) {
-            try{
-                if(!isKeepIntDir() || temp.isDef()) {
+            try {
+                if ((!isKeepIntDir()) || temp.isDef()) {
                     listener.getLogger().println("[Coverity] deleting intermediate directory: " + temp.getTempDir());
                     temp.getTempDir().deleteRecursive();
-                    listener.getLogger().println("[Coverity] deleting intermediate directory  \"" + temp.getTempDir() + "\" was successful");
+                    listener.getLogger().println(("[Coverity] deleting intermediate directory  \"" + temp.getTempDir()) + "\" was successful");
                 } else {
                     listener.getLogger().println("[Coverity] preserving intermediate directory: " + temp.getTempDir());
                 }
-            } catch(Exception e) {
+            } catch (java.lang.Exception e) {
                 listener.getLogger().println("[Coverity] Error occurred during deletion of intermediate directory: " + temp.getTempDir());
             }
         }
@@ -322,10 +320,12 @@ public class CoverityPublisher extends Recorder {
 
     @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
-
         private List<CIMInstance> instances = new ArrayList<CIMInstance>();
+
         private String home;
+
         private SSLConfigurations sslConfigurations;
+
         /**
          * This field contains all checkers on txt files and on CIM (obtained via the ws v9 call getCheckersnames() ).
          * It's populated during DescriptorImpl instantiation.
@@ -335,12 +335,11 @@ public class CoverityPublisher extends Recorder {
         public DescriptorImpl() {
             super(CoverityPublisher.class);
             load();
-
             setAllCIMCheckers("");
-            Set<String> repeatedCheckers = new HashSet<String>(split2(allCheckers ));
+            Set<String> repeatedCheckers = new HashSet<String>(split2(allCheckers));
             List<String> checkersWithoutRepetitions = new ArrayList<String>(repeatedCheckers);
             Collections.sort(checkersWithoutRepetitions);
-            this.allCheckers = StringUtils.join(checkersWithoutRepetitions,'\n');
+            this.allCheckers = StringUtils.join(checkersWithoutRepetitions, '\n');
         }
 
         public static List<String> toStrings(ListBoxModel list) {
@@ -512,6 +511,7 @@ public class CoverityPublisher extends Recorder {
             }
             return result;
         }
+
         // Spliting checker strings into a usable list
         public List<String> split2List(String string) {
             List<String> result = new LinkedList<String>();
@@ -626,57 +626,41 @@ public class CoverityPublisher extends Recorder {
 
         public void doDefectFiltersConfig(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, CovRemoteServiceException_Exception {
             logger.info(req.getSubmittedForm().toString());
-
             JSONObject json = getJSONClassObject(req.getSubmittedForm(), getId());
-
             CIMStream current = null;
             CIMStream.DescriptorImpl currentDescriptor = null;
-            if(json != null && !json.isNullObject()) {
+            if ((json != null) && (!json.isNullObject())) {
                 CoverityPublisher publisher = req.bindJSON(CoverityPublisher.class, json);
                 String id = req.getParameterMap().get("id")[0];
-                for(CIMStream cs : publisher.getCimStreams()) {
-                    if(id.equals(cs.getId())) {
+                for (CIMStream cs : publisher.getCimStreams()) {
+                    if (id.equals(cs.getId())) {
                         current = cs;
                         break;
                     }
                 }
-
-                if (current != null)
-                    currentDescriptor = ((CIMStream.DescriptorImpl) current.getDescriptor());
-
+                if (current != null) {
+                    currentDescriptor = ((CIMStream.DescriptorImpl) (current.getDescriptor()));
+                }
                 if (currentDescriptor != null) {
                     if (StringUtils.isEmpty(current.getInstance())) {
-                        //do nothing
+                        // do nothing
                     } else if (StringUtils.isEmpty(current.getStream()) || StringUtils.isEmpty(current.getProject())) {
-                        //initialize 'new' defectFilters item with default values selected
+                        // initialize 'new' defectFilters item with default values selected
                         DefectFilters defectFilters = current.getDefectFilters();
                         if (defectFilters != null) {
                             Set<String> allCheckers = split2(getInstance(current.getInstance()).getCimInstanceCheckers());
                             try {
-                                current.getDefectFilters().invertCheckers(
-                                    allCheckers,
-                                    toStrings(currentDescriptor.doFillClassificationDefectFilterItems(current.getInstance())),
-                                    toStrings(currentDescriptor.doFillActionDefectFilterItems(current.getInstance())),
-                                    toStrings(currentDescriptor.doFillSeveritiesDefectFilterItems(current.getInstance())),
-                                    toStrings(currentDescriptor.doFillComponentDefectFilterItems(current.getInstance(), current.getStream()))
-                                );
+                                current.getDefectFilters().invertCheckers(allCheckers, toStrings(currentDescriptor.doFillClassificationDefectFilterItems(current.getInstance())), toStrings(currentDescriptor.doFillActionDefectFilterItems(current.getInstance())), toStrings(currentDescriptor.doFillSeveritiesDefectFilterItems(current.getInstance())), toStrings(currentDescriptor.doFillComponentDefectFilterItems(current.getInstance(), current.getStream())));
                             } catch (CovRemoteServiceException_Exception e) {
                                 throw new IOException(e);
                             }
                         }
-
                     } else {
                         Set<String> allCheckers = split2(getInstance(current.getInstance()).getCimInstanceCheckers());
                         DefectFilters defectFilters = current.getDefectFilters();
                         if (defectFilters != null) {
                             try {
-                                current.getDefectFilters().invertCheckers(
-                                    allCheckers,
-                                    toStrings(currentDescriptor.doFillClassificationDefectFilterItems(current.getInstance())),
-                                    toStrings(currentDescriptor.doFillActionDefectFilterItems(current.getInstance())),
-                                    toStrings(currentDescriptor.doFillSeveritiesDefectFilterItems(current.getInstance())),
-                                    toStrings(currentDescriptor.doFillComponentDefectFilterItems(current.getInstance(), current.getStream()))
-                                );
+                                current.getDefectFilters().invertCheckers(allCheckers, toStrings(currentDescriptor.doFillClassificationDefectFilterItems(current.getInstance())), toStrings(currentDescriptor.doFillActionDefectFilterItems(current.getInstance())), toStrings(currentDescriptor.doFillSeveritiesDefectFilterItems(current.getInstance())), toStrings(currentDescriptor.doFillComponentDefectFilterItems(current.getInstance(), current.getStream())));
                             } catch (CovRemoteServiceException_Exception e) {
                                 throw new IOException(e);
                             }
@@ -692,42 +676,34 @@ public class CoverityPublisher extends Recorder {
 
         @JavaScriptMethod
         public void doLoadProjectsForInstance(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException {
-
             JSONObject json = getJSONClassObject(req.getSubmittedForm(), getId());
-
             CIMStream current = null;
-            if(json != null && !json.isNullObject()) {
+            if ((json != null) && (!json.isNullObject())) {
                 CoverityPublisher publisher = req.bindJSON(CoverityPublisher.class, json);
                 String id = req.getParameterMap().get("id")[0];
-                for(CIMStream cs : publisher.getCimStreams()) {
-                    if(id.equals(cs.getId())) {
+                for (CIMStream cs : publisher.getCimStreams()) {
+                    if (id.equals(cs.getId())) {
                         current = cs;
                         break;
                     }
                 }
-
                 if (current != null) {
                     CIMInstance cimInstance = publisher.getDescriptor().getInstance(current.getInstance());
                     final List<String> projects = new ArrayList<>(CimCache.getInstance().getProjects(cimInstance));
                     final String currentProject = current.getProject();
                     boolean currentProjectIsvalid = true;
-                    if (!StringUtils.isEmpty(currentProject) && !projects.contains(currentProject)) {
+                    if ((!StringUtils.isEmpty(currentProject)) && (!projects.contains(currentProject))) {
                         projects.add(currentProject);
                         currentProjectIsvalid = false;
                     }
-
                     req.setAttribute("id", id);
-
                     rsp.setContentType("application/json; charset=utf-8");
                     final ServletOutputStream outputStream = rsp.getOutputStream();
-
                     Collections.sort(projects, String.CASE_INSENSITIVE_ORDER);
-
                     JSONObject responseObject = new JSONObject();
                     responseObject.put("projects", projects);
                     responseObject.put("selectedProject", currentProject);
                     responseObject.put("validSelection", currentProjectIsvalid);
-
                     String jsonString = responseObject.toString();
                     outputStream.write(jsonString.getBytes("UTF-8"));
                 }
@@ -736,43 +712,34 @@ public class CoverityPublisher extends Recorder {
 
         @JavaScriptMethod
         public void doLoadStreamsForProject(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException {
-
             JSONObject json = getJSONClassObject(req.getSubmittedForm(), getId());
-
             CIMStream current = null;
-            if(json != null && !json.isNullObject()) {
+            if ((json != null) && (!json.isNullObject())) {
                 CoverityPublisher publisher = req.bindJSON(CoverityPublisher.class, json);
                 String id = req.getParameterMap().get("id")[0];
-                for(CIMStream cs : publisher.getCimStreams()) {
-                    if(id.equals(cs.getId())) {
+                for (CIMStream cs : publisher.getCimStreams()) {
+                    if (id.equals(cs.getId())) {
                         current = cs;
                         break;
                     }
                 }
-
                 if (current != null) {
                     CIMInstance cimInstance = publisher.getDescriptor().getInstance(current.getInstance());
-                    final List<String> streams = new ArrayList<>(CimCache.getInstance().getStreams(cimInstance ,current.getProject()));
+                    final List<String> streams = new ArrayList<>(CimCache.getInstance().getStreams(cimInstance, current.getProject()));
                     final String currentStream = current.getStream();
                     boolean currentStreamIsvalid = true;
-
-                    if (!StringUtils.isEmpty(currentStream) && !streams.contains(currentStream)) {
+                    if ((!StringUtils.isEmpty(currentStream)) && (!streams.contains(currentStream))) {
                         streams.add(currentStream);
                         currentStreamIsvalid = false;
                     }
-
                     req.setAttribute("id", id);
-
                     rsp.setContentType("application/json; charset=utf-8");
                     final ServletOutputStream outputStream = rsp.getOutputStream();
-
                     Collections.sort(streams, String.CASE_INSENSITIVE_ORDER);
-
                     JSONObject responseObject = new JSONObject();
                     responseObject.put("streams", streams);
                     responseObject.put("selectedStream", currentStream);
                     responseObject.put("validSelection", currentStreamIsvalid);
-
                     String jsonString = responseObject.toString();
                     outputStream.write(jsonString.getBytes("UTF-8"));
                 }
