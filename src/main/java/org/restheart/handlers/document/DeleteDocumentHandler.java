@@ -17,21 +17,21 @@
  */
 package org.restheart.handlers.document;
 
-import org.restheart.db.DocumentDAO;
-import org.restheart.handlers.PipedHttpHandler;
-import org.restheart.utils.HttpStatus;
-import org.restheart.handlers.RequestContext;
-import org.restheart.utils.RequestHelper;
-import org.restheart.utils.ResponseHelper;
 import io.undertow.server.HttpServerExchange;
 import org.bson.types.ObjectId;
+import org.restheart.db.DocumentDAO;
+import org.restheart.handlers.PipedHttpHandler;
+import org.restheart.handlers.RequestContext;
+import org.restheart.utils.HttpStatus;
+import org.restheart.utils.RequestHelper;
+import org.restheart.utils.ResponseHelper;
+
 
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class DeleteDocumentHandler extends PipedHttpHandler {
-
     /**
      * Creates a new instance of DeleteDocumentHandler
      */
@@ -48,22 +48,17 @@ public class DeleteDocumentHandler extends PipedHttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange, RequestContext context) throws Exception {
         ObjectId etag = RequestHelper.getWriteEtag(exchange);
-
         if (etag == null) {
             ResponseHelper.endExchange(exchange, HttpStatus.SC_CONFLICT);
             return;
         }
-
-        int httpCode = new DocumentDAO()
-                .deleteDocument(context.getDBName(), context.getCollectionName(), context.getDocumentId(), etag);
-
+        int httpCode = new DocumentDAO().deleteDocument(context.getDBName(), context.getCollectionName(), context.getDocumentId(), etag);
         // send the warnings if any (and in case no_content change the return code to ok
-        if (context.getWarnings() != null && !context.getWarnings().isEmpty()) {
+        if ((context.getWarnings() != null) && (!context.getWarnings().isEmpty())) {
             sendWarnings(httpCode, exchange, context);
         } else {
             exchange.setResponseCode(httpCode);
         }
-
         exchange.endExchange();
     }
 }

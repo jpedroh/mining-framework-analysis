@@ -21,24 +21,25 @@ import io.undertow.security.idm.Account;
 import io.undertow.security.idm.Credential;
 import io.undertow.security.idm.IdentityManager;
 import io.undertow.security.idm.PasswordCredential;
-
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class MapIdentityManager implements IdentityManager {
-
     private final Map<String, char[]> users;
 
     /**
      *
+     *
      * @param users
+     * 		
      */
     public MapIdentityManager(final Map<String, char[]> users) {
         this.users = users;
@@ -89,7 +90,6 @@ public class MapIdentityManager implements IdentityManager {
                 public Set<String> getRoles() {
                     return Collections.emptySet();
                 }
-
             };
         }
         return null;

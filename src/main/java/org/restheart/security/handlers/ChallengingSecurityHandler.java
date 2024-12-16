@@ -15,28 +15,32 @@
  */
 package org.restheart.security.handlers;
 
-import org.restheart.handlers.PipedHttpHandler;
-import org.restheart.handlers.PipedWrappingHandler;
-import org.restheart.security.AccessManager;
-import static org.restheart.security.RestheartIdentityManager.RESTHEART_REALM;
 import io.undertow.security.api.AuthenticationMechanism;
 import io.undertow.security.idm.IdentityManager;
 import io.undertow.security.impl.BasicAuthenticationMechanism;
 import io.undertow.server.HttpHandler;
 import java.util.Collections;
 import java.util.List;
+import org.restheart.handlers.PipedHttpHandler;
+import org.restheart.handlers.PipedWrappingHandler;
+import org.restheart.security.AccessManager;
+import static org.restheart.security.RestheartIdentityManager.RESTHEART_REALM;
+
 
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class ChallengingSecurityHandler extends PipedWrappingHandler {
-
     /**
      *
+     *
      * @param next
+     * 		
      * @param identityManager
+     * 		
      * @param accessManager
+     * 		
      */
     public ChallengingSecurityHandler(final PipedHttpHandler next, final IdentityManager identityManager, final AccessManager accessManager) {
         super(next, getSecurityHandlerChain(identityManager, accessManager));
@@ -45,8 +49,7 @@ public class ChallengingSecurityHandler extends PipedWrappingHandler {
     private static HttpHandler getSecurityHandlerChain(final IdentityManager identityManager, final AccessManager accessManager) {
         HttpHandler handler = null;
         if (identityManager != null) {
-            final List<AuthenticationMechanism> mechanisms = Collections.<AuthenticationMechanism>singletonList(
-                    new BasicAuthenticationMechanism(RESTHEART_REALM));
+            final List<AuthenticationMechanism> mechanisms = Collections.<AuthenticationMechanism>singletonList(new BasicAuthenticationMechanism(RESTHEART_REALM));
             handler = buildSecurityHandlerChain(accessManager, null, identityManager, mechanisms);
         }
         return handler;

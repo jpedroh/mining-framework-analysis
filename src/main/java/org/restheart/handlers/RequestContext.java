@@ -18,8 +18,6 @@
 package org.restheart.handlers;
 
 import com.mongodb.DBObject;
-import org.restheart.db.DBCursorPool.EAGER_CURSOR_ALLOCATION_POLICY;
-import org.restheart.utils.URLUtilis;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
@@ -28,13 +26,15 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
+import org.restheart.db.DBCursorPool.EAGER_CURSOR_ALLOCATION_POLICY;
+import org.restheart.utils.URLUtilis;
+
 
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class RequestContext {
-
     public enum TYPE {
 
         ERROR,
@@ -44,8 +44,7 @@ public class RequestContext {
         DOCUMENT,
         COLLECTION_INDEXES,
         INDEX,
-        FILE
-    };
+        FILE;}
 
     public enum METHOD {
 
@@ -55,33 +54,48 @@ public class RequestContext {
         DELETE,
         PATCH,
         OPTIONS,
-        OTHER
-    };
+        OTHER;}
 
     public static final String PAGE_QPARAM_KEY = "page";
+
     public static final String PAGESIZE_QPARAM_KEY = "pagesize";
+
     public static final String COUNT_QPARAM_KEY = "count";
+
     public static final String SORT_BY_QPARAM_KEY = "sort_by";
+
     public static final String FILTER_QPARAM_KEY = "filter";
+
     public static final String EAGER_CURSOR_ALLOCATION_POLICY_QPARAM_KEY = "eager";
 
     public static final String SLASH = "/";
+
     public static final String PATCH = "PATCH";
+
     public static final String UNDERSCORE = "_";
+
     public static final String SYSTEM = "system.";
+
     public static final String LOCAL = "local";
+
     public static final String ADMIN = "admin";
+
     public static final String _INDEXES = "_indexes";
+
     public static final String _FILES = "_files";
 
     private final String whereUri;
+
     private final String whatUri;
 
     private final TYPE type;
+
     private final METHOD method;
+
     private final String[] pathTokens;
 
     private DBObject dbProps;
+
     private DBObject collectionProps;
 
     private DBObject content;
@@ -89,13 +103,19 @@ public class RequestContext {
     private final ArrayList<String> warnings = new ArrayList<>();
 
     private int page = 1;
+
     private int pagesize = 100;
+
     private boolean count = false;
+
     private EAGER_CURSOR_ALLOCATION_POLICY cursorAllocationPolicy;
+
     private Deque<String> filter = null;
+
     private Deque<String> sortBy = null;
 
     private String unmappedRequestUri = null;
+
     private String mappedRequestUri = null;
 
     /**
@@ -125,14 +145,11 @@ public class RequestContext {
     public RequestContext(HttpServerExchange exchange, String whereUri, String whatUri) {
         this.whereUri = URLUtilis.removeTrailingSlashes(whereUri);
         this.whatUri = whatUri;
-
         this.unmappedRequestUri = exchange.getRequestPath();
         this.mappedRequestUri = unmapUri(exchange.getRequestPath());
-
         // "/db/collection/document" --> { "", "mappedDbName", "collection", "document" }
         pathTokens = mappedRequestUri.split(SLASH);
         this.type = selectRequestType(pathTokens);
-
         this.method = selectRequestMethod(exchange.getRequestMethod());
     }
 
@@ -164,9 +181,9 @@ public class RequestContext {
             type = TYPE.DB;
         } else if (pathTokens.length < 4) {
             type = TYPE.COLLECTION;
-        } else if (pathTokens.length == 4 && pathTokens[3].equals(_INDEXES)) {
+        } else if ((pathTokens.length == 4) && pathTokens[3].equals(_INDEXES)) {
             type = TYPE.COLLECTION_INDEXES;
-        } else if (pathTokens.length > 4 && pathTokens[3].equals(_INDEXES)) {
+        } else if ((pathTokens.length > 4) && pathTokens[3].equals(_INDEXES)) {
             type = TYPE.INDEX;
         } else {
             type = TYPE.DOCUMENT;
@@ -184,7 +201,6 @@ public class RequestContext {
      */
     public final String unmapUri(String mappedUri) {
         String ret = URLUtilis.removeTrailingSlashes(mappedUri);
-
         if (whatUri.equals("*")) {
             if (!this.whereUri.equals(SLASH)) {
                 ret = ret.replaceFirst("^" + this.whereUri, "");
@@ -192,11 +208,9 @@ public class RequestContext {
         } else {
             ret = URLUtilis.removeTrailingSlashes(ret.replaceFirst("^" + this.whereUri, this.whatUri));
         }
-
         if (ret.isEmpty()) {
             ret = SLASH;
         }
-
         return ret;
     }
 
@@ -210,7 +224,6 @@ public class RequestContext {
      */
     public final String mapUri(String unmappedUri) {
         String ret = URLUtilis.removeTrailingSlashes(unmappedUri);
-
         if (whatUri.equals("*")) {
             if (!this.whereUri.equals(SLASH)) {
                 return this.whereUri + unmappedUri;
@@ -218,14 +231,12 @@ public class RequestContext {
         } else {
             ret = URLUtilis.removeTrailingSlashes(ret.replaceFirst("^" + this.whatUri, this.whereUri));
         }
-
         if (ret.isEmpty()) {
             ret = SLASH;
         }
-
         return ret;
     }
-    
+
     /**
      * check if the parent of the requested resource is accessible in this
      * request context
@@ -238,9 +249,7 @@ public class RequestContext {
      * @return true if parent of the requested resource is accessible
      */
     public final boolean isParentAccessible() {
-        return type == TYPE.DB
-                ? unmappedRequestUri.split(SLASH).length > 1
-                : unmappedRequestUri.split(SLASH).length > 2;
+        return type == TYPE.DB ? unmappedRequestUri.split(SLASH).length > 1 : unmappedRequestUri.split(SLASH).length > 2;
     }
 
     /**
@@ -289,7 +298,7 @@ public class RequestContext {
      * @throws URISyntaxException
      */
     public URI getUri() throws URISyntaxException {
-        return new URI(Arrays.asList(pathTokens).stream().reduce(SLASH, (t1, t2) -> t1 + SLASH + t2));
+        return new URI(Arrays.asList(pathTokens).stream().reduce(SLASH, ( t1, t2) -> (t1 + SLASH) + t2));
     }
 
     /**
@@ -306,10 +315,7 @@ public class RequestContext {
      * @return isReservedResourceDb
      */
     public static boolean isReservedResourceDb(String dbName) {
-        return dbName.equals(ADMIN)
-                || dbName.equals(LOCAL)
-                || dbName.startsWith(SYSTEM)
-                || dbName.startsWith(UNDERSCORE);
+        return ((dbName.equals(ADMIN) || dbName.equals(LOCAL)) || dbName.startsWith(SYSTEM)) || dbName.startsWith(UNDERSCORE);
     }
 
     /**
@@ -318,7 +324,7 @@ public class RequestContext {
      * @return isReservedResourceCollection
      */
     public static boolean isReservedResourceCollection(String collectionName) {
-        return collectionName != null && (collectionName.startsWith(SYSTEM) || collectionName.startsWith(UNDERSCORE));
+        return (collectionName != null) && (collectionName.startsWith(SYSTEM) || collectionName.startsWith(UNDERSCORE));
     }
 
     /**
@@ -327,7 +333,7 @@ public class RequestContext {
      * @return isReservedResourceDocument
      */
     public static boolean isReservedResourceDocument(String documentId) {
-        return documentId != null && documentId.startsWith(UNDERSCORE) && !documentId.equals(_INDEXES);
+        return ((documentId != null) && documentId.startsWith(UNDERSCORE)) && (!documentId.equals(_INDEXES));
     }
 
     /**
@@ -339,9 +345,7 @@ public class RequestContext {
             return false;
         }
 
-        return isReservedResourceDb(getDBName())
-                || isReservedResourceCollection(getCollectionName())
-                || isReservedResourceDocument(getDocumentId());
+        return isReservedResourceDb(getDBName()) || isReservedResourceCollection(getCollectionName()) || isReservedResourceDocument(getDocumentId());
     }
 
     /**

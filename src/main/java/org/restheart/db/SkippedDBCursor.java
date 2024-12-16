@@ -19,12 +19,14 @@ package org.restheart.db;
 
 import com.mongodb.DBCursor;
 
+
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author uji
  */
 public class SkippedDBCursor {
     private final DBCursor cursor;
+
     private final int alreadySkipped;
 
     public SkippedDBCursor(DBCursor cursor, int alreadySkipped) {

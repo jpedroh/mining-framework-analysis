@@ -23,7 +23,6 @@ import io.undertow.security.idm.IdentityManager;
 import io.undertow.security.idm.PasswordCredential;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -31,18 +30,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public final class SimpleFileIdentityManager extends AbstractSecurityManager implements IdentityManager {
-
     private final Map<String, SimpleAccount> accounts = new HashMap<>();
 
     /**
      *
+     *
      * @param arguments
+     * 		
      * @throws java.io.FileNotFoundException
+     * 		
      */
     public SimpleFileIdentityManager(Map<String, Object> arguments) throws FileNotFoundException {
         init(arguments, "users");

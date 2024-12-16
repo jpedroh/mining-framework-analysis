@@ -20,19 +20,11 @@ package org.restheart.test.integration;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
-import org.restheart.Configuration;
-import org.restheart.db.CollectionDAO;
-import org.restheart.db.DbsDAO;
-import org.restheart.db.DocumentDAO;
-import org.restheart.db.IndexDAO;
-import org.restheart.db.MongoDBClientSingleton;
-import org.restheart.hal.Representation;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.List;
-import static org.junit.Assert.*;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -45,88 +37,140 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.restheart.Configuration;
+import org.restheart.db.CollectionDAO;
+import org.restheart.db.DbsDAO;
+import org.restheart.db.DocumentDAO;
+import org.restheart.db.IndexDAO;
+import org.restheart.db.MongoDBClientSingleton;
+import org.restheart.hal.Representation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.junit.Assert.*;
+
 
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public abstract class AbstactIT {
-
     private static final Logger LOG = LoggerFactory.getLogger(AbstactIT.class);
 
     private static final String HOST = "127.0.0.1";
+
     private static final String HTTP = "http";
 
     protected static final Path confFilePath = new File("etc/restheart-integrationtest.yml").toPath();
+
     protected static MongoClient mongoClient;
+
     protected static Configuration conf = null;
+
     protected static Executor adminExecutor = null;
+
     protected static Executor user1Executor = null;
+
     protected static Executor user2Executor = null;
+
     protected static Executor unauthExecutor = null;
 
     protected static URI rootUri;
+
     protected static URI rootUriRemapped;
+
     protected static URI dbUri;
+
     protected static URI dbUriRemappedAll;
+
     protected static URI dbUriRemappedDb;
+
     protected static final String dbName = "mydb";
+
     protected static URI dbTmpUri;
+
     protected static final String dbTmpName = "mytmpdb";
+
     protected static URI collection1Uri;
+
     protected static URI collection1UriRemappedAll;
+
     protected static URI collection1UriRemappedDb;
+
     protected static URI collection1UriRemappedCollection;
+
     protected static final String collection1Name = "refcoll1";
+
     protected static URI collection2Uri;
+
     protected static URI collection2UriRemappedAll;
+
     protected static URI collection2UriRemappedDb;
+
     protected static URI collection2UriRemappedCollection;
+
     protected static final String collection2Name = "refcoll2";
+
     protected static URI collectionTmpUri;
+
     protected static final String collectionTmpName = "tmpcoll";
+
     protected static URI docsCollectionUri;
+
     protected static URI docsCollectionUriPaging;
+
     protected static URI docsCollectionUriCountAndPaging;
+
     protected static URI docsCollectionUriSort;
+
     protected static URI docsCollectionUriFilter;
+
     protected static final String docsCollectionName = "bandleaders";
+
     protected static URI indexesUri;
+
     protected static URI indexesUriRemappedAll;
+
     protected static URI indexesUriRemappedDb;
+
     protected static URI document1Uri;
+
     protected static URI dbUriPaging;
+
     protected static URI document1UriRemappedAll;
+
     protected static URI document1UriRemappedDb;
+
     protected static URI document1UriRemappedCollection;
+
     protected static URI document1UriRemappedDocument;
+
     protected static URI document2Uri;
+
     protected static URI document2UriRemappedAll;
+
     protected static URI document2UriRemappedDb;
+
     protected static URI document2UriRemappedCollection;
+
     protected static URI document2UriRemappedDocument;
+
     protected static URI documentTmpUri;
+
     protected static URI indexesTmpUri;
+
     protected static URI indexTmpUri;
+
     protected static final String document1Id = "doc1";
+
     protected static final String document2Id = "doc2";
+
     protected static final String documentTmpId = "tmpdoc";
 
     protected static final String dbPropsString = "{ \"a\": 1, \"b\": \"two\", \"c\": { \"d\": 3, \"f\": [\"g\",\"h\",4,{\"i\":5, \"l\":\"six\"}]}}";
-    protected static final String coll1PropsString = "{ \"a\":1, \"rels\" :  ["
-            + "{ \"rel\": \"oto\", \"type\": \"ONE_TO_ONE\",  \"role\": \"OWNING\", \"target-coll\": \"refcoll2\", \"ref-field\": \"oto\" },"
-            + "{ \"rel\": \"otm\", \"type\": \"ONE_TO_MANY\", \"role\": \"OWNING\", \"target-coll\": \"refcoll2\", \"ref-field\": \"otm\" },"
-            + "{ \"rel\": \"mto\", \"type\": \"MANY_TO_ONE\", \"role\": \"OWNING\", \"target-coll\": \"refcoll2\", \"ref-field\": \"mto\" },"
-            + "{ \"rel\": \"mtm\", \"type\": \"MANY_TO_MANY\", \"role\": \"OWNING\", \"target-coll\": \"refcoll2\", \"ref-field\": \"mtm\" }"
-            + "]}";
-    protected static final String coll2PropsString = "{ \"a\":2, \"rels\" :  ["
-            + "{ \"rel\": \"oto\", \"type\": \"ONE_TO_ONE\",  \"role\": \"INVERSE\", \"target-coll\": \"refcoll1\", \"ref-field\": \"oto\" },"
-            + "{ \"rel\": \"mto\", \"type\": \"MANY_TO_ONE\", \"role\": \"INVERSE\", \"target-coll\": \"refcoll1\", \"ref-field\": \"otm\" },"
-            + "{ \"rel\": \"otm\", \"type\": \"ONE_TO_MANY\", \"role\": \"INVERSE\", \"target-coll\": \"refcoll1\", \"ref-field\": \"mto\" },"
-            + "{ \"rel\": \"mtm\", \"type\": \"MANY_TO_MANY\", \"role\": \"INVERSE\", \"target-coll\": \"refcoll1\", \"ref-field\": \"mtm\" }"
-            + "]}";
+
+    protected static final String coll1PropsString = "{ \"a\":1, \"rels\" :  [" + (((("{ \"rel\": \"oto\", \"type\": \"ONE_TO_ONE\",  \"role\": \"OWNING\", \"target-coll\": \"refcoll2\", \"ref-field\": \"oto\" }," + "{ \"rel\": \"otm\", \"type\": \"ONE_TO_MANY\", \"role\": \"OWNING\", \"target-coll\": \"refcoll2\", \"ref-field\": \"otm\" },") + "{ \"rel\": \"mto\", \"type\": \"MANY_TO_ONE\", \"role\": \"OWNING\", \"target-coll\": \"refcoll2\", \"ref-field\": \"mto\" },") + "{ \"rel\": \"mtm\", \"type\": \"MANY_TO_MANY\", \"role\": \"OWNING\", \"target-coll\": \"refcoll2\", \"ref-field\": \"mtm\" }") + "]}");
+
+    protected static final String coll2PropsString = "{ \"a\":2, \"rels\" :  [" + (((("{ \"rel\": \"oto\", \"type\": \"ONE_TO_ONE\",  \"role\": \"INVERSE\", \"target-coll\": \"refcoll1\", \"ref-field\": \"oto\" }," + "{ \"rel\": \"mto\", \"type\": \"MANY_TO_ONE\", \"role\": \"INVERSE\", \"target-coll\": \"refcoll1\", \"ref-field\": \"otm\" },") + "{ \"rel\": \"otm\", \"type\": \"ONE_TO_MANY\", \"role\": \"INVERSE\", \"target-coll\": \"refcoll1\", \"ref-field\": \"mto\" },") + "{ \"rel\": \"mtm\", \"type\": \"MANY_TO_MANY\", \"role\": \"INVERSE\", \"target-coll\": \"refcoll1\", \"ref-field\": \"mtm\" }") + "]}");
 
     protected static final ContentType halCT = ContentType.create(Representation.HAL_JSON_MEDIA_TYPE);
 
@@ -135,35 +179,27 @@ public abstract class AbstactIT {
     protected static final String collTmpPropsString = "{ \"a\":1 }";
 
     protected static final String document1PropsString = "{ \"a\": 1, \"oto\": \"doc2\", \"otm\" : [ \"doc2\" ], \"mto\" : \"doc2\", \"mtm\" : [ \"doc2\" ] }";
+
     protected static final String document2PropsString = "{ \"a\": 2 }";
 
     protected static DBObject dbProps = (DBObject) JSON.parse(AbstactIT.dbPropsString);
+
     protected static DBObject coll1Props = (DBObject) JSON.parse(AbstactIT.coll1PropsString);
+
     protected static DBObject coll2Props = (DBObject) JSON.parse(AbstactIT.coll2PropsString);
+
     protected static DBObject collTmpProps = (DBObject) JSON.parse(AbstactIT.collTmpPropsString);
+
     protected static DBObject docsCollectionProps = (DBObject) JSON.parse(AbstactIT.docsCollectionPropsStrings);
 
     protected static DBObject document1Props = (DBObject) JSON.parse(AbstactIT.document1PropsString);
+
     protected static DBObject document2Props = (DBObject) JSON.parse(AbstactIT.document2PropsString);
 
-    protected static final String[] docsPropsStrings = {
-        "{ \"ranking\": 1, \"name\": \"Nick\", \"surname\": \"Cave\", \"band\": \"Nick Cave & the Bad Seeds\"}",
-        "{ \"ranking\": 2, \"name\": \"Robert\", \"surname\": \"Smith\", \"band\": \"The Cure\"}",
-        "{ \"ranking\": 3, \"name\": \"Leonard\", \"surname\": \"Cohen\", \"band\": \"Leonard Cohen\"}",
-        "{ \"ranking\": 4, \"name\": \"Tom\", \"surname\": \"Yorke\", \"band\": \"Radiohead\"}",
-        "{ \"ranking\": 5, \"name\": \"Roger\", \"surname\": \"Waters\", \"band\": \"Pink Floyd\"}",
-        "{ \"ranking\": 6, \"name\": \"Morrissey\", \"surname\": null, \"band\": \"The Smiths\"}",
-        "{ \"ranking\": 7, \"name\": \"Mark\", \"surname\": \"Knopfler\", \"band\": \"Dire Straits\"}",
-        "{ \"ranking\": 8, \"name\": \"Ramone\", \"surname\": \"Ramone\", \"band\": \"Ramones\"}",
-        "{ \"ranking\": 9, \"name\": \"Ian\", \"surname\": \"Astbury\", \"band\": \"The Cult\"}",
-        "{ \"ranking\": 10, \"name\": \"Polly Jean\", \"surname\": \"Harvey\", \"band\": \"PJ Harvey\"}",};
+    protected static final String[] docsPropsStrings = new java.lang.String[]{ "{ \"ranking\": 1, \"name\": \"Nick\", \"surname\": \"Cave\", \"band\": \"Nick Cave & the Bad Seeds\"}", "{ \"ranking\": 2, \"name\": \"Robert\", \"surname\": \"Smith\", \"band\": \"The Cure\"}", "{ \"ranking\": 3, \"name\": \"Leonard\", \"surname\": \"Cohen\", \"band\": \"Leonard Cohen\"}", "{ \"ranking\": 4, \"name\": \"Tom\", \"surname\": \"Yorke\", \"band\": \"Radiohead\"}", "{ \"ranking\": 5, \"name\": \"Roger\", \"surname\": \"Waters\", \"band\": \"Pink Floyd\"}", "{ \"ranking\": 6, \"name\": \"Morrissey\", \"surname\": null, \"band\": \"The Smiths\"}", "{ \"ranking\": 7, \"name\": \"Mark\", \"surname\": \"Knopfler\", \"band\": \"Dire Straits\"}", "{ \"ranking\": 8, \"name\": \"Ramone\", \"surname\": \"Ramone\", \"band\": \"Ramones\"}", "{ \"ranking\": 9, \"name\": \"Ian\", \"surname\": \"Astbury\", \"band\": \"The Cult\"}", "{ \"ranking\": 10, \"name\": \"Polly Jean\", \"surname\": \"Harvey\", \"band\": \"PJ Harvey\"}" };
+
     // { keys: {a:1, b:-1} }
-    protected static final String[] docsCollectionIndexesStrings = {
-        "{ \"name\": 1 }",
-        "{ \"surname\": 1 }",
-        "{ \"band\": 1 }",
-        "{ \"ranking\": 1 }"
-    };
+    protected static final String[] docsCollectionIndexesStrings = new java.lang.String[]{ "{ \"name\": 1 }", "{ \"surname\": 1 }", "{ \"band\": 1 }", "{ \"ranking\": 1 }" };
 
     public AbstactIT() {
     }
@@ -214,23 +250,19 @@ public abstract class AbstactIT {
     private void createTestData() {
         final DbsDAO dbsDAO = new DbsDAO();
         dbsDAO.upsertDB(dbName, dbProps, new ObjectId(), false);
-        
         final CollectionDAO collectionDAO = new CollectionDAO();
         collectionDAO.upsertCollection(dbName, collection1Name, coll1Props, new ObjectId(), false, false);
         collectionDAO.upsertCollection(dbName, collection2Name, coll2Props, new ObjectId(), false, false);
         collectionDAO.upsertCollection(dbName, docsCollectionName, docsCollectionProps, new ObjectId(), false, false);
-
         final IndexDAO indexDAO = new IndexDAO();
         for (String index : docsCollectionIndexesStrings) {
-            indexDAO.createIndex(dbName, docsCollectionName, ((DBObject) JSON.parse(index)), null);
+            indexDAO.createIndex(dbName, docsCollectionName, ((DBObject) (JSON.parse(index))), null);
         }
-
         final DocumentDAO documentDAO = new DocumentDAO();
         documentDAO.upsertDocument(dbName, collection1Name, document1Id, document1Props, new ObjectId(), false);
         documentDAO.upsertDocument(dbName, collection2Name, document2Id, document2Props, new ObjectId(), false);
-
         for (String doc : docsPropsStrings) {
-            documentDAO.upsertDocument(dbName, docsCollectionName, new ObjectId().toString(), ((DBObject) JSON.parse(doc)), new ObjectId(), false);
+            documentDAO.upsertDocument(dbName, docsCollectionName, new ObjectId().toString(), ((DBObject) (JSON.parse(doc))), new ObjectId(), false);
         }
         LOG.info("test data created");
     }
@@ -516,10 +548,16 @@ public abstract class AbstactIT {
     }
 
     private static final String _INDEXES = "/_indexes";
+
     private static final String REMAPPEDDOC1 = "/remappeddoc1";
+
     private static final String REMAPPEDALL = "/remappedall";
+
     private static final String REMAPPEDDB = "/remappeddb";
+
     private static final String REMAPPEDREFCOLL2 = "/remappedrefcoll2";
+
     private static final String REMAPPEDDOC2 = "/remappeddoc2";
+
     private static final String REMAPPEDREFCOLL1 = "/remappedrefcoll1";
 }

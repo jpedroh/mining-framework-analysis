@@ -17,18 +17,18 @@
  */
 package org.restheart.utils;
 
-import org.restheart.handlers.RequestContext;
 import io.undertow.server.HttpServerExchange;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Deque;
+import org.restheart.handlers.RequestContext;
+
 
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class URLUtilis {
-
     /**
      * given string /ciao/this/has/trailings///// returns /ciao/this/has/trailings
      * 
@@ -46,7 +46,7 @@ public class URLUtilis {
             return s.trim();
         }
     }
-    
+
     /**
      * decode the percent encoded query string
      * 
@@ -175,22 +175,18 @@ public class URLUtilis {
      */
     public static String getQueryStringRemovingParams(HttpServerExchange exchange, String... paramsToRemove) {
         String ret = exchange.getQueryString();
-
-        if (ret == null || ret.isEmpty() || paramsToRemove == null) {
+        if (((ret == null) || ret.isEmpty()) || (paramsToRemove == null)) {
             return ret;
         }
-
         for (String key : paramsToRemove) {
             Deque<String> values = exchange.getQueryParameters().get(key);
-
             if (values != null) {
                 for (String value : values) {
-                    ret = ret.replaceAll(key + "=" + value + "&", "");
-                    ret = ret.replaceAll(key + "=" + value + "$", "");
+                    ret = ret.replaceAll(((key + "=") + value) + "&", "");
+                    ret = ret.replaceAll(((key + "=") + value) + "$", "");
                 }
             }
         }
-
         return ret;
     }
 }

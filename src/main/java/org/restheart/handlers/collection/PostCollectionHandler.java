@@ -20,20 +20,20 @@ package org.restheart.handlers.collection;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import io.undertow.server.HttpServerExchange;
+import org.bson.types.ObjectId;
 import org.restheart.db.DocumentDAO;
 import org.restheart.handlers.RequestContext;
 import org.restheart.utils.HttpStatus;
 import org.restheart.utils.RequestHelper;
 import org.restheart.utils.ResponseHelper;
-import io.undertow.server.HttpServerExchange;
-import org.bson.types.ObjectId;
+
 
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class PostCollectionHandler extends PutCollectionHandler {
-
     /**
      * Creates a new instance of PostCollectionHandler
      */
@@ -49,34 +49,26 @@ public class PostCollectionHandler extends PutCollectionHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange, RequestContext context) throws Exception {
         DBObject content = context.getContent();
-
         if (content == null) {
             content = new BasicDBObject();
         }
-
         // cannot POST an array
         if (content instanceof BasicDBList) {
             ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_NOT_ACCEPTABLE, "data cannot be an array");
             return;
         }
-
         ObjectId etag = RequestHelper.getWriteEtag(exchange);
-
-        if (content.get("_id") != null && content.get("_id") instanceof String && RequestContext.isReservedResourceDocument((String) content.get("_id"))) {
+        if (((content.get("_id") != null) && (content.get("_id") instanceof String)) && RequestContext.isReservedResourceDocument(((String) (content.get("_id"))))) {
             ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_FORBIDDEN, "reserved resource");
             return;
         }
-
-        int httpCode = new DocumentDAO()
-                .upsertDocumentPost(exchange, context.getDBName(), context.getCollectionName(), content, etag);
-
+        int httpCode = new DocumentDAO().upsertDocumentPost(exchange, context.getDBName(), context.getCollectionName(), content, etag);
         // send the warnings if any (and in case no_content change the return code to ok
-        if (context.getWarnings() != null && !context.getWarnings().isEmpty()) {
+        if ((context.getWarnings() != null) && (!context.getWarnings().isEmpty())) {
             sendWarnings(httpCode, exchange, context);
         } else {
             exchange.setResponseCode(httpCode);
         }
-
         exchange.endExchange();
     }
 }

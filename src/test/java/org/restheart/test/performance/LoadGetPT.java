@@ -17,23 +17,8 @@
  */
 package org.restheart.test.performance;
 
-/**
- * install ldt from https://github.com/bazhenov/load-test-tool run it from
- * target/class directory (current directory is added to classpath) as follows:
- * <PATH_TO_ldt-assembly-1.1>/bin/ldt.sh -z
- * org.restheart.LoadTestRestHeartTask#get -c 20 -n 500 -w 5 -p
- * "url=http://127.0.0.1:8080/testdb/testcoll?page=10&pagesize=5,id=a,pwd=a"
- *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
- */
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import org.restheart.ConfigurationException;
-import org.restheart.db.CollectionDAO;
-import org.restheart.db.DBCursorPool;
-import org.restheart.db.MongoDBClientSingleton;
-import org.restheart.utils.FileUtils;
-import org.restheart.utils.HttpStatus;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -57,28 +42,42 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
+import org.restheart.ConfigurationException;
+import org.restheart.db.CollectionDAO;
+import org.restheart.db.DBCursorPool;
+import org.restheart.db.MongoDBClientSingleton;
+import org.restheart.utils.FileUtils;
+import org.restheart.utils.HttpStatus;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class LoadGetPT {
-
     private String url;
 
     private String id;
+
     private String pwd;
+
     private boolean printData = false;
+
     private String db;
+
     private String coll;
+
     private String filter = null;
+
     private int page = 1;
+
     private int pagesize = 5;
 
     private final Path CONF_FILE = new File("./etc/restheart-perftest.yml").toPath();
+
     private Executor httpExecutor;
 
     private final ConcurrentHashMap<Long, Integer> threadPages = new ConcurrentHashMap<>();
@@ -143,28 +142,22 @@ public class LoadGetPT {
     public void dbdirect() {
         final CollectionDAO collectionDAO = new CollectionDAO();
         DBCollection dbcoll = collectionDAO.getCollection(db, coll);
-
         Deque<String> _filter;
-
         if (filter == null) {
             _filter = null;
         } else {
             _filter = new ArrayDeque<>();
             _filter.add(filter);
         }
-
         ArrayList<DBObject> data;
-        
         try {
             data = collectionDAO.getCollectionData(dbcoll, page, pagesize, null, _filter, DBCursorPool.EAGER_CURSOR_ALLOCATION_POLICY.NONE);
-        } catch(Exception e) {
+        } catch (java.lang.Exception e) {
             System.out.println("error: " + e.getMessage());
             return;
         }
-        
         assertNotNull(data);
         assertFalse(data.isEmpty());
-
         if (printData) {
             System.out.println(data);
         }

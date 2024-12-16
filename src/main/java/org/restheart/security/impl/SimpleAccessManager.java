@@ -17,8 +17,6 @@
  */
 package org.restheart.security.impl;
 
-import org.restheart.handlers.RequestContext;
-import org.restheart.security.AccessManager;
 import io.undertow.predicate.Predicate;
 import io.undertow.predicate.PredicateParser;
 import io.undertow.security.idm.Account;
@@ -28,21 +26,27 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
-
-import static com.google.common.collect.Sets.newHashSet;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
+import org.restheart.handlers.RequestContext;
+import org.restheart.security.AccessManager;
 import org.restheart.utils.RequestHelper;
+import static com.google.common.collect.Sets.newHashSet;
+
 
 /**
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public final class SimpleAccessManager extends AbstractSecurityManager implements AccessManager {
     private final HashMap<String, Set<Predicate>> acl = new HashMap<>();
 
     /**
+     *
+     *
      * @param arguments
+     * 		
      * @throws java.io.FileNotFoundException
+     * 		
      */
     public SimpleAccessManager(Map<String, Object> arguments) throws FileNotFoundException {
         init(arguments, "permissions");
@@ -86,10 +90,8 @@ public final class SimpleAccessManager extends AbstractSecurityManager implement
         if (noAclDefined()) {
             return false;
         }
-
         RequestHelper.fixExchangeForUndertowBug(exchange);
-
-        return roles(exchange).anyMatch(role -> aclForRole(role).stream().anyMatch(p -> p.resolve(exchange)));
+        return roles(exchange).anyMatch(( role) -> aclForRole(role).stream().anyMatch(( p) -> p.resolve(exchange)));
     }
 
     private Stream<String> roles(HttpServerExchange exchange) {
@@ -128,7 +130,6 @@ public final class SimpleAccessManager extends AbstractSecurityManager implement
     }
 
     private static class NotAuthenticatedAccount implements Account {
-
         @Override
         public Principal getPrincipal() {
             return null;

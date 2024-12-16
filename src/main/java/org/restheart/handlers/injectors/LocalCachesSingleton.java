@@ -19,29 +19,32 @@ package org.restheart.handlers.injectors;
 
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
+import java.util.Optional;
 import org.restheart.Configuration;
+import org.restheart.cache.Cache;
+import org.restheart.cache.CacheFactory;
+import org.restheart.cache.LoadingCache;
 import org.restheart.db.CollectionDAO;
 import org.restheart.db.DbsDAO;
-import java.util.Optional;
-import org.restheart.cache.Cache;
-import org.restheart.cache.LoadingCache;
-import org.restheart.cache.CacheFactory;
+
 
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class LocalCachesSingleton {
-
     private static final String SEPARATOR = "_@_@_";
 
     private static boolean initialized = false;
 
     private LoadingCache<String, DBObject> dbPropsCache = null;
+
     private LoadingCache<String, DBObject> collectionPropsCache = null;
 
     private static long ttl = 1000;
+
     private static boolean enabled = false;
+
     private static final long maxCacheSize = 1000;
 
     private LocalCachesSingleton() {
@@ -62,13 +65,11 @@ public class LocalCachesSingleton {
         if (!initialized) {
             throw new IllegalStateException("not initialized");
         }
-
         if (enabled) {
             this.dbPropsCache = CacheFactory.createLocalLoadingCache(maxCacheSize, Cache.EXPIRE_POLICY.AFTER_WRITE, ttl, DBDAO::getDbProps);
-
             this.collectionPropsCache = CacheFactory.createLocalLoadingCache(maxCacheSize, Cache.EXPIRE_POLICY.AFTER_WRITE, ttl, (String key) -> {
                 String[] dbNameAndCollectionName = key.split(SEPARATOR);
-                return CollectionDAO.getCollectionProps(dbNameAndCollectionName[0], dbNameAndCollectionName[1]);
+                return collectionDAO.getCollectionProps(dbNameAndCollectionName[0], dbNameAndCollectionName[1]);
             });
         }
     }
@@ -82,7 +83,6 @@ public class LocalCachesSingleton {
     }
 
     private static class LocalCachesSingletonHolder {
-
         private static final LocalCachesSingleton INSTANCE = new LocalCachesSingleton();
     }
 
@@ -95,11 +95,8 @@ public class LocalCachesSingleton {
         if (!enabled) {
             throw new IllegalStateException("tried to use disabled cache");
         }
-
         DBObject dbProps;
-
         Optional<DBObject> _dbProps = dbPropsCache.get(dbName);
-
         if (_dbProps != null) {
             if (_dbProps.isPresent()) {
                 dbProps = _dbProps.get();
@@ -110,22 +107,20 @@ public class LocalCachesSingleton {
         } else {
             try {
                 _dbProps = dbPropsCache.getLoading(dbName);
-            } catch (Throwable uex) {
+            } catch (java.lang.Throwable uex) {
                 if (uex.getCause() instanceof MongoException) {
-                    throw (MongoException) uex.getCause();
+                    throw ((MongoException) (uex.getCause()));
                 } else {
                     throw uex;
                 }
             }
-
-            if (_dbProps != null && _dbProps.isPresent()) {
+            if ((_dbProps != null) && _dbProps.isPresent()) {
                 dbProps = _dbProps.get();
                 dbProps.put("_db-props-cached", false);
             } else {
                 dbProps = null;
             }
         }
-
         return dbProps;
     }
 
@@ -139,11 +134,8 @@ public class LocalCachesSingleton {
         if (!enabled) {
             throw new IllegalStateException("tried to use disabled cache");
         }
-
         DBObject collProps;
-
-        Optional<DBObject> _collProps = collectionPropsCache.get(dbName + SEPARATOR + collName);
-
+        Optional<DBObject> _collProps = collectionPropsCache.get((dbName + SEPARATOR) + collName);
         if (_collProps != null) {
             if (_collProps.isPresent()) {
                 collProps = _collProps.get();
@@ -153,15 +145,14 @@ public class LocalCachesSingleton {
             }
         } else {
             try {
-                _collProps = collectionPropsCache.getLoading(dbName + SEPARATOR + collName);
-            } catch (Throwable uex) {
+                _collProps = collectionPropsCache.getLoading((dbName + SEPARATOR) + collName);
+            } catch (java.lang.Throwable uex) {
                 if (uex.getCause() instanceof MongoException) {
-                    throw (MongoException) uex.getCause();
+                    throw ((MongoException) (uex.getCause()));
                 } else {
                     throw uex;
                 }
             }
-
             if (_collProps.isPresent()) {
                 collProps = _collProps.get();
                 collProps.put("_collection-props-cached", false);
@@ -169,7 +160,6 @@ public class LocalCachesSingleton {
                 collProps = null;
             }
         }
-
         return collProps;
     }
 
@@ -178,7 +168,7 @@ public class LocalCachesSingleton {
      * @param dbName
      */
     public void invalidateDb(String dbName) {
-        if (enabled && dbPropsCache != null) {
+        if (enabled && (dbPropsCache != null)) {
             dbPropsCache.invalidate(dbName);
         }
     }
@@ -189,8 +179,8 @@ public class LocalCachesSingleton {
      * @param collName
      */
     public void invalidateCollection(String dbName, String collName) {
-        if (enabled && collectionPropsCache != null) {
-            collectionPropsCache.invalidate(dbName + SEPARATOR + collName);
+        if (enabled && (collectionPropsCache != null)) {
+            collectionPropsCache.invalidate((dbName + SEPARATOR) + collName);
         }
     }
 

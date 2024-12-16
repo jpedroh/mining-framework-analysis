@@ -20,22 +20,22 @@ package org.restheart.handlers.database;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import org.restheart.db.DbsDAO;
-import org.restheart.handlers.injectors.LocalCachesSingleton;
-import org.restheart.handlers.PipedHttpHandler;
-import org.restheart.utils.HttpStatus;
-import org.restheart.handlers.RequestContext;
-import org.restheart.utils.RequestHelper;
-import org.restheart.utils.ResponseHelper;
 import io.undertow.server.HttpServerExchange;
 import org.bson.types.ObjectId;
+import org.restheart.db.DbsDAO;
+import org.restheart.handlers.PipedHttpHandler;
+import org.restheart.handlers.RequestContext;
+import org.restheart.handlers.injectors.LocalCachesSingleton;
+import org.restheart.utils.HttpStatus;
+import org.restheart.utils.RequestHelper;
+import org.restheart.utils.ResponseHelper;
+
 
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class PutDBHandler extends PipedHttpHandler {
-
     /**
      * Creates a new instance of PutDBHandler
      */
@@ -55,33 +55,25 @@ public class PutDBHandler extends PipedHttpHandler {
             ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_NOT_ACCEPTABLE, "db name cannot be empty or start with _");
             return;
         }
-
         DBObject content = context.getContent();
-
         if (content == null) {
             content = new BasicDBObject();
         }
-
         // cannot PUT an array
         if (content instanceof BasicDBList) {
             ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_NOT_ACCEPTABLE, "data cannot be an array");
             return;
         }
-
         ObjectId etag = RequestHelper.getWriteEtag(exchange);
-
         final DbsDAO dbsDAO = new DbsDAO();
         int httpCode = dbsDAO.upsertDB(context.getDBName(), content, etag, false);
-
         // send the warnings if any (and in case no_content change the return code to ok
-        if (context.getWarnings() != null && !context.getWarnings().isEmpty()) {
+        if ((context.getWarnings() != null) && (!context.getWarnings().isEmpty())) {
             sendWarnings(httpCode, exchange, context);
         } else {
             exchange.setResponseCode(httpCode);
         }
-
         exchange.endExchange();
-
         LocalCachesSingleton.getInstance().invalidateDb(context.getDBName());
     }
 }

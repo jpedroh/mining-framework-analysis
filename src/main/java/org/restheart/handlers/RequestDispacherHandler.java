@@ -17,7 +17,7 @@
  */
 package org.restheart.handlers;
 
-import org.restheart.handlers.root.GetRootHandler;
+import io.undertow.server.HttpServerExchange;
 import org.restheart.handlers.collection.DeleteCollectionHandler;
 import org.restheart.handlers.collection.GetCollectionHandler;
 import org.restheart.handlers.collection.PatchCollectionHandler;
@@ -31,39 +31,56 @@ import org.restheart.handlers.document.DeleteDocumentHandler;
 import org.restheart.handlers.document.GetDocumentHandler;
 import org.restheart.handlers.document.PatchDocumentHandler;
 import org.restheart.handlers.document.PutDocumentHandler;
+import org.restheart.handlers.files.PutFileHandler;
 import org.restheart.handlers.indexes.DeleteIndexHandler;
 import org.restheart.handlers.indexes.GetIndexesHandler;
 import org.restheart.handlers.indexes.PutIndexHandler;
+import org.restheart.handlers.root.GetRootHandler;
 import org.restheart.utils.HttpStatus;
-import io.undertow.server.HttpServerExchange;
+import org.restheart.utils.ResponseHelper;
 import static org.restheart.handlers.RequestContext.METHOD;
 import static org.restheart.handlers.RequestContext.TYPE;
-import org.restheart.handlers.files.PutFileHandler;
-import org.restheart.utils.ResponseHelper;
+
 
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class RequestDispacherHandler extends PipedHttpHandler {
-
     private final GetRootHandler rootGet;
+
     private final GetDBHandler dbGet;
+
     private final PutDBHandler dbPut;
+
     private final DeleteDBHandler dbDelete;
+
     private final PatchDBHandler dbPatch;
+
     private final GetCollectionHandler collectionGet;
+
     private final PostCollectionHandler collectionPost;
+
     private final PutCollectionHandler collectionPut;
+
     private final DeleteCollectionHandler collectionDelete;
+
     private final PatchCollectionHandler collectionPatch;
+
     private final GetDocumentHandler documentGet;
+
     private final PutDocumentHandler documentPut;
+
     private final DeleteDocumentHandler documentDelete;
+
     private final PatchDocumentHandler documentPatch;
+
     private final GetIndexesHandler indexesGet;
+
     private final PutIndexHandler indexPut;
+
     private final DeleteIndexHandler indexDelete;
+
     private final PutFileHandler filePut;
 
     /**
@@ -71,7 +88,6 @@ public class RequestDispacherHandler extends PipedHttpHandler {
      */
     public RequestDispacherHandler() {
         super(null);
-                                    
         this.rootGet = new GetRootHandler();
         this.dbGet = new GetDBHandler();
         this.dbPut = new PutDBHandler();

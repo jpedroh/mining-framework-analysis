@@ -25,28 +25,29 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
 import com.mongodb.util.JSONParseException;
-import org.restheart.utils.HttpStatus;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Deque;
 import org.bson.BSONObject;
 import org.bson.types.ObjectId;
 import org.restheart.hal.HALUtils;
+import org.restheart.utils.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * The Data Access Object for the mongodb Collection resource.
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class CollectionDAO {
-
     private final MongoClient client;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectionDAO.class);
 
     private static final BasicDBObject PROPS_QUERY = new BasicDBObject("_id", "_properties");
+
     private static final BasicDBObject DOCUMENTS_QUERY = new BasicDBObject("_id", new BasicDBObject("$ne", "_properties"));
 
     private static final BasicDBObject fieldsToReturn;
@@ -81,12 +82,10 @@ public class CollectionDAO {
      * @return true if the specified collection exits in the db dbName
      */
     public boolean doesCollectionExist(String dbName, String collName) {
-        if (dbName == null || dbName.isEmpty() || dbName.contains(" ")) {
+        if (((dbName == null) || dbName.isEmpty()) || dbName.contains(" ")) {
             return false;
         }
-
-        BasicDBObject query = new BasicDBObject("name", dbName + "." + collName);
-
+        BasicDBObject query = new BasicDBObject("name", (dbName + ".") + collName);
         return client.getDB(dbName).getCollection("system.namespaces").findOne(query) != null;
     }
 
@@ -127,17 +126,16 @@ public class CollectionDAO {
      */
     public long getCollectionSize(DBCollection coll, Deque<String> filters) {
         final BasicDBObject query = new BasicDBObject(DOCUMENTS_QUERY);
-
         if (filters != null) {
             try {
-                filters.stream().forEach(f -> {
-                    query.putAll((BSONObject) JSON.parse(f));  // this can throw JSONParseException for invalid filter parameters
+                filters.stream().forEach(( f) -> {
+                    query.putAll(((BSONObject) (JSON.parse(f))));// this can throw JSONParseException for invalid filter parameters
+
                 });
             } catch (JSONParseException jpe) {
                 LOGGER.warn("****** error parsing filter expression {}", filters, jpe);
             }
         }
-
         return coll.count(query);
     }
 
@@ -155,15 +153,13 @@ public class CollectionDAO {
     protected DBCursor getCollectionDBCursor(DBCollection coll, Deque<String> sortBy, Deque<String> filters) throws JSONParseException {
         // apply sort_by
         DBObject sort = new BasicDBObject();
-
-        if (sortBy == null || sortBy.isEmpty()) {
+        if ((sortBy == null) || sortBy.isEmpty()) {
             sort.put("_created_on", -1);
         } else {
-            sortBy.stream().forEach((s) -> {
+            sortBy.stream().forEach(( s) -> {
+                String _s = s.trim();// the + sign is decoded into a space, in case remove it
 
-                String _s = s.trim(); // the + sign is decoded into a space, in case remove it
-
-                _s = _s.replaceAll("_lastupdated_on", "_etag"); // _lastupdated is not stored and actually generated from @etag
+                _s = _s.replaceAll("_lastupdated_on", "_etag");// _lastupdated is not stored and actually generated from @etag
 
                 if (_s.startsWith("-")) {
                     sort.put(_s.substring(1), -1);
@@ -174,38 +170,28 @@ public class CollectionDAO {
                 }
             });
         }
-
         // apply filter
         final BasicDBObject query = new BasicDBObject(DOCUMENTS_QUERY);
-
         if (filters != null) {
             filters.stream().forEach((String f) -> {
-                BSONObject filterQuery = (BSONObject) JSON.parse(f);
-
+                BSONObject filterQuery = ((BSONObject) (JSON.parse(f)));
                 HALUtils.replaceStringsWithObjectIds(filterQuery);
+                query.putAll(filterQuery);// this can throw JSONParseException for invalid filter parameters
 
-                query.putAll(filterQuery);  // this can throw JSONParseException for invalid filter parameters
             });
         }
-
         return coll.find(query).sort(sort);
     }
 
     public ArrayList<DBObject> getCollectionData(DBCollection coll, int page, int pagesize, Deque<String> sortBy, Deque<String> filters, DBCursorPool.EAGER_CURSOR_ALLOCATION_POLICY eager) throws JSONParseException {
         ArrayList<DBObject> ret = new ArrayList<>();
-
         int toskip = pagesize * (page - 1);
-
         DBCursor cursor;
         SkippedDBCursor _cursor = null;
-
         if (eager != DBCursorPool.EAGER_CURSOR_ALLOCATION_POLICY.NONE) {
-
             _cursor = DBCursorPool.getInstance().get(new DBCursorPoolEntryKey(coll, sortBy, filters, toskip, 0), eager);
         }
-
         int alreadySkipped;
-
         // in case there is not cursor in the pool to reuse
         if (_cursor == null) {
             cursor = getCollectionDBCursor(coll, sortBy, filters);
@@ -214,27 +200,20 @@ public class CollectionDAO {
             cursor = _cursor.getCursor();
             alreadySkipped = _cursor.getAlreadySkipped();
         }
-
-        if (toskip - alreadySkipped > 0) {
+        if ((toskip - alreadySkipped) > 0) {
             cursor.skip(toskip - alreadySkipped);
         }
-
-        while (pagesize > 0 && cursor.hasNext()) {
+        while ((pagesize > 0) && cursor.hasNext()) {
             ret.add(cursor.next());
             pagesize--;
-        }
-
-        ret.forEach(row -> {
+        } 
+        ret.forEach(( row) -> {
             Object etag = row.get("_etag");
-
-            if (etag != null && ObjectId.isValid("" + etag)) {
+            if ((etag != null) && ObjectId.isValid("" + etag)) {
                 ObjectId _etag = new ObjectId("" + etag);
-
                 row.put("_lastupdated_on", Instant.ofEpochSecond(_etag.getTimestamp()).toString());
             }
-        }
-        );
-
+        });
         return ret;
     }
 
@@ -247,21 +226,15 @@ public class CollectionDAO {
      */
     public DBObject getCollectionProps(String dbName, String collName) {
         DBCollection coll = getCollection(dbName, collName);
-
         DBObject properties = coll.findOne(PROPS_QUERY);
-
         if (properties != null) {
             properties.put("_id", collName);
-
             Object etag = properties.get("_etag");
-
-            if (etag != null && ObjectId.isValid("" + etag)) {
+            if ((etag != null) && ObjectId.isValid("" + etag)) {
                 ObjectId oid = new ObjectId("" + etag);
-
                 properties.put("_lastupdated_on", Instant.ofEpochSecond(oid.getTimestamp()).toString());
             }
         }
-
         return properties;
     }
 
@@ -279,77 +252,62 @@ public class CollectionDAO {
      */
     public int upsertCollection(String dbName, String collName, DBObject content, ObjectId etag, boolean updating, boolean patching) {
         DB db = new DbsDAO().getDB(dbName);
-
         DBCollection coll = db.getCollection(collName);
-
-        if (patching && !updating) {
+        if (patching && (!updating)) {
             return HttpStatus.SC_NOT_FOUND;
         }
-
         if (updating) {
             if (etag == null) {
                 return HttpStatus.SC_CONFLICT;
             }
-
             BasicDBObject idAndEtagQuery = new BasicDBObject("_id", "_properties");
             idAndEtagQuery.append("_etag", etag);
-
             if (coll.count(idAndEtagQuery) < 1) {
                 return HttpStatus.SC_PRECONDITION_FAILED;
             }
         }
-
         ObjectId timestamp = new ObjectId();
         Instant now = Instant.ofEpochSecond(timestamp.getTimestamp());
-
         if (content == null) {
             content = new BasicDBObject();
         }
-
-        content.removeField("_id"); // make sure we don't change this field
+        content.removeField("_id");// make sure we don't change this field
 
         if (updating) {
-            content.removeField("_crated_on"); // don't allow to update this field
+            content.removeField("_crated_on");// don't allow to update this field
+
             content.put("_etag", timestamp);
         } else {
             content.put("_id", "_properties");
             content.put("_created_on", now.toString());
             content.put("_etag", timestamp);
         }
-
         if (patching) {
             coll.update(PROPS_QUERY, new BasicDBObject("$set", content), true, false);
             return HttpStatus.SC_OK;
         } else {
             // we use findAndModify to get the @created_on field value from the existing properties document
-            // we need to put this field back using a second update 
+            // we need to put this field back using a second update
             // it is not possible in a single update even using $setOnInsert update operator
-            // in this case we need to provide the other data using $set operator and this makes it a partial update (patch semantic) 
-
+            // in this case we need to provide the other data using $set operator and this makes it a partial update (patch semantic)
             DBObject old = coll.findAndModify(PROPS_QUERY, fieldsToReturn, null, false, content, false, true);
-
             if (old != null) {
                 Object oldTimestamp = old.get("_created_on");
-
                 if (oldTimestamp == null) {
                     oldTimestamp = now.toString();
                     LOGGER.warn("properties of collection {} had no @created_on field. set to now", coll.getFullName());
                 }
-
-                // need to readd the @created_on field 
+                // need to readd the @created_on field
                 BasicDBObject createdContet = new BasicDBObject("_created_on", "" + oldTimestamp);
                 createdContet.markAsPartialObject();
                 coll.update(PROPS_QUERY, new BasicDBObject("$set", createdContet), true, false);
-
                 return HttpStatus.SC_OK;
             } else {
-                // need to readd the @created_on field 
+                // need to readd the @created_on field
                 BasicDBObject createdContet = new BasicDBObject("_created_on", now.toString());
                 createdContet.markAsPartialObject();
                 coll.update(PROPS_QUERY, new BasicDBObject("$set", createdContet), true, false);
-
                 initDefaultIndexes(coll);
-
                 return HttpStatus.SC_CREATED;
             }
         }
@@ -366,12 +324,9 @@ public class CollectionDAO {
      */
     public int deleteCollection(String dbName, String collName, ObjectId etag) {
         DBCollection coll = getCollection(dbName, collName);
-
         BasicDBObject checkEtag = new BasicDBObject("_id", "_properties");
         checkEtag.append("_etag", etag);
-
         DBObject exists = coll.findOne(checkEtag, fieldsToReturn);
-
         if (exists == null) {
             return HttpStatus.SC_PRECONDITION_FAILED;
         } else {

@@ -18,82 +18,85 @@
 package org.restheart;
 
 import com.mongodb.MongoClient;
-import static org.restheart.Configuration.RESTHEART_VERSION;
-import org.restheart.db.PropsFixer;
-import org.restheart.db.MongoDBClientSingleton;
-import org.restheart.handlers.ErrorHandler;
-import org.restheart.handlers.GzipEncodingHandler;
-import org.restheart.handlers.PipedHttpHandler;
-import org.restheart.handlers.RequestDispacherHandler;
-import org.restheart.handlers.injectors.RequestContextInjectorHandler;
-import org.restheart.handlers.injectors.CollectionPropsInjectorHandler;
-import org.restheart.handlers.injectors.DbPropsInjectorHandler;
-import org.restheart.handlers.injectors.LocalCachesSingleton;
-import org.restheart.security.AccessManager;
-import org.restheart.utils.ResourcesExtractor;
-import org.restheart.utils.LoggingInitializer;
-import org.restheart.handlers.RequestContext;
-import org.restheart.handlers.applicationlogic.ApplicationLogicHandler;
-import org.restheart.handlers.OptionsHandler;
-import org.restheart.handlers.PipedWrappingHandler;
-import org.restheart.handlers.injectors.BodyInjectorHandler;
-import org.restheart.handlers.metadata.MetadataEnforcerHandler;
-import org.restheart.security.handlers.SecurityHandler;
-import org.restheart.security.handlers.CORSHandler;
-import org.restheart.utils.FileUtils;
-import org.restheart.utils.OSChecker;
 import com.sun.akuma.Daemon;
-import static io.undertow.Handlers.path;
+import io.undertow.Undertow.Builder;
 import io.undertow.Undertow;
 import io.undertow.security.idm.IdentityManager;
+import io.undertow.server.handlers.AllowedMethodsHandler;
+import io.undertow.server.handlers.BlockingHandler;
+import io.undertow.server.handlers.GracefulShutdownHandler;
 import io.undertow.server.handlers.HttpContinueAcceptingHandler;
+import io.undertow.server.handlers.PathHandler;
+import io.undertow.server.handlers.RequestLimit;
+import io.undertow.server.handlers.RequestLimitingHandler;
 import io.undertow.server.handlers.resource.FileResourceManager;
+import io.undertow.server.handlers.resource.ResourceHandler;
+import io.undertow.util.HttpString;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-
-import static io.undertow.Handlers.resource;
-import io.undertow.Undertow.Builder;
-import io.undertow.server.handlers.AllowedMethodsHandler;
-import io.undertow.server.handlers.BlockingHandler;
-import io.undertow.server.handlers.GracefulShutdownHandler;
-import io.undertow.server.handlers.PathHandler;
-import io.undertow.server.handlers.RequestLimit;
-import io.undertow.server.handlers.RequestLimitingHandler;
-import io.undertow.server.handlers.resource.ResourceHandler;
-import io.undertow.util.HttpString;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import org.restheart.db.MongoDBClientSingleton;
+import org.restheart.db.PropsFixer;
+import org.restheart.handlers.ErrorHandler;
+import org.restheart.handlers.GzipEncodingHandler;
+import org.restheart.handlers.OptionsHandler;
+import org.restheart.handlers.PipedHttpHandler;
+import org.restheart.handlers.PipedWrappingHandler;
+import org.restheart.handlers.RequestContext;
+import org.restheart.handlers.RequestDispacherHandler;
+import org.restheart.handlers.applicationlogic.ApplicationLogicHandler;
+import org.restheart.handlers.injectors.BodyInjectorHandler;
+import org.restheart.handlers.injectors.CollectionPropsInjectorHandler;
+import org.restheart.handlers.injectors.DbPropsInjectorHandler;
+import org.restheart.handlers.injectors.LocalCachesSingleton;
+import org.restheart.handlers.injectors.RequestContextInjectorHandler;
+import org.restheart.handlers.metadata.MetadataEnforcerHandler;
+import org.restheart.security.AccessManager;
+import org.restheart.security.handlers.CORSHandler;
+import org.restheart.security.handlers.SecurityHandler;
+import org.restheart.utils.FileUtils;
+import org.restheart.utils.LoggingInitializer;
+import org.restheart.utils.OSChecker;
+import org.restheart.utils.ResourcesExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static io.undertow.Handlers.path;
+import static io.undertow.Handlers.resource;
+import static org.restheart.Configuration.RESTHEART_VERSION;
+
 
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public final class Bootstrapper {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(Bootstrapper.class);
+
     private static final Map<String, File> TMP_EXTRACTED_FILES = new HashMap<>();
 
     private static Undertow server;
+
     private static GracefulShutdownHandler hanldersPipe = null;
+
     private static Configuration configuration;
+
     private static Path pidFilePath;
 
     private Bootstrapper() {
@@ -305,40 +308,30 @@ public final class Bootstrapper {
 
     private static void startServer() {
         LOGGER.info("RESTHeart version {}", RESTHEART_VERSION);
-
-        String mongoHosts = configuration.getMongoServers().stream()
-                .map(s -> s.get(Configuration.MONGO_HOST_KEY) + ":" + s.get(Configuration.MONGO_PORT_KEY) + " ")
-                .reduce("", String::concat);
-
+        String mongoHosts = configuration.getMongoServers().stream().map(( s) -> ((s.get(Configuration.MONGO_HOST_KEY) + ":") + s.get(Configuration.MONGO_PORT_KEY)) + " ").reduce("", String::concat);
         LOGGER.info("initializing mongodb connection pool to {}", mongoHosts);
-
         try {
             MongoDBClientSingleton.init(configuration);
-
             LOGGER.info("mongodb connection pool initialized");
-
             new PropsFixer().fixAllMissingProps();
-        } catch (Throwable t) {
+        } catch (java.lang.Throwable t) {
             LOGGER.error("error connecting to mongodb. exiting..", t);
             stopServer();
             System.exit(-1);
         }
-
         try {
             startCoreSystem();
-        } catch (Throwable t) {
+        } catch (java.lang.Throwable t) {
             LOGGER.error("error starting RESTHeart. exiting..", t);
             stopServer();
             System.exit(-2);
         }
-
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
                 stopServer();
             }
         });
-
         LOGGER.info("RESTHeart started **********************************************");
     }
 

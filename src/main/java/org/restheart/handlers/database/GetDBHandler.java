@@ -18,19 +18,19 @@
 package org.restheart.handlers.database;
 
 import com.mongodb.DBObject;
-import org.restheart.db.DbsDAO;
-import org.restheart.utils.HttpStatus;
-import org.restheart.handlers.PipedHttpHandler;
-import org.restheart.handlers.RequestContext;
 import io.undertow.server.HttpServerExchange;
 import java.util.List;
+import org.restheart.db.DbsDAO;
+import org.restheart.handlers.PipedHttpHandler;
+import org.restheart.handlers.RequestContext;
+import org.restheart.utils.HttpStatus;
+
 
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class GetDBHandler extends PipedHttpHandler {
-
     /**
      * Creates a new instance of GetDBHandler
      */
@@ -47,11 +47,9 @@ public class GetDBHandler extends PipedHttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange, RequestContext context) throws Exception {
         final DbsDAO dbsDAO = new DbsDAO();
-        
         List<String> colls = dbsDAO.getDbCollections(dbsDAO.getDB(context.getDBName()));
         List<DBObject> data = dbsDAO.getData(context.getDBName(), colls, context.getPage(), context.getPagesize());
         exchange.setResponseCode(HttpStatus.SC_OK);
-        
         new DBRepresentationFactory().sendHal(exchange, context, data, dbsDAO.getDBSize(colls));
         exchange.endExchange();
     }

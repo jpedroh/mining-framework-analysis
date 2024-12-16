@@ -21,23 +21,23 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 import com.mongodb.util.JSONParseException;
+import io.undertow.server.HttpServerExchange;
+import java.util.ArrayList;
 import org.restheart.db.CollectionDAO;
-import org.restheart.utils.HttpStatus;
 import org.restheart.handlers.IllegalQueryParamenterException;
 import org.restheart.handlers.PipedHttpHandler;
 import org.restheart.handlers.RequestContext;
+import org.restheart.utils.HttpStatus;
 import org.restheart.utils.ResponseHelper;
-import io.undertow.server.HttpServerExchange;
-import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class GetCollectionHandler extends PipedHttpHandler {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(GetCollectionHandler.class);
 
     /**
@@ -58,14 +58,11 @@ public class GetCollectionHandler extends PipedHttpHandler {
         final CollectionDAO collectionDAO = new CollectionDAO();
         DBCollection coll = collectionDAO.getCollection(context.getDBName(), context.getCollectionName());
         long size = -1;
-
         if (context.isCount()) {
             size = collectionDAO.getCollectionSize(coll, exchange.getQueryParameters().get("filter"));
         }
-
         // ***** get data
         ArrayList<DBObject> data = null;
-
         try {
             data = collectionDAO.getCollectionData(coll, context.getPage(), context.getPagesize(), context.getSortBy(), context.getFilter(), context.getCursorAllocationPolicy());
         } catch (JSONParseException jpe) {
@@ -83,19 +80,16 @@ public class GetCollectionHandler extends PipedHttpHandler {
                 throw me;
             }
         }
-
         if (exchange.isComplete()) {
             // if an error occured getting data, the exchange is already closed
             return;
         }
-
-        // ***** return NOT_FOUND from here if collection is not existing 
+        // ***** return NOT_FOUND from here if collection is not existing
         // (this is to avoid to check existance via the slow CollectionDAO.checkCollectionExists)
-        if (data.isEmpty() && (context.getCollectionProps() == null || context.getCollectionProps().keySet().isEmpty())) {
+        if (data.isEmpty() && ((context.getCollectionProps() == null) || context.getCollectionProps().keySet().isEmpty())) {
             ResponseHelper.endExchange(exchange, HttpStatus.SC_NOT_FOUND);
             return;
         }
-
         try {
             exchange.setResponseCode(HttpStatus.SC_OK);
             new CollectionRepresentationFactory().sendHal(exchange, context, data, size);

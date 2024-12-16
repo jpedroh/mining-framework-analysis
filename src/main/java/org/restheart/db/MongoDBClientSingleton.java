@@ -23,23 +23,24 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
-import org.restheart.Configuration;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.restheart.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class MongoDBClientSingleton {
-
     private static boolean initialized = false;
 
     private static transient List<Map<String, Object>> mongoServers;
+
     private static transient List<Map<String, Object>> mongoCredentials;
 
     private MongoClient mongoClient;
@@ -50,12 +51,11 @@ public class MongoDBClientSingleton {
         if (!initialized) {
             throw new IllegalStateException("not initialized");
         }
-
         try {
             setup();
         } catch (UnknownHostException ex) {
             logger.error("error initializing mongodb client", ex);
-        } catch (Throwable tr) {
+        } catch (java.lang.Throwable tr) {
             logger.error("error initializing mongodb client", tr);
         }
     }
@@ -79,34 +79,24 @@ public class MongoDBClientSingleton {
         if (isInitialized()) {
             List<ServerAddress> servers = new ArrayList<>();
             List<MongoCredential> credentials = new ArrayList<>();
-
             for (Map<String, Object> mongoServer : mongoServers) {
                 Object mongoHost = mongoServer.get(Configuration.MONGO_HOST_KEY);
                 Object mongoPort = mongoServer.get(Configuration.MONGO_PORT_KEY);
-
-                if (mongoHost != null && mongoHost instanceof String && mongoPort != null && mongoPort instanceof Integer) {
-                    servers.add(new ServerAddress((String) mongoHost, (int) mongoPort));
+                if ((((mongoHost != null) && (mongoHost instanceof String)) && (mongoPort != null)) && (mongoPort instanceof Integer)) {
+                    servers.add(new ServerAddress(((String) (mongoHost)), ((int) (mongoPort))));
                 }
             }
-
             if (mongoCredentials != null) {
-                mongoCredentials.stream().forEach((mongoCredential) -> {
+                mongoCredentials.stream().forEach(( mongoCredential) -> {
                     Object mongoAuthDb = mongoCredential.get(Configuration.MONGO_AUTH_DB_KEY);
                     Object mongoUser = mongoCredential.get(Configuration.MONGO_USER_KEY);
                     Object mongoPwd = mongoCredential.get(Configuration.MONGO_PASSWORD_KEY);
-                    if (mongoAuthDb != null 
-                            && mongoAuthDb instanceof String 
-                            && mongoUser != null 
-                            && mongoUser instanceof String 
-                            && mongoPwd != null 
-                            && mongoPwd instanceof String) {
-                        credentials.add(MongoCredential.createMongoCRCredential((String) mongoUser, (String) mongoAuthDb, ((String) mongoPwd).toCharArray()));
+                    if ((((((mongoAuthDb != null) && (mongoAuthDb instanceof String)) && (mongoUser != null)) && (mongoUser instanceof String)) && (mongoPwd != null)) && (mongoPwd instanceof String)) {
+                        credentials.add(MongoCredential.createMongoCRCredential(((String) (mongoUser)), ((String) (mongoAuthDb)), ((String) (mongoPwd)).toCharArray()));
                     }
                 });
             }
-
             MongoClientOptions opts = MongoClientOptions.builder().readPreference(ReadPreference.primaryPreferred()).writeConcern(WriteConcern.ACKNOWLEDGED).build();
-
             mongoClient = new MongoClient(servers, credentials, opts);
         }
     }
@@ -120,7 +110,6 @@ public class MongoDBClientSingleton {
     }
 
     private static class MongoDBClientSingletonHolder {
-
         private static final MongoDBClientSingleton INSTANCE = new MongoDBClientSingleton();
     }
 

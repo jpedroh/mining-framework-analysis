@@ -19,24 +19,24 @@ package org.restheart.handlers.root;
 
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import org.restheart.db.DbsDAO;
-import org.restheart.db.MongoDBClientSingleton;
-import org.restheart.utils.HttpStatus;
-import org.restheart.handlers.PipedHttpHandler;
-import org.restheart.handlers.RequestContext;
-import org.restheart.handlers.injectors.LocalCachesSingleton;
 import io.undertow.server.HttpServerExchange;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.restheart.db.DbsDAO;
+import org.restheart.db.MongoDBClientSingleton;
+import org.restheart.handlers.PipedHttpHandler;
+import org.restheart.handlers.RequestContext;
+import org.restheart.handlers.injectors.LocalCachesSingleton;
+import org.restheart.utils.HttpStatus;
+
 
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class GetRootHandler extends PipedHttpHandler {
-
     private static final MongoClient client = MongoDBClientSingleton.getInstance().getClient();
 
     /**
@@ -55,35 +55,27 @@ public class GetRootHandler extends PipedHttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange, RequestContext context) throws Exception {
         List<String> _dbs = client.getDatabaseNames();
-
         // filter out reserved resources
-        List<String> dbs = _dbs.stream().filter(db -> !RequestContext.isReservedResourceDb(db)).collect(Collectors.toList());
-
+        List<String> dbs = _dbs.stream().filter(( db) -> !RequestContext.isReservedResourceDb(db)).collect(Collectors.toList());
         if (dbs == null) {
             dbs = new ArrayList<>();
         }
-
         int size = dbs.size();
-
-        Collections.sort(dbs); // sort by id
+        Collections.sort(dbs);// sort by id
 
         // apply page and pagesize
-        dbs = dbs.subList((context.getPage() - 1) * context.getPagesize(), (context.getPage() - 1) * context.getPagesize() + context.getPagesize() > dbs.size() ? dbs.size() : (context.getPage() - 1) * context.getPagesize() + context.getPagesize());
-
+        dbs = dbs.subList((context.getPage() - 1) * context.getPagesize(), (((context.getPage() - 1) * context.getPagesize()) + context.getPagesize()) > dbs.size() ? dbs.size() : ((context.getPage() - 1) * context.getPagesize()) + context.getPagesize());
         List<DBObject> data = new ArrayList<>();
-
         final DbsDAO dbsDAO = new DbsDAO();
-        dbs.stream().map((db) -> {
+        dbs.stream().map(( db) -> {
             if (LocalCachesSingleton.isEnabled()) {
                 return LocalCachesSingleton.getInstance().getDBProps(db);
             } else {
                 return dbsDAO.getDbProps(db);
             }
-        }
-        ).forEach((item) -> {
+        }).forEach(( item) -> {
             data.add(item);
         });
-
         exchange.setResponseCode(HttpStatus.SC_OK);
         new RootRepresentationFactory().sendHal(exchange, context, data, size);
         exchange.endExchange();

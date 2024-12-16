@@ -17,19 +17,19 @@
  */
 package org.restheart.handlers.indexes;
 
+import io.undertow.server.HttpServerExchange;
 import org.restheart.db.IndexDAO;
 import org.restheart.handlers.PipedHttpHandler;
-import org.restheart.utils.HttpStatus;
 import org.restheart.handlers.RequestContext;
+import org.restheart.utils.HttpStatus;
 import org.restheart.utils.ResponseHelper;
-import io.undertow.server.HttpServerExchange;
+
 
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class DeleteIndexHandler extends PipedHttpHandler {
-
     /**
      * Creates a new instance of DeleteIndexHandler
      */
@@ -47,24 +47,19 @@ public class DeleteIndexHandler extends PipedHttpHandler {
     public void handleRequest(HttpServerExchange exchange, RequestContext context) throws Exception {
         String db = context.getDBName();
         String co = context.getCollectionName();
-
         String id = context.getIndexId();
-
         if (id.startsWith("_") || id.equals("_id_")) {
             ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_UNAUTHORIZED, id + " is a default index and cannot be deleted");
             return;
         }
-
         final IndexDAO indexDAO = new IndexDAO();
         int httpCode = indexDAO.deleteIndex(db, co, id);
-
         // send the warnings if any (and in case no_content change the return code to ok
-        if (context.getWarnings() != null && !context.getWarnings().isEmpty()) {
+        if ((context.getWarnings() != null) && (!context.getWarnings().isEmpty())) {
             sendWarnings(httpCode, exchange, context);
         } else {
             exchange.setResponseCode(httpCode);
         }
-
         exchange.endExchange();
     }
 }

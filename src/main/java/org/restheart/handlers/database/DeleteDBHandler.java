@@ -17,20 +17,21 @@
  */
 package org.restheart.handlers.database;
 
-import org.restheart.db.DbsDAO;
-import org.restheart.handlers.injectors.LocalCachesSingleton;
-import org.restheart.handlers.PipedHttpHandler;
-import org.restheart.utils.HttpStatus;
-import org.restheart.handlers.RequestContext;
-import org.restheart.utils.RequestHelper;
-import org.restheart.utils.ResponseHelper;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
 import org.bson.types.ObjectId;
+import org.restheart.db.DbsDAO;
+import org.restheart.handlers.PipedHttpHandler;
+import org.restheart.handlers.RequestContext;
+import org.restheart.handlers.injectors.LocalCachesSingleton;
+import org.restheart.utils.HttpStatus;
+import org.restheart.utils.RequestHelper;
+import org.restheart.utils.ResponseHelper;
+
 
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class DeleteDBHandler extends PipedHttpHandler {
     /**
@@ -49,26 +50,20 @@ public class DeleteDBHandler extends PipedHttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange, RequestContext context) throws Exception {
         ObjectId etag = RequestHelper.getWriteEtag(exchange);
-
         if (etag == null) {
-            ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_CONFLICT, "the " + Headers.ETAG + " header must be provided");
+            ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_CONFLICT, ("the " + Headers.ETAG) + " header must be provided");
             return;
         }
-
         final DbsDAO dbsDAO = new DbsDAO();
         int httpCode = dbsDAO.deleteDB(context.getDBName(), etag);
-
         exchange.setResponseCode(httpCode);
-
         // send the warnings if any (and in case no_content change the return code to ok
-        if (context.getWarnings() != null && !context.getWarnings().isEmpty()) {
+        if ((context.getWarnings() != null) && (!context.getWarnings().isEmpty())) {
             sendWarnings(httpCode, exchange, context);
         } else {
             exchange.setResponseCode(httpCode);
         }
-
         exchange.endExchange();
-
         LocalCachesSingleton.getInstance().invalidateDb(context.getDBName());
     }
 }

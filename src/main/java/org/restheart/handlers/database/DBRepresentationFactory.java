@@ -18,50 +18,44 @@
 package org.restheart.handlers.database;
 
 import com.mongodb.DBObject;
+import io.undertow.server.HttpServerExchange;
+import java.util.List;
+import org.bson.types.ObjectId;
 import org.restheart.Configuration;
 import org.restheart.hal.Link;
 import org.restheart.hal.Representation;
+import org.restheart.handlers.AbstractRepresentationFactory;
 import org.restheart.handlers.IllegalQueryParamenterException;
 import org.restheart.handlers.RequestContext;
 import org.restheart.utils.ResponseHelper;
 import org.restheart.utils.URLUtilis;
-import io.undertow.server.HttpServerExchange;
-import java.util.List;
-import org.bson.types.ObjectId;
-import org.restheart.handlers.AbstractRepresentationFactory;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ *
+ * @author Andrea Di Cesare
  */
 public class DBRepresentationFactory extends AbstractRepresentationFactory {
-
     private static final Logger logger = LoggerFactory.getLogger(DBRepresentationFactory.class);
 
     public DBRepresentationFactory() {
     }
 
     @Override
-    protected Representation getRepresentation(HttpServerExchange exchange, RequestContext context, List<DBObject> embeddedData, long size)
-            throws IllegalQueryParamenterException {
+    protected Representation getRepresentation(HttpServerExchange exchange, RequestContext context, List<DBObject> embeddedData, long size) throws IllegalQueryParamenterException {
         final String requestPath = buildRequestPath(exchange);
         final Representation rep = createRepresentation(exchange, context, requestPath);
         final DBObject dbProps = context.getDbProps();
-
         if (dbProps != null) {
             rep.addProperties(dbProps);
         }
-
         addSizeAndTotalPagesProperties(size, context, rep);
-
         addEmbeddedData(embeddedData, rep, requestPath);
-        
         addPaginationLinks(exchange, context, size, rep);
-        
         addLinkTemplatesAndCuries(exchange, context, rep, requestPath);
-        
         return rep;
     }
 
@@ -86,19 +80,16 @@ public class DBRepresentationFactory extends AbstractRepresentationFactory {
     }
 
     private void embeddedCollections(List<DBObject> embeddedData, String requestPath, Representation rep) {
-        embeddedData.stream().forEach((d) -> {
+        embeddedData.stream().forEach(( d) -> {
             Object _id = d.get("_id");
-
-            if (_id != null && (_id instanceof String || _id instanceof ObjectId)) {
-                Representation nrep = new Representation(requestPath + "/" + _id.toString());
-
+            if ((_id != null) && ((_id instanceof String) || (_id instanceof ObjectId))) {
+                Representation nrep = new Representation((requestPath + "/") + _id.toString());
                 nrep.addProperty("_type", RequestContext.TYPE.COLLECTION.name());
+                if ((d.get("_etag") != null) && (d.get("_etag") instanceof ObjectId)) {
+                    d.put("_etag", ((ObjectId) (d.get("_etag"))).toString());// represent the etag as a string
 
-                if (d.get("_etag") != null && d.get("_etag") instanceof ObjectId) {
-                    d.put("_etag", ((ObjectId) d.get("_etag")).toString()); // represent the etag as a string
                 }
                 nrep.addProperties(d);
-
                 rep.addRepresentation("rh:coll", nrep);
             } else {
                 logger.error("document missing string _id field", d);

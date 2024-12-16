@@ -19,24 +19,24 @@ package org.restheart.handlers.collection;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
+import io.undertow.server.HttpServerExchange;
+import org.bson.types.ObjectId;
 import org.restheart.db.CollectionDAO;
 import org.restheart.hal.metadata.InvalidMetadataException;
 import org.restheart.hal.metadata.Relationship;
 import org.restheart.handlers.PipedHttpHandler;
-import org.restheart.utils.HttpStatus;
 import org.restheart.handlers.RequestContext;
 import org.restheart.handlers.injectors.LocalCachesSingleton;
+import org.restheart.utils.HttpStatus;
 import org.restheart.utils.RequestHelper;
 import org.restheart.utils.ResponseHelper;
-import io.undertow.server.HttpServerExchange;
-import org.bson.types.ObjectId;
+
 
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class PatchCollectionHandler extends PipedHttpHandler {
-
     /**
      * Creates a new instance of PatchCollectionHandler
      */
@@ -56,25 +56,20 @@ public class PatchCollectionHandler extends PipedHttpHandler {
             ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_NOT_ACCEPTABLE, "wrong request, db name cannot be empty");
             return;
         }
-
         if (context.getCollectionName().isEmpty() || context.getCollectionName().startsWith("_")) {
             ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_NOT_ACCEPTABLE, "wrong request, collection name cannot be empty or start with _");
             return;
         }
-
         DBObject content = context.getContent();
-
         if (content == null) {
             ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_NOT_ACCEPTABLE, "no data provided");
             return;
         }
-
         // cannot PATCH with an array
         if (content instanceof BasicDBList) {
             ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_NOT_ACCEPTABLE, "data cannot be an array");
             return;
         }
-
         if (content.containsField(Relationship.RELATIONSHIPS_ELEMENT_NAME)) {
             try {
                 Relationship.getFromJson(content);
@@ -83,27 +78,20 @@ public class PatchCollectionHandler extends PipedHttpHandler {
                 return;
             }
         }
-
         ObjectId etag = RequestHelper.getWriteEtag(exchange);
-
         if (etag == null) {
             ResponseHelper.endExchange(exchange, HttpStatus.SC_CONFLICT);
             return;
         }
-
         final CollectionDAO collectionDAO = new CollectionDAO();
         int httpCode = collectionDAO.upsertCollection(context.getDBName(), context.getCollectionName(), content, etag, true, true);
-
         // send the warnings if any (and in case no_content change the return code to ok
-        if (context.getWarnings() != null && !context.getWarnings().isEmpty()) {
+        if ((context.getWarnings() != null) && (!context.getWarnings().isEmpty())) {
             sendWarnings(httpCode, exchange, context);
         } else {
             exchange.setResponseCode(httpCode);
         }
-
         exchange.endExchange();
-
         LocalCachesSingleton.getInstance().invalidateCollection(context.getDBName(), context.getCollectionName());
     }
-
 }

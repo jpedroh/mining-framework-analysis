@@ -20,24 +20,24 @@ package org.restheart.handlers.document;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import org.restheart.db.DocumentDAO;
-import org.restheart.handlers.PipedHttpHandler;
-import org.restheart.handlers.collection.PutCollectionHandler;
-import org.restheart.utils.HttpStatus;
-import org.restheart.handlers.RequestContext;
-import org.restheart.utils.RequestHelper;
-import org.restheart.utils.ResponseHelper;
 import io.undertow.server.HttpServerExchange;
 import org.bson.types.ObjectId;
+import org.restheart.db.DocumentDAO;
+import org.restheart.handlers.PipedHttpHandler;
+import org.restheart.handlers.RequestContext;
+import org.restheart.handlers.collection.PutCollectionHandler;
+import org.restheart.utils.HttpStatus;
+import org.restheart.utils.RequestHelper;
+import org.restheart.utils.ResponseHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class PutDocumentHandler extends PipedHttpHandler {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(PutCollectionHandler.class);
 
     /**
@@ -56,45 +56,30 @@ public class PutDocumentHandler extends PipedHttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange, RequestContext context) throws Exception {
         DBObject content = context.getContent();
-
         if (content == null) {
             content = new BasicDBObject();
         }
-
         // cannot PUT an array
         if (content instanceof BasicDBList) {
             ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_NOT_ACCEPTABLE, "data cannot be an array");
             return;
         }
-
         String id = context.getDocumentId();
-
         if (content.get("_id") == null) {
             content.put("_id", getId(id));
         } else if (!content.get("_id").equals(id)) {
             ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_NOT_ACCEPTABLE, "_id in content body is different than id in URL");
             return;
         }
-
         ObjectId etag = RequestHelper.getWriteEtag(exchange);
-        
         DocumentDAO documentDAO = new DocumentDAO();
-        int httpCode = documentDAO.upsertDocument(
-                context.getDBName(),
-                context.getCollectionName(),
-                context.getDocumentId(),
-                content,
-                etag,
-                false);
-
+        int httpCode = documentDAO.upsertDocument(context.getDBName(), context.getCollectionName(), context.getDocumentId(), content, etag, false);
         // send the warnings if any (and in case no_content change the return code to ok
-        if (context.getWarnings() != null && !context.getWarnings().isEmpty()) {
+        if ((context.getWarnings() != null) && (!context.getWarnings().isEmpty())) {
             sendWarnings(httpCode, exchange, context);
         } else {
             exchange.setResponseCode(httpCode);
         }
-
         exchange.endExchange();
     }
-
 }

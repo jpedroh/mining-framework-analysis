@@ -20,15 +20,15 @@ package org.restheart.db;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import org.restheart.utils.HttpStatus;
 import java.util.List;
+import org.restheart.utils.HttpStatus;
+
 
 /**
  *
- * @author Andrea Di Cesare <andrea@softinstigate.com>
+ * @author Andrea Di Cesare
  */
 public class IndexDAO {
-
     private final MongoClient client;
 
     public static final BasicDBObject METADATA_QUERY = new BasicDBObject("_id", "_properties");
@@ -52,20 +52,18 @@ public class IndexDAO {
      * @return
      */
     public List<DBObject> getCollectionIndexes(String dbName, String collName) {
-        List<DBObject> indexes = client.getDB(dbName).getCollection("system.indexes").find(new BasicDBObject("ns", dbName + "." + collName), fieldsToReturnIndexes).sort(new BasicDBObject("name", 1)).toArray();
-
-        indexes.forEach((i) -> {
+        List<DBObject> indexes = client.getDB(dbName).getCollection("system.indexes").find(new BasicDBObject("ns", (dbName + ".") + collName), fieldsToReturnIndexes).sort(new BasicDBObject("name", 1)).toArray();
+        indexes.forEach(( i) -> {
             i.put("_id", i.get("name"));
             i.removeField("name");
         });
-
         return indexes;
     }
 
     /**
      *
      * @param db
-     * @param collection
+     * @param co
      * @param keys
      * @param ops
      */
@@ -80,7 +78,7 @@ public class IndexDAO {
     /**
      *
      * @param db
-     * @param collection
+     * @param co
      * @param indexId
      * @return
      */
