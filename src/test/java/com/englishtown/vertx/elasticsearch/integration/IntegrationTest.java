@@ -1,9 +1,15 @@
 package com.englishtown.vertx.elasticsearch.integration;
 
-import com.englishtown.promises.*;
+import com.englishtown.promises.FulfilledRunnable;
+import com.englishtown.promises.Promise;
+import com.englishtown.promises.RejectedRunnable;
+import com.englishtown.promises.Value;
+import com.englishtown.promises.When;
 import com.englishtown.vertx.elasticsearch.ElasticSearch;
 import com.englishtown.vertx.promises.WhenEventBus;
 import com.englishtown.vertx.promises.impl.DefaultWhenEventBus;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -14,37 +20,31 @@ import org.vertx.java.core.eventbus.Message;
 import org.vertx.java.core.json.JsonArray;
 import org.vertx.java.core.json.JsonObject;
 import org.vertx.testtools.TestVerticle;
+import static org.vertx.testtools.VertxAssert.assertEquals;
+import static org.vertx.testtools.VertxAssert.assertNotNull;
+import static org.vertx.testtools.VertxAssert.assertTrue;
+import static org.vertx.testtools.VertxAssert.fail;
+import static org.vertx.testtools.VertxAssert.testComplete;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.vertx.testtools.VertxAssert.*;
 
 /**
  * {@link ElasticSearch} integration test
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class IntegrationTest extends TestVerticle {
-
     private String id = "integration-test-1";
+
     private String index = "test_index";
+
     private String type = "test_type";
+
     private String source_user = "englishtown";
+
     private String source_message = "vertx elastic search";
 
     @Test
     public void test1Index() throws Exception {
-
-        JsonObject message = new JsonObject()
-                .putString("action", "index")
-                .putString(ElasticSearch.CONST_INDEX, index)
-                .putString(ElasticSearch.CONST_TYPE, type)
-                .putString(ElasticSearch.CONST_ID, id)
-                .putObject(ElasticSearch.CONST_SOURCE, new JsonObject()
-                                .putString("user", source_user)
-                                .putString("message", source_message)
-                );
-
+        JsonObject message = new JsonObject().putString("action", "index").putString(ElasticSearch.CONST_INDEX, index).putString(ElasticSearch.CONST_TYPE, type).putString(ElasticSearch.CONST_ID, id).putObject(ElasticSearch.CONST_SOURCE, new JsonObject().putString("user", source_user).putString("message", source_message));
         vertx.eventBus().send(ElasticSearch.DEFAULT_ADDRESS, message, new Handler<Message<JsonObject>>() {
             @Override
             public void handle(Message<JsonObject> reply) {
@@ -57,64 +57,41 @@ public class IntegrationTest extends TestVerticle {
                 testComplete();
             }
         });
-
     }
-
 
     @Test
     public void test2Index_Multiple() throws Exception {
-
         int count = 100;
         WhenEventBus eventBus = new DefaultWhenEventBus(vertx, container);
         When<Message<JsonObject>> when = new When<>();
         List<Promise<Message<JsonObject>>> promises = new ArrayList<>();
-
         for (int i = 0; i < count; i++) {
-            JsonObject message = new JsonObject()
-                    .putString("action", "index")
-                    .putString(ElasticSearch.CONST_INDEX, index)
-                    .putString(ElasticSearch.CONST_TYPE, type)
-                    .putString(ElasticSearch.CONST_ID, id + i)
-                    .putObject(ElasticSearch.CONST_SOURCE, new JsonObject()
-                                    .putString("user", source_user)
-                                    .putString("message", source_message + " " + i)
-                    );
+            JsonObject message = new JsonObject().putString("action", "index").putString(ElasticSearch.CONST_INDEX, index).putString(ElasticSearch.CONST_TYPE, type).putString(ElasticSearch.CONST_ID, id + i).putObject(ElasticSearch.CONST_SOURCE, new JsonObject().putString("user", source_user).putString("message", (source_message + " ") + i));
             promises.add(eventBus.<JsonObject>send(ElasticSearch.DEFAULT_ADDRESS, message));
         }
-
-        when.all(promises).then(
-                new FulfilledRunnable<List<? extends Message<JsonObject>>>() {
-                    @Override
-                    public Promise<List<? extends Message<JsonObject>>> run(List<? extends Message<JsonObject>> replies) {
-                        assertEquals(100, replies.size());
-                        for (Message<JsonObject> reply : replies) {
-                            assertEquals("ok", reply.body().getString("status"));
-                        }
-                        testComplete();
-                        return null;
-                    }
-                },
-                new RejectedRunnable<List<? extends Message<JsonObject>>>() {
-                    @Override
-                    public Promise<List<? extends Message<JsonObject>>> run(Value<List<? extends Message<JsonObject>>> value) {
-                        fail();
-                        testComplete();
-                        return null;
-                    }
+        when.all(promises).then(new FulfilledRunnable<List<? extends Message<JsonObject>>>() {
+            @Override
+            public Promise<List<? extends Message<JsonObject>>> run(List<? extends Message<JsonObject>> replies) {
+                assertEquals(100, replies.size());
+                for (Message<JsonObject> reply : replies) {
+                    assertEquals("ok", reply.body().getString("status"));
                 }
-        );
-
+                testComplete();
+                return null;
+            }
+        }, new RejectedRunnable<List<? extends Message<JsonObject>>>() {
+            @Override
+            public Promise<List<? extends Message<JsonObject>>> run(Value<List<? extends Message<JsonObject>>> value) {
+                fail();
+                testComplete();
+                return null;
+            }
+        });
     }
 
     @Test
     public void test3Get() throws Exception {
-
-        JsonObject message = new JsonObject()
-                .putString("action", "get")
-                .putString(ElasticSearch.CONST_INDEX, index)
-                .putString(ElasticSearch.CONST_TYPE, type)
-                .putString(ElasticSearch.CONST_ID, id);
-
+        JsonObject message = new JsonObject().putString("action", "get").putString(ElasticSearch.CONST_INDEX, index).putString(ElasticSearch.CONST_TYPE, type).putString(ElasticSearch.CONST_ID, id);
         vertx.eventBus().send(ElasticSearch.DEFAULT_ADDRESS, message, new Handler<Message<JsonObject>>() {
             @Override
             public void handle(Message<JsonObject> reply) {
@@ -133,23 +110,11 @@ public class IntegrationTest extends TestVerticle {
                 testComplete();
             }
         });
-
     }
 
     @Test
     public void test4Search_Simple() throws Exception {
-
-        JsonObject message = new JsonObject()
-                .putString("action", "search")
-                .putNumber("timeout", 100)
-                .putNumber("size", 10)
-                .putNumber("from", 10)
-                .putArray("fields", new JsonArray()
-                        .addString("user")
-                        .addString("message"))
-                .putString(ElasticSearch.CONST_INDEX, index)
-                .putObject("query", new JsonObject().putObject("match_all", new JsonObject()));
-
+        JsonObject message = new JsonObject().putString("action", "search").putNumber("timeout", 100).putNumber("size", 10).putNumber("from", 10).putArray("fields", new JsonArray().addString("user").addString("message")).putString(ElasticSearch.CONST_INDEX, index).putObject("query", new JsonObject().putObject("match_all", new JsonObject()));
         vertx.eventBus().send(ElasticSearch.DEFAULT_ADDRESS, message, new Handler<Message<JsonObject>>() {
             @Override
             public void handle(Message<JsonObject> reply) {
@@ -157,31 +122,18 @@ public class IntegrationTest extends TestVerticle {
                 testComplete();
             }
         });
-
     }
 
     @Test
     public void test5Scroll() throws Exception {
-
-        JsonObject message = new JsonObject()
-                .putString("action", "search")
-                .putString(ElasticSearch.CONST_INDEX, index)
-                .putString("search_type", "scan")
-                .putString("scroll", "5m")
-                .putObject("query", new JsonObject().putObject("match_all", new JsonObject()));
-
+        JsonObject message = new JsonObject().putString("action", "search").putString(ElasticSearch.CONST_INDEX, index).putString("search_type", "scan").putString("scroll", "5m").putObject("query", new JsonObject().putObject("match_all", new JsonObject()));
         vertx.eventBus().send(ElasticSearch.DEFAULT_ADDRESS, message, new Handler<Message<JsonObject>>() {
             @Override
             public void handle(Message<JsonObject> reply) {
                 assertEquals("ok", reply.body().getString("status"));
                 String scrollId = reply.body().getString("_scroll_id");
                 assertNotNull(scrollId);
-
-                JsonObject message = new JsonObject()
-                        .putString("action", "scroll")
-                        .putString("_scroll_id", scrollId)
-                        .putString("scroll", "5m");
-
+                JsonObject message = new JsonObject().putString("action", "scroll").putString("_scroll_id", scrollId).putString("scroll", "5m");
                 vertx.eventBus().send(ElasticSearch.DEFAULT_ADDRESS, message, new Handler<Message<JsonObject>>() {
                     @Override
                     public void handle(Message<JsonObject> reply) {
@@ -196,7 +148,6 @@ public class IntegrationTest extends TestVerticle {
                 });
             }
         });
-
     }
 
     @Test
@@ -232,7 +183,6 @@ public class IntegrationTest extends TestVerticle {
      */
     @Override
     public void start(final Future<Void> startedResult) {
-
         container.deployVerticle(ElasticSearch.class.getName(), new Handler<AsyncResult<String>>() {
             @Override
             public void handle(AsyncResult<String> result) {
@@ -244,7 +194,5 @@ public class IntegrationTest extends TestVerticle {
                 }
             }
         });
-
     }
-
 }

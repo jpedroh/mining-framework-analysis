@@ -1,5 +1,10 @@
 package com.englishtown.vertx.elasticsearch;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import javax.inject.Inject;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
@@ -20,31 +25,35 @@ import org.vertx.java.core.eventbus.Message;
 import org.vertx.java.core.json.JsonArray;
 import org.vertx.java.core.json.JsonObject;
 
-import javax.inject.Inject;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * ElasticSearch event bus verticle
  */
 public class ElasticSearch extends BusModBase implements Handler<Message<JsonObject>> {
-
     protected final TransportClientFactory clientFactory;
+
     private final ElasticSearchConfigurator configurator;
+
     protected TransportClient client;
+
     protected String address;
 
     public static final String CONFIG_ADDRESS = "address";
+
     public static final String DEFAULT_ADDRESS = "et.vertx.elasticsearch";
+
     public static final Charset CHARSET_UTF8 = Charset.forName("UTF-8");
 
     public static final String CONST_ID = "_id";
+
     public static final String CONST_INDEX = "_index";
+
     public static final String CONST_INDICES = "_indices";
+
     public static final String CONST_TYPE = "_type";
+
     public static final String CONST_VERSION = "_version";
+
     public static final String CONST_SOURCE = "_source";
 
     @Inject
@@ -92,38 +101,34 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
      */
     @Override
     public void handle(Message<JsonObject> message) {
-
         try {
             String action = getMandatoryString("action", message);
             if (action == null) {
                 return;
             }
-
             switch (action) {
-                case "index":
+                case "index" :
                     doIndex(message);
                     break;
-                case "get":
+                case "get" :
                     doGet(message);
                     break;
-                case "search":
+                case "search" :
                     doSearch(message);
                     break;
-                case "scroll":
+                case "scroll" :
                     doScroll(message);
                     break;
-                case "delete":
+                case "delete" :
                     doDelete(message);
                     break;
-                default:
+                default :
                     sendError(message, "Unrecognized action " + action);
                     break;
             }
-
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             sendError(message, "Unhandled exception!", e);
         }
-
     }
 
     /**
@@ -141,7 +146,7 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
         }
 
         // type is optional
-        String type = body.getString(CONST_TYPE);
+        String type = body.getString(CONST_TYPE);;
 
         JsonObject source = body.getObject(CONST_SOURCE);
         if (source == null) {
@@ -179,42 +184,30 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
      * @param message
      */
     public void doGet(final Message<JsonObject> message) {
-
         JsonObject body = message.body();
-
         final String index = getRequiredIndex(body, message);
         if (index == null) {
             return;
         }
-
         // type is optional
         String type = body.getString(CONST_TYPE);
-
         String id = getRequiredId(body, message);
         if (id == null) {
             return;
         }
+        client.prepareGet(index, type, id).execute(new ActionListener<GetResponse>() {
+            @Override
+            public void onResponse(GetResponse getResponse) {
+                JsonObject source = (getResponse.isExists()) ? new JsonObject(getResponse.getSourceAsString()) : null;
+                JsonObject reply = new JsonObject().putString(CONST_INDEX, getResponse.getIndex()).putString(CONST_TYPE, getResponse.getType()).putString(CONST_ID, getResponse.getId()).putNumber(CONST_VERSION, getResponse.getVersion()).putObject(CONST_SOURCE, source);
+                sendOK(message, reply);
+            }
 
-        client.prepareGet(index, type, id)
-                .execute(new ActionListener<GetResponse>() {
-                    @Override
-                    public void onResponse(GetResponse getResponse) {
-                        JsonObject source = (getResponse.isExists() ? new JsonObject(getResponse.getSourceAsString()) : null);
-                        JsonObject reply = new JsonObject()
-                                .putString(CONST_INDEX, getResponse.getIndex())
-                                .putString(CONST_TYPE, getResponse.getType())
-                                .putString(CONST_ID, getResponse.getId())
-                                .putNumber(CONST_VERSION, getResponse.getVersion())
-                                .putObject(CONST_SOURCE, source);
-                        sendOK(message, reply);
-                    }
-
-                    @Override
-                    public void onFailure(Throwable e) {
-                        sendError(message, "Get error: " + e.getMessage(), new RuntimeException(e));
-                    }
-                });
-
+            @Override
+            public void onFailure(Throwable e) {
+                sendError(message, "Get error: " + e.getMessage(), new RuntimeException(e));
+            }
+        });
     }
 
     /**
@@ -224,9 +217,7 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
      * @param message
      */
     public void doSearch(final Message<JsonObject> message) {
-
         JsonObject body = message.body();
-
         // Get indices to be searched
         String index = body.getString(CONST_INDEX);
         JsonArray indices = body.getArray(CONST_INDICES);
@@ -239,9 +230,7 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
                 list.add(indices.<String>get(i));
             }
         }
-
         SearchRequestBuilder builder = client.prepareSearch(list.toArray(new String[list.size()]));
-
         // Get types to be searched
         String type = body.getString(CONST_TYPE);
         JsonArray types = body.getArray("_types");
@@ -257,63 +246,53 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
         if (!list.isEmpty()) {
             builder.setTypes(list.toArray(new String[list.size()]));
         }
-
         // Set the query
         JsonObject query = body.getObject("query");
         if (query != null) {
             builder.setQuery(query.encode());
         }
-
         // Set the filter
         JsonObject filter = body.getObject("filter");
         if (filter != null) {
             builder.setPostFilter(filter.encode());
         }
-
         // Set facets
         JsonObject facets = body.getObject("facets");
         if (facets != null) {
             builder.setFacets(facets.encode().getBytes(CHARSET_UTF8));
         }
-
         // Set search type
         String searchType = body.getString("search_type");
         if (searchType != null) {
             builder.setSearchType(searchType);
         }
-
         // Set scroll keep alive time
         String scroll = body.getString("scroll");
         if (scroll != null) {
             builder.setScroll(scroll);
         }
-
         // Set Size
         Integer size = body.getInteger("size");
         if (size != null) {
             builder.setSize(size);
         }
-
         // Set From
         Integer from = body.getInteger("from");
         if (from != null) {
             builder.setFrom(from);
         }
-
-        //Set requested fields
+        // Set requested fields
         JsonArray fields = body.getArray("fields");
         if (fields != null) {
             for (int i = 0; i < fields.size(); i++) {
                 builder.addField(fields.<String>get(i));
             }
         }
-
-        //Set query timeout
+        // Set query timeout
         Long queryTimeout = body.getLong("timeout");
         if (queryTimeout != null) {
             builder.setTimeout(new TimeValue(queryTimeout));
         }
-
         builder.execute(new ActionListener<SearchResponse>() {
             @Override
             public void onResponse(SearchResponse searchResponse) {
@@ -325,7 +304,6 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
                 sendError(message, "Search error: " + e.getMessage(), new RuntimeException(e));
             }
         });
-
     }
 
     /**
@@ -427,7 +405,7 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
 
     protected String getRequiredId(JsonObject json, Message<JsonObject> message) {
         String id = json.getString(CONST_ID);
-        if (id == null || id.isEmpty()) {
+        if ((id == null) || id.isEmpty()) {
             sendError(message, CONST_ID + " is required");
             return null;
         }
