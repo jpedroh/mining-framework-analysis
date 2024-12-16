@@ -13,9 +13,12 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 package ws.wamp.jawampa;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -24,7 +27,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,8 +38,8 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import rx.Observable;
 import rx.Observable.OnSubscribe;
+import rx.Observable;
 import rx.Observer;
 import rx.Scheduler;
 import rx.Subscriber;
@@ -76,10 +78,6 @@ import ws.wamp.jawampa.internal.UriValidator;
 import ws.wamp.jawampa.transport.WampChannelEvents;
 import ws.wamp.jawampa.transport.WampClientChannelFactory;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Provides the client-side functionality for WAMP.<br>
@@ -89,32 +87,41 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * directly be instantiated.
  */
 public class WampClient {
-    
     /**
      * Possible states for a WAMP session between client and router
      */
     public static enum Status {
-        /** The session is not connected */
+
+        /**
+         * The session is not connected
+         */
         Disconnected,
-        /** The session is trying to connect to the router */
+        /**
+         * The session is trying to connect to the router
+         */
         Connecting,
-        /** The session is connected to the router */
-        Connected
-    }
+        /**
+         * The session is connected to the router
+         */
+        Connected;}
 
     /** The current status */
     Status status = Status.Disconnected;
+
     BehaviorSubject<Status> statusObservable = BehaviorSubject.create(Status.Disconnected);
-    
+
     final EventLoopGroup eventLoop;
+
     final Scheduler scheduler;
-    
+
     final ObjectMapper objectMapper = new ObjectMapper();
 
     final URI routerUri;
+
     final String realm;
+
     final boolean useStrictUriValidation;
-    
+
     /** Returns the URI of the router to which this client is connected */
     public URI routerUri() {
         return routerUri;
@@ -124,95 +131,99 @@ public class WampClient {
     public String realm() {
         return realm;
     }
-    
+
     final boolean closeClientOnErrors;
+
     boolean isCompleted = false;
 
     /** The factory which is used to create new transports to the remote peer */
     final WampClientChannelFactory channelFactory;
+
     Channel channel;
+
     ChannelFuture connectFuture;
+
     SessionHandler handler;
-    
+
     long lastRequestId = IdValidator.MIN_VALID_ID;
-    
+
     final int totalNrReconnects;
+
     final int reconnectInterval;
+
     int remainingNrReconnects = 0;
+
     Subscription reconnectSubscription;
-    
+
     long sessionId;
+
     ObjectNode welcomeDetails = null;
+
     final WampRoles[] clientRoles;
+
     WampRoles[] routerRoles;
-    
+
     enum PubSubState {
+
         Subscribing,
         Subscribed,
         Unsubscribing,
-        Unsubscribed
-    }
-    
+        Unsubscribed;}
+
     enum RegistrationState {
+
         Registering,
         Registered,
         Unregistering,
-        Unregistered
-    }
-    
+        Unregistered;}
+
     static class RequestMapEntry {
         public final int requestType;
+
         public final AsyncSubject<?> resultSubject;
-        
+
         public RequestMapEntry(int requestType, AsyncSubject<?> resultSubject) {
             this.requestType = requestType;
             this.resultSubject = resultSubject;
         }
     }
-    
+
     static class SubscriptionMapEntry {
         public PubSubState state;
+
         public long subscriptionId = 0;
-        
-        public final List<Subscriber<? super PubSubData>> subscribers
-            = new ArrayList<Subscriber<? super PubSubData>>();
-        
+
+        public final List<Subscriber<? super PubSubData>> subscribers = new ArrayList<Subscriber<? super PubSubData>>();
+
         public SubscriptionMapEntry(PubSubState state) {
             this.state = state;
         }
     }
-    
+
     static class RegisteredProceduresMapEntry {
         public RegistrationState state;
+
         public long registrationId = 0;
+
         public final Subscriber<? super Request> subscriber;
-        
+
         public RegisteredProceduresMapEntry(Subscriber<? super Request> subscriber, RegistrationState state) {
             this.subscriber = subscriber;
             this.state = state;
         }
     }
-    
-    HashMap<Long, RequestMapEntry> requestMap = 
-        new HashMap<Long, WampClient.RequestMapEntry>();
-    
-    HashMap<String, SubscriptionMapEntry> subscriptionsByUri =
-        new HashMap<String, SubscriptionMapEntry>();
-    HashMap<Long, SubscriptionMapEntry> subscriptionsBySubscriptionId =
-        new HashMap<Long, SubscriptionMapEntry>();
-    
-    HashMap<String, RegisteredProceduresMapEntry> registeredProceduresByUri = 
-            new HashMap<String, RegisteredProceduresMapEntry>();
-    HashMap<Long, RegisteredProceduresMapEntry> registeredProceduresById = 
-            new HashMap<Long, RegisteredProceduresMapEntry>();
-    
-    
-    WampClient(URI routerUri, String realm, WampRoles[] roles,
-               boolean useStrictUriValidation,
-               boolean closeClientOnErrors,
-               WampClientChannelFactory channelFactory,
-               int nrReconnects, int reconnectInterval)
-    {
+
+    HashMap<Long, RequestMapEntry> requestMap = new HashMap<Long, WampClient.RequestMapEntry>();
+
+    HashMap<String, SubscriptionMapEntry> subscriptionsByUri = new HashMap<String, SubscriptionMapEntry>();
+
+    HashMap<Long, SubscriptionMapEntry> subscriptionsBySubscriptionId = new HashMap<Long, SubscriptionMapEntry>();
+
+    HashMap<String, RegisteredProceduresMapEntry> registeredProceduresByUri = new HashMap<String, RegisteredProceduresMapEntry>();
+
+    HashMap<Long, RegisteredProceduresMapEntry> registeredProceduresById = new HashMap<Long, RegisteredProceduresMapEntry>();
+
+    WampClient(URI routerUri, String realm, WampRoles[] roles, boolean useStrictUriValidation, boolean closeClientOnErrors, WampClientChannelFactory channelFactory, int nrReconnects, int reconnectInterval) {
         // Create an eventloop and the RX scheduler on top of it
         this.eventLoop = new NioEventLoopGroup(1, new ThreadFactory() {
             @Override
@@ -223,7 +234,6 @@ public class WampClient {
             }
         });
         this.scheduler = Schedulers.from(eventLoop);
-        
         this.routerUri = routerUri;
         this.realm = realm;
         this.clientRoles = roles;
@@ -270,14 +280,14 @@ public class WampClient {
             }
         });
     }
-    
+
     /**
      * Returns whether reconnects are allowed (true) or not (false)
      */
     private boolean mayReconnect() {
         return remainingNrReconnects != 0;
     }
-    
+
     /** 
      * Schedules a reconnect operation<br>
      * The reconnect can be canceled by unsubscribing the {@link #reconnectSubscription} 
@@ -302,25 +312,24 @@ public class WampClient {
         }, reconnectInterval, TimeUnit.MILLISECONDS));
         reconnectSubscription = sub; // Store it as our new reconnect subscription
     }
-    
+
     /**
      * Netty handler for that receives and processes WampMessages and state
      * events from the pipeline.
      * A new instance of this is created for each connection attempt.
      */
     private class SessionHandler extends SimpleChannelInboundHandler<WampMessage> {
-        
         @Override
         public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
             // System.out.println("Session handler added");
         }
-        
+
         @Override
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
             if (handler != this) return;
          // System.out.println("Session handler active");
         }
-        
+
         @Override
         public void channelInactive(ChannelHandlerContext ctx) throws Exception {
             if (handler != this) return;
@@ -335,27 +344,26 @@ public class WampClient {
                 statusObservable.onNext(status);
             }
         }
-        
+
         @Override
         public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-            if (handler != this) return;
-            
+            if (handler != this) {
+                return;
+            }
             if (evt == WampChannelEvents.WEBSOCKET_CONN_ESTABLISHED) {
                 // System.out.println("Session websocket connection established");
                 // Connection to the remote host was established
                 // However the WAMP session is not established until the handshake was finished
-                
                 // Put the requested roles in the Hello message
                 ObjectNode o = objectMapper.createObjectNode();
                 ObjectNode rolesNode = o.putObject("roles");
                 for (WampRoles role : clientRoles) {
                     ObjectNode roleNode = rolesNode.putObject(role.toString());
-                    if (role == WampRoles.Publisher ) {
+                    if (role == WampRoles.Publisher) {
                         ObjectNode featuresNode = roleNode.putObject("features");
                         featuresNode.put("publisher_exclusion", true);
                     }
                 }
-                
                 ctx.writeAndFlush(new WampMessages.HelloMessage(realm, o));
             }
         }
@@ -365,15 +373,13 @@ public class WampClient {
             if (handler != this) return;
             onMessageReceived(msg);
         }
-        
+
         @Override
         public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
                 throws Exception {
             // System.out.println("Session handler caught exception " + cause);
             super.exceptionCaught(ctx, cause);
         }
-        
-        
     }
 
     /**
@@ -498,11 +504,11 @@ public class WampClient {
     public Observable<Status> statusChanged() {
         return statusObservable;
     }
-    
+
     private void onProtocolError() {
         onSessionError(new ApplicationError(ApplicationError.PROTCOL_ERROR));
     }
-    
+
     private void onSessionError(ApplicationError error) {
         // We move from connected to disconnected
         closeCurrentTransport();
@@ -710,7 +716,7 @@ public class WampClient {
             }
         }
     }
-    
+
     /**
      * Builds an ArrayNode from all positional arguments in a WAMP message.<br>
      * If there are no positional arguments then null will be returned, as
@@ -727,14 +733,14 @@ public class WampClient {
         }
         return argArray;
     }
-    
+
     private void clearPendingRequests(Throwable e) {
         for (Entry<Long, RequestMapEntry> entry : requestMap.entrySet()) {
             entry.getValue().resultSubject.onError(e);
         }
         requestMap.clear();
     }
-    
+
     private void clearAllSubscriptions(Throwable e) {
         for (Entry<String, SubscriptionMapEntry> entry : subscriptionsByUri.entrySet()) {
             for (Subscriber<? super PubSubData> s : entry.getValue().subscribers) {
@@ -746,7 +752,7 @@ public class WampClient {
         subscriptionsByUri.clear();
         subscriptionsBySubscriptionId.clear();
     }
-    
+
     private void clearAllRegisteredProcedures(Throwable e) {
         for (Entry<String, RegisteredProceduresMapEntry> entry : registeredProceduresByUri.entrySet()) {
             if (e == null) entry.getValue().subscriber.onCompleted();
@@ -756,7 +762,7 @@ public class WampClient {
         registeredProceduresByUri.clear();
         registeredProceduresById.clear();
     }
-    
+
     /**
      * Publishes an event under the given topic.
      * @param topic The topic that should be used for publishing the event
@@ -799,37 +805,18 @@ public class WampClient {
      * publication ID) and will then be completed or will be completed with
      * an error if the event could not be published.
      */
-    public Observable<Long> publish(final String topic, final ArrayNode arguments, final ObjectNode argumentsKw)
-    {
+    public Observable<Long> publish(String topic, ArrayNode arguments, ObjectNode argumentsKw) {
         return publish(topic, null, arguments, argumentsKw);
     }
 
-    /**
-     * Publishes an event under the given topic.
-     * @param topic The topic that should be used for publishing the event
-     * @param options A WAMP options dictionary. May contain advanced options
-     * for the publish call.
-     * @param arguments The positional arguments for the published event
-     * @param argumentsKw The keyword arguments for the published event.
-     * These will only be taken into consideration if arguments is not null.
-     * @return An observable that provides a notification whether the event
-     * publication was successful. This contains either a single value (the
-     * publication ID) and will then be completed or will be completed with
-     * an error if the event could not be published.
-     */
-    public Observable<Long> publish(final String topic, final ObjectNode options, final ArrayNode arguments,
-        final ObjectNode argumentsKw)
-    {
+    public Observable<Long> publish(final String topic, final ObjectNode options, final ArrayNode arguments, final ObjectNode argumentsKw) {
         final AsyncSubject<Long> resultSubject = AsyncSubject.create();
-        
         try {
             UriValidator.validate(topic, useStrictUriValidation);
-        }
-        catch (WampError e) {
+        } catch (WampError e) {
             resultSubject.onError(e);
             return resultSubject;
         }
-         
         eventLoop.execute(new Runnable() {
             @Override
             public void run() {
@@ -837,19 +824,16 @@ public class WampClient {
                     resultSubject.onError(new ApplicationError(ApplicationError.NOT_CONNECTED));
                     return;
                 }
-                
                 final long requestId = IdGenerator.newLinearId(lastRequestId, requestMap);
                 lastRequestId = requestId;
-                final WampMessages.PublishMessage msg =
-                    new WampMessages.PublishMessage(requestId, options, topic, arguments, argumentsKw);
-                
+                final WampMessages.PublishMessage msg = new WampMessages.PublishMessage(requestId, options, topic, arguments, argumentsKw);
                 requestMap.put(requestId, new RequestMapEntry(WampMessages.PublishMessage.ID, resultSubject));
                 channel.writeAndFlush(msg);
             }
         });
         return resultSubject;
     }
-    
+
     /**
      * Registers a procedure at the router which will afterwards be available
      * for remote procedure calls from other clients.<br>
@@ -873,49 +857,43 @@ public class WampClient {
             public void call(final Subscriber<? super Request> subscriber) {
                 try {
                     UriValidator.validate(topic, useStrictUriValidation);
-                }
-                catch (WampError e) {
+                } catch (WampError e) {
                     subscriber.onError(e);
                     return;
                 }
-
                 eventLoop.execute(new Runnable() {
                     @Override
                     public void run() {
                         // If the Subscriber unsubscribed in the meantime we return early
-                        if (subscriber.isUnsubscribed()) return;
+                        if (subscriber.isUnsubscribed()) {
+                            return;
+                        }
                         // Set subscription to completed if we are not connected
                         if (status != Status.Connected) {
                             subscriber.onCompleted();
                             return;
                         }
-
                         final RegisteredProceduresMapEntry entry = registeredProceduresByUri.get(topic);
                         // Check if we have already registered a function with the same name
                         if (entry != null) {
-                            subscriber.onError(
-                                new ApplicationError(ApplicationError.PROCEDURE_ALREADY_EXISTS));
+                            subscriber.onError(new ApplicationError(ApplicationError.PROCEDURE_ALREADY_EXISTS));
                             return;
                         }
-                        
                         // Insert a new entry in the subscription map
-                        final RegisteredProceduresMapEntry newEntry = 
-                            new RegisteredProceduresMapEntry(subscriber, RegistrationState.Registering);
+                        final RegisteredProceduresMapEntry newEntry = new RegisteredProceduresMapEntry(subscriber, RegistrationState.Registering);
                         registeredProceduresByUri.put(topic, newEntry);
-
                         // Make the subscribe call
                         final long requestId = IdGenerator.newLinearId(lastRequestId, requestMap);
                         lastRequestId = requestId;
                         final RegisterMessage msg = new RegisterMessage(requestId, null, topic);
-
                         final AsyncSubject<Long> registerFuture = AsyncSubject.create();
-                        registerFuture
-                        .observeOn(WampClient.this.scheduler)
-                        .subscribe(new Action1<Long>() {
+                        registerFuture.observeOn(WampClient.this.scheduler).subscribe(new Action1<Long>() {
                             @Override
                             public void call(Long t1) {
                                 // Check if we were unsubscribed (through transport close)
-                                if (newEntry.state != RegistrationState.Registering) return;
+                                if (newEntry.state != RegistrationState.Registering) {
+                                    return;
+                                }
                                 // Registration at the broker was successful
                                 newEntry.state = RegistrationState.Registered;
                                 newEntry.registrationId = t1;
@@ -927,33 +905,33 @@ public class WampClient {
                             @Override
                             public void call(Throwable t1) {
                                 // Error on registering
-                                if (newEntry.state != RegistrationState.Registering) return;
+                                if (newEntry.state != RegistrationState.Registering) {
+                                    return;
+                                }
                                 // Remark: Actually noone can't unregister until this Future completes because
                                 // the unregister functionality is only added in the success case
                                 // However a transport close event could set us to Unregistered early
                                 newEntry.state = RegistrationState.Unregistered;
-
                                 boolean isClosed = false;
-                                if (t1 instanceof ApplicationError &&
-                                        ((ApplicationError)t1).uri.equals(ApplicationError.TRANSPORT_CLOSED))
+                                if ((t1 instanceof ApplicationError) && ((ApplicationError) (t1)).uri.equals(ApplicationError.TRANSPORT_CLOSED)) {
                                     isClosed = true;
-                                
-                                if (isClosed) subscriber.onCompleted();
-                                else subscriber.onError(t1);
-
+                                }
+                                if (isClosed) {
+                                    subscriber.onCompleted();
+                                } else {
+                                    subscriber.onError(t1);
+                                }
                                 registeredProceduresByUri.remove(topic);
                             }
                         });
-
-                        requestMap.put(requestId, 
-                            new RequestMapEntry(RegisterMessage.ID, registerFuture));
+                        requestMap.put(requestId, new RequestMapEntry(RegisterMessage.ID, registerFuture));
                         channel.writeAndFlush(msg);
                     }
                 });
             }
         });
     }
-    
+
     /**
      * Add an action that is added to the subscriber which is executed
      * if unsubscribe is called on a registered procedure.<br>
@@ -1004,7 +982,7 @@ public class WampClient {
             }
         }));
     }
-    
+
     /**
      * Returns an observable that allows to subscribe on the given topic.<br>
      * The actual subscription will only be made after subscribe() was called
@@ -1054,7 +1032,7 @@ public class WampClient {
             }
         });
     }
-    
+
     /**
      * Returns an observable that allows to subscribe on the given topic.<br>
      * The actual subscription will only be made after subscribe() was called
@@ -1075,26 +1053,25 @@ public class WampClient {
             public void call(final Subscriber<? super PubSubData> subscriber) {
                 try {
                     UriValidator.validate(topic, useStrictUriValidation);
-                }
-                catch (WampError e) {
+                } catch (WampError e) {
                     subscriber.onError(e);
                     return;
                 }
-
                 eventLoop.execute(new Runnable() {
                     @Override
                     public void run() {
                         // If the Subscriber unsubscribed in the meantime we return early
-                        if (subscriber.isUnsubscribed()) return;
+                        if (subscriber.isUnsubscribed()) {
+                            return;
+                        }
                         // Set subscription to completed if we are not connected
                         if (status != Status.Connected) {
                             subscriber.onCompleted();
                             return;
                         }
-
                         final SubscriptionMapEntry entry = subscriptionsByUri.get(topic);
-
-                        if (entry != null) { // We are already subscribed at the dealer
+                        if (entry != null) {
+                            // We are already subscribed at the dealer
                             entry.subscribers.add(subscriber);
                             if (entry.state == PubSubState.Subscribed) {
                                 // Add the cancellation functionality only if we are
@@ -1102,26 +1079,24 @@ public class WampClient {
                                 // once subscription is completed
                                 attachPubSubCancelationAction(subscriber, entry, topic);
                             }
-                        }
-                        else { // need to subscribe
+                        } else {
+                            // need to subscribe
                             // Insert a new entry in the subscription map
                             final SubscriptionMapEntry newEntry = new SubscriptionMapEntry(PubSubState.Subscribing);
                             newEntry.subscribers.add(subscriber);
                             subscriptionsByUri.put(topic, newEntry);
-
                             // Make the subscribe call
                             final long requestId = IdGenerator.newLinearId(lastRequestId, requestMap);
                             lastRequestId = requestId;
                             final SubscribeMessage msg = new SubscribeMessage(requestId, null, topic);
-
                             final AsyncSubject<Long> subscribeFuture = AsyncSubject.create();
-                            subscribeFuture
-                            .observeOn(WampClient.this.scheduler)
-                            .subscribe(new Action1<Long>() {
+                            subscribeFuture.observeOn(WampClient.this.scheduler).subscribe(new Action1<Long>() {
                                 @Override
                                 public void call(Long t1) {
                                     // Check if we were unsubscribed (through transport close)
-                                    if (newEntry.state != PubSubState.Subscribing) return;
+                                    if (newEntry.state != PubSubState.Subscribing) {
+                                        return;
+                                    }
                                     // Subscription at the broker was successful
                                     newEntry.state = PubSubState.Subscribed;
                                     newEntry.subscriptionId = t1;
@@ -1137,30 +1112,29 @@ public class WampClient {
                                 @Override
                                 public void call(Throwable t1) {
                                     // Error on subscription
-                                    if (newEntry.state != PubSubState.Subscribing) return;
+                                    if (newEntry.state != PubSubState.Subscribing) {
+                                        return;
+                                    }
                                     // Remark: Actually noone can't unsubscribe until this Future completes because
                                     // the unsubscription functionality is only added in the success case
                                     // However a transport close event could set us to Unsubscribed early
                                     newEntry.state = PubSubState.Unsubscribed;
-
                                     boolean isClosed = false;
-                                    if (t1 instanceof ApplicationError &&
-                                            ((ApplicationError)t1).uri.equals(ApplicationError.TRANSPORT_CLOSED))
+                                    if ((t1 instanceof ApplicationError) && ((ApplicationError) (t1)).uri.equals(ApplicationError.TRANSPORT_CLOSED)) {
                                         isClosed = true;
-
-                                    for (Subscriber<? super PubSubData> s : newEntry.subscribers) {
-                                        if (isClosed) s.onCompleted();
-                                        else s.onError(t1);
                                     }
-
+                                    for (Subscriber<? super PubSubData> s : newEntry.subscribers) {
+                                        if (isClosed) {
+                                            s.onCompleted();
+                                        } else {
+                                            s.onError(t1);
+                                        }
+                                    }
                                     newEntry.subscribers.clear();
                                     subscriptionsByUri.remove(topic);
                                 }
                             });
-
-                            requestMap.put(requestId, 
-                                    new RequestMapEntry(SubscribeMessage.ID, 
-                                            subscribeFuture));
+                            requestMap.put(requestId, new RequestMapEntry(SubscribeMessage.ID, subscribeFuture));
                             channel.writeAndFlush(msg);
                         }
                     }
@@ -1168,7 +1142,7 @@ public class WampClient {
             }
         });
     }
-    
+
     /**
      * Add an action that is added to the subscriber which is executed
      * if unsubscribe is called. This action will lead to the unsubscription at the
@@ -1239,20 +1213,14 @@ public class WampClient {
      * If the remote procedure call yields an error the observable will be completed
      * with an error.
      */
-    public Observable<Reply> call(final String procedure,
-                                  final ArrayNode arguments,
-                                  final ObjectNode argumentsKw)
-    {
+    public Observable<Reply> call(final String procedure, final ArrayNode arguments, final ObjectNode argumentsKw) {
         final AsyncSubject<Reply> resultSubject = AsyncSubject.create();
-        
         try {
             UriValidator.validate(procedure, useStrictUriValidation);
-        }
-        catch (WampError e) {
+        } catch (WampError e) {
             resultSubject.onError(e);
             return resultSubject;
         }
-         
         eventLoop.execute(new Runnable() {
             @Override
             public void run() {
@@ -1260,19 +1228,16 @@ public class WampClient {
                     resultSubject.onError(new ApplicationError(ApplicationError.NOT_CONNECTED));
                     return;
                 }
-                
                 final long requestId = IdGenerator.newLinearId(lastRequestId, requestMap);
                 lastRequestId = requestId;
-                final CallMessage callMsg = new CallMessage(requestId, null, procedure, 
-                                                            arguments, argumentsKw);
-                
+                final CallMessage callMsg = new CallMessage(requestId, null, procedure, arguments, argumentsKw);
                 requestMap.put(requestId, new RequestMapEntry(CallMessage.ID, resultSubject));
                 channel.writeAndFlush(callMsg);
             }
         });
         return resultSubject;
     }
-    
+
     /**
      * Performs a remote procedure call through the router.<br>
      * The function will return immediately, as the actual call will happen
@@ -1293,7 +1258,7 @@ public class WampClient {
         // Build the arguments array and serialize the arguments
         return call(procedure, buildArgumentsArray(args), null);
     }
-    
+
     /**
      * Performs a remote procedure call through the router.<br>
      * The function will return immediately, as the actual call will happen
@@ -1349,7 +1314,7 @@ public class WampClient {
             }
         });
     }
-    
+
     /**
      * Returns a future that will be completed once the client terminates.<br>
      * This can be used to wait for completion after {@link #close() close} was called.
@@ -1372,5 +1337,4 @@ public class WampClient {
         });
         return p.getFuture();
     }
-
 }
