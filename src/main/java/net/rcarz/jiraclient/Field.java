@@ -16,7 +16,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
 package net.rcarz.jiraclient;
 
 import java.lang.Iterable;
@@ -30,24 +29,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import net.sf.json.JSONNull;
+import net.sf.json.JSONObject;
+
 
 /**
  * Utility functions for translating between JSON and fields.
  */
 public final class Field {
-
     /**
      * Field metadata structure.
      */
     public static final class Meta {
         public boolean required;
+
         public String type;
+
         public String items;
+
         public String name;
+
         public String system;
+
         public String custom;
+
         public int customId;
     }
 
@@ -56,13 +61,16 @@ public final class Field {
      */
     public static final class Operation {
         public String name;
+
         public Object value;
 
         /**
          * Initialises a new update operation.
          *
-         * @param name Operation name
-         * @param value Field value
+         * @param name
+         * 		Operation name
+         * @param value
+         * 		Field value
          */
         public Operation(String name, Object value) {
             this.name = name;
@@ -74,7 +82,11 @@ public final class Field {
      * Allowed value types.
      */
     public enum ValueType {
-        KEY("key"), NAME("name"), ID_NUMBER("id"), VALUE("value");
+
+        KEY("key"),
+        NAME("name"),
+        ID_NUMBER("id"),
+        VALUE("value");
         private String typeName;
 
         private ValueType(String typeName) {
@@ -85,20 +97,23 @@ public final class Field {
         public String toString() {
             return typeName;
         }
-    };
+    }
 
     /**
      * Value and value type pair.
      */
     public static final class ValueTuple {
         public final String type;
+
         public final Object value;
 
         /**
          * Initialises the value tuple.
          *
          * @param type
+         * 		
          * @param value
+         * 		
          */
         public ValueTuple(String type, Object value) {
             this.type = type;
@@ -109,7 +124,9 @@ public final class Field {
          * Initialises the value tuple.
          *
          * @param type
+         * 		
          * @param value
+         * 		
          */
         public ValueTuple(ValueType type, Object value) {
             this(type.toString(), value);
@@ -117,39 +134,69 @@ public final class Field {
     }
 
     public static final String ASSIGNEE = "assignee";
+
     public static final String ATTACHMENT = "attachment";
+
     public static final String CHANGE_LOG = "changelog";
+
     public static final String CHANGE_LOG_ENTRIES = "histories";
+
     public static final String CHANGE_LOG_ITEMS = "items";
+
     public static final String COMMENT = "comment";
+
     public static final String COMPONENTS = "components";
+
     public static final String DESCRIPTION = "description";
+
     public static final String DUE_DATE = "duedate";
+
     public static final String FIX_VERSIONS = "fixVersions";
+
     public static final String ISSUE_LINKS = "issuelinks";
+
     public static final String ISSUE_TYPE = "issuetype";
+
     public static final String LABELS = "labels";
+
     public static final String PARENT = "parent";
+
     public static final String PRIORITY = "priority";
+
     public static final String PROJECT = "project";
+
     public static final String REPORTER = "reporter";
+
     public static final String RESOLUTION = "resolution";
+
     public static final String RESOLUTION_DATE = "resolutiondate";
+
     public static final String STATUS = "status";
+
     public static final String SUBTASKS = "subtasks";
+
     public static final String SUMMARY = "summary";
+
     public static final String TIME_TRACKING = "timetracking";
+
     public static final String VERSIONS = "versions";
+
     public static final String VOTES = "votes";
+
     public static final String WATCHES = "watches";
+
     public static final String WORKLOG = "worklog";
+
     public static final String TIME_ESTIMATE = "timeestimate";
+
     public static final String TIME_SPENT = "timespent";
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
+
     public static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
-    private Field() { }
+    private Field() {
+    }
 
     /**
      * Gets a boolean value from the given object.
@@ -528,96 +575,88 @@ public final class Field {
      * @throws JiraException when a value is bad or field has invalid metadata
      * @throws UnsupportedOperationException when a field type isn't supported
      */
-    public static Object toJson(String name, Object value, JSONObject editmeta)
-        throws JiraException, UnsupportedOperationException {
-
+    public static Object toJson(String name, Object value, JSONObject editmeta) throws JiraException, UnsupportedOperationException {
         Meta m = getFieldMetadata(name, editmeta);
-        if (m.type == null)
+        if (m.type == null) {
             throw new JiraException("Field metadata is missing a type");
-
+        }
         if (m.type.equals("array")) {
-            if (value == null)
+            if (value == null) {
                 value = new ArrayList();
-            else if (!(value instanceof Iterable))
+            } else if (!(value instanceof Iterable)) {
                 throw new JiraException("Field expects an Iterable value");
-
-            return toArray((Iterable)value, m.items);
+            }
+            return toArray(((Iterable) (value)), m.items);
         } else if (m.type.equals("date")) {
-            if (value == null)
+            if (value == null) {
                 return JSONNull.getInstance();
-
+            }
             Date d = toDate(value);
-            if (d == null)
+            if (d == null) {
                 throw new JiraException("Field expects a date value or format is invalid");
-
+            }
             SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
             return df.format(d);
         } else if (m.type.equals("datetime")) {
-            if (value == null)
+            if (value == null) {
                 return JSONNull.getInstance();
-            else if (!(value instanceof Timestamp))
+            } else if (!(value instanceof Timestamp)) {
                 throw new JiraException("Field expects a Timestamp value");
-
+            }
             SimpleDateFormat df = new SimpleDateFormat(DATETIME_FORMAT);
             return df.format(value);
-        } else if (m.type.equals("issuetype") || m.type.equals("priority") ||
-                m.type.equals("user") || m.type.equals("resolution")) {
+        } else if (((m.type.equals("issuetype") || m.type.equals("priority")) || m.type.equals("user")) || m.type.equals("resolution")) {
             JSONObject json = new JSONObject();
-
-            if (value == null)
+            if (value == null) {
                 return JSONNull.getInstance();
-            else if (value instanceof ValueTuple) {
-                ValueTuple tuple = (ValueTuple)value;
-                if(tuple.value == null)
-                    throw new IllegalArgumentException("Value in ValueTuple for field '" + name + "' can't be null");
-
+            } else if (value instanceof ValueTuple) {
+                ValueTuple tuple = ((ValueTuple) (value));
+                if (tuple.value == null) {
+                    throw new IllegalArgumentException(("Value in ValueTuple for field '" + name) + "' can't be null");
+                }
                 json.put(tuple.type, tuple.value.toString());
-            } else
+            } else {
                 json.put(ValueType.NAME.toString(), value.toString());
-
+            }
             return json.toString();
         } else if (m.type.equals("project") || m.type.equals("issuelink")) {
             JSONObject json = new JSONObject();
-
-            if (value == null)
+            if (value == null) {
                 return JSONNull.getInstance();
-            else if (value instanceof ValueTuple) {
-                ValueTuple tuple = (ValueTuple)value;
-                if(tuple.value == null)
-                    throw new IllegalArgumentException("Value in value tuple for field '" + name + "' can't be null");
-
+            } else if (value instanceof ValueTuple) {
+                ValueTuple tuple = ((ValueTuple) (value));
+                if (tuple.value == null) {
+                    throw new IllegalArgumentException(("Value in value tuple for field '" + name) + "' can't be null");
+                }
                 json.put(tuple.type, tuple.value.toString());
-            } else
+            } else {
                 json.put(ValueType.KEY.toString(), value.toString());
-
+            }
             return json.toString();
         } else if (m.type.equals("string")) {
-            if (value == null)
+            if (value == null) {
                 return "";
-            else if (value instanceof List)
-                return toJsonMap((List)value);
-            else if (value instanceof ValueTuple) {
+            } else if (value instanceof List) {
+                return toJsonMap(((List) (value)));
+            } else if (value instanceof ValueTuple) {
                 JSONObject json = new JSONObject();
-                ValueTuple tuple = (ValueTuple)value;
+                ValueTuple tuple = ((ValueTuple) (value));
                 json.put(tuple.type, tuple.value.toString());
                 return json.toString();
             }
-
             return value.toString();
         } else if (m.type.equals("timetracking")) {
-            if (value == null)
+            if (value == null) {
                 return JSONNull.getInstance();
-            else if (value instanceof TimeTracking)
-                return ((TimeTracking) value).toJsonObject();
+            } else if (value instanceof TimeTracking) {
+                return ((TimeTracking) (value)).toJsonObject();
+            }
         } else if (m.type.equals("number")) {
-            if(!(value instanceof java.lang.Integer) && !(value instanceof java.lang.Double) && !(value 
-                    instanceof java.lang.Float) && !(value instanceof java.lang.Long) )
-            {
+            if ((((!(value instanceof java.lang.Integer)) && (!(value instanceof java.lang.Double))) && (!(value instanceof java.lang.Float))) && (!(value instanceof java.lang.Long))) {
                 throw new JiraException("Field expects a Numeric value");
             }
             return value;
         }
-
         throw new UnsupportedOperationException(m.type + " is not a supported field type");
     }
 
@@ -656,7 +695,7 @@ public final class Field {
     /**
      * Create a value tuple with value type of name.
      *
-     * @param name The name value
+     * @param key The name value
      *
      * @return a value tuple
      */
@@ -667,7 +706,7 @@ public final class Field {
     /**
      * Create a value tuple with value type of ID number.
      *
-     * @param id The ID number value
+     * @param key The ID number value
      *
      * @return a value tuple
      */
@@ -675,4 +714,3 @@ public final class Field {
         return new ValueTuple(ValueType.ID_NUMBER, id);
     }
 }
-
