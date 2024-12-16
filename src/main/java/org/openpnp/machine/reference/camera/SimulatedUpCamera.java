@@ -9,11 +9,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.ConcurrentModificationException;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
-import java.util.List;
-
+import java.util.ConcurrentModificationException;
 import org.openpnp.gui.support.Wizard;
 import org.openpnp.machine.reference.ReferenceCamera;
 import org.openpnp.machine.reference.SimulationModeMachine;
@@ -23,9 +21,9 @@ import org.openpnp.model.Footprint;
 import org.openpnp.model.LengthUnit;
 import org.openpnp.model.Location;
 import org.openpnp.model.Part;
-import org.openpnp.model.Solutions;
 import org.openpnp.model.Solutions.Milestone;
 import org.openpnp.model.Solutions.Severity;
+import org.openpnp.model.Solutions;
 import org.openpnp.spi.Head;
 import org.openpnp.spi.Machine;
 import org.openpnp.spi.Nozzle;
@@ -43,7 +41,7 @@ public class SimulatedUpCamera extends ReferenceCamera {
 
     @Attribute(required=false)
     protected int height = 480;
-    
+
     @Attribute(required=false)
     private boolean simulateFocalBlur;
 
@@ -51,7 +49,7 @@ public class SimulatedUpCamera extends ReferenceCamera {
     private Location errorOffsets = new Location(LengthUnit.Millimeters);
 
     public SimulatedUpCamera() {
-        setUnitsPerPixel(new Location(LengthUnit.Millimeters, 0.0234375D, 0.0234375D, 0, 0));
+        setUnitsPerPixel(new Location(LengthUnit.Millimeters, 0.0234375, 0.0234375, 0, 0));
         setLooking(Looking.Up);
     }
 
@@ -61,7 +59,7 @@ public class SimulatedUpCamera extends ReferenceCamera {
             return null;
         }
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = (Graphics2D) image.getGraphics();
+        Graphics2D g = ((Graphics2D) (image.getGraphics()));
         g.setColor(Color.black);
         g.fillRect(0, 0, width, height);
         AffineTransform tx = g.getTransform();
@@ -69,23 +67,17 @@ public class SimulatedUpCamera extends ReferenceCamera {
         g.translate(0, height);
         g.scale(1, -1);
         g.translate(width / 2, height / 2);
-
         // figure out our physical viewport size
-        Location phySize = getUnitsPerPixel().convertToUnits(LengthUnit.Millimeters)
-                .multiply(width, height, 0, 0);
+        Location phySize = getUnitsPerPixel().convertToUnits(LengthUnit.Millimeters).multiply(width, height, 0, 0);
         double phyWidth = phySize.getX();
         double phyHeight = phySize.getY();
-
         // and bounds
         Location location = getLocation().convertToUnits(LengthUnit.Millimeters);
-        Rectangle2D.Double phyBounds = new Rectangle2D.Double(location.getX() - phyWidth / 2,
-                location.getY() - phyHeight / 2, phyWidth, phyHeight);
-
+        Rectangle2D.Double phyBounds = new Rectangle2D.Double(location.getX() - (phyWidth / 2), location.getY() - (phyHeight / 2), phyWidth, phyHeight);
         // determine if there are any nozzles within our bounds and if so render them
-        Machine machine = Configuration.get()
-                .getMachine();
+        Machine machine = Configuration.get().getMachine();
         try {
-            for (Head head :  machine.getHeads()) {
+            for (Head head : machine.getHeads()) {
                 for (Nozzle nozzle : head.getNozzles()) {
                     Location l = SimulationModeMachine.getSimulatedPhysicalLocation(nozzle, getLooking());
                     if (phyBounds.contains(l.getX(), l.getY())) {
@@ -93,83 +85,63 @@ public class SimulatedUpCamera extends ReferenceCamera {
                     }
                 }
             }
+        } catch (ConcurrentModificationException e) {
+            // If nozzles are added/removed while enumerating them here, a ConcurrentModificationExceptions
+            // is thrown. This is not so unlikely when this camera has high fps.
         }
-        catch (ConcurrentModificationException e) {
-            // If nozzles are added/removed while enumerating them here, a ConcurrentModificationExceptions 
-            // is thrown. This is not so unlikely when this camera has high fps. 
-        }
-
         g.setTransform(tx);
-
         SimulationModeMachine.simulateCameraExposure(this, g, width, height);
-
         g.dispose();
-
         return image;
     }
 
     private void drawNozzle(Graphics2D gView, Nozzle nozzle, Location l) {
         BufferedImage frame;
-        Graphics2D g; 
+        Graphics2D g;
         if (isSimulateFocalBlur()) {
             frame = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             g = frame.createGraphics();
             g.setTransform(gView.getTransform());
             // Clear with transparent background
             g.setBackground(new Color(0, 0, 0, 0));
-            g.clearRect(-width/2, -height/2, width, height);
+            g.clearRect((-width) / 2, (-height) / 2, width, height);
+        } else {
+            frame = null;
+            g = gView;
         }
-        else {
-           frame = null;
-           g = gView;
-        }
-
-        g.setStroke(new BasicStroke(2f));
+        g.setStroke(new BasicStroke(2.0F));
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
         LengthUnit units = LengthUnit.Millimeters;
         Location unitsPerPixel = getUnitsPerPixel().convertToUnits(units);
-
         // Draw the nozzle
         // Get nozzle offsets from camera
         Location offsets = l.subtractWithRotation(getLocation());
-
         // Create a nozzle shape
         fillShape(g, new Ellipse2D.Double(-0.5, -0.5, 1, 1), new Color(0, 220, 0), unitsPerPixel, offsets, false);
-
         blurObjectIntoView(gView, frame, nozzle, l);
-
         if (frame != null) {
             // Clear with transparent background
             g.setBackground(new Color(0, 0, 0, 0));
-            g.clearRect(-width/2, -height/2, width, height);
+            g.clearRect((-width) / 2, (-height) / 2, width, height);
         }
-
         // Draw the part
         Part part = nozzle.getPart();
         if (part == null) {
             return;
         }
-
         org.openpnp.model.Package pkg = part.getPackage();
         Footprint footprint = pkg.getFootprint();
         if (footprint == null) {
             return;
         }
-
         if (footprint.getUnits() != units) {
             throw new Error("Not yet supported.");
         }
-
         // First draw the body in dark grey.
         fillShape(g, footprint.getBodyShape(), new Color(60, 60, 60), unitsPerPixel, offsets, true);
-
         // Then draw the pads in white
         fillShape(g, footprint.getPadsShape(), Color.white, unitsPerPixel, offsets, true);
-
-        blurObjectIntoView(gView, frame, nozzle, 
-                l.subtract(new Location(part.getHeight().getUnits(), 0, 0, Math.abs(part.getHeight().getValue()), 0)));
-
+        blurObjectIntoView(gView, frame, nozzle, l.subtract(new Location(part.getHeight().getUnits(), 0, 0, Math.abs(part.getHeight().getValue()), 0)));
         if (frame != null) {
             g.dispose();
         }
@@ -282,25 +254,17 @@ public class SimulatedUpCamera extends ReferenceCamera {
         return null;
     }
 
-
     @Override
     public void findIssues(Solutions solutions) {
         super.findIssues(solutions);
         if (solutions.isTargeting(Milestone.Connect)) {
-            solutions.add(new Solutions.Issue(
-                    this, 
-                    "The SimulatedUpCamera can be replaced with a OpenPnpCaptureCamera to connect to a real USB camera.", 
-                    "Replace with OpenPnpCaptureCamera.", 
-                    Severity.Fundamental,
-                    "https://github.com/openpnp/openpnp/wiki/OpenPnpCaptureCamera") {
-
+            solutions.add(new Solutions.Issue(this, "The SimulatedUpCamera can be replaced with a OpenPnpCaptureCamera to connect to a real USB camera.", "Replace with OpenPnpCaptureCamera.", Severity.Fundamental, "https://github.com/openpnp/openpnp/wiki/OpenPnpCaptureCamera") {
                 @Override
                 public void setState(Solutions.State state) throws Exception {
                     if (state == Solutions.State.Solved) {
                         OpenPnpCaptureCamera camera = createReplacementCamera();
                         replaceCamera(camera);
-                    }
-                    else if (getState() == Solutions.State.Solved) {
+                    } else if (getState() == Solutions.State.Solved) {
                         // Place the old one back (from the captured SimulatedUpCamera.this).
                         replaceCamera(SimulatedUpCamera.this);
                     }

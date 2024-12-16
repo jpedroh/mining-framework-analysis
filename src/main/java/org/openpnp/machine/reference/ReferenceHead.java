@@ -16,13 +16,10 @@
  * 
  * For more information about OpenPnP visit http://openpnp.org
  */
-
 package org.openpnp.machine.reference;
 
 import java.util.ArrayList;
-
 import javax.swing.Action;
-
 import org.openpnp.gui.support.PropertySheetWizardAdapter;
 import org.openpnp.gui.support.Wizard;
 import org.openpnp.machine.reference.psh.ActuatorsPropertySheetHolder;
@@ -43,16 +40,14 @@ import org.openpnp.spi.base.AbstractHeadMountable;
 import org.pmw.tinylog.Logger;
 import org.simpleframework.xml.Attribute;
 
-public class ReferenceHead extends AbstractHead {
 
+public class ReferenceHead extends AbstractHead {
     @Override
     public void home() throws Exception {
         // Note, don't call super.home() yet, need to do visual homing first.
         Logger.debug("{}.home()", getName());
         ReferenceMachine machine = getMachine();
-
         visualHome(machine, true);
-
         super.home();
         // Let everybody know.
         getMachine().fireMachineHeadActivity(this);
@@ -60,38 +55,33 @@ public class ReferenceHead extends AbstractHead {
 
     public void visualHome(ReferenceMachine machine, boolean apply) throws Exception {
         if (getVisualHomingMethod() != VisualHomingMethod.None) {
-            /*
-             * The head default camera should now be (if everything has homed correctly) directly
-             * above the homing fiducial on the machine bed, use the head camera scan for this and make sure
-             * this is exactly central - otherwise we move the camera until it is, and then reset all
-             * the axis back to the fiducial location as this is calibrated home.
+            /* The head default camera should now be (if everything has homed correctly) directly
+            above the homing fiducial on the machine bed, use the head camera scan for this and make sure
+            this is exactly central - otherwise we move the camera until it is, and then reset all
+            the axis back to the fiducial location as this is calibrated home.
              */
             HeadMountable hm = getDefaultCamera();
             Part homePart = Configuration.get().getPart("FIDUCIAL-HOME");
             if (homePart == null) {
                 throw new Exception("Visual homing is missing the FIDUCIAL-HOME part. Please create it.");
             }
-            Location homingLocation = Configuration.get().getMachine().getFiducialLocator()
-                    .getHomeFiducialLocation(getHomingFiducialLocation(), homePart);
+            Location homingLocation = Configuration.get().getMachine().getFiducialLocator().getHomeFiducialLocation(getHomingFiducialLocation(), homePart);
             if (homingLocation == null) {
                 // Homing failed
                 throw new Exception("Visual homing failed");
             }
-
             if (apply) {
                 AxesLocation axesHomingLocation;
                 if (getVisualHomingMethod() == VisualHomingMethod.ResetToFiducialLocation) {
                     // Convert fiducial location to raw coordinates
                     // TODO: are you sure the toHeadLocation() is needed?
                     axesHomingLocation = hm.toRaw(hm.toHeadLocation(getHomingFiducialLocation()));
-                }
-                else {
-                    // Use bare X, Y homing coordinates (legacy mode).
-                    axesHomingLocation =  new AxesLocation(machine, 
-                            (axis) -> (axis.getHomeCoordinate())); 
+                } else {
+                // Use bare X, Y homing coordinates (legacy mode).
+                    axesHomingLocation = new AxesLocation(machine, ( axis) -> axis.getHomeCoordinate());
                 }
                 // Just take the X and Y axes.
-                axesHomingLocation = axesHomingLocation.byType(Axis.Type.X, Axis.Type.Y); 
+                axesHomingLocation = axesHomingLocation.byType(Axis.Type.X, Axis.Type.Y);
                 // Reset to the axes homing location as the new Working Coordinate System.
                 machine.getMotionPlanner().setGlobalOffsets(axesHomingLocation);
             }
@@ -163,13 +153,14 @@ public class ReferenceHead extends AbstractHead {
     }
 
     enum NozzleSolution {
+
         Standalone,
         DualNegated,
-        DualCam
-    }
+        DualCam;}
 
     @Attribute(required=false) 
     private NozzleSolution nozzleSolution;
+
     @Attribute(required=false) 
     int nozzleSolutionsMultiplier = 1;
 

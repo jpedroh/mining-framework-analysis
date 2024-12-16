@@ -3,9 +3,7 @@ package org.openpnp.spi.base;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.swing.Icon;
-
 import org.openpnp.model.AbstractModelObject;
 import org.openpnp.model.Configuration;
 import org.openpnp.model.LengthUnit;
@@ -22,6 +20,7 @@ import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.core.Commit;
+
 
 public abstract class AbstractHead extends AbstractModelObject implements Head {
     @Attribute
@@ -53,7 +52,7 @@ public abstract class AbstractHead extends AbstractModelObject implements Head {
     @Deprecated
     @Element(required = false)
     protected Location maxLocation = null;
-    
+
     @Element(required = false)
     protected String zProbeActuatorName;
 
@@ -62,22 +61,21 @@ public abstract class AbstractHead extends AbstractModelObject implements Head {
 
     /**
      * Choice of Visual Homing Method.
-     * 
+     *
      * Previous Visual Homing reset the controller to home coordinates, not to the fiducial coordinates as one
-     * might expect. As a consequence the fiducial location may shift its meaning before/after homing i.e. it cannot be captured. 
-     * This behavior has been called a bug by Jason. But we absolutely need to migrate this behavior in order not to 
+     * might expect. As a consequence the fiducial location may shift its meaning before/after homing i.e. it cannot be captured.
+     * This behavior has been called a bug by Jason. But we absolutely need to migrate this behavior in order not to
      * break all the captured coordinates on a machine!
      *
-     * As a consequence the method is now a choice. Users with new machines can select the more natural  
-     * ResetToFiducialLocation method. This also applies to all Users that had the fiducial location == homing location, 
-     * including those that used extra after-homing G0 X Y to make it so (like myself). 
-     *
+     * As a consequence the method is now a choice. Users with new machines can select the more natural
+     * ResetToFiducialLocation method. This also applies to all Users that had the fiducial location == homing location,
+     * including those that used extra after-homing G0 X Y to make it so (like myself).
      */
     public enum VisualHomingMethod {
+
         None,
         ResetToFiducialLocation,
-        ResetToHomeLocation
-    }
+        ResetToHomeLocation;}
 
     @Attribute(required = false)
     private VisualHomingMethod visualHomingMethod = VisualHomingMethod.None;
@@ -114,7 +112,7 @@ public abstract class AbstractHead extends AbstractModelObject implements Head {
     public Nozzle getNozzle(String id) {
         return nozzles.get(id);
     }
-    
+
     @Override
     public Nozzle getNozzleByName(String name) {
         for (Nozzle nozzle : nozzles) {

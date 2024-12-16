@@ -1,5 +1,6 @@
 package org.openpnp.spi.base;
 
+import com.google.common.util.concurrent.FutureCallback;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,9 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import javax.swing.Icon;
-
 import org.openpnp.machine.reference.axis.ReferenceLinearTransformAxis;
 import org.openpnp.model.AbstractModelObject;
 import org.openpnp.model.LengthUnit;
@@ -44,22 +43,20 @@ import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.ElementMap;
 import org.simpleframework.xml.core.Commit;
 
-import com.google.common.util.concurrent.FutureCallback;
 
 public abstract class AbstractMachine extends AbstractModelObject implements Machine {
     /**
      * History:
-     * 
+     *
      * Note: Can't actually use the @Version annotation because of a bug in SimpleXML. See
      * http://sourceforge.net/p/simple/mailman/message/27887562/
-     * 
+     *
      * 1.0: Initial revision. 1.1: Added jobProcessors Map and deprecated JobProcesor and
      * JobPlanner.
      */
-
     public enum State {
-        ERROR
-    }
+
+        ERROR;}
 
     @ElementList(required = false)
     protected IdentifiableList<Axis> axes = new IdentifiableList<>();
@@ -90,10 +87,10 @@ public abstract class AbstractMachine extends AbstractModelObject implements Mac
 
     @Attribute(required = false)
     protected double speed = 1.0D;
-    
+
     @ElementMap(required = false)
     protected HashMap<String, Object> properties = new HashMap<>();
-    
+
     @ElementList(required = false)
     protected IdentifiableList<NozzleTip> nozzleTips = new IdentifiableList<>();
 
@@ -103,7 +100,8 @@ public abstract class AbstractMachine extends AbstractModelObject implements Mac
 
     volatile protected Thread taskThread;
 
-    protected AbstractMachine() {}
+    protected AbstractMachine() {
+    }
 
     @SuppressWarnings("unused")
     @Commit
@@ -112,7 +110,7 @@ public abstract class AbstractMachine extends AbstractModelObject implements Mac
             head.setMachine(this);
         }
     }
-    
+
     public void addHead(Head head) {
         head.setMachine(this);
         heads.add(head);
@@ -176,7 +174,7 @@ public abstract class AbstractMachine extends AbstractModelObject implements Mac
     public Head getHead(String id) {
         return heads.get(id);
     }
-    
+
     @Override
     public Head getHeadByName(String name) {
         for (Head head : heads) {
@@ -684,7 +682,7 @@ public abstract class AbstractMachine extends AbstractModelObject implements Mac
     public void setProperty(String name, Object value) {
         properties.put(name, value);
     }
-    
+
     @Override
     public List<NozzleTip> getNozzleTips() {
         return Collections.unmodifiableList(nozzleTips);
@@ -703,7 +701,7 @@ public abstract class AbstractMachine extends AbstractModelObject implements Mac
             fireIndexedPropertyChange("nozzleTips", index, nozzleTip, null);
         }
     }
-    
+
     @Override
     public NozzleTip getNozzleTip(String id) {
         return nozzleTips.get(id);
