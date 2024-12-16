@@ -1,36 +1,43 @@
 package com.googlecode.javaewah.benchmark;
 
 
-/*
- * Copyright 2009-2013, Daniel Lemire, Cliff Moon, David McIntosh, Robert Becho, Google Inc., Veronika Zenz and Owen Kaser
- * Licensed under APL 2.0.
+
+/* Copyright 2009-2013, Daniel Lemire, Cliff Moon, David McIntosh, Robert Becho, Google Inc., Veronika Zenz and Owen Kaser
+Licensed under APL 2.0.
  */
-
-
 /**
+<<<<<<< LEFT
  * This class will generate lists of random integers with a "clustered" distribution.  
  * Reference:
  * Anh VN, Moffat A. Index compression using 64-bit words. Software: Practice and Experience 2010; 40(2):131-147.  
  * 
+=======
+ * This class will generate lists of random integers with a "clustered" distribution.
+ * Reference:
+ * Anh VN, Moffat A. Index compression using 64-bit words. Software: Practice and Experience 2010; 40(2):131-147. 
+ *
+>>>>>>> RIGHT
  * @author Daniel Lemire
  */
 public class ClusteredDataGenerator {
-
   /**
- * 
- */
-public ClusteredDataGenerator() {
-	  unidg = new UniformDataGenerator();
+   * 
+   */
+  public ClusteredDataGenerator() {
+    unidg = new UniformDataGenerator();
   }
 
   /**
- * @param seed random seed
- */
-public ClusteredDataGenerator(final int seed) {
-	  unidg = new UniformDataGenerator(seed);
-}
+   *
+   *
+   * @param seed
+   * 		random seed
+   */
+  public ClusteredDataGenerator(final int seed) {
+    unidg = new UniformDataGenerator(seed);
+  }
 
-/**
+  /**
    * generates randomly N distinct integers from 0 to Max.
    * @param N number of integers
    * @param Max maximum integer value 
@@ -73,6 +80,4 @@ public ClusteredDataGenerator(final int seed) {
   }
 
   UniformDataGenerator unidg;
-
 }
-

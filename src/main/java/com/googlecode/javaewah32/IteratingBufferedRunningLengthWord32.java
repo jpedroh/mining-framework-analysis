@@ -2,9 +2,8 @@ package com.googlecode.javaewah32;
 
 
 
-/*
- * Copyright 2009-2013, Daniel Lemire, Cliff Moon, David McIntosh, Robert Becho, Google Inc., Veronika Zenz and Owen Kaser
- * Licensed under APL 2.0.
+/* Copyright 2009-2013, Daniel Lemire, Cliff Moon, David McIntosh, Robert Becho, Google Inc., Veronika Zenz and Owen Kaser
+Licensed under APL 2.0.
  */
 /**
  * Mostly for internal use. Similar to BufferedRunningLengthWord32, but automatically
@@ -13,11 +12,12 @@ package com.googlecode.javaewah32;
  * @since 0.5.0
  * @author Daniel Lemire and David McIntosh
  */
-public final class IteratingBufferedRunningLengthWord32 implements IteratingRLW32, Cloneable {
+public final class IteratingBufferedRunningLengthWord32 implements IteratingRLW32 , Cloneable {
   /**
    * Instantiates a new iterating buffered running length word.
    *
-   * @param iterator iterator
+   * @param iterator
+   * 		iterator
    */
   public IteratingBufferedRunningLengthWord32(final EWAHIterator32 iterator) {
     this.iterator = iterator;
@@ -25,17 +25,16 @@ public final class IteratingBufferedRunningLengthWord32 implements IteratingRLW3
     this.literalWordStartPosition = this.iterator.literalWords() + this.brlw.literalwordoffset;
     this.buffer = this.iterator.buffer();
   }
-  
 
   /**
    * Instantiates a new iterating buffered running length word.
-   * @param bitmap over which we want to iterate 
    *
-   */  
+   * @param bitmap
+   * 		over which we want to iterate
+   */
   public IteratingBufferedRunningLengthWord32(final EWAHCompressedBitmap32 bitmap) {
     this(EWAHIterator32.getEWAHIterator(bitmap));
   }
-  
 
   /**
    * Discard first words, iterating to the next running length word if needed.
@@ -65,6 +64,7 @@ public final class IteratingBufferedRunningLengthWord32 implements IteratingRLW3
       }
     }
   }
+
   /**
    * Write out up to max words, returns how many were written
    * @param container target for writes
@@ -124,12 +124,12 @@ public final class IteratingBufferedRunningLengthWord32 implements IteratingRLW3
    * @return whether the move was possible
    */
   public boolean next() {
-	  if (!this.iterator.hasNext()) {
-		  this.brlw.NumberOfLiteralWords = 0;
-		  this.brlw.RunningLength = 0;
-	      return false;
-	  }  
-	  this.brlw.reset(this.iterator.next());
+   if (!this.iterator.hasNext()) {
+    this.brlw.NumberOfLiteralWords = 0;
+    this.brlw.RunningLength = 0;
+       return false;
+   }  
+   this.brlw.reset(this.iterator.next());
       this.literalWordStartPosition = this.iterator.literalWords(); //  + this.brlw.literalwordoffset ==0
       return true;
   }
@@ -144,7 +144,7 @@ public final class IteratingBufferedRunningLengthWord32 implements IteratingRLW3
       discardFirstWords(size());
     }
   }
-  
+
   /**
    * Write out the remaining words
    * @param container target for writes
@@ -181,7 +181,7 @@ public final class IteratingBufferedRunningLengthWord32 implements IteratingRLW3
   public boolean getRunningBit() {
     return this.brlw.RunningBit;
   }
-  
+
   /**
    * Gets the running length.
    *
@@ -190,7 +190,7 @@ public final class IteratingBufferedRunningLengthWord32 implements IteratingRLW3
   public int getRunningLength() {
     return this.brlw.RunningLength;
   }
-  
+
   /**
    * Size in uncompressed words of the current running length word.
    *
@@ -199,7 +199,7 @@ public final class IteratingBufferedRunningLengthWord32 implements IteratingRLW3
   public int size() {
     return this.brlw.size();
   }
-  
+
   /**
    * write the first N literal words to the target bitmap.  Does not discard the words or perform iteration.
    * @param numWords number of words to be written
@@ -208,7 +208,6 @@ public final class IteratingBufferedRunningLengthWord32 implements IteratingRLW3
   public void writeLiteralWords(int numWords, BitmapStorage32 container) {
     container.addStreamOfLiteralWords(this.buffer, this.literalWordStartPosition, numWords);
   }
-  
 
   /**
    * write the first N literal words (negated) to the target bitmap.  Does not discard the words or perform iteration.
@@ -218,49 +217,45 @@ public final class IteratingBufferedRunningLengthWord32 implements IteratingRLW3
   public void writeNegatedLiteralWords(int numWords, BitmapStorage32 container) {
     container.addStreamOfNegatedLiteralWords(this.buffer, this.literalWordStartPosition, numWords);
   }
-  
 
   /**
    * For internal use. (One could use the non-static discharge method instead,
    * but we expect them to be slower.)
-   * 
+   *
    * @param initialWord
-   *          the initial word
+   * 		the initial word
    * @param iterator
-   *          the iterator
+   * 		the iterator
    * @param container
-   *          the container
+   * 		the container
    */
-  protected static void discharge(
-    final BufferedRunningLengthWord32 initialWord,
-    final EWAHIterator32 iterator, final BitmapStorage32 container) {
+  protected static void discharge(final BufferedRunningLengthWord32 initialWord, final EWAHIterator32 iterator, final BitmapStorage32 container) {
     BufferedRunningLengthWord32 runningLengthWord = initialWord;
-    for (;;) {
+    for (; ;) {
       final int runningLength = runningLengthWord.getRunningLength();
-      container.addStreamOfEmptyWords(runningLengthWord.getRunningBit(),
-        runningLength);
-      container.addStreamOfLiteralWords(iterator.buffer(), iterator.literalWords()
-        + runningLengthWord.literalwordoffset,
-        runningLengthWord.getNumberOfLiteralWords());
-      if (!iterator.hasNext())
+      container.addStreamOfEmptyWords(runningLengthWord.getRunningBit(), runningLength);
+      container.addStreamOfLiteralWords(iterator.buffer(), iterator.literalWords() + runningLengthWord.literalwordoffset, runningLengthWord.getNumberOfLiteralWords());
+      if (!iterator.hasNext()) {
         break;
+      }
       runningLengthWord = new BufferedRunningLengthWord32(iterator.next());
     }
   }
-  
-  
 
   public IteratingBufferedRunningLengthWord32 clone() throws CloneNotSupportedException {
- 	 IteratingBufferedRunningLengthWord32 answer = (IteratingBufferedRunningLengthWord32) super.clone();
- 	 answer.brlw = this.brlw.clone();
- 	 answer.buffer = this.buffer;
- 	 answer.iterator = this.iterator.clone();
- 	 answer.literalWordStartPosition = this.literalWordStartPosition;
- 	 return answer;
- }
+   IteratingBufferedRunningLengthWord32 answer = (IteratingBufferedRunningLengthWord32) super.clone();
+   answer.brlw = this.brlw.clone();
+   answer.buffer = this.buffer;
+   answer.iterator = this.iterator.clone();
+   answer.literalWordStartPosition = this.literalWordStartPosition;
+   return answer;
+   }
 
   private BufferedRunningLengthWord32 brlw;
+
   private int[] buffer;
+
   private int literalWordStartPosition;
+
   private EWAHIterator32 iterator;
 }
