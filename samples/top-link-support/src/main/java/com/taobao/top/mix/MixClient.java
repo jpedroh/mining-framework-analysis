@@ -1,11 +1,5 @@
 package com.taobao.top.mix;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import com.taobao.top.link.LinkException;
 import com.taobao.top.link.Logger;
 import com.taobao.top.link.LoggerFactory;
@@ -16,40 +10,48 @@ import com.taobao.top.link.endpoint.EndpointChannelHandler;
 import com.taobao.top.link.endpoint.EndpointContext;
 import com.taobao.top.link.endpoint.EndpointProxy;
 import com.taobao.top.link.endpoint.MessageHandler;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 // poll-push mix client
 public class MixClient {
 	private Logger logger;
+
 	private ClientIdentity id;
+
 	private Endpoint endpoint;
+
 	private MixClientHandler handler;
+
 	private URI serverUri;
+
 	private EndpointProxy server;
 
 	private Timer timer;
+
 	protected int reconnectInterval = 30000;
 
 	public MixClient(ClientIdentity id) {
 		// whatever, log first
 		LoggerFactory loggerFactory = new MixLoggerFactory();
 		this.logger = loggerFactory.create(this);
-
 		// sharedpool with heartbeat 60s
 		ClientChannelSharedSelector selector = new ClientChannelSharedSelector(loggerFactory);
 		// also can use embedded client
 		// ClientChannelSharedSelector selector = new
 		// EmbeddedClientChannelSharedSelector();
 		selector.setHeartbeat(60000);
-
 		// custom scheduler
 		EndpointChannelHandler channelHandler = new EndpointChannelHandler(loggerFactory);
 		// channelHandler.setScheduler(scheduler);
-
 		this.endpoint = new Endpoint(loggerFactory, this.id = id);
 		this.endpoint.setClientChannelSelector(selector);
 		this.endpoint.setChannelHandler(channelHandler);
 		this.endpoint.setMessageHandler(this.createHandler());
-
 		this.logger.info("mix-client#%s init", this.id);
 	}
 
@@ -79,8 +81,9 @@ public class MixClient {
 			@Override
 			public void onMessage(Map<String, String> message, com.taobao.top.link.endpoint.Identity messageFrom) {
 				logger.info("got poll message:" + message);
-				if (handler != null)
+				if (handler != null) {
 					handler.onPollResult(new MixMessage[0]);
+				}
 			}
 
 			@Override
@@ -135,13 +138,11 @@ public class MixClient {
 
 	public interface MixClientHandler {
 		// raise after poll
-		public void onPollResult(MixMessage[] messages);
+		public abstract void onPollResult(MixMessage[] messages);
 
 		// raise by server push
-		public void onPushMessage(MixMessage message) throws Exception;
+		public abstract void onPushMessage(MixMessage message) throws Exception;
 	}
 
-	public class MixMessage {
-
-	}
+	public class MixMessage {}
 }

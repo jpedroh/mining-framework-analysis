@@ -1,15 +1,15 @@
 package com.taobao.top.mix;
 
-import java.util.Map;
-
 import com.taobao.top.link.endpoint.EndpointContext;
 import com.taobao.top.link.endpoint.Identity;
 import com.taobao.top.link.endpoint.MessageHandler;
+import java.util.Map;
+
 
 public class ServerMessageHandler implements MessageHandler {
 	@Override
 	public void onMessage(Map<String, String> message, Identity messageFrom) {
-		System.out.println("onMessage:" + message);
+		// System.out.println("onMessage:" + message);
 	}
 
 	@Override
