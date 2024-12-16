@@ -19,16 +19,15 @@ package org.spoutcraft.launcher;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import javax.swing.UIManager;
-
 import org.spoutcraft.launcher.gui.LoginForm;
 import org.spoutcraft.launcher.gui.OptionDialog;
 import org.spoutcraft.launcher.logs.SystemConsoleListener;
 
+
 public class Main {
-	
 	static String[] args_temp;
+
 	static File recursion = new File(PlatformUtils.getWorkingDirectory(), "rtemp");
 
 	public Main() throws Exception {
@@ -56,7 +55,7 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		args_temp = args;
 		boolean relaunch = false;
@@ -66,70 +65,53 @@ public class Main {
 			} else {
 				recursion.delete();
 			}
-		} catch (Exception e) {
-			//e.printStackTrace();
+		} catch (java.lang.Exception e) {
+			// e.printStackTrace();
 		}
 		if (relaunch && OptionDialog.settings.checkProperty("memory")) {
-			int mem = 1 << 8 + OptionDialog.settings.getPropertyInteger("memory");
+			int mem = 1 << (8 + OptionDialog.settings.getPropertyInteger("memory"));
 			recursion.createNewFile();
-			reboot("-Xmx" + mem + "m");
+			reboot(("-Xmx" + mem) + "m");
 		}
-		
 		PlatformUtils.getWorkingDirectory().mkdirs();
-
 		new File(PlatformUtils.getWorkingDirectory(), "spoutcraft").mkdir();
-
 		SystemConsoleListener listener = new SystemConsoleListener();
-
 		listener.initialize();
-
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
+		} catch (java.lang.Exception e) {
 			System.out.println("[WARNING] Can't get system LnF: " + e);
 		}
-
 		LoginForm login = new LoginForm();
-
 		switch (args.length) {
-		case 4:
-			if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
-				PlatformUtils.setPortable(true);
-			}
-
-			login.doLogin(args[0], args[1]);
-
-			MinecraftUtils.setServer(args[2]);
-			break;
-
-		case 3:
-			if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
-				PlatformUtils.setPortable(true);
-			}
-
-			login.doLogin(args[0], args[1]);
-
-			MinecraftUtils.setServer(args[2]);
-			break;
-		case 2:
-			if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
-				PlatformUtils.setPortable(true);
-			}
-
-			login.doLogin(args[0], args[1]);
-
-			break;
-		default:
-			if (args.length > 5) {
+			case 4 :
 				if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
 					PlatformUtils.setPortable(true);
 				}
-
+				login.doLogin(args[0], args[1]);
 				MinecraftUtils.setServer(args[2]);
-			}
+				break;
+			case 3 :
+				if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
+					PlatformUtils.setPortable(true);
+				}
+				login.doLogin(args[0], args[1]);
+				MinecraftUtils.setServer(args[2]);
+				break;
+			case 2 :
+				if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
+					PlatformUtils.setPortable(true);
+				}
+				login.doLogin(args[0], args[1]);
+				break;
+			default :
+				if (args.length > 5) {
+					if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
+						PlatformUtils.setPortable(true);
+					}
+					MinecraftUtils.setServer(args[2]);
+				}
 		}
-
 		login.setVisible(true);
 	}
-
 }
