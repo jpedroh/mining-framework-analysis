@@ -18,20 +18,26 @@
  */
 package org.structr.web.servlet;
 
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import jakarta.servlet.MultipartConfigElement;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.io.QuietException;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.structr.api.RetryException;
@@ -61,27 +67,27 @@ import org.structr.web.entity.AbstractFile;
 import org.structr.web.entity.File;
 import org.structr.web.entity.Folder;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
 
 /**
  * Simple upload servlet.
  */
 public class UploadServlet extends AbstractServletBase implements HttpServiceServlet {
-
 	private static final Logger logger                             = LoggerFactory.getLogger(UploadServlet.class.getName());
+
 	private static final ThreadLocalMatcher threadLocalUUIDMatcher = new ThreadLocalMatcher("[a-fA-F0-9]{32}");
+
 	private static final String REDIRECT_AFTER_UPLOAD_PARAMETER    = "redirectOnSuccess";
+
 	private static final String APPEND_UUID_ON_REDIRECT_PARAMETER  = "appendUuidOnRedirect";
+
 	private static final String UPLOAD_FOLDER_PATH_PARAMETER       = "uploadFolderPath";
+
 	private static final long MEGABYTE                              = 1024 * 1024;
 
 	// non-static fields
+	// non-static fields
 	private final StructrHttpServiceConfig config = new StructrHttpServiceConfig();
+
 	private java.io.File filesDir                 = null;
 
 	public UploadServlet() {
@@ -89,7 +95,7 @@ public class UploadServlet extends AbstractServletBase implements HttpServiceSer
 
 	@Override
 	public void configureServletHolder(final ServletHolder servletHolder) {
-		MultipartConfigElement multipartConfigElement = new MultipartConfigElement("", MEGABYTE * Settings.UploadMaxFileSize.getValue(), MEGABYTE * Settings.UploadMaxRequestSize.getValue(), (int)MEGABYTE);
+		MultipartConfigElement multipartConfigElement = new MultipartConfigElement("", MEGABYTE * Settings.UploadMaxFileSize.getValue(), MEGABYTE * Settings.UploadMaxRequestSize.getValue(), ((int) (MEGABYTE)));
 		servletHolder.getRegistration().setMultipartConfig(multipartConfigElement);
 	}
 
@@ -109,463 +115,303 @@ public class UploadServlet extends AbstractServletBase implements HttpServiceSer
 
 	@Override
 	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-
 		try {
-
 			assertInitialized();
-
 		} catch (FrameworkException fex) {
-
 			try {
 				response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 				response.getOutputStream().write(fex.getMessage().getBytes("UTF-8"));
-
 			} catch (IOException ioex) {
-
 				logger.warn("Unable to send response", ioex);
 			}
-
 			return;
 		}
-
 		setCustomResponseHeaders(response);
-
 		try {
-
 			if (request.getParts().size() <= 0) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				response.getOutputStream().write("ERROR (400): Request does not contain multipart content.\n".getBytes("UTF-8"));
 				return;
 			}
-
 		} catch (IOException ioex) {
 			logger.warn("Unable to send response", ioex);
 		}
-
 		SecurityContext securityContext = null;
-		String redirectUrl              = null;
-		boolean appendUuidOnRedirect    = false;
-		String path                     = null;
-
+		String redirectUrl = null;
+		boolean appendUuidOnRedirect = false;
+		String path = null;
 		// isolate request authentication in a transaction
 		try (final Tx tx = StructrApp.getInstance().tx()) {
-
 			try {
 				securityContext = getConfig().getAuthenticator().initializeAndExamineRequest(request, response);
-
 			} catch (AuthenticationException ae) {
-
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				response.getOutputStream().write("ERROR (401): Invalid user or password.\n".getBytes("UTF-8"));
 				return;
 			}
-
 			tx.success();
-
 		} catch (FrameworkException fex) {
 			logger.warn("Unable to examine request", fex);
 		} catch (IOException ioex) {
 			logger.warn("Unable to send response", ioex);
 		}
-
 		// something went wrong, but we don't know what...
 		if (securityContext == null) {
 			logger.warn("No SecurityContext, aborting.");
 			return;
 		}
-
-		final App app              = StructrApp.getInstance(securityContext);
-
+		final App app = StructrApp.getInstance(securityContext);
 		try {
-
-			if (securityContext.getUser(false) == null && !Settings.UploadAllowAnonymous.getValue()) {
-
+			if ((securityContext.getUser(false) == null) && (!Settings.UploadAllowAnonymous.getValue())) {
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				response.getOutputStream().write("ERROR (401): Anonymous uploads forbidden.\n".getBytes("UTF-8"));
-
 				return;
 			}
-
 			// Ensure access mode is frontend
 			securityContext.setAccessMode(AccessMode.Frontend);
-
 			request.setCharacterEncoding("UTF-8");
-
 			// Important: Set character encoding before calling response.getWriter() !!, see Servlet Spec 5.4
 			response.setCharacterEncoding("UTF-8");
-
 			// don't continue on redirects
 			if (response.getStatus() == 302) {
 				return;
 			}
-
 			final String pathInfo = request.getPathInfo();
 			String type = null;
-
 			if (StringUtils.isNotBlank(pathInfo)) {
-
 				type = SchemaHelper.normalizeEntityName(StringUtils.stripStart(pathInfo.trim(), "/"));
-
 			}
-
 			response.setContentType("text/html");
-
-			final Map<String, Object> params         = new HashMap<>();
-			String uuid                              = null;
-
+			final Map<String, Object> params = new HashMap<>();
+			String uuid = null;
 			for (Part p : request.getParts()) {
-
 				for (String fieldName : p.getHeaderNames()) {
-
 					final String fieldValue = p.getHeader(fieldName);
-
 					if (REDIRECT_AFTER_UPLOAD_PARAMETER.equals(fieldName)) {
-
 						redirectUrl = fieldValue;
-
 					} else if (APPEND_UUID_ON_REDIRECT_PARAMETER.equals(fieldName)) {
-
 						appendUuidOnRedirect = "true".equalsIgnoreCase(fieldValue);
-
 					} else if (UPLOAD_FOLDER_PATH_PARAMETER.equals(fieldName)) {
-
 						path = fieldValue;
-
 					} else {
-
 						try {
-
-							final IJsonInput jsonInput = cleanAndParseJsonString(app, "{" + fieldName + ":" + fieldValue + "}");
+							final IJsonInput jsonInput = cleanAndParseJsonString(app, ((("{" + fieldName) + ":") + fieldValue) + "}");
 							for (final JsonInput input : jsonInput.getJsonInputs()) {
 								params.put(fieldName, convertPropertySetToMap(input).get(fieldName));
 							}
-
 						} catch (final FrameworkException fex) {
 							params.put(fieldName, fieldValue);
 						}
 					}
 				}
-
 				final String contentType = p.getContentType();
-				boolean isImage = (contentType != null && contentType.startsWith("image"));
-				boolean isVideo = (contentType != null && contentType.startsWith("video"));
-
+				boolean isImage = (contentType != null) && contentType.startsWith("image");
+				boolean isVideo = (contentType != null) && contentType.startsWith("video");
 				// Override type from path info
 				if (params.containsKey(NodeInterface.type.jsonName())) {
-					type = (String) params.get(NodeInterface.type.jsonName());
+					type = ((String) (params.get(NodeInterface.type.jsonName())));
 				}
-
 				Class cls = null;
 				if (type != null) {
-
 					cls = SchemaHelper.getEntityClassForRawType(type);
-
 				}
-
 				if (cls == null) {
-
 					if (isImage) {
-
 						cls = SchemaHelper.getEntityClassForRawType("Image");
-
 					} else if (isVideo) {
-
 						cls = SchemaHelper.getEntityClassForRawType("VideoFile");
 						if (cls == null) {
-
 							logger.warn("Unable to create entity of type VideoFile, class is not defined.");
 						}
-
 					} else {
-
 						cls = SchemaHelper.getEntityClassForRawType("File");
 					}
 				}
-
 				if (cls != null) {
 					type = cls.getSimpleName();
 				}
-
 				final String name = p.getName().replaceAll("\\\\", "/");
-				File newFile      = null;
-				boolean retry     = true;
-
+				File newFile = null;
+				boolean retry = true;
 				while (retry) {
-
 					retry = false;
-
 					final String defaultUploadFolderConfigValue = Settings.DefaultUploadFolder.getValue();
-					Folder uploadFolder                         = null;
-
-					// If a path attribute was sent, create all folders on the fly.
+					Folder uploadFolder = null;
+						// If a path attribute was sent, create all folders on the fly.
 					if (path != null) {
-
 						uploadFolder = getOrCreateFolderPath(securityContext, path);
-
 					} else if (StringUtils.isNotBlank(defaultUploadFolderConfigValue)) {
-
 						uploadFolder = getOrCreateFolderPath(SecurityContext.getSuperUserInstance(), defaultUploadFolderConfigValue);
-
 					}
-
 					try (final Tx tx = StructrApp.getInstance(securityContext).tx()) {
-
 						try (final InputStream is = p.getInputStream()) {
-
 							newFile = FileHelper.createFile(securityContext, is, contentType, cls, name, uploadFolder);
 							AbstractFile.validateAndRenameFileOnce(newFile, securityContext, null);
-
 							final PropertyMap changedProperties = new PropertyMap();
-
 							changedProperties.putAll(PropertyMap.inputTypeToJavaType(securityContext, cls, params));
-
 							// Update type as it could have changed
 							changedProperties.put(AbstractNode.type, type);
-
 							newFile.unlockSystemPropertiesOnce();
 							newFile.setProperties(securityContext, changedProperties, true);
-
 							uuid = newFile.getUuid();
-
 						} catch (IOException ex) {
 							logger.warn("Could not store file: {}", ex.getMessage());
 						}
-
 						tx.success();
-
 					} catch (RetryException rex) {
 						retry = true;
 					}
-				}
-
-				// since the transaction can be repeated, we need to make sure that
-				// only the actual existing file creates a UUID output
+				} 
+					// since the transaction can be repeated, we need to make sure that
+					// only the actual existing file creates a UUID output
 				if (newFile != null) {
-
 					// upload trigger
 					newFile.notifyUploadCompletion();
-
-
 					newFile.callOnUploadHandler(securityContext);
-
 					// store uuid
 					uuid = newFile.getUuid();
-				
 				}
 			}
-
 			// send redirect to allow form-based file upload without JavaScript..
 			if (StringUtils.isNotBlank(redirectUrl)) {
-
 				if (appendUuidOnRedirect) {
-
-					sendRedirectHeader(response, redirectUrl + (redirectUrl.endsWith("/") ? "" : "/") + uuid, false);	// user-provided, should be already prefixed
-
+					// user-provided, should be already prefixed
+					sendRedirectHeader(response, (redirectUrl + (redirectUrl.endsWith("/") ? "" : "/")) + uuid, false);
 				} else {
-
-					sendRedirectHeader(response, redirectUrl, false);	// user-provided, should be already prefixed
+					// user-provided, should be already prefixed
+					sendRedirectHeader(response, redirectUrl, false);
 				}
-
-			} else {
-
-				// Just write out the uuids of the new files
-				if (uuid != null) {
-					response.getWriter().write(uuid);
-				}
+			} else // Just write out the uuids of the new files
+			if (uuid != null) {
+				response.getWriter().write(uuid);
 			}
-
-		} catch (Throwable t) {
-
+		} catch (java.lang.Throwable t) {
 			final String content;
-
 			if (t instanceof FrameworkException) {
-
-				final FrameworkException fex = (FrameworkException) t;
+				final FrameworkException fex = ((FrameworkException) (t));
 				logger.error(fex.toString());
 				content = errorPage(fex);
-
 				// set response status accordingly
 				response.setStatus(fex.getStatus());
-
 			} else {
-
-				if (t instanceof QuietException || t.getCause() instanceof QuietException) {
+				if ((t instanceof QuietException) || (t.getCause() instanceof QuietException)) {
 					// ignore exceptions which (by jettys standards) should be handled less verbosely
 				} else {
 					logger.error("Exception while processing upload request", t);
 				}
-
 				content = errorPage(t);
-
 				// set response status to 500
 				response.setStatus(500);
 			}
-
 			try {
 				final ServletOutputStream out = response.getOutputStream();
 				IOUtils.write(content, out, "utf-8");
-
 			} catch (IOException ex) {
 				logger.error("Could not write to response", ex);
 			}
 		}
-
 	}
 
 	@Override
 	protected void doPut(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-
 		try {
-
 			assertInitialized();
-
 		} catch (FrameworkException fex) {
-
 			try {
 				response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 				response.getOutputStream().write(fex.getMessage().getBytes("UTF-8"));
-
 			} catch (IOException ioex) {
-
 				logger.warn("Unable to send response", ioex);
 			}
-
 			return;
 		}
-
 		setCustomResponseHeaders(response);
-
 		try (final Tx tx = StructrApp.getInstance().tx(true, false, false)) {
-
 			final String uuid = PathHelper.getName(request.getPathInfo());
-
 			if (uuid == null) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				response.getOutputStream().write("URL path doesn't end with UUID.\n".getBytes("UTF-8"));
+				response.getOutputStream().write("URL path doesn\'t end with UUID.\n".getBytes("UTF-8"));
 				return;
 			}
-
 			Matcher matcher = threadLocalUUIDMatcher.get();
 			matcher.reset(uuid);
-
 			if (!matcher.matches()) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				response.getOutputStream().write("ERROR (400): URL path doesn't end with UUID.\n".getBytes("UTF-8"));
+				response.getOutputStream().write("ERROR (400): URL path doesn\'t end with UUID.\n".getBytes("UTF-8"));
 				return;
 			}
-
 			final SecurityContext securityContext = getConfig().getAuthenticator().initializeAndExamineRequest(request, response);
-
 			// Ensure access mode is frontend
 			securityContext.setAccessMode(AccessMode.Frontend);
-
 			request.setCharacterEncoding("UTF-8");
-
 			// Important: Set character encoding before calling response.getWriter() !!, see Servlet Spec 5.4
 			response.setCharacterEncoding("UTF-8");
-
 			// don't continue on redirects
 			if (response.getStatus() == 302) {
 				return;
 			}
-
 			for (Part p : request.getParts()) {
-
 				try {
 					final GraphObject node = StructrApp.getInstance().getNodeById(uuid);
-
 					if (node == null) {
-
 						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 						response.getOutputStream().write("ERROR (404): File not found.\n".getBytes("UTF-8"));
-
 					}
-
-					if (node instanceof org.structr.web.entity.File) {
-
-						final File file = (File) node;
+					if (node instanceof File) {
+						final File file = ((File) (node));
 						if (file.isGranted(Permission.write, securityContext)) {
-
 							try (final InputStream is = p.getInputStream()) {
-
 								FileHelper.writeToFile(file, is);
 								file.increaseVersion();
-
 								// upload trigger
 								file.notifyUploadCompletion();
 							}
-
 						} else {
-
 							response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 							response.getOutputStream().write("ERROR (403): Write access forbidden.\n".getBytes("UTF-8"));
-
 						}
 					}
-
 				} catch (IOException ex) {
 					logger.warn("Could not write to file", ex);
 				}
-
 			}
-
 			tx.success();
-
-		} catch (FrameworkException | IOException  t) {
-
+		} catch (FrameworkException | IOException t) {
 			logger.error("Exception while processing request", t);
 			UiAuthenticator.writeInternalServerError(response);
 		}
-
 	}
 
 	@Override
 	protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		setCustomResponseHeaders(response);
-
 		try {
-
 			assertInitialized();
-
 			request.setCharacterEncoding("UTF-8");
 			response.setCharacterEncoding("UTF-8");
 			response.setContentType("application/json; charset=utf-8");
-
 			// check if this is a CORS preflight request
-			final String origin      = request.getHeader("Origin");
+			final String origin = request.getHeader("Origin");
 			final String corsHeaders = request.getHeader("Access-Control-Request-Headers");
-			final String corsMethod  = request.getHeader("Access-Control-Request-Method");
-			int statusCode           = HttpServletResponse.SC_OK;
-
-			if (origin != null && corsHeaders != null && corsMethod != null) {
-
+			final String corsMethod = request.getHeader("Access-Control-Request-Method");
+			int statusCode = HttpServletResponse.SC_OK;
+			if (((origin != null) && (corsHeaders != null)) && (corsMethod != null)) {
 				final Authenticator auth = getConfig().getAuthenticator();
 				// Ensure CORS settings apply by letting the authenticator examine the request.
 				auth.initializeAndExamineRequest(request, response);
-
 			} else {
-
 				// OPTIONS is not allowed for non-CORS requests
 				statusCode = HttpServletResponse.SC_METHOD_NOT_ALLOWED;
 			}
-
 			response.setContentLength(0);
 			response.setStatus(statusCode);
-
-		} catch (Throwable t) {
-
+		} catch (java.lang.Throwable t) {
 			logger.warn("Exception in UploadServlet OPTIONS", t);
-
-
 		} finally {
-
 			try {
 				//response.getWriter().flush();
 				response.getWriter().close();
-
-			} catch (Throwable t) {
-
+			} catch (java.lang.Throwable t) {
 				logger.warn("Unable to flush and close response: {}", t.getMessage());
 			}
 		}
@@ -592,39 +438,27 @@ public class UploadServlet extends AbstractServletBase implements HttpServiceSer
 	}
 
 	private IJsonInput cleanAndParseJsonString(final App app, final String input) throws FrameworkException {
-
-		final Gson gson      = getGson();
+		final Gson gson = getGson();
 		IJsonInput jsonInput = null;
-
 		// isolate input parsing (will include read and write operations)
 		try (final Tx tx = app.tx()) {
-
-			jsonInput   = gson.fromJson(input, IJsonInput.class);
+			jsonInput = gson.fromJson(input, IJsonInput.class);
 			tx.success();
-
 		} catch (JsonSyntaxException jsx) {
-			//logger.warn("", jsx);
+			// logger.warn("", jsx);
 			throw new FrameworkException(400, jsx.getMessage());
 		}
-
 		if (jsonInput == null) {
-
 			if (StringUtils.isBlank(input)) {
-
 				try (final Tx tx = app.tx()) {
-
-					jsonInput   = gson.fromJson("{}", IJsonInput.class);
+					jsonInput = gson.fromJson("{}", IJsonInput.class);
 					tx.success();
 				}
-
 			} else {
-
 				jsonInput = new JsonSingleInput();
 			}
 		}
-
 		return jsonInput;
-
 	}
 
 	private Map<String, Object> convertPropertySetToMap(JsonInput propertySet) {
@@ -637,18 +471,13 @@ public class UploadServlet extends AbstractServletBase implements HttpServiceSer
 	}
 
 	private synchronized Folder getOrCreateFolderPath(SecurityContext securityContext, String path) {
-
 		try (final Tx tx = StructrApp.getInstance().tx()) {
-
 			Folder folder = FileHelper.createFolderPath(securityContext, path);
 			tx.success();
-
 			return folder;
-
 		} catch (FrameworkException ex) {
 			logger.warn("", ex);
 		}
-
 		return null;
 	}
 

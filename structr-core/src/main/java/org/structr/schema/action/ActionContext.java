@@ -18,6 +18,9 @@
  */
 package org.structr.schema.action;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -28,12 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.graalvm.polyglot.Context;
 import org.slf4j.Logger;
@@ -59,30 +56,42 @@ import org.structr.core.script.polyglot.cache.ExecutableStaticTypeMethodCache;
 import org.structr.core.script.polyglot.cache.ExecutableTypeMethodCache;
 import org.structr.schema.parser.DatePropertyParser;
 
+
 /**
  *
  *
  */
 public class ActionContext {
-
 	private static final Logger logger = LoggerFactory.getLogger(ActionContext.class.getName());
+
 	public static final String SESSION_ATTRIBUTE_PREFIX = "user.";
 
 	// Caches
 	// cache is not static => library cache is per request
-	private final Map<String, Context> scriptingContexts                           = new HashMap<>();
-	private final Map<String, String> libraryCache                                 = new HashMap<>();
+	private final Map<String, Context> scriptingContexts = new HashMap<>();
+
+	private final Map<String, String> libraryCache = new HashMap<>();
+
 	private final ExecutableTypeMethodCache executableTypeMethodCache              = new ExecutableTypeMethodCache();
+
 	private final ExecutableStaticTypeMethodCache staticExecutableTypeMethodCache  = new ExecutableStaticTypeMethodCache();
 
 	// Regular members
+	// Regular members
 	protected SecurityContext securityContext                                      = null;
+
 	protected Predicate predicate                                                  = null;
+
 	protected ErrorBuffer errorBuffer                                              = new ErrorBuffer();
+
 	protected StringBuilder outputBuffer                                           = new StringBuilder();
+
 	protected Locale locale                                                        = Locale.getDefault();
+
 	private boolean javaScriptContext                                              = false;
+
 	private ContextStore temporaryContextStore                                     = new ContextStore();
+
 	private boolean disableVerboseExceptionLogging                                 = false;
 
 	public ActionContext(final SecurityContext securityContext) {
@@ -90,13 +99,9 @@ public class ActionContext {
 	}
 
 	public ActionContext(final SecurityContext securityContext, final Map<String, Object> parameters) {
-
 		this.securityContext = securityContext;
-
 		if (this.securityContext != null) {
-
 			this.locale = this.securityContext.getEffectiveLocale();
-
 			if (parameters != null) {
 				this.securityContext.getContextStore().setTemporaryParameters(parameters);
 			}
@@ -104,9 +109,9 @@ public class ActionContext {
 	}
 
 	public ActionContext(final ActionContext other) {
-		this.errorBuffer     = other.errorBuffer;
+		this.errorBuffer = other.errorBuffer;
 		this.securityContext = other.securityContext;
-		this.locale          = other.locale;
+		this.locale = other.locale;
 	}
 
 	public SecurityContext getSecurityContext() {
@@ -245,14 +250,11 @@ public class ActionContext {
 	}
 
 	public Object evaluate(final GraphObject entity, final String key, final Object data, final String defaultValue, final int depth, final EvaluationHints hints, final int row, final int column) throws FrameworkException {
-
 		// report usage for toplevel keys only
 		if (data == null) {
-
 			// report key as used to identify unresolved keys later
 			hints.reportUsedKey(key, row, column);
 		}
-
 		Object value = getContextStore().getConstant(key);
 		if (this.temporaryContextStore.getConstant(key) != null) {
 			hints.reportExistingKey(key);
@@ -260,277 +262,200 @@ public class ActionContext {
 		} else if (this.temporaryContextStore.hasConstant(key)) {
 			hints.reportExistingKey(key);
 			value = null;
-		} else {
-
-			if (value == null) {
-
-				// special Request handling
-				if (data instanceof HttpServletRequest) {
-
-					value = ((HttpServletRequest) data).getParameterValues(key);
-					if (value != null) {
-
-						hints.reportExistingKey(key);
-						if (((String[]) value).length == 1) {
-
-							value = ((String[]) value)[0];
-
-						} else {
-
-							value = Arrays.asList((String[]) value);
-						}
-					}
-				}
-
-				// HttpSession
-				if (data instanceof HttpSession) {
-
-					if (StringUtils.isNotBlank(key)) {
-
-						hints.reportExistingKey(key);
-
-						// use "user." prefix to separate user and system data
-						value = ((HttpSession) data).getAttribute(SESSION_ATTRIBUTE_PREFIX + key);
-					}
-				}
-
-				// special handling of maps..
-				if (data instanceof Map) {
-
+		} else if (value == null) {
+			// special Request handling
+			if (data instanceof HttpServletRequest) {
+				value = ((HttpServletRequest) (data)).getParameterValues(key);
+				if (value != null) {
 					hints.reportExistingKey(key);
-					value = ((Map) data).get(key);
-				}
-
-				if (data != null) {
-
-					if (data instanceof GraphObject) {
-
-						value = ((GraphObject) data).evaluate(this, key, defaultValue, hints, row, column);
-
-					} else if (data instanceof Class) {
-
-						// static method?
-						Map<String, Method> methods = StructrApp.getConfiguration().getAnnotatedMethods((Class) data, Export.class);
-						if (methods.containsKey(key) && Modifier.isStatic(methods.get(key).getModifiers())) {
-
-							hints.reportExistingKey(key);
-
-							final ContextStore contextStore = getContextStore();
-							final Map<String, Object> parameters = contextStore.getTemporaryParameters();
-							final Method method = methods.get(key);
-
-							return AbstractNode.invokeMethod(securityContext, method, null, parameters, hints);
-						}
-
+					if (((String[]) (value)).length == 1) {
+						value = ((String[]) (value))[0];
 					} else {
-
-						switch (key) {
-
-							case "size":
-								if (data instanceof Collection) {
-									hints.reportExistingKey(key);
-									return ((Collection) data).size();
-								}
-								if (data instanceof Iterable) {
-									hints.reportExistingKey(key);
-									return Iterables.count((Iterable) data);
-								}
-								if (data.getClass().isArray()) {
-									hints.reportExistingKey(key);
-									return ((Object[]) data).length;
-								}
-								break;
-						}
-
+						value = Arrays.asList(((String[]) (value)));
 					}
-
+				}
+			}
+				// HttpSession
+			if (data instanceof HttpSession) {
+				if (StringUtils.isNotBlank(key)) {
+					hints.reportExistingKey(key);
+						// use "user." prefix to separate user and system data
+					value = ((HttpSession) (data)).getAttribute(SESSION_ATTRIBUTE_PREFIX + key);
+				}
+			}
+			// special handling of maps..
+			if (data instanceof Map) {
+				hints.reportExistingKey(key);
+				value = ((Map) (data)).get(key);
+			}
+			if (data != null) {
+				if (data instanceof GraphObject) {
+					value = ((GraphObject) (data)).evaluate(this, key, defaultValue, hints, row, column);
+				} else if (data instanceof Class) {
+					// static method?
+					Map<String, Method> methods = StructrApp.getConfiguration().getAnnotatedMethods(((Class) (data)), Export.class);
+					if (methods.containsKey(key) && Modifier.isStatic(methods.get(key).getModifiers())) {
+						hints.reportExistingKey(key);
+						final ContextStore contextStore = getContextStore();
+						final Map<String, Object> parameters = contextStore.getTemporaryParameters();
+						final Method method = methods.get(key);
+						return AbstractNode.invokeMethod(securityContext, method, null, parameters, hints);
+					}
 				} else {
-
-					// keywords that need an existing security context
-					if (securityContext != null) {
-
-						// "data-less" keywords to start the evaluation chain
-
-						// 1. keywords without special handling
-						switch (key) {
-
-							case "request":
+					switch (key) {
+						case "size" :
+							if (data instanceof Collection) {
 								hints.reportExistingKey(key);
-								return securityContext.getRequest();
-
-							case "session":
-								if (securityContext.getRequest() != null) {
-									hints.reportExistingKey(key);
-									return securityContext.getRequest().getSession(false);
-								}
-								break;
-
-							case "baseUrl":
-							case "base_url":
-								hints.reportExistingKey(key);
-								return getBaseUrl(securityContext.getRequest());
-
-							case "applicationRootPath":
-								hints.reportExistingKey(key);
-								return Settings.applicationRootPath.getValue();
-
-							case "me":
-								hints.reportExistingKey(key);
-								return securityContext.getUser(false);
-
-							case "depth":
-								hints.reportExistingKey(key);
-								return securityContext.getSerializationDepth() - 1;
-
-						}
-
-						// 2. keywords which require a request
-						final HttpServletRequest request = securityContext.getRequest();
-
-						if (request != null) {
-
-							switch (key) {
-
-								case "host":
-									hints.reportExistingKey(key);
-									return request.getServerName();
-
-								case "ip":
-									hints.reportExistingKey(key);
-									return request.getLocalAddr();
-
-								case "port":
-									hints.reportExistingKey(key);
-									return request.getServerPort();
-
-								case "pathInfo":
-								case "path_info":
-									hints.reportExistingKey(key);
-									return request.getPathInfo();
-
-								case "queryString":
-								case "query_string":
-									hints.reportExistingKey(key);
-									return request.getQueryString();
-
-								case "parameterMap":
-								case "parameter_map":
-									hints.reportExistingKey(key);
-									return request.getParameterMap();
-
-								case "remoteAddress":
-								case "remote_address":
-									hints.reportExistingKey(key);
-									return getRemoteAddr(request);
+								return ((Collection) (data)).size();
 							}
+							if (data instanceof Iterable) {
+								hints.reportExistingKey(key);
+								return Iterables.count(((Iterable) (data)));
+							}
+							if (data.getClass().isArray()) {
+								hints.reportExistingKey(key);
+								return ((Object[]) (data)).length;
+							}
+							break;
+					}
+				}
+			} else {
+					// keywords that need an existing security context
+				if (securityContext != null) {
+						// "data-less" keywords to start the evaluation chain
+						// 1. keywords without special handling
+					switch (key) {
+						case "request" :
+							hints.reportExistingKey(key);
+							return securityContext.getRequest();
+						case "session" :
+							if (securityContext.getRequest() != null) {
+								hints.reportExistingKey(key);
+								return securityContext.getRequest().getSession(false);
+							}
+							break;
+						case "baseUrl" :
+						case "base_url" :
+							hints.reportExistingKey(key);
+							return getBaseUrl(securityContext.getRequest());
+						case "applicationRootPath" :
+							hints.reportExistingKey(key);
+							return Settings.applicationRootPath.getValue();
+						case "me" :
+							hints.reportExistingKey(key);
+							return securityContext.getUser(false);
+						case "depth" :
+							hints.reportExistingKey(key);
+							return securityContext.getSerializationDepth() - 1;
+					}
+						// 2. keywords which require a request
+					final HttpServletRequest request = securityContext.getRequest();
+					if (request != null) {
+						switch (key) {
+							case "host" :
+								hints.reportExistingKey(key);
+								return request.getServerName();
+							case "ip" :
+								hints.reportExistingKey(key);
+								return request.getLocalAddr();
+							case "port" :
+								hints.reportExistingKey(key);
+								return request.getServerPort();
+							case "pathInfo" :
+							case "path_info" :
+								hints.reportExistingKey(key);
+								return request.getPathInfo();
+							case "queryString" :
+							case "query_string" :
+								hints.reportExistingKey(key);
+								return request.getQueryString();
+							case "parameterMap" :
+							case "parameter_map" :
+								hints.reportExistingKey(key);
+								return request.getParameterMap();
+							case "remoteAddress" :
+							case "remote_address" :
+								hints.reportExistingKey(key);
+								return getRemoteAddr(request);
 						}
-
+					}
 						// 3. keywords which require a response
-						final HttpServletResponse response = securityContext.getResponse();
-
-						if (response != null) {
-
-							switch (key) {
-
-								case "response": {
-
+					final HttpServletResponse response = securityContext.getResponse();
+					if (response != null) {
+						switch (key) {
+							case "response" :
+								{
 									try {
 										// return output stream of HTTP response for streaming
 										hints.reportExistingKey(key);
 										return response.getOutputStream();
-
 									} catch (IOException ioex) {
 										logger.warn("", ioex);
 									}
 									return null;
 								}
-
-								case "statusCode":
-								case "status_code":
-									hints.reportExistingKey(key);
-									return response.getStatus();
-							}
+							case "statusCode" :
+							case "status_code" :
+								hints.reportExistingKey(key);
+								return response.getStatus();
 						}
 					}
-
+				}
 					// keywords that do not need a security context
-					switch (key) {
-
-						case "now":
-							hints.reportExistingKey(key);
-							return this.isJavaScriptContext() ? new Date() : DatePropertyParser.format(new Date(), Settings.DefaultDateFormat.getValue());
-
-						case "this":
-							hints.reportExistingKey(key);
-							return entity;
-
-						case "locale":
-							hints.reportExistingKey(key);
-							return locale != null ? locale.toString() : null;
-
-						case "tenantIdentifier":
-						case "tenant_identifier":
-							hints.reportExistingKey(key);
-							return Settings.TenantIdentifier.getValue();
-
-						case "applicationStore":
-						case "application_store":
-							hints.reportExistingKey(key);
-							return Services.getInstance().getApplicationStore();
-
-						default:
-
+				switch (key) {
+					case "now" :
+						hints.reportExistingKey(key);
+						return this.isJavaScriptContext() ? new Date() : DatePropertyParser.format(new Date(), Settings.DefaultDateFormat.getValue());
+					case "this" :
+						hints.reportExistingKey(key);
+						return entity;
+					case "locale" :
+						hints.reportExistingKey(key);
+						return locale != null ? locale.toString() : null;
+					case "tenantIdentifier" :
+					case "tenant_identifier" :
+						hints.reportExistingKey(key);
+						return Settings.TenantIdentifier.getValue();
+					case "applicationStore" :
+					case "application_store" :
+						hints.reportExistingKey(key);
+						return Services.getInstance().getApplicationStore();
+					default :
 							// Do the (slow) class check only if key value starts with uppercase character or could have a package path
-							if (StringUtils.isNotEmpty(key) && (Character.isUpperCase(key.charAt(0)) || StringUtils.contains(key, "."))) {
-
-								final Class type = StructrApp.getConfiguration().getNodeEntityClass(key);
-								if (type != null) {
-
-									hints.reportExistingKey(key);
-									return type;
-								}
+						if (StringUtils.isNotEmpty(key) && (Character.isUpperCase(key.charAt(0)) || StringUtils.contains(key, "."))) {
+							final Class type = StructrApp.getConfiguration().getNodeEntityClass(key);
+							if (type != null) {
+								hints.reportExistingKey(key);
+								return type;
 							}
-
-							break;
-					}
+						}
+						break;
 				}
 			}
 		}
-
-		if (value == null && defaultValue != null) {
+		if ((value == null) && (defaultValue != null)) {
 			return Function.numberOrString(defaultValue);
 		}
-
 		return value;
 	}
 
 	public String getRequestInfoForVerboseJavaScriptExceptionLog() {
-
 		final HttpServletRequest request = securityContext.getRequest();
-
 		if (request != null) {
-
 			final StringBuilder sb = new StringBuilder("Path = ");
 			sb.append(request.getPathInfo());
-
 			final String qs = request.getQueryString();
-			final Map pm    = getRequestStore();
-
+			final Map pm = getRequestStore();
 			if (qs != null) {
-
 				sb.append("?");
 				sb.append(qs);
 			}
-
 			if (!pm.isEmpty()) {
-
 				sb.append(" –– Parameter Map = ");
 				sb.append(pm.toString());
 			}
-
 			return sb.toString();
 		}
-
 		return null;
 	}
 
@@ -543,42 +468,31 @@ public class ActionContext {
 	}
 
 	public static String getBaseUrl(final HttpServletRequest request, final boolean forceConfigForPort) {
-
 		final String baseUrlOverride = Settings.BaseUrlOverride.getValue();
-
 		if (StringUtils.isNotEmpty(baseUrlOverride)) {
 			return baseUrlOverride;
 		}
-
 		final StringBuilder sb = new StringBuilder("http");
-
-		final Boolean httpsEnabled       = Settings.HttpsEnabled.getValue();
-		final String name                = (request != null) ? request.getServerName() : Settings.ApplicationHost.getValue();
-		final Integer port               = (request != null && forceConfigForPort != true) ? request.getServerPort() : ((httpsEnabled) ? Settings.getSettingOrMaintenanceSetting(Settings.HttpsPort).getValue() : Settings.getSettingOrMaintenanceSetting(Settings.HttpPort).getValue());
-
+		final Boolean httpsEnabled = Settings.HttpsEnabled.getValue();
+		final String name = (request != null) ? request.getServerName() : Settings.ApplicationHost.getValue();
+		final Integer port = ((request != null) && (forceConfigForPort != true)) ? request.getServerPort() : httpsEnabled ? Settings.getSettingOrMaintenanceSetting(Settings.HttpsPort).getValue() : Settings.getSettingOrMaintenanceSetting(Settings.HttpPort).getValue();
 		if (httpsEnabled) {
 			sb.append("s");
 		}
-
 		sb.append("://");
 		sb.append(name);
-
 		// we need to specify the port if (protocol = HTTPS and port != 443 OR protocol = HTTP and port != 80)
-		if ( (httpsEnabled && port != 443) || (!httpsEnabled && port != 80) ) {
+		if ((httpsEnabled && (port != 443)) || ((!httpsEnabled) && (port != 80))) {
 			sb.append(":").append(port);
 		}
-
 		return sb.toString();
 	}
 
 	public static String getRemoteAddr(HttpServletRequest request) {
-
 		final String remoteAddress = request.getHeader("X-FORWARDED-FOR");
-
 		if (remoteAddress == null) {
 			return request.getRemoteAddr();
 		}
-
 		return remoteAddress;
 	}
 
