@@ -20,6 +20,27 @@
  */
 package smartrics.rest.fitnesse.fixture;
 
+import fit.Fixture;
+import java.util.Map;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import smartrics.rest.client.RestClient;
+import smartrics.rest.client.RestRequest.Method;
+import smartrics.rest.client.RestRequest;
+import smartrics.rest.client.RestResponse;
+import smartrics.rest.fitnesse.fixture.RestFixture.Runner;
+import smartrics.rest.fitnesse.fixture.support.BodyTypeAdapter;
+import smartrics.rest.fitnesse.fixture.support.CellFormatter;
+import smartrics.rest.fitnesse.fixture.support.CellWrapper;
+import smartrics.rest.fitnesse.fixture.support.Config;
+import smartrics.rest.fitnesse.fixture.support.ContentType;
+import smartrics.rest.fitnesse.fixture.support.HeadersTypeAdapter;
+import smartrics.rest.fitnesse.fixture.support.JavascriptException;
+import smartrics.rest.fitnesse.fixture.support.RowWrapper;
+import smartrics.rest.fitnesse.fixture.support.StatusCodeTypeAdapter;
+import smartrics.rest.fitnesse.fixture.support.StringTypeAdapter;
+import smartrics.rest.fitnesse.fixture.support.Variables;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -34,29 +55,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.Map;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import smartrics.rest.client.RestClient;
-import smartrics.rest.client.RestRequest;
-import smartrics.rest.client.RestRequest.Method;
-import smartrics.rest.client.RestResponse;
-import smartrics.rest.fitnesse.fixture.RestFixture.Runner;
-import smartrics.rest.fitnesse.fixture.support.BodyTypeAdapter;
-import smartrics.rest.fitnesse.fixture.support.CellFormatter;
-import smartrics.rest.fitnesse.fixture.support.CellWrapper;
-import smartrics.rest.fitnesse.fixture.support.Config;
-import smartrics.rest.fitnesse.fixture.support.ContentType;
-import smartrics.rest.fitnesse.fixture.support.HeadersTypeAdapter;
-import smartrics.rest.fitnesse.fixture.support.JavascriptException;
-import smartrics.rest.fitnesse.fixture.support.RowWrapper;
-import smartrics.rest.fitnesse.fixture.support.StatusCodeTypeAdapter;
-import smartrics.rest.fitnesse.fixture.support.StringTypeAdapter;
-import smartrics.rest.fitnesse.fixture.support.Variables;
-import fit.Fixture;
 
 /**
  * Tests for the RestFixture class.
@@ -65,18 +63,27 @@ import fit.Fixture;
  * 
  */
 public class RestFixtureTest {
-
     private static final String BASE_URL = "http://localhost:9090";
+
     private RestFixture fixture;
+
     private final Variables variables = new Variables();
+
     private RestFixtureTestHelper helper;
+
     private PartsFactory mockPartsFactory;
+
     private RestClient mockRestClient;
+
     private RestRequest mockLastRequest;
+
     @SuppressWarnings("rawtypes")
     private CellFormatter mockCellFormatter;
+
     private Config config;
+
     private RestResponse lastResponse;
+
     private BodyTypeAdapter mockBodyTypeAdapter;
 
     @Before
@@ -181,7 +188,7 @@ public class RestFixtureTest {
         fixture.processRow(row);
         assertEquals("1234", fixture.getHeaders().get("header1"));
     }
-    
+
     @Test
     public void mustExpandSymbolWhenSettingHeaders() {
         Fixture.setSymbol("hval", "one");
@@ -193,14 +200,14 @@ public class RestFixtureTest {
 
     @Test
     public void mustRenderSymbolValueWhenSettingHeaders() {
-    	when(mockCellFormatter.gray("headerWithSymbol:one")).thenReturn("gray(headerWithSymbol:one)");
+        when(mockCellFormatter.gray("headerWithSymbol:one")).thenReturn("gray(headerWithSymbol:one)");
         Fixture.setSymbol("hval", "one");
         String header = "headerWithSymbol:%hval%";
         RowWrapper<?> row = helper.createTestRow("setHeader", header);
         fixture.processRow(row);
         verify(row.getCell(1)).text();
-        verify(row.getCell(1)).body("gray(headerWithSymbol:one)");
-        
+// commented this out because I commented out the matching code in the RestFixture (line 222)
+//        verify(row.getCell(1)).body("headerWithSymbol:one");
         verifyNoMoreInteractions(row.getCell(1));
     }
 
@@ -1045,5 +1052,4 @@ public class RestFixtureTest {
 
         }
     }
-
 }
