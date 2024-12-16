@@ -29,12 +29,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 
+
 /**
  *
  * @author Andrea Di Cesare
  */
 public class RequestContext {
-
     public enum TYPE {
 
         ERROR,
@@ -43,8 +43,7 @@ public class RequestContext {
         COLLECTION,
         DOCUMENT,
         COLLECTION_INDEXES,
-        INDEX
-    };
+        INDEX;}
 
     public enum METHOD {
 
@@ -54,24 +53,32 @@ public class RequestContext {
         DELETE,
         PATCH,
         OPTIONS,
-        OTHER
-    };
+        OTHER;}
 
     public static final String PAGE_QPARAM_KEY = "page";
+
     public static final String PAGESIZE_QPARAM_KEY = "pagesize";
+
     public static final String COUNT_QPARAM_KEY = "count";
+
     public static final String SORT_BY_QPARAM_KEY = "sort_by";
+
     public static final String FILTER_QPARAM_KEY = "filter";
+
     public static final String EAGER_CURSOR_ALLOCATION_POLICY_QPARAM_KEY = "eager";
 
     private final String whereUri;
+
     private final String whatUri;
 
     private final TYPE type;
+
     private final METHOD method;
+
     private final String[] pathTokens;
 
     private DBObject dbProps;
+
     private DBObject collectionProps;
 
     private DBObject content;
@@ -79,47 +86,54 @@ public class RequestContext {
     private final ArrayList<String> warnings = new ArrayList<>();
 
     private int page = 1;
+
     private int pagesize = 100;
+
     private boolean count = false;
+
     private EAGER_CURSOR_ALLOCATION_POLICY cursorAllocationPolicy;
+
     private Deque<String> filter = null;
+
     private Deque<String> sortBy = null;
 
     private String unmappedRequestUri = null;
+
     private String mappedRequestUri = null;
 
     /**
      *
-     * @param exchange the url rewriting feature is implemented by the whatUri
-     * and whereUri parameters
      *
-     * the exchange request path is rewritten replacing the whereUri string with
-     * the whatUri string the special whatUri value * means any resource: the
-     * whereUri is replaced with /
-     *
-     * example 1
-     *
-     * whatUri = /mydb/mycollection whereUri = /
-     *
-     * then the requestPath / is rewritten to /mydb/mycollection
-     *
-     * example 2
-     *
-     * whatUri = * whereUri = /data
-     *
-     * then the requestPath /data is rewritten to /
-     *
-     * @param whereUri the uri to map to
-     * @param whatUri the uri to map
+     * @param exchange
+     * 		the url rewriting feature is implemented by the whatUri
+     * 		and whereUri parameters
+     * 		
+     * 		the exchange request path is rewritten replacing the whereUri string with
+     * 		the whatUri string the special whatUri value * means any resource: the
+     * 		whereUri is replaced with /
+     * 		
+     * 		example 1
+     * 		
+     * 		whatUri = /mydb/mycollection whereUri = /
+     * 		
+     * 		then the requestPath / is rewritten to /mydb/mycollection
+     * 		
+     * 		example 2
+     * 		
+     * 		whatUri = * whereUri = /data
+     * 		
+     * 		then the requestPath /data is rewritten to /
+     * @param whereUri
+     * 		the uri to map to
+     * @param whatUri
+     * 		the uri to map
      */
     public RequestContext(HttpServerExchange exchange, String whereUri, String whatUri) {
         this.whereUri = URLUtilis.removeTrailingSlashes(whereUri);
         this.whatUri = whatUri;
-
         this.unmappedRequestUri = exchange.getRequestPath();
         this.mappedRequestUri = unmapUri(exchange.getRequestPath());
-
-        pathTokens = mappedRequestUri.split("/"); // "/db/collection/document" --> { "", "mappedDbName", "collection", "document" }
+        pathTokens = mappedRequestUri.split("/");// db/collection/document" --> { "", "mappedDbName", "collection", "document" }
 
         if (pathTokens.length < 2) {
             type = TYPE.ROOT;
@@ -127,16 +141,14 @@ public class RequestContext {
             type = TYPE.DB;
         } else if (pathTokens.length < 4) {
             type = TYPE.COLLECTION;
-        } else if (pathTokens.length == 4 && pathTokens[3].equals("_indexes")) {
+        } else if ((pathTokens.length == 4) && pathTokens[3].equals("_indexes")) {
             type = TYPE.COLLECTION_INDEXES;
-        } else if (pathTokens.length > 4 && pathTokens[3].equals("_indexes")) {
+        } else if ((pathTokens.length > 4) && pathTokens[3].equals("_indexes")) {
             type = TYPE.INDEX;
         } else {
             type = TYPE.DOCUMENT;
         }
-
         HttpString _method = exchange.getRequestMethod();
-
         if (Methods.GET.equals(_method)) {
             this.method = METHOD.GET;
         } else if (Methods.POST.equals(_method)) {
@@ -218,14 +230,12 @@ public class RequestContext {
      * @return true if parent of the requested resource is accessible
      */
     public final boolean isParentAccessible() {
-        return type == TYPE.DB
-                ? unmappedRequestUri.split("/").length > 1
-                : unmappedRequestUri.split("/").length > 2;
+        return type == TYPE.DB ? unmappedRequestUri.split("/").length > 1 : unmappedRequestUri.split("/").length > 2;
     }
 
     /**
      *
-     * @return type
+     * @return
      */
     public TYPE getType() {
         return type;
@@ -233,7 +243,7 @@ public class RequestContext {
 
     /**
      *
-     * @return DB Name
+     * @return
      */
     public String getDBName() {
         return getPathTokenAt(1);
@@ -241,7 +251,7 @@ public class RequestContext {
 
     /**
      *
-     * @return collection name
+     * @return
      */
     public String getCollectionName() {
         return getPathTokenAt(2);
@@ -249,7 +259,7 @@ public class RequestContext {
 
     /**
      *
-     * @return document id
+     * @return
      */
     public String getDocumentId() {
         return getPathTokenAt(3);
@@ -257,7 +267,7 @@ public class RequestContext {
 
     /**
      *
-     * @return index id
+     * @return
      */
     public String getIndexId() {
         return getPathTokenAt(4);
@@ -265,16 +275,18 @@ public class RequestContext {
 
     /**
      *
-     * @return URI
+     *
+     * @return @throws URISyntaxException
      * @throws URISyntaxException
+     * 		
      */
     public URI getUri() throws URISyntaxException {
-        return new URI(Arrays.asList(pathTokens).stream().reduce("/", (t1, t2) -> t1 + "/" + t2));
+        return new URI(Arrays.asList(pathTokens).stream().reduce("/", ( t1, t2) -> (t1 + "/") + t2));
     }
 
     /**
      *
-     * @return method
+     * @return
      */
     public METHOD getMethod() {
         return method;
@@ -283,7 +295,7 @@ public class RequestContext {
     /**
      *
      * @param dbName
-     * @return isReservedResourceDb
+     * @return
      */
     public static boolean isReservedResourceDb(String dbName) {
         return dbName.equals("admin") || dbName.equals("local") || dbName.startsWith("system.") || dbName.startsWith("_");
@@ -292,7 +304,7 @@ public class RequestContext {
     /**
      *
      * @param collectionName
-     * @return isReservedResourceCollection
+     * @return
      */
     public static boolean isReservedResourceCollection(String collectionName) {
         return collectionName != null && (collectionName.startsWith("system.") || collectionName.startsWith("_"));
@@ -301,7 +313,7 @@ public class RequestContext {
     /**
      *
      * @param documentId
-     * @return isReservedResourceDocument
+     * @return
      */
     public static boolean isReservedResourceDocument(String documentId) {
         return documentId != null && documentId.startsWith("_") && !documentId.equals("_indexes");
@@ -309,7 +321,7 @@ public class RequestContext {
 
     /**
      *
-     * @return isReservedResource
+     * @return
      */
     public boolean isReservedResource() {
         if (type == TYPE.ROOT) {
@@ -474,7 +486,7 @@ public class RequestContext {
     }
 
     /**
-     *
+     * 
      * @param index
      * @return pathTokens[index] if pathTokens.length > index, else null
      */
@@ -483,7 +495,6 @@ public class RequestContext {
     }
 
     /**
-     *
      * @return the cursorAllocationPolicy
      */
     public EAGER_CURSOR_ALLOCATION_POLICY getCursorAllocationPolicy() {

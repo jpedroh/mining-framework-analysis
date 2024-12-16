@@ -22,7 +22,6 @@ import com.softinstigate.restheart.Configuration;
 import com.softinstigate.restheart.hal.HALUtils;
 import com.softinstigate.restheart.hal.Link;
 import com.softinstigate.restheart.hal.Representation;
-import static com.softinstigate.restheart.hal.Representation.HAL_JSON_MEDIA_TYPE;
 import com.softinstigate.restheart.handlers.IllegalQueryParamenterException;
 import com.softinstigate.restheart.handlers.RequestContext;
 import com.softinstigate.restheart.handlers.document.DocumentRepresentationFactory;
@@ -33,15 +32,16 @@ import io.undertow.util.Headers;
 import java.util.List;
 import java.util.TreeMap;
 import org.bson.types.ObjectId;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import static com.softinstigate.restheart.hal.Representation.HAL_JSON_MEDIA_TYPE;
+
 
 /**
  *
  * @author Andrea Di Cesare
  */
 public class CollectionRepresentationFactory {
-
     private static final Logger logger = LoggerFactory.getLogger(CollectionRepresentationFactory.class);
 
     /**
@@ -52,10 +52,8 @@ public class CollectionRepresentationFactory {
      * @param size
      * @throws IllegalQueryParamenterException
      */
-    public static void sendHal(HttpServerExchange exchange, RequestContext context, List<DBObject> embeddedData, long size)
-            throws IllegalQueryParamenterException {
+    public static void sendHal(HttpServerExchange exchange, RequestContext context, List<DBObject> embeddedData, long size) throws IllegalQueryParamenterException {
         Representation rep = getCollection(exchange, context, embeddedData, size);
-
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, HAL_JSON_MEDIA_TYPE);
         exchange.getResponseSender().send(rep.toString());
     }
@@ -69,51 +67,37 @@ public class CollectionRepresentationFactory {
      * @return
      * @throws IllegalQueryParamenterException
      */
-    static public Representation getCollection(HttpServerExchange exchange, RequestContext context, List<DBObject> embeddedData, long size)
-            throws IllegalQueryParamenterException {
+    public static Representation getCollection(HttpServerExchange exchange, RequestContext context, List<DBObject> embeddedData, long size) throws IllegalQueryParamenterException {
         String requestPath = URLUtilis.removeTrailingSlashes(exchange.getRequestPath());
-        String queryString = exchange.getQueryString() == null || exchange.getQueryString().isEmpty() ? "" : "?" + URLUtilis.decodeQueryString(exchange.getQueryString());
-
+        String queryString = ((exchange.getQueryString() == null) || exchange.getQueryString().isEmpty()) ? "" : "?" + URLUtilis.decodeQueryString(exchange.getQueryString());
         Representation rep = new Representation(requestPath + queryString);
-
         rep.addProperty("_type", context.getType().name());
-
         // add the collection properties
         DBObject collProps = context.getCollectionProps();
-
         if (collProps != null) {
             HALUtils.addData(rep, collProps);
         }
-
         if (size >= 0) {
-            float _size = size + 0f;
-            float _pagesize = context.getPagesize() + 0f;
-
+            float _size = size + 0.0F;
+            float _pagesize = context.getPagesize() + 0.0F;
             rep.addProperty("_size", size);
             rep.addProperty("_total_pages", Math.max(1, Math.round(Math.ceil(_size / _pagesize))));
         }
-
         if (embeddedData != null) {
-            long count = embeddedData.stream().filter((props) -> props.keySet().stream().anyMatch((k) -> k.equals("id") || k.equals("_id"))).count();
-
+            long count = embeddedData.stream().filter(( props) -> props.keySet().stream().anyMatch(( k) -> k.equals("id") || k.equals("_id"))).count();
             rep.addProperty("_returned", count);
-
             if (!embeddedData.isEmpty()) {
                 embeddedDocuments(embeddedData, requestPath, exchange, context, rep);
             }
         }
-
         // collection links
         TreeMap<String, String> links;
-
         links = HALUtils.getPaginationLinks(exchange, context, size);
-
         if (links != null) {
-            links.keySet().stream().forEach((k) -> {
+            links.keySet().stream().forEach(( k) -> {
                 rep.addLink(new Link(k, links.get(k)));
             });
         }
-
         // link templates and curies
         if (context.isParentAccessible()) {
             // this can happen due to mongo-mounts mapped URL
@@ -125,23 +109,19 @@ public class CollectionRepresentationFactory {
         rep.addLink(new Link("rh:countandpaging", requestPath + "/{?page}{&pagesize}&count", true));
         rep.addLink(new Link("rh:indexes", requestPath + "/_indexes"));
         rep.addLink(new Link("rh", "curies", Configuration.RESTHEART_ONLINE_DOC_URL + "/#api-coll-{rel}", true), true);
-
         ResponseHelper.injectWarnings(rep, exchange, context);
-
         return rep;
     }
 
     private static void embeddedDocuments(List<DBObject> embeddedData, String requestPath, HttpServerExchange exchange, RequestContext context, Representation rep) throws IllegalQueryParamenterException {
         for (DBObject d : embeddedData) {
             Object _id = d.get("_id");
-            
-            if (_id != null && (_id instanceof String || _id instanceof ObjectId)) {
-                Representation nrep = DocumentRepresentationFactory.getDocument(requestPath + "/" + _id.toString(), exchange, context, d);
-                
+            if ((_id != null) && ((_id instanceof String) || (_id instanceof ObjectId))) {
+                Representation nrep = DocumentRepresentationFactory.getDocument((requestPath + "/") + _id.toString(), exchange, context, d);
                 nrep.addProperty("_type", RequestContext.TYPE.DOCUMENT.name());
-                
-                if (d.get("_etag") != null && d.get("_etag") instanceof ObjectId) {
-                    d.put("_etag", ((ObjectId) d.get("_etag")).toString()); // represent the etag as a string
+                if ((d.get("_etag") != null) && (d.get("_etag") instanceof ObjectId)) {
+                    d.put("_etag", ((ObjectId) (d.get("_etag"))).toString());// represent the etag as a string
+
                 }
                 rep.addRepresentation("rh:doc", nrep);
             } else {

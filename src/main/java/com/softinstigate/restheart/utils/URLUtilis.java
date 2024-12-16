@@ -23,30 +23,30 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Deque;
 
+
 /**
  *
  * @author Andrea Di Cesare
  */
 public class URLUtilis {
-
     /**
      * given string /ciao/this/has/trailings///// returns /ciao/this/has/trailings
-     * 
+     *
      * @param s
-     * @return the string s without the trailing slashes
+     * 		
+     * @return 
      */
-    static public String removeTrailingSlashes(String s) {
-        if (s == null || s.length() < 2) {
+    public static String removeTrailingSlashes(String s) {
+        if ((s == null) || (s.length() < 2)) {
             return s;
         }
-
         if (s.trim().charAt(s.length() - 1) == '/') {
             return removeTrailingSlashes(s.substring(0, s.length() - 1));
         } else {
             return s.trim();
         }
     }
-    
+
     /**
      * decode the percent encoded query string
      * 
@@ -121,8 +121,7 @@ public class URLUtilis {
 
         ///db/coll/?filter={"ref":{"$in":{"a","b","c"}}
         sb.append("/").append(dbName).append("/").append(collName).append("?")
-                .append("filter={").append("'").append(referenceField).append("'").append(":")
-                .append("{'$in'").append(":").append(ids).append("}}");
+                .append("filter={").append("'").append(referenceField).append("'").append(":").append("{'$in'").append(":").append(ids).append("}}");
 
         return context.mapUri(sb.toString().replaceAll(" ", ""));
     }
@@ -141,8 +140,7 @@ public class URLUtilis {
 
         ///db/coll/?filter={"ref":{"$in":{"a","b","c"}}
         sb.append("/").append(dbName).append("/").append(collName).append("?")
-                .append("filter={").append("'").append(referenceField).append("'")
-                .append(":").append(ids).append("}");
+                .append("filter={").append("'").append(referenceField).append("'").append(":").append(ids).append("}");
 
         return context.mapUri(sb.toString().replaceAll(" ", ""));
     }
@@ -161,8 +159,7 @@ public class URLUtilis {
 
         ///db/coll/?filter={'referenceField':{"$elemMatch":{'ids'}}}
         sb.append("/").append(dbName).append("/").append(collName).append("?")
-                .append("filter={'").append(referenceField)
-                .append("':{").append("'$elemMatch':{'$eq':").append(ids).append("}}}");
+                .append("filter={'").append(referenceField).append("':{").append("'$elemMatch':{'$eq':").append(ids).append("}}}");
 
         return context.mapUri(sb.toString().replaceAll(" ", ""));
     }
