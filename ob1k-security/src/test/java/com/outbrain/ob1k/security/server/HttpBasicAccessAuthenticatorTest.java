@@ -4,35 +4,38 @@ import com.outbrain.ob1k.Request;
 import com.outbrain.ob1k.concurrent.ComposableFuture;
 import com.outbrain.ob1k.concurrent.ComposableFutures;
 import com.outbrain.ob1k.security.server.HttpBasicAuthenticationFilter.HttpBasicAccessAuthenticator;
-import org.joda.time.DateTime;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import org.joda.time.DateTime;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+
 public class HttpBasicAccessAuthenticatorTest {
-
   public static final String APP_ID = "myApp";
-  private HttpBasicAccessAuthenticator basicAccessAuthenticator;
-  private CredentialsAuthenticator<UserPasswordToken> credentialsAuthenticator;
-  private AuthenticationCookieEncryptor cookieEncryptor;
-  private Request request;
-  private final int sessionMaxTimeSeconds = 10;
-  private final static String ROOT = "root";
 
+  private HttpBasicAccessAuthenticator basicAccessAuthenticator;
+
+  private CredentialsAuthenticator<UserPasswordToken> credentialsAuthenticator;
+
+  private AuthenticationCookieEncryptor cookieEncryptor;
+
+  private Request request;
+
+  private final int sessionMaxTimeSeconds = 10;
+
+  private final static String ROOT = "root";
 
   @Before
   public void setup() throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException {
@@ -134,7 +137,7 @@ public class HttpBasicAccessAuthenticatorTest {
 
   private void populateRequestWithCredentials(final String username, final String password) {
     final String authHeader = "Authorization";
-    final String credentials = username + ":" + password;
+    final String credentials = (username + ":") + password;
     final String encodedCredentials = new String(Base64.getEncoder().encode(credentials.getBytes()));
     final String headerValue = "Basic " + encodedCredentials;
     when(request.getHeader(authHeader)).thenReturn(headerValue);
@@ -142,7 +145,9 @@ public class HttpBasicAccessAuthenticatorTest {
 
   private static class SpecificUserPasswordAuthenticator implements CredentialsAuthenticator<UserPasswordToken> {
     private final String id = UUID.randomUUID().toString();
+
     private final String expectedUsername;
+
     private final String expectedPassword;
 
     public SpecificUserPasswordAuthenticator(final String expectedUsername, final String expectedPassword) {

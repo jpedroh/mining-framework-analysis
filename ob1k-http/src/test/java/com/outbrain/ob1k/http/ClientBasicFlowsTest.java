@@ -6,14 +6,8 @@ import com.squareup.okhttp.mockwebserver.Dispatcher;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.handler.codec.http.HttpHeaders;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import rx.Observable;
-import rx.observables.BlockingObservable;
-
 import java.io.IOException;
 import java.util.Base64;
 import java.util.concurrent.BlockingQueue;
@@ -22,22 +16,30 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import rx.Observable;
+import rx.observables.BlockingObservable;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 
 /**
  * @author marenzon
  */
 public class ClientBasicFlowsTest {
-
   private static MockWebServer server;
+
   private static CustomDispatcher dispatcher;
 
   private static class CustomDispatcher extends Dispatcher {
     private final BlockingQueue<Function<RecordedRequest, MockResponse>> responseQueue = new LinkedBlockingQueue<>();
+
     private volatile RecordedRequest lastRequest;
+
     private final MockResponse failureResponse = new MockResponse().setResponseCode(500).setBody("response queue empty");
 
     @Override
@@ -50,7 +52,7 @@ public class ClientBasicFlowsTest {
     }
 
     public void enqueue(final MockResponse response) {
-      enqueue(input -> {
+      enqueue(( input) -> {
         return response.clone();
       });
     }
@@ -80,7 +82,7 @@ public class ClientBasicFlowsTest {
   public void testSimpleRequestResponse() throws Exception {
 
     final String expected = "hello world";
-
+    
     dispatcher.enqueue(new MockResponse().setBody(expected));
 
     final HttpClient httpClient = HttpClient.createDefault();
@@ -208,21 +210,17 @@ public class ClientBasicFlowsTest {
 
   @Test
   public void testBasicAuth() throws Exception {
-
-    dispatcher.enqueue(input -> {
+    dispatcher.enqueue(( input) -> {
       final String authHeader = input.getHeader(HttpHeaders.Names.AUTHORIZATION).replace("Basic ", "");
-      final String credentials = new String(Base64.getDecoder().decode((authHeader)));
+      final String credentials = new String(Base64.getDecoder().decode(authHeader));
       return new MockResponse().setBody(credentials);
     });
-
     final String basicUsername = "moshe";
     final String basicPassword = "junkhead";
-
     final HttpClient httpClient = HttpClient.createDefault();
     final String url = server.url("/basicAuth").toString();
     final Response response = httpClient.get(url).withBasicAuth(basicUsername, basicPassword).asResponse().get();
-
-    final String basicAuthHeader = basicUsername + ":" + basicPassword;
-    assertEquals("response should be '" + basicAuthHeader + "'", basicAuthHeader, response.getResponseBody());
+    final String basicAuthHeader = (basicUsername + ":") + basicPassword;
+    assertEquals(("response should be '" + basicAuthHeader) + "'", basicAuthHeader, response.getResponseBody());
   }
 }
