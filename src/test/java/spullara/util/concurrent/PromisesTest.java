@@ -1,22 +1,20 @@
 package spullara.util.concurrent;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-import spullara.util.functions.Block;
-import spullara.util.functions.Mapper;
-import spullara.util.functions.Pair;
-
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
-
+import org.junit.BeforeClass;
+import org.junit.Test;
+import spullara.util.functions.Block;
+import spullara.util.functions.Mapper;
+import spullara.util.functions.Pair;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class PromisesTest {
 
+public class PromisesTest {
     private static ExecutorService es;
 
     @BeforeClass
@@ -50,7 +48,6 @@ public class PromisesTest {
             }
         });
         Promise<String> promise5 = new Promise<String>(new RuntimeException("Promise5"));
-
         final Promise<String> result10 = new Promise<String>();
         try {
             promise4.onFailure(new Block<Throwable>() {
@@ -62,7 +59,6 @@ public class PromisesTest {
             fail("Didn't timeout");
         } catch (TimeoutException te) {
         }
-
         try {
             promise5.map(new Mapper<String, Object>() {
                 @Override
@@ -89,22 +85,20 @@ public class PromisesTest {
         });
         assertEquals("Selected: Done2.", result3.get());
         assertEquals("Selected: Done2.", result4.get());
-
         Promise<Object> map1 = promise.join(promise2).map(new Mapper<Pair<String, String>, Object>() {
             @Override
             public Object map(Pair<String, String> stringStringTuple2) {
-                return stringStringTuple2._1 + ", " + stringStringTuple2._2;
+                return (stringStringTuple2._1 + ", ") + stringStringTuple2._2;
             }
         });
         Promise<Object> map2 = promise2.join(promise).map(new Mapper<Pair<String, String>, Object>() {
             @Override
             public Object map(Pair<String, String> stringStringTuple2) {
-                return stringStringTuple2._1 + ", " + stringStringTuple2._2;
+                return (stringStringTuple2._1 + ", ") + stringStringTuple2._2;
             }
         });
         assertEquals("Done., Done2.", map1.get());
         assertEquals("Done2., Done.", map2.get());
-
         final Promise<String> result1 = new Promise<String>();
         promise.select(promise4).foreach(new Block<String>() {
             @Override
@@ -114,7 +108,6 @@ public class PromisesTest {
         });
         assertEquals("Selected: Done.", result1.get());
         assertEquals("Failed", result10.get());
-
         try {
             promise4.select(promise5).onFailure(new Block<Throwable>() {
                 @Override
@@ -125,7 +118,6 @@ public class PromisesTest {
             fail("Should have failed");
         } catch (ExecutionException e) {
         }
-
         final CountDownLatch monitor = new CountDownLatch(2);
         Promise<String> onraised = Promises.execute(es, new Callable<String>() {
             @Override
@@ -146,7 +138,6 @@ public class PromisesTest {
                 monitor.countDown();
             }
         });
-
         Promise<String> map = promise.map(new Mapper<String, String>() {
             @Override
             public String map(String s) {
@@ -159,21 +150,18 @@ public class PromisesTest {
                 return "Set2: " + s;
             }
         });
-
         assertEquals("Set2: Set1: Done.", map.get());
         assertEquals(new Pair<String, String>("Constant", "Interrupted"), join.get());
-
         try {
             promise.join(promise4).map(new Mapper<Pair<String, String>, Object>() {
                 @Override
                 public Object map(Pair<String, String> stringStringTuple2) {
-                    return stringStringTuple2._1 + ", " + stringStringTuple2._2;
+                    return (stringStringTuple2._1 + ", ") + stringStringTuple2._2;
                 }
             }).get();
             fail("Should have failed");
         } catch (ExecutionException ee) {
         }
-
         assertEquals("Flatmapped: Constant", promise2.flatMap(new Mapper<String, Promise<String>>() {
             @Override
             public Promise<String> map(String s) {
@@ -185,15 +173,13 @@ public class PromisesTest {
                 return "Flatmapped: " + s;
             }
         }).get());
-
         assertEquals("Constant", promise2.flatMap(new Mapper<String, Promise<String>>() {
             @Override
             public Promise<String> map(String s) {
                 return promise3;
             }
         }).get());
-
-        final Promise<String> result11 = new Promise<>();
+        final Promise<String> result11 = new Promise<String>();
         try {
             promise2.flatMap(new Mapper<String, Promise<String>>() {
                 @Override
@@ -203,14 +189,13 @@ public class PromisesTest {
             }).onFailure(new Block<Throwable>() {
                 @Override
                 public void apply(Throwable throwable) {
-                  result11.set("Failed");
+                    result11.set("Failed");
                 }
             }).get();
             fail("Should have failed");
         } catch (ExecutionException ee) {
             assertEquals("Failed", result11.get());
         }
-
         final Promise<String> result2 = new Promise<String>();
         promise4.flatMap(new Mapper<String, Promise<String>>() {
             @Override
@@ -224,21 +209,17 @@ public class PromisesTest {
             }
         });
         assertEquals("Flat map failed: java.lang.RuntimeException: Promise4", result2.get());
-
         assertEquals("Done.", promise.get(1, TimeUnit.DAYS));
-
         try {
             promise4.get();
             fail("Should have thrown");
         } catch (ExecutionException e) {
         }
-
         try {
             promise4.join(promise).get();
             fail("Should have thrown");
         } catch (ExecutionException e) {
         }
-
         final Promise<String> result5 = new Promise<String>();
         final Promise<String> result6 = new Promise<String>();
         promise.onSuccess(new Block<String>() {
@@ -259,7 +240,6 @@ public class PromisesTest {
         });
         assertEquals("onSuccess: Done.", result5.get());
         assertEquals("Ensured", result6.get());
-
         final Promise<String> result7 = new Promise<String>();
         final Promise<String> result8 = new Promise<String>();
         promise4.onSuccess(new Block<String>() {
@@ -280,7 +260,6 @@ public class PromisesTest {
         });
         assertEquals("onFailure: java.lang.RuntimeException: Promise4", result7.get());
         assertEquals("Ensured", result8.get());
-
         assertEquals("Was Rescued!", promise4.rescue(new Mapper<Throwable, String>() {
             @Override
             public String map(Throwable throwable) {
@@ -303,23 +282,18 @@ public class PromisesTest {
                 return "Was " + s;
             }
         }).get());
-
-        assertEquals(Arrays.asList("Done.", "Done2.", "Constant"),
-                Promises.collect(Arrays.asList(promise, promise2, promise3)).map(new Mapper<List<String>, List<String>>() {
-                    @Override
-                    public List<String> map(List<String> list) {
-                        return list;
-                    }
-                }).get());
-
-        assertEquals(Arrays.asList(),
-                Promises.collect(Collections.<Promise<String>>emptyList()).map(new Mapper<List<String>, List<String>>() {
-                    @Override
-                    public List<String> map(List<String> list) {
-                        return list;
-                    }
-                }).get());
-
+        assertEquals(Arrays.asList("Done.", "Done2.", "Constant"), Promises.collect(Arrays.asList(promise, promise2, promise3)).map(new Mapper<List<String>, List<String>>() {
+            @Override
+            public List<String> map(List<String> list) {
+                return list;
+            }
+        }).get());
+        assertEquals(Arrays.asList(), Promises.collect(Collections.<Promise<String>>emptyList()).map(new Mapper<List<String>, List<String>>() {
+            @Override
+            public List<String> map(List<String> list) {
+                return list;
+            }
+        }).get());
         try {
             Promises.collect(Arrays.asList(promise, promise2, promise4)).map(new Mapper<List<String>, List<String>>() {
                 @Override
@@ -330,7 +304,6 @@ public class PromisesTest {
             fail("Should have failed");
         } catch (ExecutionException ee) {
         }
-
         final Promise<String> result9 = new Promise<String>();
         promise.foreach(new Block<String>() {
             @Override
@@ -339,7 +312,6 @@ public class PromisesTest {
             }
         });
         assertEquals("Foreach: Done.", result9.get());
-
         es.shutdown();
         es.awaitTermination(1, TimeUnit.DAYS);
     }
