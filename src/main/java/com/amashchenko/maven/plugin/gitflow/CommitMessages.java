@@ -15,49 +15,50 @@
  */
 package com.amashchenko.maven.plugin.gitflow;
 
+
+
 /**
  * Git commit messages.
- *
+ * 
  */
 public class CommitMessages {
     private String featureStartMessage;
+
     private String featureFinishMessage;
 
     private String hotfixStartMessage;
+
     private String hotfixFinishMessage;
 
     private String hotfixVersionUpdateMessage;
 
     private String releaseStartMessage;
+
     private String releaseFinishMessage;
 
     private String releaseVersionUpdateMessage;
 
     private String tagHotfixMessage;
+
     private String tagReleaseMessage;
 
     private String updateDevToAvoidConflitsMessage;
+
     private String updateDevBackPreMergeStateMessage;
 
     public CommitMessages() {
         featureStartMessage = "Update versions for feature branch";
         featureFinishMessage = "Update versions for development branch";
-
         hotfixStartMessage = "Update versions for hotfix";
         hotfixFinishMessage = "Update for next development version";
-
         hotfixVersionUpdateMessage = "Update to hotfix version";
-
         releaseStartMessage = "Update versions for release";
         releaseFinishMessage = "Update for next development version";
-
         releaseVersionUpdateMessage = "Update for next development version";
-      
         tagHotfixMessage = "Tag hotfix";
         tagReleaseMessage = "Tag release";
-
-        updateDevToAvoidConflitsMessage = "Updating develop poms to master version to avoid merge conflits";
-        updateDevBackPreMergeStateMessage = "Updating develop poms version back to pre-merge state";
+        updateDevToAvoidConflitsMessage = "updating develop poms to master version to avoid merge conflits";
+        updateDevBackPreMergeStateMessage = "updating develop poms version back to pre merge state";
     }
 
     /**
