@@ -3,10 +3,8 @@ package xdi2.core.features.nodetypes;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import xdi2.core.ContextNode;
 import xdi2.core.features.nodetypes.XdiAbstractInstanceUnordered.MappingContextNodeXdiInstanceUnorderedIterator;
 import xdi2.core.util.iterators.CastingIterator;
@@ -19,20 +17,20 @@ import xdi2.core.util.iterators.NotNullIterator;
 import xdi2.core.util.iterators.ReadOnlyIterator;
 import xdi2.core.xri3.XDI3SubSegment;
 
-public abstract class XdiAbstractClass<U extends XdiInstanceUnordered, O extends XdiInstanceOrdered, I extends XdiInstance> extends XdiAbstractSubGraph implements XdiClass<U, O, I> {
 
+public abstract class XdiAbstractClass<U extends XdiInstanceUnordered, O extends XdiInstanceOrdered, I extends XdiInstance> extends XdiAbstractSubGraph implements XdiClass<U, O, I> {
 	private static final long serialVersionUID = -1976646316893343570L;
 
 	private static final Logger log = LoggerFactory.getLogger(XdiAbstractClass.class);
 
 	private Class<U> u;
+
 	private Class<O> o;
+
 	private Class<I> i;
 
 	protected XdiAbstractClass(ContextNode contextNode, Class<U> u, Class<O> o, Class<I> i) {
-
 		super(contextNode);
-
 		this.u = u;
 		this.o = o;
 		this.i = i;
@@ -81,21 +79,20 @@ public abstract class XdiAbstractClass<U extends XdiInstanceUnordered, O extends
 	/*
 	 * Instance methods
 	 */
-
 	/**
 	 * Sets an XDI instance under this XDI class.
 	 * @return The XDI instance.
 	 */
 	@Override
 	public U setXdiInstanceUnordered(XDI3SubSegment arcXri) {
-
 		boolean attribute = this.attribute();
-
-		if (arcXri == null) arcXri = XdiAbstractInstanceUnordered.createArcXriFromRandom(attribute);
-
+		if (arcXri == null) {
+			arcXri = XdiAbstractInstanceUnordered.createArcXriFromRandom(attribute);
+		}
 		ContextNode instanceContextNode = this.getContextNode().getContextNode(arcXri);
-		if (instanceContextNode == null) instanceContextNode = this.getContextNode().createContextNode(arcXri);
-
+		if (instanceContextNode == null) {
+			instanceContextNode = this.getContextNode().createContextNode(arcXri);
+		}
 		return XdiAbstractContext.fromContextNode(instanceContextNode, this.getU());
 	}
 
@@ -127,7 +124,6 @@ public abstract class XdiAbstractClass<U extends XdiInstanceUnordered, O extends
 	 */
 	@Override
 	public long getXdiInstancesUnorderedCount() {
-
 		return new IteratorCounter(this.getXdiInstancesUnordered()).count();
 	}
 
@@ -137,16 +133,15 @@ public abstract class XdiAbstractClass<U extends XdiInstanceUnordered, O extends
 	 */
 	@Override
 	public O setXdiInstanceOrdered(long index) {
-
 		boolean attribute = this.attribute();
-
-		if (index < 0) index = this.getXdiInstancesOrderedCount();
-
+		if (index < 0) {
+			index = this.getXdiInstancesOrderedCount();
+		}
 		XDI3SubSegment arcXri = XdiAbstractInstanceOrdered.createArcXri(Long.toString(index), attribute);
-
 		ContextNode contextNode = this.getContextNode().getContextNode(arcXri);
-		if (contextNode == null) contextNode = this.getContextNode().createContextNode(arcXri);
-
+		if (contextNode == null) {
+			contextNode = this.getContextNode().createContextNode(arcXri);
+		}
 		return XdiAbstractContext.fromContextNode(contextNode, this.getO());
 	}
 
@@ -156,14 +151,12 @@ public abstract class XdiAbstractClass<U extends XdiInstanceUnordered, O extends
 	 */
 	@Override
 	public O getXdiInstanceOrdered(long index) {
-
 		boolean attribute = this.attribute();
-
 		XDI3SubSegment arcXri = XdiAbstractInstanceOrdered.createArcXri(Long.toString(index), attribute);
-
 		ContextNode contextNode = this.getContextNode().getContextNode(arcXri);
-		if (contextNode == null) return null;
-
+		if (contextNode == null) {
+			return null;
+		}
 		return XdiAbstractContext.fromContextNode(contextNode, this.getO());
 	}
 
@@ -182,7 +175,6 @@ public abstract class XdiAbstractClass<U extends XdiInstanceUnordered, O extends
 	 */
 	@Override
 	public long getXdiInstancesOrderedCount() {
-
 		return new IteratorCounter(this.getXdiInstancesOrdered()).count();
 	}
 
@@ -237,19 +229,12 @@ public abstract class XdiAbstractClass<U extends XdiInstanceUnordered, O extends
 		return attribute;
 	}
 
-	/*
-	 * Helper classes
-	 */
-
+	/* Helper classes */
 	public static class MappingContextNodeXdiClassIterator extends NotNullIterator<XdiClass<? extends XdiInstanceUnordered, ? extends XdiInstanceOrdered, ? extends XdiInstance>> {
-
 		public MappingContextNodeXdiClassIterator(Iterator<ContextNode> contextNodes) {
-
-			super(new MappingIterator<ContextNode, XdiClass<? extends XdiInstanceUnordered, ? extends XdiInstanceOrdered, ? extends XdiInstance>> (contextNodes) {
-
+			super(new MappingIterator<ContextNode, XdiClass<? extends XdiInstanceUnordered, ? extends XdiInstanceOrdered, ? extends XdiInstance>>(contextNodes) {
 				@Override
 				public XdiClass<? extends XdiInstanceUnordered, ? extends XdiInstanceOrdered, ? extends XdiInstance> map(ContextNode contextNode) {
-
 					return XdiAbstractClass.fromContextNode(contextNode);
 				}
 			});
@@ -257,21 +242,19 @@ public abstract class XdiAbstractClass<U extends XdiInstanceUnordered, O extends
 	}
 
 	public class XdiInstancesUnorderedIterator extends ReadOnlyIterator<U> {
-
 		public XdiInstancesUnorderedIterator() {
-
-			super(new CastingIterator<XdiInstanceUnordered, U> (new MappingContextNodeXdiInstanceUnorderedIterator(XdiAbstractClass.this.getContextNode().getContextNodes())));
+			super(new CastingIterator<XdiInstanceUnordered, U>(new MappingContextNodeXdiInstanceUnorderedIterator(XdiAbstractClass.this.getContextNode().getContextNodes())));
 		}
 	}
 
 	public class XdiInstancesOrderedIterator extends ReadOnlyIterator<O> {
-
 		private int index = 0;
+
 		private O nextXdiElement = null;
+
 		private boolean triedNextXdiElement = false;
 
 		public XdiInstancesOrderedIterator() {
-
 			super(null);
 		}
 
@@ -295,13 +278,13 @@ public abstract class XdiAbstractClass<U extends XdiInstanceUnordered, O extends
 		}
 
 		private void tryNextXdiElement() {
-
-			if (this.triedNextXdiElement) return;
-
+			if (this.triedNextXdiElement) {
+				return;
+			}
 			this.nextXdiElement = XdiAbstractClass.this.getXdiInstanceOrdered(this.index);
-
-			if (log.isTraceEnabled()) log.trace("Next element at index " + this.index + ": " + this.nextXdiElement);
-
+			if (log.isTraceEnabled()) {
+				log.trace((("Next element at index " + this.index) + ": ") + this.nextXdiElement);
+			}
 			this.triedNextXdiElement = true;
 		}
 	}
