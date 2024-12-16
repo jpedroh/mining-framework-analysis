@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,13 +33,16 @@ import org.sqlproc.sample.simple.model.PhoneNumber;
 import org.sqlproc.sample.simple.model.Subscriber;
 import org.sqlproc.sample.simple.type.PhoneNumberType;
 
-public class Main {
 
+public class Main {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private Connection connection;
+
     private SqlSession session;
+
     private SqlEngineFactory sqlFactory;
+
     private List<String> ddls;
 
     static {
@@ -56,9 +58,7 @@ public class Main {
         factory.setMetaFilesNames("statements.qry");
         factory.addCustomType(new PhoneNumberType());
         this.sqlFactory = factory;
-
         ddls = DDLLoader.getDDLs(this.getClass(), "hsqldb.ddl");
-
         connection = DriverManager.getConnection("jdbc:hsqldb:mem:sqlproc", "sa", "");
         session = new JdbcSimpleSession(connection);
     }
@@ -90,7 +90,6 @@ public class Main {
     // logger.info("insert person: " + count + ": " + person);
     // return (count > 0) ? person : null;
     // }
-
     // public Person insertPersonContacts(Person person, Contact... contacts) {
     // SqlCrudEngine sqlInsertContact = sqlFactory.getCrudEngine("INSERT_CONTACT");
     // if (contacts != null) {
@@ -104,14 +103,12 @@ public class Main {
     // }
     // return person;
     // }
-
     // public Library insertLibrary(Library library) {
     // SqlCrudEngine sqlInsertLibrary = sqlFactory.getCrudEngine("INSERT_LIBRARY");
     // int count = sqlInsertLibrary.insert(session, library);
     // logger.info("insert library: " + count + ": " + library);
     // return (count > 0) ? library : null;
     // }
-
     // public Subscriber insertLibrarySubscriber(Library library, Subscriber subscriber) {
     // SqlCrudEngine sqlInsertSubscriber = sqlFactory.getCrudEngine("INSERT_SUBSCRIBER");
     // if (subscriber != null) {
@@ -123,7 +120,6 @@ public class Main {
     // }
     // return subscriber;
     // }
-
     // public BankAccount insertBankAccount(BankAccount bankAccount) {
     // SqlCrudEngine sqlInsertBankAccount = sqlFactory.getCrudEngine("INSERT_BANK_ACCOUNT");
     // int count = sqlInsertBankAccount.insert(session, bankAccount);
@@ -132,7 +128,6 @@ public class Main {
     // bankAccount.getSubscriber().getBillingDetails().add(bankAccount);
     // return (count > 0) ? bankAccount : null;
     // }
-
     // public CreditCard insertCreditCard(CreditCard creditCard) {
     // SqlCrudEngine sqlInsertCreditCard = sqlFactory.getCrudEngine("INSERT_CREDIT_CARD");
     // int count = sqlInsertCreditCard.insert(session, creditCard);
@@ -141,7 +136,6 @@ public class Main {
     // creditCard.getSubscriber().getBillingDetails().add(creditCard);
     // return (count > 0) ? creditCard : null;
     // }
-
     // public Movie insertMovie(Movie movie) {
     // SqlCrudEngine sqlInsertMedia = sqlFactory.getCrudEngine("INSERT_MEDIA");
     // SqlCrudEngine sqlInsertMovie = sqlFactory.getCrudEngine("INSERT_MOVIE");
@@ -152,7 +146,6 @@ public class Main {
     // logger.info("insert movie: " + count + ": " + movie);
     // return (count > 0) ? movie : null;
     // }
-
     // public Book insertBook(Book book) {
     // SqlCrudEngine sqlInsertMedia = sqlFactory.getCrudEngine("INSERT_MEDIA");
     // SqlCrudEngine sqlInsertBook = sqlFactory.getCrudEngine("INSERT_BOOK");
@@ -163,7 +156,6 @@ public class Main {
     // logger.info("insert book: " + count + ": " + book);
     // return (count > 0) ? book : null;
     // }
-
     // public void insertPersonLibrary(Person person, Media... media) {
     // SqlCrudEngine sqlInsertPersonLibrary = sqlFactory.getCrudEngine("INSERT_PERSON_LIBRARY");
     // if (media != null) {
@@ -176,7 +168,6 @@ public class Main {
     // }
     // }
     // }
-
     // public Person getPerson(Person person) {
     // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("GET_PERSON");
     // String s = sqlEngine.getGetSql(person, null);
@@ -184,7 +175,6 @@ public class Main {
     // logger.info("get person: " + p);
     // return p;
     // }
-
     // public Person updatePersonNoNull(Person person) {
     // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("UPDATE_PERSON");
     // sqlEngine.setFeature(SqlFeature.EMPTY_FOR_NULL, Boolean.TRUE);
@@ -197,7 +187,6 @@ public class Main {
     // logger.info("update person: " + count);
     // return (count > 0) ? person : null;
     // }
-
     // public Person updatePersonIsNull(Person person) {
     // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("UPDATE_PERSON");
     // sqlEngine.setFeature(SqlFeature.EMPTY_USE_METHOD_IS_NULL, Boolean.TRUE);
@@ -210,35 +199,30 @@ public class Main {
     // logger.info("update person: " + count);
     // return (count > 0) ? person : null;
     // }
-
     // public Person updatePerson(Person person) {
     // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("UPDATE_PERSON");
     // int count = sqlEngine.update(session, person);
     // logger.info("update person: " + count);
     // return (count > 0) ? person : null;
     // }
-
     // public Book getBook(Book book) {
     // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("GET_BOOK");
     // Book b = sqlEngine.get(session, Book.class, book);
     // logger.info("get book: " + b);
     // return b;
     // }
-
     // public List<Person> listAll() {
     // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE");
     // List<Person> list = sqlEngine.query(session, Person.class);
     // logger.info("listAll size: " + list.size());
     // return list;
     // }
-
     // public List<Person> listSome(Person person) {
     // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE");
     // List<Person> list = sqlEngine.query(session, Person.class, person, SqlOrder.getDescOrder(2));
     // logger.info("listSome size: " + list.size());
     // return list;
     // }
-
     // public List<Person> listLike(Person person, boolean partialLike) {
     // SqlQueryEngine sqlEngine = partialLike ? sqlFactory.getQueryEngine("LIKE_PEOPLE") : sqlFactory
     // .getQueryEngine("LIKE_PEOPLE_FULL");
@@ -246,21 +230,18 @@ public class Main {
     // logger.info("listSome size: " + list.size());
     // return list;
     // }
-
     // public boolean delete(Person person) {
     // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("DELETE_PERSON");
     // int count = sqlEngine.delete(session, person);
     // logger.info("delete: " + count);
     // return (count > 0);
     // }
-
     // public List<Person> listPeopleAndContacts(Person person) {
     // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE_AND_CONTACTS");
     // List<Person> list = sqlEngine.query(session, Person.class, person, SqlQueryEngine.ASC_ORDER);
     // logger.info("listSome size: " + list.size());
     // return list;
     // }
-
     // public List<Person> listPeopleAndContacts2(Person person) {
     // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE_AND_CONTACTS2");
     // / Map<String, Class<?>> moreResultClasses = new HashMap<String, Class<?>>();
@@ -270,25 +251,22 @@ public class Main {
     // logger.info("listSome size: " + list.size());
     // return list;
     // }
-
     // public List<Person> listPeopleLibrary(Person person) {
     // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE_LIBRARY");
     // Map<String, Class<?>> moreResultClasses = new HashMap<String, Class<?>>();
     // moreResultClasses.put("movie", Movie.class);
-    // moreResultClasses.put("book", NewBook.class);
+    // moreResultClasses.put("book", Book.class);
     // List<Person> list = sqlEngine.query(session, Person.class, null, null, SqlQueryEngine.ASC_ORDER,
     // moreResultClasses);
     // logger.info("listSome size: " + list.size());
     // return list;
     // }
-
     // public List<Person> listCustom(Contact contact) {
     // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE_AND_CONTACTS_CUSTOM");
     // List<Person> list = sqlEngine.query(session, Person.class, contact, SqlQueryEngine.ASC_ORDER);
     // logger.info("listCustom size: " + list.size());
     // return list;
     // }
-
     // public List<Subscriber> listAllSubsribersWithBillingDetails() {
     // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_SUBSCRIBERS_BILLING_DETAILS");
     // Map<String, Class<?>> moreResultClasses = new HashMap<String, Class<?>>();
@@ -299,7 +277,6 @@ public class Main {
     // logger.info("listAllSubsribersWithBillingDetails size: " + list.size());
     // return list;
     // }
-
     // public java.sql.Timestamp callSimpleFunction(java.sql.Timestamp stamp) {
     // FormSimpleFunction f = new FormSimpleFunction();
     // f.setTime(stamp);
@@ -308,7 +285,6 @@ public class Main {
     // logger.info("callSimpleFunction result: " + result);
     // return (java.sql.Timestamp) result;
     // }
-
     // public java.sql.Timestamp callSimpleFunctionToInputForm(java.sql.Timestamp stamp) {
     // FormSimpleFunction f = new FormSimpleFunction();
     // f.setTime(stamp);
@@ -317,7 +293,6 @@ public class Main {
     // logger.info("callSimpleFunctionToInputForm result: " + f.getTime2());
     // return f.getTime2();
     // }
-
     // public Long callStoredProcedure(String name) {
     // Person p = new Person(name);
     // SqlProcedureEngine callableEngine = sqlFactory.getProcedureEngine("INSERT_PERSON_CALL");
@@ -325,7 +300,6 @@ public class Main {
     // logger.info("callStoredProcedure result: " + p.getId());
     // return p.getId();
     // }
-
     public void initDao() throws SQLException {
         bankAccountDao = new BankAccountDao(session, sqlFactory);
         bookDao = new BookDao(session, sqlFactory);
@@ -339,107 +313,101 @@ public class Main {
     }
 
     private BankAccountDao bankAccountDao;
+
     private BookDao bookDao;
+
     private ContactDao contactDao;
+
     private CreditCardDao creditCardDao;
+
     private LibraryDao libraryDao;
+
     private MovieDao movieDao;
+
     private PersonDao personDao;
+
     private PersonLibraryDao personLibraryDao;
+
     private SubscriberDao subscriberDao;
 
     public static void main(String[] args) throws Exception {
-        Person person, p;
-        BankAccount bankAccount, b1;
-        NewBook book, b;
-        Contact contact, c;
-        CreditCard creditCard, c1;
-        Library l, library;
-        Movie movie, m;
-        Subscriber subscriber, s;
-
+        Person person;
+        Person p;
+        BankAccount bankAccount;
+        BankAccount b1;
+        NewBook book;
+        NewBook b;
+        Contact contact;
+        Contact c;
+        CreditCard creditCard;
+        CreditCard c1;
+        Library l;
+        Library library;
+        Movie movie;
+        Movie m;
+        Subscriber subscriber;
+        Subscriber s;
         List<Person> list;
         boolean deleted;
         Main main = new Main();
         main.setupDb();
         main.initDao();
-
         // insert
         Person jan = main.getPersonDao().insertPerson(new Person("Jan", "Jánský"));
-        main.getContactDao().insertPersonContacts(jan,
-                new Contact()._setAddress("Jan address 1")._setPhoneNumber(new PhoneNumber(111, 222, 3333)));
+        main.getContactDao().insertPersonContacts(jan, new Contact()._setAddress("Jan address 1")._setPhoneNumber(new PhoneNumber(111, 222, 3333)));
         Person janik = main.getPersonDao().insertPerson(new Person("Janík", "Janíček"));
         main.getContactDao().insertPersonContacts(janik, new Contact()._setAddress("Janik address 1"));
         Person honza = main.getPersonDao().insertPerson(new Person("Honza", "Honzovský"));
-        main.getContactDao().insertPersonContacts(honza, new Contact()._setAddress("Honza address 1"),
-                new Contact()._setAddress("Honza address 2"));
+        main.getContactDao().insertPersonContacts(honza, new Contact()._setAddress("Honza address 1"), new Contact()._setAddress("Honza address 2"));
         Person honzik = main.getPersonDao().insertPerson(new Person("Honzik", "Honzíček"));
         Person andrej = main.getPersonDao().insertPerson(new Person("Andrej", "Andrejček")._setSsn("123456789"));
-        main.getContactDao().insertPersonContacts(andrej,
-                new Contact()._setAddress("Andrej address 1")._setPhoneNumber(new PhoneNumber(444, 555, 6666)));
-
+        main.getContactDao().insertPersonContacts(andrej, new Contact()._setAddress("Andrej address 1")._setPhoneNumber(new PhoneNumber(444, 555, 6666)));
         Library lib = main.getLibraryDao().insertLibrary(new Library("Alexandria Library"));
-        Subscriber janikS = main.getSubscriberDao().insertLibrarySubscriber(lib,
-                new Subscriber(lib, "Janik Subscr")._setContact(jan.getContacts().get(0)));
-        Subscriber honzaS = main.getSubscriberDao().insertLibrarySubscriber(lib,
-                new Subscriber(lib, "Honza Subscr")._setContact(honza.getContacts().get(0)));
-
-        BankAccount bankAccount1 = main.getBankAccountDao().insertBankAccount(
-                new BankAccount(janikS, "BA")._setBaAccount("account 1"));
+        Subscriber janikS = main.getSubscriberDao().insertLibrarySubscriber(lib, new Subscriber(lib, "Janik Subscr")._setContact(jan.getContacts().get(0)));
+        Subscriber honzaS = main.getSubscriberDao().insertLibrarySubscriber(lib, new Subscriber(lib, "Honza Subscr")._setContact(honza.getContacts().get(0)));
+        BankAccount bankAccount1 = main.getBankAccountDao().insertBankAccount(new BankAccount(janikS, "BA")._setBaAccount("account 1"));
         main.getBankAccountDao().insertBankAccount(new BankAccount(honzaS, "BA")._setBaAccount("account 2"));
-        CreditCard creditCard1 = main.getCreditCardDao().insertCreditCard(
-                new CreditCard(janikS, "CC")._setCcNumber(123L));
+        CreditCard creditCard1 = main.getCreditCardDao().insertCreditCard(new CreditCard(janikS, "CC")._setCcNumber(123L));
         main.getCreditCardDao().insertCreditCard(new CreditCard(honzaS, "CC")._setCcNumber(456L));
-
-        NewBook book1 = main.getBookDao().insertBook(new NewBook("The Adventures of Robin Hood", "978-0140367003"));
-        NewBook book2 = main.getBookDao().insertBook(new NewBook("The Three Musketeers", "978-1897093634"));
+        NewBook book1 = main.getBookDao().insertNewBook(new NewBook("The Adventures of Robin Hood", "978-0140367003"));
+        NewBook book2 = main.getBookDao().insertNewBook(new NewBook("The Three Musketeers", "978-1897093634"));
         Movie movie1 = main.getMovieDao().insertMovie(new Movie("Pippi Långstrump i Söderhavet", "abc", 82));
         Movie movie2 = main.getMovieDao().insertMovie(new Movie("Die Another Day", "def", 95));
-
         main.getPersonLibraryDao().insertPersonLibrary(jan, book1, movie1);
         main.getPersonLibraryDao().insertPersonLibrary(honza, book2, movie2);
         main.getPersonLibraryDao().insertPersonLibrary(andrej, book1, book2, movie2);
-
         // update
         person = new Person();
         person.setId(andrej.getId());
         person.setFirstName("Andrejík");
         p = main.getPersonDao().updatePerson(person);
         Assert.assertNotNull(p);
-
         bankAccount1.setBaAccount("updated account");
         bankAccount1.setSubscriber(honzaS);
         b1 = main.getBankAccountDao().updateBankAccount(bankAccount1);
         Assert.assertNotNull(b1);
-
-        book1.setNewIsbn("978-9940367003");
+        book1.setIsbn("978-9940367003");
         book1.setTitle("The Adventures of Robin Hood Updated");
         b = main.getBookDao().updateBook(book1);
         Assert.assertNotNull(b);
-
         contact = honza.getContacts().get(0);
         contact.setAddress("Honza address 1 Updated");
-        contact.setPhoneNumber(new PhoneNumber(000, 000, 0000));
+        contact.setPhoneNumber(new PhoneNumber(00, 00, 00));
         c = main.getContactDao().updateContact(contact);
         Assert.assertNotNull(c);
-
         creditCard1.setType("DD");
         c1 = main.getCreditCardDao().updateCreditCard(creditCard1);
         Assert.assertNotNull(c1);
-
         lib.setName("Alexandria Library Updated");
         l = main.getLibraryDao().updateLibrary(lib);
         Assert.assertNotNull(c);
-
         movie1.setUrlimdb("def Updated");
         movie1.setTitle("Die Another Day Updated");
         m = main.getMovieDao().updateMovie(movie1);
         Assert.assertNotNull(m);
-
         janikS.setName("Janik Subscr Updated");
         s = main.getSubscriberDao().updateSubscriber(janikS);
         Assert.assertNotNull(s);
-
         // get
         person = new Person();
         person.setId(andrej.getId());
@@ -448,7 +416,6 @@ public class Main {
         Assert.assertEquals("Andrejík", p.getFirstName());
         Assert.assertEquals("Andrejček", p.getLastName());
         Assert.assertEquals("123456789", p.getSsn());
-
         // update also with null values
         person = new Person();
         person.setId(andrej.getId());
@@ -456,15 +423,19 @@ public class Main {
         person.setNull(Person.Attribute.ssn);
         p = main.getPersonDao().updatePerson(person);
         Assert.assertNotNull(p);
-
         person = new Person();
         person.setId(andrej.getId());
-        p = main.getPersonDao().getPerson(person);
+        p = 
+<<<<<<< LEFT
+sqlInsertNewBook
+=======
+main
+>>>>>>> RIGHT
+        .getPersonDao().getPerson(person);
         Assert.assertNotNull(p);
         Assert.assertEquals("Andrioša", p.getFirstName());
         Assert.assertEquals("Andrejček", p.getLastName());
         Assert.assertNull(p.getSsn());
-
         // get
         book = new NewBook();
         book.setId(book1.getId());
@@ -472,45 +443,44 @@ public class Main {
         Assert.assertNotNull(b);
         Assert.assertEquals("978-9940367003", b.getNewIsbn());
         Assert.assertEquals("The Adventures of Robin Hood Updated", b.getTitle());
-
         bankAccount = new BankAccount();
         bankAccount.setId(bankAccount1.getId());
         b1 = main.getBankAccountDao().getBankAccount(bankAccount);
         Assert.assertNotNull(b1);
         Assert.assertEquals("updated account", b1.getBaAccount());
         Assert.assertEquals(honzaS.getId(), b1.getSubscriber().getId());
-
         contact = new Contact();
         contact.setId(honza.getContacts().get(0).getId());
         c = main.getContactDao().getContact(contact);
         Assert.assertNotNull(c);
         Assert.assertEquals("Honza address 1 Updated", c.getAddress());
-        Assert.assertEquals(new PhoneNumber(000, 0000, 0000), c.getPhoneNumber());
-
+        Assert.assertEquals(new PhoneNumber(00, 00, 00), c.getPhoneNumber());
         creditCard = new CreditCard();
         creditCard.setId(creditCard1.getId());
         c1 = main.getCreditCardDao().getCreditCard(creditCard);
         Assert.assertNotNull(c1);
         Assert.assertEquals("DD", c1.getType());
-
         library = new Library();
         library.setId(lib.getId());
         l = main.getLibraryDao().getLibrary(library);
         Assert.assertNotNull(l);
-
         movie = new Movie();
         movie.setId(movie1.getId());
         m = main.getMovieDao().getMovie(movie);
         Assert.assertNotNull(m);
         Assert.assertEquals("def Updated", m.getUrlimdb());
         Assert.assertEquals("Die Another Day Updated", m.getTitle());
-
         subscriber = new Subscriber();
         subscriber.setId(janikS.getId());
-        s = main.getSubscriberDao().getSubscriber(subscriber);
+        s = main.getSubscriberDao().
+<<<<<<< LEFT
+getNewBook
+=======
+getSubscriber
+>>>>>>> RIGHT
+        (subscriber);
         Assert.assertNotNull(s);
         Assert.assertEquals("Janik Subscr Updated", s.getName());
-
         // get object tree
         person = new Person();
         person.setId(andrej.getId());
@@ -520,7 +490,6 @@ public class Main {
         Assert.assertEquals("Andrejček", p.getLastName());
         Assert.assertTrue(p.getContacts().size() == 1);
         System.out.println("Contact for Andrej " + p.getContacts().get(0));
-
         // // queries
         // list = main.listAll();
         // Assert.assertEquals(5, list.size());
