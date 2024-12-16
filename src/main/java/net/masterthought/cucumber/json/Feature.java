@@ -1,45 +1,59 @@
 package net.masterthought.cucumber.json;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import net.masterthought.cucumber.ReportParser;
-import org.apache.commons.lang.StringUtils;
-
 import net.masterthought.cucumber.Configuration;
+import net.masterthought.cucumber.ReportParser;
 import net.masterthought.cucumber.Reportable;
 import net.masterthought.cucumber.json.support.Durationable;
 import net.masterthought.cucumber.json.support.Status;
 import net.masterthought.cucumber.json.support.StatusCounter;
 import net.masterthought.cucumber.util.Util;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class Feature implements Reportable, Durationable {
+
+public class Feature implements Reportable , Durationable {
     private static final Logger LOG = LogManager.getLogger(Feature.class);
 
     // Start: attributes from JSON file report
+    // Start: attributes from JSON file report
     private final String id = null;
+
     private final String name = null;
+
+    // as long as this is private attribute without getter deserialization must be forced by annotation
     // as long as this is private attribute without getter deserialization must be forced by annotation
     @JsonProperty("uri")
     private final String uri = null;
+
     private final String description = null;
+
     private final String keyword = null;
 
     private final Element[] elements = new Element[0];
+
     private final Tag[] tags = new Tag[0];
+
+    // End: attributes from JSON file report
     // End: attributes from JSON file report
 
     private String jsonFile;
+
     private String reportFileName;
+
     private String deviceName;
+
     private final List<Element> scenarios = new ArrayList<>();
+
     private final StatusCounter elementsCounter = new StatusCounter();
+
     private final StatusCounter stepsCounter = new StatusCounter();
 
     private Status featureStatus;
+
     private long duration;
 
     @Override
@@ -169,25 +183,25 @@ public class Feature implements Reportable, Durationable {
 
     /**
      * Sets additional information and calculates values which should be calculated during object creation.
-     * @param jsonFile JSON file name
-     * @param jsonFileNo index of the JSON file
-     * @param configuration configuration for the report
+     *
+     * @param jsonFile
+     * 		JSON file name
+     * @param jsonFileNo
+     * 		index of the JSON file
+     * @param configuration
+     * 		configuration for the report
      */
     public void setMetaData(String jsonFile, int jsonFileNo, Configuration configuration) {
         this.jsonFile = jsonFile;
-
         for (Element element : elements) {
             element.setMetaData(this);
-
             if (element.isScenario()) {
                 scenarios.add(element);
             }
         }
-
         deviceName = calculateDeviceName();
         calculateReportFileName(jsonFileNo, configuration);
         featureStatus = calculateFeatureStatus();
-
         calculateSteps();
     }
 
@@ -223,13 +237,13 @@ public class Feature implements Reportable, Durationable {
     }
 
     private Status calculateFeatureStatus() {
-        LOG.debug("calculating feature status for '" + this.name + "'");
+        LOG.debug(("calculating feature status for '" + this.name) + "'");
         StatusCounter statusCounter = new StatusCounter();
         for (Element element : elements) {
             statusCounter.incrementFor(element.getStatus());
         }
         Status finalStatus = statusCounter.getFinalStatus();
-        LOG.debug ("  final feature status is " + finalStatus);
+        LOG.debug("  final feature status is " + finalStatus);
         return finalStatus;
     }
 
@@ -238,7 +252,6 @@ public class Feature implements Reportable, Durationable {
             if (element.isScenario()) {
                 elementsCounter.incrementFor(element.getStatus());
             }
-
             for (Step step : element.getSteps()) {
                 stepsCounter.incrementFor(step.getResult().getStatus());
                 duration += step.getDuration();

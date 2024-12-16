@@ -1,61 +1,67 @@
 package net.masterthought.cucumber;
 
-
 import net.masterthought.cucumber.json.support.Status;
+
 
 /**
  * @author Damian Szczepanik (damianszczepanik@github)
  */
 public class ReportableBuilder implements Reportable {
-
     protected String name;
+
     protected String deviceName;
 
     protected int passedFeatures;
+
     protected int failedFeatures;
+
     protected int pendingFeatures;
+
     protected int undefinedFeatures;
+
     protected int totalFeatures;
 
     protected int passedScenarios;
+
     protected int failedScenarios;
+
     protected int undefinedScenarios;
+
     protected int pendingScenarios;
+
     protected int totalScenarios;
 
     protected int passedSteps;
+
     protected int failedSteps;
+
     protected int skippedSteps;
+
     protected int pendingSteps;
+
     protected int undefinedSteps;
+
     protected int totalSteps;
 
     protected long duration;
 
-    public ReportableBuilder(int passedFeatures, int failedFeatures, int pendingFeatures, int undefinedFeatures, int totalFeatures,
-                             int passedScenarios, int failedScenarios, int pendingScenarios, int undefinedScenarios, int totalScenarios,
-                             int passedSteps, int failedSteps, int skippedSteps, int pendingSteps, int undefinedSteps, int totalSteps,
-                             long duration) {
-
+    public ReportableBuilder(int passedFeatures, int failedFeatures, int pendingFeatures, int undefinedFeatures, int totalFeatures, int passedScenarios, int failedScenarios, int pendingScenarios, int undefinedScenarios, int totalScenarios, int passedSteps, int failedSteps, int skippedSteps, int pendingSteps, int undefinedSteps, int totalSteps, long duration) {
         this.passedFeatures = passedFeatures;
         this.failedFeatures = failedFeatures;
         this.pendingFeatures = pendingFeatures;
         this.undefinedFeatures = undefinedFeatures;
         this.totalFeatures = totalFeatures;
-
         this.passedScenarios = passedScenarios;
         this.failedScenarios = failedScenarios;
         this.pendingScenarios = pendingScenarios;
         this.undefinedScenarios = undefinedScenarios;
         this.totalScenarios = totalScenarios;
-
         this.passedSteps = passedSteps;
         this.failedSteps = failedSteps;
         this.skippedSteps = skippedSteps;
         this.pendingSteps = pendingSteps;
         this.undefinedSteps = undefinedSteps;
         this.totalSteps = totalSteps;
-
         this.duration = duration;
     }
 

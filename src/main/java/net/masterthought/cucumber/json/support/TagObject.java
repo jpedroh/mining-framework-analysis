@@ -2,27 +2,31 @@ package net.masterthought.cucumber.json.support;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.StringUtils;
-
 import net.masterthought.cucumber.Reportable;
 import net.masterthought.cucumber.ValidationException;
 import net.masterthought.cucumber.json.Element;
 import net.masterthought.cucumber.json.Step;
 import net.masterthought.cucumber.json.Tag;
 import net.masterthought.cucumber.util.Util;
+import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.StringUtils;
+
 
 public class TagObject implements Reportable {
-
     private final String tagName;
+
     private final List<Element> elements = new ArrayList<>();
 
     private final String reportFileName;
+
     private int scenarioCounter;
+
     private StatusCounter elementsStatusCounter = new StatusCounter();
+
     private StatusCounter stepsStatusCounter = new StatusCounter();
+
     private long totalDuration;
+
     private int totalSteps;
 
     /** Default status for current tag: {@link Status#PASSED} if all elements pass {@link Status#FAILED} otherwise. */
@@ -33,7 +37,6 @@ public class TagObject implements Reportable {
             throw new ValidationException("TagName cannot be null!");
         }
         this.tagName = tagName;
-
         this.reportFileName = Tag.generateFileName(tagName);
     }
 

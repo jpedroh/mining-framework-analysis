@@ -1,19 +1,17 @@
 package net.masterthought.cucumber.json.support;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import net.masterthought.cucumber.ValidationException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import net.masterthought.cucumber.ValidationException;
 
 /**
  * @author Sam Park (midopa@github)
  */
 public class StepObjectTest {
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -29,7 +27,6 @@ public class StepObjectTest {
 
     @Test
     public void StepObject_OnNullLocation_ThrowsException() {
-
         // given
         // nothing
 
@@ -53,15 +50,12 @@ public class StepObjectTest {
 
     @Test
     public void addDuration_ReturnsSumsDurations() {
-
         // give
         StepObject step = new StepObject("ble bla ble");
-
         // when
         step.addDuration(20L, Status.PASSED);
         step.addDuration(5L, Status.PASSED);
         step.addDuration(700L, Status.UNDEFINED);
-
         // then
         assertThat(step.getDuration()).isEqualTo(725L);
         assertThat(step.getTotalOccurrences()).isEqualTo(3);
@@ -70,39 +64,30 @@ public class StepObjectTest {
 
     @Test
     public void getFormattedTotalDuration_ReturnsFormattedSumDurations() {
-
         // give
         // from @Before
-
         // when
         String duration = stepObject.getFormattedTotalDuration();
-
         // then
         assertThat(duration).isEqualTo("3.503");
     }
 
     @Test
     public void getFormattedMaxDuration_ReturnsFormattedMaxDurations() {
-
         // give
         // from @Before
-
         // when
         String duration = stepObject.getFormattedTotalDuration();
-
         // then
         assertThat(duration).isEqualTo("3.503");
     }
 
     @Test
     public void getFormattedMaxDuration_ReturnsdMaxDurations() {
-
         // give
         // from @Before
-
         // when
         long maxDuration = stepObject.getMaxDuration();
-
         // then
         assertThat(maxDuration).isEqualTo(2200000000L);
     }
@@ -122,13 +107,10 @@ public class StepObjectTest {
 
     @Test
     public void getFormattedAverageDuration_ReturnsFormattedSumDurations() {
-
         // given
         // from @Before
-
         // when
         String duration = stepObject.getFormattedAverageDuration();
-
         // then
         assertThat(duration).isEqualTo("1.167");
     }

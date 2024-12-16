@@ -1,18 +1,16 @@
 package net.masterthought.cucumber.json;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import net.masterthought.cucumber.generators.integrations.PageTest;
 import net.masterthought.cucumber.json.support.Status;
+import org.junit.Before;
+import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Damian Szczepanik (damianszczepanik@github)
  */
 public class ElementTest extends PageTest {
-
     @Before
     public void setUp() {
         setUpWithJson(SAMPLE_JSON);
@@ -87,7 +85,6 @@ public class ElementTest extends PageTest {
         assertThat(status).isEqualTo(Status.FAILED);
     }
 
-
     @Test
     public void getBeforeStatus_ReturnsStatus() {
 
@@ -117,13 +114,10 @@ public class ElementTest extends PageTest {
 
     @Test
     public void getAfterStatus_ReturnsStatus() {
-
         // given
         Element element = features.get(1).getElements()[0];
-
         // when
         Status status = element.getAfterStatus();
-
         // then
         assertThat(status).isEqualTo(Status.UNDEFINED);
     }

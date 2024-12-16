@@ -1,36 +1,48 @@
 package net.masterthought.cucumber.json;
 
-import org.apache.commons.lang.StringUtils;
-
 import net.masterthought.cucumber.json.support.Durationable;
 import net.masterthought.cucumber.json.support.Status;
 import net.masterthought.cucumber.json.support.StatusCounter;
 import net.masterthought.cucumber.util.Util;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class Element implements Durationable {
-    private static final Logger LOG = LogManager.getLogger(Element.class);
 
+public class Element implements Durationable {
+    // Start: attributes from JSON file report
     // Start: attributes from JSON file report
     private final String name = null;
+
     private final String type = null;
+
     private final String description = null;
+
     private final String keyword = null;
+
     private final Step[] steps = new Step[0];
+
     private final Hook[] before = new Hook[0];
+
     private final Hook[] after = new Hook[0];
+
     private final Tag[] tags = new Tag[0];
+
+    // End: attributes from JSON file report
     // End: attributes from JSON file report
 
     private static final String SCENARIO_TYPE = "scenario";
 
     private Status elementStatus;
+
     private Status beforeStatus;
+
     private Status afterStatus;
+
     private Status stepsStatus;
 
     private Feature feature;
+
     private long duration;
 
     public Step[] getSteps() {
@@ -118,7 +130,7 @@ public class Element implements Durationable {
     }
 
     private Status calculateElementStatus() {
-        LOG.debug("calculating element status for " + this.type + " '" + this.name + "'");
+        LOG.debug(((("calculating element status for " + this.type) + " '") + this.name) + "'");
         StatusCounter statusCounter = new StatusCounter();
         statusCounter.incrementFor(stepsStatus);
         statusCounter.incrementFor(beforeStatus);

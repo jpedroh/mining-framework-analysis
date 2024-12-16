@@ -1,15 +1,14 @@
 package net.masterthought.cucumber;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import mockit.Deencapsulation;
 import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Damian Szczepanik (damianszczepanik@github)
  */
 public class TrendsTest {
-
     @Test
     public void addBuild_AddsNewResultAtTheLastPosition() {
 
@@ -47,67 +46,53 @@ public class TrendsTest {
 
     @Test
     public void addBuild_OnMissingDataForSteps_FillsMissingDataForSteps() {
-
         // given
         Trends trends = new Trends();
         // make sure that there is some data added already
         Reportable result = ReportableBuilder.buildSample();
         trends.addBuild("buildName", result);
-        final String[] buildNumbers = new String[]{"a", "b", "e"};
+        final String[] buildNumbers = new String[]{ "a", "b", "e" };
         Deencapsulation.setField(trends, "buildNumbers", buildNumbers);
-        
         // when
         trends.addBuild("the build!", result);
-
         // then
         assertThat(trends.getBuildNumbers()).hasSize(buildNumbers.length + 1).containsExactly("a", "b", "e", "the build!");
-
         assertThat(trends.getPassedFeatures()).hasSize(buildNumbers.length + 1).containsExactly(0, 0, 2, 2);
-
         assertThat(trends.getPassedScenarios()).hasSize(buildNumbers.length + 1).containsExactly(0, 0, 13, 13);
-
         assertThat(trends.getPassedSteps()).hasSize(buildNumbers.length + 1).containsExactly(0, 0, 31, 31);
         assertThat(trends.getSkippedSteps()).hasSize(buildNumbers.length + 1).containsExactly(0, 0, 41, 41);
         assertThat(trends.getPendingSteps()).hasSize(buildNumbers.length + 1).containsExactly(0, 0, 73, 73);
         assertThat(trends.getUndefinedSteps()).hasSize(buildNumbers.length + 1).containsExactly(0, 0, 79, 79);
-
         assertThat(trends.getDurations()).hasSize(buildNumbers.length + 1).containsExactly(-1L, -1L, 3206126182390L, 3206126182390L);
     }
 
     @Test
     public void limitItems_ReducesNumberOfItems() {
-
         // given
         final int limit = 1;
         final String buildName = "a, e -> c";
         Trends trends = new Trends();
         Reportable result = ReportableBuilder.buildSample();
         // make sure that there is some data added already
-        for (int i = 0; i < limit + 3; i++) {
+        for (int i = 0; i < (limit + 3); i++) {
             trends.addBuild(buildName, result);
         }
-
         // when
         trends.limitItems(limit);
-
         // then
         assertThat(trends.getBuildNumbers()).hasSize(limit).containsExactly(buildName);
-
         assertThat(trends.getPassedFeatures()).hasSize(limit).containsExactly(result.getPassedFeatures());
         assertThat(trends.getFailedFeatures()).hasSize(limit).containsExactly(result.getFailedFeatures());
         assertThat(trends.getTotalFeatures()).hasSize(limit).containsExactly(result.getFeatures());
-
         assertThat(trends.getPassedScenarios()).hasSize(limit).containsExactly(result.getPassedScenarios());
         assertThat(trends.getFailedScenarios()).hasSize(limit).containsExactly(result.getFailedScenarios());
         assertThat(trends.getTotalScenarios()).hasSize(limit).containsExactly(result.getScenarios());
-
         assertThat(trends.getPassedSteps()).hasSize(limit).containsExactly(result.getPassedSteps());
         assertThat(trends.getFailedSteps()).hasSize(limit).containsExactly(result.getFailedSteps());
         assertThat(trends.getPendingSteps()).hasSize(limit).containsExactly(result.getPendingSteps());
         assertThat(trends.getSkippedSteps()).hasSize(limit).containsExactly(result.getSkippedSteps());
         assertThat(trends.getUndefinedSteps()).hasSize(limit).containsExactly(result.getUndefinedSteps());
         assertThat(trends.getTotalSteps()).hasSize(limit).containsExactly(result.getSteps());
-
         assertThat(trends.getDurations()).hasSize(limit).containsExactly(result.getDuration());
     }
 
@@ -155,7 +140,6 @@ public class TrendsTest {
 
     @Test
     public void applyPatchForFeatures_OnFailedGreaterThanTotal_ChangesTotalFeatureAndFailed() {
-
         // given
         final int totalFeatures = 1000;
         final int failedFeatures = totalFeatures + 1;
@@ -164,10 +148,8 @@ public class TrendsTest {
         int undefinedFeatures = 0;
         Reportable result = new ReportableBuilder(0, failedFeatures, pendingFeatures, undefinedFeatures, totalFeatures, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3206126182398L);
         trends.addBuild("buildNumber", result);
-
         // when
         Deencapsulation.invoke(trends, "applyPatchForFeatures");
-
         // then
         assertThat(trends.getTotalFeatures()[0]).isGreaterThan(trends.getFailedFeatures()[0]);
         // check if the values were reversed

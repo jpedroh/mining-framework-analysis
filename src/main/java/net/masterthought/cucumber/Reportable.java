@@ -2,13 +2,13 @@ package net.masterthought.cucumber;
 
 import net.masterthought.cucumber.json.support.Status;
 
+
 /**
  * Defines methods required to generate single report. Implementations of this interface are used by Velocity template.
  *
  * @author Damian Szczepanik (damianszczepanik@github)
  */
 public interface Reportable {
-
     /** Returns name of the element that will be displayed to user. */
     String getName();
 
@@ -18,13 +18,17 @@ public interface Reportable {
     /** Returns number of features for this element. */
     int getFeatures();
 
-    /** Returns number of passed features for this element.
-     * a feature is considered passed if all scenarios passed */
-    int getPassedFeatures();
+    /**
+     * Returns number of passed features for this element.
+     * a feature is considered passed if all scenarios passed
+     */
+    public abstract int getPassedFeatures();
 
-    /** Returns number of failed features for this element.
-     * a feature is considered failed if there is at least one failed scenario */
-    int getFailedFeatures();
+    /**
+     * Returns number of failed features for this element.
+     * a feature is considered failed if there is at least one failed scenario
+     */
+    public abstract int getFailedFeatures();
 
     /** A feature that has 0 or more passing, 1 or more pending, but no failures */
     int getPendingFeatures();
@@ -66,12 +70,11 @@ public interface Reportable {
     int getPendingSteps();
 
     /** Returns duration as milliseconds for this element. */
-    long getDuration();
+    public abstract long getDuration();
 
     /** Returns formatted duration for this element. */
-    String getFormattedDuration();
+    public abstract String getFormattedDuration();
 
     /** Returns status for this element. */
     Status getStatus();
-
 }

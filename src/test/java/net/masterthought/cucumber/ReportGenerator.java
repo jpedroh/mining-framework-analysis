@@ -5,46 +5,60 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
 import net.masterthought.cucumber.json.Feature;
 import net.masterthought.cucumber.json.support.StepObject;
 import net.masterthought.cucumber.json.support.TagObject;
 import net.masterthought.cucumber.sorting.SortingMethod;
 
+
 /**
  * @author Damian Szczepanik (damianszczepanik@github)
  */
 public abstract class ReportGenerator {
-
     public final static String JSON_DIRECTORY = "json/";
+
     public final static String CLASSIFICATIONS_DIRECTORY = "classifications/";
 
     protected static final String SAMPLE_JSON = "sample.json";
+
     protected static final String COMPLEX_JSON = "complex.json";
+
     public static final String SIMPLE_JSON = "simple.json";
+
     protected static final String EMPTY_JSON = "empty.json";
+
     protected static final String INVALID_JSON = "invalid.json";
+
     protected static final String INVALID_REPORT_JSON = "invalid-report.json";
 
     protected static final String EMPTY_PROPERTIES = "empty.properties";
-    protected static final String SAMPLE_ONE_PROPERTIES = "sample_one.properties";
-    protected static final String SAMPLE_TWO_PROPERTIES = "sample_two.properties";
-    protected static final String DUPLICATE_PROPERTIES = "duplicate.properties";
-    protected static final String SPECIAL_CHARACTERS_PROPERTIES = "special_characters.properties";
 
+    protected static final String SAMPLE_ONE_PROPERTIES = "sample_one.properties";
+
+    protected static final String SAMPLE_TWO_PROPERTIES = "sample_two.properties";
+
+    protected static final String DUPLICATE_PROPERTIES = "duplicate.properties";
+
+    protected static final String SPECIAL_CHARACTERS_PROPERTIES = "special_characters.properties";
 
     protected static final File TRENDS_FILE = new File(pathToSampleFile("cucumber-trends.json"));
 
     private final File reportDirectory;
 
     protected Configuration configuration;
+
     private final String projectName = "test cucumberProject";
+
     protected final List<String> jsonReports = new ArrayList<>();
+
     protected final List<String> classificationFiles = new ArrayList<>();
+
     protected ReportResult reportResult;
 
     protected List<Feature> features;
+
     protected List<TagObject> tags;
+
     protected List<StepObject> steps;
 
     public ReportGenerator() {
@@ -58,16 +72,15 @@ public abstract class ReportGenerator {
 
     protected void setUpWithJson(String... jsonFiles) {
         initWithJson(jsonFiles);
-
         createReport();
     }
 
     protected void initWithJson(String... jsonFiles) {
         if (jsonFiles != null) {
-            for (String jsonFile : jsonFiles)
+            for (String jsonFile : jsonFiles) {
                 jsonReports.add(reportFromResource(jsonFile));
+            }
         }
-
         // may be already created so don't overwrite it
         if (configuration == null) {
             configuration = new Configuration(reportDirectory, projectName);
@@ -107,10 +120,8 @@ public abstract class ReportGenerator {
 
     private void createReport() {
         ReportParser reportParser = new ReportParser(configuration);
-
         List<Feature> featuresFromJson = reportParser.parseJsonFiles(jsonReports);
         reportResult = new ReportResult(featuresFromJson, configuration.getSortingMethod());
-
         features = reportResult.getAllFeatures();
         tags = reportResult.getAllTags();
         steps = reportResult.getAllSteps();

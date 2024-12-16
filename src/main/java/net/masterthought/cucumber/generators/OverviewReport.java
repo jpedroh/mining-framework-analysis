@@ -1,18 +1,19 @@
 package net.masterthought.cucumber.generators;
 
-import org.apache.commons.lang.NotImplementedException;
-
 import net.masterthought.cucumber.Reportable;
 import net.masterthought.cucumber.json.support.Status;
 import net.masterthought.cucumber.json.support.StatusCounter;
 import net.masterthought.cucumber.util.Util;
+import org.apache.commons.lang.NotImplementedException;
+
 
 public class OverviewReport implements Reportable {
-
     private long duration;
 
     private final StatusCounter featuresCounter = new StatusCounter();
+
     private final StatusCounter scenariosCounter = new StatusCounter();
+
     private final StatusCounter stepsCounter = new StatusCounter();
 
     public void incFeaturesFor(Status status) {

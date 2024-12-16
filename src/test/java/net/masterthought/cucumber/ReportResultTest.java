@@ -1,22 +1,19 @@
 package net.masterthought.cucumber;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.List;
 import java.util.regex.Pattern;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import net.masterthought.cucumber.json.Feature;
 import net.masterthought.cucumber.json.support.StepObject;
 import net.masterthought.cucumber.json.support.TagObject;
+import org.junit.Before;
+import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Damian Szczepanik (damianszczepanik@github)
  */
 public class ReportResultTest extends ReportGenerator {
-
     @Before
     public void setUp() {
         setUpWithJson(SAMPLE_JSON);
@@ -63,29 +60,23 @@ public class ReportResultTest extends ReportGenerator {
 
     @Test
     public void getTagReport_ReturnsTagReport() {
-
         // given
         // from @Before
-
         // when
         Reportable reportable = reportResult.getTagReport();
-
         // then
         assertThat(reportable.getDuration()).isEqualTo(509064334L);
     }
 
     @Test
     public void getAllXXXFeatures_ReturnsFeaturesByStatus() {
-
         // given
         // from @Before
-
         // when
         int passingFeatures = reportResult.getFeatureReport().getPassedFeatures();
         int failedFeatures = reportResult.getFeatureReport().getFailedFeatures();
         int pendingFeatures = reportResult.getFeatureReport().getPendingFeatures();
         int undefinedFeatures = reportResult.getFeatureReport().getUndefinedFeatures();
-
         // then
         assertThat(passingFeatures).isEqualTo(1);
         assertThat(failedFeatures).isEqualTo(1);

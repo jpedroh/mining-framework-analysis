@@ -2,6 +2,7 @@ package net.masterthought.cucumber.json.support;
 
 import java.util.EnumMap;
 
+
 /**
  * Keeps information about statuses occurrence.
  * 
@@ -9,7 +10,6 @@ import java.util.EnumMap;
  *
  */
 public class StatusCounter {
-
     private EnumMap<Status, Integer> counter = new EnumMap<>(Status.class);
 
     /**
@@ -36,7 +36,6 @@ public class StatusCounter {
         final int statusCounter = getValueFor(status) + 1;
         this.counter.put(status, statusCounter);
         size++;
-
         // finalStatus is the highest priority of all the statuses that we see for a given
         // container. SKIPPED is lowest priority, then PASSED, PENDING, UNDEFINED, and
         // finally FAILED.
@@ -48,7 +47,8 @@ public class StatusCounter {
     /**
      * Gets the number of occurrences for given status.
      *
-     * @param status the status
+     * @param status
+     * 		the status
      * @return number of occurrences for given status
      */
     public int getValueFor(Status status) {
