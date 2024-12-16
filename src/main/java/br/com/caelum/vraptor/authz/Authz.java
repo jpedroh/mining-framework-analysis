@@ -1,9 +1,5 @@
 package br.com.caelum.vraptor.authz;
 
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.Result;
@@ -12,6 +8,9 @@ import br.com.caelum.vraptor.core.InterceptorStack;
 import br.com.caelum.vraptor.interceptor.Interceptor;
 import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.com.caelum.vraptor.resource.ResourceMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Default authorization interceptor implementation. Check for situations on the
@@ -23,10 +22,12 @@ import br.com.caelum.vraptor.resource.ResourceMethod;
 @Intercepts
 @RequestScoped
 public class Authz implements Interceptor {
-
 	private static final Logger log = LoggerFactory.getLogger(Authz.class);
+
 	private final AuthzInfo authInfo;
+
 	private final Authorizator authorizator;
+
 	private final Result result;
 
 	public Authz(Authorizator authorizator, AuthzInfo authInfo, Result result) {
@@ -36,15 +37,14 @@ public class Authz implements Interceptor {
 	}
 
 	@Override
-	public void intercept(InterceptorStack stack, ResourceMethod method,
-			Object resourceInstance) throws InterceptionException {
-		Authorizable authorizable = authInfo.getAuthorizable();
-		if (authorizable != null) {
-			if (isAllowed(method, authorizable)) {
+	public void intercept(InterceptorStack stack, ResourceMethod method, Object resourceInstance) throws InterceptionException {
+		if (authInfo != null) {
+			Authorizable authorizable = authInfo.getAuthorizable();
+			if ((authorizable != null) && isAllowed(method, authorizable)) {
 				stack.next(method, resourceInstance);
-			} else {
-				authInfo.handleAuthError(result);
+				return;
 			}
+			authInfo.handleAuthError(result);
 		} else {
 			log.error("no AuthInfo found!");
 			throw new IllegalStateException("No AuthInfo found");
@@ -67,5 +67,4 @@ public class Authz implements Interceptor {
 		}
 		return true;
 	}
-
 }
