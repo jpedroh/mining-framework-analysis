@@ -22,8 +22,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-
 import org.apache.metamodel.data.CachingDataSetHeader;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.DataSetHeader;
@@ -57,6 +55,7 @@ import org.apache.metamodel.util.ObjectComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * This class contains various helper functionality to common tasks in
  * MetaModel, eg.:
@@ -72,7 +71,6 @@ import org.slf4j.LoggerFactory;
  * operations, but is kept stable, so it can also be used by framework users.
  */
 public final class MetaModelHelper {
-
     private final static Logger logger = LoggerFactory.getLogger(MetaModelHelper.class);
 
     private MetaModelHelper() {
@@ -177,24 +175,18 @@ public final class MetaModelHelper {
     }
 
     public static DataSet getCarthesianProduct(DataSet[] fromDataSets, Iterable<FilterItem> whereItems) {
-        assert (fromDataSets.length > 0);
+        assert fromDataSets.length > 0;
         // First check if carthesian product is even nescesary
         if (fromDataSets.length == 1) {
             return getFiltered(fromDataSets[0], whereItems);
         }
         // do a nested loop join, no matter what
         Iterator<DataSet> dsIter = Arrays.asList(fromDataSets).iterator();
-
-
         DataSet joined = dsIter.next();
-
         while (dsIter.hasNext()) {
-            joined = nestedLoopJoin(dsIter.next(), joined, (whereItems));
-
-        }
-
+            joined = nestedLoopJoin(dsIter.next(), joined, whereItems);
+        } 
         return joined;
-
     }
 
     /**
@@ -202,40 +194,28 @@ public final class MetaModelHelper {
      * in-memory dataset.
      *
      */
-    public static InMemoryDataSet nestedLoopJoin(DataSet innerLoopDs, DataSet outerLoopDs,
-            Iterable<FilterItem> filtersIterable) {
-
+    public static InMemoryDataSet nestedLoopJoin(DataSet innerLoopDs, DataSet outerLoopDs, Iterable<FilterItem> filtersIterable) {
         List<FilterItem> filters = new ArrayList<>();
         for (FilterItem fi : filtersIterable) {
             filters.add(fi);
         }
         List<Row> innerRows = innerLoopDs.toRows();
-
-        List<SelectItem> allItems = new ArrayList<>(outerLoopDs.getSelectItems());
-        allItems.addAll(innerLoopDs.getSelectItems());
-
+        List<SelectItem> allItems = new ArrayList<>(Arrays.asList(outerLoopDs.getSelectItems()));
+        allItems.addAll(Arrays.asList(innerLoopDs.getSelectItems()));
         Set<FilterItem> applicableFilters = applicableFilters(filters, allItems);
-
         DataSetHeader jointHeader = new CachingDataSetHeader(allItems);
-
         List<Row> resultRows = new ArrayList<>();
         for (Row outerRow : outerLoopDs) {
             for (Row innerRow : innerRows) {
-
                 Object[] joinedRowObjects = new Object[outerRow.getValues().length + innerRow.getValues().length];
-
                 System.arraycopy(outerRow.getValues(), 0, joinedRowObjects, 0, outerRow.getValues().length);
-                System.arraycopy(innerRow.getValues(), 0, joinedRowObjects, outerRow.getValues().length, innerRow
-                        .getValues().length);
-
+                System.arraycopy(innerRow.getValues(), 0, joinedRowObjects, outerRow.getValues().length, innerRow.getValues().length);
                 Row joinedRow = new DefaultRow(jointHeader, joinedRowObjects);
-
-                if (applicableFilters.isEmpty() || applicableFilters.stream().allMatch(fi -> fi.accept(joinedRow))) {
+                if (applicableFilters.isEmpty() || applicableFilters.stream().allMatch(( fi) -> fi.accept(joinedRow))) {
                     resultRows.add(joinedRow);
                 }
             }
         }
-
         return new InMemoryDataSet(jointHeader, resultRows);
     }
 
@@ -247,21 +227,16 @@ public final class MetaModelHelper {
      * @param selectItemList
      * @return
      */
-    private static Set<FilterItem> applicableFilters(Collection<FilterItem> filters,
-            Collection<SelectItem> selectItemList) {
-
+    private static Set<FilterItem> applicableFilters(Collection<FilterItem> filters, Collection<SelectItem> selectItemList) {
         Set<SelectItem> items = new HashSet<SelectItem>(selectItemList);
-
-        return filters.stream().filter(fi -> {
+        return filters.stream().filter(( fi) -> {
             Collection<SelectItem> fiSelectItems = new ArrayList<>();
             fiSelectItems.add(fi.getSelectItem());
             Object operand = fi.getOperand();
             if (operand instanceof SelectItem) {
-                fiSelectItems.add((SelectItem) operand);
+                fiSelectItems.add(((SelectItem) (operand)));
             }
-
             return items.containsAll(fiSelectItems);
-
         }).collect(Collectors.toSet());
     }
 
@@ -282,30 +257,23 @@ public final class MetaModelHelper {
 
     public static DataSet getSelection(final List<SelectItem> selectItems, final DataSet dataSet) {
         final List<SelectItem> dataSetSelectItems = dataSet.getSelectItems();
-
         // check if the selection is already the same
         if (selectItems.equals(dataSetSelectItems)) {
             // return the DataSet unmodified
             return dataSet;
         }
-
         final List<SelectItem> scalarFunctionSelectItemsToEvaluate = new ArrayList<>();
-
         for (SelectItem selectItem : selectItems) {
             if (selectItem.getScalarFunction() != null) {
-                if (!dataSetSelectItems.contains(selectItem) && dataSetSelectItems.contains(selectItem.replaceFunction(
-                        null))) {
+                if ((!dataSetSelectItems.contains(selectItem)) && dataSetSelectItems.contains(selectItem.replaceFunction(null))) {
                     scalarFunctionSelectItemsToEvaluate.add(selectItem);
                 }
             }
         }
-
         if (scalarFunctionSelectItemsToEvaluate.isEmpty()) {
             return new SubSelectionDataSet(selectItems, dataSet);
         }
-
-        final ScalarFunctionDataSet scalaFunctionDataSet = new ScalarFunctionDataSet(
-                scalarFunctionSelectItemsToEvaluate, dataSet);
+        final ScalarFunctionDataSet scalaFunctionDataSet = new ScalarFunctionDataSet(scalarFunctionSelectItemsToEvaluate, dataSet);
         return new SubSelectionDataSet(selectItems, scalaFunctionDataSet);
     }
 
@@ -313,32 +281,24 @@ public final class MetaModelHelper {
         return getSelection(Arrays.asList(selectItems), dataSet);
     }
 
-    public static DataSet getGrouped(List<SelectItem> selectItems, DataSet dataSet,
-            Collection<GroupByItem> groupByItems) {
+    public static DataSet getGrouped(List<SelectItem> selectItems, DataSet dataSet, Collection<GroupByItem> groupByItems) {
         return getGrouped(selectItems, dataSet, groupByItems);
     }
 
     public static DataSet getGrouped(List<SelectItem> selectItems, DataSet dataSet, List<GroupByItem> groupByItems) {
         DataSet result = dataSet;
-        if (groupByItems != null && groupByItems.size() > 0) {
+        if ((groupByItems != null) && (groupByItems.size() > 0)) {
             Map<Row, Map<SelectItem, List<Object>>> uniqueRows = new HashMap<Row, Map<SelectItem, List<Object>>>();
-
-            final List<SelectItem> groupBySelects = groupByItems.stream()
-                    .map(gbi -> gbi.getSelectItem())
-                    .collect(Collectors.toList());
+            final List<SelectItem> groupBySelects = groupByItems.stream().map(( gbi) -> gbi.getSelectItem()).collect(Collectors.toList());
             final DataSetHeader groupByHeader = new CachingDataSetHeader(groupBySelects);
-
             // Creates a list of SelectItems that have aggregate functions
             List<SelectItem> functionItems = getAggregateFunctionSelectItems(selectItems);
-
             // Loop through the dataset and identify groups
             while (dataSet.next()) {
                 Row row = dataSet.getRow();
-
                 // Subselect a row prototype with only the unique values that
                 // define the group
                 Row uniqueRow = row.getSubSelection(groupByHeader);
-
                 // function input is the values used for calculating aggregate
                 // functions in the group
                 Map<SelectItem, List<Object>> functionInput;
@@ -354,7 +314,6 @@ public final class MetaModelHelper {
                     // If this is a new group, create a new function input
                     functionInput = uniqueRows.get(uniqueRow);
                 }
-
                 // Loop through aggregate functions to check for validity
                 for (SelectItem item : functionItems) {
                     List<Object> objects = functionInput.get(item);
@@ -370,12 +329,10 @@ public final class MetaModelHelper {
                         throw new IllegalArgumentException("Expression function not supported: " + item);
                     }
                 }
-            }
-
+            } 
             dataSet.close();
             final List<Row> resultData = new ArrayList<Row>();
             final DataSetHeader resultHeader = new CachingDataSetHeader(selectItems);
-
             // Loop through the groups to generate aggregates
             for (Entry<Row, Map<SelectItem, List<Object>>> entry : uniqueRows.entrySet()) {
                 Row row = entry.getKey();
@@ -385,7 +342,7 @@ public final class MetaModelHelper {
                 int i = 0;
                 for (SelectItem item : selectItems) {
                     int uniqueRowIndex = row.indexOf(item);
-                    if (uniqueRowIndex != -1) {
+                    if (uniqueRowIndex != (-1)) {
                         // If there's already a value for the select item in the
                         // row, keep it (it's one of the grouped by columns)
                         resultRow[i] = row.getValue(uniqueRowIndex);
@@ -396,17 +353,14 @@ public final class MetaModelHelper {
                         if (objects != null) {
                             Object functionResult = item.getAggregateFunction().evaluate(objects.toArray());
                             resultRow[i] = functionResult;
-                        } else {
-                            if (item.getAggregateFunction() != null) {
-                                logger.error("No function input found for SelectItem: {}", item);
-                            }
+                        } else if (item.getAggregateFunction() != null) {
+                            logger.error("No function input found for SelectItem: {}", item);
                         }
                     }
                     i++;
                 }
                 resultData.add(new DefaultRow(resultHeader, resultRow, null));
             }
-
             if (resultData.isEmpty()) {
                 result = new EmptyDataSet(selectItems);
             } else {
@@ -523,13 +477,13 @@ public final class MetaModelHelper {
     }
 
     public static List<SelectItem> getAggregateFunctionSelectItems(Iterable<SelectItem> selectItems) {
-        return CollectionUtils.filter(selectItems, arg -> {
+        return CollectionUtils.filter(selectItems, ( arg) -> {
             return arg.getAggregateFunction() != null;
         });
     }
 
     public static List<SelectItem> getScalarFunctionSelectItems(Iterable<SelectItem> selectItems) {
-        return CollectionUtils.filter(selectItems, arg -> {
+        return CollectionUtils.filter(selectItems, ( arg) -> {
             return arg.getScalarFunction() != null;
         });
     }
@@ -684,7 +638,7 @@ public final class MetaModelHelper {
         }
         List<SelectItem> si1 = ds1.getSelectItems();
         List<SelectItem> si2 = ds2.getSelectItems();
-        List<SelectItem> selectItems = Stream.concat(si1.stream(),si2.stream()).collect(Collectors.toList());
+        List<SelectItem> selectItems = Stream.concat(si1.stream(), si2.stream()).collect(Collectors.toList());
         List<Row> resultRows = new ArrayList<Row>();
         List<Row> ds2data = readDataSetFull(ds2);
         if (ds2data.isEmpty()) {
@@ -692,20 +646,14 @@ public final class MetaModelHelper {
             // the previous dataset.
             return getSelection(selectItems, ds1);
         }
-
         final DataSetHeader header = new CachingDataSetHeader(selectItems);
-
         while (ds1.next()) {
-
             // Construct a single-row dataset for making a carthesian product
             // against ds2
             Row ds1row = ds1.getRow();
             List<Row> ds1rows = new ArrayList<Row>();
             ds1rows.add(ds1row);
-
-            DataSet carthesianProduct = getCarthesianProduct(new DataSet[] { new InMemoryDataSet(
-                    new CachingDataSetHeader(si1), ds1rows), new InMemoryDataSet(new CachingDataSetHeader(si2),
-                            ds2data) }, onConditions);
+            DataSet carthesianProduct = getCarthesianProduct(new DataSet[]{ new InMemoryDataSet(new CachingDataSetHeader(si1), ds1rows), new InMemoryDataSet(new CachingDataSetHeader(si2), ds2data) }, onConditions);
             List<Row> carthesianRows = readDataSetFull(carthesianProduct);
             if (carthesianRows.size() > 0) {
                 resultRows.addAll(carthesianRows);
@@ -715,13 +663,11 @@ public final class MetaModelHelper {
                 System.arraycopy(values, 0, row, 0, values.length);
                 resultRows.add(new DefaultRow(header, row));
             }
-        }
+        } 
         ds1.close();
-
         if (resultRows.isEmpty()) {
             return new EmptyDataSet(selectItems);
         }
-
         return new InMemoryDataSet(header, resultRows);
     }
 
@@ -742,11 +688,9 @@ public final class MetaModelHelper {
         List<SelectItem> leftOrderedSelects = new ArrayList<>();
         leftOrderedSelects.addAll(ds1selects);
         leftOrderedSelects.addAll(ds2selects);
-
         // We will reuse the left join algorithm (but switch the datasets
         // around)
         DataSet dataSet = getLeftJoin(ds2, ds1, onConditions);
-
         dataSet = getSelection(leftOrderedSelects, dataSet);
         return dataSet;
     }
@@ -761,10 +705,7 @@ public final class MetaModelHelper {
 
     public static DataSet getDistinct(DataSet dataSet) {
         List<SelectItem> selectItems = dataSet.getSelectItems();
-        List<GroupByItem> groupByItems = selectItems.stream()
-                .map(GroupByItem::new)
-                .collect(Collectors.toList());
-
+        List<GroupByItem> groupByItems = selectItems.stream().map(GroupByItem::new).collect(Collectors.toList());
         return getGrouped(selectItems, dataSet, groupByItems);
     }
 
@@ -773,13 +714,13 @@ public final class MetaModelHelper {
     }
 
     public static Column[] getColumnsByType(Column[] columns, final ColumnType columnType) {
-        return CollectionUtils.filter(columns, column -> {
+        return CollectionUtils.filter(columns, ( column) -> {
             return column.getType() == columnType;
         }).toArray(new Column[0]);
     }
 
     public static Column[] getColumnsBySuperType(Column[] columns, final SuperColumnType superColumnType) {
-        return CollectionUtils.filter(columns, column -> {
+        return CollectionUtils.filter(columns, ( column) -> {
             return column.getType().getSuperType() == superColumnType;
         }).toArray(new Column[0]);
     }

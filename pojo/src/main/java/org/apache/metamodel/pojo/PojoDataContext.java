@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.MetaModelException;
 import org.apache.metamodel.QueryPostprocessDataContext;
@@ -42,17 +41,18 @@ import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.SimpleTableDef;
 
+
 /**
  * A {@link DataContext} used to serve MetaModel support for collections of Java
  * objects and key/value maps.
  */
-public class PojoDataContext extends QueryPostprocessDataContext implements UpdateableDataContext, Serializable {
-
+public class PojoDataContext extends QueryPostprocessDataContext implements UpdateableDataContext , Serializable {
     private static final long serialVersionUID = 1L;
-    
+
     public static final String DEFAULT_SCHEMA_NAME = "Schema";
 
     private final Map<String, TableDataProvider<?>> _tables;
+
     private final String _schemaName;
 
     /**
@@ -76,22 +76,25 @@ public class PojoDataContext extends QueryPostprocessDataContext implements Upda
     /**
      * Creates a new POJO data context based on the provided
      * {@link TableDataProvider}s.
-     * 
+     *
      * @param schemaName
-     *            the name of the created schema
+     * 		the name of the created schema
      * @param tableProviders
+     * 		
      */
-    public PojoDataContext(String schemaName, @SuppressWarnings("rawtypes") TableDataProvider... tableProviders) {
-        this(schemaName, Arrays.<TableDataProvider<?>> asList(tableProviders));
+    public PojoDataContext(String schemaName, @SuppressWarnings("rawtypes")
+    TableDataProvider... tableProviders) {
+        this(schemaName, Arrays.<TableDataProvider<?>>asList(tableProviders));
     }
 
     /**
      * Creates a new POJO data context based on the provided
      * {@link TableDataProvider}s.
-     * 
+     *
      * @param schemaName
-     *            the name of the created schema
+     * 		the name of the created schema
      * @param tables
+     * 		
      */
     public PojoDataContext(String schemaName, List<TableDataProvider<?>> tables) {
         if (schemaName == null) {
@@ -110,16 +113,12 @@ public class PojoDataContext extends QueryPostprocessDataContext implements Upda
         if (pojoTable == null) {
             throw new IllegalArgumentException("No such POJO table: " + table.getName());
         }
-
         final List<SelectItem> selectItems = columns.stream().map(SelectItem::new).collect(Collectors.toList());
-
         @SuppressWarnings({ "rawtypes", "unchecked" })
         DataSet dataSet = new PojoDataSet(pojoTable, selectItems);
-
         if (maxRows > 0) {
             dataSet = new MaxRowsDataSet(dataSet, maxRows);
         }
-
         return dataSet;
     }
 
@@ -162,5 +161,4 @@ public class PojoDataContext extends QueryPostprocessDataContext implements Upda
         }
         table.insert(recordData);
     }
-
 }

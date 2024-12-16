@@ -26,7 +26,7 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
+import junit.framework.TestCase;
 import org.apache.metamodel.UpdateCallback;
 import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.create.CreateTable;
@@ -48,19 +48,18 @@ import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.update.Update;
 import org.apache.metamodel.util.MutableRef;
 
-import junit.framework.TestCase;
 
 /**
  * Test case that tests interaction with the H2 embedded database
  */
 public class H2databaseTest extends TestCase {
-
     public static final String DRIVER_CLASS = "org.h2.Driver";
+
     public static final String URL_MEMORY_DATABASE = "jdbc:h2:mem:";
 
-    private final String[] FIRST_NAMES = { "Suzy", "Barbara", "John", "Ken", "Billy", "Larry", "Joe", "Margareth",
-            "Bobby", "Elizabeth" };
-    private final String[] LAST_NAMES = { "Doe", "Gates", "Jobs", "Ellison", "Trump" };
+    private final String[] FIRST_NAMES = new java.lang.String[]{ "Suzy", "Barbara", "John", "Ken", "Billy", "Larry", "Joe", "Margareth", "Bobby", "Elizabeth" };
+
+    private final String[] LAST_NAMES = new java.lang.String[]{ "Doe", "Gates", "Jobs", "Ellison", "Trump" };
 
     private Connection conn;
 
@@ -93,7 +92,7 @@ public class H2databaseTest extends TestCase {
 
     public void testUsingSingleUpdates() throws Exception {
         final JdbcDataContext dc = new JdbcDataContext(conn);
-
+        
         final Schema schema = dc.getDefaultSchema();
         dc.executeUpdate(new CreateTable(schema, "test_table").withColumn("id").ofType(ColumnType.VARCHAR));
 
@@ -110,6 +109,7 @@ public class H2databaseTest extends TestCase {
         ds.close();
 
         dc.executeUpdate(new DeleteFrom(table).where("id").eq("bar"));
+        
 
         ds = dc.query().from(table).selectCount().execute();
         assertTrue(ds.next());
@@ -118,7 +118,7 @@ public class H2databaseTest extends TestCase {
         ds.close();
 
         dc.executeUpdate(new Update(table).where("id").eq("foo").value("id", "baz"));
-
+        
         ds = dc.query().from(table).selectAll().execute();
         assertTrue(ds.next());
         assertEquals("Row[values=[baz]]", ds.getRow().toString());
@@ -131,73 +131,50 @@ public class H2databaseTest extends TestCase {
     }
 
     public void testScenario() throws Exception {
-        int rowsAffected = conn.createStatement().executeUpdate(
-                "CREATE TABLE test_table (id INTEGER AUTO_INCREMENT, name VARCHAR(255), age INTEGER)");
+        int rowsAffected = conn.createStatement().executeUpdate("CREATE TABLE test_table (id INTEGER AUTO_INCREMENT, name VARCHAR(255), age INTEGER)");
         assertEquals(0, rowsAffected);
         PreparedStatement p = conn.prepareStatement("INSERT INTO test_table (name, age) VALUES (?,?)");
-
         // insert 10,000 random names
         for (int i = 0; i < 10000; i++) {
-            int randomAge = (int) (Math.random() * 100);
-            String randomName = getRandomFirstName() + " " + getRandomLastName();
+            int randomAge = ((int) (Math.random() * 100));
+            String randomName = (getRandomFirstName() + " ") + getRandomLastName();
             insert(p, randomName, randomAge);
         }
-
         JdbcDataContext dc = new JdbcDataContext(conn);
         assertEquals("[INFORMATION_SCHEMA, PUBLIC]", Arrays.toString(dc.getSchemaNames().toArray()));
-
         Schema schema = dc.getDefaultSchema();
         assertEquals("PUBLIC", schema.getName());
-
         assertEquals("[TEST_TABLE]", Arrays.toString(schema.getTableNames().toArray()));
-
         Table table = schema.getTableByName("test_table");
-
         assertEquals("[ID, NAME, AGE]", Arrays.toString(table.getColumnNames().toArray()));
-
         Column idColumn = table.getColumnByName("ID");
-        assertEquals("Column[name=ID,columnNumber=0,type=INTEGER,nullable=false,nativeType=INTEGER,columnSize=10]",
-                idColumn.toString());
+        assertEquals("Column[name=ID,columnNumber=0,type=INTEGER,nullable=false,nativeType=INTEGER,columnSize=10]", idColumn.toString());
         Column nameColumn = table.getColumnByName("NAME");
-        assertEquals("Column[name=NAME,columnNumber=1,type=VARCHAR,nullable=true,nativeType=VARCHAR,columnSize=255]",
-                nameColumn.toString());
+        assertEquals("Column[name=NAME,columnNumber=1,type=VARCHAR,nullable=true,nativeType=VARCHAR,columnSize=255]", nameColumn.toString());
         Column ageColumn = table.getColumnByName("AGE");
-        assertEquals("Column[name=AGE,columnNumber=2,type=INTEGER,nullable=true,nativeType=INTEGER,columnSize=10]",
-                ageColumn.toString());
-
-        Query q = dc.query().from(table).selectCount().and(FunctionType.MAX, ageColumn).and(FunctionType.MIN, ageColumn)
-                .toQuery();
-        assertEquals(
-                "SELECT COUNT(*), MAX(\"TEST_TABLE\".\"AGE\"), MIN(\"TEST_TABLE\".\"AGE\") FROM PUBLIC.\"TEST_TABLE\"",
-                q.toSql());
-
+        assertEquals("Column[name=AGE,columnNumber=2,type=INTEGER,nullable=true,nativeType=INTEGER,columnSize=10]", ageColumn.toString());
+        Query q = dc.query().from(table).selectCount().and(FunctionType.MAX, ageColumn).and(FunctionType.MIN, ageColumn).toQuery();
+        assertEquals("SELECT COUNT(*), MAX(\"TEST_TABLE\".\"AGE\"), MIN(\"TEST_TABLE\".\"AGE\") FROM PUBLIC.\"TEST_TABLE\"", q.toSql());
         assertEquals(1, dc.getFetchSizeCalculator().getFetchSize(q));
-
         DataSet ds = dc.executeQuery(q);
         assertTrue(ds.next());
         Row row = ds.getRow();
         assertFalse(ds.next());
-
-        assertEquals(10000, ((Number) row.getValue(0)).intValue());
-        int maxAge = ((Number) row.getValue(1)).intValue();
-        assertTrue("Maximum age was: " + maxAge, maxAge > 90 && maxAge <= 100);
-        int minAge = ((Number) row.getValue(2)).intValue();
-        assertTrue("Minimum age was: " + minAge, minAge < 10 && minAge >= 0);
-
-        q = dc.query().from(table).as("t").select(ageColumn).selectCount().where(ageColumn).greaterThan(50).groupBy(
-                ageColumn).toQuery();
-        assertEquals("SELECT t.\"AGE\", COUNT(*) FROM PUBLIC.\"TEST_TABLE\" t WHERE t.\"AGE\" > 50 GROUP BY t.\"AGE\"",
-                q.toSql());
-
+        assertEquals(10000, ((Number) (row.getValue(0))).intValue());
+        int maxAge = ((Number) (row.getValue(1))).intValue();
+        assertTrue("Maximum age was: " + maxAge, (maxAge > 90) && (maxAge <= 100));
+        int minAge = ((Number) (row.getValue(2))).intValue();
+        assertTrue("Minimum age was: " + minAge, (minAge < 10) && (minAge >= 0));
+        q = dc.query().from(table).as("t").select(ageColumn).selectCount().where(ageColumn).greaterThan(50).groupBy(ageColumn).toQuery();
+        assertEquals("SELECT t.\"AGE\", COUNT(*) FROM PUBLIC.\"TEST_TABLE\" t WHERE t.\"AGE\" > 50 GROUP BY t.\"AGE\"", q.toSql());
         ds = dc.executeQuery(q);
         List<Object[]> objectArrays = ds.toObjectArrays();
         assertTrue(objectArrays.size() <= 50);
         assertTrue(objectArrays.size() > 40);
-
         for (Object[] objects : objectArrays) {
-            Integer age = (Integer) objects[0];
+            Integer age = ((Integer) (objects[0]));
             assertTrue(age.intValue() > 50);
-            Number count = (Number) objects[1];
+            Number count = ((Number) (objects[1]));
             assertTrue(count.intValue() > 0);
         }
     }
@@ -235,10 +212,8 @@ public class H2databaseTest extends TestCase {
 
             @Override
             public void run(UpdateCallback cb) {
-                JdbcCreateTableBuilder createTableBuilder = (JdbcCreateTableBuilder) cb.createTable(schema,
-                        "test_table");
-                Table writtenTable = createTableBuilder.withColumn("id").asPrimaryKey().ofType(ColumnType.INTEGER)
-                        .execute();
+                JdbcCreateTableBuilder createTableBuilder = (JdbcCreateTableBuilder) cb.createTable(schema, "test_table");
+                Table writtenTable = createTableBuilder.withColumn("id").asPrimaryKey().ofType(ColumnType.INTEGER).execute();
 
                 for (int i = 0; i < 10; i++) {
                     cb.insertInto(writtenTable).value("id", i + 1).execute();
@@ -270,64 +245,44 @@ public class H2databaseTest extends TestCase {
 
     public void testCreateTable() throws Exception {
         assertFalse(conn.isReadOnly());
-
         JdbcDataContext dc = new JdbcDataContext(conn);
         final Schema schema = dc.getDefaultSchema();
         Table readTable = dc.getDefaultSchema().getTableByName("test_table");
         assertNull(readTable);
-
         final MutableRef<Table> writtenTableRef = new MutableRef<Table>();
         dc.executeUpdate(new UpdateScript() {
-
             @Override
             public void run(UpdateCallback cb) {
-                JdbcCreateTableBuilder createTableBuilder = (JdbcCreateTableBuilder) cb.createTable(schema,
-                        "test_table");
-                Table writtenTable = createTableBuilder.withColumn("id").asPrimaryKey().ofType(ColumnType.INTEGER)
-                        .withColumn("name").ofSize(255).ofType(ColumnType.VARCHAR).withColumn("age").ofType(
-                                ColumnType.INTEGER).execute();
+                JdbcCreateTableBuilder createTableBuilder = ((JdbcCreateTableBuilder) (cb.createTable(schema, "test_table")));
+                Table writtenTable = createTableBuilder.withColumn("id").asPrimaryKey().ofType(ColumnType.INTEGER).withColumn("name").ofSize(255).ofType(ColumnType.VARCHAR).withColumn("age").ofType(ColumnType.INTEGER).execute();
                 String sql = createTableBuilder.createSqlStatement();
-                assertEquals(
-                        "CREATE TABLE PUBLIC.test_table (id INTEGER, name VARCHAR(255), age INTEGER, PRIMARY KEY(id))",
-                        sql);
+                assertEquals("CREATE TABLE PUBLIC.test_table (id INTEGER, name VARCHAR(255), age INTEGER, PRIMARY KEY(id))", sql);
                 assertNotNull(writtenTable);
                 assertEquals("[ID, NAME, AGE]", Arrays.toString(writtenTable.getColumnNames().toArray()));
-
                 writtenTableRef.set(writtenTable);
             }
         });
-
         assertEquals("[TEST_TABLE]", Arrays.toString(dc.getDefaultSchema().getTableNames().toArray()));
-
         readTable = dc.getDefaultSchema().getTableByName("test_table");
         assertEquals("[ID, NAME, AGE]", Arrays.toString(readTable.getColumnNames().toArray()));
-        assertEquals("[Column[name=ID,columnNumber=0,type=INTEGER,nullable=false,nativeType=INTEGER,columnSize=10]]",
-                Arrays.toString(readTable.getPrimaryKeys().toArray()));
+        assertEquals("[Column[name=ID,columnNumber=0,type=INTEGER,nullable=false,nativeType=INTEGER,columnSize=10]]", Arrays.toString(readTable.getPrimaryKeys().toArray()));
         assertEquals(writtenTableRef.get(), readTable);
-
         assertFalse(conn.isReadOnly());
-
         dc = new JdbcDataContext(conn);
         assertSame(conn, dc.getConnection());
-
         readTable = dc.getDefaultSchema().getTableByName("test_table");
         assertEquals("[ID, NAME, AGE]", Arrays.toString(readTable.getColumnNames().toArray()));
         assertTrue(writtenTableRef.get().getQualifiedLabel().equalsIgnoreCase(readTable.getQualifiedLabel()));
-
         dc.executeUpdate(new UpdateScript() {
             @Override
             public void run(UpdateCallback cb) {
                 cb.insertInto(writtenTableRef.get()).value("age", 14).value("name", "hello").value("id", 1).execute();
-                JdbcInsertBuilder insertBuilder = (JdbcInsertBuilder) cb.insertInto(writtenTableRef.get()).value("age",
-                        15).value("name", "wor'ld").value("id", 2);
-                assertEquals("INSERT INTO PUBLIC.\"TEST_TABLE\" (ID,NAME,AGE) VALUES (?,?,?)", insertBuilder
-                        .createSqlStatement());
+                JdbcInsertBuilder insertBuilder = ((JdbcInsertBuilder) (cb.insertInto(writtenTableRef.get()).value("age", 15).value("name", "wor'ld").value("id", 2)));
+                assertEquals("INSERT INTO PUBLIC.\"TEST_TABLE\" (ID,NAME,AGE) VALUES (?,?,?)", insertBuilder.createSqlStatement());
                 insertBuilder.execute();
-                cb.insertInto(writtenTableRef.get()).value("age", 16).value("name", "escobar!").value("id", 3)
-                        .execute();
+                cb.insertInto(writtenTableRef.get()).value("age", 16).value("name", "escobar!").value("id", 3).execute();
             }
         });
-
         DataSet ds = dc.query().from(readTable).select(readTable.getColumns()).orderBy("id").execute();
         assertTrue(ds.next());
         assertEquals("Row[values=[1, hello, 14]]", ds.getRow().toString());
@@ -337,18 +292,14 @@ public class H2databaseTest extends TestCase {
         assertEquals("Row[values=[3, escobar!, 16]]", ds.getRow().toString());
         assertFalse(ds.next());
         ds.close();
-
         dc.executeUpdate(new UpdateScript() {
             @Override
             public void run(UpdateCallback callback) {
-                JdbcUpdateBuilder updateCallback = (JdbcUpdateBuilder) callback.update("test_table").value("age", 18)
-                        .where("id").greaterThan(1);
-                assertEquals("UPDATE PUBLIC.\"TEST_TABLE\" SET AGE=? WHERE \"TEST_TABLE\".\"ID\" > ?", updateCallback
-                        .createSqlStatement());
+                JdbcUpdateBuilder updateCallback = ((JdbcUpdateBuilder) (callback.update("test_table").value("age", 18).where("id").greaterThan(1)));
+                assertEquals("UPDATE PUBLIC.\"TEST_TABLE\" SET AGE=? WHERE \"TEST_TABLE\".\"ID\" > ?", updateCallback.createSqlStatement());
                 updateCallback.execute();
             }
         });
-
         ds = dc.query().from(readTable).select(readTable.getColumns()).orderBy("id").execute();
         assertTrue(ds.next());
         assertEquals("Row[values=[1, hello, 14]]", ds.getRow().toString());
@@ -358,29 +309,24 @@ public class H2databaseTest extends TestCase {
         assertEquals("Row[values=[3, escobar!, 18]]", ds.getRow().toString());
         assertFalse(ds.next());
         ds.close();
-
         dc.executeUpdate(new UpdateScript() {
             @Override
             public void run(UpdateCallback callback) {
                 callback.deleteFrom("test_table").where("age").greaterThan(15).execute();
             }
         });
-
         ds = dc.query().from(readTable).select(readTable.getColumns()).orderBy("id").execute();
         assertTrue(ds.next());
         assertEquals("Row[values=[1, hello, 14]]", ds.getRow().toString());
         assertFalse(ds.next());
         ds.close();
-
         assertEquals("[TEST_TABLE]", Arrays.toString(dc.getDefaultSchema().getTableNames().toArray()));
-
         dc.executeUpdate(new UpdateScript() {
             @Override
             public void run(UpdateCallback callback) {
                 callback.dropTable("test_table").execute();
             }
         });
-
         assertEquals("[]", Arrays.toString(dc.getDefaultSchema().getTableNames().toArray()));
     }
 
@@ -398,8 +344,8 @@ public class H2databaseTest extends TestCase {
         dc.executeUpdate(new UpdateScript() {
             @Override
             public void run(UpdateCallback callback) {
-                Table table = callback.createTable(dc.getDefaultSchema(), "test_table").withColumn("foo").ofType(
-                        ColumnType.INTEGER).withColumn("bar").ofType(ColumnType.VARCHAR).execute();
+                Table table = callback.createTable(dc.getDefaultSchema(), "test_table").withColumn("foo")
+                        .ofType(ColumnType.INTEGER).withColumn("bar").ofType(ColumnType.VARCHAR).execute();
                 callback.insertInto(table).value("foo", 1).value("bar", "hello").execute();
                 callback.insertInto(table).value("foo", 2).value("bar", "there").execute();
                 callback.insertInto(table).value("foo", 3).value("bar", "world").execute();
@@ -410,8 +356,8 @@ public class H2databaseTest extends TestCase {
         Query query = new Query().from(table, "a").from(table, "b");
         query.select(table.getColumnByName("foo"), query.getFromClause().getItem(0));
         query.select(table.getColumnByName("foo"), query.getFromClause().getItem(1));
-        query.where(new SelectItem(table.getColumnByName("bar"), query.getFromClause().getItem(0)),
-                OperatorType.EQUALS_TO, "hello");
+        query.where(new SelectItem(table.getColumnByName("bar"), query.getFromClause().getItem(0)), OperatorType.EQUALS_TO,
+                "hello");
 
         assertEquals(
                 "SELECT a.\"FOO\", b.\"FOO\" FROM PUBLIC.\"TEST_TABLE\" a, PUBLIC.\"TEST_TABLE\" b WHERE a.\"BAR\" = 'hello'",
@@ -450,8 +396,8 @@ public class H2databaseTest extends TestCase {
         dc.executeUpdate(new UpdateScript() {
             @Override
             public void run(UpdateCallback callback) {
-                Table table = callback.createTable(dc.getDefaultSchema(), "test_table").withColumn("foo").ofType(
-                        ColumnType.INTEGER).withColumn("bar").ofType(ColumnType.VARCHAR).execute();
+                Table table = callback.createTable(dc.getDefaultSchema(), "test_table").withColumn("foo")
+                        .ofType(ColumnType.INTEGER).withColumn("bar").ofType(ColumnType.VARCHAR).execute();
                 callback.insertInto(table).value("foo", 1).value("bar", "hello").execute();
                 callback.insertInto(table).value("foo", 2).value("bar", "there").execute();
                 callback.insertInto(table).value("foo", 3).value("bar", "world").execute();
@@ -545,18 +491,18 @@ public class H2databaseTest extends TestCase {
 
         final Schema schema = dc.getDefaultSchema();
 
-        assertEquals(1, schema.getRelationships().size());
+        assertEquals(1, schema.getRelationships().length);
 
-        Relationship rel = schema.getRelationships().iterator().next();
+        Relationship rel = schema.getRelationships()[0];
 
-        assertEquals("CP1", rel.getForeignColumns().get(0).getName());
-        assertEquals("CP2", rel.getForeignColumns().get(1).getName());
-        assertEquals("CP3", rel.getForeignColumns().get(2).getName());
-        assertEquals("CP4", rel.getForeignColumns().get(3).getName());
+        assertEquals("CP1", rel.getForeignColumns()[0].getName());
+        assertEquals("CP2", rel.getForeignColumns()[1].getName());
+        assertEquals("CP3", rel.getForeignColumns()[2].getName());
+        assertEquals("CP4", rel.getForeignColumns()[3].getName());
 
-        assertEquals("P1", rel.getPrimaryColumns().get(0).getName());
-        assertEquals("P2", rel.getPrimaryColumns().get(1).getName());
-        assertEquals("P3", rel.getPrimaryColumns().get(2).getName());
-        assertEquals("P4", rel.getPrimaryColumns().get(3).getName());
+        assertEquals("P1", rel.getPrimaryColumns()[0].getName());
+        assertEquals("P2", rel.getPrimaryColumns()[1].getName());
+        assertEquals("P3", rel.getPrimaryColumns()[2].getName());
+        assertEquals("P4", rel.getPrimaryColumns()[3].getName());
     }
 }

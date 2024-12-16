@@ -25,9 +25,8 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import javax.swing.table.TableModel;
-
+import junit.framework.TestCase;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.UpdateCallback;
@@ -46,17 +45,18 @@ import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 
-import junit.framework.TestCase;
 
 /**
  * Test case that tests hsqldb interaction. The test uses an embedded copy of the "pentaho sampledata" sample database
  * that can be found at http://pentaho.sourceforge.net.
  */
 public class HsqldbTest extends TestCase {
-
     private static final String CONNECTION_STRING = "jdbc:hsqldb:res:metamodel";
+
     private static final String USERNAME = "SA";
+
     private static final String PASSWORD = "";
+
     private Connection _connection;
 
     @Override
@@ -101,42 +101,17 @@ public class HsqldbTest extends TestCase {
         assertNotNull(_connection);
         JdbcDataContext dc = new JdbcDataContext(_connection);
         assertEquals("[Schema[name=INFORMATION_SCHEMA], " + "Schema[name=PUBLIC]]", Arrays.toString(dc.getSchemas().toArray()));
-
         Schema defaultSchema = dc.getDefaultSchema();
         Schema publicSchema = dc.getSchemaByName("PUBLIC");
         assertSame(defaultSchema, publicSchema);
         Table[] tables = publicSchema.getTables().toArray(new Table[publicSchema.getTables().size()]);
         assertEquals(13, tables.length);
-        assertEquals("[Table[name=CUSTOMERS,type=TABLE,remarks=null], "
-                + "Table[name=CUSTOMER_W_TER,type=TABLE,remarks=null], "
-                + "Table[name=DEPARTMENT_MANAGERS,type=TABLE,remarks=null], "
-                + "Table[name=DIM_TIME,type=TABLE,remarks=null], " + "Table[name=EMPLOYEES,type=TABLE,remarks=null], "
-                + "Table[name=OFFICES,type=TABLE,remarks=null], " + "Table[name=ORDERDETAILS,type=TABLE,remarks=null], "
-                + "Table[name=ORDERFACT,type=TABLE,remarks=null], " + "Table[name=ORDERS,type=TABLE,remarks=null], "
-                + "Table[name=PAYMENTS,type=TABLE,remarks=null], " + "Table[name=PRODUCTS,type=TABLE,remarks=null], "
-                + "Table[name=QUADRANT_ACTUALS,type=TABLE,remarks=null], "
-                + "Table[name=TRIAL_BALANCE,type=TABLE,remarks=null]]", Arrays.toString(tables));
-
+        assertEquals("[Table[name=CUSTOMERS,type=TABLE,remarks=null], " + ((((((((((("Table[name=CUSTOMER_W_TER,type=TABLE,remarks=null], " + "Table[name=DEPARTMENT_MANAGERS,type=TABLE,remarks=null], ") + "Table[name=DIM_TIME,type=TABLE,remarks=null], ") + "Table[name=EMPLOYEES,type=TABLE,remarks=null], ") + "Table[name=OFFICES,type=TABLE,remarks=null], ") + "Table[name=ORDERDETAILS,type=TABLE,remarks=null], ") + "Table[name=ORDERFACT,type=TABLE,remarks=null], ") + "Table[name=ORDERS,type=TABLE,remarks=null], ") + "Table[name=PAYMENTS,type=TABLE,remarks=null], ") + "Table[name=PRODUCTS,type=TABLE,remarks=null], ") + "Table[name=QUADRANT_ACTUALS,type=TABLE,remarks=null], ") + "Table[name=TRIAL_BALANCE,type=TABLE,remarks=null]]"), Arrays.toString(tables));
         Table empTable = publicSchema.getTableByName("EMPLOYEES");
-        assertEquals(
-                "[Column[name=EMPLOYEENUMBER,columnNumber=0,type=INTEGER,nullable=false,nativeType=INTEGER,columnSize=0], "
-                        + "Column[name=LASTNAME,columnNumber=1,type=VARCHAR,nullable=false,nativeType=VARCHAR,columnSize=50], "
-                        + "Column[name=FIRSTNAME,columnNumber=2,type=VARCHAR,nullable=false,nativeType=VARCHAR,columnSize=50], "
-                        + "Column[name=EXTENSION,columnNumber=3,type=VARCHAR,nullable=false,nativeType=VARCHAR,columnSize=10], "
-                        + "Column[name=EMAIL,columnNumber=4,type=VARCHAR,nullable=false,nativeType=VARCHAR,columnSize=100], "
-                        + "Column[name=OFFICECODE,columnNumber=5,type=VARCHAR,nullable=false,nativeType=VARCHAR,columnSize=20], "
-                        + "Column[name=REPORTSTO,columnNumber=6,type=INTEGER,nullable=true,nativeType=INTEGER,columnSize=0], "
-                        + "Column[name=JOBTITLE,columnNumber=7,type=VARCHAR,nullable=false,nativeType=VARCHAR,columnSize=50]]",
-                Arrays.toString(empTable.getColumns().toArray()));
-
-        assertEquals(
-                "[Column[name=EMPLOYEENUMBER,columnNumber=0,type=INTEGER,nullable=false,nativeType=INTEGER,columnSize=0]]",
-                Arrays.toString(empTable.getPrimaryKeys().toArray()));
-
+        assertEquals("[Column[name=EMPLOYEENUMBER,columnNumber=0,type=INTEGER,nullable=false,nativeType=INTEGER,columnSize=0], " + (((((("Column[name=LASTNAME,columnNumber=1,type=VARCHAR,nullable=false,nativeType=VARCHAR,columnSize=50], " + "Column[name=FIRSTNAME,columnNumber=2,type=VARCHAR,nullable=false,nativeType=VARCHAR,columnSize=50], ") + "Column[name=EXTENSION,columnNumber=3,type=VARCHAR,nullable=false,nativeType=VARCHAR,columnSize=10], ") + "Column[name=EMAIL,columnNumber=4,type=VARCHAR,nullable=false,nativeType=VARCHAR,columnSize=100], ") + "Column[name=OFFICECODE,columnNumber=5,type=VARCHAR,nullable=false,nativeType=VARCHAR,columnSize=20], ") + "Column[name=REPORTSTO,columnNumber=6,type=INTEGER,nullable=true,nativeType=INTEGER,columnSize=0], ") + "Column[name=JOBTITLE,columnNumber=7,type=VARCHAR,nullable=false,nativeType=VARCHAR,columnSize=50]]"), Arrays.toString(empTable.getColumns().toArray()));
+        assertEquals("[Column[name=EMPLOYEENUMBER,columnNumber=0,type=INTEGER,nullable=false,nativeType=INTEGER,columnSize=0]]", Arrays.toString(empTable.getPrimaryKeys().toArray()));
         // Only a single relationship registered in the database
-        assertEquals(
-                "[Relationship[primaryTable=PRODUCTS,primaryColumns=[PRODUCTCODE],foreignTable=ORDERFACT,foreignColumns=[PRODUCTCODE]]]",
-                Arrays.toString(publicSchema.getRelationships().toArray()));
+        assertEquals("[Relationship[primaryTable=PRODUCTS,primaryColumns=[PRODUCTCODE],foreignTable=ORDERFACT,foreignColumns=[PRODUCTCODE]]]", Arrays.toString(publicSchema.getRelationships().toArray()));
     }
 
     public void testExecuteQuery() throws Exception {
@@ -144,22 +119,14 @@ public class HsqldbTest extends TestCase {
         Schema schema = dc.getDefaultSchema();
         Table productsTable = schema.getTableByName("PRODUCTS");
         Table factTable = schema.getTableByName("ORDERFACT");
-
-        Query q = new Query().from(new FromItem(JoinType.INNER, productsTable.getRelationships(factTable).iterator().next())).select(
-                productsTable.getColumns().get(0), factTable.getColumns().get(0));
-
-        assertEquals(
-                "SELECT \"PRODUCTS\".\"PRODUCTCODE\", \"ORDERFACT\".\"ORDERNUMBER\" FROM PUBLIC.\"PRODUCTS\" INNER JOIN PUBLIC.\"ORDERFACT\" ON \"PRODUCTS\".\"PRODUCTCODE\" = \"ORDERFACT\".\"PRODUCTCODE\"",
-                q.toString());
+        Query q = new Query().from(new FromItem(JoinType.INNER, productsTable.getRelationships(factTable).iterator().next())).select(productsTable.getColumns().get(0), factTable.getColumns().get(0));
+        assertEquals("SELECT \"PRODUCTS\".\"PRODUCTCODE\", \"ORDERFACT\".\"ORDERNUMBER\" FROM PUBLIC.\"PRODUCTS\" INNER JOIN PUBLIC.\"ORDERFACT\" ON \"PRODUCTS\".\"PRODUCTCODE\" = \"ORDERFACT\".\"PRODUCTCODE\"", q.toString());
         assertEquals(25000, dc.getFetchSizeCalculator().getFetchSize(q));
-
         DataSet data = dc.executeQuery(q);
         TableModel tableModel = new DataSetTableModel(data);
         assertEquals(2, tableModel.getColumnCount());
         assertEquals(2996, tableModel.getRowCount());
-
-        assertEquals(110,
-                MetaModelHelper.executeSingleRowQuery(dc, new Query().selectCount().from(productsTable)).getValue(0));
+        assertEquals(110, MetaModelHelper.executeSingleRowQuery(dc, new Query().selectCount().from(productsTable)).getValue(0));
     }
 
     public void testLimit() throws Exception {
@@ -215,21 +182,23 @@ public class HsqldbTest extends TestCase {
         Schema schema = dc.getSchemaByName("PUBLIC");
         Table productsTable = schema.getTableByName("PRODUCTS");
 
-        Query q = new Query().from(productsTable, "pro-ducts")
-                .select(new SelectItem(productsTable.getColumnByName("PRODUCTCODE")).setAlias("c|o|d|e"));
+        Query q = new Query().from(productsTable, "pro-ducts").select(
+                new SelectItem(productsTable.getColumnByName("PRODUCTCODE")).setAlias("c|o|d|e"));
         q.setMaxRows(5);
 
         assertEquals("SELECT pro-ducts.\"PRODUCTCODE\" AS c|o|d|e FROM PUBLIC.\"PRODUCTS\" pro-ducts", q.toString());
 
         String queryString = queryRewriter.rewriteQuery(q);
-        assertEquals("SELECT TOP 5 \"pro-ducts\".\"PRODUCTCODE\" AS \"c|o|d|e\" FROM PUBLIC.\"PRODUCTS\" \"pro-ducts\"",
+        assertEquals(
+                "SELECT TOP 5 \"pro-ducts\".\"PRODUCTCODE\" AS \"c|o|d|e\" FROM PUBLIC.\"PRODUCTS\" \"pro-ducts\"",
                 queryString);
 
         // We have to test that no additional quoting characters are added every
         // time we run the rewriting
         queryString = queryRewriter.rewriteQuery(q);
         queryString = queryRewriter.rewriteQuery(q);
-        assertEquals("SELECT TOP 5 \"pro-ducts\".\"PRODUCTCODE\" AS \"c|o|d|e\" FROM PUBLIC.\"PRODUCTS\" \"pro-ducts\"",
+        assertEquals(
+                "SELECT TOP 5 \"pro-ducts\".\"PRODUCTCODE\" AS \"c|o|d|e\" FROM PUBLIC.\"PRODUCTS\" \"pro-ducts\"",
                 queryString);
 
         // Test that the original query is still the same (ie. it has been
@@ -246,10 +215,9 @@ public class HsqldbTest extends TestCase {
 
         Column column = dc.getDefaultSchema().getTableByName("PRODUCTS").getColumnByName("PRODUCTCODE");
         assertEquals("PUBLIC.PRODUCTS.PRODUCTCODE", column.getQualifiedLabel());
-        assertEquals("Table[name=PRODUCTS,type=TABLE,remarks=null]",
-                dc.getTableByQualifiedLabel("PUBLIC.PRODUCTS").toString());
-        assertEquals("Table[name=PRODUCTS,type=TABLE,remarks=null]",
-                dc.getTableByQualifiedLabel("PRODUCTS").toString());
+        assertEquals("Table[name=PRODUCTS,type=TABLE,remarks=null]", dc.getTableByQualifiedLabel("PUBLIC.PRODUCTS")
+                .toString());
+        assertEquals("Table[name=PRODUCTS,type=TABLE,remarks=null]", dc.getTableByQualifiedLabel("PRODUCTS").toString());
         assertEquals(
                 "Column[name=PRODUCTCODE,columnNumber=0,type=VARCHAR,nullable=false,nativeType=VARCHAR,columnSize=50]",
                 dc.getColumnByQualifiedLabel("PUBLIC.PRODUCTS.PRODUCTCODE").toString());
@@ -292,8 +260,8 @@ public class HsqldbTest extends TestCase {
         q = dc.query().from(table).selectCount().where("name").isEquals("m'jello").toQuery();
 
         assertEquals("SELECT COUNT(*) FROM PUBLIC.\"TESTTABLE\" WHERE \"TESTTABLE\".\"NAME\" = 'm'jello'", q.toSql());
-        assertEquals("SELECT COUNT(*) FROM PUBLIC.\"TESTTABLE\" WHERE \"TESTTABLE\".\"NAME\" = 'm''jello'",
-                dc.getQueryRewriter().rewriteQuery(q));
+        assertEquals("SELECT COUNT(*) FROM PUBLIC.\"TESTTABLE\" WHERE \"TESTTABLE\".\"NAME\" = 'm''jello'", dc
+                .getQueryRewriter().rewriteQuery(q));
 
         row = MetaModelHelper.executeSingleRowQuery(dc, q);
         assertEquals(1, ((Number) row.getValue(0)).intValue());
@@ -334,8 +302,8 @@ public class HsqldbTest extends TestCase {
     }
 
     public void testInsertOfDifferentTypes() throws Exception {
-        Connection connection =
-                DriverManager.getConnection("jdbc:hsqldb:mem:different_types_insert", USERNAME, PASSWORD);
+        Connection connection = DriverManager.getConnection("jdbc:hsqldb:mem:different_types_insert", USERNAME,
+                PASSWORD);
 
         try {
             connection.createStatement().execute("DROP TABLE my_table");
