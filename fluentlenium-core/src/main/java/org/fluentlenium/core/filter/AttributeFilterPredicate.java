@@ -1,8 +1,8 @@
 package org.fluentlenium.core.filter;
 
+import java.util.function.Predicate;
 import org.fluentlenium.core.domain.FluentWebElement;
 
-import java.util.function.Predicate;
 
 /**
  * Filter a FluentWebElement collection to return only the elements with the same text
@@ -13,7 +13,8 @@ public class AttributeFilterPredicate implements Predicate<FluentWebElement> {
     /**
      * Creates a new Attribute Filter Predicated, from an attribute filter
      *
-     * @param filter attribute filter
+     * @param filter
+     * 		attribute filter
      */
     public AttributeFilterPredicate(AttributeFilter filter) {
         this.filter = filter;
@@ -27,13 +28,12 @@ public class AttributeFilterPredicate implements Predicate<FluentWebElement> {
     }
 
     private String getAttributeValue(FluentWebElement element) {
-        if("text".equalsIgnoreCase(filter.getAttribute())) {
+        if ("text".equalsIgnoreCase(filter.getAttribute())) {
             return element.text();
-        } else if("textContent".equalsIgnoreCase(filter.getAttribute())) {
+        } else if ("textContent".equalsIgnoreCase(filter.getAttribut())) {
             return element.textContent();
         } else {
             return element.attribute(filter.getAttribute());
         }
     }
-
 }
