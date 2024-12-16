@@ -2,6 +2,7 @@ package hudson.plugins.deploy;
 
 import hudson.model.Result;
 import hudson.plugins.deploy.tomcat.Tomcat8xAdapter;
+import java.util.Collections;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.cps.SnippetizerTester;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -11,24 +12,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import java.util.Collections;
 
 /**
  * Tests pipeline compatibility. Since there is no Builder that sets the build status all of these tests
  * will ultimately result in a no-op.
  */
-public class PipelineSyntaxTest {
-
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
-
-    private String getFullScript (String func) {
-        return "node {\n" +
-                    "writeFile(file: 'readme.txt', text: 'this creates a workspace if one doesnt already exist')\n" +
-                    func +
-                "}";
-    }
-
     /**
     @Test
     public void testNoAdapterDeploy() throws Exception {
@@ -36,10 +24,7 @@ public class PipelineSyntaxTest {
         p.setDefinition(new CpsFlowDefinition(
                 getFullScript("deploy(war: 'target/app.war', contextPath: 'app', onFailure: false)"),
                 false));
-        WorkflowRun r = p.scheduleBuild2(0).get();
-        // we expect a failed build status because there are no WAR files to deploy
-        j.assertBuildStatus(Result.FAILURE, r);
-        j.assertLogContains("No wars found. Deploy aborted.", r);
+        WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
     }
 
     @Test
@@ -48,10 +33,7 @@ public class PipelineSyntaxTest {
         p.setDefinition(new CpsFlowDefinition(
                 getFullScript("deploy(adapters: [workflowAdapter()], war: 'target/app.war', contextPath: 'app')"),
                 false));
-        WorkflowRun r = p.scheduleBuild2(0).get();
-        // we expect a failed build status because there are no WAR files to deploy
-        j.assertBuildStatus(Result.FAILURE, r);
-        j.assertLogContains("No wars found. Deploy aborted.", r);
+        WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
     }
 
     @Test
@@ -60,10 +42,7 @@ public class PipelineSyntaxTest {
         p.setDefinition(new CpsFlowDefinition(
                 getFullScript("deploy(adapters: [workflowAdapter(), workflowAdapter(), workflowAdapter()], war: 'target/app.war', contextPath: 'app')"),
                 false));
-        WorkflowRun r = p.scheduleBuild2(0).get();
-        // we expect a failed build status because there are no WAR files to deploy
-        j.assertBuildStatus(Result.FAILURE, r);
-        j.assertLogContains("No wars found. Deploy aborted.", r);
+        WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
     }
 
     @Test
@@ -84,10 +63,7 @@ public class PipelineSyntaxTest {
                 "deploy(adapters: [gf2, gf3], war: 'target/app.war', contextPath: 'app')"),
                 false));
 
-        WorkflowRun r = p.scheduleBuild2(0).get();
-        // we expect a failed build status because there are no WAR files to deploy
-        j.assertBuildStatus(Result.FAILURE, r);
-        j.assertLogContains("No wars found. Deploy aborted.", r);
+        WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
     }
 
     @Test
@@ -103,10 +79,7 @@ public class PipelineSyntaxTest {
                     "credentialsId: 'FAKE') \n" +
                 "deploy(adapters: [tc7, tc8], war: 'target/app.war', contextPath: 'app')"),
                 false));
-        WorkflowRun r = p.scheduleBuild2(0).get();
-        // we expect a failed build status because there are no WAR files to deploy
-        j.assertBuildStatus(Result.FAILURE, r);
-        j.assertLogContains("No wars found. Deploy aborted.", r);
+        WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
     }
 
     @Test
@@ -146,5 +119,14 @@ public class PipelineSyntaxTest {
         t.assertRoundTrip(new CoreStep(dp), "deploy adapters: [tomcat8(credentialsId: 'test-id', url: 'http://example.com')], contextPath: 'my-app', onFailure: false, war: 'app.war'");
     }
     */
+public class PipelineSyntaxTest {
+    @Rule
+    public JenkinsRule j = new JenkinsRule();
 
+    private String getFullScript (String func) {
+        return "node {\n" +
+                    "writeFile(file: 'readme.txt', text: 'this creates a workspace if one doesnt already exist')\n" +
+                    func +
+                "}";
+    }
 }

@@ -3,12 +3,22 @@ package hudson.plugins.deploy;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import hudson.*;
 import hudson.model.*;
+import hudson.model.AbstractBuild;
 import hudson.model.listeners.ItemListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.util.VariableResolver;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import jenkins.util.io.FileBoolean;
@@ -18,27 +28,19 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
-import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Deploys WAR to a container.
  *
  * @author Kohsuke Kawaguchi
  */
-public class DeployPublisher extends Notifier implements SimpleBuildStep, Serializable {
-
+public class DeployPublisher extends Notifier implements SimpleBuildStep , Serializable {
     private List<ContainerAdapter> adapters;
+
     private String contextPath = "";
 
     private String war;
+
     private boolean onFailure = true;
 
     /**
@@ -55,7 +57,7 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
 
     @Deprecated
     public DeployPublisher(List<ContainerAdapter> adapters, String war, String contextPath, boolean onFailure) {
-   		this.adapters = adapters;
+        this.adapters = adapters;
         this.war = war;
     }
 
@@ -82,28 +84,29 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
     }
 
     @Override
-    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
+    public void perform(@Nonnull
+    Run<?, ?> run, @Nonnull
+    FilePath workspace, @Nonnull
+    Launcher launcher, @Nonnull
+    TaskListener listener) throws InterruptedException, IOException {
         Result result = run.getResult();
-        if (onFailure || result == null || Result.SUCCESS.equals(result)) {
+        if ((onFailure || (result == null)) || Result.SUCCESS.equals(result)) {
             if (!workspace.exists()) {
                 listener.getLogger().println("[DeployPublisher][ERROR] Workspace not found");
                 throw new AbortException("Workspace not found");
             }
             EnvVars envVars = new EnvVars();
             if (run instanceof AbstractBuild) {
-                final AbstractBuild build = (AbstractBuild) run;
+                final AbstractBuild build = ((AbstractBuild) (run));
                 envVars = build.getEnvironment(listener);
             }
-            
             final VariableResolver<String> resolver = new VariableResolver.ByMap<String>(envVars);
-            final String warFiles = Util.replaceMacro(envVars.expand(this.war), resolver); 
-
+            final String warFiles = Util.replaceMacro(envVars.expand(this.war), resolver);
             FilePath[] wars = workspace.list(warFiles);
-            if (wars == null || wars.length == 0) {
+            if ((wars == null) || (wars.length == 0)) {
                 throw new InterruptedException("[DeployPublisher][WARN] No wars found. Deploy aborted. %n");
             }
             listener.getLogger().printf("[DeployPublisher][INFO] Attempting to deploy %d war file(s)%n", wars.length);
-
             for (FilePath warFile : wars) {
                 for (ContainerAdapter adapter : adapters) {
                     adapter.redeployFile(warFile, contextPath, run, launcher, listener);
@@ -117,7 +120,7 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.BUILD;
     }
-    
+
     public Object readResolve() {
     	if(adapter != null) {
     		if(adapters == null) {
@@ -129,13 +132,13 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
     }
 
     /**
-	 * Get the value of the adapterWrappers property
-	 *
-	 * @return The value of adapterWrappers
-	 */
-	public List<ContainerAdapter> getAdapters() {
-		return adapters;
-	}
+    	 * Get the value of the adapterWrappers property
+    	 *
+    	 * @return The value of adapterWrappers
+    	 */
+    	public List<ContainerAdapter> getAdapters() {
+    		return adapters;
+    	}
 
     @Symbol("deploy")
     @Extension
@@ -145,7 +148,7 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
             return true;
         }
 
-        public boolean defaultOnFailure (Object job) {
+        public boolean defaultOnFailure(Object job) {
             return !(job instanceof AbstractProject);
         }
 
@@ -174,7 +177,6 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
     @Restricted(NoExternalUse.class)
     @Extension
     public static final class Migrator extends ItemListener {
-
         @SuppressWarnings("deprecation")
         @Override
         public void onLoaded() {
@@ -183,7 +185,7 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
                 return;
             }
             List<StandardUsernamePasswordCredentials> generatedCredentials = new ArrayList<StandardUsernamePasswordCredentials>();
-            for (AbstractProject<?,?> project : Jenkins.getActiveInstance().getAllItems(AbstractProject.class)) {
+            for (AbstractProject<?, ?> project : Jenkins.getActiveInstance().getAllItems(AbstractProject.class)) {
                 try {
                     DeployPublisher d = project.getPublishersList().get(DeployPublisher.class);
                     if (d == null) {
@@ -193,7 +195,7 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
                     boolean successful = true;
                     for (ContainerAdapter a : d.getAdapters()) {
                         if (a instanceof PasswordProtectedAdapterCargo) {
-                            PasswordProtectedAdapterCargo ppac = (PasswordProtectedAdapterCargo) a;
+                            PasswordProtectedAdapterCargo ppac = ((PasswordProtectedAdapterCargo) (a));
                             if (ppac.getCredentialsId() == null) {
                                 successful &= ppac.migrateCredentials(generatedCredentials);
                                 modified = true;
@@ -216,5 +218,4 @@ public class DeployPublisher extends Notifier implements SimpleBuildStep, Serial
             migrated.on();
         }
     }
-
 }
