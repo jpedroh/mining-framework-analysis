@@ -1,14 +1,12 @@
 package com.github.eirslett.maven.plugins.frontend.lib;
 
+import com.github.eirslett.maven.plugins.frontend.lib.ProxyConfig.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.eirslett.maven.plugins.frontend.lib.ProxyConfig.Proxy;
-
-public interface NpmRunner extends NodeTaskRunner {}
 
 final class DefaultNpmRunner extends NodeTaskExecutor implements NpmRunner {
     static final String TASK_NAME = "npm";
@@ -74,3 +72,5 @@ final class DefaultNpmRunner extends NodeTaskExecutor implements NpmRunner {
 		return proxy;
 	}
 }
+
+public interface NpmRunner extends NodeTaskRunner {}
