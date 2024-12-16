@@ -1,24 +1,24 @@
 package io.swagger.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.model.Animal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
-import org.threeten.bp.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+import org.threeten.bp.OffsetDateTime;
+
 
 /**
  * MixedPropertiesAndAdditionalPropertiesClass
  */
-
-public class MixedPropertiesAndAdditionalPropertiesClass   {
+public class MixedPropertiesAndAdditionalPropertiesClass {
   @JsonProperty("uuid")
   private UUID uuid = null;
 
@@ -33,12 +33,11 @@ public class MixedPropertiesAndAdditionalPropertiesClass   {
     return this;
   }
 
-   /**
-   * Get uuid
-   * @return uuid
-  **/
-  @ApiModelProperty(value = "")
-
+  /**
+  * Get uuid
+  * @return uuid
+    **/
+  @ApiModelProperty("")
   @Valid
   public UUID getUuid() {
     return uuid;
@@ -53,13 +52,17 @@ public class MixedPropertiesAndAdditionalPropertiesClass   {
     return this;
   }
 
-   /**
-   * Get dateTime
-   * @return dateTime
-  **/
-  @ApiModelProperty(value = "")
-
+  /**
+  * Get dateTime
+  * @return dateTime
+    **/
+  @ApiModelProperty("")
+<<<<<<< LEFT
   @Valid
+=======
+  @Valid
+>>>>>>> RIGHT
+
   public OffsetDateTime getDateTime() {
     return dateTime;
   }
@@ -81,12 +84,11 @@ public class MixedPropertiesAndAdditionalPropertiesClass   {
     return this;
   }
 
-   /**
-   * Get map
-   * @return map
-  **/
-  @ApiModelProperty(value = "")
-
+  /**
+  * Get map
+  * @return map
+    **/
+  @ApiModelProperty("")
   @Valid
   public Map<String, Animal> getMap() {
     return map;
@@ -96,19 +98,16 @@ public class MixedPropertiesAndAdditionalPropertiesClass   {
     this.map = map;
   }
 
-
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if ((o == null) || (getClass() != o.getClass())) {
       return false;
     }
-    MixedPropertiesAndAdditionalPropertiesClass mixedPropertiesAndAdditionalPropertiesClass = (MixedPropertiesAndAdditionalPropertiesClass) o;
-    return Objects.equals(this.uuid, mixedPropertiesAndAdditionalPropertiesClass.uuid) &&
-        Objects.equals(this.dateTime, mixedPropertiesAndAdditionalPropertiesClass.dateTime) &&
-        Objects.equals(this.map, mixedPropertiesAndAdditionalPropertiesClass.map);
+    MixedPropertiesAndAdditionalPropertiesClass mixedPropertiesAndAdditionalPropertiesClass = ((MixedPropertiesAndAdditionalPropertiesClass) (o));
+    return (Objects.equals(this.uuid, mixedPropertiesAndAdditionalPropertiesClass.uuid) && Objects.equals(this.dateTime, mixedPropertiesAndAdditionalPropertiesClass.dateTime)) && Objects.equals(this.map, mixedPropertiesAndAdditionalPropertiesClass.map);
   }
 
   @Override
@@ -120,7 +119,6 @@ public class MixedPropertiesAndAdditionalPropertiesClass   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class MixedPropertiesAndAdditionalPropertiesClass {\n");
-    
     sb.append("    uuid: ").append(toIndentedString(uuid)).append("\n");
     sb.append("    dateTime: ").append(toIndentedString(dateTime)).append("\n");
     sb.append("    map: ").append(toIndentedString(map)).append("\n");
@@ -139,4 +137,3 @@ public class MixedPropertiesAndAdditionalPropertiesClass   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

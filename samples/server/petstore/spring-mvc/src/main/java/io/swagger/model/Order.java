@@ -1,20 +1,20 @@
 package io.swagger.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.threeten.bp.OffsetDateTime;
+import java.util.Objects;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+import org.threeten.bp.OffsetDateTime;
+
 
 /**
  * Order
  */
-
-public class Order   {
+public class Order {
   @JsonProperty("id")
   private Long id = null;
 
@@ -31,15 +31,13 @@ public class Order   {
    * Order Status
    */
   public enum StatusEnum {
-    PLACED("placed"),
-    
-    APPROVED("approved"),
-    
-    DELIVERED("delivered");
 
+    PLACED("placed"),
+    APPROVED("approved"),
+    DELIVERED("delivered");
     private String value;
 
-    StatusEnum(String value) {
+    private StatusEnum(String value) {
       this.value = value;
     }
 
@@ -71,12 +69,11 @@ public class Order   {
     return this;
   }
 
-   /**
-   * Get id
-   * @return id
-  **/
-  @ApiModelProperty(value = "")
-
+  /**
+  * Get id
+  * @return id
+    **/
+  @ApiModelProperty("")
   @Valid
   public Long getId() {
     return id;
@@ -91,12 +88,11 @@ public class Order   {
     return this;
   }
 
-   /**
-   * Get petId
-   * @return petId
-  **/
-  @ApiModelProperty(value = "")
-
+  /**
+  * Get petId
+  * @return petId
+    **/
+  @ApiModelProperty("")
   @Valid
   public Long getPetId() {
     return petId;
@@ -111,12 +107,11 @@ public class Order   {
     return this;
   }
 
-   /**
-   * Get quantity
-   * @return quantity
-  **/
-  @ApiModelProperty(value = "")
-
+  /**
+  * Get quantity
+  * @return quantity
+    **/
+  @ApiModelProperty("")
   @Valid
   public Integer getQuantity() {
     return quantity;
@@ -131,13 +126,17 @@ public class Order   {
     return this;
   }
 
-   /**
-   * Get shipDate
-   * @return shipDate
-  **/
-  @ApiModelProperty(value = "")
-
+  /**
+  * Get shipDate
+  * @return shipDate
+    **/
+  @ApiModelProperty("")
+<<<<<<< LEFT
   @Valid
+=======
+  @Valid
+>>>>>>> RIGHT
+
   public OffsetDateTime getShipDate() {
     return shipDate;
   }
@@ -151,12 +150,11 @@ public class Order   {
     return this;
   }
 
-   /**
-   * Order Status
-   * @return status
-  **/
-  @ApiModelProperty(value = "Order Status")
-
+  /**
+  * Order Status
+  * @return status
+    **/
+  @ApiModelProperty("Order Status")
   @Valid
   public StatusEnum getStatus() {
     return status;
@@ -171,12 +169,11 @@ public class Order   {
     return this;
   }
 
-   /**
-   * Get complete
-   * @return complete
-  **/
-  @ApiModelProperty(value = "")
-
+  /**
+  * Get complete
+  * @return complete
+    **/
+  @ApiModelProperty("")
   @Valid
   public Boolean getComplete() {
     return complete;
@@ -186,22 +183,16 @@ public class Order   {
     this.complete = complete;
   }
 
-
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if ((o == null) || (getClass() != o.getClass())) {
       return false;
     }
-    Order order = (Order) o;
-    return Objects.equals(this.id, order.id) &&
-        Objects.equals(this.petId, order.petId) &&
-        Objects.equals(this.quantity, order.quantity) &&
-        Objects.equals(this.shipDate, order.shipDate) &&
-        Objects.equals(this.status, order.status) &&
-        Objects.equals(this.complete, order.complete);
+    Order order = ((Order) (o));
+    return ((((Objects.equals(this.id, order.id) && Objects.equals(this.petId, order.petId)) && Objects.equals(this.quantity, order.quantity)) && Objects.equals(this.shipDate, order.shipDate)) && Objects.equals(this.status, order.status)) && Objects.equals(this.complete, order.complete);
   }
 
   @Override
@@ -213,7 +204,6 @@ public class Order   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Order {\n");
-    
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    petId: ").append(toIndentedString(petId)).append("\n");
     sb.append("    quantity: ").append(toIndentedString(quantity)).append("\n");
@@ -235,4 +225,3 @@ public class Order   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

@@ -1,9 +1,11 @@
 package io.swagger.api;
 
-import java.util.Map;
-import io.swagger.model.Order;
-
 import io.swagger.annotations.*;
+import io.swagger.model.Order;
+import java.util.List;
+import java.util.Map;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,13 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
 
 @Api(value = "Store", description = "the Store API")
 public interface StoreApi {
-
     @ApiOperation(value = "Delete purchase order by ID", notes = "For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors", response = Void.class, tags={ "store", })
     @ApiResponses(value = { 
         @ApiResponse(code = 400, message = "Invalid ID supplied", response = Void.class),
@@ -30,7 +28,6 @@ public interface StoreApi {
         consumes = "application/json",
         method = RequestMethod.DELETE)
     com.netflix.hystrix.HystrixCommand<ResponseEntity<Void>> deleteOrder(@ApiParam(value = "ID of the order that needs to be deleted",required=true ) @PathVariable("orderId") String orderId);
-
 
     @ApiOperation(value = "Returns pet inventories by status", notes = "Returns a map of status codes to quantities", response = Integer.class, responseContainer = "Map", authorizations = {
         @Authorization(value = "api_key")
@@ -43,27 +40,20 @@ public interface StoreApi {
         method = RequestMethod.GET)
     com.netflix.hystrix.HystrixCommand<ResponseEntity<Map<String, Integer>>> getInventory();
 
+    @ApiOperation(value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions", response = Order.class, tags = { "store" })
+    @ApiResponses({ @ApiResponse(code = 200, message = "successful operation", response = Order.class), @ApiResponse(code = 400, message = "Invalid ID supplied", response = Order.class), @ApiResponse(code = 404, message = "Order not found", response = Order.class) })
+    @RequestMapping(value = "/store/order/{orderId}", produces = "application/json", consumes = "application/json", method = RequestMethod.GET)
+    com.netflix.hystrix.HystrixCommand<ResponseEntity<Order>> getOrderById(@ApiParam(value = "ID of pet that needs to be fetched", required = true)
+    @PathVariable("orderId")
+    String orderId) {
+    }
 
-    @ApiOperation(value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions", response = Order.class, tags={ "store", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "successful operation", response = Order.class),
-        @ApiResponse(code = 400, message = "Invalid ID supplied", response = Order.class),
-        @ApiResponse(code = 404, message = "Order not found", response = Order.class) })
-    @RequestMapping(value = "/store/order/{orderId}",
-        produces = "application/json",
-        consumes = "application/json",
-        method = RequestMethod.GET)
-    com.netflix.hystrix.HystrixCommand<ResponseEntity<Order>> getOrderById(@ApiParam(value = "ID of pet that needs to be fetched",required=true ) @PathVariable("orderId") String orderId);
-
-
-    @ApiOperation(value = "Place an order for a pet", notes = "", response = Order.class, tags={ "store", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "successful operation", response = Order.class),
-        @ApiResponse(code = 400, message = "Invalid Order", response = Order.class) })
-    @RequestMapping(value = "/store/order",
-        produces = "application/json",
-        consumes = "application/json",
-        method = RequestMethod.POST)
-    com.netflix.hystrix.HystrixCommand<ResponseEntity<Order>> placeOrder(@ApiParam(value = "order placed for purchasing the pet"  )  @Valid @RequestBody Order body);
-
+    @ApiOperation(value = "Place an order for a pet", notes = "", response = Order.class, tags = { "store" })
+    @ApiResponses({ @ApiResponse(code = 200, message = "successful operation", response = Order.class), @ApiResponse(code = 400, message = "Invalid Order", response = Order.class) })
+    @RequestMapping(value = "/store/order", produces = "application/json", consumes = "application/json", method = RequestMethod.POST)
+    com.netflix.hystrix.HystrixCommand<ResponseEntity<Order>> placeOrder(@ApiParam("order placed for purchasing the pet")
+    @Valid
+    @RequestBody
+    Order body) {
+    }
 }

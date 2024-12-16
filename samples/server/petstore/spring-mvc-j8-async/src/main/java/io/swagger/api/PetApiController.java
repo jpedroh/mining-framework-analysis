@@ -1,17 +1,21 @@
 package io.swagger.api;
 
-import org.springframework.stereotype.Controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import javax.validation.constraints.*;
 import javax.validation.Valid;
+import javax.validation.constraints.*;
+import org.springframework.stereotype.Controller;
+
 
 @Controller
 public class PetApiController implements PetApi {
-    private final ObjectMapper objectMapper;
+    public PetApiController(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     public PetApiController(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
+    private final ObjectMapper objectMapper;
 }

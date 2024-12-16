@@ -1,22 +1,22 @@
 package io.swagger.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.UUID;
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.OffsetDateTime;
+
 
 /**
  * FormatTest
  */
-
-public class FormatTest   {
+public class FormatTest {
   @JsonProperty("integer")
   private Integer integer = null;
 
@@ -61,14 +61,15 @@ public class FormatTest   {
     return this;
   }
 
-   /**
-   * Get integer
-   * minimum: 10
-   * maximum: 100
-   * @return integer
-  **/
-  @ApiModelProperty(value = "")
- @Min(10) @Max(100)
+  /**
+  * Get integer
+  * minimum: 10
+  * maximum: 100
+  * @return integer
+    **/
+  @ApiModelProperty("")
+  @Min(10)
+  @Max(100)
   @Valid
   public Integer getInteger() {
     return integer;
@@ -83,14 +84,15 @@ public class FormatTest   {
     return this;
   }
 
-   /**
-   * Get int32
-   * minimum: 20
-   * maximum: 200
-   * @return int32
-  **/
-  @ApiModelProperty(value = "")
- @Min(20) @Max(200)
+  /**
+  * Get int32
+  * minimum: 20
+  * maximum: 200
+  * @return int32
+    **/
+  @ApiModelProperty("")
+  @Min(20)
+  @Max(200)
   @Valid
   public Integer getInt32() {
     return int32;
@@ -105,12 +107,11 @@ public class FormatTest   {
     return this;
   }
 
-   /**
-   * Get int64
-   * @return int64
-  **/
-  @ApiModelProperty(value = "")
-
+  /**
+  * Get int64
+  * @return int64
+    **/
+  @ApiModelProperty("")
   @Valid
   public Long getInt64() {
     return int64;
@@ -125,15 +126,16 @@ public class FormatTest   {
     return this;
   }
 
-   /**
-   * Get number
-   * minimum: 32.1
-   * maximum: 543.2
-   * @return number
-  **/
+  /**
+  * Get number
+  * minimum: 32.1
+  * maximum: 543.2
+  * @return number
+    **/
   @ApiModelProperty(required = true, value = "")
   @NotNull
- @DecimalMin("32.1") @DecimalMax("543.2")
+  @DecimalMin("32.1")
+  @DecimalMax("543.2")
   @Valid
   public BigDecimal getNumber() {
     return number;
@@ -148,14 +150,15 @@ public class FormatTest   {
     return this;
   }
 
-   /**
-   * Get _float
-   * minimum: 54.3
-   * maximum: 987.6
-   * @return _float
-  **/
-  @ApiModelProperty(value = "")
- @DecimalMin("54.3") @DecimalMax("987.6")
+  /**
+  * Get _float
+  * minimum: 54.3
+  * maximum: 987.6
+  * @return _float
+    **/
+  @ApiModelProperty("")
+  @DecimalMin("54.3")
+  @DecimalMax("987.6")
   @Valid
   public Float getFloat() {
     return _float;
@@ -170,14 +173,15 @@ public class FormatTest   {
     return this;
   }
 
-   /**
-   * Get _double
-   * minimum: 67.8
-   * maximum: 123.4
-   * @return _double
-  **/
-  @ApiModelProperty(value = "")
- @DecimalMin("67.8") @DecimalMax("123.4")
+  /**
+  * Get _double
+  * minimum: 67.8
+  * maximum: 123.4
+  * @return _double
+    **/
+  @ApiModelProperty("")
+  @DecimalMin("67.8")
+  @DecimalMax("123.4")
   @Valid
   public Double getDouble() {
     return _double;
@@ -192,12 +196,12 @@ public class FormatTest   {
     return this;
   }
 
-   /**
-   * Get string
-   * @return string
-  **/
-  @ApiModelProperty(value = "")
- @Pattern(regexp="/[a-z]/i")
+  /**
+  * Get string
+  * @return string
+    **/
+  @ApiModelProperty("")
+  @Pattern(regexp = "/[a-z]/i")
   @Valid
   public String getString() {
     return string;
@@ -212,13 +216,12 @@ public class FormatTest   {
     return this;
   }
 
-   /**
-   * Get _byte
-   * @return _byte
-  **/
+  /**
+  * Get _byte
+  * @return _byte
+    **/
   @ApiModelProperty(required = true, value = "")
   @NotNull
-
   @Valid
   public byte[] getByte() {
     return _byte;
@@ -233,12 +236,11 @@ public class FormatTest   {
     return this;
   }
 
-   /**
-   * Get binary
-   * @return binary
-  **/
-  @ApiModelProperty(value = "")
-
+  /**
+  * Get binary
+  * @return binary
+    **/
+  @ApiModelProperty("")
   @Valid
   public byte[] getBinary() {
     return binary;
@@ -253,14 +255,18 @@ public class FormatTest   {
     return this;
   }
 
-   /**
-   * Get date
-   * @return date
-  **/
+  /**
+  * Get date
+  * @return date
+    **/
   @ApiModelProperty(required = true, value = "")
   @NotNull
-
+<<<<<<< LEFT
   @Valid
+=======
+  @Valid
+>>>>>>> RIGHT
+
   public LocalDate getDate() {
     return date;
   }
@@ -274,13 +280,17 @@ public class FormatTest   {
     return this;
   }
 
-   /**
-   * Get dateTime
-   * @return dateTime
-  **/
-  @ApiModelProperty(value = "")
-
+  /**
+  * Get dateTime
+  * @return dateTime
+    **/
+  @ApiModelProperty("")
+<<<<<<< LEFT
   @Valid
+=======
+  @Valid
+>>>>>>> RIGHT
+
   public OffsetDateTime getDateTime() {
     return dateTime;
   }
@@ -294,12 +304,11 @@ public class FormatTest   {
     return this;
   }
 
-   /**
-   * Get uuid
-   * @return uuid
-  **/
-  @ApiModelProperty(value = "")
-
+  /**
+  * Get uuid
+  * @return uuid
+    **/
+  @ApiModelProperty("")
   @Valid
   public UUID getUuid() {
     return uuid;
@@ -314,13 +323,13 @@ public class FormatTest   {
     return this;
   }
 
-   /**
-   * Get password
-   * @return password
-  **/
+  /**
+  * Get password
+  * @return password
+    **/
   @ApiModelProperty(required = true, value = "")
   @NotNull
- @Size(min=10,max=64)
+  @Size(min = 10, max = 64)
   @Valid
   public String getPassword() {
     return password;
@@ -330,29 +339,16 @@ public class FormatTest   {
     this.password = password;
   }
 
-
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if ((o == null) || (getClass() != o.getClass())) {
       return false;
     }
-    FormatTest formatTest = (FormatTest) o;
-    return Objects.equals(this.integer, formatTest.integer) &&
-        Objects.equals(this.int32, formatTest.int32) &&
-        Objects.equals(this.int64, formatTest.int64) &&
-        Objects.equals(this.number, formatTest.number) &&
-        Objects.equals(this._float, formatTest._float) &&
-        Objects.equals(this._double, formatTest._double) &&
-        Objects.equals(this.string, formatTest.string) &&
-        Objects.equals(this._byte, formatTest._byte) &&
-        Objects.equals(this.binary, formatTest.binary) &&
-        Objects.equals(this.date, formatTest.date) &&
-        Objects.equals(this.dateTime, formatTest.dateTime) &&
-        Objects.equals(this.uuid, formatTest.uuid) &&
-        Objects.equals(this.password, formatTest.password);
+    FormatTest formatTest = ((FormatTest) (o));
+    return (((((((((((Objects.equals(this.integer, formatTest.integer) && Objects.equals(this.int32, formatTest.int32)) && Objects.equals(this.int64, formatTest.int64)) && Objects.equals(this.number, formatTest.number)) && Objects.equals(this._float, formatTest._float)) && Objects.equals(this._double, formatTest._double)) && Objects.equals(this.string, formatTest.string)) && Objects.equals(this._byte, formatTest._byte)) && Objects.equals(this.binary, formatTest.binary)) && Objects.equals(this.date, formatTest.date)) && Objects.equals(this.dateTime, formatTest.dateTime)) && Objects.equals(this.uuid, formatTest.uuid)) && Objects.equals(this.password, formatTest.password);
   }
 
   @Override
@@ -364,7 +360,6 @@ public class FormatTest   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class FormatTest {\n");
-    
     sb.append("    integer: ").append(toIndentedString(integer)).append("\n");
     sb.append("    int32: ").append(toIndentedString(int32)).append("\n");
     sb.append("    int64: ").append(toIndentedString(int64)).append("\n");
@@ -393,4 +388,3 @@ public class FormatTest   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-
