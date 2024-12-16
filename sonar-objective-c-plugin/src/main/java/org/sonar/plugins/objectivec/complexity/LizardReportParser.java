@@ -17,6 +17,16 @@
  */
 package org.sonar.plugins.objectivec.complexity;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.measures.*;
@@ -26,16 +36,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This class parses xml Reports form the tool Lizard in order to extract this measures:
@@ -46,20 +46,28 @@ import java.util.Map;
  * @since 28/05/15
  */
 public class LizardReportParser {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(LizardReportParser.class);
 
-    private final Number[] FUNCTIONS_DISTRIB_BOTTOM_LIMITS = {1, 2, 4, 6, 8, 10, 12, 20, 30};
-    private final Number[] FILES_DISTRIB_BOTTOM_LIMITS = {0, 5, 10, 20, 30, 60, 90};
+    private final Number[] FUNCTIONS_DISTRIB_BOTTOM_LIMITS = new java.lang.Number[]{ 1, 2, 4, 6, 8, 10, 12, 20, 30 };
+
+    private final Number[] FILES_DISTRIB_BOTTOM_LIMITS = new java.lang.Number[]{ 0, 5, 10, 20, 30, 60, 90 };
 
     private static final String MEASURE = "measure";
+
     private static final String MEASURE_TYPE = "type";
+
     private static final String MEASURE_ITEM = "item";
+
     private static final String FILE_MEASURE = "file";
+
     private static final String FUNCTION_MEASURE = "Function";
+
     private static final String NAME = "name";
+
     private static final String VALUE = "value";
+
     private static final int CYCLOMATIC_COMPLEXITY_INDEX = 2;
+
     private static final int FUNCTIONS_INDEX = 3;
 
     /**
@@ -149,13 +157,14 @@ public class LizardReportParser {
      * @param numberOfFunctions number of functions in the file
      * @return returns a list of tree measures COMPLEXITY, FUNCTIONS, FILE_COMPLEXITY with the values specified
      */
-    private List<Measure> buildMeasureList(int complexity, double fileComplexity, int numberOfFunctions){
+    private List<Measure> buildMeasureList(int complexity, double fileComplexity, int numberOfFunctions) {
         List<Measure> list = new ArrayList<Measure>();
         list.add(new Measure(CoreMetrics.COMPLEXITY).setIntValue(complexity));
         list.add(new Measure(CoreMetrics.FUNCTIONS).setIntValue(numberOfFunctions));
         list.add(new Measure(CoreMetrics.FILE_COMPLEXITY, fileComplexity));
         RangeDistributionBuilder complexityDistribution = new RangeDistributionBuilder(CoreMetrics.FILE_COMPLEXITY_DISTRIBUTION, FILES_DISTRIB_BOTTOM_LIMITS);
         complexityDistribution.add(fileComplexity);
+        list.add(complexityDistribution.build());
         return list;
     }
 
@@ -219,10 +228,11 @@ public class LizardReportParser {
      * @param builder Builder ready to build FUNCTION_COMPLEXITY_DISTRIBUTION
      * @return list of Measures containing FUNCTION_COMPLEXITY_DISTRIBUTION, FUNCTION_COMPLEXITY and COMPLEXITY_IN_FUNCTIONS
      */
-    public List<Measure> buildFunctionMeasuresList(double complexMean, int complexityInFunctions, RangeDistributionBuilder builder){
+    public List<Measure> buildFunctionMeasuresList(double complexMean, int complexityInFunctions, RangeDistributionBuilder builder) {
         List<Measure> list = new ArrayList<Measure>();
         list.add(new Measure(CoreMetrics.FUNCTION_COMPLEXITY, complexMean));
         list.add(new Measure(CoreMetrics.COMPLEXITY_IN_FUNCTIONS).setIntValue(complexityInFunctions));
+        list.add(builder.build());
         return list;
     }
 
@@ -231,6 +241,7 @@ public class LizardReportParser {
      */
     private class ObjCFunction {
         private String name;
+
         private int cyclomaticComplexity;
 
         public ObjCFunction(String name, int cyclomaticComplexity) {
@@ -245,6 +256,5 @@ public class LizardReportParser {
         public int getCyclomaticComplexity() {
             return cyclomaticComplexity;
         }
-
     }
 }
