@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cloudfoundry;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -21,6 +20,11 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.github.zafarkhaja.semver.Version;
+import java.security.SecureRandom;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 import org.cloudfoundry.client.CloudFoundryClient;
 import org.cloudfoundry.client.v2.info.GetInfoRequest;
 import org.cloudfoundry.client.v2.organizationquotadefinitions.CreateOrganizationQuotaDefinitionRequest;
@@ -71,13 +75,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
-
-import java.security.SecureRandom;
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
 import static org.assertj.core.api.Assertions.fail;
 import static org.cloudfoundry.uaa.tokens.GrantType.AUTHORIZATION_CODE;
 import static org.cloudfoundry.uaa.tokens.GrantType.CLIENT_CREDENTIALS;
@@ -85,60 +82,21 @@ import static org.cloudfoundry.uaa.tokens.GrantType.PASSWORD;
 import static org.cloudfoundry.uaa.tokens.GrantType.REFRESH_TOKEN;
 import static org.cloudfoundry.util.tuple.TupleUtils.function;
 
+
 @Configuration
 @EnableAutoConfiguration
 public class IntegrationTestConfiguration {
+    private static final List<String> GROUPS = Arrays.asList("clients.admin", "clients.secret", "cloud_controller.admin", "idps.write", "network.admin", "routing.router_groups.read", "routing.router_groups.write", "routing.routes.read", "routing.routes.write", "scim.create", "scim.invite", "scim.read", "scim.userids", "scim.write", "scim.zones", "uaa.admin", "zones.read", "zones.write");
 
-    private static final List<String> GROUPS = Arrays.asList(
-        "clients.admin",
-        "clients.secret",
-        "cloud_controller.admin",
-        "idps.write",
-        "network.admin",
-        "routing.router_groups.read",
-        "routing.router_groups.write",
-        "routing.routes.read",
-        "routing.routes.write",
-        "scim.create",
-        "scim.invite",
-        "scim.read",
-        "scim.userids",
-        "scim.write",
-        "scim.zones",
-        "uaa.admin",
-        "zones.read",
-        "zones.write");
-
-    private static final List<String> SCOPES = Arrays.asList(
-        "clients.admin",
-        "clients.secret",
-        "cloud_controller.admin",
-        "cloud_controller.read",
-        "cloud_controller.write",
-        "idps.write",
-        "network.admin",
-        "openid",
-        "password.write",
-        "routing.router_groups.read",
-        "routing.router_groups.write",
-        "routing.routes.read",
-        "routing.routes.write",
-        "scim.create",
-        "scim.invite",
-        "scim.read",
-        "scim.userids",
-        "scim.write",
-        "scim.zones",
-        "uaa.admin",
-        "uaa.user",
-        "zones.read",
-        "zones.write");
+    private static final List<String> SCOPES = Arrays.asList("clients.admin", "clients.secret", "cloud_controller.admin", "cloud_controller.read", "cloud_controller.write", "idps.write", "network.admin", "openid", "password.write", "routing.router_groups.read", "routing.router_groups.write", "routing.routes.read", "routing.routes.write", "scim.create", "scim.invite", "scim.read", "scim.userids", "scim.write", "scim.zones", "uaa.admin", "uaa.user", "zones.read", "zones.write");
 
     private final Logger logger = LoggerFactory.getLogger("cloudfoundry-client.test");
 
     @Bean
     @Qualifier("admin")
-    ReactorCloudFoundryClient adminCloudFoundryClient(ConnectionContext connectionContext, @Value("${test.admin.password}") String password, @Value("${test.admin.username}") String username) {
+    ReactorCloudFoundryClient adminCloudFoundryClient(ConnectionContext connectionContext,
+                                                      @Value("${test.admin.password}") String password,
+                                                      @Value("${test.admin.username}") String username) {
         return ReactorCloudFoundryClient.builder()
             .connectionContext(connectionContext)
             .tokenProvider(PasswordGrantTokenProvider.builder()
@@ -201,9 +159,10 @@ public class IntegrationTestConfiguration {
     }
 
     @Bean(initMethod = "clean", destroyMethod = "clean")
-    CloudFoundryCleaner cloudFoundryCleaner(@Qualifier("admin") CloudFoundryClient cloudFoundryClient, NameFactory nameFactory, @Qualifier("admin") NetworkingClient networkingClient,
-                                            Version serverVersion, @Qualifier("admin") UaaClient uaaClient) {
-
+    CloudFoundryCleaner cloudFoundryCleaner(@Qualifier("admin")
+    CloudFoundryClient cloudFoundryClient, NameFactory nameFactory, @Qualifier("admin")
+    NetworkingClient networkingClient, Version serverVersion, @Qualifier("admin")
+    UaaClient uaaClient) {
         return new CloudFoundryCleaner(cloudFoundryClient, nameFactory, networkingClient, serverVersion, uaaClient);
     }
 
@@ -288,40 +247,7 @@ public class IntegrationTestConfiguration {
     @Bean(initMethod = "block")
     @DependsOn("cloudFoundryCleaner")
     Mono<String> organizationId(CloudFoundryClient cloudFoundryClient, String organizationName, String organizationQuotaName, Mono<String> userId) throws InterruptedException {
-        return userId
-            .flatMap(userId1 -> cloudFoundryClient.organizationQuotaDefinitions()
-                .create(CreateOrganizationQuotaDefinitionRequest.builder()
-                    .applicationInstanceLimit(-1)
-                    .applicationTaskLimit(-1)
-                    .instanceMemoryLimit(-1)
-                    .memoryLimit(8192)
-                    .name(organizationQuotaName)
-                    .nonBasicServicesAllowed(true)
-                    .totalPrivateDomains(-1)
-                    .totalReservedRoutePorts(-1)
-                    .totalRoutes(-1)
-                    .totalServiceKeys(-1)
-                    .totalServices(-1)
-                    .build())
-                .map(ResourceUtils::getId)
-                .zipWith(Mono.just(userId1)))
-            .flatMap(function((quotaId, userId1) -> cloudFoundryClient.organizations()
-                .create(CreateOrganizationRequest.builder()
-                    .name(organizationName)
-                    .quotaDefinitionId(quotaId)
-                    .build())
-                .map(ResourceUtils::getId)
-                .zipWith(Mono.just(userId1))))
-            .flatMap(function((organizationId, userId1) -> cloudFoundryClient.organizations()
-                .associateManager(AssociateOrganizationManagerRequest.builder()
-                    .organizationId(organizationId)
-                    .managerId(userId1)
-                    .build())
-                .then(Mono.just(organizationId))))
-            .doOnSubscribe(s -> this.logger.debug(">> ORGANIZATION ({}) <<", organizationName))
-            .doOnError(Throwable::printStackTrace)
-            .doOnSuccess(id -> this.logger.debug("<< ORGANIZATION ({}) >>", id))
-            .cache();
+        return userId.flatMap(( userId1) -> cloudFoundryClient.organizationQuotaDefinitions().create(CreateOrganizationQuotaDefinitionRequest.builder().applicationInstanceLimit(-1).applicationTaskLimit(-1).instanceMemoryLimit(-1).memoryLimit(8192).name(organizationQuotaName).nonBasicServicesAllowed(true).totalPrivateDomains(-1).totalReservedRoutePorts(-1).totalRoutes(-1).totalServiceKeys(-1).totalServices(-1).build()).map(ResourceUtils::getId).zipWith(Mono.just(userId1))).flatMap(function(( quotaId, userId1) -> cloudFoundryClient.organizations().create(CreateOrganizationRequest.builder().name(organizationName).quotaDefinitionId(quotaId).build()).map(ResourceUtils::getId).zipWith(Mono.just(userId1)))).flatMap(function(( organizationId, userId1) -> cloudFoundryClient.organizations().associateManager(AssociateOrganizationManagerRequest.builder().organizationId(organizationId).managerId(userId1).build()).then(Mono.just(organizationId)))).doOnSubscribe(( s) -> this.logger.debug(">> ORGANIZATION ({}) <<", organizationName)).doOnError(Throwable::printStackTrace).doOnSuccess(( id) -> this.logger.debug("<< ORGANIZATION ({}) >>", id)).cache();
     }
 
     @Bean
@@ -358,26 +284,15 @@ public class IntegrationTestConfiguration {
     }
 
     @Bean
-    Version serverVersion(@Qualifier("admin") CloudFoundryClient cloudFoundryClient) {
-        return cloudFoundryClient.info()
-            .get(GetInfoRequest.builder()
-                .build())
-            .map(response -> Version.valueOf(response.getApiVersion()))
-            .doOnSubscribe(s -> this.logger.debug(">> CLOUD FOUNDRY VERSION <<"))
-            .doOnSuccess(r -> this.logger.debug("<< CLOUD FOUNDRY VERSION >>"))
-            .block();
+    Version serverVersion(@Qualifier("admin")
+    CloudFoundryClient cloudFoundryClient) {
+        return cloudFoundryClient.info().get(GetInfoRequest.builder().build()).map(( response) -> Version.valueOf(response.getApiVersion())).doOnSubscribe(( s) -> this.logger.debug(">> CLOUD FOUNDRY VERSION <<")).doOnSuccess(( r) -> this.logger.debug("<< CLOUD FOUNDRY VERSION >>")).block();
     }
 
     @Bean(initMethod = "block")
     @DependsOn("cloudFoundryCleaner")
     Mono<String> serviceBrokerId(CloudFoundryClient cloudFoundryClient, NameFactory nameFactory, String planName, String serviceBrokerName, String serviceName, Mono<String> spaceId) {
-        return spaceId
-            .flatMap(spaceId1 -> ServiceBrokerUtils.createServiceBroker(cloudFoundryClient, nameFactory, planName, serviceBrokerName, serviceName, spaceId1, false)
-                .map(response -> response.serviceBrokerId))
-            .doOnSubscribe(s -> this.logger.debug(">> SERVICE BROKER ({} {}/{}) <<", serviceBrokerName, serviceName, planName))
-            .doOnError(Throwable::printStackTrace)
-            .doOnSuccess(id -> this.logger.debug("<< SERVICE_BROKER ({})>>", id))
-            .cache();
+        return spaceId.flatMap(( spaceId1) -> ServiceBrokerUtils.createServiceBroker(cloudFoundryClient, nameFactory, planName, serviceBrokerName, serviceName, spaceId1, false).map(( response) -> response.serviceBrokerId)).doOnSubscribe(( s) -> this.logger.debug(">> SERVICE BROKER ({} {}/{}) <<", serviceBrokerName, serviceName, planName)).doOnError(Throwable::printStackTrace).doOnSuccess(( id) -> this.logger.debug("<< SERVICE_BROKER ({})>>", id)).cache();
     }
 
     @Bean
@@ -393,17 +308,7 @@ public class IntegrationTestConfiguration {
     @Bean(initMethod = "block")
     @DependsOn("cloudFoundryCleaner")
     Mono<String> spaceId(CloudFoundryClient cloudFoundryClient, Mono<String> organizationId, String spaceName) throws InterruptedException {
-        return organizationId
-            .flatMap(orgId -> cloudFoundryClient.spaces()
-                .create(CreateSpaceRequest.builder()
-                    .name(spaceName)
-                    .organizationId(orgId)
-                    .build()))
-            .map(ResourceUtils::getId)
-            .doOnSubscribe(s -> this.logger.debug(">> SPACE ({}) <<", spaceName))
-            .doOnError(Throwable::printStackTrace)
-            .doOnSuccess(id -> this.logger.debug("<< SPACE ({}) >>", id))
-            .cache();
+        return organizationId.flatMap(( orgId) -> cloudFoundryClient.spaces().create(CreateSpaceRequest.builder().name(spaceName).organizationId(orgId).build())).map(ResourceUtils::getId).doOnSubscribe(( s) -> this.logger.debug(">> SPACE ({}) <<", spaceName)).doOnError(Throwable::printStackTrace).doOnSuccess(( id) -> this.logger.debug("<< SPACE ({}) >>", id)).cache();
     }
 
     @Bean
@@ -454,45 +359,9 @@ public class IntegrationTestConfiguration {
 
     @Bean(initMethod = "block")
     @DependsOn("cloudFoundryCleaner")
-    Mono<String> userId(@Qualifier("admin") UaaClient uaaClient, String password, String username) {
-        return uaaClient.users()
-            .create(CreateUserRequest.builder()
-                .email(Email.builder()
-                    .primary(true)
-                    .value(String.format("%s@%s.com", username, username))
-                    .build())
-                .name(Name.builder()
-                    .givenName("Test")
-                    .familyName("User")
-                    .build())
-                .password(password)
-                .userName(username)
-                .build())
-            .map(CreateUserResponse::getId)
-            .delayUntil(userId -> Flux.fromIterable(GROUPS)
-                .flatMap(group -> uaaClient.groups()
-                    .list(ListGroupsRequest.builder()
-                        .filter(String.format("displayName eq \"%s\"", group))
-                        .build())
-                    .flatMapIterable(ListGroupsResponse::getResources)
-                    .singleOrEmpty()
-                    .map(Group::getId)
-                    .switchIfEmpty(uaaClient.groups()
-                        .create(CreateGroupRequest.builder()
-                            .displayName(group)
-                            .build())
-                        .map(CreateGroupResponse::getId))
-                    .flatMap(groupId -> uaaClient.groups()
-                        .addMember(AddMemberRequest.builder()
-                            .groupId(groupId)
-                            .memberId(userId)
-                            .origin("uaa")
-                            .type(MemberType.USER)
-                            .build()))))
-            .doOnSubscribe(s -> this.logger.debug(">> USER ({}/{}) <<", username, password))
-            .doOnError(Throwable::printStackTrace)
-            .doOnSuccess(id -> this.logger.debug("<< USER ({})>>", id))
-            .cache();
+    Mono<String> userId(@Qualifier("admin")
+    UaaClient uaaClient, String password, String username) {
+        return uaaClient.users().create(CreateUserRequest.builder().email(Email.builder().primary(true).value(String.format("%s@%s.com", username, username)).build()).name(Name.builder().givenName("Test").familyName("User").build()).password(password).userName(username).build()).map(CreateUserResponse::getId).delayUntil(( userId) -> Flux.fromIterable(GROUPS).flatMap(( group) -> uaaClient.groups().list(ListGroupsRequest.builder().filter(String.format("displayName eq \"%s\"", group)).build()).flatMapIterable(ListGroupsResponse::getResources).singleOrEmpty().map(Group::getId).switchIfEmpty(uaaClient.groups().create(CreateGroupRequest.builder().displayName(group).build()).map(CreateGroupResponse::getId)).flatMap(( groupId) -> uaaClient.groups().addMember(AddMemberRequest.builder().groupId(groupId).memberId(userId).origin("uaa").type(MemberType.USER).build())))).doOnSubscribe(( s) -> this.logger.debug(">> USER ({}/{}) <<", username, password)).doOnError(Throwable::printStackTrace).doOnSuccess(( id) -> this.logger.debug("<< USER ({})>>", id)).cache();
     }
 
     @Bean
@@ -501,13 +370,10 @@ public class IntegrationTestConfiguration {
     }
 
     private static final class FailingDeserializationProblemHandler extends DeserializationProblemHandler {
-
         @Override
         public boolean handleUnknownProperty(DeserializationContext ctxt, JsonParser jp, JsonDeserializer<?> deserializer, Object beanOrClass, String propertyName) {
             fail(String.format("Found unexpected property %s in payload for %s", propertyName, beanOrClass.getClass().getName()));
             return false;
         }
-
     }
-
 }

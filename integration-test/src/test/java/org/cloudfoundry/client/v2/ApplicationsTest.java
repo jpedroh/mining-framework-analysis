@@ -13,9 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cloudfoundry.client.v2;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
+import java.util.zip.GZIPInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.cloudfoundry.AbstractIntegrationTest;
@@ -78,26 +88,13 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import reactor.util.function.Tuple2;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.time.Duration;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
-import java.util.zip.GZIPInputStream;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.cloudfoundry.client.ZipExpectations.zipEquality;
 import static org.cloudfoundry.util.tuple.TupleUtils.consumer;
 import static org.cloudfoundry.util.tuple.TupleUtils.function;
 
-public final class ApplicationsTest extends AbstractIntegrationTest {
 
+public final class ApplicationsTest extends AbstractIntegrationTest {
     @Autowired
     private CloudFoundryClient cloudFoundryClient;
 
@@ -114,795 +111,229 @@ public final class ApplicationsTest extends AbstractIntegrationTest {
     public void associateRoute() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
         String domainName = this.nameFactory.getDomainName();
-
-        Mono
-            .zip(this.organizationId, this.spaceId)
-            .flatMap(function((organizationId, spaceId) -> Mono.zip(
-                createApplicationId(this.cloudFoundryClient, spaceId, applicationName),
-                createRouteWithDomain(this.cloudFoundryClient, organizationId, spaceId, domainName, "test-host", "/test/path")
-                    .map(ResourceUtils::getId)
-            )))
-            .delayUntil(function((applicationId, routeId) -> requestAssociateRoute(this.cloudFoundryClient, applicationId, routeId)))
-            .flatMap(function((applicationId, routeId) -> Mono.zip(
-                getSingleRouteId(this.cloudFoundryClient, applicationId),
-                Mono.just(routeId)
-            )))
-            .as(StepVerifier::create)
-            .consumeNextWith(tupleEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        Mono.zip(this.organizationId, this.spaceId).flatMap(function(( organizationId, spaceId) -> Mono.zip(createApplicationId(this.cloudFoundryClient, spaceId, applicationName), createRouteWithDomain(this.cloudFoundryClient, organizationId, spaceId, domainName, "test-host", "/test/path").map(ResourceUtils::getId)))).delayUntil(function(( applicationId, routeId) -> requestAssociateRoute(this.cloudFoundryClient, applicationId, routeId))).flatMap(function(( applicationId, routeId) -> Mono.zip(getSingleRouteId(this.cloudFoundryClient, applicationId), Mono.just(routeId)))).as(StepVerifier::create).consumeNextWith(tupleEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void copy() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
         String copyApplicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> Mono.zip(
-                createApplicationId(this.cloudFoundryClient, spaceId, applicationName)
-                    .delayUntil(applicationId -> uploadApplication(this.cloudFoundryClient, applicationId)),
-                requestCreateApplication(this.cloudFoundryClient, spaceId, copyApplicationName)
-                    .map(ResourceUtils::getId)
-            ))
-            .delayUntil(function((sourceId, targetId) -> this.cloudFoundryClient.applicationsV2()
-                .copy(CopyApplicationRequest.builder()
-                    .applicationId(targetId)
-                    .sourceApplicationId(sourceId)
-                    .build())
-                .flatMap(job -> JobUtils.waitForCompletion(this.cloudFoundryClient, Duration.ofMinutes(5), job))
-            ))
-            .flatMap(function((sourceId, targetId) -> Mono.zip(
-                downloadApplication(this.cloudFoundryClient, sourceId),
-                downloadApplication(this.cloudFoundryClient, targetId)
-            )))
-            .as(StepVerifier::create)
-            .consumeNextWith(tupleEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> Mono.zip(createApplicationId(this.cloudFoundryClient, spaceId, applicationName).delayUntil(( applicationId) -> uploadApplication(this.cloudFoundryClient, applicationId)), requestCreateApplication(this.cloudFoundryClient, spaceId, copyApplicationName).map(ResourceUtils::getId))).delayUntil(function(( sourceId, targetId) -> this.cloudFoundryClient.applicationsV2().copy(CopyApplicationRequest.builder().applicationId(targetId).sourceApplicationId(sourceId).build()).flatMap(( job) -> JobUtils.waitForCompletion(this.cloudFoundryClient, Duration.ofMinutes(5), job)))).flatMap(function(( sourceId, targetId) -> Mono.zip(downloadApplication(this.cloudFoundryClient, sourceId), downloadApplication(this.cloudFoundryClient, targetId)))).as(StepVerifier::create).consumeNextWith(tupleEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void create() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> Mono.zip(
-                Mono.just(spaceId),
-                requestCreateApplication(this.cloudFoundryClient, spaceId, applicationName)
-                    .map(ResourceUtils::getEntity)
-            ))
-            .as(StepVerifier::create)
-            .consumeNextWith(consumer((spaceId, entity) -> {
-                assertThat(entity.getSpaceId()).isEqualTo(spaceId);
-                assertThat(entity.getName()).isEqualTo(applicationName);
-            }))
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> Mono.zip(Mono.just(spaceId), requestCreateApplication(this.cloudFoundryClient, spaceId, applicationName).map(ResourceUtils::getEntity))).as(StepVerifier::create).consumeNextWith(consumer(( spaceId, entity) -> {
+            assertThat(entity.getSpaceId()).isEqualTo(spaceId);
+            assertThat(entity.getName()).isEqualTo(applicationName);
+        })).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void delete() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            .delayUntil(applicationId -> this.cloudFoundryClient.applicationsV2()
-                .delete(DeleteApplicationRequest.builder()
-                    .applicationId(applicationId)
-                    .build()))
-            .flatMap(applicationId -> requestGetApplication(this.cloudFoundryClient, applicationId))
-            .as(StepVerifier::create)
-            .consumeErrorWith(t -> assertThat(t).isInstanceOf(ClientV2Exception.class).hasMessageMatching("CF-AppNotFound\\([0-9]+\\): The app could not be found: .*"))
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)).delayUntil(( applicationId) -> this.cloudFoundryClient.applicationsV2().delete(DeleteApplicationRequest.builder().applicationId(applicationId).build())).flatMap(( applicationId) -> requestGetApplication(this.cloudFoundryClient, applicationId)).as(StepVerifier::create).consumeErrorWith(( t) -> assertThat(t).isInstanceOf(.class).hasMessageMatching("CF-AppNotFound\\([0-9]+\\): The app could not be found: .*")).verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void downloadDroplet() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            .delayUntil(applicationId -> uploadAndStartApplication(this.cloudFoundryClient, applicationId))
-            .flatMapMany(applicationId -> this.cloudFoundryClient.applicationsV2()
-                .downloadDroplet(DownloadApplicationDropletRequest.builder()
-                    .applicationId(applicationId)
-                    .build())
-                .as(OperationUtils::collectByteArray))
-            .as(StepVerifier::create)
-            .consumeNextWith(isTestApplicationDroplet())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)).delayUntil(( applicationId) -> uploadAndStartApplication(this.cloudFoundryClient, applicationId)).flatMapMany(( applicationId) -> this.cloudFoundryClient.applicationsV2().downloadDroplet(DownloadApplicationDropletRequest.builder().applicationId(applicationId).build()).as(OperationUtils::collectByteArray)).as(StepVerifier::create).consumeNextWith(isTestApplicationDroplet()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void environment() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            .flatMap(applicationId -> Mono.zip(
-                Mono.just(applicationId),
-                this.cloudFoundryClient.applicationsV2()
-                    .environment(ApplicationEnvironmentRequest.builder()
-                        .applicationId(applicationId)
-                        .build())
-                    .map(response -> getStringApplicationEnvValue(response.getApplicationEnvironmentJsons(), "VCAP_APPLICATION", "application_id"))
-            ))
-            .as(StepVerifier::create)
-            .consumeNextWith(tupleEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)).flatMap(( applicationId) -> Mono.zip(Mono.just(applicationId), this.cloudFoundryClient.applicationsV2().environment(ApplicationEnvironmentRequest.builder().applicationId(applicationId).build()).map(( response) -> getStringApplicationEnvValue(response.getApplicationEnvironmentJsons(), "VCAP_APPLICATION", "application_id")))).as(StepVerifier::create).consumeNextWith(tupleEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void get() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            .flatMap(applicationId -> Mono.zip(
-                Mono.just(applicationId),
-                requestGetApplication(this.cloudFoundryClient, applicationId)
-            ))
-            .as(StepVerifier::create)
-            .consumeNextWith(applicationIdAndNameEquality(applicationName))
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)).flatMap(( applicationId) -> Mono.zip(Mono.just(applicationId), requestGetApplication(this.cloudFoundryClient, applicationId))).as(StepVerifier::create).consumeNextWith(applicationIdAndNameEquality(applicationName)).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @IfCloudFoundryVersion(greaterThanOrEqualTo = CloudFoundryVersion.PCF_1_9)
     @Test
     public void getPermissions() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            .flatMap(applicationId -> this.cloudFoundryClient.applicationsV2()
-                .getPermissions(GetApplicationPermissionsRequest.builder()
-                    .applicationId(applicationId)
-                    .build()))
-            .as(StepVerifier::create)
-            .expectNext(GetApplicationPermissionsResponse.builder()
-                .readBasicData(true)
-                .readSensitiveData(true)
-                .build())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)).flatMap(( applicationId) -> this.cloudFoundryClient.applicationsV2().getPermissions(GetApplicationPermissionsRequest.builder().applicationId(applicationId).build())).as(StepVerifier::create).expectNext(GetApplicationPermissionsResponse.builder().readBasicData(true).readSensitiveData(true).build()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void list() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            .flatMap(applicationId -> Mono.zip(
-                Mono.just(applicationId),
-                PaginationUtils
-                    .requestClientV2Resources(page -> this.cloudFoundryClient.applicationsV2()
-                        .list(ListApplicationsRequest.builder()
-                            .page(page)
-                            .build()))
-                    .filter(resource -> ResourceUtils.getId(resource).equals(applicationId))
-                    .single()
-                    .cast(AbstractApplicationResource.class)
-            ))
-            .as(StepVerifier::create)
-            .consumeNextWith(applicationIdAndNameEquality(applicationName))
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)).flatMap(( applicationId) -> Mono.zip(Mono.just(applicationId), PaginationUtils.requestClientV2Resources(( page) -> this.cloudFoundryClient.applicationsV2().list(ListApplicationsRequest.builder().page(page).build())).filter(( resource) -> ResourceUtils.getId(resource).equals(applicationId)).single().cast(.class))).as(StepVerifier::create).consumeNextWith(applicationIdAndNameEquality(applicationName)).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void listFilterByDiego() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            .flatMap(applicationId -> Mono.zip(
-                Mono.just(applicationId),
-                PaginationUtils
-                    .requestClientV2Resources(page -> this.cloudFoundryClient.applicationsV2()
-                        .list(ListApplicationsRequest.builder()
-                            .diego(true)
-                            .page(page)
-                            .build()))
-                    .filter(resource -> ResourceUtils.getId(resource).equals(applicationId))
-                    .single()
-                    .cast(AbstractApplicationResource.class)
-            ))
-            .as(StepVerifier::create)
-            .consumeNextWith(applicationIdAndNameEquality(applicationName))
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)).flatMap(( applicationId) -> Mono.zip(Mono.just(applicationId), PaginationUtils.requestClientV2Resources(( page) -> this.cloudFoundryClient.applicationsV2().list(ListApplicationsRequest.builder().diego(true).page(page).build())).filter(( resource) -> ResourceUtils.getId(resource).equals(applicationId)).single().cast(.class))).as(StepVerifier::create).consumeNextWith(applicationIdAndNameEquality(applicationName)).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void listFilterByName() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            .flatMap(applicationId -> Mono.zip(
-                Mono.just(applicationId),
-                PaginationUtils
-                    .requestClientV2Resources(page -> this.cloudFoundryClient.applicationsV2()
-                        .list(ListApplicationsRequest.builder()
-                            .name(applicationName)
-                            .page(page)
-                            .build()))
-                    .filter(resource -> ResourceUtils.getId(resource).equals(applicationId))
-                    .single()
-                    .cast(AbstractApplicationResource.class)
-            ))
-            .as(StepVerifier::create)
-            .consumeNextWith(applicationIdAndNameEquality(applicationName))
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)).flatMap(( applicationId) -> Mono.zip(Mono.just(applicationId), PaginationUtils.requestClientV2Resources(( page) -> this.cloudFoundryClient.applicationsV2().list(ListApplicationsRequest.builder().name(applicationName).page(page).build())).filter(( resource) -> ResourceUtils.getId(resource).equals(applicationId)).single().cast(.class))).as(StepVerifier::create).consumeNextWith(applicationIdAndNameEquality(applicationName)).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void listFilterByOrganizationId() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        Mono
-            .zip(
-                this.organizationId,
-                this.spaceId
-                    .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            )
-            .flatMap(function((organizationId, applicationId) -> Mono.zip(
-                Mono.just(applicationId),
-                PaginationUtils
-                    .requestClientV2Resources(page -> this.cloudFoundryClient.applicationsV2()
-                        .list(ListApplicationsRequest.builder()
-                            .organizationId(organizationId)
-                            .page(page)
-                            .build()))
-                    .filter(resource -> ResourceUtils.getId(resource).equals(applicationId))
-                    .single()
-                    .cast(AbstractApplicationResource.class)
-            )))
-            .as(StepVerifier::create)
-            .consumeNextWith(applicationIdAndNameEquality(applicationName))
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        Mono.zip(this.organizationId, this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))).flatMap(function(( organizationId, applicationId) -> Mono.zip(Mono.just(applicationId), PaginationUtils.requestClientV2Resources(( page) -> this.cloudFoundryClient.applicationsV2().list(ListApplicationsRequest.builder().organizationId(organizationId).page(page).build())).filter(( resource) -> ResourceUtils.getId(resource).equals(applicationId)).single().cast(.class)))).as(StepVerifier::create).consumeNextWith(applicationIdAndNameEquality(applicationName)).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void listFilterBySpaceId() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> Mono.zip(
-                Mono.just(spaceId),
-                createApplicationId(this.cloudFoundryClient, spaceId, applicationName)
-            ))
-            .flatMap(function((spaceId, applicationId) -> Mono.zip(
-                Mono.just(applicationId),
-                PaginationUtils
-                    .requestClientV2Resources(page -> this.cloudFoundryClient.applicationsV2()
-                        .list(ListApplicationsRequest.builder()
-                            .spaceId(spaceId)
-                            .page(page)
-                            .build()))
-                    .filter(resource -> ResourceUtils.getId(resource).equals(applicationId))
-                    .single()
-                    .cast(AbstractApplicationResource.class)
-            )))
-            .as(StepVerifier::create)
-            .consumeNextWith(applicationIdAndNameEquality(applicationName))
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> Mono.zip(Mono.just(spaceId), createApplicationId(this.cloudFoundryClient, spaceId, applicationName))).flatMap(function(( spaceId, applicationId) -> Mono.zip(Mono.just(applicationId), PaginationUtils.requestClientV2Resources(( page) -> this.cloudFoundryClient.applicationsV2().list(ListApplicationsRequest.builder().spaceId(spaceId).page(page).build())).filter(( resource) -> ResourceUtils.getId(resource).equals(applicationId)).single().cast(.class)))).as(StepVerifier::create).consumeNextWith(applicationIdAndNameEquality(applicationName)).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void listFilterByStackId() {
         String applicationName = this.nameFactory.getApplicationName();
-
-        Mono
-            .zip(
-                this.stackId,
-                this.spaceId
-                    .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            )
-            .flatMap(function((stackId, applicationId) -> Mono.zip(
-                Mono.just(applicationId),
-                PaginationUtils
-                    .requestClientV2Resources(page -> this.cloudFoundryClient.applicationsV2()
-                        .list(ListApplicationsRequest.builder()
-                            .stackId(stackId)
-                            .page(page)
-                            .build()))
-                    .filter(resource -> ResourceUtils.getId(resource).equals(applicationId))
-                    .single()
-                    .cast(AbstractApplicationResource.class)
-            )))
-            .as(StepVerifier::create)
-            .consumeNextWith(applicationIdAndNameEquality(applicationName))
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        Mono.zip(this.stackId, this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))).flatMap(function(( stackId, applicationId) -> Mono.zip(Mono.just(applicationId), PaginationUtils.requestClientV2Resources(( page) -> this.cloudFoundryClient.applicationsV2().list(ListApplicationsRequest.builder().stackId(stackId).page(page).build())).filter(( resource) -> ResourceUtils.getId(resource).equals(applicationId)).single().cast(.class)))).as(StepVerifier::create).consumeNextWith(applicationIdAndNameEquality(applicationName)).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void listRoutes() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
         String domainName = this.nameFactory.getDomainName();
-
-        Mono
-            .zip(this.organizationId, this.spaceId)
-            .flatMap(function((organizationId, spaceId) -> Mono.zip(
-                Mono.just(organizationId),
-                Mono.just(spaceId),
-                createApplicationId(this.cloudFoundryClient, spaceId, applicationName)
-            )))
-            .flatMap(function((organizationId, spaceId, applicationId) -> Mono.zip(
-                Mono.just(applicationId),
-                createApplicationRoute(this.cloudFoundryClient, organizationId, spaceId, domainName, applicationId)
-            )))
-            .flatMap(function((applicationId, routeResponse) -> Mono.zip(
-                Mono.just(ResourceUtils.getId(routeResponse)),
-                PaginationUtils
-                    .requestClientV2Resources(page -> this.cloudFoundryClient.applicationsV2()
-                        .listRoutes(ListApplicationRoutesRequest.builder()
-                            .applicationId(applicationId)
-                            .page(page)
-                            .build()))
-                    .single()
-                    .map(ResourceUtils::getId)
-            )))
-            .as(StepVerifier::create)
-            .consumeNextWith(tupleEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        Mono.zip(this.organizationId, this.spaceId).flatMap(function(( organizationId, spaceId) -> Mono.zip(Mono.just(organizationId), Mono.just(spaceId), createApplicationId(this.cloudFoundryClient, spaceId, applicationName)))).flatMap(function(( organizationId, spaceId, applicationId) -> Mono.zip(Mono.just(applicationId), createApplicationRoute(this.cloudFoundryClient, organizationId, spaceId, domainName, applicationId)))).flatMap(function(( applicationId, routeResponse) -> Mono.zip(Mono.just(ResourceUtils.getId(routeResponse)), PaginationUtils.requestClientV2Resources(( page) -> this.cloudFoundryClient.applicationsV2().listRoutes(ListApplicationRoutesRequest.builder().applicationId(applicationId).page(page).build())).single().map(ResourceUtils::getId)))).as(StepVerifier::create).consumeNextWith(tupleEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void listRoutesFilterByDomainId() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
         String domainName = this.nameFactory.getDomainName();
-
-        Mono
-            .zip(this.organizationId, this.spaceId)
-            .flatMap(function((organizationId, spaceId) -> Mono.zip(
-                Mono.just(organizationId),
-                Mono.just(spaceId),
-                createApplicationId(this.cloudFoundryClient, spaceId, applicationName)
-            )))
-            .flatMap(function((organizationId, spaceId, applicationId) -> Mono.zip(
-                Mono.just(applicationId),
-                createApplicationRoute(this.cloudFoundryClient, organizationId, spaceId, domainName, applicationId)
-            )))
-            .flatMap(function((applicationId, routeResponse) -> Mono.zip(
-                Mono.just(ResourceUtils.getId(routeResponse)),
-                PaginationUtils
-                    .requestClientV2Resources(page -> this.cloudFoundryClient.applicationsV2()
-                        .listRoutes(ListApplicationRoutesRequest.builder()
-                            .applicationId(applicationId)
-                            .domainId(ResourceUtils.getEntity(routeResponse).getDomainId())
-                            .page(page)
-                            .build()))
-                    .single()
-                    .map(ResourceUtils::getId)
-            )))
-            .as(StepVerifier::create)
-            .consumeNextWith(tupleEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        Mono.zip(this.organizationId, this.spaceId).flatMap(function(( organizationId, spaceId) -> Mono.zip(Mono.just(organizationId), Mono.just(spaceId), createApplicationId(this.cloudFoundryClient, spaceId, applicationName)))).flatMap(function(( organizationId, spaceId, applicationId) -> Mono.zip(Mono.just(applicationId), createApplicationRoute(this.cloudFoundryClient, organizationId, spaceId, domainName, applicationId)))).flatMap(function(( applicationId, routeResponse) -> Mono.zip(Mono.just(ResourceUtils.getId(routeResponse)), PaginationUtils.requestClientV2Resources(( page) -> this.cloudFoundryClient.applicationsV2().listRoutes(ListApplicationRoutesRequest.builder().applicationId(applicationId).domainId(ResourceUtils.getEntity(routeResponse).getDomainId()).page(page).build())).single().map(ResourceUtils::getId)))).as(StepVerifier::create).consumeNextWith(tupleEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void listRoutesFilterByHost() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
         String domainName = this.nameFactory.getDomainName();
-
-        Mono
-            .zip(this.organizationId, this.spaceId)
-            .flatMap(function((organizationId, spaceId) -> Mono.zip(
-                Mono.just(organizationId),
-                Mono.just(spaceId),
-                createApplicationId(this.cloudFoundryClient, spaceId, applicationName)
-            )))
-            .flatMap(function((organizationId, spaceId, applicationId) -> Mono.zip(
-                Mono.just(applicationId),
-                createApplicationRoute(this.cloudFoundryClient, organizationId, spaceId, domainName, applicationId)
-            )))
-            .flatMap(function((applicationId, routeResponse) -> Mono.zip(
-                Mono.just(ResourceUtils.getId(routeResponse)),
-                PaginationUtils
-                    .requestClientV2Resources(page -> this.cloudFoundryClient.applicationsV2()
-                        .listRoutes(ListApplicationRoutesRequest.builder()
-                            .applicationId(applicationId)
-                            .host(ResourceUtils.getEntity(routeResponse).getHost())
-                            .page(page)
-                            .build()))
-                    .single()
-                    .map(ResourceUtils::getId)
-            )))
-            .as(StepVerifier::create)
-            .consumeNextWith(tupleEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        Mono.zip(this.organizationId, this.spaceId).flatMap(function(( organizationId, spaceId) -> Mono.zip(Mono.just(organizationId), Mono.just(spaceId), createApplicationId(this.cloudFoundryClient, spaceId, applicationName)))).flatMap(function(( organizationId, spaceId, applicationId) -> Mono.zip(Mono.just(applicationId), createApplicationRoute(this.cloudFoundryClient, organizationId, spaceId, domainName, applicationId)))).flatMap(function(( applicationId, routeResponse) -> Mono.zip(Mono.just(ResourceUtils.getId(routeResponse)), PaginationUtils.requestClientV2Resources(( page) -> this.cloudFoundryClient.applicationsV2().listRoutes(ListApplicationRoutesRequest.builder().applicationId(applicationId).host(ResourceUtils.getEntity(routeResponse).getHost()).page(page).build())).single().map(ResourceUtils::getId)))).as(StepVerifier::create).consumeNextWith(tupleEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void listRoutesFilterByPath() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
         String domainName = this.nameFactory.getDomainName();
-
-        Mono
-            .zip(this.organizationId, this.spaceId)
-            .flatMap(function((organizationId, spaceId) -> Mono.zip(
-                Mono.just(organizationId),
-                Mono.just(spaceId),
-                createApplicationId(this.cloudFoundryClient, spaceId, applicationName)
-            )))
-            .flatMap(function((organizationId, spaceId, applicationId) -> Mono.zip(
-                Mono.just(applicationId),
-                createApplicationRoute(this.cloudFoundryClient, organizationId, spaceId, domainName, applicationId)
-            )))
-            .flatMap(function((applicationId, routeResponse) -> Mono.zip(
-                Mono.just(ResourceUtils.getId(routeResponse)),
-                PaginationUtils
-                    .requestClientV2Resources(page -> this.cloudFoundryClient.applicationsV2()
-                        .listRoutes(ListApplicationRoutesRequest.builder()
-                            .applicationId(applicationId)
-                            .path(ResourceUtils.getEntity(routeResponse).getPath())
-                            .page(page)
-                            .build()))
-                    .single()
-                    .map(ResourceUtils::getId)
-            )))
-            .as(StepVerifier::create)
-            .consumeNextWith(tupleEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        Mono.zip(this.organizationId, this.spaceId).flatMap(function(( organizationId, spaceId) -> Mono.zip(Mono.just(organizationId), Mono.just(spaceId), createApplicationId(this.cloudFoundryClient, spaceId, applicationName)))).flatMap(function(( organizationId, spaceId, applicationId) -> Mono.zip(Mono.just(applicationId), createApplicationRoute(this.cloudFoundryClient, organizationId, spaceId, domainName, applicationId)))).flatMap(function(( applicationId, routeResponse) -> Mono.zip(Mono.just(ResourceUtils.getId(routeResponse)), PaginationUtils.requestClientV2Resources(( page) -> this.cloudFoundryClient.applicationsV2().listRoutes(ListApplicationRoutesRequest.builder().applicationId(applicationId).path(ResourceUtils.getEntity(routeResponse).getPath()).page(page).build())).single().map(ResourceUtils::getId)))).as(StepVerifier::create).consumeNextWith(tupleEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void listRoutesFilterByPort() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
         String domainName = this.nameFactory.getDomainName();
-
-        Mono
-            .zip(this.organizationId, this.spaceId)
-            .flatMap(function((organizationId, spaceId) -> Mono.zip(
-                Mono.just(organizationId),
-                Mono.just(spaceId),
-                createApplicationId(this.cloudFoundryClient, spaceId, applicationName)
-            )))
-            .flatMap(function((organizationId, spaceId, applicationId) -> Mono.zip(
-                Mono.just(applicationId),
-                createApplicationRoute(this.cloudFoundryClient, organizationId, spaceId, domainName, applicationId)
-            )))
-            .flatMap(function((applicationId, routeResponse) -> Mono.zip(
-                Mono.just(ResourceUtils.getId(routeResponse)),
-                PaginationUtils
-                    .requestClientV2Resources(page -> {
-                        ListApplicationRoutesRequest.Builder builder = ListApplicationRoutesRequest.builder()
-                            .applicationId(applicationId)
-                            .page(page);
-
-                        Optional.ofNullable(ResourceUtils.getEntity(routeResponse).getPort()).ifPresent(builder::port);
-
-                        return this.cloudFoundryClient.applicationsV2()
-                            .listRoutes(builder
-                                .build());
-                    })
-                    .single()
-                    .map(ResourceUtils::getId)
-            )))
-            .as(StepVerifier::create)
-            .consumeNextWith(tupleEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        Mono.zip(this.organizationId, this.spaceId).flatMap(function(( organizationId, spaceId) -> Mono.zip(Mono.just(organizationId), Mono.just(spaceId), createApplicationId(this.cloudFoundryClient, spaceId, applicationName)))).flatMap(function(( organizationId, spaceId, applicationId) -> Mono.zip(Mono.just(applicationId), createApplicationRoute(this.cloudFoundryClient, organizationId, spaceId, domainName, applicationId)))).flatMap(function(( applicationId, routeResponse) -> Mono.zip(Mono.just(ResourceUtils.getId(routeResponse)), PaginationUtils.requestClientV2Resources(( page) -> {
+            ListApplicationRoutesRequest.Builder builder = ListApplicationRoutesRequest.builder().applicationId(applicationId).page(page);
+            Optional.ofNullable(ResourceUtils.getEntity(routeResponse).getPort()).ifPresent(builder::port);
+            return this.cloudFoundryClient.applicationsV2().listRoutes(builder.build());
+        }).single().map(ResourceUtils::getId)))).as(StepVerifier::create).consumeNextWith(tupleEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void listServiceBindings() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
         String serviceInstanceName = this.nameFactory.getServiceInstanceName();
-
-        this.spaceId
-            .flatMap(spaceId -> Mono.zip(
-                createApplicationId(this.cloudFoundryClient, spaceId, applicationName),
-                createUserServiceInstanceId(this.cloudFoundryClient, spaceId, serviceInstanceName)
-            ))
-            .delayUntil(function((applicationId, serviceInstanceId) -> createServiceBindingId(this.cloudFoundryClient, applicationId, serviceInstanceId)))
-            .flatMap(function((applicationId, serviceInstanceId) -> Mono.zip(
-                Mono.just(serviceInstanceId),
-                getSingleServiceBindingInstanceId(this.cloudFoundryClient, applicationId)
-            )))
-            .as(StepVerifier::create)
-            .consumeNextWith(tupleEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> Mono.zip(createApplicationId(this.cloudFoundryClient, spaceId, applicationName), createUserServiceInstanceId(this.cloudFoundryClient, spaceId, serviceInstanceName))).delayUntil(function(( applicationId, serviceInstanceId) -> createServiceBindingId(this.cloudFoundryClient, applicationId, serviceInstanceId))).flatMap(function(( applicationId, serviceInstanceId) -> Mono.zip(Mono.just(serviceInstanceId), getSingleServiceBindingInstanceId(this.cloudFoundryClient, applicationId)))).as(StepVerifier::create).consumeNextWith(tupleEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void listServiceBindingsFilterByServiceInstanceId() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
         String serviceInstanceName = this.nameFactory.getServiceInstanceName();
-
-        this.spaceId
-            .flatMap(spaceId -> Mono.zip(
-                createApplicationId(this.cloudFoundryClient, spaceId, applicationName),
-                createUserServiceInstanceId(this.cloudFoundryClient, spaceId, serviceInstanceName)
-            ))
-            .flatMap(function((applicationId, serviceInstanceId) -> Mono.zip(
-                Mono.just(applicationId),
-                Mono.just(serviceInstanceId),
-                createServiceBindingId(this.cloudFoundryClient, applicationId, serviceInstanceId)
-            )))
-            .flatMap(function((applicationId, serviceInstanceId, serviceBindingId) -> Mono.zip(
-                Mono.just(serviceBindingId),
-                PaginationUtils
-                    .requestClientV2Resources(page -> this.cloudFoundryClient.applicationsV2()
-                        .listServiceBindings(ListApplicationServiceBindingsRequest.builder()
-                            .applicationId(applicationId)
-                            .serviceInstanceId(serviceInstanceId)
-                            .page(page)
-                            .build()))
-                    .single()
-                    .map(ResourceUtils::getId)
-            )))
-            .as(StepVerifier::create)
-            .consumeNextWith(tupleEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> Mono.zip(createApplicationId(this.cloudFoundryClient, spaceId, applicationName), createUserServiceInstanceId(this.cloudFoundryClient, spaceId, serviceInstanceName))).flatMap(function(( applicationId, serviceInstanceId) -> Mono.zip(Mono.just(applicationId), Mono.just(serviceInstanceId), createServiceBindingId(this.cloudFoundryClient, applicationId, serviceInstanceId)))).flatMap(function(( applicationId, serviceInstanceId, serviceBindingId) -> Mono.zip(Mono.just(serviceBindingId), PaginationUtils.requestClientV2Resources(( page) -> this.cloudFoundryClient.applicationsV2().listServiceBindings(ListApplicationServiceBindingsRequest.builder().applicationId(applicationId).serviceInstanceId(serviceInstanceId).page(page).build())).single().map(ResourceUtils::getId)))).as(StepVerifier::create).consumeNextWith(tupleEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void removeRoute() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
         String domainName = this.nameFactory.getDomainName();
-
-        Mono
-            .zip(this.organizationId, this.spaceId)
-            .flatMap(function((organizationId, spaceId) -> Mono.zip(
-                Mono.just(organizationId),
-                Mono.just(spaceId),
-                createApplicationId(this.cloudFoundryClient, spaceId, applicationName)
-            )))
-            .flatMap(function((organizationId, spaceId, applicationId) -> Mono.zip(
-                Mono.just(applicationId),
-                createApplicationRoute(this.cloudFoundryClient, organizationId, spaceId, domainName, applicationId)
-            )))
-            .delayUntil(function((applicationId, routeResponse) -> this.cloudFoundryClient.applicationsV2()
-                .removeRoute(RemoveApplicationRouteRequest.builder()
-                    .applicationId(applicationId)
-                    .routeId(ResourceUtils.getId(routeResponse))
-                    .build())))
-            .flatMapMany(function((applicationId, routeResponse) -> requestRoutes(this.cloudFoundryClient, applicationId)))
-            .as(StepVerifier::create)
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        Mono.zip(this.organizationId, this.spaceId).flatMap(function(( organizationId, spaceId) -> Mono.zip(Mono.just(organizationId), Mono.just(spaceId), createApplicationId(this.cloudFoundryClient, spaceId, applicationName)))).flatMap(function(( organizationId, spaceId, applicationId) -> Mono.zip(Mono.just(applicationId), createApplicationRoute(this.cloudFoundryClient, organizationId, spaceId, domainName, applicationId)))).delayUntil(function(( applicationId, routeResponse) -> this.cloudFoundryClient.applicationsV2().removeRoute(RemoveApplicationRouteRequest.builder().applicationId(applicationId).routeId(ResourceUtils.getId(routeResponse)).build()))).flatMapMany(function(( applicationId, routeResponse) -> requestRoutes(this.cloudFoundryClient, applicationId))).as(StepVerifier::create).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void removeServiceBinding() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
         String serviceInstanceName = this.nameFactory.getServiceInstanceName();
-
-        this.spaceId
-            .flatMap(spaceId -> Mono.zip(
-                createApplicationId(this.cloudFoundryClient, spaceId, applicationName),
-                createUserServiceInstanceId(this.cloudFoundryClient, spaceId, serviceInstanceName)
-            ))
-            .flatMap(function((applicationId, serviceInstanceId) -> Mono.zip(
-                Mono.just(applicationId),
-                createServiceBindingId(this.cloudFoundryClient, applicationId, serviceInstanceId)
-            )))
-            .delayUntil(function((applicationId, serviceBindingId) -> this.cloudFoundryClient.applicationsV2()
-                .removeServiceBinding(RemoveApplicationServiceBindingRequest.builder()
-                    .applicationId(applicationId)
-                    .serviceBindingId(serviceBindingId)
-                    .build())))
-            .flatMapMany(function((applicationId, serviceBindingId) -> requestServiceBindings(this.cloudFoundryClient, applicationId)))
-            .as(StepVerifier::create)
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> Mono.zip(createApplicationId(this.cloudFoundryClient, spaceId, applicationName), createUserServiceInstanceId(this.cloudFoundryClient, spaceId, serviceInstanceName))).flatMap(function(( applicationId, serviceInstanceId) -> Mono.zip(Mono.just(applicationId), createServiceBindingId(this.cloudFoundryClient, applicationId, serviceInstanceId)))).delayUntil(function(( applicationId, serviceBindingId) -> this.cloudFoundryClient.applicationsV2().removeServiceBinding(RemoveApplicationServiceBindingRequest.builder().applicationId(applicationId).serviceBindingId(serviceBindingId).build()))).flatMapMany(function(( applicationId, serviceBindingId) -> requestServiceBindings(this.cloudFoundryClient, applicationId))).as(StepVerifier::create).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void restage() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            .delayUntil(applicationId -> uploadAndStartApplication(this.cloudFoundryClient, applicationId))
-            .delayUntil(applicationId -> this.cloudFoundryClient.applicationsV2()
-                .restage(RestageApplicationRequest.builder()
-                    .applicationId(applicationId)
-                    .build()))
-            .flatMap(applicationId -> waitForStagingApplication(this.cloudFoundryClient, applicationId))
-            .map(resource -> ResourceUtils.getEntity(resource).getName())
-            .as(StepVerifier::create)
-            .expectNext(applicationName)
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)).delayUntil(( applicationId) -> uploadAndStartApplication(this.cloudFoundryClient, applicationId)).delayUntil(( applicationId) -> this.cloudFoundryClient.applicationsV2().restage(RestageApplicationRequest.builder().applicationId(applicationId).build())).flatMap(( applicationId) -> waitForStagingApplication(this.cloudFoundryClient, applicationId)).map(( resource) -> ResourceUtils.getEntity(resource).getName()).as(StepVerifier::create).expectNext(applicationName).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void statistics() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            .delayUntil(applicationId -> uploadAndStartApplication(this.cloudFoundryClient, applicationId))
-            .flatMap(applicationId -> this.cloudFoundryClient.applicationsV2()
-                .statistics(ApplicationStatisticsRequest.builder()
-                    .applicationId(applicationId)
-                    .build())
-                .map(instanceStatistics -> instanceStatistics.getInstances().get("0").getStatistics().getName()))
-            .as(StepVerifier::create)
-            .expectNext(applicationName)
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)).delayUntil(( applicationId) -> uploadAndStartApplication(this.cloudFoundryClient, applicationId)).flatMap(( applicationId) -> this.cloudFoundryClient.applicationsV2().statistics(ApplicationStatisticsRequest.builder().applicationId(applicationId).build()).map(( instanceStatistics) -> instanceStatistics.getInstances().get("0").getStatistics().getName())).as(StepVerifier::create).expectNext(applicationName).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void summary() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            .flatMap(applicationId -> this.cloudFoundryClient.applicationsV2()
-                .summary(SummaryApplicationRequest.builder()
-                    .applicationId(applicationId)
-                    .build())
-                .map(SummaryApplicationResponse::getId)
-                .zipWith(Mono.just(applicationId)))
-            .as(StepVerifier::create)
-            .consumeNextWith(tupleEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)).flatMap(( applicationId) -> this.cloudFoundryClient.applicationsV2().summary(SummaryApplicationRequest.builder().applicationId(applicationId).build()).map(SummaryApplicationResponse::getId).zipWith(Mono.just(applicationId))).as(StepVerifier::create).consumeNextWith(tupleEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void terminateInstance() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            .delayUntil(applicationId -> uploadAndStartApplication(this.cloudFoundryClient, applicationId))
-            .flatMap(applicationId -> Mono.zip(
-                Mono.just(applicationId),
-                getInstanceInfo(this.cloudFoundryClient, applicationId, "0")
-                    .map(info -> Optional.ofNullable(info.getSince()))
-            ))
-            .delayUntil(function((applicationId, optionalSince) -> this.cloudFoundryClient.applicationsV2()
-                .terminateInstance(TerminateApplicationInstanceRequest.builder()
-                    .applicationId(applicationId)
-                    .index("0")
-                    .build())))
-            .flatMap(function((applicationId, optionalSince) -> waitForInstanceRestart(this.cloudFoundryClient, applicationId, "0", optionalSince)))
-            .as(StepVerifier::create)
-            .expectNextCount(1)
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)).delayUntil(( applicationId) -> uploadAndStartApplication(this.cloudFoundryClient, applicationId)).flatMap(( applicationId) -> Mono.zip(Mono.just(applicationId), getInstanceInfo(this.cloudFoundryClient, applicationId, "0").map(( info) -> Optional.ofNullable(info.getSince())))).delayUntil(function(( applicationId, optionalSince) -> this.cloudFoundryClient.applicationsV2().terminateInstance(TerminateApplicationInstanceRequest.builder().applicationId(applicationId).index("0").build()))).flatMap(function(( applicationId, optionalSince) -> waitForInstanceRestart(this.cloudFoundryClient, applicationId, "0", optionalSince))).as(StepVerifier::create).expectNextCount(1).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void update() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
         String applicationName2 = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            .flatMap(applicationId -> this.cloudFoundryClient.applicationsV2()
-                .update(UpdateApplicationRequest.builder()
-                    .applicationId(applicationId)
-                    .name(applicationName2)
-                    .environmentJson("test-var", "test-value")
-                    .build())
-                .map(ResourceUtils::getId))
-            .flatMap(applicationId -> Mono.zip(
-                Mono.just(applicationId),
-                requestGetApplication(this.cloudFoundryClient, applicationId)
-                    .map(ResourceUtils::getEntity)
-            ))
-            .flatMap(function((applicationId, entity1) -> Mono.zip(
-                Mono.just(entity1),
-                this.cloudFoundryClient.applicationsV2()
-                    .update(UpdateApplicationRequest.builder()
-                        .applicationId(applicationId)
-                        .environmentJsons(Collections.emptyMap())
-                        .build())
-                    .then(requestGetApplication(this.cloudFoundryClient, applicationId)
-                        .map(ResourceUtils::getEntity))
-            )))
-            .as(StepVerifier::create)
-            .consumeNextWith(consumer((entity1, entity2) -> {
-                assertThat(entity1.getName()).isEqualTo(applicationName2);
-                assertThat(entity1.getEnvironmentJsons()).containsEntry("test-var", "test-value");
-                assertThat(entity2.getEnvironmentJsons()).isEmpty();
-            }))
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)).flatMap(( applicationId) -> this.cloudFoundryClient.applicationsV2().update(UpdateApplicationRequest.builder().applicationId(applicationId).name(applicationName2).environmentJson("test-var", "test-value").build()).map(ResourceUtils::getId)).flatMap(( applicationId) -> Mono.zip(Mono.just(applicationId), requestGetApplication(this.cloudFoundryClient, applicationId).map(ResourceUtils::getEntity))).flatMap(function(( applicationId, entity1) -> Mono.zip(Mono.just(entity1), this.cloudFoundryClient.applicationsV2().update(UpdateApplicationRequest.builder().applicationId(applicationId).environmentJsons(Collections.emptyMap()).build()).then(requestGetApplication(this.cloudFoundryClient, applicationId).map(ResourceUtils::getEntity))))).as(StepVerifier::create).consumeNextWith(consumer(( entity1, entity2) -> {
+            assertThat(entity1.getName()).isEqualTo(applicationName2);
+            assertThat(entity1.getEnvironmentJsons()).containsEntry("test-var", "test-value");
+            assertThat(entity2.getEnvironmentJsons()).isEmpty();
+        })).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void uploadAndDownload() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            .delayUntil(applicationId -> uploadApplication(this.cloudFoundryClient, applicationId))
-            .flatMap(applicationId -> Mono.zip(
-                downloadApplication(this.cloudFoundryClient, applicationId),
-                getBytes("test-application.zip")
-            ))
-            .as(StepVerifier::create)
-            .consumeNextWith(zipEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)).delayUntil(( applicationId) -> uploadApplication(this.cloudFoundryClient, applicationId)).flatMap(( applicationId) -> Mono.zip(downloadApplication(this.cloudFoundryClient, applicationId), getBytes("test-application.zip"))).as(StepVerifier::create).consumeNextWith(zipEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void uploadAndDownloadAsyncFalse() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            .delayUntil(applicationId -> uploadApplicationAsyncFalse(this.cloudFoundryClient, applicationId))
-            .flatMap(applicationId -> Mono.zip(
-                downloadApplication(this.cloudFoundryClient, applicationId),
-                getBytes("test-application.zip")
-            ))
-            .as(StepVerifier::create)
-            .consumeNextWith(zipEquality())
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)).delayUntil(( applicationId) -> uploadApplicationAsyncFalse(this.cloudFoundryClient, applicationId)).flatMap(( applicationId) -> Mono.zip(downloadApplication(this.cloudFoundryClient, applicationId), getBytes("test-application.zip"))).as(StepVerifier::create).consumeNextWith(zipEquality()).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @Test
     public void uploadDirectory() {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            .flatMap(applicationId -> {
-                try {
-                    return this.cloudFoundryClient.applicationsV2()
-                        .upload(UploadApplicationRequest.builder()
-                            .application(new ClassPathResource("test-application").getFile().toPath())
-                            .async(true)
-                            .applicationId(applicationId)
-                            .build())
-                        .flatMap(job -> JobUtils.waitForCompletion(this.cloudFoundryClient, Duration.ofMinutes(5), job));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            })
-            .as(StepVerifier::create)
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)).flatMap(( applicationId) -> {
+            try {
+                return this.cloudFoundryClient.applicationsV2().upload(UploadApplicationRequest.builder().application(new ClassPathResource("test-application").getFile().toPath()).async(true).applicationId(applicationId).build()).flatMap(( job) -> JobUtils.waitForCompletion(this.cloudFoundryClient, Duration.ofMinutes(5), job));
+            } catch ( e) {
+                throw new <e>RuntimeException();
+            }
+        }).as(StepVerifier::create).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     @IfCloudFoundryVersion(greaterThanOrEqualTo = CloudFoundryVersion.PCF_1_9)
     @Test
     public void uploadDroplet() throws TimeoutException, InterruptedException {
         String applicationName = this.nameFactory.getApplicationName();
-
-        this.spaceId
-            .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
-            .flatMap(applicationId -> {
-                try {
-                    return this.cloudFoundryClient.applicationsV2()
-                        .uploadDroplet(UploadApplicationDropletRequest.builder()
-                            .applicationId(applicationId)
-                            .droplet(new ClassPathResource("test-droplet.tgz").getFile().toPath())
-                            .build())
-                        .flatMap(job -> JobUtils.waitForCompletion(this.cloudFoundryClient, Duration.ofMinutes(5), job));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            })
-            .as(StepVerifier::create)
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
+        this.spaceId.flatMap(( spaceId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)).flatMap(( applicationId) -> {
+            try {
+                return this.cloudFoundryClient.applicationsV2().uploadDroplet(UploadApplicationDropletRequest.builder().applicationId(applicationId).droplet(new ClassPathResource("test-droplet.tgz").getFile().toPath()).build()).flatMap(( job) -> JobUtils.waitForCompletion(this.cloudFoundryClient, Duration.ofMinutes(5), job));
+            } catch ( e) {
+                throw new <e>RuntimeException();
+            }
+        }).as(StepVerifier::create).expectComplete().verify(Duration.ofMinutes(5));
     }
 
     private static Consumer<Tuple2<String, AbstractApplicationResource>> applicationIdAndNameEquality(String name) {
@@ -920,9 +351,7 @@ public final class ApplicationsTest extends AbstractIntegrationTest {
     }
 
     private static Mono<CreateRouteResponse> createApplicationRoute(CloudFoundryClient cloudFoundryClient, String organizationId, String spaceId, String domainName, String applicationId) {
-        return createRouteWithDomain(cloudFoundryClient, organizationId, spaceId, domainName, "test-host", "/test-path")
-            .flatMap(createRouteResponse -> requestAssociateRoute(cloudFoundryClient, applicationId, createRouteResponse.getMetadata().getId())
-                .map(response -> createRouteResponse));
+        return createRouteWithDomain(cloudFoundryClient, organizationId, spaceId, domainName, "test-host", "/test-path").flatMap(( createRouteResponse) -> requestAssociateRoute(cloudFoundryClient, applicationId, createRouteResponse.getMetadata().getId()).map(( response) -> createRouteResponse));
     }
 
     private static Mono<String> createPrivateDomainId(CloudFoundryClient cloudFoundryClient, String name, String organizationId) {
@@ -931,14 +360,7 @@ public final class ApplicationsTest extends AbstractIntegrationTest {
     }
 
     private static Mono<CreateRouteResponse> createRouteWithDomain(CloudFoundryClient cloudFoundryClient, String organizationId, String spaceId, String domainName, String host, String path) {
-        return createPrivateDomainId(cloudFoundryClient, domainName, organizationId)
-            .flatMap(domainId -> cloudFoundryClient.routes()
-                .create(CreateRouteRequest.builder()
-                    .domainId(domainId)
-                    .host(host)
-                    .path(path)
-                    .spaceId(spaceId)
-                    .build()));
+        return createPrivateDomainId(cloudFoundryClient, domainName, organizationId).flatMap(( domainId) -> cloudFoundryClient.routes().create(CreateRouteRequest.builder().domainId(domainId).host(host).path(path).spaceId(spaceId).build()));
     }
 
     private static Mono<String> createServiceBindingId(CloudFoundryClient cloudFoundryClient, String applicationId, String serviceInstanceId) {
@@ -1101,13 +523,7 @@ public final class ApplicationsTest extends AbstractIntegrationTest {
 
     private static Mono<Void> uploadApplication(CloudFoundryClient cloudFoundryClient, String applicationId) {
         try {
-            return cloudFoundryClient.applicationsV2()
-                .upload(UploadApplicationRequest.builder()
-                    .application(new ClassPathResource("test-application.zip").getFile().toPath())
-                    .async(true)
-                    .applicationId(applicationId)
-                    .build())
-                .flatMap(job -> JobUtils.waitForCompletion(cloudFoundryClient, Duration.ofMinutes(5), job));
+            return cloudFoundryClient.applicationsV2().upload(UploadApplicationRequest.builder().application(new ClassPathResource("test-application.zip").getFile().toPath()).async(true).applicationId(applicationId).build()).flatMap(( job) -> JobUtils.waitForCompletion(cloudFoundryClient, Duration.ofMinutes(5), job));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -1156,6 +572,4 @@ public final class ApplicationsTest extends AbstractIntegrationTest {
                 .build())
             .as(OperationUtils::collectByteArray);
     }
-
-
 }
