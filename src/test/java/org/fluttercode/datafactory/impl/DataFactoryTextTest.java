@@ -4,9 +4,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DataFactoryTextTest {
 
+public class DataFactoryTextTest {
 	private DataFactory dataFactory;
+
 	private final int ITERATION_COUNT = 100000;
 
 	@Before
@@ -58,20 +59,20 @@ public class DataFactoryTextTest {
 		}
 	}
 
-    @Test
-	public void shouldReturnTextWithWords() {
-		for (int i = 0; i < ITERATION_COUNT; i++) {
-			int len = 512 + dataFactory.getNumberUpTo(128);
-			String text = dataFactory.getRandomText(len);
-			Assert.assertTrue(String.format(
+				@Test
+					public void shouldReturnTextWithWords() {
+						for (int i = 0; i < ITERATION_COUNT; i++) {
+							int len = 512 + dataFactory.getNumberUpTo(128);
+							String text = dataFactory.getRandomText(len);
+							Assert.assertTrue(String.format(
 					"Length does not match (%d, expected %d) '%s' ",
 					text.length(), len, text), len == text.length());
-            String[] words =   text.split(" ");
-            Assert.assertTrue("long texts should contain spaces",words.length>32);
-            Assert.assertFalse("text should not contain double spaces",text.contains("  "));
+				        String[] words =   text.split(" ");
+				        Assert.assertTrue("long texts should contain spaces",words.length>32);
+				        Assert.assertFalse("text should not contain double spaces",text.contains("  "));
 
-		}
-	}
+						}
+					}
 
 	@Test
 	public void shouldReturnTextWithinBoundedLengths() {
@@ -111,7 +112,7 @@ public class DataFactoryTextTest {
 	public void shouldReturnRandomNumber() {
 		dataFactory.getNumber();
 	}
-	
+
 	@Test
 	public void shouldReturnNegativeNumber() {
 		int random = dataFactory.getNumberBetween(Integer.MIN_VALUE, -1);
@@ -131,70 +132,68 @@ public class DataFactoryTextTest {
 	}
 
 	//Test param checking on randomWord()
-	
+
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldErrorOnNegativeLengthForRandomWord() {
 		dataFactory.getRandomWord(-1);
 	}
-	
+
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldErrorOnNegativeMinLenForRandomWord() {
 		dataFactory.getRandomWord(-1,10);
 	}
+
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldErrorOnNegativeMaxLenForRandomWord() {
 		dataFactory.getRandomWord(0,-10);
 	}
-	
-	
+
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldErrorOnInvalidSizeLenForRandomWord() {
 		dataFactory.getRandomWord(10,2);
-	}	
+	}
 
-	
 	//Test param checking on randomText()
-	
+
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldErrorOnNegativeLengthForRandomText() {
 		dataFactory.getRandomText(-1);
 	}
-	
+
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldErrorOnNegativeMinLenForRandomText() {
 		dataFactory.getRandomText(-1,10);
 	}
+
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldErrorOnNegativeMaxLenForRandomText() {
 		dataFactory.getRandomText(0,-10);
 	}
-	
-	
+
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldErrorOnInvalidSizeLenForRandomText() {
 		dataFactory.getRandomText(10,2);
 	}
-	
 
 	//Test param checking on randomChars()
-	
+
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldErrorOnNegativeLengthForRandomChars() {
 		dataFactory.getRandomChars(-1);
 	}
-	
+
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldErrorOnNegativeMinLenForRandomChars() {
 		dataFactory.getRandomChars(-1,10);
 	}
+
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldErrorOnNegativeMaxLenForRandomChars() {
 		dataFactory.getRandomChars(0,-10);
 	}
-	
-	
+
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldErrorOnInvalidSizeLenForRandomChars() {
 		dataFactory.getRandomChars(10,2);
-	}	
+	}
 }

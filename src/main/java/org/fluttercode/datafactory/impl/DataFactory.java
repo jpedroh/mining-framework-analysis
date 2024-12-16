@@ -1,37 +1,15 @@
 package org.fluttercode.datafactory.impl;
 
-/*
- * Copyright 2011, Andrew M Gibson
- *
- * www.andygibson.net
- *
- * This file is part of DataFactory.
- *
- * DataValve is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * DataValve is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with DataValve.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
-
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
-
 import org.fluttercode.datafactory.AddressDataValues;
 import org.fluttercode.datafactory.ContentDataValues;
 import org.fluttercode.datafactory.NameDataValues;
+
 
 /**
  * Class that provides a number of methods for generating test data through
@@ -47,11 +25,12 @@ import org.fluttercode.datafactory.NameDataValues;
  * 
  */
 public final class DataFactory {
-
 	private static Random random = new Random(93285);
 
 	private NameDataValues nameDataValues = new DefaultNameDataValues();
+
 	private AddressDataValues addressDataValues = new DefaultAddressDataValues();
+
 	private ContentDataValues contentDataValues = new DefaultContentDataValues();
 
 	/**
@@ -310,14 +289,40 @@ public final class DataFactory {
 	 * @return Random number within range
 	 */
 	public int getNumberBetween(int min, int max) {
-
 		if (max < min) {
-			throw new IllegalArgumentException(String.format(
-					"Minimum must be less than minimum (min=%d, max=%d)", min,
-					max));
+			throw new IllegalArgumentException(String.format("Minimum must be less than minimum (min=%d, max=%d)", min, max));
 		}
+		int average = avg(min, max);
+		int base = abs(min - average);
+		int randomNumber;
+		if (base != 0) {
+			randomNumber = random.nextInt(base);
+		} else {
+			randomNumber = 0;
+		}
+		if (random.nextBoolean()) {
+			return average + randomNumber;
+		} else {
+			return average - randomNumber;
+		}
+	}
 
-		return min + random.nextInt(max - min);
+	private int abs(int number) {
+		if (number == Integer.MIN_VALUE) {
+			// -1 * MIN_VALUE will overflow
+			return Integer.MAX_VALUE;
+		} else {
+			return Math.abs(number);
+		}
+	}
+
+	private int avg(int first, int second) {
+		BigInteger firstInt = BigInteger.valueOf(first);
+		BigInteger secondInt = BigInteger.valueOf(second);
+		
+		return firstInt.add(secondInt).
+				divide(BigInteger.valueOf(2)).
+				intValue();
 	}
 
 	/**
@@ -404,7 +409,6 @@ public final class DataFactory {
 	 */
 	public String getRandomText(int minLength, int maxLength) {
 		validateMinMaxParams(minLength, maxLength);
-
 		StringBuilder sb = new StringBuilder(maxLength);
 		int length = minLength;
 		if (maxLength != minLength) {
@@ -415,14 +419,13 @@ public final class DataFactory {
 				sb.append(" ");
 				length--;
 			}
-			final double desiredWordLengthNormalDistributed = 1.0+Math.abs(random.nextGaussian()) * 6;
-			int usedWordLength = (int)(Math.min(length, desiredWordLengthNormalDistributed));
-			String word = getRandomWord(usedWordLength);
+			final double desiredWordLengthNormalDistributed = 1.0 + (Math.abs(random.nextGaussian()) * 6);
+			int usedWordLength = ((int) (Math.min(length, desiredWordLengthNormalDistributed)));
+			String word = getRandomWord(0, usedWordLength);
 			sb.append(word);
 			length = length - word.length();
-		}
+		} 
 		return sb.toString();
-
 	}
 
 	private void validateMinMaxParams(int minLength, int maxLength) {
@@ -699,5 +702,4 @@ public final class DataFactory {
 	public void setContentDataValues(ContentDataValues contentDataValues) {
 		this.contentDataValues = contentDataValues;
 	}
-
 }
