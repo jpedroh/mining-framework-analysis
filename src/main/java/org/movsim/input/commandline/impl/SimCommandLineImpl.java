@@ -26,10 +26,6 @@
  */
 package org.movsim.input.commandline.impl;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -43,11 +39,11 @@ import org.movsim.utilities.impl.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * The Class SimCommandLineImpl. MovSim console command line parser.
  */
 public class SimCommandLineImpl implements SimCommandLine {
-
     /** The logger. */
     private static Logger logger = LoggerFactory.getLogger(SimCommandLineImpl.class);
 
@@ -74,17 +70,14 @@ public class SimCommandLineImpl implements SimCommandLine {
 
     /**
      * Instantiates a new sim command line impl.
-     * 
+     *
      * @param args
-     *            the args
+     * 		the args
      */
     public SimCommandLineImpl(String[] args) {
-
         logger.debug("Begin CommandLine Parser");
-
         createOptions();
         createParserAndParse(args);
-
         logger.debug("End CommandLine Parser");
     }
 
@@ -92,19 +85,13 @@ public class SimCommandLineImpl implements SimCommandLine {
      * Creates the options.
      */
     private void createOptions() {
-
         options = new Options();
         options.addOption("h", "help", false, "print this message");
         options.addOption("g", "gui", false, "start a Desktop GUI");
         options.addOption("v", "validate", false, "parse xml input file for validation (without simulation)");
-        options.addOption("i", "internal_xml", false,
-                "Writes internal xml (the simulation configuration) after validation from dtd. No simulation");
+        options.addOption("i", "internal_xml", false, "Writes internal xml (the simulation configuration) after validation from dtd. No simulation");
         options.addOption("w", "write dtd", false, "Writes dtd file to filesystem.");
-        options.addOption(
-                "l",
-                "logproperties",
-                false,
-                "Writes log4f.properties to file. You can adjust the logging properties to your needs. Just place the file in calling directory of MovSim.");
+        options.addOption("l", "logproperties", false, "Writes log4f.properties to file. You can adjust the logging properties to your needs. Just place the file in calling directory of MovSim.");
         options.addOption("s", "scenarios", false, "Writes example scenarios as xml for simulation to folder 'sim'.");
         OptionBuilder.withArgName("file");
         OptionBuilder.hasArg();
@@ -165,75 +152,6 @@ public class SimCommandLineImpl implements SimCommandLine {
         if (cmdline.hasOption("s")) {
             optWriteScenarios();
         }
-    }
-
-    /**
-     * Option: Writes all example scenarios from jar resources to /sim folder
-     * 
-     * @throws ClassNotFoundException
-     */
-    private void optWriteScenarios() {
-        try {
-        InputStreamReader isr = new InputStreamReader(System.in);
-        BufferedReader br = new BufferedReader(isr);
-        System.out.println("Writing scenarios to folder 'sim'");
-        System.out.println("Overrides existing filenames. Do you want to proceed? <y/n>");
-        String proceed = br.readLine();;
-        if (!(proceed.equals("yes")|| (proceed.equals("y")))) {
-            System.out.println("Exit. Nothing written.");
-            System.exit(0);
-        }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-        FileUtils.createDir("sim", "");
-
-        // //Iterate over resources does not work?!?
-        // String path = "sim/";
-        // ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        // Enumeration<?> resourceUrls;
-        // try {
-        // resourceUrls = cl.getResources(path);
-        // List<URL> result = new ArrayList<URL>();
-        // while (resourceUrls.hasMoreElements()) {
-        // URL url = (URL) resourceUrls.nextElement();
-        // System.out.println("file: " + url.getFile());
-        // result.add(url);
-        // }
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // }
-        
-        // TODO loop properly, not hard coded
-        FileUtils.createDir("sim", "");
-
-        // //Iterate over resources does not work?!?
-        // String path = "sim/";
-        // ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        // Enumeration<?> resourceUrls;
-        // try {
-        // resourceUrls = cl.getResources(path);
-        // List<URL> result = new ArrayList<URL>();
-        // while (resourceUrls.hasMoreElements()) {
-        // URL url = (URL) resourceUrls.nextElement();
-        // System.out.println("file: " + url.getFile());
-        // result.add(url);
-        // }
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // }
-        
-        // TODO loop properly
-        String[] models = { "IDM", "IIDM", "ACC", "OVM", "VDIFF", "BARL", "GIPPS", "KCA", "NSM"};
-        String[] scenario = { "onramp", "startStop" };
-        for (String sce : scenario) {
-            for (String model : models) {
-                FileUtils.resourceToFile("/sim/" + sce  + "_" + model + ".xml", "sim/"+ sce  + "_" + model + ".xml");
-            }
-        }
-        logger.info("Example scenarios written to folder 'sim'. Exit.");
-        System.exit(0);
     }
 
     /**
@@ -359,4 +277,55 @@ public class SimCommandLineImpl implements SimCommandLine {
         return writeInternalXml;
     }
 
+    /**
+     * Option: Writes all example scenarios from jar resources to /sim folder
+     *
+     * @throws ClassNotFoundException
+     * 		
+     */
+    private void optWriteScenarios() {
+        try {
+            InputStreamReader isr = new InputStreamReader(System.in);
+            BufferedReader br = new BufferedReader(isr);
+            System.out.println("Writing scenarios to folder 'sim'");
+            System.out.println("Overrides existing filenames. Do you want to proceed? <y/n>");
+            String proceed = br.readLine();
+            if (!(proceed.equals("yes") || proceed.equals("y"))) {
+                System.out.println("Exit. Nothing written.");
+                System.exit(0);
+            }
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+        FileUtils.createDir("sim", "");
+        // Iterate over resources does not work?!?
+        // String path = "sim/";
+        // ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        // Enumeration<?> resourceUrls;
+        // try {
+        // resourceUrls = cl.getResources(path);
+        // List<URL> result = new ArrayList<URL>();
+        // while (resourceUrls.hasMoreElements()) {
+        // URL url = (URL) resourceUrls.nextElement();
+        // System.out.println("file: " + url.getFile());
+        // result.add(url);
+        // }
+        // } catch (IOException e) {
+        // e.printStackTrace();
+        // }
+<<<<<<< LEFT
+// TODO loop properly, not hard coded
+=======
+// TODO loop properly
+>>>>>>> RIGHT
+        String[] models = new java.lang.String[]{ "IDM", "IIDM", "ACC", "OVM", "VDIFF", "BARL", "GIPPS", "KCA", "NSM" };
+        String[] scenario = new java.lang.String[]{ "onramp", "startStop" };
+        for (String sce : scenario) {
+            for (String model : models) {
+                FileUtils.resourceToFile(((("/sim/" + sce) + "_") + model) + ".xml", ((("sim/" + sce) + "_") + model) + ".xml");
+            }
+        }
+        logger.info("Example scenarios written to folder 'sim'. Exit.");
+        System.exit(0);
+    }
 }
