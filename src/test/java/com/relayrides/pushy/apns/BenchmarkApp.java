@@ -1,3 +1,5 @@
+<<<<<<< LEFT
+=======
 /* Copyright (c) 2014 RelayRides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,17 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
+>>>>>>> RIGHT
 package com.relayrides.pushy.apns;
-
-import io.netty.channel.nio.NioEventLoopGroup;
-
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import com.relayrides.pushy.apns.ApnsEnvironment;
 import com.relayrides.pushy.apns.PushManager;
@@ -36,24 +29,32 @@ import com.relayrides.pushy.apns.PushManagerFactory;
 import com.relayrides.pushy.apns.RejectedNotificationListener;
 import com.relayrides.pushy.apns.util.ApnsPayloadBuilder;
 import com.relayrides.pushy.apns.util.SimpleApnsPushNotification;
+import io.netty.channel.nio.NioEventLoopGroup;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 
 public class BenchmarkApp {
-
 	private static final int NOTIFICATIONS_PER_TEST = 100000;
 
 	private static final int GATEWAY_PORT = 2195;
+
 	private static final int FEEDPACK_PORT = 2196;
 
 	private final PushManagerFactory<SimpleApnsPushNotification> pushManagerFactory;
 
 	private NioEventLoopGroup serverEventLoopGroup;
+
 	private MockApnsServer server;
 
 	private final ArrayList<SimpleApnsPushNotification> notifications =
 			new ArrayList<SimpleApnsPushNotification>(NOTIFICATIONS_PER_TEST);
 
-	private class BenchmarkErrorListener implements RejectedNotificationListener<SimpleApnsPushNotification>, FailedConnectionListener<SimpleApnsPushNotification> {
-
+	private class BenchmarkErrorListener implements RejectedNotificationListener<SimpleApnsPushNotification> , FailedConnectionListener<SimpleApnsPushNotification> {
 		public void handleFailedConnection(final PushManager<? extends SimpleApnsPushNotification> pushManager, final Throwable cause) {
 			System.err.println("Connection failed.");
 			cause.printStackTrace(System.err);
@@ -65,19 +66,13 @@ public class BenchmarkApp {
 	}
 
 	public BenchmarkApp() throws Exception {
-		this.pushManagerFactory = new PushManagerFactory<SimpleApnsPushNotification>(
-				new ApnsEnvironment("127.0.0.1", GATEWAY_PORT, "localhost", FEEDPACK_PORT),
-				SSLTestUtil.createSSLContextForTestClient());
-
+		this.pushManagerFactory = new PushManagerFactory<SimpleApnsPushNotification>(new ApnsEnvironment("127.0.0.1", GATEWAY_PORT, "localhost", FEEDPACK_PORT), SSLTestUtil.createSSLContextForTestClient());
 		final ApnsPayloadBuilder builder = new ApnsPayloadBuilder();
 		final Random random = new Random();
-
 		for (int i = 0; i < NOTIFICATIONS_PER_TEST; i++) {
 			final byte[] token = new byte[32];
 			random.nextBytes(token);
-
 			builder.setAlertBody(new BigInteger(1024, new Random()).toString(16));
-
 			this.notifications.add(new SimpleApnsPushNotification(token, builder.buildWithDefaultMaximumLength()));
 		}
 	}
