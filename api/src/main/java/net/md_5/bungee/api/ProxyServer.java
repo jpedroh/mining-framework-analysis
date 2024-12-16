@@ -20,9 +20,8 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.api.scheduler.TaskScheduler;
 
-public abstract class ProxyServer
-{
 
+public abstract class ProxyServer {
     @Getter
     private static ProxyServer instance;
 
@@ -56,8 +55,9 @@ public abstract class ProxyServer
     /**
      * Gets a localized string from the .properties file.
      *
-     * @param name translation name
-     * @param args translation arguments
+     * @return the localized string
+     * @param args
+     * 		translation arguments
      * @return the localized string
      */
     public abstract String getTranslation(String name, Object... args);
@@ -337,5 +337,4 @@ public abstract class ProxyServer
      * @return boss bar
      */
     public abstract BossBar createBossBar(BaseComponent[] title, BarColor color, BarStyle style, float progress);
-
 }
