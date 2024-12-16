@@ -23,9 +23,19 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-
 package bibliothek.gui.dock.security;
 
+import bibliothek.gui.DockController;
+import bibliothek.gui.dock.control.focus.FocusController;
+import bibliothek.gui.dock.control.focus.MouseFocusObserver;
+import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
+import bibliothek.util.Todo;
+import bibliothek.util.Workarounds;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -37,27 +47,11 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.EventListener;
-
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JToolTip;
 import javax.swing.SwingUtilities;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.dock.control.focus.FocusController;
-import bibliothek.gui.dock.control.focus.MouseFocusObserver;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
-import bibliothek.gui.dock.util.PropertyKey;
-import bibliothek.gui.dock.util.PropertyValue;
-import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
-import bibliothek.util.Workarounds;
 
 /**
  * A panel containing two children: a "content pane" and a "glass pane". The
@@ -67,54 +61,57 @@ import bibliothek.util.Workarounds;
  * them, and then forward the events to the "content pane".
  * @author Benjamin Sigg
  */
-@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
-	description="In Java 1.7 if a mouse-dragged is followed by a mouse-exit, and the mouse is over another GlassedPane, then this GlassedPane no longer receives events that it received in Java 1.6")
-public class GlassedPane extends JPanel{
-	/** the strategy used by a {@link GlassedPane} to manage its tooltips */
-	public static final PropertyKey<TooltipStrategy> TOOLTIP_STRATEGY = new PropertyKey<TooltipStrategy>( "tooltip strategy", 
-			new ConstantPropertyFactory<TooltipStrategy>( new DefaultTooltipStrategy() ), true );
-	
+@Todo(compatibility = Compatibility.COMPATIBLE, priority = Priority.MAJOR, target = Version.VERSION_1_1_1, description = "In Java 1.7 if a mouse-dragged is followed by a mouse-exit, and the mouse is over another GlassedPane, then this GlassedPane no longer receives events that it received in Java 1.6")
+public class GlassedPane extends JPanel {
+    /**
+     * the strategy used by a {@link GlassedPane} to manage its tooltips
+     */
+    public static final PropertyKey<TooltipStrategy> TOOLTIP_STRATEGY = new PropertyKey<TooltipStrategy>("tooltip strategy", new ConstantPropertyFactory<TooltipStrategy>(new DefaultTooltipStrategy()), true);
+
     /** An arbitrary component */
     private JComponent contentPane = new JPanel();
+
     /** A component lying over all other components. Catches every MouseEvent */
     private JComponent glassPane = new GlassPane();
+
     /** A controller which will be informed about every click of the mouse */
     private DockController controller;
-    
-    /** the strategy used to manage tooltips */
-    private PropertyValue<TooltipStrategy> tooltips = new PropertyValue<TooltipStrategy>( TOOLTIP_STRATEGY ){
-		@Override
-		protected void valueChanged( TooltipStrategy oldValue, TooltipStrategy newValue ){
-			if( oldValue != null ){
-				oldValue.uninstall( GlassedPane.this );
-			}
-			if( newValue != null ){
-				newValue.install( GlassedPane.this );
-			}
-		}
-	};
-    
+
+    /**
+     * the strategy used to manage tooltips
+     */
+    private PropertyValue<TooltipStrategy> tooltips = new PropertyValue<TooltipStrategy>(TOOLTIP_STRATEGY) {
+        @Override
+        protected void valueChanged(TooltipStrategy oldValue, TooltipStrategy newValue) {
+            if (oldValue != null) {
+                oldValue.uninstall(GlassedPane.this);
+            }
+            if (newValue != null) {
+                newValue.install(GlassedPane.this);
+            }
+        }
+    };
+
     /**
      * Creates a new pane
      */
-    public GlassedPane(){
-        setLayout( null );
-        contentPane.setOpaque( false );
-        setOpaque( false );
-        
-        add( glassPane );
-        add( contentPane );
-        setFocusCycleRoot( true );
+    public GlassedPane() {
+        setLayout(null);
+        contentPane.setOpaque(false);
+        setOpaque(false);
+        add(glassPane);
+        add(contentPane);
+        setFocusCycleRoot(true);
     }
-    
+
     /**
      * Sets the controller to inform about {@link KeyEvent}s.
      * @param controller the controller to inform
      */
     public void setController( DockController controller ){
-		this.controller = controller;
-		tooltips.setProperties( controller );
-	}
+    		this.controller = controller;
+    		tooltips.setProperties( controller );
+    	}
 
     @Override
     public void doLayout() {
@@ -133,6 +130,7 @@ public class GlassedPane extends JPanel{
     	}
         return contentPane.getPreferredSize();
     }
+
     @Override
     public Dimension getMaximumSize() {
     	if( contentPane == null ){
@@ -140,6 +138,7 @@ public class GlassedPane extends JPanel{
     	}
         return contentPane.getMaximumSize();
     }
+
     @Override
     public Dimension getMinimumSize() {
     	if( contentPane == null ){
@@ -179,57 +178,57 @@ public class GlassedPane extends JPanel{
     public JComponent getGlassPane(){
         return glassPane;
     }
-    
+
     /**
      * A panel that lies over all other components of the enclosing GlassedPane.
      * This panel catches all MouseEvent, and informs the {@link MouseFocusObserver}.
      * @author Benjamin Sigg
      */
-    public class GlassPane extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener{
+    public class GlassPane extends JPanel implements MouseListener , MouseMotionListener , MouseWheelListener {
         /** the component where a drag-event started */
         private Component dragged;
+
         /** the component currently under the mouse */
         private Component over;
+
         /** the number of pressed buttons */
         private int downCount = 0;
 
         /** callback forwarded to the current {@link TooltipStrategy} of {@link GlassedPane#tooltips} */
         private TooltipStrategyCallback callback = new TooltipStrategyCallback(){
-			public void setToolTipText( String text ){
-				GlassPane.this.setToolTipText( text );
-			}
-			
-			public String getToolTipText(){
-				return GlassPane.this.getToolTipText();
-			}
-			
-			public GlassedPane getGlassedPane(){
-				return GlassedPane.this;
-			}
-			
-			public JToolTip createToolTip(){
-				return superCreateToolTip();
-			}
-		};
-        
+        			public void setToolTipText( String text ){
+        				GlassPane.this.setToolTipText( text );
+        			}
+        			
+        			public String getToolTipText(){
+        				return GlassPane.this.getToolTipText();
+        			}
+        			
+        			public GlassedPane getGlassedPane(){
+        				return GlassedPane.this;
+        			}
+        			
+        			public JToolTip createToolTip(){
+        				return superCreateToolTip();
+        			}
+        		};
+
         /**
          * Creates a new GlassPane.
          */
-        public GlassPane(){
-            addMouseListener( this );
-            addMouseMotionListener( this );
-            addMouseWheelListener( this );
-
-            setOpaque( false );
-            
-            setFocusable( false );
-            
-            Workarounds.getDefault().markAsGlassPane( this );
+        public GlassPane() {
+            addMouseListener(this);
+            addMouseMotionListener(this);
+            addMouseWheelListener(this);
+            setOpaque(false);
+            setFocusable(false);
+            Workarounds.getDefault().markAsGlassPane(this);
         }
-        
-        public void mouseClicked( MouseEvent e ) {
-            if( !e.isConsumed() )
-                send( e );
+
+        public void mouseClicked(MouseEvent e) {
+            if (!e.isConsumed()) {
+                send(e);
+            }
         }
 
         public void mousePressed( MouseEvent e ) {
@@ -285,99 +284,77 @@ public class GlassedPane extends JPanel{
          * @param e the event to handle
          * @param id the type of the event
          */
-        private void send( MouseEvent e, int id ){
-        	if( contentPane == null ){
-        		return;
-        	}
-
+        private void send(MouseEvent e, int id) {
+            if (contentPane == null) {
+                return;
+            }
             Point mouse = e.getPoint();
-            Component component = SwingUtilities.getDeepestComponentAt( contentPane, mouse.x, mouse.y );
-            if( component != null && !component.isEnabled() ){
-            	component = null;
+            Component component = SwingUtilities.getDeepestComponentAt(contentPane, mouse.x, mouse.y);
+            if ((component != null) && (!component.isEnabled())) {
+                component = null;
+            } else {
+                component = fallThrough(component, e);
             }
-            else{
-            	component = fallThrough( component, e );
-            }
-
             boolean drag = id == MouseEvent.MOUSE_DRAGGED;
             boolean press = id == MouseEvent.MOUSE_PRESSED;
             boolean release = id == MouseEvent.MOUSE_RELEASED;
             boolean moved = id == MouseEvent.MOUSE_MOVED;
             boolean entered = id == MouseEvent.MOUSE_ENTERED;
             boolean exited = id == MouseEvent.MOUSE_EXITED;
-            
-            if( drag && dragged == null )
+            if (drag && (dragged == null)) {
                 dragged = component;
-            else if( drag )
+            } else if (drag) {
                 component = dragged;
-
-            if( press ){
-            	downCount |= 1 << e.getButton();
             }
-
-            if( downCount > 0 && dragged != null )
+            if (press) {
+                downCount |= 1 << e.getButton();
+            }
+            if ((downCount > 0) && (dragged != null)) {
                 component = dragged;
-            else if( downCount > 0 && dragged == null )
+            } else if ((downCount > 0) && (dragged == null)) {
                 dragged = component;
-            else if( downCount == 0 )
+            } else if (downCount == 0) {
                 dragged = null;
-
-            if( release ){
-            	downCount &= ~(1 << e.getButton());
             }
-            if( (e.getModifiersEx() & (MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK)) == 0 ){
-            	// no button is pressed currently, reset dragging
-            	downCount = 0;
-            	dragged = null;
+            if (release) {
+                downCount &= ~(1 << e.getButton());
+            }
+            if ((e.getModifiersEx() & ((MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK) | MouseEvent.BUTTON3_DOWN_MASK)) == 0) {
+                // no button is pressed currently, reset dragging
+                downCount = 0;
+                dragged = null;
             }
             boolean overNewComponent = false;
-            
-            if( moved || entered || exited ){
-                if( over != component ){
-                	overNewComponent = true;
-                    if( over != null ){
-                        over.dispatchEvent( new MouseEvent( 
-                                over, MouseEvent.MOUSE_EXITED, e.getWhen(), e.getModifiers(), 
-                                mouse.x, mouse.y, e.getClickCount(), e.isPopupTrigger(), 
-                                e.getButton() ));
+            if ((moved || entered) || exited) {
+                if (over != component) {
+                    overNewComponent = true;
+                    if (over != null) {
+                        over.dispatchEvent(new MouseEvent(over, MouseEvent.MOUSE_EXITED, e.getWhen(), e.getModifiers(), mouse.x, mouse.y, e.getClickCount(), e.isPopupTrigger(), e.getButton()));
                     }
-
                     over = component;
-
-                    if( over != null ){
-                        over.dispatchEvent( new MouseEvent( 
-                                over, MouseEvent.MOUSE_ENTERED, e.getWhen(), e.getModifiers(), 
-                                mouse.x, mouse.y, e.getClickCount(), e.isPopupTrigger(), 
-                                e.getButton() ));
+                    if (over != null) {
+                        over.dispatchEvent(new MouseEvent(over, MouseEvent.MOUSE_ENTERED, e.getWhen(), e.getModifiers(), mouse.x, mouse.y, e.getClickCount(), e.isPopupTrigger(), e.getButton()));
                     }
                 }
             }
-            
-            if( component == null ){
-                setCursor( null );
-                setToolTipText( null );
-            }
-            else{
-            	mouse = SwingUtilities.convertPoint( this, mouse, component );
-                MouseEvent forward = new MouseEvent( 
-                        component, id, e.getWhen(), e.getModifiers(), 
-                        mouse.x, mouse.y, e.getClickCount(), e.isPopupTrigger(), 
-                        e.getButton() );
-                
-                if( controller != null ){
-                	controller.getGlobalMouseDispatcher().dispatch( forward );
+            if (component == null) {
+                setCursor(null);
+                setToolTipText(null);
+            } else {
+                mouse = SwingUtilities.convertPoint(this, mouse, component);
+                MouseEvent forward = new MouseEvent(component, id, e.getWhen(), e.getModifiers(), mouse.x, mouse.y, e.getClickCount(), e.isPopupTrigger(), e.getButton());
+                if (controller != null) {
+                    controller.getGlobalMouseDispatcher().dispatch(forward);
                 }
-                
-                component.dispatchEvent( forward );
-                
+                component.dispatchEvent(forward);
                 Cursor cursor = component.getCursor();
-                if( getCursor() != cursor )
-                    setCursor( cursor );
-
-                tooltips.getValue().setTooltipText( over, forward, overNewComponent, callback );
+                if (getCursor() != cursor) {
+                    setCursor(cursor);
+                }
+                tooltips.getValue().setTooltipText(over, forward, overNewComponent, callback);
             }
         }
-        
+
         /**
          * Assuming this {@link GlassedPane} wants to forward <code>event</code> to <code>component</code>,
          * this method can decide that <code>component</code> should not receive the event. Instead some
@@ -413,7 +390,7 @@ public class GlassedPane extends JPanel{
         private JToolTip superCreateToolTip(){
         	return super.createToolTip();
         }
-        
+
         /**
          * Dispatches the event <code>e</code> to the ContentPane or one
          * of the children of ContentPane. Also informs the focusController about

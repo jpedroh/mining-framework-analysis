@@ -23,32 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-
 package bibliothek.gui.dock;
-
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.swing.Icon;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -102,8 +77,8 @@ import bibliothek.gui.dock.station.split.DockableSplitDockTree;
 import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Node;
 import bibliothek.gui.dock.station.split.Placeholder;
-import bibliothek.gui.dock.station.split.PutInfo;
 import bibliothek.gui.dock.station.split.PutInfo.Put;
+import bibliothek.gui.dock.station.split.PutInfo;
 import bibliothek.gui.dock.station.split.Root;
 import bibliothek.gui.dock.station.split.SplitDividerStrategy;
 import bibliothek.gui.dock.station.split.SplitDockAccess;
@@ -161,10 +136,33 @@ import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Path;
-import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
 import bibliothek.util.Todo.Version;
+import bibliothek.util.Todo;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.swing.Icon;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.event.MouseInputListener;
+
 
 /**
  * This station shows all its children at once. The children are separated
@@ -176,13 +174,13 @@ import bibliothek.util.Todo.Version;
  * ID {@link #TITLE_ID}.
  * @author Benjamin Sigg
  */
-public class SplitDockStation extends SecureContainer implements Dockable, DockStation {
+public class SplitDockStation extends SecureContainer implements Dockable , DockStation {
 	/** The ID under which this station tries to register a {@link DockTitleFactory} */
 	public static final String TITLE_ID = "split";
 
-    /** This id is forwarded to {@link Extension}s which load additional {@link DisplayerFactory}s */
-    public static final String DISPLAYER_ID = "split";
-	
+				/** This id is forwarded to {@link Extension}s which load additional {@link DisplayerFactory}s */
+				public static final String DISPLAYER_ID = "split";
+
 	/**
 	 * Describes which {@link KeyEvent} will maximize/normalize the currently
 	 * selected {@link Dockable}. 
@@ -194,24 +192,23 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * drop-event, how to react on resize and other things related
 	 * to the layout.
 	 */
-	public static final PropertyKey<SplitLayoutManager> LAYOUT_MANAGER = new PropertyKey<SplitLayoutManager>("SplitDockStation layout manager",
-			new ConstantPropertyFactory<SplitLayoutManager>(new DefaultSplitLayoutManager()), true);
+	public static final PropertyKey<SplitLayoutManager> LAYOUT_MANAGER = new PropertyKey<SplitLayoutManager>("SplitDockStation layout manager", new ConstantPropertyFactory<SplitLayoutManager>(new DefaultSplitLayoutManager()), true);
 
 	/**
 	 * The algorithm that allows users to resize children of a {@link SplitDockStation} by
 	 * grabbing a gab between two children and moving that gap around.
 	 */
-	public static final PropertyKey<SplitDividerStrategy> DIVIDER_STRATEGY = new PropertyKey<SplitDividerStrategy>("SplitDockStation divider strategy",
-			new DynamicPropertyFactory<SplitDividerStrategy>(){
-				public SplitDividerStrategy getDefault( PropertyKey<SplitDividerStrategy> key, DockProperties properties ){
-					return new DefaultSplitDividerStrategy();
-				}
-				@Override
-				public SplitDividerStrategy getDefault( PropertyKey<SplitDividerStrategy> key ){
-					return null;
-				}
-			}, true);
-	
+	public static final PropertyKey<SplitDividerStrategy> DIVIDER_STRATEGY = new PropertyKey<SplitDividerStrategy>("SplitDockStation divider strategy", new DynamicPropertyFactory<SplitDividerStrategy>() {
+		public SplitDividerStrategy getDefault(PropertyKey<SplitDividerStrategy> key, DockProperties properties) {
+			return new DefaultSplitDividerStrategy();
+		}
+
+		@Override
+		public SplitDividerStrategy getDefault(PropertyKey<SplitDividerStrategy> key) {
+			return null;
+		}
+	}, true);
+
 	/** The parent of this station */
 	private DockStation parent;
 
@@ -224,7 +221,9 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	/** The theme of this station */
 	private DockTheme theme;
 
-	/** Combiner to {@link #dropOver(Leaf, Dockable, CombinerSource, CombinerTarget) combine} some Dockables */
+	/**
+	 * Combiner to {@link #dropOver(Leaf, Dockable, CombinerSource, CombinerTarget) combine} some Dockables
+	 */
 	private StationCombinerValue combiner;
 
 	/** The type of titles which are used for this station */
@@ -235,7 +234,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 
 	/** All {@link DockableStateListener}s of this station */
 	private DockableStateListenerManager dockableStateListeners;
-	
+
 	/** an observer ensuring that the {@link DockHierarchyEvent}s are sent properly */
 	private DockHierarchyObserver hierarchyObserver;
 
@@ -257,82 +256,94 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 */
 	protected DockStationListenerManager dockStationListeners = new DockStationListenerManager(this);
 
-	/** Optional text for this station */
-	private PropertyValue<String> titleText = new PropertyValue<String>(PropertyKey.DOCK_STATION_TITLE){
+	/**
+	 * Optional text for this station
+	 */
+	private PropertyValue<String> titleText = new PropertyValue<String>(PropertyKey.DOCK_STATION_TITLE) {
 		@Override
-		protected void valueChanged( String oldValue, String newValue ){
-			if( oldValue == null )
+		protected void valueChanged(String oldValue, String newValue) {
+			if (oldValue == null) {
 				oldValue = "";
-			if( newValue == null )
+			}
+			if (newValue == null) {
 				newValue = "";
-
-			for( DockableListener listener : dockableListeners.toArray(new DockableListener[dockableListeners.size()]) )
+			}
+			for (DockableListener listener : dockableListeners.toArray(new DockableListener[dockableListeners.size()])) {
 				listener.titleTextChanged(SplitDockStation.this, oldValue, newValue);
+			}
 		}
 	};
 
 	/** Optional icon for this station */
 	private DockIcon titleIcon;
-	
-	/** Optional tooltip for this station */
-	private PropertyValue<String> titleToolTip = new PropertyValue<String>(PropertyKey.DOCK_STATION_TOOLTIP){
+
+	/**
+	 * Optional tooltip for this station
+	 */
+	private PropertyValue<String> titleToolTip = new PropertyValue<String>(PropertyKey.DOCK_STATION_TOOLTIP) {
 		@Override
-		protected void valueChanged( String oldValue, String newValue ){
-			for( DockableListener listener : dockableListeners.toArray(new DockableListener[dockableListeners.size()]) )
+		protected void valueChanged(String oldValue, String newValue) {
+			for (DockableListener listener : dockableListeners.toArray(new DockableListener[dockableListeners.size()])) {
 				listener.titleToolTipChanged(SplitDockStation.this, oldValue, newValue);
+			}
 		}
 	};
 
-	/** the manager for detailed control of the behavior of this station */
-	private PropertyValue<SplitLayoutManager> layoutManager = new PropertyValue<SplitLayoutManager>(LAYOUT_MANAGER){
+	/**
+	 * the manager for detailed control of the behavior of this station
+	 */
+	private PropertyValue<SplitLayoutManager> layoutManager = new PropertyValue<SplitLayoutManager>(LAYOUT_MANAGER) {
 		@Override
-		protected void valueChanged( SplitLayoutManager oldValue, SplitLayoutManager newValue ){
-			if( oldValue != null )
+		protected void valueChanged(SplitLayoutManager oldValue, SplitLayoutManager newValue) {
+			if (oldValue != null) {
 				oldValue.uninstall(SplitDockStation.this);
-
-			if( newValue != null )
+			}
+			if (newValue != null) {
 				newValue.install(SplitDockStation.this);
-		}
-	};
-	
-	/** the strategy responsible for resizing the children of this station when the user moves a gap between them */
-	private PropertyValue<SplitDividerStrategy> dividerStrategy = new PropertyValue<SplitDividerStrategy>(DIVIDER_STRATEGY){
-		@Override
-		protected void valueChanged( SplitDividerStrategy oldValue, SplitDividerStrategy newValue ){
-			if( oldValue != null ){
-				oldValue.uninstall( SplitDockStation.this );
-			}
-			if( newValue != null && content != null ){
-				newValue.install( SplitDockStation.this, getContentPane() );
 			}
 		}
 	};
 
-	private PropertyValue<PlaceholderStrategy> placeholderStrategyProperty = new PropertyValue<PlaceholderStrategy>(PlaceholderStrategy.PLACEHOLDER_STRATEGY){
+	/**
+	 * the strategy responsible for resizing the children of this station when the user moves a gap between them
+	 */
+	private PropertyValue<SplitDividerStrategy> dividerStrategy = new PropertyValue<SplitDividerStrategy>(DIVIDER_STRATEGY) {
 		@Override
-		protected void valueChanged( PlaceholderStrategy oldValue, PlaceholderStrategy newValue ){
+		protected void valueChanged(SplitDividerStrategy oldValue, SplitDividerStrategy newValue) {
+			if (oldValue != null) {
+				oldValue.uninstall(SplitDockStation.this);
+			}
+			if ((newValue != null) && (content != null)) {
+				newValue.install(SplitDockStation.this, getContentPane());
+			}
+		}
+	};
+
+	private PropertyValue<PlaceholderStrategy> placeholderStrategyProperty = new PropertyValue<PlaceholderStrategy>(PlaceholderStrategy.PLACEHOLDER_STRATEGY) {
+		@Override
+		protected void valueChanged(PlaceholderStrategy oldValue, PlaceholderStrategy newValue) {
 			placeholderStrategy.setStrategy(newValue);
 		}
 	};
-	
 
-	/** Access to the current {@link DisablingStrategy} */
-	private PropertyValue<DisablingStrategy> disablingStrategy = new PropertyValue<DisablingStrategy>( DisablingStrategy.STRATEGY ){
+	/**
+	 * Access to the current {@link DisablingStrategy}
+	 */
+	private PropertyValue<DisablingStrategy> disablingStrategy = new PropertyValue<DisablingStrategy>(DisablingStrategy.STRATEGY) {
 		@Override
-		protected void valueChanged( DisablingStrategy oldValue, DisablingStrategy newValue ){
-			if( oldValue != null ){	
-				oldValue.removeDisablingStrategyListener( disablingStrategyListener );
+		protected void valueChanged(DisablingStrategy oldValue, DisablingStrategy newValue) {
+			if (oldValue != null) {
+				oldValue.removeDisablingStrategyListener(disablingStrategyListener);
 			}
-			if( newValue != null ){
-				newValue.addDisablingStrategyListener( disablingStrategyListener );
-				setDisabled( newValue.isDisabled( SplitDockStation.this ));
-			}
-			else{
-				setDisabled( false );
+			if (newValue != null) {
+				newValue.addDisablingStrategyListener(disablingStrategyListener);
+				setDisabled(newValue.isDisabled(SplitDockStation.this));
+			} else {
+				setDisabled(false);
 			}
 		}
 	};
-	
+
 	/** observes the {@link #disablingStrategy} and closes the front dockable if necessary */
 	private DisablingStrategyListener disablingStrategyListener = new DisablingStrategyListener(){
 		public void changed( DockElement item ){
@@ -391,7 +402,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 
 	/** The root of the tree which determines the structure of this station */
 	private Root root;
-	
+
 	/** The factory responsible for creating new {@link SplitNode}s */
 	private SplitNodeFactory nodeFactory = new DefaultSplitNodeFactory();
 
@@ -403,10 +414,10 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 
 	/** Information about the {@link Dockable} which is currently draged onto this station. */
 	private PutInfo putInfo;
-	
+
 	/** Information about the current {@link Span}s */
 	private SplitSpanStrategy spanStrategy;
-	
+
 	/** Information aboud the {@link Dockable} that is currently removed from this station */
 	private ComponentDragOperation dragInfo;
 
@@ -424,106 +435,99 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 */
 	private boolean resizingEnabled = true;
 
-	/** If <code>true</code>, the components are resized while the split is dragged */
+	/**
+	 * If <code>true</code>, the components are resized while the split is dragged
+	 */
 	private boolean continousDisplay = false;
 
 	/** the configurable hints for the parent of this station */
 	private DockableDisplayerHints hints;
-	
+
 	/** the parent of all {@link DockableDisplayer}s */
 	private Content content;
-	
+
 	/** the background algorithm of this station */
 	private Background background = new Background();
-	
+
 	/** the newest state issued by the {@link #disablingStrategy} */
 	private boolean disabled = false;
 
-	/** the minimum size a {@link Leaf} can have, in pixels */
-	private Dimension minimumLeafSize = new Dimension( 20, 20 );
-	
 	/**
-	 * Constructs a new {@link SplitDockStation}. 
+	 * the minimum size a {@link Leaf} can have, in pixels
 	 */
-	public SplitDockStation(){
-		this( true );
+	private Dimension minimumLeafSize = new Dimension(20, 20);
+
+	/**
+	 * Constructs a new {@link SplitDockStation}.
+	 */
+	public SplitDockStation() {
+		this(true);
 	}
 
 	/**
 	 * Creates a new {@link SplitDockStation}. 
 	 * @param createFullScreenAction whether {@link #createFullScreenAction()} should be called or not
 	 */
-	public SplitDockStation( boolean createFullScreenAction ){
+	public SplitDockStation(boolean createFullScreenAction) {
 		content = new Content();
-		content.setBackground( background );
-		setBasePane( content );
+		content.setBackground(background);
+		setBasePane(content);
 		hierarchyObserver = new DockHierarchyObserver(this);
-
 		placeholderSet = new SplitPlaceholderSet(access);
-		dockableStateListeners = new DockableStateListenerManager( this );
-
-		paint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".split", this );
-		combiner = new StationCombinerValue( ThemeManager.COMBINER + ".split", this );
-		displayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".split", this );
-		
-		displayers = new DisplayerCollection( this, displayerFactory, DISPLAYER_ID );
-		displayers.addDockableDisplayerListener(new DockableDisplayerListener(){
+		dockableStateListeners = new DockableStateListenerManager(this);
+		paint = new DefaultStationPaintValue(ThemeManager.STATION_PAINT + ".split", this);
+		combiner = new StationCombinerValue(ThemeManager.COMBINER + ".split", this);
+		displayerFactory = new DefaultDisplayerFactoryValue(ThemeManager.DISPLAYER_FACTORY + ".split", this);
+		displayers = new DisplayerCollection(this, displayerFactory, DISPLAYER_ID);
+		displayers.addDockableDisplayerListener(new DockableDisplayerListener() {
 			public void discard( DockableDisplayer displayer ){
 				SplitDockStation.this.discard(displayer);
 			}
+
 			public void moveableElementChanged( DockableDisplayer displayer ){
 				// ignore
 			}
 		});
-
-		if( createFullScreenAction ){
+		if (createFullScreenAction) {
 			fullScreenAction = createFullScreenAction();
 		}
 		visibility = new DockableShowingManager(dockStationListeners);
-
 		SplitDividerStrategy strategy = dividerStrategy.getValue();
-		if( strategy != null ){
-			strategy.install( this, getContentPane() );
+		if (strategy != null) {
+			strategy.install(this, getContentPane());
 		}
-		
 		globalSource = new HierarchyDockActionSource(this);
 		globalSource.bind();
-		
-		spanStrategy = new SplitSpanStrategy( this );
-		
-		titleIcon = new DockStationIcon( "dockStation.default", this ){
-			protected void changed( Icon oldValue, Icon newValue ){
-				for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size()] )){
-					listener.titleIconChanged( SplitDockStation.this, oldValue, newValue );
+		spanStrategy = new SplitSpanStrategy(this);
+		titleIcon = new DockStationIcon("dockStation.default", this) {
+			protected void changed(Icon oldValue, Icon newValue) {
+				for (DockableListener listener : dockableListeners.toArray(new DockableListener[dockableListeners.size()])) {
+					listener.titleIconChanged(SplitDockStation.this, oldValue, newValue);
 				}
 			}
 		};
-
-		addDockStationListener(new DockStationAdapter(){
+		addDockStationListener(new DockStationAdapter() {
 			@Override
-			public void dockableAdded( DockStation station, Dockable dockable ){
+			public void dockableAdded(DockStation station, Dockable dockable) {
 				updateConfigurableDisplayerHints();
 			}
 
 			@Override
-			public void dockableRemoved( DockStation station, Dockable dockable ){
+			public void dockableRemoved(DockStation station, Dockable dockable) {
 				updateConfigurableDisplayerHints();
 			}
 		});
-
-		placeholderStrategy.addListener(new PlaceholderStrategyListener(){
-			public void placeholderInvalidated( Set<Path> placeholders ){
+		placeholderStrategy.addListener(new PlaceholderStrategyListener() {
+			public void placeholderInvalidated(Set<Path> placeholders) {
 				removePlaceholders(placeholders);
 			}
 		});
-		
-		addHierarchyListener( new HierarchyListener(){
-			public void hierarchyChanged( HierarchyEvent e ){
-				if( (e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 ){
-					if( getDockParent() == null ){
+		addHierarchyListener(new HierarchyListener() {
+			public void hierarchyChanged(HierarchyEvent e) {
+				if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
+					if (getDockParent() == null) {
 						dockableStateListeners.checkShowing();
 					}
-					
 					visibility.fire();
 				}
 			}
@@ -537,9 +541,9 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * @return the root
 	 * @see #getRoot()
 	 */
-	protected final Root root(){
-		if( root == null ) {
-			root = access.createRoot( -1 );
+	protected final Root root() {
+		if (root == null) {
+			root = access.createRoot(-1);
 		}
 		return root;
 	}
@@ -563,7 +567,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 		return base;
 	}
-	
+
 	@Override
 	public Dimension getPreferredSize(){
 		Insets insets = getInsets();
@@ -678,7 +682,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			setCursor( null );
 		}
 	}
-	
+
 	/**
 	 * Tells the result of the current {@link DisablingStrategy}.
 	 * @return whether this station is currently enabled or not
@@ -686,7 +690,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public boolean isDisabled(){
 		return disabled;
 	}
-	
+
 	public void setDockParent( DockStation station ){
 		if( this.parent != null )
 			this.parent.removeDockStationListener(visibleListener);
@@ -784,7 +788,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public boolean accept( DockStation base, Dockable neighbour ){
 		return true;
 	}
-	
+
 	public Component getComponent(){
 		return this;
 	}
@@ -796,11 +800,11 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public boolean isUsedAsTitle(){
 		return false;
 	}
-	
+
 	public boolean shouldFocus(){
-    	return true;
-    }
-	
+	   	return true;
+	   }
+
 	public boolean shouldTransfersFocus(){
 		return false;
 	}
@@ -852,13 +856,13 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public void setTitleIcon( Icon titleIcon ){
 		this.titleIcon.setValue( titleIcon, true );
 	}
-	
-    /**
-     * Resets the icon of this {@link SplitDockStation}, the default icon is shown again.
-     */
-    public void resetTitleIcon(){
-    	this.titleIcon.setValue( null );
-    }
+
+				/**
+				 * Resets the icon of this {@link SplitDockStation}, the default icon is shown again.
+				 */
+				public void resetTitleIcon(){
+					this.titleIcon.setValue( null );
+				}
 
 	/**
 	 * Sets a special {@link SplitLayoutManager} which this station has to use.
@@ -888,7 +892,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public SplitLayoutManager getCurrentSplitLayoutManager(){
 		return layoutManager.getValue();
 	}
-	
+
 	/**
 	 * Gets the strategy for creating and storing placeholders. Note that this is not the same
 	 * value as was set to {@link #setPlaceholderStrategy(PlaceholderStrategy)} 
@@ -976,7 +980,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public int getDividerSize(){
 		return dividerSize;
 	}
-	
+
 	/**
 	 * Gets the {@link SplitDividerStrategy} that is used to handle the divider of this station.
 	 * @return the current strategy
@@ -984,7 +988,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public SplitDividerStrategy getDividerStrategy(){
 		return dividerStrategy.getValue();
 	}
-	
+
 	/**
 	 * Sets the {@link SplitDividerStrategy} that should be used to handle the divider of this station.
 	 * @param strategy the new strategy or <code>null</code> to revert to the default value
@@ -992,13 +996,13 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public void setDividerStrategy( SplitDividerStrategy strategy ){
 		dividerStrategy.setValue( strategy );
 	}
-	
+
 	/**
 	 * Gets read access to the strategy which is responsible for handling the {@link Span}s of
 	 * this station.
 	 * @return the object responsible for handling {@link Span}s, not <code>null</code> 
 	 */
-	protected SplitSpanStrategy getSpanStrategy(){
+	protected SplitSpanStrategy getSpanStrategy() {
 		return spanStrategy;
 	}
 
@@ -1014,7 +1018,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 		this.nodeFactory = factory;
 	}
-	
+
 	/**
 	 * Gets the factory which is responsible for creating new {@link SplitNode}s. Clients usually have no
 	 * need to access this property.
@@ -1024,7 +1028,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public SplitNodeFactory getNodeFactory(){
 		return nodeFactory;
 	}
-	
+
 	/**
 	 * Sets whether the dockables should be resized while the split
 	 * is dragged, or not.
@@ -1044,7 +1048,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public boolean isContinousDisplay(){
 		return continousDisplay;
 	}
-	
+
 	/**
 	 * Sets the minimum size a {@link Leaf} can have. The default is 20/20.
 	 * @param minimumLeafSize the new minimum size in pixels, not <code>null</code>
@@ -1056,7 +1060,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		this.minimumLeafSize = minimumLeafSize;
 		revalidate();
 	}
-	
+
 	/**
 	 * Gets the minimum size a {@link Leaf} can have.
 	 * @return the minimum size
@@ -1093,7 +1097,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public void requestDisplayer( DisplayerRequest request ){
 		// ignore
 	}
-	
+
 	public void changed( Dockable dockable, DockTitle title, boolean active ){
 		title.changed(new ActivityDockTitleEvent(this, dockable, active));
 	}
@@ -1101,7 +1105,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public void requestChildDockTitle( DockTitleRequest request ){
 		// ignore	
 	}
-	
+
 	public void requestChildDisplayer( DisplayerRequest request ){
 		// ignore	
 	}
@@ -1211,11 +1215,11 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public void addDockableStateListener( DockableStateListener listener ){
 		dockableStateListeners.addListener( listener );	
 	}
-	
+
 	public void removeDockableStateListener( DockableStateListener listener ){
 		dockableStateListeners.removeListener( listener );
 	}
-	
+
 	/**
 	 * Adds a listener to this station. The listener is informed some 
 	 * settings only available to a {@link SplitDockStation} are changed.
@@ -1236,7 +1240,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public boolean isChildShowing( Dockable dockable ){
 		return isVisible( dockable );
 	}
-	
+
 	@Deprecated
 	@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_3, description="remove this method" )
 	public boolean isVisible( Dockable dockable ){
@@ -1246,7 +1250,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public boolean isStationShowing(){
 		return isStationVisible();
 	}
-	
+
 	@Deprecated
 	@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_3, description="remove this method" )
 	public boolean isStationVisible(){
@@ -1256,20 +1260,20 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public boolean isDockableShowing(){
 		return isDockableVisible();
 	}
-	
+
 	@Deprecated
 	@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_3, description="remove this method" )
 	public boolean isDockableVisible(){
-    	DockController controller = getController();
-    	if( controller == null ){
-    		return false;
-    	}
-    	DockStation parent = getDockParent();
-    	if( parent != null ){
-    		return parent.isChildShowing( this );
-    	}
-    	return isShowing();
-    }
+	   	DockController controller = getController();
+	   	if( controller == null ){
+	   		return false;
+	   	}
+	   	DockStation parent = getDockParent();
+	   	if( parent != null ){
+	   		return parent.isChildShowing( this );
+	   	}
+	   	return isShowing();
+	   }
 
 	public int getDockableCount(){
 		return dockables.size();
@@ -1425,7 +1429,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public Dockable getFullScreen(){
 		return fullScreenDockable == null ? null : fullScreenDockable.getDockable();
 	}
-	
+
 	/**
 	 * Tells whether {@link #createFullScreenAction()} was called and returned a value other
 	 * than <code>null</code>.
@@ -1453,7 +1457,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 					Leaf leaf = getRoot().getLeaf(dockable);
 					if( leaf == null )
 						throw new IllegalArgumentException("Dockable not child of this station");
-	
+
 					fullScreenDockable = leaf.getDockableHandle();
 					updateVisibility();
 				}
@@ -1461,7 +1465,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 					fullScreenDockable = null;
 					updateVisibility();
 				}
-	
+
 				if( oldFullScreen != null ){
 					access.repositioned.add( oldFullScreen );
 				}
@@ -1495,7 +1499,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			}
 		}
 	}
-	
+
 	/**
 	 * Switches the child which is in fullscreen-mode. If there is no child,
 	 * nothing will happen. If there is only one child, it will be set to
@@ -1521,11 +1525,11 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public PlaceholderMap getPlaceholders(){
 		return createPlaceholderConverter().getPlaceholders();
 	}
-	
+
 	public void setPlaceholders( PlaceholderMap placeholders ){
 		createPlaceholderConverter().setPlaceholders( placeholders );
 	}
-	
+
 	/**
 	 * Creates the algorithm that is used by {@link #getPlaceholders()} and {@link #setPlaceholders(PlaceholderMap)}.
 	 * @return the algorithm to handle {@link PlaceholderMap}s, not <code>null</code>
@@ -1541,7 +1545,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				new SideSnapDropLayer( this )
 		};
 	}
-	
+
 	public StationDropOperation prepareDrop( StationDropItem item ){
 		PutInfo putInfo = null;
 		boolean move = item.getDockable().getDockParent() == this;
@@ -1573,7 +1577,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 		return new SplitDropOperation( putInfo, item, move );
 	}
-	
+
 	public StationDragOperation prepareDrag( Dockable dockable ){
 		dragInfo = new ComponentDragOperation( dockable, this ){
 			@Override
@@ -1583,7 +1587,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		};
 		return dragInfo;
 	}
-	
+
 	/**
 	 * Gets the location where the currently dragged {@link Dockable} would be dropped.
 	 * @return a possible location, may be <code>null</code>
@@ -1591,7 +1595,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public PutInfo getDropInfo(){
 		return putInfo;
 	}
-	
+
 	private void prepareCombine( PutInfo putInfo, boolean move, StationDropItem item ){
 		if( putInfo.getCombinerSource() == null && putInfo.getCombinerTarget() == null ){
 			if( putInfo.getNode() instanceof Leaf ){
@@ -1630,7 +1634,6 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			}
 		}
 	}
-	
 
 	public void drop( Dockable dockable ){
 		addDockable( dockable, null );
@@ -1687,20 +1690,20 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				drop(dockable);
 				return true;
 			}
-	
+
 			updateBounds();
-	
+
 			class DropInfo {
 				public Leaf bestLeaf;
 				public double bestLeafIntersection;
-	
+
 				public SplitNode bestNode;
 				public double bestNodeIntersection = Double.POSITIVE_INFINITY;
 				public PutInfo.Put bestNodePut;
 			}
-	
+
 			final DropInfo info = new DropInfo();
-	
+
 			root.visit(new SplitNodeVisitor(){
 				public void handleLeaf( Leaf leaf ){
 					double intersection = leaf.intersection(property);
@@ -1708,24 +1711,24 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 						info.bestLeafIntersection = intersection;
 						info.bestLeaf = leaf;
 					}
-	
+
 					handleNeighbour(leaf);
 				}
-	
+
 				public void handleNode( Node node ){
 					if( node.isVisible() ) {
 						handleNeighbour(node);
 					}
 				}
-	
+
 				public void handleRoot( Root root ){
 					// do nothing
 				}
-	
+
 				public void handlePlaceholder( Placeholder placeholder ){
 					// ignore	
 				}
-	
+
 				private void handleNeighbour( SplitNode node ){
 					if( DockUtilities.acceptable( SplitDockStation.this, dockable ) ){
 						double x = node.getX();
@@ -1777,7 +1780,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 					}
 				}
 			});
-	
+
 			if( info.bestLeaf != null ) {
 				DockStation station = info.bestLeaf.getDockable().asDockStation();
 				DockableProperty successor = property.getSuccessor();
@@ -1787,7 +1790,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 						return true;
 					}
 				}
-	
+
 				if( info.bestLeafIntersection > 0.75 ) {
 					if( station != null && DockUtilities.acceptable( station, dockable ) ) {
 						station.drop(dockable);
@@ -1801,12 +1804,12 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 					}
 				}
 			}
-	
+
 			if( info.bestNode != null ) {
 				if( !DockUtilities.acceptable( this, dockable ) ){
 					return false;
 				}
-	
+
 				double divider = 0.5;
 				if( info.bestNodePut == PutInfo.Put.LEFT ) {
 					divider = property.getWidth() / info.bestNode.getWidth();
@@ -1820,11 +1823,11 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				else if( info.bestNodePut == PutInfo.Put.BOTTOM ) {
 					divider = 1 - property.getHeight() / info.bestNode.getHeight();
 				}
-	
+
 				divider = Math.max(0, Math.min(1, divider));
 				return dropAside( info.bestNode, info.bestNodePut, dockable, null, divider, null );
 			}
-	
+
 			repaint();
 			return false;
 		}
@@ -1844,11 +1847,11 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		try{
 			access.arm();
 			DockUtilities.checkLayoutLocked();
-	
+
 			// use the ids of the topmost nodes in the path to find a node of this station
 			int index = 0;
 			SplitNode start = null;
-	
+
 			long leafId = property.getLeafId();
 			if( leafId != -1 ) {
 				start = getNode(leafId);
@@ -1868,12 +1871,12 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 					}
 				}
 			}
-	
+
 			if( start == null || index < 0 ) {
 				start = root();
 				index = 0;
 			}
-	
+
 			updateBounds();
 			boolean done = start.insert(property, index, dockable);
 			if( done )
@@ -1915,7 +1918,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		try{
 			access.arm();
 			DockUtilities.checkLayoutLocked();
-	
+
 			DockableProperty successor = property.getSuccessor();
 			if( dockable.getDockParent() == this ) {
 				setFullScreen(dockable);
@@ -2000,7 +2003,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			access.arm();
 			DockUtilities.checkLayoutLocked();
 			DockUtilities.ensureTreeValidity(this, dockable);
-	
+
 			if( source == null || target == null ){
 				PutInfo info = new PutInfo( leaf, Put.TITLE, dockable, true );
 				source = new SplitDockCombinerSource( info, this, null );
@@ -2022,14 +2025,14 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			
 			Dockable combination = combiner.combine( source, target );
 			leaf.setPlaceholderMap(null);
-	
+
 			if( property != null ) {
 				DockStation combinedStation = combination.asDockStation();
 				if( combinedStation != null && dockable.getDockParent() == combinedStation ) {
 					combinedStation.move(dockable, property);
 				}
 			}
-	
+
 			DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, combination );
 			try{
 				dockStationListeners.fireDockableAdding(combination);
@@ -2061,85 +2064,70 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * @param dockable the new child of this station
 	 * @param leaf the leaf which contains <code>dockable</code>, can be <code>null</code>
 	 * @param divider the divider-location, a value between 0 and 1
-     * @param token if <code>null</code>, then a token will be acquired by this method
-     * and this method will fire events, otherwise this methods is executed silently
-     * @return <code>true</code> if the operation was a success, <code>false</code> otherwise
+	    * @param token if <code>null</code>, then a token will be acquired by this method
+	    * and this method will fire events, otherwise this methods is executed silently
+	    * @return <code>true</code> if the operation was a success, <code>false</code> otherwise
 	 */
-	protected boolean dropAside( SplitNode neighbor, PutInfo.Put put, Dockable dockable, Leaf leaf, double divider, DockHierarchyLock.Token token ){
-		if( !DockUtilities.acceptable( this, dockable ) ){
+	protected boolean dropAside(SplitNode neighbor, PutInfo.Put put, Dockable dockable, Leaf leaf, double divider, DockHierarchyLock.Token token) {
+		if (!DockUtilities.acceptable(this, dockable)) {
 			return false;
 		}
-		
-		try{
+		try {
 			boolean fire = token == null;
 			access.arm();
 			DockUtilities.checkLayoutLocked();
-			if( fire ) {
+			if (fire) {
 				DockUtilities.ensureTreeValidity(this, dockable);
-				token = DockHierarchyLock.acquireLinking( this, dockable );
+				token = DockHierarchyLock.acquireLinking(this, dockable);
 			}
-			try{
-				if( fire ){
+			try {
+				if (fire) {
 					dockStationListeners.fireDockableAdding(dockable);
 				}
-		
 				boolean leafSet = false;
-		
-				if( leaf == null ) {
-					leaf = access.createLeaf( -1 );
+				if (leaf == null) {
+					leaf = access.createLeaf(-1);
 					leafSet = true;
 				}
-		
 				SplitNode parent = neighbor.getParent();
-		
 				// Node herstellen
 				Node node = null;
 				updateBounds();
 				int location = parent.getChildLocation(neighbor);
-		
-				node = access.createNode( -1 );
-				
-				if( put == PutInfo.Put.TOP ) {
-					node.setLeft( leaf );
-					node.setRight( neighbor );
-					node.setOrientation( Orientation.VERTICAL );
+				node = access.createNode(-1);
+				if (put == Put.TOP) {
+					node.setLeft(leaf);
+					node.setRight(neighbor);
+					node.setOrientation(Orientation.VERTICAL);
+				} else if (put == Put.BOTTOM) {
+					node.setLeft(neighbor);
+					node.setRight(leaf);
+					node.setOrientation(Orientation.VERTICAL);
+				} else if (put == Put.LEFT) {
+					node.setLeft(leaf);
+					node.setRight(neighbor);
+					node.setOrientation(Orientation.HORIZONTAL);
+				} else {
+					node.setLeft(neighbor);
+					node.setRight(leaf);
+					node.setOrientation(Orientation.HORIZONTAL);
 				}
-				else if( put == PutInfo.Put.BOTTOM ) {
-					node.setLeft( neighbor );
-					node.setRight( leaf );
-					node.setOrientation( Orientation.VERTICAL );
-				}
-				else if( put == PutInfo.Put.LEFT ) {
-					node.setLeft( leaf );
-					node.setRight( neighbor );
-					node.setOrientation( Orientation.HORIZONTAL );
-				}
-				else {
-					node.setLeft( neighbor );
-					node.setRight( leaf );
-					node.setOrientation( Orientation.HORIZONTAL );
-				}
-		
 				node.setDivider(divider);
 				parent.setChild(node, location);
-		
-				if( leafSet ) {
-					leaf.setDockable( dockable, token );
+				if (leafSet) {
+					leaf.setDockable(dockable, token);
 				}
-		
-				if( fire ) {
+				if (fire) {
 					dockStationListeners.fireDockableAdded(dockable);
 				}
 				revalidate();
 				repaint();
-			}
-			finally{
-				if( fire ){
+			} finally {
+				if (fire) {
 					token.release();
 				}
 			}
-		}
-		finally{
+		} finally {
 			access.fire();
 		}
 		return true;
@@ -2159,7 +2147,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public void dropGrid( SplitDockGrid grid ){
 		dropTree( grid.toTree() );
 	}
-	
+
 	/**
 	 * Removes all children from this station and then adds the contents
 	 * that are stored in <code>tree</code>. Calling this method is equivalent
@@ -2349,7 +2337,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 					}
 					
 					Rectangle bounds = node.getBounds();
-	
+
 					if( putInfo.getPut() == PutInfo.Put.LEFT ) {
 						bounds.width = (int) (bounds.width * putInfo.getDivider() + 0.5);
 					}
@@ -2366,7 +2354,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 						bounds.height = (int) (bounds.height * (1 - putInfo.getDivider()) + 0.5);
 						bounds.y += height - bounds.height;
 					}
-	
+
 					paint.drawInsertion(g, putInfo.getNode().getBounds(), bounds);
 				}
 				else{
@@ -2404,52 +2392,45 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * Adds <code>dockable</code> to this station and fires events
 	 * only if <code>fire</code> is <code>true</code>.
 	 * @param dockable the new child of this station
-     * @param token if <code>null</code>, then a token will be acquired by this method
-     * and this method will fire events, otherwise this methods is executed silently
+	    * @param token if <code>null</code>, then a token will be acquired by this method
+	    * and this method will fire events, otherwise this methods is executed silently
 	 */
-	private void addDockable( Dockable dockable, DockHierarchyLock.Token token ){
-		try{
+	private void addDockable(Dockable dockable, DockHierarchyLock.Token token) {
+		try {
 			boolean fire = token == null;
 			access.arm();
 			DockUtilities.checkLayoutLocked();
-			
-			if( fire ){
+			if (fire) {
 				DockUtilities.ensureTreeValidity(this, dockable);
-				token = DockHierarchyLock.acquireLinking( this, dockable );
+				token = DockHierarchyLock.acquireLinking(this, dockable);
 			}
-			try{
-				if( fire ){
+			try {
+				if (fire) {
 					dockStationListeners.fireDockableAdding(dockable);
 				}
-				Leaf leaf = access.createLeaf( -1 );
-		
+				Leaf leaf = access.createLeaf(-1);
 				Root root = root();
-				if( root.getChild() == null ) {
+				if (root.getChild() == null) {
 					root.setChild(leaf);
-				}
-				else {
+				} else {
 					SplitNode child = root.getChild();
-					root.setChild( null );
-					Node node = access.createNode( -1 );
-					node.setLeft( leaf );
-					node.setRight( child );
-					root.setChild( node );
+					root.setChild(null);
+					Node node = access.createNode(-1);
+					node.setLeft(leaf);
+					node.setRight(child);
+					root.setChild(node);
 				}
-		
-				leaf.setDockable( dockable, token );
-		
-				if( fire ) {
+				leaf.setDockable(dockable, token);
+				if (fire) {
 					dockStationListeners.fireDockableAdded(dockable);
 				}
 				revalidate();
-			}
-			finally{
-				if( fire ){
+			} finally {
+				if (fire) {
 					token.release();
 				}
 			}
-		}
-		finally{
+		} finally {
 			access.fire();
 		}
 	}
@@ -2476,19 +2457,19 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				throw new NullPointerException("next must not be null");
 			if( previous != next ) {
 				Leaf leaf = root().getLeaf(previous);
-	
+
 				if( leaf == null )
 					throw new IllegalArgumentException("Previous is not child of this station");
-	
+
 				DockUtilities.ensureTreeValidity(this, next);
-	
+
 				boolean wasFullScreen = isFullScreen() && getFullScreen() == previous;
-	
+
 				leaf.setDockable(next, null, true, station);
-	
+
 				if( wasFullScreen )
 					setFullScreen(next);
-	
+
 				revalidate();
 				repaint();
 			}
@@ -2518,16 +2499,16 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			if( fire ){
 				dockStationListeners.fireDockableAdding(dockable);
 			}
-	
+
 			dockables.add(handle);
 			dockable.setDockParent(this);
-	
+
 			handle.updateDisplayer();
-	
+
 			DockableDisplayer displayer = handle.getDisplayer();
 			getContentPane().add(displayer.getComponent());
 			displayer.getComponent().setVisible(!isFullScreen());
-	
+
 			if( fire ){
 				dockStationListeners.fireDockableAdded(dockable);
 			}
@@ -2644,17 +2625,17 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * All placeholders are removed and the tree shrinks where possible.
 	 * @param placeholders the placeholders to remove
 	 */
-	public void removePlaceholders( final Set<Path> placeholders ){
-		if( placeholders.isEmpty() )
+	public void removePlaceholders(final Set<Path> placeholders) {
+		if (placeholders.isEmpty()) {
 			return;
-
+		}
 		final List<SplitNode> nodesToDelete = new ArrayList<SplitNode>();
-		root().visit(new SplitNodeVisitor(){
+		root().visit(new SplitNodeVisitor() {
 			public void handleRoot( Root root ){
 				handle(root);
 			}
 
-			public void handlePlaceholder( Placeholder placeholder ){
+			public void handlePlaceholder(Placeholder placeholder) {
 				handle(root);
 			}
 
@@ -2662,7 +2643,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				handle(root);
 			}
 
-			public void handleLeaf( Leaf leaf ){
+			public void handleLeaf(Leaf leaf) {
 				handle(root);
 			}
 
@@ -2673,8 +2654,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				}
 			}
 		});
-
-		for( SplitNode node : nodesToDelete ) {
+		for (SplitNode node : nodesToDelete) {
 			node.delete(true);
 		}
 	}
@@ -2683,8 +2663,8 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * Removes <code>handle</code> from this station. Unbinds its
 	 * {@link Dockable}.
 	 * @param handle the handle to remove
-     * @param token if <code>null</code>, then a token will be acquired by this method
-     * and this method will fire events, otherwise this methods is executed silently
+	    * @param token if <code>null</code>, then a token will be acquired by this method
+	    * and this method will fire events, otherwise this methods is executed silently
 	 */
 	private void removeHandle( StationChildHandle handle, DockHierarchyLock.Token token ){
 		int index = dockables.indexOf( handle );
@@ -2696,8 +2676,8 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	/**
 	 * Removes the index'th handle from this station
 	 * @param index the index of the handle to remove
-     * @param token if <code>null</code>, then a token will be acquired by this method
-     * and this method will fire events, otherwise this methods is executed silently
+	    * @param token if <code>null</code>, then a token will be acquired by this method
+	    * and this method will fire events, otherwise this methods is executed silently
 	 */
 	private void removeDisplayer( int index, DockHierarchyLock.Token token ){
 		StationChildHandle handle = dockables.get(index);
@@ -2718,20 +2698,20 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		try{
 			if( fire )
 				dockStationListeners.fireDockableRemoving(dockable);
-	
+
 			dockables.remove(index);
-	
+
 			DockableDisplayer displayer = handle.getDisplayer();
-	
+
 			displayer.getComponent().setVisible(true);
 			getContentPane().remove(displayer.getComponent());
-	
+
 			handle.destroy();
-	
+
 			if( dockable == frontDockable ) {
 				setFrontDockable(null);
 			}
-	
+
 			dockable.setDockParent(null);
 			if( fire )
 				dockStationListeners.fireDockableRemoved(dockable);
@@ -2813,63 +2793,61 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * Updates all locations and sizes of the {@link Component Components}
 	 * which are in the structure of this tree.
 	 */
-	public void updateBounds(){
+	public void updateBounds() {
 		Insets insets = getContentPane().getInsets();
-		double factorW = getWidth() - insets.left - insets.right;
-		double factorH = getHeight() - insets.top - insets.bottom;
-
+		double factorW = (getWidth() - insets.left) - insets.right;
+		double factorH = (getHeight() - insets.top) - insets.bottom;
 		SplitLayoutManager manager = layoutManager.getValue();
-
-		if( factorW <= 0 || factorH <= 0 ) {
+		if ((factorW <= 0) || (factorH <= 0)) {
 			manager.updateBounds(root(), 0, 0, 0, 00);
-		}
-		else {
+		} else {
 			manager.updateBounds(root(), insets.left / factorW, insets.top / factorH, factorW, factorH);
 		}
 	}
-	
+
 	/**
 	 * Forwards a call to {@link SplitSpanStrategy#setPut(PutInfo)}.
 	 * @param info the new put info, can be <code>null</code>
 	 */
-	protected void setPut( PutInfo info ){
-		spanStrategy.setPut( info );
+	protected void setPut(PutInfo info) {
+		spanStrategy.setPut(info);
 	}
-	
+
 	/**
 	 * Forwards a call to {@link SplitSpanStrategy#unsetPut()}
 	 */
-	protected void unsetPut(){
+	protected void unsetPut() {
 		spanStrategy.unsetPut();
 	}
-	
+
 	/**
 	 * The background algorithm of this {@link SplitDockStation}.
+	 *
 	 * @author Benjamin Sigg
 	 */
-	private class Background extends BackgroundAlgorithm implements StationBackgroundComponent{
-		public Background(){
-			super( StationBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".station.split" );
+	private class Background extends BackgroundAlgorithm implements StationBackgroundComponent {
+		public Background() {
+			super(StationBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".station.split");
 		}
-		
-		public Component getComponent(){
+
+		public Component getComponent() {
 			return SplitDockStation.this.getComponent();
 		}
-		
-		public DockStation getStation(){
+
+		public DockStation getStation() {
 			return SplitDockStation.this;
 		}
 	}
-	
+
 	/**
 	 * The panel which will be the parent of all {@link DockableDisplayer displayers}
 	 * @author Benjamin Sigg
 	 */
 	private class Content extends ConfiguredBackgroundPanel {
-		public Content(){
-			super( Transparency.DEFAULT );
+		public Content() {
+			super(Transparency.DEFAULT);
 		}
-		
+
 		@Override
 		public void doLayout(){
 			updateBounds();
@@ -2881,11 +2859,11 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 						getHeight() - insets.bottom - insets.top);
 			}
 		}
-		
+
 		@Override
-		public void setTransparency( Transparency transparency ){
-			super.setTransparency( transparency );
-			SplitDockStation.this.setSolid( transparency == Transparency.SOLID );
+		public void setTransparency(Transparency transparency) {
+			super.setTransparency(transparency);
+			SplitDockStation.this.setSolid(transparency == Transparency.SOLID);
 		}
 	}
 
@@ -2893,21 +2871,26 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * Orientation how two {@link Dockable Dockables} are aligned.
 	 */
 	public enum Orientation {
-		/** One {@link Dockable} is at the left, the other at the right */
+
+		/**
+		 * One {@link Dockable} is at the left, the other at the right
+		 */
 		HORIZONTAL,
-		/** One {@link Dockable} is at the top, the other at the bottom */
-		VERTICAL
-	};
+		/**
+		 * One {@link Dockable} is at the top, the other at the bottom
+		 */
+		VERTICAL;}
 
 	/**
 	 * This listener is added to the parent of this station, and ensures
 	 * that the visibility-state of the children of this station is always
 	 * correct.
+	 *
 	 * @author Benjamin Sigg
 	 */
 	private class VisibleListener extends DockStationAdapter {
 		@Override
-		public void dockableShowingChanged( DockStation station, Dockable dockable, boolean visible ){
+		public void dockableShowingChanged(DockStation station, Dockable dockable, boolean visible) {
 			visibility.fire();
 		}
 	}
@@ -2915,114 +2898,121 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	/**
 	 * A listener that reacts on double clicks and can expand a child of
 	 * this station to fullscreen-mode.
+	 *
 	 * @author Benjamin Sigg
 	 */
 	private class FullScreenListener implements DoubleClickListener {
-		public DockElement getTreeLocation(){
+		public DockElement getTreeLocation() {
 			return SplitDockStation.this;
 		}
 
-		public boolean process( Dockable dockable, MouseEvent event ){
-			if( event.isConsumed() || !isExpandOnDoubleclick() )
+		public boolean process(Dockable dockable, MouseEvent event) {
+			if (event.isConsumed() || (!isExpandOnDoubleclick())) {
 				return false;
-			else {
-				if( dockable == SplitDockStation.this )
+			} else {
+				if (dockable == SplitDockStation.this) {
 					return false;
-
+				}
 				dockable = unwrap(dockable);
-				if( dockable != null ) {
-					if( isFullScreen() ) {
-						if( getFullScreen() == dockable ) {
+				if (dockable != null) {
+					if (isFullScreen()) {
+						if (getFullScreen() == dockable) {
 							setFullScreen(null);
 							event.consume();
 						}
-					}
-					else {
+					} else {
 						setFullScreen(dockable);
 						event.consume();
 					}
-
 					return true;
 				}
-
 				return false;
 			}
 		}
 
 		/**
-		 * Searches a parent of <code>dockable</code> which has the 
+		 * Searches a parent of <code>dockable</code> which has the
 		 * enclosing {@link SplitDockStation} as its direct parent.
-		 * @param dockable the root of the search
+		 *
+		 * @param dockable
+		 * 		the root of the search
 		 * @return <code>dockable</code>, a parent of <code>dockable</code>
-		 * or <code>null</code>
+		or <code>null</code>
 		 */
-		private Dockable unwrap( Dockable dockable ){
-			while( dockable.getDockParent() != SplitDockStation.this ) {
+		private Dockable unwrap(Dockable dockable) {
+			while (dockable.getDockParent() != SplitDockStation.this) {
 				DockStation parent = dockable.getDockParent();
-				if( parent == null )
+				if (parent == null) {
 					return null;
-
+				}
 				dockable = parent.asDockable();
-				if( dockable == null )
+				if (dockable == null) {
 					return null;
-			}
+				}
+			} 
 			return dockable;
 		}
 	}
-	
+
 	/**
 	 * Implementation of {@link StationDropOperation}.
 	 * @author Benjamin Sigg
 	 */
-	protected class SplitDropOperation implements StationDropOperation{
+	protected class SplitDropOperation implements StationDropOperation {
 		private PutInfo putInfo;
+
 		private StationDropItem item;
+
 		private boolean move;
-		
+
 		/**
 		 * Creates a new operation.
-		 * @param putInfo the desired location of the dropped {@link Dockable}.
-		 * @param item detailed information about the ongoing drag and drop operation
-		 * @param move whether this operation is a move operation or not 
+		 *
+		 * @param putInfo
+		 * 		the desired location of the dropped {@link Dockable}.
+		 * @param item
+		 * 		detailed information about the ongoing drag and drop operation
+		 * @param move
+		 * 		whether this operation is a move operation or not
 		 */
-		public SplitDropOperation( PutInfo putInfo, StationDropItem item, boolean move ){
+		public SplitDropOperation(PutInfo putInfo, StationDropItem item, boolean move) {
 			this.putInfo = putInfo;
 			this.item = item;
 			this.move = move;
 		}
-		
+
 		public boolean isMove(){
 			return move;
 		}
-		
-		public void draw(){
+
+		public void draw() {
 			SplitDockStation.this.putInfo = putInfo;
-			setPut( putInfo );
+			setPut(putInfo);
 			repaint();
 		}
 
-		public void destroy( StationDropOperation next ){
-			if( SplitDockStation.this.putInfo == putInfo ){
+		public void destroy(StationDropOperation next) {
+			if (SplitDockStation.this.putInfo == putInfo) {
 				SplitDockStation.this.putInfo = null;
-				if( next == null || !(next instanceof SplitDropOperation) || next.getTarget() != getTarget() ){
-					setPut( null );
+				if (((next == null) || (!(next instanceof SplitDropOperation))) || (next.getTarget() != getTarget())) {
+					setPut(null);
 				}
 				repaint();
 			}
 		}
-		
+
 		public DockStation getTarget(){
 			return SplitDockStation.this;
 		}
-		
+
 		public Dockable getItem(){
 			return putInfo.getDockable();
 		}
-		
+
 		public CombinerTarget getCombination(){
 			return putInfo.getCombinerTarget();
 		}
-		
+
 		public DisplayerCombinerTarget getDisplayerCombination(){
 			CombinerTarget target = getCombination();
 			if( target == null ){
@@ -3030,24 +3020,23 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			}
 			return target.getDisplayerCombination();
 		}
-		
-		public void execute(){
+
+		public void execute() {
 			unsetPut();
-			if( isMove() ){
+			if (isMove()) {
 				move();
-			}
-			else{
-				drop( null );
+			} else {
+				drop(null);
 			}
 		}
-		
+
 		public void move(){
 			try{
 				access.arm();
 				DockUtilities.checkLayoutLocked();
 				Root root = root();
 				Leaf leaf = root.getLeaf(putInfo.getDockable());
-		
+
 				SplitNode parent = putInfo.getNode();
 				
 				if( leaf.getParent() == parent ) {
@@ -3074,7 +3063,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 						}
 					}
 				}
-		
+
 				putInfo.setLeaf(leaf);
 				if( putInfo.getPut() == Put.CENTER ) {
 					leaf.placehold(false);
@@ -3088,12 +3077,12 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				access.fire();
 			}
 		}
-		
+
 		/**
 		 * Adds the {@link Dockable} given by {@link #putInfo} to this
 		 * station.
-	     * @param token if <code>null</code>, then a token will be acquired by this method
-	     * and this method will fire events, otherwise this methods is executed silently
+		    * @param token if <code>null</code>, then a token will be acquired by this method
+		    * and this method will fire events, otherwise this methods is executed silently
 		 */
 		private void drop( DockHierarchyLock.Token token ){
 			try{
@@ -3122,7 +3111,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				}
 				else {
 					boolean finish = false;
-		
+
 					if( putInfo.getCombinerTarget() != null ) {
 						if( putInfo.getNode() instanceof Leaf ) {
 							if( putInfo.getLeaf() != null ) {
@@ -3139,7 +3128,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 									}
 								}
 							}
-		
+
 							if( dropOver((Leaf) putInfo.getNode(), putInfo.getDockable(), putInfo.getCombinerSource(), putInfo.getCombinerTarget() ) ) {
 								finish = true;
 							}
@@ -3148,14 +3137,14 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 							putInfo.setPut(PutInfo.Put.TOP);
 						}
 					}
-		
+
 					if( !finish ) {
 						updateBounds();
 						layoutManager.getValue().calculateDivider( SplitDockStation.this, putInfo, root().getLeaf(putInfo.getDockable()), item );
 						dropAside( putInfo.getNode(), putInfo.getPut(), putInfo.getDockable(), putInfo.getLeaf(), putInfo.getDivider(), token );
 					}
 				}
-		
+
 				revalidate();
 			}
 			finally{
@@ -3163,17 +3152,20 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			}
 		}
 	}
-	
+
 	/**
 	 * Access to this {@link SplitDockStation}.
 	 * @author Benjamin Sigg
 	 */
-	private class Access implements SplitDockAccess{
+	private class Access implements SplitDockAccess {
 		private long lastUniqueId = -1;
+
 		private int repositionedArm = 0;
+
 		private Set<Dockable> repositioned = new HashSet<Dockable>();
+
 		private Dockable dockableSelected = null;
-		
+
 		public StationChildHandle getFullScreenDockable(){
 			return fullScreenDockable;
 		}
@@ -3209,7 +3201,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		public PutInfo validatePutInfo( PutInfo putInfo ){
 			return layoutManager.getValue().validatePutInfo(SplitDockStation.this, putInfo);
 		}
-		
+
 		public void repositioned( SplitNode node ){
 			arm();
 			try{
@@ -3238,7 +3230,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				fire();
 			}
 		}
-		
+
 		public void dockableSelected( Dockable dockable ){
 			arm();
 			if( dockableSelected == null ){
@@ -3246,7 +3238,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			}
 			fire();
 		}
-		
+
 		/**
 		 * Prepares <code>this</code> to fire an event to 
 		 * {@link DockStationListener#dockablesRepositioned(DockStation, Dockable[])}.
@@ -3303,23 +3295,23 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		public SplitPlaceholderSet getPlaceholderSet(){
 			return placeholderSet;
 		}
-		
+
 		public SplitSpanStrategy getSpanStrategy(){
 			return spanStrategy;
 		}
-		
+
 		public Leaf createLeaf( long id ){
 			return nodeFactory.createLeaf( this, id );
 		}
-		
+
 		public Node createNode( long id ){
 			return nodeFactory.createNode( this, id );
 		}
-		
+
 		public Placeholder createPlaceholder( long id ){
 			return nodeFactory.createPlaceholder( this, id );
 		}
-		
+
 		/**
 		 * Creates a new {@link Root}.
 		 * @param id the unique identifier of the new root

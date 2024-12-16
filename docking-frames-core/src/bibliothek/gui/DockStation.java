@@ -23,12 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-
 package bibliothek.gui;
-
-import java.awt.Component;
-
-import javax.swing.JFrame;
 
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockElementRepresentative;
@@ -39,8 +34,8 @@ import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDragOperation;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.support.PlaceholderList;
@@ -51,10 +46,13 @@ import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
 import bibliothek.util.Todo.Version;
+import bibliothek.util.Todo;
+import java.awt.Component;
+import javax.swing.JFrame;
+
 
 /**
  * A <code>DockStation</code> is some area (e.g. a {@link Component}) showing
@@ -82,26 +80,26 @@ import bibliothek.util.Todo.Version;
  * </ul>
  * @author Benjamin Sigg
  */
-public interface DockStation extends DockElement{
-	/**
-     * Sets the controller of this station. If the station wants to
-     * show any {@link DockTitle}, then the titles have to be replaced
-     * by new instances (assuming the controller is really new). The
-     * title has to get new {@link DockTitleVersion DockTitleVersions} through
-     * the {@link DockTitleManager} of <code>controller</code>.<br>
-     * An argument of <code>null</code> means that this station is currently 
-     * not shown.
-     * @param controller the owner of this station, can be <code>null</code>
-     */
-    public void setController( DockController controller );
-    
+public interface DockStation extends DockElement {
+/**
+    * Sets the controller of this station. If the station wants to
+    * show any {@link DockTitle}, then the titles have to be replaced
+    * by new instances (assuming the controller is really new). The
+    * title has to get new {@link DockTitleVersion DockTitleVersions} through
+    * the {@link DockTitleManager} of <code>controller</code>.<br>
+    * An argument of <code>null</code> means that this station is currently 
+    * not shown.
+    * @param controller the owner of this station, can be <code>null</code>
+    */
+   public void setController( DockController controller );
+
     /**
      * Gets the controller of this station.
      * @return the controller or <code>null</code> if no controller is set
      * @see #setController(DockController)
      */
     public DockController getController();
-   
+
     /**
      * Updates the {@link DockTheme} of this station. The new theme
      * has to be read from the {@link #getController() controller} of 
@@ -111,7 +109,7 @@ public interface DockStation extends DockElement{
      * to implement this method.
      */
     public void updateTheme();
-    
+
     /**
      * Gets the current theme of this station. The theme can be <code>null</code>,
      * but that means that the station is not fully initialized, and might not
@@ -119,7 +117,7 @@ public interface DockStation extends DockElement{
      * @return the theme of this station or <code>null</code>. 
      */
     public DockTheme getTheme();
-    
+
     /**
      * Gets a list of actions which should be available for the user and
      * affect the child <code>dockable</code>.
@@ -127,7 +125,7 @@ public interface DockStation extends DockElement{
      * @return actions for <code>dockable</code>, can be <code>null</code>
      */
     public DockActionSource getDirectActionOffers( Dockable dockable );
-    
+
     /**
      * Gets a list of actions which should be available for the user and
      * affect <code>dockable</code>. The argument <code>dockable</code>
@@ -138,20 +136,20 @@ public interface DockStation extends DockElement{
      * @return actions for <code>dockable</code> or <code>null</code>
      */
     public DockActionSource getIndirectActionOffers( Dockable dockable );
-    
+
     /**
      * Adds a listener to this station. The station has to invoke the
      * methods of the listener such that its requirements are full filled.
      * @param listener the listener to add
      */
     public void addDockStationListener( DockStationListener listener );
-    
+
     /**
      * Removes a listener from this station.
      * @param listener the listener to remove
      */
     public void removeDockStationListener( DockStationListener listener );
-    
+
     /**
      * Tells whether the child <code>dockable</code> is visible or not. Visible
      * means that the {@link Dockable#getComponent() component} of <code>dockable</code>
@@ -176,7 +174,7 @@ public interface DockStation extends DockElement{
      * @see #isStationVisible()
      */
     public boolean isChildShowing( Dockable dockable );
-    
+
     /**
      * Tells whether this station is visible or not. For example a station on 
      * a {@link JFrame} is not visible if the frame is minimized.
@@ -186,20 +184,20 @@ public interface DockStation extends DockElement{
     @Deprecated
     @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_3, description="remove this method" )
     public boolean isStationVisible();
-    
+
     /**
      * Tells whether this station is visible or not. For example a station on 
      * a {@link JFrame} is not visible if the frame is minimized.
      * @return whether this station is visible
      */
     public boolean isStationShowing();
-    
+
     /**
      * Gets the number of children.
      * @return the number of children on this station
      */
     public int getDockableCount();
-    
+
     /**
      * Gets the index'th child of this station.
      * @param index a value between 0 (incl.) and {@link #getDockableCount()} 
@@ -207,7 +205,7 @@ public interface DockStation extends DockElement{
      * @return a child of this station
      */
     public Dockable getDockable( int index );
-    
+
     /**
      * Gets the favorite child of this station. The favorite child is the one 
      * child which is specially designated for the user. An example: if the 
@@ -223,7 +221,7 @@ public interface DockStation extends DockElement{
      * @return the most important child or <code>null</code>
      */
     public Dockable getFrontDockable();
-    
+
     /**
      * Sets the most important child. The station should ensure that this child
      * is visible (assuming the station itself is visible). Read the
@@ -233,7 +231,7 @@ public interface DockStation extends DockElement{
      * @see #getFrontDockable()
      */
     public void setFrontDockable( Dockable dockable );
-    
+
     /**
      * Gets a snapshot of all placeholders that are currently stored in this {@link DockStation}. 
      * A {@link DockStation} is free in the format it chooses to fill the map. The map is to be 
@@ -244,7 +242,7 @@ public interface DockStation extends DockElement{
      * placeholders
      */
     public PlaceholderMap getPlaceholders();
-    
+
     /**
      * Sets an earlier snapshot of the placeholders of this station. This station can assume that
      * it currently does not have any children (that {@link #getDockableCount()} is <code>0</code>).<br>
@@ -265,7 +263,7 @@ public interface DockStation extends DockElement{
      * @param active the new state of the title
      */
     public void changed( Dockable dockable, DockTitle title, boolean active );
-    
+
     /**
      * Provides a {@link DockTitle} for a child of this station. This method
      * must call {@link DockTitleRequest#answer(DockTitle)} to set the result.<br>
@@ -274,16 +272,16 @@ public interface DockStation extends DockElement{
      * new {@link DockTitle}s.
      * @param request the request to answer, not <code>null</code>
      */
-	public void requestChildDockTitle( DockTitleRequest request );
-	
-	/**
-	 * Provides a {@link DockableDisplayer} for a child of this station. This method
-	 * must call {@link DisplayerRequest#answer(DockableDisplayer)} to set the result.<br>
-	 * The usual implementation should be to do nothing.
-	 * @param request the request to answer, not <code>null</code>
-	 */
-	public void requestChildDisplayer( DisplayerRequest request );
-    
+    	public void requestChildDockTitle( DockTitleRequest request );
+
+/**
+ * Provides a {@link DockableDisplayer} for a child of this station. This method
+ * must call {@link DisplayerRequest#answer(DockableDisplayer)} to set the result.<br>
+ * The usual implementation should be to do nothing.
+ * @param request the request to answer, not <code>null</code>
+ */
+public void requestChildDisplayer( DisplayerRequest request );
+
     /**
      * Tells whether this station accepts <code>child</code> as a new child,
      * or refuses <code>child</code>. The user will not be able to drop
@@ -293,7 +291,7 @@ public interface DockStation extends DockElement{
      * @return <code>true</code> if <code>child</code> is accepted
      */
     public boolean accept( Dockable child );
-    
+
     /**
      * Gets precise information about the location of a child of this station.
      * The result of this method could later be used to invoke
@@ -306,7 +304,7 @@ public interface DockStation extends DockElement{
      * @see bibliothek.gui.dock.util.DockUtilities#getPropertyChain(DockStation, Dockable)
      */
     public DockableProperty getDockableProperty( Dockable child, Dockable target );
-    
+
     /**
      * Prepares this station to get the new child <code>dockable</code> or to move around the known child <code>dockable</code>.
      * The station can refuse <code>dockable</code>, in this case this method just returns <code>null</code>.
@@ -318,12 +316,14 @@ public interface DockStation extends DockElement{
      * <li>The method should use the {@link DockAcceptance} of its controller
      * (see {@link DockController#getAcceptance()}) to ensure that the drop/location is valid.</li>
      * </ul>
-     * @param dockable information about the dockable that is going to be dropped
+     *
+     * @param dockable
+     * 		information about the dockable that is going to be dropped
      * @return an object describing where the {@link Dockable} can be dropped or <code>null</code> if
-     * no drop operation is possible
+    no drop operation is possible
      */
-    public StationDropOperation prepareDrop( StationDropItem dockable );
-    
+    public abstract StationDropOperation prepareDrop(StationDropItem dockable);
+
     /**
      * Informs this station that a drag and drop operation is in progress and that <code>dockable</code> might
      * be removed from this station.
@@ -331,14 +331,14 @@ public interface DockStation extends DockElement{
      * @return a callback that will be informed when the dockable was removed or the operation canceleled, can be <code>null</code>
      */
     public StationDragOperation prepareDrag( Dockable dockable );
-    
+
     /**
      * Adds <code>dockable</code> to this station. The station can decide
      * by its own where to put <code>dockable</code>.
      * @param dockable a new child
      */
     public void drop( Dockable dockable );
-    
+
     /**
      * Tries to add <code>dockable</code> to this station such that the location
      * given by <code>property</code> is matched. If <code>property</code>
@@ -353,7 +353,7 @@ public interface DockStation extends DockElement{
      * otherwise.
      */
     public boolean drop( Dockable dockable, DockableProperty property );
-    
+
     /**
      * Tries to move the child <code>dockable</code> in such a way, that
      * {@link DockStation#getDockableProperty(Dockable, Dockable)} would return a
@@ -365,18 +365,23 @@ public interface DockStation extends DockElement{
      * @param property the preferred position of <code>dockable</code>
      */
     public void move( Dockable dockable, DockableProperty property );
-    
+
     /**
      * Gets a description of all the areas of the screen where this {@link DockStation} can handle a drop event.<br>
      * Everytime the mouse is moved or released during a drag &amp; drop operation, this method is called for
      * all {@link DockStation}s. The returned {@link DockStationDropLayer}s are then filtered and ordered, the resulting
-     * order defines the order in which the method {@link #prepareDrop(StationDropItem)} is called.
+<<<<<<< LEFT
+     * order defines the order in which the method {@link #prepareDrop(int, int, int, int, Dockable)} is
+=======
+     * order defines the order in which the method {@link #prepareDrop(StationDropItem)} is
+>>>>>>> RIGHT
+     * called.
      * @return all the layers of this station, must not be <code>null</code>, must not contain <code>null</code>,
      * must not contain the same entry twice. The array or the {@link DockStationDropLayer}s may be modified,
      * hence this method should always create new objects.
      */
-    public DockStationDropLayer[] getLayers();
-    
+    public abstract DockStationDropLayer[] getLayers();
+
     /**
      * Tells whether <code>dockable</code> can be removed from this station or not.
      * This method assumes that <code>dockable</code> is a child of
@@ -387,7 +392,7 @@ public interface DockStation extends DockElement{
      * @return <code>true</code> if <code>dockable</code> can be dragged
      */
     public boolean canDrag( Dockable dockable );
-    
+
     /**
      * Removes a child from this station. This method may be called even
      * if {@link #canDrag(Dockable)} returned <code>false</code>.<br>
@@ -397,7 +402,7 @@ public interface DockStation extends DockElement{
      * @param dockable the child to remove
      */
     public void drag( Dockable dockable );
-    
+
     /**
      * Tells whether its possible to replace the child <code>old</code>
      * with <code>next</code> where next is not a child of this station.
@@ -408,7 +413,7 @@ public interface DockStation extends DockElement{
      * of this station
      */
     public boolean canReplace( Dockable old, Dockable next );
-    
+
     /**
      * Replaces the child <code>old</code> by <code>next</code> which is
      * not yet a child of this station. This method should not be 
@@ -420,7 +425,7 @@ public interface DockStation extends DockElement{
      * this station or if <code>old</code> is not a child
      */
     public void replace( Dockable old, Dockable next );
-    
+
     /**
      * Replaces the child <code>old</code> by <code>next</code> which is
      * not yet a child of this station. This method should not be 
