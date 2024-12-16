@@ -22,18 +22,24 @@ import org.enderstone.server.packet.play.PacketOutSpawnObject;
 import org.enderstone.server.regions.generators.TimTest;
 import org.enderstone.server.util.IntegerArrayComparator;
 
+
 /**
  *
  * @author Fernando
  */
 public class EnderWorld {
-
 	private Long seed = null;
+
 	private final RegionSet loadedChunks = new RegionSet();
+
 	public final Map<EnderPlayer, RegionSet> players = new LinkedHashMap<>();
+
 	private final ChunkGenerator generator = new TimTest();
+
 	private final Random random = new Random();
+
 	public static final int AMOUNT_OF_CHUNKSECTIONS = 16;
+
 	public final Set<Entity> entities = new HashSet<>();
 
 	public EnderChunk getOrCreateChunk(int x, int z) {
@@ -131,43 +137,42 @@ public class EnderWorld {
 	}
 
 	public void doChunkUpdatesForPlayer(EnderPlayer player, ChunkInformer informer, int radius) {
-		doChunkUpdatesForPlayer(player, informer, radius, false);
+		doChunkUpdatesForPlayer(player,informer,radius,false);
 	}
 
 	public void doChunkUpdatesForPlayer(EnderPlayer player, ChunkInformer informer, int radius, boolean force) {
-		synchronized (informer) {
+		synchronized(informer) {
 			RegionSet playerChunks = players.get(player);
 			if (playerChunks == null) {
 				players.put(player, playerChunks = new RegionSet());
 			}
-			int r2 = radius * 2 + 1;
+			int r2 = (radius * 2) + 1;
 			int px = player.getLocation().getBlockX() >> 4;
-			int cx = (px) - radius;
+			int cx = px - radius;
 			int mx = cx + r2;
 			int pz = player.getLocation().getBlockZ() >> 4;
-			int minz = (pz) - radius;
+			int minz = pz - radius;
 			int cz = minz;
 			int mz = cz + r2;
 			try {
 				if (playerChunks.isEmpty()) {
-					while (cx++ < mx) {
+					while ((cx++) < mx) {
 						for (cz = minz; cz < mz; cz++) {
 							EnderChunk c = getOrCreateChunk(cx, cz);
 							playerChunks.add(c);
 							informer.sendChunk(c);
 						}
-					}
+					} 
 				} else {
-					int maxSize = force ? Integer.MAX_VALUE : informer.maxChunks();
-					int[][] chunkLoad = new int[(radius * 2) * (radius * 2) * 2][];
+					int maxSize = (force) ? Integer.MAX_VALUE : informer.maxChunks();
+					int[][] chunkLoad = new int[((radius * 2) * (radius * 2)) * 2][];
 					int index = 0;
 					Set<EnderChunk> copy = new RegionSet(playerChunks);
-
 					for (; cx < mx; cx++) {
 						for (cz = minz; cz < mz; cz++) {
 							EnderChunk tmp = getOrCreateChunk(cx, cz);
 							if (!copy.contains(tmp)) {
-								chunkLoad[index++] = new int[]{cx, cz};
+								chunkLoad[index++] = new int[]{ cx, cz };
 							} else {
 								copy.remove(tmp);
 							}
@@ -178,9 +183,11 @@ public class EnderWorld {
 						EnderChunk i = loop.next();
 						playerChunks.remove(i);
 						informer.removeChunk(i);
-					}
+					} 
 					Arrays.sort(chunkLoad, 0, index, new IntegerArrayComparator(px, pz));
-					if (maxSize < chunkLoad.length) chunkLoad[maxSize] = null;
+					if (maxSize < chunkLoad.length) {
+						chunkLoad[maxSize] = null;
+					}
 					index = 0;
 					for (int[] l : chunkLoad) {
 						if (l == null) {
@@ -193,7 +200,9 @@ public class EnderWorld {
 						informer.sendChunk(c);
 						index++;
 					}
-					if (index > 0) EnderLogger.debug("Send " + index + " chunks to player: " + player.getName());
+					if (index > 0) {
+						EnderLogger.debug((("Send " + index) + " chunks to player: ") + player.getName());
+					}
 				}
 			} finally {
 				informer.done();
@@ -209,14 +218,13 @@ public class EnderWorld {
 	}
 
 	public static interface ChunkInformer {
+		public abstract void sendChunk(EnderChunk chunk);
 
-		public void sendChunk(EnderChunk chunk);
+		public abstract void removeChunk(EnderChunk chunk);
 
-		public void removeChunk(EnderChunk chunk);
+		public abstract void done();
 
-		public void done();
-
-		public int maxChunks();
+		public abstract int maxChunks();
 	}
 
 	public void broadcastSound(String soundName, int x, int y, int z, float volume, byte pitch, Location loc, EnderPlayer exceptOne) {
@@ -241,5 +249,4 @@ public class EnderWorld {
 	public Block getBlock(int x, int y, int z) {
 		return new EnderBlock(x, y, z, this);
 	}
-
 }
