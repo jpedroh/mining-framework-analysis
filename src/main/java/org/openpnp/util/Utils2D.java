@@ -18,14 +18,12 @@
  *
  * Changelog: 03/10/2012 Ami: Add rotate using center point
  */
-
 package org.openpnp.util;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -38,6 +36,7 @@ import org.openpnp.model.Location;
 import org.openpnp.model.Placement;
 import org.openpnp.model.Point;
 import org.pmw.tinylog.Logger;
+
 
 public class Utils2D {
     public static Point rotateTranslateScalePoint(Point point, double c, double x, double y,
@@ -89,7 +88,7 @@ public class Utils2D {
     public static Point scalePoint(Point point, double scaleX, double scaleY) {
         return new Point(point.getX() * scaleX, point.getY() * scaleY);
     }
-    
+
     /**
      * Creates an AffineTransform for a BoardLocation which handles it's position and
      * rotation. This is used when the BoardLocation does not yet have a transform created
@@ -112,7 +111,7 @@ public class Utils2D {
         }
         return tx;
     }
-    
+
     /**
      * Calculate the apparent angle from the transform. We need this because when we
      * created the transform we captured the apparent angle and that is used to position
@@ -123,25 +122,31 @@ public class Utils2D {
     private static double getTransformAngle(AffineTransform tx) {
         return affineInfo(tx).rotationAngleDeg;
     }
-    
+
     /**
      * A class to hold information about an affine transform
      */
     public static class AffineInfo {
         public double xScale;
+
         public double yScale;
+
         public double xShear;
+
         public double rotationAngleDeg;
-        public double xTranslation; //mm
-        public double yTranslation; //mm
-        
+
+        public double xTranslation;// mm
+
+
+        public double yTranslation;// mm
+
+
         @Override
         public String toString() {
-            return String.format("scale (%f, %f) shear (%f, 0.0) rotation (%f deg) translation (%f mm, %f mm)",
-                    xScale, yScale, xShear, rotationAngleDeg, xTranslation, yTranslation);
+            return String.format("scale (%f, %f) shear (%f, 0.0) rotation (%f deg) translation (%f mm, %f mm)", xScale, yScale, xShear, rotationAngleDeg, xTranslation, yTranslation);
         }
     }
-    
+
     /**
      * Returns an AffineInfo object containing information about the affine transform tx.
      * 
@@ -180,7 +185,7 @@ public class Utils2D {
         
         return affineInfo;
     }
-    
+
     /**
      * Returns an affine transform based on the affineInfo parameter
      * 
@@ -334,7 +339,6 @@ public class Utils2D {
         return location;
     }
 
-
     /**
      * Normalizes the angle to be greater than or equal to 0 and less than or equal to +360 degrees
      * @param angle
@@ -343,38 +347,39 @@ public class Utils2D {
     public static double normalizeAngle(double angle) {
         while (angle > 360) {
             angle -= 360;
-        }
+        } 
         while (angle < 0) {
             angle += 360;
-        }
+        } 
         return angle;
     }
-    
-    public static double normalizeAngle180(double angle) {
-        while (angle >= 180) {
-            angle -= 360;
-        }
-        while (angle < -180) {
-            angle += 360;
-        }
-        return angle;
-    }
-    
+
     /**
      * Normalizes the angle to be greater than or equal to -180 and less than +180 degrees
      * @param angle
      * @return
      */
-    public static double normalizeAngle180(double angle) {
+    public static 
+<<<<<<< LEFT
+double
+=======
+double
+>>>>>>> RIGHT
+     normalizeAngle180(double angle) {
         while (angle >= 180) {
             angle -= 360;
-        }
-        while (angle < -180) {
+        } 
+        while (angle < (-180)) {
             angle += 360;
-        }
+        } 
+<<<<<<< LEFT
         return angle;
+=======
+        return angle;
+>>>>>>> RIGHT
+
     }
-    
+
     /**
      * Calculate the Location along the line formed by a and b with distance from a.
      * @param a
@@ -382,7 +387,7 @@ public class Utils2D {
      * @param distance
      * @return
      */
-    public static Location getPointAlongLine(Location a, Location b, Length distance) {
+    static public Location getPointAlongLine(Location a, Location b, Length distance) {
         b = b.convertToUnits(a.getUnits());
         distance = distance.convertToUnits(a.getUnits());
         
@@ -404,11 +409,11 @@ public class Utils2D {
         secondPoint = secondPoint.convertToUnits(firstPoint.getUnits());
         return Math.toDegrees(Math.atan2(secondPoint.getY() - firstPoint.getY(), secondPoint.getX() - firstPoint.getX()));
     }
-    
+
     public static double distance(Point2D.Double a, Point2D.Double b) {
         return (Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2)));
     }
-    
+
     public static AffineTransform deriveAffineTransform(Location source1, Location source2, Location source3,
             Location dest1, Location dest2, Location dest3) {
         source1 = source1.convertToUnits(LengthUnit.Millimeters);
@@ -424,7 +429,7 @@ public class Utils2D {
                 dest2.getX(), dest2.getY(),
                 dest3.getX(), dest3.getY());
     }
-    
+
     public static AffineTransform deriveAffineTransform(Location source1, Location source2,
             Location dest1, Location dest2) {
         source1 = source1.convertToUnits(LengthUnit.Millimeters);
@@ -436,7 +441,7 @@ public class Utils2D {
                 dest1.getX(), dest1.getY(),
                 dest2.getX(), dest2.getY());
     }
-    
+
     // https://stackoverflow.com/questions/21270892/generate-affinetransform-from-3-points
     public static AffineTransform deriveAffineTransform(
             double sourceX1, double sourceY1,
@@ -467,8 +472,8 @@ public class Utils2D {
         double m12 = transform.getEntry(1, 2);
 
         return new AffineTransform(m00, m10, m01, m11, m02, m12);       
-    }  
-    
+    }
+
     // Best keywords: transformation matrix between two line segments
     // https://stackoverflow.com/questions/42328398/transformation-matrix-between-two-line-segments
     public static AffineTransform deriveAffineTransform(
@@ -493,8 +498,8 @@ public class Utils2D {
         tx.scale(scale, scale);
         tx.translate(-a.x, -a.y);
         return tx;
-    }  
-    
+    }
+
     /**
      * Returns a column matrix whose entries are the arithmetic average of each
      * corresponding row of matrix A.
@@ -510,7 +515,7 @@ public class Utils2D {
         }
         return ret.scalarMultiply(1.0/n);
     }
-    
+
     /**
      * Adds colMatrix to each column of matrix A and returns the result
      * @param A
@@ -526,7 +531,7 @@ public class Utils2D {
         }
         return ret;
     }
-    
+
     /**
      * Subtracts colMatrix from each column of matrix A and returns the result
      * @param A
@@ -542,7 +547,7 @@ public class Utils2D {
         }
         return ret;
     }
-    
+
     /**
      * Returns the least squared error affine transform that transforms the list of source
      * locations to the corresponding list of destination locations, see the discussion at
@@ -634,7 +639,7 @@ public class Utils2D {
         double s = (a + b + c) / 2.;
         return Math.sqrt(s * (s - a) * (s - b) * (s - c));
     }
-    
+
     public static List<Placement> mostDistantPair(List<Placement> points) {
         Placement maxA = null, maxB = null;
         double max = 0;
