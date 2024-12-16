@@ -27,24 +27,26 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.reflection.Jdk;
+
 
 /**
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
 public final class TypeHandlerRegistry {
-
   private final Map<JdbcType, TypeHandler<?>> JDBC_TYPE_HANDLER_MAP = new EnumMap<JdbcType, TypeHandler<?>>(JdbcType.class);
+
   private final Map<Type, Map<JdbcType, TypeHandler<?>>> TYPE_HANDLER_MAP = new ConcurrentHashMap<Type, Map<JdbcType, TypeHandler<?>>>();
+
   private final TypeHandler<Object> UNKNOWN_TYPE_HANDLER = new UnknownTypeHandler(this);
+
   private final Map<Class<?>, TypeHandler<?>> ALL_TYPE_HANDLERS_MAP = new HashMap<Class<?>, TypeHandler<?>>();
 
   private static final Map<JdbcType, TypeHandler<?>> NULL_TYPE_HANDLER_MAP = new HashMap<JdbcType, TypeHandler<?>>();
@@ -52,43 +54,36 @@ public final class TypeHandlerRegistry {
   private Class<? extends TypeHandler> defaultEnumTypeHandler = EnumTypeHandler.class;
 
   public TypeHandlerRegistry() {
-    register(Boolean.class, new BooleanTypeHandler());
+    register(java.lang.Boolean.class, new BooleanTypeHandler());
     register(boolean.class, new BooleanTypeHandler());
     register(JdbcType.BOOLEAN, new BooleanTypeHandler());
     register(JdbcType.BIT, new BooleanTypeHandler());
-
-    register(Byte.class, new ByteTypeHandler());
+    register(java.lang.Byte.class, new ByteTypeHandler());
     register(byte.class, new ByteTypeHandler());
     register(JdbcType.TINYINT, new ByteTypeHandler());
-
-    register(Short.class, new ShortTypeHandler());
+    register(java.lang.Short.class, new ShortTypeHandler());
     register(short.class, new ShortTypeHandler());
     register(JdbcType.SMALLINT, new ShortTypeHandler());
-
-    register(Integer.class, new IntegerTypeHandler());
+    register(java.lang.Integer.class, new IntegerTypeHandler());
     register(int.class, new IntegerTypeHandler());
     register(JdbcType.INTEGER, new IntegerTypeHandler());
-
-    register(Long.class, new LongTypeHandler());
+    register(java.lang.Long.class, new LongTypeHandler());
     register(long.class, new LongTypeHandler());
-
-    register(Float.class, new FloatTypeHandler());
+    register(java.lang.Float.class, new FloatTypeHandler());
     register(float.class, new FloatTypeHandler());
     register(JdbcType.FLOAT, new FloatTypeHandler());
-
-    register(Double.class, new DoubleTypeHandler());
+    register(java.lang.Double.class, new DoubleTypeHandler());
     register(double.class, new DoubleTypeHandler());
     register(JdbcType.DOUBLE, new DoubleTypeHandler());
-
     register(Reader.class, new ClobReaderTypeHandler());
-    register(String.class, new StringTypeHandler());
-    register(String.class, JdbcType.CHAR, new StringTypeHandler());
-    register(String.class, JdbcType.CLOB, new ClobTypeHandler());
-    register(String.class, JdbcType.VARCHAR, new StringTypeHandler());
-    register(String.class, JdbcType.LONGVARCHAR, new ClobTypeHandler());
-    register(String.class, JdbcType.NVARCHAR, new NStringTypeHandler());
-    register(String.class, JdbcType.NCHAR, new NStringTypeHandler());
-    register(String.class, JdbcType.NCLOB, new NClobTypeHandler());
+    register(java.lang.String.class, new StringTypeHandler());
+    register(java.lang.String.class, JdbcType.CHAR, new StringTypeHandler());
+    register(java.lang.String.class, JdbcType.CLOB, new ClobTypeHandler());
+    register(java.lang.String.class, JdbcType.VARCHAR, new StringTypeHandler());
+    register(java.lang.String.class, JdbcType.LONGVARCHAR, new ClobTypeHandler());
+    register(java.lang.String.class, JdbcType.NVARCHAR, new NStringTypeHandler());
+    register(java.lang.String.class, JdbcType.NCHAR, new NStringTypeHandler());
+    register(java.lang.String.class, JdbcType.NCLOB, new NClobTypeHandler());
     register(JdbcType.CHAR, new StringTypeHandler());
     register(JdbcType.VARCHAR, new StringTypeHandler());
     register(JdbcType.CLOB, new ClobTypeHandler());
@@ -96,50 +91,41 @@ public final class TypeHandlerRegistry {
     register(JdbcType.NVARCHAR, new NStringTypeHandler());
     register(JdbcType.NCHAR, new NStringTypeHandler());
     register(JdbcType.NCLOB, new NClobTypeHandler());
-
-    register(Object.class, JdbcType.ARRAY, new ArrayTypeHandler());
+    register(java.lang.Object.class, JdbcType.ARRAY, new ArrayTypeHandler());
     register(JdbcType.ARRAY, new ArrayTypeHandler());
-
     register(BigInteger.class, new BigIntegerTypeHandler());
     register(JdbcType.BIGINT, new LongTypeHandler());
-
     register(BigDecimal.class, new BigDecimalTypeHandler());
     register(JdbcType.REAL, new BigDecimalTypeHandler());
     register(JdbcType.DECIMAL, new BigDecimalTypeHandler());
     register(JdbcType.NUMERIC, new BigDecimalTypeHandler());
-
     register(InputStream.class, new BlobInputStreamTypeHandler());
-    register(Byte[].class, new ByteObjectArrayTypeHandler());
-    register(Byte[].class, JdbcType.BLOB, new BlobByteObjectArrayTypeHandler());
-    register(Byte[].class, JdbcType.LONGVARBINARY, new BlobByteObjectArrayTypeHandler());
+    register(java.lang.Byte[].class, new ByteObjectArrayTypeHandler());
+    register(java.lang.Byte[].class, JdbcType.BLOB, new BlobByteObjectArrayTypeHandler());
+    register(java.lang.Byte[].class, JdbcType.LONGVARBINARY, new BlobByteObjectArrayTypeHandler());
     register(byte[].class, new ByteArrayTypeHandler());
     register(byte[].class, JdbcType.BLOB, new BlobTypeHandler());
     register(byte[].class, JdbcType.LONGVARBINARY, new BlobTypeHandler());
     register(JdbcType.LONGVARBINARY, new BlobTypeHandler());
     register(JdbcType.BLOB, new BlobTypeHandler());
-
-    register(Object.class, UNKNOWN_TYPE_HANDLER);
-    register(Object.class, JdbcType.OTHER, UNKNOWN_TYPE_HANDLER);
+    register(java.lang.Object.class, UNKNOWN_TYPE_HANDLER);
+    register(java.lang.Object.class, JdbcType.OTHER, UNKNOWN_TYPE_HANDLER);
     register(JdbcType.OTHER, UNKNOWN_TYPE_HANDLER);
-
     register(Date.class, new DateTypeHandler());
     register(Date.class, JdbcType.DATE, new DateOnlyTypeHandler());
     register(Date.class, JdbcType.TIME, new TimeOnlyTypeHandler());
     register(JdbcType.TIMESTAMP, new DateTypeHandler());
     register(JdbcType.DATE, new DateOnlyTypeHandler());
     register(JdbcType.TIME, new TimeOnlyTypeHandler());
-
     register(java.sql.Date.class, new SqlDateTypeHandler());
     register(java.sql.Time.class, new SqlTimeTypeHandler());
     register(java.sql.Timestamp.class, new SqlTimestampTypeHandler());
-
     // mybatis-typehandlers-jsr310
     if (Jdk.dateAndTimeApiExists) {
       Java8TypeHandlersRegistrar.registerDateAndTimeHandlers(this);
     }
-
     // issue #273
-    register(Character.class, new CharacterTypeHandler());
+    register(java.lang.Character.class, new CharacterTypeHandler());
     register(char.class, new CharacterTypeHandler());
   }
 
@@ -217,8 +203,8 @@ public final class TypeHandlerRegistry {
     if (NULL_TYPE_HANDLER_MAP.equals(jdbcHandlerMap)) {
       return null;
     }
-    if (jdbcHandlerMap == null && type instanceof Class) {
-      Class<?> clazz = (Class<?>) type;
+    if ((jdbcHandlerMap == null) && (type instanceof Class)) {
+      Class<?> clazz = ((Class<?>) (type));
       if (clazz.isEnum()) {
         jdbcHandlerMap = getJdbcHandlerMapForEnumInterfaces(clazz, clazz);
         if (jdbcHandlerMap == null) {
@@ -430,14 +416,13 @@ public final class TypeHandlerRegistry {
       }
     }
   }
-  
+
   // get information
-  
+
   /**
    * @since 3.2.2
    */
   public Collection<TypeHandler<?>> getTypeHandlers() {
     return Collections.unmodifiableCollection(ALL_TYPE_HANDLERS_MAP.values());
   }
-  
 }
