@@ -1,14 +1,12 @@
 package com.salesmanager.shop.application.config;
 
-import static org.springframework.http.MediaType.IMAGE_GIF;
-import static org.springframework.http.MediaType.IMAGE_JPEG;
-import static org.springframework.http.MediaType.IMAGE_PNG;
-
 import com.salesmanager.core.business.configuration.CoreApplicationConfiguration;
 import com.salesmanager.shop.filter.AdminFilter;
 import com.salesmanager.shop.filter.CorsFilter;
 import com.salesmanager.shop.filter.StoreFilter;
+import com.salesmanager.shop.utils.ImageFilePath;
 import com.salesmanager.shop.utils.LabelUtils;
+import com.salesmanager.shop.utils.LocalImageFilePathUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -42,20 +40,26 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesView;
 import org.springframework.web.servlet.view.tiles3.TilesViewResolver;
+import static org.springframework.http.MediaType.IMAGE_GIF;
+import static org.springframework.http.MediaType.IMAGE_JPEG;
+import static org.springframework.http.MediaType.IMAGE_PNG;
 
+
+// import sm-core configurations
 @Configuration
-@ComponentScan({"com.salesmanager.shop", "com.salesmanager.core.business"})
-@Import({CoreApplicationConfiguration.class}) // import sm-core configurations
-@ImportResource({"classpath:/spring/shopizer-shop-context.xml"})
+@ComponentScan({ "com.salesmanager.shop", "com.salesmanager.core.business" })
+@Import({ CoreApplicationConfiguration.class })
+@ImportResource({ "classpath:/spring/shopizer-shop-context.xml" })
 @EnableWebSecurity
 public class ShopApplicationConfiguration extends WebMvcConfigurerAdapter {
-
   protected final Log logger = LogFactory.getLog(getClass());
 
   @Inject private DataSource dataSource;
 
   @Inject private TextEncryptor textEncryptor;
+
   @Inject private MerchantStoreArgumentResolver merchantStoreArgumentResolver;
+
   @Inject private LanguageArgumentResolver languageArgumentResolver;
 
   @EventListener(ApplicationReadyEvent.class)
@@ -192,5 +196,4 @@ public class ShopApplicationConfiguration extends WebMvcConfigurerAdapter {
   public LabelUtils messages() {
     return new LabelUtils();
   }
-
 }
