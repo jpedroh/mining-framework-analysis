@@ -1,18 +1,16 @@
 package de.hilling.junit.cdi;
 
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import jakarta.inject.Inject;
-
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 
 /**
  * Test and demo lifecycle events.
  */
 @ExtendWith(CdiTestJunitExtension.class)
 class NotificationLifecyleTest {
-
     @Inject
     private NotificationLifecyleSupportBean supportBean;
 

@@ -1,12 +1,11 @@
 package de.hilling.junit.cdi.scope.context;
 
-import jakarta.enterprise.inject.spi.Bean;
-
 import de.hilling.junit.cdi.annotations.BypassTestInterceptor;
-
+import jakarta.enterprise.inject.spi.Bean;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * Store for beans in custom scopes.
@@ -48,5 +47,4 @@ public class CustomScopeContextHolder implements ScopeContextHolder {
         Bean<T> bean = scopeInstance.getBean();
         bean.destroy(scopeInstance.getInstance(), scopeInstance.getCtx());
     }
-
 }

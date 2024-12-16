@@ -3,13 +3,12 @@ package de.hilling.junit.cdi;
 import de.hilling.junit.cdi.beans.Person;
 import de.hilling.junit.cdi.service.BackendServiceTestImplementation;
 import de.hilling.junit.cdi.service.SampleService;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import jakarta.inject.Inject;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 /**
  * Demo and test auto-wiring of {@link Inject}ed test implementations.
@@ -18,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ActivateAlternativeForRegularBeanTest {
     @Inject
     private SampleService sampleService;
+
     @Inject
     private BackendServiceTestImplementation testBackendService;
 
@@ -28,10 +28,9 @@ class ActivateAlternativeForRegularBeanTest {
     }
 
     @Test
-    @BackendServiceException(RuntimeException.class)
+    @BackendServiceException(java.lang.RuntimeException.class)
     void callTestActivatedServiceWithBackendException() {
         Person person = new Person();
-        Assertions.assertThrows(RuntimeException.class, () -> sampleService.storePerson(person));
+        Assertions.assertThrows(java.lang.RuntimeException.class, () -> sampleService.storePerson(person));
     }
-
 }

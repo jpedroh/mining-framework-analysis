@@ -1,21 +1,23 @@
 package de.hilling.junit.cdi.scope.context;
 
+import de.hilling.junit.cdi.annotations.BypassTestInterceptor;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.spi.Bean;
-
-import de.hilling.junit.cdi.annotations.BypassTestInterceptor;
 import org.immutables.value.Value;
+
 
 /**
  * Generate an instance of custom scope.
- * @param <T> scope type.
+ *
+ * @param <T>
+ * 		scope type.
  */
 @BypassTestInterceptor
 @Value.Immutable
 public interface CustomScopeInstance<T> {
-    Bean<T> getBean();
+    public abstract Bean<T> getBean();
 
-    CreationalContext<T> getCtx();
+    public abstract CreationalContext<T> getCtx();
 
     T getInstance();
 }

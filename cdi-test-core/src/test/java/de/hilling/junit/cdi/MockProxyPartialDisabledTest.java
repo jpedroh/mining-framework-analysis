@@ -3,14 +3,13 @@ package de.hilling.junit.cdi;
 import de.hilling.junit.cdi.beans.Person;
 import de.hilling.junit.cdi.service.BackendService;
 import de.hilling.junit.cdi.service.SampleService;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import jakarta.inject.Inject;
-
 import static org.mockito.Mockito.*;
+
 
 /**
  * Deep bean replacement with mocks.
@@ -18,7 +17,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(CdiTestJunitExtension.class)
 @ExtendWith(MockitoExtension.class)
 class MockProxyPartialDisabledTest {
-
     @Mock
     private BackendService backendService;
 
@@ -36,5 +34,4 @@ class MockProxyPartialDisabledTest {
     void doNothing() {
         verifyNoInteractions(backendService);
     }
-
 }

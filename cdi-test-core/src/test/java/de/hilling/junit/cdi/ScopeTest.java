@@ -1,19 +1,18 @@
 package de.hilling.junit.cdi;
 
 import de.hilling.junit.cdi.beans.Request;
+import jakarta.inject.Inject;
+import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import jakarta.inject.Inject;
-import java.util.UUID;
 
 /**
  * Test and demo different scopes in cdi-test.
  */
 @ExtendWith(CdiTestJunitExtension.class)
 class ScopeTest {
-
     @Inject
     private Request request;
 
@@ -41,5 +40,4 @@ class ScopeTest {
             Assertions.assertNotEquals(lastIdentifier, request.getIdentifier());
         }
     }
-
 }

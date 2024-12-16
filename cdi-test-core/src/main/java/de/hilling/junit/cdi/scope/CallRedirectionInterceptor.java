@@ -1,5 +1,7 @@
 package de.hilling.junit.cdi.scope;
 
+import de.hilling.junit.cdi.ContextControlWrapper;
+import de.hilling.junit.cdi.util.ReflectionsUtils;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.inject.Instance;
@@ -7,13 +9,10 @@ import jakarta.inject.Inject;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
-
-import de.hilling.junit.cdi.ContextControlWrapper;
-import de.hilling.junit.cdi.util.ReflectionsUtils;
-
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 
 /**
  * Interceptor to redirect method calls to beans in testing depending on the test case.
@@ -45,12 +44,11 @@ public class CallRedirectionInterceptor implements Serializable {
         Method method = ctx.getMethod();
         ContextControlWrapper controlWrapper = ContextControlWrapper.getInstance();
         Object alternative = controlWrapper.getContextualReference(invocationTargetManager.get().alternativeFor(javaClass));
-
         try {
             Method alternativeMethod = alternative.getClass().getMethod(method.getName(), method.getParameterTypes());
             return alternativeMethod.invoke(alternative, ctx.getParameters());
-        } catch (NoSuchMethodException nme) {
-            throw new IllegalStateException("method " + method.getName() + " not found on alternative " + alternative);
+        } catch (java.lang.NoSuchMethodException nme) {
+            throw new IllegalStateException((("method " + method.getName()) + " not found on alternative ") + alternative);
         } catch (InvocationTargetException ite) {
             throw ite.getCause();
         }

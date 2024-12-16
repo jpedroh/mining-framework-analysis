@@ -3,15 +3,14 @@ package de.hilling.junit.cdi;
 import de.hilling.junit.cdi.beans.Person;
 import de.hilling.junit.cdi.service.BackendService;
 import de.hilling.junit.cdi.service.SampleService;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import jakarta.inject.Inject;
-
 import static org.mockito.Mockito.verify;
+
 
 /**
  * Demo and test {@link de.hilling.junit.cdi.scope.TestScoped} and separation of test cases.
@@ -19,7 +18,6 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(CdiTestJunitExtension.class)
 @ExtendWith(MockitoExtension.class)
 class MultipleInvocationsTest {
-
     @Inject
     private SampleService sampleService;
 
@@ -44,5 +42,4 @@ class MultipleInvocationsTest {
         sampleService.storePerson(person);
         verify(backendService).storePerson(person);
     }
-
 }

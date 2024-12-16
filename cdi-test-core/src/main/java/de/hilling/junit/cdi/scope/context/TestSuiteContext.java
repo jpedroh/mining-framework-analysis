@@ -1,12 +1,11 @@
 package de.hilling.junit.cdi.scope.context;
 
+import de.hilling.junit.cdi.annotations.BypassTestInterceptor;
+import de.hilling.junit.cdi.scope.TestSuiteScoped;
 import jakarta.enterprise.context.spi.Context;
-
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 
-import de.hilling.junit.cdi.annotations.BypassTestInterceptor;
-import de.hilling.junit.cdi.scope.TestSuiteScoped;
 
 /**
  * Implementation of context for {@link TestSuiteScoped} beans.
@@ -14,8 +13,9 @@ import de.hilling.junit.cdi.scope.TestSuiteScoped;
  * @see TestSuiteScoped
  */
 @BypassTestInterceptor
-public class TestSuiteContext extends AbstractScopeContext implements Context, Serializable {
+public class TestSuiteContext extends AbstractScopeContext implements Context , Serializable {
     private static final long serialVersionUID = 1L;
+
     private static final CustomScopeContextHolder CONTEXT_HOLDER = new CustomScopeContextHolder();
 
     @Override

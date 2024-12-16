@@ -7,16 +7,15 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
-
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.jboss.weld.context.ApplicationContext;
 import org.jboss.weld.context.bound.BoundConversationContext;
 import org.jboss.weld.context.bound.BoundRequestContext;
 import org.jboss.weld.context.bound.BoundSessionContext;
 import org.jboss.weld.context.bound.MutableBoundRequest;
+
 
 /**
  * Wrapper around the weld-se specific context methods.
@@ -27,8 +26,8 @@ import org.jboss.weld.context.bound.MutableBoundRequest;
 @Dependent
 public class WeldContextControl implements ContextControl {
     private static final ThreadLocal<WeldContextControl.RequestContextHolder> requestContexts = new ThreadLocal<>();
-    private static final ThreadLocal<Map<String, Object>>                     sessionMaps     = new ThreadLocal<>();
 
+    private static final ThreadLocal<Map<String, Object>> sessionMaps = new ThreadLocal<>();
 
     @Inject
     private ApplicationContext applicationContext;
@@ -41,7 +40,6 @@ public class WeldContextControl implements ContextControl {
 
     @Inject
     private BoundConversationContext conversationContext;
-
 
     @Override
     public void startContexts() {
@@ -176,9 +174,9 @@ public class WeldContextControl implements ContextControl {
         }
     }
 
-
     private static class RequestContextHolder {
         private final BoundRequestContext boundRequestContext;
+
         private final Map<String, Object> requestMap;
 
         private RequestContextHolder(BoundRequestContext boundRequestContext, Map<String, Object> requestMap) {
@@ -194,5 +192,4 @@ public class WeldContextControl implements ContextControl {
             return requestMap;
         }
     }
-
 }

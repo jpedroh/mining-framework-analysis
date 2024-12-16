@@ -4,13 +4,12 @@ import de.hilling.junit.cdi.beans.Person;
 import de.hilling.junit.cdi.service.BackendService;
 import de.hilling.junit.cdi.service.OverriddenService;
 import de.hilling.junit.cdi.service.TestActivatedOverridenService;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import jakarta.inject.Inject;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 /**
  * Demo and test test activation for alternatives.
@@ -20,8 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ActivateAlternativeForAlternativeTest {
     @Inject
     private TestActivatedOverridenService testOverride;
+
     @Inject
     private OverriddenService overriddenService;
+
     @Inject
     private BackendService backendService;
 
