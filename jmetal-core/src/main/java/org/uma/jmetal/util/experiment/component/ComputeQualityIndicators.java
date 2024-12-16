@@ -1,5 +1,13 @@
 package org.uma.jmetal.util.experiment.component;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
@@ -16,17 +24,8 @@ import org.uma.jmetal.util.front.imp.ArrayFront;
 import org.uma.jmetal.util.front.util.FrontNormalizer;
 import org.uma.jmetal.util.front.util.FrontUtils;
 import org.uma.jmetal.util.point.util.PointSolution;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 
 /**
  * This class computes the {@link QualityIndicator}s of an experiment. Once the algorithms of an
@@ -39,13 +38,12 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class ComputeQualityIndicators<S extends Solution<?>, Result> implements ExperimentComponent {
-	
-
   private static final String FILE_STRING = "File ";
+
   private final Experiment<S, Result> experiment;
 
   public ComputeQualityIndicators(Experiment<S, Result> experiment) {
-    this.experiment = experiment ;
+    this.experiment = experiment;
   }
 
   @Override
@@ -93,11 +91,10 @@ public class ComputeQualityIndicators<S extends Solution<?>, Result> implements 
   }
 
   private void writeQualityIndicatorValueToFile(Double indicatorValue, String qualityIndicatorFile) {
-     
-    try(FileWriter os = new FileWriter(qualityIndicatorFile, true)) { 
-      os.write("" + indicatorValue + "\n");
+    try (final FileWriter os = new FileWriter(qualityIndicatorFile, true)) {
+      os.write(("" + indicatorValue) + "\n");
     } catch (IOException ex) {
-      throw new JMetalException("Error writing indicator file" + ex) ;
+      throw new JMetalException("Error writing indicator file" + ex);
     }
   }
 
@@ -108,17 +105,16 @@ public class ComputeQualityIndicators<S extends Solution<?>, Result> implements 
   private void resetFile(String file) {
     File f = new File(file);
     if (f.exists()) {
-      JMetalLogger.logger.info(FILE_STRING + file + " exist.");
-
+      JMetalLogger.logger.info((FILE_STRING + file) + " exist.");
       if (f.isDirectory()) {
-        JMetalLogger.logger.info(FILE_STRING + file + " is a directory. Deleting directory.");
+        JMetalLogger.logger.info((FILE_STRING + file) + " is a directory. Deleting directory.");
         if (f.delete()) {
           JMetalLogger.logger.info("Directory successfully deleted.");
         } else {
           JMetalLogger.logger.info("Error deleting directory.");
         }
       } else {
-        JMetalLogger.logger.info(FILE_STRING + file + " is a file. Deleting file.");
+        JMetalLogger.logger.info((FILE_STRING + file) + " is a file. Deleting file.");
         if (f.delete()) {
           JMetalLogger.logger.info("File succesfully deleted.");
         } else {
@@ -126,7 +122,7 @@ public class ComputeQualityIndicators<S extends Solution<?>, Result> implements 
         }
       }
     } else {
-      JMetalLogger.logger.info(FILE_STRING + file + " does NOT exist.");
+      JMetalLogger.logger.info((FILE_STRING + file) + " does NOT exist.");
     }
   }
 
@@ -210,4 +206,3 @@ public class ComputeQualityIndicators<S extends Solution<?>, Result> implements 
     }
   }
 }
-
