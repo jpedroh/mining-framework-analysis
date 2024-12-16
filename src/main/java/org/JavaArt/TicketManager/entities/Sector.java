@@ -1,15 +1,15 @@
 package org.JavaArt.TicketManager.entities;
 
+import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Date;
 
 @Entity
-@Table(schema="public", name = "sector")
-public class Sector implements Comparable, Serializable {
+@Table(schema = "public", name = "sector")
+public class Sector implements Comparable , Serializable {
     @Id
     @GeneratedValue(generator = "increment")
     @GenericGenerator(name = "increment", strategy = "increment")
@@ -21,7 +21,7 @@ public class Sector implements Comparable, Serializable {
     private Event event;
 
     @NotEmpty
-    @Column(name="name", nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "price")
@@ -43,8 +43,8 @@ public class Sector implements Comparable, Serializable {
     @Column(name = "MaxSeats")
     private int maxSeats;
 
-
-    public Sector() {}
+    public Sector() {
+    }
 
     public Integer getId() {
         return id;
