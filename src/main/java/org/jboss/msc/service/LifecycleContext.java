@@ -19,10 +19,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.jboss.msc.service;
 
 import java.util.concurrent.Executor;
+
 
 /**
  * A context object for lifecycle events.
@@ -31,7 +31,6 @@ import java.util.concurrent.Executor;
  * @author <a href="mailto:ropalka@redhat.com">Richard Opalka</a>
  */
 public interface LifecycleContext extends Executor {
-
     /**
      * Call within the service lifecycle method to trigger an <em>asynchronous</em> lifecycle action.  This action
      * will not be considered complete until indicated so by calling a {@link #complete()} method on this interface.
@@ -70,9 +69,11 @@ public interface LifecycleContext extends Executor {
      * or which await conditions which are driven by other services are likely to deadlock.  Such tasks should never be
      * executed in the service container.
      *
-     * @param command the command to execute
-     * @throws IllegalStateException if this method is called outside of service lifecycle methods.
+     * @param command
+     * 		the command to execute
+     * @throws IllegalStateException
+     * 		if this method is called outside of service lifecycle methods.
      */
     @Override
-    void execute(Runnable command);
+    public abstract void execute(Runnable command);
 }

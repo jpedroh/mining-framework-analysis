@@ -19,11 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.jboss.msc.service;
-
-import static java.security.AccessController.doPrivileged;
-import static org.jboss.modules.management.ObjectProperties.property;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -43,8 +39,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
@@ -61,10 +57,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-
 import org.jboss.modules.management.ObjectProperties;
 import org.jboss.modules.ref.Reaper;
 import org.jboss.modules.ref.Reference;
@@ -77,6 +71,9 @@ import org.jboss.msc.service.management.ServiceContainerMXBean;
 import org.jboss.msc.service.management.ServiceStatus;
 import org.jboss.msc.value.InjectedValue;
 import org.jboss.threads.EnhancedQueueExecutor;
+import static java.security.AccessController.doPrivileged;
+import static org.jboss.modules.management.ObjectProperties.property;
+
 
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
@@ -84,7 +81,6 @@ import org.jboss.threads.EnhancedQueueExecutor;
  * @author <a href="mailto:ropalka@redhat.com">Richard Opalka</a>
  */
 final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceContainer {
-
     private static final AtomicInteger SERIAL = new AtomicInteger(1);
 
     static {
@@ -92,20 +88,26 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
     }
 
     private final ConcurrentMap<ServiceName, ServiceRegistrationImpl> registry = new ConcurrentHashMap<>(512);
+
     private final long start = System.nanoTime();
 
     private final Set<ServiceController<?>> problems = new IdentityHashSet<>();
+
     private final Set<ServiceController<?>> failed = new IdentityHashSet<>();
+
     private final Object lock = new Object();
 
     private int unstableServices;
+
     private long shutdownInitiated;
 
     private final List<TerminateListener> terminateListeners = new ArrayList<>(1);
+
     private final boolean autoShutdown;
 
     private static final class ShutdownHookHolder {
         private static final Set<Reference<ServiceContainerImpl, Void>> containers;
+
         private static boolean down = false;
 
         static {
@@ -117,12 +119,12 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
                             // shut down all services in all containers.
                             final Set<Reference<ServiceContainerImpl, Void>> set = containers;
                             final LatchListener listener;
-                            synchronized (set) {
+                            synchronized(set) {
                                 down = true;
                                 listener = new LatchListener(set.size());
                                 for (Reference<ServiceContainerImpl, Void> containerRef : set) {
                                     final ServiceContainerImpl container = containerRef.get();
-                                    if (container == null || !container.isAutoShutdown()) {
+                                    if ((container == null) || (!container.isAutoShutdown())) {
                                         listener.countDown();
                                         continue;
                                     }
@@ -132,10 +134,12 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
                                 set.clear();
                             }
                             // wait for all services to finish.
-                            for (;;) try {
-                                listener.await();
-                                break;
-                            } catch (InterruptedException e) {
+                            for (; ;) {
+                                try {
+                                    listener.await();
+                                    break;
+                                } catch (java.lang.InterruptedException e) {
+                                }
                             }
                         }
                     }, "MSC Shutdown Thread");
@@ -157,7 +161,9 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
     private final ContainerExecutor executor;
 
     private final String name;
+
     private final MBeanServer mBeanServer;
+
     private final ObjectName objectName;
 
     private final ServiceContainerMXBean containerMXBean = new ServiceContainerMXBean() {
@@ -187,7 +193,9 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
             final List<ServiceStatus> list = new ArrayList<>(registrations.size());
             for (ServiceRegistrationImpl registration : registrations) {
                 final ServiceControllerImpl<?> instance = registration.getDependencyController();
-                if (instance != null) list.add(instance.getStatus());
+                if (instance != null) {
+                    list.add(instance.getStatus());
+                }
             }
             Collections.sort(list, new Comparator<ServiceStatus>() {
                 public int compare(final ServiceStatus o1, final ServiceStatus o2) {
@@ -236,9 +244,11 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
             for (ServiceStatus status : statuses) {
                 final String serviceName = status.getServiceName();
                 final String[] aliasesStrings = status.getAliases();
-                if (aliasesStrings != null) for (String alias : aliasesStrings) {
-                    aliases.put(alias, serviceName);
-                    aliases.put(serviceName, serviceName);
+                if (aliasesStrings != null) {
+                    for (String alias : aliasesStrings) {
+                        aliases.put(alias, serviceName);
+                        aliases.put(serviceName, serviceName);
+                    }
                 }
                 builder.append("    ");
                 final String quoted = serviceName.replace("\"", "\\\"");
@@ -257,11 +267,15 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
                 final String[] dependencies = status.getDependencies();
                 final Set<String> filteredDependencies = new HashSet<>(Arrays.asList(dependencies));
                 final String parentName = status.getParentName();
-                if (parentName != null) filteredDependencies.add(parentName);
+                if (parentName != null) {
+                    filteredDependencies.add(parentName);
+                }
                 for (String dependency : filteredDependencies) {
                     builder.append("    ").append('"').append(serviceName.replace("\"", "\\\"")).append('"');
                     String dep = aliases.get(dependency);
-                    if (dep == null) dep = dependency;
+                    if (dep == null) {
+                        dep = dependency;
+                    }
                     builder.append(" -> \"").append(dep.replace("\"", "\\\"")).append('"');
                     builder.append(";\n");
                 }
@@ -366,20 +380,19 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
             objectName = new ObjectName("jboss.msc", ObjectProperties.properties(property("type", "container"), property("name", name)));
             mBeanServer = ManagementFactory.getPlatformMBeanServer();
             mBeanServer.registerMBean(containerMXBean, objectName);
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             ServiceLogger.ROOT.mbeanFailed(e);
         }
         this.mBeanServer = mBeanServer;
         this.objectName = objectName;
         final Set<Reference<ServiceContainerImpl, Void>> set = ShutdownHookHolder.containers;
-        synchronized (set) {
+        synchronized(set) {
             // if the shutdown hook was triggered, then no services can ever come up in any new containers.
             if (ShutdownHookHolder.down) {
                 terminateInfo = new TerminateListener.Info(System.nanoTime(), System.nanoTime());
                 down = true;
-            }
-            //noinspection ThisEscapedInObjectConstruction
-            else {
+            } else //noinspection ThisEscapedInObjectConstruction
+            {
                 //noinspection ThisEscapedInObjectConstruction
                 set.add(new WeakReference<>(this, null, new Reaper<ServiceContainerImpl, Void>() {
                     public void reap(final Reference<ServiceContainerImpl, Void> reference) {
@@ -388,12 +401,12 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
                 }));
             }
         }
-        if (objectName != null && mBeanServer != null) {
+        if ((objectName != null) && (mBeanServer != null)) {
             addTerminateListener(new TerminateListener() {
                 public void handleTermination(final Info info) {
                     try {
                         ServiceContainerImpl.this.mBeanServer.unregisterMBean(ServiceContainerImpl.this.objectName);
-                    } catch (Exception ignored) {
+                    } catch (java.lang.Exception ignored) {
                     }
                 }
             });
@@ -579,7 +592,7 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
                 final ServiceRegistrationImpl registration = registry.get(name);
                 if (registration != null) {
                     final ServiceControllerImpl<?> instance = registration.getDependencyController();
-                    if (instance != null && set.add(instance)) {
+                    if ((instance != null) && set.add(instance)) {
                         i++;
                         out.printf("%s\n", instance.getStatus());
                     }
@@ -607,7 +620,6 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
     }
 
     static final class LatchListener extends CountDownLatch implements TerminateListener {
-
         LatchListener(int count) {
             super(count);
         }
@@ -680,7 +692,7 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
     @Override
     public List<ServiceName> getServiceNames() {
         final List<ServiceName> result = new ArrayList<>(registry.size());
-        for (Map.Entry<ServiceName, ServiceRegistrationImpl> registryEntry: registry.entrySet()) {
+        for (Map.Entry<ServiceName, ServiceRegistrationImpl> registryEntry : registry.entrySet()) {
             if (registryEntry.getValue().getDependencyController() != null) {
                 result.add(registryEntry.getKey());
             }
@@ -691,15 +703,13 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
     @Override
     <T> ServiceController<T> install(final AbstractServiceBuilder<T> serviceBuilder) throws DuplicateServiceException {
         apply(serviceBuilder);
-
         // Initialize registrations and injectors map
         final Map<ServiceRegistrationImpl, WritableValueImpl> provides = new LinkedHashMap<>();
         Entry<ServiceName, WritableValueImpl> entry;
-        for (Iterator<Entry<ServiceName, WritableValueImpl>> j = serviceBuilder.getProvides().entrySet().iterator(); j.hasNext(); ) {
+        for (Iterator<Entry<ServiceName, WritableValueImpl>> j = serviceBuilder.getProvides().entrySet().iterator(); j.hasNext();) {
             entry = j.next();
             provides.put(getOrCreateRegistration(entry.getKey()), entry.getValue());
         }
-
         // Create the list of dependencies
         final List<ValueInjection<?>> outInjections = new ArrayList<>();
         // set up outInjections with an InjectedValue
@@ -707,7 +717,6 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
         for (final Injector<? super T> outInjection : serviceBuilder.getOutInjections()) {
             outInjections.add(new ValueInjection<>(serviceValue, outInjection));
         }
-
         // Dependencies
         final Map<ServiceName, AbstractServiceBuilder.Dependency> dependencyMap = serviceBuilder.getDependencies();
         final Set<Dependency> requires = new HashSet<>();
@@ -735,18 +744,16 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
         for (ServiceName alias : serviceAliases) {
             aliases[i++] = alias;
         }
-
         // Next create the actual controller
-        final ServiceControllerImpl<T> instance = new ServiceControllerImpl<>(this, serviceBuilder.getServiceId(), aliases, serviceBuilder.getService(),
-                requires, provides, valueInjectionArray, outInjectionArray,
-                serviceBuilder.getMonitors(), serviceBuilder.getServiceListeners(), serviceBuilder.getLifecycleListeners(), serviceBuilder.getParent());
+        final ServiceControllerImpl<T> instance = new ServiceControllerImpl<>(this, serviceBuilder.getServiceId(), aliases, serviceBuilder.getService(), requires, provides, valueInjectionArray, outInjectionArray, serviceBuilder.getMonitors(), serviceBuilder.getServiceListeners(), serviceBuilder.getLifecycleListeners(), serviceBuilder.getParent());
         boolean ok = false;
         try {
             serviceValue.setValue(instance);
-            synchronized (this) {
+            synchronized(this) {
                 if (down) {
-                    ok = true; // do not rollback installation because we didn't install anything
-                    throw new IllegalStateException ("Container is down");
+                    ok = true;// do not rollback installation because we didn't install anything
+
+                    throw new IllegalStateException("Container is down");
                 }
                 // It is necessary to call startInstallation() under container intrinsic lock.
                 // This is the only point in MSC code where ServiceRegistrationImpl.instance
@@ -763,7 +770,7 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
             ok = true;
             return instance;
         } finally {
-            if (! ok) {
+            if (!ok) {
                 instance.rollbackInstallation();
             }
         }
@@ -780,37 +787,45 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
         final Deque<ServiceName> visitStack = new ArrayDeque<>();
         visitStack.push(instance.getName());
         for (ServiceRegistrationImpl registration : instance.getRegistrations()) {
-            synchronized (registration) {
+            synchronized(registration) {
                 detectCircularity(registration.getDependents(), instance, visited, visitStack);
             }
         }
     }
 
-    private void detectCircularity(Set<? extends Dependent> dependents, ServiceControllerImpl<?> instance, Set<ServiceControllerImpl<?>> visited,  Deque<ServiceName> visitStack) {
-        for (Dependent dependent: dependents) {
+    private void detectCircularity(Set<? extends Dependent> dependents, ServiceControllerImpl<?> instance, Set<ServiceControllerImpl<?>> visited, Deque<ServiceName> visitStack) {
+        for (Dependent dependent : dependents) {
             final ServiceControllerImpl<?> controller = dependent.getDependentController();
-            if (controller == null) continue; // [MSC-145] optional dependencies may return null
+            if (controller == null) {
+                continue;
+            }// [MSC-145] optional dependencies may return null
+
             if (controller == instance) {
                 // change cycle from dependent order to dependency order
                 ServiceName[] cycle = new ServiceName[visitStack.size()];
                 visitStack.toArray(cycle);
-                int j = cycle.length -1;
-                for (int i = 0; i < j; i++, j--) {
+                int j = cycle.length - 1;
+                for (int i = 0; i < j; i++ , j--) {
                     ServiceName temp = cycle[i];
                     cycle[i] = cycle[j];
                     cycle[j] = temp;
                 }
-                throw new CircularDependencyException("Container " + name + " has a circular dependency: " + Arrays.asList(cycle), cycle);
+                throw new CircularDependencyException((("Container " + name) + " has a circular dependency: ") + Arrays.asList(cycle), cycle);
             }
             if (visited.add(controller)) {
-                if (controller.getState() == ServiceController.State.REMOVED) continue;
+                if (controller.getState() == ServiceController.State.REMOVED) {
+                    continue;
+                }
                 visitStack.push(controller.getName());
                 synchronized(controller) {
                     detectCircularity(controller.getChildren(), instance, visited, visitStack);
                 }
                 for (ServiceRegistrationImpl registration : controller.getRegistrations()) {
-                    if (registration.getDependencyController() == null) continue; // concurrent removal
-                    synchronized (registration) {
+                    if (registration.getDependencyController() == null) {
+                        continue;
+                    }// concurrent removal
+
+                    synchronized(registration) {
                         detectCircularity(registration.getDependents(), instance, visited, visitStack);
                     }
                 }
@@ -820,11 +835,13 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
     }
 
     private static final AtomicInteger executorSeq = new AtomicInteger(1);
+
     private static final Thread.UncaughtExceptionHandler HANDLER = new Thread.UncaughtExceptionHandler() {
         public void uncaughtException(final Thread t, final Throwable e) {
             ServiceLogger.ROOT.uncaughtException(e, t);
         }
     };
+
     private static final ThreadPoolExecutor.CallerRunsPolicy POLICY = new ThreadPoolExecutor.CallerRunsPolicy();
 
     static class ServiceThread extends Thread {
@@ -842,7 +859,9 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
 
     final class ThreadAction implements PrivilegedAction<ServiceThread> {
         private final Runnable r;
+
         private final int id;
+
         private final AtomicInteger threadSeq;
 
         ThreadAction(final Runnable r, final int id, final AtomicInteger threadSeq) {
@@ -853,22 +872,25 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
 
         public ServiceThread run() {
             ServiceThread thread = new ServiceThread(r, ServiceContainerImpl.this);
-            if (thread.isDaemon()) thread.setDaemon(false);
-            if (thread.getPriority() != Thread.NORM_PRIORITY) thread.setPriority(Thread.NORM_PRIORITY);
+            if (thread.isDaemon()) {
+                thread.setDaemon(false);
+            }
+            if (thread.getPriority() != Thread.NORM_PRIORITY) {
+                thread.setPriority(Thread.NORM_PRIORITY);
+            }
             thread.setName(String.format("MSC service thread %d-%d", Integer.valueOf(id), Integer.valueOf(threadSeq.getAndIncrement())));
             thread.setUncaughtExceptionHandler(HANDLER);
             return thread;
         }
     }
 
-
     final class ContainerExecutor implements ExecutorService {
-
         private final ExecutorService delegate;
 
         ContainerExecutor(final int corePoolSize, final int maximumPoolSize, final long keepAliveTime, final TimeUnit unit) {
             final ThreadFactory threadFactory = new ThreadFactory() {
                 private final int id = executorSeq.getAndIncrement();
+
                 private final AtomicInteger threadSeq = new AtomicInteger(1);
 
                 public Thread newThread(final Runnable r) {
@@ -889,17 +911,11 @@ final class ServiceContainerImpl extends ServiceTargetImpl implements ServiceCon
                     }
                 };
             } else {
-                delegate = new EnhancedQueueExecutor.Builder()
-                    .setCorePoolSize(corePoolSize)
-                    .setMaximumPoolSize(maximumPoolSize)
-                    .setKeepAliveTime(keepAliveTime, unit)
-                    .setTerminationTask(new Runnable() {
-                        public void run() {
-                            shutdownComplete(shutdownInitiated);
-                        }
-                    })
-                    .setThreadFactory(threadFactory)
-                    .build();
+                delegate = new EnhancedQueueExecutor.Builder().setCorePoolSize(corePoolSize).setMaximumPoolSize(maximumPoolSize).setKeepAliveTime(keepAliveTime, unit).setTerminationTask(new Runnable() {
+                    public void run() {
+                        shutdownComplete(shutdownInitiated);
+                    }
+                }).setThreadFactory(threadFactory).build();
             }
         }
 

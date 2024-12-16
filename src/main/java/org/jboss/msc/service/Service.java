@@ -19,11 +19,11 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.jboss.msc.service;
 
 import org.jboss.msc.value.ImmediateValue;
 import org.jboss.msc.value.Value;
+
 
 /**
  * A service is a thing which can be started and stopped.  A service may be started or stopped from any thread.  In
@@ -37,15 +37,14 @@ import org.jboss.msc.value.Value;
  * <p>
  * See {@link org.jboss.msc.Service} for more information about implementing services.
  *
- * @param <T> the type of value that this service provides; may be {@link Void}
- *
+ * @param <T>
+ * 		the type of value that this service provides; may be {@link Void}
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  * @author <a href="mailto:ropalka@redhat.com">Richard Opalka</a>
  * @deprecated use {@link org.jboss.msc.Service} instead.
- * This class will be removed in a future release.
  */
 @Deprecated
-public interface Service<T> extends org.jboss.msc.Service, Value<T> {
+public interface Service<T> extends Service , Value<T> {
     /**
      * A simple null service which performs no start or stop action.
      */
@@ -54,5 +53,5 @@ public interface Service<T> extends org.jboss.msc.Service, Value<T> {
     /**
      * A value which resolves to the {@link #NULL null service}.
      */
-    Value<Service<Void>> NULL_VALUE = new ImmediateValue<>(NULL);
+    public static final Value<Service<Void>> NULL_VALUE = new ImmediateValue<>(NULL);
 }
