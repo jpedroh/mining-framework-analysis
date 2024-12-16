@@ -16,7 +16,6 @@
  ******************************************************************************/
 package jsprit.core.algorithm.io;
 
-
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.URL;
 import java.util.ArrayList;
@@ -28,12 +27,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import jsprit.core.algorithm.InsertionInitialSolutionFactory;
 import jsprit.core.algorithm.RemoveEmptyVehicles;
 import jsprit.core.algorithm.ResetAndIniFleetManager;
-import jsprit.core.algorithm.SearchStrategy;
 import jsprit.core.algorithm.SearchStrategy.DiscoveredSolution;
+import jsprit.core.algorithm.SearchStrategy;
 import jsprit.core.algorithm.SearchStrategyManager;
 import jsprit.core.algorithm.SearchStrategyModule;
 import jsprit.core.algorithm.VehicleRoutingAlgorithm;
@@ -72,8 +70,8 @@ import jsprit.core.algorithm.termination.IterationWithoutImprovementTermination;
 import jsprit.core.algorithm.termination.PrematureAlgorithmTermination;
 import jsprit.core.algorithm.termination.TimeTermination;
 import jsprit.core.algorithm.termination.VariationCoefficientTermination;
-import jsprit.core.problem.VehicleRoutingProblem;
 import jsprit.core.problem.VehicleRoutingProblem.FleetSize;
+import jsprit.core.problem.VehicleRoutingProblem;
 import jsprit.core.problem.constraint.ConstraintManager;
 import jsprit.core.problem.solution.SolutionCostCalculator;
 import jsprit.core.problem.solution.VehicleRoutingProblemSolution;
@@ -84,306 +82,310 @@ import jsprit.core.problem.vehicle.InfiniteFleetManagerFactory;
 import jsprit.core.problem.vehicle.Vehicle;
 import jsprit.core.problem.vehicle.VehicleFleetManager;
 import jsprit.core.util.SolutionVerifier;
-
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.Logger;
 
 
-
-
 public class VehicleRoutingAlgorithms {
-	
 	static class TypedMap {
-		
 		static interface AbstractKey<K> {
-			
-		    Class<K> getType();
+			public abstract Class<K> getType();
 		}
-		
-		static class AcceptorKey implements AbstractKey<SolutionAcceptor>{
 
+		static class AcceptorKey implements AbstractKey<SolutionAcceptor> {
 			private ModKey modKey;
-			
+
 			public AcceptorKey(ModKey modKey) {
 				super();
 				this.modKey = modKey;
 			}
 
-			
 			@Override
 			public int hashCode() {
 				final int prime = 31;
 				int result = 1;
-				result = prime * result
-						+ ((modKey == null) ? 0 : modKey.hashCode());
+				result = (prime * result) + (modKey == null ? 0 : modKey.hashCode());
 				return result;
 			}
 
-
 			@Override
 			public boolean equals(Object obj) {
-				if (this == obj)
+				if (this == obj) {
 					return true;
-				if (obj == null)
+				}
+				if (obj == null) {
 					return false;
-				if (!(obj instanceof AcceptorKey))
+				}
+				if (!(obj instanceof AcceptorKey)) {
 					return false;
-				AcceptorKey other = (AcceptorKey) obj;
+				}
+				AcceptorKey other = ((AcceptorKey) (obj));
 				if (modKey == null) {
-					if (other.modKey != null)
+					if (other.modKey != null) {
 						return false;
-				} else if (!modKey.equals(other.modKey))
+					}
+				} else if (!modKey.equals(other.modKey)) {
 					return false;
+				}
 				return true;
 			}
-
 
 			@Override
 			public Class<SolutionAcceptor> getType() {
 				return SolutionAcceptor.class;
 			}
-			
 		}
-		
-		static class SelectorKey implements AbstractKey<SolutionSelector>{
 
+		static class SelectorKey implements AbstractKey<SolutionSelector> {
 			private ModKey modKey;
-			
+
 			public SelectorKey(ModKey modKey) {
 				super();
 				this.modKey = modKey;
 			}
-			
+
 			@Override
 			public int hashCode() {
 				final int prime = 31;
 				int result = 1;
-				result = prime * result
-						+ ((modKey == null) ? 0 : modKey.hashCode());
+				result = (prime * result) + (modKey == null ? 0 : modKey.hashCode());
 				return result;
 			}
 
 			@Override
 			public boolean equals(Object obj) {
-				if (this == obj)
+				if (this == obj) {
 					return true;
-				if (obj == null)
+				}
+				if (obj == null) {
 					return false;
-				if (getClass() != obj.getClass())
+				}
+				if (getClass() != obj.getClass()) {
 					return false;
-				SelectorKey other = (SelectorKey) obj;
+				}
+				SelectorKey other = ((SelectorKey) (obj));
 				if (modKey == null) {
-					if (other.modKey != null)
+					if (other.modKey != null) {
 						return false;
-				} else if (!modKey.equals(other.modKey))
+					}
+				} else if (!modKey.equals(other.modKey)) {
 					return false;
+				}
 				return true;
 			}
-
-
 
 			@Override
 			public Class<SolutionSelector> getType() {
 				return SolutionSelector.class;
 			}
-			
 		}
-		
-		static class StrategyModuleKey implements AbstractKey<SearchStrategyModule>{
 
+		static class StrategyModuleKey implements AbstractKey<SearchStrategyModule> {
 			private ModKey modKey;
-			
+
 			public StrategyModuleKey(ModKey modKey) {
 				super();
 				this.modKey = modKey;
 			}
-			
+
 			@Override
 			public int hashCode() {
 				final int prime = 31;
 				int result = 1;
-				result = prime * result
-						+ ((modKey == null) ? 0 : modKey.hashCode());
+				result = (prime * result) + (modKey == null ? 0 : modKey.hashCode());
 				return result;
 			}
 
 			@Override
 			public boolean equals(Object obj) {
-				if (this == obj)
+				if (this == obj) {
 					return true;
-				if (obj == null)
+				}
+				if (obj == null) {
 					return false;
-				if (getClass() != obj.getClass())
+				}
+				if (getClass() != obj.getClass()) {
 					return false;
-				StrategyModuleKey other = (StrategyModuleKey) obj;
+				}
+				StrategyModuleKey other = ((StrategyModuleKey) (obj));
 				if (modKey == null) {
-					if (other.modKey != null)
+					if (other.modKey != null) {
 						return false;
-				} else if (!modKey.equals(other.modKey))
+					}
+				} else if (!modKey.equals(other.modKey)) {
 					return false;
+				}
 				return true;
 			}
-
-
 
 			@Override
 			public Class<SearchStrategyModule> getType() {
 				return SearchStrategyModule.class;
 			}
-			
 		}
-		
-		static class RuinStrategyKey implements AbstractKey<RuinStrategy>{
 
+		static class RuinStrategyKey implements AbstractKey<RuinStrategy> {
 			private ModKey modKey;
-			
+
 			public RuinStrategyKey(ModKey modKey) {
 				super();
 				this.modKey = modKey;
 			}
-			
+
 			@Override
 			public int hashCode() {
 				final int prime = 31;
 				int result = 1;
-				result = prime * result
-						+ ((modKey == null) ? 0 : modKey.hashCode());
+				result = (prime * result) + (modKey == null ? 0 : modKey.hashCode());
 				return result;
 			}
 
 			@Override
 			public boolean equals(Object obj) {
-				if (this == obj)
+				if (this == obj) {
 					return true;
-				if (obj == null)
+				}
+				if (obj == null) {
 					return false;
-				if (getClass() != obj.getClass())
+				}
+				if (getClass() != obj.getClass()) {
 					return false;
-				RuinStrategyKey other = (RuinStrategyKey) obj;
+				}
+				RuinStrategyKey other = ((RuinStrategyKey) (obj));
 				if (modKey == null) {
-					if (other.modKey != null)
+					if (other.modKey != null) {
 						return false;
-				} else if (!modKey.equals(other.modKey))
+					}
+				} else if (!modKey.equals(other.modKey)) {
 					return false;
+				}
 				return true;
 			}
-
-
 
 			@Override
 			public Class<RuinStrategy> getType() {
 				return RuinStrategy.class;
 			}
-			
 		}
 
-		static class InsertionStrategyKey implements AbstractKey<InsertionStrategy>{
-
+		static class InsertionStrategyKey implements AbstractKey<InsertionStrategy> {
 			private ModKey modKey;
-			
+
 			public InsertionStrategyKey(ModKey modKey) {
 				super();
 				this.modKey = modKey;
 			}
-			
+
 			@Override
 			public int hashCode() {
 				final int prime = 31;
 				int result = 1;
-				result = prime * result
-						+ ((modKey == null) ? 0 : modKey.hashCode());
+				result = (prime * result) + (modKey == null ? 0 : modKey.hashCode());
 				return result;
 			}
 
 			@Override
 			public boolean equals(Object obj) {
-				if (this == obj)
+				if (this == obj) {
 					return true;
-				if (obj == null)
+				}
+				if (obj == null) {
 					return false;
-				if (getClass() != obj.getClass())
+				}
+				if (getClass() != obj.getClass()) {
 					return false;
-				InsertionStrategyKey other = (InsertionStrategyKey) obj;
+				}
+				InsertionStrategyKey other = ((InsertionStrategyKey) (obj));
 				if (modKey == null) {
-					if (other.modKey != null)
+					if (other.modKey != null) {
 						return false;
-				} else if (!modKey.equals(other.modKey))
+					}
+				} else if (!modKey.equals(other.modKey)) {
 					return false;
+				}
 				return true;
 			}
-
-
 
 			@Override
 			public Class<InsertionStrategy> getType() {
 				return InsertionStrategy.class;
 			}
-			
 		}
-				
+
 		private Map<AbstractKey<?>, Object> map = new HashMap<AbstractKey<?>, Object>();
 
 		public <T> T get(AbstractKey<T> key) {
-			if(map.get(key) == null) return null;
-	        return key.getType().cast(map.get(key));
-	    }
+			if (map.get(key) == null) {
+				return null;
+			}
+			return key.getType().cast(map.get(key));
+		}
 
-	    public <T> T put(AbstractKey<T> key, T value) {
-	        return key.getType().cast(map.put(key, key.getType().cast(value)));
-	    }
-	    
-	    public Set<AbstractKey<?>> keySet(){
-	    	return map.keySet();
-	    }
+		public <T> T put(AbstractKey<T> key, T value) {
+			return key.getType().cast(map.put(key, key.getType().cast(value)));
+		}
+
+		public Set<AbstractKey<?>> keySet() {
+			return map.keySet();
+		}
 	}
-	
+
 	static class ModKey {
 		private String name;
+
 		private String id;
-		
+
 		public ModKey(String name, String id) {
 			super();
 			this.name = name;
 			this.id = id;
 		}
-		
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((id == null) ? 0 : id.hashCode());
-			result = prime * result + ((name == null) ? 0 : name.hashCode());
+			result = (prime * result) + (id == null ? 0 : id.hashCode());
+			result = (prime * result) + (name == null ? 0 : name.hashCode());
 			return result;
 		}
+
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if (obj == null) {
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
-			ModKey other = (ModKey) obj;
+			}
+			ModKey other = ((ModKey) (obj));
 			if (id == null) {
-				if (other.id != null)
+				if (other.id != null) {
 					return false;
-			} else if (!id.equals(other.id))
+				}
+			} else if (!id.equals(other.id)) {
 				return false;
+			}
 			if (name == null) {
-				if (other.name != null)
+				if (other.name != null) {
 					return false;
-			} else if (!name.equals(other.name))
+				}
+			} else if (!name.equals(other.name)) {
 				return false;
+			}
 			return true;
 		}
-		
 	}
-	
+
 	private static Logger log = Logger.getLogger(VehicleRoutingAlgorithms.class);
-	
-	private VehicleRoutingAlgorithms(){}
-	
+
+	private VehicleRoutingAlgorithms() {
+	}
+
 	/**
 	 * Creates a {@link VehicleRoutingAlgorithm} from a AlgorithConfig based on the input vrp.
 	 * 
@@ -391,15 +393,15 @@ public class VehicleRoutingAlgorithms {
 	 * @param algorithmConfig
 	 * @return {@link VehicleRoutingAlgorithm}
 	 */
-	public static VehicleRoutingAlgorithm createAlgorithm(final VehicleRoutingProblem vrp, final AlgorithmConfig algorithmConfig){
-		return createAlgo(vrp,algorithmConfig.getXMLConfiguration(),0, null);
+	public static VehicleRoutingAlgorithm createAlgorithm(final VehicleRoutingProblem vrp, final AlgorithmConfig algorithmConfig) {
+		return createAlgo(vrp, algorithmConfig.getXMLConfiguration(), 0, null);
 	}
-	
+
 	@Deprecated
-	public static VehicleRoutingAlgorithm readAndCreateAlgorithm(final VehicleRoutingProblem vrp, final XMLConfiguration config){
-		return createAlgo(vrp,config,0, null);
+	public static VehicleRoutingAlgorithm readAndCreateAlgorithm(final VehicleRoutingProblem vrp, final XMLConfiguration config) {
+		return createAlgo(vrp, config, 0, null);
 	}
-	
+
 	/**
 	 * Read and creates a {@link VehicleRoutingAlgorithm} from an url.
 	 * 
@@ -407,13 +409,13 @@ public class VehicleRoutingAlgorithms {
 	 * @param configURL
 	 * @return {@link VehicleRoutingProblem}
 	 */
-	public static VehicleRoutingAlgorithm readAndCreateAlgorithm(final VehicleRoutingProblem vrp, final URL configURL){
+	public static VehicleRoutingAlgorithm readAndCreateAlgorithm(final VehicleRoutingProblem vrp, final URL configURL) {
 		AlgorithmConfig algorithmConfig = new AlgorithmConfig();
 		AlgorithmConfigXmlReader xmlReader = new AlgorithmConfigXmlReader(algorithmConfig);
 		xmlReader.read(configURL);
-		return createAlgo(vrp,algorithmConfig.getXMLConfiguration(),0, null);
+		return createAlgo(vrp, algorithmConfig.getXMLConfiguration(), 0, null);
 	}
-	
+
 	/**
 	 * Read and creates {@link VehicleRoutingAlgorithm} from config-file.
 	 * 
@@ -421,159 +423,135 @@ public class VehicleRoutingAlgorithms {
 	 * @param configFileName
 	 * @return
 	 */
-	public static VehicleRoutingAlgorithm readAndCreateAlgorithm(final VehicleRoutingProblem vrp, final String configFileName){
+	public static VehicleRoutingAlgorithm readAndCreateAlgorithm(final VehicleRoutingProblem vrp, final String configFileName) {
 		AlgorithmConfig algorithmConfig = new AlgorithmConfig();
 		AlgorithmConfigXmlReader xmlReader = new AlgorithmConfigXmlReader(algorithmConfig);
 		xmlReader.read(configFileName);
-		return createAlgo(vrp,algorithmConfig.getXMLConfiguration(),0, null);
+		return createAlgo(vrp, algorithmConfig.getXMLConfiguration(), 0, null);
 	}
 
-	public static VehicleRoutingAlgorithm readAndCreateAlgorithm(final VehicleRoutingProblem vrp, final String configFileName, StateManager stateManager){
+	public static VehicleRoutingAlgorithm readAndCreateAlgorithm(final VehicleRoutingProblem vrp, final String configFileName, StateManager stateManager) {
 		AlgorithmConfig algorithmConfig = new AlgorithmConfig();
 		AlgorithmConfigXmlReader xmlReader = new AlgorithmConfigXmlReader(algorithmConfig);
 		xmlReader.read(configFileName);
-		return createAlgo(vrp,algorithmConfig.getXMLConfiguration(),0, stateManager);
+		return createAlgo(vrp, algorithmConfig.getXMLConfiguration(), 0, stateManager);
 	}
-	
+
 	public static VehicleRoutingAlgorithm readAndCreateAlgorithm(VehicleRoutingProblem vrp, int nThreads, String configFileName) {
 		AlgorithmConfig algorithmConfig = new AlgorithmConfig();
 		AlgorithmConfigXmlReader xmlReader = new AlgorithmConfigXmlReader(algorithmConfig);
 		xmlReader.read(configFileName);
-		return createAlgo(vrp,algorithmConfig.getXMLConfiguration(),nThreads, null);
+		return createAlgo(vrp, algorithmConfig.getXMLConfiguration(), nThreads, null);
 	}
-	
-	
 
-	private static VehicleRoutingAlgorithm createAlgo(final VehicleRoutingProblem vrp, XMLConfiguration config, int nuOfThreads, StateManager stateMan){
-		
-		
+	private static VehicleRoutingAlgorithm createAlgo(final VehicleRoutingProblem vrp, XMLConfiguration config, int nuOfThreads, StateManager stateMan) {
 		// map to store constructed modules
 		TypedMap definedClasses = new TypedMap();
-		
 		// algorithm listeners
 		Set<PrioritizedVRAListener> algorithmListeners = new HashSet<PrioritizedVRAListener>();
-		
 		// insertion listeners
 		List<InsertionListener> insertionListeners = new ArrayList<InsertionListener>();
-
-		//threading
+		// threading
 		final ExecutorService executorService;
-		if(nuOfThreads > 0){
-			log.info("setup executor-service with " + nuOfThreads + " threads");
+		if (nuOfThreads > 0) {
+			log.info(("setup executor-service with " + nuOfThreads) + " threads");
 			executorService = Executors.newFixedThreadPool(nuOfThreads);
 			algorithmListeners.add(new PrioritizedVRAListener(Priority.LOW, new AlgorithmEndsListener() {
-
 				@Override
-				public void informAlgorithmEnds(VehicleRoutingProblem problem,Collection<VehicleRoutingProblemSolution> solutions) {
+				public void informAlgorithmEnds(VehicleRoutingProblem problem, Collection<VehicleRoutingProblemSolution> solutions) {
 					log.info("shutdown executor-service");
 					executorService.shutdown();
 				}
 			}));
 			Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-
 				@Override
 				public void uncaughtException(Thread arg0, Throwable arg1) {
 					System.err.println(arg1.toString());
 					System.exit(0);
 				}
 			});
-			Runtime.getRuntime().addShutdownHook(new Thread(){
-				public void run(){
-					if(!executorService.isShutdown()){
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				public void run() {
+					if (!executorService.isShutdown()) {
 						System.err.println("shutdowHook shuts down executorService");
 						executorService.shutdown();
 					}
 				}
 			});
+		} else {
+			executorService = null;
 		}
-		else executorService = null; 
-
-	
-		//create fleetmanager
+		// create fleetmanager
 		final VehicleFleetManager vehicleFleetManager = createFleetManager(vrp);
-		
 		//create state-manager
 		final StateManager stateManager;
-		if(stateMan!=null) {
+		if (stateMan != null) {
 			stateManager = stateMan;
-		}
-		else{
-			stateManager = 	new StateManager(vrp);
+		} else {
+			stateManager = new StateManager(vrp);
 		}
 		stateManager.updateLoadStates();
 		stateManager.updateTimeWindowStates();
-		
 		/*
 		 * define constraints
 		 */
 		//constraint manager
-		ConstraintManager constraintManager = new ConstraintManager(vrp,stateManager,vrp.getConstraints());
+		ConstraintManager constraintManager = new ConstraintManager(vrp, stateManager, vrp.getConstraints());
 		constraintManager.addTimeWindowConstraint();
 		constraintManager.addLoadConstraint();
-		
-		//construct initial solution creator 
-		AlgorithmStartsListener createInitialSolution = createInitialSolution(config,vrp,vehicleFleetManager,stateManager,algorithmListeners,definedClasses,executorService,nuOfThreads,constraintManager);
-		if(createInitialSolution != null) algorithmListeners.add(new PrioritizedVRAListener(Priority.MEDIUM, createInitialSolution));
-
-		//construct algorithm, i.e. search-strategies and its modules
+		// construct initial solution creator
+		AlgorithmStartsListener createInitialSolution = createInitialSolution(config, vrp, vehicleFleetManager, stateManager, algorithmListeners, definedClasses, executorService, nuOfThreads, constraintManager);
+		if (createInitialSolution != null) {
+			algorithmListeners.add(new PrioritizedVRAListener(Priority.MEDIUM, createInitialSolution));
+		}
+		// construct algorithm, i.e. search-strategies and its modules
 		int solutionMemory = config.getInt("strategy.memory");
 		SearchStrategyManager searchStratManager = new SearchStrategyManager();
 		List<HierarchicalConfiguration> strategyConfigs = config.configurationsAt("strategy.searchStrategies.searchStrategy");
-		for(HierarchicalConfiguration strategyConfig : strategyConfigs){
+		for (HierarchicalConfiguration strategyConfig : strategyConfigs) {
 			String name = getName(strategyConfig);
-			SolutionAcceptor acceptor = getAcceptor(strategyConfig,vrp,algorithmListeners,definedClasses,solutionMemory);
-			SolutionSelector selector = getSelector(strategyConfig,vrp,algorithmListeners,definedClasses);
+			SolutionAcceptor acceptor = getAcceptor(strategyConfig, vrp, algorithmListeners, definedClasses, solutionMemory);
+			SolutionSelector selector = getSelector(strategyConfig, vrp, algorithmListeners, definedClasses);
 			SolutionCostCalculator costCalculator = getCostCalculator(stateManager);
 			SearchStrategy strategy = new SearchStrategy(selector, acceptor, costCalculator);
 			strategy.setName(name);
 			List<HierarchicalConfiguration> modulesConfig = strategyConfig.configurationsAt("modules.module");
-			for(HierarchicalConfiguration moduleConfig : modulesConfig){
-				SearchStrategyModule module = buildModule(moduleConfig,vrp,vehicleFleetManager,stateManager,algorithmListeners,definedClasses,executorService,nuOfThreads, constraintManager);
+			for (HierarchicalConfiguration moduleConfig : modulesConfig) {
+				SearchStrategyModule module = buildModule(moduleConfig, vrp, vehicleFleetManager, stateManager, algorithmListeners, definedClasses, executorService, nuOfThreads, constraintManager);
 				strategy.addModule(module);
 			}
 			searchStratManager.addStrategy(strategy, strategyConfig.getDouble("probability"));
 		}
-		
-		//construct algorithm
+		// construct algorithm
 		VehicleRoutingAlgorithm metaAlgorithm = new VehicleRoutingAlgorithm(vrp, searchStratManager);
-		if(config.containsKey("iterations")){
+		if (config.containsKey("iterations")) {
 			int iter = config.getInt("iterations");
 			metaAlgorithm.setNuOfIterations(iter);
 			log.info("set nuOfIterations to " + iter);
 		}
-		
-		
-		/*
-		 * define stateUpdates
-		 */
-//		UpdateLoads loadUpdater = new UpdateLoads(stateManager);
-//		stateManager.addListener(loadUpdater);
-//		stateManager.addActivityVisitor(loadUpdater);
+		/* define stateUpdates */
+		// UpdateLoads loadUpdater = new UpdateLoads(stateManager);
+		// stateManager.addListener(loadUpdater);
+		// stateManager.addActivityVisitor(loadUpdater);
 		stateManager.addStateUpdater(new UpdateActivityTimes(vrp.getTransportCosts()));
 		stateManager.addStateUpdater(new UpdateVariableCosts(vrp.getActivityCosts(), vrp.getTransportCosts(), stateManager));
-		
-//		stateManager.addActivityVisitor(new UpdateOccuredDeliveries(stateManager));
-//		stateManager.addActivityVisitor(new TimeWindowUpdater(stateManager, vrp.getTransportCosts()));
-//		stateManager.addActivityVisitor(new UpdateFuturePickups(stateManager));
-		
+		// stateManager.addActivityVisitor(new UpdateOccuredDeliveries(stateManager));
+		// stateManager.addActivityVisitor(new TimeWindowUpdater(stateManager, vrp.getTransportCosts()));
+		// stateManager.addActivityVisitor(new UpdateFuturePickups(stateManager));
 		metaAlgorithm.getSearchStrategyManager().addSearchStrategyModuleListener(stateManager);
 		metaAlgorithm.getAlgorithmListeners().addListener(stateManager);
-		
 		metaAlgorithm.getSearchStrategyManager().addSearchStrategyModuleListener(new RemoveEmptyVehicles(vehicleFleetManager));
 		metaAlgorithm.getSearchStrategyManager().addSearchStrategyModuleListener(new ResetAndIniFleetManager(vehicleFleetManager));
 		metaAlgorithm.getSearchStrategyManager().addSearchStrategyModuleListener(new VehicleSwitched(vehicleFleetManager));
-		
-		//define prematureBreak
-		PrematureAlgorithmTermination prematureAlgoBreaker = getPrematureBreaker(config,algorithmListeners);
+		// define prematureBreak
+		PrematureAlgorithmTermination prematureAlgoBreaker = getPrematureBreaker(config, algorithmListeners);
 		metaAlgorithm.setPrematureAlgorithmTermination(prematureAlgoBreaker);
-		
-		//misc
+		// misc
 		algorithmListeners.add(new PrioritizedVRAListener(Priority.LOW, new SolutionVerifier()));
-		
-		//register listeners
-		registerListeners(metaAlgorithm,algorithmListeners);
-		registerInsertionListeners(definedClasses,insertionListeners);
-		return metaAlgorithm;	
+		// register listeners
+		registerListeners(metaAlgorithm, algorithmListeners);
+		registerInsertionListeners(definedClasses, insertionListeners);
+		return metaAlgorithm;
 	}
 
 	private static SolutionCostCalculator getCostCalculator(final StateManager stateManager) {
@@ -669,13 +647,12 @@ public class VehicleRoutingAlgorithms {
 			return strategyConfig.getString("[@name]");
 		}
 		return "";
-	}	
+	}
 
-	
 	private static void registerListeners(VehicleRoutingAlgorithm metaAlgorithm, Set<PrioritizedVRAListener> algorithmListeners) {
 		metaAlgorithm.getAlgorithmListeners().addAll(algorithmListeners);
 	}
-	
+
 	private static AlgorithmStartsListener createInitialSolution(XMLConfiguration config, final VehicleRoutingProblem vrp, VehicleFleetManager vehicleFleetManager, final StateManager routeStates, Set<PrioritizedVRAListener> algorithmListeners, TypedMap definedClasses, ExecutorService executorService, int nuOfThreads, ConstraintManager constraintManager) {
 		List<HierarchicalConfiguration> modConfigs = config.configurationsAt("construction.insertion");
 		if(modConfigs == null) return null;
@@ -702,9 +679,9 @@ public class VehicleRoutingAlgorithms {
 			@Override
 			public void informAlgorithmStarts(VehicleRoutingProblem problem, VehicleRoutingAlgorithm algorithm, Collection<VehicleRoutingProblemSolution> solutions) {
 				InsertionInitialSolutionFactory insertionInitialSolutionFactory = new InsertionInitialSolutionFactory(finalInsertionStrategy, getCostCalculator(routeStates));
-//				CreateInitialSolution createInitialSolution = new CreateInitialSolution(finalInsertionStrategy, getCostCalculator(routeStates));
-//
-//				createInitialSolution.setGenerateAsMuchAsRoutesAsVehiclesExist(false);
+	//				CreateInitialSolution createInitialSolution = new CreateInitialSolution(finalInsertionStrategy, getCostCalculator(routeStates));
+	//
+	//				createInitialSolution.setGenerateAsMuchAsRoutesAsVehiclesExist(false);
 				VehicleRoutingProblemSolution vrpSol = insertionInitialSolutionFactory.createSolution(vrp);
 				solutions.add(vrpSol);
 			}
@@ -712,7 +689,7 @@ public class VehicleRoutingAlgorithms {
 
 
 	}
-	
+
 	private static SolutionSelector getSelector(HierarchicalConfiguration strategyConfig, VehicleRoutingProblem vrp, Set<PrioritizedVRAListener> algorithmListeners, TypedMap definedSelectors) {
 		String selectorName = strategyConfig.getString("selector[@name]");
 		if(selectorName == null) throw new IllegalStateException("no solutionSelector defined. define either \"selectRandom\" or \"selectBest\"");
@@ -736,11 +713,11 @@ public class VehicleRoutingAlgorithms {
 		}
 		throw new IllegalStateException("solutionSelector is not know. Currently, it only knows \"selectRandom\" and \"selectBest\"");
 	}
-	
+
 	private static ModKey makeKey(String name, String id){
 		return new ModKey(name, id);
 	}
-	
+
 	private static SolutionAcceptor getAcceptor(HierarchicalConfiguration strategyConfig, VehicleRoutingProblem vrp, Set<PrioritizedVRAListener> algorithmListeners, TypedMap typedMap, int solutionMemory) {
 		String acceptorName = strategyConfig.getString("acceptor[@name]");
 		if(acceptorName == null) throw new IllegalStateException("no solution acceptor is defined");
@@ -789,7 +766,7 @@ public class VehicleRoutingAlgorithms {
 			throw new IllegalStateException("solution acceptor " + acceptorName + " is not known");
 		}
 	}
-	
+
 	private static SearchStrategyModule buildModule(HierarchicalConfiguration moduleConfig, final VehicleRoutingProblem vrp, VehicleFleetManager vehicleFleetManager, 
 			final StateManager routeStates, Set<PrioritizedVRAListener> algorithmListeners, TypedMap definedClasses, ExecutorService executorService, int nuOfThreads, ConstraintManager constraintManager) {
 		String moduleName = moduleConfig.getString("[@name]");
@@ -817,14 +794,14 @@ public class VehicleRoutingAlgorithms {
 			else if(ruin_name.equals("radialRuin")){
 				String ruin_distance = moduleConfig.getString("ruin.distance");
 				JobDistance jobDistance = new AvgServiceAndShipmentDistance(vrp.getTransportCosts());
-//				if(ruin_distance == null) jobDistance 
-//				else {
-//					if(ruin_distance.equals("euclidean")){
-//						jobDistance = new EuclideanServiceDistance();
-//					}
-//					else throw new IllegalStateException("does not know ruin.distance " + ruin_distance + ". either ommit ruin.distance then the "
-//							+ "default is used or use 'euclidean'");
-//				}
+	//				if(ruin_distance == null) jobDistance 
+	//				else {
+	//					if(ruin_distance.equals("euclidean")){
+	//						jobDistance = new EuclideanServiceDistance();
+	//					}
+	//					else throw new IllegalStateException("does not know ruin.distance " + ruin_distance + ". either ommit ruin.distance then the "
+	//							+ "default is used or use 'euclidean'");
+	//				}
 				ruin = getRadialRuin(vrp, routeStates, definedClasses, ruinKey, shareToRuin, jobDistance);
 			}
 			else throw new IllegalStateException("ruin[@name] " + ruin_name + " is not known. Use either randomRuin or radialRuin.");
@@ -850,39 +827,39 @@ public class VehicleRoutingAlgorithms {
 		}
 		if(moduleName.equals("gendreau")){
 			throw new UnsupportedOperationException("gendreau is not supported yet");
-//			int iterations = moduleConfig.getInt("iterations");
-//			double share = moduleConfig.getDouble("share");
-//			String ruinName = moduleConfig.getString("ruin[@name]");
-//			if(ruinName == null) throw new IllegalStateException("gendreau.ruin[@name] is missing. set it to \"radialRuin\" or \"randomRuin\"");
-//			String ruinId = moduleConfig.getString("ruin[@id]");
-//			if(ruinId == null) ruinId = "noId";
-//			ModKey ruinKey = makeKey(ruinName,ruinId);
-//			RuinStrategyKey stratKey = new RuinStrategyKey(ruinKey);
-//			RuinStrategy ruin = definedClasses.get(stratKey);
-//			if(ruin == null){
-//				ruin = new RadialRuinStrategyFactory(0.3, new AvgJobDistance(vrp.getTransportCosts())).createStrategy(vrp);
-//				definedClasses.put(stratKey, ruin);
-//			}
-//			
-//			String insertionName = moduleConfig.getString("insertion[@name]");
-//			if(insertionName == null) throw new IllegalStateException("gendreau.insertion[@name] is missing. set it to \"regretInsertion\" or \"bestInsertion\"");
-//			String insertionId = moduleConfig.getString("insertion[@id]");
-//			if(insertionId == null) insertionId = "noId";
-//			ModKey insertionKey = makeKey(insertionName,insertionId);
-//			InsertionStrategyKey insertionStrategyKey = new InsertionStrategyKey(insertionKey);
-//			InsertionStrategy insertion = definedClasses.get(insertionStrategyKey);
-//			if(insertion == null){
-//				List<HierarchicalConfiguration> insertionConfigs = moduleConfig.configurationsAt("insertion");
-//				if(insertionConfigs.size() != 1) throw new IllegalStateException("this should be 1");
-//				List<PrioritizedVRAListener> prioListeners = new ArrayList<PrioritizedVRAListener>();
-//				insertion = createInsertionStrategy(insertionConfigs.get(0), vrp, vehicleFleetManager, routeStates, prioListeners, executorService, nuOfThreads, constraintManager);
-//				algorithmListeners.addAll(prioListeners);
-//			}
-//			Gendreau gendreau = new Gendreau(vrp, ruin, insertion, vehicleFleetManager);
-//			gendreau.setShareOfJobsToRuin(share);
-//			gendreau.setNuOfIterations(iterations);
-//			definedClasses.put(strategyModuleKey, gendreau);
-//			return gendreau;
+	//			int iterations = moduleConfig.getInt("iterations");
+	//			double share = moduleConfig.getDouble("share");
+	//			String ruinName = moduleConfig.getString("ruin[@name]");
+	//			if(ruinName == null) throw new IllegalStateException("gendreau.ruin[@name] is missing. set it to \"radialRuin\" or \"randomRuin\"");
+	//			String ruinId = moduleConfig.getString("ruin[@id]");
+	//			if(ruinId == null) ruinId = "noId";
+	//			ModKey ruinKey = makeKey(ruinName,ruinId);
+	//			RuinStrategyKey stratKey = new RuinStrategyKey(ruinKey);
+	//			RuinStrategy ruin = definedClasses.get(stratKey);
+	//			if(ruin == null){
+	//				ruin = new RadialRuinStrategyFactory(0.3, new AvgJobDistance(vrp.getTransportCosts())).createStrategy(vrp);
+	//				definedClasses.put(stratKey, ruin);
+	//			}
+	//			
+	//			String insertionName = moduleConfig.getString("insertion[@name]");
+	//			if(insertionName == null) throw new IllegalStateException("gendreau.insertion[@name] is missing. set it to \"regretInsertion\" or \"bestInsertion\"");
+	//			String insertionId = moduleConfig.getString("insertion[@id]");
+	//			if(insertionId == null) insertionId = "noId";
+	//			ModKey insertionKey = makeKey(insertionName,insertionId);
+	//			InsertionStrategyKey insertionStrategyKey = new InsertionStrategyKey(insertionKey);
+	//			InsertionStrategy insertion = definedClasses.get(insertionStrategyKey);
+	//			if(insertion == null){
+	//				List<HierarchicalConfiguration> insertionConfigs = moduleConfig.configurationsAt("insertion");
+	//				if(insertionConfigs.size() != 1) throw new IllegalStateException("this should be 1");
+	//				List<PrioritizedVRAListener> prioListeners = new ArrayList<PrioritizedVRAListener>();
+	//				insertion = createInsertionStrategy(insertionConfigs.get(0), vrp, vehicleFleetManager, routeStates, prioListeners, executorService, nuOfThreads, constraintManager);
+	//				algorithmListeners.addAll(prioListeners);
+	//			}
+	//			Gendreau gendreau = new Gendreau(vrp, ruin, insertion, vehicleFleetManager);
+	//			gendreau.setShareOfJobsToRuin(share);
+	//			gendreau.setNuOfIterations(iterations);
+	//			definedClasses.put(strategyModuleKey, gendreau);
+	//			return gendreau;
 		}
 		throw new NullPointerException("no module found with moduleName=" + moduleName + 
 				"\n\tcheck config whether the correct names are used" +
@@ -912,13 +889,9 @@ public class VehicleRoutingAlgorithms {
 		}
 		return ruin;
 	}
-	
+
 	private static InsertionStrategy createInsertionStrategy(HierarchicalConfiguration moduleConfig, VehicleRoutingProblem vrp,VehicleFleetManager vehicleFleetManager, StateManager routeStates, List<PrioritizedVRAListener> algorithmListeners, ExecutorService executorService, int nuOfThreads, ConstraintManager constraintManager) {
 		InsertionStrategy insertion = InsertionFactory.createInsertion(vrp, moduleConfig, vehicleFleetManager, routeStates, algorithmListeners, executorService, nuOfThreads, constraintManager);
 		return insertion;
 	}
-
-	
-	
-
 }
