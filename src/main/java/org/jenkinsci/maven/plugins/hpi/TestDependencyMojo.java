@@ -66,6 +66,7 @@ import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
 
+
 /**
  * Places test-dependency plugins into somewhere the test harness can pick up.
  *
@@ -75,12 +76,13 @@ import org.twdata.maven.mojoexecutor.MojoExecutor;
  * <p>Additionally, it may adjust the classpath for {@code surefire:test} to run tests against
  * different versions of various dependencies than what was configured in the POM.
  */
-@Mojo(name="resolve-test-dependencies", requiresDependencyResolution = ResolutionScope.TEST)
+@Mojo(name = "resolve-test-dependencies", requiresDependencyResolution = ResolutionScope.TEST)
 @SuppressFBWarnings(value = "REDOS", justification = "trusted code")
 public class TestDependencyMojo extends AbstractHpiMojo {
-
     private static final Pattern CORE_REGEX = Pattern.compile("WEB-INF/lib/jenkins-core-([0-9.]+(?:-[0-9a-f.]+)*(?:-(?i)([a-z]+)(-)?([0-9a-f.]+)?)?(?:-(?i)([a-z]+)(-)?([0-9a-f_.]+)?)?(?:-SNAPSHOT)?)[.]jar");
+
     private static final Pattern PLUGIN_REGEX = Pattern.compile("WEB-INF/plugins/([^/.]+)[.][hj]pi");
+
     private static final Pattern OVERRIDE_REGEX = Pattern.compile("([^:]+:[^:]+):([^:]+)");
 
     @Component private BuildPluginManager pluginManager;
@@ -109,8 +111,7 @@ public class TestDependencyMojo extends AbstractHpiMojo {
     /**
      * Whether to update all transitive dependencies to the upper bounds. Effectively causes the
      * same behavior as the {@code requireUpperBoundDeps} Enforcer rule would, if the specified
-     * dependencies were to be written to the POM. Intended for use in conjunction with {@link
-     * #overrideVersions} or {@link #overrideWar}.
+     * dependencies were to be written to the POM. Intended for use in conjunction with {@link #overrideVersions} or {@link #overrideWar}.
      */
     @Parameter(property = "useUpperBounds")
     private boolean useUpperBounds;
@@ -124,46 +125,38 @@ public class TestDependencyMojo extends AbstractHpiMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
-        Map<String, String> overrides = overrideVersions != null ? parseOverrides(overrideVersions) : Collections.emptyMap();
+        Map<String, String> overrides = (overrideVersions != null) ? parseOverrides(overrideVersions) : Collections.emptyMap();
         if (!overrides.isEmpty()) {
             getLog().info(String.format("Applying %d overrides.", overrides.size()));
         }
         if (overrides.containsKey(String.format("%s:%s", project.getGroupId(), project.getArtifactId()))) {
             throw new MojoExecutionException("Cannot override self");
         }
-
-        Map<String, String> bundledPlugins = overrideWar != null ? scanWar(overrideWar, session, project) : Collections.emptyMap();
+        Map<String, String> bundledPlugins = (overrideWar != null) ? scanWar(overrideWar, session, project) : Collections.emptyMap();
         if (!bundledPlugins.isEmpty()) {
             getLog().info(String.format("Scanned contents of %s with %d bundled plugins", overrideWar, bundledPlugins.size()));
         }
-
         // Deal with conflicts in user-provided input.
         Set<String> intersection = new HashSet<>(bundledPlugins.keySet());
         intersection.retainAll(overrides.keySet());
         for (String override : intersection) {
             if (bundledPlugins.get(override).equals(overrides.get(override))) {
-                /*
-                 * Not really a conflict since the versions are the same. Remove it from one of the
-                 * two lists to simplify the implementation later. We pick the former since the
-                 * semantics for the latter are looser.
+                /* Not really a conflict since the versions are the same. Remove it from one of the
+                two lists to simplify the implementation later. We pick the former since the
+                semantics for the latter are looser.
                  */
                 overrides.remove(override);
             } else {
-                throw new MojoExecutionException(String.format(
-                        "Failed to override %s: conflict between %s in overrideVersions and %s in overrideWar",
-                        override, overrides.get(override), bundledPlugins.get(override)));
+                throw new MojoExecutionException(String.format("Failed to override %s: conflict between %s in overrideVersions and %s in overrideWar", override, overrides.get(override), bundledPlugins.get(override)));
             }
         }
-
         // The effective artifacts to be used when building the plugin index and test classpath.
         Set<MavenArtifact> effectiveArtifacts;
-
         // Track changes to the classpath when the user has overridden dependency versions.
         Map<String, String> additions = new HashMap<>();
         Map<String, String> deletions = new HashMap<>();
         Map<String, String> updates = new HashMap<>();
-
-        if (overrides.isEmpty() && overrideWar == null) {
+        if (overrides.isEmpty() && (overrideWar == null)) {
             effectiveArtifacts = getProjectArtfacts();
         } else {
             // Under no circumstances should this code ever be executed when performing a release.
@@ -172,39 +165,32 @@ public class TestDependencyMojo extends AbstractHpiMojo {
                     throw new MojoExecutionException("Cannot override dependencies when doing a release");
                 }
             }
-
             // Create a shadow project for dependency analysis.
             MavenProject shadow = project.clone();
-
             // Stash the original resolution for use later.
             Map<String, String> originalResolution = new HashMap<>();
             for (Artifact artifact : shadow.getArtifacts()) {
                 originalResolution.put(toKey(artifact), artifact.getVersion());
             }
-
             // First pass: apply the overrides specified by the user.
             applyOverrides(overrides, bundledPlugins, false, shadow, getLog());
-
             if (useUpperBounds) {
                 boolean converged = false;
                 int i = 0;
-                Map<String, String> upperBounds = null;
-
                 while (!converged) {
-                    if (i++ > 10) {
-                        throw new MojoExecutionException("Failed to iterate to convergence during upper bounds analysis: " + upperBounds);
+                    if ((i++) > 10) {
+                        throw new MojoExecutionException("Failed to iterate to convergence during upper bounds analysis");
                     }
-
-                    /*
-                     * Do upper bounds analysis. Upper bounds analysis consumes the model directly and
-                     * not the resolution of that model, so it is fine to invoke it at this point with
-                     * the model having been updated and the resolution having been cleared.
+                    /* Do upper bounds analysis. Upper bounds analysis consumes the model directly and
+                    not the resolution of that model, so it is fine to invoke it at this point with
+                    the model having been updated and the resolution having been cleared.
                      */
                     DependencyNode node;
                     try {
                         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
                         buildingRequest.setProject(shadow);
-                        ArtifactFilter filter = null; // Evaluate all scopes
+                        ArtifactFilter filter = null;// Evaluate all scopes
+
                         node = dependencyCollectorBuilder.collectDependencyGraph(buildingRequest, filter);
                     } catch (DependencyCollectorBuilderException e) {
                         throw new MojoExecutionException("Failed to analyze dependency tree for useUpperBounds", e);
@@ -212,35 +198,29 @@ public class TestDependencyMojo extends AbstractHpiMojo {
                     RequireUpperBoundDepsVisitor visitor = new RequireUpperBoundDepsVisitor();
                     node.accept(visitor);
                     String self = String.format("%s:%s", shadow.getGroupId(), shadow.getArtifactId());
-                    upperBounds = visitor.upperBounds(upperBoundsExcludes, self);
-
+                    Map<String, String> upperBounds = visitor.upperBounds(upperBoundsExcludes, self);
                     if (upperBounds.isEmpty()) {
                         converged = true;
                     } else {
                         // Second pass: apply the results of the upper bounds analysis.
-
-                        /*
-                         * applyOverrides depends on resolution, so resolve again between the first pass
-                         * and the second.
+                        /* applyOverrides depends on resolution, so resolve again between the first pass
+                        and the second.
                          */
                         Set<Artifact> resolved = resolveDependencies(shadow);
                         shadow.setArtifacts(resolved);
-
                         applyOverrides(upperBounds, Collections.emptyMap(), true, shadow, getLog());
                     }
-                }
+                } 
             } else if (!upperBoundsExcludes.isEmpty()) {
                 throw new MojoExecutionException("Cannot provide upper bounds excludes when not using upper bounds");
             }
-
-            /*
-             * At this point, the model has been updated as the user has requested. We now redo
-             * resolution and compare the new resolution to the original in order to account for
-             * updates to transitive dependencies that are not present in the model. Anything that
-             * was updated in the new resolution needs to be updated in the test classpath. Anything
-             * that was removed in the new resolution needs to be removed from the test classpath.
-             * Anything that was added in the new resolution needs to be added to the test
-             * classpath.
+            /* At this point, the model has been updated as the user has requested. We now redo
+            resolution and compare the new resolution to the original in order to account for
+            updates to transitive dependencies that are not present in the model. Anything that
+            was updated in the new resolution needs to be updated in the test classpath. Anything
+            that was removed in the new resolution needs to be removed from the test classpath.
+            Anything that was added in the new resolution needs to be added to the test
+            classpath.
              */
             Set<Artifact> resolved = resolveDependencies(shadow);
             Map<String, String> newResolution = new HashMap<>();
@@ -259,14 +239,13 @@ public class TestDependencyMojo extends AbstractHpiMojo {
                     // Present in both old and new resolution: check for update.
                     String originalVersion = originalResolution.get(entry.getKey());
                     String newVersion = entry.getValue();
-                    /*
-                     * We check that the new version is not equal to the original version rather
-                     * than newer than the original version for the following reason. Suppose we
-                     * depend on A:1.0 which depends on B:1.2. Now suppose a problem is discovered
-                     * in B:1.2 that results in A:1.1 rolling back to B:1.1. We only ever directly
-                     * depended on A:1.0, but now we override A:1.0 to A:1.1. B:1.2 was in our
-                     * transitive tree before, but now for correctness we must change B from 1.2 to
-                     * 1.1.
+                    /* We check that the new version is not equal to the original version rather
+                    than newer than the original version for the following reason. Suppose we
+                    depend on A:1.0 which depends on B:1.2. Now suppose a problem is discovered
+                    in B:1.2 that results in A:1.1 rolling back to B:1.1. We only ever directly
+                    depended on A:1.0, but now we override A:1.0 to A:1.1. B:1.2 was in our
+                    transitive tree before, but now for correctness we must change B from 1.2 to
+                    1.1.
                      */
                     if (!newVersion.equals(originalVersion)) {
                         updates.put(entry.getKey(), newVersion);
@@ -290,46 +269,34 @@ public class TestDependencyMojo extends AbstractHpiMojo {
                 MavenSession shadowSession = session.clone();
                 shadowSession.setCurrentProject(shadow);
                 shadow.setArtifacts(resolved);
-                MojoExecutor.executeMojo(
-                        MojoExecutor.plugin(
-                                MojoExecutor.groupId("org.apache.maven.plugins"),
-                                MojoExecutor.artifactId("maven-dependency-plugin")),
-                        MojoExecutor.goal("tree"),
-                        MojoExecutor.configuration(
-                                MojoExecutor.element(
-                                        MojoExecutor.name("scope"), Artifact.SCOPE_TEST)),
-                        MojoExecutor.executionEnvironment(shadow, shadowSession, pluginManager));
+                MojoExecutor.executeMojo(MojoExecutor.plugin(MojoExecutor.groupId("org.apache.maven.plugins"), MojoExecutor.artifactId("maven-dependency-plugin")), MojoExecutor.goal("tree"), MojoExecutor.configuration(MojoExecutor.element(MojoExecutor.name("scope"), Artifact.SCOPE_TEST)), MojoExecutor.executionEnvironment(shadow, shadowSession, pluginManager));
             }
         }
-
         File testDir = new File(project.getBuild().getTestOutputDirectory(), "test-dependencies");
         try {
             Files.createDirectories(testDir.toPath());
         } catch (IOException e) {
-            throw new MojoExecutionException("Failed to create directories for '" + testDir + "'", e);
+            throw new MojoExecutionException(("Failed to create directories for '" + testDir) + "'", e);
         }
-
-        try (FileOutputStream fos = new FileOutputStream(new File(testDir, "index")); Writer w = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
+        try (final FileOutputStream fos = new FileOutputStream(new File(testDir, "index"));final Writer w = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
             for (MavenArtifact a : effectiveArtifacts) {
-                if (!a.isPluginBestEffort(getLog()))
-                    continue;
-
-                String artifactId = a.getActualArtifactId();
-                if (artifactId == null) {
-                    getLog().debug("Skipping " + artifactId + " with classifier " + a.getClassifier());
+                if (!a.isPluginBestEffort(getLog())) {
                     continue;
                 }
-
-                getLog().debug("Copying " + artifactId + " as a test dependency");
+                String artifactId = a.getActualArtifactId();
+                if (artifactId == null) {
+                    getLog().debug((("Skipping " + artifactId) + " with classifier ") + a.getClassifier());
+                    continue;
+                }
+                getLog().debug(("Copying " + artifactId) + " as a test dependency");
                 File dst = new File(testDir, artifactId + ".hpi");
-                FileUtils.copyFile(a.getHpi().getFile(),dst);
+                FileUtils.copyFile(a.getHpi().getFile(), dst);
                 w.write(artifactId + "\n");
             }
         } catch (IOException e) {
-            throw new MojoExecutionException("Failed to copy dependency plugins",e);
+            throw new MojoExecutionException("Failed to copy dependency plugins", e);
         }
-
-        if (!additions.isEmpty() || !deletions.isEmpty() || !updates.isEmpty()) {
+        if (((!additions.isEmpty()) || (!deletions.isEmpty())) || (!updates.isEmpty())) {
             List<String> additionalClasspathElements = new LinkedList<>();
             NavigableMap<String, String> includes = new TreeMap<>();
             includes.putAll(additions);
@@ -340,14 +307,13 @@ public class TestDependencyMojo extends AbstractHpiMojo {
                 String groupId = groupArt[0];
                 String artifactId = groupArt[1];
                 String version = entry.getValue();
-                /*
-                 * We cannot use MavenProject.getArtifactMap since we may have multiple dependencies
-                 * of different classifiers.
+                /* We cannot use MavenProject.getArtifactMap since we may have multiple dependencies
+                of different classifiers.
                  */
                 boolean found = false;
                 // Yeah, this is O(n²)... deal with it!
                 for (MavenArtifact a : effectiveArtifacts) {
-                    if (!a.getGroupId().equals(groupId) || !a.getArtifactId().equals(artifactId)) {
+                    if ((!a.getGroupId().equals(groupId)) || (!a.getArtifactId().equals(artifactId))) {
                         continue;
                     }
                     if (!a.getVersion().equals(version)) {
@@ -355,9 +321,8 @@ public class TestDependencyMojo extends AbstractHpiMojo {
                     }
                     found = true;
                     if (a.getArtifactHandler().isAddedToClasspath()) {
-                        /*
-                         * Everything is added to the test classpath, so there is no need to check
-                         * scope.
+                        /* Everything is added to the test classpath, so there is no need to check
+                        scope.
                          */
                         additionalClasspathElements.add(a.getFile().getAbsolutePath());
                     }
@@ -366,11 +331,9 @@ public class TestDependencyMojo extends AbstractHpiMojo {
                     throw new MojoExecutionException("could not find dependency " + key);
                 }
             }
-
             NavigableSet<String> classpathDependencyExcludes = new TreeSet<>();
             classpathDependencyExcludes.addAll(deletions.keySet());
             classpathDependencyExcludes.addAll(updates.keySet());
-
             Properties properties = project.getProperties();
             if (getLog().isDebugEnabled()) {
                 getLog().debug(String.format("Replacing POM-defined classpath elements %s with %s", classpathDependencyExcludes, additionalClasspathElements));
@@ -485,15 +448,8 @@ public class TestDependencyMojo extends AbstractHpiMojo {
      * as it is now invalid. It is possible to perform such a pass manually on a plugin and compare
      * the results with this algorithm to verify that the logic in this method is correct.
      */
-    private static void applyOverrides(
-            Map<String, String> overrides,
-            Map<String, String> bundledPlugins,
-            boolean upperBounds,
-            MavenProject project,
-            Log log)
-            throws MojoExecutionException {
+    private static void applyOverrides(Map<String, String> overrides, Map<String, String> bundledPlugins, boolean upperBounds, MavenProject project, Log log) throws MojoExecutionException {
         Set<String> appliedOverrides = new HashSet<>();
-
         // Update existing dependency entries in the model.
         for (Dependency dependency : project.getDependencies()) {
             String key = toKey(dependency);
@@ -502,7 +458,6 @@ public class TestDependencyMojo extends AbstractHpiMojo {
             }
             updateDependency(dependency, bundledPlugins, "direct dependency", log);
         }
-
         // Update existing dependency management entries in the model.
         if (project.getDependencyManagement() != null) {
             for (Dependency dependency : project.getDependencyManagement().getDependencies()) {
@@ -513,10 +468,8 @@ public class TestDependencyMojo extends AbstractHpiMojo {
                 updateDependency(dependency, bundledPlugins, "dependency management entry", log);
             }
         }
-
-        /*
-         * If an override was requested for a transitive dependency that is not in the model, add a
-         * dependency management entry to the model.
+        /* If an override was requested for a transitive dependency that is not in the model, add a
+        dependency management entry to the model.
          */
         Set<String> unappliedOverrides = new HashSet<>(overrides.keySet());
         unappliedOverrides.removeAll(appliedOverrides);
@@ -546,7 +499,6 @@ public class TestDependencyMojo extends AbstractHpiMojo {
             }
         }
         unappliedOverrides.removeAll(overrideAdditions);
-
         // By now, we should have applied the entire override request. If not, fail.
         if (!unappliedOverrides.isEmpty()) {
             if (upperBounds) {
@@ -577,16 +529,13 @@ public class TestDependencyMojo extends AbstractHpiMojo {
                 throw new MojoExecutionException("Failed to apply the following overrides: " + unappliedOverrides);
             }
         }
-
         log.debug("adjusted dependencies: " + project.getDependencies());
         if (project.getDependencyManagement() != null) {
             log.debug("adjusted dependency management: " + project.getDependencyManagement().getDependencies());
         }
-
-        /*
-         * With our changes to the model, the existing resolution is now invalid, so clear it lest
-         * anything accidentally use the invalid values. We will perform resolution again after all
-         * passes are complete.
+        /* With our changes to the model, the existing resolution is now invalid, so clear it lest
+        anything accidentally use the invalid values. We will perform resolution again after all
+        passes are complete.
          */
         project.setDependencyArtifacts(null);
         project.setArtifacts(null);
@@ -631,7 +580,6 @@ public class TestDependencyMojo extends AbstractHpiMojo {
 
     // Adapted from RequireUpperBoundDeps @ 731ea7a693a0986f2054b6a73a86a31373df59ec.
     private class RequireUpperBoundDepsVisitor implements DependencyNodeVisitor {
-
         private Map<String, List<DependencyNodeHopCountPair>> keyToPairsMap = new LinkedHashMap<>();
 
         public boolean visit(DependencyNode node) {
@@ -656,24 +604,21 @@ public class TestDependencyMojo extends AbstractHpiMojo {
             Map<String, String> r = new HashMap<>();
             for (List<DependencyNodeHopCountPair> pairs : keyToPairsMap.values()) {
                 DependencyNodeHopCountPair resolvedPair = pairs.get(0);
-
                 // search for artifact with lowest hopCount
                 for (DependencyNodeHopCountPair hopPair : pairs.subList(1, pairs.size())) {
                     if (hopPair.getHopCount() < resolvedPair.getHopCount()) {
                         resolvedPair = hopPair;
                     }
                 }
-
                 ArtifactVersion resolvedVersion = resolvedPair.extractArtifactVersion(false);
-
                 for (DependencyNodeHopCountPair pair : pairs) {
                     ArtifactVersion version = pair.extractArtifactVersion(true);
                     if (resolvedVersion.compareTo(version) < 0) {
                         Artifact artifact = resolvedPair.node.getArtifact();
                         String key = toKey(artifact);
-                        if (!key.equals(self) && (!r.containsKey(key) || new ComparableVersion(version.toString()).compareTo(new ComparableVersion(r.get(key))) > 1)) {
+                        if ((!key.equals(self)) && ((!r.containsKey(key)) || (new ComparableVersion(version.toString()).compareTo(new ComparableVersion(r.get(key))) > 1))) {
                             if (upperBoundsExcludes.contains(key)) {
-                                getLog().info( "Ignoring requireUpperBoundDeps in " + key);
+                                getLog().info("Ignoring requireUpperBoundDeps in " + key);
                             } else {
                                 getLog().info(buildErrorMessage(pairs.stream().map(DependencyNodeHopCountPair::getNode).collect(Collectors.toList())).trim());
                                 getLog().info(String.format("for %s, upper bounds forces an upgrade from %s to %s", key, resolvedVersion, version));
@@ -688,7 +633,6 @@ public class TestDependencyMojo extends AbstractHpiMojo {
     }
 
     private static class DependencyNodeHopCountPair implements Comparable<DependencyNodeHopCountPair> {
-
         private DependencyNode node;
 
         private int hopCount;
@@ -704,7 +648,7 @@ public class TestDependencyMojo extends AbstractHpiMojo {
             while (parent != null) {
                 hopCount++;
                 parent = parent.getParent();
-            }
+            } 
         }
 
         private String constructKey() {
@@ -717,10 +661,9 @@ public class TestDependencyMojo extends AbstractHpiMojo {
         }
 
         private ArtifactVersion extractArtifactVersion(boolean usePremanagedVersion) {
-            if (usePremanagedVersion && node.getPremanagedVersion() != null) {
+            if (usePremanagedVersion && (node.getPremanagedVersion() != null)) {
                 return new DefaultArtifactVersion(node.getPremanagedVersion());
             }
-
             Artifact artifact = node.getArtifact();
             String version = artifact.getBaseVersion();
             if (version != null) {
@@ -737,9 +680,7 @@ public class TestDependencyMojo extends AbstractHpiMojo {
             return hopCount;
         }
 
-        @SuppressFBWarnings(
-                value = "EQ_COMPARETO_USE_OBJECT_EQUALS",
-                justification = "Silly check; it is perfectly reasonable to implement Comparable by writing a compareTo without an equals.")
+        @SuppressFBWarnings(value = "EQ_COMPARETO_USE_OBJECT_EQUALS", justification = "Silly check; it is perfectly reasonable to implement Comparable by writing a compareTo without an equals.")
         public int compareTo(DependencyNodeHopCountPair other) {
             return Integer.compare(hopCount, other.getHopCount());
         }
