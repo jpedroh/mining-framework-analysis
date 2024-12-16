@@ -1,27 +1,26 @@
 package org.openapitools.api;
 
-import springfox.documentation.annotations.ApiIgnore;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import javax.annotation.Generated;
 import org.openapitools.model.ModelApiResponse;
-import org.springframework.data.domain.Pageable;
 import org.openapitools.model.Pet;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import javax.annotation.Generated;
 
 /**
  * A delegate to be called by the {@link PetApiController}}.
  * Implement this interface with a {@link org.springframework.stereotype.Service} annotated class.
  */
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
+@Generated("org.openapitools.codegen.languages.SpringCodegen")
 public interface PetApiDelegate {
-
     default Optional<NativeWebRequest> getRequest() {
         return Optional.empty();
     }
@@ -34,9 +33,8 @@ public interface PetApiDelegate {
      *         or Invalid input (status code 405)
      * @see PetApi#addPet
      */
-    default ResponseEntity<Void> addPet(Pet body) {
+    public default ResponseEntity<Void> addPet(Pet body) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
     /**
@@ -48,10 +46,8 @@ public interface PetApiDelegate {
      *         or Invalid pet value (status code 400)
      * @see PetApi#deletePet
      */
-    default ResponseEntity<Void> deletePet(Long petId,
-        String apiKey) {
+    public default ResponseEntity<Void> deletePet(Long petId, String apiKey) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
     /**
@@ -63,9 +59,9 @@ public interface PetApiDelegate {
      *         or Invalid status value (status code 400)
      * @see PetApi#findPetsByStatus
      */
-    default ResponseEntity<List<Pet>> findPetsByStatus(List<String> status, final Pageable pageable) {
-                getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+    public default ResponseEntity<List<Pet>> findPetsByStatus(List<String> status, final Pageable pageable) {
+        getRequest().ifPresent(( request) -> {
+            for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ], \"name\" : \"doggie\", \"id\" : 0, \"category\" : { \"name\" : \"default-name\", \"id\" : 6 }, \"tags\" : [ { \"name\" : \"name\", \"id\" : 1 }, { \"name\" : \"name\", \"id\" : 1 } ], \"status\" : \"available\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
@@ -79,7 +75,6 @@ public interface PetApiDelegate {
             }
         });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
     /**
@@ -93,9 +88,9 @@ public interface PetApiDelegate {
      * @see PetApi#findPetsByTags
      */
     @Deprecated
-    default ResponseEntity<List<Pet>> findPetsByTags(List<String> tags, final Pageable pageable) {
-                getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+    public default ResponseEntity<List<Pet>> findPetsByTags(List<String> tags, final Pageable pageable) {
+        getRequest().ifPresent(( request) -> {
+            for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ], \"name\" : \"doggie\", \"id\" : 0, \"category\" : { \"name\" : \"default-name\", \"id\" : 6 }, \"tags\" : [ { \"name\" : \"name\", \"id\" : 1 }, { \"name\" : \"name\", \"id\" : 1 } ], \"status\" : \"available\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
@@ -109,7 +104,6 @@ public interface PetApiDelegate {
             }
         });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
     /**
@@ -122,9 +116,9 @@ public interface PetApiDelegate {
      *         or Pet not found (status code 404)
      * @see PetApi#getPetById
      */
-    default ResponseEntity<Pet> getPetById(Long petId) {
-                getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+    public default ResponseEntity<Pet> getPetById(Long petId) {
+        getRequest().ifPresent(( request) -> {
+            for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ], \"name\" : \"doggie\", \"id\" : 0, \"category\" : { \"name\" : \"default-name\", \"id\" : 6 }, \"tags\" : [ { \"name\" : \"name\", \"id\" : 1 }, { \"name\" : \"name\", \"id\" : 1 } ], \"status\" : \"available\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
@@ -138,7 +132,6 @@ public interface PetApiDelegate {
             }
         });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
     /**
@@ -151,9 +144,8 @@ public interface PetApiDelegate {
      *         or Validation exception (status code 405)
      * @see PetApi#updatePet
      */
-    default ResponseEntity<Void> updatePet(Pet body) {
+    public default ResponseEntity<Void> updatePet(Pet body) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
     /**
@@ -165,11 +157,8 @@ public interface PetApiDelegate {
      * @return Invalid input (status code 405)
      * @see PetApi#updatePetWithForm
      */
-    default ResponseEntity<Void> updatePetWithForm(Long petId,
-        String name,
-        String status) {
+    public default ResponseEntity<Void> updatePetWithForm(Long petId, String name, String status) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
     /**
@@ -181,11 +170,9 @@ public interface PetApiDelegate {
      * @return successful operation (status code 200)
      * @see PetApi#uploadFile
      */
-    default ResponseEntity<ModelApiResponse> uploadFile(Long petId,
-        String additionalMetadata,
-        MultipartFile file) {
-                getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+    public default ResponseEntity<ModelApiResponse> uploadFile(Long petId, String additionalMetadata, MultipartFile file) {
+        getRequest().ifPresent(( request) -> {
+            for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"code\" : 0, \"type\" : \"type\", \"message\" : \"message\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
@@ -194,7 +181,5 @@ public interface PetApiDelegate {
             }
         });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
-
 }

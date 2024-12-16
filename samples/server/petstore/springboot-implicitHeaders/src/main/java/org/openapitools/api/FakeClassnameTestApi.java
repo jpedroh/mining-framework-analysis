@@ -5,8 +5,14 @@
  */
 package org.openapitools.api;
 
-import org.openapitools.model.Client;
 import io.swagger.annotations.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import javax.annotation.Generated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+import org.openapitools.model.Client;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,19 +21,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import javax.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
+@Generated("org.openapitools.codegen.languages.SpringCodegen")
 @Validated
 @Api(value = "fake_classname_test", description = "the fake_classname_test API")
 @RequestMapping("${openapi.openAPIPetstore.base-path:/v2}")
 public interface FakeClassnameTestApi {
-
     default Optional<NativeWebRequest> getRequest() {
         return Optional.empty();
     }
@@ -39,30 +38,15 @@ public interface FakeClassnameTestApi {
      * @param body client model (required)
      * @return successful operation (status code 200)
      */
-    @ApiOperation(
-        tags = { "fake_classname_tags 123#$%^" },
-        value = "To test class name in snake case",
-        nickname = "testClassname",
-        notes = "To test class name in snake case",
-        response = Client.class,
-        authorizations = {
-            @Authorization(value = "api_key_query")
-         }
-    )
-    @ApiResponses({
-        @ApiResponse(code = 200, message = "successful operation", response = Client.class)
-    })
-    @RequestMapping(
-        method = RequestMethod.PATCH,
-        value = "/fake_classname_test",
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
-    default ResponseEntity<Client> testClassname(
-        @ApiParam(value = "client model", required = true) @Valid @RequestBody Client body
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+    @ApiOperation(value = "To test class name in snake case", nickname = "testClassname", notes = "To test class name in snake case", response = Client.class, authorizations = { @Authorization("api_key_query") }, tags = { "fake_classname_tags 123#$%^" })
+    @ApiResponses({ @ApiResponse(code = 200, message = "successful operation", response = Client.class) })
+    @RequestMapping(method = RequestMethod.PATCH, value = "/fake_classname_test", produces = { "application/json" }, consumes = { "application/json" })
+    public default ResponseEntity<Client> testClassname(@ApiParam(value = "client model", required = true)
+    @Valid
+    @RequestBody
+    Client body) {
+        getRequest().ifPresent(( request) -> {
+            for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"client\" : \"client\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
@@ -71,7 +55,5 @@ public interface FakeClassnameTestApi {
             }
         });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
-
 }

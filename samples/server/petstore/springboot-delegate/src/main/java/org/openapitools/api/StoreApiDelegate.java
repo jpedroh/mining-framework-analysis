@@ -1,6 +1,9 @@
 package org.openapitools.api;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import javax.annotation.Generated;
 import org.openapitools.model.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -8,18 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import javax.annotation.Generated;
 
 /**
  * A delegate to be called by the {@link StoreApiController}}.
  * Implement this interface with a {@link org.springframework.stereotype.Service} annotated class.
  */
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
+@Generated("org.openapitools.codegen.languages.SpringCodegen")
 public interface StoreApiDelegate {
-
     default Optional<NativeWebRequest> getRequest() {
         return Optional.empty();
     }
@@ -33,9 +31,8 @@ public interface StoreApiDelegate {
      *         or Order not found (status code 404)
      * @see StoreApi#deleteOrder
      */
-    default ResponseEntity<Void> deleteOrder(String orderId) {
+    public default ResponseEntity<Void> deleteOrder(String orderId) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
     /**
@@ -45,9 +42,8 @@ public interface StoreApiDelegate {
      * @return successful operation (status code 200)
      * @see StoreApi#getInventory
      */
-    default ResponseEntity<Map<String, Integer>> getInventory() {
+    public default ResponseEntity<Map<String, Integer>> getInventory() {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
     /**
@@ -60,9 +56,9 @@ public interface StoreApiDelegate {
      *         or Order not found (status code 404)
      * @see StoreApi#getOrderById
      */
-    default ResponseEntity<Order> getOrderById(Long orderId) {
-                getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+    public default ResponseEntity<Order> getOrderById(Long orderId) {
+        getRequest().ifPresent(( request) -> {
+            for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"petId\" : 6, \"quantity\" : 1, \"id\" : 0, \"shipDate\" : \"2000-01-23T04:56:07.000+00:00\", \"complete\" : false, \"status\" : \"placed\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
@@ -76,7 +72,6 @@ public interface StoreApiDelegate {
             }
         });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
     /**
@@ -87,9 +82,9 @@ public interface StoreApiDelegate {
      *         or Invalid Order (status code 400)
      * @see StoreApi#placeOrder
      */
-    default ResponseEntity<Order> placeOrder(Order body) {
-                getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+    public default ResponseEntity<Order> placeOrder(Order body) {
+        getRequest().ifPresent(( request) -> {
+            for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"petId\" : 6, \"quantity\" : 1, \"id\" : 0, \"shipDate\" : \"2000-01-23T04:56:07.000+00:00\", \"complete\" : false, \"status\" : \"placed\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
@@ -103,7 +98,5 @@ public interface StoreApiDelegate {
             }
         });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
-
 }

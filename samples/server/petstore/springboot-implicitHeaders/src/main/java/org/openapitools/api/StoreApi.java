@@ -5,9 +5,14 @@
  */
 package org.openapitools.api;
 
-import java.util.Map;
-import org.openapitools.model.Order;
 import io.swagger.annotations.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import javax.annotation.Generated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+import org.openapitools.model.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,19 +21,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import javax.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
+@Generated("org.openapitools.codegen.languages.SpringCodegen")
 @Validated
 @Api(value = "store", description = "Access to Petstore orders")
 @RequestMapping("${openapi.openAPIPetstore.base-path:/v2}")
 public interface StoreApi {
-
     default Optional<NativeWebRequest> getRequest() {
         return Optional.empty();
     }
@@ -41,27 +39,14 @@ public interface StoreApi {
      * @return Invalid ID supplied (status code 400)
      *         or Order not found (status code 404)
      */
-    @ApiOperation(
-        tags = { "store" },
-        value = "Delete purchase order by ID",
-        nickname = "deleteOrder",
-        notes = "For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors"
-    )
-    @ApiResponses({
-        @ApiResponse(code = 400, message = "Invalid ID supplied"),
-        @ApiResponse(code = 404, message = "Order not found")
-    })
-    @RequestMapping(
-        method = RequestMethod.DELETE,
-        value = "/store/order/{order_id}"
-    )
-    default ResponseEntity<Void> deleteOrder(
-        @ApiParam(value = "ID of the order that needs to be deleted", required = true) @PathVariable("order_id") String orderId
-    ) {
+    @ApiOperation(value = "Delete purchase order by ID", nickname = "deleteOrder", notes = "For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors", tags = { "store" })
+    @ApiResponses({ @ApiResponse(code = 400, message = "Invalid ID supplied"), @ApiResponse(code = 404, message = "Order not found") })
+    @RequestMapping(method = RequestMethod.DELETE, value = "/store/order/{order_id}")
+    public default ResponseEntity<Void> deleteOrder(@ApiParam(value = "ID of the order that needs to be deleted", required = true)
+    @PathVariable("order_id")
+    String orderId) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
-
 
     /**
      * GET /store/inventory : Returns pet inventories by status
@@ -69,32 +54,12 @@ public interface StoreApi {
      *
      * @return successful operation (status code 200)
      */
-    @ApiOperation(
-        tags = { "store" },
-        value = "Returns pet inventories by status",
-        nickname = "getInventory",
-        notes = "Returns a map of status codes to quantities",
-        response = Integer.class,
-        responseContainer = "Map",
-        authorizations = {
-            @Authorization(value = "api_key")
-         }
-    )
-    @ApiResponses({
-        @ApiResponse(code = 200, message = "successful operation", response = Map.class, responseContainer = "Map")
-    })
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = "/store/inventory",
-        produces = { "application/json" }
-    )
-    default ResponseEntity<Map<String, Integer>> getInventory(
-        
-    ) {
+    @ApiOperation(value = "Returns pet inventories by status", nickname = "getInventory", notes = "Returns a map of status codes to quantities", response = java.lang.Integer.class, responseContainer = "Map", authorizations = { @Authorization("api_key") }, tags = { "store" })
+    @ApiResponses({ @ApiResponse(code = 200, message = "successful operation", response = Map.class, responseContainer = "Map") })
+    @RequestMapping(method = RequestMethod.GET, value = "/store/inventory", produces = { "application/json" })
+    public default ResponseEntity<Map<String, Integer>> getInventory() {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
-
 
     /**
      * GET /store/order/{order_id} : Find purchase order by ID
@@ -105,28 +70,16 @@ public interface StoreApi {
      *         or Invalid ID supplied (status code 400)
      *         or Order not found (status code 404)
      */
-    @ApiOperation(
-        tags = { "store" },
-        value = "Find purchase order by ID",
-        nickname = "getOrderById",
-        notes = "For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions",
-        response = Order.class
-    )
-    @ApiResponses({
-        @ApiResponse(code = 200, message = "successful operation", response = Order.class),
-        @ApiResponse(code = 400, message = "Invalid ID supplied"),
-        @ApiResponse(code = 404, message = "Order not found")
-    })
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = "/store/order/{order_id}",
-        produces = { "application/xml", "application/json" }
-    )
-    default ResponseEntity<Order> getOrderById(
-        @Min(1L) @Max(5L) @ApiParam(value = "ID of pet that needs to be fetched", required = true) @PathVariable("order_id") Long orderId
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+    @ApiOperation(value = "Find purchase order by ID", nickname = "getOrderById", notes = "For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions", response = Order.class, tags = { "store" })
+    @ApiResponses({ @ApiResponse(code = 200, message = "successful operation", response = Order.class), @ApiResponse(code = 400, message = "Invalid ID supplied"), @ApiResponse(code = 404, message = "Order not found") })
+    @RequestMapping(method = RequestMethod.GET, value = "/store/order/{order_id}", produces = { "application/xml", "application/json" })
+    public default ResponseEntity<Order> getOrderById(@Min(1L)
+    @Max(5L)
+    @ApiParam(value = "ID of pet that needs to be fetched", required = true)
+    @PathVariable("order_id")
+    Long orderId) {
+        getRequest().ifPresent(( request) -> {
+            for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"petId\" : 6, \"quantity\" : 1, \"id\" : 0, \"shipDate\" : \"2000-01-23T04:56:07.000+00:00\", \"complete\" : false, \"status\" : \"placed\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
@@ -140,9 +93,7 @@ public interface StoreApi {
             }
         });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
-
 
     /**
      * POST /store/order : Place an order for a pet
@@ -151,27 +102,15 @@ public interface StoreApi {
      * @return successful operation (status code 200)
      *         or Invalid Order (status code 400)
      */
-    @ApiOperation(
-        tags = { "store" },
-        value = "Place an order for a pet",
-        nickname = "placeOrder",
-        notes = "",
-        response = Order.class
-    )
-    @ApiResponses({
-        @ApiResponse(code = 200, message = "successful operation", response = Order.class),
-        @ApiResponse(code = 400, message = "Invalid Order")
-    })
-    @RequestMapping(
-        method = RequestMethod.POST,
-        value = "/store/order",
-        produces = { "application/xml", "application/json" }
-    )
-    default ResponseEntity<Order> placeOrder(
-        @ApiParam(value = "order placed for purchasing the pet", required = true) @Valid @RequestBody Order body
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+    @ApiOperation(value = "Place an order for a pet", nickname = "placeOrder", notes = "", response = Order.class, tags = { "store" })
+    @ApiResponses({ @ApiResponse(code = 200, message = "successful operation", response = Order.class), @ApiResponse(code = 400, message = "Invalid Order") })
+    @RequestMapping(method = RequestMethod.POST, value = "/store/order", produces = { "application/xml", "application/json" })
+    public default ResponseEntity<Order> placeOrder(@ApiParam(value = "order placed for purchasing the pet", required = true)
+    @Valid
+    @RequestBody
+    Order body) {
+        getRequest().ifPresent(( request) -> {
+            for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"petId\" : 6, \"quantity\" : 1, \"id\" : 0, \"shipDate\" : \"2000-01-23T04:56:07.000+00:00\", \"complete\" : false, \"status\" : \"placed\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
@@ -185,7 +124,5 @@ public interface StoreApi {
             }
         });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
-
 }

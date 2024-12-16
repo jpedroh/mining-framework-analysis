@@ -5,7 +5,6 @@
  */
 package org.openapitools.virtualan.api;
 
-import org.openapitools.virtualan.model.Client;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -16,6 +15,13 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.virtualan.annotation.ApiVirtual;
 import io.virtualan.annotation.VirtualService;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import javax.annotation.Generated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+import org.openapitools.virtualan.model.Client;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,20 +30,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import javax.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
+@Generated("org.openapitools.codegen.languages.SpringCodegen")
 @Validated
-@Tag(name = "another-fake", description = "the another-fake API")
+@Tag(value = "another-fake", description = "the another-fake API")
 @VirtualService
 @RequestMapping("${openapi.openAPIPetstore.base-path:/v2}")
 public interface AnotherFakeApi {
-
     default Optional<NativeWebRequest> getRequest() {
         return Optional.empty();
     }
@@ -50,27 +49,14 @@ public interface AnotherFakeApi {
      * @return successful operation (status code 200)
      */
     @ApiVirtual
-    @Operation(
-        operationId = "call123testSpecialTags",
-        summary = "To test special tags",
-        tags = { "$another-fake?" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "successful operation", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Client.class))
-            })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.PATCH,
-        value = "/another-fake/dummy",
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
-    default ResponseEntity<Client> call123testSpecialTags(
-        @Parameter(name = "body", description = "client model", required = true) @Valid @RequestBody Client body
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+    @Operation(nickname = "call123testSpecialTags", tags = { "$another-fake?" }, value = { @ApiResponse(message = "successful operation", responseCode = "200", content = { @Content(code = "application/json", schema = @Schema(response = Client.class)) }) }, summary = "To test special tags")
+    @RequestMapping(method = RequestMethod.PATCH, value = "/another-fake/dummy", produces = { "application/json" }, consumes = { "application/json" })
+    public default ResponseEntity<Client> call123testSpecialTags(@Parameter(value = "body", required = true)
+    @Valid
+    @RequestBody
+    Client body) {
+        getRequest().ifPresent(( request) -> {
+            for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"client\" : \"client\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
@@ -79,7 +65,5 @@ public interface AnotherFakeApi {
             }
         });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
-
 }

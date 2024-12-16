@@ -9,29 +9,25 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-
 package org.openapitools.client.api;
 
 import com.sun.jersey.api.client.GenericType;
-
-import org.openapitools.client.ApiException;
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.model.*;
-import org.openapitools.client.Pair;
-
 import java.io.File;
-import org.openapitools.client.model.ModelApiResponse;
-import org.openapitools.client.model.Pet;
-import java.util.Set;
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import org.openapitools.client.ApiClient;
+import org.openapitools.client.ApiException;
+import org.openapitools.client.Configuration;
+import org.openapitools.client.Pair;
+import org.openapitools.client.model.*;
+import org.openapitools.client.model.ModelApiResponse;
+import org.openapitools.client.model.Pet;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
+
+@javax.annotation.Generated("org.openapitools.codegen.languages.JavaClientCodegen")
 public class PetApi {
   private ApiClient apiClient;
 
@@ -65,10 +61,9 @@ public class PetApi {
       throw new ApiException(400, "Missing the required parameter 'body' when calling addPet");
     }
     
-	
-	
     // create path and map variables
     String localVarPath = "/pet";
+
     // query params
     List<Pair> localVarQueryParams = new ArrayList<Pair>();
     List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -95,6 +90,7 @@ public class PetApi {
 
     apiClient.invokeAPI(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, null);
   }
+
   /**
    * Deletes a pet
    * 
@@ -110,11 +106,10 @@ public class PetApi {
       throw new ApiException(400, "Missing the required parameter 'petId' when calling deletePet");
     }
     
-	
-	
     // create path and map variables
     String localVarPath = "/pet/{petId}"
       .replaceAll("\\{" + "petId" + "\\}", apiClient.escapeString(petId.toString()));
+
     // query params
     List<Pair> localVarQueryParams = new ArrayList<Pair>();
     List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -143,6 +138,7 @@ public class PetApi {
 
     apiClient.invokeAPI(localVarPath, "DELETE", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, null);
   }
+
   /**
    * Finds Pets by status
    * Multiple status values can be provided with comma separated strings
@@ -158,10 +154,9 @@ public class PetApi {
       throw new ApiException(400, "Missing the required parameter 'status' when calling findPetsByStatus");
     }
     
-	
-	
     // create path and map variables
     String localVarPath = "/pet/findByStatus";
+
     // query params
     List<Pair> localVarQueryParams = new ArrayList<Pair>();
     List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -189,6 +184,7 @@ public class PetApi {
     GenericType<List<Pet>> localVarReturnType = new GenericType<List<Pet>>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
       }
+
   /**
    * Finds Pets by tags
    * Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
@@ -206,10 +202,9 @@ public class PetApi {
       throw new ApiException(400, "Missing the required parameter 'tags' when calling findPetsByTags");
     }
     
-	
-	
     // create path and map variables
     String localVarPath = "/pet/findByTags";
+
     // query params
     List<Pair> localVarQueryParams = new ArrayList<Pair>();
     List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -237,6 +232,7 @@ public class PetApi {
     GenericType<Set<Pet>> localVarReturnType = new GenericType<Set<Pet>>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
       }
+
   /**
    * Find pet by ID
    * Returns a single pet
@@ -252,11 +248,10 @@ public class PetApi {
       throw new ApiException(400, "Missing the required parameter 'petId' when calling getPetById");
     }
     
-	
-	
     // create path and map variables
     String localVarPath = "/pet/{petId}"
       .replaceAll("\\{" + "petId" + "\\}", apiClient.escapeString(petId.toString()));
+
     // query params
     List<Pair> localVarQueryParams = new ArrayList<Pair>();
     List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -283,6 +278,7 @@ public class PetApi {
     GenericType<Pet> localVarReturnType = new GenericType<Pet>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
       }
+
   /**
    * Update an existing pet
    * 
@@ -297,10 +293,9 @@ public class PetApi {
       throw new ApiException(400, "Missing the required parameter 'body' when calling updatePet");
     }
     
-	
-	
     // create path and map variables
     String localVarPath = "/pet";
+
     // query params
     List<Pair> localVarQueryParams = new ArrayList<Pair>();
     List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -327,6 +322,7 @@ public class PetApi {
 
     apiClient.invokeAPI(localVarPath, "PUT", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, null);
   }
+
   /**
    * Updates a pet in the store with form data
    * 
@@ -343,11 +339,10 @@ public class PetApi {
       throw new ApiException(400, "Missing the required parameter 'petId' when calling updatePetWithForm");
     }
     
-	
-	
     // create path and map variables
     String localVarPath = "/pet/{petId}"
       .replaceAll("\\{" + "petId" + "\\}", apiClient.escapeString(petId.toString()));
+
     // query params
     List<Pair> localVarQueryParams = new ArrayList<Pair>();
     List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -360,7 +355,7 @@ public class PetApi {
     
     if (name != null)
       localVarFormParams.put("name", name);
-if (status != null)
+  if (status != null)
       localVarFormParams.put("status", status);
 
     final String[] localVarAccepts = {
@@ -378,58 +373,45 @@ if (status != null)
 
     apiClient.invokeAPI(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, null);
   }
+
   /**
    * uploads an image
    * 
    * @param petId ID of pet to update (required)
    * @param additionalMetadata Additional data to pass to server (optional)
-   * @param _file file to upload (optional)
+   * @param file file to upload (optional)
    * @return ModelApiResponse
    * @throws ApiException if fails to make API call
    */
   public ModelApiResponse uploadFile(Long petId, String additionalMetadata, File _file) throws ApiException {
     Object localVarPostBody = null;
-    
     // verify the required parameter 'petId' is set
     if (petId == null) {
       throw new ApiException(400, "Missing the required parameter 'petId' when calling uploadFile");
     }
-    
-	
-	
     // create path and map variables
-    String localVarPath = "/pet/{petId}/uploadImage"
-      .replaceAll("\\{" + "petId" + "\\}", apiClient.escapeString(petId.toString()));
+    String localVarPath = "/pet/{petId}/uploadImage".replaceAll("\\{" + ("petId" + "\\}"), apiClient.escapeString(petId.toString()));
     // query params
     List<Pair> localVarQueryParams = new ArrayList<Pair>();
     List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
     Map<String, String> localVarHeaderParams = new HashMap<String, String>();
     Map<String, String> localVarCookieParams = new HashMap<String, String>();
     Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
-    
-    if (additionalMetadata != null)
+    if (additionalMetadata != null) {
       localVarFormParams.put("additionalMetadata", additionalMetadata);
-if (_file != null)
+    }
+    if (_file != null) {
       localVarFormParams.put("file", _file);
-
-    final String[] localVarAccepts = {
-      "application/json"
-    };
+    }
+    final String[] localVarAccepts = new java.lang.String[]{ "application/json" };
     final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-
-    final String[] localVarContentTypes = {
-      "multipart/form-data"
-    };
+    final String[] localVarContentTypes = new java.lang.String[]{ "multipart/form-data" };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-    String[] localVarAuthNames = new String[] { "petstore_auth" };
-
+    String[] localVarAuthNames = new String[]{ "petstore_auth" };
     GenericType<ModelApiResponse> localVarReturnType = new GenericType<ModelApiResponse>() {};
     return apiClient.invokeAPI(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
-      }
+  }
+
   /**
    * uploads an image (required)
    * 
@@ -452,11 +434,10 @@ if (_file != null)
       throw new ApiException(400, "Missing the required parameter 'requiredFile' when calling uploadFileWithRequiredFile");
     }
     
-	
-	
     // create path and map variables
     String localVarPath = "/fake/{petId}/uploadImageWithRequiredFile"
       .replaceAll("\\{" + "petId" + "\\}", apiClient.escapeString(petId.toString()));
+
     // query params
     List<Pair> localVarQueryParams = new ArrayList<Pair>();
     List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -469,7 +450,7 @@ if (_file != null)
     
     if (additionalMetadata != null)
       localVarFormParams.put("additionalMetadata", additionalMetadata);
-if (requiredFile != null)
+  if (requiredFile != null)
       localVarFormParams.put("requiredFile", requiredFile);
 
     final String[] localVarAccepts = {
