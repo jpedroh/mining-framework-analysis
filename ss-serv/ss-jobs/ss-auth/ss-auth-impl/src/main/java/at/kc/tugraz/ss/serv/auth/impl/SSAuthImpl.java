@@ -18,7 +18,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
- package at.kc.tugraz.ss.serv.auth.impl;
+package at.kc.tugraz.ss.serv.auth.impl;
 
 import at.kc.tugraz.socialserver.utils.SSLogU;
 import at.kc.tugraz.socialserver.utils.SSMethU;
@@ -50,33 +50,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SSAuthImpl extends SSServImplWithDBA implements SSAuthClientI, SSAuthServerI{
-  
+
+public class SSAuthImpl extends SSServImplWithDBA implements SSAuthClientI , SSAuthServerI {
   private static final List<String>          keys      = new ArrayList<String>();
+
   private static final String                noAuthKey = "FischersFritzFischtFrischeFische";
+
   private        final SSAuthSQLFct          sqlFct;
-  
+
   public SSAuthImpl(final SSAuthConf conf, final SSDBGraphI dbGraph, final SSDBSQLI dbSQL) throws Exception {
-    
     super(conf, dbGraph, dbSQL);
-    
     this.sqlFct = new SSAuthSQLFct(dbSQL);
-    
     keys.add(noAuthKey);
-//    wikiauth  = new SSAuthWiki();
+    // wikiauth  = new SSAuthWiki();
   }
-  
+
   /* SSAuthServClientI */
-  
+
   @Override
   public void authCheckCred(SSSocketCon sSCon, SSServPar par) throws Exception {
     sSCon.writeRetFullToClient(authCheckCred(par));
   }
-  
+
   /* SSAuthServServerI */
-  
+
   //TODO dtheiler: create transactions here as well
-  
+
   @Override
   public void authUsersFromCSVFileAdd(final SSServPar parA) throws Exception {
     
@@ -107,127 +106,80 @@ public class SSAuthImpl extends SSServImplWithDBA implements SSAuthClientI, SSAu
       SSServErrReg.regErrThrow(error);
     }
   }
-  
-  @Override 
-  public SSUri authRegisterUser(final SSServPar parA) throws Exception{
-    
-    try{
-      
-      final SSAuthRegisterUserPar par               = new SSAuthRegisterUserPar(parA);
-      final SSUri                 userUri;
-      
+
+  @Override
+  public SSUri authRegisterUser(final SSServPar parA) throws Exception {
+    try {
+      final SSAuthRegisterUserPar par = new SSAuthRegisterUserPar(parA);
+      final SSUri userUri;
       dbSQL.startTrans(par.shouldCommit);
-      
-      if(SSServCaller.entityExists(SSEntityE.user, par.label)){
+      if (SSServCaller.entityExists(SSEntityE.user, par.label)) {
         userUri = SSServCaller.entityGet(SSEntityE.user, par.label).id;
-      }else{
-        
+      } else {
         userUri = SSServCaller.vocURICreate();
-        
-        SSServCaller.entityAdd(
-          par.user,
-          userUri,
-          par.label,
-          SSEntityE.user,
-          false);
-        
-        SSServCaller.entityEntitiesToCircleAdd(
-          par.user, 
-          SSServCaller.entityCircleURIPublicGet(), 
-          userUri, 
-          false);
+        SSServCaller.entityAdd(par.user, userUri, par.label, SSEntityE.user, false);
+        SSServCaller.entityEntitiesToCircleAdd(par.user, SSServCaller.entityCircleURIPublicGet(), userUri, false);
       }
-      
-      if(!sqlFct.hasKey(userUri)){
-        
-        keys.add(
-          sqlFct.addKey(
-            userUri,
-            SSAuthMiscFct.genKey(SSLabel.toStr(par.label) + par.password)));
+      if (!sqlFct.hasKey(userUri)) {
+        keys.add(sqlFct.addKey(userUri, SSAuthMiscFct.genKey(SSLabel.toStr(par.label) + par.password)));
       }
-      
-      try{
-        SSServCaller.collUserRootAdd (userUri, false);
-      }catch(SSServerServNotAvailableErr error){
+      try {
+        SSServCaller.collUserRootAdd(userUri, false);
+      } catch (SSServerServNotAvailableErr error) {
         SSLogU.warn("collUserRootAdd failed | service down");
       }
-      
       dbSQL.commit(par.shouldCommit);
-      
       return userUri;
-      
-    }catch(Exception error){
+    } catch (java.lang.Exception error) {
       SSServErrReg.regErrThrow(error);
       return null;
     }
   }
-  
+
   @Override
   public SSAuthCheckCredRet authCheckCred(final SSServPar parA) throws Exception {
-    
     final SSAuthCheckCredPar par = new SSAuthCheckCredPar(parA);
-    final SSUri              userUri;
-    
-    switch(((SSAuthConf)conf).authType){
-      
-      case noAuth:{
-        
-        userUri =
-          SSServCaller.authRegisterUser(
-            SSUserGlobals.systemUser,
-            par.label,
-            par.password,
-            true);
-        
-        return SSAuthCheckCredRet.get(noAuthKey, userUri, SSMethU.authCheckCred);
-      }
-      
-      case csvFileAuth:{
-        
-        try{
-          userUri = SSServCaller.entityGet(SSEntityE.user, par.label).id;
-        }catch(SSNoResultFoundErr error){
-          throw new Exception("user not registered");
+    final SSUri userUri;
+    switch (((SSAuthConf) (conf)).authType) {
+      case noAuth :
+        {
+          userUri = SSServCaller.authRegisterUser(SSUserGlobals.systemUser, par.label, par.password, true);
+          return SSAuthCheckCredRet.get(noAuthKey, userUri, SSMethU.authCheckCred);
         }
-        
-        if(!sqlFct.hasKey(userUri)){
-          throw new Exception("user not registered");
+      case csvFileAuth :
+        {
+          try {
+            userUri = SSServCaller.entityGet(SSEntityE.user, par.label).id;
+          } catch (SSNoResultFoundErr error) {
+            throw new Exception("user not registered");
+          }
+          if (!sqlFct.hasKey(userUri)) {
+            throw new Exception("user not registered");
+          }
+          return SSAuthCheckCredRet.get(SSAuthMiscFct.checkAndGetKey(sqlFct, userUri, par.label, par.password), userUri, SSMethU.authCheckCred);
         }
-        
-        return SSAuthCheckCredRet.get(
-          SSAuthMiscFct.checkAndGetKey(
-            sqlFct,
-            userUri,
-            par.label,
-            par.password),
-          userUri, 
-          SSMethU.authCheckCred);
-      }
-      
-      default: 
+      default :
         throw new UnsupportedOperationException();
-        
-        
-//      case wikiAuth:{
-//        // TODO get SSAuthWikiConf
-//        boolean authUser = wikiauth.authUser(par.user, par.pass, new SSAuthWikiConf());
-//
-//        if (authUser) {
-//
-//          if (SSStrU.containsNot(keylist, alternateKeys[0])) {
-//            keylist.add(alternateKeys[0]);
-//          }
-//
-//          return alternateKeys[0];
-//        }else{
-//          Exception ile = new Exception();
-//
-//          throw ile;
-//        }
-//      }
+        // case wikiAuth:{
+        // TODO get SSAuthWikiConf
+        // boolean authUser = wikiauth.authUser(par.user, par.pass, new SSAuthWikiConf());
+        // 
+        // if (authUser) {
+        // 
+        // if (SSStrU.containsNot(keylist, alternateKeys[0])) {
+        // keylist.add(alternateKeys[0]);
+        // }
+        // 
+        // return alternateKeys[0];
+        // }else{
+        // Exception ile = new Exception();
+        // 
+        // throw ile;
+        // }
+        // }
     }
   }
-  
+
   @Override
   public void authLoadKeys(final SSServPar parA) throws Exception {
     
@@ -240,7 +192,7 @@ public class SSAuthImpl extends SSServImplWithDBA implements SSAuthClientI, SSAu
       SSServErrReg.regErrThrow(error);
     }
   }
-  
+
   @Override
   public void authCheckKey(final SSServPar parA) throws Exception {
     
@@ -271,191 +223,3 @@ public class SSAuthImpl extends SSServImplWithDBA implements SSAuthClientI, SSAu
     }
   }
 }
-
-
-//  @Override
-//  public List<String> authKeyList(SSServerPar par) throws Exception {
-//    return keylist;
-//  }
-//
-//  @Override
-//  public SSAuthEnum authAuthType(SSServerPar par) throws Exception {
-//    return conf.getAuthTypeEnum();
-//  }
-
-
-//private static String key;
-//private static Date keyDate;
-//private static Map<String, String> passwords = new HashMap<String, String>();
-//private static String credPath = "/home/nweber/workspace/Dem1Files/";
-//private MessageDigest md5;
-//  @Deprecated
-//  private void createKey() {
-//    Date date = new Date();
-//
-//    /* Berechnung */
-//    try {
-//      md5 = MessageDigest.getInstance("MD5");
-//    } catch (NoSuchAlgorithmException e) {
-//      log.error(e.getMessage(), e);
-//    }
-//    md5.reset();
-//    md5.update(date.toGMTString().getBytes());
-//    byte[] result = md5.digest();
-//
-//    /* Ausgabe */
-//    StringBuilder hexString = new StringBuilder();
-//    for (int i = 0; i < result.length; i++) {
-//      hexString.append(Integer.toHexString(0xFF & result[i]));
-//    }
-//    if (log.isDebugEnabled()) {
-//      log.debug("MD5: " + hexString.toString());
-//    }
-//    this.key = hexString.toString();
-//    this.keyDate = date;
-//
-//  }
-//
-//  @Deprecated
-//  private static void initPasswords() {
-//    String[] userpass;
-//    List outList = new ArrayList();
-//    try {
-//
-//      boolean exists = (new File(credPath + "passwords.txt")).exists();
-//      BufferedReader in = null;
-//      if (exists) {
-//        in = new BufferedReader(new FileReader(credPath + "passwords.txt"));
-//      } else {
-//        log.error("ERROR: PASSWORD FILE MISSING !!!!");
-//      }
-//
-//      if (in == null) {
-//        return;
-//      }
-//
-//      String str;
-//      while ((str = in.readLine()) != null) {
-//        userpass = str.split(":");
-//        passwords.put(userpass[0], userpass[1]);
-//      }
-//      in.close();
-//
-//    } catch (IOException e) {
-//      log.error(e.getMessage(), e);
-//    }
-//  }
-//
-//	public String addUserCred(String user, String pass, String token)
-//	{
-//		if(checkToken(token))
-//		{
-//			try {
-//			    BufferedWriter out = new BufferedWriter(new FileWriter(credPath+"passwords.txt",true));
-//			    	out.newLine();
-//			    	out.write(user+":"+pass);
-//			    			    		    
-//			    out.close();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//			return getKey();
-//		}
-//		return null;
-//	}
-
-//  private boolean checkToken(String token) {
-//    boolean found = false;
-//    List<String> tokenList = new ArrayList<String>();
-//    try {
-//
-//      boolean exists = (new File(credPath + "tokens.txt")).exists();
-//      BufferedReader in = null;
-//      if (exists) {
-//        in = new BufferedReader(new FileReader(credPath + "tokens.txt"));
-//      } else {
-//        log.error("ERROR: TOKEN FILE MISSING !!!!");
-//      }
-//
-//      if (in == null) {
-//        return false;
-//      }
-//
-//      String str;
-//      while ((str = in.readLine()) != null) {
-//        tokenList.add(str);
-//      }
-//      in.close();
-//
-//    } catch (IOException e) {
-//      log.error(e.getMessage(), e);
-//    }
-//
-//    if (tokenList.contains(token)) {
-//      if (log.isDebugEnabled()) {
-//        log.debug("TOKEN FOUND");
-//      }
-//      found = true;
-//      tokenList.remove(token);
-//    }
-//    try {
-//      BufferedWriter out = new BufferedWriter(new FileWriter(credPath + "tokens.txt"));
-//      for (String tokenString : tokenList) {
-//        out.write(tokenString);
-//        out.newLine();
-//
-//      }
-//
-//      out.close();
-//    } catch (IOException e) {
-//      log.error(e.getMessage(), e);
-//    }
-//
-//    return found;
-//  }
-
-//  public void createTokenFile(int number, int length) {
-//    try {
-//      BufferedWriter out = new BufferedWriter(new FileWriter(credPath + "tokens.txt"));
-//      for (int i = 0; i < number; i++) {
-//        out.write(getToken(length));
-//        out.newLine();
-//      }
-//      out.close();
-//    } catch (IOException e) {
-//      log.error(e.getMessage(), e);
-//    }
-//  }
-
-//  private String getToken(int length) {
-//    Random random = new Random();
-//    int intRand = random.nextInt();
-//    Date date = new Date();
-//    long time = date.getTime();
-//
-//    long seed = intRand + time;
-//
-//
-//    try {
-//      md5 = MessageDigest.getInstance("MD5");
-//    } catch (NoSuchAlgorithmException e) {
-//      log.error(e.getMessage(), e);
-//    }
-//    md5.reset();
-//    md5.update(String.valueOf(seed).getBytes());
-//    byte[] result = md5.digest();
-//
-//    /* Ausgabe */
-//    StringBuilder hexString = new StringBuilder();
-//    for (int i = 0; i < result.length; i++) {
-//      hexString.append(Integer.toHexString(0xFF & result[i]));
-//    }
-//    if (log.isDebugEnabled()) {
-//      log.debug("MD5: " + hexString.toString());
-//    }
-//    this.key = hexString.toString();
-//    return key.substring(2, 2 + length);
-//  }
-
-//  private static final String DEFAULT_AGENT_KEY                        = "d4ed2b76cfcf9bad374ef96c9c7ab3b";
-  //  private SSAuthWiki              wikiauth      = null;

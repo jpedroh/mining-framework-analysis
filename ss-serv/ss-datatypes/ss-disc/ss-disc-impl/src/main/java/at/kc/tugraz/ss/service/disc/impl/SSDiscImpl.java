@@ -20,30 +20,30 @@
 */
 package at.kc.tugraz.ss.service.disc.impl;
 
-import at.kc.tugraz.ss.datatypes.datatypes.entity.SSUri;
-import at.kc.tugraz.ss.service.disc.datatypes.pars.SSDiscsWithEntriesGetPar;
-import at.kc.tugraz.ss.service.disc.datatypes.pars.SSDiscUserWithEntriesGetPar;
-import at.kc.tugraz.ss.service.disc.datatypes.pars.SSDiscUserEntryAddPar;
 import at.kc.tugraz.ss.adapter.socket.datatypes.SSSocketCon;
 import at.kc.tugraz.ss.datatypes.datatypes.entity.SSEntityA;
-import at.kc.tugraz.ss.serv.db.api.SSDBGraphI;
-import at.kc.tugraz.ss.serv.db.api.SSDBSQLI;
+import at.kc.tugraz.ss.datatypes.datatypes.entity.SSEntityDescA;
+import at.kc.tugraz.ss.datatypes.datatypes.entity.SSUri;
 import at.kc.tugraz.ss.datatypes.datatypes.enums.SSEntityE;
 import at.kc.tugraz.ss.datatypes.datatypes.label.SSLabel;
-import at.kc.tugraz.ss.serv.serv.api.SSServImplWithDBA;
-import at.kc.tugraz.ss.service.disc.api.*;
-import at.kc.tugraz.ss.service.disc.datatypes.*;
 import at.kc.tugraz.ss.serv.datatypes.SSServPar;
-import at.kc.tugraz.ss.datatypes.datatypes.entity.SSEntityDescA;
 import at.kc.tugraz.ss.serv.datatypes.entity.datatypes.SSEntityDesc;
+import at.kc.tugraz.ss.serv.db.api.SSDBGraphI;
+import at.kc.tugraz.ss.serv.db.api.SSDBSQLI;
 import at.kc.tugraz.ss.serv.db.datatypes.sql.err.SSSQLDeadLockErr;
 import at.kc.tugraz.ss.serv.err.reg.SSServErrReg;
 import at.kc.tugraz.ss.serv.serv.api.SSConfA;
 import at.kc.tugraz.ss.serv.serv.api.SSEntityHandlerImplI;
+import at.kc.tugraz.ss.serv.serv.api.SSServImplWithDBA;
 import at.kc.tugraz.ss.serv.serv.caller.SSServCaller;
+import at.kc.tugraz.ss.service.disc.api.*;
+import at.kc.tugraz.ss.service.disc.datatypes.*;
 import at.kc.tugraz.ss.service.disc.datatypes.pars.SSDiscUserDiscURIsForTargetGetPar;
+import at.kc.tugraz.ss.service.disc.datatypes.pars.SSDiscUserEntryAddPar;
 import at.kc.tugraz.ss.service.disc.datatypes.pars.SSDiscUserRemovePar;
+import at.kc.tugraz.ss.service.disc.datatypes.pars.SSDiscUserWithEntriesGetPar;
 import at.kc.tugraz.ss.service.disc.datatypes.pars.SSDiscsUserAllGetPar;
+import at.kc.tugraz.ss.service.disc.datatypes.pars.SSDiscsWithEntriesGetPar;
 import at.kc.tugraz.ss.service.disc.datatypes.ret.SSDiscUserDiscURIsForTargetGetRet;
 import at.kc.tugraz.ss.service.disc.datatypes.ret.SSDiscUserEntryAddRet;
 import at.kc.tugraz.ss.service.disc.datatypes.ret.SSDiscUserRemoveRet;
@@ -54,19 +54,17 @@ import at.kc.tugraz.ss.service.disc.impl.fct.op.SSDiscUserEntryAddFct;
 import at.kc.tugraz.ss.service.disc.impl.fct.sql.SSDiscSQLFct;
 import java.util.*;
 
-public class SSDiscImpl extends SSServImplWithDBA implements SSDiscClientI, SSDiscServerI, SSEntityHandlerImplI {
 
+public class SSDiscImpl extends SSServImplWithDBA implements SSDiscClientI , SSDiscServerI , SSEntityHandlerImplI {
   private final SSDiscSQLFct sqlFct;
 
   public SSDiscImpl(final SSConfA conf, final SSDBGraphI dbGraph, final SSDBSQLI dbSQL) throws Exception {
-
     super(conf, dbGraph, dbSQL);
-
     sqlFct = new SSDiscSQLFct(this);
   }
 
   /* SSEntityHandlerImplI */
-  
+
   @Override
   public List<SSUri> searchWithKeywordWithin(
     final SSUri         userUri,
@@ -81,12 +79,12 @@ public class SSDiscImpl extends SSServImplWithDBA implements SSDiscClientI, SSDi
   public Boolean setUserEntityPublic(
     final SSUri          userUri,
     final SSUri          entityUri, 
-    final SSEntityE      entityType,
+    final SSEntityE   entityType,
     final SSUri          publicCircleUri) throws Exception{
 
     return false;
   }
-  
+
   @Override
   public Boolean shareUserEntity(
     final SSUri          userUri, 
@@ -97,7 +95,7 @@ public class SSDiscImpl extends SSServImplWithDBA implements SSDiscClientI, SSDi
     
     return false;
   }
-  
+
   @Override
   public Boolean addEntityToCircle(
     final SSUri        userUri, 
@@ -107,7 +105,7 @@ public class SSDiscImpl extends SSServImplWithDBA implements SSDiscClientI, SSDi
     
     return false;
   }
-    
+
   @Override
   public void removeDirectlyAdjoinedEntitiesForUser(
     final SSUri       userUri, 
@@ -159,7 +157,7 @@ public class SSDiscImpl extends SSServImplWithDBA implements SSDiscClientI, SSDi
   }
 
   /* SSDiscClientI */
-  
+
   @Override
   public void discEntryAdd(final SSSocketCon sSCon, final SSServPar parA) throws Exception {
     
@@ -199,7 +197,7 @@ public class SSDiscImpl extends SSServImplWithDBA implements SSDiscClientI, SSDi
 
     sSCon.writeRetFullToClient(SSDiscUserWithEntriesRet.get(discUserWithEntriesGet(par), par.op));
   }
-  
+
   @Override
   public void discRemove(final SSSocketCon sSCon, final SSServPar parA) throws Exception {
 
@@ -207,7 +205,7 @@ public class SSDiscImpl extends SSServImplWithDBA implements SSDiscClientI, SSDi
 
     sSCon.writeRetFullToClient(SSDiscUserRemoveRet.get(discUserRemove(parA), parA.op));
   }
-  
+
   @Override
   public void discURIsForTargetGet(final SSSocketCon sSCon, final SSServPar parA) throws Exception {
 
@@ -217,19 +215,15 @@ public class SSDiscImpl extends SSServImplWithDBA implements SSDiscClientI, SSDi
   }
 
   /* SSDiscServerI */
-  
   @Override
   public List<SSUri> discUserDiscURIsForTargetGet(final SSServPar parA) throws Exception {
-
-    try{
+    try {
       final SSDiscUserDiscURIsForTargetGetPar par = new SSDiscUserDiscURIsForTargetGetPar(parA);
-      
-      if(!SSServCaller.entityUserCanRead(par.user, par.entity)){
+      if (!SSServCaller.entityUserCanRead(par.user, par.entity)) {
         return new ArrayList<SSUri>();
       }
-    
       return sqlFct.getDiscURIs(par.user, par.entity);
-    } catch (Exception error){
+    } catch (java.lang.Exception error) {
       SSServErrReg.regErrThrow(error);
       return null;
     }
@@ -237,36 +231,31 @@ public class SSDiscImpl extends SSServImplWithDBA implements SSDiscClientI, SSDi
 
   @Override
   public SSUri discUserRemove(final SSServPar parA) throws Exception {
-
     try {
-      final SSDiscUserRemovePar par    = new SSDiscUserRemovePar(parA);
-      
-      if(!SSServCaller.entityUserCanAll(par.user, par.disc)){
+      final SSDiscUserRemovePar par = new SSDiscUserRemovePar(parA);
+      if (!SSServCaller.entityUserCanAll(par.user, par.disc)) {
         throw new Exception("user cannot remove disc");
       }
-      
       dbSQL.startTrans(par.shouldCommit);
-      
-      switch(SSServCaller.entityMostOpenCircleTypeGet(par.disc)){
-      
-        case priv: sqlFct.deleteDisc(par.disc);          break;
-        case group: 
-        case pub: sqlFct.unlinkDisc(par.user, par.disc); break;
+      switch (SSServCaller.entityMostOpenCircleTypeGet(par.disc)) {
+        case priv :
+          sqlFct.deleteDisc(par.disc);
+          break;
+        case group :
+        case pub :
+          sqlFct.unlinkDisc(par.user, par.disc);
+          break;
       }
-      
       dbSQL.commit(par.shouldCommit);
-      
       return par.disc;
-    }catch(SSSQLDeadLockErr deadLockErr){
-      
-      if(dbSQL.rollBack(parA)){
+    } catch (SSSQLDeadLockErr deadLockErr) {
+      if (dbSQL.rollBack(parA)) {
         return discUserRemove(parA);
-      }else{
+      } else {
         SSServErrReg.regErrThrow(deadLockErr);
         return null;
       }
-      
-    }catch(Exception error){
+    } catch (java.lang.Exception error) {
       dbSQL.rollBack(parA);
       SSServErrReg.regErrThrow(error);
       return null;
@@ -274,66 +263,38 @@ public class SSDiscImpl extends SSServImplWithDBA implements SSDiscClientI, SSDi
   }
 
   protected SSDiscUserEntryAddRet discUserEntryAdd(final SSDiscUserEntryAddPar par) throws Exception {
-    
-    try{
+    try {
       SSUri discEntryUri = null;
-      
-      if(par.addNewDisc){
+      if (par.addNewDisc) {
         SSDiscUserEntryAddFct.checkWhetherUserCanAddDisc(par);
       }
-      
-      if(!par.addNewDisc){
+      if (!par.addNewDisc) {
         SSDiscUserEntryAddFct.checkWhetherUserCanAddDiscEntry(par);
       }
-      
       dbSQL.startTrans(par.shouldCommit);
-      
-      if(par.addNewDisc){
-        
+      if (par.addNewDisc) {
         par.disc = SSServCaller.vocURICreate();
-        
-        SSDiscUserEntryAddFct.addDisc(
-          sqlFct,
-          par.disc,
-          par.user,
-          par.entity,
-          par.type,
-          par.label);
-      }      
-      
-      if(par.entry != null){
-        
-        discEntryUri = 
-          SSDiscUserEntryAddFct.addDiscEntry(
-            sqlFct,
-            par.user,
-            par.disc,
-            par.entry);
+        SSDiscUserEntryAddFct.addDisc(sqlFct, par.disc, par.user, par.entity, par.type, par.label, par.explanation);
       }
-      
+      if (par.entry != null) {
+        discEntryUri = SSDiscUserEntryAddFct.addDiscEntry(sqlFct, par.user, par.disc, par.entry);
+      }
       dbSQL.commit(par.shouldCommit);
-      
-      return SSDiscUserEntryAddRet.get(
-        par.disc, 
-        discEntryUri, 
-        par.op);
-      
-    }catch(SSSQLDeadLockErr deadLockErr){
-      
-      if(dbSQL.rollBack(par)){
+      return SSDiscUserEntryAddRet.get(par.disc, discEntryUri, par.op);
+    } catch (SSSQLDeadLockErr deadLockErr) {
+      if (dbSQL.rollBack(par)) {
         return discUserEntryAdd(par);
-      }else{
+      } else {
         SSServErrReg.regErrThrow(deadLockErr);
         return null;
       }
-      
-    }catch(Exception error){
+    } catch (java.lang.Exception error) {
       dbSQL.rollBack(par);
       SSServErrReg.regErrThrow(error);
       return null;
     }
   }
-  
+
   @Override
   public SSDiscUserEntryAddRet discUserEntryAdd(final SSServPar parA) throws Exception{
     
@@ -381,23 +342,15 @@ public class SSDiscImpl extends SSServImplWithDBA implements SSDiscClientI, SSDi
   }
 
   @Override
-  public List<SSDisc> discsUserWithEntriesGet(final SSServPar parA) throws Exception{
-
-    try{
-      final SSDiscsWithEntriesGetPar par              = new SSDiscsWithEntriesGetPar(parA);
-      final List<SSDisc>             discsWithEntries = new ArrayList<SSDisc>();
-      
-      for(SSDisc disc : SSServCaller.discsUserAllGet(par.user)){
-
-        discsWithEntries.add(
-          SSServCaller.discUserWithEntriesGet(
-            par.user,
-            disc.id,
-            par.maxEntries));
+  public List<SSDisc> discsUserWithEntriesGet(final SSServPar parA) throws Exception {
+    try {
+      final SSDiscsWithEntriesGetPar par = new SSDiscsWithEntriesGetPar(parA);
+      final List<SSDisc> discsWithEntries = new ArrayList<SSDisc>();
+      for (SSDisc disc : SSServCaller.discsUserAllGet(par.user)) {
+        discsWithEntries.add(SSServCaller.discUserWithEntriesGet(par.user, disc.id, par.maxEntries));
       }
-
       return discsWithEntries;
-    }catch(Exception error){
+    } catch (java.lang.Exception error) {
       SSServErrReg.regErrThrow(error);
       return null;
     }
