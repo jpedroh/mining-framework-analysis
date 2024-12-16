@@ -1,28 +1,26 @@
 package com.google.errorprone.bugpatterns;
 
-import static com.google.errorprone.BugPattern.SeverityLevel.SUGGESTION;
-import static com.google.errorprone.matchers.Matchers.methodIsConstructor;
-import static com.google.errorprone.matchers.Matchers.hasArguments;
-import static com.google.errorprone.matchers.Description.NO_MATCH;
-
 import com.google.errorprone.BugPattern;
 import com.google.errorprone.VisitorState;
-import com.google.errorprone.bugpatterns.BugChecker;
 import com.google.errorprone.bugpatterns.BugChecker.MethodTreeMatcher;
+import com.google.errorprone.bugpatterns.BugChecker;
 import com.google.errorprone.matchers.Description;
 import com.google.errorprone.matchers.Matcher;
-
 import com.sun.source.tree.AssignmentTree;
 import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.MethodTree;
-import com.sun.source.tree.Tree;
 import com.sun.source.tree.StatementTree;
+import com.sun.source.tree.Tree;
 import com.sun.source.util.TreeScanner;
-
 import java.util.List;
+import static com.google.errorprone.BugPattern.SeverityLevel.SUGGESTION;
+import static com.google.errorprone.matchers.Description.NO_MATCH;
+import static com.google.errorprone.matchers.Matchers.hasArguments;
+import static com.google.errorprone.matchers.Matchers.methodIsConstructor;
+
 
 /**
  * Bug checker to detect usage of {@code return null;}.
@@ -30,9 +28,10 @@ import java.util.List;
 @BugPattern(name = "ThisEscapesConstructor", summary = "Do not let 'this' escape the constructor.", severity = SUGGESTION)
 public class ThisEscapesConstructor extends BugChecker implements MethodTreeMatcher {
     // your code here
+    // your code here
     private static final Matcher<MethodTree> IS_CONSTRUCTOR = methodIsConstructor();
-    // private static final Matcher<MethodTree> THIS_IN_EXPRESSION = IdentifierTreeMatcher;
 
+    // private static final Matcher<MethodTree> THIS_IN_EXPRESSION = IdentifierTreeMatcher;
     @Override
     public Description matchMethod(MethodTree constructor, VisitorState state) {
         if (!IS_CONSTRUCTOR.matches(constructor, state)) {
@@ -41,23 +40,30 @@ public class ThisEscapesConstructor extends BugChecker implements MethodTreeMatc
         if (constructor.getBody() == null) {
             return NO_MATCH;
         }
-
         BlockTree body = constructor.getBody();
         new TreeScanner<Void, Void>() {
-                @Override
-                public Void visitAssignment(AssignmentTree assignment, Void unused) {
+            @Override
+            public Void visitAssignment(AssignmentTree assignment, Void unused) {
+<<<<<<< LEFT
                     // Look at right hand side only
                     scanExpression(body, assignment.getExpression(), state);
+=======
+                    //look at right hand side only
+                    Description description = scanExpression(body, assignment.getExpression(), state);
+>>>>>>> RIGHT
                     return super.visitAssignment(assignment, unused);
                 }
-                
-                @Override
-                public Void visitMethodInvocation(MethodInvocationTree invocation, Void unused) {
+
+            @Override
+            public Void visitMethodInvocation(MethodInvocationTree invocation, Void unused) {
+<<<<<<< LEFT
                     scanMethodInvocation(body, invocation, state);
+=======
+                    Description description = scanMethodInvocation(body, invocation, state);
+>>>>>>> RIGHT
                     return super.visitMethodInvocation(invocation, unused);
                 }
-            }.scan(body, null);
-
+        }.scan(body, null);
         return NO_MATCH;
     }
 
@@ -70,11 +76,11 @@ public class ThisEscapesConstructor extends BugChecker implements MethodTreeMatc
 
     void scanExpression(BlockTree block, ExpressionTree exp, VisitorState state) {
         if (!(exp instanceof IdentifierTree)) {
-          return;
+            return;
         }
-        IdentifierTree identifierTree = ((IdentifierTree) exp);
+        IdentifierTree identifierTree = ((IdentifierTree) (exp));
         if (identifierTree.getName().contentEquals("this")) {
             state.reportMatch(describeMatch(identifierTree));
-        }       
+        }
     }
 }

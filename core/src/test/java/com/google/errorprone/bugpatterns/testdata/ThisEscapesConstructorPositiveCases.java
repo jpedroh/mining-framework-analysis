@@ -1,12 +1,14 @@
 package com.google.errorprone.bugpatterns.testdata;
 
-public class ThisEscapesConstructorPositiveCases {
 
+
+public class ThisEscapesConstructorPositiveCases {
     static class AssignsThis {
         public AssignsThis at;
+
         AssignsThis() {
             // BUG: Diagnostic contains:
-            at = this;
+            this.at = this;
         }
     }
 
