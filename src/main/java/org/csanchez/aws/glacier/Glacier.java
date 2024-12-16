@@ -1,37 +1,12 @@
 package org.csanchez.aws.glacier;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.PosixParser;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
-
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.auth.policy.Policy;
 import com.amazonaws.auth.policy.Principal;
 import com.amazonaws.auth.policy.Resource;
-import com.amazonaws.auth.policy.Statement;
 import com.amazonaws.auth.policy.Statement.Effect;
+import com.amazonaws.auth.policy.Statement;
 import com.amazonaws.auth.policy.actions.SQSActions;
 import com.amazonaws.services.glacier.AmazonGlacierClient;
 import com.amazonaws.services.glacier.model.DeleteArchiveRequest;
@@ -58,6 +33,30 @@ import com.amazonaws.services.sqs.model.GetQueueAttributesResult;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.PosixParser;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.map.ObjectMapper;
+
 
 /**
  * A command line client to Amazon Glacier based on AWS examples.
@@ -71,24 +70,39 @@ import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
  * @author Carlos Sanchez <a href="mailto:carlos@apache.org">
  */
 public class Glacier {
-
     private static long sleepTime = 600;
+
     private AmazonGlacierClient client;
+
     private AmazonSQSClient sqsClient;
+
     private AmazonSNSClient snsClient;
 
     private AWSCredentials credentials;
+
     private String region;
 
     public Glacier(AWSCredentials credentials, String region) {
         this.credentials = credentials;
         this.region = region;
         client = new AmazonGlacierClient(credentials);
-        client.setEndpoint("https://glacier." + region + ".amazonaws.com/");
+        client.setEndpoint(("https://glacier." + region) + ".amazonaws.com/");
     }
 
     public static void main(String[] args) throws Exception {
+<<<<<<< LEFT
+        String userHome = System.getProperty("user.home");
+        File props = new File(userHome + "/AwsCredentials.properties");
+=======
+
+        Options options = commonOptions();
+        if (args.length < 2) {
+            printHelp(options);
+            return;
+        }
+
         File props = new File(System.getProperty("user.home") + "/AwsCredentials.properties");
+>>>>>>> RIGHT
         if (!props.exists()) {
             System.out.println("Missing " + props.getAbsolutePath());
             return;
@@ -104,13 +118,17 @@ public class Glacier {
         CommandLine cmd = parser.parse(options, args);
         List<String> arguments = Arrays.asList(cmd.getArgs());
 
+<<<<<<< LEFT
         GlacierCliCommand command = GlacierCliCommand.get(arguments.get(0));
         if (null == command) {
             printHelp(options);
             return;
         }
 
+        AWSCredentials credentials = new PropertiesCredentials(new File(userHome + "/AwsCredentials.properties"));
+=======
         AWSCredentials credentials = new PropertiesCredentials(props);
+>>>>>>> RIGHT
         Glacier glacier = new Glacier(credentials, cmd.getOptionValue("region", "us-east-1"));
 
         switch (command) {
@@ -353,6 +371,12 @@ public class Glacier {
     }
 
     class QueueConfig {
-        String sqsQueueURL, sqsQueueARN, snsTopicARN, snsSubscriptionARN;
+        String sqsQueueURL;
+
+        String sqsQueueARN;
+
+        String snsTopicARN;
+
+        String snsSubscriptionARN;
     }
 }
