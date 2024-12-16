@@ -17,16 +17,16 @@
  */
 package org.jgrapht.graph;
 
-import org.jgrapht.Graphs;
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.stream.Collectors;
-
+import org.jgrapht.Graphs;
+import org.junit.Test;
 import static org.jgrapht.graph.SerializationTestUtils.*;
+import static org.jgrapht.graph.SerializationTestUtils.serializeAndDeserialize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
 
 /**
  * SerializationTest tests serialization and deserialization of JGraphT objects.
@@ -38,7 +38,11 @@ public class SerializationTest
     /**
      * Tests serialization of DirectedMultigraph.
      */
+<<<<<<< LEFT
     @SuppressWarnings("unchecked") @Test public void testSerialization_DirectedMultigraph()
+=======
+    @SuppressWarnings("unchecked") @Test public void testDirectedMultigraph()
+>>>>>>> RIGHT
         throws Exception
     {
         DirectedMultigraph<String, DefaultEdge> graph = new DirectedMultigraph<>(DefaultEdge.class);
@@ -57,7 +61,11 @@ public class SerializationTest
     /**
      * Tests serialization of DirectedAcyclicGraph
      */
+<<<<<<< LEFT
     @SuppressWarnings("unchecked") @Test public void testSerialization_DirectedAcyclicGraph()
+=======
+    @SuppressWarnings("unchecked") @Test public void testDirectedAcyclicGraph()
+>>>>>>> RIGHT
         throws Exception
     {
         DirectedAcyclicGraph<String, DefaultEdge> graph1 =
@@ -77,6 +85,7 @@ public class SerializationTest
 
         assertEquals(graph1.toString(), graph2.toString());
     }
+<<<<<<< LEFT
 
     /**
      * Tests serialization of DirectedPseudograph
@@ -268,4 +277,6 @@ public class SerializationTest
         assertEquals(graph1.toString(), graph2.toString());
     }
 
+=======
+>>>>>>> RIGHT
 }
