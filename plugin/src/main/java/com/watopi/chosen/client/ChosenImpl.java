@@ -19,8 +19,8 @@
 package com.watopi.chosen.client;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.NodeList;
@@ -55,88 +55,116 @@ import com.watopi.chosen.client.event.ShowingDropDownEvent;
 import com.watopi.chosen.client.event.UpdatedEvent;
 import com.watopi.chosen.client.resources.ChozenCss;
 import com.watopi.chosen.client.resources.Resources;
-
 import static com.google.gwt.query.client.GQuery.$;
 import static com.google.gwt.query.client.GQuery.document;
 
+
 public class ChosenImpl {
-
     public static interface ChozenTemplate extends SafeHtmlTemplates {
-        public ChozenTemplate templates = GWT.create(ChozenTemplate.class);
+        public static final ChozenTemplate templates = GWT.create(ChosenImpl.ChozenTemplate.class);
 
-        @Template("<li class=\"{1}\" id=\"{0}\"><span>{2}</span><a href=\"javascript:void(0)\" class=\"{3}\" " +
-                "rel=\"{4}\"></a></li>")
-        SafeHtml choice(String id, String searchChoiceClass, String content,
-                String searchChoiceCloseClass, String rel);
+        @Template("<li class=\"{1}\" id=\"{0}\"><span>{2}</span><a href=\"javascript:void(0)\" class=\"{3}\" " + "rel=\"{4}\"></a></li>")
+        public abstract SafeHtml choice(String id, String searchChoiceClass, String content, String searchChoiceCloseClass, String rel);
 
         @Template("<div id=\"{0}\" class=\"{1}\"></div>")
-        SafeHtml container(String id, String cssClasses);
+        public abstract SafeHtml container(String id, String cssClasses);
 
-        @Template("<ul class=\"{0}\"><li class=\"{1}\"><input type=\"text\" value=\"{2}\" class=\"{3}\" " +
-                "autocomplete=\"off\" style=\"width:25px;\"/></li></ul><div class=\"{4}\" style=\"{6}\"><ul " +
-                "class=\"{5}\"></ul></div>")
-        SafeHtml contentMultiple(String chznChoicesClass, String chznSearchFieldClass,
-                String defaultText, String defaultClass, String chznDropClass, String chznResultClass,
-                SafeStyles horizontalOffset);
+        @Template("<ul class=\"{0}\"><li class=\"{1}\"><input type=\"text\" value=\"{2}\" class=\"{3}\" " + ("autocomplete=\"off\" style=\"width:25px;\"/></li></ul><div class=\"{4}\" style=\"{6}\"><ul " + "class=\"{5}\"></ul></div>"))
+        public abstract SafeHtml contentMultiple(String chznChoicesClass, String chznSearchFieldClass, String defaultText, String defaultClass, String chznDropClass, String chznResultClass, SafeStyles horizontalOffset);
 
-        @Template("<a href=\"javascript:void(0)\" class=\"{0} {1}\"><span>{2}</span><div><b></b></div></a><div " +
-                "class=\"{3}\" style=\"{6}\"><div class=\"{4}\"><input type=\"text\" autocomplete=\"off\" /></div><ul" +
-                " class=\"{5}\"></ul></div>")
-        SafeHtml contentSingle(String chznSingleClass, String chznDefaultClass, String defaultText,
-                String dropClass, String chznSearchClass, String chznResultClass, SafeStyles horizontalOffset);
+        @Template("<a href=\"javascript:void(0)\" class=\"{0} {1}\"><span>{2}</span><div><b></b></div></a><div " + ("class=\"{3}\" style=\"{6}\"><div class=\"{4}\"><input type=\"text\" autocomplete=\"off\" /></div><ul" + " class=\"{5}\"></ul></div>"))
+        public abstract SafeHtml contentSingle(String chznSingleClass, String chznDefaultClass, String defaultText, String dropClass, String chznSearchClass, String chznResultClass, SafeStyles horizontalOffset);
 
         @Template("<li id=\"{0}\" class=\"{1}\">{2}</li>")
-        SafeHtml group(String id, String groupResultClass, String content);
+        public abstract SafeHtml group(String id, String groupResultClass, String content);
 
         @Template("<li class=\"{0}\">{1}\"<span></span>\"</li>")
-        SafeHtml noResults(String noResultsClass, String content);
+        public abstract SafeHtml noResults(String noResultsClass, String content);
 
         @Template("<li id=\"{0}\" class=\"{1}\" style=\"{2}\">{3}</li>")
-        SafeHtml option(String id, String groupResultClass, SafeStyles style, String content);
-
+        public abstract SafeHtml option(String id, String groupResultClass, SafeStyles style, String content);
     }
 
     private static final RegExp containerIdRegExp = RegExp.compile("[^\\w]", "g");
+
     private static final int HORIZONTAL_OFFSET = -9000;
+
     private static final String DEFAULT_CONTAINER_ID = "chozen_container__";
+
     private static final RegExp regExpChars = RegExp.compile("[-[\\]{}()*+?.,\\\\^$|#\\s]", "g");
+
     private static final String TABINDEX_PROPERTY = "tabindex";
+
     private static boolean cssInjected = false;
+
     private static int idCounter = 0;
 
     private GQuery $selectElement;
+
     private Function activateAction;
+
     private boolean activeField = false;
+
     private boolean allowSingleDeselect = false;
+
     private int backstrokeLength;
+
     private int choices;
+
     private Function clickTestAction;
+
     private GQuery container;
+
     private String containerId;
+
     private ChozenCss css;
+
     private String currentValue;
+
     private String defaultText;
+
     private GQuery dropdown;
+
     private EventBus eventBus;
+
     private int fWidth;
+
     private boolean isDisabled;
+
     private boolean isMultiple;
+
     private boolean isRTL;
+
     private boolean mouseOnContainer = false;
+
     private ChosenOptions options;
+
     private GQuery pendingBackstroke;
+
     private boolean pendingDestroyClick;
+
     private GQuery resultHighlight;
+
     private GQuery resultSingleSelected;
+
     private String resultsNoneFound;
+
     private boolean resultsShowing = false;
+
     private GQuery searchChoices;
+
     private GQuery searchContainer;
+
     private GQuery searchField;
+
     private GQuery searchResults;
+
     private SelectElement selectElement;
+
     private JsObjectArray<SelectItem> selectItems;
+
     private GQuery selectedItem;
+
     private HandlerRegistration updateEventHandlerRegistration;
 
     public GQuery getContainer() {
@@ -205,7 +233,6 @@ public class ChosenImpl {
         if (!isMultiple) {
             resultsResetCleanup();
         }
-
         setDefaultText();
         resultClearHighlight();
         resultSingleSelected = null;
@@ -773,8 +800,7 @@ public class ChosenImpl {
     }
 
     private void resultDeactivate(GQuery query) {
-        query.removeClass(css.activeResult(),  css.foundResult());
-
+        query.removeClass(css.activeResult(), css.foundResult());
     }
 
     private void resultDeselect(int index) {
@@ -1305,44 +1331,35 @@ public class ChosenImpl {
     }
 
     private void winnowResults() {
-
         noResultClear();
-
         int results = 0;
-
-        String searchText = defaultText.equals(searchField.val()) ? "" : searchField.val().trim();
+        String searchText = (defaultText.equals(searchField.val())) ? "" : searchField.val().trim();
         searchText = SafeHtmlUtils.htmlEscape(searchText);
-
-        String regexAnchor = options.isSearchContains() ? "" : "^";
+        String regexAnchor = (options.isSearchContains()) ? "" : "^";
         // escape reg exp special chars
         String escapedSearchText = regExpChars.replace(searchText, "\\$&");
         String test2 = "test";
         test2.substring(1);
         RegExp regex = RegExp.compile(regexAnchor + escapedSearchText, "i");
-        RegExp zregex = RegExp.compile("(" + escapedSearchText + ")", "i");
-
+        RegExp zregex = RegExp.compile(("(" + escapedSearchText) + ")", "i");
         for (int i = 0; i < selectItems.length(); i++) {
             SelectItem item = selectItems.get(i);
-
             if (item.isDisabled() || item.isEmpty()) {
                 continue;
             }
-
             if (item.isGroup()) {
                 $('#' + item.getDomId()).css("display", "none");
             } else {
-                OptionItem option = (OptionItem) item;
-
+                OptionItem option = ((OptionItem) (item));
                 if (!(isMultiple && option.isSelected())) {
                     boolean found = false;
                     String resultId = option.getDomId();
                     GQuery result = $("#" + resultId);
                     String optionContent = option.getHtml();
-
                     if (regex.test(optionContent)) {
                         found = true;
                         results++;
-                    } else if (optionContent.indexOf(" ") >= 0 || optionContent.indexOf("[") == 0) {
+                    } else if ((optionContent.indexOf(" ") >= 0) || (optionContent.indexOf("[") == 0)) {
                         String[] parts = optionContent.replaceAll("\\[|\\]", "").split(" ");
                         for (String part : parts) {
                             if (regex.test(part)) {
@@ -1351,42 +1368,32 @@ public class ChosenImpl {
                             }
                         }
                     }
-
                     if (found) {
-                        String text;
-                        if (searchText.length() > 0) {
-                            if (options.isHighlightSearchTerm()) {
+                        if (options.isHighlightSearchTerm()) {
+                            String text;
+                            if (searchText.length() > 0) {
+                                result.addClass(css.foundResult());
                                 text = zregex.replace(optionContent, "<em>$1</em>");
                             } else {
+                                result.removeClass(css.foundResult());
                                 text = optionContent;
                             }
-                            result.addClass(css.foundResult());
-                        } else {
-                            text = optionContent;
-                            result.removeClass(css.foundResult());
+                            result.html(text);
                         }
-
-                        result.html(text);
                         resultActivate(result);
-
-                        if (option.getGroupArrayIndex() != -1) {
-                            $("#" + selectItems.get(option.getGroupArrayIndex()).getDomId()).css("display",
-                                    "list-item");
+                        if (option.getGroupArrayIndex() != (-1)) {
+                            $("#" + selectItems.get(option.getGroupArrayIndex()).getDomId()).css("display", "list-item");
                         }
                     } else {
-                        if (resultHighlight != null && resultId.equals(resultHighlight.attr("id"))) {
+                        if ((resultHighlight != null) && resultId.equals(resultHighlight.attr("id"))) {
                             resultClearHighlight();
                         }
                         resultDeactivate(result);
                     }
-
                 }
-
             }
-
         }
-
-        if (results < 1 && searchText.length() > 0) {
+        if ((results < 1) && (searchText.length() > 0)) {
             noResults(searchText);
         } else {
             winnowResultsSetHighlight();
@@ -1396,44 +1403,34 @@ public class ChosenImpl {
     private void winnowResultsClear() {
         searchField.val("");
         GQuery lis = searchResults.find("li");
-
         for (Element li : lis.elements()) {
             GQuery $li = $(li);
             if ($li.hasClass(css.groupResult())) {
                 $li.css("display", "");
-            } else if (!isMultiple || !$li.hasClass(css.resultSelected())) {
+            } else if ((!isMultiple) || (!$li.hasClass(css.resultSelected()))) {
                 resultActivate($li);
             }
             $li.removeClass(css.foundResult());
         }
-
     }
 
     private void winnowResultsSetHighlight() {
         if (resultHighlight == null) {
-            GQuery selectedResults =
-                    !isMultiple ? searchResults.find("." + css.resultSelected() + "." + css.activeResult())
-                            : null;
-
-            GQuery doHigh =
-                    selectedResults != null && selectedResults.length() > 0 ? selectedResults.first()
-                            : getFirstActive();
-
+            GQuery selectedResults = (!isMultiple) ? searchResults.find((("." + css.resultSelected()) + ".") + css.activeResult()) : null;
+            GQuery doHigh = ((selectedResults != null) && (selectedResults.length() > 0)) ? selectedResults.first() : getFirstActive();
             if (doHigh != null) {
                 resultDoHighlight(doHigh);
             }
         }
-
     }
 
     private GQuery getFirstActive() {
         for (Element element : searchResults.elements()) {
             GQuery gq = $(element);
-            if(gq.hasClass(css.activeResult())) {
+            if (gq.hasClass(css.activeResult())) {
                 return gq;
             }
         }
         return $();
     }
-
 }

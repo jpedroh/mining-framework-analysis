@@ -38,27 +38,26 @@ import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.google.web.bindery.event.shared.SimpleEventBus;
 import com.watopi.chosen.client.ChosenImpl;
 import com.watopi.chosen.client.ChosenOptions;
-import com.watopi.chosen.client.event.ChosenChangeEvent;
 import com.watopi.chosen.client.event.ChosenChangeEvent.ChosenChangeHandler;
+import com.watopi.chosen.client.event.ChosenChangeEvent;
 import com.watopi.chosen.client.event.HasAllChosenHandlers;
-import com.watopi.chosen.client.event.HidingDropDownEvent;
 import com.watopi.chosen.client.event.HidingDropDownEvent.HidingDropDownHandler;
-import com.watopi.chosen.client.event.MaxSelectedEvent;
+import com.watopi.chosen.client.event.HidingDropDownEvent;
 import com.watopi.chosen.client.event.MaxSelectedEvent.MaxSelectedHandler;
-import com.watopi.chosen.client.event.ReadyEvent;
+import com.watopi.chosen.client.event.MaxSelectedEvent;
 import com.watopi.chosen.client.event.ReadyEvent.ReadyHandler;
-import com.watopi.chosen.client.event.ShowingDropDownEvent;
+import com.watopi.chosen.client.event.ReadyEvent;
 import com.watopi.chosen.client.event.ShowingDropDownEvent.ShowingDropDownHandler;
-import com.watopi.chosen.client.event.UpdatedEvent;
+import com.watopi.chosen.client.event.ShowingDropDownEvent;
 import com.watopi.chosen.client.event.UpdatedEvent.UpdatedHandler;
+import com.watopi.chosen.client.event.UpdatedEvent;
 import com.watopi.chosen.client.resources.Resources;
-
 import static com.google.gwt.query.client.GQuery.$;
 import static com.watopi.chosen.client.Chosen.CHOSEN_DATA_KEY;
 import static com.watopi.chosen.client.Chosen.Chosen;
 
-public class  ChosenListBox extends ListBox implements HasAllChosenHandlers {
 
+public class ChosenListBox extends ListBox implements HasAllChosenHandlers {
     /**
      * Indicates of the ChosenListBox is supported by the current browser. If
      * not (IE6/7), we fall back on normal select element.
@@ -94,7 +93,9 @@ public class  ChosenListBox extends ListBox implements HasAllChosenHandlers {
     private static String OPTGROUP_TAG = "optgroup";
 
     private EventBus chznHandlerManager;
+
     private ChosenOptions options;
+
     private boolean visible = true;
 
     /**
@@ -116,7 +117,8 @@ public class  ChosenListBox extends ListBox implements HasAllChosenHandlers {
      * selections is to use this constructor rather than
      * {@link #setMultipleSelect(boolean)}.
      *
-     * @param isMultipleSelect specifies if multiple selection is enabled
+     * @param isMultipleSelect
+     * 		specifies if multiple selection is enabled
      */
     public ChosenListBox(boolean isMultipleSelect) {
         this(isMultipleSelect, new ChosenOptions());
@@ -188,7 +190,7 @@ public class  ChosenListBox extends ListBox implements HasAllChosenHandlers {
         return ensureChosenHandlers().addHandler(HidingDropDownEvent.getType(),
                 handler);
     }
-    
+
     /**
      * Appends an item to the end of the list, adding the supplied class name to its class attribute. Equivalent to
      * calling {@code addStyledItem(label, value, className, 0)}.
@@ -232,12 +234,12 @@ public class  ChosenListBox extends ListBox implements HasAllChosenHandlers {
         OptionElement option = Document.get().createOptionElement();
         option.setValue(value);
         option.setText(label);
-        if (!(className == null || className.trim().isEmpty())) {
+        if (!((className == null) || className.trim().isEmpty())) {
             option.addClassName(className);
         }
         if (indentLevel > 0) {
             int leftPadding = options.getResources().css().indent() * indentLevel;
-            option.setAttribute("style", "padding-left: " + leftPadding + "px;");
+            option.setAttribute("style", ("padding-left: " + leftPadding) + "px;");
         }
         $selectElem.append(option);
     }
@@ -307,7 +309,7 @@ public class  ChosenListBox extends ListBox implements HasAllChosenHandlers {
 
     public void clear(boolean update) {
         $(getElement()).html("");
-        if (update){
+        if (update) {
             update();
         }
     }
@@ -320,13 +322,11 @@ public class  ChosenListBox extends ListBox implements HasAllChosenHandlers {
     }
 
     public void forceRedraw() {
-        $(getElement()).as(Chosen).destroy()
-                .chosen(options, ensureChosenHandlers());
+        $(getElement()).as(Chosen).destroy().chosen(options, ensureChosenHandlers());
     }
 
     public GQuery getChosenElement() {
-        ChosenImpl impl = $(getElement()).data(CHOSEN_DATA_KEY,
-                ChosenImpl.class);
+        ChosenImpl impl = $(getElement()).data(CHOSEN_DATA_KEY, ChosenImpl.class);
         if (impl != null) {
             return impl.getContainer();
         }
@@ -414,14 +414,12 @@ public class  ChosenListBox extends ListBox implements HasAllChosenHandlers {
      */
     public void insertGroup(String label, String id, int index) {
         GQuery optGroup = $("<optgroup></optgroup>").attr("label", label);
-        if (id != null){
+        if (id != null) {
             optGroup.attr("id", id);
         }
         GQuery select = $(getElement());
-
         int itemCount = SelectElement.as(getElement()).getLength();
-
-        if (index < 0 || index > itemCount) {
+        if ((index < 0) || (index > itemCount)) {
             select.append(optGroup);
         } else {
             GQuery before = select.children().eq(index);
@@ -438,38 +436,29 @@ public class  ChosenListBox extends ListBox implements HasAllChosenHandlers {
      * @param itemIndex  the index inside the optgroup at which to insert the item
      * @param groupIndex the index of the optGroup where the item will be inserted
      */
-    public void insertItemToGroup(String item, Direction dir, String value,
-            int groupIndex, int itemIndex) {
+    public void insertItemToGroup(String item, Direction dir, String value, int groupIndex, int itemIndex) {
         GQuery optgroupList = $(OPTGROUP_TAG, getElement());
-
         int groupCount = optgroupList.size();
-
         if (groupCount == 0) {
             // simply insert the item to the listbox
             insertItem(item, dir, value, itemIndex);
             return;
         }
-
-        if (groupIndex < 0 || groupIndex > groupCount - 1) {
+        if ((groupIndex < 0) || (groupIndex > (groupCount - 1))) {
             groupIndex = groupCount - 1;
         }
-
         GQuery optgroup = optgroupList.eq(groupIndex);
-
         OptionElement option = Document.get().createOptionElement();
         setOptionText(option, item, dir);
         option.setValue(value);
-
         Element optGroupElement = optgroup.get(0);
         int itemCount = optGroupElement.getChildCount();
-
-        if (itemIndex < 0 || itemIndex > itemCount - 1) {
+        if ((itemIndex < 0) || (itemIndex > (itemCount - 1))) {
             optgroup.append(option);
         } else {
             GQuery before = $(optGroupElement.getChild(itemIndex));
             before.before(option);
         }
-
     }
 
     /**
@@ -516,7 +505,7 @@ public class  ChosenListBox extends ListBox implements HasAllChosenHandlers {
         return options.isSingleBackstrokeDelete();
     }
 
-    public void removeGroup(int index){
+    public void removeGroup(int index) {
         $(OPTGROUP_TAG, getElement()).eq(index).remove();
         update();
     }
@@ -526,8 +515,8 @@ public class  ChosenListBox extends ListBox implements HasAllChosenHandlers {
      * To set an id to an optgroup, use {@link #insertGroup(String, String, int)} or {@link #addGroup(String, String)}
      * @param id
      */
-    public void removeGroupById(String id){
-        $("#"+id, getElement()).remove();
+    public void removeGroupById(String id) {
+        $("#" + id, getElement()).remove();
         update();
     }
 
@@ -535,8 +524,8 @@ public class  ChosenListBox extends ListBox implements HasAllChosenHandlers {
      * Remove all optgroup (and the children options) with a label matching <code>label</code> argument
      * @param label
      */
-    public void removeGroupByLabel(String label){
-        $(OPTGROUP_TAG + "[label='" + label + "']", getElement()).remove();
+    public void removeGroupByLabel(String label) {
+        $(((OPTGROUP_TAG + "[label='") + label) + "']", getElement()).remove();
         update();
     }
 
@@ -601,9 +590,8 @@ public class  ChosenListBox extends ListBox implements HasAllChosenHandlers {
      * @param values
      */
     public void setSelectedValue(String... values) {
-        for (String value : values){
-            Element element = $("option[value='" + value + "']", this).get(0);
-
+        for (String value : values) {
+            Element element = $(("option[value='" + value) + "']", this).get(0);
             if (element != null) {
                 OptionElement.as(element).setSelected(true);
             }
@@ -671,5 +659,4 @@ public class  ChosenListBox extends ListBox implements HasAllChosenHandlers {
 
         return focusableElement;
     }
-
 }
