@@ -103,93 +103,114 @@ import ru.leymooo.botfilter.BotFilterThread;
 import ru.leymooo.botfilter.config.Settings;
 import ru.leymooo.botfilter.utils.FakeOnlineUtils;
 
+
 /**
  * Main BungeeCord proxy class.
  */
-public class BungeeCord extends ProxyServer
-{
-
+public class BungeeCord extends ProxyServer {
     /**
      * Current operation state.
      */
     public volatile boolean isRunning;
+
     /**
      * Configuration.
      */
     @Getter
     public final Configuration config = new Configuration();
+
     /**
      * Localization bundle.
      */
     private ResourceBundle baseBundle;
+
     private ResourceBundle customBundle;
 
     public EventLoopGroup eventLoops;
-    public EventLoopGroup bossEventLoopGroup, workerEventLoopGroup, queryEventLoopGroup; //BotFilter
+
+    public EventLoopGroup bossEventLoopGroup;
+
+    public EventLoopGroup workerEventLoopGroup;
+
+    // BotFilter
+    public EventLoopGroup queryEventLoopGroup;
+
     /**
      * locations.yml save thread.
      */
     private final Timer saveThread = new Timer( "Reconnect Saver" );
+
     private final Timer metricsThread = new Timer( "Metrics Thread" );
+
     /**
      * Server socket listener.
      */
     private final Collection<Channel> listeners = new HashSet<>();
+
     /**
      * Fully qualified connections.
      */
     private final Map<String, UserConnection> connections = new CaseInsensitiveMap<>();
+
     // Used to help with packet rewriting
     private final Map<UUID, UserConnection> connectionsByOfflineUUID = new HashMap<>();
+
     private final Map<UUID, UserConnection> connectionsByUUID = new HashMap<>();
+
     private final ReadWriteLock connectionLock = new ReentrantReadWriteLock();
+
     /**
      * Lock to protect the shutdown process from being triggered simultaneously
      * from multiple sources.
      */
     private final ReentrantLock shutdownLock = new ReentrantLock();
+
     /**
      * Plugin manager.
      */
     @Getter
     public final PluginManager pluginManager;
+
     @Getter
     @Setter
     private ReconnectHandler reconnectHandler;
+
     @Getter
     @Setter
     private ConfigurationAdapter configurationAdapter = new YamlConfig();
+
     private final Collection<String> pluginChannels = new HashSet<>();
+
     @Getter
     private final File pluginsFolder = new File( "plugins" );
+
     @Getter
     private final BungeeScheduler scheduler = new BungeeScheduler();
+
     @Getter
     private final ConsoleReader consoleReader;
+
     @Getter
     private final Logger logger;
-    public final Gson gson = new GsonBuilder()
-            .registerTypeAdapter( BaseComponent.class, new ComponentSerializer() )
-            .registerTypeAdapter( TextComponent.class, new TextComponentSerializer() )
-            .registerTypeAdapter( TranslatableComponent.class, new TranslatableComponentSerializer() )
-            .registerTypeAdapter( KeybindComponent.class, new KeybindComponentSerializer() )
-            .registerTypeAdapter( ScoreComponent.class, new ScoreComponentSerializer() )
-            .registerTypeAdapter( SelectorComponent.class, new SelectorComponentSerializer() )
-            .registerTypeAdapter( ServerPing.PlayerInfo.class, new PlayerInfoSerializer() )
-            .registerTypeAdapter( Favicon.class, Favicon.getFaviconTypeAdapter() ).create();
+
+    public final Gson gson = new GsonBuilder().registerTypeAdapter(BaseComponent.class, new ComponentSerializer()).registerTypeAdapter(TextComponent.class, new TextComponentSerializer()).registerTypeAdapter(TranslatableComponent.class, new TranslatableComponentSerializer()).registerTypeAdapter(KeybindComponent.class, new KeybindComponentSerializer()).registerTypeAdapter(ScoreComponent.class, new ScoreComponentSerializer()).registerTypeAdapter(SelectorComponent.class, new SelectorComponentSerializer()).registerTypeAdapter(ServerPing.PlayerInfo.class, new PlayerInfoSerializer()).registerTypeAdapter(Favicon.class, Favicon.getFaviconTypeAdapter()).create();
+
     @Getter
     private ConnectionThrottle connectionThrottle;
+
     private final ModuleManager moduleManager = new ModuleManager();
 
+    //BotFilter
     @Getter
     private String customBungeeName; //BotFilter
 
+    //BotFilter
     @Getter
     @Setter
     private BotFilter botFilter; //BotFilter
 
     {
-        registerChannel( "BungeeCord" );
+        registerChannel("BungeeCord");
     }
 
     public static BungeeCord getInstance()
@@ -198,22 +219,16 @@ public class BungeeCord extends ProxyServer
     }
 
     @SuppressFBWarnings("DM_DEFAULT_ENCODING")
-    public BungeeCord() throws IOException
-    {
+    public BungeeCord() throws IOException {
         // Java uses ! to indicate a resource inside of a jar/zip/other container. Running Bungee from within a directory that has a ! will cause this to muck up.
-        Preconditions.checkState( new File( "." ).getAbsolutePath().indexOf( '!' ) == -1, "Cannot use BungeeCord in directory with ! in path." );
-
-        System.setSecurityManager( new BungeeSecurityManager() );
-
-        try
-        {
-            baseBundle = ResourceBundle.getBundle( "messages" );
-        } catch ( MissingResourceException ex )
-        {
-            baseBundle = ResourceBundle.getBundle( "messages", Locale.ENGLISH );
+        Preconditions.checkState(new File(".").getAbsolutePath().indexOf('!') == (-1), "Cannot use BungeeCord in directory with ! in path.");
+        System.setSecurityManager(new BungeeSecurityManager());
+        try {
+            baseBundle = ResourceBundle.getBundle("messages");
+        } catch (MissingResourceException ex) {
+            baseBundle = ResourceBundle.getBundle("messages", Locale.ENGLISH);
         }
         reloadMessages();
-
         // This is a workaround for quite possibly the weirdest bug I have ever encountered in my life!
         // When jansi attempts to extract its natives, by default it tries to extract a specific version,
         // using the loading class's implementation version. Normally this works completely fine,
@@ -222,41 +237,34 @@ public class BungeeCord extends ProxyServer
         // For example test-test works fine, but test-test-test does not! In order to avoid this all together but
         // still keep our versions the same as they were, we set the override property to the essentially garbage version
         // BungeeCord. This version is only used when extracting the libraries to their temp folder.
-        System.setProperty( "library.jansi.version", "BungeeCord" );
-
+        System.setProperty("library.jansi.version", "BungeeCord");
         AnsiConsole.systemInstall();
         consoleReader = new ConsoleReader();
-        consoleReader.setExpandEvents( false );
-        consoleReader.addCompleter( new ConsoleCommandCompleter( this ) );
+        consoleReader.setExpandEvents(false);
+        consoleReader.addCompleter(new ConsoleCommandCompleter(this));
+        logger = new BungeeLogger("BungeeCord", "proxy.log", consoleReader);
+        System.setErr(new PrintStream(new LoggingOutputStream(logger, Level.SEVERE), true));
+        System.setOut(new PrintStream(new LoggingOutputStream(logger, Level.INFO), true));
+        pluginManager = new PluginManager(this);
+        getPluginManager().registerCommand(null, new CommandReload());
+        getPluginManager().registerCommand(null, new CommandEnd());
+        getPluginManager().registerCommand(null, new CommandIP());
+        getPluginManager().registerCommand(null, new CommandBungee());
+        getPluginManager().registerCommand(null, new CommandPerms());
+        getPluginManager().registerCommand(null, new BotFilterCommand());// BotFilter
 
-        logger = new BungeeLogger( "BungeeCord", "proxy.log", consoleReader );
-        System.setErr( new PrintStream( new LoggingOutputStream( logger, Level.SEVERE ), true ) );
-        System.setOut( new PrintStream( new LoggingOutputStream( logger, Level.INFO ), true ) );
+        getPluginManager().registerCommand(null, new CommandReloadServers());// BotFilter
 
-        pluginManager = new PluginManager( this );
-        getPluginManager().registerCommand( null, new CommandReload() );
-        getPluginManager().registerCommand( null, new CommandEnd() );
-        getPluginManager().registerCommand( null, new CommandIP() );
-        getPluginManager().registerCommand( null, new CommandBungee() );
-        getPluginManager().registerCommand( null, new CommandPerms() );
-        getPluginManager().registerCommand( null, new BotFilterCommand() ); //BotFilter
-        getPluginManager().registerCommand( null, new CommandReloadServers() ); //BotFilter
-
-        if ( !Boolean.getBoolean( "net.md_5.bungee.native.disable" ) )
-        {
-            if ( EncryptionUtil.nativeFactory.load() )
-            {
-                logger.info( "Using mbed TLS based native cipher." );
-            } else
-            {
-                logger.info( "Using standard Java JCE cipher." );
+        if (!Boolean.getBoolean("net.md_5.bungee.native.disable")) {
+            if (EncryptionUtil.nativeFactory.load()) {
+                logger.info("Using mbed TLS based native cipher.");
+            } else {
+                logger.info("Using standard Java JCE cipher.");
             }
-            if ( CompressFactory.zlib.load() )
-            {
-                logger.info( "Using zlib based native compressor." );
-            } else
-            {
-                logger.info( "Using standard Java compressor." );
+            if (CompressFactory.zlib.load()) {
+                logger.info("Using zlib based native compressor.");
+            } else {
+                logger.info("Using standard Java compressor.");
             }
         }
     }
@@ -268,136 +276,103 @@ public class BungeeCord extends ProxyServer
      * @throws Exception any critical errors encountered
      */
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
-    public void start() throws Exception
-    {
-        System.setProperty( "io.netty.selectorAutoRebuildThreshold", "0" ); // Seems to cause Bungee to stop accepting connections
-        if ( System.getProperty( "io.netty.leakDetectionLevel" ) == null )
-        {
-            ResourceLeakDetector.setLevel( ResourceLeakDetector.Level.DISABLED ); // Eats performance
+    public void start() throws Exception {
+        System.setProperty("io.netty.selectorAutoRebuildThreshold", "0");// Seems to cause Bungee to stop accepting connections
+
+        if (System.getProperty("io.netty.leakDetectionLevel") == null) {
+            ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);// Eats performance
+
         }
+        String nameProperty = System.getProperty("bungeeName");// BotFilter
 
-        String nameProperty = System.getProperty( "bungeeName" ); // BotFilter
-        customBungeeName = ( nameProperty == null ? getName() : nameProperty ) + " " + getGameVersion(); // BotFilter
+        customBungeeName = ((nameProperty == null ? getName() : nameProperty) + " ") + getGameVersion();// BotFilter
 
-        this.botFilter = new BotFilter( true ); //Hook BotFilter into Bungee
-        new FakeOnlineUtils(); //Init fake online
-        BotFilterThread.startCleanUpThread(); //BotFilter
+        this.botFilter = new BotFilter(true);// Hook BotFilter into Bungee
 
-        bossEventLoopGroup = PipelineUtils.newEventLoopGroup( 0, new ThreadFactoryBuilder().setNameFormat( "Netty Boss IO Thread #%1$d" ).build() ); //BotFilter //WaterFall backport
-        eventLoops = workerEventLoopGroup = PipelineUtils.newEventLoopGroup( 0, new ThreadFactoryBuilder().setNameFormat( "Netty Worker IO Thread #%1$d" ).build() ); //BotFilter //WaterFall backport
-        queryEventLoopGroup = PipelineUtils.newEventLoopGroup( 1, new ThreadFactoryBuilder().setNameFormat( "Query Netty IO Thread #%1$d" ).build() ); //BotFilter
+        new FakeOnlineUtils();// Init fake online
 
-        File moduleDirectory = new File( "modules" );
-        moduleManager.load( this, moduleDirectory );
-        pluginManager.detectPlugins( moduleDirectory );
+        BotFilterThread.startCleanUpThread();// BotFilter
 
+        //BotFilter //WaterFall backport
+        bossEventLoopGroup = PipelineUtils.newEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty Boss IO Thread #%1$d").build());
+        //BotFilter //WaterFall backport
+        eventLoops = workerEventLoopGroup = PipelineUtils.newEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty Worker IO Thread #%1$d").build());
+        queryEventLoopGroup = PipelineUtils.newEventLoopGroup(1, new ThreadFactoryBuilder().setNameFormat("Query Netty IO Thread #%1$d").build());// BotFilter
+
+        File moduleDirectory = new File("modules");
+        moduleManager.load(this, moduleDirectory);
+        pluginManager.detectPlugins(moduleDirectory);
         pluginsFolder.mkdir();
-        pluginManager.detectPlugins( pluginsFolder );
-
+        pluginManager.detectPlugins(pluginsFolder);
         pluginManager.loadPlugins();
         config.load();
-
-        if ( config.isForgeSupport() )
-        {
-            registerChannel( ForgeConstants.FML_TAG );
-            registerChannel( ForgeConstants.FML_HANDSHAKE_TAG );
-            registerChannel( ForgeConstants.FORGE_REGISTER );
-
-            getLogger().warning( "MinecraftForge support is currently unmaintained and may have unresolved issues. Please use at your own risk." );
+        if (config.isForgeSupport()) {
+            registerChannel(ForgeConstants.FML_TAG);
+            registerChannel(ForgeConstants.FML_HANDSHAKE_TAG);
+            registerChannel(ForgeConstants.FORGE_REGISTER);
+            getLogger().warning("MinecraftForge support is currently unmaintained and may have unresolved issues. Please use at your own risk.");
         }
-
         isRunning = true;
-
         pluginManager.enablePlugins();
-
-        if ( config.getThrottle() > 0 )
-        {
-            connectionThrottle = new ConnectionThrottle( config.getThrottle(), config.getThrottleLimit() );
+        if (config.getThrottle() > 0) {
+            connectionThrottle = new ConnectionThrottle(config.getThrottle(), config.getThrottleLimit());
         }
         startListeners();
-
-        saveThread.scheduleAtFixedRate( new TimerTask()
-        {
+        saveThread.scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void run()
-            {
-                if ( getReconnectHandler() != null )
-                {
+            public void run() {
+                if (getReconnectHandler() != null) {
                     getReconnectHandler().save();
                 }
             }
-        }, 0, TimeUnit.MINUTES.toMillis( 5 ) );
-        metricsThread.scheduleAtFixedRate( new Metrics(), 0, TimeUnit.MINUTES.toMillis( Metrics.PING_INTERVAL ) );
-
-        Runtime.getRuntime().addShutdownHook( new Thread()
-        {
+        }, 0, TimeUnit.MINUTES.toMillis(5));
+        metricsThread.scheduleAtFixedRate(new Metrics(), 0, TimeUnit.MINUTES.toMillis(Metrics.PING_INTERVAL));
+        Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
-            public void run()
-            {
-                independentThreadStop( getTranslation( "restart" ), false );
+            public void run() {
+                independentThreadStop(getTranslation("restart"), false);
             }
-        } );
+        });
     }
 
-    public void startListeners()
-    {
-        for ( final ListenerInfo info : config.getListeners() )
-        {
-            if ( info.isProxyProtocol() )
-            {
-                getLogger().log( Level.WARNING, "Using PROXY protocol for listener {0}, please ensure this listener is adequately firewalled.", info.getSocketAddress() );
-
-                if ( connectionThrottle != null )
-                {
+    public void startListeners() {
+        for (final ListenerInfo info : config.getListeners()) {
+            if (info.isProxyProtocol()) {
+                getLogger().log(Level.WARNING, "Using PROXY protocol for listener {0}, please ensure this listener is adequately firewalled.", info.getSocketAddress());
+                if (connectionThrottle != null) {
                     connectionThrottle = null;
-                    getLogger().log( Level.WARNING, "Since PROXY protocol is in use, internal connection throttle has been disabled." );
+                    getLogger().log(Level.WARNING, "Since PROXY protocol is in use, internal connection throttle has been disabled.");
                 }
             }
-
-            ChannelFutureListener listener = new ChannelFutureListener()
-            {
+            ChannelFutureListener listener = new ChannelFutureListener() {
                 @Override
-                public void operationComplete(ChannelFuture future) throws Exception
-                {
-                    if ( future.isSuccess() )
-                    {
-                        listeners.add( future.channel() );
-                        getLogger().log( Level.INFO, "Listening on {0}", info.getSocketAddress() );
-                    } else
-                    {
-                        getLogger().log( Level.WARNING, "Could not bind to host " + info.getSocketAddress(), future.cause() );
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    if (future.isSuccess()) {
+                        listeners.add(future.channel());
+                        getLogger().log(Level.INFO, "Listening on {0}", info.getSocketAddress());
+                    } else {
+                        getLogger().log(Level.WARNING, "Could not bind to host " + info.getSocketAddress(), future.cause());
                     }
                 }
             };
-            new ServerBootstrap()
-                    .channel( PipelineUtils.getServerChannel( info.getSocketAddress() ) )
-                    .option( ChannelOption.SO_REUSEADDR, true ) // TODO: Move this elsewhere!
-                    .childAttr( PipelineUtils.LISTENER, info )
-                    .childHandler( PipelineUtils.SERVER_CHILD )
-                    .group( bossEventLoopGroup, workerEventLoopGroup ) //BotFilter //WaterFall backport
-                    .localAddress( info.getSocketAddress() )
-                    .bind().addListener( listener );
-
-            if ( info.isQueryEnabled() )
-            {
-                Preconditions.checkArgument( info.getSocketAddress() instanceof InetSocketAddress, "Can only create query listener on UDP address" );
-
-                ChannelFutureListener bindListener = new ChannelFutureListener()
-                {
+                    //BotFilter //WaterFall backport
+            // TODO: Move this elsewhere!
+            new ServerBootstrap().channel(PipelineUtils.getServerChannel(info.getSocketAddress())).option(ChannelOption.SO_REUSEADDR, true).childAttr(PipelineUtils.LISTENER, info).childHandler(PipelineUtils.SERVER_CHILD).group(bossEventLoopGroup, workerEventLoopGroup).localAddress(info.getSocketAddress()).bind().addListener(listener);
+            if (info.isQueryEnabled()) {
+                Preconditions.checkArgument(info.getSocketAddress() instanceof InetSocketAddress, "Can only create query listener on UDP address");
+                ChannelFutureListener bindListener = new ChannelFutureListener() {
                     @Override
-                    public void operationComplete(ChannelFuture future) throws Exception
-                    {
-                        if ( future.isSuccess() )
-                        {
-                            listeners.add( future.channel() );
-                            getLogger().log( Level.INFO, "Started query on {0}", future.channel().localAddress() );
-                        } else
-                        {
-                            getLogger().log( Level.WARNING, "Could not bind to host " + info.getSocketAddress(), future.cause() );
+                    public void operationComplete(ChannelFuture future) throws Exception {
+                        if (future.isSuccess()) {
+                            listeners.add(future.channel());
+                            getLogger().log(Level.INFO, "Started query on {0}", future.channel().localAddress());
+                        } else {
+                            getLogger().log(Level.WARNING, "Could not bind to host " + info.getSocketAddress(), future.cause());
                         }
                     }
                 };
-                new RemoteQuery( this, info ).start( PipelineUtils.getDatagramChannel(), new InetSocketAddress( info.getHost().getAddress(), info.getQueryPort() ), queryEventLoopGroup, bindListener ); //BotFilter
+                //BotFilter
+                new RemoteQuery(this, info).start(PipelineUtils.getDatagramChannel(), new InetSocketAddress(info.getHost().getAddress(), info.getQueryPort()), queryEventLoopGroup, bindListener);
             }
         }
     }
@@ -425,10 +400,8 @@ public class BungeeCord extends ProxyServer
     }
 
     @Override
-    public void stop(final String reason)
-    {
-        new Thread( "Shutdown Thread" )
-        {
+    public void stop(final String reason) {
+        new Thread("Shutdown Thread") {
             @Override
             public void run()
             {
@@ -440,99 +413,82 @@ public class BungeeCord extends ProxyServer
     // This must be run on a separate thread to avoid deadlock!
     @SuppressFBWarnings("DM_EXIT")
     @SuppressWarnings("TooBroadCatch")
-    private void independentThreadStop(final String reason, boolean callSystemExit)
-    {
+    private void independentThreadStop(final String reason, boolean callSystemExit) {
         // Acquire the shutdown lock
         // This needs to actually block here, otherwise running 'end' and then ctrl+c will cause the thread to terminate prematurely
         shutdownLock.lock();
-
         // Acquired the shutdown lock
-        if ( !isRunning )
-        {
+        if (!isRunning) {
             // Server is already shutting down - nothing to do
             shutdownLock.unlock();
             return;
         }
         isRunning = false;
-
         stopListeners();
-        getLogger().info( "Closing pending connections" );
-
+        getLogger().info("Closing pending connections");
         connectionLock.readLock().lock();
-        try
-        {
-            getLogger().log( Level.INFO, "Disconnecting {0} connections", connections.size() );
-            for ( UserConnection user : connections.values() )
-            {
-                user.disconnect( reason );
+        try {
+            getLogger().log(Level.INFO, "Disconnecting {0} connections", connections.size());
+            for (UserConnection user : connections.values()) {
+                user.disconnect(reason);
             }
-        } finally
-        {
+        } finally {
             connectionLock.readLock().unlock();
         }
-
-        try
-        {
-            Thread.sleep( 500 );
-        } catch ( InterruptedException ex )
-        {
+        try {
+            Thread.sleep(500);
+        } catch (java.lang.InterruptedException ex) {
         }
-
-        if ( reconnectHandler != null )
-        {
-            getLogger().info( "Saving reconnect locations" );
+        if (reconnectHandler != null) {
+            getLogger().info("Saving reconnect locations");
             reconnectHandler.save();
             reconnectHandler.close();
         }
         saveThread.cancel();
         metricsThread.cancel();
-
-        getLogger().info( "Disabling plugins" );
-        for ( Plugin plugin : Lists.reverse( new ArrayList<>( pluginManager.getPlugins() ) ) )
-        {
-            try
-            {
+        getLogger().info("Disabling plugins");
+        for (Plugin plugin : Lists.reverse(new ArrayList<>(pluginManager.getPlugins()))) {
+            try {
                 plugin.onDisable();
-                for ( Handler handler : plugin.getLogger().getHandlers() )
-                {
+                for (Handler handler : plugin.getLogger().getHandlers()) {
                     handler.close();
                 }
-            } catch ( Throwable t )
-            {
-                getLogger().log( Level.SEVERE, "Exception disabling plugin " + plugin.getDescription().getName(), t );
+            } catch (java.lang.Throwable t) {
+                getLogger().log(Level.SEVERE, "Exception disabling plugin " + plugin.getDescription().getName(), t);
             }
-            getScheduler().cancel( plugin );
+            getScheduler().cancel(plugin);
             plugin.getExecutorService().shutdownNow();
         }
+        getLogger().info("Closing IO threads");
+                //BotFilter //WaterFall backport
+        bossEventLoopGroup.shutdownGracefully();
+        workerEventLoopGroup.shutdownGracefully();// BotFilter //WaterFall backport
 
-        getLogger().info( "Closing IO threads" );
-        bossEventLoopGroup.shutdownGracefully(); //BotFilter //WaterFall backport
-        workerEventLoopGroup.shutdownGracefully(); //BotFilter //WaterFall backport
-        queryEventLoopGroup.shutdownGracefully(); //BotFilter
-        while ( true ) //BotFilter //WaterFall backport {
-            try
-            {
-                bossEventLoopGroup.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS ); //BotFilter //WaterFall backport
-                workerEventLoopGroup.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS ); //BotFilter //WaterFall backport
-                queryEventLoopGroup.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS ); //BotFilter
+        queryEventLoopGroup.shutdownGracefully();// BotFilter
+
+                //BotFilter //WaterFall backport
+        while (true) {
+            try {
+                        //BotFilter //WaterFall backport
+                bossEventLoopGroup.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+                workerEventLoopGroup.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);// BotFilter //WaterFall backport
+
+                queryEventLoopGroup.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);// BotFilter
+
                 break;
-            } catch ( InterruptedException ignored )
-            {
+            } catch (java.lang.InterruptedException ignored) {
             }
-        getLogger().info( "Thank you and goodbye" );
-        // Need to close loggers after last message!
-        for ( Handler handler : getLogger().getHandlers() )
-        {
+        } 
+        getLogger().info("Thank you and goodbye");
+                // Need to close loggers after last message!
+        for (Handler handler : getLogger().getHandlers()) {
             handler.close();
         }
-
         // Unlock the thread before optionally calling system exit, which might invoke this function again.
         // If that happens, the system will obtain the lock, and then see that isRunning == false and return without doing anything.
         shutdownLock.unlock();
-
-        if ( callSystemExit )
-        {
-            System.exit( 0 );
+        if (callSystemExit) {
+            System.exit(0);
         }
     }
 
@@ -557,9 +513,9 @@ public class BungeeCord extends ProxyServer
     }
 
     @Override
-    public String getName()
-    {
-        return "BotFilter"; //BotFilter
+    public String getName() {
+        //BotFilter
+        return "BotFilter";
     }
 
     @Override
@@ -632,17 +588,14 @@ public class BungeeCord extends ProxyServer
 
         return online;
     }
-    //BotFilter end
 
+    //BotFilter end
     @Override
-    public ProxiedPlayer getPlayer(String name)
-    {
+    public ProxiedPlayer getPlayer(String name) {
         connectionLock.readLock().lock();
-        try
-        {
-            return connections.get( name );
-        } finally
-        {
+        try {
+            return connections.get(name);
+        } finally {
             connectionLock.readLock().unlock();
         }
     }
