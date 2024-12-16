@@ -15,27 +15,28 @@
  */
 package com.datastax.driver.core;
 
+import com.datastax.driver.core.exceptions.*;
+import com.google.common.util.concurrent.AbstractFuture;
+import com.google.common.util.concurrent.Uninterruptibles;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import com.google.common.util.concurrent.AbstractFuture;
-import com.google.common.util.concurrent.Uninterruptibles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.exceptions.*;
 
 /**
  * Internal implementation of ResultSetFuture.
  */
-class DefaultResultSetFuture extends AbstractFuture<ResultSet> implements ResultSetFuture, RequestHandler.Callback {
-
+class DefaultResultSetFuture extends AbstractFuture<ResultSet> implements ResultSetFuture , RequestHandler.Callback {
     private static final Logger logger = LoggerFactory.getLogger(ResultSetFuture.class);
 
     private final SessionManager session;
+
     private final ProtocolVersion protocolVersion;
+
     private final Message.Request request;
+
     private volatile RequestHandler handler;
 
     DefaultResultSetFuture(SessionManager session, ProtocolVersion protocolVersion, Message.Request request) {
@@ -58,94 +59,94 @@ class DefaultResultSetFuture extends AbstractFuture<ResultSet> implements Result
     public void onSet(Connection connection, Message.Response response, ExecutionInfo info, Statement statement, long latency) {
         try {
             switch (response.type) {
-                case RESULT:
-                    Responses.Result rm = (Responses.Result)response;
+                case RESULT :
+                    Responses.Result rm = ((Responses.Result) (response));
                     switch (rm.kind) {
-                        case SET_KEYSPACE:
+                        case SET_KEYSPACE :
                             // propagate the keyspace change to other connections
-                            session.poolsState.setKeyspace(((Responses.Result.SetKeyspace)rm).keyspace);
+                            session.poolsState.setKeyspace(((Responses.Result.SetKeyspace) (rm)).keyspace);
                             set(ArrayBackedResultSet.fromMessage(rm, session, protocolVersion, info, statement));
                             break;
-                        case SCHEMA_CHANGE:
-                            Responses.Result.SchemaChange scc = (Responses.Result.SchemaChange)rm;
+                        case SCHEMA_CHANGE :
+                            Responses.Result.SchemaChange scc = ((Responses.Result.SchemaChange) (rm));
                             ResultSet rs = ArrayBackedResultSet.fromMessage(rm, session, protocolVersion, info, statement);
                             switch (scc.change) {
-                                case CREATED:
+                                case CREATED :
                                     switch (scc.target) {
-                                        case KEYSPACE:
+                                        case KEYSPACE :
                                             session.cluster.manager.refreshSchemaAndSignal(connection, this, rs, scc.keyspace, null, null);
                                             break;
-                                        case TABLE:
+                                        case TABLE :
                                             session.cluster.manager.refreshSchemaAndSignal(connection, this, rs, scc.keyspace, scc.name, null);
                                             break;
-                                        case TYPE:
+                                        case TYPE :
                                             session.cluster.manager.refreshSchemaAndSignal(connection, this, rs, scc.keyspace, null, scc.name);
                                             break;
                                     }
                                     break;
-                                case DROPPED:
+                                case DROPPED :
                                     KeyspaceMetadata keyspace;
                                     switch (scc.target) {
-                                        case KEYSPACE:
+                                        case KEYSPACE :
                                             // If that the one keyspace we are logged in, reset to null (it shouldn't really happen but ...)
                                             // Note: Actually, Cassandra doesn't do that so we don't either as this could confuse prepared statements.
                                             // We'll add it back if CASSANDRA-5358 changes that behavior
-                                            //if (scc.keyspace.equals(session.poolsState.keyspace))
-                                            //    session.poolsState.setKeyspace(null);
+                                            // if (scc.keyspace.equals(session.poolsState.keyspace))
+                                            // session.poolsState.setKeyspace(null);
                                             session.cluster.manager.metadata.removeKeyspace(scc.keyspace);
                                             break;
-                                        case TABLE:
+                                        case TABLE :
                                             keyspace = session.cluster.manager.metadata.getKeyspaceInternal(scc.keyspace);
-                                            if (keyspace == null)
-                                                logger.warn("Received a DROPPED notification for table {}.{}, but this keyspace is unknown in our metadata",
-                                                    scc.keyspace, scc.name);
-                                            else
+                                            if (keyspace == null) {
+                                                logger.warn("Received a DROPPED notification for table {}.{}, but this keyspace is unknown in our metadata", scc.keyspace, scc.name);
+                                            } else {
                                                 keyspace.removeTable(scc.name);
+                                            }
                                             break;
-                                        case TYPE:
-                                            keyspace = session.cluster.manager.metadata.getKeyspaceInternal(scc.keyspace);
-                                            if (keyspace == null)
-                                                logger.warn("Received a DROPPED notification for UDT {}.{}, but this keyspace is unknown in our metadata",
-                                                    scc.keyspace, scc.name);
-                                            else
+                                        case TYPE :
+                                            keyspace = session.cluster.manager.metadata.getKeyspace(scc.keyspace);
+                                            if (keyspace == null) {
+                                                logger.warn("Received a DROPPED notification for UDT {}.{}, but this keyspace is unknown in our metadata", scc.keyspace, scc.name);
+                                            } else {
                                                 keyspace.removeUserType(scc.name);
+                                            }
                                             break;
                                     }
                                     this.setResult(rs);
                                     break;
-                                case UPDATED:
+                                case UPDATED :
                                     switch (scc.target) {
-                                        case KEYSPACE:
+                                        case KEYSPACE :
                                             session.cluster.manager.refreshSchemaAndSignal(connection, this, rs, scc.keyspace, null, null);
                                             break;
-                                        case TABLE:
+                                        case TABLE :
                                             session.cluster.manager.refreshSchemaAndSignal(connection, this, rs, scc.keyspace, scc.name, null);
                                             break;
-                                        case TYPE:
+                                        case TYPE :
                                             session.cluster.manager.refreshSchemaAndSignal(connection, this, rs, scc.keyspace, null, scc.name);
                                             break;
                                     }
                                     break;
-                                default:
+                                default :
                                     logger.info("Ignoring unknown schema change result");
                                     break;
                             }
                             break;
-                        default:
+                        default :
                             set(ArrayBackedResultSet.fromMessage(rm, session, protocolVersion, info, statement));
                             break;
                     }
                     break;
-                case ERROR:
-                    setException(((Responses.Error)response).asException(connection.address));
+                case ERROR :
+                    setException(((Responses.Error) (response)).asException(connection.address));
                     break;
-                default:
+                default :
                     // This mean we have probably have a bad node, so defunct the connection
                     connection.defunct(new ConnectionException(connection.address, String.format("Got unexpected %s response", response.type)));
                     setException(new DriverInternalError(String.format("Got unexpected %s response from %s", response.type, connection.address)));
                     break;
             }
-        } catch (RuntimeException e) {
+        } catch (java.lang.RuntimeException e) {
             // If we get a bug here, the client will not get it, so better forwarding the error
             setException(new DriverInternalError("Unexpected error while processing response from " + connection.address, e));
         }

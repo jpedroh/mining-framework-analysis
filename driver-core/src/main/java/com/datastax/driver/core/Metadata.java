@@ -15,33 +15,38 @@
  */
 package com.datastax.driver.core;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * Keeps metadata on the connected cluster, including known nodes and schema definitions.
  */
 public class Metadata {
-
     private static final Logger logger = LoggerFactory.getLogger(Metadata.class);
 
     private final Cluster.Manager cluster;
+
     volatile String clusterName;
+
     volatile String partitioner;
+
     private final ConcurrentMap<InetSocketAddress, Host> hosts = new ConcurrentHashMap<InetSocketAddress, Host>();
+
     private final ConcurrentMap<String, KeyspaceMetadata> keyspaces = new ConcurrentHashMap<String, KeyspaceMetadata>();
+
     volatile TokenMap tokenMap;
 
     private static final Pattern cqlId = Pattern.compile("\\w+");
+
     private static final Pattern lowercaseId = Pattern.compile("[a-z][a-z0-9_]*");
 
     Metadata(Cluster.Manager cluster) {
@@ -50,11 +55,9 @@ public class Metadata {
 
     // Synchronized to make it easy to detect dropped keyspaces
     synchronized void rebuildSchema(String keyspaceName, String tableName, String udtName, ResultSet ks, ResultSet udts, ResultSet cfs, ResultSet cols, VersionNumber cassandraVersion) {
-
         Map<String, List<Row>> cfDefs = new HashMap<String, List<Row>>();
         Map<String, List<Row>> udtDefs = new HashMap<String, List<Row>>();
         Map<String, Map<String, Map<String, ColumnMetadata.Raw>>> colsDefs = new HashMap<String, Map<String, Map<String, ColumnMetadata.Raw>>>();
-
         // Gather cf defs
         if (cfs != null) {
             for (Row row : cfs) {
@@ -67,7 +70,6 @@ public class Metadata {
                 l.add(row);
             }
         }
-
         // Gather udt defs
         if (udts != null) {
             for (Row row : udts) {
@@ -80,7 +82,6 @@ public class Metadata {
                 l.add(row);
             }
         }
-
         // Gather columns per Cf
         if (cols != null) {
             for (Row row : cols) {
@@ -100,34 +101,32 @@ public class Metadata {
                 l.put(c.name, c);
             }
         }
-
-        if (tableName == null && udtName == null) { // Refresh one or all keyspaces
+        if ((tableName == null) && (udtName == null)) {
+        // Refresh one or all keyspaces
             assert ks != null;
             Set<String> addedKs = new HashSet<String>();
             for (Row ksRow : ks) {
                 String ksName = ksRow.getString(KeyspaceMetadata.KS_NAME);
                 KeyspaceMetadata ksm = KeyspaceMetadata.build(ksRow, udtDefs.get(ksName));
-
                 if (cfDefs.containsKey(ksName)) {
                     buildTableMetadata(ksm, cfDefs.get(ksName), colsDefs.get(ksName), cassandraVersion);
                 }
                 addedKs.add(ksName);
                 keyspaces.put(ksName, ksm);
             }
-
             // If keyspace is null, it means we're rebuilding from scratch, so
             // remove anything that was not just added as it means it's a dropped keyspace
             if (keyspaceName == null) {
                 Iterator<String> iter = keyspaces.keySet().iterator();
                 while (iter.hasNext()) {
-                    if (!addedKs.contains(iter.next()))
+                    if (!addedKs.contains(iter.next())) {
                         iter.remove();
-                }
+                    }
+                } 
             }
         } else if (tableName != null) {
             assert keyspaceName != null;
             KeyspaceMetadata ksm = keyspaces.get(keyspaceName);
-
             // If we update a keyspace we don't know about, something went
             // wrong. Log an error an schedule a full schema rebuilt.
             if (ksm == null) {
@@ -135,21 +134,21 @@ public class Metadata {
                 cluster.submitSchemaRefresh(null, null, null);
                 return;
             }
-
-            if (cfDefs.containsKey(keyspaceName))
+            if (cfDefs.containsKey(keyspaceName)) {
                 buildTableMetadata(ksm, cfDefs.get(keyspaceName), colsDefs.get(keyspaceName), cassandraVersion);
-        } else { // udtName != null
+            }
+        } else {
+            // udtName != null
             assert keyspaceName != null;
             KeyspaceMetadata ksm = keyspaces.get(keyspaceName);
-
             if (ksm == null) {
                 logger.error(String.format("Asked to rebuild type %s.%s but I don't know keyspace %s", keyspaceName, udtName, keyspaceName));
                 cluster.submitSchemaRefresh(null, null, null);
                 return;
             }
-
-            if (udtDefs.containsKey(keyspaceName))
+            if (udtDefs.containsKey(keyspaceName)) {
                 ksm.addUserTypes(udtDefs.get(keyspaceName));
+            }
         }
     }
 
@@ -443,19 +442,19 @@ public class Metadata {
     }
 
     static class TokenMap {
-
         private final Token.Factory factory;
+
         private final Map<String, Map<Token, Set<Host>>> tokenToHosts;
+
         private final Map<String, Map<Host, Set<TokenRange>>> hostsToRanges;
+
         private final List<Token> ring;
+
         private final Set<TokenRange> tokenRanges;
+
         final Set<Host> hosts;
 
-        private TokenMap(Token.Factory factory,
-                         Map<Host, Set<Token>> primaryToTokens,
-                         Map<String, Map<Token, Set<Host>>> tokenToHosts,
-                         Map<String, Map<Host, Set<TokenRange>>> hostsToRanges,
-                         List<Token> ring, Set<TokenRange> tokenRanges, Set<Host> hosts) {
+        private TokenMap(Token.Factory factory, Map<Host, Set<Token>> primaryToTokens, Map<String, Map<Token, Set<Host>>> tokenToHosts, Map<String, Map<Host, Set<TokenRange>>> hostsToRanges, List<Token> ring, Set<TokenRange> tokenRanges, Set<Host> hosts) {
             this.factory = factory;
             this.tokenToHosts = tokenToHosts;
             this.hostsToRanges = hostsToRanges;
@@ -469,12 +468,10 @@ public class Metadata {
         }
 
         public static TokenMap build(Token.Factory factory, Map<Host, Collection<String>> allTokens, Collection<KeyspaceMetadata> keyspaces) {
-
             Set<Host> hosts = allTokens.keySet();
             Map<Token, Host> tokenToPrimary = new HashMap<Token, Host>();
             Map<Host, Set<Token>> primaryToTokens = new HashMap<Host, Set<Token>>();
             Set<Token> allSorted = new TreeSet<Token>();
-
             for (Map.Entry<Host, Collection<String>> entry : allTokens.entrySet()) {
                 Host host = entry.getKey();
                 for (String tokenStr : entry.getValue()) {
@@ -488,26 +485,19 @@ public class Metadata {
                             primaryToTokens.put(host, hostTokens);
                         }
                         hostTokens.add(t);
-                    } catch (IllegalArgumentException e) {
+                    } catch (java.lang.IllegalArgumentException e) {
                         // If we failed parsing that token, skip it
                     }
                 }
             }
-
             List<Token> ring = new ArrayList<Token>(allSorted);
             Set<TokenRange> tokenRanges = makeTokenRanges(ring, factory);
-
             Map<String, Map<Token, Set<Host>>> tokenToHosts = new HashMap<String, Map<Token, Set<Host>>>();
             Map<String, Map<Host, Set<TokenRange>>> hostsToRanges = new HashMap<String, Map<Host, Set<TokenRange>>>();
-            for (KeyspaceMetadata keyspace : keyspaces)
-            {
+            for (KeyspaceMetadata keyspace : keyspaces) {
                 ReplicationStrategy strategy = keyspace.replicationStrategy();
-                Map<Token, Set<Host>> ksTokens = (strategy == null)
-                    ? makeNonReplicatedMap(tokenToPrimary)
-                    : strategy.computeTokenToReplicaMap(tokenToPrimary, ring);
-
+                Map<Token, Set<Host>> ksTokens = (strategy == null) ? makeNonReplicatedMap(tokenToPrimary) : strategy.computeTokenToReplicaMap(tokenToPrimary, ring);
                 tokenToHosts.put(keyspace.getName(), ksTokens);
-
                 Map<Host, Set<TokenRange>> ksRanges = computeHostsToRangesMap(tokenRanges, ksTokens, hosts.size());
                 hostsToRanges.put(keyspace.getName(), ksRanges);
             }
@@ -515,31 +505,31 @@ public class Metadata {
         }
 
         private Set<Host> getReplicas(String keyspace, Token token) {
-
             Map<Token, Set<Host>> keyspaceHosts = tokenToHosts.get(keyspace);
-            if (keyspaceHosts == null)
+            if (keyspaceHosts == null) {
                 return Collections.emptySet();
-
+            }
             // If the token happens to be one of the "primary" tokens, get result directly
             Set<Host> hosts = keyspaceHosts.get(token);
-            if (hosts != null)
+            if (hosts != null) {
                 return hosts;
-
+            }
             // Otherwise, find closest "primary" token on the ring
             int i = Collections.binarySearch(ring, token);
             if (i < 0) {
-                i = -i - 1;
-                if (i >= ring.size())
+                i = (-i) - 1;
+                if (i >= ring.size()) {
                     i = 0;
+                }
             }
-
             return keyspaceHosts.get(ring.get(i));
         }
 
         private static Map<Token, Set<Host>> makeNonReplicatedMap(Map<Token, Host> input) {
             Map<Token, Set<Host>> output = new HashMap<Token, Set<Host>>(input.size());
-            for (Map.Entry<Token, Host> entry : input.entrySet())
+            for (Map.Entry<Token, Host> entry : input.entrySet()) {
                 output.put(entry.getKey(), ImmutableSet.of(entry.getValue()));
+            }
             return output;
         }
 
