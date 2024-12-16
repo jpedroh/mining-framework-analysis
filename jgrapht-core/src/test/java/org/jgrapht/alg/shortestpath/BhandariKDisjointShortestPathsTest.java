@@ -17,14 +17,13 @@
  */
 package org.jgrapht.alg.shortestpath;
 
-import static org.junit.Assert.*;
-
 import java.util.*;
-
 import org.jgrapht.*;
 import org.jgrapht.alg.interfaces.*;
 import org.jgrapht.graph.*;
 import org.junit.*;
+import static org.junit.Assert.*;
+
 
 /**
  * 
@@ -32,9 +31,7 @@ import org.junit.*;
  * 
  * @author Assaf Mizrachi
  */
-public class BhandariKDisjointShortestPathsTest extends KDisjointShortestPathsTestCase
-{
-
+public class BhandariKDisjointShortestPathsTest extends KDisjointShortestPathsTestCase {
     /**
      * Tests two joint paths from 1 to 4, negative edges exist in path.
      * 
@@ -97,8 +94,7 @@ public class BhandariKDisjointShortestPathsTest extends KDisjointShortestPathsTe
     }
 
     @Override
-    protected <V, E> KShortestPathAlgorithm<V, E> getKShortestPathAlgorithm(Graph<V, E> graph)
-    {
+    protected <V, E> KShortestPathAlgorithm<V, E> getKShortestPathAlgorithm(Graph<V, E> graph) {
         return new BhandariKDisjointShortestPaths<>(graph);
     }
 }

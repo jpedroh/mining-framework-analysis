@@ -18,8 +18,9 @@
 package org.jgrapht.alg.shortestpath;
 
 import java.util.*;
-
 import org.jgrapht.*;
+import org.jgrapht.alg.util.*;
+
 
 /**
  * An implementation of Bhandari algorithm for finding $K$ edge-<em>disjoint</em> shortest paths.
@@ -45,29 +46,28 @@ import org.jgrapht.*;
  * @author Assaf Mizrachi
  * @since February 12, 2018
  */
-public class BhandariKDisjointShortestPaths<V, E> extends BaseKDisjointShortestPathsAlgorithm<V, E>
-{
+public class BhandariKDisjointShortestPaths<V, E> extends BaseKDisjointShortestPathsAlgorithm<V, E> {
     /**
      * Creates a new instance of the algorithm.
      *
-     * @param graph graph on which shortest paths are searched.
-     *
-     * @throws IllegalArgumentException if the graph is null.
-     * @throws IllegalArgumentException if the graph is undirected.
-     * @throws IllegalArgumentException if the graph is not simple.
+     * @param graph
+     * 		graph on which shortest paths are searched.
+     * @throws IllegalArgumentException
+     * 		if nPaths is negative or 0.
+     * @throws IllegalArgumentException
+     * 		if the graph is null.
+     * @throws IllegalArgumentException
+     * 		if the graph is undirected.
      */
-    public BhandariKDisjointShortestPaths(Graph<V, E> graph)
-    {
+    public BhandariKDisjointShortestPaths(Graph<V, E> graph) {
         super(graph);
     }
 
     @Override
-    protected void prepare(List<E> previousPath)
-    {
-
-        V source, target;
+    protected void prepare(List<E> previousPath) {
+        V source;
+        V target;
         E reversedEdge;
-
         // replace previous path edges with reversed edges with negative weight
         for (E originalEdge : previousPath) {
             source = workingGraph.getEdgeSource(originalEdge);
@@ -81,9 +81,7 @@ public class BhandariKDisjointShortestPaths<V, E> extends BaseKDisjointShortestP
     }
 
     @Override
-    protected GraphPath<V, E> calculateShortestPath(V startVertex, V endVertex)
-    {
+    protected GraphPath<V, E> calculateShortestPath(V startVertex, V endVertex) {
         return new BellmanFordShortestPath<>(this.workingGraph).getPath(startVertex, endVertex);
     }
-    
 }
