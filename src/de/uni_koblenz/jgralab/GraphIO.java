@@ -32,9 +32,35 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab;
 
+import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
+import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
+import de.uni_koblenz.jgralab.impl.InternalGraph;
+import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
+import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
+import de.uni_koblenz.jgralab.schema.AggregationKind;
+import de.uni_koblenz.jgralab.schema.Attribute;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.Constraint;
+import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.EnumDomain;
+import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
+import de.uni_koblenz.jgralab.schema.MapDomain;
+import de.uni_koblenz.jgralab.schema.NamedElement;
+import de.uni_koblenz.jgralab.schema.Package;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
+import de.uni_koblenz.jgralab.schema.impl.BasicDomainImpl;
+import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
+import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
+import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -57,8 +83,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
@@ -67,33 +93,6 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.impl.InternalGraph;
-import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
-import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
-import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
-import de.uni_koblenz.jgralab.schema.AggregationKind;
-import de.uni_koblenz.jgralab.schema.Attribute;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.Constraint;
-import de.uni_koblenz.jgralab.schema.Domain;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.EnumDomain;
-import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.GraphElementClass;
-import de.uni_koblenz.jgralab.schema.MapDomain;
-import de.uni_koblenz.jgralab.schema.NamedElement;
-import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.RecordDomain;
-import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
-import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.exception.SchemaException;
-import de.uni_koblenz.jgralab.schema.impl.BasicDomainImpl;
-import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
-import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
-import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
 /**
  * class for loading and storing schema and graphs in tg format
@@ -105,20 +104,23 @@ public class GraphIO {
 	 * TG File Version this GraphIO recognizes.
 	 */
 	public static final int TGFILE_VERSION = 2;
+
 	public static final String NULL_LITERAL = "n";
+
 	public static final String TRUE_LITERAL = "t";
+
 	public static final String FALSE_LITERAL = "f";
+
 	public static final String TGRAPH_FILE_EXTENSION = ".tg";
+
 	public static final String TGRAPH_COMPRESSED_FILE_EXTENSION = ".tg.gz";
 
 	/**
 	 * A {@link FilenameFilter} that accepts TG files.
-	 * 
+	 *
 	 * @author ist@uni-koblenz.de
 	 */
-	public static class TGFilenameFilter extends
-			javax.swing.filechooser.FileFilter implements FilenameFilter {
-
+	public static class TGFilenameFilter extends javax.swing.filechooser.FileFilter implements FilenameFilter {
 		private static TGFilenameFilter instance;
 
 		private TGFilenameFilter() {
@@ -131,10 +133,9 @@ public class GraphIO {
 			return instance;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
+		/* (non-Javadoc)
+
+		@see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
 		 */
 		@Override
 		public boolean accept(File dir, String name) {
@@ -144,10 +145,9 @@ public class GraphIO {
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.io.FileFilter#accept(java.io.File)
+		/* (non-Javadoc)
+
+		@see java.io.FileFilter#accept(java.io.File)
 		 */
 		@Override
 		public boolean accept(File f) {
@@ -182,15 +182,23 @@ public class GraphIO {
 
 	private final Map<String, Method> createMethods;
 
+	// line number
 	private int line; // line number
 
+	// lookahead character
 	private int la; // lookahead character
 
+	// lookahead token
 	private String lookAhead; // lookahead token
 
+	// lookahead is UTF string
 	private boolean isUtfString; // lookahead is UTF string
 
+	// if true, a space is written in the next
 	private boolean writeSpace; // if true, a space is written in the next
+
+	// writeXXX()
+	// GraphClass name of the currently loaded graph
 	// writeXXX()
 
 	private String gcName; // GraphClass name of the currently loaded graph
@@ -201,8 +209,12 @@ public class GraphIO {
 
 	private int bufferSize;
 
-	private Vertex edgeIn[], edgeOut[];
+	private Vertex[] edgeIn;
+
+	private Vertex[] edgeOut;
+
 	private int[] firstIncidence;
+
 	private int[] nextIncidence;
 
 	private int edgeOffset;
@@ -245,7 +257,8 @@ public class GraphIO {
 
 	private final Object[] vertexDescTempObject = { 0 };
 
-	private final Object[] edgeDescTempObject = { 0, 0, 0 };
+	private final Object[] edgeDescTempObject = new java.lang.Object[]{ 0, 0, 0 };
+
 	private ByteArrayOutputStream BAOut;
 
 	// stringPool allows re-use string values, saves memory if
@@ -987,15 +1000,14 @@ public class GraphIO {
 		return schema;
 	}
 
-	public static Schema loadSchemaFromStream(InputStream in)
-			throws GraphIOException {
+	public static Schema loadSchemaFromStream(InputStream in) throws GraphIOException {
 		try {
 			GraphIO io = new GraphIO();
 			io.TGIn = in;
 			io.tgfile();
 			io.schema.finish();
 			return io.schema;
-		} catch (Exception e) {
+		} catch (java.lang.Exception e) {
 			throw new GraphIOException("Exception while loading schema", e);
 		}
 	}
@@ -2519,20 +2531,16 @@ public class GraphIO {
 		return result;
 	}
 
-	private GraphBaseImpl graph(ProgressFunction pf,
-			ImplementationType implementationType) throws GraphIOException {
+	private GraphBaseImpl graph(ProgressFunction pf, ImplementationType implementationType) throws GraphIOException {
 		currentPackageName = "";
 		match("Graph");
 		String graphId = matchUtfString();
 		long graphVersion = matchLong();
-
 		gcName = matchAndNext();
-		assert !gcName.contains(".") && isValidIdentifier(gcName) : "illegal characters in graph class '"
-				+ gcName + "'";
+		assert (!gcName.contains(".")) && isValidIdentifier(gcName) : ("illegal characters in graph class '" + gcName) + "'";
 		// check if classname is known in the schema
 		if (!schema.getGraphClass().getQualifiedName().equals(gcName)) {
-			throw new GraphIOException("Graph Class " + gcName
-					+ "does not exist in " + schema.getQualifiedName());
+			throw new GraphIOException((("Graph Class " + gcName) + "does not exist in ") + schema.getQualifiedName());
 		}
 		match("(");
 		int maxV = matchInteger();
@@ -2540,49 +2548,39 @@ public class GraphIO {
 		int vCount = matchInteger();
 		int eCount = matchInteger();
 		match(")");
-
 		// verify vCount <= maxV && eCount <= maxE
 		if (vCount > maxV) {
-			throw new GraphIOException("Number of vertices in graph (" + vCount
-					+ ") exceeds maximum number of vertices (" + maxV + ")");
+			throw new GraphIOException(((("Number of vertices in graph (" + vCount) + ") exceeds maximum number of vertices (") + maxV) + ")");
 		}
 		if (eCount > maxE) {
-			throw new GraphIOException("Number of edges in graph (" + eCount
-					+ ") exceeds maximum number of edges (" + maxE + ")");
+			throw new GraphIOException(((("Number of edges in graph (" + eCount) + ") exceeds maximum number of edges (") + maxE) + ")");
 		}
-
 		// adjust fields for incidences
 		edgeIn = new Vertex[maxE + 1];
 		edgeOut = new Vertex[maxE + 1];
 		firstIncidence = new int[maxV + 1];
-		nextIncidence = new int[2 * maxE + 1];
+		nextIncidence = new int[(2 * maxE) + 1];
 		edgeOffset = maxE;
-
-		long graphElements = 0, currentCount = 0, interval = 1;
+		long graphElements = 0;
+		long currentCount = 0;
+		long interval = 1;
 		if (pf != null) {
 			pf.init(vCount + eCount);
 			interval = pf.getUpdateInterval();
 		}
 		GraphBaseImpl graph = null;
 		try {
-			if(implementationType != ImplementationType.GENERIC) {
-				graph = (GraphBaseImpl) schema.getGraphCreateMethod(
-						implementationType).invoke(null,
-						new Object[] { graphId, maxV, maxE });
+			if (implementationType != ImplementationType.GENERIC) {
+				graph = ((GraphBaseImpl) (schema.getGraphCreateMethod(implementationType).invoke(null, new Object[]{ graphId, maxV, maxE })));
+			} else {
+				graph = ((GraphBaseImpl) (schema.getGraphCreateMethod(implementationType).invoke(null, new Object[]{ schema.getGraphClass(), graphId, maxV, maxE })));
 			}
-			else {
-				graph = (GraphBaseImpl) schema.getGraphCreateMethod(
-						implementationType).invoke(null,
-						new Object[] { schema.getGraphClass(), graphId, maxV, maxE });
-			}
-		} catch (Exception e) {
-			throw new GraphIOException("can't create graph for class '"
-					+ gcName + "'", e);
+		} catch (java.lang.Exception e) {
+			throw new GraphIOException(("can't create graph for class '" + gcName) + "'", e);
 		}
 		graph.setLoading(true);
 		graph.readAttributeValues(this);
 		match(";");
-
 		int vNo = 1;
 		while (vNo <= vCount) {
 			if (lookAhead.equals("Package")) {
@@ -2600,8 +2598,7 @@ public class GraphIO {
 				}
 				++vNo;
 			}
-		}
-
+		} 
 		int eNo = 1;
 		while (eNo <= eCount) {
 			if (lookAhead.equals("Package")) {
@@ -2619,8 +2616,7 @@ public class GraphIO {
 				}
 				++eNo;
 			}
-		}
-
+		} 
 		graph.setGraphVersion(graphVersion);
 		if (pf != null) {
 			pf.finished();
@@ -2640,8 +2636,7 @@ public class GraphIO {
 		}
 	}
 
-	private void vertexDesc(Graph graph, ImplementationType implementationType)
-			throws GraphIOException {
+	private void vertexDesc(Graph graph, ImplementationType implementationType) throws GraphIOException {
 		int vId = vId();
 		String vcName = className();
 		Vertex vertex;
@@ -2649,18 +2644,16 @@ public class GraphIO {
 		createMethod = createMethods.get(vcName);
 		try {
 			if (createMethod == null) {
-				createMethod = schema.getVertexCreateMethod(vcName,
-						implementationType);
+				createMethod = schema.getVertexCreateMethod(vcName, implementationType);
 				createMethods.put(vcName, createMethod);
 			}
 			vertexDescTempObject[0] = vId;
-			if(implementationType != ImplementationType.GENERIC) {
-				vertex = (Vertex) createMethod.invoke(graph, vertexDescTempObject);
+			if (implementationType != ImplementationType.GENERIC) {
+				vertex = ((Vertex) (createMethod.invoke(graph, vertexDescTempObject)));
+			} else {
+				vertex = ((Vertex) (createMethod.invoke(graph, new Object[]{ schema.getGraphClass().getVertexClass(vcName), vId })));
 			}
-			else {
-				vertex = (Vertex) createMethod.invoke(graph, new Object[] {schema.getGraphClass().getVertexClass(vcName), vId});
-			}
-		} catch (Exception e) {
+		} catch (java.lang.Exception e) {
 			e.printStackTrace();
 			throw new GraphIOException("can't create vertex " + vId, e);
 		}
@@ -2669,8 +2662,7 @@ public class GraphIO {
 		match(";");
 	}
 
-	private void edgeDesc(Graph graph, ImplementationType implementationType)
-			throws GraphIOException {
+	private void edgeDesc(Graph graph, ImplementationType implementationType) throws GraphIOException {
 		int eId = eId();
 		String ecName = className();
 		Edge edge;
@@ -2678,22 +2670,19 @@ public class GraphIO {
 		createMethod = createMethods.get(ecName);
 		try {
 			if (createMethod == null) {
-				createMethod = schema.getEdgeCreateMethod(ecName,
-						implementationType);
+				createMethod = schema.getEdgeCreateMethod(ecName, implementationType);
 				createMethods.put(ecName, createMethod);
 			}
 			edgeDescTempObject[0] = eId;
 			edgeDescTempObject[1] = edgeOut[eId];
 			edgeDescTempObject[2] = edgeIn[eId];
-			if(implementationType != ImplementationType.GENERIC) {
-				edge = (Edge) createMethod.invoke(graph, edgeDescTempObject);
+			if (implementationType != ImplementationType.GENERIC) {
+				edge = ((Edge) (createMethod.invoke(graph, edgeDescTempObject)));
+			} else {
+				edge = ((Edge) (createMethod.invoke(graph, new Object[]{ schema.getGraphClass().getEdgeClass(ecName), eId, edgeOut[eId], edgeIn[eId] })));
 			}
-			else {
-				edge = (Edge) createMethod.invoke(graph, new Object[] {schema.getGraphClass().getEdgeClass(ecName), eId, edgeOut[eId], edgeIn[eId]});
-			}
-		} catch (Exception e) {
-			throw new GraphIOException("can't create edge " + eId + " from "
-					+ edgeOut[eId] + " to " + edgeIn[eId], e);
+		} catch (java.lang.Exception e) {
+			throw new GraphIOException((((("can't create edge " + eId) + " from ") + edgeOut[eId]) + " to ") + edgeIn[eId], e);
 		}
 		edge.readAttributeValues(this);
 		match(";");
@@ -3057,12 +3046,12 @@ public class GraphIO {
 	 */
 	private static class EnumDomainData {
 		String simpleName;
+
 		String packageName;
 
 		List<String> enumConstants;
 
-		EnumDomainData(String packageName, String simpleName,
-				List<String> enumConstants) {
+		EnumDomainData(String packageName, String simpleName, List<String> enumConstants) {
 			this.packageName = packageName;
 			this.simpleName = simpleName;
 			this.enumConstants = enumConstants;
@@ -3075,11 +3064,12 @@ public class GraphIO {
 	 */
 	private static class RecordDomainData {
 		String simpleName;
+
 		String packageName;
+
 		List<ComponentData> components;
 
-		RecordDomainData(String packageName, String simpleName,
-				List<ComponentData> components) {
+		RecordDomainData(String packageName, String simpleName, List<ComponentData> components) {
 			this.packageName = packageName;
 			this.simpleName = simpleName;
 			this.components = components;
@@ -3088,12 +3078,15 @@ public class GraphIO {
 
 	private static class ComponentData {
 		String name;
+
 		List<String> domainDescription;
 	}
 
 	private static class AttributeData {
 		String name;
+
 		List<String> domainDescription;
+
 		String defaultValue;
 	}
 
@@ -3103,8 +3096,11 @@ public class GraphIO {
 	 */
 	private static class GraphClassData {
 		Set<Constraint> constraints = new HashSet<Constraint>(1);
+
 		String name;
+
 		boolean isAbstract = false;
+
 		List<AttributeData> attributes = new ArrayList<AttributeData>();
 	}
 
@@ -3114,6 +3110,7 @@ public class GraphIO {
 	 */
 	private class GraphElementClassData {
 		String simpleName;
+
 		String packageName;
 
 		String getQualifiedName() {
@@ -3126,7 +3123,7 @@ public class GraphIO {
 
 		String fromVertexClassName;
 
-		int[] fromMultiplicity = { 1, Integer.MAX_VALUE };
+		int[] fromMultiplicity = new int[]{ 1, Integer.MAX_VALUE };
 
 		String fromRoleName = "";
 
@@ -3136,7 +3133,7 @@ public class GraphIO {
 
 		String toVertexClassName;
 
-		int[] toMultiplicity = { 1, Integer.MAX_VALUE };
+		int[] toMultiplicity = new int[]{ 1, Integer.MAX_VALUE };
 
 		String toRoleName = "";
 

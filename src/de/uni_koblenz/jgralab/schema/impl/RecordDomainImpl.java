@@ -32,16 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.schema.impl;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -61,10 +52,16 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
-public final class RecordDomainImpl extends CompositeDomainImpl implements
-		RecordDomain {
 
+public final class RecordDomainImpl extends CompositeDomainImpl implements RecordDomain {
 	/**
 	 * The class object representing the generated interface for this
 	 * RecordDomain
@@ -77,13 +74,14 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	private final Map<String, RecordComponent> components = new TreeMap<String, RecordComponent>();
 
 	/**
+	 *
+	 *
 	 * @param qn
-	 *            the unique name of the record in the schema
+	 * 		the unique name of the record in the schema
 	 * @param components
-	 *            a list of the components of the record
+	 * 		a list of the components of the record
 	 */
-	RecordDomainImpl(String sn, Package pkg,
-			Collection<RecordComponent> components) {
+	RecordDomainImpl(String sn, Package pkg, Collection<RecordComponent> components) {
 		super(sn, pkg);
 		if (components != null) {
 			for (RecordComponent c : components) {
@@ -94,31 +92,24 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public void addComponent(String name, Domain domain) {
-		if(((SchemaImpl)getSchema()).isFinish()){
+		if (((SchemaImpl) (getSchema())).isFinish()) {
 			throw new SchemaException("No changes to finished schema!");
 		}
-		
 		if (name.isEmpty()) {
-			throw new InvalidNameException(
-					"Cannot create a record component with an empty name.");
+			throw new InvalidNameException("Cannot create a record component with an empty name.");
 		}
 		if (components.containsKey(name)) {
-			throw new DuplicateRecordComponentException(name,
-					getQualifiedName());
+			throw new DuplicateRecordComponentException(name, getQualifiedName());
 		}
 		if (parentPackage.getSchema().getDomain(domain.getQualifiedName()) != domain) {
-			throw new WrongSchemaException(domain.getQualifiedName()
-					+ " must be a domain of the schema "
-					+ parentPackage.getSchema().getQualifiedName());
+			throw new WrongSchemaException((domain.getQualifiedName() + " must be a domain of the schema ") + parentPackage.getSchema().getQualifiedName());
 		}
 		if (!staysAcyclicAfterAdding(domain)) {
-			throw new RecordCycleException(
-					"The creation of a component, which has the type " + domain
-							+ ", would create a cycle of RecordDomains.");
+			throw new RecordCycleException(("The creation of a component, which has the type " + domain) + ", would create a cycle of RecordDomains.");
 		}
 		RecordComponent c = new RecordComponent(name, domain);
 		components.put(name, c);
-		((SchemaImpl)parentPackage.getSchema()).getDomainsDag().createEdge(domain,this);
+		((SchemaImpl) (parentPackage.getSchema())).getDomainsDag().createEdge(domain, this);
 	}
 
 	@Override

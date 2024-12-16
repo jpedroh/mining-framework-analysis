@@ -32,14 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab;
-
-import java.io.DataOutputStream;
-import java.util.Comparator;
-import java.util.Map;
-
-import org.pcollections.POrderedSet;
 
 import de.uni_koblenz.jgralab.eca.ECARuleManagerInterface;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -50,6 +43,11 @@ import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
 import de.uni_koblenz.jgralab.trans.Savepoint;
 import de.uni_koblenz.jgralab.trans.Transaction;
+import java.io.DataOutputStream;
+import java.util.Comparator;
+import java.util.Map;
+import org.pcollections.POrderedSet;
+
 
 /**
  * The interface Graph is the base of all JGraLab graphs. It provides access to
@@ -62,13 +60,12 @@ import de.uni_koblenz.jgralab.trans.Transaction;
  * @author ist@uni-koblenz.de
  */
 public interface Graph extends AttributedElement {
-
 	/**
 	 * Creates a vertex of the specified class <code>cls</code> and adds the new
 	 * vertex to this Graph.
 	 */
-	public <T extends Vertex> T createVertex(Class<T> cls);
-	
+	public abstract <T extends Vertex> T createVertex(Class<T> cls);
+
 	/**
 	 * Creates a vertex of the specified {@link VertexClass} and adds the new vertex
 	 * to the Graph. 
@@ -82,7 +79,7 @@ public interface Graph extends AttributedElement {
 	 */
 	public <T extends Edge> T createEdge(Class<T> cls, Vertex alpha,
 			Vertex omega);
-	
+
 	/**
 	 * Creates an edge of the specified {@link EdgeClass} <code>ec</code> that connects
 	 * <code>alpha</code> and </code>omega</code> vertices and adds the new edge to this
@@ -506,10 +503,9 @@ public interface Graph extends AttributedElement {
 	public TraversalContext getTraversalContext();
 
 	public GraphFactory getGraphFactory();
-	
 
 	public void setGraphFactory(GraphFactory graphFactory) ;
-	
+
 	public void save(String filename) throws GraphIOException;
 
 	public void save(String filename, ProgressFunction pf)

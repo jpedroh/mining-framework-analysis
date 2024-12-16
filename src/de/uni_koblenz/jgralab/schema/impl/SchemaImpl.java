@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- *
+ * 
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- *
+ * 
  * For bug reports, documentation and further information, visit
- *
+ * 
  *                         http://jgralab.uni-koblenz.de
- *
+ * 
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- *
+ * 
  * Additional permission under GNU GPL version 3 section 7
- *
+ * 
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -32,28 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.schema.impl;
-
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
-import java.util.regex.Pattern;
-
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -87,8 +66,8 @@ import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
 import de.uni_koblenz.jgralab.schema.StringDomain;
@@ -99,6 +78,25 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.ClassFileManager;
 import de.uni_koblenz.jgralab.schema.impl.compilation.InMemoryJavaSourceFile;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.Vector;
+import java.util.regex.Pattern;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
+
 
 /**
  * @author ist@uni-koblenz.de
@@ -114,8 +112,7 @@ public class SchemaImpl implements Schema {
 		return schemaClassManager;
 	}
 
-	static final Class<?>[] GRAPHCLASS_CREATE_SIGNATURE = { String.class,
-			int.class, int.class };
+	static final Class<?>[] GRAPHCLASS_CREATE_SIGNATURE = new java.lang.Class<?>[]{ java.lang.String.class, int.class, int.class };
 
 	/**
 	 * This is the name of the package into which the implementation classes for
@@ -130,7 +127,9 @@ public class SchemaImpl implements Schema {
 	 * Schema.
 	 */
 	public static final String IMPLSTDPACKAGENAME = "impl.std";
+
 	public static final String IMPLTRANSPACKAGENAME = "impl.trans";
+
 	public static final String IMPLDATABASEPACKAGENAME = "impl.db";
 
 	static final Class<?>[] VERTEX_CLASS_CREATE_SIGNATURE = { int.class };
@@ -217,41 +216,33 @@ public class SchemaImpl implements Schema {
 	 * Creates a new <code>Schema</code>.
 	 *
 	 * @param name
-	 *            Name of schema.
+	 * 		Name of schema.
 	 * @param packagePrefix
-	 *            Package prefix of schema.
+	 * 		Package prefix of schema.
 	 */
 	public SchemaImpl(String name, String packagePrefix) {
-
 		if (!SCHEMA_NAME_PATTERN.matcher(name).matches()) {
 			throwInvalidSchemaNameException();
 		}
-
 		if (!PACKAGE_PREFIX_PATTERN.matcher(packagePrefix).matches()) {
 			throwInvalidPackagePrefixNameException();
 		}
-
 		this.name = name;
 		this.packagePrefix = packagePrefix;
-		qualifiedName = packagePrefix + "." + name;
+		qualifiedName = (packagePrefix + ".") + name;
 		schemaClassManager = SchemaClassManager.instance(qualifiedName);
-
 		// Needs to be created before any NamedElement can be created
 		defaultPackage = PackageImpl.createDefaultPackage(this);
-
 		// Creation of the BasicDomains
 		createBooleanDomain();
 		createDoubleDomain();
 		createIntegerDomain();
 		createLongDomain();
 		createStringDomain();
-
-		/*
-		 * Needs to be created before any GraphElementClass element can be
-		 * created.
+		/* Needs to be created before any GraphElementClass element can be
+		created.
 		 */
 		defaultGraphClass = GraphClassImpl.createDefaultGraphClass(this);
-
 		// Creation of default GraphElementClasses
 		defaultVertexClass = VertexClassImpl.createDefaultVertexClass(this);
 		defaultEdgeClass = EdgeClassImpl.createDefaultEdgeClass(this);
@@ -458,33 +449,21 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Vector<InMemoryJavaSourceFile> commit(
-			CodeGeneratorConfiguration config) {
+	public Vector<InMemoryJavaSourceFile> commit(CodeGeneratorConfiguration config) {
 		if (!finish) {
-			throw new SchemaException(
-					"Schema must be finish before committing is allowed. "
-							+ "Call finish() to finish the schema.");
+			throw new SchemaException("Schema must be finish before committing is allowed. " + "Call finish() to finish the schema.");
 		}
-
 		Vector<InMemoryJavaSourceFile> javaSources = new Vector<InMemoryJavaSourceFile>();
-
 		// generate schema class
-		CodeGenerator schemaCodeGenerator = new SchemaCodeGenerator(this,
-				packagePrefix, config);
+		CodeGenerator schemaCodeGenerator = new SchemaCodeGenerator(this, packagePrefix, config);
 		javaSources.addAll(schemaCodeGenerator.createJavaSources());
-
 		// generate factory
-		CodeGenerator factoryCodeGenerator = new GraphFactoryGenerator(this,
-				packagePrefix, config);
+		CodeGenerator factoryCodeGenerator = new GraphFactoryGenerator(this, packagePrefix, config);
 		javaSources.addAll(factoryCodeGenerator.createJavaSources());
-
 		// generate graph classes
-
 		if (graphClass.getQualifiedName().equals("Graph")) {
-			throw new SchemaException(
-					"The defined GraphClass must not be named Graph!");
+			throw new SchemaException("The defined GraphClass must not be named Graph!");
 		}
-
 		javaSources.addAll(createClasses(config));
 		return javaSources;
 	}
@@ -570,16 +549,15 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public void commit(String pathPrefix, CodeGeneratorConfiguration config,
-			ProgressFunction progressFunction) throws GraphIOException {
+	public void commit(String pathPrefix, CodeGeneratorConfiguration config, ProgressFunction progressFunction) throws GraphIOException {
 		if (!finish) {
-			throw new SchemaException(
-					"Schema must be finish before committing is allowed. "
-							+ "Call finish() to finish the schema.");
+			throw new SchemaException("Schema must be finish before committing is allowed. " + "Call finish() to finish the schema.");
 		}
 		// progress bar for schema generation
 		// ProgressFunctionImpl pf;
-		long schemaElements = 0, currentCount = 0, interval = 1;
+		long schemaElements = 0;
+		long currentCount = 0;
+		long interval = 1;
 		if (progressFunction != null) {
 			int elements = getNumberOfElements();
 			if (config.hasTransactionSupport()) {
@@ -588,31 +566,21 @@ public class SchemaImpl implements Schema {
 			progressFunction.init(elements);
 			interval = progressFunction.getUpdateInterval();
 		}
-
 		// ********************* build code **********************
 		if (!pathPrefix.endsWith(File.separator)) {
 			pathPrefix += File.separator;
 		}
-
 		// generate schema class
-		CodeGenerator schemaCodeGenerator = new SchemaCodeGenerator(this,
-				packagePrefix, config);
+		CodeGenerator schemaCodeGenerator = new SchemaCodeGenerator(this, packagePrefix, config);
 		schemaCodeGenerator.createFiles(pathPrefix);
-
 		// generate factory
-		CodeGenerator factoryCodeGenerator = new GraphFactoryGenerator(this,
-				packagePrefix, config);
+		CodeGenerator factoryCodeGenerator = new GraphFactoryGenerator(this, packagePrefix, config);
 		factoryCodeGenerator.createFiles(pathPrefix);
-
 		// generate graph class
 		if (graphClass.getQualifiedName().equals("Graph")) {
-			throw new SchemaException(
-					"The defined GraphClass must not be named Graph!");
+			throw new SchemaException("The defined GraphClass must not be named Graph!");
 		}
-
-		createFiles(config, pathPrefix, progressFunction, schemaElements,
-				currentCount, interval);
-
+		createFiles(config, pathPrefix, progressFunction, schemaElements, currentCount, interval);
 		// finish progress bar
 		if (progressFunction != null) {
 			progressFunction.finished();
@@ -652,13 +620,12 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public EnumDomain createEnumDomain(String qualifiedName,
-			List<String> enumComponents) {
+	public EnumDomain createEnumDomain(String qualifiedName, List<String> enumComponents) {
 		if (finish) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		String[] components = splitQualifiedName(qualifiedName);
-		PackageImpl parent = (PackageImpl) createPackageWithParents(components[0]);
+		PackageImpl parent = ((PackageImpl) (createPackageWithParents(components[0])));
 		String simpleName = components[1];
 		EnumDomain ed = new EnumDomainImpl(simpleName, parent, enumComponents);
 		return ed;
@@ -742,9 +709,9 @@ public class SchemaImpl implements Schema {
 		if (finish) {
 			throw new SchemaException("No changes to finished schema!");
 		}
-		String qn = "List<" + baseDomain.getQualifiedName() + ">";
+		String qn = ("List<" + baseDomain.getQualifiedName()) + ">";
 		if (domains.containsKey(qn)) {
-			return (ListDomain) domains.get(qn);
+			return ((ListDomain) (domains.get(qn)));
 		}
 		return new ListDomainImpl(this, baseDomain);
 	}
@@ -754,10 +721,9 @@ public class SchemaImpl implements Schema {
 		if (finish) {
 			throw new SchemaException("No changes to finished schema!");
 		}
-		String qn = "Map<" + keyDomain.getQualifiedName() + ", "
-				+ valueDomain.getQualifiedName() + ">";
+		String qn = ((("Map<" + keyDomain.getQualifiedName()) + ", ") + valueDomain.getQualifiedName()) + ">";
 		if (domains.containsKey(qn)) {
-			return (MapDomain) domains.get(qn);
+			return ((MapDomain) (domains.get(qn)));
 		}
 		return new MapDomainImpl(this, keyDomain, valueDomain);
 	}
@@ -769,7 +735,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * Creates a {@link Package} with given qualified name, or returns an
 	 * existing package with this qualified name.
-	 *
+	 * 
 	 * @param qn
 	 *            the qualified name of the package
 	 * @return a new {@link Package} with the given qualified name, or an
@@ -825,7 +791,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * Given a qualified name like foo.bar.baz returns a string array with two
 	 * components: the package prefix (foo.bar) and the simple name (baz).
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            a qualified name
 	 * @return a string array with two components: the package prefix and the
@@ -854,16 +820,14 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public RecordDomain createRecordDomain(String qualifiedName,
-			Collection<RecordComponent> recordComponents) {
+	public RecordDomain createRecordDomain(String qualifiedName, Collection<RecordComponent> recordComponents) {
 		if (finish) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		String[] components = splitQualifiedName(qualifiedName);
-		PackageImpl parent = (PackageImpl) createPackageWithParents(components[0]);
+		PackageImpl parent = ((PackageImpl) (createPackageWithParents(components[0])));
 		String simpleName = components[1];
-		RecordDomain rd = new RecordDomainImpl(simpleName, parent,
-				recordComponents);
+		RecordDomain rd = new RecordDomainImpl(simpleName, parent, recordComponents);
 		return rd;
 	}
 
@@ -872,16 +836,16 @@ public class SchemaImpl implements Schema {
 		if (finish) {
 			throw new SchemaException("No changes to finished schema!");
 		}
-		String qn = "Set<" + baseDomain.getQualifiedName() + ">";
+		String qn = ("Set<" + baseDomain.getQualifiedName()) + ">";
 		if (domains.containsKey(qn)) {
-			return (SetDomain) domains.get(qn);
+			return ((SetDomain) (domains.get(qn)));
 		}
 		return new SetDomainImpl(this, baseDomain);
 	}
 
 	@Override
 	public boolean equals(Object other) {
-		if ((other == null) || !(other instanceof Schema)) {
+		if (other == null || !(other instanceof Schema)) {
 			return false;
 		}
 		return qualifiedName.equals(((Schema) other).getQualifiedName());
@@ -906,46 +870,41 @@ public class SchemaImpl implements Schema {
 	@Override
 	public List<CompositeDomain> getCompositeDomainsInTopologicalOrder() {
 		ArrayList<CompositeDomain> topologicalOrderList = new ArrayList<CompositeDomain>();
-		// CompositeDomain cd;
-		// HashSet<CompositeDomain> compositeDomainSet = new
-		// HashSet<CompositeDomain>();
-
+		//CompositeDomain cd;
+		// HashSet<CompositeDomain> compositeDomainSet = new HashSet<CompositeDomain>();
 		for (Domain dom : domainsDag.getNodesInTopologicalOrder()) {
 			if (dom instanceof CompositeDomain) {
-				topologicalOrderList.add((CompositeDomain) dom);
+				topologicalOrderList.add(((CompositeDomain) (dom)));
 			}
 		}
 		return topologicalOrderList;
-
-		// // store composite domains in compositeDomainSet
-		// for (Domain dl : domains.values()) {
-		// if (dl instanceof CompositeDomain) {
-		// compositeDomainSet.add((CompositeDomain) dl);
-		// }
-		// }
-		//
-		// // iteratively add domains from compositeDomainSet,
-		// // whose component domains already are in topologicalOrderList,
-		// // to topologicalOrderList
-		// // the added domains are removed from compositeDomainSet
-		// while (!compositeDomainSet.isEmpty()) {
-		// for (Iterator<CompositeDomain> cdit = compositeDomainSet.iterator();
-		// cdit
-		// .hasNext();) {
-		// cd = cdit.next();
-		// if (topologicalOrderList.containsAll(cd
-		// .getAllComponentCompositeDomains())) {
-		// topologicalOrderList.add(cd);
-		// cdit.remove();
-		// }
-		// }
-		// }
-		//
-		// return topologicalOrderList;
+//		// store composite domains in compositeDomainSet
+//		for (Domain dl : domains.values()) {
+//			if (dl instanceof CompositeDomain) {
+//				compositeDomainSet.add((CompositeDomain) dl);
+//			}
+//		}
+//
+//		// iteratively add domains from compositeDomainSet,
+//		// whose component domains already are in topologicalOrderList,
+//		// to topologicalOrderList
+//		// the added domains are removed from compositeDomainSet
+//		while (!compositeDomainSet.isEmpty()) {
+//			for (Iterator<CompositeDomain> cdit = compositeDomainSet.iterator(); cdit
+//					.hasNext();) {
+//				cd = cdit.next();
+//				if (topologicalOrderList.containsAll(cd
+//						.getAllComponentCompositeDomains())) {
+//					topologicalOrderList.add(cd);
+//					cdit.remove();
+//				}
+//			}
+//		}
+//
+//		return topologicalOrderList;
 	}
 
-	private Method getCreateMethod(String className, String graphClassName,
-			Class<?>[] signature, ImplementationType implementationType) {
+	private Method getCreateMethod(String className, String graphClassName, Class<?>[] signature, ImplementationType implementationType) {
 		Class<? extends Graph> schemaClass = null;
 		AttributedElementClass aec = null;
 		try {
@@ -957,32 +916,21 @@ public class SchemaImpl implements Schema {
 				if (aec == null) {
 					aec = graphClass.getEdgeClass(className);
 					if (aec == null) {
-						throw new SchemaClassAccessException("class "
-								+ className + " does not exist in schema");
+						throw new SchemaClassAccessException(("class " + className) + " does not exist in schema");
 					}
 				}
 				if (implementationType != ImplementationType.GENERIC) {
-					return schemaClass.getMethod(
-							"create"
-									+ CodeGenerator.camelCase(aec
-											.getUniqueName()), signature);
+					return schemaClass.getMethod("create" + CodeGenerator.camelCase(aec.getUniqueName()), signature);
+				} else if (signature[0].equals(VertexClass.class)) {
+					return schemaClass.getMethod("createVertex", signature);
 				} else {
-					if (signature[0].equals(VertexClass.class)) {
-						return schemaClass.getMethod("createVertex", signature);
-					} else {
-						return schemaClass.getMethod("createEdge", signature);
-					}
+					return schemaClass.getMethod("createEdge", signature);
 				}
-
 			}
-		} catch (SecurityException e) {
-			throw new SchemaClassAccessException(
-					"can't find create method in '" + schemaClass.getName()
-							+ "' for '" + aec.getUniqueName() + "'", e);
-		} catch (NoSuchMethodException e) {
-			throw new SchemaClassAccessException(
-					"can't find create method in '" + schemaClass.getName()
-							+ "' for '" + aec.getUniqueName() + "'", e);
+		} catch (java.lang.SecurityException e) {
+			throw new SchemaClassAccessException(((("can't find create method in '" + schemaClass.getName()) + "' for '") + aec.getUniqueName()) + "'", e);
+		} catch (java.lang.NoSuchMethodException e) {
+			throw new SchemaClassAccessException(((("can't find create method in '" + schemaClass.getName()) + "' for '") + aec.getUniqueName()) + "'", e);
 		}
 	}
 
@@ -1016,7 +964,7 @@ public class SchemaImpl implements Schema {
 		return domains;
 	}
 
-	protected DirectedAcyclicGraph<Domain> getDomainsDag() {
+	protected DirectedAcyclicGraph<Domain> getDomainsDag(){
 		return domainsDag;
 	}
 
@@ -1031,44 +979,35 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Method getEdgeCreateMethod(String edgeClassName,
-			ImplementationType implementationType) {
+	public Method getEdgeCreateMethod(String edgeClassName, ImplementationType implementationType) {
 		// Edge class create method cannot be found directly by its signature
 		// because the vertex parameters are subclassed to match the to- and
 		// from-class. Those subclasses are unknown in this method. Therefore,
 		// we look for a method with correct name and 3 parameters
 		// (int, vertex, Vertex).
 		AttributedElementClass aec = getAttributedElementClass(edgeClassName);
-		if ((aec == null) || !(aec instanceof EdgeClass)) {
-			throw new SchemaException(
-					"There's no EdgeClass with qualified name " + edgeClassName
-							+ "!");
+		if ((aec == null) || (!(aec instanceof EdgeClass))) {
+			throw new SchemaException(("There's no EdgeClass with qualified name " + edgeClassName) + "!");
 		}
-		EdgeClass ec = (EdgeClass) aec;
-		String methodName = "create"
-				+ CodeGenerator.camelCase(ec.getUniqueName());
+		EdgeClass ec = ((EdgeClass) (aec));
+		String methodName = "create" + CodeGenerator.camelCase(ec.getUniqueName());
 		Class<?> schemaClass = getGraphClassImpl(implementationType);
 		if (implementationType != ImplementationType.GENERIC) {
 			for (Method m : schemaClass.getMethods()) {
-				if (m.getName().equals(methodName)
-						&& (m.getParameterTypes().length == 3)) {
+				if (m.getName().equals(methodName) && (m.getParameterTypes().length == 3)) {
 					return m;
 				}
 			}
 		} else {
 			try {
-				return schemaClass.getMethod("createEdge",
-						new Class[] { EdgeClass.class, int.class, Vertex.class,
-								Vertex.class });
-			} catch (NoSuchMethodException e) {
+				return schemaClass.getMethod("createEdge", new Class[]{ EdgeClass.class, int.class, Vertex.class, Vertex.class });
+			} catch (java.lang.NoSuchMethodException e) {
 				e.printStackTrace();
-			} catch (SecurityException e) {
+			} catch (java.lang.SecurityException e) {
 				e.printStackTrace();
 			}
 		}
-		throw new SchemaClassAccessException("can't find create method '"
-				+ methodName + "' in '" + schemaClass.getName() + "' for '"
-				+ ec.getUniqueName() + "'");
+		throw new SchemaClassAccessException(((((("can't find create method '" + methodName) + "' in '") + schemaClass.getName()) + "' for '") + ec.getUniqueName()) + "'");
 	}
 
 	@Override
@@ -1115,55 +1054,44 @@ public class SchemaImpl implements Schema {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param implementationType
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private Class<? extends Graph> getGraphClassImpl(
-			ImplementationType implementationType) {
+	private Class<? extends Graph> getGraphClassImpl(ImplementationType implementationType) {
 		String implClassName = packagePrefix + ".";
 		// determine package
 		switch (implementationType) {
-		case STANDARD:
-			implClassName += IMPLSTDPACKAGENAME;
-			break;
-		case TRANSACTION:
-			implClassName += IMPLTRANSPACKAGENAME;
-			break;
-		case DATABASE:
-			implClassName += IMPLDATABASEPACKAGENAME;
-		case GENERIC:
-			implClassName = "de.uni_koblenz.jgralab.impl.generic";
-			break;
-		default:
-			throw new SchemaException("Implementation type "
-					+ implementationType + " not supported yet.");
+			case STANDARD :
+				implClassName += IMPLSTDPACKAGENAME;
+				break;
+			case TRANSACTION :
+				implClassName += IMPLTRANSPACKAGENAME;
+				break;
+			case DATABASE :
+				implClassName += IMPLDATABASEPACKAGENAME;
+			case GENERIC :
+				implClassName = "de.uni_koblenz.jgralab.impl.generic";
+				break;
+			default :
+				throw new SchemaException(("Implementation type " + implementationType) + " not supported yet.");
 		}
-
 		Class<? extends Graph> schemaClass;
 		if (implementationType != ImplementationType.GENERIC) {
-			implClassName = implClassName + "." + graphClass.getSimpleName()
-					+ "Impl";
-
+			implClassName = ((implClassName + ".") + graphClass.getSimpleName()) + "Impl";
 			try {
-				schemaClass = (Class<? extends Graph>) Class.forName(
-						implClassName, true,
-						SchemaClassManager.instance(qualifiedName));
-			} catch (ClassNotFoundException e) {
-				throw new SchemaClassAccessException(
-						"can't load implementation class '" + implClassName
-								+ "'", e);
+				schemaClass = ((Class<? extends Graph>) (Class.forName(implClassName, true, SchemaClassManager.instance(qualifiedName))));
+			} catch (java.lang.ClassNotFoundException e) {
+				throw new SchemaClassAccessException(("can't load implementation class '" + implClassName) + "'", e);
 			}
 			return schemaClass;
 		} else {
 			implClassName += "." + "GenericGraphImpl";
 			try {
-				return (Class<? extends Graph>) Class.forName(implClassName);
-			} catch (ClassNotFoundException e) {
-				throw new SchemaClassAccessException(
-						"can't load implementation class '" + implClassName
-								+ "'", e);
+				return ((Class<? extends Graph>) (Class.forName(implClassName)));
+			} catch (java.lang.ClassNotFoundException e) {
+				throw new SchemaClassAccessException(("can't load implementation class '" + implClassName) + "'", e);
 			}
 		}
 	}
@@ -1171,14 +1099,9 @@ public class SchemaImpl implements Schema {
 	@Override
 	public Method getGraphCreateMethod(ImplementationType implementationType) {
 		if (implementationType != ImplementationType.GENERIC) {
-			return getCreateMethod(graphClass.getSimpleName(),
-					graphClass.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE,
-					implementationType);
+			return getCreateMethod(graphClass.getSimpleName(), graphClass.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE, implementationType);
 		} else {
-			return getCreateMethod(graphClass.getSimpleName(),
-					graphClass.getSimpleName(), new Class[] { GraphClass.class,
-							String.class, int.class, int.class },
-					implementationType);
+			return getCreateMethod(graphClass.getSimpleName(), graphClass.getSimpleName(), new Class[]{ GraphClass.class, java.lang.String.class, int.class, int.class }, implementationType);
 		}
 	}
 
@@ -1189,7 +1112,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * only used internally
-	 *
+	 * 
 	 * @return number of graphelementclasses contained in graphclass
 	 */
 	private int getNumberOfElements() {
@@ -1240,15 +1163,11 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Method getVertexCreateMethod(String vertexClassName,
-			ImplementationType implementationType) {
+	public Method getVertexCreateMethod(String vertexClassName, ImplementationType implementationType) {
 		if (implementationType != ImplementationType.GENERIC) {
-			return getCreateMethod(vertexClassName, graphClass.getSimpleName(),
-					VERTEX_CLASS_CREATE_SIGNATURE, implementationType);
+			return getCreateMethod(vertexClassName, graphClass.getSimpleName(), VERTEX_CLASS_CREATE_SIGNATURE, implementationType);
 		} else {
-			return getCreateMethod(vertexClassName, graphClass.getSimpleName(),
-					new Class[] { VertexClass.class, int.class },
-					implementationType);
+			return getCreateMethod(vertexClassName, graphClass.getSimpleName(), new Class[]{ VertexClass.class, int.class }, implementationType);
 		}
 	}
 
@@ -1339,7 +1258,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * Set flag that transaction support should be used or not.
-	 *
+	 * 
 	 * @param config
 	 */
 	public void setConfiguration(CodeGeneratorConfiguration config) {
@@ -1352,51 +1271,41 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Graph createGraph(ImplementationType implementationType, String id,
-			int vCount, int eCount) {
+	public Graph createGraph(ImplementationType implementationType, int vCount, int eCount) {
+		return createGraph(implementationType, null, vCount, eCount);
+	}
+
+	@Override
+	public Graph createGraph(ImplementationType implementationType, String id, int vCount, int eCount) {
 		if (implementationType != ImplementationType.GENERIC) {
 			try {
 				getGraphClass().getSchemaClass();
 			} catch (SchemaClassAccessException e) {
 				switch (implementationType) {
-				case STANDARD:
-					compile(CodeGeneratorConfiguration.MINIMAL);
-					break;
-				case DATABASE:
-					compile(CodeGeneratorConfiguration.WITH_DATABASE_SUPPORT);
-					break;
-				case TRANSACTION:
-					compile(CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT);
-					break;
-				default:
-					throw new RuntimeException(
-							"FIXME: Unexpected implementation type "
-									+ implementationType);
+					case STANDARD :
+						compile(CodeGeneratorConfiguration.MINIMAL);
+						break;
+					case DATABASE :
+						compile(CodeGeneratorConfiguration.WITH_DATABASE_SUPPORT);
+						break;
+					case TRANSACTION :
+						compile(CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT);
+						break;
+					default :
+						throw new RuntimeException("FIXME: Unexpected implementation type " + implementationType);
 				}
 			}
 		}
-
-		Method graphCreateMethod = implementationType != ImplementationType.GENERIC ? getGraphCreateMethod(ImplementationType.STANDARD)
-				: getGraphCreateMethod(ImplementationType.GENERIC);
-
+		Method graphCreateMethod = (implementationType != ImplementationType.GENERIC) ? getGraphCreateMethod(ImplementationType.STANDARD) : getGraphCreateMethod(ImplementationType.GENERIC);
 		try {
 			if (implementationType != ImplementationType.GENERIC) {
-				return (Graph) graphCreateMethod.invoke(null, id, vCount,
-						eCount);
+				return ((Graph) (graphCreateMethod.invoke(null, id, vCount, eCount)));
 			} else {
-				return (Graph) graphCreateMethod.invoke(null, getGraphClass(),
-						id, vCount, eCount);
+				return ((Graph) (graphCreateMethod.invoke(null, getGraphClass(), null, vCount, eCount)));
 			}
-		} catch (Exception e) {
-			throw new SchemaException(
-					"Something failed when creating the  graph!", e);
+		} catch (java.lang.Exception e) {
+			throw new SchemaException("Something failed when creating the  graph!", e);
 		}
-	}
-
-	@Override
-	public Graph createGraph(ImplementationType implementationType, int vCount,
-			int eCount) {
-		return createGraph(implementationType, null, vCount, eCount);
 	}
 
 	/**
@@ -1408,30 +1317,25 @@ public class SchemaImpl implements Schema {
 	}
 
 	/**
-	 * Signals that the schema is finished. No more changes are allowed. To open
-	 * the change mode call reopen
+	 * Signals that the schema is finished. No more changes are allowed. 
+	 * To open the change mode call reopen
 	 */
 	@Override
 	public void finish() {
 		if (this.finish) {
 			return;
 		}
-		((GraphClassImpl) this.graphClass).finish();
+		((GraphClassImpl) (this.graphClass)).finish();
 		this.finish = true;
-
 	}
 
 	/**
-	 * Reopens the schema to allow changes. To finish the schema again, call
-	 * finish
+	 * Reopens the schema to allow changes. To finish the schema again, call finish
 	 */
 	@Override
-	public void reopen() {
-		if (!this.finish) {
-			return;
-		}
-		((GraphClassImpl) this.graphClass).finish();
+	public void reopen(){
+		if(!this.finish) return;
+		((GraphClassImpl)this.graphClass).finish();
 		this.finish = false;
 	}
-
 }
