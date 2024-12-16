@@ -1,41 +1,53 @@
 package org.camunda.bpm.extension.mockito.delegate;
 
-
+import java.util.HashMap;
+import java.util.Map;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.runtime.Incident;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 import org.camunda.bpm.model.bpmn.instance.FlowElement;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Fake delegateExecution to test simple delegates/listeners without mocking.
  * <p>
  * Not all operations are support, extend if needed.
  */
-@SuppressWarnings({"WeakerAccess","UnusedReturnValue", "unused"})
+@SuppressWarnings({ "WeakerAccess", "UnusedReturnValue", "unused" })
 public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> implements DelegateExecution {
-
-  private static final long serialVersionUID = -8413557219169444178L;
   private String processInstanceId;
+
   private String processBusinessKey;
+
   private String processDefinitionId;
+
   private String parentId;
+
   private String currentActivityId;
+
   private String currentActivityName;
+
   private String activityInstanceId;
+
   private String parentActivityInstanceId;
+
   private String currentTransitionId;
+
   private DelegateExecution processInstance;
+
   private DelegateExecution superExecution;
+
   private boolean canceled;
+
   private String tenantId;
+
   private String id;
+
   private String eventName;
+
   private String businessKey;
 
-  private final Map<String,Incident> incidents = new HashMap<>();
+  private final Map<String, Incident> incidents = new HashMap<>();
 
   public DelegateExecutionFake() {
     this(null);
@@ -53,6 +65,7 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   public String getProcessInstanceId() {
     return processInstanceId;
   }
+
   public DelegateExecutionFake withProcessInstanceId(final String processInstanceId) {
     this.processInstanceId = processInstanceId;
     return this;
@@ -64,7 +77,7 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   }
 
   @Override
-  public void setProcessBusinessKey(String processBusinessKey) {
+  public void setProcessBusinessKey(final String processBusinessKey) {
     withProcessBusinessKey(processBusinessKey);
   }
 
@@ -77,6 +90,7 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   public String getProcessDefinitionId() {
     return processDefinitionId;
   }
+
   public DelegateExecutionFake withProcessDefinitionId(final String processDefinitionId) {
     this.processDefinitionId = processDefinitionId;
     return this;
@@ -86,6 +100,7 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   public String getParentId() {
     return parentId;
   }
+
   public DelegateExecutionFake withParentId(final String parentId) {
     this.parentId = parentId;
     return this;
@@ -95,6 +110,7 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   public String getCurrentActivityId() {
     return currentActivityId;
   }
+
   public DelegateExecutionFake withCurrentActivityId(final String currentActivityId) {
     this.currentActivityId = currentActivityId;
     return this;
@@ -104,6 +120,7 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   public String getCurrentActivityName() {
     return currentActivityName;
   }
+
   public DelegateExecutionFake withCurrentActivityName(final String currentActivityName) {
     this.currentActivityName = currentActivityName;
     return this;
@@ -113,6 +130,7 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   public String getActivityInstanceId() {
     return activityInstanceId;
   }
+
   public DelegateExecutionFake withActivityInstanceId(final String activityInstanceId) {
     this.activityInstanceId = activityInstanceId;
     return this;
@@ -122,6 +140,7 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   public String getParentActivityInstanceId() {
     return parentActivityInstanceId;
   }
+
   public DelegateExecutionFake withParentActivityInstanceId(final String parentActivityInstanceId) {
     this.parentActivityInstanceId = parentActivityInstanceId;
     return this;
@@ -131,6 +150,7 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   public String getCurrentTransitionId() {
     return currentTransitionId;
   }
+
   public DelegateExecutionFake withCurrentTransitionId(final String currentTransitionId) {
     this.currentTransitionId = currentTransitionId;
     return this;
@@ -140,6 +160,7 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   public DelegateExecution getProcessInstance() {
     return processInstance;
   }
+
   public DelegateExecutionFake withProcessInstance(final DelegateExecution processInstance) {
     this.processInstance = processInstance;
     return this;
@@ -149,7 +170,8 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   public DelegateExecution getSuperExecution() {
     return superExecution;
   }
-  public DelegateExecutionFake withSuperExecution(final DelegateExecution  superExecution) {
+
+  public DelegateExecutionFake withSuperExecution(final DelegateExecution superExecution) {
     this.superExecution = superExecution;
     return this;
   }
@@ -158,6 +180,7 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   public boolean isCanceled() {
     return canceled;
   }
+
   public DelegateExecutionFake withCanceled(final boolean canceled) {
     this.canceled = canceled;
     return this;
@@ -167,6 +190,7 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   public String getTenantId() {
     return tenantId;
   }
+
   public DelegateExecutionFake withTenantId(final String tenantId) {
     this.tenantId = tenantId;
     return this;
@@ -198,6 +222,7 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   public String getId() {
     return id;
   }
+
   public DelegateExecutionFake withId(final String id) {
     this.id = id;
     return this;
@@ -207,6 +232,7 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   public String getEventName() {
     return eventName;
   }
+
   public DelegateExecutionFake withEventName(final String eventName) {
     this.eventName = eventName;
     return this;
@@ -216,6 +242,7 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   public String getBusinessKey() {
     return businessKey;
   }
+
   public DelegateExecutionFake withBusinessKey(final String businessKey) {
     this.businessKey = businessKey;
     return this;
@@ -231,37 +258,19 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
     throw new UnsupportedOperationException("not implemented");
   }
 
-
   public Map<String, Incident> getIncidents() {
     return incidents;
   }
 
+    // empty
   public static class ProcessInstanceNotSetException extends IllegalStateException {
     private static final long serialVersionUID = 1739284977147050452L;
-    // empty
   }
 
-  @Override public String toString() {
-    return "DelegateExecutionFake{" +
-      "processInstanceId='" + processInstanceId + '\'' +
-      ", processEngine='" + getProcessEngine() + '\'' +
-      ", processEngineServices=" + getProcessEngineServices() +
-      ", processBusinessKey='" + processBusinessKey + '\'' +
-      ", processDefinitionId='" + processDefinitionId + '\'' +
-      ", parentId='" + parentId + '\'' +
-      ", currentActivityId='" + currentActivityId + '\'' +
-      ", currentActivityName='" + currentActivityName + '\'' +
-      ", activityInstanceId='" + activityInstanceId + '\'' +
-      ", parentActivityInstanceId='" + parentActivityInstanceId + '\'' +
-      ", currentTransitionId='" + currentTransitionId + '\'' +
-      ", processInstance=" + processInstance +
-      ", superExecution=" + superExecution +
-      ", canceled=" + canceled +
-      ", tenantId='" + tenantId + '\'' +
-      ", id='" + id + '\'' +
-      ", eventName='" + eventName + '\'' +
-      ", businessKey='" + businessKey + '\'' +
-      ", incidents=" + incidents +
-      '}';
+  @Override
+  public String toString() {
+    return (((((((((((((((((((((((((((((((((((((((((((((((((((("DelegateExecutionFake{" + "processInstanceId='") + processInstanceId) + '\'') + ", processEngine=\'") + getProcessEngine()) + '\'') + ", processEngineServices=") + getProcessEngineServices()) + ", processBusinessKey=\'") + processBusinessKey) + '\'') + ", processDefinitionId='") + processDefinitionId) + '\'') + ", parentId='") + parentId) + '\'') + ", currentActivityId='") + currentActivityId) + '\'') + ", currentActivityName='") + currentActivityName) + '\'') + ", activityInstanceId='") + activityInstanceId) + '\'') + ", parentActivityInstanceId='") + parentActivityInstanceId) + '\'') + ", currentTransitionId='") + currentTransitionId) + '\'') + ", processInstance=") + processInstance) + ", superExecution=") + superExecution) + ", canceled=") + canceled) + ", tenantId='") + tenantId) + '\'') + ", id='") + id) + '\'') + ", eventName='") + eventName) + '\'') + ", businessKey='") + businessKey) + '\'') + ", incidents=") + incidents) + '}';
   }
+
+  private static final long serialVersionUID = -8413557219169444178L;
 }
