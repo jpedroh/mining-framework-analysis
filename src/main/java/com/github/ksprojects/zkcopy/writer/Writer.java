@@ -10,22 +10,36 @@ import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
+
 public class Writer {
     static Logger logger = Logger.getLogger(Writer.class);
-    
+
     private Node sourceRoot;
+
     private String destPath;
+
     private ZooKeeper zk;
+
     private boolean ignoreEphemeralNodes;
+
     private boolean removeDeprecated;
+
     private long ephemeralIgnored = 0;
+
     private long deletedEphemeral = 0;
+
     private long nodesUpdated = 0;
+
     private long nodesCreated = 0;
+
     private long nodesSkipped = 0;
+
     private long mtime;
+
     private long maxMtime;
+
     private Transaction transaction;
+
     private int batchSize;
 
     /**
@@ -52,7 +66,7 @@ public class Writer {
         this.mtime = mtime;
         this.batchSize = batchSize;
     }
-    
+
     /**
      * Start process of writing data to the target.
      */
@@ -65,17 +79,24 @@ public class Writer {
             update(dest);
             transaction.commit();
             logger.info("Writing data completed.");
-            logger.info("Wrote " + (nodesCreated + nodesUpdated) + " nodes");
-            logger.info("Created " + nodesCreated + " nodes; Updated " + nodesUpdated + " nodes");
-            logger.info("Ignored " + ephemeralIgnored + " ephemeral nodes");
-            logger.info("Skipped " + nodesSkipped + " nodes older than " + mtime);
+            logger.info(("Wrote " + (nodesCreated + nodesUpdated)) + " nodes");
+            logger.info(((("Created " + nodesCreated) + " nodes; Updated ") + nodesUpdated) + " nodes");
+            logger.info(("Ignored " + ephemeralIgnored) + " ephemeral nodes");
+            logger.info((("Skipped " + nodesSkipped) + " nodes older than ") + mtime);
             logger.info("Max mtime of copied nodes: " + maxMtime);
             if (deletedEphemeral > 0) {
-                logger.info("Deleted " + deletedEphemeral + " ephemeral nodes");
+                logger.info(("Deleted " + deletedEphemeral) + " ephemeral nodes");
             }
-
-        } catch (KeeperException | InterruptedException e) {
+        } catch (KeeperException | java.lang.InterruptedException e) {
             logger.error("Exception caught while writing nodes", e);
+        } finally {
+            try {
+                if (zk != null) {
+                    zk.close();
+                }
+            } catch (java.lang.InterruptedException e) {
+                logger.error("Exception caught while closing session", e);
+            }
         }
     }
 
@@ -85,32 +106,29 @@ public class Writer {
             ephemeralIgnored++;
             Stat stat = zk.exists(path, false);
             // only delete ephemeral nodes if they've been copied over persistently before
-            if (stat != null && stat.getEphemeralOwner() == 0) {
+            if ((stat != null) && (stat.getEphemeralOwner() == 0)) {
                 transaction.delete(path, stat.getVersion());
                 deletedEphemeral++;
             }
             return;
         }
-
         if (node.getMtime() > mtime) {
             upsertNode(node);
             maxMtime = Math.max(node.getMtime(), maxMtime);
         } else {
             nodesSkipped++;
         }
-
         // 2. Recursively update or create children
         for (Node child : node.getChildren()) {
             update(child);
         }
-
         if (removeDeprecated) {
             // 3. Remove deprecated children
             try {
                 List<String> destChildren = zk.getChildren(path, false);
                 for (String child : destChildren) {
                     if (!node.getChildrenNamed().contains(child)) {
-                        delete(node.getAbsolutePath() + "/" + child);
+                        delete((node.getAbsolutePath() + "/") + child);
                     }
                 }
             } catch (KeeperException e) {
@@ -147,7 +165,7 @@ public class Writer {
             transaction.create(nodePath, node.getData(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
             nodesCreated++;
         }
-        if (nodesUpdated % 100 == 0) {
+        if ((nodesUpdated % 100) == 0) {
             logger.debug(String.format("Updated: %s, current node mtime %s", nodesUpdated, node.getMtime()));
         }
     }
@@ -155,10 +173,9 @@ public class Writer {
     private void delete(String path) throws KeeperException, InterruptedException {
         List<String> children = zk.getChildren(path, false);
         for (String child : children) {
-            delete(path + "/" + child);
+            delete((path + "/") + child);
         }
         transaction.delete(path, -1);
         logger.info("Deleted node " + path);
     }
-
 }
