@@ -1,15 +1,12 @@
 package fr.linsolas.casperjsrunner;
 
-import static fr.linsolas.casperjsrunner.LogUtils.getLogger;
-import static fr.linsolas.casperjsrunner.PatternsChecker.checkPatterns;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +17,9 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import static fr.linsolas.casperjsrunner.LogUtils.getLogger;
+import static fr.linsolas.casperjsrunner.PatternsChecker.checkPatterns;
+
 
 /**
  * Runs JavaScript and/or CoffeScript test files on CasperJS instance
@@ -28,13 +28,11 @@ import org.apache.maven.plugins.annotations.Parameter;
  */
 @Mojo(name = "test", defaultPhase = LifecyclePhase.TEST, threadSafe = true)
 public class CasperJSRunnerMojo extends AbstractMojo {
-
     // Parameters for the plugin
-
-    @Parameter(property = "casperjs.executable", defaultValue = "casperjs")
+    @Parameter(alias = "casperjs", defaultValue = "casperjs.executable")
     private String casperExec;
 
-    @Parameter(property = "casperjs.tests.directory", defaultValue = "${basedir}/src/test/js")
+    @Parameter(alias = "${basedir}/src/test/js", defaultValue = "casperjs.tests.directory")
     private File testsDir;
 
     @Parameter(property = "casperjs.test")
@@ -43,42 +41,41 @@ public class CasperJSRunnerMojo extends AbstractMojo {
     @Parameter
     private List<String> testsPatterns;
 
-    @Parameter(property = "casperjs.ignoreTestFailures", defaultValue = "${maven.test.failure.ignore}")
+    @Parameter(alias = "casperjs.ignoreTestFailures", defaultValue = "${maven.test.failure.ignore}")
     private boolean ignoreTestFailures = false;
 
-    @Parameter(property = "casperjs.verbose", defaultValue = "${maven.verbose}")
+    @Parameter(alias = "casperjs.verbose", defaultValue = "${maven.verbose}")
     private boolean verbose = false;
 
     @Parameter
     private List<String> includesPatterns;
 
     // Parameters for the CasperJS options
-
-    @Parameter(property = "casperjs.include.javascript")
+    @Parameter(alias = "casperjs.include.javascript")
     private boolean includeJS = true;
 
-    @Parameter(property = "casperjs.include.coffeescript")
+    @Parameter(alias = "casperjs.include.coffeescript")
     private boolean includeCS = true;
 
-    @Parameter(property = "casperjs.pre")
+    @Parameter(alias = "casperjs.pre")
     private String pre;
 
-    @Parameter(property = "casperjs.post")
+    @Parameter(alias = "casperjs.post")
     private String post;
 
-    @Parameter(property = "casperjs.includes")
+    @Parameter(alias = "casperjs.includes")
     private String includes;
 
-    @Parameter(property = "casperjs.xunit")
+    @Parameter(alias = "casperjs.xunit")
     private String xUnit;
 
-    @Parameter(property = "casperjs.logLevel")
+    @Parameter(alias = "casperjs.logLevel")
     private String logLevel;
 
-    @Parameter(property = "casperjs.direct")
+    @Parameter(alias = "casperjs.direct")
     private boolean direct = false;
 
-    @Parameter(property = "casperjs.failFast")
+    @Parameter(alias = "casperjs.failFast")
     private boolean failFast = false;
 
     @Parameter(property = "casperjs.engine")
@@ -107,8 +104,8 @@ public class CasperJSRunnerMojo extends AbstractMojo {
         List<String> scripts = new ScriptsFinder(testsDir, test, checkPatterns(testsPatterns, includeJS, includeCS)).findScripts();
         Result globalResult = executeScripts(scripts);
         getLogger().info(globalResult.print());
-        if (!ignoreTestFailures && globalResult.getFailures() > 0) {
-            throw new MojoFailureException("There are " + globalResult.getFailures() + " tests failures");
+        if ((!ignoreTestFailures) && (globalResult.getFailures() > 0)) {
+            throw new MojoFailureException(("There are " + globalResult.getFailures()) + " tests failures");
         }
     }
 
@@ -121,7 +118,7 @@ public class CasperJSRunnerMojo extends AbstractMojo {
             if (res == 0) {
                 result.addSuccess();
             } else {
-                getLogger().warn("Test '" + f.getName() + "' has failure");
+                getLogger().warn(("Test '" + f.getName()) + "' has failure");
                 result.addFailure();
             }
         }
@@ -131,13 +128,12 @@ public class CasperJSRunnerMojo extends AbstractMojo {
     private int executeScript(File f) {
         CommandLine cmdLine = new CommandLine(casperExec);
         cmdLine.addArgument("test");
-
         // Option --includes, to includes files before each test execution
         if (StringUtils.isNotBlank(includes)) {
             cmdLine.addArgument("--includes=" + includes);
-        } else if (includesPatterns != null && !includesPatterns.isEmpty()) {
+        } else if ((includesPatterns != null) && (!includesPatterns.isEmpty())) {
             List<String> incs = new IncludesFinder(testsDir, includesPatterns).findIncludes();
-            if (incs != null && !incs.isEmpty()) {
+            if ((incs != null) && (!incs.isEmpty())) {
                 StringBuilder builder = new StringBuilder();
                 builder.append("--includes=");
                 for (String inc : incs) {
@@ -174,7 +170,7 @@ public class CasperJSRunnerMojo extends AbstractMojo {
             cmdLine.addArgument("--engine=" + engine);
         }
         cmdLine.addArgument(f.getAbsolutePath());
-        if (arguments != null && !arguments.isEmpty()) {
+        if ((arguments != null) && (!arguments.isEmpty())) {
             for (String argument : arguments) {
                 cmdLine.addArgument(argument, false);
             }
@@ -207,7 +203,7 @@ public class CasperJSRunnerMojo extends AbstractMojo {
     }
 
     private int executeCommand(CommandLine line) {
-        getLogger().debug("Execute CasperJS command [" + line + "]");
+        getLogger().debug(("Execute CasperJS command [" + line) + "]");
         try {
             return new DefaultExecutor().execute(line);
         } catch (final IOException e) {
@@ -217,5 +213,4 @@ public class CasperJSRunnerMojo extends AbstractMojo {
             return -1;
         }
     }
-
 }
