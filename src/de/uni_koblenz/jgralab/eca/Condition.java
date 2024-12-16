@@ -1,15 +1,6 @@
-package de.uni_koblenz.jgralab.eca;
-
-import de.uni_koblenz.jgralab.eca.events.Event;
-
-public interface Condition {
-
-	/**
-	 * Evaluates the condition
-	 *
-	 * @param event
-	 *            an Event containing the element to check the condition for
-	 * @return if the condition is evaluated to true
-	 */
-	public boolean evaluate(Event event);
-}
+  package    de . uni_koblenz . jgralab . eca ;   import      de . uni_koblenz . jgralab . eca . events . Event ;  import      de . uni_koblenz . jgralab . greql2 . types . Types ; 
+<<<<<<<
+  public interface Condition  {   public boolean evaluate  (  Event event ) ; }
+=======
+  public class Condition  {   private String  conditionExpression ;   private ECARule  rule ;   public Condition  (  String conditionExpression )  {    this . conditionExpression = conditionExpression ; }   public boolean evaluate  (  Event event )  {  AttributedElement  element =  event . getElement  ( ) ;  GreqlEvaluator  greqlEvaluator =    this . rule . getECARuleManager  ( ) . getGreqlEvaluator  ( ) ;  if  (   this . conditionExpression . contains  ( "context" ) )  {   greqlEvaluator . setQuery  (  "using context: " + conditionExpression ) ;   greqlEvaluator . setVariable  ( "context" , element ) ; } else  {   greqlEvaluator . setQuery  (  this . conditionExpression ) ; }   greqlEvaluator . startEvaluation  ( ) ;  Object  result =  greqlEvaluator . getResult  ( ) ;  if  (  result instanceof Boolean )  {  return  ( Boolean ) result ; } else  {    System . err . println  (  "Invalid Condition: " +  this . conditionExpression ) ;  throw  new ECAException  (     "Invalid Condition: \"" +  this . conditionExpression + "\" evaluates to type " +  Types . getGreqlTypeName  ( result ) + " but the result has to be a Boolean." ) ; } }   public ECARule getRule  ( )  {  return rule ; }   public void setRule  (  ECARule rule )  {    this . rule = rule ; }   public String getConditionExpression  ( )  {  return conditionExpression ; }    @ Override public String toString  ( )  {  return  "Condition: " +  this . conditionExpression ; } }
+>>>>>>>
