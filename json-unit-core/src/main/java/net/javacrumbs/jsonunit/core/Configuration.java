@@ -1,12 +1,12 @@
 /**
  * Copyright 2009-2019 the original author or authors.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,20 +15,14 @@
  */
 package net.javacrumbs.jsonunit.core;
 
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.Arrays;
 import net.javacrumbs.jsonunit.core.internal.Options;
 import net.javacrumbs.jsonunit.core.internal.PathOption;
 import net.javacrumbs.jsonunit.core.listener.DifferenceListener;
 import org.hamcrest.Matcher;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static java.util.Arrays.asList;
 
 /**
  * Comparison configuration. Immutable.
@@ -147,7 +141,7 @@ public class Configuration {
             Collections.unmodifiableList(newOptions));
     }
 
-    public Configuration whenIgnoringPaths(Collection<String> pathsToBeIgnored) {
+    Configuration whenIgnoringPaths(List<String> pathsToBeIgnored) {
         List<String> newPaths = new ArrayList<>(this.pathsToBeIgnored);
         newPaths.addAll(pathsToBeIgnored);
         return new Configuration(tolerance, options, ignorePlaceholder, matchers, Collections.unmodifiableList(newPaths),
@@ -164,7 +158,22 @@ public class Configuration {
      * @see ConfigurationWhen#thenIgnore
      */
     public Configuration whenIgnoringPaths(String... pathsToBeIgnored) {
+<<<<<<< LEFT
+        return whenIgnoringPaths(Arrays.asList(pathsToBeIgnored));
+=======
         return whenIgnoringPaths(asList(pathsToBeIgnored));
+    }
+
+    /**
+     * Makes JsonUnit ignore the specified paths in the actual value. If the path matches,
+     * it's completely ignored. It may be missing, null or have any value
+     *
+     * @param pathsToBeIgnored
+     * @return
+     */
+    public Configuration whenIgnoringPaths(Collection<String> pathsToBeIgnored) {
+        return new Configuration(tolerance, options, ignorePlaceholder, matchers, pathsToBeIgnored, differenceListener);
+>>>>>>> RIGHT
     }
 
     /**

@@ -15,6 +15,11 @@
  */
 package net.javacrumbs.jsonunit.assertj;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import net.javacrumbs.jsonunit.core.Configuration;
 import net.javacrumbs.jsonunit.core.ConfigurationWhen;
 import net.javacrumbs.jsonunit.core.Option;
@@ -37,13 +42,6 @@ import org.assertj.core.description.Description;
 import org.assertj.core.error.MessageFormatter;
 import org.assertj.core.internal.Failures;
 import org.hamcrest.Matcher;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
 import static net.javacrumbs.jsonunit.core.internal.Diff.quoteTextValue;
 import static net.javacrumbs.jsonunit.core.internal.JsonUtils.getNode;
 import static net.javacrumbs.jsonunit.core.internal.JsonUtils.getPathPrefix;
@@ -56,9 +54,12 @@ import static net.javacrumbs.jsonunit.core.internal.Node.NodeType.STRING;
 import static net.javacrumbs.jsonunit.jsonpath.InternalJsonPathUtils.resolveJsonPathsToBeIgnored;
 import static org.assertj.core.util.Strings.isNullOrEmpty;
 
+
 public class JsonAssert extends AbstractAssert<JsonAssert, Object> {
     final Path path;
+
     final Configuration configuration;
+
     private final InternalMatcher internalMatcher;
 
     JsonAssert(Path path, Configuration configuration, Object actual) {
@@ -79,7 +80,6 @@ public class JsonAssert extends AbstractAssert<JsonAssert, Object> {
     public JsonAssert node(String node) {
         return new JsonAssert(path.to(node), configuration, getNode(actual, node));
     }
-
 
     /**
      * Allows to do multiple comparisons on a document like
@@ -258,6 +258,7 @@ public class JsonAssert extends AbstractAssert<JsonAssert, Object> {
      */
     public static class ConfigurableJsonAssert extends JsonAssert {
         // Want to pass to inPath to not parse twice.
+        // Want to pass to inPath to not parse twice.
         private final Object originalActual;
 
         ConfigurableJsonAssert(Path path, Configuration configuration, Object actual) {
@@ -293,7 +294,7 @@ public class JsonAssert extends AbstractAssert<JsonAssert, Object> {
          * @return
          */
         public ConfigurableJsonAssert withOptions(Options options) {
-            return withConfiguration(c -> c.withOptions(options));
+            return withConfiguration(( c) -> c.withOptions(options));
         }
 
         /**
@@ -307,7 +308,6 @@ public class JsonAssert extends AbstractAssert<JsonAssert, Object> {
          */
         public ConfigurableJsonAssert withConfiguration(Function<Configuration, Configuration> configurationFunction) {
             Configuration newConfiguration = configurationFunction.apply(configuration);
-
             if (configuration.getPathsToBeIgnored() != newConfiguration.getPathsToBeIgnored()) {
                 newConfiguration = resolveJsonPathsToBeIgnored(originalActual, newConfiguration);
             }
@@ -321,7 +321,7 @@ public class JsonAssert extends AbstractAssert<JsonAssert, Object> {
          * @return
          */
         public ConfigurableJsonAssert withTolerance(BigDecimal tolerance) {
-            return withConfiguration(c -> c.withTolerance(tolerance));
+            return withConfiguration(( c) -> c.withTolerance(tolerance));
         }
 
         /**
@@ -342,7 +342,7 @@ public class JsonAssert extends AbstractAssert<JsonAssert, Object> {
          * @return
          */
         public ConfigurableJsonAssert whenIgnoringPaths(String... pathsToBeIgnored) {
-            return withConfiguration(c -> c.whenIgnoringPaths(pathsToBeIgnored));
+            return withConfiguration(( c) -> c.whenIgnoringPaths(pathsToBeIgnored));
         }
 
         /**
@@ -352,7 +352,7 @@ public class JsonAssert extends AbstractAssert<JsonAssert, Object> {
          * @return
          */
         public ConfigurableJsonAssert withIgnorePlaceholder(String ignorePlaceholder) {
-            return withConfiguration(c -> c.withIgnorePlaceholder(ignorePlaceholder));
+            return withConfiguration(( c) -> c.withIgnorePlaceholder(ignorePlaceholder));
         }
 
         /**
@@ -363,15 +363,14 @@ public class JsonAssert extends AbstractAssert<JsonAssert, Object> {
          * @return
          */
         public ConfigurableJsonAssert withMatcher(String matcherName, Matcher<?> matcher) {
-            return withConfiguration(c -> c.withMatcher(matcherName, matcher));
+            return withConfiguration(( c) -> c.withMatcher(matcherName, matcher));
         }
-
 
         /**
          * Sets difference listener
          */
         public ConfigurableJsonAssert withDifferenceListener(DifferenceListener differenceListener) {
-            return withConfiguration(c -> c.withDifferenceListener(differenceListener));
+            return withConfiguration(( c) -> c.withDifferenceListener(differenceListener));
         }
 
         public JsonAssert inPath(String jsonPath) {
