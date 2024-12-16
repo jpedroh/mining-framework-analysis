@@ -3,26 +3,24 @@ package io.tracee.contextlogger.jaxws.container;
 import io.tracee.Tracee;
 import io.tracee.TraceeBackend;
 import io.tracee.TraceeLogger;
-
 import io.tracee.contextlogger.TraceeContextLogger;
 import io.tracee.contextlogger.api.ImplicitContext;
 import io.tracee.contextlogger.contextprovider.jaxws.JaxWsWrapper;
 import io.tracee.jaxws.AbstractTraceeHandler;
 import io.tracee.jaxws.container.TraceeServerHandler;
-
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.Charset;
+import java.util.Set;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
-import java.io.ByteArrayOutputStream;
-import java.nio.charset.Charset;
-import java.util.Set;
+
 
 /**
  * Abstract base class for detecting JAX-WS related uncaught exceptions and outputting of contextual information.
  */
 public abstract class AbstractTraceeErrorLoggingHandler extends AbstractTraceeHandler {
-
     private final TraceeLogger logger = this.getTraceeBackend().getLoggerFactory().getLogger(
             TraceeServerHandler.class);
 
@@ -38,17 +36,9 @@ public abstract class AbstractTraceeErrorLoggingHandler extends AbstractTraceeHa
 
     @Override
     public final boolean handleFault(SOAPMessageContext context) {
-
         // Must pipe out Soap envelope
         SOAPMessage soapMessage = context.getMessage();
-
-        TraceeContextLogger.createDefault().logJsonWithPrefixedMessage(
-                "TRACEE JAXWS ERROR CONTEXT LISTENER",
-                ImplicitContext.COMMON,
-                ImplicitContext.TRACEE,
-                JaxWsWrapper.wrap(THREAD_LOCAL_SOAP_MESSAGE_STR.get(),
-                        convertSoapMessageAsString(soapMessage)));
-
+        TraceeContextLogger.createDefault().logJsonWithPrefixedMessage("TRACEE JAXWS ERROR CONTEXT LISTENER", ImplicitContext.COMMON, ImplicitContext.TRACEE, JaxWsWrapper.wrap(THREAD_LOCAL_SOAP_MESSAGE_STR.get(), convertSoapMessageAsString(soapMessage)));
         return true;
     }
 
@@ -69,14 +59,14 @@ public abstract class AbstractTraceeErrorLoggingHandler extends AbstractTraceeHa
         }
     }
 
-    Charset determineMessageEncoding(SOAPMessage soapMessage) {
+    final Charset determineMessageEncoding(SOAPMessage soapMessage) {
         try {
             final Object encProp = soapMessage.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
             if (encProp != null) {
                 return Charset.forName(String.valueOf(encProp));
             }
             return Charset.forName("UTF-8");
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             return Charset.forName("UTF-8");
         }
     }
@@ -102,5 +92,4 @@ public abstract class AbstractTraceeErrorLoggingHandler extends AbstractTraceeHa
     public final Set<QName> getHeaders() {
         return null;
     }
-
 }

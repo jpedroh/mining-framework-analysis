@@ -4,18 +4,17 @@ import io.tracee.contextlogger.api.TraceeContextProvider;
 import io.tracee.contextlogger.api.TraceeContextProviderMethod;
 import io.tracee.contextlogger.api.WrappedContextData;
 
+
 /**
  * Test wrapper class that wraps type {@link io.tracee.contextlogger.integrationtest.WrappedTestContextData}.
  */
 @TraceeContextProvider(displayName = "testdata", order = 50)
 public class TestContextDataWrapper implements WrappedContextData<WrappedTestContextData> {
-
     public static final String PROPERTY_NAME = "WrappedTestContextData.testOutputPropertyName";
 
     private WrappedTestContextData contextData;
 
     public TestContextDataWrapper() {
-
     }
 
     public TestContextDataWrapper(final WrappedTestContextData contextData) {
@@ -24,7 +23,7 @@ public class TestContextDataWrapper implements WrappedContextData<WrappedTestCon
 
     @Override
     public void setContextData(Object instance) throws ClassCastException {
-        this.contextData = (WrappedTestContextData)instance;
+        this.contextData = (WrappedTestContextData) instance;
     }
 
     @Override
