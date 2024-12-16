@@ -1,17 +1,5 @@
 package bibliothek.gui.dock;
 
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.event.MouseInputListener;
-
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -28,6 +16,17 @@ import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.SilentPropertyValue;
 import bibliothek.gui.dock.util.icon.DockIcon;
+import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.event.MouseInputListener;
+
 
 /**
  * A {@link Dockable} which consist only of one {@link JComponent}. This
@@ -36,9 +35,7 @@ import bibliothek.gui.dock.util.icon.DockIcon;
  * 
  * @author Herve Guillaume
  */
-public class ComponentDockable extends AbstractDockable implements
-		ToolbarElementInterface, ExpandableToolbarItem{
-
+public class ComponentDockable extends AbstractDockable implements ToolbarElementInterface , ExpandableToolbarItem {
 	/** the component */
 	private JPanel content;
 
@@ -60,64 +57,64 @@ public class ComponentDockable extends AbstractDockable implements
 	/**
 	 * Constructs a new ComponentDockable
 	 */
-	public ComponentDockable(){
+	public ComponentDockable() {
 		this(null, null, null);
 	}
 
 	/**
 	 * Constructs a new ComponentDockable and sets the icon.
-	 * 
+	 *
 	 * @param icon
-	 *            the icon, to be shown at various places
+	 * 		the icon, to be shown at various places
 	 */
-	public ComponentDockable( Icon icon ){
+	public ComponentDockable(Icon icon) {
 		this(null, null, icon);
 	}
 
 	/**
 	 * Constructs a new ComponentDockable and sets the title.
-	 * 
+	 *
 	 * @param title
-	 *            the title, to be shown at various places
+	 * 		the title, to be shown at various places
 	 */
-	public ComponentDockable( String title ){
+	public ComponentDockable(String title) {
 		this(null, title, null);
 	}
 
 	/**
 	 * Constructs a new ComponentDockable and places one component onto the
 	 * content pane.
-	 * 
+	 *
 	 * @param component
-	 *            the only child of the content pane
+	 * 		the only child of the content pane
 	 */
-	public ComponentDockable( Component component ){
+	public ComponentDockable(Component component) {
 		this(component, null, null);
 	}
 
 	/**
 	 * Constructs a new ComponentDockable, sets an icon and places one
 	 * component.
-	 * 
+	 *
 	 * @param component
-	 *            the only child of the content pane
+	 * 		the only child of the content pane
 	 * @param icon
-	 *            the icon, to be shown at various places
+	 * 		the icon, to be shown at various places
 	 */
-	public ComponentDockable( Component component, Icon icon ){
+	public ComponentDockable(Component component, Icon icon) {
 		this(component, null, icon);
 	}
 
 	/**
 	 * Constructs a new ComponentDockable, sets the title and places one
 	 * component.
-	 * 
+	 *
 	 * @param component
-	 *            the only child of the content pane
+	 * 		the only child of the content pane
 	 * @param title
-	 *            the title, to be shown at various places
+	 * 		the title, to be shown at various places
 	 */
-	public ComponentDockable( Component component, String title ){
+	public ComponentDockable(Component component, String title) {
 		this(component, title, null);
 	}
 
@@ -132,15 +129,14 @@ public class ComponentDockable extends AbstractDockable implements
 	 * @param icon
 	 *            the icon, to be shown at various places
 	 */
-	public ComponentDockable( Component component, String title, Icon icon ){
+	public ComponentDockable(Component component, String title, Icon icon) {
 		super(PropertyKey.DOCKABLE_TITLE, PropertyKey.DOCKABLE_TOOLTIP);
-
-		contentLayout = new CardLayout(){
+		contentLayout = new CardLayout() {
 			@Override
-			public Dimension preferredLayoutSize( Container parent ){
-				synchronized (parent.getTreeLock()){
+			public Dimension preferredLayoutSize(Container parent) {
+				synchronized(parent.getTreeLock()) {
 					final Component current = getNearestComponent(state);
-					if (current == null){
+					if (current == null) {
 						return new Dimension(10, 10);
 					}
 					return current.getPreferredSize();
@@ -148,10 +144,10 @@ public class ComponentDockable extends AbstractDockable implements
 			}
 
 			@Override
-			public Dimension minimumLayoutSize( Container parent ){
-				synchronized (parent.getTreeLock()){
+			public Dimension minimumLayoutSize(Container parent) {
+				synchronized(parent.getTreeLock()) {
 					final Component current = getNearestComponent(state);
-					if (current == null){
+					if (current == null) {
 						return new Dimension(10, 10);
 					}
 					return current.getMinimumSize();
@@ -159,25 +155,21 @@ public class ComponentDockable extends AbstractDockable implements
 			}
 
 			@Override
-			public Dimension maximumLayoutSize( Container parent ){
-				synchronized (parent.getTreeLock()){
+			public Dimension maximumLayoutSize(Container parent) {
+				synchronized(parent.getTreeLock()) {
 					final Component current = getNearestComponent(state);
-					if (current == null){
+					if (current == null) {
 						return new Dimension(10, 10);
 					}
 					return current.getMaximumSize();
 				}
 			}
 		};
-
 		content = new JPanel(contentLayout);
-
 		new ExpandableStateController(this);
-
-		if (component != null){
+		if (component != null) {
 			setComponent(component, ExpandedState.SHRUNK);
 		}
-
 		setTitleIcon(icon);
 		setTitleText(title);
 	}
@@ -193,16 +185,16 @@ public class ComponentDockable extends AbstractDockable implements
 	 */
 	private Component getNearestComponent( ExpandedState state ){
 		int index = state.ordinal();
-		while (index >= 0){
-			if (components[index] != null){
+		while( index >= 0 ){
+			if( components[index] != null ){
 				return components[index];
 			}
 			index--;
 		}
-
-		index = state.ordinal() + 1;
-		while (index < components.length){
-			if (components[index] != null){
+		
+		index = state.ordinal()+1;
+		while( index < components.length ){
+			if( components[index] != null ){
 				return components[index];
 			}
 			index++;
@@ -218,13 +210,13 @@ public class ComponentDockable extends AbstractDockable implements
 	 *            the state.
 	 * @return the nearest state.
 	 */
-	private ExpandedState getNearestState( ExpandedState state ){
+	private ExpandedState getNearestState(ExpandedState state) {
 		final Component nearest = getNearestComponent(state);
-		if (nearest == null){
+		if (nearest == null) {
 			return null;
 		}
-		for (final ExpandedState next : ExpandedState.values()){
-			if (components[next.ordinal()] == nearest){
+		for (final ExpandedState next : ExpandedState.values()) {
+			if (components[next.ordinal()] == nearest) {
 				return next;
 			}
 		}
@@ -232,11 +224,11 @@ public class ComponentDockable extends AbstractDockable implements
 	}
 
 	@Override
-	public void addMouseInputListener( MouseInputListener listener ){
+	public void addMouseInputListener(MouseInputListener listener) {
 		super.addMouseInputListener(listener);
 		mouseListeners.add(listener);
-		for (final Component component : components){
-			if (component != null){
+		for (final Component component : components) {
+			if (component != null) {
 				component.addMouseListener(listener);
 				component.addMouseMotionListener(listener);
 			}
@@ -244,11 +236,11 @@ public class ComponentDockable extends AbstractDockable implements
 	}
 
 	@Override
-	public void removeMouseInputListener( MouseInputListener listener ){
+	public void removeMouseInputListener(MouseInputListener listener) {
 		super.removeMouseInputListener(listener);
 		mouseListeners.remove(listener);
-		for (final Component component : components){
-			if (component != null){
+		for (final Component component : components) {
+			if (component != null) {
 				component.removeMouseListener(listener);
 				component.removeMouseMotionListener(listener);
 			}
@@ -265,28 +257,26 @@ public class ComponentDockable extends AbstractDockable implements
 	 * @param state
 	 *            the state in which to show <code>component</code>
 	 */
-	public void setComponent( Component component, ExpandedState state ){
+	public void setComponent(Component component, ExpandedState state) {
 		final Component previous = components[state.ordinal()];
-		if (previous != component){
-			if (previous != null){
+		if (previous != component) {
+			if (previous != null) {
 				content.remove(previous);
-				for (final MouseInputListener listener : mouseListeners){
+				for (final MouseInputListener listener : mouseListeners) {
 					previous.removeMouseListener(listener);
 					previous.removeMouseMotionListener(listener);
 				}
 			}
-
 			components[state.ordinal()] = component;
-			if (component != null){
+			if (component != null) {
 				content.add(component, state.toString());
-				for (final MouseInputListener listener : mouseListeners){
+				for (final MouseInputListener listener : mouseListeners) {
 					component.addMouseListener(listener);
 					component.addMouseMotionListener(listener);
 				}
 			}
-
 			final ExpandedState nearest = getNearestState(this.state);
-			if (nearest != null){
+			if (nearest != null) {
 				contentLayout.show(content, nearest.toString());
 				content.revalidate();
 			}
@@ -294,18 +284,16 @@ public class ComponentDockable extends AbstractDockable implements
 	}
 
 	@Override
-	public void setExpandedState( ExpandedState state ){
-		if (this.state != state){
+	public void setExpandedState(ExpandedState state) {
+		if (this.state != state) {
 			final ExpandedState oldState = this.state;
 			this.state = state;
 			final ExpandedState nearest = getNearestState(state);
-			if (nearest != null){
+			if (nearest != null) {
 				contentLayout.show(content, nearest.toString());
 			}
 			content.revalidate();
-			for (final ExpandableToolbarItemListener listener : expandableListeners
-					.toArray(new ExpandableToolbarItemListener[expandableListeners
-							.size()])){
+			for (final ExpandableToolbarItemListener listener : expandableListeners.toArray(new ExpandableToolbarItemListener[expandableListeners.size()])) {
 				listener.changed(this, oldState, state);
 			}
 		}
@@ -323,15 +311,15 @@ public class ComponentDockable extends AbstractDockable implements
 
 	@Override
 	public void addExpandableListener( ExpandableToolbarItemListener listener ){
-		if (listener == null){
-			throw new IllegalArgumentException("listener must not be null");
+		if( listener == null ){
+			throw new IllegalArgumentException( "listener must not be null" );
 		}
-		expandableListeners.add(listener);
+		expandableListeners.add( listener );	
 	}
 
 	@Override
 	public void removeExpandableListener( ExpandableToolbarItemListener listener ){
-		expandableListeners.remove(listener);
+		expandableListeners.remove( listener );
 	}
 
 	@Override
@@ -346,35 +334,31 @@ public class ComponentDockable extends AbstractDockable implements
 
 	@Override
 	protected DockIcon createTitleIcon(){
-		return new DockableIcon("dockable.default", this){
+		return new DockableIcon( "dockable.default", this ){
 			@Override
 			protected void changed( Icon oldValue, Icon newValue ){
-				fireTitleIconChanged(oldValue, newValue);
+				fireTitleIconChanged( oldValue, newValue );
 			}
 		};
 	}
 
 	@Override
-	public boolean accept( DockStation station ){
+	public boolean accept(DockStation station) {
 		// as this method is called during drag&drop operations a DockController
 		// is available
-		final SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>(
-				ToolbarStrategy.STRATEGY, getController());
+		final SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>(ToolbarStrategy.STRATEGY, getController());
 		final ToolbarStrategy strategy = value.getValue();
-		value.setProperties((DockController) null);
-
+		value.setProperties(((DockController) (null)));
 		return strategy.isToolbarGroupPartParent(station, this, false);
 	}
-	
+
 	@Override
 	public boolean accept( DockStation base, Dockable neighbour ){
 		return false;
 	}
 
 	@Override
-	public String toString(){
-		return this.getClass().getSimpleName() + '@'
-				+ Integer.toHexString(hashCode());
+	public String toString() {
+		return (this.getClass().getSimpleName() + '@') + Integer.toHexString(hashCode());
 	}
-
 }
