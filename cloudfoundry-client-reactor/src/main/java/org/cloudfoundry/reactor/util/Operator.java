@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cloudfoundry.reactor.util;
 
 import io.netty.channel.ChannelHandler;
@@ -22,6 +21,13 @@ import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import org.cloudfoundry.reactor.HttpClientResponseWithBody;
 import org.cloudfoundry.reactor.HttpClientResponseWithConnection;
 import org.reactivestreams.Publisher;
@@ -39,16 +45,8 @@ import reactor.netty.http.websocket.WebsocketInbound;
 import reactor.netty.http.websocket.WebsocketOutbound;
 import reactor.util.retry.Retry;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class Operator extends OperatorContextAware {
-
     private final HttpClient httpClient;
 
     public Operator(OperatorContext context, HttpClient httpClient) {
@@ -102,13 +100,10 @@ public class Operator extends OperatorContextAware {
 
     private static HttpClient attachRequestLogger(HttpClient httpClient) {
         RequestLogger requestLogger = new RequestLogger();
-        return httpClient.doAfterRequest((request, connection) -> requestLogger.request(request))
-            .doAfterResponseSuccess((response, connection) -> requestLogger.response(response))
-            .doOnResponseError((response, connection) -> requestLogger.response(response));
+        return httpClient.doAfterRequest(( request, connection) -> requestLogger.request(request)).doAfterResponseSuccess(( response, connection) -> requestLogger.response(response)).doOnResponseError(( response, connection) -> requestLogger.response(response));
     }
 
     public static class PayloadConfiguration extends OperatorContextAware {
-
         private final HttpClient.RequestSender requestSender;
 
         PayloadConfiguration(OperatorContext context, HttpClient.RequestSender requestSender) {
@@ -137,11 +132,9 @@ public class Operator extends OperatorContextAware {
         private BiFunction<HttpClientRequest, NettyOutbound, Publisher<Void>> serialized(Object payload) {
             return JsonCodec.encode(this.context.getConnectionContext().getObjectMapper(), payload);
         }
-
     }
 
     public static class ResponseReceiver extends OperatorContextAware {
-
         private final List<Function<HttpClientResponse, ChannelHandler>> channelHandlerBuilders = new ArrayList<>();
 
         private final HttpClient.ResponseReceiver<?> responseReceiver;
@@ -157,38 +150,27 @@ public class Operator extends OperatorContextAware {
         }
 
         public Mono<HttpClientResponse> get() {
-            return this.responseReceiver.responseConnection((response, connection) -> Mono.just(HttpClientResponseWithConnection.of(connection, response)))
-                .transform(this::processResponse)
-                .map(HttpClientResponseWithConnection::getResponse)
-                .singleOrEmpty();
+            return this.responseReceiver.responseConnection(( response, connection) -> Mono.just(HttpClientResponseWithConnection.of(connection, response))).transform(this::processResponse).map(HttpClientResponseWithConnection::getResponse).singleOrEmpty();
         }
 
         public <T> Mono<T> parseBody(Class<T> bodyType) {
-            addChannelHandler(response -> {
+            addChannelHandler(( response) -> {
                 if (HttpHeaderValues.APPLICATION_JSON.contentEquals(response.responseHeaders().get(HttpHeaderNames.CONTENT_TYPE))) {
                     return JsonCodec.createDecoder();
                 }
-
                 return null;
             });
-
-            return parseBodyToMono(responseWithBody -> deserialized(responseWithBody.getBody(), bodyType));
+            return parseBodyToMono(( responseWithBody) -> deserialized(responseWithBody.getBody(), bodyType));
         }
 
         public <T> Flux<T> parseBodyToFlux(Function<HttpClientResponseWithBody, Publisher<T>> responseTransformer) {
-            return this.responseReceiver.responseConnection((response, connection) -> Mono.just(HttpClientResponseWithConnection.of(connection, response)))
-                .transform(this::processResponse)
-                .flatMap(httpClientResponseWithConnection -> {
-                    Connection connection = httpClientResponseWithConnection.getConnection();
-                    HttpClientResponse response = httpClientResponseWithConnection.getResponse();
-
-                    attachChannelHandlers(response, connection);
-                    ByteBufFlux body = ByteBufFlux.fromInbound(connection.inbound().receive()
-                        .doFinally(signalType -> connection.dispose()));
-
-                    return Mono.just(HttpClientResponseWithBody.of(body, response));
-                })
-                .flatMap(responseTransformer);
+            return this.responseReceiver.responseConnection(( response, connection) -> Mono.just(HttpClientResponseWithConnection.of(connection, response))).transform(this::processResponse).flatMap(( httpClientResponseWithConnection) -> {
+                Connection connection = httpClientResponseWithConnection.getConnection();
+                HttpClientResponse response = httpClientResponseWithConnection.getResponse();
+                attachChannelHandlers(response, connection);
+                ByteBufFlux body = ByteBufFlux.fromInbound(connection.inbound().receive().doFinally(( signalType) -> connection.dispose()));
+                return Mono.just(HttpClientResponseWithBody.of(body, response));
+            }).flatMap(responseTransformer);
         }
 
         public <T> Mono<T> parseBodyToMono(Function<HttpClientResponseWithBody, Publisher<T>> responseTransformer) {
@@ -213,25 +195,19 @@ public class Operator extends OperatorContextAware {
         }
 
         private Flux<HttpClientResponseWithConnection> invalidateToken(Flux<HttpClientResponseWithConnection> inbound) {
-            return inbound
-                .doOnNext(response -> {
-                    if (isUnauthorized(response)) {
-                        this.context.getTokenProvider().ifPresent(tokenProvider -> tokenProvider.invalidate(this.context.getConnectionContext()));
-                        throw new InvalidTokenException();
-                    }
-                });
+            return inbound.doOnNext(( response) -> {
+                if (isUnauthorized(response)) {
+                    this.context.getTokenProvider().ifPresent(( tokenProvider) -> tokenProvider.invalidate(this.context.getConnectionContext()));
+                    throw new InvalidTokenException();
+                }
+            });
         }
 
         private Flux<HttpClientResponseWithConnection> processResponse(Flux<HttpClientResponseWithConnection> inbound) {
-            return inbound
-                .transform(this::invalidateToken)
-                .retryWhen(Retry.max(this.context.getConnectionContext().getInvalidTokenRetries()).filter(InvalidTokenException.class::isInstance))
-                .transform(this.context.getErrorPayloadMapper()
-                    .orElse(ErrorPayloadMappers.fallback()));
+            return inbound.transform(this::invalidateToken).retryWhen(Retry.max(this.context.getConnectionContext().getInvalidTokenRetries()).filter(Operator.ResponseReceiver.InvalidTokenException.class::isInstance)).transform(this.context.getErrorPayloadMapper().orElse(ErrorPayloadMappers.fallback()));
         }
 
         private static final class InvalidTokenException extends RuntimeException {
-
             private static final long serialVersionUID = -3114034909507471614L;
 
             private InvalidTokenException() {
@@ -242,11 +218,9 @@ public class Operator extends OperatorContextAware {
                 return null;
             }
         }
-
     }
 
     public static class ResponseReceiverConstructor extends OperatorContextAware {
-
         private final HttpClient.ResponseReceiver<?> responseReceiver;
 
         ResponseReceiverConstructor(OperatorContext context, HttpClient.ResponseReceiver<?> responseReceiver) {
@@ -257,11 +231,9 @@ public class Operator extends OperatorContextAware {
         public ResponseReceiver response() {
             return new ResponseReceiver(this.context, this.responseReceiver);
         }
-
     }
 
     public static class UriConfiguration extends OperatorContextAware {
-
         private final HttpClient.RequestSender requestSender;
 
         private UriConfiguration(OperatorContext context, HttpClient.RequestSender requestSender) {
@@ -273,11 +245,9 @@ public class Operator extends OperatorContextAware {
             String uri = transformRoot(uriTransformer);
             return new PayloadConfiguration(this.context, this.requestSender.uri(uri));
         }
-
     }
 
     public static class WebsocketResponseReceiver {
-
         private final HttpClient.WebsocketSender sender;
 
         WebsocketResponseReceiver(HttpClient.WebsocketSender sender) {
@@ -289,16 +259,11 @@ public class Operator extends OperatorContextAware {
         }
 
         private Publisher<InputStream> handleWebsocketCommunication(WebsocketInbound inbound, WebsocketOutbound outbound) {
-            return inbound.aggregateFrames()
-                .receive()
-                .asInputStream()
-                .doFinally(signalType -> outbound.sendClose());
+            return inbound.aggregateFrames().receive().asInputStream().doFinally(( signalType) -> outbound.sendClose());
         }
-
     }
 
     public static class WebsocketUriConfiguration extends OperatorContextAware {
-
         private final HttpClient.WebsocketSender sender;
 
         private WebsocketUriConfiguration(OperatorContext context, HttpClient.WebsocketSender sender) {
@@ -309,20 +274,16 @@ public class Operator extends OperatorContextAware {
         public WebsocketResponseReceiver uri(Function<UriComponentsBuilder, UriComponentsBuilder> uriTransformer) {
             String uri = transformRoot(uriTransformer);
             logWebsocketRequest(uri);
-
             return new WebsocketResponseReceiver(this.sender.uri(uri));
         }
 
         private static void logWebsocketRequest(String uri) {
             new RequestLogger().websocketRequest(uri);
         }
-
     }
-
 }
 
 class OperatorContextAware {
-
     protected final OperatorContext context;
 
     OperatorContextAware(OperatorContext context) {
@@ -331,10 +292,6 @@ class OperatorContextAware {
 
     protected String transformRoot(Function<UriComponentsBuilder, UriComponentsBuilder> uriTransformer) {
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(this.context.getRoot());
-        return uriTransformer.apply(uriComponentsBuilder)
-            .encode()
-            .build()
-            .toUriString();
+        return uriTransformer.apply(uriComponentsBuilder).encode().build().toUriString();
     }
-
 }
