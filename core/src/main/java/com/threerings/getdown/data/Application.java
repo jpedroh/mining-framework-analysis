@@ -1,10 +1,7 @@
-//
-// Getdown - application installer, patcher and launcher
-// Copyright (C) 2004-2018 Getdown authors
-// https://github.com/threerings/getdown/blob/master/LICENSE
-
 package com.threerings.getdown.data;
 
+import com.threerings.getdown.util.*;
+import com.threerings.getdown.util.Base64;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
@@ -24,20 +21,15 @@ import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
-
-import com.threerings.getdown.util.*;
-// avoid ambiguity with java.util.Base64 which we can't use as it's 1.8+
-import com.threerings.getdown.util.Base64;
-
 import static com.threerings.getdown.Log.log;
 import static java.nio.charset.StandardCharsets.UTF_8;
+
 
 /**
  * Parses and provide access to the information contained in the <code>getdown.txt</code>
  * configuration file.
  */
-public class Application
-{
+public class Application {
     /** The name of our configuration file. */
     public static final String CONFIG_FILE = "getdown.txt";
 
@@ -54,15 +46,16 @@ public class Application
     /** A special classname that means 'use -jar code.jar' instead of a classname. */
     public static final String MANIFEST_CLASS = "manifest";
 
-    /** Used to communicate information about the UI displayed when updating the application. */
-    public static final class UpdateInterface
-    {
+    /**
+     * Used to communicate information about the UI displayed when updating the application.
+     */
+    public static final class UpdateInterface {
         /**
          * The major steps involved in updating, along with some arbitrary percentages
          * assigned to them, to mark global progress.
          */
-        public enum Step
-        {
+        public enum Step {
+
             UPDATE_JAVA(10),
             VERIFY_METADATA(15, 65, 95),
             DOWNLOAD(40),
@@ -71,126 +64,157 @@ public class Application
             REDOWNLOAD_RESOURCES(90),
             UNPACK(98),
             LAUNCH(99);
-
-            /** What is the final percent value for this step? */
+            /**
+             * What is the final percent value for this step?
+             */
             public final List<Integer> defaultPercents;
 
-            /** Enum constructor. */
-            Step (int... percents)
-            {
+            /**
+             * Enum constructor.
+             */
+            private Step(int... percents) {
                 this.defaultPercents = intsToList(percents);
             }
         }
 
-        /** The human readable name of this application. */
+        /**
+         * The human readable name of this application.
+         */
         public final String name;
 
-        /** A background color, just in case. */
+        /**
+         * A background color, just in case.
+         */
         public final int background;
 
-        /** Background image specifiers for `RotatingBackgrounds`. */
+        /**
+         * Background image specifiers for `RotatingBackgrounds`.
+         */
         public final List<String> rotatingBackgrounds;
 
-        /** The error background image for `RotatingBackgrounds`. */
+        /**
+         * The error background image for `RotatingBackgrounds`.
+         */
         public final String errorBackground;
 
-        /** The paths (relative to the appdir) of images for the window icon. */
+        /**
+         * The paths (relative to the appdir) of images for the window icon.
+         */
         public final List<String> iconImages;
 
-        /** The path (relative to the appdir) to a single background image. */
+        /**
+         * The path (relative to the appdir) to a single background image.
+         */
         public final String backgroundImage;
 
-        /** The path (relative to the appdir) to the progress bar image. */
+        /**
+         * The path (relative to the appdir) to the progress bar image.
+         */
         public final String progressImage;
 
-        /** The dimensions of the progress bar. */
+        /**
+         * The dimensions of the progress bar.
+         */
         public final Rectangle progress;
 
-        /** The color of the progress text. */
+        /**
+         * The color of the progress text.
+         */
         public final int progressText;
 
-        /** The color of the progress bar. */
+        /**
+         * The color of the progress bar.
+         */
         public final int progressBar;
 
-        /** The dimensions of the status display. */
+        /**
+         * The dimensions of the status display.
+         */
         public final Rectangle status;
 
-        /** The color of the status text. */
+        /**
+         * The color of the status text.
+         */
         public final int statusText;
 
-        /** The color of the text shadow. */
+        /**
+         * The color of the text shadow.
+         */
         public final int textShadow;
 
-        /** Where to point the user for help with install errors. */
+        /**
+         * Where to point the user for help with install errors.
+         */
         public final String installError;
 
-        /** The dimensions of the patch notes button. */
+        /**
+         * The dimensions of the patch notes button.
+         */
         public final Rectangle patchNotes;
 
-        /** The patch notes URL. */
+        /**
+         * The patch notes URL.
+         */
         public final String patchNotesUrl;
 
-        /** Whether window decorations are hidden for the UI. */
+        /**
+         * Whether window decorations are hidden for the UI.
+         */
         public final boolean hideDecorations;
 
-        /** Whether progress text should be hidden or not. */
+        /**
+         * Whether progress text should be hidden or not.
+         */
         public final boolean hideProgressText;
 
-        /** The minimum number of seconds to display the GUI. This is to prevent the GUI from
-          * flashing up on the screen and immediately disappearing, which can be confusing to the
-          * user. */
+        /**
+         * The minimum number of seconds to display the GUI. This is to prevent the GUI from
+         * flashing up on the screen and immediately disappearing, which can be confusing to the
+         * user.
+         */
         public final int minShowSeconds;
 
-        /** The global percentages for each step. A step may have more than one, and
-         * the lowest reasonable one is used if a step is revisited. */
+        /**
+         * The global percentages for each step. A step may have more than one, and
+         * the lowest reasonable one is used if a step is revisited.
+         */
         public final Map<Step, List<Integer>> stepPercentages;
 
-        /** Generates a string representation of this instance. */
+        /**
+         * Generates a string representation of this instance.
+         */
         @Override
-        public String toString ()
-        {
-            return "[name=" + name + ", bg=" + background + ", bg=" + backgroundImage +
-                ", pi=" + progressImage + ", prect=" + progress + ", pt=" + progressText +
-                ", pb=" + progressBar + ", srect=" + status + ", st=" + statusText +
-                ", shadow=" + textShadow + ", err=" + installError + ", nrect=" + patchNotes +
-                ", notes=" + patchNotesUrl + ", stepPercentages=" + stepPercentages +
-                ", hideProgressText" + hideProgressText + ", minShow=" + minShowSeconds + "]";
+        public String toString() {
+            return ((((((((((((((((((((((((((((((("[name=" + name) + ", bg=") + background) + ", bg=") + backgroundImage) + ", pi=") + progressImage) + ", prect=") + progress) + ", pt=") + progressText) + ", pb=") + progressBar) + ", srect=") + status) + ", st=") + statusText) + ", shadow=") + textShadow) + ", err=") + installError) + ", nrect=") + patchNotes) + ", notes=") + patchNotesUrl) + ", stepPercentages=") + stepPercentages) + ", hideProgressText") + hideProgressText) + ", minShow=") + minShowSeconds) + "]";
         }
 
-        public UpdateInterface (Config config)
-        {
+        public UpdateInterface(Config config) {
             this.name = config.getString("ui.name");
             this.progress = config.getRect("ui.progress", new Rectangle(5, 5, 300, 15));
             this.progressText = config.getColor("ui.progress_text", Color.BLACK);
-            this.hideProgressText =  config.getBoolean("ui.hide_progress_text");
+            this.hideProgressText = config.getBoolean("ui.hide_progress_text");
             this.minShowSeconds = config.getInt("ui.min_show_seconds", 5);
-            this.progressBar = config.getColor("ui.progress_bar", 0x6699CC);
+            this.progressBar = config.getColor("ui.progress_bar", 0x6699cc);
             this.status = config.getRect("ui.status", new Rectangle(5, 25, 500, 100));
             this.statusText = config.getColor("ui.status_text", Color.BLACK);
             this.textShadow = config.getColor("ui.text_shadow", Color.CLEAR);
             this.hideDecorations = config.getBoolean("ui.hide_decorations");
             this.backgroundImage = config.getString("ui.background_image");
             // default to black or white bg color, depending on the brightness of the progressText
-            int defaultBackground = (0.5f < Color.brightness(this.progressText)) ?
-                Color.BLACK : Color.WHITE;
+            int defaultBackground = (0.5F < Color.brightness(this.progressText)) ? Color.BLACK : Color.WHITE;
             this.background = config.getColor("ui.background", defaultBackground);
             this.progressImage = config.getString("ui.progress_image");
-            this.rotatingBackgrounds = stringsToList(
-                config.getMultiValue("ui.rotating_background"));
+            this.rotatingBackgrounds = stringsToList(config.getMultiValue("ui.rotating_background"));
             this.iconImages = stringsToList(config.getMultiValue("ui.icon"));
             this.errorBackground = config.getString("ui.error_background");
-
             // On an installation error, where do we point the user.
             String installError = config.getUrl("ui.install_error", null);
-            this.installError = (installError == null) ?
-                "m.default_install_error" : MessageUtil.taint(installError);
-
+            this.installError = (installError == null) ? "m.default_install_error" : MessageUtil.taint(installError);
             // the patch notes bits
             this.patchNotes = config.getRect("ui.patch_notes", new Rectangle(5, 50, 112, 26));
             this.patchNotesUrl = config.getUrl("ui.patch_notes_url", null);
-
             // step progress percentage (defaults and then customized values)
-            EnumMap<Step, List<Integer>> stepPercentages = new EnumMap<>(Step.class);
+            EnumMap<Step, List<Integer>> stepPercentages = new EnumMap<>(Application.UpdateInterface.Step.class);
             for (Step step : Step.values()) {
                 stepPercentages.put(step, step.defaultPercents);
             }
@@ -199,8 +223,8 @@ public class Application
                 if (spec != null) {
                     try {
                         stepPercentages.put(step, intsToList(StringUtil.parseIntArray(spec)));
-                    } catch (Exception e) {
-                        log.warning("Failed to parse percentages for " + step + ": " + spec);
+                    } catch (java.lang.Exception e) {
+                        log.warning((("Failed to parse percentages for " + step) + ": ") + spec);
                     }
                 }
             }
@@ -212,10 +236,11 @@ public class Application
      * Used by {@link #verifyMetadata} to communicate status in circumstances where it needs to
      * take network actions.
      */
-    public static interface StatusDisplay
-    {
-        /** Requests that the specified status message be displayed. */
-        public void updateStatus (String message);
+    public static interface StatusDisplay {
+        /**
+         * Requests that the specified status message be displayed.
+         */
+        public abstract void updateStatus(String message);
     }
 
     /**
@@ -223,27 +248,30 @@ public class Application
      */
     public static class AuxGroup {
         public final String name;
+
         public final List<Resource> codes;
+
         public final List<Resource> rsrcs;
 
-        public AuxGroup (String name, List<Resource> codes, List<Resource> rsrcs) {
+        public AuxGroup(String name, List<Resource> codes, List<Resource> rsrcs) {
             this.name = name;
             this.codes = Collections.unmodifiableList(codes);
             this.rsrcs = Collections.unmodifiableList(rsrcs);
         }
     }
 
-    /** The proxy that should be used to do HTTP downloads. This must be configured prior to using
-      * the application instance. Yes this is a public mutable field, no I'm not going to create a
-      * getter and setter just to pretend like that's not the case. */
+    /**
+     * The proxy that should be used to do HTTP downloads. This must be configured prior to using
+     * the application instance. Yes this is a public mutable field, no I'm not going to create a
+     * getter and setter just to pretend like that's not the case.
+     */
     public Proxy proxy = Proxy.NO_PROXY;
 
     /**
      * Creates an application instance which records the location of the <code>getdown.txt</code>
      * configuration file from the supplied application directory.
-     *
      */
-    public Application (EnvConfig envc) {
+    public Application(EnvConfig envc) {
         _envc = envc;
         _config = new File(envc.appDir, CONFIG_FILE);
     }
@@ -544,39 +572,30 @@ public class Application
      * @exception IOException thrown if there is an error reading the file or an error encountered
      * during its parsing.
      */
-    public Config init (boolean checkPlatform)
-        throws IOException
-    {
+    public Config init(boolean checkPlatform) throws IOException {
         Config config = initConfig(checkPlatform);
         initConfigJava(config);
         initConfigTracking(config);
         initConfigResources(config);
         initConfigArgs(config);
-
         // determine whether we want to allow offline operation (defaults to false)
         _allowOffline = config.getBoolean("allow_offline");
-
         // look for a debug.txt file which causes us to run in java.exe on Windows so that we can
         // obtain a thread dump of the running JVM
         _windebug = getLocalPath("debug.txt").exists();
-
         // whether to cache code resources and launch from cache
         _useCodeCache = config.getBoolean("use_code_cache");
         _codeCacheRetentionDays = config.getInt("code_cache_retention_days", 7);
-
         // maximum simultaneous downloads
-        _maxConcDownloads = Math.max(1, config.getInt("max_concurrent_downloads",
-                                                      SysProps.threadPoolSize()));
-
+        _maxConcDownloads = Math.max(1, config.getInt("max_concurrent_downloads", SysProps.threadPoolSize()));
         // extract some info used to configure our child process on macOS
         _dockName = config.getString("ui.name");
         _dockIconPath = config.getString("ui.mac_dock_icon", "../desktop.icns");
-
         _verifyTimeout = config.getInt("verify_timeout", 60);
         return config;
     }
 
-    public Config initConfig (boolean checkPlatform) throws IOException {
+    public Config initConfig(boolean checkPlatform) throws IOException {
         Config config = null;
         File cfgfile = _config;
         Config.ParseOpts opts = Config.createOpts(checkPlatform);
@@ -584,21 +603,15 @@ public class Application
             // if we have a configuration file, read the data from it
             if (cfgfile.exists()) {
                 config = Config.parseConfig(_config, opts);
-            }
-            // otherwise, try reading data from our backup config file; thanks to funny windows
-            // bullshit, we have to do this backup file fiddling in case we got screwed while
-            // updating getdown.txt during normal operation
-            else if ((cfgfile = getLocalPath(CONFIG_FILE + "_old")).exists()) {
+            } else if ((cfgfile = getLocalPath(CONFIG_FILE + "_old")).exists()) {
                 config = Config.parseConfig(cfgfile, opts);
-            }
-            // otherwise, issue a warning that we found no getdown file
-            else {
+            } else // otherwise, issue a warning that we found no getdown file
+            {
                 log.info("Found no getdown.txt file", "appdir", getAppDir());
             }
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             log.warning("Failure reading config file", "file", config, e);
         }
-
         // if we failed to read our config file, check for an appbase specified via a system
         // property; we can use that to bootstrap ourselves back into operation
         if (config == null) {
@@ -608,25 +621,20 @@ public class Application
             cdata.put("appbase", appbase);
             config = new Config(cdata);
         }
-
         // first determine our application base, this way if anything goes wrong later in the
         // process, our caller can use the appbase to download a new configuration file
         _appbase = config.getString("appbase");
         if (_appbase == null) {
             throw new RuntimeException("m.missing_appbase");
         }
-
         // check if we're overriding the domain in the appbase, and sub envvars
         _appbase = processArg(SysProps.overrideAppbase(_appbase));
-
         // make sure there's a trailing slash
         if (!_appbase.endsWith("/")) {
             _appbase = _appbase + "/";
         }
-
         // extract our version information
         _version = config.getLong("version", -1L);
-
         // if we are a versioned deployment, create a versioned appbase
         try {
             _vappbase = createVAppBase(_version);
@@ -634,7 +642,6 @@ public class Application
             String err = MessageUtil.tcompose("m.invalid_appbase", _appbase);
             throw new IOException(err, mue);
         }
-
         // check for a latest config URL
         String latest = config.getString("latest");
         if (latest != null) {
@@ -650,17 +657,15 @@ public class Application
                 log.warning("Invalid URL for latest attribute.", mue);
             }
         }
-
         // determine whether we want strict comments
         _strictComments = config.getBoolean("strict_comments");
         return config;
     }
 
-    public void initConfigJava (Config config) {
+    public void initConfigJava(Config config) {
         // check to see if we're using a custom java.version property and regex
         _javaVersionProp = config.getString("java_version_prop", _javaVersionProp);
         _javaVersionRegex = config.getString("java_version_regex", _javaVersionRegex);
-
         // check to see if we require a particular JVM version and have a supplied JVM
         _javaMinVersion = config.getLong("java_version", _javaMinVersion);
         // we support java_min_version as an alias of java_version; it better expresses the check
@@ -670,17 +675,14 @@ public class Application
         _javaMaxVersion = config.getLong("java_max_version", _javaMaxVersion);
         // check to see if we require a particular JVM version and have a supplied JVM
         _javaExactVersionRequired = config.getBoolean("java_exact_version_required");
-
         _javaLocation = config.getString("java_location");
-
         // used only in conjunction with java_location
         _javaLocalDir = getLocalPath(config.getString("java_local_dir", LaunchUtil.LOCAL_JAVA_DIR));
     }
 
-    public void initConfigTracking (Config config) {
+    public void initConfigTracking(Config config) {
         // determine whether we have any tracking configuration
         _trackingURL = config.getString("tracking_url");
-
         // check for tracking progress percent configuration
         String trackPcts = config.getString("tracking_percents");
         if (!StringUtil.isBlank(trackPcts)) {
@@ -692,19 +694,16 @@ public class Application
             _trackingPcts = new HashSet<>();
             _trackingPcts.add(50);
         }
-
         // Check for tracking cookie configuration
         _trackingCookieName = config.getString("tracking_cookie_name");
         _trackingCookieProperty = config.getString("tracking_cookie_property");
-
         // Some app may need an extra suffix added to the tracking URL
         _trackingURLSuffix = config.getString("tracking_url_suffix");
-
         // Some app may need to generate google analytics code
         _trackingGAHash = config.getString("tracking_ga_hash");
     }
 
-    public void initConfigResources (Config config) throws IOException {
+    public void initConfigResources(Config config) throws IOException {
         // clear our arrays as we may be reinitializing
         _codes.clear();
         _resources.clear();
@@ -712,22 +711,18 @@ public class Application
         _jvmargs.clear();
         _appargs.clear();
         _txtJvmArgs.clear();
-
         // parse our code resources
-        if (config.getMultiValue("code") == null &&
-            config.getMultiValue("ucode") == null) {
+        if ((config.getMultiValue("code") == null) && (config.getMultiValue("ucode") == null)) {
             throw new IOException("m.missing_code");
         }
         parseResources(config, "code", Resource.NORMAL, _codes);
         parseResources(config, "ucode", Resource.UNPACK, _codes);
-
         // parse our non-code resources
         parseResources(config, "resource", Resource.NORMAL, _resources);
         parseResources(config, "uresource", Resource.UNPACK, _resources);
         parseResources(config, "xresource", Resource.EXEC, _resources);
         parseResources(config, "presource", Resource.PRELOAD, _resources);
         parseResources(config, "nresource", Resource.NATIVE, _resources);
-
         // parse our auxiliary resource groups
         for (String auxgroup : config.getList("auxgroups")) {
             List<Resource> codes = new ArrayList<>();
@@ -743,9 +738,8 @@ public class Application
         }
     }
 
-    private void initConfigArgs (Config config) throws IOException {
-        String appPrefix = _envc.appId == null ? "" : (_envc.appId + ".");
-
+    private void initConfigArgs(Config config) throws IOException {
+        String appPrefix = (_envc.appId == null) ? "" : _envc.appId + ".";
         // determine our application class name (use app-specific class _if_ one is provided)
         _class = config.getString("class");
         if (appPrefix.length() > 0) {
@@ -754,7 +748,6 @@ public class Application
         if (_class == null) {
             throw new IOException("m.missing_class");
         }
-
         // transfer our JVM arguments (we include both "global" args and app_id-prefixed args)
         String[] jvmargs = config.getMultiValue("jvmarg");
         addAll(jvmargs, _jvmargs);
@@ -762,17 +755,13 @@ public class Application
             jvmargs = config.getMultiValue(appPrefix + "jvmarg");
             addAll(jvmargs, _jvmargs);
         }
-
         // get the set of optimum JVM arguments
         _optimumJvmArgs = config.getMultiValue("optimum_jvmarg");
-
         // transfer our application arguments
         String[] appargs = config.getMultiValue(appPrefix + "apparg");
         addAll(appargs, _appargs);
-
         // add the launch specific application arguments
         _appargs.addAll(_envc.appArgs);
-
         // look for custom arguments
         fillAssignmentListFromPairs("extra.txt", _txtJvmArgs);
     }
@@ -1745,50 +1734,81 @@ public class Application
     }
 
     protected final EnvConfig _envc;
+
     protected File _config;
+
     protected Digest _digest;
 
     protected long _version = -1;
+
     protected long _targetVersion = -1;
+
     protected String _appbase;
+
     protected URL _vappbase;
+
     protected URL _latest;
+
     protected String _class;
+
     protected String _dockName;
+
     protected String _dockIconPath;
+
     protected boolean _strictComments;
+
     protected boolean _windebug;
+
     protected boolean _allowOffline;
+
     protected int _maxConcDownloads;
 
     protected String _trackingURL;
+
     protected Set<Integer> _trackingPcts;
+
     protected String _trackingCookieName;
+
     protected String _trackingCookieProperty;
+
     protected String _trackingURLSuffix;
+
     protected String _trackingGAHash;
+
     protected long _trackingStart;
+
     protected int _trackingId;
 
     protected String _javaVersionProp = "java.version";
+
     protected String _javaVersionRegex = "(\\d+)(?:\\.(\\d+)(?:\\.(\\d+)(_\\d+)?)?)?";
-    protected long _javaMinVersion, _javaMaxVersion;
+
+    protected long _javaMinVersion;
+
+    protected long _javaMaxVersion;
+
     protected boolean _javaExactVersionRequired;
+
     protected String _javaLocation;
+
     protected File _javaLocalDir;
 
     protected List<Resource> _codes = new ArrayList<>();
+
     protected List<Resource> _resources = new ArrayList<>();
 
     protected int _verifyTimeout = 60;
 
     protected boolean _useCodeCache;
+
     protected int _codeCacheRetentionDays;
 
-    protected Map<String,AuxGroup> _auxgroups = new HashMap<>();
-    protected Map<String,Boolean> _auxactive = new HashMap<>();
+    protected Map<String, AuxGroup> _auxgroups = new HashMap<>();
+
+    protected Map<String, Boolean> _auxactive = new HashMap<>();
 
     protected List<String> _jvmargs = new ArrayList<>();
+
     protected List<String> _appargs = new ArrayList<>();
 
     protected String[] _optimumJvmArgs;
@@ -1806,5 +1826,6 @@ public class Application
     protected static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     protected static final String ENV_VAR_PREFIX = "%ENV.";
+
     protected static final Pattern ENV_VAR_PATTERN = Pattern.compile("%ENV\\.(.*?)%");
 }
