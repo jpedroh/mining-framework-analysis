@@ -1,19 +1,19 @@
 /*
 Copyright 2012 Urban Airship and Contributors
 */
-
 package com.urbanairship.datacube;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
+import org.apache.hadoop.hbase.util.Bytes;
+
 
 /**
  * This class is mostly intended for internal use by datacube code. By using this class directly you
@@ -23,20 +23,23 @@ import java.util.Map.Entry;
  */
 public class Address {
 //    private static final Logger log = LogManager.getLogger(Address.class);
+//    private static final Logger log = LogManager.getLogger(Address.class);
+    
+    private final Map<Dimension<?>,BucketTypeAndBucket> buckets = Maps.newHashMap();
 
-    private final Map<Dimension<?>, BucketTypeAndBucket> buckets = Maps.newHashMap();
     private final DataCube<?> cube;
 
-    private static final byte[] WILDCARD_FIELD = new byte[]{0};
-    private static final byte[] NON_WILDCARD_FIELD = new byte[]{1};
+    private static final byte[] WILDCARD_FIELD = new byte[] {0};
+
+    private static final byte[] NON_WILDCARD_FIELD = new byte[] {1};
 
     public Address(DataCube<?> cube) {
         this.cube = cube;
     }
 
     public void at(Dimension<?> dimension, byte[] value) {
-        if (dimension.isBucketed()) {
-            throw new IllegalArgumentException("Dimension " + dimension +
+        if(dimension.isBucketed()) {
+            throw new IllegalArgumentException("Dimension " + dimension + 
                     " is a bucketed dimension. You can't query it without a bucket.");
         }
         at(dimension, BucketType.IDENTITY, value);
@@ -54,7 +57,7 @@ public class Address {
         return buckets.get(dimension);
     }
 
-    public Map<Dimension<?>, BucketTypeAndBucket> getBuckets() {
+    public Map<Dimension<?>,BucketTypeAndBucket> getBuckets() {
         return buckets;
     }
 
@@ -77,20 +80,16 @@ public class Address {
      */
     private Optional<byte[]> toKey(IdService idService, boolean readOnly) throws IOException, InterruptedException {
         List<Dimension<?>> dimensions = cube.getDimensions();
-
         boolean sawOnlyWildcardsSoFar = true;
         List<byte[]> reversedKeyElems = Lists.newArrayListWithCapacity(dimensions.size());
-
         // We build up the key in reverse order so we can leave off wildcards at the end of the key.
         // The reasoning for this is complicated, please see design docs.
         for (int i = dimensions.size() - 1; i >= 0; i--) {
             Dimension<?> dimension = dimensions.get(i);
             BucketTypeAndBucket bucketAndCoord = buckets.get(dimension);
-
             int thisDimBucketLen = dimension.getNumFieldBytes();
             int thisDimBucketTypeLen = dimension.getBucketPrefixSize();
-
-            if (bucketAndCoord == BucketTypeAndBucket.WILDCARD || bucketAndCoord == null) {
+            if ((bucketAndCoord == BucketTypeAndBucket.WILDCARD) || (bucketAndCoord == null)) {
                 // Special logic, wildcards at the end of the key are omitted
                 if (sawOnlyWildcardsSoFar) {
                     continue;
@@ -99,63 +98,57 @@ public class Address {
                 reversedKeyElems.add(WILDCARD_FIELD);
             } else {
                 sawOnlyWildcardsSoFar = false;
-
                 byte[] elem;
-                if (idService == null || !dimension.getDoIdSubstitution()) {
+                if ((idService == null) || (!dimension.getDoIdSubstitution())) {
                     elem = bucketAndCoord.bucket;
                 } else {
                     int dimensionNum = cube.getDimensions().indexOf(dimension);
                     if (readOnly) {
-                        final Optional<byte[]> maybeId =
-                                idService.getId(dimensionNum, bucketAndCoord.bucket, dimension.getNumFieldBytes());
-
+                        final Optional<byte[]> maybeId = idService.getId(dimensionNum, bucketAndCoord.bucket, dimension.getNumFieldBytes());
                         if (maybeId.isPresent()) {
                             elem = maybeId.get();
                         } else {
                             return Optional.absent();
                         }
-
                     } else {
                         elem = idService.getOrCreateId(dimensionNum, bucketAndCoord.bucket, dimension.getNumFieldBytes());
                     }
                 }
-
                 if (elem.length != thisDimBucketLen) {
-                    throw new IllegalArgumentException("Field length was wrong (after bucketing " +
-                            " and unique ID substitution). For dimension " + dimension +
-                            ", expected length " + dimension.getNumFieldBytes() + " but was " +
-                            bucketAndCoord.bucket.length);
+                    throw new IllegalArgumentException(((((("Field length was wrong (after bucketing " + " and unique ID substitution). For dimension ") + dimension) + ", expected length ") + dimension.getNumFieldBytes()) + " but was ") + bucketAndCoord.bucket.length);
                 }
-
                 byte[] bucketTypeId = bucketAndCoord.bucketType.getUniqueId();
                 if (bucketTypeId.length != thisDimBucketTypeLen) {
-                    throw new RuntimeException("Bucket prefix length was wrong. For dimension " +
-                            dimension + ", expected bucket prefix of length " + dimension.getBucketPrefixSize() +
-                            " but the bucket prefix was " + Arrays.toString(bucketTypeId) +
-                            " which had length" + bucketTypeId.length);
+                    throw new RuntimeException((((((("Bucket prefix length was wrong. For dimension " + dimension) + ", expected bucket prefix of length ") + dimension.getBucketPrefixSize()) + " but the bucket prefix was ") + Arrays.toString(bucketTypeId)) + " which had length") + bucketTypeId.length);
                 }
                 reversedKeyElems.add(elem);
                 reversedKeyElems.add(bucketTypeId);
                 reversedKeyElems.add(NON_WILDCARD_FIELD);
             }
         }
-
         List<byte[]> keyElemsInOrder = Lists.reverse(reversedKeyElems);
-
         int totalKeySize = 0;
         for (byte[] keyElement : keyElemsInOrder) {
             totalKeySize += keyElement.length;
         }
-        ByteBuffer bb = ByteBuffer.allocate(totalKeySize);
-
-
+        ByteBuffer bb;
+        // Add a place holder for the hash byte if it's required
+        if (this.cube.useAddressPrefixByteHash()) {
+            bb = ByteBuffer.allocate(totalKeySize + 1);
+            bb.put(((byte) (0x1)));
+        } else {
+            bb = ByteBuffer.allocate(totalKeySize);
+        }
         for (byte[] keyElement : keyElemsInOrder) {
             bb.put(keyElement);
         }
-
         if (bb.remaining() != 0) {
-            throw new AssertionError("Key length calculation was somehow wrong, " +
-                    bb.remaining() + " bytes remaining");
+            throw new AssertionError(("Key length calculation was somehow wrong, " + bb.remaining()) + " bytes remaining");
+        }
+        // Update the byte prefix placeholder of the hash of the key contents if required.
+        if (this.cube.useAddressPrefixByteHash()) {
+            byte hashByte = Util.hashByteArray(bb.array(), 1, totalKeySize + 1);
+            bb.put(0, hashByte);
         }
         return Optional.of(bb.array());
     }
@@ -164,8 +157,8 @@ public class Address {
         StringBuilder sb = new StringBuilder();
         sb.append("(");
         boolean firstLoop = true;
-        for (Entry<Dimension<?>, BucketTypeAndBucket> e : buckets.entrySet()) {
-            if (!firstLoop) {
+        for(Entry<Dimension<?>,BucketTypeAndBucket> e: buckets.entrySet()) {
+            if(!firstLoop) {
                 sb.append(", ");
             }
             firstLoop = false;
@@ -178,9 +171,7 @@ public class Address {
         return sb.toString();
     }
 
-    /**
-     * Eclipse auto-generated
-     */
+    /** Eclipse auto-generated */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -190,9 +181,7 @@ public class Address {
         return result;
     }
 
-    /**
-     * Eclipse auto-generated
-     */
+    /** Eclipse auto-generated */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
