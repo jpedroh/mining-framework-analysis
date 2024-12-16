@@ -23,27 +23,24 @@
  * USE OF THE SOFTWARE, THE TERMS AND CONDITIONS OF SUCH OTHER AGREEMENT SHALL
  * PREVAIL OVER ANY CONFLICTING TERMS OR CONDITIONS IN THIS AGREEMENT.
  */
-
 package com.akiban.sql.compiler;
 
-import com.akiban.sql.parser.*;
-
 import com.akiban.sql.StandardException;
+import com.akiban.sql.parser.*;
 import com.akiban.sql.types.CharacterTypeAttributes;
 import com.akiban.sql.types.DataTypeDescriptor;
 import com.akiban.sql.types.TypeId;
 
 
 /** Calculate types from schema information. */
-public class TypeComputer implements Visitor
-{
+public class TypeComputer implements Visitor {
     public TypeComputer() {
     }
 
     public void compute(StatementNode stmt) throws StandardException {
         stmt.accept(this);
     }
-    
+
     protected ValueNode setType(ValueNode node) throws StandardException {
         switch (node.getNodeType()) {
         case NodeTypes.EXPLICIT_COLLATE_NODE:
@@ -58,52 +55,52 @@ public class TypeComputer implements Visitor
      * to get type propagation started. */
     protected DataTypeDescriptor computeType(ValueNode node) throws StandardException {
         switch (node.getNodeType()) {
-        case NodeTypes.RESULT_COLUMN:
-            return resultColumn((ResultColumn)node);
-        case NodeTypes.AND_NODE:
-        case NodeTypes.OR_NODE:
-        case NodeTypes.IS_NODE:
-            return binaryLogicalOperatorNode((BinaryLogicalOperatorNode)node);
-        case NodeTypes.NOT_NODE:
-            return unaryLogicalOperatorNode((UnaryLogicalOperatorNode)node);
-        case NodeTypes.BINARY_PLUS_OPERATOR_NODE:
-        case NodeTypes.BINARY_TIMES_OPERATOR_NODE:
-        case NodeTypes.BINARY_DIVIDE_OPERATOR_NODE:
-        case NodeTypes.BINARY_DIV_OPERATOR_NODE:
-        case NodeTypes.BINARY_MINUS_OPERATOR_NODE:
-            return binaryArithmeticOperatorNode((BinaryArithmeticOperatorNode)node);
-        case NodeTypes.BINARY_EQUALS_OPERATOR_NODE:
-        case NodeTypes.BINARY_NOT_EQUALS_OPERATOR_NODE:
-        case NodeTypes.BINARY_GREATER_THAN_OPERATOR_NODE:
-        case NodeTypes.BINARY_GREATER_EQUALS_OPERATOR_NODE:
-        case NodeTypes.BINARY_LESS_THAN_OPERATOR_NODE:
-        case NodeTypes.BINARY_LESS_EQUALS_OPERATOR_NODE:
-            return binaryComparisonOperatorNode((BinaryComparisonOperatorNode)node);
-        case NodeTypes.BETWEEN_OPERATOR_NODE:
-            return betweenOperatorNode((BetweenOperatorNode)node);
-        case NodeTypes.IN_LIST_OPERATOR_NODE:
-            return inListOperatorNode((InListOperatorNode)node);
-        case NodeTypes.SUBQUERY_NODE:
-            return subqueryNode((SubqueryNode)node);
-        case NodeTypes.CONDITIONAL_NODE:
-            return conditionalNode((ConditionalNode)node);
-        case NodeTypes.COALESCE_FUNCTION_NODE:
-            return coalesceFunctionNode((CoalesceFunctionNode)node);
-        case NodeTypes.AGGREGATE_NODE:
-        case NodeTypes.GROUP_CONCAT_NODE:
-            return aggregateNode((AggregateNode)node);
-        case NodeTypes.CONCATENATION_OPERATOR_NODE:
-            return concatenationOperatorNode((ConcatenationOperatorNode)node);
-        case NodeTypes.IS_NULL_NODE:
-        case NodeTypes.IS_NOT_NULL_NODE:
-            return new DataTypeDescriptor(TypeId.BOOLEAN_ID, false);
-        case NodeTypes.NEXT_SEQUENCE_NODE:
-            return new DataTypeDescriptor(TypeId.BIGINT_ID, false);
-        case NodeTypes.CURRENT_SEQUENCE_NODE:
-            return new DataTypeDescriptor(TypeId.BIGINT_ID, false);
-        default:
-            // assert false;
-            return null;
+            case NodeTypes.RESULT_COLUMN :
+                return resultColumn(((ResultColumn) (node)));
+            case NodeTypes.AND_NODE :
+            case NodeTypes.OR_NODE :
+            case NodeTypes.IS_NODE :
+                return binaryLogicalOperatorNode(((BinaryLogicalOperatorNode) (node)));
+            case NodeTypes.NOT_NODE :
+                return unaryLogicalOperatorNode(((UnaryLogicalOperatorNode) (node)));
+            case NodeTypes.BINARY_PLUS_OPERATOR_NODE :
+            case NodeTypes.BINARY_TIMES_OPERATOR_NODE :
+            case NodeTypes.BINARY_DIVIDE_OPERATOR_NODE :
+            case NodeTypes.BINARY_DIV_OPERATOR_NODE :
+            case NodeTypes.BINARY_MINUS_OPERATOR_NODE :
+                return binaryArithmeticOperatorNode(((BinaryArithmeticOperatorNode) (node)));
+            case NodeTypes.BINARY_EQUALS_OPERATOR_NODE :
+            case NodeTypes.BINARY_NOT_EQUALS_OPERATOR_NODE :
+            case NodeTypes.BINARY_GREATER_THAN_OPERATOR_NODE :
+            case NodeTypes.BINARY_GREATER_EQUALS_OPERATOR_NODE :
+            case NodeTypes.BINARY_LESS_THAN_OPERATOR_NODE :
+            case NodeTypes.BINARY_LESS_EQUALS_OPERATOR_NODE :
+                return binaryComparisonOperatorNode(((BinaryComparisonOperatorNode) (node)));
+            case NodeTypes.BETWEEN_OPERATOR_NODE :
+                return betweenOperatorNode(((BetweenOperatorNode) (node)));
+            case NodeTypes.IN_LIST_OPERATOR_NODE :
+                return inListOperatorNode(((InListOperatorNode) (node)));
+            case NodeTypes.SUBQUERY_NODE :
+                return subqueryNode(((SubqueryNode) (node)));
+            case NodeTypes.CONDITIONAL_NODE :
+                return conditionalNode(((ConditionalNode) (node)));
+            case NodeTypes.COALESCE_FUNCTION_NODE :
+                return coalesceFunctionNode(((CoalesceFunctionNode) (node)));
+            case NodeTypes.AGGREGATE_NODE :
+            case NodeTypes.GROUP_CONCAT_NODE :
+                return aggregateNode(((AggregateNode) (node)));
+            case NodeTypes.CONCATENATION_OPERATOR_NODE :
+                return concatenationOperatorNode(((ConcatenationOperatorNode) (node)));
+            case NodeTypes.IS_NULL_NODE :
+            case NodeTypes.IS_NOT_NULL_NODE :
+                return new DataTypeDescriptor(TypeId.BOOLEAN_ID, false);
+            case NodeTypes.NEXT_SEQUENCE_NODE :
+                return new DataTypeDescriptor(TypeId.BIGINT_ID, false);
+            case NodeTypes.CURRENT_SEQUENCE_NODE :
+                return new DataTypeDescriptor(TypeId.BIGINT_ID, false);
+            default :
+                // assert false;
+                return null;
         }
     }
 
@@ -410,38 +407,31 @@ public class TypeComputer implements Visitor
 
     protected DataTypeDescriptor inListOperatorNode(InListOperatorNode node) throws StandardException {
         RowConstructorNode leftOperand = node.getLeftOperand();
-        
-        if (leftOperand.getNodeList().size() == 1)
-        {
+        if (leftOperand.getNodeList().size() == 1) {
             DataTypeDescriptor leftType = leftOperand.getNodeList().get(0).getType();
-            if (leftType == null)
+            if (leftType == null) {
                 return null;
-
+            }
             boolean nullableResult = leftType.isNullable();
-
             for (ValueNode rightOperand : node.getRightOperandList().getNodeList()) {
                 DataTypeDescriptor rightType;
                 if (isParameterOrUntypedNull(rightOperand)) {
                     rightType = leftType.getNullabilityType(true);
                     rightOperand.setType(rightType);
-                }
-                else {
+                } else {
                     rightType = rightOperand.getType();
                 }
-                if ((rightType == null) || rightType.isNullable())
+                if ((rightType == null) || rightType.isNullable()) {
                     nullableResult = true;
+                }
             }
             return new DataTypeDescriptor(TypeId.BOOLEAN_ID, nullableResult);
-        }
-        else
-        {
-            boolean nullable = isNestedTupleNullable(leftOperand)
-                                || isNestedTupleNullable(node.getRightOperandList());
-            
+        } else {
+            boolean nullable = isNestedTupleNullable(leftOperand) || isNestedTupleNullable(node.getRightOperandList());
             return new DataTypeDescriptor(TypeId.BOOLEAN_ID, nullable);
         }
     }
-    
+
     protected boolean isNestedTupleNullable(RowConstructorNode row)
     {
         boolean ret = false;
@@ -655,13 +645,15 @@ public class TypeComputer implements Visitor
         }
         return node;
     }
-    
+
     public boolean skipChildren(Visitable node) throws StandardException {
         return false;
     }
+
     public boolean visitChildrenFirst(Visitable node) {
         return true;
     }
+
     public boolean stopTraversal() {
         return false;
     }
@@ -688,5 +680,4 @@ public class TypeComputer implements Visitor
     protected TypeCompiler getTypeCompiler(ValueNode valueNode) throws StandardException {
         return getTypeCompiler(valueNode.getTypeId());
     }
-
 }
