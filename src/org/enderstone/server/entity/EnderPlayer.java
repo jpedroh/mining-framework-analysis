@@ -34,39 +34,60 @@ import org.enderstone.server.packet.play.PacketOutUpdateHealth;
 import org.enderstone.server.regions.EnderChunk;
 import org.enderstone.server.regions.EnderWorld.ChunkInformer;
 
-public class EnderPlayer extends Entity implements CommandSender {
 
+public class EnderPlayer extends Entity implements CommandSender {
 	private static final int MAX_CHUNKS_EVERY_UPDATE = 16;
 
 	public final ClientSettings clientSettings = new ClientSettings();
+
 	public final NetworkManager networkManager;
+
 	public final String playerName;
+
 	public HashSet<String> visiblePlayers = new HashSet<>();
+
 	public HashSet<Entity> canSeeEntity = new HashSet<>();
+
 	/**
 	 * If this is above 0, then the server is waiting for a correction on the last teleport the server sended
 	 */
 	public int waitingForValidMoveAfterTeleport = 0;
+
 	public final UUID uuid;
+
 	public volatile boolean isOnline = true;
+
 	public boolean isCreative = false;
+
 	public boolean godMode = false;
+
 	public boolean canFly = false;
+
 	public boolean isFlying = false;
+
 	public boolean isOnFire = false;
+
 	public boolean isSneaking = false;
+
 	public boolean isSprinting = false;
+
 	public boolean isEating = false;
+
 	private boolean isInvisible = false;
 
 	public volatile boolean isOnGround = true;
+
 	public double yLocation;
+
 	public short food = 20;
+
 	public float foodSaturation = 0;
 
 	// our alternative for the stupid Steve skins :D
 	private final String textureValue;
+
 	private final String textureSignature;
+
 	public int keepAliveID = 0;
 
 	public ChunkInformer chunkInformer = new ChunkInformer() {
@@ -86,7 +107,7 @@ public class EnderPlayer extends Entity implements CommandSender {
 		@Override
 		public void done() {
 			int size = cache.size();
-			if (size == 0)
+			if(size == 0)
 				return;
 			Packet[] packets = new Packet[size];
 			for (int i = 0; i < size; i++) {
@@ -110,31 +131,36 @@ public class EnderPlayer extends Entity implements CommandSender {
 		this.uuid = uuid;
 		this.textureValue = textures.getSkin().value;
 		this.textureSignature = textures.getSkin().signature;
-		EnderLogger.info(userName + " logged in with uuid "+uuid);
+		EnderLogger.info((userName + " logged in with uuid ") + uuid);
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+		result = (prime * result) + (uuid == null ? 0 : uuid.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
-		EnderPlayer other = (EnderPlayer) obj;
+		}
+		EnderPlayer other = ((EnderPlayer) (obj));
 		if (uuid == null) {
-			if (other.uuid != null)
+			if (other.uuid != null) {
 				return false;
-		} else if (!uuid.equals(other.uuid))
+			}
+		} else if (!uuid.equals(other.uuid)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -149,34 +175,36 @@ public class EnderPlayer extends Entity implements CommandSender {
 	@Override
 	public void onSpawn() {
 		this.updateDataWatcher();
-
-		PacketOutPlayerListItem packet = new PacketOutPlayerListItem(this.getPlayerName(), this.isOnline, (short) 1);
+		PacketOutPlayerListItem packet = new PacketOutPlayerListItem(this.getPlayerName(), this.isOnline, ((short) (1)));
 		for (EnderPlayer player : Main.getInstance().onlinePlayers) {
 			player.getNetworkManager().sendPacket(packet);
-			this.getNetworkManager().sendPacket(new PacketOutPlayerListItem(player.getPlayerName(), true, (short) 1));
+			this.getNetworkManager().sendPacket(new PacketOutPlayerListItem(player.getPlayerName(), true, ((short) (1))));
 		}
-		Utill.broadcastMessage(ChatColor.YELLOW + this.getPlayerName() + " joined the game!");
+		Utill.broadcastMessage((ChatColor.YELLOW + this.getPlayerName()) + " joined the game!");
 	}
 
 	@Override
 	public void updateDataWatcher() {
 		int meaning = 0;
-
-		if (isOnFire)
-			meaning = (byte) (meaning | 0x01);
-		if (isSneaking)
-			meaning = (byte) (meaning | 0x02);
-		if (isSprinting)
-			meaning = (byte) (meaning | 0x08);
-		if (isEating)
-			meaning = (byte) (meaning | 0x10);
-		if (isInvisible)
-			meaning = (byte) (meaning | 0x20);
-
-		this.getDataWatcher().watch(0, (byte) meaning);
-		this.getDataWatcher().watch(1, (short) 0);
-		this.getDataWatcher().watch(6, 1F);
-		this.getDataWatcher().watch(8, (byte) 0);
+		if (isOnFire) {
+			meaning = ((byte) (meaning | 0x1));
+		}
+		if (isSneaking) {
+			meaning = ((byte) (meaning | 0x2));
+		}
+		if (isSprinting) {
+			meaning = ((byte) (meaning | 0x8));
+		}
+		if (isEating) {
+			meaning = ((byte) (meaning | 0x10));
+		}
+		if (isInvisible) {
+			meaning = ((byte) (meaning | 0x20));
+		}
+		this.getDataWatcher().watch(0, ((byte) (meaning)));
+		this.getDataWatcher().watch(1, ((short) (0)));
+		this.getDataWatcher().watch(6, 1.0F);
+		this.getDataWatcher().watch(8, ((byte) (0)));
 	}
 
 	@Override
@@ -184,7 +212,8 @@ public class EnderPlayer extends Entity implements CommandSender {
 		List<ProfileProperty> list = new ArrayList<>();
 		ProfileProperty prop = new ProfileProperty("textures", this.textureValue, this.textureSignature);
 		list.add(prop);
-		return new PacketOutSpawnPlayer(this.getEntityId(), this.uuid, this.getPlayerName(), list, this.getLocation().getBlockX(), this.getLocation().getBlockY(), this.getLocation().getBlockZ(), (byte) this.getLocation().getYaw(), (byte) this.getLocation().getPitch(), (short) 0, this.getDataWatcher());
+		System.out.println(this.textureValue);
+		return new PacketOutSpawnPlayer(this.getEntityId(), this.uuid.toString().replace("-", ""), this.getPlayerName(), list, this.getLocation().getBlockX(), this.getLocation().getBlockY(), this.getLocation().getBlockZ(), ((byte) (this.getLocation().getYaw())), ((byte) (this.getLocation().getPitch())), ((short) (0)), this.getDataWatcher());
 	}
 
 	public void onPlayerChat(final String message) {
@@ -403,15 +432,15 @@ public class EnderPlayer extends Entity implements CommandSender {
 		if (damage <= 0) {
 			throw new IllegalArgumentException("Damage cannot be smaller or equal to zero.");
 		}
-		if (this.godMode) return;
+		if(this.godMode) return;
 		super.damage(damage);
 	}
 
 	@Override
-	protected void onHealthUpdate(float health, float oldHealth) {
+	protected void onHealthUpdate(float health,float oldHealth) {
 		networkManager.sendPacket(new PacketOutUpdateHealth(health, food, foodSaturation));
-		if (health > 0) return;
-		Packet packet = new PacketOutEntityDestroy(new Integer[]{this.getEntityId()});
+		if(health > 0) return;
+		Packet packet = new PacketOutEntityDestroy(new Integer[] { this.getEntityId() });
 		for (EnderPlayer ep : Main.getInstance().onlinePlayers) {
 			if (ep.visiblePlayers.contains(this.getPlayerName())) {
 				ep.visiblePlayers.remove(this.getPlayerName());
@@ -442,7 +471,7 @@ public class EnderPlayer extends Entity implements CommandSender {
 
 	public void setOnGround(boolean onGround) {
 		if (this.isOnGround == false && onGround == true) {
-			if (this.canFly) return; // Flying players don't get damage in vanilla
+			if(this.canFly) return; // Flying players don't get damage in vanilla
 			// fall damage
 			double change = this.yLocation - this.getLocation().getY() - 3;
 			if (change > 0) {
@@ -482,12 +511,16 @@ public class EnderPlayer extends Entity implements CommandSender {
 	 * @author ferrybig
 	 */
 	public final class ClientSettings {
-
 		private String locale = "en_US";
+
 		private byte renderDistance = 3;
+
 		private byte chatFlags = 0;
+
 		private boolean chatColors = true;
+
 		private byte difficulty = 2;
+
 		private boolean showCapes = true;
 
 		public String getLocale() {
@@ -537,6 +570,5 @@ public class EnderPlayer extends Entity implements CommandSender {
 		public void setShowCapes(boolean showCapes) {
 			this.showCapes = showCapes;
 		}
-
 	}
 }

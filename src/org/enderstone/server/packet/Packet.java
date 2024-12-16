@@ -1,17 +1,18 @@
 package org.enderstone.server.packet;
 
 import io.netty.buffer.ByteBuf;
-import org.enderstone.server.EnderLogger;
+import java.io.IOError;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map.Entry;
+import org.enderstone.server.EnderLogger;
 import org.enderstone.server.Vector;
 import org.enderstone.server.entity.DataWatcher;
 import org.enderstone.server.inventory.ItemStack;
 import org.enderstone.server.packet.codec.DecodeException;
 
-public abstract class Packet {
 
+public abstract class Packet {
 	public abstract void read(ByteBuf buf) throws IOException;
 
 	public abstract void write(ByteBuf buf) throws IOException;
@@ -20,8 +21,7 @@ public abstract class Packet {
 
 	public abstract byte getId();
 
-	public void onRecieve(NetworkManager networkManager) {
-	}
+	public void onRecieve(NetworkManager networkManager) {}
 
 	public void onSend(NetworkManager networkManager) {
 	}
@@ -92,47 +92,36 @@ public abstract class Packet {
 	public static void writeItemStack(ItemStack stack, ByteBuf buf) {
 		if (stack == null) {
 			buf.writeShort(-1);
-			
 			EnderLogger.warn("ItemStack: NULL");
-			return;
 		}
 		buf.writeShort(stack.getBlockId());
 		buf.writeByte(stack.getAmount());
 		buf.writeShort(stack.getDamage());
 		buf.writeShort(stack.getNbtLength());
-		
-		EnderLogger.warn("ItemStack ID: " + stack.getBlockId() + " AMOUNT: " + stack.getAmount() + " DAMAGE: " + stack.getDamage() + " NBT LENGTH: " + stack.getNbtLength());
-		
-		if (stack.getNbtLength() == -1) {
+		EnderLogger.warn((((((("ItemStack ID: " + stack.getBlockId()) + " AMOUNT: ") + stack.getAmount()) + " DAMAGE: ") + stack.getDamage()) + " NBT LENGTH: ") + stack.getNbtLength());
+		if (stack.getNbtLength() == (-1)) {
 			return;
 		}
-
 		EnderLogger.warn("NBT DATA: " + stack.getNbtData());
 		buf.writeBytes(stack.getNbtData());
 	}
 
 	public static ItemStack readItemStack(ByteBuf buf) {
 		short blockId = buf.readShort();
-		if (blockId == -1) {
+		if (blockId == (-1)) {
 			return null;
 		}
-
-		ItemStack stack = new ItemStack(blockId, (byte) -1, (short) -1);
-
+		ItemStack stack = new ItemStack(blockId, ((byte) (-1)), ((short) (-1)));
 		stack.setAmount(buf.readByte());
 		stack.setDamage(buf.readShort());
-
 		short nbtLength = buf.readShort();
 		stack.setNbtLength(nbtLength);
-
-		if (nbtLength == -1) {
+		if (nbtLength == (-1)) {
 			return stack;
 		}
-
 		byte[] data = new byte[nbtLength];
 		buf.readBytes(data, 0, nbtLength);
 		stack.setNbtData(data);
-
 		return stack;
 	}
 
@@ -140,38 +129,38 @@ public abstract class Packet {
 		for (Entry<Integer, Object> watch : watcher.getWatchedCopy().entrySet()) {
 			if (watch.getValue() instanceof Byte) {
 				// byte, index
-				int i = (0 << 5 | watch.getKey() & 0x1F) & 0xFF;
+				int i = ((0 << 5) | (watch.getKey() & 0x1f)) & 0xff;
 				buf.writeByte(i);
-				buf.writeByte((byte) watch.getValue());
+				buf.writeByte(((byte) (watch.getValue())));
 			} else if (watch.getValue() instanceof Short) {
-				int i = (1 << 5 | watch.getKey() & 0x1F) & 0xFF;
+				int i = ((1 << 5) | (watch.getKey() & 0x1f)) & 0xff;
 				buf.writeByte(i);
-				buf.writeShort((short) watch.getValue());
+				buf.writeShort(((short) (watch.getValue())));
 			} else if (watch.getValue() instanceof Integer) {
-				int i = (2 << 5 | watch.getKey() & 0x1F) & 0xFF;
+				int i = ((2 << 5) | (watch.getKey() & 0x1f)) & 0xff;
 				buf.writeByte(i);
-				buf.writeInt((int) watch.getValue());
+				buf.writeInt(((int) (watch.getValue())));
 			} else if (watch.getValue() instanceof Float) {
-				int i = (3 << 5 | watch.getKey() & 0x1F) & 0xFF;
+				int i = ((3 << 5) | (watch.getKey() & 0x1f)) & 0xff;
 				buf.writeByte(i);
-				buf.writeFloat((float) watch.getValue());
+				buf.writeFloat(((float) (watch.getValue())));
 			} else if (watch.getValue() instanceof String) {
-				int i = (4 << 5 | watch.getKey() & 0x1F) & 0xFF;
+				int i = ((4 << 5) | (watch.getKey() & 0x1f)) & 0xff;
 				buf.writeByte(i);
-				writeString((String) watch.getValue(), buf);
+				writeString(((String) (watch.getValue())), buf);
 			} else if (watch.getValue() instanceof ItemStack) {
-				int i = (5 << 5 | watch.getKey() & 0x1F) & 0xFF;
+				int i = ((5 << 5) | (watch.getKey() & 0x1f)) & 0xff;
 				buf.writeByte(i);
-				writeItemStack((ItemStack) watch.getValue(), buf);
+				writeItemStack(((ItemStack) (watch.getValue())), buf);
 			} else if (watch.getValue() instanceof Vector) {
-				int i = (6 << 5 | watch.getKey() & 0x1F) & 0xFF;
+				int i = ((6 << 5) | (watch.getKey() & 0x1f)) & 0xff;
 				buf.writeByte(i);
-				Vector vector = (Vector) watch.getValue();
+				Vector vector = ((Vector) (watch.getValue()));
 				buf.writeInt(vector.getX());
 				buf.writeInt(vector.getY());
 				buf.writeInt(vector.getZ());
 			} else {
-				throw new UnsupportedEncodingException("Type " + watch.getValue().getClass() + " cannot be part of a datawatcher.");
+				throw new UnsupportedEncodingException(("Type " + watch.getValue().getClass()) + " cannot be part of a datawatcher.");
 			}
 		}
 		buf.writeByte(127);
@@ -179,13 +168,10 @@ public abstract class Packet {
 
 	public static DataWatcher readDataWatcher(ByteBuf buf) throws IOException {
 		DataWatcher dataWatcher = new DataWatcher();
-
 		int i = buf.readUnsignedByte();
-
 		while (i != 127) {
-			int index = i & 0x1F;
-			int type = (i & 0xE0) >> 5;
-
+			int index = i & 0x1f;
+			int type = (i & 0xe0) >> 5;
 			if (type == 0) {
 				dataWatcher.watch(index, buf.readByte());
 			} else if (type == 1) {
@@ -201,16 +187,15 @@ public abstract class Packet {
 			} else if (type == 6) {
 				dataWatcher.watch(index, new Vector(buf.readInt(), buf.readInt(), buf.readInt()));
 			} else {
-				throw new IOException("Type " + type + " cannot be part of a datawatcher.");
+				throw new IOException(("Type " + type) + " cannot be part of a datawatcher.");
 			}
 			i = buf.readUnsignedByte();
-		}
+		} 
 		return dataWatcher;
 	}
 
 	public static int getDataWatcherSize(DataWatcher dataWatcher) throws IOException {
 		int total = 0;
-
 		for (Entry<Integer, Object> watch : dataWatcher.getWatchedCopy().entrySet()) {
 			total++;
 			if (watch.getValue() instanceof Byte) {
@@ -223,13 +208,13 @@ public abstract class Packet {
 			} else if (watch.getValue() instanceof Float) {
 				total += getFloatSize();
 			} else if (watch.getValue() instanceof String) {
-				total += getStringSize((String) watch.getValue());
+				total += getStringSize(((String) (watch.getValue())));
 			} else if (watch.getValue() instanceof ItemStack) {
-				total += getItemStackSize((ItemStack) watch.getValue());
+				total += getItemStackSize(((ItemStack) (watch.getValue())));
 			} else if (watch.getValue() instanceof Vector) {
-				total += (getIntSize() * 3);
+				total += getIntSize() * 3;
 			} else {
-				throw new UnsupportedEncodingException("Type " + watch.getValue().getClass() + " cannot be part of a datawatcher.");
+				throw new UnsupportedEncodingException(("Type " + watch.getValue().getClass()) + " cannot be part of a datawatcher.");
 			}
 		}
 		total++;
@@ -257,12 +242,12 @@ public abstract class Packet {
 
 	public static int getItemStackSize(ItemStack stack) {
 		int total = 0;
-		if (stack == null || stack.getBlockId() == -1) {
+		if ((stack == null) || (stack.getBlockId() == (-1))) {
 			total += getShortSize();
 			return total;
 		}
-		total += (1 + (3 * getShortSize()));
-		if (stack.getNbtLength() == -1) {
+		total += 1 + (3 * getShortSize());
+		if (stack.getNbtLength() == (-1)) {
 			return total;
 		}
 		total += stack.getNbtLength();
