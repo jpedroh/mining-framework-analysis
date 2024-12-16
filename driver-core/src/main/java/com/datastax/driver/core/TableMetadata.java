@@ -16,23 +16,26 @@
 package com.datastax.driver.core;
 
 import java.util.*;
-
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.map.ObjectMapper;
+
 
 /**
  * Describes a Table.
  */
 public class TableMetadata {
-
     static final String CF_NAME                      = "columnfamily_name";
 
     private static final String KEY_VALIDATOR        = "key_validator";
+
     private static final String COMPARATOR           = "comparator";
+
     private static final String VALIDATOR            = "default_validator";
 
     private static final String DEFAULT_KEY_ALIAS    = "key";
+
     private static final String DEFAULT_COLUMN_ALIAS = "column";
+
     private static final String DEFAULT_VALUE_ALIAS  = "value";
 
     private static final Comparator<ColumnMetadata> columnMetadataComparator = new Comparator<ColumnMetadata>() {
@@ -42,18 +45,18 @@ public class TableMetadata {
     };
 
     private final KeyspaceMetadata keyspace;
+
     private final String name;
+
     private final List<ColumnMetadata> partitionKey;
+
     private final List<ColumnMetadata> clusteringKey;
+
     private final Map<String, ColumnMetadata> columns;
+
     private final Options options;
 
-    private TableMetadata(KeyspaceMetadata keyspace,
-                          String name,
-                          List<ColumnMetadata> partitionKey,
-                          List<ColumnMetadata> clusteringKey,
-                          LinkedHashMap<String, ColumnMetadata> columns,
-                          Options options) {
+    private TableMetadata(KeyspaceMetadata keyspace, String name, List<ColumnMetadata> partitionKey, List<ColumnMetadata> clusteringKey, LinkedHashMap<String, ColumnMetadata> columns, Options options) {
         this.keyspace = keyspace;
         this.name = name;
         this.partitionKey = partitionKey;
@@ -63,23 +66,17 @@ public class TableMetadata {
     }
 
     static TableMetadata build(KeyspaceMetadata ksm, Row row, Map<String, ColumnMetadata.Raw> rawCols) {
-
         String name = row.getString(CF_NAME);
-
         CassandraTypeParser.ParseResult comparator = CassandraTypeParser.parseWithComposite(row.getString(COMPARATOR));
         CassandraTypeParser.ParseResult keyValidator = CassandraTypeParser.parseWithComposite(row.getString(KEY_VALIDATOR));
-
         int clusteringSize = findClusteringSize(rawCols.values());
-        boolean isDense = clusteringSize != comparator.types.size() - 1;
-        boolean isCompact = isDense || !comparator.isComposite;
-
+        boolean isDense = clusteringSize != (comparator.types.size() - 1);
+        boolean isCompact = isDense || (!comparator.isComposite);
         List<ColumnMetadata> partitionKey = nullInitializedList(keyValidator.types.size());
         List<ColumnMetadata> clusteringKey = nullInitializedList(clusteringSize);
         // We use a linked hashmap because we will keep this in the order of a 'SELECT * FROM ...'.
         LinkedHashMap<String, ColumnMetadata> columns = new LinkedHashMap<String, ColumnMetadata>();
-
         TableMetadata tm = new TableMetadata(ksm, name, partitionKey, clusteringKey, columns, new Options(row, isCompact));
-
         // We use this temporary set just so non PK columns are added in lexicographical order, which is the one of a
         // 'SELECT * FROM ...'
         Set<ColumnMetadata> otherColumns = new TreeSet<ColumnMetadata>(columnMetadataComparator);
@@ -87,38 +84,42 @@ public class TableMetadata {
             ColumnMetadata col = ColumnMetadata.fromRaw(tm, rawCol);
             otherColumns.add(col);
             switch (rawCol.kind) {
-                case PARTITION_KEY:
+                case PARTITION_KEY :
                     partitionKey.set(rawCol.componentIndex, col);
                     break;
-                case CLUSTERING_KEY:
+                case CLUSTERING_KEY :
                     clusteringKey.set(rawCol.componentIndex, col);
                     break;
             }
         }
-
-        for (ColumnMetadata c : partitionKey)
+        for (ColumnMetadata c : partitionKey) {
             columns.put(c.getName(), c);
-        for (ColumnMetadata c : clusteringKey)
+        }
+        for (ColumnMetadata c : clusteringKey) {
             columns.put(c.getName(), c);
-        for (ColumnMetadata c : otherColumns)
+        }
+        for (ColumnMetadata c : otherColumns) {
             columns.put(c.getName(), c);
-
+        }
         ksm.add(tm);
         return tm;
     }
 
     private static int findClusteringSize(Collection<ColumnMetadata.Raw> cols) {
         int maxId = -1;
-        for (ColumnMetadata.Raw col : cols)
-            if (col.kind == ColumnMetadata.Raw.Kind.CLUSTERING_KEY)
+        for (ColumnMetadata.Raw col : cols) {
+            if (col.kind == ColumnMetadata.Raw.Kind.CLUSTERING_KEY) {
                 maxId = Math.max(maxId, col.componentIndex);
+            }
+        }
         return maxId + 1;
     }
 
     private static <T> List<T> nullInitializedList(int size) {
         List<T> l = new ArrayList<T>(size);
-        for (int i = 0; i < size; ++i)
+        for (int i = 0; i < size; ++i) {
             l.add(null);
+        }
         return l;
     }
 
@@ -214,6 +215,7 @@ public class TableMetadata {
     }
 
     // :_(
+    // :_(
     private static ObjectMapper jsonMapper = new ObjectMapper(new JsonFactory());
 
     @SuppressWarnings("unchecked")
@@ -276,12 +278,11 @@ public class TableMetadata {
 
     private String asCQLQuery(boolean formatted) {
         StringBuilder sb = new StringBuilder();
-
         sb.append("CREATE TABLE ").append(name).append(" (");
         newLine(sb, formatted);
-        for (ColumnMetadata cm : columns.values())
+        for (ColumnMetadata cm : columns.values()) {
             newLine(sb.append(spaces(4, formatted)).append(cm).append(","), formatted);
-
+        }
         // PK
         sb.append(spaces(4, formatted)).append("PRIMARY KEY (");
         if (partitionKey.size() == 1) {
@@ -290,17 +291,21 @@ public class TableMetadata {
             sb.append("(");
             boolean first = true;
             for (ColumnMetadata cm : partitionKey) {
-                if (first) first = false; else sb.append(", ");
+                if (first) {
+                    first = false;
+                } else {
+                    sb.append(", ");
+                }
                 sb.append(cm.getName());
             }
             sb.append(")");
         }
-        for (ColumnMetadata cm : clusteringKey)
+        for (ColumnMetadata cm : clusteringKey) {
             sb.append(", ").append(cm.getName());
+        }
         sb.append(")");
         newLine(sb, formatted);
         // end PK
-
         // Options
         if (options.isCompactStorage) {
             sb.append(") WITH COMPACT STORAGE");
@@ -312,9 +317,10 @@ public class TableMetadata {
         and(sb, formatted).append("replicate_on_write = ").append(options.replicateOnWrite);
         and(sb, formatted).append("gc_grace_seconds = ").append(options.gcGrace);
         and(sb, formatted).append("bloom_filter_fp_chance = ").append(options.bfFpChance);
-        and(sb, formatted).append("caching = '").append(options.caching).append("'");
-        if (options.comment != null)
+        and(sb, formatted).append("caching = \'").append(options.caching).append("'");
+        if (options.comment != null) {
             and(sb, formatted).append("comment = '").append(options.comment).append("'");
+        }
         and(sb, formatted).append("compaction = ").append(formatOptionMap(options.compaction));
         and(sb, formatted).append("compression = ").append(formatOptionMap(options.compression));
         sb.append(";");
@@ -361,67 +367,98 @@ public class TableMetadata {
     }
 
     public static class Options {
-
         private static final String COMMENT                  = "comment";
+
         private static final String READ_REPAIR              = "read_repair_chance";
+
         private static final String LOCAL_READ_REPAIR        = "local_read_repair_chance";
+
         private static final String REPLICATE_ON_WRITE       = "replicate_on_write";
+
         private static final String GC_GRACE                 = "gc_grace_seconds";
+
         private static final String BF_FP_CHANCE             = "bloom_filter_fp_chance";
+
         private static final String CACHING                  = "caching";
+
         private static final String COMPACTION_CLASS         = "compaction_strategy_class";
+
         private static final String COMPACTION_OPTIONS       = "compaction_strategy_options";
+
         private static final String MIN_COMPACTION_THRESHOLD = "min_compaction_threshold";
+
         private static final String MAX_COMPACTION_THRESHOLD = "max_compaction_threshold";
+
         private static final String POPULATE_CACHE_ON_FLUSH  = "populate_io_cache_on_flush";
+
         private static final String COMPRESSION_PARAMS       = "compression_parameters";
+
         private static final String MEMTABLE_FLUSH_PERIOD_MS = "memtable_flush_period_in_ms";
-        private static final String DEFAULT_TTL              = "default_time_to_live";
+
+        private static final String DEFAULT_TTL = "default_time_to_live";
+
         private static final String SPECULATIVE_RETRY        = "speculative_retry";
+
         private static final String INDEX_INTERVAL           = "index_interval";
 
         private static final double DEFAULT_BF_FP_CHANCE = 0.01;
+
         private static final boolean DEFAULT_POPULATE_CACHE_ON_FLUSH = false;
+
         private static final int DEFAULT_MEMTABLE_FLUSH_PERIOD = 0;
+
         private static final int DEFAULT_DEFAULT_TTL = 0;
+
         private static final String DEFAULT_SPECULATIVE_RETRY = "NONE";
+
         private static final int DEFAULT_INDEX_INTERVAL = 128;
 
         private final boolean isCompactStorage;
 
         private final String comment;
+
         private final double readRepair;
+
         private final double localReadRepair;
+
         private final boolean replicateOnWrite;
+
         private final int gcGrace;
+
         private final double bfFpChance;
+
         private final String caching;
+
         private final boolean populateCacheOnFlush;
+
         private final int memtableFlushPeriodMs;
+
         private final int defaultTTL;
+
         private final String speculativeRetry;
+
         private final int indexInterval;
+
         private final Map<String, String> compaction = new HashMap<String, String>();
+
         private final Map<String, String> compression = new HashMap<String, String>();
 
         Options(Row row, boolean isCompactStorage) {
             this.isCompactStorage = isCompactStorage;
-            this.comment = row.isNull(COMMENT) ? "" : row.getString(COMMENT);
+            this.comment = (row.isNull(COMMENT)) ? "" : row.getString(COMMENT);
             this.readRepair = row.getDouble(READ_REPAIR);
             this.localReadRepair = row.getDouble(LOCAL_READ_REPAIR);
             this.replicateOnWrite = row.getBool(REPLICATE_ON_WRITE);
             this.gcGrace = row.getInt(GC_GRACE);
-            this.bfFpChance = row.isNull(BF_FP_CHANCE) ? DEFAULT_BF_FP_CHANCE : row.getDouble(BF_FP_CHANCE);
+            this.bfFpChance = (row.isNull(BF_FP_CHANCE)) ? DEFAULT_BF_FP_CHANCE : row.getDouble(BF_FP_CHANCE);
             this.caching = row.getString(CACHING);
-            this.populateCacheOnFlush = row.isNull(POPULATE_CACHE_ON_FLUSH) ? DEFAULT_POPULATE_CACHE_ON_FLUSH : row.getBool(POPULATE_CACHE_ON_FLUSH);
-            this.memtableFlushPeriodMs = row.isNull(MEMTABLE_FLUSH_PERIOD_MS) ? DEFAULT_MEMTABLE_FLUSH_PERIOD : row.getInt(MEMTABLE_FLUSH_PERIOD_MS);
-            this.defaultTTL = row.isNull(DEFAULT_TTL) ? DEFAULT_DEFAULT_TTL : row.getInt(DEFAULT_TTL);
-            this.speculativeRetry = row.isNull(SPECULATIVE_RETRY) ? DEFAULT_SPECULATIVE_RETRY : row.getString(SPECULATIVE_RETRY);
-            this.indexInterval = row.isNull(INDEX_INTERVAL) ? DEFAULT_INDEX_INTERVAL : row.getInt(INDEX_INTERVAL);
-
+            this.populateCacheOnFlush = (row.isNull(POPULATE_CACHE_ON_FLUSH)) ? DEFAULT_POPULATE_CACHE_ON_FLUSH : row.getBool(POPULATE_CACHE_ON_FLUSH);
+            this.memtableFlushPeriodMs = (row.isNull(MEMTABLE_FLUSH_PERIOD_MS)) ? DEFAULT_MEMTABLE_FLUSH_PERIOD : row.getInt(MEMTABLE_FLUSH_PERIOD_MS);
+            this.defaultTTL = (row.isNull(DEFAULT_TTL)) ? DEFAULT_DEFAULT_TTL : row.getInt(DEFAULT_TTL);
+            this.speculativeRetry = (row.isNull(SPECULATIVE_RETRY)) ? DEFAULT_SPECULATIVE_RETRY : row.getString(SPECULATIVE_RETRY);
+            this.indexInterval = (row.isNull(INDEX_INTERVAL)) ? DEFAULT_INDEX_INTERVAL : row.getInt(INDEX_INTERVAL);
             this.compaction.put("class", row.getString(COMPACTION_CLASS));
             this.compaction.putAll(fromJsonMap(row.getString(COMPACTION_OPTIONS)));
-
             this.compression.putAll(fromJsonMap(row.getString(COMPRESSION_PARAMS)));
         }
 
