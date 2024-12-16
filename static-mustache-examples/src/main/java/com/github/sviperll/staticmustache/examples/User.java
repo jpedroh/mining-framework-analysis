@@ -32,6 +32,7 @@ package com.github.sviperll.staticmustache.examples;
 import com.github.sviperll.staticmustache.GenerateRenderableAdapter;
 import com.github.sviperll.staticmustache.Renderable;
 
+
 /**
  *
  * @author Victor Nazarov <asviraspossible@gmail.com>
@@ -39,10 +40,15 @@ import com.github.sviperll.staticmustache.Renderable;
 @GenerateRenderableAdapter(template = "user.mustache", templateFormat = Text.class)
 public class User {
     final String name;
+
     final int age;
+
     final Renderable<Text> card;
+
     final String[] array;
+
     final int[] array1;
+
     final boolean cardEnabled;
 
     public User(String name, int age, Renderable<Text> card, String[] array, int[] array1, boolean cardEnabled) {

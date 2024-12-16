@@ -31,19 +31,23 @@ package com.github.sviperll.staticmustache.context;
 
 import javax.lang.model.element.TypeElement;
 
+
 /**
  *
  * @author Victor Nazarov <asviraspossible@gmail.com>
  */
 public class TemplateCompilerContext {
-    public static TemplateCompilerContext createInstace(RenderingCodeGenerator codeGenerator, TypeElement element,
-                                                        ContextVariables variables) {
+    public static TemplateCompilerContext createInstace(RenderingCodeGenerator codeGenerator, TypeElement element, ContextVariables variables) {
         RenderingContext fieldContext = new DeclaredTypeRenderingContext(codeGenerator, element, variables.data());
         return new TemplateCompilerContext(codeGenerator, variables, fieldContext);
     }
+
     private final EnclosedRelation enclosedRelation;
+
     private final RenderingContext context;
+
     private final RenderingCodeGenerator generator;
+
     private final ContextVariables variables;
 
     TemplateCompilerContext(RenderingCodeGenerator processor, ContextVariables variables, RenderingContext field) {
@@ -67,7 +71,7 @@ public class TemplateCompilerContext {
     }
 
     public String renderingCode() throws ContextException {
-        return beginSectionRenderingCode() + sectionBodyRenderingCode() + endSectionRenderingCode();
+        return (beginSectionRenderingCode() + sectionBodyRenderingCode()) + endSectionRenderingCode();
     }
 
     public String beginSectionRenderingCode() {
@@ -83,13 +87,14 @@ public class TemplateCompilerContext {
             return new TemplateCompilerContext(generator, variables, new OwnedRenderingContext(context), new EnclosedRelation(name, this));
         } else {
             RenderingData entry = context.getDataOrDefault(name, null);
-            if (entry == null)
+            if (entry == null) {
                 throw new ContextException("Field not found in current context: " + name);
+            }
             RenderingContext enclosedField;
             try {
                 enclosedField = generator.createRenderingContext(entry.type(), entry.expression(), new OwnedRenderingContext(context));
             } catch (TypeException ex) {
-                throw new ContextException("Can't use " + name + " for rendering", ex);
+                throw new ContextException(("Can't use " + name) + " for rendering", ex);
             }
             return new TemplateCompilerContext(generator, variables, enclosedField, new EnclosedRelation(name, this));
         }
@@ -108,7 +113,7 @@ public class TemplateCompilerContext {
             } catch (TypeException ex) {
                 throw new ContextException("Can't use " + name + " for rendering", ex);
             }
-            return new TemplateCompilerContext(generator, variables, enclosedField, new EnclosedRelation(name, this));
+            return new TemplateCompilerContext(generator, writerExpression, enclosedField, new EnclosedRelation(name, this));
         }
     }
 
