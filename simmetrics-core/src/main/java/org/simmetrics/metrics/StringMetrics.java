@@ -17,18 +17,11 @@
  * limitations under the License.
  * #L%
  */
-
 package org.simmetrics.metrics;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.simmetrics.simplifiers.Simplifiers.chain;
-import static org.simmetrics.tokenizers.Tokenizers.chain;
-import static org.simmetrics.tokenizers.Tokenizers.qGram;
-import static org.simmetrics.tokenizers.Tokenizers.whitespace;
-
+import com.google.common.collect.Multiset;
 import java.util.List;
 import java.util.Set;
-
 import org.simmetrics.Metric;
 import org.simmetrics.StringMetric;
 import org.simmetrics.builders.StringMetricBuilder;
@@ -36,8 +29,12 @@ import org.simmetrics.simplifiers.Simplifier;
 import org.simmetrics.simplifiers.Soundex;
 import org.simmetrics.tokenizers.Tokenizer;
 import org.simmetrics.tokenizers.Tokenizers;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.simmetrics.simplifiers.Simplifiers.chain;
+import static org.simmetrics.tokenizers.Tokenizers.chain;
+import static org.simmetrics.tokenizers.Tokenizers.qGram;
+import static org.simmetrics.tokenizers.Tokenizers.whitespace;
 
-import com.google.common.collect.Multiset;
 
 /**
  * Utility class for StringMetrics.
@@ -50,25 +47,22 @@ import com.google.common.collect.Multiset;
  * immutable.
  */
 public final class StringMetrics {
-
 	/**
 	 * Returns a cosine similarity metric over tokens in a string. The tokens
 	 * are created by splitting the string on whitespace.
-	 * 
+	 *
 	 * @return a cosine similarity metric
-	 * 
 	 * @see CosineSimilarity
 	 */
 	public static StringMetric cosineSimilarity() {
 		return createForMultisetMetric(new CosineSimilarity<String>(), whitespace());
 	}
-	
+
 	/**
-	 * Returns a block distance similarity metric over tokens in a string. The tokens 
+	 * Returns a block distance similarity metric over tokens in a string. The tokens
 	 * are created by splitting the string on whitespace.
-	 * 
+	 *
 	 * @return a block distance metric
-	 * 
 	 * @see BlockDistance
 	 */
 	public static StringMetric blockDistance() {
@@ -78,9 +72,8 @@ public final class StringMetrics {
 	/**
 	 * Returns a Damerau-Levenshtein similarity metric over tokens in a string. The
 	 * tokens are created by splitting the string on whitespace.
-	 * 
-	 * @return a Damerau-Levenshtein metric
-	 * 
+	 *
+	 * @return a damerau levenshtein metric
 	 * @see DamerauLevenshtein
 	 */
 	public static StringMetric damerauLevenshtein() {
@@ -90,9 +83,8 @@ public final class StringMetrics {
 	/**
 	 * Returns a Dice similarity metric over tokens in a string. The
 	 * tokens are created by splitting the string on whitespace.
-	 * 
+	 *
 	 * @return a dice metric
-	 * 
 	 * @see Dice
 	 */
 	public static StringMetric dice() {
@@ -102,21 +94,19 @@ public final class StringMetrics {
 	/**
 	 * Returns an Euclidean distance similarity metric over tokens in a string. The
 	 * tokens are created by splitting the string on whitespace.
-	 * 
+	 *
 	 * @return a Euclidean distance similarity metric
-	 * 
 	 * @see EuclideanDistance
 	 */
 	public static StringMetric euclideanDistance() {
 		return createForMultisetMetric(new EuclideanDistance<String>(), whitespace());
 	}
-	
+
 	/**
 	 * Returns a generalized Jaccard similarity metric over tokens in a string. The
 	 * tokens are created by splitting the string on whitespace.
-	 * 
-	 * @return a generalized Jaccard index metric
-	 * 
+	 *
+	 * @return a generalized jaccard index metric
 	 * @see GeneralizedJaccard
 	 */
 	public static StringMetric generalizedJaccard() {
@@ -126,9 +116,8 @@ public final class StringMetrics {
 	/**
 	 * Returns an identity similarity metric. The metric returns 1.0 when the inputs are
 	 * equals, and 0.0 when they're not.
-	 * 
+	 *
 	 * @return an identity string metric
-	 * 
 	 * @see Identity
 	 */
 	public static StringMetric identity() {
@@ -138,9 +127,8 @@ public final class StringMetrics {
 	/**
 	 * Returns a Jaccard similarity metric over tokens in a string. The
 	 * tokens are created by splitting the string on whitespace.
-	 * 
+	 *
 	 * @return a Jaccard similarity metric
-	 * 
 	 * @see Jaccard
 	 */
 	public static StringMetric jaccard() {
@@ -149,9 +137,8 @@ public final class StringMetrics {
 
 	/**
 	 * Returns a Jaro similarity metric.
-	 * 
-	 * @return a Jaro similarity metric
-	 * 
+	 *
+	 * @return a Jaro metric
 	 * @see Jaro
 	 */
 	public static StringMetric jaro() {
@@ -160,9 +147,8 @@ public final class StringMetrics {
 
 	/**
 	 * Returns a Jaro-Winkler similarity metric.
-	 * 
-	 * @return a Jaro-Winkler similarity metric
-	 * 
+	 *
+	 * @return a Jaro-Winkler metric
 	 * @see JaroWinkler
 	 */
 	public static StringMetric jaroWinkler() {
@@ -171,9 +157,8 @@ public final class StringMetrics {
 
 	/**
 	 * Returns a Levenshtein similarity metric.
-	 * 
-	 * @return a Levenshtein similarity metric
-	 * 
+	 *
+	 * @return a Levenshtein metric
 	 * @see Levenshtein
 	 */
 	public static StringMetric levenshtein() {
@@ -184,9 +169,8 @@ public final class StringMetrics {
 	 * Returns a normalized Monge-Elkan metric over tokens in a string. The tokens are
 	 * created by splitting the string on whitespace. The metric applies
 	 * Smith-Waterman-Gotoh internally.
-	 * 
-	 * @return a normalized Monge-Elkan metric
-	 * 
+	 *
+	 * @return a Monge-Elkan metric
 	 * @see MongeElkan
 	 */
 	public static StringMetric mongeElkan() {
@@ -195,9 +179,8 @@ public final class StringMetrics {
 
 	/**
 	 * Returns a Needleman-Wunch similarity metric.
-	 * 
-	 * @return a Needleman-Wunch similarity metric
-	 * 
+	 *
+	 * @return a Needleman-Wunch metric
 	 * @see NeedlemanWunch
 	 */
 	public static StringMetric needlemanWunch() {
@@ -207,9 +190,8 @@ public final class StringMetrics {
 	/**
 	 * Returns an overlap coefficient similarity metric over tokens in a string. The
 	 * tokens are created by splitting the string on whitespace.
-	 * 
-	 * @return an overlap coefficient metric
-	 * 
+	 *
+	 * @return a overlap coefficient metric
 	 * @see OverlapCoefficient
 	 */
 	public static StringMetric overlapCoefficient() {
@@ -219,9 +201,8 @@ public final class StringMetrics {
 	/**
 	 * Returns a q-grams distance similarity metric. Q-grams distance applies a
 	 * block distance similarity similarity metric over all tri-grams in a string.
-	 * 
-	 * @return a q-grams distance similarity metric
-	 * 
+	 *
+	 * @return a q-grams distance metric
 	 * @see BlockDistance
 	 */
 	public static StringMetric qGramsDistance() {
@@ -237,9 +218,8 @@ public final class StringMetrics {
 	 * Implementation based on the ideas as outlined in <a
 	 * href="http://www.catalysoft.com/articles/StrikeAMatch.html">How to Strike
 	 * a Match</a> by <cite>Simon White</cite>.
-	 * 
-	 * @return a Simon White similarity metric
-	 * 
+	 *
+	 * @return a Simon White metric
 	 * @see SimonWhite
 	 */
 	public static StringMetric simonWhite() {
@@ -248,9 +228,8 @@ public final class StringMetrics {
 
 	/**
 	 * Returns a Smith-Waterman similarity metric.
-	 * 
-	 * @return a Smith-Waterman similarity metric
-	 * 
+	 *
+	 * @return a Smith-Waterman metric
 	 * @see SmithWaterman
 	 */
 	public static StringMetric smithWaterman() {
@@ -259,9 +238,8 @@ public final class StringMetrics {
 
 	/**
 	 * Returns a Smith-Waterman-Gotoh similarity metric.
-	 * 
-	 * @return a Smith-Waterman-Gotoh similarity metric
-	 * 
+	 *
+	 * @return a Smith-Waterman-Gotoh metric
 	 * @see SmithWatermanGotoh
 	 */
 	public static StringMetric smithWatermanGotoh() {
@@ -271,16 +249,14 @@ public final class StringMetrics {
 	/**
 	 * Returns a soundex similarity metric. The metric applies the Jaro-Winkler
 	 * similarity metric over soundex strings.
-	 * 
-	 * @return a soundex similarity metric
-	 * 
+	 *
+	 * @return a Soundex metric
 	 * @see Soundex
-	 * @see JaroWinkler
 	 */
+	@Deprecated
 	public static StringMetric soundex() {
 		return create(new JaroWinkler(), new Soundex());
 	}
-	
 
 	/**
 	 * Either constructs a new string metric or returns the original metric.
@@ -420,7 +396,6 @@ public final class StringMetrics {
 		return new ForSet(metric, tokenizer);
 	}
 
-	
 	/**
 	 * Creates a new composite string metric.The tokenizer is used to tokenize
 	 * the simplified strings. The set metric compares the the tokens.
@@ -462,16 +437,15 @@ public final class StringMetrics {
 	public static StringMetric createForMultisetMetric(Metric<Multiset<String>> metric, Tokenizer tokenizer) {
 		return new ForMultiset(metric, tokenizer);
 	}
-	
+
 	static final class ForList implements StringMetric {
 		private final Metric<List<String>> metric;
+
 		private final Tokenizer tokenizer;
 
 		ForList(Metric<List<String>> metric, Tokenizer tokenizer) {
-
 			checkNotNull(metric);
 			checkNotNull(tokenizer);
-
 			this.metric = metric;
 			this.tokenizer = tokenizer;
 		}
@@ -491,21 +465,21 @@ public final class StringMetrics {
 
 		@Override
 		public String toString() {
-			return metric + " [" + tokenizer + "]";
+			return ((metric + " [") + tokenizer) + "]";
 		}
 	}
 
 	static final class ForListWithSimplifier implements StringMetric {
 		private final Metric<List<String>> metric;
+
 		private final Simplifier simplifier;
+
 		private final Tokenizer tokenizer;
 
 		ForListWithSimplifier(Metric<List<String>> metric, Simplifier simplifier, Tokenizer tokenizer) {
-
 			checkNotNull(metric);
 			checkNotNull(simplifier);
 			checkNotNull(tokenizer);
-
 			this.metric = metric;
 			this.simplifier = simplifier;
 			this.tokenizer = tokenizer;
@@ -513,8 +487,7 @@ public final class StringMetrics {
 
 		@Override
 		public float compare(String a, String b) {
-			return metric.compare(tokenizer.tokenizeToList(simplifier.simplify(a)),
-					tokenizer.tokenizeToList(simplifier.simplify(b)));
+			return metric.compare(tokenizer.tokenizeToList(simplifier.simplify(a)), tokenizer.tokenizeToList(simplifier.simplify(b)));
 		}
 
 		Metric<List<String>> getMetric() {
@@ -531,19 +504,18 @@ public final class StringMetrics {
 
 		@Override
 		public String toString() {
-			return metric + " [" + simplifier + " -> " + tokenizer + "]";
+			return ((((metric + " [") + simplifier) + " -> ") + tokenizer) + "]";
 		}
 	}
 
 	static final class ForSet implements StringMetric {
-
 		private final Metric<Set<String>> metric;
+
 		private final Tokenizer tokenizer;
 
 		ForSet(Metric<Set<String>> metric, Tokenizer tokenizer) {
 			checkNotNull(metric);
 			checkNotNull(tokenizer);
-
 			this.metric = metric;
 			this.tokenizer = tokenizer;
 		}
@@ -563,22 +535,21 @@ public final class StringMetrics {
 
 		@Override
 		public String toString() {
-			return metric + " [" + tokenizer + "]";
+			return ((metric + " [") + tokenizer) + "]";
 		}
-
 	}
 
 	static final class ForSetWithSimplifier implements StringMetric {
-
 		private final Metric<Set<String>> metric;
+
 		private final Simplifier simplifier;
+
 		private final Tokenizer tokenizer;
 
 		ForSetWithSimplifier(Metric<Set<String>> metric, Simplifier simplifier, Tokenizer tokenizer) {
 			checkNotNull(metric);
 			checkNotNull(simplifier);
 			checkNotNull(tokenizer);
-
 			this.metric = metric;
 			this.simplifier = simplifier;
 			this.tokenizer = tokenizer;
@@ -586,8 +557,7 @@ public final class StringMetrics {
 
 		@Override
 		public float compare(String a, String b) {
-			return metric.compare(tokenizer.tokenizeToSet(simplifier.simplify(a)),
-					tokenizer.tokenizeToSet(simplifier.simplify(b)));
+			return metric.compare(tokenizer.tokenizeToSet(simplifier.simplify(a)), tokenizer.tokenizeToSet(simplifier.simplify(b)));
 		}
 
 		Metric<Set<String>> getMetric() {
@@ -604,19 +574,18 @@ public final class StringMetrics {
 
 		@Override
 		public String toString() {
-			return metric + " [" + simplifier + " -> " + tokenizer + "]";
+			return ((((metric + " [") + simplifier) + " -> ") + tokenizer) + "]";
 		}
-
 	}
-	static final class ForMultiset implements StringMetric {
 
+	static final class ForMultiset implements StringMetric {
 		private final Metric<Multiset<String>> metric;
+
 		private final Tokenizer tokenizer;
 
 		ForMultiset(Metric<Multiset<String>> metric, Tokenizer tokenizer) {
 			checkNotNull(metric);
 			checkNotNull(tokenizer);
-
 			this.metric = metric;
 			this.tokenizer = tokenizer;
 		}
@@ -636,22 +605,21 @@ public final class StringMetrics {
 
 		@Override
 		public String toString() {
-			return metric + " [" + tokenizer + "]";
+			return ((metric + " [") + tokenizer) + "]";
 		}
-
 	}
 
 	static final class ForMultisetWithSimplifier implements StringMetric {
-
 		private final Metric<Multiset<String>> metric;
+
 		private final Simplifier simplifier;
+
 		private final Tokenizer tokenizer;
 
 		ForMultisetWithSimplifier(Metric<Multiset<String>> metric, Simplifier simplifier, Tokenizer tokenizer) {
 			checkNotNull(metric);
 			checkNotNull(simplifier);
 			checkNotNull(tokenizer);
-
 			this.metric = metric;
 			this.simplifier = simplifier;
 			this.tokenizer = tokenizer;
@@ -659,8 +627,7 @@ public final class StringMetrics {
 
 		@Override
 		public float compare(String a, String b) {
-			return metric.compare(tokenizer.tokenizeToMultiset(simplifier.simplify(a)),
-					tokenizer.tokenizeToMultiset(simplifier.simplify(b)));
+			return metric.compare(tokenizer.tokenizeToMultiset(simplifier.simplify(a)), tokenizer.tokenizeToMultiset(simplifier.simplify(b)));
 		}
 
 		Metric<Multiset<String>> getMetric() {
@@ -677,10 +644,10 @@ public final class StringMetrics {
 
 		@Override
 		public String toString() {
-			return metric + " [" + simplifier + " -> " + tokenizer + "]";
+			return ((((metric + " [") + simplifier) + " -> ") + tokenizer) + "]";
 		}
-
 	}
+
 	static final class ForString implements StringMetric {
 		private final Metric<String> metric;
 
@@ -701,11 +668,9 @@ public final class StringMetrics {
 		Metric<String> getMetric() {
 			return metric;
 		}
-
 	}
 
 	static final class ForStringWithSimplifier implements StringMetric {
-
 		private final Metric<String> metric;
 
 		private final Simplifier simplifier;
@@ -713,7 +678,6 @@ public final class StringMetrics {
 		ForStringWithSimplifier(Metric<String> metric, Simplifier simplifier) {
 			checkNotNull(metric);
 			checkNotNull(simplifier);
-
 			this.metric = metric;
 			this.simplifier = simplifier;
 		}
@@ -733,13 +697,11 @@ public final class StringMetrics {
 
 		@Override
 		public String toString() {
-			return metric + " [" + simplifier + "]";
+			return ((metric + " [") + simplifier) + "]";
 		}
-
 	}
 
 	private StringMetrics() {
 		// Utility class.
 	}
-
 }

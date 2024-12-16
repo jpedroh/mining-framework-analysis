@@ -17,15 +17,12 @@
  * the License.
  * #L%
  */
-
 package org.simmetrics.metrics;
 
-import static org.simmetrics.metrics.Math.intersection;
-
+import com.google.common.collect.Multiset;
 import org.simmetrics.MultisetDistance;
 import org.simmetrics.MultisetMetric;
 
-import com.google.common.collect.Multiset;
 
 /**
  * Calculates the generalized Jaccard distance and similarity coefficient over
@@ -57,25 +54,20 @@ import com.google.common.collect.Multiset;
  *            type of the token
  * 
  */
-public final class GeneralizedJaccard<T> implements MultisetMetric<T>,
-		MultisetDistance<T> {
+public final class GeneralizedJaccard<T> implements MultisetMetric<T> , MultisetDistance<T> {
 	@Override
 	public float compare(Multiset<T> a, Multiset<T> b) {
-
 		if (a.isEmpty() && b.isEmpty()) {
-			return 1.0f;
+			return 1.0F;
 		}
-
 		if (a.isEmpty() || b.isEmpty()) {
-			return 0.0f;
+			return 0.0F;
 		}
-
 		final int intersection = intersection(a, b).size();
-
 		// ∣a ∩ b∣ / ∣a ∪ b∣
 		// Implementation note: The size of the union of two sets is equal to
 		// the size of both sets minus the duplicate elements.
-		return intersection / (float) (a.size() + b.size() - intersection);
+		return intersection / ((float) ((a.size() + b.size()) - intersection));
 	}
 
 	@Override
@@ -87,5 +79,4 @@ public final class GeneralizedJaccard<T> implements MultisetMetric<T>,
 	public String toString() {
 		return "GeneralizedJaccard";
 	}
-
 }

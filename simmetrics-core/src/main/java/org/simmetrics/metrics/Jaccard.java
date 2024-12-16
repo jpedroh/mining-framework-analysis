@@ -17,15 +17,13 @@
  * the License.
  * #L%
  */
-
 package org.simmetrics.metrics;
 
-import static com.google.common.collect.Sets.intersection;
-
 import java.util.Set;
-
 import org.simmetrics.SetDistance;
 import org.simmetrics.SetMetric;
+import static com.google.common.collect.Sets.intersection;
+
 
 /**
  * Calculates the Jaccard distance and similarity coefficient over two
@@ -65,31 +63,27 @@ import org.simmetrics.SetMetric;
  *            type of the token
  * 
  */
-public final class Jaccard<T> implements SetMetric<T>, SetDistance<T> {
-
+public final class Jaccard<T> implements SetMetric<T> , SetDistance<T> {
 	@Override
 	public float compare(Set<T> a, Set<T> b) {
-
 		if (a.isEmpty() && b.isEmpty()) {
-			return 1.0f;
+			return 1.0F;
 		}
-
 		if (a.isEmpty() || b.isEmpty()) {
-			return 0.0f;
+			return 0.0F;
 		}
-		
-		// Smaller set first for performance improvement. 
+		// Smaller set first for performance improvement.
 		// See: note at Sets.intersection
-		if(a.size() > b.size()){
-			final Set<T> swap = a; a = b; b = swap;
+		if (a.size() > b.size()) {
+			final Set<T> swap = a;
+			a = b;
+			b = swap;
 		}
-		
 		final int intersection = intersection(a, b).size();
-
 		// ∣a ∩ b∣ / ∣a ∪ b∣
 		// Implementation note: The size of the union of two sets is equal to
 		// the size of both sets minus the duplicate elements.
-		return intersection / (float) (a.size() + b.size() - intersection);
+		return intersection / ((float) ((a.size() + b.size()) - intersection));
 	}
 
 	@Override
@@ -101,5 +95,4 @@ public final class Jaccard<T> implements SetMetric<T>, SetDistance<T> {
 	public String toString() {
 		return "Jaccard";
 	}
-
 }

@@ -17,17 +17,15 @@
  * the License.
  * #L%
  */
-
 package org.simmetrics.metrics;
 
+import java.util.List;
+import org.simmetrics.ListMetric;
+import org.simmetrics.StringMetric;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.Math.max;
 import static java.lang.Math.sqrt;
 
-import java.util.List;
-
-import org.simmetrics.ListMetric;
-import org.simmetrics.StringMetric;
 
 /**
  * Calculates the normalized Monge-Elkan distance (similarity) over two strings.
@@ -41,17 +39,15 @@ import org.simmetrics.StringMetric;
  * </p>
  * <p>
  * This class is immutable and thread-safe.
- * 
  */
 public final class MongeElkan implements ListMetric<String> {
-
 	private final StringMetric metric;
 
 	/**
 	 * Constructs a Monge-Elkan metric with metric.
-	 * 
+	 *
 	 * @param metric
-	 *            metric to use
+	 * 		metric to use
 	 */
 	public MongeElkan(final StringMetric metric) {
 		this.metric = metric;
@@ -92,5 +88,4 @@ public final class MongeElkan implements ListMetric<String> {
 	public String toString() {
 		return "MongeElkan [metric=" + metric + "]";
 	}
-
 }

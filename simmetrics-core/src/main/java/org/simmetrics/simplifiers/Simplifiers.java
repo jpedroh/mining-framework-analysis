@@ -17,24 +17,21 @@
  * limitations under the License.
  * #L%
  */
-
 package org.simmetrics.simplifiers;
 
-import static com.google.common.base.Joiner.on;
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.asList;
-
+import com.google.common.collect.ImmutableList;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.simmetrics.builders.StringMetricBuilder;
+import static com.google.common.base.Joiner.on;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Lists.asList;
 
-import com.google.common.collect.ImmutableList;
 
 /**
  * Utilities for simplifiers. Construct simple simplifiers or chain multiple
@@ -44,9 +41,7 @@ import com.google.common.collect.ImmutableList;
  * are also thread-safe and immutable.
  */
 public final class Simplifiers {
-
 	static final class ChainSimplifier implements Simplifier {
-
 		private final List<Simplifier> simplifiers;
 
 		ChainSimplifier(List<Simplifier> simplifiers) {
@@ -65,17 +60,13 @@ public final class Simplifiers {
 			for (Simplifier s : simplifiers) {
 				output = s.simplify(output);
 			}
-
 			return output;
-
 		}
 
 		@Override
 		public String toString() {
 			return on(" -> ").join(simplifiers);
 		}
-		
-		
 	}
 
 	/**
@@ -84,9 +75,7 @@ public final class Simplifiers {
 	 * This class is thread-safe and immutable.
 	 */
 	static final class RemoveDiacritics implements Simplifier {
-
-		private static final Pattern DIACRITICS_AND_FRIENDS = Pattern
-				.compile("[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+");
+		private static final Pattern DIACRITICS_AND_FRIENDS = Pattern.compile("[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+");
 
 		RemoveDiacritics() {
 		}
@@ -100,23 +89,19 @@ public final class Simplifiers {
 		 * removed. The resulting string will be in canonical decomposition
 		 * form.
 		 * <p>
-		 * 
-		 * @return the input string in canonical decomposition form without
-		 *         diacritics
 		 *
+		 * @return the input string in canonical decomposition form without
+		diacritics
 		 */
 		@Override
 		public String simplify(String input) {
-			return DIACRITICS_AND_FRIENDS.matcher(
-					Normalizer.normalize(input, Normalizer.Form.NFD))
-					.replaceAll("");
+			return DIACRITICS_AND_FRIENDS.matcher(Normalizer.normalize(input, Normalizer.Form.NFD)).replaceAll("");
 		}
 
 		@Override
 		public String toString() {
 			return "RemoveDiacritics";
 		}
-
 	}
 
 	static final class ReplaceAll implements Simplifier {
@@ -138,12 +123,11 @@ public final class Simplifiers {
 
 		@Override
 		public String toString() {
-			return "Replace [" + pattern + " -> '" + repplacement + "' ]";
+			return ((("Replace [" + pattern) + " -> '") + repplacement) + "' ]";
 		}
 	}
 
 	static final class ToLowerCase implements Simplifier {
-
 		private final Locale locale;
 
 		ToLowerCase(Locale locale) {
@@ -157,12 +141,11 @@ public final class Simplifiers {
 
 		@Override
 		public String toString() {
-			return "ToLowerCase [locale=" + locale + "]";
+			return ("ToLowerCase [locale=" + locale) + "]";
 		}
 	}
 
 	static final class ToUpperCase implements Simplifier {
-
 		private final Locale locale;
 
 		ToUpperCase(Locale locale) {
@@ -176,7 +159,7 @@ public final class Simplifiers {
 
 		@Override
 		public String toString() {
-			return "ToUpperCase [locale=" + locale + "]";
+			return ("ToUpperCase [locale=" + locale) + "]";
 		}
 	}
 
@@ -272,10 +255,8 @@ public final class Simplifiers {
 	 * After which any characters matching the regex
 	 * <code>\p{InCombiningDiacriticalMarks}\p{IsLm}\p{IsSk}]+</code> are
 	 * removed. The resulting string will be in canonical decomposition form.
-	 * 
-	 * @return a simplifier that removes diacritics
-	 * 
 	 *
+	 * @return a simplifier that removes diacritics
 	 */
 	public static Simplifier removeDiacritics() {
 		return new RemoveDiacritics();
@@ -284,9 +265,8 @@ public final class Simplifiers {
 	/**
 	 * Returns a simplifier that removes all non-word {@code [^0-9a-zA-Z]}
 	 * characters.
-	 * 
+	 *
 	 * @return a simplifier that removes all non-word characters
-	 * 
 	 * @see #removeAll(Pattern)
 	 */
 	public static Simplifier removeNonWord() {
@@ -297,15 +277,12 @@ public final class Simplifiers {
 	 * Returns a simplifier that removes all consecutive non-word characters
 	 * {@code [^0-9a-zA-Z]+} and replaces them with the {@code replacement}.
 	 * <p>
-	 * 
+	 *
 	 * @see #removeAll(Pattern)
-	 * 
 	 * @param replacement
-	 *            replaces the consecutive non word characters
-	 * 
+	 * 		replaces the consecutive non word characters
 	 * @return a simplifier that replaces all consecutive non-word characters
-	 *         with a replacement
-	 * 
+	with a replacement
 	 */
 	public static Simplifier removeNonWord(String replacement) {
 		return removeAll("\\W+");
@@ -348,7 +325,7 @@ public final class Simplifiers {
 	/**
 	 * Returns a simplifier that replaces all individual non-word characters
 	 * {@code [^0-9a-zA-Z]} with a space.
-	 * 
+	 *
 	 * @return a simplifier that replaces all non-word characters
 	 */
 	public static Simplifier replaceNonWord() {
@@ -358,10 +335,9 @@ public final class Simplifiers {
 	/**
 	 * Returns a simplifier that replaces all individual non-word characters
 	 * {@code [^0-9a-zA-Z]} with the {@code replacement}.
-	 * 
+	 *
 	 * @param replacement
-	 *            replaces the non word characters
-	 * 
+	 * 		replaces the non word characters
 	 * @return a simplifier that replaces all non-word characters
 	 */
 	public static Simplifier replaceNonWord(String replacement) {
@@ -373,9 +349,9 @@ public final class Simplifiers {
 	 * lower case equivalent.
 	 * <P>
 	 * Uses the default locale to apply the transform.
-	 * 
+	 *
 	 * @return a simplifier that transforms all upper case characters into their
-	 *         lower case equivalent
+	lower case equivalent
 	 */
 	public static Simplifier toLowerCase() {
 		return toLowerCase(Locale.getDefault());
@@ -384,12 +360,11 @@ public final class Simplifiers {
 	/**
 	 * Returns a simplifier that transforms all upper case characters into their
 	 * lower case equivalent.
-	 * 
-	 * @param l
-	 *            locale in which the transform is applied
 	 *
+	 * @param l
+	 * 		locale in which the transform is applied
 	 * @return a simplifier that transforms all upper case characters into their
-	 *         lower case equivalent
+	lower case equivalent
 	 */
 	public static Simplifier toLowerCase(Locale l) {
 		return new ToLowerCase(l);
@@ -400,9 +375,9 @@ public final class Simplifiers {
 	 * upper case equivalent.
 	 * <P>
 	 * Uses the default locale to apply the transform.
-	 * 
+	 *
 	 * @return a simplifier that transforms all lower case characters into their
-	 *         upper case equivalent
+	upper case equivalent
 	 */
 	public static Simplifier toUpperCase() {
 		return toUpperCase(Locale.getDefault());
@@ -411,12 +386,11 @@ public final class Simplifiers {
 	/**
 	 * Returns a simplifier that transforms all lower case characters into their
 	 * upper case equivalent.
-	 * 
-	 * @param l
-	 *            locale in which the transform is applied
 	 *
+	 * @param l
+	 * 		locale in which the transform is applied
 	 * @return a simplifier that transforms all upper case characters into their
-	 *         lower case equivalent
+	lower case equivalent
 	 */
 	public static Simplifier toUpperCase(Locale l) {
 		return new ToUpperCase(l);
@@ -425,5 +399,4 @@ public final class Simplifiers {
 	private Simplifiers() {
 		// Utility class
 	}
-
 }
