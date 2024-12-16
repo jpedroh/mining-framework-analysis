@@ -18,12 +18,6 @@
  */
 package org.apache.accumulo.test.compaction;
 
-import static org.apache.accumulo.core.util.LazySingletons.RANDOM;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
@@ -31,14 +25,13 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-
 import org.apache.accumulo.core.client.Accumulo;
 import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.AccumuloException;
@@ -75,13 +68,19 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import static org.apache.accumulo.core.util.LazySingletons.RANDOM;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class CompactionExecutorIT extends SharedMiniClusterBase {
-
   public static class TestPlanner implements CompactionPlanner {
-
     private int filesPerCompaction;
+
     private List<CompactionExecutorId> executorIds;
+
     private EnumSet<CompactionKind> kindsToProcess = EnumSet.noneOf(CompactionKind.class);
 
     @Override
@@ -107,27 +106,18 @@ public class CompactionExecutorIT extends SharedMiniClusterBase {
     @Override
     public CompactionPlan makePlan(PlanningParameters params) {
       if (Boolean.parseBoolean(params.getExecutionHints().getOrDefault("compact_all", "false"))) {
-        return params
-            .createPlanBuilder().addJob((short) 1,
-                executorIds.get(RANDOM.get().nextInt(executorIds.size())), params.getCandidates())
-            .build();
+        return params.createPlanBuilder().addJob(((short) (1)), executorIds.get(RANDOM.get().nextInt(executorIds.size())), params.getCandidates()).build();
       }
-
       if (kindsToProcess.contains(params.getKind())) {
         var planBuilder = params.createPlanBuilder();
-
         // Group files by first char, like F for flush files or C for compaction produced files.
         // This prevents F and C files from compacting together, which makes it easy to reason about
         // the number of expected files produced by compactions from known number of F files.
-        params.getCandidates().stream().collect(Collectors.groupingBy(TestPlanner::getFirstChar))
-            .values().forEach(files -> {
-              for (int i = filesPerCompaction; i <= files.size(); i += filesPerCompaction) {
-                planBuilder.addJob((short) 1,
-                    executorIds.get(RANDOM.get().nextInt(executorIds.size())),
-                    files.subList(i - filesPerCompaction, i));
-              }
-            });
-
+        params.getCandidates().stream().collect(Collectors.groupingBy(TestPlanner::getFirstChar)).values().forEach(( files) -> {
+          for (int i = filesPerCompaction; i <= files.size(); i += filesPerCompaction) {
+            planBuilder.addJob(((short) (1)), executorIds.get(RANDOM.get().nextInt(executorIds.size())), files.subList(i - filesPerCompaction, i));
+          }
+        });
         return planBuilder.build();
       } else {
         return params.createPlanBuilder().build();
@@ -178,17 +168,14 @@ public class CompactionExecutorIT extends SharedMiniClusterBase {
 
   @AfterEach
   public void cleanup() {
-    try (AccumuloClient client = Accumulo.newClient().from(getClientProps()).build()) {
-      client.tableOperations().list().stream()
-          .filter(
-              tableName -> !tableName.startsWith(Namespace.ACCUMULO.name() + Namespace.SEPARATOR))
-          .forEach(tableName -> {
-            try {
-              client.tableOperations().delete(tableName);
-            } catch (AccumuloException | AccumuloSecurityException | TableNotFoundException e) {
-              throw new RuntimeException(e);
-            }
-          });
+    try (final AccumuloClient client = Accumulo.newClient().from(getClientProps()).build()) {
+      client.tableOperations().list().stream().filter(( tableName) -> !tableName.startsWith(Namespace.ACCUMULO.name() + Namespace.SEPARATOR)).forEach(( tableName) -> {
+        try {
+          client.tableOperations().delete(tableName);
+        } catch (AccumuloException | AccumuloSecurityException | TableNotFoundException e) {
+          throw new <e>RuntimeException();
+        }
+      });
     }
   }
 
@@ -498,47 +485,30 @@ public class CompactionExecutorIT extends SharedMiniClusterBase {
   @Test
   public void testConfigurer() throws Exception {
     String tableName = "tcc";
-
-    try (AccumuloClient client = Accumulo.newClient().from(getClientProps()).build()) {
-      var ntc = new NewTableConfiguration()
-          .setProperties(Map.of(Property.TABLE_FILE_COMPRESSION_TYPE.getKey(), "none"));
+    try (final AccumuloClient client = Accumulo.newClient().from(getClientProps()).build()) {
+      var ntc = new NewTableConfiguration().setProperties(Map.of(Property.TABLE_FILE_COMPRESSION_TYPE.getKey(), "none"));
       client.tableOperations().create(tableName, ntc);
-
       byte[] data = new byte[100000];
-      Arrays.fill(data, (byte) 65);
-
-      try (var writer = client.createBatchWriter(tableName)) {
+      Arrays.fill(data, ((byte) (65)));
+      try (final var writer = client.createBatchWriter(tableName)) {
         for (int row = 0; row < 10; row++) {
           Mutation m = new Mutation(row + "");
           m.at().family("big").qualifier("stuff").put(data);
           writer.addMutation(m);
         }
       }
-
       client.tableOperations().flush(tableName, null, null, true);
-
       // without compression, expect file to be large
       long sizes = getFileSizes(client, tableName);
-      assertTrue(sizes > data.length * 10 && sizes < data.length * 11,
-          "Unexpected files sizes : " + sizes);
-
-      client.tableOperations().compact(tableName,
-          new CompactionConfig().setWait(true)
-              .setConfigurer(new PluginConfig(CompressionConfigurer.class.getName(),
-                  Map.of(CompressionConfigurer.LARGE_FILE_COMPRESSION_TYPE, "gz",
-                      CompressionConfigurer.LARGE_FILE_COMPRESSION_THRESHOLD, data.length + ""))));
-
+      assertTrue((sizes > (data.length * 10)) && (sizes < (data.length * 11)), "Unexpected files sizes : " + sizes);
+      client.tableOperations().compact(tableName, new CompactionConfig().setWait(true).setConfigurer(new PluginConfig(CompressionConfigurer.class.getName(), Map.of(CompressionConfigurer.LARGE_FILE_COMPRESSION_TYPE, "gz", CompressionConfigurer.LARGE_FILE_COMPRESSION_THRESHOLD, data.length + ""))));
       // after compacting with compression, expect small file
       sizes = getFileSizes(client, tableName);
       assertTrue(sizes < data.length, "Unexpected files sizes : " + sizes);
-
       client.tableOperations().compact(tableName, new CompactionConfig().setWait(true));
-
       // after compacting without compression, expect big files again
       sizes = getFileSizes(client, tableName);
-      assertTrue(sizes > data.length * 10 && sizes < data.length * 11,
-          "Unexpected files sizes : " + sizes);
-
+      assertTrue((sizes > (data.length * 10)) && (sizes < (data.length * 11)), "Unexpected files sizes : " + sizes);
     }
   }
 

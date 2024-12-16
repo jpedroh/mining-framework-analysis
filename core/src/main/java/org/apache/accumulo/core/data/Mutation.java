@@ -18,8 +18,8 @@
  */
 package org.apache.accumulo.core.data;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import org.apache.accumulo.core.dataImpl.thrift.TMutation;
 import org.apache.accumulo.core.security.ColumnVisibility;
 import org.apache.accumulo.core.util.ByteBufferUtil;
@@ -36,9 +35,8 @@ import org.apache.accumulo.core.util.UnsynchronizedBuffer;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableUtils;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
 
 /**
  * Mutation represents an action that manipulates a row in a table. A mutation holds a list of
@@ -69,7 +67,6 @@ import com.google.common.base.Preconditions;
  * methods and more is provided by the new fluent {@link #at()} method added in 2.0.
  */
 public class Mutation implements Writable {
-
   /**
    * Internally, this class keeps most mutation data in a byte buffer. If a cell value put into a
    * mutation exceeds this size, then it is stored in a separate buffer, and a reference to it is
@@ -89,15 +86,21 @@ public class Mutation implements Writable {
    * <a href="doc-files/mutation-serialization.html">separate document</a>.
    */
   public enum SERIALIZED_FORMAT {
-    VERSION1, VERSION2
-  }
+
+    VERSION1,
+    VERSION2;}
 
   private boolean useOldDeserialize = false;
+
   private byte[] row;
+
   private byte[] data;
+
   private int entries;
+
   private List<byte[]> values;
 
+  // tracks estimated size of row.length + largeValues.length
   // tracks estimated size of row.length + largeValues.length
   @VisibleForTesting
   long estRowAndLargeValSize = 0;
@@ -132,7 +135,8 @@ public class Mutation implements Writable {
   /**
    * Creates a new mutation. A defensive copy is made.
    *
-   * @param row row ID
+   * @param row
+   * 		row ID
    * @since 1.5.0
    */
   public Mutation(byte[] row) {
@@ -142,8 +146,10 @@ public class Mutation implements Writable {
   /**
    * Creates a new mutation. A defensive copy is made.
    *
-   * @param row row ID
-   * @param initialBufferSize the initial size, in bytes, of the internal buffer for serializing
+   * @param row
+   * 		row ID
+   * @param initialBufferSize
+   * 		the initial size, in bytes, of the internal buffer for serializing
    * @since 1.7.0
    */
   public Mutation(byte[] row, int initialBufferSize) {
@@ -153,10 +159,14 @@ public class Mutation implements Writable {
   /**
    * Creates a new mutation. A defensive copy is made.
    *
-   * @param row byte array containing row ID
-   * @param start starting index of row ID in byte array
-   * @param length length of row ID in byte array
-   * @throws IndexOutOfBoundsException if start or length is invalid
+   * @param row
+   * 		byte array containing row ID
+   * @param start
+   * 		starting index of row ID in byte array
+   * @param length
+   * 		length of row ID in byte array
+   * @throws IndexOutOfBoundsException
+   * 		if start or length is invalid
    * @since 1.5.0
    */
   public Mutation(byte[] row, int start, int length) {
@@ -166,11 +176,16 @@ public class Mutation implements Writable {
   /**
    * Creates a new mutation. A defensive copy is made.
    *
-   * @param row byte array containing row ID
-   * @param start starting index of row ID in byte array
-   * @param length length of row ID in byte array
-   * @param initialBufferSize the initial size, in bytes, of the internal buffer for serializing
-   * @throws IndexOutOfBoundsException if start or length is invalid
+   * @param row
+   * 		byte array containing row ID
+   * @param start
+   * 		starting index of row ID in byte array
+   * @param length
+   * 		length of row ID in byte array
+   * @param initialBufferSize
+   * 		the initial size, in bytes, of the internal buffer for serializing
+   * @throws IndexOutOfBoundsException
+   * 		if start or length is invalid
    * @since 1.7.0
    */
   public Mutation(byte[] row, int start, int length, int initialBufferSize) {
@@ -183,7 +198,8 @@ public class Mutation implements Writable {
   /**
    * Creates a new mutation. A defensive copy is made.
    *
-   * @param row row ID
+   * @param row
+   * 		row ID
    */
   public Mutation(Text row) {
     this(row.getBytes(), 0, row.getLength());
@@ -192,8 +208,10 @@ public class Mutation implements Writable {
   /**
    * Creates a new mutation. A defensive copy is made.
    *
-   * @param row row ID
-   * @param initialBufferSize the initial size, in bytes, of the internal buffer for serializing
+   * @param row
+   * 		row ID
+   * @param initialBufferSize
+   * 		the initial size, in bytes, of the internal buffer for serializing
    * @since 1.7.0
    */
   public Mutation(Text row, int initialBufferSize) {
@@ -203,7 +221,8 @@ public class Mutation implements Writable {
   /**
    * Creates a new mutation.
    *
-   * @param row row ID
+   * @param row
+   * 		row ID
    */
   public Mutation(CharSequence row) {
     this(new Text(row.toString()));
@@ -212,8 +231,10 @@ public class Mutation implements Writable {
   /**
    * Creates a new mutation.
    *
-   * @param row row ID
-   * @param initialBufferSize the initial size, in bytes, of the internal buffer for serializing
+   * @param row
+   * 		row ID
+   * @param initialBufferSize
+   * 		the initial size, in bytes, of the internal buffer for serializing
    * @since 1.7.0
    */
   public Mutation(CharSequence row, int initialBufferSize) {
@@ -223,7 +244,8 @@ public class Mutation implements Writable {
   /**
    * Creates a new mutation.
    */
-  public Mutation() {}
+  public Mutation() {
+  }
 
   /**
    * Creates a new mutation from a Thrift mutation.
@@ -235,7 +257,6 @@ public class Mutation implements Writable {
     this.data = ByteBufferUtil.toBytes(tmutation.data);
     this.entries = tmutation.entries;
     this.values = ByteBufferUtil.toBytesList(tmutation.values);
-
     if (this.row == null) {
       throw new IllegalArgumentException("null row");
     }
@@ -770,13 +791,13 @@ public class Mutation implements Writable {
    * @since 2.0.0
    */
   public interface FamilyOptions extends QualifierOptions {
-    QualifierOptions family(byte[] colFam);
+    public abstract QualifierOptions family(byte[] colFam);
 
-    QualifierOptions family(ByteBuffer colFam);
+    public abstract QualifierOptions family(ByteBuffer colFam);
 
-    QualifierOptions family(CharSequence colFam);
+    public abstract QualifierOptions family(CharSequence colFam);
 
-    QualifierOptions family(Text colFam);
+    public abstract QualifierOptions family(Text colFam);
   }
 
   /**
@@ -790,13 +811,13 @@ public class Mutation implements Writable {
    * @since 2.0.0
    */
   public interface QualifierOptions extends VisibilityOptions {
-    VisibilityOptions qualifier(byte[] colQual);
+    public abstract VisibilityOptions qualifier(byte[] colQual);
 
-    VisibilityOptions qualifier(ByteBuffer colQual);
+    public abstract VisibilityOptions qualifier(ByteBuffer colQual);
 
-    VisibilityOptions qualifier(CharSequence colQual);
+    public abstract VisibilityOptions qualifier(CharSequence colQual);
 
-    VisibilityOptions qualifier(Text colQual);
+    public abstract VisibilityOptions qualifier(Text colQual);
   }
 
   /**
@@ -810,15 +831,15 @@ public class Mutation implements Writable {
    * @since 2.0.0
    */
   public interface VisibilityOptions extends TimestampOptions {
-    TimestampOptions visibility(byte[] colVis);
+    public abstract TimestampOptions visibility(byte[] colVis);
 
-    TimestampOptions visibility(ByteBuffer colVis);
+    public abstract TimestampOptions visibility(ByteBuffer colVis);
 
-    TimestampOptions visibility(CharSequence colVis);
+    public abstract TimestampOptions visibility(CharSequence colVis);
 
-    TimestampOptions visibility(ColumnVisibility colVis);
+    public abstract TimestampOptions visibility(ColumnVisibility colVis);
 
-    TimestampOptions visibility(Text colVis);
+    public abstract TimestampOptions visibility(Text colVis);
   }
 
   /**
@@ -832,7 +853,7 @@ public class Mutation implements Writable {
    * @since 2.0.0
    */
   public interface TimestampOptions extends MutationOptions {
-    MutationOptions timestamp(long ts);
+    public abstract MutationOptions timestamp(long ts);
   }
 
   /**
@@ -846,17 +867,17 @@ public class Mutation implements Writable {
    * @since 2.0.0
    */
   public interface MutationOptions {
-    Mutation put(byte[] val);
+    public abstract Mutation put(byte[] val);
 
-    Mutation put(ByteBuffer val);
+    public abstract Mutation put(ByteBuffer val);
 
-    Mutation put(CharSequence val);
+    public abstract Mutation put(CharSequence val);
 
-    Mutation put(Text val);
+    public abstract Mutation put(Text val);
 
-    Mutation put(Value val);
+    public abstract Mutation put(Value val);
 
-    Mutation delete();
+    public abstract Mutation delete();
   }
 
   /**
@@ -891,18 +912,23 @@ public class Mutation implements Writable {
   // private inner class implementing all Options interfaces
   private class Options implements FamilyOptions {
     byte[] columnFamily;
+
     int columnFamilyLength;
 
     byte[] columnQualifier;
+
     int columnQualifierLength;
 
     byte[] columnVisibility = null;
+
     int columnVisibilityLength;
 
     boolean hasTs = false;
+
     long timestamp;
 
-    private Options() {}
+    private Options() {
+    }
 
     // methods for changing the column family of a Mutation
     /**
@@ -1351,7 +1377,6 @@ public class Mutation implements Writable {
 
   @Override
   public void readFields(DataInput in) throws IOException {
-
     // Clear out cached column updates and value lengths so
     // that we recalculate them based on the (potentially) new
     // data we are about to read in.
@@ -1359,14 +1384,12 @@ public class Mutation implements Writable {
     cachedValLens = -1;
     buffer = null;
     useOldDeserialize = false;
-
     byte first = in.readByte();
     if ((first & 0x80) != 0x80) {
       oldReadFields(first, in);
       useOldDeserialize = true;
       return;
     }
-
     int len = WritableUtils.readVInt(in);
     row = new byte[len];
     in.readFully(row);
@@ -1374,8 +1397,7 @@ public class Mutation implements Writable {
     data = new byte[len];
     in.readFully(data);
     entries = WritableUtils.readVInt(in);
-
-    boolean valuesPresent = (first & 0x01) == 0x01;
+    boolean valuesPresent = (first & 0x1) == 0x1;
     if (valuesPresent) {
       values = new ArrayList<>();
       int numValues = WritableUtils.readVInt(in);
@@ -1388,8 +1410,7 @@ public class Mutation implements Writable {
     } else {
       values = null;
     }
-
-    if ((first & 0x02) == 0x02) {
+    if ((first & 0x2) == 0x2) {
       int numMutations = WritableUtils.readVInt(in);
       for (int i = 0; i < numMutations; i++) {
         // consume the replication sources that may have been previously serialized
@@ -1466,20 +1487,17 @@ public class Mutation implements Writable {
   public void write(DataOutput out) throws IOException {
     final byte[] integerBuffer = new byte[5];
     serialize();
-    byte hasValues = (values == null) ? 0 : (byte) 1;
+    byte hasValues = (values == null) ? 0 : ((byte) (1));
     // When replication sources were supported, we used the 2nd least-significant bit to denote
     // their presence, but this is no longer used; kept here for historical explanation only
     // hasValues = (byte) (0x02 | hasValues);
-    out.write((byte) (0x80 | hasValues));
-
+    out.write(((byte) (0x80 | hasValues)));
     UnsynchronizedBuffer.writeVInt(out, integerBuffer, row.length);
     out.write(row);
-
     UnsynchronizedBuffer.writeVInt(out, integerBuffer, data.length);
     out.write(data);
     UnsynchronizedBuffer.writeVInt(out, integerBuffer, entries);
-
-    if ((0x01 & hasValues) == 0x01) {
+    if ((0x1 & hasValues) == 0x1) {
       UnsynchronizedBuffer.writeVInt(out, integerBuffer, values.size());
       for (byte[] val : values) {
         UnsynchronizedBuffer.writeVInt(out, integerBuffer, val.length);
@@ -1519,24 +1537,20 @@ public class Mutation implements Writable {
   private boolean equalMutation(Mutation m) {
     ByteBuffer myData = serializedSnapshot();
     ByteBuffer otherData = m.serializedSnapshot();
-    if (Arrays.equals(row, m.row) && entries == m.entries && myData.equals(otherData)) {
+    if ((Arrays.equals(row, m.row) && (entries == m.entries)) && myData.equals(otherData)) {
       // If two mutations don't have the same
-      if (values == null && m.values == null) {
+      if ((values == null) && (m.values == null)) {
         return true;
       }
-
-      if (values != null && m.values != null && values.size() == m.values.size()) {
+      if (((values != null) && (m.values != null)) && (values.size() == m.values.size())) {
         for (int i = 0; i < values.size(); i++) {
           if (!Arrays.equals(values.get(i), m.values.get(i))) {
             return false;
           }
         }
-
         return true;
       }
-
     }
-
     return false;
   }
 

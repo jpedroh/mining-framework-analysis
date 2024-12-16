@@ -18,15 +18,8 @@
  */
 package org.apache.accumulo.tserver.log;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.singletonList;
-import static org.apache.accumulo.tserver.logger.LogEvents.COMPACTION_FINISH;
-import static org.apache.accumulo.tserver.logger.LogEvents.COMPACTION_START;
-import static org.apache.accumulo.tserver.logger.LogEvents.DEFINE_TABLET;
-import static org.apache.accumulo.tserver.logger.LogEvents.MANY_MUTATIONS;
-import static org.apache.accumulo.tserver.logger.LogEvents.MUTATION;
-import static org.apache.accumulo.tserver.logger.LogEvents.OPEN;
-
+import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -42,7 +35,6 @@ import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
-
 import org.apache.accumulo.core.Constants;
 import org.apache.accumulo.core.client.Durability;
 import org.apache.accumulo.core.conf.AccumuloConfiguration;
@@ -51,8 +43,8 @@ import org.apache.accumulo.core.crypto.CryptoEnvironmentImpl;
 import org.apache.accumulo.core.crypto.CryptoUtils;
 import org.apache.accumulo.core.crypto.streams.NoFlushOutputStream;
 import org.apache.accumulo.core.data.Mutation;
-import org.apache.accumulo.core.spi.crypto.CryptoEnvironment;
 import org.apache.accumulo.core.spi.crypto.CryptoEnvironment.Scope;
+import org.apache.accumulo.core.spi.crypto.CryptoEnvironment;
 import org.apache.accumulo.core.spi.crypto.CryptoService;
 import org.apache.accumulo.core.spi.crypto.FileDecrypter;
 import org.apache.accumulo.core.spi.crypto.FileEncrypter;
@@ -73,15 +65,22 @@ import org.apache.hadoop.hdfs.DFSOutputStream;
 import org.apache.hadoop.hdfs.protocol.DatanodeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.singletonList;
+import static org.apache.accumulo.tserver.logger.LogEvents.COMPACTION_FINISH;
+import static org.apache.accumulo.tserver.logger.LogEvents.COMPACTION_START;
+import static org.apache.accumulo.tserver.logger.LogEvents.DEFINE_TABLET;
+import static org.apache.accumulo.tserver.logger.LogEvents.MANY_MUTATIONS;
+import static org.apache.accumulo.tserver.logger.LogEvents.MUTATION;
+import static org.apache.accumulo.tserver.logger.LogEvents.OPEN;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 
 /**
  * Wrap a connection to a logger.
  *
  */
 public class DfsLogger implements Comparable<DfsLogger> {
+  // older version supported for upgrade
   // older version supported for upgrade
   public static final String LOG_FILE_HEADER_V3 = "--- Log File Header (v3) ---";
 
@@ -93,6 +92,7 @@ public class DfsLogger implements Comparable<DfsLogger> {
   public static final String LOG_FILE_HEADER_V4 = "--- Log File Header (v4) ---";
 
   private static final Logger log = LoggerFactory.getLogger(DfsLogger.class);
+
   private static final DatanodeInfo[] EMPTY_PIPELINE = new DatanodeInfo[0];
 
   public static class LogClosedException extends IOException {
@@ -117,17 +117,16 @@ public class DfsLogger implements Comparable<DfsLogger> {
   }
 
   public interface ServerResources {
-    AccumuloConfiguration getConfiguration();
+    public abstract AccumuloConfiguration getConfiguration();
 
-    VolumeManager getVolumeManager();
+    public abstract VolumeManager getVolumeManager();
   }
 
   private final LinkedBlockingQueue<DfsLogger.LogWork> workQueue = new LinkedBlockingQueue<>();
 
   private final Object closeLock = new Object();
 
-  private static final DfsLogger.LogWork CLOSED_MARKER =
-      new DfsLogger.LogWork(null, Durability.FLUSH);
+  private static final DfsLogger.LogWork CLOSED_MARKER = new DfsLogger.LogWork(null, Durability.FLUSH);
 
   private static final LogFileValue EMPTY = new LogFileValue();
 
@@ -142,33 +141,30 @@ public class DfsLogger implements Comparable<DfsLogger> {
       boolean sawClosedMarker = false;
       while (!sawClosedMarker) {
         work.clear();
-
         try {
           work.add(workQueue.take());
-        } catch (InterruptedException ex) {
+        } catch (java.lang.InterruptedException ex) {
           continue;
         }
         workQueue.drainTo(work);
-
         Optional<Boolean> shouldHSync = Optional.empty();
-        loop: for (LogWork logWork : work) {
+        loop : for (LogWork logWork : work) {
           switch (logWork.durability) {
-            case DEFAULT:
-            case NONE:
-            case LOG:
+            case DEFAULT :
+            case NONE :
+            case LOG :
               // shouldn't make it to the work queue
               throw new IllegalArgumentException("unexpected durability " + logWork.durability);
-            case SYNC:
+            case SYNC :
               shouldHSync = Optional.of(Boolean.TRUE);
               break loop;
-            case FLUSH:
+            case FLUSH :
               if (shouldHSync.isEmpty()) {
                 shouldHSync = Optional.of(Boolean.FALSE);
               }
               break;
           }
         }
-
         long start = System.currentTimeMillis();
         try {
           if (shouldHSync.isPresent()) {
@@ -180,38 +176,32 @@ public class DfsLogger implements Comparable<DfsLogger> {
               flushCounter.incrementAndGet();
             }
           }
-        } catch (IOException | RuntimeException ex) {
+        } catch (IOException | java.lang.RuntimeException ex) {
           fail(work, ex, "synching");
         }
         long duration = System.currentTimeMillis() - start;
         if (duration > slowFlushMillis) {
-          String msg = new StringBuilder(128).append("Slow sync cost: ").append(duration)
-              .append(" ms, current pipeline: ").append(Arrays.toString(getPipeLine())).toString();
+          String msg = new StringBuilder(128).append("Slow sync cost: ").append(duration).append(" ms, current pipeline: ").append(Arrays.toString(getPipeLine())).toString();
           log.info(msg);
           if (expectedReplication > 0) {
             int current = expectedReplication;
             try {
-              current = ((DFSOutputStream) logFile.getWrappedStream()).getCurrentBlockReplication();
+              current = ((DFSOutputStream) (logFile.getWrappedStream())).getCurrentBlockReplication();
             } catch (IOException e) {
               fail(work, e, "getting replication level");
             }
             if (current < expectedReplication) {
-              fail(work,
-                  new IOException(
-                      "replication of " + current + " is less than " + expectedReplication),
-                  "replication check");
+              fail(work, new IOException((("replication of " + current) + " is less than ") + expectedReplication), "replication check");
             }
           }
         }
-        if (expectedReplication == 0 && logFile.getWrappedStream() instanceof DFSOutputStream) {
+        if ((expectedReplication == 0) && (logFile.getWrappedStream() instanceof DFSOutputStream)) {
           try {
-            expectedReplication =
-                ((DFSOutputStream) logFile.getWrappedStream()).getCurrentBlockReplication();
+            expectedReplication = ((DFSOutputStream) (logFile.getWrappedStream())).getCurrentBlockReplication();
           } catch (IOException e) {
             fail(work, e, "getting replication level");
           }
         }
-
         for (DfsLogger.LogWork logWork : work) {
           if (logWork == CLOSED_MARKER) {
             sawClosedMarker = true;
@@ -219,7 +209,7 @@ public class DfsLogger implements Comparable<DfsLogger> {
             logWork.latch.countDown();
           }
         }
-      }
+      } 
     }
 
     private void fail(ArrayList<DfsLogger.LogWork> work, Exception ex, String why) {
@@ -232,7 +222,9 @@ public class DfsLogger implements Comparable<DfsLogger> {
 
   private static class LogWork {
     final CountDownLatch latch;
+
     final Durability durability;
+
     volatile Exception exception;
 
     public LogWork(CountDownLatch latch, Durability durability) {
@@ -251,15 +243,14 @@ public class DfsLogger implements Comparable<DfsLogger> {
     public void await() throws IOException {
       try {
         work.latch.await();
-      } catch (InterruptedException e) {
+      } catch (java.lang.InterruptedException e) {
         throw new RuntimeException(e);
       }
-
       if (work.exception != null) {
         if (work.exception instanceof IOException) {
-          throw (IOException) work.exception;
+          throw ((IOException) (work.exception));
         } else if (work.exception instanceof RuntimeException) {
-          throw (RuntimeException) work.exception;
+          throw ((RuntimeException) (work.exception));
         } else {
           throw new RuntimeException(work.exception);
         }
@@ -268,13 +259,13 @@ public class DfsLogger implements Comparable<DfsLogger> {
   }
 
   private static class NoWaitLoggerOperation extends LoggerOperation {
-
     public NoWaitLoggerOperation() {
       super(null);
     }
 
     @Override
-    public void await() {}
+    public void await() {
+    }
   }
 
   static final LoggerOperation NO_WAIT_LOGGER_OP = new NoWaitLoggerOperation();
@@ -298,28 +289,35 @@ public class DfsLogger implements Comparable<DfsLogger> {
   }
 
   private final ServerContext context;
+
   private final ServerResources conf;
+
   private FSDataOutputStream logFile;
+
   private DataOutputStream encryptingLogFile = null;
+
   private String logPath;
+
   private Thread syncThread;
 
   /* Track what's actually in +r/!0 for this logger ref */
   private String metaReference;
+
   private AtomicLong syncCounter;
+
   private AtomicLong flushCounter;
+
   private final long slowFlushMillis;
+
   private long writes = 0;
 
   private DfsLogger(ServerContext context, ServerResources conf) {
     this.context = context;
     this.conf = conf;
-    this.slowFlushMillis =
-        conf.getConfiguration().getTimeInMillis(Property.TSERV_SLOW_FLUSH_MILLIS);
+    this.slowFlushMillis = conf.getConfiguration().getTimeInMillis(Property.TSERV_SLOW_FLUSH_MILLIS);
   }
 
-  public DfsLogger(ServerContext context, ServerResources conf, AtomicLong syncCounter,
-      AtomicLong flushCounter) {
+  public DfsLogger(ServerContext context, ServerResources conf, AtomicLong syncCounter, AtomicLong flushCounter) {
     this(context, conf);
     this.syncCounter = syncCounter;
     this.flushCounter = flushCounter;
@@ -328,7 +326,8 @@ public class DfsLogger implements Comparable<DfsLogger> {
   /**
    * Reference a pre-existing log file.
    *
-   * @param meta the cq for the "log" entry in +r/!0
+   * @param meta
+   * 		the cq for the "log" entry in +r/!0
    */
   public DfsLogger(ServerContext context, ServerResources conf, String filename, String meta) {
     this(context, conf);
@@ -343,47 +342,35 @@ public class DfsLogger implements Comparable<DfsLogger> {
    * @throws LogHeaderIncompleteException if the header cannot be fully read (can happen if the
    *         tserver died before finishing)
    */
-  public static DataInputStream getDecryptingStream(FSDataInputStream input,
-      CryptoService cryptoService) throws LogHeaderIncompleteException, IOException {
+  public static DataInputStream getDecryptingStream(FSDataInputStream input, CryptoService cryptoService) throws LogHeaderIncompleteException, IOException {
     DataInputStream decryptingInput;
-
     byte[] magic4 = DfsLogger.LOG_FILE_HEADER_V4.getBytes(UTF_8);
     byte[] magic3 = DfsLogger.LOG_FILE_HEADER_V3.getBytes(UTF_8);
-
     if (magic4.length != magic3.length) {
-      throw new AssertionError("Always expect log file headers to be same length : " + magic4.length
-          + " != " + magic3.length);
+      throw new AssertionError((("Always expect log file headers to be same length : " + magic4.length) + " != ") + magic3.length);
     }
-
     byte[] magicBuffer = new byte[magic4.length];
     try {
       input.readFully(magicBuffer);
       if (Arrays.equals(magicBuffer, magic4)) {
-        FileDecrypter decrypter =
-            CryptoUtils.getFileDecrypter(cryptoService, Scope.WAL, null, input);
+        FileDecrypter decrypter = CryptoUtils.getFileDecrypter(cryptoService, Scope.WAL, null, input);
         log.debug("Using {} for decrypting WAL", cryptoService.getClass().getSimpleName());
-        decryptingInput = cryptoService instanceof NoCryptoService ? input
-            : new DataInputStream(decrypter.decryptStream(input));
+        decryptingInput = (cryptoService instanceof NoCryptoService) ? input : new DataInputStream(decrypter.decryptStream(input));
       } else if (Arrays.equals(magicBuffer, magic3)) {
         // Read logs files from Accumulo 1.9 and throw an error if they are encrypted
         String cryptoModuleClassname = input.readUTF();
         if (!cryptoModuleClassname.equals("NullCryptoModule")) {
-          throw new IllegalArgumentException(
-              "Old encryption modules not supported at this time.  Unsupported module : "
-                  + cryptoModuleClassname);
+          throw new IllegalArgumentException("Old encryption modules not supported at this time.  Unsupported module : " + cryptoModuleClassname);
         }
-
         decryptingInput = input;
       } else {
-        throw new IllegalArgumentException(
-            "Unsupported write ahead log version " + new String(magicBuffer, UTF_8));
+        throw new IllegalArgumentException("Unsupported write ahead log version " + new String(magicBuffer, UTF_8));
       }
     } catch (EOFException e) {
       // Explicitly catch any exceptions that should be converted to LogHeaderIncompleteException
       // A TabletServer might have died before the (complete) header was written
       throw new LogHeaderIncompleteException(e);
     }
-
     return decryptingInput;
   }
 
@@ -484,7 +471,7 @@ public class DfsLogger implements Comparable<DfsLogger> {
   static long getWalBlockSize(AccumuloConfiguration conf) {
     long blockSize = conf.getAsBytes(Property.TSERV_WAL_BLOCKSIZE);
     if (blockSize == 0) {
-      blockSize = (long) (conf.getAsBytes(Property.TSERV_WAL_MAX_SIZE) * 1.1);
+      blockSize = ((long) (conf.getAsBytes(Property.TSERV_WAL_MAX_SIZE) * 1.1));
     }
     return blockSize;
   }
@@ -700,5 +687,4 @@ public class DfsLogger implements Comparable<DfsLogger> {
     // Don't have a pipeline or can't figure it out.
     return EMPTY_PIPELINE;
   }
-
 }
