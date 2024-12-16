@@ -21,11 +21,10 @@ package com.syncleus.ferma;
 import com.syncleus.ferma.framefactories.FrameFactory;
 import com.syncleus.ferma.typeresolvers.TypeResolver;
 import com.tinkerpop.blueprints.TransactionalGraph;
-
 import java.util.Collection;
 
-public class DelegatingFramedTransactionalGraph<G extends TransactionalGraph> extends DelegatingFramedGraph<G> implements WrapperFramedTransactionalGraph<G> {
 
+public class DelegatingFramedTransactionalGraph<G extends TransactionalGraph> extends DelegatingFramedGraph<G> implements WrapperFramedTransactionalGraph<G> {
     public DelegatingFramedTransactionalGraph(final G delegate, final FrameFactory builder, final TypeResolver defaultResolver) {
         super(delegate, builder, defaultResolver);
     }
@@ -60,16 +59,16 @@ public class DelegatingFramedTransactionalGraph<G extends TransactionalGraph> ex
 
     @Override
     public void stopTransaction(final TransactionalGraph.Conclusion conclusion) {
-        ((TransactionalGraph) this.getDelegate()).stopTransaction(conclusion);
+        ((TransactionalGraph) (this.getDelegate())).stopTransaction(conclusion);
     }
 
     @Override
     public void commit() {
-        ((TransactionalGraph) this.getDelegate()).commit();
+        ((TransactionalGraph) (this.getDelegate())).commit();
     }
 
     @Override
     public void rollback() {
-        ((TransactionalGraph) this.getDelegate()).rollback();
+        ((TransactionalGraph) (this.getDelegate())).rollback();
     }
 }
