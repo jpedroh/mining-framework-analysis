@@ -19,20 +19,19 @@
  */
 package com.papercut.silken;
 
+import com.google.common.base.Strings;
+import com.google.template.soy.data.SoyMapData;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Locale;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.base.Strings;
-import com.google.template.soy.data.SoyMapData;
 
 /**
  * The main Silken servlet class. This is designed to be put on a url path like /soy.  Requests supported include:
@@ -85,7 +84,6 @@ import com.google.template.soy.data.SoyMapData;
  * @author chris
  */
 public class SilkenServlet extends HttpServlet {
-    
     private static volatile SilkenServlet s_instance;
 
     private static final long serialVersionUID = 1L;
@@ -93,9 +91,8 @@ public class SilkenServlet extends HttpServlet {
     private static final String HTML_CONTENT_TYPE = "text/html";
 
     private static final String JS_CONTENT_TYPE = "text/javascript";
-    
+
     private static final String UTF8_ENCODING = "UTF-8";
-    
 
     private final Config config = new Config();
 
@@ -104,73 +101,65 @@ public class SilkenServlet extends HttpServlet {
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
         super.init(servletConfig);
-
         String disableCaching = servletConfig.getInitParameter("disableCaching");
         if (disableCaching != null) {
             config.setDisableCaching(isValueTrue(disableCaching));
         }
         if (System.getProperty("silken.disableCaching") != null) {
-        	config.setDisableCaching(true);
+            config.setDisableCaching(true);
         }
-        
         String sharedNamespaces = servletConfig.getInitParameter("sharedNamespaces");
         if (!Strings.isNullOrEmpty(sharedNamespaces)) {
-        	config.setSharedNameSpaces(Arrays.asList(sharedNamespaces.split("[,;]")));
+            config.setSharedNameSpaces(Arrays.asList(sharedNamespaces.split("[,;]")));
         }
-
         String localeResolver = servletConfig.getInitParameter("localeResolver");
         if (localeResolver != null) {
             try {
                 Object resolver = Class.forName(localeResolver).newInstance();
-                config.setLocaleResolver((LocaleResolver) resolver);
-            } catch (Exception e) {
+                config.setLocaleResolver(((LocaleResolver) (resolver)));
+            } catch (java.lang.Exception e) {
                 throw new ServletException("Unable to create localeResolver", e);
             }
         }
-
         String modelResolver = servletConfig.getInitParameter("modelResolver");
         if (modelResolver != null) {
             try {
                 Object resolver = Class.forName(modelResolver).newInstance();
-                config.setModelResolver((ModelResolver) resolver);
-            } catch (Exception e) {
+                config.setModelResolver(((ModelResolver) (resolver)));
+            } catch (java.lang.Exception e) {
                 throw new ServletException("Unable to create modelResolver", e);
             }
         }
-
         String fileSetResolver = servletConfig.getInitParameter("fileSetResolver");
         if (fileSetResolver != null) {
             try {
                 Object resolver = Class.forName(fileSetResolver).newInstance();
-                config.setFileSetResolver((FileSetResolver) resolver);
-            } catch (Exception e) {
+                config.setFileSetResolver(((FileSetResolver) (resolver)));
+            } catch (java.lang.Exception e) {
                 throw new ServletException("Unable to create fileSetResolver", e);
             }
         } else {
             // Instance our default - passing in reference to our servlet context.
             config.setFileSetResolver(new WebAppFileSetResolver(getServletContext()));
         }
-
         String compileTimeGlobalsProvider = servletConfig.getInitParameter("compileTimeGlobalsProvider");
         if (compileTimeGlobalsProvider != null) {
             try {
                 Object provider = Class.forName(compileTimeGlobalsProvider).newInstance();
-                config.setCompileTimeGlobalsProvider((CompileTimeGlobalsProvider) provider);
-            } catch (Exception e) {
+                config.setCompileTimeGlobalsProvider(((CompileTimeGlobalsProvider) (provider)));
+            } catch (java.lang.Exception e) {
                 throw new ServletException("Unable to create compileTimeGlobalsProvider", e);
             }
         }
-        
         String runtimeGlobalsProvider = servletConfig.getInitParameter("runtimeGlobalsResolver");
         if (runtimeGlobalsProvider != null) {
             try {
                 Object provider = Class.forName(runtimeGlobalsProvider).newInstance();
-                config.setRuntimeGlobalsResolver((RuntimeGlobalsResolver) provider);
-            } catch (Exception e) {
+                config.setRuntimeGlobalsResolver(((RuntimeGlobalsResolver) (provider)));
+            } catch (java.lang.Exception e) {
                 throw new ServletException("Unable to create runtimeGlobalsResolver", e);
             }
         }
-
         String stackTraces = servletConfig.getInitParameter("showStackTracesInErrors");
         if (stackTraces != null) {
             if (isValueFalse(stackTraces)) {
@@ -179,31 +168,26 @@ public class SilkenServlet extends HttpServlet {
                 config.setShowStackTracesInErrors(true);
             }
         }
-        
         String searchPath = servletConfig.getInitParameter("searchPath");
         if (searchPath != null) {
-        	config.setSearchPath(searchPath);
+            config.setSearchPath(searchPath);
         }
-
         // Store a reference config in our context so external code can modify.
         getServletContext().setAttribute("silken.config", config);
-        
         // Store a reference to our template render so external code can access for raw rendering is required.
         getServletContext().setAttribute("silken.templateRenderer", templateRenderer);
-        
         // Do we have some namespaces defined to precompile?
         String namespaces = servletConfig.getInitParameter("precompileNamespaces");
         if (!Strings.isNullOrEmpty(namespaces)) {
-        	for (String ns : namespaces.split("[,;]")) {
-        		try {
-        			templateRenderer.precompile(ns);
-        		} catch (Exception e) {
-        			// Do our best. Ignore.
-        			servletConfig.getServletContext().log("Unable to precompile namespace: " + ns, e);
-        		}	
-        	}
+            for (String ns : namespaces.split("[,;]")) {
+                try {
+                    templateRenderer.precompile(ns);
+                } catch (java.lang.Exception e) {
+                    // Do our best. Ignore.
+                    servletConfig.getServletContext().log("Unable to precompile namespace: " + ns, e);
+                }
+            }
         }
-        
         s_instance = this;
     }
 
@@ -218,93 +202,71 @@ public class SilkenServlet extends HttpServlet {
     }
 
     private void doRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         try {
             final String pathInfo = req.getPathInfo();
-
-            if (pathInfo == null || pathInfo.isEmpty() || pathInfo.equals("/")) {
+            if (((pathInfo == null) || pathInfo.isEmpty()) || pathInfo.equals("/")) {
                 error(req, resp, new RuntimeException("No valid soy template defined. Check the path."));
                 return;
             }
-
             // Path is pathInfo minus leading slash to make it easier to work with.
             final String path = pathInfo.substring(1);
-
             // Any paths starting with an underscore may/will be a special management command.
             if (path.startsWith("_")) {
-                
                 if (path.startsWith("_precompile/")) {
                     templateRenderer.precompile(namespaceFromPath(path));
                     return;
                 }
-
                 if (path.startsWith("_flush/")) {
                     templateRenderer.flush(namespaceFromPath(path));
                     return;
                 }
-                
                 if (path.startsWith("_flushAll")) {
                     templateRenderer.flushAll();
                     return;
                 }
-                
             }
-                
             // If starts with js/ then we're requested templates as JavaScript 
             // Format : js/[serial]/[optional:locale]/namespace[.js]
             if (path.startsWith("js/")) {
                 Locale locale = null;
-                
                 String namespace = namespaceFromPath(path);
                 if (namespace.endsWith(".js")) {
                     namespace = namespace.substring(0, namespace.length() - 3);
                 }
-                
                 String[] components = path.split("/");
                 if (components.length == 3) {
                     locale = config.getLocaleResolver().resolveLocale(req);
                 } else if (components.length == 4) {
                     locale = Utils.stringToLocale(components[2]);
                 } else {
-                    throw new RuntimeException(
-                            "Request not in the format: /soy/js/[serial]/[optional:locale]/namespace.js" 
-                            );
+                    throw new RuntimeException("Request not in the format: /soy/js/[serial]/[optional:locale]/namespace.js");
                 }
-
                 resp.setContentType(JS_CONTENT_TYPE);
                 resp.setCharacterEncoding(UTF8_ENCODING);
-                
                 // If we're in development mode, turn of JS browser caching as well.
                 if (config.isDisableCaching()) {
                     resp.setHeader("Cache-Control", "no-cache");
                 } else {
                     resp.setHeader("Cache-Control", "max-age=" + Long.toString(config.getJavaScriptCacheMaxAge()));
                 }
-                
                 resp.getWriter().print(templateRenderer.provideAsJavaScript(namespace, locale));
                 return;
             }
-
-
             final Locale locale = config.getLocaleResolver().resolveLocale(req);
             final String templateName = path;
-            
             SoyMapData model = config.getModelResolver().resolveModel(req);
             SoyMapData globals = null;
             if (config.getRuntimeGlobalsResolver() != null) {
                 globals = config.getRuntimeGlobalsResolver().resolveGlobals(req);
             }
-            
             // FUTURE: A mime type resolver and character type encoding?
             resp.setContentType(HTML_CONTENT_TYPE);
             resp.setCharacterEncoding(UTF8_ENCODING);
             resp.getWriter().print(templateRenderer.render(templateName, model, globals, locale));
             return;
-
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             error(req, resp, e);
         }
-
     }
 
     private void error(HttpServletRequest req, HttpServletResponse resp, Exception ex) throws ServletException,
@@ -333,24 +295,24 @@ public class SilkenServlet extends HttpServlet {
         html.append("</html>");
         resp.getWriter().append(html.toString());
     }
-    
+
     private String namespaceFromPath(String path) {
         final int slashPos = path.lastIndexOf('/');
         return path.substring(slashPos + 1);
     }
-    
+
     private boolean isValueTrue(String value) {
         value = Strings.nullToEmpty(value).trim().toLowerCase();
         // true, 1 or yes.
         return (value.startsWith("t") || value.equals("1") || value.startsWith("y"));
     }
-    
+
     private boolean isValueFalse(String value) {
         value = Strings.nullToEmpty(value).trim().toLowerCase();
         // false, 0 or no
         return (value.startsWith("f") || value.equals("0") || value.startsWith("n"));
     }
-    
+
     /**
      * Advanced: A convenience method to get a reference to the currently loaded SilkenServlet. Use this method with
      * care.  It assumes only one instance if the SilkenServlet is loaded in your server's context.
@@ -358,10 +320,10 @@ public class SilkenServlet extends HttpServlet {
      * @return A reference to the currently loaded SilkenServlet.
      */
     public static SilkenServlet getInstance() {
-	if (s_instance == null) throw new IllegalStateException("The Silken Servlet is not yet initialized/loaded!");
-	return s_instance;
+    	if (s_instance == null) throw new IllegalStateException("The Silken Servlet is not yet initialized/loaded!");
+    	return s_instance;
     }
-    
+
     /**
      * Advanced: A convenience method to get a reference to the currently loaded SilkenServlet's Config class. Use this
      * method with care.  Where possible obtain this reference from the "silken.config" servlet context attribute.
@@ -369,9 +331,9 @@ public class SilkenServlet extends HttpServlet {
      * @return A reference to the currently loaded SilkenServet's Config class.
      */
     public static Config getConfig() {
-	return getInstance().config;
+        return getInstance().config;
     }
-    
+
     /**
      * Advanced: A convenience method to get a reference to the currently loaded TemplateRender. Use this method with 
      * care.  Where possible obtain this reference from the "silken.templateRenderer" servlet context attribute.
@@ -379,7 +341,6 @@ public class SilkenServlet extends HttpServlet {
      * @return A reference to the currently loaded TemplateRenderer hosted by Silken.
      */
     public static TemplateRenderer getTemplateRenderer() {
-	return getInstance().templateRenderer;
+    	return getInstance().templateRenderer;
     }
-
 }

@@ -1,5 +1,12 @@
 package com.papercut.silken;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.primitives.Primitives;
+import com.google.template.soy.data.SoyMapData;
+import com.google.template.soy.msgs.SoyMsgBundle;
+import com.google.template.soy.msgs.restricted.SoyMsg;
+import com.google.template.soy.msgs.restricted.SoyMsgBundleImpl;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -8,13 +15,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.primitives.Primitives;
-import com.google.template.soy.data.SoyMapData;
-import com.google.template.soy.msgs.SoyMsgBundle;
-import com.google.template.soy.msgs.restricted.SoyMsg;
-import com.google.template.soy.msgs.restricted.SoyMsgBundleImpl;
 
 /**
  * Various utility methods.
@@ -128,6 +128,7 @@ public class Utils {
     }
     
     /**
+<<<<<<< LEFT
      * Convert (at least attempt) any object to a SoyMapData instance. 
      * @param obj The object to convert.
      * @return The created SoyMapData.
@@ -147,19 +148,44 @@ public class Utils {
      * s2 will overwrite s1.  
      * @param s1 1st resource map.
      * @param s2 2nd resource map.
+=======
+     * Merge two SoyMapData resources.
+     * @param soyMap1 1st resource map.
+     * @param soyMap2 2nd resource map.
+>>>>>>> RIGHT
      * @return A new SoyMapData object containing data from both source.
      */
+<<<<<<< LEFT
     public static SoyMapData mergeSoyMapData(SoyMapData s1, SoyMapData s2) {
         Preconditions.checkNotNull(s1);
         Preconditions.checkNotNull(s2);
         SoyMapData merged = new SoyMapData();
         for (String key: s1.getKeys()) {
             merged.putSingle(key, s1.getSingle(key));
+=======
+    public static SoyMapData mergeSoyMapData(SoyMapData soyMap1, SoyMapData soyMap2) {
+        SoyMapData mergedMap = new SoyMapData();
+        
+        if (soyMap1 != null) {
+        	addSoyMapMapToSoyMapData(soyMap1, mergedMap);
+>>>>>>> RIGHT
         }
-        for (String key: s2.getKeys()) {
-            merged.putSingle(key, s2.getSingle(key));
+        if (soyMap2 != null) {
+        	addSoyMapMapToSoyMapData(soyMap2, mergedMap);
         }
-        return merged;
+
+        return mergedMap;
+    }
+    
+    /**
+     * Iterates through sourceMap and adds entries to destinationMap 
+     * @param sourceMap Map to read from
+     * @param destinationMap Map to write to
+     */
+    private static void addSoyMapMapToSoyMapData(SoyMapData sourceMap, SoyMapData destinationMap) {
+    	for (String key: sourceMap.getKeys()) {
+    		destinationMap.putSingle(key, sourceMap.getSingle(key));
+        }
     }
     
     /**
