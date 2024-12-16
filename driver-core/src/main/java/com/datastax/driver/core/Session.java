@@ -15,26 +15,23 @@
  */
 package com.datastax.driver.core;
 
-import java.net.InetAddress;
-import java.nio.ByteBuffer;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import com.datastax.cassandra.transport.Message;
+import com.datastax.cassandra.transport.messages.*;
+import com.datastax.driver.core.exceptions.*;
+import com.datastax.driver.core.policies.*;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.Uninterruptibles;
-
-import com.datastax.driver.core.exceptions.*;
-import com.datastax.driver.core.policies.*;
-
-import com.datastax.cassandra.transport.Message;
-import com.datastax.cassandra.transport.messages.*;
-
+import java.net.InetAddress;
+import java.nio.ByteBuffer;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * A session holds connections to a Cassandra cluster, allowing it to be queried.
@@ -49,7 +46,6 @@ import org.slf4j.LoggerFactory;
  * at a time, so one instance per keyspace is necessary.
  */
 public class Session {
-
     private static final Logger logger = LoggerFactory.getLogger(Session.class);
 
     final Manager manager;
@@ -255,32 +251,31 @@ public class Session {
     }
 
     private PreparedStatement toPreparedStatement(String query, Connection.Future future) {
-
         try {
             Message.Response response = Uninterruptibles.getUninterruptibly(future);
             switch (response.type) {
-                case RESULT:
-                    ResultMessage rm = (ResultMessage)response;
+                case RESULT :
+                    ResultMessage rm = ((ResultMessage) (response));
                     switch (rm.kind) {
-                        case PREPARED:
-                            ResultMessage.Prepared pmsg = (ResultMessage.Prepared)rm;
+                        case PREPARED :
+                            ResultMessage.Prepared pmsg = ((ResultMessage.Prepared) (rm));
                             PreparedStatement stmt = PreparedStatement.fromMessage(pmsg, manager.cluster.getMetadata(), query, manager.poolsState.keyspace);
                             try {
                                 manager.cluster.manager.prepare(pmsg.statementId, stmt, future.getAddress());
-                            } catch (InterruptedException e) {
+                            } catch (java.lang.InterruptedException e) {
                                 Thread.currentThread().interrupt();
                                 // This method doesn't propagate interruption, at least not for now. However, if we've
                                 // interrupted preparing queries on other node it's not a problem as we'll re-prepare
                                 // later if need be. So just ignore.
                             }
                             return stmt;
-                        default:
+                        default :
                             throw new DriverInternalError(String.format("%s response received when prepared statement was expected", rm.kind));
                     }
-                case ERROR:
-                    ResultSetFuture.extractCause(ResultSetFuture.convertException(((ErrorMessage)response).error));
+                case ERROR :
+                    ResultSetFuture.extractCause(ResultSetFuture.convertException(((ErrorMessage) (response)).error));
                     break;
-                default:
+                default :
                     throw new DriverInternalError(String.format("%s response received when prepared statement was expected", response.type));
             }
             throw new AssertionError();
@@ -291,7 +286,6 @@ public class Session {
     }
 
     static class Manager {
-
         final Cluster cluster;
 
         final ConcurrentMap<Host, HostConnectionPool> pools;
@@ -302,10 +296,8 @@ public class Session {
 
         public Manager(Cluster cluster, Collection<Host> hosts) {
             this.cluster = cluster;
-
             this.pools = new ConcurrentHashMap<Host, HostConnectionPool>(hosts.size());
             this.poolsState = new HostConnectionPool.PoolState();
-
             // Create pool to initial nodes (and wait for them to be created)
             for (Host host : hosts) {
                 try {
@@ -313,7 +305,7 @@ public class Session {
                 } catch (ExecutionException e) {
                     // This is not supposed to happen
                     throw new DriverInternalError(e);
-                } catch (InterruptedException e) {
+                } catch (java.lang.InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
             }
@@ -353,17 +345,19 @@ public class Session {
 
         ListenableFuture<Boolean> addOrRenewPool(final Host host, final boolean isHostAddition) {
             final HostDistance distance = cluster.manager.loadBalancingPolicy().distance(host);
-            if (distance == HostDistance.IGNORED)
+            if (distance == HostDistance.IGNORED) {
                 return Futures.immediateFuture(true);
-
+            }
             // Creating a pool is somewhat long since it has to create the connection, so do it asynchronously.
             return executor().submit(new Callable<Boolean>() {
                 public Boolean call() {
                     logger.debug("Adding {} to list of queried hosts", host);
                     try {
                         HostConnectionPool previous = pools.put(host, new HostConnectionPool(host, distance, Session.Manager.this));
-                        if (previous != null)
-                            previous.shutdown(); // The previous was probably already shutdown but that's ok
+                        if (previous != null) {
+                            previous.shutdown();
+                        }// The previous was probably already shutdown but that's ok
+
                         return true;
                     } catch (AuthenticationException e) {
                         logger.error("Error creating pool to {} ({})", host, e.getMessage());
@@ -404,10 +398,10 @@ public class Session {
             for (Host h : cluster.getMetadata().allHosts()) {
                 HostDistance dist = loadBalancingPolicy().distance(h);
                 HostConnectionPool pool = pools.get(h);
-
                 if (pool == null) {
-                    if (dist != HostDistance.IGNORED && h.isUp())
+                    if ((dist != HostDistance.IGNORED) && h.isUp()) {
                         addOrRenewPool(h, false);
+                    }
                 } else if (dist != pool.hostDistance) {
                     if (dist == HostDistance.IGNORED) {
                         removePool(h);
@@ -484,9 +478,9 @@ public class Session {
         }
 
         public ResultSetFuture executeQuery(Message.Request msg, Query query) {
-            if (query.isTracing())
+            if (query.isTracing()) {
                 msg.setTracingRequested();
-
+            }
             ResultSetFuture future = new ResultSetFuture(this, msg);
             execute(future.callback, query);
             return future;

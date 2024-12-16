@@ -15,22 +15,19 @@
  */
 package com.datastax.driver.core;
 
+import com.datastax.driver.core.exceptions.*;
+import com.google.common.io.Files;
 import java.io.*;
 import java.net.InetAddress;
 import java.util.*;
-
-import com.datastax.driver.core.exceptions.*;
-import static com.datastax.driver.core.TestUtils.*;
-
-import com.google.common.io.Files;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import static com.datastax.driver.core.TestUtils.*;
+
 
 public class CCMBridge {
-
     private static final Logger logger = LoggerFactory.getLogger(CCMBridge.class);
 
     public static final String IP_PREFIX;
@@ -38,7 +35,9 @@ public class CCMBridge {
     private static final String CASSANDRA_VERSION_REGEXP = "\\d\\.\\d\\.\\d(-\\w+)?";
 
     static final File CASSANDRA_DIR;
+
     static final String CASSANDRA_VERSION;
+
     static {
         String version = System.getProperty("cassandra.version");
         if (version.matches(CASSANDRA_VERSION_REGEXP)) {
@@ -48,19 +47,18 @@ public class CCMBridge {
             CASSANDRA_DIR = new File(version);
             CASSANDRA_VERSION = "";
         }
-
         String ip_prefix = System.getProperty("ipprefix");
-        if (ip_prefix == null || ip_prefix.equals("")) {
+        if ((ip_prefix == null) || ip_prefix.equals("")) {
             ip_prefix = "127.0.1.";
         }
         IP_PREFIX = ip_prefix;
     }
 
     private final Runtime runtime = Runtime.getRuntime();
+
     private final File ccmDir;
 
-    private CCMBridge()
-    {
+    private CCMBridge() {
         this.ccmDir = Files.createTempDir();
     }
 
@@ -206,12 +204,14 @@ public class CCMBridge {
 
     // One cluster for the whole test class
     public static abstract class PerClassSingleNodeCluster {
-
         protected static CCMBridge cassandraCluster;
+
         private static boolean erroredOut;
+
         private static boolean schemaCreated;
 
         protected static Cluster cluster;
+
         protected static Session session;
 
         protected abstract Collection<String> getTableDefinitions();
@@ -229,48 +229,46 @@ public class CCMBridge {
                 session = cluster.connect();
             } catch (NoHostAvailableException e) {
                 erroredOut = true;
-                for (Map.Entry<InetAddress, String> entry : e.getErrors().entrySet())
-                    logger.info("Error connecting to " + entry.getKey() + ": " + entry.getValue());
+                for (Map.Entry<InetAddress, String> entry : e.getErrors().entrySet()) {
+                    logger.info((("Error connecting to " + entry.getKey()) + ": ") + entry.getValue());
+                }
                 throw new RuntimeException(e);
             }
         }
 
-        @AfterClass(groups = {"short", "long"})
+        @AfterClass(groups = { "short", "long" })
         public static void discardCluster() {
-            if (cluster != null)
+            if (cluster != null) {
                 cluster.shutdown();
-
+            }
             if (cassandraCluster == null) {
                 logger.error("No cluster to discard");
             } else if (erroredOut) {
                 cassandraCluster.stop();
-                logger.info("Error during tests, kept C* logs in " + cassandraCluster.ccmDir);
+                logger.info("Error during tests, kept C* logs in " + CCMBridge.PerClassSingleNodeCluster.cassandraCluster.ccmDir);
             } else {
                 cassandraCluster.remove();
-                cassandraCluster.ccmDir.delete();
+                CCMBridge.PerClassSingleNodeCluster.cassandraCluster.ccmDir.delete();
             }
         }
 
-        @BeforeClass(groups = {"short", "long"})
+        @BeforeClass(groups = { "short", "long" })
         public void beforeClass() {
             createCluster();
             maybeCreateSchema();
         }
 
         public void maybeCreateSchema() {
-
             try {
-                if (schemaCreated)
+                if (schemaCreated) {
                     return;
-
+                }
                 try {
                     session.execute(String.format(CREATE_KEYSPACE_SIMPLE_FORMAT, SIMPLE_KEYSPACE, 1));
                 } catch (AlreadyExistsException e) {
                     // It's ok, ignore
                 }
-
                 session.execute("USE " + SIMPLE_KEYSPACE);
-
                 for (String tableDef : getTableDefinitions()) {
                     try {
                         session.execute(tableDef);
@@ -278,7 +276,6 @@ public class CCMBridge {
                         // It's ok, ignore
                     }
                 }
-
                 schemaCreated = true;
             } catch (DriverException e) {
                 erroredOut = true;
@@ -288,8 +285,8 @@ public class CCMBridge {
     }
 
     public static class CCMCluster {
-
         public final Cluster cluster;
+
         public final Session session;
 
         public final CCMBridge cassandraCluster;
@@ -316,8 +313,9 @@ public class CCMBridge {
                 this.cluster = builder.addContactPoints(IP_PREFIX + "1").build();
                 this.session = cluster.connect();
             } catch (NoHostAvailableException e) {
-                for (Map.Entry<InetAddress, String> entry : e.getErrors().entrySet())
-                    logger.info("Error connecting to " + entry.getKey() + ": " + entry.getValue());
+                for (Map.Entry<InetAddress, String> entry : e.getErrors().entrySet()) {
+                    logger.info((("Error connecting to " + entry.getKey()) + ": ") + entry.getValue());
+                }
                 throw new RuntimeException(e);
             }
         }

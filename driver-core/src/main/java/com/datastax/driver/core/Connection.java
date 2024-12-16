@@ -15,26 +15,22 @@
  */
 package com.datastax.driver.core;
 
+import com.datastax.cassandra.transport.*;
+import com.datastax.cassandra.transport.messages.*;
+import com.datastax.cassandra.transport.messages.AuthChallenge;
+import com.datastax.cassandra.transport.messages.AuthResponse;
+import com.datastax.driver.core.exceptions.AuthenticationException;
+import com.datastax.driver.core.exceptions.DriverInternalError;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.common.util.concurrent.Uninterruptibles;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Iterator;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.net.ssl.SSLEngine;
-
-import com.datastax.cassandra.transport.messages.AuthChallenge;
-import com.datastax.cassandra.transport.messages.AuthResponse;
-import com.google.common.collect.ImmutableMap;
-import com.datastax.driver.core.exceptions.AuthenticationException;
-import com.google.common.util.concurrent.Uninterruptibles;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
-import com.datastax.driver.core.exceptions.DriverInternalError;
-
 import org.apache.cassandra.service.ClientState;
-import com.datastax.cassandra.transport.*;
-import com.datastax.cassandra.transport.messages.*;
-
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.*;
 import org.jboss.netty.channel.group.ChannelGroup;
@@ -45,48 +41,55 @@ import org.jboss.netty.handler.ssl.SslHandler;
 import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timeout;
 import org.jboss.netty.util.TimerTask;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 // For LoggingHandler
 //import org.jboss.netty.handler.logging.LoggingHandler;
 //import org.jboss.netty.logging.InternalLogLevel;
-
 /**
  * A connection to a Cassandra Node.
  */
-class Connection extends com.datastax.cassandra.transport.Connection
-{
-
+class Connection extends Connection {
     private static final Logger logger = LoggerFactory.getLogger(Connection.class);
 
     // TODO: that doesn't belong here
+    // TODO: that doesn't belong here
     private static final String CQL_VERSION = "3.0.0";
 
-    private static final Connection.Tracker EMPTY_TRACKER = new Connection.Tracker() {
+    private static final Tracker EMPTY_TRACKER = new Tracker() {
         @Override
-        public void addConnection(Channel ch, com.datastax.cassandra.transport.Connection connection) {}
+        public void addConnection(Channel ch, Connection connection) {
+        }
 
         @Override
-        public void closeAll() {}
+        public void closeAll() {
+        }
     };
 
     public final InetAddress address;
+
     private final String name;
 
     private final Channel channel;
+
     private final Factory factory;
+
     private final Dispatcher dispatcher = new Dispatcher();
 
+    // Used by connnection pooling to count how many requests are "in flight" on that connection.
     // Used by connnection pooling to count how many requests are "in flight" on that connection.
     public final AtomicInteger inFlight = new AtomicInteger(0);
 
     private final AtomicInteger writer = new AtomicInteger(0);
+
     private volatile boolean isClosed;
+
     private volatile String keyspace;
 
     private volatile boolean isDefunct;
+
     private volatile ConnectionException exception;
 
     /**
@@ -99,34 +102,30 @@ class Connection extends com.datastax.cassandra.transport.Connection
      */
     private Connection(String name, InetAddress address, Factory factory) throws ConnectionException, InterruptedException {
         super(EMPTY_TRACKER);
-
         this.address = address;
         this.factory = factory;
         this.name = name;
-
         ClientBootstrap bootstrap = factory.newBootstrap();
-        if (factory.configuration.getProtocolOptions().sslOptions == null)
+        if (factory.configuration.getProtocolOptions().sslOptions == null) {
             bootstrap.setPipelineFactory(new PipelineFactory(this));
-        else
+        } else {
             bootstrap.setPipelineFactory(new SecurePipelineFactory(this, factory.configuration.getProtocolOptions().sslOptions));
-
+        }
         ChannelFuture future = bootstrap.connect(new InetSocketAddress(address, factory.getPort()));
-
         writer.incrementAndGet();
         try {
             // Wait until the connection attempt succeeds or fails.
             this.channel = future.awaitUninterruptibly().getChannel();
             this.factory.allChannels.add(this.channel);
-            if (!future.isSuccess())
-            {
-                if (logger.isDebugEnabled())
+            if (!future.isSuccess()) {
+                if (logger.isDebugEnabled()) {
                     logger.debug(String.format("[%s] Error connecting to %s%s", name, address, extractMessage(future.getCause())));
+                }
                 throw new TransportException(address, "Cannot connect", future.getCause());
             }
         } finally {
             writer.decrementAndGet();
         }
-
         logger.trace("[{}] Connection opened successfully", name);
         initializeTransport();
         logger.trace("[{}] Transport initialized and ready", name);
@@ -140,14 +139,12 @@ class Connection extends com.datastax.cassandra.transport.Connection
     }
 
     private void initializeTransport() throws ConnectionException, InterruptedException {
-
         // TODO: we will need to get fancy about handling protocol version at
         // some point, but keep it simple for now.
         ImmutableMap.Builder<String, String> options = new ImmutableMap.Builder<String, String>();
         options.put(StartupMessage.CQL_VERSION, CQL_VERSION);
         ProtocolOptions.Compression compression = factory.configuration.getProtocolOptions().getCompression();
-        if (compression != ProtocolOptions.Compression.NONE)
-        {
+        if (compression != ProtocolOptions.Compression.NONE) {
             options.put(StartupMessage.COMPRESSION, compression.toString());
             setCompressor(compression.compressor());
         }
@@ -155,20 +152,20 @@ class Connection extends com.datastax.cassandra.transport.Connection
         try {
             com.datastax.cassandra.transport.Message.Response response = write(startup).get();
             switch (response.type) {
-                case READY:
+                case READY :
                     break;
-                case ERROR:
-                    throw defunct(new TransportException(address, String.format("Error initializing connection: %s", ((ErrorMessage)response).error.getMessage())));
-                case AUTHENTICATE:
+                case ERROR :
+                    throw defunct(new TransportException(address, String.format("Error initializing connection: %s", ((ErrorMessage) (response)).error.getMessage())));
+                case AUTHENTICATE :
                     Authenticator authenticator = factory.authProvider.newAuthenticator(address);
                     byte[] initialResponse = authenticator.initialResponse();
-                    if (null == initialResponse)
+                    if (null == initialResponse) {
                         initialResponse = new byte[0];
-
+                    }
                     com.datastax.cassandra.transport.Message.Response authResponse = write(new AuthResponse(initialResponse)).get();
                     waitForSaslCompletion(authResponse, authenticator);
                     break;
-                default:
+                default :
                     throw defunct(new TransportException(address, String.format("Unexpected %s response message from server to a STARTUP message", response.type)));
             }
         } catch (BusyConnectionException e) {
@@ -178,16 +175,14 @@ class Connection extends com.datastax.cassandra.transport.Connection
         }
     }
 
-    private void waitForSaslCompletion(com.datastax.cassandra.transport.Message.Response authResponse, Authenticator authenticator)
-    throws ConnectionException, BusyConnectionException, ExecutionException, InterruptedException
-    {
+    private void waitForSaslCompletion(com.datastax.cassandra.transport.Message.Response authResponse, Authenticator authenticator) throws ConnectionException, BusyConnectionException, ExecutionException, InterruptedException {
         switch (authResponse.type) {
-            case AUTH_SUCCESS:
-            case READY:
+            case AUTH_SUCCESS :
+            case READY :
                 logger.debug("Server has sent us a Ready message, authentication should be complete.");
                 break;
-            case AUTH_CHALLENGE:
-                byte[] responseToServer = authenticator.evaluateChallenge(((AuthChallenge) authResponse).getToken());
+            case AUTH_CHALLENGE :
+                byte[] responseToServer = authenticator.evaluateChallenge(((AuthChallenge) (authResponse)).getToken());
                 if (responseToServer == null) {
                     // If we generate a null response, then authentication has completed,return without
                     // sending a further response back to the server.
@@ -199,12 +194,10 @@ class Connection extends com.datastax.cassandra.transport.Connection
                     waitForSaslCompletion(write(new AuthResponse(responseToServer)).get(), authenticator);
                 }
                 break;
-            case ERROR:
-                throw new AuthenticationException(address, (((ErrorMessage) authResponse).error).getMessage());
-            default:
-                throw new TransportException(address,
-                        String.format("Unexpected %s response message from server to authentication message",
-                                authResponse.type));
+            case ERROR :
+                throw new AuthenticationException(address, ((ErrorMessage) (authResponse)).error.getMessage());
+            default :
+                throw new TransportException(address, String.format("Unexpected %s response message from server to authentication message", authResponse.type));
         }
     }
 
@@ -235,23 +228,23 @@ class Connection extends com.datastax.cassandra.transport.Connection
     }
 
     public void setKeyspace(String keyspace) throws ConnectionException {
-        if (keyspace == null)
+        if (keyspace == null) {
             return;
-
-        if (this.keyspace != null && this.keyspace.equals(keyspace))
+        }
+        if ((this.keyspace != null) && this.keyspace.equals(keyspace)) {
             return;
-
+        }
         try {
             logger.trace("[{}] Setting keyspace {}", name, keyspace);
             long timeout = factory.getConnectTimeoutMillis();
             // Note: we quote the keyspace below, because the name is the one coming from Cassandra, so it's in the right case already
-            Future future = write(new QueryMessage("USE \"" + keyspace + "\"", ConsistencyLevel.DEFAULT_CASSANDRA_CL));
+            Future future = write(new QueryMessage(("USE \"" + keyspace) + "\"", ConsistencyLevel.DEFAULT_CASSANDRA_CL));
             com.datastax.cassandra.transport.Message.Response response = Uninterruptibles.getUninterruptibly(future, timeout, TimeUnit.MILLISECONDS);
             switch (response.type) {
-                case RESULT:
+                case RESULT :
                     this.keyspace = keyspace;
                     break;
-                default:
+                default :
                     // The code set the keyspace only when a successful 'use'
                     // has been perform, so there shouldn't be any error here.
                     // It can happen however that the node we're connecting to
@@ -287,15 +280,11 @@ class Connection extends com.datastax.cassandra.transport.Connection
     }
 
     public ResponseHandler write(ResponseCallback callback) throws ConnectionException, BusyConnectionException {
-
         com.datastax.cassandra.transport.Message.Request request = callback.request();
-
         request.attach(this);
-
         ResponseHandler handler = new ResponseHandler(this, callback);
         dispatcher.add(handler);
         request.setStreamId(handler.streamId);
-
         /*
          * We check for close/defunct *after* having set the handler because closing/defuncting
          * will set their flag and then error out handler if need. So, by doing the check after
@@ -306,12 +295,10 @@ class Connection extends com.datastax.cassandra.transport.Connection
             dispatcher.removeHandler(handler.streamId, true);
             throw new ConnectionException(address, "Write attempt on defunct connection");
         }
-
         if (isClosed) {
             dispatcher.removeHandler(handler.streamId, true);
             throw new ConnectionException(address, "Connection has been closed");
         }
-
         logger.trace("[{}] writing request {}", name, request);
         writer.incrementAndGet();
         channel.write(request).addListener(writeHandler(request, handler));
@@ -322,15 +309,12 @@ class Connection extends com.datastax.cassandra.transport.Connection
         return new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture writeFuture) {
-
                 writer.decrementAndGet();
-
                 if (!writeFuture.isSuccess()) {
                     logger.debug("[{}] Error writing request {}", name, request);
                     // Remove this handler from the dispatcher so it don't get notified of the error
                     // twice (we will fail that method already)
                     dispatcher.removeHandler(handler.streamId, true);
-
                     ConnectionException ce;
                     if (writeFuture.getCause() instanceof java.nio.channels.ClosedChannelException) {
                         ce = new TransportException(address, "Error writing: Closed channel");
@@ -393,24 +377,33 @@ class Connection extends com.datastax.cassandra.transport.Connection
     }
 
     // Cruft needed because we reuse server side classes, but we don't care about it
-    public void validateNewMessage(com.datastax.cassandra.transport.Message.Type type) {};
-    public void applyStateTransition(com.datastax.cassandra.transport.Message.Type requestType, com.datastax.cassandra.transport.Message.Type responseType) {};
-    public ClientState clientState() { return null; };
+    public void validateNewMessage(com.datastax.cassandra.transport.Message.Type type) {
+    }
+
+    public void applyStateTransition(com.datastax.cassandra.transport.Message.Type requestType, com.datastax.cassandra.transport.Message.Type responseType) {
+    }
+
+    public ClientState clientState() { return null; }
 
     public static class Factory {
-
         private final ExecutorService bossExecutor = Executors.newCachedThreadPool();
+
         private final ExecutorService workerExecutor = Executors.newCachedThreadPool();
+
         public final HashedWheelTimer timer = new HashedWheelTimer(new ThreadFactoryBuilder().setNameFormat("Timeouter-%d").build());
 
         private final ChannelFactory channelFactory = new NioClientSocketChannelFactory(bossExecutor, workerExecutor);
+
         private final ChannelGroup allChannels = new DefaultChannelGroup();
 
         private final ConcurrentMap<Host, AtomicInteger> idGenerators = new ConcurrentHashMap<Host, AtomicInteger>();
+
         public final DefaultResponseHandler defaultHandler;
+
         public final Configuration configuration;
 
         public final AuthProvider authProvider;
+
         private volatile boolean isShutdown;
 
         public Factory(Cluster.Manager manager, AuthProvider authProvider) {
@@ -508,8 +501,8 @@ class Connection extends com.datastax.cassandra.transport.Connection
     }
 
     private class Dispatcher extends SimpleChannelUpstreamHandler {
-
         public final StreamIdGenerator streamIdHandler = new StreamIdGenerator();
+
         private final ConcurrentMap<Integer, ResponseHandler> pending = new ConcurrentHashMap<Integer, ResponseHandler>();
 
         public void add(ResponseHandler handler) {
@@ -518,18 +511,18 @@ class Connection extends com.datastax.cassandra.transport.Connection
         }
 
         public void removeHandler(int streamId, boolean releaseStreamId) {
-
             // If we don't release the ID, mark first so that we can rely later on the fact that if
             // we receive a response for an ID with no handler, it's that this ID has been marked.
-            if (!releaseStreamId)
+            if (!releaseStreamId) {
                 streamIdHandler.mark(streamId);
-
+            }
             ResponseHandler handler = pending.remove(streamId);
-            if (handler != null)
+            if (handler != null) {
                 handler.cancelTimeout();
-
-            if (releaseStreamId)
+            }
+            if (releaseStreamId) {
                 streamIdHandler.release(streamId);
+            }
         }
 
         @Override
@@ -538,27 +531,24 @@ class Connection extends com.datastax.cassandra.transport.Connection
                 logger.error("[{}] Received unexpected message: {}", name, e.getMessage());
                 defunct(new TransportException(address, "Unexpected message received: " + e.getMessage()));
             } else {
-                com.datastax.cassandra.transport.Message.Response response = (com.datastax.cassandra.transport.Message.Response)e.getMessage();
+                com.datastax.cassandra.transport.Message.Response response = ((com.datastax.cassandra.transport.Message.Response) (e.getMessage()));
                 int streamId = response.getStreamId();
-
                 logger.trace("[{}] received: {}", name, e.getMessage());
-
                 if (streamId < 0) {
                     factory.defaultHandler.handle(response);
                     return;
                 }
-
                 ResponseHandler handler = pending.remove(streamId);
                 streamIdHandler.release(streamId);
                 if (handler == null) {
                     /**
                      * During normal operation, we should not receive responses for which we don't have a handler. There is
                      * two cases however where this can happen:
-                     *   1) The connection has been defuncted due to some internal error and we've raced between removing the
-                     *      handler and actually closing the connection; since the original error has been logged, we're fine
-                     *      ignoring this completely.
-                     *   2) This request has timeouted. In that case, we've already switched to another host (or errored out
-                     *      to the user). So log it for debugging purpose, but it's fine ignoring otherwise.
+                     * 1) The connection has been defuncted due to some internal error and we've raced between removing the
+                     * handler and actually closing the connection; since the original error has been logged, we're fine
+                     * ignoring this completely.
+                     * 2) This request has timeouted. In that case, we've already switched to another host (or errored out
+                     * to the user). So log it for debugging purpose, but it's fine ignoring otherwise.
                      */
                     streamIdHandler.unmark(streamId);
                     logger.debug("[{}] Response received on stream {} but no handler set anymore (either the request has timeouted or it was closed due to another error). Received message is {}", name, streamId, response);
@@ -583,12 +573,11 @@ class Connection extends com.datastax.cassandra.transport.Connection
 
         public void errorOutAllHandler(ConnectionException ce) {
             Iterator<ResponseHandler> iter = pending.values().iterator();
-            while (iter.hasNext())
-            {
+            while (iter.hasNext()) {
                 ResponseHandler handler = iter.next();
                 handler.callback.onException(Connection.this, ce, System.nanoTime() - handler.startTime);
                 iter.remove();
-            }
+            } 
         }
 
         @Override
@@ -603,8 +592,8 @@ class Connection extends com.datastax.cassandra.transport.Connection
     }
 
     static class Future extends SimpleFuture<com.datastax.cassandra.transport.Message.Response> implements RequestHandler.Callback {
-
         private final com.datastax.cassandra.transport.Message.Request request;
+
         private volatile InetAddress address;
 
         public Future(com.datastax.cassandra.transport.Message.Request request) {
@@ -636,14 +625,16 @@ class Connection extends com.datastax.cassandra.transport.Connection
         public void onException(Connection connection, Exception exception, long latency) {
             // If all nodes are down, we will get a null connection here. This is fine, if we have
             // an exception, consumers shouldn't assume the address is not null.
-            if (connection != null)
+            if (connection != null) {
                 this.address = connection.address;
+            }
             super.setException(exception);
         }
 
         @Override
         public void onTimeout(Connection connection, long latency) {
-            assert connection != null; // We always timeout on a specific connection, so this shouldn't be null
+            assert connection != null;// We always timeout on a specific connection, so this shouldn't be null
+
             this.address = connection.address;
             super.setException(new ConnectionException(connection.address, "Operation Timeouted"));
         }
@@ -654,29 +645,32 @@ class Connection extends com.datastax.cassandra.transport.Connection
     }
 
     interface ResponseCallback {
-        public com.datastax.cassandra.transport.Message.Request request();
-        public void onSet(Connection connection, com.datastax.cassandra.transport.Message.Response response, long latency);
-        public void onException(Connection connection, Exception exception, long latency);
-        public void onTimeout(Connection connection, long latency);
+        public abstract com.datastax.cassandra.transport.Message.Request request();
+
+        public abstract void onSet(Connection connection, com.datastax.cassandra.transport.Message.Response response, long latency);
+
+        public abstract void onException(Connection connection, Exception exception, long latency);
+
+        public abstract void onTimeout(Connection connection, long latency);
     }
 
     static class ResponseHandler {
-
         public final Connection connection;
+
         public final int streamId;
+
         public final ResponseCallback callback;
 
         private final Timeout timeout;
+
         private final long startTime;
 
         public ResponseHandler(Connection connection, ResponseCallback callback) throws BusyConnectionException {
             this.connection = connection;
             this.streamId = connection.dispatcher.streamIdHandler.next();
             this.callback = callback;
-
             long timeoutMs = connection.factory.getReadTimeoutMillis();
-            this.timeout = timeoutMs <= 0 ? null : connection.factory.timer.newTimeout(onTimeoutTask(), timeoutMs, TimeUnit.MILLISECONDS);
-
+            this.timeout = (timeoutMs <= 0) ? null : connection.factory.timer.newTimeout(onTimeoutTask(), timeoutMs, TimeUnit.MILLISECONDS);
             this.startTime = System.nanoTime();
         }
 
@@ -705,37 +699,46 @@ class Connection extends com.datastax.cassandra.transport.Connection
     }
 
     public interface DefaultResponseHandler {
-        public void handle(com.datastax.cassandra.transport.Message.Response response);
+        public abstract void handle(com.datastax.cassandra.transport.Message.Response response);
     }
 
     private static class PipelineFactory implements ChannelPipelineFactory {
         // Stateless handlers
+        // Stateless handlers
         private static final Message.ProtocolDecoder messageDecoder = new Message.ProtocolDecoder();
+
         private static final Message.ProtocolEncoder messageEncoder = new Message.ProtocolEncoder();
+
         private static final Frame.Decompressor frameDecompressor = new Frame.Decompressor();
+
         private static final Frame.Compressor frameCompressor = new Frame.Compressor();
+
         private static final Frame.Encoder frameEncoder = new Frame.Encoder();
 
         // One more fallout of using server side classes; not a big deal
-        private static final Connection.Tracker tracker;
+        private static final Tracker tracker;
+
         static {
-            tracker = new Connection.Tracker() {
+            tracker = new Tracker() {
                 @Override
-                public void addConnection(Channel ch, com.datastax.cassandra.transport.Connection connection) {}
+                public void addConnection(Channel ch, Connection connection) {
+                }
 
                 @Override
-                public void closeAll() {}
+                public void closeAll() {
+                }
             };
         }
 
         private final Connection connection;
+
         private final com.datastax.cassandra.transport.Connection.Factory cfactory;
 
         public PipelineFactory(final Connection connection) {
             this.connection = connection;
             this.cfactory = new com.datastax.cassandra.transport.Connection.Factory() {
                 @Override
-                public Connection newConnection(Connection.Tracker tracker) {
+                public Connection newConnection(Tracker tracker) {
                     return connection;
                 }
             };
@@ -744,26 +747,19 @@ class Connection extends com.datastax.cassandra.transport.Connection
         @Override
         public ChannelPipeline getPipeline() throws Exception {
             ChannelPipeline pipeline = Channels.pipeline();
-
             //pipeline.addLast("debug", new LoggingHandler(InternalLogLevel.INFO));
-
             pipeline.addLast("frameDecoder", new Frame.Decoder(tracker, cfactory));
             pipeline.addLast("frameEncoder", frameEncoder);
-
             pipeline.addLast("frameDecompressor", frameDecompressor);
             pipeline.addLast("frameCompressor", frameCompressor);
-
             pipeline.addLast("messageDecoder", messageDecoder);
             pipeline.addLast("messageEncoder", messageEncoder);
-
             pipeline.addLast("dispatcher", connection.dispatcher);
-
             return pipeline;
         }
     }
 
     private static class SecurePipelineFactory extends PipelineFactory {
-
         private final SSLOptions options;
 
         public SecurePipelineFactory(final Connection connection, SSLOptions options) {
