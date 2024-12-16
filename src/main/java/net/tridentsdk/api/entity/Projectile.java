@@ -17,8 +17,8 @@
  */
 package net.tridentsdk.api.entity;
 
-import net.tridentsdk.api.Block;
 import net.tridentsdk.api.entity.living.ProjectileSource;
+
 
 /**
  * Represents a Projectile
@@ -38,12 +38,22 @@ public interface Projectile extends Entity {
      *
      * @param shooter the ProjectileSource of the Projectile
      */
+<<<<<<< LEFT
+    void setShooter(ProjectileSource shooter);
+    /**
+     * Represents the current tile (Block) that this Projectile is located in
+     *
+     * @return the current tile this Projectile is in
+     */
+    Block getCurrentTile();
+=======
     void setSource(ProjectileSource shooter);
+>>>>>>> RIGHT
 
     /**
      * The projectile source
      *
      * @return gets the source of the projectile
      */
-    ProjectileSource getProjectileSource();
+    ProjectileSource getSource();
 }
