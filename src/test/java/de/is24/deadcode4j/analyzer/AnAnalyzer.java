@@ -5,16 +5,16 @@ import de.is24.deadcode4j.Module;
 import de.is24.deadcode4j.Repository;
 import de.is24.deadcode4j.junit.FileLoader;
 import de.is24.deadcode4j.junit.LoggingRule;
+import java.io.File;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Rule;
 
-import java.io.File;
-import java.util.Collections;
 
 public abstract class AnAnalyzer {
-
     @Rule
     public final LoggingRule enableLogging = new LoggingRule();
+
     protected CodeContext codeContext;
 
     @Before
@@ -26,5 +26,4 @@ public abstract class AnAnalyzer {
     protected File getFile(String fileName) {
         return FileLoader.getFile(fileName);
     }
-
 }

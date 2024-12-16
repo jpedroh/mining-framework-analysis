@@ -1,16 +1,14 @@
 package de.is24.deadcode4j;
 
 import com.google.common.base.Function;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.project.MavenProject;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.project.MavenProject;
 import static com.google.common.collect.Sets.newHashSet;
+
 
 /**
  * Provides convenience methods.
@@ -18,7 +16,6 @@ import static com.google.common.collect.Sets.newHashSet;
  * @since 1.2.0
  */
 public final class Utils {
-
     private Utils() {
         super();
     }
@@ -54,19 +51,11 @@ public final class Utils {
     public static Function<MavenProject, String> toKey() {
         return new Function<MavenProject, String>() {
             @Override
-            public String apply(@Nullable MavenProject input) {
+            public String apply(@Nullable
+            MavenProject input) {
                 return input == null ? null : getKeyFor(input);
             }
         };
-    }
-
-    /**
-     * Adds the given element to a collection if the element is not <code>null</code>.
-     *
-     * @since 1.2.0
-     */
-    public static <E> boolean addIfNonNull(@Nonnull Collection<E> collection, @Nullable E element) {
-        return element != null && collection.add(element);
     }
 
     /**
@@ -92,5 +81,4 @@ public final class Utils {
         }
         return values;
     }
-
 }
