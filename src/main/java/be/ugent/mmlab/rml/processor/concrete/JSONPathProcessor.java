@@ -24,31 +24,28 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openrdf.model.Resource;
 
+
 /**
  *
  * @author mielvandersande, andimou
  */
 public class JSONPathProcessor extends AbstractRMLProcessor {
-
     private static Log log = LogFactory.getLog(RMLMappingFactory.class);
 
     @Override
     public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, InputStream input) {
-
         try {
             String reference = getReference(map.getLogicalSource());
-            //This is a none streaming solution. A streaming parser requires own implementation, possibly based on https://code.google.com/p/json-simple/wiki/DecodingExamples
+            // This is a none streaming solution. A streaming parser requires own implementation, possibly based on https://code.google.com/p/json-simple/wiki/DecodingExamples
             JsonPath path = JsonPath.compile(reference);
-            
             Object val = path.read(input);
             log.info("[JSONPathProcessor:execute] input " + input.toString());
             execute(dataset, map, performer, val);
-
         } catch (FileNotFoundException ex) {
             Logger.getLogger(JSONPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(JSONPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
     }
 
     @Override
@@ -61,6 +58,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
                 JSONArray arr = (JSONArray) val;
                 return Arrays.asList(arr.toArray(new String[0]));
             }
+
             list.add((String) val.toString());
             return list;
         } catch (com.jayway.jsonpath.InvalidPathException ex) {
@@ -81,7 +79,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
         
         //TODO: check if it's complete for sub-mappings
     }
-    
+
     private void execute (SesameDataSet dataset, TriplesMap parentTriplesMap, RMLPerformer performer, Object node){
         if (node instanceof JSONObject) 
             performer.perform(node, dataset, parentTriplesMap);
