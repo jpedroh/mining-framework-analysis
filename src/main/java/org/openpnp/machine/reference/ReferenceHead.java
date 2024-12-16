@@ -16,13 +16,10 @@
  * 
  * For more information about OpenPnP visit http://openpnp.org
  */
-
 package org.openpnp.machine.reference;
 
 import java.util.ArrayList;
-
 import javax.swing.Action;
-
 import org.openpnp.gui.support.PropertySheetWizardAdapter;
 import org.openpnp.gui.support.Wizard;
 import org.openpnp.machine.reference.psh.ActuatorsPropertySheetHolder;
@@ -34,6 +31,7 @@ import org.openpnp.model.Location;
 import org.openpnp.spi.PropertySheetHolder;
 import org.openpnp.spi.base.AbstractHead;
 import org.pmw.tinylog.Logger;
+
 
 public class ReferenceHead extends AbstractHead {
     @Override
@@ -60,7 +58,7 @@ public class ReferenceHead extends AbstractHead {
         children.add(new NozzlesPropertySheetHolder(this, "Nozzles", getNozzles(), null));
         children.add(new CamerasPropertySheetHolder(this, "Cameras", getCameras(), null));
         children.add(new ActuatorsPropertySheetHolder(this, "Actuators", getActuators(), null));
-        return children.toArray(new PropertySheetHolder[] {});
+        return children.toArray(new PropertySheetHolder[]{  });
     }
 
     @Override
@@ -78,7 +76,7 @@ public class ReferenceHead extends AbstractHead {
         Logger.debug("{}.moveToSafeZ({})", getName(), speed);
         super.moveToSafeZ(speed);
     }
-    
+
     public void moveTo(ReferenceHeadMountable hm, Location location, double speed) throws Exception {
         if (isSoftLimitsEnabled()) {
             /**
@@ -103,11 +101,11 @@ public class ReferenceHead extends AbstractHead {
     public String toString() {
         return getName();
     }
-    
+
     ReferenceDriver getDriver() {
         return getMachine().getDriver();
     }
-    
+
     public ReferenceMachine getMachine() {
         return (ReferenceMachine) Configuration.get().getMachine();
     }

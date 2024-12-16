@@ -4,11 +4,9 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
-
 import org.openpnp.ConfigurationListener;
 import org.openpnp.gui.MainFrame;
 import org.openpnp.gui.support.Icons;
@@ -35,6 +33,7 @@ import org.pmw.tinylog.Logger;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.core.Commit;
+
 
 public class ReferenceNozzle extends AbstractNozzle implements ReferenceHeadMountable {
     @Element
@@ -123,7 +122,7 @@ public class ReferenceNozzle extends AbstractNozzle implements ReferenceHeadMoun
     public void setHeadOffsets(Location headOffsets) {
         this.headOffsets = headOffsets;
         // Changing a head offset invalidates the nozzle tip calibration.
-        ReferenceNozzleTipCalibration.resetAllNozzleTips();
+        ReferenceNozzleTip.Calibration.resetAllNozzleTips();
     }
 
     public String getVacuumSenseActuatorName() {

@@ -16,20 +16,22 @@
  * 
  * For more information about OpenPnP visit http://openpnp.org
  */
-
 package org.openpnp.machine.reference.wizards;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.AbstractTableModel;
-
 import org.openpnp.ConfigurationListener;
 import org.openpnp.gui.components.ComponentDecorators;
 import org.openpnp.gui.support.AbstractConfigurationWizard;
@@ -39,101 +41,69 @@ import org.openpnp.gui.support.LengthConverter;
 import org.openpnp.machine.reference.ReferenceNozzleTip;
 import org.openpnp.model.Configuration;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
 
 public class ReferenceNozzleTipConfigurationWizard extends AbstractConfigurationWizard {
     private final ReferenceNozzleTip nozzleTip;
+
     private JPanel panelDwellTime;
+
     private JLabel lblPickDwellTime;
+
     private JLabel lblPlaceDwellTime;
+
     private JLabel lblDwellTime;
+
     private JTextField pickDwellTf;
+
     private JTextField placeDwellTf;
 
     private Set<org.openpnp.model.Package> compatiblePackages = new HashSet<>();
-    private JPanel panel;
-    private JLabel lblName;
-    private JTextField nameTf;
 
+    private JPanel panel;
+
+    private JLabel lblName;
+
+    private JTextField nameTf;
 
     public ReferenceNozzleTipConfigurationWizard(ReferenceNozzleTip nozzleTip) {
         this.nozzleTip = nozzleTip;
-        
         panel = new JPanel();
         panel.setBorder(new TitledBorder(null, "Properties", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         contentPanel.add(panel);
-        panel.setLayout(new FormLayout(new ColumnSpec[] {
-                FormSpecs.RELATED_GAP_COLSPEC,
-                FormSpecs.DEFAULT_COLSPEC,
-                FormSpecs.RELATED_GAP_COLSPEC,
-                FormSpecs.DEFAULT_COLSPEC,},
-            new RowSpec[] {
-                FormSpecs.RELATED_GAP_ROWSPEC,
-                FormSpecs.DEFAULT_ROWSPEC,}));
-        
+        panel.setLayout(new FormLayout(new ColumnSpec[]{ FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC }, new RowSpec[]{ FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC }));
         lblName = new JLabel("Name");
         panel.add(lblName, "2, 2, right, default");
-        
         nameTf = new JTextField();
         panel.add(nameTf, "4, 2, fill, default");
         nameTf.setColumns(10);
-        
         panelDwellTime = new JPanel();
         panelDwellTime.setBorder(new TitledBorder(null, "Dwell Times", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         contentPanel.add(panelDwellTime);
-        panelDwellTime.setLayout(new FormLayout(new ColumnSpec[] {
-                FormSpecs.RELATED_GAP_COLSPEC,
-                FormSpecs.DEFAULT_COLSPEC,
-                FormSpecs.RELATED_GAP_COLSPEC,
-                FormSpecs.DEFAULT_COLSPEC,
-                FormSpecs.RELATED_GAP_COLSPEC,
-                ColumnSpec.decode("default:grow"),},
-            new RowSpec[] {
-                FormSpecs.RELATED_GAP_ROWSPEC,
-                FormSpecs.DEFAULT_ROWSPEC,
-                FormSpecs.RELATED_GAP_ROWSPEC,
-                FormSpecs.DEFAULT_ROWSPEC,
-                FormSpecs.RELATED_GAP_ROWSPEC,
-                FormSpecs.DEFAULT_ROWSPEC,}));
-          
+        panelDwellTime.setLayout(new FormLayout(new ColumnSpec[]{ FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow") }, new RowSpec[]{ FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC }));
         lblPickDwellTime = new JLabel("Pick Dwell Time (ms)");
         panelDwellTime.add(lblPickDwellTime, "2, 2, right, default");
-        
         pickDwellTf = new JTextField();
         panelDwellTime.add(pickDwellTf, "4, 2");
         pickDwellTf.setColumns(10);
-        
         lblPlaceDwellTime = new JLabel("Place Dwell Time (ms)");
         panelDwellTime.add(lblPlaceDwellTime, "2, 4, right, default");
-        
         placeDwellTf = new JTextField();
         panelDwellTime.add(placeDwellTf, "4, 4");
         placeDwellTf.setColumns(10);
-        
         CellConstraints cc = new CellConstraints();
         lblDwellTime = new JLabel("Note: Total Dwell Time is the sum of Nozzle Dwell Time plus the Nozzle Tip Dwell Time.");
         panelDwellTime.add(lblDwellTime, cc.xywh(2, 6, 5, 1));
-       
     }
-    
 
     @Override
     public void createBindings() {
         LengthConverter lengthConverter = new LengthConverter();
         IntegerConverter intConverter = new IntegerConverter();
         DoubleConverter doubleConverter = new DoubleConverter(Configuration.get().getLengthDisplayFormat());
-
         addWrappedBinding(nozzleTip, "name", nameTf, "text");
-        
         addWrappedBinding(nozzleTip, "pickDwellMilliseconds", pickDwellTf, "text", intConverter);
         addWrappedBinding(nozzleTip, "placeDwellMilliseconds", placeDwellTf, "text", intConverter);
-        
         ComponentDecorators.decorateWithAutoSelect(nameTf);
-        
         ComponentDecorators.decorateWithAutoSelect(pickDwellTf);
         ComponentDecorators.decorateWithAutoSelect(placeDwellTf);
     }
@@ -152,7 +122,8 @@ public class ReferenceNozzleTipConfigurationWizard extends AbstractConfiguration
     }
 
     public class PackagesTableModel extends AbstractTableModel {
-        private String[] columnNames = new String[] {"Package Id", "Compatible?"};
+        private String[] columnNames = new String[]{ "Package Id", "Compatible?" };
+
         private List<org.openpnp.model.Package> packages;
 
         public PackagesTableModel() {
@@ -178,7 +149,7 @@ public class ReferenceNozzleTipConfigurationWizard extends AbstractConfiguration
         }
 
         public int getRowCount() {
-            return (packages == null) ? 0 : packages.size();
+            return packages == null ? 0 : packages.size();
         }
 
         public org.openpnp.model.Package getPackage(int index) {
@@ -195,16 +166,14 @@ public class ReferenceNozzleTipConfigurationWizard extends AbstractConfiguration
             try {
                 org.openpnp.model.Package pkg = packages.get(rowIndex);
                 if (columnIndex == 1) {
-                    if ((Boolean) aValue) {
+                    if (((Boolean) (aValue))) {
                         compatiblePackages.add(pkg);
-                    }
-                    else {
+                    } else {
                         compatiblePackages.remove(pkg);
                     }
                     notifyChange();
                 }
-            }
-            catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 // TODO: dialog, bad input
             }
         }
@@ -212,18 +181,18 @@ public class ReferenceNozzleTipConfigurationWizard extends AbstractConfiguration
         @Override
         public Class<?> getColumnClass(int columnIndex) {
             if (columnIndex == 1) {
-                return Boolean.class;
+                return java.lang.Boolean.class;
             }
             return super.getColumnClass(columnIndex);
         }
 
         public Object getValueAt(int row, int col) {
             switch (col) {
-                case 0:
+                case 0 :
                     return packages.get(row).getId();
-                case 1:
+                case 1 :
                     return compatiblePackages.contains(packages.get(row));
-                default:
+                default :
                     return null;
             }
         }

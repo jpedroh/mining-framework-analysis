@@ -16,9 +16,12 @@
  * 
  * For more information about OpenPnP visit http://openpnp.org
  */
-
 package org.openpnp.gui;
 
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
@@ -29,7 +32,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Locale;
 import java.util.prefs.Preferences;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BoxLayout;
@@ -40,7 +42,6 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
-
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.openpnp.ConfigurationListener;
@@ -64,18 +65,18 @@ import org.openpnp.util.BeanUtils;
 import org.openpnp.util.MovableUtils;
 import org.openpnp.util.UiUtils;
 
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
 
 public class MachineControlsPanel extends JPanel {
     private final Configuration configuration;
+
     private final JobPanel jobPanel;
 
+            //$NON-NLS-1$
     private static final String PREF_JOG_CONTROLS_EXPANDED =
             "MachineControlsPanel.jogControlsExpanded"; //$NON-NLS-1$
+
     private static final boolean PREF_JOG_CONTROLS_EXPANDED_DEF = true;
+
     private Preferences prefs = Preferences.userNodeForPackage(MachineControlsPanel.class);
 
     private HeadMountable selectedTool;
@@ -87,19 +88,18 @@ public class MachineControlsPanel extends JPanel {
     private Location markLocation = null;
 
     private Color droNormalColor = new Color(0xBDFFBE);
+
     private Color droSavedColor = new Color(0x90cce0);
-    
+
     /**
      * Create the panel.
      */
     public MachineControlsPanel(Configuration configuration, JobPanel jobPanel) {
-        setBorder(new TitledBorder(null, Translations.getString("MachineControls.Label"), TitledBorder.LEADING, TitledBorder.TOP, //$NON-NLS-1$
-                null, null));
+        setBorder(// $NON-NLS-1$
+        new TitledBorder(null, Translations.getString("MachineControls.Label"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
         this.configuration = configuration;
         this.jobPanel = jobPanel;
-
         createUi();
-
         configuration.addListener(configurationListener);
     }
 
@@ -114,7 +114,6 @@ public class MachineControlsPanel extends JPanel {
             return null;
         }
     }
-
 
     /**
      * Currently returns the selected Nozzle. Intended to eventually return either the selected
@@ -141,7 +140,7 @@ public class MachineControlsPanel extends JPanel {
     public JogControlsPanel getJogControlsPanel() {
         return jogControlsPanel;
     }
-    
+
     public JobPanel getJobPanel() {
     	return jobPanel;
     }
@@ -243,12 +242,12 @@ public class MachineControlsPanel extends JPanel {
     }
 
     @SuppressWarnings("serial")
-    public Action startStopMachineAction = new AbstractAction(Translations.getString("MachineControls.Action.Stop"), Icons.powerOn) { //$NON-NLS-1$
+    public Action startStopMachineAction = new AbstractAction(Translations.getString("MachineControls.Action.Stop"), Icons.powerOn) {
         {
-            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('E',
-                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('E', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         }
 
+        // $NON-NLS-1$
         @Override
         public void actionPerformed(ActionEvent arg0) {
             setEnabled(false);
@@ -258,17 +257,16 @@ public class MachineControlsPanel extends JPanel {
                 Machine machine = Configuration.get().getMachine();
                 boolean enable = !machine.isEnabled();
                 try {
-					Configuration.get().getMachine().setEnabled(enable);
-					// TODO STOPSHIP move setEnabled into a binding.
-					setEnabled(true);
-					if (machine.getHomeAfterEnabled() && machine.isEnabled()) {
+                    Configuration.get().getMachine().setEnabled(enable);
+                    // TODO STOPSHIP move setEnabled into a binding.
+                    setEnabled(true);
+                    if (machine.getHomeAfterEnabled() && machine.isEnabled()) {
                         // TODO STOPSHIP should not be in the UI
-						machine.home();
-					}
-                }
-                catch (Exception t1) {
-                    MessageBoxes.errorBox(MachineControlsPanel.this, "Enable Failure", //$NON-NLS-1$
-                            t1.getMessage());
+                        machine.home();
+                    }
+                } catch (java.lang.Exception t1) {
+                    // $NON-NLS-1$
+                    MessageBoxes.errorBox(MachineControlsPanel.this, "Enable Failure", t1.getMessage());
                     setEnabled(true);
                 }
             });
@@ -280,9 +278,9 @@ public class MachineControlsPanel extends JPanel {
     public class HomeAction extends AbstractAction {
         public HomeAction() {
             super(Translations.getString("MachineControls.Action.Home"), Icons.home);
-            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_QUOTE,
-                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_QUOTE, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         }
+
         public void setHomed(boolean homed) {
             putValue(Action.SMALL_ICON, homed ? Icons.home : Icons.homeWarning);
         }
@@ -295,6 +293,7 @@ public class MachineControlsPanel extends JPanel {
             });
         }
     }
+
     public HomeAction homeAction = new HomeAction();
 
     @SuppressWarnings("serial")
@@ -371,8 +370,7 @@ public class MachineControlsPanel extends JPanel {
                         if (markLocation == null) {
                             markLocation = getCurrentLocation();
                             MainFrame.get().getDroLabel().setBackground(droSavedColor);
-                        }
-                        else {
+                        } else {
                             markLocation = null;
                             MainFrame.get().getDroLabel().setBackground(droNormalColor);
                         }
@@ -380,62 +378,49 @@ public class MachineControlsPanel extends JPanel {
                     });
                 }
             });
-
             Machine machine = configuration.getMachine();
             if (machine != null) {
                 machine.removeListener(machineListener);
             }
-
             for (Head head : machine.getHeads()) {
                 for (Nozzle nozzle : head.getNozzles()) {
                     comboBoxHeadMountable.addItem(new NozzleItem(nozzle));
                 }
-
                 for (Camera camera : head.getCameras()) {
                     comboBoxHeadMountable.addItem(new CameraItem(camera));
                 }
-                
                 for (Actuator actuator : head.getActuators()) {
                     comboBoxHeadMountable.addItem(new ActuatorItem(actuator));
                 }
             }
-
-            setSelectedTool(((HeadMountableItem) comboBoxHeadMountable.getItemAt(0)).getItem());
-
+            setSelectedTool(((HeadMountableItem) (comboBoxHeadMountable.getItemAt(0))).getItem());
             machine.addListener(machineListener);
-
             updateStartStopButton(machine.isEnabled());
-
             setEnabled(machine.isEnabled());
-            
             BeanUtils.bind(UpdateStrategy.READ, machine, "homed", homeAction, "homed");
-
             for (Head head : machine.getHeads()) {
-
-                BeanUtils.addPropertyChangeListener(head, "nozzles", (e) -> { //$NON-NLS-1$
-                    if (e.getOldValue() == null && e.getNewValue() != null) {
-                        Nozzle nozzle = (Nozzle) e.getNewValue();
+                BeanUtils.addPropertyChangeListener(head, "nozzles", ( e) -> {
+                    // $NON-NLS-1$
+                    if ((e.getOldValue() == null) && (e.getNewValue() != null)) {
+                        Nozzle nozzle = ((Nozzle) (e.getNewValue()));
                         comboBoxHeadMountable.addItem(new NozzleItem(nozzle));
-                    }
-                    else if (e.getOldValue() != null && e.getNewValue() == null) {
+                    } else if ((e.getOldValue() != null) && (e.getNewValue() == null)) {
                         for (int i = 0; i < comboBoxHeadMountable.getItemCount(); i++) {
-                            NozzleItem item = (NozzleItem) comboBoxHeadMountable.getItemAt(i);
+                            NozzleItem item = ((NozzleItem) (comboBoxHeadMountable.getItemAt(i)));
                             if (item.getNozzle() == e.getOldValue()) {
                                 comboBoxHeadMountable.removeItemAt(i);
                             }
                         }
                     }
                 });
-
-                BeanUtils.addPropertyChangeListener(head, "cameras", (e) -> { //$NON-NLS-1$
-                    if (e.getOldValue() == null && e.getNewValue() != null) {
-                        Camera camera = (Camera) e.getNewValue();
+                BeanUtils.addPropertyChangeListener(head, "cameras", ( e) -> {
+                    // $NON-NLS-1$
+                    if ((e.getOldValue() == null) && (e.getNewValue() != null)) {
+                        Camera camera = ((Camera) (e.getNewValue()));
                         comboBoxHeadMountable.addItem(new CameraItem(camera));
-                    }
-                    else if (e.getOldValue() != null && e.getNewValue() == null) {
+                    } else if ((e.getOldValue() != null) && (e.getNewValue() == null)) {
                         for (int i = 0; i < comboBoxHeadMountable.getItemCount(); i++) {
-                            HeadMountableItem item =
-                                    (HeadMountableItem) comboBoxHeadMountable.getItemAt(i);
+                            HeadMountableItem item = ((HeadMountableItem) (comboBoxHeadMountable.getItemAt(i)));
                             if (item.getItem() == e.getOldValue()) {
                                 comboBoxHeadMountable.removeItemAt(i);
                             }
@@ -443,8 +428,8 @@ public class MachineControlsPanel extends JPanel {
                     }
                 });
             }
-
         }
     };
+
     private JButton btnThing;
 }

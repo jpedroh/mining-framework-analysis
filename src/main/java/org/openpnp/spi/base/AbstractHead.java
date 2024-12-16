@@ -2,9 +2,7 @@ package org.openpnp.spi.base;
 
 import java.util.Collections;
 import java.util.List;
-
 import javax.swing.Icon;
-
 import org.openpnp.model.AbstractModelObject;
 import org.openpnp.model.Configuration;
 import org.openpnp.model.LengthUnit;
@@ -19,6 +17,7 @@ import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.core.Commit;
+
 
 public abstract class AbstractHead extends AbstractModelObject implements Head {
     @Attribute
@@ -38,7 +37,7 @@ public abstract class AbstractHead extends AbstractModelObject implements Head {
 
     @Element(required = false)
     protected Location parkLocation = new Location(LengthUnit.Millimeters);
-    
+
     @Element(required=false)
     protected boolean softLimitsEnabled = false;
 
@@ -47,7 +46,7 @@ public abstract class AbstractHead extends AbstractModelObject implements Head {
 
     @Element(required = false)
     protected Location maxLocation = new Location(LengthUnit.Millimeters);
-    
+
     @Element(required = false)
     protected String zProbeActuatorName;
 
@@ -186,6 +185,9 @@ public abstract class AbstractHead extends AbstractModelObject implements Head {
         for (Actuator actuator : actuators) {
             actuator.home();
         }
+        for (PasteDispenser dispenser : pasteDispensers) {
+            dispenser.home();
+        }
     }
 
     @Override
@@ -288,10 +290,10 @@ public abstract class AbstractHead extends AbstractModelObject implements Head {
     public void setSoftLimitsEnabled(boolean softLimitsEnabled) {
         this.softLimitsEnabled = softLimitsEnabled;
     }
-    
+
     @Override
     public Actuator getZProbe() {
-        return getActuatorByName(zProbeActuatorName); 
+        return getActuatorByName(zProbeActuatorName);
     }
 
     public String getzProbeActuatorName() {

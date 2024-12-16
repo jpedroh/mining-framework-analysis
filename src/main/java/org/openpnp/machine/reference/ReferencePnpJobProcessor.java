@@ -16,7 +16,6 @@
  * 
  * For more information about OpenPnP visit http://openpnp.org
  */
-
 package org.openpnp.machine.reference;
 
 import java.text.DecimalFormat;
@@ -29,7 +28,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.openpnp.gui.support.Wizard;
 import org.openpnp.machine.reference.wizards.ReferencePnpJobProcessorConfigurationWizard;
 import org.openpnp.model.BoardLocation;
@@ -61,21 +59,25 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.core.Commit;
 
+
 @Root
 public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
     interface Step {
-        public Step step() throws JobProcessorException;
+        public abstract Step step() throws JobProcessorException;
     }
-    
+
     public enum JobOrderHint {
+
         PartHeight,
-        Part
-    }
+        Part;}
 
     public static class PlannedPlacement {
         public final JobPlacement jobPlacement;
+
         public final Nozzle nozzle;
+
         public Feeder feeder;
+
         public PartAlignment.PartAlignmentOffset alignmentOffsets;
 
         public PlannedPlacement(Nozzle nozzle, JobPlacement jobPlacement) {
@@ -98,15 +100,15 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
     @Deprecated
     @Attribute(required = false)
     protected Boolean parkWhenComplete = null;
-    
+
     @Deprecated
     @Element(required = false)
     protected Boolean autoSaveJob = null;
-    
+
     @Deprecated
     @Element(required = false)
     protected Boolean autoSaveConfiguration = null;
-    
+
     @Deprecated
     @Element(required = false)
     protected Long configSaveFrequencyMs = null;
@@ -120,13 +122,14 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
     protected List<JobPlacement> jobPlacements = new ArrayList<>();
 
     private Step currentStep = null;
-    
+
     long startTime;
+
     int totalPartsPlaced;
-    
+
     public ReferencePnpJobProcessor() {
     }
-    
+
     @Commit
     public void commit() {
         parkWhenComplete = null;
@@ -149,8 +152,7 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
         this.fireJobState(Configuration.get().getMachine().getSignalers(), AbstractJobProcessor.State.RUNNING);
         try {
             currentStep = currentStep.step();
-        }
-        catch (Exception e) {
+        } catch (java.lang.Exception e) {
             this.fireJobState(Configuration.get().getMachine().getSignalers(), AbstractJobProcessor.State.ERROR);
             throw e;
         }
@@ -163,8 +165,7 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
     public synchronized void abort() throws JobProcessorException {
         try {
             new Cleanup().step();
-        }
-        catch (Exception e) {
+        } catch (java.lang.Exception e) {
             // We swallow the error here because if we can't cleanup there's not really much
             // we can do. We have to end the job.
             Logger.error(e);
@@ -191,162 +192,128 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
         public Step step() throws JobProcessorException {
             startTime = System.currentTimeMillis();
             totalPartsPlaced = 0;
-            
             jobPlacements.clear();
-
             // Create some shortcuts for things that won't change during the run
             machine = Configuration.get().getMachine();
             try {
                 head = machine.getDefaultHead();
-            }
-            catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 throw new JobProcessorException(machine, e);
             }
-            
             checkSetupErrors();
-            
             prepMachine();
-            
             scriptJobStarting();
-
             return new PanelFiducialCheck();
         }
-        
+
         private void checkSetupErrors() throws JobProcessorException {
             fireTextStatus("Checking job for setup errors.");
-
             for (BoardLocation boardLocation : job.getBoardLocations()) {
                 // Only check enabled boards
                 if (!boardLocation.isEnabled()) {
                     continue;
                 }
-                
                 checkDuplicateRefs(boardLocation);
-                
                 for (Placement placement : boardLocation.getBoard().getPlacements()) {
                     // Ignore placements that aren't placements
                     if (placement.getType() != Placement.Type.Placement) {
                         continue;
                     }
-                    
                     if (!placement.isEnabled()) {
                         continue;
                     }
-                    
                     // Ignore placements that are placed already
                     if (boardLocation.getPlaced(placement.getId())) {
                         continue;
                     }
-
                     // Ignore placements that aren't on the side of the board we're processing.
                     if (placement.getSide() != boardLocation.getSide()) {
                         continue;
                     }
-
                     JobPlacement jobPlacement = new JobPlacement(boardLocation, placement);
-
                     checkJobPlacement(jobPlacement);
-
                     jobPlacements.add(jobPlacement);
                 }
             }
         }
-        
+
         private void checkJobPlacement(JobPlacement jobPlacement) throws JobProcessorException {
             BoardLocation boardLocation = jobPlacement.getBoardLocation();
             Placement placement = jobPlacement.getPlacement();
-            
-            // Make sure the part is not null
+                // Make sure the part is not null
             if (placement.getPart() == null) {
-                throw new JobProcessorException(placement, String.format("Part not found for board %s, placement %s.",
-                        boardLocation.getBoard().getName(), placement.getId()));
+                throw new JobProcessorException(placement, String.format("Part not found for board %s, placement %s.", boardLocation.getBoard().getName(), placement.getId()));
             }
-
-            // Verify that the part height is greater than zero. Catches a common configuration
-            // error.
-            if (placement.getPart().getHeight().getValue() <= 0D) {
-                throw new JobProcessorException(placement.getPart(), String.format("Part height for %s must be greater than 0.",
-                        placement.getPart().getId()));
+                // Verify that the part height is greater than zero. Catches a common configuration
+                // error.
+            if (placement.getPart().getHeight().getValue() <= 0.0) {
+                throw new JobProcessorException(placement.getPart(), String.format("Part height for %s must be greater than 0.", placement.getPart().getId()));
             }
-
             // Make sure there is at least one compatible nozzle tip available
             findNozzleTip(head, placement.getPart());
-
             // Make sure there is at least one compatible and enabled feeder available
             findFeeder(machine, placement.getPart());
         }
-        
+
         private void scriptJobStarting() throws JobProcessorException {
             HashMap<String, Object> params = new HashMap<>();
             params.put("job", job);
             params.put("jobProcessor", this);
             try {
                 Configuration.get().getScripting().on("Job.Starting", params);
-            }
-            catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 throw new JobProcessorException(null, e);
             }
         }
-        
+
         private void prepMachine() throws JobProcessorException {
             // Everything looks good, so prepare the machine.
             fireTextStatus("Preparing machine.");
-
             // Safe Z the machine
             try {
                 head.moveToSafeZ();
-            }
-            catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 throw new JobProcessorException(head, e);
             }
             // Discard any currently picked parts
             discardAll(head);
         }
-        
+
         private void checkDuplicateRefs(BoardLocation boardLocation) throws JobProcessorException {
             // Check for ID duplicates - throw error if any are found
             HashSet<String> idlist = new HashSet<String>();
             for (Placement placement : boardLocation.getBoard().getPlacements()) {
                 if (idlist.contains(placement.getId())) {
-                    throw new JobProcessorException(boardLocation, 
-                            String.format("This board contains at least one duplicate ID entry: %s ",
-                            placement.getId()));
-                } 
-                else {
+                    throw new JobProcessorException(boardLocation, String.format("This board contains at least one duplicate ID entry: %s ", placement.getId()));
+                } else {
                     idlist.add(placement.getId());
                 }
-            }       
+            }
         }
     }
-    
+
     protected class PanelFiducialCheck implements Step {
         public Step step() throws JobProcessorException {
             FiducialLocator locator = Configuration.get().getMachine().getFiducialLocator();
-            
-            if (job.isUsingPanel() && job.getPanels().get(0).isCheckFiducials()){
+            if (job.isUsingPanel() && job.getPanels().get(0).isCheckFiducials()) {
                 Panel p = job.getPanels().get(0);
-                
                 BoardLocation boardLocation = job.getBoardLocations().get(0);
-                
                 fireTextStatus("Panel fiducial check on %s", boardLocation);
                 try {
                     locator.locateBoard(boardLocation, p.isCheckFiducials());
-                }
-                catch (Exception e) {
+                } catch (java.lang.Exception e) {
                     throw new JobProcessorException(boardLocation, e);
                 }
             }
-            
             return new BoardLocationFiducialCheck();
         }
     }
-    
+
     protected class BoardLocationFiducialCheck implements Step {
         protected Set<BoardLocation> completed = new HashSet<>();
-        
+
         public Step step() throws JobProcessorException {
             FiducialLocator locator = Configuration.get().getMachine().getFiducialLocator();
-
             for (BoardLocation boardLocation : job.getBoardLocations()) {
                 if (!boardLocation.isEnabled()) {
                     continue;
@@ -357,19 +324,15 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
                 if (completed.contains(boardLocation)) {
                     continue;
                 }
-                
                 fireTextStatus("Fiducial check for %s", boardLocation);
                 try {
                     locator.locateBoard(boardLocation);
-                }
-                catch (Exception e) {
+                } catch (java.lang.Exception e) {
                     throw new JobProcessorException(boardLocation, e);
                 }
-                
                 completed.add(boardLocation);
                 return this;
             }
-            
             return new Plan();
         }
     }
@@ -377,33 +340,22 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
     protected class Plan implements Step {
         public Step step() throws JobProcessorException {
             List<PlannedPlacement> plannedPlacements = new ArrayList<>();
-            
             fireTextStatus("Planning placements.");
-
             List<JobPlacement> jobPlacements;
-
             if (jobOrder.equals(JobOrderHint.Part)) {
                 // Get the list of unfinished placements and sort them by part.
-                    jobPlacements = getPendingJobPlacements().stream()
-                            .sorted(Comparator.comparing(JobPlacement::getPartId))
-                            .collect(Collectors.toList());
-            } 
-            else {
+                jobPlacements = getPendingJobPlacements().stream().sorted(Comparator.comparing(JobPlacement::getPartId)).collect(Collectors.toList());
+            } else {
                 // Get the list of unfinished placements and sort them by part height.
-                    jobPlacements = getPendingJobPlacements().stream()
-                            .sorted(Comparator.comparing(JobPlacement::getPartHeight))
-                            .collect(Collectors.toList());
+                jobPlacements = getPendingJobPlacements().stream().sorted(Comparator.comparing(JobPlacement::getPartHeight)).collect(Collectors.toList());
             }
-
             if (jobPlacements.isEmpty()) {
                 return new Finish();
             }
-
             long t = System.currentTimeMillis();
             List<JobPlacement> result = planner.plan(head, jobPlacements);
-            Logger.debug("Planner complete in {}ms: {}", (System.currentTimeMillis() - t), result);
-
-            // Now we have a solution, so apply it to the nozzles and plan the placements.
+            Logger.debug("Planner complete in {}ms: {}", System.currentTimeMillis() - t, result);
+        // Now we have a solution, so apply it to the nozzles and plan the placements.
             for (Nozzle nozzle : head.getNozzles()) {
                 // The solution is in Nozzle order, so grab the next one.
                 JobPlacement jobPlacement = result.remove(0);
@@ -413,142 +365,114 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
                 jobPlacement.setStatus(Status.Processing);
                 plannedPlacements.add(new PlannedPlacement(nozzle, jobPlacement));
             }
-            
             if (plannedPlacements.size() == 0) {
                 throw new JobProcessorException(planner, "Planner failed to plan any placements. Please contact support.");
             }
-
             Logger.debug("Planned placements {}", plannedPlacements);
-            
             return new ChangeNozzleTips(plannedPlacements);
         }
     }
-    
+
     protected class ChangeNozzleTips extends PlannedPlacementStep {
         public ChangeNozzleTips(List<PlannedPlacement> plannedPlacements) {
             super(plannedPlacements);
         }
-        
+
         @Override
         public Step stepImpl(PlannedPlacement plannedPlacement) throws JobProcessorException {
             if (plannedPlacement == null) {
                 return new CalibrateNozzleTips(plannedPlacements);
             }
-            
             final Nozzle nozzle = plannedPlacement.nozzle;
             final Part part = plannedPlacement.jobPlacement.getPlacement().getPart();
-            
             // If the currently loaded NozzleTip can handle the Part we're good.
-            if (nozzle.getNozzleTip() != null && nozzle.getNozzleTip().canHandle(part)) {
+            if ((nozzle.getNozzleTip() != null) && nozzle.getNozzleTip().canHandle(part)) {
                 Logger.debug("No nozzle tip change needed for nozzle {}", nozzle);
                 return this;
             }
-            
-            fireTextStatus("Locate nozzle tip on nozzle %s for part %s.", 
-                    nozzle.getId(), 
-                    part.getId());
-            
+            fireTextStatus("Locate nozzle tip on nozzle %s for part %s.", nozzle.getId(), part.getId());
             // Otherwise find a compatible tip and load it
             NozzleTip nozzleTip = findNozzleTip(nozzle, part);
-            fireTextStatus("Change nozzle tip on nozzle %s to %s.", 
-                    nozzle.getId(), 
-                    nozzleTip.getName());
+            fireTextStatus("Change nozzle tip on nozzle %s to %s.", nozzle.getId(), nozzleTip.getName());
             try {
                 nozzle.unloadNozzleTip();
                 nozzle.loadNozzleTip(nozzleTip);
+            } catch (java.lang.Exception e) {
+                throw new JobProcessorException(nozzleTip, e);
             }
-            catch (Exception e) {
-                throw new JobProcessorException(nozzleTip,  e);
-            }
-            
             return this;
         }
     }
-    
+
     protected class CalibrateNozzleTips extends PlannedPlacementStep {
         public CalibrateNozzleTips(List<PlannedPlacement> plannedPlacements) {
             super(plannedPlacements);
         }
-        
+
         @Override
         public Step stepImpl(PlannedPlacement plannedPlacement) throws JobProcessorException {
             if (plannedPlacement == null) {
                 return new Pick(plannedPlacements);
             }
-            
             final NozzleTip nozzleTip = plannedPlacement.nozzle.getNozzleTip();
-            
             if (nozzleTip == null) {
                 return this;
             }
-            
             if (nozzleTip.isCalibrated()) {
                 return this;
             }
-            
             fireTextStatus("Calibrate nozzle tip %s", nozzleTip);
             try {
                 nozzleTip.calibrate();
-            }
-            catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 throw new JobProcessorException(nozzleTip, e);
             }
-            
             return this;
         }
     }
 
     protected class Pick extends PlannedPlacementStep {
         HashMap<PlannedPlacement, Integer> retries = new HashMap<>();
-        
+
         public Pick(List<PlannedPlacement> plannedPlacements) {
             super(plannedPlacements);
         }
-        
+
         @Override
         public Step stepImpl(PlannedPlacement plannedPlacement) throws JobProcessorException {
             if (plannedPlacement == null) {
                 return new Align(plannedPlacements);
             }
-            
             final Nozzle nozzle = plannedPlacement.nozzle;
             final JobPlacement jobPlacement = plannedPlacement.jobPlacement;
             final Placement placement = jobPlacement.getPlacement();
             final Part part = placement.getPart();
-            
             final Feeder feeder = findFeeder(machine, part);
-
             feed(feeder, nozzle);
-            
             pick(nozzle, feeder, placement, part);
-
-            /** 
+            /**
              * If either postPick or checkPartOn fails we discard and then cycle back to feed
              * up to pickRetryCount times. We include postPick because if the pick succeeded
              * then we assume we are carrying a part, so we want to make sure to discard it
-             * if there is a problem.   
+             * if there is a problem.
              */
             try {
                 postPick(feeder, nozzle);
-                
                 checkPartOn(nozzle);
-            }
-            catch (JobProcessorException e) {
+            } catch (JobProcessorException e) {
                 if (retryIncrementAndGet(plannedPlacement) >= feeder.getPickRetryCount()) {
                     // Clear the retry count because we're about to show the error. If the user
                     // decides to try again we want to do the full retry cycle.
                     retries.remove(plannedPlacement);
                     throw e;
-                }
-                else {
+                } else {
                     discard(nozzle);
                     return this;
                 }
             }
-            
             return this;
         }
-        
+
         private int retryIncrementAndGet(PlannedPlacement plannedPlacement) {
             Integer retry = retries.get(plannedPlacement);
             if (retry == null) {
@@ -558,65 +482,54 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
             retries.put(plannedPlacement, retry);
             return retry;
         }
-        
+
         private void feed(Feeder feeder, Nozzle nozzle) throws JobProcessorException {
             Exception lastException = null;
             for (int i = 0; i < Math.max(1, feeder.getFeedRetryCount()); i++) {
                 try {
                     fireTextStatus("Feed %s on %s.", feeder.getName(), feeder.getPart().getId());
-                    
                     feeder.feed(nozzle);
                     return;
-                }
-                catch (Exception e) {
+                } catch (java.lang.Exception e) {
                     lastException = e;
                 }
             }
             throw new JobProcessorException(feeder, lastException);
         }
-        
+
         private void pick(Nozzle nozzle, Feeder feeder, Placement placement, Part part) throws JobProcessorException {
             try {
-                fireTextStatus("Pick %s from %s for %s.", part.getId(), feeder.getName(),
-                        placement.getId());
-                
+                fireTextStatus("Pick %s from %s for %s.", part.getId(), feeder.getName(), placement.getId());
                 // Move to pick location.
                 MovableUtils.moveToLocationAtSafeZ(nozzle, feeder.getPickLocation());
-
-
-                // Pick
+            // Pick
                 nozzle.pick(part);
-
-                // Retract
+            // Retract
                 nozzle.moveToSafeZ();
-            }
-            catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 throw new JobProcessorException(nozzle, e);
             }
         }
-        
+
         private void postPick(Feeder feeder, Nozzle nozzle) throws JobProcessorException {
             try {
                 feeder.postPick(nozzle);
-            }
-            catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 throw new JobProcessorException(feeder, e);
             }
         }
-        
+
         private void checkPartOn(Nozzle nozzle) throws JobProcessorException {
             if (!nozzle.isPartDetectionEnabled()) {
                 return;
             }
             try {
-                if(!nozzle.isPartOn()) {
+                if (!nozzle.isPartOn()) {
                     throw new JobProcessorException(nozzle, "No part detected after pick.");
                 }
-            }
-            catch (JobProcessorException e) {
+            } catch (JobProcessorException e) {
                 throw e;
-            }
-            catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 throw new JobProcessorException(nozzle, e);
             }
         }
@@ -632,67 +545,53 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
             if (plannedPlacement == null) {
                 return new Place(plannedPlacements);
             }
-            
             final Nozzle nozzle = plannedPlacement.nozzle;
             final JobPlacement jobPlacement = plannedPlacement.jobPlacement;
             final Placement placement = jobPlacement.getPlacement();
             final Part part = placement.getPart();
-
             final PartAlignment partAlignment = findPartAligner(machine, part);
-            
             if (partAlignment == null) {
                 plannedPlacement.alignmentOffsets = null;
                 Logger.debug("Not aligning {} as no compatible enabled aligners defined", part);
                 return this;
             }
-
             align(plannedPlacement, partAlignment);
-            
             checkPartOn(nozzle);
-
             return this;
         }
-        
+
         private void align(PlannedPlacement plannedPlacement, PartAlignment partAlignment) throws JobProcessorException {
             final Nozzle nozzle = plannedPlacement.nozzle;
             final JobPlacement jobPlacement = plannedPlacement.jobPlacement;
             final Placement placement = jobPlacement.getPlacement();
             final BoardLocation boardLocation = jobPlacement.getBoardLocation();
             final Part part = placement.getPart();
-
             Exception lastException = null;
             // TODO make retry count configurable.
             for (int i = 0; i < 3; i++) {
                 fireTextStatus("Aligning %s for %s.", part.getId(), placement.getId());
                 try {
-                    plannedPlacement.alignmentOffsets = VisionUtils.findPartAlignmentOffsets(
-                            partAlignment,
-                            part,
-                            boardLocation,
-                            placement.getLocation(), nozzle);
+                    plannedPlacement.alignmentOffsets = VisionUtils.findPartAlignmentOffsets(partAlignment, part, boardLocation, placement.getLocation(), nozzle);
                     Logger.debug("Align {} with {}, offsets {}", part, nozzle, plannedPlacement.alignmentOffsets);
                     return;
-                }
-                catch (Exception e) {
+                } catch (java.lang.Exception e) {
                     lastException = e;
                 }
             }
             throw new JobProcessorException(part, lastException);
         }
-        
+
         private void checkPartOn(Nozzle nozzle) throws JobProcessorException {
             if (!nozzle.isPartDetectionEnabled()) {
                 return;
             }
             try {
-                if(!nozzle.isPartOn()) {
+                if (!nozzle.isPartOn()) {
                     throw new JobProcessorException(nozzle, "No part detected after alignment. Part may have been lost in transit.");
                 }
-            }
-            catch (JobProcessorException e) {
+            } catch (JobProcessorException e) {
                 throw e;
-            }
-            catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 throw new JobProcessorException(nozzle, e);
             }
         }
@@ -708,54 +607,39 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
             if (plannedPlacement == null) {
                 return new FinishCycle();
             }
-            
             final Nozzle nozzle = plannedPlacement.nozzle;
             final JobPlacement jobPlacement = plannedPlacement.jobPlacement;
             final Placement placement = jobPlacement.getPlacement();
             final Part part = placement.getPart();
             final BoardLocation boardLocation = plannedPlacement.jobPlacement.getBoardLocation();
-
             Location placementLocation = getPlacementLocation(plannedPlacement);
-            
             scriptBeforeAssembly(plannedPlacement, placementLocation);
-
             checkPartOn(nozzle);
-            
             place(nozzle, part, placement, placementLocation);
-            
             checkPartOff(nozzle, part);
-            
             // Mark the placement as finished
             jobPlacement.setStatus(Status.Complete);
-            
             // Mark the placement as "placed"
             boardLocation.setPlaced(jobPlacement.getPlacement().getId(), true);
-            
             totalPartsPlaced++;
-            
             scriptComplete(plannedPlacement, placementLocation);
-            
             return this;
         }
-        
+
         private void place(Nozzle nozzle, Part part, Placement placement, Location placementLocation) throws JobProcessorException {
             fireTextStatus("Placing %s for %s.", part.getId(), placement.getId());
-            
             try {
-                // Move to the placement location
+            // Move to the placement location
                 MovableUtils.moveToLocationAtSafeZ(nozzle, placementLocation);
-
-                // Place the part
+            // Place the part
                 nozzle.place();
-
-                // Retract
+            // Retract
                 nozzle.moveToSafeZ();
-            }
-            catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 throw new JobProcessorException(nozzle, e);
             }
         }
-        
+
         private void checkPartOn(Nozzle nozzle) throws JobProcessorException {
             if (!nozzle.isPartDetectionEnabled()) {
                 return;
@@ -772,7 +656,7 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
                 throw new JobProcessorException(nozzle, e);
             }
         }
-        
+
         private void checkPartOff(Nozzle nozzle, Part part) throws JobProcessorException {
             if (!nozzle.isPartDetectionEnabled()) {
                 return;
@@ -796,7 +680,7 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
                 throw new JobProcessorException(nozzle, e);
             }
         }
-        
+
         private void scriptBeforeAssembly(PlannedPlacement plannedPlacement, Location placementLocation) throws JobProcessorException {
             final Nozzle nozzle = plannedPlacement.nozzle;
             final JobPlacement jobPlacement = plannedPlacement.jobPlacement;
@@ -814,11 +698,10 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
                 params.put("placementLocation", placementLocation);
                 params.put("alignmentOffsets", plannedPlacement.alignmentOffsets);
                 Configuration.get().getScripting().on("Job.Placement.BeforeAssembly", params);
-            }
-            catch (Exception e) {
+            } catch (java.lang.Exception e) {
             }
         }
-        
+
         private void scriptComplete(PlannedPlacement plannedPlacement, Location placementLocation) throws JobProcessorException {
             final Nozzle nozzle = plannedPlacement.nozzle;
             final JobPlacement jobPlacement = plannedPlacement.jobPlacement;
@@ -835,70 +718,53 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
                 params.put("boardLocation", boardLocation);
                 params.put("placementLocation", placementLocation);
                 Configuration.get().getScripting().on("Job.Placement.Complete", params);
-            }
-            catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 throw new JobProcessorException(null, e);
             }
         }
-        
+
         private Location getPlacementLocation(PlannedPlacement plannedPlacement) {
             final JobPlacement jobPlacement = plannedPlacement.jobPlacement;
             final Placement placement = jobPlacement.getPlacement();
             final Part part = placement.getPart();
             final BoardLocation boardLocation = plannedPlacement.jobPlacement.getBoardLocation();
-
             // Check if there is a fiducial override for the board location and if so, use it.
-            Location placementLocation =
-                    Utils2D.calculateBoardPlacementLocation(boardLocation, placement.getLocation());
-
+            Location placementLocation = Utils2D.calculateBoardPlacementLocation(boardLocation, placement.getLocation());
             // If there are alignment offsets update the placement location with them
             if (plannedPlacement.alignmentOffsets != null) {
-                /*
-                 * preRotated means during alignment we have already rotated the component - this is
-                 * useful for say an external rotating stage that the component is placed on,
-                 * rotated to correct placement angle, and then picked up again.
+                /* preRotated means during alignment we have already rotated the component - this is
+                useful for say an external rotating stage that the component is placed on,
+                rotated to correct placement angle, and then picked up again.
                  */
                 if (plannedPlacement.alignmentOffsets.getPreRotated()) {
-                    placementLocation = placementLocation.subtractWithRotation(
-                            plannedPlacement.alignmentOffsets.getLocation());
-                }
-                else {
+                    placementLocation = placementLocation.subtractWithRotation(plannedPlacement.alignmentOffsets.getLocation());
+                } else {
                     Location alignmentOffsets = plannedPlacement.alignmentOffsets.getLocation();
                     // Rotate the point 0,0 using the alignment offsets as a center point by the angle
                     // that is
                     // the difference between the alignment angle and the calculated global
                     // placement angle.
-                    Location location =
-                            new Location(LengthUnit.Millimeters).rotateXyCenterPoint(alignmentOffsets,
-                                    placementLocation.getRotation() - alignmentOffsets.getRotation());
-
+                    Location location = new Location(LengthUnit.Millimeters).rotateXyCenterPoint(alignmentOffsets, placementLocation.getRotation() - alignmentOffsets.getRotation());
                     // Set the angle to the difference mentioned above, aligning the part to the
                     // same angle as
                     // the placement.
-                    location = location.derive(null, null, null,
-                            placementLocation.getRotation() - alignmentOffsets.getRotation());
-
+                    location = location.derive(null, null, null, placementLocation.getRotation() - alignmentOffsets.getRotation());
                     // Add the placement final location to move our local coordinate into global
                     // space
                     location = location.add(placementLocation);
-
                     // Subtract the alignment offsets to move the part to the final location,
                     // instead of
                     // the nozzle.
                     location = location.subtract(alignmentOffsets);
-
                     placementLocation = location;
                 }
             }
-
             // Add the part's height to the placement location
-            placementLocation = placementLocation.add(new Location(part.getHeight().getUnits(), 0,
-                    0, part.getHeight().getValue(), 0));
-            
+            placementLocation = placementLocation.add(new Location(part.getHeight().getUnits(), 0, 0, part.getHeight().getValue(), 0));
             return placementLocation;
         }
     }
-    
+
     protected class FinishCycle implements Step {
         public Step step() throws JobProcessorException {
             discardAll(head);
@@ -909,98 +775,67 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
     protected class Cleanup implements Step {
         public Step step() throws JobProcessorException {
             fireTextStatus("Cleaning up.");
-            
             try {
                 // Safe Z the machine
                 head.moveToSafeZ();
-                
                 // Discard any currently picked parts
                 discardAll(head);
-
                 // Safe Z the machine
                 head.moveToSafeZ();
-            }
-            catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 throw new JobProcessorException(head, e);
             }
-            
             fireTextStatus("Park head.");
             try {
                 MovableUtils.park(head);
-            }
-            catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 throw new JobProcessorException(head, e);
             }
-            
             return null;
         }
     }
-    
+
     protected class Finish implements Step {
         public Step step() throws JobProcessorException {
             new Cleanup().step();
-          
             double dtSec = (System.currentTimeMillis() - startTime) / 1000.0;
             DecimalFormat df = new DecimalFormat("###,###.0");
-            
             // Collect the errored placements
-            List<JobPlacement> erroredPlacements = jobPlacements
-                    .stream()
-                    .filter(jp -> {
-                        return jp.getStatus() == JobPlacement.Status.Errored;
-                    })
-                    .collect(Collectors.toList());
-
-            Logger.info("Job finished {} parts in {} sec. This is {} CPH", totalPartsPlaced,
-                    df.format(dtSec), df.format(totalPartsPlaced / (dtSec / 3600.0)));
-
+            List<JobPlacement> erroredPlacements = jobPlacements.stream().filter(( jp) -> {
+                return jp.getStatus() == JobPlacement.Status.Errored;
+            }).collect(Collectors.toList());
+            Logger.info("Job finished {} parts in {} sec. This is {} CPH", totalPartsPlaced, df.format(dtSec), df.format(totalPartsPlaced / (dtSec / 3600.0)));
             try {
                 HashMap<String, Object> params = new HashMap<>();
                 params.put("job", job);
                 params.put("jobProcessor", this);
-                Configuration.get()
-                             .getScripting()
-                             .on("Job.Finished", params);
-            }
-            catch (Exception e) {
+                Configuration.get().getScripting().on("Job.Finished", params);
+            } catch (java.lang.Exception e) {
                 throw new JobProcessorException(null, e);
             }
-
             if (!erroredPlacements.isEmpty()) {
-                fireTextStatus("Job finished with %d errors, placed %s parts in %s sec. (%s CPH)",
-                        erroredPlacements.size(),
-                        totalPartsPlaced,
-                        df.format(dtSec), 
-                        df.format(totalPartsPlaced / (dtSec / 3600.0)));
+                fireTextStatus("Job finished with %d errors, placed %s parts in %s sec. (%s CPH)", erroredPlacements.size(), totalPartsPlaced, df.format(dtSec), df.format(totalPartsPlaced / (dtSec / 3600.0)));
+            } else {
+                fireTextStatus("Job finished without error, placed %s parts in %s sec. (%s CPH)", totalPartsPlaced, df.format(dtSec), df.format(totalPartsPlaced / (dtSec / 3600.0)));
             }
-            else {
-                fireTextStatus("Job finished without error, placed %s parts in %s sec. (%s CPH)", 
-                        totalPartsPlaced,
-                        df.format(dtSec), 
-                        df.format(totalPartsPlaced / (dtSec / 3600.0)));
-            }
-            
             Logger.info("Errored Placements:");
             for (JobPlacement jobPlacement : erroredPlacements) {
                 Logger.info("{}: {}", jobPlacement, jobPlacement.getError().getMessage());
             }
-
             return null;
         }
     }
-    
+
     protected class Abort implements Step {
         public Step step() throws JobProcessorException {
             new Cleanup().step();
-            
             fireTextStatus("Aborted.");
-            
             return null;
         }
     }
-    
+
     protected List<JobPlacement> getPendingJobPlacements() {
-        return this.jobPlacements.stream().filter((jobPlacement) -> {
+        return this.jobPlacements.stream().filter(( jobPlacement) -> {
             return jobPlacement.getStatus() == Status.Pending;
         }).collect(Collectors.toList());
     }
@@ -1008,28 +843,29 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
     protected boolean isJobComplete() {
         return getPendingJobPlacements().isEmpty();
     }
-    
+
     @Override
     public Wizard getConfigurationWizard() {
         return new ReferencePnpJobProcessorConfigurationWizard(this);
     }
-    
+
     public JobOrderHint getJobOrder() {
         return jobOrder;
     }
-    
+
     public void setJobOrder(JobOrderHint newJobOrder) {
         this.jobOrder = newJobOrder;
-    }    
+    }
 
     protected abstract class PlannedPlacementStep implements Step {
         protected final List<PlannedPlacement> plannedPlacements;
+
         private Set<PlannedPlacement> completed = new HashSet<>();
-        
+
         protected PlannedPlacementStep(List<PlannedPlacement> plannedPlacements) {
             this.plannedPlacements = plannedPlacements;
         }
-        
+
         /**
          * Process the step for the given planned placement. The method should perform everything
          * that needs to be done with that planned placement before returning. If there is an
@@ -1054,35 +890,29 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
              * Get the first planned placement from the list that is still in processing status
              * and that is not marked completed.
              */
-            PlannedPlacement plannedPlacement = plannedPlacements
-                    .stream()
-                    .filter(p -> {
-                        return p.jobPlacement.getStatus() == Status.Processing;
-                    })
-                    .filter(p -> {
-                        return !completed.contains(p);
-                    })
-                    .findFirst()
-                    .orElse(null);
+            PlannedPlacement plannedPlacement = plannedPlacements.stream().filter(( p) -> {
+                return p.jobPlacement.getStatus() == Status.Processing;
+            }).filter(( p) -> {
+                return !completed.contains(p);
+            }).findFirst().orElse(null);
             try {
                 Step result = stepImpl(plannedPlacement);
                 completed.add(plannedPlacement);
                 return result;
-            }
-            catch (JobProcessorException e) {
+            } catch (JobProcessorException e) {
                 switch (plannedPlacement.jobPlacement.getPlacement().getErrorHandling()) {
-                    case Alert:
+                    case Alert :
                         throw e;
-                    case Defer:
+                    case Defer :
                         plannedPlacement.jobPlacement.setError(e);
                         return this;
-                    default:
+                    default :
                         throw new Error("Unhandled Error Handling case " + plannedPlacement.jobPlacement.getPlacement().getErrorHandling());
                 }
             }
         }
     }
-    
+
     /**
      * Description of the planner:
      * 
@@ -1105,60 +935,56 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
     @Root
     public static class StandardPnpJobPlanner implements PnpJobPlanner {
         Head head;
-        
+
         public List<JobPlacement> plan(Head head, List<JobPlacement> jobPlacements) {
             this.head = head;
-            
             // Create a List of Lists of JobPlacements that each Nozzle can handle, including
             // one instance of null per Nozzle. The null indicates a possible "no solution"
             // for that Nozzle.
-            List<List<JobPlacement>> solutions = head.getNozzles().stream().map(nozzle -> {
-                return Stream.concat(jobPlacements.stream().filter(jobPlacement -> {
+            List<List<JobPlacement>> solutions = head.getNozzles().stream().map(( nozzle) -> {
+                return Stream.concat(jobPlacements.stream().filter(( jobPlacement) -> {
                     return nozzleCanHandle(nozzle, jobPlacement.getPlacement().getPart());
-                }), Stream.of((JobPlacement) null)).collect(Collectors.toList());
+                }), Stream.of(((JobPlacement) (null)))).collect(Collectors.toList());
             }).collect(Collectors.toList());
-
             // Get the cartesian product of those Lists
-            List<JobPlacement> result = Collect.cartesianProduct(solutions).stream()
-                    // Filter out any results that contains the same JobPlacement more than once
-                    .filter(list -> {
-                        // Note: A previous version of this code just dumped everything into a
-                        // set and compared the size. This worked for two nozzles since there would
-                        // never be more than two nulls, but for > 2 nozzles there will always be a
-                        // solution that has > 2 nulls, which means the size will never match.
-                        // This version of the code ignores the nulls (since they are valid
-                        // solutions) and instead only checks for duplicate valid JobPlacements.
-                        // There is probably a more clever way to do this, but it isn't coming
-                        // to me at the moment.
-                        HashSet<JobPlacement> set = new HashSet<>();
-                        for (JobPlacement jp : list) {
-                            if (jp == null) {
-                                continue;
-                            }
-                            if (set.contains(jp)) {
-                                return false;
-                            }
-                            set.add(jp);
-                        }
-                        return true;
-                    })
-                    // Sort by the solutions that contain the fewest nulls followed by the
-                    // solutions that require the fewest nozzle changes.
-                    .sorted(byFewestNulls.thenComparing(byFewestNozzleChanges))
-                    // And return the top result.
-                    .findFirst().orElse(null);
+            List<JobPlacement> result = // And return the top result.
+            // Sort by the solutions that contain the fewest nulls followed by the
+            // solutions that require the fewest nozzle changes.
+            // Filter out any results that contains the same JobPlacement more than once
+            Collect.cartesianProduct(solutions).stream().filter(( list) -> {
+                // Note: A previous version of this code just dumped everything into a
+                // set and compared the size. This worked for two nozzles since there would
+                // never be more than two nulls, but for > 2 nozzles there will always be a
+                // solution that has > 2 nulls, which means the size will never match.
+                // This version of the code ignores the nulls (since they are valid
+                // solutions) and instead only checks for duplicate valid JobPlacements.
+                // There is probably a more clever way to do this, but it isn't coming
+                // to me at the moment.
+                HashSet<JobPlacement> set = new HashSet<>();
+                for (JobPlacement jp : list) {
+                    if (jp == null) {
+                        continue;
+                    }
+                    if (set.contains(jp)) {
+                        return false;
+                    }
+                    set.add(jp);
+                }
+                return true;
+            }).sorted(byFewestNulls.thenComparing(byFewestNozzleChanges)).findFirst().orElse(null);
             return result;
         }
-        
+
         // Sort a List<JobPlacement> by the number of nulls it contains in ascending order.
-        Comparator<List<JobPlacement>> byFewestNulls = (a, b) -> {
+        Comparator<List<JobPlacement>> byFewestNulls = ( a, b) -> {
             return Collections.frequency(a, null) - Collections.frequency(b, null);
         };
 
         // Sort a List<JobPlacement> by the number of nozzle changes it will require in
         // descending order.
-        Comparator<List<JobPlacement>> byFewestNozzleChanges = (a, b) -> {
-            int countA = 0, countB = 0;
+        Comparator<List<JobPlacement>> byFewestNozzleChanges = ( a, b) -> {
+            int countA = 0;
+            int countB = 0;
             for (int i = 0; i < head.getNozzles().size(); i++) {
                 Nozzle nozzle = head.getNozzles().get(i);
                 JobPlacement jpA = a.get(i);
@@ -1168,17 +994,17 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
                     countB++;
                     continue;
                 }
-                if (jpA != null && !nozzle.getNozzleTip().canHandle(jpA.getPlacement().getPart())) {
+                if ((jpA != null) && (!nozzle.getNozzleTip().canHandle(jpA.getPlacement().getPart()))) {
                     countA++;
                 }
-                if (jpB != null && !nozzle.getNozzleTip().canHandle(jpB.getPlacement().getPart())) {
+                if ((jpB != null) && (!nozzle.getNozzleTip().canHandle(jpB.getPlacement().getPart()))) {
                     countB++;
                 }
             }
             return countA - countB;
         };
     }
-    
+
     @Root
     public static class SimplePnpJobPlanner implements PnpJobPlanner {
         /**
@@ -1218,7 +1044,6 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
             List<JobPlacement> result = new ArrayList<>();
             for (Nozzle nozzle : head.getNozzles()) {
                 JobPlacement solution = null;
-                
                 // First, see if we can put a placement on the nozzle that will not require a
                 // nozzle tip change.
                 if (nozzle.getNozzleTip() != null) {
@@ -1236,7 +1061,6 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
                     result.add(solution);
                     continue;
                 }
-
                 // If that didn't work, see if we can put one on with a nozzle tip change.
                 for (JobPlacement jobPlacement : jobPlacements) {
                     Placement placement = jobPlacement.getPlacement();
@@ -1251,7 +1075,6 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
                     result.add(solution);
                     continue;
                 }
-                
                 // And if that didn't work we give up on this nozzle.
                 result.add(null);
             }
