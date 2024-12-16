@@ -23,15 +23,15 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-
 import org.apache.avro.AvroRuntimeException;
-import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
+import org.apache.avro.Schema;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.avro.io.Decoder;
 import org.apache.avro.io.ResolvingDecoder;
 import org.apache.avro.specific.SpecificData;
 import org.apache.avro.specific.SpecificDatumReader;
+
 
 /**
  * {@link org.apache.avro.io.DatumReader DatumReader} for existing classes via
@@ -42,28 +42,38 @@ public class ReflectDatumReader<T> extends SpecificDatumReader<T> {
     this(null, null, ReflectData.get());
   }
 
-  /** Construct for reading instances of a class. */
+  /**
+   * Construct for reading instances of a class.
+   */
   public ReflectDatumReader(Class<T> c) {
     this(new ReflectData(c.getClassLoader()));
     setSchema(getSpecificData().getSchema(c));
   }
 
-  /** Construct where the writer's and reader's schemas are the same. */
+  /**
+   * Construct where the writer's and reader's schemas are the same.
+   */
   public ReflectDatumReader(Schema root) {
     this(root, root, ReflectData.get());
   }
 
-  /** Construct given writer's and reader's schema. */
+  /**
+   * Construct given writer's and reader's schema.
+   */
   public ReflectDatumReader(Schema writer, Schema reader) {
     this(writer, reader, ReflectData.get());
   }
 
-  /** Construct given writer's and reader's schema and the data model. */
+  /**
+   * Construct given writer's and reader's schema and the data model.
+   */
   public ReflectDatumReader(Schema writer, Schema reader, ReflectData data) {
     super(writer, reader, data);
   }
 
-  /** Construct given a {@link ReflectData}. */
+  /**
+   * Construct given a {@link ReflectData}.
+   */
   public ReflectDatumReader(ReflectData data) {
     super(data);
   }
@@ -142,33 +152,32 @@ public class ReflectDatumReader<T> extends SpecificDatumReader<T> {
     throw new AvroRuntimeException("reflectDatumReader does not use addToArray");
   }
 
-  @Override
   /** Called to read an array instance.  May be overridden for alternate array
    * representations.*/
-  protected Object readArray(Object old, Schema expected, ResolvingDecoder in)
-      throws IOException {
+  @Override
+  protected Object readArray(Object old, Schema expected, ResolvingDecoder in) throws IOException {
     Schema expectedType = expected.getElementType();
     long l = in.readArrayStart();
     if (l <= 0) {
       return newArray(old, 0, expected);
     }
-    Object array = newArray(old, (int) l, expected);
+    Object array = newArray(old, ((int) (l)), expected);
     if (array instanceof Collection) {
       @SuppressWarnings("unchecked")
-      Collection<Object> c = (Collection<Object>) array;
+      Collection<Object> c = ((Collection<Object>) (array));
       return readCollection(c, expectedType, l, in);
     } else if (array instanceof Map) {
       // Only for non-string keys, we can use NS_MAP_* fields
       // So we check the samee explicitly here
       if (ReflectData.isNonStringMapSchema(expected)) {
-        Collection<Object> c = new ArrayList<Object> ();
+        Collection<Object> c = new ArrayList<Object>();
         readCollection(c, expectedType, l, in);
-        Map m = (Map)array;
-        for (Object ele: c) {
-          IndexedRecord rec = ((IndexedRecord)ele);
+        Map m = ((Map) (array));
+        for (Object ele : c) {
+          IndexedRecord rec = ((IndexedRecord) (ele));
           Object key = rec.get(ReflectData.NS_MAP_KEY_INDEX);
           Object value = rec.get(ReflectData.NS_MAP_VALUE_INDEX);
-          m.put (key, value);
+          m.put(key, value);
         }
         return array;
       } else {
@@ -195,28 +204,26 @@ public class ReflectDatumReader<T> extends SpecificDatumReader<T> {
     return ArrayAccessor.readArray(array, c, l, in);
   }
 
-  private Object readObjectArray(Object[] array, Schema expectedType, long l,
-      ResolvingDecoder in) throws IOException {
+  private Object readObjectArray(Object[] array, Schema expectedType, long l, ResolvingDecoder in) throws IOException {
     int index = 0;
     do {
-      int limit = index + (int) l;
+      int limit = index + ((int) (l));
       while (index < limit) {
         Object element = read(null, expectedType, in);
         array[index] = element;
         index++;
-      }
-    } while ((l = in.arrayNext()) > 0);
+      } 
+    } while ((l = in.arrayNext()) > 0 );
     return array;
   }
 
-  private Object readCollection(Collection<Object> c, Schema expectedType,
-      long l, ResolvingDecoder in) throws IOException {
+  private Object readCollection(Collection<Object> c, Schema expectedType, long l, ResolvingDecoder in) throws IOException {
     do {
       for (int i = 0; i < l; i++) {
         Object element = read(null, expectedType, in);
         c.add(element);
       }
-    } while ((l = in.arrayNext()) > 0);
+    } while ((l = in.arrayNext()) > 0 );
     return c;
   }
 
@@ -257,27 +264,22 @@ public class ReflectDatumReader<T> extends SpecificDatumReader<T> {
   }
 
   @Override
-  protected void readField(Object record, Field f, Object oldDatum,
-      ResolvingDecoder in, Object state) throws IOException {
+  protected void readField(Object record, Field f, Object oldDatum, ResolvingDecoder in, Object state) throws IOException {
     if (state != null) {
-      FieldAccessor accessor = ((FieldAccessor[]) state)[f.pos()];
+      FieldAccessor accessor = ((FieldAccessor[]) (state))[f.pos()];
       if (accessor != null) {
-        if (accessor.supportsIO()
-            && (!Schema.Type.UNION.equals(f.schema().getType())
-                || accessor.isCustomEncoded())) {
+        if (accessor.supportsIO() && ((!Schema.Type.UNION.equals(f.schema().getType())) || accessor.isCustomEncoded())) {
           accessor.read(record, in);
           return;
         }
         if (accessor.isStringable()) {
           try {
-            String asString = (String) read(null, f.schema(), in);
-            accessor.set(record, asString == null 
-              ? null
-              : newInstanceFromString(accessor.getField().getType(), asString));
+            String asString = ((String) (read(null, f.schema(), in)));
+            accessor.set(record, asString == null ? null : newInstanceFromString(accessor.getField().getType(), asString));
             return;
-          } catch (Exception e) {
+          } catch (java.lang.Exception e) {
             throw new AvroRuntimeException("Failed to read Stringable", e);
-          } 
+          }
         }
       }
     }

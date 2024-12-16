@@ -17,6 +17,8 @@
  */
 package org.apache.avro.reflect;
 
+import com.thoughtworks.paranamer.CachingParanamer;
+import com.thoughtworks.paranamer.Paranamer;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
@@ -37,40 +39,42 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.avro.AvroRemoteException;
 import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.AvroTypeException;
-import org.apache.avro.Protocol;
 import org.apache.avro.Protocol.Message;
+import org.apache.avro.Protocol;
 import org.apache.avro.Schema;
+import org.apache.avro.SchemaNormalization;
 import org.apache.avro.generic.GenericContainer;
 import org.apache.avro.generic.GenericFixed;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.avro.io.BinaryData;
-import org.apache.avro.util.ClassUtils;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.specific.FixedSize;
 import org.apache.avro.specific.SpecificData;
-import org.apache.avro.SchemaNormalization;
+import org.apache.avro.util.ClassUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.NullNode;
 
-import com.thoughtworks.paranamer.CachingParanamer;
-import com.thoughtworks.paranamer.Paranamer;
 
 /** Utilities to use existing Java classes and interfaces via reflection. */
 public class ReflectData extends SpecificData {
-  /** {@link ReflectData} implementation that permits null field values.  The
+  /**
+   * {@link ReflectData} implementation that permits null field values.  The
    * schema generated for each field is a union of its declared type and
-   * null. */
+   * null.
+   */
   public static class AllowNull extends ReflectData {
-
     private static final AllowNull INSTANCE = new AllowNull();
 
-    /** Return the singleton instance. */
-    public static AllowNull get() { return INSTANCE; }
+    /**
+     * Return the singleton instance.
+     */
+    public static AllowNull get() {
+      return INSTANCE;
+    }
 
     @Override
     protected Schema createFieldSchema(Field field, Map<String, Schema> names) {
@@ -83,19 +87,24 @@ public class ReflectData extends SpecificData {
       return makeNullable(schema);
     }
   }
-  
+
   private static final ReflectData INSTANCE = new ReflectData();
 
   private boolean resolvingCircularRefs;
 
-  /** For subclasses.  Applications normally use {@link ReflectData#get()}. */
-  public ReflectData() {}
-  
-  /** Construct with a particular classloader. */
+  /**
+   * For subclasses.  Applications normally use {@link ReflectData#get()}.
+   */
+  public ReflectData() {
+  }
+
+  /**
+   * Construct with a particular classloader.
+   */
   public ReflectData(ClassLoader classLoader) {
     super(classLoader);
   }
-  
+
   /** Return the singleton instance. */
   public static ReflectData get() { return INSTANCE; }
 
@@ -156,7 +165,7 @@ public class ReflectData extends SpecificData {
   public Object getField(Object record, String name, int position) {
     return getField(record, name, position, null);
   }
-  
+
   @Override
   protected Object getField(Object record, String name, int pos, Object state) {
     if (record instanceof IndexedRecord) {
@@ -168,7 +177,7 @@ public class ReflectData extends SpecificData {
       throw new AvroRuntimeException(e);
     }
   }
-    
+
   private FieldAccessor getAccessorForField(Object record, String name,
       int pos, Object optionalState) {
     if (optionalState != null) {
@@ -193,10 +202,10 @@ public class ReflectData extends SpecificData {
    */
   @Override
   protected boolean isArray(Object datum) {
-    if (datum == null) return false;
-    return (datum instanceof Collection)
-      || datum.getClass().isArray()
-      || isNonStringMap(datum);
+    if (datum == null) {
+      return false;
+    }
+    return ((datum instanceof Collection) || datum.getClass().isArray()) || isNonStringMap(datum);
   }
 
   @Override
@@ -235,32 +244,29 @@ public class ReflectData extends SpecificData {
       return super.validate(schema, datum);
     }
   }
-  
-  static final ConcurrentHashMap<Class<?>, ClassAccessorData> 
-    ACCESSOR_CACHE = new ConcurrentHashMap<Class<?>, ClassAccessorData>();
+
+  static final ConcurrentHashMap<Class<?>, ClassAccessorData> ACCESSOR_CACHE = new ConcurrentHashMap<Class<?>, ClassAccessorData>();
 
   private static class ClassAccessorData {
     private final Class<?> clazz;
-    private final Map<String, FieldAccessor> byName =
-        new HashMap<String, FieldAccessor>();
-    private final IdentityHashMap<Schema, FieldAccessor[]> bySchema =
-        new IdentityHashMap<Schema, FieldAccessor[]>();
-        
+
+    private final Map<String, FieldAccessor> byName = new HashMap<String, FieldAccessor>();
+
+    private final IdentityHashMap<Schema, FieldAccessor[]> bySchema = new IdentityHashMap<Schema, FieldAccessor[]>();
+
     private ClassAccessorData(Class<?> c) {
       clazz = c;
-      for(Field f : getFields(c, false)) {
+      for (Field f : getFields(c, false)) {
         if (f.isAnnotationPresent(AvroIgnore.class)) {
           continue;
         }
         FieldAccessor accessor = ReflectionUtil.getFieldAccess().getAccessor(f);
-        AvroName avroname = f.getAnnotation(AvroName.class);    
-        byName.put( (avroname != null 
-          ? avroname.value()
-          : f.getName()) , accessor);  
+        AvroName avroname = f.getAnnotation(AvroName.class);
+        byName.put(avroname != null ? avroname.value() : f.getName(), accessor);
       }
     }
-    
-    /** 
+
+    /**
      * Return the field accessors as an array, indexed by the field
      * index of the given schema.
      */
@@ -276,7 +282,7 @@ public class ReflectData extends SpecificData {
     private FieldAccessor[] createAccessorsFor(Schema schema) {
       List<Schema.Field> avroFields = schema.getFields();
       FieldAccessor[] result = new FieldAccessor[avroFields.size()];
-      for(Schema.Field avroField : schema.getFields()) {
+      for (Schema.Field avroField : schema.getFields()) {
         result[avroField.pos()] = byName.get(avroField.name());
       }
       return result;
@@ -285,13 +291,12 @@ public class ReflectData extends SpecificData {
     private FieldAccessor getAccessorFor(String fieldName) {
       FieldAccessor result = byName.get(fieldName);
       if (result == null) {
-        throw new AvroRuntimeException(
-            "No field named " + fieldName + " in: " + clazz);
+        throw new AvroRuntimeException((("No field named " + fieldName) + " in: ") + clazz);
       }
       return result;
     }
   }
-  
+
   private ClassAccessorData getClassAccessorData(Class<?> c) {
     ClassAccessorData data = ACCESSOR_CACHE.get(c);
     if(data == null && !IndexedRecord.class.isAssignableFrom(c)){
@@ -303,7 +308,7 @@ public class ReflectData extends SpecificData {
     }
     return data;
   }
-  
+
   private FieldAccessor[] getFieldAccessors(Class<?> c, Schema s) {
     ClassAccessorData data = getClassAccessorData(c);
     if (data != null) {
@@ -311,7 +316,7 @@ public class ReflectData extends SpecificData {
     }
     return null;
   }
-  
+
   private FieldAccessor getFieldAccessor(Class<?> c, String fieldName) {
     ClassAccessorData data = getClassAccessorData(c);
     if (data != null) {
@@ -323,15 +328,16 @@ public class ReflectData extends SpecificData {
   /** @deprecated  Replaced by {@link SpecificData#CLASS_PROP} */
   @Deprecated
   static final String CLASS_PROP = "java-class";
+
   /** @deprecated  Replaced by {@link SpecificData#KEY_CLASS_PROP} */
   @Deprecated
   static final String KEY_CLASS_PROP = "java-key-class";
+
   /** @deprecated  Replaced by {@link SpecificData#ELEMENT_PROP} */
   @Deprecated
   static final String ELEMENT_PROP = "java-element-class";
 
-  private static final Map<String,Class> CLASS_CACHE =
-               new ConcurrentHashMap<String, Class>();
+  private static final Map<String, Class> CLASS_CACHE = new ConcurrentHashMap<String, Class>();
 
   static Class getClassProp(Schema schema, String prop) {
     String name = schema.getProp(prop);
@@ -349,7 +355,9 @@ public class ReflectData extends SpecificData {
   }
 
   private static final Class BYTES_CLASS = new byte[0].getClass();
+
   private static final IdentityHashMap<Class, Class> ARRAY_CLASSES;
+
   static {
     ARRAY_CLASSES = new IdentityHashMap<Class, Class>();
     ARRAY_CLASSES.put(byte.class, byte[].class);
@@ -419,11 +427,20 @@ public class ReflectData extends SpecificData {
     }
   }
 
+  // record name prefix
   static final String NS_MAP_ARRAY_RECORD =   // record name prefix
     "org.apache.avro.reflect.Pair";
+
+  // name of key field
   static final String NS_MAP_KEY = "key";     // name of key field
+
+  // index of key field
   static final int NS_MAP_KEY_INDEX = 0;      // index of key field
+
+  // name of value field
   static final String NS_MAP_VALUE = "value"; // name of value field
+
+  // index of value field
   static final int NS_MAP_VALUE_INDEX = 1;    // index of value field
 
   /*
@@ -433,10 +450,7 @@ public class ReflectData extends SpecificData {
   Schema createNonStringMapSchema(Type keyType, Type valueType,
                                   Map<String, Schema> names) {
     Schema keySchema = createSchema(keyType, names);
-    keySchema = checkCircularRefSchema(keySchema);
     Schema valueSchema = createSchema(valueType, names);
-    valueSchema = checkCircularRefSchema(valueSchema);
-
     Schema.Field keyField = 
       new Schema.Field(NS_MAP_KEY, keySchema, null, null);
     Schema.Field valueField = 
@@ -495,66 +509,75 @@ public class ReflectData extends SpecificData {
   }
 
   @Override
-  protected Schema createSchema(Type type, Map<String,Schema> names) {
-    if (type instanceof GenericArrayType) {                  // generic array
-      Type component = ((GenericArrayType)type).getGenericComponentType();
-      if (component == Byte.TYPE)                            // byte array
-        return Schema.create(Schema.Type.BYTES);           
+  protected Schema createSchema(Type type, Map<String, Schema> names) {
+    if (type instanceof GenericArrayType) {
+      // generic array
+      Type component = ((GenericArrayType) (type)).getGenericComponentType();
+      // byte array
+      if (component == Byte.TYPE) {
+        return Schema.create(Schema.Type.BYTES);
+      }
       Schema elementSchema = createSchema(component, names);
       Schema circularSchema = checkCircularRefSchema(elementSchema);
       Schema result = Schema.createArray(circularSchema);
       setElement(result, component);
       return result;
     } else if (type instanceof ParameterizedType) {
-      ParameterizedType ptype = (ParameterizedType)type;
-      Class raw = (Class)ptype.getRawType();
+      ParameterizedType ptype = ((ParameterizedType) (type));
+      Class raw = ((Class) (ptype.getRawType()));
       Type[] params = ptype.getActualTypeArguments();
-      if (Map.class.isAssignableFrom(raw)) {                 // Map
-        Class key = (Class)params[0];
-        if (isStringable(key)) {                             // Stringable key
-          Schema valueSchema = createSchema(params[1], names);
-          Schema circularSchema = checkCircularRefSchema(valueSchema);
-          Schema schema = Schema.createMap(circularSchema);
+      if (Map.class.isAssignableFrom(raw)) {
+        // Map
+        Schema valueSchema = createSchema(params[1], names);
+        Schema circularSchema = checkCircularRefSchema(valueSchema);
+        Schema schema = Schema.createMap(circularSchema);
+      // Map
+        Class key = ((Class) (params[0]));
+        if (isStringable(key)) {
+          // Stringable key
+          Schema schema = Schema.createMap(createSchema(params[1], names));
           schema.addProp(KEY_CLASS_PROP, key.getName());
           return schema;
-        } else if (key != String.class) {
+        } else if (key != java.lang.String.class) {
           Schema schema = createNonStringMapSchema(params[0], params[1], names);
           schema.addProp(CLASS_PROP, raw.getName());
           return schema;
         }
-      } else if (Collection.class.isAssignableFrom(raw)) {   // Collection
-        if (params.length != 1)
+      } else if (Collection.class.isAssignableFrom(raw)) {
+        // Collection
+        if (params.length != 1) {
           throw new AvroTypeException("No array type specified.");
+        }
         Schema elementSchema = createSchema(params[0], names);
         Schema circularSchema = checkCircularRefSchema(elementSchema);
         Schema schema = Schema.createArray(circularSchema);
         schema.addProp(CLASS_PROP, raw.getName());
         return schema;
       }
-    } else if ((type == Byte.class) || (type == Byte.TYPE)) {
+    } else if ((type == java.lang.Byte.class) || (type == Byte.TYPE)) {
       Schema result = Schema.create(Schema.Type.INT);
-      result.addProp(CLASS_PROP, Byte.class.getName());
+      result.addProp(CLASS_PROP, java.lang.Byte.class.getName());
       return result;
-    } else if ((type == Short.class) || (type == Short.TYPE)) {
+    } else if ((type == java.lang.Short.class) || (type == Short.TYPE)) {
       Schema result = Schema.create(Schema.Type.INT);
-      result.addProp(CLASS_PROP, Short.class.getName());
+      result.addProp(CLASS_PROP, java.lang.Short.class.getName());
       return result;
-    } else if ((type == Character.class) || (type == Character.TYPE)) {
-        Schema result = Schema.create(Schema.Type.INT);
-        result.addProp(CLASS_PROP, Character.class.getName());
-        return result;
-    } else if (type instanceof Class) {                      // Class
-      Class<?> c = (Class<?>)type;
-      if (c.isPrimitive() ||                                 // primitives
-          c == Void.class || c == Boolean.class || 
-          c == Integer.class || c == Long.class ||
-          c == Float.class || c == Double.class || 
-          c == Byte.class || c == Short.class || 
-          c == Character.class)
+    } else if ((type == java.lang.Character.class) || (type == Character.TYPE)) {
+      Schema result = Schema.create(Schema.Type.INT);
+      result.addProp(CLASS_PROP, java.lang.Character.class.getName());
+      return result;
+    } else if (type instanceof Class) {
+      // Class
+      Class<?> c = ((Class<?>) (type));
+      if (((((((((c.isPrimitive() || // primitives
+      (c == java.lang.Void.class)) || (c == java.lang.Boolean.class)) || (c == java.lang.Integer.class)) || (c == java.lang.Long.class)) || (c == java.lang.Float.class)) || (c == java.lang.Double.class)) || (c == java.lang.Byte.class)) || (c == java.lang.Short.class)) || (c == java.lang.Character.class)) {
         return super.createSchema(type, names);
-      if (c.isArray()) {                                     // array
+      }
+      if (c.isArray()) {
+        // array
         Class component = c.getComponentType();
-        if (component == Byte.TYPE) {                        // byte array
+        if (component == Byte.TYPE) {
+          // byte array
           Schema result = Schema.create(Schema.Type.BYTES);
           result.addProp(CLASS_PROP, c.getName());
           return result;
@@ -567,89 +590,107 @@ public class ReflectData extends SpecificData {
         return result;
       }
       AvroSchema explicit = c.getAnnotation(AvroSchema.class);
-      if (explicit != null)                                  // explicit schema
+      // explicit schema
+      if (explicit != null) {
         return Schema.parse(explicit.value());
-      if (CharSequence.class.isAssignableFrom(c))            // String
+      }
+      // String
+      if (java.lang.CharSequence.class.isAssignableFrom(c)) {
         return Schema.create(Schema.Type.STRING);
-      if (ByteBuffer.class.isAssignableFrom(c))              // bytes
+      }
+      // bytes
+      if (ByteBuffer.class.isAssignableFrom(c)) {
         return Schema.create(Schema.Type.BYTES);
-      if (Collection.class.isAssignableFrom(c))              // array
+      }
+      // array
+      if (Collection.class.isAssignableFrom(c)) {
         throw new AvroRuntimeException("Can't find element type of Collection");
+      }
       String fullName = c.getName();
       Schema schema = names.get(fullName);
       if (schema == null) {
         String name = c.getSimpleName();
-        String space = c.getPackage() == null ? "" : c.getPackage().getName();
-        if (c.getEnclosingClass() != null)                   // nested class
+        String space = (c.getPackage() == null) ? "" : c.getPackage().getName();
+        // nested class
+        if (c.getEnclosingClass() != null) {
           space = c.getEnclosingClass().getName() + "$";
+        }
         Union union = c.getAnnotation(Union.class);
-        if (union != null) {                                 // union annotated
+        if (union != null) {
+          // union annotated
           return getAnnotatedUnion(union, names);
-        } else if (isStringable(c)) {                        // Stringable
+        } else if (isStringable(c)) {
+          // Stringable
           Schema result = Schema.create(Schema.Type.STRING);
           result.addProp(CLASS_PROP, c.getName());
           return result;
-        } else if (c.isEnum()) {                             // Enum
+        } else if (c.isEnum()) {
+          // Enum
           List<String> symbols = new ArrayList<String>();
-          Enum[] constants = (Enum[])c.getEnumConstants();
-          for (int i = 0; i < constants.length; i++)
+          Enum[] constants = ((Enum[]) (c.getEnumConstants()));
+          for (int i = 0; i < constants.length; i++) {
             symbols.add(constants[i].name());
-          schema = Schema.createEnum(name, null /* doc */, space, symbols);
+          }
+          schema = /* doc */
+          Schema.createEnum(name, null, space, symbols);
           consumeAvroAliasAnnotation(c, schema);
-        } else if (GenericFixed.class.isAssignableFrom(c)) { // fixed
+        } else if (GenericFixed.class.isAssignableFrom(c)) {
+          // fixed
           int size = c.getAnnotation(FixedSize.class).value();
-          schema = Schema.createFixed(name, null /* doc */, space, size);
+          schema = /* doc */
+          Schema.createFixed(name, null, space, size);
           consumeAvroAliasAnnotation(c, schema);
-        } else if (IndexedRecord.class.isAssignableFrom(c)) { // specific
+        } else if (IndexedRecord.class.isAssignableFrom(c)) {
+          // specific
           return super.createSchema(type, names);
-        } else {                                             // record
+        } else {
+          // record
           List<Schema.Field> fields = new ArrayList<Schema.Field>();
-          boolean error = Throwable.class.isAssignableFrom(c);
-          schema = Schema.createRecord(name, null /* doc */, space, error);
+          boolean error = java.lang.Throwable.class.isAssignableFrom(c);
+          schema = /* doc */
+          Schema.createRecord(name, null, space, error);
           consumeAvroAliasAnnotation(c, schema);
           names.put(c.getName(), schema);
-          for (Field field : getCachedFields(c))
-            if ((field.getModifiers()&(Modifier.TRANSIENT|Modifier.STATIC))==0 
-                && !field.isAnnotationPresent(AvroIgnore.class)) {
+          for (Field field : getCachedFields(c)) {
+            if (((field.getModifiers() & (Modifier.TRANSIENT | Modifier.STATIC)) == 0) && (!field.isAnnotationPresent(AvroIgnore.class))) {
               Schema fieldSchema = createFieldSchema(field, names);
-              if (c != CircularRef.class)
+              if (c != CircularRef.class) {
                 fieldSchema = checkCircularRefSchema(fieldSchema);
-              AvroDefault defaultAnnotation
-                = field.getAnnotation(AvroDefault.class);
-              JsonNode defaultValue = (defaultAnnotation == null)
-                ? null
-                : Schema.parseJson(defaultAnnotation.value());
-              
-              if (defaultValue == null
-                  && fieldSchema.getType() == Schema.Type.UNION) {
+              }
+              AvroDefault defaultAnnotation = field.getAnnotation(AvroDefault.class);
+              JsonNode defaultValue = (defaultAnnotation == null) ? null : Schema.parseJson(defaultAnnotation.value());
+              if ((defaultValue == null) && (fieldSchema.getType() == Type.UNION)) {
                 Schema defaultType = fieldSchema.getTypes().get(0);
-                if (defaultType.getType() == Schema.Type.NULL) {
+                if (defaultType.getType() == Type.NULL) {
                   defaultValue = NullNode.getInstance();
                 }
               }
-              AvroName annotatedName = field.getAnnotation(AvroName.class);       // Rename fields
-              String fieldName = (annotatedName != null)            
-                ? annotatedName.value()
-                : field.getName();
-              Schema.Field recordField 
-                = new Schema.Field(fieldName, fieldSchema, null, defaultValue);
-             
-              AvroMeta meta = field.getAnnotation(AvroMeta.class);              // add metadata
-              if (meta != null) 
-                recordField.addProp(meta.key(), meta.value());  
-              for(Schema.Field f : fields) {                                
-                if (f.name().equals(fieldName)) 
-                  throw new AvroTypeException("double field entry: "+ fieldName);
+              AvroName annotatedName = field.getAnnotation(AvroName.class);// Rename fields
+
+              String fieldName = (annotatedName != null) ? annotatedName.value() : field.getName();
+              Schema.Field recordField = new Schema.Field(fieldName, fieldSchema, null, defaultValue);
+              AvroMeta meta = field.getAnnotation(AvroMeta.class);// add metadata
+
+              if (meta != null) {
+                recordField.addProp(meta.key(), meta.value());
+              }
+              for (Schema.Field f : fields) {
+                if (f.name().equals(fieldName)) {
+                  throw new AvroTypeException("double field entry: " + fieldName);
+                }
               }
               fields.add(recordField);
             }
-          if (error)                              // add Throwable message
-            fields.add(new Schema.Field("detailMessage", THROWABLE_MESSAGE,
-                                        null, null));
+          }
+          // add Throwable message
+          if (error) {
+            fields.add(new Schema.Field("detailMessage", THROWABLE_MESSAGE, null, null));
+          }
           schema.setFields(fields);
           AvroMeta meta = c.getAnnotation(AvroMeta.class);
-          if (meta != null) 
-              schema.addProp(meta.key(), meta.value());
+          if (meta != null) {
+            schema.addProp(meta.key(), meta.value());
+          }
         }
         names.put(fullName, schema);
       }
@@ -697,7 +738,7 @@ public class ReflectData extends SpecificData {
     // Neither record, nor union with record, return original schema
     return fieldSchema;
   }
-  
+
   private boolean canBeRecordWithCircularRefs (Schema s) {
     if (s.getType() == Schema.Type.RECORD && !s.isError()) {
       // Skip java built-in classes.
@@ -756,9 +797,8 @@ public class ReflectData extends SpecificData {
     }
   }
 
-  private static final Map<Class<?>,Field[]> FIELDS_CACHE =
-    new ConcurrentHashMap<Class<?>,Field[]>();
-  
+  private static final Map<Class<?>, Field[]> FIELDS_CACHE = new ConcurrentHashMap<Class<?>, Field[]>();
+
   // Return of this class and its superclasses to serialize.
   private static Field[] getCachedFields(Class<?> recordClass) {
     Field[] fieldsList = FIELDS_CACHE.get(recordClass);
@@ -786,7 +826,7 @@ public class ReflectData extends SpecificData {
     fieldsList = fields.values().toArray(new Field[0]);
     return fieldsList;
   }
-  
+
   /** Create a schema for a field. */
   protected Schema createFieldSchema(Field field, Map<String, Schema> names) {
     AvroEncode enc = field.getAnnotation(AvroEncode.class);
@@ -926,7 +966,7 @@ public class ReflectData extends SpecificData {
   protected Object getRecordState(Object record, Schema schema) {
     return getFieldAccessors(record.getClass(), schema);
   }
-  
+
   private void consumeAvroAliasAnnotation(Class<?> c, Schema schema) {
     AvroAlias alias = c.getAnnotation(AvroAlias.class);
     if (alias != null) {
@@ -936,5 +976,4 @@ public class ReflectData extends SpecificData {
       schema.addAlias(alias.alias(), space);
     }
   }
-  
 }

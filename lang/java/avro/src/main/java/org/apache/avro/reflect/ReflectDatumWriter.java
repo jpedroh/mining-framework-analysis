@@ -21,12 +21,12 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.Map;
-
 import org.apache.avro.AvroRuntimeException;
-import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
+import org.apache.avro.Schema;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.specific.SpecificDatumWriter;
+
 
 /**
  * {@link org.apache.avro.io.DatumWriter DatumWriter} for existing classes
@@ -52,15 +52,15 @@ public class ReflectDatumWriter<T> extends SpecificDatumWriter<T> {
   public ReflectDatumWriter(Schema root, ReflectData reflectData) {
     super(root, reflectData);
   }
-  
+
   protected ReflectDatumWriter(ReflectData reflectData) {
     super(reflectData);
   }
 
-  private static final ThreadLocal<IdentityHashMap<Object,CircularRef>>
-    CIRCULAR_REFS = new ThreadLocal<IdentityHashMap<Object,CircularRef>>() {
-    @Override protected IdentityHashMap<Object,CircularRef> initialValue() {
-        return new IdentityHashMap<Object,CircularRef>();
+  private static final ThreadLocal<IdentityHashMap<Object, CircularRef>> CIRCULAR_REFS = new ThreadLocal<IdentityHashMap<Object, CircularRef>>() {
+    @Override
+    protected IdentityHashMap<Object, CircularRef> initialValue() {
+      return new IdentityHashMap<Object, CircularRef>();
     }
   };
 
@@ -70,7 +70,7 @@ public class ReflectDatumWriter<T> extends SpecificDatumWriter<T> {
     if (((ReflectData)getData()).isResolvingCircularRefs())
       CIRCULAR_REFS.get().clear();             // clear references after
   }
-  
+
   @Override
   protected void writeRecord(Schema schema, Object datum, Encoder out)
     throws IOException {
@@ -147,7 +147,7 @@ public class ReflectDatumWriter<T> extends SpecificDatumWriter<T> {
       out.writeArrayEnd();
     }
   }
-  
+
   private void writeObjectArray(Schema element, Object[] data, Encoder out) throws IOException {
     int size = data.length;
     out.setItemCount(size);
@@ -155,12 +155,12 @@ public class ReflectDatumWriter<T> extends SpecificDatumWriter<T> {
       this.write(element, data[i], out);
     }
   }
-    
+
   private void arrayError(Class<?> cl, Schema.Type type) {
     throw new AvroRuntimeException("Error writing array with inner type " +
       cl + " and avro type: " + type);
   }
-  
+
   @Override
   protected void writeBytes(Object datum, Encoder out) throws IOException {
     if (datum instanceof byte[])
@@ -170,25 +170,24 @@ public class ReflectDatumWriter<T> extends SpecificDatumWriter<T> {
   }
 
   @Override
-  protected void write(Schema schema, Object datum, Encoder out)
-    throws IOException {
-    if (datum instanceof Byte)
-      datum = ((Byte)datum).intValue();
-    else if (datum instanceof Short)
-      datum = ((Short)datum).intValue();
-    else if (datum instanceof Character)
-        datum = (int)(char)(Character)datum;
-    else if (datum instanceof Map && ReflectData.isNonStringMapSchema(schema)) {
-        // Maps with non-string keys are written as arrays.
-        // Schema for such maps is already changed. Here we
-        // just switch the map to a similar form too.
-        datum = ((Map)datum).entrySet();
-      }
+  protected void write(Schema schema, Object datum, Encoder out) throws IOException {
+    if (datum instanceof Byte) {
+      datum = ((Byte) (datum)).intValue();
+    } else if (datum instanceof Short) {
+      datum = ((Short) (datum)).intValue();
+    } else if (datum instanceof Character) {
+      datum = ((int) ((char) ((Character) (datum))));
+    } else if ((datum instanceof Map) && ReflectData.isNonStringMapSchema(schema)) {
+      // Maps with non-string keys are written as arrays.
+      // Schema for such maps is already changed. Here we
+      // just switch the map to a similar form too.
+      datum = ((Map) (datum)).entrySet();
+    }
     try {
       super.write(schema, datum, out);
-    } catch (NullPointerException e) {            // improve error message
-      NullPointerException result =
-        new NullPointerException("in "+schema.getFullName()+" "+e.getMessage());
+    } catch (java.lang.NullPointerException e) {
+      // improve error message
+      NullPointerException result = new NullPointerException((("in " + schema.getFullName()) + " ") + e.getMessage());
       result.initCause(e.getCause() == null ? e : e.getCause());
       throw result;
     }
