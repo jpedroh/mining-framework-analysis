@@ -1,20 +1,19 @@
 package com.xebia.graph.neo4j.plugins;
 
+import com.google.common.collect.Lists;
 import java.util.List;
-
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 
-import com.google.common.collect.Lists;
 
 public class TestGraphUtil {
 	private enum RelTypes implements RelationshipType {
-		X
-	}
-	
+
+		X;}
+
 	public static List<Node> createTestNodes(GraphDatabaseService graphDb) {
 		Transaction tx = graphDb.beginTx();
 		Node n1 = null, n2 = null, n3 = null;
@@ -36,7 +35,7 @@ public class TestGraphUtil {
 
 		return Lists.newArrayList(n1, n2, n3);
 	}
-	
+
 	public static List<Relationship> createTestEdgesLinearlyConnecting(List<Node> nodes, GraphDatabaseService graphDb) {
 		Transaction tx = graphDb.beginTx();
 		List<Relationship> testEdges = Lists.newArrayList();
@@ -57,33 +56,26 @@ public class TestGraphUtil {
 		
 		return testEdges;
 	}
-	
-	public static List<Relationship> createTestEdgesMakingTriangleGraphWithUnbalancedWeight(Node n1, Node n2, Node n3,
-			GraphDatabaseService graphDb) {
+
+	public static List<Relationship> createTestEdgesMakingTriangleGraphWithUnbalancedWeight(Node n1, Node n2, Node n3, GraphDatabaseService graphDb) {
 		Transaction tx = graphDb.beginTx();
 		List<Relationship> testEdges = Lists.newArrayList();
-		
 		try {
 			Relationship e1 = n1.createRelationshipTo(n2, RelTypes.X);
 			e1.setProperty("weight", 3.0);
-			
 			Relationship e2 = n1.createRelationshipTo(n3, RelTypes.X);
 			e2.setProperty("weight", 1.0);
-			
 			Relationship e3 = n2.createRelationshipTo(n3, RelTypes.X);
 			e3.setProperty("weight", 3.0);
-			
 			testEdges.add(e1);
 			testEdges.add(e2);
 			testEdges.add(e3);
-			
 			tx.success();
-		} catch (Exception e) {
+		} catch (java.lang.Exception e) {
 			tx.failure();
 		} finally {
 			tx.finish();
 		}
-		
 		return testEdges;
 	}
 
@@ -110,7 +102,7 @@ public class TestGraphUtil {
 
 		return Lists.newArrayList(n1, n2, n3, n4);
 	}
-	
+
 	public static List<Node> createCypherTestNodes(GraphDatabaseService graphDb) {
 		Transaction tx = graphDb.beginTx();
 		Node n1 = null, n2 = null, n3 = null, n4 = null, n5 = null, n6 = null, n7 = null, n8 = null, n9 = null, n10 = null;
@@ -146,7 +138,7 @@ public class TestGraphUtil {
 
 		return Lists.newArrayList(n1, n2, n3, n4, n5, n6, n7, n8, n9, n10);
 	}
-	
+
 	public static List<Relationship> createTestEdgesMakingSquareGraphWithUnbalancedWeight(Node n1, Node n2, Node n3, Node n4,
 			GraphDatabaseService graphDb) {
 		Transaction tx = graphDb.beginTx();
