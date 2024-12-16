@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.cloudslang.orchestrator.services;
 
+import io.cloudslang.score.facade.entities.Execution;
 import io.cloudslang.score.facade.execution.ExecutionSummary;
 import io.cloudslang.score.facade.execution.PauseReason;
-import io.cloudslang.score.facade.entities.Execution;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,13 +33,12 @@ import java.util.Set;
  * Time: 15:34
  */
 public interface PauseResumeService {
-
     /**
      * Pauses execution with type PENDING_PAUSE
      *
      * @param executionId id of the execution
-     * @param branchId    id of the branch of the execution we want to pause
-     * @param reason      the pause reason
+     * @param branchId id of the branch of the execution we want to pause
+     * @param reason the pause reason
      * @return paused execution id but in case the execution is already paused then return null
      */
     Long pauseExecution(Long executionId, String branchId, PauseReason reason);
@@ -48,25 +46,39 @@ public interface PauseResumeService {
     /**
      * Add interrupts to the system context under USER_INTERRUPT
      *
-     * @param executionId id of the execution
+     * @param executionId
+     * 		id of the execution
      * @return add interrupts to the current execution
      */
-    void injectInterrupts(Long executionId, Map<String, Set<String>> interrupts);
+    public abstract void injectInterrupts(Long executionId, Map<String, 
+<<<<<<< LEFT
+ArrayList
+=======
+Set
+>>>>>>> RIGHT
+    <String>> interrupts);
 
     /**
      * removes interrupts
      *
-     * @param executionId id of the execution
+     * @param executionId
+     * 		id of the execution
      * @return add interrupts to the current execution
      */
-    void deleteInterrupts(Long executionId, Map<String, Set<String>> interrupts);
+    public abstract void deleteInterrupts(Long executionId, Map<String, 
+<<<<<<< LEFT
+ArrayList
+=======
+Set
+>>>>>>> RIGHT
+    <String>> interrupts);
 
     /**
      * Resumes execution and puts it back to execution queue
      *
      * @param executionId id of the paused execution we want to resume
-     * @param branchId    id of the branch of the execution we want to resume
-     * @param map         the values to run with
+     * @param branchId id of the branch of the execution we want to resume
+     * @param map the values to run with
      */
     void resumeExecution(Long executionId, String branchId, Map<String, Serializable> map);
 
@@ -91,8 +103,8 @@ public interface PauseResumeService {
      * Returns the execution if its status is Paused*. Otherwise returns null.
      *
      * @param executionId id of the execution
-     * @param branchId    id of the branch
-     * @return the execution if its status is Paused*. Otherwise returns null.
+     * @param branchId id of the branch
+     * @return  the execution if its status is Paused*. Otherwise returns null.
      */
     ExecutionSummary readPausedExecution(Long executionId, String branchId);
 

@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.cloudslang.orchestrator.services;
 
+import io.cloudslang.score.facade.entities.Execution;
 import io.cloudslang.score.facade.execution.ExecutionSummary;
 import io.cloudslang.score.facade.execution.PauseReason;
-import io.cloudslang.score.facade.entities.Execution;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 
 /**
  * User: stoneo
@@ -38,7 +37,6 @@ import java.util.Set;
  * until it done, no pause and resume is possible in score
  */
 public class StubPauseResumeServiceImpl implements PauseResumeService {
-
     @Override
     public Long pauseExecution(Long executionId, String branchId, PauseReason reason) {
         return null;
@@ -50,13 +48,23 @@ public class StubPauseResumeServiceImpl implements PauseResumeService {
     }
 
     @Override
-    public void injectInterrupts(Long executionId, Map<String, Set<String>> interrupts) {
-
+    public void injectInterrupts(Long executionId, Map<String, 
+<<<<<<< LEFT
+ArrayList
+=======
+Set
+>>>>>>> RIGHT
+    <String>> interrupts) {
     }
 
     @Override
-    public void deleteInterrupts(Long executionId, Map<String, Set<String>> interrupts) {
-
+    public void deleteInterrupts(Long executionId, Map<String, 
+<<<<<<< LEFT
+ArrayList
+=======
+Set
+>>>>>>> RIGHT
+    <String>> interrupts) {
     }
 
     @Override
