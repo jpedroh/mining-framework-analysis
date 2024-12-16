@@ -35,7 +35,6 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-
 package org.dcm4che3.tool.storescp;
 
 import java.io.File;
@@ -48,17 +47,16 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.dcm4che3.data.Tag;
 import org.dcm4che3.data.Attributes;
+import org.dcm4che3.data.Tag;
 import org.dcm4che3.data.VR;
+import org.dcm4che3.io.DicomInputStream.IncludeBulkData;
 import org.dcm4che3.io.DicomInputStream;
 import org.dcm4che3.io.DicomOutputStream;
-import org.dcm4che3.io.DicomInputStream.IncludeBulkData;
 import org.dcm4che3.net.*;
 import org.dcm4che3.net.pdu.PresentationContext;
 import org.dcm4che3.net.service.BasicCEchoSCP;
@@ -71,52 +69,56 @@ import org.dcm4che3.util.SafeClose;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * @author Gunter Zeilinger <gunterze@gmail.com>
  *
  */
 public class StoreSCP {
-
     private static final Logger LOG = LoggerFactory.getLogger(StoreSCP.class);
 
     private static ResourceBundle rb =
         ResourceBundle.getBundle("org.dcm4che3.tool.storescp.messages");
+
     private static final String PART_EXT = ".part";
 
     private final Device device = new Device("storescp");
-    private final ApplicationEntity ae = new ApplicationEntity("*");
-    private final Connection conn = new Connection();
-    private File storageDir;
-    private AttributesFormat filePathFormat;
-    private int status;
-    private int[] receiveDelays;
-    private int[] responseDelays;
-    private int renameRetries;
-    private int renameRetryJitter;
-    private final BasicCStoreSCP cstoreSCP = new BasicCStoreSCP("*") {
 
+    private final ApplicationEntity ae = new ApplicationEntity("*");
+
+    private final Connection conn = new Connection();
+
+    private File storageDir;
+
+    private AttributesFormat filePathFormat;
+
+    private int status;
+
+    private int[] receiveDelays;
+
+    private int[] responseDelays;
+
+    private int renameRetries;
+
+    private int renameRetryJitter;
+
+    private final BasicCStoreSCP cstoreSCP = new BasicCStoreSCP("*") {
         @Override
-        protected void store(Association as, PresentationContext pc,
-                Attributes rq, PDVInputStream data, Attributes rsp)
-                throws IOException {
+        protected void store(Association as, PresentationContext pc, Attributes rq, PDVInputStream data, Attributes rsp) throws IOException {
             sleep(as, receiveDelays);
             try {
                 rsp.setInt(Tag.Status, VR.US, status);
-                if (storageDir == null)
+                if (storageDir == null) {
                     return;
-
+                }
                 String cuid = rq.getString(Tag.AffectedSOPClassUID);
                 String iuid = rq.getString(Tag.AffectedSOPInstanceUID);
                 String tsuid = pc.getTransferSyntax();
                 File file = File.createTempFile(iuid, PART_EXT, storageDir);
                 try {
-                    storeTo(as, as.createFileMetaInformation(iuid, cuid, tsuid),
-                            data, file);
-                    renameTo(as, file, new File(storageDir,
-                            filePathFormat == null
-                                    ? iuid
-                                    : filePathFormat.format(parse(file))));
-                } catch (Exception e) {
+                    storeTo(as, as.createFileMetaInformation(iuid, cuid, tsuid), data, file);
+                    renameTo(as, file, new File(storageDir, filePathFormat == null ? iuid : filePathFormat.format(parse(file))));
+                } catch (java.lang.Exception e) {
                     deleteFile(as, file);
                     throw new DicomServiceException(Status.ProcessingFailure, e);
                 }
@@ -124,7 +126,6 @@ public class StoreSCP {
                 sleep(as, responseDelays);
             }
         }
-
     };
 
     private void sleep(Association as, int[] delays) {
@@ -159,22 +160,20 @@ public class StoreSCP {
         }
     }
 
-    private void renameTo(Association as, File from, File dest)
-            throws IOException {
+    private void renameTo(Association as, File from, File dest) throws IOException {
         LOG.info("{}: M-RENAME {} to {}", as, from, dest);
-        for(int try_count = 0; try_count <= renameRetries; try_count++) {
-            try{
+        for (int try_count = 0; try_count <= renameRetries; try_count++) {
+            try {
                 dest.getParentFile().mkdirs();
                 Files.move(from.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 return;
-            }
-            catch (IOException e){
-                if (try_count == renameRetries){
+            } catch (IOException e) {
+                if (try_count == renameRetries) {
                     throw e;
                 }
                 try {
-                    Thread.sleep((long)(Math.random()*renameRetryJitter));
-                } catch (InterruptedException ignore) {
+                    Thread.sleep(((long) (Math.random() * renameRetryJitter)));
+                } catch (java.lang.InterruptedException ignore) {
                 }
             }
         }
@@ -226,8 +225,8 @@ public class StoreSCP {
         this.responseDelays = responseDelays;
     }
 
-    public void setRenameRetries(int renameRetries){
-        if (renameRetries <0){
+    public void setRenameRetries(int renameRetries) {
+        if (renameRetries < 0) {
             throw new IllegalArgumentException("Rename retries must be a non-negative value!");
         }
         this.renameRetries = renameRetries;
@@ -240,8 +239,7 @@ public class StoreSCP {
         this.renameRetryJitter = renameRetryJitter;
     }
 
-    private static CommandLine parseComandLine(String[] args)
-            throws ParseException {
+    private static CommandLine parseComandLine(String[] args) throws ParseException {
         Options opts = new Options();
         CLIUtils.addBindServerOption(opts);
         CLIUtils.addAEOptions(opts);
@@ -330,8 +328,7 @@ public class StoreSCP {
             main.setRenameRetries(CLIUtils.getIntOption(cl, "rename-retries", 3));
             main.setRenameRetryJitter(CLIUtils.getIntOption(cl, "rename-retry-jitter", 50));
             ExecutorService executorService = Executors.newCachedThreadPool();
-            ScheduledExecutorService scheduledExecutorService = 
-                    Executors.newSingleThreadScheduledExecutor();
+            ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
             main.device.setScheduledExecutor(scheduledExecutorService);
             main.device.setExecutor(executorService);
             main.device.bindConnections();
@@ -339,7 +336,7 @@ public class StoreSCP {
             System.err.println("storescp: " + e.getMessage());
             System.err.println(rb.getString("try"));
             System.exit(2);
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             System.err.println("storescp: " + e.getMessage());
             e.printStackTrace();
             System.exit(2);
@@ -378,5 +375,4 @@ public class StoreSCP {
             }
         }
      }
-
 }
