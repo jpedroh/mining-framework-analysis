@@ -18,7 +18,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser;
 
 import com.github.javaparser.ast.CompilationUnit;
@@ -26,14 +25,13 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.LineComment;
 import com.github.javaparser.utils.PositionUtils;
-
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-
 import static com.github.javaparser.ast.Node.NODE_BY_BEGIN_POSITION;
+
 
 /**
  * Assigns comments to nodes of the AST.
@@ -53,23 +51,19 @@ class CommentsInserter {
      * the comments.
      */
     private void insertComments(CompilationUnit cu, TreeSet<Comment> comments) {
-        if (comments.isEmpty())
+        if (comments.isEmpty()) {
             return;
-
+        }
         /* I should sort all the direct children and the comments, if a comment
-         is the first thing then it
-         a comment to the CompilationUnit */
-
+        is the first thing then it
+        a comment to the CompilationUnit
+         */
         // FIXME if there is no package it could be also a comment to the following class...
         // so I could use some heuristics in these cases to distinguish the two
         // cases
-
         List<Node> children = cu.getChildNodes();
-
         Comment firstComment = comments.iterator().next();
-        if (cu.getPackageDeclaration().isPresent()
-                && (children.isEmpty() || PositionUtils.areInOrder(
-                firstComment, cu.getPackageDeclaration().get()))) {
+        if (cu.getPackageDeclaration().isPresent() && (children.isEmpty() || PositionUtils.areInOrder(firstComment, cu.getPackageDeclaration().get()))) {
             cu.setComment(firstComment);
             comments.remove(firstComment);
         }
@@ -213,5 +207,4 @@ class CommentsInserter {
         int endOfA = a.getEnd().get().line;
         return b.getBegin().get().line > endOfA + 1;
     }
-
 }

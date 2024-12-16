@@ -18,7 +18,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser.printer;
 
 import com.github.javaparser.ast.*;
@@ -34,15 +33,14 @@ import com.github.javaparser.ast.nodeTypes.NodeWithVariables;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
 import com.github.javaparser.ast.visitor.VoidVisitor;
-
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static com.github.javaparser.utils.PositionUtils.sortByBeginPosition;
 import static com.github.javaparser.utils.Utils.isNullOrEmpty;
+
 
 /**
  * Outputs the AST as formatted Java source code.
@@ -152,24 +150,20 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
     @Override
     public void visit(final CompilationUnit n, final Void arg) {
         printJavaComment(n.getComment(), arg);
-
         if (n.getPackageDeclaration().isPresent()) {
             n.getPackageDeclaration().get().accept(this, arg);
         }
-
         n.getImports().accept(this, arg);
         if (!n.getImports().isEmpty()) {
             printer.println();
         }
-
-        for (final Iterator<TypeDeclaration<?>> i = n.getTypes().iterator(); i.hasNext(); ) {
+        for (final Iterator<TypeDeclaration<?>> i = n.getTypes().iterator(); i.hasNext();) {
             i.next().accept(this, arg);
             printer.println();
             if (i.hasNext()) {
                 printer.println();
             }
         }
-
         printOrphanCommentsEnding(n);
     }
 
@@ -215,20 +209,16 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
         printJavaComment(n.getComment(), arg);
         printMemberAnnotations(n.getAnnotations(), arg);
         printModifiers(n.getModifiers());
-
         if (n.isInterface()) {
             printer.print("interface ");
         } else {
             printer.print("class ");
         }
-
         n.getName().accept(this, arg);
-
         printTypeParameters(n.getTypeParameters(), arg);
-
         if (!n.getExtendedTypes().isEmpty()) {
             printer.print(" extends ");
-            for (final Iterator<ClassOrInterfaceType> i = n.getExtendedTypes().iterator(); i.hasNext(); ) {
+            for (final Iterator<ClassOrInterfaceType> i = n.getExtendedTypes().iterator(); i.hasNext();) {
                 final ClassOrInterfaceType c = i.next();
                 c.accept(this, arg);
                 if (i.hasNext()) {
@@ -236,10 +226,9 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
                 }
             }
         }
-
         if (!n.getImplementedTypes().isEmpty()) {
             printer.print(" implements ");
-            for (final Iterator<ClassOrInterfaceType> i = n.getImplementedTypes().iterator(); i.hasNext(); ) {
+            for (final Iterator<ClassOrInterfaceType> i = n.getImplementedTypes().iterator(); i.hasNext();) {
                 final ClassOrInterfaceType c = i.next();
                 c.accept(this, arg);
                 if (i.hasNext()) {
@@ -247,15 +236,12 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
                 }
             }
         }
-
         printer.println(" {");
         printer.indent();
         if (!isNullOrEmpty(n.getMembers())) {
             printMembers(n.getMembers(), arg);
         }
-
         printOrphanCommentsEnding(n);
-
         printer.unindent();
         printer.print("}");
     }
@@ -947,13 +933,11 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
         printJavaComment(n.getComment(), arg);
         printMemberAnnotations(n.getAnnotations(), arg);
         printModifiers(n.getModifiers());
-
         printer.print("enum ");
         n.getName().accept(this, arg);
-
         if (!n.getImplementedTypes().isEmpty()) {
             printer.print(" implements ");
-            for (final Iterator<ClassOrInterfaceType> i = n.getImplementedTypes().iterator(); i.hasNext(); ) {
+            for (final Iterator<ClassOrInterfaceType> i = n.getImplementedTypes().iterator(); i.hasNext();) {
                 final ClassOrInterfaceType c = i.next();
                 c.accept(this, arg);
                 if (i.hasNext()) {
@@ -961,12 +945,11 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
                 }
             }
         }
-
         printer.println(" {");
         printer.indent();
         if (n.getEntries() != null) {
             printer.println();
-            for (final Iterator<EnumConstantDeclaration> i = n.getEntries().iterator(); i.hasNext(); ) {
+            for (final Iterator<EnumConstantDeclaration> i = n.getEntries().iterator(); i.hasNext();) {
                 final EnumConstantDeclaration e = i.next();
                 e.accept(this, arg);
                 if (i.hasNext()) {
@@ -977,10 +960,8 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
         if (!n.getMembers().isEmpty()) {
             printer.println(";");
             printMembers(n.getMembers(), arg);
-        } else {
-            if (!n.getEntries().isEmpty()) {
-                printer.println();
-            }
+        } else if (!n.getEntries().isEmpty()) {
+            printer.println();
         }
         printer.unindent();
         printer.print("}");
@@ -1495,5 +1476,4 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
         }
         return helper.toArrayLevel(nodeWithVariables.getVariables().get(0).getType(), --level);
     }
-
 }

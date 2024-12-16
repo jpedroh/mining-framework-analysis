@@ -18,7 +18,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser.ast.visitor;
 
 import com.github.javaparser.ast.*;
@@ -33,11 +32,11 @@ import com.github.javaparser.ast.nodeTypes.NodeWithAnnotations;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
 
+
 /**
  * @author Julio Vilmar Gesser
  */
 public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
-
     @Override
     public void visit(final AnnotationDeclaration n, final A arg) {
         visitComment(n.getComment(), arg);

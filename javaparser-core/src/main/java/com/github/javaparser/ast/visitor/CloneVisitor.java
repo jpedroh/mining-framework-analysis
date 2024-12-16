@@ -18,7 +18,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser.ast.visitor;
 
 import com.github.javaparser.ast.*;
@@ -31,21 +30,16 @@ import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.imports.*;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
-
 import java.util.Optional;
 
-public class CloneVisitor implements GenericVisitor<Visitable, Object> {
 
+public class CloneVisitor implements GenericVisitor<Visitable, Object> {
     @Override
     public Visitable visit(CompilationUnit _n, Object _arg) {
         PackageDeclaration package_ = cloneNode(_n.getPackageDeclaration(), _arg);
         NodeList<ImportDeclaration> imports = cloneList(_n.getImports(), _arg);
         NodeList<TypeDeclaration<?>> types = cloneList(_n.getTypes(), _arg);
-
-        return new CompilationUnit(
-                _n.getRange().orElse(null),
-                package_, imports, types
-        );
+        return new CompilationUnit(_n.getRange().orElse(null), package_, imports, types);
     }
 
     @Override
@@ -93,11 +87,7 @@ public class CloneVisitor implements GenericVisitor<Visitable, Object> {
         NodeList<BodyDeclaration<?>> members = cloneList(_n.getMembers(), _arg);
         Comment comment = cloneNode(_n.getComment(), _arg);
         SimpleName nameExpr_ = cloneNode(_n.getName(), _arg);
-
-        ClassOrInterfaceDeclaration r = new ClassOrInterfaceDeclaration(
-                _n.getRange().orElse(null),
-                _n.getModifiers(), annotations, _n.isInterface(), nameExpr_, typeParameters, extendsList, implementsList, members
-        );
+        ClassOrInterfaceDeclaration r = new ClassOrInterfaceDeclaration(_n.getRange().orElse(null), _n.getModifiers(), annotations, _n.isInterface(), nameExpr_, typeParameters, extendsList, implementsList, members);
         r.setComment(comment);
         return r;
     }
@@ -110,11 +100,7 @@ public class CloneVisitor implements GenericVisitor<Visitable, Object> {
         NodeList<BodyDeclaration<?>> members = cloneList(_n.getMembers(), _arg);
         Comment comment = cloneNode(_n.getComment(), _arg);
         SimpleName nameExpr_ = cloneNode(_n.getName(), _arg);
-
-        EnumDeclaration r = new EnumDeclaration(
-                _n.getRange().orElse(null),
-                _n.getModifiers(), annotations, nameExpr_, implementsList, entries, members
-        );
+        EnumDeclaration r = new EnumDeclaration(_n.getRange().orElse(null), _n.getModifiers(), annotations, nameExpr_, implementsList, entries, members);
         r.setComment(comment);
         return r;
     }
@@ -1237,5 +1223,4 @@ public class CloneVisitor implements GenericVisitor<Visitable, Object> {
         }
         return (NodeList<N>) list.accept(this, _arg);
     }
-
 }

@@ -18,7 +18,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser.ast.visitor;
 
 import com.github.javaparser.ast.*;
@@ -32,11 +31,11 @@ import com.github.javaparser.ast.imports.*;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
 
+
 /**
  * @author Julio Vilmar Gesser
  */
 public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A> {
-
     @Override
     public R visit(final AnnotationDeclaration n, final A arg) {
         visitComment(n, arg);
@@ -324,7 +323,6 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
                 }
             }
         }
-
         if (n.getImplementedTypes() != null) {
             for (final ClassOrInterfaceType c : n.getImplementedTypes()) {
                 {
@@ -1609,7 +1607,7 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
         }
         return null;
     }
-    
+
     @Override
     public R visit(BadImportDeclaration n, A arg) {
         visitComment(n, arg);

@@ -18,7 +18,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser.bdd.steps;
 
 import com.github.javaparser.JavaParser;
@@ -37,14 +36,12 @@ import com.github.javaparser.ast.stmt.TryStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.VoidType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import java.util.EnumSet;
+import java.util.Map;
 import org.jbehave.core.annotations.Alias;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
-
-import java.util.EnumSet;
-import java.util.Map;
-
 import static com.github.javaparser.ast.NodeList.nodeList;
 import static com.github.javaparser.ast.type.PrimitiveType.INT_TYPE;
 import static com.github.javaparser.bdd.steps.SharedSteps.getMethodByPositionAndClassPosition;
@@ -52,14 +49,19 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 
-public class ManipulationSteps {
 
+public class ManipulationSteps {
     /* Fields used to maintain step state within this step class */
     private BlockStmt blockStmt;
+
     private Statement statement;
+
     private TryStmt tryStmt;
+
     private NodeList<VariableDeclarationExpr> variableDeclarationExprList;
+
     private ChangeMethodNameToUpperCaseVisitor changeMethodNameToUpperCaseVisitor;
+
     private AddNewIntParameterCalledValueVisitor addNewIntParameterCalledValueVisitor;
 
     /* Map that maintains shares state across step classes.  If manipulating the objects in the map you must update the state */
@@ -123,7 +125,7 @@ public class ManipulationSteps {
 
     @When("the package declaration is set to \"$packageName\"")
     public void whenThePackageDeclarationIsSetTo(String packageName) {
-        CompilationUnit compilationUnit = (CompilationUnit) state.get("cu1");
+        CompilationUnit compilationUnit = ((CompilationUnit) (state.get("cu1")));
         compilationUnit.setPackageDeclaration(new PackageDeclaration(Name.parse(packageName)));
         state.put("cu1", compilationUnit);
     }
@@ -284,4 +286,3 @@ public class ManipulationSteps {
         }
     }
 }
-

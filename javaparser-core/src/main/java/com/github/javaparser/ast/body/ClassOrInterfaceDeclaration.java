@@ -18,7 +18,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser.ast.body;
 
 import com.github.javaparser.Range;
@@ -34,74 +33,41 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.TypeParameter;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
-
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
-
 import static com.github.javaparser.utils.Utils.assertNotNull;
+
 
 /**
  * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1">JLS</a>
  * A definition of a class or interface. <code>class X { ... }</code>
  * @author Julio Vilmar Gesser
  */
-public final class ClassOrInterfaceDeclaration extends TypeDeclaration<ClassOrInterfaceDeclaration> implements
-        NodeWithImplements<ClassOrInterfaceDeclaration>,
-        NodeWithExtends<ClassOrInterfaceDeclaration>,
-        NodeWithTypeParameters<ClassOrInterfaceDeclaration> {
-
+public final class ClassOrInterfaceDeclaration extends TypeDeclaration<ClassOrInterfaceDeclaration> implements NodeWithImplements<ClassOrInterfaceDeclaration> , NodeWithExtends<ClassOrInterfaceDeclaration> , NodeWithTypeParameters<ClassOrInterfaceDeclaration> {
     private boolean isInterface;
 
     private NodeList<TypeParameter> typeParameters;
 
+    // Can contain more than one item if this is an interface
     // Can contain more than one item if this is an interface
     private NodeList<ClassOrInterfaceType> extendedTypes;
 
     private NodeList<ClassOrInterfaceType> implementedTypes;
 
     public ClassOrInterfaceDeclaration() {
-        this(null,
-                EnumSet.noneOf(Modifier.class),
-                new NodeList<>(),
-                false,
-                new SimpleName(),
-                new NodeList<>(),
-                new NodeList<>(),
-                new NodeList<>(),
-                new NodeList<>());
+        this(null, EnumSet.noneOf(Modifier.class), new NodeList<>(), false, new SimpleName(), new NodeList<>(), new NodeList<>(), new NodeList<>(), new NodeList<>());
     }
 
-    public ClassOrInterfaceDeclaration(final EnumSet<Modifier> modifiers, final boolean isInterface,
-                                       final String name) {
-        this(null,
-                modifiers,
-                new NodeList<>(),
-                isInterface,
-                new SimpleName(name),
-                new NodeList<>(),
-                new NodeList<>(),
-                new NodeList<>(),
-                new NodeList<>());
+    public ClassOrInterfaceDeclaration(final EnumSet<Modifier> modifiers, final boolean isInterface, final String name) {
+        this(null, modifiers, new NodeList<>(), isInterface, new SimpleName(name), new NodeList<>(), new NodeList<>(), new NodeList<>(), new NodeList<>());
     }
 
-    public ClassOrInterfaceDeclaration(final EnumSet<Modifier> modifiers,
-                                       final NodeList<AnnotationExpr> annotations, final boolean isInterface,
-                                       final SimpleName name,
-                                       final NodeList<TypeParameter> typeParameters,
-                                       final NodeList<ClassOrInterfaceType> extendedTypes,
-                                       final NodeList<ClassOrInterfaceType> implementedTypes,
-                                       final NodeList<BodyDeclaration<?>> members) {
+    public ClassOrInterfaceDeclaration(final EnumSet<Modifier> modifiers, final NodeList<AnnotationExpr> annotations, final boolean isInterface, final SimpleName name, final NodeList<TypeParameter> typeParameters, final NodeList<ClassOrInterfaceType> extendedTypes, final NodeList<ClassOrInterfaceType> implementedTypes, final NodeList<BodyDeclaration<?>> members) {
         this(null, modifiers, annotations, isInterface, name, typeParameters, extendedTypes, implementedTypes, members);
     }
 
-    public ClassOrInterfaceDeclaration(Range range, final EnumSet<Modifier> modifiers,
-                                       final NodeList<AnnotationExpr> annotations, final boolean isInterface,
-                                       final SimpleName name,
-                                       final NodeList<TypeParameter> typeParameters,
-                                       final NodeList<ClassOrInterfaceType> extendedTypes,
-                                       final NodeList<ClassOrInterfaceType> implementedTypes,
-                                       final NodeList<BodyDeclaration<?>> members) {
+    public ClassOrInterfaceDeclaration(Range range, final EnumSet<Modifier> modifiers, final NodeList<AnnotationExpr> annotations, final boolean isInterface, final SimpleName name, final NodeList<TypeParameter> typeParameters, final NodeList<ClassOrInterfaceType> extendedTypes, final NodeList<ClassOrInterfaceType> implementedTypes, final NodeList<BodyDeclaration<?>> members) {
         super(range, annotations, modifiers, name, members);
         setInterface(isInterface);
         setTypeParameters(typeParameters);

@@ -18,7 +18,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser.ast;
 
 import com.github.javaparser.JavaParser;
@@ -32,14 +31,13 @@ import com.github.javaparser.ast.observer.ObservableProperty;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.utils.ClassUtils;
-
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import static com.github.javaparser.utils.Utils.assertNotNull;
+
 
 /**
  * <p>
@@ -59,7 +57,6 @@ import static com.github.javaparser.utils.Utils.assertNotNull;
  * @author Julio Vilmar Gesser
  */
 public final class CompilationUnit extends Node {
-
     private PackageDeclaration packageDeclaration;
 
     private NodeList<ImportDeclaration> imports;
@@ -74,8 +71,7 @@ public final class CompilationUnit extends Node {
         this(null, packageDeclaration, imports, types);
     }
 
-    public CompilationUnit(Range range, PackageDeclaration packageDeclaration, NodeList<ImportDeclaration> imports,
-                           NodeList<TypeDeclaration<?>> types) {
+    public CompilationUnit(Range range, PackageDeclaration packageDeclaration, NodeList<ImportDeclaration> imports, NodeList<TypeDeclaration<?>> types) {
         super(range);
         setPackageDeclaration(packageDeclaration);
         setImports(imports);
@@ -139,7 +135,7 @@ public final class CompilationUnit extends Node {
      * @return the list of types or <code>null</code> null if there is no type
      * @see AnnotationDeclaration
      * @see ClassOrInterfaceDeclaration
-     * @see EnumDeclaration
+     * @see EmptyTypeDeclaration
      */
     public NodeList<TypeDeclaration<?>> getTypes() {
         return types;

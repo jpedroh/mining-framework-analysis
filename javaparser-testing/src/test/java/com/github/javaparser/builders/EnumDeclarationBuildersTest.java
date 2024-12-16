@@ -1,3 +1,5 @@
+<<<<<<< LEFT
+=======
 /*
  * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
  * Copyright (C) 2011, 2013-2016 The JavaParser Team.
@@ -18,19 +20,18 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
+>>>>>>> RIGHT
 package com.github.javaparser.builders;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.EnumDeclaration;
+import java.util.function.Function;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.function.Function;
-
 import static com.github.javaparser.utils.Utils.EOL;
 import static org.junit.Assert.assertEquals;
+
 
 public class EnumDeclarationBuildersTest {
     CompilationUnit cu;
@@ -50,8 +51,7 @@ public class EnumDeclarationBuildersTest {
         EnumDeclaration testEnum = cu.addEnum("test");
         testEnum.addImplements(Function.class);
         assertEquals(1, cu.getImports().size());
-        assertEquals("import " + Function.class.getName() + ";" + EOL,
-                cu.getImport(0).toString());
+        assertEquals((("import " + Function.class.getName()) + ";") + EOL, cu.getImport(0).toString());
         assertEquals(1, testEnum.getImplementedTypes().size());
         assertEquals(Function.class.getSimpleName(), testEnum.getImplementedTypes(0).getNameAsString());
     }

@@ -1,3 +1,5 @@
+<<<<<<< LEFT
+=======
 /*
  * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
  * Copyright (C) 2011, 2013-2016 The JavaParser Team.
@@ -18,21 +20,22 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
+>>>>>>> RIGHT
 package com.github.javaparser.ast.nodeTypes;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
-public interface NodeWithImplements<N extends Node> {
-    NodeList<ClassOrInterfaceType> getImplementedTypes();
 
-    default ClassOrInterfaceType getImplementedTypes(int i) {
+public interface NodeWithImplements<N extends Node> {
+    public abstract NodeList<ClassOrInterfaceType> getImplementedTypes();
+
+    public default ClassOrInterfaceType getImplementedTypes(int i) {
         return getImplementedTypes().get(i);
     }
 
-    N setImplementedTypes(NodeList<ClassOrInterfaceType> implementsList);
+    public abstract N setImplementedTypes(NodeList<ClassOrInterfaceType> implementsList);
 
     /**
      * Add an implements to this
@@ -41,11 +44,11 @@ public interface NodeWithImplements<N extends Node> {
      * @return this
      */
     @SuppressWarnings("unchecked")
-    default N addImplements(String name) {
+    public default N addImplements(String name) {
         ClassOrInterfaceType classOrInterfaceType = new ClassOrInterfaceType(name);
         getImplementedTypes().add(classOrInterfaceType);
-        classOrInterfaceType.setParentNode((Node) this);
-        return (N) this;
+        classOrInterfaceType.setParentNode(((Node) (this)));
+        return ((N) (this));
     }
 
     /**

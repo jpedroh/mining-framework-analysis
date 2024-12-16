@@ -18,7 +18,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser.ast.visitor;
 
 import com.github.javaparser.ast.*;
@@ -32,8 +31,8 @@ import com.github.javaparser.ast.imports.*;
 import com.github.javaparser.ast.nodeTypes.NodeWithAnnotations;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
-
 import java.util.List;
+
 
 /**
  * This visitor can be used to save time when some specific nodes needs
@@ -43,7 +42,6 @@ import java.util.List;
  * @author Julio Vilmar Gesser
  */
 public class ModifierVisitor<A> implements GenericVisitor<Visitable, A> {
-
     private void removeNulls(final List<?> list) {
         for (int i = list.size() - 1; i >= 0; i--) {
             if (list.get(i) == null) {
@@ -211,7 +209,7 @@ public class ModifierVisitor<A> implements GenericVisitor<Visitable, A> {
         n.setTypeParameters(modifyList(n.getTypeParameters(), arg));
         n.setExtendedTypes(modifyList(n.getExtendedTypes(), arg));
         n.setImplementedTypes(modifyList(n.getImplementedTypes(), arg));
-        n.setMembers((NodeList<BodyDeclaration<?>>) n.getMembers().accept(this, arg));
+        n.setMembers(((NodeList<BodyDeclaration<?>>) (n.getMembers().accept(this, arg))));
         return n;
     }
 
@@ -237,10 +235,10 @@ public class ModifierVisitor<A> implements GenericVisitor<Visitable, A> {
     public Visitable visit(final CompilationUnit n, final A arg) {
         visitComment(n, arg);
         if (n.getPackageDeclaration().isPresent()) {
-            n.setPackageDeclaration((PackageDeclaration) n.getPackageDeclaration().get().accept(this, arg));
+            n.setPackageDeclaration(((PackageDeclaration) (n.getPackageDeclaration().get().accept(this, arg))));
         }
-        n.setImports((NodeList<ImportDeclaration>) n.getImports().accept(this, arg));
-        n.setTypes((NodeList<TypeDeclaration<?>>) n.getTypes().accept(this, arg));
+        n.setImports(((NodeList<ImportDeclaration>) (n.getImports().accept(this, arg))));
+        n.setTypes(((NodeList<TypeDeclaration<?>>) (n.getTypes().accept(this, arg))));
         return n;
     }
 
@@ -326,10 +324,10 @@ public class ModifierVisitor<A> implements GenericVisitor<Visitable, A> {
     @Override
     public Visitable visit(final EnumDeclaration n, final A arg) {
         visitComment(n, arg);
-        n.setAnnotations((NodeList<AnnotationExpr>) n.getAnnotations().accept(this, arg));
-        n.setImplementedTypes((NodeList<ClassOrInterfaceType>) n.getImplementedTypes().accept(this, arg));
-        n.setEntries((NodeList<EnumConstantDeclaration>) n.getEntries().accept(this, arg));
-        n.setMembers((NodeList<BodyDeclaration<?>>) n.getMembers().accept(this, arg));
+        n.setAnnotations(((NodeList<AnnotationExpr>) (n.getAnnotations().accept(this, arg))));
+        n.setImplementedTypes(((NodeList<ClassOrInterfaceType>) (n.getImplementedTypes().accept(this, arg))));
+        n.setEntries(((NodeList<EnumConstantDeclaration>) (n.getEntries().accept(this, arg))));
+        n.setMembers(((NodeList<BodyDeclaration<?>>) (n.getMembers().accept(this, arg))));
         return n;
     }
 

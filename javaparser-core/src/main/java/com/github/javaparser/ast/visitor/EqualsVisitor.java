@@ -18,7 +18,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser.ast.visitor;
 
 import com.github.javaparser.ast.*;
@@ -30,14 +29,13 @@ import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.imports.*;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
-
 import java.util.List;
+
 
 /**
  * @author Julio Vilmar Gesser
  */
 public class EqualsVisitor implements GenericVisitor<Boolean, Visitable> {
-
     private static final EqualsVisitor SINGLETON = new EqualsVisitor();
 
     public static boolean equals(final Node n1, final Node n2) {
@@ -122,24 +120,19 @@ public class EqualsVisitor implements GenericVisitor<Boolean, Visitable> {
 
     @Override
     public Boolean visit(final CompilationUnit n1, final Visitable arg) {
-        final CompilationUnit n2 = (CompilationUnit) arg;
-
+        final CompilationUnit n2 = ((CompilationUnit) (arg));
         if (!nodeEquals(n1.getPackageDeclaration().orElse(null), n2.getPackageDeclaration().orElse(null))) {
             return false;
         }
-
         if (!nodesEquals(n1.getImports(), n2.getImports())) {
             return false;
         }
-
         if (!nodesEquals(n1.getTypes(), n2.getTypes())) {
             return false;
         }
-
         if (!nodesEquals(n1.getComments(), n2.getComments())) {
             return false;
         }
-
         return true;
     }
 
@@ -207,75 +200,57 @@ public class EqualsVisitor implements GenericVisitor<Boolean, Visitable> {
 
     @Override
     public Boolean visit(final ClassOrInterfaceDeclaration n1, final Visitable arg) {
-        final ClassOrInterfaceDeclaration n2 = (ClassOrInterfaceDeclaration) arg;
-
+        final ClassOrInterfaceDeclaration n2 = ((ClassOrInterfaceDeclaration) (arg));
         // javadoc are checked at CompilationUnit
-
         if (!n1.getModifiers().equals(n2.getModifiers())) {
             return false;
         }
-
         if (n1.isInterface() != n2.isInterface()) {
             return false;
         }
-
         if (!objEquals(n1.getName(), n2.getName())) {
             return false;
         }
-
         if (!nodesEquals(n1.getAnnotations(), n2.getAnnotations())) {
             return false;
         }
-
         if (!nodesEquals(n1.getTypeParameters(), n2.getTypeParameters())) {
             return false;
         }
-
         if (!nodesEquals(n1.getExtendedTypes(), n2.getExtendedTypes())) {
             return false;
         }
-
         if (!nodesEquals(n1.getImplementedTypes(), n2.getImplementedTypes())) {
             return false;
         }
-
         if (!nodesEquals(n1.getMembers(), n2.getMembers())) {
             return false;
         }
-
         return true;
     }
 
     @Override
     public Boolean visit(final EnumDeclaration n1, final Visitable arg) {
-        final EnumDeclaration n2 = (EnumDeclaration) arg;
-
+        final EnumDeclaration n2 = ((EnumDeclaration) (arg));
         // javadoc are checked at CompilationUnit
-
         if (!n1.getModifiers().equals(n2.getModifiers())) {
             return false;
         }
-
         if (!objEquals(n1.getName(), n2.getName())) {
             return false;
         }
-
         if (!nodesEquals(n1.getAnnotations(), n2.getAnnotations())) {
             return false;
         }
-
         if (!nodesEquals(n1.getImplementedTypes(), n2.getImplementedTypes())) {
             return false;
         }
-
         if (!nodesEquals(n1.getEntries(), n2.getEntries())) {
             return false;
         }
-
         if (!nodesEquals(n1.getMembers(), n2.getMembers())) {
             return false;
         }
-
         return true;
     }
 

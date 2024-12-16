@@ -1,3 +1,5 @@
+<<<<<<< LEFT
+=======
 /*
  * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
  * Copyright (C) 2011, 2013-2016 The JavaParser Team.
@@ -18,20 +20,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
+>>>>>>> RIGHT
 package com.github.javaparser.builders;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import java.util.List;
+import java.util.function.Function;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
-import java.util.function.Function;
-
 import static com.github.javaparser.utils.Utils.EOL;
 import static org.junit.Assert.assertEquals;
+
 
 public class ClassOrInterfaceDeclarationBuildersTest {
     CompilationUnit cu;
@@ -51,8 +52,7 @@ public class ClassOrInterfaceDeclarationBuildersTest {
         ClassOrInterfaceDeclaration testClass = cu.addClass("test");
         testClass.addExtends(List.class);
         assertEquals(1, cu.getImports().size());
-        assertEquals("import " + List.class.getName() + ";" + EOL,
-                cu.getImport(0).toString());
+        assertEquals((("import " + List.class.getName()) + ";") + EOL, cu.getImport(0).toString());
         assertEquals(1, testClass.getExtendedTypes().size());
         assertEquals(List.class.getSimpleName(), testClass.getExtendedTypes(0).getNameAsString());
     }
@@ -62,8 +62,7 @@ public class ClassOrInterfaceDeclarationBuildersTest {
         ClassOrInterfaceDeclaration testClass = cu.addClass("test");
         testClass.addImplements(Function.class);
         assertEquals(1, cu.getImports().size());
-        assertEquals("import " + Function.class.getName() + ";" + EOL,
-                cu.getImport(0).toString());
+        assertEquals((("import " + Function.class.getName()) + ";") + EOL, cu.getImport(0).toString());
         assertEquals(1, testClass.getImplementedTypes().size());
         assertEquals(Function.class.getSimpleName(), testClass.getImplementedTypes(0).getNameAsString());
     }

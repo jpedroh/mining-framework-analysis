@@ -18,7 +18,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser.ast.body;
 
 import com.github.javaparser.Range;
@@ -31,60 +30,35 @@ import com.github.javaparser.ast.observer.ObservableProperty;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
-
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
-
 import static com.github.javaparser.utils.Utils.assertNotNull;
+
 
 /**
  * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.9">JLS</a>
  * The declaration of an enum. <code>enum X { ... }</code>
  * @author Julio Vilmar Gesser
  */
-public final class EnumDeclaration extends TypeDeclaration<EnumDeclaration> implements
-        NodeWithImplements<EnumDeclaration> {
-
+public final class EnumDeclaration extends TypeDeclaration<EnumDeclaration> implements NodeWithImplements<EnumDeclaration> {
     private NodeList<ClassOrInterfaceType> implementedTypes;
 
     private NodeList<EnumConstantDeclaration> entries;
 
     public EnumDeclaration() {
-        this(null,
-                EnumSet.noneOf(Modifier.class),
-                new NodeList<>(),
-                new SimpleName(),
-                new NodeList<>(),
-                new NodeList<>(),
-                new NodeList<>());
+        this(null, EnumSet.noneOf(Modifier.class), new NodeList<>(), new SimpleName(), new NodeList<>(), new NodeList<>(), new NodeList<>());
     }
 
     public EnumDeclaration(EnumSet<Modifier> modifiers, String name) {
-        this(null,
-                modifiers,
-                new NodeList<>(),
-                new SimpleName(name),
-                new NodeList<>(),
-                new NodeList<>(),
-                new NodeList<>());
+        this(null, modifiers, new NodeList<>(), new SimpleName(name), new NodeList<>(), new NodeList<>(), new NodeList<>());
     }
 
-    public EnumDeclaration(EnumSet<Modifier> modifiers, NodeList<AnnotationExpr> annotations, SimpleName name,
-                           NodeList<ClassOrInterfaceType> implementedTypes, NodeList<EnumConstantDeclaration> entries,
-                           NodeList<BodyDeclaration<?>> members) {
-        this(null,
-                modifiers,
-                annotations,
-                name,
-                implementedTypes,
-                entries,
-                members);
+    public EnumDeclaration(EnumSet<Modifier> modifiers, NodeList<AnnotationExpr> annotations, SimpleName name, NodeList<ClassOrInterfaceType> implementedTypes, NodeList<EnumConstantDeclaration> entries, NodeList<BodyDeclaration<?>> members) {
+        this(null, modifiers, annotations, name, implementedTypes, entries, members);
     }
 
-    public EnumDeclaration(Range range, EnumSet<Modifier> modifiers, NodeList<AnnotationExpr> annotations, SimpleName name,
-                           NodeList<ClassOrInterfaceType> implementedTypes, NodeList<EnumConstantDeclaration> entries,
-                           NodeList<BodyDeclaration<?>> members) {
+    public EnumDeclaration(Range range, EnumSet<Modifier> modifiers, NodeList<AnnotationExpr> annotations, SimpleName name, NodeList<ClassOrInterfaceType> implementedTypes, NodeList<EnumConstantDeclaration> entries, NodeList<BodyDeclaration<?>> members) {
         super(range, annotations, modifiers, name, members);
         setImplementedTypes(implementedTypes);
         setEntries(entries);
@@ -94,7 +68,6 @@ public final class EnumDeclaration extends TypeDeclaration<EnumDeclaration> impl
     public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
         return v.visit(this, arg);
     }
-
 
     @Override
     public <A> void accept(VoidVisitor<A> v, A arg) {
