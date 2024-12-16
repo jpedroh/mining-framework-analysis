@@ -1,35 +1,5 @@
 package com.cribbstechnologies.clients.mandrill.request;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.MockitoAnnotations.initMocks;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ClientConnectionManager;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-
 import com.cribbstechnologies.clients.mandrill.exception.RequestFailedException;
 import com.cribbstechnologies.clients.mandrill.model.BaseMandrillRequest;
 import com.cribbstechnologies.clients.mandrill.model.MandrillHtmlMessage;
@@ -63,9 +33,37 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ClientConnectionManager;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.MockitoAnnotations.initMocks;
+
 
 public class MandrillRESTRequestTest {
-<<<<<<< HEAD
+<<<<<<< LEFT
 	
 	MandrillRESTRequest request;
 	@Mock
@@ -482,7 +480,7 @@ public class MandrillRESTRequestTest {
         sb.append(",\"tags\":[\"tag1\",\"tag2\"]");
         sb.append(",\"google_analytics_domains\":[]");
         sb.append(",\"google_analytics_campaign\":[]");
->>>>>>> 4da8cd42c2f2c9a7191d65645100747c130c98a3
+>>>>>>> RIGHT
         sb.append(",\"global_merge_vars\":null");
         sb.append(",\"merge_vars\":null");
         sb.append(",\"attachments\":null");

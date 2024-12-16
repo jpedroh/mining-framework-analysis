@@ -3,9 +3,10 @@ package com.cribbstechnologies.clients.mandrill.model;
 import java.util.List;
 import java.util.Map;
 
+
 public class MandrillMessage {
 
-<<<<<<< HEAD
+<<<<<<< LEFT
 	private String text;
 	private String subject;
 	private String from_email;
@@ -19,7 +20,24 @@ public class MandrillMessage {
 	private String[] tags = new String[0];
 	private String[] google_analytics_domains = new String[0];
 	private String[] google_analytics_campaign = new String[0];
+=======
+    private String text;
+    private String subject;
+    private String from_email;
+    private String from_name;
+    private String subaccount;
+    private MandrillRecipient[] to;
+    private boolean track_opens = false;
+    private boolean track_clicks = false;
+    private boolean auto_text = false;
+    private boolean url_strip_qs = false;
+    private boolean preserve_recipients = false;
+    private String[] tags = new String[0];
+    private String[] google_analytics_domains = new String[0];
+    private String[] google_analytics_campaign = new String[0];
+>>>>>>> RIGHT
     private List<MergeVar> global_merge_vars;
+<<<<<<< LEFT
 	
 	private Map<String, String> headers;
 	
@@ -94,65 +112,10 @@ public class MandrillMessage {
 	public void setHeaders(Map<String, String> struct) {
 		this.headers = struct;
 	}
-
-	public boolean isAuto_text() {
-		return auto_text;
-	}
-
-	public void setAuto_text(boolean auto_text) {
-		this.auto_text = auto_text;
-	}
-
-	public boolean isUrl_strip_qs() {
-		return url_strip_qs;
-	}
-
-	public void setUrl_strip_qs(boolean url_strip_qs) {
-		this.url_strip_qs = url_strip_qs;
-	}
-
-	public String[] getGoogle_analytics_domains() {
-		return google_analytics_domains;
-	}
-
-	public void setGoogle_analytics_domains(String[] google_analytics_domains) {
-		this.google_analytics_domains = google_analytics_domains;
-	}
-
-	public String[] getGoogle_analytics_campaign() {
-		return google_analytics_campaign;
-	}
-
-	public void setGoogle_analytics_campaign(String[] google_analytics_campaign) {
-		this.google_analytics_campaign = google_analytics_campaign;
-	}
-
-	public String getText() {
-		return text;
-	}
-
-	public void setText(String text) {
-		this.text = text;
-	}
 =======
-    private String text;
-    private String subject;
-    private String from_email;
-    private String from_name;
-    private String subaccount;
-    private MandrillRecipient[] to;
-    private boolean track_opens = false;
-    private boolean track_clicks = false;
-    private boolean auto_text = false;
-    private boolean url_strip_qs = false;
-    private boolean preserve_recipients = false;
-    private String[] tags = new String[0];
-    private String[] google_analytics_domains = new String[0];
-    private String[] google_analytics_campaign = new String[0];
-    private List<MergeVar> global_merge_vars;
     List<MessageMergeVars> merge_vars;
     List<MandrillAttachment> attachments;
->>>>>>> 4da8cd42c2f2c9a7191d65645100747c130c98a3
+>>>>>>> RIGHT
 
     private Map<String, String> headers;
 
