@@ -2,7 +2,6 @@ package strat.mining.stratum.proxy.worker;
 
 import java.util.Date;
 import java.util.Set;
-
 import strat.mining.stratum.proxy.exception.ChangeExtranonceNotSupportedException;
 import strat.mining.stratum.proxy.exception.TooManyWorkersException;
 import strat.mining.stratum.proxy.json.MiningNotifyNotification;
@@ -12,22 +11,24 @@ import strat.mining.stratum.proxy.json.MiningSubmitResponse;
 import strat.mining.stratum.proxy.model.Share;
 import strat.mining.stratum.proxy.network.Connection;
 import strat.mining.stratum.proxy.pool.Pool;
+import strat.mining.stratum.proxy.utils.Timer.Task;
+import strat.mining.stratum.proxy.utils.Timer;
+
 
 public interface WorkerConnection extends Connection {
-
 	/**
 	 * Return the pool on which this connection is bound.
 	 * 
 	 * @return
 	 */
-	public Pool getPool();
+	public abstract Pool getPool();
 
 	/**
 	 * Return true if the connection is connected
 	 * 
 	 * @return
 	 */
-	public boolean isConnected();
+	public abstract boolean isConnected();
 
 	/**
 	 * Reset the connection with the parameters of the new pool. May close the
@@ -37,28 +38,29 @@ public interface WorkerConnection extends Connection {
 	 * @throws TooManyWorkersException
 	 * @throws ChangeExtranonceNotSupportedException
 	 */
-	public void rebindToPool(Pool newPool) throws TooManyWorkersException, ChangeExtranonceNotSupportedException;
+	public abstract void rebindToPool(Pool newPool) throws TooManyWorkersException, ChangeExtranonceNotSupportedException;
 
 	/**
 	 * Called when the pool change its extranonce. Send the extranonce change to
 	 * the worker. Throw an exception if the extranonce change is not supported
 	 * on the fly.
 	 */
-	public void onPoolExtranonceChange() throws ChangeExtranonceNotSupportedException;
+	public abstract void onPoolExtranonceChange() throws ChangeExtranonceNotSupportedException;
 
 	/**
 	 * Called when the pool difficulty has changed
-	 * 
-	 * @param notification
+	 *
+	 * @return 
 	 */
-	public void onPoolDifficultyChanged(MiningSetDifficultyNotification notification);
+	public abstract void onPoolDifficultyChanged(MiningSetDifficultyNotification notification);
 
 	/**
 	 * Called when the pool has send a new notify notification.
-	 * 
+	 *
 	 * @param notification
+	 * 		
 	 */
-	public void onPoolNotify(MiningNotifyNotification notification);
+	public abstract void onPoolNotify(MiningNotifyNotification notification);
 
 	/**
 	 * Update the shares lists with the given share to compute hashrate
@@ -66,7 +68,7 @@ public interface WorkerConnection extends Connection {
 	 * @param share
 	 * @param isAccepted
 	 */
-	public void updateShareLists(Share share, boolean isAccepted);
+	public abstract void updateShareLists(Share share, boolean isAccepted);
 
 	/**
 	 * Called when the pool has answered to a submit request.
@@ -74,7 +76,7 @@ public interface WorkerConnection extends Connection {
 	 * @param workerRequest
 	 * @param poolResponse
 	 */
-	public void onPoolSubmitResponse(MiningSubmitRequest workerRequest, MiningSubmitResponse poolResponse);
+	public abstract void onPoolSubmitResponse(MiningSubmitRequest workerRequest, MiningSubmitResponse poolResponse);
 
 	/**
 	 * Set the sampling period to compute the hashrate of the connection. he
@@ -82,33 +84,33 @@ public interface WorkerConnection extends Connection {
 	 * 
 	 * @param samplingHashesPeriod
 	 */
-	public void setSamplingHashesPeriod(Integer samplingHashesPeriod);
+	public abstract void setSamplingHashesPeriod(Integer samplingHashesPeriod);
 
 	/**
 	 * Return the number of rejected hashes per seconds of the connection.
-	 * 
-	 * @return
+	 *
+	 * @return 
 	 */
-	public double getRejectedHashrate();
+	public abstract double getRejectedHashrate();
 
 	/**
 	 * Return the of accepted hashes per seconds of the connection.
-	 * 
-	 * @return
+	 *
+	 * @return 
 	 */
-	public double getAcceptedHashrate();
+	public abstract double getAcceptedHashrate();
 
 	/**
 	 * Return a read-only set of users that are authorized on this connection.
 	 * 
 	 * @return
 	 */
-	public Set<String> getAuthorizedWorkers();
+	public abstract Set<String> getAuthorizedWorkers();
 
 	/**
 	 * Return the of activation of this connection
 	 * 
 	 * @return
 	 */
-	public Date getActiveSince();
+	public abstract Date getActiveSince();
 }

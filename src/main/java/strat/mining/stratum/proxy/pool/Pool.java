@@ -18,6 +18,7 @@
  */
 package strat.mining.stratum.proxy.pool;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -34,12 +35,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 import javax.ws.rs.core.UriBuilder;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import strat.mining.stratum.proxy.callback.ResponseReceivedCallback;
 import strat.mining.stratum.proxy.constant.Constants;
 import strat.mining.stratum.proxy.exception.AuthorizationException;
@@ -60,37 +58,48 @@ import strat.mining.stratum.proxy.json.MiningSubscribeResponse;
 import strat.mining.stratum.proxy.manager.StratumProxyManager;
 import strat.mining.stratum.proxy.model.Share;
 import strat.mining.stratum.proxy.utils.HashrateUtils;
-import strat.mining.stratum.proxy.utils.Timer;
 import strat.mining.stratum.proxy.utils.Timer.Task;
+import strat.mining.stratum.proxy.utils.Timer;
 
-import com.google.common.util.concurrent.AtomicDouble;
 
 public class Pool implements Comparable<Pool> {
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(Pool.class);
 
 	private StratumProxyManager manager;
 
 	private String name;
+
 	private String host;
+
 	private URI uri;
+
 	private String username;
+
 	private String password;
 
 	private Double difficulty;
+
 	private String extranonce1;
+
 	private Integer extranonce2Size;
 
 	private Date activeSince;
+
 	private boolean isActive;
+
 	private boolean isEnabled;
+
 	private boolean isStable;
+
 	private boolean isFirstRun;
+
 	private boolean isAppendWorkerNames;
+
 	private boolean isUseWorkerPassword;
 
 	private String workerSeparator;
 
+	// Contains all available tails in Hexa format.
 	// Contains all available tails in Hexa format.
 	private Deque<String> tails;
 
@@ -99,8 +108,11 @@ public class Pool implements Comparable<Pool> {
 	private MiningNotifyNotification currentJob;
 
 	private Task reconnectTask;
+
 	private Task notifyTimeoutTask;
+
 	private Task stabilityTestTask;
+
 	private Task subscribeResponseTimeoutTask;
 
 	private Boolean isExtranonceSubscribeEnabled = false;
@@ -110,15 +122,21 @@ public class Pool implements Comparable<Pool> {
 	private Integer priority;
 
 	private AtomicDouble acceptedDifficulty;
+
 	private AtomicDouble rejectedDifficulty;
 
 	private Deque<Share> lastAcceptedShares;
+
 	private Deque<Share> lastRejectedShares;
+
+	// Time of sampling shares to calculate hash rate
 	// Time of sampling shares to calculate hash rate
 	private Integer samplingHashratePeriod = Constants.DEFAULT_POOL_HASHRATE_SAMPLING_PERIOD * 1000;
 
 	private Integer connectionRetryDelay = Constants.DEFAULT_POOL_CONNECTION_RETRY_DELAY;
+
 	private Integer reconnectStabilityPeriod = Constants.DEFAULT_POOL_RECONNECTION_STABILITY_PERIOD;
+
 	private Integer noNotifyTimeout = Constants.DEFAULT_NOTIFY_NOTIFICATION_TIMEOUT;
 
 	private Boolean isRejectReconnect = false;
@@ -134,7 +152,7 @@ public class Pool implements Comparable<Pool> {
 
 	public Pool(String name, String host, String username, String password) {
 		super();
-		this.name = name == null ? host : name;
+		this.name = (name == null) ? host : name;
 		this.host = host;
 		this.username = username;
 		this.password = password;
@@ -142,14 +160,11 @@ public class Pool implements Comparable<Pool> {
 		this.isEnabled = true;
 		this.isStable = false;
 		this.isFirstRun = true;
-
 		acceptedDifficulty = new AtomicDouble(0);
 		rejectedDifficulty = new AtomicDouble(0);
-
 		this.tails = buildTails();
 		this.submitCallbacks = Collections.synchronizedMap(new HashMap<Long, ResponseReceivedCallback<MiningSubmitRequest, MiningSubmitResponse>>());
-		this.authorizeCallbacks = Collections
-				.synchronizedMap(new HashMap<Long, ResponseReceivedCallback<MiningAuthorizeRequest, MiningAuthorizeResponse>>());
+		this.authorizeCallbacks = Collections.synchronizedMap(new HashMap<Long, ResponseReceivedCallback<MiningAuthorizeRequest, MiningAuthorizeResponse>>());
 		this.lastAcceptedShares = new ConcurrentLinkedDeque<Share>();
 		this.lastRejectedShares = new ConcurrentLinkedDeque<Share>();
 		this.authorizedWorkers = Collections.synchronizedList(new ArrayList<String>());
@@ -600,7 +615,7 @@ public class Pool implements Comparable<Pool> {
 	 * @param delayFirstRetry
 	 */
 	private void retryConnect(boolean delayFirstRetry) {
-		if (connectionRetryDelay > 0 && reconnectTask == null) {
+		if ((connectionRetryDelay > 0) && (reconnectTask == null)) {
 			LOGGER.info("Trying reconnect of pool {} in {} seconds.", getName(), delayFirstRetry ? connectionRetryDelay : 0.001);
 			reconnectTask = new Task() {
 				public void run() {
@@ -611,7 +626,7 @@ public class Pool implements Comparable<Pool> {
 							reconnectTask.cancel();
 							reconnectTask = null;
 						}
-					} catch (Exception e) {
+					} catch (java.lang.Exception e) {
 						LOGGER.error("Failed to restart the pool {}.", getName(), e);
 					}
 				}
@@ -740,7 +755,6 @@ public class Pool implements Comparable<Pool> {
 				notifyTimeoutTask.cancel();
 				notifyTimeoutTask = null;
 			}
-
 			notifyTimeoutTask = new Task() {
 				public void run() {
 					LOGGER.warn("No mining.notify received from pool {} for {} ms. Stopping the pool...", getName(), noNotifyTimeout);
@@ -766,7 +780,6 @@ public class Pool implements Comparable<Pool> {
 					stabilityTestTask.cancel();
 					stabilityTestTask = null;
 				}
-
 				stabilityTestTask = new Task() {
 					public void run() {
 						setStable();
@@ -805,17 +818,14 @@ public class Pool implements Comparable<Pool> {
 			stabilityTestTask.cancel();
 			stabilityTestTask = null;
 		}
-
 		if (reconnectTask != null) {
 			reconnectTask.cancel();
 			reconnectTask = null;
 		}
-
 		if (notifyTimeoutTask != null) {
 			notifyTimeoutTask.cancel();
 			notifyTimeoutTask = null;
 		}
-
 		if (subscribeResponseTimeoutTask != null) {
 			subscribeResponseTimeoutTask.cancel();
 			subscribeResponseTimeoutTask = null;
