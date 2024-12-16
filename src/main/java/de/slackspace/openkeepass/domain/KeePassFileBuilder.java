@@ -2,6 +2,7 @@ package de.slackspace.openkeepass.domain;
 
 import de.slackspace.openkeepass.domain.zipper.GroupZipper;
 
+
 /**
  * A builder to create {@link KeePassFile}s.
  * <p>
@@ -12,10 +13,12 @@ import de.slackspace.openkeepass.domain.zipper.GroupZipper;
  *
  */
 public class KeePassFileBuilder implements KeePassFileContract {
-
 	Meta meta;
+
 	Group root;
+
 	private GroupBuilder rootBuilder = new GroupBuilder();
+
 	private GroupBuilder topGroupBuilder = new GroupBuilder();
 
 	/**
@@ -27,7 +30,6 @@ public class KeePassFileBuilder implements KeePassFileContract {
 	 */
 	public KeePassFileBuilder(KeePassFile keePassFile) {
 		this.meta = keePassFile.getMeta();
-
 		rootBuilder = new GroupBuilder(keePassFile.getRoot());
 	}
 
@@ -35,7 +37,7 @@ public class KeePassFileBuilder implements KeePassFileContract {
 	 * Creates a builder with the given databasename.
 	 *
 	 * @param databaseName
-	 *            the name of the database
+	 * 		the name of the database
 	 */
 	public KeePassFileBuilder(String databaseName) {
 		meta = new MetaBuilder(databaseName).historyMaxItems(10).build();
@@ -45,7 +47,7 @@ public class KeePassFileBuilder implements KeePassFileContract {
 	 * Creates a builder with the given meta object.
 	 *
 	 * @param meta
-	 *            the meta object to initialize the builder meta
+	 * 		the meta object to initialize the builder meta
 	 */
 	public KeePassFileBuilder(Meta meta) {
 		this.meta = meta;

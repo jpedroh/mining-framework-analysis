@@ -4,9 +4,10 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class Sha256 {
 
-	private Sha256() {}
+public class Sha256 {
+	private Sha256() {
+	}
 
 	public static byte[] hash(String text) {
 		if (text == null) {
@@ -24,7 +25,6 @@ public class Sha256 {
 		if (bytes == null) {
 			throw new IllegalArgumentException("Bytes must not be null");
 		}
-
 		return hash(bytes, 0, bytes.length);
 	}
 
@@ -32,7 +32,6 @@ public class Sha256 {
 		if (bytes == null) {
 			throw new IllegalArgumentException("Bytes must not be null");
 		}
-
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
 			md.update(bytes, offset, length);

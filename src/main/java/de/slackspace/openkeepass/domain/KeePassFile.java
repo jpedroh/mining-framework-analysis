@@ -1,16 +1,15 @@
 package de.slackspace.openkeepass.domain;
 
+import de.slackspace.openkeepass.domain.filter.Filter;
+import de.slackspace.openkeepass.domain.filter.ListFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import de.slackspace.openkeepass.domain.filter.Filter;
-import de.slackspace.openkeepass.domain.filter.ListFilter;
 
 /**
  * A KeePassFile represents the structure of a KeePass database. This is the
@@ -19,7 +18,6 @@ import de.slackspace.openkeepass.domain.filter.ListFilter;
 @XmlRootElement(name = "KeePassFile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class KeePassFile implements KeePassFileElement {
-
 	@XmlElement(name = "Meta")
 	private Meta meta;
 
@@ -118,13 +116,10 @@ public class KeePassFile implements KeePassFileElement {
 	 */
 	public List<Entry> getEntriesByTitle(final String title, final boolean matchExactly) {
 		List<Entry> allEntries = new ArrayList<Entry>();
-
 		if (root != null) {
 			getEntries(root, allEntries);
 		}
-
 		return ListFilter.filter(allEntries, new Filter<Entry>() {
-
 			@Override
 			public boolean matches(Entry item) {
 				if (matchExactly) {
@@ -139,7 +134,6 @@ public class KeePassFile implements KeePassFileElement {
 
 				return false;
 			}
-
 		});
 	}
 
@@ -160,13 +154,10 @@ public class KeePassFile implements KeePassFileElement {
 	 */
 	public List<Group> getGroupsByName(final String name, final boolean matchExactly) {
 		List<Group> allGroups = new ArrayList<Group>();
-
 		if (root != null) {
 			getGroups(root, allGroups);
 		}
-
 		return ListFilter.filter(allGroups, new Filter<Group>() {
-
 			@Override
 			public boolean matches(Group item) {
 				if (matchExactly) {
@@ -181,7 +172,6 @@ public class KeePassFile implements KeePassFileElement {
 
 				return false;
 			}
-
 		});
 	}
 
@@ -193,11 +183,9 @@ public class KeePassFile implements KeePassFileElement {
 	 */
 	public List<Entry> getEntries() {
 		List<Entry> allEntries = new ArrayList<Entry>();
-
 		if (root != null) {
 			getEntries(root, allEntries);
 		}
-
 		return allEntries;
 	}
 
@@ -209,11 +197,9 @@ public class KeePassFile implements KeePassFileElement {
 	 */
 	public List<Group> getGroups() {
 		List<Group> allGroups = new ArrayList<Group>();
-
 		if (root != null) {
 			getGroups(root, allGroups);
 		}
-
 		return allGroups;
 	}
 
@@ -238,46 +224,81 @@ public class KeePassFile implements KeePassFileElement {
 		return null;
 	}
 
-	private void getEntries(Group parentGroup, List<Entry> entries) {
+	private static void getEntries(Group parentGroup, List<Entry> entries) {
 		List<Group> groups = parentGroup.getGroups();
 		entries.addAll(parentGroup.getEntries());
-
 		if (!groups.isEmpty()) {
 			for (Group group : groups) {
 				getEntries(group, entries);
 			}
 		}
-
 		return;
 	}
 
-	private void getGroups(Group parentGroup, List<Group> groups) {
+	private static void getGroups(Group parentGroup, List<Group> groups) {
 		List<Group> parentGroups = parentGroup.getGroups();
 		groups.addAll(parentGroups);
-
 		if (!parentGroups.isEmpty()) {
 			for (Group group : parentGroups) {
 				getGroups(group, groups);
 			}
 		}
-
 		return;
 	}
 
+				/**
+				 * Retrieves an entry based on its UUID.
+				 *
+				 * @param UUID
+				 *            the uuid which should be searched
+				 * @return the found entry or null
+				 * @deprecated use {@link #getEntryByUuid} instead
+				 */
+	@Deprecated
+	public Entry getEntryByUUID(final UUID UUID) {
+		return getEntryByUuid(UUID);
+	}
+
 	/**
-	 * Retrieves an entry based on its UUID.
+	 * Retrieves an entry based on its uuid.
 	 *
 	 * @param UUID
-	 *            the uuid which should be searched
+	 * 		the uuid which should be searched
 	 * @return the found entry or null
 	 */
-	public Entry getEntryByUUID(final UUID UUID) {
+	public Entry getEntryByUuid(final UUID uuid) {
 		List<Entry> allEntries = getEntries();
-
 		List<Entry> entries = ListFilter.filter(allEntries, new Filter<Entry>() {
-
 			@Override
 			public boolean matches(Entry item) {
+				if ((item.getUuid() != null) && (item.getUuid().compareTo(uuid) == 0)) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		});
+		if (entries.size() == 1) {
+			return entries.get(0);
+		} else {
+			return null;
+		}
+	}
+
+				/**
+				 * Retrieves a group based on its UUID.
+				 *
+				 * @param UUID
+				 *            the uuid which should be searched
+				 * @return the found group or null
+				 * @deprecated use {@link #getGroupByUuid} instead
+				 */
+	@Deprecated
+	public Group getGroupByUUID(final UUID UUID) {
+		List<Group> allGroups = getGroups();
+		List<Group> groups = ListFilter.filter(allGroups, new Filter<Group>() {
+			@Override
+			public boolean matches(Group item) {
 
 				if (item.getUuid() != null && item.getUuid().compareTo(UUID) == 0) {
 					return true;
@@ -286,9 +307,8 @@ public class KeePassFile implements KeePassFileElement {
 				}
 			}
 		});
-
-		if (entries.size() == 1) {
-			return entries.get(0);
+		if (groups.size() == 1) {
+			return groups.get(0);
 		} else {
 			return null;
 		}
@@ -301,22 +321,18 @@ public class KeePassFile implements KeePassFileElement {
 	 *            the uuid which should be searched
 	 * @return the found group or null
 	 */
-	public Group getGroupByUUID(final UUID UUID) {
+	public Group getGroupByUuid(final UUID uuid) {
 		List<Group> allGroups = getGroups();
-
 		List<Group> groups = ListFilter.filter(allGroups, new Filter<Group>() {
-
 			@Override
 			public boolean matches(Group item) {
-
-				if (item.getUuid() != null && item.getUuid().compareTo(UUID) == 0) {
+				if ((item.getUuid() != null) && (item.getUuid().compareTo(uuid) == 0)) {
 					return true;
 				} else {
 					return false;
 				}
 			}
 		});
-
 		if (groups.size() == 1) {
 			return groups.get(0);
 		} else {

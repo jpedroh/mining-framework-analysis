@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class GroupBuilder implements GroupContract {
 
+public class GroupBuilder implements GroupContract {
 	private UUID uuid;
 
 	private String name;
@@ -37,7 +37,6 @@ public class GroupBuilder implements GroupContract {
 		if (group == null) {
 			throw new IllegalArgumentException("Parameter group must not be null");
 		}
-
 		this.uuid = group.getUuid();
 		this.name = group.getName();
 		this.iconId = group.getIconId();
@@ -147,5 +146,4 @@ public class GroupBuilder implements GroupContract {
 	public List<Group> getGroups() {
 		return groups;
 	}
-
 }

@@ -1,14 +1,5 @@
 package de.slackspace.openkeepass;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-
 import de.slackspace.openkeepass.api.KeePassDatabaseReader;
 import de.slackspace.openkeepass.api.KeePassDatabaseWriter;
 import de.slackspace.openkeepass.api.KeyFileReader;
@@ -19,6 +10,15 @@ import de.slackspace.openkeepass.exception.KeePassDatabaseUnreadableException;
 import de.slackspace.openkeepass.util.ByteUtils;
 import de.slackspace.openkeepass.util.SafeInputStream;
 import de.slackspace.openkeepass.util.StreamUtils;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+
 
 /**
  * A KeePassDatabase is the central API class to read and write a KeePass
@@ -63,15 +63,16 @@ import de.slackspace.openkeepass.util.StreamUtils;
  * </pre>
  *
  * @see KeePassFile
- *
  */
 public class KeePassDatabase {
-
 	private static final String UTF_8 = "UTF-8";
+
 	private static final String MSG_UTF8_NOT_SUPPORTED = "The encoding UTF-8 is not supported";
+
 	private static final String MSG_EMPTY_MASTER_KEY = "The password for the database must not be null. Please provide a valid password.";
 
 	private KeePassHeader keepassHeader = new KeePassHeader();
+
 	private byte[] keepassFile;
 
 	private KeePassDatabase(InputStream inputStream) {
@@ -159,11 +160,9 @@ public class KeePassDatabase {
 		if (password == null) {
 			throw new IllegalArgumentException(MSG_EMPTY_MASTER_KEY);
 		}
-
 		try {
 			byte[] passwordBytes = password.getBytes(UTF_8);
 			byte[] hashedPassword = Sha256.hash(passwordBytes);
-
 			return new KeePassDatabaseReader(keepassHeader).decryptAndParseDatabase(hashedPassword, keepassFile);
 		} catch (UnsupportedEncodingException e) {
 			throw new UnsupportedOperationException(MSG_UTF8_NOT_SUPPORTED, e);
@@ -221,12 +220,10 @@ public class KeePassDatabase {
 		if (keyFileStream == null) {
 			throw new IllegalArgumentException("You must provide a non-empty KeePass keyfile stream.");
 		}
-
 		try {
 			byte[] passwordBytes = password.getBytes(UTF_8);
 			byte[] hashedPassword = Sha256.hash(passwordBytes);
 			byte[] protectedBuffer = new KeyFileReader().readKeyFile(keyFileStream);
-
 			return new KeePassDatabaseReader(keepassHeader).decryptAndParseDatabase(ByteUtils.concat(hashedPassword, protectedBuffer), keepassFile);
 		} catch (UnsupportedEncodingException e) {
 			throw new UnsupportedOperationException(MSG_UTF8_NOT_SUPPORTED, e);
@@ -274,7 +271,6 @@ public class KeePassDatabase {
 		if (keyFileStream == null) {
 			throw new IllegalArgumentException("You must provide a non-empty KeePass keyfile stream.");
 		}
-
 		byte[] protectedBuffer = new KeyFileReader().readKeyFile(keyFileStream);
 		return new KeePassDatabaseReader(keepassHeader).decryptAndParseDatabase(protectedBuffer, keepassFile);
 	}
@@ -303,11 +299,9 @@ public class KeePassDatabase {
 	 * @see KeePassFile
 	 */
 	public static void write(KeePassFile keePassFile, String password, String keePassDatabaseFile) {
-		if (keePassDatabaseFile == null || keePassDatabaseFile.isEmpty()) {
-			throw new IllegalArgumentException(
-					"You must provide a non-empty path where the database should be written to.");
+		if ((keePassDatabaseFile == null) || keePassDatabaseFile.isEmpty()) {
+			throw new IllegalArgumentException("You must provide a non-empty path where the database should be written to.");
 		}
-
 		try {
 			write(keePassFile, password, new FileOutputStream(keePassDatabaseFile));
 		} catch (FileNotFoundException e) {
@@ -334,8 +328,6 @@ public class KeePassDatabase {
 		if (stream == null) {
 			throw new IllegalArgumentException("You must provide a stream to write to.");
 		}
-
 		new KeePassDatabaseWriter().writeKeePassFile(keePassFile, password, stream);
 	}
-
 }

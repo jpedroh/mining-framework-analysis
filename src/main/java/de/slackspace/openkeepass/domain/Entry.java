@@ -1,16 +1,15 @@
 package de.slackspace.openkeepass.domain;
 
+import de.slackspace.openkeepass.domain.xml.adapter.UUIDXmlAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import de.slackspace.openkeepass.domain.xml.adapter.UUIDXmlAdapter;
 
 /**
  * Represents an entry in the KeePass database. It typically consists of a
@@ -20,12 +19,16 @@ import de.slackspace.openkeepass.domain.xml.adapter.UUIDXmlAdapter;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Entry implements KeePassFileElement {
-
 	private static final String USER_NAME = "UserName";
+
 	private static final String NOTES = "Notes";
+
 	private static final String URL = "URL";
+
 	private static final String PASSWORD = "Password";
+
 	private static final String TITLE = "Title";
+
 	private static final List<String> PROPERTY_KEYS = new ArrayList<String>();
 
 	static {
@@ -65,13 +68,11 @@ public class Entry implements KeePassFileElement {
 		this.iconData = entryContract.getIconData();
 		this.iconId = entryContract.getIconId();
 		this.customIconUUID = entryContract.getCustomIconUUID();
-
 		setValue(false, NOTES, entryContract.getNotes());
 		setValue(true, PASSWORD, entryContract.getPassword());
 		setValue(false, TITLE, entryContract.getTitle());
 		setValue(false, USER_NAME, entryContract.getUsername());
 		setValue(false, URL, entryContract.getUrl());
-
 		this.properties.addAll(entryContract.getCustomPropertyList());
 	}
 
@@ -234,5 +235,4 @@ public class Entry implements KeePassFileElement {
 		return "Entry [uuid=" + uuid + ", getTitle()=" + getTitle() + ", getPassword()=" + getPassword()
 		+ ", getUsername()=" + getUsername() + "]";
 	}
-
 }

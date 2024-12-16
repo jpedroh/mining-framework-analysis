@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+
 /**
  * A builder to create {@link Entry} objects.
  *
  */
 public class EntryBuilder implements EntryContract {
-
 	private UUID uuid;
 
 	private History history;
@@ -45,7 +45,7 @@ public class EntryBuilder implements EntryContract {
 	 * Creates a new builder with the given UUID.
 	 *
 	 * @param uuid
-	 *            the UUID which should be used
+	 * 		the UUID which should be used
 	 */
 	public EntryBuilder(UUID uuid) {
 		this.uuid = uuid;
@@ -55,7 +55,7 @@ public class EntryBuilder implements EntryContract {
 	 * Creates a new builder with the given title.
 	 *
 	 * @param title
-	 *            the title which should be used
+	 * 		the title which should be used
 	 */
 	public EntryBuilder(String title) {
 		this();
@@ -66,7 +66,7 @@ public class EntryBuilder implements EntryContract {
 	 * Initializes the builder with values from the given entry.
 	 *
 	 * @param entry
-	 *            the values from this will initialize the builder
+	 * 		the values from this will initialize the builder
 	 */
 	public EntryBuilder(Entry entry) {
 		if (entry == null) {

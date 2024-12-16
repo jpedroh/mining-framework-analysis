@@ -2,12 +2,12 @@ package de.slackspace.openkeepass.domain;
 
 import java.util.UUID;
 
+
 /**
  * A builder to create {@link CustomIcon} objects.
  *
  */
 public class CustomIconBuilder implements CustomIconContract {
-
 	UUID uuid;
 
 	byte[] data;

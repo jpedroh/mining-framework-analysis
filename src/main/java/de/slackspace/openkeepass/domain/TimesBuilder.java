@@ -2,15 +2,15 @@ package de.slackspace.openkeepass.domain;
 
 import java.util.Calendar;
 
+
 /**
  * A builder to create {@link Times} objects.
  *
  */
 public class TimesBuilder implements TimesContract {
-
 	private Calendar lastModificationTime;
 
-	private	Calendar creationTime;
+	private Calendar creationTime;
 
 	private Calendar lastAccessTime;
 
@@ -73,7 +73,7 @@ public class TimesBuilder implements TimesContract {
 
 	/**
 	 * Builds a new times with the values from the builder.
-	 *
+	 * 
 	 * @return a new times object
 	 */
 	public Times build() {

@@ -3,12 +3,12 @@ package de.slackspace.openkeepass.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * A builder to create {@link CustomIcons} objects.
  *
  */
 public class CustomIconsBuilder implements CustomIconsContract {
-
 	List<CustomIcon> customIcons = new ArrayList<CustomIcon>();
 
 	public CustomIconsBuilder() {

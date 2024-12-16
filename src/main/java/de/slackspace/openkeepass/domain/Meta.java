@@ -1,16 +1,15 @@
 package de.slackspace.openkeepass.domain;
 
+import de.slackspace.openkeepass.domain.xml.adapter.BooleanXmlAdapter;
+import de.slackspace.openkeepass.domain.xml.adapter.UUIDXmlAdapter;
 import java.util.Calendar;
 import java.util.UUID;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import de.slackspace.openkeepass.domain.xml.adapter.BooleanXmlAdapter;
-import de.slackspace.openkeepass.domain.xml.adapter.UUIDXmlAdapter;
 
 /**
  * Represents the metadata of the KeePass database like database name, custom
@@ -20,12 +19,11 @@ import de.slackspace.openkeepass.domain.xml.adapter.UUIDXmlAdapter;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Meta {
+	@XmlElement(name = "Generator")
+	private String generator;
 
-    @XmlElement(name = "Generator")
-    private String generator;
-
-    @XmlElement(name = "DatabaseName")
-    private String databaseName;
+	@XmlElement(name = "DatabaseName")
+	private String databaseName;
 
 	@XmlElement(name = "DatabaseDescription")
 	private String databaseDescription;

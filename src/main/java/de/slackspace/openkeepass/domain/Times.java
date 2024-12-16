@@ -1,14 +1,13 @@
 package de.slackspace.openkeepass.domain;
 
+import de.slackspace.openkeepass.domain.xml.adapter.BooleanXmlAdapter;
 import java.util.Calendar;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import de.slackspace.openkeepass.domain.xml.adapter.BooleanXmlAdapter;
 
 /**
  * Represents statistical information of an {@link Entry}.
@@ -17,7 +16,6 @@ import de.slackspace.openkeepass.domain.xml.adapter.BooleanXmlAdapter;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Times {
-
 	@XmlElement(name = "LastModificationTime")
 	private Calendar lastModificationTime;
 
@@ -144,5 +142,4 @@ public class Times {
 	public String toString() {
 		return "Times [lastModificationTime=" + lastModificationTime + ", creationTime=" + creationTime + "]";
 	}
-
 }
