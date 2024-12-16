@@ -19,14 +19,13 @@ package org.jgrapht;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.EdgeReversedGraph;
+
 
 /**
  * A collection of utilities to assist with graph manipulation.
@@ -34,39 +33,37 @@ import org.jgrapht.graph.EdgeReversedGraph;
  * @author Barak Naveh
  * @since Jul 31, 2003
  */
-public abstract class Graphs
-{
-
+public abstract class Graphs {
     /**
      * Creates a new edge and adds it to the specified graph similarly to the
      * {@link Graph#addEdge(Object, Object)} method.
      *
-     * @param g the graph for which the edge to be added
-     * @param sourceVertex source vertex of the edge
-     * @param targetVertex target vertex of the edge
-     * @param weight weight of the edge
-     * @param <V> the graph vertex type
-     * @param <E> the graph edge type
-     *
+     * @param g
+     * 		the graph for which the edge to be added
+     * @param sourceVertex
+     * 		source vertex of the edge
+     * @param targetVertex
+     * 		target vertex of the edge
+     * @param weight
+     * 		weight of the edge
+     * @param <V>
+     * 		the graph vertex type
+     * @param <E>
+     * 		the graph edge type
      * @return The newly created edge if added to the graph, otherwise <code>
-     * null</code>.
-     * 
-     * @throws UnsupportedOperationException if the graph has no edge supplier
-     *
+    null</code>.
+     * @see Graph#addEdge(Object, Object)
      * @see Graph#addEdge(Object, Object)
      */
-    public static <V, E> E addEdge(Graph<V, E> g, V sourceVertex, V targetVertex, double weight)
-    {
+    public static <V, E> E addEdge(Graph<V, E> g, V sourceVertex, V targetVertex, double weight) {
         Supplier<E> edgeSupplier = g.getEdgeSupplier();
-        if (edgeSupplier == null) { 
+        if (edgeSupplier == null) {
             throw new UnsupportedOperationException("Graph contains no edge supplier");
         }
         E e = edgeSupplier.get();
-
         // we first create the edge and set the weight to make sure that
         // listeners will see the correct weight upon addEdge.
         g.setEdgeWeight(e, weight);
-
         return g.addEdge(sourceVertex, targetVertex, e) ? e : null;
     }
 
@@ -262,7 +259,7 @@ public abstract class Graphs
     /**
      * Returns a list of vertices that are the neighbors of a specified vertex. If the graph is a
      * multigraph vertices may appear more than once in the returned list.
-     *
+     * 
      * <p>
      * The method uses {@link Graph#edgesOf(Object)} to traverse the graph.
      *
@@ -306,10 +303,10 @@ public abstract class Graphs
     /**
      * Returns a list of vertices that are the direct predecessors of a specified vertex. If the
      * graph is a multigraph, vertices may appear more than once in the returned list.
-     *
+     * 
      * <p>
      * The method uses {@link Graph#incomingEdgesOf(Object)} to traverse the graph.
-     *
+     * 
      * @param g the graph to look for predecessors in
      * @param vertex the vertex to get the predecessors of
      * @param <V> the graph vertex type
@@ -370,8 +367,7 @@ public abstract class Graphs
      * @throws IllegalArgumentException if the graph is neither directed nor undirected
      * @see AsUndirectedGraph
      */
-    public static <V, E> Graph<V, E> undirectedGraph(Graph<V, E> g)
-    {
+    public static <V, E> Graph<V, E> undirectedGraph(Graph<V, E> g) {
         if (g.getType().isDirected()) {
             return new AsUndirectedGraph<>(g);
         } else if (g.getType().isUndirected()) {
@@ -581,5 +577,3 @@ public abstract class Graphs
         return !graph.incomingEdgesOf(vertex).isEmpty();
     }
 }
-
-// End Graphs.java

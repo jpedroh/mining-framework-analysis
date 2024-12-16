@@ -17,23 +17,20 @@
  */
 package org.jgrapht;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.*;
-
 import org.jgrapht.generate.*;
 import org.jgrapht.graph.*;
 import org.junit.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 
 /**
  * Test class GraphTests.
  * 
  * @author Dimitrios Michail
  */
-public class GraphTestsTest
-{
-
+public class GraphTestsTest {
     @Test
     public void testIsEmpty()
     {
@@ -289,8 +286,7 @@ public class GraphTestsTest
     }
 
     @Test
-    public void testIsTree()
-    {
+    public void testIsTree() {
         Graph<Integer, DefaultEdge> g = GraphTestsUtils.createPseudograph();
         assertFalse(GraphTests.isTree(g));
         g.addVertex(1);
@@ -305,7 +301,6 @@ public class GraphTestsTest
         assertTrue(GraphTests.isTree(g));
         g.addEdge(2, 3);
         assertFalse(GraphTests.isTree(g));
-
         // disconnected but with correct number of edges
         Graph<Integer, DefaultEdge> g1 = GraphTestsUtils.createPseudograph();
         assertFalse(GraphTests.isTree(g1));
@@ -316,8 +311,7 @@ public class GraphTestsTest
     }
 
     @Test
-    public void testIsForest1()
-    {
+    public void testIsForest1() {
         Graph<Integer, DefaultEdge> g = GraphTestsUtils.createPseudograph();
         assertFalse(GraphTests.isForest(g));
         g.addVertex(1);
@@ -331,8 +325,7 @@ public class GraphTestsTest
     }
 
     @Test
-    public void testIsForest2()
-    {
+    public void testIsForest2() {
         Graph<Integer, DefaultEdge> g = GraphTestsUtils.createPseudograph();
         StarGraphGenerator<Integer, DefaultEdge> gen = new StarGraphGenerator<>(10);
         gen.generateGraph(g);
@@ -341,16 +334,13 @@ public class GraphTestsTest
     }
 
     @Test
-    public void testIsOverfull()
-    {
+    public void testIsOverfull() {
         assertFalse(GraphTests.isOverfull(NamedGraphGenerator.clawGraph()));
         assertTrue(GraphTests.isOverfull(NamedGraphGenerator.doyleGraph()));
-
         Graph<Integer, DefaultEdge> k6 = GraphTestsUtils.createPseudograph();
         CompleteGraphGenerator<Integer, DefaultEdge> gen = new CompleteGraphGenerator<>(6);
         gen.generateGraph(k6);
         assertFalse(GraphTests.isOverfull(k6));
-
         Graph<Integer, DefaultEdge> k7 = GraphTestsUtils.createPseudograph();
         gen = new CompleteGraphGenerator<>(7);
         gen.generateGraph(k7);
@@ -380,24 +370,23 @@ public class GraphTestsTest
     }
 
     @Test
-    public void isSplit2()
-    {
+    public void isSplit2() {
         // Create some random split graphs.
         Random rand = new Random(0);
         CompleteGraphGenerator<Integer, DefaultEdge> gen = new CompleteGraphGenerator<>(6);
-
         for (int inst = 0; inst < 5; inst++) {
             // 1. create a clique
             Graph<Integer, DefaultEdge> g = GraphTestsUtils.createSimpleGraph();
             gen.generateGraph(g);
-
             // 2. add a number of vertices (the independent set) and connect some of these vertices
             // with vertices in the clique.
             for (int j = 6; j < 12; j++) {
                 g.addVertex(j);
-                for (int i = 0; i < 6; i++)
-                    if (rand.nextBoolean())
+                for (int i = 0; i < 6; i++) {
+                    if (rand.nextBoolean()) {
                         g.addEdge(i, j);
+                    }
+                }
             }
             assertTrue(GraphTests.isSplit(g));
         }
@@ -468,10 +457,8 @@ public class GraphTestsTest
     }
 
     @Test
-    public void testRandomBipartite()
-    {
-        GnpRandomBipartiteGraphGenerator<Integer, DefaultEdge> generator =
-            new GnpRandomBipartiteGraphGenerator<>(10, 10, 0.8);
+    public void testRandomBipartite() {
+        GnpRandomBipartiteGraphGenerator<Integer, DefaultEdge> generator = new GnpRandomBipartiteGraphGenerator<>(10, 10, 0.8);
         for (int i = 0; i < 100; i++) {
             Graph<Integer, DefaultEdge> g = GraphTestsUtils.createPseudograph();
             generator.generateGraph(g);
@@ -556,5 +543,3 @@ public class GraphTestsTest
         assertTrue(GraphTests.isWeaklyChordal(graph));
     }
 }
-
-// End GraphTestsTest.java

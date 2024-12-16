@@ -18,8 +18,8 @@
 package org.jgrapht.graph;
 
 import java.io.*;
-
 import org.jgrapht.*;
+
 
 /**
  * Default implementation of the graph type.
@@ -37,25 +37,24 @@ import org.jgrapht.*;
  * 
  * @author Dimitrios Michail
  */
-public class DefaultGraphType
-    implements
-    GraphType,
-    Serializable
-{
+public class DefaultGraphType implements GraphType , Serializable {
     private static final long serialVersionUID = 4291049312119347474L;
 
     private final boolean directed;
+
     private final boolean undirected;
+
     private final boolean selfLoops;
+
     private final boolean multipleEdges;
+
     private final boolean weighted;
+
     private final boolean allowsCycles;
+
     private final boolean modifiable;
 
-    private DefaultGraphType(
-        boolean directed, boolean undirected, boolean selfLoops, boolean multipleEdges,
-        boolean weighted, boolean allowsCycles, boolean modifiable)
-    {
+    private DefaultGraphType(boolean directed, boolean undirected, boolean selfLoops, boolean multipleEdges, boolean weighted, boolean allowsCycles, boolean modifiable) {
         this.directed = directed;
         this.undirected = undirected;
         this.selfLoops = selfLoops;
@@ -282,21 +281,25 @@ public class DefaultGraphType
      * 
      * @author Dimitrios Michail
      */
-    public static class Builder
-    {
+    public static class Builder {
         private boolean directed;
+
         private boolean undirected;
+
         private boolean allowSelfLoops;
+
         private boolean allowMultipleEdges;
+
         private boolean weighted;
+
         private boolean allowCycles;
+
         private boolean modifiable;
 
         /**
          * Construct a new Builder.
          */
-        public Builder()
-        {
+        public Builder() {
             this.directed = false;
             this.undirected = true;
             this.allowSelfLoops = true;
@@ -308,11 +311,11 @@ public class DefaultGraphType
 
         /**
          * Construct a new Builder.
-         * 
-         * @param type the type to base the builder
+         *
+         * @param type
+         * 		the type to base the builder
          */
-        public Builder(GraphType type)
-        {
+        public Builder(GraphType type) {
             this.directed = type.isDirected() || type.isMixed();
             this.undirected = type.isUndirected() || type.isMixed();
             this.allowSelfLoops = type.isAllowingSelfLoops();
@@ -324,15 +327,15 @@ public class DefaultGraphType
 
         /**
          * Construct a new Builder.
-         * 
-         * @param directed whether the graph contains directed edges
-         * @param undirected whether the graph contains undirected edges
+         *
+         * @param directed
+         * 		whether the graph contains directed edges
+         * @param undirected
+         * 		whether the graph contains undirected edges
          */
-        public Builder(boolean directed, boolean undirected)
-        {
-            if (!directed && !undirected) {
-                throw new IllegalArgumentException(
-                    "At least one of directed or undirected must be true");
+        public Builder(boolean directed, boolean undirected) {
+            if ((!directed) && (!undirected)) {
+                throw new IllegalArgumentException("At least one of directed or undirected must be true");
             }
             this.directed = directed;
             this.undirected = undirected;
@@ -450,7 +453,5 @@ public class DefaultGraphType
                 directed, undirected, allowSelfLoops, allowMultipleEdges, weighted, allowCycles,
                 modifiable);
         }
-
     }
-
 }
