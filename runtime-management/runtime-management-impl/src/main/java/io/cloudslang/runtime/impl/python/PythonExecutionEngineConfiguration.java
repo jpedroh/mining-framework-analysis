@@ -13,26 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.cloudslang.runtime.impl.python;
 
 import io.cloudslang.dependency.impl.services.DependenciesManagementConfiguration;
 import io.cloudslang.runtime.api.python.PythonRuntimeService;
 import io.cloudslang.runtime.impl.python.external.ExternalPythonExecutionEngine;
 import io.cloudslang.runtime.impl.python.external.ExternalPythonRuntimeServiceImpl;
+import java.util.concurrent.Semaphore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import java.util.concurrent.Semaphore;
 
 /**
  * Created by Genadi Rabinovich, genadi@hpe.com on 05/05/2016.
  */
 @Configuration
 @ComponentScan("io.cloudslang.runtime.impl.python")
-@Import({DependenciesManagementConfiguration.class})
+@Import({ DependenciesManagementConfiguration.class })
 public class PythonExecutionEngineConfiguration {
     @Bean(name = "jythonRuntimeService")
     public PythonRuntimeService pythonRuntimeService() {
@@ -57,6 +56,4 @@ public class PythonExecutionEngineConfiguration {
     PythonExecutionEngine externalPythonExecutionEngine() {
         return new ExternalPythonExecutionEngine();
     }
-
-
 }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.cloudslang.runtime.impl.python;
 
 import io.cloudslang.dependency.api.services.DependencyService;
@@ -27,6 +26,17 @@ import io.cloudslang.runtime.api.python.PythonRuntimeService;
 import io.cloudslang.runtime.impl.python.external.ExternalPythonExecutionEngine;
 import io.cloudslang.runtime.impl.python.external.ExternalPythonRuntimeServiceImpl;
 import io.cloudslang.score.events.EventBus;
+import java.io.File;
+import java.io.Serializable;
+import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
+import javax.annotation.Resource;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
@@ -38,25 +48,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
-import java.io.File;
-import java.io.Serializable;
-import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Semaphore;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+
 
 /**
  * Created by Genadi Rabinovich, genadi@hpe.com on 05/05/2016.
@@ -65,47 +63,33 @@ import static org.mockito.Mockito.mock;
 @ContextConfiguration(classes = PythonExecutorTest.TestConfig.class)
 public class PythonExecutorTest {
     private static boolean shouldRunMaven;
+
     static {
         ClassLoader classLoader = PythonExecutorTest.class.getClassLoader();
-
         String settingsXmlPath = classLoader.getResource("settings.xml").getPath();
         File rootHome = new File(settingsXmlPath).getParentFile();
         File mavenHome = new File(rootHome, "maven");
         UnzipUtil.unzipToFolder(mavenHome.getAbsolutePath(), classLoader.getResourceAsStream("maven.zip"));
-
         System.setProperty(MavenConfig.MAVEN_HOME, mavenHome.getAbsolutePath());
-
         System.setProperty(MavenConfig.MAVEN_REPO_LOCAL, new TestConfig().mavenConfig().getLocalMavenRepoPath());
         System.setProperty("maven.home", classLoader.getResource("maven").getPath());
-
-        shouldRunMaven = System.getProperties().containsKey(MavenConfigImpl.MAVEN_REMOTE_URL) &&
-                System.getProperties().containsKey(MavenConfigImpl.MAVEN_PLUGINS_URL);
-
-
+        shouldRunMaven = System.getProperties().containsKey(MavenConfigImpl.MAVEN_REMOTE_URL) && System.getProperties().containsKey(MavenConfigImpl.MAVEN_PLUGINS_URL);
         System.setProperty(MavenConfig.MAVEN_SETTINGS_PATH, settingsXmlPath);
         System.setProperty(MavenConfig.MAVEN_M2_CONF_PATH, classLoader.getResource("m2.conf").getPath());
-
         String provideralAlreadyConfigured = System.setProperty("python.executor.engine", PythonExecutionCachedEngine.class.getSimpleName());
         assertNull("python.executor.engine was configured before this test!!!!!!!", provideralAlreadyConfigured);
     }
 
     private static String LINE_SEPARATOR = System.lineSeparator();
+
     private static final String SYSTEM_PROPERTIES_MAP = "__sys_prop__";
 
-    private static final String GET_SP_FUNCTION_DEFINITION =
-            "import time" + LINE_SEPARATOR +
-                    "def check_env(sysPropName, expectedSysPropValue, variable, expectedVariableValue):" + LINE_SEPARATOR +
-                    "  time.sleep(3)" + LINE_SEPARATOR +
-                    "  property_value = __sys_prop__.get(sysPropName)" + LINE_SEPARATOR +
-                    "  print 'sysProperty: found ' + property_value + ', expected ' + expectedSysPropValue" + LINE_SEPARATOR +
-                    "  global_variable_value = globals().get(variable)" + LINE_SEPARATOR +
-                    "  print 'global variable: found ' + str(global_variable_value) + ', expected ' + expectedVariableValue" + LINE_SEPARATOR +
-                    "  EXPECTED=expectedVariableValue" + LINE_SEPARATOR +
-                    "  ACTUAL=property_value" + LINE_SEPARATOR +
-                    "  return expectedSysPropValue + ':' + property_value + ',' + expectedVariableValue + ':' + global_variable_value";
+    private static final String GET_SP_FUNCTION_DEFINITION = ((((((((((((((((("import time" + LINE_SEPARATOR) + "def check_env(sysPropName, expectedSysPropValue, variable, expectedVariableValue):") + LINE_SEPARATOR) + "  time.sleep(3)") + LINE_SEPARATOR) + "  property_value = __sys_prop__.get(sysPropName)") + LINE_SEPARATOR) + "  print 'sysProperty: found ' + property_value + ', expected ' + expectedSysPropValue") + LINE_SEPARATOR) + "  global_variable_value = globals().get(variable)") + LINE_SEPARATOR) + "  print 'global variable: found ' + str(global_variable_value) + ', expected ' + expectedVariableValue") + LINE_SEPARATOR) + "  EXPECTED=expectedVariableValue") + LINE_SEPARATOR) + "  ACTUAL=property_value") + LINE_SEPARATOR) + "  return expectedSysPropValue + ':' + property_value + ',' + expectedVariableValue + ':' + global_variable_value";
 
     private static final String VAR1 = "VAR1";
+
     private static final String VAR2 = "VAR2";
+
     private static final String EXECUTION_SCRIPT =
             "import sys" + LINE_SEPARATOR +
                     "import time" + LINE_SEPARATOR +
@@ -114,11 +98,15 @@ public class PythonExecutorTest {
                     VAR2 + "={1}" + LINE_SEPARATOR +
                     "print ''VAR1='' + str(" + VAR1 + ")" + LINE_SEPARATOR +
                     "print ''VAR2='' + str(" + VAR2 + ")" + LINE_SEPARATOR;
+
     private static final String PY_CLASS_IS_EXCLUDED_SCRIPT =
             "from Queue import Queue" + LINE_SEPARATOR +
                     "x = 'abc'" + LINE_SEPARATOR;
+
     private static final Map<String, Serializable> EMPTY_CALL_ARGUMENTS = Collections.emptyMap();
+
     private static final Map<String, Serializable> EXPECTED_CONTEXT_EXEC;
+
     private static final Map<String, Serializable> EXPECTED_CONTEXT_EVAL;
 
     static {
@@ -342,12 +330,15 @@ public class PythonExecutorTest {
         PythonExecutionEngine externalPythonExecutionEngine() {
             return new ExternalPythonExecutionEngine();
         }
+
         @Bean public DependencyService dependencyService() {return new DependencyServiceImpl() {
             public Set<String> getDependencies(Set<String> resources) {
                 return resources;
             }
         };}
+
         @Bean public EventBus eventBus() { return mock(EventBus.class);}
+
         @Bean public MavenConfig mavenConfig() {return new MavenConfigImpl();}
     }
 }

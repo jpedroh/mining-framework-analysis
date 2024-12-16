@@ -18,14 +18,14 @@ package io.cloudslang.runtime.impl.python.external;
 import io.cloudslang.runtime.api.python.PythonEvaluationResult;
 import io.cloudslang.runtime.api.python.PythonExecutionResult;
 import io.cloudslang.runtime.api.python.PythonRuntimeService;
-import org.apache.log4j.Logger;
-
-import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Resource;
+import org.apache.log4j.Logger;
+
 
 public class ExternalPythonRuntimeServiceImpl implements PythonRuntimeService {
     private static final Logger logger = Logger.getLogger(ExternalPythonRuntimeServiceImpl.class);
@@ -44,23 +44,21 @@ public class ExternalPythonRuntimeServiceImpl implements PythonRuntimeService {
         try {
             if (executionControlSemaphore.tryAcquire(1L, TimeUnit.SECONDS)) {
                 try {
-                    return externalPythonExecutionEngine.exec(dependencies, script, vars);
-                } finally {
-                    executionControlSemaphore.release();
-                }
-            } else {
-                logger.warn("Maximum number of python processes has been reached. Waiting for a python process to finish. " +
-                        "You can configure the number of concurrent python executions by setting " +
-                        "'python.concurrent.execution.permits' system property.");
-                executionControlSemaphore.acquire();
-                try {
-                    logger.info("Acquired a permit for a new python process. Continuing with execution...");
                     return externalPythonExecutionNotCachedEngine.exec(dependencies, script, vars);
                 } finally {
                     executionControlSemaphore.release();
                 }
+            } else {
+                logger.warn("Maximum number of python processes has been reached. Waiting for a python process to finish. " + ("You can configure the number of concurrent python executions by setting " + "'python.concurrent.execution.permits' system property."));
+                executionControlSemaphore.acquire();
+                try {
+                    logger.info("Acquired a permit for a new python process. Continuing with execution...");
+                    return externalPythonExecutionEngine.exec(dependencies, script, vars);
+                } finally {
+                    executionControlSemaphore.release();
+                }
             }
-        } catch (InterruptedException ie) {
+        } catch (java.lang.InterruptedException ie) {
             throw new ExternalPythonScriptException("Execution was interrupted while waiting for a python permit.");
         }
     }
@@ -70,23 +68,21 @@ public class ExternalPythonRuntimeServiceImpl implements PythonRuntimeService {
         try {
             if (executionControlSemaphore.tryAcquire(1L, TimeUnit.SECONDS)) {
                 try {
-                    return externalPythonExecutionEngine.eval(prepareEnvironmentScript, script, vars);
-                } finally {
-                    executionControlSemaphore.release();
-                }
-            } else {
-                logger.warn("Maximum number of python processes has been reached. Waiting for a python process to finish. " +
-                        "You can configure the number of concurrent python executions by setting " +
-                        "'python.concurrent.execution.permits' system property.");
-                executionControlSemaphore.acquire();
-                try {
-                    logger.info("Acquired a permit for a new python process. Continuing with execution...");
                     return externalPythonExecutionNotCachedEngine.eval(prepareEnvironmentScript, script, vars);
                 } finally {
                     executionControlSemaphore.release();
                 }
+            } else {
+                logger.warn("Maximum number of python processes has been reached. Waiting for a python process to finish. " + ("You can configure the number of concurrent python executions by setting " + "'python.concurrent.execution.permits' system property."));
+                executionControlSemaphore.acquire();
+                try {
+                    logger.info("Acquired a permit for a new python process. Continuing with execution...");
+                    return externalPythonExecutionEngine.eval(prepareEnvironmentScript, script, vars);
+                } finally {
+                    executionControlSemaphore.release();
+                }
             }
-        } catch (InterruptedException ie) {
+        } catch (java.lang.InterruptedException ie) {
             throw new ExternalPythonScriptException("Execution was interrupted while waiting for a python permit.");
         }
     }
