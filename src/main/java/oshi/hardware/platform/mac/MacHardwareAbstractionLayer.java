@@ -20,12 +20,12 @@ import oshi.hardware.CentralProcessor;
 import oshi.hardware.Display;
 import oshi.hardware.GlobalMemory;
 import oshi.hardware.HWDiskStore;
-import oshi.hardware.HardwareAbstractionLayer;
 import oshi.hardware.PowerSource;
 import oshi.hardware.Sensors;
 import oshi.hardware.common.AbstractHardwareAbstractionLayer;
 import oshi.software.os.OSFileStore;
 import oshi.software.os.mac.MacFileSystem;
+
 
 public class MacHardwareAbstractionLayer extends AbstractHardwareAbstractionLayer {
 
@@ -85,6 +85,8 @@ public class MacHardwareAbstractionLayer extends AbstractHardwareAbstractionLaye
         }
         return this.sensors;
     }
+<<<<<<< LEFT
+=======
 
     @Override
     public HWDiskStore[] getDisksStores() {
@@ -110,4 +112,5 @@ public class MacHardwareAbstractionLayer extends AbstractHardwareAbstractionLaye
                 .add("fileStores", fileStoreArrayBuilder.build()).add("displays", displayArrayBuilder.build())
                 .add("sensors", getSensors().toJSON()).build();
     }
+>>>>>>> RIGHT
 }

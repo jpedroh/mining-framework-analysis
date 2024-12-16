@@ -17,22 +17,15 @@
  */
 package oshi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
+import com.sun.jna.Platform;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.util.Arrays;
-
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sun.jna.Platform;
-
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.Display;
 import oshi.hardware.GlobalMemory;
@@ -46,6 +39,10 @@ import oshi.software.os.OperatingSystemVersion;
 import oshi.util.FormatUtil;
 import oshi.util.ParseUtil;
 import oshi.util.Util;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 
 /**
  * The Class SystemInfoTest.
@@ -53,7 +50,6 @@ import oshi.util.Util;
  * @author dblock[at]dblock[dot]org
  */
 public class SystemInfoTest {
-
     /**
      * Test central processor.
      */
@@ -61,53 +57,42 @@ public class SystemInfoTest {
     public void testCentralProcessor() {
         SystemInfo si = new SystemInfo();
         CentralProcessor p = si.getHardware().getProcessor();
-
         assertNotNull(p.getVendor());
-        assertTrue(p.getVendorFreq() == -1 || p.getVendorFreq() > 0);
+        assertTrue((p.getVendorFreq() == (-1)) || (p.getVendorFreq() > 0));
         p.setVendor("v");
         assertEquals(p.getVendor(), "v");
-
         assertNotNull(p.getName());
         p.setName("n");
         assertEquals(p.getName(), "n");
-
         assertNotNull(p.getIdentifier());
         p.setIdentifier("i");
         assertEquals(p.getIdentifier(), "i");
-
         p.setCpu64(true);
         assertTrue(p.isCpu64bit());
-
         assertNotNull(p.getStepping());
         p.setStepping("s");
         assertEquals(p.getStepping(), "s");
-
         assertNotNull(p.getModel());
         p.setModel("m");
         assertEquals(p.getModel(), "m");
-
         assertNotNull(p.getFamily());
         p.setFamily("f");
         assertEquals(p.getFamily(), "f");
-
-        assertTrue(p.getSystemCpuLoadBetweenTicks() >= 0 && p.getSystemCpuLoadBetweenTicks() <= 1);
+        assertTrue((p.getSystemCpuLoadBetweenTicks() >= 0) && (p.getSystemCpuLoadBetweenTicks() <= 1));
         assertEquals(p.getSystemCpuLoadTicks().length, 4);
         assertTrue(p.getSystemIOWaitTicks() >= 0);
         assertEquals(p.getSystemIrqTicks().length, 2);
-
         Util.sleep(500);
-        assertTrue(p.getSystemCpuLoad() >= 0.0 && p.getSystemCpuLoad() <= 1.0);
+        assertTrue((p.getSystemCpuLoad() >= 0.0) && (p.getSystemCpuLoad() <= 1.0));
         assertEquals(p.getSystemLoadAverage(3).length, 3);
         if (Platform.isMac() || Platform.isLinux()) {
             assertTrue(p.getSystemLoadAverage() >= 0.0);
         }
-
         assertEquals(p.getProcessorCpuLoadBetweenTicks().length, p.getLogicalProcessorCount());
         for (int cpu = 0; cpu < p.getLogicalProcessorCount(); cpu++) {
-            assertTrue(p.getProcessorCpuLoadBetweenTicks()[cpu] >= 0 && p.getProcessorCpuLoadBetweenTicks()[cpu] <= 1);
+            assertTrue((p.getProcessorCpuLoadBetweenTicks()[cpu] >= 0) && (p.getProcessorCpuLoadBetweenTicks()[cpu] <= 1));
             assertEquals(p.getProcessorCpuLoadTicks()[cpu].length, 4);
         }
-
         assertTrue(p.getSystemUptime() > 0);
         assertNotNull(p.getSystemSerialNumber());
         assertTrue(p.getLogicalProcessorCount() >= p.getPhysicalProcessorCount());
@@ -137,12 +122,10 @@ public class SystemInfoTest {
         HardwareAbstractionLayer hal = si.getHardware();
         GlobalMemory memory = hal.getMemory();
         assertNotNull(memory);
-
         // RAM tests
         assertTrue(memory.getTotal() > 0);
         assertTrue(memory.getAvailable() >= 0);
         assertTrue(memory.getAvailable() <= memory.getTotal());
-
         // Swap tests
         assertTrue(memory.getSwapTotal() >= 0);
         assertTrue(memory.getSwapUsed() >= 0);
@@ -157,10 +140,9 @@ public class SystemInfoTest {
         SystemInfo si = new SystemInfo();
         PowerSource[] ps = si.getHardware().getPowerSources();
         if (ps.length > 1) {
-            assertTrue(ps[0].getRemainingCapacity() >= 0 && ps[0].getRemainingCapacity() <= 1);
-            double epsilon = 1E-6;
-            assertTrue(ps[0].getTimeRemaining() > 0 || Math.abs(ps[0].getTimeRemaining() - -1) < epsilon
-                    || Math.abs(ps[0].getTimeRemaining() - -2) < epsilon);
+            assertTrue((ps[0].getRemainingCapacity() >= 0) && (ps[0].getRemainingCapacity() <= 1));
+            double epsilon = 1.0E-6;
+            assertTrue(((ps[0].getTimeRemaining() > 0) || (Math.abs(ps[0].getTimeRemaining() - (-1)) < epsilon)) || (Math.abs(ps[0].getTimeRemaining() - (-2)) < epsilon));
         }
     }
 
@@ -171,49 +153,12 @@ public class SystemInfoTest {
     public void testSensors() {
         SystemInfo si = new SystemInfo();
         Sensors s = si.getHardware().getSensors();
-        assertTrue(s.getCpuTemperature() >= 0d && s.getCpuTemperature() <= 100d);
+        assertTrue((s.getCpuTemperature() >= 0.0) && (s.getCpuTemperature() <= 100.0));
         int[] speeds = s.getFanSpeeds();
         for (int fan = 0; fan < speeds.length; fan++) {
             assertTrue(speeds[fan] >= 0);
         }
         assertTrue(s.getCpuVoltage() >= 0);
-    }
-
-    /**
-     * Test get version.
-     */
-    @Test
-    public void testOSVersion() {
-        SystemInfo si = new SystemInfo();
-        OperatingSystem os = si.getOperatingSystem();
-        assertNotNull(os.getFamily());
-        assertNotNull(os.getManufacturer());
-        OperatingSystemVersion version = os.getVersion();
-        assertNotNull(version);
-        assertNotNull(version.getVersion());
-        assertNotNull(version.getCodeName());
-        assertNotNull(version.getBuildNumber());
-    }
-
-    /**
-     * Test file system.
-     *
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    @Test
-    public void testFileSystem() throws IOException {
-        SystemInfo si = new SystemInfo();
-        OSFileStore[] fs = si.getHardware().getFileStores();
-        for (int f = 0; f < fs.length; f++) {
-            assertTrue(fs[f].getTotalSpace() >= 0);
-            assertTrue(fs[f].getUsableSpace() <= fs[f].getTotalSpace());
-        }
-        // Hack to extract path from FileStore.toString() is undocumented,
-        // this test will fail if toString format changes
-        if (Platform.isLinux()) {
-            FileStore store = Files.getFileStore((new File("/")).toPath());
-            assertEquals("/", store.toString().replace(" (" + store.name() + ")", ""));
-        }
     }
 
     /**
@@ -237,106 +182,93 @@ public class SystemInfoTest {
     }
 
     /**
-     * Test system uptime.
+     * Test get version.
      */
     @Test
-    public void testSystemUptime() {
+    public void testOSVersion() {
         SystemInfo si = new SystemInfo();
-        HardwareAbstractionLayer hal = si.getHardware();
-        long uptime = hal.getProcessor().getSystemUptime();
-        assertTrue(uptime >= 0);
+        OperatingSystem os = si.getOperatingSystem();
+        assertNotNull(os.getFamily());
+        assertNotNull(os.getManufacturer());
+        OperatingSystemVersion version = os.getVersion();
+        assertNotNull(version);
+        assertNotNull(version.getVersion());
+        assertNotNull(version.getCodeName());
+        assertNotNull(version.getBuildNumber());
     }
 
     /**
-     * Test serial number
+     * Test file system.
+     *
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
      */
     @Test
-    public void testSerialNumber() {
+    public void testFileSystem() throws IOException {
         SystemInfo si = new SystemInfo();
-        HardwareAbstractionLayer hal = si.getHardware();
-        String sn = hal.getProcessor().getSystemSerialNumber();
-        assertTrue(sn.length() >= 0);
-    }
-
-    /**
-     * Test displays
-     */
-    @Test
-    public void testDisplay() {
-        SystemInfo si = new SystemInfo();
-        HardwareAbstractionLayer hal = si.getHardware();
-        Display[] displays = hal.getDisplays();
-        if (displays.length > 0) {
-            assertTrue(displays[0].getEdid().length >= 128);
+        OSFileStore[] fs = si.getHardware().getFileStores();
+        for (int f = 0; f < fs.length; f++) {
+            assertTrue(fs[f].getTotalSpace() >= 0);
+            assertTrue(fs[f].getUsableSpace() <= fs[f].getTotalSpace());
+        }
+        // Hack to extract path from FileStore.toString() is undocumented,
+        // this test will fail if toString format changes
+        if (Platform.isLinux()) {
+            FileStore store = Files.getFileStore(new File("/").toPath());
+            assertEquals("/", store.toString().replace((" (" + store.name()) + ")", ""));
         }
     }
 
     /**
      * The main method.
      *
-     * @param args the arguments
+     * @param args
+     *            the arguments
      */
     public static void main(String[] args) {
         // Options: ERROR > WARN > INFO > DEBUG > TRACE
         System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "INFO");
         Logger LOG = LoggerFactory.getLogger(SystemInfoTest.class);
-
         LOG.info("Initializing System...");
         SystemInfo si = new SystemInfo();
         // software
         // software: operating system
         OperatingSystem os = si.getOperatingSystem();
         System.out.println(os);
-
         LOG.info("Initializing Hardware...");
         // hardware
         HardwareAbstractionLayer hal = si.getHardware();
-
         // hardware: processors
         System.out.println(hal.getProcessor());
-        System.out.println(" " + hal.getProcessor().getPhysicalProcessorCount() + " physical CPU(s)");
-        System.out.println(" " + hal.getProcessor().getLogicalProcessorCount() + " logical CPU(s)");
-
+        System.out.println((" " + hal.getProcessor().getPhysicalProcessorCount()) + " physical CPU(s)");
+        System.out.println((" " + hal.getProcessor().getLogicalProcessorCount()) + " logical CPU(s)");
         System.out.println("Identifier: " + hal.getProcessor().getIdentifier());
         System.out.println("Serial Num: " + hal.getProcessor().getSystemSerialNumber());
-
         // hardware: memory
         LOG.info("Checking Memory...");
-        System.out.println("Memory: " + FormatUtil.formatBytes(hal.getMemory().getAvailable()) + "/"
-                + FormatUtil.formatBytes(hal.getMemory().getTotal()));
-        System.out.println("Swap used: " + FormatUtil.formatBytes(hal.getMemory().getSwapUsed()) + "/"
-                + FormatUtil.formatBytes(hal.getMemory().getSwapTotal()));
+        System.out.println((("Memory: " + FormatUtil.formatBytes(hal.getMemory().getAvailable())) + "/") + FormatUtil.formatBytes(hal.getMemory().getTotal()));
+        System.out.println((("Swap used: " + FormatUtil.formatBytes(hal.getMemory().getSwapUsed())) + "/") + FormatUtil.formatBytes(hal.getMemory().getSwapTotal()));
         // uptime
         LOG.info("Checking Uptime...");
         System.out.println("Uptime: " + FormatUtil.formatElapsedSecs(hal.getProcessor().getSystemUptime()));
-
         // CPU
         LOG.info("Checking CPU...");
         long[] prevTicks = hal.getProcessor().getSystemCpuLoadTicks();
-        System.out.println("CPU, IOWait, and IRQ ticks @ 0 sec:" + Arrays.toString(prevTicks) + ", "
-                + hal.getProcessor().getSystemIOWaitTicks() + ", "
-                + Arrays.toString(hal.getProcessor().getSystemIrqTicks()));
+        System.out.println((((("CPU, IOWait, and IRQ ticks @ 0 sec:" + Arrays.toString(prevTicks)) + ", ") + hal.getProcessor().getSystemIOWaitTicks()) + ", ") + Arrays.toString(hal.getProcessor().getSystemIrqTicks()));
         // Wait a second...
         Util.sleep(1000);
         long[] ticks = hal.getProcessor().getSystemCpuLoadTicks();
-        System.out.println("CPU, IOWait, and IRQ ticks @ 1 sec:" + Arrays.toString(ticks) + ", "
-                + hal.getProcessor().getSystemIOWaitTicks() + ", "
-                + Arrays.toString(hal.getProcessor().getSystemIrqTicks()));
+        System.out.println((((("CPU, IOWait, and IRQ ticks @ 1 sec:" + Arrays.toString(ticks)) + ", ") + hal.getProcessor().getSystemIOWaitTicks()) + ", ") + Arrays.toString(hal.getProcessor().getSystemIrqTicks()));
         long user = ticks[0] - prevTicks[0];
         long nice = ticks[1] - prevTicks[1];
         long sys = ticks[2] - prevTicks[2];
         long idle = ticks[3] - prevTicks[3];
-        long totalCpu = user + nice + sys + idle;
-
-        System.out.format("User: %.1f%% Nice: %.1f%% System: %.1f%% Idle: %.1f%%%n", 100d * user / totalCpu,
-                100d * nice / totalCpu, 100d * sys / totalCpu, 100d * idle / totalCpu);
-        System.out.format("CPU load: %.1f%% (counting ticks)%n",
-                hal.getProcessor().getSystemCpuLoadBetweenTicks() * 100);
+        long totalCpu = ((user + nice) + sys) + idle;
+        System.out.format("User: %.1f%% Nice: %.1f%% System: %.1f%% Idle: %.1f%%%n", (100.0 * user) / totalCpu, (100.0 * nice) / totalCpu, (100.0 * sys) / totalCpu, (100.0 * idle) / totalCpu);
+        System.out.format("CPU load: %.1f%% (counting ticks)%n", hal.getProcessor().getSystemCpuLoadBetweenTicks() * 100);
         System.out.format("CPU load: %.1f%% (OS MXBean)%n", hal.getProcessor().getSystemCpuLoad() * 100);
         double[] loadAverage = hal.getProcessor().getSystemLoadAverage(3);
-        System.out.println("CPU load averages:" + (loadAverage[0] < 0 ? " N/A" : String.format(" %.2f", loadAverage[0]))
-                + (loadAverage[1] < 0 ? " N/A" : String.format(" %.2f", loadAverage[1]))
-                + (loadAverage[2] < 0 ? " N/A" : String.format(" %.2f", loadAverage[2])));
+        System.out.println((("CPU load averages:" + (loadAverage[0] < 0 ? " N/A" : String.format(" %.2f", loadAverage[0]))) + (loadAverage[1] < 0 ? " N/A" : String.format(" %.2f", loadAverage[1]))) + (loadAverage[2] < 0 ? " N/A" : String.format(" %.2f", loadAverage[2])));
         // per core CPU
         StringBuilder procCpu = new StringBuilder("CPU load per processor:");
         double[] load = hal.getProcessor().getProcessorCpuLoadBetweenTicks();
@@ -344,15 +276,13 @@ public class SystemInfoTest {
             procCpu.append(String.format(" %.1f%%", load[cpu] * 100));
         }
         System.out.println(procCpu.toString());
-        System.out.println("Processes: " + hal.getProcessor().getProcessCount() + ", Threads: "
-                + hal.getProcessor().getThreadCount());
+        System.out.println((("Processes: " + hal.getProcessor().getProcessCount()) + ", Threads: ") + hal.getProcessor().getThreadCount());
         // hardware: sensors
         LOG.info("Checking Sensors...");
         System.out.println("Sensors:");
         System.out.format(" CPU Temperature: %.1f°C%n", hal.getSensors().getCpuTemperature());
         System.out.println(" Fan Speeds:" + Arrays.toString(hal.getSensors().getFanSpeeds()));
         System.out.format(" CPU Voltage: %.1fV%n", hal.getSensors().getCpuVoltage());
-
         // hardware: power
         LOG.info("Checking Power sources...");
         StringBuilder sb = new StringBuilder("Power: ");
@@ -360,58 +290,48 @@ public class SystemInfoTest {
             sb.append("Unknown");
         } else {
             double timeRemaining = hal.getPowerSources()[0].getTimeRemaining();
-            if (timeRemaining < -1d) {
+            if (timeRemaining < (-1.0)) {
                 sb.append("Charging");
-            } else if (timeRemaining < 0d) {
+            } else if (timeRemaining < 0.0) {
                 sb.append("Calculating time remaining");
             } else {
-                sb.append(String.format("%d:%02d remaining", (int) (timeRemaining / 3600),
-                        (int) (timeRemaining / 60) % 60));
+                sb.append(String.format("%d:%02d remaining", ((int) (timeRemaining / 3600)), ((int) (timeRemaining / 60)) % 60));
             }
         }
         for (PowerSource pSource : hal.getPowerSources()) {
-            sb.append(String.format("%n %s @ %.1f%%", pSource.getName(), pSource.getRemainingCapacity() * 100d));
+            sb.append(String.format("%n %s @ %.1f%%", pSource.getName(), pSource.getRemainingCapacity() * 100.0));
         }
         System.out.println(sb.toString());
-
         // hardware: file system
         LOG.info("Checking File System...");
         System.out.println("File System:");
-
         OSFileStore[] fsArray = hal.getFileStores();
         for (OSFileStore fs : fsArray) {
             long usable = fs.getUsableSpace();
             long total = fs.getTotalSpace();
-            System.out.format(" %s (%s) %s of %s free (%.1f%%)%n", fs.getName(),
-                    fs.getDescription().isEmpty() ? "file system" : fs.getDescription(), FormatUtil.formatBytes(usable),
-                    FormatUtil.formatBytes(fs.getTotalSpace()), 100d * usable / total);
+            System.out.format(" %s (%s) %s of %s free (%.1f%%)%n", fs.getName(), fs.getDescription().isEmpty() ? "file system" : fs.getDescription(), FormatUtil.formatBytes(usable), FormatUtil.formatBytes(fs.getTotalSpace()), (100.0 * usable) / total);
         }
-
         // hardware: disks
         LOG.info("Checking Disks...");
         System.out.println("Disks:");
-
         HWDiskStore[] dskArray = hal.getDisksStores();
         for (HWDiskStore dsk : dskArray) {
             long byteReads = dsk.getReads();
             long byteWrites = dsk.getWrites();
-            System.out.format(" %s: (model: %s - S/N: %s) reads (in bytes): %s writes (in bytes): %s %n",
-                    dsk.getName(), dsk.getModel(), dsk.getSerial(), byteReads, byteWrites);
+            System.out.format(" %s: (model: %s - S/N: %s) reads (in bytes): %s writes (in bytes): %s %n", dsk.getName(), dsk.getModel(), dsk.getSerial(), byteReads, byteWrites);
         }
-
         // hardware: displays
         LOG.info("Checking Displays...");
         System.out.println("Displays:");
         int i = 0;
         for (Display display : hal.getDisplays()) {
-            System.out.println(" Display " + i + ":");
+            System.out.println((" Display " + i) + ":");
             System.out.println(display.toString());
             i++;
         }
         LOG.info("Printing JSON:");
         // Compact JSON
         // System.out.println(si.toJSON().toString());
-
         // Pretty JSON
         System.out.println(ParseUtil.jsonPrettyPrint(si.toJSON()));
     }
