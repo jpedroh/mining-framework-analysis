@@ -15,14 +15,12 @@
  */
 package net.javacrumbs.jsonunit;
 
+import java.io.IOException;
+import java.io.StringReader;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.After;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.io.StringReader;
-
 import static net.javacrumbs.jsonunit.JsonAssert.assertJsonEquals;
 import static net.javacrumbs.jsonunit.JsonAssert.assertJsonPartEquals;
 import static net.javacrumbs.jsonunit.JsonAssert.assertJsonPartStructureEquals;
@@ -31,8 +29,8 @@ import static net.javacrumbs.jsonunit.JsonAssert.setTolerance;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class JsonAssertTest {
 
+public class JsonAssertTest {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @After
@@ -107,7 +105,7 @@ public class JsonAssertTest {
         try {
             assertJsonEquals(MAPPER.readValue("{\"test\":1}", ObjectNode.class), MAPPER.readValue("{\"test\": 2}", ObjectNode.class));
             fail("Exception expected");
-        } catch (AssertionError e) {
+        } catch (java.lang.AssertionError e) {
             assertEquals("JSON documents have different values:\nDifferent value found in node \"test\". Expected 1, got 2.\n", e.getMessage());
         }
     }
@@ -117,7 +115,7 @@ public class JsonAssertTest {
         try {
             assertJsonEquals(MAPPER.readValue("{\"test\":\"a\"}", ObjectNode.class), MAPPER.readValue("{\"test\": \"b\"}", ObjectNode.class));
             fail("Exception expected");
-        } catch (AssertionError e) {
+        } catch (java.lang.AssertionError e) {
             assertEquals("JSON documents have different values:\nDifferent value found in node \"test\". Expected \"a\", got \"b\".\n", e.getMessage());
         }
     }

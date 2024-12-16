@@ -15,12 +15,6 @@
  */
 package net.javacrumbs.jsonunit.core.internal;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,15 +22,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static net.javacrumbs.jsonunit.core.internal.JsonUtils.convertToJson;
 import static net.javacrumbs.jsonunit.core.internal.JsonUtils.quoteIfNeeded;
 
@@ -48,19 +46,35 @@ import static net.javacrumbs.jsonunit.core.internal.JsonUtils.quoteIfNeeded;
  */
 public class Diff {
     private static final Pattern ARRAY_PATTERN = Pattern.compile("(\\w+)\\[(\\d+)\\]");
+
     private final JsonNode expectedRoot;
+
     private final JsonNode actualRoot;
+
     private final Differences structureDifferences = new Differences("structures");
+
     private final Differences valueDifferences = new Differences("values");
+
     private final String startPath;
+
     private final BigDecimal numericComparisonTolerance;
+
     private boolean compared = false;
+
     private final String ignorePlaceholder;
 
     private static final Logger diffLogger = LoggerFactory.getLogger("net.javacrumbs.jsonunit.difference.diff");
+
     private static final Logger valuesLogger = LoggerFactory.getLogger("net.javacrumbs.jsonunit.difference.values");
 
-    private enum NodeType {OBJECT, ARRAY, STRING, NUMBER, BOOLEAN, NULL}
+    private enum NodeType {
+
+        OBJECT,
+        ARRAY,
+        STRING,
+        NUMBER,
+        BOOLEAN,
+        NULL;}
 
     public Diff(JsonNode expected, JsonNode actual, String startPath, String ignorePlaceholder, BigDecimal numericComparisonTolerance) {
         super();
@@ -90,7 +104,6 @@ public class Diff {
         return create(expected, actual, actualName, startPath, ignorePlaceholder, null);
     }
 
-
     private void compare() {
         if (!compared) {
             JsonNode part = getStartNode(actualRoot, startPath);
@@ -107,7 +120,6 @@ public class Diff {
         if (startPath.length() == 0) {
             return actualRoot;
         }
-
         JsonNode startNode = actualRoot;
         StringTokenizer stringTokenizer = new StringTokenizer(startPath, ".");
         while (stringTokenizer.hasMoreElements()) {
@@ -119,10 +131,9 @@ public class Diff {
                 startNode = startNode.path(matcher.group(1));
                 startNode = startNode.path(Integer.valueOf(matcher.group(2)));
             }
-        }
+        } 
         return startNode;
     }
-
 
     /**
      * Compares object nodes.
@@ -134,7 +145,6 @@ public class Diff {
     private void compareObjectNodes(ObjectNode expected, ObjectNode actual, String path) {
         Map<String, JsonNode> expectedFields = getFields(expected);
         Map<String, JsonNode> actualFields = getFields(actual);
-
         Set<String> expectedKeys = expectedFields.keySet();
         Set<String> actualKeys = actualFields.keySet();
         if (!expectedKeys.equals(actualKeys)) {
@@ -142,7 +152,6 @@ public class Diff {
             String extraKeys = getExtraKeys(expectedKeys, actualKeys, path);
             structureDifferenceFound("Different keys found in node \"%s\". Expected %s, got %s. %s %s", path, sort(expectedFields.keySet()), sort(actualFields.keySet()), missingKeys, extraKeys);
         }
-
         for (String fieldName : commonFields(expectedFields, actualFields)) {
             JsonNode expectedNode = expectedFields.get(fieldName);
             JsonNode actualNode = actualFields.get(fieldName);
@@ -150,7 +159,6 @@ public class Diff {
             compareNodes(expectedNode, actualNode, fieldPath);
         }
     }
-
 
     static String getMissingKeys(Set<String> expectedKeys, Collection<String> actualKeys, String path) {
         Set<String> missingKeys = new TreeSet<String>(expectedKeys);
@@ -181,10 +189,9 @@ public class Diff {
             if (iterator.hasNext()) {
                 buffer.append(",");
             }
-        }
+        } 
         return buffer.toString();
     }
-
 
     /**
      * Compares two nodes.
@@ -196,48 +203,44 @@ public class Diff {
     private void compareNodes(JsonNode expectedNode, JsonNode actualNode, String fieldPath) {
         NodeType expectedNodeType = getNodeType(expectedNode);
         NodeType actualNodeType = getNodeType(actualNode);
-
         //ignoring value
-        if (expectedNodeType == NodeType.STRING && ignorePlaceholder.equals(expectedNode.asText())) {
+        if ((expectedNodeType == NodeType.STRING) && ignorePlaceholder.equals(expectedNode.asText())) {
             return;
         }
-
         if (!expectedNodeType.equals(actualNodeType)) {
-            valueDifferenceFound("Different value found in node \"%s\". Expected '%s', got '%s'.", fieldPath, expectedNode, actualNode);
+            valueDifferenceFound("Different value found in node \"%s\". Expected \'%s\', got \'%s\'.", fieldPath, expectedNode, actualNode);
         } else {
             switch (expectedNodeType) {
-                case OBJECT:
-                    compareObjectNodes((ObjectNode) expectedNode, (ObjectNode) actualNode, fieldPath);
+                case OBJECT :
+                    compareObjectNodes(((ObjectNode) (expectedNode)), ((ObjectNode) (actualNode)), fieldPath);
                     break;
-                case ARRAY:
-                    compareArrayNodes((ArrayNode) expectedNode, (ArrayNode) actualNode, fieldPath);
+                case ARRAY :
+                    compareArrayNodes(((ArrayNode) (expectedNode)), ((ArrayNode) (actualNode)), fieldPath);
                     break;
-                case STRING:
+                case STRING :
                     compareValues(expectedNode.asText(), actualNode.asText(), fieldPath);
                     break;
-                case NUMBER:
+                case NUMBER :
                     if (numericComparisonTolerance != null) {
-                        BigDecimal diff = expectedNode.getDecimalValue().subtract(actualNode.getDecimalValue()).abs();
+                        BigDecimal diff = expectedNode.decimalValue().subtract(actualNode.decimalValue()).abs();
                         if (diff.compareTo(numericComparisonTolerance) > 0) {
-                            valueDifferenceFound("Different value found in node \"%s\". Expected %s, got %s, difference is %s, tolerance is %s",
-                                    fieldPath, quoteTextValue(expectedNode.getNumberValue()), quoteTextValue(actualNode.getNumberValue()), diff.toString(), numericComparisonTolerance);
+                            valueDifferenceFound("Different value found in node \"%s\". Expected %s, got %s, difference is %s, tolerance is %s", fieldPath, quoteTextValue(expectedNode.numberValue()), quoteTextValue(actualNode.numberValue()), diff.toString(), numericComparisonTolerance);
                         }
                     } else {
                         compareValues(expectedNode.getNumberValue(), actualNode.getNumberValue(), fieldPath);
                     }
                     break;
-                case BOOLEAN:
+                case BOOLEAN :
                     compareValues(expectedNode.asBoolean(), actualNode.asBoolean(), fieldPath);
                     break;
-                case NULL:
-                    //nothing
+                case NULL :
+                    // nothing
                     break;
-                default:
+                default :
                     throw new IllegalStateException("Unexpected node type " + expectedNodeType);
             }
         }
     }
-
 
     private void compareValues(Object expectedValue, Object actualValue, String path) {
         if (!expectedValue.equals(actualValue)) {
@@ -259,7 +262,6 @@ public class Diff {
         }
     }
 
-
     private void compareArrayNodes(ArrayNode expectedNode, ArrayNode actualNode, String path) {
         List<JsonNode> expectedElements = asList(expectedNode.getElements());
         List<JsonNode> actualElements = asList(actualNode.getElements());
@@ -271,16 +273,14 @@ public class Diff {
         }
     }
 
-
     private List<JsonNode> asList(Iterator<JsonNode> elements) {
         List<JsonNode> result = new ArrayList<JsonNode>();
         while (elements.hasNext()) {
             JsonNode jsonNode = elements.next();
             result.add(jsonNode);
-        }
+        } 
         return Collections.unmodifiableList(result);
     }
-
 
     /**
      * Returns NodeType of the node.
@@ -305,7 +305,6 @@ public class Diff {
             throw new IllegalStateException("Unexpected node type " + node);
         }
     }
-
 
     /**
      * Construct path to an element.
@@ -345,13 +344,11 @@ public class Diff {
         valueDifferences.add(message, arguments);
     }
 
-
     private Set<String> commonFields(Map<String, JsonNode> expectedFields, Map<String, JsonNode> actualFields) {
         Set<String> result = new TreeSet<String>(expectedFields.keySet());
         result.retainAll(actualFields.keySet());
         return Collections.unmodifiableSet(result);
     }
-
 
     private SortedSet<String> sort(Set<String> set) {
         return new TreeSet<String>(set);
@@ -397,7 +394,7 @@ public class Diff {
         while (fields.hasNext()) {
             Map.Entry<String, JsonNode> field = fields.next();
             result.put(field.getKey(), field.getValue());
-        }
+        } 
         return Collections.unmodifiableMap(result);
     }
 
@@ -428,5 +425,4 @@ public class Diff {
         structureDifferences.appendDifferences(message);
         return message.toString();
     }
-
 }

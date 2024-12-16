@@ -15,15 +15,14 @@
  */
 package net.javacrumbs.jsonunit.fluent;
 
-import org.junit.Test;
-
 import java.io.IOException;
 import java.io.StringReader;
-
+import org.junit.Test;
 import static net.javacrumbs.jsonunit.core.internal.JsonUtils.readValue;
 import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
 
 public class JsonFluentAssertTest {
     @Test
@@ -83,9 +82,9 @@ public class JsonFluentAssertTest {
     @Test
     public void testAssertNode() throws IOException {
         try {
-            assertThatJson(readValue("{\"test\":1}","")).isEqualTo(readValue("{\"test\":2}", ""));
+            assertThatJson(readValue("{\"test\":1}", "")).isEqualTo(readValue("{\"test\":2}", ""));
             fail("Exception expected");
-        } catch (AssertionError e) {
+        } catch (java.lang.AssertionError e) {
             assertEquals("JSON documents have different values:\nDifferent value found in node \"test\". Expected 2, got 1.\n", e.getMessage());
         }
     }
@@ -95,7 +94,7 @@ public class JsonFluentAssertTest {
         try {
             assertThatJson("{\"test\":1}").isEqualTo(readValue("{\"test\":2}", ""));
             fail("Exception expected");
-        } catch (AssertionError e) {
+        } catch (java.lang.AssertionError e) {
             assertEquals("JSON documents have different values:\nDifferent value found in node \"test\". Expected 2, got 1.\n", e.getMessage());
         }
     }
@@ -179,7 +178,6 @@ public class JsonFluentAssertTest {
     public void testAssertPathArrayOk() {
         assertThatJson("{\"root\":{\"test\":[1,2,3]}}").node("root.test[1]").isEqualTo(2);
     }
-
 
     @Test
     public void testLongPaths() {

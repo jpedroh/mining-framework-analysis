@@ -19,8 +19,8 @@ import net.javacrumbs.jsonunit.core.internal.Diff;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-
 import static net.javacrumbs.jsonunit.core.internal.Diff.create;
+
 
 /**
  * Contains Hamcrest matchers to be used with Hamcrest assertThat and other tools.
@@ -39,7 +39,8 @@ public class JsonMatchers {
      * Are the JSONs equivalent?
      *
      * @param expected
-     * @return
+     * 		
+     * @return 
      */
     public static <T> Matcher<T> jsonEquals(Object expected) {
         return new JsonPartMatcher<T>("", expected);
@@ -49,7 +50,8 @@ public class JsonMatchers {
      * Is the part of the JSON equivalent?
      *
      * @param expected
-     * @return
+     * 		
+     * @return 
      */
     public static <T> Matcher<T> jsonPartEquals(String path, Object expected) {
         return new JsonPartMatcher<T>(path, expected);
@@ -62,7 +64,8 @@ public class JsonMatchers {
      * do the type inference correctly.
      *
      * @param expected
-     * @return
+     * 		
+     * @return 
      */
     public static Matcher<String> jsonStringEquals(Object expected) {
         return jsonEquals(expected);
@@ -75,7 +78,8 @@ public class JsonMatchers {
      * do the type inference correctly.
      *
      * @param expected
-     * @return
+     * 		
+     * @return 
      */
     public static Matcher<String> jsonStringPartEquals(String path, Object expected) {
         return jsonPartEquals(path, expected);
@@ -83,7 +87,9 @@ public class JsonMatchers {
 
     private static final class JsonPartMatcher<T> extends BaseMatcher<T> {
         private final Object expected;
+
         private final String path;
+
         private String differences;
 
         JsonPartMatcher(String path, Object expected) {
