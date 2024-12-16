@@ -5,14 +5,12 @@
  *
  * http://www.dspace.org/license/
  */
-
 package org.dspace.curate;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,6 +44,7 @@ import org.dspace.xmlworkflow.storedcomponents.service.XmlWorkflowItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 /**
  * Manage interactions between curation and workflow.  A curation task can be
  * attached to a workflow step, to be executed during the step.
@@ -58,8 +57,7 @@ import org.springframework.stereotype.Service;
  * @author mwood
  */
 @Service
-public class XmlWorkflowCuratorServiceImpl
-        implements XmlWorkflowCuratorService {
+public class XmlWorkflowCuratorServiceImpl implements XmlWorkflowCuratorService {
     private static final Logger LOG = LogManager.getLogger();
 
     @Autowired(required = true)
@@ -99,13 +97,13 @@ public class XmlWorkflowCuratorServiceImpl
     }
 
     @Override
-    public boolean doCuration(Context c, XmlWorkflowItem wfi)
-            throws AuthorizeException, IOException, SQLException {
+    public boolean doCuration(Context c, XmlWorkflowItem wfi) throws AuthorizeException, IOException, SQLException {
         Curator curator = new Curator();
         curator.setReporter(reporter);
         c.turnOffAuthorisationSystem();
         boolean wasAnonymous = false;
-        if (null == c.getCurrentUser()) { // We need someone to email
+        if (null == c.getCurrentUser()) {
+            // We need someone to email
             wasAnonymous = true;
             c.setCurrentUser(ePersonService.getSystemEPerson(c));
         }
@@ -130,10 +128,8 @@ public class XmlWorkflowCuratorServiceImpl
     }
 
     @Override
-    public boolean curate(Curator curator, Context c, XmlWorkflowItem wfi)
-            throws AuthorizeException, IOException, SQLException {
+    public boolean curate(Curator curator, Context c, XmlWorkflowItem wfi) throws AuthorizeException, IOException, SQLException {
         FlowStep step = getFlowStep(c, wfi);
-
         if (step != null) {
             // assign collection to item in case task needs it
             Item item = wfi.getItem();
@@ -146,12 +142,12 @@ public class XmlWorkflowCuratorServiceImpl
                     curator.queue(c, item.getID().toString(), step.queue);
                 } else {
                     // Task is configured to be run automatically
-                    curator.curate(c, item);
+                    curator.curate(item);
                     int status = curator.getStatus(task.name);
                     String result = curator.getResult(task.name);
                     String action = "none";
                     switch (status) {
-                        case Curator.CURATE_FAIL:
+                        case Curator.CURATE_FAIL :
                             // task failed - notify any contacts the task has assigned
                             if (task.powers.contains("reject")) {
                                 action = "reject";
@@ -159,13 +155,11 @@ public class XmlWorkflowCuratorServiceImpl
                             notifyContacts(c, wfi, task, "fail", action, result);
                             // if task so empowered, reject submission and terminate
                             if ("reject".equals(action)) {
-                                workflowService.sendWorkflowItemBackSubmission(c, wfi,
-                                        c.getCurrentUser(), null,
-                                        task.name + ": " + result);
+                                workflowService.sendWorkflowItemBackSubmission(c, wfi, c.getCurrentUser(), null, (task.name + ": ") + result);
                                 return false;
                             }
                             break;
-                        case Curator.CURATE_SUCCESS:
+                        case Curator.CURATE_SUCCESS :
                             if (task.powers.contains("approve")) {
                                 action = "approve";
                             }
@@ -175,22 +169,18 @@ public class XmlWorkflowCuratorServiceImpl
                                 return true;
                             }
                             break;
-                        case Curator.CURATE_ERROR:
+                        case Curator.CURATE_ERROR :
                             notifyContacts(c, wfi, task, "error", action, result);
                             break;
-                        default:
+                        default :
                             break;
                     }
                 }
                 curator.clear();
             }
-
             // Record any reporting done by the tasks.
             if (reporter.length() > 0) {
-                LOG.info("Curation tasks over item {} for step {} report:%n{}",
-                    () -> wfi.getItem().getID(),
-                    () -> step.step,
-                    () -> reporter.toString());
+                LOG.info("Curation tasks over item {} for step {} report:%n{}", () -> wfi.getItem().getID(), () -> step.step, () -> reporter.toString());
             }
         }
         return true;
@@ -242,17 +232,12 @@ public class XmlWorkflowCuratorServiceImpl
      * @throws IOException passed through.
      * @throws SQLException passed through.
      */
-    protected void notifyContacts(Context c, XmlWorkflowItem wfi,
-            Task task,
-            String status, String action, String message)
-            throws AuthorizeException, IOException, SQLException {
+    protected void notifyContacts(Context c, XmlWorkflowItem wfi, Task task, String status, String action, String message) throws AuthorizeException, IOException, SQLException {
         List<EPerson> epa = resolveContacts(c, task.getContacts(status), wfi);
         if (!epa.isEmpty()) {
             workflowService.notifyOfCuration(c, wfi, epa, task.name, action, message);
         } else {
-            LOG.warn("No contacts were found for workflow item {}:  "
-                    + "task {} returned action {} with message {}",
-                    wfi.getID(), task.name, action, message);
+            LOG.warn("No contacts were found for workflow item {}:  " + "task {} returned action {} with message {}", wfi.getID(), task.name, action, message);
         }
     }
 
@@ -267,9 +252,7 @@ public class XmlWorkflowCuratorServiceImpl
      * @throws IOException passed through.
      * @throws SQLException passed through.
      */
-    protected List<EPerson> resolveContacts(Context c, List<String> contacts,
-                                             XmlWorkflowItem wfi)
-                    throws AuthorizeException, IOException, SQLException {
+    protected List<EPerson> resolveContacts(Context c, List<String> contacts, XmlWorkflowItem wfi) throws AuthorizeException, IOException, SQLException {
         List<EPerson> epList = new ArrayList<>();
         for (String contact : contacts) {
             // decode contacts
@@ -281,8 +264,7 @@ public class XmlWorkflowCuratorServiceImpl
                     Workflow workflow = workflowFactory.getWorkflow(wfi.getCollection());
                     step = workflow.getStep(stepID);
                 } catch (WorkflowConfigurationException e) {
-                    LOG.error("Failed to locate current workflow step for workflow item {}",
-                            String.valueOf(wfi.getID()), e);
+                    LOG.error("Failed to locate current workflow step for workflow item {}", String.valueOf(wfi.getID()), e);
                     return epList;
                 }
                 Role role = step.getRole();
@@ -305,8 +287,7 @@ public class XmlWorkflowCuratorServiceImpl
                 }
             } else if ("$siteadmin".equals(contact)) {
                 // special literal for site administrator
-                EPerson siteEp = ePersonService.findByEmail(c,
-                        configurationService.getProperty("mail.admin"));
+                EPerson siteEp = ePersonService.findByEmail(c, configurationService.getProperty("mail.admin"));
                 if (siteEp != null) {
                     epList.add(siteEp);
                 }
