@@ -23,31 +23,9 @@
  * USE OF THE SOFTWARE, THE TERMS AND CONDITIONS OF SUCH OTHER AGREEMENT SHALL
  * PREVAIL OVER ANY CONFLICTING TERMS OR CONDITIONS IN THIS AGREEMENT.
  */
-
-/* The original from which this derives bore the following: */
-
-/*
-
-   Derby - Class org.apache.derby.impl.sql.compile.C_NodeNames
-
-   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  See the NOTICE file distributed with
-   this work for additional information regarding copyright ownership.
-   The ASF licenses this file to you under the Apache License, Version 2.0
-   (the "License"); you may not use this file except in compliance with
-   the License.  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-
- */
-
 package com.akiban.sql.parser;
+
+
 
 /**
  * This is the set of constants used to identify the classes
@@ -61,10 +39,9 @@ package com.akiban.sql.parser;
  * THEM TO tools/jar/DBMSnodes.properties
  *
  */
-
-public interface NodeNames
-{
-
+    // The names are in alphabetic order.
+public interface NodeNames {
+    // The names are in alphabetic order.
     // The names are in alphabetic order.
 
     static final String AGGREGATE_NODE_NAME = "com.akiban.sql.parser.AggregateNode";
@@ -90,7 +67,7 @@ public interface NodeNames
     static final String BINARY_RELATIONAL_OPERATOR_NODE_NAME = "com.akiban.sql.parser.BinaryRelationalOperatorNode";
 
     static final String LEFT_RIGHT_FUNC_OPERATOR_NODE_NAME = "com.akiban.sql.parser.LeftRightFuncOperatorNode";
-    
+
     static final String BIT_CONSTANT_NODE_NAME = "com.akiban.sql.parser.BitConstantNode";
 
     static final String BOOLEAN_CONSTANT_NODE_NAME = "com.akiban.sql.parser.BooleanConstantNode";
@@ -137,7 +114,7 @@ public interface NodeNames
 
     static final String CURSOR_NODE_NAME = "com.akiban.sql.parser.CursorNode";
 
-    static final String OCTET_LENGTH_OPERATOR_NODE_NAME = "com.akiban.sql.parser.OctetLengthOperatorNode";
+    public static final String OCTET_LENGTH_OPERATOR_NODE_NAME = "com.akiban.sql.parser.OctetLengthOperatorNode";
 
     static final String DEFAULT_NODE_NAME = "com.akiban.sql.parser.DefaultNode";
 
@@ -330,7 +307,7 @@ public interface NodeNames
     static final String TRANSACTION_CONTROL_NODE_NAME = "com.akiban.sql.parser.TransactionControlNode";
 
     static final String TRIM_OPERATOR_NODE_NAME = "com.akiban.sql.parser.TrimOperatorNode";
-    
+
     static final String UNARY_ARITHMETIC_OPERATOR_NODE_NAME = "com.akiban.sql.parser.UnaryArithmeticOperatorNode";
 
     static final String UNARY_BIT_OPERATOR_NODE_NAME = "com.akiban.sql.parser.UnaryBitOperatorNode";
@@ -364,7 +341,4 @@ public interface NodeNames
     static final String XML_CONSTANT_NODE_NAME = "com.akiban.sql.parser.XMLConstantNode";
 
     static final String XML_UNARY_OPERATOR_NODE_NAME = "com.akiban.sql.parser.XMLUnaryOperatorNode";
-
-    // The names are in alphabetic order.
-
 }
