@@ -5,14 +5,14 @@ import io.swagger.models.Contact;
 import io.swagger.models.Info;
 import io.swagger.models.License;
 import io.swagger.util.BaseReaderUtils;
+import java.io.File;
+import java.lang.annotation.Annotation;
+import java.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.reflections.Reflections;
 import org.springframework.core.annotation.AnnotationUtils;
 
-import java.io.File;
-import java.lang.annotation.Annotation;
-import java.util.*;
 
 /**
  * User: kongchen
@@ -43,9 +43,7 @@ public class ApiSource {
      */
     private String host;
 
-    /*
-     * The transfer protocols of the API. Values MUST be from the list: "http", "https", "ws", "wss"
-     */
+    /* The transfer protocols of the API. Values MUST be from the list: "http", "https", "ws", "wss" */
     private List<String> schemes;
 
     /**
@@ -130,7 +128,7 @@ public class ApiSource {
 
     @Parameter
     private List<String> modelConverters;
-    
+
     @Parameter
     private String operationIdFormat;
 
@@ -191,19 +189,11 @@ public class ApiSource {
         for (Class<?> aClass : getValidClasses(SwaggerDefinition.class)) {
             SwaggerDefinition swaggerDefinition = AnnotationUtils.findAnnotation(aClass, SwaggerDefinition.class);
             io.swagger.annotations.Info infoAnnotation = swaggerDefinition.info();
-
-            Info info = new Info().title(infoAnnotation.title())
-                    .description(emptyToNull(infoAnnotation.description()))
-                    .version(infoAnnotation.version())
-                    .termsOfService(emptyToNull(infoAnnotation.termsOfService()))
-                    .license(from(infoAnnotation.license()))
-                    .contact(from(infoAnnotation.contact()));
-
+            Info info = new Info().title(infoAnnotation.title()).description(emptyToNull(infoAnnotation.description())).version(infoAnnotation.version()).termsOfService(emptyToNull(infoAnnotation.termsOfService())).license(from(infoAnnotation.license())).contact(from(infoAnnotation.contact()));
             Map<String, Object> customExtensions = BaseReaderUtils.parseExtensions(infoAnnotation.extensions());
             for (Map.Entry<String, Object> extension : customExtensions.entrySet()) {
                 resultInfo.setVendorExtension(extension.getKey(), extension.getValue());
             }
-
             resultInfo.mergeWith(info);
         }
         info = resultInfo;
@@ -351,16 +341,16 @@ public class ApiSource {
     }
 
     public List<String> getSwaggerExtensions() {
-		return swaggerExtensions;
-	}
+    		return swaggerExtensions;
+    	}
 
-	public void setSwaggerExtensions(List<String> swaggerExtensions) {
-		this.swaggerExtensions = swaggerExtensions;
-	}
+public void setSwaggerExtensions(List<String> swaggerExtensions) {
+	this.swaggerExtensions = swaggerExtensions;
+}
 
-	public String getApiSortComparator() {
-        return apiSortComparator;
-    }
+public String getApiSortComparator() {
+       return apiSortComparator;
+   }
 
     public void setApiSortComparator(String apiSortComparator) {
         this.apiSortComparator = apiSortComparator;
@@ -439,15 +429,14 @@ public class ApiSource {
     }
 
     public String getOperationIdFormat() {
-		return operationIdFormat;
-	}
+    		return operationIdFormat;
+    	}
 
-	public void setOperationIdFormat(String operationIdFormat) {
-		this.operationIdFormat = operationIdFormat;
-	}
+public void setOperationIdFormat(String operationIdFormat) {
+	this.operationIdFormat = operationIdFormat;
+}
 
-	private String emptyToNull(String str) {
+    private String emptyToNull(String str) {
         return StringUtils.isEmpty(str) ? null : str;
     }
 }
-

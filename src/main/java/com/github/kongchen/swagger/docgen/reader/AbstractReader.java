@@ -1,40 +1,7 @@
 package com.github.kongchen.swagger.docgen.reader;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-
-import org.apache.commons.lang3.reflect.TypeUtils;
-import org.apache.commons.lang3.text.StrBuilder;
-import org.apache.maven.plugin.logging.Log;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-
 import com.google.common.collect.Lists;
 import com.sun.jersey.api.core.InjectParam;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -70,17 +37,49 @@ import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.ws.rs.BeanParam;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import org.apache.commons.lang3.reflect.TypeUtils;
+import org.apache.commons.lang3.text.StrBuilder;
+import org.apache.maven.plugin.logging.Log;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+
 
 /**
  * @author chekong on 15/4/28.
  */
 public abstract class AbstractReader {
     protected final Log LOG;
+
     protected Swagger swagger;
+
     private Set<Type> typesToSkip = new HashSet<Type>();
 
     protected String operationIdFormat;
-    
+
     /**
      * Supported parameters: {{packageName}}, {{className}}, {{methodName}}, {{httpMethod}}
      * Suggested default value is: "{{className}}_{{methodName}}_{{httpMethod}}"
@@ -118,10 +117,9 @@ public abstract class AbstractReader {
 
     protected List<SecurityRequirement> getSecurityRequirements(Api api) {
         List<SecurityRequirement> securities = new ArrayList<SecurityRequirement>();
-        if(api == null) {
+        if (api == null) {
             return securities;
         }
-
         for (Authorization auth : api.authorizations()) {
             if (auth.value().isEmpty()) {
                 continue;
@@ -169,12 +167,10 @@ public abstract class AbstractReader {
                 responseHeaders = new HashMap<String, Property>();
             }
             Class<?> cls = header.response();
-
-            if (!cls.equals(Void.class) && !cls.equals(void.class)) {
+            if ((!cls.equals(java.lang.Void.class)) && (!cls.equals(void.class))) {
                 Property property = ModelConverters.getInstance().readAsProperty(cls);
                 if (property != null) {
                     Property responseProperty;
-
                     if (header.responseContainer().equalsIgnoreCase("list")) {
                         responseProperty = new ArrayProperty(property);
                     } else if (header.responseContainer().equalsIgnoreCase("map")) {
@@ -215,15 +211,14 @@ public abstract class AbstractReader {
     }
 
     protected boolean canReadApi(boolean readHidden, Api api) {
-        return (api == null) || (readHidden) || (!api.hidden());
+        return ((api == null) || readHidden) || (!api.hidden());
     }
 
     protected Set<Tag> extractTags(Api api) {
         Set<Tag> output = new LinkedHashSet<Tag>();
-        if(api == null) {
+        if (api == null) {
             return output;
         }
-
         boolean hasExplicitTags = false;
         for (String tag : api.tags()) {
             if (!tag.isEmpty()) {
@@ -246,7 +241,7 @@ public abstract class AbstractReader {
     }
 
     protected void updateOperationProtocols(ApiOperation apiOperation, Operation operation) {
-        if(apiOperation == null) {
+        if (apiOperation == null) {
             return;
         }
         String[] protocols = apiOperation.protocols().split(",");
@@ -309,7 +304,6 @@ public abstract class AbstractReader {
                 operation.produces(mediaType);
             }
         }
-
         if (operation.getTags() == null) {
             for (String tagString : tags.keySet()) {
                 operation.tag(tagString);
@@ -323,10 +317,9 @@ public abstract class AbstractReader {
     private boolean isApiParamHidden(List<Annotation> parameterAnnotations) {
         for (Annotation parameterAnnotation : parameterAnnotations) {
             if (parameterAnnotation instanceof ApiParam) {
-                return ((ApiParam) parameterAnnotation).hidden();
+                return ((ApiParam) (parameterAnnotation)).hidden();
             }
         }
-
         return false;
     }
 
@@ -336,7 +329,6 @@ public abstract class AbstractReader {
         // has at lease one annotation before processing it.  Also, check a
         // whitelist to make sure that the annotation of the parameter is
         // compatible with spring-maven-plugin
-
         List<Type> validParameterAnnotations = new ArrayList<Type>();
         validParameterAnnotations.add(ModelAttribute.class);
         validParameterAnnotations.add(BeanParam.class);
@@ -352,8 +344,6 @@ public abstract class AbstractReader {
         validParameterAnnotations.add(RequestHeader.class);
         validParameterAnnotations.add(RequestPart.class);
         validParameterAnnotations.add(CookieValue.class);
-
-
         boolean hasValidAnnotation = false;
         for (Annotation potentialAnnotation : parameterAnnotations) {
             if (validParameterAnnotations.contains(potentialAnnotation.annotationType())) {
@@ -361,7 +351,6 @@ public abstract class AbstractReader {
                 break;
             }
         }
-
         return hasValidAnnotation;
     }
 
@@ -372,21 +361,18 @@ public abstract class AbstractReader {
 
     // this method exists so that outside callers can choose their own custom types to skip
     protected List<Parameter> getParameters(Type type, List<Annotation> annotations, Set<Type> typesToSkip) {
-        if (!hasValidAnnotations(annotations) || isApiParamHidden(annotations)) {
+        if ((!hasValidAnnotations(annotations)) || isApiParamHidden(annotations)) {
             return Collections.emptyList();
         }
-
         Iterator<SwaggerExtension> chain = SwaggerExtensions.chain();
         List<Parameter> parameters = new ArrayList<Parameter>();
         Class<?> cls = TypeUtils.getRawType(type, type);
         LOG.debug("Looking for path/query/header/form/cookie params in " + cls);
-
         if (chain.hasNext()) {
             SwaggerExtension extension = chain.next();
             LOG.debug("trying extension " + extension);
             parameters = extension.extractParameters(annotations, type, typesToSkip, chain);
         }
-
         if (!parameters.isEmpty()) {
             for (Parameter parameter : parameters) {
                 ParameterProcessor.applyAnnotations(swagger, parameter, type, annotations);
@@ -409,11 +395,8 @@ public abstract class AbstractReader {
         for (ApiResponse apiResponse : responseAnnotation.value()) {
             Map<String, Property> responseHeaders = parseResponseHeaders(apiResponse.responseHeaders());
             Class<?> responseClass = apiResponse.response();
-            Response response = new Response()
-                    .description(apiResponse.message())
-                    .headers(responseHeaders);
-
-            if (responseClass.equals(Void.class)) {
+            Response response = new Response().description(apiResponse.message()).headers(responseHeaders);
+            if (responseClass.equals(java.lang.Void.class)) {
                 if (operation.getResponses() != null) {
                     Response apiOperationResponse = operation.getResponses().get(String.valueOf(apiResponse.code()));
                     if (apiOperationResponse != null) {
@@ -435,7 +418,6 @@ public abstract class AbstractReader {
                 for (Map.Entry<String, Model> entry : models.entrySet()) {
                     swagger.model(entry.getKey(), entry.getValue());
                 }
-
                 if (response.getSchema() == null) {
                     Map<String, Response> responses = operation.getResponses();
                     if (responses != null) {
@@ -446,7 +428,6 @@ public abstract class AbstractReader {
                     }
                 }
             }
-
             if (apiResponse.code() == 0) {
                 operation.defaultResponse(response);
             } else {
@@ -488,10 +469,9 @@ public abstract class AbstractReader {
             Class<?> cls;
             try {
                 cls = Class.forName(param.dataType());
-            } catch (ClassNotFoundException e) {
+            } catch (java.lang.ClassNotFoundException e) {
                 cls = method.getDeclaringClass();
             }
-
             Parameter p = readImplicitParam(param, cls);
             if (p != null) {
                 operation.addParameter(p);
@@ -514,8 +494,7 @@ public abstract class AbstractReader {
         } else {
             return null;
         }
-
-        return ParameterProcessor.applyAnnotations(swagger, parameter, apiClass, Arrays.asList(new Annotation[]{param}));
+        return ParameterProcessor.applyAnnotations(swagger, parameter, apiClass, Arrays.asList(new Annotation[]{ param }));
     }
 
     void processOperationDecorator(Operation operation, Method method) {
@@ -525,31 +504,30 @@ public abstract class AbstractReader {
             extension.decorateOperation(operation, method, chain);
         }
     }
-    
+
     protected String getOperationId(Method method, String httpMethod) {
-  		if (this.operationIdFormat == null) {
-  			this.operationIdFormat = OPERATION_ID_FORMAT_DEFAULT;
-  		}
-  		
-  		String packageName = method.getDeclaringClass().getPackage().getName();
-  		String className = method.getDeclaringClass().getSimpleName();
-  		String methodName = method.getName();
-        
-  		StrBuilder sb = new StrBuilder(this.operationIdFormat);
-  		sb.replaceAll("{{packageName}}", packageName);
-  		sb.replaceAll("{{className}}", className);
-  		sb.replaceAll("{{methodName}}", methodName);
-  		sb.replaceAll("{{httpMethod}}", httpMethod);
-  		
-  		return sb.toString();
+    if (this.operationIdFormat == null) {
+    	this.operationIdFormat = OPERATION_ID_FORMAT_DEFAULT;
     }
 
-	public String getOperationIdFormat() {
-		return operationIdFormat;
-	}
+    String packageName = method.getDeclaringClass().getPackage().getName();
+    String className = method.getDeclaringClass().getSimpleName();
+    String methodName = method.getName();
+        
+    StrBuilder sb = new StrBuilder(this.operationIdFormat);
+    sb.replaceAll("{{packageName}}", packageName);
+    sb.replaceAll("{{className}}", className);
+    sb.replaceAll("{{methodName}}", methodName);
+    sb.replaceAll("{{httpMethod}}", httpMethod);
 
-	public void setOperationIdFormat(String operationIdFormat) {
-		this.operationIdFormat = operationIdFormat;
-	}
+    return sb.toString();
+    }
+
+public String getOperationIdFormat() {
+	return operationIdFormat;
 }
 
+public void setOperationIdFormat(String operationIdFormat) {
+	this.operationIdFormat = operationIdFormat;
+}
+}
