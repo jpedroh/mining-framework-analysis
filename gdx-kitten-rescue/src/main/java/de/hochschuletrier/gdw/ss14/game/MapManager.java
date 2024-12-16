@@ -3,7 +3,6 @@ package de.hochschuletrier.gdw.ss14.game;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
-
 import de.hochschuletrier.gdw.commons.gdx.assets.*;
 import de.hochschuletrier.gdw.commons.gdx.physix.*;
 import de.hochschuletrier.gdw.commons.resourcelocator.*;
@@ -15,60 +14,51 @@ import de.hochschuletrier.gdw.ss14.ecs.*;
 import de.hochschuletrier.gdw.ss14.ecs.components.*;
 import de.hochschuletrier.gdw.ss14.ecs.systems.CatContactSystem;
 import de.hochschuletrier.gdw.ss14.states.GroundTypeState;
-
 import java.util.*;
+
 
 /**
  * Created by Daniel Dreher on 01.10.2014.
  */
-public class MapManager
-{
+public class MapManager {
     private EntityManager entityManager;
+
     private PhysixManager physixManager;
 
     private TiledMap tiledMap;
+
     private String folderLocation = "data/maps/";
+
     private String fileType = ".tmx";
 
     HashMap<TileSet, Texture> tilesetImages;
 
     private int levelEntity;
-    private int currentFloor = -1;
-    
 
-    public MapManager(EntityManager entityManager, PhysixManager physixManager, AssetManagerX assetmanager)
-    {
+    private int currentFloor = -1;
+
+    public MapManager(EntityManager entityManager, PhysixManager physixManager, AssetManagerX assetmanager) {
         this.entityManager = entityManager;
         this.physixManager = physixManager;
         tilesetImages = new HashMap();
-
         levelEntity = entityManager.createEntity();
     }
 
-    public void loadMap(String mapName)
-    {
-        String filename = folderLocation + mapName + fileType;
-        try
-        {
+    public void loadMap(String mapName) {
+        String filename = (folderLocation + mapName) + fileType;
+        try {
             this.tiledMap = new TiledMap(filename, LayerObject.PolyMode.ABSOLUTE);
-        } catch (Exception ex)
-        {
-            throw new IllegalArgumentException(
-                    "Map konnte nicht geladen werden: " + filename, ex);
+        } catch (java.lang.Exception ex) {
+            throw new IllegalArgumentException("Map konnte nicht geladen werden: " + filename, ex);
         }
-
         createTileSet();
         createPhysics();
-
         TileMapRenderingComponent mapComp;
         mapComp = entityManager.getComponent(levelEntity, TileMapRenderingComponent.class);
-
-        if (mapComp == null)
-        {
+        if (mapComp == null) {
             mapComp = new TileMapRenderingComponent();
             entityManager.addComponent(levelEntity, mapComp);
         }
-
         mapComp.setMap(getMap());
     }
 
@@ -87,76 +77,51 @@ public class MapManager
         }
     }
 
-    public void setFloor(int floor)
-    {
-
+    public void setFloor(int floor) {
         currentFloor = floor;
-
         TileMapRenderingComponent mapComp = entityManager.getComponent(levelEntity, TileMapRenderingComponent.class);
         mapComp.renderedLayers.clear();
-
-        for (Layer layer : mapComp.getMap().getLayers())
-        {
-            //System.out.println(this.getClass().getName()+": "+layer.getIntProperty("floor", -1));
-            if ((layer.getIntProperty("floor", -1) == floor) && (layer.isTileLayer()))
+        for (Layer layer : mapComp.getMap().getLayers()) {
+            // System.out.println(this.getClass().getName()+": "+layer.getIntProperty("floor", -1));
+            if ((layer.getIntProperty("floor", -1) == floor) && layer.isTileLayer()) {
                 mapComp.renderedLayers.add(mapComp.getMap().getLayers().indexOf(layer));
+            }
         }
-        
         loadMapObjects();
     }
 
-    private enum tile2entity{
-        none, waterpuddle, deadzone, bloodpuddle, parketfloor, kitchenfloor
-    }
-    
-    private void createPhysics()
-    {
+    private enum tile2entity {
+
+        none,
+        waterpuddle,
+        deadzone,
+        bloodpuddle,
+        parketfloor,
+        kitchenfloor;}
+
+    private void createPhysics() {
         // Generate static world
         int tileWidth = tiledMap.getTileWidth();
         int tileHeight = tiledMap.getTileHeight();
-        //                     
-
-        
+        // 
         RectangleGenerator generator = new RectangleGenerator();
-        for(int i = 0; i < 16; i++){
-            short floor = (short)(Math.pow(2, i));
+        for (int i = 0; i < 16; i++) {
+            short floor = ((short) (Math.pow(2, i)));
             final int j = i;
-        generator.generate(tiledMap,
-                (Layer layer, TileInfo info) ->info.getBooleanProperty("blocked", false)
-                   && (layer.getIntProperty("floor", 0) == j) ,
-                (Rectangle rect) -> addShape(physixManager, rect, tileWidth, tileHeight, floor, "wall"));
-        generator.generate(tiledMap,
-                (Layer layer, TileInfo info) -> info.getBooleanProperty("deadzone", false)
-                                   && (layer.getIntProperty("floor", 0) == j) ,
-                (Rectangle rect) -> addShape(physixManager, rect, tileWidth, tileHeight, floor, tile2entity.deadzone));
-        generator.generate(tiledMap,
-                (Layer layer, TileInfo info) -> info.getBooleanProperty("blood puddle", false)
-                && (layer.getIntProperty("floor", 0) == j) ,
-                (Rectangle rect) -> addShape(physixManager, rect, tileWidth, tileHeight, floor, tile2entity.bloodpuddle));
-        generator.generate(tiledMap,
-                (Layer layer, TileInfo info) -> info.getBooleanProperty("water puddle", false)
-                && (layer.getIntProperty("floor", 0) == j) ,
-                (Rectangle rect) -> addShape(physixManager, rect, tileWidth, tileHeight, floor, tile2entity.waterpuddle));
-        generator.generate(tiledMap,
-                (Layer layer, TileInfo info) -> info.getBooleanProperty("woodfloor", false)
-                && (layer.getIntProperty("floor", 0) == j) ,
-                (Rectangle rect) -> addShape(physixManager, rect, tileWidth, tileHeight, floor, tile2entity.parketfloor));
-        generator.generate(tiledMap,
-                (Layer layer, TileInfo info) -> info.getBooleanProperty("woodbeam", false)
-                && (layer.getIntProperty("floor", 0) == j) ,
-                (Rectangle rect) -> addShape(physixManager, rect, tileWidth, tileHeight, floor, tile2entity.parketfloor));
-        generator.generate(tiledMap,
-                (Layer layer, TileInfo info) -> info.getBooleanProperty("kitchenfloor", false)
-                && (layer.getIntProperty("floor", 0) == j) ,
-                (Rectangle rect) -> addShape(physixManager, rect, tileWidth, tileHeight, floor, tile2entity.kitchenfloor));
-
+            generator.generate(tiledMap, (Layer layer,TileInfo info) -> info.getBooleanProperty("blocked", false) && (layer.getIntProperty("floor", 0) == j), (Rectangle rect) -> addShape(physixManager, rect, tileWidth, tileHeight, floor, "wall"));
+            generator.generate(tiledMap, (Layer layer,TileInfo info) -> info.getBooleanProperty("deadzone", false) && (layer.getIntProperty("floor", 0) == j), (Rectangle rect) -> addShape(physixManager, rect, tileWidth, tileHeight, floor, tile2entity.deadzone));
+            generator.generate(tiledMap, (Layer layer,TileInfo info) -> info.getBooleanProperty("blood puddle", false) && (layer.getIntProperty("floor", 0) == j), (Rectangle rect) -> addShape(physixManager, rect, tileWidth, tileHeight, floor, tile2entity.bloodpuddle));
+            generator.generate(tiledMap, (Layer layer,TileInfo info) -> info.getBooleanProperty("water puddle", false) && (layer.getIntProperty("floor", 0) == j), (Rectangle rect) -> addShape(physixManager, rect, tileWidth, tileHeight, floor, tile2entity.waterpuddle));
+            generator.generate(tiledMap, (Layer layer,TileInfo info) -> info.getBooleanProperty("woodfloor", false) && (layer.getIntProperty("floor", 0) == j), (Rectangle rect) -> addShape(physixManager, rect, tileWidth, tileHeight, floor, tile2entity.parketfloor));
+            generator.generate(tiledMap, (Layer layer,TileInfo info) -> info.getBooleanProperty("woodbeam", false) && (layer.getIntProperty("floor", 0) == j), (Rectangle rect) -> addShape(physixManager, rect, tileWidth, tileHeight, floor, tile2entity.parketfloor));
+            generator.generate(tiledMap, (Layer layer,TileInfo info) -> info.getBooleanProperty("kitchenfloor", false) && (layer.getIntProperty("floor", 0) == j), (Rectangle rect) -> addShape(physixManager, rect, tileWidth, tileHeight, floor, tile2entity.kitchenfloor));
         }
     }
 
     private void addShape(PhysixManager physixManager, Rectangle rect, int tileWidth, int tileHeight, int floor, String userdata){
         addShape(physixManager, rect, tileWidth, tileHeight, floor, false, userdata);
     }
-    
+
     /*
     private PhysixBody getShape(PhysixManager physixManager, Rectangle rect, int tileWidth, int tileHeight, int floor)
     {
@@ -171,41 +136,40 @@ public class MapManager
                 .category((short)floor));
         return body;
     }*/
-    
-    private void addShape(PhysixManager physixManager, Rectangle rect, int tileWidth, int tileHeight, int floor, tile2entity t2e)
-    {
+    private void addShape(PhysixManager physixManager, Rectangle rect, int tileWidth, int tileHeight, int floor, tile2entity t2e) {
         float width = rect.width * tileWidth;
         float height = rect.height * tileHeight;
-        float x = rect.x * tileWidth + width / 2;
-        float y = rect.y * tileHeight + height / 2;
-
-        PhysixBodyDef bodydef = new PhysixBodyDef(BodyDef.BodyType.StaticBody, physixManager).position(x, y)
-                .fixedRotation(false);
-        
-        PhysixFixtureDef fixturedef = new PhysixFixtureDef(physixManager).density(1).friction(0.5f).shapeBox(width, height)
-                .category((short)floor).mask((short)0b1111111111111111); 
+        float x = (rect.x * tileWidth) + (width / 2);
+        float y = (rect.y * tileHeight) + (height / 2);
+        PhysixBodyDef bodydef = new PhysixBodyDef(BodyDef.BodyType.StaticBody, physixManager).position(x, y).fixedRotation(false);
+        PhysixFixtureDef fixturedef = new PhysixFixtureDef(physixManager).density(1).friction(0.5F).shapeBox(width, height).category(((short) (floor))).mask(((short) (0b1111111111111111)));
         switch (t2e) {
-        case none: 
-            PhysixBody body = bodydef.create();
-            body.createFixture(fixturedef);
-            break;
-        case waterpuddle: EntityFactory.constructPuddleOfWater(bodydef, fixturedef);break;
-        case bloodpuddle: 
-            fixturedef.sensor(false);
-            EntityFactory.constructPuddleOfBlood(bodydef, fixturedef);break;
-        case deadzone:
-            fixturedef.sensor(true);
-            EntityFactory.constructDeadzone(bodydef, fixturedef);break;
-        case kitchenfloor:
-            fixturedef.sensor(true);
-            EntityFactory.constructFloor(bodydef, fixturedef, GroundTypeState.kitchenfloor);break;
-        case parketfloor:    
-            fixturedef.sensor(true);
-            EntityFactory.constructFloor(bodydef, fixturedef, GroundTypeState.woodenfloor);break;
+            case none :
+                PhysixBody body = bodydef.create();
+                body.createFixture(fixturedef);
+                break;
+            case waterpuddle :
+                EntityFactory.constructPuddleOfWater(bodydef, fixturedef);
+                break;
+            case bloodpuddle :
+                fixturedef.sensor(false);
+                EntityFactory.constructPuddleOfBlood(bodydef, fixturedef);
+                break;
+            case deadzone :
+                fixturedef.sensor(true);
+                EntityFactory.constructDeadzone(bodydef, fixturedef);
+                break;
+            case kitchenfloor :
+                fixturedef.sensor(true);
+                EntityFactory.constructFloor(bodydef, fixturedef, GroundTypeState.kitchenfloor);
+                break;
+            case parketfloor :
+                fixturedef.sensor(true);
+                EntityFactory.constructFloor(bodydef, fixturedef, GroundTypeState.woodenfloor);
+                break;
         }
-        
     }
-       
+
     private void addShape(PhysixManager physixManager, Rectangle rect, int tileWidth, int tileHeight, int floor, boolean flag, String userdata)
     {
         float width = rect.width * tileWidth;
@@ -227,132 +191,109 @@ public class MapManager
         return this.tiledMap;
     }
 
-    private void loadMapObjects()
-    {
+    private void loadMapObjects() {
         ArrayList<Layer> layers = this.tiledMap.getLayers();
-
-        for (int i = 0; i < layers.size(); ++i)
-        {
-            if (layers.get(i).getIntProperty("floor", -1) != currentFloor)
+        // end for (layer)
+        for (int i = 0; i < layers.size(); ++i) {
+            if (layers.get(i).getIntProperty("floor", -1) != currentFloor) {
                 continue;
-            
+            }
             ArrayList<LayerObject> mapObjects = layers.get(i).getObjects();
-            if (mapObjects != null)
-            {
+            if (mapObjects != null) {
                 ArrayList<Integer> dogIds = new ArrayList<>();
                 ArrayList<Vector2> dogpositions = new ArrayList<>();
-                ArrayList<String>  dogpatrolstring = new ArrayList<>();
-                
+                ArrayList<String> dogpatrolstring = new ArrayList<>();
                 ArrayList<Vector2> patrolspots = new ArrayList<>();
                 ArrayList<Integer> spotIds = new ArrayList<>();
-               
-                short mask = 0, category = 0;
-                for (int j = 0; j < mapObjects.size(); ++j)
-                {
-                    
+                short mask = 0;
+                short category = 0;
+                // end for (mapObjects)
+                for (int j = 0; j < mapObjects.size(); ++j) {
                     String objType = mapObjects.get(j).getName();
                     float x = mapObjects.get(j).getX();
                     float y = mapObjects.get(j).getY();
                     Vector2 pos = new Vector2(x, y);
                     float width = mapObjects.get(j).getWidth();
                     float height = mapObjects.get(j).getHeight();
-
-                    mask = (short)Math.pow(2, mapObjects.get(j).getIntProperty("floor", 0));
-                    category = (short)0b1111111111111111;
-                    
-                    if (objType != null)
-                    {
-                        switch (objType)
-                        {
-                            case "start":
+                    mask = ((short) (Math.pow(2, mapObjects.get(j).getIntProperty("floor", 0))));
+                    category = ((short) (0b1111111111111111));
+                    if (objType != null) {
+                        switch (objType) {
+                            case "start" :
                                 try {
-                                    EntityFactory.constructCat(pos, 150, 75, 0, 50.0f,
-                                            mask, category
-                                            );
-                                    
-                                } catch (Exception e) {
+                                    EntityFactory.constructCat(pos, 150, 75, 0, 50.0F, mask, category);
+                                } catch (java.lang.Exception e) {
                                     e.printStackTrace();
                                 }
-
                                 break;
-                                
-                            case "dogspawn":
+                            case "dogspawn" :
                                 /* dogs are build later */
                                 dogpositions.add(pos);
                                 dogIds.add(mapObjects.get(j).getIntProperty("ID", -1));
                                 dogpatrolstring.add(mapObjects.get(j).getProperty("pat", ""));
                                 break;
-                            case "dogpat":
+                            case "dogpat" :
                                 /* used for building dogs */
                                 patrolspots.add(pos);
                                 spotIds.add(mapObjects.get(j).getIntProperty("ID", -1));
                                 break;
-                            case "wool":
+                            case "wool" :
                                 EntityFactory.constructWool(pos);
                                 break;
-
-                            case "vase":
+                            case "vase" :
                                 // TODO: add object with entityFactory here
                                 break;
-
-                            case "broom":
+                            case "broom" :
                                 // TODO: add object with entityFactory here
                                 break;
-
-                            case "lamp":
+                            case "lamp" :
                                 // TODO: add object with entityFactory here
                                 break;
-
-                            case "food":
+                            case "food" :
                                 // TODO: add object with entityFactory here
                                 break;
-
-                            case "finish":
+                            case "finish" :
                                 // TODO: add object with entityFactory here
-//                                EntityFactory.constructMapChangeObj(pos, width, height, nextMap);
+                                // EntityFactory.constructMapChangeObj(pos, width, height, nextMap);
                                 break;
-// isn't an object
-//                            case "door":category
-//                                // TODO: add object with entityFactory here
-//                                break;
-
-                            case "catbox":
+                            case "catbox" :
                                 EntityFactory.constructCatbox(pos, mask, category);
                                 break;
-
-                            case "stairs":
+                            case "stairs" :
                                 // read out floor of mapobject properties, default is 0.
                                 int floor = 0;
-
-                                if(mapObjects.get(j).getProperties().getString("stairs") != null)
-                                {
+                                if (mapObjects.get(j).getProperties().getString("stairs") != null) {
                                     String floorTargetProperty = mapObjects.get(j).getProperties().getString("stairs");
                                     floor = Integer.parseInt(floorTargetProperty);
                                 }
-
                                 EntityFactory.constructStairs(pos, width, height, floor);
                                 break;
                         }
                     }
-                }   // end for (mapObjects)
-                
+                }
                 /* build dogs now */
-                for(Vector2 pos : dogpositions){
-                    
+                for (Vector2 pos : dogpositions) {
                     ArrayList<Vector2> tmp = new ArrayList<>();
-                    for(String s : dogpatrolstring){
-                        if(dogpatrolstring.size() == 0) continue;
-                        if(spotIds.size() == 0) continue;
-                        for(String r : s.split(",")){
-                            if(!r.isEmpty())
-                                if( spotIds.get(Integer.parseInt(r)) <= 0 ) continue;
-                                tmp.add(patrolspots.get( spotIds.get(Integer.parseInt(r)) ));
+                    for (String s : dogpatrolstring) {
+                        if (dogpatrolstring.size() == 0) {
+                            continue;
+                        }
+                        if (spotIds.size() == 0) {
+                            continue;
+                        }
+                        for (String r : s.split(",")) {
+                            if (!r.isEmpty()) {
+                                if (spotIds.get(Integer.parseInt(r)) <= 0) {
+                                    continue;
+                                }
+                            }
+                            tmp.add(patrolspots.get(spotIds.get(Integer.parseInt(r))));
                         }
                     }
                     EntityFactory.constructSmartDog(pos, 100, 85, 0, 30, tmp, mask, category);
                 }
                 /* end build dogs */
             }
-        }   // end for (layer)
+        }
     }
 }

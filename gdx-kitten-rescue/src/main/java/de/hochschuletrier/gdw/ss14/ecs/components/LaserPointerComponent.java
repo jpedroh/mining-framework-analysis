@@ -5,32 +5,39 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.Vector2;
 
 
-public class LaserPointerComponent implements Component{
+public class LaserPointerComponent implements Component {
+    // percent/second
     public static final float WATER_CONSUMPTION_SPEED = 0.1f; // percent/second
+
+    // percent/second
     public static final float WATER_REFILL_SPEED = 0.05f; // percent/second
+
     public Vector2 position;
+
     public final float MAX_SPEED = 150f;
+
     public float speed;
+
     public final float ACCELERATION = 100f;
+
+    // in percent: 1.0 = 100%
     public float currentWaterlevel; // in percent: 1.0 = 100%
+
     public ToolState toolState;
+
     public boolean waterpistolIsUsed;
-    
-    /*
-     * !!! isVisible is now: toolState == ToolState.LASER !!!
-     */
-    
+
+    /* !!! isVisible is now: toolState == ToolState.LASER !!! */
     public enum ToolState {
+
         LASER,
-        WATERPISTOL
-    }
-    
-    public LaserPointerComponent(Vector2 position){
-        //isVisible = true;
+        WATERPISTOL;}
+
+    public LaserPointerComponent(Vector2 position) {
+        // isVisible = true;
         toolState = ToolState.LASER;
         waterpistolIsUsed = false;
-        currentWaterlevel = 1.0f;
+        currentWaterlevel = 1.0F;
         this.position = position;
     }
-
 }
