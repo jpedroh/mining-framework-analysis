@@ -45,9 +45,9 @@ import org.scijava.listeners.Listeners;
 import org.scijava.ui.behaviour.util.InputActionBindings;
 import org.scijava.ui.behaviour.util.RunnableAction;
 
+
 // TODO: what happens when the current source, display mode, etc is changed while the editor is active? deactivate?
-public class ManualTransformationEditor implements TransformListener< AffineTransform3D >
-{
+public class ManualTransformationEditor implements TransformListener<AffineTransform3D> {
 	private boolean active = false;
 
 	private final InputActionBindings bindings;
@@ -68,8 +68,7 @@ public class ManualTransformationEditor implements TransformListener< AffineTran
 
 	private final Listeners.List< ManualTransformActiveListener > manualTransformActiveListeners;
 
-	public ManualTransformationEditor( final ViewerPanel viewer, final InputActionBindings inputActionBindings )
-	{
+	public ManualTransformationEditor(final ViewerPanel viewer, final InputActionBindings inputActionBindings) {
 		this.viewer = viewer;
 		bindings = inputActionBindings;
 		frozenTransform = new AffineTransform3D();
@@ -77,18 +76,17 @@ public class ManualTransformationEditor implements TransformListener< AffineTran
 		sourcesToModify = new ArrayList<>();
 		sourcesToFix = new ArrayList<>();
 		manualTransformActiveListeners = new Listeners.SynchronizedList<>();
-
-		final KeyStroke abortKey = KeyStroke.getKeyStroke( KeyEvent.VK_ESCAPE, 0 );
-		final Action abortAction = new RunnableAction( "abort manual transformation", this::abort );
-		final KeyStroke resetKey = KeyStroke.getKeyStroke( KeyEvent.VK_R, 0 );
-		final Action resetAction = new RunnableAction( "reset manual transformation", this::reset );
+		final KeyStroke abortKey = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		final Action abortAction = new RunnableAction("abort manual transformation", this::abort);
+		final KeyStroke resetKey = KeyStroke.getKeyStroke(KeyEvent.VK_R, 0);
+		final Action resetAction = new RunnableAction("reset manual transformation", this::reset);
 		actionMap = new ActionMap();
 		inputMap = new InputMap();
-		actionMap.put( "abort manual transformation", abortAction );
-		inputMap.put( abortKey, "abort manual transformation" );
-		actionMap.put( "reset manual transformation", resetAction );
-		inputMap.put( resetKey, "reset manual transformation" );
-		bindings.addActionMap( "manual transform", actionMap );
+		actionMap.put("abort manual transformation", abortAction);
+		inputMap.put(abortKey, "abort manual transformation");
+		actionMap.put("reset manual transformation", resetAction);
+		inputMap.put(resetKey, "reset manual transformation");
+		bindings.addActionMap("manual transform", actionMap);
 	}
 
 	public synchronized void abort()
@@ -124,68 +122,62 @@ public class ManualTransformationEditor implements TransformListener< AffineTran
 		}
 	}
 
-	public synchronized void setActive( final boolean a )
-	{
-		if ( this.active == a )
+	public synchronized void setActive(final boolean a) {
+		if (this.active == a) {
 			return;
-
-		if ( a )
-		{
+		}
+		if (a) {
 			// Enter manual edit mode
 			final ViewerState state = viewer.state().snapshot();
-			final List< SourceAndConverter< ? > > currentSources = new ArrayList<>();
-			switch ( state.getDisplayMode() )
-			{
-			case FUSED:
-				currentSources.add( state.getCurrentSource() );
-				break;
-			case FUSEDGROUP:
-				currentSources.addAll( state.getSourcesInGroup( state.getCurrentGroup() ) );
-				break;
-			default:
-				viewer.showMessage( "Can only do manual transformation when in FUSED mode." );
-				return;
+			final List<SourceAndConverter<?>> currentSources = new ArrayList<>();
+			switch (state.getDisplayMode()) {
+				case FUSED :
+					currentSources.add(state.getCurrentSource());
+					break;
+				case FUSEDGROUP :
+					currentSources.addAll(state.getSourcesInGroup(state.getCurrentGroup()));
+					break;
+				default :
+					viewer.showMessage("Can only do manual transformation when in FUSED mode.");
+					return;
 			}
-			state.getViewerTransform( frozenTransform );
+			state.getViewerTransform(frozenTransform);
 			sourcesToModify.clear();
 			sourcesToFix.clear();
-			for ( SourceAndConverter< ? > source : state.getSources() )
-			{
-				if ( source.getSpimSource() instanceof TransformedSource )
-				{
-					if ( currentSources.contains( source ) )
-						sourcesToModify.add( ( TransformedSource< ? > ) source.getSpimSource() );
-					else
-						sourcesToFix.add( ( TransformedSource< ? > ) source.getSpimSource() );
+			for (SourceAndConverter<?> source : state.getSources()) {
+				if (source.getSpimSource() instanceof TransformedSource) {
+					if (currentSources.contains(source)) {
+						sourcesToModify.add(((TransformedSource<?>) (source.getSpimSource())));
+					} else {
+						sourcesToFix.add(((TransformedSource<?>) (source.getSpimSource())));
+					}
 				}
 			}
 			active = true;
-			viewer.addTransformListener( this );
-			bindings.addInputMap( "manual transform", inputMap );
-			viewer.showMessage( "starting manual transform" );
-		}
-		else
-		{
+			viewer.addTransformListener(this);
+			bindings.addInputMap("manual transform", inputMap);
+			viewer.showMessage("starting manual transform");
+		} else {
 			// Exit manual edit mode.
 			active = false;
-			viewer.removeTransformListener( this );
-			bindings.removeInputMap( "manual transform" );
+			viewer.removeTransformListener(this);
+			bindings.removeInputMap("manual transform");
 			final AffineTransform3D tmp = new AffineTransform3D();
-			for ( final TransformedSource< ? > source : sourcesToModify )
-			{
+			for (final TransformedSource<?> source : sourcesToModify) {
 				tmp.identity();
-				source.setIncrementalTransform( tmp );
-				source.getFixedTransform( tmp );
-				tmp.preConcatenate( liveTransform );
-				source.setFixedTransform( tmp );
+				source.setIncrementalTransform(tmp);
+				source.getFixedTransform(tmp);
+				tmp.preConcatenate(liveTransform);
+				source.setFixedTransform(tmp);
 			}
 			tmp.identity();
-			for ( final TransformedSource< ? > source : sourcesToFix )
-				source.setIncrementalTransform( tmp );
-			viewer.setCurrentViewerTransform( frozenTransform );
-			viewer.showMessage( "fixed manual transform" );
+			for (final TransformedSource<?> source : sourcesToFix) {
+				source.setIncrementalTransform(tmp);
+			}
+			viewer.setCurrentViewerTransform(frozenTransform);
+			viewer.showMessage("fixed manual transform");
 		}
-		manualTransformActiveListeners.list.forEach( l -> l.manualTransformActiveChanged( active ) );
+		manualTransformActiveListeners.list.forEach(( l) -> l.manualTransformActiveChanged(active));
 	}
 
 	public synchronized void toggle()
