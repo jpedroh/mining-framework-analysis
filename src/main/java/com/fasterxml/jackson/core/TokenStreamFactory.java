@@ -1,16 +1,11 @@
+<<<<<<< LEFT
 /* Jackson JSON-processor.
  *
  * Copyright (c) 2007- Tatu Saloranta, tatu.saloranta@iki.fi
  */
+=======
+>>>>>>> RIGHT
 package com.fasterxml.jackson.core;
-
-import java.io.*;
-import java.lang.ref.SoftReference;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Locale;
 
 import com.fasterxml.jackson.core.async.ByteArrayFeeder;
 import com.fasterxml.jackson.core.exc.WrappedIOException;
@@ -23,6 +18,14 @@ import com.fasterxml.jackson.core.util.BufferRecyclers;
 import com.fasterxml.jackson.core.util.JacksonFeature;
 import com.fasterxml.jackson.core.util.Named;
 import com.fasterxml.jackson.core.util.Snapshottable;
+import java.io.*;
+import java.lang.ref.SoftReference;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Locale;
+
 
 /**
  * The main factory class of Jackson streaming package, used to configure and
@@ -40,35 +43,28 @@ import com.fasterxml.jackson.core.util.Snapshottable;
  *
  * @since 3.0 (refactored out of {@link JsonFactory})
  */
-public abstract class TokenStreamFactory
-    implements Versioned,
-        java.io.Serializable,
-        Snapshottable<TokenStreamFactory> // 3.0
-{
+        // 3.0
+public abstract class TokenStreamFactory implements Versioned , Serializable , Snapshottable<TokenStreamFactory> {
     private static final long serialVersionUID = 3L;
 
     /**
      * Shareable stateles "empty" {@link ObjectWriteContext} Object, passed in
      * cases where caller had not passed actual context -- "null object" of sort.
      */
-    public final static ObjectWriteContext EMPTY_WRITE_CONTEXT = new ObjectWriteContext.Base();
+    public static final ObjectWriteContext EMPTY_WRITE_CONTEXT = new ObjectWriteContext.Base();
 
     /*
     /**********************************************************************
     /* Helper types
     /**********************************************************************
      */
-
     /**
      * Enumeration that defines all on/off features that can only be
      * changed for {@link TokenStreamFactory}.
      */
-    public enum Feature
-        implements JacksonFeature
-    {
-        
-        // // // Symbol handling (interning etc)
-        
+    public enum Feature implements JacksonFeature {
+
+        // Symbol handling (interning etc)
         /**
          * Feature that determines whether JSON object property names are
          * to be canonicalized using {@link String#intern} or not:
@@ -77,15 +73,14 @@ public abstract class TokenStreamFactory
          * no intern()ing is done. There may still be basic
          * canonicalization (that is, same String will be used to represent
          * all identical object property names for a single document).
-         *<p>
+         * <p>
          * Note: this setting only has effect if
          * {@link #CANONICALIZE_PROPERTY_NAMES} is true -- otherwise no
          * canonicalization of any sort is done.
-         *<p>
+         * <p>
          * This setting is disabled by default since 3.0 (was enabled in 1.x and 2.x)
          */
         INTERN_PROPERTY_NAMES(false),
-
         /**
          * Feature that determines whether JSON object property names are
          * to be canonicalized (details of how canonicalization is done
@@ -95,7 +90,6 @@ public abstract class TokenStreamFactory
          * This setting is enabled by default.
          */
         CANONICALIZE_PROPERTY_NAMES(true),
-
         /**
          * Feature that determines what happens if we encounter a case in symbol
          * handling where number of hash collisions exceeds a safety threshold
@@ -105,11 +99,10 @@ public abstract class TokenStreamFactory
          * thrown to indicate the suspected denial-of-service attack; if disabled, processing continues but
          * canonicalization (and thereby <code>intern()</code>ing) is disabled) as protective
          * measure.
-         *<p>
+         * <p>
          * This setting is enabled by default.
          */
         FAIL_ON_SYMBOL_HASH_OVERFLOW(true),
-
         /**
          * Feature that determines whether we will use {@link BufferRecycler} with
          * {@link ThreadLocal} and {@link SoftReference}, for efficient reuse of
@@ -120,13 +113,10 @@ public abstract class TokenStreamFactory
          * {@link ThreadLocal} (see
          * <a href="https://github.com/FasterXML/jackson-core/issues/189">Issue #189</a>
          * for a possible case)
-         *<p>
+         * <p>
          * This setting is enabled by default.
          */
-        USE_THREAD_LOCAL_FOR_BUFFER_RECYCLING(true)
-
-        ;
-
+        USE_THREAD_LOCAL_FOR_BUFFER_RECYCLING(true);
         /**
          * Whether feature is enabled or disabled by default.
          */
@@ -146,12 +136,18 @@ public abstract class TokenStreamFactory
             return flags;
         }
 
-        private Feature(boolean defaultState) { _defaultState = defaultState; }
+        private Feature(boolean defaultState) {
+            _defaultState = defaultState;
+        }
 
         @Override
-        public boolean enabledByDefault() { return _defaultState; }
+        public boolean enabledByDefault() {
+            return _defaultState;
+        }
+
         @Override
         public boolean enabledIn(int flags) { return (flags & getMask()) != 0; }
+
         @Override
         public int getMask() { return (1 << ordinal()); }
     }
@@ -162,9 +158,7 @@ public abstract class TokenStreamFactory
      *
      * @since 3.0
      */
-    public abstract static class TSFBuilder<F extends TokenStreamFactory,
-        B extends TSFBuilder<F,B>>
-    {
+    public abstract static class TSFBuilder<F extends TokenStreamFactory, B extends TSFBuilder<F, B>> {
         /**
          * Set of {@link TokenStreamFactory.Feature}s enabled, as bitmask.
          */
@@ -190,8 +184,7 @@ public abstract class TokenStreamFactory
          */
         protected int _formatWriteFeatures;
 
-        // // // Construction
-
+        // Construction
         protected TSFBuilder(int formatReadF, int formatWriteF) {
             _factoryFeatures = DEFAULT_FACTORY_FEATURE_FLAGS;
             _streamReadFeatures = DEFAULT_STREAM_READ_FEATURE_FLAGS;
@@ -200,17 +193,11 @@ public abstract class TokenStreamFactory
             _formatWriteFeatures = formatWriteF;
         }
 
-        protected TSFBuilder(TokenStreamFactory base)
-        {
-            this(base._factoryFeatures,
-                    base._streamReadFeatures, base._streamWriteFeatures,
-                    base._formatReadFeatures, base._formatWriteFeatures);
+        protected TSFBuilder(TokenStreamFactory base) {
+            this(base._factoryFeatures, base._streamReadFeatures, base._streamWriteFeatures, base._formatReadFeatures, base._formatWriteFeatures);
         }
 
-        protected TSFBuilder(int factoryFeatures,
-                int streamReadFeatures, int streamWriteFeatures,
-                int formatReadFeatures, int formatWriteFeatures)
-        {
+        protected TSFBuilder(int factoryFeatures, int streamReadFeatures, int streamWriteFeatures, int formatReadFeatures, int formatWriteFeatures) {
             _factoryFeatures = factoryFeatures;
             _streamReadFeatures = streamReadFeatures;
             _streamWriteFeatures = streamWriteFeatures;
@@ -218,17 +205,28 @@ public abstract class TokenStreamFactory
             _formatWriteFeatures = formatWriteFeatures;
         }
 
-        // // // Accessors
+        // Accessors
+        public int factoryFeaturesMask() {
+            return _factoryFeatures;
+        }
 
-        public int factoryFeaturesMask() { return _factoryFeatures; }
-        public int streamReadFeaturesMask() { return _streamReadFeatures; }
-        public int streamWriteFeaturesMask() { return _streamWriteFeatures; }
+        public int streamReadFeaturesMask() {
+            return _streamReadFeatures;
+        }
 
-        public int formatReadFeaturesMask() { return _formatReadFeatures; }
-        public int formatWriteFeaturesMask() { return _formatWriteFeatures; }
+        public int streamWriteFeaturesMask() {
+            return _streamWriteFeatures;
+        }
 
-        // // // Factory features
+        public int formatReadFeaturesMask() {
+            return _formatReadFeatures;
+        }
 
+        public int formatWriteFeaturesMask() {
+            return _formatWriteFeatures;
+        }
+
+        // Factory features
         public B enable(TokenStreamFactory.Feature f) {
             _factoryFeatures |= f.getMask();
             return _this();
@@ -243,8 +241,7 @@ public abstract class TokenStreamFactory
             return state ? enable(f) : disable(f);
         }
 
-        // // // Parser features
-
+        // Parser features
         public B enable(StreamReadFeature f) {
             _streamReadFeatures |= f.getMask();
             return _this();
@@ -275,8 +272,7 @@ public abstract class TokenStreamFactory
             return state ? enable(f) : disable(f);
         }
 
-        // // // Generator features
-
+        // Generator features
         public B enable(StreamWriteFeature f) {
             _streamWriteFeatures |= f.getMask();
             return _this();
@@ -294,7 +290,7 @@ public abstract class TokenStreamFactory
             _streamWriteFeatures &= ~f.getMask();
             return _this();
         }
-        
+
         public B disable(StreamWriteFeature first, StreamWriteFeature... other) {
             _streamWriteFeatures &= ~first.getMask();
             for (StreamWriteFeature f : other) {
@@ -307,8 +303,7 @@ public abstract class TokenStreamFactory
             return state ? enable(f) : disable(f);
         }
 
-        // // // Other methods
-
+        // Other methods
         /**
          * Method for constructing actual {@link TokenStreamFactory} instance, given
          * configuration.
@@ -319,7 +314,9 @@ public abstract class TokenStreamFactory
 
         // silly convenience cast method we need
         @SuppressWarnings("unchecked")
-        protected final B _this() { return (B) this; }
+        protected final B _this() {
+            return ((B) (this));
+        }
     }
 
     /*
@@ -338,7 +335,7 @@ public abstract class TokenStreamFactory
      * by default.
      */
     protected final static int DEFAULT_STREAM_READ_FEATURE_FLAGS = StreamReadFeature.collectDefaults();
-    
+
     /**
      * Bitfield (set of flags) of all generator features that are enabled
      * by default.
@@ -355,7 +352,7 @@ public abstract class TokenStreamFactory
      * Currently enabled {@link TokenStreamFactory.Feature}s features as a bitmask.
      */
     protected final int _factoryFeatures;
-    
+
     /**
      * Currently enabled {@link StreamReadFeature}s as a bitmask.
      */
@@ -375,13 +372,11 @@ public abstract class TokenStreamFactory
      * Set of format-specific write features enabled, as bitmask.
      */
     protected final int _formatWriteFeatures;
-    
-    /*
-    /**********************************************************************
+
+    /* ********************************************************************
     /* Construction
     /**********************************************************************
      */
-    
     /**
      * Default constructor used to create factory instances.
      * Creation of a factory instance is a light-weight operation,
@@ -392,8 +387,10 @@ public abstract class TokenStreamFactory
      * and this reuse only works within context of a single
      * factory instance.
      *
-     * @param formatReadFeatures Bitmask of format-specific read features enabled
-     * @param formatWriteFeatures Bitmask of format-specific write features enabled
+     * @param formatReadFeatures
+     * 		Bitmask of format-specific read features enabled
+     * @param formatWriteFeatures
+     * 		Bitmask of format-specific write features enabled
      */
     protected TokenStreamFactory(int formatReadFeatures, int formatWriteFeatures) {
         _factoryFeatures = DEFAULT_FACTORY_FEATURE_FLAGS;
@@ -410,12 +407,11 @@ public abstract class TokenStreamFactory
      * if and when new general-purpose properties are added, implementation classes
      * do not have to use different constructors.
      *
-     * @param baseBuilder Builder with configuration to use
-     *
+     * @param baseBuilder
+     * 		Builder with configuration to use
      * @since 3.0
      */
-    protected TokenStreamFactory(TSFBuilder<?,?> baseBuilder)
-    {
+    protected TokenStreamFactory(TSFBuilder<?, ?> baseBuilder) {
         _factoryFeatures = baseBuilder.factoryFeaturesMask();
         _streamReadFeatures = baseBuilder.streamReadFeaturesMask();
         _streamWriteFeatures = baseBuilder.streamWriteFeaturesMask();
@@ -427,10 +423,10 @@ public abstract class TokenStreamFactory
      * Constructor used if a snapshot is created, or possibly for sub-classing or
      * wrapping (delegating)
      *
-     * @param src Source factory with configuration to copy
+     * @param src
+     * 		Source factory with configuration to copy
      */
-    protected TokenStreamFactory(TokenStreamFactory src)
-    {
+    protected TokenStreamFactory(TokenStreamFactory src) {
         _factoryFeatures = src._factoryFeatures;
         _streamReadFeatures = src._streamReadFeatures;
         _streamWriteFeatures = src._streamWriteFeatures;
@@ -458,13 +454,13 @@ public abstract class TokenStreamFactory
      * the same settings as this instance, but is otherwise
      * independent (i.e. nothing is actually shared, symbol tables
      * are separate).
-     *<p>
+     * <p>
      * Although assumption is that all factories are immutable -- and that we could
      * usually simply return `this` -- method is left unimplemented at this level
      * to make implementors aware of requirement to consider immutability.
      *
-     * @return This factory instance to allow call chaining
-     *
+     * @return Whether format supported by this factory
+    requires Object properties to be ordered.
      * @since 3.0
      */
     @Override
@@ -479,14 +475,13 @@ public abstract class TokenStreamFactory
      * @since 3.0
      */
     public abstract TSFBuilder<?,?> rebuild();
-//    public abstract <F extends TokenStreamFactory, T extends TSFBuilder<F,T>> TSFBuilder<F,T> rebuild();
 
+//    public abstract <F extends TokenStreamFactory, T extends TSFBuilder<F,T>> TSFBuilder<F,T> rebuild();
     /*
     /**********************************************************************
     /* Capability introspection
     /**********************************************************************
      */
-    
     /**
      * Introspection method that higher-level functionality may call
      * to see whether underlying data format requires a stable ordering
@@ -496,9 +491,11 @@ public abstract class TokenStreamFactory
      * if no ordering if explicitly specified.
      *
      * @return Whether format supported by this factory
-     *   requires Object properties to be ordered.
+    supports native binary content
      */
-    public boolean requiresPropertyOrdering() { return false; }
+    public boolean requiresPropertyOrdering() {
+        return false;
+    }
 
     /**
      * Introspection method that higher-level functionality may call
@@ -549,7 +546,6 @@ public abstract class TokenStreamFactory
     /* Format detection functionality
     /**********************************************************************
      */
-
     /**
      * Method that can be used to quickly check whether given schema
      * is something that parsers and/or generators constructed by this
@@ -558,10 +554,10 @@ public abstract class TokenStreamFactory
      * generators this factory constructs); individual schema instances
      * may have further usage restrictions.
      *
-     * @param schema Schema instance to check
-     *
+     * @param schema
+     * 		Schema instance to check
      * @return Whether parsers and generators constructed by this factory
-     *   can use specified format schema instance
+    can use specified format schema instance
      */
     public abstract boolean canUseSchema(FormatSchema schema);
 
@@ -582,12 +578,10 @@ public abstract class TokenStreamFactory
     @Override
     public abstract Version version();
 
-    /*
-    /**********************************************************************
+    /* ********************************************************************
     /* Configuration, access to features
     /**********************************************************************
      */
-
     /**
      * Checked whether specified parser feature is enabled.
      *
@@ -632,10 +626,14 @@ public abstract class TokenStreamFactory
     }
 
     // @since 3.0
-    public int getFormatReadFeatures() { return _formatReadFeatures; }
+    public int getFormatReadFeatures() {
+        return _formatReadFeatures;
+    }
 
     // @since 3.0
-    public int getFormatWriteFeatures() { return _formatWriteFeatures; }
+    public int getFormatWriteFeatures() {
+        return _formatWriteFeatures;
+    }
 
     /*
     /**********************************************************************
@@ -680,7 +678,6 @@ public abstract class TokenStreamFactory
     /* Parser factories, traditional (blocking) I/O sources
     /**********************************************************************
      */
-
     /**
      * Method for constructing parser instance to decode
      * contents of specified file.
@@ -702,8 +699,7 @@ public abstract class TokenStreamFactory
      *
      * @throws JacksonException If parser construction or initialization fails
      */
-    public abstract JsonParser createParser(ObjectReadContext readCtxt,
-            File f) throws JacksonException;
+    public abstract JsonParser createParser(ObjectReadContext readCtxt, File f) throws JacksonException;
 
     /**
      * Method for constructing parser instance to decode
@@ -753,8 +749,7 @@ public abstract class TokenStreamFactory
      *
      * @throws JacksonException If parser construction or initialization fails
      */
-    public abstract JsonParser createParser(ObjectReadContext readCtxt,
-            URL url) throws JacksonException;
+    public abstract JsonParser createParser(ObjectReadContext readCtxt, URL url) throws JacksonException;
 
     /**
      * Method for constructing JSON parser instance to parse
@@ -830,8 +825,7 @@ public abstract class TokenStreamFactory
      *
      * @throws JacksonException If parser construction or initialization fails
      */
-    public abstract JsonParser createParser(ObjectReadContext readCtxt,
-            byte[] content, int offset, int len) throws JacksonException;
+    public abstract JsonParser createParser(ObjectReadContext readCtxt, byte[] content, int offset, int len) throws JacksonException;
 
     /**
      * Method for constructing parser for parsing contents of given String.
@@ -873,16 +867,13 @@ public abstract class TokenStreamFactory
      *
      * @throws JacksonException If parser construction or initialization fails
      */
-    public abstract JsonParser createParser(ObjectReadContext readCtxt,
-            char[] content, int offset, int len) throws JacksonException;
+    public abstract JsonParser createParser(ObjectReadContext readCtxt, char[] content, int offset, int len) throws JacksonException;
 
-    /*
-    /**********************************************************************
+    /* ********************************************************************
     /* Parser factories, convenience methods that do not specify
     /* `ObjectReadContext` 
     /**********************************************************************
      */
-
     /**
      * @param f File that contains content to parse
      * @return Parser constructed
@@ -1009,7 +1000,6 @@ public abstract class TokenStreamFactory
     /* Parser factories, non-stream sources
     /**********************************************************************
      */
-
     /**
      * Optional method for constructing parser for reading contents from specified {@link DataInput}
      * instance.
@@ -1024,8 +1014,7 @@ public abstract class TokenStreamFactory
      *
      * @throws JacksonException If parser construction or initialization fails
      */
-    public abstract JsonParser createParser(ObjectReadContext readCtxt,
-            DataInput in) throws JacksonException;
+    public abstract JsonParser createParser(ObjectReadContext readCtxt, DataInput in) throws JacksonException;
 
     /**
      * Optional method for constructing parser for non-blocking parsing
@@ -1045,15 +1034,13 @@ public abstract class TokenStreamFactory
      * @throws JacksonException If parser construction or initialization fails
      */
     public <P extends JsonParser & ByteArrayFeeder> P createNonBlockingByteArrayParser(ObjectReadContext readCtxt) throws JacksonException {
-        return _unsupported("Non-blocking source not (yet?) support for this format ("+getFormatName()+")");        
+        return _unsupported(("Non-blocking source not (yet?) support for this format (" + getFormatName()) + ")");
     }
 
-    /*
-    /**********************************************************************
+    /* ********************************************************************
     /* Generator factories with databind context (3.0)
     /**********************************************************************
      */
-
     /**
      * Method for constructing generator that writes contents
      * using specified {@link OutputStream}.
@@ -1077,8 +1064,7 @@ public abstract class TokenStreamFactory
      *
      * @since 3.0
      */
-    public JsonGenerator createGenerator(ObjectWriteContext writeCtxt, OutputStream out)
-        throws JacksonException {
+    public JsonGenerator createGenerator(ObjectWriteContext writeCtxt, OutputStream out) throws JacksonException {
         return createGenerator(writeCtxt, out, JsonEncoding.UTF8);
     }
 
@@ -1106,9 +1092,7 @@ public abstract class TokenStreamFactory
      *
      * @since 3.0
      */
-    public abstract JsonGenerator createGenerator(ObjectWriteContext writeCtxt,
-            OutputStream out, JsonEncoding enc)
-        throws JacksonException;
+    public abstract JsonGenerator createGenerator(ObjectWriteContext writeCtxt, OutputStream out, JsonEncoding enc) throws JacksonException;
 
     /**
      * Method for constructing generator that writes contents
@@ -1132,8 +1116,7 @@ public abstract class TokenStreamFactory
      *
      * @since 3.0
      */
-    public abstract JsonGenerator createGenerator(ObjectWriteContext writeCtxt, Writer w)
-        throws JacksonException;
+    public abstract JsonGenerator createGenerator(ObjectWriteContext writeCtxt, Writer w) throws JacksonException;
 
     /**
      * Method for constructing generator that writes contents
@@ -1155,9 +1138,7 @@ public abstract class TokenStreamFactory
      *
      * @since 3.0
      */
-    public abstract JsonGenerator createGenerator(ObjectWriteContext writeCtxt, File f,
-            JsonEncoding enc)
-        throws JacksonException;
+    public abstract JsonGenerator createGenerator(ObjectWriteContext writeCtxt, File f, JsonEncoding enc) throws JacksonException;
 
     /**
      * Method for constructing generator that writes contents
@@ -1179,9 +1160,7 @@ public abstract class TokenStreamFactory
      *
      * @since 3.0
      */
-    public abstract JsonGenerator createGenerator(ObjectWriteContext writeCtxt, Path p,
-            JsonEncoding enc)
-        throws JacksonException;
+    public abstract JsonGenerator createGenerator(ObjectWriteContext writeCtxt, Path p, JsonEncoding enc) throws JacksonException;
 
     /**
      * Method for constructing generator that writes content into specified {@link DataOutput},
@@ -1197,8 +1176,7 @@ public abstract class TokenStreamFactory
      *
      * @since 3.0
      */
-    public JsonGenerator createGenerator(ObjectWriteContext writeCtxt, DataOutput out)
-            throws JacksonException {
+    public JsonGenerator createGenerator(ObjectWriteContext writeCtxt, DataOutput out) throws JacksonException {
         return createGenerator(writeCtxt, _createDataOutputWrapper(out));
     }
 
@@ -1208,13 +1186,12 @@ public abstract class TokenStreamFactory
     /* `ObjectWriteContext` 
     /**********************************************************************
      */
-    
     /**
      * Method for constructing JSON generator for writing content
      * using specified output stream.
      * Encoding to use must be specified, and needs to be one of available
      * types (as per JSON specification).
-     *<p>
+     * <p>
      * Underlying stream <b>is NOT owned</b> by the generator constructed,
      * so that generator will NOT close the output stream when
      * {@link JsonGenerator#close} is called (unless auto-closing
@@ -1222,20 +1199,17 @@ public abstract class TokenStreamFactory
      * {@link com.fasterxml.jackson.core.StreamWriteFeature#AUTO_CLOSE_TARGET}
      * is enabled).
      * Using application needs to close it explicitly if this is the case.
-     *<p>
+     * <p>
      * Note: there are formats that use fixed encoding (like most binary data formats)
      * and that ignore passed in encoding.
      *
-     * @param out OutputStream to use for writing content 
-     * @param enc Character encoding to use
-     *
-     * @return Generator constructed
-     *
-     * @throws JacksonException If generator construction or initialization fails
+     * @since 2.14
+     * @param enc
+     * 		Character encoding to use
      */
-    @Deprecated // since 3.0
-    public JsonGenerator createGenerator(OutputStream out, JsonEncoding enc)
-        throws JacksonException {
+    // since 3.0
+    @Deprecated
+    public JsonGenerator createGenerator(OutputStream out, JsonEncoding enc) throws JacksonException {
         return createGenerator(ObjectWriteContext.empty(), out, enc);
     }
 
@@ -1243,17 +1217,15 @@ public abstract class TokenStreamFactory
      * Convenience method for constructing generator that uses default
      * encoding of the format (UTF-8 for JSON and most other data formats),
      *
-     * @param out OutputStream to use for writing content 
-     *
+     * @since 2.14
      * @return Generator constructed
-     *
-     * @throws JacksonException If generator construction or initialization fails
      */
-    @Deprecated // since 3.0
+    // since 3.0
+    @Deprecated
     public JsonGenerator createGenerator(OutputStream out) throws JacksonException {
         return createGenerator(ObjectWriteContext.empty(), out, JsonEncoding.UTF8);
     }
-    
+
     /**
      * Method for constructing JSON generator for writing content
      * using specified Writer.
@@ -1271,7 +1243,8 @@ public abstract class TokenStreamFactory
      *
      * @throws JacksonException If generator construction or initialization fails
      */
-    @Deprecated // since 3.0
+    // since 3.0
+    @Deprecated
     public JsonGenerator createGenerator(Writer w) throws JacksonException {
         return createGenerator(ObjectWriteContext.empty(), w);
     }
@@ -1324,8 +1297,7 @@ public abstract class TokenStreamFactory
      *
      * @return Context constructed
      */
-    protected IOContext _createContext(ContentReference contentRef, boolean resourceManaged,
-            JsonEncoding enc) {
+    protected IOContext _createContext(ContentReference contentRef, boolean resourceManaged, JsonEncoding enc) {
         return new IOContext(_getBufferRecycler(), contentRef, resourceManaged, enc);
     }
 
@@ -1345,14 +1317,14 @@ public abstract class TokenStreamFactory
      * to pass to parser or generator being created; used in cases where input
      * comes in a static buffer with relevant offset and length.
      *
-     * @param contentRef Underlying input source (parser) or target (generator)
-     * @param offset Offset of content in buffer ({@code rawSource})
-     * @param length Length of content in buffer ({@code rawSource})
-     *
+     * @since 2.10
+     * @param offset
+     * 		Offset of content in buffer ({@code rawSource})
+     * @param length
+     * 		Length of content in buffer ({@code rawSource})
      * @return InputSourceReference instance to use
      */
-    protected abstract ContentReference _createContentReference(Object contentRef,
-            int offset, int length);
+    protected abstract ContentReference _createContentReference(Object contentRef, int offset, int length);
 
     protected OutputStream _createDataOutputWrapper(DataOutput out) {
         return new DataOutputAsStream(out);
@@ -1367,18 +1339,18 @@ public abstract class TokenStreamFactory
      *
      * @return InputStream constructed for given {@link URL}
      *
-     * @throws JacksonException If there is a problem accessing content from specified {@link URL}
+     * @throws IOException If there is a problem accessing content from specified {@link URL}
      */
     protected InputStream _optimizedStreamFromURL(URL url) throws JacksonException {
         if ("file".equals(url.getProtocol())) {
             /* Can not do this if the path refers
-             * to a network drive on windows. This fixes the problem;
-             * might not be needed on all platforms (NFS?), but should not
-             * matter a lot: performance penalty of extra wrapping is more
-             * relevant when accessing local file system.
+            to a network drive on windows. This fixes the problem;
+            might not be needed on all platforms (NFS?), but should not
+            matter a lot: performance penalty of extra wrapping is more
+            relevant when accessing local file system.
              */
             String host = url.getHost();
-            if (host == null || host.length() == 0) {
+            if ((host == null) || (host.length() == 0)) {
                 // [core#48]: Let's try to avoid probs with URL encoded stuff
                 String path = url.getPath();
                 if (path.indexOf('%') < 0) {
@@ -1398,18 +1370,7 @@ public abstract class TokenStreamFactory
         }
     }
 
-    /**
-     * Helper methods used for constructing an {@link InputStream} for
-     * parsers to use, when input is to be read from given {@link File}.
-     *
-     * @param f File to open stream for
-     *
-     * @return {@link InputStream} constructed
-     *
-     * @throws JacksonException If there is a problem opening the stream
-     */
-    protected InputStream _fileInputStream(File f) throws JacksonException
-    {
+    protected InputStream _fileInputStream(File f) throws JacksonException {
         try {
             return new FileInputStream(f);
         } catch (IOException e) {
@@ -1426,18 +1387,7 @@ public abstract class TokenStreamFactory
         }
     }
 
-    /**
-     * Helper methods used for constructing an {@link OutputStream} for
-     * generator to use, when target is to be written into given {@link File}.
-     *
-     * @param f File to open stream for
-     *
-     * @return {@link OutputStream} constructed
-     *
-     * @throws JacksonException If there is a problem opening the stream
-     */
-    protected OutputStream _fileOutputStream(File f) throws JacksonException
-    {
+    protected OutputStream _fileOutputStream(File f) throws JacksonException {
         try {
             return new FileOutputStream(f);
         } catch (IOException e) {
@@ -1461,7 +1411,7 @@ public abstract class TokenStreamFactory
     protected <T> T _unsupported() {
         return _unsupported("Operation not supported for this format (%s)", getFormatName());
     }
-    
+
     protected <T> T _unsupported(String str, Object... args) {
         throw new UnsupportedOperationException(String.format(str, args));
     }
