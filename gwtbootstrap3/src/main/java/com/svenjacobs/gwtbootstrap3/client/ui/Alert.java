@@ -1,25 +1,5 @@
 package com.svenjacobs.gwtbootstrap3.client.ui;
 
-/*
- * #%L
- * GwtBootstrap3
- * %%
- * Copyright (C) 2013 Sven Jacobs
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Event;
@@ -31,33 +11,29 @@ import com.svenjacobs.gwtbootstrap3.client.ui.constants.AlertType;
 import com.svenjacobs.gwtbootstrap3.client.ui.constants.ButtonDismiss;
 import com.svenjacobs.gwtbootstrap3.client.ui.constants.Styles;
 
+
 /**
  * Alert block.
  * <p/>
  * Use {@link #setDismissable(boolean)} to add a close ("x") button.
- * 
+ *
  * @author Sven Jacobs
  * @author Joshua Godi
  * @see AlertCloseEvent
  * @see AlertClosedEvent
  */
-public class Alert extends HTMLPanel implements HasType<AlertType>, HasResponsiveness {
-
+public class Alert extends HTMLPanel implements HasType<AlertType> , HasResponsiveness {
     private final CloseButton closeButton = new CloseButton();
 
     public Alert(final String html) {
         super(html);
-
         setStyleName(Styles.ALERT);
         setType(AlertType.WARNING);
-
         closeButton.setDismiss(ButtonDismiss.ALERT);
-
         bindJavaScriptEvents(getElement());
     }
 
     public Alert(final String html, final AlertType type) {
-
         this(html);
         setType(type);
     }
@@ -67,13 +43,12 @@ public class Alert extends HTMLPanel implements HasType<AlertType>, HasResponsiv
     }
 
     public Alert(final SafeHtml safeHtml, final AlertType type) {
-
         this(safeHtml.asString(), type);
     }
 
     /**
      * Sets alert type.
-     * 
+     *
      * @param type Alert type
      * @see AlertType
      */
@@ -89,7 +64,7 @@ public class Alert extends HTMLPanel implements HasType<AlertType>, HasResponsiv
 
     /**
      * Adds a close button to the alert
-     * 
+     *
      * @param dismissable Adds close button when {@code true}
      */
     public void setDismissable(final boolean dismissable) {
@@ -132,12 +107,12 @@ public class Alert extends HTMLPanel implements HasType<AlertType>, HasResponsiv
     }
 
     // @formatter:off
-	
-    private native void alert(final Element e, final String arg) /*-{
+    /*-{
         $wnd.jQuery(e).alert(arg);
-    }-*/;
+    }-*/
+    private native void alert(final Element e, final String arg);
 
-    private native void bindJavaScriptEvents(final Element e) /*-{
+    /*-{
         var target = this;
         var $alert = $wnd.jQuery(e);
 
@@ -148,5 +123,6 @@ public class Alert extends HTMLPanel implements HasType<AlertType>, HasResponsiv
         $alert.on('closed.bs.alert', function (evt) {
             target.@com.svenjacobs.gwtbootstrap3.client.ui.Alert::onClosed(Lcom/google/gwt/user/client/Event;)(evt);
         });
-    }-*/;
+    }-*/
+    private native void bindJavaScriptEvents(final Element e);
 }

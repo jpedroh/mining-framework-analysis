@@ -1,25 +1,5 @@
 package com.svenjacobs.gwtbootstrap3.client.ui;
 
-/*
- * #%L
- * GwtBootstrap3
- * %%
- * Copyright (C) 2013 Sven Jacobs
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
@@ -30,27 +10,38 @@ import com.google.gwt.user.client.ui.Widget;
 import com.svenjacobs.gwtbootstrap3.client.shared.event.*;
 import com.svenjacobs.gwtbootstrap3.client.ui.constants.Placement;
 import com.svenjacobs.gwtbootstrap3.client.ui.constants.Trigger;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
 
 /**
  * @author Joshua Godi
  */
-public class Popover implements IsWidget, HasWidgets, HasOneWidget, HasId, HasHover {
+public class Popover implements IsWidget , HasWidgets , HasOneWidget , HasId , HasHover {
+    // Defaults from http://getbootstrap.com/javascript/#popovers
     // Defaults from http://getbootstrap.com/javascript/#popovers
     private boolean isAnimated = true;
+
     private boolean isHTML = false;
+
     private Placement placement = Placement.TOP;
+
     private Trigger trigger = Trigger.HOVER;
+
     private String title = "";
+
     private String content = "";
+
     private int hideDelayMs = 0;
+
     private int showDelayMs = 0;
+
     private String container = null;
+
     private final String selector = null;
 
     private Widget widget;
+
     private String id;
 
     public Popover() {
@@ -66,26 +57,21 @@ public class Popover implements IsWidget, HasWidgets, HasOneWidget, HasId, HasHo
         if (w == widget) {
             return;
         }
-
         // Detach new child
         if (w != null) {
             w.removeFromParent();
         }
-
         // Remove old child
         if (widget != null) {
             remove(widget);
         }
-
         // Logical attach, but don't physical attach; done by jquery.
         widget = w;
         if (widget == null) {
             return;
         }
-
         // Bind jquery events
         bindJsEvents(widget.getElement());
-
         // When we attach it, configure the tooltip
         widget.addAttachHandler(new AttachEvent.Handler() {
             @Override
@@ -378,7 +364,6 @@ public class Popover implements IsWidget, HasWidgets, HasOneWidget, HasId, HasHo
     private native void call(final Element e, final String arg) /*-{
         $wnd.jQuery(e).popover(arg);
     }-*/;
-
 
     private native void popover(Element e, boolean animation, boolean html, String placement, String selector,
                                 String title, String content, String trigger, int showDelay, int hideDelay, String container) /*-{

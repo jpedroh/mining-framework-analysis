@@ -1,27 +1,5 @@
 package com.svenjacobs.gwtbootstrap3.datetimepicker.client.ui.base;
 
-/*
- * #%L
- * GwtBootstrap3
- * %%
- * Copyright (C) 2013 Sven Jacobs
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
-import java.util.Date;
-
 import com.google.gwt.core.client.JsDate;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
@@ -59,27 +37,32 @@ import com.svenjacobs.gwtbootstrap3.datetimepicker.client.ui.base.constant.HasSt
 import com.svenjacobs.gwtbootstrap3.datetimepicker.client.ui.base.constant.HasTimeIcon;
 import com.svenjacobs.gwtbootstrap3.datetimepicker.client.ui.base.constant.HasUpIcon;
 import com.svenjacobs.gwtbootstrap3.datetimepicker.client.ui.base.constant.HasVisibleHandlers;
+import java.util.Date;
+
 
 /**
  * @author Joshua Godi
  */
-public class DateTimeBoxBase extends Widget implements HasValue<Date>, HasEnabled, HasValueChangeHandlers<Date>,
-        HasVisibility, HasChangeHandlers, HasVisibleHandlers, HasId, HasResponsiveness, HasDateIcon, HasShowDatePicker,
-        HasShowTimePicker, HasDownIcon, HasEndDate, HasStartDate, HasStrict, HasTimeIcon, HasUpIcon, HasFormat,
-        HasPlaceholder {
-
+public class DateTimeBoxBase extends Widget implements HasValue<Date> , HasEnabled , HasValueChangeHandlers<Date> , HasVisibility , HasChangeHandlers , HasVisibleHandlers , HasId , HasResponsiveness , HasDateIcon , HasShowDatePicker , HasShowTimePicker , HasDownIcon , HasEndDate , HasStartDate , HasStrict , HasTimeIcon , HasUpIcon , HasFormat , HasPlaceholder {
     /** Moment.js date format */
     private static final String DEFAULT_FORMAT = "YYYY-MM-DD HH:mm";
 
     private final TextBox textBox;
+
     private String format;
 
     private boolean showTime = true;
+
     private boolean showDate = true;
+
     private boolean useStrict = false;
+
     private String dateIconClass = "fa fa-calendar";
+
     private String timeIconClass = "fa fa-clock-o";
+
     private String upIconClass = "fa fa-arrow-up";
+
     private String downIconClass = "fa fa-arrow-down";
 
     public DateTimeBoxBase() {
@@ -176,7 +159,6 @@ public class DateTimeBoxBase extends Widget implements HasValue<Date>, HasEnable
     public void setFormat(final String format) {
         this.format = format;
         // dateTimeFormat = DateTimeFormat.getFormat(format);
-
         final Date oldValue = getValue();
         if (oldValue != null) {
             setValue(oldValue);
@@ -231,13 +213,13 @@ public class DateTimeBoxBase extends Widget implements HasValue<Date>, HasEnable
     @Override
     public Date getValue() {
         final String value = textBox.getValue();
-        if (!(value == null || "".equals(value))) {
+        if (!((value == null) || "".equals(value))) {
             return null;
         }
         try {
             final JsDate date = parse(textBox.getValue(), format);
-            return new Date((long) date.getTime());
-        } catch (final Exception e) {
+            return new Date(((long) (date.getTime())));
+        } catch (final java.lang.Exception e) {
             GWT.log("JS error", e);
         }
         return null;
@@ -309,40 +291,40 @@ public class DateTimeBoxBase extends Widget implements HasValue<Date>, HasEnable
     }
 
     // @formatter:off
-    
+
     protected native JsDate parse(final String dateStr, final String format) /*-{
         return $wnd.moment(dateStr, format).toDate();
     }-*/;
-    
+
     protected native String format(final Date date, final String format) /*-{
         return $wnd.moment(date).format(format);
     }-*/;
-    
-    protected native void updateValue(Element e, Date newDate) /*-{
+
+    protected native void updateValue(Element e, Date newDate)/*-{
         if ($wnd.jQuery(e).data('DateTimePicker')) {
             $wnd.jQuery(e).data('DateTimePicker').setDate(newDate);
         }
     }-*/;
 
-    protected native void show(Element e) /*-{
+    protected native void show(Element e)/*-{
         if ($wnd.jQuery(e).data('DateTimePicker')) {
             $wnd.jQuery(e).data('DateTimePicker').show();
         }
     }-*/;
 
-    protected native void hide(Element e) /*-{
+    protected native void hide(Element e)/*-{
         if ($wnd.jQuery(e).data('DateTimePicker')) {
             $wnd.jQuery(e).data('DateTimePicker').hide();
         }
     }-*/;
 
-    protected native void setStartDate(Element e, Date startDate) /*-{
+    protected native void setStartDate(Element e, Date startDate)/*-{
         if ($wnd.jQuery(e).data('DateTimePicker')) {
             $wnd.jQuery(e).data('DateTimePicker').setStartDate(startDate);
         }
     }-*/;
 
-    protected native void setEndDate(Element e, Date endDate) /*-{
+    protected native void setEndDate(Element e, Date endDate)/*-{
         if ($wnd.jQuery(e).data('DateTimePicker')) {
             $wnd.jQuery(e).data('DateTimePicker').setEndDate(endDate);
         }
@@ -352,28 +334,29 @@ public class DateTimeBoxBase extends Widget implements HasValue<Date>, HasEnable
         $wnd.jQuery(e).datetimepicker(cmd);
     }-*/;
 
-    protected native void configure(Element e, boolean showTime, boolean showDate, boolean useStrict,
-            String timeIconClass, String dateIconClass, String upIconClass, String downIconClass) /*-{
-        var that = this;
-        $wnd.jQuery(e).datetimepicker({
-            pickDate: showDate,
-            pickTime: showTime,
-            useStrict: useStrict,
-            icons: {
-                time: timeIconClass,
-                date: dateIconClass,
-                up: upIconClass,
-                down: downIconClass
-            }
-        })
-        .on('change.dp', function () {
-            that.@com.svenjacobs.gwtbootstrap3.datetimepicker.client.ui.base.DateTimeBoxBase::onChange()();
-        })
-        .on("show.dp", function (e) {
-            that.@com.svenjacobs.gwtbootstrap3.datetimepicker.client.ui.base.DateTimeBoxBase::onShow(Lcom/google/gwt/user/client/Event;)(e);
-        })
-        .on("hide.dp", function (e) {
-            that.@com.svenjacobs.gwtbootstrap3.datetimepicker.client.ui.base.DateTimeBoxBase::onHide(Lcom/google/gwt/user/client/Event;)(e);
-        });
-    }-*/;
+    /* -{
+    var that = this;
+    $wnd.jQuery(e).datetimepicker({
+    pickDate: showDate,
+    pickTime: showTime,
+    useStrict: useStrict,
+    icons: {
+    time: timeIconClass,
+    date: dateIconClass,
+    up: upIconClass,
+    down: downIconClass
+    }
+    })
+    .on('change.dp', function () {
+    that.@com.svenjacobs.gwtbootstrap3.datetimepicker.client.ui.base.DateTimeBoxBase::onChange()();
+    })
+    .on("show.dp", function (e) {
+    that.@com.svenjacobs.gwtbootstrap3.datetimepicker.client.ui.base.DateTimeBoxBase::onShow(Lcom/google/gwt/user/client/Event;)(e);
+    })
+    .on("hide.dp", function (e) {
+    that.@com.svenjacobs.gwtbootstrap3.datetimepicker.client.ui.base.DateTimeBoxBase::onHide(Lcom/google/gwt/user/client/Event;)(e);
+    });
+    }-
+     */
+    protected native void configure(Element e, boolean showTime, boolean showDate, boolean useStrict, String timeIconClass, String dateIconClass, String upIconClass, String downIconClass);
 }

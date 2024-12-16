@@ -1,25 +1,5 @@
 package com.svenjacobs.gwtbootstrap3.client.ui.base.button;
 
-/*
- * #%L
- * GwtBootstrap3
- * %%
- * Copyright (C) 2013 Sven Jacobs
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -41,15 +21,14 @@ import com.svenjacobs.gwtbootstrap3.client.ui.constants.ButtonSize;
 import com.svenjacobs.gwtbootstrap3.client.ui.constants.ButtonType;
 import com.svenjacobs.gwtbootstrap3.client.ui.constants.Styles;
 
+
 /**
  * Abstract base class for different kinds of buttons.
- * 
+ *
  * @author Sven Jacobs
  * @author Joshua Godi
  */
-public abstract class AbstractButton extends ComplexWidget implements HasEnabled, HasActive, HasType<ButtonType>,
-        HasSize<ButtonSize>, HasTarget, HasClickHandlers, HasResponsiveness {
-
+public abstract class AbstractButton extends ComplexWidget implements HasEnabled , HasActive , HasType<ButtonType> , HasSize<ButtonSize> , HasTarget , HasClickHandlers , HasResponsiveness {
     public class ButtonStateHandler {
         private ButtonStateHandler() {
         }
@@ -64,7 +43,7 @@ public abstract class AbstractButton extends ComplexWidget implements HasEnabled
 
         /**
          * Resets button to specified text state.
-         * 
+         *
          * @param state Text state
          */
         public void reset(final String state) {
@@ -73,7 +52,9 @@ public abstract class AbstractButton extends ComplexWidget implements HasEnabled
     }
 
     private final ButtonStateHandler buttonStateHandler = new ButtonStateHandler();
+
     private final TargetMixin<AbstractButton> targetMixin = new TargetMixin<AbstractButton>(this);
+
     private final ActiveMixin<AbstractButton> activeMixin = new ActiveMixin<AbstractButton>(this);
 
     /**
@@ -116,7 +97,7 @@ public abstract class AbstractButton extends ComplexWidget implements HasEnabled
 
     /**
      * Sets type of button.
-     * 
+     *
      * @param type Type of button
      */
     @Override
@@ -131,7 +112,7 @@ public abstract class AbstractButton extends ComplexWidget implements HasEnabled
 
     /**
      * Sets size of button.
-     * 
+     *
      * @param size Size of button
      */
     @Override
@@ -166,7 +147,7 @@ public abstract class AbstractButton extends ComplexWidget implements HasEnabled
 
     /**
      * Makes button a block level element that spawns full width of parent.
-     * 
+     *
      * @param block True for block level element
      */
     public void setBlock(final boolean block) {
@@ -185,8 +166,9 @@ public abstract class AbstractButton extends ComplexWidget implements HasEnabled
      * {@code MODAL} the button will act as the dismiss (close) button for this
      * Modal. Same goes for {@link com.svenjacobs.gwtbootstrap3.client.ui.Alert}
      * and dismiss type {@code ALERT}.
-     * 
-     * @param dismiss Dismiss type of button
+     *
+     * @param dismiss
+     * 		Dismiss type of button
      * @see com.svenjacobs.gwtbootstrap3.client.ui.Modal
      * @see com.svenjacobs.gwtbootstrap3.client.ui.Alert
      */
@@ -217,8 +199,8 @@ public abstract class AbstractButton extends ComplexWidget implements HasEnabled
     protected abstract Element createElement();
 
     // @formatter:off
-    
-    private native void button(final Element e, final String arg) /*-{
+    /*-{
         $wnd.jQuery(e).button(arg);
-    }-*/;
+    }-*/
+    private native void button(final Element e, final String arg);
 }

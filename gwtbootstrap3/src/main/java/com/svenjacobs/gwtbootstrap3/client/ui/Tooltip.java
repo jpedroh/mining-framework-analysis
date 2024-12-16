@@ -1,25 +1,5 @@
 package com.svenjacobs.gwtbootstrap3.client.ui;
 
-/*
- * #%L
- * GwtBootstrap3
- * %%
- * Copyright (C) 2013 Sven Jacobs
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.Event;
@@ -27,31 +7,40 @@ import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-
 import com.svenjacobs.gwtbootstrap3.client.shared.event.*;
 import com.svenjacobs.gwtbootstrap3.client.ui.constants.Placement;
 import com.svenjacobs.gwtbootstrap3.client.ui.constants.Trigger;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
 
 /**
  * @author Joshua Godi
  * @author Pontus Enmark
  */
-public class Tooltip implements IsWidget, HasWidgets, HasOneWidget, HasId, HasHover {
+public class Tooltip implements IsWidget , HasWidgets , HasOneWidget , HasId , HasHover {
+    // Defaults from http://getbootstrap.com/javascript/#tooltips
     // Defaults from http://getbootstrap.com/javascript/#tooltips
     private boolean isAnimated = true;
+
     private boolean isHTML = false;
+
     private Placement placement = Placement.TOP;
+
     private Trigger trigger = Trigger.HOVER;
+
     private String title = "";
+
     private int hideDelayMs = 0;
+
     private int showDelayMs = 0;
+
     private String container = null;
+
     private final String selector = null;
 
     private Widget widget;
+
     private String id;
 
     public Tooltip() {
@@ -67,26 +56,21 @@ public class Tooltip implements IsWidget, HasWidgets, HasOneWidget, HasId, HasHo
         if (w == widget) {
             return;
         }
-
         // Detach new child
         if (w != null) {
             w.removeFromParent();
         }
-
         // Remove old child
         if (widget != null) {
             remove(widget);
         }
-
         // Logical attach, but don't physical attach; done by jquery.
         widget = w;
         if (widget == null) {
             return;
         }
-
         // Bind jquery events
         bindJsEvents(widget.getElement());
-
         // When we attach it, configure the tooltip
         widget.addAttachHandler(new AttachEvent.Handler() {
             @Override
@@ -212,20 +196,15 @@ public class Tooltip implements IsWidget, HasWidgets, HasOneWidget, HasId, HasHo
     public void reconfigure() {
         // First destroy the old tooltip
         destroy();
-
         // Setup the new tooltip
-        if (container != null && selector != null) {
-            tooltip(widget.getElement(), isAnimated, isHTML, placement.getCssName(), selector, title,
-                    trigger.getCssName(), showDelayMs, hideDelayMs, container);
+        if ((container != null) && (selector != null)) {
+            tooltip(widget.getElement(), isAnimated, isHTML, placement.getCssName(), selector, title, trigger.getCssName(), showDelayMs, hideDelayMs, container);
         } else if (container != null) {
-            tooltip(widget.getElement(), isAnimated, isHTML, placement.getCssName(), title,
-                    trigger.getCssName(), showDelayMs, hideDelayMs, container);
+            tooltip(widget.getElement(), isAnimated, isHTML, placement.getCssName(), title, trigger.getCssName(), showDelayMs, hideDelayMs, container);
         } else if (selector != null) {
-            tooltip(widget.getElement(), isAnimated, isHTML, placement.getCssName(), selector, title,
-                    trigger.getCssName(), showDelayMs, hideDelayMs);
+            tooltip(widget.getElement(), isAnimated, isHTML, placement.getCssName(), selector, title, trigger.getCssName(), showDelayMs, hideDelayMs);
         } else {
-            tooltip(widget.getElement(), isAnimated, isHTML, placement.getCssName(), title,
-                    trigger.getCssName(), showDelayMs, hideDelayMs);
+            tooltip(widget.getElement(), isAnimated, isHTML, placement.getCssName(), title, trigger.getCssName(), showDelayMs, hideDelayMs);
         }
     }
 
@@ -315,6 +294,7 @@ public class Tooltip implements IsWidget, HasWidgets, HasOneWidget, HasId, HasHo
         // Simple iterator for the widget
         return new Iterator<Widget>() {
             boolean hasElement = widget != null;
+
             Widget returned = null;
 
             @Override
@@ -324,11 +304,11 @@ public class Tooltip implements IsWidget, HasWidgets, HasOneWidget, HasId, HasHo
 
             @Override
             public Widget next() {
-                if (!hasElement || (widget == null)) {
+                if ((!hasElement) || (widget == null)) {
                     throw new NoSuchElementException();
                 }
                 hasElement = false;
-                return (returned = widget);
+                return returned = widget;
             }
 
             @Override
@@ -358,7 +338,7 @@ public class Tooltip implements IsWidget, HasWidgets, HasOneWidget, HasId, HasHo
     }
 
     // @formatter:off
-    private native void bindJsEvents(final Element e) /*-{
+    /*-{
         var target = this;
         var $tooltip = $wnd.jQuery(e);
 
@@ -377,74 +357,75 @@ public class Tooltip implements IsWidget, HasWidgets, HasOneWidget, HasId, HasHo
         $tooltip.on('hidden.bs.tooltip', function (evt) {
             target.@com.svenjacobs.gwtbootstrap3.client.ui.Tooltip::onHidden(Lcom/google/gwt/user/client/Event;)(evt);
         });
-    }-*/;
+    }-*/
+    private native void bindJsEvents(final Element e);
 
-    private native void call(final Element e, final String arg) /*-{
+    /*-{
         $wnd.jQuery(e).tooltip(arg);
-    }-*/;
+    }-*/
+    private native void call(final Element e, final String arg);
 
+                                /*-{
+                                        $wnd.jQuery(e).tooltip({
+                                            animation: animation,
+                                            html: html,
+                                            placement: placement,
+                                            selector: selector,
+                                            title: title,
+                                            trigger: trigger,
+                                            delay: {
+                                                show: showDelay,
+                                                hide: hideDelay
+                                            },
+                                            container: container
+                                        });
+                                    }-*/
+    private native void tooltip(Element e, boolean animation, boolean html, String placement, String selector, String title, String trigger, int showDelay, int hideDelay, String container);
 
-    private native void tooltip(Element e, boolean animation, boolean html, String placement, String selector,
-                                String title, String trigger, int showDelay, int hideDelay, String container) /*-{
-        $wnd.jQuery(e).tooltip({
-            animation: animation,
-            html: html,
-            placement: placement,
-            selector: selector,
-            title: title,
-            trigger: trigger,
-            delay: {
-                show: showDelay,
-                hide: hideDelay
-            },
-            container: container
-        });
-    }-*/;
+                                /*-{
+                                        $wnd.jQuery(e).tooltip({
+                                            animation: animation,
+                                            html: html,
+                                            placement: placement,
+                                            title: title,
+                                            trigger: trigger,
+                                            delay: {
+                                                show: showDelay,
+                                                hide: hideDelay
+                                            },
+                                            container: container
+                                        });
+                                    }-*/
+    private native void tooltip(Element e, boolean animation, boolean html, String placement, String title, String trigger, int showDelay, int hideDelay, String container);
 
-    private native void tooltip(Element e, boolean animation, boolean html, String placement,
-                                String title, String trigger, int showDelay, int hideDelay, String container) /*-{
-        $wnd.jQuery(e).tooltip({
-            animation: animation,
-            html: html,
-            placement: placement,
-            title: title,
-            trigger: trigger,
-            delay: {
-                show: showDelay,
-                hide: hideDelay
-            },
-            container: container
-        });
-    }-*/;
+                                /*-{
+                                        $wnd.jQuery(e).tooltip({
+                                            animation: animation,
+                                            html: html,
+                                            placement: placement,
+                                            selector: selector,
+                                            title: title,
+                                            trigger: trigger,
+                                            delay: {
+                                                show: showDelay,
+                                                hide: hideDelay
+                                            }
+                                        });
+                                    }-*/
+    private native void tooltip(Element e, boolean animation, boolean html, String placement, String selector, String title, String trigger, int showDelay, int hideDelay);
 
-    private native void tooltip(Element e, boolean animation, boolean html, String placement, String selector,
-                                String title, String trigger, int showDelay, int hideDelay) /*-{
-        $wnd.jQuery(e).tooltip({
-            animation: animation,
-            html: html,
-            placement: placement,
-            selector: selector,
-            title: title,
-            trigger: trigger,
-            delay: {
-                show: showDelay,
-                hide: hideDelay
-            }
-        });
-    }-*/;
-
-    private native void tooltip(Element e, boolean animation, boolean html, String placement,
-                                String title, String trigger, int showDelay, int hideDelay) /*-{
-        $wnd.jQuery(e).tooltip({
-            animation: animation,
-            html: html,
-            placement: placement,
-            title: title,
-            trigger: trigger,
-            delay: {
-                show: showDelay,
-                hide: hideDelay
-            }
-        });
-    }-*/;
+                                /*-{
+                                        $wnd.jQuery(e).tooltip({
+                                            animation: animation,
+                                            html: html,
+                                            placement: placement,
+                                            title: title,
+                                            trigger: trigger,
+                                            delay: {
+                                                show: showDelay,
+                                                hide: hideDelay
+                                            }
+                                        });
+                                    }-*/
+    private native void tooltip(Element e, boolean animation, boolean html, String placement, String title, String trigger, int showDelay, int hideDelay);
 }

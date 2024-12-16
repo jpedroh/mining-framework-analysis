@@ -1,25 +1,5 @@
 package com.svenjacobs.gwtbootstrap3.client.ui;
 
-/*
- * #%L
- * GwtBootstrap3
- * %%
- * Copyright (C) 2013 Sven Jacobs
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.ui.Widget;
@@ -30,14 +10,14 @@ import com.svenjacobs.gwtbootstrap3.client.ui.constants.IconSize;
 import com.svenjacobs.gwtbootstrap3.client.ui.constants.IconType;
 import com.svenjacobs.gwtbootstrap3.client.ui.constants.Styles;
 
+
 /**
  * Simple put, an icon.
- * 
+ *
  * @author Sven Jacobs
  * @see IconType
  */
-public class Icon extends Widget implements HasType<IconType>, HasResponsiveness {
-
+public class Icon extends Widget implements HasType<IconType> , HasResponsiveness {
     public Icon() {
         setElement(Document.get().createElement("i"));
         addStyleName(Styles.FONT_AWESOME_BASE);
@@ -98,26 +78,23 @@ public class Icon extends Widget implements HasType<IconType>, HasResponsiveness
     }
 
     public void setRotate(final IconRotate iconRotate) {
-        if (iconRotate == null || iconRotate == IconRotate.NONE) {
+        if ((iconRotate == null) || (iconRotate == IconRotate.NONE)) {
             return;
         }
-
         StyleHelper.addUniqueEnumStyleName(this, IconRotate.class, iconRotate);
     }
 
     public void setFlip(final IconFlip iconFlip) {
-        if (iconFlip == null || iconFlip == IconFlip.NONE) {
+        if ((iconFlip == null) || (iconFlip == IconFlip.NONE)) {
             return;
         }
-
         StyleHelper.addUniqueEnumStyleName(this, IconFlip.class, iconFlip);
     }
 
     public void setSize(final IconSize iconSize) {
-        if (iconSize == null || iconSize == IconSize.NONE) {
+        if ((iconSize == null) || (iconSize == IconSize.NONE)) {
             return;
         }
-
         StyleHelper.addUniqueEnumStyleName(this, IconSize.class, iconSize);
     }
 }
