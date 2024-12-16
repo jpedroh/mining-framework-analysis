@@ -14,55 +14,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.fasterxml.uuid;
 
+import com.fasterxml.uuid.impl.NameBasedGenerator;
+import com.fasterxml.uuid.impl.RandomBasedGenerator;
+import com.fasterxml.uuid.impl.TimeBasedEpochGenerator;
+import com.fasterxml.uuid.impl.TimeBasedGenerator;
+import com.fasterxml.uuid.impl.TimeBasedReorderedGenerator;
+import com.fasterxml.uuid.impl.UUIDUtil;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.util.*;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 
-import com.fasterxml.uuid.impl.UUIDUtil;
-import com.fasterxml.uuid.impl.NameBasedGenerator;
-import com.fasterxml.uuid.impl.RandomBasedGenerator;
-import com.fasterxml.uuid.impl.TimeBasedEpochGenerator;
-import com.fasterxml.uuid.impl.TimeBasedReorderedGenerator;
-import com.fasterxml.uuid.impl.TimeBasedGenerator;
-
 /**
  * JUnit Test class for the com.fasterxml.uuid.UUIDGenerator class.
  *
  * @author Eric Bie
  */
-public class UUIDGeneratorTest extends TestCase
-{
+    /**************************************************************************
+     * End Private Helper Methods for use in tests 
+     *************************************************************************/
+public class UUIDGeneratorTest extends TestCase {
     // size of the arrays to create for tests using arrays of values
     // 19-Jun-2022, tatu: Reduce from 10000 since that seems to sometimes
-    //    trigger timing overflow wrt sanity checks (sanity checks being
-    //    simplistic; not exposing an actual issue)
+    // trigger timing overflow wrt sanity checks (sanity checks being
+    // simplistic; not exposing an actual issue)
     private static final int SIZE_OF_TEST_ARRAY = 9000;
-    
-    public UUIDGeneratorTest(java.lang.String testName)
-    {
+
+    public UUIDGeneratorTest(java.lang.String testName) {
         super(testName);
     }
-    
+
     public static Test suite()
     {
         TestSuite suite = new TestSuite(UUIDGeneratorTest.class);
         return suite;
     }
-    
+
     public static void main(String[] args)
     {
         TestRunner.run(suite());
     }
-    
+
     /**
      * Test of getDummyAddress method,
      * of class com.fasterxml.uuid.UUIDGenerator.
@@ -105,7 +103,7 @@ public class UUIDGeneratorTest extends TestCase
                     (ethernet_address[0] & 0x01));
         }
     }
-    
+
     /**
      * Test of generateRandomBasedUUID method,
      * of class com.fasterxml.uuid.UUIDGenerator.
@@ -139,7 +137,7 @@ public class UUIDGeneratorTest extends TestCase
         // of (Secure)Random is bad
         checkUUIDArrayForUniqueness(uuid_array);
     }
-    
+
     /**
      * Test of generateTimeBasedUUID() method,
      * of class com.fasterxml.uuid.UUIDGenerator.
@@ -186,7 +184,7 @@ public class UUIDGeneratorTest extends TestCase
         // check that all uuids have timestamps between the start and end time
         checkUUIDArrayForCorrectCreationTime(uuid_array, start_time, end_time);
     }
-    
+
     /**
      * Test of generateTimeBasedUUID(EthernetAddress) method,
      * of class com.fasterxml.uuid.UUIDGenerator.
@@ -245,58 +243,48 @@ public class UUIDGeneratorTest extends TestCase
         UUID testValue = UUID.fromString("017F22E2-79B0-7CC3-98C4-DC0C0C07398F");
         checkUUIDArrayForCorrectCreationTimeEpoch(new UUID[] { testValue }, 1645557742000L, 1645557742010L);
     }
-    
+
     /**
      * Test of generateTimeBasedEpochUUID() method,
      * of class com.fasterxml.uuid.UUIDGenerator.
      */
-    public void testGenerateTimeBasedEpochUUID() throws Exception
-    {
+    public void testGenerateTimeBasedEpochUUID() throws Exception {
         // this test will attempt to check for reasonable behavior of the
         // generateTimeBasedUUID method
-        
         Random entropy = new Random(0x666);
-
         // we need a instance to use
         TimeBasedEpochGenerator uuid_gen = Generators.timeBasedEpochGenerator(entropy);
-
         // first check that given a number of calls to generateTimeBasedEpochUUID,
         // all returned UUIDs order after the last returned UUID
         // we'll check this by generating the UUIDs into one array and sorting
         // then in another and checking the order of the two match
         // change the number in the array statement if you want more or less
         // UUIDs to be generated and tested
-        UUID uuid_array[] = new UUID[SIZE_OF_TEST_ARRAY];
-
+        UUID[] uuid_array = new UUID[SIZE_OF_TEST_ARRAY];
         // before we generate all the uuids, lets get the start time
         long start_time = System.currentTimeMillis();
-        Thread.sleep(2);  // Clean start time
+        Thread.sleep(2);// Clean start time
 
         // now create the array of uuids
         for (int i = 0; i < uuid_array.length; i++) {
             uuid_array[i] = uuid_gen.generate();
         }
- 
         // now capture the end time
         long end_time = System.currentTimeMillis();
-        Thread.sleep(2);  // Clean end time
+        Thread.sleep(2);// Clean end time
 
         // check that none of the UUIDs are null
         checkUUIDArrayForNonNullUUIDs(uuid_array);
-
         // check that all the uuids were correct variant and version (type-1)
         checkUUIDArrayForCorrectVariantAndVersion(uuid_array, UUIDType.TIME_BASED_EPOCH);
-
         // check that all the uuids were generated with correct order
         checkUUIDArrayForCorrectOrdering(uuid_array);
-
         // check that all uuids were unique
         checkUUIDArrayForUniqueness(uuid_array);
-
         // check that all uuids have timestamps between the start and end time
         checkUUIDArrayForCorrectCreationTimeEpoch(uuid_array, start_time, end_time);
     }
-    
+
     /**
      * Test of generateNameBasedUUID(UUID, String)
      * method, of class com.fasterxml.uuid.UUIDGenerator.
@@ -373,7 +361,7 @@ public class UUIDGeneratorTest extends TestCase
         assertTrue("expected both arrays to be equal, they were not!",
             Arrays.equals(uuid_array, uuid_array2));
     }
-    
+
     /**
      * Test of generateNameBasedUUID(UUID, String, MessageDigest)
      * method, of class com.fasterxml.uuid.UUIDGenerator.
@@ -456,7 +444,7 @@ public class UUIDGeneratorTest extends TestCase
         assertTrue("expected both arrays to be equal, they were not!",
             Arrays.equals(uuid_array, uuid_array2));
     }
-    
+
     /**
      * Test of generateTimeBasedReorderedUUID() method,
      * of class com.fasterxml.uuid.UUIDGenerator.
@@ -503,7 +491,7 @@ public class UUIDGeneratorTest extends TestCase
         // check that all uuids have timestamps between the start and end time
         checkUUIDArrayForCorrectCreationTimeReorder(uuid_array, start_time, end_time);
     }
-    
+
     /**
      * Test of generateTimeBasedReorderedUUID(EthernetAddress) method,
      * of class com.fasterxml.uuid.UUIDGenerator.
@@ -555,30 +543,28 @@ public class UUIDGeneratorTest extends TestCase
         // check that all UUIDs have the correct ethernet address in the UUID
         checkUUIDArrayForCorrectEthernetAddress(uuid_array, ethernet_address);
     }
-    
-    /**************************************************************************
-     * Begin Private Helper Methods for use in tests 
-     *************************************************************************/
 
-    class ReverseOrderUUIDComparator implements Comparator<UUID>
-    {
+    /**
+     * ************************************************************************
+     * Begin Private Helper Methods for use in tests
+     * *********************************************************************
+     */
+    class ReverseOrderUUIDComparator implements Comparator<UUID> {
         // this Comparator class has a compare which orders reverse of the
         // compareTo methond in UUID (so we can be sure our arrays below are
         // 'not ordered in sorted order' before we sort them.
         @Override
-        public int compare(UUID uuid1, UUID uuid2)
-        {
+        public int compare(UUID uuid1, UUID uuid2) {
             return -uuid1.compareTo(uuid2);
         }
-        
+
         // we are only implementing equals because it's needed, super should do
         @Override
-        public boolean equals(Object o)
-        {
+        public boolean equals(Object o) {
             return super.equals(o);
         }
     }
-    
+
     private void checkUUIDArrayForCorrectOrdering(UUID[] uuidArray)
     {
         // now we'll clone the array and reverse it
@@ -610,7 +596,7 @@ public class UUIDGeneratorTest extends TestCase
                 uuidArray[i].equals(uuid_sorted_array[i]));
         }        
     }
-    
+
     private void checkUUIDArrayForUniqueness(UUID[] uuidArray)
     {
         // here we'll assert that all elements in the list are not equal to
@@ -626,7 +612,7 @@ public class UUIDGeneratorTest extends TestCase
                     hash_set.add(uuidArray[i]));
         }
     }
-    
+
     private void checkUUIDArrayForCorrectVariantAndVersion(UUID[] uuidArray,
             UUIDType expectedType)
     {
@@ -708,76 +694,59 @@ public class UUIDGeneratorTest extends TestCase
     }
 
     // Modified version for Version 6 (reordered timestamps)
-    private void checkUUIDArrayForCorrectCreationTimeReorder(UUID[] uuidArray,
-            long startTime, long endTime)
-    {
+    private void checkUUIDArrayForCorrectCreationTimeReorder(UUID[] uuidArray, long startTime, long endTime) {
         // we need to convert from 100-nanosecond units (as used in UUIDs)
         // to millisecond units as used in UTC based time
         final long MILLI_CONVERSION_FACTOR = 10000L;
         // Since System.currentTimeMillis() returns time epoc time
         // (from 1-Jan-1970), and UUIDs use time from the beginning of
         // Gregorian calendar (15-Oct-1582) we have a offset for correction
-        final long GREGORIAN_CALENDAR_START_TO_UTC_START_OFFSET =
-            122192928000000000L;
-
+        final long GREGORIAN_CALENDAR_START_TO_UTC_START_OFFSET = 122192928000000000L;
         // 21-Feb-2020, tatu: Not sure why this would be checked, as timestamps come from
-        //     System.currenTimeMillis()...
-        assertTrue("Start time: " + startTime +" was after the end time: " + endTime,
-            startTime <= endTime);
-
+        // System.currenTimeMillis()...
+        assertTrue((("Start time: " + startTime) + " was after the end time: ") + endTime, startTime <= endTime);
         // let's check that all uuids in the array have a timestamp which lands
         // between the start and end time
-        for (int i = 0; i < uuidArray.length; i++){
+        for (int i = 0; i < uuidArray.length; i++) {
             byte[] temp_uuid = UUIDUtil.asByteArray(uuidArray[i]);
-
             // first we'll collect the UUID time stamp which is
             // the number of 100-nanosecond intervals since
             // 00:00:00.00 15 October 1582
             long uuid_time = 0L;
-            uuid_time |= ((temp_uuid[0] & 0xFFL) << 52);
-            uuid_time |= ((temp_uuid[1] & 0xFFL) << 44);
-            uuid_time |= ((temp_uuid[2] & 0xFFL) << 36);
-            uuid_time |= ((temp_uuid[3] & 0xFFL) << 28);
-            uuid_time |= ((temp_uuid[4] & 0xFFL) << 20);
-            uuid_time |= ((temp_uuid[5] & 0xFFL) << 12);
-            uuid_time |= ((temp_uuid[6] & 0x0FL) << 8);
-            uuid_time |= ((temp_uuid[7] & 0xFFL));
-
+            uuid_time |= (temp_uuid[0] & 0xffL) << 52;
+            uuid_time |= (temp_uuid[1] & 0xffL) << 44;
+            uuid_time |= (temp_uuid[2] & 0xffL) << 36;
+            uuid_time |= (temp_uuid[3] & 0xffL) << 28;
+            uuid_time |= (temp_uuid[4] & 0xffL) << 20;
+            uuid_time |= (temp_uuid[5] & 0xffL) << 12;
+            uuid_time |= (temp_uuid[6] & 0xfL) << 8;
+            uuid_time |= temp_uuid[7] & 0xffL;
             // first we'll remove the gregorian offset
             uuid_time -= GREGORIAN_CALENDAR_START_TO_UTC_START_OFFSET;
-
             // and convert to milliseconds as the system clock is in millis
             uuid_time /= MILLI_CONVERSION_FACTOR;
-
             // now check that the times are correct
-            assertTrue(
-                "Start time: " + startTime +
-                    " was not before UUID timestamp: " + uuid_time,
-                startTime  <= uuid_time);
-            assertTrue(
-                "UUID timestamp: " + uuid_time +
-                    " was not before the end time: " + endTime,
-                uuid_time <= endTime);
+            assertTrue((("Start time: " + startTime) + " was not before UUID timestamp: ") + uuid_time, startTime <= uuid_time);
+            assertTrue((("UUID timestamp: " + uuid_time) + " was not before the end time: ") + endTime, uuid_time <= endTime);
         }
     }
 
-    // Modified version for Variant 7 (Unix Epoch monotonic timestamps)
-    private void checkUUIDArrayForCorrectCreationTimeEpoch(UUID[] uuidArray,
-            long startTime, long endTime)
-    {
-        assertTrue("Start time: " + startTime + " was after the end time: " + endTime, startTime <= endTime);
-
+<<<<<<< LEFT
+// Modified version for Variant 7 (Unix Epoch monotonic timestamps)
+=======
+// Modified version for Version 7 (Unix Epoch timestamps)
+>>>>>>> RIGHT
+    private void checkUUIDArrayForCorrectCreationTimeEpoch(UUID[] uuidArray, long startTime, long endTime) {
+        assertTrue((("Start time: " + startTime) + " was after the end time: ") + endTime, startTime <= endTime);
         // let's check that all uuids in the array have a timestamp which lands
         // between the start and end time
         for (int i = 0; i < uuidArray.length; i++) {
             byte[] temp_uuid = UUIDUtil.asByteArray(uuidArray[i]);
             ByteBuffer buff = ByteBuffer.wrap(temp_uuid);
-            final long uuid_time = buff.getLong() >>> 16; 
+            final long uuid_time = buff.getLong() >>> 16;
             // now check that the times are correct
-            assertTrue("Start time: " + startTime + " was not before UUID timestamp: " + uuid_time,
-                       startTime <= uuid_time);
-            assertTrue("UUID: " + i + " timestamp: " + uuid_time + " was not before the end time: " + endTime,
-                       uuid_time <= endTime);
+            assertTrue((("Start time: " + startTime) + " was not before UUID timestamp: ") + uuid_time, startTime <= uuid_time);
+            assertTrue((((("UUID: " + i) + " timestamp: ") + uuid_time) + " was not before the end time: ") + endTime, uuid_time <= endTime);
         }
     }
 
@@ -795,7 +764,7 @@ public class UUIDGeneratorTest extends TestCase
                 Arrays.equals(ethernet_address, uuid_ethernet_address));
         }
     }
-    
+
     private void checkUUIDArrayForNonNullUUIDs(UUID[] uuidArray)
     {
         for (int i = 0; i < uuidArray.length; i++) {
@@ -804,7 +773,4 @@ public class UUIDGeneratorTest extends TestCase
         	}
         }
     }
-    /**************************************************************************
-     * End Private Helper Methods for use in tests 
-     *************************************************************************/
 }

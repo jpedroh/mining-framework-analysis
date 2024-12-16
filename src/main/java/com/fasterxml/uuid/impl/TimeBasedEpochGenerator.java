@@ -1,17 +1,17 @@
 package com.fasterxml.uuid.impl;
 
+import com.fasterxml.uuid.NoArgGenerator;
+import com.fasterxml.uuid.UUIDType;
 import java.security.SecureRandom;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.fasterxml.uuid.NoArgGenerator;
-import com.fasterxml.uuid.UUIDType;
 
 /**
  * Implementation of UUID generator that uses time/location based generation
- * method field from the Unix Epoch timestamp source - the number of 
+ * method field from the Unix Epoch timestamp source - the number of
  * milliseconds seconds since midnight 1 Jan 1970 UTC, leap seconds excluded.
  * This is usually referred to as "Version 7".
  * <p>
@@ -23,8 +23,7 @@ import com.fasterxml.uuid.UUIDType;
  *
  * @since 4.1
  */
-public class TimeBasedEpochGenerator extends NoArgGenerator
-{ 
+public class TimeBasedEpochGenerator extends NoArgGenerator {
     private static final int ENTROPY_BYTE_LENGTH = 10;
 
     /*
@@ -37,27 +36,29 @@ public class TimeBasedEpochGenerator extends NoArgGenerator
      * Random number generator that this generator uses.
      */
     protected final Random _random;
+
     private long _lastTimestamp = -1;
+
     private final byte[] _lastEntropy  = new byte[ENTROPY_BYTE_LENGTH];
+
     private final Lock lock = new ReentrantLock();
 
-    /*
-    /**********************************************************************
+    /* ********************************************************************
     /* Construction
     /**********************************************************************
      */
-
     /**
-     * @param rnd Random number generator to use for generating UUIDs; if null,
-     *   shared default generator is used. Note that it is strongly recommend to
-     *   use a <b>good</b> (pseudo) random number generator; for example, JDK's
-     *   {@link SecureRandom}.
+     *
+     *
+     * @param rnd
+     * 		Random number generator to use for generating UUIDs; if null,
+     * 		shared default generator is used. Note that it is strongly recommend to
+     * 		use a <b>good</b> (pseudo) random number generator; for example, JDK's
+     * 		{@link SecureRandom}.
      */
-    
-    public TimeBasedEpochGenerator(Random rnd)
-    {
+    public TimeBasedEpochGenerator(Random rnd) {
         if (rnd == null) {
-            rnd = LazyRandom.sharedSecureRandom(); 
+            rnd = LazyRandom.sharedSecureRandom();
         }
         _random = rnd;
     }
@@ -76,20 +77,18 @@ public class TimeBasedEpochGenerator extends NoArgGenerator
     /* UUID generation
     /**********************************************************************
      */
-    
     @Override
-    public UUID generate()
-    {
+    public UUID generate() {
         lock.lock();
-        try { 
+        try {
             long rawTimestamp = System.currentTimeMillis();
             if (rawTimestamp == _lastTimestamp) {
                 boolean c = true;
                 for (int i = ENTROPY_BYTE_LENGTH - 1; i >= 0; i--) {
                     if (c) {
                         byte temp = _lastEntropy[i];
-                        temp = (byte) (temp + 0x01);
-                        c = _lastEntropy[i] == (byte) 0xff && c;
+                        temp = ((byte) (temp + 0x1));
+                        c = (_lastEntropy[i] == ((byte) (0xff))) && c;
                         _lastEntropy[i] = temp;
                     }
                 }
