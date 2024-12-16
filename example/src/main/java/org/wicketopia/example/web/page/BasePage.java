@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketopia.example.web.page;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.IHeaderContributor;
@@ -31,16 +32,17 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
-public class BasePage extends WebPage implements IHeaderContributor
-{
+public class BasePage extends WebPage implements IHeaderContributor {
+//----------------------------------------------------------------------------------------------------------------------
+// Fields
+//----------------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------
 // Fields
 //----------------------------------------------------------------------------------------------------------------------
@@ -53,11 +55,9 @@ public class BasePage extends WebPage implements IHeaderContributor
 //----------------------------------------------------------------------------------------------------------------------
 // Constructors
 //----------------------------------------------------------------------------------------------------------------------
-
-    public BasePage()
-    {
-        init();
-    }
+  public BasePage() {
+    init();
+  }
 
     private void init()
     {
@@ -67,7 +67,7 @@ public class BasePage extends WebPage implements IHeaderContributor
         add(new Label("copyrightLabel", resourceModel("page.copyright", new GregorianCalendar().get(
                 Calendar.YEAR))).setEscapeModelStrings(false));
 
-//        add(new StyleSheetReference("stylesheet", BasePage.class, "style.css"));
+        add(new StyleSheetReference("stylesheet", BasePage.class, "style.css"));
 
         add(new FeedbackPanel("feedback").setOutputMarkupPlaceholderTag(true));
         add(new BookmarkablePageLink<Void>("homeLink", HomePage.class));
@@ -80,6 +80,7 @@ public class BasePage extends WebPage implements IHeaderContributor
                 final UsernamePasswordAuthenticationToken tok = new UsernamePasswordAuthenticationToken("admin", "admin");
                 SecurityContextHolder.getContext().setAuthentication(authenticationManager.authenticate(tok));
                 setResponsePage(BasePage.this.getClass());
+                setRedirect(true);
             }
 
             @Override
@@ -95,6 +96,7 @@ public class BasePage extends WebPage implements IHeaderContributor
             {
                 SecurityContextHolder.clearContext();
                 setResponsePage(BasePage.this.getClass());
+                setRedirect(true);
             }
 
             @Override
@@ -105,26 +107,22 @@ public class BasePage extends WebPage implements IHeaderContributor
         });
     }
 
-    public BasePage(IModel<?> model)
-    {
-        super(model);
-        init();
-    }
+  public BasePage(IModel<?> model) {
+    super(model);
+    init();
+  }
 
-    public BasePage(PageParameters parameters)
-    {
-        super(parameters);
-        init();
-    }
+  public BasePage(PageParameters parameters) {
+    super(parameters);
+    init();
+  }
 
 //----------------------------------------------------------------------------------------------------------------------
 // IHeaderContributor Implementation
 //----------------------------------------------------------------------------------------------------------------------
-
-    public void renderHead(IHeaderResponse header)
-    {
-        header.renderCSSReference(new PackageResourceReference(getClass(), "style.css"));
-    }
+  public void renderHead(IHeaderResponse header) {
+    header.renderCSSReference(new PackageResourceReference(BasePage.class, "style.css"));
+  }
 
 //----------------------------------------------------------------------------------------------------------------------
 // Other Methods

@@ -13,9 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketopia;
 
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.ServiceLoader;
+import java.util.Set;
 import org.apache.wicket.Component;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.RuntimeConfigurationType;
@@ -54,36 +66,27 @@ import org.wicketopia.util.Pluralizer;
 import org.wicketopia.viewer.PropertyViewerProvider;
 import org.wicketopia.viewer.component.LabelPropertyViewer;
 
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
-import java.util.Set;
 
-public class Wicketopia
-{
+public class Wicketopia {
 //----------------------------------------------------------------------------------------------------------------------
 // Fields
 //----------------------------------------------------------------------------------------------------------------------
-
     private static final Logger LOGGER = LoggerFactory.getLogger(Wicketopia.class);
 
     private static final MetaDataKey<Wicketopia> META_KEY = new WicketopiaPluginKey();
 
     private BeanMetaDataFactory beanMetaDataFactory = new AnnotationBeanMetaDataFactory(findClasspathUrls());
+
     private TypeMapping editorTypeMapping = new DefaultEditorTypeMapping();
+
     private TypeMapping viewerTypeMapping = new DefaultViewerTypeMapping();
+
     private final Map<String, PropertyEditorProvider> editorProviders = new HashMap<String, PropertyEditorProvider>();
+
     private final Map<String, PropertyViewerProvider> viewerProviders = new HashMap<String, PropertyViewerProvider>();
+
     private final List<WicketopiaPlugin> plugins;
+
     private WebApplication application;
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -122,12 +125,10 @@ public class Wicketopia
         new Wicketopia().install(WebApplication.get());
     }
 
-//----------------------------------------------------------------------------------------------------------------------
-// Constructors
-//----------------------------------------------------------------------------------------------------------------------
-
-    public Wicketopia()
-    {
+    // ----------------------------------------------------------------------------------------------------------------------
+    // Constructors
+    // ----------------------------------------------------------------------------------------------------------------------
+    public Wicketopia() {
         this(findDefaultPlugins());
     }
 
@@ -141,13 +142,11 @@ public class Wicketopia
         return plugins;
     }
 
-    public Wicketopia(List<WicketopiaPlugin> plugins)
-    {
+    public Wicketopia(List<WicketopiaPlugin> plugins) {
         this.plugins = plugins;
     }
 
-    public Wicketopia(WicketopiaPlugin... plugins)
-    {
+    public Wicketopia(WicketopiaPlugin... plugins) {
         this(Arrays.asList(plugins));
     }
 
@@ -287,10 +286,8 @@ public class Wicketopia
         return new PropertyViewerComponentFactory<T>(beanType);
     }
 
-    public BeanMetaData getBeanMetaData(Class<?> beanClass)
-    {
-        if (WebApplication.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT))
-        {
+    public BeanMetaData getBeanMetaData(Class<?> beanClass) {
+        if (WebApplication.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT)) {
             beanMetaDataFactory.clear();
         }
         return beanMetaDataFactory.getBeanMetaData(beanClass);
@@ -404,15 +401,13 @@ public class Wicketopia
         return names;
     }
 
-    public void install(WebApplication application)
-    {
+    public void install(WebApplication application) {
         this.application = application;
         application.setMetaData(META_KEY, this);
         addDefaultEditorProviders();
         adDefaultViewerProviders();
-        for (WicketopiaPlugin plugin : plugins)
-        {
-            LOGGER.debug("Initializing plugin " + plugin + "...");
+        for (WicketopiaPlugin plugin : plugins) {
+            LOGGER.debug(("Initializing plugin " + plugin) + "...");
             plugin.initialize(this);
         }
     }
@@ -434,8 +429,5 @@ public class Wicketopia
 //----------------------------------------------------------------------------------------------------------------------
 // Inner Classes
 //----------------------------------------------------------------------------------------------------------------------
-
-    private static final class WicketopiaPluginKey extends MetaDataKey<Wicketopia>
-    {
-    }
+    private static final class WicketopiaPluginKey extends MetaDataKey<Wicketopia> {}
 }

@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketopia.builder;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 
+
 /**
  * @author James Carman
  */
-public interface ComponentBuilder
-{
-    void addBehavior(Behavior behavior);
-    void visible(boolean viewable);
-    Component build();
+public interface ComponentBuilder {
+    public abstract void addBehavior(Behavior behavior);
+
+    public void visible(boolean viewable);
+
+    public Component build();
 }

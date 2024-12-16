@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketopia.example.web.page;
 
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.wicketopia.persistence.PersistenceProvider;
 
+
 /**
  * Homepage
  */
-public class HomePage extends BasePage
-{
+public class HomePage extends BasePage {
+//----------------------------------------------------------------------------------------------------------------------
+// Fields
+//----------------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------
 // Fields
 //----------------------------------------------------------------------------------------------------------------------
@@ -40,8 +42,6 @@ public class HomePage extends BasePage
 //----------------------------------------------------------------------------------------------------------------------
 // Constructors
 //----------------------------------------------------------------------------------------------------------------------
-
-    public HomePage()
-    {
-    }
+  public HomePage() {
+  }
 }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketopia.viewer.component;
 
 import org.apache.wicket.Component;
@@ -24,12 +23,16 @@ import org.metastopheles.PropertyMetaData;
 import org.wicketopia.builder.ViewerBuilder;
 import org.wicketopia.viewer.PropertyViewerProvider;
 
-public class LabelPropertyViewer extends Label implements ViewerBuilder
-{
+
+public class LabelPropertyViewer extends Label implements ViewerBuilder {
+//----------------------------------------------------------------------------------------------------------------------
+// Fields
+//----------------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------
 // Fields
 //----------------------------------------------------------------------------------------------------------------------
     public static final String TYPE_NAME = "label";
+
     private static final PropertyViewerProvider provider = new Provider();
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -41,24 +44,20 @@ public class LabelPropertyViewer extends Label implements ViewerBuilder
         return provider;
     }
 
-//----------------------------------------------------------------------------------------------------------------------
-// Constructors
-//----------------------------------------------------------------------------------------------------------------------
-
-    public LabelPropertyViewer(String id, IModel<?> model)
-    {
-        super(id, model);
-    }
+ // ----------------------------------------------------------------------------------------------------------------------
+ // Constructors
+ // ----------------------------------------------------------------------------------------------------------------------
+ public LabelPropertyViewer(String id, IModel<?> model) {
+  super(id, model);
+ }
 
 //----------------------------------------------------------------------------------------------------------------------
 // PropertyViewer Implementation
 //----------------------------------------------------------------------------------------------------------------------
-
-    @Override
-    public void addBehavior(Behavior behavior)
-    {
-        add(behavior);
-    }
+ @Override
+ public void addBehavior(Behavior behavior) {
+  add(behavior);
+ }
 
     @Override
     public Component build()
@@ -75,13 +74,11 @@ public class LabelPropertyViewer extends Label implements ViewerBuilder
 //----------------------------------------------------------------------------------------------------------------------
 // Inner Classes
 //----------------------------------------------------------------------------------------------------------------------
-
-    private static final class Provider implements PropertyViewerProvider
-    {
+ private static final class Provider implements PropertyViewerProvider {
         @Override
         public ViewerBuilder createPropertyViewer(String componentId, PropertyMetaData propertyMetadata, IModel<?> propertyModel)
         {
             return new LabelPropertyViewer(componentId, propertyModel);
         }
-    }
+ }
 }
