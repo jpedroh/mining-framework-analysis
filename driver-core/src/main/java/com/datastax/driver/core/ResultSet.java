@@ -15,11 +15,15 @@
  */
 package com.datastax.driver.core;
 
-
+import com.datastax.driver.core.exceptions.*;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
+import com.google.common.util.concurrent.Uninterruptibles;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * The result of a query.
@@ -27,7 +31,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Note that this class is not thread-safe.
  */
 public interface ResultSet extends Iterable<Row> {
-
     /**
      * Returns the columns returned in this ResultSet.
      *
@@ -56,7 +59,7 @@ public interface ResultSet extends Iterable<Row> {
      * @return a list containing the remaining results of this ResultSet. The
      * returned list is empty if and only the ResultSet is exhausted.
      */
-    public List<Row> all();
+    public abstract List<Row> all();
 
     /**
      * Returns an iterator over the rows contained in this ResultSet.
@@ -71,7 +74,7 @@ public interface ResultSet extends Iterable<Row> {
      * this ResultSet.
      */
     @Override
-    public Iterator<Row> iterator();
+    public abstract Iterator<Row> iterator();
 
     /**
      * The number of rows that can be retrieved from this result set without
@@ -149,9 +152,9 @@ public interface ResultSet extends Iterable<Row> {
      * The returned object includes basic information such as the queried hosts,
      * but also the Cassandra query trace if tracing was enabled for the query.
      *
-     * @return the execution info for the last query made for this ResultSet.
+     * @return the execution info for this query.
      */
-    public ExecutionInfo getExecutionInfo();
+    public abstract ExecutionInfo getExecutionInfo();
 
     /**
      * Return the execution informations for all queries made to retrieve this

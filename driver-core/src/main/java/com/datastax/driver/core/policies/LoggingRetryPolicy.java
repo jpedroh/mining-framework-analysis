@@ -15,12 +15,12 @@
  */
 package com.datastax.driver.core.policies;
 
+import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.Query;
+import com.datastax.driver.core.WriteType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.Statement;
-import com.datastax.driver.core.WriteType;
 
 /**
  * A retry policy that wraps another policy, logging the decision made by its sub-policy.
@@ -30,8 +30,8 @@ import com.datastax.driver.core.WriteType;
  * logging is done at the INFO level.
  */
 public class LoggingRetryPolicy implements RetryPolicy {
-
     private static final Logger logger = LoggerFactory.getLogger(LoggingRetryPolicy.class);
+
     private final RetryPolicy policy;
 
     /**
@@ -52,11 +52,11 @@ public class LoggingRetryPolicy implements RetryPolicy {
     public RetryDecision onReadTimeout(Statement statement, ConsistencyLevel cl, int requiredResponses, int receivedResponses, boolean dataRetrieved, int nbRetry) {
         RetryDecision decision = policy.onReadTimeout(statement, cl, requiredResponses, receivedResponses, dataRetrieved, nbRetry);
         switch (decision.getType()) {
-            case IGNORE:
+            case IGNORE :
                 String f1 = "Ignoring read timeout (initial consistency: %s, required responses: %d, received responses: %d, data retrieved: %b, retries: %d)";
                 logger.info(String.format(f1, cl, requiredResponses, receivedResponses, dataRetrieved, nbRetry));
                 break;
-            case RETRY:
+            case RETRY :
                 String f2 = "Retrying on read timeout at consistency %s (initial consistency: %s, required responses: %d, received responses: %d, data retrieved: %b, retries: %d)";
                 logger.info(String.format(f2, cl(cl, decision), cl, requiredResponses, receivedResponses, dataRetrieved, nbRetry));
                 break;
@@ -68,11 +68,11 @@ public class LoggingRetryPolicy implements RetryPolicy {
     public RetryDecision onWriteTimeout(Statement statement, ConsistencyLevel cl, WriteType writeType, int requiredAcks, int receivedAcks, int nbRetry) {
         RetryDecision decision = policy.onWriteTimeout(statement, cl, writeType, requiredAcks, receivedAcks, nbRetry);
         switch (decision.getType()) {
-            case IGNORE:
+            case IGNORE :
                 String f1 = "Ignoring write timeout (initial consistency: %s, write type: %s, required acknowledgments: %d, received acknowledgments: %d, retries: %d)";
                 logger.info(String.format(f1, cl, writeType, requiredAcks, receivedAcks, nbRetry));
                 break;
-            case RETRY:
+            case RETRY :
                 String f2 = "Retrying on write timeout at consistency %s(initial consistency: %s, write type: %s, required acknowledgments: %d, received acknowledgments: %d, retries: %d)";
                 logger.info(String.format(f2, cl(cl, decision), cl, writeType, requiredAcks, receivedAcks, nbRetry));
                 break;
@@ -84,11 +84,11 @@ public class LoggingRetryPolicy implements RetryPolicy {
     public RetryDecision onUnavailable(Statement statement, ConsistencyLevel cl, int requiredReplica, int aliveReplica, int nbRetry) {
         RetryDecision decision = policy.onUnavailable(statement, cl, requiredReplica, aliveReplica, nbRetry);
         switch (decision.getType()) {
-            case IGNORE:
+            case IGNORE :
                 String f1 = "Ignoring unavailable exception (initial consistency: %s, required replica: %d, alive replica: %d, retries: %d)";
                 logger.info(String.format(f1, cl, requiredReplica, aliveReplica, nbRetry));
                 break;
-            case RETRY:
+            case RETRY :
                 String f2 = "Retrying on unavailable exception at consistency %s (initial consistency: %s, required replica: %d, alive replica: %d, retries: %d)";
                 logger.info(String.format(f2, cl(cl, decision), cl, requiredReplica, aliveReplica, nbRetry));
                 break;

@@ -15,61 +15,55 @@
  */
 package com.datastax.driver.core;
 
-import java.nio.ByteBuffer;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-
+import com.datastax.driver.core.exceptions.DriverInternalError;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.google.common.util.concurrent.Uninterruptibles;
+import java.nio.ByteBuffer;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.exceptions.DriverInternalError;
 
 /**
  * Default implementation of a result set, backed by an ArrayDeque of ArrayList.
  */
 class ArrayBackedResultSet implements ResultSet {
-
     private static final Logger logger = LoggerFactory.getLogger(ResultSet.class);
 
     private static final Queue<List<ByteBuffer>> EMPTY_QUEUE = new ArrayDeque<List<ByteBuffer>>(0);
 
     private final ColumnDefinitions metadata;
+
     private final Queue<List<ByteBuffer>> rows;
 
     private final List<ExecutionInfo> infos;
 
-    /*
-     * The fetching state of this result set. The fetchState will always be in one of
-     * the 3 following state:
-     *   1) fetchState is null or reference a null: fetching is done, there
-     *      is nothing more to fetch and no query in progress.
-     *   2) fetchState.get().nextStart is not null: there is more pages to fetch. In
-     *      that case, inProgress is *guaranteed* to be null.
-     *   3) fetchState.get().inProgress is not null: a page is being fetched.
-     *      In that case, nextStart is *guaranteed* to be null.
-     *
-     * Also note that while ResultSet doesn't pretend to be thread-safe, the actual
-     * fetch is done asynchonously and so we do need to be volatile below.
+    /* The fetching state of this result set. The fetchState will always be in one of
+    the 3 following state:
+    1) fetchState is null or reference a null: fetching is done, there
+    is nothing more to fetch and no query in progress.
+    2) fetchState.get().nextStart is not null: there is more pages to fetch. In
+    that case, inProgress is *guaranteed* to be null.
+    3) fetchState.get().inProgress is not null: a page is being fetched.
+    In that case, nextStart is *guaranteed* to be null.
+
+    Also note that while ResultSet doesn't pretend to be thread-safe, the actual
+    fetch is done asynchonously and so we do need to be volatile below.
      */
     private volatile FetchingState fetchState;
+
     // The two following info can be null, but only if fetchState == null
     private final SessionManager session;
+
     private final Statement statement;
 
-    private ArrayBackedResultSet(ColumnDefinitions metadata,
-                                 Queue<List<ByteBuffer>> rows,
-                                 ExecutionInfo info,
-                                 ByteBuffer initialPagingState,
-                                 SessionManager session,
-                                 Statement statement) {
+    private ArrayBackedResultSet(ColumnDefinitions metadata, Queue<List<ByteBuffer>> rows, ExecutionInfo info, ByteBuffer initialPagingState, SessionManager session, Statement statement) {
         this.metadata = metadata;
         this.rows = rows;
         this.session = session;
-
         if (initialPagingState == null) {
             this.fetchState = null;
             this.infos = Collections.<ExecutionInfo>singletonList(info);
@@ -78,38 +72,33 @@ class ArrayBackedResultSet implements ResultSet {
             this.infos = new ArrayList<ExecutionInfo>();
             this.infos.add(info);
         }
-
         this.statement = statement;
-        assert fetchState == null || (session != null && statement != null);
+        assert (fetchState == null) || ((session != null) && (statement != null));
     }
 
     static ArrayBackedResultSet fromMessage(Responses.Result msg, SessionManager session, ExecutionInfo info, Statement statement) {
-
         UUID tracingId = msg.getTracingId();
-        info = tracingId == null || info == null ? info : info.withTrace(new QueryTrace(tracingId, session));
-
+        info = ((tracingId == null) || (info == null)) ? info : info.withTrace(new QueryTrace(tracingId, session));
         switch (msg.kind) {
-            case VOID:
+            case VOID :
                 return empty(info);
-            case ROWS:
-                Responses.Result.Rows r = (Responses.Result.Rows)msg;
-
+            case ROWS :
+                Responses.Result.Rows r = ((Responses.Result.Rows) (msg));
                 ColumnDefinitions columnDefs;
                 if (r.metadata.columns == null) {
                     assert statement instanceof BoundStatement;
-                    columnDefs = ((BoundStatement)statement).statement.getPreparedId().resultSetMetadata;
+                    columnDefs = ((BoundStatement) (statement)).statement.getPreparedId().resultSetMetadata;
                     assert columnDefs != null;
                 } else {
                     columnDefs = r.metadata.columns;
                 }
-
                 return new ArrayBackedResultSet(columnDefs, r.data, info, r.metadata.pagingState, session, statement);
-            case SET_KEYSPACE:
-            case SCHEMA_CHANGE:
+            case SET_KEYSPACE :
+            case SCHEMA_CHANGE :
                 return empty(info);
-            case PREPARED:
+            case PREPARED :
                 throw new RuntimeException("Prepared statement received when a ResultSet was expected");
-            default:
+            default :
                 logger.error("Received unknow result type '{}'; returning empty result set", msg.kind);
                 return empty(info);
         }
@@ -119,52 +108,50 @@ class ArrayBackedResultSet implements ResultSet {
         return new ArrayBackedResultSet(ColumnDefinitions.EMPTY, EMPTY_QUEUE, info, null, null, null);
     }
 
-    public ColumnDefinitions getColumnDefinitions()
-    {
+    public ColumnDefinitions getColumnDefinitions() {
         return metadata;
     }
 
     public boolean isExhausted() {
-        if (!rows.isEmpty())
+        if (!rows.isEmpty()) {
             return false;
-
+        }
         // This is slightly tricky: the fact that we do paged fetches underneath
         // should be completely transparent, so we can't answer false until
         // we've actually fetch the next results, since there is not absolute
         // guarantee that this won't come back empty.
         fetchMoreResultsBlocking();
-
         // ResultSet is *not* thread-safe, so either the last fetch has
         // returned result, or we should be done with fetching
-        assert !rows.isEmpty() || isFullyFetched();
+        assert (!rows.isEmpty()) || isFullyFetched();
         return rows.isEmpty();
     }
 
     public Row one() {
         List<ByteBuffer> nextRow = rows.poll();
-        if (nextRow != null)
+        if (nextRow != null) {
             return ArrayBackedRow.fromData(metadata, nextRow);
-
+        }
         fetchMoreResultsBlocking();
         return ArrayBackedRow.fromData(metadata, rows.poll());
     }
 
     public List<Row> all() {
-        if (isExhausted())
+        if (isExhausted()) {
             return Collections.emptyList();
-
+        }
         // The result may have more that rows.size() if there is some page fetching
         // going on, but it won't be less and it the most common case where we don't page.
         List<Row> result = new ArrayList<Row>(rows.size());
-        for (Row row : this)
+        for (Row row : this) {
             result.add(row);
+        }
         return result;
     }
 
     @Override
     public Iterator<Row> iterator() {
         return new Iterator<Row>() {
-
             @Override
             public boolean hasNext() {
                 return !isExhausted();
@@ -297,6 +284,7 @@ class ArrayBackedResultSet implements ResultSet {
 
     private static class FetchingState {
         public final ByteBuffer nextStart;
+
         public final ListenableFuture<Void> inProgress;
 
         FetchingState(ByteBuffer nextStart, ListenableFuture<Void> inProgress) {
@@ -306,4 +294,3 @@ class ArrayBackedResultSet implements ResultSet {
         }
     }
 }
-

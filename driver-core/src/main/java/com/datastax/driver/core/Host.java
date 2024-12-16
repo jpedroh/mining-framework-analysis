@@ -15,11 +15,11 @@
  */
 package com.datastax.driver.core;
 
+import com.google.common.collect.ImmutableList;
 import java.net.InetAddress;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.google.common.collect.ImmutableList;
 
 /**
  * A Cassandra node.
@@ -27,15 +27,17 @@ import com.google.common.collect.ImmutableList;
  * This class keeps the information the driver maintain on a given Cassandra node.
  */
 public class Host {
-
     private final InetAddress address;
 
     private volatile String datacenter;
+
     private volatile String rack;
 
     private volatile boolean isUp;
+
     private final ConvictionPolicy policy;
 
+    // Tracks reconnection attempts to that host so we avoid adding multiple tasks
     // Tracks reconnection attempts to that host so we avoid adding multiple tasks
     final AtomicReference<ScheduledFuture<?>> reconnectionAttempt = new AtomicReference<ScheduledFuture<?>>();
 
@@ -44,9 +46,9 @@ public class Host {
     // ClusterMetadata keeps one Host object per inet address, so don't use
     // that constructor unless you know what you do (use ClusterMetadata.getHost typically).
     Host(InetAddress address, ConvictionPolicy.Factory policy) {
-        if (address == null || policy == null)
+        if ((address == null) || (policy == null)) {
             throw new NullPointerException();
-
+        }
         this.address = address;
         this.policy = policy.create(this);
         this.defaultExecutionInfo = new ExecutionInfo(ImmutableList.of(this));
@@ -146,41 +148,44 @@ public class Host {
      * Interface for listeners that are interested in hosts added, up, down and
      * removed events.
      * <p>
-     * It is possible for the same event to be fired multiple times, 
+     * It is possible for the same event to be fired multiple times,
      * particularly for up or down events. Therefore, a listener should
      * ignore the same event if it has already been notified of a
      * node's state.
      */
     public interface StateListener {
-
         /**
          * Called when a new node is added to the cluster.
          * <p>
          * The newly added node should be considered up.
          *
-         * @param host the host that has been newly added.
+         * @param host
+         * 		the host that has been newly added.
          */
-        public void onAdd(Host host);
+        public abstract void onAdd(Host host);
 
         /**
          * Called when a node is determined to be up.
          *
-         * @param host the host that has been detected up.
+         * @param host
+         * 		the host that has been detected up.
          */
-        public void onUp(Host host);
+        public abstract void onUp(Host host);
 
         /**
          * Called when a node is determined to be down.
          *
-         * @param host the host that has been detected down.
+         * @param host
+         * 		the host that has been detected down.
          */
-        public void onDown(Host host);
+        public abstract void onDown(Host host);
 
         /**
          * Called when a node is removed from the cluster.
          *
-         * @param host the removed host.
+         * @param host
+         * 		the removed host.
          */
-        public void onRemove(Host host);
+        public abstract void onRemove(Host host);
     }
 }

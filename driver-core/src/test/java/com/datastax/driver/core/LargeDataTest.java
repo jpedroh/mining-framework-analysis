@@ -15,22 +15,20 @@
  */
 package com.datastax.driver.core;
 
+import com.datastax.driver.core.querybuilder.Batch;
+import com.datastax.driver.core.querybuilder.Insert;
 import java.nio.ByteBuffer;
-
+import org.testng.annotations.Test;
 import static com.datastax.driver.core.TestUtils.CREATE_KEYSPACE_SIMPLE_FORMAT;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
-import org.testng.annotations.Test;
 
-import com.datastax.driver.core.querybuilder.Batch;
-import com.datastax.driver.core.querybuilder.Insert;
 
 /**
  * Test limitations when using large amounts of data with the driver
  */
 public class LargeDataTest {
-
     /*
      * Test a wide row of size 1,000,000
      * @param c The cluster object
@@ -42,14 +40,12 @@ public class LargeDataTest {
         for (int i = 0; i < 1000000; ++i) {
             c.session.execute(insertInto("wide_rows").value("k", key).value("i", i).setConsistencyLevel(ConsistencyLevel.QUORUM));
         }
-
         // Read data
         ResultSet rs = c.session.execute(select("i").from("wide_rows").where(eq("k", key)));
-
         // Verify data
         int i = 0;
         for (Row row : rs) {
-            assertTrue(row.getInt("i") == i++);
+            assertTrue(row.getInt("i") == (i++));
         }
     }
 
@@ -66,14 +62,12 @@ public class LargeDataTest {
             q = q.add(insertInto("wide_batch_rows").value("k", key).value("i", i));
         }
         c.session.execute(q.setConsistencyLevel(ConsistencyLevel.QUORUM));
-
         // Read data
         ResultSet rs = c.session.execute(select("i").from("wide_batch_rows").where(eq("k", key)));
-
         // Verify data
         int i = 0;
         for (Row row : rs) {
-            assertTrue(row.getInt("i") == i++);
+            assertTrue(row.getInt("i") == (i++));
         }
     }
 
@@ -86,17 +80,14 @@ public class LargeDataTest {
     private void testByteRows(CCMBridge.CCMCluster c, int key) throws Throwable {
         // Build small ByteBuffer sample
         ByteBuffer bb = ByteBuffer.allocate(58);
-        bb.putShort((short) 0xCAFE);
+        bb.putShort(((short) (0xcafe)));
         bb.flip();
-
         // Write data
         for (int i = 0; i < 1000000; ++i) {
             c.session.execute(insertInto("wide_byte_rows").value("k", key).value("i", bb).setConsistencyLevel(ConsistencyLevel.QUORUM));
         }
-
         // Read data
         ResultSet rs = c.session.execute(select("i").from("wide_byte_rows").where(eq("k", key)));
-
         // Verify data
         for (Row row : rs) {
             assertEquals(row.getBytes("i"), bb);
@@ -117,10 +108,8 @@ public class LargeDataTest {
             b.append(i);
         }
         c.session.execute(insertInto("large_text").value("k", key).value("txt", b.toString()).setConsistencyLevel(ConsistencyLevel.QUORUM));
-
         // Read data
         Row row = c.session.execute(select().all().from("large_text").where(eq("k", key))).one();
-
         // Verify data
         assertTrue(b.toString().equals(row.getString("txt")));
     }
@@ -161,16 +150,13 @@ public class LargeDataTest {
             insertStatement = insertStatement.value(createColumnName(i), i);
         }
         c.session.execute(insertStatement.setConsistencyLevel(ConsistencyLevel.QUORUM));
-
         // Read data
         Row row = c.session.execute(select().all().from("wide_table").where(eq("k", key))).one();
-
         // Verify data
         for (int i = 0; i < 330; ++i) {
             assertTrue(row.getInt(createColumnName(i)) == i);
         }
     }
-
 
     /**
      * Test a wide row of size 1,000,000

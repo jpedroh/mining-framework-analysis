@@ -15,6 +15,12 @@
  */
 package com.datastax.driver.core;
 
+import com.datastax.driver.core.exceptions.NoHostAvailableException;
+import com.datastax.driver.core.exceptions.QueryExecutionException;
+import com.datastax.driver.core.exceptions.QueryValidationException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
 
 /**
  * A session holds connections to a Cassandra cluster, allowing it to be queried.
@@ -29,7 +35,6 @@ package com.datastax.driver.core;
  * at a time, so one instance per keyspace is necessary.
  */
 public interface Session {
-
     /**
      * Executes the provided query.
      *
@@ -54,21 +59,26 @@ public interface Session {
      *
      * This is a convenience method for {@code execute(new SimpleStatement(query, values))}.
      *
-     * @param query the CQL query to execute.
-     * @param values values required for the execution of {@code query}. See
-     * {@link SimpleStatement#SimpleStatement(String, Object...)} for more detail.
+     * @param query
+     * 		the CQL query to execute (that can be either a {@code Statement} or a {@code BoundStatement}). If it is a {@code BoundStatement}, all variables must have been bound (the statement must
+     * 		be ready).
      * @return the result of the query. That result will never be null but can
-     * be empty (and will be for any non SELECT query).
-     *
-     * @throws NoHostAvailableException if no host in the cluster can be
-     * contacted successfully to execute this query.
-     * @throws QueryExecutionException if the query triggered an execution
-     * exception, i.e. an exception thrown by Cassandra when it cannot execute
-     * the query with the requested consistency level successfully.
-     * @throws QueryValidationException if the query if invalid (syntax error,
-     * unauthorized or any other validation problem).
+    be empty (and will be for any non SELECT query).
+     * @throws NoHostAvailableException
+     * 		if no host in the cluster can be
+     * 		contacted successfully to execute this query.
+     * @throws QueryExecutionException
+     * 		if the query triggered an execution
+     * 		exception, i.e. an exception thrown by Cassandra when it cannot execute
+     * 		the query with the requested consistency level successfully.
+     * @throws QueryValidationException
+     * 		if the query if invalid (syntax error,
+     * 		unauthorized or any other validation problem).
+     * @throws IllegalStateException
+     * 		if {@code query} is a {@code BoundStatement}
+     * 		but {@code !query.isReady()}.
      */
-    public ResultSet execute(String query, Object... values);
+    public abstract ResultSet execute(String query, Object... values);
 
     /**
      * Executes the provided query.
@@ -80,19 +90,22 @@ public interface Session {
      * guarantee that if the request is invalid, an exception will be thrown
      * by this method.
      *
-     * @param statement the CQL query to execute (that can be any {@code Statement}).
-     * @return the result of the query. That result will never be null but can
-     * be empty (and will be for any non SELECT query).
-     *
-     * @throws NoHostAvailableException if no host in the cluster can be
-     * contacted successfully to execute this query.
-     * @throws QueryExecutionException if the query triggered an execution
-     * exception, i.e. an exception thrown by Cassandra when it cannot execute
-     * the query with the requested consistency level successfully.
-     * @throws QueryValidationException if the query if invalid (syntax error,
-     * unauthorized or any other validation problem).
+     * @param query
+     * 		the CQL query to execute (that can be either a {@code Statement} or a {@code BoundStatement}). If it is a {@code BoundStatement}, all variables must have been bound (the statement must
+     * 		be ready).
+     * @return a future on the result of the query.
+     * @throws IllegalStateException
+     * 		if {@code query} is a {@code BoundStatement}
+     * 		but {@code !query.isReady()}.
+     * @throws QueryExecutionException
+     * 		if the query triggered an execution
+     * 		exception, i.e. an exception thrown by Cassandra when it cannot execute
+     * 		the query with the requested consistency level successfully.
+     * @throws QueryValidationException
+     * 		if the query if invalid (syntax error,
+     * 		unauthorized or any other validation problem).
      */
-    public ResultSet execute(Statement statement);
+    public abstract ResultSet execute(Statement statement);
 
     /**
      * Executes the provided query asynchronously.
@@ -109,12 +122,14 @@ public interface Session {
      *
      * This is a convenience method for {@code executeAsync(new SimpleStatement(query, values))}.
      *
-     * @param query the CQL query to execute.
-     * @param values values required for the execution of {@code query}. See
-     * {@link SimpleStatement#SimpleStatement(String, Object...)} for more detail.
-     * @return a future on the result of the query.
+     * @param statement
+     * 		the statement to prepare
+     * @return the prepared statement corresponding to {@code statement}.
+     * @throws NoHostAvailableException
+     * 		if no host in the cluster can be
+     * 		contacted successfully to prepare this statement.
      */
-    public ResultSetFuture executeAsync(String query, Object... values);
+    public abstract ResultSetFuture executeAsync(String query, Object... values);
 
     /**
      * Executes the provided query asynchronously.
@@ -129,10 +144,11 @@ public interface Session {
      * DELETE), you will need to access the ResultSetFuture (that is call one of
      * its get method to make sure the query was successful.
      *
-     * @param statement the CQL query to execute (that can be either any {@code Statement}.
+     * @param statement
+     * 		the CQL query to execute (that can be either any {@code Statement}.
      * @return a future on the result of the query.
      */
-    public ResultSetFuture executeAsync(Statement statement);
+    public abstract ResultSetFuture executeAsync(Statement statement);
 
     /**
      * Prepares the provided query string.
@@ -152,23 +168,25 @@ public interface Session {
      * but note that the resulting {@code PreparedStamenent} will inherit the query properties
      * set on {@code statement}. Concretely, this means that in the following code:
      * <pre>
-     *   RegularStatement toPrepare = new SimpleStatement("SELECT * FROM test WHERE k=?").setConsistencyLevel(ConsistencyLevel.QUORUM);
-     *   PreparedStatement prepared = session.prepare(toPrepare);
-     *   session.execute(prepared.bind("someValue"));
+     * RegularStatement toPrepare = new SimpleStatement("SELECT * FROM test WHERE k=?").setConsistencyLevel(ConsistencyLevel.QUORUM);
+     * PreparedStatement prepared = session.prepare(toPrepare);
+     * session.execute(prepared.bind("someValue"));
      * </pre>
      * the final execution will be performed with Quorum consistency.
      *
-     * @param statement the statement to prepare
-     * @return the prepared statement corresponding to {@code statement}.
-     *
-     * @throws NoHostAvailableException if no host in the cluster can be
-     * contacted successfully to prepare this statement.
-     * @throws IllegalArgumentException if {@code statement.getValues() != null}
-     * (values for executing a prepared statement should be provided after preparation
-     * though the {@link PreparedStatement#bind} method or through a corresponding
-     * {@link BoundStatement}).
+     * @param timeout
+     * 		how long to wait for the session to shutdown.
+     * @param unit
+     * 		the unit for the timeout.
+     * @return {@code true} if the session has been properly shutdown within
+    the {@code timeout}, {@code false} otherwise.
+     * @throws IllegalArgumentException
+     * 		if {@code statement.getValues() != null}
+     * 		(values for executing a prepared statement should be provided after preparation
+     * 		though the {@link PreparedStatement#bind} method or through a corresponding
+     * 		{@link BoundStatement}).
      */
-    public PreparedStatement prepare(RegularStatement statement);
+    public abstract PreparedStatement prepare(RegularStatement statement);
 
     /**
      * Initiates a shutdown of this session instance.

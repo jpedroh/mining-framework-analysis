@@ -15,14 +15,13 @@
  */
 package com.datastax.driver.core;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import com.google.common.util.concurrent.ListenableFuture;
-
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
 import com.datastax.driver.core.exceptions.QueryExecutionException;
 import com.datastax.driver.core.exceptions.QueryValidationException;
+import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 
 /**
  * A future on a {@link ResultSet}.
@@ -31,7 +30,6 @@ import com.datastax.driver.core.exceptions.QueryValidationException;
  * ListenableFuture} and can so be used with Guava's future utilities.
  */
 public interface ResultSetFuture extends ListenableFuture<ResultSet> {
-
     /**
      * Waits for the query to return and return its result.
      *

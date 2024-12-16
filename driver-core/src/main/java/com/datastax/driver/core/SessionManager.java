@@ -15,40 +15,41 @@
  */
 package com.datastax.driver.core;
 
-import java.net.InetAddress;
-import java.nio.ByteBuffer;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicReference;
-
-import com.google.common.util.concurrent.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.datastax.driver.core.exceptions.AuthenticationException;
 import com.datastax.driver.core.exceptions.DriverInternalError;
 import com.datastax.driver.core.policies.LoadBalancingPolicy;
 import com.datastax.driver.core.policies.ReconnectionPolicy;
+import com.google.common.util.concurrent.*;
+import java.net.InetAddress;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Driver implementation of the Session interface.
  */
 class SessionManager implements Session {
-
     private static final Logger logger = LoggerFactory.getLogger(Session.class);
 
     final Cluster cluster;
+
     final ConcurrentMap<Host, HostConnectionPool> pools;
+
     final HostConnectionPool.PoolState poolsState;
+
     final AtomicReference<ShutdownFuture> shutdownFuture = new AtomicReference<ShutdownFuture>();
 
     // Package protected, only Cluster should construct that.
     SessionManager(Cluster cluster, Collection<Host> hosts) {
         this.cluster = cluster;
-
         this.pools = new ConcurrentHashMap<Host, HostConnectionPool>(hosts.size());
         this.poolsState = new HostConnectionPool.PoolState();
-
         // Create pool to initial nodes (and wait for them to be created)
         for (Host host : hosts) {
             try {
@@ -56,7 +57,7 @@ class SessionManager implements Session {
             } catch (ExecutionException e) {
                 // This is not supposed to happen
                 throw new DriverInternalError(e);
-            } catch (InterruptedException e) {
+            } catch (java.lang.InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
@@ -93,36 +94,34 @@ class SessionManager implements Session {
     }
 
     public PreparedStatement prepare(RegularStatement statement) {
-        if (statement.getValues() != null)
+        if (statement.getValues() != null) {
             throw new IllegalArgumentException("A statement to prepare should not have values");
-
+        }
         PreparedStatement prepared = prepare(statement.toString());
-
         ByteBuffer routingKey = statement.getRoutingKey();
-        if (routingKey != null)
+        if (routingKey != null) {
             prepared.setRoutingKey(routingKey);
+        }
         prepared.setConsistencyLevel(statement.getConsistencyLevel());
-        if (statement.isTracing())
+        if (statement.isTracing()) {
             prepared.enableTracing();
+        }
         prepared.setRetryPolicy(statement.getRetryPolicy());
-
         return prepared;
     }
 
     public ShutdownFuture shutdown() {
         ShutdownFuture future = shutdownFuture.get();
-        if (future != null)
+        if (future != null) {
             return future;
-
+        }
         List<ShutdownFuture> futures = new ArrayList<ShutdownFuture>(pools.size());
-        for (HostConnectionPool pool : pools.values())
+        for (HostConnectionPool pool : pools.values()) {
             futures.add(pool.shutdown());
-
+        }
         future = new ShutdownFuture.Forwarding(futures);
-
-        return shutdownFuture.compareAndSet(null, future)
-            ? future
-            : shutdownFuture.get(); // We raced, it's ok, return the future that was actually set
+            // We raced, it's ok, return the future that was actually set
+        return shutdownFuture.compareAndSet(null, future) ? future : shutdownFuture.get();
     }
 
     public Cluster getCluster() {
@@ -133,27 +132,27 @@ class SessionManager implements Session {
         try {
             Message.Response response = Uninterruptibles.getUninterruptibly(future);
             switch (response.type) {
-                case RESULT:
-                    Responses.Result rm = (Responses.Result)response;
+                case RESULT :
+                    Responses.Result rm = ((Responses.Result) (response));
                     switch (rm.kind) {
-                        case PREPARED:
-                            Responses.Result.Prepared pmsg = (Responses.Result.Prepared)rm;
+                        case PREPARED :
+                            Responses.Result.Prepared pmsg = ((Responses.Result.Prepared) (rm));
                             DefaultPreparedStatement stmt = DefaultPreparedStatement.fromMessage(pmsg, cluster.getMetadata(), query, poolsState.keyspace);
                             try {
                                 cluster.manager.prepare(stmt, future.getAddress());
-                            } catch (InterruptedException e) {
+                            } catch (java.lang.InterruptedException e) {
                                 Thread.currentThread().interrupt();
                                 // This method doesn't propagate interruption, at least not for now. However, if we've
                                 // interrupted preparing queries on other node it's not a problem as we'll re-prepare
                                 // later if need be. So just ignore.
                             }
                             return stmt;
-                        default:
+                        default :
                             throw new DriverInternalError(String.format("%s response received when prepared statement was expected", rm.kind));
                     }
-                case ERROR:
-                    throw ((Responses.Error)response).asException(future.getAddress());
-                default:
+                case ERROR :
+                    throw ((Responses.Error) (response)).asException(future.getAddress());
+                default :
                     throw new DriverInternalError(String.format("%s response received when prepared statement was expected", response.type));
             }
         } catch (ExecutionException e) {
@@ -191,18 +190,20 @@ class SessionManager implements Session {
 
     ListenableFuture<Boolean> addOrRenewPool(final Host host, final boolean isHostAddition) {
         final HostDistance distance = cluster.manager.loadBalancingPolicy().distance(host);
-        if (distance == HostDistance.IGNORED)
+        if (distance == HostDistance.IGNORED) {
             return Futures.immediateFuture(true);
-
+        }
         // Creating a pool is somewhat long since it has to create the connection, so do it asynchronously.
         return executor().submit(new Callable<Boolean>() {
             public Boolean call() {
                 logger.debug("Adding {} to list of queried hosts", host);
                 try {
                     HostConnectionPool previous = pools.put(host, new HostConnectionPool(host, distance, SessionManager.this));
-                    if (previous != null)
-            previous.shutdown(); // The previous was probably already shutdown but that's ok
-        return true;
+                    if (previous != null) {
+                        previous.shutdown();
+                    }// The previous was probably already shutdown but that's ok
+
+                    return true;
                 } catch (AuthenticationException e) {
                     logger.error("Error creating pool to {} ({})", host, e.getMessage());
                     cluster.manager.signalConnectionFailure(host, new ConnectionException(e.getHost(), e.getMessage()), isHostAddition);
@@ -242,10 +243,10 @@ class SessionManager implements Session {
         for (Host h : cluster.getMetadata().allHosts()) {
             HostDistance dist = loadBalancingPolicy().distance(h);
             HostConnectionPool pool = pools.get(h);
-
             if (pool == null) {
-                if (dist != HostDistance.IGNORED && h.isUp())
+                if ((dist != HostDistance.IGNORED) && h.isUp()) {
                     addOrRenewPool(h, false);
+                }
             } else if (dist != pool.hostDistance) {
                 if (dist == HostDistance.IGNORED) {
                     removePool(h);
@@ -284,41 +285,41 @@ class SessionManager implements Session {
     }
 
     Message.Request makeRequestMessage(Statement statement, ByteBuffer pagingState) {
-
         ConsistencyLevel consistency = statement.getConsistencyLevel();
-        if (consistency == null)
+        if (consistency == null) {
             consistency = configuration().getQueryOptions().getConsistencyLevel();
-
+        }
         ConsistencyLevel serialConsistency = statement.getSerialConsistencyLevel();
-        if (serialConsistency == null)
+        if (serialConsistency == null) {
             serialConsistency = configuration().getQueryOptions().getSerialConsistencyLevel();
-
+        }
         return makeRequestMessage(statement, consistency, serialConsistency, pagingState);
     }
 
     Message.Request makeRequestMessage(Statement statement, ConsistencyLevel cl, ConsistencyLevel scl, ByteBuffer pagingState) {
         int fetchSize = statement.getFetchSize();
-        if (fetchSize <= 0)
+        if (fetchSize <= 0) {
             fetchSize = configuration().getQueryOptions().getFetchSize();
-        if (fetchSize == Integer.MAX_VALUE)
+        }
+        if (fetchSize == Integer.MAX_VALUE) {
             fetchSize = -1;
-
+        }
         if (statement instanceof RegularStatement) {
-            RegularStatement rs = (RegularStatement)statement;
+            RegularStatement rs = ((RegularStatement) (statement));
             ByteBuffer[] rawValues = rs.getValues();
-            List<ByteBuffer> values = rawValues == null ? Collections.<ByteBuffer>emptyList() : Arrays.asList(rawValues);
+            List<ByteBuffer> values = (rawValues == null) ? Collections.<ByteBuffer>emptyList() : Arrays.asList(rawValues);
             String qString = rs.getQueryString();
             Requests.QueryProtocolOptions options = new Requests.QueryProtocolOptions(cl, values, false, fetchSize, pagingState, scl);
             return new Requests.Query(qString, options);
         } else if (statement instanceof BoundStatement) {
-            BoundStatement bs = (BoundStatement)statement;
+            BoundStatement bs = ((BoundStatement) (statement));
             boolean skipMetadata = bs.statement.getPreparedId().resultSetMetadata != null;
             Requests.QueryProtocolOptions options = new Requests.QueryProtocolOptions(cl, Arrays.asList(bs.values), skipMetadata, fetchSize, pagingState, scl);
             return new Requests.Execute(bs.statement.getPreparedId().id, options);
         } else {
             assert statement instanceof BatchStatement : statement;
             assert pagingState == null;
-            BatchStatement bs = (BatchStatement)statement;
+            BatchStatement bs = ((BatchStatement) (statement));
             BatchStatement.IdAndValues idAndVals = bs.getIdAndValues();
             return new Requests.Batch(bs.batchType, idAndVals.ids, idAndVals.values, cl);
         }
@@ -336,9 +337,9 @@ class SessionManager implements Session {
 
     void prepare(String query, InetAddress toExclude) throws InterruptedException {
         for (Map.Entry<Host, HostConnectionPool> entry : pools.entrySet()) {
-            if (entry.getKey().getAddress().equals(toExclude))
+            if (entry.getKey().getAddress().equals(toExclude)) {
                 continue;
-
+            }
             // Let's not wait too long if we can't get a connection. Things
             // will fix themselves once the user tries a query anyway.
             Connection c = null;
@@ -356,16 +357,17 @@ class SessionManager implements Session {
                 // query, so log this (but ignore otherwise as it's not a big deal)
                 logger.error(String.format("Unexpected error while preparing query (%s) on %s", query, entry.getKey()), e);
             } finally {
-                if (c != null)
+                if (c != null) {
                     entry.getValue().returnConnection(c);
+                }
             }
         }
     }
 
     ResultSetFuture executeQuery(Message.Request msg, Statement statement) {
-        if (statement.isTracing())
+        if (statement.isTracing()) {
             msg.setTracingRequested();
-
+        }
         DefaultResultSetFuture future = new DefaultResultSetFuture(this, msg);
         execute(future, statement);
         return future;

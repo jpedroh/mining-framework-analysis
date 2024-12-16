@@ -20,89 +20,91 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * A number of static fields/methods handy for tests.
  */
 public abstract class TestUtils {
-
     private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
 
     public static final String CREATE_KEYSPACE_SIMPLE_FORMAT = "CREATE KEYSPACE %s WITH replication = { 'class' : 'SimpleStrategy', 'replication_factor' : %d }";
+
     public static final String CREATE_KEYSPACE_GENERIC_FORMAT = "CREATE KEYSPACE %s WITH replication = { 'class' : '%s', %s }";
 
     public static final String SIMPLE_KEYSPACE = "ks";
+
     public static final String SIMPLE_TABLE = "test";
 
     public static final String CREATE_TABLE_SIMPLE_FORMAT = "CREATE TABLE %s (k text PRIMARY KEY, t text, i int, f float)";
 
     public static final String INSERT_FORMAT = "INSERT INTO %s (k, t, i, f) VALUES ('%s', '%s', %d, %f)";
+
     public static final String SELECT_ALL_FORMAT = "SELECT * FROM %s";
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static BoundStatement setBoundValue(BoundStatement bs, String name, DataType type, Object value) {
         switch (type.getName()) {
-            case ASCII:
-                bs.setString(name, (String)value);
+            case ASCII :
+                bs.setString(name, ((String) (value)));
                 break;
-            case BIGINT:
-                bs.setLong(name, (Long)value);
+            case BIGINT :
+                bs.setLong(name, ((Long) (value)));
                 break;
-            case BLOB:
-                bs.setBytes(name, (ByteBuffer)value);
+            case BLOB :
+                bs.setBytes(name, ((ByteBuffer) (value)));
                 break;
-            case BOOLEAN:
-                bs.setBool(name, (Boolean)value);
+            case BOOLEAN :
+                bs.setBool(name, ((Boolean) (value)));
                 break;
-            case COUNTER:
+            case COUNTER :
                 // Just a no-op, we shouldn't handle counters the same way than other types
                 break;
-            case DECIMAL:
-                bs.setDecimal(name, (BigDecimal)value);
+            case DECIMAL :
+                bs.setDecimal(name, ((BigDecimal) (value)));
                 break;
-            case DOUBLE:
-                bs.setDouble(name, (Double)value);
+            case DOUBLE :
+                bs.setDouble(name, ((Double) (value)));
                 break;
-            case FLOAT:
-                bs.setFloat(name, (Float)value);
+            case FLOAT :
+                bs.setFloat(name, ((Float) (value)));
                 break;
-            case INET:
-                bs.setInet(name, (InetAddress)value);
+            case INET :
+                bs.setInet(name, ((InetAddress) (value)));
                 break;
-            case INT:
-                bs.setInt(name, (Integer)value);
+            case INT :
+                bs.setInt(name, ((Integer) (value)));
                 break;
-            case TEXT:
-                bs.setString(name, (String)value);
+            case TEXT :
+                bs.setString(name, ((String) (value)));
                 break;
-            case TIMESTAMP:
-                bs.setDate(name, (Date)value);
+            case TIMESTAMP :
+                bs.setDate(name, ((Date) (value)));
                 break;
-            case UUID:
-                bs.setUUID(name, (UUID)value);
+            case UUID :
+                bs.setUUID(name, ((UUID) (value)));
                 break;
-            case VARCHAR:
-                bs.setString(name, (String)value);
+            case VARCHAR :
+                bs.setString(name, ((String) (value)));
                 break;
-            case VARINT:
-                bs.setVarint(name, (BigInteger)value);
+            case VARINT :
+                bs.setVarint(name, ((BigInteger) (value)));
                 break;
-            case TIMEUUID:
-                bs.setUUID(name, (UUID)value);
+            case TIMEUUID :
+                bs.setUUID(name, ((UUID) (value)));
                 break;
-            case LIST:
-                bs.setList(name, (List)value);
+            case LIST :
+                bs.setList(name, ((List) (value)));
                 break;
-            case SET:
-                bs.setSet(name, (Set)value);
+            case SET :
+                bs.setSet(name, ((Set) (value)));
                 break;
-            case MAP:
-                bs.setMap(name, (Map)value);
+            case MAP :
+                bs.setMap(name, ((Map) (value)));
                 break;
-            default:
+            default :
                 throw new RuntimeException("Missing handling of " + type);
         }
         return bs;

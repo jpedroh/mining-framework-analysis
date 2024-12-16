@@ -15,10 +15,10 @@
  */
 package com.datastax.driver.core.querybuilder;
 
-import java.util.*;
-
 import com.datastax.driver.core.RegularStatement;
 import com.datastax.driver.core.TableMetadata;
+import java.util.*;
+
 
 /**
  * Static methods to build a CQL3 query.
@@ -36,8 +36,8 @@ import com.datastax.driver.core.TableMetadata;
  * Note that it could be convenient to use an 'import static' to use the methods of this class.
  */
 public final class QueryBuilder {
-
-    private QueryBuilder() {}
+    private QueryBuilder() {
+    }
 
     /**
      * Start building a new SELECT query that selects the provided names.
@@ -49,7 +49,7 @@ public final class QueryBuilder {
      * least a FROM clause to complete the query).
      */
     public static Select.Builder select(String... columns) {
-        return new Select.Builder(Arrays.asList((Object[])columns));
+        return new Select.Builder(Arrays.asList(((Object[]) (columns))));
     }
 
     /**
@@ -136,7 +136,7 @@ public final class QueryBuilder {
      * clause needs to be provided to complete the query).
      */
     public static Delete.Builder delete(String... columns) {
-        return new Delete.Builder(Arrays.asList((Object[])columns));
+        return new Delete.Builder(Arrays.asList(((Object[]) (columns))));
     }
 
     /**
@@ -161,7 +161,7 @@ public final class QueryBuilder {
      * using {@link #unloggedBatch}).
      *
      * @param statements the statements to batch.
-     * @return a new {@code RegularStatement} that batch {@code statements}.
+     * @return a new {@code Statement} that batch {@code statements}.
      */
     public static Batch batch(RegularStatement... statements) {
         return new Batch(statements, true);
@@ -181,7 +181,7 @@ public final class QueryBuilder {
      * resulting batch will be a COUNTER one.
      *
      * @param statements the statements to batch.
-     * @return a new {@code RegularStatement} that batch {@code statements} without
+     * @return a new {@code Statement} that batch {@code statements} without
      * using the batch log.
      */
     public static Batch unloggedBatch(RegularStatement... statements) {
@@ -258,7 +258,7 @@ public final class QueryBuilder {
     public static String token(String... columnNames) {
         StringBuilder sb = new StringBuilder();
         sb.append("token(");
-        Utils.joinAndAppendNames(sb, ",", Arrays.asList((Object[])columnNames));
+        Utils.joinAndAppendNames(sb, ",", Arrays.asList(((Object[]) (columnNames))));
         sb.append(")");
         return sb.toString();
     }
@@ -364,9 +364,9 @@ public final class QueryBuilder {
      * @throws IllegalArgumentException if {@code timestamp &gt; 0}.
      */
     public static Using timestamp(long timestamp) {
-        if (timestamp < 0)
+        if (timestamp < 0) {
             throw new IllegalArgumentException("Invalid timestamp, must be positive");
-
+        }
         return new Using.WithValue("TIMESTAMP", timestamp);
     }
 
@@ -389,9 +389,9 @@ public final class QueryBuilder {
      * @throws IllegalArgumentException if {@code ttl &gt; 0}.
      */
     public static Using ttl(int ttl) {
-        if (ttl < 0)
+        if (ttl < 0) {
             throw new IllegalArgumentException("Invalid ttl, must be positive");
-
+        }
         return new Using.WithValue("TTL", ttl);
     }
 
@@ -504,7 +504,7 @@ public final class QueryBuilder {
      * @return the correspond assignment (to use in an update query)
      */
     public static Assignment prepend(String name, Object value) {
-        Object v = value instanceof BindMarker ? value : Collections.singletonList(value);
+        Object v = (value instanceof BindMarker) ? value : Collections.singletonList(value);
         return new Assignment.ListPrependAssignment(name, v);
     }
 
@@ -544,7 +544,7 @@ public final class QueryBuilder {
      * @return the correspond assignment (to use in an update query)
      */
     public static Assignment append(String name, Object value) {
-        Object v = value instanceof BindMarker ? value : Collections.singletonList(value);
+        Object v = (value instanceof BindMarker) ? value : Collections.singletonList(value);
         return new Assignment.CollectionAssignment(name, v, true);
     }
 
@@ -584,7 +584,7 @@ public final class QueryBuilder {
      * @return the correspond assignment (to use in an update query)
      */
     public static Assignment discard(String name, Object value) {
-        Object v = value instanceof BindMarker ? value : Collections.singletonList(value);
+        Object v = (value instanceof BindMarker) ? value : Collections.singletonList(value);
         return new Assignment.CollectionAssignment(name, v, false);
     }
 
@@ -638,7 +638,7 @@ public final class QueryBuilder {
      * @return the correspond assignment (to use in an update query)
      */
     public static Assignment add(String name, Object value) {
-        Object v = value instanceof BindMarker ? value : Collections.singleton(value);
+        Object v = (value instanceof BindMarker) ? value : Collections.singleton(value);
         return new Assignment.CollectionAssignment(name, v, true);
     }
 
@@ -678,7 +678,7 @@ public final class QueryBuilder {
      * @return the correspond assignment (to use in an update query)
      */
     public static Assignment remove(String name, Object value) {
-        Object v = value instanceof BindMarker ? value : Collections.singleton(value);
+        Object v = (value instanceof BindMarker) ? value : Collections.singleton(value);
         return new Assignment.CollectionAssignment(name, v, false);
     }
 
@@ -753,11 +753,9 @@ public final class QueryBuilder {
      * <p>
      * This can be used wherever a value is expected. For instance, one can do:
      * <pre>
-     * {@code
-     *     Insert i = QueryBuilder.insertInto("test").value("k", 0)
-     *                                               .value("c", QueryBuilder.bindMarker());
-     *     PreparedState p = session.prepare(i.toString());
-     * }
+     * {@code Insert i = QueryBuilder.insertInto("test").value("k", 0)
+     * .value("c", QueryBuilder.bindMarker());
+     * PreparedState p = session.prepare(i.toString());}
      * </pre>
      *
      * @return a new bind marker.
@@ -792,12 +790,12 @@ public final class QueryBuilder {
      * <p>
      * The following table exemplify the behavior of this function:
      * <table border=1>
-     *   <tr><th>Code</th><th>Resulting query string</th></tr>
-     *   <tr><td>{@code select().from("t").where(eq("c", "C'est la vie!")); }</td><td>{@code "SELECT * FROM t WHERE c='C''est la vie!';"}</td></tr>
-     *   <tr><td>{@code select().from("t").where(eq("c", raw("C'est la vie!"))); }</td><td>{@code "SELECT * FROM t WHERE c=C'est la vie!;"}</td></tr>
-     *   <tr><td>{@code select().from("t").where(eq("c", raw("'C'est la vie!'"))); }</td><td>{@code "SELECT * FROM t WHERE c='C'est la vie!';"}</td></tr>
-     *   <tr><td>{@code select().from("t").where(eq("c", "now()")); }</td><td>{@code "SELECT * FROM t WHERE c='now()';"}</td></tr>
-     *   <tr><td>{@code select().from("t").where(eq("c", raw("now()"))); }</td><td>{@code "SELECT * FROM t WHERE c=now();"}</td></tr>
+     * <tr><th>Code</th><th>Resulting query string</th></tr>
+     * <tr><td>{@code select().from("t").where(eq("c", "C'est la vie!"));}</td><td>{@code "SELECT * FROM t WHERE c='C''est la vie!';"}</td></tr>
+     * <tr><td>{@code select().from("t").where(eq("c", raw("C'est la vie!")));}</td><td>{@code "SELECT * FROM t WHERE c=C'est la vie!;"}</td></tr>
+     * <tr><td>{@code select().from("t").where(eq("c", raw("'C'est la vie!'")));}</td><td>{@code "SELECT * FROM t WHERE c='C'est la vie!';"}</td></tr>
+     * <tr><td>{@code select().from("t").where(eq("c", "now()"));}</td><td>{@code "SELECT * FROM t WHERE c='now()';"}</td></tr>
+     * <tr><td>{@code select().from("t").where(eq("c", raw("now()")));}</td><td>{@code "SELECT * FROM t WHERE c=now();"}</td></tr>
      * </table>
      * <i>Note: the 2nd and 3rd examples in this table are not a valid CQL3 queries.</i>
      * <p>
@@ -805,7 +803,8 @@ public final class QueryBuilder {
      * if you know what you are doing, it allows to escape the interprations done by the
      * QueryBuilder.
      *
-     * @param str the raw value to use as a string
+     * @param str
+     * 		the string value to use
      * @return the value but protected from being interpreted/escaped by the query builder.
      */
     public static Object raw(String str) {

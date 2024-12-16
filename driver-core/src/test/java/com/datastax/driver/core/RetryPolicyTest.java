@@ -15,14 +15,15 @@
  */
 package com.datastax.driver.core;
 
-import static org.testng.Assert.*;
-import org.testng.annotations.Test;
-
 import com.datastax.driver.core.exceptions.*;
 import com.datastax.driver.core.policies.*;
+import org.testng.annotations.Test;
+import static com.datastax.driver.core.TestUtils.waitFor;
+import static com.datastax.driver.core.TestUtils.waitForDownWithWait;
+import static org.testng.Assert.*;
+
 
 public class RetryPolicyTest extends AbstractPoliciesTest {
-
     /**
      * Test RetryPolicy to ensure the basic unit get tests for the RetryDecisions.
      */
@@ -30,12 +31,15 @@ public class RetryPolicyTest extends AbstractPoliciesTest {
         public RetryDecision onReadTimeout(Statement query, ConsistencyLevel cl, int requiredResponses, int receivedResponses, boolean dataRetrieved, int nbRetry) {
             return RetryDecision.rethrow();
         }
+
         public RetryDecision onWriteTimeout(Statement query, ConsistencyLevel cl, WriteType writeType, int requiredAcks, int receivedAcks, int nbRetry) {
             return RetryDecision.rethrow();
         }
+
         public RetryDecision onUnavailable(Statement query, ConsistencyLevel cl, int requiredReplica, int aliveReplica, int nbRetry) {
             return RetryDecision.rethrow();
         }
+
         public static void testRetryDecision() {
             assertEquals(RetryDecision.retry(ConsistencyLevel.ONE).getType(), RetryDecision.Type.RETRY);
             assertEquals(RetryDecision.retry(ConsistencyLevel.ONE).getRetryConsistencyLevel(), ConsistencyLevel.ONE);
@@ -100,15 +104,11 @@ public class RetryPolicyTest extends AbstractPoliciesTest {
             createSchema(c.session);
             // FIXME: Race condition where the nodes are not fully up yet and assertQueried reports slightly different numbers with fallthrough*Policy
             Thread.sleep(5000);
-
             init(c, 12);
             query(c, 12);
-
             assertQueried(CCMBridge.IP_PREFIX + "1", 6);
             assertQueried(CCMBridge.IP_PREFIX + "2", 6);
-
             resetCoordinators();
-
             // Test reads
             boolean successfulQuery = false;
             boolean readTimeoutOnce = false;
@@ -120,22 +120,19 @@ public class RetryPolicyTest extends AbstractPoliciesTest {
                     if (!readTimeoutOnce) {
                         c.cassandraCluster.forceStop(2);
                     }
-
                     // Force an UnavailableException to be performed once
-                    if (readTimeoutOnce && !unavailableOnce) {
+                    if (readTimeoutOnce && (!unavailableOnce)) {
                         waitForDownWithWait(CCMBridge.IP_PREFIX + "2", c.cluster, 5);
                     }
-
                     // Bring back node to ensure other errors are not thrown on restart
-                    if (unavailableOnce && !restartOnce) {
+                    if (unavailableOnce && (!restartOnce)) {
                         c.cassandraCluster.start(2);
                         restartOnce = true;
                     }
-
                     query(c, 12);
-
-                    if (restartOnce)
+                    if (restartOnce) {
                         successfulQuery = true;
+                    }
                 } catch (UnavailableException e) {
                     assertEquals("Not enough replica available for query at consistency ONE (1 required but only 0 alive)", e.getMessage());
                     unavailableOnce = true;
@@ -144,19 +141,14 @@ public class RetryPolicyTest extends AbstractPoliciesTest {
                     readTimeoutOnce = true;
                 }
             }
-
             // Ensure the full cycle was completed
-            assertTrue(successfulQuery, "Hit testing race condition. [Never completed successfully.] (Shouldn't be an issue.):\n");
-            assertTrue(readTimeoutOnce, "Hit testing race condition. [Never encountered a ReadTimeoutException.] (Shouldn't be an issue.):\n");
-            assertTrue(unavailableOnce, "Hit testing race condition. [Never encountered an UnavailableException.] (Shouldn't be an issue.):\n");
-
+            assertTrue(successfulQuery, "Hit testing race condition. [Never completed successfully.] (Shouldn\'t be an issue.):\n");
+            assertTrue(readTimeoutOnce, "Hit testing race condition. [Never encountered a ReadTimeoutException.] (Shouldn\'t be an issue.):\n");
+            assertTrue(unavailableOnce, "Hit testing race condition. [Never encountered an UnavailableException.] (Shouldn\'t be an issue.):\n");
             // A weak test to ensure that the nodes were contacted
             assertQueriedAtLeast(CCMBridge.IP_PREFIX + "1", 1);
             assertQueriedAtLeast(CCMBridge.IP_PREFIX + "2", 1);
-
             resetCoordinators();
-
-
             // Test writes
             successfulQuery = false;
             boolean writeTimeoutOnce = false;
@@ -168,22 +160,19 @@ public class RetryPolicyTest extends AbstractPoliciesTest {
                     if (!writeTimeoutOnce) {
                         c.cassandraCluster.forceStop(2);
                     }
-
                     // Force an UnavailableException to be performed once
-                    if (writeTimeoutOnce && !unavailableOnce) {
+                    if (writeTimeoutOnce && (!unavailableOnce)) {
                         waitForDownWithWait(CCMBridge.IP_PREFIX + "2", c.cluster, 5);
                     }
-
                     // Bring back node to ensure other errors are not thrown on restart
-                    if (unavailableOnce && !restartOnce) {
+                    if (unavailableOnce && (!restartOnce)) {
                         c.cassandraCluster.start(2);
                         restartOnce = true;
                     }
-
                     init(c, 12);
-
-                    if (restartOnce)
+                    if (restartOnce) {
                         successfulQuery = true;
+                    }
                 } catch (UnavailableException e) {
                     assertEquals("Not enough replica available for query at consistency ONE (1 required but only 0 alive)", e.getMessage());
                     unavailableOnce = true;
@@ -193,13 +182,10 @@ public class RetryPolicyTest extends AbstractPoliciesTest {
                 }
             }
             // Ensure the full cycle was completed
-            assertTrue(successfulQuery, "Hit testing race condition. [Never completed successfully.] (Shouldn't be an issue.):\n");
-            assertTrue(writeTimeoutOnce, "Hit testing race condition. [Never encountered a ReadTimeoutException.] (Shouldn't be an issue.):\n");
-            assertTrue(unavailableOnce, "Hit testing race condition. [Never encountered an UnavailableException.] (Shouldn't be an issue.):\n");
-
+            assertTrue(successfulQuery, "Hit testing race condition. [Never completed successfully.] (Shouldn\'t be an issue.):\n");
+            assertTrue(writeTimeoutOnce, "Hit testing race condition. [Never encountered a ReadTimeoutException.] (Shouldn\'t be an issue.):\n");
+            assertTrue(unavailableOnce, "Hit testing race condition. [Never encountered an UnavailableException.] (Shouldn\'t be an issue.):\n");
             // TODO: Missing test to see if nodes were written to
-
-
             // Test batch writes
             successfulQuery = false;
             writeTimeoutOnce = false;
@@ -211,22 +197,19 @@ public class RetryPolicyTest extends AbstractPoliciesTest {
                     if (!writeTimeoutOnce) {
                         c.cassandraCluster.forceStop(2);
                     }
-
                     // Force an UnavailableException to be performed once
-                    if (writeTimeoutOnce && !unavailableOnce) {
+                    if (writeTimeoutOnce && (!unavailableOnce)) {
                         waitForDownWithWait(CCMBridge.IP_PREFIX + "2", c.cluster, 5);
                     }
-
                     // Bring back node to ensure other errors are not thrown on restart
-                    if (unavailableOnce && !restartOnce) {
+                    if (unavailableOnce && (!restartOnce)) {
                         c.cassandraCluster.start(2);
                         restartOnce = true;
                     }
-
                     init(c, 12, true);
-
-                    if (restartOnce)
+                    if (restartOnce) {
                         successfulQuery = true;
+                    }
                 } catch (UnavailableException e) {
                     assertEquals("Not enough replica available for query at consistency ONE (1 required but only 0 alive)", e.getMessage());
                     unavailableOnce = true;
@@ -236,13 +219,11 @@ public class RetryPolicyTest extends AbstractPoliciesTest {
                 }
             }
             // Ensure the full cycle was completed
-            assertTrue(successfulQuery, "Hit testing race condition. [Never completed successfully.] (Shouldn't be an issue.):\n");
-            assertTrue(writeTimeoutOnce, "Hit testing race condition. [Never encountered a ReadTimeoutException.] (Shouldn't be an issue.):\n");
-            assertTrue(unavailableOnce, "Hit testing race condition. [Never encountered an UnavailableException.] (Shouldn't be an issue.):\n");
-
+            assertTrue(successfulQuery, "Hit testing race condition. [Never completed successfully.] (Shouldn\'t be an issue.):\n");
+            assertTrue(writeTimeoutOnce, "Hit testing race condition. [Never encountered a ReadTimeoutException.] (Shouldn\'t be an issue.):\n");
+            assertTrue(unavailableOnce, "Hit testing race condition. [Never encountered an UnavailableException.] (Shouldn\'t be an issue.):\n");
             // TODO: Missing test to see if nodes were written to
-
-        } catch (Throwable e) {
+        } catch (java.lang.Throwable e) {
             c.errorOut();
             throw e;
         } finally {
@@ -278,58 +259,42 @@ public class RetryPolicyTest extends AbstractPoliciesTest {
             createSchema(c.session, 3);
             // FIXME: Race condition where the nodes are not fully up yet and assertQueried reports slightly different numbers
             Thread.sleep(5000);
-
             init(c, 12, ConsistencyLevel.ALL);
             query(c, 12, ConsistencyLevel.ALL);
-
             assertQueried(CCMBridge.IP_PREFIX + "1", 4);
             assertQueried(CCMBridge.IP_PREFIX + "2", 4);
             assertQueried(CCMBridge.IP_PREFIX + "3", 4);
-
             resetCoordinators();
             c.cassandraCluster.forceStop(2);
             waitForDownWithWait(CCMBridge.IP_PREFIX + "2", c.cluster, 10);
-
             query(c, 12, ConsistencyLevel.ALL);
-
             assertQueried(CCMBridge.IP_PREFIX + "1", 6);
             assertQueried(CCMBridge.IP_PREFIX + "2", 0);
             assertQueried(CCMBridge.IP_PREFIX + "3", 6);
-
             resetCoordinators();
             c.cassandraCluster.forceStop(1);
             waitForDownWithWait(CCMBridge.IP_PREFIX + "1", c.cluster, 5);
             Thread.sleep(5000);
-
             try {
                 query(c, 12, ConsistencyLevel.ALL);
             } catch (ReadTimeoutException e) {
                 assertEquals("Cassandra timeout during read query at consistency TWO (2 responses were required but only 1 replica responded)", e.getMessage());
             }
-
             query(c, 12, ConsistencyLevel.QUORUM);
-
             assertQueried(CCMBridge.IP_PREFIX + "1", 0);
             assertQueried(CCMBridge.IP_PREFIX + "2", 0);
             assertQueried(CCMBridge.IP_PREFIX + "3", 12);
-
             resetCoordinators();
-
             query(c, 12, ConsistencyLevel.TWO);
-
             assertQueried(CCMBridge.IP_PREFIX + "1", 0);
             assertQueried(CCMBridge.IP_PREFIX + "2", 0);
             assertQueried(CCMBridge.IP_PREFIX + "3", 12);
-
             resetCoordinators();
-
             query(c, 12, ConsistencyLevel.ONE);
-
             assertQueried(CCMBridge.IP_PREFIX + "1", 0);
             assertQueried(CCMBridge.IP_PREFIX + "2", 0);
             assertQueried(CCMBridge.IP_PREFIX + "3", 12);
-
-        } catch (Throwable e) {
+        } catch (java.lang.Throwable e) {
             c.errorOut();
             throw e;
         } finally {
@@ -345,60 +310,44 @@ public class RetryPolicyTest extends AbstractPoliciesTest {
     public void alwaysIgnoreRetryPolicyTest() throws Throwable {
         Cluster.Builder builder = Cluster.builder().withRetryPolicy(new LoggingRetryPolicy(AlwaysIgnoreRetryPolicy.INSTANCE));
         CCMBridge.CCMCluster c = CCMBridge.buildCluster(2, builder);
-
         try {
             createSchema(c.session);
             init(c, 12);
             query(c, 12);
-
             assertQueried(CCMBridge.IP_PREFIX + "1", 6);
             assertQueried(CCMBridge.IP_PREFIX + "2", 6);
-
             resetCoordinators();
-
             // Test failed reads
             c.cassandraCluster.forceStop(2);
             for (int i = 0; i < 10; ++i) {
                 query(c, 12);
             }
-
             // A weak test to ensure that the nodes were contacted
             assertQueried(CCMBridge.IP_PREFIX + "1", 120);
             assertQueried(CCMBridge.IP_PREFIX + "2", 0);
             resetCoordinators();
-
-
             c.cassandraCluster.start(2);
             waitFor(CCMBridge.IP_PREFIX + "2", c.cluster);
-
             // Test successful reads
             for (int i = 0; i < 10; ++i) {
                 query(c, 12);
             }
-
             // A weak test to ensure that the nodes were contacted
             assertQueriedAtLeast(CCMBridge.IP_PREFIX + "1", 1);
             assertQueriedAtLeast(CCMBridge.IP_PREFIX + "2", 1);
             resetCoordinators();
-
-
             // Test writes
             for (int i = 0; i < 100; ++i) {
                 init(c, 12);
             }
-
             // TODO: Missing test to see if nodes were written to
-
-
             // Test failed writes
             c.cassandraCluster.forceStop(2);
             for (int i = 0; i < 100; ++i) {
                 init(c, 12);
             }
-
             // TODO: Missing test to see if nodes were written to
-
-        } catch (Throwable e) {
+        } catch (java.lang.Throwable e) {
             c.errorOut();
             throw e;
         } finally {
@@ -409,6 +358,7 @@ public class RetryPolicyTest extends AbstractPoliciesTest {
 
     private class QueryRunnable implements Runnable {
         private CCMBridge.CCMCluster c;
+
         private int i;
 
         public QueryRunnable(CCMBridge.CCMCluster c, int i) {
@@ -416,13 +366,14 @@ public class RetryPolicyTest extends AbstractPoliciesTest {
             this.i = i;
         }
 
-        public void run(){
+        public void run() {
             query(c, i);
         }
     }
 
     private class InitRunnable implements Runnable {
         private CCMBridge.CCMCluster c;
+
         private int i;
 
         public InitRunnable(CCMBridge.CCMCluster c, int i) {
@@ -430,12 +381,13 @@ public class RetryPolicyTest extends AbstractPoliciesTest {
             this.i = i;
         }
 
-        public void run(){
+        public void run() {
             try {
                 init(c, i);
                 fail();
             } catch (DriverInternalError e) {
-            } catch (NoHostAvailableException e) { }
+            } catch (NoHostAvailableException e) {
+            }
         }
     }
 
@@ -446,65 +398,50 @@ public class RetryPolicyTest extends AbstractPoliciesTest {
     public void alwaysRetryRetryPolicyTest() throws Throwable {
         Cluster.Builder builder = Cluster.builder().withRetryPolicy(new LoggingRetryPolicy(AlwaysRetryRetryPolicy.INSTANCE));
         CCMBridge.CCMCluster c = CCMBridge.buildCluster(2, builder);
-
         try {
             createSchema(c.session);
             init(c, 12);
             query(c, 12);
-
             assertQueried(CCMBridge.IP_PREFIX + "1", 6);
             assertQueried(CCMBridge.IP_PREFIX + "2", 6);
-
             resetCoordinators();
-
             // Test failed reads
             c.cassandraCluster.forceStop(2);
-
             Thread t1 = new Thread(new QueryRunnable(c, 12));
             t1.start();
             t1.join(10000);
-            if (t1.isAlive())
+            if (t1.isAlive()) {
                 t1.interrupt();
-
+            }
             // A weak test to ensure that the nodes were contacted
             assertQueried(CCMBridge.IP_PREFIX + "1", 0);
             assertQueried(CCMBridge.IP_PREFIX + "2", 0);
             resetCoordinators();
-
-
             c.cassandraCluster.start(2);
             waitFor(CCMBridge.IP_PREFIX + "2", c.cluster);
-
             // Test successful reads
             for (int i = 0; i < 10; ++i) {
                 query(c, 12);
             }
-
             // A weak test to ensure that the nodes were contacted
             assertQueriedAtLeast(CCMBridge.IP_PREFIX + "1", 1);
             assertQueriedAtLeast(CCMBridge.IP_PREFIX + "2", 1);
             resetCoordinators();
-
-
             // Test writes
             for (int i = 0; i < 100; ++i) {
                 init(c, 12);
             }
-
             // TODO: Missing test to see if nodes were written to
-
-
             // Test failed writes
             c.cassandraCluster.forceStop(2);
             Thread t2 = new Thread(new InitRunnable(c, 12));
             t2.start();
             t2.join(10000);
-            if (t2.isAlive())
+            if (t2.isAlive()) {
                 t2.interrupt();
-
+            }
             // TODO: Missing test to see if nodes were written to
-
-        } catch (Throwable e) {
+        } catch (java.lang.Throwable e) {
             c.errorOut();
             throw e;
         } finally {

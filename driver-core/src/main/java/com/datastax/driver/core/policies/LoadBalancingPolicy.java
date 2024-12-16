@@ -15,13 +15,13 @@
  */
 package com.datastax.driver.core.policies;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.HostDistance;
-import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.Query;
+import java.util.Collection;
+import java.util.Iterator;
+
 
 /**
  * The policy that decides which Cassandra hosts to contact for each new query.
@@ -39,7 +39,6 @@ import com.datastax.driver.core.Statement;
  * policy is expected to exclude down hosts from query plans.
  */
 public interface LoadBalancingPolicy extends Host.StateListener {
-
     /**
      * Initialize this load balancing policy.
      * <p>
@@ -50,7 +49,7 @@ public interface LoadBalancingPolicy extends Host.StateListener {
      * @param cluster the {@code Cluster} instance for which the policy is created.
      * @param hosts the initial hosts to use.
      */
-    public void init(Cluster cluster, Collection<Host> hosts);
+    public abstract void init(Cluster cluster, Collection<Host> hosts);
 
     /**
      * Returns the distance assigned by this policy to the provided host.
@@ -68,7 +67,7 @@ public interface LoadBalancingPolicy extends Host.StateListener {
      * @param host the host of which to return the distance of.
      * @return the HostDistance to {@code host}.
      */
-    public HostDistance distance(Host host);
+    public abstract HostDistance distance(Host host);
 
     /**
      * Returns the hosts to use for a new query.
@@ -79,14 +78,14 @@ public interface LoadBalancingPolicy extends Host.StateListener {
      * used. If all hosts of the returned {@code Iterator} are down, the query
      * will fail.
      *
-     * @param loggedKeyspace the currently logged keyspace (the one set through either
-     * {@link Cluster#connect(String)} or by manually doing a {@code USE} query) for
-     * the session on which this plan need to be built. This can be {@code null} if
-     * the corresponding session has no keyspace logged in.
-     * @param statement the query for which to build a plan.
+     * @param query
+     * 		the query for which to build a plan.
      * @return an iterator of Host. The query is tried against the hosts
-     * returned by this iterator in order, until the query has been sent
-     * successfully to one of the host.
+    returned by this iterator in order, until the query has been sent
+    successfully to one of the host.
+     * @return an iterator of Host. The query is tried against the hosts
+    returned by this iterator in order, until the query has been sent
+    successfully to one of the host.
      */
-    public Iterator<Host> newQueryPlan(String loggedKeyspace, Statement statement);
+    public abstract Iterator<Host> newQueryPlan(String loggedKeyspace, Statement statement);
 }

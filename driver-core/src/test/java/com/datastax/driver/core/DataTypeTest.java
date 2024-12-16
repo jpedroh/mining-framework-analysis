@@ -15,45 +15,48 @@
  */
 package com.datastax.driver.core;
 
+import com.datastax.driver.core.exceptions.InvalidTypeException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
-
-import static org.testng.Assert.*;
+import java.util.*;
 import org.testng.annotations.Test;
-
-import com.datastax.driver.core.exceptions.InvalidTypeException;
+import static org.testng.Assert.*;
 
 
 /**
  * Tests DataType class to ensure data sent in is the same as data received
  * All tests are executed via a Simple Statements
  * Counters are the only datatype not tested within the entirety of the suite.
- *     There is, however, an isolated test case that needs to be implemented.
+ * There is, however, an isolated test case that needs to be implemented.
  * All statements and sample data is easily exportable via the print_*() methods.
  */
 public class DataTypeTest extends CCMBridge.PerClassSingleNodeCluster {
-
     private final static Set<DataType> DATA_TYPE_PRIMITIVES = DataType.allPrimitiveTypes();
-    private final static Set<DataType.Name> DATA_TYPE_NON_PRIMITIVE_NAMES = EnumSet.of(DataType.Name.MAP, DataType.Name.SET, DataType.Name.LIST);
 
-    private final static String PRIMITIVE_INSERT_FORMAT = "INSERT INTO %1$s (k, v) VALUES (%2$s, %2$s);";
-    private final static String BASIC_SELECT_FORMAT = "SELECT k, v FROM %1$s;";
+    private static final Set<DataType.Name> DATA_TYPE_NON_PRIMITIVE_NAMES = EnumSet.of(DataType.Name.MAP, DataType.Name.SET, DataType.Name.LIST);
 
-    private final static String COLLECTION_INSERT_FORMAT = "INSERT INTO %1$s (k, v) VALUES (%2$s, %3$s);";
-    private final static String MAP_INSERT_FORMAT = "INSERT INTO %1$s (k, v) VALUES (%3$s, {%2$s: %3$s});";
+    private static final String PRIMITIVE_INSERT_FORMAT = "INSERT INTO %1$s (k, v) VALUES (%2$s, %2$s);";
 
-    private final static HashMap<DataType, Object> SAMPLE_DATA = getSampleData();
-    private final static HashMap<DataType, Object> SAMPLE_COLLECTIONS = getSampleCollections();
+    private static final String BASIC_SELECT_FORMAT = "SELECT k, v FROM %1$s;";
+
+    private static final String COLLECTION_INSERT_FORMAT = "INSERT INTO %1$s (k, v) VALUES (%2$s, %3$s);";
+
+    private static final String MAP_INSERT_FORMAT = "INSERT INTO %1$s (k, v) VALUES (%3$s, {%2$s: %3$s});";
+
+    private static final HashMap<DataType, Object> SAMPLE_DATA = getSampleData();
+
+    private static final HashMap<DataType, Object> SAMPLE_COLLECTIONS = getSampleCollections();
 
     private final static Collection<String> PRIMITIVE_INSERT_STATEMENTS = getPrimitiveInsertStatements();
-    private final static HashMap<DataType, String> PRIMITIVE_SELECT_STATEMENTS = getPrimitiveSelectStatements();
+
+    private static final HashMap<DataType, String> PRIMITIVE_SELECT_STATEMENTS = getPrimitiveSelectStatements();
 
     private final static Collection<String> COLLECTION_INSERT_STATEMENTS = getCollectionInsertStatements();
-    private final static HashMap<DataType, String> COLLECTION_SELECT_STATEMENTS = getCollectionSelectStatements();
 
+    private static final HashMap<DataType, String> COLLECTION_SELECT_STATEMENTS = getCollectionSelectStatements();
 
     private static boolean exclude(DataType t) {
         return t.getName() == DataType.Name.COUNTER;

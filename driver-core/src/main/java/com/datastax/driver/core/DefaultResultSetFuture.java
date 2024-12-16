@@ -15,26 +15,26 @@
  */
 package com.datastax.driver.core;
 
+import com.datastax.driver.core.exceptions.*;
+import com.google.common.util.concurrent.AbstractFuture;
+import com.google.common.util.concurrent.Uninterruptibles;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import com.google.common.util.concurrent.AbstractFuture;
-import com.google.common.util.concurrent.Uninterruptibles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.exceptions.*;
 
 /**
  * Internal implementation of ResultSetFuture.
  */
-class DefaultResultSetFuture extends AbstractFuture<ResultSet> implements ResultSetFuture, RequestHandler.Callback {
-
+class DefaultResultSetFuture extends AbstractFuture<ResultSet> implements ResultSetFuture , RequestHandler.Callback {
     private static final Logger logger = LoggerFactory.getLogger(ResultSetFuture.class);
 
     private final SessionManager session;
+
     private final Message.Request request;
+
     private volatile RequestHandler handler;
 
     DefaultResultSetFuture(SessionManager session, Message.Request request) {
@@ -56,26 +56,26 @@ class DefaultResultSetFuture extends AbstractFuture<ResultSet> implements Result
     public void onSet(Connection connection, Message.Response response, ExecutionInfo info, Statement statement, long latency) {
         try {
             switch (response.type) {
-                case RESULT:
-                    Responses.Result rm = (Responses.Result)response;
+                case RESULT :
+                    Responses.Result rm = ((Responses.Result) (response));
                     switch (rm.kind) {
-                        case SET_KEYSPACE:
+                        case SET_KEYSPACE :
                             // propagate the keyspace change to other connections
-                            session.poolsState.setKeyspace(((Responses.Result.SetKeyspace)rm).keyspace);
+                            session.poolsState.setKeyspace(((Responses.Result.SetKeyspace) (rm)).keyspace);
                             set(ArrayBackedResultSet.fromMessage(rm, session, info, statement));
                             break;
-                        case SCHEMA_CHANGE:
-                            Responses.Result.SchemaChange scc = (Responses.Result.SchemaChange)rm;
+                        case SCHEMA_CHANGE :
+                            Responses.Result.SchemaChange scc = ((Responses.Result.SchemaChange) (rm));
                             ResultSet rs = ArrayBackedResultSet.fromMessage(rm, session, info, statement);
                             switch (scc.change) {
-                                case CREATED:
+                                case CREATED :
                                     if (scc.columnFamily.isEmpty()) {
                                         session.cluster.manager.refreshSchema(connection, this, rs, null, null);
                                     } else {
                                         session.cluster.manager.refreshSchema(connection, this, rs, scc.keyspace, null);
                                     }
                                     break;
-                                case DROPPED:
+                                case DROPPED :
                                     if (scc.columnFamily.isEmpty()) {
                                         // If that the one keyspace we are logged in, reset to null (it shouldn't really happen but ...)
                                         // Note: Actually, Cassandra doesn't do that so we don't either as this could confuse prepared statements.
@@ -87,33 +87,33 @@ class DefaultResultSetFuture extends AbstractFuture<ResultSet> implements Result
                                         session.cluster.manager.refreshSchema(connection, this, rs, scc.keyspace, null);
                                     }
                                     break;
-                                case UPDATED:
+                                case UPDATED :
                                     if (scc.columnFamily.isEmpty()) {
                                         session.cluster.manager.refreshSchema(connection, this, rs, scc.keyspace, null);
                                     } else {
                                         session.cluster.manager.refreshSchema(connection, this, rs, scc.keyspace, scc.columnFamily);
                                     }
                                     break;
-                                default:
+                                default :
                                     logger.info("Ignoring unknown schema change result");
                                     break;
                             }
                             break;
-                        default:
+                        default :
                             set(ArrayBackedResultSet.fromMessage(rm, session, info, statement));
                             break;
                     }
                     break;
-                case ERROR:
-                    setException(((Responses.Error)response).asException(connection.address));
+                case ERROR :
+                    setException(((Responses.Error) (response)).asException(connection.address));
                     break;
-                default:
+                default :
                     // This mean we have probably have a bad node, so defunct the connection
                     connection.defunct(new ConnectionException(connection.address, String.format("Got unexpected %s response", response.type)));
                     setException(new DriverInternalError(String.format("Got unexpected %s response from %s", response.type, connection.address)));
                     break;
             }
-        } catch (RuntimeException e) {
+        } catch (java.lang.RuntimeException e) {
             // If we get a bug here, the client will not get it, so better forwarding the error
             setException(new DriverInternalError("Unexpected error while processing response from " + connection.address, e));
         }
@@ -239,9 +239,9 @@ class DefaultResultSetFuture extends AbstractFuture<ResultSet> implements Result
      */
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
-        if (!super.cancel(mayInterruptIfRunning))
+        if (!super.cancel(mayInterruptIfRunning)) {
             return false;
-
+        }
         handler.cancel();
         return true;
     }
@@ -252,9 +252,10 @@ class DefaultResultSetFuture extends AbstractFuture<ResultSet> implements Result
         // with said cause will make no mention of the current thread. This is painful for say, finding
         // out which execute() statement actually raised the exception. So instead, we re-create the
         // exception.
-        if (e.getCause() instanceof DriverException)
-            throw ((DriverException)e.getCause()).copy();
-        else
+        if (e.getCause() instanceof DriverException) {
+            throw ((DriverException) (e.getCause())).copy();
+        } else {
             throw new DriverInternalError("Unexpected exception thrown", e.getCause());
+        }
     }
 }

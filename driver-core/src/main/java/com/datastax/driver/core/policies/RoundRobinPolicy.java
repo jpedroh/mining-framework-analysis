@@ -15,6 +15,11 @@
  */
 package com.datastax.driver.core.policies;
 
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Host;
+import com.datastax.driver.core.HostDistance;
+import com.datastax.driver.core.Query;
+import com.google.common.collect.AbstractIterator;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -22,12 +27,6 @@ import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.google.common.collect.AbstractIterator;
-
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Host;
-import com.datastax.driver.core.HostDistance;
-import com.datastax.driver.core.Statement;
 
 /**
  * A Round-robin load balancing policy.
@@ -42,15 +41,16 @@ import com.datastax.driver.core.Statement;
  * {@link DCAwareRoundRobinPolicy} load balancing policy instead.
  */
 public class RoundRobinPolicy implements LoadBalancingPolicy {
-
     private final CopyOnWriteArrayList<Host> liveHosts = new CopyOnWriteArrayList<Host>();
+
     private final AtomicInteger index = new AtomicInteger();
 
     /**
      * Creates a load balancing policy that picks host to query in a round robin
      * fashion (on all the hosts of the Cassandra cluster).
      */
-    public RoundRobinPolicy() {}
+    public RoundRobinPolicy() {
+    }
 
     @Override
     public void init(Cluster cluster, Collection<Host> hosts) {
@@ -80,41 +80,41 @@ public class RoundRobinPolicy implements LoadBalancingPolicy {
      * call to this method, the {@code i}th host of the plans returned will cycle
      * over all the hosts of the cluster in a round-robin fashion.
      *
-     * @param loggedKeyspace the keyspace currently logged in on for this
-     * query.
-     * @param statement the query for which to build the plan.
+     * @param query
+     * 		the query for which to build the plan.
      * @return a new query plan, i.e. an iterator indicating which host to
-     * try first for querying, which one to use as failover, etc...
+    try first for querying, which one to use as failover, etc...
+     * @return a new query plan, i.e. an iterator indicating which host to
+    try first for querying, which one to use as failover, etc...
      */
     @Override
     public Iterator<Host> newQueryPlan(String loggedKeyspace, Statement statement) {
-
         // We clone liveHosts because we want a version of the list that
         // cannot change concurrently of the query plan iterator (this
         // would be racy). We use clone() as it don't involve a copy of the
         // underlying array (and thus we rely on liveHosts being a CopyOnWriteArrayList).
         @SuppressWarnings("unchecked")
-        final List<Host> hosts = (List<Host>)liveHosts.clone();
+        final List<Host> hosts = ((List<Host>) (liveHosts.clone()));
         final int startIdx = index.getAndIncrement();
-
         // Overflow protection; not theoretically thread safe but should be good enough
-        if (startIdx > Integer.MAX_VALUE - 10000)
+        if (startIdx > (Integer.MAX_VALUE - 10000)) {
             index.set(0);
-
+        }
         return new AbstractIterator<Host>() {
-
             private int idx = startIdx;
+
             private int remaining = hosts.size();
 
             @Override
             protected Host computeNext() {
-                if (remaining <= 0)
+                if (remaining <= 0) {
                     return endOfData();
-
+                }
                 remaining--;
-                int c = idx++ % hosts.size();
-                if (c < 0)
+                int c = (idx++) % hosts.size();
+                if (c < 0) {
                     c += hosts.size();
+                }
                 return hosts.get(c);
             }
         };

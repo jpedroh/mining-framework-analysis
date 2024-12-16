@@ -15,9 +15,10 @@
  */
 package com.datastax.driver.core;
 
-import java.nio.ByteBuffer;
-
 import com.datastax.driver.core.policies.RetryPolicy;
+import java.nio.ByteBuffer;
+import java.util.List;
+
 
 /**
  * Represents a prepared statement, a query with bound variables that has been
@@ -38,13 +39,12 @@ import com.datastax.driver.core.policies.RetryPolicy;
  * {@link Session#prepare(RegularStatement)} is used.
  */
 public interface PreparedStatement {
-
     /**
      * Returns metadata on the bounded variables of this prepared statement.
      *
      * @return the variables bounded in this prepared statement.
      */
-    public ColumnDefinitions getVariables();
+    public abstract ColumnDefinitions getVariables();
 
     /**
      * Creates a new BoundStatement object and bind its variables to the
@@ -70,7 +70,7 @@ public interface PreparedStatement {
      *
      * @see BoundStatement#bind
      */
-    public BoundStatement bind(Object... values);
+    public abstract BoundStatement bind(Object... values);
 
     /**
      * Creates a new BoundStatement object for this prepared statement.
@@ -81,7 +81,7 @@ public interface PreparedStatement {
      *
      * @return the newly created {@code BoundStatement}.
      */
-    public BoundStatement bind();
+    public abstract BoundStatement bind();
 
     /**
      * Sets the routing key for this prepared statement.
@@ -98,9 +98,9 @@ public interface PreparedStatement {
      * @param routingKey the raw (binary) value to use as routing key.
      * @return this {@code PreparedStatement} object.
      *
-     * @see Statement#getRoutingKey
+     * @see Query#getRoutingKey
      */
-    public PreparedStatement setRoutingKey(ByteBuffer routingKey);
+    public abstract PreparedStatement setRoutingKey(ByteBuffer routingKey);
 
     /**
      * Sets the routing key for this query.
@@ -113,9 +113,9 @@ public interface PreparedStatement {
      * the routing key.
      * @return this {@code PreparedStatement} object.
      *
-     * @see Statement#getRoutingKey
+     * @see Query#getRoutingKey
      */
-    public PreparedStatement setRoutingKey(ByteBuffer... routingKeyComponents);
+    public abstract PreparedStatement setRoutingKey(ByteBuffer... routingKeyComponents);
 
     /**
      * Returns the routing key set for this query.
@@ -123,7 +123,7 @@ public interface PreparedStatement {
      * @return the routing key for this query or {@code null} if none has been
      * explicitely set on this PreparedStatement.
      */
-    public ByteBuffer getRoutingKey();
+    public abstract ByteBuffer getRoutingKey();
 
     /**
      * Sets a default consistency level for all bound statements 
@@ -138,7 +138,7 @@ public interface PreparedStatement {
      * @param consistency the default consistency level to set.
      * @return this {@code PreparedStatement} object.
      */
-    public PreparedStatement setConsistencyLevel(ConsistencyLevel consistency);
+    public abstract PreparedStatement setConsistencyLevel(ConsistencyLevel consistency);
 
     /**
      * Returns the default consistency level set through {@link #setConsistencyLevel}.
@@ -147,7 +147,7 @@ public interface PreparedStatement {
      * consistency level has been set through this object {@code setConsistencyLevel}
      * method.
      */
-    public ConsistencyLevel getConsistencyLevel();
+    public abstract ConsistencyLevel getConsistencyLevel();
 
     /**
      * Returns the string of the query that was prepared to yield this {@code
@@ -163,7 +163,7 @@ public interface PreparedStatement {
      * @return the query that was prepared to yield this
      * {@code PreparedStatement}.
      */
-    public String getQueryString();
+    public abstract String getQueryString();
 
     /**
      * Returns the keyspace at the time that this prepared statement was prepared,
@@ -175,7 +175,7 @@ public interface PreparedStatement {
      * is possible since keyspaces can be explicitly qualified in queries and
      * so may not require a current keyspace to be set).
      */
-    public String getQueryKeyspace();
+    public abstract String getQueryKeyspace();
 
     /**
      * Convenience method to enables tracing for all bound statements created
@@ -183,7 +183,7 @@ public interface PreparedStatement {
      *
      * @return this {@code Query} object.
      */
-    public PreparedStatement enableTracing();
+    public abstract PreparedStatement enableTracing();
 
     /**
      * Convenience method to disable tracing for all bound statements created
@@ -191,7 +191,7 @@ public interface PreparedStatement {
      *
      * @return this {@code PreparedStatement} object.
      */
-    public PreparedStatement disableTracing();
+    public abstract PreparedStatement disableTracing();
 
     /**
      * Returns whether tracing is enabled for this prepared statement, i.e. if
@@ -200,7 +200,7 @@ public interface PreparedStatement {
      * @return {@code true} if this prepared statement has tracing enabled,
      * {@code false} otherwise.
      */
-    public boolean isTracing();
+    public abstract boolean isTracing();
 
     /**
      * Convenience method to set a default retry policy for the {@code BoundStatement}
@@ -216,7 +216,7 @@ public interface PreparedStatement {
      * @param policy the retry policy to use for this prepared statement.
      * @return this {@code PreparedStatement} object.
      */
-    public PreparedStatement setRetryPolicy(RetryPolicy policy);
+    public abstract PreparedStatement setRetryPolicy(RetryPolicy policy);
 
     /**
      * Returns the retry policy sets for this prepared statement, if any.
@@ -224,7 +224,7 @@ public interface PreparedStatement {
      * @return the retry policy sets specifically for this prepared statement or
      * {@code null} if none have been set.
      */
-    public RetryPolicy getRetryPolicy();
+    public abstract RetryPolicy getRetryPolicy();
 
     /**
      * Returns the prepared Id for this statement.

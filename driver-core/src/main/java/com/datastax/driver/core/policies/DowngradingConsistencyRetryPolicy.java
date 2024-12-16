@@ -16,8 +16,9 @@
 package com.datastax.driver.core.policies;
 
 import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.Query;
 import com.datastax.driver.core.WriteType;
+
 
 /**
  * A retry policy that sometimes retry with a lower consistency level than
@@ -67,20 +68,21 @@ import com.datastax.driver.core.WriteType;
  * than reading nothing, even if there is a risk of reading stale data.
  */
 public class DowngradingConsistencyRetryPolicy implements RetryPolicy {
-
     public static final DowngradingConsistencyRetryPolicy INSTANCE = new DowngradingConsistencyRetryPolicy();
 
-    private DowngradingConsistencyRetryPolicy() {}
+    private DowngradingConsistencyRetryPolicy() {
+    }
 
     private RetryDecision maxLikelyToWorkCL(int knownOk) {
-        if (knownOk >= 3)
+        if (knownOk >= 3) {
             return RetryDecision.retry(ConsistencyLevel.THREE);
-        else if (knownOk >= 2)
+        } else if (knownOk >= 2) {
             return RetryDecision.retry(ConsistencyLevel.TWO);
-        else if (knownOk >= 1)
+        } else if (knownOk >= 1) {
             return RetryDecision.retry(ConsistencyLevel.ONE);
-        else
+        } else {
             return RetryDecision.rethrow();
+        }
     }
 
     /**
@@ -93,7 +95,7 @@ public class DowngradingConsistencyRetryPolicy implements RetryPolicy {
      * retrieve, the operation is retried with the initial consistency
      * level. Otherwise, an exception is thrown.
      *
-     * @param statement the original query that timeouted.
+     * @param query the original query that timeouted.
      * @param cl the original consistency level of the read that timeouted.
      * @param requiredResponses the number of responses that were required to
      * achieve the requested consistency level.
@@ -106,21 +108,20 @@ public class DowngradingConsistencyRetryPolicy implements RetryPolicy {
      */
     @Override
     public RetryDecision onReadTimeout(Statement statement, ConsistencyLevel cl, int requiredResponses, int receivedResponses, boolean dataRetrieved, int nbRetry) {
-        if (nbRetry != 0)
+        if (nbRetry != 0) {
             return RetryDecision.rethrow();
-
+        }
         // CAS reads are not all that useful in terms of visibility of the writes since CAS write supports the
         // normal consistency levels on the committing phase. So the main use case for CAS reads is probably for
         // when you've timeouted on a CAS write and want to make sure what happened. Downgrading in that case
         // would be always wrong so we just special case to rethrow.
-        if (cl == ConsistencyLevel.SERIAL || cl == ConsistencyLevel.LOCAL_SERIAL)
+        if ((cl == ConsistencyLevel.SERIAL) || (cl == ConsistencyLevel.LOCAL_SERIAL)) {
             return RetryDecision.rethrow();
-
+        }
         if (receivedResponses < requiredResponses) {
             // Tries the biggest CL that is expected to work
             return maxLikelyToWorkCL(receivedResponses);
         }
-
         return !dataRetrieved ? RetryDecision.retry(cl) : RetryDecision.rethrow();
     }
 
@@ -137,7 +138,7 @@ public class DowngradingConsistencyRetryPolicy implements RetryPolicy {
      * if we know the write has been persisted on at least one replica, we
      * ignore the exception. Otherwise, an exception is thrown.
      *
-     * @param statement the original query that timeouted.
+     * @param query the original query that timeouted.
      * @param cl the original consistency level of the write that timeouted.
      * @param writeType the type of the write that timeouted.
      * @param requiredAcks the number of acknowledgments that were required to
@@ -149,19 +150,19 @@ public class DowngradingConsistencyRetryPolicy implements RetryPolicy {
      */
     @Override
     public RetryDecision onWriteTimeout(Statement statement, ConsistencyLevel cl, WriteType writeType, int requiredAcks, int receivedAcks, int nbRetry) {
-        if (nbRetry != 0)
+        if (nbRetry != 0) {
             return RetryDecision.rethrow();
-
+        }
         switch (writeType) {
-            case SIMPLE:
-            case BATCH:
+            case SIMPLE :
+            case BATCH :
                 // Since we provide atomicity there is no point in retrying
                 return RetryDecision.ignore();
-            case UNLOGGED_BATCH:
+            case UNLOGGED_BATCH :
                 // Since only part of the batch could have been persisted,
                 // retry with whatever consistency should allow to persist all
                 return maxLikelyToWorkCL(receivedAcks);
-            case BATCH_LOG:
+            case BATCH_LOG :
                 return RetryDecision.retry(cl);
         }
         // We want to rethrow on COUNTER and CAS, because in those case "we don't know" and don't want to guess
@@ -176,7 +177,7 @@ public class DowngradingConsistencyRetryPolicy implements RetryPolicy {
      * is know to be alive, the operation is retried at a lower consistency
      * level.
      *
-     * @param statement the original query for which the consistency level cannot
+     * @param query the original query for which the consistency level cannot
      * be achieved.
      * @param cl the original consistency level for the operation.
      * @param requiredReplica the number of replica that should have been
@@ -188,9 +189,9 @@ public class DowngradingConsistencyRetryPolicy implements RetryPolicy {
      */
     @Override
     public RetryDecision onUnavailable(Statement statement, ConsistencyLevel cl, int requiredReplica, int aliveReplica, int nbRetry) {
-        if (nbRetry != 0)
+        if (nbRetry != 0) {
             return RetryDecision.rethrow();
-
+        }
         // Tries the biggest CL that is expected to work
         return maxLikelyToWorkCL(aliveReplica);
     }

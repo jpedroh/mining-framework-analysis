@@ -15,49 +15,42 @@
  */
 package com.datastax.driver.core;
 
+import org.testng.annotations.Test;
 import static com.datastax.driver.core.TestUtils.*;
 import static org.testng.Assert.assertEquals;
-import org.testng.annotations.Test;
+
 
 /**
  * Simple test of the Sessions methods against a one node cluster.
  */
 public class StateListenerTest {
-
     @Test(groups = "long")
     public void listenerTest() throws Throwable {
-
         CCMBridge.CCMCluster c = CCMBridge.buildCluster(1, Cluster.builder());
         Cluster cluster = c.cluster;
-
         try {
             CountingListener listener = new CountingListener();
             cluster.register(listener);
-
             c.cassandraCluster.bootstrapNode(2);
             waitFor(CCMBridge.IP_PREFIX + "2", cluster);
-
             // We sleep slightly before checking the listener because the node is marked UP
             // just before the listeners are called, and since waitFor is based on isUP,
             // it can return *just* before the listener are called.
             Thread.sleep(500);
             assertEquals(listener.adds, 1);
-
             c.cassandraCluster.forceStop(1);
             waitForDown(CCMBridge.IP_PREFIX + "1", cluster);
             Thread.sleep(500);
             assertEquals(listener.downs, 1);
-
             c.cassandraCluster.start(1);
             waitFor(CCMBridge.IP_PREFIX + "1", cluster);
             Thread.sleep(500);
             assertEquals(listener.ups, 1);
-
             c.cassandraCluster.decommissionNode(2);
             waitForDecommission(CCMBridge.IP_PREFIX + "2", cluster);
             Thread.sleep(500);
             assertEquals(listener.removes, 1);
-        } catch (Throwable e) {
+        } catch (java.lang.Throwable e) {
             c.errorOut();
             throw e;
         } finally {
@@ -66,10 +59,12 @@ public class StateListenerTest {
     }
 
     private static class CountingListener implements Host.StateListener {
-
         public int adds;
+
         public int removes;
+
         public int ups;
+
         public int downs;
 
         public void onAdd(Host host) {

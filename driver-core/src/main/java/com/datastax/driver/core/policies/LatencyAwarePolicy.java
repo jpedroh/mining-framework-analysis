@@ -15,17 +15,16 @@
  */
 package com.datastax.driver.core.policies;
 
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicReference;
-
+import com.datastax.driver.core.*;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.*;
 
 /**
  * A wrapper load balancing policy that adds latency awareness to a child policy.
@@ -58,32 +57,29 @@ import com.datastax.driver.core.*;
  * @since 1.0.4
  */
 public class LatencyAwarePolicy implements LoadBalancingPolicy {
-
     private static final Logger logger = LoggerFactory.getLogger(LatencyAwarePolicy.class);
 
     private final LoadBalancingPolicy childPolicy;
+
     private final Tracker latencyTracker;
+
     private final ScheduledExecutorService updaterService = Executors.newSingleThreadScheduledExecutor(threadFactory("LatencyAwarePolicy updater"));
 
     private final double exclusionThreshold;
 
     private final long scale;
+
     private final long retryPeriod;
+
     private final long minMeasure;
 
-    private LatencyAwarePolicy(LoadBalancingPolicy childPolicy,
-                               double exclusionThreshold,
-                               long scale,
-                               long retryPeriod,
-                               long updateRate,
-                               int minMeasure) {
+    private LatencyAwarePolicy(LoadBalancingPolicy childPolicy, double exclusionThreshold, long scale, long retryPeriod, long updateRate, int minMeasure) {
         this.childPolicy = childPolicy;
         this.retryPeriod = retryPeriod;
         this.scale = scale;
         this.latencyTracker = new Tracker();
         this.exclusionThreshold = exclusionThreshold;
         this.minMeasure = minMeasure;
-
         updaterService.scheduleAtFixedRate(new Updater(), updateRate, updateRate, TimeUnit.NANOSECONDS);
     }
 
@@ -100,7 +96,6 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
     }
 
     private class Updater implements Runnable {
-
         private Set<Host> excludedAtLastTick = Collections.<Host>emptySet();
 
         @Override
@@ -108,44 +103,41 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
             try {
                 logger.trace("Updating LatencyAwarePolicy minimum");
                 latencyTracker.updateMin();
-
                 if (logger.isDebugEnabled()) {
-                    /*
-                     * For users to be able to know if the policy potentially needs tuning, we need to provide
-                     * some feedback on on how things evolve. For that, we use the min computation to also check
-                     * which host will be excluded if a query is submitted now and if any host is, we log it (but
-                     * we try to avoid flooding too). This is probably interesting information anyway since it
-                     * gets an idea of which host perform badly.
+                    /* For users to be able to know if the policy potentially needs tuning, we need to provide
+                    some feedback on on how things evolve. For that, we use the min computation to also check
+                    which host will be excluded if a query is submitted now and if any host is, we log it (but
+                    we try to avoid flooding too). This is probably interesting information anyway since it
+                    gets an idea of which host perform badly.
                      */
                     Set<Host> excludedThisTick = new HashSet<Host>();
                     double currentMin = latencyTracker.getMinAverage();
                     for (Map.Entry<Host, Snapshot.Stats> entry : getScoresSnapshot().getAllStats().entrySet()) {
                         Host host = entry.getKey();
                         Snapshot.Stats stats = entry.getValue();
-                        if (stats.getMeasurementsCount() < minMeasure)
+                        if (stats.getMeasurementsCount() < minMeasure) {
                             continue;
-
+                        }
                         if (stats.lastUpdatedSince() > retryPeriod) {
-                            if (excludedAtLastTick.contains(host))
+                            if (excludedAtLastTick.contains(host)) {
                                 logger.debug(String.format("Previously avoided host %s has not be queried since %.3fms: will be reconsidered.", host, inMS(stats.lastUpdatedSince())));
+                            }
                             continue;
                         }
-
-                        if (stats.getLatencyScore() > ((long)(exclusionThreshold * currentMin))) {
+                        if (stats.getLatencyScore() > ((long) (exclusionThreshold * currentMin))) {
                             excludedThisTick.add(host);
-                            if (!excludedAtLastTick.contains(host))
-                                logger.debug(String.format("Host %s has an average latency score of %.3fms, more than %f times more than the minimum %.3fms: will be avoided temporarily.",
-                                                          host, inMS(stats.getLatencyScore()), exclusionThreshold, inMS(currentMin)));
+                            if (!excludedAtLastTick.contains(host)) {
+                                logger.debug(String.format("Host %s has an average latency score of %.3fms, more than %f times more than the minimum %.3fms: will be avoided temporarily.", host, inMS(stats.getLatencyScore()), exclusionThreshold, inMS(currentMin)));
+                            }
                             continue;
                         }
-
                         if (excludedAtLastTick.contains(host)) {
                             logger.debug("Previously avoided host {} average latency has come back within accepted bounds: will be reconsidered.", host);
                         }
                     }
                     excludedAtLastTick = excludedThisTick;
                 }
-            } catch (RuntimeException e) {
+            } catch (java.lang.RuntimeException e) {
                 // An unexpected exception would suppress further execution, so catch, log, but swallow after that.
                 logger.error("Error while updating LatencyAwarePolicy minimum", e);
             }
@@ -194,15 +186,15 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
      * by this iterator, but only only after all non-excluded hosts of the
      * child policy have been returned.
      *
-     * @param loggedKeyspace the currently logged keyspace.
-     * @param statement the statement for which to build the plan.
+     * @param query
+     * 		the query for which to build the plan.
+     * @return the new query plan.
      * @return the new query plan.
      */
     @Override
     public Iterator<Host> newQueryPlan(String loggedKeyspace, Statement statement) {
         final Iterator<Host> childIter = childPolicy.newQueryPlan(loggedKeyspace, statement);
         return new AbstractIterator<Host>() {
-
             private Queue<Host> skipped;
 
             @Override
@@ -212,27 +204,26 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
                 while (childIter.hasNext()) {
                     Host host = childIter.next();
                     TimestampedAverage latency = latencyTracker.latencyOf(host);
-
                     // If we haven't had enough data point yet to have a score, or the last update of the score
                     // is just too old, include the host.
-                    if (min < 0 || latency == null || latency.nbMeasure < minMeasure || (now - latency.timestamp) > retryPeriod)
+                    if ((((min < 0) || (latency == null)) || (latency.nbMeasure < minMeasure)) || ((now - latency.timestamp) > retryPeriod)) {
                         return host;
-
+                    }
                     // If the host latency is within acceptable bound of the faster known host, return
                     // that host. Otherwise, skip it.
-                    if (latency.average <= ((long)(exclusionThreshold * (double)min)))
+                    if (latency.average <= ((long) (exclusionThreshold * ((double) (min))))) {
                         return host;
-
-                    if (skipped == null)
+                    }
+                    if (skipped == null) {
                         skipped = new ArrayDeque<Host>();
+                    }
                     skipped.offer(host);
-                }
-
-                if (skipped != null && !skipped.isEmpty())
+                } 
+                if ((skipped != null) && (!skipped.isEmpty())) {
                     return skipped.poll();
-
+                }
                 return endOfData();
-            };
+            }
         };
     }
 
@@ -290,11 +281,10 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
         }
 
         /**
-         * A map with the stats for all hosts tracked by the {@code
-         * LatencyAwarePolicy} at the time of the snapshot.
+         * A map with the stats for all hosts tracked by the {@code LatencyAwarePolicy} at the time of the snapshot.
          *
          * @return a immutable map with all the stats contained in this
-         * snapshot.
+        snapshot.
          */
         public Map<Host, Stats> getAllStats() {
             return stats;
@@ -303,9 +293,10 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
         /**
          * The {@code Stats} object for a given host.
          *
-         * @param host the host to return the stats of.
+         * @param host
+         * 		the host to return the stats of.
          * @return the {@code Stats} for {@code host} in this snapshot or
-         * {@code null} if the snapshot has not information on {@code host}.
+        {@code null} if the snapshot has not information on {@code host}.
          */
         public Stats getStats(Host host) {
             return stats.get(host);
@@ -316,7 +307,9 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
          */
         public static class Stats {
             private final long lastUpdatedSince;
+
             private final long average;
+
             private final long nbMeasurements;
 
             private Stats(long lastUpdatedSince, long average, long nbMeasurements) {
@@ -330,7 +323,7 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
              * of the snapshot).
              *
              * @return The number of nanoseconds since the last latency update was recorded (at the time
-             * of the snapshot).
+            of the snapshot).
              */
             public long lastUpdatedSince() {
                 return lastUpdatedSince;
@@ -340,7 +333,7 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
              * The latency score for the host this is the stats of at the time of the snapshot.
              *
              * @return the latency score for the host this is the stats of at the time of the snapshot,
-             * or {@code -1L} if not enough measurements have been taken to assign a score.
+            or {@code -1L} if not enough measurements have been taken to assign a score.
              */
             public long getLatencyScore() {
                 return average;
@@ -358,8 +351,8 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
     }
 
     private class Tracker implements LatencyTracker {
-
         private final ConcurrentMap<Host, HostLatencyTracker> latencies = new ConcurrentHashMap<Host, HostLatencyTracker>();
+
         private volatile long cachedMin = -1L;
 
         public void update(Host host, long newLatencyNanos) {
@@ -367,8 +360,9 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
             if (hostTracker == null) {
                 hostTracker = new HostLatencyTracker(scale, (30L * minMeasure) / 100L);
                 HostLatencyTracker old = latencies.putIfAbsent(host, hostTracker);
-                if (old != null)
+                if (old != null) {
                     hostTracker = old;
+                }
             }
             hostTracker.add(newLatencyNanos);
         }
@@ -378,11 +372,13 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
             long now = System.nanoTime();
             for (HostLatencyTracker tracker : latencies.values()) {
                 TimestampedAverage latency = tracker.getCurrentAverage();
-                if (latency != null && latency.average >= 0 && latency.nbMeasure >= minMeasure && (now - latency.timestamp) <= retryPeriod)
+                if ((((latency != null) && (latency.average >= 0)) && (latency.nbMeasure >= minMeasure)) && ((now - latency.timestamp) <= retryPeriod)) {
                     newMin = Math.min(newMin, latency.average);
+                }
             }
-            if (newMin != Long.MAX_VALUE)
+            if (newMin != Long.MAX_VALUE) {
                 cachedMin = newMin;
+            }
         }
 
         public long getMinAverage() {
@@ -396,8 +392,9 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
 
         public Map<Host, TimestampedAverage> currentLatencies() {
             Map<Host, TimestampedAverage> map = new HashMap<Host, TimestampedAverage>(latencies.size());
-            for (Map.Entry<Host, HostLatencyTracker> entry : latencies.entrySet())
+            for (Map.Entry<Host, HostLatencyTracker> entry : latencies.entrySet()) {
                 map.put(entry.getKey(), entry.getValue().getCurrentAverage());
+            }
             return map;
         }
 
@@ -407,9 +404,10 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
     }
 
     private static class TimestampedAverage {
-
         private final long timestamp;
+
         private final long average;
+
         private final long nbMeasure;
 
         TimestampedAverage(long timestamp, long average, long nbMeasure) {
@@ -420,35 +418,36 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
     }
 
     private static class HostLatencyTracker {
-
         private final long thresholdToAccount;
+
         private final double scale;
+
         private final AtomicReference<TimestampedAverage> current = new AtomicReference<TimestampedAverage>();
 
         HostLatencyTracker(long scale, long thresholdToAccount) {
-            this.scale = (double)scale; // We keep in double since that's how we'll use it.
+            this.scale = ((double) (scale));// We keep in double since that's how we'll use it.
+
             this.thresholdToAccount = thresholdToAccount;
         }
 
         public void add(long newLatencyNanos) {
-            TimestampedAverage previous, next;
+            TimestampedAverage previous;
+            TimestampedAverage next;
             do {
                 previous = current.get();
                 next = computeNextAverage(previous, newLatencyNanos);
-            } while (next != null && !current.compareAndSet(previous, next));
+            } while ((next != null) && (!current.compareAndSet(previous, next)) );
         }
 
         private TimestampedAverage computeNextAverage(TimestampedAverage previous, long newLatencyNanos) {
-
             long currentTimestamp = System.nanoTime();
-
-            long nbMeasure = previous == null ? 1 : previous.nbMeasure + 1;
-            if (nbMeasure < thresholdToAccount)
+            long nbMeasure = (previous == null) ? 1 : previous.nbMeasure + 1;
+            if (nbMeasure < thresholdToAccount) {
                 return new TimestampedAverage(currentTimestamp, -1L, nbMeasure);
-
-            if (previous == null || previous.average < 0)
+            }
+            if ((previous == null) || (previous.average < 0)) {
                 return new TimestampedAverage(currentTimestamp, newLatencyNanos, nbMeasure);
-
+            }
             // Note: it's possible for the delay to be 0, in which case newLatencyNanos will basically be
             // discarded. It's fine: nanoTime is precise enough in practice that even if it happens, it
             // will be very rare, and discarding a latency every once in a while is not the end of the world.
@@ -457,15 +456,14 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
             // so while this is almost surely not a problem anymore, there's no reason to break the computation
             // if this even happen.
             long delay = currentTimestamp - previous.timestamp;
-            if (delay <= 0)
+            if (delay <= 0) {
                 return null;
-
-            double scaledDelay = ((double)delay)/scale;
+            }
+            double scaledDelay = ((double) (delay)) / scale;
             // Note: We don't use log1p because we it's quite a bit slower and we don't care about the precision (and since we
             // refuse ridiculously big scales, scaledDelay can't be so low that scaledDelay+1 == 1.0 (due to rounding)).
-            double prevWeight = Math.log(scaledDelay+1) / scaledDelay;
-            long newAverage = (long)((1.0 - prevWeight) * newLatencyNanos + prevWeight * previous.average);
-
+            double prevWeight = Math.log(scaledDelay + 1) / scaledDelay;
+            long newAverage = ((long) (((1.0 - prevWeight) * newLatencyNanos) + (prevWeight * previous.average)));
             return new TimestampedAverage(currentTimestamp, newAverage, nbMeasure);
         }
 
@@ -490,27 +488,35 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
      * @since 1.0.4
      */
     public static class Builder {
-
         private static final double DEFAULT_EXCLUSION_THRESHOLD = 2.0;
+
         private static final long DEFAULT_SCALE = TimeUnit.MILLISECONDS.toNanos(100);
+
         private static final long DEFAULT_RETRY_PERIOD = TimeUnit.SECONDS.toNanos(10);
+
         private static final long DEFAULT_UPDATE_RATE = TimeUnit.MILLISECONDS.toNanos(100);
+
         private static final int DEFAULT_MIN_MEASURE = 50;
 
         private final LoadBalancingPolicy childPolicy;
 
         private double exclusionThreshold = DEFAULT_EXCLUSION_THRESHOLD;
+
         private long scale = DEFAULT_SCALE;
+
         private long retryPeriod = DEFAULT_RETRY_PERIOD;
+
         private long updateRate = DEFAULT_UPDATE_RATE;
+
         private int minMeasure = DEFAULT_MIN_MEASURE;
 
         /**
          * Creates a new latency aware policy builder given the child policy
          * that the resulting policy wraps.
          *
-         * @param childPolicy the load balancing policy to wrap with latency
-         * awareness.
+         * @param childPolicy
+         * 		the load balancing policy to wrap with latency
+         * 		awareness.
          */
         public Builder(LoadBalancingPolicy childPolicy) {
             this.childPolicy = childPolicy;
@@ -527,15 +533,17 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
          * In other words, the resulting policy excludes nodes that are more than
          * twice slower than the fastest node.
          *
-         * @param exclusionThreshold the exclusion threshold to use. Must be
-         * greater or equal to 1.
+         * @param exclusionThreshold
+         * 		the exclusion threshold to use. Must be
+         * 		greater or equal to 1.
          * @return this builder.
-         *
-         * @throws IllegalArgumentException if {@code exclusionThreshold &lt; 1}.
+         * @throws IllegalArgumentException
+         * 		if {@code exclusionThreshold &lt; 1}.
          */
         public Builder withExclusionThreshold(double exclusionThreshold) {
-            if (exclusionThreshold < 1d)
+            if (exclusionThreshold < 1.0) {
                 throw new IllegalArgumentException("Invalid exclusion threshold, must be greater than 1.");
+            }
             this.exclusionThreshold = exclusionThreshold;
             return this;
         }
@@ -549,9 +557,9 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
          * time \(t'\), then the newly calculated average \(avg\) for that host is calculated
          * thusly:
          * \[
-         *   d = \frac{t - t'}{scale} \\
-         *   \alpha = 1 - \left(\frac{\ln(d+1)}{d}\right) \\
-         *   avg = \alpha * l + (1-\alpha) * prev
+         * d = \frac{t - t'}{scale} \\
+         * \alpha = 1 - \left(\frac{\ln(d+1)}{d}\right) \\
+         * avg = \alpha * l + (1-\alpha) * prev
          * \]
          * Typically, with a {@code scale} of 100 milliseconds (the default), if a new
          * latency is measured and the previous measure is 10 millisecond old (so \(d=0.1\)),
@@ -564,15 +572,18 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
          * (hosts are excluded too quickly or not fast enough and tuning the exclusion threshold
          * doesn't help).
          *
-         * @param scale the scale to use.
-         * @param unit the unit of {@code scale}.
+         * @param scale
+         * 		the scale to use.
+         * @param unit
+         * 		the unit of {@code scale}.
          * @return this builder.
-         *
-         * @throws IllegalArgumentException if {@code scale &lte; 0}.
+         * @throws IllegalArgumentException
+         * 		if {@code scale &lte; 0}.
          */
         public Builder withScale(long scale, TimeUnit unit) {
-            if (scale <= 0)
+            if (scale <= 0) {
                 throw new IllegalArgumentException("Invalid scale, must be strictly positive");
+            }
             return this;
         }
 
@@ -587,15 +598,18 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
          * less than {@code retryPeriod}. Since penalized nodes will likely not see their
          * latency updated, this is basically how long the policy will exclude a node.
          *
-         * @param retryPeriod the retry period to use.
-         * @param unit the unit for {@code retryPeriod}.
+         * @param retryPeriod
+         * 		the retry period to use.
+         * @param unit
+         * 		the unit for {@code retryPeriod}.
          * @return this builder.
-         *
-         * @throws IllegalArgumentException if {@code retryPeriod &lt; 0}.
+         * @throws IllegalArgumentException
+         * 		if {@code retryPeriod &lt; 0}.
          */
         public Builder withRetryPeriod(long retryPeriod, TimeUnit unit) {
-            if (retryPeriod < 0)
+            if (retryPeriod < 0) {
                 throw new IllegalArgumentException("Invalid retry period, must be positive");
+            }
             this.retryPeriod = unit.toNanos(retryPeriod);
             return this;
         }
@@ -617,15 +631,18 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
          * reason to use a very slow rate (more than second is probably
          * unnecessarily slow for instance).
          *
-         * @param updateRate the update rate to use.
-         * @param unit the unit for {@code updateRate}.
+         * @param updateRate
+         * 		the update rate to use.
+         * @param unit
+         * 		the unit for {@code updateRate}.
          * @return this builder.
-         *
-         * @throws IllegalArgumentException if {@code updateRate &lte; 0}.
+         * @throws IllegalArgumentException
+         * 		if {@code updateRate &lte; 0}.
          */
         public Builder withUpdateRate(long updateRate, TimeUnit unit) {
-            if (updateRate <= 0)
+            if (updateRate <= 0) {
                 throw new IllegalArgumentException("Invalid update rate value, must be strictly positive");
+            }
             this.updateRate = unit.toNanos(updateRate);
             return this;
         }
@@ -655,14 +672,16 @@ public class LatencyAwarePolicy implements LoadBalancingPolicy {
          * if only to avoid the influence of JVM warm-up on newly restarted
          * nodes.
          *
-         * @param minMeasure the minimum measurements to consider.
+         * @param minMeasure
+         * 		the minimum measurements to consider.
          * @return this builder.
-         *
-         * @throws IllegalArgumentException if {@code minMeasure &lt; 0}.
+         * @throws IllegalArgumentException
+         * 		if {@code minMeasure &lt; 0}.
          */
         public Builder withMininumMeasurements(int minMeasure) {
-            if (minMeasure < 0)
+            if (minMeasure < 0) {
                 throw new IllegalArgumentException("Invalid minimum measurements value, must be positive");
+            }
             this.minMeasure = minMeasure;
             return this;
         }

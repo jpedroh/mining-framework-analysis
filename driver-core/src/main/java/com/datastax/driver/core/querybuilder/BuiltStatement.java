@@ -15,21 +15,25 @@
  */
 package com.datastax.driver.core.querybuilder;
 
+import com.datastax.driver.core.*;
+import com.datastax.driver.core.RegularStatement;
+import com.datastax.driver.core.policies.RetryPolicy;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.datastax.driver.core.*;
-import com.datastax.driver.core.policies.RetryPolicy;
 
 abstract class BuiltStatement extends RegularStatement {
-
     private final List<ColumnMetadata> partitionKey;
+
     private final ByteBuffer[] routingKey;
+
     final String keyspace;
 
     private boolean dirty;
+
     private String cache;
+
     private ByteBuffer[] values;
 
     Boolean isCounterOp;
@@ -37,6 +41,7 @@ abstract class BuiltStatement extends RegularStatement {
     // Whether the user has inputed bind markers. If that's the case, we never generate values as
     // it means the user meant for the statement to be prepared and we shouldn't add our own markers.
     boolean hasBindMarkers;
+
     private boolean forceNoValues;
 
     BuiltStatement(String keyspace) {
@@ -58,38 +63,38 @@ abstract class BuiltStatement extends RegularStatement {
     }
 
     private void maybeRebuildCache() {
-        if (!dirty && cache != null)
+        if ((!dirty) && (cache != null)) {
             return;
-
+        }
         StringBuilder sb;
         values = null;
-
         if (hasBindMarkers || forceNoValues) {
             sb = buildQueryString(null);
         } else {
             List<ByteBuffer> l = new ArrayList<ByteBuffer>();
             sb = buildQueryString(l);
-            if (!l.isEmpty())
+            if (!l.isEmpty()) {
                 values = l.toArray(new ByteBuffer[l.size()]);
+            }
         }
-
         maybeAddSemicolon(sb);
-
         cache = sb.toString();
         dirty = false;
     }
 
     static StringBuilder maybeAddSemicolon(StringBuilder sb) {
-        // Use the same test that String#trim() uses to determine
-        // if a character is a whitespace character.
+            // Use the same test that String#trim() uses to determine
+            // if a character is a whitespace character.
         int l = sb.length();
-        while (l > 0 && sb.charAt(l - 1) <= ' ')
+        while ((l > 0) && (sb.charAt(l - 1) <= ' ')) {
             l -= 1;
-        if (l != sb.length())
+        } 
+        if (l != sb.length()) {
             sb.setLength(l);
-
-        if (l == 0 || sb.charAt(l - 1) != ';')
+        }
+        if ((l == 0) || (sb.charAt(l - 1) != ';')) {
             sb.append(';');
+        }
         return sb;
     }
 
@@ -105,8 +110,9 @@ abstract class BuiltStatement extends RegularStatement {
 
     void checkForBindMarkers(Object value) {
         dirty = true;
-        if (Utils.containsBindMarker(value))
+        if (Utils.containsBindMarker(value)) {
             hasBindMarkers = true;
+        }
     }
 
     void checkForBindMarkers(Utils.Appendeable value) {
@@ -117,9 +123,9 @@ abstract class BuiltStatement extends RegularStatement {
 
     // TODO: Correctly document the InvalidTypeException
     void maybeAddRoutingKey(String name, Object value) {
-        if (routingKey == null || name == null || value == null || value instanceof BindMarker)
+        if ((((routingKey == null) || (name == null)) || (value == null)) || (value instanceof BindMarker)) {
             return;
-
+        }
         for (int i = 0; i < partitionKey.size(); i++) {
             if (name.equals(partitionKey.get(i).getName()) && Utils.isRawValue(value)) {
                 routingKey[i] = partitionKey.get(i).getType().parse(Utils.toRawString(value));
@@ -213,12 +219,11 @@ abstract class BuiltStatement extends RegularStatement {
     /**
      * An utility class to create a BuiltStatement that encapsulate another one.
      */
-    abstract static class ForwardingStatement<T extends BuiltStatement> extends BuiltStatement {
-
+    static abstract class ForwardingStatement<T extends BuiltStatement> extends BuiltStatement {
         T statement;
 
         ForwardingStatement(T statement) {
-            super((String)null);
+            super(((String) (null)));
             this.statement = statement;
         }
 

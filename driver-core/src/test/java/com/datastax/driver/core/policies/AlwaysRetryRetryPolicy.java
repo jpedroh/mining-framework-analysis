@@ -19,11 +19,12 @@ import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.WriteType;
 
-public class AlwaysRetryRetryPolicy implements RetryPolicy {
 
+public class AlwaysRetryRetryPolicy implements RetryPolicy {
     public static final AlwaysRetryRetryPolicy INSTANCE = new AlwaysRetryRetryPolicy();
 
-    private AlwaysRetryRetryPolicy() {}
+    private AlwaysRetryRetryPolicy() {
+    }
 
     public RetryDecision onReadTimeout(Statement statement, ConsistencyLevel cl, int requiredResponses, int receivedResponses, boolean dataRetrieved, int nbRetry) {
         return RetryDecision.retry(ConsistencyLevel.ONE);

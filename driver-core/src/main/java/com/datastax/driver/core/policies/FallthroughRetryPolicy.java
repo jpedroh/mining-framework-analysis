@@ -16,8 +16,9 @@
 package com.datastax.driver.core.policies;
 
 import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.Query;
 import com.datastax.driver.core.WriteType;
+
 
 /**
  * A retry policy that never retry (nor ignore).
@@ -26,15 +27,15 @@ import com.datastax.driver.core.WriteType;
  * If this policy is used, retry will have to be implemented in business code.
  */
 public class FallthroughRetryPolicy implements RetryPolicy {
-
     public static final FallthroughRetryPolicy INSTANCE = new FallthroughRetryPolicy();
 
-    private FallthroughRetryPolicy() {}
+    private FallthroughRetryPolicy() {
+    }
 
     /**
      * Defines whether to retry and at which consistency level on a read timeout.
      *
-     * @param statement the original query that timeouted.
+     * @param query the original query that timeouted.
      * @param cl the original consistency level of the read that timeouted.
      * @param requiredResponses the number of responses that were required to
      * achieve the requested consistency level.
@@ -53,7 +54,7 @@ public class FallthroughRetryPolicy implements RetryPolicy {
     /**
      * Defines whether to retry and at which consistency level on a write timeout.
      *
-     * @param statement the original query that timeouted.
+     * @param query the original query that timeouted.
      * @param cl the original consistency level of the write that timeouted.
      * @param writeType the type of the write that timeouted.
      * @param requiredAcks the number of acknowledgments that were required to
@@ -72,7 +73,7 @@ public class FallthroughRetryPolicy implements RetryPolicy {
      * Defines whether to retry and at which consistency level on an
      * unavailable exception.
      *
-     * @param statement the original query for which the consistency level cannot
+     * @param query the original query for which the consistency level cannot
      * be achieved.
      * @param cl the original consistency level for the operation.
      * @param requiredReplica the number of replica that should have been

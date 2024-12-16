@@ -15,28 +15,36 @@
  */
 package com.datastax.driver.core;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * Describes a Column.
  */
 public class ColumnMetadata {
-
     private static final String COLUMN_NAME = "column_name";
+
     private static final String VALIDATOR = "validator";
+
     private static final String COMPONENT_INDEX = "component_index";
+
     private static final String KIND = "type";
 
-    private static final String INDEX_TYPE = "index_type";
-    private static final String INDEX_OPTIONS = "index_options";
-    private static final String INDEX_NAME = "index_name";
+        private static final String INDEX_TYPE = "index_type";
+
+        private static final String INDEX_OPTIONS = "index_options";
+
+        private static final String INDEX_NAME = "index_name";
+
     private static final String CUSTOM_INDEX_CLASS = "class_name";
 
     private final TableMetadata table;
+
     private final String name;
+
     private final DataType type;
+
     private final IndexMetadata index;
 
     private ColumnMetadata(TableMetadata table, String name, DataType type, Map<String, String> indexColumns) {
@@ -91,10 +99,12 @@ public class ColumnMetadata {
      * Metadata on a column index.
      */
     public static class IndexMetadata {
-
         private final ColumnMetadata column;
+
         private final String name;
-        private final String customClassName; // will be null, unless it's a custom index
+
+        // will be null, unless it's a custom index
+        private final String customClassName;
 
         private IndexMetadata(ColumnMetadata column, String name, String customClassName) {
             this.column = column;
@@ -156,22 +166,20 @@ public class ColumnMetadata {
             String ksName = TableMetadata.escapeId(table.getKeyspace().getName());
             String cfName = TableMetadata.escapeId(table.getName());
             String colName = TableMetadata.escapeId(column.getName());
-            return isCustomIndex()
-                 ? String.format("CREATE CUSTOM INDEX %s ON %s.%s (%s) USING '%s';", name, ksName, cfName, colName, customClassName)
-                 : String.format("CREATE INDEX %s ON %s.%s (%s);", name, ksName, cfName, colName);
+            return isCustomIndex() ? String.format("CREATE CUSTOM INDEX %s ON %s.%s (%s) USING '%s';", name, ksName, cfName, colName, customClassName) : String.format("CREATE INDEX %s ON %s.%s (%s);", name, ksName, cfName, colName);
         }
 
         private static IndexMetadata build(ColumnMetadata column, Map<String, String> indexColumns) {
-            if (indexColumns.isEmpty())
+            if (indexColumns.isEmpty()) {
                 return null;
-
+            }
             String type = indexColumns.get(INDEX_TYPE);
-            if (type == null)
+            if (type == null) {
                 return null;
-
-            if (!type.equalsIgnoreCase("CUSTOM") || !indexColumns.containsKey(INDEX_OPTIONS))
+            }
+            if ((!type.equalsIgnoreCase("CUSTOM")) || (!indexColumns.containsKey(INDEX_OPTIONS))) {
                 return new IndexMetadata(column, indexColumns.get(INDEX_NAME), null);
-
+            }
             Map<String, String> indexOptions = TableMetadata.fromJsonMap(indexColumns.get(INDEX_OPTIONS));
             return new IndexMetadata(column, indexColumns.get(INDEX_NAME), indexOptions.get(CUSTOM_INDEX_CLASS));
         }
@@ -179,18 +187,27 @@ public class ColumnMetadata {
 
     @Override
     public String toString() {
-        return TableMetadata.escapeId(name) + " " + type;
+        return (TableMetadata.escapeId(name) + " ") + type;
     }
 
     // Temporary class that is used to make building the schema easier. Not meant to be
     // exposed publicly at all.
     static class Raw {
-        public enum Kind { PARTITION_KEY, CLUSTERING_KEY, REGULAR, COMPACT_VALUE }
+        public enum Kind {
+
+            PARTITION_KEY,
+            CLUSTERING_KEY,
+            REGULAR,
+            COMPACT_VALUE;}
 
         public final String name;
+
         public final Kind kind;
+
         public final int componentIndex;
+
         public final DataType dataType;
+
         public final boolean isReversed;
 
         public final Map<String, String> indexColumns = new HashMap<String, String>();
@@ -205,18 +222,17 @@ public class ColumnMetadata {
 
         static Raw fromRow(Row row) {
             String name = row.getString(COLUMN_NAME);
-            Kind kind = row.isNull(KIND) ? Kind.REGULAR : Enum.valueOf(Kind.class, row.getString(KIND).toUpperCase());
-            int componentIndex = row.isNull(COMPONENT_INDEX) ? 0 : row.getInt(COMPONENT_INDEX);
+            Kind kind = (row.isNull(KIND)) ? Kind.REGULAR : Enum.valueOf(ColumnMetadata.Raw.Kind.class, row.getString(KIND).toUpperCase());
+            int componentIndex = (row.isNull(COMPONENT_INDEX)) ? 0 : row.getInt(COMPONENT_INDEX);
             String validatorStr = row.getString(VALIDATOR);
             boolean reversed = CassandraTypeParser.isReversed(validatorStr);
             DataType dataType = CassandraTypeParser.parseOne(validatorStr);
-
             Raw c = new Raw(name, kind, componentIndex, dataType, reversed);
-
-            for (String str : Arrays.asList(INDEX_TYPE, INDEX_NAME, INDEX_OPTIONS))
-                if (!row.isNull(str))
+            for (String str : Arrays.asList(INDEX_TYPE, INDEX_NAME, INDEX_OPTIONS)) {
+                if (!row.isNull(str)) {
                     c.indexColumns.put(str, row.getString(str));
-
+                }
+            }
             return c;
         }
     }

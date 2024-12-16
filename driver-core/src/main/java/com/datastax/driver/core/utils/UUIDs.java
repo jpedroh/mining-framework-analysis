@@ -15,6 +15,7 @@
  */
 package com.datastax.driver.core.utils;
 
+import com.google.common.base.Charsets;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -24,32 +25,33 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.google.common.base.Charsets;
 
 /**
  * Utility methods to work with UUID and most specifically with time-based ones
  * (version 1).
  */
 public final class UUIDs {
-
-    private UUIDs() {};
+    private UUIDs() {
+    }
 
     // http://www.ietf.org/rfc/rfc4122.txt
+    // http://www.ietf.org/rfc/rfc4122.txt
     private static final long START_EPOCH = makeEpoch();
+
     private static final long CLOCK_SEQ_AND_NODE = makeClockSeqAndNode();
 
-    /*
-     * The min and max possible lsb for a UUID.
-     * Note that his is not 0 and all 1's because Cassandra TimeUUIDType
-     * compares the lsb parts as a signed byte array comparison. So the min
-     * value is 8 times -128 and the max is 8 times +127.
-     *
-     * Note that we ignore the uuid variant (namely, MIN_CLOCK_SEQ_AND_NODE
-     * have variant 2 as it should, but MAX_CLOCK_SEQ_AND_NODE have variant 0)
-     * because I don't trust all uuid implementation to have correctly set
-     * those (pycassa don't always for instance).
+    /* The min and max possible lsb for a UUID.
+    Note that his is not 0 and all 1's because Cassandra TimeUUIDType
+    compares the lsb parts as a signed byte array comparison. So the min
+    value is 8 times -128 and the max is 8 times +127.
+
+    Note that we ignore the uuid variant (namely, MIN_CLOCK_SEQ_AND_NODE
+    have variant 2 as it should, but MAX_CLOCK_SEQ_AND_NODE have variant 0)
+    because I don't trust all uuid implementation to have correctly set
+    those (pycassa don't always for instance).
      */
     private static final long MIN_CLOCK_SEQ_AND_NODE = 0x8080808080808080L;
+
     private static final long MAX_CLOCK_SEQ_AND_NODE = 0x7f7f7f7f7f7f7f7fL;
 
     private static final AtomicLong lastTimestamp = new AtomicLong(0L);

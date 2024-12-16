@@ -16,8 +16,9 @@
 package com.datastax.driver.core.policies;
 
 import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.Query;
 import com.datastax.driver.core.WriteType;
+
 
 /**
  * The default retry policy.
@@ -35,10 +36,10 @@ import com.datastax.driver.core.WriteType;
  * like {@link DowngradingConsistencyRetryPolicy}.
  */
 public class DefaultRetryPolicy implements RetryPolicy {
-
     public static final DefaultRetryPolicy INSTANCE = new DefaultRetryPolicy();
 
-    private DefaultRetryPolicy() {}
+    private DefaultRetryPolicy() {
+    }
 
     /**
      * Defines whether to retry and at which consistency level on a read timeout.
@@ -52,7 +53,7 @@ public class DefaultRetryPolicy implements RetryPolicy {
      * timeout the dead replica will likely have been detected as dead and
      * the retry has a high change of success.
      *
-     * @param statement the original query that timeouted.
+     * @param query the original query that timeouted.
      * @param cl the original consistency level of the read that timeouted.
      * @param requiredResponses the number of responses that were required to
      * achieve the requested consistency level.
@@ -66,10 +67,10 @@ public class DefaultRetryPolicy implements RetryPolicy {
      */
     @Override
     public RetryDecision onReadTimeout(Statement statement, ConsistencyLevel cl, int requiredResponses, int receivedResponses, boolean dataRetrieved, int nbRetry) {
-        if (nbRetry != 0)
+        if (nbRetry != 0) {
             return RetryDecision.rethrow();
-
-        return receivedResponses >= requiredResponses && !dataRetrieved ? RetryDecision.retry(cl) : RetryDecision.rethrow();
+        }
+        return (receivedResponses >= requiredResponses) && (!dataRetrieved) ? RetryDecision.retry(cl) : RetryDecision.rethrow();
     }
 
     /**
@@ -85,7 +86,7 @@ public class DefaultRetryPolicy implements RetryPolicy {
      * nodes will likely have been detected as dead and the retry has thus a
      * high change of success.
      *
-     * @param statement the original query that timeouted.
+     * @param query the original query that timeouted.
      * @param cl the original consistency level of the write that timeouted.
      * @param writeType the type of the write that timeouted.
      * @param requiredAcks the number of acknowledgments that were required to
@@ -98,9 +99,9 @@ public class DefaultRetryPolicy implements RetryPolicy {
      */
     @Override
     public RetryDecision onWriteTimeout(Statement statement, ConsistencyLevel cl, WriteType writeType, int requiredAcks, int receivedAcks, int nbRetry) {
-        if (nbRetry != 0)
+        if (nbRetry != 0) {
             return RetryDecision.rethrow();
-
+        }
         // If the batch log write failed, retry the operation as this might just be we were unlucky at picking candidates
         return writeType == WriteType.BATCH_LOG ? RetryDecision.retry(cl) : RetryDecision.rethrow();
     }
@@ -112,7 +113,7 @@ public class DefaultRetryPolicy implements RetryPolicy {
      * This method never retries as a retry on an unavailable exception
      * using the same consistency level has almost no change of success.
      *
-     * @param statement the original query for which the consistency level cannot
+     * @param query the original query for which the consistency level cannot
      * be achieved.
      * @param cl the original consistency level for the operation.
      * @param requiredReplica the number of replica that should have been

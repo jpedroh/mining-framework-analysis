@@ -15,63 +15,64 @@
  */
 package com.datastax.driver.core;
 
+import com.datastax.driver.core.exceptions.DriverInternalError;
+import com.datastax.driver.core.exceptions.InvalidTypeException;
+import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.*;
-
-import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import org.jboss.netty.buffer.ChannelBuffer;
 
-import com.datastax.driver.core.exceptions.DriverInternalError;
-import com.datastax.driver.core.exceptions.InvalidTypeException;
 
 /**
  * Data types supported by cassandra.
  */
 public class DataType {
-
     /**
      * The CQL type name.
      */
     public enum Name {
 
-        ASCII     (1,  String.class),
-        BIGINT    (2,  Long.class),
-        BLOB      (3,  ByteBuffer.class),
-        BOOLEAN   (4,  Boolean.class),
-        COUNTER   (5,  Long.class),
-        DECIMAL   (6,  BigDecimal.class),
-        DOUBLE    (7,  Double.class),
-        FLOAT     (8,  Float.class),
-        INET      (16, InetAddress.class),
-        INT       (9,  Integer.class),
-        TEXT      (10, String.class),
-        TIMESTAMP (11, Date.class),
-        UUID      (12, UUID.class),
-        VARCHAR   (13, String.class),
-        VARINT    (14, BigInteger.class),
-        TIMEUUID  (15, UUID.class),
-        LIST      (32, List.class),
-        SET       (34, Set.class),
-        MAP       (33, Map.class),
-        CUSTOM    (0,  ByteBuffer.class);
-
+        ASCII(1, java.lang.String.class),
+        BIGINT(2, java.lang.Long.class),
+        BLOB(3, ByteBuffer.class),
+        BOOLEAN(4, java.lang.Boolean.class),
+        COUNTER(5, java.lang.Long.class),
+        DECIMAL(6, BigDecimal.class),
+        DOUBLE(7, java.lang.Double.class),
+        FLOAT(8, java.lang.Float.class),
+        INET(16, InetAddress.class),
+        INT(9, java.lang.Integer.class),
+        TEXT(10, java.lang.String.class),
+        TIMESTAMP(11, Date.class),
+        UUID(12, UUID.class),
+        VARCHAR(13, java.lang.String.class),
+        VARINT(14, BigInteger.class),
+        TIMEUUID(15, UUID.class),
+        LIST(32, List.class),
+        SET(34, Set.class),
+        MAP(33, Map.class),
+        CUSTOM(0, ByteBuffer.class);
         final int protocolId;
+
         final Class<?> javaType;
 
         private static final Name[] nameToIds;
+
         static {
             int maxCode = -1;
-            for (Name name : Name.values())
+            for (Name name : Name.values()) {
                 maxCode = Math.max(maxCode, name.protocolId);
+            }
             nameToIds = new Name[maxCode + 1];
             for (Name name : Name.values()) {
-                if (nameToIds[name.protocolId] != null)
+                if (nameToIds[name.protocolId] != null) {
                     throw new IllegalStateException("Duplicate Id");
+                }
                 nameToIds[name.protocolId] = name;
             }
         }
@@ -146,17 +147,23 @@ public class DataType {
     }
 
     private final DataType.Name name;
+
     private final List<DataType> typeArguments;
+
     private final String customClassName;
+
     private final TypeCodec<?> codec;
 
-    private static final Map<Name, DataType> primitiveTypeMap = new EnumMap<Name, DataType>(Name.class);
+    private static final Map<Name, DataType> primitiveTypeMap = new EnumMap<Name, DataType>(DataType.Name.class);
+
     static {
         for (Name name : Name.values()) {
-            if (!name.isCollection() && name != Name.CUSTOM)
+            if ((!name.isCollection()) && (name != Name.CUSTOM)) {
                 primitiveTypeMap.put(name, new DataType(name, Collections.<DataType>emptyList(), TypeCodec.createFor(name)));
+            }
         }
     }
+
     private static final Set<DataType> primitiveTypeSet = ImmutableSet.copyOf(primitiveTypeMap.values());
 
     private DataType(DataType.Name name, List<DataType> typeArguments, TypeCodec<?> codec) {
@@ -382,12 +389,14 @@ public class DataType {
      * <p>
      * The use of custom types is rarely useful and is thus not encouraged.
      *
-     * @param typeClassName the server-side fully qualified class name for the type.
+     * @param typeClassName
+     * 		the server-side class name for the type.
      * @return the custom type for {@code typeClassName}.
      */
     public static DataType custom(String typeClassName) {
-        if (typeClassName == null)
+        if (typeClassName == null) {
             throw new NullPointerException();
+        }
         return new DataType(Name.CUSTOM, Collections.<DataType>emptyList(), typeClassName, TypeCodec.createFor(Name.CUSTOM));
     }
 
@@ -424,8 +433,8 @@ public class DataType {
     /**
      * Returns the server-side class name for a custom type.
      *
-     * @return the server-side fully qualified class name for a custom type or
-     * {@code null} for any other type.
+     * @return the server-side class name for a custom type or {@code null}
+     * for any other type.
      */
     public String getCustomTypeClassName() {
         return customClassName;
@@ -438,21 +447,21 @@ public class DataType {
      * Please note that currently, parsing collections is not supported and will
      * throw an {@code InvalidTypeException}.
      *
-     * @param value the value to parse.
+     * @param value
+     * 		the value to parse.
      * @return the binary representation of {@code value}.
-     *
-     * @throws InvalidTypeException if {@code value} is not a valid string
-     * representation for this type. Please note that values for custom types
-     * can never be parsed and will always return this exception.
+     * @throws InvalidTypeException
+     * 		if {@code value} is not a valid string
+     * 		representation for this type. Please note that values for custom types
+     * 		can never be parsed and will always return this exception.
      */
     public ByteBuffer parse(String value) {
-        if (name == Name.CUSTOM)
-            throw new InvalidTypeException(String.format("Cannot parse '%s' as value of custom type of class '%s' "
-                                                       + "(values for custom type cannot be parse and must be inputed as bytes directly)", value, customClassName));
-
-        if (name.isCollection())
+        if (name == Name.CUSTOM) {
+            throw new InvalidTypeException(String.format("Cannot parse '%s' as value of custom type of class '%s' " + "(values for custom type cannot be parse and must be inputed as bytes directly)", value, customClassName));
+        }
+        if (name.isCollection()) {
             throw new InvalidTypeException(String.format("Cannot parse value as %s, parsing collections is not currently supported", name));
-
+        }
         return codec().serialize(codec.parse(value));
     }
 
@@ -504,12 +513,12 @@ public class DataType {
     public ByteBuffer serialize(Object value) {
         Class<?> providedClass = value.getClass();
         Class<?> expectedClass = asJavaClass();
-        if (!expectedClass.isAssignableFrom(providedClass))
+        if (!expectedClass.isAssignableFrom(providedClass)) {
             throw new InvalidTypeException(String.format("Invalid value for CQL type %s, expecting %s but %s provided", toString(), expectedClass, providedClass));
-
+        }
         try {
             return codec().serialize(value);
-        } catch (ClassCastException e) {
+        } catch (java.lang.ClassCastException e) {
             // With collections, the element type has not been checked, so it can throw
             throw new InvalidTypeException("Invalid type for collection element: " + e.getMessage());
         }
@@ -557,13 +566,13 @@ public class DataType {
      * by {@link DataType#asJavaClass}.
      */
     public static ByteBuffer serializeValue(Object value) {
-        if (value == null)
+        if (value == null) {
             return null;
-
+        }
         DataType dt = TypeCodec.getDataTypeFor(value);
-        if (dt == null)
+        if (dt == null) {
             throw new IllegalArgumentException(String.format("Value of type %s does not correspond to any CQL3 type", value.getClass()));
-
+        }
         try {
             return dt.serialize(value);
         } catch (InvalidTypeException e) {

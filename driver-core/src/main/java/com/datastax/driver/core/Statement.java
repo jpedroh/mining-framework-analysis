@@ -15,9 +15,9 @@
  */
 package com.datastax.driver.core;
 
+import com.datastax.driver.core.policies.RetryPolicy;
 import java.nio.ByteBuffer;
 
-import com.datastax.driver.core.policies.RetryPolicy;
 
 /**
  * An executable query.
@@ -27,7 +27,6 @@ import com.datastax.driver.core.policies.RetryPolicy;
  * whether to trace the query, ...).
  */
 public abstract class Statement {
-
     // An exception to the RegularStatement, BoundStatement or BatchStatement rule above. This is
     // used when preparing a statement and for other internal queries. Do not expose publicly.
     static final Statement DEFAULT = new Statement() {
@@ -39,14 +38,18 @@ public abstract class Statement {
     };
 
     private volatile ConsistencyLevel consistency;
+
     private volatile ConsistencyLevel serialConsistency;
+
     private volatile boolean traceQuery;
+
     private volatile int fetchSize;
 
     private volatile RetryPolicy retryPolicy;
 
     // We don't want to expose the constructor, because the code rely on this being only subclassed RegularStatement, BoundStatement and BatchStatement
-    Statement() {}
+    Statement() {
+    }
 
     /**
      * Sets the consistency level for the query.
@@ -166,6 +169,12 @@ public abstract class Statement {
     public abstract ByteBuffer getRoutingKey();
 
     /**
+     * Creates a new Statement.
+     */
+    protected Statement() {
+    }
+
+    /**
      * Returns the keyspace this query operates on.
      * <p>
      * Note that not all query specify on which keyspace they operate on, and
@@ -181,7 +190,7 @@ public abstract class Statement {
      * return {@code null} (or even a bogus keyspace name) will never cause the
      * query to fail.
      *
-     * @return the keyspace this query operate on if relevant or {@code null}.
+     * @return a valid CQL query string.
      */
     public abstract String getKeyspace();
 

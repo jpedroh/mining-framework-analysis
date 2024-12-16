@@ -21,20 +21,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+
 /**
  * Describes a keyspace defined in this cluster.
  */
 public class KeyspaceMetadata {
-
     public static final String KS_NAME           = "keyspace_name";
+
     private static final String DURABLE_WRITES   = "durable_writes";
+
     private static final String STRATEGY_CLASS   = "strategy_class";
+
     private static final String STRATEGY_OPTIONS = "strategy_options";
 
     private final String name;
+
     private final boolean durableWrites;
 
     private final ReplicationStrategy strategy;
+
     private final Map<String, String> replication;
 
     private final Map<String, TableMetadata> tables = new ConcurrentHashMap<String, TableMetadata>();
@@ -47,14 +52,11 @@ public class KeyspaceMetadata {
     }
 
     static KeyspaceMetadata build(Row row) {
-
         String name = row.getString(KS_NAME);
         boolean durableWrites = row.getBool(DURABLE_WRITES);
-
         Map<String, String> replicationOptions = new HashMap<String, String>();
         replicationOptions.put("class", row.getString(STRATEGY_CLASS));
         replicationOptions.putAll(TableMetadata.fromJsonMap(row.getString(STRATEGY_OPTIONS)));
-
         return new KeyspaceMetadata(name, durableWrites, replicationOptions);
     }
 
@@ -122,12 +124,10 @@ public class KeyspaceMetadata {
      */
     public String exportAsString() {
         StringBuilder sb = new StringBuilder();
-
         sb.append(asCQLQuery()).append("\n");
-
-        for (TableMetadata tm : tables.values())
+        for (TableMetadata tm : tables.values()) {
             sb.append("\n").append(tm.exportAsString()).append("\n");
-
+        }
         return sb.toString();
     }
 

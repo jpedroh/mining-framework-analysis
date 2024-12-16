@@ -15,15 +15,17 @@
  */
 package com.datastax.driver.core;
 
-import org.testng.annotations.Test;
-
 import com.datastax.driver.core.exceptions.*;
+import org.testng.annotations.Test;
+import static com.datastax.driver.core.TestUtils.waitForDown;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 
 /**
  * Tests Exception classes with seperate clusters per test, when applicable
  */
 public class ExceptionsTest {
-
     /**
      * Tests the AlreadyExistsException.
      * Create a keyspace twice and a table twice.
@@ -36,18 +38,11 @@ public class ExceptionsTest {
         try {
             String keyspace = "TestKeyspace";
             String table = "TestTable";
-
-            String[] cqlCommands = new String[]{
-                String.format(TestUtils.CREATE_KEYSPACE_SIMPLE_FORMAT, keyspace, 1),
-                "USE " + keyspace,
-                String.format(TestUtils.CREATE_TABLE_SIMPLE_FORMAT, table)
-            };
-
+            String[] cqlCommands = new String[]{ String.format(TestUtils.CREATE_KEYSPACE_SIMPLE_FORMAT, keyspace, 1), "USE " + keyspace, String.format(TestUtils.CREATE_TABLE_SIMPLE_FORMAT, table) };
             // Create the schema once
             c.session.execute(cqlCommands[0]);
             c.session.execute(cqlCommands[1]);
             c.session.execute(cqlCommands[2]);
-
             // Try creating the keyspace again
             try {
                 c.session.execute(cqlCommands[0]);
@@ -58,9 +53,7 @@ public class ExceptionsTest {
                 assertEquals(e.getTable(), null);
                 assertEquals(e.wasTableCreation(), false);
             }
-
             c.session.execute(cqlCommands[1]);
-
             // Try creating the table again
             try {
                 c.session.execute(cqlCommands[2]);
@@ -70,7 +63,7 @@ public class ExceptionsTest {
                 assertEquals(e.getTable(), table.toLowerCase());
                 assertEquals(e.wasTableCreation(), true);
             }
-        } catch (Throwable e) {
+        } catch (java.lang.Throwable e) {
             throw e;
         } finally {
             c.discard();
@@ -84,7 +77,6 @@ public class ExceptionsTest {
     @Test(groups = "unit")
     public void driverInternalError() throws Exception {
         String errorMessage = "Test Message";
-
         try {
             throw new DriverInternalError(errorMessage);
         } catch (DriverInternalError e1) {
@@ -92,8 +84,7 @@ public class ExceptionsTest {
                 throw new DriverInternalError(e1);
             } catch (DriverInternalError e2) {
                 assertTrue(e2.getMessage().contains(errorMessage));
-
-                DriverInternalError copy = (DriverInternalError) e2.copy();
+                DriverInternalError copy = ((DriverInternalError) (e2.copy()));
                 assertEquals(copy.getMessage(), e2.getMessage());
             }
         }
@@ -106,7 +97,6 @@ public class ExceptionsTest {
     @Test(groups = "unit")
     public void invalidConfigurationInQueryException() throws Exception {
         String errorMessage = "Test Message";
-
         try {
             throw new InvalidConfigurationInQueryException(errorMessage);
         } catch (InvalidConfigurationInQueryException e) {
@@ -121,13 +111,11 @@ public class ExceptionsTest {
     @Test(groups = "unit")
     public void invalidQueryException() throws Exception {
         String errorMessage = "Test Message";
-
         try {
             throw new InvalidQueryException(errorMessage);
         } catch (InvalidQueryException e) {
             assertEquals(e.getMessage(), errorMessage);
-
-            InvalidQueryException copy = (InvalidQueryException) e.copy();
+            InvalidQueryException copy = ((InvalidQueryException) (e.copy()));
             assertEquals(copy.getMessage(), e.getMessage());
         }
     }
@@ -139,13 +127,11 @@ public class ExceptionsTest {
     @Test(groups = "unit")
     public void invalidTypeException() throws Exception {
         String errorMessage = "Test Message";
-
         try {
             throw new InvalidTypeException(errorMessage);
         } catch (InvalidTypeException e) {
             assertEquals(e.getMessage(), errorMessage);
-
-            InvalidTypeException copy = (InvalidTypeException) e.copy();
+            InvalidTypeException copy = ((InvalidTypeException) (e.copy()));
             assertEquals(copy.getMessage(), e.getMessage());
         }
     }
@@ -162,8 +148,7 @@ public class ExceptionsTest {
         } catch (NoHostAvailableException e) {
             assertEquals(e.getErrors().size(), 1);
             assertTrue(e.getErrors().values().iterator().next().toString().contains("[/255.255.255.255] Cannot connect"));
-
-            NoHostAvailableException copy = (NoHostAvailableException) e.copy();
+            NoHostAvailableException copy = ((NoHostAvailableException) (e.copy()));
             assertEquals(copy.getMessage(), e.getMessage());
             assertEquals(copy.getErrors(), e.getErrors());
         }
@@ -184,28 +169,24 @@ public class ExceptionsTest {
             String table = "TestTable";
             int replicationFactor = 3;
             String key = "1";
-
             c.session.execute(String.format(TestUtils.CREATE_KEYSPACE_SIMPLE_FORMAT, keyspace, replicationFactor));
             c.session.execute("USE " + keyspace);
             c.session.execute(String.format(TestUtils.CREATE_TABLE_SIMPLE_FORMAT, table));
-
-            c.session.execute(new SimpleStatement(String.format(TestUtils.INSERT_FORMAT, table, key, "foo", 42, 24.03f)).setConsistencyLevel(ConsistencyLevel.ALL));
+            c.session.execute(new SimpleStatement(String.format(TestUtils.INSERT_FORMAT, table, key, "foo", 42, 24.03F)).setConsistencyLevel(ConsistencyLevel.ALL));
             c.session.execute(new SimpleStatement(String.format(TestUtils.SELECT_ALL_FORMAT, table)).setConsistencyLevel(ConsistencyLevel.ALL));
-
             c.cassandraCluster.forceStop(2);
-            try{
+            try {
                 c.session.execute(new SimpleStatement(String.format(TestUtils.SELECT_ALL_FORMAT, table)).setConsistencyLevel(ConsistencyLevel.ALL));
             } catch (ReadTimeoutException e) {
                 assertEquals(e.getConsistencyLevel(), ConsistencyLevel.ALL);
                 assertEquals(e.getReceivedAcknowledgements(), 2);
                 assertEquals(e.getRequiredAcknowledgements(), 3);
                 assertEquals(e.wasDataRetrieved(), true);
-
-                ReadTimeoutException copy = (ReadTimeoutException) e.copy();
+                ReadTimeoutException copy = ((ReadTimeoutException) (e.copy()));
                 assertEquals(copy.getMessage(), e.getMessage());
                 assertEquals(copy.wasDataRetrieved(), e.wasDataRetrieved());
             }
-        } catch (Throwable e) {
+        } catch (java.lang.Throwable e) {
             throw e;
         } finally {
             c.discard();
@@ -219,13 +200,11 @@ public class ExceptionsTest {
     @Test(groups = "unit")
     public void syntaxError() throws Exception {
         String errorMessage = "Test Message";
-
         try {
             throw new SyntaxError(errorMessage);
         } catch (SyntaxError e) {
             assertEquals(e.getMessage(), errorMessage);
-
-            SyntaxError copy = (SyntaxError) e.copy();
+            SyntaxError copy = ((SyntaxError) (e.copy()));
             assertEquals(copy.getMessage(), e.getMessage());
         }
     }
@@ -237,13 +216,11 @@ public class ExceptionsTest {
     @Test(groups = "unit")
     public void traceRetrievalException() throws Exception {
         String errorMessage = "Test Message";
-
         try {
             throw new TraceRetrievalException(errorMessage);
         } catch (TraceRetrievalException e) {
             assertEquals(e.getMessage(), errorMessage);
-
-            TraceRetrievalException copy = (TraceRetrievalException) e.copy();
+            TraceRetrievalException copy = ((TraceRetrievalException) (e.copy()));
             assertEquals(copy.getMessage(), e.getMessage());
         }
     }
@@ -255,13 +232,11 @@ public class ExceptionsTest {
     @Test(groups = "unit")
     public void truncateException() throws Exception {
         String errorMessage = "Test Message";
-
         try {
             throw new TruncateException(errorMessage);
         } catch (TruncateException e) {
             assertEquals(e.getMessage(), errorMessage);
-
-            TruncateException copy = (TruncateException) e.copy();
+            TruncateException copy = ((TruncateException) (e.copy()));
             assertEquals(copy.getMessage(), e.getMessage());
         }
     }
@@ -273,13 +248,11 @@ public class ExceptionsTest {
     @Test(groups = "unit")
     public void unauthorizedException() throws Exception {
         String errorMessage = "Test Message";
-
         try {
             throw new UnauthorizedException(errorMessage);
         } catch (UnauthorizedException e) {
             assertEquals(e.getMessage(), errorMessage);
-
-            UnauthorizedException copy = (UnauthorizedException) e.copy();
+            UnauthorizedException copy = ((UnauthorizedException) (e.copy()));
             assertEquals(copy.getMessage(), e.getMessage());
         }
     }
@@ -300,19 +273,14 @@ public class ExceptionsTest {
             String table = "TestTable";
             int replicationFactor = 3;
             String key = "1";
-
             c.session.execute(String.format(TestUtils.CREATE_KEYSPACE_SIMPLE_FORMAT, keyspace, replicationFactor));
             c.session.execute("USE " + keyspace);
             c.session.execute(String.format(TestUtils.CREATE_TABLE_SIMPLE_FORMAT, table));
-
-            c.session.execute(new SimpleStatement(String.format(TestUtils.INSERT_FORMAT, table, key, "foo", 42, 24.03f)).setConsistencyLevel(ConsistencyLevel.ALL));
+            c.session.execute(new SimpleStatement(String.format(TestUtils.INSERT_FORMAT, table, key, "foo", 42, 24.03F)).setConsistencyLevel(ConsistencyLevel.ALL));
             c.session.execute(new SimpleStatement(String.format(TestUtils.SELECT_ALL_FORMAT, table)).setConsistencyLevel(ConsistencyLevel.ALL));
-
             c.cassandraCluster.stop(2);
-
             waitForDown(CCMBridge.IP_PREFIX + "2", c.cluster);
-
-            try{
+            try {
                 c.session.execute(new SimpleStatement(String.format(TestUtils.SELECT_ALL_FORMAT, table)).setConsistencyLevel(ConsistencyLevel.ALL));
             } catch (UnavailableException e) {
                 String expectedError = String.format("Not enough replica available for query at consistency %s (%d required but only %d alive)", "ALL", 3, 2);
@@ -321,9 +289,8 @@ public class ExceptionsTest {
                 assertEquals(e.getRequiredReplicas(), replicationFactor);
                 assertEquals(e.getAliveReplicas(), replicationFactor - 1);
             }
-
-            try{
-                c.session.execute(new SimpleStatement(String.format(TestUtils.INSERT_FORMAT, table, key, "foo", 42, 24.03f)).setConsistencyLevel(ConsistencyLevel.ALL));
+            try {
+                c.session.execute(new SimpleStatement(String.format(TestUtils.INSERT_FORMAT, table, key, "foo", 42, 24.03F)).setConsistencyLevel(ConsistencyLevel.ALL));
             } catch (UnavailableException e) {
                 String expectedError = String.format("Not enough replica available for query at consistency %s (%d required but only %d alive)", "ALL", 3, 2);
                 assertEquals(e.getMessage(), expectedError);
@@ -331,7 +298,7 @@ public class ExceptionsTest {
                 assertEquals(e.getRequiredReplicas(), replicationFactor);
                 assertEquals(e.getAliveReplicas(), replicationFactor - 1);
             }
-        } catch (Throwable e) {
+        } catch (java.lang.Throwable e) {
             throw e;
         } finally {
             c.discard();
@@ -353,24 +320,21 @@ public class ExceptionsTest {
             String table = "TestTable";
             int replicationFactor = 3;
             String key = "1";
-
             c.session.execute(String.format(TestUtils.CREATE_KEYSPACE_SIMPLE_FORMAT, keyspace, replicationFactor));
             c.session.execute("USE " + keyspace);
             c.session.execute(String.format(TestUtils.CREATE_TABLE_SIMPLE_FORMAT, table));
-
-            c.session.execute(new SimpleStatement(String.format(TestUtils.INSERT_FORMAT, table, key, "foo", 42, 24.03f)).setConsistencyLevel(ConsistencyLevel.ALL));
+            c.session.execute(new SimpleStatement(String.format(TestUtils.INSERT_FORMAT, table, key, "foo", 42, 24.03F)).setConsistencyLevel(ConsistencyLevel.ALL));
             c.session.execute(new SimpleStatement(String.format(TestUtils.SELECT_ALL_FORMAT, table)).setConsistencyLevel(ConsistencyLevel.ALL));
-
             c.cassandraCluster.forceStop(2);
-            try{
-                c.session.execute(new SimpleStatement(String.format(TestUtils.INSERT_FORMAT, table, key, "foo", 42, 24.03f)).setConsistencyLevel(ConsistencyLevel.ALL));
+            try {
+                c.session.execute(new SimpleStatement(String.format(TestUtils.INSERT_FORMAT, table, key, "foo", 42, 24.03F)).setConsistencyLevel(ConsistencyLevel.ALL));
             } catch (WriteTimeoutException e) {
                 assertEquals(e.getConsistencyLevel(), ConsistencyLevel.ALL);
                 assertEquals(e.getReceivedAcknowledgements(), 2);
                 assertEquals(e.getRequiredAcknowledgements(), 3);
                 assertEquals(e.getWriteType(), WriteType.SIMPLE);
             }
-        } catch (Throwable e) {
+        } catch (java.lang.Throwable e) {
             throw e;
         } finally {
             c.discard();
