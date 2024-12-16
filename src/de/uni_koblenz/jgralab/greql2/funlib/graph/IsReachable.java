@@ -32,11 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.greql2.funlib.graph;
-
-import java.util.LinkedList;
-import java.util.Queue;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
@@ -50,16 +46,15 @@ import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.funlib.NeedsEvaluatorArgument;
 import de.uni_koblenz.jgralab.greql2.types.pathsearch.PathSearchQueueEntry;
+import java.util.LinkedList;
+import java.util.Queue;
+
 
 @NeedsEvaluatorArgument
 public class IsReachable extends Function {
-
 	public static boolean PRINT_STOP_VERTICES = false;
 
-	@Description(params = { "u", "v", "dfa" }, description = "Returns true, iff there is a path from vertex given as first argument to vertex "
-			+ "given as second argument that matches the path description given as second argument. "
-			+ "Usually invoked like so: myVertex (--> | <>--)+ myOtherVertex.", categories = {
-			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
+	@Description(params = { "u", "v", "dfa" }, description = "Returns true, iff there is a path from vertex given as first argument to vertex " + ("given as second argument that matches the path description given as second argument. " + "Usually invoked like so: myVertex (--> | <>--)+ myOtherVertex."), categories = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
 	public IsReachable() {
 		super(50, 1, 0.01);
 	}
@@ -69,20 +64,20 @@ public class IsReachable extends Function {
 		return evaluate(evaluator, u, v, nfa.getDFA());
 	}
 
-	public Boolean evaluate(InternalGreqlEvaluator evaluator, Vertex u,
-			Vertex v, DFA dfa) {
+	public Boolean evaluate(Vertex u, Vertex v, NFA nfa) {
+		return evaluate(u, v, nfa.getDFA());
+	}
+
+	public Boolean evaluate(InternalGreqlEvaluator evaluator, Vertex u, Vertex v, DFA dfa) {
 		if (u.getGraph() != v.getGraph()) {
-			throw new IllegalArgumentException(
-					"The vertices are in different graphs, but must be in the same graph.");
+			throw new IllegalArgumentException("The vertices are in different graphs, but must be in the same graph.");
 		}
-		BooleanGraphMarker[] markers = new BooleanGraphMarker[dfa.stateList
-				.size()];
+		BooleanGraphMarker[] markers = new BooleanGraphMarker[dfa.stateList.size()];
 		for (State s : dfa.stateList) {
 			markers[s.number] = new BooleanGraphMarker(u.getGraph());
 		}
 		Queue<PathSearchQueueEntry> queue = new LinkedList<PathSearchQueueEntry>();
-		PathSearchQueueEntry currentEntry = new PathSearchQueueEntry(u,
-				dfa.initialState);
+		PathSearchQueueEntry currentEntry = new PathSearchQueueEntry(u, dfa.initialState);
 		markers[currentEntry.state.number].mark(currentEntry.vertex);
 		queue.add(currentEntry);
 		while (!queue.isEmpty()) {
@@ -92,21 +87,17 @@ public class IsReachable extends Function {
 			}
 			for (Edge inc : currentEntry.vertex.incidences()) {
 				for (Transition currentTransition : currentEntry.state.outTransitions) {
-					Vertex nextVertex = currentTransition.getNextVertex(
-							currentEntry.vertex, inc);
-					boolean isMarked = markers[currentTransition.endState.number]
-							.isMarked(nextVertex);
-					boolean transitionIsPossible = currentTransition.accepts(
-							currentEntry.vertex, inc, evaluator);
-					if (!isMarked && transitionIsPossible) {
-						PathSearchQueueEntry nextEntry = new PathSearchQueueEntry(
-								nextVertex, currentTransition.endState);
+					Vertex nextVertex = currentTransition.getNextVertex(currentEntry.vertex, inc);
+					boolean isMarked = markers[currentTransition.endState.number].isMarked(nextVertex);
+					boolean transitionIsPossible = currentTransition.accepts(currentEntry.vertex, inc, evaluator);
+					if ((!isMarked) && transitionIsPossible) {
+						PathSearchQueueEntry nextEntry = new PathSearchQueueEntry(nextVertex, currentTransition.endState);
 						markers[nextEntry.state.number].mark(nextVertex);
 						queue.add(nextEntry);
 					}
 				}
 			}
-		}
+		} 
 		return false;
 	}
 }
