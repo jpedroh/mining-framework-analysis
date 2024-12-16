@@ -1,16 +1,5 @@
 package com.salesmanager.core.business.services.catalog.product;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import javax.inject.Inject;
-import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import com.salesmanager.core.business.exception.ServiceException;
 import com.salesmanager.core.business.repositories.catalog.product.ProductRepository;
 import com.salesmanager.core.business.services.catalog.category.CategoryService;
@@ -39,6 +28,18 @@ import com.salesmanager.core.model.content.ImageContentFile;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
 import com.salesmanager.core.model.tax.taxclass.TaxClass;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import javax.inject.Inject;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 
 @Service("productService")
 public class ProductServiceImpl extends SalesManagerEntityServiceImpl<Long, Product> implements ProductService {
@@ -99,6 +100,11 @@ public class ProductServiceImpl extends SalesManagerEntityServiceImpl<Long, Prod
 		description.setProduct(product);
 		update(product);
 		searchService.index(product.getMerchantStore(), product);
+	}
+	
+	@Override
+	public Product getProductWithOnlyMerchantStoreById(Long productId) {
+		return productRepository.getProductWithOnlyMerchantStoreById(productId);
 	}
 	
 	@Override

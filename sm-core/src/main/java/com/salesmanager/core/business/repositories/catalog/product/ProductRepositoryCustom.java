@@ -1,15 +1,15 @@
 package com.salesmanager.core.business.repositories.catalog.product;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
 import com.salesmanager.core.model.catalog.product.Product;
 import com.salesmanager.core.model.catalog.product.ProductCriteria;
 import com.salesmanager.core.model.catalog.product.ProductList;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
 import com.salesmanager.core.model.tax.taxclass.TaxClass;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
 
 public interface ProductRepositoryCustom {
 	
@@ -34,6 +34,7 @@ public interface ProductRepositoryCustom {
 				Locale locale);
 
 		Product getById(Long productId);
+	  Product getProductWithOnlyMerchantStoreById(Long productId);
 		Product getById(Long productId, MerchantStore merchant);
 
 		Product getByCode(String productCode, Language language);

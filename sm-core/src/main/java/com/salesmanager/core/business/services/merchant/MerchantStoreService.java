@@ -1,16 +1,14 @@
 package com.salesmanager.core.business.services.merchant;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.data.domain.Page;
-
-
 import com.salesmanager.core.business.exception.ServiceException;
 import com.salesmanager.core.business.services.common.generic.SalesManagerEntityService;
 import com.salesmanager.core.model.common.GenericEntityList;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.merchant.MerchantStoreCriteria;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.data.domain.Page;
+
 
 public interface MerchantStoreService extends SalesManagerEntityService<Integer, MerchantStore>{
 	
@@ -31,6 +29,8 @@ public interface MerchantStoreService extends SalesManagerEntityService<Integer,
 	Page<MerchantStore> listChildren(String code, int page, int count) throws ServiceException;
 
 	boolean existByCode(String code);
+	
+	List<MerchantStore> findAllStoreCodeNameEmail() throws ServiceException;
 
 	void saveOrUpdate(MerchantStore store) throws ServiceException;
 	
