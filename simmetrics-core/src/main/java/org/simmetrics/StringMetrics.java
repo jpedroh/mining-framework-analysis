@@ -21,10 +21,7 @@
  */
 package org.simmetrics;
 
-import static org.simmetrics.StringMetricBuilder.with;
-
 import java.util.List;
-
 import org.simmetrics.metrics.BlockDistance;
 import org.simmetrics.metrics.CosineSimilarity;
 import org.simmetrics.metrics.DiceSimilarity;
@@ -45,6 +42,8 @@ import org.simmetrics.simplifiers.SoundexSimplifier;
 import org.simmetrics.tokenizers.QGramExtendedTokenizer;
 import org.simmetrics.tokenizers.QGramTokenizer;
 import org.simmetrics.tokenizers.WhitespaceTokenizer;
+import static org.simmetrics.StringMetricBuilder.with;
+
 
 /**
  * Utility class for StringMetrics.
@@ -81,7 +80,6 @@ import org.simmetrics.tokenizers.WhitespaceTokenizer;
  *
  */
 public final class StringMetrics {
-
 	private StringMetrics() {
 		// Utility class.
 	}
@@ -174,8 +172,7 @@ public final class StringMetrics {
 	 * @return a block distance metric
 	 */
 	public static StringMetric blockDistance() {
-		return with(new BlockDistance<String>())
-				.tokenize(new WhitespaceTokenizer()).build();
+		return with(new BlockDistance<String>()).tokenize(new WhitespaceTokenizer()).build();
 	}
 
 	/**
@@ -185,8 +182,7 @@ public final class StringMetrics {
 	 * @return a cosine similarity metric
 	 */
 	public static StringMetric cosineSimilarity() {
-		return with(new CosineSimilarity<String>())
-				.tokenize(new WhitespaceTokenizer()).build();
+		return with(new CosineSimilarity<String>()).tokenize(new WhitespaceTokenizer()).build();
 	}
 
 	/**
@@ -196,8 +192,7 @@ public final class StringMetrics {
 	 * @return a dice similarity metric
 	 */
 	public static StringMetric diceSimilarity() {
-		return with(new DiceSimilarity<String>())
-				.tokenize(new WhitespaceTokenizer()).build();
+		return with(new DiceSimilarity<String>()).tokenize(new WhitespaceTokenizer()).build();
 	}
 
 	/**
@@ -207,8 +202,7 @@ public final class StringMetrics {
 	 * @return a Euclidean distance similarity metric
 	 */
 	public static StringMetric euclideanDistance() {
-		return with(new EuclideanDistance<String>())
-				.tokenize(new WhitespaceTokenizer()).build();
+		return with(new EuclideanDistance<String>()).tokenize(new WhitespaceTokenizer()).build();
 	}
 
 	/**
@@ -218,8 +212,7 @@ public final class StringMetrics {
 	 * @return a Jaccard similarity metric
 	 */
 	public static StringMetric jaccardSimilarity() {
-		return with(new JaccardSimilarity<String>())
-				.tokenize(new WhitespaceTokenizer()).build();
+		return with(new JaccardSimilarity<String>()).tokenize(new WhitespaceTokenizer()).build();
 	}
 
 	/**
@@ -256,9 +249,7 @@ public final class StringMetrics {
 	 * @return a matching coefficient metric
 	 */
 	public static StringMetric matchingCoefficient() {
-		return with(new MatchingCoefficient<String>())
-				.tokenize(new WhitespaceTokenizer())
-				.build();
+		return with(new MatchingCoefficient<String>()).tokenize(new WhitespaceTokenizer()).build();
 	}
 
 	/**
@@ -269,10 +260,7 @@ public final class StringMetrics {
 	 * @return a Monge-Elkan metric
 	 */
 	public static StringMetric mongeElkan() {
-		return with(
-				new MongeElkan(new SmithWatermanGotoh()))
-				.tokenize(new WhitespaceTokenizer())
-				.build();
+		return with(new MongeElkan(new SmithWatermanGotoh())).tokenize(new WhitespaceTokenizer()).build();
 	}
 
 	/**
@@ -291,8 +279,7 @@ public final class StringMetrics {
 	 * @return a overlap coefficient metric
 	 */
 	public static StringMetric overlapCoefficient() {
-		return with(new OverlapCoefficient<String>())
-				.tokenize(new WhitespaceTokenizer()).build();
+		return with(new OverlapCoefficient<String>()).tokenize(new WhitespaceTokenizer()).build();
 	}
 
 	/**
@@ -302,8 +289,7 @@ public final class StringMetrics {
 	 * @return a q-grams distance metric
 	 */
 	public static StringMetric qGramsDistance() {
-		return with(new BlockDistance<String>())
-				.tokenize(new QGramExtendedTokenizer(3)).build();
+		return with(new BlockDistance<String>()).tokenize(new QGramExtendedTokenizer(3)).build();
 	}
 
 	/**
@@ -314,9 +300,7 @@ public final class StringMetrics {
 	 * @return a Simon White metric
 	 */
 	public static StringMetric simonWhite() {
-		return with(new SimonWhite<String>())
-				.tokenize(new WhitespaceTokenizer())
-				.tokenize(new QGramTokenizer(2)).build();
+		return with(new SimonWhite<String>()).tokenize(new WhitespaceTokenizer()).tokenize(new QGramTokenizer(2)).build();
 	}
 
 	/**
@@ -354,7 +338,6 @@ public final class StringMetrics {
 	 * @return a Soundex metric
 	 */
 	public static StringMetric soundex() {
-		return with(new JaroWinkler())
-				.simplify(new SoundexSimplifier()).build();
+		return with(new JaroWinkler()).simplify(new SoundexSimplifier()).build();
 	}
 }

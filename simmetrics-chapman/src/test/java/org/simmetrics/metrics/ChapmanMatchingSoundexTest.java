@@ -21,41 +21,20 @@
  */
 package org.simmetrics.metrics;
 
-import static org.simmetrics.StringMetricBuilder.with;
-
 import org.simmetrics.StringMetric;
 import org.simmetrics.simplifiers.SoundexSimplifier;
 import org.simmetrics.tokenizers.WhitespaceTokenizer;
+import static org.simmetrics.StringMetricBuilder.with;
+
 
 public class ChapmanMatchingSoundexTest extends StringMetricTest {
-
 	@Override
 	protected StringMetric getMetric() {
-		return with(new MongeElkan(
-						with(new JaroWinkler())
-						.simplify(new SoundexSimplifier()).build()))
-				.tokenize(new WhitespaceTokenizer()).build();
+		return with(new MongeElkan(with(new JaroWinkler()).simplify(new SoundexSimplifier()).build())).tokenize(new WhitespaceTokenizer()).build();
 	}
 
 	@Override
 	protected T[] getTests() {
-		return new T[] { 
-				new T(1.0000f, "test string1", "test string2"),
-				new T(0.9667f, "aaa bbb ccc ddd", "aaa bbb ccc eee"),
-				new T(0.9667f, "a b c d", "a b c e"),
-				new T(0.8667f, "Healed", "Sealed"),
-				new T(1.0000f, "Healed", "Healthy"),
-				new T(0.8800f, "Healed", "Heard"),
-				new T(0.7600f, "Healed", "Herded"),
-				new T(0.8933f, "Healed", "Help"),
-				new T(0.8667f, "Healed", "Sold"),
-				new T(0.8933f, "Healed", "Help"),
-				new T(0.9244f, "Sam J Chapman", "Samuel John Chapman"),
-				new T(0.9400f, "Sam Chapman", "S Chapman"),
-				new T(0.8870f, "John Smith", "Samuel John Chapman"),
-				new T(0.8105f, "John Smith", "Sam Chapman"),
-				new T(0.8375f, "John Smith", "Sam J Chapman"),
-				new T(0.7125f, "John Smith", "S Chapman"),
-			};
+		return new T[]{ new T(1.0F, "test string1", "test string2"), new T(0.9667F, "aaa bbb ccc ddd", "aaa bbb ccc eee"), new T(0.9667F, "a b c d", "a b c e"), new T(0.8667F, "Healed", "Sealed"), new T(1.0F, "Healed", "Healthy"), new T(0.88F, "Healed", "Heard"), new T(0.76F, "Healed", "Herded"), new T(0.8933F, "Healed", "Help"), new T(0.8667F, "Healed", "Sold"), new T(0.8933F, "Healed", "Help"), new T(0.9244F, "Sam J Chapman", "Samuel John Chapman"), new T(0.94F, "Sam Chapman", "S Chapman"), new T(0.887F, "John Smith", "Samuel John Chapman"), new T(0.8105F, "John Smith", "Sam Chapman"), new T(0.8375F, "John Smith", "Sam J Chapman"), new T(0.7125F, "John Smith", "S Chapman") };
 	}
 }
