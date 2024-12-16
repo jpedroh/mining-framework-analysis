@@ -2,8 +2,10 @@ package com.github.javafaker;
 
 import com.github.javafaker.service.RandomService;
 
+
 public class Address {
     private final Faker faker;
+
     private final RandomService random = new RandomService();
 
     protected Address(Faker faker) {
@@ -38,9 +40,7 @@ public class Address {
         return faker.bothify(faker.fakeValuesService().resolve("address.postcode", this,faker));
     }
 
-    public String zipCodeByState(String stateAbbr) {
-        return faker.fakeValuesService().resolve("address.postcode_by_state." + stateAbbr, this, faker);
-    }
+    public String zipCodeByState(String stateAbbr) { return faker.fakeValuesService().resolve("address.postcode_by_state." + stateAbbr, this, faker); }
 
     public String countyByZipCode(String postCode) {
         return faker.fakeValuesService().resolve("address.county_by_postcode." + postCode, this, faker);
@@ -125,5 +125,4 @@ public class Address {
         String intersection = streetName() + " and " + streetName() + " intersection";
         return distance + direction + " of the " + intersection; 
     }
-    
 }

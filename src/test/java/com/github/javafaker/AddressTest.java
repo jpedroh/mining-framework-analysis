@@ -1,24 +1,23 @@
 package com.github.javafaker;
 
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+import java.util.Random;
+import org.junit.Test;
 import static com.github.javafaker.matchers.IsANumber.isANumber;
 import static com.github.javafaker.matchers.MatchesRegularExpression.matchesRegularExpression;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.not;
 
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
-import java.util.Random;
-
-import org.junit.Test;
 
 public class AddressTest extends AbstractFakerTest {
-    private final static String EXPRESSION = "(north|east|west|south)+\\s{0,1}"
-        + "((by|-)\\s{0,1}(north|east|west|south)+){0,1}";
+    private static final String EXPRESSION = "(north|east|west|south)+\\s{0,1}" + "((by|-)\\s{0,1}(north|east|west|south)+){0,1}";
+
     private static final char decimalSeparator = new DecimalFormatSymbols().getDecimalSeparator();
 
     @Test
@@ -81,7 +80,7 @@ public class AddressTest extends AbstractFakerTest {
 
     @Test
     public void testCountry() {
-        assertThat(faker.address().country(), matchesRegularExpression("[A-Za-z\\- &.,'()\\d]+"));
+        assertThat(faker.address().country(), matchesRegularExpression("[A-Za-z\\- &.,\'()\\d]+"));
     }
 
     @Test
@@ -112,13 +111,7 @@ public class AddressTest extends AbstractFakerTest {
         faker = new Faker(new Locale("en-US"));
         assertThat(faker.address().zipCodeByState(faker.address().stateAbbr()), matchesRegularExpression("[0-9]{5}"));
     }
-    
-    @Test
-    public void testCountyByZipCode() {
-        faker = new Faker(new Locale("en-US"));
-        assertThat(faker.address().countyByZipCode(faker.address().zipCodeByState(faker.address().stateAbbr())), not(emptyOrNullString()));
-    }
-    
+
     @Test
     public void testPhysicalDescription() {
     	String physicalDescription = faker.address().physicalDescription();
@@ -127,5 +120,10 @@ public class AddressTest extends AbstractFakerTest {
             matchesRegularExpression("[1-5] mile(s){0,1} " + EXPRESSION 
                 + " of the \\w+ \\w+ and \\w+ \\w+ intersection"));
     }
-    
+
+    @Test
+    public void testCountyByZipCode() {
+        faker = new Faker(new Locale("en-US"));
+        assertThat(faker.address().countyByZipCode(faker.address().zipCodeByState(faker.address().stateAbbr())), not(isEmptyOrNullString()));
+    }
 }
