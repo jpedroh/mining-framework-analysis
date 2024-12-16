@@ -34,14 +34,6 @@
  */
 package org.jooq.tools;
 
-import static java.time.temporal.ChronoField.INSTANT_SECONDS;
-import static java.time.temporal.ChronoField.MILLI_OF_DAY;
-import static java.time.temporal.ChronoField.MILLI_OF_SECOND;
-import static org.jooq.types.Unsigned.ubyte;
-import static org.jooq.types.Unsigned.uint;
-import static org.jooq.types.Unsigned.ulong;
-import static org.jooq.types.Unsigned.ushort;
-
 import java.io.File;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
@@ -73,8 +65,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
-
-// ...
 import org.jooq.Converter;
 import org.jooq.EnumType;
 import org.jooq.Field;
@@ -86,6 +76,14 @@ import org.jooq.types.UByte;
 import org.jooq.types.UInteger;
 import org.jooq.types.ULong;
 import org.jooq.types.UShort;
+import static java.time.temporal.ChronoField.INSTANT_SECONDS;
+import static java.time.temporal.ChronoField.MILLI_OF_DAY;
+import static java.time.temporal.ChronoField.MILLI_OF_SECOND;
+import static org.jooq.types.Unsigned.ubyte;
+import static org.jooq.types.Unsigned.uint;
+import static org.jooq.types.Unsigned.ulong;
+import static org.jooq.types.Unsigned.ushort;
+
 
 /**
  * Utility methods for type conversions
@@ -99,7 +97,6 @@ import org.jooq.types.UShort;
  * @author Lukas Eder
  */
 public final class Convert {
-
     /**
      * All string values that can be transformed into a boolean <code>true</code> value.
      */
@@ -118,7 +115,6 @@ public final class Convert {
     static {
         Set<String> trueValues = new HashSet<String>();
         Set<String> falseValues = new HashSet<String>();
-
         trueValues.add("1");
         trueValues.add("1.0");
         trueValues.add("y");
@@ -133,7 +129,6 @@ public final class Convert {
         trueValues.add("ON");
         trueValues.add("enabled");
         trueValues.add("ENABLED");
-
         falseValues.add("0");
         falseValues.add("0.0");
         falseValues.add("n");
@@ -148,7 +143,6 @@ public final class Convert {
         falseValues.add("OFF");
         falseValues.add("disabled");
         falseValues.add("DISABLED");
-
         TRUE_VALUES = Collections.unmodifiableSet(trueValues);
         FALSE_VALUES = Collections.unmodifiableSet(falseValues);
     }
@@ -214,6 +208,7 @@ public final class Convert {
             return null;
         }
     }
+
     /**
      * Convert an array into another one using a converter
      * <p>
@@ -424,13 +419,13 @@ public final class Convert {
     /**
      * No instances
      */
-    private Convert() {}
+    private Convert() {
+    }
 
     /**
      * The converter to convert them all.
      */
     private static class ConvertAll<U> implements Converter<Object, U> {
-
         /**
          * Generated UID
          */
@@ -446,610 +441,374 @@ public final class Convert {
         @Override
         public U from(Object from) {
             if (from == null) {
-
                 // [#936] If types are converted to primitives, the result must not
                 // be null. Return the default value instead
                 if (toClass.isPrimitive()) {
-
                     // Characters default to the "zero" character
                     if (toClass == char.class) {
-                        return (U) Character.valueOf((char) 0);
-                    }
-
-                    // All others can be converted from (int) 0
-                    else {
+                        return ((U) (Character.valueOf(((char) (0)))));
+                    } else // All others can be converted from (int) 0
+                    {
                         return convert(0, toClass);
                     }
-                }
-
-
-                else if (toClass == Optional.class) {
-                    return (U) Optional.empty();
-                }
-
-
-                else {
+                } else if (toClass == Optional.class) {
+                    return ((U) (Optional.empty()));
+                } else {
                     return null;
                 }
-            }
-            else {
+            } else {
                 final Class<?> fromClass = from.getClass();
-
                 // No conversion
                 if (toClass == fromClass) {
-                    return (U) from;
-                }
-
-                // [#2535] Simple up-casting can be done early
-                // [#1155] ... up-casting includes (toClass == Object.class)
-                else if (toClass.isAssignableFrom(fromClass)) {
-                    return (U) from;
-                }
-
-                // Regular checks
-                else if (fromClass == byte[].class) {
-
+                    return ((U) (from));
+                } else if (toClass.isAssignableFrom(fromClass)) {
+                    return ((U) (from));
+                } else if (fromClass == byte[].class) {
                     // [#5824] UUID's most significant bits in byte[] are first
                     if (toClass == UUID.class) {
-                        ByteBuffer b = ByteBuffer.wrap((byte[]) from);
+                        ByteBuffer b = ByteBuffer.wrap(((byte[]) (from)));
                         long mostSigBits = b.getLong();
                         long leastSigBits = b.getLong();
-                        return (U) new UUID(mostSigBits, leastSigBits);
+                        return ((U) (new UUID(mostSigBits, leastSigBits)));
+                    } else // [#5569] Binary data is expected to be in JVM's default encoding
+                    {
+                        return convert(new String(((byte[]) (from))), toClass);
                     }
-
-                    // [#5569] Binary data is expected to be in JVM's default encoding
-                    else {
-                        return convert(new String((byte[]) from), toClass);
-                    }
-                }
-                else if (fromClass.isArray()) {
-                    Object[] fromArray = (Object[]) from;
-
+                } else if (fromClass.isArray()) {
+                    Object[] fromArray = ((Object[]) (from));
                     // [#3062] Default collections if no specific collection type was requested
-                    if (Collection.class.isAssignableFrom(toClass) &&
-                            toClass.isAssignableFrom(ArrayList.class)) {
-                        return (U) new ArrayList(Arrays.asList(fromArray));
+                    if (Collection.class.isAssignableFrom(toClass) && toClass.isAssignableFrom(ArrayList.class)) {
+                        return ((U) (new ArrayList(Arrays.asList(fromArray))));
+                    } else if (Collection.class.isAssignableFrom(toClass) && toClass.isAssignableFrom(LinkedHashSet.class)) {
+                        return ((U) (new LinkedHashSet(Arrays.asList(fromArray))));
                     }
-                    else if (Collection.class.isAssignableFrom(toClass) &&
-                            toClass.isAssignableFrom(LinkedHashSet.class)) {
-                        return (U) new LinkedHashSet(Arrays.asList(fromArray));
-                    }
-
                     // [#3443] Conversion from Object[] to JDBC Array
                     if (toClass == java.sql.Array.class) {
-                        return (U) new MockArray(null, fromArray, fromClass);
+                        return ((U) (new MockArray(null, fromArray, fromClass)));
+                    } else {
+                        return ((U) (convertArray(fromArray, toClass)));
                     }
-                    else {
-                        return (U) convertArray(fromArray, toClass);
-                    }
-                }
-
-                else if (toClass.isArray()
-                        && Collection.class.isAssignableFrom(fromClass)){
-                    Collection f = (Collection) from;
+                } else if (toClass.isArray() && Collection.class.isAssignableFrom(fromClass)) {
+                    Collection f = ((Collection) (from));
                     Class componentType = toClass.getComponentType();
-
-                    Object[] dest = (Object[]) Array.newInstance(componentType, f.size());
-                    Object[] list = f.stream()
-                            .map(e -> {
-                                if (!componentType.isAssignableFrom(e.getClass()))
-                                    return convert(e, componentType);
-                                return e;
-                            }).toArray();
+                    Object[] dest = ((Object[]) (Array.newInstance(componentType, f.size())));
+                    Object[] list = f.stream().map(( e) -> {
+                        if (!componentType.isAssignableFrom(e.getClass())) {
+                            return convert(e, componentType);
+                        }
+                        return e;
+                    }).toArray();
                     System.arraycopy(list, 0, dest, 0, dest.length);
-
-                    return (U) dest;
-                }
-
-                else if (toClass == Optional.class) {
-                    return (U) Optional.of(from);
-                }
-
-
-                // All types can be converted into String
-                else if (toClass == String.class) {
+                    return ((U) (dest));
+                } else if (toClass == Optional.class) {
+                    return ((U) (Optional.of(from)));
+                } else if (toClass == java.lang.String.class) {
                     if (from instanceof EnumType) {
-                        return (U) ((EnumType) from).getLiteral();
+                        return ((U) (((EnumType) (from)).getLiteral()));
                     }
-
-                    return (U) from.toString();
-                }
-
-                // [#5569] It should be possible, at least, to convert an empty string to an empty (var)binary.
-                else if (toClass == byte[].class) {
-
+                    return ((U) (from.toString()));
+                } else if (toClass == byte[].class) {
                     // [#5824] UUID's most significant bits in byte[] are first
                     if (from instanceof UUID) {
                         ByteBuffer b = ByteBuffer.wrap(new byte[16]);
-                        b.putLong(((UUID) from).getMostSignificantBits());
-                        b.putLong(((UUID) from).getLeastSignificantBits());
-                        return (U)b.array();
+                        b.putLong(((UUID) (from)).getMostSignificantBits());
+                        b.putLong(((UUID) (from)).getLeastSignificantBits());
+                        return ((U) (b.array()));
+                    } else {
+                        return ((U) (from.toString().getBytes()));
                     }
-                    else {
-                        return (U) from.toString().getBytes();
+                } else if ((toClass == java.lang.Byte.class) || (toClass == byte.class)) {
+                    if (java.lang.Number.class.isAssignableFrom(fromClass)) {
+                        return ((U) (Byte.valueOf(((Number) (from)).byteValue())));
                     }
-                }
-
-                // Various number types are converted between each other via String
-                else if (toClass == Byte.class || toClass == byte.class) {
-                    if (Number.class.isAssignableFrom(fromClass)) {
-                        return (U) Byte.valueOf(((Number) from).byteValue());
+                    if ((fromClass == java.lang.Boolean.class) || (fromClass == boolean.class)) {
+                        return ((U) (((Boolean) (from)) ? Byte.valueOf(((byte) (1))) : Byte.valueOf(((byte) (0)))));
                     }
-
-                    if (fromClass == Boolean.class || fromClass == boolean.class) {
-                        return (U) (((Boolean) from) ? Byte.valueOf((byte) 1) : Byte.valueOf((byte) 0));
-                    }
-
                     try {
-                        return (U) Byte.valueOf(new BigDecimal(from.toString().trim()).byteValue());
-                    }
-                    catch (NumberFormatException e) {
+                        return ((U) (Byte.valueOf(new BigDecimal(from.toString().trim()).byteValue())));
+                    } catch (java.lang.NumberFormatException e) {
                         return null;
                     }
-                }
-                else if (toClass == Short.class || toClass == short.class) {
-                    if (Number.class.isAssignableFrom(fromClass)) {
-                        return (U) Short.valueOf(((Number) from).shortValue());
+                } else if ((toClass == java.lang.Short.class) || (toClass == short.class)) {
+                    if (java.lang.Number.class.isAssignableFrom(fromClass)) {
+                        return ((U) (Short.valueOf(((Number) (from)).shortValue())));
                     }
-
-                    if (fromClass == Boolean.class || fromClass == boolean.class) {
-                        return (U) (((Boolean) from) ? Short.valueOf((short) 1) : Short.valueOf((short) 0));
+                    if ((fromClass == java.lang.Boolean.class) || (fromClass == boolean.class)) {
+                        return ((U) (((Boolean) (from)) ? Short.valueOf(((short) (1))) : Short.valueOf(((short) (0)))));
                     }
-
                     try {
-                        return (U) Short.valueOf(new BigDecimal(from.toString().trim()).shortValue());
-                    }
-                    catch (NumberFormatException e) {
+                        return ((U) (Short.valueOf(new BigDecimal(from.toString().trim()).shortValue())));
+                    } catch (java.lang.NumberFormatException e) {
                         return null;
                     }
-                }
-                else if (toClass == Integer.class || toClass == int.class) {
-                    if (Number.class.isAssignableFrom(fromClass)) {
-                        return (U) Integer.valueOf(((Number) from).intValue());
+                } else if ((toClass == java.lang.Integer.class) || (toClass == int.class)) {
+                    if (java.lang.Number.class.isAssignableFrom(fromClass)) {
+                        return ((U) (Integer.valueOf(((Number) (from)).intValue())));
                     }
-
-                    if (fromClass == Boolean.class || fromClass == boolean.class) {
-                        return (U) (((Boolean) from) ? Integer.valueOf(1) : Integer.valueOf(0));
+                    if ((fromClass == java.lang.Boolean.class) || (fromClass == boolean.class)) {
+                        return ((U) (((Boolean) (from)) ? Integer.valueOf(1) : Integer.valueOf(0)));
                     }
-
                     try {
-                        return (U) Integer.valueOf(new BigDecimal(from.toString().trim()).intValue());
-                    }
-                    catch (NumberFormatException e) {
+                        return ((U) (Integer.valueOf(new BigDecimal(from.toString().trim()).intValue())));
+                    } catch (java.lang.NumberFormatException e) {
                         return null;
                     }
-                }
-                else if (toClass == Long.class || toClass == long.class) {
-                    if (Number.class.isAssignableFrom(fromClass)) {
-                        return (U) Long.valueOf(((Number) from).longValue());
+                } else if ((toClass == java.lang.Long.class) || (toClass == long.class)) {
+                    if (java.lang.Number.class.isAssignableFrom(fromClass)) {
+                        return ((U) (Long.valueOf(((Number) (from)).longValue())));
                     }
-
-                    if (fromClass == Boolean.class || fromClass == boolean.class) {
-                        return (U) (((Boolean) from) ? Long.valueOf(1L) : Long.valueOf(0L));
+                    if ((fromClass == java.lang.Boolean.class) || (fromClass == boolean.class)) {
+                        return ((U) (((Boolean) (from)) ? Long.valueOf(1L) : Long.valueOf(0L)));
                     }
-
                     if (java.util.Date.class.isAssignableFrom(fromClass)) {
-                        return (U) Long.valueOf(((java.util.Date) from).getTime());
+                        return ((U) (Long.valueOf(((java.util.Date) (from)).getTime())));
                     }
-
-
                     if (Temporal.class.isAssignableFrom(fromClass)) {
-                        return (U) Long.valueOf(millis((Temporal) from));
+                        return ((U) (Long.valueOf(millis(((Temporal) (from))))));
                     }
-
-
                     try {
-                        return (U) Long.valueOf(new BigDecimal(from.toString().trim()).longValue());
-                    }
-                    catch (NumberFormatException e) {
+                        return ((U) (Long.valueOf(new BigDecimal(from.toString().trim()).longValue())));
+                    } catch (java.lang.NumberFormatException e) {
                         return null;
                     }
-                }
-
-                // ... this also includes unsigned number types
-                else if (toClass == UByte.class) {
+                } else if (toClass == UByte.class) {
                     try {
-                        if (Number.class.isAssignableFrom(fromClass)) {
-                            return (U) ubyte(((Number) from).shortValue());
+                        if (java.lang.Number.class.isAssignableFrom(fromClass)) {
+                            return ((U) (ubyte(((Number) (from)).shortValue())));
                         }
-
-                        if (fromClass == Boolean.class || fromClass == boolean.class) {
-                            return (U) (((Boolean) from) ? ubyte(1) : ubyte(0));
+                        if ((fromClass == java.lang.Boolean.class) || (fromClass == boolean.class)) {
+                            return ((U) (((Boolean) (from)) ? ubyte(1) : ubyte(0)));
                         }
-
-                        return (U) ubyte(new BigDecimal(from.toString().trim()).shortValue());
-                    }
-                    catch (NumberFormatException e) {
+                        return ((U) (ubyte(new BigDecimal(from.toString().trim()).shortValue())));
+                    } catch (java.lang.NumberFormatException e) {
                         return null;
                     }
-                }
-                else if (toClass == UShort.class) {
+                } else if (toClass == UShort.class) {
                     try {
-                        if (Number.class.isAssignableFrom(fromClass)) {
-                            return (U) ushort(((Number) from).intValue());
+                        if (java.lang.Number.class.isAssignableFrom(fromClass)) {
+                            return ((U) (ushort(((Number) (from)).intValue())));
                         }
-
-                        if (fromClass == Boolean.class || fromClass == boolean.class) {
-                            return (U) (((Boolean) from) ? ushort(1) : ushort(0));
+                        if ((fromClass == java.lang.Boolean.class) || (fromClass == boolean.class)) {
+                            return ((U) (((Boolean) (from)) ? ushort(1) : ushort(0)));
                         }
-
-                        return (U) ushort(new BigDecimal(from.toString().trim()).intValue());
-                    }
-                    catch (NumberFormatException e) {
+                        return ((U) (ushort(new BigDecimal(from.toString().trim()).intValue())));
+                    } catch (java.lang.NumberFormatException e) {
                         return null;
                     }
-                }
-                else if (toClass == UInteger.class) {
+                } else if (toClass == UInteger.class) {
                     try {
-                        if (Number.class.isAssignableFrom(fromClass)) {
-                            return (U) uint(((Number) from).longValue());
+                        if (java.lang.Number.class.isAssignableFrom(fromClass)) {
+                            return ((U) (uint(((Number) (from)).longValue())));
                         }
-
-                        if (fromClass == Boolean.class || fromClass == boolean.class) {
-                            return (U) (((Boolean) from) ? uint(1) : uint(0));
+                        if ((fromClass == java.lang.Boolean.class) || (fromClass == boolean.class)) {
+                            return ((U) (((Boolean) (from)) ? uint(1) : uint(0)));
                         }
-
-                        return (U) uint(new BigDecimal(from.toString().trim()).longValue());
-                    }
-                    catch (NumberFormatException e) {
+                        return ((U) (uint(new BigDecimal(from.toString().trim()).longValue())));
+                    } catch (java.lang.NumberFormatException e) {
                         return null;
                     }
-                }
-                else if (toClass == ULong.class) {
-                    if (fromClass == Boolean.class || fromClass == boolean.class) {
-                        return (U) (((Boolean) from) ? ulong(1) : ulong(0));
+                } else if (toClass == ULong.class) {
+                    if ((fromClass == java.lang.Boolean.class) || (fromClass == boolean.class)) {
+                        return ((U) (((Boolean) (from)) ? ulong(1) : ulong(0)));
                     }
-
                     if (java.util.Date.class.isAssignableFrom(fromClass)) {
-                        return (U) ulong(((java.util.Date) from).getTime());
+                        return ((U) (ulong(((java.util.Date) (from)).getTime())));
                     }
-
-
                     if (Temporal.class.isAssignableFrom(fromClass)) {
-                        return (U) ulong(millis((Temporal) from));
+                        return ((U) (ulong(millis(((Temporal) (from))))));
                     }
-
-
                     try {
-                        return (U) ulong(new BigDecimal(from.toString().trim()).toBigInteger().toString());
-                    }
-                    catch (NumberFormatException e) {
+                        return ((U) (ulong(new BigDecimal(from.toString().trim()).toBigInteger().toString())));
+                    } catch (java.lang.NumberFormatException e) {
                         return null;
                     }
-                }
-
-                // ... and floating point / fixed point types
-                else if (toClass == Float.class || toClass == float.class) {
-                    if (Number.class.isAssignableFrom(fromClass)) {
-                        return (U) Float.valueOf(((Number) from).floatValue());
+                } else if ((toClass == java.lang.Float.class) || (toClass == float.class)) {
+                    if (java.lang.Number.class.isAssignableFrom(fromClass)) {
+                        return ((U) (Float.valueOf(((Number) (from)).floatValue())));
                     }
-
-                    if (fromClass == Boolean.class || fromClass == boolean.class) {
-                        return (U) (((Boolean) from) ? Float.valueOf(1.0f) : Float.valueOf(0.0f));
+                    if ((fromClass == java.lang.Boolean.class) || (fromClass == boolean.class)) {
+                        return ((U) (((Boolean) (from)) ? Float.valueOf(1.0F) : Float.valueOf(0.0F)));
                     }
-
                     try {
-                        return (U) Float.valueOf(from.toString().trim());
-                    }
-                    catch (NumberFormatException e) {
+                        return ((U) (Float.valueOf(from.toString().trim())));
+                    } catch (java.lang.NumberFormatException e) {
                         return null;
                     }
-                }
-                else if (toClass == Double.class || toClass == double.class) {
-                    if (Number.class.isAssignableFrom(fromClass)) {
-                        return (U) Double.valueOf(((Number) from).doubleValue());
+                } else if ((toClass == java.lang.Double.class) || (toClass == double.class)) {
+                    if (java.lang.Number.class.isAssignableFrom(fromClass)) {
+                        return ((U) (Double.valueOf(((Number) (from)).doubleValue())));
                     }
-
-                    if (fromClass == Boolean.class || fromClass == boolean.class) {
-                        return (U) (((Boolean) from) ? Double.valueOf(1.0) : Double.valueOf(0.0));
+                    if ((fromClass == java.lang.Boolean.class) || (fromClass == boolean.class)) {
+                        return ((U) (((Boolean) (from)) ? Double.valueOf(1.0) : Double.valueOf(0.0)));
                     }
-
                     try {
-                        return (U) Double.valueOf(from.toString().trim());
-                    }
-                    catch (NumberFormatException e) {
+                        return ((U) (Double.valueOf(from.toString().trim())));
+                    } catch (java.lang.NumberFormatException e) {
                         return null;
                     }
-                }
-                else if (toClass == BigDecimal.class) {
-                    if (fromClass == Boolean.class || fromClass == boolean.class) {
-                        return (U) (((Boolean) from) ? BigDecimal.ONE : BigDecimal.ZERO);
+                } else if (toClass == BigDecimal.class) {
+                    if ((fromClass == java.lang.Boolean.class) || (fromClass == boolean.class)) {
+                        return ((U) (((Boolean) (from)) ? BigDecimal.ONE : BigDecimal.ZERO));
                     }
-
                     try {
-                        return (U) new BigDecimal(from.toString().trim());
-                    }
-                    catch (NumberFormatException e) {
+                        return ((U) (new BigDecimal(from.toString().trim())));
+                    } catch (java.lang.NumberFormatException e) {
                         return null;
                     }
-                }
-                else if (toClass == BigInteger.class) {
-                    if (fromClass == Boolean.class || fromClass == boolean.class) {
-                        return (U) (((Boolean) from) ? BigInteger.ONE : BigInteger.ZERO);
+                } else if (toClass == BigInteger.class) {
+                    if ((fromClass == java.lang.Boolean.class) || (fromClass == boolean.class)) {
+                        return ((U) (((Boolean) (from)) ? BigInteger.ONE : BigInteger.ZERO));
                     }
-
                     try {
-                        return (U) new BigDecimal(from.toString().trim()).toBigInteger();
-                    }
-                    catch (NumberFormatException e) {
+                        return ((U) (new BigDecimal(from.toString().trim()).toBigInteger()));
+                    } catch (java.lang.NumberFormatException e) {
                         return null;
                     }
-                }
-                else if (toClass == Boolean.class || toClass == boolean.class) {
+                } else if ((toClass == java.lang.Boolean.class) || (toClass == boolean.class)) {
                     String s = from.toString().toLowerCase().trim();
-
                     if (TRUE_VALUES.contains(s)) {
-                        return (U) Boolean.TRUE;
+                        return ((U) (Boolean.TRUE));
+                    } else if (FALSE_VALUES.contains(s)) {
+                        return ((U) (Boolean.FALSE));
+                    } else {
+                        return ((U) (toClass == java.lang.Boolean.class ? null : false));
                     }
-                    else if (FALSE_VALUES.contains(s)) {
-                        return (U) Boolean.FALSE;
+                } else if ((toClass == java.lang.Character.class) || (toClass == char.class)) {
+                    if ((fromClass == java.lang.Boolean.class) || (fromClass == boolean.class)) {
+                        return ((U) (((Boolean) (from)) ? Character.valueOf('1') : Character.valueOf('0')));
                     }
-                    else {
-                        return (U) (toClass == Boolean.class ? null : false);
-                    }
-                }
-                else if (toClass == Character.class || toClass == char.class) {
-                    if (fromClass == Boolean.class || fromClass == boolean.class) {
-                        return (U) (((Boolean) from) ? Character.valueOf('1') : Character.valueOf('0'));
-                    }
-
                     if (from.toString().length() < 1) {
                         return null;
                     }
-
-                    return (U) Character.valueOf(from.toString().charAt(0));
-                }
-
-                // URI types can be converted from strings
-                else if ((fromClass == String.class) && toClass == URI.class) {
+                    return ((U) (Character.valueOf(from.toString().charAt(0))));
+                } else if ((fromClass == java.lang.String.class) && (toClass == URI.class)) {
                     try {
-                        return (U) new URI(from.toString());
-                    }
-                    catch (URISyntaxException e) {
+                        return ((U) (new URI(from.toString())));
+                    } catch (URISyntaxException e) {
                         return null;
                     }
-                }
-
-                // URI types can be converted from strings
-                else if ((fromClass == String.class) && toClass == URL.class) {
+                } else if ((fromClass == java.lang.String.class) && (toClass == URL.class)) {
                     try {
-                        return (U) new URI(from.toString()).toURL();
-                    }
-                    catch (Exception e) {
+                        return ((U) (new URI(from.toString()).toURL()));
+                    } catch (java.lang.Exception e) {
                         return null;
                     }
-                }
-
-                // File types can be converted from strings
-                else if ((fromClass == String.class) && toClass == File.class) {
+                } else if ((fromClass == java.lang.String.class) && (toClass == File.class)) {
                     try {
-                        return (U) new File(from.toString());
-                    }
-                    catch (Exception e) {
+                        return ((U) (new File(from.toString())));
+                    } catch (java.lang.Exception e) {
                         return null;
                     }
-                }
-
-                // Date types can be converted among each other
-                else if (java.util.Date.class.isAssignableFrom(fromClass)) {
-                    return toDate(((java.util.Date) from).getTime(), toClass);
-                }
-
-
-                else if (Temporal.class.isAssignableFrom(fromClass)) {
-                    return toDate(convert(from, Long.class), toClass);
-                }
-
-
-                // Long may also be converted into a date type
-                else if ((fromClass == Long.class || fromClass == long.class) && java.util.Date.class.isAssignableFrom(toClass)) {
-                    return toDate((Long) from, toClass);
-                }
-
-
-                else if ((fromClass == Long.class || fromClass == long.class) && Temporal.class.isAssignableFrom(toClass)) {
-                    return toDate((Long) from, toClass);
-                }
-
-
-                // [#1501] Strings can be converted to java.sql.Date
-                else if ((fromClass == String.class) && toClass == java.sql.Date.class) {
+                } else if (java.util.Date.class.isAssignableFrom(fromClass)) {
+                    return toDate(((java.util.Date) (from)).getTime(), toClass);
+                } else if (Temporal.class.isAssignableFrom(fromClass)) {
+                    return toDate(convert(from, java.lang.Long.class), toClass);
+                } else if (((fromClass == java.lang.Long.class) || (fromClass == long.class)) && java.util.Date.class.isAssignableFrom(toClass)) {
+                    return toDate(((Long) (from)), toClass);
+                } else if (((fromClass == java.lang.Long.class) || (fromClass == long.class)) && Temporal.class.isAssignableFrom(toClass)) {
+                    return toDate(((Long) (from)), toClass);
+                } else if ((fromClass == java.lang.String.class) && (toClass == Date.class)) {
                     try {
-                        return (U) java.sql.Date.valueOf((String) from);
-                    }
-                    catch (IllegalArgumentException e) {
+                        return ((U) (Date.valueOf(((String) (from)))));
+                    } catch (java.lang.IllegalArgumentException e) {
                         return null;
                     }
-                }
-
-                // [#1501] Strings can be converted to java.sql.Date
-                else if ((fromClass == String.class) && toClass == java.sql.Time.class) {
+                } else if ((fromClass == java.lang.String.class) && (toClass == Time.class)) {
                     try {
-                        return (U) java.sql.Time.valueOf((String) from);
-                    }
-                    catch (IllegalArgumentException e) {
+                        return ((U) (Time.valueOf(((String) (from)))));
+                    } catch (java.lang.IllegalArgumentException e) {
                         return null;
                     }
-                }
-
-                // [#1501] Strings can be converted to java.sql.Date
-                else if ((fromClass == String.class) && toClass == java.sql.Timestamp.class) {
+                } else if ((fromClass == java.lang.String.class) && (toClass == Timestamp.class)) {
                     try {
-                        return (U) java.sql.Timestamp.valueOf((String) from);
-                    }
-                    catch (IllegalArgumentException e) {
+                        return ((U) (Timestamp.valueOf(((String) (from)))));
+                    } catch (java.lang.IllegalArgumentException e) {
                         return null;
                     }
-                }
-
-
-                else if ((fromClass == String.class) && toClass == LocalDate.class) {
-
+                } else if ((fromClass == java.lang.String.class) && (toClass == LocalDate.class)) {
                     // Try "lenient" ISO date formats first
                     try {
-                        return (U) java.sql.Date.valueOf((String) from).toLocalDate();
-                    }
-                    catch (IllegalArgumentException e1) {
+                        return ((U) (Date.valueOf(((String) (from))).toLocalDate()));
+                    } catch (java.lang.IllegalArgumentException e1) {
                         try {
-                            return (U) LocalDate.parse((String) from);
-                        }
-                        catch (DateTimeParseException e2) {
+                            return ((U) (LocalDate.parse(((String) (from)))));
+                        } catch (DateTimeParseException e2) {
                             return null;
                         }
                     }
-                }
-
-                else if ((fromClass == String.class) && toClass == LocalTime.class) {
-
+                } else if ((fromClass == java.lang.String.class) && (toClass == LocalTime.class)) {
                     // Try "lenient" ISO date formats first
                     try {
-                        return (U) java.sql.Time.valueOf((String) from).toLocalTime();
-                    }
-                    catch (IllegalArgumentException e1) {
+                        return ((U) (Time.valueOf(((String) (from))).toLocalTime()));
+                    } catch (java.lang.IllegalArgumentException e1) {
                         try {
-                            return (U) LocalTime.parse((String) from);
-                        }
-                        catch (DateTimeParseException e2) {
+                            return ((U) (LocalTime.parse(((String) (from)))));
+                        } catch (DateTimeParseException e2) {
                             return null;
                         }
                     }
-                }
-
-                else if ((fromClass == String.class) && toClass == OffsetTime.class) {
-
+                } else if ((fromClass == java.lang.String.class) && (toClass == OffsetTime.class)) {
                     // Try "local" ISO date formats first
                     try {
-                        return (U) java.sql.Time.valueOf((String) from).toLocalTime().atOffset(OffsetTime.now().getOffset());
-                    }
-                    catch (IllegalArgumentException e1) {
+                        return ((U) (Time.valueOf(((String) (from))).toLocalTime().atOffset(OffsetTime.now().getOffset())));
+                    } catch (java.lang.IllegalArgumentException e1) {
                         try {
-                            return (U) OffsetTime.parse((String) from);
-                        }
-                        catch (DateTimeParseException e2) {
+                            return ((U) (OffsetTime.parse(((String) (from)))));
+                        } catch (DateTimeParseException e2) {
                             return null;
                         }
                     }
-                }
-
-                else if ((fromClass == String.class) && toClass == LocalDateTime.class) {
-
+                } else if ((fromClass == java.lang.String.class) && (toClass == LocalDateTime.class)) {
                     // Try "lenient" ISO date formats first
                     try {
-                        return (U) java.sql.Timestamp.valueOf((String) from).toLocalDateTime();
-                    }
-                    catch (IllegalArgumentException e1) {
+                        return ((U) (Timestamp.valueOf(((String) (from))).toLocalDateTime()));
+                    } catch (java.lang.IllegalArgumentException e1) {
                         try {
-                            return (U) LocalDateTime.parse((String) from);
-                        }
-                        catch (DateTimeParseException e2) {
+                            return ((U) (LocalDateTime.parse(((String) (from)))));
+                        } catch (DateTimeParseException e2) {
                             return null;
                         }
                     }
-                }
-
-                else if ((fromClass == String.class) && toClass == OffsetDateTime.class) {
-
+                } else if ((fromClass == java.lang.String.class) && (toClass == OffsetDateTime.class)) {
                     // Try "local" ISO date formats first
                     try {
-                        return (U) java.sql.Timestamp.valueOf((String) from).toLocalDateTime().atOffset(OffsetDateTime.now().getOffset());
-                    }
-                    catch (IllegalArgumentException e1) {
+                        return ((U) (Timestamp.valueOf(((String) (from))).toLocalDateTime().atOffset(OffsetDateTime.now().getOffset())));
+                    } catch (java.lang.IllegalArgumentException e1) {
                         try {
-                            return (U) OffsetDateTime.parse((String) from);
-                        }
-                        catch (DateTimeParseException e2) {
+                            return ((U) (OffsetDateTime.parse(((String) (from)))));
+                        } catch (DateTimeParseException e2) {
                             return null;
                         }
                     }
-                }
-
-                else if ((fromClass == String.class) && toClass == Instant.class) {
-
+                } else if ((fromClass == java.lang.String.class) && (toClass == Instant.class)) {
                     // Try "local" ISO date formats first
                     try {
-                        return (U) java.sql.Timestamp.valueOf((String) from).toLocalDateTime().atOffset(OffsetDateTime.now().getOffset()).toInstant();
-                    }
-                    catch (IllegalArgumentException e1) {
+                        return ((U) (Timestamp.valueOf(((String) (from))).toLocalDateTime().atOffset(OffsetDateTime.now().getOffset()).toInstant()));
+                    } catch (java.lang.IllegalArgumentException e1) {
                         try {
-                            return (U) Instant.parse((String) from);
-                        }
-                        catch (DateTimeParseException e2) {
+                            return ((U) (Instant.parse(((String) (from)))));
+                        } catch (DateTimeParseException e2) {
                             return null;
                         }
                     }
-                }
-
-
-                // [#1448] Some users may find it useful to convert string
-                // literals to Enum values without a Converter
-                else if ((fromClass == String.class) && java.lang.Enum.class.isAssignableFrom(toClass)) {
+                } else if ((fromClass == java.lang.String.class) && java.lang.Enum.class.isAssignableFrom(toClass)) {
                     try {
-                        return (U) java.lang.Enum.valueOf((Class) toClass, (String) from);
-                    }
-                    catch (IllegalArgumentException e) {
+                        return ((U) (java.lang.Enum.valueOf(((Class) (toClass)), ((String) (from)))));
+                    } catch (java.lang.IllegalArgumentException e) {
                         return null;
                     }
-                }
-
-                // [#1624] UUID data types can be read from Strings
-                else if ((fromClass == String.class) && toClass == UUID.class) {
+                } else if ((fromClass == java.lang.String.class) && (toClass == UUID.class)) {
                     try {
-                        return (U) parseUUID((String) from);
-                    }
-                    catch (IllegalArgumentException e) {
+                        return ((U) (parseUUID(((String) (from)))));
+                    } catch (java.lang.IllegalArgumentException e) {
                         return null;
                     }
-                }
-
-                // [#3023] Record types can be converted using the supplied Configuration's
-                // RecordMapperProvider
-                else if (Record.class.isAssignableFrom(fromClass)) {
-                    Record record = (Record) from;
+                } else if (Record.class.isAssignableFrom(fromClass)) {
+                    Record record = ((Record) (from));
                     return record.into(toClass);
                 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 // TODO [#2520] When RecordUnmappers are supported, they should also be considered here
             }
-
             throw fail(from, toClass);
         }
 
@@ -1116,7 +875,6 @@ public final class Convert {
             throw fail(time, toClass);
         }
 
-
         private static final long millis(Temporal temporal) {
 
             // java.sql.* temporal types:
@@ -1142,7 +900,6 @@ public final class Convert {
 
             throw fail(temporal, Long.class);
         }
-
 
         /**
          * Some databases do not implement the standard very well. Specifically,
