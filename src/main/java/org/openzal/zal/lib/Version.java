@@ -3,6 +3,7 @@ package org.openzal.zal.lib;
 import java.util.Objects;
 import java.util.Optional;
 
+
 public class Version implements Comparable<Version> {
 
   private final int major;
@@ -127,11 +128,14 @@ public class Version implements Comparable<Version> {
     return compareTo(version) >= 0;
   }
 
+<<<<<<< LEFT
   public boolean isAtMost(Version version)
   {
     return compareTo(version) <= 0;
   }
 
+=======
+>>>>>>> RIGHT
   @Override
   public String toString() {
     if (!minor.isPresent()) {
