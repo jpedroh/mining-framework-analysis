@@ -1,22 +1,5 @@
 package com.citytechinc.cq.component.content.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javassist.CtClass;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.io.IOUtils;
-
 import com.citytechinc.cq.component.annotations.Component;
 import com.citytechinc.cq.component.content.Content;
 import com.citytechinc.cq.component.content.factory.ContentFactory;
@@ -25,10 +8,24 @@ import com.citytechinc.cq.component.dialog.ComponentNameTransformer;
 import com.citytechinc.cq.component.dialog.exception.InvalidComponentClassException;
 import com.citytechinc.cq.component.dialog.exception.OutputFailureException;
 import com.citytechinc.cq.component.maven.util.ComponentMojoUtil;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import javassist.CtClass;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.io.IOUtils;
+
 
 public class ContentUtil {
 	private ContentUtil() {
-	};
+	}
 
 	/**
 	 * Write the content.xml to an output file, the path of which is determined
@@ -77,27 +74,14 @@ public class ContentUtil {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	public static void writeContentToArchiveFile(ComponentNameTransformer transformer, File contentFile,
-		CtClass componentClass, ZipArchiveOutputStream archiveStream, Set<String> reservedNames,
-		String componentPathBase, String defaultComponentPathSuffix) throws IOException, ClassNotFoundException {
-		String contentFilePath = ComponentMojoUtil.getComponentBasePathForComponentClass(componentClass,
-			componentPathBase)
-			+ "/"
-			+ ComponentMojoUtil.getComponentPathSuffixForComponentClass(componentClass, defaultComponentPathSuffix)
-			+ "/" + ComponentMojoUtil.getComponentNameForComponentClass(transformer, componentClass) + "/.content.xml";
-
+	public static void writeContentToArchiveFile(ComponentNameTransformer transformer, File contentFile, CtClass componentClass, ZipArchiveOutputStream archiveStream, Set<String> reservedNames, String componentPathBase, String defaultComponentPathSuffix) throws IOException, ClassNotFoundException {
+		String contentFilePath = ((((ComponentMojoUtil.getComponentBasePathForComponentClass(componentClass, componentPathBase) + "/") + ComponentMojoUtil.getComponentPathSuffixForComponentClass(componentClass, defaultComponentPathSuffix)) + "/") + ComponentMojoUtil.getComponentNameForComponentClass(transformer, componentClass)) + "/.content.xml";
 		ComponentMojoUtil.getLog().debug("Archiving content file " + contentFilePath);
-
 		if (!reservedNames.contains(contentFilePath.toLowerCase())) {
-
 			ZipArchiveEntry entry = new ZipArchiveEntry(contentFile, contentFilePath);
-
 			archiveStream.putArchiveEntry(entry);
-
 			IOUtils.copy(new FileInputStream(contentFile), archiveStream);
-
 			archiveStream.closeArchiveEntry();
-
 		} else {
 			ComponentMojoUtil.getLog().debug("Existing file found at " + contentFilePath);
 		}
@@ -151,5 +135,4 @@ public class ContentUtil {
 		return builtContents;
 
 	}
-
 }

@@ -1,43 +1,5 @@
 package com.citytechinc.cq.component.maven.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.NotFoundException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.StringUtils;
-import org.reflections.Reflections;
-import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-
 import com.citytechinc.cq.classpool.ClassLoaderClassPool;
 import com.citytechinc.cq.component.annotations.Component;
 import com.citytechinc.cq.component.annotations.config.Widget;
@@ -53,12 +15,47 @@ import com.citytechinc.cq.component.dialog.util.DialogUtil;
 import com.citytechinc.cq.component.dialog.widget.WidgetRegistry;
 import com.citytechinc.cq.component.editconfig.util.EditConfigUtil;
 import com.citytechinc.cq.component.util.WidgetConfigHolder;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javassist.CannotCompileException;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtField;
+import javassist.CtMethod;
+import javassist.NotFoundException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.StringUtils;
+import org.reflections.Reflections;
+import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+
 
 public class ComponentMojoUtil {
 	private static final String OUTPUT_PATH = "tempComponentConfig";
 
 	private ComponentMojoUtil() {
-	};
+	}
 
 	public static final LogSingleton getLog() {
 		return LogSingleton.getInstance();
@@ -135,108 +132,99 @@ public class ComponentMojoUtil {
 	 * Add files to the already constructed Archive file by creating a new
 	 * Archive file, appending the contents of the existing Archive file to it,
 	 * and then adding additional entries for the newly constructed artifacts.
-	 * 
+	 *
 	 * @param classList
+	 * 		
 	 * @param xtypeMap
+	 * 		
 	 * @param classLoader
+	 * 		
 	 * @param classPool
+	 * 		
 	 * @param buildDirectory
+	 * 		
 	 * @param componentPathBase
+	 * 		
 	 * @param defaultComponentPathSuffix
+	 * 		
 	 * @param defaultComponentGroup
+	 * 		
 	 * @param existingArchiveFile
+	 * 		
 	 * @param tempArchiveFile
+	 * 		
 	 * @throws OutputFailureException
+	 * 		
 	 * @throws IOException
+	 * 		
 	 * @throws InvalidComponentClassException
+	 * 		
 	 * @throws InvalidComponentFieldException
+	 * 		
 	 * @throws ParserConfigurationException
+	 * 		
 	 * @throws TransformerException
+	 * 		
 	 * @throws ClassNotFoundException
+	 * 		
 	 * @throws CannotCompileException
+	 * 		
 	 * @throws NotFoundException
+	 * 		
 	 * @throws SecurityException
+	 * 		
 	 * @throws NoSuchFieldException
+	 * 		
 	 * @throws IllegalArgumentException
+	 * 		
 	 * @throws IllegalAccessException
+	 * 		
 	 * @throws InvocationTargetException
+	 * 		
 	 * @throws NoSuchMethodException
+	 * 		
 	 * @throws InstantiationException
+	 * 		
 	 */
-	public static void buildArchiveFileForProjectAndClassList(List<CtClass> classList, WidgetRegistry widgetRegistry,
-		ClassLoader classLoader, ClassPool classPool, File buildDirectory, String componentPathBase,
-		String defaultComponentPathSuffix, String defaultComponentGroup, File existingArchiveFile,
-		File tempArchiveFile, ComponentNameTransformer transformer) throws OutputFailureException, IOException,
-		InvalidComponentClassException, InvalidComponentFieldException, ParserConfigurationException,
-		TransformerException, ClassNotFoundException, CannotCompileException, NotFoundException, SecurityException,
-		NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException,
-		NoSuchMethodException, InstantiationException {
-
+	public static void buildArchiveFileForProjectAndClassList(List<CtClass> classList, WidgetRegistry widgetRegistry, ClassLoader classLoader, ClassPool classPool, File buildDirectory, String componentPathBase, String defaultComponentPathSuffix, String defaultComponentGroup, File existingArchiveFile, File tempArchiveFile, ComponentNameTransformer transformer) throws InstantiationException, OutputFailureException, IOException, InvalidComponentClassException, InvalidComponentFieldException, ParserConfigurationException, TransformerException, ClassNotFoundException, CannotCompileException, NotFoundException, SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		if (!existingArchiveFile.exists()) {
 			throw new OutputFailureException("Archive file does not exist");
 		}
-
 		if (tempArchiveFile.exists()) {
 			tempArchiveFile.delete();
 		}
-
 		tempArchiveFile.createNewFile();
-
 		deleteTemporaryComponentOutputDirectory(buildDirectory);
-
-		/*
-		 * Create archive input stream
-		 */
+		/* Create archive input stream */
 		ZipArchiveInputStream existingInputStream = new ZipArchiveInputStream(new FileInputStream(existingArchiveFile));
-
-		/*
-		 * Create a zip archive output stream for the temp file
-		 */
+		/* Create a zip archive output stream for the temp file */
 		ZipArchiveOutputStream tempOutputStream = new ZipArchiveOutputStream(tempArchiveFile);
-
-		/*
-		 * Iterate through all existing entries adding them to the new archive
-		 */
+		/* Iterate through all existing entries adding them to the new archive */
 		ZipArchiveEntry curArchiveEntry;
-
 		Set<String> existingArchiveEntryNames = new HashSet<String>();
-
 		while ((curArchiveEntry = existingInputStream.getNextZipEntry()) != null) {
 			existingArchiveEntryNames.add(curArchiveEntry.getName().toLowerCase());
 			getLog().debug("Current File Name: " + curArchiveEntry.getName());
 			tempOutputStream.putArchiveEntry(curArchiveEntry);
 			IOUtils.copy(existingInputStream, tempOutputStream);
 			tempOutputStream.closeArchiveEntry();
-		}
-
+		} 
 		/*
 		 * Create content.xml within temp archive
 		 */
-		ContentUtil.buildContentFromClassList(classList, tempOutputStream, existingArchiveEntryNames, buildDirectory,
-			componentPathBase, defaultComponentPathSuffix, defaultComponentGroup, transformer);
-
+		ContentUtil.buildContentFromClassList(classList, tempOutputStream, existingArchiveEntryNames, buildDirectory, componentPathBase, defaultComponentPathSuffix, defaultComponentGroup, transformer);
 		/*
 		 * Create Dialogs within temp archive
 		 */
-		DialogUtil.buildDialogsFromClassList(transformer, classList, tempOutputStream, existingArchiveEntryNames,
-			widgetRegistry, classLoader, classPool, buildDirectory, componentPathBase, defaultComponentPathSuffix);
-
-		/*
-		 * Create edit config within temp archive
-		 */
-		EditConfigUtil.buildEditConfigFromClassList(classList, tempOutputStream, existingArchiveEntryNames,
-			buildDirectory, componentPathBase, defaultComponentPathSuffix, transformer);
-
-		/*
-		 * Copy temp archive to the original archive position
-		 */
+		DialogUtil.buildDialogsFromClassList(transformer, classList, tempOutputStream, existingArchiveEntryNames, widgetRegistry, classLoader, classPool, buildDirectory, componentPathBase, defaultComponentPathSuffix);
+		/* Create edit config within temp archive */
+		EditConfigUtil.buildEditConfigFromClassList(classList, tempOutputStream, existingArchiveEntryNames, buildDirectory, componentPathBase, defaultComponentPathSuffix, transformer);
+		/* Copy temp archive to the original archive position */
 		tempOutputStream.finish();
 		existingInputStream.close();
 		tempOutputStream.close();
-
 		existingArchiveFile.delete();
 		tempArchiveFile.renameTo(existingArchiveFile);
-
 	}
 
 	/**
@@ -284,24 +272,15 @@ public class ComponentMojoUtil {
 	 * @throws OutputFailureException
 	 * @throws ClassNotFoundException
 	 */
-	public static File getOutputDirectoryForComponentClass(ComponentNameTransformer transformer,
-		CtClass componentClass, File buildDirectory, String componentPathBase, String defaultComponentPathSuffix)
-		throws OutputFailureException, ClassNotFoundException {
+	public static File getOutputDirectoryForComponentClass(ComponentNameTransformer transformer, CtClass componentClass, File buildDirectory, String componentPathBase, String defaultComponentPathSuffix) throws OutputFailureException, ClassNotFoundException {
 		// File buildDirectory = new File(project.getBuild().getDirectory());
-
-		String dialogFilePath = OUTPUT_PATH + "/"
-			+ getComponentBasePathForComponentClass(componentClass, componentPathBase) + "/"
-			+ getComponentPathSuffixForComponentClass(componentClass, defaultComponentPathSuffix) + "/"
-			+ getComponentNameForComponentClass(transformer, componentClass);
-
+		String dialogFilePath = (((((OUTPUT_PATH + "/") + getComponentBasePathForComponentClass(componentClass, componentPathBase)) + "/") + getComponentPathSuffixForComponentClass(componentClass, defaultComponentPathSuffix)) + "/") + getComponentNameForComponentClass(transformer, componentClass);
 		File componentOutputDirectory = new File(buildDirectory, dialogFilePath);
-
 		if (!componentOutputDirectory.exists()) {
 			if (!componentOutputDirectory.mkdirs()) {
 				throw new OutputFailureException("Failure creating output directory for Component");
 			}
 		}
-
 		return componentOutputDirectory;
 	}
 
@@ -394,24 +373,16 @@ public class ComponentMojoUtil {
 	 * @throws NotFoundException
 	 * @throws MalformedURLException
 	 */
-	public static List<WidgetConfigHolder> getAllWidgetAnnotations(ClassPool classPool, ClassLoader classLoader,
-		Reflections reflections) throws ClassNotFoundException, NotFoundException, MalformedURLException {
+	public static List<WidgetConfigHolder> getAllWidgetAnnotations(ClassPool classPool, ClassLoader classLoader, Reflections reflections) throws ClassNotFoundException, NotFoundException, MalformedURLException {
 		List<WidgetConfigHolder> builtInWidgets = new ArrayList<WidgetConfigHolder>();
-
 		for (Class<?> c : reflections.getTypesAnnotatedWith(Widget.class)) {
 			CtClass clazz = classPool.getCtClass(c.getName());
-			Widget widgetAnnotation = (Widget) clazz.getAnnotation(Widget.class);
-
+			Widget widgetAnnotation = ((Widget) (clazz.getAnnotation(Widget.class)));
 			Class<? extends Annotation> annotationClass = widgetAnnotation.annotationClass();
-
 			Class<? extends WidgetMaker> makerClass = widgetAnnotation.makerClass();
-			Class<? extends AbstractWidget> widgetClass = classLoader.loadClass(clazz.getName()).asSubclass(
-				AbstractWidget.class);
-			WidgetConfigHolder widgetConfig = new WidgetConfigHolder(annotationClass, widgetClass, makerClass,
-				widgetAnnotation.xtype(), widgetAnnotation.ranking());
-
+			Class<? extends AbstractWidget> widgetClass = classLoader.loadClass(clazz.getName()).asSubclass(AbstractWidget.class);
+			WidgetConfigHolder widgetConfig = new WidgetConfigHolder(annotationClass, widgetClass, makerClass, widgetAnnotation.xtype(), widgetAnnotation.ranking());
 			builtInWidgets.add(widgetConfig);
-
 		}
 		return builtInWidgets;
 	}

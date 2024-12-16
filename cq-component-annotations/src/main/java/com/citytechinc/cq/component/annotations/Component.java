@@ -1,13 +1,13 @@
 package com.citytechinc.cq.component.annotations;
 
+import com.citytechinc.cq.component.annotations.editconfig.ActionConfig;
+import com.citytechinc.cq.component.annotations.editconfig.DropTarget;
+import com.citytechinc.cq.component.annotations.editconfig.FormParameter;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.citytechinc.cq.component.annotations.editconfig.ActionConfig;
-import com.citytechinc.cq.component.annotations.editconfig.DropTarget;
-import com.citytechinc.cq.component.annotations.editconfig.FormParameter;
 
 /**
  * The Component marks your class as a CQ Component. Tools will use this
@@ -19,7 +19,6 @@ import com.citytechinc.cq.component.annotations.editconfig.FormParameter;
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
 public @interface Component {
-
 	/**
 	 * Overrides the baseComponentPath
 	 * 
@@ -148,10 +147,10 @@ public @interface Component {
 
 	/**
 	 * An array of ActionConfig's for the edit config file
-	 * 
-	 * @return ActionConfig[]
+	 *
+	 * @author paulmichelotti
 	 */
-	ActionConfig[] actionConfigs() default {};
+	ActionConfig[] actionConfigs() default {  };
 
 	boolean inPlaceEditingActive() default true;
 
@@ -166,5 +165,4 @@ public @interface Component {
 	ContentProperty[] contentAdditionalProperties() default {};
 
 	boolean disableTargeting() default false;
-
 }

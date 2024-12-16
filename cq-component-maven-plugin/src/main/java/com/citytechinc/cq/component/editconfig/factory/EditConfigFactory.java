@@ -1,15 +1,5 @@
 package com.citytechinc.cq.component.editconfig.factory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javassist.CtClass;
-
-import org.codehaus.plexus.util.StringUtils;
-
 import com.citytechinc.cq.component.annotations.Component;
 import com.citytechinc.cq.component.annotations.Listener;
 import com.citytechinc.cq.component.annotations.editconfig.ActionConfig;
@@ -35,6 +25,14 @@ import com.citytechinc.cq.component.editconfig.inplaceediting.EditConfigInPlaceE
 import com.citytechinc.cq.component.editconfig.listeners.EditConfigListeners;
 import com.citytechinc.cq.component.editconfig.listeners.EditConfigListenersParameters;
 import com.citytechinc.cq.component.xml.XmlElement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javassist.CtClass;
+import org.codehaus.plexus.util.StringUtils;
+
 
 public class EditConfigFactory {
 	private static final String ACTION_CONFIG_FIELD_NAME = "actionConfig";
@@ -42,59 +40,41 @@ public class EditConfigFactory {
 	private EditConfigFactory() {
 	}
 
-	public static final EditConfig make(CtClass componentClass) throws InvalidComponentClassException,
-		ClassNotFoundException {
-
-		Component componentAnnotation = (Component) componentClass.getAnnotation(Component.class);
-
+	public static final EditConfig make(CtClass componentClass) throws InvalidComponentClassException, ClassNotFoundException {
+		Component componentAnnotation = ((Component) (componentClass.getAnnotation(Component.class)));
 		if (componentAnnotation == null) {
 			throw new InvalidComponentClassException("Class provided is not property annotated");
 		}
 		EditConfigParameters parameters = new EditConfigParameters();
-
 		String title = getTitleForEditConfig(componentClass, componentAnnotation);
 		parameters.setActions(getActionsForEditConfig(componentAnnotation, title));
-
 		parameters.setDialogMode(getDialogModeForEditConfig(componentAnnotation));
-
 		parameters.setLayout(getLayoutForEditConfig(componentAnnotation));
 		parameters.setEmptyText(getEmptyTextForEditConfig(componentAnnotation));
 		parameters.setInherit(getInheritForEditConfig(componentAnnotation));
-		parameters.setDisableTargeting(getDisableTargingForEditConfig(componentAnnotation));
-
 		List<XmlElement> editConfigChildren = new ArrayList<XmlElement>();
-
 		EditConfigListeners ecl = getListenersForEditConfig(componentAnnotation);
 		if (ecl != null) {
 			editConfigChildren.add(ecl);
 		}
-
 		EditConfigActionConfigs ecac = getActionConfigsForEditConfig(componentAnnotation);
 		if (ecac != null) {
 			editConfigChildren.add(ecac);
 		}
-
 		EditConfigInPlaceEditing ecipe = getInPlaceEditingForEditConfig(componentAnnotation);
 		if (ecipe != null) {
 			editConfigChildren.add(ecipe);
 		}
-
 		EditConfigFormParameters ecfp = getFormParametersForEditConfig(componentAnnotation);
 		if (ecfp != null) {
 			editConfigChildren.add(ecfp);
 		}
-
 		EditConfigDropTargets ecdt = getDropTargetsForEditConfig(componentAnnotation);
 		if (ecdt != null) {
 			editConfigChildren.add(ecdt);
 		}
-
 		parameters.setContainedElements(editConfigChildren);
 		return new DefaultEditConfig(parameters);
-	}
-
-	private static Boolean getDisableTargingForEditConfig(Component componentAnnotation) {
-		return componentAnnotation.disableTargeting();
 	}
 
 	private static boolean getInheritForEditConfig(Component componentAnnotation) {
@@ -184,14 +164,11 @@ public class EditConfigFactory {
 	private static final EditConfigListeners getListenersForEditConfig(Component componentAnnotation) {
 		if (componentAnnotation.listeners().length > 0) {
 			Map<String, String> listeners = new HashMap<String, String>();
-
 			for (Listener listener : componentAnnotation.listeners()) {
 				listeners.put(listener.name(), listener.value());
 			}
-
 			EditConfigListenersParameters parameters = new EditConfigListenersParameters();
 			parameters.setListeners(listeners);
-
 			return new EditConfigListeners(parameters);
 		}
 		return null;
