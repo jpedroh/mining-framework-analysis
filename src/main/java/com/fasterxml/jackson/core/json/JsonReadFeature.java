@@ -2,17 +2,16 @@ package com.fasterxml.jackson.core.json;
 
 import com.fasterxml.jackson.core.*;
 
+
 /**
  * Token reader (parser) features specific to JSON backend.
- *<p>
+ * <p>
  * NOTE: Jackson 2.x had these mixed with non-JSON-specific features within
  * <code>JsonParser.Feature</code> enumeration.
  */
-public enum JsonReadFeature
-    implements FormatFeature
-{
-    // // // Support for non-standard data format constructs: comments
+public enum JsonReadFeature implements FormatFeature {
 
+    // // // Support for non-standard data format constructs: comments
     /**
      * Feature that determines whether parser will allow use
      * of Java/C/C++ style comments (both '/'+'*' and
@@ -26,7 +25,6 @@ public enum JsonReadFeature
      * explicitly enabled.
      */
     ALLOW_JAVA_COMMENTS(false),
-
     /**
      * Feature that determines whether parser will allow use
      * of YAML comments, ones starting with '#' and continuing
@@ -40,21 +38,18 @@ public enum JsonReadFeature
      * explicitly enabled.
      */
     ALLOW_YAML_COMMENTS(false),
-
     // // // Support for non-standard data format constructs: quoting/escaping
-
     /**
      * Feature that determines whether parser will allow use
      * of single quotes (apostrophe, character '\'') for
      * quoting Strings (names and String values). If so,
      * this is in addition to other acceptable markers.
-     *<p>
+     * <p>
      * Since JSON specification requires use of double quotes for
      * field names,
      * this is a non-standard feature, and as such disabled by default.
      */
     ALLOW_SINGLE_QUOTES(false),
-
     /**
      * Feature that determines whether parser will allow use
      * of unquoted field names (which is allowed by Javascript,
@@ -65,7 +60,6 @@ public enum JsonReadFeature
      * this is a non-standard feature, and as such disabled by default.
      */
     ALLOW_UNQUOTED_FIELD_NAMES(false),
-
     /**
      * Feature that determines whether parser will allow
      * JSON Strings to contain unescaped control characters
@@ -78,7 +72,6 @@ public enum JsonReadFeature
      * this is a non-standard feature, and as such disabled by default.
      */
     ALLOW_UNESCAPED_CONTROL_CHARS(false),
-
     /**
      * Feature that can be enabled to accept quoting of all character
      * using backslash quoting mechanism: if not enabled, only characters
@@ -89,9 +82,7 @@ public enum JsonReadFeature
      * this is a non-standard feature, and as such disabled by default.
      */
     ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER(false),
-
     // // // Support for non-standard data format constructs: number representations
-    
     /**
      * Feature that determines whether parser will allow
      * JSON integral numbers to start with additional (ignorable) 
@@ -103,7 +94,6 @@ public enum JsonReadFeature
      * this is a non-standard feature, and as such disabled by default.
      */
     ALLOW_LEADING_ZEROS_FOR_NUMBERS(false),
-    
     /**
      * Feature that allows parser to recognize set of
      * "Not-a-Number" (NaN) tokens as legal floating number
@@ -123,9 +113,7 @@ public enum JsonReadFeature
      * this is a non-standard feature, and as such disabled by default.
      */
     ALLOW_NON_NUMERIC_NUMBERS(false),
-
     // // // Support for non-standard data format constructs: array/value separators
-     
     /**
      * Feature allows the support for "missing" values in a JSON array: missing
      * value meaning sequence of two commas, without value in-between but only
@@ -141,7 +129,6 @@ public enum JsonReadFeature
      * feature and is disabled by default.
      */
     ALLOW_MISSING_VALUES(false),
-
     /**
      * Feature that determines whether {@link JsonParser} will allow for a single trailing
      * comma following the final value (in an Array) or member (in an Object). These commas
@@ -161,10 +148,9 @@ public enum JsonReadFeature
      * Since the JSON specification does not permit trailing commas, this is a non-standard
      * feature, and as such disabled by default.
      */
-    ALLOW_TRAILING_COMMA(false),
-    ;
-
+    ALLOW_TRAILING_COMMA(false);
     final private boolean _defaultState;
+
     final private int _mask;
 
     /**
@@ -181,16 +167,18 @@ public enum JsonReadFeature
         }
         return flags;
     }
-    
+
     private JsonReadFeature(boolean defaultState) {
         _defaultState = defaultState;
-        _mask = (1 << ordinal());
+        _mask = 1 << ordinal();
     }
 
     @Override
     public boolean enabledByDefault() { return _defaultState; }
+
     @Override
     public int getMask() { return _mask; }
+
     @Override
     public boolean enabledIn(int flags) { return (flags & _mask) != 0; }
 }
