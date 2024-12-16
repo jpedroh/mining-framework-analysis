@@ -18,11 +18,6 @@
  */
 package com.premiumminds.billy.france.test;
 
-import java.util.UUID;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-
 import com.google.inject.Guice;
 import com.premiumminds.billy.core.exceptions.SeriesUniqueCodeNotFilled;
 import com.premiumminds.billy.core.persistence.dao.DAOInvoiceSeries;
@@ -48,10 +43,14 @@ import com.premiumminds.billy.france.test.util.FRInvoiceTestUtil;
 import com.premiumminds.billy.france.test.util.FRReceiptTestUtil;
 import com.premiumminds.billy.france.util.Services;
 import com.premiumminds.billy.persistence.entities.jpa.JPAInvoiceSeriesEntity;
+import java.util.UUID;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+
 
 public class FRPersistencyAbstractTest extends FRAbstractTest {
-
     protected static final String PRIVATE_KEY_DIR = "/keys/private.pem";
+
     protected static final String DEFAULT_SERIES = "DEFAULT";
 
     @BeforeEach
@@ -70,42 +69,30 @@ public class FRPersistencyAbstractTest extends FRAbstractTest {
 
     public FRInvoiceEntity getNewIssuedInvoice() {
         return this.getNewIssuedInvoice(StringID.fromValue(UUID.randomUUID().toString()));
-
     }
 
     public FRInvoiceEntity getNewIssuedInvoice(StringID<Business> businessUID) {
         Services service = new Services(FRAbstractTest.injector);
         FRIssuingParams parameters = new FRIssuingParamsImpl();
-
         parameters = this.getParameters(FRPersistencyAbstractTest.DEFAULT_SERIES, "30000");
-
         try {
-            return (FRInvoiceEntity) service.issueDocument(
-                    new FRInvoiceTestUtil(FRAbstractTest.injector).getInvoiceBuilder(
-                            new FRBusinessTestUtil(FRAbstractTest.injector).getBusinessEntity(businessUID)),
-                    parameters);
+            return ((FRInvoiceEntity) (service.issueDocument(new FRInvoiceTestUtil(FRAbstractTest.injector).getInvoiceBuilder(new FRBusinessTestUtil(FRAbstractTest.injector).getBusinessEntity(businessUID)), parameters)));
         } catch (DocumentIssuingException | SeriesUniqueCodeNotFilled | DocumentSeriesDoesNotExistException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
     public FRReceiptEntity getNewIssuedReceipt(StringID<Business> businessUID) {
         Services service = new Services(FRAbstractTest.injector);
         FRIssuingParams parameters = new FRIssuingParamsImpl();
-
         parameters = this.getParameters(FRPersistencyAbstractTest.DEFAULT_SERIES, "007");
-
         try {
-            return (FRReceiptEntity) service.issueDocument(
-                    new FRReceiptTestUtil(FRAbstractTest.injector).getReceiptBuilder(
-                            new FRBusinessTestUtil(FRAbstractTest.injector).getBusinessEntity(businessUID)),
-                    parameters);
+            return ((FRReceiptEntity) (service.issueDocument(new FRReceiptTestUtil(FRAbstractTest.injector).getReceiptBuilder(new FRBusinessTestUtil(FRAbstractTest.injector).getBusinessEntity(businessUID)), parameters)));
         } catch (DocumentIssuingException | SeriesUniqueCodeNotFilled | DocumentSeriesDoesNotExistException e) {
             e.printStackTrace();
         }
-      return null;
+        return null;
     }
 
     public FRCreditReceiptEntity getNewIssuedCreditReceipt(FRReceipt receipt) {
@@ -130,18 +117,13 @@ public class FRPersistencyAbstractTest extends FRAbstractTest {
     public FRCreditNoteEntity getNewIssuedCreditnote(FRInvoice reference) {
         Services service = new Services(FRAbstractTest.injector);
         FRIssuingParams parameters = new FRIssuingParamsImpl();
-
         parameters = this.getParameters("NC", "30000");
         this.createSeries(reference, "NC");
-
         try {
-            return (FRCreditNoteEntity) service.issueDocument(
-                    new FRCreditNoteTestUtil(FRAbstractTest.injector).getCreditNoteBuilder((FRInvoiceEntity) reference),
-                    parameters);
+            return ((FRCreditNoteEntity) (service.issueDocument(new FRCreditNoteTestUtil(FRAbstractTest.injector).getCreditNoteBuilder(((FRInvoiceEntity) (reference))), parameters)));
         } catch (DocumentIssuingException | SeriesUniqueCodeNotFilled | DocumentSeriesDoesNotExistException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -153,17 +135,11 @@ public class FRPersistencyAbstractTest extends FRAbstractTest {
     }
 
     protected void createSeries(StringID<Business> businessUID) {
-        this.createSeries(
-            new FRReceiptTestUtil(FRAbstractTest.injector).getReceiptBuilder(
-                new FRBusinessTestUtil(FRAbstractTest.injector).getBusinessEntity(businessUID)).build(),
-            FRPersistencyAbstractTest.DEFAULT_SERIES);
+        this.createSeries(new FRReceiptTestUtil(FRAbstractTest.injector).getReceiptBuilder(new FRBusinessTestUtil(FRAbstractTest.injector).getBusinessEntity(businessUID)).build(), FRPersistencyAbstractTest.DEFAULT_SERIES);
     }
 
     protected void createSeries(StringID<Business> businessUID, String series) {
-        this.createSeries(
-            new FRReceiptTestUtil(FRAbstractTest.injector).getReceiptBuilder(
-                new FRBusinessTestUtil(FRAbstractTest.injector).getBusinessEntity(businessUID)).build(),
-            series);
+        this.createSeries(new FRReceiptTestUtil(FRAbstractTest.injector).getReceiptBuilder(new FRBusinessTestUtil(FRAbstractTest.injector).getBusinessEntity(businessUID)).build(), series);
     }
 
     protected <T extends GenericInvoice> void createSeries(T document, String series) {

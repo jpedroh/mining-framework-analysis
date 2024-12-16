@@ -18,12 +18,6 @@
  */
 package com.premiumminds.billy.france.persistence.dao.jpa;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.persistence.EntityManager;
-
 import com.premiumminds.billy.core.services.StringID;
 import com.premiumminds.billy.core.services.entities.Business;
 import com.premiumminds.billy.core.services.entities.documents.GenericInvoice;
@@ -37,10 +31,14 @@ import com.premiumminds.billy.france.persistence.entities.jpa.QJPAFRGenericInvoi
 import com.premiumminds.billy.france.services.entities.FRCreditNote;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
+import java.util.ArrayList;
+import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
 
-public class DAOFRCreditNoteImpl extends AbstractDAOFRGenericInvoiceImpl<FRCreditNoteEntity, JPAFRCreditNoteEntity>
-        implements DAOFRCreditNote {
 
+public class DAOFRCreditNoteImpl extends AbstractDAOFRGenericInvoiceImpl<FRCreditNoteEntity, JPAFRCreditNoteEntity> implements DAOFRCreditNote {
     @Inject
     public DAOFRCreditNoteImpl(Provider<EntityManager> emProvider) {
         super(emProvider);
@@ -61,25 +59,8 @@ public class DAOFRCreditNoteImpl extends AbstractDAOFRGenericInvoiceImpl<FRCredi
         QJPAFRCreditNoteEntity creditNote = QJPAFRCreditNoteEntity.jPAFRCreditNoteEntity;
         QJPAFRCreditNoteEntryEntity entry = QJPAFRCreditNoteEntryEntity.jPAFRCreditNoteEntryEntity;
         QJPAFRGenericInvoiceEntity invoice = QJPAFRGenericInvoiceEntity.jPAFRGenericInvoiceEntity;
-
-        final JPQLQuery<String> invQ = JPAExpressions
-            .select(invoice.uid)
-            .from(invoice)
-            .where(invoice.uid.eq(uidInvoice.toString()));
-
-        final JPQLQuery<String> entQ = JPAExpressions
-            .select(entry.uid)
-            .from(entry)
-            .where(this.toDSL(entry.invoiceReference, QJPAFRGenericInvoiceEntity.class).uid.in(invQ));
-
-        return new ArrayList<>(this
-            .createQuery()
-            .from(creditNote)
-            .where(this.toDSL(creditNote.business, QJPAFRBusinessEntity.class).uid
-                       .eq(uidCompany.toString())
-                       .and(this.toDSL(creditNote.entries.any(), QJPAFRCreditNoteEntryEntity.class).uid.in(entQ)))
-            .select(creditNote)
-            .fetch());
+        final JPQLQuery<String> invQ = JPAExpressions.select(invoice.uid).from(invoice).where(invoice.uid.eq(uidInvoice.toString()));
+        final JPQLQuery<String> entQ = JPAExpressions.select(entry.uid).from(entry).where(this.toDSL(entry.invoiceReference, QJPAFRGenericInvoiceEntity.class).uid.in(invQ));
+        return new ArrayList<>(this.createQuery().from(creditNote).where(this.toDSL(creditNote.business, QJPAFRBusinessEntity.class).uid.eq(uidCompany.toString()).and(this.toDSL(creditNote.entries.any(), QJPAFRCreditNoteEntryEntity.class).uid.in(entQ))).select(creditNote).fetch());
     }
-
 }

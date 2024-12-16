@@ -18,6 +18,9 @@
  */
 package com.premiumminds.billy.spain.persistence.entities.jpa;
 
+import com.premiumminds.billy.core.persistence.entities.GenericInvoiceEntity;
+import com.premiumminds.billy.spain.Config;
+import com.premiumminds.billy.spain.persistence.entities.ESCreditReceiptEntryEntity;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,28 +28,21 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
 import org.hibernate.envers.Audited;
 
-import com.premiumminds.billy.spain.Config;
-import com.premiumminds.billy.spain.persistence.entities.ESCreditReceiptEntryEntity;
-import com.premiumminds.billy.spain.services.entities.ESReceipt;
 
 @Entity
 @Audited
 @Table(name = Config.TABLE_PREFIX + "CREDIT_RECEIPT_ENTRY")
-public class JPAESCreditReceiptEntryEntity extends JPAESGenericInvoiceEntryEntity
-        implements ESCreditReceiptEntryEntity {
-
+public class JPAESCreditReceiptEntryEntity extends JPAESGenericInvoiceEntryEntity implements ESCreditReceiptEntryEntity {
     /**
      *
      */
     private static final long serialVersionUID = 1L;
 
-    @OneToOne(fetch = FetchType.EAGER, targetEntity = JPAESReceiptEntity.class,
-            cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @OneToOne(fetch = FetchType.EAGER, targetEntity = JPAESReceiptEntity.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "ID_ESRECEIPT", referencedColumnName = "ID")
-    protected ESReceipt receiptReference;
+    protected GenericInvoiceEntity receiptReference;
 
     @Column(name = "REASON")
     protected String reason;
@@ -57,12 +53,12 @@ public class JPAESCreditReceiptEntryEntity extends JPAESGenericInvoiceEntryEntit
     }
 
     @Override
-    public ESReceipt getReference() {
+    public GenericInvoiceEntity getReference() {
         return this.receiptReference;
     }
 
     @Override
-    public void setReference(ESReceipt reference) {
+    public void setReference(GenericInvoiceEntity reference) {
         this.receiptReference = reference;
     }
 

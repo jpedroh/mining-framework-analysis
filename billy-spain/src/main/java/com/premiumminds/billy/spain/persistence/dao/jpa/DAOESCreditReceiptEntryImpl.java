@@ -18,10 +18,7 @@
  */
 package com.premiumminds.billy.spain.persistence.dao.jpa;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.persistence.EntityManager;
-
+import com.premiumminds.billy.core.persistence.entities.GenericInvoiceEntity;
 import com.premiumminds.billy.spain.persistence.dao.DAOESCreditReceiptEntry;
 import com.premiumminds.billy.spain.persistence.entities.ESCreditReceiptEntity;
 import com.premiumminds.billy.spain.persistence.entities.ESCreditReceiptEntryEntity;
@@ -29,14 +26,14 @@ import com.premiumminds.billy.spain.persistence.entities.jpa.JPAESCreditReceiptE
 import com.premiumminds.billy.spain.persistence.entities.jpa.JPAESCreditReceiptEntryEntity;
 import com.premiumminds.billy.spain.persistence.entities.jpa.QJPAESCreditReceiptEntity;
 import com.premiumminds.billy.spain.persistence.entities.jpa.QJPAESCreditReceiptEntryEntity;
-import com.premiumminds.billy.spain.services.entities.ESReceipt;
 import com.querydsl.core.types.dsl.PathInits;
 import com.querydsl.jpa.impl.JPAQuery;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
 
-public class DAOESCreditReceiptEntryImpl
-        extends AbstractDAOESGenericInvoiceEntryImpl<ESCreditReceiptEntryEntity, JPAESCreditReceiptEntryEntity>
-        implements DAOESCreditReceiptEntry {
 
+public class DAOESCreditReceiptEntryImpl extends AbstractDAOESGenericInvoiceEntryImpl<ESCreditReceiptEntryEntity, JPAESCreditReceiptEntryEntity> implements DAOESCreditReceiptEntry {
     @Inject
     public DAOESCreditReceiptEntryImpl(Provider<EntityManager> emProvider) {
         super(emProvider);
@@ -53,14 +50,8 @@ public class DAOESCreditReceiptEntryImpl
     }
 
     @Override
-    public ESCreditReceiptEntity checkCreditReceipt(ESReceipt receipt) {
+    public ESCreditReceiptEntity checkCreditReceipt(GenericInvoiceEntity receipt) {
         QJPAESCreditReceiptEntity creditReceiptEntity = QJPAESCreditReceiptEntity.jPAESCreditReceiptEntity;
-
-        return new JPAQuery<JPAESCreditReceiptEntity>(this.getEntityManager())
-                .from(creditReceiptEntity)
-                .where(new QJPAESCreditReceiptEntryEntity(JPAESCreditReceiptEntryEntity.class, creditReceiptEntity.entries.any().getMetadata(), PathInits.DIRECT2)
-                        .receiptReference.id.eq(receipt.getID()))
-                .select(creditReceiptEntity)
-                .fetchFirst();
+        return new JPAQuery<JPAESCreditReceiptEntity>(this.getEntityManager()).from(creditReceiptEntity).where(new QJPAESCreditReceiptEntryEntity(JPAESCreditReceiptEntryEntity.class, creditReceiptEntity.entries.any().getMetadata(), PathInits.DIRECT2).receiptReference.id.eq(receipt.getID())).select(creditReceiptEntity).fetchFirst();
     }
 }

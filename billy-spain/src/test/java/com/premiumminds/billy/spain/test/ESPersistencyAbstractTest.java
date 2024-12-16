@@ -18,11 +18,6 @@
  */
 package com.premiumminds.billy.spain.test;
 
-import java.util.UUID;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-
 import com.google.inject.Guice;
 import com.premiumminds.billy.core.exceptions.SeriesUniqueCodeNotFilled;
 import com.premiumminds.billy.core.persistence.dao.DAOInvoiceSeries;
@@ -48,10 +43,14 @@ import com.premiumminds.billy.spain.test.util.ESCreditReceiptTestUtil;
 import com.premiumminds.billy.spain.test.util.ESInvoiceTestUtil;
 import com.premiumminds.billy.spain.test.util.ESReceiptTestUtil;
 import com.premiumminds.billy.spain.util.Services;
+import java.util.UUID;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+
 
 public class ESPersistencyAbstractTest extends ESAbstractTest {
-
     protected static final String PRIVATE_KEY_DIR = "/keys/private.pem";
+
     protected static final String DEFAULT_SERIES = "DEFAULT";
 
     @BeforeEach
@@ -70,38 +69,26 @@ public class ESPersistencyAbstractTest extends ESAbstractTest {
 
     public ESInvoiceEntity getNewIssuedInvoice() {
         return this.getNewIssuedInvoice(StringID.fromValue(UUID.randomUUID().toString()));
-
     }
 
     public ESInvoiceEntity getNewIssuedInvoice(StringID<Business> businessUID) {
         Services service = new Services(ESAbstractTest.injector);
         ESIssuingParams parameters = new ESIssuingParamsImpl();
-
         parameters = this.getParameters(ESPersistencyAbstractTest.DEFAULT_SERIES, "30000");
-
         try {
-            return (ESInvoiceEntity) service.issueDocument(
-                    new ESInvoiceTestUtil(ESAbstractTest.injector).getInvoiceBuilder(
-                            new ESBusinessTestUtil(ESAbstractTest.injector).getBusinessEntity(businessUID)),
-                    parameters);
+            return ((ESInvoiceEntity) (service.issueDocument(new ESInvoiceTestUtil(ESAbstractTest.injector).getInvoiceBuilder(new ESBusinessTestUtil(ESAbstractTest.injector).getBusinessEntity(businessUID)), parameters)));
         } catch (DocumentIssuingException | SeriesUniqueCodeNotFilled | DocumentSeriesDoesNotExistException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
     public ESReceiptEntity getNewIssuedReceipt(StringID<Business> businessUID) {
         Services service = new Services(ESAbstractTest.injector);
         ESIssuingParams parameters = new ESIssuingParamsImpl();
-
         parameters = this.getParameters(ESPersistencyAbstractTest.DEFAULT_SERIES, "007");
-
         try {
-            return (ESReceiptEntity) service.issueDocument(
-                    new ESReceiptTestUtil(ESAbstractTest.injector).getReceiptBuilder(
-                            new ESBusinessTestUtil(ESAbstractTest.injector).getBusinessEntity(businessUID)),
-                    parameters);
+            return ((ESReceiptEntity) (service.issueDocument(new ESReceiptTestUtil(ESAbstractTest.injector).getReceiptBuilder(new ESBusinessTestUtil(ESAbstractTest.injector).getBusinessEntity(businessUID)), parameters)));
         } catch (DocumentIssuingException | SeriesUniqueCodeNotFilled | DocumentSeriesDoesNotExistException e) {
             e.printStackTrace();
         }
@@ -130,19 +117,13 @@ public class ESPersistencyAbstractTest extends ESAbstractTest {
     public ESCreditNoteEntity getNewIssuedCreditnote(ESInvoice reference) {
         Services service = new Services(ESAbstractTest.injector);
         ESIssuingParams parameters = new ESIssuingParamsImpl();
-
         parameters = this.getParameters("NC", "30000");
-
         this.createSeries(reference, "NC");
-
         try {
-            return (ESCreditNoteEntity) service.issueDocument(
-                    new ESCreditNoteTestUtil(ESAbstractTest.injector).getCreditNoteBuilder((ESInvoiceEntity) reference),
-                    parameters);
+            return ((ESCreditNoteEntity) (service.issueDocument(new ESCreditNoteTestUtil(ESAbstractTest.injector).getCreditNoteBuilder(((ESInvoiceEntity) (reference))), parameters)));
         } catch (DocumentIssuingException | SeriesUniqueCodeNotFilled | DocumentSeriesDoesNotExistException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -154,17 +135,11 @@ public class ESPersistencyAbstractTest extends ESAbstractTest {
     }
 
     protected void createSeries(StringID<Business> businessUID) {
-        this.createSeries(
-            new ESReceiptTestUtil(ESAbstractTest.injector).getReceiptBuilder(
-                new ESBusinessTestUtil(ESAbstractTest.injector).getBusinessEntity(businessUID)).build(),
-            ESPersistencyAbstractTest.DEFAULT_SERIES);
+        this.createSeries(new ESReceiptTestUtil(ESAbstractTest.injector).getReceiptBuilder(new ESBusinessTestUtil(ESAbstractTest.injector).getBusinessEntity(businessUID)).build(), ESPersistencyAbstractTest.DEFAULT_SERIES);
     }
 
     protected void createSeries(StringID<Business> businessUID, String series) {
-        this.createSeries(
-            new ESReceiptTestUtil(ESAbstractTest.injector).getReceiptBuilder(
-                new ESBusinessTestUtil(ESAbstractTest.injector).getBusinessEntity(businessUID)).build(),
-            series);
+        this.createSeries(new ESReceiptTestUtil(ESAbstractTest.injector).getReceiptBuilder(new ESBusinessTestUtil(ESAbstractTest.injector).getBusinessEntity(businessUID)).build(), series);
     }
 
     protected <T extends GenericInvoice> void createSeries(T document, String series) {

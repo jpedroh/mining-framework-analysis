@@ -37,9 +37,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
-public class DAOESCreditReceiptImpl extends
-        AbstractDAOESGenericInvoiceImpl<ESCreditReceiptEntity, JPAESCreditReceiptEntity> implements DAOESCreditReceipt {
 
+public class DAOESCreditReceiptImpl extends AbstractDAOESGenericInvoiceImpl<ESCreditReceiptEntity, JPAESCreditReceiptEntity> implements DAOESCreditReceipt {
     @Inject
     public DAOESCreditReceiptImpl(Provider<EntityManager> emProvider) {
         super(emProvider);
@@ -55,30 +54,13 @@ public class DAOESCreditReceiptImpl extends
         return JPAESCreditReceiptEntity.class;
     }
 
-    @Override public List<ESCreditReceipt> findByReferencedDocument(StringID<Business> uidCompany,
-            StringID<GenericInvoice> uidInvoice) {
+    @Override
+    public List<ESCreditReceipt> findByReferencedDocument(StringID<Business> uidCompany, StringID<GenericInvoice> uidInvoice) {
         QJPAESCreditReceiptEntity creditReceipt = QJPAESCreditReceiptEntity.jPAESCreditReceiptEntity;
         QJPAESCreditReceiptEntryEntity entry = QJPAESCreditReceiptEntryEntity.jPAESCreditReceiptEntryEntity;
         QJPAESGenericInvoiceEntity receipt = QJPAESGenericInvoiceEntity.jPAESGenericInvoiceEntity;
-
-        final JPQLQuery<String> invQ = JPAExpressions
-            .select(receipt.uid)
-            .from(receipt)
-            .where(receipt.uid.eq(uidInvoice.getIdentifier()));
-
-        final JPQLQuery<String> entQ = JPAExpressions
-            .select(entry.uid)
-            .from(entry)
-            .where(this.toDSL(entry.receiptReference, QJPAESGenericInvoiceEntity.class).uid.in(invQ));
-
-        return new ArrayList<>(this
-            .createQuery()
-            .from(creditReceipt)
-            .where(this.toDSL(creditReceipt.business, QJPAESBusinessEntity.class).uid
-                       .eq(uidCompany.toString())
-                       .and(this.toDSL(creditReceipt.entries.any(), QJPAESCreditReceiptEntryEntity.class).uid.in(entQ)))
-            .select(creditReceipt)
-            .fetch());
+        final JPQLQuery<String> invQ = JPAExpressions.select(receipt.uid).from(receipt).where(receipt.uid.eq(uidInvoice.getIdentifier()));
+        final JPQLQuery<String> entQ = JPAExpressions.select(entry.uid).from(entry).where(this.toDSL(entry.receiptReference, QJPAESGenericInvoiceEntity.class).uid.in(invQ));
+        return new ArrayList<>(this.createQuery().from(creditReceipt).where(this.toDSL(creditReceipt.business, QJPAESBusinessEntity.class).uid.eq(uidCompany.toString()).and(this.toDSL(creditReceipt.entries.any(), QJPAESCreditReceiptEntryEntity.class).uid.in(entQ))).select(creditReceipt).fetch());
     }
-
 }
