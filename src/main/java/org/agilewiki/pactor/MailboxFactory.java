@@ -6,7 +6,6 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.agilewiki.pactor.impl.MailboxImpl;
 import org.agilewiki.pactor.impl.MessageQueue;
 import org.agilewiki.pactor.impl.MessageQueueFactory;
@@ -14,24 +13,24 @@ import org.agilewiki.pactor.impl.MessageQueueFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public final class MailboxFactory {
-    private static Logger LOG = LoggerFactory.getLogger(MailboxFactory.class);;
     private final ExecutorService executorService;
+
     private final MessageQueueFactory messageQueueFactory;
+
     /** Must also be thread-safe. */
     private final List<AutoCloseable> closables = new Vector<AutoCloseable>();
+
     private final AtomicBoolean shuttingDown = new AtomicBoolean();
 
     public MailboxFactory() {
         this(null, null);
     }
 
-    public MailboxFactory(final ExecutorService executorService,
-            final MessageQueueFactory messageQueueFactory) {
-        this.executorService = (executorService == null) ? Executors
-                .newCachedThreadPool() : executorService;
-        this.messageQueueFactory = (messageQueueFactory == null) ? MessageQueueFactoryImpl.INTANCE
-                : messageQueueFactory;
+    public MailboxFactory(final ExecutorService executorService, final MessageQueueFactory messageQueueFactory) {
+        this.executorService = (executorService == null) ? Executors.newCachedThreadPool() : executorService;
+        this.messageQueueFactory = (messageQueueFactory == null) ? MessageQueueFactoryImpl.INTANCE : messageQueueFactory;
     }
 
     public Mailbox createMailbox() {
@@ -45,14 +44,20 @@ public final class MailboxFactory {
     public void submit(final Runnable task) throws Exception {
         try {
             executorService.submit(task);
-        } catch (final Exception e) {
-            if (!isShuttingDown())
+        } catch (final java.lang.Exception e) {
+            if (!isShuttingDown()) 
+<<<<<<< LEFT
                 throw e;
-            else
-                LOG.warn("Unable to process the request, possible mailbox shutdown had been called in the application");
-        } catch (final Error e) {
-            if (!isShuttingDown())
+=======
                 throw e;
+            else            
+            	LOG.warn("Unable to process the request, possible mailbox shutdown had been called in the application");
+>>>>>>> RIGHT
+
+        } catch (final java.lang.Error e) {
+            if (!isShuttingDown()) {
+                throw e;
+            }
         }
     }
 
@@ -72,10 +77,10 @@ public final class MailboxFactory {
             while (it.hasNext()) {
                 try {
                     it.next().close();
-                } catch (final Throwable t) {
+                } catch (final java.lang.Throwable t) {
                     t.printStackTrace();
                 }
-            }
+            } 
         }
     }
 
