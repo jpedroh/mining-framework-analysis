@@ -12,11 +12,8 @@
  */
 package org.omnifaces.component.output;
 
-import static org.omnifaces.util.FacesLocal.createConverter;
-
 import java.io.IOException;
 import java.io.StringWriter;
-
 import javax.faces.FacesException;
 import javax.faces.component.FacesComponent;
 import javax.faces.component.UIParameter;
@@ -24,8 +21,9 @@ import javax.faces.component.ValueHolder;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import javax.faces.convert.Converter;
-
 import org.omnifaces.component.ParamHolder;
+import static org.omnifaces.util.FacesLocal.createConverter;
+
 
 /**
  * <p>
@@ -42,7 +40,7 @@ import org.omnifaces.component.ParamHolder;
  * <code>&lt;h:outputFormat&gt;</code>. For example,
  * <pre>
  * &lt;h:outputFormat value="#{bundle.paragraph}" escape="false"&gt;
- *     &lt;o:param&gt;&lt;h:link outcome="contact" value="#{bundle.contact}" /&gt;&lt;/o:param&gt;
+ * &lt;o:param&gt;&lt;h:link outcome="contact" value="#{bundle.contact}" /&gt;&lt;/o:param&gt;
  * &lt;/h:outputFormat&gt;
  * </pre>
  * <p>with this bundle
@@ -53,34 +51,32 @@ import org.omnifaces.component.ParamHolder;
  * <p>will result in the link being actually encoded as output format parameter value.
  *
  * @author Bauke Scholtz
- * @param <T> The type of the value.
  * @since 1.4
+ * @see ParamHolder
  * @see ParamHolder
  */
 @FacesComponent(Param.COMPONENT_TYPE)
 public class Param<T> extends UIParameter implements ParamHolder<T> {
-
+	// Public constants -----------------------------------------------------------------------------------------------
 	// Public constants -----------------------------------------------------------------------------------------------
 
 	public static final String COMPONENT_TYPE = "org.omnifaces.component.output.Param";
 
 	// Private constants ----------------------------------------------------------------------------------------------
-
 	private enum PropertyKeys {
+
 		// Cannot be uppercased. They have to exactly match the attribute names.
-		converter;
-	}
+		converter;}
 
 	// Attribute getters/setters --------------------------------------------------------------------------------------
-
 	@Override
 	@SuppressWarnings("unchecked")
 	public Converter<T> getConverter() {
-		return (Converter<T>) getStateHelper().eval(PropertyKeys.converter);
+		return ((Converter<T>) (getStateHelper().eval(PropertyKeys.converter)));
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void setConverter(Converter converter) {
 		getStateHelper().put(PropertyKeys.converter, converter);
 	}
@@ -91,7 +87,7 @@ public class Param<T> extends UIParameter implements ParamHolder<T> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public T getLocalValue() {
-		return (T) super.getValue();
+		return ((T) (super.getValue()));
 	}
 
 	@Override
@@ -100,33 +96,25 @@ public class Param<T> extends UIParameter implements ParamHolder<T> {
 		FacesContext context = getFacesContext();
 		Converter<T> converter = getConverter();
 		Object value = getLocalValue();
-
-		if (value == null && getChildCount() > 0) {
+		if ((value == null) && (getChildCount() > 0)) {
 			ResponseWriter originalResponseWriter = context.getResponseWriter();
 			StringWriter output = new StringWriter();
 			context.setResponseWriter(originalResponseWriter.cloneWithWriter(output));
-
 			try {
 				super.encodeChildren(context);
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				throw new FacesException(e);
-			}
-			finally {
+			} finally {
 				context.setResponseWriter(originalResponseWriter);
 			}
-
 			value = output.toString();
 		}
-
-		if (converter == null && value != null) {
+		if ((converter == null) && (value != null)) {
 			converter = createConverter(context, value.getClass());
 		}
-
 		if (converter != null) {
-			return converter.getAsString(context, this, (T) value);
-		}
-		else {
+			return converter.getAsString(context, this, ((T) (value)));
+		} else {
 			return value != null ? value.toString() : null;
 		}
 	}
@@ -140,5 +128,4 @@ public class Param<T> extends UIParameter implements ParamHolder<T> {
 	public void encodeChildren(FacesContext context) throws IOException {
 		// This override which does nothing effectively blocks the children from being encoded during JSF render.
 	}
-
 }
