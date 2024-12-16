@@ -15,6 +15,16 @@
  */
 package controllers;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import conf.XCMailrConf;
+import etc.HelperUtils;
+import filters.AdminFilter;
+import filters.SecureFilter;
+import filters.WhitelistFilter;
+import io.ebean.DB;
+import io.ebean.SqlRow;
+import io.ebean.Transaction;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -23,21 +33,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-
-import io.ebean.DB;
-import io.ebean.SqlRow;
-import io.ebean.Transaction;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
-import conf.XCMailrConf;
-import etc.HelperUtils;
-import filters.AdminFilter;
-import filters.SecureFilter;
-import filters.WhitelistFilter;
 import models.Domain;
 import models.MailStatisticsJson;
 import models.MailTransaction;
@@ -51,21 +46,19 @@ import ninja.Results;
 import ninja.i18n.Messages;
 import ninja.params.Param;
 import ninja.params.PathParam;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import services.MailrMessageSenderFactory;
+
 
 /**
  * Handles all Actions for the Administration-Section
  * 
  * @author Patrick Thum, Xceptance Software Technologies GmbH, Germany.
  */
-
-@FilterWith(
-    {
-      SecureFilter.class, AdminFilter.class
-    })
+@FilterWith({ SecureFilter.class, AdminFilter.class })
 @Singleton
-public class AdminHandler
-{
+public class AdminHandler {
     @Inject
     XCMailrConf xcmConfiguration;
 
@@ -78,8 +71,7 @@ public class AdminHandler
     @Inject
     CachingSessionHandler cachingSessionHandler;
 
-    private static final Pattern PATTERN_DOMAINS = Pattern.compile("^[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,6}",
-                                                                   Pattern.CASE_INSENSITIVE);
+    private static final Pattern PATTERN_DOMAINS = Pattern.compile("^[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,6}", Pattern.CASE_INSENSITIVE);
 
     /**
      * Shows the Administration-Index-Page.
@@ -144,17 +136,15 @@ public class AdminHandler
      *            the context of this request
      * @return the page to show paginated mail-transactions
      */
-    public Result pagedMTX(Context context, @Param("p") Optional<Integer> page)
-    {
+    public Result pagedMTX(Context context, @Param("p")
+    Optional<Integer> page) {
         // set a default number or the number which the user had chosen
         HelperUtils.parseEntryValue(context, xcmConfiguration.APP_DEFAULT_ENTRYNO);
         // get the default number of entries per page
         int entries = Integer.parseInt(context.getSession().get("no"));
         int _page = page.orElse(1);
-
         // generate the paged-list to get pagination on the page
-        PageList<MailTransaction> pagedMailTransactionList = new PageList<MailTransaction>(MailTransaction.getSortedAndLimitedList(xcmConfiguration.MTX_LIMIT),
-                                                                                           entries);
+        PageList<MailTransaction> pagedMailTransactionList = new PageList<MailTransaction>(MailTransaction.getSortedAndLimitedList(xcmConfiguration.MTX_LIMIT), entries);
         return Results.html().render("plist", pagedMailTransactionList).render("curPage", _page);
     }
 
@@ -165,18 +155,15 @@ public class AdminHandler
      *            the time in days (all before will be deleted)
      * @return mail-transactions overview page
      */
-    public Result deleteMTXProcess(@PathParam("time") Optional<Integer> time, Context context)
-    {
+    public Result deleteMTXProcess(@PathParam("time")
+    Optional<Integer> time, Context context) {
         final Integer _time = time.orElse(null);
-        if (_time != null)
-        {
-            if (_time == -1)
-            { // all entries will be deleted
+        if (_time != null) {
+            if (_time == (-1)) {
+                // all entries will be deleted
                 MailTransaction.deleteTxInPeriod(null);
-            }
-            else
-            {
-                // calculate the time and delete all entries before
+            } else {
+            // calculate the time and delete all entries before
                 DateTime dt = DateTime.now().minusDays(_time);
                 MailTransaction.deleteTxInPeriod(dt.getMillis());
             }
@@ -193,34 +180,27 @@ public class AdminHandler
      *            the context of this request
      * @return users overview page
      */
-    public Result activateUserProcess(@PathParam("id") Long userId, Context context)
-    {
+    public Result activateUserProcess(@PathParam("id")
+    Long userId, Context context) {
         // get the user who executes this action
         User executingUser = context.getAttribute("user", User.class);
         // no action of admin wants to (de)activate his own account
-        if (executingUser.getId() != userId)
-        {
+        if (executingUser.getId() != userId) {
             // activate or deactivate the user
             boolean active = User.activate(userId);
-
             // generate the (de-)activation-information mail and send it to the user
             User user = User.getById(userId);
             String from = xcmConfiguration.ADMIN_ADDRESS;
             String host = xcmConfiguration.MB_HOST;
-
             Optional<String> optLanguage = Optional.of(user.getLanguage());
-
             // generate the message title
-            String subject = messages.get(active ? "user_Activate_Title" : "user_Deactivate_Title", optLanguage, host)
-                                     .get();
+            String subject = messages.get(active ? "user_Activate_Title" : "user_Deactivate_Title", optLanguage, host).get();
             // generate the message body
-            String content = messages.get(active ? "user_Activate_Message" : "user_Deactivate_Message", optLanguage,
-                                          user.getForename())
-                                     .get();
+            String content = messages.get(active ? "user_Activate_Message" : "user_Deactivate_Message", optLanguage, user.getForename()).get();
             // send the mail
             mailSender.sendMail(from, user.getMail(), content, subject);
-            if (!active)
-            { // delete the sessions of this user
+            if (!active) {
+                // delete the sessions of this user
                 cachingSessionHandler.deleteUsersSessions(User.getById(userId));
             }
         }
@@ -278,20 +258,15 @@ public class AdminHandler
      *            the context of this request
      * @return found users as JSON array
      */
-    public Result jsonUserSearch(Context context)
-    {
+    public Result jsonUserSearch(Context context) {
         List<User> userList;
         String searchString = context.getParameter("s", "");
-
         userList = (searchString.equals("")) ? new ArrayList<User>() : User.findUserLike(searchString);
-
         UserFormData userData;
         List<UserFormData> userDatalist = new ArrayList<UserFormData>();
-
         // GSON can't handle object graphs with cyclic references (the 1:m relation between user and MBox will end up in a cycle)
         // so we need to transform the data which does not contain the reference
-        for (User currentUser : userList)
-        {
+        for (User currentUser : userList) {
             userData = UserFormData.prepopulate(currentUser);
             userDatalist.add(userData);
         }
@@ -342,29 +317,24 @@ public class AdminHandler
      * @return overview of all white-listed domains
      */
     @FilterWith(WhitelistFilter.class)
-    public Result handleRemoveDomain(Context context, @Param("action") Optional<String> action,
-                                     @Param("domainId") Long domainId)
-    {
+    public Result handleRemoveDomain(Context context, @Param("action")
+    Optional<String> action, @Param("domainId")
+    Long domainId) {
         Result result = Results.redirect(context.getContextPath() + "/admin/whitelist");
         String _action = action.orElse(null);
-
-        if ("deleteUsersAndDomain".equals(_action))
-        {
+        if ("deleteUsersAndDomain".equals(_action)) {
             Domain domain = Domain.getById(domainId);
             List<User> usersToDelete = User.getUsersOfDomain(domain.getDomainname());
-
-            for (User userToDelete : usersToDelete)
-            { // delete the sessions of the users and the account
+            for (User userToDelete : usersToDelete) {
+                // delete the sessions of the users and the account
                 cachingSessionHandler.deleteUsersSessions(userToDelete);
                 User.delete(userToDelete.getId());
             }
             domain.delete();
-        }
-        else if ("deleteDomain".equals(_action))
-        {// just delete the domain
+        } else if ("deleteDomain".equals(_action)) {
+        // just delete the domain
             Domain.delete(domainId);
         }
-
         // if no action matches or the actions had been executed, redirect
         return result;
     }
@@ -379,33 +349,28 @@ public class AdminHandler
      * @return overview of all white-listed domains
      */
     @FilterWith(WhitelistFilter.class)
-    public Result addDomain(Context context, @Param("domainName") Optional<String> domainName)
-    {
+    public Result addDomain(Context context, @Param("domainName")
+    Optional<String> domainName) {
         Result result = Results.redirect(context.getContextPath() + "/admin/whitelist");
         String _domainName = domainName.orElse(null);
-        if (StringUtils.isBlank(_domainName))
-        {
+        if (StringUtils.isBlank(_domainName)) {
             // the input-string was empty
             context.getFlashScope().error("adminAddDomain_Flash_EmptyField");
             return result;
         }
-
-        if (!PATTERN_DOMAINS.matcher(_domainName).matches())
-        { // the validation of the domain-name failed
+        if (!PATTERN_DOMAINS.matcher(_domainName).matches()) {
+            // the validation of the domain-name failed
             context.getFlashScope().error("adminAddDomain_Flash_InvalidDomain");
             return result;
         }
-
-        if (Domain.exists(_domainName))
-        { // the domain-name is already part of the domain-list
+        if (Domain.exists(_domainName)) {
+            // the domain-name is already part of the domain-list
             context.getFlashScope().error("adminAddDomain_Flash_DomainExists");
             return result;
         }
-
         Domain domain = new Domain(_domainName);
         domain.save();
         context.getFlashScope().success("adminAddDomain_Flash_Success");
-
         return result;
     }
 
@@ -416,73 +381,58 @@ public class AdminHandler
      *            the context of this request
      * @return
      */
-    public Result showEmailStatistics(Context context, @Param("dayPage") Optional<Integer> dayPage,
-                                      @Param("weekPage") Optional<Integer> weekPage,
-                                      @Param("sortDailyList") Optional<String> sortDailyList,
-                                      @Param("sortWeeklyList") Optional<String> sortWeeklyList)
-    {
+    public Result showEmailStatistics(Context context, @Param("dayPage")
+    Optional<Integer> dayPage, @Param("weekPage")
+    Optional<Integer> weekPage, @Param("sortDailyList")
+    Optional<String> sortDailyList, @Param("sortWeeklyList")
+    Optional<String> sortWeeklyList) {
         Result html = Results.html();
-
         // today statistics
         List<Long> dailyDroppedMails = new LinkedList<>();
         List<Long> dailyForwardedMails = new LinkedList<>();
         List<Long> dailyTimestamps = new LinkedList<>();
-
         reduceStatisticsData(4, getStatistics(0, true), dailyDroppedMails, dailyForwardedMails, dailyTimestamps);
-
         html.render("lastDayTimestamps", dailyTimestamps);
         html.render("lastDayDroppedData", dailyDroppedMails);
         html.render("lastDayForwardedData", dailyForwardedMails);
-
         List<Long> weeklyDroppedMails = new LinkedList<>();
         List<Long> weeklyForwardedMails = new LinkedList<>();
         List<Long> weeklyTimestamps = new LinkedList<>();
-
         // week statistics
-        reduceStatisticsData(4, getStatistics(xcmConfiguration.MAIL_STATISTICS_MAX_DAYS - 1, false), weeklyDroppedMails,
-                             weeklyForwardedMails, weeklyTimestamps);
-
+        reduceStatisticsData(4, getStatistics(xcmConfiguration.MAIL_STATISTICS_MAX_DAYS - 1, false), weeklyDroppedMails, weeklyForwardedMails, weeklyTimestamps);
         html.render("lastWeekTimestamps", weeklyTimestamps);
         html.render("lastWeekDroppedData", weeklyDroppedMails);
         html.render("lastWeekForwardedData", weeklyForwardedMails);
-
         return html;
     }
 
-    public Result getEmailSenderTablePage(Context context, @Param("scope") String scope,
-                                          @Param("page") Optional<Integer> page,
-                                          @Param("offset") Optional<Integer> offset,
-                                          @Param("limit") Optional<Integer> limit, @Param("sort") Optional<String> sort,
-                                          @Param("order") Optional<String> order)
-    {
+    public Result getEmailSenderTablePage(Context context, @Param("scope")
+    String scope, @Param("page")
+    Optional<Integer> page, @Param("offset")
+    Optional<Integer> offset, @Param("limit")
+    Optional<Integer> limit, @Param("sort")
+    Optional<String> sort, @Param("order")
+    Optional<String> order) {
         List<MailStatisticsJson> data = null;
-
         final int _offset = offset.orElse(0);
         final int _limit = limit.orElse(0);
         final String _sort = sort.orElse(null);
         final String _order = order.orElse(null);
-        switch (scope)
-        {
-            case "day":
+        switch (scope) {
+            case "day" :
                 data = getMailSenderList(0, _sort, _order);
                 break;
-
-            case "week":
+            case "week" :
                 data = getMailSenderList(6, _sort, _order);
                 break;
-
-            default:
+            default :
                 return Results.badRequest();
         }
-
         final int total = data.size();
         final List<MailStatisticsJson> rows;
-        if (_offset < 0 || _limit <= 0 || total == 0)
-        {
+        if (((_offset < 0) || (_limit <= 0)) || (total == 0)) {
             rows = Collections.emptyList();
-        }
-        else
-        {
+        } else {
             rows = data.subList(Math.min(_offset, total), Math.min(_offset + _limit, total));
         }
         return Results.json().render("rows", rows).render("total", total);
@@ -495,38 +445,30 @@ public class AdminHandler
      *            A positive integer that specifies how many days should be aggregated
      * @return
      */
-    private List<MailStatisticsJson> getMailSenderList(int lastNDays, String sort, String order)
-    {
-        if (lastNDays < 0)
+    private List<MailStatisticsJson> getMailSenderList(int lastNDays, String sort, String order) {
+        if (lastNDays < 0) {
             lastNDays = 0;
-
+        }
         // daily top for dropped mail sender
         StringBuilder sql = new StringBuilder();
         sql.append("select ms.FROM_DOMAIN as \"fromDomain\", sum(ms.DROP_COUNT) as \"droppedCount\", sum(ms.FORWARD_COUNT) as \"forwardedCount\"");
         sql.append("  from MAIL_STATISTICS ms");
         sql.append(" where ms.DATE >= CURRENT_DATE() - " + lastNDays);
         sql.append(" group by ms.FROM_DOMAIN");
-
         String orderColumn = getOrderColumn(sort);
         String orderBy = getOrderDirection(order);
-
-        sql.append(" order by \"" + orderColumn + "\" " + orderBy);
-
+        sql.append(((" order by \"" + orderColumn) + "\" ") + orderBy);
         List<SqlRow> droppedMail = DB.sqlQuery(sql.toString()).findList();
         List<MailStatisticsJson> droppedMailSender = new LinkedList<>();
         int rowIdx = 0;
-        for (final SqlRow row : droppedMail)
-        {
+        for (final SqlRow row : droppedMail) {
             MailStatisticsJson ms = new MailStatisticsJson();
             ms.id = rowIdx++;
             ms.droppedCount = row.getInteger("droppedCount");
             ms.forwardedCount = row.getInteger("forwardedCount");
             ms.fromDomain = row.getString("fromDomain");
-
             droppedMailSender.add(ms);
         }
-        ;
-
         return droppedMailSender;
     }
 
@@ -569,22 +511,18 @@ public class AdminHandler
      *            result will only contain full days including the current
      * @return
      */
-    private List<SqlRow> getStatistics(int lastNDays, boolean slidingWindow)
-    {
-        if (lastNDays < 0)
+    private List<SqlRow> getStatistics(int lastNDays, boolean slidingWindow) {
+        if (lastNDays < 0) {
             lastNDays = 0;
-
-        if (slidingWindow)
+        }
+        if (slidingWindow) {
             lastNDays++;
-
+        }
         // new line
         String newLine = "\n";
-
         Transaction transaction = DB.beginTransaction();
-
         // set starting quarter of the day as a variable for sliding window results
         DB.sqlUpdate("set @startingQuarter = ((hour(CURRENT_TIME()) + 1)  * 4)").execute();
-
         StringBuilder sb = new StringBuilder(5000);
         sb.append("select temp.DATE");
         sb.append(", temp.X as QUARTER_HOUR");
@@ -593,42 +531,33 @@ public class AdminHandler
         sb.append("from (");
         sb.append("select date,X ");
         sb.append("from (").append(newLine);
-
-        for (int i = 0; i < lastNDays + 1; i++)
-        {
-            if (i > 0)
+        for (int i = 0; i < (lastNDays + 1); i++) {
+            if (i > 0) {
                 sb.append("union ");
-
-            sb.append("select CURRENT_DATE() - " + i + " as date from dual").append(newLine);
+            }
+            sb.append(("select CURRENT_DATE() - " + i) + " as date from dual").append(newLine);
         }
         sb.append(") ").append(newLine);
         sb.append("cross join (select X from system_range(0,95))").append(newLine);
         sb.append(") temp").append(newLine);
-
         sb.append("left ");
         sb.append("join  MAIL_STATISTICS ms");
         sb.append("  on  ms.DATE = temp.date ").append(newLine);
         sb.append(" and ms.quarter_hour = temp.X").append(newLine);
-
-        if (slidingWindow)
-        {
+        if (slidingWindow) {
             sb.append("where ");
             sb.append("(temp.DATE < CURRENT_DATE()");
             sb.append(" and temp.X >= @startingQuarter)");
             sb.append(" or (temp.DATE = CURRENT_DATE()");
             sb.append(" and temp.X < @startingQuarter)").append(newLine);
         }
-
         sb.append("group by temp.DATE, temp.X").append(newLine);
         sb.append("order by temp.date, temp.X;").append(newLine);
-
         // System.out.println("==========================================");
         // System.out.println(sb.toString());
         // System.out.println("==========================================");
-
         List<SqlRow> result = DB.sqlQuery(sb.toString()).findList();
         transaction.commit();
-
         return result;
     }
 

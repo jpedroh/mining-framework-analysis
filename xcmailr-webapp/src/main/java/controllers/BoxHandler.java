@@ -15,6 +15,16 @@
  */
 package controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import conf.XCMailrConf;
+import etc.HelperUtils;
+import etc.MailboxEntry;
+import etc.TypeRef;
+import filters.JsonSecureFilter;
+import filters.SecureFilter;
+import io.ebean.DB;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
@@ -27,36 +37,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
 import javax.activation.DataSource;
 import javax.mail.internet.MimeMessage;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.mail.util.MimeMessageParser;
-import org.apache.commons.mail.util.MimeMessageUtils;
-import org.hibernate.validator.internal.constraintvalidators.EmailValidator;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-
-import io.ebean.DB;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
-import conf.XCMailrConf;
-import etc.HelperUtils;
-import etc.MailboxEntry;
-import etc.TypeRef;
-import filters.JsonSecureFilter;
-import filters.SecureFilter;
 import models.MBox;
 import models.Mail;
 import models.User;
@@ -70,16 +57,24 @@ import ninja.params.Param;
 import ninja.params.PathParam;
 import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.mail.util.MimeMessageParser;
+import org.apache.commons.mail.util.MimeMessageUtils;
+import org.hibernate.validator.internal.constraintvalidators.EmailValidator;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+
 
 /**
  * Handles all actions for the (virtual) Mailboxes like add, delete and edit box
  * 
  * @author Patrick Thum, Xceptance Software Technologies GmbH, Germany
  */
-
 @Singleton
-public class BoxHandler
-{
+public class BoxHandler {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy");
 
     @Inject
@@ -709,20 +704,19 @@ public class BoxHandler
      * @return a text page with all selected addresses of a user
      */
     @FilterWith(SecureFilter.class)
-    public Result showSelectedMailsAsTextList(@Param("jsonObj") Optional<String> inputList, Context context)
-    {
+    public Result showSelectedMailsAsTextList(@Param("jsonObj")
+    Optional<String> inputList, Context context) {
         Result result = Results.text();
         String errorMessage = messages.get("mailbox_Flash_NoBoxSelected", context, Optional.of(result)).get();
-        if (inputList.isEmpty())
+        if (inputList.isEmpty()) {
             return result.render(errorMessage);
-
+        }
         Map<String, Boolean> boxIdMap = getMapFoMaprStrings(inputList.get());
-        if (boxIdMap == null || boxIdMap.isEmpty())
+        if ((boxIdMap == null) || boxIdMap.isEmpty()) {
             return result.render(errorMessage);
-
+        }
         User user = context.getAttribute("user", User.class);
         List<Long> boxes = getIdListForMap(boxIdMap);
-
         return result.render(MBox.getSelectedMailsForTxt(user.getId(), boxes));
     }
 
@@ -762,112 +756,86 @@ public class BoxHandler
         return boxIds;
     }
 
-    public Result createTemporaryMailAddress(@PathParam("token") String apiToken,
-                                             @PathParam("mailAddress") String desiredMailAddress,
-                                             @PathParam("validTime") String validTime, Context context)
-    {
-        if (!new EmailValidator().isValid(desiredMailAddress, null))
+    public Result createTemporaryMailAddress(@PathParam("token")
+    String apiToken, @PathParam("mailAddress")
+    String desiredMailAddress, @PathParam("validTime")
+    String validTime, Context context) {
+        if (!new EmailValidator().isValid(desiredMailAddress, null)) {
             return ninja.getBadRequestResult(context, null);
-
+        }
         // check token
         final User user = User.findUserByToken(apiToken);
-        if (user == null)
-        {
+        if (user == null) {
             // there is no user assigned with that api token
             log.error("Token invalid");
             return ninja.getUnauthorizedResult(context);
         }
-
         // check desired mail address
         String[] mailAddressParts = HelperUtils.splitMailAddress(desiredMailAddress);
-        if (!HelperUtils.checkEmailAddressValidness(mailAddressParts, xcmConfiguration.DOMAIN_LIST))
-        { // mail is not in format "localpart@domain" or domain is not configured in XCMailr
+        if (!HelperUtils.checkEmailAddressValidness(mailAddressParts, xcmConfiguration.DOMAIN_LIST)) {
+            // mail is not in format "localpart@domain" or domain is not configured in XCMailr
             log.error("Email address invalid: " + desiredMailAddress);
             return ninja.getForbiddenResult(context);
         }
-
         int parsedValidTimeMinutes;
         // check valid time
-        try
-        {
+        try {
             parsedValidTimeMinutes = Integer.valueOf(validTime);
-            if (parsedValidTimeMinutes < 1 || parsedValidTimeMinutes > xcmConfiguration.TEMPORARY_MAIL_MAX_VALID_TIME)
-            {
+            if ((parsedValidTimeMinutes < 1) || (parsedValidTimeMinutes > xcmConfiguration.TEMPORARY_MAIL_MAX_VALID_TIME)) {
                 return ninja.getBadRequestResult(context, null);
             }
-        }
-        catch (NumberFormatException e)
-        {
+        } catch (java.lang.NumberFormatException e) {
             // invalid format
             log.error("Email valid time invalid: " + validTime);
             return ninja.getBadRequestResult(context, null);
         }
-
         // check if that email address is already claimed by someone
         final MBox mailbox = MBox.getByName(mailAddressParts[0], mailAddressParts[1]);
-
         final Instant validUntil = Instant.now().plus(parsedValidTimeMinutes, ChronoUnit.MINUTES);
         final long validUntil_ts = validUntil.toEpochMilli();
-        if (mailbox != null)
-        {
+        if (mailbox != null) {
             // mailbox exists, check if the user related to it is the same as the token bearer
-            if (mailbox.getUsr().getId() == user.getId())
-            {
+            if (mailbox.getUsr().getId() == user.getId()) {
                 log.info("Reactivate mailbox: " + desiredMailAddress);
                 // reactivate address
                 mailbox.enable();
                 mailbox.setTs_Active(validUntil_ts);
                 mailbox.save();
-            }
-            else
-            {
+            } else {
                 // another user owns that address
                 log.info("Email address is owned by user: " + mailbox.getUsr().getMail());
                 return ninja.getForbiddenResult(context);
             }
-        }
-        else
-        {
+        } else {
             log.info("Create mailbox " + desiredMailAddress);
             // create the address for the current user
             new MBox(mailAddressParts[0], mailAddressParts[1], validUntil_ts, false, user).save();
         }
-
         final Map<String, Object> data = new HashMap<>();
         data.put("emailAddress", desiredMailAddress);
         data.put("emailValidity", Integer.toString(parsedValidTimeMinutes));
         data.put("emailValidUntil", Long.toString(validUntil_ts));
         data.put("emailValidUntilDate", validUntil.atZone(ZoneId.of("UTC")).format(DATE_FORMAT));
-
         final String formatParameter = context.getParameter("format", "html").toLowerCase();
-        if ("html".equals(formatParameter))
-        {
+        if ("html".equals(formatParameter)) {
             return Results.html().render(data);
-        }
-        else if ("json".equals(formatParameter))
-        {
+        } else if ("json".equals(formatParameter)) {
             return Results.json().render(data);
-        }
-        else
-        {
+        } else {
             return ninja.getBadRequestResult(context, null);
         }
     }
 
-    public Result queryMailbox(@PathParam("token") String apiToken, @PathParam("mailAddress") String mailAddress,
-                               Context context)
-        throws Exception
-    {
+    public Result queryMailbox(@PathParam("token")
+    String apiToken, @PathParam("mailAddress")
+    String mailAddress, Context context) throws Exception {
         log.trace("passed null check");
         User user = User.findUserByToken(apiToken);
-
-        if (user == null)
-        {
+        if (user == null) {
             // there is no user assigned with that api token
             log.error("Token invalid");
             return ninja.getUnauthorizedResult(context);
         }
-
         // we put the username into the cookie, but use the id of the cookie for authentication
         String sessionKey = context.getSession().getId();
         cachingSessionHandler.set(sessionKey, xcmConfiguration.COOKIE_EXPIRETIME, user);
@@ -876,186 +844,123 @@ public class BoxHandler
         // logged-in)
         cachingSessionHandler.setSessionUser(user, sessionKey, xcmConfiguration.COOKIE_EXPIRETIME);
         context.getSession().put("username", user.getMail());
-
         final String[] mailAddressParts = HelperUtils.splitMailAddress(mailAddress);
-        final MBox mailbox = HelperUtils.checkEmailAddressValidness(mailAddressParts,
-                                                                    xcmConfiguration.DOMAIN_LIST) ? MBox.getByName(mailAddressParts[0], mailAddressParts[1]) : null;
-
-        if (mailbox == null)
-        {
+        final MBox mailbox = (HelperUtils.checkEmailAddressValidness(mailAddressParts, xcmConfiguration.DOMAIN_LIST)) ? MBox.getByName(mailAddressParts[0], mailAddressParts[1]) : null;
+        if (mailbox == null) {
             log.info("Mailbox not found: " + mailAddress);
             return ninja.getNotFoundResult(context);
         }
-
-        if (!mailbox.belongsTo(user.getId()))
-        {
+        if (!mailbox.belongsTo(user.getId())) {
             log.error("Mailbox belongs to another user");
             return ninja.getForbiddenResult(context);
         }
-
-        List<Mail> emails = DB.find(Mail.class).where() //
-                                 .eq("mailbox_id", mailbox.getId()) //
-                                 .order("receiveTime")//
-                                 .findList();
-
+        List<Mail> emails = //
+                                //
+        //
+        DB.find(Mail.class).where().eq("mailbox_id", mailbox.getId()).order("receiveTime").findList();
         String senderRegex = context.getParameter("from");
         String subjectRegex = context.getParameter("subject");
         String plainTextRegex = context.getParameter("textContent");
         String htmlTextRegex = context.getParameter("htmlContent");
         String headerRegex = context.getParameter("mailHeader");
         boolean lastMatch = context.getParameter("lastMatch") != null;
-
         final Pattern senderPattern;
         final Pattern subjectPattern;
         final Pattern plainTextPattern;
         final Pattern htmlTextPattern;
         final Pattern headerPattern;
-        try
-        {
-            senderPattern = senderRegex != null ? Pattern.compile(senderRegex, Pattern.MULTILINE | Pattern.DOTALL)
-                                                : null;
-            subjectPattern = subjectRegex != null ? Pattern.compile(subjectRegex, Pattern.MULTILINE | Pattern.DOTALL)
-                                                  : null;
-            plainTextPattern = plainTextRegex != null ? Pattern.compile(plainTextRegex,
-                                                                        Pattern.MULTILINE | Pattern.DOTALL)
-                                                      : null;
-            htmlTextPattern = htmlTextRegex != null ? Pattern.compile(htmlTextRegex, Pattern.MULTILINE | Pattern.DOTALL)
-                                                    : null;
-            headerPattern = headerRegex != null ? Pattern.compile(headerRegex, Pattern.MULTILINE | Pattern.DOTALL)
-                                                : null;
-        }
-        catch (PatternSyntaxException e)
-        {
+        try {
+            senderPattern = (senderRegex != null) ? Pattern.compile(senderRegex, Pattern.MULTILINE | Pattern.DOTALL) : null;
+            subjectPattern = (subjectRegex != null) ? Pattern.compile(subjectRegex, Pattern.MULTILINE | Pattern.DOTALL) : null;
+            plainTextPattern = (plainTextRegex != null) ? Pattern.compile(plainTextRegex, Pattern.MULTILINE | Pattern.DOTALL) : null;
+            htmlTextPattern = (htmlTextRegex != null) ? Pattern.compile(htmlTextRegex, Pattern.MULTILINE | Pattern.DOTALL) : null;
+            headerPattern = (headerRegex != null) ? Pattern.compile(headerRegex, Pattern.MULTILINE | Pattern.DOTALL) : null;
+        } catch (PatternSyntaxException e) {
             return ninja.getBadRequestResult(context, null);
         }
-
         final List<MailboxEntry> entries = new LinkedList<>();
-        for (int i = 0; i < emails.size(); i++)
-        {
+        for (int i = 0; i < emails.size(); i++) {
             final Mail email = emails.get(i);
-
             final MailboxEntry mailboxEntry = new MailboxEntry(mailAddress, email);
             final MailboxEntry.Content mailContent = mailboxEntry.mailContent;
-            if ((senderPattern == null || senderPattern.matcher(mailboxEntry.sender).find()) //
-                && (subjectPattern == null || subjectPattern.matcher(mailboxEntry.subject).find()) //
-                && (plainTextPattern == null
-                    || (mailContent != null && plainTextPattern.matcher(mailContent.text).find())) //
-                && (htmlTextPattern == null
-                    || (mailContent != null && htmlTextPattern.matcher(mailContent.html).find())) //
-                && (headerPattern == null || headerPattern.matcher(mailboxEntry.mailHeader).find()))
-            {
+            if ((((((senderPattern == null) || senderPattern.matcher(mailboxEntry.sender).find())// 
+             && ((subjectPattern == null) || subjectPattern.matcher(mailboxEntry.subject).find()))// 
+             && ((plainTextPattern == null) || ((mailContent != null) && plainTextPattern.matcher(mailContent.text).find())))// 
+             && ((htmlTextPattern == null) || ((mailContent != null) && htmlTextPattern.matcher(mailContent.html).find())))// 
+             && ((headerPattern == null) || headerPattern.matcher(mailboxEntry.mailHeader).find())) {
                 entries.add(mailboxEntry);
             }
         }
-
         final String formatParameter = context.getParameter("format", "html").toLowerCase();
-        if ((entries.size() > 1 && lastMatch) || "header".equals(formatParameter))
-        {
+        if (((entries.size() > 1) && lastMatch) || "header".equals(formatParameter)) {
             // only retrieve the last match, also for plain format since we can not distinct multiple entries in the
             // output
-            if (entries.size() >= 1)
-            {
+            if (entries.size() >= 1) {
                 MailboxEntry lastEntry = entries.get(entries.size() - 1);
                 entries.clear();
                 entries.add(lastEntry);
             }
         }
-
-        if ("html".equals(formatParameter))
-        {
+        if ("html".equals(formatParameter)) {
             // display content embedded in the site
             return Results.html().render("accountEmails", entries).render("mailaddress", mailAddress);
-        }
-        else if ("json".equals(formatParameter))
-        {
+        } else if ("json".equals(formatParameter)) {
             // return content as json structure
-
             return Results.json().render(entries);
-        }
-        else if ("header".equals(formatParameter))
-        {
+        } else if ("header".equals(formatParameter)) {
             // output plain mail
-
             // safety check
-            if (entries.size() == 0 || entries.size() > 1)
-            {
+            if ((entries.size() == 0) || (entries.size() > 1)) {
                 return ninja.getBadRequestResult(context, null);
             }
-
             return Results.text().render(entries.get(0).mailHeader);
-        }
-        else
-        {
+        } else {
             return ninja.getBadRequestResult(context, null);
         }
     }
 
     @FilterWith(SecureFilter.class)
-    public Result queryAllMailboxes(Context context, @Param("offset") final Optional<Integer> offset,
-                                    @Param("limit") final Optional<Integer> limit, @Param("sort")final Optional<String> sort,
-                                    @Param("order") final Optional<String> order, @Param("search") final Optional<String> search)
-        throws Exception
-    {
+    public Result queryAllMailboxes(Context context, @Param("offset")
+    final Optional<Integer> offset, @Param("limit")
+    final Optional<Integer> limit, @Param("sort")
+    final Optional<String> sort, @Param("order")
+    final Optional<String> order, @Param("search")
+    final Optional<String> search) throws Exception {
         final String formatParameter = context.getParameter("format", "html").toLowerCase();
-
-        if ("html".equals(formatParameter))
-        {
+        if ("html".equals(formatParameter)) {
             return Results.html();
-        }
-        else if ("json".equals(formatParameter))
-        {
-
+        } else if ("json".equals(formatParameter)) {
             final int iOffset = Math.max(0, offset.orElse(0));
-            final int iLimit = limit.map(i -> Math.max(1, i)).orElse(0);
-
+            final int iLimit = limit.map(( i) -> Math.max(1, i)).orElse(0);
             final String _sort = getOrderColumn(sort.orElse(null));
             final String _order = getOrderDirection(order.orElse(null));
             final String _search = search.orElse(null);
-
             final User user = context.getAttribute("user", User.class);
-
             // #61: look up mail boxes freshly
             final List<?> mailboxIds = DB.find(MBox.class).where().eq("usr_id", user.getId()).findIds();
-
-            final List<Mail> mails = DB.find(Mail.class).where().in("mailbox_id", mailboxIds)
-                                          .orderBy(_sort + " " + _order).findList();
-
+            final List<Mail> mails = DB.find(Mail.class).where().in("mailbox_id", mailboxIds).orderBy((_sort + " ") + _order).findList();
             final List<MailboxEntry> matches = new ArrayList<>();
-
             // there is a searchphrase. prefilter the results
             // apparent we can't do this in the db since messages are stored encoded
-
-            for (Mail mail : mails)
-            {
+            for (Mail mail : mails) {
                 final MBox mailbox = mail.getMailbox();
-                
                 // check if the mailbox of this mail has just been deleted, and, if so, ignore this mail
-                if (mailbox != null)
-                {
+                if (mailbox != null) {
                     final MailboxEntry mailboxEntry = new MailboxEntry(mailbox.getFullAddress(), mail);
-    
-                    if (StringUtils.isBlank(_search) || mailboxEntry.matchesSearchPhrase(_search))
-                    {
+                    if (StringUtils.isBlank(_search) || mailboxEntry.matchesSearchPhrase(_search)) {
                         matches.add(mailboxEntry);
                     }
                 }
             }
-
             final int nbMatches = matches.size();
             final List<MailboxEntry> result;
-            if (iOffset >= nbMatches || iLimit == 0)
-            {
+            if ((iOffset >= nbMatches) || (iLimit == 0)) {
                 result = Collections.emptyList();
-            }
-            else
-            {
+            } else {
                 result = matches.subList(iOffset, Math.min(iOffset + iLimit, nbMatches));
             }
-
             return Results.json().render("rows", result).render("total", mails.size());
-        }
-        else
-        {
+        } else {
             return ninja.getBadRequestResult(context, null);
         }
     }
@@ -1071,43 +976,31 @@ public class BoxHandler
     }
 
     @FilterWith(SecureFilter.class)
-    public Result downloadMailAttachment(Context context, @PathParam("downloadToken") String downloadToken,
-                                         @PathParam("filename") String filename)
-        throws Exception
-    {
+    public Result downloadMailAttachment(Context context, @PathParam("downloadToken")
+    String downloadToken, @PathParam("filename")
+    String filename) throws Exception {
         List<Mail> foundMails = DB.find(Mail.class).where().eq("uuid", downloadToken).findList();
-
-        if (foundMails.isEmpty())
-        {
+        if (foundMails.isEmpty()) {
             return ninja.getNotFoundResult(context);
         }
         Mail mail = foundMails.get(0);
-
         MimeMessage mimeMessage = MimeMessageUtils.createMimeMessage(null, mail.getMessage());
         MimeMessageParser mimeMessageParser = new MimeMessageParser(mimeMessage);
         mimeMessageParser.parse();
-
         DataSource foundAttachment = null;
-        for (DataSource attachment : mimeMessageParser.getAttachmentList())
-        {
-            if (attachment.getName().equals(filename))
-            {
+        for (DataSource attachment : mimeMessageParser.getAttachmentList()) {
+            if (attachment.getName().equals(filename)) {
                 foundAttachment = attachment;
                 break;
             }
         }
-
-        if (foundAttachment == null)
-        {
+        if (foundAttachment == null) {
             return ninja.getNotFoundResult(context);
         }
-
         final ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
-        try (final InputStream is = foundAttachment.getInputStream())
-        {
+        try (final InputStream is = foundAttachment.getInputStream()) {
             IOUtils.copy(is, baos);
         }
-
         return Results.ok().contentType(foundAttachment.getContentType()).renderRaw(baos.toByteArray());
     }
 
