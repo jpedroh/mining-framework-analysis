@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -29,6 +28,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
+
 
 /**
  * The git flow hotfix finish mojo.
@@ -62,6 +62,14 @@ public class GitFlowHotfixFinishMojo extends AbstractGitFlowMojo {
     private boolean pushRemote;
 
     /**
+<<<<<<< LEFT
+     * Hotfix Branch Name to finish instead of using the prompter in non interactive mode.
+     *
+     * @since 1.7.1
+     */
+    @Parameter(property = "branchName", defaultValue = "")
+    private String branchName = "";
+=======
      * Maven goals to execute in the hotfix branch before merging into the
      * production or support branch.
      * 
@@ -84,6 +92,7 @@ public class GitFlowHotfixFinishMojo extends AbstractGitFlowMojo {
      */
     @Parameter(property = "hotfixVersion")
     private String hotfixVersion;
+>>>>>>> RIGHT
 
     /** {@inheritDoc} */
     @Override
@@ -94,6 +103,41 @@ public class GitFlowHotfixFinishMojo extends AbstractGitFlowMojo {
             // check uncommitted changes
             checkUncommittedChanges();
 
+<<<<<<< LEFT
+            // git for-each-ref --format='%(refname:short)' refs/heads/hotfix/*
+            final String hotfixBranches = gitFindBranches(
+                    gitFlowConfig.getHotfixBranchPrefix(), false);
+
+            if (StringUtils.isBlank(hotfixBranches)) {
+                throw new MojoFailureException("There are no hotfix branches.");
+            }
+
+            String[] branches = hotfixBranches.split("\\r?\\n");
+
+            List<String> numberedList = new ArrayList<String>();
+            StringBuilder str = new StringBuilder("Hotfix branches:")
+                    .append(LS);
+            for (int i = 0; i < branches.length; i++) {
+                str.append((i + 1) + ". " + branches[i] + LS);
+                numberedList.add(String.valueOf(i + 1));
+            }
+            str.append("Choose hotfix branch to finish");
+
+            String hotfixNumber = null;
+            if (!settings.isInteractiveMode() && StringUtils.isNotBlank(branchName)) {
+                hotfixNumber = getIndexNumberByBranchName(branches, branchName);
+            }
+            try {
+                while (StringUtils.isBlank(hotfixNumber)) {
+                    hotfixNumber = prompter
+                            .prompt(str.toString(), numberedList);
+                }
+            } catch (PrompterException e) {
+                getLog().error(e);
+            }
+
+=======
+>>>>>>> RIGHT
             String hotfixBranchName = null;
             if (settings.isInteractiveMode()) {
                 hotfixBranchName = promptBranchName();
@@ -278,6 +322,17 @@ public class GitFlowHotfixFinishMojo extends AbstractGitFlowMojo {
         }
     }
 
+<<<<<<< LEFT
+    private String getIndexNumberByBranchName(final String[] branches, final String branchName) {
+        for (int i = 0; i < branches.length; i++) {
+            if (branchName.equals(branches[i])) {
+                return String.valueOf(i + 1);
+            }
+            i++;
+        }
+        // If branchName is not one of the valid branches, then return blank and prompter will be used
+        return "";
+=======
     private String promptBranchName()
             throws MojoFailureException, CommandLineException {
         // git for-each-ref --format='%(refname:short)' refs/heads/hotfix/*
@@ -314,16 +369,6 @@ public class GitFlowHotfixFinishMojo extends AbstractGitFlowMojo {
         }
 
         return hotfixBranchName;
-    }
-
-    private String getIndexNumberByBranchName(final String[] branches, final String branchName) {
-        for (int i = 0; i < branches.length; i++) {
-            if (branchName.equals(branches[i])) {
-                return String.valueOf(i + 1);
-            }
-            i++;
-        }
-        // If branchName is not one of the valid branches, then return blank and prompter will be used
-        return "";
+>>>>>>> RIGHT
     }
 }
