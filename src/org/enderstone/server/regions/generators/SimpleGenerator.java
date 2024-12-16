@@ -20,7 +20,6 @@ package org.enderstone.server.regions.generators;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 import org.enderstone.server.Main;
 import org.enderstone.server.api.Location;
 import org.enderstone.server.entity.EntityCow;
@@ -32,8 +31,8 @@ import org.enderstone.server.regions.EnderChunk;
 import org.enderstone.server.regions.EnderWorld;
 import org.enderstone.server.regions.generators.util.SimplexOctaveGenerator;
 
-public class SimpleGenerator implements ChunkGenerator {
 
+public class SimpleGenerator implements ChunkGenerator {
 	@Override
 	public BlockId[][] generateExtBlockSections(EnderWorld world, Random random, int i, int o) {
 		BlockId[][] chunk = new BlockId[16][];
@@ -82,31 +81,28 @@ public class SimpleGenerator implements ChunkGenerator {
 	@Override
 	public List<MultiChunkBlockPopulator> getDefaultPopulators(EnderWorld world) {
 		List<MultiChunkBlockPopulator> pops = new ArrayList<>();
-
 		pops.add(new BlockPopulator() {
-
 			public void setBlock(int x, int z, EnderChunk source) {
 				if (source.getBlock(x, source.getHighestBlockAt(x, z), z) != BlockId.LONG_GRASS) {
-					source.setBlock(x, source.getHighestBlockAt(x, z) + 1, z, BlockId.LONG_GRASS, (byte) 1); // grass
+					// grass
+					source.setBlock(x, source.getHighestBlockAt(x, z) + 1, z, BlockId.LONG_GRASS, ((byte) (1)));
 				}
 			}
 
 			@Override
 			public void populate(EnderWorld world, Random random, EnderChunk source) {
-				
-				for(int i = 0; i < Main.random.nextInt(5) + 10; i++){
+				for (int i = 0; i < (Main.random.nextInt(5) + 10); i++) {
 					setBlock(Main.random.nextInt(16), Main.random.nextInt(16), source);
 				}
-
 				// TEMPORARILY TESTS
 				if (Main.random.nextInt(25) == 0) {
-					world.addEntity(new EntitySpider(world, new Location(world, source.getX() * 16, source.getHighestBlockAt(0, 0) + 1, source.getZ() * 16, 0F, 0F)));
+					world.addEntity(new EntitySpider(world, new Location(world, source.getX() * 16, source.getHighestBlockAt(0, 0) + 1, source.getZ() * 16, 0.0F, 0.0F)));
 				}
 				if (Main.random.nextInt(10) == 0) {
-					world.addEntity(new EntityCow(world, new Location(world, source.getX() * 16, source.getHighestBlockAt(0, 0) + 1, source.getZ() * 16, 0F, 0F)));
+					world.addEntity(new EntityCow(world, new Location(world, source.getX() * 16, source.getHighestBlockAt(0, 0) + 1, source.getZ() * 16, 0.0F, 0.0F)));
 				}
-
-				int x = random.nextInt(5) + 3, z = random.nextInt(5) + 3;
+				int x = random.nextInt(5) + 3;
+				int z = random.nextInt(5) + 3;
 				generateTree(source, x, source.getHighestBlockAt(x, z), z);
 			}
 		});
@@ -115,17 +111,14 @@ public class SimpleGenerator implements ChunkGenerator {
 
 	private void generateTree(EnderChunk chunk, int x, int y, int z) {
 		int height = Main.random.nextInt(3) + 5;
-
 		for (int i = 0; i < height; i++) {
-			chunk.setBlock(x, (i + y) + 1, z, BlockId.LOG, (byte) 0);
+			chunk.setBlock(x, (i + y) + 1, z, BlockId.LOG, ((byte) (0)));
 		}
-
-		chunk.setBlock(x, y, z, BlockId.DIRT, (byte) 0);
-
-		for (int leafY = height - 2; leafY < height + 1; leafY++) {
+		chunk.setBlock(x, y, z, BlockId.DIRT, ((byte) (0)));
+		for (int leafY = height - 2; leafY < (height + 1); leafY++) {
 			for (int leafX = -1; leafX < 2; leafX++) {
 				for (int leafZ = -1; leafZ < 2; leafZ++) {
-					chunk.setBlock(leafX + x, leafY + y, leafZ + z, BlockId.LEAVES, (byte) 0);
+					chunk.setBlock(leafX + x, leafY + y, leafZ + z, BlockId.LEAVES, ((byte) (0)));
 				}
 			}
 		}

@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
 import org.enderstone.server.EnderLogger;
 import org.enderstone.server.Main;
 import org.enderstone.server.api.ChatPosition;
@@ -69,16 +68,16 @@ import org.enderstone.server.packet.play.PacketOutEntityHeadLook;
 import org.enderstone.server.packet.play.PacketOutEntityLook;
 import org.enderstone.server.packet.play.PacketOutEntityMetadata;
 import org.enderstone.server.packet.play.PacketOutEntityRelativeMove;
-import org.enderstone.server.packet.play.PacketOutEntityStatus;
 import org.enderstone.server.packet.play.PacketOutEntityStatus.Status;
+import org.enderstone.server.packet.play.PacketOutEntityStatus;
 import org.enderstone.server.packet.play.PacketOutEntityTeleport;
 import org.enderstone.server.packet.play.PacketOutPlayParticle;
 import org.enderstone.server.packet.play.PacketOutPlayerAbilities;
 import org.enderstone.server.packet.play.PacketOutPlayerListHeaderFooter;
-import org.enderstone.server.packet.play.PacketOutPlayerListItem;
 import org.enderstone.server.packet.play.PacketOutPlayerListItem.Action;
 import org.enderstone.server.packet.play.PacketOutPlayerListItem.ActionAddPlayer;
 import org.enderstone.server.packet.play.PacketOutPlayerListItem.ActionRemovePlayer;
+import org.enderstone.server.packet.play.PacketOutPlayerListItem;
 import org.enderstone.server.packet.play.PacketOutPlayerPositionLook;
 import org.enderstone.server.packet.play.PacketOutRespawn;
 import org.enderstone.server.packet.play.PacketOutSetExperience;
@@ -86,27 +85,27 @@ import org.enderstone.server.packet.play.PacketOutSoundEffect;
 import org.enderstone.server.packet.play.PacketOutSpawnPlayer;
 import org.enderstone.server.packet.play.PacketOutStatistics;
 import org.enderstone.server.packet.play.PacketOutTabComplete;
-import org.enderstone.server.packet.play.PacketOutTitle;
 import org.enderstone.server.packet.play.PacketOutTitle.ActionDisplayTitle;
 import org.enderstone.server.packet.play.PacketOutTitle.ActionSubtitle;
+import org.enderstone.server.packet.play.PacketOutTitle;
 import org.enderstone.server.packet.play.PacketOutUpdateHealth;
 import org.enderstone.server.regions.BlockId;
 import org.enderstone.server.regions.EnderChunk;
-import org.enderstone.server.regions.EnderWorld;
 import org.enderstone.server.regions.EnderWorld.ChunkInformer;
+import org.enderstone.server.regions.EnderWorld;
 import org.enderstone.server.regions.RegionSet;
 
-public class EnderPlayer extends EnderEntity implements CommandSender, Player {
 
+public class EnderPlayer extends EnderEntity implements CommandSender , Player {
 	private static final int MAX_CHUNKS_EVERY_UPDATE = 16;
 
 	private final InventoryHandler inventoryHandler = new InventoryHandler(this);
+
 	{
 		inventoryHandler.getPlayerInventory().addListener(new InventoryListener() {
-
 			@Override
 			public void onSlotChange(Inventory inv, int slot, ItemStack oldStack, ItemStack newStack) {
-				if (slot > 35 && slot < 45) {
+				if ((slot > 35) && (slot < 45)) {
 					broadcastEquipment(EquipmentUpdateType.ITEM_IN_HAND_CHANGE);
 				} else if (slot == 5) {
 					broadcastEquipment(EquipmentUpdateType.HELMET_CHANGE);
@@ -120,31 +119,44 @@ public class EnderPlayer extends EnderEntity implements CommandSender, Player {
 			}
 
 			@Override
-			public void onPropertyChange(Inventory inv, short property, short oldValue, short newValue) {}
+			public void onPropertyChange(Inventory inv, short property, short oldValue, short newValue) {
+			}
 
 			@Override
-			public void closeInventory(Inventory inv) {}
+			public void closeInventory(Inventory inv) {
+			}
 		});
 	}
+
 	public final PlayerSettings clientSettings = new PlayerSettings();
+
 	public final NetworkManager networkManager;
+
 	public final EnumSet<PlayerDebugger> debugOutputs = EnumSet.noneOf(PlayerDebugger.class);
 
 	public volatile boolean isOnline = true;
+
 	public int keepAliveID = 0;
+
 	private int entitySubId;
 
 	public final String playerName;
+
 	public final HashSet<String> visiblePlayers = new HashSet<>();
+
 	public final HashSet<EnderEntity> canSeeEntity = new HashSet<>();
+
 	public final UUID uuid;
+
 	private final String textureValue;
+
 	private final String textureSignature;
 
 	/**
 	 * Two fields used to determine the amount of fall damage
 	 */
 	public boolean isOnGround = true;
+
 	public double yLocation;
 
 	/**
@@ -153,12 +165,12 @@ public class EnderPlayer extends EnderEntity implements CommandSender, Player {
 	public int waitingForValidMoveAfterTeleport = 0;
 
 	/**
-	 * 
 	 * The loadedChunks regionSet is a kinda "HashMap" for chunks, but a bit faster.
-	 * 
+	 *
 	 * The chunkInformer is a small interface which converts our "chunk data" into sendable packets. This interface is currently also being used for caching the sending chunks.
 	 */
 	private final RegionSet loadedChunks = new RegionSet();
+
 	public ChunkInformer chunkInformer = new ChunkInformer() {
 
 		private List<EnderChunk> cache = new ArrayList<>();
@@ -607,6 +619,7 @@ public class EnderPlayer extends EnderEntity implements CommandSender, Player {
 	}
 
 	private int latestHeal = 0;
+
 	private int latestFood = 0;
 
 	@Override
@@ -704,11 +717,12 @@ public class EnderPlayer extends EnderEntity implements CommandSender, Player {
 		if (damage <= 0) {
 			throw new IllegalArgumentException("Damage cannot be smaller or equal to zero.");
 		}
-		if (this.clientSettings.godMode)
+		if (this.clientSettings.godMode) {
 			return false;
-		if (this.getGameMode() == GameMode.CREATIVE || this.getGameMode() == GameMode.SPECTATOR)
+		}
+		if ((this.getGameMode() == GameMode.CREATIVE) || (this.getGameMode() == GameMode.SPECTATOR)) {
 			return false;
-
+		}
 		for (ItemStack stack : this.getInventory().getPlayerInventory().getArmor()) {
 			if (stack != null) {
 				Armor armor = Armor.fromId(stack.getId());
@@ -799,7 +813,6 @@ public class EnderPlayer extends EnderEntity implements CommandSender, Player {
 			this.isOnGround = onGround;
 			return;
 		}
-
 		World world = this.getWorld();
 		double x = this.getLocation().getX();
 		double y = this.getLocation().getY();
@@ -809,30 +822,30 @@ public class EnderPlayer extends EnderEntity implements CommandSender, Player {
 		BlockId id3 = world.getBlock(floor(x - (getWidth() / 2)), floor(y), floor(z)).getBlock();
 		BlockId id4 = world.getBlock(floor(x), floor(y), floor(z - (getWidth() / 2))).getBlock();
 		BlockId id5 = world.getBlock(floor(x), floor(y), floor(z + (getWidth() / 2))).getBlock();
-		BlockId[] array = new BlockId[] { id1, id2, id3, id4, id5 };
-		boolean isInWater = compare(BlockId.WATER, array) || compare(BlockId.WATER_FLOWING, array) || compare(BlockId.LAVA, array) || compare(BlockId.LAVA_FLOWING, array);
-
+		BlockId[] array = new BlockId[]{ id1, id2, id3, id4, id5 };
+		boolean isInWater = ((compare(BlockId.WATER, array) || compare(BlockId.WATER_FLOWING, array)) || compare(BlockId.LAVA, array)) || compare(BlockId.LAVA_FLOWING, array);
 		if (isInWater) {
 			// reset fall damage
 			this.yLocation = this.getLocation().getY();
 		}
-		if (this.isOnGround == false && onGround == true) {
+		if ((this.isOnGround == false) && (onGround == true)) {
 			if (this.clientSettings.isFlying) {
-				return; // flying players don't get damage in vanilla
+				return;// flying players don't get damage in vanilla
+
 			}
 			// fall damage
-			double change = this.yLocation - this.getLocation().getY() - 3;
+			double change = (this.yLocation - this.getLocation().getY()) - 3;
 			if (change > 0) {
 				if (isInWater) {
 					// nothing should happen
 				} else {
-					if (damage((float) change)) {
+					if (damage(((float) (change)))) {
 						Main.getInstance().broadcastMessage(new SimpleMessage(this.getPlayerName() + " fell from a high place."));
 					}
-					Main.getInstance().getWorld(this).broadcastSound("damage.fallsmall", 1F, (byte) 63, getLocation(), null);
+					Main.getInstance().getWorld(this).broadcastSound("damage.fallsmall", 1.0F, ((byte) (63)), getLocation(), null);
 				}
 			}
-		} else if (this.isOnGround == true && onGround == false) {
+		} else if ((this.isOnGround == true) && (onGround == false)) {
 			// save Y location
 			this.yLocation = this.getLocation().getY();
 		}
@@ -909,8 +922,10 @@ public class EnderPlayer extends EnderEntity implements CommandSender, Player {
 	}
 
 	public enum PlayerDebugger {
-		INVENTORY, PACKET, OTHER,
-	}
+
+		INVENTORY,
+		PACKET,
+		OTHER;}
 
 	public RegionSet getLoadedChunks() {
 		return this.loadedChunks;
