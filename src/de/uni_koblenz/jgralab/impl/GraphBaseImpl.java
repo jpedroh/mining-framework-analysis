@@ -32,17 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.impl;
-
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
@@ -62,6 +52,15 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.NoSuchElementException;
+
 
 /**
  * Implementation of interface Graph with doubly linked lists realizing eSeq,
@@ -70,8 +69,8 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class GraphBaseImpl implements Graph, GraphBase {
-
+public abstract class GraphBaseImpl implements Graph , GraphBase {
+	// ------------- GRAPH VARIABLES -------------
 	// ------------- GRAPH VARIABLES -------------
 
 	/**
@@ -104,6 +103,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	private boolean loading;
 
 	// ------------- VERTEX LIST VARIABLES -------------
+	// ------------- VERTEX LIST VARIABLES -------------
 	/**
 	 * maximum number of vertices
 	 */
@@ -114,6 +114,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 */
 	protected FreeIndexList freeVertexList;
 
+	// ------------- EDGE LIST VARIABLES -------------
 	// ------------- EDGE LIST VARIABLES -------------
 
 	/**
@@ -128,11 +129,11 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 
 	/**
 	 * Creates a graph of the given GraphClass with the given id
-	 * 
+	 *
 	 * @param id
-	 *            this Graph's id
+	 * 		this Graph's id
 	 * @param cls
-	 *            the GraphClass of this Graph
+	 * 		the GraphClass of this Graph
 	 */
 	protected GraphBaseImpl(String id, GraphClass cls) {
 		this(id, cls, 1000, 1000);
@@ -142,8 +143,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	public void initializeAttributesWithDefaultValues() {
 		for (Attribute attr : getAttributedElementClass().getAttributeList()) {
 			try {
-				if ((attr.getDefaultValueAsString() != null)
-						&& !attr.getDefaultValueAsString().isEmpty()) {
+				if ((attr.getDefaultValueAsString() != null) && (!attr.getDefaultValueAsString().isEmpty())) {
 					internalSetDefaultValue(attr);
 				}
 			} catch (GraphIOException e) {
@@ -173,20 +173,17 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		if (eMax < 1) {
 			throw new GraphException("eMax must not be less than 1", null);
 		}
-
 		schema = cls.getSchema();
 		graphFactory = schema.getGraphFactory();
 		setId(id == null ? RandomIdGenerator.generateId() : id);
 		// needed for initialization of graphVersion with transactions
 		graphVersion = -1;
 		setGraphVersion(0);
-
 		expandVertexArray(vMax);
 		setFirstVertex(null);
 		setLastVertex(null);
 		setVCount(0);
 		setDeleteVertexList(new LinkedList<VertexBase>());
-
 		expandEdgeArray(eMax);
 		setFirstEdgeInGraph(null);
 		setLastEdgeInGraph(null);
@@ -194,7 +191,6 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	}
 
 	// protected TraversalContext traversalContext;
-
 	// @Override
 	// public TraversalContext setTraversalContext(TraversalContext tc) {
 	// TraversalContext result = traversalContext;
@@ -205,46 +201,31 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	// public TraversalContext getTraversalContext() {
 	// return traversalContext;
 	// }
-
 	public void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
 		assert newEdge != null;
-		assert (alpha != null) && alpha.isValid() && containsVertex(alpha) : "Alpha vertex is invalid";
-		assert (omega != null) && omega.isValid() && containsVertex(omega) : "Omega vertex is invalid";
+		assert ((alpha != null) && alpha.isValid()) && containsVertex(alpha) : "Alpha vertex is invalid";
+		assert ((omega != null) && omega.isValid()) && containsVertex(omega) : "Omega vertex is invalid";
 		assert newEdge.isNormal() : "Can't add reversed edge";
-		assert (alpha.getSchema() == omega.getSchema())
-				&& (alpha.getSchema() == schema)
-				&& (newEdge.getSchema() == schema) : "The schemas of alpha, omega, newEdge and this graph don't match!";
-		assert (alpha.getGraph() == omega.getGraph())
-				&& (alpha.getGraph() == this) && (newEdge.getGraph() == this) : "The graph of alpha, omega, newEdge and this graph don't match!";
-
-		EdgeBaseImpl e = (EdgeBaseImpl) newEdge;
-		VertexBase a = (VertexBase) alpha;
+		assert ((alpha.getSchema() == omega.getSchema()) && (alpha.getSchema() == schema)) && (newEdge.getSchema() == schema) : "The schemas of alpha, omega, newEdge and this graph don't match!";
+		assert ((alpha.getGraph() == omega.getGraph()) && (alpha.getGraph() == this)) && (newEdge.getGraph() == this) : "The graph of alpha, omega, newEdge and this graph don't match!";
+		EdgeBaseImpl e = ((EdgeBaseImpl) (newEdge));
+		VertexBase a = ((VertexBase) (alpha));
 		if (!a.isValidAlpha(e)) {
-			throw new GraphException("Edges of class "
-					+ e.getAttributedElementClass().getQualifiedName()
-					+ " may not start at vertices of class "
-					+ a.getAttributedElementClass().getQualifiedName());
+			throw new GraphException((("Edges of class " + e.getAttributedElementClass().getQualifiedName()) + " may not start at vertices of class ") + a.getAttributedElementClass().getQualifiedName());
 		}
-
-		VertexBase o = (VertexBase) omega;
+		VertexBase o = ((VertexBase) (omega));
 		if (!o.isValidOmega(e)) {
-			throw new GraphException("Edges of class "
-					+ e.getAttributedElementClass().getQualifiedName()
-					+ " may not end at vertices of class "
-					+ o.getAttributedElementClass().getQualifiedName());
+			throw new GraphException((("Edges of class " + e.getAttributedElementClass().getQualifiedName()) + " may not end at vertices of class ") + o.getAttributedElementClass().getQualifiedName());
 		}
-
 		int eId = e.getId();
 		if (isLoading()) {
 			if (eId > 0) {
 				// the given edge already has an id, try to use it
 				if (containsEdgeId(eId)) {
-					throw new GraphException("edge with id " + e.getId()
-							+ " already exists");
+					throw new GraphException(("edge with id " + e.getId()) + " already exists");
 				}
 				if (eId > eMax) {
-					throw new GraphException("edge id " + e.getId()
-							+ " is bigger than eSize");
+					throw new GraphException(("edge id " + e.getId()) + " is bigger than eSize");
 				}
 			} else {
 				throw new GraphException("can not load an edge with id <= 0");
@@ -270,25 +251,22 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 
 	public void internalEdgeAdded(EdgeBase e) {
 		notifyEdgeAdded(e);
-		if(this.getECARuleManagerIfThere() != null){
+		if (this.getECARuleManagerIfThere() != null) {
 			getECARuleManagerIfThere().fireAfterCreateEdgeEvents(e);
 		}
 	}
 
 	public void addVertex(Vertex newVertex) {
-		VertexBase v = (VertexBase) newVertex;
-
+		VertexBase v = ((VertexBase) (newVertex));
 		int vId = v.getId();
 		if (isLoading()) {
 			if (vId > 0) {
 				// the given vertex already has an id, try to use it
 				if (containsVertexId(vId)) {
-					throw new GraphException("vertex with id " + vId
-							+ " already exists");
+					throw new GraphException(("vertex with id " + vId) + " already exists");
 				}
 				if (vId > vMax) {
-					throw new GraphException("vertex id " + vId
-							+ " is bigger than vSize");
+					throw new GraphException(("vertex id " + vId) + " is bigger than vSize");
 				}
 			} else {
 				throw new GraphException("can not load a vertex with id <= 0");
@@ -301,9 +279,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			assert vId != 0;
 			v.setId(vId);
 		}
-
 		appendVertexToVSeq(v);
-
 		if (!isLoading()) {
 			vertexListModified();
 			internalVertexAdded(v);
@@ -312,35 +288,33 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 
 	public void internalVertexAdded(VertexBase v) {
 		notifyVertexAdded(v);
-		if(this.getECARuleManagerIfThere() != null){
+		if (this.getECARuleManagerIfThere() != null) {
 			getECARuleManager().fireAfterCreateVertexEvents(v);
 		}
 	}
 
 	public void appendEdgeToESeq(EdgeBase e) {
-		getEdge()[((EdgeBaseImpl) e).id] = e;
-		getRevEdge()[((EdgeBaseImpl) e).id] = ((EdgeBaseImpl) e).reversedEdge;
+		getEdge()[((EdgeBaseImpl) (e)).id] = e;
+		getRevEdge()[((EdgeBaseImpl) (e)).id] = ((EdgeBaseImpl) (e)).reversedEdge;
 		setECount(getBaseECount() + 1);
 		if (getFirstBaseEdge() == null) {
 			setFirstEdgeInGraph(e);
 		}
 		if (getLastBaseEdge() != null) {
-			(getLastBaseEdge()).setNextEdgeInGraph(e);
-
+			getLastBaseEdge().setNextEdgeInGraph(e);
 			e.setPrevEdgeInGraph(getLastBaseEdge());
-
 		}
 		setLastEdgeInGraph(e);
 	}
 
 	public void appendVertexToVSeq(VertexBase v) {
-		getVertex()[((VertexBaseImpl) v).id] = v;
+		getVertex()[((VertexBaseImpl) (v)).id] = v;
 		setVCount(getBaseVCount() + 1);
 		if (getFirstBaseVertex() == null) {
 			setFirstVertex(v);
 		}
 		if (getLastBaseVertex() != null) {
-			(getLastBaseVertex()).setNextVertex(v);
+			getLastBaseVertex().setNextVertex(v);
 			v.setPrevVertex(getLastBaseVertex());
 		}
 		setLastVertex(v);
@@ -401,13 +375,27 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 */
 	@Override
 	public boolean containsEdge(Edge e) {
-		return (e != null)
-				&& (e.getGraph() == this)
-				&& containsEdgeId(((EdgeBaseImpl) e.getNormalEdge()).id)
-				&& (getEdge(((EdgeBaseImpl) e.getNormalEdge()).id) == e
-						.getNormalEdge())
-				&& (traversalContext == null || traversalContext
-						.containsEdge(e));
+		if (e == null) {
+			return false;
+		}
+		if (e.getGraph() != this) {
+			return false;
+		}
+		if (!containsEdgeId(((EdgeBaseImpl) (e.getNormalEdge())).id)) {
+			return false;
+		}
+		if (!(getEdge(((EdgeBaseImpl) (e.getNormalEdge())).id) == e.getNormalEdge())) {
+			return false;
+		}
+		return true;
+		// return (e != null)
+		// && (e.getGraph() == this)
+		// && containsEdgeId(((EdgeBaseImpl) e.getNormalEdge()).id)
+		// && (getEdge(((EdgeBaseImpl) e.getNormalEdge()).id) == e
+		// .getNormalEdge())
+		// && (traversalContext == null || traversalContext
+		// .containsEdge(e))
+		// ;
 	}
 
 	/**
@@ -422,8 +410,23 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		if (eId < 0) {
 			eId = -eId;
 		}
-		return (eId > 0) && (eId <= eMax) && (getEdge()[eId] != null)
-				&& (getRevEdge()[eId] != null);
+		if (!(eId > 0)) {
+			return false;
+		}
+		if (!(eId <= eMax)) {
+			return false;
+		}
+		EdgeBase[] edge = getEdge();
+		if (!(edge[eId] != null)) {
+			return false;
+		}
+		EdgeBase[] revEdge = getRevEdge();
+		if (!(revEdge[eId] != null)) {
+			return false;
+		}
+		return true;
+		// return (eId > 0) && (eId <= eMax) && (getEdge()[eId] != null)
+		// && (getRevEdge()[eId] != null);
 	}
 
 	/*
@@ -435,11 +438,9 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	@Override
 	public boolean containsVertex(Vertex v) {
 		VertexBase[] vertex = getVertex();
-		return (v != null) && (v.getGraph() == this)
-				&& containsVertexId(((VertexBaseImpl) v).id)
-				&& (vertex[((VertexBaseImpl) v).id] == v)
-				&& (traversalContext == null || traversalContext
-						.containsVertex(v));
+		// && (traversalContext == null || traversalContext
+		// .containsVertex(v))
+		return (((v != null) && (v.getGraph() == this)) && containsVertexId(((VertexBaseImpl) (v)).id)) && (vertex[((VertexBaseImpl) (v)).id] == v);
 	}
 
 	/**
@@ -451,7 +452,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 * @return true if this graph contains a vertex with id vId
 	 */
 	private final boolean containsVertexId(int vId) {
-		return (vId > 0) && (vId <= vMax) && (getVertex()[vId] != null);
+		return ((vId > 0) && (vId <= vMax)) && (getVertex()[vId] != null);
 	}
 
 	/**
@@ -474,8 +475,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		}
 	}
 
-	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
-			Vertex omega) {
+	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha, Vertex omega) {
 		return graphFactory.createEdge(cls, 0, this, alpha, omega);
 	}
 
@@ -521,9 +521,8 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 */
 	@Override
 	public void deleteVertex(Vertex v) {
-		assert (v != null) && v.isValid() && containsVertex(v);
-
-		getDeleteVertexList().add((VertexBase) v);
+		assert ((v != null) && v.isValid()) && containsVertex(v);
+		getDeleteVertexList().add(((VertexBase) (v)));
 		internalDeleteVertex();
 	}
 
@@ -575,29 +574,23 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 */
 	public void expandEdgeArray(int newSize) {
 		if (newSize <= eMax) {
-			throw new GraphException("newSize must be > eSize: eSize=" + eMax
-					+ ", newSize=" + newSize);
+			throw new GraphException((("newSize must be > eSize: eSize=" + eMax) + ", newSize=") + newSize);
 		}
-
 		EdgeBase[] e = new EdgeBase[newSize + 1];
 		if (getEdge() != null) {
 			System.arraycopy(getEdge(), 0, e, 0, getEdge().length);
 		}
 		setEdge(e);
-
 		ReversedEdgeBaseImpl[] r = new ReversedEdgeBaseImpl[newSize + 1];
-
 		if (getRevEdge() != null) {
 			System.arraycopy(getRevEdge(), 0, r, 0, getRevEdge().length);
 		}
-
 		setRevEdge(r);
 		if (getFreeEdgeList() == null) {
 			setFreeEdgeList(new FreeIndexList(newSize));
 		} else {
 			getFreeEdgeList().expandBy(newSize - eMax);
 		}
-
 		eMax = newSize;
 		notifyMaxEdgeCountIncreased(newSize);
 	}
@@ -610,13 +603,11 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 */
 	public void expandVertexArray(int newSize) {
 		if (newSize <= vMax) {
-			throw new GraphException("newSize must > vSize: vSize=" + vMax
-					+ ", newSize=" + newSize);
+			throw new GraphException((("newSize must > vSize: vSize=" + vMax) + ", newSize=") + newSize);
 		}
 		VertexBase[] expandedArray = new VertexBase[newSize + 1];
 		if (getVertex() != null) {
-			System.arraycopy(getVertex(), 0, expandedArray, 0,
-					getVertex().length);
+			System.arraycopy(getVertex(), 0, expandedArray, 0, getVertex().length);
 		}
 		if (getFreeVertexList() == null) {
 			setFreeVertexList(new FreeIndexList(newSize));
@@ -649,7 +640,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		assert eId != 0 : "The edge id must be != 0, given was " + eId;
 		try {
 			return eId < 0 ? getRevEdge()[-eId] : getEdge()[eId];
-		} catch (ArrayIndexOutOfBoundsException e) {
+		} catch (java.lang.ArrayIndexOutOfBoundsException e) {
 			return null;
 		}
 	}
@@ -663,7 +654,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	public Edge getFirstEdge() {
 		Edge firstEdge = getFirstBaseEdge();
 		TraversalContext tc = getTraversalContext();
-		if (!(tc == null || firstEdge == null || tc.containsEdge(firstEdge))) {
+		if (!(((tc == null) || (firstEdge == null)) || tc.containsEdge(firstEdge))) {
 			firstEdge = firstEdge.getNextEdge();
 		}
 		return firstEdge;
@@ -678,7 +669,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	public Edge getLastEdge() {
 		Edge lastEdge = getLastBaseEdge();
 		TraversalContext tc = getTraversalContext();
-		if (!(tc == null || lastEdge == null || tc.containsEdge(lastEdge))) {
+		if (!(((tc == null) || (lastEdge == null)) || tc.containsEdge(lastEdge))) {
 			lastEdge = lastEdge.getPrevEdge();
 		}
 		return lastEdge;
@@ -725,8 +716,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	public Vertex getFirstVertex() {
 		Vertex firstVertex = getFirstBaseVertex();
 		TraversalContext tc = getTraversalContext();
-		if (!(tc == null || firstVertex == null || tc
-				.containsVertex(firstVertex))) {
+		if (!(((tc == null) || (firstVertex == null)) || tc.containsVertex(firstVertex))) {
 			firstVertex = firstVertex.getNextVertex();
 		}
 		return firstVertex;
@@ -741,7 +731,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	public Vertex getLastVertex() {
 		Vertex lastVertex = getLastBaseVertex();
 		TraversalContext tc = getTraversalContext();
-		if (!(tc == null || lastVertex == null || tc.containsVertex(lastVertex))) {
+		if (!(((tc == null) || (lastVertex == null)) || tc.containsVertex(lastVertex))) {
 			lastVertex = lastVertex.getPrevVertex();
 		}
 		return lastVertex;
@@ -856,10 +846,10 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 */
 	@Override
 	public Vertex getVertex(int vId) {
-		assert (vId > 0) : "The vertex id must be > 0, given was " + vId;
+		assert vId > 0 : "The vertex id must be > 0, given was " + vId;
 		try {
 			return getVertex()[vId];
-		} catch (ArrayIndexOutOfBoundsException e) {
+		} catch (java.lang.ArrayIndexOutOfBoundsException e) {
 			return null;
 		}
 	}
@@ -873,31 +863,29 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		setGraphVersion(getGraphVersion() + 1);
 	}
 
-	/**
-	 * Triggers ECA-rules before an Attribute is changed
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param name
-	 *            of the changing Attribute
+	 * @see
+	 * de.uni_koblenz.jgralab.impl.InternalGraph#ecaAttributeChanging(java.lang
+	 * .String, java.lang.Object, java.lang.Object)
 	 */
-	public void ecaAttributeChanging(String name, Object oldValue,
-			Object newValue) {
+	public void ecaAttributeChanging(String name, Object oldValue, Object newValue) {
 		if (!isLoading()) {
-			getECARuleManager().fireBeforeChangeAttributeEvents(this, name,
-					oldValue, newValue);
+			getECARuleManager().fireBeforeChangeAttributeEvents(this, name, oldValue, newValue);
 		}
 	}
 
-	/**
-	 * Triggers ECA-rule after an Attribute is changed
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param name
-	 *            of the changed Attribute
+	 * @see
+	 * de.uni_koblenz.jgralab.impl.InternalGraph#ecaAttributeChanged(java.lang
+	 * .String, java.lang.Object, java.lang.Object)
 	 */
-	public void ecaAttributeChanged(String name, Object oldValue,
-			Object newValue) {
+	public void ecaAttributeChanged(String name, Object oldValue, Object newValue) {
 		if (!isLoading()) {
-			getECARuleManager().fireAfterChangeAttributeEvents(this, name,
-					oldValue, newValue);
+			getECARuleManager().fireAfterChangeAttributeEvents(this, name, oldValue, newValue);
 		}
 	}
 
@@ -908,30 +896,21 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 *            an edge
 	 */
 	private void internalDeleteEdge(Edge edge) {
-		assert (edge != null) && edge.isValid() && containsEdge(edge);
-
-		getECARuleManager().fireBeforeDeleteEdgeEvents(edge);
-
-		EdgeBase e = (EdgeBase) edge.getNormalEdge();
-		if(this.getECARuleManagerIfThere() != null){
+		assert ((edge != null) && edge.isValid()) && containsEdge(edge);
+		if (this.getECARuleManagerIfThere() != null) {
 			getECARuleManagerIfThere().fireBeforeDeleteEdgeEvents(edge);
 		}
-		
-		EdgeBase e = (EdgeBase) edge.getNormalEdge();
+		EdgeBase e = ((EdgeBase) (edge.getNormalEdge()));
 		internalEdgeDeleted(e);
-
 		VertexBase alpha = e.getIncidentVertex();
 		alpha.removeIncidenceFromLambdaSeq(e);
 		alpha.incidenceListModified();
-
-		VertexBase omega = ((EdgeBaseImpl) e).reversedEdge.getIncidentVertex();
-		omega.removeIncidenceFromLambdaSeq(((EdgeBaseImpl) e).reversedEdge);
+		VertexBase omega = ((EdgeBaseImpl) (e)).reversedEdge.getIncidentVertex();
+		omega.removeIncidenceFromLambdaSeq(((EdgeBaseImpl) (e)).reversedEdge);
 		omega.incidenceListModified();
-
 		removeEdgeFromESeq(e);
 		edgeListModified();
-
-		if(this.getECARuleManagerIfThere() != null){
+		if (this.getECARuleManagerIfThere() != null) {
 			getECARuleManagerIfThere().fireAfterDeleteEdgeEvents(e.getM1Class());
 		}
 		edgeAfterDeleted(e, alpha, omega);
@@ -950,9 +929,8 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	private void internalDeleteVertex() {
 		while (!getDeleteVertexList().isEmpty()) {
 			VertexBase v = getDeleteVertexList().remove(0);
-			assert (v != null) && v.isValid() && containsVertex(v);
-			
-			if(this.getECARuleManagerIfThere() != null){
+			assert ((v != null) && v.isValid()) && containsVertex(v);
+			if (this.getECARuleManagerIfThere() != null) {
 				getECARuleManagerIfThere().fireBeforeDeleteVertexEvents(v);
 			}
 			internalVertexDeleted(v);
@@ -963,23 +941,21 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 				if (e.getThatAggregationKind() == AggregationKind.COMPOSITE) {
 					// check for cascading delete of vertices in incident
 					// composition edges
-					VertexBase other = (VertexBase) e.getThat();
-					if ((other != v) && containsVertex(other)
-							&& !getDeleteVertexList().contains(other)) {
+					VertexBase other = ((VertexBase) (e.getThat()));
+					if (((other != v) && containsVertex(other)) && (!getDeleteVertexList().contains(other))) {
 						getDeleteVertexList().add(other);
 					}
 				}
 				deleteEdge(e);
 				e = v.getFirstIncidence();
-			}
+			} 
 			removeVertexFromVSeq(v);
 			vertexListModified();
-			
-			if(this.getECARuleManagerIfThere() != null){
+			if (this.getECARuleManagerIfThere() != null) {
 				getECARuleManagerIfThere().fireAfterDeleteVertexEvents(v.getM1Class());
 			}
 			vertexAfterDeleted(v);
-		}
+		} 
 	}
 
 	public void internalVertexDeleted(VertexBase v) {
@@ -993,7 +969,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			// delete at head of vertex list
 			setFirstVertex(v.getNextBaseVertex());
 			if (getFirstBaseVertex() != null) {
-				(getFirstBaseVertex()).setPrevVertex(null);
+				getFirstBaseVertex().setPrevVertex(null);
 			}
 			if (v == getLastBaseVertex()) {
 				// this vertex was the only one...
@@ -1003,14 +979,12 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			// delete at tail of vertex list
 			setLastVertex(v.getPrevBaseVertex());
 			if (getLastBaseVertex() != null) {
-				(getLastBaseVertex()).setNextVertex(null);
+				getLastBaseVertex().setNextVertex(null);
 			}
 		} else {
 			// delete somewhere in the middle
-			(v.getPrevBaseVertex()).setNextVertex(v
-					.getNextBaseVertex());
-			(v.getNextBaseVertex()).setPrevVertex(v
-					.getPrevBaseVertex());
+			v.getPrevBaseVertex().setNextVertex(v.getNextBaseVertex());
+			v.getNextBaseVertex().setPrevVertex(v.getPrevBaseVertex());
 		}
 		// freeIndex(getFreeVertexList(), v.getId());
 		freeVertexIndex(v.getId());
@@ -1024,7 +998,6 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	public void removeEdgeFromESeq(EdgeBase e) {
 		assert e != null;
 		removeEdgeFromESeqWithoutDeletingIt(e);
-
 		// freeIndex(getFreeEdgeList(), e.getId());
 		freeEdgeIndex(e.getId());
 		getEdge()[e.getId()] = null;
@@ -1040,7 +1013,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			// delete at head of edge list
 			setFirstEdgeInGraph(e.getNextBaseEdge());
 			if (getFirstBaseEdge() != null) {
-				(getFirstBaseEdge()).setPrevEdgeInGraph(null);
+				getFirstBaseEdge().setPrevEdgeInGraph(null);
 			}
 			if (e == getLastBaseEdge()) {
 				// this edge was the only one...
@@ -1050,15 +1023,12 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			// delete at tail of edge list
 			setLastEdgeInGraph(e.getPrevBaseEdge());
 			if (getLastBaseEdge() != null) {
-				(getLastBaseEdge()).setNextEdgeInGraph(null);
+				getLastBaseEdge().setNextEdgeInGraph(null);
 			}
 		} else {
 			// delete somewhere in the middle
-			(e.getPrevBaseEdge()).setNextEdgeInGraph(e
-					.getNextBaseEdge());
-			(e.getNextBaseEdge()).setPrevEdgeInGraph(e
-					.getPrevBaseEdge());
-
+			e.getPrevBaseEdge().setNextEdgeInGraph(e.getNextBaseEdge());
+			e.getNextBaseEdge().setPrevEdgeInGraph(e.getPrevBaseEdge());
 		}
 	}
 
@@ -1118,8 +1088,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 * de.uni_koblenz.jgralab.impl.InternalGraph#internalLoadingCompleted(int[],
 	 * int[])
 	 */
-	public void internalLoadingCompleted(int[] firstIncidence,
-			int[] nextIncidence) {
+	public void internalLoadingCompleted(int[] firstIncidence, int[] nextIncidence) {
 		getFreeVertexList().reinitialize(getVertex());
 		getFreeEdgeList().reinitialize(getEdge());
 		for (int vId = 1; vId < getVertex().length; ++vId) {
@@ -1127,104 +1096,77 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			if (v != null) {
 				int eId = firstIncidence[vId];
 				while (eId != 0) {
-					v.appendIncidenceToLambdaSeq(eId < 0 ? getRevEdge()[-eId]
-							: getEdge()[eId]);
+					v.appendIncidenceToLambdaSeq(eId < 0 ? getRevEdge()[-eId] : getEdge()[eId]);
 					eId = nextIncidence[eMax + eId];
-				}
+				} 
 			}
 		}
 	}
 
 	public void putEdgeAfterInGraph(EdgeBase targetEdge, EdgeBase movedEdge) {
-		assert (targetEdge != null) && targetEdge.isValid()
-				&& containsEdge(targetEdge);
-		assert (movedEdge != null) && movedEdge.isValid()
-				&& containsEdge(movedEdge);
+		assert ((targetEdge != null) && targetEdge.isValid()) && containsEdge(targetEdge);
+		assert ((movedEdge != null) && movedEdge.isValid()) && containsEdge(movedEdge);
 		assert targetEdge != movedEdge;
-
-		if ((targetEdge == movedEdge)
-				|| (targetEdge.getNextBaseEdge() == movedEdge)) {
+		if ((targetEdge == movedEdge) || (targetEdge.getNextBaseEdge() == movedEdge)) {
 			return;
 		}
-
 		assert getFirstBaseEdge() != getLastBaseEdge();
-
 		// remove moved edge from eSeq
 		if (movedEdge == getFirstBaseEdge()) {
 			setFirstEdgeInGraph(movedEdge.getNextBaseEdge());
-			(movedEdge.getNextBaseEdge()).setPrevEdgeInGraph(null);
+			movedEdge.getNextBaseEdge().setPrevEdgeInGraph(null);
 		} else if (movedEdge == getLastBaseEdge()) {
 			setLastEdgeInGraph(movedEdge.getPrevBaseEdge());
-			(movedEdge.getPrevBaseEdge()).setNextEdgeInGraph(null);
+			movedEdge.getPrevBaseEdge().setNextEdgeInGraph(null);
 		} else {
-			(movedEdge.getPrevBaseEdge())
-					.setNextEdgeInGraph(movedEdge.getNextBaseEdge());
-			(movedEdge.getNextBaseEdge())
-					.setPrevEdgeInGraph(movedEdge.getPrevBaseEdge());
-
+			movedEdge.getPrevBaseEdge().setNextEdgeInGraph(movedEdge.getNextBaseEdge());
+			movedEdge.getNextBaseEdge().setPrevEdgeInGraph(movedEdge.getPrevBaseEdge());
 		}
-
 		// insert moved edge in eSeq immediately after target
 		if (targetEdge == getLastBaseEdge()) {
 			setLastEdgeInGraph(movedEdge);
 			movedEdge.setNextEdgeInGraph(null);
 		} else {
-			(targetEdge.getNextBaseEdge())
-					.setPrevEdgeInGraph(movedEdge);
+			targetEdge.getNextBaseEdge().setPrevEdgeInGraph(movedEdge);
 			movedEdge.setNextEdgeInGraph(targetEdge.getNextBaseEdge());
 		}
 		movedEdge.setPrevEdgeInGraph(targetEdge);
-
 		targetEdge.setNextEdgeInGraph(movedEdge);
 		edgeListModified();
 	}
 
 	public void putVertexAfter(VertexBase targetVertex, VertexBase movedVertex) {
-		assert (targetVertex != null) && targetVertex.isValid()
-				&& containsVertex(targetVertex);
-		assert (movedVertex != null) && movedVertex.isValid()
-				&& containsVertex(movedVertex);
+		assert ((targetVertex != null) && targetVertex.isValid()) && containsVertex(targetVertex);
+		assert ((movedVertex != null) && movedVertex.isValid()) && containsVertex(movedVertex);
 		assert targetVertex != movedVertex;
-
 		Vertex nextVertex = targetVertex.getNextBaseVertex();
 		if ((targetVertex == movedVertex) || (nextVertex == movedVertex)) {
 			return;
 		}
-
 		assert getFirstBaseVertex() != getLastBaseVertex();
-
 		// remove moved vertex from vSeq
 		if (movedVertex == getFirstBaseVertex()) {
-			VertexBase newFirstVertex = movedVertex
-					.getNextBaseVertex();
+			VertexBase newFirstVertex = movedVertex.getNextBaseVertex();
 			setFirstVertex(newFirstVertex);
 			newFirstVertex.setPrevVertex(null);
 			// ((VertexImpl)
 			// movedVertex.getNextVertex()).setPrevVertex(null);
-
 		} else if (movedVertex == getLastBaseVertex()) {
 			setLastVertex(movedVertex.getPrevBaseVertex());
-			(movedVertex.getPrevBaseVertex()).setNextVertex(null);
+			movedVertex.getPrevBaseVertex().setNextVertex(null);
 		} else {
-			(movedVertex.getPrevBaseVertex())
-					.setNextVertex(movedVertex.getNextBaseVertex());
-			(movedVertex.getNextBaseVertex())
-					.setPrevVertex(movedVertex.getPrevBaseVertex());
-
+			movedVertex.getPrevBaseVertex().setNextVertex(movedVertex.getNextBaseVertex());
+			movedVertex.getNextBaseVertex().setPrevVertex(movedVertex.getPrevBaseVertex());
 		}
-
 		// insert moved vertex in vSeq immediately after target
 		if (targetVertex == getLastBaseVertex()) {
 			setLastVertex(movedVertex);
 			movedVertex.setNextVertex(null);
 		} else {
-			(targetVertex.getNextBaseVertex())
-					.setPrevVertex(movedVertex);
-
+			targetVertex.getNextBaseVertex().setPrevVertex(movedVertex);
 			movedVertex.setNextVertex(targetVertex.getNextBaseVertex());
 		}
 		movedVertex.setPrevVertex(targetVertex);
-
 		targetVertex.setNextVertex(movedVertex);
 		vertexListModified();
 	}
@@ -1239,81 +1181,59 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 *            the edge to be moved
 	 */
 	public void putEdgeBeforeInGraph(EdgeBase targetEdge, EdgeBase movedEdge) {
-		assert (targetEdge != null) && targetEdge.isValid()
-				&& containsEdge(targetEdge);
-		assert (movedEdge != null) && movedEdge.isValid()
-				&& containsEdge(movedEdge);
+		assert ((targetEdge != null) && targetEdge.isValid()) && containsEdge(targetEdge);
+		assert ((movedEdge != null) && movedEdge.isValid()) && containsEdge(movedEdge);
 		assert targetEdge != movedEdge;
-
-		if ((targetEdge == movedEdge)
-				|| (targetEdge.getPrevBaseEdge() == movedEdge)) {
+		if ((targetEdge == movedEdge) || (targetEdge.getPrevBaseEdge() == movedEdge)) {
 			return;
 		}
-
 		assert getFirstBaseEdge() != getLastBaseEdge();
-
 		removeEdgeFromESeqWithoutDeletingIt(movedEdge);
-
 		// insert moved edge in eSeq immediately before target
 		if (targetEdge == getFirstBaseEdge()) {
 			setFirstEdgeInGraph(movedEdge);
 			movedEdge.setPrevEdgeInGraph(null);
-
 		} else {
-			EdgeBase previousEdge = (targetEdge.getPrevBaseEdge());
+			EdgeBase previousEdge = targetEdge.getPrevBaseEdge();
 			previousEdge.setNextEdgeInGraph(movedEdge);
 			movedEdge.setPrevEdgeInGraph(previousEdge);
-
 		}
 		movedEdge.setNextEdgeInGraph(targetEdge);
 		targetEdge.setPrevEdgeInGraph(movedEdge);
-
 		edgeListModified();
 	}
 
 	public void putVertexBefore(VertexBase targetVertex, VertexBase movedVertex) {
-		assert (targetVertex != null) && targetVertex.isValid()
-				&& containsVertex(targetVertex);
-		assert (movedVertex != null) && movedVertex.isValid()
-				&& containsVertex(movedVertex);
+		assert ((targetVertex != null) && targetVertex.isValid()) && containsVertex(targetVertex);
+		assert ((movedVertex != null) && movedVertex.isValid()) && containsVertex(movedVertex);
 		assert targetVertex != movedVertex;
-
 		Vertex prevVertex = targetVertex.getPrevBaseVertex();
 		if ((targetVertex == movedVertex) || (prevVertex == movedVertex)) {
 			return;
 		}
-
 		assert getFirstBaseVertex() != getLastBaseVertex();
-
 		// remove moved vertex from vSeq
 		if (movedVertex == getFirstBaseVertex()) {
 			setFirstVertex(movedVertex.getNextBaseVertex());
-			(movedVertex.getNextBaseVertex()).setPrevVertex(null);
-
+			movedVertex.getNextBaseVertex().setPrevVertex(null);
 		} else if (movedVertex == getLastBaseVertex()) {
 			setLastVertex(movedVertex.getPrevBaseVertex());
-			(movedVertex.getPrevBaseVertex()).setNextVertex(null);
+			movedVertex.getPrevBaseVertex().setNextVertex(null);
 		} else {
-			(movedVertex.getPrevBaseVertex())
-					.setNextVertex(movedVertex.getNextBaseVertex());
-			(movedVertex.getNextBaseVertex())
-					.setPrevVertex(movedVertex.getPrevBaseVertex());
-
+			movedVertex.getPrevBaseVertex().setNextVertex(movedVertex.getNextBaseVertex());
+			movedVertex.getNextBaseVertex().setPrevVertex(movedVertex.getPrevBaseVertex());
 		}
-
 		// insert moved vertex in vSeq immediately before target
 		if (targetVertex == getFirstBaseVertex()) {
 			setFirstVertex(movedVertex);
 			movedVertex.setPrevVertex(null);
 		} else {
-			VertexBase previousVertex = targetVertex
-					.getPrevBaseVertex();
+			VertexBase previousVertex = targetVertex.getPrevBaseVertex();
 			previousVertex.setNextVertex(movedVertex);
 			movedVertex.setPrevVertex(previousVertex);
 		}
 		movedVertex.setNextVertex(targetVertex);
 		targetVertex.setPrevVertex(movedVertex);
-
 		vertexListModified();
 	}
 
@@ -1398,7 +1318,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 					while (getFreeVertexList().isFragmented()) {
 						while ((vId >= 1) && (getVertex()[vId] == null)) {
 							--vId;
-						}
+						} 
 						assert vId >= 1;
 						VertexBase v = getVertex()[vId];
 						getVertex()[vId] = null;
@@ -1408,14 +1328,13 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 						v.setId(newId);
 						getVertex()[newId] = v;
 						--vId;
-					}
+					} 
 				}
-				int newVMax = getBaseVCount() == 0 ? 1 : getBaseVCount();
+				int newVMax = (getBaseVCount() == 0) ? 1 : getBaseVCount();
 				if (newVMax != vMax) {
 					vMax = newVMax;
 					VertexBase[] newVertex = new VertexBase[vMax + 1];
-					System.arraycopy(getVertex(), 0, newVertex, 0,
-							newVertex.length);
+					System.arraycopy(getVertex(), 0, newVertex, 0, newVertex.length);
 					setVertex(newVertex);
 				}
 				graphModified();
@@ -1428,7 +1347,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 					while (getFreeEdgeList().isFragmented()) {
 						while ((eId >= 1) && (getEdge()[eId] == null)) {
 							--eId;
-						}
+						} 
 						assert eId >= 1;
 						EdgeBase e = getEdge()[eId];
 						getEdge()[eId] = null;
@@ -1441,9 +1360,9 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 						getEdge()[newId] = e;
 						// getRevEdge()[newId] = r;
 						--eId;
-					}
+					} 
 				}
-				int newEMax = getBaseECount() == 0 ? 1 : getBaseECount();
+				int newEMax = (getBaseECount() == 0) ? 1 : getBaseECount();
 				if (newEMax != eMax) {
 					eMax = newEMax;
 					EdgeBase[] newEdge = new EdgeBase[eMax + 1];
@@ -1462,7 +1381,6 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	// access to <code>FreeIndexList</code>s with these functions
 	// abstract protected void freeIndex(FreeIndexList freeIndexList, int
 	// index);
-
 	public void setFreeVertexList(FreeIndexList freeVertexList) {
 		this.freeVertexList = freeVertexList;
 	}
@@ -1474,19 +1392,19 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	// sort vertices
 	@Override
 	public void sortVertices(Comparator<Vertex> comp) {
-
 		if (getFirstBaseVertex() == null) {
 			// no sorting required for empty vertex lists
 			return;
 		}
 		class VertexList {
 			VertexBase first;
+
 			VertexBase last;
 
 			public void add(VertexBase v) {
 				if (first == null) {
 					first = v;
-					assert (last == null);
+					assert last == null;
 					last = v;
 				} else {
 					v.setPrevVertex(last);
@@ -1514,22 +1432,18 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			}
 
 			public boolean isEmpty() {
-				assert ((first == null) == (last == null));
+				assert (first == null) == (last == null);
 				return first == null;
 			}
-
 		}
-
 		VertexList a = new VertexList();
 		VertexList b = new VertexList();
 		VertexList out = a;
-
 		// split
 		VertexBase last;
 		VertexList l = new VertexList();
 		l.first = getFirstBaseVertex();
 		l.last = getLastBaseVertex();
-
 		out.add(last = l.remove());
 		while (!l.isEmpty()) {
 			VertexBase current = l.remove();
@@ -1538,34 +1452,28 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			}
 			out.add(current);
 			last = current;
-		}
+		} 
 		if (a.isEmpty() || b.isEmpty()) {
-			out = a.isEmpty() ? b : a;
+			out = (a.isEmpty()) ? b : a;
 			setFirstVertex(out.first);
 			setLastVertex(out.last);
 			return;
 		}
-
 		while (true) {
 			if (a.isEmpty() || b.isEmpty()) {
-				out = a.isEmpty() ? b : a;
+				out = (a.isEmpty()) ? b : a;
 				setFirstVertex(out.first);
 				setLastVertex(out.last);
 				edgeListModified();
 				return;
 			}
-
 			VertexList c = new VertexList();
 			VertexList d = new VertexList();
 			out = c;
-
 			last = null;
-			while (!a.isEmpty() && !b.isEmpty()) {
-				int compareAToLast = last != null ? comp.compare(a.first, last)
-						: 0;
-				int compareBToLast = last != null ? comp.compare(b.first, last)
-						: 0;
-
+			while ((!a.isEmpty()) && (!b.isEmpty())) {
+				int compareAToLast = (last != null) ? comp.compare(a.first, last) : 0;
+				int compareBToLast = (last != null) ? comp.compare(b.first, last) : 0;
 				if ((compareAToLast >= 0) && (compareBToLast >= 0)) {
 					if (comp.compare(a.first, b.first) <= 0) {
 						out.add(last = a.remove());
@@ -1580,8 +1488,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 				} else {
 					out.add(last = a.remove());
 				}
-			}
-
+			} 
 			// copy rest of A
 			while (!a.isEmpty()) {
 				VertexBase current = a.remove();
@@ -1590,8 +1497,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 				}
 				out.add(current);
 				last = current;
-			}
-
+			} 
 			// copy rest of B
 			while (!b.isEmpty()) {
 				VertexBase current = b.remove();
@@ -1600,31 +1506,28 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 				}
 				out.add(current);
 				last = current;
-			}
-
+			} 
 			a = c;
 			b = d;
-		}
-
+		} 
 	}
 
 	// sort edges
-
 	@Override
 	public void sortEdges(Comparator<Edge> comp) {
-
 		if (getFirstBaseEdge() == null) {
 			// no sorting required for empty edge lists
 			return;
 		}
 		class EdgeList {
 			EdgeBase first;
+
 			EdgeBase last;
 
 			public void add(EdgeBase e) {
 				if (first == null) {
 					first = e;
-					assert (last == null);
+					assert last == null;
 					last = e;
 				} else {
 					e.setPrevEdgeInGraph(last);
@@ -1648,27 +1551,22 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 				out = first;
 				first = out.getNextBaseEdge();
 				first.setPrevEdgeInGraph(null);
-
 				return out;
 			}
 
 			public boolean isEmpty() {
-				assert ((first == null) == (last == null));
+				assert (first == null) == (last == null);
 				return first == null;
 			}
-
 		}
-
 		EdgeList a = new EdgeList();
 		EdgeList b = new EdgeList();
 		EdgeList out = a;
-
 		// split
 		EdgeBase last;
 		EdgeList l = new EdgeList();
 		l.first = getFirstBaseEdge();
 		l.last = getLastBaseEdge();
-
 		out.add(last = l.remove());
 		while (!l.isEmpty()) {
 			EdgeBase current = l.remove();
@@ -1677,34 +1575,28 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			}
 			out.add(current);
 			last = current;
-		}
+		} 
 		if (a.isEmpty() || b.isEmpty()) {
-			out = a.isEmpty() ? b : a;
+			out = (a.isEmpty()) ? b : a;
 			setFirstEdgeInGraph(out.first);
 			setLastEdgeInGraph(out.last);
 			return;
 		}
-
 		while (true) {
 			if (a.isEmpty() || b.isEmpty()) {
-				out = a.isEmpty() ? b : a;
+				out = (a.isEmpty()) ? b : a;
 				setFirstEdgeInGraph(out.first);
 				setLastEdgeInGraph(out.last);
 				edgeListModified();
 				return;
 			}
-
 			EdgeList c = new EdgeList();
 			EdgeList d = new EdgeList();
 			out = c;
-
 			last = null;
-			while (!a.isEmpty() && !b.isEmpty()) {
-				int compareAToLast = last != null ? comp.compare(a.first, last)
-						: 0;
-				int compareBToLast = last != null ? comp.compare(b.first, last)
-						: 0;
-
+			while ((!a.isEmpty()) && (!b.isEmpty())) {
+				int compareAToLast = (last != null) ? comp.compare(a.first, last) : 0;
+				int compareBToLast = (last != null) ? comp.compare(b.first, last) : 0;
 				if ((compareAToLast >= 0) && (compareBToLast >= 0)) {
 					if (comp.compare(a.first, b.first) <= 0) {
 						out.add(last = a.remove());
@@ -1719,8 +1611,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 				} else {
 					out.add(last = a.remove());
 				}
-			}
-
+			} 
 			// copy rest of A
 			while (!a.isEmpty()) {
 				EdgeBase current = a.remove();
@@ -1729,8 +1620,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 				}
 				out.add(current);
 				last = current;
-			}
-
+			} 
 			// copy rest of B
 			while (!b.isEmpty()) {
 				EdgeBase current = b.remove();
@@ -1739,40 +1629,37 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 				}
 				out.add(current);
 				last = current;
-			}
-
+			} 
 			a = c;
 			b = d;
-		}
-
+		} 
 	}
 
+	// ECA Rules
 	// ECA Rules
 	private ECARuleManagerInterface ecaRuleManager;
 
 	@Override
 	public ECARuleManagerInterface getECARuleManager() {
-		if(ecaRuleManager == null){
+		if (ecaRuleManager == null) {
 			Constructor<?> ruleManagerConstructor;
 			try {
-				ruleManagerConstructor = Class.forName(
-						"de.uni_koblenz.jgralab.eca.ECARuleManager")
-						.getConstructor(Graph.class);
-				ecaRuleManager = (ECARuleManagerInterface) ruleManagerConstructor
-						.newInstance(this);
-			} catch (Exception e) {
+				ruleManagerConstructor = Class.forName("de.uni_koblenz.jgralab.eca.ECARuleManager").getConstructor(Graph.class);
+				ecaRuleManager = ((ECARuleManagerInterface) (ruleManagerConstructor.newInstance(this)));
+			} catch (java.lang.Exception e) {
 				e.printStackTrace();
 			}
 			assert ecaRuleManager != null;
 		}
 		return ecaRuleManager;
 	}
-	
+
 	@Override
-	public ECARuleManagerInterface getECARuleManagerIfThere(){
+	public ECARuleManagerInterface getECARuleManagerIfThere() {
 		return ecaRuleManager;
 	}
 
+	// handle GraphStructureChangedListener
 	// handle GraphStructureChangedListener
 
 	/**
@@ -1780,7 +1667,9 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 * <i>WeakReference</i>s.
 	 */
 	protected List<WeakReference<GraphStructureChangedListener>> graphStructureChangedListenersWithAutoRemoval;
+
 	protected List<GraphStructureChangedListener> graphStructureChangedListeners;
+
 	{
 		graphStructureChangedListenersWithAutoRemoval = null;
 		graphStructureChangedListeners = new ArrayList<GraphStructureChangedListener>();
@@ -1845,36 +1734,32 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	@Override
 	public int getGraphStructureChangedListenerCount() {
 		return graphStructureChangedListenersWithAutoRemoval == null ? graphStructureChangedListeners
-				.size()
-				: graphStructureChangedListenersWithAutoRemoval.size()
-						+ graphStructureChangedListeners.size();
+				.size() : graphStructureChangedListenersWithAutoRemoval.size()
+				+ graphStructureChangedListeners.size();
 	}
 
 	private Iterator<WeakReference<GraphStructureChangedListener>> getListenerListIteratorForAutoRemove() {
 		return graphStructureChangedListenersWithAutoRemoval != null ? graphStructureChangedListenersWithAutoRemoval
-				.iterator()
-				: null;
+				.iterator() : null;
 	}
 
 	private Iterator<GraphStructureChangedListener> getListenerListIterator() {
 		return graphStructureChangedListeners != null ? graphStructureChangedListeners
-				.iterator()
-				: null;
+				.iterator() : null;
 	}
 
 	public void notifyVertexDeleted(Vertex v) {
-		assert (v != null) && v.isValid() && containsVertex(v);
+		assert ((v != null) && v.isValid()) && containsVertex(v);
 		if (graphStructureChangedListenersWithAutoRemoval != null) {
 			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
 			while (iterator.hasNext()) {
-				GraphStructureChangedListener currentListener = iterator.next()
-						.get();
+				GraphStructureChangedListener currentListener = iterator.next().get();
 				if (currentListener == null) {
 					iterator.remove();
 				} else {
 					currentListener.vertexDeleted(v);
 				}
-			}
+			} 
 			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
@@ -1884,18 +1769,17 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	}
 
 	public void notifyVertexAdded(Vertex v) {
-		assert (v != null) && v.isValid() && containsVertex(v);
+		assert ((v != null) && v.isValid()) && containsVertex(v);
 		if (graphStructureChangedListenersWithAutoRemoval != null) {
 			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
 			while (iterator.hasNext()) {
-				GraphStructureChangedListener currentListener = iterator.next()
-						.get();
+				GraphStructureChangedListener currentListener = iterator.next().get();
 				if (currentListener == null) {
 					iterator.remove();
 				} else {
 					currentListener.vertexAdded(v);
 				}
-			}
+			} 
 			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
@@ -1905,18 +1789,17 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	}
 
 	public void notifyEdgeDeleted(Edge e) {
-		assert (e != null) && e.isValid() && e.isNormal() && containsEdge(e);
+		assert (((e != null) && e.isValid()) && e.isNormal()) && containsEdge(e);
 		if (graphStructureChangedListenersWithAutoRemoval != null) {
 			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
 			while (iterator.hasNext()) {
-				GraphStructureChangedListener currentListener = iterator.next()
-						.get();
+				GraphStructureChangedListener currentListener = iterator.next().get();
 				if (currentListener == null) {
 					iterator.remove();
 				} else {
 					currentListener.edgeDeleted(e);
 				}
-			}
+			} 
 			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
@@ -1926,18 +1809,17 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	}
 
 	public void notifyEdgeAdded(Edge e) {
-		assert (e != null) && e.isValid() && e.isNormal() && containsEdge(e);
+		assert (((e != null) && e.isValid()) && e.isNormal()) && containsEdge(e);
 		if (graphStructureChangedListenersWithAutoRemoval != null) {
 			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
 			while (iterator.hasNext()) {
-				GraphStructureChangedListener currentListener = iterator.next()
-						.get();
+				GraphStructureChangedListener currentListener = iterator.next().get();
 				if (currentListener == null) {
 					iterator.remove();
 				} else {
 					currentListener.edgeAdded(e);
 				}
-			}
+			} 
 			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
@@ -1950,20 +1832,18 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		if (graphStructureChangedListenersWithAutoRemoval != null) {
 			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
 			while (iterator.hasNext()) {
-				GraphStructureChangedListener currentListener = iterator.next()
-						.get();
+				GraphStructureChangedListener currentListener = iterator.next().get();
 				if (currentListener == null) {
 					iterator.remove();
 				} else {
 					currentListener.maxVertexCountIncreased(newValue);
 				}
-			}
+			} 
 			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
 		for (int i = 0; i < n; i++) {
-			graphStructureChangedListeners.get(i).maxVertexCountIncreased(
-					newValue);
+			graphStructureChangedListeners.get(i).maxVertexCountIncreased(newValue);
 		}
 	}
 
@@ -1971,20 +1851,18 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		if (graphStructureChangedListenersWithAutoRemoval != null) {
 			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
 			while (iterator.hasNext()) {
-				GraphStructureChangedListener currentListener = iterator.next()
-						.get();
+				GraphStructureChangedListener currentListener = iterator.next().get();
 				if (currentListener == null) {
 					iterator.remove();
 				} else {
 					currentListener.maxEdgeCountIncreased(newValue);
 				}
-			}
+			} 
 			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
 		for (int i = 0; i < n; i++) {
-			graphStructureChangedListeners.get(i).maxEdgeCountIncreased(
-					newValue);
+			graphStructureChangedListeners.get(i).maxEdgeCountIncreased(newValue);
 		}
 	}
 
