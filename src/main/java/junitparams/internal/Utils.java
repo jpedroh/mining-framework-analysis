@@ -3,6 +3,7 @@ package junitparams.internal;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+
 /**
  * Some String utils to handle parameterised tests' results.
  *
@@ -12,20 +13,19 @@ public class Utils {
     public static final String REGEX_ALL_NEWLINES = "(\\r\\n|\\n|\\r)";
 
     public static String stringify(Object paramSet, int paramIdx) {
-        String result = "[" + paramIdx + "] ";
-
+        String result = ("[" + paramIdx) + "] ";
         return result + stringify(paramSet);
     }
 
     public static String stringify(Object paramSet) {
         String result;
-        if (paramSet == null)
+        if (paramSet == null) {
             result = "null";
-        else if (paramSet instanceof String)
+        } else if (paramSet instanceof String) {
             result = paramSet.toString();
-        else
+        } else {
             result = asCsvString(safelyCastParamsToArray(paramSet));
-
+        }
         return trimSpecialChars(result);
     }
 
@@ -76,28 +76,26 @@ public class Utils {
     static Object[] safelyCastParamsToArray(Object paramSet) {
         final Object[] params;
         if (paramSet instanceof Object[]) {
-            params = (Object[]) paramSet;
+            params = ((Object[]) (paramSet));
         } else {
-            params = new Object[] {paramSet};
+            params = new Object[]{ paramSet };
         }
         return params;
     }
-    
+
     private static String asCsvString(Object[] params) {
-        if (params == null)
+        if (params == null) {
             return "null";
-
-        if (params.length == 0)
+        }
+        if (params.length == 0) {
             return "";
-
+        }
         String result = "";
-
-        for (int i = 0; i < params.length - 1; i++) {
+        for (int i = 0; i < (params.length - 1); i++) {
             Object param = params[i];
             result = addParamToResult(result, param) + ", ";
         }
         result = addParamToResult(result, params[params.length - 1]);
-
         return result;
     }
 
