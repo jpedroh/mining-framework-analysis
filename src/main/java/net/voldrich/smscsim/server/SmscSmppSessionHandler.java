@@ -1,14 +1,5 @@
 package net.voldrich.smscsim.server;
 
-import java.lang.ref.WeakReference;
-
-import net.voldrich.smscsim.spring.DeliveryReceiptScheduler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import net.voldrich.smscsim.spring.ResponseMessageIdGenerator;
-import net.voldrich.smscsim.spring.auto.DelayedRequestSenderImpl;
-import net.voldrich.smscsim.spring.auto.SmscGlobalConfiguration;
 import com.cloudhopper.smpp.PduAsyncResponse;
 import com.cloudhopper.smpp.SmppConstants;
 import com.cloudhopper.smpp.SmppServerSession;
@@ -19,9 +10,16 @@ import com.cloudhopper.smpp.pdu.PduResponse;
 import com.cloudhopper.smpp.pdu.SubmitSm;
 import com.cloudhopper.smpp.pdu.SubmitSmResp;
 import com.cloudhopper.smpp.pdu.Unbind;
+import java.lang.ref.WeakReference;
+import net.voldrich.smscsim.spring.DeliveryReceiptScheduler;
+import net.voldrich.smscsim.spring.ResponseMessageIdGenerator;
+import net.voldrich.smscsim.spring.auto.DelayedRequestSenderImpl;
+import net.voldrich.smscsim.spring.auto.SmscGlobalConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class SmscSmppSessionHandler extends DefaultSmppSessionHandler {
-
     private static final Logger logger = LoggerFactory.getLogger(SmscSmppSessionHandler.class);
 
     private WeakReference<SmppSession> sessionRef;
@@ -43,9 +41,8 @@ public class SmscSmppSessionHandler extends DefaultSmppSessionHandler {
     @Override
     public PduResponse firePduRequestReceived(PduRequest pduRequest) {
         SmppSession session = sessionRef.get();
-
         if (pduRequest instanceof SubmitSm) {
-            SubmitSm submitSm = (SubmitSm) pduRequest;
+            SubmitSm submitSm = ((SubmitSm) (pduRequest));
             SubmitSmResp submitSmResp = submitSm.createResponse();
             long messageId = messageIdGenerator.getNextMessageId();
             submitSmResp.setMessageId(FormatUtils.formatAsHex(messageId));
@@ -53,13 +50,18 @@ public class SmscSmppSessionHandler extends DefaultSmppSessionHandler {
                 // We can not wait in this thread!!
                 // It would block handling of other messages and performance would drop drastically!!
                 // create and enqueue delivery receipt
-                if (submitSm.getRegisteredDelivery() > 0 && deliverSender != null) {
+                if (((submitSm.getRegisteredDelivery() > 0) && (deliverSender != null)) && submitSm.getSourceAddress().getAddress().equals("TEST")) {
+                    logger.info("Source address is: 'TEST', responding with failed delivery receipt");
+                    FailedDeliveryReceiptRecord record = new FailedDeliveryReceiptRecord(session, submitSm, messageId);
+                    record.setDeliverTime(deliveryReceiptScheduler.getDeliveryTimeMillis());
+                    deliverSender.scheduleDelivery(record);
+                } else if ((submitSm.getRegisteredDelivery() > 0) && (deliverSender != null)) {
                     String sourceAddress = submitSm.getSourceAddress().getAddress();
                     DeliveryReceiptRecord record;
                     if (sourceAddress.matches("TEST\\d\\d")) {
                         double successRate = Double.parseDouble(sourceAddress.replaceAll("TEST", ""));
                         double rng = Math.random() * 100;
-                        if(rng <= successRate) {
+                        if (rng <= successRate) {
                             record = new DeliveryReceiptRecord(session, submitSm, messageId);
                         } else {
                             record = new FailedDeliveryReceiptRecord(session, submitSm, messageId);
@@ -70,20 +72,18 @@ public class SmscSmppSessionHandler extends DefaultSmppSessionHandler {
                     record.setDeliverTime(deliveryReceiptScheduler.getDeliveryTimeMillis());
                     deliverSender.scheduleDelivery(record);
                 }
-            } catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 logger.error("Error when handling submit", e);
             }
-
-            //submitSmResp.setCommandStatus(SmppConstants.STATUS_X_T_APPN);
+            // submitSmResp.setCommandStatus(SmppConstants.STATUS_X_T_APPN);
             return submitSmResp;
             //return null;
         } else if (pduRequest instanceof Unbind) {
-            //session.destroy();  
+            // session.destroy();
             // TO DO refine, this throws exceptions
             session.unbind(1000);
             return pduRequest.createResponse();
         }
-
         return pduRequest.createResponse();
     }
 
@@ -95,5 +95,4 @@ public class SmscSmppSessionHandler extends DefaultSmppSessionHandler {
             //pduAsyncResponse.getRequest().setReferenceObject(value)
         }
     }
-
 }
