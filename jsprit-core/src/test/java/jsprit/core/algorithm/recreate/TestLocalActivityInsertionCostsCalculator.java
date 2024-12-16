@@ -16,6 +16,8 @@
  ******************************************************************************/
 package jsprit.core.algorithm.recreate;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import jsprit.core.algorithm.state.StateManager;
 import jsprit.core.algorithm.state.UpdateActivityTimes;
 import jsprit.core.algorithm.state.UpdateFutureWaitingTimes;
@@ -39,16 +41,12 @@ import jsprit.core.problem.vehicle.VehicleTypeImpl;
 import jsprit.core.util.CostFactory;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TestLocalActivityInsertionCostsCalculator {
 
+public class TestLocalActivityInsertionCostsCalculator {
 	VehicleRoutingTransportCosts tpCosts;
 
 	VehicleRoutingActivityCosts actCosts;
@@ -62,18 +60,15 @@ public class TestLocalActivityInsertionCostsCalculator {
 	JobInsertionContext jic;
 
 	@Before
-	public void doBefore(){
-
+	public void doBefore() {
 		vehicle = mock(Vehicle.class);
 		route = mock(VehicleRoute.class);
 		when(route.isEmpty()).thenReturn(false);
 		when(route.getVehicle()).thenReturn(vehicle);
-
 		jic = mock(JobInsertionContext.class);
 		when(jic.getRoute()).thenReturn(route);
 		when(jic.getNewVehicle()).thenReturn(vehicle);
 		when(vehicle.getType()).thenReturn(VehicleTypeImpl.Builder.newInstance("type").build());
-
 		tpCosts = mock(VehicleRoutingTransportCosts.class);
 		when(tpCosts.getTransportCost(loc("i"), loc("j"), 0.0, null, vehicle)).thenReturn(2.0);
 		when(tpCosts.getTransportTime(loc("i"), loc("j"), 0.0, null, vehicle)).thenReturn(0.0);
@@ -81,17 +76,16 @@ public class TestLocalActivityInsertionCostsCalculator {
 		when(tpCosts.getTransportTime(loc("i"), loc("k"), 0.0, null, vehicle)).thenReturn(0.0);
 		when(tpCosts.getTransportCost(loc("k"), loc("j"), 0.0, null, vehicle)).thenReturn(3.0);
 		when(tpCosts.getTransportTime(loc("k"), loc("j"), 0.0, null, vehicle)).thenReturn(0.0);
-
 		actCosts = mock(VehicleRoutingActivityCosts.class);
 		calc = new LocalActivityInsertionCostsCalculator(tpCosts, actCosts, mock(StateManager.class));
 	}
 
-    private Location loc(String i) {
-        return Location.Builder.newInstance().setId(i).build();
-    }
+				private Location loc(String i) {
+				    return Location.Builder.newInstance().setId(i).build();
+				}
 
-    @Test
-	public void whenInsertingActBetweenTwoRouteActs_itCalcsMarginalTpCosts(){
+	@Test
+	public void whenInsertingActBetweenTwoRouteActs_itCalcsMarginalTpCosts() {
 		TourActivity prevAct = mock(TourActivity.class);
 		when(prevAct.getLocation()).thenReturn(loc("i"));
 		when(prevAct.getIndex()).thenReturn(1);
@@ -101,15 +95,13 @@ public class TestLocalActivityInsertionCostsCalculator {
 		TourActivity newAct = mock(TourActivity.class);
 		when(newAct.getLocation()).thenReturn(loc("k"));
 		when(newAct.getIndex()).thenReturn(1);
-
 		when(vehicle.isReturnToDepot()).thenReturn(true);
-
 		double costs = calc.getCosts(jic, prevAct, nextAct, newAct, 0.0);
-		assertEquals(4.0,costs,0.01);
+		assertEquals(4.0, costs, 0.01);
 	}
 
 	@Test
-	public void whenInsertingActBetweenLastActAndEnd_itCalcsMarginalTpCosts(){
+	public void whenInsertingActBetweenLastActAndEnd_itCalcsMarginalTpCosts() {
 		TourActivity prevAct = mock(TourActivity.class);
 		when(prevAct.getLocation()).thenReturn(loc("i"));
 		when(prevAct.getIndex()).thenReturn(1);
@@ -117,15 +109,13 @@ public class TestLocalActivityInsertionCostsCalculator {
 		TourActivity newAct = mock(TourActivity.class);
 		when(newAct.getLocation()).thenReturn(loc("k"));
 		when(newAct.getIndex()).thenReturn(1);
-
 		when(vehicle.isReturnToDepot()).thenReturn(true);
-
 		double costs = calc.getCosts(jic, prevAct, nextAct, newAct, 0.0);
-		assertEquals(4.0,costs,0.01);
+		assertEquals(4.0, costs, 0.01);
 	}
 
 	@Test
-	public void whenInsertingActBetweenTwoRouteActsAndRouteIsOpen_itCalcsMarginalTpCosts(){
+	public void whenInsertingActBetweenTwoRouteActsAndRouteIsOpen_itCalcsMarginalTpCosts() {
 		TourActivity prevAct = mock(TourActivity.class);
 		when(prevAct.getLocation()).thenReturn(loc("i"));
 		when(prevAct.getIndex()).thenReturn(1);
@@ -135,15 +125,13 @@ public class TestLocalActivityInsertionCostsCalculator {
 		TourActivity newAct = mock(TourActivity.class);
 		when(newAct.getLocation()).thenReturn(loc("k"));
 		when(newAct.getIndex()).thenReturn(1);
-
 		when(vehicle.isReturnToDepot()).thenReturn(false);
-
 		double costs = calc.getCosts(jic, prevAct, nextAct, newAct, 0.0);
-		assertEquals(4.0,costs,0.01);
+		assertEquals(4.0, costs, 0.01);
 	}
 
 	@Test
-	public void whenInsertingActBetweenLastActAndEndAndRouteIsOpen_itCalculatesTpCostsFromPrevToNewAct(){
+	public void whenInsertingActBetweenLastActAndEndAndRouteIsOpen_itCalculatesTpCostsFromPrevToNewAct() {
 		TourActivity prevAct = mock(TourActivity.class);
 		when(prevAct.getLocation()).thenReturn(loc("i"));
 		when(prevAct.getIndex()).thenReturn(1);
@@ -151,11 +139,9 @@ public class TestLocalActivityInsertionCostsCalculator {
 		TourActivity newAct = mock(TourActivity.class);
 		when(newAct.getLocation()).thenReturn(loc("k"));
 		when(newAct.getIndex()).thenReturn(1);
-
 		when(vehicle.isReturnToDepot()).thenReturn(false);
-
 		double costs = calc.getCosts(jic, prevAct, nextAct, newAct, 0.0);
-		assertEquals(3.0,costs,0.01);
+		assertEquals(3.0, costs, 0.01);
 	}
 
 	@Test
@@ -309,7 +295,7 @@ public class TestLocalActivityInsertionCostsCalculator {
 		VehicleTypeImpl type = VehicleTypeImpl.Builder.newInstance("t").setCostPerWaitingTime(1.).build();
 
 		VehicleImpl v = VehicleImpl.Builder.newInstance("v").setType(type).setStartLocation(Location.newInstance(0,0)).build();
-//		VehicleImpl v2 = VehicleImpl.Builder.newInstance("v2").setHasVariableDepartureTime(true).setType(type).setStartLocation(Location.newInstance(0,0)).build();
+	//		VehicleImpl v2 = VehicleImpl.Builder.newInstance("v2").setHasVariableDepartureTime(true).setType(type).setStartLocation(Location.newInstance(0,0)).build();
 
 		Service prevS = Service.Builder.newInstance("prev").setLocation(Location.newInstance(10,0)).build();
 		Service newS = Service.Builder.newInstance("new").setServiceTime(10).setTimeWindow(TimeWindow.newInstance(100,120)).setLocation(Location.newInstance(20, 0)).build();
@@ -342,7 +328,7 @@ public class TestLocalActivityInsertionCostsCalculator {
 		VehicleTypeImpl type = VehicleTypeImpl.Builder.newInstance("t").setCostPerWaitingTime(1.).build();
 
 		VehicleImpl v = VehicleImpl.Builder.newInstance("v").setType(type).setStartLocation(Location.newInstance(0,0)).build();
-//		VehicleImpl v2 = VehicleImpl.Builder.newInstance("v2").setHasVariableDepartureTime(true).setType(type).setStartLocation(Location.newInstance(0,0)).build();
+	//		VehicleImpl v2 = VehicleImpl.Builder.newInstance("v2").setHasVariableDepartureTime(true).setType(type).setStartLocation(Location.newInstance(0,0)).build();
 
 		Service prevS = Service.Builder.newInstance("prev").setLocation(Location.newInstance(10,0)).build();
 		Service newS = Service.Builder.newInstance("new").setServiceTime(10).setTimeWindow(TimeWindow.newInstance(100, 120)).setLocation(Location.newInstance(20, 0)).build();
@@ -380,7 +366,7 @@ public class TestLocalActivityInsertionCostsCalculator {
 		VehicleTypeImpl type = VehicleTypeImpl.Builder.newInstance("t").setCostPerWaitingTime(1.).build();
 
 		VehicleImpl v = VehicleImpl.Builder.newInstance("v").setType(type).setStartLocation(Location.newInstance(0,0)).build();
-//		VehicleImpl v2 = VehicleImpl.Builder.newInstance("v2").setHasVariableDepartureTime(true).setType(type).setStartLocation(Location.newInstance(0,0)).build();
+	//		VehicleImpl v2 = VehicleImpl.Builder.newInstance("v2").setHasVariableDepartureTime(true).setType(type).setStartLocation(Location.newInstance(0,0)).build();
 
 		Service prevS = Service.Builder.newInstance("prev").setLocation(Location.newInstance(10,0)).build();
 		Service newS = Service.Builder.newInstance("new").setServiceTime(10).setTimeWindow(TimeWindow.newInstance(100,120)).setLocation(Location.newInstance(20, 0)).build();
@@ -422,7 +408,7 @@ public class TestLocalActivityInsertionCostsCalculator {
 		VehicleTypeImpl type = VehicleTypeImpl.Builder.newInstance("t").setCostPerWaitingTime(1.).build();
 
 		VehicleImpl v = VehicleImpl.Builder.newInstance("v").setType(type).setStartLocation(Location.newInstance(0,0)).build();
-//		VehicleImpl v2 = VehicleImpl.Builder.newInstance("v2").setHasVariableDepartureTime(true).setType(type).setStartLocation(Location.newInstance(0,0)).build();
+	//		VehicleImpl v2 = VehicleImpl.Builder.newInstance("v2").setHasVariableDepartureTime(true).setType(type).setStartLocation(Location.newInstance(0,0)).build();
 
 		Service prevS = Service.Builder.newInstance("prev").setLocation(Location.newInstance(10,0)).build();
 		Service newS = Service.Builder.newInstance("new").setServiceTime(10).setTimeWindow(TimeWindow.newInstance(100,120)).setLocation(Location.newInstance(20, 0)).build();
@@ -463,7 +449,7 @@ public class TestLocalActivityInsertionCostsCalculator {
 		VehicleTypeImpl type = VehicleTypeImpl.Builder.newInstance("t").setCostPerWaitingTime(1.).build();
 
 		VehicleImpl v = VehicleImpl.Builder.newInstance("v").setType(type).setStartLocation(Location.newInstance(0,0)).build();
-//		VehicleImpl v2 = VehicleImpl.Builder.newInstance("v2").setHasVariableDepartureTime(true).setType(type).setStartLocation(Location.newInstance(0,0)).build();
+	//		VehicleImpl v2 = VehicleImpl.Builder.newInstance("v2").setHasVariableDepartureTime(true).setType(type).setStartLocation(Location.newInstance(0,0)).build();
 
 		Service prevS = Service.Builder.newInstance("prev").setLocation(Location.newInstance(10,0)).build();
 		Service newS = Service.Builder.newInstance("new").setServiceTime(10).setTimeWindow(TimeWindow.newInstance(50,70)).setLocation(Location.newInstance(20, 0)).build();
@@ -496,11 +482,6 @@ public class TestLocalActivityInsertionCostsCalculator {
 		new = 30 + 10 = 40
 		 */
 	}
-
-
-
-
-
 
 	private StateManager getStateManager(VehicleRoutingProblem vrp, VehicleRoute route) {
 		StateManager stateManager = new StateManager(vrp);

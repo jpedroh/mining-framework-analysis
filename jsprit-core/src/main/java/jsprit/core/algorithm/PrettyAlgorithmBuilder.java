@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-
 package jsprit.core.algorithm;
 
+import java.util.*;
 import jsprit.core.algorithm.acceptor.SchrimpfAcceptance;
 import jsprit.core.algorithm.acceptor.SolutionAcceptor;
 import jsprit.core.algorithm.listener.AlgorithmStartsListener;
@@ -33,13 +33,11 @@ import jsprit.core.problem.vehicle.VehicleFleetManager;
 import jsprit.core.problem.vehicle.VehicleTypeKey;
 import jsprit.core.util.ActivityTimeTracker;
 
-import java.util.*;
 
 /**
- * Created by schroeder on 10.12.14.
- */
+* Created by schroeder on 10.12.14.
+*/
 public class PrettyAlgorithmBuilder {
-
     private final VehicleRoutingProblem vrp;
 
     private final VehicleFleetManager fleetManager;
@@ -56,8 +54,8 @@ public class PrettyAlgorithmBuilder {
 
     private boolean coreStuff = false;
 
-    public static PrettyAlgorithmBuilder newInstance(VehicleRoutingProblem vrp, VehicleFleetManager fleetManager, StateManager stateManager, ConstraintManager constraintManager) {
-        return new PrettyAlgorithmBuilder(vrp, fleetManager, stateManager, constraintManager);
+    public static PrettyAlgorithmBuilder newInstance(VehicleRoutingProblem vrp, VehicleFleetManager fleetManager, StateManager stateManager, ConstraintManager constraintManager){
+        return new PrettyAlgorithmBuilder(vrp,fleetManager,stateManager,constraintManager);
     }
 
     PrettyAlgorithmBuilder(VehicleRoutingProblem vrp, VehicleFleetManager fleetManager, StateManager stateManager, ConstraintManager constraintManager) {
@@ -68,17 +66,17 @@ public class PrettyAlgorithmBuilder {
         this.searchStrategyManager = new SearchStrategyManager();
     }
 
-    public PrettyAlgorithmBuilder setRandom(Random random) {
+    public PrettyAlgorithmBuilder setRandom(Random random){
         searchStrategyManager.setRandom(random);
         return this;
     }
 
-    public PrettyAlgorithmBuilder withStrategy(SearchStrategy strategy, double weight) {
-        searchStrategyManager.addStrategy(strategy, weight);
+    public PrettyAlgorithmBuilder withStrategy(SearchStrategy strategy, double weight){
+        searchStrategyManager.addStrategy(strategy,weight);
         return this;
     }
 
-    public PrettyAlgorithmBuilder constructInitialSolutionWith(InsertionStrategy insertionStrategy, SolutionCostCalculator objFunction) {
+    public PrettyAlgorithmBuilder constructInitialSolutionWith(InsertionStrategy insertionStrategy, SolutionCostCalculator objFunction){
         this.iniInsertionStrategy = insertionStrategy;
         this.iniObjFunction = objFunction;
         return this;
@@ -93,7 +91,6 @@ public class PrettyAlgorithmBuilder {
             stateManager.updateTimeWindowStates();
             UpdateVehicleDependentPracticalTimeWindows twUpdater = new UpdateVehicleDependentPracticalTimeWindows(stateManager, vrp.getTransportCosts());
             twUpdater.setVehiclesToUpdate(new UpdateVehicleDependentPracticalTimeWindows.VehiclesToUpdate() {
-
                 Map<VehicleTypeKey, Vehicle> uniqueTypes = new HashMap<VehicleTypeKey, Vehicle>();
 
                 @Override
@@ -109,14 +106,13 @@ public class PrettyAlgorithmBuilder {
                     vehicles.addAll(uniqueTypes.values());
                     return vehicles;
                 }
-
             });
             stateManager.addStateUpdater(twUpdater);
             stateManager.updateSkillStates();
             stateManager.addStateUpdater(new UpdateEndLocationIfRouteIsOpen());
             stateManager.addStateUpdater(new UpdateActivityTimes(vrp.getTransportCosts(), ActivityTimeTracker.ActivityPolicy.AS_SOON_AS_TIME_WINDOW_OPENS));
             stateManager.addStateUpdater(new UpdateVariableCosts(vrp.getActivityCosts(), vrp.getTransportCosts(), stateManager));
-            stateManager.addStateUpdater(new UpdateFutureWaitingTimes(stateManager,vrp.getTransportCosts()));
+            stateManager.addStateUpdater(new UpdateFutureWaitingTimes(stateManager, vrp.getTransportCosts()));
         }
         VehicleRoutingAlgorithm vra = new VehicleRoutingAlgorithm(vrp, searchStrategyManager);
         vra.addListener(stateManager);
@@ -127,14 +123,18 @@ public class PrettyAlgorithmBuilder {
         vra.addListener(resetAndIniFleetManager);
         vra.addListener(vehicleSwitched);
         if (iniInsertionStrategy != null) {
-            if (!iniInsertionStrategy.getListeners().contains(removeEmptyVehicles))
+            if (!iniInsertionStrategy.getListeners().contains(removeEmptyVehicles)) {
                 iniInsertionStrategy.addListener(removeEmptyVehicles);
-            if (!iniInsertionStrategy.getListeners().contains(resetAndIniFleetManager))
+            }
+            if (!iniInsertionStrategy.getListeners().contains(resetAndIniFleetManager)) {
                 iniInsertionStrategy.addListener(resetAndIniFleetManager);
-            if (!iniInsertionStrategy.getListeners().contains(vehicleSwitched))
+            }
+            if (!iniInsertionStrategy.getListeners().contains(vehicleSwitched)) {
                 iniInsertionStrategy.addListener(vehicleSwitched);
-            if (!iniInsertionStrategy.getListeners().contains(stateManager))
+            }
+            if (!iniInsertionStrategy.getListeners().contains(stateManager)) {
                 iniInsertionStrategy.addListener(stateManager);
+            }
             vra.addListener(new AlgorithmStartsListener() {
                 @Override
                 public void informAlgorithmStarts(VehicleRoutingProblem problem, VehicleRoutingAlgorithm algorithm, Collection<VehicleRoutingProblemSolution> solutions) {
@@ -154,10 +154,10 @@ public class PrettyAlgorithmBuilder {
 
     private void searchSchrimpfAndRegister(VehicleRoutingAlgorithm vra) {
         boolean schrimpfAdded = false;
-        for (SearchStrategy strategy : vra.getSearchStrategyManager().getStrategies()) {
+        for(SearchStrategy strategy : vra.getSearchStrategyManager().getStrategies()){
             SolutionAcceptor acceptor = strategy.getSolutionAcceptor();
-            if (acceptor instanceof SchrimpfAcceptance) {
-                if (!schrimpfAdded) {
+            if(acceptor instanceof SchrimpfAcceptance){
+                if(!schrimpfAdded) {
                     vra.addListener((SchrimpfAcceptance) acceptor);
                     schrimpfAdded = true;
                 }
@@ -169,6 +169,4 @@ public class PrettyAlgorithmBuilder {
         this.coreStuff = true;
         return this;
     }
-
-
 }

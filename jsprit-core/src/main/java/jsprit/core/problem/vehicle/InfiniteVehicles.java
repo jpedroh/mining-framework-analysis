@@ -16,28 +16,23 @@
  ******************************************************************************/
 package jsprit.core.problem.vehicle;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
-
-
-class InfiniteVehicles implements VehicleFleetManager{
-
+class InfiniteVehicles implements VehicleFleetManager {
 	private static Logger logger = LogManager.getLogger(InfiniteVehicles.class);
 
-	private Map<VehicleTypeKey,Vehicle> types = new HashMap<VehicleTypeKey, Vehicle>();
+	private Map<VehicleTypeKey, Vehicle> types = new HashMap<VehicleTypeKey, Vehicle>();
 
 //	private List<VehicleTypeKey> sortedTypes = new ArrayList<VehicleTypeKey>();
-
-	public InfiniteVehicles(Collection<Vehicle> vehicles){
+	public InfiniteVehicles(Collection<Vehicle> vehicles) {
 		extractTypes(vehicles);
-		logger.debug("initialise " + this);
+		logger.debug("initialise {}", this);
 	}
 
 	@Override
@@ -46,24 +41,22 @@ class InfiniteVehicles implements VehicleFleetManager{
 	}
 
 	private void extractTypes(Collection<Vehicle> vehicles) {
-		for(Vehicle v : vehicles){
-			VehicleTypeKey typeKey = new VehicleTypeKey(v.getType().getTypeId(), v.getStartLocation().getId(),v.getEndLocation().getId(), v.getEarliestDeparture(), v.getLatestArrival(), v.getSkills(), v.isReturnToDepot());
-			types.put(typeKey,v);
+		for (Vehicle v : vehicles) {
+			VehicleTypeKey typeKey = new VehicleTypeKey(v.getType().getTypeId(), v.getStartLocation().getId(), v.getEndLocation().getId(), v.getEarliestDeparture(), v.getLatestArrival(), v.getSkills(), v.isReturnToDepot());
+			types.put(typeKey, v);
 //			sortedTypes.add(typeKey);
 		}
 	}
 
-
 	@Override
 	public void lock(Vehicle vehicle) {
-
+		
 	}
 
 	@Override
 	public void unlock(Vehicle vehicle) {
-
+		
 	}
-
 
 	@Override
 	public boolean isLocked(Vehicle vehicle) {
@@ -72,7 +65,7 @@ class InfiniteVehicles implements VehicleFleetManager{
 
 	@Override
 	public void unlockAll() {
-
+		
 	}
 
 	@Override
@@ -84,12 +77,11 @@ class InfiniteVehicles implements VehicleFleetManager{
 	public Collection<Vehicle> getAvailableVehicles(Vehicle withoutThisType) {
 		Collection<Vehicle> vehicles = new ArrayList<Vehicle>();
 		VehicleTypeKey thisKey = new VehicleTypeKey(withoutThisType.getType().getTypeId(), withoutThisType.getStartLocation().getId(), withoutThisType.getEndLocation().getId(), withoutThisType.getEarliestDeparture(), withoutThisType.getLatestArrival(), withoutThisType.getSkills(), withoutThisType.isReturnToDepot());
-		for(VehicleTypeKey key : types.keySet()){
-			if(!key.equals(thisKey)){
+		for (VehicleTypeKey key : types.keySet()) {
+			if (!key.equals(thisKey)) {
 				vehicles.add(types.get(key));
 			}
 		}
 		return vehicles;
 	}
-
 }

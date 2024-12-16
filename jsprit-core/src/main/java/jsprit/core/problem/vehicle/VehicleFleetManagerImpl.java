@@ -16,21 +16,18 @@
  ******************************************************************************/
 package jsprit.core.problem.vehicle;
 
+import java.util.*;
 import jsprit.core.problem.vehicle.VehicleImpl.NoVehicle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
-
 
 class VehicleFleetManagerImpl implements VehicleFleetManager {
-
 	public VehicleFleetManagerImpl newInstance(Collection<Vehicle> vehicles){
 		return new VehicleFleetManagerImpl(vehicles);
 	}
 
 	static class TypeContainer {
-
 		private ArrayList<Vehicle> vehicleList;
 
 		public TypeContainer() {
@@ -38,26 +35,25 @@ class VehicleFleetManagerImpl implements VehicleFleetManager {
 			vehicleList = new ArrayList<Vehicle>();
 		}
 
-		void add(Vehicle vehicle){
-			if(vehicleList.contains(vehicle)){
+		void add(Vehicle vehicle) {
+			if (vehicleList.contains(vehicle)) {
 				throw new IllegalStateException("cannot add vehicle twice " + vehicle.getId());
 			}
 			vehicleList.add(vehicle);
 		}
 
-		void remove(Vehicle vehicle){
+		void remove(Vehicle vehicle) {
 			vehicleList.remove(vehicle);
 		}
 
 		public Vehicle getVehicle() {
 			return vehicleList.get(0);
-//			return vehicleList.getFirst();
+			// return vehicleList.getFirst();
 		}
 
 		public boolean isEmpty() {
 			return vehicleList.isEmpty();
 		}
-
 	}
 
 	private static Logger logger = LogManager.getLogger(VehicleFleetManagerImpl.class);
@@ -66,17 +62,16 @@ class VehicleFleetManagerImpl implements VehicleFleetManager {
 
 	private Set<Vehicle> lockedVehicles;
 
-	private Map<VehicleTypeKey,TypeContainer> typeMapOfAvailableVehicles;
+	private Map<VehicleTypeKey, TypeContainer> typeMapOfAvailableVehicles;
 
-	private Map<VehicleTypeKey,Vehicle> penaltyVehicles = new HashMap<VehicleTypeKey, Vehicle>();
-
+	private Map<VehicleTypeKey, Vehicle> penaltyVehicles = new HashMap<VehicleTypeKey, Vehicle>();
 
 	public VehicleFleetManagerImpl(Collection<Vehicle> vehicles) {
 		super();
 		this.vehicles = vehicles;
 		this.lockedVehicles = new HashSet<Vehicle>();
 		makeMap();
-		logger.debug("initialise " + this);
+		logger.debug("initialise {}", this);
 	}
 
 	@Override
@@ -93,42 +88,37 @@ class VehicleFleetManagerImpl implements VehicleFleetManager {
 	}
 
 	private void addVehicle(Vehicle v) {
-		if(v.getType() == null){
+		if (v.getType() == null) {
 			throw new IllegalStateException("vehicle needs type");
 		}
-		VehicleTypeKey typeKey = new VehicleTypeKey(v.getType().getTypeId(), v.getStartLocation().getId(), v.getEndLocation().getId(), v.getEarliestDeparture(), v.getLatestArrival(), v.getSkills(),v.isReturnToDepot() );
-		if(!typeMapOfAvailableVehicles.containsKey(typeKey)){
+		VehicleTypeKey typeKey = new VehicleTypeKey(v.getType().getTypeId(), v.getStartLocation().getId(), v.getEndLocation().getId(), v.getEarliestDeparture(), v.getLatestArrival(), v.getSkills(), v.isReturnToDepot());
+		if (!typeMapOfAvailableVehicles.containsKey(typeKey)) {
 			typeMapOfAvailableVehicles.put(typeKey, new TypeContainer());
 		}
 		typeMapOfAvailableVehicles.get(typeKey).add(v);
-
 	}
 
-	private void removeVehicle(Vehicle v){
-		VehicleTypeKey key = new VehicleTypeKey(v.getType().getTypeId(), v.getStartLocation().getId(), v.getEndLocation().getId(), v.getEarliestDeparture(), v.getLatestArrival(), v.getSkills(),v.isReturnToDepot() );
-		if(typeMapOfAvailableVehicles.containsKey(key)){
+	private void removeVehicle(Vehicle v) {
+		VehicleTypeKey key = new VehicleTypeKey(v.getType().getTypeId(), v.getStartLocation().getId(), v.getEndLocation().getId(), v.getEarliestDeparture(), v.getLatestArrival(), v.getSkills(), v.isReturnToDepot());
+		if (typeMapOfAvailableVehicles.containsKey(key)) {
 			typeMapOfAvailableVehicles.get(key).remove(v);
 		}
 	}
 
-
 	/**
 	 * Returns a collection of available vehicles.
-	 *
-	 *<p>If there is no vehicle with a certain type and location anymore, it looks up whether a penalty vehicle has been specified with
+	 * <p/>
+	 * <p>If there is no vehicle with a certain type and location anymore, it looks up whether a penalty vehicle has been specified with
 	 * this type and location. If so, it returns this penalty vehicle. If not, no vehicle with this type and location is returned.
 	 */
 	@Override
 	public Collection<Vehicle> getAvailableVehicles() {
 		List<Vehicle> vehicles = new ArrayList<Vehicle>();
-		for(VehicleTypeKey key : typeMapOfAvailableVehicles.keySet()){
-			if(!typeMapOfAvailableVehicles.get(key).isEmpty()){
+		for (VehicleTypeKey key : typeMapOfAvailableVehicles.keySet()) {
+			if (!typeMapOfAvailableVehicles.get(key).isEmpty()) {
 				vehicles.add(typeMapOfAvailableVehicles.get(key).getVehicle());
-			}
-			else{
-				if(penaltyVehicles.containsKey(key)){
-					vehicles.add(penaltyVehicles.get(key));
-				}
+			} else if (penaltyVehicles.containsKey(key)) {
+				vehicles.add(penaltyVehicles.get(key));
 			}
 		}
 		return vehicles;
@@ -137,16 +127,15 @@ class VehicleFleetManagerImpl implements VehicleFleetManager {
 	@Override
 	public Collection<Vehicle> getAvailableVehicles(Vehicle withoutThisType) {
 		List<Vehicle> vehicles = new ArrayList<Vehicle>();
-		VehicleTypeKey thisKey = new VehicleTypeKey(withoutThisType.getType().getTypeId(), withoutThisType.getStartLocation().getId(), withoutThisType.getEndLocation().getId(), withoutThisType.getEarliestDeparture(), withoutThisType.getLatestArrival(), withoutThisType.getSkills(),withoutThisType.isReturnToDepot() );
-		for(VehicleTypeKey key : typeMapOfAvailableVehicles.keySet()){
-			if(key.equals(thisKey)) continue;
-			if(!typeMapOfAvailableVehicles.get(key).isEmpty()){
-				vehicles.add(typeMapOfAvailableVehicles.get(key).getVehicle());
+		VehicleTypeKey thisKey = new VehicleTypeKey(withoutThisType.getType().getTypeId(), withoutThisType.getStartLocation().getId(), withoutThisType.getEndLocation().getId(), withoutThisType.getEarliestDeparture(), withoutThisType.getLatestArrival(), withoutThisType.getSkills(), withoutThisType.isReturnToDepot());
+		for (VehicleTypeKey key : typeMapOfAvailableVehicles.keySet()) {
+			if (key.equals(thisKey)) {
+				continue;
 			}
-			else{
-				if(penaltyVehicles.containsKey(key)){
-					vehicles.add(penaltyVehicles.get(key));
-				}
+			if (!typeMapOfAvailableVehicles.get(key).isEmpty()) {
+				vehicles.add(typeMapOfAvailableVehicles.get(key).getVehicle());
+			} else if (penaltyVehicles.containsKey(key)) {
+				vehicles.add(penaltyVehicles.get(key));
 			}
 		}
 		return vehicles;
@@ -206,5 +195,4 @@ class VehicleFleetManagerImpl implements VehicleFleetManager {
 	public int sizeOfLockedVehicles(){
 		return lockedVehicles.size();
 	}
-
 }

@@ -14,9 +14,11 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-
 package jsprit.core.algorithm.state;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import jsprit.core.problem.Location;
 import jsprit.core.problem.cost.VehicleRoutingTransportCosts;
 import jsprit.core.problem.solution.route.RouteVisitor;
@@ -24,26 +26,20 @@ import jsprit.core.problem.solution.route.VehicleRoute;
 import jsprit.core.problem.solution.route.activity.TourActivity;
 import jsprit.core.problem.vehicle.Vehicle;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 
-public class UpdateVehicleDependentPracticalTimeWindows implements RouteVisitor, StateUpdater{
-
+public class UpdateVehicleDependentPracticalTimeWindows implements RouteVisitor , StateUpdater {
     @Override
     public void visit(VehicleRoute route) {
         begin(route);
         Iterator<TourActivity> revIterator = route.getTourActivities().reverseActivityIterator();
-        while(revIterator.hasNext()){
+        while (revIterator.hasNext()) {
             visit(revIterator.next());
-        }
+        } 
         finish();
     }
 
     public static interface VehiclesToUpdate {
-
-        public Collection<Vehicle> get(VehicleRoute route);
-
+        public abstract Collection<Vehicle> get(VehicleRoute route);
     }
 
     private VehiclesToUpdate vehiclesToUpdate = new VehiclesToUpdate() {
@@ -79,23 +75,20 @@ public class UpdateVehicleDependentPracticalTimeWindows implements RouteVisitor,
         this.vehiclesToUpdate = vehiclesToUpdate;
     }
 
-
     public void begin(VehicleRoute route) {
         this.route = route;
         vehicles = vehiclesToUpdate.get(route);
-        for(Vehicle vehicle : vehicles){
+        for (Vehicle vehicle : vehicles) {
             latest_arrTimes_at_prevAct[vehicle.getVehicleTypeIdentifier().getIndex()] = vehicle.getLatestArrival();
             location_of_prevAct[vehicle.getVehicleTypeIdentifier().getIndex()] = vehicle.getEndLocation();
         }
     }
 
-
     public void visit(TourActivity activity) {
-        for(Vehicle vehicle : vehicles){
+        for (Vehicle vehicle : vehicles) {
             double latestArrTimeAtPrevAct = latest_arrTimes_at_prevAct[vehicle.getVehicleTypeIdentifier().getIndex()];
             Location prevLocation = location_of_prevAct[vehicle.getVehicleTypeIdentifier().getIndex()];
-            double potentialLatestArrivalTimeAtCurrAct = latestArrTimeAtPrevAct - transportCosts.getBackwardTransportTime(activity.getLocation(), prevLocation,
-                    latestArrTimeAtPrevAct, route.getDriver(), vehicle) - activity.getOperationTime();
+            double potentialLatestArrivalTimeAtCurrAct = (latestArrTimeAtPrevAct - transportCosts.getBackwardTransportTime(activity.getLocation(), prevLocation, latestArrTimeAtPrevAct, route.getDriver(), vehicle)) - activity.getOperationTime();
             double latestArrivalTime = Math.min(activity.getTheoreticalLatestOperationStartTime(), potentialLatestArrivalTimeAtCurrAct);
             stateManager.putInternalTypedActivityState(activity, vehicle, InternalStates.LATEST_OPERATION_START_TIME, latestArrivalTime);
             latest_arrTimes_at_prevAct[vehicle.getVehicleTypeIdentifier().getIndex()] = latestArrivalTime;
@@ -103,8 +96,5 @@ public class UpdateVehicleDependentPracticalTimeWindows implements RouteVisitor,
         }
     }
 
-
     public void finish() {}
-
 }
-
