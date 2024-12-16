@@ -3,6 +3,11 @@ package org.apache.mesos.hdfs.state;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 import com.google.inject.Singleton;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mesos.Protos;
@@ -10,28 +15,27 @@ import org.apache.mesos.hdfs.config.SchedulerConf;
 import org.apache.mesos.hdfs.util.HDFSConstants;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Set;
-
 @Singleton
 public class LiveState {
   public static final Log log = LogFactory.getLog(LiveState.class);
+
   private Set<Protos.TaskID> stagingTasks = new HashSet<>();
+
   private AcquisitionPhase currentAcquisitionPhase = AcquisitionPhase.RECONCILING_TASKS;
+
   // TODO (nicgrayson) Might need to split this out to jns, nns, and dns if dns too big
   private LinkedHashMap<Protos.TaskID, Protos.TaskStatus> runningTasks = new LinkedHashMap<>();
+
   private HashMap<Protos.TaskStatus, Boolean> nameNode1TaskMap = new HashMap<>();
+
   private HashMap<Protos.TaskStatus, Boolean> nameNode2TaskMap = new HashMap<>();
 
   public boolean isNameNode1Initialized() {
-    return !nameNode1TaskMap.isEmpty() && nameNode1TaskMap.values().iterator().next();
+    return (!nameNode1TaskMap.isEmpty()) && nameNode1TaskMap.values().iterator().next();
   }
 
   public boolean isNameNode2Initialized() {
-    return !nameNode2TaskMap.isEmpty() && nameNode2TaskMap.values().iterator().next();
+    return (!nameNode2TaskMap.isEmpty()) && nameNode2TaskMap.values().iterator().next();
   }
 
   public void addStagingTask(Protos.TaskID taskId) {
@@ -51,11 +55,9 @@ public class LiveState {
   }
 
   public void removeRunningTask(Protos.TaskID taskId) {
-    if (isNameNode1Initialized()
-        && nameNode1TaskMap.keySet().iterator().next().getTaskId().equals(taskId)) {
+    if (isNameNode1Initialized() && nameNode1TaskMap.keySet().iterator().next().getTaskId().equals(taskId)) {
       nameNode1TaskMap.clear();
-    } else if (isNameNode2Initialized()
-       && nameNode2TaskMap.keySet().iterator().next().getTaskId().equals(taskId)) {
+    } else if (isNameNode2Initialized() && nameNode2TaskMap.keySet().iterator().next().getTaskId().equals(taskId)) {
       nameNode2TaskMap.clear();
     }
     runningTasks.remove(taskId);
@@ -64,13 +66,10 @@ public class LiveState {
   public void updateTaskForStatus(Protos.TaskStatus status) {
     //Case of name node, update the task map
     if (status.getTaskId().getValue().contains(HDFSConstants.NAME_NODE_TASKID)) {
-      if (status.getMessage().equals(HDFSConstants.NAME_NODE_INIT_MESSAGE)
-          || (currentAcquisitionPhase.equals(AcquisitionPhase.RECONCILING_TASKS)
-          && !isNameNode1Initialized())) {
+      if (status.getMessage().equals(HDFSConstants.NAME_NODE_INIT_MESSAGE) || (currentAcquisitionPhase.equals(AcquisitionPhase.RECONCILING_TASKS) && (!isNameNode1Initialized()))) {
         nameNode1TaskMap.clear();
         nameNode1TaskMap.put(status, true);
-      } else if (status.getMessage().equals(HDFSConstants.NAME_NODE_BOOTSTRAP_MESSAGE)
-          || currentAcquisitionPhase.equals(AcquisitionPhase.RECONCILING_TASKS)) {
+      } else if (status.getMessage().equals(HDFSConstants.NAME_NODE_BOOTSTRAP_MESSAGE) || currentAcquisitionPhase.equals(AcquisitionPhase.RECONCILING_TASKS)) {
         nameNode2TaskMap.clear();
         nameNode2TaskMap.put(status, true);
       } else if (nameNode1TaskMap.isEmpty()) {

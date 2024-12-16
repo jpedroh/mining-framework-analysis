@@ -1,17 +1,16 @@
 package org.apache.mesos.hdfs.config;
 
 import com.google.inject.Singleton;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Properties;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Properties;
 
 @Singleton
 public class SchedulerConf extends Configured {
-
   public SchedulerConf(Configuration conf) {
     setConf(conf);
   }

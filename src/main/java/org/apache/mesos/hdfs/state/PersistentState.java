@@ -1,16 +1,6 @@
 package org.apache.mesos.hdfs.state;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.mesos.MesosNativeLibrary;
-import org.apache.mesos.Protos;
-import org.apache.mesos.Protos.FrameworkID;
-import org.apache.mesos.hdfs.config.SchedulerConf;
-import org.apache.mesos.hdfs.util.HDFSConstants;
-import org.apache.mesos.state.Variable;
-import org.apache.mesos.state.ZooKeeperState;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,19 +14,33 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.mesos.MesosNativeLibrary;
+import org.apache.mesos.Protos.FrameworkID;
+import org.apache.mesos.Protos;
+import org.apache.mesos.hdfs.config.SchedulerConf;
+import org.apache.mesos.hdfs.util.HDFSConstants;
+import org.apache.mesos.state.Variable;
+import org.apache.mesos.state.ZooKeeperState;
+
 
 public class PersistentState {
   public static final Log log = LogFactory.getLog(PersistentState.class);
+
   private static String FRAMEWORK_ID_KEY = "frameworkId";
+
   private static String NAMENODES_KEY = "nameNodes";
+
   private static String JOURNALNODES_KEY = "journalNodes";
+
   private static String DATANODES_KEY = "dataNodes";
+
   private ZooKeeperState zkState;
 
   public PersistentState(SchedulerConf conf) {
     MesosNativeLibrary.load(conf.getNativeLibrary());
-    this.zkState = new ZooKeeperState(conf.getStateZkServers(),
-        conf.getStateZkTimeout(), TimeUnit.MILLISECONDS, "/hdfs-mesos/" + conf.getFrameworkName());
+    this.zkState = new ZooKeeperState(conf.getStateZkServers(), conf.getStateZkTimeout(), TimeUnit.MILLISECONDS, "/hdfs-mesos/" + conf.getFrameworkName());
   }
 
   public FrameworkID getFrameworkID() throws InterruptedException, ExecutionException,
@@ -120,7 +124,7 @@ public class PersistentState {
       case HDFSConstants.NAME_NODE_ID :
         HashMap<String, String> nameNodes = getNameNodes();
         nameNodes.put(hostname, taskId.getValue());
-        System.out.println("Saving the name node " + hostname + " " + taskId.getValue());
+        System.out.println((("Saving the name node " + hostname) + " ") + taskId.getValue());
         setNameNodes(nameNodes);
         break;
       case HDFSConstants.JOURNAL_NODE_ID :
@@ -145,7 +149,7 @@ public class PersistentState {
     HashMap<String, String> journalNodes = getJournalNodes();
     if (journalNodes.values().contains(taskId)) {
       for (Map.Entry<String, String> entry : journalNodes.entrySet()) {
-        if (entry.getValue() != null && entry.getValue().equals(taskId)) {
+        if ((entry.getValue() != null) && entry.getValue().equals(taskId)) {
           journalNodes.put(entry.getKey(), null);
           setJournalNodes(journalNodes);
           return;
@@ -155,7 +159,7 @@ public class PersistentState {
     HashMap<String, String> nameNodes = getNameNodes();
     if (nameNodes.values().contains(taskId)) {
       for (Map.Entry<String, String> entry : nameNodes.entrySet()) {
-        if (entry.getValue() != null && entry.getValue().equals(taskId)) {
+        if ((entry.getValue() != null) && entry.getValue().equals(taskId)) {
           nameNodes.put(entry.getKey(), null);
           setNameNodes(nameNodes);
           return;
@@ -165,7 +169,7 @@ public class PersistentState {
     HashMap<String, String> dataNodes = getDataNodes();
     if (dataNodes.values().contains(taskId)) {
       for (Map.Entry<String, String> entry : dataNodes.entrySet()) {
-        if (entry.getValue() != null && entry.getValue().equals(taskId)) {
+        if ((entry.getValue() != null) && entry.getValue().equals(taskId)) {
           dataNodes.put(entry.getKey(), null);
           setDataNodes(dataNodes);
           return;
@@ -189,7 +193,7 @@ public class PersistentState {
   private void setNameNodes(HashMap<String, String> nameNodes) {
     try {
       set(NAMENODES_KEY, nameNodes);
-    } catch (Exception e) {
+    } catch (java.lang.Exception e) {
       log.error("Error while setting namenodes in persistent state", e);
     }
   }
