@@ -25,9 +25,20 @@
  *      Imixs Software Solutions GmbH - Project Management
  *      Ralph Soika - Software Developer
  */
-
 package org.imixs.workflow.engine;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.annotation.security.DeclareRoles;
+import jakarta.annotation.security.RunAs;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
+import jakarta.ejb.Timer;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -41,9 +52,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
 import java.util.logging.Logger;
-
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.imixs.workflow.ItemCollection;
 import org.imixs.workflow.WorkflowKernel;
@@ -62,18 +71,6 @@ import org.imixs.workflow.xml.XMLDocument;
 import org.imixs.workflow.xml.XMLDocumentAdapter;
 import org.xml.sax.SAXException;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.Resource;
-import jakarta.annotation.security.DeclareRoles;
-import jakarta.annotation.security.RunAs;
-import jakarta.ejb.Singleton;
-import jakarta.ejb.Startup;
-import jakarta.ejb.Timer;
-import jakarta.enterprise.event.Event;
-import jakarta.inject.Inject;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Unmarshaller;
 
 /**
  * The SetupService EJB initializes the Imxis-Workflow engine and returns the
@@ -108,6 +105,7 @@ import jakarta.xml.bind.Unmarshaller;
 @Singleton
 public class SetupService {
     public static String SETUP_OK = "OK";
+
     public static String MODEL_INITIALIZED = "MODEL_INITIALIZED";
 
     private static Logger logger = Logger.getLogger(SetupService.class.getName());
@@ -125,7 +123,7 @@ public class SetupService {
 
     @Inject
     private SearchService indexSearchService;
-    
+
     @Inject
     private UpdateService indexUpdateService;
 
@@ -148,26 +146,22 @@ public class SetupService {
      */
     @PostConstruct
     public void startup() {
-
         // created with linux figlet
         logger.info("   ____      _");
         logger.info("  /  _/_ _  (_)_ __ ___   Workflow");
-        logger.info(" _/ //  ' \\/ /\\ \\ /(_-<   Engine");
+        logger.info(" _/ //  \' \\/ /\\ \\ /(_-<   Engine");
         logger.info("/___/_/_/_/_//_\\_\\/___/   V6.0");
         logger.info("");
-
         logger.info("...initalizing models...");
-
         // first we scan for default models
         List<String> models = modelService.getVersions();
-        if (models.isEmpty() || modelDefaultDataOverwrite == true) {
+        if (models.isEmpty() || (modelDefaultDataOverwrite == true)) {
             scanDefaultModels();
         } else {
             for (String model : models) {
-                logger.info("...model: " + model + " ...OK");
+                logger.info(("...model: " + model) + " ...OK");
             }
         }
-
         // Finally fire the SetupEvent. This allows CDI Observers to react on the setup
         if (setupEvents != null) {
             // create Group Event
@@ -176,14 +170,11 @@ public class SetupService {
         } else {
             logger.warning("Missing CDI support for Event<SetupEvent> !");
         }
-
         // migrate old workflow scheduler
         migrateWorkflowScheduler();
-
         // Finally start optional schedulers
         logger.info("...initalizing schedulers...");
         schedulerService.startAllSchedulers();
-
     }
 
     /**
@@ -231,25 +222,24 @@ public class SetupService {
     public boolean checkIndex() {
         try {
             // check the index
-        	// write dummy 
-        	ItemCollection dummy=new ItemCollection();
-        	// ([0-9a-f]{8}-.*|[0-9a-f]{11}-.*)
-        	dummy.setItemValueUnique(WorkflowKernel.UNIQUEID,"00000000-aaaa-0000-0000-luceneindexcheck");
-        	String checksum=""+System.currentTimeMillis();
-        	dummy.setItemValue("$workflowsummary", checksum);
-        	List<ItemCollection> dummyList=new ArrayList<ItemCollection>();
-        	dummyList.add(dummy);
-        	indexUpdateService.updateIndex(dummyList);
-        	
+            // write dummy
+            ItemCollection dummy = new ItemCollection();
+        // ([0-9a-f]{8}-.*|[0-9a-f]{11}-.*)
+            dummy.setItemValueUnique(WorkflowKernel.UNIQUEID, "00000000-aaaa-0000-0000-luceneindexcheck");
+            String checksum = "" + System.currentTimeMillis();
+            dummy.setItemValue("$workflowsummary", checksum);
+            List<ItemCollection> dummyList = new ArrayList<ItemCollection>();
+            dummyList.add(dummy);
+            indexUpdateService.updateIndex(dummyList);
             // findStubs with the dummy unqiueid...
             List<ItemCollection> result = indexSearchService.search("$uniqueid:00000000-aaaa-0000-0000-luceneindexcheck", 1, 0, null, null, true);
             // verify checksum
-            dummy=result.get(0);
+            dummy = result.get(0);
             if (!checksum.equals(dummy.getItemValueString("$workflowsummary"))) {
-            	logger.warning("SetupService - CheckIndex failed!");
-            	throw new Exception("lucene index check failed!");
+                logger.warning("SetupService - CheckIndex failed!");
+                throw new Exception("lucene index check failed!");
             }
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             // database/index failed!
             return false;
         }
@@ -348,14 +338,12 @@ public class SetupService {
         XMLDocument entity;
         ItemCollection itemCollection;
         String sModelVersion = null;
-
-        if (filestream == null)
+        if (filestream == null) {
             return;
+        }
         try {
-
             XMLDataCollection ecol = null;
             logger.fine("importXmlEntityData - importModel, verifing file content....");
-
             JAXBContext context;
             Object jaxbObject = null;
             // unmarshall the model file
@@ -365,17 +353,14 @@ public class SetupService {
                 Unmarshaller m = context.createUnmarshaller();
                 jaxbObject = m.unmarshal(input);
             } catch (JAXBException e) {
-                throw new ModelException(ModelException.INVALID_MODEL,
-                        "error - wrong xml file format - unable to import model file: ", e);
+                throw new ModelException(ModelException.INVALID_MODEL, "error - wrong xml file format - unable to import model file: ", e);
             }
-            if (jaxbObject == null)
-                throw new ModelException(ModelException.INVALID_MODEL,
-                        "error - wrong xml file format - unable to import model file!");
-
-            ecol = (XMLDataCollection) jaxbObject;
+            if (jaxbObject == null) {
+                throw new ModelException(ModelException.INVALID_MODEL, "error - wrong xml file format - unable to import model file!");
+            }
+            ecol = ((XMLDataCollection) (jaxbObject));
             // import the model entities....
             if (ecol.getDocument().length > 0) {
-
                 Vector<String> vModelVersions = new Vector<String>();
                 // first iterrate over all enttity and find if model entries are
                 // included
@@ -383,18 +368,16 @@ public class SetupService {
                     itemCollection = XMLDocumentAdapter.putDocument(aentity);
                     // test if this is a model entry
                     // (type=WorkflowEnvironmentEntity)
-                    if ("WorkflowEnvironmentEntity".equals(itemCollection.getItemValueString("type"))
-                            && "environment.profile".equals(itemCollection.getItemValueString("txtName"))) {
-
+                    if ("WorkflowEnvironmentEntity".equals(itemCollection.getItemValueString("type")) && "environment.profile".equals(itemCollection.getItemValueString("txtName"))) {
                         sModelVersion = itemCollection.getItemValueString("$ModelVersion");
-                        if (vModelVersions.indexOf(sModelVersion) == -1)
+                        if (vModelVersions.indexOf(sModelVersion) == (-1)) {
                             vModelVersions.add(sModelVersion);
+                        }
                     }
                 }
                 // now remove old model entries....
                 for (String aModelVersion : vModelVersions) {
-                    logger.fine("importXmlEntityData - removing existing configuration for model version '"
-                            + aModelVersion + "'");
+                    logger.fine(("importXmlEntityData - removing existing configuration for model version '" + aModelVersion) + "'");
                     modelService.removeModel(aModelVersion);
                 }
                 // save new entities into database and update modelversion.....
@@ -404,14 +387,11 @@ public class SetupService {
                     // save entity
                     documentService.save(itemCollection);
                 }
-
-                logger.fine("importXmlEntityData - " + ecol.getDocument().length + " entries sucessfull imported");
+                logger.fine(("importXmlEntityData - " + ecol.getDocument().length) + " entries sucessfull imported");
             }
-
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -420,7 +400,6 @@ public class SetupService {
      */
     public void migrateWorkflowScheduler() {
         // lets see if we have an old scheduler configuration....
-
         ItemCollection configItemCollection = null;
         String searchTerm = "(type:\"configuration\" AND txtname:\"org.imixs.workflow.scheduler\")";
         Collection<ItemCollection> col;
@@ -430,26 +409,18 @@ public class SetupService {
             logger.severe("loadConfiguration - invalid param: " + e.getMessage());
             throw new InvalidAccessException(InvalidAccessException.INVALID_ID, e.getMessage(), e);
         }
-
         if (col.size() == 1) {
-
             configItemCollection = col.iterator().next();
             ItemCollection scheduler = new ItemCollection();
-
             // create new scheduler??
             if (schedulerService.loadConfiguration(WorkflowScheduler.NAME) == null) {
                 logger.info("...migrating deprecated workflow scheduler configuration...");
                 scheduler.setItemValue("type", SchedulerService.DOCUMENT_TYPE);
-                scheduler.setItemValue(Scheduler.ITEM_SCHEDULER_DEFINITION,
-                        configItemCollection.getItemValue("txtConfiguration"));
+                scheduler.setItemValue(Scheduler.ITEM_SCHEDULER_DEFINITION, configItemCollection.getItemValue("txtConfiguration"));
                 scheduler.setItemValue(Scheduler.ITEM_SCHEDULER_CLASS, WorkflowScheduler.class.getName());
-
-                scheduler.setItemValue(Scheduler.ITEM_SCHEDULER_ENABLED,
-                        configItemCollection.getItemValueBoolean("_enabled"));
-
+                scheduler.setItemValue(Scheduler.ITEM_SCHEDULER_ENABLED, configItemCollection.getItemValueBoolean("_enabled"));
                 scheduler.setItemValue("txtname", WorkflowScheduler.NAME);
                 schedulerService.saveConfiguration(scheduler);
-
             }
             Timer oldTimer = this.findTimer(configItemCollection.getUniqueID());
             if (oldTimer != null) {
@@ -457,9 +428,7 @@ public class SetupService {
             }
             logger.info("...deleting deprecated workflow scheduler");
             documentService.remove(configItemCollection);
-
         }
-
     }
 
     /**
@@ -473,16 +442,15 @@ public class SetupService {
     Timer findTimer(String id) {
         Timer timer = null;
         for (Object obj : timerService.getTimers()) {
-            Timer atimer = (Timer) obj;
+            Timer atimer = ((Timer) (obj));
             String timerID = atimer.getInfo().toString();
             if (id.equals(timerID)) {
                 if (timer != null) {
-                    logger.severe("more then one timer with id " + id + " was found!");
+                    logger.severe(("more then one timer with id " + id) + " was found!");
                 }
                 timer = atimer;
             }
         }
         return timer;
     }
-
 }

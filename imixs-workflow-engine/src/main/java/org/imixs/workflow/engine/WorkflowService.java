@@ -25,9 +25,20 @@
  *      Imixs Software Solutions GmbH - Project Management
  *      Ralph Soika - Software Developer
  */
-
 package org.imixs.workflow.engine;
 
+import jakarta.annotation.Resource;
+import jakarta.annotation.security.DeclareRoles;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.event.Event;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,15 +53,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import jakarta.annotation.Resource;
-import jakarta.annotation.security.DeclareRoles;
-import jakarta.annotation.security.RolesAllowed;
-import jakarta.enterprise.event.Event;
-import jakarta.enterprise.inject.Any;
-import jakarta.enterprise.inject.Instance;
-import jakarta.inject.Inject;
-
 import org.imixs.workflow.Adapter;
 import org.imixs.workflow.ItemCollection;
 import org.imixs.workflow.Model;
@@ -67,11 +69,6 @@ import org.imixs.workflow.exceptions.PluginException;
 import org.imixs.workflow.exceptions.ProcessingErrorException;
 import org.imixs.workflow.exceptions.QueryException;
 
-import jakarta.ejb.LocalBean;
-import jakarta.ejb.SessionContext;
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
 
 /**
  * The WorkflowService is the Java EE Implementation for the Imixs Workflow Core
@@ -83,31 +80,35 @@ import jakarta.ejb.TransactionAttributeType;
  * @author rsoika
  * 
  */
-
-@DeclareRoles({ "org.imixs.ACCESSLEVEL.NOACCESS", "org.imixs.ACCESSLEVEL.READERACCESS",
-        "org.imixs.ACCESSLEVEL.AUTHORACCESS", "org.imixs.ACCESSLEVEL.EDITORACCESS",
-        "org.imixs.ACCESSLEVEL.MANAGERACCESS" })
-@RolesAllowed({ "org.imixs.ACCESSLEVEL.NOACCESS", "org.imixs.ACCESSLEVEL.READERACCESS",
-        "org.imixs.ACCESSLEVEL.AUTHORACCESS", "org.imixs.ACCESSLEVEL.EDITORACCESS",
-        "org.imixs.ACCESSLEVEL.MANAGERACCESS" })
+@DeclareRoles({ "org.imixs.ACCESSLEVEL.NOACCESS", "org.imixs.ACCESSLEVEL.READERACCESS", "org.imixs.ACCESSLEVEL.AUTHORACCESS", "org.imixs.ACCESSLEVEL.EDITORACCESS", "org.imixs.ACCESSLEVEL.MANAGERACCESS" })
+@RolesAllowed({ "org.imixs.ACCESSLEVEL.NOACCESS", "org.imixs.ACCESSLEVEL.READERACCESS", "org.imixs.ACCESSLEVEL.AUTHORACCESS", "org.imixs.ACCESSLEVEL.EDITORACCESS", "org.imixs.ACCESSLEVEL.MANAGERACCESS" })
 @Stateless
 @LocalBean
-public class WorkflowService implements WorkflowManager, WorkflowContext {
-
+public class WorkflowService implements WorkflowManager , WorkflowContext {
+    // workitem properties
     // workitem properties
     public static final String UNIQUEIDREF = "$uniqueidref";
+
     public static final String READACCESS = "$readaccess";
+
     public static final String WRITEACCESS = "$writeaccess";
+
     public static final String PARTICIPANTS = "$participants";
+
     public static final String DEFAULT_TYPE = "workitem";
 
     // view properties
+    // view properties
     public static final int SORT_ORDER_CREATED_DESC = 0;
+
     public static final int SORT_ORDER_CREATED_ASC = 1;
+
     public static final int SORT_ORDER_MODIFIED_DESC = 2;
+
     public static final int SORT_ORDER_MODIFIED_ASC = 3;
 
     public static final String INVALID_ITEMVALUE_FORMAT = "INVALID_ITEMVALUE_FORMAT";
+
     public static final String INVALID_TAG_FORMAT = "INVALID_TAG_FORMAT";
 
     @Inject
@@ -129,7 +130,7 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
 
     @Resource
     SessionContext ctx;
-   
+
     @Inject
     protected Event<ProcessingEvent> processingEvents;
 
@@ -138,9 +139,6 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
 
     private static Logger logger = Logger.getLogger(WorkflowService.class.getName());
 
-    
-    
-    
     public WorkflowService() {
         super();
     }
@@ -170,19 +168,16 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
      * @return List of workitems
      * 
      */
-    public List<ItemCollection> getWorkListByOwner(String name, String type, int pageSize, int pageIndex, String sortBy,
-            boolean sortReverse) {
-
-        if (name == null || "".equals(name))
+    public List<ItemCollection> getWorkListByOwner(String name, String type, int pageSize, int pageIndex, String sortBy, boolean sortReverse) {
+        if ((name == null) || "".equals(name)) {
             name = ctx.getCallerPrincipal().getName();
-
-        String searchTerm = "(";
-        if (type != null && !"".equals(type)) {
-            searchTerm += " type:\"" + type + "\" AND ";
         }
-
+        String searchTerm = "(";
+        if ((type != null) && (!"".equals(type))) {
+            searchTerm += (" type:\"" + type) + "\" AND ";
+        }
         // support deprecated namowner field
-        searchTerm += " (namowner:\"" + name + "\" OR $owner:\"" + name + "\") )";
+        searchTerm += (((" (namowner:\"" + name) + "\" OR $owner:\"") + name) + "\") )";
         try {
             return documentService.find(searchTerm, pageSize, pageIndex, sortBy, sortReverse);
         } catch (QueryException e) {
@@ -210,18 +205,15 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
      * @return List of workitems
      * 
      */
-    public List<ItemCollection> getWorkListByAuthor(String name, String type, int pageSize, int pageIndex,
-            String sortBy, boolean sortReverse) {
-
-        if (name == null || "".equals(name))
+    public List<ItemCollection> getWorkListByAuthor(String name, String type, int pageSize, int pageIndex, String sortBy, boolean sortReverse) {
+        if ((name == null) || "".equals(name)) {
             name = ctx.getCallerPrincipal().getName();
-
-        String searchTerm = "(";
-        if (type != null && !"".equals(type)) {
-            searchTerm += " type:\"" + type + "\" AND ";
         }
-        searchTerm += " $writeaccess:\"" + name + "\" )";
-
+        String searchTerm = "(";
+        if ((type != null) && (!"".equals(type))) {
+            searchTerm += (" type:\"" + type) + "\" AND ";
+        }
+        searchTerm += (" $writeaccess:\"" + name) + "\" )";
         try {
             return documentService.find(searchTerm, pageSize, pageIndex, sortBy, sortReverse);
         } catch (QueryException e) {
@@ -247,17 +239,15 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
      * @return List of workitems
      * 
      */
-    public List<ItemCollection> getWorkListByCreator(String name, String type, int pageSize, int pageIndex,
-            String sortBy, boolean sortReverse) {
-
-        if (name == null || "".equals(name))
+    public List<ItemCollection> getWorkListByCreator(String name, String type, int pageSize, int pageIndex, String sortBy, boolean sortReverse) {
+        if ((name == null) || "".equals(name)) {
             name = ctx.getCallerPrincipal().getName();
-
-        String searchTerm = "(";
-        if (type != null && !"".equals(type)) {
-            searchTerm += " type:\"" + type + "\" AND ";
         }
-        searchTerm += " $creator:\"" + name + "\" )";
+        String searchTerm = "(";
+        if ((type != null) && (!"".equals(type))) {
+            searchTerm += (" type:\"" + type) + "\" AND ";
+        }
+        searchTerm += (" $creator:\"" + name) + "\" )";
         try {
             return documentService.find(searchTerm, pageSize, pageIndex, sortBy, sortReverse);
         } catch (QueryException e) {
@@ -285,34 +275,28 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
      * @return List of workitems
      * 
      */
-    public List<ItemCollection> getWorkListByWriteAccess(String type, int pageSize, int pageIndex, String sortBy,
-            boolean sortReverse) {
+    public List<ItemCollection> getWorkListByWriteAccess(String type, int pageSize, int pageIndex, String sortBy, boolean sortReverse) {
         StringBuffer nameListBuffer = new StringBuffer();
-
         String name = ctx.getCallerPrincipal().getName();
-
         // construct nameList. Begin with empty string '' and username
-        nameListBuffer.append("($writeaccess:\"" + name + "\"");
+        nameListBuffer.append(("($writeaccess:\"" + name) + "\"");
         // now construct role list
-
         String accessRoles = documentService.getAccessRoles();
-
-        String roleList = "org.imixs.ACCESSLEVEL.READERACCESS,org.imixs.ACCESSLEVEL.AUTHORACCESS,org.imixs.ACCESSLEVEL.EDITORACCESS,"
-                + accessRoles;
+        String roleList = "org.imixs.ACCESSLEVEL.READERACCESS,org.imixs.ACCESSLEVEL.AUTHORACCESS,org.imixs.ACCESSLEVEL.EDITORACCESS," + accessRoles;
         // add each role the user is in to the name list
         StringTokenizer roleListTokens = new StringTokenizer(roleList, ",");
         while (roleListTokens.hasMoreTokens()) {
             String testRole = roleListTokens.nextToken().trim();
-            if (!"".equals(testRole) && ctx.isCallerInRole(testRole))
-                nameListBuffer.append(" OR $writeaccess:\"" + testRole + "\"");
-        }
+            if ((!"".equals(testRole)) && ctx.isCallerInRole(testRole)) {
+                nameListBuffer.append((" OR $writeaccess:\"" + testRole) + "\"");
+            }
+        } 
         nameListBuffer.append(")");
-
         String searchTerm = "(";
-        if (type != null && !"".equals(type)) {
-            searchTerm += " type:\"" + type + "\" AND " + nameListBuffer.toString();
+        if ((type != null) && (!"".equals(type))) {
+            searchTerm += ((" type:\"" + type) + "\" AND ") + nameListBuffer.toString();
         }
-        searchTerm += " $writeaccess:\"" + name + "\" )";
+        searchTerm += (" $writeaccess:\"" + name) + "\" )";
         try {
             return documentService.find(searchTerm, pageSize, pageIndex, sortBy, sortReverse);
         } catch (QueryException e) {
@@ -450,36 +434,30 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
         int processID = workitem.getTaskID();
         // verify if version is valid
         Model model = modelService.getModelByWorkitem(workitem);
-
         List<ItemCollection> eventList = model.findAllEventsByTask(processID);
-
         String username = getUserName();
         boolean bManagerAccess = ctx.isCallerInRole(DocumentService.ACCESSLEVEL_MANAGERACCESS);
-
         // now filter events which are not public (keypublicresult==false) or
         // restricted for current user (keyRestrictedVisibility).
         for (ItemCollection event : eventList) {
             // test keypublicresult==false
-
             // ad only activities with userControlled != No
             if ("0".equals(event.getItemValueString("keypublicresult"))) {
                 continue;
             }
-
             // test user access level
             List<String> readAccessList = event.getItemValue("$readaccess");
-            if (!bManagerAccess && !readAccessList.isEmpty()) {
+            if ((!bManagerAccess) && (!readAccessList.isEmpty())) {
                 /**
                  * check read access for current user
                  */
                 boolean accessGranted = false;
                 // get user name list
                 List<String> auserNameList = getUserNameList();
-
                 // check each read access
                 for (String aReadAccess : readAccessList) {
-                    if (aReadAccess != null && !aReadAccess.isEmpty()) {
-                        if (auserNameList.indexOf(aReadAccess) > -1) {
+                    if ((aReadAccess != null) && (!aReadAccess.isEmpty())) {
+                        if (auserNameList.indexOf(aReadAccess) > (-1)) {
                             accessGranted = true;
                             break;
                         }
@@ -490,10 +468,9 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
                     continue;
                 }
             }
-
             // test RestrictedVisibility
             List<String> restrictedList = event.getItemValue("keyRestrictedVisibility");
-            if (!bManagerAccess && !restrictedList.isEmpty()) {
+            if ((!bManagerAccess) && (!restrictedList.isEmpty())) {
                 // test each item for the current user name...
                 List<String> totalNameList = new ArrayList<String>();
                 for (String itemName : restrictedList) {
@@ -502,16 +479,14 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
                 // remove null and empty values....
                 totalNameList.removeAll(Collections.singleton(null));
                 totalNameList.removeAll(Collections.singleton(""));
-                if (!totalNameList.isEmpty() && !totalNameList.contains(username)) {
+                if ((!totalNameList.isEmpty()) && (!totalNameList.contains(username))) {
                     // event is not visible for current user!
                     continue;
                 }
             }
             result.add(event);
         }
-
         return result;
-
     }
 
     /**
@@ -539,15 +514,12 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
      * @throws PluginException          - thrown if processing by a plugin fails
      * @throws ModelException
      */
-    public ItemCollection processWorkItem(ItemCollection workitem)
-            throws AccessDeniedException, ProcessingErrorException, PluginException, ModelException {
+    public ItemCollection processWorkItem(ItemCollection workitem) throws AccessDeniedException, ProcessingErrorException, PluginException, ModelException {
         boolean debug = logger.isLoggable(Level.FINE);
         long lStartTime = System.currentTimeMillis();
-
-        if (workitem == null)
-            throw new ProcessingErrorException(WorkflowService.class.getSimpleName(),
-                    ProcessingErrorException.INVALID_WORKITEM, "workitem Is Null!");
-
+        if (workitem == null) {
+            throw new ProcessingErrorException(WorkflowService.class.getSimpleName(), ProcessingErrorException.INVALID_WORKITEM, "workitem Is Null!");
+        }
         // fire event
         if (processingEvents != null) {
             processingEvents.fire(new ProcessingEvent(workitem, ProcessingEvent.BEFORE_PROCESS));
@@ -562,55 +534,37 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
             if (currentInstance != null) {
                 // test for author access
                 if (!currentInstance.getItemValueBoolean(DocumentService.ISAUTHOR)) {
-                    throw new AccessDeniedException(AccessDeniedException.OPERATION_NOTALLOWED, "$uniqueid: "
-                            + workitem.getItemValueInteger(WorkflowKernel.UNIQUEID) + " - No Author Access!");
+                    throw new AccessDeniedException(AccessDeniedException.OPERATION_NOTALLOWED, ("$uniqueid: " + workitem.getItemValueInteger(WorkflowKernel.UNIQUEID)) + " - No Author Access!");
                 }
                 // test if $taskID matches current instance
-                if (workitem.getTaskID() > 0 && currentInstance.getTaskID() != workitem.getTaskID()) {
-                    throw new ProcessingErrorException(WorkflowService.class.getSimpleName(),
-                            ProcessingErrorException.INVALID_PROCESSID,
-                            "$uniqueid: " + workitem.getItemValueInteger(WorkflowKernel.UNIQUEID) + " - $taskid="
-                                    + workitem.getTaskID() + " Did Not Match Expected $taskid="
-                                    + currentInstance.getTaskID());
+                if ((workitem.getTaskID() > 0) && (currentInstance.getTaskID() != workitem.getTaskID())) {
+                    throw new ProcessingErrorException(WorkflowService.class.getSimpleName(), ProcessingErrorException.INVALID_PROCESSID, (((("$uniqueid: " + workitem.getItemValueInteger(WorkflowKernel.UNIQUEID)) + " - $taskid=") + workitem.getTaskID()) + " Did Not Match Expected $taskid=") + currentInstance.getTaskID());
                 }
                 // merge workitem into current instance (issue #86, issue #507)
                 // an instance of this WorkItem still exists! so we update the new
                 // values....
                 workitem.mergeItems(currentInstance.getAllItems());
-
-            } else {
-                // In case we have a $UniqueId but did not found an matching workitem
-                // and the workitem miss a valid model assignment than
-                // processing is not possible - OPERATION_NOTALLOWED
-
-                if ((workitem.getTaskID() <= 0) || (workitem.getEventID() <= 0)
-                        || (workitem.getModelVersion().isEmpty() && workitem.getWorkflowGroup().isEmpty())) {
-                    // user has no read access -> throw AccessDeniedException
-                    throw new InvalidAccessException(InvalidAccessException.OPERATION_NOTALLOWED,
-                            "$uniqueid: " + workitem.getItemValueInteger(WorkflowKernel.UNIQUEID)
-                                    + " - Insufficient Data or Lack Of Permission!");
-                }
-
+            } else // In case we have a $UniqueId but did not found an matching workitem
+            // and the workitem miss a valid model assignment than
+            // processing is not possible - OPERATION_NOTALLOWED
+            if (((workitem.getTaskID() <= 0) || (workitem.getEventID() <= 0)) || (workitem.getModelVersion().isEmpty() && workitem.getWorkflowGroup().isEmpty())) {
+                // user has no read access -> throw AccessDeniedException
+                throw new InvalidAccessException(InvalidAccessException.OPERATION_NOTALLOWED, ("$uniqueid: " + workitem.getItemValueInteger(WorkflowKernel.UNIQUEID)) + " - Insufficient Data or Lack Of Permission!");
             }
         }
-
         // verify type attribute
         if ("".equals(workitem.getType())) {
             workitem.replaceItemValue("type", DEFAULT_TYPE);
         }
-
-        /*
-         * Lookup current processEntity. If not available update model to latest
-         * matching model version
+        /* Lookup current processEntity. If not available update model to latest
+        matching model version
          */
         Model model = null;
         try {
             model = this.getModelManager().getModelByWorkitem(workitem);
         } catch (ModelException e) {
-            throw new ProcessingErrorException(WorkflowService.class.getSimpleName(),
-                    ProcessingErrorException.INVALID_PROCESSID, e.getMessage(), e);
+            throw new ProcessingErrorException(WorkflowService.class.getSimpleName(), ProcessingErrorException.INVALID_PROCESSID, e.getMessage(), e);
         }
-
         WorkflowKernel workflowkernel = new WorkflowKernel(this);
         // register plugins...
         registerPlugins(workflowkernel, model);
@@ -618,22 +572,19 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
         registerAdapters(workflowkernel);
         // udpate workitem metadata...
         updateMetadata(workitem);
-
         // now process the workitem
         try {
             long lKernelTime = System.currentTimeMillis();
             workitem = workflowkernel.process(workitem);
             if (debug) {
-                logger.fine("...WorkflowKernel processing time=" + (System.currentTimeMillis() - lKernelTime) + "ms");
+                logger.fine(("...WorkflowKernel processing time=" + (System.currentTimeMillis() - lKernelTime)) + "ms");
             }
         } catch (PluginException pe) {
             // if a plugin exception occurs we roll back the transaction.
-            logger.severe("processing workitem '" + workitem.getItemValueString(WorkflowKernel.UNIQUEID)
-                    + " failed, rollback transaction...");
+            logger.severe(("processing workitem '" + workitem.getItemValueString(WorkflowKernel.UNIQUEID)) + " failed, rollback transaction...");
             ctx.setRollbackOnly();
             throw pe;
         }
-
         // fire event
         if (processingEvents != null) {
             processingEvents.fire(new ProcessingEvent(workitem, ProcessingEvent.AFTER_PROCESS));
@@ -647,10 +598,9 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
             }
             documentService.save(splitWorkitemm);
         }
-
         workitem = documentService.save(workitem);
         if (debug) {
-            logger.fine("...total processing time=" + (System.currentTimeMillis() - lStartTime) + "ms");
+            logger.fine(("...total processing time=" + (System.currentTimeMillis() - lStartTime)) + "ms");
         }
         return workitem;
     }
@@ -707,9 +657,8 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
      * @throws AccessDeniedException
      * 
      */
-    @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
-    public ItemCollection processWorkItemByNewTransaction(ItemCollection workitem)
-            throws AccessDeniedException, ProcessingErrorException, PluginException, ModelException {
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public ItemCollection processWorkItemByNewTransaction(ItemCollection workitem) throws AccessDeniedException, ProcessingErrorException, PluginException, ModelException {
         boolean debug = logger.isLoggable(Level.FINE);
         if (debug) {
             logger.finest(" ....processing workitem by by new transaction...");
@@ -766,7 +715,6 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
      */
     public String getUserName() {
         return ctx.getCallerPrincipal().getName();
-
     }
 
     /**
@@ -778,7 +726,7 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
     public boolean isUserInRole(String rolename) {
         try {
             return ctx.isCallerInRole(rolename);
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             // avoid a exception for a role request which is not defined
             return false;
         }
@@ -869,50 +817,43 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
      *         result.
      * @throws PluginException if the xml structure is invalid
      */
-    public ItemCollection evalWorkflowResult(ItemCollection event, String tag, ItemCollection documentContext,
-            boolean resolveItemValues) throws PluginException {
+    public ItemCollection evalWorkflowResult(ItemCollection event, String tag, ItemCollection documentContext, boolean resolveItemValues) throws PluginException {
         boolean debug = logger.isLoggable(Level.FINE);
         ItemCollection result = new ItemCollection();
         String workflowResult = event.getItemValueString("txtActivityResult");
         if (workflowResult.trim().isEmpty()) {
             return null;
         }
-        if (tag == null || tag.isEmpty()) {
+        if ((tag == null) || tag.isEmpty()) {
             logger.warning("cannot eval workflow result - no tag name specified. Verify model!");
             return null;
         }
-
         // if no <tag exists we skip the evaluation...
-        if (workflowResult.indexOf("<" + tag) == -1) {
+        if (workflowResult.indexOf("<" + tag) == (-1)) {
             return null;
         }
-
         // replace dynamic values?
         if (resolveItemValues) {
             workflowResult = adaptText(workflowResult, documentContext);
         }
-
         boolean invalidPattern = false;
         // Fast first test if the tag really exists....
-        Pattern patternSimple = Pattern.compile("<" + tag + " (.*?)>(.*?)|<" + tag + " (.*?)./>", Pattern.DOTALL);
+        Pattern patternSimple = Pattern.compile(((("<" + tag) + " (.*?)>(.*?)|<") + tag) + " (.*?)./>", Pattern.DOTALL);
         Matcher matcherSimple = patternSimple.matcher(workflowResult);
         if (matcherSimple.find()) {
             invalidPattern = true;
             // we found the starting tag.....
-
-            // Extract all tags with attributes using regex (including empty tags)
-            // see also:
-            // https://stackoverflow.com/questions/1732348/regex-match-open-tags-except-xhtml-self-contained-tags
-            // e.g. <item(.*?)>(.*?)</item>|<item(.*?)./>
-            Pattern pattern = Pattern.compile("(?s)(?:(<" + tag + "(?>\\b(?:\".*?\"|'.*?'|[^>]*?)*>)(?<=/>))|(<" + tag
-                    + "(?>\\b(?:\".*?\"|'.*?'|[^>]*?)*>)(?<!/>))(.*?)(</" + tag + "\\s*>))", Pattern.DOTALL);
+        // Extract all tags with attributes using regex (including empty tags)
+        // see also:
+        // https://stackoverflow.com/questions/1732348/regex-match-open-tags-except-xhtml-self-contained-tags
+        // e.g. <item(.*?)>(.*?)</item>|<item(.*?)./>
+            Pattern pattern = Pattern.compile(((((("(?s)(?:(<" + tag) + "(?>\\b(?:\".*?\"|\'.*?\'|[^>]*?)*>)(?<=/>))|(<") + tag) + "(?>\\b(?:\".*?\"|\'.*?\'|[^>]*?)*>)(?<!/>))(.*?)(</") + tag) + "\\s*>))", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(workflowResult);
             while (matcher.find()) {
                 invalidPattern = false;
                 // we expect up to 4 different result groups
                 // group 0 contains complete tag string
                 // groups 1 or 2 contain the attributes
-
                 String content = "";
                 String attributes = matcher.group(1);
                 if (attributes == null) {
@@ -921,38 +862,34 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
                 } else {
                     content = matcher.group(2);
                 }
-
                 if (content == null) {
                     content = "";
                 }
-
                 // now extract the attributes to verify the tag name..
-                if (attributes != null && !attributes.isEmpty()) {
+                if ((attributes != null) && (!attributes.isEmpty())) {
                     // parse attributes...
-                    String spattern = "(\\S+)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|[>\"']))+.)[\"']?";
+                    String spattern = "(\\S+)=[\"\']?((?:.(?![\"\']?\\s+(?:\\S+)=|[>\"\']))+.)[\"\']?";
                     Pattern attributePattern = Pattern.compile(spattern);
                     Matcher attributeMatcher = attributePattern.matcher(attributes);
                     Map<String, String> attrMap = new HashMap<String, String>();
                     while (attributeMatcher.find()) {
-                        String attrName = attributeMatcher.group(1); // name
-                        String attrValue = attributeMatcher.group(2); // value
-                        attrMap.put(attrName, attrValue);
-                    }
+                        String attrName = attributeMatcher.group(1);// name
 
+                        String attrValue = attributeMatcher.group(2);// value
+
+                        attrMap.put(attrName, attrValue);
+                    } 
                     String tagName = attrMap.get("name");
                     if (tagName == null) {
-                        throw new PluginException(ResultPlugin.class.getSimpleName(), INVALID_TAG_FORMAT,
-                                "<" + tag + "> tag contains no name attribute.");
+                        throw new PluginException(ResultPlugin.class.getSimpleName(), INVALID_TAG_FORMAT, ("<" + tag) + "> tag contains no name attribute.");
                     }
-
                     // now add optional attributes if available
                     for (String attrName : attrMap.keySet()) {
                         // we need to skip the 'name' attribute
                         if (!"name".equals(attrName)) {
-                            result.appendItemValue(tagName + "." + attrName, attrMap.get(attrName));
+                            result.appendItemValue((tagName + ".") + attrName, attrMap.get(attrName));
                         }
                     }
-
                     // test if the type attribute was provided to convert content?
                     String sType = result.getItemValueString(tagName + ".type");
                     String sFormat = result.getItemValueString(tagName + ".format");
@@ -963,33 +900,33 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
                         } else if ("integer".equalsIgnoreCase(sType)) {
                             try {
                                 result.appendItemValue(tagName, Integer.valueOf(content));
-                            } catch (NumberFormatException e) {
+                            } catch (java.lang.NumberFormatException e) {
                                 // append 0 value
                                 result.appendItemValue(tagName, new Integer(0));
                             }
                         } else if ("double".equalsIgnoreCase(sType)) {
                             try {
                                 result.appendItemValue(tagName, Double.valueOf(content));
-                            } catch (NumberFormatException e) {
+                            } catch (java.lang.NumberFormatException e) {
                                 // append 0 value
                                 result.appendItemValue(tagName, new Double(0));
                             }
                         } else if ("float".equalsIgnoreCase(sType)) {
                             try {
                                 result.appendItemValue(tagName, Float.valueOf(content));
-                            } catch (NumberFormatException e) {
+                            } catch (java.lang.NumberFormatException e) {
                                 // append 0 value
                                 result.appendItemValue(tagName, new Float(0));
                             }
                         } else if ("long".equalsIgnoreCase(sType)) {
                             try {
                                 result.appendItemValue(tagName, Long.valueOf(content));
-                            } catch (NumberFormatException e) {
+                            } catch (java.lang.NumberFormatException e) {
                                 // append 0 value
                                 result.appendItemValue(tagName, new Long(0));
                             }
                         } else if ("date".equalsIgnoreCase(sType)) {
-                            if (content == null || content.isEmpty()) {
+                            if ((content == null) || content.isEmpty()) {
                                 // no value available - no op!
                                 if (debug) {
                                     logger.finer("......can not convert empty string into date object");
@@ -1001,10 +938,9 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
                                         logger.finer("......convert string into date object");
                                     }
                                     Date dateResult = null;
-                                    if (sFormat == null || sFormat.isEmpty()) {
+                                    if ((sFormat == null) || sFormat.isEmpty()) {
                                         // use standard format short/short
-                                        dateResult = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
-                                                .parse(content);
+                                        dateResult = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).parse(content);
                                     } else {
                                         // use given formatter (see: TextItemValueAdapter)
                                         DateFormat dateFormat = new SimpleDateFormat(sFormat);
@@ -1017,28 +953,22 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
                                     }
                                 }
                             }
-
-                        } else
-                            // no type conversion
+                        } else // no type conversion
+                        {
                             result.appendItemValue(tagName, content);
+                        }
                     } else {
                         // no type definition
                         result.appendItemValue(tagName, content);
                     }
-
                 } else {
-                    throw new PluginException(ResultPlugin.class.getSimpleName(), INVALID_TAG_FORMAT,
-                            "<" + tag + "> tag contains no name attribute.");
-
+                    throw new PluginException(ResultPlugin.class.getSimpleName(), INVALID_TAG_FORMAT, ("<" + tag) + "> tag contains no name attribute.");
                 }
-            }
+            } 
         }
-
         // test for general invalid format
         if (invalidPattern) {
-            throw new PluginException(ResultPlugin.class.getSimpleName(), INVALID_TAG_FORMAT,
-                    "invalid <" + tag + "> tag format in workflowResult: " + workflowResult + "  , expected format is <"
-                            + tag + " name=\"...\">...</item> ");
+            throw new PluginException(ResultPlugin.class.getSimpleName(), INVALID_TAG_FORMAT, ((((("invalid <" + tag) + "> tag format in workflowResult: ") + workflowResult) + "  , expected format is <") + tag) + " name=\"...\">...</item> ");
         }
         return result;
     }
@@ -1147,13 +1077,13 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
 
     protected void registerAdapters(WorkflowKernel workflowkernel) {
         boolean debug = logger.isLoggable(Level.FINE);
-        if (debug && (adapters == null || !adapters.iterator().hasNext())) {
+        if (debug && ((adapters == null) || (!adapters.iterator().hasNext()))) {
             logger.finest("......no CDI Adapters injected");
         } else {
             // iterate over all injected adapters....
             for (Adapter adapter : this.adapters) {
                 if (debug) {
-                    logger.finest("......register CDI Adapter class '" + adapter.getClass().getName() + "'");
+                    logger.finest(("......register CDI Adapter class '" + adapter.getClass().getName()) + "'");
                 }
                 workflowkernel.registerAdapter(adapter);
             }
@@ -1176,31 +1106,25 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
      * @param workitem
      */
     protected void updateMetadata(ItemCollection workitem) {
-
         // identify Caller and update CurrentEditor
         String nameEditor;
         nameEditor = ctx.getCallerPrincipal().getName();
-
         // add namCreator if empty
         // migrate $creator (Backward compatibility)
-        if (workitem.getItemValueString("$creator").isEmpty() && !workitem.getItemValueString("namCreator").isEmpty()) {
+        if (workitem.getItemValueString("$creator").isEmpty() && (!workitem.getItemValueString("namCreator").isEmpty())) {
             workitem.replaceItemValue("$creator", workitem.getItemValue("namCreator"));
         }
-
         if (workitem.getItemValueString("$creator").isEmpty()) {
             workitem.replaceItemValue("$creator", nameEditor);
             // support deprecated fieldname
             workitem.replaceItemValue("namCreator", nameEditor);
         }
-
         // update namLastEditor only if current editor has changed
-        if (!nameEditor.equals(workitem.getItemValueString("$editor"))
-                && !workitem.getItemValueString("$editor").isEmpty()) {
+        if ((!nameEditor.equals(workitem.getItemValueString("$editor"))) && (!workitem.getItemValueString("$editor").isEmpty())) {
             workitem.replaceItemValue("$lasteditor", workitem.getItemValueString("$editor"));
             // deprecated
             workitem.replaceItemValue("namlasteditor", workitem.getItemValueString("$editor"));
         }
-
         // update $editor
         workitem.replaceItemValue("$editor", nameEditor);
         // deprecated
@@ -1215,11 +1139,11 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
      * @return plugin class or null if not found
      */
     private Plugin findPluginByName(String pluginClassName) {
-        if (pluginClassName == null || pluginClassName.isEmpty())
+        if ((pluginClassName == null) || pluginClassName.isEmpty()) {
             return null;
+        }
         boolean debug = logger.isLoggable(Level.FINE);
-
-        if (plugins == null || !plugins.iterator().hasNext()) {
+        if ((plugins == null) || (!plugins.iterator().hasNext())) {
             if (debug) {
                 logger.finest("......no CDI plugins injected");
             }
@@ -1229,12 +1153,11 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
         for (Plugin plugin : this.plugins) {
             if (plugin.getClass().getName().equals(pluginClassName)) {
                 if (debug) {
-                    logger.finest("......CDI plugin '" + pluginClassName + "' successful injected");
+                    logger.finest(("......CDI plugin '" + pluginClassName) + "' successful injected");
                 }
                 return plugin;
             }
         }
-
         return null;
     }
 }
