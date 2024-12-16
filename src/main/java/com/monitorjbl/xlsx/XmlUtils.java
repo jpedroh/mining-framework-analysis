@@ -1,16 +1,16 @@
 package com.monitorjbl.xlsx;
 
 import com.monitorjbl.xlsx.exceptions.ParseException;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-
+import java.util.*;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import java.util.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+
 
 public class XmlUtils {
   public static NodeList searchForNodeList(Document document, String xpath) {
@@ -19,9 +19,8 @@ public class XmlUtils {
       NamespaceContextImpl nc = new NamespaceContextImpl();
       nc.addNamespace("ss", "http://schemas.openxmlformats.org/spreadsheetml/2006/main");
       xp.setNamespaceContext(nc);
-      return (NodeList)xp.compile(xpath)
-              .evaluate(document, XPathConstants.NODESET);
-    } catch(XPathExpressionException e) {
+      return ((NodeList) (xp.compile(xpath).evaluate(document, XPathConstants.NODESET)));
+    } catch (XPathExpressionException e) {
       throw new ParseException(e);
     }
   }
@@ -36,10 +35,10 @@ public class XmlUtils {
       addNamespace(XMLConstants.XMLNS_ATTRIBUTE, XMLConstants.XMLNS_ATTRIBUTE_NS_URI);
     }
 
-    public void addNamespace(String prefix, String namespaceURI) {
+    public synchronized void addNamespace(String prefix, String namespaceURI) {
       urisByPrefix.put(prefix, namespaceURI);
       if (prefixesByURI.containsKey(namespaceURI)) {
-        (prefixesByURI.get(namespaceURI)).add(prefix);
+        prefixesByURI.get(namespaceURI).add(prefix);
       } else {
         Set<String> set = new HashSet<String>();
         set.add(prefix);
@@ -48,16 +47,18 @@ public class XmlUtils {
     }
 
     public String getNamespaceURI(String prefix) {
-      if (prefix == null)
+      if (prefix == null) {
         throw new IllegalArgumentException("prefix cannot be null");
-      if (urisByPrefix.containsKey(prefix))
-        return (String) urisByPrefix.get(prefix);
-      else
+      }
+      if (urisByPrefix.containsKey(prefix)) {
+        return ((String) (urisByPrefix.get(prefix)));
+      } else {
         return XMLConstants.NULL_NS_URI;
+      }
     }
 
     public String getPrefix(String namespaceURI) {
-      return (String) getPrefixes(namespaceURI).next();
+      return ((String) (getPrefixes(namespaceURI).next()));
     }
 
     public Iterator getPrefixes(String namespaceURI) {
