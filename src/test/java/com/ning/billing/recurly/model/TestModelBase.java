@@ -13,14 +13,15 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 package com.ning.billing.recurly.model;
 
+import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.testng.annotations.BeforeMethod;
 
-public abstract class TestModelBase {
 
+public abstract class TestModelBase {
     protected XmlMapper xmlMapper;
 
     @BeforeMethod(alwaysRun = true)

@@ -13,19 +13,18 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 package com.ning.billing.recurly.model;
 
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+
 @XmlRootElement(name = "subscription")
 public class AbstractSubscription extends RecurlyObject {
-
-    public static final String SUBSCRIPTION_RESOURCE = "/subscriptions";
+    public static final String SUBSCRIPTION_RESOURCE
+            = "/subscriptions";
 
     @XmlElement(name = "unit_amount_in_cents")
     protected Integer unitAmountInCents;
@@ -80,9 +79,7 @@ public class AbstractSubscription extends RecurlyObject {
         if (!(o instanceof AbstractSubscription)) {
             return false;
         }
-
-        final AbstractSubscription that = (AbstractSubscription) o;
-
+        final AbstractSubscription that = ((AbstractSubscription) (o));
         if (addOns != null ? !addOns.equals(that.addOns) : that.addOns != null) {
             return false;
         }
@@ -95,7 +92,6 @@ public class AbstractSubscription extends RecurlyObject {
         if (unitAmountInCents != null ? !unitAmountInCents.equals(that.unitAmountInCents) : that.unitAmountInCents != null) {
             return false;
         }
-
         return true;
     }
 

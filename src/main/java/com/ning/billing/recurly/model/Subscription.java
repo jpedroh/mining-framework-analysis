@@ -13,17 +13,15 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 package com.ning.billing.recurly.model;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.joda.time.DateTime;
+
 
 @XmlRootElement(name = "subscription")
 public class Subscription extends AbstractSubscription {
-
     @XmlElement(name = "account")
     private Account account;
 
@@ -184,12 +182,10 @@ public class Subscription extends AbstractSubscription {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if ((o == null) || (getClass() != o.getClass())) {
             return false;
         }
-
-        final Subscription that = (Subscription) o;
-
+        final Subscription that = ((Subscription) (o));
         if (account != null ? !account.equals(that.account) : that.account != null) {
             return false;
         }
@@ -220,11 +216,9 @@ public class Subscription extends AbstractSubscription {
         if (quantity != null ? !quantity.equals(that.quantity) : that.quantity != null) {
             return false;
         }
-
         if (state != null ? !state.equals(that.state) : that.state != null) {
             return false;
         }
-
         if (trialEndsAt != null ? !trialEndsAt.equals(that.trialEndsAt) : that.trialEndsAt != null) {
             return false;
         }
@@ -237,27 +231,26 @@ public class Subscription extends AbstractSubscription {
         if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null) {
             return false;
         }
-
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = account != null ? account.hashCode() : 0;
-        result = 31 * result + (plan != null ? plan.hashCode() : 0);
-        result = 31 * result + (uuid != null ? uuid.hashCode() : 0);
-        //result = 31 * result + (state != null ? state.hashCode() : 0);
-        result = 31 * result + (unitAmountInCents != null ? unitAmountInCents.hashCode() : 0);
-        result = 31 * result + (currency != null ? currency.hashCode() : 0);
-        result = 31 * result + (quantity != null ? quantity.hashCode() : 0);
-        result = 31 * result + (activatedAt != null ? activatedAt.hashCode() : 0);
-        result = 31 * result + (canceledAt != null ? canceledAt.hashCode() : 0);
-        result = 31 * result + (expiresAt != null ? expiresAt.hashCode() : 0);
-        result = 31 * result + (currentPeriodStartedAt != null ? currentPeriodStartedAt.hashCode() : 0);
-        result = 31 * result + (currentPeriodEndsAt != null ? currentPeriodEndsAt.hashCode() : 0);
-        result = 31 * result + (trialStartedAt != null ? trialStartedAt.hashCode() : 0);
-        result = 31 * result + (trialEndsAt != null ? trialEndsAt.hashCode() : 0);
-        result = 31 * result + (addOns != null ? addOns.hashCode() : 0);
+        int result = (account != null) ? account.hashCode() : 0;
+        result = (31 * result) + (plan != null ? plan.hashCode() : 0);
+        result = (31 * result) + (uuid != null ? uuid.hashCode() : 0);
+        // result = 31 * result + (state != null ? state.hashCode() : 0);
+        result = (31 * result) + (unitAmountInCents != null ? unitAmountInCents.hashCode() : 0);
+        result = (31 * result) + (currency != null ? currency.hashCode() : 0);
+        result = (31 * result) + (quantity != null ? quantity.hashCode() : 0);
+        result = (31 * result) + (activatedAt != null ? activatedAt.hashCode() : 0);
+        result = (31 * result) + (canceledAt != null ? canceledAt.hashCode() : 0);
+        result = (31 * result) + (expiresAt != null ? expiresAt.hashCode() : 0);
+        result = (31 * result) + (currentPeriodStartedAt != null ? currentPeriodStartedAt.hashCode() : 0);
+        result = (31 * result) + (currentPeriodEndsAt != null ? currentPeriodEndsAt.hashCode() : 0);
+        result = (31 * result) + (trialStartedAt != null ? trialStartedAt.hashCode() : 0);
+        result = (31 * result) + (trialEndsAt != null ? trialEndsAt.hashCode() : 0);
+        result = (31 * result) + (addOns != null ? addOns.hashCode() : 0);
         return result;
     }
 }

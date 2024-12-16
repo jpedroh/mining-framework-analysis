@@ -13,22 +13,16 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 package com.ning.billing.recurly.model;
 
 import javax.xml.bind.annotation.XmlElement;
 
-/**
- * Subscription object for update calls.
- * <p/>
- * The timeframe parameter is specific to the update.
- */
-public class SubscriptionUpdate extends AbstractSubscription {
 
+public class SubscriptionUpdate extends AbstractSubscription {
     public static enum Timeframe {
+
         now,
-        renewal
-    }
+        renewal;}
 
     @XmlElement
     private Timeframe timeframe;
@@ -52,13 +46,10 @@ public class SubscriptionUpdate extends AbstractSubscription {
         if (!super.equals(o)) {
             return false;
         }
-
-        SubscriptionUpdate that = (SubscriptionUpdate) o;
-
+        SubscriptionUpdate that = ((SubscriptionUpdate) (o));
         if (timeframe != that.timeframe) {
             return false;
         }
-
         return true;
     }
 
