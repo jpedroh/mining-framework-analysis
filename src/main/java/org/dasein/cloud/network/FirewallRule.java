@@ -15,12 +15,12 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.dasein.cloud.network;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 
 /**
  * <p>
@@ -254,130 +254,119 @@ public class FirewallRule implements Comparable<FirewallRule> {
         }
     }
 
-    static public @Nullable FirewallRule parseId(@Nonnull String id) {
+    @Nullable
+    public static FirewallRule parseId(@Nonnull
+    String id) {
         String[] parts = id.split(":");
-
-        if( parts.length < 2 ) {
+        if (parts.length < 2) {
             return null;
         }
         Permission permission = Permission.ALLOW;
         int i = 0;
-
-        if( parts[i].equalsIgnoreCase("DENY") ) {
+        if (parts[i].equalsIgnoreCase("DENY")) {
             permission = Permission.DENY;
             i++;
-        }
-        else if( parts[i].equalsIgnoreCase("ALLOW") ) {
+        } else if (parts[i].equalsIgnoreCase("ALLOW")) {
             i++;
         }
-        if( parts.length < i+1 ) {
+        if (parts.length < (i + 1)) {
             return null;
         }
-
         String providerFirewallId = parts[i++];
-
-        if( parts.length < i+1 ) {
+        if (parts.length < (i + 1)) {
             return null;
         }
-
-
         Direction direction = null;
         RuleTarget source;
-
-
         String tname = parts[i++];
-
-        if( parts.length < i+1 ) {
+        if (parts.length < (i + 1)) {
             return null;
-        }
-        else {
+        } else {
             try {
                 RuleTargetType t = RuleTargetType.valueOf(tname);
                 String tmp = parts[i++];
-
                 direction = Direction.valueOf(tmp.toUpperCase());
-
-                switch( t ) {
-                    case GLOBAL: source = RuleTarget.getGlobal(tmp); break;
-                    case VM: source = RuleTarget.getVirtualMachine(tmp); break;
-                    case VLAN: source = RuleTarget.getVlan(tmp); break;
-                    case CIDR: source = RuleTarget.getCIDR(tmp); break;
-                    default: return null;
+                switch (t) {
+                    case GLOBAL :
+                        source = RuleTarget.getGlobal(tmp);
+                        break;
+                    case VM :
+                        source = RuleTarget.getVirtualMachine(tmp);
+                        break;
+                    case VLAN :
+                        source = RuleTarget.getVlan(tmp);
+                        break;
+                    case CIDR :
+                        source = RuleTarget.getCIDR(tmp);
+                        break;
+                    default :
+                        return null;
                 }
-            }
-            catch( Throwable ignore ) {
+            } catch (java.lang.Throwable ignore) {
                 source = RuleTarget.getGlobal(providerFirewallId);
             }
         }
-
-        if( direction == null ) {
+        if (direction == null) {
             try {
                 direction = Direction.valueOf(parts[i++].toUpperCase());
-            }
-            catch( Throwable ignore ) {
+            } catch (java.lang.Throwable ignore) {
                 return null;
             }
         }
-        if( parts.length < i+1 ) {
+        if (parts.length < (i + 1)) {
             return null;
         }
-
         Protocol protocol;
-
         try {
             protocol = Protocol.valueOf(parts[i++].toUpperCase());
-        }
-        catch( Throwable ignore ) {
+        } catch (java.lang.Throwable ignore) {
             return null;
         }
-        if( parts.length < i+1 ) {
+        if (parts.length < (i + 1)) {
             return null;
         }
-
         int startPort;
-
         try {
             startPort = Integer.parseInt(parts[i++]);
-        }
-        catch( NumberFormatException ignore ) {
+        } catch (java.lang.NumberFormatException ignore) {
             return null;
         }
-        if( parts.length < i+1 ) {
+        if (parts.length < (i + 1)) {
             return null;
         }
-
         int endPort;
-
         try {
             endPort = Integer.parseInt(parts[i++]);
-        }
-        catch( NumberFormatException ignore ) {
+        } catch (java.lang.NumberFormatException ignore) {
             return null;
         }
-
         RuleTarget target;
-
-        if( parts.length < i+1 ) {
+        if (parts.length < (i + 1)) {
             target = RuleTarget.getGlobal(providerFirewallId);
-        }
-        else {
+        } else {
             tname = parts[i++];
-            if( parts.length < i+1 ) {
+            if (parts.length < (i + 1)) {
                 target = RuleTarget.getGlobal(providerFirewallId);
-            }
-            else {
+            } else {
                 try {
                     RuleTargetType t = RuleTargetType.valueOf(tname);
-
-                    switch( t ) {
-                        case GLOBAL: target = RuleTarget.getGlobal(parts[i]); break;
-                        case VM: target = RuleTarget.getVirtualMachine(parts[i]); break;
-                        case VLAN: target = RuleTarget.getVlan(parts[i]); break;
-                        case CIDR: target = RuleTarget.getCIDR(parts[i]); break;
-                        default: return null;
+                    switch (t) {
+                        case GLOBAL :
+                            target = RuleTarget.getGlobal(parts[i]);
+                            break;
+                        case VM :
+                            target = RuleTarget.getVirtualMachine(parts[i]);
+                            break;
+                        case VLAN :
+                            target = RuleTarget.getVlan(parts[i]);
+                            break;
+                        case CIDR :
+                            target = RuleTarget.getCIDR(parts[i]);
+                            break;
+                        default :
+                            return null;
                     }
-                }
-                catch( Throwable ignore ) {
+                } catch (java.lang.Throwable ignore) {
                     target = RuleTarget.getGlobal(providerFirewallId);
                 }
             }
@@ -386,17 +375,27 @@ public class FirewallRule implements Comparable<FirewallRule> {
     }
 
     private RuleTarget destinationEndpoint;
+
     private Direction  direction;
+
     private int        endPort;
+
     private String     firewallId;
+
     private Permission permission;
+
     private int        precedence;
+
     private Protocol   protocol;
+
     private String     providerRuleId;
+
     private RuleTarget sourceEndpoint;
+
     private int        startPort;
 
-    private FirewallRule() { }
+    private FirewallRule() {
+    }
 
     @Override
     public int compareTo(FirewallRule other) {

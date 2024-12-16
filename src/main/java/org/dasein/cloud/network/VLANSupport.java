@@ -15,15 +15,12 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.dasein.cloud.network;
 
 import java.util.Collection;
 import java.util.Locale;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import org.dasein.cloud.AccessControlledService;
 import org.dasein.cloud.CloudException;
 import org.dasein.cloud.InternalException;
@@ -33,6 +30,7 @@ import org.dasein.cloud.ResourceStatus;
 import org.dasein.cloud.Tag;
 import org.dasein.cloud.identity.ServiceAction;
 
+
 /**
  * @version 2013.02 added listResources(String) (issue #24)
  * @version 2013.04 added support for specifying data centers when provisioning subnets
@@ -41,31 +39,53 @@ public interface VLANSupport extends AccessControlledService {
     static public final ServiceAction ANY               = new ServiceAction("NET:ANY");
 
     static public final ServiceAction ADD_ROUTE               = new ServiceAction("NET:ADD_ROUTE");
+
     static public final ServiceAction ASSIGN_ROUTE_TO_SUBNET  = new ServiceAction("NET:ASSIGN_ROUTE_TO_SUBNET");
+
     static public final ServiceAction ASSIGN_ROUTE_TO_VLAN    = new ServiceAction("NET:ASSIGN_ROUTE_TO_VLAN");
+
     static public final ServiceAction ATTACH_INTERNET_GATEWAY = new ServiceAction("NET:ATTACH_INTERNET_GATEWAY");
+
     static public final ServiceAction CREATE_ROUTING_TABLE    = new ServiceAction("NET:CREATE_ROUTING_TABLE");
+
     static public final ServiceAction CREATE_INTERNET_GATEWAY = new ServiceAction("NET:CREATE_INTERNET_GATEWAY");
+
     static public final ServiceAction GET_ROUTING_TABLE       = new ServiceAction("NET:GET_ROUTING_TABLE");
+
     static public final ServiceAction LIST_ROUTING_TABLE      = new ServiceAction("NET:LIST_ROUTING_TABLE");
+
     static public final ServiceAction REMOVE_INTERNET_GATEWAY = new ServiceAction("NET:REMOVE_INTERNET_GATEWAY");
+
     static public final ServiceAction REMOVE_ROUTE            = new ServiceAction("NET:REMOVE_ROUTE");
+
     static public final ServiceAction REMOVE_ROUTING_TABLE    = new ServiceAction("NET:REMOVE_ROUTING_TABLE");
 
     static public final ServiceAction ATTACH_NIC        = new ServiceAction("NET:ATTACH_NIC");
+
     static public final ServiceAction CREATE_NIC        = new ServiceAction("NET:CREATE_NIC");
+
     static public final ServiceAction DETACH_NIC        = new ServiceAction("NET:DETACH_NIC");
+
     static public final ServiceAction GET_NIC           = new ServiceAction("NET:GET_NIC");
+
     static public final ServiceAction LIST_NIC          = new ServiceAction("NET:LIST_NIC");
+
     static public final ServiceAction REMOVE_NIC        = new ServiceAction("NET:REMOVE_NIC");
-    
+
     static public final ServiceAction CREATE_SUBNET     = new ServiceAction("NET:CREATE_SUBNET");
+
     static public final ServiceAction CREATE_VLAN       = new ServiceAction("NET:CREATE_VLAN");
+
     static public final ServiceAction GET_SUBNET        = new ServiceAction("NET:GET_SUBNET");
+
     static public final ServiceAction GET_VLAN          = new ServiceAction("NET:GET_VLAN");
+
     static public final ServiceAction LIST_SUBNET       = new ServiceAction("NET:LIST_SUBNET");
+
     static public final ServiceAction LIST_VLAN         = new ServiceAction("NET:LIST_VLAN");
+
     static public final ServiceAction REMOVE_SUBNET     = new ServiceAction("NET:REMOVE_SUBNET");
+
     static public final ServiceAction REMOVE_VLAN       = new ServiceAction("NET:REMOVE_VLAN");
 
     /**
@@ -122,7 +142,7 @@ public interface VLANSupport extends AccessControlledService {
     public abstract boolean allowsNewNetworkInterfaceCreation() throws CloudException, InternalException;
 
     public abstract boolean allowsNewVlanCreation() throws CloudException, InternalException;
-    
+
     public abstract boolean allowsNewSubnetCreation() throws CloudException, InternalException;
 
     /**
@@ -140,7 +160,6 @@ public interface VLANSupport extends AccessControlledService {
      * @throws InternalException an error occurred in the Dasein Cloud implementation determining support
      */
     public abstract boolean allowsMultipleTrafficTypesOverVlan() throws CloudException, InternalException;
-
 
     /**
      * Assigns the specified routing table to the target subnet.
@@ -190,7 +209,7 @@ public interface VLANSupport extends AccessControlledService {
      * @throws InternalException a local error occurred creating the routing table
      */
     public abstract @Nonnull String createRoutingTable(@Nonnull String forVlanId, @Nonnull String name, @Nonnull String description) throws CloudException, InternalException;
-    
+
     /**
      * Provisions a new network interface in accordance with the specified create options. 
      * @param options the options to be used in creating the network interface
@@ -250,7 +269,7 @@ public interface VLANSupport extends AccessControlledService {
      * @throws InternalException a local error occurred figuring out the limit
      */
     public abstract int getMaxNetworkInterfaceCount() throws CloudException, InternalException;
-    
+
     public abstract int getMaxVlanCount() throws CloudException, InternalException;
 
     /**
@@ -259,9 +278,9 @@ public interface VLANSupport extends AccessControlledService {
      * @return a localized term for "network interface" specific to this cloud provider
      */
     public abstract @Nonnull String getProviderTermForNetworkInterface(@Nonnull Locale locale);
-    
+
     public abstract @Nonnull String getProviderTermForSubnet(@Nonnull Locale locale);
-    
+
     public abstract @Nonnull String getProviderTermForVlan(@Nonnull Locale locale);
 
     /**
@@ -354,7 +373,7 @@ public interface VLANSupport extends AccessControlledService {
     public abstract boolean isNetworkInterfaceSupportEnabled() throws CloudException, InternalException;
 
     public abstract boolean isSubscribed() throws CloudException, InternalException;
-    
+
     public abstract boolean isSubnetDataCenterConstrained() throws CloudException, InternalException;
 
     public abstract boolean isVlanDataCenterConstrained() throws CloudException, InternalException;
@@ -429,7 +448,7 @@ public interface VLANSupport extends AccessControlledService {
      * @throws InternalException a local error occurred processing the routing tables
      */
     public abstract @Nonnull Iterable<RoutingTable> listRoutingTables(@Nonnull String inVlanId) throws CloudException, InternalException;
-    
+
     public abstract @Nonnull Iterable<Subnet> listSubnets(@Nonnull String inVlanId) throws CloudException, InternalException;
 
     /**
