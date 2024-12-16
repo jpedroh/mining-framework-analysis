@@ -13,13 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.google.zxing.oned;
-
-import com.google.zxing.common.BitMatrixTestCase;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -28,30 +22,46 @@ import com.google.zxing.Writer;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitArray;
 import com.google.zxing.common.BitMatrix;
-
-import java.util.Map;
+import com.google.zxing.common.BitMatrixTestCase;
 import java.util.EnumMap;
+import java.util.Map;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 
 /**
  * Tests {@link Code128Writer}.
  */
 public class Code128WriterTestCase extends Assert {
-
   private static final String FNC1 = "11110101110";
+
   private static final String FNC2 = "11110101000";
+
   private static final String FNC3 = "10111100010";
+
   private static final String FNC4A = "11101011110";
+
   private static final String FNC4B = "10111101110";
+
   private static final String START_CODE_A = "11010000100";
+
   private static final String START_CODE_B = "11010010000";
+
   private static final String START_CODE_C = "11010011100";
+
   private static final String SWITCH_CODE_A = "11101011110";
+
   private static final String SWITCH_CODE_B = "10111101110";
+
   private static final String QUIET_SPACE = "00000";
+
   private static final String STOP = "1100011101011";
+
   private static final String LF = "10000110010";
 
   private Writer writer;
+
   private Code128Reader reader;
 
   @Before
@@ -110,12 +120,10 @@ public class Code128WriterTestCase extends Assert {
 
   @Test
   public void testEncodeWithFunc4() throws WriterException {
-    String toEncode = "\u00f4" + "123";
+    String toEncode = "ô" + "123";
     //                                                       "1"            "2"             "3"          check digit 59
-    String expected = QUIET_SPACE + START_CODE_B + FNC4B + "10011100110" + "11001110010" + "11001011100" + "11100011010" + STOP + QUIET_SPACE;
-
+    String expected = (((((((QUIET_SPACE + START_CODE_B) + FNC4B) + "10011100110") + "11001110010") + "11001011100") + "11100011010") + STOP) + QUIET_SPACE;
     BitMatrix result = writer.encode(toEncode, BarcodeFormat.CODE_128, 0, 0);
-
     String actual = BitMatrixTestCase.matrixToString(result);
     assertEquals(expected, actual);
   }
@@ -143,7 +151,7 @@ public class Code128WriterTestCase extends Assert {
     //                                                "a"             "b"             Switch to A     "\0             "Switch to B"   "a"             "b"             check digit
     testEncode("ab\0ab", QUIET_SPACE + START_CODE_B + "10010110000" + "10010000110" + SWITCH_CODE_A + "10100001100" + SWITCH_CODE_B + "10010110000" + "10010000110" + "11010001110" + STOP + QUIET_SPACE);
   }
-  
+
   private void testEncode(String toEncode, String expected) throws Exception {
     BitMatrix result = writer.encode(toEncode, BarcodeFormat.CODE_128, 0, 0);
 
@@ -156,51 +164,47 @@ public class Code128WriterTestCase extends Assert {
     assertEquals(toEncode, actualRoundtripResultText);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = java.lang.IllegalArgumentException.class)
   public void testEncodeWithForcedCodeSetFailureCodeSetABadCharacter() throws Exception {
     // Lower case characters should not be accepted when the code set is forced to A.
     String toEncode = "ASDFx0123";
-
     Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
     hints.put(EncodeHintType.FORCE_CODE_SET, "A");
     BitMatrix result = writer.encode(toEncode, BarcodeFormat.CODE_128, 0, 0, hints);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = java.lang.IllegalArgumentException.class)
   public void testEncodeWithForcedCodeSetFailureCodeSetBBadCharacter() throws Exception {
-    String toEncode = "ASdf\00123"; // \0 (ascii value 0)
-    // Characters with ASCII value below 32 should not be accepted when the code set is forced to B.
+    String toEncode = "ASdf\u000123";// \0 (ascii value 0)
 
+    // Characters with ASCII value below 32 should not be accepted when the code set is forced to B.
     Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
     hints.put(EncodeHintType.FORCE_CODE_SET, "B");
     BitMatrix result = writer.encode(toEncode, BarcodeFormat.CODE_128, 0, 0, hints);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = java.lang.IllegalArgumentException.class)
   public void testEncodeWithForcedCodeSetFailureCodeSetCBadCharactersNonNum() throws Exception {
     String toEncode = "123a5678";
     // Non-digit characters should not be accepted when the code set is forced to C.
-
     Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
     hints.put(EncodeHintType.FORCE_CODE_SET, "C");
     BitMatrix result = writer.encode(toEncode, BarcodeFormat.CODE_128, 0, 0, hints);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = java.lang.IllegalArgumentException.class)
   public void testEncodeWithForcedCodeSetFailureCodeSetCBadCharactersFncCode() throws Exception {
-    String toEncode = "123\u00f2a678";
+    String toEncode = "123òa678";
     // Function codes other than 1 should not be accepted when the code set is forced to C.
-
     Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
     hints.put(EncodeHintType.FORCE_CODE_SET, "C");
     BitMatrix result = writer.encode(toEncode, BarcodeFormat.CODE_128, 0, 0, hints);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = java.lang.IllegalArgumentException.class)
   public void testEncodeWithForcedCodeSetFailureCodeSetCWrongAmountOfDigits() throws Exception {
     String toEncode = "123456789";
     // An uneven amount of digits should not be accepted when the code set is forced to C.
-
     Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
     hints.put(EncodeHintType.FORCE_CODE_SET, "C");
     BitMatrix result = writer.encode(toEncode, BarcodeFormat.CODE_128, 0, 0, hints);

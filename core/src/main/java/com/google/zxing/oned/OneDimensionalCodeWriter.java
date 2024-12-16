@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.google.zxing.oned;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.Writer;
 import com.google.zxing.common.BitMatrix;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.regex.Pattern;
+
 
 /**
  * <p>Encapsulates functionality and implementation that is common to one-dimensional barcodes.</p>
@@ -34,7 +33,13 @@ public abstract class OneDimensionalCodeWriter implements Writer {
   private static final Pattern NUMERIC = Pattern.compile("[0-9]+");
 
   @Override
+<<<<<<< LEFT
   public final BitMatrix encode(String contents, BarcodeFormat format, int width, int height) {
+    this.hints = null;
+=======
+  public final BitMatrix encode(String contents, BarcodeFormat format, int width, int height)
+      throws WriterException {
+>>>>>>> RIGHT
     return encode(contents, format, width, height, null);
   }
 
@@ -155,4 +160,3 @@ public abstract class OneDimensionalCodeWriter implements Writer {
     return encode(contents);
   }
 }
-
