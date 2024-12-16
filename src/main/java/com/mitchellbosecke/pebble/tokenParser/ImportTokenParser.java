@@ -15,8 +15,8 @@ import com.mitchellbosecke.pebble.node.RenderableNode;
 import com.mitchellbosecke.pebble.node.expression.Expression;
 import com.mitchellbosecke.pebble.parser.Parser;
 
-public class ImportTokenParser extends AbstractTokenParser {
 
+public class ImportTokenParser extends AbstractTokenParser {
     @Override
     public RenderableNode parse(Token token, Parser parser) {
 

@@ -9,17 +9,16 @@
 package com.mitchellbosecke.pebble.template;
 
 import com.google.common.cache.Cache;
-
 import com.mitchellbosecke.pebble.cache.CacheKey;
 import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.extension.ExtensionRegistry;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+
 
 /**
  * An evaluation context will store all stateful data that is necessary for the
@@ -29,7 +28,6 @@ import java.util.concurrent.ExecutorService;
  * @author Mitchell
  */
 public class EvaluationContext {
-
     private final boolean strictVariables;
 
     /**
@@ -96,16 +94,10 @@ public class EvaluationContext {
      * @param hierarchy         The inheritance chain
      * @param tagCache          The cache used by the "cache" tag
      */
-    public EvaluationContext(PebbleTemplateImpl self, boolean strictVariables, Locale locale,
-                             ExtensionRegistry extensionRegistry, Cache<CacheKey, Object> tagCache,
-                             ExecutorService executorService, List<PebbleTemplateImpl> importedTemplates,
-                             Map<String, PebbleTemplateImpl> namedImportedTemplates, ScopeChain scopeChain,
-                             Hierarchy hierarchy, boolean allowGetClass) {
-
+    public EvaluationContext(PebbleTemplateImpl self, boolean strictVariables, Locale locale, ExtensionRegistry extensionRegistry, Cache<CacheKey, Object> tagCache, ExecutorService executorService, List<PebbleTemplateImpl> importedTemplates, Map<String, PebbleTemplateImpl> namedImportedTemplates, ScopeChain scopeChain, Hierarchy hierarchy, boolean allowGetClass) {
         if (hierarchy == null) {
             hierarchy = new Hierarchy(self);
         }
-
         this.strictVariables = strictVariables;
         this.locale = locale;
         this.extensionRegistry = extensionRegistry;
@@ -126,8 +118,7 @@ public class EvaluationContext {
      * @return A copy of the evaluation context
      */
     public EvaluationContext shallowCopyWithoutInheritanceChain(PebbleTemplateImpl self) {
-        EvaluationContext result = new EvaluationContext(self, strictVariables, locale, extensionRegistry, tagCache,
-                executorService, importedTemplates, namedImportedTemplates, scopeChain, null, allowGetClass);
+        EvaluationContext result = new EvaluationContext(self, strictVariables, locale, extensionRegistry, tagCache, executorService, importedTemplates, namedImportedTemplates, scopeChain, null, allowGetClass);
         return result;
     }
 
@@ -140,8 +131,7 @@ public class EvaluationContext {
      * @return A copy of the evaluation context
      */
     public EvaluationContext threadSafeCopy(PebbleTemplateImpl self) {
-        EvaluationContext result = new EvaluationContext(self, strictVariables, locale, extensionRegistry, tagCache, executorService,
-                new ArrayList<>(importedTemplates), new HashMap<>(namedImportedTemplates), scopeChain.deepCopy(), hierarchy, allowGetClass);
+        EvaluationContext result = new EvaluationContext(self, strictVariables, locale, extensionRegistry, tagCache, executorService, new ArrayList<>(importedTemplates), new HashMap<>(namedImportedTemplates), scopeChain.deepCopy(), hierarchy, allowGetClass);
         return result;
     }
 
@@ -243,5 +233,4 @@ public class EvaluationContext {
     public boolean isAllowGetClass() {
         return this.allowGetClass;
     }
-
 }

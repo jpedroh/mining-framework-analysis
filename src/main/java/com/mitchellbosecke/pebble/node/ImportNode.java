@@ -13,12 +13,12 @@ import com.mitchellbosecke.pebble.node.expression.Expression;
 import com.mitchellbosecke.pebble.template.EvaluationContext;
 import com.mitchellbosecke.pebble.template.MacroAttributeProvider;
 import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
-
 import java.io.Writer;
 
-public class ImportNode extends AbstractRenderableNode {
 
+public class ImportNode extends AbstractRenderableNode {
     private final Expression<?> importExpression;
+
     private final String alias;
 
     public ImportNode(int lineNumber, Expression<?> importExpression, String alias) {
@@ -29,17 +29,7 @@ public class ImportNode extends AbstractRenderableNode {
 
     @Override
     public void render(PebbleTemplateImpl self, Writer writer, EvaluationContext context) {
-        String templateName = (String) importExpression.evaluate(self, context);
-        if (alias != null) {
-            self.importNamedTemplate(context, templateName, alias);
-
-            // put the imported template into scope
-            PebbleTemplateImpl template = self.getNamedImportedTemplate(context, alias);
-            context.getScopeChain().put(alias, new MacroAttributeProvider(template));
-
-        } else {
-            self.importTemplate(context, templateName);
-        }
+        self.importTemplate(context, ((String) (importExpression.evaluate(self, context))));
     }
 
     @Override
@@ -50,5 +40,4 @@ public class ImportNode extends AbstractRenderableNode {
     public Expression<?> getImportExpression() {
         return importExpression;
     }
-
 }
