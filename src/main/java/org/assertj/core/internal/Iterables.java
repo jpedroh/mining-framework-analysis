@@ -12,6 +12,24 @@
  */
 package org.assertj.core.internal;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import org.assertj.core.api.AssertionInfo;
+import org.assertj.core.api.Condition;
+import org.assertj.core.error.ElementsShouldSatisfy.UnsatisfiedRequirement;
+import org.assertj.core.error.ZippedElementsShouldSatisfy.ZipSatisfyError;
+import org.assertj.core.presentation.PredicateDescription;
+import org.assertj.core.util.VisibleForTesting;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.Objects.requireNonNull;
@@ -81,25 +99,6 @@ import static org.assertj.core.util.IterableUtil.sizeOf;
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.assertj.core.util.Streams.stream;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import org.assertj.core.api.AssertionInfo;
-import org.assertj.core.api.Condition;
-import org.assertj.core.error.ElementsShouldSatisfy.UnsatisfiedRequirement;
-import org.assertj.core.error.ZippedElementsShouldSatisfy.ZipSatisfyError;
-import org.assertj.core.presentation.PredicateDescription;
-import org.assertj.core.util.VisibleForTesting;
 
 /**
  * Reusable assertions for <code>{@link Iterable}</code>s.
@@ -112,13 +111,16 @@ import org.assertj.core.util.VisibleForTesting;
  * @author Florent Biville
  */
 public class Iterables {
-
   private static final Iterables INSTANCE = new Iterables();
+
   private final ComparisonStrategy comparisonStrategy;
+
   @VisibleForTesting
   Failures failures = Failures.instance();
+
   @VisibleForTesting
   Conditions conditions = Conditions.instance();
+
   @VisibleForTesting
   Predicates predicates = Predicates.instance();
 
@@ -335,7 +337,9 @@ public class Iterables {
    */
   public void assertContains(AssertionInfo info, Iterable<?> actual, Object[] values) {
     final List<?> actualAsList = newArrayList(actual);
-    if (commonCheckThatIterableAssertionSucceeds(info, actualAsList, values)) return;
+    if (commonCheckThatIterableAssertionSucceeds(info, actualAsList, values)) {
+      return;
+    }
     // check for elements in values that are missing in actual.
     assertIterableContainsGivenValues(actualAsList, values, info);
   }
@@ -374,8 +378,9 @@ public class Iterables {
    */
   public void assertContainsOnly(AssertionInfo info, Iterable<?> actual, Object[] expectedValues) {
     final List<?> actualAsList = newArrayList(actual);
-    if (commonCheckThatIterableAssertionSucceeds(info, actualAsList, expectedValues)) return;
-
+    if (commonCheckThatIterableAssertionSucceeds(info, actualAsList, expectedValues)) {
+      return;
+    }
     // after the for loop, unexpected = expectedValues - actual
     List<Object> unexpectedValues = newArrayList(actualAsList);
     // after the for loop, missing = actual - expectedValues
@@ -389,11 +394,8 @@ public class Iterables {
         iterablesRemove(unexpectedValues, expected);
       }
     }
-
-    if (!unexpectedValues.isEmpty() || !missingValues.isEmpty()) {
-      throw failures.failure(info, shouldContainOnly(actualAsList, expectedValues,
-                                                     missingValues, unexpectedValues,
-                                                     comparisonStrategy));
+    if ((!unexpectedValues.isEmpty()) || (!missingValues.isEmpty())) {
+      throw failures.failure(info, shouldContainOnly(actualAsList, expectedValues, missingValues, unexpectedValues, comparisonStrategy));
     }
   }
 
@@ -466,19 +468,24 @@ public class Iterables {
     // So we store each element and slide for each new element until a match is found or until the 'actual' is
     // exhausted. Of course if 'actual' really is infinite then this could take a while :-D
     final Iterator<?> actualIterator = actual.iterator();
-    if (!actualIterator.hasNext() && sequence.length == 0) return;
+    if ((!actualIterator.hasNext()) && (sequence.length == 0)) {
+      return;
+    }
     failIfEmptySinceActualIsNotEmpty(sequence);
     // we only store sequence.length entries from actual in the LIFO, no need for more.
     Lifo lifo = new Lifo(sequence.length);
     while (actualIterator.hasNext()) {
       lifo.add(actualIterator.next());
-      if (lifo.matchesExactly(sequence)) return;
-    }
+      if (lifo.matchesExactly(sequence)) {
+        return;
+      }
+    } 
     throw actualDoesNotContainSequence(info, actual, sequence);
   }
 
   private class Lifo {
     private int maxSize;
+
     private LinkedList<Object> stack;
 
     Lifo(int maxSize) {
@@ -492,9 +499,13 @@ public class Iterables {
     }
 
     boolean matchesExactly(Object[] sequence) {
-      if (stack.size() != sequence.length) return false;
+      if (stack.size() != sequence.length) {
+        return false;
+      }
       for (int i = 0; i < sequence.length; i++) {
-        if (!areEqual(stack.get(i), sequence[i])) return false;
+        if (!areEqual(stack.get(i), sequence[i])) {
+          return false;
+        }
       }
       return true;
     }
@@ -1114,7 +1125,6 @@ public class Iterables {
   public void assertContainsExactly(AssertionInfo info, Iterable<?> actual, Object[] values) {
     checkIsNotNull(values);
     assertNotNull(info, actual);
-
     List<Object> actualAsList = newArrayList(actual);
     IterableDiff diff = diff(actualAsList, asList(values), comparisonStrategy);
     if (!diff.differencesFound()) {
@@ -1129,9 +1139,7 @@ public class Iterables {
       }
       return;
     }
-    throw failures.failure(info,
-                           shouldContainExactly(actual, asList(values), diff.missing, diff.unexpected,
-                                                comparisonStrategy));
+    throw failures.failure(info, shouldContainExactly(actual, asList(values), diff.missing, diff.unexpected, comparisonStrategy));
   }
 
   public <E> void assertAllSatisfy(AssertionInfo info, Iterable<? extends E> actual, Consumer<? super E> requirements) {
@@ -1364,11 +1372,11 @@ public class Iterables {
   }
 
   public static <T> Predicate<T> byPassingAssertions(Consumer<? super T> assertions) {
-    return objectToTest -> {
+    return ( objectToTest) -> {
       try {
         assertions.accept(objectToTest);
         return true;
-      } catch (AssertionError e) {
+      } catch (java.lang.AssertionError e) {
         return false;
       }
     };
@@ -1381,5 +1389,4 @@ public class Iterables {
   private static void checkIsNotEmptySubsequence(Object[] subsequence) {
     if (subsequence.length == 0) throw new IllegalArgumentException(emptySubsequence());
   }
-
 }
