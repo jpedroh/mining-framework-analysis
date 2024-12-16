@@ -19,9 +19,10 @@
  */
 package org.sonar.objectivec;
 
+import com.sonar.sslr.impl.Parser;
+import com.sonar.sslr.squid.metrics.CounterVisitor;
 import java.io.File;
 import java.util.Collection;
-
 import org.sonar.objectivec.api.ObjectiveCGrammar;
 import org.sonar.objectivec.api.ObjectiveCMetric;
 import org.sonar.objectivec.parser.ObjectiveCParser;
@@ -37,94 +38,57 @@ import org.sonar.squidbridge.metrics.CommentsVisitor;
 import org.sonar.squidbridge.metrics.LinesOfCodeVisitor;
 import org.sonar.squidbridge.metrics.LinesVisitor;
 
-import com.sonar.sslr.impl.Parser;
-<<<<<<< HEAD
-=======
-import com.sonar.sslr.squid.AstScanner;
-import com.sonar.sslr.squid.SquidAstVisitor;
-import com.sonar.sslr.squid.SquidAstVisitorContextImpl;
-import com.sonar.sslr.squid.metrics.CommentsVisitor;
-import com.sonar.sslr.squid.metrics.LinesOfCodeVisitor;
-import com.sonar.sslr.squid.metrics.LinesVisitor;
-import com.sonar.sslr.squid.metrics.CounterVisitor;
->>>>>>> FETCH_HEAD
 
 public class ObjectiveCAstScanner {
+  private ObjectiveCAstScanner() {
+  }
 
-    private ObjectiveCAstScanner() {
+  /**
+   * Helper method for testing checks without having to deploy them on a Sonar instance.
+   */
+  public static SourceFile scanSingleFile(File file, SquidAstVisitor<ObjectiveCGrammar>... visitors) {
+    if (!file.isFile()) {
+      throw new IllegalArgumentException(("File '" + file) + "' not found.");
     }
-
-    /**
-     * Helper method for testing checks without having to deploy them on a Sonar instance.
-     */
-    public static SourceFile scanSingleFile(File file, SquidAstVisitor<ObjectiveCGrammar>... visitors) {
-        if (!file.isFile()) {
-            throw new IllegalArgumentException("File '" + file + "' not found.");
-        }
-        AstScanner<ObjectiveCGrammar> scanner = create(new ObjectiveCConfiguration(), visitors);
-        scanner.scanFile(file);
-        Collection<SourceCode> sources = scanner.getIndex().search(new QueryByType(SourceFile.class));
-        if (sources.size() != 1) {
-            throw new IllegalStateException("Only one SourceFile was expected whereas " + sources.size() + " has been returned.");
-        }
-        return (SourceFile) sources.iterator().next();
+    AstScanner<ObjectiveCGrammar> scanner = create(new ObjectiveCConfiguration(), visitors);
+    scanner.scanFile(file);
+    Collection<SourceCode> sources = scanner.getIndex().search(new QueryByType(SourceFile.class));
+    if (sources.size() != 1) {
+      throw new IllegalStateException(("Only one SourceFile was expected whereas " + sources.size()) + " has been returned.");
     }
+    return ((SourceFile) (sources.iterator().next()));
+  }
 
-    public static AstScanner<ObjectiveCGrammar> create(ObjectiveCConfiguration conf, SquidAstVisitor<ObjectiveCGrammar>... visitors) {
-        final SquidAstVisitorContextImpl<ObjectiveCGrammar> context = new SquidAstVisitorContextImpl<ObjectiveCGrammar>(new SourceProject("Objective-C Project"));
-        final Parser<ObjectiveCGrammar> parser = ObjectiveCParser.create(conf);
+  public static AstScanner<ObjectiveCGrammar> create(ObjectiveCConfiguration conf, SquidAstVisitor<ObjectiveCGrammar>... visitors) {
+    final SquidAstVisitorContextImpl<ObjectiveCGrammar> context = new SquidAstVisitorContextImpl<ObjectiveCGrammar>(new SourceProject("Objective-C Project"));
+    final Parser<ObjectiveCGrammar> parser = ObjectiveCParser.create(conf);
+    AstScanner.Builder<ObjectiveCGrammar> builder = AstScanner.<ObjectiveCGrammar>builder(context).setBaseParser(parser);
+    /* Metrics */
+    builder.withMetrics(ObjectiveCMetric.values());
+    /* Comments */
+    builder.setCommentAnalyser(new CommentAnalyser() {
+          @Override
+          public boolean isBlank(String line) {
+            for (int i = 0; i < line.length(); i++) {
+              if (Character.isLetterOrDigit(line.charAt(i))) {
+                return false;
+              }
+            }
+            return true;
+          }
 
-        AstScanner.Builder<ObjectiveCGrammar> builder = AstScanner.<ObjectiveCGrammar> builder(context).setBaseParser(parser);
-
-        /* Metrics */
-        builder.withMetrics(ObjectiveCMetric.values());
-
-        /* Comments */
-        builder.setCommentAnalyser(
-                new CommentAnalyser() {
-                    @Override
-                    public boolean isBlank(String line) {
-                        for (int i = 0; i < line.length(); i++) {
-                            if (Character.isLetterOrDigit(line.charAt(i))) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    public String getContents(String comment) {
-                        return comment.startsWith("//") ? comment.substring(2) : comment.substring(2, comment.length() - 2);
-                    }
-                });
-
-        /* Files */
-      builder.setFilesMetric(ObjectiveCMetric.FILES);
-
-<<<<<<< HEAD
-        /* Metrics */
-      	builder.withSquidAstVisitor(new LinesVisitor<ObjectiveCGrammar>(ObjectiveCMetric.LINES));
-      	builder.withSquidAstVisitor(new LinesOfCodeVisitor<ObjectiveCGrammar>(ObjectiveCMetric.LINES_OF_CODE));
-      	builder.withSquidAstVisitor(CommentsVisitor.<ObjectiveCGrammar> builder().withCommentMetric(ObjectiveCMetric.COMMENT_LINES)
-      			.withNoSonar(true)
-      			.withIgnoreHeaderComment(conf.getIgnoreHeaderComments())
-      			.build());
-=======
+          @Override
+          public String getContents(String comment) {
+            return comment.startsWith("//") ? comment.substring(2) : comment.substring(2, comment.length() - 2);
+          }
+    });
+    /* Files */
+    builder.setFilesMetric(ObjectiveCMetric.FILES);
     /* Metrics */
     builder.withSquidAstVisitor(new LinesVisitor<ObjectiveCGrammar>(ObjectiveCMetric.LINES));
     builder.withSquidAstVisitor(new LinesOfCodeVisitor<ObjectiveCGrammar>(ObjectiveCMetric.LINES_OF_CODE));
-    builder.withSquidAstVisitor(CommentsVisitor.<ObjectiveCGrammar> builder().withCommentMetric(ObjectiveCMetric.COMMENT_LINES)
-        .withBlankCommentMetric(ObjectiveCMetric.COMMENT_BLANK_LINES)
-        .withNoSonar(true)
-        .withIgnoreHeaderComment(conf.getIgnoreHeaderComments())
-        .build());
-    builder.withSquidAstVisitor(CounterVisitor.<ObjectiveCGrammar> builder()
-        .setMetricDef(ObjectiveCMetric.STATEMENTS)
-        .subscribeTo(parser.getGrammar().statement)
-        .build());
->>>>>>> FETCH_HEAD
-
-        return builder.build();
-    }
-
+    builder.withSquidAstVisitor(CommentsVisitor.<ObjectiveCGrammar>builder().withCommentMetric(ObjectiveCMetric.COMMENT_LINES).withNoSonar(true).withIgnoreHeaderComment(conf.getIgnoreHeaderComments()).build());
+    builder.withSquidAstVisitor(CounterVisitor.<ObjectiveCGrammar>builder().setMetricDef(ObjectiveCMetric.STATEMENTS).subscribeTo(parser.getGrammar().statement).build());
+    return builder.build();
+  }
 }

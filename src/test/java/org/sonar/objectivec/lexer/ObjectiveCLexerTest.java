@@ -19,82 +19,58 @@
  */
 package org.sonar.objectivec.lexer;
 
+import com.sonar.sslr.api.GenericTokenType;
+import com.sonar.sslr.api.Token;
+import com.sonar.sslr.impl.Lexer;
+import java.io.File;
+import java.util.List;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.sonar.objectivec.api.ObjectiveCKeyword;
+import org.sonar.objectivec.api.ObjectiveCTokenType;
 import static com.sonar.sslr.test.lexer.LexerMatchers.hasComment;
 import static com.sonar.sslr.test.lexer.LexerMatchers.hasToken;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import java.io.File;
-import java.util.List;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import com.sonar.sslr.api.GenericTokenType;
-import com.sonar.sslr.api.Token;
-import com.sonar.sslr.impl.Lexer;
-
-import org.sonar.objectivec.api.ObjectiveCTokenType;
-import org.sonar.objectivec.api.ObjectiveCKeyword;
 
 public class ObjectiveCLexerTest {
+  private static Lexer lexer;
 
-    private static Lexer lexer;
+  @BeforeClass
+  public static void init() {
+    lexer = ObjectiveCLexer.create();
+  }
 
-    @BeforeClass
-    public static void init() {
-        lexer = ObjectiveCLexer.create();
-    }
+  @Test
+  public void lexMultiLinesComment() {
+    assertThat(lexer.lex("/* My Comment \n*/"), hasComment("/* My Comment \n*/"));
+    assertThat(lexer.lex("/**/"), hasComment("/**/"));
+  }
 
-    @Test
-    public void lexMultiLinesComment() {
-        assertThat(lexer.lex("/* My Comment \n*/"), hasComment("/* My Comment \n*/"));
-        assertThat(lexer.lex("/**/"), hasComment("/**/"));
-    }
-
-    @Test
-    public void lexInlineComment() {
-        assertThat(lexer.lex("// My Comment \n new line"), hasComment("// My Comment "));
-        assertThat(lexer.lex("//"), hasComment("//"));
-    }
+  @Test
+  public void lexInlineComment() {
+    assertThat(lexer.lex("// My Comment \n new line"), hasComment("// My Comment "));
+    assertThat(lexer.lex("//"), hasComment("//"));
+  }
 
     @Test
     public void lexEndOflineComment() {
-        assertThat(lexer.lex("[self init]; // My Comment end of line"), hasComment("// My Comment end of line"));
-        assertThat(lexer.lex("[self init]; //"), hasComment("//"));
+      assertThat(lexer.lex("[self init]; // My Comment end of line"), hasComment("// My Comment end of line"));
+      assertThat(lexer.lex("[self init]; //"), hasComment("//"));
     }
 
     @Test
-<<<<<<< HEAD
-    public void lexLineOfCode() {
-        assertThat(lexer.lex("[self init];"), hasToken("[self", GenericTokenType.LITERAL));
-    }
-
-    @Test
-    public void lexEmptyLine() {
-        List<Token> tokens = lexer.lex("\n");
-        assertThat(tokens.size(), equalTo(1));
-        assertThat(tokens, hasToken(GenericTokenType.EOF));
-    }
-
-    @Test
-    public void lexSampleFile() {
-        List<Token> tokens = lexer.lex(new File("src/test/resources/objcSample.h"));
-        assertThat(tokens.size(), equalTo(16));
-        assertThat(tokens, hasToken(GenericTokenType.EOF));
-=======
     public void lexEmptyLine() {
     	List<Token> tokens = lexer.lex("\n");
     	assertThat(tokens.size(), equalTo(1));
-        assertThat(tokens, hasToken(GenericTokenType.EOF));
-    }
-    
-    public void lexInclude() {
-        List<Token> tokens = lexer.lex("#include \"Test.h\"");
-        assertThat(tokens.size(), equalTo(2));
-        assertThat(tokens, hasToken(ObjectiveCKeyword.HASH_INCLUDE));
-        assertThat(tokens, hasToken(ObjectiveCTokenType.STRING_LITERAL));
->>>>>>> FETCH_HEAD
+      assertThat(tokens, hasToken(GenericTokenType.EOF));
     }
 
+  public void lexInclude() {
+    List<Token> tokens = lexer.lex("#include \"Test.h\"");
+    assertThat(tokens.size(), equalTo(2));
+    assertThat(tokens, hasToken(ObjectiveCKeyword.HASH_INCLUDE));
+    assertThat(tokens, hasToken(ObjectiveCTokenType.STRING_LITERAL));
+  }
 }

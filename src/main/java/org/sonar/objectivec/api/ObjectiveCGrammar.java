@@ -22,48 +22,41 @@ package org.sonar.objectivec.api;
 import com.sonar.sslr.api.Grammar;
 import com.sonar.sslr.api.Rule;
 
+
 public class ObjectiveCGrammar extends Grammar {
-
-<<<<<<< HEAD
-    public Rule identifierName;
-
-    // A.1 Lexical
-
-    public Rule literal;
-    public Rule nullLiteral;
-    public Rule booleanLiteral;
-    public Rule stringLiteral;
-=======
   public Rule identifierName;
-    
+
   // A.1 Lexical
+  // A.1 Lexical
+
   public Rule literal;
+
   public Rule nullLiteral;
+
   public Rule booleanLiteral;
+
   public Rule stringLiteral;
 
   public Rule messageReceiver;
+
   public Rule messageSent;
 
+  // Expressions
   // Expressions
   public Rule sendMessageExpression;
 
   // Statements
+  // Statements
   public Rule statement;
-  
+
   public Rule sourceElements;
+
   public Rule sourceElement;
+
   public Rule program;
->>>>>>> FETCH_HEAD
 
-    public Rule program;
-
-    public Rule sourceElements;
-    public Rule sourceElement;
-
-    @Override
-    public Rule getRootRule() {
-        return program;
-    }
-
+  @Override
+  public Rule getRootRule() {
+    return program;
+  }
 }

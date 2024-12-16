@@ -19,76 +19,42 @@
  */
 package org.sonar.objectivec.lexer;
 
-import static com.sonar.sslr.impl.channel.RegexpChannelBuilder.commentRegexp;
-import static com.sonar.sslr.impl.channel.RegexpChannelBuilder.regexp;
-import static com.sonar.sslr.impl.channel.RegexpChannelBuilder.o2n;
-import static com.sonar.sslr.impl.channel.RegexpChannelBuilder.and;
-
-import org.sonar.objectivec.ObjectiveCConfiguration;
-import org.sonar.objectivec.api.ObjectiveCKeyword;
-import org.sonar.objectivec.api.ObjectiveCTokenType;
-import org.sonar.objectivec.api.ObjectiveCPunctuator;
-
 import com.sonar.sslr.impl.Lexer;
 import com.sonar.sslr.impl.channel.BlackHoleChannel;
-import com.sonar.sslr.impl.channel.PunctuatorChannel;
 import com.sonar.sslr.impl.channel.IdentifierAndKeywordChannel;
+import com.sonar.sslr.impl.channel.PunctuatorChannel;
+import org.sonar.objectivec.ObjectiveCConfiguration;
+import org.sonar.objectivec.api.ObjectiveCKeyword;
+import org.sonar.objectivec.api.ObjectiveCPunctuator;
+import org.sonar.objectivec.api.ObjectiveCTokenType;
+import static com.sonar.sslr.impl.channel.RegexpChannelBuilder.and;
+import static com.sonar.sslr.impl.channel.RegexpChannelBuilder.commentRegexp;
+import static com.sonar.sslr.impl.channel.RegexpChannelBuilder.o2n;
+import static com.sonar.sslr.impl.channel.RegexpChannelBuilder.regexp;
+
 
 public class ObjectiveCLexer {
+  private ObjectiveCLexer() {
+  }
 
-    private ObjectiveCLexer() {
-    }
+  public static Lexer create() {
+    return create(new ObjectiveCConfiguration());
+  }
 
-    public static Lexer create() {
-        return create(new ObjectiveCConfiguration());
-    }
-
-    public static Lexer create(ObjectiveCConfiguration conf) {
-        return Lexer.builder()
-                .withCharset(conf.getCharset())
-
-<<<<<<< HEAD
-                .withFailIfNoChannelToConsumeOneCharacter(false)
-=======
-        .withFailIfNoChannelToConsumeOneCharacter(true)
->>>>>>> FETCH_HEAD
-
-                // Comments
-                .withChannel(commentRegexp("//[^\\n\\r]*+"))
-                .withChannel(commentRegexp("/\\*[\\s\\S]*?\\*/"))
-
-<<<<<<< HEAD
-                // All other tokens
-                .withChannel(regexp(LITERAL, "[^\r\n\\s/]+"))
-
-                .withChannel(new BlackHoleChannel("[\\s]"))
-
-                .build();
-    }
-=======
-        // string literals
-        .withChannel(regexp(ObjectiveCTokenType.STRING_LITERAL, "\"([^\"\\\\]*+(\\\\[\\s\\S])?+)*+\""))
-
-        // numeric literals
-        // integer/long
-        // decimal
-        .withChannel(regexp(ObjectiveCTokenType.NUMERIC_LITERAL, "[0-9]++[lL]?+"))
-        // hex
-        .withChannel(regexp(ObjectiveCTokenType.NUMERIC_LITERAL, "0[xX][0-9A-Fa-f]++[lL]?+"))
-        // float/double
-        // decimal
-        .withChannel(regexp(ObjectiveCTokenType.NUMERIC_LITERAL, "[0-9]++[fFdD]"))
-
+  public static Lexer create(ObjectiveCConfiguration conf) {
+    return // skip all whitespace chars
+        // punctuators/operators
         // identifiers and keywords
         // identifiers starts with a non digit and underscore and continues with either one of these or with digits
         // case sensitive = true
-        .withChannel(new IdentifierAndKeywordChannel(and("[a-zA-Z_]", o2n("\\w")), true, ObjectiveCKeyword.values()))
-
-        // punctuators/operators
-        .withChannel(new PunctuatorChannel(ObjectiveCPunctuator.values()))
-
-        // skip all whitespace chars
-        .withChannel(new BlackHoleChannel("[\\s]"))
->>>>>>> FETCH_HEAD
-
+        // float/double
+        // decimal
+        // hex
+        // numeric literals
+        // integer/long
+        // decimal
+    // string literals
+        // Comments
+    Lexer.builder().withCharset(conf.getCharset()).withFailIfNoChannelToConsumeOneCharacter(true).withChannel(commentRegexp("//[^\\n\\r]*+")).withChannel(commentRegexp("/\\*[\\s\\S]*?\\*/")).withChannel(regexp(ObjectiveCTokenType.STRING_LITERAL, "\"([^\"\\\\]*+(\\\\[\\s\\S])?+)*+\"")).withChannel(regexp(ObjectiveCTokenType.NUMERIC_LITERAL, "[0-9]++[lL]?+")).withChannel(regexp(ObjectiveCTokenType.NUMERIC_LITERAL, "0[xX][0-9A-Fa-f]++[lL]?+")).withChannel(regexp(ObjectiveCTokenType.NUMERIC_LITERAL, "[0-9]++[fFdD]")).withChannel(new IdentifierAndKeywordChannel(and("[a-zA-Z_]", o2n("\\w")), true, ObjectiveCKeyword.values())).withChannel(new PunctuatorChannel(ObjectiveCPunctuator.values())).withChannel(new BlackHoleChannel("[\\s]")).build();
+  }
 }

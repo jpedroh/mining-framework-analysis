@@ -22,29 +22,20 @@ package org.sonar.objectivec.api;
 import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.TokenType;
 
+
 public enum ObjectiveCTokenType implements TokenType {
 
-<<<<<<< HEAD
-    NUMERIC_LITERAL;
-=======
   STRING_LITERAL,
   NUMERIC_LITERAL;
-  
   public String getName() {
     return name();
   }
->>>>>>> FETCH_HEAD
 
-    public String getName() {
-        return name();
-    }
+  public String getValue() {
+    return name();
+  }
 
-    public String getValue() {
-        return name();
-    }
-
-    public boolean hasToBeSkippedFromAst(AstNode node) {
-        return false;
-    }
-
+  public boolean hasToBeSkippedFromAst(AstNode node) {
+    return false;
+  }
 }

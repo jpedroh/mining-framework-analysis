@@ -19,61 +19,35 @@
  */
 package org.sonar.objectivec;
 
+import java.io.File;
+import org.junit.Test;
+import org.sonar.objectivec.api.ObjectiveCMetric;
+import org.sonar.squidbridge.api.SourceFile;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.io.File;
 
-import org.junit.Test;
-import org.sonar.objectivec.api.ObjectiveCMetric;
-import org.sonar.squidbridge.api.SourceFile;
+/* 
+  @Test
+  public void lines() {
+    SourceFile file = ObjectiveCAstScanner.scanSingleFile(new File("src/test/resources/objcSample.h"));
+    assertThat(file.getInt(ObjectiveCMetric.LINES), is(18));
+  }
 
-public class ObjectiveCAstScannerTest {
-<<<<<<< HEAD
-
-    @Test
-    public void lines() {
-        SourceFile file = ObjectiveCAstScanner.scanSingleFile(new File("src/test/resources/objcSample.h"));
-        assertThat(file.getInt(ObjectiveCMetric.LINES), is(18));
-    }
-
-    @Test
-    public void lines_of_code() {
-        SourceFile file = ObjectiveCAstScanner.scanSingleFile(new File("src/test/resources/objcSample.h"));
-        assertThat(file.getInt(ObjectiveCMetric.LINES_OF_CODE), is(5));
-    }
-
-    @Test
-    public void comments() {
-        SourceFile file = ObjectiveCAstScanner.scanSingleFile(new File("src/test/resources/objcSample.h"));
-        assertThat(file.getInt(ObjectiveCMetric.COMMENT_LINES), is(4));
-        assertThat(file.getNoSonarTagLines(), hasItem(10));
-        assertThat(file.getNoSonarTagLines().size(), is(1));
-    }
-
-=======
-	/* 
-	  @Test
-	  public void lines() {
-	    SourceFile file = ObjectiveCAstScanner.scanSingleFile(new File("src/test/resources/objcSample.h"));
-	    assertThat(file.getInt(ObjectiveCMetric.LINES), is(18));
-	  }
-
-	  @Test
-	  public void lines_of_code() {
-	    SourceFile file = ObjectiveCAstScanner.scanSingleFile(new File("src/test/resources/objcSample.h"));
-	    assertThat(file.getInt(ObjectiveCMetric.LINES_OF_CODE), is(5));
-	  }
-	  
-	  @Test
-	  public void comments() {
-	    SourceFile file = ObjectiveCAstScanner.scanSingleFile(new File("src/test/resources/objcSample.h"));
-	    assertThat(file.getInt(ObjectiveCMetric.COMMENT_BLANK_LINES), is(3));
-	    assertThat(file.getInt(ObjectiveCMetric.COMMENT_LINES), is(4));
-	    assertThat(file.getNoSonarTagLines(), hasItem(10));
-	    assertThat(file.getNoSonarTagLines().size(), is(1));
-	  }
-      */
->>>>>>> FETCH_HEAD
-}
+  @Test
+  public void lines_of_code() {
+    SourceFile file = ObjectiveCAstScanner.scanSingleFile(new File("src/test/resources/objcSample.h"));
+    assertThat(file.getInt(ObjectiveCMetric.LINES_OF_CODE), is(5));
+  }
+  
+  @Test
+  public void comments() {
+    SourceFile file = ObjectiveCAstScanner.scanSingleFile(new File("src/test/resources/objcSample.h"));
+    assertThat(file.getInt(ObjectiveCMetric.COMMENT_BLANK_LINES), is(3));
+    assertThat(file.getInt(ObjectiveCMetric.COMMENT_LINES), is(4));
+    assertThat(file.getNoSonarTagLines(), hasItem(10));
+    assertThat(file.getNoSonarTagLines().size(), is(1));
+  }
+     */
+public class ObjectiveCAstScannerTest {}
