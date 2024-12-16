@@ -15,64 +15,59 @@
  */
 package com.datastax.driver.core.querybuilder;
 
+import com.datastax.driver.core.RegularStatement;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.datastax.driver.core.RegularStatement;
 
 /**
  * A built BATCH statement.
  */
 public class Batch extends BuiltStatement {
-
     private final List<RegularStatement> statements;
+
     private final boolean logged;
+
     private final Options usings;
+
     private ByteBuffer routingKey;
 
+    // Only used when we add at last one statement that is not a BuiltStatement subclass
     // Only used when we add at last one statement that is not a BuiltStatement subclass
     private int nonBuiltStatementValues;
 
     Batch(RegularStatement[] statements, boolean logged) {
-        super((String)null);
-        this.statements = statements.length == 0
-                        ? new ArrayList<RegularStatement>()
-                        : new ArrayList<RegularStatement>(statements.length);
+        super(((String) (null)));
+        this.statements = (statements.length == 0) ? new ArrayList<RegularStatement>() : new ArrayList<RegularStatement>(statements.length);
         this.logged = logged;
         this.usings = new Options(this);
-
-        for (int i = 0; i < statements.length; i++)
+        for (int i = 0; i < statements.length; i++) {
             add(statements[i]);
+        }
     }
 
     @Override
     StringBuilder buildQueryString(List<Object> variables) {
         StringBuilder builder = new StringBuilder();
-
-        builder.append(isCounterOp()
-                       ? "BEGIN COUNTER BATCH"
-                       : (logged ? "BEGIN BATCH" : "BEGIN UNLOGGED BATCH"));
-
+        builder.append(isCounterOp() ? "BEGIN COUNTER BATCH" : logged ? "BEGIN BATCH" : "BEGIN UNLOGGED BATCH");
         if (!usings.usings.isEmpty()) {
             builder.append(" USING ");
             Utils.joinAndAppend(builder, " AND ", usings.usings, variables);
         }
         builder.append(' ');
-
         for (int i = 0; i < statements.size(); i++) {
             RegularStatement stmt = statements.get(i);
             if (stmt instanceof BuiltStatement) {
-                BuiltStatement bst = (BuiltStatement)stmt;
+                BuiltStatement bst = ((BuiltStatement) (stmt));
                 builder.append(maybeAddSemicolon(bst.buildQueryString(variables)));
-
             } else {
                 String str = stmt.getQueryString();
                 builder.append(str);
-                if (!str.trim().endsWith(";"))
+                if (!str.trim().endsWith(";")) {
                     builder.append(';');
-
+                }
                 // Note that we force hasBindMarkers if there is any non-BuiltStatement, so we know
                 // that we can only get there with variables == null
                 assert variables == null;
@@ -92,33 +87,27 @@ public class Batch extends BuiltStatement {
      * are mixed.
      */
     public Batch add(RegularStatement statement) {
-        boolean isCounterOp = statement instanceof BuiltStatement && ((BuiltStatement) statement).isCounterOp();
-
-        if (this.isCounterOp == null)
+        boolean isCounterOp = (statement instanceof BuiltStatement) && ((BuiltStatement) (statement)).isCounterOp();
+        if (this.isCounterOp == null) {
             setCounterOp(isCounterOp);
-        else if (isCounterOp() != isCounterOp)
+        } else if (isCounterOp() != isCounterOp) {
             throw new IllegalArgumentException("Cannot mix counter operations and non-counter operations in a batch statement");
-
-        this.statements.add(statement);
-
-        if (statement instanceof BuiltStatement)
-        {
-            this.hasBindMarkers |= ((BuiltStatement)statement).hasBindMarkers;
         }
-        else
-        {
+        this.statements.add(statement);
+        if (statement instanceof BuiltStatement) {
+            this.hasBindMarkers |= ((BuiltStatement) (statement)).hasBindMarkers;
+        } else {
             // For non-BuiltStatement, we cannot know if it includes a bind makers and we assume it does. In practice,
             // this means we will always serialize values as strings when there is non-BuiltStatement
             this.hasBindMarkers = true;
-            if (statement.getValues() != null)
+            if (statement.getValues() != null) {
                 this.nonBuiltStatementValues += statement.getValues().length;
+            }
         }
-
         checkForBindMarkers(null);
-
-        if (routingKey == null && statement.getRoutingKey() != null)
+        if ((routingKey == null) && (statement.getRoutingKey() != null)) {
             routingKey = statement.getRoutingKey();
-
+        }
         return this;
     }
 
@@ -181,7 +170,6 @@ public class Batch extends BuiltStatement {
      * The options of a BATCH statement.
      */
     public static class Options extends BuiltStatement.ForwardingStatement<Batch> {
-
         private final List<Using> usings = new ArrayList<Using>();
 
         Options(Batch statement) {
@@ -191,7 +179,8 @@ public class Batch extends BuiltStatement {
         /**
          * Adds the provided option.
          *
-         * @param using a BATCH option.
+         * @param using
+         * 		a BATCH option.
          * @return this {@code Options} object.
          */
         public Options and(Using using) {
@@ -203,7 +192,8 @@ public class Batch extends BuiltStatement {
         /**
          * Adds a new statement to the BATCH statement these options are part of.
          *
-         * @param statement the statement to add.
+         * @param statement
+         * 		the statement to add.
          * @return the BATCH statement these options are part of.
          */
         public Batch add(RegularStatement statement) {
