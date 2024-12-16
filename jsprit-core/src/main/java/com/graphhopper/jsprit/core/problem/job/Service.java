@@ -17,8 +17,6 @@
  */
 package com.graphhopper.jsprit.core.problem.job;
 
-import java.util.Collection;
-
 import com.graphhopper.jsprit.core.problem.AbstractJob;
 import com.graphhopper.jsprit.core.problem.Capacity;
 import com.graphhopper.jsprit.core.problem.Location;
@@ -27,6 +25,8 @@ import com.graphhopper.jsprit.core.problem.solution.route.activity.TimeWindow;
 import com.graphhopper.jsprit.core.problem.solution.route.activity.TimeWindows;
 import com.graphhopper.jsprit.core.problem.solution.route.activity.TimeWindowsImpl;
 import com.graphhopper.jsprit.core.util.Coordinate;
+import java.util.Collection;
+
 
 /**
  * Service implementation of a job.
@@ -39,19 +39,12 @@ import com.graphhopper.jsprit.core.util.Coordinate;
  * @author schroeder
  */
 public class Service extends AbstractJob {
-
-
-
     /**
      * Builder that builds a service.
      *
      * @author schroeder
      */
     public static class Builder<T extends Service> {
-
-
-
-
         /**
          * Returns a new instance of builder that builds a service.
          *
@@ -88,16 +81,19 @@ public class Service extends AbstractJob {
 
         protected TimeWindowsImpl timeWindows;
 
-        private boolean twAdded = false;
+private boolean twAdded = false;
 
         private int priority = 2;
+
+        protected double maxTimeInVehicle = Double.MAX_VALUE;
+
         protected Object userData;
 
-		protected double maxTimeInVehicle = Double.MAX_VALUE;Builder(String id){
-			this.id = id;
-			timeWindows = new TimeWindowsImpl();
-			timeWindows.add(timeWindow);
-		}
+        Builder(String id) {
+            this.id = id;
+            timeWindows = new TimeWindowsImpl();
+            timeWindows.add(timeWindow);
+        }
 
         /**
          * Protected method to set the type-name of the service.
@@ -201,11 +197,13 @@ public class Service extends AbstractJob {
          * @throws IllegalArgumentException if neither locationId nor coordinate is set.
          */
         public T build() {
-            if (location == null) throw new IllegalArgumentException("location is missing");
+            if (location == null) {
+                throw new IllegalArgumentException("location is missing");
+            }
             this.setType("service");
             capacity = capacityBuilder.build();
             skills = skillBuilder.build();
-            return (T) new Service(this);
+            return ((T) (new Service(this)));
         }
 
         public Builder<T> addRequiredSkill(String skill) {
@@ -238,20 +236,22 @@ public class Service extends AbstractJob {
          * Default is 2.
          *
          * @param priority
+         * 		
          * @return builder
          */
         public Builder<T> setPriority(int priority) {
-            if (priority < 1 || priority > 10)
+            if ((priority < 1) || (priority > 10)) {
                 throw new IllegalArgumentException("incorrect priority. only priority values from 1 to 10 are allowed where 1 = high and 10 is low");
+            }
             this.priority = priority;
             return this;
         }
 
         public Builder<T> setMaxTimeInVehicle(double maxTimeInVehicle){
             throw new UnsupportedOperationException("maxTimeInVehicle is not yet supported for Pickups and Services (only for Deliveries and Shipments)");
-//            if(maxTimeInVehicle < 0) throw new IllegalArgumentException("maxTimeInVehicle should be positive");
-//            this.maxTimeInVehicle = maxTimeInVehicle;
-//            return this;
+        //            if(maxTimeInVehicle < 0) throw new IllegalArgumentException("maxTimeInVehicle should be positive");
+        //            this.maxTimeInVehicle = maxTimeInVehicle;
+        //            return this;
         }
     }
 
@@ -289,11 +289,12 @@ public class Service extends AbstractJob {
         location = builder.location;
         timeWindowManager = builder.timeWindows;
         priority = builder.priority;
-	maxTimeInVehicle = builder.maxTimeInVehicle;}
-
-    public Collection<TimeWindow> getTimeWindows(){
-        return timeWindowManager.getTimeWindows();
+        maxTimeInVehicle = builder.maxTimeInVehicle;
     }
+
+public Collection<TimeWindow> getTimeWindows(){
+	return timeWindowManager.getTimeWindows();
+}
 
     @Override
     public String getId() {
@@ -308,7 +309,6 @@ public class Service extends AbstractJob {
     public Location getLocation() {
         return location;
     }
-
 
     /**
      * Returns the service-time/duration a service takes at service-location.
@@ -346,7 +346,6 @@ public class Service extends AbstractJob {
     public String toString() {
         return "[id=" + id + "][name=" + name + "][type=" + type + "][location=" + location + "][capacity=" + size + "][serviceTime=" + serviceTime + "][timeWindow=" + timeWindow + "]";
     }
-
 
     @Override
     public int hashCode() {
@@ -407,5 +406,4 @@ public class Service extends AbstractJob {
     public double getMaxTimeInVehicle() {
         return this.maxTimeInVehicle;
     }
-
 }

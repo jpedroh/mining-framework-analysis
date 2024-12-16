@@ -17,14 +17,13 @@
  */
 package com.graphhopper.jsprit.core.problem.job;
 
-import java.util.Collection;
-
 import com.graphhopper.jsprit.core.problem.AbstractJob;
 import com.graphhopper.jsprit.core.problem.Capacity;
 import com.graphhopper.jsprit.core.problem.Location;
 import com.graphhopper.jsprit.core.problem.Skills;
 import com.graphhopper.jsprit.core.problem.solution.route.activity.TimeWindow;
 import com.graphhopper.jsprit.core.problem.solution.route.activity.TimeWindowsImpl;
+import java.util.Collection;
 
 
 /**
@@ -44,17 +43,12 @@ import com.graphhopper.jsprit.core.problem.solution.route.activity.TimeWindowsIm
  * @author schroeder
  */
 public class Shipment extends AbstractJob {
-
-
-
-
     /**
      * Builder that builds the shipment.
      *
      * @author schroeder
      */
     public static class Builder {
-
         private String id;
 
         private double pickupServiceTime = 0.0;
@@ -89,9 +83,9 @@ public class Shipment extends AbstractJob {
 
         private int priority = 2;
 
-        public Object userData;
-
         public double maxTimeInVehicle = Double.MAX_VALUE;
+
+        public Object userData;
 
         /**
          * Returns new instance of this builder.
@@ -104,7 +98,9 @@ public class Shipment extends AbstractJob {
         }
 
         Builder(String id) {
-            if (id == null) throw new IllegalArgumentException("id must not be null");
+            if (id == null) {
+                throw new IllegalArgumentException("id must not be null");
+            }
             this.id = id;
             pickupTimeWindows = new TimeWindowsImpl();
             pickupTimeWindows.add(pickupTimeWindow);
@@ -133,8 +129,7 @@ public class Shipment extends AbstractJob {
         /**
          * Sets pickup location.
          *
-         * @param pickupLocation
-         *            pickup location
+         * @param pickupLocation pickup location
          * @return builder
          */
         public Builder setPickupLocation(Location pickupLocation) {
@@ -174,8 +169,6 @@ public class Shipment extends AbstractJob {
             this.pickupTimeWindows.add(timeWindow);
             return this;
         }
-
-
 
         /**
          * Sets delivery location.
@@ -235,7 +228,6 @@ public class Shipment extends AbstractJob {
             return this;
         }
 
-
         /**
          * Builds the shipment.
          *
@@ -250,7 +242,6 @@ public class Shipment extends AbstractJob {
             skills = skillBuilder.build();
             return new Shipment(this);
         }
-
 
         public Builder addRequiredSkill(String skill) {
             skillBuilder.addSkill(skill);
@@ -297,11 +288,13 @@ public class Shipment extends AbstractJob {
          * Default is 2 = medium.
          *
          * @param priority
+         * 		
          * @return builder
          */
         public Builder setPriority(int priority) {
-            if (priority < 1 || priority > 10)
+            if ((priority < 1) || (priority > 10)) {
                 throw new IllegalArgumentException("incorrect priority. only 1 (very high) to 10 (very low) are allowed");
+            }
             this.priority = priority;
             return this;
         }
@@ -423,7 +416,6 @@ public class Shipment extends AbstractJob {
     public Collection<TimeWindow> getPickupTimeWindows() {
         return pickupTimeWindows.getTimeWindows();
     }
-
 
     @Override
     public int hashCode() {
