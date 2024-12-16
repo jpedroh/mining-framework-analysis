@@ -1,3 +1,4 @@
+<<<<<<< LEFT
 /*
  * ScoreBoard
  * Copyright (C) 2012-2013 Frank Bille
@@ -15,13 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+=======
+>>>>>>> RIGHT
 package dk.frankbille.scoreboard.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 
 public class Game implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -31,9 +34,9 @@ public class Game implements Serializable {
 	private Date date;
 
 	private GameTeam team1;
-	
+
 	private GameTeam team2;
-	
+
 	private League league;
 
 	public Long getId() {
@@ -51,27 +54,27 @@ public class Game implements Serializable {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	
+
 	public GameTeam getTeam1() {
 		return team1;
 	}
-	
+
 	public void setTeam1(GameTeam team1) {
 		this.team1 = team1;
 	}
-	
+
 	public GameTeam getTeam2() {
 		return team2;
 	}
-	
+
 	public void setTeam2(GameTeam team2) {
 		this.team2 = team2;
 	}
-	
+
 	public League getLeague() {
 		return league;
 	}
-	
+
 	public void setLeague(League league) {
 		this.league = league;
 	}
@@ -83,7 +86,7 @@ public class Game implements Serializable {
 		
 		return team.getScore() == getLargestScore();
 	}
-	
+
 	public int getLargestScore() {
 		return Math.max(team1.getScore(), team2.getScore());
 	}
@@ -104,7 +107,7 @@ public class Game implements Serializable {
 	public boolean didPlayerWin(Player player) {
 		return didTeamWin(getTeamForPlayer(player));
 	}
-	
+
 	public List<GameTeam> getTeamsSortedByScore() {
 		List<GameTeam> teams = new ArrayList<GameTeam>();
 		GameTeam firstTeam = getWinnerTeam();

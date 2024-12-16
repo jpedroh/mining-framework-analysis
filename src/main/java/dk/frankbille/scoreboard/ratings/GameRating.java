@@ -1,3 +1,4 @@
+<<<<<<< LEFT
 /*
  * ScoreBoard
  * Copyright (C) 2012-2013 Frank Bille
@@ -15,10 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+=======
+>>>>>>> RIGHT
 package dk.frankbille.scoreboard.ratings;
 
+
+
 public interface GameRating {
-	public double getChange(long teamId);
-	public double getRating(long teamId);
+	public abstract double getChange(long teamId);
+
+	public abstract double getRating(long teamId);
 }

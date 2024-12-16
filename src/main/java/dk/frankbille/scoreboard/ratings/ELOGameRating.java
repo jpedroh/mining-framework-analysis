@@ -1,3 +1,4 @@
+<<<<<<< LEFT
 /*
  * ScoreBoard
  * Copyright (C) 2012-2013 Frank Bille
@@ -15,14 +16,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+=======
+>>>>>>> RIGHT
 package dk.frankbille.scoreboard.ratings;
+
+
 
 public class ELOGameRating implements GameRating {
 	private double winnerRating;
+
 	private long winnerTeamId;
+
 	private double loserRating;
+
 	private long loserTeamId;
+
 	private double change;
 
 	public ELOGameRating(long winnerTeamId, double winnerRating, long loserTeamId, double loserRating, double change) {
@@ -35,26 +43,22 @@ public class ELOGameRating implements GameRating {
 
 	@Override
 	public double getChange(long teamId) {
-		if (winnerTeamId==teamId) {
+		if (winnerTeamId == teamId) {
 			return +change;
-		}
-		else if (loserTeamId==teamId) {
+		} else if (loserTeamId == teamId) {
 			return -change;
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException(String.format("Team id %d not found in rating", teamId));
 		}
 	}
 
 	@Override
 	public double getRating(long teamId) {
-		if (winnerTeamId==teamId) {
+		if (winnerTeamId == teamId) {
 			return winnerRating;
-		}
-		else if (loserTeamId==teamId) {
+		} else if (loserTeamId == teamId) {
 			return loserRating;
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException(String.format("Team id %d not found in rating", teamId));
 		}
 	}
