@@ -1,8 +1,13 @@
 package com.github.rnewson.couchdb.lucene;
 
-import static java.lang.Math.max;
-import static java.util.concurrent.TimeUnit.SECONDS;
-
+import com.github.rnewson.couchdb.lucene.couchdb.CouchDocument;
+import com.github.rnewson.couchdb.lucene.couchdb.Database;
+import com.github.rnewson.couchdb.lucene.couchdb.DesignDocument;
+import com.github.rnewson.couchdb.lucene.couchdb.View;
+import com.github.rnewson.couchdb.lucene.util.Constants;
+import com.github.rnewson.couchdb.lucene.util.ServletUtils;
+import com.github.rnewson.couchdb.lucene.util.StopWatch;
+import com.github.rnewson.couchdb.lucene.util.Utils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -13,19 +18,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.Map.Entry;
 import java.util.concurrent.CountDownLatch;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -38,14 +40,14 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.index.IndexReader.FieldOption;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.index.IndexReader.FieldOption;
-import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.FieldDoc;
@@ -58,34 +60,31 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.mozilla.javascript.ClassShutter;
 import org.mozilla.javascript.Context;
+import static java.lang.Math.max;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
-import com.github.rnewson.couchdb.lucene.couchdb.CouchDocument;
-import com.github.rnewson.couchdb.lucene.couchdb.Database;
-import com.github.rnewson.couchdb.lucene.couchdb.DesignDocument;
-import com.github.rnewson.couchdb.lucene.couchdb.View;
-import com.github.rnewson.couchdb.lucene.util.Constants;
-import com.github.rnewson.couchdb.lucene.util.ServletUtils;
-import com.github.rnewson.couchdb.lucene.util.StopWatch;
-import com.github.rnewson.couchdb.lucene.util.Utils;
 
-public final class DatabaseIndexer implements Runnable, ResponseHandler<Void> {
-
+public final class DatabaseIndexer implements Runnable , ResponseHandler<Void> {
 	private class IndexState {
-
 		private final DocumentConverter converter;
+
 		private boolean readerDirty;
+
 		private boolean writerDirty;
+
 		private String etag;
 
 		private final Analyzer analyzer;
+
 		private long pending_seq;
+
 		private IndexReader reader;
+
 		private final IndexWriter writer;
+
 		private final Database database;
 
-		public IndexState(final DocumentConverter converter,
-				final IndexWriter writer, final Analyzer analyzer,
-				final Database database) {
+		public IndexState(final DocumentConverter converter, final IndexWriter writer, final Analyzer analyzer, final Database database) {
 			this.converter = converter;
 			this.writer = writer;
 			this.analyzer = analyzer;
@@ -127,8 +126,7 @@ public final class DatabaseIndexer implements Runnable, ResponseHandler<Void> {
 		}
 
 		public Query parse(final String query) throws ParseException {
-			final QueryParser parser = new CustomQueryParser(Constants.VERSION,
-					Constants.DEFAULT_FIELD, analyzer);
+			final QueryParser parser = new CustomQueryParser(Constants.VERSION, Constants.DEFAULT_FIELD, analyzer);
 			return parser.parse(query);
 		}
 
@@ -179,7 +177,6 @@ public final class DatabaseIndexer implements Runnable, ResponseHandler<Void> {
 	}
 
 	private final class RestrictiveClassShutter implements ClassShutter {
-
 		public boolean visibleToScripts(final String fullClassName) {
 			return false;
 		}
@@ -230,22 +227,18 @@ public final class DatabaseIndexer implements Runnable, ResponseHandler<Void> {
 
 	private long since;
 
-	private final Map<View, IndexState> states = Collections
-			.synchronizedMap(new HashMap<View, IndexState>());
+	private final Map<View, IndexState> states = Collections.synchronizedMap(new HashMap<View, IndexState>());
 
 	private UUID uuid;
 
 	private final HierarchicalINIConfiguration ini;
 
-	public DatabaseIndexer(final HttpClient client, final File root,
-			final Database database, final HierarchicalINIConfiguration ini)
-			throws IOException {
+	public DatabaseIndexer(final HttpClient client, final File root, final Database database, final HierarchicalINIConfiguration ini) throws IOException {
 		this.client = client;
 		this.root = root;
 		this.database = database;
 		this.ini = ini;
-		this.logger = Logger.getLogger(DatabaseIndexer.class.getName() + "."
-				+ database.getInfo().getName());
+		this.logger = Logger.getLogger((DatabaseIndexer.class.getName() + ".") + database.getInfo().getName());
 	}
 
 	public void admin(final HttpServletRequest req,
@@ -283,33 +276,26 @@ public final class DatabaseIndexer implements Runnable, ResponseHandler<Void> {
 		}
 	}
 
-	public Void handleResponse(final HttpResponse response)
-			throws ClientProtocolException, IOException {
+	public Void handleResponse(final HttpResponse response) throws ClientProtocolException, IOException {
 		final HttpEntity entity = response.getEntity();
-		final BufferedReader reader = new BufferedReader(new InputStreamReader(
-				entity.getContent(), "UTF-8"));
+		final BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent(), "UTF-8"));
 		String line;
-		loop: while ((line = reader.readLine()) != null) {
+		loop : while ((line = reader.readLine()) != null) {
 			maybeCommit();
-
 			// Heartbeat.
 			if (line.length() == 0) {
 				logger.trace("heartbeat");
 				continue loop;
 			}
-
 			final JSONObject json = JSONObject.fromObject(line);
-
 			if (json.has("error")) {
 				logger.warn("Indexing stopping due to error: " + json);
 				break loop;
 			}
-
 			if (json.has("last_seq")) {
 				logger.warn("End of changes detected.");
 				break loop;
 			}
-
 			final long seq = json.getLong("seq");
 			final String id = json.getString("id");
 			CouchDocument doc;
@@ -321,16 +307,15 @@ public final class DatabaseIndexer implements Runnable, ResponseHandler<Void> {
 					doc = database.getDocument(id);
 				} catch (final HttpResponseException e) {
 					switch (e.getStatusCode()) {
-					case HttpStatus.SC_NOT_FOUND:
-						doc = CouchDocument.deletedDocument(id);
-						break;
-					default:
-						logger.warn("Failed to fetch " + id);
-						break loop;
+						case HttpStatus.SC_NOT_FOUND :
+							doc = CouchDocument.deletedDocument(id);
+							break;
+						default :
+							logger.warn("Failed to fetch " + id);
+							break loop;
 					}
 				}
 			}
-
 			if (id.startsWith("_design")) {
 				if (seq > ddoc_seq) {
 					logger.info("Exiting due to design document change.");
@@ -341,7 +326,6 @@ public final class DatabaseIndexer implements Runnable, ResponseHandler<Void> {
 				}
 				continue loop;
 			}
-
 			if (doc.isDeleted()) {
 				for (final IndexState state : states.values()) {
 					state.writer.deleteDocuments(new Term("_id", id));
@@ -352,16 +336,13 @@ public final class DatabaseIndexer implements Runnable, ResponseHandler<Void> {
 				for (final Entry<View, IndexState> entry : states.entrySet()) {
 					final View view = entry.getKey();
 					final IndexState state = entry.getValue();
-
 					final Document[] docs;
 					try {
-						docs = state.converter.convert(doc, view
-								.getDefaultSettings(), database);
-					} catch (final Exception e) {
-						logger.warn(id + " caused " + e.getMessage());
+						docs = state.converter.convert(doc, view.getDefaultSettings(), database);
+					} catch (final java.lang.Exception e) {
+						logger.warn((id + " caused ") + e.getMessage());
 						continue loop;
 					}
-
 					state.writer.deleteDocuments(new Term("_id", id));
 					for (final Document d : docs) {
 						state.writer.addDocument(d, view.getAnalyzer());
@@ -371,7 +352,7 @@ public final class DatabaseIndexer implements Runnable, ResponseHandler<Void> {
 					state.readerDirty = true;
 				}
 			}
-		}
+		} 
 		req.abort();
 		return null;
 	}
@@ -444,11 +425,11 @@ public final class DatabaseIndexer implements Runnable, ResponseHandler<Void> {
 		}
 	}
 
-	public void search(final HttpServletRequest req,
-			final HttpServletResponse resp) throws IOException {
+	public void search(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
 		final IndexState state = getState(req, resp);
-		if (state == null)
+		if (state == null) {
 			return;
+		}
 		final IndexSearcher searcher = state.borrowSearcher(isStaleOk(req));
 		final String etag = state.getEtag();
 		final JSONArray result = new JSONArray();
@@ -467,16 +448,13 @@ public final class DatabaseIndexer implements Runnable, ResponseHandler<Void> {
 				}
 				queryRow.put("etag", etag);
 				if (getBooleanParameter(req, "rewrite")) {
-					final Query rewritten_q = q.rewrite(searcher
-							.getIndexReader());
+					final Query rewritten_q = q.rewrite(searcher.getIndexReader());
 					queryRow.put("rewritten_q", rewritten_q.toString());
-
 					final JSONObject freqs = new JSONObject();
-
 					final Set<Term> terms = new HashSet<Term>();
 					rewritten_q.extractTerms(terms);
 					for (final Object term : terms) {
-						final int freq = searcher.docFreq((Term) term);
+						final int freq = searcher.docFreq(((Term) (term)));
 						freqs.put(term, freq);
 					}
 					queryRow.put("freqs", freqs);
@@ -484,35 +462,27 @@ public final class DatabaseIndexer implements Runnable, ResponseHandler<Void> {
 					// Perform the search.
 					final TopDocs td;
 					final StopWatch stopWatch = new StopWatch();
-
-					final boolean include_docs = getBooleanParameter(req,
-							"include_docs");
+					final boolean include_docs = getBooleanParameter(req, "include_docs");
 					final int limit = getIntParameter(req, "limit", 25);
-					final Sort sort = CustomQueryParser.toSort(req
-							.getParameter("sort"));
+					final Sort sort = CustomQueryParser.toSort(req.getParameter("sort"));
 					final int skip = getIntParameter(req, "skip", 0);
-
 					if (sort == null) {
 						td = searcher.search(q, null, skip + limit);
 					} else {
 						td = searcher.search(q, null, skip + limit, sort);
 					}
 					stopWatch.lap("search");
-
 					// Fetch matches (if any).
-					final int max = Math.max(0, Math.min(td.totalHits - skip,
-							limit));
+					final int max = Math.max(0, Math.min(td.totalHits - skip, limit));
 					final JSONArray rows = new JSONArray();
 					final String[] fetch_ids = new String[max];
-					for (int i = skip; i < skip + max; i++) {
+					for (int i = skip; i < (skip + max); i++) {
 						final Document doc = searcher.doc(td.scoreDocs[i].doc);
 						final JSONObject row = new JSONObject();
 						final JSONObject fields = new JSONObject();
-
 						// Include stored fields.
 						for (final Object f : doc.getFields()) {
-							final Field fld = (Field) f;
-
+							final Field fld = ((Field) (f));
 							if (!fld.isStored()) {
 								continue;
 							}
@@ -521,30 +491,28 @@ public final class DatabaseIndexer implements Runnable, ResponseHandler<Void> {
 							if (value != null) {
 								if ("_id".equals(name)) {
 									row.put("id", value);
+								} else if (!fields.has(name)) {
+									fields.put(name, value);
 								} else {
-									if (!fields.has(name)) {
-										fields.put(name, value);
+									final Object obj = fields.get(name);
+									if (obj instanceof String) {
+										final JSONArray arr = new JSONArray();
+										arr.add(obj);
+										arr.add(value);
+										fields.put(name, arr);
 									} else {
-										final Object obj = fields.get(name);
-										if (obj instanceof String) {
-											final JSONArray arr = new JSONArray();
-											arr.add(obj);
-											arr.add(value);
-											fields.put(name, arr);
-										} else {
-											assert obj instanceof JSONArray;
-											((JSONArray) obj).add(value);
-										}
+										assert obj instanceof JSONArray;
+										((JSONArray) (obj)).add(value);
 									}
 								}
 							}
 						}
-
 						if (!Float.isNaN(td.scoreDocs[i].score)) {
 							row.put("score", td.scoreDocs[i].score);
 						}// Include sort order (if any).
+
 						if (td instanceof TopFieldDocs) {
-							final FieldDoc fd = (FieldDoc) ((TopFieldDocs) td).scoreDocs[i];
+							final FieldDoc fd = ((FieldDoc) (((TopFieldDocs) (td)).scoreDocs[i]));
 							row.put("sort_order", fd.fields);
 						}
 						// Fetch document (if requested).
@@ -557,47 +525,37 @@ public final class DatabaseIndexer implements Runnable, ResponseHandler<Void> {
 						rows.add(row);
 					}
 					// Fetch documents (if requested).
-					if (include_docs && fetch_ids.length > 0) {
+					if (include_docs && (fetch_ids.length > 0)) {
 						database.getDocuments(fetch_ids);
-						final List<CouchDocument> fetched_docs = database
-								.getDocuments(fetch_ids);
+						final List<CouchDocument> fetched_docs = database.getDocuments(fetch_ids);
 						for (int j = 0; j < max; j++) {
-							rows.getJSONObject(j).put("doc",
-									fetched_docs.get(j).asJson());
+							rows.getJSONObject(j).put("doc", fetched_docs.get(j).asJson());
 						}
-
 					}
 					stopWatch.lap("fetch");
-
 					queryRow.put("skip", skip);
 					queryRow.put("limit", limit);
 					queryRow.put("total_rows", td.totalHits);
-					queryRow.put("search_duration", stopWatch
-							.getElapsed("search"));
-					queryRow.put("fetch_duration", stopWatch
-							.getElapsed("fetch"));
+					queryRow.put("search_duration", stopWatch.getElapsed("search"));
+					queryRow.put("fetch_duration", stopWatch.getElapsed("fetch"));
 					// Include sort info (if requested).
 					if (td instanceof TopFieldDocs) {
-						queryRow.put("sort_order", CustomQueryParser
-								.toString(((TopFieldDocs) td).fields));
+						queryRow.put("sort_order", CustomQueryParser.toString(((TopFieldDocs) (td)).fields));
 					}
 					queryRow.put("rows", rows);
 				}
 				result.add(queryRow);
 			}
 		} catch (final ParseException e) {
-			ServletUtils.sendJSONError(req, resp, 400, "Bad query syntax: "
-					+ e.getMessage());
+			ServletUtils.sendJSONError(req, resp, 400, "Bad query syntax: " + e.getMessage());
 			return;
 		} finally {
 			state.returnSearcher(searcher);
 		}
-
 		resp.setHeader("ETag", etag);
 		resp.setHeader("Cache-Control", "must-revalidate");
 		ServletUtils.setResponseContentTypeAndEncoding(req, resp);
-
-		final JSON json = result.size() > 1 ? result : result.getJSONObject(0);
+		final JSON json = (result.size() > 1) ? result : result.getJSONObject(0);
 		final String callback = req.getParameter("callback");
 		final String body;
 		if (callback != null) {
@@ -605,7 +563,6 @@ public final class DatabaseIndexer implements Runnable, ResponseHandler<Void> {
 		} else {
 			body = json.toString(getBooleanParameter(req, "debug") ? 2 : 0);
 		}
-
 		final Writer writer = resp.getWriter();
 		try {
 			writer.write(body);
@@ -706,45 +663,35 @@ public final class DatabaseIndexer implements Runnable, ResponseHandler<Void> {
 
 	private void init() throws IOException {
 		this.uuid = database.getOrCreateUuid();
-
 		this.context = Context.enter();
 		context.setClassShutter(new RestrictiveClassShutter());
 		context.setOptimizationLevel(9);
-
 		this.ddoc_seq = database.getInfo().getUpdateSequence();
 		this.since = 0;
-
 		for (final DesignDocument ddoc : database.getAllDesignDocuments()) {
-			for (final Entry<String, View> entry : ddoc.getAllViews()
-					.entrySet()) {
+			for (final Entry<String, View> entry : ddoc.getAllViews().entrySet()) {
 				final String name = entry.getKey();
 				final View view = entry.getValue();
 				paths.put(toPath(ddoc.getId(), name), view);
-
 				if (!states.containsKey(view)) {
 					final Directory dir = FSDirectory.open(viewDir(view, true));
 					final long seq = getUpdateSequence(dir);
 					if (since == 0) {
 						since = seq;
 					}
-					if (seq != -1L) {
+					if (seq != (-1L)) {
 						since = Math.min(since, seq);
 					}
-					logger.debug(dir + " bumped since to " + since);
-
-					final DocumentConverter converter = new DocumentConverter(
-							context, view);
+					logger.debug((dir + " bumped since to ") + since);
+					final DocumentConverter converter = new DocumentConverter(context, view);
 					final IndexWriter writer = newWriter(dir);
-
-					final IndexState state = new IndexState(converter, writer,
-							view.getAnalyzer(), database);
+					final IndexState state = new IndexState(converter, writer, view.getAnalyzer(), database);
 					state.setPendingSequence(seq);
 					states.put(view, state);
 				}
 			}
 		}
 		logger.debug("paths: " + paths);
-
 		this.lastCommit = now();
 		latch.countDown();
 	}
@@ -793,5 +740,4 @@ public final class DatabaseIndexer implements Runnable, ResponseHandler<Void> {
 	private String toPath(final String ddoc, final String view) {
 		return ddoc + "/" + view;
 	}
-
 }

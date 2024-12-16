@@ -1,24 +1,22 @@
 package com.github.rnewson.couchdb.lucene;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import com.github.rnewson.couchdb.lucene.couchdb.CouchDocument;
+import com.github.rnewson.couchdb.lucene.couchdb.View;
+import com.github.rnewson.couchdb.lucene.couchdb.ViewSettings;
+import com.github.rnewson.couchdb.lucene.util.Constants;
 import net.sf.json.JSONObject;
-
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.NumericField;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mozilla.javascript.Context;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
 
-import com.github.rnewson.couchdb.lucene.couchdb.CouchDocument;
-import com.github.rnewson.couchdb.lucene.couchdb.View;
-import com.github.rnewson.couchdb.lucene.couchdb.ViewSettings;
-import com.github.rnewson.couchdb.lucene.util.Constants;
 
 public class DocumentConverterTest {
-
     private Context context;
 
     @Before
@@ -179,7 +177,7 @@ public class DocumentConverterTest {
         assertThat(result.length, is(1));
         assertThat(result[0].get("default"), is("1 2"));
     }
-    
+
     @Test
     public void testNullValue() throws Exception {
     	 final String fun = "function(doc) { var ret=new Document(); ret.add(doc.foo);  return ret; }";
@@ -191,7 +189,7 @@ public class DocumentConverterTest {
          assertThat(result.length, is(1));
          assertThat(result[0].get("foo"), is(nullValue()));
     }
-    
+
     @Test
     public void testLongValue() throws Exception {
     	 final String fun = "function(doc) { var ret=new Document(); ret.add(12, {type:\"long\", field:\"num\"});  return ret; }";
@@ -203,7 +201,7 @@ public class DocumentConverterTest {
          assertThat(result.length, is(1));
          assertThat(result[0].getFieldable("num"), is(NumericField.class));
     }
-    
+
     @Test
     public void testDateString() throws Exception {
     	 final String fun = "function(doc) { var ret=new Document(); ret.add(\"2009-01-01\", {type:\"date\", field:\"num\"});  return ret; }";
@@ -215,7 +213,7 @@ public class DocumentConverterTest {
          assertThat(result.length, is(1));
          assertThat(result[0].getFieldable("num"), is(NumericField.class));
     }
-    
+
     @Test
     public void testDateObject() throws Exception {
     	 final String fun = "function(doc) { var ret=new Document(); ret.add(new Date(), {type:\"date\", field:\"num\"});  return ret; }";
@@ -227,28 +225,25 @@ public class DocumentConverterTest {
          assertThat(result.length, is(1));
          assertThat(result[0].getFieldable("num"), is(NumericField.class));
     }
-    
+
     @Test
     public void testParseInt() throws Exception {
-    	 final String fun = "function(doc) { var ret=new Document(); ret.add(parseInt(\"12.5\"), {type:\"int\", field:\"num\"});  return ret; }";
-         final DocumentConverter converter = new DocumentConverter(context, view(fun));
-         final Document[] result = converter.convert(
-                 doc("{_id:\"hi\"}"),
-                 settings(),
-                 null);
-         assertThat(result.length, is(1));
-         assertThat(result[0].getFieldable("num"), is(NumericField.class));
+        final String fun = "function(doc) { var ret=new Document(); ret.add(parseInt(\"12.5\"), {type:\"int\", field:\"num\"});  return ret; }";
+        final DocumentConverter converter = new DocumentConverter(context, view(fun));
+        final Document[] result = converter.convert(doc("{_id:\"hi\"}"), settings(), null);
+        assertThat(result.length, is(1));
+        assertThat(result[0].getFieldable("num"), is(NumericField.class));
     }
-    
-	@Test
-	public void testConditionalOnNulls() throws Exception {
-		final String fun = "function(doc) { if (doc.foo && doc.bar) { return new Document(); }; return null; }";
-		final DocumentConverter converter = new DocumentConverter(context,
-				view(fun));
-		final Document[] result = converter.convert(
-				doc("{_id:\"hi\", foo: null, bar: null}"), settings(), null);
-		assertThat(result.length, is(0));
-	}
+
+@Test
+public void testConditionalOnNulls() throws Exception {
+	final String fun = "function(doc) { if (doc.foo && doc.bar) { return new Document(); }; return null; }";
+	final DocumentConverter converter = new DocumentConverter(context,
+			view(fun));
+	final Document[] result = converter.convert(
+			doc("{_id:\"hi\", foo: null, bar: null}"), settings(), null);
+	assertThat(result.length, is(0));
+}
 
     private CouchDocument doc(final String json) {
         return new CouchDocument(JSONObject.fromObject(json));
@@ -263,5 +258,4 @@ public class DocumentConverterTest {
         json.put("index", fun);
         return new View(json);
     }
-
 }

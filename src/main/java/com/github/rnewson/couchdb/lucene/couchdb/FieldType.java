@@ -1,23 +1,6 @@
 package com.github.rnewson.couchdb.lucene.couchdb;
 
-/**
- * Copyright 2010 Robert Newson
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0 
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import java.util.Date;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.lucene.document.AbstractField;
 import org.apache.lucene.document.Field;
@@ -29,21 +12,19 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermRangeQuery;
 
+
 public enum FieldType {
 
     DATE(8, SortField.LONG) {
-
         @Override
         public NumericField toField(final String name, final Object value, final ViewSettings settings) throws ParseException {
             return field(name, precisionStep, settings).setLongValue(toDate(value));
         }
 
         @Override
-        public Query toRangeQuery(final String name, final String lower, final String upper, final boolean inclusive)
-                throws ParseException {
+        public Query toRangeQuery(final String name, final String lower, final String upper, final boolean inclusive) throws ParseException {
             return NumericRangeQuery.newLongRange(name, precisionStep, toDate(lower), toDate(upper), inclusive, inclusive);
         }
-
     },
     DOUBLE(8, SortField.DOUBLE) {
         @Override
@@ -57,12 +38,11 @@ public enum FieldType {
         }
 
         private double toDouble(final Object obj) {
-        	if (obj instanceof Number) {
-        		return ((Number)obj).doubleValue();
-        	}
+            if (obj instanceof Number) {
+                return ((Number) (obj)).doubleValue();
+            }
             return Double.parseDouble(obj.toString());
         }
-
     },
     FLOAT(4, SortField.FLOAT) {
         @Override
@@ -76,9 +56,9 @@ public enum FieldType {
         }
 
         private float toFloat(final Object obj) {
-        	if (obj instanceof Number) {
-        		return ((Number)obj).floatValue();
-        	}
+            if (obj instanceof Number) {
+                return ((Number) (obj)).floatValue();
+            }
             return Float.parseFloat(obj.toString());
         }
     },
@@ -94,12 +74,11 @@ public enum FieldType {
         }
 
         private int toInt(final Object obj) {
-        	if (obj instanceof Number) {
-        		return ((Number)obj).intValue();
-        	}
+            if (obj instanceof Number) {
+                return ((Number) (obj)).intValue();
+            }
             return Integer.parseInt(obj.toString());
         }
-
     },
     LONG(8, SortField.LONG) {
         @Override
@@ -113,12 +92,11 @@ public enum FieldType {
         }
 
         private long toLong(final Object obj) {
-        	if (obj instanceof Number) {
-        		return ((Number)obj).longValue();
-        	}
+            if (obj instanceof Number) {
+                return ((Number) (obj)).longValue();
+            }
             return Long.parseLong(obj.toString());
         }
-
     },
     STRING(0, SortField.STRING) {
         @Override
@@ -133,13 +111,8 @@ public enum FieldType {
             return result;
         }
     };
-
     private static NumericField field(final String name, final int precisionStep, final ViewSettings settings) {
         return boost(new NumericField(name, precisionStep, settings.getStore(), settings.getIndex().isIndexed()), settings);
-    }
-
-    private static Field field(final String name, final Object value, final ViewSettings settings) {
-        return boost(new Field(name, value.toString(), settings.getStore(), settings.getIndex(), settings.getTermVector()), settings);
     }
 
     private static <T extends AbstractField> T boost(final T field, final ViewSettings settings) {
@@ -147,8 +120,7 @@ public enum FieldType {
         return field;
     }
 
-    public static final String[] DATE_PATTERNS = new String[] { "yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-ddZ",
-            "yyyy-MM-dd" };
+    public static final String[] DATE_PATTERNS = new String[]{ "yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-ddZ", "yyyy-MM-dd" };
 
     private final int sortField;
 
@@ -169,9 +141,9 @@ public enum FieldType {
     }
 
     public static long toDate(final Object obj) throws ParseException {
-    	if (obj instanceof Date) {
-    		return ((Date)obj).getTime();
-    	}
+        if (obj instanceof Date) {
+            return ((Date) (obj)).getTime();
+        }
         try {
             return DateUtils.parseDate(obj.toString().toUpperCase(), DATE_PATTERNS).getTime();
         } catch (final java.text.ParseException e) {
@@ -179,4 +151,7 @@ public enum FieldType {
         }
     }
 
+    private static Field field(final String name, final Object value, final ViewSettings settings) {
+        return boost(new Field(name, value.toString(), settings.getStore(), settings.getIndex(), settings.getTermVector()), settings);
+    }
 }

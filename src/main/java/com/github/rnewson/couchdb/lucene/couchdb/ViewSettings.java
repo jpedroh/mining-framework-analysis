@@ -1,13 +1,12 @@
 package com.github.rnewson.couchdb.lucene.couchdb;
 
+import com.github.rnewson.couchdb.lucene.util.Constants;
 import net.sf.json.JSONObject;
-
 import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.Field.TermVector;
 import org.mozilla.javascript.NativeObject;
 
-import com.github.rnewson.couchdb.lucene.util.Constants;
 
 /**
  * Copyright 2010 Robert Newson
@@ -24,18 +23,27 @@ import com.github.rnewson.couchdb.lucene.util.Constants;
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 public final class ViewSettings {
-
     public static ViewSettings getDefaultSettings() {
-        return new ViewSettings(Constants.DEFAULT_FIELD, "analyzed", "no", "string", "1.0", "no", null);
+        return new ViewSettings(Constants.DEFAULT_FIELD, "analyzed", "no", "string", 
+<<<<<<< LEFT
+"1.0", "no"
+=======
+"1.0"
+>>>>>>> RIGHT
+        , null);
     }
 
     private final Index index;
+
     private final Store store;
+
     private final String field;
+
     private final FieldType type;
+
     private final float boost;
+
     private final TermVector termvector;
 
     public ViewSettings(final JSONObject json) {
@@ -55,12 +63,12 @@ public final class ViewSettings {
     }
 
     private ViewSettings(final String field, final String index, final String store, final String type, final String boost, final String termvector, final ViewSettings defaults) {
-        this.field = field != null ? field : defaults.getField();
-        this.index = index != null ? Index.valueOf(index.toUpperCase()) : defaults.getIndex();
-        this.store = store != null ? Store.valueOf(store.toUpperCase()) : defaults.getStore();
-        this.type = type != null ? FieldType.valueOf(type.toUpperCase()) : defaults.getFieldType();
-        this.boost = boost != null ? Float.valueOf(boost) : defaults.getBoost();
-        this.termvector = termvector != null? TermVector.valueOf(termvector.toUpperCase()) : defaults.getTermVector();
+        this.field = (field != null) ? field : defaults.getField();
+        this.index = (index != null) ? Index.valueOf(index.toUpperCase()) : defaults.getIndex();
+        this.store = (store != null) ? Store.valueOf(store.toUpperCase()) : defaults.getStore();
+        this.type = (type != null) ? FieldType.valueOf(type.toUpperCase()) : defaults.getFieldType();
+        this.boost = (boost != null) ? Float.valueOf(boost) : defaults.getBoost();
+        this.termvector = (termvector != null) ? TermVector.valueOf(termvector.toUpperCase()) : defaults.getTermVector();
     }
 
     public float getBoost() {
@@ -91,5 +99,4 @@ public final class ViewSettings {
     private static String get(final NativeObject obj, final String key) {
         return obj == null ? null : obj.has(key, null) ? obj.get(key, null).toString() : null;
     }
-
 }
