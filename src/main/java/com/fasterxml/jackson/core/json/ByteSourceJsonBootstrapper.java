@@ -1,13 +1,13 @@
 package com.fasterxml.jackson.core.json;
 
-import java.io.*;
-
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.format.InputAccessor;
 import com.fasterxml.jackson.core.format.MatchStrength;
 import com.fasterxml.jackson.core.io.*;
 import com.fasterxml.jackson.core.sym.ByteQuadsCanonicalizer;
 import com.fasterxml.jackson.core.sym.CharsToNameCanonicalizer;
+import java.io.*;
+
 
 /**
  * This class is used to determine the encoding of byte stream
@@ -16,12 +16,13 @@ import com.fasterxml.jackson.core.sym.CharsToNameCanonicalizer;
  * for BOM handling, which is a property of underlying
  * streams.
  */
-public final class ByteSourceJsonBootstrapper
-{
+public final class ByteSourceJsonBootstrapper {
     final static byte UTF8_BOM_1 = (byte) 0xEF;
+
     final static byte UTF8_BOM_2 = (byte) 0xBB;
+
     final static byte UTF8_BOM_3 = (byte) 0xBF;
-    
+
     /*
     /**********************************************************
     /* Configuration
@@ -50,17 +51,15 @@ public final class ByteSourceJsonBootstrapper
      */
     private final boolean _bufferRecyclable;
 
-    /*
-    /**********************************************************
+    /* ********************************************************
     /* Input location
     /**********************************************************
      */
-
     /**
      * Current number of input units (bytes or chars) that were processed in
      * previous blocks,
      * before contents of current input buffer.
-     *<p>
+     * <p>
      * Note: includes possible BOMs, if those were part of the input.
      */
     protected int _inputProcessed;
@@ -73,14 +72,13 @@ public final class ByteSourceJsonBootstrapper
 
     protected boolean _bigEndian = true;
 
+    // 0 means "dunno yet"
     protected int _bytesPerChar; // 0 means "dunno yet"
 
-    /*
-    /**********************************************************
+    /* ********************************************************
     /* Life-cycle
     /**********************************************************
      */
-
     public ByteSourceJsonBootstrapper(IOContext ctxt, InputStream in) {
         _context = ctxt;
         _in = in;
@@ -95,7 +93,7 @@ public final class ByteSourceJsonBootstrapper
         _in = null;
         _inputBuffer = inputBuffer;
         _inputPtr = inputStart;
-        _inputEnd = (inputStart + inputLen);
+        _inputEnd = inputStart + inputLen;
         // Need to offset this for correct location info
         _inputProcessed = -inputStart;
         _bufferRecyclable = false;
@@ -106,7 +104,7 @@ public final class ByteSourceJsonBootstrapper
     /*  Encoding detection during bootstrapping
     /**********************************************************
      */
-    
+
     /**
      * Method that should be called after constructing an instace.
      * It will figure out encoding that content uses, to allow
@@ -205,7 +203,7 @@ public final class ByteSourceJsonBootstrapper
     /* Constructing a Reader
     /**********************************************************
      */
-    
+
     @SuppressWarnings("resource")
     public Reader constructReader() throws IOException
     {
@@ -379,18 +377,17 @@ public final class ByteSourceJsonBootstrapper
         return skipSpace(acc, acc.nextByte());
     }
 
-    private static int skipSpace(InputAccessor acc, byte b) throws IOException
-    {
+    private static int skipSpace(InputAccessor acc, byte b) throws IOException {
         while (true) {
-            int ch = (int) b & 0xFF;
-            if (!(ch == ' ' || ch == '\r' || ch == '\n' || ch == '\t')) {
+            int ch = ((int) (b)) & 0xff;
+            if (!((((ch == ' ') || (ch == '\r')) || (ch == '\n')) || (ch == '\t'))) {
                 return ch;
             }
             if (!acc.hasMoreBytes()) {
                 return -1;
             }
             b = acc.nextByte();
-        }
+        } 
     }
 
     /*
