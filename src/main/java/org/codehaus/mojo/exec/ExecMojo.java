@@ -1,24 +1,5 @@
 package org.codehaus.mojo.exec;
 
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,7 +19,6 @@ import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
-
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
@@ -68,6 +48,7 @@ import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.DefaultConsumer;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 
+
 /**
  * A Plugin for executing external programs.
  *
@@ -75,10 +56,8 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
  * @version $Id$
  * @since 1.0
  */
-@Mojo( name = "exec", threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
-public class ExecMojo
-    extends AbstractExecMojo
-{
+@Mojo(name = "exec", threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST)
+public class ExecMojo extends AbstractExecMojo {
     /**
      * <p>
      * The executable. Can be a full path or the name of the executable. In the latter case, the executable must be in
@@ -97,7 +76,7 @@ public class ExecMojo
      *
      * @since 1.0
      */
-    @Parameter( property = "exec.executable", required = true )
+    @Parameter(property = "exec.executable", required = true)
     private String executable;
 
     /**
@@ -105,15 +84,15 @@ public class ExecMojo
      * The toolchain. If omitted, <code>"jdk"</code> is assumed.
      * </p>
      */
-    @Parameter( property = "exec.toolchain", defaultValue = "jdk")
+    @Parameter(property = "exec.toolchain", defaultValue = "jdk")
     private String toolchain;
-    
+
     /**
      * The current working directory. Optional. If not specified, basedir will be used.
      *
      * @since 1.0
      */
-    @Parameter( property = "exec.workingdir" )
+    @Parameter(property = "exec.workingdir")
     private File workingDirectory;
 
     /**
@@ -126,7 +105,7 @@ public class ExecMojo
      * @see java.lang.System#err
      * @see java.lang.System#in
      */
-    @Parameter( property = "exec.outputFile" )
+    @Parameter(property = "exec.outputFile")
     private File outputFile;
 
     /**
@@ -137,13 +116,16 @@ public class ExecMojo
      *
      * @since 1.0
      */
+    // TODO: Change ? into something more meaningful
     @Parameter
-    private List<?> arguments; // TODO: Change ? into something more meaningful
+    private List<?> arguments;
 
     /**
+     *
+     *
      * @since 1.0
      */
-    @Parameter( readonly = true, required = true, defaultValue = "${basedir}" )
+    @Parameter(readonly = true, required = true, defaultValue = "${basedir}")
     private File basedir;
 
     /**
@@ -167,7 +149,7 @@ public class ExecMojo
     /**
      * The current build session instance. This is used for toolchain manager API calls.
      */
-    @Parameter( defaultValue = "${session}", readonly = true )
+    @Parameter(defaultValue = "${session}", readonly = true)
     private MavenSession session;
 
     /**
@@ -185,13 +167,13 @@ public class ExecMojo
      *
      * @since 1.1.2
      */
-    @Parameter( property = "exec.longClasspath", defaultValue = "false" )
+    @Parameter(property = "exec.longClasspath", defaultValue = "false")
     private boolean longClasspath;
 
     /**
      * If set to true the child process executes asynchronously and build execution continues in parallel.
      */
-    @Parameter( property = "exec.async", defaultValue = "false" )
+    @Parameter(property = "exec.async", defaultValue = "false")
     private boolean async;
 
     /**
@@ -199,7 +181,7 @@ public class ExecMojo
      * child process continues execution after JVM shutdown. Applies only to asynchronous processes; ignored for
      * synchronous processes.
      */
-    @Parameter( property = "exec.asyncDestroyOnShutdown", defaultValue = "true" )
+    @Parameter(property = "exec.asyncDestroyOnShutdown", defaultValue = "true")
     private boolean asyncDestroyOnShutdown = true;
 
     public static final String CLASSPATH_TOKEN = "%classpath";
@@ -580,81 +562,56 @@ public class ExecMojo
 
     private ProcessDestroyer processDestroyer;
 
-    CommandLine getExecutablePath( Map<String, String> enviro, File dir )
-    {
-        File execFile = new File( executable );
+    CommandLine getExecutablePath(Map<String, String> enviro, File dir) {
+        File execFile = new File(executable);
         String exec = null;
-        if ( execFile.isFile() )
-        {
-            getLog().debug( "Toolchains are ignored, 'executable' parameter is set to " + executable );
+        if (execFile.isFile()) {
+            getLog().debug("Toolchains are ignored, 'executable' parameter is set to " + executable);
             exec = execFile.getAbsolutePath();
         }
-
-        if ( exec == null )
-        {
+        if (exec == null) {
             Toolchain tc = getToolchain();
-
             // if the file doesn't exist & toolchain is null, the exec is probably in the PATH...
             // we should probably also test for isFile and canExecute, but the second one is only
             // available in SDK 6.
-            if ( tc != null )
-            {
-                getLog().info( "Toolchain in exec-maven-plugin: " + tc );
-                exec = tc.findTool( executable );
-            }
-            else
-            {
-                if ( OS.isFamilyWindows() )
-                {
-                    List<String> paths = this.getExecutablePaths( enviro );
-                    paths.add( 0, dir.getAbsolutePath() );
-
-                    File f = null;
-                    search: for ( String path : paths ) {
-                        f = new File( path, executable );
-                        if ( f.isFile() )
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            for ( String extension : getExecutableExtensions() )
-                            {
-                                f = new File(path, executable + extension);
-                                if ( f.isFile() )
-                                {
-                                    break search;
-                                }
+            if (tc != null) {
+                getLog().info("Toolchain in exec-maven-plugin: " + tc);
+                exec = tc.findTool(executable);
+            } else if (OS.isFamilyWindows()) {
+                List<String> paths = this.getExecutablePaths(enviro);
+                paths.add(0, dir.getAbsolutePath());
+                File f = null;
+                for (String path : paths) {
+                    f = new File(path, executable);
+                    if (f.isFile()) {
+                        break;
+                    } else {
+                        for (String extension : getExecutableExtensions()) {
+                            f = new File(path, executable + extension);
+                            if (f.isFile()) {
+                                break;
                             }
                         }
                     }
-
-                    if ( f != null ) {
-                        exec = f.getAbsolutePath();
-                    }
+                }
+                if (f != null) {
+                    exec = f.getAbsolutePath();
                 }
             }
         }
-
-        if ( exec == null )
-        {
+        if (exec == null) {
             exec = executable;
         }
-
         CommandLine toRet;
-        if ( OS.isFamilyWindows() && !hasNativeExtension( exec ) && hasExecutableExtension( exec ) )
-        {
+        if ((OS.isFamilyWindows() && (!hasNativeExtension(exec))) && hasExecutableExtension(exec)) {
             // run the windows batch script in isolation and exit at the end
-            final String comSpec = System.getenv( "ComSpec" );
-            toRet = new CommandLine( comSpec == null ? "cmd" : comSpec );
-            toRet.addArgument( "/c" );
-            toRet.addArgument( exec );
+            final String comSpec = System.getenv("ComSpec");
+            toRet = new CommandLine(comSpec == null ? "cmd" : comSpec);
+            toRet.addArgument("/c");
+            toRet.addArgument(exec);
+        } else {
+            toRet = new CommandLine(exec);
         }
-        else
-        {
-            toRet = new CommandLine( exec );
-        }
-
         return toRet;
     }
 
