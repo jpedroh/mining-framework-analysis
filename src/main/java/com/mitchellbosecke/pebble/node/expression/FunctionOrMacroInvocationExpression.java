@@ -14,14 +14,13 @@ import com.mitchellbosecke.pebble.extension.NodeVisitor;
 import com.mitchellbosecke.pebble.node.ArgumentsNode;
 import com.mitchellbosecke.pebble.template.EvaluationContextImpl;
 import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class FunctionOrMacroInvocationExpression implements Expression<Object> {
 
+public class FunctionOrMacroInvocationExpression implements Expression<Object> {
     private final String functionName;
 
     private final ArgumentsNode args;
@@ -43,12 +42,9 @@ public class FunctionOrMacroInvocationExpression implements Expression<Object> {
         return self.macro(context, this.functionName, this.args, false, this.lineNumber);
     }
 
-    private Object applyFunction(PebbleTemplateImpl self, EvaluationContextImpl context, Function function,
-                                 ArgumentsNode args) throws PebbleException {
+    private Object applyFunction(PebbleTemplateImpl self, EvaluationContextImpl context, Function function, ArgumentsNode args) throws PebbleException {
         List<Object> arguments = new ArrayList<>();
-
         Collections.addAll(arguments, args);
-
         Map<String, Object> namedArguments = args.getArgumentMap(self, context, function);
         return function.execute(namedArguments, self, context, this.getLineNumber());
     }
@@ -70,5 +66,4 @@ public class FunctionOrMacroInvocationExpression implements Expression<Object> {
     public int getLineNumber() {
         return this.lineNumber;
     }
-
 }
