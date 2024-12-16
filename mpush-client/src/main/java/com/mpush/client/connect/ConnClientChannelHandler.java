@@ -16,9 +16,7 @@
  * Contributors:
  *   ohun@live.cn (夜色)
  */
-
 package com.mpush.client.connect;
-
 
 import com.google.common.collect.Maps;
 import com.mpush.api.Constants;
@@ -39,11 +37,10 @@ import com.mpush.tools.thread.ThreadNames;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -53,15 +50,21 @@ import java.util.concurrent.TimeUnit;
  */
 public final class ConnClientChannelHandler extends ChannelInboundHandlerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnClientChannelHandler.class);
+
     private static final Timer HASHED_WHEEL_TIMER = new HashedWheelTimer(new NamedPoolThreadFactory(ThreadNames.T_CONN_TIMER));
+
     public static final AttributeKey<ClientConfig> CONFIG_KEY = AttributeKey.newInstance("clientConfig");
+
     public static final TestStatistics STATISTICS = new TestStatistics();
+
     private static CacheManager cacheManager = CacheManagerFactory.create();
 
     private final Connection connection = new NettyConnection();
 
     private ClientConfig clientConfig;
+
     private boolean perfTest;
+
     private int hbTimeoutTimes;
 
     public ConnClientChannelHandler() {
@@ -80,10 +83,10 @@ public final class ConnClientChannelHandler extends ChannelInboundHandlerAdapter
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         connection.updateLastReadTime();
         if (msg instanceof Packet) {
-            Packet packet = (Packet) msg;
+            Packet packet = ((Packet) (msg));
             Command command = Command.toCMD(packet.cmd);
             if (command == Command.HANDSHAKE) {
-                int connectedNum = STATISTICS.connectedNum.incrementAndGet();
+                int connectedNum = ConnClientChannelHandler.STATISTICS.connectedNum.incrementAndGet();
                 connection.getSessionContext().changeCipher(new AesCipher(clientConfig.getClientKey(), clientConfig.getIv()));
                 HandshakeOkMessage message = new HandshakeOkMessage(packet, connection);
                 message.decodeBody();
@@ -97,13 +100,12 @@ public final class ConnClientChannelHandler extends ChannelInboundHandlerAdapter
                     saveToRedisForFastConnection(clientConfig, message.sessionId, message.expireTime, sessionKey);
                 }
             } else if (command == Command.FAST_CONNECT) {
-                int connectedNum = STATISTICS.connectedNum.incrementAndGet();
+                int connectedNum = ConnClientChannelHandler.STATISTICS.connectedNum.incrementAndGet();
                 String cipherStr = clientConfig.getCipher();
                 String[] cs = cipherStr.split(",");
                 byte[] key = AesCipher.toArray(cs[0]);
                 byte[] iv = AesCipher.toArray(cs[1]);
                 connection.getSessionContext().changeCipher(new AesCipher(key, iv));
-
                 FastConnectOkMessage message = new FastConnectOkMessage(packet, connection);
                 message.decodeBody();
                 connection.getSessionContext().setHeartbeat(message.heartbeat);
@@ -119,38 +121,30 @@ public final class ConnClientChannelHandler extends ChannelInboundHandlerAdapter
                 message.decodeBody();
                 LOGGER.error("receive an error packet=" + message);
             } else if (command == Command.PUSH) {
-                int receivePushNum = STATISTICS.receivePushNum.incrementAndGet();
-
+                int receivePushNum = ConnClientChannelHandler.STATISTICS.receivePushNum.incrementAndGet();
                 PushMessage message = new PushMessage(packet, connection);
                 message.decodeBody();
-                LOGGER.info("receive push message, content={}, receivePushNum={}"
-                        , new String(message.content, Constants.UTF_8), receivePushNum);
-
+                LOGGER.info("receive push message, content={}, receivePushNum={}", new String(message.content, Constants.UTF_8), receivePushNum);
                 if (message.needAck()) {
                     AckMessage.from(message).sendRaw();
                     LOGGER.info("send ack success for sessionId={}", message.getSessionId());
                 }
-
             } else if (command == Command.HEARTBEAT) {
                 LOGGER.info("receive heartbeat pong...");
             } else if (command == Command.OK) {
                 OkMessage message = new OkMessage(packet, connection);
                 message.decodeBody();
-                int bindUserNum = STATISTICS.bindUserNum.get();
+                int bindUserNum = ConnClientChannelHandler.STATISTICS.bindUserNum.get();
                 if (message.cmd == Command.BIND.cmd) {
-                    bindUserNum = STATISTICS.bindUserNum.incrementAndGet();
+                    bindUserNum = ConnClientChannelHandler.STATISTICS.bindUserNum.incrementAndGet();
                 }
-
                 LOGGER.info("receive {}, bindUserNum={}", message, bindUserNum);
-
             } else if (command == Command.HTTP_PROXY) {
                 HttpResponseMessage message = new HttpResponseMessage(packet, connection);
                 message.decodeBody();
-                LOGGER.info("receive http response, message={}, body={}",
-                        message, message.body == null ? null : new String(message.body, Constants.UTF_8));
+                LOGGER.info("receive http response, message={}, body={}", message, message.body == null ? null : new String(message.body, Constants.UTF_8));
             }
         }
-
         LOGGER.debug("receive package={}, chanel={}", msg, ctx.channel());
     }
 
@@ -244,7 +238,8 @@ public final class ConnClientChannelHandler extends ChannelInboundHandlerAdapter
         map.put("expireTime", expireTime + "");
         map.put("cipherStr", connection.getSessionContext().cipher.toString());
         String key = CacheKeys.getDeviceIdKey(client.getDeviceId());
-        cacheManager.set(key, map, 60 * 5); //5分钟
+        //5分钟
+        cacheManager.set(key, map, 60 * 5);
     }
 
     @SuppressWarnings("unchecked")

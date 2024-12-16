@@ -16,16 +16,16 @@
  * Contributors:
  *   ohun@live.cn (夜色)
  */
-
 package com.mpush.bootstrap;
-
 
 import com.mpush.bootstrap.job.*;
 import com.mpush.core.server.*;
-
-import static com.mpush.common.ServerNodes.*;
+import com.mpush.tools.config.CC;
+import static com.mpush.common.ServerNodes.CS;
+import static com.mpush.common.ServerNodes.GS;
 import static com.mpush.tools.config.CC.mp.net.udpGateway;
 import static com.mpush.tools.config.CC.mp.net.wsEnabled;
+
 
 /**
  * Created by yxx on 2016/5/14.
@@ -33,21 +33,20 @@ import static com.mpush.tools.config.CC.mp.net.wsEnabled;
  * @author ohun@live.cn
  */
 public final class ServerLauncher {
-
     private final BootChain chain = BootChain.chain();
 
     public ServerLauncher() {
-        chain.boot()
-                .setNext(new ServiceRegistryBoot())//1.启动ZK节点数据变化监听
-                .setNext(new RedisBoot())//2.注册redis sever 到ZK
-                .setNext(new ServerBoot(ConnectionServer.I(), CS))//3.启动长连接服务
-                .setNext(() -> new ServerBoot(WebSocketServer.I(), WS), wsEnabled())//4.启动websocket连接服务
-                .setNext(new ServerBoot(udpGateway() ? GatewayUDPConnector.I() : GatewayServer.I(), GS))//4.启动网关服务
-                .setNext(new ServerBoot(AdminServer.I(), null))//5.启动控制台服务
-                .setNext(new PushCenterBoot())//6.启动http代理服务，解析dns
-                .setNext(new HttpProxyBoot())//6.启动http代理服务，解析dns
-                .setNext(new MonitorBoot())//7.启动监控
-                .setNext(new LastBoot());//8.启动结束
+                //7.启动监控
+                //8.启动结束
+                //6.启动http代理服务，解析dns
+                //6.启动http代理服务，解析dns
+                //5.启动控制台服务
+                //4.启动网关服务
+        // 4.启动websocket连接服务
+                //3.启动长连接服务
+                //2.注册redis sever 到ZK
+                //1.启动ZK节点数据变化监听
+        chain.boot().setNext(new ServiceRegistryBoot()).setNext(new RedisBoot()).setNext(new ServerBoot(ConnectionServer.I(), CS)).setNext(() -> new <WS_NODE>ServerBoot(WebSocketServer.I()), wsEnabled()).setNext(new ServerBoot(udpGateway() ? GatewayUDPConnector.I() : GatewayServer.I(), GS)).setNext(new ServerBoot(AdminServer.I(), null)).setNext(new PushCenterBoot()).setNext(new HttpProxyBoot()).setNext(new MonitorBoot()).setNext(new LastBoot());
     }
 
     public void start() {

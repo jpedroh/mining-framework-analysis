@@ -16,7 +16,6 @@
  * Contributors:
  *   ohun@live.cn (夜色)
  */
-
 package com.mpush.core.router;
 
 import com.google.common.eventbus.Subscribe;
@@ -39,9 +38,7 @@ import com.mpush.tools.Utils;
 import com.mpush.tools.config.CC;
 import com.mpush.tools.event.EventConsumer;
 import com.mpush.tools.log.Logs;
-
 import java.net.InetSocketAddress;
-
 import static com.mpush.common.ServerNodes.GS;
 
 
@@ -52,8 +49,11 @@ import static com.mpush.common.ServerNodes.GS;
  */
 public final class RouterChangeListener extends EventConsumer implements MQMessageReceiver {
     public static final String KICK_CHANNEL_ = "/mpush/kick/";
+
     private final String kick_channel = KICK_CHANNEL_ + GS.getHostAndPort();
+
     private final boolean udpGateway = CC.mp.net.udpGateway();
+
     private MQClient mqClient;
 
     public RouterChangeListener() {
@@ -94,7 +94,7 @@ public final class RouterChangeListener extends EventConsumer implements MQMessa
         KickUserMessage message = KickUserMessage.build(connection);
         message.deviceId = context.deviceId;
         message.userId = userId;
-        message.send(future -> {
+        message.send(( future) -> {
             if (future.isSuccess()) {
                 Logs.CONN.info("kick local connection success, userId={}, router={}, conn={}", userId, router, connection);
             } else {
@@ -119,28 +119,13 @@ public final class RouterChangeListener extends EventConsumer implements MQMessa
             Logs.CONN.debug("kick remote router in local pc, ignore remote broadcast, userId={}", userId);
             return;
         }
-
         if (udpGateway) {
             Connection connection = GatewayUDPConnector.I().getConnection();
-            GatewayKickUserMessage.build(connection)
-                    .setUserId(userId)
-                    .setClientType(location.getClientType())
-                    .setConnId(location.getConnId())
-                    .setDeviceId(location.getDeviceId())
-                    .setTargetServer(location.getHost())
-                    .setTargetPort(location.getPort())
-                    .setRecipient(new InetSocketAddress(location.getHost(), location.getPort()))
-                    .sendRaw();
+            GatewayKickUserMessage.build(connection).setUserId(userId).setClientType(location.getClientType()).setConnId(location.getConnId()).setDeviceId(location.getDeviceId()).setTargetServer(location.getHost()).setTargetPort(location.getPort()).setRecipient(new InetSocketAddress(location.getHost(), location.getPort())).sendRaw();
         } else {
-            //2.发送广播
-            //TODO 远程机器可能不存在，需要确认下redis 那个通道如果机器不存在的话，是否会存在消息积压的问题。
-            RedisKickRemoteMessage message = new RedisKickRemoteMessage()
-                    .setUserId(userId)
-                    .setClientType(location.getClientType())
-                    .setConnId(location.getConnId())
-                    .setDeviceId(location.getDeviceId())
-                    .setTargetServer(location.getHost())
-                    .setTargetPort(location.getPort());
+            // 2.发送广播
+            // TODO 远程机器可能不存在，需要确认下redis 那个通道如果机器不存在的话，是否会存在消息积压的问题。
+            RedisKickRemoteMessage message = new RedisKickRemoteMessage().setUserId(userId).setClientType(location.getClientType()).setConnId(location.getConnId()).setDeviceId(location.getDeviceId()).setTargetServer(location.getHost()).setTargetPort(location.getPort());
             mqClient.publish(getKickChannel(location.getHostAndPort()), message);
         }
     }
@@ -159,7 +144,6 @@ public final class RouterChangeListener extends EventConsumer implements MQMessa
             Logs.CONN.error("receive kick remote msg, target server error, localIp={}, msg={}", Utils.getLocalIp(), msg);
             return;
         }
-
         //2.查询本地路由，找到要被踢下线的链接，并删除该本地路由
         String userId = msg.getUserId();
         int clientType = msg.getClientType();
@@ -167,10 +151,11 @@ public final class RouterChangeListener extends EventConsumer implements MQMessa
         LocalRouter localRouter = localRouterManager.lookup(userId, clientType);
         if (localRouter != null) {
             Logs.CONN.info("receive kick remote msg, msg={}", msg);
-            if (localRouter.getRouteValue().getId().equals(msg.getConnId())) {//二次校验，防止误杀
-                //2.1删除本地路由信息
+            if (localRouter.getRouteValue().getId().equals(msg.getConnId())) {
+                // 二次校验，防止误杀
+                // 2.1删除本地路由信息
                 localRouterManager.unRegister(userId, clientType);
-                //2.2发送踢人消息到客户端
+                // 2.2发送踢人消息到客户端
                 kickLocal(userId, localRouter);
             } else {
                 Logs.CONN.warn("kick router failure target connId not match, localRouter={}, msg={}", localRouter, msg);

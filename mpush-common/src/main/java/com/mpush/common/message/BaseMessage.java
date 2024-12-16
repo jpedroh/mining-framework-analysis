@@ -16,7 +16,6 @@
  * Contributors:
  *   ohun@live.cn (夜色)
  */
-
 package com.mpush.common.message;
 
 import com.mpush.api.Message;
@@ -27,11 +26,12 @@ import com.mpush.tools.common.IOUtils;
 import com.mpush.tools.common.Profiler;
 import com.mpush.tools.config.CC;
 import io.netty.channel.ChannelFutureListener;
-
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
+
 
 /**
  * Created by ohun on 2015/12/28.
@@ -40,10 +40,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class BaseMessage implements Message {
     private static final byte STATUS_DECODED = 1;
+
     private static final byte STATUS_ENCODED = 2;
+
     private static final AtomicInteger ID_SEQ = new AtomicInteger();
-    transient protected Packet packet;
-    transient protected Connection connection;
+
+    protected transient Packet packet;
+
+    protected transient Connection connection;
+
     transient private byte status = 0;
 
     public BaseMessage(Packet packet, Connection connection) {
@@ -55,7 +60,6 @@ public abstract class BaseMessage implements Message {
     public void decodeBody() {
         if ((status & STATUS_DECODED) == 0) {
             status |= STATUS_DECODED;
-
             if (packet.getBodyLength() > 0) {
                 if (packet.hasFlag(Packet.FLAG_JSON_BODY)) {
                     decodeJsonBody0();
@@ -63,7 +67,6 @@ public abstract class BaseMessage implements Message {
                     decodeBinaryBody0();
                 }
             }
-
         }
     }
 
@@ -82,35 +85,34 @@ public abstract class BaseMessage implements Message {
     }
 
     private void decodeBinaryBody0() {
-        //1.解密
+        // 1.解密
         byte[] tmp = packet.body;
         if (packet.hasFlag(Packet.FLAG_CRYPTO)) {
             if (connection.getSessionContext().cipher != null) {
                 tmp = connection.getSessionContext().cipher.decrypt(tmp);
             }
         }
-        //2.解压
+        // 2.解压
         if (packet.hasFlag(Packet.FLAG_COMPRESS)) {
             tmp = IOUtils.decompress(tmp);
         }
-
         if (tmp.length == 0) {
             throw new RuntimeException("message decode ex");
         }
-
         packet.body = tmp;
         Profiler.enter("time cost on [body decode]");
         decode(packet.body);
         Profiler.release();
         packet.body = null;// 释放内存
+
     }
 
     private void encodeBinaryBody0() {
         Profiler.enter("time cost on [body encode]");
         byte[] tmp = encode();
         Profiler.release();
-        if (tmp != null && tmp.length > 0) {
-            //1.压缩
+        if ((tmp != null) && (tmp.length > 0)) {
+            // 1.压缩
             if (tmp.length > CC.mp.core.compress_threshold) {
                 byte[] result = IOUtils.compress(tmp);
                 if (result.length > 0) {
@@ -118,8 +120,7 @@ public abstract class BaseMessage implements Message {
                     packet.addFlag(Packet.FLAG_COMPRESS);
                 }
             }
-
-            //2.加密
+            // 2.加密
             SessionContext context = connection.getSessionContext();
             if (context.cipher != null) {
                 byte[] result = context.cipher.encrypt(tmp);
@@ -144,7 +145,6 @@ public abstract class BaseMessage implements Message {
     private void encodeBodyRaw() {
         if ((status & STATUS_ENCODED) == 0) {
             status |= STATUS_ENCODED;
-
             if (packet.hasFlag(Packet.FLAG_JSON_BODY)) {
                 encodeJsonBody0();
             } else {

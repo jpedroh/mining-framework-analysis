@@ -16,7 +16,6 @@
  * Contributors:
  *   ohun@live.cn (夜色)
  */
-
 package com.mpush.bootstrap.job;
 
 import com.mpush.api.service.Listener;
@@ -25,6 +24,7 @@ import com.mpush.api.spi.common.ServiceRegistryFactory;
 import com.mpush.api.srd.ServiceNode;
 import com.mpush.tools.log.Logs;
 
+
 /**
  * Created by yxx on 2016/5/14.
  *
@@ -32,6 +32,7 @@ import com.mpush.tools.log.Logs;
  */
 public final class ServerBoot extends BootJob {
     private final Server server;
+
     private final ServiceNode node;
 
     public ServerBoot(Server server, ServiceNode node) {
@@ -46,7 +47,8 @@ public final class ServerBoot extends BootJob {
             @Override
             public void onSuccess(Object... args) {
                 Logs.Console.info("start {} success on:{}", server.getClass().getSimpleName(), args[0]);
-                if (node != null) {//注册应用到zk
+                if (node != null) {
+                //注册应用到zk
                     ServiceRegistryFactory.create().register(node);
                     Logs.RSD.info("register {} to srd success.", node);
                 }

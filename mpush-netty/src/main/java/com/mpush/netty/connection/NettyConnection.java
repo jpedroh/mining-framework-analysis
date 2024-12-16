@@ -16,7 +16,6 @@
  * Contributors:
  *   ohun@live.cn (夜色)
  */
-
 package com.mpush.netty.connection;
 
 import com.mpush.api.connection.Cipher;
@@ -33,18 +32,25 @@ import io.netty.channel.socket.DatagramPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * Created by ohun on 2015/12/22.
  *
  * @author ohun@live.cn
  */
-public final class NettyConnection implements Connection, ChannelFutureListener {
+public final class NettyConnection implements Connection , ChannelFutureListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(NettyConnection.class);
+
     private static final Cipher RSA_CIPHER = CipherFactory.create();
+
     private SessionContext context;
+
     private Channel channel;
+
     private volatile byte status = STATUS_NEW;
+
     private long lastReadTime;
+
     private long lastWriteTime;
 
     @Override
@@ -81,27 +87,24 @@ public final class NettyConnection implements Connection, ChannelFutureListener 
     @Override
     public ChannelFuture send(Packet packet, final ChannelFutureListener listener) {
         if (channel.isActive()) {
-
             ChannelFuture future = channel.writeAndFlush(packet.toFrame(channel)).addListener(this);
-
             if (listener != null) {
                 future.addListener(listener);
             }
-
             if (channel.isWritable()) {
                 return future;
             }
-
             //阻塞调用线程还是抛异常？
             //return channel.newPromise().setFailure(new RuntimeException("send data too busy"));
             future.awaitUninterruptibly(100);
             return future;
         } else {
-            /*if (listener != null) {
-                channel.newPromise()
-                        .addListener(listener)
-                        .setFailure(new RuntimeException("connection is disconnected"));
-            }*/
+            /* if (listener != null) {
+            channel.newPromise()
+            .addListener(listener)
+            .setFailure(new RuntimeException("connection is disconnected"));
+            }
+             */
             return this.close();
         }
     }
