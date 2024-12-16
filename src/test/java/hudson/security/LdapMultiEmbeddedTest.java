@@ -4,27 +4,25 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import hudson.model.User;
 import hudson.tasks.Mailer;
 import hudson.util.Secret;
-import jenkins.model.IdStrategy;
-import jenkins.security.plugins.ldap.*;
-import org.hamcrest.CoreMatchers;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.jvnet.hudson.test.LoggerRule;
-import org.jvnet.hudson.test.JenkinsRule;
-import org.springframework.dao.DataAccessException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import jenkins.model.IdStrategy;
+import jenkins.security.plugins.ldap.*;
 import org.acegisecurity.AuthenticationException;
 import org.acegisecurity.AuthenticationServiceException;
 import org.acegisecurity.userdetails.UsernameNotFoundException;
-
+import org.hamcrest.CoreMatchers;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.RuleChain;
+import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.LoggerRule;
+import org.springframework.dao.DataAccessException;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.StringContains.containsString;
@@ -35,15 +33,20 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.jvnet.hudson.test.LoggerRule.recorded;
 
+
 /**
  * Tests connecting to two different embedded servers using slightly different configurations.
  */
 @LDAPTestConfiguration
 public class LdapMultiEmbeddedTest {
     public LDAPRule sevenSeas = new LDAPRule();
+
     public LDAPRule planetExpress = new LDAPRule();
+
     public JenkinsRule r = new JenkinsRule();
+
     public LoggerRule log = new LoggerRule().record(LDAPSecurityRealm.class, Level.WARNING).capture(100);
+
     @Rule
     public RuleChain chain = RuleChain.outerRule(sevenSeas).around(planetExpress).around(r).around(log);
 
@@ -153,8 +156,12 @@ public class LdapMultiEmbeddedTest {
     }
 
     public static final String FAILED_COMMUNICATION_WITH_LDAP_SERVER = "Failed communication with ldap server";
+
     public static final String WILL_NOT_TRY_NEXT_CONFIGURATION = ", will _not_ try the next configuration";
+
     public static final String WILL_TRY_NEXT_CONFIGURATION = ", will try the next configuration";
+
+    // TEST-NET-1 as defined by RFC 5737, will not resolve to a real address.
     public static final String INVALID_URL_PREFIX = "ldap://invalid_host_for_testing:"; // TEST-NET-1 as defined by RFC 5737, will not resolve to a real address.
 
     private void setBadPwd(LDAPRule rule) {
@@ -162,11 +169,13 @@ public class LdapMultiEmbeddedTest {
     }
 
     private enum LdapConfigOption {
-        BAD_PASSWORD, BAD_SERVER_URL, IGNORE_IF_UNAVAILABLE
-    }
+
+        BAD_PASSWORD,
+        BAD_SERVER_URL,
+        IGNORE_IF_UNAVAILABLE;}
 
     private void reconfigure(LDAPRule rule, Set<LdapConfigOption> options) {
-        final LDAPSecurityRealm realm = (LDAPSecurityRealm)r.jenkins.getSecurityRealm();
+        final LDAPSecurityRealm realm = ((LDAPSecurityRealm) (r.jenkins.getSecurityRealm()));
         LDAPConfiguration repl = null;
         int index = -1;
         final List<LDAPConfiguration> configurations = realm.getConfigurations();
@@ -180,26 +189,12 @@ public class LdapMultiEmbeddedTest {
         }
         assertNotNull(repl);
         assertTrue(index >= 0);
-
-        LDAPConfiguration nc = new LDAPConfiguration(
-                options.contains(LdapConfigOption.BAD_SERVER_URL)
-                        ? INVALID_URL_PREFIX + rule.getPort()
-                        : repl.getServer(),
-                repl.getRootDN(),
-                true,
-                repl.getManagerDN(),
-                options.contains(LdapConfigOption.BAD_PASSWORD)
-                        ? Secret.fromString("something completely wrong")
-                        : repl.getManagerPasswordSecret());
+        LDAPConfiguration nc = new LDAPConfiguration(options.contains(LdapConfigOption.BAD_SERVER_URL) ? INVALID_URL_PREFIX + rule.getPort() : repl.getServer(), repl.getRootDN(), true, repl.getManagerDN(), options.contains(LdapConfigOption.BAD_PASSWORD) ? Secret.fromString("something completely wrong") : repl.getManagerPasswordSecret());
         if (options.contains(LdapConfigOption.IGNORE_IF_UNAVAILABLE)) {
             nc.setIgnoreIfUnavailable(true);
         }
         configurations.set(index, nc);
-        r.jenkins.setSecurityRealm(new LDAPSecurityRealm(configurations,
-                realm.disableMailAddressResolver,
-                realm.getCache(),
-                realm.getUserIdStrategy(),
-                realm.getGroupIdStrategy()));
+        r.jenkins.setSecurityRealm(new LDAPSecurityRealm(configurations, realm.disableMailAddressResolver, realm.getCache(), realm.getUserIdStrategy(), realm.getGroupIdStrategy()));
     }
 
     @Test
@@ -256,21 +251,15 @@ public class LdapMultiEmbeddedTest {
                 containsString(FAILED_COMMUNICATION_WITH_LDAP_SERVER))));
     }
 
-
     @Test
     public void when_first_is_wrong_and_lookup_on_first_then_log() throws Exception {
         setBadPwd(planetExpress);
-
         try {
             r.jenkins.getSecurityRealm().loadUserByUsername("fry");
         } catch (DataAccessException _) {
-            //all is as expected
+            // all is as expected
         }
-        assertThat(log, recorded(Level.WARNING,
-                allOf(containsString(FAILED_COMMUNICATION_WITH_LDAP_SERVER),
-                        containsString(WILL_NOT_TRY_NEXT_CONFIGURATION),
-                        containsString(planetExpress.getUrl())),
-                CoreMatchers.<Throwable>instanceOf(DataAccessException.class)));
+        assertThat(log, recorded(Level.WARNING, allOf(containsString(FAILED_COMMUNICATION_WITH_LDAP_SERVER), containsString(WILL_NOT_TRY_NEXT_CONFIGURATION), containsString(planetExpress.getUrl())), CoreMatchers.<Throwable>instanceOf(DataAccessException.class)));
     }
 
     @Test
@@ -280,13 +269,9 @@ public class LdapMultiEmbeddedTest {
             r.jenkins.getSecurityRealm().loadUserByUsername("hnelson");
             fail("Expected a DataAccessException");
         } catch (DataAccessException _) {
-            //all is as expected
+            // all is as expected
         }
-        assertThat(log, recorded(Level.WARNING,
-                allOf(containsString(FAILED_COMMUNICATION_WITH_LDAP_SERVER),
-                        containsString(WILL_NOT_TRY_NEXT_CONFIGURATION),
-                        containsString(planetExpress.getUrl())),
-                CoreMatchers.<Throwable>instanceOf(DataAccessException.class)));
+        assertThat(log, recorded(Level.WARNING, allOf(containsString(FAILED_COMMUNICATION_WITH_LDAP_SERVER), containsString(WILL_NOT_TRY_NEXT_CONFIGURATION), containsString(planetExpress.getUrl())), CoreMatchers.<Throwable>instanceOf(DataAccessException.class)));
     }
 
     @Test
@@ -296,13 +281,9 @@ public class LdapMultiEmbeddedTest {
             r.jenkins.getSecurityRealm().loadUserByUsername("hnelson");
             fail("Expected a DataAccessException");
         } catch (DataAccessException _) {
-            //all is as expected
+            // all is as expected
         }
-        assertThat(log, recorded(Level.WARNING,
-                allOf(containsString(FAILED_COMMUNICATION_WITH_LDAP_SERVER),
-                        containsString(WILL_NOT_TRY_NEXT_CONFIGURATION),
-                        containsString(sevenSeas.getUrl())),
-                CoreMatchers.<Throwable>instanceOf(DataAccessException.class)));
+        assertThat(log, recorded(Level.WARNING, allOf(containsString(FAILED_COMMUNICATION_WITH_LDAP_SERVER), containsString(WILL_NOT_TRY_NEXT_CONFIGURATION), containsString(sevenSeas.getUrl())), CoreMatchers.<Throwable>instanceOf(DataAccessException.class)));
     }
 
     @Test
@@ -410,20 +391,6 @@ public class LdapMultiEmbeddedTest {
                 CoreMatchers.<Throwable>instanceOf(DataAccessException.class)));
     }
 
-    public void when_second_is_wrong_and_lookup_group_on_second_then_log() throws Exception {
-        setBadPwd(sevenSeas);
-        try {
-            r.jenkins.getSecurityRealm().loadGroupByGroupname("HMS Victory");
-            fail("Expected a DataAccessException");
-        } catch (DataAccessException e) {
-            // Expected.
-        }
-        assertThat(log, recorded(Level.WARNING,
-                allOf(containsString(FAILED_COMMUNICATION_WITH_LDAP_SERVER),
-                        containsString(sevenSeas.getUrl())),
-                CoreMatchers.<Throwable>instanceOf(DataAccessException.class)));
-    }
-
     @Test
     public void when_first_is_wrong_and_lookup_group_on_second_then_failure() {
         reconfigure(planetExpress, EnumSet.of(LdapConfigOption.BAD_PASSWORD));
@@ -451,6 +418,22 @@ public class LdapMultiEmbeddedTest {
                 CoreMatchers.<Throwable>instanceOf(DataAccessException.class)));
     }
 
+    @Test
+    public void when_second_is_wrong_and_lookup_group_on_second_then_log() throws Exception {
+        setBadPwd(sevenSeas);
+        try {
+            r.jenkins.getSecurityRealm().loadGroupByGroupname("HMS Victory");
+            fail("Expected a DataAccessException");
+        } catch (DataAccessException e) {
+            // Expected.
+        }
+        assertThat(log, recorded(Level.WARNING,
+                allOf(containsString(FAILED_COMMUNICATION_WITH_LDAP_SERVER),
+                        containsString(sevenSeas.getUrl())),
+                CoreMatchers.<Throwable>instanceOf(DataAccessException.class)));
+    }
+
+    @Test
     public void when_second_is_wrong_and_lookup_group_on_first_then_no_log() throws Exception {
         setBadPwd(sevenSeas);
         try {

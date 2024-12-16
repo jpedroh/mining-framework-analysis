@@ -37,31 +37,6 @@ import hudson.security.SecurityRealm;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
 import hudson.util.spring.BeanBuilder;
-import jenkins.model.Jenkins;
-import org.acegisecurity.ldap.InitialDirContextFactory;
-import org.acegisecurity.ldap.LdapTemplate;
-import org.acegisecurity.ldap.search.FilterBasedLdapUserSearch;
-import org.acegisecurity.providers.ldap.LdapAuthoritiesPopulator;
-import org.apache.commons.codec.Charsets;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.input.AutoCloseInputStream;
-import org.apache.commons.lang.StringUtils;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
-import org.springframework.web.context.WebApplicationContext;
-
-import javax.annotation.Nonnull;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -82,19 +57,42 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import javax.annotation.Nonnull;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import jenkins.model.Jenkins;
+import org.acegisecurity.ldap.InitialDirContextFactory;
+import org.acegisecurity.ldap.LdapTemplate;
+import org.acegisecurity.ldap.search.FilterBasedLdapUserSearch;
+import org.acegisecurity.providers.ldap.LdapAuthoritiesPopulator;
+import org.apache.commons.codec.Charsets;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.input.AutoCloseInputStream;
+import org.apache.commons.lang.StringUtils;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.springframework.web.context.WebApplicationContext;
 import static hudson.Util.fixEmpty;
 import static hudson.Util.fixEmptyAndTrim;
 import static hudson.Util.fixNull;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
+
 /**
  * A configuration for one ldap connection
  */
 public class LDAPConfiguration extends AbstractDescribableImpl<LDAPConfiguration> {
-
     private static final Logger LOGGER = LDAPSecurityRealm.LOGGER;
+
     @Restricted(NoExternalUse.class)
     public static final String SECURITY_REALM_LDAPBIND_GROOVY = "LDAPBindSecurityRealm.groovy";
 
@@ -108,16 +106,23 @@ public class LDAPConfiguration extends AbstractDescribableImpl<LDAPConfiguration
      * The root DN to connect to. Normally something like "dc=sun,dc=com"
      */
     private final String rootDN;
+
     /**
      * Allow the rootDN to be inferred? Default is false.
      * If true, allow rootDN to be blank.
      */
     private final boolean inhibitInferRootDN;
+
     private String userSearchBase;
+
     private String userSearch;
+
     private String groupSearchBase;
+
     private String groupSearchFilter;
+
     private LDAPGroupMembershipStrategy groupMembershipStrategy;
+
     /**
      * If non-null, we use this and {@link #getManagerPassword()}
      * when binding to LDAP.
@@ -125,32 +130,40 @@ public class LDAPConfiguration extends AbstractDescribableImpl<LDAPConfiguration
      * This is necessary when LDAP doesn't support anonymous access.
      */
     private final String managerDN;
+
     /**
      * Password used to first bind to LDAP.
      */
     private final Secret managerPasswordSecret;
+
     private String displayNameAttributeName;
+
     private String mailAddressAttributeName;
+
     /**
      * If true, then any operation using this configuration which fails to connect to the server will try
      * again using the next configuration. This could be a security issue if the same username exists in
      * multiple LDAP configurations but should not correspond to the same Jenkins user, so it defaults to false.
      */
     private boolean ignoreIfUnavailable;
-    private Map<String,String> extraEnvVars;
+
+    private Map<String, String> extraEnvVars;
+
     /**
      * Set in {@link #createApplicationContext(LDAPSecurityRealm, boolean)}
      */
     private transient LDAPExtendedTemplate ldapTemplate;
+
     private transient String id;
 
     @DataBoundConstructor
-    public LDAPConfiguration(@Nonnull String server, String rootDN, boolean inhibitInferRootDN, String managerDN, Secret managerPasswordSecret) {
+    public LDAPConfiguration(@Nonnull
+    String server, String rootDN, boolean inhibitInferRootDN, String managerDN, Secret managerPasswordSecret) {
         this.server = server.trim();
         this.managerDN = fixEmpty(managerDN);
         this.managerPasswordSecret = managerPasswordSecret;
         this.inhibitInferRootDN = inhibitInferRootDN;
-        if (!inhibitInferRootDN && fixEmptyAndTrim(rootDN) == null) {
+        if ((!inhibitInferRootDN) && (fixEmptyAndTrim(rootDN) == null)) {
             rootDN = fixNull(inferRootDN(server));
         }
         this.rootDN = rootDN;
@@ -390,9 +403,11 @@ public class LDAPConfiguration extends AbstractDescribableImpl<LDAPConfiguration
 
     @Extension
     public static final class LDAPConfigurationDescriptor extends Descriptor<LDAPConfiguration> {
-        //For jelly usage
+        // For jelly usage
         public static final String DEFAULT_DISPLAYNAME_ATTRIBUTE_NAME = LDAPSecurityRealm.DescriptorImpl.DEFAULT_DISPLAYNAME_ATTRIBUTE_NAME;
+
         public static final String DEFAULT_MAILADDRESS_ATTRIBUTE_NAME = LDAPSecurityRealm.DescriptorImpl.DEFAULT_MAILADDRESS_ATTRIBUTE_NAME;
+
         public static final String DEFAULT_USER_SEARCH = LDAPSecurityRealm.DescriptorImpl.DEFAULT_USER_SEARCH;
 
         @Override
@@ -405,67 +420,71 @@ public class LDAPConfiguration extends AbstractDescribableImpl<LDAPConfiguration
         }
 
         // note that this works better in 1.528+ (JENKINS-19124)
-        @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", justification = "Only on newer core versions") //TODO remove when core is bumped
-        public FormValidation doCheckServer(@QueryParameter String value, @QueryParameter String managerDN, @QueryParameter Secret managerPasswordSecret) {
+        // TODO remove when core is bumped
+        @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", justification = "Only on newer core versions")
+        public FormValidation doCheckServer(@QueryParameter
+        String value, @QueryParameter
+        String managerDN, @QueryParameter
+        Secret managerPasswordSecret) {
             String server = value;
             String managerPassword = Secret.toString(managerPasswordSecret);
-
             final Jenkins jenkins = Jenkins.getInstance();
             if (jenkins == null) {
                 return FormValidation.error("Jenkins is not ready. Cannot validate the field");
             }
-            if(!jenkins.hasPermission(Jenkins.ADMINISTER))
+            if (!jenkins.hasPermission(Jenkins.ADMINISTER)) {
                 return FormValidation.ok();
-
+            }
             try {
-                Hashtable<String,String> props = new Hashtable<String,String>();
-                if(managerDN!=null && managerDN.trim().length() > 0  && !"undefined".equals(managerDN)) {
-                    props.put(Context.SECURITY_PRINCIPAL,managerDN);
+                Hashtable<String, String> props = new Hashtable<String, String>();
+                if (((managerDN != null) && (managerDN.trim().length() > 0)) && (!"undefined".equals(managerDN))) {
+                    props.put(Context.SECURITY_PRINCIPAL, managerDN);
                 }
-                if(managerPassword!=null && managerPassword.trim().length() > 0 && !"undefined".equals(managerPassword)) {
-                    props.put(Context.SECURITY_CREDENTIALS,managerPassword);
+                if (((managerPassword != null) && (managerPassword.trim().length() > 0)) && (!"undefined".equals(managerPassword))) {
+                    props.put(Context.SECURITY_CREDENTIALS, managerPassword);
                 }
                 props.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
                 props.put(Context.PROVIDER_URL, LDAPSecurityRealm.toProviderUrl(server, ""));
-
                 DirContext ctx = new InitialDirContext(props);
                 ctx.getAttributes("");
-                return FormValidation.ok();   // connected
+                return FormValidation.ok();// connected
+
             } catch (NamingException e) {
                 // trouble-shoot
                 Matcher m = Pattern.compile("(ldaps?://)?([^:]+)(?:\\:(\\d+))?(\\s+(ldaps?://)?([^:]+)(?:\\:(\\d+))?)*").matcher(server.trim());
-                if(!m.matches())
+                if (!m.matches()) {
                     return FormValidation.error(hudson.security.Messages.LDAPSecurityRealm_SyntaxOfServerField());
-
+                }
                 try {
                     InetAddress adrs = InetAddress.getByName(m.group(2));
-                    int port = m.group(1)!=null ? 636 : 389;
-                    if(m.group(3)!=null)
+                    int port = (m.group(1) != null) ? 636 : 389;
+                    if (m.group(3) != null) {
                         port = Integer.parseInt(m.group(3));
-                    Socket s = new Socket(adrs,port);
+                    }
+                    Socket s = new Socket(adrs, port);
                     s.close();
                 } catch (UnknownHostException x) {
                     return FormValidation.error(hudson.security.Messages.LDAPSecurityRealm_UnknownHost(x.getMessage()));
                 } catch (IOException x) {
                     return FormValidation.error(x, hudson.security.Messages.LDAPSecurityRealm_UnableToConnect(server, x.getMessage()));
                 }
-
                 // otherwise we don't know what caused it, so fall back to the general error report
                 // getMessage() alone doesn't offer enough
                 return FormValidation.error(e, hudson.security.Messages.LDAPSecurityRealm_UnableToConnect(server, e));
-            } catch (NumberFormatException x) {
+            } catch (java.lang.NumberFormatException x) {
                 // The getLdapCtxInstance method throws this if it fails to parse the port number
                 return FormValidation.error(hudson.security.Messages.LDAPSecurityRealm_InvalidPortNumber());
             }
         }
 
-        @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", justification = "Only on newer core versions") //TODO remove when core is bumped
+        // TODO remove when core is bumped
+        @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", justification = "Only on newer core versions")
         public DescriptorExtensionList<LDAPGroupMembershipStrategy, Descriptor<LDAPGroupMembershipStrategy>> getGroupMembershipStrategies() {
             final Jenkins jenkins = Jenkins.getInstance();
             if (jenkins != null) {
                 return jenkins.getDescriptorList(LDAPGroupMembershipStrategy.class);
             } else {
-                return DescriptorExtensionList.createDescriptorList((Jenkins)null, LDAPGroupMembershipStrategy.class);
+                return DescriptorExtensionList.createDescriptorList(((Jenkins) (null)), LDAPGroupMembershipStrategy.class);
             }
         }
     }
@@ -577,12 +596,10 @@ public class LDAPConfiguration extends AbstractDescribableImpl<LDAPConfiguration
         Binding binding = new Binding();
         binding.setVariable("instance", this);
         binding.setVariable("realmInstance", realm);
-
         final Jenkins jenkins = Jenkins.getInstance();
         if (jenkins == null) {
             throw new IllegalStateException("Jenkins has not been started, or was already shut down");
         }
-
         BeanBuilder builder = new BeanBuilder(jenkins.pluginManager.uberClassLoader);
         try {
             File override = getLdapBindOverrideFile(jenkins);
@@ -594,18 +611,14 @@ public class LDAPConfiguration extends AbstractDescribableImpl<LDAPConfiguration
                 }
                 builder.parse(new AutoCloseInputStream(LDAPSecurityRealm.class.getResourceAsStream(SECURITY_REALM_LDAPBIND_GROOVY)), binding);
             }
-
         } catch (FileNotFoundException e) {
-            throw new IllegalStateException("Failed to load "+ SECURITY_REALM_LDAPBIND_GROOVY, e);
+            throw new IllegalStateException("Failed to load " + SECURITY_REALM_LDAPBIND_GROOVY, e);
         }
         WebApplicationContext appContext = builder.createApplicationContext();
-
         ldapTemplate = new LDAPExtendedTemplate(SecurityRealm.findBean(InitialDirContextFactory.class, appContext));
-
         if (groupMembershipStrategy != null) {
             groupMembershipStrategy.setAuthoritiesPopulator(SecurityRealm.findBean(LdapAuthoritiesPopulator.class, appContext));
         }
-
         return appContext;
     }
 

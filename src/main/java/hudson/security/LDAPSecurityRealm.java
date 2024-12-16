@@ -33,18 +33,42 @@ import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.model.User;
 import hudson.tasks.MailAddressResolver;
-import hudson.tasks.Mailer;
 import hudson.tasks.Mailer.UserProperty;
+import hudson.tasks.Mailer;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.Scrambler;
 import hudson.util.Secret;
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.BasicAttributes;
+import javax.naming.ldap.Control;
+import javax.naming.ldap.LdapName;
 import jenkins.model.IdStrategy;
 import jenkins.model.Jenkins;
 import jenkins.security.plugins.ldap.FromGroupSearchLDAPGroupMembershipStrategy;
 import jenkins.security.plugins.ldap.LDAPConfiguration;
-import jenkins.security.plugins.ldap.LDAPGroupMembershipStrategy;
 import jenkins.security.plugins.ldap.LDAPExtendedTemplate;
+import jenkins.security.plugins.ldap.LDAPGroupMembershipStrategy;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.acegisecurity.AcegiSecurityException;
@@ -82,33 +106,8 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 import org.springframework.dao.DataAccessException;
 import org.springframework.web.context.WebApplicationContext;
-
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.BasicAttributes;
-import javax.naming.ldap.Control;
-import javax.naming.ldap.LdapName;
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import static hudson.Util.fixNull;
+
 
 /**
  * {@link SecurityRealm} implementation that uses LDAP for authentication.
@@ -240,15 +239,17 @@ import static hudson.Util.fixNull;
 public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
     private static final boolean FORCE_USERNAME_LOWERCASE =
             Boolean.getBoolean(LDAPSecurityRealm.class.getName() + ".forceUsernameLowercase");
+
     private static final boolean FORCE_GROUPNAME_LOWERCASE =
             Boolean.getBoolean(LDAPSecurityRealm.class.getName() + ".forceGroupnameLowercase");
+
     /**
      * LDAP server name(s) separated by spaces, optionally with TCP port number, like "ldap.acme.org"
      * or "ldap.acme.org:389" and/or with protcol, like "ldap://ldap.acme.org".
      */
-    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD",
-        justification = "This public field is exposed to the plugin's API")
-    @Deprecated @Restricted(NoExternalUse.class)
+    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", justification = "This public field is exposed to the plugin's API")
+    @Deprecated
+    @Restricted(NoExternalUse.class)
     public transient String server;
 
     /**
@@ -256,18 +257,18 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
      *
      * How do I infer this?
      */
-    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD",
-        justification = "This public field is exposed to the plugin's API")
-    @Deprecated @Restricted(NoExternalUse.class)
+    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", justification = "This public field is exposed to the plugin's API")
+    @Deprecated
+    @Restricted(NoExternalUse.class)
     public transient String rootDN;
 
     /**
      * Allow the rootDN to be inferred? Default is false.
      * If true, allow rootDN to be blank.
      */
-    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD",
-        justification = "This public field is exposed to the plugin's API")
-    @Deprecated @Restricted(NoExternalUse.class)
+    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", justification = "This public field is exposed to the plugin's API")
+    @Deprecated
+    @Restricted(NoExternalUse.class)
     public transient boolean inhibitInferRootDN;
 
     /**
@@ -276,9 +277,9 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
      *
      * Something like "ou=people" but can be empty.
      */
-    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD",
-        justification = "This public field is exposed to the plugin's API")
-    @Deprecated @Restricted(NoExternalUse.class)
+    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", justification = "This public field is exposed to the plugin's API")
+    @Deprecated
+    @Restricted(NoExternalUse.class)
     public transient String userSearchBase;
 
     /**
@@ -288,11 +289,11 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
      *
      * @see FilterBasedLdapUserSearch
      */
-    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD",
-        justification = "This public field is exposed to the plugin's API")
-    @Deprecated @Restricted(NoExternalUse.class)
+    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", justification = "This public field is exposed to the plugin's API")
+    @Deprecated
+    @Restricted(NoExternalUse.class)
     public transient String userSearch;
-    
+
     /**
      * This defines the organizational unit that contains groups.
      *
@@ -301,9 +302,9 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
      *
      * @see FilterBasedLdapUserSearch
      */
-    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD",
-        justification = "This public field is exposed to the plugin's API")
-    @Deprecated @Restricted(NoExternalUse.class)
+    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", justification = "This public field is exposed to the plugin's API")
+    @Deprecated
+    @Restricted(NoExternalUse.class)
     public transient String groupSearchBase;
 
     /**
@@ -312,9 +313,9 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
      *
      * @since 1.5
      */
-    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD",
-        justification = "This public field is exposed to the plugin's API")
-    @Deprecated @Restricted(NoExternalUse.class)
+    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", justification = "This public field is exposed to the plugin's API")
+    @Deprecated
+    @Restricted(NoExternalUse.class)
     public transient String groupSearchFilter;
 
     /**
@@ -325,46 +326,47 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
      * @since 1.5
      * @deprecated use {@link #groupMembershipStrategy}
      */
-    @Deprecated @Restricted(NoExternalUse.class)
-    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", 
-        justification = "This public field is exposed to the plugin's API")
+    @Deprecated
+    @Restricted(NoExternalUse.class)
+    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", justification = "This public field is exposed to the plugin's API")
     public transient String groupMembershipFilter;
 
     /**
+     *
+     *
      * @since 2.0
      */
-    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD",
-        justification = "This public field is exposed to the plugin's API")
-    @Deprecated @Restricted(NoExternalUse.class)
-    public /*effectively final*/ transient LDAPGroupMembershipStrategy groupMembershipStrategy;
+    /* effectively final */
+    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", justification = "This public field is exposed to the plugin's API")
+    @Deprecated
+    @Restricted(NoExternalUse.class)
+    public transient LDAPGroupMembershipStrategy groupMembershipStrategy;
 
-    /*
-        Other configurations that are needed:
+    /* Other configurations that are needed:
 
-        group search base DN (relative to root DN)
-        group search filter (uniquemember={1} seems like a reasonable default)
-        group target (CN is a reasonable default)
+    group search base DN (relative to root DN)
+    group search filter (uniquemember={1} seems like a reasonable default)
+    group target (CN is a reasonable default)
 
-        manager dn/password if anonyomus search is not allowed.
+    manager dn/password if anonyomus search is not allowed.
 
-        See GF configuration at http://weblogs.java.net/blog/tchangu/archive/2007/01/ldap_security_r.html
-        Geronimo configuration at http://cwiki.apache.org/GMOxDOC11/ldap-realm.html
+    See GF configuration at http://weblogs.java.net/blog/tchangu/archive/2007/01/ldap_security_r.html
+    Geronimo configuration at http://cwiki.apache.org/GMOxDOC11/ldap-realm.html
      */
-
     /**
      * If non-null, we use this and {@link #managerPasswordSecret}
      * when binding to LDAP.
      *
      * This is necessary when LDAP doesn't support anonymous access.
      */
-    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD",
-        justification = "This public field is exposed to the plugin's API")
-    @Deprecated @Restricted(NoExternalUse.class)
+    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", justification = "This public field is exposed to the plugin's API")
+    @Deprecated
+    @Restricted(NoExternalUse.class)
     public transient String managerDN;
 
-    @Deprecated @Restricted(NoExternalUse.class)
-    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", 
-        justification = "This public field is exposed to the plugin's API")
+    @Deprecated
+    @Restricted(NoExternalUse.class)
+    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", justification = "This public field is exposed to the plugin's API")
     private transient String managerPassword;
 
     /**
@@ -374,10 +376,11 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
     private transient Secret managerPasswordSecret;
 
     /**
+     *
+     *
      * @since 1.2
      */
-    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD",
-        justification = "This public field is exposed to the plugin's API")
+    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", justification = "This public field is exposed to the plugin's API")
     public final boolean disableMailAddressResolver;
 
     private List<LDAPConfiguration> configurations;
@@ -391,15 +394,16 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
     /**
      * The {@link UserDetails} cache.
      */
-    private transient Map<String,CacheEntry<LdapUserDetails>> userDetailsCache = null;
+    private transient Map<String, CacheEntry<LdapUserDetails>> userDetailsCache = null;
 
     /**
      * The group details cache.
      */
-    private transient Map<String,CacheEntry<GroupDetailsImpl>> groupDetailsCache = null;
+    private transient Map<String, CacheEntry<GroupDetailsImpl>> groupDetailsCache = null;
 
-    @Deprecated @Restricted(NoExternalUse.class)
-    private transient Map<String,String> extraEnvVars;
+    @Deprecated
+    @Restricted(NoExternalUse.class)
+    private transient Map<String, String> extraEnvVars;
 
     @Deprecated @Restricted(NoExternalUse.class)
     private transient String displayNameAttributeName;
@@ -414,6 +418,8 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
     private boolean disableRolePrefixing;
 
     /**
+     *
+     *
      * @deprecated retained for backwards binary compatibility.
      */
     @Deprecated
@@ -422,25 +428,28 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
     }
 
     /**
+     *
+     *
      * @deprecated retained for backwards binary compatibility.
      */
     @Deprecated
-    public LDAPSecurityRealm(String server, String rootDN, String userSearchBase, String userSearch, String groupSearchBase, String managerDN, String managerPassword, boolean inhibitInferRootDN,
-                             boolean disableMailAddressResolver) {
-        this(server, rootDN, userSearchBase, userSearch, groupSearchBase, managerDN, managerPassword, inhibitInferRootDN,
-                                     disableMailAddressResolver, null);
+    public LDAPSecurityRealm(String server, String rootDN, String userSearchBase, String userSearch, String groupSearchBase, String managerDN, String managerPassword, boolean inhibitInferRootDN, boolean disableMailAddressResolver) {
+        this(server, rootDN, userSearchBase, userSearch, groupSearchBase, managerDN, managerPassword, inhibitInferRootDN, disableMailAddressResolver, null);
     }
 
     /**
+     *
+     *
      * @deprecated retained for backwards binary compatibility.
      */
     @Deprecated
-    public LDAPSecurityRealm(String server, String rootDN, String userSearchBase, String userSearch, String groupSearchBase, String managerDN, String managerPassword, boolean inhibitInferRootDN,
-                             boolean disableMailAddressResolver, CacheConfiguration cache) {
+    public LDAPSecurityRealm(String server, String rootDN, String userSearchBase, String userSearch, String groupSearchBase, String managerDN, String managerPassword, boolean inhibitInferRootDN, boolean disableMailAddressResolver, CacheConfiguration cache) {
         this(server, rootDN, userSearchBase, userSearch, groupSearchBase, null, null, managerDN, managerPassword, inhibitInferRootDN, disableMailAddressResolver, cache);
     }
 
     /**
+     *
+     *
      * @deprecated retained for backwards binary compatibility.
      */
     @Deprecated
@@ -449,6 +458,8 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
     }
 
     /**
+     *
+     *
      * @deprecated retained for backwards binary compatibility.
      */
     @Deprecated
@@ -457,6 +468,8 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
     }
 
     /**
+     *
+     *
      * @deprecated retained for backwards binary compatibility.
      */
     @Deprecated
@@ -465,6 +478,8 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
     }
 
     /**
+     *
+     *
      * @deprecated retained for backwards binary compatibility.
      */
     @Deprecated
@@ -473,6 +488,8 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
     }
 
     /**
+     *
+     *
      * @deprecated retained for backwards binary compatibility.
      */
     @Deprecated
@@ -481,23 +498,25 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
     }
 
     /**
+     *
+     *
      * @deprecated retained for backwards binary compatibility.
      */
     @Deprecated
     public LDAPSecurityRealm(String server, String rootDN, String userSearchBase, String userSearch, String groupSearchBase, String groupSearchFilter, LDAPGroupMembershipStrategy groupMembershipStrategy, String managerDN, Secret managerPasswordSecret, boolean inhibitInferRootDN, boolean disableMailAddressResolver, CacheConfiguration cache, EnvironmentProperty[] environmentProperties, String displayNameAttributeName, String mailAddressAttributeName, IdStrategy userIdStrategy, IdStrategy groupIdStrategy) {
-        this(createLdapConfiguration(server, rootDN, userSearchBase, userSearch, groupSearchBase, groupSearchFilter, groupMembershipStrategy, managerDN, managerPasswordSecret, inhibitInferRootDN, environmentProperties, displayNameAttributeName, mailAddressAttributeName),
-                disableMailAddressResolver, cache, userIdStrategy, groupIdStrategy);
+        this(createLdapConfiguration(server, rootDN, userSearchBase, userSearch, groupSearchBase, groupSearchFilter, groupMembershipStrategy, managerDN, managerPasswordSecret, inhibitInferRootDN, environmentProperties, displayNameAttributeName, mailAddressAttributeName), disableMailAddressResolver, cache, userIdStrategy, groupIdStrategy);
     }
 
     @DataBoundConstructor
     public LDAPSecurityRealm(List<LDAPConfiguration> configurations, boolean disableMailAddressResolver, CacheConfiguration cache, IdStrategy userIdStrategy, IdStrategy groupIdStrategy) {
-        if (configurations == null || configurations.isEmpty()) {
-            //Correct FormException should be handled by DescriptorImpl.newInstance
+        if ((configurations == null) || configurations.isEmpty()) {
+            // Correct FormException should be handled by DescriptorImpl.newInstance
             throw new IllegalArgumentException(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AtLeastOne());
         }
         if (configurations.size() > 1) {
-            //Configuration as code is a hot topic these days, so newInstance might not have been used.
-            if (!Main.isUnitTest || !Boolean.getBoolean(LDAPSecurityRealm.class.getName() + "do a bad thing during testing")) {  //Only during unit testing do we want to work around this limitation, but only explicitly.
+            // Configuration as code is a hot topic these days, so newInstance might not have been used.
+            if ((!Main.isUnitTest) || (!Boolean.getBoolean(LDAPSecurityRealm.class.getName() + "do a bad thing during testing"))) {
+                // Only during unit testing do we want to work around this limitation, but only explicitly.
                 for (int i = 0; i < configurations.size(); i++) {
                     LDAPConfiguration ci = configurations.get(i);
                     for (int k = i + 1; k < configurations.size(); k++) {
@@ -677,7 +696,8 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         return hasConfiguration() && configurations.size() > 1;
     }
 
-    @CheckForNull @Restricted(NoExternalUse.class)
+    @CheckForNull
+    @Restricted(NoExternalUse.class)
     public LDAPConfiguration getConfigurationFor(String configurationId) {
         if (configurations != null) {
             for (LDAPConfiguration configuration : configurations) {
@@ -854,12 +874,12 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         GroupDetailsImpl cachedGroup;
         if (cache != null) {
             final CacheEntry<GroupDetailsImpl> cached;
-            synchronized (this) {
-                cached = groupDetailsCache != null ? groupDetailsCache.get(groupname) : null;
+            synchronized(this) {
+                cached = (groupDetailsCache != null) ? groupDetailsCache.get(groupname) : null;
             }
-            if (cached != null && cached.isValid()) {
+            if ((cached != null) && cached.isValid()) {
                 GroupDetailsImpl cachedValue = cached.getValue();
-                if (!fetchMembers || cachedValue.getMembers() != null) {
+                if ((!fetchMembers) || (cachedValue.getMembers() != null)) {
                     cachedGroup = cachedValue;
                 } else {
                     cachedGroup = null;
@@ -870,30 +890,26 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         } else {
             cachedGroup = null;
         }
-
-        final GroupDetailsImpl group = cachedGroup != null
-                ? cachedGroup
-                : searchForGroupName(groupname, fetchMembers);
-        if (cache != null && cachedGroup == null) {
-            synchronized (this) {
+        final GroupDetailsImpl group = (cachedGroup != null) ? cachedGroup : searchForGroupName(groupname, fetchMembers);
+        if ((cache != null) && (cachedGroup == null)) {
+            synchronized(this) {
                 if (groupDetailsCache == null) {
                     groupDetailsCache = new CacheMap<>(cache.getSize());
                 }
                 groupDetailsCache.put(groupname, new CacheEntry<>(cache.getTtl(), group));
             }
         }
-
         return group;
     }
 
-    private @Nonnull GroupDetailsImpl searchForGroupName(String groupname, boolean fetchMembers) throws UsernameNotFoundException, DataAccessException {
+    @Nonnull
+    private GroupDetailsImpl searchForGroupName(String groupname, boolean fetchMembers) throws UsernameNotFoundException, DataAccessException {
         for (LDAPConfiguration conf : configurations) {
             try {
-                String searchBase = conf.getGroupSearchBase() != null ? conf.getGroupSearchBase() : "";
-                String searchFilter = conf.getGroupSearchFilter() != null ? conf.getGroupSearchFilter() : GROUP_SEARCH;
+                String searchBase = (conf.getGroupSearchBase() != null) ? conf.getGroupSearchBase() : "";
+                String searchFilter = (conf.getGroupSearchFilter() != null) ? conf.getGroupSearchFilter() : GROUP_SEARCH;
                 LDAPExtendedTemplate template = conf.getLdapTemplate();
-                GroupDetailsImpl groupDetails = (GroupDetailsImpl)template.searchForFirstEntry(searchBase, searchFilter,
-                        new Object[]{groupname}, new String[]{}, new GroupDetailsMapper());
+                GroupDetailsImpl groupDetails = ((GroupDetailsImpl) (template.searchForFirstEntry(searchBase, searchFilter, new Object[]{ groupname }, new String[]{  }, new GroupDetailsMapper())));
                 if (groupDetails != null) {
                     if (fetchMembers) {
                         Set<String> members = conf.getGroupMembershipStrategy().getGroupMembers(groupDetails.getDn(), conf);
@@ -901,11 +917,9 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                     }
                     return groupDetails;
                 }
-            // Make sure we don't throw BadCredentialsException. Catch logic matches LDAPUserDetailsService#loadUserByUsername.
             } catch (DataAccessException e) {
-                throwUnlessConfigIsIgnorable(e, conf);
-            } catch (RuntimeException e) {
-                throwUnlessConfigIsIgnorable(new LdapDataAccessException("Failed to search LDAP for group: " + groupname, e), conf);
+                LOGGER.log(Level.WARNING, String.format("Failed communication with ldap server %s (%s)", conf.getId(), conf.getServer()), e);
+                throw e;
             }
         }
         throw new UsernameNotFoundException(groupname);
@@ -924,21 +938,20 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         return (DescriptorImpl) super.getDescriptor();
     }
 
-    private static <T extends Exception> void throwUnlessConfigIsIgnorable(T e, @CheckForNull LDAPConfiguration config) throws T {
-        boolean shouldThrow = config == null || !config.isIgnoreIfUnavailable();
-        LOGGER.log(Level.WARNING, String.format("Failed communication with ldap server %s (%s), will %s the next configuration",
-                config == null ? "null" : config.getId(),
-                config == null ? "null" : config.getServer(),
-                shouldThrow ? "_not_ try" : "try"), e);
+    private static <T extends Exception> void throwUnlessConfigIsIgnorable(T e, @CheckForNull
+    LDAPConfiguration config) throws T {
+        boolean shouldThrow = (config == null) || (!config.isIgnoreIfUnavailable());
+        LOGGER.log(Level.WARNING, String.format("Failed communication with ldap server %s (%s), will %s the next configuration", config == null ? "null" : config.getId(), config == null ? "null" : config.getServer(), shouldThrow ? "_not_ try" : "try"), e);
         if (shouldThrow) {
             throw e;
         }
     }
 
     private static class GroupDetailsImpl extends GroupDetails {
-
         private final String dn;
+
         private final String name;
+
         private final Set<String> members;
 
         public GroupDetailsImpl(String dn, String name) {
@@ -976,7 +989,8 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
     }
 
     private class LDAPAuthenticationManager implements AuthenticationManager {
-        private final List<ManagerEntry> delegates = new ArrayList<>();;
+        private final List<ManagerEntry> delegates = new ArrayList<>();
+
         private final DelegateLDAPUserDetailsService detailsService;
 
         private LDAPAuthenticationManager() {
@@ -1006,14 +1020,16 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                     Authentication a = delegate.delegate.authenticate(authentication);
                     return updateUserDetails(new DelegatedLdapAuthentication(a, delegate.configurationId));
                 } catch (BadCredentialsException e) {
-                    if (detailsService != null && delegates.size() > 1) {
+                    if ((detailsService != null) && (delegates.size() > 1)) {
                         try {
                             UserDetails details = detailsService.loadUserByUsername(delegate.configurationId, String.valueOf(authentication.getPrincipal()));
                             if (details != null) {
-                                throw e; //the user actually exists on this server, so we should stop here and report
+                                throw e;// the user actually exists on this server, so we should stop here and report
+
                             }
                         } catch (UsernameNotFoundException e1) {
-                            lastException = e; //all is as intended, let's move along
+                            //all is as intended, let's move along
+                            lastException = e;
                         } catch (DataAccessException e1) {
                             final LDAPConfiguration configuration = getConfigurationFor(delegate.configurationId);
                             throwUnlessConfigIsIgnorable(e1, configuration);
@@ -1037,6 +1053,7 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
 
         private class ManagerEntry {
             final AuthenticationManager delegate;
+
             final String configurationId;
 
             public ManagerEntry(AuthenticationManager delegate, String configurationId) {
@@ -1046,9 +1063,10 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         }
     }
 
-    /*package access for testability*/
+    /* package access for testability */
     static class DelegatedLdapAuthentication implements Authentication {
         private final Authentication delegate;
+
         private final String configurationId;
 
         public DelegatedLdapAuthentication(Authentication delegate, String configurationId) {
@@ -1074,8 +1092,8 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         @Override
         public Object getPrincipal() {
             Object principal = delegate.getPrincipal();
-            if (principal instanceof LdapUserDetails && !(principal instanceof DelegatedLdapUserDetails)) {
-                return new DelegatedLdapUserDetails((LdapUserDetails) principal, this.configurationId);
+            if ((principal instanceof LdapUserDetails) && (!(principal instanceof DelegatedLdapUserDetails))) {
+                return new DelegatedLdapUserDetails(((LdapUserDetails) (principal)), this.configurationId);
             } else {
                 return principal;
             }
@@ -1105,13 +1123,17 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         }
     }
 
-    /*package access for testability*/
-    static class DelegatedLdapUserDetails implements LdapUserDetails, Serializable {
+    /* package access for testability */
+    static class DelegatedLdapUserDetails implements LdapUserDetails , Serializable {
         private static final long serialVersionUID = 1L;
+
         private final LdapUserDetails userDetails;
+
         private final String configurationId;
 
-        public DelegatedLdapUserDetails(@Nonnull LdapUserDetails userDetails, @Nonnull String configurationId) {
+        public DelegatedLdapUserDetails(@Nonnull
+        LdapUserDetails userDetails, @Nonnull
+        String configurationId) {
             this.userDetails = userDetails;
             this.configurationId = configurationId;
         }
@@ -1241,7 +1263,7 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                 }
             }
             if (lastUNFE != null) {
-                throw  lastUNFE;
+                throw lastUNFE;
             } else {
                 throw new UsernameNotFoundException(username);
             }
@@ -1250,9 +1272,13 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
 
     public static class LDAPUserDetailsService implements UserDetailsService {
         public final LdapUserSearch ldapSearch;
+
         public final LdapAuthoritiesPopulator authoritiesPopulator;
+
         public final LDAPGroupMembershipStrategy groupMembershipStrategy;
+
         public final String configurationId;
+
         /**
          * {@link BasicAttributes} in LDAP tend to be bulky (about 20K at size), so interning them
          * to keep the size under control. When a programmatic client is not smart enough to
@@ -1278,35 +1304,29 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         }
 
         @Deprecated
-        public LDAPUserDetailsService(WebApplicationContext appContext,
-                                      LDAPGroupMembershipStrategy groupMembershipStrategy) {
+        public LDAPUserDetailsService(WebApplicationContext appContext, LDAPGroupMembershipStrategy groupMembershipStrategy) {
             this(findBean(LdapUserSearch.class, appContext), findBean(LdapAuthoritiesPopulator.class, appContext), groupMembershipStrategy, null);
         }
 
-        public LDAPUserDetailsService(WebApplicationContext appContext,
-                                      LDAPGroupMembershipStrategy groupMembershipStrategy, String configurationId) {
+        public LDAPUserDetailsService(WebApplicationContext appContext, LDAPGroupMembershipStrategy groupMembershipStrategy, String configurationId) {
             this(findBean(LdapUserSearch.class, appContext), findBean(LdapAuthoritiesPopulator.class, appContext), groupMembershipStrategy, configurationId);
         }
 
-        @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", justification = "Only on newer core versions") //TODO remove when core is bumped
+        //TODO remove when core is bumped
+        @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", justification = "Only on newer core versions")
         public LdapUserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
             username = fixUsername(username);
             try {
                 final Jenkins jenkins = Jenkins.getInstance();
-                final SecurityRealm securityRealm = jenkins == null ? null : jenkins.getSecurityRealm();
-                if (securityRealm instanceof LDAPSecurityRealm
-                        && (securityRealm.getSecurityComponents().userDetails == this
-                        || (securityRealm.getSecurityComponents().userDetails instanceof DelegateLDAPUserDetailsService
-                        && ((DelegateLDAPUserDetailsService) securityRealm.getSecurityComponents().userDetails).contains(this))
-                        )) {
-                    LDAPSecurityRealm ldapSecurityRealm = (LDAPSecurityRealm) securityRealm;
+                final SecurityRealm securityRealm = (jenkins == null) ? null : jenkins.getSecurityRealm();
+                if ((securityRealm instanceof LDAPSecurityRealm) && ((securityRealm.getSecurityComponents().userDetails == this) || ((securityRealm.getSecurityComponents().userDetails instanceof DelegateLDAPUserDetailsService) && ((DelegateLDAPUserDetailsService) (securityRealm.getSecurityComponents().userDetails)).contains(this)))) {
+                    LDAPSecurityRealm ldapSecurityRealm = ((LDAPSecurityRealm) (securityRealm));
                     if (ldapSecurityRealm.cache != null) {
                         final CacheEntry<LdapUserDetails> cached;
-                        synchronized (ldapSecurityRealm) {
-                            cached = (ldapSecurityRealm.userDetailsCache != null) ? ldapSecurityRealm.userDetailsCache
-                                    .get(username) : null;
+                        synchronized(ldapSecurityRealm) {
+                            cached = (ldapSecurityRealm.userDetailsCache != null) ? ldapSecurityRealm.userDetailsCache.get(username) : null;
                         }
-                        if (cached != null && cached.isValid()) {
+                        if ((cached != null) && cached.isValid()) {
                             return cached.getValue();
                         }
                     }
@@ -1316,20 +1336,19 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                 // Add those, as done in LdapAuthenticationProvider.createUserDetails().
                 if (ldapUser != null) {
                     LdapUserDetailsImpl.Essence user = new LdapUserDetailsImpl.Essence(ldapUser);
-
                     // intern attributes
                     Attributes v = ldapUser.getAttributes();
-                    if (v instanceof BasicAttributes) {// BasicAttributes.equals is what makes the interning possible
-                        synchronized (attributesCache) {
-                            Attributes vv = (Attributes)attributesCache.get(v);
-                            if (vv==null)   attributesCache.put(v,vv=v);
+                    if (v instanceof BasicAttributes) {
+                        // BasicAttributes.equals is what makes the interning possible
+                        synchronized(attributesCache) {
+                            Attributes vv = ((Attributes) (attributesCache.get(v)));
+                            if (vv == null) {
+                                attributesCache.put(v, vv = v);
+                            }
                             user.setAttributes(vv);
                         }
                     }
-
-                    GrantedAuthority[] extraAuthorities = groupMembershipStrategy == null
-                            ? authoritiesPopulator.getGrantedAuthorities(ldapUser)
-                            : groupMembershipStrategy.getGrantedAuthorities(ldapUser);
+                    GrantedAuthority[] extraAuthorities = (groupMembershipStrategy == null) ? authoritiesPopulator.getGrantedAuthorities(ldapUser) : groupMembershipStrategy.getGrantedAuthorities(ldapUser);
                     for (GrantedAuthority extraAuthority : extraAuthorities) {
                         if (FORCE_GROUPNAME_LOWERCASE) {
                             user.addAuthority(new GrantedAuthorityImpl(extraAuthority.getAuthority().toLowerCase()));
@@ -1343,30 +1362,21 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                         ldapUser = user.createUserDetails();
                     }
                 }
-                if (securityRealm instanceof LDAPSecurityRealm
-                        && (securityRealm.getSecurityComponents().userDetails == this
-                            || (securityRealm.getSecurityComponents().userDetails instanceof DelegateLDAPUserDetailsService
-                                && ((DelegateLDAPUserDetailsService) securityRealm.getSecurityComponents().userDetails).contains(this))
-                               )
-                        ) {
-                    LDAPSecurityRealm ldapSecurityRealm = (LDAPSecurityRealm) securityRealm;
+                if ((securityRealm instanceof LDAPSecurityRealm) && ((securityRealm.getSecurityComponents().userDetails == this) || ((securityRealm.getSecurityComponents().userDetails instanceof DelegateLDAPUserDetailsService) && ((DelegateLDAPUserDetailsService) (securityRealm.getSecurityComponents().userDetails)).contains(this)))) {
+                    LDAPSecurityRealm ldapSecurityRealm = ((LDAPSecurityRealm) (securityRealm));
                     if (ldapSecurityRealm.cache != null) {
-                        synchronized (ldapSecurityRealm) {
+                        synchronized(ldapSecurityRealm) {
                             if (ldapSecurityRealm.userDetailsCache == null) {
-                                ldapSecurityRealm.userDetailsCache =
-                                        new CacheMap<String, LdapUserDetails>(ldapSecurityRealm.cache.getSize());
+                                ldapSecurityRealm.userDetailsCache = new CacheMap<String, LdapUserDetails>(ldapSecurityRealm.cache.getSize());
                             }
-                            ldapSecurityRealm.userDetailsCache.put(username,
-                                    new CacheEntry<LdapUserDetails>(ldapSecurityRealm.cache.getTtl(),
-                                            ldapSecurityRealm.updateUserDetails(ldapUser)));
+                            ldapSecurityRealm.userDetailsCache.put(username, new CacheEntry<LdapUserDetails>(ldapSecurityRealm.cache.getTtl(), ldapSecurityRealm.updateUserDetails(ldapUser)));
                         }
                     }
                 }
-
                 return ldapUser;
             } catch (DataAccessException | UsernameNotFoundException x) {
                 throw x;
-            } catch (RuntimeException x) {
+            } catch (java.lang.RuntimeException x) {
                 throw new LdapDataAccessException("Failed to search LDAP for " + username, x);
             }
         }
@@ -1377,23 +1387,25 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
      */
     @Extension
     public static final class MailAdressResolverImpl extends MailAddressResolver {
-        @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", justification = "Only on newer core versions") //TODO remove when core is bumped
+        // TODO remove when core is bumped
+        @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", justification = "Only on newer core versions")
         public String findMailAddressFor(User u) {
             final Jenkins jenkins = Jenkins.getInstance();
             if (jenkins == null) {
                 return null;
             }
             SecurityRealm realm = jenkins.getSecurityRealm();
-            if(!(realm instanceof LDAPSecurityRealm)) { // LDAP not active
+            if (!(realm instanceof LDAPSecurityRealm)) {
+                // LDAP not active
                 return null;
             }
-            if (((LDAPSecurityRealm)realm).disableMailAddressResolver) {
-                LOGGER.info( "LDAPSecurityRealm MailAddressResolver is disabled" );
+            if (((LDAPSecurityRealm) (realm)).disableMailAddressResolver) {
+                LOGGER.info("LDAPSecurityRealm MailAddressResolver is disabled");
                 return null;
             }
             try {
-                LdapUserDetails details = (LdapUserDetails)realm.getSecurityComponents().userDetails.loadUserByUsername(u.getId());
-                final LDAPConfiguration configuration = ((LDAPSecurityRealm) realm).getConfigurationFor(details);
+                LdapUserDetails details = ((LdapUserDetails) (realm.getSecurityComponents().userDetails.loadUserByUsername(u.getId())));
+                final LDAPConfiguration configuration = ((LDAPSecurityRealm) (realm)).getConfigurationFor(details);
                 String attr;
                 if (configuration != null) {
                     attr = configuration.getMailAddressAttributeName();
@@ -1404,29 +1416,27 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                     attr = DescriptorImpl.DEFAULT_MAILADDRESS_ATTRIBUTE_NAME;
                 }
                 Attribute mail = details.getAttributes().get(attr);
-                if(mail==null)  return null;    // not found
-                return (String)mail.get();
+                if (mail == null) {
+                    return null;
+                }// not found
+
+                return ((String) (mail.get()));
             } catch (DataAccessException | NamingException | AcegiSecurityException e) {
-                LOGGER.log(Level.FINE, "Failed to look up LDAP for e-mail address",e);
+                LOGGER.log(Level.FINE, "Failed to look up LDAP for e-mail address", e);
                 return null;
             }
         }
     }
 
     public static final class LdapAuthenticationProviderImpl extends LdapAuthenticationProvider {
-
-        public LdapAuthenticationProviderImpl(LdapAuthenticator authenticator,
-                                              LdapAuthoritiesPopulator authoritiesPopulator,
-                                              LDAPGroupMembershipStrategy groupMembershipStrategy) {
-            super(authenticator, groupMembershipStrategy != null
-                    ? new WrappedAuthoritiesPopulator(groupMembershipStrategy, authoritiesPopulator)
-                    : authoritiesPopulator);
+        public LdapAuthenticationProviderImpl(LdapAuthenticator authenticator, LdapAuthoritiesPopulator authoritiesPopulator, LDAPGroupMembershipStrategy groupMembershipStrategy) {
+            super(authenticator, groupMembershipStrategy != null ? new WrappedAuthoritiesPopulator(groupMembershipStrategy, authoritiesPopulator) : authoritiesPopulator);
         }
     }
 
     private static final class WrappedAuthoritiesPopulator implements LdapAuthoritiesPopulator {
-
         private final LDAPGroupMembershipStrategy strategy;
+
         private final LdapAuthoritiesPopulator populator;
 
         private WrappedAuthoritiesPopulator(LDAPGroupMembershipStrategy strategy, LdapAuthoritiesPopulator populator) {
@@ -1442,7 +1452,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             }
             return strategy.getGrantedAuthorities(userDetails);
         }
-
     }
 
     /**
@@ -1451,12 +1460,13 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
     public static final class AuthoritiesPopulatorImpl extends DefaultLdapAuthoritiesPopulator {
         // Make these available (private in parent class and no get methods!)
         String rolePrefix = "ROLE_";
+
         boolean convertToUpperCase = true;
+
         private GrantedAuthority defaultRole = null;
 
         public AuthoritiesPopulatorImpl(InitialDirContextFactory initialDirContextFactory, String groupSearchBase) {
             super(initialDirContextFactory, fixNull(groupSearchBase));
-
             super.setRolePrefix("");
             super.setConvertToUpperCase(false);
         }
@@ -1468,13 +1478,13 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
 
         @Override
         public void setRolePrefix(String rolePrefix) {
-//            super.setRolePrefix(rolePrefix);
+            // super.setRolePrefix(rolePrefix);
             this.rolePrefix = rolePrefix;
         }
 
         @Override
         public void setConvertToUpperCase(boolean convertToUpperCase) {
-//            super.setConvertToUpperCase(convertToUpperCase);
+            // super.setConvertToUpperCase(convertToUpperCase);
             this.convertToUpperCase = convertToUpperCase;
         }
 
@@ -1487,22 +1497,19 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
          */
         @Override
         public Set getGroupMembershipRoles(String userDn, String username) {
-            Set<GrantedAuthority> names = super.getGroupMembershipRoles(userDn,username);
-
-            Set<GrantedAuthority> r = new HashSet<GrantedAuthority>(names.size()*2);
+            Set<GrantedAuthority> names = super.getGroupMembershipRoles(userDn, username);
+            Set<GrantedAuthority> r = new HashSet<GrantedAuthority>(names.size() * 2);
             r.addAll(names);
-
             if (isGeneratingPrefixRoles()) {
                 for (GrantedAuthority ga : names) {
                     String role = ga.getAuthority();
-
                     // backward compatible name mangling
-                    if (convertToUpperCase)
+                    if (convertToUpperCase) {
                         role = role.toUpperCase();
+                    }
                     r.add(new GrantedAuthorityImpl(rolePrefix + role));
                 }
             }
-
             return r;
         }
 
@@ -1531,9 +1538,10 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
 
     @Extension
     public static final class DescriptorImpl extends Descriptor<SecurityRealm> {
-
         public static final String DEFAULT_DISPLAYNAME_ATTRIBUTE_NAME = "displayname";
+
         public static final String DEFAULT_MAILADDRESS_ATTRIBUTE_NAME = "mail";
+
         public static final String DEFAULT_USER_SEARCH = "uid={0}";
 
         public String getDisplayName() {
@@ -1551,14 +1559,14 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             } else {
                 final Object configurations = formData.get("configurations");
                 if (configurations instanceof JSONArray) {
-                    if (((JSONArray) configurations).isEmpty()) {
+                    if (((JSONArray) (configurations)).isEmpty()) {
                         throw new Descriptor.FormException(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AtLeastOne(), "configurations");
-                    } else if (((JSONArray) configurations).size() > 1) {
-                        //check server names
+                    } else if (((JSONArray) (configurations)).size() > 1) {
+                        // check server names
                         List<LDAPConfiguration> confs = req.bindJSONToList(LDAPConfiguration.class, configurations);
                         for (int i = 0; i < confs.size(); i++) {
                             LDAPConfiguration ci = confs.get(i);
-                            for (int k = i+1; k < confs.size(); k++) {
+                            for (int k = i + 1; k < confs.size(); k++) {
                                 LDAPConfiguration ck = confs.get(k);
                                 if (ci.isConfiguration(ck.getId())) {
                                     throw new Descriptor.FormException(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_NotSameServer(), "configurations");
@@ -1568,7 +1576,7 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                     }
                 } else if (!(configurations instanceof JSONObject)) {
                     throw new Descriptor.FormException(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AtLeastOne(), "configurations");
-                } else if (((JSONObject) configurations).isNullObject()) {
+                } else if (((JSONObject) (configurations)).isNullObject()) {
                     throw new Descriptor.FormException(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AtLeastOne(), "configurations");
                 }
             }
@@ -1601,7 +1609,7 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             response.append("'>");
             response.append(message);
             boolean needBr = true;
-            for (Object extra: extras) {
+            for (Object extra : extras) {
                 if (extra instanceof String) {
                     if (needBr) {
                         response.append("<br/>");
@@ -1610,7 +1618,7 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                     needBr = true;
                 } else if (extra instanceof Collection) {
                     response.append("<ul>");
-                    for (String item : (Collection<String>)extra) {
+                    for (String item : ((Collection<String>) (extra))) {
                         response.append("<li>");
                         response.append(item);
                         response.append("</li>");
@@ -1643,30 +1651,22 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                     return connnectionCheck;
                 }
             }
-
             // ok let's start with authentication
             StringBuilder response = new StringBuilder(1024);
-            response.append("<div>")
-                    .append(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_LoginHeader())
-                    .append("</div>");
+            response.append("<div>").append(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_LoginHeader()).append("</div>");
             boolean potentialLockout = false;
             boolean likelyLockout = false;
-
             // can we login?
             LdapUserDetails loginDetails = null;
             try {
                 // need to access direct so as not to update the user details
-                loginDetails = (LdapUserDetails) realm.getSecurityComponents().manager.authenticate(
-                        new UsernamePasswordAuthenticationToken(fixUsername(user), password)).getPrincipal();
-                ok(response, "authentication",
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AuthenticationSuccessful());
+                loginDetails = ((LdapUserDetails) (realm.getSecurityComponents().manager.authenticate(new UsernamePasswordAuthenticationToken(fixUsername(user), password)).getPrincipal()));
+                ok(response, "authentication", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AuthenticationSuccessful());
             } catch (AuthenticationException e) {
                 if (StringUtils.isBlank(password)) {
-                    warning(response, "authentication",
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AuthenticationFailedEmptyPass(user));
+                    warning(response, "authentication", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AuthenticationFailedEmptyPass(user));
                 } else {
-                    error(response, "authentication",
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AuthenticationFailed(user));
+                    error(response, "authentication", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AuthenticationFailed(user));
                     potentialLockout = true;
                     likelyLockout = true;
                 }
@@ -1674,15 +1674,12 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             Set<String> loginAuthorities = new HashSet<>();
             if (loginDetails != null) {
                 // report details of the logged in user
-                ok(response, "authentication-username",
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserId(Util.escape(loginDetails.getUsername())));
-                ok(response, "authentication-dn",
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserDn(Util.escape(loginDetails.getDn())));
+                ok(response, "authentication-username", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserId(Util.escape(loginDetails.getUsername())));
+                ok(response, "authentication-dn", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserDn(Util.escape(loginDetails.getDn())));
                 LDAPConfiguration loginConfiguration = realm.getConfigurationFor(loginDetails);
                 assert loginConfiguration != null;
                 if (realm.hasMultiConfiguration()) {
-                    ok(response, "authentication-configuration",
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserConfiguration(Util.escape(loginConfiguration.getServer())));
+                    ok(response, "authentication-configuration", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserConfiguration(Util.escape(loginConfiguration.getServer())));
                 }
                 validateDisplayName(loginConfiguration, response, loginDetails, "authentication-displayname");
                 if (!realm.disableMailAddressResolver) {
@@ -1692,96 +1689,55 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                     loginAuthorities.add(a.getAuthority());
                 }
                 if (loginDetails.getAuthorities().length < 1) {
-                    error(response, "authentication-groups",
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_NoGroupMembership());
+                    error(response, "authentication-groups", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_NoGroupMembership());
                     // we do not flag this error as may be legitimate config
                 } else if (loginDetails.getAuthorities().length == 1) {
-                    warning(response, "authentication-groups",
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_BasicGroupMembership(),
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_BasicGroupMembershipDetail());
+                    warning(response, "authentication-groups", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_BasicGroupMembership(), jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_BasicGroupMembershipDetail());
                 } else {
                     List<String> authorities = new ArrayList<>();
                     for (GrantedAuthority a : loginDetails.getAuthorities()) {
                         if (AUTHENTICATED_AUTHORITY.equals(a)) {
                             continue;
                         }
-                        authorities.add("<code>"+ Util.escape(a.getAuthority()) + "</code>");
+                        authorities.add(("<code>" + Util.escape(a.getAuthority())) + "</code>");
                     }
-                    ok(response, "authentication-groups",
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupMembership(),
-                            authorities);
+                    ok(response, "authentication-groups", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupMembership(), authorities);
                 }
             }
-
             // can we lookup user by username?
-            response.append("<div>")
-                    .append(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_LookupHeader())
-                    .append("</div>");
+            response.append("<div>").append(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_LookupHeader()).append("</div>");
             LdapUserDetails lookUpDetails = null;
             try {
                 // need to access direct so as not to update the user details
-                lookUpDetails =
-                        (LdapUserDetails) realm.getSecurityComponents().userDetails
-                                .loadUserByUsername(fixUsername(user));
-                ok(response, "lookup",
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupSuccessful());
+                lookUpDetails = ((LdapUserDetails) (realm.getSecurityComponents().userDetails.loadUserByUsername(fixUsername(user))));
+                ok(response, "lookup", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupSuccessful());
             } catch (UserMayOrMayNotExistException e1) {
-                rsp(response, loginDetails == null ? "warning" : "error", "lookup",
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupInconclusive(user),
-                        isAnyManagerBlank(realm)
-                                ? jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupManagerDnRequired()
-                                : jenkins.security.plugins.ldap.Messages
-                                .LDAPSecurityRealm_UserLookupManagerDnPermissions()
-                );
+                rsp(response, loginDetails == null ? "warning" : "error", "lookup", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupInconclusive(user), isAnyManagerBlank(realm) ? jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupManagerDnRequired() : jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupManagerDnPermissions());
                 // we do not flag these errors as could be probing user accounts
             } catch (UsernameNotFoundException e1) {
-                rsp(response, loginDetails == null ? "warning" : "error", "lookup",
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupDoesNotExist(user),
-                        isAnyManagerBlank(realm)
-                                ? jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupManagerDnRequired()
-                                : jenkins.security.plugins.ldap.Messages
-                                .LDAPSecurityRealm_UserLookupManagerDnPermissions(),
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupSettingsCorrect());
+                rsp(response, loginDetails == null ? "warning" : "error", "lookup", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupDoesNotExist(user), isAnyManagerBlank(realm) ? jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupManagerDnRequired() : jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupManagerDnPermissions(), jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupSettingsCorrect());
                 // we do not flag these errors as could be probing user accounts
             } catch (LdapDataAccessException e) {
                 Throwable cause = e.getCause();
-                while (cause != null && !(cause instanceof BadCredentialsException)) {
+                while ((cause != null) && (!(cause instanceof BadCredentialsException))) {
                     cause = cause.getCause();
-                }
+                } 
                 if (cause != null) {
-                    error(response, "lookup",
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupBadCredentials(),
-                            isAnyManagerBlank(realm)
-                                    ? jenkins.security.plugins.ldap.Messages
-                                    .LDAPSecurityRealm_UserLookupManagerDnCorrect()
-                                    : jenkins.security.plugins.ldap.Messages
-                                    .LDAPSecurityRealm_UserLookupManagerDnPermissions()
-                    );
+                    error(response, "lookup", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupBadCredentials(), isAnyManagerBlank(realm) ? jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupManagerDnCorrect() : jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupManagerDnPermissions());
                     potentialLockout = true;
                 } else {
-                    error(response, "lookup",
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupFailed(user),
-                            Util.escape(e.getLocalizedMessage()));
+                    error(response, "lookup", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupFailed(user), Util.escape(e.getLocalizedMessage()));
                     potentialLockout = true;
                 }
             }
-            if (loginDetails == null && lookUpDetails != null) {
+            if ((loginDetails == null) && (lookUpDetails != null)) {
                 // we could not login, so let's report details of the resolved user
-                ok(response, "lookup-username",
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserId(
-                                Util.escape(lookUpDetails.getUsername())
-                        ));
-                ok(response, "lookup-dn",
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserDn(
-                                Util.escape(lookUpDetails.getDn())
-                        ));
+                ok(response, "lookup-username", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserId(Util.escape(lookUpDetails.getUsername())));
+                ok(response, "lookup-dn", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserDn(Util.escape(lookUpDetails.getDn())));
                 LDAPConfiguration lookupConfiguration = realm.getConfigurationFor(lookUpDetails);
                 assert lookupConfiguration != null;
                 if (realm.hasMultiConfiguration()) {
-                    ok(response, "lookup-configuration",
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserConfiguration(
-                                    Util.escape(lookupConfiguration.getServer())
-                            ));
+                    ok(response, "lookup-configuration", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserConfiguration(Util.escape(lookupConfiguration.getServer())));
                 }
                 validateDisplayName(lookupConfiguration, response, lookUpDetails, "lookup-displayname");
                 if (!realm.disableMailAddressResolver) {
@@ -1793,104 +1749,93 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                 for (GrantedAuthority a : lookUpDetails.getAuthorities()) {
                     lookupAuthorities.add(a.getAuthority());
                 }
-                if (loginDetails == null || !loginAuthorities.equals(lookupAuthorities)) {
+                if ((loginDetails == null) || (!loginAuthorities.equals(lookupAuthorities))) {
                     // report the group details if different or if we did not login
                     if (lookUpDetails.getAuthorities().length < 1) {
-                        error(response, "lookup-groups",
-                                jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_NoGroupMembership());
+                        error(response, "lookup-groups", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_NoGroupMembership());
                         // we do not flag this error as may be legitimate
                     } else if (lookUpDetails.getAuthorities().length == 1) {
-                        warning(response, "lookup-groups",
-                                jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_BasicGroupMembership(),
-                                jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_BasicGroupMembershipDetail());
+                        warning(response, "lookup-groups", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_BasicGroupMembership(), jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_BasicGroupMembershipDetail());
                     } else {
                         List<String> authorities = new ArrayList<>();
                         for (GrantedAuthority a : lookUpDetails.getAuthorities()) {
                             if (AUTHENTICATED_AUTHORITY.equals(a)) {
                                 continue;
                             }
-                            authorities.add("<code>" + Util.escape(a.getAuthority()) + "</code>");
+                            authorities.add(("<code>" + Util.escape(a.getAuthority())) + "</code>");
                         }
-                        ok(response, "lookup-groups",
-                                jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupMembership(),
-                                authorities);
+                        ok(response, "lookup-groups", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupMembership(), authorities);
                     }
                 }
             }
             // let's check consistency
-            if (loginDetails != null && lookUpDetails != null) {
+            if ((loginDetails != null) && (lookUpDetails != null)) {
                 LDAPConfiguration loginConfiguration = realm.getConfigurationFor(loginDetails);
                 LDAPConfiguration lookupConfiguration = realm.getConfigurationFor(lookUpDetails);
                 assert loginConfiguration == lookupConfiguration : "The lookup user details and login user details are not from the same server configuration";
                 // username
                 if (!StringUtils.equals(loginDetails.getUsername(), lookUpDetails.getUsername())) {
-                    error(response, "consistency-username",
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UsernameMismatch(
-                                    loginDetails.getUsername(), lookUpDetails.getUsername()));
-                    potentialLockout = true; // consistency is important
+                    error(response, "consistency-username", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UsernameMismatch(loginDetails.getUsername(), lookUpDetails.getUsername()));
+                    potentialLockout = true;// consistency is important
+
                 }
                 // dn
                 if (!StringUtils.equals(loginDetails.getDn(), lookUpDetails.getDn())) {
-                    error(response, "consistency-dn",
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_DnMismatch(
-                                    loginDetails.getDn(), lookUpDetails.getDn()));
-                    potentialLockout = true; // consistency is important
+                    error(response, "consistency-dn", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_DnMismatch(loginDetails.getDn(), lookUpDetails.getDn()));
+                    potentialLockout = true;// consistency is important
+
                 }
                 // display name
                 if (StringUtils.isNotBlank(loginConfiguration.getDisplayNameAttributeName())) {
                     Attribute loginAttr = loginDetails.getAttributes().get(loginConfiguration.getDisplayNameAttributeName());
                     Object loginValue;
                     try {
-                        loginValue = loginAttr == null ? null : loginAttr.get();
+                        loginValue = (loginAttr == null) ? null : loginAttr.get();
                     } catch (NamingException e) {
                         loginValue = e.getClass();
                     }
                     Attribute lookUpAttr = lookUpDetails.getAttributes().get(lookupConfiguration.getDisplayNameAttributeName());
                     Object lookUpValue;
                     try {
-                        lookUpValue = lookUpAttr == null ? null : lookUpAttr.get();
+                        lookUpValue = (lookUpAttr == null) ? null : lookUpAttr.get();
                     } catch (NamingException e) {
                         lookUpValue = e.getClass();
                     }
                     if (loginValue == null ? lookUpValue != null : !loginValue.equals(lookUpValue)) {
-                        error(response, "consistency-displayname",
-                                jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_DisplayNameMismatch(
-                                        loginValue, lookUpValue));
-                        potentialLockout = true; // consistency is important
+                        error(response, "consistency-displayname", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_DisplayNameMismatch(loginValue, lookUpValue));
+                        potentialLockout = true;// consistency is important
+
                     }
                 }
                 // email address
-                if (!realm.disableMailAddressResolver && StringUtils.isNotBlank(loginConfiguration.getMailAddressAttributeName()))
-                {
+                if ((!realm.disableMailAddressResolver) && StringUtils.isNotBlank(loginConfiguration.getMailAddressAttributeName())) {
                     Attribute loginAttr = loginDetails.getAttributes().get(loginConfiguration.getMailAddressAttributeName());
                     Object loginValue;
                     try {
-                        loginValue = loginAttr == null ? null : loginAttr.get();
+                        loginValue = (loginAttr == null) ? null : loginAttr.get();
                     } catch (NamingException e) {
                         loginValue = e.getClass();
                     }
                     Attribute lookUpAttr = lookUpDetails.getAttributes().get(lookupConfiguration.getMailAddressAttributeName());
                     Object lookUpValue;
                     try {
-                        lookUpValue = lookUpAttr == null ? null : lookUpAttr.get();
+                        lookUpValue = (lookUpAttr == null) ? null : lookUpAttr.get();
                     } catch (NamingException e) {
                         lookUpValue = e.getClass();
                     }
                     if (loginValue == null ? lookUpValue != null : !loginValue.equals(lookUpValue)) {
-                        error(response, "consistency-email",
-                                jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_EmailAddressMismatch(
-                                        loginValue, lookUpValue));
-                        potentialLockout = true; // consistency is important
+                        error(response, "consistency-email", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_EmailAddressMismatch(loginValue, lookUpValue));
+                        potentialLockout = true;// consistency is important
+
                     }
                 }
                 // groups
                 if (loginAuthorities.equals(lookupAuthorities)) {
-                    ok(response, "consistency",
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupMembershipMatch());
+                    ok(response, "consistency", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupMembershipMatch());
                 } else {
-                    error(response, "consistency",
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupMembershipMismatch());
-                    potentialLockout = true; // consistency is important
+                    error(response, "consistency", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupMembershipMismatch());
+                    potentialLockout = true;// consistency is important
+
                 }
             }
             // lets check group lookup if we can
@@ -1906,35 +1851,19 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                 }
             }
             if (groups.isEmpty()) {
-                warning(response, "resolve-groups",
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupLookupNotPossible(),
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupLookupNotPossibleDetail());
+                warning(response, "resolve-groups", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupLookupNotPossible(), jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupLookupNotPossibleDetail());
             } else if (badGroups.isEmpty()) {
-                ok(response, "resolve-groups",
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupLookupSuccessful(groups.size()));
+                ok(response, "resolve-groups", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupLookupSuccessful(groups.size()));
             } else {
                 List<String> escaped = new ArrayList<>(badGroups.size());
                 for (String group : badGroups) {
-                    escaped.add("<code>"+Util.escape(group)+"</code>");
+                    escaped.add(("<code>" + Util.escape(group)) + "</code>");
                 }
-                warning(response, "resolve-groups",
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupLookupFailed(badGroups.size()),
-                        escaped,
-                        isAnyManagerBlank(realm)
-                                ? jenkins.security.plugins.ldap.Messages
-                                .LDAPSecurityRealm_GroupLookupManagerDnRequired()
-                                : jenkins.security.plugins.ldap.Messages
-                                .LDAPSecurityRealm_GroupLookupManagerDnPermissions(),
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupLookupSettingsCorrect());
+                warning(response, "resolve-groups", jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupLookupFailed(badGroups.size()), escaped, isAnyManagerBlank(realm) ? jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupLookupManagerDnRequired() : jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupLookupManagerDnPermissions(), jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupLookupSettingsCorrect());
             }
             if (potentialLockout) {
-                response.append("<div>")
-                        .append(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_LockoutHeader())
-                        .append("</div>");
-                error(response, "lockout",
-                        likelyLockout ? jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_PotentialLockout(user)
-                                : jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_PotentialLockout2(user)
-                );
+                response.append("<div>").append(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_LockoutHeader()).append("</div>");
+                error(response, "lockout", likelyLockout ? jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_PotentialLockout(user) : jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_PotentialLockout2(user));
             }
             // and we are done, report the results
             return FormValidation.okWithMarkup(response.toString());
@@ -1949,106 +1878,62 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             return false;
         }
 
-        private void validateEmailAddress(LDAPConfiguration configuration, StringBuilder response,
-                                          LdapUserDetails details, String testId) {
+        private void validateEmailAddress(LDAPConfiguration configuration, StringBuilder response, LdapUserDetails details, String testId) {
             Attribute attribute = details.getAttributes().get(configuration.getMailAddressAttributeName());
             if (attribute == null) {
                 List<String> alternatives = new ArrayList<>();
                 for (Attribute attr : Collections.list(details.getAttributes().getAll())) {
-                    alternatives.add("<code>"+Util.escape(attr.getID())+"</code>");
+                    alternatives.add(("<code>" + Util.escape(attr.getID())) + "</code>");
                 }
-                warning(response, testId,
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_NoEmailAddress(),
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_IsAttributeNameCorrect(
-                                Util.escape(configuration.getMailAddressAttributeName())
-                        ),
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AvailableAttributes(),
-                        alternatives);
+                warning(response, testId, jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_NoEmailAddress(), jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_IsAttributeNameCorrect(Util.escape(configuration.getMailAddressAttributeName())), jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AvailableAttributes(), alternatives);
             } else {
                 try {
-                    String mailAddress = (String) attribute.get();
+                    String mailAddress = ((String) (attribute.get()));
                     if (StringUtils.isNotBlank(mailAddress)) {
-                        ok(response, testId,
-                                jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserEmail(
-                                        Util.escape(mailAddress)
-                                ));
+                        ok(response, testId, jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserEmail(Util.escape(mailAddress)));
                     } else {
                         List<String> alternatives = new ArrayList<>();
                         for (Attribute attr : Collections.list(details.getAttributes().getAll())) {
-                            alternatives.add("<code>" + Util.escape(attr.getID()) + "</code>");
+                            alternatives.add(("<code>" + Util.escape(attr.getID())) + "</code>");
                         }
-                        warning(response, testId,
-                                jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_EmptyEmailAddress(),
-                                jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_IsAttributeNameCorrect(
-                                        Util.escape(configuration.getMailAddressAttributeName())
-                                ),
-                                jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AvailableAttributes(),
-                                alternatives);
+                        warning(response, testId, jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_EmptyEmailAddress(), jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_IsAttributeNameCorrect(Util.escape(configuration.getMailAddressAttributeName())), jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AvailableAttributes(), alternatives);
                     }
                 } catch (NamingException e) {
                     List<String> alternatives = new ArrayList<>();
                     for (Attribute attr : Collections.list(details.getAttributes().getAll())) {
-                        alternatives.add("<code>" + Util.escape(attr.getID()) + "</code>");
+                        alternatives.add(("<code>" + Util.escape(attr.getID())) + "</code>");
                     }
-                    error(response, testId,
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_CouldNotRetrieveEmailAddress(),
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_IsAttributeNameCorrect(
-                                    Util.escape(configuration.getMailAddressAttributeName())
-                            ),
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AvailableAttributes(),
-                            alternatives);
+                    error(response, testId, jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_CouldNotRetrieveEmailAddress(), jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_IsAttributeNameCorrect(Util.escape(configuration.getMailAddressAttributeName())), jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AvailableAttributes(), alternatives);
                 }
             }
         }
 
-        private void validateDisplayName(LDAPConfiguration configuration, StringBuilder response,
-                                         LdapUserDetails details, String testId) {
+        private void validateDisplayName(LDAPConfiguration configuration, StringBuilder response, LdapUserDetails details, String testId) {
             Attribute attribute = details.getAttributes().get(configuration.getDisplayNameAttributeName());
             if (attribute == null) {
                 List<String> alternatives = new ArrayList<>();
                 for (Attribute attr : Collections.list(details.getAttributes().getAll())) {
-                    alternatives.add("<code>" + Util.escape(attr.getID()) + "</code>");
+                    alternatives.add(("<code>" + Util.escape(attr.getID())) + "</code>");
                 }
-                warning(response, testId,
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_NoDisplayName(),
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_IsAttributeNameCorrect(
-                                Util.escape(configuration.getDisplayNameAttributeName())
-                        ),
-                        jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AvailableAttributes(),
-                        alternatives);
+                warning(response, testId, jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_NoDisplayName(), jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_IsAttributeNameCorrect(Util.escape(configuration.getDisplayNameAttributeName())), jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AvailableAttributes(), alternatives);
             } else {
                 try {
-                    String displayName = (String) attribute.get();
+                    String displayName = ((String) (attribute.get()));
                     if (displayName != null) {
-                        ok(response, testId,
-                                jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserDisplayName(
-                                        Util.escape(displayName)
-                                ));
+                        ok(response, testId, jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserDisplayName(Util.escape(displayName)));
                     } else {
                         List<String> alternatives = new ArrayList<>();
                         for (Attribute attr : Collections.list(details.getAttributes().getAll())) {
-                            alternatives.add("<code>" + Util.escape(attr.getID()) + "</code>");
+                            alternatives.add(("<code>" + Util.escape(attr.getID())) + "</code>");
                         }
-                        warning(response, testId,
-                                jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_EmptyDisplayName(),
-                                jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_IsAttributeNameCorrect(
-                                        Util.escape(configuration.getDisplayNameAttributeName())
-                                ),
-                                jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AvailableAttributes(),
-                                alternatives);
+                        warning(response, testId, jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_EmptyDisplayName(), jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_IsAttributeNameCorrect(Util.escape(configuration.getDisplayNameAttributeName())), jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AvailableAttributes(), alternatives);
                     }
                 } catch (NamingException e) {
                     List<String> alternatives = new ArrayList<>();
                     for (Attribute attr : Collections.list(details.getAttributes().getAll())) {
-                        alternatives.add("<code>" + Util.escape(attr.getID()) + "</code>");
+                        alternatives.add(("<code>" + Util.escape(attr.getID())) + "</code>");
                     }
-                    error(response, testId,
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_CouldNotRetrieveDisplayName(),
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_IsAttributeNameCorrect(
-                                    Util.escape(configuration.getDisplayNameAttributeName())
-                            ),
-                            jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AvailableAttributes(),
-                            alternatives);
+                    error(response, testId, jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_CouldNotRetrieveDisplayName(), jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_IsAttributeNameCorrect(Util.escape(configuration.getDisplayNameAttributeName())), jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AvailableAttributes(), alternatives);
                 }
             }
         }
@@ -2073,11 +1958,11 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
      * See http://msdn.microsoft.com/en-us/library/aa746475(VS.85).aspx for the syntax by example.
      * WANTED: The specification of the syntax.
      */
-    public static final String GROUP_SEARCH = System.getProperty(LDAPSecurityRealm.class.getName()+".groupSearch",
-            "(& (cn={0}) (| (objectclass=groupOfNames) (objectclass=groupOfUniqueNames) (objectclass=posixGroup)))");
+    public static final String GROUP_SEARCH = System.getProperty(LDAPSecurityRealm.class.getName() + ".groupSearch", "(& (cn={0}) (| (objectclass=groupOfNames) (objectclass=groupOfUniqueNames) (objectclass=posixGroup)))");
 
     public static class CacheConfiguration extends AbstractDescribableImpl<CacheConfiguration> {
         private final int size;
+
         private final int ttl;
 
         @DataBoundConstructor
@@ -2094,9 +1979,10 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             return ttl;
         }
 
-        @Extension public static class DescriptorImpl extends Descriptor<CacheConfiguration> {
-
-            @Override public String getDisplayName() {
+        @Extension
+        public static class DescriptorImpl extends Descriptor<CacheConfiguration> {
+            @Override
+            public String getDisplayName() {
                 return "";
             }
 
@@ -2114,17 +2000,17 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
 
             public ListBoxModel doFillTtlItems() {
                 ListBoxModel m = new ListBoxModel();
-                for (int ttl: new int[]{30, 60, 120, 300, 600, 900, 1800, 3600}) {
-                    m.add(Util.getTimeSpanString(ttl*1000L), Integer.toString(ttl));
+                for (int ttl : new int[]{ 30, 60, 120, 300, 600, 900, 1800, 3600 }) {
+                    m.add(Util.getTimeSpanString(ttl * 1000L), Integer.toString(ttl));
                 }
                 return m;
             }
-
         }
     }
 
     private static class CacheEntry<T> {
         private final long expires;
+
         private final T value;
 
         public CacheEntry(int ttlSeconds, T value) {
@@ -2145,26 +2031,29 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
      * While we could use Guava's CacheBuilder the method signature changes make using it problematic.
      * Safer to roll our own and ensure compatibility across as wide a range of Jenkins versions as possible.
      *
-     * @param <K> Key type
-     * @param <V> Cache entry type
+     * @param <K>
+     * 		Key type
+     * @param <V>
+     * 		Cache entry type
      */
     private static class CacheMap<K, V> extends LinkedHashMap<K, CacheEntry<V>> {
-
         private final int cacheSize;
 
         public CacheMap(int cacheSize) {
-            super(cacheSize + 1); // prevent realloc when hitting cache size limit
+            super(cacheSize + 1);// prevent realloc when hitting cache size limit
+
             this.cacheSize = cacheSize;
         }
 
         @Override
         protected boolean removeEldestEntry(Map.Entry<K, CacheEntry<V>> eldest) {
-            return size() > cacheSize || eldest.getValue() == null || !eldest.getValue().isValid();
+            return ((size() > cacheSize) || (eldest.getValue() == null)) || (!eldest.getValue().isValid());
         }
     }
 
     public static class EnvironmentProperty extends AbstractDescribableImpl<EnvironmentProperty> implements Serializable {
         private final String name;
+
         private final String value;
 
         @DataBoundConstructor
@@ -2181,10 +2070,10 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             return value;
         }
 
-        public static Map<String,String> toMap(List<EnvironmentProperty> properties) {
+        public static Map<String, String> toMap(List<EnvironmentProperty> properties) {
             if (properties != null) {
                 final Map<String, String> result = new LinkedHashMap<String, String>();
-                for (EnvironmentProperty property:properties) {
+                for (EnvironmentProperty property : properties) {
                     result.put(property.getName(), property.getValue());
                 }
                 return result;
@@ -2194,7 +2083,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
 
         @Extension
         public static class DescriptorImpl extends Descriptor<EnvironmentProperty> {
-
             @Override
             public String getDisplayName() {
                 return "";
