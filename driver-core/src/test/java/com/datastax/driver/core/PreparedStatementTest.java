@@ -15,20 +15,17 @@
  */
 package com.datastax.driver.core;
 
+import com.datastax.driver.core.exceptions.NoHostAvailableException;
+import com.datastax.driver.core.exceptions.UnsupportedFeatureException;
+import com.datastax.driver.core.utils.CassandraVersion;
 import java.util.*;
-
 import org.testng.annotations.Test;
-
+import static com.datastax.driver.core.TestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import com.datastax.driver.core.exceptions.NoHostAvailableException;
-import com.datastax.driver.core.exceptions.UnsupportedFeatureException;
-import com.datastax.driver.core.utils.CassandraVersion;
-
-import static com.datastax.driver.core.TestUtils.*;
 
 /**
  * Prepared statement tests.
@@ -36,12 +33,16 @@ import static com.datastax.driver.core.TestUtils.*;
  * Note: this class also happens to test all the get methods from Row.
  */
 public class PreparedStatementTest extends CCMBridge.PerClassSingleNodeCluster {
-
     private static final String ALL_NATIVE_TABLE = "all_native";
+
     private static final String ALL_LIST_TABLE = "all_list";
+
     private static final String ALL_SET_TABLE = "all_set";
+
     private static final String ALL_MAP_TABLE = "all_map";
+
     private static final String SIMPLE_TABLE = "test";
+
     private static final String SIMPLE_TABLE2 = "test2";
 
     private boolean exclude(DataType t) {
@@ -294,28 +295,18 @@ public class PreparedStatementTest extends CCMBridge.PerClassSingleNodeCluster {
     }
 
     private void reprepareOnNewlyUpNodeTest(String ks, Session session) throws Exception {
-
-        ks = ks == null ? "" : ks + '.';
-
-        session.execute("INSERT INTO " + ks + "test (k, i) VALUES ('123', 17)");
-        session.execute("INSERT INTO " + ks + "test (k, i) VALUES ('124', 18)");
-
-        PreparedStatement ps = session.prepare("SELECT * FROM " + ks + "test WHERE k = ?");
-
+        ks = (ks == null) ? "" : ks + '.';
+        session.execute(("INSERT INTO " + ks) + "test (k, i) VALUES ('123', 17)");
+        session.execute(("INSERT INTO " + ks) + "test (k, i) VALUES ('124', 18)");
+        PreparedStatement ps = session.prepare(("SELECT * FROM " + ks) + "test WHERE k = ?");
         assertEquals(session.execute(ps.bind("123")).one().getInt("i"), 17);
-
         ccmBridge.stop();
         waitForDown(CCMBridge.IP_PREFIX + '1', cluster);
-
         ccmBridge.start();
         waitFor(CCMBridge.IP_PREFIX + '1', cluster, 120);
-
-        try
-        {
+        try {
             assertEquals(session.execute(ps.bind("124")).one().getInt("i"), 18);
-        }
-        catch (NoHostAvailableException e)
-        {
+        } catch (NoHostAvailableException e) {
             System.out.println(">> " + e.getErrors());
             throw e;
         }
@@ -328,7 +319,6 @@ public class PreparedStatementTest extends CCMBridge.PerClassSingleNodeCluster {
 
     @Test(groups = "long")
     public void reprepareOnNewlyUpNodeNoKeyspaceTest() throws Exception {
-
         // This is the same test than reprepareOnNewlyUpNodeTest, except that the
         // prepared statement is prepared while no current keyspace is used
         reprepareOnNewlyUpNodeTest(keyspace, cluster.connect());
@@ -385,32 +375,26 @@ public class PreparedStatementTest extends CCMBridge.PerClassSingleNodeCluster {
 
     @Test(groups = "short")
     public void batchTest() throws Exception {
-
         try {
-            PreparedStatement ps1 = session.prepare("INSERT INTO " + SIMPLE_TABLE2 + "(k, v) VALUES (?, ?)");
-            PreparedStatement ps2 = session.prepare("INSERT INTO " + SIMPLE_TABLE2 + "(k, v) VALUES (?, 'bar')");
-
+            PreparedStatement ps1 = session.prepare(("INSERT INTO " + SIMPLE_TABLE2) + "(k, v) VALUES (?, ?)");
+            PreparedStatement ps2 = session.prepare(("INSERT INTO " + SIMPLE_TABLE2) + "(k, v) VALUES (?, 'bar')");
             BatchStatement bs = new BatchStatement();
             bs.add(ps1.bind("one", "foo"));
             bs.add(ps2.bind("two"));
-            bs.add(new SimpleStatement("INSERT INTO " + SIMPLE_TABLE2 + " (k, v) VALUES ('three', 'foobar')"));
-
+            bs.add(new SimpleStatement(("INSERT INTO " + SIMPLE_TABLE2) + " (k, v) VALUES ('three', 'foobar')"));
             session.execute(bs);
-
             List<Row> all = session.execute("SELECT * FROM " + SIMPLE_TABLE2).all();
-
             assertEquals("three", all.get(0).getString("k"));
             assertEquals("foobar", all.get(0).getString("v"));
-
             assertEquals("one", all.get(1).getString("k"));
             assertEquals("foo", all.get(1).getString("v"));
-
             assertEquals("two", all.get(2).getString("k"));
             assertEquals("bar", all.get(2).getString("v"));
         } catch (UnsupportedFeatureException e) {
             // This is expected when testing the protocol v1
-            if (cluster.getConfiguration().getProtocolOptions().getProtocolVersionEnum() != ProtocolVersion.V1)
+            if (cluster.getConfiguration().getProtocolOptions().getProtocolVersionEnum() != ProtocolVersion.V1) {
                 throw e;
+            }
         }
     }
 
@@ -431,11 +415,10 @@ public class PreparedStatementTest extends CCMBridge.PerClassSingleNodeCluster {
         session.execute(batch);
     }
 
-    @Test(groups="short")
+    @Test(groups = "short")
     public void should_set_routing_key_on_case_insensitive_keyspace_and_table() {
-        session.execute(String.format("CREATE TABLE %s.foo (i int PRIMARY KEY)",keyspace));
-
-        PreparedStatement ps = session.prepare(String.format("INSERT INTO %s.foo (i) VALUES (?)",keyspace));
+        session.execute(String.format("CREATE TABLE %s.foo (i int PRIMARY KEY)", keyspace));
+        PreparedStatement ps = session.prepare(String.format("INSERT INTO %s.foo (i) VALUES (?)", keyspace));
         BoundStatement bs = ps.bind(1);
         assertThat(bs.getRoutingKey()).isNotNull();
     }

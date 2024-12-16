@@ -15,29 +15,27 @@
  */
 package com.datastax.driver.core;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
 import org.testng.annotations.Test;
-
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
+
 
 /**
  * Simple test of the Sessions methods against a one node cluster.
  */
 public class SessionTest extends CCMBridge.PerClassSingleNodeCluster {
-
     private static final String TABLE1 = "test1";
+
     private static final String TABLE2 = "test2";
+
     private static final String TABLE3 = "test3";
+
     private static final String COUNTER_TABLE = "counters";
 
     @Override
@@ -109,30 +107,21 @@ public class SessionTest extends CCMBridge.PerClassSingleNodeCluster {
 
     @Test(groups = "short")
     public void compressionTest() throws Exception {
-
         // Same as executeTest, but with compression enabled
-
         cluster.getConfiguration().getProtocolOptions().setCompression(ProtocolOptions.Compression.SNAPPY);
-
         try {
-
             Session compressedSession = cluster.connect(keyspace);
-
             // Simple calls to all versions of the execute/executeAsync methods
             String key = "execute_compressed_test";
-            ResultSet rs = compressedSession.execute(String.format(Locale.US, TestUtils.INSERT_FORMAT, TABLE3, key, "foo", 42, 24.03f));
+            ResultSet rs = compressedSession.execute(String.format(Locale.US, TestUtils.INSERT_FORMAT, TABLE3, key, "foo", 42, 24.03F));
             assertTrue(rs.isExhausted());
-
             String SELECT_ALL = String.format(TestUtils.SELECT_ALL_FORMAT + " WHERE k = '%s'", TABLE3, key);
-
             // execute
             checkExecuteResultSet(compressedSession.execute(SELECT_ALL), key);
             checkExecuteResultSet(compressedSession.execute(new SimpleStatement(SELECT_ALL).setConsistencyLevel(ConsistencyLevel.ONE)), key);
-
             // executeAsync
             checkExecuteResultSet(compressedSession.executeAsync(SELECT_ALL).getUninterruptibly(), key);
             checkExecuteResultSet(compressedSession.executeAsync(new SimpleStatement(SELECT_ALL).setConsistencyLevel(ConsistencyLevel.ONE)).getUninterruptibly(), key);
-
         } finally {
             cluster.getConfiguration().getProtocolOptions().setCompression(ProtocolOptions.Compression.NONE);
         }
@@ -142,15 +131,12 @@ public class SessionTest extends CCMBridge.PerClassSingleNodeCluster {
     public void getStateTest() throws Exception {
         Session.State state = session.getState();
         Host host = state.getConnectedHosts().iterator().next();
-
         String hostAddress = String.format("/%s1", CCMBridge.IP_PREFIX);
-
         assertEquals(state.getConnectedHosts().size(), 1);
         assertEquals(host.getAddress().toString(), hostAddress);
         assertEquals(host.getDatacenter(), "datacenter1");
         assertEquals(host.getRack(), "rack1");
         assertEquals(host.getSocketAddress().toString(), hostAddress + ":9042");
-
         assertEquals(state.getOpenConnections(host), TestUtils.numberOfLocalCoreConnections(cluster));
         assertEquals(state.getInFlightQueries(host), 0);
         assertEquals(state.getSession(), session);
@@ -162,28 +148,24 @@ public class SessionTest extends CCMBridge.PerClassSingleNodeCluster {
     @Test(groups = "short")
     public void closeDuringClusterInitTest() throws InterruptedException {
         for (int i = 0; i < 500; i++) {
-
             // Use our own cluster and session (not the ones provided by the parent class) because we want an uninitialized cluster
             // (note the use of newSession below)
-            final Cluster cluster = Cluster.builder().addContactPoint(CCMBridge.IP_PREFIX + "1").build();
+            final Cluster cluster = Cluster.builder().addContactPointsWithPorts(Collections.singletonList(hostAddress)).build();
             final Session session = cluster.newSession();
-
             // Spawn two threads to simulate the race
             ExecutorService executor = Executors.newFixedThreadPool(2);
             final CountDownLatch startLatch = new CountDownLatch(1);
-
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         startLatch.await();
                         cluster.init();
-                    } catch (InterruptedException e) {
+                    } catch (java.lang.InterruptedException e) {
                         fail("unexpected interruption", e);
                     }
                 }
             });
-
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -191,19 +173,16 @@ public class SessionTest extends CCMBridge.PerClassSingleNodeCluster {
                         startLatch.await();
                         TimeUnit.MILLISECONDS.sleep(10);
                         session.close();
-                    } catch (InterruptedException e) {
+                    } catch (java.lang.InterruptedException e) {
                         fail("unexpected interruption", e);
                     }
                 }
             });
-
             // Start the threads
             startLatch.countDown();
-
             executor.shutdown();
             boolean normalShutdown = executor.awaitTermination(1, TimeUnit.SECONDS);
             assertTrue(normalShutdown);
-
             // The deadlock occurred here before JAVA-418
             cluster.close();
         }

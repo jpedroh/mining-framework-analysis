@@ -15,6 +15,8 @@
  */
 package com.datastax.driver.core;
 
+import com.datastax.driver.core.exceptions.UnsupportedFeatureException;
+import com.google.common.collect.ImmutableList;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,9 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-
-import com.datastax.driver.core.exceptions.UnsupportedFeatureException;
 
 /**
  * A statement that groups a number of {@link Statement} so they get executed as
@@ -41,32 +40,30 @@ import com.datastax.driver.core.exceptions.UnsupportedFeatureException;
  * native protocol version 3 or higher (see {@link #setSerialConsistencyLevel(ConsistencyLevel)}).
  */
 public class BatchStatement extends Statement {
-
     /**
      * The type of batch to use.
      */
     public enum Type {
+
         /**
          * A logged batch: Cassandra will first write the batch to its distributed batch log
          * to ensure the atomicity of the batch (atomicity meaning that if any statement in
          * the batch succeeds, all will eventually succeed).
          */
         LOGGED,
-
         /**
          * A batch that doesn't use Cassandra's distributed batch log. Such batch are not
          * guaranteed to be atomic.
          */
         UNLOGGED,
-
         /**
          * A counter batch. Note that such batch is the only type that can contain counter
          * operations and it can only contain these.
          */
-        COUNTER
-    };
+        COUNTER;}
 
     final Type batchType;
+
     private final List<Statement> statements = new ArrayList<Statement>();
 
     /**
@@ -79,7 +76,8 @@ public class BatchStatement extends Statement {
     /**
      * Creates a new batch statement of the provided type.
      *
-     * @param batchType the type of batch.
+     * @param batchType
+     * 		the type of batch.
      */
     public BatchStatement(Type batchType) {
         this.batchType = batchType;
@@ -89,14 +87,14 @@ public class BatchStatement extends Statement {
         IdAndValues idAndVals = new IdAndValues(statements.size());
         for (Statement statement : statements) {
             if (statement instanceof RegularStatement) {
-                RegularStatement st = (RegularStatement)statement;
+                RegularStatement st = ((RegularStatement) (statement));
                 ByteBuffer[] vals = st.getValues(protocolVersion);
                 idAndVals.ids.add(st.getQueryString());
                 idAndVals.values.add(vals == null ? Collections.<ByteBuffer>emptyList() : Arrays.asList(vals));
             } else {
                 // We handle BatchStatement in add() so ...
                 assert statement instanceof BoundStatement;
-                BoundStatement st = (BoundStatement)statement;
+                BoundStatement st = ((BoundStatement) (statement));
                 idAndVals.ids.add(st.statement.getPreparedId().id);
                 idAndVals.values.add(Arrays.asList(st.wrapper.values));
             }
@@ -123,25 +121,26 @@ public class BatchStatement extends Statement {
      * for the purpose of the execution of the Batch. Instead, the options used are the one
      * of this {@code BatchStatement} object.
      *
-     * @param statement the new statement to add.
+     * @param statement
+     * 		the new statement to add.
      * @return this batch statement.
-     *
-     * @throws IllegalStateException if adding the new statement means that this
-     * {@code BatchStatement} has more than 65536 statements (since this is the maximum number
-     * of statements for a BatchStatement allowed by the underlying protocol).
+     * @throws IllegalStateException
+     * 		if adding the new statement means that this
+     * 		{@code BatchStatement} has more than 65536 statements (since this is the maximum number
+     * 		of statements for a BatchStatement allowed by the underlying protocol).
      */
     public BatchStatement add(Statement statement) {
-
         // We handle BatchStatement here (rather than in getIdAndValues) as it make it slightly
         // easier to avoid endless loop if the use mistakenly pass a batch that depends on this
         // object (or this directly).
         if (statement instanceof BatchStatement) {
-            for (Statement subStatements : ((BatchStatement)statement).statements) {
+            for (Statement subStatements : ((BatchStatement) (statement)).statements) {
                 add(subStatements);
             }
         } else {
-            if (statements.size() >= 0xFFFF)
-                throw new IllegalStateException("Batch statement cannot contain more than " + 0xFFFF + " statements.");
+            if (statements.size() >= 0xffff) {
+                throw new IllegalStateException(("Batch statement cannot contain more than " + 0xffff) + " statements.");
+            }
             statements.add(statement);
         }
         return this;
@@ -200,17 +199,16 @@ public class BatchStatement extends Statement {
      * have their serial consistency level hardcoded to SERIAL; if you need to execute a batch
      * with LOCAL_SERIAL, you will have to use a CQL batch.
      *
-     * @param serialConsistency the serial consistency level to set.
-     * @return this {@code Statement} object.
-     *
-     * @throws IllegalArgumentException if {@code serialConsistency} is not one of
-     * {@code ConsistencyLevel.SERIAL} or {@code ConsistencyLevel.LOCAL_SERIAL}.
-     *
+     * @param serialConsistency
+     * 		the serial consistency level
+     * @return nothing since this call currently always throws an {@code UnsupportedOperationException}.
+     * @throws UnsupportedOperationException
+     * 		see above.
      * @see Statement#setSerialConsistencyLevel(ConsistencyLevel)
      */
     @Override
     public BatchStatement setSerialConsistencyLevel(ConsistencyLevel serialConsistency) {
-        return (BatchStatement) super.setSerialConsistencyLevel(serialConsistency);
+        return ((BatchStatement) (super.setSerialConsistencyLevel(serialConsistency)));
     }
 
     @Override
@@ -240,8 +238,8 @@ public class BatchStatement extends Statement {
     }
 
     static class IdAndValues {
-
         public final List<Object> ids;
+
         public final List<List<ByteBuffer>> values;
 
         IdAndValues(int nbstatements) {

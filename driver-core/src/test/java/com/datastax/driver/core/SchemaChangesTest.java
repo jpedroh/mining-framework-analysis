@@ -1,24 +1,24 @@
 package com.datastax.driver.core;
 
-import java.util.List;
-
+import com.datastax.driver.core.utils.Bytes;
+import com.datastax.driver.core.utils.CassandraVersion;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import java.util.List;
 import org.testng.annotations.*;
-
-import com.datastax.driver.core.utils.Bytes;
-import com.datastax.driver.core.utils.CassandraVersion;
-
 import static com.datastax.driver.core.Assertions.assertThat;
 
+
 public class SchemaChangesTest {
-    private static final String CREATE_KEYSPACE =
-        "CREATE KEYSPACE %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor': '1' }";
+    private static final String CREATE_KEYSPACE = "CREATE KEYSPACE %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor': '1' }";
 
     CCMBridge ccm;
+
     Cluster cluster;
-    Cluster cluster2; // a second cluster to check that other clients also get notified
+
+    // a second cluster to check that other clients also get notified
+    Cluster cluster2;
 
     // The metadatas of the two clusters (we'll test that they're kept in sync)
     List<Metadata> metadatas;
@@ -28,12 +28,9 @@ public class SchemaChangesTest {
     @BeforeClass(groups = "short")
     public void setup() {
         ccm = CCMBridge.create("schemaChangesTest", 1);
-
         cluster = Cluster.builder().addContactPoint(CCMBridge.ipOfNode(1)).build();
         cluster2 = Cluster.builder().addContactPoint(CCMBridge.ipOfNode(1)).build();
-
         metadatas = Lists.newArrayList(cluster.getMetadata(), cluster2.getMetadata());
-
         session = cluster.connect();
         session.execute(String.format(CREATE_KEYSPACE, "lowercase"));
         session.execute(String.format(CREATE_KEYSPACE, "\"CaseSensitive\""));
@@ -41,47 +38,46 @@ public class SchemaChangesTest {
 
     @AfterClass(groups = "short")
     public void teardown() {
-        if (cluster != null)
+        if (cluster != null) {
             cluster.close();
-        if (cluster2 != null)
+        }
+        if (cluster2 != null) {
             cluster2.close();
-        if (ccm != null)
+        }
+        if (ccm != null) {
             ccm.remove();
+        }
     }
-
 
     @DataProvider(name = "existingKeyspaceName")
     public static Object[][] existingKeyspaceName() {
-        return new Object[][]{ { "lowercase" }, { "\"CaseSensitive\"" } };
+        return new Object[][]{ new java.lang.Object[]{ "lowercase" }, new java.lang.Object[]{ "\"CaseSensitive\"" } };
     }
 
     @Test(groups = "short", dataProvider = "existingKeyspaceName")
     public void should_notify_of_table_creation(String keyspace) {
         session.execute(String.format("CREATE TABLE %s.table1(i int primary key)", keyspace));
-
-        for (Metadata m : metadatas)
-            assertThat(m.getKeyspace(keyspace).getTable("table1"))
-                .isNotNull();
+        for (Metadata m : metadatas) {
+            assertThat(m.getKeyspace(keyspace).getTable("table1")).isNotNull();
+        }
     }
 
     @Test(groups = "short", dataProvider = "existingKeyspaceName")
     public void should_notify_of_table_update(String keyspace) {
         session.execute(String.format("CREATE TABLE %s.table1(i int primary key)", keyspace));
         session.execute(String.format("ALTER TABLE %s.table1 ADD j int", keyspace));
-
-        for (Metadata m : metadatas)
-            assertThat(m.getKeyspace(keyspace).getTable("table1").getColumn("j"))
-                .isNotNull();
+        for (Metadata m : metadatas) {
+            assertThat(m.getKeyspace(keyspace).getTable("table1").getColumn("j")).isNotNull();
+        }
     }
 
     @Test(groups = "short", dataProvider = "existingKeyspaceName")
     public void should_notify_of_table_drop(String keyspace) {
         session.execute(String.format("CREATE TABLE %s.table1(i int primary key)", keyspace));
         session.execute(String.format("DROP TABLE %s.table1", keyspace));
-
-        for (Metadata m : metadatas)
-            assertThat(m.getKeyspace(keyspace).getTable("table1"))
-                .isNull();
+        for (Metadata m : metadatas) {
+            assertThat(m.getKeyspace(keyspace).getTable("table1")).isNull();
+        }
     }
 
     @Test(groups = "short", dataProvider = "existingKeyspaceName")
@@ -118,58 +114,45 @@ public class SchemaChangesTest {
 
     @DataProvider(name = "newKeyspaceName")
     public static Object[][] newKeyspaceName() {
-        return new Object[][]{ { "lowercase2" }, { "\"CaseSensitive2\"" } };
+        return new Object[][]{ new java.lang.Object[]{ "lowercase2" }, new java.lang.Object[]{ "\"CaseSensitive2\"" } };
     }
 
     @Test(groups = "short", dataProvider = "newKeyspaceName")
     public void should_notify_of_keyspace_creation(String keyspace) {
         session.execute(String.format(CREATE_KEYSPACE, keyspace));
-
-        for (Metadata m : metadatas)
-            assertThat(m.getKeyspace(keyspace))
-                .isNotNull();
+        for (Metadata m : metadatas) {
+            assertThat(m.getKeyspace(keyspace)).isNotNull();
+        }
     }
 
     @Test(groups = "short", dataProvider = "newKeyspaceName")
     public void should_notify_of_keyspace_update(String keyspace) {
         session.execute(String.format(CREATE_KEYSPACE, keyspace));
-        for (Metadata m : metadatas)
-            assertThat(m.getKeyspace(keyspace).isDurableWrites())
-                .isTrue();
-
+        for (Metadata m : metadatas) {
+            assertThat(m.getKeyspace(keyspace).isDurableWrites()).isTrue();
+        }
         session.execute(String.format("ALTER KEYSPACE %s WITH durable_writes = false", keyspace));
-        for (Metadata m : metadatas)
-            assertThat(m.getKeyspace(keyspace).isDurableWrites())
-                .isFalse();
+        for (Metadata m : metadatas) {
+            assertThat(m.getKeyspace(keyspace).isDurableWrites()).isFalse();
+        }
     }
 
     @Test(groups = "short", dataProvider = "newKeyspaceName")
     public void should_notify_of_keyspace_drop(String keyspace) {
         session.execute(String.format(CREATE_KEYSPACE, keyspace));
-        for (Metadata m : metadatas)
-            assertThat(m.getReplicas(keyspace, Bytes.fromHexString("0xCAFEBABE")))
-                .isNotEmpty();
-
-        session.execute(String.format("DROP KEYSPACE %s", keyspace));
-
         for (Metadata m : metadatas) {
-            assertThat(m.getKeyspace(keyspace))
-                .isNull();
-            assertThat(m.getReplicas(keyspace, Bytes.fromHexString("0xCAFEBABE")))
-                .isEmpty();
+            assertThat(m.getReplicas(keyspace, Bytes.fromHexString("0xCAFEBABE"))).isNotEmpty();
+        }
+        session.execute(String.format("DROP KEYSPACE %s", keyspace));
+        for (Metadata m : metadatas) {
+            assertThat(m.getKeyspace(keyspace)).isNull();
+            assertThat(m.getReplicas(keyspace, Bytes.fromHexString("0xCAFEBABE"))).isEmpty();
         }
     }
 
     @AfterMethod(groups = "short")
     public void cleanup() {
-        ListenableFuture<List<ResultSet>> f = Futures.successfulAsList(Lists.newArrayList(
-            session.executeAsync("DROP TABLE lowercase.table1"),
-            session.executeAsync("DROP TABLE \"CaseSensitive\".table1"),
-            session.executeAsync("DROP TYPE lowercase.type1"),
-            session.executeAsync("DROP TYPE \"CaseSensitive\".type1"),
-            session.executeAsync("DROP KEYSPACE lowercase2"),
-            session.executeAsync("DROP KEYSPACE \"CaseSensitive2\"")
-        ));
+        ListenableFuture<List<ResultSet>> f = Futures.successfulAsList(Lists.newArrayList(session.executeAsync("DROP TABLE lowercase.table1"), session.executeAsync("DROP TABLE \"CaseSensitive\".table1"), session.executeAsync("DROP TYPE ks.type1"), session.executeAsync("DROP TYPE \"CaseSensitive\".type1"), session.executeAsync("DROP KEYSPACE lowercase2"), session.executeAsync("DROP KEYSPACE \"CaseSensitive2\"")));
         Futures.getUnchecked(f);
     }
 }
