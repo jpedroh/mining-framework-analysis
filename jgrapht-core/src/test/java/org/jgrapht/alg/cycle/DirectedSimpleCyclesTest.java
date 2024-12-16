@@ -17,46 +17,34 @@
  */
 package org.jgrapht.alg.cycle;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.function.Function;
-
 import org.jgrapht.*;
 import org.jgrapht.graph.*;
 import org.junit.*;
+import static org.junit.Assert.assertTrue;
 
-public class DirectedSimpleCyclesTest
-{
+
+public class DirectedSimpleCyclesTest {
     private static int MAX_SIZE = 9;
-    private static int[] RESULTS = { 0, 1, 3, 8, 24, 89, 415, 2372, 16072, 125673 };
+
+    private static int[] RESULTS = new int[]{ 0, 1, 3, 8, 24, 89, 415, 2372, 16072, 125673 };
 
     @Test
-    public void test()
-    {
-        testAlgorithm(g -> new TiernanSimpleCycles<Integer, DefaultEdge>(g));
-        testAlgorithm(g -> new TarjanSimpleCycles<Integer, DefaultEdge>(g));
-        testAlgorithm(g -> new JohnsonSimpleCycles<Integer, DefaultEdge>(g));
-        testAlgorithm(g -> new SzwarcfiterLauerSimpleCycles<Integer, DefaultEdge>(g));
-        testAlgorithm(g -> new HawickJamesSimpleCycles<Integer, DefaultEdge>(g));
-
-        testAlgorithmWithWeightedGraph(
-            g -> new TiernanSimpleCycles<Integer, DefaultWeightedEdge>(g));
-        testAlgorithmWithWeightedGraph(
-            g -> new TarjanSimpleCycles<Integer, DefaultWeightedEdge>(g));
-        testAlgorithmWithWeightedGraph(
-            g -> new JohnsonSimpleCycles<Integer, DefaultWeightedEdge>(g));
-        testAlgorithmWithWeightedGraph(
-            g -> new SzwarcfiterLauerSimpleCycles<Integer, DefaultWeightedEdge>(g));
-        testAlgorithmWithWeightedGraph(
-            g -> new HawickJamesSimpleCycles<Integer, DefaultWeightedEdge>(g));
+    public void test() {
+        testAlgorithm(( g) -> new TiernanSimpleCycles<Integer, DefaultEdge>(g));
+        testAlgorithm(( g) -> new TarjanSimpleCycles<Integer, DefaultEdge>(g));
+        testAlgorithm(( g) -> new JohnsonSimpleCycles<Integer, DefaultEdge>(g));
+        testAlgorithm(( g) -> new SzwarcfiterLauerSimpleCycles<Integer, DefaultEdge>(g));
+        testAlgorithm(( g) -> new HawickJamesSimpleCycles<Integer, DefaultEdge>(g));
+        testAlgorithmWithWeightedGraph(( g) -> new TiernanSimpleCycles<Integer, DefaultWeightedEdge>(g));
+        testAlgorithmWithWeightedGraph(( g) -> new TarjanSimpleCycles<Integer, DefaultWeightedEdge>(g));
+        testAlgorithmWithWeightedGraph(( g) -> new JohnsonSimpleCycles<Integer, DefaultWeightedEdge>(g));
+        testAlgorithmWithWeightedGraph(( g) -> new SzwarcfiterLauerSimpleCycles<Integer, DefaultWeightedEdge>(g));
+        testAlgorithmWithWeightedGraph(( g) -> new HawickJamesSimpleCycles<Integer, DefaultWeightedEdge>(g));
     }
 
-    private void testAlgorithm(
-        Function<Graph<Integer, DefaultEdge>,
-            DirectedSimpleCycles<Integer, DefaultEdge>> algProvider)
-    {
-        Graph<Integer, DefaultEdge> graph =
-            new DirectedGraph<>(new ClassBasedEdgeFactory<>(DefaultEdge.class));
+    private void testAlgorithm(Function<Graph<Integer, DefaultEdge>, DirectedSimpleCycles<Integer, DefaultEdge>> algProvider) {
+        Graph<Integer, DefaultEdge> graph = new DefaultDirectedGraph<>(DefaultEdge.class);
         for (int i = 0; i < 7; i++) {
             graph.addVertex(i);
         }
@@ -74,9 +62,8 @@ public class DirectedSimpleCyclesTest
         assertTrue(alg.findSimpleCycles().size() == 4);
         graph.addEdge(6, 6);
         assertTrue(alg.findSimpleCycles().size() == 5);
-
         for (int size = 1; size <= MAX_SIZE; size++) {
-            graph = new DirectedGraph<>(new ClassBasedEdgeFactory<>(DefaultEdge.class));
+            graph = new DefaultDirectedGraph<>(DefaultEdge.class);
             for (int i = 0; i < size; i++) {
                 graph.addVertex(i);
             }
@@ -90,12 +77,8 @@ public class DirectedSimpleCyclesTest
         }
     }
 
-    private void testAlgorithmWithWeightedGraph(
-        Function<Graph<Integer, DefaultWeightedEdge>,
-            DirectedSimpleCycles<Integer, DefaultWeightedEdge>> algProvider)
-    {
-        Graph<Integer, DefaultWeightedEdge> graph =
-            new DirectedWeightedGraph<>(DefaultWeightedEdge.class);
+    private void testAlgorithmWithWeightedGraph(Function<Graph<Integer, DefaultWeightedEdge>, DirectedSimpleCycles<Integer, DefaultWeightedEdge>> algProvider) {
+        Graph<Integer, DefaultWeightedEdge> graph = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
         for (int i = 0; i < 7; i++) {
             graph.addVertex(i);
         }
@@ -113,9 +96,8 @@ public class DirectedSimpleCyclesTest
         assertTrue(alg.findSimpleCycles().size() == 4);
         graph.addEdge(6, 6);
         assertTrue(alg.findSimpleCycles().size() == 5);
-
         for (int size = 1; size <= MAX_SIZE; size++) {
-            graph = new DirectedWeightedGraph<>(DefaultWeightedEdge.class);
+            graph = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
             for (int i = 0; i < size; i++) {
                 graph.addVertex(i);
             }
@@ -128,5 +110,4 @@ public class DirectedSimpleCyclesTest
             assertTrue(alg.findSimpleCycles().size() == RESULTS[size]);
         }
     }
-
 }
