@@ -7,13 +7,11 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vividsolutions.jts.geom.*;
-
 import java.io.IOException;
-
 import static com.bedatadriven.jackson.datatype.jts.GeoJson.*;
 
-public class GeometryDeserializer extends JsonDeserializer<Geometry> {
 
+public class GeometryDeserializer extends JsonDeserializer<Geometry> {
 	private GeometryFactory gf;
 
 	public GeometryDeserializer() {
@@ -26,6 +24,10 @@ public class GeometryDeserializer extends JsonDeserializer<Geometry> {
 		} else {
 			this.gf = gf;
 		}
+	}
+
+	public GeometryDeserializer(GeometryFactory gf) {
+		this.gf = gf;
 	}
 
 	@Override
