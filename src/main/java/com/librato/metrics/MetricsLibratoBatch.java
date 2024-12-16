@@ -2,13 +2,15 @@ package com.librato.metrics;
 
 import com.librato.metrics.LibratoReporter.ExpandedMetric;
 import com.librato.metrics.LibratoReporter.MetricExpansionConfig;
-import com.yammer.metrics.core.*;
+import com.yammer.metrics.core.Gauge;
+import com.yammer.metrics.core.Metered;
+import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.Sampling;
+import com.yammer.metrics.core.Summarizable;
 import com.yammer.metrics.stats.Snapshot;
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.TimeUnit;
-
 import static com.librato.metrics.LibratoReporter.ExpandedMetric.*;
 
 
@@ -31,14 +33,13 @@ public class MetricsLibratoBatch extends LibratoBatch {
         agentIdentifier = String.format("metrics-librato/%s metrics/%s", version, codaVersion);
     }
 
-    public MetricsLibratoBatch(int postBatchSize, APIUtil.Sanitizer sanitizer, long timeout, TimeUnit timeoutUnit,
-                               MetricExpansionConfig expansionConfig) {
+    public MetricsLibratoBatch(int postBatchSize, APIUtil.Sanitizer sanitizer, long timeout, TimeUnit timeoutUnit, MetricExpansionConfig expansionConfig) {
         super(postBatchSize, sanitizer, timeout, timeoutUnit, agentIdentifier);
         this.expansionConfig = expansionConfig;
     }
 
     public void addGauge(String name, Gauge gauge) {
-        addGaugeMeasurement(name, (Number) gauge.value());
+        addGaugeMeasurement(name, ((Number) (gauge.value())));
     }
 
     public void addSummarizable(String name, Summarizable summarizable) {
@@ -49,15 +50,8 @@ public class MetricsLibratoBatch extends LibratoBatch {
             countValue = Math.round(countCalculation);
         }
         // no need to publish these additional values if they are zero, plus the API will puke
-        if (countValue != null && countValue > 0) {
-            addMeasurement(new MultiSampleGaugeMeasurement(
-                    name,
-                    countValue,
-                    summarizable.sum(),
-                    summarizable.max(),
-                    summarizable.min(),
-                    null
-            ));
+        if ((countValue != null) && (countValue > 0)) {
+            addMeasurement(new MultiSampleGaugeMeasurement(name, countValue, summarizable.sum(), summarizable.max(), summarizable.min(), null));
         }
     }
 

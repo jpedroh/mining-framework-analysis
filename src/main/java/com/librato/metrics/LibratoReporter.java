@@ -5,15 +5,15 @@ import com.ning.http.util.Base64;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.*;
 import com.yammer.metrics.reporting.AbstractPollingReporter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * A reporter for publishing metrics to <a href="http://metrics.librato.com/">Librato Metrics</a>
@@ -56,7 +56,11 @@ public class LibratoReporter extends AbstractPollingReporter implements MetricPr
         this.clock = clock;
         this.vm = vm;
         this.reportVmMetrics = reportVmMetrics;
+<<<<<<< LEFT
+=======
         this.expansionConfig = expansionConfig;
+
+>>>>>>> RIGHT
         this.executor = registry.newScheduledThreadPool(1, name);
     }
 
