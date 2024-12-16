@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.mercadopago.exceptions.MPException;
+import java.io.InputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
-import java.io.InputStream;
 
 /**
  * Mercado Pago SDK
@@ -15,7 +15,6 @@ import java.io.InputStream;
  * Created by Eduardo Paoletta on 11/17/16.
  */
 public class MPCoreUtils {
-
     public static final String FORMAT_ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 
     /**
@@ -41,17 +40,14 @@ public class MPCoreUtils {
                 ByteArrayOutputStream result = new ByteArrayOutputStream();
                 byte[] buffer = new byte[1024];
                 int length;
-                while ((length = is.read(buffer)) != -1) {
+                while ((length = is.read(buffer)) != (-1)) {
                     result.write(buffer, 0, length);
-                }
+                } 
                 value = result.toString("UTF-8");
-
-            } catch (Exception ex) {
+            } catch (java.lang.Exception ex) {
                 throw new MPException(ex);
             }
         }
         return value;
-
     }
-
 }

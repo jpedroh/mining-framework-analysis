@@ -5,11 +5,10 @@ import com.mercadopago.core.restannotations.DELETE;
 import com.mercadopago.core.restannotations.GET;
 import com.mercadopago.core.restannotations.POST;
 import com.mercadopago.exceptions.MPException;
-import org.junit.Test;
-
 import java.util.HashMap;
-
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+
 
 /**
  * Mercado Pago SDK
@@ -18,25 +17,24 @@ import static org.junit.Assert.assertEquals;
  * Created by Eduardo Paoletta on 11/15/16.
  */
 public class MPBaseMultipleParamsTest extends MPBase {
-
     String card_id = null;
 
-    @GET(path="/loadpath/slug")
+    @GET(path = "/loadpath/slug")
     public String load() throws MPException {
         return super.processMethod("load");
     }
 
-    @POST(path="/savepath/slug/:param1")
+    @POST(path = "/savepath/slug/:param1")
     public String save(String param1) throws MPException {
         return super.processMethod("save", param1);
     }
 
-    @GET(path="/getpath/slug/:param1/otherslug/:param2")
+    @GET(path = "/getpath/slug/:param1/otherslug/:param2")
     public String update(String param1, String param2) throws MPException {
         return super.processMethod("update", param1, param2);
     }
 
-    @DELETE(path="/delete/slug/:card_id/otherslug/:param2/:param3")
+    @DELETE(path = "/delete/slug/:card_id/otherslug/:param2/:param3")
     public String delete(String card_id, String param2, String param3) throws MPException {
         HashMap<String, String> mapParams = new HashMap<String, String>();
         mapParams.put("card_id", card_id);
@@ -80,5 +78,4 @@ public class MPBaseMultipleParamsTest extends MPBase {
         String response = delete("test1", "test2", "test3");
         assertEquals("{\"method\":\"DELETE\",\"path\":\"https://api.mercadopago.com/delete/slug/test1/otherslug/test2/test3\"}", response);
     }
-
 }

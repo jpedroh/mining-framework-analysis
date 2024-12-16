@@ -1,16 +1,15 @@
 package test.mercadopago.core;
 
+import com.mercadopago.core.MPBase;
 import com.mercadopago.core.restannotations.GET;
 import com.mercadopago.core.restannotations.POST;
 import com.mercadopago.core.restannotations.PUT;
-import com.mercadopago.core.MPBase;
 import com.mercadopago.exceptions.MPException;
-import org.junit.Test;
-
 import java.util.Date;
-
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+
 
 /**
  * Mercado Pago SDK
@@ -19,18 +18,19 @@ import static org.junit.Assert.assertSame;
  * Created by Eduardo Paoletta on 11/4/16.
  */
 public class MPBaseTest extends MPBase {
-
     private String id = null;
+
     private String testString = "Test String";
+
     private Integer testInteger = 666;
 
-    @GET(path="/getpath/slug/:id")
+    @GET(path = "/getpath/slug/:id")
     public String load(String id) throws MPException {
         return super.processMethod("load", id);
     }
 
-    @GET(path="/getpath/slug/")
-    @PUT(path="/putpath/slug/")
+    @GET(path = "/getpath/slug/")
+    @PUT(path = "/putpath/slug/")
     public String loadAll() throws MPException {
         return super.processMethod("loadAll");
     }
@@ -41,12 +41,12 @@ public class MPBaseTest extends MPBase {
         return super.processMethod("save");
     }
 
-    @POST(path="/postpath/slug")
+    @POST(path = "/postpath/slug")
     public String create() throws MPException {
         return super.processMethod("create");
     }
 
-    @PUT(path="/putpath/slug/:id")
+    @PUT(path = "/putpath/slug/:id")
     public String update(String id) throws MPException {
         return super.processMethod("update", id);
     }
@@ -156,5 +156,4 @@ public class MPBaseTest extends MPBase {
         assertEquals("{\"method\":\"PUT\",\"path\":\"https://api.mercadopago.com/putpath/slug/5\",\"payload\":{\"testString\":\"TestUpdate\"}}", resource.update(null));
 
     }
-
 }
