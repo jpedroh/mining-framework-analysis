@@ -3,25 +3,24 @@ package scala_maven;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.maven.plugins.annotations.Parameter;
-
 import sbt_inc.SbtIncrementalCompiler;
-import xsbti.compile.CompileOrder;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.MainHelper;
+import xsbti.compile.CompileOrder;
+
 
 /**
-* Abstract parent of all Scala Mojo who run compilation
-*/
+ * Abstract parent of all Scala Mojo who run compilation
+ */
 public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
-
     public static final String ALL = "all";
+
     public static final String INCREMENTAL = "incremental";
 
     /**
-    * Keeps track of if we get compile errors in incremental mode
-    */
+     * Keeps track of if we get compile errors in incremental mode
+     */
     private boolean compileErrors;
 
     /**
@@ -36,12 +35,12 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     protected String recompileMode;
 
     /**
-    * notifyCompilation if true then print a message "path: compiling"
-    * for each root directory or files that will be compiled.
-    * Useful for debug, and for integration with Editor/IDE to reset markers only
-    * for compiled files.
-    *
-    */
+     * notifyCompilation if true then print a message "path: compiling"
+     * for each root directory or files that will be compiled.
+     * Useful for debug, and for integration with Editor/IDE to reset markers only
+     * for compiled files.
+     *
+     */
     @Parameter(property = "notifyCompilation", defaultValue = "true")
     private boolean notifyCompilation;
 
@@ -54,16 +53,16 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     private SbtIncrementalCompiler incremental;
 
     /**
-    * Analysis cache file for incremental recompilation.
-    */
+     * Analysis cache file for incremental recompilation.
+     */
     abstract protected File getAnalysisCacheFile() throws Exception;
 
     /**
-    * Compile order for Scala and Java sources for sbt incremental compile.
-    *
-    * Can be Mixed, JavaThenScala, or ScalaThenJava.
-    *
-    */
+     * Compile order for Scala and Java sources for sbt incremental compile.
+     *
+     * Can be Mixed, JavaThenScala, or ScalaThenJava.
+     *
+     */
     @Parameter(property = "compileOrder", defaultValue = "Mixed")
     private CompileOrder compileOrder;
 
@@ -79,34 +78,30 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         int nbFiles = compile(getSourceDirectories(), outputDir, analysisCacheFile, getClasspathElements(), false);
         switch (nbFiles) {
             case -1:
-            getLog().info("No sources to compile");
-            break;
+                getLog().info("No sources to compile");
+                break;
             case 0:
-            getLog().info("Nothing to compile - all classes are up to date");;
-            break;
+                getLog().info("Nothing to compile - all classes are up to date");;
+                break;
             default:
-            break;
+                break;
         }
     }
 
     protected int compile(List<File> sourceRootDirs, File outputDir, File analysisCacheFile, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
-        if (!compileInLoop && INCREMENTAL.equals(recompileMode)) {
+        if ((!compileInLoop) && INCREMENTAL.equals(recompileMode)) {
             // if not compileInLoop, invoke incrementalCompile immediately
             return incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, false);
         }
-
         long t0 = System.currentTimeMillis();
         LastCompilationInfo lastCompilationInfo = LastCompilationInfo.find(sourceRootDirs, outputDir);
         if (_lastCompileAt < 0) {
             _lastCompileAt = lastCompilationInfo.getLastSuccessfullTS();
         }
-
         List<File> files = getFilesToCompile(sourceRootDirs, _lastCompileAt);
-
         if (files == null) {
             return -1;
         }
-
         if (files.size() < 1) {
             return 0;
         }
@@ -114,7 +109,6 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             outputDir.mkdirs();
         }
         long t1 = System.currentTimeMillis();
-
         if (compileInLoop && INCREMENTAL.equals(recompileMode)) {
             // if compileInLoop, do not invoke incrementalCompile when there's no change
             int retCode = incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, compileInLoop);
@@ -124,20 +118,20 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             }
             return retCode;
         }
-
         getLog().info(String.format("Compiling %d source files to %s at %d", files.size(), outputDir.getAbsolutePath(), t1));
         JavaMainCaller jcmd = getScalaCommand();
         jcmd.redirectToLog();
-        if (!classpathElements.isEmpty()) jcmd.addArgs("-classpath", MainHelper.toMultiPath(classpathElements));
+        if (!classpathElements.isEmpty()) {
+            jcmd.addArgs("-classpath", MainHelper.toMultiPath(classpathElements));
+        }
         jcmd.addArgs("-d", outputDir.getAbsolutePath());
-        //jcmd.addArgs("-sourcepath", sourceDir.getAbsolutePath());
+        // jcmd.addArgs("-sourcepath", sourceDir.getAbsolutePath());
         for (File f : files) {
             jcmd.addArgs(f.getAbsolutePath());
         }
         if (jcmd.run(displayCmd, !compileInLoop)) {
             lastCompilationInfo.setLastSuccessfullTS(t1);
-        }
-        else {
+        } else {
             compileErrors = true;
         }
         getLog().info(String.format("prepare-compile in %d s", (t1 - t0) / 1000));
@@ -147,8 +141,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
 
     /**
-    * Returns true if the previous compile failed
-    */
+     * Returns true if the previous compile failed
+     */
     protected boolean hasCompileErrors() {
         return compileErrors;
     }
@@ -210,10 +204,11 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             for (File f : sourceRootDirs) {
                 hash.append(f.toString());
             }
-            return new LastCompilationInfo(new File(outputDir.getAbsolutePath() + "." + hash.toString().hashCode() + ".timestamp"), outputDir);
+            return new LastCompilationInfo(new File(((outputDir.getAbsolutePath() + ".") + hash.toString().hashCode()) + ".timestamp"), outputDir);
         }
 
         private final File _lastCompileAtFile;
+
         private final File _outputDir;
 
         private LastCompilationInfo(File f, File outputDir) {
@@ -222,8 +217,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         }
 
         long getLastSuccessfullTS() throws Exception {
-            long back =  -1;
-            if (_lastCompileAtFile.exists() && _outputDir.exists() && (_outputDir.list().length > 0)) {
+            long back = -1;
+            if ((_lastCompileAtFile.exists() && _outputDir.exists()) && (_outputDir.list().length > 0)) {
                 back = _lastCompileAtFile.lastModified();
             }
             return back;
@@ -240,19 +235,16 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     //
     // Incremental compilation
     //
-
     @SuppressWarnings("unchecked")
     protected int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir, File cacheFile, boolean compileInLoop) throws Exception {
         List<File> sources = findSourceWithFilters(sourceRootDirs);
         if (sources.isEmpty()) {
             return -1;
         }
-
         // TODO - Do we really need this duplicated here?
         if (!outputDir.exists()) {
             outputDir.mkdirs();
         }
-
         if (incremental == null) {
             File libraryJar = getLibraryJar();
             File reflectJar = getReflectJar();
@@ -262,21 +254,18 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             File compilerBridgeJar = getCompilerBridgeJar();
             incremental = new SbtIncrementalCompiler(libraryJar, reflectJar, compilerJar, findScalaVersion(), extraJars, compilerBridgeJar, getLog(), cacheFile, compileOrder);
         }
-
         classpathElements.remove(outputDir.getAbsolutePath());
         List<String> scalacOptions = getScalaOptions();
         List<String> javacOptions = getJavacOptions();
-
         try {
             incremental.compile(classpathElements, sources, outputDir, scalacOptions, javacOptions);
-        } catch (xsbti.CompileFailed e) {
+        } catch (xsbti e) {
             if (compileInLoop) {
                 compileErrors = true;
             } else {
                 throw e;
             }
         }
-
         return 1;
     }
 }
