@@ -14,9 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.shardingsphere.elasticjob.reg.zookeeper;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import org.apache.curator.utils.ThreadUtils;
 import org.apache.shardingsphere.elasticjob.reg.listener.DataChangedEvent;
 import org.apache.shardingsphere.elasticjob.reg.zookeeper.fixture.EmbedTestingServer;
@@ -24,20 +27,15 @@ import org.apache.shardingsphere.elasticjob.reg.zookeeper.util.ZookeeperRegistry
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.startsWith;
+import static org.junit.Assert.assertThat;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 public final class ZookeeperRegistryCenterWatchTest {
-    
     private static final ZookeeperConfiguration ZOOKEEPER_CONFIGURATION = new ZookeeperConfiguration(EmbedTestingServer.getConnectionString(), ZookeeperRegistryCenterWatchTest.class.getName());
-    
+
     private static ZookeeperRegistryCenter zkRegCenter;
-    
+
     @BeforeClass
     public static void setUp() {
         EmbedTestingServer.start();
@@ -46,20 +44,20 @@ public final class ZookeeperRegistryCenterWatchTest {
         zkRegCenter.init();
         ZookeeperRegistryCenterTestUtil.persist(zkRegCenter);
     }
-    
+
     @AfterClass
     public static void tearDown() {
         zkRegCenter.close();
     }
 
-    @Test(timeout = 10000L)
+    @Test(timeout = 30000L)
     public void assertWatchWithoutExecutor() throws InterruptedException {
         CountDownLatch waitingForCountDownValue = new CountDownLatch(1);
         zkRegCenter.addCacheData("/test");
         CountDownLatch waitingForWatchReady = new CountDownLatch(1);
-        zkRegCenter.watch("/test", event -> {
+        zkRegCenter.watch("/test", ( event) -> {
             waitingForWatchReady.countDown();
-            if (DataChangedEvent.Type.UPDATED == event.getType() && "countDown".equals(event.getValue())) {
+            if ((DataChangedEvent.Type.UPDATED == event.getType()) && "countDown".equals(event.getValue())) {
                 waitingForCountDownValue.countDown();
             }
         }, null);
@@ -67,8 +65,8 @@ public final class ZookeeperRegistryCenterWatchTest {
         zkRegCenter.update("/test", "countDown");
         waitingForCountDownValue.await();
     }
-    
-    @Test(timeout = 30000L)
+
+    @Test(timeout = 10000L)
     public void assertWatchWithExecutor() throws InterruptedException {
         CountDownLatch waitingForCountDownValue = new CountDownLatch(1);
         zkRegCenter.addCacheData("/test");
