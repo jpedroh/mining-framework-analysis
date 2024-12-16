@@ -11,18 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package tech.tablesaw.api;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static tech.tablesaw.aggregate.AggregateFunctions.mean;
-import static tech.tablesaw.aggregate.AggregateFunctions.stdDev;
-
+import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -32,27 +23,34 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.google.common.collect.Lists;
-
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static tech.tablesaw.aggregate.AggregateFunctions.mean;
+import static tech.tablesaw.aggregate.AggregateFunctions.stdDev;
 import tech.tablesaw.columns.Column;
 import tech.tablesaw.columns.dates.PackedLocalDate;
+
 
 /**
  * Tests for Table
  */
 public class TableTest {
-
     private static final int ROWS_BOUNDARY = 1000;
+
     private static final Random RANDOM = new Random();
 
     private Table table;
-    private NumberColumn f1 =  DoubleColumn.create("f1");
-    private NumberColumn numberColumn =  DoubleColumn.create("d1");
+
+    private NumberColumn f1 = DoubleColumn.create("f1");
+
+    private NumberColumn numberColumn = DoubleColumn.create("d1");
 
     @Before
     public void setUp() {
@@ -77,19 +75,11 @@ public class TableTest {
 
     @Test
     public void testRowWiseAddition() {
-        double[] a = {3, 4, 5};
-        double[] b = {3, 4, 5};
-        double[] c = {3, 4, 5};
-        Table t = Table.create("test",
-                DoubleColumn.create("a", a),
-                DoubleColumn.create("b", b),
-                DoubleColumn.create("c", c));
-
-        NumberColumn n =
-                t.numberColumn(0)
-                .add(t.numberColumn(1))
-                .add(t.numberColumn(2));
-
+        double[] a = new double[]{ 3, 4, 5 };
+        double[] b = new double[]{ 3, 4, 5 };
+        double[] c = new double[]{ 3, 4, 5 };
+        Table t = Table.create("test", DoubleColumn.create("a", a), DoubleColumn.create("b", b), DoubleColumn.create("c", c));
+        NumberColumn n = t.numberColumn(0).add(t.numberColumn(1)).add(t.numberColumn(2));
         assertEquals(n.get(0), 9, 0);
         assertEquals(n.get(1), 12, 0);
         assertEquals(n.get(2), 15, 0);
@@ -97,16 +87,11 @@ public class TableTest {
 
     @Test
     public void testRowWiseAddition2() {
-        double[] a = {3, 4, 5};
-        double[] b = {3, 4, 5};
-        double[] c = {3, 4, 5};
-        Table t = Table.create("test",
-                DoubleColumn.create("a", a),
-                DoubleColumn.create("b", b),
-                DoubleColumn.create("c", c));
-
+        double[] a = new double[]{ 3, 4, 5 };
+        double[] b = new double[]{ 3, 4, 5 };
+        double[] c = new double[]{ 3, 4, 5 };
+        Table t = Table.create("test", DoubleColumn.create("a", a), DoubleColumn.create("b", b), DoubleColumn.create("c", c));
         NumberColumn n = sum(t.numberColumns());
-
         assertEquals(n.get(0), 9, 0);
         assertEquals(n.get(1), 12, 0);
         assertEquals(n.get(2), 15, 0);
@@ -130,7 +115,6 @@ public class TableTest {
     public void printEmptyTable() {
         Table t = Table.create("Test");
         assertEquals("Test\n\n", t.print());
-
         Column c1 = StringColumn.create("SC");
         t.addColumns(c1);
         assertEquals(" Test \n SC  |\n------", t.print());
@@ -145,7 +129,7 @@ public class TableTest {
         t1.append(t2).append(t3);
         assertEquals(3 * rowCount, t1.rowCount());
         t1 = t1.dropDuplicateRows();
-        assertEquals(t1.rowCount(),rowCount);
+        assertEquals(t1.rowCount(), rowCount);
     }
 
     @Test
@@ -154,7 +138,7 @@ public class TableTest {
         Column c2 = DoubleColumn.create("NC");
         Column c3 = DateColumn.create("DC");
         Table t = Table.create("Test", c1, c2, c3);
-        assertEquals(0, t.missingValueCounts().numberColumn(1).get(0), 0.00001);
+        assertEquals(0, t.missingValueCounts().numberColumn(1).get(0), 1.0E-5);
     }
 
     @Test
@@ -201,17 +185,16 @@ public class TableTest {
     @Test
     public void testSampleSplit() throws Exception {
         Table t = Table.read().csv("../data/bush.csv");
-        Table[] results = t.sampleSplit(.75);
+        Table[] results = t.sampleSplit(0.75);
         assertEquals(t.rowCount(), results[0].rowCount() + results[1].rowCount());
     }
 
     @Test
     public void testDoWithEachRow() throws Exception {
         Table t = Table.read().csv("../data/bush.csv").first(10);
-        Double[] ratingsArray = {53.0, 58.0};
+        Double[] ratingsArray = new java.lang.Double[]{ 53.0, 58.0 };
         List<Double> ratings = Lists.asList(52.0, ratingsArray);
-
-        Consumer<Row> doable = row -> {
+        Consumer<Row> doable = ( row) -> {
             if (row.getRowNumber() < 5) {
                 assertTrue(ratings.contains(row.getDouble("approval")));
             }
@@ -225,9 +208,8 @@ public class TableTest {
         int dateTarget = PackedLocalDate.pack(LocalDate.of(2002, 1, 1));
         double ratingTarget = 75;
         AtomicInteger count = new AtomicInteger(0);
-        Consumer<Row> doable = row -> {
-            if (row.getPackedDate("date") > dateTarget
-                    && row.getInt("approval") > ratingTarget) {
+        Consumer<Row> doable = ( row) -> {
+            if ((row.getPackedDate("date") > dateTarget) && (row.getInt("approval") > ratingTarget)) {
                 count.getAndIncrement();
             }
         };
@@ -240,9 +222,7 @@ public class TableTest {
         Table t = Table.read().csv("../data/bush.csv");
         int dateTarget = PackedLocalDate.pack(LocalDate.of(2002, 1, 1));
         double ratingTarget = 75;
-        Predicate<Row> doable = row ->
-                (row.getPackedDate("date") > dateTarget
-                && row.getInt("approval") > ratingTarget);
+        Predicate<Row> doable = ( row) -> (row.getPackedDate("date") > dateTarget) && (row.getInt("approval") > ratingTarget);
         assertTrue(t.detect(doable));
     }
 
@@ -251,10 +231,7 @@ public class TableTest {
         Table t = Table.read().csv("../data/bush.csv");
         Row row = new Row(t);
         row.at(0);
-        assertEquals("             bush.csv              \n" +
-                "    date     |  approval  |  who  |\n" +
-                "-----------------------------------\n" +
-                " 2004-02-04  |      53.0  |  fox  |", row.toString());
+        assertEquals("             bush.csv              \n" + (("    date     |  approval  |  who  |\n" + "-----------------------------------\n") + " 2004-02-04  |      53.0  |  fox  |"), row.toString());
     }
 
     @Test
@@ -267,17 +244,14 @@ public class TableTest {
 
     @Test
     public void testPairs2() throws Exception {
-
         Table t = Table.read().csv("../data/bush.csv");
-
-        Table.Pairs runningAvg =  new Table.Pairs() {
-
+        Table.Pairs runningAvg = new Table.Pairs() {
             private List<Double> values = new ArrayList<>();
 
             @Override
             public void doWithPair(Row row1, Row row2) {
-                double r1  = row1.getDouble("approval");
-                double r2  = row2.getDouble("approval");
+                double r1 = row1.getDouble("approval");
+                double r2 = row2.getDouble("approval");
                 values.add((r1 + r2) / 2.0);
             }
 
@@ -286,7 +260,6 @@ public class TableTest {
                 return values;
             }
         };
-
         t.doWithRows(runningAvg);
         //System.out.println(runningAvg.getResult());
     }
@@ -295,29 +268,27 @@ public class TableTest {
     public void testRollWithNrows2() throws Exception {
         Table t = Table.read().csv("../data/bush.csv").first(4);
         NumberColumn approval = t.numberColumn("approval");
-
         List<Integer> sums = new ArrayList<>();
-        Consumer<Row[]> rowConsumer = rows -> {
+        Consumer<Row[]> rowConsumer = ( rows) -> {
             int sum = 0;
             for (Row row : rows) {
                 sum += row.getDouble("approval");
             }
             sums.add(sum);
         };
-        t.rollWithRows(rowConsumer,2);
-        assertTrue(sums.contains((int) approval.getDouble(0) + (int) approval.getDouble(1)));
-        assertTrue(sums.contains((int) approval.getDouble(1) + (int) approval.getDouble(2)));
-        assertTrue(sums.contains((int) approval.getDouble(2) + (int) approval.getDouble(3)));
+        t.rollWithRows(rowConsumer, 2);
+        assertTrue(sums.contains(((int) (approval.getDouble(0))) + ((int) (approval.getDouble(1)))));
+        assertTrue(sums.contains(((int) (approval.getDouble(1))) + ((int) (approval.getDouble(2)))));
+        assertTrue(sums.contains(((int) (approval.getDouble(2))) + ((int) (approval.getDouble(3)))));
     }
 
     private class PairChild implements Table.Pairs {
-
         List<Double> runningAverage = new ArrayList<>();
 
         @Override
         public void doWithPair(Row row1, Row row2) {
-            double r1  = row1.getDouble("approval");
-            double r2  = row2.getDouble("approval");
+            double r1 = row1.getDouble("approval");
+            double r2 = row2.getDouble("approval");
             runningAverage.add((r1 + r2) / 2.0);
         }
     }
@@ -326,9 +297,9 @@ public class TableTest {
     public void testRowCount() {
         assertEquals(0, table.rowCount());
         NumberColumn floatColumn = this.f1;
-        floatColumn.append(2f);
+        floatColumn.append(2.0F);
         assertEquals(1, table.rowCount());
-        floatColumn.append(2.2342f);
+        floatColumn.append(2.2342F);
         assertEquals(2, table.rowCount());
     }
 
@@ -364,7 +335,7 @@ public class TableTest {
 
     @Test
     public void testAppendMultipleColumns() {
-        NumberColumn column =  DoubleColumn.create("e1");
+        NumberColumn column = DoubleColumn.create("e1");
         table.addColumns(column);
         NumberColumn first = f1.emptyCopy();
         NumberColumn second = column.emptyCopy();
@@ -381,22 +352,22 @@ public class TableTest {
         table.append(null);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = java.lang.IllegalStateException.class)
     public void testAppendTableWithNonExistingColumns() {
         Table tableToAppend = Table.create("wrong", numberColumn);
         table.append(tableToAppend);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = java.lang.IllegalStateException.class)
     public void testAppendTableWithAnotherColumnName() {
-        NumberColumn column =  DoubleColumn.create("42");
+        NumberColumn column = DoubleColumn.create("42");
         Table tableToAppend = Table.create("wrong", column);
         table.append(tableToAppend);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = java.lang.IllegalStateException.class)
     public void testAppendTableWithDifferentShape() {
-        NumberColumn column =  DoubleColumn.create("e1");
+        NumberColumn column = DoubleColumn.create("e1");
         table.addColumns(column);
         Table tableToAppend = Table.create("different", column);
         assertEquals(2, table.columns().size());
@@ -406,12 +377,10 @@ public class TableTest {
 
     @Test
     public void testReplaceColumn() {
-        NumberColumn first =  DoubleColumn.create("c1", new double[]{1, 2, 3, 4, 5});
-        NumberColumn second =  DoubleColumn.create("c2", new double[]{6, 7, 8, 9, 10});
-        NumberColumn replacement =  DoubleColumn.create("c2", new double[]{10, 20, 30, 40, 50});
-
+        NumberColumn first = DoubleColumn.create("c1", new double[]{ 1, 2, 3, 4, 5 });
+        NumberColumn second = DoubleColumn.create("c2", new double[]{ 6, 7, 8, 9, 10 });
+        NumberColumn replacement = DoubleColumn.create("c2", new double[]{ 10, 20, 30, 40, 50 });
         Table t = Table.create("populated", first, second);
-
         int colIndex = t.columnIndex(second);
         assertSame(t.column("c2"), second);
         t.replaceColumn("c2", replacement);
@@ -453,29 +422,26 @@ public class TableTest {
 
     @Test
     public void testAsMatrix() {
-        NumberColumn first =  DoubleColumn.create("c1", new double[]{1L, 2L, 3L, 4L, 5L});
-        NumberColumn second =  DoubleColumn.create("c2", new double[]{6.0f, 7.0f, 8.0f, 9.0f, 10.0f});
-        NumberColumn third =  DoubleColumn.create("c3", new double[]{10.0, 20.0, 30.0, 40.0, 50.0});
-
+        NumberColumn first = DoubleColumn.create("c1", new double[]{ 1L, 2L, 3L, 4L, 5L });
+        NumberColumn second = DoubleColumn.create("c2", new double[]{ 6.0F, 7.0F, 8.0F, 9.0F, 10.0F });
+        NumberColumn third = DoubleColumn.create("c3", new double[]{ 10.0, 20.0, 30.0, 40.0, 50.0 });
         Table t = Table.create("table", first, second, third);
         double[][] matrix = t.as().doubleMatrix();
         assertEquals(5, matrix.length);
-        assertArrayEquals(new double[]{1.0, 6.0, 10.0}, matrix[0], 0.0000001);
-        assertArrayEquals(new double[]{2.0, 7.0, 20.0}, matrix[1], 0.0000001);
-        assertArrayEquals(new double[]{3.0, 8.0, 30.0}, matrix[2], 0.0000001);
-        assertArrayEquals(new double[]{4.0, 9.0, 40.0}, matrix[3], 0.0000001);
-        assertArrayEquals(new double[]{5.0, 10.0, 50.0}, matrix[4], 0.0000001);
+        assertArrayEquals(new double[]{ 1.0, 6.0, 10.0 }, matrix[0], 1.0E-7);
+        assertArrayEquals(new double[]{ 2.0, 7.0, 20.0 }, matrix[1], 1.0E-7);
+        assertArrayEquals(new double[]{ 3.0, 8.0, 30.0 }, matrix[2], 1.0E-7);
+        assertArrayEquals(new double[]{ 4.0, 9.0, 40.0 }, matrix[3], 1.0E-7);
+        assertArrayEquals(new double[]{ 5.0, 10.0, 50.0 }, matrix[4], 1.0E-7);
     }
 
     @Test
     public void testRowSort() throws Exception {
         Table bush = Table.read().csv("../data/bush.csv");
-
-        Comparator<Row> rowComparator = Comparator.comparingDouble(o -> o.getDouble("approval"));
-
+        Comparator<Row> rowComparator = Comparator.comparingDouble(( o) -> o.getDouble("approval"));
         Table sorted = bush.sortOn(rowComparator);
         NumberColumn approval = sorted.nCol("approval");
-        for (int i = 0; i < bush.rowCount() - 2; i++) {
+        for (int i = 0; i < (bush.rowCount() - 2); i++) {
             assertTrue(approval.get(i) <= approval.get(i + 1));
         }
     }
@@ -489,7 +455,7 @@ public class TableTest {
         }
     }
 
-    private NumberColumn sum(NumberColumn ... columns) {
+    private NumberColumn sum(NumberColumn... columns) {
         int size = columns[0].size();
         NumberColumn result = DoubleColumn.create("sum", size);
         for (int r = 0; r < size; r++) {
