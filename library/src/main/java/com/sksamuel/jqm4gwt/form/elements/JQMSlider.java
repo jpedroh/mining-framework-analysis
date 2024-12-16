@@ -20,22 +20,23 @@ import com.sksamuel.jqm4gwt.HasText;
 import com.sksamuel.jqm4gwt.JQMCommon;
 import com.sksamuel.jqm4gwt.events.HasTapHandlers;
 import com.sksamuel.jqm4gwt.events.JQMComponentEvents;
-import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration.WidgetHandlerCounter;
+import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.TapEvent;
 import com.sksamuel.jqm4gwt.events.TapHandler;
 import com.sksamuel.jqm4gwt.form.JQMFieldContainer;
 import com.sksamuel.jqm4gwt.html.FormLabel;
 
-/**
- * @author Stephen K Samuel samspade79@gmail.com 10 May 2011 00:24:06
- *
- * <br> An implementation of a jquery mobile "slider" widget.
- * <br> See <a href="http://demos.jquerymobile.com/1.4.5/slider/">Slider</a>
- */
-public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, HasMini<JQMSlider>,
-        HasText<JQMSlider>, HasCorners<JQMSlider>, HasChangeHandlers, HasClickHandlers, HasTapHandlers {
 
+/**
+ *
+ *
+ * @author Stephen K Samuel samspade79@gmail.com 10 May 2011 00:24:06
+
+<p/> An implementation of a jquery mobile "slider" widget.
+<p/> See <a href="http://demos.jquerymobile.com/1.4.5/slider/">Slider</a>
+ */
+public class JQMSlider extends JQMFieldContainer implements HasValue<Double> , HasMini<JQMSlider> , HasText<JQMSlider> , HasCorners<JQMSlider> , HasChangeHandlers , HasClickHandlers , HasTapHandlers {
     private final FormLabel label = new FormLabel();
 
     /**
@@ -67,7 +68,7 @@ public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, Ha
         label.setFor(id);
         input.getElement().setId(id);
         input.getElement().setAttribute("type", "range");
-        internVal = 0d;
+        internVal = 0.0;
         input.getElement().setAttribute("value", "0");
         input.getElement().setAttribute("min", "0");
         input.getElement().setAttribute("max", "100");
@@ -81,8 +82,10 @@ public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, Ha
                     internVal = getUiValue();
                     // in case of JQMRangeSlider this onChange() occurs for both Lo and Hi sliders,
                     // even if only one of them was changed, so we have to check if it's really changed.
-                    boolean eq = internVal == old || internVal != null && internVal.equals(old);
-                    if (!eq) ValueChangeEvent.fire(JQMSlider.this, getValue());
+                    boolean eq = (internVal == old) || ((internVal != null) && internVal.equals(old));
+                    if (!eq) {
+                        ValueChangeEvent.fire(JQMSlider.this, getValue());
+                    }
                 }
             }
         });
@@ -91,7 +94,8 @@ public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, Ha
     /**
      * Create a new {@link JQMSlider} with the given label and default values for the min and max
      *
-     * @param text the label text
+     * @param text
+     * 		the label text
      */
     public JQMSlider(String text) {
         this();
@@ -101,9 +105,12 @@ public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, Ha
     /**
      * Create a new {@link JQMSlider} with the given label and min and max values
      *
-     * @param text the label text
-     * @param min  the minimum value of the slider
-     * @param max  the maximum value of the slider
+     * @param text
+     * 		the label text
+     * @param min
+     * 		the minimum value of the slider
+     * @param max
+     * 		the maximum value of the slider
      */
     public JQMSlider(String text, Double min, Double max) {
         this(text);
@@ -142,17 +149,21 @@ public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, Ha
     }
 
     // XXX: Warning! 'String id' cannot be replaced by 'Element elt', because $("#" + id) not equal $(elt) for this widget!
-    private static native void disable(String id) /*-{
-        $wnd.$("#" + id).slider('disable');
-    }-*/;
+    /* -{
+    $wnd.$("#" + id).slider('disable');
+    }-
+     */
+    private static native void disable(String id);
 
     public void enable() {
         enable(input.getElement().getId());
     }
 
-    private static native void enable(String id) /*-{
-        $wnd.$("#" + id).slider('enable');
-    }-*/;
+    /* -{
+    $wnd.$("#" + id).slider('enable');
+    }-
+     */
+    private static native void enable(String id);
 
     /**
      * Returns the text of the label
@@ -199,22 +210,29 @@ public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, Ha
     @Override
     public Double getValue() {
         Double rslt = getUiValue();
-        if (rslt == null) return internVal;
-
+        if (rslt == null) {
+            return internVal;
+        }
         if (internVal == null) {
             Double min = getMin();
-            if (rslt == min || rslt != null && rslt.equals(min)) return null;
+            if ((rslt == min) || ((rslt != null) && rslt.equals(min))) {
+                return null;
+            }
         }
         internVal = rslt;
         return rslt;
     }
 
     /**
+     *
+     *
      * @return - null if slider is not created/initialized/attached yet and therefore have no UI value.
      */
     private Double getUiValue() {
         String v = JQMCommon.getVal(input.getElement().getId());
-        if (v == null || v.isEmpty()) return null;
+        if ((v == null) || v.isEmpty()) {
+            return null;
+        }
         return Double.valueOf(v);
     }
 
@@ -222,38 +240,51 @@ public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, Ha
      * Can raise ChangeEvent, block it manually by setting ignoreChange (if needed).
      */
     // XXX: Warning! 'String id' cannot be replaced by 'Element elt', because $("#" + id) not equal $(elt) for this widget!
-    private static native void refresh(String id, String value) /*-{
-        if ($wnd.$ === undefined || $wnd.$ === null) return; // jQuery is not loaded
-        $wnd.$("#" + id).val(value).slider("refresh");
-    }-*/;
+    /* -{
+    if ($wnd.$ === undefined || $wnd.$ === null) return; // jQuery is not loaded
+    $wnd.$("#" + id).val(value).slider("refresh");
+    }-
+     */
+    private static native void refresh(String id, String value);
 
-    private static native void refresh(String id) /*-{
-        if ($wnd.$ === undefined || $wnd.$ === null) return; // jQuery is not loaded
-        $wnd.$("#" + id).slider("refresh");
-    }-*/;
+    /* -{
+    if ($wnd.$ === undefined || $wnd.$ === null) return; // jQuery is not loaded
+    $wnd.$("#" + id).slider("refresh");
+    }-
+     */
+    private static native void refresh(String id);
 
-    private static native void refreshMin(String id, String min) /*-{
-        if ($wnd.$ === undefined || $wnd.$ === null) return; // jQuery is not loaded
-        $wnd.$("#" + id).attr("min", min).slider("refresh");
-    }-*/;
+    /* -{
+    if ($wnd.$ === undefined || $wnd.$ === null) return; // jQuery is not loaded
+    $wnd.$("#" + id).attr("min", min).slider("refresh");
+    }-
+     */
+    private static native void refreshMin(String id, String min);
 
-    private static native void refreshMax(String id, String max) /*-{
-        if ($wnd.$ === undefined || $wnd.$ === null) return; // jQuery is not loaded
-        $wnd.$("#" + id).attr("max", max).slider("refresh");
-    }-*/;
+    /* -{
+    if ($wnd.$ === undefined || $wnd.$ === null) return; // jQuery is not loaded
+    $wnd.$("#" + id).attr("max", max).slider("refresh");
+    }-
+     */
+    private static native void refreshMax(String id, String max);
 
-    private static native void refreshStep(String id, String step) /*-{
-        if ($wnd.$ === undefined || $wnd.$ === null) return; // jQuery is not loaded
-        $wnd.$("#" + id).attr("step", step).slider("refresh");
-    }-*/;
+    /* -{
+    if ($wnd.$ === undefined || $wnd.$ === null) return; // jQuery is not loaded
+    $wnd.$("#" + id).attr("step", step).slider("refresh");
+    }-
+     */
+    private static native void refreshStep(String id, String step);
 
     public boolean isHighlight() {
         return "true".equals(JQMCommon.getAttribute(input, "data-highligh"));
     }
 
     public void setHighlight(boolean highlight) {
-        if (highlight) JQMCommon.setAttribute(input, "data-highlight", String.valueOf(highlight));
-        else JQMCommon.setAttribute(input, "data-highlight", null);
+        if (highlight) {
+            JQMCommon.setAttribute(input, "data-highlight", String.valueOf(highlight));
+        } else {
+            JQMCommon.setAttribute(input, "data-highlight", null);
+        }
     }
 
     @Override
@@ -281,7 +312,8 @@ public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, Ha
     /**
      * Sets the text of the label
      *
-     * @param text is the new text to display
+     * @param text
+     * 		is the new text to display
      */
     public void setLabelText(String text) {
         label.setText(text);
@@ -300,7 +332,9 @@ public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, Ha
 
     public Double getStep() {
         String v = input.getElement().getAttribute("step");
-        if (v == null || v.isEmpty()) return 1d;
+        if ((v == null) || v.isEmpty()) {
+            return 1.0;
+        }
         return Double.valueOf(v);
     }
 
@@ -338,7 +372,9 @@ public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, Ha
      */
     public Double getMax() {
         String v = input.getElement().getAttribute("max");
-        if (v == null || v.isEmpty()) return null;
+        if ((v == null) || v.isEmpty()) {
+            return null;
+        }
         return Double.valueOf(v);
     }
 
@@ -347,14 +383,17 @@ public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, Ha
      */
     public Double getMin() {
         String v = input.getElement().getAttribute("min");
-        if (v == null || v.isEmpty()) return null;
+        if ((v == null) || v.isEmpty()) {
+            return null;
+        }
         return Double.valueOf(v);
     }
 
     /**
      * Sets the new max range for the slider.
      *
-     * @param max the new max range
+     * @param max
+     * 		the new max range
      */
     public void setMax(Double max) {
         String maxStr = doubleToNiceStr(max);
@@ -384,7 +423,8 @@ public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, Ha
     /**
      * Sets the new min range for the slider
      *
-     * @param min the new min range
+     * @param min
+     * 		the new min range
      */
     public void setMin(Double min) {
         String minStr = doubleToNiceStr(min);
@@ -415,12 +455,12 @@ public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, Ha
         Double val = getValue();
         if (val != null) {
             Double min = getMin();
-            if (min != null && val.compareTo(min) < 0) {
+            if ((min != null) && (val.compareTo(min) < 0)) {
                 setValue(min);
                 return;
             }
             Double max = getMax();
-            if (max != null && val.compareTo(max) > 0) {
+            if ((max != null) && (val.compareTo(max) > 0)) {
                 setValue(max);
                 return;
             }
@@ -431,8 +471,8 @@ public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, Ha
         final String valStr;
         if (value != null) {
             double d = value.doubleValue();
-            int i = (int) d;
-            valStr = i == d ? String.valueOf(i) : String.valueOf(d);
+            int i = ((int) (d));
+            valStr = (i == d) ? String.valueOf(i) : String.valueOf(d);
         } else {
             valStr = null;
         }
@@ -446,7 +486,8 @@ public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, Ha
     /**
      * Sets the value of the slider to the given value
      *
-     * @param value the new value of the slider, must be in the range of the slider
+     * @param value
+     * 		the new value of the slider, must be in the range of the slider
      */
     @Override
     public void setValue(Double value) {
@@ -476,12 +517,15 @@ public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, Ha
     /**
      * Sets the value of the slider to the given value
      *
-     * @param value the new value of the slider, must be in the range of the slider
+     * @param value
+     * 		the new value of the slider, must be in the range of the slider
      */
     @Override
     public void setValue(Double value, boolean fireEvents) {
         Double old = getValue();
-        if (old == value || old != null && old.equals(value)) return;
+        if ((old == value) || ((old != null) && old.equals(value))) {
+            return;
+        }
         internVal = value;
         setInputValueAttr(value);
         ignoreChange = true;
@@ -490,7 +534,9 @@ public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, Ha
         } finally {
             ignoreChange = false;
         }
-        if (fireEvents) ValueChangeEvent.fire(this, value);
+        if (fireEvents) {
+            ValueChangeEvent.fire(this, value);
+        }
     }
 
     @Override

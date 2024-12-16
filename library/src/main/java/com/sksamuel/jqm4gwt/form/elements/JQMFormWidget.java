@@ -5,15 +5,19 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 
+
 /**
  * @author Stephen K Samuel samspade79@gmail.com 12 Jul 2011 22:24:12
  *
  */
-public interface JQMFormWidget extends IsWidget, HasValue<String>, HasBlurHandlers {
-
+public interface JQMFormWidget extends IsWidget , HasValue<String> , HasBlurHandlers {
     /**
      * Optional, can return null, then JQMForm will create label by itself.
+<<<<<<< LEFT
      * <br> Create and return a new Label for displaying errors and attach to the form widget.
+=======
+     *  Create and return a new Label for displaying errors and attach to the form widget.
+>>>>>>> RIGHT
      **/
-    Label addErrorLabel();
+    public abstract Label addErrorLabel();
 }

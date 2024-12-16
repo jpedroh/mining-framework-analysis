@@ -5,25 +5,33 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.user.client.ui.Widget;
 
-public class JQMTabsEvent extends GwtEvent<JQMTabsEvent.Handler> {
 
+public class JQMTabsEvent extends GwtEvent<JQMTabsEvent.Handler> {
     public interface Handler extends EventHandler {
         /**
          *  If the tabs are currently collapsed, event.oldTabHeader and event.oldTabContent will be null.
+<<<<<<< LEFT
          *  <br> If the tabs are collapsing, event.newTabHeader and event.newTabContent will be null.
+=======
+         *   If the tabs are collapsing, event.newTabHeader and event.newTabContent will be null.
+>>>>>>> RIGHT
          */
-        void onActivate(JQMTabsEvent event);
+        public abstract void onActivate(JQMTabsEvent event);
 
         /**
          * If any exception is thrown then tabs won't be switched and current tab remains active.
+<<<<<<< LEFT
          *  <br> If the tabs are currently collapsed, event.oldTabHeader and event.oldTabContent will be null.
          *  <br> If the tabs are collapsing, event.newTabHeader and event.newTabContent will be null.
+=======
+         *   If the tabs are currently collapsed, event.oldTabHeader and event.oldTabContent will be null.
+         *   If the tabs are collapsing, event.newTabHeader and event.newTabContent will be null.
+>>>>>>> RIGHT
          */
-        void onBeforeActivate(JQMTabsEvent event);
+        public abstract void onBeforeActivate(JQMTabsEvent event);
     }
 
     public static class DefaultHandler implements Handler {
-
         @Override
         public void onActivate(JQMTabsEvent event) {
         }
@@ -57,16 +65,22 @@ public class JQMTabsEvent extends GwtEvent<JQMTabsEvent.Handler> {
         return TYPE;
     }
 
-    public enum TabsState { ACTIVATE, BEFORE_ACTIVATE }
+    public enum TabsState {
+
+        ACTIVATE,
+        BEFORE_ACTIVATE;}
 
     private final TabsState tabsState;
+
     private final Widget newTabHeader;
+
     private final Widget oldTabHeader;
+
     private final Widget newTabContent;
+
     private final Widget oldTabContent;
 
-    protected JQMTabsEvent(TabsState tabsState, Widget newTabHeader, Widget oldTabHeader,
-            Widget newTabContent, Widget oldTabContent) {
+    protected JQMTabsEvent(TabsState tabsState, Widget newTabHeader, Widget oldTabHeader, Widget newTabContent, Widget oldTabContent) {
         this.tabsState = tabsState;
         this.newTabHeader = newTabHeader;
         this.oldTabHeader = oldTabHeader;
@@ -117,5 +131,4 @@ public class JQMTabsEvent extends GwtEvent<JQMTabsEvent.Handler> {
                 break;
         }
     }
-
 }

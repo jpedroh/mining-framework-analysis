@@ -37,24 +37,22 @@ import com.sksamuel.jqm4gwt.HasText;
 import com.sksamuel.jqm4gwt.JQMCommon;
 import com.sksamuel.jqm4gwt.events.HasTapHandlers;
 import com.sksamuel.jqm4gwt.events.JQMComponentEvents;
-import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration.WidgetHandlerCounter;
+import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.TapEvent;
 import com.sksamuel.jqm4gwt.events.TapHandler;
 import com.sksamuel.jqm4gwt.form.JQMFieldContainer;
 import com.sksamuel.jqm4gwt.html.FormLabel;
 
-/**
- * @author Stephen K Samuel samspade79@gmail.com 11 May 2011 13:49:09
- * <br>
- * An implementation of a standard HTML text input.
- */
-public class JQMText extends JQMFieldContainer implements HasText<JQMText>, HasFocusHandlers,
-        HasClickHandlers, HasTapHandlers, HasChangeHandlers, HasValue<String>, HasReadOnly<JQMText>,
-        JQMFormWidget, HasKeyDownHandlers, HasKeyUpHandlers, HasMouseOverHandlers,
-        HasMouseOutHandlers, HasPreventFocusZoom, HasMini<JQMText>,
-        HasPlaceHolder<JQMText>, Focusable, HasClearButton<JQMText>, HasCorners<JQMText> {
 
+/**
+ *
+ *
+ * @author Stephen K Samuel samspade79@gmail.com 11 May 2011 13:49:09
+<p/>
+An implementation of a standard HTML text input.
+ */
+public class JQMText extends JQMFieldContainer implements HasText<JQMText> , HasFocusHandlers , HasClickHandlers , HasTapHandlers , HasChangeHandlers , HasValue<String> , HasReadOnly<JQMText> , JQMFormWidget , HasKeyDownHandlers , HasKeyUpHandlers , HasMouseOverHandlers , HasMouseOutHandlers , HasPreventFocusZoom , HasMini<JQMText> , HasPlaceHolder<JQMText> , Focusable , HasClearButton<JQMText> , HasCorners<JQMText> {
     /**
      * The widget used for the label
      */
@@ -77,17 +75,13 @@ public class JQMText extends JQMFieldContainer implements HasText<JQMText>, HasF
      */
     public JQMText(String text) {
         String id = Document.get().createUniqueId();
-
         label = new FormLabel();
         label.setFor(id);
-
         input = new TextBox();
         input.getElement().setId(id);
         input.setName(id);
-
         add(label);
         add(input);
-
         setText(text);
     }
 
@@ -156,17 +150,21 @@ public class JQMText extends JQMFieldContainer implements HasText<JQMText>, HasF
         disable(input.getElement());
     }
 
-    private static native void disable(Element elt)/*-{
-        $wnd.$(elt).textinput('disable');
-    }-*/;
+    /* -{
+    $wnd.$(elt).textinput('disable');
+    }-
+     */
+    private static native void disable(Element elt);
 
     public void enable() {
         enable(input.getElement());
     }
 
-    private static native void enable(Element elt) /*-{
-        $wnd.$(elt).textinput('enable');
-    }-*/;
+    /* -{
+    $wnd.$(elt).textinput('enable');
+    }-
+     */
+    private static native void enable(Element elt);
 
     @Override
     public int getTabIndex() {
@@ -271,27 +269,24 @@ public class JQMText extends JQMFieldContainer implements HasText<JQMText>, HasF
     }
 
     @Override
-    public void setReadOnly(boolean readOnly)
-    {
+    public void setReadOnly(boolean readOnly) {
         input.setReadOnly(readOnly);
     }
 
     @Override
-    public JQMText withReadOnly(boolean readOnly)
-    {
+    public JQMText withReadOnly(boolean readOnly) {
         setReadOnly(readOnly);
         return this;
     }
 
     @Override
-    public String getPlaceHolder()
-    {
+    public String getPlaceHolder() {
         return input.getElement().getAttribute(HasPlaceHolder.ATTRIBUTE_PLACEHOLDER);
     }
 
     @Override
     public void setPlaceHolder(String placeHolderText) {
-        input.getElement().setAttribute(HasPlaceHolder.ATTRIBUTE_PLACEHOLDER,placeHolderText);
+        input.getElement().setAttribute(HasPlaceHolder.ATTRIBUTE_PLACEHOLDER, placeHolderText);
     }
 
     @Override

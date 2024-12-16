@@ -1,11 +1,7 @@
 package com.sksamuel.jqm4gwt;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ResizeEvent;
@@ -22,29 +18,39 @@ import com.sksamuel.jqm4gwt.events.JQMOrientationChangeHandler;
 import com.sksamuel.jqm4gwt.toolbar.JQMFooter;
 import com.sksamuel.jqm4gwt.toolbar.JQMHeader;
 import com.sksamuel.jqm4gwt.toolbar.JQMPanel;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 4 May 2011 23:55:27
- * <br>
+ * <p/>
  * A {@link JQMPage} is the base container for a single page. Any JQM widgets can be added
  * to the page. You can consider a JQMPage as like a GWT "view" in the MVP paradigm.
  */
 public class JQMPage extends JQMContainer implements HasFullScreen<JQMPage> {
-
     public static final String UI_DIALOG_BACKGROUND = "ui-dialog-background";
+
     public static final String DATA_DOM_CACHE = "data-dom-cache";
+
     public static final String JQM4GWT_DLG_TRANSPARENT = "jqm4gwt-dialog-transparent";
 
     private static final String STYLE_UI_DIALOG = "ui-dialog";
+
     private static final String UI_DIALOG_CONTAIN = "ui-dialog-contain";
+
     private static final String UI_BODY_INHERIT = "ui-body-inherit";
 
     private static final String JQM4GWT_FIXED_HIDDEN = "jqm4gwt-fixed-hidden";
 
     private static int counter = 1;
 
-    /** Needed to find out JQMPage by its Element received usually from JS */
-    private static final Map<Element, JQMPage> allPages = new HashMap<Element, JQMPage>(); // there is no WeakHashMap in GWT
+    /**
+     * Needed to find out JQMPage by its Element received usually from JS
+     */
+    // there is no WeakHashMap in GWT
+    private static final Map<Element, JQMPage> allPages = new HashMap<Element, JQMPage>();
 
     /** The primary content div */
     private JQMContent content;
@@ -52,27 +58,42 @@ public class JQMPage extends JQMContainer implements HasFullScreen<JQMPage> {
     public boolean firstShow = false;
 
     protected HasJqmHeader header;
+
     protected HasJqmFooter footer;
+
     protected JQMPanel panel;
 
     private boolean contentCentered;
+
     private double contentHeightPercent;
+
     private boolean pseudoFixedToolbars;
 
     private double hideFixedToolbarsIfContentAreaPercentBelow = 50.0d;
+
+    // threshold(height) for keyboard detection
     private int hideFixedToolbarsIfVirtualKeyboard = 0; // threshold(height) for keyboard detection
 
     private boolean windowResizeInitialized;
+
     private boolean orientationChangeInitialized;
+
     private int initialWindowHeight;
+
     private int hiddenHeaderH;
+
     private boolean hiddenHeaderFixed;
+
     private int hiddenFooterH;
+
     private boolean hiddenFooterFixed;
 
     private boolean transparent;
+
     private Element transparentPrevPage;
+
     private boolean transparentPrevPageClearCache;
+
     private boolean transparentDoPrevPageLifecycle;
 
     /**
@@ -101,16 +122,19 @@ public class JQMPage extends JQMContainer implements HasFullScreen<JQMPage> {
     public JQMPage(Collection<Widget> widgets) {
         this();
         withContainerId();
-        if (widgets != null)
+        if (widgets != null) {
             add(widgets);
+        }
     }
 
     /**
      * Creates a {@link JQMPage} with the given id
      *
-     * @param containerId the id to use as this page's id
+     * @param containerId
+     * 		the id to use as this page's id
      */
-    public @UiConstructor JQMPage(String containerId) {
+    @UiConstructor
+    public JQMPage(String containerId) {
         this();
         this.setContainerId(containerId);
     }
@@ -148,8 +172,9 @@ public class JQMPage extends JQMContainer implements HasFullScreen<JQMPage> {
     public JQMPage(Widget... widgets) {
         this();
         withContainerId();
-        if (widgets != null)
+        if (widgets != null) {
             add(widgets);
+        }
     }
 
     /**
@@ -160,44 +185,44 @@ public class JQMPage extends JQMContainer implements HasFullScreen<JQMPage> {
         setFooter(footer);
     }
 
-	/**
-	 * Logical add operation. If you do this you are responsible for adding it
-	 * to the DOM yourself.
-	 *
-	 * @param child
-	 *            the child widget to be added
-	 */
-	protected void addLogical(Widget child) {
-		// Detach new child.
-		child.removeFromParent();
+/**
+ * Logical add operation. If you do this you are responsible for adding it
+ * to the DOM yourself.
+ *
+ * @param child
+ *            the child widget to be added
+ */
+protected void addLogical(Widget child) {
+	// Detach new child.
+	child.removeFromParent();
 
-		// Logical attach.
-		getChildren().add(child);
+	// Logical attach.
+	getChildren().add(child);
 
-		// Adopt.
-		adopt(child);
+	// Adopt.
+	adopt(child);
+}
+
+/**
+ * Logical remove operation. If you do this you are responsible for removing it
+ * from the DOM yourself.
+ *
+ * @param w - the child widget to be removed
+ */
+protected boolean removeLogical(Widget w) {
+	// Validate.
+	if (w.getParent() != this) {
+		return false;
 	}
-
-	/**
-	 * Logical remove operation. If you do this you are responsible for removing it
-	 * from the DOM yourself.
-	 *
-	 * @param w - the child widget to be removed
-	 */
-	protected boolean removeLogical(Widget w) {
-		// Validate.
-		if (w.getParent() != this) {
-			return false;
-		}
-		// Orphan.
-		try {
-			orphan(w);
-		} finally {
-			// Logical detach.
-			getChildren().remove(w);
-		}
-		return true;
+	// Orphan.
+	try {
+		orphan(w);
+	} finally {
+		// Logical detach.
+		getChildren().remove(w);
 	}
+	return true;
+}
 
     /**
      * Sets the header of the page. Alias for setHeader(). Any existing header
@@ -321,7 +346,7 @@ public class JQMPage extends JQMContainer implements HasFullScreen<JQMPage> {
     /**
      * Returns the primary content container
      *
-     * @return the primary content container
+     * @returns the primary content container
      */
     public JQMContent getPrimaryContent() {
         return content;
@@ -551,36 +576,36 @@ public class JQMPage extends JQMContainer implements HasFullScreen<JQMPage> {
     }
 
     /**
-	 * Removes the footer element set on this page. If no footer is set then
-	 * this has no effect.
-	 */
-	public void removeFooter() {
-		if (footer != null) {
-			removeLogical(footer.getFooterStage());
-			footer = null;
-			removeToolBar("footer");
-		}
-	}
+    	 * Removes the footer element set on this page. If no footer is set then
+    	 * this has no effect.
+    	 */
+    	public void removeFooter() {
+    		if (footer != null) {
+    			removeLogical(footer.getFooterStage());
+    			footer = null;
+    			removeToolBar("footer");
+    		}
+    	}
 
-	/**
-	 * Removes the header element set on this page. If no header is set then
-	 * this has no effect.
-	 */
-	public void removeHeader() {
-		if (header != null) {
-			removeLogical(header.getHeaderStage());
-			header = null;
-			removeToolBar("header");
-		}
+/**
+ * Removes the header element set on this page. If no header is set then
+ * this has no effect.
+ */
+public void removeHeader() {
+	if (header != null) {
+		removeLogical(header.getHeaderStage());
+		header = null;
+		removeToolBar("header");
 	}
+}
 
-	public void removePanel() {
-		if (panel != null) {
-			removeLogical(panel);
-			panel = null;
-			removeToolBar("panel");
-		}
+public void removePanel() {
+	if (panel != null) {
+		removeLogical(panel);
+		panel = null;
+		removeToolBar("panel");
 	}
+}
 
     private void removeToolBar(String name) {
         Element element = getToolBar(name);
@@ -676,11 +701,13 @@ public class JQMPage extends JQMContainer implements HasFullScreen<JQMPage> {
      * Additional class names can be added directly to content div for better custom styling.
      * The same idea as UiBinder's embedded addStyleNames functionality.
      *
-     * <br> Example:
+     * Example:
      * <pre>&lt;jqm:JQMPage contentAddStyleNames="aaa bbb ccc"/&gt;</pre>
      */
     public void setContentAddStyleNames(String value) {
-        if (value == null || value.isEmpty()) return;
+        if ((value == null) || value.isEmpty()) {
+            return;
+        }
         JQMCommon.addStyleNames(content, value);
     }
 
@@ -752,13 +779,16 @@ public class JQMPage extends JQMContainer implements HasFullScreen<JQMPage> {
     /**
      * Fixed Header and Footer will be hidden if content area height percent is below
      * than specified percent of window height (default is 50%).
+<<<<<<< LEFT
      * <br> Useful in cases with activated virtual keyboard, especially on Android.
+=======
+     *  Useful in cases with activated virtual keyboard, especially on Android.
+>>>>>>> RIGHT
      */
     public void setHideFixedToolbarsIfContentAreaPercentBelow(double value) {
         double oldVal = hideFixedToolbarsIfContentAreaPercentBelow;
         hideFixedToolbarsIfContentAreaPercentBelow = value;
-        if (oldVal != hideFixedToolbarsIfContentAreaPercentBelow
-                && content != null && content.isAttached()) {
+        if (((oldVal != hideFixedToolbarsIfContentAreaPercentBelow) && (content != null)) && content.isAttached()) {
             processFixedToolbars();
             centerContent();
             initWindowResize();
@@ -771,18 +801,24 @@ public class JQMPage extends JQMContainer implements HasFullScreen<JQMPage> {
 
     /**
      * Fixed Header and Footer will be hidden if virtual/on-screen keyboard is activated.
+<<<<<<< LEFT
      * <br> This property is used as threshold(keyboard's height) in pixels
      * for keyboard detection (to work must be > 0, default is 0).
+=======
+     *  This property is used as threshold(keyboard's height) in pixels
+     * for keyboard detection (to work must be &gt; 0, default is 0).
+>>>>>>> RIGHT
      */
     public void setHideFixedToolbarsIfVirtualKeyboard(int value) {
         int oldVal = hideFixedToolbarsIfVirtualKeyboard;
         hideFixedToolbarsIfVirtualKeyboard = value;
-        if (oldVal != hideFixedToolbarsIfVirtualKeyboard
-                && content != null && content.isAttached()) {
+        if (((oldVal != hideFixedToolbarsIfVirtualKeyboard) && (content != null)) && content.isAttached()) {
             processFixedToolbars();
             centerContent();
             initWindowResize();
-            if (hideFixedToolbarsIfVirtualKeyboard > 0) initOrientationChange();
+            if (hideFixedToolbarsIfVirtualKeyboard > 0) {
+                initOrientationChange();
+            }
         }
     }
 
@@ -1008,7 +1044,7 @@ public class JQMPage extends JQMContainer implements HasFullScreen<JQMPage> {
      * then true means show faded previous page under dialog window
      * and don't bother prev page with lifecycle events (show, hide, ...).
      *
-     * <br> See <a href="http://tqcblog.com/2012/04/19/transparent-jquery-mobile-dialogs/">Transparent jQuery mobile dialogs</a>
+     * <p/> See <a href="http://tqcblog.com/2012/04/19/transparent-jquery-mobile-dialogs/">Transparent jQuery mobile dialogs</a>
      */
     public void setDlgTransparent(boolean transparent) {
         this.transparent = transparent;
@@ -1107,8 +1143,10 @@ public class JQMPage extends JQMContainer implements HasFullScreen<JQMPage> {
     }-*/;
 
     public static enum DlgCloseBtn {
-        RIGHT("right"), NONE("none"), LEFT("left");
 
+        RIGHT("right"),
+        NONE("none"),
+        LEFT("left");
         private final String jqmVal;
 
         private DlgCloseBtn(String jqmVal) {
@@ -1123,9 +1161,13 @@ public class JQMPage extends JQMContainer implements HasFullScreen<JQMPage> {
         }
 
         public static DlgCloseBtn fromJqmValue(String jqmValue) {
-            if (jqmValue == null || jqmValue.isEmpty()) return null;
+            if ((jqmValue == null) || jqmValue.isEmpty()) {
+                return null;
+            }
             for (DlgCloseBtn i : DlgCloseBtn.values()) {
-                if (i.getJqmValue().equals(jqmValue)) return i;
+                if (i.getJqmValue().equals(jqmValue)) {
+                    return i;
+                }
             }
             return null;
         }
@@ -1158,5 +1200,4 @@ public class JQMPage extends JQMContainer implements HasFullScreen<JQMPage> {
     public void setTheme(String theme) {
         JQMCommon.setThemeEx(this, theme, "ui-page-theme-");
     }
-
 }

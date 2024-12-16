@@ -1,12 +1,7 @@
 package com.sksamuel.jqm4gwt.form.elements;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
@@ -45,37 +40,44 @@ import com.sksamuel.jqm4gwt.JQMPage;
 import com.sksamuel.jqm4gwt.JQMWidget;
 import com.sksamuel.jqm4gwt.events.HasTapHandlers;
 import com.sksamuel.jqm4gwt.events.JQMComponentEvents;
-import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration.WidgetHandlerCounter;
+import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.TapEvent;
 import com.sksamuel.jqm4gwt.events.TapHandler;
 import com.sksamuel.jqm4gwt.form.JQMFieldContainer;
 import com.sksamuel.jqm4gwt.html.FormLabel;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 5 May 2011 10:58:58
- * <br> An implementation of a jQuery mobile select element.
- * <br> See <a href="http://demos.jquerymobile.com/1.4.5/selectmenu/">Select menu</a>
+ * <p/> An implementation of a jQuery mobile select element.
+ * <p/> See <a href="http://demos.jquerymobile.com/1.4.5/selectmenu/">Select menu</a>
  */
-public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>, HasText<JQMSelect>,
-        HasFocusHandlers, HasChangeHandlers, HasClickHandlers, HasTapHandlers, HasValue<String>,
-        JQMFormWidget, HasIcon<JQMSelect>, HasPreventFocusZoom, HasCorners<JQMSelect>,
-        HasMini<JQMSelect>, Focusable {
-
-
+public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect> , HasText<JQMSelect> , HasFocusHandlers , HasChangeHandlers , HasClickHandlers , HasTapHandlers , HasValue<String> , JQMFormWidget , HasIcon<JQMSelect> , HasPreventFocusZoom , HasCorners<JQMSelect> , HasMini<JQMSelect> , Focusable {
     public static class Option {
         private String value;
+
         private String text;
+
         private String filterText;
+
         private boolean placeholder;
+
         private boolean selected;
+
         private boolean disabled;
 
         // Icons are supported by JQMSelectWithIcons
         private DataIcon icon;
+
         private String customIcon;
 
-        public Option() {}
+        public Option() {
+        }
 
         public String getValue() {
             return value;
@@ -145,7 +147,6 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
     private static final String SELECT_STYLENAME = "jqm4gwt-select";
 
     protected class ListBoxEx extends ListBox {
-
         public ListBoxEx(boolean isMultipleSelect) {
             super(isMultipleSelect);
         }
@@ -158,22 +159,31 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
 
     protected final ListBoxEx select;
 
-    /** Unique search index: value, index in select */
-    protected final Map<String, Integer> selectIdx = new HashMap<String, Integer>(); // search index
+    /**
+     * Unique search index: value, index in select
+     */
+    // search index
+    protected final Map<String, Integer> selectIdx = new HashMap<String, Integer>();
 
     protected final FormLabel label;
 
     private boolean valueChangeHandlerInitialized;
 
     private boolean transparent = true;
+
     private Element transparentPrevPage;
+
     private boolean transparentPrevPageClearCache;
+
     private boolean transparentDoPrevPageLifecycle;
 
     /** See {@link JQMSelect#getDelayedValue()} */
     private String delayedValue;
+
     private Boolean delayedFireEvents;
+
     private boolean addingOptions;
+
     private ArrayList<OptionElement> addingOptionList;
 
     /**
@@ -188,15 +198,12 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
      */
     public JQMSelect(String text) {
         String id = Document.get().createUniqueId();
-
         label = new FormLabel();
         label.setFor(id);
         add(label);
-
         select = new ListBoxEx(false);
         select.getElement().setId(id);
         add(select);
-
         setText(text);
         addStyleName(SELECT_STYLENAME);
     }
@@ -216,16 +223,16 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
         return select.addClickHandler(handler);
     }
 
-	@Override
-	public HandlerRegistration addTapHandler(TapHandler handler) {
-        // this is not a native browser event so we will have to manage it via JS
-        return JQMHandlerRegistration.registerJQueryHandler(new WidgetHandlerCounter() {
-			@Override
-			public int getHandlerCountForWidget(Type<?> type) {
-				return getHandlerCount(type);
-			}
-        }, this, handler, JQMComponentEvents.TAP_EVENT, TapEvent.getType());
-	}
+@Override
+public HandlerRegistration addTapHandler(TapHandler handler) {
+       // this is not a native browser event so we will have to manage it via JS
+       return JQMHandlerRegistration.registerJQueryHandler(new WidgetHandlerCounter() {
+		@Override
+		public int getHandlerCountForWidget(Type<?> type) {
+			return getHandlerCount(type);
+		}
+       }, this, handler, JQMComponentEvents.TAP_EVENT, TapEvent.getType());
+}
 
     @Override
     public Label addErrorLabel() {
@@ -247,7 +254,11 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
     /**
      * Adds an option with the given text. The text is also used as the value.
      * The option is added at the end of the list of options.
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * If you want to specify a value diferent from the display text, then
      * invoke addOption(String, String).
      */
@@ -486,10 +497,19 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
     /**
      * setValue() can be called before options are populated (or in the middle of their population).
      * For example: asynchronous options loading or data binding scenarios.
+<<<<<<< LEFT
      * <br> if value != null and cannot be resolved immediately through current options,
+=======
+     *  if value != null and cannot be resolved immediately through current options,
+>>>>>>> RIGHT
      * it will be memorized and probably resolved later, when more options are added.
+<<<<<<< LEFT
      * <br> On successful resolution regular setValue() will be called (and events fired if it was requested).
      * <br> Calling clear() resets delayedValue processing.
+=======
+     *  On successful resolution regular setValue() will be called (and events fired if it was requested).
+     *  Calling clear() resets delayedValue processing.
+>>>>>>> RIGHT
      */
     public String getDelayedValue() {
         return delayedValue;
@@ -773,11 +793,19 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
 
     /**
      * Change the selection to the option at the given index.
+<<<<<<< LEFT
      * <br> Setting the selected index programmatically does <em>NOT</em>
+=======
+     *  Setting the selected index programmatically does <em>NOT</em>
+>>>>>>> RIGHT
      * cause the {@link ChangeHandler#onChange(ChangeEvent)}
      * nor {@link ValueChangeHandler#onValueChange(ValueChangeEvent)}
      * events to be fired.
+<<<<<<< LEFT
      * <br> Call {@link JQMSelect#setValue(String, boolean)} with <b>true</b> if you need them raised.
+=======
+     *  Call {@link JQMSelect#setValue(String, boolean)} with <b>true</b> if you need them raised.
+>>>>>>> RIGHT
      */
     public void setSelectedIndex(int index) {
         select.setSelectedIndex(index);
@@ -908,7 +936,11 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
 
     /**
      * Default is true.
+<<<<<<< LEFT
      * <br> Sets whether placeholder menu items are hidden.
+=======
+     *  Sets whether placeholder menu items are hidden.
+>>>>>>> RIGHT
      * When true, the menu item used as the placeholder for the select menu widget
      * will not appear in the list of choices.
      */
@@ -1037,5 +1069,4 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
     public void setDlgTransparentDoPrevPageLifecycle(boolean transparentDoPrevPageLifecycle) {
         this.transparentDoPrevPageLifecycle = transparentDoPrevPageLifecycle;
     }
-
 }

@@ -5,14 +5,15 @@ import com.google.gwt.user.client.ui.Widget;
 import com.sksamuel.jqm4gwt.HasHTML;
 import com.sksamuel.jqm4gwt.HasText;
 
-/**
- * @author Stephen K Samuel samspade79@gmail.com 11 Jul 2011 13:38:38
- *
- * <br> An implemenation of a &lt;label&gt; element
- *
- */
-public class FormLabel extends Widget implements HasText<FormLabel>, HasHTML<FormLabel> {
 
+/**
+ *
+ *
+ * @author Stephen K Samuel samspade79@gmail.com 11 Jul 2011 13:38:38
+
+<p/> An implemenation of a &lt;label> element
+ */
+public class FormLabel extends Widget implements HasText<FormLabel> , HasHTML<FormLabel> {
 	public FormLabel() {
 		setElement(Document.get().createLabelElement());
 	}
@@ -35,25 +36,25 @@ public class FormLabel extends Widget implements HasText<FormLabel>, HasHTML<For
 		getElement().setInnerText(text);
 	}
 
-    @Override
-    public FormLabel withText(String text) {
-        setText(text);
-        return this;
-    }
+	@Override
+	public FormLabel withText(String text) {
+		setText(text);
+		return this;
+	}
 
-    @Override
-    public String getHTML() {
-        return getElement().getInnerHTML();
-    }
+	@Override
+	public String getHTML() {
+		return getElement().getInnerHTML();
+	}
 
-    @Override
-    public void setHTML(String html) {
-        getElement().setInnerHTML(html);
-    }
+	@Override
+	public void setHTML(String html) {
+		getElement().setInnerHTML(html);
+	}
 
-    @Override
-    public FormLabel withHTML(String html) {
-        setHTML(html);
-        return this;
-    }
+	@Override
+	public FormLabel withHTML(String html) {
+		setHTML(html);
+		return this;
+	}
 }

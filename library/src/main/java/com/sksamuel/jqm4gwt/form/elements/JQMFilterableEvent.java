@@ -6,22 +6,23 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.sksamuel.jqm4gwt.JQMCommon;
 
-public class JQMFilterableEvent extends GwtEvent<JQMFilterableEvent.Handler> {
 
+public class JQMFilterableEvent extends GwtEvent<JQMFilterableEvent.Handler> {
     public interface Handler extends EventHandler {
-        void onBeforeFilter(JQMFilterableEvent event);
+        public abstract void onBeforeFilter(JQMFilterableEvent event);
 
         /**
+         *
+         *
          * @return - must return <b>true</b> if the element is to be <b>filtered out</b>.
-         * <br> - must return <b>false</b> if the element is to be <b>shown</b>.
-         * <br> - null means default filtering should be used.
-         * <br> JQMCommon.getTextForFiltering(elt) can be used to get filtering element's text
+        <p/> - must return <b>false</b> if the element is to be <b>shown</b>.
+        <p/> - null means default filtering should be used.
+        <p/> JQMCommon.getTextForFiltering(elt) can be used to get filtering element's text
          */
-        Boolean onFiltering(JQMFilterableEvent event);
+        public abstract Boolean onFiltering(JQMFilterableEvent event);
     }
 
     public static class DefaultHandler implements Handler {
-
         @Override
         public void onBeforeFilter(JQMFilterableEvent event) {
         }
@@ -33,32 +34,44 @@ public class JQMFilterableEvent extends GwtEvent<JQMFilterableEvent.Handler> {
     }
 
     /**
-     * @param splitTextForFiltering - regex for splitting item's text (optional, could be null).
+     *
+     *
+     * @param splitTextForFiltering
+     * 		- regex for splitting item's text (optional, could be null).
      * @return - false: show, true: filter out.
      */
     public Boolean filterStartWithIgnoreCase(String splitTextForFiltering) {
         String search = getFilterText();
-        if (search == null || search.isEmpty()) return null;
+        if ((search == null) || search.isEmpty()) {
+            return null;
+        }
         String s = JQMCommon.getTextForFiltering(getFilteringElt());
-        if (s == null || s.isEmpty()) return null;
-        if (splitTextForFiltering == null || splitTextForFiltering.isEmpty()) {
+        if ((s == null) || s.isEmpty()) {
+            return null;
+        }
+        if ((splitTextForFiltering == null) || splitTextForFiltering.isEmpty()) {
             return !(s.startsWith(search) || s.toLowerCase().startsWith(search.toLowerCase()));
         } else {
             String[] arr = s.split(splitTextForFiltering);
             for (String i : arr) {
                 i = i.trim();
                 boolean match = i.startsWith(search) || i.toLowerCase().startsWith(search.toLowerCase());
-                if (match) return false;
+                if (match) {
+                    return false;
+                }
             }
             return true;
         }
     }
 
     /**
+     *
+     *
      * @return - false: show, true: filter out.
      */
     public Boolean filterStartWithIgnoreCase() {
-        return filterStartWithIgnoreCase(null/*splitTextForFiltering*/);
+        return /* splitTextForFiltering */
+        filterStartWithIgnoreCase(null);
     }
 
     static Type<JQMFilterableEvent.Handler> TYPE;
@@ -66,22 +79,21 @@ public class JQMFilterableEvent extends GwtEvent<JQMFilterableEvent.Handler> {
     /**
      * Fires an {@link JQMFilterableEvent} on all registered handlers in the handler source.
      *
-     * @param <S> The handler source type
-     * @param source - the source of the handlers
+     * @param <S>
+     * 		The handler source type
+     * @param source
+     * 		- the source of the handlers
      */
-    public static <S extends HasAttachHandlers> void fire(S source, FilterableState filterableState,
-                                                          String filterText) {
+    public static <S extends HasAttachHandlers> void fire(S source, FilterableState filterableState, String filterText) {
         if (TYPE != null) {
             JQMFilterableEvent event = new JQMFilterableEvent(filterableState, filterText);
             source.fireEvent(event);
         }
     }
 
-    public static <S extends HasAttachHandlers> Boolean fire(S source, FilterableState filterableState,
-            String filterText, Element filteringElt, Integer filteringEltIdx) {
+    public static <S extends HasAttachHandlers> Boolean fire(S source, FilterableState filterableState, String filterText, Element filteringElt, Integer filteringEltIdx) {
         if (TYPE != null) {
-            JQMFilterableEvent event = new JQMFilterableEvent(filterableState, filterText,
-                                                              filteringElt, filteringEltIdx);
+            JQMFilterableEvent event = new JQMFilterableEvent(filterableState, filterText, filteringElt, filteringEltIdx);
             source.fireEvent(event);
             return event.filteringResult;
         }
@@ -95,18 +107,22 @@ public class JQMFilterableEvent extends GwtEvent<JQMFilterableEvent.Handler> {
         return TYPE;
     }
 
-    public enum FilterableState { BEFORE_FILTER, FILTERING }
+    public enum FilterableState {
+
+        BEFORE_FILTER,
+        FILTERING;}
 
     private final FilterableState filterableState;
+
     private final String filterText;
 
     private final Element filteringElt;
+
     private final Integer filteringEltIdx;
 
     private Boolean filteringResult;
 
-    protected JQMFilterableEvent(FilterableState filterableState, String filterText,
-            Element filteringElt, Integer filteringEltIdx) {
+    protected JQMFilterableEvent(FilterableState filterableState, String filterText, Element filteringElt, Integer filteringEltIdx) {
         this.filterableState = filterableState;
         this.filterText = filterText;
         this.filteringElt = filteringElt;
@@ -141,11 +157,9 @@ public class JQMFilterableEvent extends GwtEvent<JQMFilterableEvent.Handler> {
     @Override
     public String toDebugString() {
         assertLive();
-        String s = super.toDebugString() + " filterableState = " + filterableState
-                + "; filterText = " + filterText;
+        String s = (((super.toDebugString() + " filterableState = ") + filterableState) + "; filterText = ") + filterText;
         if (filteringElt != null) {
-            s += "; filteringElt = " + filteringElt.toString()
-                    + "; filteringEltIdx = " + filteringEltIdx;
+            s += (("; filteringElt = " + filteringElt.toString()) + "; filteringEltIdx = ") + filteringEltIdx;
         }
         return s;
     }
@@ -153,14 +167,12 @@ public class JQMFilterableEvent extends GwtEvent<JQMFilterableEvent.Handler> {
     @Override
     protected void dispatch(JQMFilterableEvent.Handler handler) {
         switch (filterableState) {
-            case BEFORE_FILTER:
+            case BEFORE_FILTER :
                 handler.onBeforeFilter(this);
                 break;
-
-            case FILTERING:
+            case FILTERING :
                 filteringResult = handler.onFiltering(this);
                 break;
         }
     }
-
 }

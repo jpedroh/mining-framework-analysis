@@ -12,19 +12,20 @@ import com.sksamuel.jqm4gwt.IconPos;
 import com.sksamuel.jqm4gwt.JQMCommon;
 import com.sksamuel.jqm4gwt.JQMWidget;
 
-/**
- * @author Stephen K Samuel samspade79@gmail.com 24 Jul 2011 10:44:29
- * <br>
- * An implementation of a group or set of collapsibles.
- * When {@link JQMCollapsible} widgets are placed inside a {@link JQMCollapsibleSet}
- * they behave like an accordion widget - that is only one can be open at any time.
- * If a user opens another collapsible panel, then any others will be closed automatically.
- *
- * <br> See <a href="http://demos.jquerymobile.com/1.4.5/collapsibleset/">Collapsible set</a>
- */
-public class JQMCollapsibleSet extends JQMWidget implements HasIconPos<JQMCollapsibleSet>,
-        HasMini<JQMCollapsibleSet>, HasInset<JQMCollapsibleSet>, HasCorners<JQMCollapsibleSet> {
 
+/**
+ *
+ *
+ * @author Stephen K Samuel samspade79@gmail.com 24 Jul 2011 10:44:29
+<p/>
+An implementation of a group or set of collapsibles.
+When {@link JQMCollapsible} widgets are placed inside a {@link JQMCollapsibleSet}
+they behave like an accordion widget - that is only one can be open at any time.
+If a user opens another collapsible panel, then any others will be closed automatically.
+
+<p/> See <a href="http://demos.jquerymobile.com/1.4.5/collapsibleset/">Collapsible set</a>
+ */
+public class JQMCollapsibleSet extends JQMWidget implements HasIconPos<JQMCollapsibleSet> , HasMini<JQMCollapsibleSet> , HasInset<JQMCollapsibleSet> , HasCorners<JQMCollapsibleSet> {
     private final FlowPanel flow;
 
     public JQMCollapsibleSet() {
@@ -47,7 +48,7 @@ public class JQMCollapsibleSet extends JQMWidget implements HasIconPos<JQMCollap
     }
 
     public JQMCollapsible getCollapsible(int index) {
-        return (JQMCollapsible) flow.getWidget(index);
+        return ((JQMCollapsible) (flow.getWidget(index)));
     }
 
     public DataIcon getCollapsedIcon() {
@@ -173,11 +174,12 @@ public class JQMCollapsibleSet extends JQMWidget implements HasIconPos<JQMCollap
         refresh(getElement());
     }
 
-    private static native void refresh(Element elt) /*-{
-        var w = $wnd.$(elt);
-        if (w.data('mobile-collapsibleset') !== undefined) {
-            w.collapsibleset('refresh');
-        }
-    }-*/;
-
+    /* -{
+    var w = $wnd.$(elt);
+    if (w.data('mobile-collapsibleset') !== undefined) {
+    w.collapsibleset('refresh');
+    }
+    }-
+     */
+    private static native void refresh(Element elt);
 }

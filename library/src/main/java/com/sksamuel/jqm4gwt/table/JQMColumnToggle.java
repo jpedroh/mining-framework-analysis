@@ -1,14 +1,5 @@
 package com.sksamuel.jqm4gwt.table;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
@@ -26,60 +17,89 @@ import com.sksamuel.jqm4gwt.HasFilterable;
 import com.sksamuel.jqm4gwt.JQMCommon;
 import com.sksamuel.jqm4gwt.form.elements.JQMFilterableEvent;
 import com.sksamuel.jqm4gwt.html.CustomFlowPanel;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Map;
+import java.util.Set;
+
 
 /**
  * See <a href="http://demos.jquerymobile.com/1.4.5/table-column-toggle/">Table: Column Toggle</a>
+<<<<<<< LEFT
  * <br> See <a href="http://demos.jquerymobile.com/1.4.5/table-reflow/">Table: Reflow</a>
+=======
+ *  See <a href="http://demos.jquerymobile.com/1.4.5/table-reflow/">Table: Reflow</a>
+>>>>>>> RIGHT
  *
+<<<<<<< LEFT
  * <br> See also <a href="http://jquerymobile.com/demos/1.3.0-rc.1/docs/tables/">Responsive tables</a>
  * <br> See also <a href="http://jquerymobile.com/demos/1.3.0-beta.1/docs/demos/tables/financial-grouped-columns.html">Grouped column headers</a>
+=======
+ *  See also <a href="http://jquerymobile.com/demos/1.3.0-rc.1/docs/tables/">Responsive tables</a>
+ *  See also <a href="http://jquerymobile.com/demos/1.3.0-beta.1/docs/demos/tables/financial-grouped-columns.html">Grouped column headers</a>
+>>>>>>> RIGHT
  *
  * @author slavap
  *
  */
-public class JQMColumnToggle extends CustomFlowPanel implements HasFilterable,
-        HasValue<Collection<String>> {
-
-    //TODO: table-stroke and table-stripe are deprecated in 1.4, so custom CSS will be needed in 1.5
+public class JQMColumnToggle extends CustomFlowPanel implements HasFilterable , HasValue<Collection<String>> {
+    // TODO: table-stroke and table-stripe are deprecated in 1.4, so custom CSS will be needed in 1.5
     public static final String STD_ROW_LINES = "table-stroke";
+
     public static final String STD_ROW_STRIPES = "table-stripe";
 
     public static final String STD_RESPONSIVE = "ui-responsive";
 
     public static final String JQM4GWT_COL_PERSISTENT = "jqm4gwt-col-persistent";
+
     public static final String JQM4GWT_THEAD_GROUPS = "jqm4gwt-thead-groups";
 
     private static final String COLUMN_BTN_TEXT = "data-column-btn-text";
+
     private static final String COLUMN_BTN_THEME = "data-column-btn-theme";
+
     private static final String COLUMN_POPUP_THEME = "data-column-popup-theme";
 
     private static final String TOGGLE = "columntoggle";
+
     private static final String REFLOW = "reflow";
 
     private static final String IMG_ONLY = "img-only";
 
     // See http://stackoverflow.com/a/2709855
-    //private static final String COMMA_SPLIT = "(?<!\\\\),";
-    //private static final String BACKSLASH_COMMA = "\\\\,";
-
+    // private static final String COMMA_SPLIT = "(?<!\\\\),";
+    // private static final String BACKSLASH_COMMA = "\\\\,";
     private final ComplexPanel tHead;
+
     private final ComplexPanel tBody;
 
     private boolean loaded;
 
     private String rowLines;
+
     private String rowStripes;
+
     private String responsive;
+
     private String headerTheme;
 
     private String colNames;
+
     private String cells;
+
     private String colGroups;
 
     private static class ColumnDef {
         public String title;
+
         public String priority;
-        public int colspan; // needed for 'Grouped column headers' mode
+
+        public int colspan;// needed for 'Grouped column headers' mode
+
 
         public ColumnDef() {
         }
@@ -94,20 +114,27 @@ public class JQMColumnToggle extends CustomFlowPanel implements HasFilterable,
     /** populated based on colNames parsing */
     private final Set<ColumnDef> columns = new LinkedHashSet<ColumnDef>();
 
-    /** populated directly by addColTitleWidget(), probably from UiBinder template */
+    /**
+     * populated directly by addColTitleWidget(), probably from UiBinder template
+     */
     private final Map<Widget, ColumnDef> colTitleWidgets = new LinkedHashMap<Widget, ColumnDef>();
 
     /** populated based on colGroups parsing */
     private final Set<ColumnDef> headGroups = new LinkedHashSet<ColumnDef>();
 
-    /** populated directly by addColGroupWidget(), probably from UiBinder template */
+    /**
+     * populated directly by addColGroupWidget(), probably from UiBinder template
+     */
     private final Map<Widget, ColumnDef> colGroupWidgets = new LinkedHashMap<Widget, ColumnDef>();
 
     private Collection<String> dataStr;
+
     private Map<Widget, Boolean> dataObj;
 
     private boolean boundFilterEvents;
+
     private boolean boundFilterCallback;
+
     private JavaScriptObject origFilter;
 
     public JQMColumnToggle() {
@@ -116,11 +143,9 @@ public class JQMColumnToggle extends CustomFlowPanel implements HasFilterable,
         table.setId(Document.get().createUniqueId());
         JQMCommon.setDataRole(table, "table");
         JQMCommon.setAttribute(table, "data-mode", TOGGLE);
-
         setResponsive(STD_RESPONSIVE);
         setRowLines(STD_ROW_LINES);
         setRowStripes(STD_ROW_STRIPES);
-
         tHead = new CustomFlowPanel(Document.get().createTHeadElement());
         tBody = new CustomFlowPanel(Document.get().createTBodyElement());
         add(tHead);
@@ -186,9 +211,9 @@ public class JQMColumnToggle extends CustomFlowPanel implements HasFilterable,
     /**
      * @param colNames - comma separated column names with optional priority (1 = highest, 6 = lowest).
      * If you need comma in name use \, to preserve it.
-     * <br> Column name can be valid HTML, i.e. &lt;abbr title="Rotten Tomato Rating">Rating&lt;/abbr&gt;=1
-     * <br> Example: Rank,Movie Title,Year=3,Reviews=5
-     * <br> To make a column persistent so it's not available for hiding, just omit priority.
+     * <p/> Column name can be valid HTML, i.e. &lt;abbr title="Rotten Tomato Rating">Rating&lt;/abbr>=1
+     * <p/> Example: Rank,Movie Title,Year=3,Reviews=5
+     * <p/> To make a column persistent so it's not available for hiding, just omit priority.
      * This will make the column visible at all widths and won't be available in the column chooser menu.
      */
     public void setColNames(String colNames) {
@@ -238,9 +263,9 @@ public class JQMColumnToggle extends CustomFlowPanel implements HasFilterable,
     /**
      * @param colGroups - comma separated grouped column headers with colspan and priority (1 = highest, 6 = lowest).
      * If you need comma in name use \, to preserve it.
-     * <br> Expected format: colspan=GroupName=priority
-     * <br> Group name can be valid HTML, i.e. 4=&lt;abbr title="Previous Year Results">2012&lt;/abbr&gt;=1
-     * <br> Example: 3=Q1 2012=5, 3=Q2 2012=4, 3=Q3 2012=3, 3=Q4 2012=2, 3=2012 Totals=1
+     * <p/> Expected format: colspan=GroupName=priority
+     * <p/> Group name can be valid HTML, i.e. 4=&lt;abbr title="Previous Year Results">2012&lt;/abbr>=1
+     * <p/> Example: 3=Q1 2012=5, 3=Q2 2012=4, 3=Q3 2012=3, 3=Q4 2012=2, 3=2012 Totals=1
      */
     public void setColGroups(String colGroups) {
         if (this.colGroups == colGroups || this.colGroups != null && this.colGroups.equals(colGroups)) return;
@@ -273,7 +298,7 @@ public class JQMColumnToggle extends CustomFlowPanel implements HasFilterable,
     /**
      * @param cells - comma separated table cells, each string/cell can be valid HTML.
      * If you need comma in name use \, to preserve it.
-     * <br> Example: &lt;th&gt;1&lt;/th&gt;, The Matrix, 1999, 8.7, &lt;th&gt;2&lt;/th&gt;, Falling Down, 1993, 7.5
+     * <p/> Example: &lt;th>1&lt;/th>, The Matrix, 1999, 8.7, &lt;th>2&lt;/th>, Falling Down, 1993, 7.5
      */
     public void setCells(String cells) {
         if (this.cells == cells || this.cells != null && this.cells.equals(cells)) return;
@@ -536,8 +561,7 @@ public class JQMColumnToggle extends CustomFlowPanel implements HasFilterable,
     }
 
     private static class HeadGroupsPanel extends CustomFlowPanel {
-
-        public HeadGroupsPanel(com.google.gwt.dom.client.Element e) {
+        public HeadGroupsPanel(Element e) {
             super(e);
             getElement().addClassName(JQM4GWT_THEAD_GROUPS);
         }
@@ -610,7 +634,7 @@ public class JQMColumnToggle extends CustomFlowPanel implements HasFilterable,
     }
 
     /**
-     * @param asTh - &lt;th&gt; will be used for creating cell instead of &lt;td&gt;,
+     * @param asTh - &lt;th> will be used for creating cell instead of &lt;td>,
      * so such cell will be styled differently, like columnNames/header cells.
      */
     @UiChild(tagname = "cell")
@@ -942,5 +966,4 @@ public class JQMColumnToggle extends CustomFlowPanel implements HasFilterable,
             ValueChangeEvent.fireIfNotEqual(this, oldValue, newValue);
         }
     }
-
 }

@@ -13,34 +13,37 @@ import com.sksamuel.jqm4gwt.JQMWidget;
 import com.sksamuel.jqm4gwt.form.elements.JQMSelect;
 import com.sksamuel.jqm4gwt.list.JQMListItem;
 
-/**
- * @author Stephen K Samuel samspade79@gmail.com 11 Jul 2011 22:13:36
- * <br>
- * A panel that contains multiple child widgets. The child widgets can
- * be either {@link JQMWidget} widgets or regular GWT {@link Widget} widgets.
- * <br>
- * The panel can use any HTML element type as the containing element. So
- * for example, this class can be used by {@link JQMListItem} as an &lt;li&gt;
- * element panel, or by {@link JQMSelect} as a &lt;select&gt; element panel.
- * <br>
- * This is the reason for the existence of this class. Jquery mobile
- * uses many elements as containers for other elements. GWT does not
- * natively support panels other than div based panels.
- * <br>
- * This panel implements {@link HasTheme} but this does not necessarily
- * have any effect. It depends on where the panel is being used.
- * <br>
- * Typcially this class will only be used for implementing JQM Widgets
- * and users of the jqm4gwt framework will want to use a normal GWT
- * {@link Panel} instance.
- */
-public class JQMPanel extends ComplexPanel implements HasId<JQMPanel>, HasTheme<JQMPanel> {
 
+/**
+ *
+ *
+ * @author Stephen K Samuel samspade79@gmail.com 11 Jul 2011 22:13:36
+<p/>
+A panel that contains multiple child widgets. The child widgets can
+be either {@link JQMWidget} widgets or regular GWT {@link Widget} widgets.
+<p/>
+The panel can use any HTML element type as the containing element. So
+for example, this class can be used by {@link JQMListItem} as an &lt;li>
+element panel, or by {@link JQMSelect} as a &lt;select> element panel.
+<p/>
+This is the reason for the existence of this class. Jquery mobile
+uses many elements as containers for other elements. GWT does not
+natively support panels other than div based panels.
+<p/>
+This panel implements {@link HasTheme} but this does not necessarily
+have any effect. It depends on where the panel is being used.
+<p/>
+Typcially this class will only be used for implementing JQM Widgets
+and users of the jqm4gwt framework will want to use a normal GWT
+{@link Panel} instance.
+ */
+public class JQMPanel extends ComplexPanel implements HasId<JQMPanel> , HasTheme<JQMPanel> {
     /**
      * Creates a new {@link JQMPanel} with a given element.
      *
-     * @param element the element to use as the container for this panel. Must
-     *                not be null.
+     * @param element
+     * 		the element to use as the container for this panel. Must
+     * 		not be null.
      */
     public JQMPanel(Element element) {
         this(element, null, null);
@@ -49,9 +52,11 @@ public class JQMPanel extends ComplexPanel implements HasId<JQMPanel>, HasTheme<
     /**
      * Creates a new {@link JQMPanel} with a given element and datarole.
      *
-     * @param element  the element to use as the container for this panel. Must
-     *                 not be null.
-     * @param dataRole the value of the data-role attribute to set. Can be null.
+     * @param element
+     * 		the element to use as the container for this panel. Must
+     * 		not be null.
+     * @param dataRole
+     * 		the value of the data-role attribute to set. Can be null.
      */
     public JQMPanel(Element element, String dataRole) {
         this(element, dataRole, null);
@@ -61,17 +66,22 @@ public class JQMPanel extends ComplexPanel implements HasId<JQMPanel>, HasTheme<
      * Creates a new {@link JQMPanel} with a given element, datarole and
      * stylename.
      *
-     * @param element   the element to use as the container for this panel. Must
-     *                  not be null.
-     * @param dataRole  the value of the data-role attribute to set. Can be null.
-     * @param styleName the value of the class attribute to set. Can be null
+     * @param element
+     * 		the element to use as the container for this panel. Must
+     * 		not be null.
+     * @param dataRole
+     * 		the value of the data-role attribute to set. Can be null.
+     * @param styleName
+     * 		the value of the class attribute to set. Can be null
      */
     public JQMPanel(Element element, String dataRole, String styleName) {
         setElement(element);
-        if (styleName != null)
+        if (styleName != null) {
             setStyleName(styleName);
-        if (dataRole != null)
+        }
+        if (dataRole != null) {
             setDataRole(dataRole);
+        }
         setId();
     }
 
@@ -87,7 +97,7 @@ public class JQMPanel extends ComplexPanel implements HasId<JQMPanel>, HasTheme<
         while (child != null) {
             getElement().removeChild(child);
             child = getElement().getFirstChild();
-        }
+        } 
     }
 
     protected String getAttribute(String name) {
@@ -108,9 +118,11 @@ public class JQMPanel extends ComplexPanel implements HasId<JQMPanel>, HasTheme<
         hide(getElement());
     }
 
-    private static native void hide(Element elt) /*-{
-        $wnd.$(elt).hide();
-    }-*/;
+    /* -{
+    $wnd.$(elt).hide();
+    }-
+     */
+    private static native void hide(Element elt);
 
     public void insert(IsWidget w, int beforeIndex) {
         insert(asWidgetOrNull(w), beforeIndex);
@@ -169,7 +181,9 @@ public class JQMPanel extends ComplexPanel implements HasId<JQMPanel>, HasTheme<
         show(getElement());
     }
 
-    private static native void show(Element elt) /*-{
-        $wnd.$(elt).show();
-    }-*/;
+    /* -{
+    $wnd.$(elt).show();
+    }-
+     */
+    private static native void show(Element elt);
 }

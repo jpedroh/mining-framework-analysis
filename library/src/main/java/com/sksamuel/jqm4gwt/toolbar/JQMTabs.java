@@ -1,10 +1,5 @@
 package com.sksamuel.jqm4gwt.toolbar;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
@@ -23,6 +18,11 @@ import com.sksamuel.jqm4gwt.button.JQMButton;
 import com.sksamuel.jqm4gwt.list.JQMList;
 import com.sksamuel.jqm4gwt.list.JQMListItem;
 import com.sksamuel.jqm4gwt.toolbar.JQMTabsEvent.TabsState;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * @author SlavaP
@@ -32,26 +32,30 @@ import com.sksamuel.jqm4gwt.toolbar.JQMTabsEvent.TabsState;
  *
  */
 public class JQMTabs extends JQMWidget {
-
     /**
      * Predefined tab event, see {@link JQMTabs#setTabEvent(String)}
      */
     public static final String ACTIVATE_TAB_ON_HOVER = "mouseover";
+
     public static final String ACTIVATE_TAB_ON_CLICK = "click";
 
     /**
      * Controls the height of the tabs widget and each panel.
      */
     public static enum HeightStyle {
-        /** All panels will be set to the height of the tallest panel. */
+
+        /**
+         * All panels will be set to the height of the tallest panel.
+         */
         AUTO("auto"),
-
-        /** Expand to the available height based on the tabs' parent height. */
+        /**
+         * Expand to the available height based on the tabs' parent height.
+         */
         FILL("fill"),
-
-        /** Each panel will be only as tall as its content. */
+        /**
+         * Each panel will be only as tall as its content.
+         */
         CONTENT("content");
-
         private final String jqmVal;
 
         private HeightStyle(String jqmVal) {
@@ -63,17 +67,22 @@ public class JQMTabs extends JQMWidget {
         }
 
         public static HeightStyle fromJqmValue(String jqmValue) {
-            if (jqmValue == null || jqmValue.isEmpty()) return null;
+            if ((jqmValue == null) || jqmValue.isEmpty()) {
+                return null;
+            }
             for (HeightStyle i : HeightStyle.values()) {
-                if (i.getJqmValue().equals(jqmValue)) return i;
+                if (i.getJqmValue().equals(jqmValue)) {
+                    return i;
+                }
             }
             return null;
         }
     }
 
     public static enum ShowEffect {
-        FADE_IN("fadeIn"), SLIDE_DOWN("slideDown");
 
+        FADE_IN("fadeIn"),
+        SLIDE_DOWN("slideDown");
         private final String jqmVal;
 
         private ShowEffect(String jqmVal) {
@@ -85,17 +94,22 @@ public class JQMTabs extends JQMWidget {
         }
 
         public static ShowEffect fromJqmValue(String jqmValue) {
-            if (jqmValue == null || jqmValue.isEmpty()) return null;
+            if ((jqmValue == null) || jqmValue.isEmpty()) {
+                return null;
+            }
             for (ShowEffect i : ShowEffect.values()) {
-                if (i.getJqmValue().equals(jqmValue)) return i;
+                if (i.getJqmValue().equals(jqmValue)) {
+                    return i;
+                }
             }
             return null;
         }
     }
 
     public static enum HideEffect {
-        FADE_OUT("fadeOut"), SLIDE_UP("slideUp");
 
+        FADE_OUT("fadeOut"),
+        SLIDE_UP("slideUp");
         private final String jqmVal;
 
         private HideEffect(String jqmVal) {
@@ -107,22 +121,28 @@ public class JQMTabs extends JQMWidget {
         }
 
         public static HideEffect fromJqmValue(String jqmValue) {
-            if (jqmValue == null || jqmValue.isEmpty()) return null;
+            if ((jqmValue == null) || jqmValue.isEmpty()) {
+                return null;
+            }
             for (HideEffect i : HideEffect.values()) {
-                if (i.getJqmValue().equals(jqmValue)) return i;
+                if (i.getJqmValue().equals(jqmValue)) {
+                    return i;
+                }
             }
             return null;
         }
     }
 
-    private static final String ERROR_HEADER =
-            "JQMButton OR JQMListItem can be used for tab headers, but not simultaneously!";
+    private static final String ERROR_HEADER = "JQMButton OR JQMListItem can be used for tab headers, but not simultaneously!";
 
     private static final String DATA_ACTIVE = "data-active";
+
     private static final String ARIA_SELECTED = "aria-selected";
 
     private FlowPanel flow;
+
     private JQMNavBar navbar;
+
     private JQMList list;
 
     public JQMTabs() {
@@ -249,11 +269,17 @@ public class JQMTabs extends JQMWidget {
 
     /**
      * Works only in case of JQMButton were used for tab headers.
+<<<<<<< LEFT
      * <br> Sets the position of the icons on tab headers.
+=======
+     *  Sets the position of the icons on tab headers.
+>>>>>>> RIGHT
      * If you desire an icon only button then set the position to IconPos.NOTEXT.
      */
     public void setIconPos(IconPos pos) {
-       if (navbar != null) navbar.setIconPos(pos);
+        if (navbar != null) {
+            navbar.setIconPos(pos);
+        }
     }
 
     private static native void bindCreated(Element elt, JQMTabs tabs) /*-{
@@ -495,28 +521,34 @@ public class JQMTabs extends JQMWidget {
 
     /**
      *  If the tabs are currently collapsed, oldTabHeader and oldTabContent will be null.
+<<<<<<< LEFT
      *  <br> If the tabs are collapsing, newTabHeader and newTabContent will be null.
+=======
+     *   If the tabs are collapsing, newTabHeader and newTabContent will be null.
+>>>>>>> RIGHT
      *
      * @param newTabHeader - JQMButton or JQMListItem
      * @param oldTabHeader - JQMButton or JQMListItem
      * @param newTabContent - Widget
      * @param oldTabContent - Widget
      */
-    protected void onActivate(Widget newTabHeader, Widget oldTabHeader,
-                              Widget newTabContent, Widget oldTabContent) {
+    protected void onActivate(Widget newTabHeader, Widget oldTabHeader, Widget newTabContent, Widget oldTabContent) {
     }
 
     /**
      *  If the tabs are currently collapsed, oldTabHeader and oldTabContent will be null.
+<<<<<<< LEFT
      *  <br> If the tabs are collapsing, newTabHeader and newTabContent will be null.
+=======
+     *   If the tabs are collapsing, newTabHeader and newTabContent will be null.
+>>>>>>> RIGHT
      *
      * @param newTabHeader - JQMButton or JQMListItem
      * @param oldTabHeader - JQMButton or JQMListItem
      * @param newTabContent - Widget
      * @param oldTabContent - Widget
      */
-    protected boolean onBeforeActivate(Widget newTabHeader, Widget oldTabHeader,
-                                       Widget newTabContent, Widget oldTabContent) {
+    protected boolean onBeforeActivate(Widget newTabHeader, Widget oldTabHeader, Widget newTabContent, Widget oldTabContent) {
         return true;
     }
 
@@ -719,8 +751,8 @@ public class JQMTabs extends JQMWidget {
 
     /**
      * @param value - Multiple types supported:
-     * <br> Boolean: Enable or disable all tabs.
-     * <br> Array: An array containing the zero-based indexes of the tabs that should be disabled,
+     * <p/> Boolean: Enable or disable all tabs.
+     * <p/> Array: An array containing the zero-based indexes of the tabs that should be disabled,
      * e.g., [ 0, 2 ] would disable the first and third tab.
      */
     public void setTabDisabled(String value) {
@@ -734,7 +766,7 @@ public class JQMTabs extends JQMWidget {
     /**
      * @param value - The type of event that the tabs should react to in order to activate the tab.
      * To activate on hover, use "mouseover" {@link JQMTabs#ACTIVATE_TAB_ON_HOVER}.
-     * <br> Default value is "click" {@link JQMTabs#ACTIVATE_TAB_ON_CLICK} .
+     * <p/> Default value is "click" {@link JQMTabs#ACTIVATE_TAB_ON_CLICK} .
      */
     public void setTabEvent(String value) {
         JQMCommon.setAttribute(this, "data-event", value);

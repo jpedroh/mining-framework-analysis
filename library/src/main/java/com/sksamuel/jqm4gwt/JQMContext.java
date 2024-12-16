@@ -1,24 +1,24 @@
 package com.sksamuel.jqm4gwt;
 
-import java.util.Date;
-
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.core.client.JsDate;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import java.util.Date;
+
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 9 Jul 2011 12:57:43
  *
- * <br>    The {@link JQMContext} provides methods that facilitate interaction
+ * <p/>    The {@link JQMContext} provides methods that facilitate interaction
  *         between GWT, JQM and the DOM.
  *
  */
 public class JQMContext {
-
     private static boolean defaultTransistionDirection = false;
+
     private static boolean defaultChangeHash = true;
 
     public static native void disableHashListening() /*-{
@@ -219,19 +219,30 @@ public class JQMContext {
 
     /**
      * See <a href="http://stackoverflow.com/a/12629050">Read :hover pseudo class with javascript</a>
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * @param rule - substring for css rule search
      * @param props - requested property names
      * @param regexProps - regular expressions for requested properties, see the following links:
      *
+<<<<<<< LEFT
      * <br> <a href="http://www.w3schools.com/jsref/jsref_obj_regexp.asp">JavaScript RegExp Object</a>
      * <br> <a href="http://www.regular-expressions.info/javascriptexample.html">Regex Tester</a>
      * <br> <a href="http://www.regular-expressions.info/anchors.html">Start of String and End of String Anchors</a>
      * <br>
+=======
+     *  <a href="http://www.w3schools.com/jsref/jsref_obj_regexp.asp">JavaScript RegExp Object</a>
+     *  <a href="http://www.regular-expressions.info/javascriptexample.html">Regex Tester</a>
+     *  <a href="http://www.regular-expressions.info/anchors.html">Start of String and End of String Anchors</a>
+     *
+>>>>>>> RIGHT
      *
      * @return - property/value javascript object
      */
-    public static native JavaScriptObject getCssForRule(String rule, JsArrayString props, JsArrayString regexProps) /*-{
+    /*-{
         var sheets = $wnd.document.styleSheets;
         var slen = sheets.length;
         for (var i = 0; i < slen; i++) {
@@ -271,7 +282,8 @@ public class JQMContext {
             }
         }
         return null;
-    }-*/;
+    }-*/
+    public static native JavaScriptObject getCssForRule(String rule, JsArrayString props, JsArrayString regexProps);
 
     /**
      * Example: jsObjToString(css, ":", ";") returns <b> color:red;background-color:yellow; </b>
@@ -333,5 +345,4 @@ public class JQMContext {
         double interestedInZeroDPs = valueToRound * multipicationFactor;
         return Math.round(interestedInZeroDPs) / multipicationFactor;
     }
-
 }

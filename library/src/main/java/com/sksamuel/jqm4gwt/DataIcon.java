@@ -3,21 +3,22 @@ package com.sksamuel.jqm4gwt;
 import java.util.HashMap;
 import java.util.Map;
 
+
 /**
+ *
+ *
  * @author Stephen K Samuel samspade79@gmail.com 9 Jul 2011 14:23:25
- *
- * <br>This enum represents the default iconset available in jquery mobile.
- *
- * <br>To see what the icon set looks like, visit the following site:
- *
- * <p><a href="http://demos.jquerymobile.com/1.4.5/icons/">JQM Icons</a></p>
- *
+
+<p/>This enum represents the default iconset available in jquery mobile.
+
+<p/>To see what the icon set looks like, visit the following site:
+
+<p><a href="http://demos.jquerymobile.com/1.4.5/icons/">JQM Icons</a></p>
  */
 public enum DataIcon {
 
     ACTION("action"),
     ALERT("alert"),
-
     DOWN("arrow-d"),
     DOWNLEFT("arrow-d-l"),
     DOWNRIGHT("arrow-d-r"),
@@ -26,19 +27,16 @@ public enum DataIcon {
     UP("arrow-u"),
     UPLEFT("arrow-u-l"),
     UPRIGHT("arrow-u-r"),
-
     AUDIO("audio"),
     BACK("back"),
     BARS("bars"),
     BULLETS("bullets"),
     CALENDAR("calendar"),
     CAMERA("camera"),
-
     DOWNCARAT("carat-d"),
     LEFTCARAT("carat-l"),
     RIGHTCARAT("carat-r"),
     UPCARAT("carat-u"),
-
     CHECK("check"),
     CLOCK("clock"),
     CLOUD("cloud"),
@@ -69,10 +67,8 @@ public enum DataIcon {
     TAG("tag"),
     USER("user"),
     VIDEO("video"),
-
     CUSTOM("custom"),
     NONE("false");
-
     private static final Map<String, DataIcon> jqmToIcon = new HashMap<String, DataIcon>();
 
     static {
@@ -95,7 +91,9 @@ public enum DataIcon {
     }
 
     public static DataIcon fromJqmValue(String jqmValue) {
-        if (jqmValue == null || jqmValue.isEmpty()) return null;
+        if ((jqmValue == null) || jqmValue.isEmpty()) {
+            return null;
+        }
         return jqmToIcon.get(jqmValue);
     }
 }

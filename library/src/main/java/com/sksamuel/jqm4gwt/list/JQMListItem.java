@@ -1,8 +1,5 @@
 package com.sksamuel.jqm4gwt.list;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
@@ -11,8 +8,8 @@ import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.LIElement;
 import com.google.gwt.dom.client.Node;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -33,20 +30,21 @@ import com.sksamuel.jqm4gwt.Mobile;
 import com.sksamuel.jqm4gwt.Transition;
 import com.sksamuel.jqm4gwt.events.HasTapHandlers;
 import com.sksamuel.jqm4gwt.events.JQMComponentEvents;
-import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration.WidgetHandlerCounter;
+import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.TapEvent;
 import com.sksamuel.jqm4gwt.events.TapHandler;
 import com.sksamuel.jqm4gwt.form.elements.JQMFilterable;
 import com.sksamuel.jqm4gwt.html.CustomFlowPanel;
 import com.sksamuel.jqm4gwt.panel.JQMControlGroup;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 5 May 2011 11:21:29
  */
-public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>, HasClickHandlers,
-        HasTapHandlers, HasRel<JQMListItem>, HasTransition<JQMListItem> {
-
+public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem> , HasClickHandlers , HasTapHandlers , HasRel<JQMListItem> , HasTransition<JQMListItem> {
     public static final String STYLE_UI_LI_HAS_THUMB = "ui-li-has-thumb";
 
     /**
@@ -63,10 +61,12 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
      * The element that contains the link, if any
      */
     private Element anchor;
+
     private CustomFlowPanel anchorPanel;
 
     /** Split button element */
     private Element split;
+
     private String splitTheme;
 
     /**
@@ -82,17 +82,19 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
     private JQMList list;
 
     public class LiControlGroup extends JQMControlGroup {
-
         protected LiControlGroup(Element element, String styleName) {
             super(element, styleName);
         }
     }
 
     private LiControlGroup controlGroup;
+
     private ComplexPanel controlGroupRoot;
+
     private TextBox checkBoxInput;
 
     private HandlerRegistration clickHandler;
+
     private HandlerRegistration tapHandler;
 
     private Object tag;
@@ -121,7 +123,9 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
      */
     public JQMListItem(String text, String url) {
         this(text);
-        if (url != null) setUrl(url);
+        if (url != null) {
+            setUrl(url);
+        }
     }
 
     public JQMListItem(String text, IconPos checkBox) {
@@ -398,7 +402,11 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
 
     /**
      * Sets the image to be used to the given source url.
+<<<<<<< LEFT
      * <br> The same as setImage(), but image is marked as icon class.
+=======
+     *  The same as setImage(), but image is marked as icon class.
+>>>>>>> RIGHT
      */
     public void setIcon(String src) {
         setImage(src);
@@ -416,7 +424,11 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
 
     /**
      * Sets the image to be used to the given source url.
+<<<<<<< LEFT
      * <br> The same as setImage(), but image is marked as thumbnail class.
+=======
+     *  The same as setImage(), but image is marked as thumbnail class.
+>>>>>>> RIGHT
      */
     public void setThumbnail(String src) {
         setImage(src);
@@ -434,18 +446,24 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
 
     /**
      * Sets the image on this list item to the given source url.
+<<<<<<< LEFT
      * <br> Neither 'jqm4gwt-listitem-thumb' nor 'jqm4gwt-listitem-icon' class is added.
+=======
+     *  Neither 'jqm4gwt-listitem-thumb' nor 'jqm4gwt-listitem-icon' class is added.
+>>>>>>> RIGHT
      */
     public void setImage(String src) {
         if (src == null) {
             throw new RuntimeException("Cannot set image to null. Call removeImage() if you wanted to remove the image");
         }
-
         if (imageElem == null) {
             imageElem = Document.get().createImageElement();
             // must be first child according to jquery.mobile-1.4.x.css
-            if (anchor != null) anchor.insertFirst(imageElem);
-            else insertFirstChild(imageElem);
+            if (anchor != null) {
+                anchor.insertFirst(imageElem);
+            } else {
+                insertFirstChild(imageElem);
+            }
         }
         imageElem.setAttribute("src", src);
         getElement().addClassName(STYLE_UI_LI_HAS_THUMB);
@@ -458,8 +476,12 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
     }
 
     /**
-     * Adds secondary image to this list item. It's forcefully added directly to &lt;li&gt; element.
+     * Adds secondary image to this list item. It's forcefully added directly to &lt;li> element.
+<<<<<<< LEFT
      * <br> Additional CSS is needed to control appearance of this image, for example right side
+=======
+     *  Additional CSS is needed to control appearance of this image, for example right side
+>>>>>>> RIGHT
      * icon on the static band can be implemented, see <b>jqm4gwt-list-static-item-img-right</b> CSS rule.
      */
     public ImageElement addSecondaryImage(String src) {
@@ -1057,5 +1079,4 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
     public void setTagStr(String value) {
         setTag(value);
     }
-
 }

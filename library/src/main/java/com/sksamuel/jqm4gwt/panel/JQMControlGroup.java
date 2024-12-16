@@ -13,16 +13,17 @@ import com.sksamuel.jqm4gwt.JQMCommon;
 import com.sksamuel.jqm4gwt.Orientation;
 import com.sksamuel.jqm4gwt.form.elements.JQMFilterableEvent;
 
+
 /**
  * @author Stephen K Samuel samspade79@gmail.com 11 Jul 2011 22:09:41
- * <br>
- * An implementation of {@link JQMPanel} for control groups.
+ *         <p/>
+ *         An implementation of {@link JQMPanel} for control groups.
  */
-public class JQMControlGroup extends JQMPanel implements HasOrientation<JQMControlGroup>,
-        HasMini<JQMControlGroup>, HasCorners<JQMControlGroup>, HasFilterable {
-
+public class JQMControlGroup extends JQMPanel implements HasOrientation<JQMControlGroup> , HasMini<JQMControlGroup> , HasCorners<JQMControlGroup> , HasFilterable {
     private boolean boundFilterEvents;
+
     private boolean boundFilterCallback;
+
     private JavaScriptObject origFilter;
 
     protected JQMControlGroup(Element element, String styleName) {
@@ -123,9 +124,15 @@ public class JQMControlGroup extends JQMPanel implements HasOrientation<JQMContr
 
     /**
      * After dynamic changes to widgets, can be called in conjunction with JQMContext.render().
+<<<<<<< LEFT
      * <br> Example:
      * <br> JQMContext.render(grp.getElement().getId());
      * <br> grp.refresh();
+=======
+     *  Example:
+     *  JQMContext.render(grp.getElement().getId());
+     *  grp.refresh();
+>>>>>>> RIGHT
      */
     public void refresh() {
         refresh(getElement());
@@ -285,5 +292,4 @@ public class JQMControlGroup extends JQMPanel implements HasOrientation<JQMContr
         unbindFilterCallback();
         super.onUnload();
     }
-
 }

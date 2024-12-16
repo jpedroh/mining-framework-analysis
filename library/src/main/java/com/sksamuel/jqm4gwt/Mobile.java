@@ -2,20 +2,29 @@ package com.sksamuel.jqm4gwt;
 
 import com.google.gwt.dom.client.Element;
 
+
 /**
  * @author Stephen K Samuel samspade79@gmail.com 13 May 2011 11:14:24
- * <br>
+ * <p/>
  *         Utility methods. The static methods in this class map through to the
  *         equivalent JQM method in $.mobile
  *
  */
 public class Mobile {
-
     /**
+<<<<<<< LEFT
      * See <a href="http://api.jquerymobile.com/pagecontainer/#method-change">Pagecontainer.change -> options.role</a>
      * <br> The data-role value to be used when displaying the page.
+=======
+     * See <a href="http://api.jquerymobile.com/pagecontainer/#method-change">Pagecontainer.change -&gt; options.role</a>
+     *  The data-role value to be used when displaying the page.
+>>>>>>> RIGHT
      * By default this is undefined which means rely on the value of the data-role attribute defined on the element.
+<<<<<<< LEFT
      * <br> For example: pagecontainer.change() with dialog option is not deprecated, and as result of
+=======
+     *  For example: pagecontainer.change() with dialog option is not deprecated, and as result of
+>>>>>>> RIGHT
      * such call page's data-role will be set to "dialog" and cause conflict with explicitly
      * defined data-dialog property.
      */
@@ -23,7 +32,9 @@ public class Mobile {
 
     public static String pleaseWaitMsg = "Please Wait...";
 
-    private Mobile() {} // static class, should not be instantiated
+    // static class, should not be instantiated
+    private Mobile() {
+    }
 
     public static native void back() /*-{
         $wnd.$.mobile.back();
@@ -66,11 +77,12 @@ public class Mobile {
 
     /**
      * It's not enough for IE9, see <a href="http://stackoverflow.com/a/17852518">jQuery Mobile, disable all button when loading overlay is showed</a>
-     * <p> So &lt;div class="ui-loader-background"&gt;&lt;/div&gt; must be added to html body. </p>
+     * <p> So &lt;div class="ui-loader-background"/&lt; must be added to html body. </p>
      */
-    public static native void disableUI() /*-{
+    /*-{
         $wnd.$('body').addClass('ui-state-disabled');
-    }-*/;
+    }-*/
+    public static native void disableUI();
 
     public static native void enableUI() /*-{
         $wnd.$('body').removeClass('ui-state-disabled');
@@ -127,5 +139,4 @@ public class Mobile {
     public static native void clearActiveClickedLink() /*-{
         $wnd.$.mobile.activeClickedLink = null;
     }-*/;
-
 }

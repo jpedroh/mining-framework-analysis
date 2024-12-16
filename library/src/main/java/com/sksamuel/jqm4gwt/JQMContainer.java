@@ -1,7 +1,5 @@
 package com.sksamuel.jqm4gwt;
 
-import java.util.Collection;
-
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.EventHandler;
@@ -11,21 +9,23 @@ import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sksamuel.jqm4gwt.events.HasJQMEventHandlers;
 import com.sksamuel.jqm4gwt.events.JQMEventFactory;
-import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration.WidgetHandlerCounter;
+import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
+import java.util.Collection;
+
 
 /**
+ *
+ *
  * @author Stephen K Samuel samspade79@gmail.com 16 Sep 2012 00:22:18
- * <br>
- * A JQMContainer is any "page level" widget, such as dialogs, popups and pages themselves,
- * which are directly attached to the DOM.
- * It is meant to contain the common functionality for showing these containers.
+<p/>
+A JQMContainer is any "page level" widget, such as dialogs, popups and pages themselves,
+which are directly attached to the DOM.
+It is meant to contain the common functionality for showing these containers.
  */
-public abstract class JQMContainer extends ComplexPanel implements HasId<JQMContainer>,
-        HasTheme<JQMContainer>, HasTransition<JQMContainer>, HasCorners<JQMContainer>,
-        HasJQMEventHandlers {
-
+public abstract class JQMContainer extends ComplexPanel implements HasId<JQMContainer> , HasTheme<JQMContainer> , HasTransition<JQMContainer> , HasCorners<JQMContainer> , HasJQMEventHandlers {
     private static int counter = 1;
+
     private static final String AUTOINC_SUFFIX = "++";
 
     /**
@@ -47,7 +47,9 @@ public abstract class JQMContainer extends ComplexPanel implements HasId<JQMCont
 
     protected void setRole(String role) {
         String s = JQMCommon.getDataRole(this);
-        if (s != null && !s.isEmpty()) removeStyleName("jqm4gwt-" + s);
+        if ((s != null) && (!s.isEmpty())) {
+            removeStyleName("jqm4gwt-" + s);
+        }
         JQMCommon.setDataRole(this, role);
         addStyleName("jqm4gwt-" + role);
     }
@@ -58,6 +60,7 @@ public abstract class JQMContainer extends ComplexPanel implements HasId<JQMCont
 
     /**
      * Assigns a default containerId of 'container' followed by the instance number.
+     *
      * @return the instance being operated on as part of a Fluent API
      */
     public JQMContainer withContainerId() {
@@ -67,14 +70,17 @@ public abstract class JQMContainer extends ComplexPanel implements HasId<JQMCont
 
     /**
      * Sets the containerId so it can be referenced by name.
+     *
      * @param containerId
+     * 		
      */
     public void setContainerId(String containerId) {
-        if (containerId == null)
+        if (containerId == null) {
             throw new IllegalArgumentException("id for JQMContainer cannot be null");
-        if (containerId.contains(" "))
+        }
+        if (containerId.contains(" ")) {
             throw new IllegalArgumentException("id for JQMContainer cannot contain space");
-
+        }
         if (containerId.isEmpty()) {
             this.id = generateContainerId();
         } else if (containerId.endsWith(AUTOINC_SUFFIX)) {
@@ -82,7 +88,6 @@ public abstract class JQMContainer extends ComplexPanel implements HasId<JQMCont
         } else {
             this.id = containerId;
         }
-
         getElement().setId(this.id);
         setAttribute("data-url", this.id);
     }
@@ -93,6 +98,7 @@ public abstract class JQMContainer extends ComplexPanel implements HasId<JQMCont
 
     /**
      * Sets the containerId so it can be referenced by name.
+     *
      * @return the instance being operated on as part of a Fluent API
      */
     public JQMContainer withContainerId(String containerId) {
@@ -104,8 +110,9 @@ public abstract class JQMContainer extends ComplexPanel implements HasId<JQMCont
      * Adds the given collection of widgets to the primary content panel of this container
      */
     public void add(Collection<Widget> widgets) {
-        for (Widget widget : widgets)
+        for (Widget widget : widgets) {
             add(widget);
+        }
     }
 
     @Override
@@ -118,11 +125,13 @@ public abstract class JQMContainer extends ComplexPanel implements HasId<JQMCont
      * Adds the given array of widgets to the primary content container of
      * this container.
      *
-     * @param widgets the widgets to add to the primary content
+     * @param widgets
+     * 		the widgets to add to the primary content
      */
     public void add(Widget[] widgets) {
-        for (Widget widget : widgets)
+        for (Widget widget : widgets) {
             add(widget);
+        }
     }
 
     /**
@@ -157,7 +166,8 @@ public abstract class JQMContainer extends ComplexPanel implements HasId<JQMCont
     /**
      * Removes the attribute with the given name
      *
-     * @param name the name of the attribute to remove
+     * @param name
+     * 		the name of the attribute to remove
      */
     protected void removeAttribute(String name) {
         getElement().removeAttribute(name);
@@ -193,7 +203,7 @@ public abstract class JQMContainer extends ComplexPanel implements HasId<JQMCont
     @Override
     public JQMContainer withTheme(String themeName) {
         setTheme(themeName);
-           return this;
+        return this;
     }
 
     @Override
@@ -235,9 +245,7 @@ public abstract class JQMContainer extends ComplexPanel implements HasId<JQMCont
 
     @Override
     public HandlerRegistration addJQMEventHandler(String jqmEventName, EventHandler handler) {
-
         Type<EventHandler> t = JQMEventFactory.getType(jqmEventName, EventHandler.class);
-
         return JQMHandlerRegistration.registerJQueryHandler(new WidgetHandlerCounter() {
             @Override
             public int getHandlerCountForWidget(Type<?> type) {
@@ -245,5 +253,4 @@ public abstract class JQMContainer extends ComplexPanel implements HasId<JQMCont
             }
         }, this, handler, jqmEventName, t);
     }
-
 }

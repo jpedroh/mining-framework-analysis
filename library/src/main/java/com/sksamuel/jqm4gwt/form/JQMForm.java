@@ -1,13 +1,7 @@
 package com.sksamuel.jqm4gwt.form;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -23,21 +17,26 @@ import com.sksamuel.jqm4gwt.Mobile;
 import com.sksamuel.jqm4gwt.form.elements.JQMFormWidget;
 import com.sksamuel.jqm4gwt.form.validators.NotNullOrEmptyValidator;
 import com.sksamuel.jqm4gwt.form.validators.Validator;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 12 Jul 2011 21:36:02
- *         <br>
+ *         <p/>
  *         A {@link JQMForm} is a standard GWT panel that offers extra
  *         functionality for quick building of input forms. The framework offers
  *         built in validation and error reporting and simplified submission
  *         processing.
- *         <br>
+ *         <p/>
  *         Any {@link JQMSubmit} widgets that are added will be automatically
  *         wired to submit this form. Alternatively, any widget can be set to
  *         programatically submit the form by invoking submit();
  */
 public class JQMForm extends FlowPanel {
-
     private static final String STYLE_OK_VALIDATED = "jqm4gwt-fieldvalidated";
 
     private static final String STYLE_ERRORCONTAIN = "jqm4gwt-errorcontain";
@@ -62,12 +61,15 @@ public class JQMForm extends FlowPanel {
      */
     private SubmissionHandler<?> submissionHandler;
 
-    /** A mapping between the validators and the labels they use to show errors */
+    /**
+     * A mapping between the validators and the labels they use to show errors
+     */
     private final Map<Validator, Label> validatorLabels = new HashMap<Validator, Label>();
 
-    /** A map containing the widgets and the validators that should be invoked on those */
-    private final Map<JQMFormWidget, Collection<Validator>> widgetValidators =
-            new HashMap<JQMFormWidget, Collection<Validator>>();
+    /**
+     * A map containing the widgets and the validators that should be invoked on those
+     */
+    private final Map<JQMFormWidget, Collection<Validator>> widgetValidators = new HashMap<JQMFormWidget, Collection<Validator>>();
 
     /**
      * A map containing the validators and the elements/widgets that should
@@ -137,10 +139,18 @@ public class JQMForm extends FlowPanel {
      * This method will automatically add a label element which will be made
      * visible with an error message when validate is called on this field and
      * fails.
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * The label element will be located immediately after the supplied widget
      * (as first sibling).
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * If the widget is not null then the an onBlur handler will be registered
      * that will trigger validation for this validator only.
      *
@@ -158,7 +168,7 @@ public class JQMForm extends FlowPanel {
      * see addValidator(null, validator);
      */
     public void addValidator(Validator validator) {
-        addValidator(validator, (JQMFormWidget) null);
+        addValidator(validator, ((JQMFormWidget) (null)));
     }
 
     public void addValidator(Validator validator, boolean immediate, JQMFormWidget... firingWidgets) {
@@ -341,7 +351,11 @@ public class JQMForm extends FlowPanel {
     /**
      * Sets the given widget to be required with a custom message. Then this
      * field will be checked to ensure it has a value set before the form will be submitted.
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * In effect, setting a field to required adds an implicit "not null or empty" validator.
      */
     public void setRequired(JQMFormWidget widget, String msg) {
@@ -360,30 +374,45 @@ public class JQMForm extends FlowPanel {
      * This method is invoked when the form is ready for submission. Typically
      * this method would be called from one of your submission buttons
      * automatically but it is possible to invoke it programmatically.
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * Before validation, the general errors are cleared.
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * If the validation phase is passed the the submission handler will be
      * invoked. Before the handler is invoked, the page loading dialog will be
      * shown so that async requests can complete in the background.
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * The {@link SubmissionHandler} must hide the loading dialog by calling
      * hideFormProcessingDialog() on the form or by calling Mobile.hideLoadingDialog()
      */
     public void submit(String... submitMsgs) {
-        if (submissionHandler == null)
-            throw new IllegalStateException(
-                    "No SubmissionHandler has been set for this Form and it is in an invalid " +
-                    "state for submit() until one has been defined.");
+        if (submissionHandler == null) {
+            throw new IllegalStateException("No SubmissionHandler has been set for this Form and it is in an invalid " + "state for submit() until one has been defined.");
+        }
         generalErrors.clear();
         boolean validated = validate();
         if (validated) {
             String s = null;
-            if (submitMsgs.length > 0) s = submitMsgs[0];
-            if (s == null || s.isEmpty()) s = "Submitting form";
+            if (submitMsgs.length > 0) {
+                s = submitMsgs[0];
+            }
+            if ((s == null) || s.isEmpty()) {
+                s = "Submitting form";
+            }
             showFormProcessingDialog(s);
             @SuppressWarnings("unchecked")
-            SubmissionHandler<JQMForm> h = (SubmissionHandler<JQMForm>) submissionHandler;
+            SubmissionHandler<JQMForm> h = ((SubmissionHandler<JQMForm>) (submissionHandler));
             h.onSubmit(this);
         } else {
             scrollToFirstError();

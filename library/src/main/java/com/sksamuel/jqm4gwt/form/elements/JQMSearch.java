@@ -9,20 +9,20 @@ import com.sksamuel.jqm4gwt.events.JQMChangeHandler;
 import com.sksamuel.jqm4gwt.events.JQMComponentEvents;
 import com.sksamuel.jqm4gwt.events.JQMEvent;
 import com.sksamuel.jqm4gwt.events.JQMEventFactory;
-import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration.WidgetHandlerCounter;
+import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.JQMInputHandler;
+
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 18 May 2011 04:17:45
  *
- * <br> Text element stylised as a search box.
+ * <p/> Text element stylised as a search box.
  *
- * <br> See <a href="http://demos.jquerymobile.com/1.4.5/forms/#search">Search Input</a>
+ * <p/> See <a href="http://demos.jquerymobile.com/1.4.5/forms/#search">Search Input</a>
  *
  */
 public class JQMSearch extends JQMText {
-
 	/**
 	 * Create a new {@link JQMSearch} with no label text
 	 */
@@ -33,7 +33,8 @@ public class JQMSearch extends JQMText {
 	/**
 	 * Create a new {@link JQMSearch} with the given label text
 	 *
-	 * @param text - the text to use as the label
+	 * @param text
+	 * 		- the text to use as the label
 	 */
 	public JQMSearch(String text) {
 		super(text);
@@ -42,12 +43,12 @@ public class JQMSearch extends JQMText {
 	}
 
 	@Override
-    public String getValue() {
-        return JQMCommon.getVal(getInputId());
-    }
+	   public String getValue() {
+	       return JQMCommon.getVal(getInputId());
+	   }
 
 	@Override
-    public void setValue(String value, boolean fireEvents) {
+	   public void setValue(String value, boolean fireEvents) {
 	    JQMCommon.setVal(getInputId(), value);
 	    if (fireEvents) DomEvent.fireNativeEvent(Document.get().createChangeEvent(), input);
 	}
@@ -58,33 +59,37 @@ public class JQMSearch extends JQMText {
 	 */
 	private void initChangeHandler() {
 	    JQMChangeHandler handler = new JQMChangeHandler() {
-            @Override
-            public void onEvent(JQMEvent<?> event) {
-                DomEvent.fireNativeEvent(Document.get().createChangeEvent(), input);
-            }};
+	           @Override
+	           public void onEvent(JQMEvent<?> event) {
+	               DomEvent.fireNativeEvent(Document.get().createChangeEvent(), input);
+	           }};
 	    JQMHandlerRegistration.registerJQueryHandler(new WidgetHandlerCounter() {
-            @Override
-            public int getHandlerCountForWidget(GwtEvent.Type<?> type) {
-                return getHandlerCount(type);
-            }
-        }, this, handler, JQMComponentEvents.CHANGE,
-        JQMEventFactory.getType(JQMComponentEvents.CHANGE, JQMChangeHandler.class));
+	           @Override
+	           public int getHandlerCountForWidget(GwtEvent.Type<?> type) {
+	               return getHandlerCount(type);
+	           }
+	       }, this, handler, JQMComponentEvents.CHANGE,
+	       JQMEventFactory.getType(JQMComponentEvents.CHANGE, JQMChangeHandler.class));
 	}
 
 	/**
      * Occurs on every entered/deleted symbol.
+<<<<<<< LEFT
      * <br><b>Warning!</b> Clear button does not raise this event, use
+=======
+     * <b>Warning!</b> Clear button does not raise this event, use
+>>>>>>> RIGHT
      * addValueChangeHandler() to react on it.
 	 */
 	public HandlerRegistration addInputHandler(JQMInputHandler handler) {
-	    if (handler == null) return null;
-	    return JQMHandlerRegistration.registerJQueryHandler(new WidgetHandlerCounter() {
-            @Override
-            public int getHandlerCountForWidget(GwtEvent.Type<?> type) {
-                return getHandlerCount(type);
-            }
-        }, this, handler, JQMComponentEvents.INPUT,
-        JQMEventFactory.getType(JQMComponentEvents.INPUT, JQMInputHandler.class));
+		if (handler == null) {
+			return null;
+		}
+		return JQMHandlerRegistration.registerJQueryHandler(new WidgetHandlerCounter() {
+			@Override
+			public int getHandlerCountForWidget(GwtEvent.Type<?> type) {
+				return getHandlerCount(type);
+			}
+		}, this, handler, JQMComponentEvents.INPUT, JQMEventFactory.getType(JQMComponentEvents.INPUT, JQMInputHandler.class));
 	}
-
 }

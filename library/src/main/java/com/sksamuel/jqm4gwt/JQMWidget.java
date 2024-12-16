@@ -12,35 +12,36 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 import com.sksamuel.jqm4gwt.events.HasJQMEventHandlers;
 import com.sksamuel.jqm4gwt.events.JQMEventFactory;
-import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration.WidgetHandlerCounter;
+import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.form.elements.JQMFilterable;
 import com.sksamuel.jqm4gwt.form.elements.JQMFilterableEvent;
 import com.sksamuel.jqm4gwt.form.elements.JQMSelect;
 import com.sksamuel.jqm4gwt.layout.JQMCollapsibleSet;
 import com.sksamuel.jqm4gwt.list.JQMList;
 
+
 /**
  * @author Stephen K Samuel samspade79@gmail.com 11 Jul 2011 17:02:40
- *         <br>
+ *         <p/>
  *         An extension of the standard GWT {@link Widget} that adds
  *         functionality common to all JQM elements, as well as convenience
  *         methods used by subclasses.
- *         <br>
+ *         <p/>
  *         The {@link JQMWidget} is an extension of composite because
  *         {@link JQMWidget}s do not typically add new functionality (in terms
  *         of new elements), they are mostly compositions of existing HTML
  *         elements.
- *         <br>
+ *         <p/>
  *         This abstract superclass does not define the nature of the
  *         composition in use. Implementating subclasses must decide how to
  *         compose and thus call initWidget() themselves.
  */
-public abstract class JQMWidget extends Composite implements HasTheme<JQMWidget>, HasId<JQMWidget>,
-        HasDataRole, HasEnabled, HasJQMEventHandlers, HasFilterable {
-
+public abstract class JQMWidget extends Composite implements HasTheme<JQMWidget> , HasId<JQMWidget> , HasDataRole , HasEnabled , HasJQMEventHandlers , HasFilterable {
     private boolean boundFilterEvents;
+
     private boolean boundFilterCallback;
+
     private JavaScriptObject origFilter;
 
     /**
@@ -182,7 +183,11 @@ public abstract class JQMWidget extends Composite implements HasTheme<JQMWidget>
 
     /**
      * {@link JQMFilterable} will use this text when searching through this widget.
+<<<<<<< LEFT
      * <br><b>Detail description:</b> By default, the filter simply searches against
+=======
+     * <b>Detail description:</b> By default, the filter simply searches against
+>>>>>>> RIGHT
      * the contents of each list item.
      * If you want the filter to search against different content, add the data-filtertext
      * attribute to the item and populate it with one or many keywords and phrases that
@@ -217,9 +222,17 @@ public abstract class JQMWidget extends Composite implements HasTheme<JQMWidget>
 
     /**
      * To be used in conjunction with {@link JQMFilterable}.
+<<<<<<< LEFT
      * <br> May not work for any widget or require {@link JQMWidget#getDataFilterWidget()} override
+=======
+     *  May not work for any widget or require {@link JQMWidget#getDataFilterWidget()} override
+>>>>>>> RIGHT
      * for composite widgets like {@link JQMSelect}.
+<<<<<<< LEFT
      * <br> But {@link JQMList}, {@link JQMCollapsibleSet}, and others with children collection are supported.
+=======
+     *  But {@link JQMList}, {@link JQMCollapsibleSet}, and others with children collection are supported.
+>>>>>>> RIGHT
      *
      * @param filterSelector - a jQuery selector that will be used to retrieve the element
      * that will serve as the input source, UiBinder example: dataFilter="#{fltr1.getFilterId}"
@@ -317,9 +330,9 @@ public abstract class JQMWidget extends Composite implements HasTheme<JQMWidget>
      * @param searchValue - filtering text
      *
      * @return - must return <b>true</b> if the element is to be <b>filtered out</b>.
-     * <br> - must return <b>false</b> if the element is to be <b>shown</b>.
-     * <br> - null means default filtering should be used.
-     * <br> JQMCommon.getTextForFiltering(elt) can be used to get filtering element's text
+     * <p/> - must return <b>false</b> if the element is to be <b>shown</b>.
+     * <p/> - null means default filtering should be used.
+     * <p/> JQMCommon.getTextForFiltering(elt) can be used to get filtering element's text
      */
     protected Boolean onFiltering(Element elt, Integer index, String searchValue) {
         //String s = JQMCommon.getTextForFiltering(elt);
@@ -388,5 +401,4 @@ public abstract class JQMWidget extends Composite implements HasTheme<JQMWidget>
         unbindFilterCallback();
         super.onUnload();
     }
-
 }

@@ -1,9 +1,5 @@
 package com.sksamuel.jqm4gwt.list;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -22,18 +18,22 @@ import com.sksamuel.jqm4gwt.JQMPage;
 import com.sksamuel.jqm4gwt.JQMWidget;
 import com.sksamuel.jqm4gwt.events.HasTapHandlers;
 import com.sksamuel.jqm4gwt.events.JQMComponentEvents;
-import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration.WidgetHandlerCounter;
+import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.TapEvent;
 import com.sksamuel.jqm4gwt.events.TapHandler;
 import com.sksamuel.jqm4gwt.html.ListWidget;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 4 May 2011 21:21:13
- * <br>
+ * <p/>
  * An implementation of a jquery mobile list view as seen here:
  * <a href="http://jquerymobile.com/demos/1.2.1/docs/lists/index.html">Listviews</a>
- * <br>
+ * <p/>
  * This list can be ordered or unordered (which must be set at constructor time).
  * The list can be dynamically modified with random access.
  *
@@ -43,22 +43,20 @@ import com.sksamuel.jqm4gwt.html.ListWidget;
  * {@link com.google.gwt.uibinder.client.UiBinder UiBinder} templates, you
  * can set the List Items and Separators via child elements. For example:
  * <pre>
- * &lt;jqm:list.JQMList&gt;
- *     &lt;jqm:item>&lt;jqm:list.JQMListItem text="List Item #1 Text Here"/&gt;&lt;/jqm:item&gt;
- *     &lt;jqm:divider>&lt;jqm:list.JQMListDivider text="List divider text here"/&gt;&lt;/jqm:divider&gt;
- *     &lt;jqm:item>&lt;jqm:list.JQMListItem text="List Item #2 Text Here"/>&lt;/jqm:item&gt;
- * &lt;/jqm:list.JQMList&gt;
+ * &lt;jqm:list.JQMList>
+ *     &lt;jqm:item>&lt;jqm:list.JQMListItem text="List Item #1 Text Here"/>&lt;/jqm:item>
+ *     &lt;jqm:divider>&lt;jqm:list.JQMListDivider text="List divider text here"/>&lt;/jqm:divider>
+ *     &lt;jqm:item>&lt;jqm:list.JQMListItem text="List Item #2 Text Here"/>&lt;/jqm:item>
+ * &lt;/jqm:list.JQMList>
  * </pre>
  */
-public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandlers,
-        HasInset<JQMList>, HasFilter<JQMList>, HasCorners<JQMList> {
-
+public class JQMList extends JQMWidget implements HasClickHandlers , HasTapHandlers , HasInset<JQMList> , HasFilter<JQMList> , HasCorners<JQMList> {
     /**
      * An ordered JQMList
      */
     public static class Ordered extends JQMList {
         public Ordered() {
-           super(true);
+            super(true);
         }
     }
 
@@ -67,7 +65,7 @@ public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandle
      */
     public static class Unordered extends JQMList {
         public Unordered() {
-           super(false);
+            super(false);
         }
     }
 
@@ -76,6 +74,7 @@ public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandle
 
     /** The index of the last click */
     private int clickIndex;
+
     private boolean clickIsSplit;
 
     /**
@@ -93,22 +92,24 @@ public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandle
     /**
      * Create a new {@link JQMList} that is unordered or ordered depending on the given boolean.
      *
-     * @param ordered true if you want an ordered list, false otherwise.
+     * @param ordered
+     * 		true if you want an ordered list, false otherwise.
      */
     public JQMList(boolean ordered) {
-
         list = new ListWidget(ordered);
         initWidget(list);
-
         setStyleName("jqm4gwt-list");
         setDataRole("listview");
-
         setId();
     }
 
     /**
      * Registers a new {@link ClickHandler} on this list.
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * When a click event has been fired, you can get a reference to the position that was clicked by getClickIndex()
      * and a reference to the item that was clicked with getClickItem()
      */
@@ -177,7 +178,11 @@ public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandle
         return addItem(text, (String) null);
     }
 
-    public static enum ListItemImageKind { NONE, THUMBNAIL, ICON }
+    public static enum ListItemImageKind {
+
+        NONE,
+        THUMBNAIL,
+        ICON;}
 
     /**
      * This method is needed as good enough workaround for the following issue:
@@ -235,10 +240,13 @@ public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandle
         addItem(items.size(), item);
     }
 
-
     /**
      * Adds a new {@link JQMListItem} that contains the given @param text as the heading element.
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * The list item is made linkable to the given page
      *
      * @param text the text to use as the content of the header element
@@ -252,9 +260,17 @@ public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandle
      * Adds a new {@link JQMListItem} that contains the given @param text as the content. Note that if you want to
      * navigate to an internal url (ie, another JQM Page) then you must prefix the url with a hash. IE, the hash is
      * not added automatically. This allows you to navigate to external urls as well.
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * If you add an item after the page has been created then you must call .refresh() to update the layout.
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * The list item is made linkable to the @param url
      */
     public JQMListItem addItem(String text, String url) {
@@ -408,7 +424,7 @@ public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandle
     }
 
     public interface LiCallback {
-        void on(JQMListItem item);
+        public abstract void on(JQMListItem item);
     }
 
     public void forEach(LiCallback callback) {
@@ -427,8 +443,10 @@ public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandle
     }
 
     public static enum ListChecked {
-        NONE, ANY, ALL
-    }
+
+        NONE,
+        ANY,
+        ALL;}
 
     public ListChecked getCheckedInfo() {
         boolean anyChecked = false;
@@ -466,7 +484,11 @@ public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandle
 
     /**
      * Call to refresh the list after a programmatic change is made.
+<<<<<<< LEFT
      * <br> In some cases you have to call recreate() first, and then refresh(), for example
+=======
+     *  In some cases you have to call recreate() first, and then refresh(), for example
+>>>>>>> RIGHT
      * when adding complex list items.
      */
     public void refresh() {
@@ -820,5 +842,4 @@ public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandle
     public void setIconAlt(boolean value) {
         JQMCommon.setIconAlt(this, value);
     }
-
 }

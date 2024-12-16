@@ -5,10 +5,10 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.dom.client.SpanElement;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.VerticalAlign;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -22,27 +22,31 @@ import com.sksamuel.jqm4gwt.JQMCommon;
 import com.sksamuel.jqm4gwt.Orientation;
 import com.sksamuel.jqm4gwt.events.HasTapHandlers;
 import com.sksamuel.jqm4gwt.events.JQMComponentEvents;
-import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration.WidgetHandlerCounter;
+import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.TapEvent;
 import com.sksamuel.jqm4gwt.events.TapHandler;
 
-/**
- * @author Stephen K Samuel samspade79@gmail.com 17 Jul 2011 15:38:47
- * <br>
- * An implementation of an anchor tag that wraps an image tag and optional text.
- * <pre> &lt;a href='mylink'&gt;&lt;img src='myimage'/&gt;&lt;/a&gt; </pre>
- *
- */
-public class ImageLink extends Widget implements HasClickHandlers, HasTapHandlers, HasEnabled,
-        HasText<ImageLink> {
 
+/**
+ *
+ *
+ * @author Stephen K Samuel samspade79@gmail.com 17 Jul 2011 15:38:47
+<p/>
+An implementation of an anchor tag that wraps an image tag and optional text.
+<pre> &lt;a href='mylink'>&lt;img src='myimage'/>&lt;/a> </pre>
+ */
+public class ImageLink extends Widget implements HasClickHandlers , HasTapHandlers , HasEnabled , HasText<ImageLink> {
     protected static final String JQM4GWT_IMAGE_LINK_A = "jqm4gwt-image-link-a";
+
     protected static final String JQM4GWT_IMAGE_LINK_IMG = "jqm4gwt-image-link-img";
+
     protected static final String DATA_RESIZE_PRIORITY = "data-resize-priority";
 
     protected ImageElement img;
+
     protected AnchorElement a;
+
     protected SpanElement txt;
 
     public ImageLink() {
@@ -64,7 +68,8 @@ public class ImageLink extends Widget implements HasClickHandlers, HasTapHandler
     protected void initImg() {
         setStyleName(img, JQM4GWT_IMAGE_LINK_IMG);
         setImageResizePriority(Orientation.HORIZONTAL);
-        img.getStyle().setVerticalAlign(VerticalAlign.TOP); // eliminates excessive/strange margin at the bottom
+        img.getStyle().setVerticalAlign(VerticalAlign.TOP);// eliminates excessive/strange margin at the bottom
+
         img.getStyle().setDisplay(Display.NONE);
     }
 
@@ -86,6 +91,7 @@ public class ImageLink extends Widget implements HasClickHandlers, HasTapHandler
      * The URL of the source image
      *
      * @param src
+     * 		
      */
     public void setSrc(String src) {
         img.setAttribute("src", src);
@@ -96,17 +102,24 @@ public class ImageLink extends Widget implements HasClickHandlers, HasTapHandler
         String src = getSrc();
         String text = getText();
         Style imgSt = img.getStyle();
-        if (src == null || src.isEmpty()) {
+        if ((src == null) || src.isEmpty()) {
             imgSt.setVerticalAlign(VerticalAlign.TOP);
             imgSt.clearMarginRight();
             imgSt.setDisplay(Display.NONE);
-            if (txt != null) txt.getStyle().setVerticalAlign(VerticalAlign.TOP);
+            if (txt != null) {
+                txt.getStyle().setVerticalAlign(VerticalAlign.TOP);
+            }
         } else {
             imgSt.setVerticalAlign(VerticalAlign.MIDDLE);
             imgSt.clearDisplay();
-            if (txt != null) txt.getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
-            if (text == null || text.isEmpty()) imgSt.clearMarginRight();
-            else imgSt.setMarginRight(0.3d, Unit.EM);
+            if (txt != null) {
+                txt.getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
+            }
+            if ((text == null) || text.isEmpty()) {
+                imgSt.clearMarginRight();
+            } else {
+                imgSt.setMarginRight(0.3, Unit.EM);
+            }
         }
     }
 
@@ -114,6 +127,7 @@ public class ImageLink extends Widget implements HasClickHandlers, HasTapHandler
      * The destination URL of the link
      *
      * @param href
+     * 		
      */
     public void setHref(String href) {
         a.setAttribute("href", href);
@@ -137,9 +151,15 @@ public class ImageLink extends Widget implements HasClickHandlers, HasTapHandler
 
     public Orientation getImageResizePriority() {
         String s = img.getAttribute(DATA_RESIZE_PRIORITY);
-        if (s == null || s.isEmpty()) return null;
-        if (Orientation.HORIZONTAL.getJqmValue().equals(s)) return Orientation.HORIZONTAL;
-        if (Orientation.VERTICAL.getJqmValue().equals(s)) return Orientation.VERTICAL;
+        if ((s == null) || s.isEmpty()) {
+            return null;
+        }
+        if (Orientation.HORIZONTAL.getJqmValue().equals(s)) {
+            return Orientation.HORIZONTAL;
+        }
+        if (Orientation.VERTICAL.getJqmValue().equals(s)) {
+            return Orientation.VERTICAL;
+        }
         return null;
     }
 
@@ -150,8 +170,11 @@ public class ImageLink extends Widget implements HasClickHandlers, HasTapHandler
      * <p> See <a href="http://stackoverflow.com/a/16217391">Flexible images</a></p>
      */
     public void setImageResizePriority(Orientation value) {
-        if (value == null) img.removeAttribute(DATA_RESIZE_PRIORITY);
-        else img.setAttribute(DATA_RESIZE_PRIORITY, value.getJqmValue());
+        if (value == null) {
+            img.removeAttribute(DATA_RESIZE_PRIORITY);
+        } else {
+            img.setAttribute(DATA_RESIZE_PRIORITY, value.getJqmValue());
+        }
     }
 
     @Override
@@ -197,9 +220,11 @@ public class ImageLink extends Widget implements HasClickHandlers, HasTapHandler
 
     @Override
     public void setText(String text) {
-        boolean emptyText = text == null || text.isEmpty();
+        boolean emptyText = (text == null) || text.isEmpty();
         if (emptyText) {
-            if (txt != null) txt.setInnerText(text);
+            if (txt != null) {
+                txt.setInnerText(text);
+            }
         } else {
             if (txt == null) {
                 txt = Document.get().createSpanElement();

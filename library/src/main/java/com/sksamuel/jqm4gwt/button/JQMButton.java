@@ -1,12 +1,5 @@
 package com.sksamuel.jqm4gwt.button;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.core.client.Scheduler;
@@ -38,42 +31,53 @@ import com.sksamuel.jqm4gwt.Mobile;
 import com.sksamuel.jqm4gwt.Transition;
 import com.sksamuel.jqm4gwt.events.HasTapHandlers;
 import com.sksamuel.jqm4gwt.events.JQMComponentEvents;
-import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration.WidgetHandlerCounter;
+import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration;
 import com.sksamuel.jqm4gwt.events.TapEvent;
 import com.sksamuel.jqm4gwt.events.TapHandler;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Map;
+
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 5 May 2011 14:02:24
- * <br>
+ * <p/>
  * An implementation of a Jquery mobile button.
- * <br>See <a href="http://demos.jquerymobile.com/1.4.5/button-markup/">Buttons</a>
- * <br>See also <a href="http://jquerymobile.com/demos/1.2.1/docs/buttons/buttons-types.html">Button basics</a>
+ * <p/>See <a href="http://demos.jquerymobile.com/1.4.5/button-markup/">Buttons</a>
+ * <p/>See also <a href="http://jquerymobile.com/demos/1.2.1/docs/buttons/buttons-types.html">Button basics</a>
  */
-public class JQMButton extends JQMWidget implements HasText<JQMButton>, HasRel<JQMButton>,
-        HasTransition<JQMButton>, HasClickHandlers, HasInline<JQMButton>,
-        HasIcon<JQMButton>, HasCorners<JQMButton>, HasIconShadow<JQMButton>, HasMini<JQMButton>,
-        HasTapHandlers {
+public class JQMButton extends JQMWidget implements HasText<JQMButton> , HasRel<JQMButton> , HasTransition<JQMButton> , HasClickHandlers , HasInline<JQMButton> , HasIcon<JQMButton> , HasCorners<JQMButton> , HasIconShadow<JQMButton> , HasMini<JQMButton> , HasTapHandlers {
+    private static final String[] HOVER_PROPS = new java.lang.String[]{ "background-color", "color", "border-color", "text-shadow" };
 
-    private static final String[] HOVER_PROPS = { "background-color", "color", "border-color", "text-shadow" };
+    private static final String[] HOVER_REGEX = new java.lang.String[]{ "^border-\\S*color$", "^border-\\S*color-value$" };
 
-    private static final String[] HOVER_REGEX = { "^border-\\S*color$", "^border-\\S*color-value$" };
+    /**
+     * FindRegex/Replacement pairs
+     */
+    private static final String[] HOVER_REPLACE = new java.lang.String[]{ "color-value", "color" };
 
-    /** FindRegex/Replacement pairs */
-    private static final String[] HOVER_REPLACE = { "color-value", "color" };
-
-    /** Heuristics based on jquery.mobile.css definitions */
+    /**
+     * Heuristics based on jquery.mobile.css definitions
+     */
     private static final Map<String, String> currentThemeSearch = new LinkedHashMap<String, String>();
 
     private static final Map<String, JavaScriptObject> cachedCssRules = new HashMap<String, JavaScriptObject>();
 
     private boolean alwaysActive;
+
     private boolean alwaysHover;
+
     private JavaScriptObject hoverStyle = null;
 
     private class StyleItem {
         public final String property;
+
         public final String oldValue;
+
         public final String newValue;
 
         public StyleItem(String property, String oldValue, String newValue) {
@@ -122,16 +126,22 @@ public class JQMButton extends JQMWidget implements HasText<JQMButton>, HasRel<J
      * anything. This button would only react to events if a link is added or
      * a click handler is attached.
      *
-     * @param text the text to display on the button
+     * @param text
+     * 		the text to display on the button
      */
-    public @UiConstructor JQMButton(String text) {
+    @UiConstructor
+    public JQMButton(String text) {
         this(new Anchor(text));
     }
 
     /**
      * Convenience constructor that creates a button that shows the given
      * JQMPage when clicked. The link will use a Transition.POP type.
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * Note that the page param is an already instantiated page and thus will
      * be immediately inserted into the DOM. Do not use this constructor when
      * you want to lazily add the page.
@@ -145,7 +155,11 @@ public class JQMButton extends JQMWidget implements HasText<JQMButton>, HasRel<J
 
     /**
      * Convenience constructor that creates a button that shows the given JQMPage when clicked.
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * Note that the page param is an already instantiated page and thus will
      * be immediately inserted into the DOM. Do not use this constructor when
      * you want to lazily add the page.
@@ -162,7 +176,11 @@ public class JQMButton extends JQMWidget implements HasText<JQMButton>, HasRel<J
     /**
      * Convenience constructor that creates a button that shows the given url
      * when clicked. The link will use a Transition.POP type.
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * Note that the page param is an already instantiated page and thus will
      * be immediately inserted into the DOM. Do not use this constructor when
      * you want to lazily add the page.
@@ -177,7 +195,11 @@ public class JQMButton extends JQMWidget implements HasText<JQMButton>, HasRel<J
     /**
      * Convenience constructor that creates a button that shows the given url
      * when clicked.
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * Note that the page param is an already instantiated page and thus will
      * be immediately inserted into the DOM. Do not use this constructor when
      * you want to lazily add the page.
@@ -188,10 +210,12 @@ public class JQMButton extends JQMWidget implements HasText<JQMButton>, HasRel<J
      */
     public JQMButton(String text, String url, final Transition t) {
         this(text);
-        if (url != null)
+        if (url != null) {
             setHref(url);
-        if (t != null)
+        }
+        if (t != null) {
             withTransition(t);
+        }
     }
 
     public static void initEltAsButton(Element elt) {
@@ -218,30 +242,30 @@ public class JQMButton extends JQMWidget implements HasText<JQMButton>, HasRel<J
         return addDomHandler(handler, ClickEvent.getType());
     }
 
-	@Override
-	public HandlerRegistration addTapHandler(TapHandler handler) {
-        // this is not a native browser event so we will have to manage it via JS
-        return JQMHandlerRegistration.registerJQueryHandler(new WidgetHandlerCounter() {
-			@Override
-			public int getHandlerCountForWidget(Type<?> type) {
-				return getHandlerCount(type);
-			}
-        }, this, handler, JQMComponentEvents.TAP_EVENT, TapEvent.getType());
-	}
+@Override
+public HandlerRegistration addTapHandler(TapHandler handler) {
+       // this is not a native browser event so we will have to manage it via JS
+       return JQMHandlerRegistration.registerJQueryHandler(new WidgetHandlerCounter() {
+		@Override
+		public int getHandlerCountForWidget(Type<?> type) {
+			return getHandlerCount(type);
+		}
+       }, this, handler, JQMComponentEvents.TAP_EVENT, TapEvent.getType());
+}
 
-	@Override
-    public IconPos getIconPos() {
-        return JQMCommon.getIconPosEx(this, JQMCommon.STYLE_UI_BTN_ICONPOS);
-    }
+@Override
+   public IconPos getIconPos() {
+       return JQMCommon.getIconPosEx(this, JQMCommon.STYLE_UI_BTN_ICONPOS);
+   }
 
-	/**
-     * Sets the position of the icon. If you desire an icon only button then
-     * set the position to IconPos.NOTEXT
-     */
-    @Override
-    public void setIconPos(IconPos pos) {
-        JQMCommon.setIconPosEx(this, pos, JQMCommon.STYLE_UI_BTN_ICONPOS);
-    }
+/**
+    * Sets the position of the icon. If you desire an icon only button then
+    * set the position to IconPos.NOTEXT
+    */
+   @Override
+   public void setIconPos(IconPos pos) {
+       JQMCommon.setIconPosEx(this, pos, JQMCommon.STYLE_UI_BTN_ICONPOS);
+   }
 
     /**
      * Sets the position of the icon. If you desire an icon only button then
@@ -458,7 +482,11 @@ public class JQMButton extends JQMWidget implements HasText<JQMButton>, HasRel<J
 
     /**
      * Sets this button to be inline.
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * NOTE: If this button is inside a {@link JQMButtonGroup} then you must
      * call withInline(boolean) on the button group itself and not each button
      * individually.
@@ -472,7 +500,11 @@ public class JQMButton extends JQMWidget implements HasText<JQMButton>, HasRel<J
 
     /**
      * Sets this button to be inline.
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * NOTE: If this button is inside a {@link JQMButtonGroup} then you must
      * call withInline(boolean) on the button group itself and not each button
      * individually.
@@ -752,9 +784,13 @@ public class JQMButton extends JQMWidget implements HasText<JQMButton>, HasRel<J
     }
 
     private static final String STYLE_UI_BTN_RIGHT = "ui-btn-right";
+
     private static final String STYLE_UI_BTN_LEFT = "ui-btn-left";
 
-    public static enum PosOnBand { RIGHT, LEFT }
+    public static enum PosOnBand {
+
+        RIGHT,
+        LEFT;}
 
     public PosOnBand getPosOnBand() {
         if (JQMCommon.hasStyle(this, STYLE_UI_BTN_RIGHT)) return PosOnBand.RIGHT;
@@ -780,5 +816,4 @@ public class JQMButton extends JQMWidget implements HasText<JQMButton>, HasRel<J
             }
         }
     }
-
 }

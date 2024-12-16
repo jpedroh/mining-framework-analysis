@@ -7,33 +7,36 @@ import com.sksamuel.jqm4gwt.HasJqmHeader;
 import com.sksamuel.jqm4gwt.HasText;
 import com.sksamuel.jqm4gwt.JQMCommon;
 import com.sksamuel.jqm4gwt.JQMPage;
-import com.sksamuel.jqm4gwt.button.JQMButton;
 import com.sksamuel.jqm4gwt.button.JQMButton.PosOnBand;
+import com.sksamuel.jqm4gwt.button.JQMButton;
+
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 4 May 2011 21:21:13
  *
- * <br> This class models a Jquery Mobile header element.
- * It can contain text, and two optional buttons, one left and one right.
+ *         This class models a Jquery Mobile header element. It can contain
+ *         text, and two optional buttons, one left and one right.
  *
- * <br> See <a href="http://jquerymobile.com/demos/1.2.0/docs/toolbars/docs-headers.html">Header structure</a>
+ * @link
+ *       http://jquerymobile.com/demos/1.2.0/docs/toolbars/docs-headers.html
  *
  */
-public class JQMHeader extends JQMToolbar implements HasText<JQMHeader>, HasJqmHeader {
-
+public class JQMHeader extends JQMToolbar implements HasText<JQMHeader> , HasJqmHeader {
     private static final String BACK_BTN = "data-add-back-btn";
+
     private static final String BACK_BTN_TEXT = "data-back-btn-text";
+
     private static final String BACK_BTN_THEME = "data-back-btn-theme";
 
     /**
      * Left button, keep reference so we can replace
      */
-    private JQMButton   left;
+    private JQMButton left;
 
     /**
      * Right button, keep reference so we can replace
      */
-    private JQMButton   right;
+    private JQMButton right;
 
     /**
      * Creates a new {@link JQMHeader} with no text and no automatic
@@ -381,7 +384,11 @@ public class JQMHeader extends JQMToolbar implements HasText<JQMHeader>, HasJqmH
      * Sets whether or not this page should have an auto generated back
      * button. If so, it will be placed in the left slot and override any left
      * button already there.
+<<<<<<< LEFT
      * <br>
+=======
+     *
+>>>>>>> RIGHT
      * If you want a back button in the right, then programatically create a
      * button, set it to back using btn.setBack(), and call header.setRightButton(btn) with
      * the button as the param.
