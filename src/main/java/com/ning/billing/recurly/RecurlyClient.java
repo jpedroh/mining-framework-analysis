@@ -14,10 +14,17 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 package com.ning.billing.recurly;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.StandardSystemProperty;
+import com.google.common.io.CharSource;
+import com.google.common.io.Resources;
+import com.google.common.net.HttpHeaders;
 import com.ning.billing.recurly.model.Account;
+import com.ning.billing.recurly.model.AccountAcquisition;
 import com.ning.billing.recurly.model.AccountBalance;
 import com.ning.billing.recurly.model.AccountNotes;
 import com.ning.billing.recurly.model.Accounts;
@@ -38,6 +45,8 @@ import com.ning.billing.recurly.model.InvoiceCollection;
 import com.ning.billing.recurly.model.InvoiceRefund;
 import com.ning.billing.recurly.model.InvoiceState;
 import com.ning.billing.recurly.model.Invoices;
+import com.ning.billing.recurly.model.MeasuredUnit;
+import com.ning.billing.recurly.model.MeasuredUnits;
 import com.ning.billing.recurly.model.Plan;
 import com.ning.billing.recurly.model.Plans;
 import com.ning.billing.recurly.model.Purchase;
@@ -51,9 +60,9 @@ import com.ning.billing.recurly.model.RefundOption;
 import com.ning.billing.recurly.model.ShippingAddress;
 import com.ning.billing.recurly.model.ShippingAddresses;
 import com.ning.billing.recurly.model.Subscription;
+import com.ning.billing.recurly.model.SubscriptionNotes;
 import com.ning.billing.recurly.model.SubscriptionState;
 import com.ning.billing.recurly.model.SubscriptionUpdate;
-import com.ning.billing.recurly.model.SubscriptionNotes;
 import com.ning.billing.recurly.model.Subscriptions;
 import com.ning.billing.recurly.model.Transaction;
 import com.ning.billing.recurly.model.TransactionState;
@@ -61,29 +70,11 @@ import com.ning.billing.recurly.model.TransactionType;
 import com.ning.billing.recurly.model.Transactions;
 import com.ning.billing.recurly.model.Usage;
 import com.ning.billing.recurly.model.Usages;
-import com.ning.billing.recurly.model.MeasuredUnit;
-import com.ning.billing.recurly.model.MeasuredUnits;
-import com.ning.billing.recurly.model.AccountAcquisition;
-
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.StandardSystemProperty;
-import com.google.common.io.CharSource;
-import com.google.common.io.Resources;
-import com.google.common.net.HttpHeaders;
-
 import com.ning.billing.recurly.util.http.SslUtils;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
 import com.ning.http.client.FluentCaseInsensitiveStringsMap;
 import com.ning.http.client.Response;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
-import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -93,28 +84,38 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.List;
+import javax.annotation.Nullable;
+import javax.xml.bind.DatatypeConverter;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class RecurlyClient {
-
     private static final Logger log = LoggerFactory.getLogger(RecurlyClient.class);
 
     public static final String RECURLY_DEBUG_KEY = "recurly.debug";
+
     public static final String RECURLY_API_VERSION = "2.17";
 
     private static final String X_RATELIMIT_REMAINING_HEADER_NAME = "X-RateLimit-Remaining";
+
     private static final String X_RECORDS_HEADER_NAME = "X-Records";
+
     private static final String LINK_HEADER_NAME = "Link";
 
     private static final String GIT_PROPERTIES_FILE = "com/ning/billing/recurly/git.properties";
+
     @VisibleForTesting
     static final String GIT_COMMIT_ID_DESCRIBE_SHORT = "git.commit.id.describe-short";
+
     private static final Pattern TAG_FROM_GIT_DESCRIBE_PATTERN = Pattern.compile("recurly-java-library-([0-9]*\\.[0-9]*\\.[0-9]*)(-[0-9]*)?");
 
     public static final String FETCH_RESOURCE = "/recurly_js/result";
@@ -129,16 +130,22 @@ public class RecurlyClient {
     }
 
     // TODO: should we make it static?
+    // TODO: should we make it static?
     private final XmlMapper xmlMapper;
+
     private final String userAgent;
 
     private final String key;
+
     private final String baseUrl;
+
     private AsyncHttpClient client;
 
     // Allows error messages to be returned in a specified language
+    // Allows error messages to be returned in a specified language
     private String acceptLanguage = "en-US";
 
+    // Stores the number of requests remaining before rate limiting takes effect
     // Stores the number of requests remaining before rate limiting takes effect
     private int rateLimitRemaining;
 
@@ -566,7 +573,6 @@ public class RecurlyClient {
                       Subscription.class);
     }
 
-
     /**
      * Update to a particular {@link Subscription}'s notes by it's UUID
      * <p>
@@ -693,7 +699,6 @@ public class RecurlyClient {
                         addOnCode +
                         Usage.USAGE_RESOURCE, Usages.class, params );
     }
-
 
     /**
      * Get the subscriptions for an account.
@@ -1011,7 +1016,7 @@ public class RecurlyClient {
         return doGET(Invoices.INVOICES_RESOURCE + "/" + invoiceId + Transactions.TRANSACTIONS_RESOURCE,
                      Transactions.class, new QueryParams());
     }
-    
+
     /**
      * Lookup an account's invoices
      * <p>
@@ -1557,7 +1562,6 @@ public class RecurlyClient {
                 Redemption.class);
     }
 
-
     /**
      * Lookup all coupon redemptions on an invoice.
      *
@@ -1917,7 +1921,6 @@ public class RecurlyClient {
         doDELETE(Account.ACCOUNT_RESOURCE + "/" + accountCode + AccountAcquisition.ACCOUNT_ACQUISITION_RESOURCE);
     }
 
-
     /**
      * Get Credit Payments
      * <p>
@@ -2210,11 +2213,7 @@ public class RecurlyClient {
     }
 
     private AsyncHttpClient.BoundRequestBuilder clientRequestBuilderCommon(AsyncHttpClient.BoundRequestBuilder requestBuilder) {
-        return requestBuilder.addHeader("Authorization", "Basic " + key)
-                .addHeader("X-Api-Version", RECURLY_API_VERSION)
-                .addHeader(HttpHeaders.USER_AGENT, userAgent)
-                .addHeader("Accept-Language", acceptLanguage)
-                .setBodyEncoding("UTF-8");
+        return requestBuilder.addHeader("Authorization", "Basic " + key).addHeader("X-Api-Version", RECURLY_API_VERSION).addHeader(HttpHeaders.USER_AGENT, userAgent).addHeader("Accept-Language", acceptLanguage).setBodyEncoding("UTF-8");
     }
 
     private String convertStreamToString(final java.io.InputStream is) {

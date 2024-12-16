@@ -14,20 +14,18 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 package com.ning.billing.recurly.model;
 
 import com.google.common.base.Objects;
-import org.joda.time.DateTime;
-
+import java.math.BigDecimal;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.math.BigDecimal;
+import org.joda.time.DateTime;
+
 
 @XmlRootElement(name = "invoice")
 public class Invoice extends RecurlyObject {
-
     @XmlElement(name = "account")
     private Account account;
 
@@ -433,7 +431,6 @@ public class Invoice extends RecurlyObject {
         this.refundableTotalInCents = integerOrNull(refundableTotalInCents);
     }
 
-
     public DateTime getDueOn() {
         return dueOn;
     }
@@ -521,11 +518,13 @@ public class Invoice extends RecurlyObject {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        final Invoice invoice = (Invoice) o;
-
+        if (this == o) {
+            return true;
+        }
+        if ((o == null) || (getClass() != o.getClass())) {
+            return false;
+        }
+        final Invoice invoice = ((Invoice) (o));
         if (account != null ? !account.equals(invoice.account) : invoice.account != null) {
             return false;
         }
@@ -637,51 +636,11 @@ public class Invoice extends RecurlyObject {
         if (gatewayCode != null ? !gatewayCode.equals(invoice.gatewayCode) : invoice.gatewayCode != null) {
             return false;
         }
-
         return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(
-                account,
-                originalInvoice,
-                originalInvoices,
-                uuid,
-                state,
-                invoiceNumber,
-                invoiceNumberPrefix,
-                poNumber,
-                vatNumber,
-                subtotalInCents,
-                totalInCents,
-                taxInCents,
-                taxRegion,
-                taxType,
-                taxRate,
-                currency,
-                createdAt,
-                updatedAt,
-                closedAt,
-                collectionMethod,
-                netTerms,
-                attemptNextCollectionAt,
-                recoveryReason,
-                lineItems,
-                transactions,
-                customerNotes,
-                termsAndConditions,
-                vatReverseChargeNotes,
-                gatewayCode,
-                subtotalBeforeDiscountInCents,
-                discountInCents,
-                balanceInCents,
-                refundableTotalInCents,
-                type,
-                origin,
-                address,
-                shippingAddress
-        );
+        return Objects.hashCode(account, originalInvoice, originalInvoices, uuid, state, invoiceNumber, invoiceNumberPrefix, poNumber, vatNumber, subtotalInCents, totalInCents, taxInCents, taxRegion, taxType, taxRate, currency, createdAt, updatedAt, closedAt, collectionMethod, netTerms, attemptNextCollectionAt, recoveryReason, lineItems, transactions, customerNotes, termsAndConditions, vatReverseChargeNotes, gatewayCode, subtotalBeforeDiscountInCents, discountInCents, balanceInCents, refundableTotalInCents, type, origin, address, shippingAddress);
     }
-
 }
