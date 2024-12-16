@@ -18,7 +18,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser.symbolsolver.javassistmodel;
 
 import com.github.javaparser.ast.AccessSpecifier;
@@ -35,25 +34,21 @@ import com.github.javaparser.symbolsolver.logic.MethodResolutionCapability;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.resolution.SymbolSolver;
+import java.util.*;
+import java.util.stream.Collectors;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.NotFoundException;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Federico Tomassetti
  */
-public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
-        implements ResolvedInterfaceDeclaration, MethodResolutionCapability, MethodUsageResolutionCapability {
-
+public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration implements ResolvedInterfaceDeclaration , MethodResolutionCapability , MethodUsageResolutionCapability {
     private CtClass ctClass;
+
     private TypeSolver typeSolver;
+
     private JavassistTypeDeclarationAdapter javassistTypeDeclarationAdapter;
 
     @Override
@@ -98,8 +93,7 @@ public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
     }
 
     @Deprecated
-    public Optional<MethodUsage> solveMethodAsUsage(String name, List<ResolvedType> argumentsTypes,
-                                                    Context invokationContext, List<ResolvedType> typeParameterValues) {
+    public Optional<MethodUsage> solveMethodAsUsage(String name, List<ResolvedType> argumentsTypes, Context invokationContext, List<ResolvedType> typeParameterValues) {
         return JavassistUtils.solveMethodAsUsage(name, argumentsTypes, typeSolver, invokationContext, typeParameterValues, this, ctClass);
     }
 
@@ -116,7 +110,7 @@ public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
 
     @Override
     public List<ResolvedFieldDeclaration> getAllFields() {
-      return javassistTypeDeclarationAdapter.getDeclaredFields();
+        return javassistTypeDeclarationAdapter.getDeclaredFields();
     }
 
     @Override
@@ -126,14 +120,17 @@ public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
 
     @Override
     public List<ResolvedReferenceType> getAncestors(boolean acceptIncompleteList) {
+<<<<<<< LEFT
+        return javassistTypeDeclarationAdapter.getAncestors(this, acceptIncompleteList);
+=======
         return javassistTypeDeclarationAdapter.getAncestors(acceptIncompleteList);
+>>>>>>> RIGHT
+
     }
 
     @Override
     public Set<ResolvedMethodDeclaration> getDeclaredMethods() {
-        return Arrays.stream(ctClass.getDeclaredMethods())
-                .map(m -> new JavassistMethodDeclaration(m, typeSolver))
-                .collect(Collectors.toSet());
+        return Arrays.stream(ctClass.getDeclaredMethods()).map(( m) -> new JavassistMethodDeclaration(m, typeSolver)).collect(Collectors.toSet());
     }
 
     @Override
@@ -162,7 +159,6 @@ public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
         return this;
     }
 
-
     @Deprecated
     public SymbolReference<? extends ResolvedValueDeclaration> solveSymbol(String name, TypeSolver typeSolver) {
         for (CtField field : ctClass.getDeclaredFields()) {
@@ -170,7 +166,6 @@ public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
                 return SymbolReference.solved(new JavassistFieldDeclaration(field, typeSolver));
             }
         }
-
         String[] interfaceFQNs = getInterfaceFQNs();
         for (String interfaceFQN : interfaceFQNs) {
             SymbolReference<? extends ResolvedValueDeclaration> interfaceRef = solveSymbolForFQN(name, interfaceFQN);
@@ -178,7 +173,6 @@ public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
                 return interfaceRef;
             }
         }
-
         return SymbolReference.unsolved(ResolvedValueDeclaration.class);
     }
 
@@ -186,7 +180,6 @@ public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
         if (fqn == null) {
             return SymbolReference.unsolved(ResolvedValueDeclaration.class);
         }
-
         ResolvedReferenceTypeDeclaration fqnTypeDeclaration = typeSolver.solveType(fqn);
         return new SymbolSolver(typeSolver).solveSymbolInType(fqnTypeDeclaration, symbolName);
     }
@@ -207,7 +200,7 @@ public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
             Get all internal types of the current class and get their corresponding ReferenceTypeDeclaration.
             Finally, return them in a Set.
              */
-            return Arrays.stream(ctClass.getDeclaredClasses()).map(itype -> JavassistFactory.toTypeDeclaration(itype, typeSolver)).collect(Collectors.toSet());
+            return Arrays.stream(ctClass.getDeclaredClasses()).map(( itype) -> JavassistFactory.toTypeDeclaration(itype, typeSolver)).collect(Collectors.toSet());
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -219,10 +212,8 @@ public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
         The name of the ReferenceTypeDeclaration could be composed on the internal class and the outer class, e.g. A$B. That's why we search the internal type in the ending part.
         In case the name is composed of the internal type only, i.e. f.getName() returns B, it will also works.
          */
-        Optional<ResolvedReferenceTypeDeclaration> type =
-                this.internalTypes().stream().filter(f -> f.getName().endsWith(name)).findFirst();
-        return type.orElseThrow(() ->
-                new UnsolvedSymbolException("Internal type not found: " + name));
+        Optional<ResolvedReferenceTypeDeclaration> type = this.internalTypes().stream().filter(( f) -> f.getName().endsWith(name)).findFirst();
+        return type.orElseThrow(() -> new UnsolvedSymbolException("Internal type not found: " + name));
     }
 
     @Override
@@ -231,7 +222,7 @@ public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
         The name of the ReferenceTypeDeclaration could be composed on the internal class and the outer class, e.g. A$B. That's why we search the internal type in the ending part.
         In case the name is composed of the internal type only, i.e. f.getName() returns B, it will also works.
          */
-        return this.internalTypes().stream().anyMatch(f -> f.getName().endsWith(name));
+        return this.internalTypes().stream().anyMatch(( f) -> f.getName().endsWith(name));
     }
 
     @Override

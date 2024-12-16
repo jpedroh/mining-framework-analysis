@@ -18,7 +18,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser.symbolsolver.javassistmodel;
 
 import com.github.javaparser.ast.body.AnnotationDeclaration;
@@ -27,22 +26,23 @@ import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.logic.AbstractTypeDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
-import javassist.CtClass;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javassist.CtClass;
+
 
 /**
  * @author Malte Skoruppa
  */
 public class JavassistAnnotationDeclaration extends AbstractTypeDeclaration implements ResolvedAnnotationDeclaration {
-
     private CtClass ctClass;
+
     private TypeSolver typeSolver;
+
     private JavassistTypeDeclarationAdapter javassistTypeDeclarationAdapter;
 
     @Override
@@ -100,7 +100,12 @@ public class JavassistAnnotationDeclaration extends AbstractTypeDeclaration impl
 
     @Override
     public List<ResolvedReferenceType> getAncestors(boolean acceptIncompleteList) {
+<<<<<<< LEFT
+        return javassistTypeDeclarationAdapter.getAncestors(this, acceptIncompleteList);
+=======
         return javassistTypeDeclarationAdapter.getAncestors(acceptIncompleteList);
+>>>>>>> RIGHT
+
     }
 
     @Override

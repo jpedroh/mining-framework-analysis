@@ -18,7 +18,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser.symbolsolver.javassistmodel;
 
 import com.github.javaparser.ast.AccessSpecifier;
@@ -34,22 +33,22 @@ import com.github.javaparser.symbolsolver.logic.MethodResolutionCapability;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.resolution.SymbolSolver;
+import java.util.*;
+import java.util.stream.Collectors;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.NotFoundException;
 import javassist.bytecode.AccessFlag;
 
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Federico Tomassetti
  */
-public class JavassistEnumDeclaration extends AbstractTypeDeclaration
-        implements ResolvedEnumDeclaration, MethodResolutionCapability, MethodUsageResolutionCapability {
-
+public class JavassistEnumDeclaration extends AbstractTypeDeclaration implements ResolvedEnumDeclaration , MethodResolutionCapability , MethodUsageResolutionCapability {
     private CtClass ctClass;
+
     private TypeSolver typeSolver;
+
     private JavassistTypeDeclarationAdapter javassistTypeDeclarationAdapter;
 
     public JavassistEnumDeclaration(CtClass ctClass, TypeSolver typeSolver) {
@@ -90,7 +89,12 @@ public class JavassistEnumDeclaration extends AbstractTypeDeclaration
 
     @Override
     public List<ResolvedReferenceType> getAncestors(boolean acceptIncompleteList) {
+<<<<<<< LEFT
+        return javassistTypeDeclarationAdapter.getAncestors(this, acceptIncompleteList);
+=======
         return javassistTypeDeclarationAdapter.getAncestors(acceptIncompleteList);
+>>>>>>> RIGHT
+
     }
 
     @Override
@@ -151,8 +155,7 @@ public class JavassistEnumDeclaration extends AbstractTypeDeclaration
         return JavassistUtils.solveMethod(name, argumentsTypes, staticOnly, typeSolver, this, ctClass);
     }
 
-    public Optional<MethodUsage> solveMethodAsUsage(String name, List<ResolvedType> argumentsTypes,
-                                                    Context invokationContext, List<ResolvedType> typeParameterValues) {
+    public Optional<MethodUsage> solveMethodAsUsage(String name, List<ResolvedType> argumentsTypes, Context invokationContext, List<ResolvedType> typeParameterValues) {
         return JavassistUtils.solveMethodAsUsage(name, argumentsTypes, typeSolver, invokationContext, typeParameterValues, this, ctClass);
     }
 
