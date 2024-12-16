@@ -1,7 +1,6 @@
 package junit.framework;
 
 import java.util.List;
-
 import org.junit.Ignore;
 import org.junit.runner.Describable;
 import org.junit.runner.Description;
@@ -15,6 +14,7 @@ import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Orderable;
 import org.junit.runner.manipulation.Sorter;
 
+
 /**
  * The JUnit4TestAdapter enables running JUnit-4-style tests using a JUnit-3-style test runner.
  *
@@ -25,7 +25,7 @@ import org.junit.runner.manipulation.Sorter;
       }
 </pre>
  */
-public class JUnit4TestAdapter implements Test, Filterable, Orderable, Describable {
+public class JUnit4TestAdapter implements Test , Filterable , Orderable , Describable {
     private final Class<?> fNewTestClass;
 
     private final Runner fRunner;

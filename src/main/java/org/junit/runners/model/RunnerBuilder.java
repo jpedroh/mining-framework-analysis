@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.OrderWith;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.Ordering;
+
 
 /**
  * A RunnerBuilder is a strategy for constructing runners for classes.
@@ -61,7 +61,8 @@ public abstract class RunnerBuilder {
      * {@code null} from this method, but no RunnerBuilder passed to a Runner constructor will
      * return {@code null} from this method.
      *
-     * @param testClass class to be run
+     * @param testClass
+     * 		class to be run
      * @return a Runner
      */
     public Runner safeRunnerForClass(Class<?> testClass) {
@@ -71,7 +72,7 @@ public abstract class RunnerBuilder {
                 configureRunner(runner);
             }
             return runner;
-        } catch (Throwable e) {
+        } catch (java.lang.Throwable e) {
             return new ErrorReportingRunner(testClass, e);
         }
     }

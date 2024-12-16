@@ -1,7 +1,6 @@
 package org.junit.runner;
 
 import java.util.Comparator;
-
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.internal.requests.ClassRequest;
 import org.junit.internal.requests.FilterRequest;
@@ -11,6 +10,7 @@ import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.Ordering;
 import org.junit.runners.model.InitializationError;
+
 
 /**
  * A <code>Request</code> is an abstract description of tests to be run. Older versions of
@@ -92,7 +92,6 @@ public abstract class Request {
         return classes(JUnitCore.defaultComputer(), classes);
     }
 
-
     /**
      * Creates a {@link Request} that, when processed, will report an error for the given
      * test class with the given cause.
@@ -139,7 +138,8 @@ public abstract class Request {
      * <p>Returns an empty {@code Request} if {@code desiredDescription} is not a single test and filters all but the single
      * test if {@code desiredDescription} is a single test.</p>
      *
-     * @param desiredDescription {@code Description} of those tests that should be run
+     * @param desiredDescription
+     * 		{@link Description} of those tests that should be run
      * @return the filtered Request
      */
     public Request filterWith(Description desiredDescription) {
@@ -153,19 +153,20 @@ public abstract class Request {
      * For example, here is code to run a test suite in alphabetical order:
      * <pre>
      * private static Comparator&lt;Description&gt; forward() {
-     *   return new Comparator&lt;Description&gt;() {
-     *     public int compare(Description o1, Description o2) {
-     *       return o1.getDisplayName().compareTo(o2.getDisplayName());
-     *     }
-     *   };
+     * return new Comparator&lt;Description&gt;() {
+     * public int compare(Description o1, Description o2) {
+     * return o1.getDisplayName().compareTo(o2.getDisplayName());
+     * }
+     * };
      * }
      *
      * public static main() {
-     *   new JUnitCore().run(Request.aClass(AllTests.class).sortWith(forward()));
+     * new JUnitCore().run(Request.aClass(AllTests.class).sortWith(forward()));
      * }
      * </pre>
      *
-     * @param comparator definition of the order of the tests in this Request
+     * @param comparator
+     * 		definition of the order of the tests in this Request
      * @return a Request with ordered Tests
      */
     public Request sortWith(Comparator<Description> comparator) {

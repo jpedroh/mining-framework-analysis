@@ -1,8 +1,5 @@
 package org.junit.runners;
 
-import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_METHOD_VALIDATOR;
-import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_VALIDATOR;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -15,7 +12,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -47,6 +43,9 @@ import org.junit.runners.model.TestClass;
 import org.junit.validator.AnnotationsValidator;
 import org.junit.validator.PublicClassValidator;
 import org.junit.validator.TestClassValidator;
+import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_METHOD_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_VALIDATOR;
+
 
 /**
  * Provides most of the functionality specific to a Runner that implements a
@@ -61,12 +60,11 @@ import org.junit.validator.TestClassValidator;
  *
  * @since 4.5
  */
-public abstract class ParentRunner<T> extends Runner implements Filterable,
-        Orderable {
-    private static final List<TestClassValidator> VALIDATORS = Arrays.asList(
-            new AnnotationsValidator(), new PublicClassValidator());
+public abstract class ParentRunner<T> extends Runner implements Filterable , Orderable {
+    private static final List<TestClassValidator> VALIDATORS = Arrays.asList(new AnnotationsValidator(), new PublicClassValidator());
 
     private final Object childrenLock = new Object();
+
     private final TestClass testClass;
 
     // Guarded by childrenLock
@@ -231,10 +229,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * {@link org.junit.runners.model.MultipleFailureException}.
      */
     protected Statement withAfterClasses(Statement statement) {
-        List<FrameworkMethod> afters = testClass
-                .getAnnotatedMethods(AfterClass.class);
-        return afters.isEmpty() ? statement :
-                new RunAfters(statement, afters, null);
+        List<FrameworkMethod> afters = testClass.getAnnotatedMethods(AfterClass.class);
+        return afters.isEmpty() ? statement : new RunAfters(statement, afters, null);
     }
 
     /**
@@ -349,19 +345,17 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     //
     // Implementation of Runner
     //
-
     @Override
     public Description getDescription() {
         Class<?> clazz = getTestClass().getJavaClass();
         Description description;
         // if subclass overrides `getName()` then we should use it
         // to maintain backwards compatibility with JUnit 4.12
-        if (clazz == null || !clazz.getName().equals(getName())) {
+        if ((clazz == null) || (!clazz.getName().equals(getName()))) {
             description = Description.createSuiteDescription(getName(), getRunnerAnnotations());
         } else {
             description = Description.createSuiteDescription(clazz, getRunnerAnnotations());
         }
-
         for (T child : getFilteredChildren()) {
             description.addChild(describeChild(child));
         }
@@ -370,8 +364,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
     @Override
     public void run(final RunNotifier notifier) {
-        EachTestNotifier testNotifier = new EachTestNotifier(notifier,
-                getDescription());
+        EachTestNotifier testNotifier = new EachTestNotifier(notifier, getDescription());
         testNotifier.fireTestSuiteStarted();
         try {
             Statement statement = classBlock(notifier);
@@ -380,7 +373,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             testNotifier.addFailedAssumption(e);
         } catch (StoppedByUserException e) {
             throw e;
-        } catch (Throwable e) {
+        } catch (java.lang.Throwable e) {
             testNotifier.addFailure(e);
         } finally {
             testNotifier.fireTestSuiteFinished();
@@ -390,11 +383,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     //
     // Implementation of Filterable and Sortable
     //
-
     public void filter(Filter filter) throws NoTestsRemainException {
-        synchronized (childrenLock) {
+        synchronized(childrenLock) {
             List<T> children = new ArrayList<T>(getFilteredChildren());
-            for (Iterator<T> iter = children.iterator(); iter.hasNext(); ) {
+            for (Iterator<T> iter = children.iterator(); iter.hasNext();) {
                 T each = iter.next();
                 if (shouldRun(filter, each)) {
                     try {
@@ -414,7 +406,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     public void sort(Sorter sorter) {
-        synchronized (childrenLock) {
+        synchronized(childrenLock) {
             for (T each : getFilteredChildren()) {
                 sorter.apply(each);
             }
@@ -430,10 +422,9 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * @since 4.13
      */
     public void order(GeneralOrdering ordering) throws InvalidOrderingException {
-        synchronized (childrenLock) {
+        synchronized(childrenLock) {
             List<T> children = getFilteredChildren();
-            Map<Description, List<T>> childMap = new LinkedHashMap<Description, List<T>>(
-                    children.size());
+            Map<Description, List<T>> childMap = new LinkedHashMap<Description, List<T>>(children.size());
             for (T child : children) {
                 Description description = describeChild(child);
                 List<T> childrenWithDescription = childMap.get(description);
@@ -444,10 +435,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                 childrenWithDescription.add(child);
                 ordering.apply(child);
             }
-
             Set<Description> uniqueDescriptions = childMap.keySet();
             List<Description> inOrder = ordering.orderChildren(getDescription());
-
             if (!uniqueDescriptions.containsAll(inOrder)) {
                 throw new InvalidOrderingException("Ordering added items");
             }
@@ -457,7 +446,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             } else if (!resultAsSet.containsAll(uniqueDescriptions)) {
                 throw new InvalidOrderingException("Ordering removed items");
             }
-
             children = new ArrayList<T>(children.size());
             for (Description description : inOrder) {
                 children.addAll(childMap.get(description));
@@ -469,7 +457,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     //
     // Private implementation
     //
-
     private void validate() throws InitializationError {
         List<Throwable> errors = new ArrayList<Throwable>();
         collectInitializationErrors(errors);
@@ -477,10 +464,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             throw new InvalidTestClassError(testClass.getJavaClass(), errors);
         }
     }
-  
+
     private List<T> getFilteredChildren() {
         if (filteredChildren == null) {
-            synchronized (childrenLock) {
+            synchronized(childrenLock) {
                 if (filteredChildren == null) {
                     List<T> children = getChildren();
                     filteredChildren = Collections.unmodifiableList(children);
