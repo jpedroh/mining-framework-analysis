@@ -18,17 +18,19 @@ package org.apache.commons.net.util;
 
 import java.util.regex.Pattern;
 
+
 /**
  * This class that performs some subnet calculations given IP address in CIDR-notation.
  * <p>For IPv4 address subnet, especially Classless Inter-Domain Routing (CIDR),
  * refer to <a href="https://tools.ietf.org/html/rfc4632">RFC4632</a>.</p>
  * <p>For IPv6 address subnet, refer to <a href="https://tools.ietf.org/html/rfc4291#section-2.3">
  * Section 2.3 of RFC 4291</a>.</p>
- * @since 2.0
+ *
+ * @see "http://www.faqs.org/rfcs/rfc1519.html"
  */
 public class SubnetUtils {
-
     private static final String IPV4_ADDRESS = "(\\d{1,3}\\.){3}\\d{1,3}/\\d{1,2}";
+
     private static final String IPV6_ADDRESS = "([0-9a-f]{1,4}\\:){7}[0-9a-f]{1,4}/\\d{1,3}";
 
     private final SubnetInfo subnetInfo;
@@ -40,11 +42,11 @@ public class SubnetUtils {
      *
      * NOTE: IPv6 address does NOT allow to omit consecutive sections of zeros in the current version.
      *
-     * @param cidrNotation IPv4 or IPv6 address,
-     * e.g. "192.168.0.1/16" or "2001:db8:0:0:0:ff00:42:8329/46"
-     * @throws IllegalArgumentException if the parameter is invalid,
-     * e.g. does not match either n.n.n.n/m where n = 1-3 decimal digits, m = 1-2 decimal digits in range 0-32; or
-     * n:n:n:n:n:n:n:n/m n = 1-4 hexadecimal digits, m = 1-3 decimal digits in range 0-128.
+     * @param cidrNotation
+     * 		A CIDR-notation string, e.g. "192.168.0.1/16"
+     * @throws IllegalArgumentException
+     * 		if the parameter is invalid,
+     * 		i.e. does not match n.n.n.n/m where n=1-3 decimal digits, m = 1-2 decimal digits in range 0-32
      */
     public SubnetUtils(String cidrNotation) {
         subnetInfo = getByCIDRNortation(cidrNotation);
@@ -54,12 +56,13 @@ public class SubnetUtils {
      * Constructor that creates IPv4 subnet summary information,
      * given a dotted decimal address and mask.
      *
-     * @param address an IP address, e.g. "192.168.0.1"
-     * @param mask a dotted decimal netmask e.g. "255.255.0.0"
-     * @throws IllegalArgumentException if the address or mask is invalid,
-     * e.g. the address does not match n.n.n.n where n=1-3 decimal digits, or
-     * the mask does not match n.n.n.n which n={0, 128, 192, 224, 240, 248, 252, 254, 255}
-     * and after the 0-field, it is all zeros.
+     * @param address
+     * 		An IP address, e.g. "192.168.0.1"
+     * @param mask
+     * 		A dotted decimal netmask e.g. "255.255.0.0"
+     * @throws IllegalArgumentException
+     * 		if the address or mask is invalid,
+     * 		i.e. does not match n.n.n.n where n=1-3 decimal digits and the mask is not all zeros
      */
     public SubnetUtils(String address, String mask) {
         subnetInfo = new IP4Subnet(address, mask);
@@ -68,8 +71,9 @@ public class SubnetUtils {
     /**
      * Returns <code>true</code> if the return value of {@link SubnetInfo#getAddressCountLong() getAddressCountLong}
      * includes the network and broadcast addresses.
-     * @return true if the host count includes the network and broadcast addresses
+     *
      * @since 2.2
+     * @return true if the host count includes the network and broadcast addresses
      */
     public boolean isInclusiveHostCount() {
         return subnetInfo.isInclusiveHostCount();
@@ -78,7 +82,9 @@ public class SubnetUtils {
     /**
      * Set to <code>true</code> if you want the return value of {@link SubnetInfo#getAddressCountLong() getAddressCountLong}
      * to include the network and broadcast addresses.
-     * @param inclusiveHostCount true if network and broadcast addresses are to be included
+     *
+     * @param inclusiveHostCount
+     * 		true if network and broadcast addresses are to be included
      * @since 2.2
      */
     public void setInclusiveHostCount(boolean inclusiveHostCount) {
@@ -101,7 +107,7 @@ public class SubnetUtils {
         } else if (Pattern.matches(IPV6_ADDRESS, cidrNotation)) {
             return new IP6Subnet(cidrNotation);
         } else {
-            throw new IllegalArgumentException("Could not parse [" + cidrNotation + "]");
+            throw new IllegalArgumentException(("Could not parse [" + cidrNotation) + "]");
         }
     }
 
@@ -123,33 +129,30 @@ public class SubnetUtils {
 
     /**
      * Convenience container for subnet summary information.
+     *
      */
     public static class SubnetInfo {
-
-        /*
-         * Convenience function to check integer boundaries. Checks if a value x
-         * is in the range [begin,end]. Returns x if it is in range, throws an
-         * exception otherwise.
+        /* Convenience function to check integer boundaries. Checks if a value x
+        is in the range [begin,end]. Returns x if it is in range, throws an
+        exception otherwise.
          */
         static int rangeCheck(int value, int begin, int end) {
-            if (value < begin || value > end) {
-                throw new IllegalArgumentException("Value [" + value + "] not in range [" + begin + "," + end + "]");
+            if ((value < begin) || (value > end)) {
+                throw new IllegalArgumentException(((((("Value [" + value) + "] not in range [") + begin) + ",") + end) + "]");
             }
-
             return value;
         }
 
-        /*
-         * Count the number of 1-bits in a 32-bit integer using a
-         * divide-and-conquer strategy see Hacker's Delight section 5.1
+        /* Count the number of 1-bits in a 32-bit integer using a
+        divide-and-conquer strategy see Hacker's Delight section 5.1
          */
         static int pop(int x) {
             x = x - ((x >>> 1) & 0x55555555);
             x = (x & 0x33333333) + ((x >>> 2) & 0x33333333);
-            x = (x + (x >>> 4)) & 0x0F0F0F0F;
+            x = (x + (x >>> 4)) & 0xf0f0f0f;
             x = x + (x >>> 8);
             x = x + (x >>> 16);
-            return x & 0x3F;
+            return x & 0x3f;
         }
 
         /*
@@ -158,15 +161,12 @@ public class SubnetUtils {
         static String format(int[] arry, String symbol) {
             StringBuilder str = new StringBuilder();
             final int iMax = arry.length - 1;
-
             for (int i = 0; i <= iMax; i++) {
                 str.append(arry[i]);
-
                 if (i != iMax) {
                     str.append(symbol);
                 }
             }
-
             return str.toString();
         }
 
@@ -176,7 +176,9 @@ public class SubnetUtils {
          * @param address a dotted decimal format address
          * @return a packed integer of a dotted decimal format address
          */
-        public int asInteger(String address) { return 0; }
+        public int asInteger(String address) {
+            return 0;
+        }
 
         /**
          * Returns <code>true</code> if the return value of {@link #getAddressCountLong() getAddressCountLong}
@@ -192,7 +194,8 @@ public class SubnetUtils {
          *
          * @param inclusiveHostCount true if network and broadcast addresses are to be included
          */
-        public void setInclusiveHostCount(boolean inclusiveHostCount) {}
+        public void setInclusiveHostCount(boolean inclusiveHostCount) {
+        }
 
         /**
          * Returns true if the parameter <code>address</code> is in the
@@ -203,26 +206,49 @@ public class SubnetUtils {
          * a colon-hexadecimal IPv6 address, e.g. "2001:db8::ff00:42:8329"
          * @return true if in range, false otherwise
          */
-        public boolean isInRange(String address) { return false; }
+        public boolean isInRange(String address) {
+            return false;
+        }
 
         /**
          * Returns true if the parameter <code>address</code> is in the
          * range of usable endpoint addresses for this subnet. This excludes the
          * network and broadcast addresses if the address is IPv4 address.
          *
-         * @param address the address to check
-         * @return true if it is in range
+         * @param address
+         * 		A dot-delimited IPv4 address, e.g. "192.168.0.1"
+         * @return True if in range, false otherwise
          */
-        public boolean isInRange(int address) { return false; }
+        public boolean isInRange(int address) {
+            return false;
+        }
 
         /**
          * Returns true if the parameter <code>address</code> is in the
+<<<<<<< LEFT
          * range of usable endpoint addresses for this subnet.
          *
+=======
+         * range of usable endpoint addresses for this subnet. This excludes the
+         * network and broadcast addresses.
+>>>>>>> RIGHT
          * @param address the address to check
          * @return true if it is in range
          */
-        public boolean isInRange(int[] address) { return false; }
+        public boolean isInRange(int[] address) 
+<<<<<<< LEFT
+        { return false; }
+=======
+        {
+            if (address == 0) { // cannot ever be in range; rejecting now avoids problems with CIDR/31,32
+                return false;
+            }
+            long addLong = address & UNSIGNED_INT_MASK;
+            long lowLong = low() & UNSIGNED_INT_MASK;
+            long highLong = high() & UNSIGNED_INT_MASK;
+            return addLong >= lowLong && addLong <= highLong;
+        }
+>>>>>>> RIGHT
 
         /**
          * Returns the IP address.
@@ -231,7 +257,9 @@ public class SubnetUtils {
          *
          * @return a string of the IP address
          */
-        public String getAddress() { return null; }
+        public String getAddress() {
+            return null;
+        }
 
         /**
          * Returns the CIDR suffixes, the count of consecutive 1 bits in the subnet mask.
@@ -246,21 +274,27 @@ public class SubnetUtils {
          *
          * @return a string of netmask in a dot-decimal format.
          */
-        public String getNetmask() { return null; }
+        public String getNetmask() {
+            return null;
+        }
 
         /**
          * Returns a network address in the address. (ONLY USE IPv4)
          *
          * @return a string of a network address in a dot-decimal format.
          */
-        public String getNetworkAddress() { return null; }
+        public String getNetworkAddress() {
+            return null;
+        }
 
         /**
          * Returns a broadcast address in the address. (ONLY USE IPv4)
          *
          * @return a string of a broadcast address in a dot-decimal format.
          */
-        public String getBroadcastAddress() { return null; }
+        public String getBroadcastAddress() {
+            return null;
+        }
 
         /**
          * Returns a CIDR notation, in which the address is followed by slash and
@@ -268,9 +302,11 @@ public class SubnetUtils {
          * IPv4 CIDR notation: e.g. "192.168.0.1/24"
          * IPv6 CIDR notation: e.g. "2001:db8::ff00:42:8329/48"
          *
-         * @return the CIDR notation of the address
+         * @return the IP address in dotted format, may be "0.0.0.0" if there is no valid address
          */
-        public String getCIDRNotation() { return null; }
+        public String getCIDRNotation() {
+            return null;
+        }
 
         /**
          * Returns a CIDR notation, in which the address is followed by slash and
@@ -278,7 +314,7 @@ public class SubnetUtils {
          * IPv4 CIDR notation: e.g. "192.168.0.1/24"
          * IPv6 CIDR notation: e.g. "2001:db8::ff00:42:8329/48"
          *
-         * @return the CIDR notation of the address
+         * @return the IP address in dotted format, may be "0.0.0.0" if there is no valid address
          */
         public String getCidrSignature() {
             return getCIDRNotation();
@@ -290,10 +326,11 @@ public class SubnetUtils {
          * Will be zero for CIDR/31 and CIDR/32 if the address is IPv4 address and
          * the inclusive flag is <code>false</code>.
          *
-         * @return the IP address in dotted or colon 16-bit delimited format,
-         * may be "0.0.0.0" or "::" if there is no valid address
+         * @return the count of addresses, may be zero.
          */
-        public String getLowAddress() { return null; }
+        public String getLowAddress() {
+            return null;
+        }
 
         /**
          * Returns the highest address as the dotted decimal or
@@ -304,7 +341,9 @@ public class SubnetUtils {
          * @return the IP address in dotted or colon 16-bit delimited format,
          * may be "0.0.0.0" or "::" if there is no valid address
          */
-        public String getHighAddress() { return null; }
+        public String getHighAddress() {
+            return null;
+        }
 
         /**
          * Get the count of available addresses.
@@ -330,7 +369,9 @@ public class SubnetUtils {
          *
          * @return the count of addresses, may be zero
          */
-        public long getAddressCountLong() { return 0; }
+        public long getAddressCountLong() {
+            return 0;
+        }
 
         /**
          * Returns the count of available addresses.
@@ -339,22 +380,25 @@ public class SubnetUtils {
          *
          * @return the count of addresses in a string, may be zero
          */
-        public String getAddressCountString() { return null; }
-
+        public String getAddressCountString() {
+            return null;
+        }
 
         /**
          * Returns a list of the available addresses.
          *
-         * @return an array of the available addresses
+         * @since 2.2
          */
-        public String[] getAllAddresses() { return new String[0]; }
-
+        public String[] getAllAddresses() {
+            return new String[0];
+        }
     }
 
     /**
      * Return a {@link SubnetInfo} instance that contains subnet-specific statistics
      * @return new instance
      */
-    public final SubnetInfo getInfo() { return subnetInfo; }
-
+    public final SubnetInfo getInfo() {
+        return subnetInfo;
+    }
 }
