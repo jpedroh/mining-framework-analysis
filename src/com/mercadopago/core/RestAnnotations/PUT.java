@@ -2,6 +2,7 @@ package com.mercadopago.core.restannotations;
 
 import java.lang.annotation.*;
 
+
 /**
  * Mercado Pago SDK
  * Rest Information annotation interface for PUT
@@ -9,9 +10,10 @@ import java.lang.annotation.*;
  * Created by Eduardo Paoletta on 11/4/16.
  */
 @Inherited
-@Target({ElementType.METHOD})
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PUT {
     String path();
+
     PayloadType payloadType() default PayloadType.JSON;
 }

@@ -9,8 +9,6 @@ import com.google.gson.reflect.TypeToken;
 import com.mercadopago.MPConf;
 import com.mercadopago.core.restannotations.*;
 import com.mercadopago.exceptions.MPException;
-import org.apache.commons.lang3.StringUtils;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
@@ -19,6 +17,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
+
 
 /**
  * Mercado Pago SDK
@@ -27,7 +27,6 @@ import java.util.Map;
  * Created by Eduardo Paoletta on 11/4/16.
  */
 public abstract class MPBase {
-
     private transient JsonObject lastKnownJson = null;
 
     private static final List<String> ALLOWED_METHODS = Arrays.asList("load", "loadAll", "save", "create", "update", "delete");
@@ -83,17 +82,17 @@ public abstract class MPBase {
      * @throws MPException
      */
     protected String processMethod(String methodName, HashMap<String, String> mapParams) throws MPException {
-        //Validates the method executed
-        if (!ALLOWED_METHODS.contains(methodName))
-            throw new MPException("Method \"" + methodName + "\" not allowed");
-
+        // Validates the method executed
+        if (!ALLOWED_METHODS.contains(methodName)) {
+            throw new MPException(("Method \"" + methodName) + "\" not allowed");
+        }
         AnnotatedElement annotatedMethod = getAnnotatedMethod(methodName);
         HashMap<String, Object> hashAnnotation = getRestInformation(annotatedMethod);
         String httpMethod = hashAnnotation.get("method").toString();
         String path = parsePath(hashAnnotation.get("path").toString(), mapParams);
         // Validator will throw an MPValidatorException, there is no need to do a conditional
         MPValidator.validate(this);
-        PayloadType payloadType = (PayloadType) hashAnnotation.get("payloadType");
+        PayloadType payloadType = ((PayloadType) (hashAnnotation.get("payloadType")));
         JsonObject payload = generatePayload(httpMethod);
         String response = callApi(httpMethod, path, payload, payloadType);
         lastKnownJson = getJson();
@@ -101,9 +100,9 @@ public abstract class MPBase {
     }
 
     private String callApi(String httpMethod, String path, JsonObject payload, PayloadType payloadType) throws MPException {
-//        MPRestClient restClient = new MPRestClient();
-//        Collection<Header> colHeaders = null;
-//        HttpResponse httpResponse = restClient.executeRequest(httpMethod, path, payload, payloadType, colHeaders);
+    //        MPRestClient restClient = new MPRestClient();
+    //        Collection<Header> colHeaders = null;
+    //        HttpResponse httpResponse = restClient.executeRequest(httpMethod, path, payload, payloadType, colHeaders);
 
         String response = "{\"method\":\"" + httpMethod + "\",\"path\":\"" + path + "\"";
         if (payload != null &&
@@ -126,21 +125,16 @@ public abstract class MPBase {
             int paramIterator = 0;
             while (path.contains(":")) {
                 paramIterator++;
-
                 processedPath = processedPath + path.substring(0, path.indexOf(":"));
                 path = path.substring(path.indexOf(":") + 1);
                 String param = path;
                 if (path.contains("/")) {
                     param = path.substring(0, path.indexOf("/"));
                 }
-
                 String value = null;
-                if (paramIterator <= 2 &&
-                        mapParams != null &&
-                        StringUtils.isNotEmpty(mapParams.get("param" + String.valueOf(paramIterator)))) {
+                if (((paramIterator <= 2) && (mapParams != null)) && StringUtils.isNotEmpty(mapParams.get("param" + String.valueOf(paramIterator)))) {
                     value = mapParams.get("param" + String.valueOf(paramIterator));
-                } else if (mapParams != null &&
-                        StringUtils.isNotEmpty(mapParams.get(param))) {
+                } else if ((mapParams != null) && StringUtils.isNotEmpty(mapParams.get(param))) {
                     value = mapParams.get(param);
                 } else {
                     JsonObject json = getJson();
@@ -151,13 +145,11 @@ public abstract class MPBase {
                 if (StringUtils.isEmpty(value)) {
                     throw new MPException("No argument supplied/found for method path");
                 }
-
                 processedPath = processedPath + value;
                 if (path.contains("/")) {
                     path = path.substring(path.indexOf("/"));
                 }
-            }
-
+            } 
         } else {
             processedPath = path;
         }
@@ -178,15 +170,12 @@ public abstract class MPBase {
             payload = getJson();
         } else if (httpMethod.equals("PUT")) {
             JsonObject actualJson = getJson();
-
-            Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+            Type mapType = new TypeToken<Map<String, Object>>() {}.getType();
             Gson gson = new Gson();
             Map<String, Object> oldMap = gson.fromJson(this.lastKnownJson, mapType);
             Map<String, Object> newMap = gson.fromJson(actualJson, mapType);
             MapDifference<String, Object> mapDifferences = Maps.difference(oldMap, newMap);
-
             payload = new JsonObject();
-
             mapDifferences.entriesDiffering().size();
             for (Map.Entry<String, MapDifference.ValueDifference<Object>> entry : mapDifferences.entriesDiffering().entrySet()) {
                 payload.addProperty(entry.getKey(), entry.getValue().rightValue().toString());
@@ -201,10 +190,8 @@ public abstract class MPBase {
      */
     private JsonObject getJson() {
         String FORMAT_ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
-        Gson gson = new GsonBuilder()
-                .setDateFormat(FORMAT_ISO8601)
-                .create();
-        return (JsonObject) gson.toJsonTree(this);
+        Gson gson = new GsonBuilder().setDateFormat(FORMAT_ISO8601).create();
+        return ((JsonObject) (gson.toJsonTree(this)));
     }
 
     /**
@@ -215,35 +202,32 @@ public abstract class MPBase {
      * @return                  a hashmap with keys 'method' and 'path'
      * @throws MPException
      */
-    private HashMap<String, Object> getRestInformation(AnnotatedElement element) throws MPException{
-        if (element.getAnnotations().length == 0)
+    private HashMap<String, Object> getRestInformation(AnnotatedElement element) throws MPException {
+        if (element.getAnnotations().length == 0) {
             throw new MPException("No rest method found");
-
+        }
         HashMap<String, Object> hashAnnotation = new HashMap<String, Object>();
         for (Annotation annotation : element.getAnnotations()) {
             if (annotation instanceof DELETE) {
-                DELETE delete = (DELETE) annotation;
+                DELETE delete = ((DELETE) (annotation));
                 if (StringUtils.isEmpty(delete.path())) {
                     throw new MPException("Path not found for DELETE method");
                 }
                 hashAnnotation = fillHashAnnotations(hashAnnotation, "DELETE", delete.path(), null);
-
             } else if (annotation instanceof GET) {
-                GET get = (GET) annotation;
+                GET get = ((GET) (annotation));
                 if (StringUtils.isEmpty(get.path())) {
                     throw new MPException("Path not found for GET method");
                 }
                 hashAnnotation = fillHashAnnotations(hashAnnotation, "GET", get.path(), null);
-
             } else if (annotation instanceof POST) {
-                POST post = (POST) annotation;
+                POST post = ((POST) (annotation));
                 if (StringUtils.isEmpty(post.path())) {
                     throw new MPException("Path not found for POST method");
                 }
                 hashAnnotation = fillHashAnnotations(hashAnnotation, "POST", post.path(), post.payloadType());
-
             } else if (annotation instanceof PUT) {
-                PUT put = (PUT) annotation;
+                PUT put = ((PUT) (annotation));
                 if (StringUtils.isEmpty(put.path())) {
                     throw new MPException("Path not found for PUT method");
                 }
@@ -263,8 +247,7 @@ public abstract class MPBase {
      * @return                      the HashMap object that is received by param
      * @throws MPException
      */
-    private HashMap<String, Object> fillHashAnnotations(HashMap<String, Object> hashAnnotation, String method, String path, PayloadType payloadType)
-            throws MPException {
+    private HashMap<String, Object> fillHashAnnotations(HashMap<String, Object> hashAnnotation, String method, String path, PayloadType payloadType) throws MPException {
         if (hashAnnotation.containsKey("method")) {
             throw new MPException("Multiple rest methods found");
         }
@@ -289,5 +272,4 @@ public abstract class MPBase {
         }
         throw new MPException("No method found");
     }
-
 }

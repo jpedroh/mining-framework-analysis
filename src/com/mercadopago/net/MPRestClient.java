@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import com.mercadopago.core.MPBaseResponse;
 import com.mercadopago.core.restannotations.PayloadType;
 import com.mercadopago.exceptions.MPRestException;
+import java.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
@@ -18,7 +19,6 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 
-import java.util.*;
 
 /**
  * Mercado Pago SDK
@@ -27,12 +27,11 @@ import java.util.*;
  * Created by Eduardo Paoletta on 11/11/16.
  */
 public class MPRestClient {
-
     private static final List<String> ALLOWED_METHODS = Arrays.asList("GET", "POST", "PUT", "DELETE");
 
     private static String proxyHostName = null;
-    private static int proxyPort = -1;
 
+    private static int proxyPort = -1;
 
     public MPRestClient() {
         new MPRestClient(null, -1);
@@ -54,8 +53,7 @@ public class MPRestClient {
      * @return                          MPBaseResponse with parsed info of the http response
      * @throws MPRestException
      */
-    public MPBaseResponse executeRequest(String httpMethod, String uri, PayloadType payloadType, JsonObject payload, Collection<Header> colHeaders)
-            throws MPRestException {
+    public MPBaseResponse executeRequest(String httpMethod, String uri, PayloadType payloadType, JsonObject payload, Collection<Header> colHeaders) throws MPRestException {
         HttpClient httpClient = null;
         try {
             httpClient = getClient();
@@ -68,19 +66,18 @@ public class MPRestClient {
                 request.addHeader(header);
             }
             HttpResponse response = httpClient.execute(request);
-
             return new MPBaseResponse(response);
-
         } catch (MPRestException restEx) {
             throw restEx;
-        } catch (Exception ex) {
+        } catch (java.lang.Exception ex) {
             throw new MPRestException(ex);
         } finally {
             try {
-                if (httpClient != null)
+                if (httpClient != null) {
                     httpClient.getConnectionManager().shutdown();
-            } catch (Exception ex) {
-                //Do Nothing
+                }
+            } catch (java.lang.Exception ex) {
+                // Do Nothing
             }
         }
     }
@@ -120,14 +117,13 @@ public class MPRestClient {
                 StringEntity stringEntity = null;
                 try {
                     stringEntity = new StringEntity(payload.toString());
-                } catch(Exception ex) {
+                } catch (java.lang.Exception ex) {
                     throw new MPRestException(ex);
                 }
                 stringEntity.setContentType(header);
                 entity = stringEntity;
-
             } else {
-                Map<String, Object> map = new Gson().fromJson(payload.toString(), new TypeToken<Map<String, Object>>(){}.getType());
+                Map<String, Object> map = new Gson().fromJson(payload.toString(), new TypeToken<Map<String, Object>>() {}.getType());
                 List<NameValuePair> params = new ArrayList<NameValuePair>(2);
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
                     params.add(new BasicNameValuePair(entry.getKey(), entry.getValue().toString()));
@@ -135,20 +131,18 @@ public class MPRestClient {
                 UrlEncodedFormEntity urlEncodedFormEntity = null;
                 try {
                     urlEncodedFormEntity = new UrlEncodedFormEntity(params, "UTF-8");
-                } catch(Exception ex) {
+                } catch (java.lang.Exception ex) {
                     throw new MPRestException(ex);
                 }
-
-                //if (payloadType == PayloadType.FORM_DATA)
-                //    header = new BasicHeader(HTTP.CONTENT_TYPE, "multipart/form-data");
-                //else if (payloadType == PayloadType.X_WWW_FORM_URLENCODED)
-                    header = new BasicHeader(HTTP.CONTENT_TYPE, "application/x-www-form-urlencoded");
+                // if (payloadType == PayloadType.FORM_DATA)
+                // header = new BasicHeader(HTTP.CONTENT_TYPE, "multipart/form-data");
+                // else if (payloadType == PayloadType.X_WWW_FORM_URLENCODED)
+                header = new BasicHeader(HTTP.CONTENT_TYPE, "application/x-www-form-urlencoded");
                 urlEncodedFormEntity.setContentType(header);
                 entity = urlEncodedFormEntity;
             }
         }
         colHeaders.add(header);
-
         return entity;
     }
 
@@ -162,58 +156,38 @@ public class MPRestClient {
      * @throws MPRestException
      */
     private HttpRequestBase getRequestMethod(String httpMethod, String uri, HttpEntity entity) throws MPRestException {
-        if (StringUtils.isEmpty(httpMethod) ||
-                !ALLOWED_METHODS.contains(httpMethod))
+        if (StringUtils.isEmpty(httpMethod) || (!ALLOWED_METHODS.contains(httpMethod))) {
             throw new MPRestException("HttpMethod must be \"GET\", \"POST\", \"PUT\" or \"DELETE\".");
-        if (StringUtils.isEmpty(uri))
+        }
+        if (StringUtils.isEmpty(uri)) {
             throw new MPRestException("Uri can not be an empty String.");
-
+        }
         HttpRequestBase request = null;
         if (httpMethod.equals("GET")) {
-<<<<<<< HEAD
-            if (entity != null)
-                throw new MPRestException("Payload not supported for this method.");
-            request = new HttpGet(uri);
-        } else if (httpMethod.equals("POST")) {
-            if (entity == null)
-                throw new MPRestException("Must include payload for this method.");
-=======
             if (entity != null) {
-                throw new MPRestException("Not supported for this method.");
+                throw new MPRestException("Payload not supported for this method.");
             }
             request = new HttpGet(uri);
         } else if (httpMethod.equals("POST")) {
             if (entity == null) {
-                throw new MPRestException("Not supported for this method.");
+                throw new MPRestException("Must include payload for this method.");
             }
->>>>>>> a31e410d5ae37a8d97ed3404c940b393a0a28c71
             HttpPost post = new HttpPost(uri);
             post.setEntity(entity);
             request = post;
         } else if (httpMethod.equals("PUT")) {
-<<<<<<< HEAD
-            if (entity == null)
-                throw new MPRestException("Must include payload for this method.");
-=======
             if (entity == null) {
-                throw new MPRestException("Not supported for this method.");
+                throw new MPRestException("Must include payload for this method.");
             }
->>>>>>> a31e410d5ae37a8d97ed3404c940b393a0a28c71
             HttpPut put = new HttpPut(uri);
             put.setEntity(entity);
             request = put;
         } else if (httpMethod.equals("DELETE")) {
-<<<<<<< HEAD
-            if (entity != null)
-                throw new MPRestException("Payload not supported for this method.");
-=======
             if (entity != null) {
-                throw new MPRestException("Not supported for this method.");
+                throw new MPRestException("Payload not supported for this method.");
             }
->>>>>>> a31e410d5ae37a8d97ed3404c940b393a0a28c71
             request = new HttpDelete(uri);
         }
         return request;
     }
-
 }
