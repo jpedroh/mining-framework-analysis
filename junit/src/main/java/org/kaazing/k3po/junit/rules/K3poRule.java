@@ -18,35 +18,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.kaazing.k3po.junit.rules;
-
-import static java.lang.String.format;
-import static org.junit.Assert.assertTrue;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.junit.rules.Verifier;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runners.model.Statement;
 import org.kaazing.k3po.junit.annotation.Specification;
 import org.kaazing.net.URLFactory;
+import static java.lang.String.format;
+import static org.junit.Assert.assertTrue;
+
 
 /**
  * A K3poRule specifies how a Test using k3po is executed.
  *
  */
 public class K3poRule extends Verifier {
-
-    /*
-     * For some reason earlier versions of JUnit will cause tests to either hang or succeed incorrectly without ever
-     * talking to the K3PO. I'm not sure why but the apply method does not seem to be called. So we need to require
-     * version 4.10 (I know 4.7 has the problem ... not sure about 4.8 and 4.9 but 4.10 works).
+    /* For some reason earlier versions of JUnit will cause tests to either hang or succeed incorrectly without ever
+    talking to the K3PO. I'm not sure why but the apply method does not seem to be called. So we need to require
+    version 4.10 (I know 4.7 has the problem ... not sure about 4.8 and 4.9 but 4.10 works).
      */
     static {
         JUnitCore core = new JUnitCore();
@@ -61,15 +57,18 @@ public class K3poRule extends Verifier {
             versionsInt[i] = Integer.parseInt(versionToken);
         }
         if (versionsInt[0] < 5) {
-            if (versionsInt.length == 1 || versionsInt[0] < 4 || versionsInt[1] < 10) {
+            if (((versionsInt.length == 1) || (versionsInt[0] < 4)) || (versionsInt[1] < 10)) {
                 throw new AssertionError("JUnit library 4.10+ required. Found version " + version);
             }
         }
     }
 
     private final Latch latch;
+
     private String scriptRoot;
+
     private URL controlURL;
+
     private SpecificationStatement statement;
 
     /**
@@ -101,10 +100,8 @@ public class K3poRule extends Verifier {
 
     @Override
     public Statement apply(Statement statement, final Description description) {
-
         Specification specification = description.getAnnotation(Specification.class);
         String[] scripts = (specification != null) ? specification.value() : null;
-
         if (scripts != null) {
             // decorate with K3PO behavior only if @Specification annotation is present
             String packagePath = this.scriptRoot;
@@ -113,28 +110,23 @@ public class K3poRule extends Verifier {
                 String packageName = testClass.getPackage().getName();
                 packagePath = packageName.replaceAll("\\.", "/");
             }
-
             List<String> scriptNames = new LinkedList<>();
             for (String script : scripts) {
                 // strict compatibility (relax to support fully qualified paths later)
                 if (script.startsWith("/")) {
                     throw new IllegalArgumentException("Script path must be relative");
                 }
-
                 String scriptName = format("%s/%s", packagePath, script);
                 scriptNames.add(scriptName);
             }
-
             URL controlURL = this.controlURL;
             if (controlURL == null) {
                 // lazy dependency on TCP scheme
                 controlURL = createURL("tcp://localhost:11642");
             }
-
             this.statement = new SpecificationStatement(statement, controlURL, scriptNames, latch);
             statement = this.statement;
         }
-
         return super.apply(statement, description);
     }
 

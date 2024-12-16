@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kaazing.k3po.driver.internal.control;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class PrepareMessage extends ControlMessage {
 
+public class PrepareMessage extends ControlMessage {
     private List<String> names;
+
     private String version;
 
     public PrepareMessage() {
@@ -64,5 +64,4 @@ public class PrepareMessage extends ControlMessage {
     protected final boolean equals(PrepareMessage that) {
         return super.equalTo(that) && Objects.equals(this.names, that.names);
     }
-
 }

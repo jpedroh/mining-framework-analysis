@@ -18,22 +18,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.kaazing.k3po.control.internal.command;
 
 import java.util.Objects;
+
 
 /**
  * Abstract class for a Command to the robot.
  *
  */
 public abstract class Command {
-
     /**
      * Kind of Command.
      *
      */
     public enum Kind {
+
         /**
          * Prepare command.
          */
@@ -53,8 +53,7 @@ public abstract class Command {
         /**
          * Notify command.
          */
-        NOTIFY
-    }
+        NOTIFY;}
 
     /**
      * @return Kind
@@ -72,5 +71,4 @@ public abstract class Command {
     protected final boolean equalTo(Command that) {
         return Objects.equals(this.getKind(), that.getKind());
     }
-
 }
