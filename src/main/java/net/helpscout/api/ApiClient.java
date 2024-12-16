@@ -1,13 +1,14 @@
 package net.helpscout.api;
 
 import com.google.gson.*;
+import java.net.URLEncoder;
+import java.util.*;
+import lombok.SneakyThrows;
 import net.helpscout.api.adapters.*;
 import net.helpscout.api.cbo.*;
 import net.helpscout.api.exception.*;
 import net.helpscout.api.extractors.HashExtractor;
 import net.helpscout.api.extractors.IdExtractor;
-import net.helpscout.api.utils.EncodeUtils;
-import net.helpscout.api.utils.JSONUtils;
 import net.helpscout.api.model.*;
 import net.helpscout.api.model.Customer;
 import net.helpscout.api.model.customer.SearchCustomer;
@@ -25,35 +26,42 @@ import net.helpscout.api.model.report.user.ConversationStats;
 import net.helpscout.api.model.report.user.UserHappiness;
 import net.helpscout.api.model.report.user.UserReport;
 import net.helpscout.api.model.thread.*;
+import net.helpscout.api.utils.EncodeUtils;
+import net.helpscout.api.utils.JSONUtils;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
-
 import static java.text.MessageFormat.format;
 import static net.helpscout.api.utils.ParamsUtils.getCustomerSearchParams;
 import static net.helpscout.api.utils.ParamsUtils.setFields;
 import static net.helpscout.api.utils.ParamsUtils.setParams;
 
-public class ApiClient {
 
+public class ApiClient {
     private final static String DEFAULT_BASE_URL = "https://api.helpscout.net/v1/";
+
     private final static String METHOD_GET = "GET";
+
     private final static String METHOD_POST = "POST";
+
     private final static String METHOD_PUT = "PUT";
+
     private final static String METHOD_DELETE = "DELETE";
 
     private final static int HTTP_STATUS_OK = 200;
+
     private final static int HTTP_STATUS_CREATED = 201;
 
     private String apiKey = "";
+
     private String baseUrl = DEFAULT_BASE_URL;
 
     private static final ResultExtractor<Long> idExtractor = new IdExtractor();
+
     private static final ResultExtractor<String> hashExtractor = new HashExtractor();
 
     private static ApiClient instance = new ApiClient();
 
-    private ApiClient() {}
+    private ApiClient() {
+    }
 
     public static ApiClient getInstance() {
         return instance;
@@ -113,10 +121,10 @@ public class ApiClient {
      * @throws ApiException
      */
     public Mailbox getMailbox(Long mailboxID, List<String> fields) throws ApiException {
-        if (mailboxID == null || mailboxID < 1) {
+        if ((mailboxID == null) || (mailboxID < 1)) {
             throw new ApiException("Invalid mailboxId in getMailbox");
         }
-        String url = setFields("mailboxes/" + mailboxID + ".json", fields);
+        String url = setFields(("mailboxes/" + mailboxID) + ".json", fields);
         return getItem(url, Mailbox.class, HTTP_STATUS_OK);
     }
 
@@ -198,7 +206,7 @@ public class ApiClient {
      * @throws ApiException
      */
     public Page<Folder> getFolders(Long mailboxId, List<String> fields) throws ApiException {
-        String url = setFields("mailboxes/" + mailboxId + "/folders.json", fields);
+        String url = setFields(("mailboxes/" + mailboxId) + "/folders.json", fields);
         return getPage(url, Folder.class, HTTP_STATUS_OK);
     }
 
@@ -280,7 +288,7 @@ public class ApiClient {
      * @throws ApiException
      */
     public Page<Conversation> getConversationsForFolder(Long mailboxID, Long folderID, List<String> fields) throws ApiException {
-        String url = setFields("mailboxes/" + mailboxID + "/folders/" + folderID + "/conversations.json", fields);
+        String url = setFields(((("mailboxes/" + mailboxID) + "/folders/") + folderID) + "/conversations.json", fields);
         return getPage(url, Conversation.class, HTTP_STATUS_OK);
     }
 
@@ -356,7 +364,7 @@ public class ApiClient {
      * @throws ApiException
      */
     public Page<Conversation> getConversationsForMailbox(Long mailboxID, List<String> fields) throws ApiException {
-        String url = setFields("mailboxes/" + mailboxID + "/conversations.json", fields);
+        String url = setFields(("mailboxes/" + mailboxID) + "/conversations.json", fields);
         return getPage(url, Conversation.class, HTTP_STATUS_OK);
     }
 
@@ -439,7 +447,7 @@ public class ApiClient {
      * @throws ApiException
      */
     public Page<Conversation> getConversationsForCustomerByMailbox(Long mailboxID, Long customerID, List<String> fields) throws ApiException {
-        String url = setFields("mailboxes/" + mailboxID + "/customers/" + customerID + "/conversations.json", fields);
+        String url = setFields(((("mailboxes/" + mailboxID) + "/customers/") + customerID) + "/conversations.json", fields);
         return getPage(url, Conversation.class, HTTP_STATUS_OK);
     }
 
@@ -504,10 +512,10 @@ public class ApiClient {
      * @throws ApiException
      */
     public Conversation getConversation(Long conversationID, List<String> fields) throws ApiException {
-        if (conversationID == null || conversationID < 1) {
+        if ((conversationID == null) || (conversationID < 1)) {
             throw new ApiException("Invalid conversationId in getConversation");
         }
-        String url = setFields("conversations/" + conversationID + ".json", fields);
+        String url = setFields(("conversations/" + conversationID) + ".json", fields);
         return getItem(url, Conversation.class, HTTP_STATUS_OK);
     }
 
@@ -533,17 +541,17 @@ public class ApiClient {
      * @throws ApiException
      */
     public String getThreadSource(Long conversationID, Long threadID) throws ApiException {
-        if (conversationID == null || conversationID < 1) {
+        if ((conversationID == null) || (conversationID < 1)) {
             throw new ApiException("Invalid conversationID in getThreadSource");
         }
-        if (threadID == null || threadID < 1) {
+        if ((threadID == null) || (threadID < 1)) {
             throw new ApiException("Invalid threadID in getThreadSource");
         }
-        String url = "conversations/" + conversationID + "/thread-source/" + threadID + ".json";
+        String url = ((("conversations/" + conversationID) + "/thread-source/") + threadID) + ".json";
         String json;
         try {
             json = doGet(url, HTTP_STATUS_OK);
-        } catch(RuntimeException e) {
+        } catch (java.lang.RuntimeException e) {
             if (e.getCause() instanceof NotFoundException) {
                 json = null;
             } else {
@@ -552,9 +560,9 @@ public class ApiClient {
         }
         if (json != null) {
             JsonElement obj = parseJson(url, json);
-            JsonElement elem  = obj.getAsJsonObject().get("item");
+            JsonElement elem = obj.getAsJsonObject().get("item");
             return new String(EncodeUtils.getDecoded(elem.getAsJsonObject().get("data").getAsString()));
-        } 
+        }
         return null;
     }
 
@@ -595,13 +603,13 @@ public class ApiClient {
      * @throws ApiException
      */
     public byte[] getAttachmentBinaryData(Long attachmentID) throws ApiException {
-        if (attachmentID == null || attachmentID < 1) {
+        if ((attachmentID == null) || (attachmentID < 1)) {
             throw new ApiException("Invalid attachmentID in getAttachmentData");
         }
-        String url = "attachments/" + attachmentID + "/data.json";
+        String url = ("attachments/" + attachmentID) + "/data.json";
         String json = doGet(url, HTTP_STATUS_OK);
         JsonElement obj = parseJson(url, json);
-        JsonElement elem  = obj.getAsJsonObject().get("item");
+        JsonElement elem = obj.getAsJsonObject().get("item");
         return EncodeUtils.getDecoded(elem.getAsJsonObject().get("data").getAsString());
     }
 
@@ -771,10 +779,10 @@ public class ApiClient {
      * @throws ApiException
      */
     public Customer getCustomer(Long customerId, List<String> fields) throws ApiException {
-        if (customerId == null || customerId < 1) {
+        if ((customerId == null) || (customerId < 1)) {
             throw new ApiException("Invalid customerId in getCustomer");
         }
-        String url = setFields("customers/" + customerId + ".json", fields);
+        String url = setFields(("customers/" + customerId) + ".json", fields);
         return getItem(url, Customer.class, HTTP_STATUS_OK);
     }
 
@@ -860,7 +868,7 @@ public class ApiClient {
     }
 
     private <T extends MailboxUser> T getMailboxUser(Class<T> userClass, String baseUrl, Long mailboxUserId, List<String> fields) throws ApiException {
-        if (mailboxUserId == null || mailboxUserId < 1) {
+        if ((mailboxUserId == null) || (mailboxUserId < 1)) {
             throw new ApiException("Invalid identifier, it must be larger than 1, but was " + mailboxUserId);
         }
         String url = format("{0}/{1}.json", baseUrl, mailboxUserId);
@@ -990,7 +998,7 @@ public class ApiClient {
      * @throws ApiException
      */
     public Page<MailboxUser> getUsersForMailbox(Long mailboxId, List<String> fields) throws ApiException {
-        String url = setFields("mailboxes/" + mailboxId + "/users.json", fields);
+        String url = setFields(("mailboxes/" + mailboxId) + "/users.json", fields);
         return getPage(url, MailboxUser.class, HTTP_STATUS_OK);
     }
 
@@ -1061,21 +1069,12 @@ public class ApiClient {
      * @throws ApiException
      */
     public void createConversation(Conversation conversation, boolean imported) throws ApiException {
-        GsonBuilder builder = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-                .registerTypeAdapter(ThreadState.class, new ThreadStateAdapter())
-                .registerTypeAdapter(Status.class, new StatusAdapter())
-                .registerTypeAdapter(PersonType.class, new PersonTypeAdapter())
-                .registerTypeAdapter(ThreadType.class, new ThreadTypeAdapter())
-                .registerTypeAdapter(ConversationType.class, new ConversationTypeAdapter())
-                .registerTypeAdapter(CustomFieldResponse.class, new CustomFieldResponseAdapter());
-
+        GsonBuilder builder = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").registerTypeAdapter(ThreadState.class, new ThreadStateAdapter()).registerTypeAdapter(Status.class, new StatusAdapter()).registerTypeAdapter(PersonType.class, new PersonTypeAdapter()).registerTypeAdapter(ThreadType.class, new ThreadTypeAdapter()).registerTypeAdapter(ConversationType.class, new ConversationTypeAdapter()).registerTypeAdapter(CustomFieldResponse.class, new CustomFieldResponseAdapter());
         String json = builder.create().toJson(conversation);
-
         StringBuilder url = new StringBuilder("conversations.json");
         if (imported) {
             url.append("?imported=true");
         }
-
         Long id = doPost(url.toString(), json, HTTP_STATUS_CREATED, idExtractor);
         conversation.setId(id);
     }
@@ -1102,21 +1101,14 @@ public class ApiClient {
     public void createConversationThread(Long conversationId, ConversationThread thread, boolean imported) throws ApiException {
         try {
             setThreadProperties(thread);
-
-            GsonBuilder builder = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-                    .registerTypeAdapter(ThreadState.class, new ThreadStateAdapter())
-                    .registerTypeAdapter(Status.class, new StatusAdapter())
-                    .registerTypeAdapter(PersonType.class, new PersonTypeAdapter());
-
+            GsonBuilder builder = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").registerTypeAdapter(ThreadState.class, new ThreadStateAdapter()).registerTypeAdapter(Status.class, new StatusAdapter()).registerTypeAdapter(PersonType.class, new PersonTypeAdapter());
             String json = builder.create().toJson(thread);
-
             StringBuilder url = new StringBuilder("conversations/").append(conversationId).append(".json");
             if (imported) {
                 url.append("?imported=true");
             }
-
             doPost(url.toString(), json, HTTP_STATUS_CREATED, idExtractor);
-        } catch (Exception ex) {
+        } catch (java.lang.Exception ex) {
             throw new ApiException(ex.getMessage());
         }
     }
@@ -1237,7 +1229,7 @@ public class ApiClient {
      * @throws ApiException
      */
     public void runManualWorkflow(Long id, Long ticketId) throws ApiException {
-        doPost("workflows/" + id + "/conversations/" + ticketId + ".json", null, HTTP_STATUS_OK, idExtractor);
+        doPost(((("workflows/" + id) + "/conversations/") + ticketId) + ".json", null, HTTP_STATUS_OK, idExtractor);
     }
 
     /**
@@ -1252,9 +1244,9 @@ public class ApiClient {
         JsonObject obj = new JsonObject();
         obj.add("conversationIds", tickets);
         String json = new Gson().toJson(obj);
-        doPost("workflows/" + id + "/conversations.json", json, HTTP_STATUS_OK, idExtractor);
+        doPost(("workflows/" + id) + "/conversations.json", json, HTTP_STATUS_OK, idExtractor);
     }
-    
+
     public ConversationsReport getConversationsReport(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/conversations.json", queryParams);
         return getObject(url, ConversationsReport.class);
@@ -1263,8 +1255,7 @@ public class ApiClient {
     public List<DayStats> getBusiestTimeOfDayReport(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/conversations/busy-times.json", queryParams);
         String json = doGet(url, HTTP_STATUS_OK);
-        JsonElement busyTimes = (new JsonParser()).parse(json);
-
+        JsonElement busyTimes = new JsonParser().parse(json);
         return JSONUtils.getPageItems(busyTimes, DayStats.class);
     }
 
@@ -1288,102 +1279,102 @@ public class ApiClient {
         return getPage(url, net.helpscout.api.model.report.conversations.Conversation.class, "conversations");
     }
 
-    public DocsReport getDocsReport(Map<String,String> queryParams) throws ApiException {
+    public DocsReport getDocsReport(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/docs.json", queryParams);
         return getObject(url, DocsReport.class);
     }
-    
-    public HappinessReport getHappinessReport(Map<String,String> queryParams) throws ApiException {
+
+    public HappinessReport getHappinessReport(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/happiness.json", queryParams);
         return getObject(url, HappinessReport.class);
     }
-    
+
     public Page<Rating> getHappinessRatings(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/happiness/ratings.json", queryParams);
         return getPage(url, queryParams, Rating.class, HTTP_STATUS_OK);
     }
-    
-    public ProductivityReport getProductivityReport(Map<String,String> queryParams) throws ApiException {
+
+    public ProductivityReport getProductivityReport(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/productivity.json", queryParams);
         return getObject(url, ProductivityReport.class);
     }
-    
-    public DatesAndElapsedTimes getFirstResponseTimes(Map<String,String> queryParams) throws ApiException {
+
+    public DatesAndElapsedTimes getFirstResponseTimes(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/productivity/first-response-time.json", queryParams);
         return getObject(url, DatesAndElapsedTimes.class);
     }
-    
-    public DatesAndCounts getRepliesSent(Map<String,String> queryParams) throws ApiException {
+
+    public DatesAndCounts getRepliesSent(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/productivity/replies-sent.json", queryParams);
         return getObject(url, DatesAndCounts.class);
     }
-    
-    public DatesAndCounts getResolved(Map<String,String> queryParams) throws ApiException {
+
+    public DatesAndCounts getResolved(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/productivity/resolved.json", queryParams);
         return getObject(url, DatesAndCounts.class);
     }
-    
-    public DatesAndElapsedTimes getResolutionTimes(Map<String,String> queryParams) throws ApiException {
+
+    public DatesAndElapsedTimes getResolutionTimes(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/productivity/resolution-time.json", queryParams);
         return getObject(url, DatesAndElapsedTimes.class);
     }
-    
-    public DatesAndElapsedTimes getResponseTime(Map<String,String> queryParams) throws ApiException {
+
+    public DatesAndElapsedTimes getResponseTime(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/productivity/response-time.json", queryParams);
         return getObject(url, DatesAndElapsedTimes.class);
     }
-    
-    public Page<net.helpscout.api.model.report.conversations.Conversation> getProductivityDrillDown(Map<String,String> queryParams) throws ApiException {
+
+    public Page<net.helpscout.api.model.report.conversations.Conversation> getProductivityDrillDown(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/productivity/drilldown.json", queryParams);
         return getPage(url, net.helpscout.api.model.report.conversations.Conversation.class, "conversations");
     }
-    
-    public TeamReport getTeamReport(Map<String,String> queryParams) throws ApiException {
+
+    public TeamReport getTeamReport(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/team.json", queryParams);
         return getObject(url, TeamReport.class);
     }
-    
-    public DatesAndCounts getTeamCustomersHelped(Map<String,String> queryParams) throws ApiException {
+
+    public DatesAndCounts getTeamCustomersHelped(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/team/customers-helped.json", queryParams);
         return getObject(url, DatesAndCounts.class);
     }
-    
-    public Page<net.helpscout.api.model.report.conversations.Conversation> getTeamDrillDown(Map<String,String> queryParams) throws ApiException {
+
+    public Page<net.helpscout.api.model.report.conversations.Conversation> getTeamDrillDown(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/team/drilldown.json", queryParams);
         return getPage(url, net.helpscout.api.model.report.conversations.Conversation.class, "conversations");
     }
-    
-    public UserReport getUserReport(Map<String,String> queryParams) throws ApiException {
+
+    public UserReport getUserReport(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/user.json", queryParams);
         return getObject(url, UserReport.class);
     }
-    
-    public Page<ConversationStats> getUserConversationHistory(Map<String,String> queryParams) throws ApiException {
+
+    public Page<ConversationStats> getUserConversationHistory(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/user/conversation-history.json", queryParams);
         return getPage(url, queryParams, ConversationStats.class, HTTP_STATUS_OK);
     }
-    
-    public DatesAndCounts getUserCustomersHelped(Map<String,String> queryParams) throws ApiException {
+
+    public DatesAndCounts getUserCustomersHelped(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/user/customers-helped.json", queryParams);
         return getObject(url, DatesAndCounts.class);
     }
-    
-    public DatesAndCounts getUserReplies(Map<String,String> queryParams) throws ApiException {
+
+    public DatesAndCounts getUserReplies(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/user/replies.json", queryParams);
         return getObject(url, DatesAndCounts.class);
     }
-    
-    public DatesAndCounts getUserResolutions(Map<String,String> queryParams) throws ApiException {
+
+    public DatesAndCounts getUserResolutions(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/user/resolutions.json", queryParams);
         return getObject(url, DatesAndCounts.class);
     }
-    
-    public UserHappiness getUserHappinessReport(Map<String,String> queryParams) throws ApiException {
+
+    public UserHappiness getUserHappinessReport(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/user/happiness.json", queryParams);
         return getObject(url, UserHappiness.class);
     }
-    
-    public Page<Rating> getUserRatings(Map<String,String> queryParams) throws ApiException {
+
+    public Page<Rating> getUserRatings(Map<String, String> queryParams) throws ApiException {
         String url = setParams("reports/user/ratings.json", queryParams);
         return getPage(url, queryParams, Rating.class, HTTP_STATUS_OK);
     }
@@ -1392,7 +1383,7 @@ public class ApiClient {
         String url = setParams("reports/user/drilldown.json", queryParams);
         return getPage(url, net.helpscout.api.model.report.conversations.Conversation.class, "conversations");
     }
-    
+
     private void setThreadProperties(ConversationThread thread) {
         AbstractThread theThread = (AbstractThread)thread;
 
@@ -1426,68 +1417,62 @@ public class ApiClient {
 
         return Parser.getInstance().getObject(item, clazzType);
     }
-    
+
     private <T> Page<T> getPage(String url, Class<T> clazzType, int expectedCode) throws ApiException {
         return getPage(url, null, clazzType, expectedCode);
     }
-    
+
     private <T> Page<T> getPage(String url, Class<T> clazzType, String wrapperObjectName) throws ApiException {
         String json = doGet(url, HTTP_STATUS_OK);
-
         JsonObject outerObj = parseJson(url, json).getAsJsonObject();
         JsonObject innerObj = outerObj.get(wrapperObjectName).getAsJsonObject();
-        
         return JSONUtils.objectToPage(innerObj, clazzType);
     }
 
-    private <T> Page<T> getPage(String url, Map<String,String> params, Class<T> clazzType, int expectedCode) throws ApiException {
+    private <T> Page<T> getPage(String url, Map<String, String> params, Class<T> clazzType, int expectedCode) throws ApiException {
         url = setParams(url, params);
         String json = doGet(url, HTTP_STATUS_OK);
         JsonElement obj = parseJson(url, json);
-        
         return JSONUtils.objectToPage(obj.getAsJsonObject(), clazzType);
     }
-    
-    private <T> T doPost(String url, String requestBody, int expectedCode, ResultExtractor<T> extractor) throws ApiException {
 
-        try (HTTPConnectionWrapper conn = new HTTPConnectionWrapper(apiKey, baseUrl + url, METHOD_POST, expectedCode, requestBody)) {
+    private <T> T doPost(String url, String requestBody, int expectedCode, ResultExtractor<T> extractor) throws ApiException {
+        try (final HTTPConnectionWrapper conn = new HTTPConnectionWrapper(apiKey, baseUrl + url, METHOD_POST, expectedCode, requestBody)) {
             return extractor.extract(conn);
-        } catch(ApiException ex) {
+        } catch (ApiException ex) {
             throw ex;
-        } catch (Exception ex) {
+        } catch (java.lang.Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
     private void doPut(String url, String requestBody, int expectedCode) throws ApiException {
-
-        try (HTTPConnectionWrapper conn = new HTTPConnectionWrapper(apiKey, baseUrl + url, METHOD_PUT, expectedCode, requestBody)) {
-        } catch(ApiException ex) {
+        try (final HTTPConnectionWrapper conn = new HTTPConnectionWrapper(apiKey, baseUrl + url, METHOD_PUT, expectedCode, requestBody)) {
+        } catch (ApiException ex) {
             throw ex;
-        } catch (Exception ex) {
+        } catch (java.lang.Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
     private String doGet(String url, int expectedCode) throws ApiException {
-        String response    = null;
-        try (HTTPConnectionWrapper conn = new HTTPConnectionWrapper(apiKey, baseUrl + url, METHOD_GET, expectedCode)) {
+        String response = null;
+        try (final HTTPConnectionWrapper conn = new HTTPConnectionWrapper(apiKey, baseUrl + url, METHOD_GET, expectedCode)) {
             response = conn.getResponse();
-        } catch(ApiException e) {
+        } catch (ApiException e) {
             throw e;
-        } catch(Exception e) {
+        } catch (java.lang.Exception e) {
             throw new RuntimeException(e);
         }
         return response;
     }
 
     private void doDelete(String url, int expectedCode) throws ApiException {
-        try (HTTPConnectionWrapper conn = new HTTPConnectionWrapper(apiKey, baseUrl + url, METHOD_DELETE, expectedCode)) {
-        } catch(ApiException e) {
+        try (final HTTPConnectionWrapper conn = new HTTPConnectionWrapper(apiKey, baseUrl + url, METHOD_DELETE, expectedCode)) {
+        } catch (ApiException e) {
             throw e;
-        } catch (Exception ex) {
+        } catch (java.lang.Exception ex) {
             throw new RuntimeException(ex);
         }
     }
-
 }
