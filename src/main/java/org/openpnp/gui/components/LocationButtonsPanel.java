@@ -16,14 +16,12 @@
  * 
  * For more information about OpenPnP visit http://openpnp.org
  */
-
 package org.openpnp.gui.components;
 
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
@@ -32,7 +30,6 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-
 import org.openpnp.gui.MainFrame;
 import org.openpnp.gui.support.Helpers;
 import org.openpnp.gui.support.Icons;
@@ -48,6 +45,7 @@ import org.openpnp.util.MovableUtils;
 import org.openpnp.util.UiUtils;
 import org.pmw.tinylog.Logger;
 
+
 /**
  * A JPanel of 4 small buttons that assist in setting locations. The buttons are Capture Camera
  * Coordinates, Capture Tool Coordinates, Move Camera to Coordinates and Move Tool to Coordinates.
@@ -56,52 +54,54 @@ import org.pmw.tinylog.Logger;
  */
 @SuppressWarnings("serial")
 public class LocationButtonsPanel extends JPanel {
-    private JTextField textFieldX, textFieldY, textFieldZ, textFieldC;
+    private JTextField textFieldX;
+
+    private JTextField textFieldY;
+
+    private JTextField textFieldZ;
+
+    private JTextField textFieldC;
+
     private String actuatorName;
 
     private JButton buttonCenterCamera;
+
     private JButton buttonCenterTool;
+
     private JButton buttonCaptureCamera;
+
     private JButton buttonCaptureTool;
-    
+
     private Location baseLocation;
 
-    public LocationButtonsPanel(JTextField textFieldX, JTextField textFieldY, JTextField textFieldZ,
-            JTextField textFieldC) {
-        FlowLayout flowLayout = (FlowLayout) getLayout();
+    public LocationButtonsPanel(JTextField textFieldX, JTextField textFieldY, JTextField textFieldZ, JTextField textFieldC) {
+        FlowLayout flowLayout = ((FlowLayout) (getLayout()));
         flowLayout.setVgap(0);
         flowLayout.setHgap(2);
         this.textFieldX = textFieldX;
         this.textFieldY = textFieldY;
         this.textFieldZ = textFieldZ;
         this.textFieldC = textFieldC;
-        
         buttonCenterCamera = new JButton(positionCameraAction);
         buttonCenterCamera.setHideActionText(true);
         add(buttonCenterCamera);
-
         buttonCenterTool = new JButton(positionToolAction);
         buttonCenterTool.setHideActionText(true);
         add(buttonCenterTool);
-
         buttonCenterToolNoSafeZ = new JButton(positionToolNoSafeZAction);
         buttonCenterToolNoSafeZ.setHideActionText(true);
-                
         separator = new JSeparator();
         separator.setOrientation(SwingConstants.VERTICAL);
         add(separator);
-
         buttonCaptureCamera = new JButton(captureCameraCoordinatesAction);
         buttonCaptureCamera.setHideActionText(true);
         add(buttonCaptureCamera);
-
         buttonCaptureTool = new JButton(captureToolCoordinatesAction);
         buttonCaptureTool.setHideActionText(true);
         add(buttonCaptureTool);
-
         setActuatorName(null);
     }
-    
+
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
@@ -111,38 +111,38 @@ public class LocationButtonsPanel extends JPanel {
         buttonCaptureCamera.setEnabled(enabled);
         buttonCaptureTool.setEnabled(enabled);
     }
-    
+
     public void setEnabledCenterCamera(boolean enabled) {
         buttonCenterCamera.setEnabled(enabled);
     }
-    
+
     public void setEnabledCenterTool(boolean enabled) {
         buttonCenterTool.setEnabled(enabled);
     }
-    
+
     public void setEnabledCenterToolNoSafeZ(boolean enabled) {
         buttonCenterToolNoSafeZ.setEnabled(enabled);
     }
-    
+
     public void setEnabledCaptureCamera(boolean enabled) {
         buttonCaptureCamera.setEnabled(enabled);
     }
-    
+
     public void setEnabledCaptureTool(boolean enabled) {
         buttonCaptureTool.setEnabled(enabled);
     }
-    
+
     public void setEnabledCenter(boolean enabled) {
         buttonCenterCamera.setEnabled(enabled);
         buttonCenterTool.setEnabled(enabled);
         buttonCenterToolNoSafeZ.setEnabled(enabled);
     }
-    
+
     public void setEnabledCapture(boolean enabled) {
         buttonCaptureCamera.setEnabled(enabled);
         buttonCaptureTool.setEnabled(enabled);
     }
-    
+
     public Location getBaseLocation() {
         return baseLocation;
     }
@@ -150,7 +150,7 @@ public class LocationButtonsPanel extends JPanel {
     public void setBaseLocation(Location baseLocation) {
         this.baseLocation = baseLocation;
     }
-    
+
     public void setShowPositionToolNoSafeZ(boolean b) {
         if (b) {
             add(buttonCenterToolNoSafeZ, 2);
@@ -162,12 +162,11 @@ public class LocationButtonsPanel extends JPanel {
 
     public void setActuatorName(String actuatorName) {
         this.actuatorName = actuatorName;
-        if (actuatorName == null || actuatorName.trim().length() == 0) {
+        if ((actuatorName == null) || (actuatorName.trim().length() == 0)) {
             buttonCaptureTool.setAction(captureToolCoordinatesAction);
             buttonCenterTool.setAction(positionToolAction);
             buttonCenterToolNoSafeZ.setAction(positionToolNoSafeZAction);
-        }
-        else {
+        } else {
             buttonCaptureTool.setAction(captureActuatorCoordinatesAction);
             buttonCenterTool.setAction(positionActuatorAction);
             buttonCenterToolNoSafeZ.setAction(positionActuatorNoSafeZAction);
@@ -224,123 +223,106 @@ public class LocationButtonsPanel extends JPanel {
         return new Location(Configuration.get().getSystemUnits(), x, y, z, rotation);
     }
 
-    private Action captureCameraCoordinatesAction =
-            new AbstractAction("Get Camera Coordinates", Icons.captureCamera) {
-                {
-                    putValue(Action.SHORT_DESCRIPTION,
-                            "Capture the location that the camera is centered on.");
-                }
+    private Action captureCameraCoordinatesAction = new AbstractAction("Get Camera Coordinates", Icons.captureCamera) {
+        {
+            putValue(Action.SHORT_DESCRIPTION, "Capture the location that the camera is centered on.");
+        }
 
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    UiUtils.submitUiMachineTask(() -> {
-                        Location l = getCamera().getLocation();
-                        Location lz = Cycles.zProbe(l);
-                        if (lz != null) {
-                            l = lz;
-                        }
-                        if (baseLocation != null) {
-                            l = l.subtractWithRotation(baseLocation);
-                            l = l.rotateXy(-baseLocation.getRotation());
-                        }
-                        final Location lf = l;
-                        SwingUtilities.invokeAndWait(() -> {
-                            Helpers.copyLocationIntoTextFields(lf, 
-                                    textFieldX, 
-                                    textFieldY, 
-                                    lz == null ? null : textFieldZ,
-                                    textFieldC);
-                        });
-                    });
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            UiUtils.submitUiMachineTask(() -> {
+                Location l = getCamera().getLocation();
+                Location lz = Cycles.zProbe(l);
+                if (lz != null) {
+                    l = lz;
                 }
-            };
-
-    private Action captureToolCoordinatesAction =
-            new AbstractAction("Get Tool Coordinates", Icons.captureTool) {
-                {
-                    putValue(Action.SHORT_DESCRIPTION,
-                            "Capture the location that the tool is centered on.");
+                if (baseLocation != null) {
+                    l = l.subtractWithRotation(baseLocation);
+                    l = l.rotateXy(-baseLocation.getRotation());
                 }
+                final Location lf = l;
+                SwingUtilities.invokeAndWait(() -> {
+                    Helpers.copyLocationIntoTextFields(lf, textFieldX, textFieldY, lz == null ? null : textFieldZ, textFieldC);
+                });
+            });
+        }
+    };
 
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    UiUtils.submitUiMachineTask(() -> {
-                        Location l = getTool().getLocation();
-                        if (baseLocation != null) {
-                            l = l.subtractWithRotation(baseLocation);
-                            l = l.rotateXy(-baseLocation.getRotation());
-                        }
-                        final Location lf = l;
-                        SwingUtilities.invokeAndWait(() -> {
-                            Helpers.copyLocationIntoTextFields(lf, textFieldX, textFieldY, textFieldZ,
-                                    textFieldC);
-                        });
-                    });
+    private Action captureToolCoordinatesAction = new AbstractAction("Get Tool Coordinates", Icons.captureTool) {
+        {
+            putValue(Action.SHORT_DESCRIPTION, "Capture the location that the tool is centered on.");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            UiUtils.submitUiMachineTask(() -> {
+                Location l = getTool().getLocation();
+                if (baseLocation != null) {
+                    l = l.subtractWithRotation(baseLocation);
+                    l = l.rotateXy(-baseLocation.getRotation());
                 }
-            };
+                final Location lf = l;
+                SwingUtilities.invokeAndWait(() -> {
+                    Helpers.copyLocationIntoTextFields(lf, textFieldX, textFieldY, textFieldZ, textFieldC);
+                });
+            });
+        }
+    };
 
-    private Action captureActuatorCoordinatesAction =
-            new AbstractAction("Get Actuator Coordinates", Icons.capturePin) {
-                {
-                    putValue(Action.SHORT_DESCRIPTION,
-                            "Capture the location that the actuator is centered on.");
+    private Action captureActuatorCoordinatesAction = new AbstractAction("Get Actuator Coordinates", Icons.capturePin) {
+        {
+            putValue(Action.SHORT_DESCRIPTION, "Capture the location that the actuator is centered on.");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            UiUtils.submitUiMachineTask(() -> {
+                Actuator actuator = getActuator();
+                if (actuator == null) {
+                    return;
                 }
-
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    UiUtils.submitUiMachineTask(() -> {
-                        Actuator actuator = getActuator();
-                        if (actuator == null) {
-                            return;
-                        }
-                        Location l = actuator.getLocation();
-                        if (baseLocation != null) {
-                            l = l.subtractWithRotation(baseLocation);
-                            l = l.rotateXy(-baseLocation.getRotation());
-                        }
-                        final Location lf = l;
-                        SwingUtilities.invokeAndWait(() -> {
-                            Helpers.copyLocationIntoTextFields(lf, textFieldX,
-                                    textFieldY, textFieldZ, textFieldC);
-                        });
-                    });
-
+                Location l = actuator.getLocation();
+                if (baseLocation != null) {
+                    l = l.subtractWithRotation(baseLocation);
+                    l = l.rotateXy(-baseLocation.getRotation());
                 }
-            };
+                final Location lf = l;
+                SwingUtilities.invokeAndWait(() -> {
+                    Helpers.copyLocationIntoTextFields(lf, textFieldX, textFieldY, textFieldZ, textFieldC);
+                });
+            });
+        }
+    };
 
-    private Action positionCameraAction =
-            new AbstractAction("Position Camera", Icons.centerCamera) {
-                {
-                    putValue(Action.SHORT_DESCRIPTION,
-                            "Position the camera over the center of the location.");
-                }
+    private Action positionCameraAction = new AbstractAction("Position Camera", Icons.centerCamera) {
+        {
+            putValue(Action.SHORT_DESCRIPTION, "Position the camera over the center of the location.");
+        }
 
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    UiUtils.submitUiMachineTask(() -> {
-                        Camera camera = getCamera();
-                        Location location = getParsedLocation();
-                        if (baseLocation != null) {
-                            location = location.rotateXy(baseLocation.getRotation());
-                            location = location.addWithRotation(baseLocation);
-                        }
-                        MovableUtils.moveToLocationAtSafeZ(camera, location);
-                        try {
-                            Map<String, Object> globals = new HashMap<>();
-                            globals.put("camera", camera);
-                            Configuration.get().getScripting().on("Camera.AfterPosition", globals);
-                        }
-                        catch (Exception e) {
-                            Logger.warn(e);
-                        }
-                    });
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            UiUtils.submitUiMachineTask(() -> {
+                Camera camera = getCamera();
+                Location location = getParsedLocation();
+                if (baseLocation != null) {
+                    location = location.rotateXy(baseLocation.getRotation());
+                    location = location.addWithRotation(baseLocation);
                 }
-            };
+                MovableUtils.moveToLocationAtSafeZ(camera, location);
+                try {
+                    Map<String, Object> globals = new HashMap<>();
+                    globals.put("camera", camera);
+                    Configuration.get().getScripting().on("Camera.AfterPosition", globals);
+                } catch ( e) {
+                    Logger.warn(e);
+                }
+            });
+        }
+    };
 
     private Action positionToolAction = new AbstractAction("Position Tool", Icons.centerTool) {
         {
-            putValue(Action.SHORT_DESCRIPTION,
-                    "Position the tool over the center of the location.");
+            putValue(Action.SHORT_DESCRIPTION, "Position the tool over the center of the location.");
         }
 
         @Override
@@ -357,67 +339,64 @@ public class LocationButtonsPanel extends JPanel {
         }
     };
 
-    private Action positionToolNoSafeZAction =
-            new AbstractAction("Position Tool (Without Safe Z)", Icons.centerToolNoSafeZ) {
-                {
-                    putValue(Action.SHORT_DESCRIPTION,
-                            "Position the tool over the center of the location without first moving to Safe Z.");
-                }
+    private Action positionToolNoSafeZAction = new AbstractAction("Position Tool (Without Safe Z)", Icons.centerToolNoSafeZ) {
+        {
+            putValue(Action.SHORT_DESCRIPTION, "Position the tool over the center of the location without first moving to Safe Z.");
+        }
 
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    UiUtils.submitUiMachineTask(() -> {
-                        HeadMountable tool = getTool();
-                        Location location = getParsedLocation();
-                        if (baseLocation != null) {
-                            location = location.rotateXy(baseLocation.getRotation());
-                            location = location.addWithRotation(baseLocation);
-                        }
-                        tool.moveTo(location);
-                    });
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            UiUtils.submitUiMachineTask(() -> {
+                HeadMountable tool = getTool();
+                Location location = getParsedLocation();
+                if (baseLocation != null) {
+                    location = location.rotateXy(baseLocation.getRotation());
+                    location = location.addWithRotation(baseLocation);
                 }
-            };
+                tool.moveTo(location);
+            });
+        }
+    };
 
-    private Action positionActuatorAction =
-            new AbstractAction("Position Actuator", Icons.centerPin) {
-                {
-                    putValue(Action.SHORT_DESCRIPTION,
-                            "Position the actuator over the center of the location.");
-                }
+    private Action positionActuatorAction = new AbstractAction("Position Actuator", Icons.centerPin) {
+        {
+            putValue(Action.SHORT_DESCRIPTION, "Position the actuator over the center of the location.");
+        }
 
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    UiUtils.submitUiMachineTask(() -> {
-                        Actuator actuator = getActuator();
-                        Location location = getParsedLocation();
-                        if (baseLocation != null) {
-                            location = location.rotateXy(baseLocation.getRotation());
-                            location = location.addWithRotation(baseLocation);
-                        }
-                        MovableUtils.moveToLocationAtSafeZ(actuator, location);
-                    });
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            UiUtils.submitUiMachineTask(() -> {
+                Actuator actuator = getActuator();
+                Location location = getParsedLocation();
+                if (baseLocation != null) {
+                    location = location.rotateXy(baseLocation.getRotation());
+                    location = location.addWithRotation(baseLocation);
                 }
-            };
-    private Action positionActuatorNoSafeZAction =
-            new AbstractAction("Position Actuator (Without Safe Z)", Icons.centerPinNoSafeZ) {
-                {
-                    putValue(Action.SHORT_DESCRIPTION,
-                            "Position the actuator over the center of the location without first moving to Safe Z.");
-                }
+                MovableUtils.moveToLocationAtSafeZ(actuator, location);
+            });
+        }
+    };
 
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    UiUtils.submitUiMachineTask(() -> {
-                        Actuator actuator = getActuator();
-                        Location location = getParsedLocation();
-                        if (baseLocation != null) {
-                            location = location.rotateXy(baseLocation.getRotation());
-                            location = location.addWithRotation(baseLocation);
-                        }
-                        actuator.moveTo(location);
-                    });
+    private Action positionActuatorNoSafeZAction = new AbstractAction("Position Actuator (Without Safe Z)", Icons.centerPinNoSafeZ) {
+        {
+            putValue(Action.SHORT_DESCRIPTION, "Position the actuator over the center of the location without first moving to Safe Z.");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            UiUtils.submitUiMachineTask(() -> {
+                Actuator actuator = getActuator();
+                Location location = getParsedLocation();
+                if (baseLocation != null) {
+                    location = location.rotateXy(baseLocation.getRotation());
+                    location = location.addWithRotation(baseLocation);
                 }
-            };
+                actuator.moveTo(location);
+            });
+        }
+    };
+
     private JButton buttonCenterToolNoSafeZ;
+
     private JSeparator separator;
 }

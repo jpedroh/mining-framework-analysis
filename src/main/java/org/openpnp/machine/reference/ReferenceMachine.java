@@ -16,7 +16,6 @@
  * 
  * For more information about OpenPnP visit http://openpnp.org
  */
-
 package org.openpnp.machine.reference;
 
 import java.io.IOException;
@@ -24,9 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import javax.swing.Action;
-
 import org.openpnp.ConfigurationListener;
 import org.openpnp.gui.support.PropertySheetWizardAdapter;
 import org.openpnp.gui.support.Wizard;
@@ -45,9 +42,9 @@ import org.openpnp.machine.reference.feeder.BlindsFeeder;
 import org.openpnp.machine.reference.feeder.ReferenceAutoFeeder;
 import org.openpnp.machine.reference.feeder.ReferenceDragFeeder;
 import org.openpnp.machine.reference.feeder.ReferenceFeederGroup;
-import org.openpnp.machine.reference.feeder.ReferencePushPullFeeder;
 import org.openpnp.machine.reference.feeder.ReferenceLeverFeeder;
 import org.openpnp.machine.reference.feeder.ReferenceLoosePartFeeder;
+import org.openpnp.machine.reference.feeder.ReferencePushPullFeeder;
 import org.openpnp.machine.reference.feeder.ReferenceRotatedTrayFeeder;
 import org.openpnp.machine.reference.feeder.ReferenceSlotAutoFeeder;
 import org.openpnp.machine.reference.feeder.ReferenceStripFeeder;
@@ -80,6 +77,7 @@ import org.openpnp.spi.base.SimplePropertySheetHolder;
 import org.pmw.tinylog.Logger;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.core.Commit;
+
 
 public class ReferenceMachine extends AbstractMachine {
     @Element(required = false)
@@ -118,17 +116,14 @@ public class ReferenceMachine extends AbstractMachine {
     }
 
     public ReferenceMachine() {
-        Configuration.get()
-                     .addListener(new ConfigurationListener.Adapter() {
-
-                         @Override
-                         public void configurationLoaded(Configuration configuration)
-                                 throws Exception {
-                             if (partAlignments.isEmpty()) {
-                                 partAlignments.add(new ReferenceBottomVision());
-                             }
-                         }
-                     });
+        Configuration.get().addListener(new ConfigurationListener.Adapter() {
+            @Override
+            public void configurationLoaded(Configuration configuration) throws Exception {
+                if (partAlignments.isEmpty()) {
+                    partAlignments.add(new ReferenceBottomVision());
+                }
+            }
+        });
     }
 
     @Override

@@ -1,7 +1,6 @@
 package org.openpnp.spi.base;
 
 import javax.swing.Icon;
-
 import org.openpnp.ConfigurationListener;
 import org.openpnp.gui.support.Icons;
 import org.openpnp.gui.support.PropertySheetWizardAdapter;
@@ -13,6 +12,7 @@ import org.openpnp.spi.Nozzle;
 import org.pmw.tinylog.Logger;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.core.Commit;
+
 
 public abstract class AbstractFeeder extends AbstractModelObject implements Feeder {
     @Attribute
@@ -29,21 +29,20 @@ public abstract class AbstractFeeder extends AbstractModelObject implements Feed
 
     @Attribute
     protected String partId;
-    
+
     /**
      * Note: This is feedRetryCount in reality. It was left as retryCount for backwards
      * compatibility when pickRetryCount was added. 
      */
     @Attribute(required=false)
     protected int retryCount = 3;
-    
+
     @Attribute(required = false)
     protected int pickRetryCount = 3;
 
     protected Part part;
-    
+
     //protected WizardContainer wizardContainer;
-    
     public AbstractFeeder() {
         this.id = Configuration.createId("FDR");
         this.parentId = ROOT_FEEDER_ID;
@@ -76,7 +75,7 @@ public abstract class AbstractFeeder extends AbstractModelObject implements Feed
         this.enabled = enabled;
         firePropertyChange("enabled", oldValue, enabled);
     }
-    
+
     public boolean isLocallyEnabled() {
         return enabled;
     }
@@ -109,19 +108,19 @@ public abstract class AbstractFeeder extends AbstractModelObject implements Feed
     public boolean isParentIdChangable() {
         return true;
     }
-    
+
     @Override
     public void addChild(String childId) {
     }
-    
+
     @Override
     public void removeChild(String childId) {
     }
-    
+
     @Override
     public void removeAllChildren() {
     }
-    
+
     @Override
     public boolean isPotentialParentOf(Feeder feeder) {
         return false;
@@ -133,8 +132,7 @@ public abstract class AbstractFeeder extends AbstractModelObject implements Feed
             Configuration.get().getMachine().getFeeder(parentId).removeChild(getId());
         }
     }
-    
-    
+
     @Override
     public void setPart(Part part) {
         Object oldValue = this.part;
@@ -170,7 +168,7 @@ public abstract class AbstractFeeder extends AbstractModelObject implements Feed
     public void setFeedRetryCount(int retryCount) {
         this.retryCount = retryCount;
     }
-    
+
     public int getPickRetryCount() {
         return pickRetryCount;
     }
@@ -183,6 +181,6 @@ public abstract class AbstractFeeder extends AbstractModelObject implements Feed
     public PropertySheet[] getPropertySheets() {
         return new PropertySheet[] {new PropertySheetWizardAdapter(getConfigurationWizard(), "Configuration")};
     }
-    
+
     public void postPick(Nozzle nozzle) throws Exception { }
 }

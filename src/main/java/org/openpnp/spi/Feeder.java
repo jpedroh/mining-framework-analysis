@@ -16,11 +16,9 @@
  * 
  * For more information about OpenPnP visit http://openpnp.org
  */
-
 package org.openpnp.spi;
 
 import java.util.List;
-
 import org.openpnp.gui.support.WizardContainer;
 import org.openpnp.machine.reference.feeder.ReferenceFeederGroup;
 import org.openpnp.model.Configuration;
@@ -30,21 +28,20 @@ import org.openpnp.model.Named;
 import org.openpnp.model.Part;
 
 
-
 /**
  * A Feeder is an abstraction that represents any type of part source. It can be a tape and reel
  * feeder, a tray handler, a single part in a specific location or anything else that can be used as
  * a pick source.
  */
-public interface Feeder extends Identifiable, Named, WizardConfigurable, PropertySheetHolder {
+public interface Feeder extends Identifiable , Named , WizardConfigurable , PropertySheetHolder {
     public static String ROOT_FEEDER_ID = "Machine";
 
     /**
      * Return true if this feeder is currently enabled and therefore can be considered in Job planning.
-     * 
-     * @return
+     *
+     * @return 
      */
-    public boolean isEnabled();
+    public abstract boolean isEnabled();
 
     public void setEnabled(boolean enabled);
 
@@ -66,22 +63,22 @@ public interface Feeder extends Identifiable, Named, WizardConfigurable, Propert
      * Set the ParentId of this Feeder.
      */
     public void setParentId(String parentId);
-    
+
     /**
      * Check to see if the ParentId of this Feeder can be changed.
      */
     public boolean isParentIdChangable();
-    
+
     /**
      * Adds the specified child to this feeder and sets its parent to this Feeder.
      */
     public void addChild(String childId);
-    
+
     /**
      * Removes the specified child from this Feeder and sets its parent to the parent of this Feeder.
      */
     public void removeChild(String childId);
-    
+
     /**
      * Removes all children from this Feeder and sets their parent to the parent of this Feeder.
      */
@@ -122,19 +119,21 @@ public interface Feeder extends Identifiable, Named, WizardConfigurable, Propert
      * @return The location for the feeder Job preparation visit or null if none.
      */
     public Location getJobPreparationLocation();
-    
+
     /**
-     * Prepares a Feeder for usage in a Job. This is done for all the feeders that are enabled and 
-     * contain Parts that are used in pending placements. Preparation is done when the Job is started, 
-     * so it can perform bulk initialization that should not be postponed until the Nozzle.feed() 
-     * 
-     * @param visit true for visits along the getJobPreparationLocation() travel path, false for 
-     * general preparation (second pass for visited feeders).
-     *  
+     * Prepares a Feeder for usage in a Job. This is done for all the feeders that are enabled and
+     * contain Parts that are used in pending placements. Preparation is done when the Job is started,
+     * so it can perform bulk initialization that should not be postponed until the Nozzle.feed()
+     *
+     * @param feedersToPrepare
+     * 		Lists all the feeders to be prepared, so bulk preparation is possible.
+     * 		Bulk preparation, should only be triggered once for each concern, regardless of subsequent calls
+     * 		to this method. Therefore feeders must record whether preparation was already done.
      * @throws Exception
+     * 		
      */
-    public void prepareForJob(boolean visit) throws Exception;
-    
+    public abstract void prepareForJob(boolean visit) throws Exception;
+
     /**
      * Commands the Feeder to do anything it needs to do to prepare the part to be picked by the
      * specified Nozzle. If the Feeder requires Head interaction to feed it will perform those
@@ -149,9 +148,8 @@ public interface Feeder extends Identifiable, Named, WizardConfigurable, Propert
     public void feed(Nozzle nozzle) throws Exception;
 
     public void postPick(Nozzle nozzle) throws Exception;
-    
+
     public int getFeedRetryCount();
-    
+
     public int getPickRetryCount();
 }
-
