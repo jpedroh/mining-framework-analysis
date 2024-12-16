@@ -1,16 +1,15 @@
 package com.fasterxml.jackson.core.json;
 
-import java.io.*;
-import java.util.Arrays;
-
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.base.ParserBase;
 import com.fasterxml.jackson.core.io.CharTypes;
 import com.fasterxml.jackson.core.io.IOContext;
 import com.fasterxml.jackson.core.sym.*;
 import com.fasterxml.jackson.core.util.*;
-
+import java.io.*;
+import java.util.Arrays;
 import static com.fasterxml.jackson.core.JsonTokenId.*;
+
 
 /**
  * This is a concrete implementation of {@link JsonParser}, which is
@@ -18,17 +17,15 @@ import static com.fasterxml.jackson.core.JsonTokenId.*;
  *<p>
  * Note: non-final since version 2.3.
  */
-public class UTF8StreamJsonParser
-    extends ParserBase
-{
+public class UTF8StreamJsonParser extends ParserBase {
     final static byte BYTE_LF = (byte) '\n';
 
     // This is the main input-code lookup table, fetched eagerly
-    private final static int[] _icUTF8 = CharTypes.getInputCodeUtf8();
+    private static final int[] _icUTF8 = CharTypes.getInputCodeUtf8();
 
     // Latin1 encoding is not supported, but we do use 8-bit subset for
     // pre-processing task, to simplify first pass, keep it fast.
-    protected final static int[] _icLatin1 = CharTypes.getInputCodeLatin1();
+    protected static final int[] _icLatin1 = CharTypes.getInputCodeLatin1();
 
     /*
     /**********************************************************
@@ -47,13 +44,13 @@ public class UTF8StreamJsonParser
      * Symbol table that contains field names encountered so far
      */
     final protected BytesToNameCanonicalizer _symbols;
-    
+
     /*
     /**********************************************************
     /* Parsing state
     /**********************************************************
      */
-    
+
     /**
      * Temporary buffer used for name parsing.
      */
@@ -70,13 +67,13 @@ public class UTF8StreamJsonParser
      * Temporary storage for partially parsed name bytes.
      */
     private int _quad1;
-    
+
     /*
     /**********************************************************
     /* Input buffering (from former 'StreamBasedParserBase')
     /**********************************************************
      */
-    
+
     protected InputStream _inputStream;
 
     /*
@@ -95,23 +92,17 @@ public class UTF8StreamJsonParser
     /**
      * Flag that indicates whether the input buffer is recycable (and
      * needs to be returned to recycler once we are done) or not.
-     *<p>
+     * <p>
      * If it is not, it also means that parser can NOT modify underlying
      * buffer.
      */
     protected boolean _bufferRecyclable;
-    
-    /*
-    /**********************************************************
+
+    /* ********************************************************
     /* Life-cycle
     /**********************************************************
      */
-
-    public UTF8StreamJsonParser(IOContext ctxt, int features, InputStream in,
-            ObjectCodec codec, BytesToNameCanonicalizer sym,
-            byte[] inputBuffer, int start, int end,
-            boolean bufferRecyclable)
-    {
+    public UTF8StreamJsonParser(IOContext ctxt, int features, InputStream in, ObjectCodec codec, BytesToNameCanonicalizer sym, byte[] inputBuffer, int start, int end, boolean bufferRecyclable) {
         super(ctxt, features);
         _inputStream = in;
         _objectCodec = codec;
@@ -134,7 +125,7 @@ public class UTF8StreamJsonParser
     public void setCodec(ObjectCodec c) {
         _objectCodec = c;
     }
-    
+
     /*
     /**********************************************************
     /* Overrides for life-cycle
@@ -158,7 +149,7 @@ public class UTF8StreamJsonParser
     public Object getInputSource() {
         return _inputStream;
     }
-    
+
     /*
     /**********************************************************
     /* Overrides, low-level reading
@@ -229,7 +220,7 @@ public class UTF8StreamJsonParser
         }
         return true;
     }
-    
+
     @Override
     protected void _closeInput() throws IOException
     {
@@ -275,14 +266,13 @@ public class UTF8StreamJsonParser
     /* Public API, data access
     /**********************************************************
      */
-
     @Override
-    public String getText() throws IOException
-    {
+    public String getText() throws IOException {
         if (_currToken == JsonToken.VALUE_STRING) {
             if (_tokenIncomplete) {
                 _tokenIncomplete = false;
-                return _finishAndReturnString(); // only strings can be incomplete
+                // only strings can be incomplete
+                return _finishAndReturnString();
             }
             return _textBuffer.contentsAsString();
         }
@@ -290,35 +280,34 @@ public class UTF8StreamJsonParser
     }
 
     // // // Let's override default impls for improved performance
-    
     // @since 2.1
     @Override
-    public String getValueAsString() throws IOException
-    {
+    public String getValueAsString() throws IOException {
         if (_currToken == JsonToken.VALUE_STRING) {
             if (_tokenIncomplete) {
                 _tokenIncomplete = false;
-                return _finishAndReturnString(); // only strings can be incomplete
+                // only strings can be incomplete
+                return _finishAndReturnString();
             }
             return _textBuffer.contentsAsString();
         }
         return super.getValueAsString(null);
     }
-    
+
     // @since 2.1
     @Override
-    public String getValueAsString(String defValue) throws IOException
-    {
+    public String getValueAsString(String defValue) throws IOException {
         if (_currToken == JsonToken.VALUE_STRING) {
             if (_tokenIncomplete) {
                 _tokenIncomplete = false;
-                return _finishAndReturnString(); // only strings can be incomplete
+                // only strings can be incomplete
+                return _finishAndReturnString();
             }
             return _textBuffer.contentsAsString();
         }
         return super.getValueAsString(defValue);
     }
-    
+
     protected final String _getText2(JsonToken t)
     {
         if (t == null) {
@@ -339,126 +328,119 @@ public class UTF8StreamJsonParser
     }
 
     @Override
-    public char[] getTextCharacters() throws IOException
-    {
-        if (_currToken != null) { // null only before/after document
+    public char[] getTextCharacters() throws IOException {
+        if (_currToken != null) {
+            // null only before/after document
             switch (_currToken.id()) {
-                
-            case ID_FIELD_NAME:
-                if (!_nameCopied) {
-                    String name = _parsingContext.getCurrentName();
-                    int nameLen = name.length();
-                    if (_nameCopyBuffer == null) {
-                        _nameCopyBuffer = _ioContext.allocNameCopyBuffer(nameLen);
-                    } else if (_nameCopyBuffer.length < nameLen) {
-                        _nameCopyBuffer = new char[nameLen];
+                case ID_FIELD_NAME :
+                    if (!_nameCopied) {
+                        String name = _parsingContext.getCurrentName();
+                        int nameLen = name.length();
+                        if (_nameCopyBuffer == null) {
+                            _nameCopyBuffer = _ioContext.allocNameCopyBuffer(nameLen);
+                        } else if (ParserBase._nameCopyBuffer.length < nameLen) {
+                            _nameCopyBuffer = new char[nameLen];
+                        }
+                        name.getChars(0, nameLen, _nameCopyBuffer, 0);
+                        _nameCopied = true;
                     }
-                    name.getChars(0, nameLen, _nameCopyBuffer, 0);
-                    _nameCopied = true;
-                }
-                return _nameCopyBuffer;
-    
-            case ID_STRING:
-                if (_tokenIncomplete) {
-                    _tokenIncomplete = false;
-                    _finishString(); // only strings can be incomplete
-                }
-                // fall through
-            case ID_NUMBER_INT:
-            case ID_NUMBER_FLOAT:
-                return _textBuffer.getTextBuffer();
-                
-            default:
-                return _currToken.asCharArray();
+                    return _nameCopyBuffer;
+                case ID_STRING :
+                    if (_tokenIncomplete) {
+                        _tokenIncomplete = false;
+                        _finishString();// only strings can be incomplete
+
+                    }
+                    // fall through
+                case ID_NUMBER_INT :
+                case ID_NUMBER_FLOAT :
+                    return _textBuffer.getTextBuffer();
+                default :
+                    return _currToken.asCharArray();
             }
         }
         return null;
     }
 
     @Override
-    public int getTextLength() throws IOException
-    {
-        if (_currToken != null) { // null only before/after document
+    public int getTextLength() throws IOException {
+        if (_currToken != null) {
+            // null only before/after document
             switch (_currToken.id()) {
-                
-            case ID_FIELD_NAME:
-                return _parsingContext.getCurrentName().length();
-            case ID_STRING:
-                if (_tokenIncomplete) {
-                    _tokenIncomplete = false;
-                    _finishString(); // only strings can be incomplete
-                }
-                // fall through
-            case ID_NUMBER_INT:
-            case ID_NUMBER_FLOAT:
-                return _textBuffer.size();
-                
-            default:
-                return _currToken.asCharArray().length;
+                case ID_FIELD_NAME :
+                    return _parsingContext.getCurrentName().length();
+                case ID_STRING :
+                    if (_tokenIncomplete) {
+                        _tokenIncomplete = false;
+                        _finishString();// only strings can be incomplete
+
+                    }
+                    // fall through
+                case ID_NUMBER_INT :
+                case ID_NUMBER_FLOAT :
+                    return _textBuffer.size();
+                default :
+                    return _currToken.asCharArray().length;
             }
         }
         return 0;
     }
 
     @Override
-    public int getTextOffset() throws IOException
-    {
+    public int getTextOffset() throws IOException {
         // Most have offset of 0, only some may have other values:
         if (_currToken != null) {
             switch (_currToken.id()) {
-            case ID_FIELD_NAME:
-                return 0;
-            case ID_STRING:
-                if (_tokenIncomplete) {
-                    _tokenIncomplete = false;
-                    _finishString(); // only strings can be incomplete
-                }
-                // fall through
-            case ID_NUMBER_INT:
-            case ID_NUMBER_FLOAT:
-                return _textBuffer.getTextOffset();
-            default:
+                case ID_FIELD_NAME :
+                    return 0;
+                case ID_STRING :
+                    if (_tokenIncomplete) {
+                        _tokenIncomplete = false;
+                        _finishString();// only strings can be incomplete
+
+                    }
+                    // fall through
+                case ID_NUMBER_INT :
+                case ID_NUMBER_FLOAT :
+                    return _textBuffer.getTextOffset();
+                default :
             }
         }
         return 0;
     }
-    
+
     @Override
-    public byte[] getBinaryValue(Base64Variant b64variant) throws IOException
-    {
-        if (_currToken != JsonToken.VALUE_STRING &&
-                (_currToken != JsonToken.VALUE_EMBEDDED_OBJECT || _binaryValue == null)) {
-            _reportError("Current token ("+_currToken+") not VALUE_STRING or VALUE_EMBEDDED_OBJECT, can not access as binary");
+    public byte[] getBinaryValue(Base64Variant b64variant) throws IOException {
+        if ((_currToken != JsonToken.VALUE_STRING) && ((_currToken != JsonToken.VALUE_EMBEDDED_OBJECT) || (_binaryValue == null))) {
+            _reportError(("Current token (" + _currToken) + ") not VALUE_STRING or VALUE_EMBEDDED_OBJECT, can not access as binary");
         }
         /* To ensure that we won't see inconsistent data, better clear up
-         * state...
+        state...
          */
         if (_tokenIncomplete) {
             try {
                 _binaryValue = _decodeBase64(b64variant);
-            } catch (IllegalArgumentException iae) {
-                throw _constructError("Failed to decode VALUE_STRING as base64 ("+b64variant+"): "+iae.getMessage());
+            } catch (java.lang.IllegalArgumentException iae) {
+                throw _constructError((("Failed to decode VALUE_STRING as base64 (" + b64variant) + "): ") + iae.getMessage());
             }
             /* let's clear incomplete only now; allows for accessing other
-             * textual content in error cases
+            textual content in error cases
              */
             _tokenIncomplete = false;
-        } else { // may actually require conversion...
-            if (_binaryValue == null) {
-                @SuppressWarnings("resource")
-                ByteArrayBuilder builder = _getByteArrayBuilder();
-                _decodeBase64(getText(), builder, b64variant);
-                _binaryValue = builder.toByteArray();
-            }
+        } else // may actually require conversion...
+        if (_binaryValue == null) {
+            @SuppressWarnings("resource")
+            ByteArrayBuilder builder = _getByteArrayBuilder();
+            _decodeBase64(getText(), builder, b64variant);
+            _binaryValue = builder.toByteArray();
         }
         return _binaryValue;
     }
 
     @Override
-    public int readBinaryValue(Base64Variant b64variant, OutputStream out) throws IOException
-    {
+    public int readBinaryValue(Base64Variant b64variant, OutputStream out) throws IOException {
         // if we have already read the token, just use whatever we may have
-        if (!_tokenIncomplete || _currToken != JsonToken.VALUE_STRING) {
+        if ((!_tokenIncomplete) || (_currToken != JsonToken.VALUE_STRING)) {
             byte[] b = getBinaryValue(b64variant);
             out.write(b);
             return b.length;
@@ -472,13 +454,10 @@ public class UTF8StreamJsonParser
         }
     }
 
-    protected int _readBinary(Base64Variant b64variant, OutputStream out,
-                              byte[] buffer) throws IOException
-    {
+    protected int _readBinary(Base64Variant b64variant, OutputStream out, byte[] buffer) throws IOException {
         int outputPtr = 0;
         final int outputEnd = buffer.length - 3;
         int outputCount = 0;
-
         while (true) {
             // first, we'll skip preceding white space, if any
             int ch;
@@ -486,54 +465,50 @@ public class UTF8StreamJsonParser
                 if (_inputPtr >= _inputEnd) {
                     loadMoreGuaranteed();
                 }
-                ch = (int) _inputBuffer[_inputPtr++] & 0xFF;
-            } while (ch <= INT_SPACE);
+                ch = ((int) (_inputBuffer[_inputPtr++])) & 0xff;
+            } while (ch <= INT_SPACE );
             int bits = b64variant.decodeBase64Char(ch);
-            if (bits < 0) { // reached the end, fair and square?
+            if (bits < 0) {
+                // reached the end, fair and square?
                 if (ch == INT_QUOTE) {
                     break;
                 }
                 bits = _decodeBase64Escape(b64variant, ch, 0);
-                if (bits < 0) { // white space to skip
+                if (bits < 0) {
+                    // white space to skip
                     continue;
                 }
             }
-
             // enough room? If not, flush
             if (outputPtr > outputEnd) {
                 outputCount += outputPtr;
                 out.write(buffer, 0, outputPtr);
                 outputPtr = 0;
             }
-
             int decodedData = bits;
-
             // then second base64 char; can't get padding yet, nor ws
-
             if (_inputPtr >= _inputEnd) {
                 loadMoreGuaranteed();
             }
-            ch = _inputBuffer[_inputPtr++] & 0xFF;
+            ch = _inputBuffer[_inputPtr++] & 0xff;
             bits = b64variant.decodeBase64Char(ch);
             if (bits < 0) {
                 bits = _decodeBase64Escape(b64variant, ch, 1);
             }
             decodedData = (decodedData << 6) | bits;
-
             // third base64 char; can be padding, but not ws
             if (_inputPtr >= _inputEnd) {
                 loadMoreGuaranteed();
             }
-            ch = _inputBuffer[_inputPtr++] & 0xFF;
+            ch = _inputBuffer[_inputPtr++] & 0xff;
             bits = b64variant.decodeBase64Char(ch);
-
             // First branch: can get padding (-> 1 byte)
             if (bits < 0) {
                 if (bits != Base64Variant.BASE64_VALUE_PADDING) {
                     // as per [JACKSON-631], could also just be 'missing'  padding
-                    if (ch == '"' && !b64variant.usesPadding()) {
+                    if ((ch == '"') && (!b64variant.usesPadding())) {
                         decodedData >>= 4;
-                        buffer[outputPtr++] = (byte) decodedData;
+                        buffer[outputPtr++] = ((byte) (decodedData));
                         break;
                     }
                     bits = _decodeBase64Escape(b64variant, ch, 2);
@@ -543,13 +518,13 @@ public class UTF8StreamJsonParser
                     if (_inputPtr >= _inputEnd) {
                         loadMoreGuaranteed();
                     }
-                    ch = _inputBuffer[_inputPtr++] & 0xFF;
+                    ch = _inputBuffer[_inputPtr++] & 0xff;
                     if (!b64variant.usesPaddingChar(ch)) {
-                        throw reportInvalidBase64Char(b64variant, ch, 3, "expected padding character '"+b64variant.getPaddingChar()+"'");
+                        throw reportInvalidBase64Char(b64variant, ch, 3, ("expected padding character '" + b64variant.getPaddingChar()) + "'");
                     }
                     // Got 12 bits, only need 8, need to shift
                     decodedData >>= 4;
-                    buffer[outputPtr++] = (byte) decodedData;
+                    buffer[outputPtr++] = ((byte) (decodedData));
                     continue;
                 }
             }
@@ -559,38 +534,38 @@ public class UTF8StreamJsonParser
             if (_inputPtr >= _inputEnd) {
                 loadMoreGuaranteed();
             }
-            ch = _inputBuffer[_inputPtr++] & 0xFF;
+            ch = _inputBuffer[_inputPtr++] & 0xff;
             bits = b64variant.decodeBase64Char(ch);
             if (bits < 0) {
                 if (bits != Base64Variant.BASE64_VALUE_PADDING) {
                     // as per [JACKSON-631], could also just be 'missing'  padding
-                    if (ch == '"' && !b64variant.usesPadding()) {
+                    if ((ch == '"') && (!b64variant.usesPadding())) {
                         decodedData >>= 2;
-                        buffer[outputPtr++] = (byte) (decodedData >> 8);
-                        buffer[outputPtr++] = (byte) decodedData;
+                        buffer[outputPtr++] = ((byte) (decodedData >> 8));
+                        buffer[outputPtr++] = ((byte) (decodedData));
                         break;
                     }
                     bits = _decodeBase64Escape(b64variant, ch, 3);
                 }
                 if (bits == Base64Variant.BASE64_VALUE_PADDING) {
                     /* With padding we only get 2 bytes; but we have
-                     * to shift it a bit so it is identical to triplet
-                     * case with partial output.
-                     * 3 chars gives 3x6 == 18 bits, of which 2 are
-                     * dummies, need to discard:
+                    to shift it a bit so it is identical to triplet
+                    case with partial output.
+                    3 chars gives 3x6 == 18 bits, of which 2 are
+                    dummies, need to discard:
                      */
                     decodedData >>= 2;
-                    buffer[outputPtr++] = (byte) (decodedData >> 8);
-                    buffer[outputPtr++] = (byte) decodedData;
+                    buffer[outputPtr++] = ((byte) (decodedData >> 8));
+                    buffer[outputPtr++] = ((byte) (decodedData));
                     continue;
                 }
             }
             // otherwise, our triplet is now complete
             decodedData = (decodedData << 6) | bits;
-            buffer[outputPtr++] = (byte) (decodedData >> 16);
-            buffer[outputPtr++] = (byte) (decodedData >> 8);
-            buffer[outputPtr++] = (byte) decodedData;
-        }
+            buffer[outputPtr++] = ((byte) (decodedData >> 16));
+            buffer[outputPtr++] = ((byte) (decodedData >> 8));
+            buffer[outputPtr++] = ((byte) (decodedData));
+        } 
         _tokenIncomplete = false;
         if (outputPtr > 0) {
             outputCount += outputPtr;
@@ -618,7 +593,7 @@ public class UTF8StreamJsonParser
                 _currInputProcessed + _inputPtr, -1L, // bytes, chars
                 _currInputRow, col);
     }
-    
+
     /*
     /**********************************************************
     /* Public API, traversal, basic
@@ -794,7 +769,7 @@ public class UTF8StreamJsonParser
         }
         return (_currToken = _handleUnexpectedValue(i));
     }
-    
+
     private final JsonToken _nextAfterName()
     {
         _nameCopied = false; // need to invalidate if it was copied
@@ -808,7 +783,7 @@ public class UTF8StreamJsonParser
         }
         return (_currToken = t);
     }
-    
+
     /*
     /**********************************************************
     /* Public API, traversal, nextXxxValue/nextFieldName
@@ -1063,7 +1038,7 @@ public class UTF8StreamJsonParser
         _inputPtr = ptr-1;
         return _skipColon2(false);
     }
-    
+
     private final void _isNextTokenNameYes(int i) throws IOException
     {
         _currToken = JsonToken.FIELD_NAME;
@@ -1109,8 +1084,7 @@ public class UTF8StreamJsonParser
         }
         _nextToken = _handleUnexpectedValue(i);
     }
-    
-    
+
     private final boolean _isNextTokenNameMaybe(int i, SerializableString str) throws IOException
     {
         // // // and this is back to standard nextToken()
@@ -1175,10 +1149,10 @@ public class UTF8StreamJsonParser
     }
 
     @Override
-    public String nextTextValue() throws IOException
-    {
+    public String nextTextValue() throws IOException {
         // two distinct cases; either got name and we know next type, or 'other'
-        if (_currToken == JsonToken.FIELD_NAME) { // mostly copied from '_nextAfterName'
+        if (_currToken == JsonToken.FIELD_NAME) {
+            // mostly copied from '_nextAfterName'
             _nameCopied = false;
             JsonToken t = _nextToken;
             _nextToken = null;
@@ -1198,7 +1172,7 @@ public class UTF8StreamJsonParser
             return null;
         }
         // !!! TODO: optimize this case as well
-        return (nextToken() == JsonToken.VALUE_STRING) ? getText() : null;
+        return nextToken() == JsonToken.VALUE_STRING ? getText() : null;
     }
 
     @Override
@@ -1279,7 +1253,7 @@ public class UTF8StreamJsonParser
             return null;
         }
     }
-    
+
     /*
     /**********************************************************
     /* Internal methods, number parsing
@@ -1342,7 +1316,7 @@ public class UTF8StreamJsonParser
         // And there we have it!
         return resetInt(false, intLen);
     }
-    
+
     protected JsonToken _parseNegNumber() throws IOException
     {
         char[] outBuf = _textBuffer.emptyAndGetCurrentSegment();
@@ -1442,7 +1416,7 @@ public class UTF8StreamJsonParser
         return resetInt(negative, intPartLength);
         
     }
-    
+
     /**
      * Method called when we have seen one zero, and want to ensure
      * it is not followed by another
@@ -1478,7 +1452,7 @@ public class UTF8StreamJsonParser
         }
         return ch;
     }
-    
+
     private final JsonToken _parseFloat(char[] outBuf, int outPtr, int c,
             boolean negative, int integerPartLength) throws IOException
     {
@@ -1604,7 +1578,7 @@ public class UTF8StreamJsonParser
     /* Internal methods, secondary parsing
     /**********************************************************
      */
-    
+
     protected final Name _parseName(int i) throws IOException
     {
         if (i != INT_QUOTE) {
@@ -1773,15 +1747,15 @@ public class UTF8StreamJsonParser
      * to come consecutively. Happens rarely, so this is off-lined;
      * plus we'll also do full checks for escaping etc.
      */
-    protected Name slowParseName() throws IOException
-    {
+    protected Name slowParseName() throws IOException {
         if (_inputPtr >= _inputEnd) {
             if (!loadMore()) {
-                _reportInvalidEOF(": was expecting closing '\"' for name");
+                _reportInvalidEOF(": was expecting closing \'\"\' for name");
             }
         }
-        int i = _inputBuffer[_inputPtr++] & 0xFF;
-        if (i == INT_QUOTE) { // special case, ""
+        int i = _inputBuffer[_inputPtr++] & 0xff;
+        if (i == INT_QUOTE) {
+            // special case, ""
             return BytesToNameCanonicalizer.getEmptyName();
         }
         return parseEscapedName(_quadBuffer, 0, 0, i, 0);
@@ -1803,18 +1777,16 @@ public class UTF8StreamJsonParser
      * needs to be able to handle more exceptional cases, gets
      * slower, and hance is offlined to a separate method.
      */
-    protected final Name parseEscapedName(int[] quads, int qlen, int currQuad, int ch,
-            int currQuadBytes) throws IOException
-    {
+    protected final Name parseEscapedName(int[] quads, int qlen, int currQuad, int ch, int currQuadBytes) throws IOException {
         /* 25-Nov-2008, tatu: This may seem weird, but here we do not want to worry about
-         *   UTF-8 decoding yet. Rather, we'll assume that part is ok (if not it will get
-         *   caught later on), and just handle quotes and backslashes here.
+        UTF-8 decoding yet. Rather, we'll assume that part is ok (if not it will get
+        caught later on), and just handle quotes and backslashes here.
          */
         final int[] codes = _icLatin1;
-
         while (true) {
             if (codes[ch] != 0) {
-                if (ch == INT_QUOTE) { // we are done
+                if (ch == INT_QUOTE) {
+                    // we are done
                     break;
                 }
                 // Unquoted white space?
@@ -1826,9 +1798,9 @@ public class UTF8StreamJsonParser
                     ch = _decodeEscaped();
                 }
                 /* Oh crap. May need to UTF-8 (re-)encode it, if it's
-                 * beyond 7-bit ascii. Gets pretty messy.
-                 * If this happens often, may want to use different name
-                 * canonicalization to avoid these hits.
+                beyond 7-bit ascii. Gets pretty messy.
+                If this happens often, may want to use different name
+                canonicalization to avoid these hits.
                  */
                 if (ch > 127) {
                     // Ok, we'll need room for first byte right away
@@ -1840,11 +1812,13 @@ public class UTF8StreamJsonParser
                         currQuad = 0;
                         currQuadBytes = 0;
                     }
-                    if (ch < 0x800) { // 2-byte
+                    if (ch < 0x800) {
+                        // 2-byte
                         currQuad = (currQuad << 8) | (0xc0 | (ch >> 6));
                         ++currQuadBytes;
                         // Second byte gets output below:
-                    } else { // 3 bytes; no need to worry about surrogates here
+                    } else {
+                        // 3 bytes; no need to worry about surrogates here
                         currQuad = (currQuad << 8) | (0xe0 | (ch >> 12));
                         ++currQuadBytes;
                         // need room for middle byte?
@@ -1880,8 +1854,8 @@ public class UTF8StreamJsonParser
                     _reportInvalidEOF(" in field name");
                 }
             }
-            ch = _inputBuffer[_inputPtr++] & 0xFF;
-        }
+            ch = _inputBuffer[_inputPtr++] & 0xff;
+        } 
         if (currQuadBytes > 0) {
             if (qlen >= quads.length) {
                 _quadBuffer = quads = growArrayBy(quads, quads.length);
@@ -2314,7 +2288,7 @@ public class UTF8StreamJsonParser
         _finishString2(outBuf, outPtr);
         return _textBuffer.contentsAsString();
     }
-    
+
     private final void _finishString2(char[] outBuf, int outPtr)
         throws IOException
     {
@@ -2605,7 +2579,7 @@ public class UTF8StreamJsonParser
 
         return JsonToken.VALUE_STRING;
     }
-    
+
     /**
      * Method called if expected numeric value (due to leading sign) does not
      * look like a number
@@ -2651,7 +2625,7 @@ public class UTF8StreamJsonParser
             }
             ++_inputPtr;
         } while (++i < len);
-    
+
         int ch = _inputBuffer[_inputPtr] & 0xFF;
         if (ch >= '0' && ch != ']' && ch != '}') { // expected/allowed chars
             _checkMatchEnd(matchStr, i, ch);
@@ -2668,7 +2642,7 @@ public class UTF8StreamJsonParser
             }
             ++_inputPtr;
         } while (++i < len);
-    
+
         // but let's also ensure we either get EOF, or non-alphanum char...
         if (_inputPtr >= _inputEnd && !loadMore()) {
             return;
@@ -2686,7 +2660,7 @@ public class UTF8StreamJsonParser
             _reportInvalidToken(matchStr.substring(0, i));
         }
     }
-    
+
     /*
     /**********************************************************
     /* Internal methods, ws skipping, escape/unescape
@@ -2747,7 +2721,7 @@ public class UTF8StreamJsonParser
         }        
         throw _constructError("Unexpected end-of-input within/between "+_parsingContext.getTypeDesc()+" entries");
     }
-    
+
     private final int _skipWSOrEnd() throws IOException
     {
         // Let's handle first character separately since it is likely that
@@ -2883,7 +2857,7 @@ public class UTF8StreamJsonParser
         }
         return _skipColon2(false);
     }
-    
+
     private final int _skipColon2(boolean gotColon) throws IOException
     {
         while (_inputPtr < _inputEnd || loadMore()) {
@@ -3037,7 +3011,7 @@ public class UTF8StreamJsonParser
             }
         }
     }
-    
+
     @Override
     protected char _decodeEscaped() throws IOException
     {
@@ -3311,12 +3285,12 @@ public class UTF8StreamJsonParser
     }
 
         private int nextByte() throws IOException
-    {
+            {
         if (_inputPtr >= _inputEnd) {
             loadMoreGuaranteed();
         }
         return _inputBuffer[_inputPtr++] & 0xFF;
-    }
+            }
 
     /*
     /**********************************************************
@@ -3350,7 +3324,7 @@ public class UTF8StreamJsonParser
          }
          _reportError("Unrecognized token '"+sb.toString()+"': was expecting "+msg);
      }
-        
+
     protected void _reportInvalidChar(int c)
         throws JsonParseException
     {
