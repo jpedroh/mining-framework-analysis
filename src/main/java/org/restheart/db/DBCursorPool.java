@@ -18,7 +18,6 @@
 package org.restheart.db;
 
 import com.mongodb.DBCursor;
-import org.restheart.Bootstrapper;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
@@ -30,41 +29,48 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.restheart.Bootstrapper;
 import org.restheart.cache.Cache;
 import org.restheart.cache.CacheFactory;
 import org.restheart.cache.LoadingCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  *
  * @author Andrea Di Cesare <andrea@softinstigate.com>
  */
 public class DBCursorPool {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(DBCursorPool.class);
 
     private final DbsDAO dbsDAO;
 
     //TODO make those configurable
+    //TODO make those configurable
     private final int SKIP_SLICE_LINEAR_DELTA = Bootstrapper.getConfiguration().getEagerLinearSliceDelta();
+
     private final int SKIP_SLICE_LINEAR_WIDTH = Bootstrapper.getConfiguration().getEagerLinearSliceWidht();
+
     private final int[] SKIP_SLICES_HEIGHTS = Bootstrapper.getConfiguration().getEagerLinearSliceHeights();
 
     private final int SKIP_SLICE_RND_MIN_WIDTH = Bootstrapper.getConfiguration().getEagerRndSliceMinWidht();
+
     private final int SKIP_SLICE_RND_MAX_CURSORS = Bootstrapper.getConfiguration().getEagerRndMaxCursors();
 
     public enum EAGER_CURSOR_ALLOCATION_POLICY {
 
         LINEAR,
         RANDOM,
-        NONE
-    };
+        NONE;}
 
     private final Cache<DBCursorPoolEntryKey, DBCursor> cache;
+
     private final LoadingCache<DBCursorPoolEntryKey, Long> collSizes;
 
-    private static final long TTL = 8 * 60 * 1000; // MUST BE < 10 since this 10 the TTL of the default cursor in mongodb
+    // MUST BE < 10 since this 10 the TTL of the default cursor in mongodb
+    private static final long TTL = (8 * 60) * 1000;
+
     private static final long POOL_SIZE = Bootstrapper.getConfiguration().getEagerPoolSize();
 
     ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -75,21 +81,16 @@ public class DBCursorPool {
 
     private DBCursorPool(DbsDAO dbsDAO) {
         this.dbsDAO = dbsDAO;
-
         cache = CacheFactory.createLocalCache(POOL_SIZE, Cache.EXPIRE_POLICY.AFTER_READ, TTL);
-
         collSizes = CacheFactory.createLocalLoadingCache(100, org.restheart.cache.Cache.EXPIRE_POLICY.AFTER_WRITE, 60 * 1000, (DBCursorPoolEntryKey key) -> {
             return dbsDAO.getCollectionSize(key.getCollection(), key.getFilter());
-        }
-        );
-
+        });
         if (LOGGER.isDebugEnabled()) {
             // print stats every 1 minute
             Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-                getCacheSizes().forEach((s, c) -> {
+                getCacheSizes().forEach(( s, c) -> {
                     LOGGER.debug("db cursor pool size: {}\t{}", s, c);
                 });
-
                 LOGGER.trace("db cursor pool entries: {}", cache.asMap().keySet());
             }, 1, 1, TimeUnit.MINUTES);
         }
@@ -145,37 +146,24 @@ public class DBCursorPool {
         if (key.getSkipped() < SKIP_SLICE_LINEAR_WIDTH) {
             return;
         }
-
         int firstSlice = key.getSkipped() / SKIP_SLICE_LINEAR_WIDTH;
-
         executor.submit(() -> {
             int slice = firstSlice;
-
             for (int tohave : SKIP_SLICES_HEIGHTS) {
-                int sliceSkips = slice * SKIP_SLICE_LINEAR_WIDTH - SKIP_SLICE_LINEAR_DELTA;
+                int sliceSkips = (slice * SKIP_SLICE_LINEAR_WIDTH) - SKIP_SLICE_LINEAR_DELTA;
                 DBCursorPoolEntryKey sliceKey = new DBCursorPoolEntryKey(key.getCollection(), key.getSort(), key.getFilter(), key.getFilter(), sliceSkips, -1);
-
                 long existing = getSliceHeight(sliceKey);
-
                 long tocreate = tohave - existing;
-
                 if (tocreate > 0) {
                     // create the first cursor
                     DBCursor cursor = dbsDAO.getCollectionDBCursor(key.getCollection(), key.getSort(), key.getFilter(), key.getKeys());
-                    cursor
-                            .limit(1000 + SKIP_SLICE_LINEAR_DELTA)
-                            .skip(sliceSkips);
-                    
-                    cursor.hasNext(); // this forces the actual skipping
-                    
+                    cursor.limit(1000 + SKIP_SLICE_LINEAR_DELTA).skip(sliceSkips);
+                    cursor.hasNext();// this forces the actual skipping
+
                     DBCursorPoolEntryKey newkey = new DBCursorPoolEntryKey(key.getCollection(), key.getSort(), key.getFilter(), key.getKeys(), sliceSkips, System.nanoTime());
                     cache.put(newkey, cursor);
-                    
-                    
                     LOGGER.debug("created new cursor in pool: {}", newkey);
-
                     tocreate--;
-
                     // copy the first cursor for better performance
                     for (long cont = tocreate; cont > 0; cont--) {
                         newkey = new DBCursorPoolEntryKey(key.getCollection(), key.getSort(), key.getFilter(), key.getKeys(), sliceSkips, System.nanoTime());
@@ -183,7 +171,6 @@ public class DBCursorPool {
                         LOGGER.debug("created new cursor in pool: {}", newkey);
                     }
                 }
-
                 slice++;
             }
         });
@@ -192,11 +179,9 @@ public class DBCursorPool {
     private void populateCacheRandom(DBCursorPoolEntryKey key) {
         executor.submit(() -> {
             Long size = collSizes.getLoading(key).get();
-
             int sliceWidht;
             int slices;
-            int totalSlices = size.intValue() / SKIP_SLICE_RND_MIN_WIDTH + 1;
-
+            int totalSlices = (size.intValue() / SKIP_SLICE_RND_MIN_WIDTH) + 1;
             if (totalSlices <= SKIP_SLICE_RND_MAX_CURSORS) {
                 slices = totalSlices;
                 sliceWidht = SKIP_SLICE_RND_MIN_WIDTH;
@@ -204,22 +189,15 @@ public class DBCursorPool {
                 slices = SKIP_SLICE_RND_MAX_CURSORS;
                 sliceWidht = size.intValue() / slices;
             }
-
             for (int slice = 1; slice < slices; slice++) {
                 int sliceSkips = slice * sliceWidht;
-
                 DBCursorPoolEntryKey sliceKey = new DBCursorPoolEntryKey(key.getCollection(), key.getSort(), key.getFilter(), key.getKeys(), sliceSkips, -1);
-
                 long existing = getSliceHeight(sliceKey);
-                
                 if (existing == 0) {
                     DBCursor cursor = dbsDAO.getCollectionDBCursor(key.getCollection(), key.getSort(), key.getFilter(), key.getKeys());
-                    cursor
-                            .skip(sliceSkips)
-                            .limit(1000 + sliceWidht);
-                    
-                    cursor.hasNext(); // this forces the actual skipping
-                    
+                    cursor.skip(sliceSkips).limit(1000 + sliceWidht);
+                    cursor.hasNext();// this forces the actual skipping
+
                     DBCursorPoolEntryKey newkey = new DBCursorPoolEntryKey(key.getCollection(), key.getSort(), key.getFilter(), key.getKeys(), sliceSkips, System.nanoTime());
                     cache.put(newkey, cursor);
                     LOGGER.debug("created new cursor in pool: {}", newkey);
@@ -239,21 +217,11 @@ public class DBCursorPool {
     }
 
     private Predicate<? super DBCursorPoolEntryKey> cursorsPoolFilterEq(DBCursorPoolEntryKey key) {
-        return k
-                -> Objects.equals(k.getCollection().getDB().getName(), key.getCollection().getDB().getName())
-                && Objects.equals(k.getCollection().getName(), key.getCollection().getName())
-                && Arrays.equals(k.getFilter() != null ? k.getFilter().toArray() : null, key.getFilter() != null ? key.getFilter().toArray() : null)
-                && Arrays.equals(k.getSort() != null ? k.getSort().toArray() : null, key.getSort() != null ? key.getSort().toArray() : null)
-                && k.getSkipped() == key.getSkipped();
+        return ( k) -> (((Objects.equals(k.getCollection().getDB().getName(), key.getCollection().getDB().getName()) && Objects.equals(k.getCollection().getName(), key.getCollection().getName())) && Arrays.equals(k.getFilter() != null ? k.getFilter().toArray() : null, key.getFilter() != null ? key.getFilter().toArray() : null)) && Arrays.equals(k.getSort() != null ? k.getSort().toArray() : null, key.getSort() != null ? key.getSort().toArray() : null)) && (k.getSkipped() == key.getSkipped());
     }
 
     private Predicate<? super DBCursorPoolEntryKey> cursorsPoolFilterGte(DBCursorPoolEntryKey key) {
-        return k
-                -> Objects.equals(k.getCollection().getDB().getName(), key.getCollection().getDB().getName())
-                && Objects.equals(k.getCollection().getName(), key.getCollection().getName())
-                && Arrays.equals(k.getFilter() != null ? k.getFilter().toArray() : null, key.getFilter() != null ? key.getFilter().toArray() : null)
-                && Arrays.equals(k.getSort() != null ? k.getSort().toArray() : null, key.getSort() != null ? key.getSort().toArray() : null)
-                && k.getSkipped() <= key.getSkipped();
+        return ( k) -> (((Objects.equals(k.getCollection().getDB().getName(), key.getCollection().getDB().getName()) && Objects.equals(k.getCollection().getName(), key.getCollection().getName())) && Arrays.equals(k.getFilter() != null ? k.getFilter().toArray() : null, key.getFilter() != null ? key.getFilter().toArray() : null)) && Arrays.equals(k.getSort() != null ? k.getSort().toArray() : null, key.getSort() != null ? key.getSort().toArray() : null)) && (k.getSkipped() <= key.getSkipped());
     }
 
     private TreeMap<String, Long> getCacheSizes() {
@@ -261,8 +229,6 @@ public class DBCursorPool {
     }
 
     private static class DBCursorPoolSingletonHolder {
-
         private static final DBCursorPool INSTANCE = new DBCursorPool(new DbsDAO());
-
-    };
+    }
 }

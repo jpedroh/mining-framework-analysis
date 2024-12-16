@@ -25,28 +25,24 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
 import com.mongodb.util.JSONParseException;
-
-import org.restheart.utils.HttpStatus;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
-
 import org.bson.BSONObject;
 import org.bson.types.ObjectId;
+import org.restheart.utils.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
- * The Data Access Object for the mongodb Collection resource. NOTE: this class
- * is package-private and only meant to be used as a delagate within the DbsDAO
- * class.
+ * The Data Access Object for the mongodb Collection resource. NOTE: this class is package-private and only meant to be
+ * used as a delagate within the DbsDAO class.
  *
  * @author Andrea Di Cesare <andrea@softinstigate.com>
  */
 class CollectionDAO {
-
     private final MongoClient client;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectionDAO.class);
@@ -67,21 +63,21 @@ class CollectionDAO {
     /**
      * Checks if the collection exists.
      *
-     * WARNING: slow method. perf tests show this can take up to 35% overall
-     * requests processing time when getting data from a collection
+     * WARNING: slow method. perf tests show this can take up to 35% overall requests processing time when getting data
+     * from a collection
      *
-     * @deprecated
-     * @param dbName the database name of the collection
-     * @param collName the collection name
+     * @deprecated 
+     * @param dbName
+     * 		the database name of the collection
+     * @param collName
+     * 		the collection name
      * @return true if the specified collection exits in the db dbName
      */
     boolean doesCollectionExist(final String dbName, final String collName) {
-        if (dbName == null || dbName.isEmpty() || dbName.contains(" ")) {
+        if (((dbName == null) || dbName.isEmpty()) || dbName.contains(" ")) {
             return false;
         }
-
-        BasicDBObject query = new BasicDBObject("name", dbName + "." + collName);
-
+        BasicDBObject query = new BasicDBObject("name", (dbName + ".") + collName);
         return client.getDB(dbName).getCollection("system.namespaces").findOne(query) != null;
     }
 
@@ -98,12 +94,11 @@ class CollectionDAO {
     }
 
     /**
-     * Checks if the given collection is empty. Note that RESTHeart creates a
-     * reserved properties document in every collection (with _id
-     * '_properties'). This method returns true even if the collection contains
-     * such document.
+     * Checks if the given collection is empty. Note that RESTHeart creates a reserved properties document in every
+     * collection (with _id '_properties'). This method returns true even if the collection contains such document.
      *
-     * @param coll the mongodb DBCollection object
+     * @param coll
+     * 		the mongodb DBCollection object
      * @return true if the commection is empty
      */
     public boolean isCollectionEmpty(final DBCollection coll) {
@@ -111,61 +106,51 @@ class CollectionDAO {
     }
 
     /**
-     * Returns the number of documents in the given collection (taking into
-     * account the filters in case).
+     * Returns the number of documents in the given collection (taking into account the filters in case).
      *
-     * @param coll the mongodb DBCollection object.
-     * @param filters the filters to apply. it is a Deque collection of mongodb
-     * query conditions.
+     * @param coll
+     * 		the mongodb DBCollection object.
+     * @param filters
+     * 		the filters to apply. it is a Deque collection of mongodb
+     * 		query conditions.
      * @return the number of documents in the given collection (taking into
-     * account the filters in case)
+    account the filters in case)
      */
     public long getCollectionSize(final DBCollection coll, final Deque<String> filters) {
         final BasicDBObject query = new BasicDBObject();
-
         if (filters != null) {
             try {
-                filters.stream().forEach(f -> {
-                    query.putAll((BSONObject) JSON.parse(f));  // this can throw JSONParseException for invalid filter parameters
+                filters.stream().forEach(( f) -> {
+                    query.putAll(((BSONObject) (JSON.parse(f))));// this can throw JSONParseException for invalid filter parameters
+
                 });
             } catch (JSONParseException jpe) {
                 LOGGER.warn("****** error parsing filter expression {}", filters, jpe);
             }
         }
-
         return coll.count(query);
     }
 
     /**
      * Returs the DBCursor of the collection applying sorting and filtering.
      *
-     * @param coll the mongodb DBCollection object <<<<<<< HEAD
+     * @param coll the mongodb DBCollection object
      * @param sortBy the Deque collection of fields to use for sorting (prepend
      * field name with - for descending sorting)
      * @param filters the filters to apply. it is a Deque collection of mongodb
-     * query conditions. =======
-     * @param sortBy the Deque collection of fields to use for sorting (prepend
-     * field name with - for descending sorting)
-     * @param filters the filters to apply. it is a Deque collection of mongodb
-     * query conditions. >>>>>>> 3d60559d7f3582061f69b35b54ef03c3a01c20de
-     * @param keys
+     * query conditions.
+     * @param keys 
      * @return
      * @throws JSONParseException
      */
-    DBCursor getCollectionDBCursor(
-            final DBCollection coll,
-            final Deque<String> sortBy,
-            final Deque<String> filters,
-            final Deque<String> keys) throws JSONParseException {
+    DBCursor getCollectionDBCursor(final DBCollection coll, final Deque<String> sortBy, final Deque<String> filters, final Deque<String> keys) throws JSONParseException {
         // apply sort_by
         DBObject sort = new BasicDBObject();
-
-        if (sortBy == null || sortBy.isEmpty()) {
+        if ((sortBy == null) || sortBy.isEmpty()) {
             sort.put("_id", -1);
         } else {
-            sortBy.stream().forEach((s) -> {
-
-                String _s = s.trim(); // the + sign is decoded into a space, in case remove it
+            sortBy.stream().forEach(( s) -> {
+                String _s = s.trim();// the + sign is decoded into a space, in case remove it
 
                 if (_s.startsWith("-")) {
                     sort.put(_s.substring(1), -1);
@@ -176,96 +161,79 @@ class CollectionDAO {
                 }
             });
         }
-
         // apply filter
         final BasicDBObject query = new BasicDBObject();
-
         if (filters != null) {
             filters.stream().forEach((String f) -> {
-                BSONObject filterQuery = (BSONObject) JSON.parse(f);
+                BSONObject filterQuery = ((BSONObject) (JSON.parse(f)));
+                query.putAll(filterQuery);// this can throw JSONParseException for invalid filter parameters
 
-                query.putAll(filterQuery);  // this can throw JSONParseException for invalid filter parameters
             });
         }
-
         final BasicDBObject fields = new BasicDBObject();
-
         if (keys != null) {
             keys.stream().forEach((String f) -> {
-                BSONObject keyQuery = (BSONObject) JSON.parse(f);
+                BSONObject keyQuery = ((BSONObject) (JSON.parse(f)));
+                fields.putAll(keyQuery);// this can throw JSONParseException for invalid filter parameters
 
-                fields.putAll(keyQuery);  // this can throw JSONParseException for invalid filter parameters
             });
         }
-
         return coll.find(query, fields).sort(sort);
     }
 
-    ArrayList<DBObject> getCollectionData(
-            final DBCollection coll,
-            final int page,
-            final int pagesize,
-            final Deque<String> sortBy,
-            final Deque<String> filters,
-            final Deque<String> keys, DBCursorPool.EAGER_CURSOR_ALLOCATION_POLICY eager) throws JSONParseException {
-
+    ArrayList<DBObject> getCollectionData(final DBCollection coll, final int page, final int pagesize, final Deque<String> sortBy, final Deque<String> filters, final Deque<String> keys, DBCursorPool.EAGER_CURSOR_ALLOCATION_POLICY eager) throws JSONParseException {
         ArrayList<DBObject> ret = new ArrayList<>();
-
         int toskip = pagesize * (page - 1);
-
         SkippedDBCursor _cursor = null;
-
         if (eager != DBCursorPool.EAGER_CURSOR_ALLOCATION_POLICY.NONE) {
-
             _cursor = DBCursorPool.getInstance().get(new DBCursorPoolEntryKey(coll, sortBy, filters, keys, toskip, 0), eager);
         }
-
-        int _pagesize = pagesize;
-
+        int alreadySkipped;
         // in case there is not cursor in the pool to reuse
         DBCursor cursor;
         if (_cursor == null) {
             cursor = getCollectionDBCursor(coll, sortBy, filters, keys);
             cursor.skip(toskip);
-
-            while (_pagesize > 0 && cursor.hasNext()) {
+            while ((pagesize > 0) && cursor.hasNext()) {
                 ret.add(cursor.next());
-                _pagesize--;
-            }
+                pagesize--;
+            } 
         } else {
             int alreadySkipped;
-
             cursor = _cursor.getCursor();
             alreadySkipped = _cursor.getAlreadySkipped();
-
-            while (toskip > alreadySkipped && cursor.hasNext()) {
+            while ((toskip > alreadySkipped) && cursor.hasNext()) {
                 cursor.next();
                 alreadySkipped++;
-            }
-
-            while (_pagesize > 0 && cursor.hasNext()) {
+            } 
+            while ((pagesize > 0) && cursor.hasNext()) {
                 ret.add(cursor.next());
-                _pagesize--;
-            }
+                pagesize--;
+            } 
         }
-
+        while (toskip > alreadySkipped) {
+            cursor.next();
+            alreadySkipped++;
+            // cursor.skip(toskip - alreadySkipped);
+        } 
+        int _pagesize = pagesize;
+        while ((_pagesize > 0) && cursor.hasNext()) {
+            ret.add(cursor.next());
+            _pagesize--;
+        } 
         // add the _lastupdated_on and _created_on
-        ret.forEach(row -> {
+        ret.forEach(( row) -> {
             Object etag = row.get("_etag");
-
-            if (row.get("_lastupdated_on") == null && etag != null && etag instanceof ObjectId) {
-                row.put("_lastupdated_on", Instant.ofEpochSecond(((ObjectId) etag).getTimestamp()).toString());
+            if (((row.get("_lastupdated_on") == null) && (etag != null)) && (etag instanceof ObjectId)) {
+                row.put("_lastupdated_on", Instant.ofEpochSecond(((ObjectId) (etag)).getTimestamp()).toString());
             }
-
             Object id = row.get("_id");
-
             // generate the _created_on timestamp from the _id if this is an instance of ObjectId
-            if (row.get("_created_on") == null && id != null && id instanceof ObjectId) {
-                row.put("_created_on", Instant.ofEpochSecond(((ObjectId) id).getTimestamp()).toString());
+            if (((row.get("_created_on") == null) && (id != null)) && (id instanceof ObjectId)) {
+                row.put("_created_on", Instant.ofEpochSecond(((ObjectId) (id)).getTimestamp()).toString());
             }
         });
-
-        
+        DBCursorPool.getInstance().populateCache(new DBCursorPoolEntryKey(coll, sortBy, filters, keys, toskip, 0), eager);
         return ret;
     }
 
@@ -278,22 +246,17 @@ class CollectionDAO {
      */
     public DBObject getCollectionProps(final String dbName, final String collName, final boolean fixMissingProperties) {
         DBCollection propsColl = getCollection(dbName, "_properties");
-
         DBObject properties = propsColl.findOne(new BasicDBObject("_id", "_properties.".concat(collName)));
-
         if (properties != null) {
             properties.put("_id", collName);
-
             Object etag = properties.get("_etag");
-
-            if (etag != null && etag instanceof ObjectId) {
-                properties.put("_lastupdated_on", Instant.ofEpochSecond(((ObjectId) etag).getTimestamp()).toString());
+            if ((etag != null) && (etag instanceof ObjectId)) {
+                properties.put("_lastupdated_on", Instant.ofEpochSecond(((ObjectId) (etag)).getTimestamp()).toString());
             }
         } else if (fixMissingProperties) {
             new PropsFixer().addCollectionProps(dbName, collName);
             return getCollectionProps(dbName, collName, false);
         }
-
         return properties;
     }
 
@@ -302,101 +265,74 @@ class CollectionDAO {
      *
      * @param dbName the database name of the collection
      * @param collName the collection name
-     * @param properties the new collection properties
+     * @param content the new collection properties
      * @param requestEtag the entity tag. must match to allow actual write
      * (otherwise http error code is returned)
      * @param updating true if updating existing document
      * @param patching true if use patch semantic (update only specified fields)
      * @return the HttpStatus code to set in the http response
      */
-    OperationResult upsertCollection(
-            final String dbName,
-            final String collName,
-            final DBObject properties,
-            final ObjectId requestEtag,
-            final boolean updating,
-            final boolean patching) {
-
+    OperationResult upsertCollection(final String dbName, final String collName, final DBObject properties, final ObjectId requestEtag, final boolean updating, final boolean patching) {
         DB db = client.getDB(dbName);
-
-        if (patching && !updating) {
+        if (patching && (!updating)) {
             return new OperationResult(HttpStatus.SC_NOT_FOUND);
         }
-
         final DBCollection propsColl = db.getCollection("_properties");
-
         final DBObject exists = propsColl.findOne(new BasicDBObject("_id", "_properties.".concat(collName)), FIELDS_TO_RETURN);
-
-        if (exists == null && updating) {
+        if ((exists == null) && updating) {
             LOGGER.error("updating but cannot find collection _properties.{} for {}/{}", collName, dbName, collName);
             return new OperationResult(HttpStatus.SC_NOT_FOUND);
         } else if (exists != null) {
             Object oldEtag = exists.get("_etag");
-
             if (oldEtag != null) {
                 if (requestEtag == null) {
                     return new OperationResult(HttpStatus.SC_CONFLICT, oldEtag);
                 }
-
                 if (!oldEtag.equals(requestEtag)) {
                     return new OperationResult(HttpStatus.SC_PRECONDITION_FAILED, oldEtag);
                 }
             }
         }
-
         ObjectId newEtag = new ObjectId();
         Instant now = Instant.ofEpochSecond(newEtag.getTimestamp());
-
         final DBObject content = DAOUtils.validContent(properties);
-
-        content.removeField("_id"); // make sure we don't change this field
-
+        // make sure we don't change this field
+        content.removeField("_id");
         if (updating) {
-            content.removeField("_crated_on"); // don't allow to update this field
+            // don't allow to update this field
+            content.removeField("_crated_on");
             content.put("_etag", newEtag);
         } else {
             content.put("_id", "_properties.".concat(collName));
             content.put("_created_on", now.toString());
             content.put("_etag", newEtag);
         }
-
         if (patching) {
-            propsColl.update(new BasicDBObject("_id", "_properties.".concat(collName)),
-                    new BasicDBObject("$set", content), true, false);
+            propsColl.update(new BasicDBObject("_id", "_properties.".concat(collName)), new BasicDBObject("$set", content), true, false);
             return new OperationResult(HttpStatus.SC_OK, newEtag);
         } else {
-            // we use findAndModify to get the @created_on field value from the existing properties document
+                // we use findAndModify to get the @created_on field value from the existing properties document
             // we need to put this field back using a second update 
             // it is not possible in a single update even using $setOnInsert update operator
             // in this case we need to provide the other data using $set operator and this makes it a partial update (patch semantic) 
-
-            DBObject old = propsColl.findAndModify(new BasicDBObject("_id", "_properties.".concat(collName)),
-                    FIELDS_TO_RETURN, null, false, content, false, true);
-
+            DBObject old = propsColl.findAndModify(new BasicDBObject("_id", "_properties.".concat(collName)), FIELDS_TO_RETURN, null, false, content, false, true);
             if (old != null) {
                 Object oldTimestamp = old.get("_created_on");
-
                 if (oldTimestamp == null) {
                     oldTimestamp = now.toString();
-                    LOGGER.warn("properties of collection {} had no @created_on field. set it to now", dbName + "." + collName);
+                    LOGGER.warn("properties of collection {} had no @created_on field. set it to now", (dbName + ".") + collName);
                 }
-
-                // need to readd the @created_on field 
+                // need to readd the @created_on field
                 BasicDBObject createdContent = new BasicDBObject("_created_on", "" + oldTimestamp);
                 createdContent.markAsPartialObject();
-                propsColl.update(new BasicDBObject("_id", "_properties.".concat(collName)),
-                        new BasicDBObject("$set", createdContent), true, false);
-
+                propsColl.update(new BasicDBObject("_id", "_properties.".concat(collName)), new BasicDBObject("$set", createdContent), true, false);
                 return new OperationResult(HttpStatus.SC_OK, newEtag);
             } else {
-                // need to readd the @created_on field 
+                // need to readd the @created_on field
                 BasicDBObject createdContent = new BasicDBObject("_created_on", now.toString());
                 createdContent.markAsPartialObject();
-                propsColl.update(new BasicDBObject("_id", "_properties.".concat(collName)),
-                        new BasicDBObject("$set", createdContent), true, false);
-
+                propsColl.update(new BasicDBObject("_id", "_properties.".concat(collName)), new BasicDBObject("$set", createdContent), true, false);
                 initDefaultIndexes(db.getCollection(collName));
-
                 return new OperationResult(HttpStatus.SC_CREATED, newEtag);
             }
         }
@@ -414,18 +350,13 @@ class CollectionDAO {
     OperationResult deleteCollection(final String dbName, final String collName, final ObjectId requestEtag) {
         DBCollection coll = getCollection(dbName, collName);
         DBCollection propsColl = getCollection(dbName, "_properties");
-
         final BasicDBObject checkEtag = new BasicDBObject("_id", "_properties.".concat(collName));
-
         final DBObject exists = propsColl.findOne(checkEtag, FIELDS_TO_RETURN);
-
         if (exists != null) {
             Object oldEtag = exists.get("_etag");
-
-            if (oldEtag != null && requestEtag == null) {
+            if ((oldEtag != null) && (requestEtag == null)) {
                 return new OperationResult(HttpStatus.SC_CONFLICT, oldEtag);
             }
-
             if (requestEtag.equals(oldEtag)) {
                 propsColl.remove(new BasicDBObject("_id", "_properties.".concat(collName)));
                 coll.drop();
