@@ -4,7 +4,6 @@ import com.github.oxo42.stateless4j.delegates.*;
 import com.github.oxo42.stateless4j.transitions.Transition;
 import com.github.oxo42.stateless4j.transitions.TransitioningTriggerBehaviour;
 import com.github.oxo42.stateless4j.triggers.*;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -12,8 +11,9 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
+
 
 /**
  * Models behaviour as transitions between a finite set of states
@@ -22,27 +22,25 @@ import java.util.Map.Entry;
  * @param <TTrigger> The type used to represent the triggers that cause state transitions
  */
 public class StateMachine<TState, TTrigger> {
-
     protected final Map<TState, StateRepresentation<TState, TTrigger>> stateConfiguration = new HashMap<>();
+
     protected final Map<TTrigger, TriggerWithParameters<TState, TTrigger>> triggerConfiguration = new HashMap<>();
+
     protected final Func<TState> stateAccessor;
+
     protected final Action1<TState> stateMutator;
+
     protected Action2<TState, TTrigger> unhandledTriggerAction = new Action2<TState, TTrigger>() {
-
         public void doIt(TState state, TTrigger trigger) {
-            throw new IllegalStateException(
-                    String.format(
-                            "No valid leaving transitions are permitted from state '%s' for trigger '%s'. Consider ignoring the trigger.",
-                            state, trigger)
-            );
+            throw new IllegalStateException(String.format("No valid leaving transitions are permitted from state '%s' for trigger '%s'. Consider ignoring the trigger.", state, trigger));
         }
-
     };
 
     /**
      * Construct a state machine
      *
-     * @param initialState The initial state
+     * @param initialState
+     * 		The initial state
      */
     public StateMachine(TState initialState) {
         final StateReference<TState, TTrigger> reference = new StateReference<>();

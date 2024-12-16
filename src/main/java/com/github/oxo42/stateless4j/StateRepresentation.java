@@ -4,17 +4,22 @@ import com.github.oxo42.stateless4j.delegates.Action1;
 import com.github.oxo42.stateless4j.delegates.Action2;
 import com.github.oxo42.stateless4j.transitions.Transition;
 import com.github.oxo42.stateless4j.triggers.TriggerBehaviour;
-
 import java.util.*;
+
 
 public class StateRepresentation<TState, TTrigger> {
     private final TState state;
 
     private final Map<TTrigger, List<TriggerBehaviour<TState, TTrigger>>> triggerBehaviours = new HashMap<>();
+
     private final List<Action2<Transition<TState, TTrigger>, Object[]>> entryActions = new ArrayList<>();
+
     private final List<Action1<Transition<TState, TTrigger>>> exitActions = new ArrayList<>();
+
     private final List<StateRepresentation<TState, TTrigger>> substates = new ArrayList<>();
-    private StateRepresentation<TState, TTrigger> superstate; // null
+
+    // null
+    private StateRepresentation<TState, TTrigger> superstate;
 
     public StateRepresentation(TState state) {
         this.state = state;
@@ -58,7 +63,6 @@ public class StateRepresentation<TState, TTrigger> {
 
     public void addEntryAction(final TTrigger trigger, final Action2<Transition<TState, TTrigger>, Object[]> action) {
         assert action != null : "action is null";
-
         entryActions.add(new Action2<Transition<TState, TTrigger>, Object[]>() {
             @Override
             public void doIt(Transition<TState, TTrigger> t, Object[] args) {
@@ -86,21 +90,18 @@ public class StateRepresentation<TState, TTrigger> {
 
     public void enter(Transition<TState, TTrigger> transition, Object... entryArgs) {
         assert transition != null : "transition is null";
-
         if (transition.isReentry()) {
             executeEntryActions(transition, entryArgs);
         } else if (!includes(transition.getSource())) {
             if (superstate != null) {
                 superstate.enter(transition, entryArgs);
             }
-
             executeEntryActions(transition, entryArgs);
         }
     }
 
     public void exit(Transition<TState, TTrigger> transition) {
         assert transition != null : "transition is null";
-
         if (transition.isReentry()) {
             executeExitActions(transition);
         } else if (!includes(transition.getDestination())) {
@@ -163,13 +164,12 @@ public class StateRepresentation<TState, TTrigger> {
     }
 
     public boolean isIncludedIn(TState stateToCheck) {
-        return this.state.equals(stateToCheck) || (superstate != null && superstate.isIncludedIn(stateToCheck));
+        return this.state.equals(stateToCheck) || ((superstate != null) && superstate.isIncludedIn(stateToCheck));
     }
 
     @SuppressWarnings("unchecked")
     public List<TTrigger> getPermittedTriggers() {
         Set<TTrigger> result = new HashSet<>();
-
         for (TTrigger t : triggerBehaviours.keySet()) {
             for (TriggerBehaviour<TState, TTrigger> v : triggerBehaviours.get(t)) {
                 if (v.isGuardConditionMet()) {
@@ -178,11 +178,9 @@ public class StateRepresentation<TState, TTrigger> {
                 }
             }
         }
-
         if (getSuperstate() != null) {
             result.addAll(getSuperstate().getPermittedTriggers());
         }
-
         return new ArrayList<>(result);
     }
 }
