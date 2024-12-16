@@ -1,34 +1,30 @@
 package com.fasterxml.jackson.core.json;
 
-import java.io.*;
-
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.base.ParserBase;
 import com.fasterxml.jackson.core.io.CharTypes;
 import com.fasterxml.jackson.core.io.IOContext;
 import com.fasterxml.jackson.core.sym.CharsToNameCanonicalizer;
 import com.fasterxml.jackson.core.util.*;
-
+import java.io.*;
 import static com.fasterxml.jackson.core.JsonTokenId.*;
+
 
 /**
  * This is a concrete implementation of {@link JsonParser}, which is
  * based on a {@link java.io.Reader} to handle low-level character
  * conversion tasks.
  */
-public class ReaderBasedJsonParser // final in 2.3, earlier
-    extends ParserBase
-{
+// final in 2.3, earlier
+public class ReaderBasedJsonParser extends ParserBase {
     // Latin1 encoding is not supported, but we do use 8-bit subset for
     // pre-processing task, to simplify first pass, keep it fast.
-    protected final static int[] _icLatin1 = CharTypes.getInputCodeLatin1();
+    protected static final int[] _icLatin1 = CharTypes.getInputCodeLatin1();
 
-    /*
-    /**********************************************************
+    /* ********************************************************
     /* Input configuration
     /**********************************************************
      */
-
     /**
      * Reader that can be used for reading more content, if one
      * buffer from input source, but in some cases pre-loaded buffer
@@ -45,12 +41,12 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
     /**
      * Flag that indicates whether the input buffer is recycable (and
      * needs to be returned to recycler once we are done) or not.
-     *<p>
+     * <p>
      * If it is not, it also means that parser can NOT modify underlying
      * buffer.
      */
     protected boolean _bufferRecyclable;
-    
+
     /*
     /**********************************************************
     /* Configuration
@@ -60,15 +56,13 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
     protected ObjectCodec _objectCodec;
 
     final protected CharsToNameCanonicalizer _symbols;
-    
+
     final protected int _hashSeed;
 
-    /*
-    /**********************************************************
+    /* ********************************************************
     /* Parsing state
     /**********************************************************
      */
-    
     /**
      * Flag that indicates that the current token has not yet
      * been fully processed, and needs to be finished for
@@ -76,23 +70,17 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
      */
     protected boolean _tokenIncomplete = false;
 
-    /*
-    /**********************************************************
+    /* ********************************************************
     /* Life-cycle
     /**********************************************************
      */
-
     /**
      * Method called when caller wants to provide input buffer directly,
      * and it may or may not be recyclable use standard recycle context.
-     * 
+     *
      * @since 2.4
      */
-    public ReaderBasedJsonParser(IOContext ctxt, int features, Reader r,
-            ObjectCodec codec, CharsToNameCanonicalizer st,
-            char[] inputBuffer, int start, int end,
-            boolean bufferRecyclable)
-    {
+    public ReaderBasedJsonParser(IOContext ctxt, int features, Reader r, ObjectCodec codec, CharsToNameCanonicalizer st, char[] inputBuffer, int start, int end, boolean bufferRecyclable) {
         super(ctxt, features);
         _reader = r;
         _inputBuffer = inputBuffer;
@@ -108,9 +96,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
      * Method called when input comes as a {@link java.io.Reader}, and buffer allocation
      * can be done using default mechanism.
      */
-    public ReaderBasedJsonParser(IOContext ctxt, int features, Reader r,
-        ObjectCodec codec, CharsToNameCanonicalizer st)
-    {
+    public ReaderBasedJsonParser(IOContext ctxt, int features, Reader r, ObjectCodec codec, CharsToNameCanonicalizer st) {
         super(ctxt, features);
         _reader = r;
         _inputBuffer = ctxt.allocTokenBuffer();
@@ -129,8 +115,9 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
      */
 
     @Override public ObjectCodec getCodec() { return _objectCodec; }
+
     @Override public void setCodec(ObjectCodec c) { _objectCodec = c; }
-    
+
     @Override
     public int releaseBuffered(Writer w) throws IOException {
         int count = _inputEnd - _inputPtr;
@@ -210,13 +197,13 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
             }
         }
     }
-    
+
     /*
     /**********************************************************
     /* Public API, data access
     /**********************************************************
      */
-    
+
     /**
      * Method for accessing textual representation of the current event;
      * if no current event (before first call to {@link #nextToken}, or
@@ -238,15 +225,14 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
     }
 
     // // // Let's override default impls for improved performance
-    
     // @since 2.1
     @Override
-    public final String getValueAsString() throws IOException
-    {
+    public final String getValueAsString() throws IOException {
         if (_currToken == JsonToken.VALUE_STRING) {
             if (_tokenIncomplete) {
                 _tokenIncomplete = false;
-                _finishString(); // only strings can be incomplete
+                _finishString();// only strings can be incomplete
+
             }
             return _textBuffer.contentsAsString();
         }
@@ -255,14 +241,15 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
         }
         return super.getValueAsString(null);
     }
-    
+
     // @since 2.1
     @Override
     public final String getValueAsString(String defValue) throws IOException {
         if (_currToken == JsonToken.VALUE_STRING) {
             if (_tokenIncomplete) {
                 _tokenIncomplete = false;
-                _finishString(); // only strings can be incomplete
+                _finishString();// only strings can be incomplete
+
             }
             return _textBuffer.contentsAsString();
         }
@@ -308,7 +295,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
                     _nameCopied = true;
                 }
                 return _nameCopyBuffer;
-    
+
             case ID_STRING:
                 if (_tokenIncomplete) {
                     _tokenIncomplete = false;
@@ -404,7 +391,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
         }
         return _binaryValue;
     }
-    
+
     @Override
     public int readBinaryValue(Base64Variant b64variant, OutputStream out) throws IOException
     {
@@ -550,9 +537,9 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
     }
 
     /*
-   /**********************************************************
-   /* Public API, traversal
-   /**********************************************************
+       /**********************************************************
+       /* Public API, traversal
+       /**********************************************************
     */
 
     /**
@@ -1155,7 +1142,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
         // and offline the less common case
         return _verifyNLZ2();
     }
-        
+
     private char _verifyNLZ2() throws IOException
     {
         if (_inputPtr >= _inputEnd && !loadMore()) {
@@ -1241,7 +1228,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
         }
         _reportMissingRootWS(ch);
     }
-    
+
     /*
     /**********************************************************
     /* Internal methods, secondary parsing
@@ -1274,29 +1261,26 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
         return _parseName2(start, hash, INT_QUOTE);
     }
 
-    private String _parseName2(int startPtr, int hash, int endChar) throws IOException
-    {
-        _textBuffer.resetWithShared(_inputBuffer, startPtr, (_inputPtr - startPtr));
-
+    private String _parseName2(int startPtr, int hash, int endChar) throws IOException {
+        _textBuffer.resetWithShared(_inputBuffer, startPtr, _inputPtr - startPtr);
         /* Output pointers; calls will also ensure that the buffer is
-         * not shared and has room for at least one more char.
+        not shared and has room for at least one more char.
          */
         char[] outBuf = _textBuffer.getCurrentSegment();
         int outPtr = _textBuffer.getCurrentSegmentSize();
-
         while (true) {
             if (_inputPtr >= _inputEnd) {
                 if (!loadMore()) {
-                    _reportInvalidEOF(": was expecting closing '"+((char) endChar)+"' for name");
+                    _reportInvalidEOF((": was expecting closing '" + ((char) (endChar))) + "' for name");
                 }
             }
             char c = _inputBuffer[_inputPtr++];
-            int i = (int) c;
+            int i = ((int) (c));
             if (i <= INT_BACKSLASH) {
                 if (i == INT_BACKSLASH) {
                     /* Although chars outside of BMP are to be escaped as
-                     * an UTF-16 surrogate pair, does that affect decoding?
-                     * For now let's assume it does not.
+                    an UTF-16 surrogate pair, does that affect decoding?
+                    For now let's assume it does not.
                      */
                     c = _decodeEscaped();
                 } else if (i <= endChar) {
@@ -1311,13 +1295,12 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
             hash = (hash * CharsToNameCanonicalizer.HASH_MULT) + c;
             // Ok, let's add char to output:
             outBuf[outPtr++] = c;
-
             // Need more room?
             if (outPtr >= outBuf.length) {
                 outBuf = _textBuffer.finishCurrentSegment();
                 outPtr = 0;
             }
-        }
+        } 
         _textBuffer.setCurrentLength(outPtr);
         {
             TextBuffer tb = _textBuffer;
@@ -1467,7 +1450,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
         _reportUnexpectedChar(i, "expected a valid value (number, String, array, object, 'true', 'false' or 'null')");
         return null;
     }
-    
+
     protected JsonToken _handleApos() throws IOException
     {
         char[] outBuf = _textBuffer.emptyAndGetCurrentSegment();
@@ -1508,7 +1491,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
         _textBuffer.setCurrentLength(outPtr);
         return JsonToken.VALUE_STRING;
     }
-    
+
     private String _handleOddName2(int startPtr, int hash, int[] codes) throws IOException
     {
         _textBuffer.resetWithShared(_inputBuffer, startPtr, (_inputPtr - startPtr));
@@ -1552,7 +1535,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
             return _symbols.findSymbol(buf, start, len, hash);
         }
     }
-  
+
     @Override
     protected final void _finishString() throws IOException
     {
@@ -1682,7 +1665,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
     /* Internal methods, other parsing
     /**********************************************************
      */
-    
+
     /**
      * We actually need to check the character value here
      * (to see if we have \n following \r).
@@ -1696,7 +1679,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
         ++_currInputRow;
         _currInputRowStart = _inputPtr;
     }
-    
+
     private final int _skipColon() throws IOException
     {
         if ((_inputPtr + 4) >= _inputEnd) {
@@ -1792,7 +1775,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
             }
         }
     }
- 
+
     // Primary loop: no reloading, comment handling
     private final int _skipComma(int i) throws IOException
     {
@@ -1851,7 +1834,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
         }
         throw _constructError("Unexpected end-of-input within/between "+_parsingContext.getTypeDesc()+" entries");
     }
-    
+
     private final int _skipWSOrEnd() throws IOException
     {
         // Let's handle first character separately since it is likely that
@@ -1935,7 +1918,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
             }
         }
     }
-    
+
     private void _skipComment() throws IOException
     {
         if (!isEnabled(Feature.ALLOW_COMMENTS)) {
@@ -1994,7 +1977,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
         _skipLine();
         return true;
     }
-    
+
     private void _skipLine() throws IOException
     {
         // Ok: need to find EOF or linefeed
@@ -2068,7 +2051,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
         }
         return (char) value;
     }
-    
+
     private final void _matchTrue() throws IOException {
         int ptr = _inputPtr;
         if ((ptr + 3) < _inputEnd) {
@@ -2281,7 +2264,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
     protected void _reportInvalidToken(String matchedPart) throws IOException {
         _reportInvalidToken(matchedPart, "'null', 'true', 'false' or NaN");
     }
-    
+
     protected void _reportInvalidToken(String matchedPart, String msg) throws IOException
     {
         StringBuilder sb = new StringBuilder(matchedPart);

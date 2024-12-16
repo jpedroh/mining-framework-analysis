@@ -1,10 +1,10 @@
 package com.fasterxml.jackson.core.sym;
 
+import com.fasterxml.jackson.core.*;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 
-import com.fasterxml.jackson.core.*;
 
 public class TestSymbolTables extends com.fasterxml.jackson.core.BaseTest
 {
@@ -344,26 +344,8 @@ public class TestSymbolTables extends com.fasterxml.jackson.core.BaseTest
         p.close();
     }
 
-    private String _shortDoc191() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\n");
-        for (int i = 0; i < 400; ++i) {
-            if (i > 0) {
-                sb.append(",\n");
-            }
-            sb.append('"');
-            char c = (char) i;
-            if (Character.isLetterOrDigit(c)) {
-                sb.append((char) i);
-            } else {
-                sb.append(String.format("\\u%04x", i));
-            }
-            sb.append("\" : "+i);
-        }
-        sb.append("}\n");
-        return sb.toString();
-    }
-    
+<<<<<<< LEFT
+=======
     // [core#191]
     public void testShortQuotedDirectChars() throws IOException
     {
@@ -378,12 +360,11 @@ public class TestSymbolTables extends com.fasterxml.jackson.core.BaseTest
         assertEquals(COUNT, symbols.size());
         assertEquals(1024, symbols.bucketCount());
 
-        assertEquals(50, symbols.collisionCount());
+        assertEquals(112, symbols.collisionCount());
         assertEquals(2, symbols.maxCollisionLength());
     }
 
-    @SuppressWarnings("deprecation")
-    public void testShortQuotedDirectBytesOld() throws IOException
+    public void testShortQuotedDirectBytes() throws IOException
     {
         final int COUNT = 400;
         BytesToNameCanonicalizer symbols =
@@ -399,29 +380,61 @@ public class TestSymbolTables extends com.fasterxml.jackson.core.BaseTest
         assertEquals(44, symbols.collisionCount());
         assertEquals(2, symbols.maxCollisionLength());
     }
-
-    public void testShortQuotedDirectBytes() throws IOException
+    
+    // [core#191]
+    public void testShortNameCollisionsDirect() throws IOException
     {
         final int COUNT = 400;
-        ByteQuadsCanonicalizer symbols =
-                ByteQuadsCanonicalizer.createRoot(123).makeChild(JsonFactory.Feature.collectDefaults());
-        for (int i = 0; i < COUNT; ++i) {
-            String id = String.format("\\u%04x", i);
-            int[] quads = calcQuads(id.getBytes("UTF-8"));
-            symbols.addName(id, quads, quads.length);
-        }
-        assertEquals(COUNT, symbols.size());
-        assertEquals(512, symbols.bucketCount());
 
-        assertEquals(285, symbols.primaryCount());
-        assertEquals(90, symbols.secondaryCount());
-        assertEquals(25, symbols.tertiaryCount());
-        assertEquals(0, symbols.spilloverCount());
+        // First, char-based
+        {
+            CharsToNameCanonicalizer symbols = CharsToNameCanonicalizer.createRoot(1);
+            for (int i = 0; i < COUNT; ++i) {
+                String id = String.valueOf((char) i);
+                char[] ch = id.toCharArray();
+                symbols.findSymbol(ch, 0, ch.length, symbols.calcHash(id));
+            }
+            assertEquals(COUNT, symbols.size());
+            assertEquals(1024, symbols.bucketCount());
+    
+            assertEquals(0, symbols.collisionCount());
+            assertEquals(0, symbols.maxCollisionLength());
+        }
+
+        // then byte-based
+        {
+            BytesToNameCanonicalizer symbols =
+                    BytesToNameCanonicalizer.createRoot(1).makeChild(JsonFactory.Feature.collectDefaults());
+            for (int i = 0; i < COUNT; ++i) {
+                String id = String.valueOf((char) i);
+                int[] quads = BytesToNameCanonicalizer.calcQuads(id.getBytes("UTF-8"));
+                symbols.addName(id, quads, quads.length);
+            }
+            assertEquals(COUNT, symbols.size());
+            assertEquals(1024, symbols.bucketCount());
+    
+            assertEquals(15, symbols.collisionCount());
+            assertEquals(1, symbols.maxCollisionLength());
+        }
+    }
+    
+>>>>>>> RIGHT
+    private String _shortDoc191() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\n");
+        for (int i = 0; i < 400; ++i) {
+            if (i > 0) {
+                sb.append(",\n");
+            }
+            sb.append(String.format("\"\\u%04x\" : %d", i, i));
+        }
+        sb.append("}\n");
+        return sb.toString();
     }
     
     // [core#191]
     @SuppressWarnings("deprecation")
-    public void testShortNameCollisionsDirect() throws IOException
+    public void testShortNameCollisionsDirectOld() throws IOException
     {
         final int COUNT = 600;
 
@@ -461,8 +474,9 @@ public class TestSymbolTables extends com.fasterxml.jackson.core.BaseTest
     {
         final int COUNT = 700;
         {
+            final int SEED = 33333;
             ByteQuadsCanonicalizer symbols =
-                    ByteQuadsCanonicalizer.createRoot(333).makeChild(JsonFactory.Feature.collectDefaults());
+                    ByteQuadsCanonicalizer.createRoot(SEED).makeChild(JsonFactory.Feature.collectDefaults());
             for (int i = 0; i < COUNT; ++i) {
                 String id = String.valueOf((char) i);
                 int[] quads = calcQuads(id.getBytes("UTF-8"));
