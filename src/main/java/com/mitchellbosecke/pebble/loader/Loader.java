@@ -9,8 +9,8 @@
 package com.mitchellbosecke.pebble.loader;
 
 import com.mitchellbosecke.pebble.PebbleEngine;
-
 import java.io.Reader;
+
 
 /**
  * Interface used to find templates for Pebble. Different implementations can
@@ -21,16 +21,15 @@ import java.io.Reader;
  *
  */
 public interface Loader<T> {
-
     /**
      * The reader which will be used by Pebble to read the contents of the
      * template.
      *
-     * @param templateName
-     *           the template name to use to load create the reader.
+     * @param cacheKey
+     * 		the cache key to use to load create the reader.
      * @return A reader object
      */
-    Reader getReader(String templateName);
+    public abstract Reader getReader(String templateName);
 
     /**
      * A method for end users to change the charset used by the loader.
@@ -118,5 +117,4 @@ public interface Loader<T> {
      * @return Returns the cache key
      */
     T createCacheKey(String templateName);
-
 }

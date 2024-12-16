@@ -9,11 +9,11 @@
 package com.mitchellbosecke.pebble.loader;
 
 import com.mitchellbosecke.pebble.error.LoaderException;
-
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 
 /**
  * This loader will delegate control to a list of children loaders. This is the
@@ -25,14 +25,11 @@ import java.util.List;
  *
  */
 public class DelegatingLoader implements Loader<DelegatingLoaderCacheKey> {
-
     private String prefix;
 
     private String suffix;
 
     private String charset = "UTF-8";
-
-
 
     /**
      * Children loaders to delegate to. The loaders are used in order and as
@@ -45,18 +42,15 @@ public class DelegatingLoader implements Loader<DelegatingLoaderCacheKey> {
      * Constructor provided with a list of children loaders.
      *
      * @param loaders
-     *            A list of loaders to delegate to
+     * 		A list of loaders to delegate to
      */
     public DelegatingLoader(List<Loader<?>> loaders) {
         this.loaders = Collections.unmodifiableList(new ArrayList<Loader<?>>(loaders));
     }
 
-
     @Override
     public Reader getReader(String templateName) {
-
         Reader reader = null;
-
         final int size = this.loaders.size();
         for (int i = 0; i < size; i++) {
             Loader<?> loader = this.loaders.get(i);
@@ -70,14 +64,17 @@ public class DelegatingLoader implements Loader<DelegatingLoaderCacheKey> {
             }
         }
         if (reader == null) {
-            throw new LoaderException(null, "Could not find template \"" + templateName + "\"");
+            throw new LoaderException(null, ("Could not find template \"" + templateName) + "\"");
         }
-
         return reader;
     }
 
     private <T> Reader getReaderInner(Loader<T> delegatingLoader, String templateName) {
-        return delegatingLoader.getReader(templateName);
+        // This unchecked cast is ok, because we ensure that the type of the
+        // cache key corresponds to the loader when we create the key.
+        @SuppressWarnings("unchecked")
+        T castedKey = ((T) (cacheKey));
+        return delegatingLoader.getReader(castedKey);
     }
 
     public String getSuffix() {
