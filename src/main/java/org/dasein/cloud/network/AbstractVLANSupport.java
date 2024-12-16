@@ -1,3 +1,4 @@
+<<<<<<< LEFT
 /**
  * Copyright (C) 2009-2013 enstratius, Inc.
  *
@@ -15,9 +16,15 @@
  * limitations under the License.
  * ====================================================================
  */
-
+=======
+>>>>>>> RIGHT
 package org.dasein.cloud.network;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.dasein.cloud.CloudException;
 import org.dasein.cloud.CloudProvider;
 import org.dasein.cloud.InternalException;
@@ -31,11 +38,6 @@ import org.dasein.cloud.compute.VirtualMachine;
 import org.dasein.cloud.compute.VirtualMachineSupport;
 import org.dasein.cloud.identity.ServiceAction;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Provides baseline support for functionality that is common among implementations, in particular for deprecated methods.
@@ -47,7 +49,8 @@ import java.util.Collections;
 public abstract class AbstractVLANSupport implements VLANSupport {
     private CloudProvider provider;
 
-    public AbstractVLANSupport(@Nonnull CloudProvider provider) {
+    public AbstractVLANSupport(@Nonnull
+    CloudProvider provider) {
         this.provider = provider;
     }
 
@@ -99,7 +102,6 @@ public abstract class AbstractVLANSupport implements VLANSupport {
         }
         return false;
     }
-
 
     @Override
     public boolean allowsNewNetworkInterfaceCreation() throws CloudException, InternalException {
@@ -163,8 +165,10 @@ public abstract class AbstractVLANSupport implements VLANSupport {
     }
 
     @Override
-    public @Nonnull VLAN createVlan(@Nonnull VlanCreateOptions vco) throws CloudException, InternalException {
-      throw new OperationNotSupportedException("VLANs are not currently implemented for " + getProvider().getCloudName());
+    @Nonnull
+    public VLAN createVlan(@Nonnull
+    VlanCreateOptions vco) throws CloudException, InternalException {
+        throw new OperationNotSupportedException("VLANs are not currently implemented for " + getProvider().getCloudName());
     }
 
     @Override
