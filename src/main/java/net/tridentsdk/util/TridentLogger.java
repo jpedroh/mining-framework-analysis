@@ -16,6 +16,8 @@
  */
 package net.tridentsdk.util;
 
+import java.util.Arrays;
+import java.util.Random;
 import net.tridentsdk.Trident;
 import net.tridentsdk.docs.InternalUseOnly;
 import net.tridentsdk.docs.Volatile;
@@ -23,24 +25,10 @@ import net.tridentsdk.plugin.TridentPluginHandler;
 import org.apache.log4j.*;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.Random;
 
 @Volatile(policy = "Init FIRST", reason = "Requires SLF4J to be configured", fix = "first static block in main class")
 public final class TridentLogger {
-    private static final String[] ERRORS = {
-            "Aw, Mazen! Really?",
-            "I feel funny",
-            "9 + 10 does not equal 21",
-            "Dang",
-            "Thanks, Obama",
-            "God dammit Tony Abbot, the fax didn't go through",
-            "This wasn't supposed to happen. It did anyways.",
-            "Bukkit 1.8 not found, contact Dinnerbone",
-            "Huston, we have a problem",
-            "Oh great, a stacktrace. Can't we write good software for once?",
-            "Trust me this isn't a bug, it's a feature!"
-    };
+    private static final String[] ERRORS = new java.lang.String[]{ "Aw, Mazen! Really?", "I feel funny", "9 + 10 does not equal 21", "Dang", "Thanks, Obama", "God dammit Tony Abbot, the fax didn\'t go through", "This wasn't supposed to happen. It did anyways.", "Bukkit 1.8 not found, contact Dinnerbone", "Huston, we have a problem", "Oh great, a stacktrace. Can't we write good software for once?", "Trust me this isn\'t a bug, it\'s a feature!", "Vilsol screamed your JVM to death", "Herobrine", "1 + 1 = 3" };
 
     private TridentLogger() {
     }
@@ -56,7 +44,6 @@ public final class TridentLogger {
         Logger.getRootLogger().addAppender(console);
 
         FileAppender fa = new FileAppender();
-
         fa.setName("FileLogger");
         fa.setFile("trident.log");
         fa.setLayout(new PatternLayout(PATTERN));
