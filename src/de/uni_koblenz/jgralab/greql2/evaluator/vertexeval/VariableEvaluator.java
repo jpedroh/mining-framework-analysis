@@ -32,15 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
@@ -53,18 +45,46 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+
 
 /**
  * Evaluates a Variable vertex in the GReQL-2 Syntaxgraph. Provides access to
  * the variable value using the method getResult(..), because it should make no
  * difference for other VertexEvaluators, if a vertex is root of a complex
  * subgraph or a variable. Also provides a method to set the variable value.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
+	/**
+	 * @return the estimated number of possible different values this variable
+	 *         may get during evaluation
+	 */
+	// @Override
+	// public long getVariableCombinations() {
+	// if (estimatedAssignments == Long.MIN_VALUE) {
+	// estimatedAssignments = calculateEstimatedAssignments();
+	// }
+	// return estimatedAssignments;
+	// }
+	/**
+	 * calculated the estimated number of possible different values this
+	 * variable may get during evaluation
+	 */
+	// public long calculateEstimatedAssignments() {
+	// return greqlEvaluator.getCostModel().calculateVariableAssignments(this);
+	// }
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel().calculateCostsVariable(this);
+	// }
 public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
-
 	private List<VertexEvaluator<? extends Expression>> dependingExpressions;
 
 	/**
@@ -75,15 +95,16 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 	/**
 	 * Sets the given value as "result" of this variable, so it can be uses via
 	 * the getResult(graph) method
-	 * 
-	 * @param variableValue
+	 *
+	 * @param variableValue2
+	 * 		
 	 * @param evaluator
+	 * 		
 	 */
 	public void setValue(Object variableValue, InternalGreqlEvaluator evaluator) {
 		if (dependingExpressions == null) {
 			dependingExpressions = calculateDependingExpressions();
 		}
-
 		int size = dependingExpressions.size();
 		for (int i = 0; i < size; i++) {
 			dependingExpressions.get(i).clear(evaluator);
@@ -99,8 +120,10 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 	}
 
 	/**
-	 * @param vertex
-	 *            the vertex which gets evaluated by this VertexEvaluator
+	 *
+	 *
+	 * @param eval
+	 * 		the GreqlEvaluator this VertexEvaluator belongs to
 	 */
 	public VariableEvaluator(V vertex, QueryImpl query) {
 		super(vertex, query);
@@ -140,62 +163,40 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 		List<Vertex> forbiddenVertices = new ArrayList<Vertex>();
 		SimpleDeclaration simpleDecl = null;
 		if (vertex.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT) != null) {
-			simpleDecl = (SimpleDeclaration) vertex
-					.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT)
-					.getThat();
+			simpleDecl = ((SimpleDeclaration) (vertex.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getThat()));
 		}
 		if (simpleDecl != null) {
 			forbiddenVertices.add(simpleDecl);
-			Declaration declaringVertex = (Declaration) simpleDecl
-					.getFirstIsSimpleDeclOfIncidence().getThat();
-			if (declaringVertex
-					.getFirstIsCompDeclOfIncidence(EdgeDirection.OUT) != null) {
-				forbiddenVertices.add(declaringVertex
-						.getFirstIsCompDeclOfIncidence(EdgeDirection.OUT)
-						.getThat());
+			Declaration declaringVertex = ((Declaration) (simpleDecl.getFirstIsSimpleDeclOfIncidence().getThat()));
+			if (declaringVertex.getFirstIsCompDeclOfIncidence(EdgeDirection.OUT) != null) {
+				forbiddenVertices.add(declaringVertex.getFirstIsCompDeclOfIncidence(EdgeDirection.OUT).getThat());
 			} else {
-				forbiddenVertices.add(declaringVertex
-						.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.OUT)
-						.getThat());
+				forbiddenVertices.add(declaringVertex.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.OUT).getThat());
 			}
+		} else if (vertex.getFirstIsVarOfIncidence(EdgeDirection.OUT) != null) {
+			Definition definingVertex = ((Definition) (vertex.getFirstIsVarOfIncidence(EdgeDirection.OUT).getThat()));
+			forbiddenVertices.add(definingVertex);
+			forbiddenVertices.add(definingVertex.getFirstIsDefinitionOfIncidence(EdgeDirection.OUT).getThat());
 		} else {
-			if (vertex.getFirstIsVarOfIncidence(EdgeDirection.OUT) != null) {
-				Definition definingVertex = (Definition) vertex
-						.getFirstIsVarOfIncidence(EdgeDirection.OUT).getThat();
-				forbiddenVertices.add(definingVertex);
-				forbiddenVertices.add(definingVertex
-						.getFirstIsDefinitionOfIncidence(EdgeDirection.OUT)
-						.getThat());
-			} else {
-				// thisvertex, thisedge
-
-			}
+			// thisvertex, thisedge
 		}
-
 		queue.add(vertex);
 		while (!queue.isEmpty()) {
 			Greql2Vertex currentVertex = queue.poll();
 			VertexEvaluator<?> eval = query.getVertexEvaluator(currentVertex);
-
-			if ((eval != null) && (!dependingEvaluators.contains(eval))
-					&& (!(eval instanceof PathDescriptionEvaluator))
-					&& (!(eval instanceof DeclarationEvaluator))
-					&& (!(eval instanceof SimpleDeclarationEvaluator))) {
-				dependingEvaluators
-						.add((VertexEvaluator<? extends Expression>) eval);
+			if (((((eval != null) && (!dependingEvaluators.contains(eval))) && (!(eval instanceof PathDescriptionEvaluator))) && (!(eval instanceof DeclarationEvaluator))) && (!(eval instanceof SimpleDeclarationEvaluator))) {
+				dependingEvaluators.add(((VertexEvaluator<? extends Expression>) (eval)));
 			}
-			Greql2Aggregation currentEdge = currentVertex
-					.getFirstGreql2AggregationIncidence(EdgeDirection.OUT);
+			Greql2Aggregation currentEdge = currentVertex.getFirstGreql2AggregationIncidence(EdgeDirection.OUT);
 			while (currentEdge != null) {
-				Greql2Vertex nextVertex = (Greql2Vertex) currentEdge.getThat();
+				Greql2Vertex nextVertex = ((Greql2Vertex) (currentEdge.getThat()));
 				if (!forbiddenVertices.contains(nextVertex)) {
 					// if (!(nextVertex instanceof SimpleDeclaration)) {
 					queue.add(nextVertex);
 				}
-				currentEdge = currentEdge
-						.getNextGreql2AggregationIncidence(EdgeDirection.OUT);
-			}
-		}
+				currentEdge = currentEdge.getNextGreql2AggregationIncidence(EdgeDirection.OUT);
+			} 
+		} 
 		return dependingEvaluators;
 	}
 
@@ -203,30 +204,4 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 	public void calculateNeededAndDefinedVariables() {
 		// for variables, this method is not used
 	}
-
-	/**
-	 * @return the estimated number of possible different values this variable
-	 *         may get during evaluation
-	 */
-	// @Override
-	// public long getVariableCombinations() {
-	// if (estimatedAssignments == Long.MIN_VALUE) {
-	// estimatedAssignments = calculateEstimatedAssignments();
-	// }
-	// return estimatedAssignments;
-	// }
-
-	/**
-	 * calculated the estimated number of possible different values this
-	 * variable may get during evaluation
-	 */
-	// public long calculateEstimatedAssignments() {
-	// return greqlEvaluator.getCostModel().calculateVariableAssignments(this);
-	// }
-
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel().calculateCostsVariable(this);
-	// }
-
 }

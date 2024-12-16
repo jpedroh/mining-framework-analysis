@@ -34,16 +34,6 @@
  */
 package de.uni_koblenz.jgralab.greql2.parser;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
-
-import org.pcollections.PSet;
-import org.pcollections.PVector;
-
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.ImplementationType;
@@ -53,6 +43,15 @@ import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.schema.*;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+import org.pcollections.PSet;
+import org.pcollections.PVector;
+
 
 public class GreqlParser extends ParserHelper {
 	private final Map<RuleEnum, int[]> testedRules = new HashMap<RuleEnum, int[]>();
@@ -72,6 +71,7 @@ public class GreqlParser extends ParserHelper {
 	private boolean predicateFulfilled = true;
 
 	private Greql2Schema schema = null;
+
 	private Set<String> subQueryNames = null;
 
 	/**
@@ -191,7 +191,7 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final TokenTypes lookAhead(int i) {
-		if ((current + i) < tokens.size()) {
+		if (current + i < tokens.size()) {
 			return tokens.get(current + i).type;
 		} else {
 			return TokenTypes.EOF;
@@ -417,7 +417,7 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private String getLookAheadValue(int i) {
-		if ((current + i) < tokens.size()) {
+		if (current + i < tokens.size()) {
 			Token t = tokens.get(current + i);
 			return t.getValue();
 		} else {
@@ -504,10 +504,8 @@ public class GreqlParser extends ParserHelper {
 			match();
 			List<VertexPosition<Variable>> varList = parseVariableList();
 			for (VertexPosition<Variable> var : varList) {
-				IsBoundVarOf isVarOf = graph.createIsBoundVarOf(var.node,
-						rootExpr);
-				isVarOf.set_sourcePositions(createSourcePositionList(
-						var.length, var.offset));
+				IsBoundVarOf isVarOf = graph.createIsBoundVarOf(var.node, rootExpr);
+				isVarOf.set_sourcePositions(createSourcePositionList(var.length, var.offset));
 			}
 			match(TokenTypes.COLON);
 		}
@@ -677,9 +675,7 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final Expression parseQuantifiedExpression() {
-		if ((lookAhead(0) == TokenTypes.EXISTS)
-				|| (lookAhead(0) == TokenTypes.EXISTS_ONE)
-				|| (lookAhead(0) == TokenTypes.FORALL)) {
+		if (((lookAhead(0) == TokenTypes.EXISTS) || (lookAhead(0) == TokenTypes.EXISTS_ONE)) || (lookAhead(0) == TokenTypes.FORALL)) {
 			int offsetQuantifier = getCurrentOffset();
 			int offsetQuantifiedDecl = 0;
 			int offsetQuantifiedExpr = 0;
@@ -699,21 +695,14 @@ public class GreqlParser extends ParserHelper {
 			QuantifiedExpression quantifiedExpr = null;
 			if (!inPredicateMode()) {
 				quantifiedExpr = graph.createQuantifiedExpression();
-				IsQuantifierOf quantifierOf = graph.createIsQuantifierOf(
-						quantifier, quantifiedExpr);
-				quantifierOf.set_sourcePositions(createSourcePositionList(
-						lengthQuantifier, offsetQuantifier));
+				IsQuantifierOf quantifierOf = graph.createIsQuantifierOf(quantifier, quantifiedExpr);
+				quantifierOf.set_sourcePositions(createSourcePositionList(lengthQuantifier, offsetQuantifier));
 				// add declaration
-				IsQuantifiedDeclOf quantifiedDeclOf = graph
-						.createIsQuantifiedDeclOf(decl, quantifiedExpr);
-				quantifiedDeclOf.set_sourcePositions(createSourcePositionList(
-						lengthQuantifiedDecl, offsetQuantifiedDecl));
+				IsQuantifiedDeclOf quantifiedDeclOf = graph.createIsQuantifiedDeclOf(decl, quantifiedExpr);
+				quantifiedDeclOf.set_sourcePositions(createSourcePositionList(lengthQuantifiedDecl, offsetQuantifiedDecl));
 				// add predicate
-				IsBoundExprOf boundExprOf = graph
-						.createIsBoundExprOfQuantifiedExpression(boundExpr,
-								quantifiedExpr);
-				boundExprOf.set_sourcePositions(createSourcePositionList(
-						lengthQuantifiedExpr, offsetQuantifiedExpr));
+				IsBoundExprOf boundExprOf = graph.createIsBoundExprOfQuantifiedExpression(boundExpr, quantifiedExpr);
+				boundExprOf.set_sourcePositions(createSourcePositionList(lengthQuantifiedExpr, offsetQuantifiedExpr));
 			}
 			duringParsingvariableSymbolTable.blockEnd();
 			return quantifiedExpr;
@@ -1505,26 +1494,23 @@ public class GreqlParser extends ParserHelper {
 		}
 		if (!inPredicateMode()) {
 			PrimaryPathDescription result = graph.createSimplePathDescription();
-			dir = (Direction) graph.getFirstVertex(Direction.class);
+			dir = ((Direction) (graph.getFirstVertex(Direction.class)));
 			while (dir != null) {
 				if (!dir.get_dirValue().equals(direction)) {
 					dir = dir.getNextDirection();
 				} else {
 					break;
 				}
-			}
+			} 
 			if (dir == null) {
 				dir = graph.createDirection();
 				dir.set_dirValue(direction);
 			}
 			IsDirectionOf directionOf = graph.createIsDirectionOf(dir, result);
-			directionOf.set_sourcePositions(createSourcePositionList(0,
-					offsetDir));
+			directionOf.set_sourcePositions(createSourcePositionList(0, offsetDir));
 			if (edgeRestr != null) {
-				IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf(
-						edgeRestr, result);
-				edgeRestrOf.set_sourcePositions(createSourcePositionList(
-						lengthEdgeRestr, offsetEdgeRestr));
+				IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf(edgeRestr, result);
+				edgeRestrOf.set_sourcePositions(createSourcePositionList(lengthEdgeRestr, offsetEdgeRestr));
 			}
 			return result;
 		}
@@ -1576,39 +1562,35 @@ public class GreqlParser extends ParserHelper {
 		int offsetExpr = getCurrentOffset();
 		Expression expr = parseExpression();
 		int lengthExpr = getLength(offsetExpr);
-
 		if (tryMatch(TokenTypes.EDGEEND)) {
 			edgeEnd = true;
 		} else {
 			match(TokenTypes.EDGE);
 		}
-
 		if (!inPredicateMode()) {
 			int lengthDir = getLength(offsetDir);
 			EdgePathDescription result = graph.createEdgePathDescription();
-			if (edgeStart && !edgeEnd) {
+			if (edgeStart && (!edgeEnd)) {
 				direction = GReQLDirection.IN;
-			} else if (!edgeStart && edgeEnd) {
+			} else if ((!edgeStart) && edgeEnd) {
 				direction = GReQLDirection.OUT;
 			}
-			dir = (Direction) graph.getFirstVertex(Direction.class);
+			dir = ((Direction) (graph.getFirstVertex(Direction.class)));
 			while (dir != null) {
 				if (!dir.get_dirValue().equals(direction)) {
 					dir = dir.getNextDirection();
 				} else {
 					break;
 				}
-			}
+			} 
 			if (dir == null) {
 				dir = graph.createDirection();
 				dir.set_dirValue(direction);
 			}
 			IsDirectionOf directionOf = graph.createIsDirectionOf(dir, result);
-			directionOf.set_sourcePositions(createSourcePositionList(lengthDir,
-					offsetDir));
+			directionOf.set_sourcePositions(createSourcePositionList(lengthDir, offsetDir));
 			IsEdgeExprOf edgeExprOf = graph.createIsEdgeExprOf(expr, result);
-			edgeExprOf.set_sourcePositions(createSourcePositionList(lengthExpr,
-					offsetExpr));
+			edgeExprOf.set_sourcePositions(createSourcePositionList(lengthExpr, offsetExpr));
 			return result;
 		}
 		return null;
@@ -2639,5 +2621,4 @@ public class GreqlParser extends ParserHelper {
 	public Greql2Schema getSchema() {
 		return schema;
 	}
-
 }

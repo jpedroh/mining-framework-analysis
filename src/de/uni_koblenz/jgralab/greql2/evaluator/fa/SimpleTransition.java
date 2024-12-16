@@ -32,10 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
-
-import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
@@ -49,6 +46,10 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.IncidenceClass;
+import java.util.BitSet;
+import java.util.Set;
+
 
 /**
  * This transition accepts a SimplePathDescription. A SimplePathDescription is
@@ -58,10 +59,9 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * 
  */
 public class SimpleTransition extends Transition {
-
 	protected VertexEvaluator<? extends Expression> predicateEvaluator;
 
-	public VertexEvaluator<? extends Expression> getPredicateEvaluator() {
+	public VertexEvaluator getPredicateEvaluator() {
 		return predicateEvaluator;
 	}
 
@@ -115,7 +115,7 @@ public class SimpleTransition extends Transition {
 		// String desc = "SimpleTransition";
 		String desc = "SimpleTransition (Dir:" + validDirection.toString();
 		if (typeCollection != null) {
-			desc = desc + "\n " + typeCollection.toString() + "\n ";
+			desc = ((desc + "\n ") + typeCollection.toString()) + "\n ";
 		}
 		desc += ")";
 		return desc;
@@ -133,7 +133,7 @@ public class SimpleTransition extends Transition {
 		if (!(t instanceof SimpleTransition)) {
 			return false;
 		}
-		SimpleTransition et = (SimpleTransition) t;
+		SimpleTransition et = ((SimpleTransition) (t));
 		if (!typeCollection.equals(et.typeCollection)) {
 			return false;
 		}
@@ -147,10 +147,8 @@ public class SimpleTransition extends Transition {
 			if (!validToEdgeRoles.equals(et.validToEdgeRoles)) {
 				return false;
 			}
-		} else {
-			if (et.validToEdgeRoles != null) {
-				return false;
-			}
+		} else if (et.validToEdgeRoles != null) {
+			return false;
 		}
 		if (validFromEdgeRoles == null) {
 			if (et.validFromEdgeRoles != null) {
@@ -164,7 +162,6 @@ public class SimpleTransition extends Transition {
 				return false;
 			}
 		}
-
 		if (predicateEvaluator != null) {
 			if (et.predicateEvaluator == null) {
 				return false;
@@ -172,12 +169,9 @@ public class SimpleTransition extends Transition {
 			if (!predicateEvaluator.equals(et.predicateEvaluator)) {
 				return false;
 			}
-		} else {
-			if (et.predicateEvaluator != null) {
-				return false;
-			}
+		} else if (et.predicateEvaluator != null) {
+			return false;
 		}
-
 		return true;
 	}
 
@@ -240,20 +234,16 @@ public class SimpleTransition extends Transition {
 	 *            The set of accepted edge role names, or null if any role is
 	 *            accepted
 	 */
-	public SimpleTransition(State start, State end, GReQLDirection dir,
-			TypeCollection typeCollection, Set<String> roles,
-			VertexEvaluator<? extends Expression> predicateEvaluator,
-			QueryImpl query) {
+	public SimpleTransition(State start, State end, GReQLDirection dir, TypeCollection typeCollection, Set<String> roles, VertexEvaluator<? extends Expression> predicateEvaluator, QueryImpl query) {
 		super(start, end);
 		validDirection = dir;
 		validToEdgeRoles = roles;
 		validFromEdgeRoles = null;
 		this.typeCollection = typeCollection;
 		this.predicateEvaluator = predicateEvaluator;
-		ThisEdge v = (ThisEdge) query.getQueryGraph().getFirstVertex(
-				ThisEdge.class);
+		ThisEdge v = ((ThisEdge) (query.getQueryGraph().getFirstVertex(ThisEdge.class)));
 		if (v != null) {
-			thisEdgeEvaluator = (ThisEdgeEvaluator) query.getVertexEvaluator(v);
+			thisEdgeEvaluator = ((ThisEdgeEvaluator) (query.getVertexEvaluator(v)));
 		}
 	}
 
@@ -304,19 +294,14 @@ public class SimpleTransition extends Transition {
 				return false;
 			}
 		}
-
 		Set<String> validEdgeRoles = validToEdgeRoles;
 		boolean checkToEdgeRoles = true;
 		if (validEdgeRoles == null) {
 			validEdgeRoles = validFromEdgeRoles;
 			checkToEdgeRoles = false;
 		}
-
-		boolean rolesOnly = (validEdgeRoles != null)
-				&& (typeCollection.getAllowedTypes().size() == 0)
-				&& (typeCollection.getForbiddenTypes().size() == 0);
+		boolean rolesOnly = ((validEdgeRoles != null) && (typeCollection.getAllowedTypes().size() == 0)) && (typeCollection.getForbiddenTypes().size() == 0);
 		boolean acceptedByRole = false;
-
 		// checks if a role restriction is set and if e has the right role
 		if (validEdgeRoles != null) {
 			EdgeClass ec = e.getAttributedElementClass();
@@ -337,15 +322,12 @@ public class SimpleTransition extends Transition {
 			if (!acceptedByRole) {
 				return false;
 			}
-		} else {
-			if (!acceptedByRole) {
-				EdgeClass edgeClass = e.getAttributedElementClass();
-				if (!typeCollection.acceptsType(edgeClass)) {
-					return false;
-				}
+		} else if (!acceptedByRole) {
+			EdgeClass edgeClass = e.getAttributedElementClass();
+			if (!typeCollection.acceptsType(edgeClass)) {
+				return false;
 			}
 		}
-
 		// checks if a boolean expression exists and if it evaluates to true
 		if (predicateEvaluator != null) {
 			if (thisEdgeEvaluator != null) {
@@ -353,7 +335,7 @@ public class SimpleTransition extends Transition {
 			}
 			Object res = predicateEvaluator.getResult(evaluator);
 			if (res instanceof Boolean) {
-				return (Boolean) res;
+				return ((Boolean) (res));
 			}
 			return false;
 		}
@@ -384,12 +366,11 @@ public class SimpleTransition extends Transition {
 		} else if (validDirection == GReQLDirection.OUT) {
 			symbol = "-->";
 		}
-		return symbol + "{" + b + "}";
+		return ((symbol + "{") + b) + "}";
 	}
 
 	@Override
 	public boolean consumesEdge() {
 		return true;
 	}
-
 }

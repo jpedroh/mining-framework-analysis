@@ -32,12 +32,12 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+
 
 /**
  * Is baseclass of all transitions. Has one start and one endstate.
@@ -46,7 +46,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
  * 
  */
 public abstract class Transition {
-
 	/**
 	 * The state where this transition starts
 	 */
@@ -83,11 +82,11 @@ public abstract class Transition {
 
 	/**
 	 * creates a new transition from start to end
-	 * 
+	 *
 	 * @param start
-	 *            state where this transition should start
+	 * 		state where this transition should start
 	 * @param end
-	 *            state where this transition should end
+	 * 		state where this transition should end
 	 */
 	public Transition(State start, State end) {
 		startState = start;
@@ -98,12 +97,12 @@ public abstract class Transition {
 
 	/**
 	 * Copy-constructor, creates a copy of the given transition.
-	 * 
+	 *
 	 * @param addToStates
-	 *            if true, the transition gets added to the in/out
-	 *            transitionlist of start and end state. Beware, if you use one
-	 *            of these lists in an iterator and create copies for all
-	 *            transitions, it will result in a concurntlyModifiedException
+	 * 		if true, the transition gets added to the in/out
+	 * 		transitionlist of start and end state. Beware, if you use one
+	 * 		of these lists in an iterator and create copies for all
+	 * 		transitions, it will result in a concurntlyModifiedException
 	 */
 	protected Transition(Transition t, boolean addToStates) {
 		startState = t.startState;
@@ -171,8 +170,7 @@ public abstract class Transition {
 	 * returns true if this transition accepts the given combination of Vertex
 	 * and Edge
 	 */
-	public abstract boolean accepts(Vertex v, Edge e,
-			InternalGreqlEvaluator evaluator);
+	public abstract boolean accepts(Vertex v, Edge e, InternalGreqlEvaluator evaluator);
 
 	/**
 	 * returns the vertex of the datagraph which can be visited after this
@@ -187,5 +185,4 @@ public abstract class Transition {
 	 *         which does not traverse and consume an edge)
 	 */
 	public abstract boolean consumesEdge();
-
 }

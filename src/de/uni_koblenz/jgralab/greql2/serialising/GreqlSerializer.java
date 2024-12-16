@@ -32,12 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-/**
- * 
- */
 package de.uni_koblenz.jgralab.greql2.serialising;
-
-import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
@@ -112,13 +107,14 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
 import de.uni_koblenz.jgralab.greql2.schema.VertexTypeSubgraph;
 import de.uni_koblenz.jgralab.greql2.schema.WhereExpression;
+import java.util.Iterator;
+
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  * 
  */
 public class GreqlSerializer {
-
 	private StringBuffer sb = null;
 
 	public static String serializeGraph(Greql2Graph greqlGraph) {
@@ -566,34 +562,34 @@ public class GreqlSerializer {
 	private void serializeSimplePathDescription(SimplePathDescription exp) {
 		GReQLDirection dir = exp.get_direction().get_dirValue();
 		switch (dir) {
-		case OUT:
-			sb.append("-->");
-			break;
-		case IN:
-			sb.append("<--");
-			break;
-		default:
-			sb.append("<->");
+			case OUT :
+				sb.append("-->");
+				break;
+			case IN :
+				sb.append("<--");
+				break;
+			default :
+				sb.append("<->");
 		}
 	}
 
 	private void serializeEdgePathDescription(EdgePathDescription exp) {
 		GReQLDirection dir = exp.get_direction().get_dirValue();
 		switch (dir) {
-		case OUT:
-			sb.append("--");
-			serializeExpression(exp.get_edgeExpr(), false);
-			sb.append("->");
-			break;
-		case IN:
-			sb.append("<-");
-			serializeExpression(exp.get_edgeExpr(), false);
-			sb.append("--");
-			break;
-		default:
-			sb.append("<-");
-			serializeExpression(exp.get_edgeExpr(), false);
-			sb.append("->");
+			case OUT :
+				sb.append("--");
+				serializeExpression(exp.get_edgeExpr(), false);
+				sb.append("->");
+				break;
+			case IN :
+				sb.append("<-");
+				serializeExpression(exp.get_edgeExpr(), false);
+				sb.append("--");
+				break;
+			default :
+				sb.append("<-");
+				serializeExpression(exp.get_edgeExpr(), false);
+				sb.append("->");
 		}
 	}
 

@@ -34,27 +34,25 @@
  */
 package de.uni_koblenz.jgralab.greql2.evaluator;
 
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.ProgressFunction;
 import java.util.Map;
-
 import org.pcollections.PMap;
 import org.pcollections.POrderedSet;
 import org.pcollections.PVector;
 
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.ProgressFunction;
 
 public interface GreqlEvaluator {
 	// TODO [greqlevaluator] create public interface
-	public Object getResult();
+	public abstract Object getResult();
 
-	public <T> T getSingleResult();
+	public abstract <T> T getSingleResult();
 
-	public <T> PVector<T> getResultList();
+	public abstract <T> PVector<T> getResultList();
 
-	public <K, V> PMap<K, V> getResultMap();
+	public abstract <K, V> PMap<K, V> getResultMap();
 
-	public <T> POrderedSet<T> getResultSet();
+	public abstract <T> POrderedSet<T> getResultSet();
 
-	public Object evaluate(QueryImpl query, Graph datagraph,
-			Map<String, Object> variables, ProgressFunction progressFunction);
+	public abstract Object evaluate(QueryImpl query, Graph datagraph, Map<String, Object> variables, ProgressFunction progressFunction);
 }

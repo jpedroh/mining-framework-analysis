@@ -32,7 +32,6 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -42,6 +41,7 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
+
 /**
  * This transition accepts a vertex type restriction. It is used to accept
  * start- and goalrestrictions.
@@ -50,13 +50,12 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * 
  */
 public class VertexTypeRestrictionTransition extends Transition {
-
 	/**
 	 * The type collection that toggles which types are accepted and which are
 	 * not
 	 */
 	private final TypeCollection typeCollection;
-	
+
 	public TypeCollection getAcceptedVertexTypes() {
 		return typeCollection;
 	}
@@ -80,16 +79,15 @@ public class VertexTypeRestrictionTransition extends Transition {
 	/**
 	 * Creates a new transition from start state to end state. The Transition
 	 * may fire if the start vertex has the right type
-	 * 
+	 *
 	 * @param start
-	 *            The state where this transition starts
+	 * 		The state where this transition starts
 	 * @param end
-	 *            The state where this transition ends
+	 * 		The state where this transition ends
 	 * @param typeCollection
-	 *            The typeIds which restricts the possible start vertices
+	 * 		The typeIds which restricts the possible start vertices
 	 */
-	public VertexTypeRestrictionTransition(State start, State end,
-			TypeCollection typeCollection) {
+	public VertexTypeRestrictionTransition(State start, State end, TypeCollection typeCollection) {
 		super(start, end);
 		this.typeCollection = typeCollection;
 	}
@@ -97,8 +95,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	/**
 	 * Copy-constructor, creates a copy of the given transition
 	 */
-	protected VertexTypeRestrictionTransition(
-			VertexTypeRestrictionTransition t, boolean addToStates) {
+	protected VertexTypeRestrictionTransition(VertexTypeRestrictionTransition t, boolean addToStates) {
 		super(t, addToStates);
 		typeCollection = new TypeCollection(t.typeCollection);
 	}

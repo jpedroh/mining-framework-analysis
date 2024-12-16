@@ -32,7 +32,6 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -45,6 +44,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
 
+
 /**
  * This transition may fire, if the VertexEvaluator it holds as attribute
  * returns true as result
@@ -53,10 +53,9 @@ import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
  * 
  */
 public class BoolExpressionTransition extends Transition {
-
 	private final VertexEvaluator<? extends Expression> boolExpressionEvaluator;
 
-	public VertexEvaluator<? extends Expression> getBooleanExpressionEvaluator() {
+	public VertexEvaluator getBooleanExpressionEvaluator() {
 		return boolExpressionEvaluator;
 	}
 
@@ -83,7 +82,7 @@ public class BoolExpressionTransition extends Transition {
 		if (!(t instanceof BoolExpressionTransition)) {
 			return false;
 		}
-		BoolExpressionTransition bt = (BoolExpressionTransition) t;
+		BoolExpressionTransition bt = ((BoolExpressionTransition) (t));
 		if (bt.boolExpressionEvaluator == boolExpressionEvaluator) {
 			return true;
 		}
@@ -93,8 +92,7 @@ public class BoolExpressionTransition extends Transition {
 	/**
 	 * Copy-constructor, creates a copy of the given transition
 	 */
-	protected BoolExpressionTransition(BoolExpressionTransition t,
-			boolean addToStates) {
+	protected BoolExpressionTransition(BoolExpressionTransition t, boolean addToStates) {
 		super(t, addToStates);
 		boolExpressionEvaluator = t.boolExpressionEvaluator;
 		thisVertexEvaluator = t.thisVertexEvaluator;
@@ -111,15 +109,12 @@ public class BoolExpressionTransition extends Transition {
 	/**
 	 * Creates a new transition from start state to end state.
 	 */
-	public BoolExpressionTransition(State start, State end,
-			VertexEvaluator<? extends Expression> boolEval, QueryImpl query) {
+	public BoolExpressionTransition(State start, State end, VertexEvaluator<? extends Expression> boolEval, QueryImpl query) {
 		super(start, end);
 		boolExpressionEvaluator = boolEval;
-		ThisVertex v = (ThisVertex) query.getQueryGraph().getFirstVertex(
-				ThisVertex.class);
+		ThisVertex v = ((ThisVertex) (query.getQueryGraph().getFirstVertex(ThisVertex.class)));
 		if (v != null) {
-			thisVertexEvaluator = (ThisVertexEvaluator) query
-					.getVertexEvaluator(v);
+			thisVertexEvaluator = ((ThisVertexEvaluator) (query.getVertexEvaluator(v)));
 		}
 	}
 
@@ -144,7 +139,7 @@ public class BoolExpressionTransition extends Transition {
 			thisVertexEvaluator.setValue(v, evaluator);
 		}
 		Object res = boolExpressionEvaluator.getResult(evaluator);
-		if (res instanceof Boolean && ((Boolean) res).equals(Boolean.TRUE)) {
+		if ((res instanceof Boolean) && ((Boolean) (res)).equals(Boolean.TRUE)) {
 			return true;
 		}
 		return false;
@@ -157,9 +152,7 @@ public class BoolExpressionTransition extends Transition {
 
 	@Override
 	public String prettyPrint() {
-		return "IntermediateVertex "
-				+ GreqlSerializer.serializeVertex(boolExpressionEvaluator
-						.getVertex());
+		return "IntermediateVertex " + GreqlSerializer.serializeVertex(boolExpressionEvaluator.getVertex());
 	}
 
 	@Override

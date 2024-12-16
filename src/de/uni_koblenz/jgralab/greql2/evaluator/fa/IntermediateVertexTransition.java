@@ -32,26 +32,24 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
-
-import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
+import org.pcollections.PCollection;
+
 
 public class IntermediateVertexTransition extends Transition {
-
 	/**
 	 * this transition may only fire, if the end-vertex of the edge e is part of
 	 * the result of this VertexEvaluator
 	 */
 	public VertexEvaluator<?> intermediateVertexEvaluator;
 
-	public VertexEvaluator<?> getIntermediateVertexEvaluator() {
+	public VertexEvaluator getIntermediateVertexEvaluator() {
 		return intermediateVertexEvaluator;
 	}
 
@@ -64,7 +62,7 @@ public class IntermediateVertexTransition extends Transition {
 		if (!(t instanceof IntermediateVertexTransition)) {
 			return false;
 		}
-		IntermediateVertexTransition vt = (IntermediateVertexTransition) t;
+		IntermediateVertexTransition vt = ((IntermediateVertexTransition) (t));
 		if (intermediateVertexEvaluator != vt.intermediateVertexEvaluator) {
 			return false;
 		}
@@ -81,8 +79,7 @@ public class IntermediateVertexTransition extends Transition {
 	 * @param intermediateVertices
 	 *            the collection of intermediate vertices
 	 */
-	public IntermediateVertexTransition(State start, State end,
-			VertexEvaluator<?> intermediateVertices) {
+	public IntermediateVertexTransition(State start, State end, VertexEvaluator<?> intermediateVertices) {
 		super(start, end);
 		intermediateVertexEvaluator = intermediateVertices;
 	}
@@ -90,8 +87,7 @@ public class IntermediateVertexTransition extends Transition {
 	/**
 	 * Copy-constructor, creates a copy of the given transition
 	 */
-	protected IntermediateVertexTransition(IntermediateVertexTransition t,
-			boolean addToStates) {
+	protected IntermediateVertexTransition(IntermediateVertexTransition t, boolean addToStates) {
 		super(t, addToStates);
 		intermediateVertexEvaluator = t.intermediateVertexEvaluator;
 	}
@@ -132,15 +128,14 @@ public class IntermediateVertexTransition extends Transition {
 	public boolean accepts(Vertex v, Edge e, InternalGreqlEvaluator evaluator) {
 		// checks if a intermediateVertexExpression exists and if the end-vertex
 		// of e is part of the result of this expression
-
 		if (intermediateVertexEvaluator != null) {
 			Object tempRes = intermediateVertexEvaluator.getResult(evaluator);
 			if (tempRes instanceof PCollection) {
 				@SuppressWarnings("unchecked")
-				PCollection<Vertex> intermediateVertices = (PCollection<Vertex>) tempRes;
+				PCollection<Vertex> intermediateVertices = ((PCollection<Vertex>) (tempRes));
 				return intermediateVertices.contains(v);
 			} else {
-				Vertex intermediateVertex = (Vertex) tempRes;
+				Vertex intermediateVertex = ((Vertex) (tempRes));
 				return v == intermediateVertex;
 			}
 		}
@@ -158,9 +153,7 @@ public class IntermediateVertexTransition extends Transition {
 
 	@Override
 	public String prettyPrint() {
-		return "IntermediateVertex "
-				+ GreqlSerializer.serializeVertex(intermediateVertexEvaluator
-						.getVertex());
+		return "IntermediateVertex " + GreqlSerializer.serializeVertex(intermediateVertexEvaluator.getVertex());
 	}
 
 	@Override

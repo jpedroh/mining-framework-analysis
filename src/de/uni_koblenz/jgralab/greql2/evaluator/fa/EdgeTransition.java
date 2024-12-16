@@ -32,10 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
-
-import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
@@ -45,6 +42,8 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.GReQLDirection;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
+import java.util.Set;
+
 
 /**
  * This transition accepts only one edge. Because this edge may be a variable or
@@ -58,7 +57,6 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * 
  */
 public class EdgeTransition extends SimpleTransition {
-
 	/**
 	 * In GReQL 2 it is possible to specify an explicit edge. Cause this edge
 	 * may be a variable or the result of an expression containing a variable,
@@ -67,7 +65,7 @@ public class EdgeTransition extends SimpleTransition {
 	 */
 	private final VertexEvaluator<?> allowedEdgeEvaluator;
 
-	public VertexEvaluator<?> getAllowedEdgeEvaluator() {
+	public VertexEvaluator getAllowedEdgeEvaluator() {
 		return allowedEdgeEvaluator;
 	}
 
@@ -96,7 +94,7 @@ public class EdgeTransition extends SimpleTransition {
 		if (!(t instanceof EdgeTransition)) {
 			return false;
 		}
-		EdgeTransition et = (EdgeTransition) t;
+		EdgeTransition et = ((EdgeTransition) (t));
 		if (!typeCollection.equals(et.typeCollection)) {
 			return false;
 		}
@@ -107,10 +105,8 @@ public class EdgeTransition extends SimpleTransition {
 			if (!validToEdgeRoles.equals(et.validToEdgeRoles)) {
 				return false;
 			}
-		} else {
-			if (et.validToEdgeRoles != null) {
-				return false;
-			}
+		} else if (et.validToEdgeRoles != null) {
+			return false;
 		}
 		if (validFromEdgeRoles == null) {
 			if (et.validFromEdgeRoles != null) {
@@ -137,10 +133,8 @@ public class EdgeTransition extends SimpleTransition {
 			if (!predicateEvaluator.equals(et.predicateEvaluator)) {
 				return false;
 			}
-		} else {
-			if (et.predicateEvaluator != null) {
-				return false;
-			}
+		} else if (et.predicateEvaluator != null) {
+			return false;
 		}
 		return true;
 	}
@@ -183,10 +177,7 @@ public class EdgeTransition extends SimpleTransition {
 	 *            If this is set, only the resulting edge of this evaluator will
 	 *            be accepted
 	 */
-	public EdgeTransition(State start, State end, GReQLDirection dir,
-			TypeCollection typeCollection, Set<String> roles,
-			VertexEvaluator<?> edgeEval,
-			VertexEvaluator<? extends Expression> predicateEval, QueryImpl query) {
+	public EdgeTransition(State start, State end, GReQLDirection dir, TypeCollection typeCollection, Set<String> roles, VertexEvaluator<?> edgeEval, VertexEvaluator<? extends Expression> predicateEval, QueryImpl query) {
 		super(start, end, dir, typeCollection, roles, predicateEval, query);
 		allowedEdgeEvaluator = edgeEval;
 	}
@@ -195,20 +186,18 @@ public class EdgeTransition extends SimpleTransition {
 	 * (non-Javadoc)
 	 * 
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
-	 */@Override
+	 */
+	@Override
 	public boolean accepts(Vertex v, Edge e, InternalGreqlEvaluator evaluator) {
 		if (!super.accepts(v, e, evaluator)) {
 			return false;
 		}
 		// checks if only one edge is allowed an if e is this allowed edge
 		if (allowedEdgeEvaluator != null) {
-
-			Edge allowedEdge = ((Edge) allowedEdgeEvaluator
-					.getResult(evaluator)).getNormalEdge();
+			Edge allowedEdge = ((Edge) (allowedEdgeEvaluator.getResult(evaluator))).getNormalEdge();
 			if (e.getNormalEdge() != allowedEdge) {
 				return false;
 			}
-
 		}
 		return true;
 	}
@@ -216,5 +205,4 @@ public class EdgeTransition extends SimpleTransition {
 	public boolean consumedEdge() {
 		return true;
 	}
-
 }

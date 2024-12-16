@@ -32,10 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
-
-import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -43,6 +40,8 @@ import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Direction;
 import de.uni_koblenz.jgralab.greql2.schema.GReQLDirection;
 import de.uni_koblenz.jgralab.greql2.schema.PrimaryPathDescription;
+import java.util.Set;
+
 
 /**
  * abstract baseclass for SimplePathDescription and EdgePathDescription
@@ -50,11 +49,7 @@ import de.uni_koblenz.jgralab.greql2.schema.PrimaryPathDescription;
  * @author ist@uni-koblenz.de Summer 2006, Diploma Thesis
  * 
  */
-public abstract class PrimaryPathDescriptionEvaluator<V extends PrimaryPathDescription>
-		extends PathDescriptionEvaluator<V> {
-
-	private GReQLDirection validDirection = null;
-
+public abstract class PrimaryPathDescriptionEvaluator<V extends PrimaryPathDescription> extends PathDescriptionEvaluator<V> {
 	public PrimaryPathDescriptionEvaluator(V vertex, QueryImpl query) {
 		super(vertex, query);
 	}
@@ -65,10 +60,9 @@ public abstract class PrimaryPathDescriptionEvaluator<V extends PrimaryPathDescr
 	protected GReQLDirection getEdgeDirection(PrimaryPathDescription vertex) {
 		if (validDirection == null) {
 			validDirection = GReQLDirection.INOUT;
-			Edge dirEdge = vertex
-					.getFirstIsDirectionOfIncidence(EdgeDirection.IN);
+			Edge dirEdge = vertex.getFirstIsDirectionOfIncidence(EdgeDirection.IN);
 			if (dirEdge != null) {
-				Direction dirVertex = (Direction) dirEdge.getAlpha();
+				Direction dirVertex = ((Direction) (dirEdge.getAlpha()));
 				validDirection = dirVertex.get_dirValue();
 			}
 		}
@@ -84,5 +78,4 @@ public abstract class PrimaryPathDescriptionEvaluator<V extends PrimaryPathDescr
 		}
 		return edgeRestEval.getEdgeRoles();
 	}
-
 }
