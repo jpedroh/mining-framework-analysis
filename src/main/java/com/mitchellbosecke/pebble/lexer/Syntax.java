@@ -2,6 +2,7 @@ package com.mitchellbosecke.pebble.lexer;
 
 import java.util.regex.Pattern;
 
+
 /**
  * The syntax describes the different syntax parts of the Pebble language.
  *
@@ -10,7 +11,6 @@ import java.util.regex.Pattern;
  * cannot be changed during the execution.
  */
 public final class Syntax {
-
     private final String delimiterCommentOpen;
 
     private final String delimiterCommentClose;
@@ -45,6 +45,7 @@ public final class Syntax {
     private final Pattern regexTrailingWhitespaceTrim;
 
     private final Pattern regexInterpolationOpen;
+
     private final Pattern regexInterpolationClose;
 
     /**
@@ -56,11 +57,7 @@ public final class Syntax {
 
     private static final String POSSIBLE_NEW_LINE = "(\r\n|\n\r|\r|\n|\u0085|\u2028|\u2029)?";
 
-    public Syntax(final String delimiterCommentOpen, final String delimiterCommentClose,
-            final String delimiterExecuteOpen, final String delimiterExecuteClose, final String delimiterPrintOpen,
-            final String delimiterPrintClose, final String delimiterInterpolationOpen,
-            final String delimiterInterpolationClose, final String whitespaceTrim,
-            final boolean enableNewLineTrimming) {
+    public Syntax(final String delimiterCommentOpen, final String delimiterCommentClose, final String delimiterExecuteOpen, final String delimiterExecuteClose, final String delimiterPrintOpen, final String delimiterPrintClose, final String delimiterInterpolationOpen, final String delimiterInterpolationClose, final String whitespaceTrim, final boolean enableNewLineTrimming) {
         this.delimiterCommentClose = delimiterCommentClose;
         this.delimiterCommentOpen = delimiterCommentOpen;
         this.delimiterExecuteOpen = delimiterExecuteOpen;
@@ -68,40 +65,27 @@ public final class Syntax {
         this.delimiterPrintOpen = delimiterPrintOpen;
         this.delimiterPrintClose = delimiterPrintClose;
         this.whitespaceTrim = whitespaceTrim;
+<<<<<<< LEFT
         this.delimiterInterpolationClose = delimiterInterpolationClose;
         this.delimiterInterpolationOpen = delimiterInterpolationOpen;
-
-        // Do we trim the newline following a tag?
+=======
         String newlineRegexSuffix = enableNewLineTrimming ? POSSIBLE_NEW_LINE : "";
+>>>>>>> RIGHT
 
         // regexes used to find the individual delimiters
-        this.regexPrintClose = Pattern.compile("^\\s*" + Pattern.quote(whitespaceTrim) + "?"
-                + Pattern.quote(delimiterPrintClose) + newlineRegexSuffix);
-
-        this.regexExecuteClose = Pattern.compile("^\\s*" + Pattern.quote(whitespaceTrim) + "?"
-                + Pattern.quote(delimiterExecuteClose) + newlineRegexSuffix);
+        this.regexPrintClose = Pattern.compile(((("^\\s*" + Pattern.quote(whitespaceTrim)) + "?") + Pattern.quote(delimiterPrintClose)) + newlineRegexSuffix);
+        this.regexExecuteClose = Pattern.compile(((("^\\s*" + Pattern.quote(whitespaceTrim)) + "?") + Pattern.quote(delimiterExecuteClose)) + newlineRegexSuffix);
         this.regexCommentClose = Pattern.compile(Pattern.quote(delimiterCommentClose) + newlineRegexSuffix);
-
         // combination regex used to find the next START delimiter of any kind
-        this.regexStartDelimiters = Pattern.compile(Pattern.quote(delimiterPrintOpen) + "|"
-                + Pattern.quote(delimiterExecuteOpen) + "|" + Pattern.quote(delimiterCommentOpen));
-
+        this.regexStartDelimiters = Pattern.compile((((Pattern.quote(delimiterPrintOpen) + "|") + Pattern.quote(delimiterExecuteOpen)) + "|") + Pattern.quote(delimiterCommentOpen));
         // regex to find the verbatim tag
-        this.regexVerbatimStart = Pattern.compile("^\\s*verbatim\\s*(" + Pattern.quote(whitespaceTrim) + ")?"
-                + Pattern.quote(delimiterExecuteClose) + newlineRegexSuffix);
-        this.regexVerbatimEnd = Pattern.compile(Pattern.quote(delimiterExecuteOpen) + "("
-                + Pattern.quote(whitespaceTrim) + ")?" + "\\s*endverbatim\\s*(" + Pattern.quote(whitespaceTrim) + ")?"
-                + Pattern.quote(delimiterExecuteClose) + newlineRegexSuffix);
-
+        this.regexVerbatimStart = Pattern.compile(((("^\\s*verbatim\\s*(" + Pattern.quote(whitespaceTrim)) + ")?") + Pattern.quote(delimiterExecuteClose)) + newlineRegexSuffix);
+        this.regexVerbatimEnd = Pattern.compile((((((((Pattern.quote(delimiterExecuteOpen) + "(") + Pattern.quote(whitespaceTrim)) + ")?") + "\\s*endverbatim\\s*(") + Pattern.quote(whitespaceTrim)) + ")?") + Pattern.quote(delimiterExecuteClose)) + newlineRegexSuffix);
         // regex for the whitespace trim character
         this.regexLeadingWhitespaceTrim = Pattern.compile(Pattern.quote(whitespaceTrim) + "\\s+");
-        this.regexTrailingWhitespaceTrim = Pattern.compile("^\\s*" + Pattern.quote(whitespaceTrim) + "("
-                + Pattern.quote(delimiterPrintClose) + "|" + Pattern.quote(delimiterExecuteClose) + "|"
-                + Pattern.quote(delimiterCommentClose) + ")");
-
+        this.regexTrailingWhitespaceTrim = Pattern.compile(((((((("^\\s*" + Pattern.quote(whitespaceTrim)) + "(") + Pattern.quote(delimiterPrintClose)) + "|") + Pattern.quote(delimiterExecuteClose)) + "|") + Pattern.quote(delimiterCommentClose)) + ")");
         this.regexInterpolationOpen = Pattern.compile("^" + Pattern.quote(delimiterInterpolationOpen));
         this.regexInterpolationClose = Pattern.compile("^\\s*" + Pattern.quote(delimiterInterpolationClose));
-
     }
 
     /**
@@ -202,7 +186,6 @@ public final class Syntax {
      * Helper class to create new instances of {@link Syntax}.
      */
     public static class Builder {
-
         private String delimiterCommentOpen = "{#";
 
         private String delimiterCommentClose = "#}";
@@ -347,10 +330,7 @@ public final class Syntax {
         }
 
         public Syntax build() {
-            return new Syntax(delimiterCommentOpen, delimiterCommentClose, delimiterExecuteOpen, delimiterExecuteClose,
-                    delimiterPrintOpen, delimiterPrintClose, delimiterInterpolationOpen, delimiterInterpolationClose,
-                    whitespaceTrim, enableNewLineTrimming);
+            return new Syntax(delimiterCommentOpen, delimiterCommentClose, delimiterExecuteOpen, delimiterExecuteClose, delimiterPrintOpen, delimiterPrintClose, delimiterInterpolationOpen, delimiterInterpolationClose, whitespaceTrim, enableNewLineTrimming);
         }
     }
-
 }
