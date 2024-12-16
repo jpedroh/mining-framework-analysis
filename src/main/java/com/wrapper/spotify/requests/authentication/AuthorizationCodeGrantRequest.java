@@ -7,73 +7,56 @@ import com.wrapper.spotify.Api;
 import com.wrapper.spotify.exceptions.*;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import com.wrapper.spotify.requests.AbstractRequest;
+import java.io.IOException;
 import org.apache.commons.codec.binary.Base64;
 
-import java.io.IOException;
 
 public class AuthorizationCodeGrantRequest extends AbstractRequest {
-
   protected AuthorizationCodeGrantRequest(Builder builder) {
     super(builder);
   }
 
   public SettableFuture<AuthorizationCodeCredentials> postAsync() {
     final SettableFuture<AuthorizationCodeCredentials> future = SettableFuture.create();
-
     try {
       final JsonObject jsonObject = new JsonParser().parse(postJson()).getAsJsonObject();
       future.set(new AuthorizationCodeCredentials.JsonUtil().createModelObject(jsonObject));
-    } catch (Exception e) {
+    } catch (java.lang.Exception e) {
       future.setException(e);
     }
-
     return future;
   }
 
-  public AuthorizationCodeCredentials get() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public AuthorizationCodeCredentials get() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     final JsonObject jsonObject = new JsonParser().parse(postJson()).getAsJsonObject();
     return new AuthorizationCodeCredentials.JsonUtil().createModelObject(jsonObject);
   }
 
   public static final class Builder extends AbstractRequest.Builder<Builder> {
-
     public Builder(final String accessToken) {
       super();
     }
 
-
     public Builder grantType(String grantType) {
-      assert (grantType != null);
+      assert grantType != null;
       return setQueryParameter("grant_type", grantType);
     }
 
     public Builder code(String code) {
-      assert (code != null);
+      assert code != null;
       return setQueryParameter("code", code);
     }
 
     public Builder redirectUri(String redirectUri) {
-      assert (redirectUri != null);
+      assert redirectUri != null;
       return setQueryParameter("redirect_uri", redirectUri);
     }
 
     public Builder basicAuthorizationHeader(String clientId, String clientSecret) {
-      assert (clientId != null);
-      assert (clientSecret != null);
-
-      String idSecret = clientId + ":" + clientSecret;
+      assert clientId != null;
+      assert clientSecret != null;
+      String idSecret = (clientId + ":") + clientSecret;
       String idSecretEncoded = new String(Base64.encodeBase64(idSecret.getBytes()));
-
       return setHeader("Authorization", "Basic " + idSecretEncoded);
     }
 
@@ -85,6 +68,5 @@ public class AuthorizationCodeGrantRequest extends AbstractRequest {
 
       return new AuthorizationCodeGrantRequest(this);
     }
-
   }
 }
