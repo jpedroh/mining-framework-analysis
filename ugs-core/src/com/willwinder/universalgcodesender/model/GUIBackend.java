@@ -36,11 +36,6 @@ import com.willwinder.universalgcodesender.services.MessageService;
 import com.willwinder.universalgcodesender.types.GcodeCommand;
 import com.willwinder.universalgcodesender.utils.*;
 import com.willwinder.universalgcodesender.utils.Settings.FileStats;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -51,32 +46,46 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import org.apache.commons.lang3.StringUtils;
+
 
 /**
  * @author wwinder
  */
-public class GUIBackend implements BackendAPI, ControllerListener, SettingChangeListener, IFirmwareSettingsListener {
+public class GUIBackend implements BackendAPI , ControllerListener , SettingChangeListener , IFirmwareSettingsListener {
     private static final Logger logger = Logger.getLogger(GUIBackend.class.getName());
+
     private static final String NEW_LINE = "\n    ";
 
     private final MessageService messageService = new MessageService();
 
     private IController controller = null;
+
     private Settings settings = null;
 
     private final Collection<UGSEventListener> ugsEventListener = Collections.synchronizedList(new ArrayList<>());
 
     // GUI State
+    // GUI State
     private File gcodeFile = null;
+
     private File processedGcodeFile = null;
+
     private File tempDir = null;
+
     private String firmware = null;
 
     private long lastResponse = Long.MIN_VALUE;
+
     private boolean streamFailed = false;
+
     private boolean autoconnect = false;
 
     private GcodeParser gcp = new GcodeParser();
+
     private ControllerStatus controllerStatus = new ControllerStatus();
 
     @Override
@@ -339,8 +348,7 @@ public class GUIBackend implements BackendAPI, ControllerListener, SettingChange
     @Override
     public CommunicatorState getControlState() {
         logger.log(Level.FINEST, "Getting control state.");
-        return this.controller == null ?
-                CommunicatorState.COMM_DISCONNECTED : this.controller.getCommunicatorState();
+        return this.controller == null ? CommunicatorState.COMM_DISCONNECTED : this.controller.getCommunicatorState();
     }
 
     @Override
