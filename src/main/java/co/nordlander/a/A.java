@@ -1,5 +1,9 @@
 package co.nordlander.a;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,11 +21,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -39,7 +42,6 @@ import javax.jms.TextMessage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.script.ScriptException;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.artemis.api.jms.ActiveMQJMSClient;
 import org.apache.activemq.command.ActiveMQMessage;
@@ -63,22 +65,26 @@ import org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A - A JMS testing and admin tool. Primarily built for use with ActiveMQ.
  */
 public class A {
 	private static final Logger logger = LoggerFactory.getLogger(A.class);
+
 	protected ConnectionFactory cf;
+
 	protected Connection conn;
-	protected Session sess, tsess;
+
+	protected Session sess;
+
+	protected Session tsess;
+
 	protected CommandLine cmdLine;
+
 	MessageDumpTransformer transformer = new MessageDumpTransformer();
 
+	// Customizable output
 	// Customizable output
 	protected AOutput output = args -> {
 		for (Object arg : args) {
@@ -86,67 +92,120 @@ public class A {
 		}
 		System.out.println("");
 	};
-	
+
+	// Commands
 	// Commands
 	public static final String CMD_AMQP = "A";
+
 	public static final String CMD_ARTEMIS_CORE = "a";
+
 	public static final String CMD_SET_BOOLEAN_HEADER = "B";
+
 	public static final String CMD_BROKER = "b";
+
 	public static final String CMD_COPY_QUEUE = "C";
+
 	public static final String CMD_COUNT = "c";
+
 	public static final String CMD_CORRELATION_ID = "E";
+
 	public static final String CMD_ENCODING = "e";
+
 	public static final String CMD_JNDI_CF = "F";
+
 	public static final String CMD_FIND = "f";
+
 	public static final String CMD_GET = "g";
+
 	public static final String CMD_SET_HEADER = "H";
+
 	public static final String CMD_HTTP_BRIDGE = "h";
+
 	public static final String CMD_SET_INT_HEADER = "I";
+
 	public static final String CMD_PRIORITY = "i";
+
 	public static final String CMD_JNDI = "J";
+
 	public static final String CMD_JMS_HEADERS = "j";
+
 	public static final String CMD_LIST_QUEUES = "l";
+
 	public static final String CMD_SET_LONG_HEADER = "L";
+
 	public static final String CMD_MOVE_QUEUE = "M";
+
 	public static final String CMD_NON_PERSISTENT = "n";
+
 	public static final String CMD_OPENWIRE = "O";
+
 	public static final String CMD_OUTPUT = "o";
+
 	public static final String CMD_PASS = "P";
+
 	public static final String CMD_PUT = "p";
+
 	public static final String CMD_REPLY_TO = "r";
+
 	public static final String CMD_READ_FOLDER = "R";
+
 	public static final String CMD_TRANSFORM_SCRIPT = "S";
+
 	public static final String CMD_SELECTOR = "s";
+
 	public static final String CMD_NO_TRANSACTION_SUPPORT = "T";
+
 	public static final String CMD_TYPE = "t";
+
 	public static final String CMD_USER = "U";
+
 	public static final String CMD_VERSION = "v";
+
 	public static final String CMD_WAIT = "w";
+
 	public static final String CMD_BATCH_FILE = "W";
+
 	public static final String CMD_RESTORE_DUMP = "X";
+
 	public static final String CMD_WRITE_DUMP = "x";
+
 	public static final String CMD_JMS_TYPE = "y";
+
 	public static final String CMD_TTL = "z";
+
 	public static final String CMD_CLIENTID = "k";
-	
+
+	// Various constants
 	// Various constants
 	public static final long SLEEP_TIME_BETWEEN_FILE_CHECK = 1000L;
+
 	public static final String DEFAULT_COUNT_GET = "1";
+
 	public static final String DEFAULT_COUNT_ALL = "0";
+
 	public static final String DEFAULT_WAIT = "50";
+
 	public static final String TYPE_TEXT = "text";
+
 	public static final String TYPE_BYTES = "bytes";
+
 	public static final String TYPE_MAP = "map";
+
 	public static final String DEFAULT_TYPE = TYPE_TEXT;
+
 	public static final String DEFAULT_DATE_FORMAT = "yyyy MM dd HH:mm:ss";
 
 	public enum Protocol {
-		OpenWire, AMQP, ArtemisCore
-	}
+
+		OpenWire,
+		AMQP,
+		ArtemisCore;}
 
 	public static void main(String[] args) {
 		A a = new A();
-		try { a.run(args); } catch (Exception e) {
+		try {
+			a.run(args);
+		} catch (java.lang.Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -154,49 +213,35 @@ public class A {
 
 	public void run(String[] args) throws Exception {
 		Options opts = createOptions();
-
 		if (args.length == 0) {
 			HelpFormatter helpFormatter = new HelpFormatter();
-			helpFormatter.printHelp(
-					"java -jar a-<version>-with-dependencies.jar", opts, true);
+			helpFormatter.printHelp("java -jar a-<version>-with-dependencies.jar", opts, true);
 			System.exit(0);
 		}
-
 		CommandLineParser cmdParser = new DefaultParser();
-
 		try {
 			cmdLine = cmdParser.parse(opts, args);
-			if( cmdLine.hasOption(CMD_VERSION)){
+			if (cmdLine.hasOption(CMD_VERSION)) {
 				executeShowVersion();
 				return;
 			}
-
 			Protocol protocol = Protocol.OpenWire;
 			if (cmdLine.hasOption(CMD_AMQP)) {
 				protocol = Protocol.AMQP;
 			} else if (cmdLine.hasOption(CMD_ARTEMIS_CORE)) {
 				protocol = Protocol.ArtemisCore;
 			}
-
-			connect(cmdLine.getOptionValue(CMD_BROKER, "tcp://localhost:61616"),
-					cmdLine.getOptionValue(CMD_USER),
-					cmdLine.getOptionValue(CMD_PASS), protocol,
-					cmdLine.getOptionValue(CMD_JNDI, ""),
-					cmdLine.getOptionValue(CMD_CLIENTID),
-					cmdLine.hasOption(CMD_NO_TRANSACTION_SUPPORT));
-
+			connect(cmdLine.getOptionValue(CMD_BROKER, "tcp://localhost:61616"), cmdLine.getOptionValue(CMD_USER), cmdLine.getOptionValue(CMD_PASS), protocol, cmdLine.getOptionValue(CMD_JNDI, ""), cmdLine.getOptionValue(CMD_CLIENTID), cmdLine.hasOption(CMD_NO_TRANSACTION_SUPPORT));
 			long startTime = System.currentTimeMillis();
 			executeCommandLine(cmdLine);
 			long stopTime = System.currentTimeMillis();
 			long elapsedTime = stopTime - startTime;
-			output("Operation completed in ", Long.toString(elapsedTime),
-					"ms (excluding connect)");
+			output("Operation completed in ", Long.toString(elapsedTime), "ms (excluding connect)");
 		} finally {
 			try {
 				if (sess != null) {
 					sess.close();
 				}
-
 				if (conn != null) {
 					conn.close();
 				}
@@ -208,7 +253,7 @@ public class A {
 		logger.debug("At the end of the road");
 	}
 
-	protected void executeCommandLine(CommandLine cmdLine) throws JsonParseException,IOException,JMSException,ScriptException{
+	protected void executeCommandLine(CommandLine cmdLine) throws JsonParseException, JMSException, ScriptException, IOException {
 		if (cmdLine.hasOption(CMD_GET)) {
 			executeGet(cmdLine);
 		} else if (cmdLine.hasOption(CMD_PUT)) {
@@ -225,9 +270,11 @@ public class A {
 			executeWriteDump(cmdLine);
 		} else if (cmdLine.hasOption(CMD_RESTORE_DUMP)) {
 			executeReadDump(cmdLine);
-		} /*else if (cmdLine.hasOption(CMD_HTTP_BRIDGE)) {
-			executeStartHttpBridge(cmdLine);
-		} */else {
+		} else /* else if (cmdLine.hasOption(CMD_HTTP_BRIDGE)) {
+		executeStartHttpBridge(cmdLine);
+		}
+		 */
+		{
 			executeBrowse(cmdLine);
 		}
 	}
@@ -318,32 +365,30 @@ public class A {
 
 	}
 
-	protected void connect(String url, String user, String password,
-			Protocol protocol, String jndi, String clientid, boolean noTransactionSupport) throws Exception {
+	protected void connect(String url, String user, String password, Protocol protocol, String jndi, String clientid, boolean noTransactionSupport) throws Exception {
 		if (StringUtils.isBlank(jndi)) {
 			switch (protocol) {
-			case AMQP:
-				cf = createAMQPCF(url);
-				break;
-			case OpenWire:
-				cf = new ActiveMQConnectionFactory(url);
-				break;
-			case ArtemisCore:
-				cf = ActiveMQJMSClient.createConnectionFactory(url, "");
-				break;
+				case AMQP :
+					cf = createAMQPCF(url);
+					break;
+				case OpenWire :
+					cf = new ActiveMQConnectionFactory(url);
+					break;
+				case ArtemisCore :
+					cf = ActiveMQJMSClient.createConnectionFactory(url, "");
+					break;
 			}
 		} else {
 			// Initialize CF via JNDI.
 			Properties properties = new Properties();
 			try {
 				// try classpath
-				InputStream propertiesStream = getClass().getResourceAsStream(
-						jndi);
+				InputStream propertiesStream = getClass().getResourceAsStream(jndi);
 				if (propertiesStream == null) {
 					// try absolut path
-					propertiesStream = FileUtils
-							.openInputStream(new File(jndi)); // will throw FNE
-																// if not found
+					propertiesStream = FileUtils.openInputStream(new File(jndi));// will throw FNE
+
+					// if not found
 				}
 				// Read the hello.properties JNDI propewsrties file and use
 				// contents to create the InitialContext.
@@ -355,24 +400,22 @@ public class A {
 				// "org.apache.qpid.amqp_1_0.jms.jndi.PropertiesFileInitialContextFactory"
 				// and setting the "java.naming.provider.url" system property as
 				// a URL to a properties file.
-				cf = (ConnectionFactory) context.lookup(cmdLine.getOptionValue(
-						CMD_JNDI_CF, "connectionFactory"));
-
-			} catch (Exception e) {
+				cf = ((ConnectionFactory) (context.lookup(cmdLine.getOptionValue(CMD_JNDI_CF, "connectionFactory"))));
+			} catch (java.lang.Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
-
-		if (user != null && password != null) {
+		if ((user != null) && (password != null)) {
 			conn = cf.createConnection(user, password);
 		} else {
 			conn = cf.createConnection();
 		}
-		if(clientid != null) {
+		if (clientid != null) {
 			conn.setClientID(clientid);
 		}
 		sess = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
-		if (noTransactionSupport) { // Some providers cannot create transactional sessions. I.e. Azure Service Bus
+		if (noTransactionSupport) {
+		// Some providers cannot create transactional sessions. I.e. Azure Service Bus
 			tsess = null;
 		} else {
 			tsess = conn.createSession(true, Session.AUTO_ACKNOWLEDGE);
@@ -382,10 +425,10 @@ public class A {
 
 	protected ConnectionFactory createAMQPCF(String uri) {
 		try {
-            return ConnectionFactoryImpl.createFromURL(uri);
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
+	           return ConnectionFactoryImpl.createFromURL(uri);
+	       } catch (MalformedURLException e) {
+	           throw new IllegalArgumentException(e.getMessage());
+	       }
 	}
 
 	protected void executeGet(final CommandLine cmdLine) throws JMSException,
@@ -428,7 +471,7 @@ public class A {
 			output("Message sent");
 		}
 	}
-	
+
 	protected void executeReadFolder(final CommandLine cmdLine) throws IOException,
 	JMSException, ScriptException {
 		
@@ -478,7 +521,7 @@ public class A {
 			}
 		} while( endTime > System.currentTimeMillis());
 	}
-	
+
 	/**
 	 * Executes a dump restore. 
 	 * 
@@ -612,7 +655,7 @@ public class A {
 		Properties props = cmdLine.getOptionProperties(CMD_SET_HEADER);
 		Properties intProps = cmdLine.getOptionProperties(CMD_SET_INT_HEADER);
 		Properties longProps = cmdLine.getOptionProperties(CMD_SET_LONG_HEADER);
-        Properties booleanProps = cmdLine.getOptionProperties(CMD_SET_BOOLEAN_HEADER);
+	       Properties booleanProps = cmdLine.getOptionProperties(CMD_SET_BOOLEAN_HEADER);
 
 		String type = cmdLine.getOptionValue(CMD_TYPE, DEFAULT_TYPE);
 		String encoding = cmdLine.getOptionValue(CMD_ENCODING, Charset
@@ -936,11 +979,10 @@ public class A {
 	protected void displayAdvisoryMessage(ActiveMQMessage cmdMsg) throws JMSException {
 		final String topic = cmdMsg.getJMSDestination().toString();
 		final String advisoryMsg = advisoryDataStructureToString(cmdMsg.getDataStructure());
-		final String advisoryType = cmdMsg.getDataStructure() != null ? "Type: " + dataStructureTypeToString(cmdMsg.getDataStructure().getDataStructureType()) : "";
-		output("Advisory on " + topic + advisoryType + (advisoryMsg != null ? " Info " + advisoryMsg : ""));
-		
+		final String advisoryType = (cmdMsg.getDataStructure() != null) ? "Type: " + dataStructureTypeToString(cmdMsg.getDataStructure().getDataStructureType()) : "";
+		output((("Advisory on " + topic) + advisoryType) + (advisoryMsg != null ? " Info " + advisoryMsg : ""));
 	}
-	
+
 	protected String advisoryDataStructureToString(final DataStructure dataStructure) throws JMSException {
 		
 		if( dataStructure != null) {
@@ -959,7 +1001,7 @@ public class A {
 				ConnectionInfo connInfo = (ConnectionInfo) dataStructure;
 				String connStr = connInfo.getUserName() != null ? connInfo.getUserName() + "@" + connInfo.getClientIp() : connInfo.getClientIp();
 				return "ConnectionId: " + connInfo.getConnectionId().toString() + " Connection from: " + connStr + " clientId: " +  connInfo.getClientId();
-	
+
 			case CommandTypes.REMOVE_INFO:
 				RemoveInfo removeInfo = (RemoveInfo)dataStructure;
 				return advisoryDataStructureToString(removeInfo.getObjectId());
@@ -1022,7 +1064,7 @@ public class A {
 			break;
 		}
 	}
-	
+
 	protected File getNextFilename(String suggestedFilename, int i) {
 		String filename = suggestedFilename;
 		if (i > 0) {
@@ -1046,25 +1088,17 @@ public class A {
 	protected void outputHeaders(Message msg) {
 		output("Message Headers");
 		try {
-			String deliveryMode = msg.getJMSDeliveryMode() == DeliveryMode.PERSISTENT ? "persistent"
-					: "non-persistent";
+			String deliveryMode = (msg.getJMSDeliveryMode() == DeliveryMode.PERSISTENT) ? "persistent" : "non-persistent";
 			output("  JMSCorrelationID: " + msg.getJMSCorrelationID());
-			output("  JMSExpiration: "
-					+ timestampToString(msg.getJMSExpiration()));
+			output("  JMSExpiration: " + timestampToString(msg.getJMSExpiration()));
 			output("  JMSDeliveryMode: " + deliveryMode);
 			output("  JMSMessageID: " + msg.getJMSMessageID());
 			output("  JMSPriority: " + msg.getJMSPriority());
-			output("  JMSTimestamp: "
-					+ timestampToString(msg.getJMSTimestamp()));
+			output("  JMSTimestamp: " + timestampToString(msg.getJMSTimestamp()));
 			output("  JMSType: " + msg.getJMSType());
-			output("  JMSDestination: "
-					+ (msg.getJMSDestination() != null ? msg
-							.getJMSDestination().toString() : "Not set"));
-			output("  JMSRedelivered: "
-					+ Boolean.toString(msg.getJMSRedelivered()));
-			output("  JMSReplyTo: "
-					+ (msg.getJMSReplyTo() != null ? msg.getJMSReplyTo()
-							.toString() : "Not set"));
+			output("  JMSDestination: " + (msg.getJMSDestination() != null ? msg.getJMSDestination().toString() : "Not set"));
+			output("  JMSRedelivered: " + Boolean.toString(msg.getJMSRedelivered()));
+			output("  JMSReplyTo: " + (msg.getJMSReplyTo() != null ? msg.getJMSReplyTo().toString() : "Not set"));
 		} catch (JMSException e) {
 			// nothing to do here. just ignore.
 			logger.debug("Cannot print JMS headers. {}", e.getMessage());
@@ -1107,132 +1141,49 @@ public class A {
 
 	protected Options createOptions() {
 		Options opts = new Options();
-		opts.addOption(CMD_BROKER, "broker", true,
-				"URL to broker. defaults to: tcp://localhost:61616");
+		opts.addOption(CMD_BROKER, "broker", true, "URL to broker. defaults to: tcp://localhost:61616");
 		opts.addOption(CMD_GET, "get", false, "Get a message from destination");
-		opts.addOption(CMD_PUT, "put", true,
-				"Put a message. Specify data. if starts with @, a file is assumed and loaded");
-		opts.addOption(CMD_TYPE, "type", true,
-				"Message type to put, [bytes, text, map] - defaults to text");
-		opts.addOption(CMD_ENCODING, "encoding", true,
-				"Encoding of input file data. Default UTF-8");
-		opts.addOption(CMD_NON_PERSISTENT, "non-persistent", false,
-				"Set message to non persistent.");
-		opts.addOption(CMD_REPLY_TO, "reply-to", true,
-				"Set reply to destination, i.e. queue:reply");
-		opts.addOption(CMD_CORRELATION_ID, "correlation-id", true,
-				"Set CorrelationID");
-		opts.addOption(
-				CMD_OUTPUT,
-				"output",
-				true,
-				"file to write payload to. If multiple messages, a -1.<ext> will be added to the file. BytesMessage will be written as-is, TextMessage will be written in UTF-8");
-		opts.addOption(
-				CMD_COUNT,
-				"count",
-				true,
-				"A number of messages to browse,get,move or put (put will put the same message <count> times). 0 means all messages.");
-		opts.addOption(CMD_JMS_HEADERS, "jms-headers", false,
-				"Print JMS headers");
-		opts.addOption(
-				CMD_COPY_QUEUE,
-				"copy-queue",
-				true,
-				"Copy all messages from this to target. Limited by maxBrowsePageSize in broker settings (default 400).");
-		opts.addOption(CMD_MOVE_QUEUE, "move-queue", true,
-				"Move all messages from this to target");
-		opts.addOption(CMD_FIND, "find", true,
-				"Search for messages in queue with this value in payload. Use with browse.");
-		opts.addOption(CMD_SELECTOR, "selector", true,
-				"Browse or get with selector");
-		opts.addOption(CMD_WAIT, "wait", true,
-				"Time to wait on get operation. Default 50. 0 equals infinity");
+		opts.addOption(CMD_PUT, "put", true, "Put a message. Specify data. if starts with @, a file is assumed and loaded");
+		opts.addOption(CMD_TYPE, "type", true, "Message type to put, [bytes, text, map] - defaults to text");
+		opts.addOption(CMD_ENCODING, "encoding", true, "Encoding of input file data. Default UTF-8");
+		opts.addOption(CMD_NON_PERSISTENT, "non-persistent", false, "Set message to non persistent.");
+		opts.addOption(CMD_REPLY_TO, "reply-to", true, "Set reply to destination, i.e. queue:reply");
+		opts.addOption(CMD_CORRELATION_ID, "correlation-id", true, "Set CorrelationID");
+		opts.addOption(CMD_OUTPUT, "output", true, "file to write payload to. If multiple messages, a -1.<ext> will be added to the file. BytesMessage will be written as-is, TextMessage will be written in UTF-8");
+		opts.addOption(CMD_COUNT, "count", true, "A number of messages to browse,get,move or put (put will put the same message <count> times). 0 means all messages.");
+		opts.addOption(CMD_JMS_HEADERS, "jms-headers", false, "Print JMS headers");
+		opts.addOption(CMD_COPY_QUEUE, "copy-queue", true, "Copy all messages from this to target. Limited by maxBrowsePageSize in broker settings (default 400).");
+		opts.addOption(CMD_MOVE_QUEUE, "move-queue", true, "Move all messages from this to target");
+		opts.addOption(CMD_FIND, "find", true, "Search for messages in queue with this value in payload. Use with browse.");
+		opts.addOption(CMD_SELECTOR, "selector", true, "Browse or get with selector");
+		opts.addOption(CMD_WAIT, "wait", true, "Time to wait on get operation. Default 50. 0 equals infinity");
 		opts.addOption(CMD_USER, "user", true, "Username to connect to broker");
 		opts.addOption(CMD_PASS, "pass", true, "Password to connect to broker");
 		opts.addOption(CMD_PRIORITY, "priority", true, "sets JMSPriority");
 		opts.addOption(CMD_TTL, "ttl", true, "sets JMSExpiry");
-		opts.addOption(CMD_AMQP, "amqp", false,
-				"Set protocol to AMQP. Defaults to OpenWire");
-		opts.addOption(
-				CMD_JNDI,
-				"jndi",
-				true,
-				"Connect via JNDI. Overrides -b and -A options. Specify context file on classpath");
-		opts.addOption(
-				CMD_JNDI_CF,
-				"jndi-cf-name",
-				true,
-				"Specify JNDI name for ConnectionFactory. Defaults to connectionFactory. Use with -J");
-		opts.addOption(CMD_ARTEMIS_CORE, "artemis-core", false,
-				"Set protocol to ActiveMQ Artemis Core. Defaults to OpenWire");
-		opts.addOption(CMD_OPENWIRE, "openwire", false,
-				"Set protocol to OpenWire. This is default protocol");
-		opts.addOption(CMD_LIST_QUEUES, "list-queues", false,
-				"List queues and topics on broker (OpenWire only)");
-		
-		opts.addOption(CMD_NO_TRANSACTION_SUPPORT,"no-transaction-support", false, 
-				"Set to disable transactions if not supported by platform. "
-				+ "I.e. Azure Service Bus. When set to false, the Move option is NOT atomic.");	
-		
-		opts.addOption(CMD_READ_FOLDER, "read-folder", true, 
-				"Read files in folder and put to queue. Sent files are deleted! Specify path and a filename."
-						+" Wildcards are supported '*' and '?'. If no path is given, current directory is assumed.");
+		opts.addOption(CMD_AMQP, "amqp", false, "Set protocol to AMQP. Defaults to OpenWire");
+		opts.addOption(CMD_JNDI, "jndi", true, "Connect via JNDI. Overrides -b and -A options. Specify context file on classpath");
+		opts.addOption(CMD_JNDI_CF, "jndi-cf-name", true, "Specify JNDI name for ConnectionFactory. Defaults to connectionFactory. Use with -J");
+		opts.addOption(CMD_ARTEMIS_CORE, "artemis-core", false, "Set protocol to ActiveMQ Artemis Core. Defaults to OpenWire");
+		opts.addOption(CMD_OPENWIRE, "openwire", false, "Set protocol to OpenWire. This is default protocol");
+		opts.addOption(CMD_LIST_QUEUES, "list-queues", false, "List queues and topics on broker (OpenWire only)");
+		opts.addOption(CMD_NO_TRANSACTION_SUPPORT, "no-transaction-support", false, "Set to disable transactions if not supported by platform. " + "I.e. Azure Service Bus. When set to false, the Move option is NOT atomic.");
+		opts.addOption(CMD_READ_FOLDER, "read-folder", true, "Read files in folder and put to queue. Sent files are deleted! Specify path and a filename." + " Wildcards are supported '*' and '?'. If no path is given, current directory is assumed.");
 		opts.addOption(CMD_CLIENTID, "clientid", true, "Specify connection ClientID");
-
-
-		Option property = Option.builder(CMD_SET_HEADER)
-				.argName("property=value")
-				.numberOfArgs(2)
-				.valueSeparator()
-				.desc("use value for given String property. Can be used several times.")
-				.build();
-
+		Option property = Option.builder(CMD_SET_HEADER).argName("property=value").numberOfArgs(2).valueSeparator().desc("use value for given String property. Can be used several times.").build();
 		opts.addOption(property);
-
-		Option longProperty = Option.builder(CMD_SET_LONG_HEADER)
-				.argName("property=value")
-				.numberOfArgs(2)
-				.valueSeparator()
-				.desc("use value for given Long property. Can be used several times.")
-				.build();
-
+		Option longProperty = Option.builder(CMD_SET_LONG_HEADER).argName("property=value").numberOfArgs(2).valueSeparator().desc("use value for given Long property. Can be used several times.").build();
 		opts.addOption(longProperty);
-
-		Option booleanProperty = Option.builder(CMD_SET_BOOLEAN_HEADER)
-				.argName("property=value")
-				.numberOfArgs(2)
-				.valueSeparator()
-				.desc("use value for given Boolean property. Can be used several times.")
-				.build();
-
+		Option booleanProperty = Option.builder(CMD_SET_BOOLEAN_HEADER).argName("property=value").numberOfArgs(2).valueSeparator().desc("use value for given Boolean property. Can be used several times.").build();
 		opts.addOption(booleanProperty);
-
-		Option intProperty = Option.builder(CMD_SET_INT_HEADER)
-				.argName("property=value")
-				.numberOfArgs(2)
-				.valueSeparator()
-				.desc("use value for given Integer property. Can be used several times.")
-				.build();
-
+		Option intProperty = Option.builder(CMD_SET_INT_HEADER).argName("property=value").numberOfArgs(2).valueSeparator().desc("use value for given Integer property. Can be used several times.").build();
 		opts.addOption(intProperty);
-		
-		opts.addOption(CMD_WRITE_DUMP, "write-dump", true, "Write a dump of messages to a file. "
-						+ "Will preserve metadata and type. Can  be used with transformation option.  Warning! Will consume queue!" );
-		
-		opts.addOption(CMD_RESTORE_DUMP, "restore-dump", true, "Restore a dump of messages in a file," + 
-						"created with -" + CMD_WRITE_DUMP + ". Can be used with transformation option.");
-		
-		opts.addOption(CMD_TRANSFORM_SCRIPT, "transform-script", true, "JavaScript code (or @path/to/file.js). "
-					+"Used to transform messages with the dump options. Access message in JavaScript by msg.JMSType = 'foobar';");
-
+		opts.addOption(CMD_WRITE_DUMP, "write-dump", true, "Write a dump of messages to a file. " + "Will preserve metadata and type. Can  be used with transformation option.  Warning! Will consume queue!");
+		opts.addOption(CMD_RESTORE_DUMP, "restore-dump", true, (("Restore a dump of messages in a file," + "created with -") + CMD_WRITE_DUMP) + ". Can be used with transformation option.");
+		opts.addOption(CMD_TRANSFORM_SCRIPT, "transform-script", true, "JavaScript code (or @path/to/file.js). " + "Used to transform messages with the dump options. Access message in JavaScript by msg.JMSType = 'foobar';");
 		opts.addOption(CMD_VERSION, "version", false, "Show version of A");
-
-		opts.addOption(CMD_JMS_TYPE, "jms-type", true, "Sets JMSType header" );
-
-		opts.addOption(CMD_BATCH_FILE, "batch-file", true,
-				"Line separated batch file. Used with -p to produce one message per line in file. " +
-				"Used together with Script where each batch line can be accessed with variable 'entry' ");
-
+		opts.addOption(CMD_JMS_TYPE, "jms-type", true, "Sets JMSType header");
+		opts.addOption(CMD_BATCH_FILE, "batch-file", true, "Line separated batch file. Used with -p to produce one message per line in file. " + "Used together with Script where each batch line can be accessed with variable 'entry' ");
 		return opts;
 	}
 
