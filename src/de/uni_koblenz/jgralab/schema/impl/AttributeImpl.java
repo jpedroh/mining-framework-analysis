@@ -32,10 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.schema.impl;
-
-import java.util.regex.Pattern;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -43,14 +40,15 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
+import java.util.regex.Pattern;
+
 
 /**
  * AttributeImpl represents a grUML attribute on the schema level.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
-public class AttributeImpl implements Attribute, Comparable<Attribute> {
-
+public class AttributeImpl implements Attribute , Comparable<Attribute> {
 	private static final Pattern ATTRIBUTE_NAME_PATTERN = Pattern
 			.compile("\\p{Lower}\\w*");
 
@@ -86,7 +84,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
 	/**
 	 * builds a new attribute
-	 *
+	 * 
 	 * @param name
 	 *            the name of the attribute
 	 * @param domain
@@ -98,23 +96,22 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	 *            a String in TG value format denoting the default value of this
 	 *            Attribute, or null if no default value shall be specified.
 	 */
-	AttributeImpl(String name, Domain domain, AttributedElementClass<?, ?> aec,
-			String defaultValue) {
+	AttributeImpl(String name, Domain domain, AttributedElementClass<?, ?> aec, String defaultValue) {
 		if (!ATTRIBUTE_NAME_PATTERN.matcher(name).matches()) {
-			throw new SchemaException("Invalid attribute name '" + name + "'.");
+			throw new SchemaException(("Invalid attribute name '" + name) + "'.");
 		}
 		this.name = name;
 		this.domain = domain;
 		this.aec = aec;
-		sortKey = name + ":" + domain.getQualifiedName();
+		sortKey = (name + ":") + domain.getQualifiedName();
 		setDefaultValueAsString(defaultValue);
-		DomainImpl d = ((DomainImpl) this.domain);
+		DomainImpl d = ((DomainImpl) (this.domain));
 		d.registerAttribute(this);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -124,7 +121,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see jgralab.Attribute#getDomain()
 	 */
 	@Override
@@ -134,7 +131,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see jgralab.Attribute#getName()
 	 */
 	@Override
