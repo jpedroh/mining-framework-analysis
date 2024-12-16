@@ -16,15 +16,14 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.dasein.cloud.network;
 
-import org.dasein.cloud.Taggable;
-
+import java.util.*;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import org.dasein.cloud.Taggable;
+
 
 /**
  * Represents a virtual load balancer operating in a cloud. Load balancers have an address/virtual IP (VIP) to which
@@ -36,7 +35,7 @@ import java.util.*;
  * @version 2013.04 added Javadoc and refactored for support for endpoints and data integrity
  * @since unknown
  */
-public class LoadBalancer implements Networkable, Taggable {
+public class LoadBalancer implements Networkable , Taggable {
     /**
      * Constructs a load balancer with the minimally acceptable data set.
      * @param ownerId the account number that owns this load balancer
@@ -50,7 +49,16 @@ public class LoadBalancer implements Networkable, Taggable {
      * @param publicPorts one or more public ports on which the load balancer is listening
      * @return a load balancer instance representing the specified state
      */
-    static public LoadBalancer getInstance(@Nonnull String ownerId, @Nonnull String regionId, @Nonnull String lbId, @Nonnull LoadBalancerState state, @Nonnull String name, @Nonnull String description, @Nonnull LoadBalancerAddressType addressType, @Nonnull String address, @Nonnull int ... publicPorts) {
+    public static LoadBalancer getInstance(@Nonnull
+    String ownerId, @Nonnull
+    String regionId, @Nonnull
+    String lbId, @Nonnull
+    LoadBalancerState state, @Nonnull
+    String name, @Nonnull
+    String description, @Nonnull
+    LoadBalancerAddressType addressType, @Nonnull
+    String address, @Nonnull
+    int... publicPorts) {
         return new LoadBalancer(ownerId, regionId, lbId, state, name, description, addressType, address, publicPorts);
     }
 
@@ -67,10 +75,20 @@ public class LoadBalancer implements Networkable, Taggable {
      * @param publicPorts one or more public ports on which the load balancer is listening
      * @return a load balancer instance representing the specified state
      */
-    static public LoadBalancer getInstance(@Nonnull String ownerId, @Nonnull String regionId, @Nonnull String lbId, @Nonnull LoadBalancerState state, @Nonnull String name, @Nonnull String description, @Nonnull LbType type, @Nonnull LoadBalancerAddressType addressType, @Nonnull String address, @Nonnull int ... publicPorts) {
-      LoadBalancer lb = new LoadBalancer(ownerId, regionId, lbId, state, name, description, addressType, address, publicPorts);
-      lb.setType( type );
-      return lb;
+    public static LoadBalancer getInstance(@Nonnull
+    String ownerId, @Nonnull
+    String regionId, @Nonnull
+    String lbId, @Nonnull
+    LoadBalancerState state, @Nonnull
+    String name, @Nonnull
+    String description, @Nonnull
+    LbType type, @Nonnull
+    LoadBalancerAddressType addressType, @Nonnull
+    String address, @Nonnull
+    int... publicPorts) {
+        LoadBalancer lb = new LoadBalancer(ownerId, regionId, lbId, state, name, description, addressType, address, publicPorts);
+        lb.setType(type);
+        return lb;
     }
 
     /**
@@ -95,32 +113,61 @@ public class LoadBalancer implements Networkable, Taggable {
     }
 
     private String                  address;
+
     private LoadBalancerAddressType addressType;
+
     private long                    creationTimestamp;
+
     private LoadBalancerState       currentState;
+
     private String                  description;
+
     private LbType                  type;
-    private ArrayList<LbListener>   listeners;
+
+    private ArrayList<LbListener> listeners;
+
     private String                  name;
+
     private String[]                providerDataCenterIds;
+
     private String                  providerLoadBalancerId;
+
     private String                  providerOwnerId;
+
     private String                  providerRegionId;
+
     private String[]                providerServerIds;
+
     private ArrayList<String>       providerSubnetIds;
+
     private int[]                   publicPorts;
+
     private IPVersion[]             supportedTraffic;
-    private Map<String,String>      tags;
-    private String                  providerLBHealthCheckId;
+
+    private Map<String, String> tags;
+
     private String[]                providerFirewallIds;
+
+    private String                  providerLBHealthCheckId;
 
     /**
      * Constructs a load balancer object with no data.
+     *
      * @deprecated Use the factory methods that construct fully-formed load balancers
      */
-    public LoadBalancer() { }
+    public LoadBalancer() {
+    }
 
-    private LoadBalancer(@Nonnull String ownerId, @Nonnull String regionId, @Nonnull String lbId, @Nonnull LoadBalancerState state, @Nonnull String name, @Nonnull String description, @Nonnull LoadBalancerAddressType addressType, @Nonnull String address, @Nonnull int ... publicPorts) {
+    private LoadBalancer(@Nonnull
+    String ownerId, @Nonnull
+    String regionId, @Nonnull
+    String lbId, @Nonnull
+    LoadBalancerState state, @Nonnull
+    String name, @Nonnull
+    String description, @Nonnull
+    LoadBalancerAddressType addressType, @Nonnull
+    String address, @Nonnull
+    int... publicPorts) {
         this.providerOwnerId = ownerId;
         this.providerRegionId = regionId;
         this.providerLoadBalancerId = lbId;
@@ -132,7 +179,7 @@ public class LoadBalancer implements Networkable, Taggable {
         this.addressType = addressType;
         this.publicPorts = publicPorts;
         this.creationTimestamp = 0L;
-        this.supportedTraffic = new IPVersion[] { IPVersion.IPV4 };
+        this.supportedTraffic = new IPVersion[]{ IPVersion.IPV4 };
     }
 
     /**
@@ -209,8 +256,9 @@ public class LoadBalancer implements Networkable, Taggable {
     /**
      * @return the set of listeners associated with the load balancer
      */
-    public @Nonnull LbListener[] getListeners() {
-        return (listeners == null ? new LbListener[0] : listeners.toArray(new LbListener[listeners.size()]));
+    @Nonnull
+    public LbListener[] getListeners() {
+        return listeners == null ? new LbListener[0] : listeners.toArray(new LbListener[listeners.size()]);
     }
 
     /**
@@ -260,8 +308,9 @@ public class LoadBalancer implements Networkable, Taggable {
     /**
      * @return the IP version of the traffic allowed through this load balancer
      */
-    public @Nonnull IPVersion[] getSupportedTraffic() {
-        return (supportedTraffic == null ? new IPVersion[] { IPVersion.IPV4 } : supportedTraffic);
+    @Nonnull
+    public IPVersion[] getSupportedTraffic() {
+        return supportedTraffic == null ? new IPVersion[]{ IPVersion.IPV4 } : supportedTraffic;
     }
 
     /**
@@ -363,7 +412,8 @@ public class LoadBalancer implements Networkable, Taggable {
      * @param traffic the traffic supported in this load balancer
      * @return this
      */
-    public LoadBalancer supportingTraffic(@Nonnull IPVersion ... traffic) {
+    public LoadBalancer supportingTraffic(@Nonnull
+    IPVersion... traffic) {
         supportedTraffic = traffic;
         return this;
     }
@@ -378,8 +428,10 @@ public class LoadBalancer implements Networkable, Taggable {
      * @param listeners one or more listeners to associate with the load balancer
      * @return this
      */
-    public @Nonnull LoadBalancer withListeners(@Nonnull LbListener ... listeners) {
-        if( this.listeners == null ) {
+    @Nonnull
+    public LoadBalancer withListeners(@Nonnull
+    LbListener... listeners) {
+        if (this.listeners == null) {
             this.listeners = new ArrayList<LbListener>();
         }
         Collections.addAll(this.listeners, listeners);
@@ -411,7 +463,8 @@ public class LoadBalancer implements Networkable, Taggable {
      * @param addressType the address type for the address associated with the load balancer
      * @deprecated Use the factory methods to construct a load balancer
      */
-    public void setAddressType(@Nonnull LoadBalancerAddressType addressType) {
+    public void setAddressType(@Nonnull
+    LoadBalancerAddressType addressType) {
         this.addressType = addressType;
     }
 
@@ -430,7 +483,8 @@ public class LoadBalancer implements Networkable, Taggable {
      * @param currentState the current load balancer state
      * @deprecated Use the factory methods to construct a load balancer
      */
-    public void setCurrentState(@Nonnull LoadBalancerState currentState) {
+    public void setCurrentState(@Nonnull
+    LoadBalancerState currentState) {
         this.currentState = currentState;
     }
 
@@ -447,8 +501,8 @@ public class LoadBalancer implements Networkable, Taggable {
      * Sets the load balancer type.
      * @param type the load balancer type
      */
-    public void setType( LbType type ) {
-      this.type = type;
+    public void setType(LbType type) {
+        this.type = type;
     }
 
     /**
@@ -464,7 +518,8 @@ public class LoadBalancer implements Networkable, Taggable {
      * @param listeners the list of listeners associated with the load balancer
      * @deprecated Use the factory methods to construct a load balancer and the {@link #withListeners(LbListener...)} method
      */
-    public void setListeners(@Nonnull LbListener ... listeners) {
+    public void setListeners(@Nonnull
+    LbListener... listeners) {
         withListeners(listeners);
     }
 
@@ -538,8 +593,9 @@ public class LoadBalancer implements Networkable, Taggable {
      * @param supportedTraffic the supported traffic containing at least one IP version
      * @deprecated Use the factory methods to construct an LB
      */
-    public void setSupportedTraffic(@Nonnull IPVersion[] supportedTraffic) {
-        assert (supportedTraffic.length > 0);
+    public void setSupportedTraffic(@Nonnull
+    IPVersion[] supportedTraffic) {
+        assert supportedTraffic.length > 0;
         this.supportedTraffic = supportedTraffic;
     }
 }

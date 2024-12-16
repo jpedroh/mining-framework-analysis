@@ -16,12 +16,13 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.dasein.cloud.network;
 
 import java.util.HashMap;
 import java.util.Locale;
-
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.dasein.cloud.AccessControlledService;
 import org.dasein.cloud.CloudException;
 import org.dasein.cloud.InternalException;
@@ -30,11 +31,6 @@ import org.dasein.cloud.Requirement;
 import org.dasein.cloud.ResourceStatus;
 import org.dasein.cloud.identity.ServiceAction;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Locale;
 
 /**
  * Implements support for cloud load balancing services.
@@ -48,22 +44,39 @@ public interface LoadBalancerSupport extends AccessControlledService {
     static public final ServiceAction ANY                       = new ServiceAction("LB:ANY");
 
     static public final ServiceAction ADD_DATA_CENTERS          = new ServiceAction("LB:ADD_DC");
+
     static public final ServiceAction ADD_VMS                   = new ServiceAction("LB:ADD_VM");
+
     static public final ServiceAction CREATE_LOAD_BALANCER      = new ServiceAction("LB:CREATE_LOAD_BALANCER");
+
     static public final ServiceAction GET_LOAD_BALANCER         = new ServiceAction("LB:GET_LOAD_BALANCER");
+
     static public final ServiceAction LIST_LOAD_BALANCER        = new ServiceAction("LB:LIST_LOAD_BALANCER");
+
     static public final ServiceAction GET_LOAD_BALANCER_SERVER_HEALTH   = new ServiceAction("LB:GET_LOAD_BALANCER_SERVER_HEALTH");
+
     static public final ServiceAction REMOVE_DATA_CENTERS       = new ServiceAction("LB:REMOVE_DC");
+
     static public final ServiceAction REMOVE_VMS                = new ServiceAction("LB:REMOVE_VM");
+
     static public final ServiceAction REMOVE_LOAD_BALANCER      = new ServiceAction("LB:REMOVE_LOAD_BALANCER");
+
     static public final ServiceAction CONFIGURE_HEALTH_CHECK    = new ServiceAction("LB:CONFIGURE_HEALTH_CHECK");
+
     static public final ServiceAction LIST_SSL_CERTIFICATES     = new ServiceAction("LB:LIST_SSL_CERTIFICATES");
+
     static public final ServiceAction GET_SSL_CERTIFICATE       = new ServiceAction("LB:GET_SSL_CERTIFICATE");
+
     static public final ServiceAction CREATE_SSL_CERTIFICATE    = new ServiceAction("LB:CREATE_SSL_CERTIFICATE");
+
     static public final ServiceAction DELETE_SSL_CERTIFICATE    = new ServiceAction("LB:DELETE_SSL_CERTIFICATE");
+
     static public final ServiceAction SET_LB_SSL_CERTIFICATE    = new ServiceAction("LB:SET_SSL_CERTIFICATE");
+
     static public final ServiceAction SET_FIREWALLS        = new ServiceAction("LB:SET_FIREWALLS");
+
     static public final ServiceAction ATTACH_LB_TO_SUBNETS    = new ServiceAction("LB:ATTACH_LB_TO_SUBNETS");
+
     static public final ServiceAction DETACH_LB_FROM_SUBNETS    = new ServiceAction("LB:DETACH_LB_FROM_SUBNETS");
 
     /**
@@ -305,7 +318,8 @@ public interface LoadBalancerSupport extends AccessControlledService {
      * @deprecated use {@link LoadBalancerCapabilities#listSupportedEndpointTypes()}
      */
     @Deprecated
-    public @Nonnull Iterable<LbEndpointType> listSupportedEndpointTypes() throws CloudException, InternalException;
+    @Nonnull
+    public abstract Iterable<LbEndpointType> listSupportedEndpointTypes() throws CloudException, InternalException;
 
     /**
      * Lists all IP protocol versions supported for load balancers in this cloud.
@@ -457,7 +471,8 @@ public interface LoadBalancerSupport extends AccessControlledService {
      * @param options the options for creating the health check
      * @return the unique ID of the health check
      */
-    public LoadBalancerHealthCheck createLoadBalancerHealthCheck(@Nonnull HealthCheckOptions options) throws CloudException, InternalException;
+    public abstract LoadBalancerHealthCheck createLoadBalancerHealthCheck(@Nonnull
+    HealthCheckOptions options) throws CloudException, InternalException;
 
     /**
      * Gets the specified Health Check from the cloud
@@ -490,13 +505,18 @@ public interface LoadBalancerSupport extends AccessControlledService {
 
     /**
      * Gets the health state of the virtual machine(s) being monitored by the health check
-     * @param providerLoadBalancerId the ID of the specific loadbalancer under which the instance(s) belong(s)
-     * @param providerVirtualMachineId the ID of a specific virtual machine if required
+     *
+     * @param providerLoadBalancerId
+     * 		the ID of the specific loadbalancer under which the instance(s) belong(s)
+     * @param providerVirtualMachineId
+     * 		the ID of a specific virtual machine if required
      * @return Hashmap containing the virtual machine ID and it's corresponding health state
-     * @deprecated
+     * @deprecated 
      */
     @Deprecated
-    public HashMap<String, String> getInstanceHealth(@Nonnull String providerLoadBalancerId, @Nullable String providerVirtualMachineId) throws CloudException, InternalException;
+    public abstract HashMap<String, String> getInstanceHealth(@Nonnull
+    String providerLoadBalancerId, @Nullable
+    String providerVirtualMachineId) throws CloudException, InternalException;
 
     /**
      * Allows an existing LB Health Check to be modified
@@ -516,30 +536,28 @@ public interface LoadBalancerSupport extends AccessControlledService {
      */
     public void removeLoadBalancerHealthCheck(@Nonnull String providerLoadBalancerId) throws CloudException, InternalException;
 
-	/**
-	 * Adds subnets to the loadbalancer
-	 *
-	 * @param toLoadBalancerId the ID of the loadbalancer the subnets need to be attached
-	 * @param subnetIdsToAdd subnets IDs to be attached to the specified loadbalancer
-	 * @throws CloudException
-	 * @throws InternalException
-	 */
-	public void attachLoadBalancerToSubnets(@Nonnull String toLoadBalancerId, @Nonnull String ... subnetIdsToAdd) throws CloudException, InternalException;
+/**
+ * Adds subnets to the loadbalancer
+ *
+ * @param toLoadBalancerId the ID of the loadbalancer the subnets need to be attached
+ * @param subnetIdsToAdd subnets IDs to be attached to the specified loadbalancer
+ * @throws CloudException
+ * @throws InternalException
+ */
+public void attachLoadBalancerToSubnets(@Nonnull String toLoadBalancerId, @Nonnull String ... subnetIdsToAdd) throws CloudException, InternalException;
 
-	/**
-	 * Removes subnet from the loadbalancer
-	 *
-	 * @param fromLoadBalancerId the ID of loadbalancer the subnets need to be detached
-	 * @param subnetIdsToDelete subnets IDs to be detached from the specified loadbalancer
-	 * @throws CloudException
-	 * @throws InternalException
-	 */
-	public void detachLoadBalancerFromSubnets(@Nonnull String fromLoadBalancerId, @Nonnull String ... subnetIdsToDelete) throws CloudException, InternalException;
+/**
+ * Removes subnet from the loadbalancer
+ *
+ * @param fromLoadBalancerId the ID of loadbalancer the subnets need to be detached
+ * @param subnetIdsToDelete subnets IDs to be detached from the specified loadbalancer
+ * @throws CloudException
+ * @throws InternalException
+ */
+public void detachLoadBalancerFromSubnets(@Nonnull String fromLoadBalancerId, @Nonnull String ... subnetIdsToDelete) throws CloudException, InternalException;
 
-
-	/********************************** DEPRECATED METHODS *************************************/
-
-	/**
+/********************************** DEPRECATED METHODS *************************************/
+    /**
      * Indicates whether a health check can be created independantly of a load balancer
      * @return false if a health check can exist without having been assigned to a load balancer
      * @throws CloudException
@@ -547,7 +565,7 @@ public interface LoadBalancerSupport extends AccessControlledService {
      * @deprecated use {@link LoadBalancerCapabilities#healthCheckRequiresLoadBalancer()}
      */
     @Deprecated
-    public boolean healthCheckRequiresLoadBalancer() throws CloudException, InternalException;
+    public abstract boolean healthCheckRequiresLoadBalancer() throws CloudException, InternalException;
 
     /**
      * Creates a new load balancer matching the specified characteristics in the cloud.
@@ -564,7 +582,16 @@ public interface LoadBalancerSupport extends AccessControlledService {
      * @throws InternalException an error occurred within the Dasein Cloud implementation while performing this action
      * @deprecated Use {@link #createLoadBalancer(LoadBalancerCreateOptions)}
      */
-    public @Nonnull String create(@Nonnull String name, @Nonnull String description, @Nullable String addressId, @Nullable String[] dataCenterIds, @Nullable LbListener[] listeners, @Nullable String[] serverIds, @Nullable String[] subnetIds, @Nullable LbType type) throws CloudException, InternalException;
+    @Nonnull
+    public abstract String create(@Nonnull
+    String name, @Nonnull
+    String description, @Nullable
+    String addressId, @Nullable
+    String[] dataCenterIds, @Nullable
+    LbListener[] listeners, @Nullable
+    String[] serverIds, @Nullable
+    String[] subnetIds, @Nullable
+    LbType type) throws CloudException, InternalException;
 
     /**
      * Removes a load balancer.
