@@ -1,17 +1,3 @@
-// Copyright 2015 PlanBase Inc. & Glen Peterson
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package org.organicdesign.fp.collections;
 
 import java.security.NoSuchAlgorithmException;
@@ -21,19 +7,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.organicdesign.fp.FunctionUtils;
 import org.organicdesign.fp.TestUtilities;
-
 import static org.junit.Assert.*;
 import static org.organicdesign.fp.StaticImports.vec;
 import static org.organicdesign.fp.TestUtilities.compareIterators;
 import static org.organicdesign.fp.TestUtilities.serializeDeserialize;
 import static org.organicdesign.testUtils.EqualsContract.equalsDistinctHashCode;
+
 
 @RunWith(JUnit4.class)
 public class PersistentVectorTest {
@@ -59,51 +44,68 @@ public class PersistentVectorTest {
                                vec((Integer) null));
     }
 
-    @Test public void emptyListIterator() {
+    @Test
+    public void emptyListIterator() {
         TestUtilities.listIteratorTest(Collections.emptyList(), PersistentVector.empty());
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx00() { PersistentVector.empty().get(Integer.MIN_VALUE); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx01() { PersistentVector.empty().get(-1); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx02() { PersistentVector.empty().get(0); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx03() { PersistentVector.empty().get(1); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx04() { PersistentVector.empty().get(Integer.MAX_VALUE); }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx10() { PersistentVector.ofIter(Collections.emptyList()).get(Integer.MIN_VALUE); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx11() { PersistentVector.ofIter(Collections.emptyList()).get(-1); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx12() { PersistentVector.ofIter(Collections.emptyList()).get(0); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx13() { PersistentVector.ofIter(Collections.emptyList()).get(1); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx14() { PersistentVector.ofIter(Collections.emptyList()).get(Integer.MAX_VALUE); }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx20() { PersistentVector.ofIter(new ArrayList<>()).get(Integer.MIN_VALUE); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx21() { PersistentVector.ofIter(new ArrayList<>()).get(-1); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx22() { PersistentVector.ofIter(new ArrayList<>()).get(0); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx23() { PersistentVector.ofIter(new ArrayList<>()).get(1); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx24() { PersistentVector.ofIter(new ArrayList<>()).get(Integer.MAX_VALUE); }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx30() { vec().get(Integer.MIN_VALUE); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx31() { vec().get(-1); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx32() { vec().get(0); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx33() { vec().get(1); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyEx34() { vec().get(Integer.MAX_VALUE); }
 
@@ -121,14 +123,18 @@ public class PersistentVectorTest {
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void oneEx00() { vec(1).get(Integer.MIN_VALUE); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void oneEx01() { vec(1).get(-1); }
+
     @Test
     public void oneIsOne() {
         assertEquals(Integer.valueOf(1), vec(1).get(0));
     }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void oneEx03() { vec(1).get(1); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void oneEx04() { vec(1).get(Integer.MAX_VALUE); }
 
@@ -137,21 +143,25 @@ public class PersistentVectorTest {
         List<Integer> oneList = new ArrayList<>();
         oneList.add(1);
         PersistentVector.ofIter(oneList).get(Integer.MIN_VALUE); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void oneEx11() {
         List<Integer> oneList = new ArrayList<>();
         oneList.add(1);
         PersistentVector.ofIter(oneList).get(-1); }
+
     @Test
     public void oneIsOne2() {
         List<Integer> oneList = new ArrayList<>();
         oneList.add(1);
         assertEquals(Integer.valueOf(1), PersistentVector.ofIter(oneList).get(0)); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void oneEx13() {
         List<Integer> oneList = new ArrayList<>();
         oneList.add(1);
         PersistentVector.ofIter(oneList).get(1); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void oneEx14() {
         List<Integer> oneList = new ArrayList<>();
@@ -163,64 +173,66 @@ public class PersistentVectorTest {
         List<Integer> oneList = new ArrayList<>();
         oneList.add(1);
         PersistentVector.ofIter(Collections.unmodifiableList(oneList)).get(Integer.MIN_VALUE); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void oneEx21() {
         List<Integer> oneList = new ArrayList<>();
         oneList.add(1);
         PersistentVector.ofIter(Collections.unmodifiableList(oneList)).get(-1); }
+
     @Test
     public void oneIsOne3() {
         List<Integer> oneList = new ArrayList<>();
         oneList.add(1);
         assertEquals(Integer.valueOf(1), PersistentVector.ofIter(Collections.unmodifiableList(oneList)).get(0)); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void oneEx23() {
         List<Integer> oneList = new ArrayList<>();
         oneList.add(1);
         PersistentVector.ofIter(Collections.unmodifiableList(oneList)).get(1); }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void oneEx24() {
         List<Integer> oneList = new ArrayList<>();
         oneList.add(1);
         PersistentVector.ofIter(Collections.unmodifiableList(oneList)).get(Integer.MAX_VALUE); }
 
-    @Test public void addSeveralItems() throws NoSuchAlgorithmException {
+    @Test
+    public void addSeveralItems() throws NoSuchAlgorithmException {
 //        System.out.println("addSeveral start");
-        final int SEVERAL = 100; //SecureRandom.getInstanceStrong().nextInt(999999) + 33 ;
+        //SecureRandom.getInstanceStrong().nextInt(999999) + 33 ;
+        final int SEVERAL = 100;
         PersistentVector<Integer> is = PersistentVector.empty();
-        for (int j = 0; j < SEVERAL; j++){
+        for (int j = 0; j < SEVERAL; j++) {
             is = is.append(j);
         }
         assertEquals(SEVERAL, is.size());
-        for (int j = 0; j < SEVERAL; j++){
+        for (int j = 0; j < SEVERAL; j++) {
             assertEquals(Integer.valueOf(j), is.get(j));
         }
     }
 
-    @Test public void serializationTest() throws Exception {
+    @Test
+    public void serializationTest() throws Exception {
         ImList<Integer> empty1 = serializeDeserialize(PersistentVector.empty());
         ImList<Integer> empty2 = PersistentVector.ofIter(Collections.emptyList());
         ImList<Integer> empty3 = PersistentVector.ofIter(new ArrayList<>());
         ImList<Integer> empty4 = vec();
-
-        equalsDistinctHashCode(empty1, empty2, empty3,
-                               vec(1));
-
-        equalsDistinctHashCode(empty2, empty3, empty4,
-                               vec((Integer) null));
-
+        equalsDistinctHashCode(empty1, empty2, empty3, vec(1));
+        equalsDistinctHashCode(empty2, empty3, empty4, vec(((Integer) (null))));
 //        System.out.println("addSeveral start");
-        final int SEVERAL = 100; //SecureRandom.getInstanceStrong().nextInt(999999) + 33 ;
+        //SecureRandom.getInstanceStrong().nextInt(999999) + 33 ;
+        final int SEVERAL = 100;
         PersistentVector<Integer> is = PersistentVector.empty();
-        for (int j = 0; j < SEVERAL; j++){
+        for (int j = 0; j < SEVERAL; j++) {
             is = is.append(j);
         }
         PersistentVector<Integer> pv = serializeDeserialize(is);
         assertEquals(SEVERAL, pv.size());
-        for (int j = 0; j < SEVERAL; j++){
+        for (int j = 0; j < SEVERAL; j++) {
             assertEquals(Integer.valueOf(j), pv.get(j));
         }
-
     }
 
     @Test
@@ -238,17 +250,14 @@ public class PersistentVectorTest {
     // Time ImVectorImplementation vs. java.util.ArrayList to prove that performance does not degrade
     // if changes are made.
     @Ignore
-    @Test public void speedTest() throws NoSuchAlgorithmException, InterruptedException {
+    @Test
+    public void speedTest() throws NoSuchAlgorithmException, InterruptedException {
         final int maxItems = 1000000;
-
-        System.out.println("Speed tests take time.  The more accurate, the more time.\n" +
-                                   "This may fail occasionally, then work when re-run, which is OK.\n" +
-                                   "Better that, than set the limit too high and miss a performance drop.");
-
+        System.out.println("Speed tests take time.  The more accurate, the more time.\n" + ("This may fail occasionally, then work when re-run, which is OK.\n" + "Better that, than set the limit too high and miss a performance drop."));
         // These are worst-case timings, indexed by number of items inserted in the test.
-        final UnmodMap<Integer,Double> benchmarkRatios;
+        final UnmodMap<Integer, Double> benchmarkRatios;
         {
-            Map<Integer,Double> mm = new HashMap<>();
+            Map<Integer, Double> mm = new HashMap<>();
             mm.put(1, 1.4);
             mm.put(10, 2.7);
             mm.put(100, 6.5);
@@ -258,26 +267,20 @@ public class PersistentVectorTest {
             mm.put(1000000, 7.8);
             benchmarkRatios = FunctionUtils.unmodMap(mm);
         }
-
         // Remember the results of each insertion test to average them later.
         List<Double> ratios = new ArrayList<>();
-
         // Run tests for increasingly more inserts each time (powers of 10 should be fair since underlying
         // implementations use powers of 2).
         for (int numItems = 1; numItems <= maxItems; numItems *= 10) {
-
             // Run the speed tests this many times (for better accuracy) testing ArrayList and ImVectorImpl alternately.
-            int testRepetitions = (numItems < 1000) ? 10000 :
-                                  (numItems < 10000) ? 1000 :
-                                  (numItems < 100000) ? 100 : 10;
-
+            int testRepetitions = (numItems < 1000) ? 10000 : numItems < 10000 ? 1000 : numItems < 100000 ? 100 : 10;
             long[] testTimes = new long[testRepetitions];
             long[] benchTimes = new long[testRepetitions];
-
-            Thread.sleep(0); // GC and other processes, this is your chance.
+            Thread.sleep(0);// GC and other processes, this is your chance.
 
             for (int z = 0; z < testRepetitions; z++) {
-                Thread.sleep(0); // GC and other processes, this is your chance.
+                Thread.sleep(0);// GC and other processes, this is your chance.
+
                 long startTime = System.nanoTime();
                 List<Integer> benchmark = new ArrayList<>();
                 for (int i = 0; i < numItems; i++) {
@@ -287,8 +290,8 @@ public class PersistentVectorTest {
                 assertEquals(Integer.valueOf(numItems / 2), benchmark.get(numItems / 2));
                 assertEquals(Integer.valueOf(numItems - 1), benchmark.get(numItems - 1));
                 benchTimes[z] = System.nanoTime() - startTime;
+                Thread.sleep(0);// GC and other processes, this is your chance.
 
-                Thread.sleep(0); // GC and other processes, this is your chance.
                 startTime = System.nanoTime();
                 PersistentVector<Integer> test = PersistentVector.empty();
                 for (int i = 0; i < numItems; i++) {
@@ -299,26 +302,20 @@ public class PersistentVectorTest {
                 assertEquals(Integer.valueOf(numItems - 1), test.get(numItems - 1));
                 testTimes[z] = System.nanoTime() - startTime;
             }
-
             // We want the median time.  That discards all the unlucky (worst) and lucky (best) times.
             // That makes it a fairer measurement for this than the mean time.
             Arrays.sort(testTimes);
             Arrays.sort(benchTimes);
             long testTime = testTimes[testTimes.length / 2];
             long benchTime = benchTimes[benchTimes.length / 2];
-
             // Ratio of mean times of the tested collection vs. the benchmark.
-            double ratio = ((double) testTime) / ((double) benchTime);
-            System.out.println("Iterations: " + numItems + " test: " + testTime + " benchmark: " + benchTime +
-                                       " test/benchmark: " + ratio);
-
+            double ratio = ((double) (testTime)) / ((double) (benchTime));
+            System.out.println((((((("Iterations: " + numItems) + " test: ") + testTime) + " benchmark: ") + benchTime) + " test/benchmark: ") + ratio);
             // Verify that the median time is within established bounds for this test
             assertTrue(ratio <= benchmarkRatios.get(numItems));
-
             // Record these ratios to take an over-all mean later.
             ratios.add(ratio);
         }
-
         // Compute mean ratio.
         double sum = 0;
         for (Double ratio : ratios) {
@@ -326,7 +323,6 @@ public class PersistentVectorTest {
         }
         double meanRatio = sum / ratios.size();
         System.out.println("meanRatio: " + meanRatio);
-
         // Average-case timing over the range of number of inserts.
         // This is typically 2.5, but max 3.8 for unit tests, max 5.3 for unitTests "with coverage" from IDEA.
         // I think this means that PersistentVector performs worse with all the other work being done in the background
@@ -362,28 +358,24 @@ public class PersistentVectorTest {
         assertArrayEquals(test, pv2.toArray());
     }
 
-    @Test public void listIterator() {
+    @Test
+    public void listIterator() {
         List<Integer> control = new ArrayList<>();
         PersistentVector<Integer> test = PersistentVector.empty();
         final int SOME = 200;
-
         for (int i = 0; i < SOME; i++) {
             control.add(i);
             test = test.append(i);
             assertEquals(control.size(), test.size());
         }
-
         PersistentVector<Integer> serTest = serializeDeserialize(test);
-
         for (int i = 0; i < SOME; i++) {
             assertEquals(control.get(i), test.get(i));
             assertEquals(control.get(i), serTest.get(i));
         }
-
         compareIterators(control.iterator(), test.iterator());
         compareIterators(control.iterator(), serTest.iterator());
         assertArrayEquals(control.toArray(), test.toArray());
-
         TestUtilities.listIteratorTest(control, test);
         TestUtilities.listIteratorTest(control, serTest);
     }
@@ -397,68 +389,60 @@ public class PersistentVectorTest {
                      pv);
     }
 
-    @Test public void testMutable() {
+    @Test
+    public void testMutable() {
         List<Integer> control = new ArrayList<>();
         MutableList<Integer> test = PersistentVector.<Integer>empty().mutable();
-        final int SEVERAL = 2000; // more than 1024 so 3 levels deep.
+        final int SEVERAL = 2000;// more than 1024 so 3 levels deep.
+
         for (int i = 0; i < SEVERAL; i++) {
             control.add(i);
             test.append(i);
             assertEquals(control.size(), test.size());
         }
-
         assertEquals(test, test.mutable());
-
         assertTrue(test == test.mutable());
-
         for (int i = 0; i < SEVERAL; i++) {
             assertEquals(control.get(i), test.get(i));
         }
-
         for (int i = 0; i < SEVERAL; i++) {
             control.set(i, i + 10);
             test.replace(i, i + 10);
             assertEquals(control.size(), test.size());
         }
-
         for (int i = 0; i < SEVERAL; i++) {
             assertEquals(control.get(i), test.get(i));
         }
-
         List<Integer> additional = Arrays.asList(SEVERAL + 3, SEVERAL + 4, SEVERAL + 5);
         control.addAll(additional);
         test.concat(additional);
-
         assertEquals(control.size(), test.size());
         compareIterators(control.iterator(), test.iterator());
         assertEquals(control, test);
-
         assertEquals(control, test.mutable());
         assertEquals(control.size(), test.mutable().size());
         compareIterators(control.iterator(), test.mutable().iterator());
-
     }
 
-    @Test public void testAddReplace() {
+    @Test
+    public void testAddReplace() {
         List<Integer> control = new ArrayList<>();
         ImList<Integer> test = PersistentVector.empty();
-        final int SEVERAL = 2000; // more than 1024 so 3 levels deep.
+        final int SEVERAL = 2000;// more than 1024 so 3 levels deep.
+
         for (int i = 0; i < SEVERAL; i++) {
             control.add(i);
             test = test.append(i);
             assertEquals(control.size(), test.size());
         }
-
         for (int i = 0; i < SEVERAL; i++) {
             assertEquals(control.get(i), test.get(i));
         }
-
         for (int i = 0; i < SEVERAL; i++) {
             control.set(i, i + 10);
             test = test.replace(i, i + 10);
             assertEquals(control.size(), test.size());
         }
-
         for (int i = 0; i < SEVERAL; i++) {
             assertEquals(control.get(i), test.get(i));
         }
