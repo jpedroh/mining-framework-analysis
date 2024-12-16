@@ -1,15 +1,5 @@
 package com.alibaba.easyexcel.test.demo.write;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.alibaba.easyexcel.test.core.head.ComplexHeadData;
 import com.alibaba.easyexcel.test.util.TestFileUtil;
 import com.alibaba.excel.EasyExcel;
@@ -23,10 +13,10 @@ import com.alibaba.excel.annotation.write.style.HeadRowHeight;
 import com.alibaba.excel.enums.CellDataTypeEnum;
 import com.alibaba.excel.metadata.data.CommentData;
 import com.alibaba.excel.metadata.data.FormulaData;
-import com.alibaba.excel.metadata.data.HyperlinkData;
 import com.alibaba.excel.metadata.data.HyperlinkData.HyperlinkType;
-import com.alibaba.excel.metadata.data.ImageData;
+import com.alibaba.excel.metadata.data.HyperlinkData;
 import com.alibaba.excel.metadata.data.ImageData.ImageType;
+import com.alibaba.excel.metadata.data.ImageData;
 import com.alibaba.excel.metadata.data.RichTextStringData;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.util.BooleanUtils;
@@ -41,7 +31,15 @@ import com.alibaba.excel.write.metadata.style.WriteCellStyle;
 import com.alibaba.excel.write.metadata.style.WriteFont;
 import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
-
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -49,6 +47,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.junit.jupiter.api.Test;
+
 
 /**
  * 写的常见写法
@@ -705,6 +704,8 @@ public class WriteTest {
         EasyExcel.write(fileName).head(head()).sheet("模板").doWrite(dataList());
     }
 
+<<<<<<< LEFT
+
     /**
      * 数据验证自定义拦截器
      * <p>
@@ -739,6 +740,8 @@ public class WriteTest {
         }
     }
 
+=======
+>>>>>>> RIGHT
     private List<LongestMatchColumnWidthData> dataLong() {
         List<LongestMatchColumnWidthData> list = ListUtils.newArrayList();
         for (int i = 0; i < 10; i++) {
