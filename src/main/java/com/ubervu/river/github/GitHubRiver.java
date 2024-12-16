@@ -4,6 +4,16 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonStreamParser;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -28,66 +38,56 @@ import org.elasticsearch.river.RiverSettings;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 
 
 public class GitHubRiver extends AbstractRiverComponent implements River {
-
     private final Client client;
+
     private final String index;
+
     private final String repository;
+
     private final String owner;
-    private final int userRequestedInterval;
+
     private final String endpoint;
 
+    private final int userRequestedInterval;
+
     private String password;
+
     private String username;
+
     private DataStream dataStream;
+
     private String eventETag = null;
+
     private int pollInterval = 60;
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @Inject
     public GitHubRiver(RiverName riverName, RiverSettings settings, Client client) {
         super(riverName, settings);
         this.client = client;
-
         if (!settings.settings().containsKey("github")) {
             throw new IllegalArgumentException("Need river settings - owner and repository.");
         }
-
         // get settings
-        Map<String, Object> githubSettings = (Map<String, Object>) settings.settings().get("github");
+        Map<String, Object> githubSettings = ((Map<String, Object>) (settings.settings().get("github")));
         owner = XContentMapValues.nodeStringValue(githubSettings.get("owner"), null);
         repository = XContentMapValues.nodeStringValue(githubSettings.get("repository"), null);
-
         index = String.format("%s&%s", owner, repository);
         userRequestedInterval = XContentMapValues.nodeIntegerValue(githubSettings.get("interval"), 60);
-
         // auth (optional)
         username = null;
         password = null;
         if (githubSettings.containsKey("authentication")) {
-            Map<String, Object> auth = (Map<String, Object>) githubSettings.get("authentication");
+            Map<String, Object> auth = ((Map<String, Object>) (githubSettings.get("authentication")));
             username = XContentMapValues.nodeStringValue(auth.get("username"), null);
             password = XContentMapValues.nodeStringValue(auth.get("password"), null);
         }
-
         // endpoint (optional - default to github.com)
         endpoint = XContentMapValues.nodeStringValue(githubSettings.get("endpoint"), "https://api.github.com");
-
         logger.info("Created GitHub river.");
     }
 
@@ -102,7 +102,7 @@ public class GitHubRiver extends AbstractRiverComponent implements River {
             logger.info("Created index.");
         } catch (IndexAlreadyExistsException e) {
             logger.info("Index already created");
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             logger.error("Exception creating index.", e);
         }
         dataStream = new DataStream();
@@ -160,9 +160,7 @@ public class GitHubRiver extends AbstractRiverComponent implements River {
                 return false;
             }
             JsonStreamParser jsp = new JsonStreamParser(new InputStreamReader(input));
-
-            JsonArray array = (JsonArray) jsp.next();
-
+            JsonArray array = ((JsonArray) (jsp.next()));
             BulkProcessor bp = BulkProcessor.builder(client, new BulkProcessor.Listener() {
                 @Override
                 public void beforeBulk(long executionId, BulkRequest request) {
@@ -176,11 +174,9 @@ public class GitHubRiver extends AbstractRiverComponent implements River {
                 public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
                 }
             }).build();
-
             boolean continueIndexing = true;
-
             IndexRequest req = null;
-            for (JsonElement e: array) {
+            for (JsonElement e : array) {
                 if (type.equals("event")) {
                     req = indexEvent(e);
                     if (req == null) {
@@ -202,13 +198,11 @@ public class GitHubRiver extends AbstractRiverComponent implements River {
                 bp.add(req);
             }
             bp.close();
-
             try {
                 input.close();
             } catch (IOException e) {
                 logger.warn("Couldn't close connection?", e);
             }
-
             return continueIndexing;
         }
 
@@ -221,15 +215,11 @@ public class GitHubRiver extends AbstractRiverComponent implements River {
             String type = obj.get("type").getAsString();
             String id = obj.get("id").getAsString();
             logger.debug("Indexing event with id {}", id);
-
             if (isEventIndexed(id)) {
                 return null;
             }
-
-            IndexRequest req = new IndexRequest(index)
-                    .type(type)
-                    .id(id).create(false) // we want to overwrite old items
-                    .source(e.toString());
+            IndexRequest req = // we want to overwrite old items
+            new IndexRequest(index).type(type).id(id).create(false).source(e.toString());
             return req;
         }
 
@@ -297,7 +287,7 @@ public class GitHubRiver extends AbstractRiverComponent implements River {
         }
 
         private void addAuthHeader(URLConnection connection) {
-            if (username == null || password == null) {
+            if ((username == null) || (password == null)) {
                 return;
             }
             String auth = String.format("%s:%s", username, password);
@@ -317,7 +307,7 @@ public class GitHubRiver extends AbstractRiverComponent implements River {
                 } else {
                     url = new URL(String.format(fmt, owner, repository));
                 }
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                HttpURLConnection connection = ((HttpURLConnection) (url.openConnection()));
                 addAuthHeader(connection);
                 if (type.equals("event")) {
                     boolean modified = checkAndUpdateETag(connection);
@@ -326,25 +316,20 @@ public class GitHubRiver extends AbstractRiverComponent implements River {
                     }
                 }
                 boolean continueIndexing = indexResponse(connection, type);
-
                 while (continueIndexing && morePagesAvailable(connection)) {
                     url = new URL(nextPageURL(connection));
-                    connection = (HttpURLConnection) url.openConnection();
+                    connection = ((HttpURLConnection) (url.openConnection()));
                     addAuthHeader(connection);
                     continueIndexing = indexResponse(connection, type);
-                }
-            } catch (Exception e) {
+                } 
+            } catch (java.lang.Exception e) {
                 logger.error("Exception in getData", e);
             }
-
             return true;
         }
 
         private void deleteByType(String type) {
-            client.prepareDeleteByQuery(index)
-                    .setQuery(termQuery("_type", type))
-                    .execute()
-                    .actionGet();
+            client.prepareDeleteByQuery(index).setQuery(termQuery("_type", type)).execute().actionGet();
         }
 
         /**
@@ -387,35 +372,29 @@ public class GitHubRiver extends AbstractRiverComponent implements River {
                 final String mostRecentEntry;
                 try {
                     mostRecentEntry = getMostRecentEntry();
-                } catch (Throwable e) {
+                } catch (java.lang.Throwable e) {
                     logger.error("WTF?", e);
                     throw new RuntimeException(e);
                 }
                 logger.debug("Checking for events");
-                if (getData(endpoint + "/repos/%s/%s/events?per_page=1000",
-                        "event")) {
+                if (getData(endpoint + "/repos/%s/%s/events?per_page=1000", "event")) {
                     logger.debug("First run or new events found, fetching rest of the data");
                     if (mostRecentEntry != null) {
-                        getData(endpoint + "/repos/%s/%s/issues?state=all&per_page=1000&since=%s",
-                                "issue", mostRecentEntry);
+                        getData("https://api.github.com/repos/%s/%s/issues?state=all&per_page=1000&since=%s", "issue", mostRecentEntry);
                     } else {
-                        getData(endpoint + "/repos/%s/%s/issues?state=all&per_page=1000",
-                                "issue");
+                        getData("https://api.github.com/repos/%s/%s/issues?state=all&per_page=1000", "issue");
                     }
                     // delete pull req data - we are only storing open pull reqs
                     // and when a pull request is closed we have no way of knowing;
                     // this is why we have to delete them and reindex "fresh" ones
                     deleteByType("PullRequestData");
                     getData(endpoint + "/repos/%s/%s/pulls", "pullreq");
-
                     // same for milestones
                     deleteByType("MilestoneData");
                     getData(endpoint + "/repos/%s/%s/milestones?per_page=1000", "milestone");
-
                     // collaborators
                     deleteByType("CollaboratorData");
                     getData(endpoint + "/repos/%s/%s/collaborators?per_page=1000", "collaborator");
-
                     // and for labels - they have IDs based on the MD5 of the contents, so
                     // if a property changes, we get a "new" document
                     deleteByType("LabelData");
@@ -426,11 +405,12 @@ public class GitHubRiver extends AbstractRiverComponent implements River {
                 try {
                     int waitTime = Math.max(pollInterval, userRequestedInterval) * 1000;
                     logger.debug("Waiting {} ms before polling for new events", waitTime);
-                    Thread.sleep(waitTime); // needs milliseconds
-                } catch (InterruptedException e) {
+                    // needs milliseconds
+                    Thread.sleep(waitTime);
+                } catch (java.lang.InterruptedException e) {
                     logger.info("Wait interrupted, river was probably stopped");
                 }
-            }
+            } 
         }
 
         public void setRunning(boolean running) {
