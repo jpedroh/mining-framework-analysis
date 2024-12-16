@@ -11,7 +11,6 @@
  * specific language governing permissions and limitations under the License.
  * </p>
  */
-
 package com.vip.saturn.job.basic;
 
 import com.vip.saturn.job.exception.JobException;
@@ -37,17 +36,17 @@ import com.vip.saturn.job.threads.SaturnThreadFactory;
 import com.vip.saturn.job.threads.TaskQueue;
 import com.vip.saturn.job.trigger.SaturnScheduler;
 import com.vip.saturn.job.utils.LogUtils;
+import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.curator.framework.CuratorFramework;
 import org.quartz.Trigger;
 import org.quartz.spi.OperableTrigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 作业调度器.
@@ -60,8 +59,9 @@ public class JobScheduler {
 
 	private String executorName;
 
-	/** since all the conf-node values will be gotten from zk-cache. use this to compare with the new values. */
-
+	/**
+	 * since all the conf-node values will be gotten from zk-cache. use this to compare with the new values.
+	 */
 	private JobConfiguration previousConf = new JobConfiguration(null, null);
 
 	private final JobConfiguration currentConf;
@@ -104,8 +104,7 @@ public class JobScheduler {
 
 	private AtomicBoolean isShutdownFlag = new AtomicBoolean(false);
 
-	public JobScheduler(final CoordinatorRegistryCenter coordinatorRegistryCenter,
-			final JobConfiguration jobConfiguration) {
+	public JobScheduler(final CoordinatorRegistryCenter coordinatorRegistryCenter, final JobConfiguration jobConfiguration) {
 		this.jobName = jobConfiguration.getJobName();
 		this.executorName = coordinatorRegistryCenter.getExecutorName();
 		this.currentConf = jobConfiguration;
@@ -113,9 +112,7 @@ public class JobScheduler {
 		this.jobNodeStorage = new JobNodeStorage(coordinatorRegistryCenter, jobConfiguration);
 		initExecutorService();
 		JobRegistry.addJobScheduler(executorName, jobName, this);
-
-		zkCacheManager = new ZkCacheManager((CuratorFramework) coordinatorRegistryCenter.getRawClient(), jobName,
-				executorName);
+		zkCacheManager = new ZkCacheManager(((CuratorFramework) (coordinatorRegistryCenter.getRawClient())), jobName, executorName);
 		configService = new ConfigurationService(this);
 		leaderElectionService = new LeaderElectionService(this);
 		serverService = new ServerService(this);
@@ -128,7 +125,6 @@ public class JobScheduler {
 		limitMaxJobsService = new LimitMaxJobsService(this);
 		listenerManager = new ListenerManager(this);
 		reportService = new ReportService(this);
-
 		// see EnabledPathListener and CronPathListener, only these values are supposed to be watched.
 		previousConf.setTimeZone(jobConfiguration.getTimeZone());
 		previousConf.setCron(jobConfiguration.getCron());
@@ -215,7 +211,7 @@ public class JobScheduler {
 	}
 
 	public void shutdownExecutorService() {
-		if (executorService != null && !executorService.isShutdown()) {
+		if ((executorService != null) && (!executorService.isShutdown())) {
 			executorService.shutdown();
 		}
 	}
@@ -270,17 +266,14 @@ public class JobScheduler {
 	}
 
 	public void shutdown(boolean removeJob) {
-		synchronized (isShutdownFlag) {
+		synchronized(isShutdownFlag) {
 			isShutdownFlag.set(true);
-
 			// 关闭Listener
 			listenerManager.shutdown();
-
 			// 关闭作业：关闭调度器，强杀业务
 			if (job != null) {
 				job.shutdown();
 			}
-
 			// 关闭服务
 			shardingService.shutdown();
 			configService.shutdown();
@@ -292,16 +285,13 @@ public class JobScheduler {
 			statisticsService.shutdown();
 			analyseService.shutdown();
 			limitMaxJobsService.shutdown();
-
 			// 关闭TreeCache
 			zkCacheManager.shutdown();
-
 			// 删除作业
 			if (removeJob) {
 				jobNodeStorage.deleteJobNode();
 				saturnExecutorService.removeJobName(jobName);
 			}
-
 			// 移除作业注册表
 			JobRegistry.clearJob(executorName, jobName);
 		}
@@ -433,5 +423,4 @@ public class JobScheduler {
 	public ExecutorService getExecutorService() {
 		return executorService;
 	}
-
 }

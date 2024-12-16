@@ -8,7 +8,6 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License. </p>
  */
-
 package com.vip.saturn.job.internal.server;
 
 import com.vip.saturn.job.basic.JobScheduler;
@@ -18,21 +17,20 @@ import com.vip.saturn.job.internal.listener.AbstractListenerManager;
 import com.vip.saturn.job.internal.storage.JobNodePath;
 import com.vip.saturn.job.threads.SaturnThreadFactory;
 import com.vip.saturn.job.utils.LogUtils;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent.Type;
+import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * 作业控制监听管理器.
  * @author dylan.xue
  */
 public class JobOperationListenerManager extends AbstractListenerManager {
-
 	static Logger log = LoggerFactory.getLogger(JobOperationListenerManager.class);
 
 	private boolean isShutdown = false;
@@ -45,14 +43,10 @@ public class JobOperationListenerManager extends AbstractListenerManager {
 
 	@Override
 	public void start() {
-		jobDeleteExecutorService = Executors
-				.newSingleThreadExecutor(new SaturnThreadFactory(executorName + "-" + jobName + "-jobDelete", false));
-		zkCacheManager.addTreeCacheListener(new TriggerJobRunAtOnceListener(),
-				JobNodePath.getNodeFullPath(jobName, String.format(ServerNode.RUNONETIME, executorName)), 0);
-		zkCacheManager.addTreeCacheListener(new JobForcedToStopListener(),
-				JobNodePath.getNodeFullPath(jobName, String.format(ServerNode.STOPONETIME, executorName)), 0);
-		zkCacheManager.addTreeCacheListener(new JobDeleteListener(),
-				JobNodePath.getNodeFullPath(jobName, ConfigurationNode.TO_DELETE), 0);
+		jobDeleteExecutorService = Executors.newSingleThreadExecutor(new SaturnThreadFactory(((executorName + "-") + jobName) + "-jobDelete", false));
+		zkCacheManager.addTreeCacheListener(new TriggerJobRunAtOnceListener(), JobNodePath.getNodeFullPath(jobName, String.format(ServerNode.RUNONETIME, executorName)), 0);
+		zkCacheManager.addTreeCacheListener(new JobForcedToStopListener(), JobNodePath.getNodeFullPath(jobName, String.format(ServerNode.STOPONETIME, executorName)), 0);
+		zkCacheManager.addTreeCacheListener(new JobDeleteListener(), JobNodePath.getNodeFullPath(jobName, ConfigurationNode.TO_DELETE), 0);
 	}
 
 	@Override
@@ -63,10 +57,8 @@ public class JobOperationListenerManager extends AbstractListenerManager {
 			// don't use shutdownNow, don't interrupt the thread
 			jobDeleteExecutorService.shutdown();
 		}
-		zkCacheManager.closeTreeCache(
-				JobNodePath.getNodeFullPath(jobName, String.format(ServerNode.RUNONETIME, executorName)), 0);
-		zkCacheManager.closeTreeCache(
-				JobNodePath.getNodeFullPath(jobName, String.format(ServerNode.STOPONETIME, executorName)), 0);
+		zkCacheManager.closeTreeCache(JobNodePath.getNodeFullPath(jobName, String.format(ServerNode.RUNONETIME, executorName)), 0);
+		zkCacheManager.closeTreeCache(JobNodePath.getNodeFullPath(jobName, String.format(ServerNode.STOPONETIME, executorName)), 0);
 		zkCacheManager.closeTreeCache(JobNodePath.getNodeFullPath(jobName, ConfigurationNode.TO_DELETE), 0);
 	}
 
@@ -77,19 +69,17 @@ public class JobOperationListenerManager extends AbstractListenerManager {
 	 *
 	 */
 	class TriggerJobRunAtOnceListener extends AbstractJobListener {
-
 		@Override
 		protected void dataChanged(final CuratorFramework client, final TreeCacheEvent event, final String path) {
 			if (isShutdown) {
 				return;
 			}
-			if ((Type.NODE_ADDED == event.getType() || Type.NODE_UPDATED == event.getType()) && ServerNode
-					.isRunOneTimePath(jobName, path, executorName)) {
+			if (((Type.NODE_ADDED == event.getType()) || (Type.NODE_UPDATED == event.getType())) && ServerNode.isRunOneTimePath(jobName, path, executorName)) {
 				if (!jobScheduler.getJob().isRunning()) {
-					LogUtils.info(log, jobName, "job run-at-once triggered.");
+					LogUtils.info(log, jobName, "[{}] msg=job run-at-once triggered.", jobName);
 					jobScheduler.triggerJob();
 				} else {
-					LogUtils.info(log, jobName, "job is running, run-at-once ignored.");
+					LogUtils.info(log, jobName, "[{}] msg=job is running, run-at-once ignored.", jobName);
 				}
 				coordinatorRegistryCenter.remove(path);
 			}
@@ -102,21 +92,19 @@ public class JobOperationListenerManager extends AbstractListenerManager {
 	 *
 	 */
 	class JobDeleteListener extends AbstractJobListener {
-
 		@Override
 		protected void dataChanged(CuratorFramework client, TreeCacheEvent event, String path) {
 			if (isShutdown) {
 				return;
 			}
-			if (ConfigurationNode.isToDeletePath(jobName, path) && (Type.NODE_ADDED == event.getType()
-					|| Type.NODE_UPDATED == event.getType())) {
-				LogUtils.info(log, jobName, "job is going to be deleted.");
+			if (ConfigurationNode.isToDeletePath(jobName, path) && ((Type.NODE_ADDED == event.getType()) || (Type.NODE_UPDATED == event.getType()))) {
+				LogUtils.info(log, jobName, "[{}] msg={} is going to be deleted.", jobName, jobName);
 				jobDeleteExecutorService.execute(new Runnable() {
 					@Override
 					public void run() {
 						try {
 							jobScheduler.shutdown(true);
-						} catch (Throwable t) {
+						} catch (java.lang.Throwable t) {
 							LogUtils.error(log, jobName, "delete job error", t);
 						}
 					}
@@ -131,15 +119,14 @@ public class JobOperationListenerManager extends AbstractListenerManager {
 	 *
 	 */
 	class JobForcedToStopListener extends AbstractJobListener {
-
 		@Override
 		protected void dataChanged(CuratorFramework client, TreeCacheEvent event, String path) {
 			if (isShutdown) {
 				return;
 			}
-			if (Type.NODE_ADDED == event.getType() || Type.NODE_UPDATED == event.getType()) {
+			if ((Type.NODE_ADDED == event.getType()) || (Type.NODE_UPDATED == event.getType())) {
 				try {
-					LogUtils.info(log, jobName, "job is going to be stopped at once.");
+					LogUtils.info(log, jobName, "[{}] msg={} is going to be stopped at once.", jobName, jobName);
 					jobScheduler.getJob().forceStop();
 				} finally {
 					coordinatorRegistryCenter.remove(path);

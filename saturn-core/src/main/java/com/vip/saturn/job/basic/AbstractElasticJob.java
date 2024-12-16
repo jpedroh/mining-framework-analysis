@@ -11,7 +11,6 @@
  * specific language governing permissions and limitations under the License.
  * </p>
  */
-
 package com.vip.saturn.job.basic;
 
 import com.vip.saturn.job.executor.SaturnExecutorService;
@@ -27,14 +26,14 @@ import com.vip.saturn.job.internal.storage.JobNodePath;
 import com.vip.saturn.job.trigger.SaturnScheduler;
 import com.vip.saturn.job.trigger.SaturnTrigger;
 import com.vip.saturn.job.utils.LogUtils;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 /**
  * 弹性化分布式作业的基类.
@@ -44,8 +43,11 @@ public abstract class AbstractElasticJob implements Stoppable {
 	private static Logger log = LoggerFactory.getLogger(AbstractElasticJob.class);
 
 	private volatile boolean stopped = false;
+
 	private volatile boolean forceStopped = false;
+
 	private volatile boolean aborted = false;
+
 	private volatile boolean running = false;
 
 	protected ConfigurationService configService;
@@ -113,49 +115,36 @@ public abstract class AbstractElasticJob implements Stoppable {
 		LogUtils.debug(log, jobName, "Saturn start to execute job [{}]", jobName);
 		// 对每一个jobScheduler，作业对象只有一份，多次使用，所以每次开始执行前先要reset
 		reset();
-
 		if (configService == null) {
 			LogUtils.warn(log, jobName, "configService is null");
 			return;
 		}
-
 		JobExecutionMultipleShardingContext shardingContext = null;
 		try {
-			if (!configService.isEnabledReport() || failoverService.getLocalHostFailoverItems().isEmpty()) {
+			if ((!configService.isEnabledReport()) || failoverService.getLocalHostFailoverItems().isEmpty()) {
 				shardingService.shardingIfNecessary();
 			}
-
 			if (!configService.isJobEnabled()) {
-				LogUtils.debug(log, jobName, "{} is disabled, cannot be continued, do nothing about business.",
-						jobName);
+				LogUtils.debug(log, jobName, "{} is disabled, cannot be continued, do nothing about business.", jobName);
 				return;
 			}
-
 			shardingContext = executionContextService.getJobExecutionShardingContext();
-			if (shardingContext.getShardingItems() == null || shardingContext.getShardingItems().isEmpty()) {
-				LogUtils.debug(log, jobName, "{} 's items of the executor is empty, do nothing about business.",
-						jobName);
+			if ((shardingContext.getShardingItems() == null) || shardingContext.getShardingItems().isEmpty()) {
+				LogUtils.debug(log, jobName, "{} 's items of the executor is empty, do nothing about business.", jobName);
 				callbackWhenShardingItemIsEmpty(shardingContext);
 				return;
 			}
-
 			if (configService.isInPausePeriod()) {
-				LogUtils.info(log, jobName,
-						"the job {} current running time is in pausePeriod, do nothing about business.", jobName);
+				LogUtils.info(log, jobName, "the job {} current running time is in pausePeriod, do nothing about business.", jobName);
 				return;
 			}
-
 			executeJobInternal(shardingContext);
-
-			if (isFailoverSupported() && configService.isFailover() && !stopped && !forceStopped && !aborted) {
+			if ((((isFailoverSupported() && configService.isFailover()) && (!stopped)) && (!forceStopped)) && (!aborted)) {
 				failoverService.failoverIfNecessary();
 			}
-
-			LogUtils.debug(log, jobName, "Saturn finish to execute job [{}], sharding context:{}.", jobName,
-					shardingContext);
-		} catch (Exception e) {
-			LogUtils.warn(log, jobName, String.format(SaturnConstant.LOG_FORMAT_FOR_STRING, jobName, e.getMessage()),
-					e);
+			LogUtils.debug(log, jobName, "Saturn finish to execute job [{}], sharding context:{}.", jobName, shardingContext);
+		} catch (java.lang.Exception e) {
+			LogUtils.warn(log, jobName, String.format(SaturnConstant.LOG_FORMAT_FOR_STRING, jobName, e.getMessage()), e);
 		} finally {
 			running = false;
 		}
@@ -195,8 +184,7 @@ public abstract class AbstractElasticJob implements Stoppable {
 	 * @return 是否继续执行完complete节点，清空failover信息
 	 */
 	private boolean checkIfZkLostAfterExecution(final Integer item) {
-		CuratorFramework curatorFramework = (CuratorFramework) executionService.getCoordinatorRegistryCenter()
-				.getRawClient();
+		CuratorFramework curatorFramework = ((CuratorFramework) (executionService.getCoordinatorRegistryCenter().getRawClient()));
 		try {
 			String runningPath = JobNodePath.getNodeFullPath(jobName, ExecutionNode.getRunningNode(item));
 			Stat itemStat = curatorFramework.checkExists().forPath(runningPath);
@@ -205,10 +193,7 @@ public abstract class AbstractElasticJob implements Stoppable {
 			if (itemStat != null) {
 				long ephemeralOwner = itemStat.getEphemeralOwner();
 				if (ephemeralOwner != sessionId) {
-					LogUtils.info(log, jobName,
-							"item={} 's running node doesn't belong to current zk, node sessionid is {}, current zk "
-									+ "sessionid is {}",
-							item, ephemeralOwner, sessionId);
+					LogUtils.info(log, jobName, "item={} 's running node doesn't belong to current zk, node sessionid is {}, current zk " + "sessionid is {}", item, ephemeralOwner, sessionId);
 					return false;
 				} else {
 					return true;
@@ -216,9 +201,8 @@ public abstract class AbstractElasticJob implements Stoppable {
 			}
 			// 如果itemStat是空，要么是已经failover完了，要么是没有节点failover；两种情况都返回false
 			LogUtils.info(log, jobName, "item={} 's running node is not exists, zk sessionid={} ", item, sessionId);
-
 			return false;
-		} catch (Throwable e) {
+		} catch (java.lang.Throwable e) {
 			LogUtils.error(log, jobName, String.format(SaturnConstant.LOG_FORMAT_FOR_STRING, jobName, e.getMessage()), e);
 			return false;
 		}
@@ -368,5 +352,4 @@ public abstract class AbstractElasticJob implements Stoppable {
 	public void setJobVersion(String jobVersion) {
 		this.jobVersion = jobVersion;
 	}
-
 }
