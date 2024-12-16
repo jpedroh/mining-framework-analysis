@@ -32,20 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.impl;
-
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
@@ -73,6 +60,18 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
 
 /**
  * Implementation of interface Graph with doubly linked lists realizing eSeq,
@@ -81,8 +80,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  *
  * @author ist@uni-koblenz.de
  */
-public abstract class GraphBaseImpl implements Graph, InternalGraph {
-
+public abstract class GraphBaseImpl implements Graph , InternalGraph {
 	// ------------- GRAPH VARIABLES -------------
 
 	@Override
@@ -167,6 +165,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	private boolean loading;
 
 	// ------------- VERTEX LIST VARIABLES -------------
+	// ------------- VERTEX LIST VARIABLES -------------
 	/**
 	 * maximum number of vertices
 	 */
@@ -177,6 +176,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	protected FreeIndexList freeVertexList;
 
+	// ------------- EDGE LIST VARIABLES -------------
 	// ------------- EDGE LIST VARIABLES -------------
 
 	/**
@@ -193,9 +193,9 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * Creates a graph of the given GraphClass with the given id
 	 *
 	 * @param id
-	 *            this Graph's id
+	 * 		this Graph's id
 	 * @param cls
-	 *            the GraphClass of this Graph
+	 * 		the GraphClass of this Graph
 	 */
 	protected GraphBaseImpl(String id, GraphClass cls) {
 		this(id, cls, 1000, 1000);
@@ -237,20 +237,17 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		if (eMax < 1) {
 			throw new GraphException("eMax must not be less than 1", null);
 		}
-
 		schema = cls.getSchema();
 		//graphFactory = schema.getGraphFactory();
 		setId(id == null ? RandomIdGenerator.generateId() : id);
 		// needed for initialization of graphVersion with transactions
 		graphVersion = -1;
 		setGraphVersion(0);
-
 		expandVertexArray(vMax);
 		setFirstVertex(null);
 		setLastVertex(null);
 		setVCount(0);
 		setDeleteVertexList(new LinkedList<InternalVertex>());
-
 		expandEdgeArray(eMax);
 		setFirstEdgeInGraph(null);
 		setLastEdgeInGraph(null);
@@ -551,8 +548,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * Creates an edge of the given {@link EdgeClass} and adds it to the graph.
 	 */
@@ -584,7 +580,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 					+ cls.getName(), ex);
 		}
 	}
-	
+
 	/**
 	 * Creates a vertex of the given {@link VertexClass} and adds it to the graph.
 	 */
@@ -1923,6 +1919,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	// ECA Rules
+	// ECA Rules
 	private ECARuleManagerInterface ecaRuleManager;
 
 	@Override
@@ -1949,13 +1946,16 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	// handle GraphStructureChangedListener
+	// handle GraphStructureChangedListener
 
 	/**
 	 * A list of all registered <code>GraphStructureChangedListener</code> as
 	 * <i>WeakReference</i>s.
 	 */
 	protected List<WeakReference<GraphStructureChangedListener>> graphStructureChangedListenersWithAutoRemoval;
+
 	protected List<GraphStructureChangedListener> graphStructureChangedListeners;
+
 	{
 		graphStructureChangedListenersWithAutoRemoval = null;
 		graphStructureChangedListeners = new ArrayList<GraphStructureChangedListener>();

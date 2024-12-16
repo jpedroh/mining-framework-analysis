@@ -32,17 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-/**
- *
- */
 package de.uni_koblenz.jgralab.schema.impl;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -56,13 +46,18 @@ import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import org.pcollections.PMap;
+
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
  * 
  */
-public final class MapDomainImpl extends CompositeDomainImpl implements
-		MapDomain {
+public final class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 	/**
 	 * The domain of this MapDomain's keys.
 	 */
@@ -74,28 +69,17 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 	private final Domain valueDomain;
 
 	MapDomainImpl(Schema schema, Domain aKeyDomain, Domain aValueDomain) {
-		super(MAPDOMAIN_NAME + "<"
-				+ aKeyDomain.getTGTypeName(schema.getDefaultPackage()) + ", "
-				+ aValueDomain.getTGTypeName(schema.getDefaultPackage()) + ">",
-				schema.getDefaultPackage());
-
+		super(((((MAPDOMAIN_NAME + "<") + aKeyDomain.getTGTypeName(schema.getDefaultPackage())) + ", ") + aValueDomain.getTGTypeName(schema.getDefaultPackage())) + ">", schema.getDefaultPackage());
 		if (parentPackage.getSchema().getDomain(aKeyDomain.getQualifiedName()) == null) {
-			throw new SchemaException("Key domain '"
-					+ aKeyDomain.getQualifiedName()
-					+ "' not existent in schema "
-					+ parentPackage.getSchema().getQualifiedName());
+			throw new SchemaException((("Key domain '" + aKeyDomain.getQualifiedName()) + "' not existent in schema ") + parentPackage.getSchema().getQualifiedName());
 		}
-		if (parentPackage.getSchema()
-				.getDomain(aValueDomain.getQualifiedName()) == null) {
-			throw new SchemaException("Value domain '"
-					+ aValueDomain.getQualifiedName()
-					+ "' not existent in schema "
-					+ parentPackage.getSchema().getQualifiedName());
+		if (parentPackage.getSchema().getDomain(aValueDomain.getQualifiedName()) == null) {
+			throw new SchemaException((("Value domain '" + aValueDomain.getQualifiedName()) + "' not existent in schema ") + parentPackage.getSchema().getQualifiedName());
 		}
 		keyDomain = aKeyDomain;
 		valueDomain = aValueDomain;
-		((SchemaImpl)schema).getDomainsDag().createEdge(keyDomain,this);
-		((SchemaImpl)schema).getDomainsDag().createEdge(valueDomain,this);
+		((SchemaImpl) (schema)).getDomainsDag().createEdge(keyDomain, this);
+		((SchemaImpl) (schema)).getDomainsDag().createEdge(valueDomain, this);
 	}
 
 	@Override
