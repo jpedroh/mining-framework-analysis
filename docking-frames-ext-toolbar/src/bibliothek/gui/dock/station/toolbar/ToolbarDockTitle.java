@@ -1,11 +1,5 @@
 package bibliothek.gui.dock.station.toolbar;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-
-import javax.swing.JComponent;
-
 import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarExtension;
 import bibliothek.gui.dock.action.DockAction;
@@ -15,6 +9,11 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import javax.swing.JComponent;
+
 
 /**
  * A very simplistic implementation of a {@link DockTitle}. This particular implementation
@@ -45,45 +44,39 @@ public class ToolbarDockTitle extends AbstractDockTitle {
 			}
 		};
 	}
-	
+
 	private Color color;
-	
-	public ToolbarDockTitle( DockTitleVersion origin, Dockable dockable, Color color ){
-		super( dockable, origin, true );
+
+	public ToolbarDockTitle(DockTitleVersion origin, Dockable dockable, Color color) {
+		super(dockable, origin, true);
 		this.color = color;
 	}
-	
+
 	@Override
 	protected BasicTitleViewItem<JComponent> createItemFor( DockAction action, Dockable dockable ){
 		return dockable.getController().getActionViewConverter().createView( 
 				action, ToolbarExtension.TOOLBAR_TITLE, dockable );
 	}
-		
+
 	@Override
 	public Dimension getPreferredSize(){
 		Dimension size = super.getPreferredSize();
 		return new Dimension( Math.max( 5, size.width ), Math.max( 5, size.height ));
 	}
-	
+
 	@Override
 	public void setActive( boolean active ){
 		super.setActive( active );
 		repaint();
 	}
-	
+
 	@Override
-	public void paintBackground( Graphics g, JComponent component ){
-		g.setColor( color );
-		g.fillRect( 0, 0, getWidth(), getHeight() );
-		
-		if( isActive() ){
-			g.setColor( Color.BLACK );
-			if( orientation.isHorizontal() ){
-				g.drawLine( 1, getHeight()/2, getWidth()-1, getHeight()/2 );
-			}
-			else{
-				g.drawLine( getWidth()/2, 1, getWidth()/2, getHeight()-1 );
-			}
+	public void paintBackground(Graphics g, JComponent component) {
+		g.setColor(color);
+		g.fillRect(0, 0, getWidth(), getHeight());
+		if (isActive()) {
+			g.setColor(Color.GRAY);
+			g.fillRect(0, 0, getWidth(), getHeight());
 		}
 	}
 }
