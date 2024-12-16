@@ -1,23 +1,8 @@
-// Copyright 2014-09-22 PlanBase Inc. & Glen Peterson
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package org.organicdesign.fp;
 
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
-
 import org.organicdesign.fp.collections.ImList;
 import org.organicdesign.fp.collections.ImMap;
 import org.organicdesign.fp.collections.ImSet;
@@ -33,45 +18,71 @@ import org.organicdesign.fp.tuple.Tuple3;
 import org.organicdesign.fp.xform.Transformable;
 import org.organicdesign.fp.xform.Xform;
 
+
 /**
- <p>A mini data definition language composed of vec(), tup(), map(), set(), plus xform() which makes
- java.util collections transformable.</p>
-
- <pre><code>import org.organicdesign.fp.StaticImports.*
-
- // Create a new vector of integers
- vec(1, 2, 3, 4);
-
- // Create a new set of Strings
- set("a", "b", "c");
-
- // Create a tuple of an int and a string (a type-safe heterogeneous container)
- tup("a", 1);
-
- // Create a map with a few key value pairs
- map(tup("a", 1), tup("b", 2), tup("c", 3);</code></pre>
-
- <p>vec(), map(), and set() are the only three methods in this project to take varargs.  I tried
- writing out versions that took multiple type-safe arguments, but IntelliJ presented you with a
- menu of all of them for auto-completion which was overwhelming, so I reverted to varargs.  Also,
- varargs relax some type safety rules (variance) for data definition in a generally helpful (rarely
- dangerous) way.</p>
-
- <p>If you're used to Clojure/JSON, you'll find that what's a map (dictionary) in those languages
- usually becomes a tuple in Paguro. A true map data structure in a type-safe language is
- homogeneous, meaning that every member is of the same type (or a descendant of a common ancestor).
- Tuples are designed to contain unrelated data types and enforce those types.</p>
-
- <p>As with any usage of import *, there could be issues if you import 2 different versions of this
- file in your classpath.  Java needs a data definition language so badly that I think it is worth
- the risk.  Also, I don't anticipate this file changing much, except to add more tup()
- implementations, which shouldn't break anything.  Let me know if you find that the danger outweighs
- convenience or have advice on what to do about it.</p>
+ * <p>A mini data definition language composed of vec(), tup(), map(), set(), plus xform() which makes
+ * java.util collections transformable.</p>
+ *
+ * <pre><code>import org.organicdesign.fp.StaticImports.*
+ *
+ * // Create a new vector of integers
+ * vec(1, 2, 3, 4);
+ *
+ * // Create a new set of Strings
+ * set("a", "b", "c");
+ *
+ * // Create a tuple of an int and a string (a type-safe heterogeneous container)
+ * tup("a", 1);
+ *
+ * // Create a map with a few key value pairs
+ * map(tup("a", 1), tup("b", 2), tup("c", 3);</code></pre>
+ *
+ * <p>vec(), map(), and set() are the only three methods in this project to take varargs.  I tried
+ * writing out versions that took multiple type-safe arguments, but IntelliJ presented you with a
+ * menu of all of them for auto-completion which was overwhelming, so I reverted to varargs.  Also,
+ * varargs relax some type safety rules (variance) for data definition in a generally helpful (rarely
+ * dangerous) way.</p>
+ *
+ * <p>If you're used to Clojure/JSON, you'll find that what's a map (dictionary) in those languages
+ * usually becomes a tuple in Paguro. A true map data structure in a type-safe language is
+ * homogeneous, meaning that every member is of the same type (or a descendant of a common ancestor).
+ * Tuples are designed to contain unrelated data types and enforce those types.</p>
+ *
+ * <p>As with any usage of import *, there could be issues if you import 2 different versions of this
+ * file in your classpath.  Java needs a data definition language so badly that I think it is worth
+ * the risk.  Also, I don't anticipate this file changing much, except to add more tup()
+ * implementations, which shouldn't break anything.  Let me know if you find that the danger outweighs
+ * convenience or have advice on what to do about it.</p>
  */
+    // TODO: Enable this to make Maps, Strings, and StringBuilders work like other collections.
+//    /** Wrap a Java.util.Map to perform a transformation on it. */
+//    public static <K,V> Transformable<Map.Entry<K,V>> xform(Map<K,V> map) { return Xform.of(map.entrySet()); }
+//
+//    /** Wrap a String to perform a transformation on it. */
+//    public static Transformable<Character> xform(CharSequence seq) {
+//        //noinspection Convert2Lambda
+//        return Xform.of(new Iterable<Character>() {
+//            @Override public Iterator<Character> iterator() {
+//                return new Iterator<Character>() {
+//                    private int idx = 0;
+//                    @Override public boolean hasNext() { return idx < seq.length(); }
+//
+//                    @Override public Character next() {
+//                        int nextIdx = idx + 1;
+//                        Character c = seq.charAt(idx);
+//                        idx = nextIdx;
+//                        return c;
+//                    }
+//                };
+//            }
+//        });
+//    }
 @SuppressWarnings("UnusedDeclaration")
 public final class StaticImports {
     // Prevent instantiation
-    private StaticImports() { throw new UnsupportedOperationException("No instantiation"); }
+    private StaticImports() {
+        throw new UnsupportedOperationException("No instantiation");
+    }
 
     /**
      This turned out to be a bad idea due to the complexity and slowness of serializing
@@ -178,30 +189,10 @@ public final class StaticImports {
         return PersistentVector.ofIter(Arrays.asList(items));
     }
 
-    /** Wrap a regular Java collection or other iterable outside this project to perform a transformation on it. */
-    public static <T> Transformable<T> xform(Iterable<T> iterable) { return Xform.of(iterable); }
-
-    // TODO: Enable this to make Maps, Strings, and StringBuilders work like other collections.
-//    /** Wrap a Java.util.Map to perform a transformation on it. */
-//    public static <K,V> Transformable<Map.Entry<K,V>> xform(Map<K,V> map) { return Xform.of(map.entrySet()); }
-//
-//    /** Wrap a String to perform a transformation on it. */
-//    public static Transformable<Character> xform(CharSequence seq) {
-//        //noinspection Convert2Lambda
-//        return Xform.of(new Iterable<Character>() {
-//            @Override public Iterator<Character> iterator() {
-//                return new Iterator<Character>() {
-//                    private int idx = 0;
-//                    @Override public boolean hasNext() { return idx < seq.length(); }
-//
-//                    @Override public Character next() {
-//                        int nextIdx = idx + 1;
-//                        Character c = seq.charAt(idx);
-//                        idx = nextIdx;
-//                        return c;
-//                    }
-//                };
-//            }
-//        });
-//    }
+    /**
+     * Wrap a regular Java collection or other iterable outside this project to perform a transformation on it.
+     */
+    public static <T> Transformable<T> xform(Iterable<T> iterable) {
+        return Xform.of(iterable);
+    }
 }
