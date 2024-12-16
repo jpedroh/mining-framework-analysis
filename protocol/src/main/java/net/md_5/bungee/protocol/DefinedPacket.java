@@ -17,11 +17,13 @@ import ru.leymooo.botfilter.utils.FastOverflowPacketException;
 import se.llbit.nbt.NamedTag;
 import se.llbit.nbt.Tag;
 
-@RequiredArgsConstructor
-public abstract class DefinedPacket
-{
 
+@RequiredArgsConstructor
+public abstract class DefinedPacket {
+    //BotFilter
     private static final FastException VARINT_TOO_BIG = new FastException( "varint too big" ); //BotFilter
+
+    //BotFilter
     private static final FastException ILLEGAL_BUF = new FastException( "Buffer is no longer readable" ); //BotFilter
 
     public static void writeString(String s, ByteBuf buf)
@@ -36,28 +38,21 @@ public abstract class DefinedPacket
         buf.writeBytes( b );
     }
 
-    public static String readString(ByteBuf buf)
-    {
-        return readString( buf, Short.MAX_VALUE );
+    public static String readString(ByteBuf buf) {
+        return readString(buf, Short.MAX_VALUE);
     }
 
-    public static String readString(ByteBuf buf, int maxLen)
-    {
-        int len = readVarInt( buf );
-        if ( len > maxLen * 4 )
-        {
-            throw new FastOverflowPacketException( "Cannot receive string longer than "+maxLen * 4 +" (got " + len + " bytes)" );
+    public static String readString(ByteBuf buf, int maxLen) {
+        int len = readVarInt(buf);
+        if (len > (maxLen * 4)) {
+            throw new FastOverflowPacketException(String.format(("Cannot receive string longer than Short.MAX_VALUE (got " + len) + " characters)"));
         }
-
-        byte[] b = new byte[ len ];
-        buf.readBytes( b );
-
-        String s = new String( b, Charsets.UTF_8 );
-        if ( s.length() > maxLen )
-        {
-            throw new FastOverflowPacketException( String.format( "Cannot receive string longer than %d (got %d characters)", maxLen, s.length() ) );
+        byte[] b = new byte[len];
+        buf.readBytes(b);
+        String s = new String(b, Charsets.UTF_8);
+        if (s.length() > maxLen) {
+            throw new OverflowPacketException(String.format("Cannot receive string longer than %d (got %d characters)", maxLen, s.length()));
         }
-
         return s;
     }
 
@@ -84,15 +79,13 @@ public abstract class DefinedPacket
         return readArray( buf, buf.readableBytes() );
     }
 
-    public static byte[] readArray(ByteBuf buf, int limit)
-    {
-        int len = readVarInt( buf );
-        if ( len > limit )
-        {
-            throw new FastOverflowPacketException( String.format( "Cannot receive byte array longer than %s (got %s bytes)", limit, len ) );
+    public static byte[] readArray(ByteBuf buf, int limit) {
+        int len = readVarInt(buf);
+        if (len > limit) {
+            throw new FastOverflowPacketException(String.format("Cannot receive byte array longer than %s (got %s bytes)", limit, len));
         }
-        byte[] ret = new byte[ len ];
-        buf.readBytes( ret );
+        byte[] ret = new byte[len];
+        buf.readBytes(ret);
         return ret;
     }
 
@@ -134,14 +127,12 @@ public abstract class DefinedPacket
         return readVarInt( input, 5 );
     }
 
-    public static int readVarInt(ByteBuf input, int maxBytes)
-    {
+    public static int readVarInt(ByteBuf input, int maxBytes) {
         int out = 0;
         int bytes = 0;
         byte in;
         // int readable = input.readableBytes(); //BotFilter
-        while ( true )
-        {
+        while (true) {
             // BotFilter start
             // if ( readable-- == 0 )
             // {
@@ -149,20 +140,15 @@ public abstract class DefinedPacket
             //   }
             //BotFiter end
             in = input.readByte();
-
-            out |= ( in & 0x7F ) << ( bytes++ * 7 );
-
-            if ( bytes > maxBytes )
-            {
-                throw VARINT_TOO_BIG; //BotFilter
+            out |= (in & 0x7f) << ((bytes++) * 7);
+            if (bytes > maxBytes) {
+                //BotFilter
+                throw VARINT_TOO_BIG;
             }
-
-            if ( ( in & 0x80 ) != 0x80 )
-            {
+            if ((in & 0x80) != 0x80) {
                 break;
             }
-        }
-
+        } 
         return out;
     }
 
