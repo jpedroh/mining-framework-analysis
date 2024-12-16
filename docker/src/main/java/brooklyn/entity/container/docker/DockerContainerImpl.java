@@ -15,23 +15,14 @@
  */
 package brooklyn.entity.container.docker;
 
-import static java.lang.String.format;
-
-import java.io.IOException;
-import java.net.InetAddress;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.annotation.Nullable;
-
-import org.python.google.common.net.HostAndPort;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import brooklyn.entity.container.DockerAttributes;
+import brooklyn.entity.container.DockerUtils;
+import brooklyn.location.docker.DockerContainerLocation;
+import brooklyn.location.docker.DockerHostLocation;
+import brooklyn.networking.portforwarding.subnet.JcloudsPortforwardingSubnetLocation;
+import brooklyn.networking.sdn.SdnAgent;
+import brooklyn.networking.sdn.SdnAttributes;
+import brooklyn.networking.subnet.SubnetTier;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Functions;
@@ -43,13 +34,15 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
-
-import org.jclouds.compute.domain.Processor;
-import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.docker.compute.options.DockerTemplateOptions;
-import org.jclouds.net.domain.IpPermission;
-import org.jclouds.net.domain.IpProtocol;
-
+import java.io.IOException;
+import java.net.InetAddress;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.annotation.Nullable;
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.api.location.LocationSpec;
@@ -86,21 +79,21 @@ import org.apache.brooklyn.util.net.Cidr;
 import org.apache.brooklyn.util.net.Urls;
 import org.apache.brooklyn.util.text.Strings;
 import org.apache.brooklyn.util.time.Duration;
+import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.docker.compute.options.DockerTemplateOptions;
+import org.jclouds.net.domain.IpPermission;
+import org.jclouds.net.domain.IpProtocol;
+import org.python.google.common.net.HostAndPort;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import static java.lang.String.format;
 
-import brooklyn.entity.container.DockerAttributes;
-import brooklyn.entity.container.DockerUtils;
-import brooklyn.location.docker.DockerContainerLocation;
-import brooklyn.location.docker.DockerHostLocation;
-import brooklyn.networking.portforwarding.subnet.JcloudsPortforwardingSubnetLocation;
-import brooklyn.networking.sdn.SdnAgent;
-import brooklyn.networking.sdn.SdnAttributes;
-import brooklyn.networking.subnet.SubnetTier;
 
 /**
  * A single Docker container.
  */
 public class DockerContainerImpl extends BasicStartableImpl implements DockerContainer {
-
     private static final Logger LOG = LoggerFactory.getLogger(DockerContainer.class);
 
     private transient FunctionFeed status;
@@ -264,70 +257,74 @@ public class DockerContainerImpl extends BasicStartableImpl implements DockerCon
 
     private DockerTemplateOptions getDockerTemplateOptions() {
         Entity entity = getRunningEntity();
-        Map<String,Object> entityFlags = MutableMap.copyOf(entity.config().get(SoftwareProcess.PROVISIONING_PROPERTIES));
+        Map<String, Object> entityFlags = MutableMap.copyOf(entity.config().get(SoftwareProcess.PROVISIONING_PROPERTIES));
         DockerTemplateOptions options = new DockerTemplateOptions();
-
         // Determine the container name to use
         Boolean useHostDns = Objects.firstNonNull(entity.config().get(DOCKER_USE_HOST_DNS_NAME), Boolean.FALSE);
         String hostname = getDockerHost().sensors().get(Attributes.HOSTNAME);
         String address = getDockerHost().sensors().get(Attributes.ADDRESS);
         String container = DockerUtils.getContainerName(entity).or(Optional.fromNullable(getDockerContainerName())).get();
-        String name = (!useHostDns || hostname.equalsIgnoreCase(address)) ? container : hostname;
+        String name = ((!useHostDns) || hostname.equalsIgnoreCase(address)) ? container : hostname;
         options.hostname(name);
         options.nodeNames(ImmutableList.of(name));
         sensors().set(DOCKER_CONTAINER_NAME, name);
         entity.sensors().set(DOCKER_CONTAINER_NAME, name);
         LOG.debug("Container name set to {} for {}", name, entity);
-
         // CPU shares
         Integer cpuShares = entity.config().get(DOCKER_CPU_SHARES);
-        if (cpuShares == null) cpuShares = config().get(DOCKER_CPU_SHARES);
+        if (cpuShares == null) {
+            cpuShares = config().get(DOCKER_CPU_SHARES);
+        }
         if (cpuShares != null) {
             // TODO set based on number of cores available in host divided by cores requested in flags
             Integer hostCores = getDockerHost().getDynamicLocation().getMachine().getMachineDetails().getHardwareDetails().getCpuCount();
             Integer minCores = entity.config().get(JcloudsLocationConfig.MIN_CORES);
             if (minCores == null) {
-                minCores = (Integer) entityFlags.get(JcloudsLocationConfig.MIN_CORES.getName());
+                minCores = ((Integer) (entityFlags.get(JcloudsLocationConfig.MIN_CORES.getName())));
             }
             if (minCores == null) {
-                TemplateBuilder template = (TemplateBuilder) entityFlags.get(JcloudsLocationConfig.TEMPLATE_BUILDER.getName());
+                TemplateBuilder template = ((TemplateBuilder) (entityFlags.get(JcloudsLocationConfig.TEMPLATE_BUILDER.getName())));
                 if (template != null) {
                     minCores = 0;
                     for (Processor cpu : template.build().getHardware().getProcessors()) {
-                        minCores = minCores + (int) cpu.getCores();
+                        minCores = minCores + ((int) (cpu.getCores()));
                     }
                 }
             }
             if (minCores != null) {
-                double ratio = (double) minCores / (double) (hostCores != null ? hostCores : 1);
-                LOG.debug("Cores: host {}, min {}, ratio {}", new Object[] { hostCores, minCores, ratio });
+                double ratio = ((double) (minCores)) / ((double) (hostCores != null ? hostCores : 1));
+                LOG.debug("Cores: host {}, min {}, ratio {}", new Object[]{ hostCores, minCores, ratio });
             }
         }
-        if (cpuShares != null) options.cpuShares(cpuShares);
-
+        if (cpuShares != null) {
+            options.cpuShares(cpuShares);
+        }
         // Memory
         Integer memory = entity.config().get(DOCKER_MEMORY);
-        if (memory == null) memory = config().get(DOCKER_MEMORY);
+        if (memory == null) {
+            memory = config().get(DOCKER_MEMORY);
+        }
         if (memory != null) {
             // TODO set based on memory available in host divided by memory requested in flags
             Integer hostRam = getDockerHost().getDynamicLocation().getMachine().getMachineDetails().getHardwareDetails().getRam();
-            Integer minRam = (Integer) entity.config().get(JcloudsLocationConfig.MIN_RAM);
+            Integer minRam = ((Integer) (entity.config().get(JcloudsLocationConfig.MIN_RAM)));
             if (minRam == null) {
-                minRam = (Integer) entityFlags.get(JcloudsLocationConfig.MIN_RAM.getName());
+                minRam = ((Integer) (entityFlags.get(JcloudsLocationConfig.MIN_RAM.getName())));
             }
             if (minRam == null) {
-                TemplateBuilder template = (TemplateBuilder) entityFlags.get(JcloudsLocationConfig.TEMPLATE_BUILDER.getName());
+                TemplateBuilder template = ((TemplateBuilder) (entityFlags.get(JcloudsLocationConfig.TEMPLATE_BUILDER.getName())));
                 if (template != null) {
                     minRam = template.build().getHardware().getRam();
                 }
             }
             if (minRam != null) {
-                double ratio = (double) minRam / (double) hostRam;
-                LOG.debug("Memory: host {}, min {}, ratio {}", new Object[] { hostRam, minRam, ratio });
+                double ratio = ((double) (minRam)) / ((double) (hostRam));
+                LOG.debug("Memory: host {}, min {}, ratio {}", new Object[]{ hostRam, minRam, ratio });
             }
         }
-        if (memory != null) options.memory(memory);
-
+        if (memory != null) {
+            options.memory(memory);
+        }
         // Volumes
         Map<String, String> volumes = MutableMap.copyOf(getDockerHost().sensors().get(DockerHost.DOCKER_HOST_VOLUME_MAPPING));
         Map<String, String> mapping = entity.config().get(DockerHost.DOCKER_HOST_VOLUME_MAPPING);
@@ -350,19 +347,18 @@ public class DockerContainerImpl extends BasicStartableImpl implements DockerCon
         sensors().set(DockerAttributes.DOCKER_VOLUME_MAPPING, volumes);
         entity.sensors().set(DockerAttributes.DOCKER_VOLUME_MAPPING, volumes);
         options.volumes(volumes);
-
         // Direct port mappings
         Map<Integer, Integer> bindings = MutableMap.copyOf(entity.config().get(DockerAttributes.DOCKER_PORT_BINDINGS));
-        if (bindings == null || bindings.isEmpty()) {
+        if ((bindings == null) || bindings.isEmpty()) {
             bindings = MutableMap.of();
             List<PortAttributeSensorAndConfigKey> entityPortConfig = entity.config().get(DockerAttributes.DOCKER_DIRECT_PORT_CONFIG);
             if (entityPortConfig != null) {
                 for (PortAttributeSensorAndConfigKey key : entityPortConfig) {
                     PortRange range = entity.config().get(key);
-                    if (range != null && !range.isEmpty()) {
+                    if ((range != null) && (!range.isEmpty())) {
                         Integer port = range.iterator().next();
                         if (port != null) {
-                            bindings.put(port,  port);
+                            bindings.put(port, port);
                         }
                     }
                 }
@@ -379,7 +375,6 @@ public class DockerContainerImpl extends BasicStartableImpl implements DockerCon
         if (bindings.size() > 0) {
             options.portBindings(bindings);
         }
-
         // Inbound ports
         Set<Integer> entityOpenPorts = MutableSet.copyOf(DockerUtils.getContainerPorts(entity));
         entityOpenPorts.addAll(DockerUtils.getOpenPorts(entity));
@@ -389,13 +384,12 @@ public class DockerContainerImpl extends BasicStartableImpl implements DockerCon
         options.inboundPorts(Ints.toArray(entityOpenPorts));
         sensors().set(DockerAttributes.DOCKER_CONTAINER_OPEN_PORTS, ImmutableList.copyOf(entityOpenPorts));
         entity.sensors().set(DockerAttributes.DOCKER_CONTAINER_OPEN_PORTS, ImmutableList.copyOf(entityOpenPorts));
-
         // Environment and links
         MutableMap<String, Object> environment = MutableMap.of();
         environment.add(config().get(DockerContainer.DOCKER_CONTAINER_ENVIRONMENT));
         environment.add(entity.config().get(DockerContainer.DOCKER_CONTAINER_ENVIRONMENT));
         List<Entity> links = entity.config().get(DockerAttributes.DOCKER_LINKS);
-        if (links != null && links.size() > 0) {
+        if ((links != null) && (links.size() > 0)) {
             LOG.debug("Found links: {}", links);
             Map<String, String> extraHosts = MutableMap.of();
             for (Entity linked : links) {
@@ -412,19 +406,16 @@ public class DockerContainerImpl extends BasicStartableImpl implements DockerCon
         sensors().set(DockerContainer.DOCKER_CONTAINER_ENVIRONMENT, environment);
         entity.sensors().set(DockerContainer.DOCKER_CONTAINER_ENVIRONMENT, environment);
         List<String> env = MutableList.of();
-        if (environment != null && !environment.isEmpty()) {
+        if ((environment != null) && (!environment.isEmpty())) {
             for (Map.Entry<String, Object> entry : environment.entrySet()) {
-                env.add(entry.getKey() + "=" + entry.getValue());
+                env.add((entry.getKey() + "=") + entry.getValue());
             }
         }
         options.env(env);
-
         // Log for debugging without password
         LOG.debug("Docker options for {}: {}", entity, options);
-
         // Set login password from the Docker host
         options.overrideLoginPassword(getDockerHost().getPassword());
-
         return options;
     }
 
@@ -476,7 +467,6 @@ public class DockerContainerImpl extends BasicStartableImpl implements DockerCon
         return permissions;
     }
 
-
     /**
      * Create a new {@link DockerContainerLocation} wrapping a machine from the host's {@link JcloudsLocation}.
      */
@@ -486,55 +476,33 @@ public class DockerContainerImpl extends BasicStartableImpl implements DockerCon
         DockerHostLocation host = dockerHost.getDynamicLocation();
         SubnetTier subnetTier = dockerHost.getSubnetTier();
         Entity entity = getRunningEntity();
-
         // Configure the container options based on the host and the running entity
         DockerTemplateOptions options = getDockerTemplateOptions();
-
         // put these fields on the location so it has the info it needs to create the subnet
-        Map<?, ?> dockerFlags = MutableMap.<Object, Object>builder()
-                .put(JcloudsLocationConfig.TEMPLATE_BUILDER, new PortableTemplateBuilder().options(options))
-                .put(JcloudsLocationConfig.IMAGE_ID, config().get(DOCKER_IMAGE_ID))
-                .put(JcloudsLocationConfig.HARDWARE_ID, config().get(DOCKER_HARDWARE_ID))
-                .put(LocationConfigKeys.USER, "root")
-                .put(LocationConfigKeys.PASSWORD, config().get(DOCKER_PASSWORD))
-                .put(SshTool.PROP_PASSWORD, config().get(DOCKER_PASSWORD))
-                .put(LocationConfigKeys.PRIVATE_KEY_DATA, null)
-                .put(LocationConfigKeys.PRIVATE_KEY_FILE, null)
-                .put(CloudLocationConfig.WAIT_FOR_SSHABLE, false)
-                .put(JcloudsLocationConfig.INBOUND_PORTS, options.getInboundPorts())
-                .put(JcloudsLocation.USE_PORT_FORWARDING, true)
-                .put(JcloudsLocation.PORT_FORWARDER, subnetTier.getPortForwarderExtension())
-                .put(JcloudsLocation.PORT_FORWARDING_MANAGER, subnetTier.getPortForwardManager())
-                .put(JcloudsPortforwardingSubnetLocation.PORT_FORWARDER, subnetTier.getPortForwarder())
-                .put(SubnetTier.SUBNET_CIDR, Cidr.CLASS_B)
-                .build();
-
+        Map<?, ?> dockerFlags = MutableMap.<Object, Object>builder().put(JcloudsLocationConfig.TEMPLATE_BUILDER, new PortableTemplateBuilder().options(options)).put(JcloudsLocationConfig.IMAGE_ID, config().get(DOCKER_IMAGE_ID)).put(JcloudsLocationConfig.HARDWARE_ID, config().get(DOCKER_HARDWARE_ID)).put(LocationConfigKeys.USER, "root").put(LocationConfigKeys.PASSWORD, config().get(DOCKER_PASSWORD)).put(SshTool.PROP_PASSWORD, config().get(DOCKER_PASSWORD)).put(LocationConfigKeys.PRIVATE_KEY_DATA, null).put(LocationConfigKeys.PRIVATE_KEY_FILE, null).put(CloudLocationConfig.WAIT_FOR_SSHABLE, false).put(JcloudsLocationConfig.INBOUND_PORTS, options.getInboundPorts()).put(JcloudsLocation.USE_PORT_FORWARDING, true).put(JcloudsLocation.PORT_FORWARDER, subnetTier.getPortForwarderExtension()).put(JcloudsLocation.PORT_FORWARDING_MANAGER, subnetTier.getPortForwardManager()).put(JcloudsPortforwardingSubnetLocation.PORT_FORWARDER, subnetTier.getPortForwarder()).put(SubnetTier.SUBNET_CIDR, Cidr.CLASS_B).build();
         try {
             // Create a new container using jclouds Docker driver
-            JcloudsSshMachineLocation container = (JcloudsSshMachineLocation) host.getJcloudsLocation().obtain(dockerFlags);
+            JcloudsSshMachineLocation container = ((JcloudsSshMachineLocation) (host.getJcloudsLocation().obtain(dockerFlags)));
             String containerId = container.getNode().getId();
             sensors().set(CONTAINER_ID, containerId);
-
             // Configure the host to allow remote access to bound container ports
             configurePortBindings(dockerHost, entity);
-
             // Link the entity to the container
             entity.sensors().set(DockerContainer.DOCKER_INFRASTRUCTURE, dockerHost.getInfrastructure());
             entity.sensors().set(DockerContainer.DOCKER_HOST, dockerHost);
             entity.sensors().set(DockerContainer.CONTAINER, this);
             entity.sensors().set(DockerContainer.CONTAINER_ID, containerId);
-
             // If SDN is enabled, attach networks
             if (config().get(SdnAttributes.SDN_ENABLE)) {
                 SdnAgent agent = Entities.attributeSupplierWhenReady(dockerHost, SdnAgent.SDN_AGENT).get();
-
                 // Save attached network list
                 List<String> networks = Lists.newArrayList(entity.getApplicationId());
                 Collection<String> extra = entity.config().get(SdnAttributes.NETWORK_LIST);
-                if (extra != null) networks.addAll(extra);
+                if (extra != null) {
+                    networks.addAll(extra);
+                }
                 sensors().set(SdnAttributes.ATTACHED_NETWORKS, networks);
                 entity.sensors().set(SdnAttributes.ATTACHED_NETWORKS, networks);
-
                 // Save container addresses
                 Set<String> addresses = Sets.newHashSet();
                 for (String networkId : networks) {
@@ -550,22 +518,12 @@ public class DockerContainerImpl extends BasicStartableImpl implements DockerCon
                 sensors().set(CONTAINER_ADDRESSES, addresses);
                 entity.sensors().set(CONTAINER_ADDRESSES, addresses);
             }
-
             // Create our wrapper location around the container
-            LocationSpec<DockerContainerLocation> spec = LocationSpec.create(DockerContainerLocation.class)
-                    .parent(host)
-                    .configure(flags)
-                    .configure(DynamicLocation.OWNER, this)
-                    .configure("machine", container) // the underlying JcloudsLocation
-                    .configure(container.config().getBag().getAllConfig())
-                    .configureIfNotNull(SshMachineLocation.SSH_HOST, getSshHostAddress())
-                    .configureIfNotNull(SshMachineLocation.SSH_PORT, getSshPort())
-                    .displayName(getDockerContainerName());
+            LocationSpec<DockerContainerLocation> spec = // the underlying JcloudsLocation
+            LocationSpec.create(DockerContainerLocation.class).parent(host).configure(flags).configure(DynamicLocation.OWNER, this).configure("machine", container).configure(container.config().getBag().getAllConfig()).configureIfNotNull(SshMachineLocation.SSH_HOST, getSshHostAddress()).configureIfNotNull(SshMachineLocation.SSH_PORT, getSshPort()).displayName(getDockerContainerName());
             DockerContainerLocation location = getManagementContext().getLocationManager().createLocation(spec);
-
             sensors().set(DYNAMIC_LOCATION, location);
             sensors().set(LOCATION_NAME, location.getId());
-
             LOG.info("New Docker container location {} created", location);
             return location;
         } catch (NoMachinesAvailableException e) {
@@ -689,5 +647,4 @@ public class DockerContainerImpl extends BasicStartableImpl implements DockerCon
         RendererHints.register(ENTITY, new RendererHints.NamedActionWithUrl("Open", DelegateEntity.EntityUrl.entityUrl()));
         RendererHints.register(CONTAINER, new RendererHints.NamedActionWithUrl("Open", DelegateEntity.EntityUrl.entityUrl()));
     }
-
 }
