@@ -12,12 +12,11 @@ import com.mitchellbosecke.pebble.extension.NodeVisitor;
 import com.mitchellbosecke.pebble.node.expression.Expression;
 import com.mitchellbosecke.pebble.template.EvaluationContextImpl;
 import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
-
 import java.io.IOException;
 import java.io.Writer;
 
-public class ExtendsNode extends AbstractRenderableNode {
 
+public class ExtendsNode extends AbstractRenderableNode {
     Expression<?> parentExpression;
 
     public ExtendsNode(int lineNumber, Expression<?> parentExpression) {
@@ -27,7 +26,7 @@ public class ExtendsNode extends AbstractRenderableNode {
 
     @Override
     public void render(final PebbleTemplateImpl self, Writer writer, final EvaluationContextImpl context) throws IOException {
-        self.setParent(context, (String) parentExpression.evaluate(self, context));
+        self.setParent(context, ((String) (parentExpression.evaluate(self, context))));
     }
 
     @Override

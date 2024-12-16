@@ -40,7 +40,6 @@ import com.mitchellbosecke.pebble.node.expression.UnaryExpression;
 import com.mitchellbosecke.pebble.operator.Associativity;
 import com.mitchellbosecke.pebble.operator.BinaryOperator;
 import com.mitchellbosecke.pebble.operator.UnaryOperator;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,203 +48,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
 /**
  * Parses expressions.
  */
 public class ExpressionParser {
-
-    private static final Set<String> RESERVED_KEYWORDS = new HashSet<>(Arrays.asList("true", "false", "null", "none"));
-
-    private final Parser parser;
-
-    private TokenStream stream;
-
-    private Map<String, BinaryOperator> binaryOperators;
-
-    private Map<String, UnaryOperator> unaryOperators;
-
-    /**
-     * Constructor
-     *
-     * @param parser
-     *            A reference to the main parser
-     * @param binaryOperators
-     *            All the binary operators
-     * @param unaryOperators
-     *            All the unary operators
-     */
-    public ExpressionParser(Parser parser, Map<String, BinaryOperator> binaryOperators,
-            Map<String, UnaryOperator> unaryOperators) {
-        this.parser = parser;
-        this.binaryOperators = binaryOperators;
-        this.unaryOperators = unaryOperators;
-    }
-
-    /**
-     * The public entry point for parsing an expression.
-     *
-     * @return NodeExpression the expression that has been parsed.
-     */
-    public Expression<?> parseExpression() {
-        return parseExpression(0);
-    }
-
-    /**
-     * A private entry point for parsing an expression. This method takes in the
-     * precedence required to operate a "precedence climbing" parsing algorithm.
-     * It is a recursive method.
-     *
-     * @see http://en.wikipedia.org/wiki/Operator-precedence_parser
-     *
-     * @return The NodeExpression representing the parsed expression.
-     */
-    private Expression<?> parseExpression(int minPrecedence) {
-
-        this.stream = parser.getStream();
-        Token token = stream.current();
-        Expression<?> expression = null;
-
-        /*
-         * The first check is to see if the expression begins with a unary
-         * operator, or an opening bracket, or neither.
-         */
-        if (isUnary(token)) {
-            UnaryOperator operator = this.unaryOperators.get(token.getValue());
-            stream.next();
-            expression = parseExpression(operator.getPrecedence());
-
-            UnaryExpression unaryExpression = null;
-            Class<? extends UnaryExpression> operatorNodeClass = operator.getNodeClass();
-            try {
-                unaryExpression = operatorNodeClass.newInstance();
-                unaryExpression.setLineNumber(stream.current().getLineNumber());
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-            unaryExpression.setChildExpression(expression);
-
-            expression = unaryExpression;
-
-        } else if (token.test(Token.Type.PUNCTUATION, "(")) {
-
-            stream.next();
-            expression = parseExpression();
-            stream.expect(Token.Type.PUNCTUATION, ")");
-            expression = parsePostfixExpression(expression);
-
-        }
-        // array definition syntax
-        else if (token.test(Token.Type.PUNCTUATION, "[")) {
-
-            // preserve [ token for array parsing
-            expression = parseArrayDefinitionExpression();
-            // don't expect ], because it has been already expected
-            // currently, postfix expressions are not supported for arrays
-            // expression = parsePostfixExpression(expression);
-        }
-        // map definition syntax
-        else if (token.test(Token.Type.PUNCTUATION, "{")) {
-
-            // preserve { token for map parsing
-            expression = parseMapDefinitionExpression();
-            // don't expect }, because it has been already expected
-            // currently, postfix expressions are not supported for maps
-            // expression = parsePostfixExpression(expression);
-
-        } else {
-            /*
-             * starts with neither. Let's parse out the first expression that we
-             * can find. There may be one, there may be many (separated by
-             * binary operators); right now we are just looking for the first.
-             */
-            expression = subparseExpression();
-        }
-
-        /*
-         * If, after parsing the first expression we encounter a binary operator
-         * then we know we have another expression on the other side of the
-         * operator that requires parsing. Otherwise we're done.
-         */
-        token = stream.current();
-        while (isBinary(token) && binaryOperators.get(token.getValue()).getPrecedence() >= minPrecedence) {
-
-            // find out which operator we are dealing with and then skip over it
-            BinaryOperator operator = binaryOperators.get(token.getValue());
-            stream.next();
-
-            Expression<?> expressionRight = null;
-
-            // the right hand expression of the FILTER operator is handled in a
-            // unique way
-            if (FilterExpression.class.equals(operator.getNodeClass())) {
-                expressionRight = parseFilterInvocationExpression();
-            }
-            // the right hand expression of TEST operators is handled in a
-            // unique way
-            else if (PositiveTestExpression.class.equals(operator.getNodeClass())
-                    || NegativeTestExpression.class.equals(operator.getNodeClass())) {
-                expressionRight = parseTestInvocationExpression();
-            } else {
-                /*
-                 * parse the expression on the right hand side of the operator
-                 * while maintaining proper associativity and precedence
-                 */
-                expressionRight = parseExpression(Associativity.LEFT.equals(operator.getAssociativity()) ? operator
-                        .getPrecedence() + 1 : operator.getPrecedence());
-            }
-
-            /*
-             * we have to wrap the left and right side expressions into one
-             * final expression. The operator provides us with the type of
-             * expression we are creating.
-             */
-            BinaryExpression<?> finalExpression = null;
-            Class<? extends BinaryExpression<?>> operatorNodeClass = operator.getNodeClass();
-            try {
-                finalExpression = operatorNodeClass.newInstance();
-                finalExpression.setLineNumber(stream.current().getLineNumber());
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new ParserException(e, "Error instantiating operator node [" + operatorNodeClass.getName() + "]",
-                        token.getLineNumber(), stream.getFilename());
-            }
-
-            finalExpression.setLeft(expression);
-            finalExpression.setRight(expressionRight);
-
-            expression = finalExpression;
-
-            token = stream.current();
-        }
-
-        if (minPrecedence == 0) {
-            return parseTernaryExpression(expression);
-        }
-
-        return expression;
-    }
-
-    /**
-     * Checks if a token is a unary operator.
-     *
-     * @param token
-     *            The token that we are checking
-     * @return boolean Whether the token is a unary operator or not
-     */
-    private boolean isUnary(Token token) {
-        return token.test(Token.Type.OPERATOR) && this.unaryOperators.containsKey(token.getValue());
-    }
-
-    /**
-     * Checks if a token is a binary operator.
-     *
-     * @param token
-     *            The token that we are checking
-     * @return boolean Whether the token is a binary operator or not
-     */
-    private boolean isBinary(Token token) {
-        return token.test(Token.Type.OPERATOR) && this.binaryOperators.containsKey(token.getValue());
-    }
-
     /**
      * Finds and returns the next "simple" expression; an expression of which
      * can be found on either side of a binary operator but does not contain a
@@ -322,6 +129,161 @@ public class ExpressionParser {
         return parsePostfixExpression(node);
     }
 
+    private static final Set<String> RESERVED_KEYWORDS = new HashSet<>(Arrays.asList("true", "false", "null", "none"));
+
+    private final Parser parser;
+
+    private TokenStream stream;
+
+    private Map<String, BinaryOperator> binaryOperators;
+
+    private Map<String, UnaryOperator> unaryOperators;
+
+    /**
+     * Constructor
+     *
+     * @param parser
+     * 		A reference to the main parser
+     * @param binaryOperators
+     * 		All the binary operators
+     * @param unaryOperators
+     * 		All the unary operators
+     */
+    public ExpressionParser(Parser parser, Map<String, BinaryOperator> binaryOperators, Map<String, UnaryOperator> unaryOperators) {
+        this.parser = parser;
+        this.binaryOperators = binaryOperators;
+        this.unaryOperators = unaryOperators;
+    }
+
+    /**
+     * The public entry point for parsing an expression.
+     *
+     * @return NodeExpression the expression that has been parsed.
+     */
+    public Expression<?> parseExpression() {
+        return parseExpression(0);
+    }
+
+    /**
+     * A private entry point for parsing an expression. This method takes in the
+     * precedence required to operate a "precedence climbing" parsing algorithm.
+     * It is a recursive method.
+     *
+     * @see http://en.wikipedia.org/wiki/Operator-precedence_parser
+     * @return The NodeExpression representing the parsed expression.
+     */
+    private Expression<?> parseExpression(int minPrecedence) {
+        this.stream = parser.getStream();
+        Token token = stream.current();
+        Expression<?> expression = null;
+        /* The first check is to see if the expression begins with a unary
+        operator, or an opening bracket, or neither.
+         */
+        if (isUnary(token)) {
+            UnaryOperator operator = this.unaryOperators.get(token.getValue());
+            stream.next();
+            expression = parseExpression(operator.getPrecedence());
+            UnaryExpression unaryExpression = null;
+            Class<? extends UnaryExpression> operatorNodeClass = operator.getNodeClass();
+            try {
+                unaryExpression = operatorNodeClass.newInstance();
+                unaryExpression.setLineNumber(stream.current().getLineNumber());
+            } catch (java.lang.InstantiationException | java.lang.IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            unaryExpression.setChildExpression(expression);
+            expression = unaryExpression;
+        } else if (token.test(Token.Type.PUNCTUATION, "(")) {
+            stream.next();
+            expression = parseExpression();
+            stream.expect(Token.Type.PUNCTUATION, ")");
+            expression = parsePostfixExpression(expression);
+        } else if (token.test(Token.Type.PUNCTUATION, "[")) {
+            // preserve [ token for array parsing
+            expression = parseArrayDefinitionExpression();
+            // don't expect ], because it has been already expected
+            // currently, postfix expressions are not supported for arrays
+            // expression = parsePostfixExpression(expression);
+        } else if (token.test(Token.Type.PUNCTUATION, "{")) {
+            // preserve { token for map parsing
+            expression = parseMapDefinitionExpression();
+            // don't expect }, because it has been already expected
+            // currently, postfix expressions are not supported for maps
+            // expression = parsePostfixExpression(expression);
+        } else {
+            /* starts with neither. Let's parse out the first expression that we
+            can find. There may be one, there may be many (separated by
+            binary operators); right now we are just looking for the first.
+             */
+            expression = subparseExpression();
+        }
+        /* If, after parsing the first expression we encounter a binary operator
+        then we know we have another expression on the other side of the
+        operator that requires parsing. Otherwise we're done.
+         */
+        token = stream.current();
+        while (isBinary(token) && (binaryOperators.get(token.getValue()).getPrecedence() >= minPrecedence)) {
+            // find out which operator we are dealing with and then skip over it
+            BinaryOperator operator = binaryOperators.get(token.getValue());
+            stream.next();
+            Expression<?> expressionRight = null;
+            // the right hand expression of the FILTER operator is handled in a
+            // unique way
+            if (FilterExpression.class.equals(operator.getNodeClass())) {
+                expressionRight = parseFilterInvocationExpression();
+            } else if (PositiveTestExpression.class.equals(operator.getNodeClass()) || NegativeTestExpression.class.equals(operator.getNodeClass())) {
+                expressionRight = parseTestInvocationExpression();
+            } else {
+                /* parse the expression on the right hand side of the operator
+                while maintaining proper associativity and precedence
+                 */
+                expressionRight = parseExpression(Associativity.LEFT.equals(operator.getAssociativity()) ? operator.getPrecedence() + 1 : operator.getPrecedence());
+            }
+            /* we have to wrap the left and right side expressions into one
+            final expression. The operator provides us with the type of
+            expression we are creating.
+             */
+            BinaryExpression<?> finalExpression = null;
+            Class<? extends BinaryExpression<?>> operatorNodeClass = operator.getNodeClass();
+            try {
+                finalExpression = operatorNodeClass.newInstance();
+                finalExpression.setLineNumber(stream.current().getLineNumber());
+            } catch (java.lang.InstantiationException | java.lang.IllegalAccessException e) {
+                throw new ParserException(e, ("Error instantiating operator node [" + operatorNodeClass.getName()) + "]", token.getLineNumber(), stream.getFilename());
+            }
+            finalExpression.setLeft(expression);
+            finalExpression.setRight(expressionRight);
+            expression = finalExpression;
+            token = stream.current();
+        } 
+        if (minPrecedence == 0) {
+            return parseTernaryExpression(expression);
+        }
+        return expression;
+    }
+
+    /**
+     * Checks if a token is a unary operator.
+     *
+     * @param token
+     *            The token that we are checking
+     * @return boolean Whether the token is a unary operator or not
+     */
+    private boolean isUnary(Token token) {
+        return token.test(Token.Type.OPERATOR) && this.unaryOperators.containsKey(token.getValue());
+    }
+
+    /**
+     * Checks if a token is a binary operator.
+     *
+     * @param token
+     *            The token that we are checking
+     * @return boolean Whether the token is a binary operator or not
+     */
+    private boolean isBinary(Token token) {
+        return token.test(Token.Type.OPERATOR) && this.binaryOperators.containsKey(token.getValue());
+    }
+
     private Expression<?> parseStringExpression() throws ParserException {
         List<Expression<?>> nodes = new ArrayList<>();
 
@@ -368,16 +330,14 @@ public class ExpressionParser {
     private Expression<?> parseTernaryExpression(Expression<?> expression) {
         // if the next token isn't a ?, we're not dealing with a ternary
         // expression
-        if (!stream.current().test(Token.Type.PUNCTUATION, "?"))
+        if (!stream.current().test(Token.Type.PUNCTUATION, "?")) {
             return expression;
-
+        }
         stream.next();
         Expression<?> expression2 = parseExpression();
         stream.expect(Token.Type.PUNCTUATION, ":");
         Expression<?> expression3 = parseExpression();
-
-        expression = new TernaryExpression((Expression<Boolean>) expression, expression2, expression3, this.stream
-                .current().getLineNumber(), stream.getFilename());
+        expression = new TernaryExpression(((Expression<Boolean>) (expression)), expression2, expression3, this.stream.current().getLineNumber(), stream.getFilename());
         return expression;
     }
 
@@ -388,78 +348,65 @@ public class ExpressionParser {
      * var.attribute(bar)).
      *
      * @param node
-     *            The expression that we have already discovered
+     * 		The expression that we have already discovered
      * @return Either the original expression that was passed in or a slightly
-     *         modified version of it, depending on what was discovered.
+    modified version of it, depending on what was discovered.
      */
     private Expression<?> parsePostfixExpression(Expression<?> node) {
         Token current;
         while (true) {
             current = stream.current();
-
             if (current.test(Token.Type.PUNCTUATION, ".") || current.test(Token.Type.PUNCTUATION, "[")) {
-
                 // a period represents getting an attribute from a variable or
                 // calling a method
                 node = parseBeanAttributeExpression(node);
-
             } else if (current.test(Token.Type.PUNCTUATION, "(")) {
-
                 // function call
                 node = parseFunctionOrMacroInvocation(node);
-
             } else {
                 break;
             }
-        }
+        } 
         return node;
     }
 
     private Expression<?> parseFunctionOrMacroInvocation(Expression<?> node) {
-        String functionName = ((FunctionOrMacroNameNode) node).getName();
+        String functionName = ((FunctionOrMacroNameNode) (node)).getName();
         ArgumentsNode args = parseArguments();
-
-        /*
-         * The following core functions have their own Nodes and are rendered in
-         * unique ways for the sake of performance.
+        /* The following core functions have their own Nodes and are rendered in
+        unique ways for the sake of performance.
          */
         switch (functionName) {
-        case "parent":
-            return new ParentFunctionExpression(parser.peekBlockStack(), stream.current().getLineNumber());
-        case "block":
-            return new BlockFunctionExpression(args, node.getLineNumber());
+            case "parent" :
+                return new ParentFunctionExpression(parser.peekBlockStack(), stream.current().getLineNumber());
+            case "block" :
+                return new BlockFunctionExpression(args, node.getLineNumber());
         }
-
         return new FunctionOrMacroInvocationExpression(functionName, args, node.getLineNumber());
     }
 
     public FilterInvocationExpression parseFilterInvocationExpression() {
         TokenStream stream = parser.getStream();
         Token filterToken = stream.expect(Token.Type.NAME);
-
         ArgumentsNode args = null;
         if (stream.current().test(Token.Type.PUNCTUATION, "(")) {
             args = this.parseArguments();
         } else {
             args = new ArgumentsNode(null, null, filterToken.getLineNumber());
         }
-
         return new FilterInvocationExpression(filterToken.getValue(), args, filterToken.getLineNumber());
     }
 
     private Expression<?> parseTestInvocationExpression() {
         TokenStream stream = parser.getStream();
         int lineNumber = stream.current().getLineNumber();
-
         Token testToken = stream.expect(Token.Type.NAME);
-
         ArgumentsNode args = null;
         if (stream.current().test(Token.Type.PUNCTUATION, "(")) {
             args = this.parseArguments();
         } else {
             args = new ArgumentsNode(null, null, testToken.getLineNumber());
         }
-
         return new TestInvocationExpression(lineNumber, testToken.getValue(), args);
     }
 
@@ -471,43 +418,30 @@ public class ExpressionParser {
      * Ex. foo.bar or foo['bar'] or foo.bar('baz')
      *
      * @param node
-     *            The expression parsed so far
+     * 		The expression parsed so far
      * @return NodeExpression The parsed subscript expression
      */
     private Expression<?> parseBeanAttributeExpression(Expression<?> node) {
         TokenStream stream = parser.getStream();
-
         if (stream.current().test(Token.Type.PUNCTUATION, ".")) {
-
             // skip over the '.' token
             stream.next();
-
             Token token = stream.expect(Token.Type.NAME);
-
             ArgumentsNode args = null;
             if (stream.current().test(Token.Type.PUNCTUATION, "(")) {
                 args = this.parseArguments();
                 if (!args.getNamedArgs().isEmpty()) {
-                    throw new ParserException(null, "Can not use named arguments when calling a bean method", stream
-                            .current().getLineNumber(), stream.getFilename());
+                    throw new ParserException(null, "Can not use named arguments when calling a bean method", stream.current().getLineNumber(), stream.getFilename());
                 }
             }
-
-            node = new GetAttributeExpression(node,
-                    new LiteralStringExpression(token.getValue(), token.getLineNumber()), args,
-                    stream.getFilename(), token.getLineNumber());
-
+            node = new GetAttributeExpression(node, new LiteralStringExpression(token.getValue(), token.getLineNumber()), args, stream.getFilename(), token.getLineNumber());
         } else if (stream.current().test(Token.Type.PUNCTUATION, "[")) {
             // skip over opening '[' bracket
             stream.next();
-
-            node = new GetAttributeExpression(node, parseExpression(), stream.getFilename(), stream.current()
-                    .getLineNumber());
-
+            node = new GetAttributeExpression(node, parseExpression(), stream.getFilename(), stream.current().getLineNumber());
             // move past the closing ']' bracket
             stream.expect(Token.Type.PUNCTUATION, "]");
         }
-
         return node;
     }
 
@@ -516,26 +450,19 @@ public class ExpressionParser {
     }
 
     public ArgumentsNode parseArguments(boolean isMacroDefinition) {
-
         List<PositionalArgumentNode> positionalArgs = new ArrayList<>();
         List<NamedArgumentNode> namedArgs = new ArrayList<>();
         this.stream = this.parser.getStream();
-
         stream.expect(Token.Type.PUNCTUATION, "(");
-
         while (!stream.current().test(Token.Type.PUNCTUATION, ")")) {
-
             String argumentName = null;
             Expression<?> argumentValue = null;
-
-            if (!namedArgs.isEmpty() || !positionalArgs.isEmpty()) {
+            if ((!namedArgs.isEmpty()) || (!positionalArgs.isEmpty())) {
                 stream.expect(Token.Type.PUNCTUATION, ",");
             }
-
-            /*
-             * Most arguments consist of VALUES with optional NAMES but in the
-             * case of a macro definition the user is specifying NAMES with
-             * optional VALUES. Therefore the logic changes slightly.
+            /* Most arguments consist of VALUES with optional NAMES but in the
+            case of a macro definition the user is specifying NAMES with
+            optional VALUES. Therefore the logic changes slightly.
              */
             if (isMacroDefinition) {
                 argumentName = parseNewVariableName();
@@ -550,23 +477,16 @@ public class ExpressionParser {
                 }
                 argumentValue = parseExpression();
             }
-
             if (argumentName == null) {
                 if (!namedArgs.isEmpty()) {
-                    throw new ParserException(null,
-                            "Positional arguments must be declared before any named arguments.", stream.current()
-                                    .getLineNumber(),
-                            stream.getFilename());
+                    throw new ParserException(null, "Positional arguments must be declared before any named arguments.", stream.current().getLineNumber(), stream.getFilename());
                 }
                 positionalArgs.add(new PositionalArgumentNode(argumentValue));
             } else {
                 namedArgs.add(new NamedArgumentNode(argumentName, argumentValue));
             }
-
-        }
-
+        } 
         stream.expect(Token.Type.PUNCTUATION, ")");
-
         return new ArgumentsNode(positionalArgs, namedArgs, stream.current().getLineNumber());
     }
 
@@ -578,32 +498,26 @@ public class ExpressionParser {
      * @return A variable name
      */
     public String parseNewVariableName() {
-
         // set the stream because this function may be called externally (for
         // and set token parsers)
         this.stream = this.parser.getStream();
         Token token = stream.current();
         token.test(Token.Type.NAME);
-
         if (RESERVED_KEYWORDS.contains(token.getValue())) {
-            throw new ParserException(null, String.format("Can not assign a value to %s", token.getValue()),
-                    token.getLineNumber(), stream.getFilename());
+            throw new ParserException(null, String.format("Can not assign a value to %s", token.getValue()), token.getLineNumber(), stream.getFilename());
         }
-
         stream.next();
         return token.getValue();
     }
 
     private Expression<?> parseArrayDefinitionExpression() {
         TokenStream stream = parser.getStream();
-
         // expect the opening bracket and check for an empty array
         stream.expect(Token.Type.PUNCTUATION, "[");
         if (stream.current().test(Token.Type.PUNCTUATION, "]")) {
             stream.next();
             return new ArrayExpression(stream.current().getLineNumber());
         }
-
         // there's at least one expression in the array
         List<Expression<?>> elements = new ArrayList<>();
         while (true) {
@@ -616,24 +530,20 @@ public class ExpressionParser {
             // expect the comma separator, until we either find a closing
             // bracket or fail the expect
             stream.expect(Token.Type.PUNCTUATION, ",");
-        }
-
+        } 
         // expect the closing bracket
         stream.expect(Token.Type.PUNCTUATION, "]");
-
         return new ArrayExpression(elements, stream.current().getLineNumber());
     }
 
     private Expression<?> parseMapDefinitionExpression() {
         TokenStream stream = parser.getStream();
-
         // expect the opening brace and check for an empty map
         stream.expect(Token.Type.PUNCTUATION, "{");
         if (stream.current().test(Token.Type.PUNCTUATION, "}")) {
             stream.next();
             return new MapExpression(stream.current().getLineNumber());
         }
-
         // there's at least one expression in the map
         Map<Expression<?>, Expression<?>> elements = new HashMap<>();
         while (true) {
@@ -649,12 +559,9 @@ public class ExpressionParser {
             // expect the comma separator, until we either find a closing brace
             // or fail the expect
             stream.expect(Token.Type.PUNCTUATION, ",");
-        }
-
+        } 
         // expect the closing brace
         stream.expect(Token.Type.PUNCTUATION, "}");
-
         return new MapExpression(elements, stream.current().getLineNumber());
     }
-
 }

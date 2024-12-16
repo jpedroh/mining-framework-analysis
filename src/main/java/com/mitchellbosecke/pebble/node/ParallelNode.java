@@ -12,19 +12,17 @@ import com.mitchellbosecke.pebble.extension.NodeVisitor;
 import com.mitchellbosecke.pebble.template.EvaluationContextImpl;
 import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
 import com.mitchellbosecke.pebble.utils.FutureWriter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class ParallelNode extends AbstractRenderableNode {
-
     private final Logger logger = LoggerFactory.getLogger(ParallelNode.class);
 
     private final BodyNode body;
@@ -43,36 +41,23 @@ public class ParallelNode extends AbstractRenderableNode {
     }
 
     @Override
-    public void render(final PebbleTemplateImpl self, Writer writer, final EvaluationContextImpl context)
-            throws IOException {
-
+    public void render(final PebbleTemplateImpl self, Writer writer, final EvaluationContextImpl context) throws IOException {
         ExecutorService es = context.getExecutorService();
-
         if (es == null) {
-
             if (!hasWarnedAboutNonExistingExecutorService) {
-                logger.info(String.format(
-                        "The parallel tag was used [%s:%d] but no ExecutorService was provided. The parallel tag will be ignored "
-                                + "and it's contents will be rendered in sequence with the rest of the template.",
-                        self.getName(), getLineNumber()));
+                logger.info(String.format("The parallel tag was used [%s:%d] but no ExecutorService was provided. The parallel tag will be ignored " + "and it's contents will be rendered in sequence with the rest of the template.", self.getName(), getLineNumber()));
                 hasWarnedAboutNonExistingExecutorService = true;
             }
-
             /*
              * If user did not provide an ExecutorService, we simply ignore the
              * parallel tag and render it's contents like we normally would.
              */
             body.render(self, writer, context);
-            
         } else {
-
             final EvaluationContextImpl contextCopy = context.threadSafeCopy(self);
-
             final StringWriter newStringWriter = new StringWriter();
             final Writer newFutureWriter = new FutureWriter(newStringWriter);
-
             Future<String> future = es.submit(new Callable<String>() {
-
                 @Override
                 public String call() throws IOException {
                     body.render(self, newFutureWriter, contextCopy);
@@ -81,7 +66,7 @@ public class ParallelNode extends AbstractRenderableNode {
                     return newStringWriter.toString();
                 }
             });
-            ((FutureWriter) writer).enqueue(future);
+            ((FutureWriter) (writer)).enqueue(future);
         }
     }
 
