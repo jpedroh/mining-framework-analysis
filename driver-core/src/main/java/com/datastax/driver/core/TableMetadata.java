@@ -15,34 +15,40 @@
  */
 package com.datastax.driver.core;
 
-import java.util.*;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * Describes a Table.
  */
 public class TableMetadata {
-
     private static final Logger logger = LoggerFactory.getLogger(TableMetadata.class);
 
     static final String CF_NAME                      = "columnfamily_name";
+
     private static final String CF_ID                = "cf_id";
 
     private static final String KEY_VALIDATOR        = "key_validator";
+
     private static final String COMPARATOR           = "comparator";
+
     private static final String VALIDATOR            = "default_validator";
 
     private static final String KEY_ALIASES          = "key_aliases";
+
     private static final String COLUMN_ALIASES       = "column_aliases";
+
     private static final String VALUE_ALIAS          = "value_alias";
 
     private static final String DEFAULT_KEY_ALIAS    = "key";
+
     private static final String DEFAULT_COLUMN_ALIAS = "column";
+
     private static final String DEFAULT_VALUE_ALIAS  = "value";
 
     private static final Comparator<ColumnMetadata> columnMetadataComparator = new Comparator<ColumnMetadata>() {
@@ -52,12 +58,19 @@ public class TableMetadata {
     };
 
     private final KeyspaceMetadata keyspace;
+
     private final String name;
+
     private final UUID id;
+
     private final List<ColumnMetadata> partitionKey;
+
     private final List<ColumnMetadata> clusteringColumns;
+
     private final Map<String, ColumnMetadata> columns;
+
     private final Options options;
+
     private final List<Order> clusteringOrder;
 
     private final VersionNumber cassandraVersion;
@@ -69,8 +82,9 @@ public class TableMetadata {
      * order of a table.
      */
     public static enum Order {
-        ASC, DESC;
 
+        ASC,
+        DESC;
         static final Predicate<Order> isAscending = new Predicate<Order>() {
             public boolean apply(Order o) {
                 return o == ASC;
@@ -78,15 +92,7 @@ public class TableMetadata {
         };
     }
 
-    private TableMetadata(KeyspaceMetadata keyspace,
-                          String name,
-                          UUID id,
-                          List<ColumnMetadata> partitionKey,
-                          List<ColumnMetadata> clusteringColumns,
-                          LinkedHashMap<String, ColumnMetadata> columns,
-                          Options options,
-                          List<Order> clusteringOrder,
-                          VersionNumber cassandraVersion) {
+    private TableMetadata(KeyspaceMetadata keyspace, String name, UUID id, List<ColumnMetadata> partitionKey, List<ColumnMetadata> clusteringColumns, LinkedHashMap<String, ColumnMetadata> columns, Options options, List<Order> clusteringOrder, VersionNumber cassandraVersion) {
         this.keyspace = keyspace;
         this.name = name;
         this.id = id;
@@ -99,94 +105,75 @@ public class TableMetadata {
     }
 
     static TableMetadata build(KeyspaceMetadata ksm, Row row, Map<String, ColumnMetadata.Raw> rawCols, VersionNumber cassandraVersion) {
-
         String name = row.getString(CF_NAME);
-        UUID id = (cassandraVersion.getMajor() > 2 || (cassandraVersion.getMajor() == 2 && cassandraVersion.getMinor() >= 1))
-                ? row.getUUID(CF_ID)
-                : null;
-
+        UUID id = ((cassandraVersion.getMajor() > 2) || ((cassandraVersion.getMajor() == 2) && (cassandraVersion.getMinor() >= 1))) ? row.getUUID(CF_ID) : null;
         CassandraTypeParser.ParseResult keyValidator = CassandraTypeParser.parseWithComposite(row.getString(KEY_VALIDATOR));
         CassandraTypeParser.ParseResult comparator = CassandraTypeParser.parseWithComposite(row.getString(COMPARATOR));
-        List<String> columnAliases = cassandraVersion.getMajor() >= 2 || row.getString(COLUMN_ALIASES) == null
-                                   ? Collections.<String>emptyList()
-                                   : SimpleJSONParser.parseStringList(row.getString(COLUMN_ALIASES));
-
+        List<String> columnAliases = ((cassandraVersion.getMajor() >= 2) || (row.getString(COLUMN_ALIASES) == null)) ? Collections.<String>emptyList() : SimpleJSONParser.parseStringList(row.getString(COLUMN_ALIASES));
         int clusteringSize = findClusteringSize(comparator, rawCols.values(), columnAliases, cassandraVersion);
-        boolean isDense = clusteringSize != comparator.types.size() - 1;
-        boolean isCompact = isDense || !comparator.isComposite;
-
+        boolean isDense = clusteringSize != (comparator.types.size() - 1);
+        boolean isCompact = isDense || (!comparator.isComposite);
         List<ColumnMetadata> partitionKey = nullInitializedList(keyValidator.types.size());
         List<ColumnMetadata> clusteringColumns = nullInitializedList(clusteringSize);
         List<Order> clusteringOrder = nullInitializedList(clusteringSize);
         // We use a linked hashmap because we will keep this in the order of a 'SELECT * FROM ...'.
         LinkedHashMap<String, ColumnMetadata> columns = new LinkedHashMap<String, ColumnMetadata>();
-
-
         Options options = null;
         try {
             options = new Options(row, isCompact, cassandraVersion);
-        } catch (RuntimeException e) {
+        } catch (java.lang.RuntimeException e) {
             // See ControlConnection#refreshSchema for why we'd rather not probably this further. Since table options is one thing
             // that tends to change often in Cassandra, it's worth special casing this.
-            logger.error(String.format("Error parsing schema options for table %s.%s: "
-                                       + "Cluster.getMetadata().getKeyspace(\"%s\").getTable(\"%s\").getOptions() will return null",
-                                       ksm.getName(), name, ksm.getName(), name), e);
+            logger.error(String.format("Error parsing schema options for table %s.%s: " + "Cluster.getMetadata().getKeyspace(\"%s\").getTable(\"%s\").getOptions() will return null", ksm.getName(), name, ksm.getName(), name), e);
         }
-
         TableMetadata tm = new TableMetadata(ksm, name, id, partitionKey, clusteringColumns, columns, options, clusteringOrder, cassandraVersion);
-
         // We use this temporary set just so non PK columns are added in lexicographical order, which is the one of a
         // 'SELECT * FROM ...'
         Set<ColumnMetadata> otherColumns = new TreeSet<ColumnMetadata>(columnMetadataComparator);
-
         if (cassandraVersion.getMajor() < 2) {
             // In C* 1.2, only the REGULAR columns are in the columns schema table, so we need to add the names from
             // the aliases (and make sure we handle default aliases).
-            List<String> keyAliases = row.getString(KEY_ALIASES) == null
-                                    ? Collections.<String>emptyList()
-                                    : SimpleJSONParser.parseStringList(row.getString(KEY_ALIASES));
+            List<String> keyAliases = (row.getString(KEY_ALIASES) == null) ? Collections.<String>emptyList() : SimpleJSONParser.parseStringList(row.getString(KEY_ALIASES));
             for (int i = 0; i < partitionKey.size(); i++) {
-                String alias = keyAliases.size() > i ? keyAliases.get(i) : (i == 0 ? DEFAULT_KEY_ALIAS : DEFAULT_KEY_ALIAS + (i + 1));
+                String alias = (keyAliases.size() > i) ? keyAliases.get(i) : i == 0 ? DEFAULT_KEY_ALIAS : DEFAULT_KEY_ALIAS + (i + 1);
                 partitionKey.set(i, ColumnMetadata.forAlias(tm, alias, keyValidator.types.get(i)));
             }
-
             for (int i = 0; i < clusteringSize; i++) {
-                String alias = columnAliases.size() > i ? columnAliases.get(i) : DEFAULT_COLUMN_ALIAS + (i + 1);
+                String alias = (columnAliases.size() > i) ? columnAliases.get(i) : DEFAULT_COLUMN_ALIAS + (i + 1);
                 clusteringColumns.set(i, ColumnMetadata.forAlias(tm, alias, comparator.types.get(i)));
                 clusteringOrder.set(i, comparator.reversed.get(i) ? Order.DESC : Order.ASC);
             }
-
             // We have a value alias if we're dense
             if (isDense) {
-                String alias = row.isNull(VALUE_ALIAS) ? DEFAULT_VALUE_ALIAS : row.getString(VALUE_ALIAS);
+                String alias = (row.isNull(VALUE_ALIAS)) ? DEFAULT_VALUE_ALIAS : row.getString(VALUE_ALIAS);
                 DataType type = CassandraTypeParser.parseOne(row.getString(VALIDATOR));
                 otherColumns.add(ColumnMetadata.forAlias(tm, alias, type));
             }
         }
-
         for (ColumnMetadata.Raw rawCol : rawCols.values()) {
             ColumnMetadata col = ColumnMetadata.fromRaw(tm, rawCol);
             switch (rawCol.kind) {
-                case PARTITION_KEY:
+                case PARTITION_KEY :
                     partitionKey.set(rawCol.componentIndex, col);
                     break;
-                case CLUSTERING_KEY:
+                case CLUSTERING_KEY :
                     clusteringColumns.set(rawCol.componentIndex, col);
                     clusteringOrder.set(rawCol.componentIndex, rawCol.isReversed ? Order.DESC : Order.ASC);
                     break;
-                default:
+                default :
                     otherColumns.add(col);
                     break;
             }
         }
-
-        for (ColumnMetadata c : partitionKey)
+        for (ColumnMetadata c : partitionKey) {
             columns.put(c.getName(), c);
-        for (ColumnMetadata c : clusteringColumns)
+        }
+        for (ColumnMetadata c : clusteringColumns) {
             columns.put(c.getName(), c);
-        for (ColumnMetadata c : otherColumns)
+        }
+        for (ColumnMetadata c : otherColumns) {
             columns.put(c.getName(), c);
-
+        }
         ksm.add(tm);
         return tm;
     }
@@ -358,18 +345,16 @@ public class TableMetadata {
      * some definition of human readable at least).
      *
      * @return the CQL queries representing this table schema as a {code
-     * String}.
+    String}.
      */
     public String exportAsString() {
         StringBuilder sb = new StringBuilder();
-
         sb.append(asCQLQuery(true));
-
         for (ColumnMetadata column : columns.values()) {
             ColumnMetadata.IndexMetadata index = column.getIndex();
-            if (index == null)
+            if (index == null) {
                 continue;
-
+            }
             sb.append('\n').append(index.asCQLQuery());
         }
         return sb.toString();
@@ -393,12 +378,11 @@ public class TableMetadata {
 
     private String asCQLQuery(boolean formatted) {
         StringBuilder sb = new StringBuilder();
-
         sb.append("CREATE TABLE ").append(Metadata.escapeId(keyspace.getName())).append('.').append(Metadata.escapeId(name)).append(" (");
         newLine(sb, formatted);
-        for (ColumnMetadata cm : columns.values())
+        for (ColumnMetadata cm : columns.values()) {
             newLine(sb.append(spaces(4, formatted)).append(cm).append(','), formatted);
-
+        }
         // PK
         sb.append(spaces(4, formatted)).append("PRIMARY KEY (");
         if (partitionKey.size() == 1) {
@@ -407,45 +391,54 @@ public class TableMetadata {
             sb.append('(');
             boolean first = true;
             for (ColumnMetadata cm : partitionKey) {
-                if (first) first = false; else sb.append(", ");
+                if (first) {
+                    first = false;
+                } else {
+                    sb.append(", ");
+                }
                 sb.append(Metadata.escapeId(cm.getName()));
             }
             sb.append(')');
         }
-        for (ColumnMetadata cm : clusteringColumns)
+        for (ColumnMetadata cm : clusteringColumns) {
             sb.append(", ").append(Metadata.escapeId(cm.getName()));
+        }
         sb.append(')');
         newLine(sb, formatted);
         // end PK
-
         // Options
         sb.append(") WITH ");
-
-        if (options.isCompactStorage)
+        if (options.isCompactStorage) {
             and(sb.append("COMPACT STORAGE"), formatted);
-        if (!Iterables.all(clusteringOrder, Order.isAscending))
+        }
+        if (!Iterables.all(clusteringOrder, Order.isAscending)) {
             and(appendClusteringOrder(sb), formatted);
+        }
         sb.append("read_repair_chance = ").append(options.readRepair);
         and(sb, formatted).append("dclocal_read_repair_chance = ").append(options.localReadRepair);
-        if (cassandraVersion.getMajor() < 2 || (cassandraVersion.getMajor() == 2 && cassandraVersion.getMinor() == 0))
+        if ((cassandraVersion.getMajor() < 2) || ((cassandraVersion.getMajor() == 2) && (cassandraVersion.getMinor() == 0))) {
             and(sb, formatted).append("replicate_on_write = ").append(options.replicateOnWrite);
+        }
         and(sb, formatted).append("gc_grace_seconds = ").append(options.gcGrace);
         and(sb, formatted).append("bloom_filter_fp_chance = ").append(options.bfFpChance);
-        if (cassandraVersion.getMajor() < 2 || cassandraVersion.getMajor() == 2 && cassandraVersion.getMinor() < 1)
+        if ((cassandraVersion.getMajor() < 2) || ((cassandraVersion.getMajor() == 2) && (cassandraVersion.getMinor() < 1))) {
             and(sb, formatted).append("caching = '").append(options.caching.get("keys")).append('\'');
-        else
+        } else {
             and(sb, formatted).append("caching = ").append(formatOptionMap(options.caching));
-        if (options.comment != null)
-            and(sb, formatted).append("comment = '").append(options.comment.replace("'","''")).append('\'');
+        }
+        if (options.comment != null) {
+            and(sb, formatted).append("comment = '").append(options.comment.replace("'", "''")).append('\'');
+        }
         and(sb, formatted).append("compaction = ").append(formatOptionMap(options.compaction));
         and(sb, formatted).append("compression = ").append(formatOptionMap(options.compression));
         if (cassandraVersion.getMajor() >= 2) {
             and(sb, formatted).append("default_time_to_live = ").append(options.defaultTTL);
             and(sb, formatted).append("speculative_retry = '").append(options.speculativeRetry).append('\'');
-            if (options.indexInterval != null)
+            if (options.indexInterval != null) {
                 and(sb, formatted).append("index_interval = ").append(options.indexInterval);
+            }
         }
-        if (cassandraVersion.getMajor() > 2 || (cassandraVersion.getMajor() == 2 && cassandraVersion.getMinor() >= 1)) {
+        if ((cassandraVersion.getMajor() > 2) || ((cassandraVersion.getMajor() == 2) && (cassandraVersion.getMinor() >= 1))) {
             and(sb, formatted).append("min_index_interval = ").append(options.minIndexInterval);
             and(sb, formatted).append("max_index_interval = ").append(options.maxIndexInterval);
         }
@@ -490,110 +483,142 @@ public class TableMetadata {
     }
 
     static String spaces(int n, boolean formatted) {
-        if (!formatted)
+        if (!formatted) {
             return "";
-
+        }
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++) {
             sb.append(' ');
-
+        }
         return sb.toString();
     }
 
     static StringBuilder newLine(StringBuilder sb, boolean formatted) {
-        if (formatted)
+        if (formatted) {
             sb.append('\n');
+        }
         return sb;
     }
 
     public static class Options {
+        private static final String COMMENT                  = "comment";
 
-        private static final String COMMENT                     = "comment";
-        private static final String READ_REPAIR                 = "read_repair_chance";
-        private static final String LOCAL_READ_REPAIR           = "local_read_repair_chance";
-        private static final String REPLICATE_ON_WRITE          = "replicate_on_write";
-        private static final String GC_GRACE                    = "gc_grace_seconds";
-        private static final String BF_FP_CHANCE                = "bloom_filter_fp_chance";
-        private static final String CACHING                     = "caching";
-        private static final String COMPACTION_CLASS            = "compaction_strategy_class";
-        private static final String COMPACTION_OPTIONS          = "compaction_strategy_options";
-        private static final String MIN_COMPACTION_THRESHOLD    = "min_compaction_threshold";
-        private static final String MAX_COMPACTION_THRESHOLD    = "max_compaction_threshold";
-        private static final String POPULATE_CACHE_ON_FLUSH     = "populate_io_cache_on_flush";
-        private static final String COMPRESSION_PARAMS          = "compression_parameters";
-        private static final String MEMTABLE_FLUSH_PERIOD_MS    = "memtable_flush_period_in_ms";
-        private static final String DEFAULT_TTL                 = "default_time_to_live";
-        private static final String SPECULATIVE_RETRY           = "speculative_retry";
-        private static final String INDEX_INTERVAL              = "index_interval";
+        private static final String READ_REPAIR              = "read_repair_chance";
+
+        private static final String LOCAL_READ_REPAIR        = "local_read_repair_chance";
+
+        private static final String REPLICATE_ON_WRITE       = "replicate_on_write";
+
+        private static final String GC_GRACE                 = "gc_grace_seconds";
+
+        private static final String BF_FP_CHANCE             = "bloom_filter_fp_chance";
+
+        private static final String CACHING                  = "caching";
+
+        private static final String COMPACTION_CLASS         = "compaction_strategy_class";
+
+        private static final String COMPACTION_OPTIONS       = "compaction_strategy_options";
+
+        private static final String MIN_COMPACTION_THRESHOLD = "min_compaction_threshold";
+
+        private static final String MAX_COMPACTION_THRESHOLD = "max_compaction_threshold";
+
+        private static final String POPULATE_CACHE_ON_FLUSH  = "populate_io_cache_on_flush";
+
+        private static final String COMPRESSION_PARAMS       = "compression_parameters";
+
+        private static final String MEMTABLE_FLUSH_PERIOD_MS = "memtable_flush_period_in_ms";
+
+        private static final String DEFAULT_TTL              = "default_time_to_live";
+
+        private static final String SPECULATIVE_RETRY        = "speculative_retry";
+
+        private static final String INDEX_INTERVAL           = "index_interval";
+
         private static final String MIN_INDEX_INTERVAL          = "min_index_interval";
+
         private static final String MAX_INDEX_INTERVAL          = "max_index_interval";
 
         private static final boolean DEFAULT_REPLICATE_ON_WRITE = true;
+
         private static final double DEFAULT_BF_FP_CHANCE = 0.01;
+
         private static final boolean DEFAULT_POPULATE_CACHE_ON_FLUSH = false;
+
         private static final int DEFAULT_MEMTABLE_FLUSH_PERIOD = 0;
+
         private static final int DEFAULT_DEFAULT_TTL = 0;
+
         private static final String DEFAULT_SPECULATIVE_RETRY = "NONE";
+
         private static final int DEFAULT_INDEX_INTERVAL = 128;
+
         private static final int DEFAULT_MIN_INDEX_INTERVAL = 128;
+
         private static final int DEFAULT_MAX_INDEX_INTERVAL = 2048;
 
         private final boolean isCompactStorage;
 
         private final String comment;
+
         private final double readRepair;
+
         private final double localReadRepair;
+
         private final boolean replicateOnWrite;
+
         private final int gcGrace;
+
         private final double bfFpChance;
+
         private final Map<String, String> caching;
+
         private final boolean populateCacheOnFlush;
+
         private final int memtableFlushPeriodMs;
+
         private final int defaultTTL;
+
         private final String speculativeRetry;
+
         private final Integer indexInterval;
+
         private final Integer minIndexInterval;
+
         private final Integer maxIndexInterval;
+
         private final Map<String, String> compaction = new HashMap<String, String>();
+
         private final Map<String, String> compression = new HashMap<String, String>();
 
         Options(Row row, boolean isCompactStorage, VersionNumber version) {
             this.isCompactStorage = isCompactStorage;
-            this.comment = isNullOrAbsent(row, COMMENT) ? "" : row.getString(COMMENT);
+            this.comment = (isNullOrAbsent(row, COMMENT)) ? "" : row.getString(COMMENT);
             this.readRepair = row.getDouble(READ_REPAIR);
             this.localReadRepair = row.getDouble(LOCAL_READ_REPAIR);
-            boolean is210OrMore = version.getMajor() > 2 || (version.getMajor() == 2 && version.getMinor() >= 1);
-            this.replicateOnWrite = is210OrMore || isNullOrAbsent(row, REPLICATE_ON_WRITE) ? DEFAULT_REPLICATE_ON_WRITE : row.getBool(REPLICATE_ON_WRITE);
+            boolean is210OrMore = (version.getMajor() > 2) || ((version.getMajor() == 2) && (version.getMinor() >= 1));
+            this.replicateOnWrite = (is210OrMore || isNullOrAbsent(row, REPLICATE_ON_WRITE)) ? DEFAULT_REPLICATE_ON_WRITE : row.getBool(REPLICATE_ON_WRITE);
             this.gcGrace = row.getInt(GC_GRACE);
-            this.bfFpChance = isNullOrAbsent(row, BF_FP_CHANCE) ? DEFAULT_BF_FP_CHANCE : row.getDouble(BF_FP_CHANCE);
-            this.caching = is210OrMore
-                         ? SimpleJSONParser.parseStringMap(row.getString(CACHING))
-                         : ImmutableMap.of("keys", row.getString(CACHING));
-            this.populateCacheOnFlush = isNullOrAbsent(row, POPULATE_CACHE_ON_FLUSH) ? DEFAULT_POPULATE_CACHE_ON_FLUSH : row.getBool(POPULATE_CACHE_ON_FLUSH);
-            this.memtableFlushPeriodMs = version.getMajor() < 2 || isNullOrAbsent(row, MEMTABLE_FLUSH_PERIOD_MS) ? DEFAULT_MEMTABLE_FLUSH_PERIOD : row.getInt(MEMTABLE_FLUSH_PERIOD_MS);
-            this.defaultTTL = version.getMajor() < 2 || isNullOrAbsent(row, DEFAULT_TTL) ? DEFAULT_DEFAULT_TTL : row.getInt(DEFAULT_TTL);
-            this.speculativeRetry = version.getMajor() < 2 || isNullOrAbsent(row, SPECULATIVE_RETRY) ? DEFAULT_SPECULATIVE_RETRY : row.getString(SPECULATIVE_RETRY);
-
-            if (version.getMajor() >= 2 && !is210OrMore)
-                this.indexInterval = isNullOrAbsent(row, INDEX_INTERVAL) ? DEFAULT_INDEX_INTERVAL : row.getInt(INDEX_INTERVAL);
-            else
+            this.bfFpChance = (isNullOrAbsent(row, BF_FP_CHANCE)) ? DEFAULT_BF_FP_CHANCE : row.getDouble(BF_FP_CHANCE);
+            this.caching = (is210OrMore) ? SimpleJSONParser.parseStringMap(row.getString(CACHING)) : ImmutableMap.of("keys", row.getString(CACHING));
+            this.populateCacheOnFlush = (isNullOrAbsent(row, POPULATE_CACHE_ON_FLUSH)) ? DEFAULT_POPULATE_CACHE_ON_FLUSH : row.getBool(POPULATE_CACHE_ON_FLUSH);
+            this.memtableFlushPeriodMs = ((version.getMajor() < 2) || isNullOrAbsent(row, MEMTABLE_FLUSH_PERIOD_MS)) ? DEFAULT_MEMTABLE_FLUSH_PERIOD : row.getInt(MEMTABLE_FLUSH_PERIOD_MS);
+            this.defaultTTL = ((version.getMajor() < 2) || isNullOrAbsent(row, DEFAULT_TTL)) ? DEFAULT_DEFAULT_TTL : row.getInt(DEFAULT_TTL);
+            this.speculativeRetry = ((version.getMajor() < 2) || isNullOrAbsent(row, SPECULATIVE_RETRY)) ? DEFAULT_SPECULATIVE_RETRY : row.getString(SPECULATIVE_RETRY);
+            if ((version.getMajor() >= 2) && (!is210OrMore)) {
+                this.indexInterval = (isNullOrAbsent(row, INDEX_INTERVAL)) ? DEFAULT_INDEX_INTERVAL : row.getInt(INDEX_INTERVAL);
+            } else {
                 this.indexInterval = null;
-
+            }
             if (is210OrMore) {
-                this.minIndexInterval = isNullOrAbsent(row, MIN_INDEX_INTERVAL)
-                                      ? DEFAULT_MIN_INDEX_INTERVAL
-                                      : row.getInt(MIN_INDEX_INTERVAL);
-                this.maxIndexInterval = isNullOrAbsent(row, MAX_INDEX_INTERVAL)
-                                      ? DEFAULT_MAX_INDEX_INTERVAL
-                                      : row.getInt(MAX_INDEX_INTERVAL);
+                this.minIndexInterval = (isNullOrAbsent(row, MIN_INDEX_INTERVAL)) ? DEFAULT_MIN_INDEX_INTERVAL : row.getInt(MIN_INDEX_INTERVAL);
+                this.maxIndexInterval = (isNullOrAbsent(row, MAX_INDEX_INTERVAL)) ? DEFAULT_MAX_INDEX_INTERVAL : row.getInt(MAX_INDEX_INTERVAL);
             } else {
                 this.minIndexInterval = null;
                 this.maxIndexInterval = null;
             }
-
             this.compaction.put("class", row.getString(COMPACTION_CLASS));
             this.compaction.putAll(SimpleJSONParser.parseStringMap(row.getString(COMPACTION_OPTIONS)));
-
             this.compression.putAll(SimpleJSONParser.parseStringMap(row.getString(COMPRESSION_PARAMS)));
         }
 
@@ -670,7 +695,7 @@ public class TableMetadata {
         /**
          * Returns the caching options for this table.
          *
-         * @return the caching options for this table.
+         * @return the caching option for this table.
          */
         public Map<String, String> getCaching() {
             return caching;
