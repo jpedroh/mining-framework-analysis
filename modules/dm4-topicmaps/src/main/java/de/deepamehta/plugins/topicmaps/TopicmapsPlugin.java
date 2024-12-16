@@ -1,8 +1,5 @@
 package de.deepamehta.plugins.topicmaps;
 
-import de.deepamehta.plugins.topicmaps.model.Topicmap;
-import de.deepamehta.plugins.topicmaps.service.TopicmapsService;
-
 import de.deepamehta.core.Association;
 import de.deepamehta.core.model.AssociationModel;
 import de.deepamehta.core.model.AssociationRoleModel;
@@ -11,31 +8,30 @@ import de.deepamehta.core.model.TopicModel;
 import de.deepamehta.core.model.TopicRoleModel;
 import de.deepamehta.core.osgi.PluginActivator;
 import de.deepamehta.core.service.ClientState;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.POST;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.WebApplicationException;
-
+import de.deepamehta.plugins.topicmaps.model.Topicmap;
+import de.deepamehta.plugins.topicmaps.service.TopicmapsService;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 
 
 @Path("/topicmap")
 @Consumes("application/json")
 @Produces("application/json")
 public class TopicmapsPlugin extends PluginActivator implements TopicmapsService {
-
+    // ---------------------------------------------------------------------------------------------- Instance Variables
     // ---------------------------------------------------------------------------------------------- Instance Variables
 
     private Logger logger = Logger.getLogger(getClass().getName());
@@ -101,9 +97,7 @@ public class TopicmapsPlugin extends PluginActivator implements TopicmapsService
         CompositeValue topicmapState = new CompositeValue().put("dm4.topicmaps.state", new CompositeValue()
             .put("dm4.topicmaps.translation", new CompositeValue()
                 .put("dm4.topicmaps.translation_x", trans_x)
-                .put("dm4.topicmaps.translation_y", trans_y)
-            )
-        );
+                .put("dm4.topicmaps.translation_y", trans_y)));
         dms.updateTopic(new TopicModel(topicmapId, topicmapState), null);
     }
 
@@ -126,8 +120,6 @@ public class TopicmapsPlugin extends PluginActivator implements TopicmapsService
         // Note: the template parameters are evaluated at client-side
         return invokeWebclient();
     }
-
-
 
     // ------------------------------------------------------------------------------------------------- Private Methods
 

@@ -1,12 +1,5 @@
 package de.deepamehta.plugins.accesscontrol;
 
-import de.deepamehta.plugins.accesscontrol.model.Operation;
-import de.deepamehta.plugins.accesscontrol.model.Permissions;
-import de.deepamehta.plugins.accesscontrol.model.Role;
-import de.deepamehta.plugins.accesscontrol.service.AccessControlService;
-import de.deepamehta.plugins.facets.service.FacetsService;
-import de.deepamehta.plugins.workspaces.service.WorkspacesService;
-
 import de.deepamehta.core.RelatedTopic;
 import de.deepamehta.core.ResultSet;
 import de.deepamehta.core.Topic;
@@ -21,61 +14,66 @@ import de.deepamehta.core.service.ClientState;
 import de.deepamehta.core.service.Directives;
 import de.deepamehta.core.service.PluginService;
 import de.deepamehta.core.service.listener.IntroduceTopicTypeListener;
-import de.deepamehta.core.service.listener.PostCreateTopicListener;
-import de.deepamehta.core.service.listener.PreSendTopicListener;
-import de.deepamehta.core.service.listener.PreSendTopicTypeListener;
-import de.deepamehta.core.service.listener.PostInstallPluginListener;
 import de.deepamehta.core.service.listener.PluginServiceArrivedListener;
 import de.deepamehta.core.service.listener.PluginServiceGoneListener;
+import de.deepamehta.core.service.listener.PostCreateTopicListener;
+import de.deepamehta.core.service.listener.PostInstallPluginListener;
+import de.deepamehta.core.service.listener.PreSendTopicListener;
+import de.deepamehta.core.service.listener.PreSendTopicTypeListener;
 import de.deepamehta.core.util.JavaUtils;
-
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.POST;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.CookieParam;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Cookie;
-
-import static java.util.Arrays.asList;
+import de.deepamehta.plugins.accesscontrol.model.Operation;
+import de.deepamehta.plugins.accesscontrol.model.Permissions;
+import de.deepamehta.plugins.accesscontrol.model.Role;
+import de.deepamehta.plugins.accesscontrol.service.AccessControlService;
+import de.deepamehta.plugins.facets.service.FacetsService;
+import de.deepamehta.plugins.workspaces.service.WorkspacesService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-
+import javax.ws.rs.Consumes;
+import javax.ws.rs.CookieParam;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Cookie;
+import static java.util.Arrays.asList;
 
 
 @Path("/accesscontrol")
 @Consumes("application/json")
 @Produces("application/json")
-public class AccessControlPlugin extends PluginActivator implements AccessControlService, PostCreateTopicListener,
-                                                                                          PreSendTopicListener,
-                                                                                          PreSendTopicTypeListener,
-                                                                                          PostInstallPluginListener,
-                                                                                          IntroduceTopicTypeListener,
-                                                                                          PluginServiceArrivedListener,
-                                                                                          PluginServiceGoneListener {
-
+public class AccessControlPlugin extends PluginActivator implements AccessControlService , PostCreateTopicListener , PreSendTopicListener , PreSendTopicTypeListener , PostInstallPluginListener , IntroduceTopicTypeListener , PluginServiceArrivedListener , PluginServiceGoneListener {
     private static final String DEFAULT_USERNAME = "admin";
+
     private static final String DEFAULT_PASSWORD = "";
+
+    // don't change this
     private static final String ENCRYPTED_PASSWORD_PREFIX = "-SHA256-";  // don't change this
 
     // association type semantics ### TODO: to be dropped. Model-driven manipulators required.
+    // association type semantics ### TODO: to be dropped. Model-driven manipulators required.
     private static final String WORKSPACE_MEMBERSHIP = "dm4.accesscontrol.membership";
+
     private static final String ROLE_TYPE_USER       = "dm4.core.default";
+
     private static final String ROLE_TYPE_WORKSPACE  = "dm4.core.default";
 
     // ---------------------------------------------------------------------------------------------- Instance Variables
+    // ---------------------------------------------------------------------------------------------- Instance Variables
 
     private static final Permissions DEFAULT_TOPIC_PERMISSIONS = new Permissions();
+
     private static final Permissions DEFAULT_TYPE_PERMISSIONS  = new Permissions();
+
     static {
         DEFAULT_TOPIC_PERMISSIONS.add(Operation.WRITE, true);
         DEFAULT_TYPE_PERMISSIONS.add(Operation.WRITE, true);
@@ -83,6 +81,7 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
     }
 
     private FacetsService facetsService;
+
     private WorkspacesService wsService;
 
     private Logger logger = Logger.getLogger(getClass().getName());
@@ -131,23 +130,25 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
     }
 
     // ---
-
     @GET
     @Path("/owner/{user_id}/{type_uri}")
     @Override
-    public Topic getOwnedTopic(@PathParam("user_id") long userId, @PathParam("type_uri") String typeUri) {
+    public Topic getOwnedTopic(@PathParam("user_id")
+    long userId, @PathParam("type_uri")
+    String typeUri) {
         /* ### TODO: adapt to DM4
         List<RelatedTopic> topics = dms.getRelatedTopics(userId, asList(typeUri),
-            asList(RelationType.TOPIC_OWNER.name() + ";OUTGOING"), null);
+        asList(RelationType.TOPIC_OWNER.name() + ";OUTGOING"), null);
         //
         if (topics.size() == 0) {
-            return null;
+        return null;
         } else if (topics.size() > 1) {
-            throw new RuntimeException("Ambiguity: owner " + userId + " has " +
-                topics.size() + " " + typeUri + " topics");
+        throw new RuntimeException("Ambiguity: owner " + userId + " has " +
+        topics.size() + " " + typeUri + " topics");
         }
         //
-        return topics.get(0).getTopic(); */
+        return topics.get(0).getTopic();
+         */
         return null;
     }
 
@@ -187,21 +188,16 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
             new TopicRoleModel(workspaceId, ROLE_TYPE_WORKSPACE)), null);
     }
 
-
-
     // ********************************
     // *** Listener Implementations ***
     // ********************************
-
-
-
     @Override
     public void postCreateTopic(Topic topic, ClientState clientState, Directives directives) {
         // ### TODO: explain
         if (isPluginTopic(topic)) {
             return;
         }
-        //
+        // 
         setCreator(topic, clientState);
         createACLEntry(topic, Role.CREATOR, DEFAULT_TOPIC_PERMISSIONS);
     }
@@ -218,32 +214,30 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
             }
         }
     } */
-
     @Override
     public void introduceTopicType(TopicType topicType, ClientState clientState) {
         // ### TODO: explain
         if (topicType.getUri().equals("dm4.core.meta_meta_type")) {
             return;
         }
-        //
+        // 
         setCreator(topicType, clientState);
         createACLEntry(topicType, Role.CREATOR, DEFAULT_TYPE_PERMISSIONS);
     }
 
     // ---
-
     @Override
     public void preSendTopic(Topic topic, ClientState clientState) {
         // ### TODO: explain
         if (isPluginTopic(topic)) {
-            enrichWithPermissions(topic, false);    // write=false
+            enrichWithPermissions(topic, false);// write=false
+
             return;
         }
-        //
-        logger.info("### Enriching " + info(topic) + " with its permissions (clientState=" + clientState + ")");
+        // 
+        logger.info(((("### Enriching " + info(topic)) + " with its permissions (clientState=") + clientState) + ")");
         Topic username = getUsername(clientState);
-        enrichWithPermissions(topic,
-            hasPermission(username, Operation.WRITE, topic));
+        enrichWithPermissions(topic, hasPermission(username, Operation.WRITE, topic));
     }
 
     @Override
@@ -252,15 +246,14 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
         // - "Access Control List Facet": endless recursion would occur. ### FIXDOC
         // - "Meta Meta Type": doesn't exist in DB. Retrieving its ACL would fail.
         if (isPluginType(topicType) || topicType.getUri().equals("dm4.core.meta_meta_type")) {
-            enrichWithPermissions(topicType, false, false);     // write=false, create=false
+            enrichWithPermissions(topicType, false, false);// write=false, create=false
+
             return;
         }
-        //
-        logger.info("### Enriching topic type \"" + topicType.getUri() + "\" with its permissions");
+        // 
+        logger.info(("### Enriching topic type \"" + topicType.getUri()) + "\" with its permissions");
         Topic username = getUsername(clientState);
-        enrichWithPermissions(topicType,
-            hasPermission(username, Operation.WRITE, topicType),
-            hasPermission(username, Operation.CREATE, topicType));
+        enrichWithPermissions(topicType, hasPermission(username, Operation.WRITE, topicType), hasPermission(username, Operation.CREATE, topicType));
     }
 
     @Override
@@ -273,9 +266,9 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
     public void pluginServiceArrived(PluginService service) {
         logger.info("########## Service arrived: " + service);
         if (service instanceof FacetsService) {
-            facetsService = (FacetsService) service;
+            facetsService = ((FacetsService) (service));
         } else if (service instanceof WorkspacesService) {
-            wsService = (WorkspacesService) service;
+            wsService = ((WorkspacesService) (service));
         }
     }
 
@@ -288,8 +281,6 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
             wsService = null;
         }
     }
-
-
 
     // ------------------------------------------------------------------------------------------------- Private Methods
 
@@ -373,10 +364,10 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
      * @param   username    a Topic of type "Username" (<code>dm4.accesscontrol.username</code>).
      */
     private boolean hasPermission(Topic username, Operation operation, Topic topic) {
-        logger.fine("Determining permission for " + userInfo(username) + " to " + operation + " " + info(topic));
+        logger.fine((((("Determining permission for " + userInfo(username)) + " to ") + operation) + " ") + info(topic));
         for (RelatedTopic aclEntry : getACLEntries(topic)) {
             String roleUri = aclEntry.getCompositeValue().getTopic("dm4.accesscontrol.role").getUri();
-            logger.fine("There is an ACL entry for role \"" + roleUri + "\"");
+            logger.fine(("There is an ACL entry for role \"" + roleUri) + "\"");
             boolean allowedForRole = getAllowed(aclEntry, operation);
             logger.fine("value=" + allowedForRole);
             if (allowedForRole && userOccupiesRole(topic, username, roleUri)) {
@@ -389,20 +380,19 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
     }
 
     // ---
-
     /**
      * @param   username    a Topic of type "Username" (<code>dm4.accesscontrol.username</code>).
      */
     private boolean userOccupiesRole(Topic topic, Topic username, String roleUri) {
-        //
+        // 
         if (roleUri.equals("dm4.accesscontrol.role_everyone")) {
             return true;
         }
-        //
+        // 
         if (username == null) {
             return false;
         }
-        //
+        // 
         if (roleUri.equals("dm4.accesscontrol.role_member")) {
             if (userIsMember(username, topic)) {
                 return true;
@@ -416,7 +406,7 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
                 return true;
             }
         } else {
-            throw new RuntimeException("\"" + roleUri + "\" is an unexpected role URI");
+            throw new RuntimeException(("\"" + roleUri) + "\" is an unexpected role URI");
         }
         return false;
     }
@@ -520,7 +510,6 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
     }
 
     // ---
-
     private void enrichWithPermissions(Topic topic, boolean write) {
         // Note: we must extend/override possibly existing permissions.
         // Consider a type update: directive UPDATE_TOPIC_TYPE is followed by UPDATE_TOPIC, both on the same object.
@@ -537,7 +526,6 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
     }
 
     // ---
-
     private CompositeValue getPermissions(Topic topic) {
         // Note: "dm4.accesscontrol.permissions" is a contrived URI. There is no such type definition.
         // Permissions are transient data, not stored in DB, recalculated for each request.
@@ -575,7 +563,6 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
     }
 
     // ---
-
     private Permissions permissions(boolean write) {
         Permissions permissions = new Permissions();
         permissions.add(Operation.WRITE, write);

@@ -18,54 +18,49 @@ import de.deepamehta.core.service.CommandResult;
 import de.deepamehta.core.service.CoreEvent;
 import de.deepamehta.core.service.Directives;
 import de.deepamehta.core.service.PluginInfo;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.DELETE;
+import java.util.Set;
+import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 
-import java.util.Set;
-import java.util.logging.Logger;
-
-
 
 @Path("/core")
 @Consumes("application/json")
 @Produces("application/json")
 public class WebservicePlugin extends PluginActivator {
-
+    // ---------------------------------------------------------------------------------------------- Instance Variables
     // ---------------------------------------------------------------------------------------------- Instance Variables
 
     private Logger logger = Logger.getLogger(getClass().getName());
 
     // -------------------------------------------------------------------------------------------------- Public Methods
-
-
-
     // === Topics ===
-
     @GET
     @Path("/topic/{id}")
-    public Topic getTopic(@PathParam("id") long topicId,
-                          @QueryParam("fetch_composite") @DefaultValue("true") boolean fetchComposite,
-                          @HeaderParam("Cookie") ClientState clientState) {
+    public Topic getTopic(@PathParam("id")
+    long topicId, @QueryParam("fetch_composite")
+    @DefaultValue("true")
+    boolean fetchComposite, @HeaderParam("Cookie")
+    ClientState clientState) {
         try {
             Topic topic = dms.getTopic(topicId, fetchComposite, clientState);
             //
             firePreSend(topic, clientState);
-            //
+            // 
             return topic;
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             throw new WebApplicationException(e);
         }
     }
@@ -84,17 +79,19 @@ public class WebservicePlugin extends PluginActivator {
 
     @GET
     @Path("/topic/by_type/{type_uri}")
-    public ResultSet<Topic> getTopics(@PathParam("type_uri") String typeUri,
-                                      @QueryParam("fetch_composite") @DefaultValue("false") boolean fetchComposite,
-                                      @QueryParam("max_result_size") int maxResultSize,
-                                      @HeaderParam("Cookie") ClientState clientState) {
+    public ResultSet<Topic> getTopics(@PathParam("type_uri")
+    String typeUri, @QueryParam("fetch_composite")
+    @DefaultValue("false")
+    boolean fetchComposite, @QueryParam("max_result_size")
+    int maxResultSize, @HeaderParam("Cookie")
+    ClientState clientState) {
         try {
             ResultSet<Topic> topics = dms.getTopics(typeUri, fetchComposite, maxResultSize, clientState);
-            //
-            firePreSend(topics, clientState);
+            // 
+            triggerPreSend(topics, clientState);
             //
             return topics;
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             throw new WebApplicationException(e);
         }
     }
@@ -114,28 +111,30 @@ public class WebservicePlugin extends PluginActivator {
 
     @POST
     @Path("/topic")
-    public Topic createTopic(TopicModel model, @HeaderParam("Cookie") ClientState clientState) {
+    public Topic createTopic(TopicModel model, @HeaderParam("Cookie")
+    ClientState clientState) {
         try {
             Topic topic = dms.createTopic(model, clientState);
             //
             firePreSend(topic, clientState);
-            //
+            // 
             return topic;
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             throw new WebApplicationException(e);
         }
     }
 
     @PUT
     @Path("/topic")
-    public Directives updateTopic(TopicModel model, @HeaderParam("Cookie") ClientState clientState) {
+    public Directives updateTopic(TopicModel model, @HeaderParam("Cookie")
+    ClientState clientState) {
         try {
             Directives directives = dms.updateTopic(model, clientState);
             //
             firePreSend(directives, clientState);
-            //
+            // 
             return directives;
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             throw new WebApplicationException(e);
         }
     }
@@ -150,22 +149,21 @@ public class WebservicePlugin extends PluginActivator {
         }
     }
 
-
-
     // === Associations ===
-
     @GET
     @Path("/association/{id}")
-    public Association getAssociation(@PathParam("id") long assocId,
-                                      @QueryParam("fetch_composite") @DefaultValue("true") boolean fetchComposite,
-                                      @HeaderParam("Cookie") ClientState clientState) {
+    public Association getAssociation(@PathParam("id")
+    long assocId, @QueryParam("fetch_composite")
+    @DefaultValue("true")
+    boolean fetchComposite, @HeaderParam("Cookie")
+    ClientState clientState) {
         try {
             Association assoc = dms.getAssociation(assocId, fetchComposite, clientState);
             //
-            // firePreSend(assoc, clientState);  ### TODO
+            // triggerPreSend(assoc, clientState);  ### TODO
             //
             return assoc;
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             throw new WebApplicationException(e);
         }
     }
@@ -242,8 +240,6 @@ public class WebservicePlugin extends PluginActivator {
         }
     }
 
-
-
     // === Topic Types ===
 
     @GET
@@ -258,57 +254,60 @@ public class WebservicePlugin extends PluginActivator {
 
     @GET
     @Path("/topictype/{uri}")
-    public TopicType getTopicType(@PathParam("uri") String uri, @HeaderParam("Cookie") ClientState clientState) {
+    public TopicType getTopicType(@PathParam("uri")
+    String uri, @HeaderParam("Cookie")
+    ClientState clientState) {
         try {
             TopicType topicType = dms.getTopicType(uri, clientState);
             //
             firePreSend(topicType, clientState);
-            //
+            // 
             return topicType;
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             throw new WebApplicationException(e);
         }
     }
 
     @GET
     @Path("/topictype/all")
-    public Set<TopicType> getAllTopicTypes(@HeaderParam("Cookie") ClientState clientState) {
+    public Set<TopicType> getAllTopicTypes(@HeaderParam("Cookie")
+    ClientState clientState) {
         try {
             return dms.getAllTopicTypes(clientState);
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             throw new WebApplicationException(e);
         }
     }
 
     @POST
     @Path("/topictype")
-    public TopicType createTopicType(TopicTypeModel topicTypeModel, @HeaderParam("Cookie") ClientState clientState) {
+    public TopicType createTopicType(TopicTypeModel topicTypeModel, @HeaderParam("Cookie")
+    ClientState clientState) {
         try {
             TopicType topicType = dms.createTopicType(topicTypeModel, clientState);
-            //
-            firePreSend(topicType, clientState);
+            // 
+            triggerPreSend(topicType, clientState);
             //
             return topicType;
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             throw new WebApplicationException(e);
         }
     }
 
     @PUT
     @Path("/topictype")
-    public Directives updateTopicType(TopicTypeModel model, @HeaderParam("Cookie") ClientState clientState) {
+    public Directives updateTopicType(TopicTypeModel model, @HeaderParam("Cookie")
+    ClientState clientState) {
         try {
             Directives directives = dms.updateTopicType(model, clientState);
-            //
-            firePreSend(directives, clientState);
+            // 
+            triggerPreSend(directives, clientState);
             //
             return directives;
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             throw new WebApplicationException(e);
         }
     }
-
-
 
     // === Association Types ===
 
@@ -335,10 +334,11 @@ public class WebservicePlugin extends PluginActivator {
 
     @GET
     @Path("/assoctype/all")
-    public Set<AssociationType> getAssociationAllTypes(@HeaderParam("Cookie") ClientState clientState) {
+    public Set<AssociationType> getAssociationAllTypes(@HeaderParam("Cookie")
+    ClientState clientState) {
         try {
             return dms.getAllAssociationTypes(clientState);
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             throw new WebApplicationException(e);
         }
     }
@@ -354,25 +354,22 @@ public class WebservicePlugin extends PluginActivator {
         }
     }
 
-
-
     // === Commands ===
-
     // ### TODO: drop this method. For the moment it stays here to illustrate file uploading.
     // ### See de.deepamehta.plugins.webservice.provider.CommandParamsProvider
     @POST
     @Path("/command/{command}")
     @Consumes("application/json, multipart/form-data")
-    public CommandResult executeCommand(@PathParam("command") String command, CommandParams params,
-                                        @HeaderParam("Cookie") ClientState clientState) {
+    public CommandResult executeCommand(@PathParam("command")
+    String command, CommandParams params, @HeaderParam("Cookie")
+    ClientState clientState) {
         try {
-            return null;    // ### dms.executeCommand(command, params, clientState);
-        } catch (Exception e) {
+            return null;// ### dms.executeCommand(command, params, clientState);
+
+        } catch (java.lang.Exception e) {
             throw new WebApplicationException(e);
         }
     }
-
-
 
     // === Plugins ===
 
@@ -385,8 +382,6 @@ public class WebservicePlugin extends PluginActivator {
             throw new WebApplicationException(e);
         }
     }
-
-
 
     // **********************
     // *** Topic REST API ***
@@ -417,18 +412,11 @@ public class WebservicePlugin extends PluginActivator {
         }
     }
 
-
-
     // ****************************
     // *** Association REST API ***
     // ****************************
-
     // ### TODO
-
-
-
     // ------------------------------------------------------------------------------------------------- Private Methods
-
     private void firePreSend(Topic topic, ClientState clientState) {
         dms.fireEvent(CoreEvent.PRE_SEND_TOPIC, topic, clientState);
     }
@@ -437,21 +425,21 @@ public class WebservicePlugin extends PluginActivator {
         dms.fireEvent(CoreEvent.PRE_SEND_TOPIC_TYPE, topicType, clientState);
     }
 
-    private void firePreSend(ResultSet<Topic> topics, ClientState clientState) {
+    private void triggerPreSend(ResultSet<Topic> topics, ClientState clientState) {
         for (Topic topic : topics) {
-            firePreSend(topic, clientState);
+            triggerPreSend(topic, clientState);
         }
     }
 
     private void firePreSend(Directives directives, ClientState clientState) {
         for (Directives.Entry entry : directives) {
             switch (entry.dir) {
-            case UPDATE_TOPIC:
-                firePreSend((Topic) entry.arg, clientState);
-                break;
-            case UPDATE_TOPIC_TYPE:
-                firePreSend((TopicType) entry.arg, clientState);
-                break;
+                case UPDATE_TOPIC :
+                    firePreSend(((Topic) (entry.arg)), clientState);
+                    break;
+                case UPDATE_TOPIC_TYPE :
+                    firePreSend(((TopicType) (entry.arg)), clientState);
+                    break;
             }
         }
     }
