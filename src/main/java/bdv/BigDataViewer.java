@@ -29,31 +29,6 @@
  */
 package bdv;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.ActionMap;
-import javax.swing.JFileChooser;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JSeparator;
-import javax.swing.filechooser.FileFilter;
-
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
-import org.scijava.ui.behaviour.io.InputTriggerConfig;
-import org.scijava.ui.behaviour.io.yaml.YamlConfigIO;
-
 import bdv.cache.CacheControl;
 import bdv.export.ProgressWriter;
 import bdv.export.ProgressWriterConsole;
@@ -84,6 +59,20 @@ import bdv.viewer.SourceAndConverter;
 import bdv.viewer.ViewerFrame;
 import bdv.viewer.ViewerOptions;
 import bdv.viewer.ViewerPanel;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.ActionMap;
+import javax.swing.JFileChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JSeparator;
+import javax.swing.filechooser.FileFilter;
 import mpicbg.spim.data.SpimDataException;
 import mpicbg.spim.data.generic.AbstractSpimData;
 import mpicbg.spim.data.generic.sequence.AbstractSequenceDescription;
@@ -96,9 +85,17 @@ import net.imglib2.display.ScaledARGBConverter;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.volatiles.VolatileARGBType;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
+import org.scijava.ui.behaviour.io.InputTriggerConfig;
+import org.scijava.ui.behaviour.io.yaml.YamlConfigIO;
 
-public class BigDataViewer
-{
+
+public class BigDataViewer {
 	protected final ViewerFrame viewerFrame;
 
 	protected final ViewerPanel viewer;
@@ -138,8 +135,7 @@ public class BigDataViewer
 		manualTransformationEditor.toggle();
 	}
 
-	public void initSetBookmark()
-	{
+	public void initSetBookmark() {
 		bookmarkEditor.initSetBookmark();
 	}
 
@@ -148,13 +144,11 @@ public class BigDataViewer
 		bookmarkEditor.initCreateDynamicBookmark();
 	}
 
-	public void initGoToBookmark()
-	{
+	public void initGoToBookmark() {
 		bookmarkEditor.initGoToBookmark();
 	}
 
-	public void initGoToBookmarkRotation()
-	{
+	public void initGoToBookmarkRotation() {
 		bookmarkEditor.initGoToBookmarkRotation();
 	}
 
@@ -336,169 +330,123 @@ public class BigDataViewer
 	 * @param options
 	 *            optional parameters.
 	 */
-	public BigDataViewer(
-			final ArrayList< ConverterSetup > converterSetups,
-			final ArrayList< SourceAndConverter< ? > > sources,
-			final AbstractSpimData< ? > spimData,
-			final int numTimepoints,
-			final CacheControl cache,
-			final String windowTitle,
-			final ProgressWriter progressWriter,
-			final ViewerOptions options )
-	{
-		final InputTriggerConfig inputTriggerConfig = getInputTriggerConfig( options );
-		if ( options.values.getTransformEventHandlerFactory() instanceof BehaviourTransformEventHandlerFactory )
-			( ( BehaviourTransformEventHandlerFactory< ? > ) options.values.getTransformEventHandlerFactory() ).setConfig( inputTriggerConfig );
-
-		viewerFrame = new ViewerFrame( sources, numTimepoints, cache, options );
-
-		viewerFrame.setSaveOnCloseFunction( this::onViewerFrameOnClose );
-
-		if ( windowTitle != null )
-			viewerFrame.setTitle( windowTitle );
-		viewer = viewerFrame.getViewerPanel();
-
-		for ( final ConverterSetup cs : converterSetups )
-			cs.setViewer( viewer );
-
-		manualTransformation = new ManualTransformation( viewer );
-		manualTransformationEditor = new ManualTransformationEditor( viewer, viewerFrame.getKeybindings() );
-
-		bookmarks = new Bookmarks();
-		bookmarkEditor = new BookmarksEditor( viewer, viewerFrame.getKeybindings(), bookmarks );
-
-		setupAssignments = new SetupAssignments( converterSetups, 0, 65535 );
-		if ( setupAssignments.getMinMaxGroups().size() > 0 )
-		{
-			final MinMaxGroup group = setupAssignments.getMinMaxGroups().get( 0 );
-			for ( final ConverterSetup setup : setupAssignments.getConverterSetups() )
-				setupAssignments.moveSetupToGroup( setup, group );
+	public BigDataViewer(final ArrayList<ConverterSetup> converterSetups, final ArrayList<SourceAndConverter<?>> sources, final AbstractSpimData<?> spimData, final int numTimepoints, final CacheControl cache, final String windowTitle, final ProgressWriter progressWriter, final ViewerOptions options) {
+		final InputTriggerConfig inputTriggerConfig = getInputTriggerConfig(options);
+		if (options.values.getTransformEventHandlerFactory() instanceof BehaviourTransformEventHandlerFactory) {
+			((BehaviourTransformEventHandlerFactory<?>) (options.values.getTransformEventHandlerFactory())).setConfig(inputTriggerConfig);
 		}
-
-		brightnessDialog = new BrightnessDialog( viewerFrame, setupAssignments );
-
-		if (spimData != null )
-			viewer.getSourceInfoOverlayRenderer().setTimePointsOrdered( spimData.getSequenceDescription().getTimePoints().getTimePointsOrdered() );
-
-		cropDialog = ( spimData == null ) ? null : new CropDialog( viewerFrame, viewer, spimData.getSequenceDescription() );
-
-		movieDialog = new RecordMovieDialog( viewerFrame, viewer, progressWriter );
+		viewerFrame = new ViewerFrame(sources, numTimepoints, cache, options);
+		viewerFrame.setSaveOnCloseFunction(this::onViewerFrameOnClose);
+		if (windowTitle != null) {
+			viewerFrame.setTitle(windowTitle);
+		}
+		viewer = viewerFrame.getViewerPanel();
+		for (final ConverterSetup cs : converterSetups) {
+			cs.setViewer(viewer);
+		}
+		manualTransformation = new ManualTransformation(viewer);
+		manualTransformationEditor = new ManualTransformationEditor(viewer, viewerFrame.getKeybindings());
+		bookmarks = new Bookmarks();
+		bookmarkEditor = new BookmarksEditor(viewer, viewerFrame.getKeybindings(), bookmarks);
+		setupAssignments = new SetupAssignments(converterSetups, 0, 65535);
+		if (setupAssignments.getMinMaxGroups().size() > 0) {
+			final MinMaxGroup group = setupAssignments.getMinMaxGroups().get(0);
+			for (final ConverterSetup setup : setupAssignments.getConverterSetups()) {
+				setupAssignments.moveSetupToGroup(setup, group);
+			}
+		}
+		brightnessDialog = new BrightnessDialog(viewerFrame, setupAssignments);
+		if (spimData != null) {
+			viewer.getSourceInfoOverlayRenderer().setTimePointsOrdered(spimData.getSequenceDescription().getTimePoints().getTimePointsOrdered());
+		}
+		cropDialog = (spimData == null) ? null : new CropDialog(viewerFrame, viewer, spimData.getSequenceDescription());
+		movieDialog = new RecordMovieDialog(viewerFrame, viewer, progressWriter);
 		// this is just to get updates of window size:
-		viewer.getDisplay().addOverlayRenderer( movieDialog );
-
-		movieMaxProjectDialog = new RecordMaxProjectionDialog( viewerFrame, viewer, progressWriter );
+		viewer.getDisplay().addOverlayRenderer(movieDialog);
+		movieMaxProjectDialog = new RecordMaxProjectionDialog(viewerFrame, viewer, progressWriter);
 		// this is just to get updates of window size:
-		viewer.getDisplay().addOverlayRenderer( movieMaxProjectDialog );
-
-		activeSourcesDialog = new VisibilityAndGroupingDialog( viewerFrame, viewer.getVisibilityAndGrouping() );
-
-		addBookmarkDialog = new AddBookmarkDialog( viewerFrame, bookmarkEditor );
-		bookmarkManagementDialog = new BookmarkManagementDialog( viewerFrame, bookmarkEditor );
-
-		helpDialog = new HelpDialog( viewerFrame );
-
+		viewer.getDisplay().addOverlayRenderer(movieMaxProjectDialog);
+		activeSourcesDialog = new VisibilityAndGroupingDialog(viewerFrame, viewer.getVisibilityAndGrouping());
+		addBookmarkDialog = new AddBookmarkDialog(viewerFrame, bookmarkEditor);
+		bookmarkManagementDialog = new BookmarkManagementDialog(viewerFrame, bookmarkEditor);
+		helpDialog = new HelpDialog(viewerFrame);
 		fileChooser = new JFileChooser();
-		fileChooser.setFileFilter( new FileFilter()
-		{
+		fileChooser.setFileFilter(new FileFilter() {
 			@Override
-			public String getDescription()
-			{
+			public String getDescription() {
 				return "xml files";
 			}
 
 			@Override
-			public boolean accept( final File f )
-			{
-				if ( f.isDirectory() )
+			public boolean accept(final File f) {
+				if (f.isDirectory()) {
 					return true;
-				if ( f.isFile() )
-				{
+				}
+				if (f.isFile()) {
 					final String s = f.getName();
-					final int i = s.lastIndexOf( '.' );
-					if ( i > 0 && i < s.length() - 1 )
-					{
-						final String ext = s.substring( i + 1 ).toLowerCase();
-						return ext.equals( "xml" );
+					final int i = s.lastIndexOf('.');
+					if ((i > 0) && (i < (s.length() - 1))) {
+						final String ext = s.substring(i + 1).toLowerCase();
+						return ext.equals("xml");
 					}
 				}
 				return false;
 			}
-		} );
-
-		NavigationActions.installActionBindings( viewerFrame.getKeybindings(), viewer, inputTriggerConfig );
-		BigDataViewerActions.installActionBindings( viewerFrame.getKeybindings(), this, inputTriggerConfig );
-
+		});
+		NavigationActions.installActionBindings(viewerFrame.getKeybindings(), viewer, inputTriggerConfig);
+		BigDataViewerActions.installActionBindings(viewerFrame.getKeybindings(), this, inputTriggerConfig);
 		final JMenuBar menubar = new JMenuBar();
-		JMenu menu = new JMenu( "File" );
-		menubar.add( menu );
-
+		JMenu menu = new JMenu("File");
+		menubar.add(menu);
 		final ActionMap actionMap = viewerFrame.getKeybindings().getConcatenatedActionMap();
-		final JMenuItem miLoadSettings = new JMenuItem( actionMap.get( BigDataViewerActions.LOAD_SETTINGS ) );
-		miLoadSettings.setText( "Load settings" );
-		menu.add( miLoadSettings );
-
-		final JMenuItem miSaveSettings = new JMenuItem( actionMap.get( BigDataViewerActions.SAVE_SETTINGS ) );
-		miSaveSettings.setText( "Save settings" );
-		menu.add( miSaveSettings );
-
-		menu = new JMenu( "Settings" );
-		menubar.add( menu );
-
-		final JMenuItem miBrightness = new JMenuItem( actionMap.get( BigDataViewerActions.BRIGHTNESS_SETTINGS ) );
-		miBrightness.setText( "Brightness & Color" );
-		menu.add( miBrightness );
-
-		final JMenuItem miVisibility = new JMenuItem( actionMap.get( BigDataViewerActions.VISIBILITY_AND_GROUPING ) );
-		miVisibility.setText( "Visibility & Grouping" );
-		menu.add( miVisibility );
-
-		menu = new JMenu( "Tools" );
-		menubar.add( menu );
-
-		if ( cropDialog != null )
-		{
-			final JMenuItem miCrop = new JMenuItem( actionMap.get( BigDataViewerActions.CROP ) );
-			miCrop.setText( "Crop" );
-			menu.add( miCrop );
+		final JMenuItem miLoadSettings = new JMenuItem(actionMap.get(BigDataViewerActions.LOAD_SETTINGS));
+		miLoadSettings.setText("Load settings");
+		menu.add(miLoadSettings);
+		final JMenuItem miSaveSettings = new JMenuItem(actionMap.get(BigDataViewerActions.SAVE_SETTINGS));
+		miSaveSettings.setText("Save settings");
+		menu.add(miSaveSettings);
+		menu = new JMenu("Settings");
+		menubar.add(menu);
+		final JMenuItem miBrightness = new JMenuItem(actionMap.get(BigDataViewerActions.BRIGHTNESS_SETTINGS));
+		miBrightness.setText("Brightness & Color");
+		menu.add(miBrightness);
+		final JMenuItem miVisibility = new JMenuItem(actionMap.get(BigDataViewerActions.VISIBILITY_AND_GROUPING));
+		miVisibility.setText("Visibility & Grouping");
+		menu.add(miVisibility);
+		menu = new JMenu("Tools");
+		menubar.add(menu);
+		if (cropDialog != null) {
+			final JMenuItem miCrop = new JMenuItem(actionMap.get(BigDataViewerActions.CROP));
+			miCrop.setText("Crop");
+			menu.add(miCrop);
 		}
-
-		final JMenuItem miMovie = new JMenuItem( actionMap.get( BigDataViewerActions.RECORD_MOVIE ) );
-		miMovie.setText( "Record Movie" );
-		menu.add( miMovie );
-
-		final JMenuItem miMaxProjectMovie = new JMenuItem( actionMap.get( BigDataViewerActions.RECORD_MAX_PROJECTION_MOVIE ) );
-		miMaxProjectMovie.setText( "Record Max-Projection Movie" );
-		menu.add( miMaxProjectMovie );
-
-		final JMenuItem miManualTransform = new JMenuItem( actionMap.get( BigDataViewerActions.MANUAL_TRANSFORM ) );
-		miManualTransform.setText( "Manual Transform" );
-		menu.add( miManualTransform );
-
-		menu = new JMenu( "Bookmarks" );
-		menubar.add( menu );
-
-		final JMenuItem miAddBookmark = new JMenuItem( actionMap.get( BigDataViewerActions.OPEN_ADD_BOOKMARK_DIALOG ) );
-		miAddBookmark.setText( "Add Bookmark" );
-		menu.add( miAddBookmark );
-
-		final JMenuItem miBookmarkMgmt = new JMenuItem( actionMap.get( BigDataViewerActions.OPEN_BOOKMARK_MANAGEMENT ) );
-		miBookmarkMgmt.setText( "Bookmark Management" );
-		menu.add( miBookmarkMgmt );
-
-		menu.add( new JSeparator() );
-
-		final JMenuItem miDeselectBookmark = new JMenuItem( actionMap.get( BigDataViewerActions.DESELECT_BOOKMARK ) );
-		miDeselectBookmark.setText( "Deselect Bookmark" );
-		menu.add( miDeselectBookmark );
-
-		menu = new JMenu( "Help" );
-		menubar.add( menu );
-
-		final JMenuItem miHelp = new JMenuItem( actionMap.get( BigDataViewerActions.SHOW_HELP ) );
-		miHelp.setText( "Show Help" );
-		menu.add( miHelp );
-
-		viewerFrame.setJMenuBar( menubar );
+		final JMenuItem miMovie = new JMenuItem(actionMap.get(BigDataViewerActions.RECORD_MOVIE));
+		miMovie.setText("Record Movie");
+		menu.add(miMovie);
+		final JMenuItem miMaxProjectMovie = new JMenuItem(actionMap.get(BigDataViewerActions.RECORD_MAX_PROJECTION_MOVIE));
+		miMaxProjectMovie.setText("Record Max-Projection Movie");
+		menu.add(miMaxProjectMovie);
+		final JMenuItem miManualTransform = new JMenuItem(actionMap.get(BigDataViewerActions.MANUAL_TRANSFORM));
+		miManualTransform.setText("Manual Transform");
+		menu.add(miManualTransform);
+		menu = new JMenu("Bookmarks");
+		menubar.add(menu);
+		final JMenuItem miAddBookmark = new JMenuItem(actionMap.get(BigDataViewerActions.OPEN_ADD_BOOKMARK_DIALOG));
+		miAddBookmark.setText("Add Bookmark");
+		menu.add(miAddBookmark);
+		final JMenuItem miBookmarkMgmt = new JMenuItem(actionMap.get(BigDataViewerActions.OPEN_BOOKMARK_MANAGEMENT));
+		miBookmarkMgmt.setText("Bookmark Management");
+		menu.add(miBookmarkMgmt);
+		menu.add(new JSeparator());
+		final JMenuItem miDeselectBookmark = new JMenuItem(actionMap.get(BigDataViewerActions.DESELECT_BOOKMARK));
+		miDeselectBookmark.setText("Deselect Bookmark");
+		menu.add(miDeselectBookmark);
+		menu = new JMenu("Help");
+		menubar.add(menu);
+		final JMenuItem miHelp = new JMenuItem(actionMap.get(BigDataViewerActions.SHOW_HELP));
+		miHelp.setText("Show Help");
+		menu.add(miHelp);
+		viewerFrame.setJMenuBar(menubar);
 	}
 
 	public static BigDataViewer open( final AbstractSpimData< ? > spimData, final String windowTitle, final ProgressWriter progressWriter, final ViewerOptions options )
@@ -647,16 +595,15 @@ public class BigDataViewer
 		}
 	}
 
-	public void saveSettings( final String xmlFilename ) throws IOException
-	{
-		final Element root = new Element( "Settings" );
-		root.addContent( viewer.stateToXml() );
-		root.addContent( setupAssignments.toXml() );
-		root.addContent( manualTransformation.toXml() );
-		root.addContent( bookmarks.toXml() );
-		final Document doc = new Document( root );
-		final XMLOutputter xout = new XMLOutputter( Format.getPrettyFormat() );
-		xout.output( doc, new FileWriter( xmlFilename ) );
+	public void saveSettings(final String xmlFilename) throws IOException {
+		final Element root = new Element("Settings");
+		root.addContent(viewer.stateToXml());
+		root.addContent(setupAssignments.toXml());
+		root.addContent(manualTransformation.toXml());
+		root.addContent(bookmarks.toXml());
+		final Document doc = new Document(root);
+		final XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
+		xout.output(doc, new FileWriter(xmlFilename));
 	}
 
 	/**
@@ -728,21 +675,19 @@ public class BigDataViewer
 		}
 	}
 
-	public void loadSettings( final String xmlFilename ) throws IOException, JDOMException
-	{
+	public void loadSettings(final String xmlFilename) throws IOException, JDOMException {
 		final SAXBuilder sax = new SAXBuilder();
-		final Document doc = sax.build( xmlFilename );
+		final Document doc = sax.build(xmlFilename);
 		final Element root = doc.getRootElement();
-		viewer.stateFromXml( root );
-		setupAssignments.restoreFromXml( root );
-		manualTransformation.restoreFromXml( root );
-		bookmarks.restoreFromXml( root );
+		viewer.stateFromXml(root);
+		setupAssignments.restoreFromXml(root);
+		manualTransformation.restoreFromXml(root);
+		bookmarks.restoreFromXml(root);
 		activeSourcesDialog.update();
 		viewer.requestRepaint();
 	}
 
-	public static void main( final String[] args )
-	{
+	public static void main(final String[] args) {
 //		final String fn = "http://tomancak-mac-17.mpi-cbg.de:8080/openspim/";
 //		final String fn = "/Users/Pietzsch/Desktop/openspim/datasetHDF.xml";
 		final String fn = "/Users/pietzsch/workspace/data/111010_weber_full.xml";
@@ -751,7 +696,7 @@ public class BigDataViewer
 //		final String fn = "/Users/Pietzsch/Desktop/bdv example/drosophila 2.xml";
 //		final String fn = "/Users/pietzsch/Desktop/data/clusterValia/140219-1/valia-140219-1.xml";
 //		final String fn = "/Users/Pietzsch/Desktop/data/catmaid.xml";
-//		final String fn = "src/main/resources/openconnectome-bock11-neariso.xml";
+		// final String fn = "src/main/resources/openconnectome-bock11-neariso.xml";
 //		final String fn = "/home/saalfeld/catmaid.xml";
 //		final String fn = "/home/saalfeld/catmaid-fafb00-v9.xml";
 //		final String fn = "/home/saalfeld/catmaid-fafb00-sample_A_cutout_3k.xml";
@@ -770,17 +715,11 @@ public class BigDataViewer
 //		final String fn = "/Users/pietzsch/workspace/data/111010_weber_full.xml";
 //		final String fn = "/Volumes/projects/tomancak_lightsheet/Mette/ZeissZ1SPIM/Maritigrella/021013_McH2BsGFP_CAAX-mCherry/11-use/hdf5/021013_McH2BsGFP_CAAX-mCherry-11-use.xml";
 //		final String fn = "C:\\Users\\maxkl\\Desktop\\weber_full\\111010_weber_full.xml";
-
-		try
-		{
-			System.setProperty( "apple.laf.useScreenMenuBar", "true" );
-
-			final BigDataViewer bdv = open( fn, new File( fn ).getName(), new ProgressWriterConsole(), ViewerOptions.options() );
-
+		try {
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+			final BigDataViewer bdv = open(fn, new File(fn).getName(), new ProgressWriterConsole(), ViewerOptions.options());
 //			DumpInputConfig.writeToYaml( System.getProperty( "user.home" ) + "/.bdv/bdvkeyconfig.yaml", bdv.getViewerFrame() );
-		}
-		catch ( final Exception e )
-		{
+		} catch (final java.lang.Exception e) {
 			e.printStackTrace();
 		}
 	}
