@@ -16,7 +16,6 @@
  * as well as a copy of the GNU Lesser General Public License,
  * along with Technic Launcher Core.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package net.technicpack.launchercore.mirror.download;
 
 import java.io.*;
@@ -26,25 +25,32 @@ import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ReadableByteChannel;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-
 import net.technicpack.launchercore.exception.DownloadException;
 import net.technicpack.launchercore.exception.PermissionDeniedException;
-
 import net.technicpack.launchercore.util.DownloadListener;
 import net.technicpack.utilslib.Utils;
 import org.apache.commons.io.IOUtils;
+
 
 public class Download implements Runnable {
 	private static final long TIMEOUT = 30000;
 
 	private URL url;
+
 	private long size = -1;
+
 	private long downloaded = 0;
+
 	private String outPath;
+
 	private String name;
+
 	private DownloadListener listener;
+
 	private Result result = Result.FAILURE;
+
 	private File outFile = null;
+
 	private Exception exception = null;
 
 	public Download(URL url, String name, String outPath) throws MalformedURLException {
@@ -67,51 +73,44 @@ public class Download implements Runnable {
 		ReadableByteChannel rbc = null;
 		FileOutputStream fos = null;
 		try {
-            HttpURLConnection conn = Utils.openHttpConnection(url);
-            int response = conn.getResponseCode();
-            int responseFamily = response / 100;
-
-            if (responseFamily == 3) {
-                throw new DownloadException("The server issued a redirect response which Technic failed to follow.");
-            } else if (responseFamily != 2) {
-                throw new DownloadException("The server issued a " + response + " response code.");
-            }
-
-            InputStream in = getConnectionInputStream(conn);
-
-            size = conn.getContentLength();
-            outFile = new File(outPath);
-            outFile.delete();
-
-            rbc = Channels.newChannel(in);
-            fos = new FileOutputStream(outFile);
-
-            stateChanged();
-
-            Thread progress = new MonitorThread(Thread.currentThread(), rbc);
-            progress.start();
-
-            fos.getChannel().transferFrom(rbc, 0, size > 0 ? size : Integer.MAX_VALUE);
-            in.close();
-            rbc.close();
-            progress.interrupt();
-            if (size > 0) {
-                if (size == outFile.length()) {
-                    result = Result.SUCCESS;
-                }
-            } else {
-                result = Result.SUCCESS;
-            }
-        } catch (ClosedByInterruptException ex) {
-            result = Result.FAILURE;
-            return;
+			HttpURLConnection conn = Utils.openHttpConnection(url);
+			int response = conn.getResponseCode();
+			int responseFamily = response / 100;
+			if (responseFamily == 3) {
+				throw new DownloadException("The server issued a redirect response which Technic failed to follow.");
+			} else if (responseFamily != 2) {
+				throw new DownloadException(("The server issued a " + response) + " response code.");
+			}
+			InputStream in = getConnectionInputStream(conn);
+			size = conn.getContentLength();
+			outFile = new File(outPath);
+			outFile.delete();
+			rbc = Channels.newChannel(in);
+			fos = new FileOutputStream(outFile);
+			stateChanged();
+			Thread progress = new MonitorThread(Thread.currentThread(), rbc);
+			progress.start();
+			fos.getChannel().transferFrom(rbc, 0, size > 0 ? size : Integer.MAX_VALUE);
+			in.close();
+			rbc.close();
+			progress.interrupt();
+			if (size > 0) {
+				if (size == outFile.length()) {
+					result = Result.SUCCESS;
+				}
+			} else {
+				result = Result.SUCCESS;
+			}
+		} catch (ClosedByInterruptException ex) {
+			result = Result.FAILURE;
+			return;
 		} catch (PermissionDeniedException e) {
 			exception = e;
 			result = Result.PERMISSION_DENIED;
 		} catch (DownloadException e) {
 			exception = e;
 			result = Result.FAILURE;
-		} catch (Exception e) {
+		} catch (java.lang.Exception e) {
 			exception = e;
 			e.printStackTrace();
 		} finally {
@@ -173,7 +172,9 @@ public class Download implements Runnable {
 
 	private static class StreamThread extends Thread {
 		private final URLConnection urlconnection;
+
 		private final AtomicReference<InputStream> is;
+
 		public final AtomicBoolean permDenied = new AtomicBoolean(false);
 
 		public StreamThread(URLConnection urlconnection, AtomicReference<InputStream> is) {
@@ -196,7 +197,9 @@ public class Download implements Runnable {
 
 	private class MonitorThread extends Thread {
 		private final ReadableByteChannel rbc;
+
 		private final Thread downloadThread;
+
 		private long last = System.currentTimeMillis();
 
 		public MonitorThread(Thread downloadThread, ReadableByteChannel rbc) {
@@ -219,28 +222,29 @@ public class Download implements Runnable {
 						try {
 							rbc.close();
 							downloadThread.interrupt();
-						} catch (Exception ignore) {
-							//We catch all exceptions here, because ReadableByteChannel is AWESOME
-							//and was throwing NPE's sometimes when we tried to close it after
-							//the connection broke.
+						} catch (java.lang.Exception ignore) {
+							// We catch all exceptions here, because ReadableByteChannel is AWESOME
+							// and was throwing NPE's sometimes when we tried to close it after
+							// the connection broke.
 						}
 						return;
 					}
 				} else {
 					last = System.currentTimeMillis();
 				}
-
 				stateChanged();
 				try {
 					sleep(50);
-				} catch (InterruptedException ignore) {
+				} catch (java.lang.InterruptedException ignore) {
 					return;
 				}
-			}
+			} 
 		}
 	}
 
 	public enum Result {
-		SUCCESS, FAILURE, PERMISSION_DENIED,
-	}
+
+		SUCCESS,
+		FAILURE,
+		PERMISSION_DENIED;}
 }

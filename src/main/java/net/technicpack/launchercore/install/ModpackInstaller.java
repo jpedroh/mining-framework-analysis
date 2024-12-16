@@ -16,45 +16,46 @@
  * as well as a copy of the GNU Lesser General Public License,
  * along with Technic Launcher Core.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package net.technicpack.launchercore.install;
 
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import javax.swing.*;
 import net.technicpack.launchercore.exception.PackNotAvailableOfflineException;
+import net.technicpack.launchercore.install.tasks.*;
 import net.technicpack.launchercore.modpacks.ModpackModel;
+import net.technicpack.launchercore.util.DownloadListener;
+import net.technicpack.launchercore.util.Utils;
+import net.technicpack.launchercore.util.ZipUtils;
 import net.technicpack.platform.IPlatformApi;
-
 import net.technicpack.utilslib.Utils;
 import net.technicpack.utilslib.ZipUtils;
 import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
 
 public class ModpackInstaller<VersionData> {
-    private final IPlatformApi platformApi;
-    private final String clientId;
+	private final IPlatformApi platformApi;
+
+	private final String clientId;
 
 	public ModpackInstaller(IPlatformApi platformApi, String clientId) {
 		this.clientId = clientId;
-        this.platformApi = platformApi;
+		this.platformApi = platformApi;
 	}
 
-	public VersionData installPack(InstallTasksQueue<VersionData> tasksQueue, ModpackModel modpack, String build) throws IOException, InterruptedException {
-        modpack.save();
-        modpack.initDirectories();
-
-        tasksQueue.runAllTasks();
-
-        Version versionFile = new Version(build, false);
-        versionFile.save(modpack.getBinDir());
-
-        Version installedVersion = modpack.getInstalledVersion();
-        if (installedVersion == null) {
-            platformApi.incrementPackInstalls(modpack.getName());
-            Utils.sendTracking("installModpack", modpack.getName(), modpack.getBuild(), clientId);
-        }
-
-        return tasksQueue.getCompleteVersion();
-    }
+	public VersionData installPack(InstallTasksQueue<VersionData> tasksQueue, ModpackModel modpack, String build) throws InterruptedException, IOException {
+		modpack.save();
+		modpack.initDirectories();
+		tasksQueue.runAllTasks();
+		Version versionFile = new Version(build, false);
+		versionFile.save(modpack.getBinDir());
+		Version installedVersion = modpack.getInstalledVersion();
+		if (installedVersion == null) {
+			platformApi.incrementPackInstalls(modpack.getName());
+			Utils.sendTracking("installModpack", modpack.getName(), modpack.getBuild(), clientId);
+		}
+		return tasksQueue.getCompleteVersion();
+	}
 }
