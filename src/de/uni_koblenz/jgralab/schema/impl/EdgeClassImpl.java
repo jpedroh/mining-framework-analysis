@@ -32,7 +32,6 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -43,10 +42,11 @@ import de.uni_koblenz.jgralab.schema.IncidenceDirection;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
-		implements EdgeClass {
 
-	private IncidenceClass from, to;
+public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge> implements EdgeClass {
+	private IncidenceClass from;
+
+	private IncidenceClass to;
 
 	/**
 	 * builds a new edge class
@@ -80,36 +80,21 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	 *            a name which identifies the 'to' side of the edge class in a
 	 *            unique way
 	 */
-	protected EdgeClassImpl(String simpleName, PackageImpl pkg,
-			GraphClassImpl gc, VertexClass from, int fromMin, int fromMax,
-			String fromRoleName, AggregationKind aggrFrom, VertexClass to,
-			int toMin, int toMax, String toRoleName, AggregationKind aggrTo) {
+	protected EdgeClassImpl(String simpleName, PackageImpl pkg, GraphClassImpl gc, VertexClass from, int fromMin, int fromMax, String fromRoleName, AggregationKind aggrFrom, VertexClass to, int toMin, int toMax, String toRoleName, AggregationKind aggrTo) {
 		super(simpleName, pkg, gc, gc.edgeClassDag);
-
 		if (pkg.isDefaultPackage() && simpleName.equals(DEFAULTEDGECLASS_NAME)) {
 			// the default EC is just created
-		} else if (pkg.isDefaultPackage() && simpleName.equals(TEMPORARYEDGECLASS_NAME)){
+		} else if (pkg.isDefaultPackage() && simpleName.equals(TEMPORARYEDGECLASS_NAME)) {
 			// the temporary EC is just created
-		}else {
-			if ((from == graphClass.getDefaultVertexClass())
-					|| (to == graphClass.getDefaultVertexClass())) {
-				throw new SchemaException(
-						"EdgeClasses from/to the default vertex class are forbidden!\n "
-								+ "Tried to create edge class " + simpleName
-								+ ": " + to.getQualifiedName() + " -> "
-								+ to.getQualifiedName());
-			}
+		} else if ((from == graphClass.getDefaultVertexClass()) || (to == graphClass.getDefaultVertexClass())) {
+			throw new SchemaException(((((("EdgeClasses from/to the default vertex class are forbidden!\n " + "Tried to create edge class ") + simpleName) + ": ") + to.getQualifiedName()) + " -> ") + to.getQualifiedName());
 		}
-
-		IncidenceClass fromInc = new IncidenceClassImpl(this, from,
-				fromRoleName, fromMin, fromMax, IncidenceDirection.OUT,
-				aggrFrom);
-		IncidenceClass toInc = new IncidenceClassImpl(this, to, toRoleName,
-				toMin, toMax, IncidenceDirection.IN, aggrTo);
+		IncidenceClass fromInc = new IncidenceClassImpl(this, from, fromRoleName, fromMin, fromMax, IncidenceDirection.OUT, aggrFrom);
+		IncidenceClass toInc = new IncidenceClassImpl(this, to, toRoleName, toMin, toMax, IncidenceDirection.IN, aggrTo);
 		this.from = fromInc;
 		this.to = toInc;
-		((VertexClassImpl) from).addOutIncidenceClass(fromInc);
-		((VertexClassImpl) to).addInIncidenceClass(toInc);
+		((VertexClassImpl) (from)).addOutIncidenceClass(fromInc);
+		((VertexClassImpl) (to)).addInIncidenceClass(toInc);
 		parentPackage.addEdgeClass(this);
 		graphClass.addEdgeClass(this);
 	}
@@ -231,17 +216,13 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	@Override
 	public void delete() {
 		if (this == graphClass.getDefaultEdgeClass()) {
-			throw new SchemaException(
-					"The default edge class cannot be deleted.");
+			throw new SchemaException("The default edge class cannot be deleted.");
 		}
-
-		VertexClassImpl fromVC = (VertexClassImpl) from.getVertexClass();
-		VertexClassImpl toVC = (VertexClassImpl) to.getVertexClass();
+		VertexClassImpl fromVC = ((VertexClassImpl) (from.getVertexClass()));
+		VertexClassImpl toVC = ((VertexClassImpl) (to.getVertexClass()));
 		fromVC.unlink(from);
 		toVC.unlink(to);
-
 		super.delete();
-
 		graphClass.edgeClasses.remove(qualifiedName);
 		graphClass.edgeClassDag.delete(this);
 		parentPackage.edgeClasses.remove(simpleName);

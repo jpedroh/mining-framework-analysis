@@ -32,15 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.schema.impl;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -50,14 +42,19 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.pcollections.PVector;
 
-public final class GraphClassImpl extends
-		AttributedElementClassImpl<GraphClass, Graph> implements GraphClass {
 
+public final class GraphClassImpl extends AttributedElementClassImpl<GraphClass, Graph> implements GraphClass {
 	Map<String, VertexClass> vertexClasses = new HashMap<String, VertexClass>();
 
 	DirectedAcyclicGraph<VertexClass> vertexClassDag = new DirectedAcyclicGraph<VertexClass>(
 			true);
+
 	Map<String, EdgeClass> edgeClasses = new HashMap<String, EdgeClass>();
 
 	DirectedAcyclicGraph<EdgeClass> edgeClassDag = new DirectedAcyclicGraph<EdgeClass>(
@@ -66,9 +63,9 @@ public final class GraphClassImpl extends
 	private VertexClassImpl defaultVertexClass;
 
 	private EdgeClassImpl defaultEdgeClass;
-	
+
 	private TemporaryVertexClassImpl tempVertexClass;
-	
+
 	private TemporaryEdgeClassImpl tempEdgeClass;
 
 	/**
@@ -86,13 +83,13 @@ public final class GraphClassImpl extends
 	 * </p>
 	 *
 	 * @param qn
-	 *            a unique name in the <code>Schema</code>
+	 * 		a unique name in the <code>Schema</code>
 	 * @param aSchema
-	 *            the <code>Schema</code> containing this
-	 *            <code>GraphClass</code>
+	 * 		the <code>Schema</code> containing this
+	 * 		<code>GraphClass</code>
 	 */
 	GraphClassImpl(String gcName, SchemaImpl schema) {
-		super(gcName, (PackageImpl) schema.getDefaultPackage(), schema);
+		super(gcName, ((PackageImpl) (schema.getDefaultPackage())), schema);
 		schema.setGraphClass(this);
 	}
 
@@ -125,7 +122,7 @@ public final class GraphClassImpl extends
 	public final VertexClass getTemporaryVertexClass() {
 		return tempVertexClass;
 	}
-	
+
 	final void initializeTemporaryVertexClass() {
 		assert getTemporaryVertexClass() == null : "TemporaryVertexClass already created!";
 		tempVertexClass = new TemporaryVertexClassImpl(this);
@@ -136,12 +133,12 @@ public final class GraphClassImpl extends
 		assert getTemporaryEdgeClass() == null : "TemporaryEdgeClass already created!";
 		this.tempEdgeClass = new TemporaryEdgeClassImpl(this);
 	}
-	
+
 	@Override
 	public final EdgeClass getTemporaryEdgeClass(){
 		return tempEdgeClass;
 	}
-	
+
 	@Override
 	public final EdgeClass getDefaultEdgeClass() {
 		return defaultEdgeClass;
@@ -149,8 +146,7 @@ public final class GraphClassImpl extends
 
 	void addEdgeClass(EdgeClass ec) {
 		if (edgeClasses.containsKey(ec.getQualifiedName())) {
-			throw new SchemaException("Duplicate edge class name '"
-					+ ec.getQualifiedName() + "'");
+			throw new SchemaException(("Duplicate edge class name '" + ec.getQualifiedName()) + "'");
 		}
 		// Don't track the default EC
 		if (!ec.getQualifiedName().equals(EdgeClass.DEFAULTEDGECLASS_NAME)) {
@@ -160,8 +156,7 @@ public final class GraphClassImpl extends
 
 	void addVertexClass(VertexClass vc) {
 		if (vertexClasses.containsKey(vc.getQualifiedName())) {
-			throw new SchemaException("Duplicate vertex class name '"
-					+ vc.getQualifiedName() + "'");
+			throw new SchemaException(("Duplicate vertex class name '" + vc.getQualifiedName()) + "'");
 		}
 		// Don't track the default VC
 		if (!vc.getQualifiedName().equals(VertexClass.DEFAULTVERTEXCLASS_NAME)) {
@@ -180,8 +175,7 @@ public final class GraphClassImpl extends
 			AggregationKind aggrFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName, AggregationKind aggrTo) {
 		assertNotFinished();
-		if (from.isDefaultGraphElementClass()
-				|| to.isDefaultGraphElementClass()) {
+		if (from.isDefaultGraphElementClass() || to.isDefaultGraphElementClass()) {
 			throw new SchemaException(
 					"EdgeClasses starting or ending at the default "
 							+ "VertexClass Vertex are forbidden.");
@@ -344,5 +338,4 @@ public final class GraphClassImpl extends
 	protected void deleteAttribute(AttributeImpl attr) {
 		allAttributes = allAttributes.minus(attr);
 	}
-
 }

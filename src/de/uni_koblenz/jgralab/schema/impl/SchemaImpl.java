@@ -32,32 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.schema.impl;
-
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
-import java.util.regex.Pattern;
-
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
-
-import org.pcollections.ArrayPSet;
-import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
@@ -92,8 +67,8 @@ import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
 import de.uni_koblenz.jgralab.schema.StringDomain;
@@ -104,11 +79,33 @@ import de.uni_koblenz.jgralab.schema.impl.compilation.ClassFileManager;
 import de.uni_koblenz.jgralab.schema.impl.compilation.InMemoryJavaSourceFile;
 import de.uni_koblenz.jgralab.schema.impl.compilation.ManagableArtifact;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.Vector;
+import java.util.regex.Pattern;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
+import org.pcollections.ArrayPSet;
+import org.pcollections.PSet;
+
 
 /**
  * @author ist@uni-koblenz.de
  */
-public class SchemaImpl implements Schema, ManagableArtifact {
+public class SchemaImpl implements Schema , ManagableArtifact {
 	// we need a hard reference here, cause the SchemaClassManager uses only
 	// weak references. This way, when the schema gets collected, the class
 	// manager is free for collection, too.
@@ -118,8 +115,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		return schemaClassManager;
 	}
 
-	static final Class<?>[] GRAPHCLASS_CREATE_SIGNATURE = {
-			ImplementationType.class, String.class, int.class, int.class };
+	static final Class<?>[] GRAPHCLASS_CREATE_SIGNATURE = new java.lang.Class<?>[]{ ImplementationType.class, java.lang.String.class, int.class, int.class };
 
 	/**
 	 * This is the name of the package into which the implementation classes for
@@ -134,7 +130,9 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	 * Schema.
 	 */
 	public static final String IMPLSTDPACKAGENAME = "impl.std";
+
 	public static final String IMPLTRANSPACKAGENAME = "impl.trans";
+
 	public static final String IMPLDATABASEPACKAGENAME = "impl.db";
 
 	static final Class<?>[] VERTEX_CLASS_CREATE_SIGNATURE = { int.class };
@@ -207,42 +205,23 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	 * Creates a new <code>Schema</code>.
 	 *
 	 * @param name
-	 *            Name of schema.
+	 * 		Name of schema.
 	 * @param packagePrefix
-	 *            Package prefix of schema.
+	 * 		Package prefix of schema.
 	 */
 	public SchemaImpl(String name, String packagePrefix) {
 		if (!SCHEMA_NAME_PATTERN.matcher(name).matches()) {
-			throw new SchemaException(
-					"Invalid schema name '"
-							+ name
-							+ "'.\n"
-							+ "The name must not be empty.\n"
-							+ "The name must start with a capital letter.\n"
-							+ "Any following character must be alphanumeric and/or a '_' character.\n"
-							+ "The name must end with an alphanumeric character.");
+			throw new SchemaException(((((("Invalid schema name '" + name) + "\'.\n") + "The name must not be empty.\n") + "The name must start with a capital letter.\n") + "Any following character must be alphanumeric and/or a \'_\' character.\n") + "The name must end with an alphanumeric character.");
 		}
-
 		if (!PACKAGE_PREFIX_PATTERN.matcher(packagePrefix).matches()) {
-			throw new SchemaException(
-					"Invalid schema package prefix '"
-							+ packagePrefix
-							+ "'.\n"
-							+ "The packagePrefix must not be empty.\n"
-							+ "The package prefix must start with a small letter.\n"
-							+ "The first character after each '.' must be a small letter.\n"
-							+ "Following characters may be alphanumeric and/or '_' characters.\n"
-							+ "The last character before a '.' and the end of the line must be an alphanumeric character.");
+			throw new SchemaException((((((("Invalid schema package prefix '" + packagePrefix) + "\'.\n") + "The packagePrefix must not be empty.\n") + "The package prefix must start with a small letter.\n") + "The first character after each \'.\' must be a small letter.\n") + "Following characters may be alphanumeric and/or \'_\' characters.\n") + "The last character before a '.' and the end of the line must be an alphanumeric character.");
 		}
-
 		this.name = name;
 		this.packagePrefix = packagePrefix;
-		qualifiedName = packagePrefix + "." + name;
+		qualifiedName = (packagePrefix + ".") + name;
 		schemaClassManager = SchemaClassManager.instance(qualifiedName);
-
 		// Needs to be created before any NamedElement can be created
 		defaultPackage = PackageImpl.createDefaultPackage(this);
-
 		// Creation of the BasicDomains
 		createBooleanDomain();
 		createDoubleDomain();
@@ -419,19 +398,12 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		return javaSources;
 	}
 
-	private void createFiles(CodeGeneratorConfiguration config,
-			String pathPrefix, ProgressFunction progressFunction,
-			long schemaElements, long currentCount, long interval)
-			throws GraphIOException {
-
+	private void createFiles(CodeGeneratorConfiguration config, String pathPrefix, ProgressFunction progressFunction, long schemaElements, long currentCount, long interval) throws GraphIOException {
 		/* create code for graph */
-		GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(
-				graphClass, packagePrefix, name, config);
+		GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(graphClass, packagePrefix, name, config);
 		graphCodeGenerator.createFiles(pathPrefix);
-
 		for (VertexClass vertexClass : graphClass.getVertexClasses()) {
-			VertexCodeGenerator codeGen = new VertexCodeGenerator(vertexClass,
-					packagePrefix, config);
+			VertexCodeGenerator codeGen = new VertexCodeGenerator(vertexClass, packagePrefix, config);
 			codeGen.createFiles(pathPrefix);
 			if (progressFunction != null) {
 				schemaElements++;
@@ -442,15 +414,11 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 				}
 			}
 		}
-
 		for (EdgeClass edgeClass : graphClass.getEdgeClasses()) {
-			CodeGenerator codeGen = new EdgeCodeGenerator(edgeClass,
-					packagePrefix, config);
+			CodeGenerator codeGen = new EdgeCodeGenerator(edgeClass, packagePrefix, config);
 			codeGen.createFiles(pathPrefix);
-
 			if (!edgeClass.isAbstract()) {
-				codeGen = new ReversedEdgeCodeGenerator(edgeClass,
-						packagePrefix, config);
+				codeGen = new ReversedEdgeCodeGenerator(edgeClass, packagePrefix, config);
 				codeGen.createFiles(pathPrefix);
 			}
 			if (progressFunction != null) {
@@ -462,12 +430,10 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 				}
 			}
 		}
-
 		// build records and enums
 		for (Domain domain : getRecordDomains()) {
 			// also generate an abstract class for Records
-			CodeGenerator rcode = new RecordCodeGenerator(
-					(RecordDomain) domain, packagePrefix, config);
+			CodeGenerator rcode = new RecordCodeGenerator(((RecordDomain) (domain)), packagePrefix, config);
 			rcode.createFiles(pathPrefix);
 			if (progressFunction != null) {
 				schemaElements++;
@@ -479,8 +445,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 			}
 		}
 		for (Domain domain : getEnumDomains()) {
-			CodeGenerator ecode = new EnumCodeGenerator((EnumDomain) domain,
-					packagePrefix);
+			CodeGenerator ecode = new EnumCodeGenerator(((EnumDomain) (domain)), packagePrefix);
 			ecode.createFiles(pathPrefix);
 		}
 		if (progressFunction != null) {
@@ -585,8 +550,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	}
 
 	@Override
-	public EnumDomain createEnumDomain(String qualifiedName,
-			String... enumComponents) {
+	public EnumDomain createEnumDomain(String qualifiedName, String... enumComponents) {
 		return createEnumDomain(qualifiedName, Arrays.asList(enumComponents));
 	}
 
@@ -594,15 +558,10 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	public GraphClass createGraphClass(String simpleName) {
 		assertNotFinished();
 		if (graphClass != null) {
-			throw new SchemaException(
-					"Only one GraphClass (except DefaultGraphClass) is allowed in a Schema! '"
-							+ graphClass.getQualifiedName()
-							+ "' is already there.");
+			throw new SchemaException(("Only one GraphClass (except DefaultGraphClass) is allowed in a Schema! '" + graphClass.getQualifiedName()) + "' is already there.");
 		}
-
 		if (simpleName.contains(".")) {
-			throw new SchemaException(
-					"A GraphClass must always be in the default package!");
+			throw new SchemaException("A GraphClass must always be in the default package!");
 		}
 		GraphClassImpl gc = new GraphClassImpl(simpleName, this);
 		gc.initializeDefaultVertexClass();
@@ -888,7 +847,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	@Override
 	public PSet<Domain> getDomains() {
-		return ArrayPSet.<Domain> empty().plusAll(domains.values());
+		return ArrayPSet.<Domain>empty().plusAll(domains.values());
 	}
 
 	void addDomainDependency(Domain composite, Domain base) {
@@ -1278,5 +1237,4 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	public String getManagedName() {
 		return qualifiedName;
 	}
-
 }

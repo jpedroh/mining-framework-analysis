@@ -32,14 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-
 package de.uni_koblenz.jgralab.schema.impl;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
@@ -48,9 +41,14 @@ import de.uni_koblenz.jgralab.schema.IncidenceClass;
 import de.uni_koblenz.jgralab.schema.IncidenceDirection;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-public class VertexClassImpl extends
-		GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
+
+public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
 	/**
 	 * the own in IncidenceClasses
 	 */
@@ -100,8 +98,7 @@ public class VertexClassImpl extends
 	/**
 	 * builds a new vertex class object
 	 */
-	protected VertexClassImpl(String simpleName, PackageImpl pkg,
-			GraphClassImpl gc) {
+	protected VertexClassImpl(String simpleName, PackageImpl pkg, GraphClassImpl gc) {
 		super(simpleName, pkg, gc, gc.vertexClassDag);
 		parentPackage.addVertexClass(this);
 		graphClass.addVertexClass(this);
@@ -213,13 +210,11 @@ public class VertexClassImpl extends
 	 * not redefined by A or a superclass of A
 	 *
 	 */
-
 	@Override
 	public Set<IncidenceClass> getValidFromFarIncidenceClasses() {
 		if (isFinished()) {
 			return validFromFarIncidenceClasses;
 		}
-
 		Set<IncidenceClass> validFromInc = new HashSet<IncidenceClass>();
 		for (IncidenceClass ic : getAllOutIncidenceClasses()) {
 			IncidenceClass farInc = ic.getEdgeClass().getTo();
@@ -235,7 +230,6 @@ public class VertexClassImpl extends
 		for (IncidenceClass ic : temp) {
 			validFromInc.removeAll(ic.getRedefinedIncidenceClasses());
 		}
-
 		return validFromInc;
 	}
 
@@ -259,7 +253,6 @@ public class VertexClassImpl extends
 		for (IncidenceClass ic : temp) {
 			validToInc.removeAll(ic.getRedefinedIncidenceClasses());
 		}
-
 		return validToInc;
 	}
 
@@ -423,7 +416,7 @@ public class VertexClassImpl extends
 
 	@Override
 	public boolean isValidFromFor(EdgeClass ec) {
-		if(ec.equals(this.graphClass.getTemporaryEdgeClass())){
+		if (ec.equals(this.graphClass.getTemporaryEdgeClass())) {
 			return true;
 		}
 		return getValidFromEdgeClasses().contains(ec);
@@ -431,7 +424,7 @@ public class VertexClassImpl extends
 
 	@Override
 	public boolean isValidToFor(EdgeClass ec) {
-		if(ec.equals(this.graphClass.getTemporaryEdgeClass())){
+		if (ec.equals(this.graphClass.getTemporaryEdgeClass())) {
 			return true;
 		}
 		return getValidToEdgeClasses().contains(ec);
@@ -496,14 +489,10 @@ public class VertexClassImpl extends
 	public void delete() {
 		schema.assertNotFinished();
 		if (this == graphClass.getDefaultVertexClass()) {
-			throw new SchemaException(
-					"The default vertex class cannot be deleted.");
+			throw new SchemaException("The default vertex class cannot be deleted.");
 		}
 		if (!getConnectedEdgeClasses().isEmpty()) {
-			throw new SchemaException("Cannot delete vertex class "
-					+ qualifiedName
-					+ " because there are still connected edge classes: "
-					+ getConnectedEdgeClasses());
+			throw new SchemaException((("Cannot delete vertex class " + qualifiedName) + " because there are still connected edge classes: ") + getConnectedEdgeClasses());
 		}
 		super.delete();
 		graphClass.vertexClasses.remove(qualifiedName);

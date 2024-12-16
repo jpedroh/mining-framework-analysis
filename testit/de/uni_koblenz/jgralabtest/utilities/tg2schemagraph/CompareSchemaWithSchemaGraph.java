@@ -34,18 +34,6 @@
  */
 package de.uni_koblenz.jgralabtest.utilities.tg2schemagraph;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
@@ -88,19 +76,31 @@ import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.Subsets;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
+import de.uni_koblenz.jgralab.schema.impl.TemporaryEdgeClassImpl;
+import de.uni_koblenz.jgralab.schema.impl.TemporaryVertexClassImpl;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+
 
 /**
  * Compares a given Schema and SchemaGraph with each other.
- *
+ * 
  * Note:
- *
+ * 
  * This class exists only for test purposes. Because of the use of a lot of
  * Assert of JUnit, it will crash without catching these exceptions.
- *
+ * 
  * @author mmce, Eckhard Großmann
  */
 public class CompareSchemaWithSchemaGraph {
-
 	/**
 	 * Only used EdgeDirection in this comparison.
 	 */
@@ -109,7 +109,7 @@ public class CompareSchemaWithSchemaGraph {
 	/**
 	 * Schema, which is compared.
 	 */
-	private de.uni_koblenz.jgralab.schema.Schema schema;
+	private Schema schema;
 
 	private String currentName;
 
@@ -121,7 +121,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares the given Schema with the given SchemaGraph.
-	 *
+	 * 
 	 * @param schema
 	 *            Schema, which should be compared.
 	 * @param schemaGraph
@@ -137,7 +137,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares a Schema and a Schema from a SchemaGraph with each other.
-	 *
+	 * 
 	 * @param schema
 	 *            Schema, which is compared.
 	 * @param gSchema
@@ -249,9 +249,9 @@ public class CompareSchemaWithSchemaGraph {
 	/**
 	 * Compares a Package of a Schema and a Package of a SchemaGraph with each
 	 * other.
-	 *
+	 * 
 	 * It also compares all subpackages.
-	 *
+	 * 
 	 * @param xPackage
 	 *            Package, which should be compared.
 	 * @param gPackage
@@ -320,7 +320,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares all Domain objects of two Package objects.
-	 *
+	 * 
 	 * @param xPackage
 	 *            Package from the Schema, of which all Domain objects are
 	 *            compared.
@@ -328,27 +328,18 @@ public class CompareSchemaWithSchemaGraph {
 	 *            Package from the SchemaGraph, of which all Domain objects are
 	 *            compared.
 	 */
-	final private void compareAllDomains(
-			de.uni_koblenz.jgralab.schema.Package xPackage, Package gPackage) {
+	private final void compareAllDomains(de.uni_koblenz.jgralab.schema.Package xPackage, Package gPackage) {
 		// Loop over all ContainsDomain edges
-		for (ContainsDomain containsDomain : gPackage
-				.getContainsDomainIncidences(OUTGOING)) {
+		for (ContainsDomain containsDomain : gPackage.getContainsDomainIncidences(OUTGOING)) {
 			// Checking if the reference is right
 			Domain gDomain = retrieveDomain(containsDomain);
-
 			// Gets the simpleName for querying a the right domain
-			String simpleName = schema.getDomain(gDomain.get_qualifiedName())
-					.getSimpleName();
-
+			String simpleName = schema.getDomain(gDomain.get_qualifiedName()).getSimpleName();
 			// Gets, removes and compares at the same time both Domain objects.
-			de.uni_koblenz.jgralab.schema.Domain domain = xPackage
-					.getDomain(simpleName);
-			assertTrue("There is corresponding Domain of name \"" + simpleName
-					+ "\" in the Schema.", domain != null);
-
+			de.uni_koblenz.jgralab.schema.Domain domain = xPackage.getDomain(simpleName);
+			assertTrue(("There is corresponding Domain of name \"" + simpleName) + "\" in the Schema.", domain != null);
 			compareDomain(domain, gDomain);
 		}
-
 	}
 
 	private Domain retrieveDomain(ContainsDomain containsDomain) {
@@ -360,7 +351,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares all GraphElementClass objects in two Packages.
-	 *
+	 * 
 	 * @param xPackage
 	 *            Package from the Schema, of which all GraphElementClass
 	 *            objects should be compared.
@@ -368,42 +359,27 @@ public class CompareSchemaWithSchemaGraph {
 	 *            Package from the SchemaGraph, of which all GraphElementClass
 	 *            objects should be compared.
 	 */
-	final private void compareAllGraphElementClasses(
-			de.uni_koblenz.jgralab.schema.Package xPackage, Package gPackage) {
-
-		assertEquals("The number of graph element classes in package "
-				+ xPackage + " don't match!", xPackage.getVertexClasses()
-				.size() + xPackage.getEdgeClasses().size(),
-				gPackage.getDegree(ContainsGraphElementClass.class));
-
+	private final void compareAllGraphElementClasses(de.uni_koblenz.jgralab.schema.Package xPackage, Package gPackage) {
+		assertEquals(("The number of graph element classes in package " + xPackage) + " don't match!", xPackage.getVertexClasses().size() + xPackage.getEdgeClasses().size(), gPackage.getDegree(ContainsGraphElementClass.class));
 		// Loop over all ContainsGraphElementClass edges
-		for (ContainsGraphElementClass containsGraphElementClass : gPackage
-				.getContainsGraphElementClassIncidences(OUTGOING)) {
-
+		for (ContainsGraphElementClass containsGraphElementClass : gPackage.getContainsGraphElementClassIncidences(OUTGOING)) {
 			// The referenced object should be at least a FraphElementClass
-			assertTrue(
-					"Omega should be an instance of GraphElementClass.",
-					containsGraphElementClass.getOmega() instanceof GraphElementClass);
-
+			assertTrue("Omega should be an instance of GraphElementClass.", containsGraphElementClass.getOmega() instanceof GraphElementClass);
 			Vertex omega = containsGraphElementClass.getOmega();
 			assert omega != null;
-
 			// Distinguishing between VertexClass and EdgeClass
 			if (omega instanceof VertexClass) {
-				VertexClass gVertexClass = (VertexClass) omega;
+				VertexClass gVertexClass = ((VertexClass) (omega));
 				// Retrieving the simple name of the corresponding VertexClass
-				String simpleName = schema.getAttributedElementClass(
-						gVertexClass.get_qualifiedName()).getSimpleName();
+				String simpleName = schema.getAttributedElementClass(gVertexClass.get_qualifiedName()).getSimpleName();
 				// Queries, removes and compares at the same time two
 				// VertexClass objects
-				compareVertexClass(xPackage.getVertexClass(simpleName),
-						gVertexClass);
+				compareVertexClass(xPackage.getVertexClass(simpleName), gVertexClass);
 			} else if (omega instanceof EdgeClass) {
 				// The Same for the EdgeClass comparison
-				EdgeClass gEdgeClass = (EdgeClass) omega;
+				EdgeClass gEdgeClass = ((EdgeClass) (omega));
 				// Retrieving the simple name of the corresponding VertexClass
-				String simpleName = schema.getAttributedElementClass(
-						gEdgeClass.get_qualifiedName()).getSimpleName();
+				String simpleName = schema.getAttributedElementClass(gEdgeClass.get_qualifiedName()).getSimpleName();
 				// Queries, removes and compares at the same time two EdgeClass
 				// objects
 				compareEdgeClass(xPackage.getEdgeClass(simpleName), gEdgeClass);
@@ -411,12 +387,11 @@ public class CompareSchemaWithSchemaGraph {
 				throw new RuntimeException("Unexpected type " + omega);
 			}
 		}
-
 	}
 
 	/**
 	 * Compares all SubPackage objects of two Package objects.
-	 *
+	 * 
 	 * @param xPackage
 	 *            Package from the Schema, of which all Packages should be
 	 *            compared.
@@ -424,38 +399,24 @@ public class CompareSchemaWithSchemaGraph {
 	 *            Package from the SchemaGraph, of which all Packages should be
 	 *            compared.
 	 */
-	final private void compareAllSubPackages(
-			de.uni_koblenz.jgralab.schema.Package xPackage, Package gPackage) {
-
-		assertEquals("The number of subpackages in package " + xPackage
-				+ " don't match!", xPackage.getSubPackages().size(),
-				gPackage.getDegree(ContainsSubPackage.class, EdgeDirection.OUT));
-
+	private final void compareAllSubPackages(de.uni_koblenz.jgralab.schema.Package xPackage, Package gPackage) {
+		assertEquals(("The number of subpackages in package " + xPackage) + " don't match!", xPackage.getSubPackages().size(), gPackage.getDegree(ContainsSubPackage.class, EdgeDirection.OUT));
 		// Loop over all ContainsSubPackage edges
-		for (ContainsSubPackage containsSubPackage : gPackage
-				.getContainsSubPackageIncidences(OUTGOING)) {
-
-			assertTrue("Omega should be an instance of \"Package\".",
-					containsSubPackage.getOmega() instanceof Package);
+		for (ContainsSubPackage containsSubPackage : gPackage.getContainsSubPackageIncidences(OUTGOING)) {
+			assertTrue("Omega should be an instance of \"Package\".", containsSubPackage.getOmega() instanceof Package);
 			Package gSubPackage = containsSubPackage.getOmega();
-			de.uni_koblenz.jgralab.schema.Package subpackage = schema
-					.getPackage(gSubPackage.get_qualifiedName());
-
+			de.uni_koblenz.jgralab.schema.Package subpackage = schema.getPackage(gSubPackage.get_qualifiedName());
 			// The references shouldn't be null
-			assertTrue("There is no corresponding Package in Schema.",
-					subpackage != null);
-			assertTrue("There is no corresponding Package in Schema.",
-					xPackage.getSubPackage(subpackage.getSimpleName()) != null);
-
+			assertTrue("There is no corresponding Package in Schema.", subpackage != null);
+			assertTrue("There is no corresponding Package in Schema.", xPackage.getSubPackage(subpackage.getSimpleName()) != null);
 			// Gets, removes and compares both Package objects with each other
 			comparePackage(subpackage, gSubPackage);
 		}
-
 	}
 
 	/**
 	 * Compares two Domains with each other.
-	 *
+	 * 
 	 * @param domain
 	 *            Domain from the Schema, which should be compared.
 	 * @param gDomain
@@ -496,7 +457,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two RecordDomain objects with each other.
-	 *
+	 * 
 	 * @param domain
 	 *            RecordDomain from Schema, which should be compared.
 	 * @param gDomain
@@ -545,7 +506,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares tow MapDomain objects with each other.
-	 *
+	 * 
 	 * @param domain
 	 *            MapDomain from the Schema, which should be compared.
 	 * @param gDomain
@@ -591,7 +552,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two CollectionDomain objects with each other.
-	 *
+	 * 
 	 * @param domain
 	 *            CollectionDomain from the Schema, which should be compared.
 	 * @param gDomain
@@ -622,7 +583,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two EnumDomain objects with each other.
-	 *
+	 * 
 	 * @param domain
 	 *            EnumDomain from the Schema, which should be compared.
 	 * @param gDomain
@@ -645,7 +606,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two AttributedElementClass with each other.
-	 *
+	 * 
 	 * @param element
 	 *            An AttributedElementClass from the Schema, which should be
 	 *            compared.
@@ -681,7 +642,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two VertexClass objects with each other.
-	 *
+	 * 
 	 * @param vertexClass
 	 *            VertexClass from the Schema, which should be compared.
 	 * @param gVertexClass
@@ -717,7 +678,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two EdgeClass objects with each other.
-	 *
+	 * 
 	 * @param edgeClass
 	 *            EdgeClass from the Schema, which should be compared.
 	 * @param gEdgeClass
@@ -767,7 +728,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two IncidenceClasses objects.
-	 *
+	 * 
 	 * @param incidence
 	 *            IncidenceClasses from the Schema.
 	 * @param gIncidence
@@ -882,7 +843,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two sets of RedefinedRoles with each other.
-	 *
+	 * 
 	 * @param redefinedRoles
 	 *            Set of RedefinedRoles of an edge from the Schema.
 	 * @param gRedefinedRoles
@@ -966,7 +927,7 @@ public class CompareSchemaWithSchemaGraph {
 	/**
 	 * Compares all Attribute objects of two AttributedElementClass objects with
 	 * each other.
-	 *
+	 * 
 	 * @param element
 	 *            AttributedElementClass from the Schema, of which all Attribute
 	 *            objects should be compared.
@@ -1019,7 +980,7 @@ public class CompareSchemaWithSchemaGraph {
 	/**
 	 * Compares all Constraint objects of two AttributedElementClass objects
 	 * with each other.
-	 *
+	 * 
 	 * @param element
 	 *            AttributedElementClass from the Schema, of which all
 	 *            Constraint objects should be compared.
@@ -1078,7 +1039,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Creates an Attribute map out of an Attribute set.
-	 *
+	 * 
 	 * @param attributeList
 	 *            Set of Attribute object, of which a map of Attributes should
 	 *            be created.
@@ -1098,7 +1059,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Makes out of an element set an element map.
-	 *
+	 * 
 	 * @param elementSet
 	 *            Set of AttributedElementClass objects.
 	 * @return The new map of AttributedElementClass objects with their
