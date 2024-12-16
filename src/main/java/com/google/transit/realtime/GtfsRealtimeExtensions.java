@@ -34,13 +34,13 @@ package com.google.transit.realtime;
 
 import com.google.protobuf.ExtensionRegistry;
 
+
 /**
  * Support for GTFS-realtime extensions.
  * 
  * @author bdferris
  */
 public class GtfsRealtimeExtensions {
-
   /**
    * Adds all known GTFS-realtime extension messages to the specified extension
    * registry, except LIRR, unless includeLIRR=true. If includeLIRR=true, the
@@ -50,14 +50,19 @@ public class GtfsRealtimeExtensions {
    * LIRR and MNR GTFS-RT extensions both use extension ID 1005. Since MNR has
    * been assigned extension ID 1005 in the Google registry, it makes sense to
    * default to MNR.
-   * 
-   * @param registry registry to add the extensions to
+   *
+   * @param registry
+   * 		registry to add the extensions to
    */
   public static void registerExtensions(ExtensionRegistry registry) {
     GtfsRealtimeNYCT.registerAllExtensions(registry);
     GtfsRealtimeOneBusAway.registerAllExtensions(registry);
-    GtfsRealtimeMTARR.registerAllExtensions(registry)
+    // warning: cannot add both GtfsRealtimeMNR.mnrStopTimeUpdate and GtfsRealtimeLIRR.MtaStopTimeUpdate.track to the same registry
+    if (includeLIRR) {
+      GtfsRealtimeLIRR.registerAllExtensions(registry);
+    } else {
+      GtfsRealtimeMNR.registerAllExtensions(registry);
+    }
     GtfsRealtimeServiceStatus.registerAllExtensions(registry);
   }
-
 }
