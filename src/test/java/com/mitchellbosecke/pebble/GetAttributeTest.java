@@ -14,9 +14,6 @@ import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.error.RootAttributeNotFoundException;
 import com.mitchellbosecke.pebble.loader.StringLoader;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
-
-import org.junit.Test;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -25,11 +22,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
-public class GetAttributeTest extends AbstractTest {
 
+public class GetAttributeTest extends AbstractTest {
     @Test
     public void testOneLayerAttributeNesting() throws PebbleException, IOException {
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(true).build();
@@ -83,19 +80,19 @@ public class GetAttributeTest extends AbstractTest {
         assertEquals("hello Steve", writer.toString());
     }
 
-  @Test
-  public void testHashmapAttributeWithArgumentOfNull() throws PebbleException, IOException {
-    PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).build();
-    PebbleTemplate template = pebble.getTemplate("hello {{ object[missingContextProperty] }}");
-    Map<String, Object> context = new HashMap<>();
-    Map<String, String> map = new HashMap<>();
-    map.put("name", "Steve");
-    context.put("object", map);
+    @Test
+    public void testHashmapAttributeWithArgumentOfNull() throws PebbleException, IOException {
+        PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).build();
+        PebbleTemplate template = pebble.getTemplate("hello {{ object[missingContextProperty] }}");
+        Map<String, Object> context = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
+        map.put("name", "Steve");
+        context.put("object", map);
 
-    Writer writer = new StringWriter();
-    template.evaluate(writer, context);
-    assertEquals("hello ", writer.toString());
-  }
+        Writer writer = new StringWriter();
+        template.evaluate(writer, context);
+        assertEquals("hello ", writer.toString());
+    }
 
     @Test
     public void testMethodAttribute() throws PebbleException, IOException {
@@ -112,15 +109,10 @@ public class GetAttributeTest extends AbstractTest {
 
     @Test
     public void testMethodAttributeWhenAccessingClassWithStrictVariableOffAndAllowGetClass() throws PebbleException, IOException {
-        PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader())
-                .strictVariables(false)
-                .allowGetClass(true)
-                .build();
-
+        PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(false).allowGetClass(true).build();
         PebbleTemplate template = pebble.getTemplate("hello {{ object.class }}");
         Map<String, Object> context = new HashMap<>();
         context.put("object", "some string");
-
         Writer writer = new StringWriter();
         template.evaluate(writer, context);
         assertEquals("hello ", writer.toString());
@@ -128,15 +120,10 @@ public class GetAttributeTest extends AbstractTest {
 
     @Test(expected = ClassAccessException.class)
     public void testMethodAttributeWhenAccessingClassWithStrictVariableOnAndAllowGetClass() throws PebbleException, IOException {
-        PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader())
-                .strictVariables(true)
-                .allowGetClass(true)
-                .build();
-
+        PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(true).allowGetClass(true).build();
         PebbleTemplate template = pebble.getTemplate("hello {{ object.class }}");
         Map<String, Object> context = new HashMap<>();
         context.put("object", "some string");
-
         Writer writer = new StringWriter();
         template.evaluate(writer, context);
     }
@@ -501,11 +488,12 @@ public class GetAttributeTest extends AbstractTest {
         assertEquals("hello parent", writer.toString());
     }
 
-
     public class Person {
         public final String name = "Name";
+
         public final String surname = "Surname";
     }
+
     @Test
     public void testAccessingValueWithSubscriptInLoop() throws PebbleException, IOException {
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(true).build();
@@ -522,60 +510,50 @@ public class GetAttributeTest extends AbstractTest {
     }
 
     public class SimpleObject {
-
         public final String name = "Steve";
     }
 
     public class SimpleObject2 {
-
         public final SimpleObject simpleObject = new SimpleObject();
     }
 
     public class SimpleObject3 {
-
         public final SimpleObject2 simpleObject2 = new SimpleObject2();
     }
 
     public class SimpleObject4 {
-
         public String name() {
             return "Steve";
         }
     }
 
     public class SimpleObject5 {
-
         public String getName() {
             return "Steve";
         }
     }
 
     public class SimpleObject6 {
-
         public String isName() {
             return "Steve";
         }
     }
 
     public class SimpleObject7 {
-
         public String name = null;
     }
 
     public class SimpleObject8 {
-
         public boolean name = true;
     }
 
     public class SimpleObject9 {
-
         public String hasName() {
             return "Steve";
         }
     }
 
     public class BeanWithMethodsThatHaveArguments {
-
         public String getName(String name) {
             return name;
         }
@@ -594,7 +572,6 @@ public class GetAttributeTest extends AbstractTest {
     }
 
     public class ComplexObject {
-
         public final Map<String, Object> map = new HashMap<>();
 
         {
@@ -604,7 +581,6 @@ public class GetAttributeTest extends AbstractTest {
     }
 
     public class CustomizableObject {
-
         private final String name;
 
         public CustomizableObject(String name) {
@@ -616,12 +592,9 @@ public class GetAttributeTest extends AbstractTest {
         }
     }
 
-    public class ChildObject extends ParentObject {
-
-    }
+    public class ChildObject extends ParentObject {}
 
     public class ParentObject {
-
         public String getName() {
             return "parent";
         }
@@ -658,13 +631,12 @@ public class GetAttributeTest extends AbstractTest {
     }
 
     public class PrimitiveArguments {
-
         public String getStringFromLong(long id) {
             return String.valueOf(id);
         }
 
         public String getStringFromLongs(Long first, long second) {
-            return String.valueOf(first) + " " + String.valueOf(second);
+            return (String.valueOf(first) + " ") + String.valueOf(second);
         }
 
         public String getStringFromBoolean(boolean bool) {
