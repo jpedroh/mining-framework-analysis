@@ -13,6 +13,18 @@
  */
 package net.logstash.logback.appender;
 
+import ch.qos.logback.core.encoder.Encoder;
+import ch.qos.logback.core.joran.spi.DefaultClass;
+import ch.qos.logback.core.net.ssl.ConfigurableSSLSocketFactory;
+import ch.qos.logback.core.net.ssl.SSLConfigurableSocket;
+import ch.qos.logback.core.net.ssl.SSLConfiguration;
+import ch.qos.logback.core.net.ssl.SSLParametersConfiguration;
+import ch.qos.logback.core.spi.DeferredProcessingAware;
+import ch.qos.logback.core.util.CloseUtil;
+import ch.qos.logback.core.util.Duration;
+import com.lmax.disruptor.EventHandler;
+import com.lmax.disruptor.LifecycleAware;
+import com.lmax.disruptor.RingBuffer;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,12 +48,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
-
 import net.logstash.logback.appender.destination.DelegateDestinationConnectionStrategy;
 import net.logstash.logback.appender.destination.DestinationConnectionStrategy;
 import net.logstash.logback.appender.destination.DestinationParser;
@@ -50,19 +60,6 @@ import net.logstash.logback.appender.listener.TcpAppenderListener;
 import net.logstash.logback.encoder.SeparatorParser;
 import net.logstash.logback.encoder.StreamingEncoder;
 
-import com.lmax.disruptor.EventHandler;
-import com.lmax.disruptor.LifecycleAware;
-import com.lmax.disruptor.RingBuffer;
-
-import ch.qos.logback.core.encoder.Encoder;
-import ch.qos.logback.core.joran.spi.DefaultClass;
-import ch.qos.logback.core.net.ssl.ConfigurableSSLSocketFactory;
-import ch.qos.logback.core.net.ssl.SSLConfigurableSocket;
-import ch.qos.logback.core.net.ssl.SSLConfiguration;
-import ch.qos.logback.core.net.ssl.SSLParametersConfiguration;
-import ch.qos.logback.core.spi.DeferredProcessingAware;
-import ch.qos.logback.core.util.CloseUtil;
-import ch.qos.logback.core.util.Duration;
 
 /**
  * An {@link AsyncDisruptorAppender} appender that writes
@@ -83,11 +80,11 @@ import ch.qos.logback.core.util.Duration;
  * @author <a href="mailto:mirko.bernardoni@gmail.com">Mirko Bernardoni</a> (original, which did not use disruptor)
  * @since 11 Jun 2014 (creation date)
  */
-public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredProcessingAware, Listener extends TcpAppenderListener<Event>>
-        extends AsyncDisruptorAppender<Event, Listener> {
-
+public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredProcessingAware, Listener extends TcpAppenderListener<Event>> extends AsyncDisruptorAppender<Event, Listener> {
     protected static final String HOST_NAME_FORMAT = "%3$s";
+
     protected static final String PORT_FORMAT = "%4$d";
+
     public static final String DEFAULT_THREAD_NAME_FORMAT = "logback-appender-" + APPENDER_NAME_FORMAT + "-" + HOST_NAME_FORMAT + ":" + PORT_FORMAT + "-" + THREAD_INDEX_FORMAT;
 
     /**
@@ -122,10 +119,12 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
     public static final int DEFAULT_WRITE_BUFFER_SIZE = 8192;
 
     private static final NotConnectedException NOT_CONNECTED_EXCEPTION = new NotConnectedException();
+
     private static final ShutdownInProgressException SHUTDOWN_IN_PROGRESS_EXCEPTION = new ShutdownInProgressException();
+
     static {
-        NOT_CONNECTED_EXCEPTION.setStackTrace(new StackTraceElement[] {new StackTraceElement(AbstractLogstashTcpSocketAppender.TcpSendingEventHandler.class.getName(), "onEvent(..)", null, -1)});
-        SHUTDOWN_IN_PROGRESS_EXCEPTION.setStackTrace(new StackTraceElement[] {new StackTraceElement(AbstractLogstashTcpSocketAppender.TcpSendingEventHandler.class.getName(), "onEvent(..)", null, -1)});
+        NOT_CONNECTED_EXCEPTION.setStackTrace(new StackTraceElement[]{ new StackTraceElement(AbstractLogstashTcpSocketAppender.TcpSendingEventHandler.class.getName(), "onEvent(..)", null, -1) });
+        SHUTDOWN_IN_PROGRESS_EXCEPTION.setStackTrace(new StackTraceElement[]{ new StackTraceElement(AbstractLogstashTcpSocketAppender.TcpSendingEventHandler.class.getName(), "onEvent(..)", null, -1) });
     }
 
     /**
@@ -172,12 +171,12 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
     private Duration reconnectionDelay = new Duration(DEFAULT_RECONNECTION_DELAY);
 
     /**
-     * Socket connection timeout in milliseconds.
+     * Socket connection timeout in milliseconds. 
      */
     private int acceptConnectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
 
     /**
-     * Human readable identifier of the client (used for logback status messages)
+     * Human readable identifier of the client (used for logback status messages) 
      */
     private String peerId;
 
@@ -275,8 +274,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
     /**
      * Event handler responsible for performing the TCP transmission.
      */
-    private class TcpSendingEventHandler implements EventHandler<LogEvent<Event>>, LifecycleAware {
-
+    private class TcpSendingEventHandler implements EventHandler<LogEvent<Event>> , LifecycleAware {
         /**
          * Max number of consecutive failed connection attempts for which
          * logback status messages will be logged.
@@ -310,6 +308,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
          * Used to detect write timeouts.
          */
         private volatile long lastSendStartNanoTime;
+
         /**
          * Time at which the last event send was completed (e.g. after write/flush).
          * Used to calculate if a keep alive message
@@ -364,10 +363,8 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
          * has elapsed since the last event was sent,
          * then the event handler will send the {@link AbstractLogstashTcpSocketAppender#keepAliveMessage}
          * to the socket outputstream.
-         *
          */
         private class KeepAliveRunnable implements Runnable {
-
             private int previousDestinationIndex = connectedDestinationIndex;
 
             @Override
@@ -375,25 +372,22 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                 long lastSendEnd = lastSendEndNanoTime;
                 long currentNanoTime = System.nanoTime();
                 if (hasKeepAliveDurationElapsed(lastSendEnd, currentNanoTime)) {
-                    /*
-                     * Publish a keep alive message to the RingBuffer.
-                     *
-                     * A null event indicates that this is a keep alive message.
-                     *
-                     * Use tryPublishEvent instead of publishEvent, because if the ring buffer is full,
-                     * there's really no need to send a keep alive, since
-                     * there are other messages waiting to be sent.
+                    /* Publish a keep alive message to the RingBuffer.
+
+                    A null event indicates that this is a keep alive message.
+
+                    Use tryPublishEvent instead of publishEvent, because if the ring buffer is full,
+                    there's really no need to send a keep alive, since
+                    there are other messages waiting to be sent.
                      */
                     getDisruptor().getRingBuffer().tryPublishEvent(getEventTranslator(), null);
                     scheduleKeepAlive(currentNanoTime);
                 } else {
                     scheduleKeepAlive(lastSendEnd);
                 }
-
                 if (previousDestinationIndex != connectedDestinationIndex) {
-                    /*
-                     * Destination has changed since last keep alive event,
-                     * so update the thread name
+                    /* Destination has changed since last keep alive event,
+                    so update the thread name
                      */
                     updateCurrentThreadName();
                 }
@@ -404,12 +398,11 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
         /**
          * Keeps reading the {@link ReaderCallable#inputStream} until the
          * end of the stream is reached.
-         *
+         * 
          * This helps pro-actively detect server-side socket disconnections,
          * specifically in the case of Amazon's Elastic Load Balancers (ELB).
          */
         private class ReaderCallable implements Callable<Void> {
-
             private final InputStream inputStream;
 
             ReaderCallable(InputStream inputStream) {
@@ -469,14 +462,12 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                     }
                 }
             }
-
         }
 
         /**
          * Detects write timeouts by inspecting {@link #lastSendStartNanoTime} and {@link #lastSendEndNanoTime}
          */
         private class WriteTimeoutRunnable implements Runnable {
-
             /**
              * The lastSendStartNanoTime of the last detected timeout.
              * Used to ensure we only detect a write timeout for a single write once
@@ -486,18 +477,16 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
 
             @Override
             public void run() {
-                long lastSendStart = lastSendStartNanoTime; // volatile read
-                long lastSendEnd = lastSendEndNanoTime;     // volatile read
+                long lastSendStart = lastSendStartNanoTime;// volatile read
 
-                /*
-                 * A write is in progress if the start is greater than the end
-                 */
-                if (lastSendStart > lastSendEnd && lastSendStart != lastDetectedStartNanoTime) {
+                long lastSendEnd = lastSendEndNanoTime;// volatile read
 
+                /* A write is in progress if the start is greater than the end */
+                if ((lastSendStart > lastSendEnd) && (lastSendStart != lastDetectedStartNanoTime)) {
                     long elapsedSendTimeInMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - lastSendStart);
                     if (elapsedSendTimeInMillis > writeTimeout.getMilliseconds()) {
                         lastDetectedStartNanoTime = lastSendStart;
-                        addWarn(peerId + "Detected write timeout after " + elapsedSendTimeInMillis + "ms.  Write timeout=" + getWriteTimeout() + ".  Closing socket to force reconnect");
+                        addWarn(((((peerId + "Detected write timeout after ") + elapsedSendTimeInMillis) + "ms.  Write timeout=") + getWriteTimeout()) + ".  Closing socket to force reconnect");
                         closeSocket();
                     }
                 }
@@ -506,7 +495,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
 
         @Override
         public void onEvent(LogEvent<Event> logEvent, long sequence, boolean endOfBatch) throws Exception {
-
+            
             Exception sendFailureException = null;
             for (int i = 0; i < MAX_REPEAT_WRITE_ATTEMPTS; i++) {
                 /*
@@ -536,7 +525,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                      *
                      * If socket == null here, it means that a write timed out,
                      * and the socket was closed by the WriteTimeoutRunnable.
-                     *
+                     * 
                      * Therefore, attempt reconnection.
                      */
                     addInfo(peerId + "destination terminated the connection. Reconnecting.");
@@ -557,7 +546,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                     addWarn(peerId + "unable to send event: " + e.getMessage() + " Reconnecting.", e);
                     /*
                      * Need to re-open the socket in case of IOExceptions.
-                     *
+                     * 
                      * Reopening the socket probably won't help other exceptions
                      * (like NullPointerExceptions),
                      * but we're doing so anyway, just in case.
@@ -565,14 +554,13 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                     reopenSocket();
                 }
             }
-
+            
             if (logEvent.event != null) {
                 fireEventSendFailure(logEvent.event, sendFailureException);
             }
         }
 
         private void writeEvent(Socket socket, OutputStream outputStream, LogEvent<Event> logEvent, boolean endOfBatch) throws IOException {
-
             long startWallTime = System.currentTimeMillis();
             long startNanoTime = System.nanoTime();
             lastSendStartNanoTime = startNanoTime;
@@ -587,9 +575,8 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                  */
                 encode(logEvent.event, outputStream);
             } else if (hasKeepAliveDurationElapsed(lastSendEndNanoTime, startNanoTime)) {
-                /*
-                 * This is a keep alive event, and the keepAliveDuration has passed,
-                 * Therefore, we need to send the keepAliveMessage.
+                /* This is a keep alive event, and the keepAliveDuration has passed,
+                Therefore, we need to send the keepAliveMessage.
                  */
                 outputStream.write(keepAliveBytes);
             }
@@ -598,14 +585,10 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
             }
             long endNanoTime = System.nanoTime();
             lastSendEndNanoTime = endNanoTime;
-
             if (logEvent.event != null) {
                 fireEventSent(socket, logEvent.event, endNanoTime - startNanoTime);
             }
-
-            /*
-             * Should we close the current connection, and attempt to reconnect to another destination?
-             */
+            /* Should we close the current connection, and attempt to reconnect to another destination? */
             if (connectionStrategy.shouldReconnect(startWallTime, connectedDestinationIndex, destinations.size())) {
                 addInfo(peerId + "reestablishing connection.");
                 outputStream.flush();
@@ -613,11 +596,10 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
             }
         }
 
-        
         @SuppressWarnings("unchecked")
         private void encode(Event event, OutputStream outputStream) throws IOException {
             if (encoder instanceof StreamingEncoder) {
-                ((StreamingEncoder<Event>) encoder).encode(event, outputStream);
+                ((StreamingEncoder<Event>) (encoder)).encode(event, outputStream);
             } else {
                 byte[] data = encoder.encode(event);
                 if (data != null) {
@@ -625,8 +607,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                 }
             }
         }
-        
-        
+
         private boolean hasKeepAliveDurationElapsed(long lastSentNanoTime, long currentNanoTime) {
             return isKeepAliveEnabled()
                     && lastSentNanoTime + TimeUnit.MILLISECONDS.toNanos(keepAliveDuration.getMilliseconds()) < currentNanoTime;
@@ -656,7 +637,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
         /**
          * Repeatedly tries to open a socket until it is successful,
          * or the hander is stopped, or the handler thread is interrupted.
-         *
+         * 
          * If the socket is non-null when this method returns,
          * then it should be able to be used to send.
          */
@@ -668,7 +649,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                 long startWallTime = System.currentTimeMillis();
                 Socket tempSocket = null;
                 OutputStream tempOutputStream = null;
-
+                
                 /*
                  * Choose next server
                  */
@@ -706,7 +687,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
 
                     /*
                      * Set the SO_TIMEOUT so that SSL handshakes will timeout if they take too long.
-                     *
+                     * 
                      * Note that SO_TIMEOUT only applies to reads (which occur during the handshake process).
                      */
                     tempSocket = socketFactory.createSocket();
@@ -716,23 +697,23 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                      * must be created to resolve the hostname.
                      */
                     tempSocket.connect(new InetSocketAddress(getHostString(currentDestination), currentDestination.getPort()), acceptConnectionTimeout);
-
+                    
                     /*
                      * Trigger SSL handshake immediately and declare the socket unconnected if it fails
                      */
                     if (tempSocket instanceof SSLSocket) {
-                        ((SSLSocket) tempSocket).startHandshake();
+                    	((SSLSocket)tempSocket).startHandshake();
                     }
-
+                    
                     /*
                      * Issue #218, make buffering the output stream optional.
                      */
                     tempOutputStream = writeBufferSize > 0
                             ? new BufferedOutputStream(tempSocket.getOutputStream(), writeBufferSize)
                             : tempSocket.getOutputStream();
-
+                    
                     addInfo(peerId + "connection established.");
-
+                    
                     this.socket = tempSocket;
                     this.outputStream = tempOutputStream;
 
@@ -741,7 +722,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                     connectedDestination = currentDestination;
 
                     connectionStrategy.connectSuccess(startWallTime, destinationIndex, destinations.size());
-
+                    
                     if (shouldUpdateThreadName) {
                         /*
                          * destination has changed, so update the thread name
@@ -751,18 +732,18 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
 
                     this.readerFuture = scheduleReaderCallable(
                             new ReaderCallable(tempSocket.getInputStream()));
-
+                    
                     fireConnectionOpened(this.socket);
 
                     return;
-
+                    
                 } catch (Exception e) {
                     CloseUtil.closeQuietly(tempOutputStream);
                     CloseUtil.closeQuietly(tempSocket);
-
+                    
                     connectionStrategy.connectFailed(startWallTime, destinationIndex, destinations.size());
                     fireConnectionFailed(currentDestination, e);
-
+                    
                     /*
                      * Avoid spamming status messages by checking the MAX_REPEAT_CONNECTION_ERROR_LOG.
                      */
@@ -777,7 +758,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
             connectedDestination = null;
             CloseUtil.closeQuietly(outputStream);
             outputStream = null;
-
+            
             CloseUtil.closeQuietly(socket);
             fireConnectionClosed(socket);
             socket = null;
@@ -786,7 +767,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                 /*
                  * This shouldn't be necessary, since closing the socket
                  * should cause the read() call to throw an exception.
-                 *
+                 * 
                  * But cancel it anyway to be extra-safe.
                  */
                 this.readerFuture.cancel(true);
@@ -816,6 +797,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                 }
             }
         }
+
         private synchronized void unscheduleKeepAlive() {
             if (keepAliveFuture != null) {
                 keepAliveFuture.cancel(true);
@@ -829,6 +811,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                 }
             }
         }
+
         private synchronized void scheduleWriteTimeout() {
             if (isWriteTimeoutEnabled() && !Thread.currentThread().isInterrupted()) {
                 if (writeTimeoutRunnable == null) {
@@ -849,6 +832,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                 }
             }
         }
+
         private synchronized void unscheduleWriteTimeout() {
             if (writeTimeoutFuture != null) {
                 writeTimeoutFuture.cancel(true);
@@ -868,11 +852,11 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
      * An extension of logback's {@link ConfigurableSSLSocketFactory}
      * that supports creating unconnected sockets
      * (via {@link UnconnectedConfigurableSSLSocketFactory#createSocket()})
-     * so that a custom connection timeout can be used when connecting.
+     * so that a custom connection timeout can be used when connecting. 
      */
     private static class UnconnectedConfigurableSSLSocketFactory extends ConfigurableSSLSocketFactory {
-
         private final SSLParametersConfiguration parameters;
+
         private final SSLSocketFactory delegate;
 
         UnconnectedConfigurableSSLSocketFactory(SSLParametersConfiguration parameters, SSLSocketFactory delegate) {
@@ -887,7 +871,6 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
             parameters.configure(new SSLConfigurableSocket(socket));
             return socket;
         }
-
     }
 
     public AbstractLogstashTcpSocketAppender() {
@@ -912,62 +895,42 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
             errorCount++;
             addError("No encoder was configured. Use <encoder> to specify the fully qualified class name of the encoder to use");
         }
-
-        /*
-         * Make sure at least one destination has been specified
-         */
+        /* Make sure at least one destination has been specified */
         if (destinations.isEmpty()) {
             errorCount++;
             addError("No destination was configured. Use <destination> to add one or more destinations to the appender");
         }
-
-        /*
-         * Create socket factory
-         */
-        if (errorCount == 0 && socketFactory == null) {
+        /* Create socket factory */
+        if ((errorCount == 0) && (socketFactory == null)) {
             if (sslConfiguration == null) {
                 socketFactory = SocketFactory.getDefault();
             } else {
-
                 try {
                     SSLContext sslContext = getSsl().createContext(this);
                     SSLParametersConfiguration parameters = getSsl().getParameters();
                     parameters.setContext(getContext());
-
-                    socketFactory = new UnconnectedConfigurableSSLSocketFactory(
-                            parameters,
-                            sslContext.getSocketFactory());
-                } catch (Exception e) {
+                    socketFactory = new UnconnectedConfigurableSSLSocketFactory(parameters, sslContext.getSocketFactory());
+                } catch (java.lang.Exception e) {
                     addError("Unable to create ssl context", e);
                     errorCount++;
                 }
             }
         }
-
-        if (keepAliveMessage != null && keepAliveCharset != null) {
+        if ((keepAliveMessage != null) && (keepAliveCharset != null)) {
             keepAliveBytes = keepAliveMessage.getBytes(keepAliveCharset);
         }
-
         if (errorCount == 0) {
-
             encoder.setContext(getContext());
             if (!encoder.isStarted()) {
                 encoder.start();
             }
-
-            /*
-             * Increase the core size to handle the reader thread
-             */
+            /* Increase the core size to handle the reader thread */
             int threadPoolCoreSize = getThreadPoolCoreSize() + 1;
-            /*
-             * Increase the core size to handle the keep alive thread
-             */
+            /* Increase the core size to handle the keep alive thread */
             if (keepAliveDuration != null) {
                 threadPoolCoreSize++;
             }
-            /*
-             * Increase the core size to handle the write timeout detection thread
-             */
+            /* Increase the core size to handle the write timeout detection thread */
             if (isWriteTimeoutEnabled()) {
                 threadPoolCoreSize++;
             }
@@ -998,6 +961,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
             listener.eventSent(this, socket, event, durationInNanos);
         }
     }
+
     protected void fireEventSendFailure(Event event, Throwable reason) {
         for (Listener listener : listeners) {
             listener.eventSendFailure(this, event, reason);
@@ -1021,7 +985,6 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
             listener.connectionFailed(this, address, throwable);
         }
     }
-
 
     public Encoder<Event> getEncoder() {
         return encoder;
@@ -1056,9 +1019,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
      * For example, "host1.domain.com,host2.domain.com:5560"
      */
     public void addDestination(final String destination) throws IllegalArgumentException {
-
         List<InetSocketAddress> parsedDestinations = DestinationParser.parse(destination, DEFAULT_PORT);
-
         addDestinations(parsedDestinations.toArray(new InetSocketAddress[0]));
     }
 
@@ -1069,11 +1030,12 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
         if (destinations == null) {
             return;
         }
-
+        
         for (InetSocketAddress destination : destinations) {
             try {
                 InetAddress.getByName(getHostString(destination));
-            } catch (UnknownHostException ex) {
+            } 
+            catch (UnknownHostException ex) {
                 /*
                  * Warn, but don't fail startup, so that transient
                  * DNS problems are allowed to resolve themselves eventually.
@@ -1089,7 +1051,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
      * avoiding a DNS hit if possible.
      */
     protected String getHostString(InetSocketAddress destination) {
-
+        
         /*
          * Avoid the potential DNS hit by using getHostString() instead of getHostName()
          */
@@ -1104,7 +1066,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
     protected List<Object> getThreadNameFormatParams() {
         List<Object> superThreadNameFormatParams = super.getThreadNameFormatParams();
         List<Object> threadNameFormatParams = new ArrayList<Object>(superThreadNameFormatParams.size() + 2);
-
+        
         threadNameFormatParams.addAll(superThreadNameFormatParams);
         InetSocketAddress currentDestination = this.destinations.get(connectedDestinationIndex);
         threadNameFormatParams.add(getHostString(currentDestination));
@@ -1135,20 +1097,20 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
         return reconnectionDelay;
     }
 
-
     /**
      * Convenience method for setting {@link PreferPrimaryDestinationConnectionStrategy#setSecondaryConnectionTTL(Duration)}.
-     *
+     * 
      * When the {@link #connectionStrategy} is a {@link PreferPrimaryDestinationConnectionStrategy},
      * this will set its {@link PreferPrimaryDestinationConnectionStrategy#setSecondaryConnectionTTL(Duration)}.
-     *
+     * 
      * @see PreferPrimaryDestinationConnectionStrategy#setSecondaryConnectionTTL(Duration)
      * @throws IllegalStateException if the {@link #connectionStrategy} is not a {@link PreferPrimaryDestinationConnectionStrategy}
      */
     public void setSecondaryConnectionTTL(Duration secondaryConnectionTTL) {
         if (connectionStrategy instanceof PreferPrimaryDestinationConnectionStrategy) {
             ((PreferPrimaryDestinationConnectionStrategy) connectionStrategy).setSecondaryConnectionTTL(secondaryConnectionTTL);
-        } else {
+        }
+        else {
             throw new IllegalStateException(String.format("When setting the secondaryConnectionTTL, the strategy must be a %s.  It is currently a %s", PreferPrimaryDestinationConnectionStrategy.class, connectionStrategy));
         }
     }
@@ -1161,7 +1123,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
     }
 
     /**
-     * Socket connection timeout in milliseconds.
+     * Socket connection timeout in milliseconds. 
      */
     void setAcceptConnectionTimeout(int acceptConnectionTimeout) {
         this.acceptConnectionTimeout = acceptConnectionTimeout;
@@ -1174,12 +1136,12 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
     /**
      * The number of bytes available in the write buffer.
      * Defaults to {@value #DEFAULT_WRITE_BUFFER_SIZE}
-     *
+     * 
      * If less than or equal to zero, buffering the output stream will be disabled.
      * If buffering is disabled, the writer thread can slow down, but
      * it will also can prevent dropping events in the buffer on flaky connections.
      */
-   public void setWriteBufferSize(int writeBufferSize) {
+       public void setWriteBufferSize(int writeBufferSize) {
         this.writeBufferSize = writeBufferSize;
     }
 
@@ -1193,7 +1155,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
     /**
      * Sets the maximum number of events in the queue. Once the queue is full
      * additional events will be dropped.
-     *
+     * 
      * <p>
      * Must be a positive power of 2.
      *
@@ -1206,6 +1168,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
     public SSLConfiguration getSsl() {
         return sslConfiguration;
     }
+
     /**
      * Set this to non-null to use SSL.
      * See <a href="http://logback.qos.ch/manual/usingSSL.html"> the logback manual</a>
@@ -1218,11 +1181,12 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
     public Duration getKeepAliveDuration() {
         return keepAliveDuration;
     }
+
     /**
      * If this duration elapses without an event being sent,
      * then the {@link #keepAliveMessage} will be sent to the socket in
      * order to keep the connection alive.
-     *
+     * 
      * When null, no keepAlive messages will be sent.
      */
     public void setKeepAliveDuration(Duration keepAliveDuration) {
@@ -1232,10 +1196,11 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
     public String getKeepAliveMessage() {
         return keepAliveMessage;
     }
+
     /**
      * Message to send for keeping the connection alive
      * if {@link #keepAliveDuration} is non-null.
-     *
+     * 
      * The following values have special meaning:
      * <ul>
      * <li><tt>null</tt> or empty string = no keep alive.</li>
@@ -1275,11 +1240,11 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
      * Pattern used by the to set the handler thread name.
      * Defaults to {@value #DEFAULT_THREAD_NAME_FORMAT}.
      * <p>
-     *
+     * 
      * If you change the {@link #threadFactory}, then this
      * value may not be honored.
      * <p>
-     *
+     * 
      * The string is a format pattern understood by {@link Formatter#format(String, Object...)}.
      * {@link Formatter#format(String, Object...)} is used to
      * construct the actual thread name prefix.
@@ -1297,6 +1262,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
     public DestinationConnectionStrategy getConnectionStrategy() {
         return connectionStrategy;
     }
+
     @DefaultClass(DelegateDestinationConnectionStrategy.class)
     public void setConnectionStrategy(DestinationConnectionStrategy destinationConnectionStrategy) {
         this.connectionStrategy = destinationConnectionStrategy;

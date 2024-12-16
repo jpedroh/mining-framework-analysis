@@ -13,42 +13,38 @@
  */
 package net.logstash.logback.composite;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.util.ServiceConfigurationError;
-
-import net.logstash.logback.decorate.JsonFactoryDecorator;
-import net.logstash.logback.decorate.JsonGeneratorDecorator;
-import net.logstash.logback.decorate.NullJsonFactoryDecorator;
-import net.logstash.logback.decorate.NullJsonGeneratorDecorator;
-
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.spi.ContextAware;
 import ch.qos.logback.core.spi.ContextAwareBase;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import ch.qos.logback.core.spi.LifeCycle;
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.util.ServiceConfigurationError;
+import net.logstash.logback.decorate.JsonFactoryDecorator;
+import net.logstash.logback.decorate.JsonGeneratorDecorator;
+import net.logstash.logback.decorate.NullJsonFactoryDecorator;
+import net.logstash.logback.decorate.NullJsonGeneratorDecorator;
+
 
 /**
  * Formats logstash Events as JSON using {@link JsonProvider}s.
  * <p>
- *
+ * 
  * The {@link CompositeJsonFormatter} starts the JSON object ('{'),
  * then delegates writing the contents of the object to the {@link JsonProvider}s,
  * and then ends the JSON object ('}').
  *
  * @param <Event> type of event ({@link ILoggingEvent} or {@link IAccessEvent}).
  */
-public abstract class CompositeJsonFormatter<Event extends DeferredProcessingAware>
-        extends ContextAwareBase implements LifeCycle {
-
+public abstract class CompositeJsonFormatter<Event extends DeferredProcessingAware> extends ContextAwareBase implements LifeCycle {
     /**
      * Used to create the necessary {@link JsonGenerator}s for generating JSON.
      */
@@ -56,7 +52,7 @@ public abstract class CompositeJsonFormatter<Event extends DeferredProcessingAwa
 
     /**
      * Decorates the {@link #jsonFactory}.
-     * Allows customization of the {@link #jsonFactory}.
+     * Allows customization of the {@link #jsonFactory}. 
      */
     private JsonFactoryDecorator jsonFactoryDecorator = new NullJsonFactoryDecorator();
 
@@ -105,12 +101,8 @@ public abstract class CompositeJsonFormatter<Event extends DeferredProcessingAwa
     }
 
     private JsonFactory createJsonFactory() {
-        ObjectMapper objectMapper = new ObjectMapper()
-                /*
-                 * Assume empty beans are ok.
-                 */
-                .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-
+        ObjectMapper objectMapper = /* Assume empty beans are ok. */
+        new ObjectMapper().disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         if (findAndRegisterJacksonModules) {
             try {
                 objectMapper.findAndRegisterModules();
@@ -118,31 +110,23 @@ public abstract class CompositeJsonFormatter<Event extends DeferredProcessingAwa
                 addError("Error occurred while dynamically loading jackson modules", serviceConfigurationError);
             }
         }
-
-        JsonFactory jsonFactory = objectMapper
-                .getFactory()
-                /*
-                 * When generators are flushed, don't flush the underlying outputStream.
-                 *
-                 * This allows some streaming optimizations when using an encoder.
-                 *
-                 * The encoder generally determines when the stream should be flushed
-                 * by an 'immediateFlush' property.
-                 *
-                 * The 'immediateFlush' property of the encoder can be set to false
-                 * when the appender performs the flushes at appropriate times
-                 * (such as the end of a batch in the AbstractLogstashTcpSocketAppender).
-                 */
-                .disable(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM)
-
-                /*
+        JsonFactory jsonFactory = /*
                  * Don't let the json generator close the underlying outputStream and let the
                  * encoder managed it.
                  */
-                .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
-                
+        /* When generators are flushed, don't flush the underlying outputStream.
+
+        This allows some streaming optimizations when using an encoder.
+
+        The encoder generally determines when the stream should be flushed
+        by an 'immediateFlush' property.
+
+        The 'immediateFlush' property of the encoder can be set to false
+        when the appender performs the flushes at appropriate times
+        (such as the end of a batch in the AbstractLogstashTcpSocketAppender).
+         */
+        objectMapper.getFactory().disable(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM).disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
                 //FIXME these settings are mandatory - should we instead apply them *after* jsonGeneratorDecorator is applied (ie. in createGenerator()) ?
-        
         return this.jsonFactoryDecorator.decorate(jsonFactory);
     }
 
@@ -152,14 +136,14 @@ public abstract class CompositeJsonFormatter<Event extends DeferredProcessingAwa
         }
         /*
          * Do not flush the outputStream.
-         *
+         * 
          * Allow something higher in the stack (e.g. the encoder/appender)
          * to determine appropriate times to flush.
          */
     }
 
     public void writeEventToWriter(Event event, Writer writer) throws IOException {
-        try (JsonGenerator generator = createGenerator(writer)) {
+        try (final JsonGenerator generator = createGenerator(writer)) {
             writeEventToGenerator(generator, event);
         }
     }
@@ -182,7 +166,7 @@ public abstract class CompositeJsonFormatter<Event extends DeferredProcessingAwa
     private JsonGenerator createGenerator(OutputStream outputStream) throws IOException {
         return this.jsonGeneratorDecorator.decorate(jsonFactory.createGenerator(outputStream, encoding));
     }
-    
+
     private JsonGenerator createGenerator(Writer writer) throws IOException {
         return this.jsonGeneratorDecorator.decorate(jsonFactory.createGenerator(writer));
     }
