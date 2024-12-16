@@ -2,8 +2,8 @@ package com.github.steveice10.packetlib.tcp;
 
 import com.github.steveice10.packetlib.BuiltinFlags;
 import com.github.steveice10.packetlib.ProxyInfo;
-import com.github.steveice10.packetlib.packet.PacketProtocol;
 import com.github.steveice10.packetlib.io.local.LocalChannelWithRemoteAddress;
+import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
@@ -35,18 +35,24 @@ import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
 import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
-
 import java.net.*;
+
 
 public class TcpClientSession extends TcpSession {
     private static final String IP_REGEX = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
+
     private static Class<? extends Channel> CHANNEL_CLASS;
-    private static Class<? extends DatagramChannel> DATAGRAM_CHANNEL_CLASS;
+
+    private static final Class<? extends DatagramChannel> DATAGRAM_CHANNEL_CLASS;
+
     private static EventLoopGroup EVENT_LOOP_GROUP;
+
     private static DefaultEventLoopGroup DEFAULT_EVENT_LOOP_GROUP;
 
     private final String bindAddress;
+
     private final int bindPort;
+
     private final ProxyInfo proxy;
 
     private boolean isInternallyConnecting = false;
@@ -72,18 +78,14 @@ public class TcpClientSession extends TcpSession {
 
     @Override
     public void connect(boolean wait) {
-        if(this.disconnected) {
+        if (this.disconnected) {
             throw new IllegalStateException("Session has already been disconnected.");
         }
-
         isInternallyConnecting = false;
-
         boolean debug = getFlag(BuiltinFlags.PRINT_DEBUG, false);
-
         if (CHANNEL_CLASS == null) {
             createTcpEventLoopGroup();
         }
-
         try {
             final Bootstrap bootstrap = new Bootstrap();
             bootstrap.channel(CHANNEL_CLASS);
@@ -91,59 +93,50 @@ public class TcpClientSession extends TcpSession {
                 @Override
                 public void initChannel(Channel channel) {
                     getPacketProtocol().newClientSession(TcpClientSession.this);
-
                     channel.config().setOption(ChannelOption.IP_TOS, 0x18);
                     try {
                         channel.config().setOption(ChannelOption.TCP_NODELAY, true);
                     } catch (ChannelException e) {
-                        if(debug) {
+                        if (debug) {
                             System.out.println("Exception while trying to set TCP_NODELAY");
                             e.printStackTrace();
                         }
                     }
-
                     ChannelPipeline pipeline = channel.pipeline();
-
                     refreshReadTimeoutHandler(channel);
                     refreshWriteTimeoutHandler(channel);
-
                     addProxy(pipeline);
-
                     pipeline.addLast("encryption", new TcpPacketEncryptor(TcpClientSession.this));
                     pipeline.addLast("sizer", new TcpPacketSizer(TcpClientSession.this));
                     pipeline.addLast("codec", new TcpPacketCodec(TcpClientSession.this));
                     pipeline.addLast("manager", TcpClientSession.this);
-
                     addHAProxySupport(pipeline);
                 }
             }).group(EVENT_LOOP_GROUP).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getConnectTimeout() * 1000);
-
             Runnable connectTask = () -> {
                 try {
                     InetSocketAddress remoteAddress = resolveAddress();
                     bootstrap.remoteAddress(remoteAddress);
                     bootstrap.localAddress(bindAddress, bindPort);
-
                     ChannelFuture future = bootstrap.connect().sync();
-                    if(future.isSuccess()) {
-                        while(!isConnected() && !disconnected) {
+                    if (future.isSuccess()) {
+                        while ((!isConnected()) && (!disconnected)) {
                             try {
                                 Thread.sleep(5);
-                            } catch(InterruptedException e) {
+                            } catch (java.lang.InterruptedException e) {
                             }
-                        }
+                        } 
                     }
-                } catch(Throwable t) {
+                } catch (java.lang.Throwable t) {
                     exceptionCaught(null, t);
                 }
             };
-
-            if(wait) {
+            if (wait) {
                 connectTask.run();
             } else {
                 new Thread(connectTask).start();
             }
-        } catch(Throwable t) {
+        } catch (java.lang.Throwable t) {
             exceptionCaught(null, t);
         }
     }
@@ -232,64 +225,55 @@ public class TcpClientSession extends TcpSession {
 
     private InetSocketAddress resolveAddress() {
         boolean debug = getFlag(BuiltinFlags.PRINT_DEBUG, false);
-
-        String name = this.getPacketProtocol().getSRVRecordPrefix() + "._tcp." + this.getHost();
-        if(debug) {
-            System.out.println("[PacketLib] Attempting SRV lookup for \"" + name + "\".");
+        String name = (this.getPacketProtocol().getSRVRecordPrefix() + "._tcp.") + this.getHost();
+        if (debug) {
+            System.out.println(("[PacketLib] Attempting SRV lookup for \"" + name) + "\".");
         }
-
-        if(getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost"))) {
+        if (getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && ((!this.host.matches(IP_REGEX)) && (!this.host.equalsIgnoreCase("localhost")))) {
             DnsNameResolver resolver = null;
             AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
             try {
-                resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
-                        .channelType(DATAGRAM_CHANNEL_CLASS)
-                        .build();
+                resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next()).channelType(DATAGRAM_CHANNEL_CLASS).build();
                 envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
-
                 DnsResponse response = envelope.content();
-                if(response.count(DnsSection.ANSWER) > 0) {
+                if (response.count(DnsSection.ANSWER) > 0) {
                     DefaultDnsRawRecord record = response.recordAt(DnsSection.ANSWER, 0);
-                    if(record.type() == DnsRecordType.SRV) {
+                    if (record.type() == DnsRecordType.SRV) {
                         ByteBuf buf = record.content();
-                        buf.skipBytes(4); // Skip priority and weight.
+                        buf.skipBytes(4);// Skip priority and weight.
 
                         int port = buf.readUnsignedShort();
                         String host = DefaultDnsRecordDecoder.decodeName(buf);
-                        if(host.endsWith(".")) {
+                        if (host.endsWith(".")) {
                             host = host.substring(0, host.length() - 1);
                         }
-
-                        if(debug) {
-                            System.out.println("[PacketLib] Found SRV record containing \"" + host + ":" + port + "\".");
+                        if (debug) {
+                            System.out.println(((("[PacketLib] Found SRV record containing \"" + host) + ":") + port) + "\".");
                         }
-
                         this.host = host;
                         this.port = port;
-                    } else if(debug) {
+                    } else if (debug) {
                         System.out.println("[PacketLib] Received non-SRV record in response.");
                     }
-                } else if(debug) {
+                } else if (debug) {
                     System.out.println("[PacketLib] No SRV record found.");
                 }
-            } catch(Exception e) {
-                if(debug) {
+            } catch (java.lang.Exception e) {
+                if (debug) {
                     System.out.println("[PacketLib] Failed to resolve SRV record.");
                     e.printStackTrace();
                 }
             } finally {
-                if(envelope != null) {
+                if (envelope != null) {
                     envelope.release();
                 }
-
-                if(resolver != null) {
+                if (resolver != null) {
                     resolver.close();
                 }
             }
-        } else if(debug) {
+        } else if (debug) {
             System.out.println("[PacketLib] Not resolving SRV record for " + this.host);
         }
-
         // Resolve host here
         try {
             InetAddress resolved = InetAddress.getByName(getHost());
@@ -370,14 +354,12 @@ public class TcpClientSession extends TcpSession {
         if (CHANNEL_CLASS != null) {
             return;
         }
-
         boolean disableNative = System.getProperties().contains("disableNativeEventLoop");
-
-        if (!disableNative && Epoll.isAvailable()) {
+        if ((!disableNative) && Epoll.isAvailable()) {
             CHANNEL_CLASS = EpollSocketChannel.class;
             DATAGRAM_CHANNEL_CLASS = EpollDatagramChannel.class;
             EVENT_LOOP_GROUP = new EpollEventLoopGroup();
-        } else if (!disableNative && KQueue.isAvailable()) {
+        } else if ((!disableNative) && KQueue.isAvailable()) {
             CHANNEL_CLASS = KQueueSocketChannel.class;
             DATAGRAM_CHANNEL_CLASS = KQueueDatagramChannel.class;
             EVENT_LOOP_GROUP = new KQueueEventLoopGroup();
