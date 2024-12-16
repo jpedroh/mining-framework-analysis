@@ -15,6 +15,16 @@
  */
 package com.datastax.driver.core;
 
+import com.datastax.driver.core.exceptions.AuthenticationException;
+import com.datastax.driver.core.exceptions.DriverInternalError;
+import com.datastax.driver.core.exceptions.NoHostAvailableException;
+import com.datastax.driver.core.policies.*;
+import com.google.common.base.Predicates;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.MapMaker;
+import com.google.common.collect.SetMultimap;
+import com.google.common.util.concurrent.*;
 import java.io.Closeable;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -23,21 +33,9 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.MapMaker;
-import com.google.common.collect.SetMultimap;
-import com.google.common.util.concurrent.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.exceptions.AuthenticationException;
-import com.datastax.driver.core.exceptions.DriverInternalError;
-import com.datastax.driver.core.exceptions.NoHostAvailableException;
-import com.datastax.driver.core.policies.*;
 
 /**
  * Information and known state of a Cassandra cluster.
@@ -59,9 +57,10 @@ import com.datastax.driver.core.policies.*;
  * subsequently.
  */
 public class Cluster implements Closeable {
-
     private static final Logger logger = LoggerFactory.getLogger(Cluster.class);
 
+    // Some per-JVM number that allows to generate unique cluster names when
+    // multiple Cluster instance are created in the same JVM.
     // Some per-JVM number that allows to generate unique cluster names when
     // multiple Cluster instance are created in the same JVM.
     private static final AtomicInteger CLUSTER_ID = new AtomicInteger(0);
@@ -78,9 +77,12 @@ public class Cluster implements Closeable {
      * should prefer either using the {@link #builder} or calling {@link #buildFrom} with a custom
      * Initializer.
      *
-     * @param name the name to use for the cluster (this is not the Cassandra cluster name, see {@link #getClusterName}).
-     * @param contactPoints the list of contact points to use for the new cluster.
-     * @param configuration the configuration for the new cluster.
+     * @param name
+     * 		the name to use for the cluster (this is not the Cassandra cluster name, see {@link #getClusterName}).
+     * @param contactPoints
+     * 		the list of contact points to use for the new cluster.
+     * @param configuration
+     * 		the configuration for the new cluster.
      */
     protected Cluster(String name, List<InetSocketAddress> contactPoints, Configuration configuration) {
         this(name, contactPoints, configuration, Collections.<Host.StateListener>emptySet());
@@ -93,14 +95,12 @@ public class Cluster implements Closeable {
      * easier or to "intercept" its method call. Most users shouldn't extend this class however and
      * should prefer using the {@link #builder}.
      *
-     * @param initializer the initializer to use.
+     * @param initializer
+     * 		the initializer to use.
      * @see #buildFrom
      */
     protected Cluster(Initializer initializer) {
-        this(initializer.getClusterName(),
-             checkNotEmpty(initializer.getContactPoints()),
-             initializer.getConfiguration(),
-             initializer.getInitialListeners());
+        this(initializer.getClusterName(), checkNotEmpty(initializer.getContactPoints()), initializer.getConfiguration(), initializer.getInitialListeners());
     }
 
     private static List<InetSocketAddress> checkNotEmpty(List<InetSocketAddress> contactPoints) {
@@ -471,7 +471,6 @@ public class Cluster implements Closeable {
      * retrieves initialization from a web-service or from a configuration file.
      */
     public interface Initializer {
-
         /**
          * An optional name for the created cluster.
          * <p>
@@ -480,17 +479,17 @@ public class Cluster implements Closeable {
          * information.
          *
          * @return the name for the created cluster or {@code null} to use an automatically
-         * generated name.
+        generated name.
          */
-        public String getClusterName();
+        public abstract String getClusterName();
 
         /**
          * Returns the initial Cassandra hosts to connect to.
          *
          * @return the initial Cassandra contact points. See {@link Builder#addContactPoint}
-         * for more details on contact points.
+        for more details on contact points.
          */
-        public List<InetSocketAddress> getContactPoints();
+        public abstract List<InetSocketAddress> getContactPoints();
 
         /**
          * The configuration to use for the new cluster.
@@ -499,15 +498,15 @@ public class Cluster implements Closeable {
          * initialization but some others cannot. In particular, the ones that
          * cannot be changed afterwards includes:
          * <ul>
-         *   <li>the port use to connect to Cassandra nodes (see {@link ProtocolOptions}).</li>
-         *   <li>the policies used (see {@link Policies}).</li>
-         *   <li>the authentication info provided (see {@link Configuration}).</li>
-         *   <li>whether metrics are enabled (see {@link Configuration}).</li>
+         * <li>the port use to connect to Cassandra nodes (see {@link ProtocolOptions}).</li>
+         * <li>the policies used (see {@link Policies}).</li>
+         * <li>the authentication info provided (see {@link Configuration}).</li>
+         * <li>whether metrics are enabled (see {@link Configuration}).</li>
          * </ul>
          *
          * @return the configuration to use for the new cluster.
          */
-        public Configuration getConfiguration();
+        public abstract Configuration getConfiguration();
 
         /**
          * Optional listeners to register against the newly created cluster.
@@ -517,39 +516,50 @@ public class Cluster implements Closeable {
          * events for the initial contact points.
          *
          * @return a possibly empty collection of {@code Host.StateListener} to register
-         * against the newly created cluster.
+        against the newly created cluster.
          */
-        public Collection<Host.StateListener> getInitialListeners();
+        public abstract Collection<Host.StateListener> getInitialListeners();
     }
 
     /**
      * Helper class to build {@link Cluster} instances.
      */
     public static class Builder implements Initializer {
-
         private String clusterName;
+
         private final List<InetSocketAddress> addresses = new ArrayList<InetSocketAddress>();
+
         private final List<InetAddress> rawAddresses = new ArrayList<InetAddress>();
+
         private int port = ProtocolOptions.DEFAULT_PORT;
+
         private int protocolVersion = -1;
+
         private AuthProvider authProvider = AuthProvider.NONE;
 
         private LoadBalancingPolicy loadBalancingPolicy;
+
         private ReconnectionPolicy reconnectionPolicy;
+
         private RetryPolicy retryPolicy;
+
         private AddressTranslater addressTranslater;
 
         private ProtocolOptions.Compression compression = ProtocolOptions.Compression.NONE;
+
         private SSLOptions sslOptions = null;
+
         private boolean metricsEnabled = true;
+
         private boolean jmxEnabled = true;
 
         private PoolingOptions poolingOptions;
+
         private SocketOptions socketOptions;
+
         private QueryOptions queryOptions;
 
         private Collection<Host.StateListener> listeners;
-
 
         @Override
         public String getClusterName() {
@@ -645,10 +655,9 @@ public class Cluster implements Closeable {
          * negative value.
          */
         public Builder withProtocolVersion(int version) {
-            if (protocolVersion == 0 || protocolVersion > ProtocolOptions.NEWEST_SUPPORTED_PROTOCOL_VERSION)
-                throw new IllegalArgumentException(String.format("Unsupported protocol version %d; valid values must be between 1 and %d or negative (for auto-detect).",
-                                                                 protocolVersion,
-                                                                 ProtocolOptions.NEWEST_SUPPORTED_PROTOCOL_VERSION));
+            if ((protocolVersion == 0) || (protocolVersion > ProtocolOptions.NEWEST_SUPPORTED_PROTOCOL_VERSION)) {
+                throw new IllegalArgumentException(String.format("Unsupported protocol version %d; valid values must be between 1 and %d or negative (for auto-detect).", protocolVersion, ProtocolOptions.NEWEST_SUPPORTED_PROTOCOL_VERSION));
+            }
             this.protocolVersion = version;
             return this;
         }
@@ -1064,25 +1073,32 @@ public class Cluster implements Closeable {
      * user to be able to call the {@link #onUp} and {@link #onDown} methods.
      */
     class Manager implements Connection.DefaultResponseHandler {
-
         final String clusterName;
+
         private boolean isInit;
+
         private volatile boolean isFullyInit;
 
         // Initial contacts point
+        // Initial contacts point
         final List<InetSocketAddress> contactPoints;
+
         final Set<SessionManager> sessions = new CopyOnWriteArraySet<SessionManager>();
 
         final Metadata metadata;
+
         final Configuration configuration;
+
         final Metrics metrics;
 
         final Connection.Factory connectionFactory;
+
         final ControlConnection controlConnection;
 
         final ConvictionPolicy.Factory convictionPolicyFactory = new ConvictionPolicy.Simple.Factory();
 
         final ScheduledExecutorService reconnectionExecutor = Executors.newScheduledThreadPool(2, threadFactory("Reconnection-%d"));
+
         // scheduledTasksExecutor is used to process C* notifications. So having it mono-threaded ensures notifications are
         // applied in the order received.
         final ScheduledExecutorService scheduledTasksExecutor = Executors.newScheduledThreadPool(1, threadFactory("Scheduled Tasks-%d"));
@@ -1102,70 +1118,66 @@ public class Cluster implements Closeable {
         final ConcurrentMap<MD5Digest, PreparedStatement> preparedQueries = new MapMaker().weakValues().makeMap();
 
         final Set<Host.StateListener> listeners;
+
         final Set<LatencyTracker> trackers = new CopyOnWriteArraySet<LatencyTracker>();
 
         private Manager(String clusterName, List<InetSocketAddress> contactPoints, Configuration configuration, Collection<Host.StateListener> listeners) {
             logger.debug("Starting new cluster with contact points " + contactPoints);
-
-            this.clusterName = clusterName == null ? generateClusterName() : clusterName;
+            this.clusterName = (clusterName == null) ? generateClusterName() : clusterName;
             this.configuration = configuration;
             this.configuration.register(this);
-
             this.executor = makeExecutor(Runtime.getRuntime().availableProcessors(), "Cassandra Java Driver worker-%d");
             this.blockingExecutor = makeExecutor(2, "Cassandra Java Driver blocking tasks worker-%d");
-
             this.metadata = new Metadata(this);
             this.contactPoints = contactPoints;
             this.connectionFactory = new Connection.Factory(this, configuration);
             this.controlConnection = new ControlConnection(this);
-
-            this.metrics = configuration.getMetricsOptions() == null ? null : new Metrics(this);
+            this.metrics = (configuration.getMetricsOptions() == null) ? null : new Metrics(this);
             this.listeners = new CopyOnWriteArraySet<Host.StateListener>(listeners);
         }
 
         // Initialization is not too performance intensive and in practice there shouldn't be contention
         // on it so synchronized is good enough.
         synchronized void init() {
-            if (isClosed())
+            if (isClosed()) {
                 throw new IllegalStateException("Can't use this Cluster instance because it was previously closed");
-            if (isInit)
+            }
+            if (isInit) {
                 return;
+            }
             isInit = true;
-
             for (InetSocketAddress address : contactPoints) {
                 // We don't want to signal -- call onAdd() -- because nothing is ready
                 // yet (loadbalancing policy, control connection, ...). All we want is
                 // create the Host object so we can initialize the control connection.
                 Host host = metadata.add(address);
             }
-
             try {
                 while (true) {
                     try {
                         controlConnection.connect();
-                        if (connectionFactory.protocolVersion < 0)
+                        if (connectionFactory.protocolVersion < 0) {
                             connectionFactory.protocolVersion = ProtocolOptions.NEWEST_SUPPORTED_PROTOCOL_VERSION;
-
+                        }
                         // Now that the control connection is ready, we have all the information we need about the nodes (datacenter,
                         // rack...) to initialize the load balancing policy
                         Collection<Host> hosts = metadata.allHosts();
                         loadBalancingPolicy().init(Cluster.this, hosts);
-
                         isFullyInit = true;
-
-                        for (Host host : hosts)
+                        for (Host host : hosts) {
                             triggerOnAdd(host);
-
+                        }
                         return;
                     } catch (UnsupportedProtocolVersionException e) {
                         assert connectionFactory.protocolVersion < 1;
                         // For now, all C* version supports the protocol version 1
-                        if (e.versionUnsupported <= 1)
+                        if (e.versionUnsupported <= 1) {
                             throw new DriverInternalError("Got a node that don't even support the protocol version 1, this makes no sense", e);
+                        }
                         logger.debug("{}: retrying with version {}", e.getMessage(), e.versionUnsupported - 1);
                         connectionFactory.protocolVersion = e.versionUnsupported - 1;
                     }
-                }
+                } 
             } catch (NoHostAvailableException e) {
                 close();
                 throw e;
@@ -1763,19 +1775,20 @@ public class Cluster implements Closeable {
 
         // refresh the schema using the provided connection, and notice the future with the provided resultset once done
         public void refreshSchemaAndSignal(final Connection connection, final DefaultResultSetFuture future, final ResultSet rs, final String keyspace, final String table) {
-            if (logger.isDebugEnabled())
+            if (logger.isDebugEnabled()) {
                 logger.debug("Refreshing schema for {}{}", keyspace == null ? "" : keyspace, table == null ? "" : '.' + table);
-
+            }
             executor.submit(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         // Before refreshing the schema, wait for schema agreement so
                         // that querying a table just after having created it don't fail.
-                        if (!ControlConnection.waitForSchemaAgreement(connection, Cluster.Manager.this))
+                        if (!ControlConnection.waitForSchemaAgreement(connection, Cluster.Manager.this)) {
                             logger.warn("No schema agreement from live replicas after {} ms. The schema may not be up to date on some nodes.", ControlConnection.MAX_SCHEMA_AGREEMENT_WAIT_MS);
+                        }
                         ControlConnection.refreshSchema(connection, keyspace, table, Cluster.Manager.this, false);
-                    } catch (Exception e) {
+                    } catch (java.lang.Exception e) {
                         logger.error("Error during schema refresh ({}). The schema from Cluster.getMetadata() might appear stale. Asynchronously submitting job to fix.", e.getMessage());
                         submitSchemaRefresh(keyspace, table);
                     } finally {
@@ -1921,7 +1934,6 @@ public class Cluster implements Closeable {
         }
 
         private class ClusterCloseFuture extends CloseFuture.Forwarding {
-
             ClusterCloseFuture(List<CloseFuture> futures) {
                 super(futures);
             }
@@ -1935,16 +1947,15 @@ public class Cluster implements Closeable {
 
             @Override
             protected void onFuturesDone() {
-                /*
-                 * When we reach this, all sessions should be shutdown. We've also started a shutdown
-                 * of the thread pools used by this object. Remains 2 things before marking the shutdown
-                 * as done:
-                 *   1) we need to wait for the completion of the shutdown of the Cluster threads pools.
-                 *   2) we need to shutdown the Connection.Factory, i.e. the executors used by Netty.
-                 * But at least for 2), we must not do it on the current thread because that could be
-                 * a netty worker, which we're going to shutdown. So creates some thread for that.
+                /* When we reach this, all sessions should be shutdown. We've also started a shutdown
+                of the thread pools used by this object. Remains 2 things before marking the shutdown
+                as done:
+                1) we need to wait for the completion of the shutdown of the Cluster threads pools.
+                2) we need to shutdown the Connection.Factory, i.e. the executors used by Netty.
+                But at least for 2), we must not do it on the current thread because that could be
+                a netty worker, which we're going to shutdown. So creates some thread for that.
                  */
-                (new Thread("Shutdown-checker") {
+                new Thread("Shutdown-checker") {
                     public void run() {
                         // Just wait indefinitely on the the completion of the thread pools. Provided the user
                         // call force(), we'll never really block forever.
@@ -1952,18 +1963,16 @@ public class Cluster implements Closeable {
                             reconnectionExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
                             scheduledTasksExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
                             executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-
                             // Some of the jobs on the executors can be doing query stuff, so close the
                             // connectionFactory at the very last
                             connectionFactory.shutdown();
-
                             set(null);
-                        } catch (InterruptedException e) {
+                        } catch (java.lang.InterruptedException e) {
                             Thread.currentThread().interrupt();
                             setException(e);
                         }
                     }
-                }).start();
+                }.start();
             }
         }
     }

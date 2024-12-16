@@ -15,6 +15,10 @@
  */
 package com.datastax.driver.core;
 
+import com.datastax.driver.core.exceptions.DriverException;
+import com.datastax.driver.core.exceptions.DriverInternalError;
+import com.datastax.driver.core.exceptions.NoHostAvailableException;
+import com.google.common.base.Objects;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -23,25 +27,20 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-
-import com.google.common.base.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.exceptions.DriverException;
-import com.datastax.driver.core.exceptions.DriverInternalError;
-import com.datastax.driver.core.exceptions.NoHostAvailableException;
 
 class ControlConnection implements Host.StateListener {
-
     private static final Logger logger = LoggerFactory.getLogger(ControlConnection.class);
 
+    // TODO: we might want to make that configurable
     // TODO: we might want to make that configurable
     static final long MAX_SCHEMA_AGREEMENT_WAIT_MS = 10000;
 
     private static final InetAddress bindAllAddress;
-    static
-    {
+
+    static {
         try {
             bindAllAddress = InetAddress.getByAddress(new byte[4]);
         } catch (UnknownHostException e) {
@@ -50,14 +49,19 @@ class ControlConnection implements Host.StateListener {
     }
 
     private static final String SELECT_KEYSPACES = "SELECT * FROM system.schema_keyspaces";
+
     private static final String SELECT_COLUMN_FAMILIES = "SELECT * FROM system.schema_columnfamilies";
+
     private static final String SELECT_COLUMNS = "SELECT * FROM system.schema_columns";
+
     private static final String SELECT_USERTYPES = "SELECT * FROM system.schema_usertypes";
 
     private static final String SELECT_PEERS = "SELECT * FROM system.peers";
+
     private static final String SELECT_LOCAL = "SELECT * FROM system.local WHERE key='local'";
 
     private static final String SELECT_SCHEMA_PEERS = "SELECT peer, rpc_address, schema_version FROM system.peers";
+
     private static final String SELECT_SCHEMA_LOCAL = "SELECT schema_version FROM system.local WHERE key='local'";
 
     private final AtomicReference<Connection> connectionRef = new AtomicReference<Connection>();
@@ -214,20 +218,13 @@ class ControlConnection implements Host.StateListener {
 
     private Connection tryConnect(Host host, boolean isInitialConnection) throws ConnectionException, ExecutionException, InterruptedException, UnsupportedProtocolVersionException {
         Connection connection = cluster.connectionFactory.open(host);
-
         try {
             logger.trace("[Control connection] Registering for events");
-            List<ProtocolEvent.Type> evs = Arrays.asList(
-                ProtocolEvent.Type.TOPOLOGY_CHANGE,
-                ProtocolEvent.Type.STATUS_CHANGE,
-                ProtocolEvent.Type.SCHEMA_CHANGE
-            );
+            List<ProtocolEvent.Type> evs = Arrays.asList(ProtocolEvent.Type.TOPOLOGY_CHANGE, ProtocolEvent.Type.STATUS_CHANGE, ProtocolEvent.Type.SCHEMA_CHANGE);
             connection.write(new Requests.Register(evs));
-
             // We need to refresh the node list first so we know about the cassandra version of
             // the node we're connecting to.
             refreshNodeListAndTokenMap(connection, cluster, isInitialConnection);
-
             // Note that refreshing the schema will trigger refreshNodeListAndTokenMap since table == null
             // We want that because the token map was not properly initialized by the first call above, since it requires the list of keyspaces
             // to be loaded.
@@ -237,7 +234,7 @@ class ControlConnection implements Host.StateListener {
         } catch (BusyConnectionException e) {
             connection.closeAsync().get();
             throw new DriverInternalError("Newly created connection should not be busy");
-        } catch (RuntimeException e) {
+        } catch (java.lang.RuntimeException e) {
             connection.closeAsync().get();
             throw e;
         }
@@ -248,16 +245,18 @@ class ControlConnection implements Host.StateListener {
         try {
             Connection c = connectionRef.get();
             // At startup, when we add the initial nodes, this will be null, which is ok
-            if (c == null)
+            if (c == null) {
                 return;
+            }
             refreshSchema(c, keyspace, table, cluster, false);
         } catch (ConnectionException e) {
             logger.debug("[Control connection] Connection error while refreshing schema ({})", e.getMessage());
             signalError();
         } catch (ExecutionException e) {
             // If we're being shutdown during schema refresh, this can happen. That's fine so don't scare the user.
-            if (!isShutdown)
+            if (!isShutdown) {
                 logger.error("[Control connection] Unexpected error while refreshing schema", e);
+            }
             signalError();
         } catch (BusyConnectionException e) {
             logger.debug("[Control connection] Connection is busy, reconnecting");
@@ -271,51 +270,45 @@ class ControlConnection implements Host.StateListener {
         // a Cassandra version from the protocol version (this is not full proof, we can have the protocol 1 against C* 2.0+, but it's worth
         // a shot, and since we log in this case, it should be relatively easy to debug when if this ever fail).
         VersionNumber cassandraVersion;
-        if (host == null || host.getCassandraVersion() == null) {
-            cassandraVersion = cluster.protocolVersion() == 1 ? VersionNumber.parse("1.2.0") : VersionNumber.parse("2.0.0");
-            logger.warn("Cannot find Cassandra version for host {} to parse the schema, using {} based on protocol version in use. "
-                      + "If parsing the schema fails, this could be the cause", connection.address, cassandraVersion);
+        if ((host == null) || (host.getCassandraVersion() == null)) {
+            cassandraVersion = (cluster.protocolVersion() == 1) ? VersionNumber.parse("1.2.0") : VersionNumber.parse("2.0.0");
+            logger.warn("Cannot find Cassandra version for host {} to parse the schema, using {} based on protocol version in use. " + "If parsing the schema fails, this could be the cause", connection.address, cassandraVersion);
         } else {
             cassandraVersion = host.getCassandraVersion();
         }
-
         // Make sure we're up to date on schema
         String whereClause = "";
         if (keyspace != null) {
-            whereClause = " WHERE keyspace_name = '" + keyspace + '\'';
-            if (table != null)
-                whereClause += " AND columnfamily_name = '" + table + '\'';
+            whereClause = (" WHERE keyspace_name = '" + keyspace) + '\'';
+            if (table != null) {
+                whereClause += (" AND columnfamily_name = '" + table) + '\'';
+            }
         }
-
-        DefaultResultSetFuture ksFuture = table == null
-                                        ? new DefaultResultSetFuture(null, cluster.protocolVersion(), new Requests.Query(SELECT_KEYSPACES + whereClause))
-                                        : null;
-        DefaultResultSetFuture udtFuture = table == null && (cassandraVersion.getMajor() > 2 || (cassandraVersion.getMajor() == 2 && cassandraVersion.getMinor() >= 1))
-                                         ? new DefaultResultSetFuture(null, cluster.protocolVersion(), new Requests.Query(SELECT_USERTYPES + whereClause))
-                                         : null;
+        DefaultResultSetFuture ksFuture = (table == null) ? new DefaultResultSetFuture(null, cluster.protocolVersion(), new Requests.Query(SELECT_KEYSPACES + whereClause)) : null;
+        DefaultResultSetFuture udtFuture = ((table == null) && ((cassandraVersion.getMajor() > 2) || ((cassandraVersion.getMajor() == 2) && (cassandraVersion.getMinor() >= 1)))) ? new DefaultResultSetFuture(null, cluster.protocolVersion(), new Requests.Query(SELECT_USERTYPES + whereClause)) : null;
         DefaultResultSetFuture cfFuture = new DefaultResultSetFuture(null, cluster.protocolVersion(), new Requests.Query(SELECT_COLUMN_FAMILIES + whereClause));
         DefaultResultSetFuture colsFuture = new DefaultResultSetFuture(null, cluster.protocolVersion(), new Requests.Query(SELECT_COLUMNS + whereClause));
-
-        if (ksFuture != null)
+        if (ksFuture != null) {
             connection.write(ksFuture);
-        if (udtFuture != null)
+        }
+        if (udtFuture != null) {
             connection.write(udtFuture);
+        }
         connection.write(cfFuture);
         connection.write(colsFuture);
-
         try {
             cluster.metadata.rebuildSchema(keyspace, table, ksFuture == null ? null : ksFuture.get(), udtFuture == null ? null : udtFuture.get(), cfFuture.get(), colsFuture.get(), cassandraVersion);
-        } catch (RuntimeException e) {
+        } catch (java.lang.RuntimeException e) {
             // Failure to parse the schema is definitively wrong so log a full-on error, but this won't generally prevent queries to
             // work and this can happen when new Cassandra versions modify stuff in the schema and the driver hasn't yet be modified.
             // So log, but let things go otherwise.
             logger.error("Error parsing schema from Cassandra system tables: the schema in Cluster#getMetadata() will appear incomplete or stale", e);
         }
-
         // If the table is null, we either rebuild all from scratch or have an updated keyspace. In both case, rebuild the token map
         // since some replication on some keyspace may have changed
-        if (table == null)
+        if (table == null) {
             refreshNodeListAndTokenMap(connection, cluster, false);
+        }
     }
 
     public void refreshNodeListAndTokenMap() {
@@ -366,34 +359,33 @@ class ControlConnection implements Host.StateListener {
     private Row fetchNodeInfo(Host host, Connection c) {
         try {
             boolean isConnectedHost = c.address.equals(host.getSocketAddress());
-            if (isConnectedHost || host.listenAddress != null) {
-                DefaultResultSetFuture future = isConnectedHost
-                    ? new DefaultResultSetFuture(null, cluster.protocolVersion(), new Requests.Query(SELECT_LOCAL))
-                    : new DefaultResultSetFuture(null, cluster.protocolVersion(), new Requests.Query(SELECT_PEERS + " WHERE peer='" + host.listenAddress.getHostAddress() + '\''));
+            if (isConnectedHost || (host.listenAddress != null)) {
+                DefaultResultSetFuture future = (isConnectedHost) ? new DefaultResultSetFuture(null, cluster.protocolVersion(), new Requests.Query(SELECT_LOCAL)) : new DefaultResultSetFuture(null, cluster.protocolVersion(), new Requests.Query(((SELECT_PEERS + " WHERE peer='") + host.listenAddress.getHostAddress()) + '\''));
                 c.write(future);
                 return future.get().one();
             }
-
             // We have to fetch the whole peers table and find the host we're looking for
             DefaultResultSetFuture future = new DefaultResultSetFuture(null, cluster.protocolVersion(), new Requests.Query(SELECT_PEERS));
             c.write(future);
             for (Row row : future.get()) {
                 InetSocketAddress addr = addressToUseForPeerHost(row, c.address, cluster);
-                if (addr != null && addr.equals(host.getSocketAddress()))
+                if ((addr != null) && addr.equals(host.getSocketAddress())) {
                     return row;
+                }
             }
         } catch (ConnectionException e) {
             logger.debug("[Control connection] Connection error while refreshing node info ({})", e.getMessage());
             signalError();
         } catch (ExecutionException e) {
             // If we're being shutdown during refresh, this can happen. That's fine so don't scare the user.
-            if (!isShutdown)
+            if (!isShutdown) {
                 logger.debug("[Control connection] Unexpected error while refreshing node info", e);
+            }
             signalError();
         } catch (BusyConnectionException e) {
             logger.debug("[Control connection] Connection is busy, reconnecting");
             signalError();
-        } catch (InterruptedException e) {
+        } catch (java.lang.InterruptedException e) {
             Thread.currentThread().interrupt();
             logger.debug("[Control connection] Interrupted while refreshing node list and token map, skipping it.");
         }
@@ -448,28 +440,24 @@ class ControlConnection implements Host.StateListener {
 
     private static void refreshNodeListAndTokenMap(Connection connection, Cluster.Manager cluster, boolean isInitialConnection) throws ConnectionException, BusyConnectionException, ExecutionException, InterruptedException {
         logger.debug("[Control connection] Refreshing node list and token map");
-
         // Make sure we're up to date on nodes and tokens
-
         DefaultResultSetFuture localFuture = new DefaultResultSetFuture(null, cluster.protocolVersion(), new Requests.Query(SELECT_LOCAL));
         DefaultResultSetFuture peersFuture = new DefaultResultSetFuture(null, cluster.protocolVersion(), new Requests.Query(SELECT_PEERS));
         connection.write(localFuture);
         connection.write(peersFuture);
-
         String partitioner = null;
         Map<Host, Collection<String>> tokenMap = new HashMap<Host, Collection<String>>();
-
         // Update cluster name, DC and rack for the one node we are connected to
         Row localRow = localFuture.get().one();
         if (localRow != null) {
             String clusterName = localRow.getString("cluster_name");
-            if (clusterName != null)
+            if (clusterName != null) {
                 cluster.metadata.clusterName = clusterName;
-
+            }
             partitioner = localRow.getString("partitioner");
-            if (partitioner != null)
+            if (partitioner != null) {
                 cluster.metadata.partitioner = partitioner;
-
+            }
             Host host = cluster.metadata.getHost(connection.address);
             // In theory host can't be null. However there is no point in risking a NPE in case we
             // have a race between a node removal and this.
@@ -477,32 +465,30 @@ class ControlConnection implements Host.StateListener {
                 logger.debug("Host in local system table ({}) unknown to us (ok if said host just got removed)", connection.address);
             } else {
                 updateInfo(host, localRow, cluster);
-                Set<String> tokens = localRow.getSet("tokens", String.class);
-                if (partitioner != null && !tokens.isEmpty())
+                Set<String> tokens = localRow.getSet("tokens", java.lang.String.class);
+                if ((partitioner != null) && (!tokens.isEmpty())) {
                     tokenMap.put(host, tokens);
+                }
             }
         }
-
         List<InetSocketAddress> foundHosts = new ArrayList<InetSocketAddress>();
         List<String> dcs = new ArrayList<String>();
         List<String> racks = new ArrayList<String>();
         List<String> cassandraVersions = new ArrayList<String>();
         List<InetAddress> listenAddresses = new ArrayList<InetAddress>();
         List<Set<String>> allTokens = new ArrayList<Set<String>>();
-
         for (Row row : peersFuture.get()) {
             InetSocketAddress addr = addressToUseForPeerHost(row, connection.address, cluster);
-            if (addr == null)
+            if (addr == null) {
                 continue;
-
+            }
             foundHosts.add(addr);
             dcs.add(row.getString("data_center"));
             racks.add(row.getString("rack"));
             cassandraVersions.add(row.getString("release_version"));
             listenAddresses.add(row.getInet("peer"));
-            allTokens.add(row.getSet("tokens", String.class));
+            allTokens.add(row.getSet("tokens", java.lang.String.class));
         }
-
         for (int i = 0; i < foundHosts.size(); i++) {
             Host host = cluster.metadata.getHost(foundHosts.get(i));
             boolean isNew = false;
@@ -512,66 +498,60 @@ class ControlConnection implements Host.StateListener {
                 host = cluster.metadata.add(foundHosts.get(i));
                 isNew = true;
             }
-            if (dcs.get(i) != null || racks.get(i) != null)
+            if ((dcs.get(i) != null) || (racks.get(i) != null)) {
                 updateLocationInfo(host, dcs.get(i), racks.get(i), cluster);
-            if (cassandraVersions.get(i) != null)
+            }
+            if (cassandraVersions.get(i) != null) {
                 host.setVersionAndListenAdress(cassandraVersions.get(i), listenAddresses.get(i));
-
-            if (partitioner != null && !allTokens.get(i).isEmpty())
+            }
+            if ((partitioner != null) && (!allTokens.get(i).isEmpty())) {
                 tokenMap.put(host, allTokens.get(i));
-
-            if (isNew && !isInitialConnection)
+            }
+            if (isNew && (!isInitialConnection)) {
                 cluster.triggerOnAdd(host);
+            }
         }
-
         // Removes all those that seems to have been removed (since we lost the control connection)
         Set<InetSocketAddress> foundHostsSet = new HashSet<InetSocketAddress>(foundHosts);
-        for (Host host : cluster.metadata.allHosts())
-            if (!host.getSocketAddress().equals(connection.address) && !foundHostsSet.contains(host.getSocketAddress()))
+        for (Host host : cluster.metadata.allHosts()) {
+            if ((!host.getSocketAddress().equals(connection.address)) && (!foundHostsSet.contains(host.getSocketAddress()))) {
                 cluster.removeHost(host, isInitialConnection);
-
+            }
+        }
         cluster.metadata.rebuildTokenMap(partitioner, tokenMap);
     }
 
     static boolean waitForSchemaAgreement(Connection connection, Cluster.Manager cluster) throws ConnectionException, BusyConnectionException, ExecutionException, InterruptedException {
-
         long start = System.nanoTime();
         long elapsed = 0;
         while (elapsed < MAX_SCHEMA_AGREEMENT_WAIT_MS) {
-
             DefaultResultSetFuture peersFuture = new DefaultResultSetFuture(null, cluster.protocolVersion(), new Requests.Query(SELECT_SCHEMA_PEERS));
             DefaultResultSetFuture localFuture = new DefaultResultSetFuture(null, cluster.protocolVersion(), new Requests.Query(SELECT_SCHEMA_LOCAL));
             connection.write(peersFuture);
             connection.write(localFuture);
-
             Set<UUID> versions = new HashSet<UUID>();
-
             Row localRow = localFuture.get().one();
-            if (localRow != null && !localRow.isNull("schema_version"))
+            if ((localRow != null) && (!localRow.isNull("schema_version"))) {
                 versions.add(localRow.getUUID("schema_version"));
-
-            for (Row row : peersFuture.get()) {
-
-                InetSocketAddress addr = addressToUseForPeerHost(row, connection.address, cluster);
-                if (addr == null || row.isNull("schema_version"))
-                    continue;
-
-                Host peer = cluster.metadata.getHost(addr);
-                if (peer != null && peer.isUp())
-                    versions.add(row.getUUID("schema_version"));
             }
-
+            for (Row row : peersFuture.get()) {
+                InetSocketAddress addr = addressToUseForPeerHost(row, connection.address, cluster);
+                if ((addr == null) || row.isNull("schema_version")) {
+                    continue;
+                }
+                Host peer = cluster.metadata.getHost(addr);
+                if ((peer != null) && peer.isUp()) {
+                    versions.add(row.getUUID("schema_version"));
+                }
+            }
             logger.debug("Checking for schema agreement: versions are {}", versions);
-
-            if (versions.size() <= 1)
+            if (versions.size() <= 1) {
                 return true;
-
+            }
             // let's not flood the node too much
             Thread.sleep(200);
-
             elapsed = Cluster.timeSince(start, TimeUnit.MILLISECONDS);
-        }
-
+        } 
         return false;
     }
 
