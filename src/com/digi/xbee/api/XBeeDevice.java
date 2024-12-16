@@ -11,14 +11,8 @@
 */
 package com.digi.xbee.api;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.digi.xbee.api.connection.IConnectionInterface;
 import com.digi.xbee.api.connection.DataReader;
+import com.digi.xbee.api.connection.IConnectionInterface;
 import com.digi.xbee.api.connection.serial.SerialPortParameters;
 import com.digi.xbee.api.exceptions.ATCommandException;
 import com.digi.xbee.api.exceptions.InterfaceAlreadyOpenException;
@@ -37,14 +31,14 @@ import com.digi.xbee.api.listeners.ISerialDataReceiveListener;
 import com.digi.xbee.api.models.ATCommand;
 import com.digi.xbee.api.models.ATCommandResponse;
 import com.digi.xbee.api.models.ATCommandStatus;
+import com.digi.xbee.api.models.OperatingMode;
 import com.digi.xbee.api.models.XBee16BitAddress;
 import com.digi.xbee.api.models.XBee64BitAddress;
-import com.digi.xbee.api.models.OperatingMode;
 import com.digi.xbee.api.models.XBeeProtocol;
 import com.digi.xbee.api.models.XBeeTransmitOptions;
 import com.digi.xbee.api.models.XBeeTransmitStatus;
-import com.digi.xbee.api.packet.XBeeAPIPacket;
 import com.digi.xbee.api.packet.APIFrameType;
+import com.digi.xbee.api.packet.XBeeAPIPacket;
 import com.digi.xbee.api.packet.XBeePacket;
 import com.digi.xbee.api.packet.common.ATCommandPacket;
 import com.digi.xbee.api.packet.common.ATCommandResponsePacket;
@@ -55,89 +49,111 @@ import com.digi.xbee.api.packet.common.TransmitStatusPacket;
 import com.digi.xbee.api.packet.raw.TXStatusPacket;
 import com.digi.xbee.api.utils.ByteUtils;
 import com.digi.xbee.api.utils.HexUtils;
+import java.io.IOException;
+import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class XBeeDevice {
-	
+	// Constants.
+	// 2.0 seconds of timeout to receive packet and command responses.
 	// Constants.
 	protected static int DEFAULT_RECEIVE_TIMETOUT = 2000; // 2.0 seconds of timeout to receive packet and command responses.
+
 	protected static int TIMEOUT_BEFORE_COMMAND_MODE = 1200;
+
 	protected static int TIMEOUT_ENTER_COMMAND_MODE = 1500;
-	
+
 	private static String COMMAND_MODE_CHAR = "+";
+
 	private static String COMMAND_MODE_OK = "OK\r";
-	
+
+	// Variables.
 	// Variables.
 	protected IConnectionInterface connectionInterface;
-	
+
 	protected DataReader dataReader = null;
-	
+
 	protected XBeeProtocol xbeeProtocol = XBeeProtocol.UNKNOWN;
-	
+
 	protected OperatingMode operatingMode = OperatingMode.UNKNOWN;
-	
+
 	protected XBee64BitAddress xbee64BitAddress;
-	
+
 	protected int currentFrameID = 0xFF;
+
 	protected int receiveTimeout = DEFAULT_RECEIVE_TIMETOUT;
-	
+
 	protected Logger logger;
-	
+
 	private XBeeDevice localXBeeDevice;
-	
+
 	/**
-	 * Class constructor. Instantiates a new {@code XBeeDevice} object in the 
+	 * Class constructor. Instantiates a new {@code XBeeDevice} object in the
 	 * given port name and baud rate.
-	 * 
-	 * @param port Serial port name where XBee device is attached to.
-	 * @param baudRate Serial port baud rate to communicate with the device. 
-	 *                 Other connection parameters will be set as default (8 
-	 *                 data bits, 1 stop bit, no parity, no flow control).
-	 * 
-	 * @throws NullPointerException if {@code port == null}.
-	 * @throws IllegalArgumentException if {@code baudRate < 0}.
+	 *
+	 * @param port
+	 * 		Serial port name where XBee device is attached to.
+	 * @param baudRate
+	 * 		Serial port baud rate to communicate with the device.
+	 * 		Other connection parameters will be set as default (8
+	 * 		data bits, 1 stop bit, no parity, no flow control).
+	 * @throws NullPointerException
+	 * 		if {@code port == null}.
+	 * @throws IllegalArgumentException
+	 * 		if {@code baudRate < 0}.
 	 */
 	public XBeeDevice(String port, int baudRate) {
 		this(XBee.createConnectiontionInterface(port, baudRate));
 	}
-	
+
 	/**
-	 * Class constructor. Instantiates a new {@code XBeeDevice} object in the 
+	 * Class constructor. Instantiates a new {@code XBeeDevice} object in the
 	 * given serial port name and settings.
-	 * 
-	 * @param port Serial port name where XBee device is attached to.
-	 * @param baudRate Serial port baud rate to communicate with the device.
-	 * @param dataBits Serial port data bits.
-	 * @param stopBits Serial port data bits.
-	 * @param parity Serial port data bits.
-	 * @param flowControl Serial port data bits.
-	 * 
-	 * @throws NullPointerException if {@code port == null}.
-	 * @throws IllegalArgumentException if {@code baudRate < 0} or
-	 *                                  if {@code dataBits < 0} or
-	 *                                  if {@code stopBits < 0} or
-	 *                                  if {@code parity < 0} or
-	 *                                  if {@code flowControl < 0}.
+	 *
+	 * @param port
+	 * 		Serial port name where XBee device is attached to.
+	 * @param baudRate
+	 * 		Serial port baud rate to communicate with the device.
+	 * @param dataBits
+	 * 		Serial port data bits.
+	 * @param stopBits
+	 * 		Serial port data bits.
+	 * @param parity
+	 * 		Serial port data bits.
+	 * @param flowControl
+	 * 		Serial port data bits.
+	 * @throws NullPointerException
+	 * 		if {@code port == null}.
+	 * @throws IllegalArgumentException
+	 * 		if {@code baudRate < 0} or
+	 * 		if {@code dataBits < 0} or
+	 * 		if {@code stopBits < 0} or
+	 * 		if {@code parity < 0} or
+	 * 		if {@code flowControl < 0}.
 	 */
 	public XBeeDevice(String port, int baudRate, int dataBits, int stopBits, int parity, int flowControl) {
 		this(port, new SerialPortParameters(baudRate, dataBits, stopBits, parity, flowControl));
 	}
-	
+
 	/**
-	 * Class constructor. Instantiates a new {@code XBeeDevice} object in the 
+	 * Class constructor. Instantiates a new {@code XBeeDevice} object in the
 	 * given serial port name and parameters.
-	 * 
-	 * @param port Serial port name where XBee device is attached to.
-	 * @param serialPortParameters Object containing the serial port parameters.
-	 * 
-	 * @throws NullPointerException if {@code port == null} or
-	 *                              if {@code serialPortParameters == null}.
-	 * 
+	 *
+	 * @param port
+	 * 		Serial port name where XBee device is attached to.
+	 * @param serialPortParameters
+	 * 		Object containing the serial port parameters.
+	 * @throws NullPointerException
+	 * 		if {@code port == null} or
+	 * 		if {@code serialPortParameters == null}.
 	 * @see SerialPortParameters
 	 */
 	public XBeeDevice(String port, SerialPortParameters serialPortParameters) {
 		this(XBee.createConnectiontionInterface(port, serialPortParameters));
 	}
-	
+
 	/**
 	 * Class constructor. Instantiates a new {@code XBeeDevice} object with the 
 	 * given connection interface.
@@ -145,20 +161,19 @@ public class XBeeDevice {
 	 * @param connectionInterface The connection interface with the physical 
 	 *                            XBee device.
 	 * 
-	 * @throws NullPointerException if {@code connectionInterface == null}.
+	 * @throws NullPointerException if {@code connectionInterface == null}
 	 * 
 	 * @see IConnectionInterface
 	 */
 	public XBeeDevice(IConnectionInterface connectionInterface) {
-		if (connectionInterface == null)
+		if (connectionInterface == null) {
 			throw new NullPointerException("ConnectionInterface cannot be null.");
-		
+		}
 		this.connectionInterface = connectionInterface;
 		this.logger = LoggerFactory.getLogger(this.getClass());
-		logger.debug(toString() + "Using the connection interface {}.", 
-				connectionInterface.getClass().getSimpleName());
+		logger.debug(toString() + "Using the connection interface {}.", connectionInterface.getClass().getSimpleName());
 	}
-	
+
 	/**
 	 * Class constructor. Instantiates a new remote {@code XBeeDevice} object 
 	 * with the given local {@code XBeeDevice} which contains the connection 
@@ -166,7 +181,7 @@ public class XBeeDevice {
 	 * 
 	 * @param localXBeeDevice The local XBee device that will behave as 
 	 *                        connection interface to communicate with this 
-	 *                        remote XBee device.
+	 *                        remote XBee device
 	 * @param xbee64BitAddress The 64-bit address to identify this remote XBee 
 	 *                         device.
 	 * @throws NullPointerException if {@code localXBeeDevice == null} or
@@ -175,21 +190,22 @@ public class XBeeDevice {
 	 * @see XBee64BitAddress
 	 */
 	public XBeeDevice(XBeeDevice localXBeeDevice, XBee64BitAddress xbee64BitAddress) {
-		if (localXBeeDevice == null)
+		if (localXBeeDevice == null) {
 			throw new NullPointerException("Local XBee device cannot be null.");
-		if (xbee64BitAddress == null)
+		}
+		if (xbee64BitAddress == null) {
 			throw new NullPointerException("XBee 64 bit address of the remote device cannot be null.");
-		if (localXBeeDevice.isRemote())
+		}
+		if (localXBeeDevice.isRemote()) {
 			throw new IllegalArgumentException("The given local XBee device is remote.");
-		
+		}
 		this.localXBeeDevice = localXBeeDevice;
 		this.connectionInterface = localXBeeDevice.getConnectionInterface();
 		this.xbee64BitAddress = xbee64BitAddress;
 		this.logger = LoggerFactory.getLogger(this.getClass());
-		logger.debug(toString() + "Using the connection interface {}.", 
-				connectionInterface.getClass().getSimpleName());
+		logger.debug(toString() + "Using the connection interface {}.", connectionInterface.getClass().getSimpleName());
 	}
-	
+
 	/**
 	 * Opens the connection interface associated with this XBee device.
 	 * 
@@ -233,7 +249,7 @@ public class XBeeDevice {
 			throw new InvalidOperatingModeException(operatingMode);
 		}
 	}
-	
+
 	/**
 	 * Closes the connection interface associated with this XBee device.
 	 * 
@@ -248,7 +264,7 @@ public class XBeeDevice {
 		connectionInterface.close();
 		logger.info(toString() + "Connection interface closed.");
 	}
-	
+
 	/**
 	 * Retrieves whether or not the connection interface associated to the 
 	 * device is open.
@@ -263,7 +279,7 @@ public class XBeeDevice {
 			return connectionInterface.isOpen();
 		return false;
 	}
-	
+
 	/**
 	 * Retrieves the connection interface associated to this XBee device.
 	 * 
@@ -274,7 +290,7 @@ public class XBeeDevice {
 	public IConnectionInterface getConnectionInterface() {
 		return connectionInterface;
 	}
-	
+
 	/**
 	 * Retrieves whether or not the XBee device is a remote device.
 	 * 
@@ -284,7 +300,7 @@ public class XBeeDevice {
 	public boolean isRemote() {
 		return localXBeeDevice != null;
 	}
-	
+
 	/**
 	 * Determines the operating mode of the XBee device.
 	 * 
@@ -310,25 +326,25 @@ public class XBeeDevice {
 				return operatingMode;
 			}
 		} catch (TimeoutException e) {
-			// Check if device is in AT operating mode.
-			operatingMode = OperatingMode.AT;
-			dataReader.setXBeeReaderMode(operatingMode);
-			
-			try {
-				// It is necessary to wait at least 1 second to enter in command mode after 
-				// sending any data to the device.
-				Thread.sleep(TIMEOUT_BEFORE_COMMAND_MODE);
-				// Try to enter in AT command mode, if so the module is in AT mode.
-				boolean success = enterATCommandMode();
-				if (success)
-					return OperatingMode.AT;
-			} catch (TimeoutException e1) {
-				logger.error(e1.getMessage(), e1);
-			} catch (InvalidOperatingModeException e1) {
-				logger.error(e1.getMessage(), e1);
-			} catch (InterruptedException e1) {
-				logger.error(e1.getMessage(), e1);
-			}
+				// Check if device is in AT operating mode.
+				operatingMode = OperatingMode.AT;
+				dataReader.setXBeeReaderMode(operatingMode);
+				
+				try {
+					// It is necessary to wait at least 1 second to enter in command mode after 
+					// sending any data to the device.
+					Thread.sleep(TIMEOUT_BEFORE_COMMAND_MODE);
+					// Try to enter in AT command mode, if so the module is in AT mode.
+					boolean success = enterATCommandMode();
+					if (success)
+						return OperatingMode.AT;
+				} catch (TimeoutException e1) {
+					logger.error(e1.getMessage(), e1);
+				} catch (InvalidOperatingModeException e1) {
+					logger.error(e1.getMessage(), e1);
+				} catch (InterruptedException e1) {
+					logger.error(e1.getMessage(), e1);
+				}
 		} catch (InvalidOperatingModeException e) {
 			logger.error("Invalid operating mode", e);
 		} catch (IOException e) {
@@ -336,7 +352,7 @@ public class XBeeDevice {
 		}
 		return OperatingMode.UNKNOWN;
 	}
-	
+
 	/**
 	 * Attempts to put the device in AT Command mode. Only valid if device is 
 	 * working in AT mode.
@@ -385,7 +401,7 @@ public class XBeeDevice {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Retrieves the 64-bit address of the XBee device.
 	 * 
@@ -396,7 +412,7 @@ public class XBeeDevice {
 	public XBee64BitAddress get64BitAddress() {
 		return xbee64BitAddress;
 	}
-	
+
 	/**
 	 * Retrieves the Operating mode (AT, API or API escaped) of the XBee device.
 	 * 
@@ -407,7 +423,7 @@ public class XBeeDevice {
 	public OperatingMode getOperatingMode() {
 		return operatingMode;
 	}
-	
+
 	/**
 	 * Retrieves the XBee Protocol of the XBee device.
 	 * 
@@ -419,7 +435,7 @@ public class XBeeDevice {
 	public XBeeProtocol getXBeeProtocol() {
 		return xbeeProtocol;
 	}
-	
+
 	/**
 	 * Sets the XBee protocol of the XBee device.
 	 * 
@@ -431,7 +447,7 @@ public class XBeeDevice {
 	protected void setXBeeProtocol(XBeeProtocol xbeeProtocol) {
 		this.xbeeProtocol = xbeeProtocol;
 	}
-	
+
 	/**
 	 * Sends the given AT command and waits for answer or until the configured 
 	 * receive timeout expires.
@@ -504,7 +520,7 @@ public class XBeeDevice {
 		}
 		return response;
 	}
-	
+
 	/**
 	 * Sends the given XBee packet synchronously and blocks until the response 
 	 * is received or the configured receive timeout expires.
@@ -537,7 +553,7 @@ public class XBeeDevice {
 			throw new XBeeException("Error writing in the communication interface.", e);
 		}
 	}
-	
+
 	/**
 	 * Sends the given XBee packet synchronously and blocks until response is 
 	 * received or receive timeout is reached.
@@ -634,7 +650,7 @@ public class XBeeDevice {
 			}
 		}
 	}
-	
+
 	/**
 	 * Insert (if possible) the next frame ID stored in the device to the 
 	 * provided packet.
@@ -650,7 +666,7 @@ public class XBeeDevice {
 		if (((XBeeAPIPacket)xbeePacket).needsAPIFrameID() && ((XBeeAPIPacket)xbeePacket).getFrameID() == XBeeAPIPacket.NO_FRAME_ID)
 			((XBeeAPIPacket)xbeePacket).setFrameID(getNextFrameID());
 	}
-	
+
 	/**
 	 * Retrieves the packet listener corresponding to the provided sent packet. 
 	 * 
@@ -716,7 +732,7 @@ public class XBeeDevice {
 		
 		return packetReceiveListener;
 	}
-	
+
 	/**
 	 * Retrieves whether or not the sent packet is the same than the received one.
 	 * 
@@ -734,24 +750,27 @@ public class XBeeDevice {
 			return true;
 		return false;
 	}
-	
+
 	/**
 	 * Sends the given XBee packet asynchronously and registers the given packet
 	 * listener (if not {@code null}) to wait for an answer.
-	 * 
-	 * @param packet XBee packet to be sent.
-	 * @param packetReceiveListener Listener for the operation, {@code null} 
-	 *                              not to be notified when the answer arrives.
-	 * @param sentFromLocalDevice Indicates whether or not the packet was sent 
-	 *                            from a local device.
-	 *                              
-	 * @throws InvalidOperatingModeException if the operating mode is different than {@link OperatingMode#API} and 
-	 *                                       {@link OperatingMode#API_ESCAPE}.
-	 * @throws OperationNotSupportedException if the packet is being sent from a remote device.
-	 * @throws IOException if an I/O error occurs while sending the XBee packet.
-	 * @throws InterfaceNotOpenException if the device is not open.
-	 * @throws NullPointerException if {@code packet == null}.
-	 * 
+	 *
+	 * @param packet
+	 * 		XBee packet to be sent.
+	 * @param packetReceiveListener
+	 * 		Listener for the operation, {@code null}
+	 * 		not to be notified when the answer arrives.
+	 * @throws InvalidOperatingModeException
+	 * 		if the operating mode is different than {@link OperatingMode#API} and
+	 * 		{@link OperatingMode#API_ESCAPE}.
+	 * @throws OperationNotSupportedException
+	 * 		if the packet is being sent from a remote device.
+	 * @throws IOException
+	 * 		if an I/O error occurs while sending the XBee packet.
+	 * @throws InterfaceNotOpenException
+	 * 		if the device is not open.
+	 * @throws NullPointerException
+	 * 		if {@code packet == null}.
 	 * @see XBeePacket
 	 * @see IPacketReceiveListener
 	 * @see #sendXBeePacket(XBeePacket)
@@ -759,73 +778,79 @@ public class XBeeDevice {
 	 * @see #sendXBeePacket(XBeePacket, IPacketReceiveListener)
 	 * @see #sendXBeePacketAsync(XBeePacket)
 	 * @see #sendXBeePacketAsync(XBeePacket, boolean)
+	 * @see #sendXBeePacketAsync(XBeePacket, boolean)
 	 */
-	private void sendXBeePacket(XBeePacket packet, IPacketReceiveListener packetReceiveListener, boolean sentFromLocalDevice)
-			throws InvalidOperatingModeException, OperationNotSupportedException, IOException {
+	private void sendXBeePacket(XBeePacket packet, IPacketReceiveListener packetReceiveListener, boolean sentFromLocalDevice) throws InvalidOperatingModeException, OperationNotSupportedException, IOException {
 		// Check if the packet to send is null.
-		if (packet == null)
+		if (packet == null) {
 			throw new NullPointerException("XBee packet cannot be null.");
+		}
 		// Check connection.
-		if (!connectionInterface.isOpen())
+		if (!connectionInterface.isOpen()) {
 			throw new InterfaceNotOpenException();
+		}
 		// Check if the packet is being sent from a remote device.
-		if (!sentFromLocalDevice)
+		if (!sentFromLocalDevice) {
 			throw new OperationNotSupportedException("Remote devices cannot send data to other remote devices.");
-		
+		}
 		OperatingMode operatingMode = getOperatingMode();
 		switch (operatingMode) {
-		case AT:
-		case UNKNOWN:
-		default:
-			throw new InvalidOperatingModeException(operatingMode);
-		case API:
-		case API_ESCAPE:
-			// Add the required frame ID and subscribe listener if given.
-			if (packet instanceof XBeeAPIPacket) {
-				if (((XBeeAPIPacket)packet).needsAPIFrameID()) {
-					if (((XBeeAPIPacket)packet).getFrameID() == XBeeAPIPacket.NO_FRAME_ID)
-						((XBeeAPIPacket)packet).setFrameID(getNextFrameID());
-					if (packetReceiveListener != null)
-						dataReader.addPacketReceiveListener(packetReceiveListener, ((XBeeAPIPacket)packet).getFrameID());
-				} else if (packetReceiveListener != null)
-					dataReader.addPacketReceiveListener(packetReceiveListener);
-			}
-			
-			// Write packet data.
-			writePacket(packet);
-			break;
+			case AT :
+			case UNKNOWN :
+			default :
+				throw new InvalidOperatingModeException(operatingMode);
+			case API :
+			case API_ESCAPE :
+				// Add the required frame ID and subscribe listener if given.
+				if (packet instanceof XBeeAPIPacket) {
+					if (((XBeeAPIPacket) (packet)).needsAPIFrameID()) {
+						if (((XBeeAPIPacket) (packet)).getFrameID() == XBeeAPIPacket.NO_FRAME_ID) {
+							((XBeeAPIPacket) (packet)).setFrameID(getNextFrameID());
+						}
+						if (packetReceiveListener != null) {
+							dataReader.addPacketReceiveListener(packetReceiveListener, ((XBeeAPIPacket) (packet)).getFrameID());
+						}
+					} else if (packetReceiveListener != null) {
+						dataReader.addPacketReceiveListener(packetReceiveListener);
+					}
+				}
+				// Write packet data.
+				writePacket(packet);
+				break;
 		}
 	}
-	
+
 	/**
 	 * Sends the given XBee packet asynchronously.
-	 * 
-	 * <p>To be notified when the answer is received, use 
+	 *
+	 * <p>To be notified when the answer is received, use
 	 * {@link #sendXBeePacket(XBeePacket, IPacketReceiveListener)}.</p>
-	 * 
-	 * @param packet XBee packet to be sent asynchronously.
-	 * @param sentFromLocalDevice Indicates whether or not the packet was sent 
-	 *                            from a local device.
-	 * 
-	 * @throws InvalidOperatingModeException if the operating mode is different than {@link OperatingMode#API} and 
-	 *                                       {@link OperatingMode#API_ESCAPE}.
-	 * @throws OperationNotSupportedException if the packet is being sent from a remote device.
-	 * @throws IOException if an I/O error occurs while sending the XBee packet.
-	 * @throws InterfaceNotOpenException if the device is not open.
-	 * @throws NullPointerException if {@code packet == null}.
-	 * 
+	 *
+	 * @param packet
+	 * 		XBee packet to be sent asynchronously.
+	 * @throws InvalidOperatingModeException
+	 * 		if the operating mode is different than {@link OperatingMode#API} and
+	 * 		{@link OperatingMode#API_ESCAPE}.
+	 * @throws OperationNotSupportedException
+	 * 		if the packet is being sent from a remote device.
+	 * @throws IOException
+	 * 		if an I/O error occurs while sending the XBee packet.
+	 * @throws InterfaceNotOpenException
+	 * 		if the device is not open.
+	 * @throws NullPointerException
+	 * 		if {@code packet == null}.
 	 * @see XBeePacket
 	 * @see #sendXBeePacketAsync(XBeePacket)
 	 * @see #sendXBeePacket(XBeePacket)
 	 * @see #sendXBeePacket(XBeePacket, boolean)
 	 * @see #sendXBeePacket(XBeePacket, IPacketReceiveListener)
 	 * @see #sendXBeePacket(XBeePacket, IPacketReceiveListener, boolean)
+	 * @see #sendXBeePacket(XBeePacket, IPacketReceiveListener, boolean)
 	 */
-	private void sendXBeePacketAsync(XBeePacket packet, boolean sentFromLocalDevice) 
-			throws InvalidOperatingModeException, OperationNotSupportedException, IOException {
+	private void sendXBeePacketAsync(XBeePacket packet, boolean sentFromLocalDevice) throws InvalidOperatingModeException, OperationNotSupportedException, IOException {
 		sendXBeePacket(packet, null, sentFromLocalDevice);
 	}
-	
+
 	/**
 	 * Sends the given XBee packet and registers the given packet listener 
 	 * (if not {@code null}) to wait for an answer.
@@ -843,15 +868,14 @@ public class XBeeDevice {
 	 * @see #sendXBeePacket(XBeePacket)
 	 * @see #sendXBeePacketAsync(XBeePacket)
 	 */
-	public void sendXBeePacket(XBeePacket packet, IPacketReceiveListener packetReceiveListener)
-			throws XBeeException {
+	public void sendXBeePacket(XBeePacket packet, IPacketReceiveListener packetReceiveListener) throws XBeeException {
 		try {
 			sendXBeePacket(packet, packetReceiveListener, !isRemote());
 		} catch (IOException e) {
 			throw new XBeeException("Error writing in the communication interface.", e);
 		}
 	}
-	
+
 	/**
 	 * Sends the given XBee packet asynchronously.
 	 * 
@@ -868,15 +892,14 @@ public class XBeeDevice {
 	 * @see #sendXBeePacket(XBeePacket)
 	 * @see #sendXBeePacket(XBeePacket, IPacketReceiveListener)
 	 */
-	public void sendXBeePacketAsync(XBeePacket packet) 
-			throws IOException, XBeeException {
+	public void sendXBeePacketAsync(XBeePacket packet) throws IOException, XBeeException {
 		try {
 			sendXBeePacket(packet, null, !isRemote());
 		} catch (IOException e) {
 			throw new XBeeException("Error writing in the communication interface.", e);
 		}
 	}
-	
+
 	/**
 	 * Writes the given XBee packet in the connection interface.
 	 * 
@@ -898,7 +921,7 @@ public class XBeeDevice {
 			break;
 		}
 	}
-	
+
 	/**
 	 * Retrieves the next Frame ID of the XBee protocol.
 	 * 
@@ -912,7 +935,7 @@ public class XBeeDevice {
 			currentFrameID ++;
 		return currentFrameID;
 	}
-	
+
 	/**
 	 * Retrieves the configured timeout for receiving packets in synchronous 
 	 * operations.
@@ -924,7 +947,7 @@ public class XBeeDevice {
 	public int getReceiveTimeout() {
 		return receiveTimeout;
 	}
-	
+
 	/**
 	 * Configures the timeout in milliseconds for receiving packets in 
 	 * synchronous operations.
@@ -941,7 +964,7 @@ public class XBeeDevice {
 		
 		this.receiveTimeout = receiveTimeout;
 	}
-	
+
 	/**
 	 * Starts listening for packets in the provided packets listener.
 	 * 
@@ -959,7 +982,7 @@ public class XBeeDevice {
 			return;
 		dataReader.addPacketReceiveListener(listener);
 	}
-	
+
 	/**
 	 * Stops listening for packets in the provided packets listener. 
 	 * 
@@ -976,7 +999,7 @@ public class XBeeDevice {
 			return;
 		dataReader.removePacketReceiveListener(listener);
 	}
-	
+
 	/**
 	 * Starts listening for serial data in the provided serial data listener.
 	 *  
@@ -994,7 +1017,7 @@ public class XBeeDevice {
 			return;
 		dataReader.addSerialDatatReceiveListener(listener);
 	}
-	
+
 	/**
 	 * Stops listening for serial data in the provided serial data listener.
 	 * 
@@ -1011,22 +1034,25 @@ public class XBeeDevice {
 			return;
 		dataReader.removeSerialDataReceiveListener(listener);
 	}
-	
+
 	/**
-	 * Sends the provided data to the XBee device of the network corresponding 
+	 * Sends the provided data to the XBee device of the network corresponding
 	 * to the given 64-bit address asynchronously.
-	 * 
-	 * <p>Asynchronous transmissions do not wait for answer from the remote 
+	 *
+	 * <p>Asynchronous transmissions do not wait for answer from the remote
 	 * device or for transmit status packet.</p>
-	 * 
-	 * @param address The 64-bit address of the XBee that will receive the data.
-	 * @param data Byte array containing data to be sent.
-	 * 
-	 * @throws XBeeException if there is any XBee related exception.
-	 * @throws InterfaceNotOpenException if the device is not open.
-	 * @throws NullPointerException if {@code address == null} or 
-	 *                              if {@code data == null}.
-	 * 
+	 *
+	 * @param address
+	 * 		The 64-bit address of the XBee that will receive the data.
+	 * @param data
+	 * 		Byte array containing data to be sent.
+	 * @throws XBeeException
+	 * 		if there is any XBee related exception.
+	 * @throws InterfaceNotOpenException
+	 * 		if the device is not open.
+	 * @throws NullPointerException
+	 * 		if {@code address == null} or
+	 * 		if {@code data == null}.
 	 * @see XBee64BitAddress
 	 * @see #sendSerialDataAsync(XBee16BitAddress, byte[])
 	 * @see #sendSerialDataAsync(XBeeDevice, byte[])
@@ -1036,24 +1062,25 @@ public class XBeeDevice {
 	 */
 	public void sendSerialDataAsync(XBee64BitAddress address, byte[] data) throws XBeeException {
 		// Verify the parameters are not null, if they are null, throw an exception.
-		if (address == null)
+		if (address == null) {
 			throw new NullPointerException("Address cannot be null");
-		if (data == null)
+		}
+		if (data == null) {
 			throw new NullPointerException("Data cannot be null");
-		
+		}
 		// Check connection.
-		if (!connectionInterface.isOpen())
+		if (!connectionInterface.isOpen()) {
 			throw new InterfaceNotOpenException();
+		}
 		// Check if device is remote.
-		if (isRemote())
+		if (isRemote()) {
 			throw new OperationNotSupportedException("Cannot send data to a remote device from a remote device.");
-		
+		}
 		logger.info(toString() + "Sending serial data asynchronously to {} >> {}.", address, HexUtils.prettyHexString(data));
-		
 		XBeePacket xbeePacket = new TransmitPacket(getNextFrameID(), address, XBee16BitAddress.UNKNOWN_ADDRESS, 0, XBeeTransmitOptions.NONE, data);
 		sendAndCheckXBeePacket(xbeePacket, true);
 	}
-	
+
 	/**
 	 * Sends the provided data to the XBee device of the network corresponding 
 	 * to the given 64-Bit/16-Bit address asynchronously.
@@ -1089,41 +1116,45 @@ public class XBeeDevice {
 	 */
 	protected void sendSerialDataAsync(XBee64BitAddress address64Bit, XBee16BitAddress address16bit, byte[] data) throws XBeeException {
 		// Verify the parameters are not null, if they are null, throw an exception.
-		if (address64Bit == null)
+		if (address64Bit == null) {
 			throw new NullPointerException("64-bit address cannot be null");
-		if (address16bit == null)
+		}
+		if (address16bit == null) {
 			throw new NullPointerException("16-bit address cannot be null");
-		if (data == null)
+		}
+		if (data == null) {
 			throw new NullPointerException("Data cannot be null");
-		
+		}
 		// Check connection.
-		if (!connectionInterface.isOpen())
+		if (!connectionInterface.isOpen()) {
 			throw new InterfaceNotOpenException();
+		}
 		// Check if device is remote.
-		if (isRemote())
+		if (isRemote()) {
 			throw new OperationNotSupportedException("Cannot send data to a remote device from a remote device.");
-		
-		logger.info(toString() + "Sending serial data asynchronously to {}[{}] >> {}.", 
-				address64Bit, address16bit, HexUtils.prettyHexString(data));
-		
+		}
+		logger.info(toString() + "Sending serial data asynchronously to {}[{}] >> {}.", address64Bit, address16bit, HexUtils.prettyHexString(data));
 		XBeePacket xbeePacket = new TransmitPacket(getNextFrameID(), address64Bit, address16bit, 0, XBeeTransmitOptions.NONE, data);
 		sendAndCheckXBeePacket(xbeePacket, true);
 	}
-	
+
 	/**
 	 * Sends the provided data to the provided XBee device asynchronously.
-	 * 
-	 * <p>Asynchronous transmissions do not wait for answer from the remote 
+	 *
+	 * <p>Asynchronous transmissions do not wait for answer from the remote
 	 * device or for transmit status packet.</p>
-	 * 
-	 * @param xbeeDevice The XBee device of the network that will receive the data.
-	 * @param data Byte array containing data to be sent.
-	 * 
-	 * @throws XBeeException if there is any XBee related exception.
-	 * @throws InterfaceNotOpenException if the device is not open.
-	 * @throws NullPointerException if {@code xbeeDevice == null} or 
-	 *                              if {@code data == null}.
-	 *                              
+	 *
+	 * @param xbeeDevice
+	 * 		The XBee device of the network that will receive the data.
+	 * @param data
+	 * 		Byte array containing data to be sent.
+	 * @throws XBeeException
+	 * 		if there is any XBee related exception.
+	 * @throws InterfaceNotOpenException
+	 * 		if the device is not open.
+	 * @throws NullPointerException
+	 * 		if {@code xbeeDevice == null} or
+	 * 		if {@code data == null}.
 	 * @see #sendSerialDataAsync(XBee64BitAddress, byte[])
 	 * @see #sendSerialDataAsync(XBee16BitAddress, byte[])
 	 * @see #sendSerialData(XBee64BitAddress, byte[])
@@ -1131,11 +1162,12 @@ public class XBeeDevice {
 	 * @see #sendSerialData(XBeeDevice, byte[])
 	 */
 	public void sendSerialDataAsync(XBeeDevice xbeeDevice, byte[] data) throws XBeeException {
-		if (xbeeDevice == null)
+		if (xbeeDevice == null) {
 			throw new NullPointerException("XBee device cannot be null");
+		}
 		sendSerialDataAsync(xbeeDevice.get64BitAddress(), data);
 	}
-	
+
 	/**
 	 * Sends the provided data to the XBee device of the network corresponding 
 	 * to the given 64-bit address.
@@ -1169,24 +1201,25 @@ public class XBeeDevice {
 	 */
 	public void sendSerialData(XBee64BitAddress address, byte[] data) throws TimeoutException, XBeeException {
 		// Verify the parameters are not null, if they are null, throw an exception.
-		if (address == null)
+		if (address == null) {
 			throw new NullPointerException("Address cannot be null");
-		if (data == null)
+		}
+		if (data == null) {
 			throw new NullPointerException("Data cannot be null");
-		
+		}
 		// Check connection.
-		if (!connectionInterface.isOpen())
+		if (!connectionInterface.isOpen()) {
 			throw new InterfaceNotOpenException();
+		}
 		// Check if device is remote.
-		if (isRemote())
+		if (isRemote()) {
 			throw new OperationNotSupportedException("Cannot send data to a remote device from a remote device.");
-		
+		}
 		logger.info(toString() + "Sending serial data to {} >> {}.", address, HexUtils.prettyHexString(data));
-		
 		XBeePacket xbeePacket = new TransmitPacket(getNextFrameID(), address, XBee16BitAddress.UNKNOWN_ADDRESS, 0, XBeeTransmitOptions.NONE, data);
 		sendAndCheckXBeePacket(xbeePacket, false);
 	}
-	
+
 	/**
 	 * Sends the provided data to the XBee device of the network corresponding 
 	 * to the given 64-Bit/16-Bit address.
@@ -1229,27 +1262,28 @@ public class XBeeDevice {
 	 */
 	protected void sendSerialData(XBee64BitAddress address64Bit, XBee16BitAddress address16bit, byte[] data) throws TimeoutException, XBeeException {
 		// Verify the parameters are not null, if they are null, throw an exception.
-		if (address64Bit == null)
+		if (address64Bit == null) {
 			throw new NullPointerException("64-bit address cannot be null");
-		if (address16bit == null)
+		}
+		if (address16bit == null) {
 			throw new NullPointerException("16-bit address cannot be null");
-		if (data == null)
+		}
+		if (data == null) {
 			throw new NullPointerException("Data cannot be null");
-		
+		}
 		// Check connection.
-		if (!connectionInterface.isOpen())
+		if (!connectionInterface.isOpen()) {
 			throw new InterfaceNotOpenException();
+		}
 		// Check if device is remote.
-		if (isRemote())
+		if (isRemote()) {
 			throw new OperationNotSupportedException("Cannot send data to a remote device from a remote device.");
-		
-		logger.info(toString() + "Sending serial data to {}[{}] >> {}.", 
-				address64Bit, address16bit, HexUtils.prettyHexString(data));
-		
+		}
+		logger.info(toString() + "Sending serial data to {}[{}] >> {}.", address64Bit, address16bit, HexUtils.prettyHexString(data));
 		XBeePacket xbeePacket = new TransmitPacket(getNextFrameID(), address64Bit, address16bit, 0, XBeeTransmitOptions.NONE, data);
 		sendAndCheckXBeePacket(xbeePacket, false);
 	}
-	
+
 	/**
 	 * Sends the provided data to the given XBee device.
 	 * 
@@ -1284,7 +1318,7 @@ public class XBeeDevice {
 			throw new NullPointerException("XBee device cannot be null");
 		sendSerialData(xbeeDevice.get64BitAddress(), data);
 	}
-	
+
 	/**
 	 * Sends the provided {@code XBeePacket} and determines if the transmission 
 	 * status is success for synchronous transmissions. If the status is not 
@@ -1303,38 +1337,41 @@ public class XBeeDevice {
 	 */
 	protected void sendAndCheckXBeePacket(XBeePacket packet, boolean asyncTransmission) throws TransmitException, XBeeException {
 		XBeePacket receivedPacket = null;
-		
 		// Send the XBee packet.
 		try {
-			if (asyncTransmission)
+			if (asyncTransmission) {
 				sendXBeePacketAsync(packet, true);
-			else
+			} else {
 				receivedPacket = sendXBeePacket(packet, true);
+			}
 		} catch (IOException e) {
 			throw new XBeeException("Error writing in the communication interface.", e);
 		}
-		
 		// If the transmission is async. we are done.
-		if (asyncTransmission)
+		if (asyncTransmission) {
 			return;
-		
+		}
 		// Check if the packet received is a valid transmit status packet.
-		if (receivedPacket == null)
+		if (receivedPacket == null) {
 			throw new TransmitException(null);
+		}
 		if (receivedPacket instanceof TransmitStatusPacket) {
-			if (((TransmitStatusPacket)receivedPacket).getTransmitStatus() == null)
+			if (((TransmitStatusPacket) (receivedPacket)).getTransmitStatus() == null) {
 				throw new TransmitException(null);
-			else if (((TransmitStatusPacket)receivedPacket).getTransmitStatus() != XBeeTransmitStatus.SUCCESS)
-				throw new TransmitException(((TransmitStatusPacket)receivedPacket).getTransmitStatus());
+			} else if (((TransmitStatusPacket) (receivedPacket)).getTransmitStatus() != XBeeTransmitStatus.SUCCESS) {
+				throw new TransmitException(((TransmitStatusPacket) (receivedPacket)).getTransmitStatus());
+			}
 		} else if (receivedPacket instanceof TXStatusPacket) {
-			if (((TXStatusPacket)receivedPacket).getTransmitStatus() == null)
+			if (((TXStatusPacket) (receivedPacket)).getTransmitStatus() == null) {
 				throw new TransmitException(null);
-			else if (((TXStatusPacket)receivedPacket).getTransmitStatus() != XBeeTransmitStatus.SUCCESS)
-				throw new TransmitException(((TXStatusPacket)receivedPacket).getTransmitStatus());
-		} else
+			} else if (((TXStatusPacket) (receivedPacket)).getTransmitStatus() != XBeeTransmitStatus.SUCCESS) {
+				throw new TransmitException(((TXStatusPacket) (receivedPacket)).getTransmitStatus());
+			}
+		} else {
 			throw new TransmitException(null);
+		}
 	}
-	
+
 	/**
 	 * Sets the configuration of the given IO line.
 	 * 
@@ -1374,7 +1411,7 @@ public class XBeeDevice {
 		// Check if AT Command response is valid.
 		checkATCommandResponseIsValid(response);
 	}
-	
+
 	/**
 	 * Retrieves the configuration mode of the provided IO line.
 	 * 
@@ -1424,7 +1461,7 @@ public class XBeeDevice {
 		// Return the configuration mode.
 		return dioMode;
 	}
-	
+
 	/**
 	 * Sets the digital value (high or low) to the provided IO line.
 	 * 
@@ -1470,7 +1507,7 @@ public class XBeeDevice {
 		// Check if AT Command response is valid.
 		checkATCommandResponseIsValid(response);
 	}
-	
+
 	/**
 	 * Retrieves the digital value of the provided IO line (must be configured 
 	 * as digital I/O).
@@ -1492,18 +1529,17 @@ public class XBeeDevice {
 	 * @see #getIOConfiguration(IOLine)
 	 * @see #setIOConfiguration(IOLine, IOMode)
 	 */
-	public IOValue getDIOValue(IOLine ioLine) throws TimeoutException, XBeeException {
+	public IOValue getDIOValue(IOLine ioLine) throws XBeeException, TimeoutException {
 		// Obtain an IO Sample from the XBee device.
 		IOSample ioSample = getIOSample(ioLine);
-		
 		// Check if the IO sample contains the expected IO line and value.
-		if (!ioSample.hasDigitalValues() || !ioSample.getDigitalValues().containsKey(ioLine))
-			throw new OperationNotSupportedException("Answer does not conain digital data for " + ioLine.getName() + ".");
-		
-		// Return the digital value. 
+		if ((!ioSample.hasDigitalValues()) || (!ioSample.getDigitalValues().containsKey(ioLine))) {
+			throw new OperationNotSupportedException(("Answer does not conain digital data for " + ioLine.getName()) + ".");
+		}
+		// Return the digital value.
 		return ioSample.getDigitalValues().get(ioLine);
 	}
-	
+
 	/**
 	 * Sets the duty cycle (in %) of the provided IO line. 
 	 * 
@@ -1557,7 +1593,7 @@ public class XBeeDevice {
 		// Check if AT Command response is valid.
 		checkATCommandResponseIsValid(response);
 	}
-	
+
 	/**
 	 * Gets the PWM duty cycle (in %) corresponding to the provided IO line.
 	 * 
@@ -1612,7 +1648,7 @@ public class XBeeDevice {
 		int readValue = ByteUtils.byteArrayToInt(response.getResponse());
 		return Math.round((readValue * 100.0/1023.0) * 100.0) / 100.0;
 	}
-	
+
 	/**
 	 * Retrieves the analog value of the provided IO line (must be configured 
 	 * as ADC).
@@ -1634,20 +1670,19 @@ public class XBeeDevice {
 	 */
 	public int getADCValue(IOLine ioLine) throws TimeoutException, XBeeException {
 		// Check IO line.
-		if (ioLine == null)
+		if (ioLine == null) {
 			throw new NullPointerException("IO line cannot be null.");
-		
+		}
 		// Obtain an IO Sample from the XBee device.
 		IOSample ioSample = getIOSample(ioLine);
-		
 		// Check if the IO sample contains the expected IO line and value.
-		if (!ioSample.hasAnalogValues() || !ioSample.getAnalogValues().containsKey(ioLine))
-			throw new OperationNotSupportedException("Answer does not conain analog data for " + ioLine.getName() + ".");
-		
+		if ((!ioSample.hasAnalogValues()) || (!ioSample.getAnalogValues().containsKey(ioLine))) {
+			throw new OperationNotSupportedException(("Answer does not conain analog data for " + ioLine.getName()) + ".");
+		}
 		// Return the analog value.
 		return ioSample.getAnalogValues().get(ioLine);
 	}
-	
+
 	/**
 	 * Checks if the provided {@code ATCommandResponse} is valid throwing an 
 	 * {@code ATCommandException} in case it is not.
@@ -1658,34 +1693,41 @@ public class XBeeDevice {
 	 *                            if {@code response.getResponseStatus() != ATCommandStatus.OK}.
 	 */
 	protected void checkATCommandResponseIsValid(ATCommandResponse response) throws ATCommandException {
-		if (response == null || response.getResponseStatus() == null)
+		if ((response == null) || (response.getResponseStatus() == null)) {
 			throw new ATCommandException(null);
-		else if (response.getResponseStatus() != ATCommandStatus.OK)
+		} else if (response.getResponseStatus() != ATCommandStatus.OK) {
 			throw new ATCommandException(response.getResponseStatus());
+		}
 	}
-	
+
 	/**
-	 * Retrieves an IO sample from the XBee device containing the value of the 
+	 * Retrieves an IO sample from the XBee device containing the value of the
 	 * provided IO line.
-	 * 
-	 * @param ioLine The IO line to obtain its associated IO sample.
-	 * @return An IO sample containing the value of the provided IO line.
-	 * 
-	 * @throws InterfaceNotOpenException if the device is not open.
-	 * @throws NullPointerException if {@code ioLine == null}.
-	 * @throws TimeoutException if there is a timeout getting the IO sample.
-	 * @throws XBeeException if there is any other XBee related exception.
-	 * 
-	 * @see IOSample
-	 * @see IOLine
+	 *
+	 * @param address
+	 * 		The 16-bit address of the XBee that will receive the data.
+	 * @param data
+	 * 		Byte array containing data to be sent.
+	 * @throws TimeoutException
+	 * 		if there is a timeout sending the serial data.
+	 * @throws XBeeException
+	 * 		if there is any other XBee related exception.
+	 * @throws InterfaceNotOpenException
+	 * 		if the device is not open.
+	 * @throws NullPointerException
+	 * 		if {@code address == null} or
+	 * 		if {@code data == null}.
+	 * @see XBee16BitAddress
+	 * @see #getReceiveTimeout()
 	 */
 	protected IOSample getIOSample(IOLine ioLine) throws TimeoutException, XBeeException {
-		if (ioLine == null)
+		if (ioLine == null) {
 			throw new NullPointerException("IO line cannot be null.");
+		}
 		// Check connection.
-		if (!connectionInterface.isOpen())
+		if (!connectionInterface.isOpen()) {
 			throw new InterfaceNotOpenException();
-		
+		}
 		// Create and send the AT Command.
 		ATCommandResponse response = null;
 		try {
@@ -1693,22 +1735,20 @@ public class XBeeDevice {
 		} catch (IOException e) {
 			throw new XBeeException("Error writing in the communication interface.", e);
 		}
-		
 		// Check if AT Command response is valid.
 		checkATCommandResponseIsValid(response);
-		
 		// Try to build an IO Sample from the sample payload.
 		IOSample ioSample;
 		try {
 			ioSample = new IOSample(response.getResponse());
-		} catch (IllegalArgumentException e) {
+		} catch (java.lang.IllegalArgumentException e) {
 			throw new XBeeException("Couldn't create the IO sample.", e);
-		} catch (NullPointerException e) {
+		} catch (java.lang.NullPointerException e) {
 			throw new XBeeException("Couldn't create the IO sample.", e);
 		}
 		return ioSample;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
