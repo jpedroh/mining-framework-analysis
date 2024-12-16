@@ -1,7 +1,5 @@
 package com.mercadopago.serialization;
 
-import static com.google.gson.stream.JsonToken.END_DOCUMENT;
-
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,10 +17,11 @@ import com.mercadopago.resources.ResultsResourcesPage;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Type;
+import static com.google.gson.stream.JsonToken.END_DOCUMENT;
+
 
 /** Serializer class, responsible for objects serialization and deserialization. */
 public class Serializer {
-
   private static final String DATE_FORMAT_ISO8601 = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
   private static final Gson GSON =
@@ -44,7 +43,7 @@ public class Serializer {
   }
 
   /**
-   * <<<<<<< HEAD Method responsible for deserialize objects to ResultsResourcesPage. =======  >>>>>>> release-v2
+   * Method responsible for deserialize objects to ResultsResourcesPage.
    *
    * @param clazz class.
    * @param jsonObject json object.
@@ -61,17 +60,16 @@ public class Serializer {
   /**
    * Method responsible for deserialize objects.
    *
-   * @param clazz clazz
-   * @param jsonObject jsonObject
-   * @param <T> type
-   * @return MPResourceList
+   * @param clazz class.
+   * @param jsonObject json object.
+   * @param <T> class type.
+   * @return object.
    */
-  public static <T extends MPResource> MPResourceList<T> deserializeListFromJson(
-      Class<T> clazz, String jsonObject) {
+  public static <T extends MPResource> MPResourceList<T> deserializeListFromJson(Class<T> clazz, String jsonObject) {
     MPResourceList<T> resourceList = new MPResourceList<>();
     JsonObject rootObject = JsonParser.parseString(jsonObject).getAsJsonObject();
     JsonArray jsonArray = getArrayFromJsonElement(rootObject);
-    for (int i = 0; i < jsonArray.size(); i++) {
+    for(int i=0; i < jsonArray.size(); i++) {
       T resource = GSON.fromJson(jsonArray.get(i), clazz);
       resourceList.add(resource);
     }
@@ -82,18 +80,19 @@ public class Serializer {
   /**
    * Method for getting a json array from a json element
    *
-   * @param jsonElement the jsonElement to be analyzed
-   * @return JsonArray
+   * @param jsonElement the jsonElement to be analized
+   * @return
    */
   static JsonArray getArrayFromJsonElement(JsonElement jsonElement) {
+    JsonArray jsonArray = null;
     if (jsonElement.isJsonArray()) {
-      return jsonElement.getAsJsonArray();
-    } else if (jsonElement.isJsonObject()
-        && ((JsonObject) jsonElement).get("results") != null
-        && ((JsonObject) jsonElement).get("results").isJsonArray()) {
-      return ((JsonObject) jsonElement).get("results").getAsJsonArray();
+      jsonArray = jsonElement.getAsJsonArray();
+    } else if (jsonElement.isJsonObject() &&
+        ((JsonObject) jsonElement).get("results") != null &&
+        ((JsonObject) jsonElement).get("results").isJsonArray()) {
+      jsonArray = ((JsonObject) jsonElement).get("results").getAsJsonArray();
     }
-    return null;
+    return jsonArray;
   }
 
   /**

@@ -1,9 +1,5 @@
 package com.mercadopago.net;
 
-import static com.mercadopago.net.HttpStatus.BAD_REQUEST;
-import static com.mercadopago.net.HttpStatus.FORBIDDEN;
-import static com.mercadopago.net.HttpStatus.INTERNAL_SERVER_ERROR;
-
 import com.google.gson.JsonObject;
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.exceptions.MPApiException;
@@ -16,11 +12,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLPeerUnverifiedException;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -48,6 +44,11 @@ import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
+import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
+import static com.mercadopago.net.HttpStatus.BAD_REQUEST;
+import static com.mercadopago.net.HttpStatus.FORBIDDEN;
+import static com.mercadopago.net.HttpStatus.INTERNAL_SERVER_ERROR;
+
 
 /** Mercado Pago default Http Client class. */
 public class MPDefaultHttpClient implements MPHttpClient {
@@ -62,30 +63,27 @@ public class MPDefaultHttpClient implements MPHttpClient {
 
   private static final Logger LOGGER = Logger.getLogger(MPDefaultHttpClient.class.getName());
 
+  static {
+    StreamHandler streamHandler = getStreamHandler();
+    streamHandler.setLevel(MercadoPagoConfig.getLoggingLevel());
+    LOGGER.addHandler(streamHandler);
+  }
+
   private final HttpClient httpClient;
 
   /** MPDefaultHttpClient constructor. */
   public MPDefaultHttpClient() {
-    this(null);
+    this.httpClient = createHttpClient();
   }
 
-  /** MPDefaultHttpClient constructor for testing only. */
-  protected MPDefaultHttpClient(HttpClient httpClient) {
-    StreamHandler streamHandler = getStreamHandler();
-    streamHandler.setLevel(MercadoPagoConfig.getLoggingLevel());
-    LOGGER.addHandler(streamHandler);
-    if (Objects.isNull(httpClient)) {
-      this.httpClient = createHttpClient();
-    } else {
-      this.httpClient = httpClient;
-    }
-  }
-
-  private StreamHandler getStreamHandler() {
-    if (Objects.isNull(MercadoPagoConfig.getLoggingHandler())) {
-      return new ConsoleHandler();
-    }
-    return MercadoPagoConfig.getLoggingHandler();
+  /**
+   * MPDefaultHttpClient constructor receiving httpClient.
+   *
+   * @param httpClient
+   * 		httpClient
+   */
+  public MPDefaultHttpClient(HttpClient httpClient) {
+    this.httpClient = httpClient;
   }
 
   private HttpClient createHttpClient() {
@@ -134,28 +132,22 @@ public class MPDefaultHttpClient implements MPHttpClient {
     try {
       HttpRequestBase completeRequest = createHttpRequest(mpRequest);
       HttpClientContext context = HttpClientContext.create();
-
       HttpResponse response = executeHttpRequest(mpRequest, completeRequest, context);
-
       String responseBody = EntityUtils.toString(response.getEntity(), UTF_8);
       Map<String, List<String>> headers = getHeaders(response);
       int statusCode = response.getStatusLine().getStatusCode();
       MPResponse mpResponse = new MPResponse(statusCode, headers, responseBody);
-
       if (!Serializer.isJsonValid(responseBody)) {
         throw new MPApiException("Response body has malformed json", mpResponse);
       }
-
       if (statusCode > 299) {
         throw new MPApiException("Api error. Check response for details", mpResponse);
       }
-
       LOGGER.fine(String.format("Response body: %s", responseBody));
       return mpResponse;
-
     } catch (MPMalformedRequestException | MPApiException ex) {
       throw ex;
-    } catch (Exception ex) {
+    } catch (java.lang.Exception ex) {
       throw new MPException(ex);
     }
   }
@@ -192,8 +184,7 @@ public class MPDefaultHttpClient implements MPHttpClient {
     return request;
   }
 
-  private HttpResponse executeHttpRequest(
-      MPRequest mpRequest, HttpRequestBase completeRequest, HttpClientContext context) {
+  private HttpResponse executeHttpRequest(MPRequest mpRequest, HttpRequestBase completeRequest, HttpClientContext context) {
     try {
       if (Objects.nonNull(mpRequest.getPayload())) {
         LOGGER.fine(String.format("Request body: %s", mpRequest.getPayload().toString()));
@@ -205,16 +196,13 @@ public class MPDefaultHttpClient implements MPHttpClient {
       return httpClient.execute(completeRequest, context);
     } catch (ClientProtocolException e) {
       LOGGER.fine(String.format("ClientProtocolException: %s", e.getMessage()));
-      return new BasicHttpResponse(
-          new BasicStatusLine(completeRequest.getProtocolVersion(), BAD_REQUEST, null));
+      return new BasicHttpResponse(new BasicStatusLine(completeRequest.getProtocolVersion(), BAD_REQUEST, null));
     } catch (SSLPeerUnverifiedException e) {
       LOGGER.fine(String.format("SSLException: %s", e.getMessage()));
-      return new BasicHttpResponse(
-          new BasicStatusLine(completeRequest.getProtocolVersion(), FORBIDDEN, null));
+      return new BasicHttpResponse(new BasicStatusLine(completeRequest.getProtocolVersion(), FORBIDDEN, null));
     } catch (IOException e) {
       LOGGER.fine(String.format("IOException: %s", e.getMessage()));
-      return new BasicHttpResponse(
-          new BasicStatusLine(completeRequest.getProtocolVersion(), INTERNAL_SERVER_ERROR, null));
+      return new BasicHttpResponse(new BasicStatusLine(completeRequest.getProtocolVersion(), INTERNAL_SERVER_ERROR, null));
     }
   }
 
