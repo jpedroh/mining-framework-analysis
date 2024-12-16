@@ -16,9 +16,14 @@
  * limitations under the License.
  * ====================================================================
  */
-
 package org.dasein.cloud.network;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.dasein.cloud.CloudException;
 import org.dasein.cloud.CloudProvider;
 import org.dasein.cloud.InternalException;
@@ -28,12 +33,6 @@ import org.dasein.cloud.Requirement;
 import org.dasein.cloud.ResourceStatus;
 import org.dasein.cloud.identity.ServiceAction;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 
 /**
  * Provides a basic implementation of load balancer support that you can extend and customize to support your cloud.
@@ -45,7 +44,8 @@ import java.util.HashMap;
 public abstract class AbstractLoadBalancerSupport<T extends CloudProvider> implements LoadBalancerSupport {
     private T provider;
 
-    public AbstractLoadBalancerSupport(@Nonnull T provider) {
+    public AbstractLoadBalancerSupport(@Nonnull
+    T provider) {
         this.provider = provider;
     }
 
