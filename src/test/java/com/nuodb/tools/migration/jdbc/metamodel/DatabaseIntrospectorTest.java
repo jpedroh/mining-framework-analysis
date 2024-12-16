@@ -1,40 +1,46 @@
 package com.nuodb.tools.migration.jdbc.metamodel;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.util.Map;
-
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class DatabaseIntrospectorTest {
-    private static final String TEST_CATALOG_NAME = "TEST_CATALOG";
-    private static final String TEST_SCHEMA_NAME = "TEST_SCHEMA";
 
-    private Database database;
-    private DatabaseMetaData mockMetaData;
-    private DatabaseIntrospector databaseIntrospector;
+public class DatabaseIntrospectorTest {
+    Database database;
+
+    DatabaseMetaData mockMetaData;
+
+    DatabaseIntrospector databaseIntrospector;
+
+    final String TEST_CATALOG_NAME = "TEST_CATALOG";
+
+    final String TEST_SCHEMA_NAME = "TEST_SCHEMA";
 
     @Before
     public void setUp() throws Exception {
         databaseIntrospector = new DatabaseIntrospector();
-
         mockMetaData = mock(DatabaseMetaData.class);
-        database = new Database(); // mock(Database.class);
+        database = new Database();// mock(Database.class);
 
         final ResultSet mockResultSet = mock(ResultSet.class);
         when(mockResultSet.next()).thenReturn(true).thenReturn(false);
-
         when(mockResultSet.getString("TABLE_CAT")).thenReturn(TEST_CATALOG_NAME);
         when(mockResultSet.getString("TABLE_CATALOG")).thenReturn(TEST_CATALOG_NAME);
         when(mockResultSet.getString("TABLE_SCHEM")).thenReturn(TEST_CATALOG_NAME);
-
         when(mockMetaData.getCatalogs()).thenReturn(mockResultSet);
         when(mockMetaData.getSchemas()).thenReturn(mockResultSet);
+    }
+
+    @Test
+    public void testWithConnectionProvider() throws Exception {
+        databaseIntrospector.withConnection(mock(Connection.class));
+        Assert.assertNotNull(databaseIntrospector.getConnectionProvider());
     }
 
     @Test
