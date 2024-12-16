@@ -4,29 +4,33 @@
 package org.keedio.flume.source.ftp.client.sources;
 
 import com.jcraft.jsch.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import org.keedio.flume.source.ftp.client.KeedioSource;
 import org.keedio.flume.source.ftp.client.filters.KeedioFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
  * @author Luis Lázaro lalazaro@keedio.com Keedio
  */
 public class SFTPSource extends KeedioSource<ChannelSftp.LsEntry> {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(SFTPSource.class);
 
     private String knownHosts;
+
     private JSch jsch;
+
     private Session sessionSftp;
+
     private Channel channel;
+
     private ChannelSftp sftpClient;
+
     private String strictHostKeyChecking;
 
     /**
@@ -37,7 +41,9 @@ public class SFTPSource extends KeedioSource<ChannelSftp.LsEntry> {
 
     /**
      *
+     *
      * @param knownHosts
+     * 		
      */
     public SFTPSource(String knownHosts, String strictHostKeyChecking) {
         this.knownHosts = knownHosts;
@@ -237,13 +243,13 @@ public class SFTPSource extends KeedioSource<ChannelSftp.LsEntry> {
      */
     public long getModifiedTime(ChannelSftp.LsEntry file) { return file.getAttrs().getMTime() * 1000L; }
 
-    @Override
     /**
      * There is no attribute to check isfile in SftpATTRS
      *
      * @return boolean
      * @param file to check
      */
+    @Override
     public boolean isFile(ChannelSftp.LsEntry file) {
         boolean isfile;
         if ((!isDirectory(file)) && (!isLink(file))) {
@@ -357,6 +363,4 @@ public class SFTPSource extends KeedioSource<ChannelSftp.LsEntry> {
         }
         return listFiltered;
     }
-    
-  
 }

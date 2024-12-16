@@ -3,43 +3,49 @@
  */
 package org.keedio.flume.source.ftp.client.sources;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.net.ssl.KeyManager;
 import org.apache.commons.net.ftp.FTP;
-import org.keedio.flume.source.ftp.client.KeedioSource;
-import org.apache.commons.net.ftp.FTPSClient;
-import java.io.File;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
-import org.apache.commons.net.util.TrustManagerUtils;
+import org.apache.commons.net.ftp.FTPSClient;
 import org.apache.commons.net.util.KeyManagerUtils;
-import javax.net.ssl.KeyManager;
-
+import org.apache.commons.net.util.TrustManagerUtils;
+import org.keedio.flume.source.ftp.client.KeedioSource;
 import org.keedio.flume.source.ftp.client.filters.KeedioFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  *
  * @author Luis Lázaro lalazaro@keedio.com Keedio
  */
 public class FTPSSource extends KeedioSource<FTPFile> {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(FTPSSource.class);
 
-    private boolean securityMode, securityCert;
-    private String protocolSec, pathTokesytore, storePass;
+    private boolean securityMode;
+
+    private boolean securityCert;
+
+    private String protocolSec;
+
+    private String pathTokesytore;
+
+    private String storePass;
+
     private FTPSClient ftpsClient;
 
     public FTPSSource() {
     }
 
-    public FTPSSource(boolean securityMode, String protocolSec, boolean securityCert, String pathTokeystore,
-                      String storePass) {
+    public FTPSSource(boolean securityMode, String protocolSec, boolean securityCert, String pathTokeystore, String storePass) {
         this.securityMode = securityMode;
         this.protocolSec = protocolSec;
         this.securityCert = securityCert;
@@ -85,7 +91,7 @@ public class FTPSSource extends KeedioSource<FTPFile> {
             LOGGER.error("", e);
         }
         return isConnected();
-    }   
+    }
 
     /**
      * Disconnect and logout from current connection to server
@@ -111,28 +117,27 @@ public class FTPSSource extends KeedioSource<FTPFile> {
             ftpsClient.changeWorkingDirectory(directory);        
     }
 
-    @Override
     /**
      * @return list with objects in directory
      * @param current directory
      */
+    @Override
     public List<FTPFile> listElements(String dir) throws IOException {
         FTPFile[] subFiles = getFtpsClient().listFiles(dir);
         return Arrays.asList(subFiles);
     }
 
-    @Override
     /**
      * @param Object
      * @return InputStream
      */
+    @Override
     public InputStream getInputStream(FTPFile file) throws IOException {
         if (isFlushLines()) {
             this.setFileType(FTP.ASCII_FILE_TYPE);
         } else {
             this.setFileType(FTP.BINARY_FILE_TYPE);
         }
-
         return getFtpsClient().retrieveFileStream(file.getName());
     }
 
@@ -215,11 +220,11 @@ public class FTPSSource extends KeedioSource<FTPFile> {
         return file.getLink();
     }
 
-    @Override
     /**
      *
      * @return String directory retrieved for server on connect
      */
+    @Override
     public String getDirectoryserver() throws IOException {
         return getFtpsClient().printWorkingDirectory();
     }
@@ -321,5 +326,4 @@ public class FTPSSource extends KeedioSource<FTPFile> {
         list = Arrays.asList(subFiles);
         return list;
     }
-
 }

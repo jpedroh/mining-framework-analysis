@@ -3,55 +3,56 @@
  */
 package org.keedio.flume.source.ftp.source;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.*;
-
+import java.util.List;
+import java.util.zip.GZIPInputStream;
+import org.apache.flume.ChannelException;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
 import org.apache.flume.PollableSource;
 import org.apache.flume.conf.Configurable;
 import org.apache.flume.event.SimpleEvent;
+import org.apache.flume.source.AbstractSource;
+import org.keedio.flume.source.ftp.client.KeedioSource;
+import org.keedio.flume.source.ftp.client.factory.SourceFactory;
 import org.keedio.flume.source.ftp.client.filters.KeedioFileFilter;
+import org.keedio.flume.source.ftp.metrics.SourceCounter;
+import org.keedio.flume.source.ftp.source.utils.FTPSourceEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.flume.ChannelException;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
-
-import org.keedio.flume.source.ftp.source.utils.FTPSourceEventListener;
-
-import org.keedio.flume.source.ftp.metrics.SourceCounter;
-
-import java.util.List;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
-import org.keedio.flume.source.ftp.client.factory.SourceFactory;
-import org.keedio.flume.source.ftp.client.KeedioSource;
-
-import java.nio.charset.Charset;
-
-import org.apache.flume.source.AbstractSource;
-import java.util.zip.GZIPInputStream;
 
 /**
  * @author luislazaro lalazaro@keedio.com - KEEDIO
  */
-public class Source extends AbstractSource implements Configurable, PollableSource {
-
+//endclass
+public class Source extends AbstractSource implements Configurable , PollableSource {
   private SourceFactory sourceFactory = new SourceFactory();
+
   private KeedioSource keedioSource;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(Source.class);
+
+  //  max limit attempts reconnection
   private static final short ATTEMPTS_MAX = 3; //  max limit attempts reconnection
+
   private static final long EXTRA_DELAY = 10000;
+
   private int counterConnect = 0;
+
   private FTPSourceEventListener listener = new FTPSourceEventListener();
+
   private SourceCounter sourceCounter;
+
   private String workingDirectory;
+
   private KeedioFileFilter keedioFileFilter;
 
   /**
@@ -74,7 +75,7 @@ public class Source extends AbstractSource implements Configurable, PollableSour
     if (keedioSource.existFolder()) {
       keedioSource.makeLocationFile();
     } else {
-      LOGGER.error("Folder " + keedioSource.getPathTohasmap().toString() + " does not exist");
+      LOGGER.error(("Folder " + keedioSource.getPathTohasmap().toString()) + " does not exist");
     }
     keedioSource.connect();
     sourceCounter = new SourceCounter("SOURCE." + getName());
@@ -94,22 +95,18 @@ public class Source extends AbstractSource implements Configurable, PollableSour
         LOGGER.info("property workdir is null, setting to default");
         workingDirectory = keedioSource.getDirectoryserver();
       }
-
-      LOGGER.info("Actual dir:  " + workingDirectory + " files: "
-        + keedioSource.getFileList().size());
-
+      LOGGER.info((("Actual dir:  " + workingDirectory) + " files: ") + keedioSource.getFileList().size());
       discoverElements(keedioSource, workingDirectory, "", 0, keedioSource.isRecursive());
-      keedioSource.cleanList(); //clean list according existing actual files
+      keedioSource.cleanList();// clean list according existing actual files
+
       keedioSource.getExistFileList().clear();
     } catch (IOException e) {
       LOGGER.error("Exception thrown in process, try to reconnect " + counterConnect, e);
-
       if (!keedioSource.connect()) {
         counterConnect++;
       } else {
         keedioSource.checkPreviousMap();
       }
-
       if (counterConnect < ATTEMPTS_MAX) {
         process();
       } else {
@@ -117,19 +114,20 @@ public class Source extends AbstractSource implements Configurable, PollableSour
         try {
           Thread.sleep(keedioSource.getRunDiscoverDelay() + EXTRA_DELAY);
           counterConnect = 0;
-        } catch (InterruptedException ce) {
+        } catch (java.lang.InterruptedException ce) {
           LOGGER.error("InterruptedException", ce);
         }
       }
     }
     keedioSource.saveMap();
-
     try {
       Thread.sleep(keedioSource.getRunDiscoverDelay());
-      return PollableSource.Status.READY;     //source was successfully able to generate events
-    } catch (InterruptedException inte) {
+      return PollableSource.Status.READY;// source was successfully able to generate events
+
+    } catch (java.lang.InterruptedException inte) {
       LOGGER.error("Exception thrown in process while putting to sleep", inte);
-      return PollableSource.Status.BACKOFF;   //inform the runner thread to back off for a bit
+      return PollableSource.Status.BACKOFF;// inform the runner thread to back off for a bit
+
     }
   }
 
@@ -161,101 +159,99 @@ public class Source extends AbstractSource implements Configurable, PollableSour
    * discoverElements: find files to process them
    *
    * @param <T>
+   * 		
    * @param keedioSource
-   * @param parentDir,   will be the directory retrieved by the server when
-   *                     connected
-   * @param currentDir,  actual dir in the recursive method
-   * @param level,       deep to search
-   * @param recursive    Whether to search sub-directories recursively
+   * 		
+   * @param parentDir,
+   * 		will be the directory retrieved by the server when
+   * 		connected
+   * @param currentDir,
+   * 		actual dir in the recursive method
+   * @param level,
+   * 		deep to search
    * @throws IOException
+   * 		
+   * @throws IOException
+   * 		
    */
   // @SuppressWarnings("UnnecessaryContinue")
-  private <T> void discoverElements(KeedioSource keedioSource, String parentDir, String currentDir, int level,
-                                   boolean recursive) throws IOException {
-
-    long position = 0L;
-
+  private <T> void discoverElements(KeedioSource keedioSource, String parentDir, String currentDir, int level, boolean recursive) throws IOException {
+    long position;
     String dirToList = parentDir;
-    if (!("").equals(currentDir)) {
+    if (!"".equals(currentDir)) {
       dirToList += "/" + currentDir;
     }
     List<T> list = keedioSource.listElements(dirToList, keedioFileFilter);
-    if (!(list.isEmpty())) {
-
+    if (!list.isEmpty()) {
       for (T element : list) {
         String elementName = keedioSource.getObjectName(element);
         if (elementName.equals(".") || elementName.equals("..")) {
           continue;
         }
-
         if (keedioSource.isDirectory(element)) {
-          if(recursive) {
-            LOGGER.info("Traversing element recursively: " + "[" + elementName + "]");
+          if (recursive) {
+            LOGGER.info((("Traversing element recursively: " + "[") + elementName) + "]");
             keedioSource.changeToDirectory(parentDir);
             discoverElements(keedioSource, dirToList, elementName, level + 1, recursive);
           }
-        } else if (keedioSource.isFile(element)) { //element is a regular file
+        } else if (keedioSource.isFile(element)) {
+          // element is a regular file
           keedioSource.changeToDirectory(dirToList);
-
           // Check whether user has specified that file is not to be processed while in use
-          if(!keedioSource.isProcessInUse()) {
+          if (!keedioSource.isProcessInUse()) {
             // If file is currently being written to, skip this file until it is finalized
-            if(isBeingWritten(keedioSource.getModifiedTime(element), keedioSource.getProcessInUseTimeout())) {
-              LOGGER.info("File " + elementName + " is still being written. " +
-                      "Will skip for now and re-read when write is completed.");
+            if (isBeingWritten(keedioSource.getModifiedTime(element), keedioSource.getProcessInUseTimeout())) {
+              LOGGER.info((("File " + elementName) + " is still being written. ") + "Will skip for now and re-read when write is completed.");
               continue;
             }
           }
+          keedioSource.getExistFileList().add((dirToList + "/") + elementName);// control of deleted files in server
 
-          keedioSource.getExistFileList().add(dirToList + "/" + elementName);  //control of deleted files in server
+          // test if file is new in collection
+          if (!keedioSource.getFileList().containsKey((dirToList + "/") + elementName)) {
+            // new file
+            sourceCounter.incrementFilesCount();// include all files, even not yet processed
 
-          //test if file is new in collection
-          if (!(keedioSource.getFileList().containsKey(dirToList + "/" + elementName))) { //new file
-            sourceCounter.incrementFilesCount(); //include all files, even not yet processed
             position = 0L;
-            LOGGER.info("Discovered: " + elementName + " ,size: " + keedioSource.getObjectSize(element));
-          } else { //known file
-            long prevSize = (long) keedioSource.getFileList().get(dirToList + "/" + elementName);
+            LOGGER.info((("Discovered: " + elementName) + " ,size: ") + keedioSource.getObjectSize(element));
+          }// end if known file
+           else {
+            // known file
+            long prevSize = ((long) (keedioSource.getFileList().get((dirToList + "/") + elementName)));
             position = prevSize;
-            long dif = keedioSource.getObjectSize(element) - (long) keedioSource.getFileList()
-              .get(dirToList + "/" + elementName);
-
+            long dif = keedioSource.getObjectSize(element) - ((long) (keedioSource.getFileList().get((dirToList + "/") + elementName)));
             if (dif > 0) {
-              LOGGER.info("Modified: " + elementName + " ,size: " + dif);
-            } else if (dif < 0) { //known and full modified
-              keedioSource.getExistFileList().remove(dirToList + "/" + elementName); //will be rediscovered as new file
+              LOGGER.info((("Modified: " + elementName) + " ,size: ") + dif);
+            } else if (dif < 0) {
+              // known and full modified
+              keedioSource.getExistFileList().remove((dirToList + "/") + elementName);// will be rediscovered as new file
+
               keedioSource.saveMap();
               continue;
             } else {
               continue;
             }
+          }// end if known file
 
-          } //end if known file
-
-          //common for all regular files
+          // common for all regular files
           InputStream inputStream = null;
           try {
             inputStream = keedioSource.getInputStream(element);
             listener.fileStreamRetrieved();
-
             if (!readStream(inputStream, position, elementName, dirToList)) {
               inputStream = null;
             }
+            boolean success = (inputStream != null) && keedioSource.particularCommand();// mandatory if FTPClient
 
-            boolean success = inputStream != null && keedioSource.particularCommand(); //mandatory if FTPClient
             if (success) {
-              keedioSource.getFileList().put(dirToList + "/" + elementName, keedioSource.getObjectSize(element));
+              keedioSource.getFileList().put((dirToList + "/") + elementName, keedioSource.getObjectSize(element));
               keedioSource.saveMap();
-
               if (position != 0) {
                 sourceCounter.incrementCountModProc();
               } else {
                 sourceCounter.incrementFilesProcCount();
               }
-
-              LOGGER
-                .info("Processed:  " + elementName + ", total files: " + this.keedioSource.getFileList().size() + "\n");
-
+              LOGGER.info(((("Processed:  " + elementName) + ", total files: ") + this.keedioSource.getFileList().size()) + "\n");
             } else {
               handleProcessError(elementName);
             }
@@ -264,11 +260,9 @@ public class Source extends AbstractSource implements Configurable, PollableSour
             LOGGER.error("Failed retrieving inputStream on discoverElements ", e);
             continue;
           }
-
           keedioSource.changeToDirectory(dirToList);
-
         } else if (keedioSource.isLink(element)) {
-          LOGGER.info(elementName + " is a link of " + this.keedioSource.getLink(element) + " could not retrieve size");
+          LOGGER.info(((elementName + " is a link of ") + this.keedioSource.getLink(element)) + " could not retrieve size");
           keedioSource.changeToDirectory(parentDir);
           continue;
         } else {
@@ -277,7 +271,6 @@ public class Source extends AbstractSource implements Configurable, PollableSour
           continue;
         }
         keedioSource.changeToDirectory(parentDir);
-
       }
     }
   }
@@ -311,38 +304,30 @@ public class Source extends AbstractSource implements Configurable, PollableSour
     if (inputStream == null) {
       return false;
     }
-
     boolean successRead = true;
-
     if (keedioSource.isFlushLines()) {
       try {
         inputStream.skip(position);
-
-        if(keedioSource.getCompressionFormat() != null) {
-          switch(keedioSource.getCompressionFormat()) {
-            case "gzip":
-            LOGGER.info("File " + fileName + " is GZIP compressed, and decompression has been requested by user. " +
-                    "Will attempt to decompress.");
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(new GZIPInputStream(inputStream),
-                    Charset.defaultCharset()))) {
-              String line = null;
-
-              while ((line = in.readLine()) != null) {
-                processMessage(line.getBytes(), fileName, filePath);
+        if (keedioSource.getCompressionFormat() != null) {
+          switch (keedioSource.getCompressionFormat()) {
+            case "gzip" :
+              LOGGER.info((("File " + fileName) + " is GZIP compressed, and decompression has been requested by user. ") + "Will attempt to decompress.");
+              try (final BufferedReader in = new BufferedReader(new InputStreamReader(new GZIPInputStream(inputStream), Charset.defaultCharset()))) {
+                String line = null;
+                while ((line = in.readLine()) != null) {
+                  processMessage(line.getBytes(), fileName, filePath);
+                } 
               }
-            }
-            break;
-            default: throw new IOException("Unsupported compression format specified: " +
-                    keedioSource.getCompressionFormat());
+              break;
+            default :
+              throw new IOException("Unsupported compression format specified: " + keedioSource.getCompressionFormat());
           }
         } else {
-          try (BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, Charset.defaultCharset()))) {
-            String line = null;
-
+          try (final BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, Charset.defaultCharset()))) {
+            String line;
             while ((line = in.readLine()) != null) {
               processMessage(line.getBytes(), fileName, filePath);
-            }
-
+            } 
           }
         }
         inputStream.close();
@@ -351,25 +336,22 @@ public class Source extends AbstractSource implements Configurable, PollableSour
         successRead = false;
       }
     } else {
-
       try {
         inputStream.skip(position);
         int chunkSize = keedioSource.getChunkSize();
         byte[] bytesArray = new byte[chunkSize];
-        int bytesRead = -1;
-        while ((bytesRead = inputStream.read(bytesArray)) != -1) {
-          try (ByteArrayOutputStream baostream = new ByteArrayOutputStream(chunkSize)) {
+        int bytesRead;
+        while ((bytesRead = inputStream.read(bytesArray)) != (-1)) {
+          try (final ByteArrayOutputStream baostream = new ByteArrayOutputStream(chunkSize)) {
             baostream.write(bytesArray, 0, bytesRead);
             byte[] data = baostream.toByteArray();
             processMessage(data, fileName, filePath);
           }
-        }
-
+        } 
         inputStream.close();
       } catch (IOException e) {
         LOGGER.error("on readStream", e);
         successRead = false;
-
       }
     }
     return successRead;
@@ -383,27 +365,27 @@ public class Source extends AbstractSource implements Configurable, PollableSour
     byte[] message = lastInfo;
     Event event = new SimpleEvent();
     Map<String, String> headers = new HashMap<>();
-      headers.put("fileName", fileName);
-      headers.put("filePath", filePath);
-      headers.put("timestamp", String.valueOf(System.currentTimeMillis()));
-      event.setBody(message);
-      event.setHeaders(headers);
-      try {
-        getChannelProcessor().processEvent(event);
-      } catch (ChannelException e) {
-        LOGGER.error("ChannelException", e);
-      }
-      sourceCounter.incrementCountSizeProc(message.length);
-      sourceCounter.incrementEventCount();
+    headers.put("fileName", fileName);
+    headers.put("filePath", filePath);
+    headers.put("timestamp", String.valueOf(System.currentTimeMillis()));
+    event.setBody(message);
+    event.setHeaders(headers);
+    try {
+      getChannelProcessor().processEvent(event);
+    } catch (ChannelException e) {
+      LOGGER.error("ChannelException", e);
     }
+    sourceCounter.incrementCountSizeProc(message.length);
+    sourceCounter.incrementEventCount();
+  }
 
     /**
      * @param listener
      */
 
-  public void setListener(FTPSourceEventListener listener) {
+      public void setListener(FTPSourceEventListener listener) {
     this.listener = listener;
-  }
+      }
 
   /**
    * @param fileName
@@ -436,4 +418,4 @@ public class Source extends AbstractSource implements Configurable, PollableSour
   public long getMaxBackOffSleepInterval() {
     return 0;
   }
-} //endclass
+}
