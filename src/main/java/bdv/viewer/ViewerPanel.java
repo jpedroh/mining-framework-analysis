@@ -29,22 +29,35 @@
  */
 package bdv.viewer;
 
-import static bdv.viewer.VisibilityAndGrouping.Event.CURRENT_SOURCE_CHANGED;
-import static bdv.viewer.VisibilityAndGrouping.Event.DISPLAY_MODE_CHANGED;
-import static bdv.viewer.VisibilityAndGrouping.Event.GROUP_ACTIVITY_CHANGED;
-import static bdv.viewer.VisibilityAndGrouping.Event.GROUP_NAME_CHANGED;
-import static bdv.viewer.VisibilityAndGrouping.Event.NUM_GROUPS_CHANGED;
-import static bdv.viewer.VisibilityAndGrouping.Event.NUM_SOURCES_CHANGED;
-import static bdv.viewer.VisibilityAndGrouping.Event.SOURCE_ACTVITY_CHANGED;
-import static bdv.viewer.VisibilityAndGrouping.Event.VISIBILITY_CHANGED;
-
+import bdv.BigDataViewerActions;
+import bdv.cache.CacheControl;
+import bdv.tools.bookmarks.bookmark.Bookmark;
+import bdv.tools.bookmarks.bookmark.DynamicBookmark;
+import bdv.util.Affine3DHelpers;
+import bdv.util.InvokeOnEDT;
+import bdv.util.Prefs;
+import bdv.viewer.animate.AbstractTransformAnimator;
+import bdv.viewer.animate.MessageOverlayAnimator;
+import bdv.viewer.animate.OverlayAnimator;
+import bdv.viewer.animate.RotationAnimator;
+import bdv.viewer.animate.TextOverlayAnimator.TextPosition;
+import bdv.viewer.animate.TextOverlayAnimator;
+import bdv.viewer.overlay.MultiBoxOverlayRenderer;
+import bdv.viewer.overlay.ScaleBarOverlayRenderer;
+import bdv.viewer.overlay.SourceInfoOverlayRenderer;
+import bdv.viewer.render.MultiResolutionRenderer;
+import bdv.viewer.render.TransformAwareBufferedImageOverlayRenderer;
+import bdv.viewer.state.SourceGroup;
+import bdv.viewer.state.SourceState;
+import bdv.viewer.state.ViewerState;
+import bdv.viewer.state.XmlIoViewerState;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -61,7 +74,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.Box;
@@ -74,31 +86,6 @@ import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import org.jdom2.Element;
-
-import bdv.BigDataViewerActions;
-import bdv.cache.CacheControl;
-import bdv.tools.bookmarks.bookmark.Bookmark;
-import bdv.tools.bookmarks.bookmark.DynamicBookmark;
-import bdv.util.Affine3DHelpers;
-import bdv.util.InvokeOnEDT;
-import bdv.util.Prefs;
-import bdv.viewer.animate.AbstractTransformAnimator;
-import bdv.viewer.animate.MessageOverlayAnimator;
-import bdv.viewer.animate.OverlayAnimator;
-import bdv.viewer.animate.RotationAnimator;
-import bdv.viewer.animate.TextOverlayAnimator;
-import bdv.viewer.animate.TextOverlayAnimator.TextPosition;
-import bdv.viewer.overlay.MultiBoxOverlayRenderer;
-import bdv.viewer.overlay.ScaleBarOverlayRenderer;
-import bdv.viewer.overlay.SourceInfoOverlayRenderer;
-import bdv.viewer.render.MultiResolutionRenderer;
-import bdv.viewer.render.TransformAwareBufferedImageOverlayRenderer;
-import bdv.viewer.state.SourceGroup;
-import bdv.viewer.state.SourceState;
-import bdv.viewer.state.ViewerState;
-import bdv.viewer.state.XmlIoViewerState;
 import net.imglib2.Positionable;
 import net.imglib2.RealLocalizable;
 import net.imglib2.RealPoint;
@@ -110,6 +97,15 @@ import net.imglib2.ui.PainterThread;
 import net.imglib2.ui.TransformEventHandler;
 import net.imglib2.ui.TransformListener;
 import net.imglib2.util.LinAlgHelpers;
+import org.jdom2.Element;
+import static bdv.viewer.VisibilityAndGrouping.Event.CURRENT_SOURCE_CHANGED;
+import static bdv.viewer.VisibilityAndGrouping.Event.DISPLAY_MODE_CHANGED;
+import static bdv.viewer.VisibilityAndGrouping.Event.GROUP_ACTIVITY_CHANGED;
+import static bdv.viewer.VisibilityAndGrouping.Event.GROUP_NAME_CHANGED;
+import static bdv.viewer.VisibilityAndGrouping.Event.NUM_GROUPS_CHANGED;
+import static bdv.viewer.VisibilityAndGrouping.Event.NUM_SOURCES_CHANGED;
+import static bdv.viewer.VisibilityAndGrouping.Event.SOURCE_ACTVITY_CHANGED;
+import static bdv.viewer.VisibilityAndGrouping.Event.VISIBILITY_CHANGED;
 
 
 /**
@@ -122,8 +118,7 @@ import net.imglib2.util.LinAlgHelpers;
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
  */
-public class ViewerPanel extends JPanel implements OverlayRenderer, TransformListener< AffineTransform3D >, PainterThread.Paintable, VisibilityAndGrouping.UpdateListener, RequestRepaint
-{
+public class ViewerPanel extends JPanel implements OverlayRenderer , TransformListener<AffineTransform3D> , PainterThread.Paintable , VisibilityAndGrouping.UpdateListener , RequestRepaint {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -142,12 +137,14 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 	 */
 	protected final TransformAwareBufferedImageOverlayRenderer renderTarget;
 
+	// TODO: move to specialized class
 	/**
 	 * Overlay navigation boxes.
 	 */
 	// TODO: move to specialized class
 	protected final MultiBoxOverlayRenderer multiBoxOverlayRenderer;
 
+	// TODO: move to specialized class
 	/**
 	 * Overlay current source name and current timepoint.
 	 */
@@ -239,7 +236,7 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 	 * animators. Initially, this contains a {@link TextOverlayAnimator} showing
 	 * the "press F1 for help" message.
 	 */
-	protected final ArrayList< OverlayAnimator > overlayAnimators;
+	protected final ArrayList<OverlayAnimator> overlayAnimators;
 
 	/**
 	 * Fade-out overlay of recent messages. See {@link #showMessage(String)}.
@@ -253,240 +250,190 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 	protected final JButton addKeyframeButton;
 
 	protected final JButton nextKeyframeButton;
-	
+
 	protected final List<ActiveBookmarkChangedListener> activeBookmarkChangedListeners = new ArrayList<>();
-	
+
 	protected final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-	
-	protected final Timer playTimer = new Timer( 0, this::onPlayTimerTick ); 
-	
+
+	protected final Timer playTimer = new Timer(0, this::onPlayTimerTick);
+
 	protected final ActionMap actionMap;
-	
-	public ViewerPanel( final List< SourceAndConverter< ? > > sources, final int numTimePoints, final CacheControl cacheControl, final ActionMap actionMap )
-	{
-		this( sources, numTimePoints, cacheControl, ViewerOptions.options(), actionMap );
+
+	public ViewerPanel(final List<SourceAndConverter<?>> sources, final int numTimePoints, final CacheControl cacheControl, final ActionMap actionMap) {
+		this(sources, numTimePoints, cacheControl, ViewerOptions.options(), actionMap);
 	}
 
 	/**
-	 * @wbp.parser.constructor
+	 *
+	 *
 	 * @param sources
-	 *            the {@link SourceAndConverter sources} to display.
+	 * 		the {@link SourceAndConverter sources} to display.
 	 * @param numTimepoints
-	 *            number of available timepoints.
+	 * 		number of available timepoints.
 	 * @param cacheControl
-	 *            to control IO budgeting and fetcher queue.
+	 * 		to control IO budgeting and fetcher queue.
 	 * @param optional
-	 *            optional parameters. See {@link ViewerOptions#options()}.
+	 * 		optional parameters. See {@link ViewerOptions#options()}.
+	 * @param optional
+	 * 		optional parameters. See {@link ViewerOptions#options()}.
 	 */
-	public ViewerPanel( final List< SourceAndConverter< ? > > sources, final int numTimepoints, final CacheControl cacheControl, final ViewerOptions optional, final ActionMap actionMap )
-	{
-		super( new BorderLayout(), false );
+	public ViewerPanel(final List<SourceAndConverter<?>> sources, final int numTimepoints, final CacheControl cacheControl, final ViewerOptions optional, final ActionMap actionMap) {
+		super(new BorderLayout(), false);
 		setPreferredSize(new Dimension(600, 500));
 		options = optional.values;
 		this.actionMap = actionMap;
-
 		final int numGroups = options.getNumSourceGroups();
-		final ArrayList< SourceGroup > groups = new ArrayList<>( numGroups );
-		for ( int i = 0; i < numGroups; ++i )
-			groups.add( new SourceGroup( "group " + Integer.toString( i + 1 ) ) );
-		state = new ViewerState( sources, groups, numTimepoints );
-		for ( int i = Math.min( numGroups, sources.size() ) - 1; i >= 0; --i )
-			state.getSourceGroups().get( i ).addSource( i );
-
-		if ( !sources.isEmpty() )
-			state.setCurrentSource( 0 );
+		final ArrayList<SourceGroup> groups = new ArrayList<>(numGroups);
+		for (int i = 0; i < numGroups; ++i) {
+			groups.add(new SourceGroup("group " + Integer.toString(i + 1)));
+		}
+		state = new ViewerState(sources, groups, numTimepoints);
+		for (int i = Math.min(numGroups, sources.size()) - 1; i >= 0; --i) {
+			state.getSourceGroups().get(i).addSource(i);
+		}
+		if (!sources.isEmpty()) {
+			state.setCurrentSource(0);
+		}
 		multiBoxOverlayRenderer = new MultiBoxOverlayRenderer();
 		sourceInfoOverlayRenderer = new SourceInfoOverlayRenderer();
-		scaleBarOverlayRenderer = Prefs.showScaleBar() ? new ScaleBarOverlayRenderer() : null;
-
-		threadGroup = new ThreadGroup( this.toString() );
-		painterThread = new PainterThread( threadGroup, this );
+		scaleBarOverlayRenderer = (Prefs.showScaleBar()) ? new ScaleBarOverlayRenderer() : null;
+		threadGroup = new ThreadGroup(this.toString());
+		painterThread = new PainterThread(threadGroup, this);
 		viewerTransform = new AffineTransform3D();
 		renderTarget = new TransformAwareBufferedImageOverlayRenderer();
-		renderTarget.setCanvasSize( options.getWidth(), options.getHeight() );
-
-		renderingExecutorService = Executors.newFixedThreadPool(
-				options.getNumRenderingThreads(),
-				new RenderThreadFactory() );
-		imageRenderer = new MultiResolutionRenderer(
-				renderTarget, painterThread,
-				options.getScreenScales(),
-				options.getTargetRenderNanos(),
-				options.isDoubleBuffered(),
-				options.getNumRenderingThreads(),
-				renderingExecutorService,
-				options.isUseVolatileIfAvailable(),
-				options.getAccumulateProjectorFactory(),
-				cacheControl );
-
+		renderTarget.setCanvasSize(options.getWidth(), options.getHeight());
+		renderingExecutorService = Executors.newFixedThreadPool(options.getNumRenderingThreads(), new RenderThreadFactory());
+		imageRenderer = new MultiResolutionRenderer(renderTarget, painterThread, options.getScreenScales(), options.getTargetRenderNanos(), options.isDoubleBuffered(), options.getNumRenderingThreads(), renderingExecutorService, options.isUseVolatileIfAvailable(), options.getAccumulateProjectorFactory(), cacheControl);
 		mouseCoordinates = new MouseCoordinateListener();
-
-		display = new InteractiveDisplayCanvasComponent<>(
-				options.getWidth(), options.getHeight(), options.getTransformEventHandlerFactory() );
+		display = new InteractiveDisplayCanvasComponent<>(options.getWidth(), options.getHeight(), options.getTransformEventHandlerFactory());
 		add(display, BorderLayout.CENTER);
-		
-		display.addTransformListener( this );
-		display.addOverlayRenderer( renderTarget );
-		display.addOverlayRenderer( this );
-		display.addHandler( mouseCoordinates );
-		
-		display.addComponentListener( new ComponentAdapter()
-		{
+		display.addTransformListener(this);
+		display.addOverlayRenderer(renderTarget);
+		display.addOverlayRenderer(this);
+		display.addHandler(mouseCoordinates);
+		display.addComponentListener(new ComponentAdapter() {
 			@Override
-			public void componentResized( final ComponentEvent e )
-			{
+			public void componentResized(final ComponentEvent e) {
 				requestRepaint();
-				display.removeComponentListener( this );
+				display.removeComponentListener(this);
 			}
-		} );
-				
+		});
 		JPanel sliderPanel = new JPanel();
 		sliderPanel.setLayout(new BoxLayout(sliderPanel, BoxLayout.X_AXIS));
-		
 		sliderPanel.add(Box.createRigidArea(new Dimension(5, 5)));
-		
 		previousKeyframeButton = new JButton("<<");
 		previousKeyframeButton.setToolTipText("Go to previous keyframe");
-		previousKeyframeButton.addActionListener( new ActionListener()
-		{
+		previousKeyframeButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed( ActionEvent e )
-			{
-				final Action action = actionMap.get( BigDataViewerActions.PREVIOUS_KEYFRAME );
-				if(action != null)
-					action.actionPerformed( e );
+			public void actionPerformed(ActionEvent e) {
+				final Action action = actionMap.get(BigDataViewerActions.PREVIOUS_KEYFRAME);
+				if (action != null) {
+					action.actionPerformed(e);
+				}
 			}
-		} );
+		});
 		sliderPanel.add(previousKeyframeButton);
-		
 		sliderPanel.add(Box.createRigidArea(new Dimension(5, 5)));
-		
 		addKeyframeButton = new JButton("+");
 		addKeyframeButton.setToolTipText("Add a new keyframe");
-		addKeyframeButton.addActionListener( new ActionListener()
-		{
+		addKeyframeButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed( ActionEvent e )
-			{
-				final Action action = actionMap.get( BigDataViewerActions.ADD_KEYFRAME );
-				if(action != null)
-					action.actionPerformed( e );
+			public void actionPerformed(ActionEvent e) {
+				final Action action = actionMap.get(BigDataViewerActions.ADD_KEYFRAME);
+				if (action != null) {
+					action.actionPerformed(e);
+				}
 			}
-		} );
+		});
 		sliderPanel.add(addKeyframeButton);
-		
 		sliderPanel.add(Box.createRigidArea(new Dimension(5, 5)));
-		
 		nextKeyframeButton = new JButton(">>");
 		nextKeyframeButton.setToolTipText("Go to next keyframe");
-		nextKeyframeButton.addActionListener( new ActionListener()
-		{
+		nextKeyframeButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed( ActionEvent e )
-			{
-				final Action action = actionMap.get( BigDataViewerActions.NEXT_KEYFRAME );
-				if(action != null)
-					action.actionPerformed( e );
+			public void actionPerformed(ActionEvent e) {
+				final Action action = actionMap.get(BigDataViewerActions.NEXT_KEYFRAME);
+				if (action != null) {
+					action.actionPerformed(e);
+				}
 			}
-		} );
+		});
 		sliderPanel.add(nextKeyframeButton);
-		
 		sliderPanel.add(Box.createRigidArea(new Dimension(5, 5)));
-		
 		sliderPlay = new JPlaySlider();
 		sliderPlay.setPreferredSize(new Dimension(200, 50));
 		sliderPlay.setMinimumSize(new Dimension(200, 50));
 		sliderPlay.setMaximumSize(new Dimension(200, 50));
 		sliderPlay.setAlignmentX(Component.LEFT_ALIGNMENT);
 		sliderPanel.add(sliderPlay);
-		sliderPlay.addChangeListener( new ChangeListener()
-		{
+		sliderPlay.addChangeListener(new ChangeListener() {
 			@Override
-			public void stateChanged( final ChangeEvent e )
-			{
-				//if ( !e.getSource().equals( sliderPlay ) )
-				//	return;
-						
-				if(sliderPlay.getValue() == 0) {
+			public void stateChanged(final ChangeEvent e) {
+				// if ( !e.getSource().equals( sliderPlay ) )
+				// return;
+				if (sliderPlay.getValue() == 0) {
 					stopPlayExecuter();
 					return;
 				}
-				
 				final int periode = 1000 / (1 * Math.abs(sliderPlay.getValue()));
-				playTimer.setDelay( periode );
+				playTimer.setDelay(periode);
 				playTimer.start();
 			}
-		} );
+		});
 		sliderPlay.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentHidden(ComponentEvent e) {
 				stopPlayExecuter();
 			}
-			
 		});
-		
 		rigidArea = Box.createRigidArea(new Dimension(5, 5));
 		sliderPanel.add(rigidArea);
-		
 		timeKeyframePanel = new JPanel();
 		timeKeyframePanel.setBorder(new EmptyBorder(5, 0, 5, 0));
 		sliderPanel.add(timeKeyframePanel);
 		timeKeyframePanel.setLayout(new BoxLayout(timeKeyframePanel, BoxLayout.Y_AXIS));
-		
 		timeSlider = new JSlider(0, numTimepoints - 1, 0);
 		timeSlider.setMinimumSize(new Dimension(36, 26));
 		timeSlider.setMaximumSize(new Dimension(32767, 26));
-		
 		timeKeyframePanel.add(timeSlider);
-		
 		keyframePanel = new JKeyFramePanel(timeSlider);
 		timeKeyframePanel.add(keyframePanel);
-		
-		timeSlider.addChangeListener( new ChangeListener()
-		{
+		timeSlider.addChangeListener(new ChangeListener() {
 			@Override
-			public void stateChanged( final ChangeEvent e )
-			{
-				if ( e.getSource().equals( timeSlider ) )
-					setTimepoint( timeSlider.getValue() );
+			public void stateChanged(final ChangeEvent e) {
+				if (e.getSource().equals(timeSlider)) {
+					setTimepoint(timeSlider.getValue());
+				}
 			}
-		} );
-
-		add( display, BorderLayout.CENTER );
-		if ( numTimepoints > 1 )
-			add( sliderPanel, BorderLayout.SOUTH );
-
-		visibilityAndGrouping = new VisibilityAndGrouping( state );
-		visibilityAndGrouping.addUpdateListener( this );
-
+		});
+		add(display, BorderLayout.CENTER);
+		if (numTimepoints > 1) {
+			add(sliderPanel, BorderLayout.SOUTH);
+		}
+		visibilityAndGrouping = new VisibilityAndGrouping(state);
+		visibilityAndGrouping.addUpdateListener(this);
 		transformListeners = new CopyOnWriteArrayList<>();
 		lastRenderTransformListeners = new CopyOnWriteArrayList<>();
 		timePointListeners = new CopyOnWriteArrayList<>();
 		interpolationModeListeners = new CopyOnWriteArrayList<>();
-
 		msgOverlay = options.getMsgOverlay();
-
 		overlayAnimators = new ArrayList<>();
-		overlayAnimators.add( msgOverlay );
-		overlayAnimators.add( new TextOverlayAnimator( "Press <F1> for help.", 3000, TextPosition.CENTER ) );
-
-		display.addComponentListener( new ComponentAdapter()
-		{
+		overlayAnimators.add(msgOverlay);
+		overlayAnimators.add(new TextOverlayAnimator("Press <F1> for help.", 3000, TextPosition.CENTER));
+		display.addComponentListener(new ComponentAdapter() {
 			@Override
-			public void componentResized( final ComponentEvent e )
-			{
+			public void componentResized(final ComponentEvent e) {
 				requestRepaint();
-				display.removeComponentListener( this );
+				display.removeComponentListener(this);
 			}
-		} );
-
+		});
 		painterThread.start();
 	}
-	
+
 	public void stopPlayExecuter() {
 		playTimer.stop();
 	}
-	
+
 	private void onPlayTimerTick(ActionEvent event) {
 		final int changeValue = Integer.signum(sliderPlay.getValue());
 		final int newTimepoint = state.getCurrentTimepoint() + changeValue;
@@ -512,11 +459,11 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 		addKeyframeButton.setEnabled(enable);
 		nextKeyframeButton.setEnabled(enable);
 	}
-	
+
 	public KeyFramePopupMenu getKeyFramePopupMenu(){
 		return this.keyframePanel.getKeyFramePopupMenuPopupMenu();
 	}
-	
+
 	public void addSource( final SourceAndConverter< ? > sourceAndConverter )
 	{
 		synchronized ( visibilityAndGrouping )
@@ -547,12 +494,10 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 		requestRepaint();
 	}
 
-	public void removeGroup( final SourceGroup group )
-	{
-		synchronized ( visibilityAndGrouping )
-		{
-			state.removeGroup( group );
-			visibilityAndGrouping.update( NUM_GROUPS_CHANGED );
+	public void removeGroup(final SourceGroup group) {
+		synchronized(visibilityAndGrouping) {
+			state.removeGroup(group);
+			visibilityAndGrouping.update(NUM_GROUPS_CHANGED);
 		}
 		requestRepaint();
 	}
@@ -657,50 +602,41 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 	}
 
 	@Override
-	public void drawOverlays( final Graphics g )
-	{
+	public void drawOverlays(final Graphics g) {
 		boolean requiresRepaint = false;
-		if ( Prefs.showMultibox() )
-		{
-			multiBoxOverlayRenderer.setViewerState( state );
-			multiBoxOverlayRenderer.updateVirtualScreenSize( display.getWidth(), display.getHeight() );
-			multiBoxOverlayRenderer.paint( ( Graphics2D ) g );
+		if (Prefs.showMultibox()) {
+			multiBoxOverlayRenderer.setViewerState(state);
+			multiBoxOverlayRenderer.updateVirtualScreenSize(display.getWidth(), display.getHeight());
+			multiBoxOverlayRenderer.paint(((Graphics2D) (g)));
 			requiresRepaint = multiBoxOverlayRenderer.isHighlightInProgress();
 		}
-
-		if( Prefs.showTextOverlay() )
-		{
-			sourceInfoOverlayRenderer.setViewerState( state );
-			sourceInfoOverlayRenderer.paint( ( Graphics2D ) g );
-
-			final RealPoint gPos = new RealPoint( 3 );
-			getGlobalMouseCoordinates( gPos );
-			final String mousePosGlobalString = String.format( "(%6.1f,%6.1f,%6.1f)", gPos.getDoublePosition( 0 ), gPos.getDoublePosition( 1 ), gPos.getDoublePosition( 2 ) );
-
-			g.setFont( new Font( "Monospaced", Font.PLAIN, 12 ) );
-			g.setColor( Color.white );
-			g.drawString( mousePosGlobalString, ( int ) g.getClipBounds().getWidth() - 170, 25 );
+		if (Prefs.showTextOverlay()) {
+			sourceInfoOverlayRenderer.setViewerState(state);
+			sourceInfoOverlayRenderer.paint(((Graphics2D) (g)));
+			final RealPoint gPos = new RealPoint(3);
+			getGlobalMouseCoordinates(gPos);
+			final String mousePosGlobalString = String.format("(%6.1f,%6.1f,%6.1f)", gPos.getDoublePosition(0), gPos.getDoublePosition(1), gPos.getDoublePosition(2));
+			g.setFont(new Font("Monospaced", Font.PLAIN, 12));
+			g.setColor(Color.white);
+			g.drawString(mousePosGlobalString, ((int) (g.getClipBounds().getWidth())) - 170, 25);
 		}
-
-		if ( Prefs.showScaleBar() )
-		{
-			scaleBarOverlayRenderer.setViewerState( state );
-			scaleBarOverlayRenderer.paint( ( Graphics2D ) g );
+		if (Prefs.showScaleBar()) {
+			scaleBarOverlayRenderer.setViewerState(state);
+			scaleBarOverlayRenderer.paint(((Graphics2D) (g)));
 		}
-
 		final long currentTimeMillis = System.currentTimeMillis();
-		final ArrayList< OverlayAnimator > overlayAnimatorsToRemove = new ArrayList<>();
-		for ( final OverlayAnimator animator : overlayAnimators )
-		{
-			animator.paint( ( Graphics2D ) g, currentTimeMillis );
+		final ArrayList<OverlayAnimator> overlayAnimatorsToRemove = new ArrayList<>();
+		for (final OverlayAnimator animator : overlayAnimators) {
+			animator.paint(((Graphics2D) (g)), currentTimeMillis);
 			requiresRepaint |= animator.requiresRepaint();
-			if ( animator.isComplete() )
-				overlayAnimatorsToRemove.add( animator );
+			if (animator.isComplete()) {
+				overlayAnimatorsToRemove.add(animator);
+			}
 		}
-		overlayAnimators.removeAll( overlayAnimatorsToRemove );
-
-		if ( requiresRepaint )
+		overlayAnimators.removeAll(overlayAnimatorsToRemove);
+		if (requiresRepaint) {
 			display.repaint();
+		}
 	}
 
 	@Override
@@ -742,26 +678,29 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 	}
 
 	private final static double c = Math.cos( Math.PI / 4 );
+
 	private Component rigidArea;
+
 	private JPlaySlider sliderPlay;
+
 	private Component rigidArea_1;
+
 	private JPanel timeKeyframePanel;
+
 	private JKeyFramePanel keyframePanel;
 
 	/**
 	 * The planes which can be aligned with the viewer coordinate system: XY,
 	 * ZY, and XZ plane.
 	 */
-	public static enum AlignPlane
-	{
-		XY( "XY", 2, new double[] { 1, 0, 0, 0 } ),
-		ZY( "ZY", 0, new double[] { c, 0, -c, 0 } ),
-		XZ( "XZ", 1, new double[] { c, c, 0, 0 } );
+	public static enum AlignPlane {
 
+		XY("XY", 2, new double[]{ 1, 0, 0, 0 }),
+		ZY("ZY", 0, new double[]{ c, 0, -c, 0 }),
+		XZ("XZ", 1, new double[]{ c, c, 0, 0 });
 		private final String name;
 
-		public String getName()
-		{
+		public String getName() {
 			return name;
 		}
 
@@ -774,12 +713,12 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 		 * Axis index. The plane spanned by the remaining two axes will be
 		 * transformed to the same plane by the computed rotation and the
 		 * "rotation part" of the affine source transform.
+		 *
 		 * @see Affine3DHelpers#extractApproximateRotationAffine(AffineTransform3D, double[], int)
 		 */
 		private final int coerceAffineDimension;
 
-		private AlignPlane( final String name, final int coerceAffineDimension, final double[] qAlign )
-		{
+		private AlignPlane(final String name, final int coerceAffineDimension, final double[] qAlign) {
 			this.name = name;
 			this.coerceAffineDimension = coerceAffineDimension;
 			this.qAlign = qAlign;
@@ -838,26 +777,24 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 	 * Switch to next interpolation mode. (Currently, there are two
 	 * interpolation modes: nearest-neighbor and N-linear.)
 	 */
-	public synchronized void toggleInterpolation()
-	{
+	public synchronized void toggleInterpolation() {
 		final int i = state.getInterpolation().ordinal();
 		final int n = Interpolation.values().length;
-		final Interpolation mode = Interpolation.values()[ ( i + 1 ) % n ];
-		setInterpolation( mode );
+		final Interpolation mode = Interpolation.values()[(i + 1) % n];
+		setInterpolation(mode);
 	}
 
 	/**
 	 * Set the {@link Interpolation} mode.
 	 */
-	public synchronized void setInterpolation( final Interpolation mode )
-	{
+	public synchronized void setInterpolation(final Interpolation mode) {
 		final Interpolation interpolation = state.getInterpolation();
-		if ( mode != interpolation )
-		{
-			state.setInterpolation( mode );
-			showMessage( mode.getName() );
-			for ( final InterpolationModeListener l : interpolationModeListeners )
-				l.interpolationModeChanged( state.getInterpolation() );
+		if (mode != interpolation) {
+			state.setInterpolation(mode);
+			showMessage(mode.getName());
+			for (final InterpolationModeListener l : interpolationModeListeners) {
+				l.interpolationModeChanged(state.getInterpolation());
+			}
 			requestRepaint();
 		}
 	}
@@ -885,14 +822,13 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 	 * @param timepoint
 	 *            time-point index.
 	 */
-	public synchronized void setTimepoint( final int timepoint )
-	{
-		if ( state.getCurrentTimepoint() != timepoint )
-		{
-			state.setCurrentTimepoint( timepoint );
-			timeSlider.setValue( timepoint );
-			for ( final TimePointListener l : timePointListeners )
-				l.timePointChanged( timepoint );
+	public synchronized void setTimepoint(final int timepoint) {
+		if (state.getCurrentTimepoint() != timepoint) {
+			state.setCurrentTimepoint(timepoint);
+			timeSlider.setValue(timepoint);
+			for (final TimePointListener l : timePointListeners) {
+				l.timePointChanged(timepoint);
+			}
 			requestRepaint();
 		}
 	}
@@ -900,19 +836,19 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 	/**
 	 * Show the next time-point.
 	 */
-	public synchronized void nextTimePoint()
-	{
-		if ( state.getNumTimepoints() > 1 )
-			timeSlider.setValue( timeSlider.getValue() + 1 );
+	public synchronized void nextTimePoint() {
+		if (state.getNumTimepoints() > 1) {
+			timeSlider.setValue(timeSlider.getValue() + 1);
+		}
 	}
 
 	/**
 	 * Show the previous time-point.
 	 */
-	public synchronized void previousTimePoint()
-	{
-		if ( state.getNumTimepoints() > 1 )
-			timeSlider.setValue( timeSlider.getValue() - 1 );
+	public synchronized void previousTimePoint() {
+		if (state.getNumTimepoints() > 1) {
+			timeSlider.setValue(timeSlider.getValue() - 1);
+		}
 	}
 
 	/**
@@ -936,35 +872,34 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 		}
 	}
 
-	private synchronized void setNumTimepointsSynchronized( final int numTimepoints )
-	{
-		if ( numTimepoints < 1 || state.getNumTimepoints() == numTimepoints )
+	private synchronized void setNumTimepointsSynchronized(final int numTimepoints) {
+		if ((numTimepoints < 1) || (state.getNumTimepoints() == numTimepoints)) {
 			return;
-		else if ( numTimepoints == 1 && state.getNumTimepoints() > 1 )
-			remove( timeSlider );
-		else if ( numTimepoints > 1 && state.getNumTimepoints() == 1 )
-			add( timeSlider, BorderLayout.SOUTH );
-
-		state.setNumTimepoints( numTimepoints );
-		if ( state.getCurrentTimepoint() >= numTimepoints )
-		{
-			final int timepoint = numTimepoints - 1;
-			state.setCurrentTimepoint( timepoint );
-			for ( final TimePointListener l : timePointListeners )
-				l.timePointChanged( timepoint );
+		} else if ((numTimepoints == 1) && (state.getNumTimepoints() > 1)) {
+			remove(timeSlider);
+		} else if ((numTimepoints > 1) && (state.getNumTimepoints() == 1)) {
+			add(timeSlider, BorderLayout.SOUTH);
 		}
-		timeSlider.setModel( new DefaultBoundedRangeModel( state.getCurrentTimepoint(), 0, 0, numTimepoints - 1 ) );
+		state.setNumTimepoints(numTimepoints);
+		if (state.getCurrentTimepoint() >= numTimepoints) {
+			final int timepoint = numTimepoints - 1;
+			state.setCurrentTimepoint(timepoint);
+			for (final TimePointListener l : timePointListeners) {
+				l.timePointChanged(timepoint);
+			}
+		}
+		timeSlider.setModel(new DefaultBoundedRangeModel(state.getCurrentTimepoint(), 0, 0, numTimepoints - 1));
 		revalidate();
 		requestRepaint();
 	}
-	
+
 	/**
 	 * Get the currently active bookmark.
 	 */
 	public synchronized Bookmark getActiveBookmark(){
 		return state.getActiveBookmark();
 	}
-	
+
 	/**
 	 * Set the active bookmark
 	 * @param bookmark
@@ -976,24 +911,24 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 		
 		final boolean enableKeyframeButtons = bookmark instanceof DynamicBookmark;
 		setKeyframeButtonEnable(enableKeyframeButtons);
-        
-        if (bookmark instanceof DynamicBookmark) {
-            keyframePanel.setDynamicBookmarks((DynamicBookmark) bookmark);
-        } else {
-        	keyframePanel.setDynamicBookmarks(null);
-        }
-        
-        for(ActiveBookmarkChangedListener l: this.activeBookmarkChangedListeners){
-        	l.activeBookmarkChanged(previousBookmark, bookmark);
-        }
-        
+	       
+	       if (bookmark instanceof DynamicBookmark) {
+	           keyframePanel.setDynamicBookmarks((DynamicBookmark) bookmark);
+	       } else {
+	       	keyframePanel.setDynamicBookmarks(null);
+	       }
+	       
+	       for(ActiveBookmarkChangedListener l: this.activeBookmarkChangedListeners){
+	       	l.activeBookmarkChanged(previousBookmark, bookmark);
+	       }
+	       
 		display.repaint();
 	}
-	
+
 	public void addActiveBookmarkChangedListener(ActiveBookmarkChangedListener listener){
 		activeBookmarkChangedListeners.add(listener);
 	}
-	
+
 	public void removeActiveBookmarkChangedListener(ActiveBookmarkChangedListener listener){
 		activeBookmarkChangedListeners.remove(listener);
 	}
@@ -1197,73 +1132,65 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 		}
 	}
 
-	protected class MouseCoordinateListener implements MouseMotionListener, MouseListener
-	{
+	protected class MouseCoordinateListener implements MouseMotionListener , MouseListener {
 		private int x;
 
 		private int y;
 
 		private boolean isInside;
 
-		public synchronized void getMouseCoordinates( final Positionable p )
-		{
-			p.setPosition( x, 0 );
-			p.setPosition( y, 1 );
+		public synchronized void getMouseCoordinates(final Positionable p) {
+			p.setPosition(x, 0);
+			p.setPosition(y, 1);
 		}
 
 		@Override
-		public synchronized void mouseDragged( final MouseEvent e )
-		{
+		public synchronized void mouseDragged(final MouseEvent e) {
 			x = e.getX();
 			y = e.getY();
 		}
 
 		@Override
-		public synchronized void mouseMoved( final MouseEvent e )
-		{
+		public synchronized void mouseMoved(final MouseEvent e) {
 			x = e.getX();
 			y = e.getY();
-			display.repaint(); // TODO: only when overlays are visible
+			display.repaint();// TODO: only when overlays are visible
+
 		}
 
-		public synchronized int getX()
-		{
+		public synchronized int getX() {
 			return x;
 		}
 
-		public synchronized int getY()
-		{
+		public synchronized int getY() {
 			return y;
 		}
 
-		public synchronized boolean isMouseInsidePanel()
-		{
+		public synchronized boolean isMouseInsidePanel() {
 			return isInside;
 		}
 
 		@Override
-		public synchronized void mouseEntered( final MouseEvent e )
-		{
+		public synchronized void mouseEntered(final MouseEvent e) {
 			isInside = true;
 		}
 
 		@Override
-		public synchronized void mouseExited( final MouseEvent e )
-		{
+		public synchronized void mouseExited(final MouseEvent e) {
 			isInside = false;
 		}
 
 		@Override
-		public void mouseClicked( final MouseEvent e )
-		{}
+		public void mouseClicked(final MouseEvent e) {
+		}
 
 		@Override
-		public void mousePressed( final MouseEvent e )
-		{}
+		public void mousePressed(final MouseEvent e) {
+		}
 
 		@Override
-		public void mouseReleased( final MouseEvent e )
-		{}
+		public void mouseReleased(final MouseEvent e) {
+		}
 	}
 
 	public synchronized Element stateToXml()
@@ -1325,24 +1252,20 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 
 	protected static final AtomicInteger panelNumber = new AtomicInteger( 1 );
 
-	protected class RenderThreadFactory implements ThreadFactory
-	{
-		private final String threadNameFormat = String.format(
-				"bdv-panel-%d-thread-%%d",
-				panelNumber.getAndIncrement() );
+	protected class RenderThreadFactory implements ThreadFactory {
+		private final String threadNameFormat = String.format("bdv-panel-%d-thread-%%d", panelNumber.getAndIncrement());
 
-		private final AtomicInteger threadNumber = new AtomicInteger( 1 );
+		private final AtomicInteger threadNumber = new AtomicInteger(1);
 
 		@Override
-		public Thread newThread( final Runnable r )
-		{
-			final Thread t = new Thread( threadGroup, r,
-					String.format( threadNameFormat, threadNumber.getAndIncrement() ),
-					0 );
-			if ( t.isDaemon() )
-				t.setDaemon( false );
-			if ( t.getPriority() != Thread.NORM_PRIORITY )
-				t.setPriority( Thread.NORM_PRIORITY );
+		public Thread newThread(final Runnable r) {
+			final Thread t = new Thread(threadGroup, r, String.format(threadNameFormat, threadNumber.getAndIncrement()), 0);
+			if (t.isDaemon()) {
+				t.setDaemon(false);
+			}
+			if (t.getPriority() != Thread.NORM_PRIORITY) {
+				t.setPriority(Thread.NORM_PRIORITY);
+			}
 			return t;
 		}
 	}
