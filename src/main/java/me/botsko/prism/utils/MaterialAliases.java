@@ -1,5 +1,16 @@
 package me.botsko.prism.utils;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.Map;
+import java.util.Set;
 import me.botsko.prism.Prism;
 import me.botsko.prism.database.IdMapQuery;
 import me.botsko.prism.database.sql.SqlIdMapQuery;
@@ -12,22 +23,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 public class MaterialAliases {
     private static final int SUBID_WILDCARD = -1;
+
     private final Map<String, String> matCache = new HashMap<>();
+
     private final Map<String, String> idCache = new HashMap<>();
+
     private final Map<Material, Set<IntPair>> allIdsCache = new HashMap<>();
 
     private final HashMap<String, String> itemAliases = new HashMap<>();
@@ -42,14 +45,10 @@ public class MaterialAliases {
             System.out.println("Elixr: Loaded items directory");
             items = YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
         }
-
-
         if (items != null) {
-
             // Load all item ids/aliases
             ConfigurationSection sec = items.getConfigurationSection("items");
             Map<String, Object> itemAliases = null;
-
             if (sec != null) {
                 itemAliases = sec.getValues(false);
             }
@@ -57,17 +56,14 @@ public class MaterialAliases {
             if (itemAliases != null) {
                 for (Map.Entry<String, Object> entry : itemAliases.entrySet()) {
                     @SuppressWarnings("unchecked")
-                    Iterable<String> aliases = (List<String>) entry.getValue();
-
+                    Iterable<String> aliases = ((List<String>) (entry.getValue()));
                     for (String alias : aliases) {
                         this.itemAliases.put(entry.getKey().toLowerCase(), alias);
                     }
                 }
             }
-
         } else {
-            Prism.getPrismDataSource().getLog().error(
-                    "ERROR: The Item library was unable to load an internal item alias list.");
+            Prism.getPrismDataSource().getLog().error("ERROR: The Item library was unable to load an internal item alias list.");
         }
     }
 
@@ -77,7 +73,6 @@ public class MaterialAliases {
 
     /**
      * Initialize the library.
-     *
      * @param materials Materials ...
      */
     public void initMaterials(Material... materials) {
@@ -86,21 +81,17 @@ public class MaterialAliases {
             for (Material m : materials) {
                 String matName = m.name().toLowerCase(Locale.ENGLISH);
                 String dataString;
-
-            try {
-                dataString = Utilities.dataString(Bukkit.createBlockData(m));
-            } catch (IllegalArgumentException e) {
-                continue;
-            }
-
-                query.findIds(m.name().toLowerCase(Locale.ENGLISH), dataString, (i, d) ->
-                        storeCache(m, dataString, i, d), () -> {
-                          int id = query.mapAutoId(matName, dataString);
-                          storeCache(m, dataString, id, 0);
-                    });
+                try {
+                    dataString = Utilities.dataString(Bukkit.createBlockData(m));
+                } catch ( e) {
+                    continue;
+                }
+                query.findIds(m.name().toLowerCase(Locale.ENGLISH), dataString, ( i, d) -> storeCache(m, dataString, i, d), () -> {
+                    int id = query.mapAutoId(matName, dataString);
+                    storeCache(m, dataString, id, 0);
+                });
             }
         });
-
     }
 
     private Set<IntPair> getIdsOf(Material material) {
@@ -152,9 +143,8 @@ public class MaterialAliases {
 
     /**
      * .
-     *
-     * @param blockId           int
-     * @param blockSubId        logMaterialErrorsint
+     * @param blockId int
+     * @param blockSubId logMaterialErrorsint
      * @param logMaterialErrors boolean.
      * @return MaterialState
      */
@@ -189,52 +179,43 @@ public class MaterialAliases {
 
     /**
      * Create IntPair.
-     *
      * @param material Material
-     * @param state    State
+     * @param state State
      * @return IntPair
      */
     public IntPair materialToIds(Material material, String state) {
         int blockSubId;
-
         // For tools, where durability doesn't mean a different item (different cached
         // value) but is still important
         int durability = 0;
         try {
             durability = Integer.parseInt(state);
-        } catch (NumberFormatException ignored) {
+        } catch (java.lang.NumberFormatException ignored) {
             //ignored
         }
-
         if (material.getMaxDurability() > 0) {
             blockSubId = 0;
         } else {
             blockSubId = durability;
         }
-
         IntPair cachedIds = fromCache(material, blockSubId == 0 ? state : String.valueOf(blockSubId));
-
         if (cachedIds != null) {
             return cachedIds;
         }
-
         IntPair result = new IntPair(0, 0);
         SqlIdMapQuery query = new SqlIdMapQuery(Prism.getPrismDataSource());
         String materialName = material.name().toLowerCase(Locale.ENGLISH);
-
-        synchronized (this) {
-            query.findIds(materialName, state, (queryId, querySubId) -> {
+        synchronized(this) {
+            query.findIds(materialName, state, ( queryId, querySubId) -> {
                 result.first = queryId;
                 result.second = querySubId;
                 storeCache(material, state, queryId, querySubId);
-            },
-                  () -> {
-                      int blockId = query.mapAutoId(materialName, state);
-                      result.first = blockId;
-                      storeCache(material, state, blockId, 0);
-                  });
+            }, () -> {
+                int blockId = query.mapAutoId(materialName, state);
+                result.first = blockId;
+                storeCache(material, state, blockId, 0);
+            });
         }
-
         if (blockSubId != durability) {
             result.second = durability;
         }
@@ -247,41 +228,31 @@ public class MaterialAliases {
 
     /**
      * .
-     *
-     * @param material         Material
+     * @param material Material
      * @param partialBlockData String
      * @return Set of IntPair
      * @throws IllegalArgumentException exception
      */
-    public Set<IntPair> partialBlockDataIds(Material material, String partialBlockData)
-            throws IllegalArgumentException {
+    public Set<IntPair> partialBlockDataIds(Material material, String partialBlockData) throws IllegalArgumentException {
         String fullBlockData = Utilities.dataString(Bukkit.createBlockData(material, partialBlockData));
-
         String[] parts = fullBlockData.substring(1, fullBlockData.length() - 1).toLowerCase(Locale.ENGLISH).split(",");
-
         StringBuilder likeString = new StringBuilder("%");
-
         for (String string : parts) {
             if (partialBlockData.contains(string)) {
                 likeString.append(string).append('%');
             }
         }
-
         String stateLike = likeString.toString();
-
         IdMapQuery query = new SqlIdMapQuery(Prism.getPrismDataSource());
-
         Set<IntPair> ids = new HashSet<>();
         query.findAllIdsPartial(material.name().toLowerCase(Locale.ENGLISH), stateLike, ids::addAll);
-
         return ids;
     }
 
     /**
      * .
-     *
      * @param material Material
-     * @param state    String
+     * @param state String
      * @return IntPair
      */
     @Deprecated
@@ -306,14 +277,12 @@ public class MaterialAliases {
 
     /**
      * .
-     *
      * @param material Material
-     * @param data     BlockData
+     * @param data BlockData
      * @return String
      */
     public String getAlias(Material material, BlockData data) {
         String dataString = Utilities.dataString(data);
-
         String itemName = null;
         if (!itemAliases.isEmpty()) {
             String key = material.name().toLowerCase() + dataString;
@@ -337,7 +306,6 @@ public class MaterialAliases {
 
     /**
      * .
-     *
      * @param alias String
      * @return ArrayList
      */
@@ -356,6 +324,7 @@ public class MaterialAliases {
 
     public static class MaterialState {
         public Material material;
+
         public String state;
 
         protected MaterialState() {
@@ -374,35 +343,29 @@ public class MaterialAliases {
         public BlockData asBlockData() {
             try {
                 BlockData data = Bukkit.createBlockData(material, state);
-
                 // In the event that we tried to get BlockData for an item and it returned air
                 if (data.getMaterial() == material) {
                     return data;
                 }
-            } catch (IllegalArgumentException ignored) {
+            } catch (java.lang.IllegalArgumentException ignored) {
                 //ignored
             }
-
             return null;
         }
 
         /**
          * Get as Item.
-         *
          * @return ItemStack
          */
         public ItemStack asItem() {
             ItemStack item = new ItemStack(material, 1);
-
             if (!state.isEmpty()) {
                 try {
                     ItemUtils.setItemDamage(item, Short.parseShort(state));
-                } catch (NumberFormatException ignored) {
+                } catch (java.lang.NumberFormatException ignored) {
                     //ignored
                 }
-
             }
-
             return item;
         }
 

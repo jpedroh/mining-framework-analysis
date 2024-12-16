@@ -12,8 +12,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
-public class BlockChangeAction extends BlockAction {
 
+public class BlockChangeAction extends BlockAction {
     @Override
     public String getNiceName() {
         String name;
@@ -78,22 +78,14 @@ public class BlockChangeAction extends BlockAction {
         return new ChangeResult(ChangeResultType.SKIPPED, null);
     }
 
-    private ChangeResult processChange(Player player, QueryParameters parameters, boolean isPreview,
-                                       Material originalMaterial, Material replacedMaterial, BlockData replacedData,
-                                       Block currentBlock, boolean isDeferred, BlockAction action) {
-        if (Utilities.isAcceptableForBlockPlace(currentBlock.getType())
-                || Utilities.areBlockIdsSameCoreItem(currentBlock.getType(), originalMaterial) || isPreview
-                || parameters.hasFlag(Flag.OVERWRITE)) {
+    private ChangeResult processChange(Player player, QueryParameters parameters, boolean isPreview, Material originalMaterial, Material replacedMaterial, BlockData replacedData, Block currentBlock, boolean isDeferred, BlockAction action) {
+        if (((Utilities.isAcceptableForBlockPlace(currentBlock.getType()) || Utilities.areBlockIdsSameCoreItem(currentBlock.getType(), originalMaterial)) || isPreview) || parameters.hasFlag(Flag.OVERWRITE)) {
             action.setMaterial(replacedMaterial);
             action.setBlockData(replacedData);
             return action.placeBlock(player, parameters, isPreview, currentBlock, isDeferred);
         } else {
-            Prism.debug("Skipped Change for " + parameters.getProcessType().name() + " because current-> "
-                    + currentBlock.getType() + " != " + originalMaterial.name() + " <- what we think we will replace.");
+            Prism.debug(((((("Skipped Change for " + parameters.getProcessType().name()) + " because current-> ") + currentBlock.getType()) + " != ") + originalMaterial.name()) + " <- what we think we will replace.");
             return new ChangeResult(ChangeResultType.SKIPPED, null);
         }
     }
 }
-
-
-

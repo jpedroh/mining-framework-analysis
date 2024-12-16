@@ -1,6 +1,22 @@
 package me.botsko.prism;
 
 import io.papermc.lib.PaperLib;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.HandlerRegistry;
 import me.botsko.prism.actionlibs.Ignore;
@@ -60,71 +76,91 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class Prism extends JavaPlugin {
-
     private static final HashMap<String, String> alertedOres = new HashMap<>();
+
     private static final Logger log = Logger.getLogger("Minecraft");
+
     private static final HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
+
     public static Messenger messenger;
+
     public static FileConfiguration config;
+
     public static ConcurrentHashMap<String, Wand> playersWithActiveTools = new ConcurrentHashMap<>();
+
     public static HashMap<String, Integer> prismWorlds = new HashMap<>();
+
     public static HashMap<UUID, PrismPlayer> prismPlayers = new HashMap<>();
+
     public static HashMap<String, Integer> prismActions = new HashMap<>();
+
     private static List<Material> illegalBlocks;
+
     private static List<EntityType> illegalEntities;
+
     private static PrismDataSource prismDataSource = null;
+
     private static String pluginName;
+
     private static String pasteKey;
+
     private static MaterialAliases items;
+
     private static ActionRegistry actionRegistry;
+
     private static HandlerRegistry handlerRegistry;
+
     private static Ignore ignore;
+
     private static Prism instance;
+
     private final ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);
+
     private final ScheduledExecutorService recordingMonitorTask = new ScheduledThreadPoolExecutor(1);
+
     public boolean monitoring = false;
+
     public OreMonitor oreMonitor;
+
     public UseMonitor useMonitor;
+
     public ConcurrentHashMap<String, PreviewSession> playerActivePreviews = new ConcurrentHashMap<>();
+
     public ConcurrentHashMap<String, ArrayList<Block>> playerActiveViews = new ConcurrentHashMap<>();
+
     public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<>();
+
     public Map<Location, Long> alertedBlocks = new ConcurrentHashMap<>();
+
     public TimeTaken eventTimer;
+
     public QueueStats queueStats;
+
     public BukkitTask recordingTask;
+
     public int totalRecordsAffected = 0;
+
     public long maxCycleTime = 0;
+
     /**
      * We store a basic index of hanging entities we anticipate will fall, so that
      * when they do fall we can attribute them to the player who broke the original
      * block.
      */
     public ConcurrentHashMap<String, String> preplannedBlockFalls = new ConcurrentHashMap<>();
+
     /**
      * VehicleCreateEvents do not include the player/entity that created it, so we
      * need to track players right-clicking rails with minecart vehicles, or water
      * for boats.
      */
     public ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<>();
+
     private String pluginVersion;
+
+    // private ScheduledFuture<?> scheduledPurgeExecutor;
     // private ScheduledFuture<?> scheduledPurgeExecutor;
     private PurgeManager purgeManager;
 
@@ -314,18 +350,18 @@ public class Prism extends JavaPlugin {
      */
     @Override
     public void onEnable() {
-
         pluginName = this.getDescription().getName();
         pluginVersion = this.getDescription().getVersion();
-        log("Initializing Prism " + pluginVersion + ". Originally by Viveleroi; maintained by the AddstarMC Network");
-        loadConfig();        // Load configuration, or install if new
+        log(("Initializing Prism " + pluginVersion) + ". Originally by Viveleroi; maintained by the AddstarMC Network");
+        loadConfig();// Load configuration, or install if new
+
         if (!getConfig().getBoolean("prism.suppress-paper-message", false)) {
             PaperLib.suggestPaper(this);
         }
         checkPluginDependencies();
         if (getConfig().getBoolean("prism.paste.enable")) {
             pasteKey = Prism.config.getString("prism.paste.api-key", "API KEY");
-            if (pasteKey != null && (pasteKey.startsWith("API key") || pasteKey.length() < 6)) {
+            if ((pasteKey != null) && (pasteKey.startsWith("API key") || (pasteKey.length() < 6))) {
                 pasteKey = null;
             } else {
                 Prism.log("PasteApi is configured and available");
@@ -333,63 +369,54 @@ public class Prism extends JavaPlugin {
         } else {
             pasteKey = null;
         }
-        final List<String> worldNames = getServer().getWorlds().stream()
-                .map(World::getName).collect(Collectors.toList());
-
-        final String[] playerNames = Bukkit.getServer().getOnlinePlayers().stream()
-                .map(Player::getName).toArray(String[]::new);
-
+        final List<String> worldNames = getServer().getWorlds().stream().map(World::getName).collect(Collectors.toList());
+        final String[] playerNames = Bukkit.getServer().getOnlinePlayers().stream().map(Player::getName).toArray(String[]::new);
         // init db async then call back to complete enable.
         final BukkitTask updating = Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
             if (!isEnabled()) {
                 warn("Prism is loading and updating the database; logging is NOT enabled");
             }
-        },100,200);
-
+        }, 100, 200);
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
-            prismDataSource = PrismDatabaseFactory.createDataSource(config);
+            Prism.prismDataSource = PrismDatabaseFactory.createDataSource(Prism.config);
             Connection testConnection;
-            if (prismDataSource != null) {
-                testConnection = prismDataSource.getConnection();
+            if (Prism.prismDataSource != null) {
+                testConnection = Prism.prismDataSource.getConnection();
                 if (testConnection == null) {
                     notifyDisabled();
-                    Bukkit.getScheduler().runTask(instance, () -> instance.onDisable());
+                    Bukkit.getScheduler().runTask(Prism.instance, () -> Prism.instance.onDisable());
                     updating.cancel();
                     return;
                 }
                 try {
                     testConnection.close();
-                } catch (final SQLException e) {
-                    prismDataSource.handleDataSourceException(e);
+                } catch (final  e) {
+                    Prism.prismDataSource.handleDataSourceException(e);
                 }
             } else {
                 notifyDisabled();
-                Bukkit.getScheduler().runTask(instance, () -> instance.onDisable());
+                Bukkit.getScheduler().runTask(Prism.instance, () -> Prism.instance.onDisable());
                 updating.cancel();
                 return;
             }
-
             // Info needed for setup, init these here
-            handlerRegistry = new HandlerRegistry();
-            actionRegistry = new ActionRegistry();
-
+            Prism.handlerRegistry = new HandlerRegistry();
+            Prism.actionRegistry = new ActionRegistry();
             // Setup databases
-            prismDataSource.setupDatabase(actionRegistry);
-
+            Prism.prismDataSource.setupDatabase(Prism.actionRegistry);
             // Cache world IDs
-            prismDataSource.cacheWorldPrimaryKeys(prismWorlds);
+            Prism.prismDataSource.cacheWorldPrimaryKeys(Prism.prismWorlds);
             PlayerIdentification.cacheOnlinePlayerPrimaryKeys(playerNames);
-
             // ensure current worlds are added
             for (final String w : worldNames) {
                 if (!Prism.prismWorlds.containsKey(w)) {
-                    prismDataSource.addWorldName(w);
+                    Prism.prismDataSource.addWorldName(w);
                 }
             }
             // Apply any updates
             final Updater up = new Updater(this);
             up.applyUpdates();
-            Bukkit.getScheduler().runTask(instance, () -> instance.enabled());
+            Bukkit.getScheduler().runTask(Prism.instance, () -> Prism.instance.enabled());
             updating.cancel();
         });
     }
@@ -407,7 +434,6 @@ public class Prism extends JavaPlugin {
             eventTimer = new TimeTaken(this);
             queueStats = new QueueStats();
             ignore = new Ignore(this);
-
             // Assign event listeners
             getServer().getPluginManager().registerEvents(new PrismBlockEvents(this), this);
             getServer().getPluginManager().registerEvents(new PrismEntityEvents(this), this);
@@ -415,21 +441,17 @@ public class Prism extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new PrismPlayerEvents(this), this);
             getServer().getPluginManager().registerEvents(new PrismInventoryEvents(this), this);
             getServer().getPluginManager().registerEvents(new PrismVehicleEvents(this), this);
-
             // InventoryMoveItem
             if (getConfig().getBoolean("prism.track-hopper-item-events") && Prism.getIgnore().event("item-insert")) {
                 getServer().getPluginManager().registerEvents(new PrismInventoryMoveItemEvent(), this);
             }
-
             if (getConfig().getBoolean("prism.tracking.api.enabled")) {
                 getServer().getPluginManager().registerEvents(new PrismCustomEvents(this), this);
             }
-
             // Assign listeners to our own events
             // getServer().getPluginManager().registerEvents(new
             // PrismRollbackEvents(), this);
             getServer().getPluginManager().registerEvents(new PrismMiscEvents(), this);
-
             // Add commands
             PluginCommand command = getCommand("prism");
             if (command != null) {
@@ -459,35 +481,27 @@ public class Prism extends JavaPlugin {
             registerParameter(new RadiusParameter());
             registerParameter(new SinceParameter());
             registerParameter(new WorldParameter());
-
             // Init re-used classes
             messenger = new Messenger(pluginName);
             oreMonitor = new OreMonitor(instance);
             useMonitor = new UseMonitor(instance);
-
             // Init async tasks
             actionRecorderTask();
-
             // Init scheduled events
             endExpiredQueryCaches();
             endExpiredPreviews();
             removeExpiredLocations();
-
             // Delete old data based on config
             launchScheduledPurgeManager();
-
             // Keep watch on db connections, other sanity
             launchInternalAffairs();
-
             if (config.getBoolean("prism.preload-materials")) {
                 config.set("prism.preload-materials", false);
                 saveConfig();
                 Prism.log("Preloading materials - This will take a while!");
-
                 items.initAllMaterials();
                 Prism.log("Preloading complete!");
             }
-
             items.initMaterials(Material.AIR);
         }
     }
