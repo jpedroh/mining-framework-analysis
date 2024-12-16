@@ -25,9 +25,15 @@
  *      Imixs Software Solutions GmbH - Project Management
  *      Ralph Soika - Software Developer
  */
-
 package org.imixs.workflow.engine.solr;
 
+import jakarta.annotation.security.DeclareRoles;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.json.Json;
+import jakarta.json.stream.JsonParser.Event;
+import jakarta.json.stream.JsonParser;
 import java.io.StringReader;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -36,11 +42,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import jakarta.annotation.security.DeclareRoles;
-import jakarta.annotation.security.RolesAllowed;
-import jakarta.inject.Inject;
-
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.imixs.workflow.ItemCollection;
 import org.imixs.workflow.engine.DocumentService;
@@ -52,10 +53,6 @@ import org.imixs.workflow.engine.index.SortOrder;
 import org.imixs.workflow.exceptions.QueryException;
 import org.imixs.workflow.util.JSONParser;
 
-import jakarta.ejb.Stateless;
-import jakarta.json.Json;
-import jakarta.json.stream.JsonParser;
-import jakarta.json.stream.JsonParser.Event;
 
 /**
  * This session ejb provides a service to search the solr index.
@@ -64,19 +61,19 @@ import jakarta.json.stream.JsonParser.Event;
  * @version 1.0
  * @author rsoika
  */
-@DeclareRoles({ "org.imixs.ACCESSLEVEL.NOACCESS", "org.imixs.ACCESSLEVEL.READERACCESS",
-        "org.imixs.ACCESSLEVEL.AUTHORACCESS", "org.imixs.ACCESSLEVEL.EDITORACCESS",
-        "org.imixs.ACCESSLEVEL.MANAGERACCESS" })
-@RolesAllowed({ "org.imixs.ACCESSLEVEL.NOACCESS", "org.imixs.ACCESSLEVEL.READERACCESS",
-        "org.imixs.ACCESSLEVEL.AUTHORACCESS", "org.imixs.ACCESSLEVEL.EDITORACCESS",
-        "org.imixs.ACCESSLEVEL.MANAGERACCESS" })
+@DeclareRoles({ "org.imixs.ACCESSLEVEL.NOACCESS", "org.imixs.ACCESSLEVEL.READERACCESS", "org.imixs.ACCESSLEVEL.AUTHORACCESS", "org.imixs.ACCESSLEVEL.EDITORACCESS", "org.imixs.ACCESSLEVEL.MANAGERACCESS" })
+@RolesAllowed({ "org.imixs.ACCESSLEVEL.NOACCESS", "org.imixs.ACCESSLEVEL.READERACCESS", "org.imixs.ACCESSLEVEL.AUTHORACCESS", "org.imixs.ACCESSLEVEL.EDITORACCESS", "org.imixs.ACCESSLEVEL.MANAGERACCESS" })
 @Stateless
 public class SolrSearchService implements SearchService {
-
+    // limiting the
     public static final int DEFAULT_MAX_SEARCH_RESULT = 9999; // limiting the
-                                                              // total
+
+                                                            // total
     // number of hits
-    public static final int DEFAULT_PAGE_SIZE = 100; // default docs in one page
+    // default docs in one page
+                                                            // total
+                                                                // number of hits
+                                                                public static final int DEFAULT_PAGE_SIZE = 100; // default docs in one page
 
     @Inject
     @ConfigProperty(name = "solr.core", defaultValue = "imixs-workflow")
@@ -213,11 +210,12 @@ public class SolrSearchService implements SearchService {
     }
 
     @Override
-    public List<Category> getTaxonomyByQuery(String searchTerm,String ... categories) {
+    public List<Category> getTaxonomyByQuery(String searchTerm, String... categories) {
         // TODO Auto-generated method stub
         logger.warning("method getTaxonomy not implemented");
         return null;
     }
+
     public List<Category> getTaxonomy(String ... categories) {
         // TODO Auto-generated method stub
         logger.warning("method getTaxonomy not implemented");
@@ -237,17 +235,17 @@ public class SolrSearchService implements SearchService {
         JsonParser parser = Json.createParser(new StringReader(json));
         Event event = null;
         while (true) {
-
             try {
-                event = parser.next(); // START_OBJECT
+                // START_OBJECT
+                event = parser.next();
                 if (event == null) {
                     break;
                 }
-
                 if (event.name().equals(Event.KEY_NAME.toString())) {
                     String jsonkey = parser.getString();
                     if ("docs".equals(jsonkey)) {
-                        event = parser.next(); // docs array
+                        // docs array
+                        event = parser.next();
                         if (event.name().equals(Event.START_ARRAY.toString())) {
                             event = parser.next();
                             while (event.name().equals(Event.START_OBJECT.toString())) {
@@ -259,24 +257,19 @@ public class SolrSearchService implements SearchService {
                                 // now take the values
                                 result.add(itemCol);
                                 event = parser.next();
-                            }
-
+                            } 
                             if (event.name().equals(Event.END_ARRAY.toString())) {
                                 break;
-
                             }
-
                         }
-
                     }
-
                 }
             } catch (NoSuchElementException e) {
                 break;
             }
-        }
+        } 
         if (debug) {
-            logger.finest("......total parsing time " + (System.currentTimeMillis() - l) + "ms");
+            logger.finest(("......total parsing time " + (System.currentTimeMillis() - l)) + "ms");
         }
         return result;
     }
@@ -291,7 +284,8 @@ public class SolrSearchService implements SearchService {
         boolean debug = logger.isLoggable(Level.FINE);
         ItemCollection document = new ItemCollection();
         Event event = null;
-        event = parser.next(); // a single doc..
+        // a single doc..
+        event = parser.next();
         while (event.name().equals(Event.KEY_NAME.toString())) {
             String itemName = parser.getString();
             if (debug) {
@@ -302,8 +296,7 @@ public class SolrSearchService implements SearchService {
             itemName = solarIndexService.adaptSolrFieldName(itemName);
             document.replaceItemValue(itemName, itemValue);
             event = parser.next();
-        }
-
+        } 
         return document;
     }
 
@@ -314,24 +307,22 @@ public class SolrSearchService implements SearchService {
      * @return
      */
     private List<Object> parseItem(JsonParser parser) {
-
         List<Object> result = new ArrayList<Object>();
         Event event = null;
         while (true) {
-            event = parser.next(); // a single doc..
+            // a single doc..
+            event = parser.next();
             if (event.name().equals(Event.START_ARRAY.toString())) {
-
                 while (true) {
-                    event = parser.next(); // a single doc..
+                    // a single doc..
+                    event = parser.next();
                     if (event.name().equals(Event.VALUE_STRING.toString())) {
                         // just return the next json object here
-
                         result.add(convertLuceneValue(parser.getString()));
                     }
                     if (event.name().equals(Event.VALUE_NUMBER.toString())) {
                         // just return the next json object here
                         // result.add(parser.getBigDecimal());
-
                         result.add(convertLuceneValue(parser.getString()));
                     }
                     if (event.name().equals(Event.VALUE_TRUE.toString())) {
@@ -345,10 +336,8 @@ public class SolrSearchService implements SearchService {
                     if (event.name().equals(Event.END_ARRAY.toString())) {
                         break;
                     }
-                }
-
+                } 
             }
-
             if (event.name().equals(Event.VALUE_STRING.toString())) {
                 // single value!
                 result.add(parser.getString());
@@ -365,10 +354,8 @@ public class SolrSearchService implements SearchService {
                 // just return the next json object here
                 result.add(false);
             }
-
             break;
-        }
-
+        } 
         return result;
     }
 
@@ -484,5 +471,4 @@ public class SolrSearchService implements SearchService {
 
         return result;
     }
-
 }

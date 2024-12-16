@@ -25,9 +25,21 @@
  *      Imixs Software Solutions GmbH - Project Management
  *      Ralph Soika - Software Developer
  */
-
 package org.imixs.workflow.engine;
 
+import jakarta.annotation.Resource;
+import jakarta.annotation.security.DeclareRoles;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.FlushModeType;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,13 +55,6 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import jakarta.annotation.Resource;
-import jakarta.annotation.security.DeclareRoles;
-import jakarta.annotation.security.RolesAllowed;
-import jakarta.enterprise.event.Event;
-import jakarta.inject.Inject;
-
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.imixs.workflow.ItemCollection;
 import org.imixs.workflow.WorkflowKernel;
@@ -63,14 +68,6 @@ import org.imixs.workflow.exceptions.InvalidAccessException;
 import org.imixs.workflow.exceptions.PluginException;
 import org.imixs.workflow.exceptions.QueryException;
 
-import jakarta.ejb.SessionContext;
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.FlushModeType;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
 
 /**
  * The DocumentService is used to save and load instances of ItemCollections
@@ -151,7 +148,14 @@ public class DocumentService {
 	private static final String REGEX_UUID = "([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})|([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}-[0-9]{13,15})";
 	private static final String REGEX_OLDUID = "([0-9a-f]{8}-.*|[0-9a-f]{11}-.*)";
 
+<<<<<<< LEFT
 	public static final String USER_GROUP_LIST = "org.imixs.USER.GROUPLIST";
+=======
+	private static final String REGEX_UUID = "([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})|([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}-[0-9]{13,15})";
+	private static final String REGEX_OLDUID = "([0-9a-f]{8}-.*|[0-9a-f]{11}-.*)";
+	
+    private final static Logger logger = Logger.getLogger(DocumentService.class.getName());
+>>>>>>> RIGHT
 
 	private final static Logger logger = Logger.getLogger(DocumentService.class.getName());
 
@@ -310,6 +314,7 @@ public class DocumentService {
 		}
 	}
 
+<<<<<<< LEFT
 	/**
 	 * This Method saves an ItemCollection into the database. If the ItemCollection
 	 * is saved the first time the method generates a uniqueID ('$uniqueid') which
@@ -364,6 +369,22 @@ public class DocumentService {
 		Document persistedDocument = null;
 		// Now set flush Mode to COMMIT
 		manager.setFlushMode(FlushModeType.COMMIT);
+=======
+        // check if a $uniqueid is available
+        String sID = document.getItemValueString(WorkflowKernel.UNIQUEID);
+        
+        if (!sID.isEmpty() && !isValidUIDPattern(sID)) {
+            throw new InvalidAccessException(INVALID_PARAMETER, "invalid UUID pattern - " + sID);
+        }
+        
+        if (!sID.isEmpty()) {
+            // yes so we can try to find the Entity by its primary key
+            persistedDocument = manager.find(Document.class, sID);
+            if (debug && persistedDocument == null) {
+                logger.finest("......Document '" + sID + "' not found!");
+            }
+        }
+>>>>>>> RIGHT
 
 		// check if a $uniqueid is available
 		String sID = document.getItemValueString(WorkflowKernel.UNIQUEID);
@@ -1330,5 +1351,27 @@ public class DocumentService {
 
 		return valid;
 
+<<<<<<< LEFT
+=======
+	/**
+	 * This method returns true if the given id is a valid UUID or SnapshotID (UUI +
+	 * timestamp
+	 * <p>
+	 * We also need to support the old uid formats
+	 * <code>4832b09a1a-20c38abd-1519421083952</code>
+	 * 
+	 * @param uid
+	 * @return
+	 */
+	public static boolean isValidUIDPattern(String uid) {
+		boolean valid = uid.matches(REGEX_UUID);
+		if (!valid) {
+			// check old snapshot pattern
+			valid = uid.matches(REGEX_OLDUID);
+		}
+
+		return valid;
+
+>>>>>>> RIGHT
 	}
 }

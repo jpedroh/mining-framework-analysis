@@ -25,9 +25,15 @@
  *      Imixs Software Solutions GmbH - Project Management
  *      Ralph Soika - Software Developer
  */
-
 package org.imixs.workflow.engine.lucene;
 
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,10 +45,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import jakarta.enterprise.event.Event;
-import jakarta.inject.Inject;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.ClassicAnalyzer;
 import org.apache.lucene.document.Document;
@@ -72,11 +74,6 @@ import org.imixs.workflow.engine.index.SchemaService;
 import org.imixs.workflow.engine.jpa.EventLog;
 import org.imixs.workflow.exceptions.IndexException;
 
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 
 /**
  * This session ejb provides functionality to maintain a local Lucene index.
@@ -86,12 +83,14 @@ import jakarta.persistence.PersistenceContext;
  */
 @Stateless
 public class LuceneIndexService {
-
     public static final int EVENTLOG_ENTRY_FLUSH_COUNT = 16;
 
     public static final String ANONYMOUS = "ANONYMOUS";
+
     public static final String DEFAULT_ANALYZER = "org.apache.lucene.analysis.standard.ClassicAnalyzer";
+
     public static final String DEFAULT_INDEX_DIRECTORY = "imixs-workflow-index";
+
     public static final String TAXONOMY_INDEXFIELD_PRAFIX = ".taxonomy";
 
     @PersistenceContext(unitName = "org.imixs.workflow.jpa")
@@ -160,13 +159,12 @@ public class LuceneIndexService {
      * @return true if the the complete event log was flushed. If false the method
      *         must be recalled.
      */
-    @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public boolean flushEventLog(int junkSize) {
         long total = 0;
         long count = 0;
         boolean dirtyIndex = true;
         long l = System.currentTimeMillis();
-
         while (dirtyIndex) {
             try {
                 dirtyIndex = !flushEventLogByCount(EVENTLOG_ENTRY_FLUSH_COUNT);
@@ -174,27 +172,23 @@ public class LuceneIndexService {
                     total = total + EVENTLOG_ENTRY_FLUSH_COUNT;
                     count = count + EVENTLOG_ENTRY_FLUSH_COUNT;
                     if (count >= 100) {
-                        logger.finest("...flush event log: " + total + " entries in " + (System.currentTimeMillis() - l)
-                                + "ms...");
+                        logger.finest(((("...flush event log: " + total) + " entries in ") + (System.currentTimeMillis() - l)) + "ms...");
                         count = 0;
                     }
-
                     // issue #439
                     // In some cases the flush method runs endless.
                     // experimental code: we break the flush method after 1024 flushs
                     // maybe we can remove this hard break
                     if (total >= junkSize) {
-                        logger.finest("...flush event: Issue #439  -> total count >=" + total
-                                + " flushEventLog will be continued...");
+                        logger.finest(("...flush event: Issue #439  -> total count >=" + total) + " flushEventLog will be continued...");
                         return false;
                     }
                 }
-
             } catch (IndexException e) {
                 logger.warning("...unable to flush lucene event log: " + e.getMessage());
                 return true;
             }
-        }
+        } 
         return true;
     }
 
@@ -245,8 +239,8 @@ public class LuceneIndexService {
                     Term term = new Term("$uniqueid", workitem.getItemValueString("$uniqueid"));
                     logger.finest("......lucene add/update uncommitted workitem '"
                             + workitem.getItemValueString(WorkflowKernel.UNIQUEID) + "' to index...");
-
-                    // awriter.updateDocument(term, createDocument(workitem));
+                    
+                    //awriter.updateDocument(term, createDocument(workitem));
                     Document lucenedoc = createDocument(workitem);
                     updateLuceneIndex(term, lucenedoc, indexWriter, taxonomyWriter);
                 }
@@ -272,11 +266,9 @@ public class LuceneIndexService {
                 try {
                     taxonomyWriter.close();
                 } catch (CorruptIndexException e) {
-                    throw new IndexException(IndexException.INVALID_INDEX, "Unable to close lucene taxonomyWriter: ",
-                            e);
+                    throw new IndexException(IndexException.INVALID_INDEX, "Unable to close lucene taxonomyWriter: ", e);
                 } catch (IOException e) {
-                    throw new IndexException(IndexException.INVALID_INDEX, "Unable to close lucene taxonomyWriter: ",
-                            e);
+                    throw new IndexException(IndexException.INVALID_INDEX, "Unable to close lucene taxonomyWriter: ", e);
                 }
             }
         }
@@ -301,11 +293,8 @@ public class LuceneIndexService {
         IndexWriter indexWriter = null;
         long l = System.currentTimeMillis();
         logger.finest("......flush eventlog cache....");
-
-        List<EventLog> events = eventLogService.findEventsByTopic(count + 1, DocumentService.EVENTLOG_TOPIC_INDEX_ADD,
-                DocumentService.EVENTLOG_TOPIC_INDEX_REMOVE);
-
-        if (events != null && events.size() > 0) {
+        List<EventLog> events = eventLogService.findEventsByTopic(count + 1, DocumentService.EVENTLOG_TOPIC_INDEX_ADD, DocumentService.EVENTLOG_TOPIC_INDEX_REMOVE);
+        if ((events != null) && (events.size() > 0)) {
             try {
                 indexWriter = createIndexWriter();
                 taxonomyWriter = createTaxonomyWriter();
@@ -313,12 +302,10 @@ public class LuceneIndexService {
                 for (EventLog eventLogEntry : events) {
                     Term term = new Term("$uniqueid", eventLogEntry.getRef());
                     // lookup the Document Entity...
-                    org.imixs.workflow.engine.jpa.Document doc = manager
-                            .find(org.imixs.workflow.engine.jpa.Document.class, eventLogEntry.getRef());
-
+                    org.imixs.workflow.engine.jpa.Document doc = manager.find(Document.class, eventLogEntry.getRef());
                     // if the document was found we add/update the index. Otherwise we remove the
                     // document form the index.
-                    if (doc != null && DocumentService.EVENTLOG_TOPIC_INDEX_ADD.equals(eventLogEntry.getTopic())) {
+                    if ((doc != null) && DocumentService.EVENTLOG_TOPIC_INDEX_ADD.equals(eventLogEntry.getTopic())) {
                         // add workitem to search index....
                         long l2 = System.currentTimeMillis();
                         ItemCollection workitem = new ItemCollection();
@@ -326,22 +313,17 @@ public class LuceneIndexService {
                         if (!workitem.getItemValueBoolean(DocumentService.NOINDEX)) {
                             Document lucenedoc = createDocument(workitem);
                             // indexWriter.updateDocument(term,lucenedoc );
-
                             updateLuceneIndex(term, lucenedoc, indexWriter, taxonomyWriter);
-                            logger.finest("......lucene add/update workitem '" + doc.getId() + "' to index in "
-                                    + (System.currentTimeMillis() - l2) + "ms");
+                            logger.finest(((("......lucene add/update workitem '" + doc.getId()) + "' to index in ") + (System.currentTimeMillis() - l2)) + "ms");
                         }
                     } else {
                         long l2 = System.currentTimeMillis();
                         indexWriter.deleteDocuments(term);
-                        logger.finest("......lucene remove workitem '" + term + "' from index in "
-                                + (System.currentTimeMillis() - l2) + "ms");
+                        logger.finest(((("......lucene remove workitem '" + term) + "' from index in ") + (System.currentTimeMillis() - l2)) + "ms");
                     }
-
                     // remove the eventLogEntry.
                     lastEventDate = eventLogEntry.getCreated().getTime();
                     eventLogService.removeEvent(eventLogEntry);
-
                     // break?
                     _counter++;
                     if (_counter >= count) {
@@ -355,7 +337,7 @@ public class LuceneIndexService {
                 // We just log a warning here and close the flush mode to no longer block the
                 // writer.
                 // NOTE: maybe throwing a IndexException would be an alternative:
-                //
+                // 
                 // throw new IndexException(IndexException.INVALID_INDEX, "Unable to update
                 // lucene search index",
                 // luceneEx);
@@ -367,11 +349,9 @@ public class LuceneIndexService {
                     try {
                         indexWriter.close();
                     } catch (CorruptIndexException e) {
-                        throw new IndexException(IndexException.INVALID_INDEX, "Unable to close lucene IndexWriter: ",
-                                e);
+                        throw new IndexException(IndexException.INVALID_INDEX, "Unable to close lucene IndexWriter: ", e);
                     } catch (IOException e) {
-                        throw new IndexException(IndexException.INVALID_INDEX, "Unable to close lucene IndexWriter: ",
-                                e);
+                        throw new IndexException(IndexException.INVALID_INDEX, "Unable to close lucene IndexWriter: ", e);
                     }
                 }
                 // close taxonomyWriter!
@@ -380,22 +360,15 @@ public class LuceneIndexService {
                     try {
                         taxonomyWriter.close();
                     } catch (CorruptIndexException e) {
-                        throw new IndexException(IndexException.INVALID_INDEX,
-                                "Unable to close lucene taxonomyWriter: ", e);
+                        throw new IndexException(IndexException.INVALID_INDEX, "Unable to close lucene taxonomyWriter: ", e);
                     } catch (IOException e) {
-                        throw new IndexException(IndexException.INVALID_INDEX,
-                                "Unable to close lucene taxonomyWriter: ", e);
+                        throw new IndexException(IndexException.INVALID_INDEX, "Unable to close lucene taxonomyWriter: ", e);
                     }
                 }
             }
-
         }
-
-        logger.fine("...flushEventLog - " + events.size() + " events in " + (System.currentTimeMillis() - l)
-                + " ms - last log entry: " + lastEventDate);
-
+        logger.fine((((("...flushEventLog - " + events.size()) + " events in ") + (System.currentTimeMillis() - l)) + " ms - last log entry: ") + lastEventDate);
         return cacheIsEmpty;
-
     }
 
     /**
@@ -452,38 +425,38 @@ public class LuceneIndexService {
         // combine all search fields from the search field list into one field
         // ('content') for the lucene document
         String textContent = "";
-
         List<String> searchFieldList = schemaService.getFieldList();
         for (String aFieldname : searchFieldList) {
             sValue = "";
             // check value list - skip empty fields
             List<?> vValues = document.getItemValue(aFieldname);
-            if (vValues.size() == 0)
+            if (vValues.size() == 0) {
                 continue;
+            }
             // get all values of a value list field
             for (Object o : vValues) {
-                if (o == null)
-                    // skip null values
+                // skip null values
+                if (o == null) {
                     continue;
-
-                if (o instanceof Calendar || o instanceof Date) {
+                }
+                if ((o instanceof Calendar) || (o instanceof Date)) {
                     // convert calendar to string
                     String sDateValue;
-                    if (o instanceof Calendar)
-                        sDateValue = luceneDateFormat.format(((Calendar) o).getTime());
-                    else
-                        sDateValue = luceneDateFormat.format((Date) o);
+                    if (o instanceof Calendar) {
+                        sDateValue = luceneDateFormat.format(((Calendar) (o)).getTime());
+                    } else {
+                        sDateValue = luceneDateFormat.format(((Date) (o)));
+                    }
                     sValue += sDateValue + ",";
-
-                } else
-                    // simple string representation
+                } else // simple string representation
+                {
                     sValue += o.toString() + ",";
+                }
             }
             if (sValue != null) {
                 textContent += sValue + ",";
             }
         }
-
         // fire IndexEvent to update the text content if needed
         if (indexEvents != null) {
             IndexEvent indexEvent = new IndexEvent(IndexEvent.ON_INDEX_UPDATE, document);
@@ -493,14 +466,11 @@ public class LuceneIndexService {
         } else {
             logger.warning("Missing CDI support for Event<IndexEvent> !");
         }
-
         logger.finest("......add lucene field content=" + textContent);
         doc.add(new TextField("content", textContent, Store.NO));
-
         // add each field from the indexFieldList into the lucene document
         List<String> _localFieldListStore = new ArrayList<String>();
         _localFieldListStore.addAll(schemaService.getFieldListStore());
-
         // analyzed...
         List<String> indexFieldListAnalyze = schemaService.getFieldListAnalyze();
         for (String aFieldname : indexFieldListAnalyze) {
@@ -508,19 +478,16 @@ public class LuceneIndexService {
             // avoid duplication.....
             _localFieldListStore.remove(aFieldname);
         }
-
         // ... and not analyzed...
         List<String> indexFieldListNoAnalyze = schemaService.getFieldListNoAnalyze();
         for (String aFieldname : indexFieldListNoAnalyze) {
             addItemValues(doc, document, aFieldname, false, _localFieldListStore.contains(aFieldname));
         }
-
         // add $uniqueid not analyzed
         doc.add(new StringField("$uniqueid", document.getItemValueString("$uniqueid"), Store.YES));
-
         // add $readAccess not analyzed
-        List<String> vReadAccess = (List<String>) document.getItemValue(DocumentService.READACCESS);
-        if (vReadAccess.size() == 0 || (vReadAccess.size() == 1 && "".equals(vReadAccess.get(0).toString()))) {
+        List<String> vReadAccess = ((List<String>) (document.getItemValue(DocumentService.READACCESS)));
+        if ((vReadAccess.size() == 0) || ((vReadAccess.size() == 1) && "".equals(vReadAccess.get(0).toString()))) {
             // if emtpy add the ANONYMOUS default entry
             sValue = ANONYMOUS;
             doc.add(new StringField(DocumentService.READACCESS, sValue, Store.NO));
@@ -530,9 +497,7 @@ public class LuceneIndexService {
             for (String sReader : vReadAccess) {
                 doc.add(new StringField(DocumentService.READACCESS, sReader, Store.NO));
             }
-
         }
-
         // add optional categories
         List<String> indexFieldListCategory = schemaService.getFieldListCategory();
         // example
@@ -546,18 +511,16 @@ public class LuceneIndexService {
              * if (!value.isEmpty()) { doc.add(new
              * FacetField(aFieldname+TAXONOMY_INDEXFIELD_PRAFIX, value)); }
              */
-
             /** MULTI VALUE VARIANT **/
             // a facetField can only be written if we have a value
             List<?> valueList = document.getItemValue(aFieldname);
-            if (valueList.size() > 0 && valueList.get(0) != null) {
+            if ((valueList.size() > 0) && (valueList.get(0) != null)) {
                 for (Object singleValue : valueList) {
                     String stringValue = luceneItemAdapter.convertItemValue(singleValue);
                     doc.add(new FacetField(aFieldname + TAXONOMY_INDEXFIELD_PRAFIX, stringValue));
                 }
             }
         }
-
         return doc;
     }
 
@@ -702,5 +665,4 @@ public class LuceneIndexService {
         }
         return indexDir;
     }
-
 }

@@ -25,9 +25,12 @@
  *      Imixs Software Solutions GmbH - Project Management
  *      Ralph Soika - Software Developer
  */
-
 package org.imixs.workflow.engine.lucene;
 
+import jakarta.annotation.security.DeclareRoles;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -35,11 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import jakarta.annotation.security.DeclareRoles;
-import jakarta.annotation.security.RolesAllowed;
-import jakarta.inject.Inject;
-
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.facet.FacetResult;
@@ -76,7 +74,6 @@ import org.imixs.workflow.engine.index.SearchService;
 import org.imixs.workflow.exceptions.InvalidAccessException;
 import org.imixs.workflow.exceptions.QueryException;
 
-import jakarta.ejb.Stateless;
 
 /**
  * This session ejb provides a service to search the lucene index. The EJB uses
@@ -94,19 +91,19 @@ import jakarta.ejb.Stateless;
  * @version 2.0
  * @author rsoika
  */
-@DeclareRoles({ "org.imixs.ACCESSLEVEL.NOACCESS", "org.imixs.ACCESSLEVEL.READERACCESS",
-        "org.imixs.ACCESSLEVEL.AUTHORACCESS", "org.imixs.ACCESSLEVEL.EDITORACCESS",
-        "org.imixs.ACCESSLEVEL.MANAGERACCESS" })
-@RolesAllowed({ "org.imixs.ACCESSLEVEL.NOACCESS", "org.imixs.ACCESSLEVEL.READERACCESS",
-        "org.imixs.ACCESSLEVEL.AUTHORACCESS", "org.imixs.ACCESSLEVEL.EDITORACCESS",
-        "org.imixs.ACCESSLEVEL.MANAGERACCESS" })
+@DeclareRoles({ "org.imixs.ACCESSLEVEL.NOACCESS", "org.imixs.ACCESSLEVEL.READERACCESS", "org.imixs.ACCESSLEVEL.AUTHORACCESS", "org.imixs.ACCESSLEVEL.EDITORACCESS", "org.imixs.ACCESSLEVEL.MANAGERACCESS" })
+@RolesAllowed({ "org.imixs.ACCESSLEVEL.NOACCESS", "org.imixs.ACCESSLEVEL.READERACCESS", "org.imixs.ACCESSLEVEL.AUTHORACCESS", "org.imixs.ACCESSLEVEL.EDITORACCESS", "org.imixs.ACCESSLEVEL.MANAGERACCESS" })
 @Stateless
 public class LuceneSearchService implements SearchService {
-
+    // limiting the
     public static final int DEFAULT_MAX_SEARCH_RESULT = 9999; // limiting the
-                                                              // total
+
+                                                            // total
     // number of hits
-    public static final int DEFAULT_PAGE_SIZE = 100; // default docs in one page
+    // default docs in one page
+                                                            // total
+                                                                // number of hits
+                                                                public static final int DEFAULT_PAGE_SIZE = 100; // default docs in one page
 
     @Inject
     private LuceneIndexService luceneIndexService;
@@ -310,11 +307,10 @@ public class LuceneSearchService implements SearchService {
             TaxonomyReader taxoReader = createTaxonomyReader();
             FacetsConfig config = luceneIndexService.getFacetsConfig();
             FacetsCollector fc = new FacetsCollector();
-
             // MatchAllDocsQuery is for "browsing" (counts facets
             // for all non-deleted docs in the index); normally
             // you'd use a "normal" query:
-            if (searchTerm == null || searchTerm.isEmpty()) {
+            if ((searchTerm == null) || searchTerm.isEmpty()) {
                 searcher.search(new MatchAllDocsQuery(), fc);
             } else {
                 searchTerm = schemaService.getExtendedSearchTerm(searchTerm);
@@ -324,13 +320,11 @@ public class LuceneSearchService implements SearchService {
                 searcher.search(query, fc);
             }
             Facets facets = new FastTaxonomyFacetCounts(taxoReader, config, fc);
-
             // count each result
             for (String cat : categories) {
                 // Count the dimensions (we use a index field prefix to avoid conflicts with
                 // existing indices.
-                FacetResult facetResult = facets.getTopChildren(10,
-                        cat + LuceneIndexService.TAXONOMY_INDEXFIELD_PRAFIX);
+                FacetResult facetResult = facets.getTopChildren(10, cat + LuceneIndexService.TAXONOMY_INDEXFIELD_PRAFIX);
                 if (facetResult != null) {
                     Category category = new Category(cat, facetResult.childCount);
                     for (LabelAndValue lav : facetResult.labelValues) {
@@ -463,11 +457,12 @@ public class LuceneSearchService implements SearchService {
      * @throws Exception
      */
     TaxonomyReader createTaxonomyReader() throws IOException {
-
+        
         logger.finest("......createTaxonomyReader...");
         Directory taxoDir = luceneIndexService.createTaxonomyDirectory();
         TaxonomyReader taxoReader = new DirectoryTaxonomyReader(taxoDir);
-
+        
+       
         return taxoReader;
     }
 
@@ -582,5 +577,4 @@ public class LuceneSearchService implements SearchService {
         return true;
 
     }
-
 }
