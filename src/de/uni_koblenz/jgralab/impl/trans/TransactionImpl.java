@@ -34,15 +34,6 @@
  */
 package de.uni_koblenz.jgralab.impl.trans;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.logging.Logger;
-
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
@@ -57,6 +48,15 @@ import de.uni_koblenz.jgralab.trans.Transaction;
 import de.uni_koblenz.jgralab.trans.TransactionState;
 import de.uni_koblenz.jgralab.trans.VersionedDataObject;
 import de.uni_koblenz.jgralab.trans.VertexPosition;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.logging.Logger;
+
 
 /**
  * The implementation of a <code>Transaction</code>.
@@ -66,15 +66,23 @@ import de.uni_koblenz.jgralab.trans.VertexPosition;
 public class TransactionImpl implements Transaction {
 	private static Logger logger = JGraLab
 			.getLogger("de.uni_koblenz.jgralab.impl.trans");
+
 	protected long temporaryVersionCounter;
+
 	protected long persistentVersionAtBot;
+
 	protected long persistentVersionAtCommit;
 
 	private TransactionManagerImpl transactionManager;
+
 	private GraphImpl graph;
+
 	private Thread thread;
+
 	private int id;
+
 	private TransactionState state;
+
 	private boolean readOnly;
 
 	private short savepointIdCounter;
@@ -82,29 +90,47 @@ public class TransactionImpl implements Transaction {
 	// change sets and maps needed for validation- and writing-phase
 	// important to have lists here to be able to reproduce the order of adding
 	// and deleting in writing phase
+	// change sets and maps needed for validation- and writing-phase
+	// important to have lists here to be able to reproduce the order of adding
+	// and deleting in writing phase
 	protected List<VertexImpl> addedVertices;
+
 	protected List<EdgeImpl> addedEdges;
+
 	protected List<VertexImpl> deletedVertices;
+
 	protected List<EdgeImpl> deletedEdges;
+
 	protected Map<VertexImpl, Map<ListPosition, Boolean>> changedVseqVertices;
+
 	protected Map<EdgeImpl, Map<ListPosition, Boolean>> changedEseqEdges;
+
 	protected Map<VertexImpl, Map<IncidenceImpl, Map<ListPosition, Boolean>>> changedIncidences;
+
 	protected Map<EdgeImpl, VertexPosition> changedEdges;
+
 	protected Map<AttributedElement, Set<VersionedDataObject<?>>> changedAttributes;
 
 	protected List<VertexImpl> deletedVerticesWhileWriting;
-	protected List<de.uni_koblenz.jgralab.impl.InternalVertex> deleteVertexList;
+
+	protected List<InternalVertex> deleteVertexList;
 
 	protected SavepointImpl latestDefinedSavepoint;
+
 	protected SavepointImpl latestRestoredSavepoint;
+
 	private List<Savepoint> savepointList;
 
 	private ValidationComponent validationComponent;
+
 	private WritingComponent writingComponent;
 
 	// needed to undo creation of new persistent versions if during writing
 	// phase something goes wrong unexpectedly.
+	// needed to undo creation of new persistent versions if during writing
+	// phase something goes wrong unexpectedly.
 	protected Set<VersionedDataObjectImpl<?>> changedDuringCommit;
+
 	private TraversalContext tc;
 
 	/**
@@ -115,7 +141,7 @@ public class TransactionImpl implements Transaction {
 	 * values. Note that as soon as a save-point has been created for a
 	 * save-point the temporary values of the versioned data objects need to be
 	 * stored in <code>temporaryVersionMap</code>.
-	 * 
+	 *
 	 * Introduced for "better" and less memory usage.
 	 */
 	protected Map<VersionedDataObject<?>, Object> temporaryValueMap;
@@ -126,7 +152,7 @@ public class TransactionImpl implements Transaction {
 	 * needed if this transactions has defined save-points and therefore needs a
 	 * mapping between temporary version numbers and temporary values of the
 	 * versioned data objects.
-	 * 
+	 *
 	 * Defining save-point means important increase of memory usage.
 	 */
 	protected Map<VersionedDataObject<?>, SortedMap<Long, Object>> temporaryVersionMap;
@@ -137,20 +163,24 @@ public class TransactionImpl implements Transaction {
 	 *         it
 	 */
 	protected long incrTemporaryVersionCounter() {
+
 		++temporaryVersionCounter;
 		return temporaryVersionCounter;
 	}
 
 	/**
-	 * 
-	 * 
+	 *
+	 *
 	 * @param transactionManager
+	 * 		
 	 * @param graph
+	 * 		
 	 * @param ID
+	 * 		
 	 * @param readOnly
+	 * 		
 	 */
-	public TransactionImpl(TransactionManagerImpl transactionManager,
-			GraphImpl graph, int ID, boolean readOnly) {
+	public TransactionImpl(TransactionManagerImpl transactionManager, GraphImpl graph, int ID, boolean readOnly) {
 		this.transactionManager = transactionManager;
 		this.graph = graph;
 		id = ID;
@@ -173,24 +203,23 @@ public class TransactionImpl implements Transaction {
 			logger.fine("tx id=" + id);
 		}
 		if (thread != Thread.currentThread()) {
-			throw new GraphException(
-					"Transaction is not active in current thread.");
+			throw new GraphException("Transaction is not active in current thread.");
 		}
 		if (!readOnly) {
 			// remove all temporary values created...
 			removeAllTemporaryValues();
 			state = TransactionState.ABORTING;
 			// free Ids of added vertices and edges...
-			if (addedVertices != null && addedVertices.size() > 0) {
-				synchronized (graph.getFreeVertexList()) {
+			if ((addedVertices != null) && (addedVertices.size() > 0)) {
+				synchronized(graph.getFreeVertexList()) {
 					for (VertexImpl vertex : addedVertices) {
 						graph.freeVertexIndex(vertex.getId());
 					}
 					addedVertices = null;
 				}
 			}
-			if (addedEdges != null && addedEdges.size() > 0) {
-				synchronized (graph.getFreeEdgeList()) {
+			if ((addedEdges != null) && (addedEdges.size() > 0)) {
+				synchronized(graph.getFreeEdgeList()) {
 					for (EdgeImpl edge : addedEdges) {
 						graph.freeEdgeIndex(edge.getId());
 					}
@@ -201,7 +230,6 @@ public class TransactionImpl implements Transaction {
 		}
 		state = TransactionState.ABORTED;
 		transactionManager.removeTransactionForThread(Thread.currentThread());
-
 		// free memory
 		deletedVertices = null;
 		deletedEdges = null;
@@ -239,11 +267,9 @@ public class TransactionImpl implements Transaction {
 			logger.fine("tx id=" + id);
 		}
 		if (thread != Thread.currentThread()) {
-			throw new GraphException(
-					"Transaction is not active in current thread.");
+			throw new GraphException("Transaction is not active in current thread.");
 		}
-		assert state == TransactionState.RUNNING : "Expected TransactionState RUNNING, but it's "
-				+ state + ".";
+		assert state == TransactionState.RUNNING : ("Expected TransactionState RUNNING, but it's " + state) + ".";
 		state = TransactionState.COMMITTING;
 		// case Read-Write-Transaction
 		if (!readOnly) {
@@ -252,14 +278,12 @@ public class TransactionImpl implements Transaction {
 			if (internalIsInConflict()) {
 				state = TransactionState.RUNNING;
 				transactionManager.commitSync.writeLock().unlock();
-				throw new CommitFailedException(this, validationComponent
-						.getConflictReason());
+				throw new CommitFailedException(this, validationComponent.getConflictReason());
 			}
 			// make sure no other transaction is executing isInConflict()-method
 			transactionManager.commitValidatingSync.writeLock().lock();
 			// make sure no other transaction is doing its BOT
 			transactionManager.botWritingSync.writeLock().lock();
-
 			persistentVersionAtCommit = graph.getPersistentVersionCounter();
 			if (writingComponent == null) {
 				writingComponent = new WritingComponent(this);
@@ -267,7 +291,7 @@ public class TransactionImpl implements Transaction {
 			try {
 				state = TransactionState.WRITING;
 				writingComponent.write();
-			} catch (Exception e) {
+			} catch (java.lang.Exception e) {
 				// this should not happen!!!
 				e.printStackTrace();
 				state = TransactionState.RUNNING;
@@ -278,8 +302,8 @@ public class TransactionImpl implements Transaction {
 			}
 			state = TransactionState.COMMITTING;
 			// free Ids of deleted vertices and edges
-			if (deletedVertices != null && deletedVertices.size() > 0) {
-				synchronized (graph.getFreeVertexList()) {
+			if ((deletedVertices != null) && (deletedVertices.size() > 0)) {
+				synchronized(graph.getFreeVertexList()) {
 					for (VertexImpl vertex : deletedVertices) {
 						int id = vertex.getId();
 						assert id > 0;
@@ -288,8 +312,8 @@ public class TransactionImpl implements Transaction {
 					deletedVertices = null;
 				}
 			}
-			if (deletedEdges != null && deletedEdges.size() > 0) {
-				synchronized (graph.getFreeEdgeList()) {
+			if ((deletedEdges != null) && (deletedEdges.size() > 0)) {
+				synchronized(graph.getFreeEdgeList()) {
 					for (EdgeImpl edge : deletedEdges) {
 						int id = edge.getId();
 						assert id > 0;
@@ -300,23 +324,18 @@ public class TransactionImpl implements Transaction {
 			}
 			graph.freeStoredIndexes();
 			removeAllTemporaryValues();
-
 			state = TransactionState.COMMITTED;
-			transactionManager.removeTransactionForThread(Thread
-					.currentThread());
+			transactionManager.removeTransactionForThread(Thread.currentThread());
 			transactionManager.removeTransaction(this);
-
 			transactionManager.botWritingSync.writeLock().unlock();
 			transactionManager.commitValidatingSync.writeLock().unlock();
 			transactionManager.commitSync.writeLock().unlock();
 			// case Read-Only-Transaction
 		} else {
 			state = TransactionState.COMMITTED;
-			transactionManager.removeTransactionForThread(Thread
-					.currentThread());
+			transactionManager.removeTransactionForThread(Thread.currentThread());
 			transactionManager.removeTransaction(this);
 		}
-
 		// free memory
 		addedVertices = null;
 		addedEdges = null;
@@ -421,12 +440,10 @@ public class TransactionImpl implements Transaction {
 			logger.fine("tx id=" + id);
 		}
 		if (thread != Thread.currentThread()) {
-			throw new GraphException(
-					"Transaction is not active in current thread.");
+			throw new GraphException("Transaction is not active in current thread.");
 		}
 		if (readOnly) {
-			throw new GraphException(
-					"Read-only transactions are not allowed to define save-points.");
+			throw new GraphException("Read-only transactions are not allowed to define save-points.");
 		}
 		// initialize save-point list if needed
 		if (savepointList == null) {
@@ -438,13 +455,11 @@ public class TransactionImpl implements Transaction {
 		// if save-point is defined and temporary values don't have mappings
 		// with version numbers yet, then it has to be done now...
 		if (temporaryValueMap != null) {
-			synchronized (temporaryValueMap) {
-				Set<VersionedDataObject<?>> versionedDataObjects = new HashSet<VersionedDataObject<?>>(
-						temporaryValueMap.keySet());
+			synchronized(temporaryValueMap) {
+				Set<VersionedDataObject<?>> versionedDataObjects = new HashSet<VersionedDataObject<?>>(temporaryValueMap.keySet());
 				for (VersionedDataObject<?> dataObject : versionedDataObjects) {
 					// dataObject.createNewTemporaryValue(this);
-					((VersionedDataObjectImpl<?>) dataObject)
-							.moveTemporaryVersion(this);
+					((VersionedDataObjectImpl<?>) (dataObject)).moveTemporaryVersion(this);
 				}
 			}
 		}
@@ -633,8 +648,8 @@ public class TransactionImpl implements Transaction {
 								.getKey();
 						SortedMap<Long, Object> versionsMap = entries
 								.getValue();
-						temporaryValueMap.put(versionedDataObject, versionsMap
-								.get(versionsMap.lastKey()));
+						temporaryValueMap.put(versionedDataObject,
+								versionsMap.get(versionsMap.lastKey()));
 						temporaryVersionMap.remove(versionedDataObject);
 					}
 					temporaryVersionMap = null;

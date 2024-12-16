@@ -34,19 +34,19 @@
  */
 package de.uni_koblenz.jgralab.impl.trans;
 
-import java.util.Map;
-
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 import de.uni_koblenz.jgralab.trans.ListPosition;
 import de.uni_koblenz.jgralab.trans.TransactionState;
 import de.uni_koblenz.jgralab.trans.VersionedIncidence;
+import java.util.Map;
+
 
 /**
  * Implementation of <code>ReversedEdgeImpl</code> with versioning.
@@ -56,28 +56,30 @@ import de.uni_koblenz.jgralab.trans.VersionedIncidence;
  * 
  * @author Jose Monte(monte@uni-koblenz.de)
  */
-public abstract class ReversedEdgeImpl extends
-		de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl implements
-		VersionedIncidence {
+public abstract class ReversedEdgeImpl extends ReversedEdgeBaseImpl implements VersionedIncidence {
+	// attributes inherited from <code>IncidenceImpl</code>
 	// attributes inherited from <code>IncidenceImpl</code>
 	protected VersionedReferenceImpl<VertexBaseImpl> incidentVertex;
+
 	protected VersionedReferenceImpl<IncidenceImpl> nextIncidence;
+
 	protected VersionedReferenceImpl<IncidenceImpl> prevIncidence;
 
 	/**
 	 * Initialization of versioned attributes is avoided here, to not have
 	 * persistent and temporary values for new instances within the transaction
 	 * this instance is created in.
-	 * 
+	 *
 	 * @param normalEdge
+	 * 		
 	 * @param graph
+	 * 		
 	 */
 	protected ReversedEdgeImpl(EdgeBaseImpl normalEdge, Graph graph) {
 		super(normalEdge, graph);
 	}
 
 	// --- getter ---//
-
 	@Override
 	public InternalVertex getIncidentVertex() {
 		if (incidentVertex == null) {
@@ -112,27 +114,22 @@ public abstract class ReversedEdgeImpl extends
 	@Override
 	public void setIncidentVertex(Vertex v) {
 		if (graph.isLoading()) {
-			incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(
-					normalEdge, (VertexBaseImpl) v, "$normalEdge");
+			incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(normalEdge, ((VertexBaseImpl) (v)), "$normalEdge");
 		} else {
 			// initialize here
 			if (incidentVertex == null) {
-				incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(
-						normalEdge, null, "$revIncidentVertex");
+				incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(normalEdge, null, "$revIncidentVertex");
 			}
-			incidentVertex.setValidValue((VertexBaseImpl) v, graph
-					.getCurrentTransaction());
+			incidentVertex.setValidValue(((VertexBaseImpl) (v)), graph.getCurrentTransaction());
 		}
 	}
 
 	@Override
 	public void setNextIncidenceInternal(InternalEdge nextIncidence) {
 		if (graph.isLoading()) {
-			this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					normalEdge, (IncidenceImpl) nextIncidence, "$revNextIncidence");
+			this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(normalEdge, ((IncidenceImpl) (nextIncidence)), "$revNextIncidence");
 		} else {
-			TransactionImpl transaction = (TransactionImpl) graph
-					.getCurrentTransaction();
+			TransactionImpl transaction = ((TransactionImpl) (graph.getCurrentTransaction()));
 			if (transaction == null) {
 				throw new GraphException("Current transaction is null.");
 			}
@@ -141,36 +138,28 @@ public abstract class ReversedEdgeImpl extends
 			// relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedIncidences != null) {
-					InternalVertex currentIncidentVertex = incidentVertex
-							.getTemporaryValue(transaction);
-					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences
-							.get(currentIncidentVertex);
+					InternalVertex currentIncidentVertex = incidentVertex.getTemporaryValue(transaction);
+					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences.get(currentIncidentVertex);
 					explicitChange = false;
 					if (incidenceList != null) {
-						explicitChange = incidenceList.containsKey(this)
-								&& (incidenceList.get(this).keySet()
-										.contains(ListPosition.NEXT));
+						explicitChange = incidenceList.containsKey(this) && incidenceList.get(this).keySet().contains(ListPosition.NEXT);
 					}
 				}
 			}
 			// initialize here
 			if (this.nextIncidence == null) {
-				this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-						normalEdge, null, "$revNextIncidence");
+				this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(normalEdge, null, "$revNextIncidence");
 			}
-			this.nextIncidence.setValidValue((IncidenceImpl) nextIncidence,
-					transaction, explicitChange);
+			this.nextIncidence.setValidValue(((IncidenceImpl) (nextIncidence)), transaction, explicitChange);
 		}
 	}
 
 	@Override
 	public void setPrevIncidenceInternal(InternalEdge prevIncidence) {
 		if (graph.isLoading()) {
-			this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					normalEdge, (IncidenceImpl) prevIncidence, "$revPrevIncidence");
+			this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(normalEdge, ((IncidenceImpl) (prevIncidence)), "$revPrevIncidence");
 		} else {
-			TransactionImpl transaction = (TransactionImpl) graph
-					.getCurrentTransaction();
+			TransactionImpl transaction = ((TransactionImpl) (graph.getCurrentTransaction()));
 			if (transaction == null) {
 				throw new GraphException("Current transaction is null.");
 			}
@@ -179,25 +168,19 @@ public abstract class ReversedEdgeImpl extends
 			// only relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedIncidences != null) {
-					InternalVertex currentIncidentVertex = incidentVertex
-							.getTemporaryValue(transaction);
-					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences
-							.get(currentIncidentVertex);
+					InternalVertex currentIncidentVertex = incidentVertex.getTemporaryValue(transaction);
+					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences.get(currentIncidentVertex);
 					explicitChange = false;
 					if (incidenceList != null) {
-						explicitChange = incidenceList.containsKey(this)
-								&& (incidenceList.get(this).keySet()
-										.contains(ListPosition.PREV));
+						explicitChange = incidenceList.containsKey(this) && incidenceList.get(this).keySet().contains(ListPosition.PREV);
 					}
 				}
 			}
 			// initialize here
 			if (this.prevIncidence == null) {
-				this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-						normalEdge, null, "$revPrevIncidence");
+				this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(normalEdge, null, "$revPrevIncidence");
 			}
-			this.prevIncidence.setValidValue((IncidenceImpl) prevIncidence,
-					transaction, explicitChange);
+			this.prevIncidence.setValidValue(((IncidenceImpl) (prevIncidence)), transaction, explicitChange);
 		}
 	}
 
