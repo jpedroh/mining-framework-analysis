@@ -15,6 +15,7 @@
  */
 package me.zhengjie.modules.system.service.impl;
 
+import java.util.*;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.service.DataService;
@@ -26,7 +27,7 @@ import me.zhengjie.utils.enums.DataScopeEnum;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import java.util.*;
+
 
 /**
  * @author Zheng Jie
@@ -38,13 +39,15 @@ import java.util.*;
 @RequiredArgsConstructor
 @CacheConfig(cacheNames = "data")
 public class DataServiceImpl implements DataService {
-
     private final RoleService roleService;
+
     private final DeptService deptService;
 
     /**
      * 用户角色和用户部门改变时需清理缓存
-     * @param user /
+     *
+     * @param user
+     * 		/
      * @return /
      */
     @Override
@@ -58,16 +61,16 @@ public class DataServiceImpl implements DataService {
         for (RoleSmallDto role : roleSet) {
             DataScopeEnum dataScopeEnum = DataScopeEnum.find(role.getDataScope());
             switch (Objects.requireNonNull(dataScopeEnum)) {
-                case THIS_LEVEL:
+                case THIS_LEVEL :
                     deptIds.add(user.getDept().getId());
                     break;
-                case CUSTOMIZE:
+                case CUSTOMIZE :
                     deptIds.addAll(getCustomize(deptIds, role));
                     break;
-                case ALL:
+                case ALL :
                     // 增加如果是数据权限包含有全部，则直接返回空
                     return new ArrayList<>();
-                default:
+                default :
                     return new ArrayList<>(deptIds);
             }
         }

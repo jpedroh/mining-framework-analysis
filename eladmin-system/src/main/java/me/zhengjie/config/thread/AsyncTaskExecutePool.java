@@ -15,6 +15,8 @@
  */
 package me.zhengjie.config.thread;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.exception.TaskException;
@@ -25,8 +27,7 @@ import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
+
 
 /**
  * 异步任务线程池装配类
@@ -37,21 +38,20 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Configuration
 @RequiredArgsConstructor
 public class AsyncTaskExecutePool implements AsyncConfigurer {
-
     private final QuartzLogService quartzLogService;
 
     @Override
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        //核心线程池大小
+        // 核心线程池大小
         executor.setCorePoolSize(AsyncTaskProperties.corePoolSize);
-        //最大线程数
+        // 最大线程数
         executor.setMaxPoolSize(AsyncTaskProperties.maxPoolSize);
-        //队列容量
+        // 队列容量
         executor.setQueueCapacity(AsyncTaskProperties.queueCapacity);
-        //活跃时间
+        // 活跃时间
         executor.setKeepAliveSeconds(AsyncTaskProperties.keepAliveSeconds);
-        //线程工厂
+        // 线程工厂
         executor.setThreadFactory(new TheadFactoryName("el-async"));
         // setRejectedExecutionHandler：当pool已经达到max size的时候，如何处理新任务
         // CallerRunsPolicy：不在新线程中执行任务，而是由调用者所在的线程来执行
@@ -62,19 +62,18 @@ public class AsyncTaskExecutePool implements AsyncConfigurer {
 
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return (throwable, method, objects) -> {
-            log.error("===="+throwable.getMessage()+"====", throwable);
-            log.error("exception method:"+method.getName());
+        return ( throwable, method, objects) -> {
+            log.error(("====" + throwable.getMessage()) + "====", throwable);
+            log.error("exception method:" + method.getName());
             // 针对返回了异步错误的，额外记录到定时任务日志中
             if (throwable instanceof TaskException) {
                 QuartzLog quartzLog = new QuartzLog();
                 quartzLog.setBeanName(method.getDeclaringClass().getSimpleName());
                 quartzLog.setMethodName(method.getName());
                 quartzLog.setExceptionDetail(ThrowableUtil.getStackTrace(throwable));
-                quartzLog.setParams(((TaskException) throwable).getParam());
+                quartzLog.setParams(((TaskException) (throwable)).getParam());
                 quartzLog.setIsSuccess(false);
                 quartzLog.setTime(0L);
-
                 quartzLogService.create(quartzLog);
             }
         };

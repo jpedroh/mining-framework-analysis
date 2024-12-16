@@ -17,19 +17,18 @@ package me.zhengjie.utils;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.template.*;
-import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.domain.GenConfig;
-import me.zhengjie.domain.ColumnInfo;
-import org.springframework.util.ObjectUtils;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.time.LocalDate;
 import java.util.*;
-
+import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.domain.ColumnInfo;
+import me.zhengjie.domain.GenConfig;
+import org.springframework.util.ObjectUtils;
 import static me.zhengjie.utils.FileUtil.SYS_TEM_DIR;
+
 
 /**
  * 代码生成
@@ -38,9 +37,8 @@ import static me.zhengjie.utils.FileUtil.SYS_TEM_DIR;
  * @date 2019-01-02
  */
 @Slf4j
-@SuppressWarnings({"unchecked", "all"})
+@SuppressWarnings({ "unchecked", "all" })
 public class GenUtil {
-
     private static final String TIMESTAMP = "Timestamp";
 
     private static final String BIGDECIMAL = "BigDecimal";
@@ -260,8 +258,7 @@ public class GenUtil {
             // 大写开头的字段名
             String capitalColumnName = "";
             if (StrUtil.isNotBlank(columnPrefix)) {
-                capitalColumnName = StringUtils.toCapitalizeCamelCase(
-                        StrUtil.removePrefix(column.getColumnName(), columnPrefix));
+                capitalColumnName = StringUtils.toCapitalizeCamelCase(StrUtil.removePrefix(column.getColumnName(), columnPrefix));
             } else {
                 capitalColumnName = StringUtils.toCapitalizeCamelCase(column.getColumnName());
             }
@@ -288,10 +285,10 @@ public class GenUtil {
             // 主键存在字典
             if (StringUtils.isNotBlank(column.getDictName())) {
                 genMap.put("hasDict", true);
-                if(!dicts.contains(column.getDictName()))
+                if (!dicts.contains(column.getDictName())) {
                     dicts.add(column.getDictName());
+                }
             }
-
             // 存储字段类型
             listMap.put("columnType", colType);
             // 存储字原始段名称
@@ -306,7 +303,7 @@ public class GenUtil {
             listMap.put("formType", StringUtils.isNotBlank(column.getFormType()) ? column.getFormType() : "Input");
             // 小写开头的字段名称
             listMap.put("changeColumnName", changeColumnName);
-            //大写开头的字段名称
+            // 大写开头的字段名称
             listMap.put("capitalColumnName", capitalColumnName);
             // 字典名称
             listMap.put("dictName", column.getDictName());
