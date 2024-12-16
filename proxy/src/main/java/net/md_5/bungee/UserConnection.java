@@ -61,74 +61,100 @@ import net.md_5.bungee.tab.TabList;
 import net.md_5.bungee.util.CaseInsensitiveSet;
 import net.md_5.bungee.util.ChatComponentTransformer;
 
-@RequiredArgsConstructor
-public final class UserConnection implements ProxiedPlayer
-{
 
+@RequiredArgsConstructor
+public final class UserConnection implements ProxiedPlayer {
+    //BotFilter
     @Getter
     @Setter
-    private boolean needLogin = true; //BotFilter
+    private boolean needLogin = true;
+
     /*========================================================================*/
     @NonNull
     private final ProxyServer bungee;
+
+    //BotFilter
     @NonNull
     @Getter //BotFilter
     private final ChannelWrapper ch;
+
     @Getter
     @NonNull
     private final String name;
+
     @Getter
     private final InitialHandler pendingConnection;
+
     /*========================================================================*/
     @Getter
     @Setter
     private ServerConnection server;
+
     @Getter
     @Setter
     private boolean dimensionChange = true;
+
     @Getter
     private final Collection<ServerInfo> pendingConnects = new HashSet<>();
+
     /*========================================================================*/
     @Getter
     @Setter
     private long sentPingTime;
+
     @Getter
     @Setter
     private int ping = 100;
+
     @Getter
     @Setter
     private ServerInfo reconnectServer;
+
     @Getter
     private TabList tabListHandler;
+
     @Getter
     @Setter
     private int gamemode;
+
     @Getter
     private int compressionThreshold = -1;
+
+    // Used for trying multiple servers in order
     // Used for trying multiple servers in order
     @Setter
     private Queue<String> serverJoinQueue;
+
     /*========================================================================*/
     private final Collection<String> groups = new CaseInsensitiveSet();
+
     private final Collection<String> permissions = new CaseInsensitiveSet();
+
     /*========================================================================*/
     @Getter
     private ClientSettings settings;
+
     @Getter
     private final Scoreboard serverSentScoreboard = new Scoreboard();
+
     @Getter
     private final Collection<UUID> sentBossBars = new HashSet<>();
+
     /*========================================================================*/
     @Getter
     private String displayName;
+
     private Locale locale;
+
     /*========================================================================*/
     @Getter
     @Setter
     private ForgeClientHandler forgeClientHandler;
+
     @Getter
     @Setter
     private ForgeServerHandler forgeServerHandler;
+
     /*========================================================================*/
     private final Unsafe unsafe = new Unsafe()
     {
@@ -139,23 +165,17 @@ public final class UserConnection implements ProxiedPlayer
         }
     };
 
-    public void init()
-    {
+    public void init() {
         this.displayName = name;
-
-        tabListHandler = new ServerUnique( this );
-
-        Collection<String> g = bungee.getConfigurationAdapter().getGroups( name );
-        g.addAll( bungee.getConfigurationAdapter().getGroups( getUniqueId().toString() ) );
-        for ( String s : g )
-        {
-            addGroups( s );
+        tabListHandler = new ServerUnique(this);
+        Collection<String> g = bungee.getConfigurationAdapter().getGroups(name);
+        g.addAll(bungee.getConfigurationAdapter().getGroups(getUniqueId().toString()));
+        for (String s : g) {
+            addGroups(s);
         }
-
-        forgeClientHandler = new ForgeClientHandler( this );
-
+        forgeClientHandler = new ForgeClientHandler(this);
         // Set whether the connection has a 1.8 FML marker in the handshake.
-        forgeClientHandler.setFmlTokenInHandshake( this.getPendingConnection().getExtraDataInHandshake().contains( ForgeConstants.FML_HANDSHAKE_TOKEN ) );
+        forgeClientHandler.setFmlTokenInHandshake(this.getPendingConnection().getExtraDataInHandshake().contains(ForgeConstants.FML_HANDSHAKE_TOKEN));
     }
 
     public void sendPacket(PacketWrapper packet)
@@ -392,33 +412,25 @@ public final class UserConnection implements ProxiedPlayer
     }
 
     @Override
-    public void sendMessage(ChatMessageType position, BaseComponent... message)
-    {
+    public void sendMessage(ChatMessageType position, BaseComponent... message) {
         // transform score components
-        message = ChatComponentTransformer.getInstance().transform( this, message );
-
+        message = ChatComponentTransformer.getInstance().transform(this, message);
         // Action bar doesn't display the new JSON formattings, legacy works - send it using this for now
-        if ( position == ChatMessageType.ACTION_BAR )
-        {
-            sendMessage( position, ComponentSerializer.toString( new TextComponent( BaseComponent.toLegacyText( message ) ) ) );
-        } else
-        {
-            sendMessage( position, ComponentSerializer.toString( message ) );
+        if (position == ChatMessageType.ACTION_BAR) {
+            sendMessage(position, ComponentSerializer.toString(new TextComponent(BaseComponent.toLegacyText(message))));
+        } else {
+            sendMessage(position, ComponentSerializer.toString(message));
         }
     }
 
     @Override
-    public void sendMessage(ChatMessageType position, BaseComponent message)
-    {
-        message = ChatComponentTransformer.getInstance().transform( this, message )[0];
-
+    public void sendMessage(ChatMessageType position, BaseComponent message) {
+        message = ChatComponentTransformer.getInstance().transform(this, message)[0];
         // Action bar doesn't display the new JSON formattings, legacy works - send it using this for now
-        if ( position == ChatMessageType.ACTION_BAR )
-        {
-            sendMessage( position, ComponentSerializer.toString( new TextComponent( BaseComponent.toLegacyText( message ) ) ) );
-        } else
-        {
-            sendMessage( position, ComponentSerializer.toString( message ) );
+        if (position == ChatMessageType.ACTION_BAR) {
+            sendMessage(position, ComponentSerializer.toString(new TextComponent(BaseComponent.toLegacyText(message))));
+        } else {
+            sendMessage(position, ComponentSerializer.toString(message));
         }
     }
 
@@ -590,27 +602,17 @@ public final class UserConnection implements ProxiedPlayer
     }
 
     @Override
-    public void setTabHeader(BaseComponent header, BaseComponent footer)
-    {
-        header = ChatComponentTransformer.getInstance().transform( this, header )[0];
-        footer = ChatComponentTransformer.getInstance().transform( this, footer )[0];
-
-        unsafe().sendPacket( new PlayerListHeaderFooter(
-                ComponentSerializer.toString( header ),
-                ComponentSerializer.toString( footer )
-        ) );
+    public void setTabHeader(BaseComponent header, BaseComponent footer) {
+        header = ChatComponentTransformer.getInstance().transform(this, header)[0];
+        footer = ChatComponentTransformer.getInstance().transform(this, footer)[0];
+        unsafe().sendPacket(new PlayerListHeaderFooter(ComponentSerializer.toString(header), ComponentSerializer.toString(footer)));
     }
 
     @Override
-    public void setTabHeader(BaseComponent[] header, BaseComponent[] footer)
-    {
-        header = ChatComponentTransformer.getInstance().transform( this, header );
-        footer = ChatComponentTransformer.getInstance().transform( this, footer );
-
-        unsafe().sendPacket( new PlayerListHeaderFooter(
-                ComponentSerializer.toString( header ),
-                ComponentSerializer.toString( footer )
-        ) );
+    public void setTabHeader(BaseComponent[] header, BaseComponent[] footer) {
+        header = ChatComponentTransformer.getInstance().transform(this, header);
+        footer = ChatComponentTransformer.getInstance().transform(this, footer);
+        unsafe().sendPacket(new PlayerListHeaderFooter(ComponentSerializer.toString(header), ComponentSerializer.toString(footer)));
     }
 
     @Override

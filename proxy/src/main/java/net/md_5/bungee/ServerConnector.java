@@ -42,24 +42,30 @@ import net.md_5.bungee.protocol.packet.ScoreboardObjective;
 import net.md_5.bungee.protocol.packet.ScoreboardScore;
 import net.md_5.bungee.protocol.packet.SetCompression;
 
-@RequiredArgsConstructor
-public class ServerConnector extends PacketHandler
-{
 
+@RequiredArgsConstructor
+public class ServerConnector extends PacketHandler {
     private final ProxyServer bungee;
+
     private ChannelWrapper ch;
+
     private final UserConnection user;
+
     private final BungeeServerInfo target;
+
     private State thisState = State.LOGIN_SUCCESS;
+
     @Getter
     private ForgeServerHandler handshakeHandler;
+
     private boolean obsolete;
 
-    private enum State
-    {
+    private enum State {
 
-        LOGIN_SUCCESS, ENCRYPT_RESPONSE, LOGIN, FINISHED;
-    }
+        LOGIN_SUCCESS,
+        ENCRYPT_RESPONSE,
+        LOGIN,
+        FINISHED;}
 
     @Override
     public void exception(Throwable t) throws Exception
@@ -153,36 +159,36 @@ public class ServerConnector extends PacketHandler
     }
 
     @Override
-    public void handle(Login login) throws Exception
-    {
-        Preconditions.checkState( thisState == State.LOGIN, "Not expecting LOGIN" );
-
-        ServerConnection server = new ServerConnection( ch, target );
-        ServerConnectedEvent event = new ServerConnectedEvent( user, server );
-        bungee.getPluginManager().callEvent( event );
-
-        ch.write( BungeeCord.getInstance().registerChannels() );
+    public void handle(Login login) throws Exception {
+        Preconditions.checkState(thisState == State.LOGIN, "Not expecting LOGIN");
+        ServerConnection server = new ServerConnection(ch, target);
+        ServerConnectedEvent event = new ServerConnectedEvent(user, server);
+        bungee.getPluginManager().callEvent(event);
+        ch.write(BungeeCord.getInstance().registerChannels());
         Queue<DefinedPacket> packetQueue = target.getPacketQueue();
-        synchronized ( packetQueue )
-        {
-            while ( !packetQueue.isEmpty() )
-            {
-                ch.write( packetQueue.poll() );
-            }
+        synchronized(packetQueue) {
+            while (!packetQueue.isEmpty()) {
+                ch.write(packetQueue.poll());
+            } 
         }
-
-        for ( PluginMessage message : user.getPendingConnection().getRelayMessages() )
-        {
-            ch.write( message );
+        for (PluginMessage message : user.getPendingConnection().getRelayMessages()) {
+            ch.write(message);
         }
-
-        if ( user.getForgeClientHandler().getClientModList() == null && !user.getForgeClientHandler().isHandshakeComplete() ) // Vanilla
-        {
+        // Vanilla
+        if ((user.getForgeClientHandler().getClientModList() == null) && (!user.getForgeClientHandler().isHandshakeComplete())) {
             user.getForgeClientHandler().setHandshakeComplete();
         }
+        //BotFilter
+        if (user.isNeedLogin()) {
+<<<<<<< LEFT
+            user.setNeedLogin( false ); //BotFilter
+            // Once again, first connection
+            user.setClientEntityId( login.getEntityId() );
+            user.setServerEntityId( login.getEntityId() );
 
-        if ( user.isNeedLogin() ) //BotFilter
-        {
+            // Set tab list size, this sucks balls, TODO: what shall we do about packet mutability
+=======
+>>>>>>> RIGHT
             Login modLogin = new Login( login.getEntityId(), login.getGameMode(), (byte) login.getDimension(), login.getDifficulty(),
                     (byte) user.getPendingConnection().getListener().getTabListSize(), login.getLevelType(), login.isReducedDebugInfo() );
 
@@ -192,8 +198,7 @@ public class ServerConnector extends PacketHandler
             DefinedPacket.writeString( bungee.getName() + " (" + bungee.getVersion() + ")", brand );
             user.unsafe().sendPacket( new PluginMessage( "MC|Brand", DefinedPacket.toArray( brand ), handshakeHandler.isServerForge() ) );
             brand.release();
-        } else
-        {
+        } else {
             if ( user.getServer() != null ) //BotFilter
             {
                 user.getServer().setObsolete( true ); //BotFilter
@@ -218,30 +223,23 @@ public class ServerConnector extends PacketHandler
                 this.user.getServer().disconnect( "Quitting" ); //BotFilter
             }
         }
-
         // TODO: Fix this?
-        if ( !user.isActive() )
-        {
-            server.disconnect( "Quitting" );
+        if (!user.isActive()) {
+            server.disconnect("Quitting");
             // Silly server admins see stack trace and die
-            bungee.getLogger().warning( "No client connected for pending server!" );
+            bungee.getLogger().warning("No client connected for pending server!");
             return;
         }
-
         // Add to new server
         // TODO: Move this to the connected() method of DownstreamBridge
-        target.addPlayer( user );
-        user.getPendingConnects().remove( target );
-        user.setServerJoinQueue( null );
-        user.setDimensionChange( false );
-
-        user.setServer( server );
-        ch.getHandle().pipeline().get( HandlerBoss.class ).setHandler( new DownstreamBridge( bungee, user, server ) );
-
-        bungee.getPluginManager().callEvent( new ServerSwitchEvent( user ) );
-
+        target.addPlayer(user);
+        user.getPendingConnects().remove(target);
+        user.setServerJoinQueue(null);
+        user.setDimensionChange(false);
+        user.setServer(server);
+        ch.getHandle().pipeline().get(HandlerBoss.class).setHandler(new DownstreamBridge(bungee, user, server));
+        bungee.getPluginManager().callEvent(new ServerSwitchEvent(user));
         thisState = State.FINISHED;
-
         throw CancelSendSignal.INSTANCE;
     }
 

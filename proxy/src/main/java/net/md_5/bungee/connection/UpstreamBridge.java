@@ -25,20 +25,18 @@ import net.md_5.bungee.protocol.packet.PluginMessage;
 import net.md_5.bungee.protocol.packet.TabCompleteRequest;
 import net.md_5.bungee.protocol.packet.TabCompleteResponse;
 
-public class UpstreamBridge extends PacketHandler
-{
 
+public class UpstreamBridge extends PacketHandler {
     private final ProxyServer bungee;
+
     private final UserConnection con;
 
-    public UpstreamBridge(ProxyServer bungee, UserConnection con)
-    {
+    public UpstreamBridge(ProxyServer bungee, UserConnection con) {
         this.bungee = bungee;
         this.con = con;
-
-        BungeeCord.getInstance().addConnection( con );
+        BungeeCord.getInstance().addConnection(con);
         con.getTabListHandler().onConnect();
-        con.unsafe().sendPacket( BungeeCord.getInstance().registerChannels() );
+        con.unsafe().sendPacket(BungeeCord.getInstance().registerChannels());
     }
 
     @Override
@@ -81,11 +79,9 @@ public class UpstreamBridge extends PacketHandler
     }
 
     @Override
-    public void writabilityChanged(ChannelWrapper channel) throws Exception
-    {
-        if ( con.getServer() != null )
-        {
-            con.getServer().getCh().getHandle().config().setAutoRead( channel.getHandle().isWritable() );
+    public void writabilityChanged(ChannelWrapper channel) throws Exception {
+        if (con.getServer() != null) {
+            con.getServer().getCh().getHandle().config().setAutoRead(channel.getHandle().isWritable());
         }
     }
 
@@ -96,11 +92,9 @@ public class UpstreamBridge extends PacketHandler
     }
 
     @Override
-    public void handle(PacketWrapper packet) throws Exception
-    {
-        if ( con.getServer() != null )
-        {
-            con.getServer().getCh().write( packet );
+    public void handle(PacketWrapper packet) throws Exception {
+        if (con.getServer() != null) {
+            con.getServer().getCh().write(packet);
         }
     }
 
