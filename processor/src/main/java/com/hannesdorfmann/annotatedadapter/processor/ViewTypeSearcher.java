@@ -20,17 +20,22 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
+
 /**
- * Searches for @ViewTypes and collects data about annotated field and surrounding adapter classes
- *
  * @author Hannes Dorfmann
  */
 public class ViewTypeSearcher {
+  @Inject
+  ProcessorMessage logger;
 
-  @Inject ProcessorMessage logger;
-  @Inject TypeHelper typeHelper;
-  @Inject Elements elementUtils;
+  @Inject
+  TypeHelper typeHelper;
+
+  @Inject
+  Elements elementUtils;
+
   @Inject Types typeUtils;
+
   /**
    * Maps the
    */
@@ -41,99 +46,65 @@ public class ViewTypeSearcher {
   }
 
   public void addElementIfNotAlready(Element field) {
-
-    if (isValidField(field) && isFieldInValidClass((VariableElement) field)) {
+    if (isValidField(field) && isFieldInValidClass(((VariableElement) (field)))) {
       Element surroundingClass = field.getEnclosingElement();
-      if (surroundingClass.getModifiers().contains(Modifier.ABSTRACT)) {
-        return; // Skip abstract classes
-      }
       String className = surroundingClass.asType().toString();
       if (classMap.get(className) == null) {
-        classMap.put(className, (TypeElement) surroundingClass);
+        classMap.put(className, ((TypeElement) (surroundingClass)));
       }
     }
   }
 
   private boolean isFieldInValidClass(VariableElement field) {
-
     if (field.getEnclosingElement() == null) {
       logger.error(field, "%s is not in a class", field.getSimpleName());
       return false;
     }
-
     if (field.getEnclosingElement().getKind() != ElementKind.CLASS) {
-      logger.error(field, "Only field in a class can be annotated with @%s (caused by %s in %s)",
-          ViewType.class, field.getSimpleName(), field.getEnclosingElement().asType().toString());
+      logger.error(field, "Only field in a class can be annotated with @%s (caused by %s in %s)", ViewType.class, field.getSimpleName(), field.getEnclosingElement().asType().toString());
       return false;
     }
-
-    if (typeHelper.isOfType(field.getEnclosingElement(),
-        AbsListViewAnnotatedAdapter.class.getCanonicalName())) {
+    if (typeHelper.isOfType(field.getEnclosingElement(), AbsListViewAnnotatedAdapter.class.getCanonicalName())) {
       return true;
     }
-
-    if (typeHelper.isOfType(field.getEnclosingElement(),
-        AnnotatedAdapter.class.getCanonicalName())) {
+    if (typeHelper.isOfType(field.getEnclosingElement(), AnnotatedAdapter.class.getCanonicalName())) {
       return true;
     }
-
     // Failing
-    logger.error(field, "The class with @%s annotations must extend from %s or %s",
-        ViewType.class.getSimpleName(), AnnotatedAdapter.class.getCanonicalName(),
-        AbsListViewAnnotatedAdapter.class.getCanonicalName());
-
+    logger.error(field, "The class with @%s annotations must extend from %s or %s", ViewType.class.getSimpleName(), AnnotatedAdapter.class.getCanonicalName(), AbsListViewAnnotatedAdapter.class.getCanonicalName());
     return false;
   }
 
   private boolean isValidField(Element element) {
-
     if (element.getKind() == ElementKind.FIELD) {
-
       // Check if its public
       if (!element.getModifiers().contains(Modifier.PUBLIC)) {
-        logger.error(element, "%s in %s is not public. Only final integer fields with public "
-                + "visibility can be annotated with @%s.", element.getSimpleName(),
-            element.getEnclosingElement().getSimpleName(), ViewType.class.getSimpleName());
+        logger.error(element, "%s in %s is not public. Only final integer fields with public " + "visibility can be annotated with @%s.", element.getSimpleName(), element.getEnclosingElement().getSimpleName(), ViewType.class.getSimpleName());
         return false;
       }
-
       // Check if its final
       if (!element.getModifiers().contains(Modifier.FINAL)) {
-        logger.error(element,
-            "%s in %s is not final. Only final integer fields can be annotated with @%s.",
-            element.getSimpleName(), element.getEnclosingElement().getSimpleName(),
-            ViewType.class.getSimpleName());
+        logger.error(element, "%s in %s is not final. Only final integer fields can be annotated with @%s.", element.getSimpleName(), element.getEnclosingElement().getSimpleName(), ViewType.class.getSimpleName());
         return false;
       }
-
       // Check if its an int
       if (element.asType().getKind() != TypeKind.INT) {
-        logger.error(element,
-            "%s in %s is not a integer. Only final public integer fields can be annotated with @%s.",
-            element.getSimpleName(), element.getEnclosingElement().getSimpleName(),
-            ViewType.class.getSimpleName());
-
+        logger.error(element, "%s in %s is not a integer. Only final public integer fields can be annotated with @%s.", element.getSimpleName(), element.getEnclosingElement().getSimpleName(), ViewType.class.getSimpleName());
         return false;
       }
-
       // Everything is ok, its a valid integer
       return true;
     } else {
-      logger.error(element, "@%s can only be applied on integer fields. %s is not a field",
-          ViewType.class.getSimpleName(), element.getSimpleName());
+      logger.error(element, "@%s can only be applied on integer fields. %s is not a field", ViewType.class.getSimpleName(), element.getSimpleName());
       return false;
     }
   }
 
   private boolean isValidAnnotation(Element element, ViewType annotation) {
-
     if (annotation.model().length > 1) {
-      logger.error(element,
-          "The field %s in %s annotated with @%s has specified a more than one model. Please specify exactly one model or don't set this annotation",
-          element.getSimpleName(), element.asType().toString(), ViewType.class.getSimpleName());
+      logger.error(element, "The field %s in %s annotated with @%s has specified a more than one model. Please specify exactly one model or don't set this annotation", element.getSimpleName(), element.asType().toString(), ViewType.class.getSimpleName());
       return false;
     }
-
     return true;
   }
 
@@ -160,7 +131,7 @@ public class ViewTypeSearcher {
             + "Make %s extends one of those adapter classes", adapterClass.getSimpleName(),
         ViewType.class.getSimpleName(), AnnotatedAdapter.class.getCanonicalName(),
         AbsListViewAnnotatedAdapter.class.getCanonicalName(), adapterClass.getSimpleName());
-
+    
     return null;
   }
 
@@ -168,26 +139,26 @@ public class ViewTypeSearcher {
    * Get all the classes that have annoatated fields
    */
   public List<AdapterInfo> getAdapterInfos() {
-
     List<AdapterInfo> adapterInfos = new ArrayList<AdapterInfo>();
-
     for (TypeElement element : classMap.values()) {
-
+<<<<<<< LEFT
       AdapterInfo.AdapterType adapterType = isValidAdapterClass(element);
 
       AdapterInfo adapterInfo = new AdapterInfo(element, adapterType);
-      adapterInfos.add(adapterInfo);
+=======
+      AdapterInfo adapterInfo = new AdapterInfo(element);
+>>>>>>> RIGHT
 
+      adapterInfos.add(adapterInfo);
       for (Element field : elementUtils.getAllMembers(element)) {
         if (field.getKind().isField()) {
           ViewType annotation = field.getAnnotation(ViewType.class);
-          if (annotation != null && isValidAnnotation(field, annotation)) {
+          if ((annotation != null) && isValidAnnotation(field, annotation)) {
             adapterInfo.addViewTypeInfo(new ViewTypeInfo(field, annotation));
           }
         }
       }
     }
-
     return adapterInfos;
   }
 }
