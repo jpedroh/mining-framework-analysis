@@ -16,7 +16,6 @@
  * 
  * For more information about OpenPnP visit http://openpnp.org
  */
-
 package org.openpnp.machine.reference;
 
 import java.awt.Color;
@@ -26,11 +25,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
-
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -44,8 +41,8 @@ import org.opencv.imgproc.Imgproc;
 import org.openpnp.ConfigurationListener;
 import org.openpnp.gui.MainFrame;
 import org.openpnp.gui.components.CameraPanel;
-import org.openpnp.gui.components.CameraView;
 import org.openpnp.gui.components.CameraView.RenderingQuality;
+import org.openpnp.gui.components.CameraView;
 import org.openpnp.gui.support.Icons;
 import org.openpnp.gui.support.PropertySheetWizardAdapter;
 import org.openpnp.gui.wizards.CameraConfigurationWizard;
@@ -64,9 +61,9 @@ import org.openpnp.model.Configuration;
 import org.openpnp.model.Length;
 import org.openpnp.model.LengthUnit;
 import org.openpnp.model.Location;
-import org.openpnp.model.Solutions;
 import org.openpnp.model.Solutions.Milestone;
 import org.openpnp.model.Solutions.Severity;
+import org.openpnp.model.Solutions;
 import org.openpnp.spi.Actuator;
 import org.openpnp.spi.Camera;
 import org.openpnp.spi.FocusProvider;
@@ -76,14 +73,15 @@ import org.openpnp.util.Collect;
 import org.openpnp.util.OpenCvUtils;
 import org.openpnp.util.SimpleGraph;
 import org.openpnp.util.UiUtils;
-import org.openpnp.vision.LensCalibration;
 import org.openpnp.vision.LensCalibration.LensModel;
 import org.openpnp.vision.LensCalibration.Pattern;
+import org.openpnp.vision.LensCalibration;
 import org.pmw.tinylog.Logger;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.core.Commit;
 import org.simpleframework.xml.core.Persist;
+
 
 public abstract class ReferenceCamera extends AbstractBroadcastingCamera implements ReferenceHeadMountable {
     static {
@@ -131,22 +129,22 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
     protected int scaleHeight = 0;
 
     @Attribute(required = false)
-    protected double redBalance = 1.0; 
+    protected double redBalance = 1.0;
 
     @Attribute(required = false)
-    protected double greenBalance = 1.0; 
+    protected double greenBalance = 1.0;
 
     @Attribute(required = false)
-    protected double blueBalance = 1.0; 
+    protected double blueBalance = 1.0;
 
     @Attribute(required = false)
-    protected double redGamma = 1.0; 
+    protected double redGamma = 1.0;
 
     @Attribute(required = false)
-    protected double greenGamma = 1.0; 
+    protected double greenGamma = 1.0;
 
     @Attribute(required = false)
-    protected double blueGamma = 1.0; 
+    protected double blueGamma = 1.0;
 
     @Attribute(required = false)
     protected boolean deinterlace;
@@ -158,7 +156,8 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
     private AdvancedCalibration advancedCalibration = new AdvancedCalibration();
 
     @Attribute(required = false)
-    private String lightActuatorId; 
+    private String lightActuatorId;
+
     @Attribute(required = false)
     private boolean allowMachineActuators = false;
 
@@ -176,18 +175,23 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
 
     @Element(required = false)
     private double[] redColorMap;
+
     @Element(required = false)
     private double[] greenColorMap;
+
     @Element(required = false)
     private double[] blueColorMap;
 
-
     private boolean calibrating;
+
     private CalibrationCallback calibrationCallback;
+
     private int calibrationCountGoal = 25;
 
     private Mat undistortionMap1;
+
     private Mat undistortionMap2;
+
     private Mat lut;
 
     private LensCalibration lensCalibration;
@@ -195,17 +199,16 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
     private Actuator lightActuator;
 
     public enum FocusSensingMethod {
+
         None,
-        AutoFocus
-    }
+        AutoFocus;}
 
     public ReferenceCamera() {
         super();
         Configuration.get().addListener(new ConfigurationListener.Adapter() {
-
             @Override
             public void configurationLoaded(Configuration configuration) throws Exception {
-                // We don't have access to machine or head here. So we need to scan them all. 
+                // We don't have access to machine or head here. So we need to scan them all.
                 // I'm sure there is a better solution.
                 Machine machine = configuration.getMachine();
                 lightActuator = machine.getActuator(lightActuatorId);
@@ -217,7 +220,7 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
             }
         });
     }
-    
+
     /**
      * Captures an image using captureTransformed() and performs scripting and lighting events
      * before and after the capture.
@@ -234,7 +237,7 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
         Configuration.get().getScripting().on("Camera.AfterCapture", globals);
         return image;
     }
-    
+
     /**
      * Captures an image using captureRaw(), applies local transformations and returns the image.
      */
@@ -242,7 +245,7 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
     public BufferedImage captureTransformed() {
         return transformImage(captureRaw());
     }
-    
+
     /**
      * Captures an image using safeInternalCapture() and returns it without any transformations
      * applied.
@@ -259,7 +262,7 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
     }
 
     protected abstract BufferedImage internalCapture();
-    
+
     /**
      * Wraps internalCapture() to ensure that a null image is never returned. Attempts to
      * retry capture if the capture returns null and if no image can be captured returns a
@@ -328,49 +331,33 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
 
     @Override
     public Location getHeadOffsets() {
-        if (advancedCalibration.isOverridingOldTransformsAndDistortionCorrectionSettings() && 
-                advancedCalibration.isValid()) {
+        if (advancedCalibration.isOverridingOldTransformsAndDistortionCorrectionSettings() && advancedCalibration.isValid()) {
             Head head = getHead();
             if (head == null) {
-                //For fixed cameras, the head offset is the horizontal location of the 
-                //associated virtual camera and the vertical location set by auto focus
+                // For fixed cameras, the head offset is the horizontal location of the
+                // associated virtual camera and the vertical location set by auto focus
                 Location uncalibratedHeadOffsets = getUncalibratedHeadOffsets().convertToUnits(LengthUnit.Millimeters);
-                return new Location(LengthUnit.Millimeters, 
-                        advancedCalibration.getVectorFromMachToVirCamInMachRefFrame().get(0, 0)[0],
-                        advancedCalibration.getVectorFromMachToVirCamInMachRefFrame().get(1, 0)[0],
-                        uncalibratedHeadOffsets.getZ(), 0);
-            }
-            else {
-                //For movable cameras, the head offset is the location of the associated virtual
-                //camera relative to the default camera's associated virtual camera plus the default
-                //camera's uncalibrated head offset (which is usually zero)
+                return new Location(LengthUnit.Millimeters, advancedCalibration.getVectorFromMachToVirCamInMachRefFrame().get(0, 0)[0], advancedCalibration.getVectorFromMachToVirCamInMachRefFrame().get(1, 0)[0], uncalibratedHeadOffsets.getZ(), 0);
+            } else {
+                // For movable cameras, the head offset is the location of the associated virtual
+                // camera relative to the default camera's associated virtual camera plus the default
+                // camera's uncalibrated head offset (which is usually zero)
                 ReferenceCamera defaultCamera = null;
                 try {
-                    defaultCamera = (ReferenceCamera)head.getDefaultCamera();
-                }
-                catch (Exception e) {
+                    defaultCamera = ((ReferenceCamera) (head.getDefaultCamera()));
+                } catch (java.lang.Exception e) {
                     if (e instanceof ClassCastException) {
-                        //TODO - need to figure out what to do if the default camera is not a 
-                        //ReferenceCamera - should advancedCalibration be moved to AbstractCamera???
+                        // TODO - need to figure out what to do if the default camera is not a
+                        // ReferenceCamera - should advancedCalibration be moved to AbstractCamera???
                     }
                     Logger.trace(e);
                 }
-                if (defaultCamera != null && defaultCamera.getAdvancedCalibration().isValid()) {
+                if ((defaultCamera != null) && defaultCamera.getAdvancedCalibration().isValid()) {
                     AdvancedCalibration defCameraAdvCal = defaultCamera.getAdvancedCalibration();
-                    Location defCameraUncalibratedHeadOffsets = defaultCamera.
-                            getUncalibratedHeadOffsets().convertToUnits(LengthUnit.Millimeters);
+                    Location defCameraUncalibratedHeadOffsets = defaultCamera.getUncalibratedHeadOffsets().convertToUnits(LengthUnit.Millimeters);
                     Mat vectorFromDefaultVirCamToVirCamInMachRefFrame = new Mat();
-                    Core.subtract(advancedCalibration.getVectorFromMachToVirCamInMachRefFrame(), 
-                            defCameraAdvCal.getVectorFromMachToVirCamInMachRefFrame(), 
-                            vectorFromDefaultVirCamToVirCamInMachRefFrame);
-                    Location offset = new Location(LengthUnit.Millimeters,
-                            vectorFromDefaultVirCamToVirCamInMachRefFrame.get(0, 0)[0] + 
-                                defCameraUncalibratedHeadOffsets.getX(), 
-                            vectorFromDefaultVirCamToVirCamInMachRefFrame.get(1, 0)[0] + 
-                                defCameraUncalibratedHeadOffsets.getY(), 
-                            vectorFromDefaultVirCamToVirCamInMachRefFrame.get(2, 0)[0] + 
-                                defCameraUncalibratedHeadOffsets.getZ(),
-                            0);
+                    Core.subtract(advancedCalibration.getVectorFromMachToVirCamInMachRefFrame(), defCameraAdvCal.getVectorFromMachToVirCamInMachRefFrame(), vectorFromDefaultVirCamToVirCamInMachRefFrame);
+                    Location offset = new Location(LengthUnit.Millimeters, vectorFromDefaultVirCamToVirCamInMachRefFrame.get(0, 0)[0] + defCameraUncalibratedHeadOffsets.getX(), vectorFromDefaultVirCamToVirCamInMachRefFrame.get(1, 0)[0] + defCameraUncalibratedHeadOffsets.getY(), vectorFromDefaultVirCamToVirCamInMachRefFrame.get(2, 0)[0] + defCameraUncalibratedHeadOffsets.getZ(), 0);
                     vectorFromDefaultVirCamToVirCamInMachRefFrame.release();
                     return offset;
                 }
@@ -378,7 +365,7 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
         }
         return headOffsets;
     }
-    
+
     @Override
     public void setHeadOffsets(Location headOffsets) {
         this.headOffsets = headOffsets;
@@ -388,7 +375,7 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
     public Location getUncalibratedHeadOffsets() {
         return headOffsets;
     }
-    
+
     @Override
     public void home() throws Exception {
     }
@@ -520,7 +507,6 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
         cameraViewHasChanged(null);
     }
 
-
     public double getRedGamma() {
         return redGamma;
     }
@@ -569,9 +555,7 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
     }
 
     public boolean isWhiteBalanced() {
-        return redBalance != 1.0 || greenBalance != 1.0 || blueBalance != 1.0
-                || redGamma != 1.0 || greenGamma != 1.0 || blueGamma != 1.0
-                || (redColorMap != null & blueColorMap != null & greenColorMap != null); 
+        return ((((((redBalance != 1.0) || (greenBalance != 1.0)) || (blueBalance != 1.0)) || (redGamma != 1.0)) || (greenGamma != 1.0)) || (blueGamma != 1.0)) || (((redColorMap != null) & (blueColorMap != null)) & (greenColorMap != null));
     }
 
     @Override
@@ -617,57 +601,33 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
             if (image == null) {
                 return null;
             }
-
             if (advancedCalibration.isOverridingOldTransformsAndDistortionCorrectionSettings()) {
-                //Skip all the old style image transforms and distortion corrections except for 
-                //deinterlacing and cropping
-                if (isDeinterlaced() || isCropped() || advancedCalibration.isEnabled()) {
+                // Skip all the old style image transforms and distortion corrections except for
+                // deinterlacing and cropping
+                if ((isDeinterlaced() || isCropped()) || advancedCalibration.isEnabled()) {
                     Mat mat = OpenCvUtils.toMat(image);
                     mat = deinterlace(mat);
                     mat = crop(mat);
                     if (advancedCalibration.isEnabled()) {
-                        //Use the new advanced image transformation and distortion correction
+                        // Use the new advanced image transformation and distortion correction
                         mat = advancedUndistort(mat);
                     }
                     mat = whiteBalance(mat);
                     image = OpenCvUtils.toBufferedImage(mat);
                     mat.release();
                 }
-            }
-            // Old style of image transforms and distortion correction
-            // We do skip the convert to and from Mat if no transforms are needed.
-            // But we must enter while performing original calibration.
-            else if (isDeinterlaced()
-                || isCropped() 
-                || isCalibrating()
-                || isUndistorted()
-                || isScaled()
-                || isRotated()
-                || isOffset()
-                || isFlipped()
-                || isWhiteBalanced()) {
-
+            } else if (((((((((isDeinterlaced() || isCropped()) || isWhiteBalanced()) || isCalibrating()) || isUndistorted()) || isScaled()) || isRotated()) || isOffset()) || isFlipped()) || isWhiteBalanced()) {
                 Mat mat = OpenCvUtils.toMat(image);
-
                 mat = deinterlace(mat);
-
                 mat = crop(mat);
-
                 mat = whiteBalance(mat);
-
                 mat = calibrate(mat);
-
                 mat = undistort(mat);
-
                 // apply affine transformations
                 mat = scale(mat);
-
                 mat = rotate(mat);
-
                 mat = offset(mat);
-
                 mat = flip(mat);
-
                 image = OpenCvUtils.toBufferedImage(mat);
                 mat.release();
             }
@@ -677,8 +637,7 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
                 height = image.getHeight();
                 setLastTransformedImage(image);
             }
-        }
-        catch (Exception e) {
+        } catch (java.lang.Exception e) {
             Logger.error(e);
         }
         return image;
@@ -687,15 +646,13 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
     @Override
     public Location getUnitsPerPixel(Length viewingPlaneZ) {
         if (advancedCalibration.isOverridingOldTransformsAndDistortionCorrectionSettings()) {
-            //If using advance calibration but it is not valid, we could just return the upp set 
-            //by the super but it is safer to just return zero as this will keep the operator from
-            //doing a camera drag jog with potentially unexpected results
+            // If using advance calibration but it is not valid, we could just return the upp set
+            // by the super but it is safer to just return zero as this will keep the operator from
+            // doing a camera drag jog with potentially unexpected results
             double upp = 0;
             if (advancedCalibration.isValid()) {
-                upp = advancedCalibration.getDistanceToCameraAtZ(viewingPlaneZ).
-                            convertToUnits(LengthUnit.Millimeters).getValue() / 
-                            advancedCalibration.getVirtualCameraMatrix().get(0, 0)[0];
-                upp = Double.isFinite(upp) ? upp : 0;
+                upp = advancedCalibration.getDistanceToCameraAtZ(viewingPlaneZ).convertToUnits(LengthUnit.Millimeters).getValue() / advancedCalibration.getVirtualCameraMatrix().get(0, 0)[0];
+                upp = (Double.isFinite(upp)) ? upp : 0;
             }
             return new Location(LengthUnit.Millimeters, upp, upp, 0, 0);
         }
@@ -703,22 +660,19 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
     }
 
     private Mat advancedUndistort(Mat mat) {
-        if (undistortionMap1 == null || undistortionMap2 == null) {
+        if ((undistortionMap1 == null) || (undistortionMap2 == null)) {
             undistortionMap1 = new Mat();
             undistortionMap2 = new Mat();
-            advancedCalibration.initUndistortRectifyMap(mat.size(), 
-                    undistortionMap1, undistortionMap2);
+            advancedCalibration.initUndistortRectifyMap(mat.size(), undistortionMap1, undistortionMap2);
         }
-        
         Mat dst = mat.clone();
         Imgproc.remap(mat, dst, undistortionMap1, undistortionMap2, Imgproc.INTER_LINEAR);
         mat.release();
-
         return dst;
     }
 
     private Mat whiteBalance(Mat mat) {
-        if (isWhiteBalanced() && mat.channels() == 3) {
+        if (isWhiteBalanced() && (mat.channels() == 3)) {
             initWhiteBalanceLut();
             Mat whiteBalanced = new Mat();
             Core.LUT(mat, lut, whiteBalanced);
@@ -732,37 +686,36 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
         if (lut == null) {
             byte[] data = new byte[3];
             lut = new Mat(256, 1, CvType.CV_8UC3);
-            if (redColorMap != null & blueColorMap != null & greenColorMap != null) {
+            if (((redColorMap != null) & (blueColorMap != null)) & (greenColorMap != null)) {
                 final int levels = redColorMap.length;
-                final int range = 256/levels;
-                final int halfRange = range/2;
+                final int range = 256 / levels;
+                final int halfRange = range / 2;
                 for (int i = 0; i < 256; i++) {
                     // Indexed BGR.
-                    int level1 = (i+halfRange)/range;
+                    int level1 = (i + halfRange) / range;
                     int level0 = level1 - 1;
-                    double weight1 = ((i + halfRange) % range)/(double)range; 
+                    double weight1 = ((i + halfRange) % range) / ((double) (range));
                     double weight0 = 1.0 - weight1;
                     if (level0 < 0) {
                         level0 = 0;
                         weight0 = -weight0;
                     }
                     if (level1 >= levels) {
-                        level1 = levels-2;
-                        weight0 += 2*weight1; 
+                        level1 = levels - 2;
+                        weight0 += 2 * weight1;
                         weight1 = -weight1;
                     }
-                    data[2] = (byte)Math.max(0, Math.min(255, (redColorMap[level0]*weight0 + redColorMap[level1]*weight1)*255.0));
-                    data[1] = (byte)Math.max(0, Math.min(255, (greenColorMap[level0]*weight0 + greenColorMap[level1]*weight1)*255.0));
-                    data[0] = (byte)Math.max(0, Math.min(255, (blueColorMap[level0]*weight0 + blueColorMap[level1]*weight1)*255.0));
+                    data[2] = ((byte) (Math.max(0, Math.min(255, ((redColorMap[level0] * weight0) + (redColorMap[level1] * weight1)) * 255.0))));
+                    data[1] = ((byte) (Math.max(0, Math.min(255, ((greenColorMap[level0] * weight0) + (greenColorMap[level1] * weight1)) * 255.0))));
+                    data[0] = ((byte) (Math.max(0, Math.min(255, ((blueColorMap[level0] * weight0) + (blueColorMap[level1] * weight1)) * 255.0))));
                     lut.put(i, 0, data);
                 }
-            }
-            else {
+            } else {
                 for (int i = 0; i < 256; i++) {
                     // Indexed BGR.
-                    data[2] = (byte)Math.min(255, Math.pow(i/255.0*redBalance, 1/redGamma)*255.0);
-                    data[1] = (byte)Math.min(255, Math.pow(i/255.0*greenBalance, 1/greenGamma)*255.0);
-                    data[0] = (byte)Math.min(255, Math.pow(i/255.0*blueBalance, 1/blueGamma)*255.0);
+                    data[2] = ((byte) (Math.min(255, Math.pow((i / 255.0) * redBalance, 1 / redGamma) * 255.0)));
+                    data[1] = ((byte) (Math.min(255, Math.pow((i / 255.0) * greenBalance, 1 / greenGamma) * 255.0)));
+                    data[0] = ((byte) (Math.min(255, Math.pow((i / 255.0) * blueBalance, 1 / blueGamma) * 255.0)));
                     lut.put(i, 0, data);
                 }
             }
@@ -777,62 +730,57 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
         // Calculate the histogram.
         long[][] histogram = computeImageHistogram(image);
         // Analyze the percentiles.
-        long pixels = image.getHeight()*image.getWidth();
-        double percentileGamma[] = new double[3];
-        double percentileLead[] = new double[3];
-        double percentileClip[] = new double[3];
-        double sum[] = new double[3];
-        double n[] = new double[3];
+        long pixels = image.getHeight() * image.getWidth();
+        double[] percentileGamma = new double[3];
+        double[] percentileLead = new double[3];
+        double[] percentileClip = new double[3];
+        double[] sum = new double[3];
+        double[] n = new double[3];
         for (int ch = 0; ch < 3; ch++) {
             long accumulated = 0;
             for (int bin = 0; bin < 256; bin++) {
                 long value = histogram[ch][bin];
                 accumulated += value;
-                if (accumulated < pixels*0.5) {
+                if (accumulated < (pixels * 0.5)) {
                     percentileGamma[ch] = bin;
                 }
-                if (accumulated < pixels*whiteBalanceLeadFractile) {
+                if (accumulated < (pixels * whiteBalanceLeadFractile)) {
                     percentileLead[ch] = bin;
-                }
-                else {
-                    sum[ch] += bin*value;
+                } else {
+                    sum[ch] += bin * value;
                     n[ch] += value;
                 }
-                if (accumulated < pixels*whiteBalanceClipFractile) {
+                if (accumulated < (pixels * whiteBalanceClipFractile)) {
                     percentileClip[ch] = bin;
                 }
             }
             sum[ch] /= n[ch];
         }
         // Adapt the other channels to the one with the highest signal in the result.
-        double resultLead[] = averaged ? sum : percentileLead;
+        double[] resultLead = (averaged) ? sum : percentileLead;
         double lead = Math.max(Math.max(resultLead[0], resultLead[1]), resultLead[2]);
         if (lead < 32) {
-            throw new Exception("The camera "+getName()+" exposure is too low!");
+            throw new Exception(("The camera " + getName()) + " exposure is too low!");
         }
-
-        double r = lead/resultLead[0];
-        double g = lead/resultLead[1];
-        double b = lead/resultLead[2];
-
+        double r = lead / resultLead[0];
+        double g = lead / resultLead[1];
+        double b = lead / resultLead[2];
         // We do not: Norm to the maximum clip percentile, but never amplify.
-        double clip = 1.0; //Math.max(1.0, Math.max(Math.max(r*percentileClip[0], g*percentileClip[1]), b*percentileClip[2])/255.0);
+        double clip = 1.0;// Math.max(1.0, Math.max(Math.max(r*percentileClip[0], g*percentileClip[1]), b*percentileClip[2])/255.0);
 
         // Set the new balance.
-        setRedBalance(r/clip);
-        setGreenBalance(g/clip);
-        setBlueBalance(b/clip);
-        
+        setRedBalance(r / clip);
+        setGreenBalance(g / clip);
+        setBlueBalance(b / clip);
         // Scale the gamma percentile.
-        percentileGamma[0] *= r/clip/255; 
-        percentileGamma[1] *= g/clip/255; 
-        percentileGamma[2] *= b/clip/255;
-        
+        percentileGamma[0] *= (r / clip) / 255;
+        percentileGamma[1] *= (g / clip) / 255;
+        percentileGamma[2] *= (b / clip) / 255;
         // Make them match.
-        double midGamma = (percentileGamma[0] + percentileGamma[1] + percentileGamma[2])/3;
-        setRedGamma(Math.log(percentileGamma[0])/Math.log(midGamma));
-        setGreenGamma(Math.log(percentileGamma[1])/Math.log(midGamma));
-        setBlueGamma(Math.log(percentileGamma[2])/Math.log(midGamma));
+        double midGamma = ((percentileGamma[0] + percentileGamma[1]) + percentileGamma[2]) / 3;
+        setRedGamma(Math.log(percentileGamma[0]) / Math.log(midGamma));
+        setGreenGamma(Math.log(percentileGamma[1]) / Math.log(midGamma));
+        setBlueGamma(Math.log(percentileGamma[2]) / Math.log(midGamma));
     }
 
     protected long[][] computeImageHistogram(BufferedImage image) {
@@ -857,20 +805,20 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
         // Capture.
         BufferedImage image = lightSettleAndCapture();
         // Map the balance on various levels.
-        final int range = 256/levels;
-        final int halfRange = range/2;
-        final int clip = 254; 
+        final int range = 256 / levels;
+        final int halfRange = range / 2;
+        final int clip = 254;
         final int balanceLimit = 4;
         long[][] histogram = computeImageHistogram(image);
-        double lead[] = new double[3];
-        long pixels = image.getHeight()*image.getWidth();
+        double[] lead = new double[3];
+        long pixels = image.getHeight() * image.getWidth();
         int fractileLead = 0;
         for (int ch = 0; ch < 3; ch++) {
             long accumulated = 0;
             for (int bin = 0; bin < 256; bin++) {
                 long value = histogram[ch][bin];
                 accumulated += value;
-                if (accumulated > pixels*whiteBalanceLeadFractile) {
+                if (accumulated > (pixels * whiteBalanceLeadFractile)) {
                     lead[ch] = bin;
                     if (bin > fractileLead) {
                         fractileLead = bin;
@@ -879,8 +827,8 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
                 }
             }
         }
-        double amplify = fractileLead*3.0/(lead[0] + lead[1] + lead[2]);
-        long[][][] histogramAtLevel = new long[3][levels][255+range];
+        double amplify = (fractileLead * 3.0) / ((lead[0] + lead[1]) + lead[2]);
+        long[][][] histogramAtLevel = new long[3][levels][255 + range];
         long[][] counts = new long[3][levels];
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
@@ -888,41 +836,41 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
                 int r = (rgb >> 16) & 0xff;
                 int g = (rgb >> 8) & 0xff;
                 int b = (rgb >> 0) & 0xff;
-                int lum = ((r >= clip || g >= clip || b >= clip) ? 255 // clip all when one is clipped 
-                        : (int)(amplify*(r+g+b)/3));
+                int lum = (((r >= clip) || (g >= clip)) || (b >= clip)) ? 255// clip all when one is clipped
+                 : ((int) ((amplify * ((r + g) + b)) / 3));
                 if (lum >= 1) {
-                    if (r >= 1 && lum/r < balanceLimit && r/lum < balanceLimit) {
-                        int level = r/range;
-                        int midLevel = level*range+halfRange;
-                        histogramAtLevel[0][level][Math.min(255, midLevel*lum/r)]++;
+                    if (((r >= 1) && ((lum / r) < balanceLimit)) && ((r / lum) < balanceLimit)) {
+                        int level = r / range;
+                        int midLevel = (level * range) + halfRange;
+                        histogramAtLevel[0][level][Math.min(255, (midLevel * lum) / r)]++;
                         counts[0][level]++;
                     }
-                    if (g >= 1 && lum/g < balanceLimit && g/lum < balanceLimit) {
-                        int level = g/range;
-                        int midLevel = level*range+halfRange;
-                        histogramAtLevel[1][level][Math.min(255, midLevel*lum/g)]++;
+                    if (((g >= 1) && ((lum / g) < balanceLimit)) && ((g / lum) < balanceLimit)) {
+                        int level = g / range;
+                        int midLevel = (level * range) + halfRange;
+                        histogramAtLevel[1][level][Math.min(255, (midLevel * lum) / g)]++;
                         counts[1][level]++;
                     }
-                    if (b >= 1 && lum/b < balanceLimit && b/lum < balanceLimit) {
-                        int level = b/range;
-                        int midLevel = level*range+halfRange;
-                        histogramAtLevel[2][level][Math.min(255, midLevel*lum/b)]++;
+                    if (((b >= 1) && ((lum / b) < balanceLimit)) && ((b / lum) < balanceLimit)) {
+                        int level = b / range;
+                        int midLevel = (level * range) + halfRange;
+                        histogramAtLevel[2][level][Math.min(255, (midLevel * lum) / b)]++;
                         counts[2][level]++;
                     }
                 }
             }
         }
         // Map the colors.
-        double [][] colorMap = new double[3][levels];
+        double[][] colorMap = new double[3][levels];
         for (int ch = 0; ch < 3; ch++) {
             for (int level = 0; level < levels; level++) {
-                long median = counts[ch][level]/2;
+                long median = counts[ch][level] / 2;
                 long accumulated = 0;
                 for (int bin = 0; bin < 256; bin++) {
                     long value = histogramAtLevel[ch][level][bin];
                     accumulated += value;
                     if (accumulated > median) {
-                        colorMap[ch][level] = bin/255.0;
+                        colorMap[ch][level] = bin / 255.0;
                         break;
                     }
                 }
@@ -930,31 +878,25 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
             // Sanity check
             for (int level = 1; level < levels; level++) {
                 if (level == levels) {
-                    if (colorMap[ch][level] > colorMap[ch][level+1]) {
+                    if (colorMap[ch][level] > colorMap[ch][level + 1]) {
                         // extrapolate
-                        colorMap[ch][level] = (colorMap[ch][level+1]*3 - colorMap[ch][level+2])/2;
+                        colorMap[ch][level] = ((colorMap[ch][level + 1] * 3) - colorMap[ch][level + 2]) / 2;
                     }
-                }
-                else if (colorMap[ch][level-1] > colorMap[ch][level]) {
-                    if (level+1 >= levels) {
+                } else if (colorMap[ch][level - 1] > colorMap[ch][level]) {
+                    if ((level + 1) >= levels) {
                         // extrapolate
-                        colorMap[ch][level] = (colorMap[ch][level-1]*3 - colorMap[ch][level-2])/2;
-                    }
-                    else {
-                        if (colorMap[ch][level-1] > colorMap[ch][level+1]) {
-                            throw new Exception("Image does not contain grayscales at level "+100*level/levels+" ... "+100*(level+1)/levels+"%.");
-//                            colorMap[ch][level] = colorMap[ch][level-1];
-                        }
-                        else {
+                        colorMap[ch][level] = ((colorMap[ch][level - 1] * 3) - colorMap[ch][level - 2]) / 2;
+                    } else if (colorMap[ch][level - 1] > colorMap[ch][level + 1]) {
+                        throw new Exception(((("Image does not contain grayscales at level " + ((100 * level) / levels)) + " ... ") + ((100 * (level + 1)) / levels)) + "%.");
+                        // colorMap[ch][level] = colorMap[ch][level-1];
+                    } else {
                         // Simply interpolate.
-                        colorMap[ch][level] = (colorMap[ch][level-1] + colorMap[ch][level+1])/2;
-                        }
+                        colorMap[ch][level] = (colorMap[ch][level - 1] + colorMap[ch][level + 1]) / 2;
                     }
                 }
             }
         }
-
-        // As an approximation, compute the parametric white balance (as sort of feedback 
+        // As an approximation, compute the parametric white balance (as sort of feedback
         // for the user, and starting point for manual override).
         autoAdjustWhiteBalance(false);
         // But immediately reset the maps and LUT.
@@ -1122,7 +1064,7 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
     protected boolean isOffset() {
         return offsetX != 0D || offsetY != 0D;
     }
-    
+
     private Mat scale(Mat mat) {
         if (!isScaled()) {
             return mat;
@@ -1141,22 +1083,16 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
         if (!isUndistorted()) {
             return mat;
         }
-
-        if (undistortionMap1 == null || undistortionMap2 == null) {
+        if ((undistortionMap1 == null) || (undistortionMap2 == null)) {
             undistortionMap1 = new Mat();
             undistortionMap2 = new Mat();
             Mat rectification = Mat.eye(3, 3, CvType.CV_32F);
-            Calib3d.initUndistortRectifyMap(calibration.getCameraMatrixMat(),
-                    calibration.getDistortionCoefficientsMat(), rectification,
-                    calibration.getCameraMatrixMat(), mat.size(), CvType.CV_32FC1, undistortionMap1,
-                    undistortionMap2);
+            Calib3d.initUndistortRectifyMap(calibration.getCameraMatrixMat(), calibration.getDistortionCoefficientsMat(), rectification, calibration.getCameraMatrixMat(), mat.size(), CvType.CV_32FC1, undistortionMap1, undistortionMap2);
             rectification.release();
         }
-
         Mat dst = mat.clone();
         Imgproc.remap(mat, dst, undistortionMap1, undistortionMap2, Imgproc.INTER_LINEAR);
         mat.release();
-
         return dst;
     }
 
@@ -1193,41 +1129,32 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
         if (!isCalibrating()) {
             return mat;
         }
-
         // Get the number of images counted so far.
         int count = lensCalibration.getPatternFoundCount();
-
         // Submit an image for counting. If it is good the count will increase.
         Mat appliedMat = lensCalibration.apply(mat);
         if (appliedMat == null) {
             // nothing was found in the image
             return mat;
         }
-
         // If the count changed then we have counted a new image, so let the caller know.
         if (count != lensCalibration.getPatternFoundCount()) {
             // If we've reached our goal, finish the process.
             if (lensCalibration.getPatternFoundCount() == calibrationCountGoal) {
-                calibrationCallback.callback(lensCalibration.getPatternFoundCount(),
-                        calibrationCountGoal, true);
+                calibrationCallback.callback(lensCalibration.getPatternFoundCount(), calibrationCountGoal, true);
                 lensCalibration.calibrate();
                 calibration.setCameraMatrixMat(lensCalibration.getCameraMatrix());
-                calibration
-                        .setDistortionCoefficientsMat(lensCalibration.getDistortionCoefficients());
+                calibration.setDistortionCoefficientsMat(lensCalibration.getDistortionCoefficients());
                 clearCalibrationCache();
                 calibration.setEnabled(true);
-
                 lensCalibration.close();
                 lensCalibration = null;
                 calibrating = false;
-            }
-            // Otherwise just report the addition.
-            else {
-                calibrationCallback.callback(lensCalibration.getPatternFoundCount(),
-                        calibrationCountGoal, false);
+            } else // Otherwise just report the addition.
+            {
+                calibrationCallback.callback(lensCalibration.getPatternFoundCount(), calibrationCountGoal, false);
             }
         }
-
         return appliedMat;
     }
 
@@ -1250,8 +1177,7 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
     public void startCalibration(CalibrationCallback callback) {
         this.calibrationCallback = callback;
         calibration.setEnabled(false);
-        lensCalibration = new LensCalibration(LensModel.Pinhole, Pattern.AsymmetricCirclesGrid, 4,
-                11, 15, 750);
+        lensCalibration = new LensCalibration(LensModel.Pinhole, Pattern.AsymmetricCirclesGrid, 4, 11, 15, 750);
         calibrating = true;
     }
 
@@ -1272,28 +1198,18 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
 
     @Override
     public PropertySheet[] getPropertySheets() {
-        PropertySheet[] sheets = new PropertySheet[] {
-                new PropertySheetWizardAdapter(new CameraConfigurationWizard(this), "General Configuration"),
-                new PropertySheetWizardAdapter(new CameraVisionConfigurationWizard(this), "Vision"),
-                new PropertySheetWizardAdapter(getConfigurationWizard(), "Device Settings"),
-                new PropertySheetWizardAdapter(new ReferenceCameraPositionConfigurationWizard(getMachine(), this), "Position"),
-                new PropertySheetWizardAdapter(new ReferenceCameraCalibrationConfigurationWizard(this), "Lens Calibration"),
-                new PropertySheetWizardAdapter(new ReferenceCameraTransformsConfigurationWizard(this), "Image Transforms"),
-                new PropertySheetWizardAdapter(new ReferenceCameraCalibrationWizard(this), "Experimental Calibration"),
-        };
+        PropertySheet[] sheets = new PropertySheet[]{ new PropertySheetWizardAdapter(new CameraConfigurationWizard(this), "General Configuration"), new PropertySheetWizardAdapter(new CameraVisionConfigurationWizard(this), "Vision"), new PropertySheetWizardAdapter(getConfigurationWizard(), "Device Settings"), new PropertySheetWizardAdapter(new ReferenceCameraPositionConfigurationWizard(getMachine(), this), "Position"), new PropertySheetWizardAdapter(new ReferenceCameraCalibrationConfigurationWizard(this), "Lens Calibration"), new PropertySheetWizardAdapter(new ReferenceCameraTransformsConfigurationWizard(this), "Image Transforms"), new PropertySheetWizardAdapter(new ReferenceCameraCalibrationWizard(this), "Experimental Calibration") };
         if (getFocusSensingMethod() != FocusSensingMethod.None) {
-                sheets = Collect.concat(sheets, new PropertySheet[] {
-                        new PropertySheetWizardAdapter(getFocusProvider().getConfigurationWizard(this), "Auto Focus"),
-                });
+            sheets = Collect.concat(sheets, new PropertySheet[]{ new PropertySheetWizardAdapter(getFocusProvider().getConfigurationWizard(this), "Auto Focus") });
         }
         return sheets;
     }
-    
+
     @Override
     public Action[] getPropertySheetHolderActions() {
         return new Action[] { deleteAction };
     }
-    
+
     public Action deleteAction = new AbstractAction("Delete Camera") {
         {
             putValue(SMALL_ICON, Icons.delete);
@@ -1303,21 +1219,17 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            int ret = JOptionPane.showConfirmDialog(MainFrame.get(),
-                    "Are you sure you want to delete " + getName() + "?",
-                    "Delete " + getName() + "?", JOptionPane.YES_NO_OPTION);
+            int ret = JOptionPane.showConfirmDialog(MainFrame.get(), ("Are you sure you want to delete " + getName()) + "?", ("Delete " + getName()) + "?", JOptionPane.YES_NO_OPTION);
             if (ret == JOptionPane.YES_OPTION) {
                 if (getHead() != null) {
                     getHead().removeCamera(ReferenceCamera.this);
-                }
-                else {
+                } else {
                     Configuration.get().getMachine().removeCamera(ReferenceCamera.this);
                 }
                 MainFrame.get().getCameraViews().removeCamera(ReferenceCamera.this);
                 try {
                     ReferenceCamera.this.close();
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -1329,7 +1241,7 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
     }
 
     public interface CalibrationCallback {
-        public void callback(int progressCurrent, int progressMax, boolean complete);
+        public abstract void callback(int progressCurrent, int progressMax, boolean complete);
     }
 
     @Override
