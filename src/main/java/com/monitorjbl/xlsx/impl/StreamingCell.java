@@ -1,6 +1,8 @@
 package com.monitorjbl.xlsx.impl;
 
 import com.monitorjbl.xlsx.exceptions.NotSupportedException;
+import java.util.Calendar;
+import java.util.Date;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -15,11 +17,8 @@ import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
-import java.util.Calendar;
-import java.util.Date;
 
 public class StreamingCell implements Cell {
-
   private static final Supplier NULL_SUPPLIER = new Supplier() {
     @Override
     public Object getContent() {
@@ -28,20 +27,31 @@ public class StreamingCell implements Cell {
   };
 
   private static final String FALSE_AS_STRING = "0";
+
   private static final String TRUE_AS_STRING  = "1";
 
   private int columnIndex;
+
   private int rowIndex;
+
   private final boolean use1904Dates;
 
   private Supplier contentsSupplier = NULL_SUPPLIER;
+
   private Object rawContents;
+
   private String formula;
+
   private String numericFormat;
+
   private Short numericFormatIndex;
+
   private String type;
+
   private Row row;
+
   private CellStyle cellStyle;
+
   private boolean formulaType;
 
   public StreamingCell(int columnIndex, int rowIndex, boolean use1904Dates) {
@@ -145,37 +155,21 @@ public class StreamingCell implements Cell {
    * @return the cell type
    */
   @Override
-<<<<<<< HEAD
-  public int getCellType() {
-    return getCellTypeEnum().getCode();
-  }
-
-  /**
-   * Return the cell type.
-   *
-   * @return the cell type
-   * Will be renamed to <code>getCellType()</code> when we make the CellType enum transition in POI 4.0. See bug 59791.
-   */
-  @Override
-  public CellType getCellTypeEnum() {
-    if(formulaType) {
-      return CellType.FORMULA;
-    } else if(contentsSupplier.getContent() == null || type == null) {
-=======
   public CellType getCellType() {
-    if(contentsSupplier.getContent() == null || type == null) {
->>>>>>> upstream-master
+    if (formulaType) {
+      return CellType.FORMULA;
+    } else if ((contentsSupplier.getContent() == null) || (type == null)) {
       return CellType.BLANK;
-    } else if("n".equals(type)) {
+    } else if ("n".equals(type)) {
       return CellType.NUMERIC;
-    } else if("s".equals(type) || "inlineStr".equals(type) || "str".equals(type)) {
+    } else if (("s".equals(type) || "inlineStr".equals(type)) || "str".equals(type)) {
       return CellType.STRING;
-    } else if("b".equals(type)) {
+    } else if ("b".equals(type)) {
       return CellType.BOOLEAN;
-    } else if("e".equals(type)) {
+    } else if ("e".equals(type)) {
       return CellType.ERROR;
     } else {
-      throw new UnsupportedOperationException("Unsupported cell type '" + type + "'");
+      throw new UnsupportedOperationException(("Unsupported cell type '" + type) + "'");
     }
   }
 
@@ -225,7 +219,7 @@ public class StreamingCell implements Cell {
    */
   @Override
   public Date getDateCellValue() {
-    if(getCellType() == CellType.STRING){
+    if (getCellType() == CellType.STRING) {
       throw new IllegalStateException("Cell type cannot be CELL_TYPE_STRING");
     }
     return rawContents == null ? null : HSSFDateUtil.getJavaDate(getNumericCellValue(), use1904Dates);
@@ -240,22 +234,20 @@ public class StreamingCell implements Cell {
   @Override
   public boolean getBooleanCellValue() {
     CellType cellType = getCellType();
-    switch(cellType) {
-      case BLANK:
+    switch (cellType) {
+      case BLANK :
         return false;
-      case BOOLEAN:
-        return rawContents != null && TRUE_AS_STRING.equals(rawContents);
-      case FORMULA:
+      case BOOLEAN :
+        return (rawContents != null) && TRUE_AS_STRING.equals(rawContents);
+      case FORMULA :
         throw new NotSupportedException();
-      default:
+      default :
         throw typeMismatch(CellType.BOOLEAN, cellType, false);
     }
   }
 
   private static RuntimeException typeMismatch(CellType expectedType, CellType actualType, boolean isFormulaCell) {
-    String msg = "Cannot get a "
-            + getCellTypeName(expectedType) + " value from a "
-            + getCellTypeName(actualType) + " " + (isFormulaCell ? "formula " : "") + "cell";
+    String msg = ((((("Cannot get a " + getCellTypeName(expectedType)) + " value from a ") + getCellTypeName(actualType)) + " ") + (isFormulaCell ? "formula " : "")) + "cell";
     return new IllegalStateException(msg);
   }
 
@@ -264,14 +256,20 @@ public class StreamingCell implements Cell {
    */
   private static String getCellTypeName(CellType cellType) {
     switch (cellType) {
-      case BLANK:   return "blank";
-      case STRING:  return "text";
-      case BOOLEAN: return "boolean";
-      case ERROR:   return "error";
-      case NUMERIC: return "numeric";
-      case FORMULA: return "formula";
+      case BLANK :
+        return "blank";
+      case STRING :
+        return "text";
+      case BOOLEAN :
+        return "boolean";
+      case ERROR :
+        return "error";
+      case NUMERIC :
+        return "numeric";
+      case FORMULA :
+        return "formula";
     }
-    return "#unknown cell type (" + cellType + ")#";
+    return ("#unknown cell type (" + cellType) + ")#";
   }
 
   /**
@@ -290,49 +288,35 @@ public class StreamingCell implements Cell {
    */
   @Override
   public String getCellFormula() {
-    if (!formulaType)
+    if (!formulaType) {
       throw new IllegalStateException("This cell does not have a formula");
+    }
     return formula;
   }
 
   /**
    * Only valid for formula cells
-   * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
-   *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
+   * @return one of ({@link #CELL_TYPE_NUMERIC}, {@link #CELL_TYPE_STRING},
+   *     {@link #CELL_TYPE_BOOLEAN}, {@link #CELL_TYPE_ERROR}) depending
    * on the cached value of the formula
    */
   @Override
-<<<<<<< HEAD
-  public int getCachedFormulaResultType() {
-    return getCachedFormulaResultTypeEnum().getCode();
-  }
-
-  /**
-   * Not supported
-   */
-  @Override
-  public CellType getCachedFormulaResultTypeEnum() {
-    if (formulaType) {
-      if(contentsSupplier.getContent() == null || type == null) {
-=======
   public CellType getCachedFormulaResultType() {
-    if (type != null && "str".equals(type)) {
-      if(contentsSupplier.getContent() == null || cachedFormulaResultType == null) {
->>>>>>> upstream-master
+    if (formulaType) {
+      if ((contentsSupplier.getContent() == null) || (type == null)) {
         return CellType.BLANK;
-      } else if("n".equals(type)) {
+      } else if ("n".equals(type)) {
         return CellType.NUMERIC;
-      } else if("s".equals(type) || "inlineStr".equals(type) || "str".equals(type)) {
+      } else if (("s".equals(type) || "inlineStr".equals(type)) || "str".equals(type)) {
         return CellType.STRING;
-      } else if("b".equals(type)) {
+      } else if ("b".equals(type)) {
         return CellType.BOOLEAN;
-      } else if("e".equals(type)) {
+      } else if ("e".equals(type)) {
         return CellType.ERROR;
       } else {
-        throw new UnsupportedOperationException("Unsupported cell type '" + type + "'");
+        throw new UnsupportedOperationException(("Unsupported cell type '" + type) + "'");
       }
-    }
-    else  {
+    } else {
       throw new IllegalStateException("Only formula cells have cached results");
     }
   }
@@ -343,7 +327,6 @@ public class StreamingCell implements Cell {
   }
 
   /* Not supported */
-
   /**
    * Not supported
    */
