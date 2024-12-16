@@ -1,23 +1,22 @@
 package net.md_5.bungee.api.chat;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import net.md_5.bungee.api.ChatColor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.chat.TranslationRegistry;
+
 
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
-public class TranslatableComponent extends BaseComponent
-{
-
+public class TranslatableComponent extends BaseComponent {
     private final Pattern format = Pattern.compile( "%(?:(\\d+)\\$)?([A-Za-z%]|$)" );
 
     /**
@@ -25,6 +24,7 @@ public class TranslatableComponent extends BaseComponent
      * text depends on the client's locale setting. The console is always en_US
      */
     private String translate;
+
     /**
      * The components to substitute into the translation
      */
@@ -33,21 +33,18 @@ public class TranslatableComponent extends BaseComponent
     /**
      * Creates a translatable component from the original to clone it.
      *
-     * @param original the original for the new translatable component.
+     * @param original
+     * 		the original for the new translatable component.
      */
-    public TranslatableComponent(TranslatableComponent original)
-    {
-        super( original );
-        setTranslate( original.getTranslate() );
-
-        if ( original.getWith() != null )
-        {
+    public TranslatableComponent(TranslatableComponent original) {
+        super(original);
+        setTranslate(original.getTranslate());
+        if (original.getWith() != null) {
             List<BaseComponent> temp = new ArrayList<BaseComponent>();
-            for ( BaseComponent baseComponent : original.getWith() )
-            {
-                temp.add( baseComponent.duplicate() );
+            for (BaseComponent baseComponent : original.getWith()) {
+                temp.add(baseComponent.duplicate());
             }
-            setWith( temp );
+            setWith(temp);
         }
     }
 
@@ -61,23 +58,18 @@ public class TranslatableComponent extends BaseComponent
      * {@link net.md_5.bungee.api.chat.BaseComponent}s to use into the
      * translation
      */
-    public TranslatableComponent(String translate, Object... with)
-    {
-        setTranslate( translate );
-        if ( with != null && with.length != 0 )
-        {
+    public TranslatableComponent(String translate, Object... with) {
+        setTranslate(translate);
+        if ((with != null) && (with.length != 0)) {
             List<BaseComponent> temp = new ArrayList<BaseComponent>();
-            for ( Object w : with )
-            {
-                if ( w instanceof BaseComponent )
-                {
-                    temp.add( (BaseComponent) w );
-                } else
-                {
-                    temp.add( new TextComponent( String.valueOf( w ) ) );
+            for (Object w : with) {
+                if (w instanceof BaseComponent) {
+                    temp.add(((BaseComponent) (w)));
+                } else {
+                    temp.add(new TextComponent(String.valueOf(w)));
                 }
             }
-            setWith( temp );
+            setWith(temp);
         }
     }
 
@@ -135,81 +127,66 @@ public class TranslatableComponent extends BaseComponent
     }
 
     @Override
-    protected void toPlainText(StringBuilder builder)
-    {
-        String trans = TranslationRegistry.INSTANCE.translate( translate );
-
-        Matcher matcher = format.matcher( trans );
+    protected void toPlainText(StringBuilder builder) {
+        String trans = TranslationRegistry.INSTANCE.translate(translate);
+        Matcher matcher = format.matcher(trans);
         int position = 0;
         int i = 0;
-        while ( matcher.find( position ) )
-        {
+        while (matcher.find(position)) {
             int pos = matcher.start();
-            if ( pos != position )
-            {
-                builder.append( trans.substring( position, pos ) );
+            if (pos != position) {
+                builder.append(trans.substring(position, pos));
             }
             position = matcher.end();
-
-            String formatCode = matcher.group( 2 );
-            switch ( formatCode.charAt( 0 ) )
-            {
-                case 's':
-                case 'd':
-                    String withIndex = matcher.group( 1 );
-                    with.get( withIndex != null ? Integer.parseInt( withIndex ) - 1 : i++ ).toPlainText( builder );
+            String formatCode = matcher.group(2);
+            switch (formatCode.charAt(0)) {
+                case 's' :
+                case 'd' :
+                    String withIndex = matcher.group(1);
+                    with.get(withIndex != null ? Integer.parseInt(withIndex) - 1 : i++).toPlainText(builder);
                     break;
-                case '%':
-                    builder.append( '%' );
+                case '%' :
+                    builder.append('%');
                     break;
             }
+        } 
+        if (trans.length() != position) {
+            builder.append(trans.substring(position, trans.length()));
         }
-        if ( trans.length() != position )
-        {
-            builder.append( trans.substring( position, trans.length() ) );
-        }
-
-        super.toPlainText( builder );
+        super.toPlainText(builder);
     }
 
     @Override
-    protected void toLegacyText(StringBuilder builder)
-    {
-        String trans = TranslationRegistry.INSTANCE.translate( translate );
-
-        Matcher matcher = format.matcher( trans );
+    protected void toLegacyText(StringBuilder builder) {
+        String trans = TranslationRegistry.INSTANCE.translate(translate);
+        Matcher matcher = format.matcher(trans);
         int position = 0;
         int i = 0;
-        while ( matcher.find( position ) )
-        {
+        while (matcher.find(position)) {
             int pos = matcher.start();
-            if ( pos != position )
-            {
-                addFormat( builder );
-                builder.append( trans.substring( position, pos ) );
+            if (pos != position) {
+                addFormat(builder);
+                builder.append(trans.substring(position, pos));
             }
             position = matcher.end();
-
-            String formatCode = matcher.group( 2 );
-            switch ( formatCode.charAt( 0 ) )
-            {
-                case 's':
-                case 'd':
-                    String withIndex = matcher.group( 1 );
-                    with.get( withIndex != null ? Integer.parseInt( withIndex ) - 1 : i++ ).toLegacyText( builder );
+            String formatCode = matcher.group(2);
+            switch (formatCode.charAt(0)) {
+                case 's' :
+                case 'd' :
+                    String withIndex = matcher.group(1);
+                    with.get(withIndex != null ? Integer.parseInt(withIndex) - 1 : i++).toLegacyText(builder);
                     break;
-                case '%':
-                    addFormat( builder );
-                    builder.append( '%' );
+                case '%' :
+                    addFormat(builder);
+                    builder.append('%');
                     break;
             }
+        } 
+        if (trans.length() != position) {
+            addFormat(builder);
+            builder.append(trans.substring(position, trans.length()));
         }
-        if ( trans.length() != position )
-        {
-            addFormat( builder );
-            builder.append( trans.substring( position, trans.length() ) );
-        }
-        super.toLegacyText( builder );
+        super.toLegacyText(builder);
     }
 
     private void addFormat(StringBuilder builder)

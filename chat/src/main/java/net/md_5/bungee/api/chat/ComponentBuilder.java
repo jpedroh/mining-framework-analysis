@@ -1,9 +1,10 @@
 package net.md_5.bungee.api.chat;
 
 import com.google.common.base.Preconditions;
-import net.md_5.bungee.api.ChatColor;
 import java.util.ArrayList;
 import java.util.List;
+import net.md_5.bungee.api.ChatColor;
+
 
 /**
  * <p>
@@ -23,44 +24,42 @@ import java.util.List;
  * part's formatting
  * </p>
  */
-public class ComponentBuilder
-{
-
+public class ComponentBuilder {
     private BaseComponent current;
+
     private final List<BaseComponent> parts = new ArrayList<BaseComponent>();
 
     /**
      * Creates a ComponentBuilder from the other given ComponentBuilder to clone
      * it.
      *
-     * @param original the original for the new ComponentBuilder.
+     * @param original
+     * 		the original for the new ComponentBuilder.
      */
-    public ComponentBuilder(ComponentBuilder original)
-    {
+    public ComponentBuilder(ComponentBuilder original) {
         current = original.current.duplicate();
-        for ( BaseComponent baseComponent : original.parts )
-        {
-            parts.add( baseComponent.duplicate() );
+        for (BaseComponent baseComponent : original.parts) {
+            parts.add(baseComponent.duplicate());
         }
     }
 
     /**
      * Creates a ComponentBuilder with the given text as the first part.
      *
-     * @param text the first text element
+     * @param text
+     * 		the first text element
      */
-    public ComponentBuilder(String text)
-    {
-        current = new TextComponent( text );
+    public ComponentBuilder(String text) {
+        current = new TextComponent(text);
     }
 
     /**
      * Creates a ComponentBuilder with the given component as the first part.
      *
-     * @param component the first component element
+     * @param component
+     * 		the first component element
      */
-    public ComponentBuilder(BaseComponent component)
-    {
+    public ComponentBuilder(BaseComponent component) {
         current = component.duplicate();
     }
 
@@ -340,8 +339,7 @@ public class ComponentBuilder
         return result;
     }
 
-    public static enum FormatRetention
-    {
+    public static enum FormatRetention {
 
         /**
          * Specify that we do not want to retain anything from the previous
@@ -361,15 +359,12 @@ public class ComponentBuilder
          * Specify that we want to retain everything from the previous
          * component.
          */
-        ALL
-    }
+        ALL;}
 
     /**
      * Functional interface to join additional components to a ComponentBuilder.
      */
-    public interface Joiner
-    {
-
+    public interface Joiner {
         /**
          * Joins additional components to the provided {@link ComponentBuilder}
          * and then returns it to fulfill a chain pattern.
@@ -378,10 +373,12 @@ public class ComponentBuilder
          * recommendation to the Joiner and not as a guarantee to have a
          * previous component in builder unmodified.
          *
-         * @param componentBuilder to which to append additional components
-         * @param retention the formatting to possibly retain
+         * @param componentBuilder
+         * 		to which to append additional components
+         * @param retention
+         * 		the formatting to possibly retain
          * @return input componentBuilder for chaining
          */
-        ComponentBuilder join(ComponentBuilder componentBuilder, FormatRetention retention);
+        public abstract ComponentBuilder join(ComponentBuilder componentBuilder, FormatRetention retention);
     }
 }

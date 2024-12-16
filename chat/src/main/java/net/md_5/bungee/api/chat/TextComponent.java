@@ -1,22 +1,20 @@
 package net.md_5.bungee.api.chat;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.md_5.bungee.api.ChatColor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class TextComponent extends BaseComponent
-{
-
-    private static final Pattern url = Pattern.compile( "^(?:(https?)://)?([-\\w_\\.]{2,}\\.[a-z]{2,4})(/\\S*)?$" );
+public class TextComponent extends BaseComponent {
+    private static final Pattern url = Pattern.compile("^(?:(https?)://)?([-\\w_\\.]{2,}\\.[a-z]{2,4})(/\\S*)?$");
 
     /**
      * Converts the old formatting system that used
@@ -146,8 +144,7 @@ public class TextComponent extends BaseComponent
     /**
      * Creates a TextComponent with blank text.
      */
-    public TextComponent()
-    {
+    public TextComponent() {
         this.text = "";
     }
 
@@ -155,24 +152,24 @@ public class TextComponent extends BaseComponent
      * Creates a TextComponent with formatting and text from the passed
      * component
      *
-     * @param textComponent the component to copy from
+     * @param textComponent
+     * 		the component to copy from
      */
-    public TextComponent(TextComponent textComponent)
-    {
-        super( textComponent );
-        setText( textComponent.getText() );
+    public TextComponent(TextComponent textComponent) {
+        super(textComponent);
+        setText(textComponent.getText());
     }
 
     /**
      * Creates a TextComponent with blank text and the extras set to the passed
      * array
      *
-     * @param extras the extras to set
+     * @param extras
+     * 		the extras to set
      */
-    public TextComponent(BaseComponent... extras)
-    {
-        setText( "" );
-        setExtra( new ArrayList<BaseComponent>( Arrays.asList( extras ) ) );
+    public TextComponent(BaseComponent... extras) {
+        setText("");
+        setExtra(new ArrayList<BaseComponent>(Arrays.asList(extras)));
     }
 
     /**
