@@ -18,6 +18,12 @@ import com.willwinder.universalgcodesender.utils.*;
 import com.willwinder.universalgcodesender.visualizer.GcodeViewParse;
 import com.willwinder.universalgcodesender.visualizer.LineSegment;
 import com.willwinder.universalgcodesender.visualizer.VisualizerUtils;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.netbeans.api.editor.EditorActionRegistration;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -27,37 +33,18 @@ import org.openide.nodes.Node;
 import org.openide.util.HelpCtx;
 import org.openide.util.actions.CookieAction;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-@ActionID(
-        category = LocalizingService.CATEGORY_PROGRAM,
-        id = "MirrorAction")
-@ActionRegistration(
-        iconBase = MirrorAction.ICON_BASE,
-        displayName = MirrorAction.NAME,
-        lazy = false)
-@ActionReferences({
-        @ActionReference(
-                path = LocalizingService.MENU_PROGRAM,
-                position = 1220)
-})
-@EditorActionRegistration(
-        name = "mirror-gcode",
-        toolBarPosition = 12,
-        mimeType = GcodeLanguageConfig.MIME_TYPE,
-        iconResource = MirrorAction.ICON_BASE
-)
+@ActionID(category = LocalizingService.CATEGORY_PROGRAM, id = "MirrorAction")
+@ActionRegistration(iconBase = MirrorAction.ICON_BASE, displayName = MirrorAction.NAME, lazy = false)
+@ActionReferences({ @ActionReference(path = LocalizingService.MENU_PROGRAM, position = 1220) })
+@EditorActionRegistration(name = "mirror-gcode", toolBarPosition = 12, mimeType = GcodeLanguageConfig.MIME_TYPE, iconResource = MirrorAction.ICON_BASE)
 public class MirrorAction extends CookieAction implements UGSEventListener {
-
     public static final String ICON_BASE = "icons/mirror.svg";
 
     public static final String NAME = "Mirror";
+
     public static final double ARC_SEGMENT_LENGTH = 0.5;
+
     private final transient BackendAPI backend;
 
     public MirrorAction() {
@@ -68,7 +55,7 @@ public class MirrorAction extends CookieAction implements UGSEventListener {
 
     @Override
     public void UGSEvent(UGSEvent cse) {
-        if (cse instanceof ControllerStateEvent || cse instanceof FileStateEvent) {
+        if ((cse instanceof ControllerStateEvent) || (cse instanceof FileStateEvent)) {
             EventQueue.invokeLater(() -> setEnabled(isEnabled()));
         }
     }

@@ -24,9 +24,9 @@ import com.willwinder.universalgcodesender.model.BackendAPI;
 import com.willwinder.universalgcodesender.model.UGSEvent;
 import com.willwinder.universalgcodesender.model.events.FileState;
 import com.willwinder.universalgcodesender.model.events.FileStateEvent;
-
 import java.util.HashSet;
 import java.util.Set;
+
 
 /**
  * A service that will handle skipping to given line numbers in a loaded gcode program. When this service is created it
@@ -36,14 +36,16 @@ import java.util.Set;
  */
 public class RunFromService implements UGSEventListener {
     private final BackendAPI backend;
+
     private final Set<RunFromServiceListener> listeners = new HashSet<>();
+
     private RunFromProcessor runFromProcessor = new RunFromProcessor(0);
 
     public RunFromService(BackendAPI backend) {
         this.backend = backend;
         try {
             this.backend.applyCommandProcessor(runFromProcessor);
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             // Never mind this
         }
         this.backend.addUGSEventListener(this);
@@ -53,8 +55,8 @@ public class RunFromService implements UGSEventListener {
         try {
             this.runFromProcessor.setLineNumber(lineNumber);
             this.backend.applyCommandProcessor(runFromProcessor);
-            listeners.forEach(listener -> listener.runFromLineChanged(lineNumber));
-        } catch (Exception e) {
+            listeners.forEach(( listener) -> listener.runFromLineChanged(lineNumber));
+        } catch (java.lang.Exception e) {
             e.printStackTrace();
         }
     }
@@ -69,13 +71,12 @@ public class RunFromService implements UGSEventListener {
 
     @Override
     public void UGSEvent(UGSEvent evt) {
-
-        if (evt instanceof FileStateEvent && ((FileStateEvent)evt).getFileState() == FileState.OPENING_FILE) {
+        if ((evt instanceof FileStateEvent) && (((FileStateEvent) (evt)).getFileState() == FileState.OPENING_FILE)) {
             runFromProcessor.setLineNumber(0);
         }
     }
 
     public interface RunFromServiceListener {
-        void runFromLineChanged(int line);
+        public abstract void runFromLineChanged(int line);
     }
 }

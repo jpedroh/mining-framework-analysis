@@ -28,6 +28,8 @@ import com.willwinder.universalgcodesender.model.UGSEvent;
 import com.willwinder.universalgcodesender.model.events.ControllerStateEvent;
 import com.willwinder.universalgcodesender.services.RunFromService;
 import com.willwinder.universalgcodesender.utils.GUIHelpers;
+import java.awt.*;
+import javax.swing.*;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -36,26 +38,17 @@ import org.openide.nodes.Node;
 import org.openide.util.HelpCtx;
 import org.openide.util.actions.CookieAction;
 
-import javax.swing.*;
-import java.awt.*;
 
-@ActionID(
-        category = LocalizingService.RunFromCategory,
-        id = LocalizingService.RunFromActionId)
-@ActionRegistration(
-        iconBase = RunFromAction.ICON_BASE,
-        displayName = "Run from...",
-        lazy = false)
-@ActionReferences({
-        @ActionReference(
-                path = LocalizingService.RunFromWindowPath,
-                position = 1016)
-})
+@ActionID(category = LocalizingService.RunFromCategory, id = LocalizingService.RunFromActionId)
+@ActionRegistration(iconBase = RunFromAction.ICON_BASE, displayName = "Run from...", lazy = false)
+@ActionReferences({ @ActionReference(path = LocalizingService.RunFromWindowPath, position = 1016) })
 public final class RunFromAction extends CookieAction implements UGSEventListener {
-
     public static final String NAME = LocalizingService.RunFromTitle;
+
     public static final String ICON_BASE = "icons/fast-forward.svg";
-    private final transient  RunFromService runFromService;
+
+    private final transient RunFromService runFromService;
+
     private final transient BackendAPI backend;
 
     public RunFromAction() {
@@ -76,7 +69,6 @@ public final class RunFromAction extends CookieAction implements UGSEventListene
     public boolean isEnabled() {
         return backend.getGcodeFile() != null && backend.isConnected() && !backend.isSendingFile() && super.isEnabled();
     }
-
 
     @Override
     public String getName() {

@@ -31,32 +31,38 @@ import com.willwinder.universalgcodesender.model.Position;
 import com.willwinder.universalgcodesender.model.UGSEvent;
 import com.willwinder.universalgcodesender.model.UnitUtils.Units;
 import com.willwinder.universalgcodesender.model.events.*;
-import com.willwinder.universalgcodesender.utils.Settings;
 import com.willwinder.universalgcodesender.utils.Settings.FileStats;
-
-import javax.swing.*;
+import com.willwinder.universalgcodesender.utils.Settings;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
+import javax.swing.*;
+import static com.willwinder.universalgcodesender.model.UGSEvent.FileState.FILE_LOADED;
+
 
 /**
  * Process all the listeners and call methods in the renderer.
  *
  * @author wwinder
  */
-public class RendererInputHandler implements
-        WindowListener, MouseWheelListener, MouseMotionListener,
-        MouseListener, KeyListener, PreferenceChangeListener, UGSEventListener {
+public class RendererInputHandler implements WindowListener , MouseWheelListener , MouseMotionListener , MouseListener , KeyListener , PreferenceChangeListener , UGSEventListener {
     final private GcodeRenderer gcodeRenderer;
+
     final private FPSAnimator animator;
+
     private final BackendAPI backend;
+
     private final GcodeModel gcodeModel;
+
     private final SizeDisplay sizeDisplay;
+
     private final Selection selection;
+
     private Settings settings;
 
     private static final int HIGH_FPS = 15;
+
     private static final int LOW_FPS = 4;
 
     public RendererInputHandler(GcodeRenderer gr, FPSAnimator a, BackendAPI backend) {
@@ -65,18 +71,16 @@ public class RendererInputHandler implements
         this.backend = backend;
         animator.start();
         settings = backend.getSettings();
-
         RotationService rs = new RotationService();
         gcodeModel = new GcodeModel(Localization.getString("platform.visualizer.renderable.gcode-model"), rs);
         sizeDisplay = new SizeDisplay(Localization.getString("platform.visualizer.renderable.gcode-model-size"));
         selection = new Selection(Localization.getString("platform.visualizer.renderable.selection"));
         sizeDisplay.setUnits(settings.getPreferredUnits());
-
         gr.registerRenderable(gcodeModel);
         gr.registerRenderable(sizeDisplay);
         gr.registerRenderable(selection);
     }
-    
+
     private void setFPS(int fps) {
         animator.stop();
         animator.setFPS(fps);
@@ -87,7 +91,7 @@ public class RendererInputHandler implements
     public void preferenceChange(PreferenceChangeEvent evt) {
         gcodeRenderer.reloadPreferences();
     }
- 
+
     public void setGcodeFile(String file) {
         gcodeModel.setGcodeFile(file);
         gcodeRenderer.setObjectSize(gcodeModel.getMin(), gcodeModel.getMax());
@@ -113,26 +117,25 @@ public class RendererInputHandler implements
     public void UGSEvent(UGSEvent cse) {
         if (cse instanceof FileStateEvent) {
             animator.pause();
-            FileStateEvent fileStateEvent = (FileStateEvent) cse;
+            FileStateEvent fileStateEvent = ((FileStateEvent) (cse));
             switch (fileStateEvent.getFileState()) {
-                case FILE_LOADED:
+                case FILE_LOADED :
                     setGcodeFile(fileStateEvent.getFile());
                     break;
-                case FILE_STREAM_COMPLETE:
+                case FILE_STREAM_COMPLETE :
                     gcodeModel.setCurrentCommandNumber(0);
                     break;
             }
-
             animator.resume();
         } else if (cse instanceof SettingChangedEvent) {
             sizeDisplay.setUnits(settings.getPreferredUnits());
         } else if (cse instanceof ControllerStatusEvent) {
-            ControllerStatusEvent controllerStatusEvent = (ControllerStatusEvent) cse;
+            ControllerStatusEvent controllerStatusEvent = ((ControllerStatusEvent) (cse));
             gcodeRenderer.setMachineCoordinate(controllerStatusEvent.getStatus().getMachineCoord());
             gcodeRenderer.setWorkCoordinate(controllerStatusEvent.getStatus().getWorkCoord());
         } else if (cse instanceof CommandEvent) {
-            CommandEvent commandEvent = (CommandEvent) cse;
-            if (commandEvent.getCommandEventType() == CommandEventType.COMMAND_COMPLETE && !commandEvent.getCommand().isGenerated()) {
+            CommandEvent commandEvent = ((CommandEvent) (cse));
+            if ((commandEvent.getCommandEventType() == CommandEventType.COMMAND_COMPLETE) && (!commandEvent.getCommand().isGenerated())) {
                 gcodeModel.setCurrentCommandNumber(commandEvent.getCommand().getCommandNumber());
             }
         }
@@ -178,7 +181,7 @@ public class RendererInputHandler implements
     public void mouseWheelMoved(MouseWheelEvent e) {
         gcodeRenderer.zoom(e.getWheelRotation());
     }
-    
+
     /**
      * Window Listener
      */
@@ -236,7 +239,9 @@ public class RendererInputHandler implements
     }
 
     private boolean selecting = false;
+
     private Position selectionStart = null;
+
     private Position selectionEnd = null;
 
     /**
@@ -326,7 +331,7 @@ public class RendererInputHandler implements
                 break;
         }
     }
-    
+
     /**
      * KeyListener method.
      */

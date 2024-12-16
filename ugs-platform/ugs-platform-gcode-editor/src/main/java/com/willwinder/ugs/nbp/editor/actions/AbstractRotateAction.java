@@ -36,24 +36,26 @@ import com.willwinder.universalgcodesender.utils.*;
 import com.willwinder.universalgcodesender.visualizer.GcodeViewParse;
 import com.willwinder.universalgcodesender.visualizer.LineSegment;
 import com.willwinder.universalgcodesender.visualizer.VisualizerUtils;
-import org.openide.nodes.Node;
-import org.openide.util.HelpCtx;
-import org.openide.util.actions.CookieAction;
-
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.openide.nodes.Node;
+import org.openide.util.HelpCtx;
+import org.openide.util.actions.CookieAction;
+
 
 /**
  * An abstract action for applying rotation to a loaded model
  */
 public abstract class AbstractRotateAction extends CookieAction implements UGSEventListener {
     public static final double ARC_SEGMENT_LENGTH = 0.5;
+
     private final double rotation;
-    private final transient BackendAPI backend;
+
+    private transient final BackendAPI backend;
 
     protected AbstractRotateAction(double rotation) {
         this.backend = CentralLookup.getDefault().lookup(BackendAPI.class);
@@ -64,7 +66,7 @@ public abstract class AbstractRotateAction extends CookieAction implements UGSEv
 
     @Override
     public void UGSEvent(UGSEvent cse) {
-        if (cse instanceof ControllerStateEvent || cse instanceof FileStateEvent) {
+        if ((cse instanceof ControllerStateEvent) || (cse instanceof FileStateEvent)) {
             EventQueue.invokeLater(() -> setEnabled(isEnabled()));
         }
     }

@@ -26,6 +26,10 @@ import com.willwinder.universalgcodesender.utils.GcodeStreamReader;
 import com.willwinder.universalgcodesender.utils.GcodeStreamTest;
 import com.willwinder.universalgcodesender.utils.GcodeStreamWriter;
 import com.willwinder.universalgcodesender.utils.IGcodeStreamReader;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.concurrent.LinkedBlockingDeque;
 import org.apache.commons.io.FileUtils;
 import org.easymock.EasyMock;
 import org.junit.AfterClass;
@@ -33,12 +37,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.concurrent.LinkedBlockingDeque;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -48,21 +46,26 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+
 /**
  * @author wwinder
  */
 public class BufferedCommunicatorTest {
-
     private static File tempDir;
+
     private final static Connection mockConnection = EasyMock.createMock(Connection.class);
+
     private final static CommunicatorListener mockScl = EasyMock.createMock(CommunicatorListener.class);
+
     private BufferedCommunicator instance;
+
     private LinkedBlockingDeque<GcodeCommand> cb;
+
     private LinkedBlockingDeque<GcodeCommand> asl;
 
     public BufferedCommunicatorTest() {
     }
-    
+
     @BeforeClass
     static public void setup() throws IOException {
         tempDir = GcodeStreamTest.createTempDirectory();
@@ -160,7 +163,7 @@ public class BufferedCommunicatorTest {
         }
 
         IGcodeStreamReader gsr = new GcodeStreamReader(f);
- 
+     
         instance.queueStreamForComm(gsr);
         instance.streamCommands();
 
@@ -576,12 +579,11 @@ public class BufferedCommunicatorTest {
         }
 
         public boolean processedCommand(String response) {
-            return (response != null &&
-                    ("ok".equals(response) || response.startsWith("error")));
+            return (response != null) && ("ok".equals(response) || response.startsWith("error"));
         }
 
         public boolean processedCommandIsError(String response) {
-            return (response != null && response.startsWith("error"));
+            return (response != null) && response.startsWith("error");
         }
     }
 }
