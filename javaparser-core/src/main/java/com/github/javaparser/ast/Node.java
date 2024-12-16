@@ -18,16 +18,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser.ast;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.IdentityHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
 
 import com.github.javaparser.HasParentNode;
 import com.github.javaparser.Position;
@@ -36,10 +27,16 @@ import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.LineComment;
 import com.github.javaparser.ast.visitor.*;
-
+import java.lang.reflect.Field;
 import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.IdentityHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import static java.util.Collections.*;
+
 
 /**
  * Abstract class for all nodes of the AST.
@@ -51,17 +48,18 @@ import static java.util.Collections.*;
  * @author Julio Vilmar Gesser
  */
 // Use <Node> to prevent Node from becoming generic.
-public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable {
+public abstract class Node implements Cloneable , HasParentNode<Node> , Visitable {
     /**
      * This can be used to sort nodes on position.
      */
-    public static Comparator<Node> NODE_BY_BEGIN_POSITION = (a, b) -> a.getBegin().compareTo(b.getBegin());
+    public static Comparator<Node> NODE_BY_BEGIN_POSITION = ( a, b) -> a.getBegin().compareTo(b.getBegin());
 
     private Range range;
 
     private Node parentNode;
 
     private List<Node> childrenNodes = new LinkedList<>();
+
     private List<Comment> orphanComments = new LinkedList<>();
 
     private IdentityHashMap<UserDataKey<?>, Object> userData = null;
@@ -71,7 +69,7 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable 
     public Node(Range range) {
         this.range = range;
     }
-    
+
     /**
      * This is a comment associated with this node.
      *
@@ -196,7 +194,7 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable 
 
     @Override
     public Node clone() {
-        return (Node) accept(new CloneVisitor(), null);
+        return ((Node) (accept(new CloneVisitor(), null)));
     }
 
     @Override
@@ -250,14 +248,12 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable 
     public List<Comment> getAllContainedComments() {
         List<Comment> comments = new LinkedList<>();
         comments.addAll(getOrphanComments());
-
         for (Node child : getChildNodes()) {
             if (child.getComment() != null) {
                 comments.add(child.getComment());
             }
             comments.addAll(child.getAllContainedComments());
         }
-
         return comments;
     }
 
@@ -282,6 +278,7 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable 
     }
 
     public static final int ABSOLUTE_BEGIN_LINE = -1;
+
     public static final int ABSOLUTE_END_LINE = -2;
 
     public boolean isPositionedAfter(Position position) {
@@ -366,39 +363,43 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable 
      */
     public boolean remove() {
         Node parentNode = this.parentNode;
-        if (parentNode == null)
+        if (parentNode == null) {
             return false;
+        }
         boolean success = false;
         Class<?> parentClass = parentNode.getClass();
-        while (parentClass != Object.class) {
+        while (parentClass != java.lang.Object.class) {
             for (Field f : parentClass.getDeclaredFields()) {
                 f.setAccessible(true);
                 try {
                     Object object = f.get(parentNode);
-                    if (object == null)
+                    if (object == null) {
                         continue;
+                    }
                     if (Collection.class.isAssignableFrom(object.getClass())) {
-                        Collection<?> l = (Collection<?>) object;
+                        Collection<?> l = ((Collection<?>) (object));
                         boolean remove = l.remove(this);
                         success |= remove;
                     } else if (NodeList.class.isAssignableFrom(object.getClass())) {
-                        NodeList<Node> l = (NodeList<Node>) object;
+                        NodeList<Node> l = ((NodeList<Node>) (object));
                         success |= l.remove(this);
                     } else if (Optional.class.equals(f.getType())) {
-                        Optional<?> opt = (Optional<?>) object;
-                        if (opt.isPresent())
-                            if (opt.get() == this)
+                        Optional<?> opt = ((Optional<?>) (object));
+                        if (opt.isPresent()) {
+                            if (opt.get() == this) {
                                 f.set(parentNode, Optional.empty());
+                            }
+                        }
                     } else if (object == this) {
                         f.set(parentNode, null);
                         success |= true;
                     }
-                } catch (IllegalArgumentException | IllegalAccessException e) {
+                } catch (java.lang.IllegalArgumentException | java.lang.IllegalAccessException e) {
                     throw new RuntimeException("Error while removing " + getClass().getSimpleName(), e);
                 }
             }
             parentClass = parentClass.getSuperclass();
-        }
+        } 
         setParentNode(null);
         return success;
     }

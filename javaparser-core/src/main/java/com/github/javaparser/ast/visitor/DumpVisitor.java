@@ -18,7 +18,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser.ast.visitor;
 
 import com.github.javaparser.ast.*;
@@ -32,16 +31,15 @@ import com.github.javaparser.ast.imports.*;
 import com.github.javaparser.ast.nodeTypes.NodeWithTypeArguments;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
-
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static com.github.javaparser.utils.PositionUtils.sortByBeginPosition;
 import static com.github.javaparser.utils.Utils.EOL;
 import static com.github.javaparser.utils.Utils.isNullOrEmpty;
+
 
 /**
  * Dumps the AST to formatted Java source code.
@@ -49,7 +47,6 @@ import static com.github.javaparser.utils.Utils.isNullOrEmpty;
  * @author Julio Vilmar Gesser
  */
 public class DumpVisitor implements VoidVisitor<Object> {
-
 	private boolean printComments;
 
 	public DumpVisitor() {
@@ -61,7 +58,6 @@ public class DumpVisitor implements VoidVisitor<Object> {
 	}
 
 	public static class SourcePrinter {
-
 		private final String indentation;
 
 		public SourcePrinter(final String indentation) {
@@ -281,28 +277,28 @@ public class DumpVisitor implements VoidVisitor<Object> {
 
 		printTypeParameters(n.getTypeParameters(), arg);
 
-        if(!n.getExtends().isEmpty()) {
-            printer.print(" extends ");
-            for (final Iterator<ClassOrInterfaceType> i = n.getExtends().iterator(); i.hasNext(); ) {
-                final ClassOrInterfaceType c = i.next();
-                c.accept(this, arg);
-                if (i.hasNext()) {
-                    printer.print(", ");
-                }
-            }
-        }
-        
-        if(!n.getImplements().isEmpty()) {
-            printer.print(" implements ");
-            for (final Iterator<ClassOrInterfaceType> i = n.getImplements().iterator(); i.hasNext(); ) {
-                final ClassOrInterfaceType c = i.next();
-                c.accept(this, arg);
-                if (i.hasNext()) {
-                    printer.print(", ");
-                }
-            }
-        }
-        
+	       if(!n.getExtends().isEmpty()) {
+	           printer.print(" extends ");
+	           for (final Iterator<ClassOrInterfaceType> i = n.getExtends().iterator(); i.hasNext(); ) {
+	               final ClassOrInterfaceType c = i.next();
+	               c.accept(this, arg);
+	               if (i.hasNext()) {
+	                   printer.print(", ");
+	               }
+	           }
+	       }
+	       
+	       if(!n.getImplements().isEmpty()) {
+	           printer.print(" implements ");
+	           for (final Iterator<ClassOrInterfaceType> i = n.getImplements().iterator(); i.hasNext(); ) {
+	               final ClassOrInterfaceType c = i.next();
+	               c.accept(this, arg);
+	               if (i.hasNext()) {
+	                   printer.print(", ");
+	               }
+	           }
+	       }
+	       
 		printer.printLn(" {");
 		printer.indent();
 		if (!isNullOrEmpty(n.getMembers())) {
@@ -405,21 +401,21 @@ public class DumpVisitor implements VoidVisitor<Object> {
 	}
 
 	@Override
-    public void visit(final ArrayType n, final Object arg) {
-        final List<ArrayType> arrayTypeBuffer = new LinkedList<>();
-        Type type = n;
-        while (type instanceof ArrayType) {
-            final ArrayType arrayType = (ArrayType) type;
-            arrayTypeBuffer.add(arrayType);
-            type = arrayType.getComponentType();
-        }
+	   public void visit(final ArrayType n, final Object arg) {
+	       final List<ArrayType> arrayTypeBuffer = new LinkedList<>();
+	       Type type = n;
+	       while (type instanceof ArrayType) {
+	           final ArrayType arrayType = (ArrayType) type;
+	           arrayTypeBuffer.add(arrayType);
+	           type = arrayType.getComponentType();
+	       }
 
-        type.accept(this, arg);
-        for (ArrayType arrayType : arrayTypeBuffer) {
-            printAnnotations(arrayType.getAnnotations(), true, arg);
-            printer.print("[]");
-        }
-    }
+	       type.accept(this, arg);
+	       for (ArrayType arrayType : arrayTypeBuffer) {
+	           printAnnotations(arrayType.getAnnotations(), true, arg);
+	           printer.print("[]");
+	       }
+	   }
 
 	@Override
 	public void visit(final ArrayCreationLevel n, final Object arg) {
@@ -446,20 +442,19 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		}
 	}
 
-    @Override public void visit(final UnionType n, final Object arg) {
-        printJavaComment(n.getComment(), arg);
-		printAnnotations(n.getAnnotations(), true, arg);
-        boolean isFirst = true;
-        for (ReferenceType element : n.getElements()) {
-            if (isFirst) {
-                isFirst = false;
-            } else {
-                printer.print(" | ");
-            }
-	        element.accept(this, arg);
-        }
-    }
-
+				@Override public void visit(final UnionType n, final Object arg) {
+				    printJavaComment(n.getComment(), arg);
+						printAnnotations(n.getAnnotations(), true, arg);
+				    boolean isFirst = true;
+				    for (ReferenceType element : n.getElements()) {
+				        if (isFirst) {
+				            isFirst = false;
+				        } else {
+				            printer.print(" | ");
+				        }
+				     element.accept(this, arg);
+				    }
+				}
 
 	@Override
 	public void visit(final WildcardType n, final Object arg) {
@@ -1541,7 +1536,6 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		}
 	}
 
-
 	@Override
 	public void visit(MethodReferenceExpr n, Object arg) {
 		printJavaComment(n.getComment(), arg);
@@ -1576,7 +1570,7 @@ public class DumpVisitor implements VoidVisitor<Object> {
 	@Override
 	public void visit(NodeList n, Object arg) {
 		for(Object node: n){
-            ((Node)node).accept(this, arg);
+	           ((Node)node).accept(this, arg);
 		}
 	}
 
@@ -1624,32 +1618,39 @@ public class DumpVisitor implements VoidVisitor<Object> {
 	}
 
 	private void printOrphanCommentsBeforeThisChildNode(final Node node) {
-		if (node instanceof Comment) return;
-
+		if (node instanceof Comment) {
+			return;
+		}
 		Node parent = node.getParentNode();
-		if (parent == null) return;
+		if (parent == null) {
+			return;
+		}
 		List<Node> everything = new LinkedList<>();
 		everything.addAll(parent.getChildrenNodes());
 		sortByBeginPosition(everything);
 		int positionOfTheChild = -1;
 		for (int i = 0; i < everything.size(); i++) {
-			if (everything.get(i) == node) positionOfTheChild = i;
+			if (everything.get(i) == node) {
+				positionOfTheChild = i;
+			}
 		}
-		if (positionOfTheChild == -1) {
+		if (positionOfTheChild == (-1)) {
 			throw new AssertionError("I am not a child of my parent.");
 		}
 		int positionOfPreviousChild = -1;
-		for (int i = positionOfTheChild - 1; i >= 0 && positionOfPreviousChild == -1; i--) {
-			if (!(everything.get(i) instanceof Comment)) positionOfPreviousChild = i;
+		for (int i = positionOfTheChild - 1; (i >= 0) && (positionOfPreviousChild == (-1)); i--) {
+			if (!(everything.get(i) instanceof Comment)) {
+				positionOfPreviousChild = i;
+			}
 		}
 		for (int i = positionOfPreviousChild + 1; i < positionOfTheChild; i++) {
 			Node nodeToPrint = everything.get(i);
-			if (!(nodeToPrint instanceof Comment))
-				throw new RuntimeException("Expected comment, instead " + nodeToPrint.getClass() + ". Position of previous child: " + positionOfPreviousChild + ", position of child " + positionOfTheChild);
+			if (!(nodeToPrint instanceof Comment)) {
+				throw new RuntimeException((((("Expected comment, instead " + nodeToPrint.getClass()) + ". Position of previous child: ") + positionOfPreviousChild) + ", position of child ") + positionOfTheChild);
+			}
 			nodeToPrint.accept(this, null);
 		}
 	}
-
 
 	private void printOrphanCommentsEnding(final Node node) {
 		List<Node> everything = new LinkedList<>();
@@ -1658,18 +1659,17 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		if (everything.isEmpty()) {
 			return;
 		}
-
 		int commentsAtEnd = 0;
 		boolean findingComments = true;
-		while (findingComments && commentsAtEnd < everything.size()) {
-			Node last = everything.get(everything.size() - 1 - commentsAtEnd);
-			findingComments = (last instanceof Comment);
+		while (findingComments && (commentsAtEnd < everything.size())) {
+			Node last = everything.get((everything.size() - 1) - commentsAtEnd);
+			findingComments = last instanceof Comment;
 			if (findingComments) {
 				commentsAtEnd++;
 			}
-		}
+		} 
 		for (int i = 0; i < commentsAtEnd; i++) {
-			everything.get(everything.size() - commentsAtEnd + i).accept(this, null);
+			everything.get((everything.size() - commentsAtEnd) + i).accept(this, null);
 		}
 	}
 }

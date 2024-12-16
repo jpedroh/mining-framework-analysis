@@ -18,9 +18,26 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser.bdd.steps;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseProblemException;
+import com.github.javaparser.ParseResult;
+import com.github.javaparser.ParseStart;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
+import com.github.javaparser.ast.stmt.ReturnStmt;
+import com.github.javaparser.ast.stmt.Statement;
+import java.util.List;
+import java.util.Map;
+import org.jbehave.core.annotations.Given;
+import org.jbehave.core.annotations.Then;
+import org.jbehave.core.annotations.When;
 import static com.github.javaparser.ParseStart.*;
 import static com.github.javaparser.Providers.provider;
 import static com.github.javaparser.bdd.steps.SharedSteps.getMemberByTypeAndPosition;
@@ -34,32 +51,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import java.util.List;
-import java.util.Map;
-
-import com.github.javaparser.ParseProblemException;
-import com.github.javaparser.ParseResult;
-import com.github.javaparser.ParseStart;
-import com.github.javaparser.ast.body.*;
-import com.github.javaparser.ast.expr.*;
-import org.jbehave.core.annotations.Given;
-import org.jbehave.core.annotations.Then;
-import org.jbehave.core.annotations.When;
-
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.PackageDeclaration;
-import com.github.javaparser.ast.stmt.BlockStmt;
-import com.github.javaparser.ast.stmt.ExpressionStmt;
-import com.github.javaparser.ast.stmt.ReturnStmt;
-import com.github.javaparser.ast.stmt.Statement;
 
 public class ParsingSteps {
-
     private Map<String, Object> state;
 
-    public ParsingSteps(Map<String, Object> state){
+    public ParsingSteps(Map<String, Object> state) {
         this.state = state;
     }
 
@@ -73,7 +69,6 @@ public class ParsingSteps {
     public void givenTheClass(String classSrc) {
         this.sourceUnderTest = classSrc.trim();
     }
-
 
     /*
      * When steps
@@ -132,11 +127,9 @@ public class ParsingSteps {
 
     @Then("field $fieldPosition in class $classPosition contains annotation $annotationPosition value is \"$expectedValue\"")
     public void thenFieldInClassContainsAnnotationValueIs(int fieldPosition, int classPosition, int annotationPosition, String expectedValue) {
-        CompilationUnit compilationUnit = (CompilationUnit) state.get("cu1");
-
-		TypeDeclaration<?> classUnderTest = compilationUnit.getTypes().get(classPosition - 1);
-        FieldDeclaration fieldUnderTest = (FieldDeclaration) getMemberByTypeAndPosition(classUnderTest, fieldPosition - 1,
-                FieldDeclaration.class);
+        CompilationUnit compilationUnit = ((CompilationUnit) (state.get("cu1")));
+        TypeDeclaration<?> classUnderTest = compilationUnit.getTypes().get(classPosition - 1);
+        FieldDeclaration fieldUnderTest = ((FieldDeclaration) (getMemberByTypeAndPosition(classUnderTest, fieldPosition - 1, FieldDeclaration.class)));
         AnnotationExpr annotationUnderTest = fieldUnderTest.getAnnotations().get(annotationPosition - 1);
         assertThat(annotationUnderTest.getChildNodes().get(1).toString(), is(expectedValue));
     }

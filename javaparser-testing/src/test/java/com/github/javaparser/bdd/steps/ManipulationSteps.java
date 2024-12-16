@@ -18,27 +18,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
- 
 package com.github.javaparser.bdd.steps;
 
-import static com.github.javaparser.ast.NodeList.*;
-import static com.github.javaparser.ast.type.PrimitiveType.*;
-import static com.github.javaparser.bdd.steps.SharedSteps.getMethodByPositionAndClassPosition;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThat;
-
-import java.util.EnumSet;
-import java.util.Map;
-
-import com.github.javaparser.ast.*;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import org.jbehave.core.annotations.Alias;
-import org.jbehave.core.annotations.Given;
-import org.jbehave.core.annotations.Then;
-import org.jbehave.core.annotations.When;
-
 import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.*;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
@@ -51,23 +34,41 @@ import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.TryStmt;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.VoidType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import java.util.EnumSet;
+import java.util.Map;
+import org.jbehave.core.annotations.Alias;
+import org.jbehave.core.annotations.Given;
+import org.jbehave.core.annotations.Then;
+import org.jbehave.core.annotations.When;
+import static com.github.javaparser.ast.NodeList.*;
+import static com.github.javaparser.ast.type.PrimitiveType.*;
+import static com.github.javaparser.bdd.steps.SharedSteps.getMethodByPositionAndClassPosition;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
+
 
 public class ManipulationSteps {
-
     /* Fields used to maintain step state within this step class */
     private BlockStmt blockStmt;
+
     private Statement statement;
+
     private TryStmt tryStmt;
+
     private NodeList<VariableDeclarationExpr> variableDeclarationExprList;
+
     private ChangeMethodNameToUpperCaseVisitor changeMethodNameToUpperCaseVisitor;
+
     private AddNewIntParameterCalledValueVisitor addNewIntParameterCalledValueVisitor;
 
     /* Map that maintains shares state across step classes.  If manipulating the objects in the map you must update the state */
     private Map<String, Object> state;
 
-    public ManipulationSteps(Map<String, Object> state){
+    public ManipulationSteps(Map<String, Object> state) {
         this.state = state;
     }
 
@@ -133,7 +134,7 @@ public class ManipulationSteps {
     @When("a public class called \"$className\" is added to the CompilationUnit")
     public void whenAClassCalledIsAddedToTheCompilationUnit(String className) {
         CompilationUnit compilationUnit = (CompilationUnit) state.get("cu1");
-		TypeDeclaration<?> type = new ClassOrInterfaceDeclaration(EnumSet.of(Modifier.PUBLIC), false, "CreateClass");
+    		TypeDeclaration<?> type = new ClassOrInterfaceDeclaration(EnumSet.of(Modifier.PUBLIC), false, "CreateClass");
         compilationUnit.setTypes(nodeList(type));
         state.put("cu1", compilationUnit);
     }
@@ -141,11 +142,11 @@ public class ManipulationSteps {
     @When("a public static method called \"$methodName\" returning void is added to class $position in the compilation unit")
     public void whenAStaticMethodCalledReturningIsAddedToClassInTheCompilationUnit(String methodName, int position) {
         CompilationUnit compilationUnit = (CompilationUnit) state.get("cu1");
-		 TypeDeclaration<?> type = compilationUnit.getTypes().get(position -1);
-		EnumSet<Modifier> modifiers = EnumSet.of(Modifier.PUBLIC);
-		MethodDeclaration method = new MethodDeclaration(modifiers, new VoidType(), methodName);
-		modifiers.add(Modifier.STATIC);
-		method.setModifiers(modifiers);
+    		 TypeDeclaration<?> type = compilationUnit.getTypes().get(position -1);
+    		EnumSet<Modifier> modifiers = EnumSet.of(Modifier.PUBLIC);
+    		MethodDeclaration method = new MethodDeclaration(modifiers, new VoidType(), methodName);
+    		modifiers.add(Modifier.STATIC);
+    		method.setModifiers(modifiers);
         type.addMember(method);
         state.put("cu1", compilationUnit);
     }
@@ -237,7 +238,7 @@ public class ManipulationSteps {
 
     @Then("all the VariableDeclarations parent is the TryStmt")
     public void thenAllTheVariableDeclarationsParentIsTheTryStmt() {
-        for(VariableDeclarationExpr expr : variableDeclarationExprList){
+        for (VariableDeclarationExpr expr : variableDeclarationExprList) {
             assertThat(expr.getParentNode(), is(tryStmt));
         }
     }
@@ -286,4 +287,3 @@ public class ManipulationSteps {
         }
     }
 }
-
