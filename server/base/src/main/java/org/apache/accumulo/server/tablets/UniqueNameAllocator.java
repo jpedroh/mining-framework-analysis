@@ -18,15 +18,15 @@
  */
 package org.apache.accumulo.server.tablets;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.accumulo.core.util.LazySingletons.RANDOM;
-
 import org.apache.accumulo.core.Constants;
 import org.apache.accumulo.core.conf.Property;
 import org.apache.accumulo.core.util.FastFormat;
 import org.apache.accumulo.server.ServerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.accumulo.core.util.LazySingletons.RANDOM;
+
 
 /**
  * Allocates unique names for an accumulo instance. The names are unique for the lifetime of the
@@ -35,43 +35,39 @@ import org.slf4j.LoggerFactory;
  * This is useful for filenames because it makes caching easy.
  */
 public class UniqueNameAllocator {
-
   private static Logger log = LoggerFactory.getLogger(UniqueNameAllocator.class);
 
   private static final int DEFAULT_BASE_ALLOCATION =
       Integer.parseInt(Property.GENERAL_FILENAME_BASE_ALLOCATION.getDefaultValue());
 
   private ServerContext context;
+
   private long next = 0;
+
   private long maxAllocated = 0;
+
   private String nextNamePath;
 
   public UniqueNameAllocator(ServerContext context) {
     this.context = context;
-    nextNamePath = Constants.ZROOT + "/" + context.getInstanceID() + Constants.ZNEXT_FILE;
+    nextNamePath = ((Constants.ZROOT + "/") + context.getInstanceID()) + Constants.ZNEXT_FILE;
   }
 
   public synchronized String getNextName() {
-
     while (next >= maxAllocated) {
       final int allocate = getAllocation();
-
       try {
-        byte[] max = context.getZooReaderWriter().mutateExisting(nextNamePath, currentValue -> {
-          long l = Long.parseLong(new String(currentValue, UTF_8), Character.MAX_RADIX);
-          return Long.toString(l + allocate, Character.MAX_RADIX).getBytes(UTF_8);
+        byte[] max = context.getZooReaderWriter().mutateExisting(nextNamePath, ( currentValue) -> {
+          long l = Long.parseLong(new String(currentValue, java.nio.charset.StandardCharsets.UTF_8), Character.MAX_RADIX);
+          return Long.toString(l + allocate, Character.MAX_RADIX).getBytes(java.nio.charset.StandardCharsets.UTF_8);
         });
-
         maxAllocated = Long.parseLong(new String(max, UTF_8), Character.MAX_RADIX);
         next = maxAllocated - allocate;
-
-      } catch (Exception e) {
+      } catch (java.lang.Exception e) {
         throw new IllegalStateException(e);
       }
-    }
-
-    return new String(FastFormat.toZeroPaddedString(next++, 7, Character.MAX_RADIX, new byte[0]),
-        UTF_8);
+    } 
+    return new String(FastFormat.toZeroPaddedString(next++, 7, Character.MAX_RADIX, new byte[0]), UTF_8);
   }
 
   private int getAllocation() {
@@ -89,7 +85,7 @@ public class UniqueNameAllocator {
 
     int totalAllocation = baseAllocation;
     if (jitterAllocation > 0) {
-      totalAllocation += RANDOM.get().nextInt(jitterAllocation);
+      totalAllocation += random.nextInt(jitterAllocation);
     }
 
     log.debug("Allocating {} filenames", totalAllocation);
