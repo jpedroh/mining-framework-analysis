@@ -8,17 +8,16 @@ import io.yawp.repository.Repository;
 import io.yawp.repository.Yawp;
 import io.yawp.servlet.cache.Cache;
 import io.yawp.servlet.cache.CacheHolder;
-
+import java.io.IOException;
+import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.logging.Logger;
+
 
 public class EndpointServlet extends HttpServlet {
-
     private static final long serialVersionUID = 8155293897299089610L;
 
     private final static Logger logger = Logger.getLogger(EndpointServlet.class.getName());
@@ -39,7 +38,6 @@ public class EndpointServlet extends HttpServlet {
         super.init(config);
         setWithShields(config.getInitParameter("enableShields"));
         initYawp(config.getInitParameter("packagePrefix"));
-
         crossDomainManager.init(config);
     }
 
@@ -101,16 +99,12 @@ public class EndpointServlet extends HttpServlet {
     public HttpResponse execute(RequestContext ctx) {
         try {
             Cache.clearAll();
-
             Repository r = getRepository(ctx);
             EndpointRouter router = EndpointRouter.parse(r, ctx);
-
             if (!router.isValid()) {
                 throw new HttpException(400, "Invalid route. Please check uri, json format, object ids and parent structure, etc.");
             }
-
             return router.executeRestAction(enableShields);
-
         } finally {
             Yawp.dispose();
         }
@@ -119,5 +113,4 @@ public class EndpointServlet extends HttpServlet {
     protected Repository getRepository(RequestContext ctx) {
         return Yawp.yawp().setRequestContext(ctx);
     }
-
 }

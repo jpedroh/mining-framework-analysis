@@ -7,14 +7,13 @@ import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.query.condition.Condition;
 import io.yawp.repository.query.condition.SimpleCondition;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class QueryBuilder<T> {
 
+public class QueryBuilder<T> {
     private Class<T> clazz;
 
     private ObjectModel model;
@@ -261,9 +260,8 @@ public class QueryBuilder<T> {
 
     @SuppressWarnings("unchecked")
     private T executeQueryById() {
-        SimpleCondition c = (SimpleCondition) condition;
-        IdRef<T> id = (IdRef<T>) c.getWhereValue();
-
+        SimpleCondition c = ((SimpleCondition) (condition));
+        IdRef<T> id = ((IdRef<T>) (c.getWhereValue()));
         T retrieved = r.driver().query().fetch(id);
         RepositoryHooks.afterQueryFetch(this, retrieved);
         return retrieved;
@@ -334,18 +332,22 @@ public class QueryBuilder<T> {
         if (hasPostFilter() || hasPostOrder()) {
             throw new RuntimeException("ids() cannot be used with post query filter or order. You may need to add @Index to your model attributes.");
         }
-
         r.namespace().set(getClazz());
         try {
+<<<<<<< LEFT
             List<IdRef<T>> ids = r.driver().query().ids(this);
             RepositoryHooks.afterQueryIds(this, ids);
             return ids;
+=======
+            return r.driver().query().ids(this);
+>>>>>>> RIGHT
         } finally {
             r.namespace().reset();
         }
     }
 
     public IdRef<T> onlyId() throws NoResultException, MoreThanOneResultException {
+
         List<IdRef<T>> ids = ids();
 
         if (ids.size() == 0) {
