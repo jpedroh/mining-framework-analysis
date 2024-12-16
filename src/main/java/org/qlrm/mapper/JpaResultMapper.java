@@ -5,35 +5,33 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.persistence.Query;
 
-public class JpaResultMapper extends ResultMapper {
 
+public class JpaResultMapper extends ResultMapper {
 	private static final Map<Class<?>, Class<?>> PRIMITIVE_TO_BOX_TYPE_MAP = new HashMap<>();
 
 	{
-		PRIMITIVE_TO_BOX_TYPE_MAP.put(int.class, Integer.class);
-		PRIMITIVE_TO_BOX_TYPE_MAP.put(long.class, Long.class);
-		PRIMITIVE_TO_BOX_TYPE_MAP.put(byte.class, Byte.class);
-		PRIMITIVE_TO_BOX_TYPE_MAP.put(boolean.class, Boolean.class);
-		PRIMITIVE_TO_BOX_TYPE_MAP.put(char.class, Character.class);
-		PRIMITIVE_TO_BOX_TYPE_MAP.put(float.class, Float.class);
-		PRIMITIVE_TO_BOX_TYPE_MAP.put(double.class, Double.class);
+		PRIMITIVE_TO_BOX_TYPE_MAP.put(int.class, java.lang.Integer.class);
+		PRIMITIVE_TO_BOX_TYPE_MAP.put(long.class, java.lang.Long.class);
+		PRIMITIVE_TO_BOX_TYPE_MAP.put(byte.class, java.lang.Byte.class);
+		PRIMITIVE_TO_BOX_TYPE_MAP.put(boolean.class, java.lang.Boolean.class);
+		PRIMITIVE_TO_BOX_TYPE_MAP.put(char.class, java.lang.Character.class);
+		PRIMITIVE_TO_BOX_TYPE_MAP.put(float.class, java.lang.Float.class);
+		PRIMITIVE_TO_BOX_TYPE_MAP.put(double.class, java.lang.Double.class);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> List<T> list(Query q, Class<T> clazz) throws IllegalArgumentException {
+	public <T> List<T> list(final Query q, final Class<T> clazz) throws IllegalArgumentException {
 		List<T> result = new ArrayList<T>();
 		List<Object[]> list = postProcessResultList(q.getResultList());
-
 		Constructor<?> ctor = null;
 		// why finding a constructor for each item? The result set is the same!
-		if (list != null && !list.isEmpty()) {
+		if ((list != null) && (!list.isEmpty())) {
 			ctor = findConstructor(clazz, list.get(0));
 		}
 		for (Object[] obj : list) {
-			result.add((T) createInstance(ctor, obj));
+			result.add(((T) (createInstance(ctor, obj))));
 		}
 		return result;
 	}
@@ -51,19 +49,17 @@ public class JpaResultMapper extends ResultMapper {
 		return rawResult instanceof Object[] ? (Object[]) rawResult : new Object[] { rawResult };
 	}
 
-	public <T> T uniqueResult(Query q, Class<T> clazz) {
+	public <T> T uniqueResult(final Query q, final Class<T> clazz) {
 		Object[] rec = postProcessSingleResult(q.getSingleResult());
 		Constructor<?> ctor = findConstructor(clazz, rec);
-
 		return createInstance(ctor, rec);
 	}
 
-	private Constructor<?> findConstructor(Class<?> clazz, Object... args) {
+	private Constructor<?> findConstructor(final Class<?> clazz, final Object... args) {
 		Constructor<?> result = null;
 		final Constructor<?>[] ctors = clazz.getDeclaredConstructors();
-
 		// More stable check
-		if (ctors.length == 1 && ctors[0].getParameterTypes().length == args.length) {
+		if ((ctors.length == 1) && (ctors[0].getParameterTypes().length == args.length)) {
 			// INFO stefanheimberg: wenn nur ein konstruktor, dann diesen
 			// verwenden
 			result = ctors[0];
@@ -71,12 +67,11 @@ public class JpaResultMapper extends ResultMapper {
 		if (ctors.length > 1) {
 			// INFO stefanheimberg: wenn mehrere konstruktor, dann den mit der
 			// korrekten signatur verwenden
-
-			NEXT_CONSTRUCTOR: for (Constructor<?> ctor : ctors) {
+			for (Constructor<?> ctor : ctors) {
 				final Class<?>[] parameterTypes = postProcessConstructorParameterTypes(ctor.getParameterTypes());
 				if (parameterTypes.length != args.length) {
 					// INFO stefanheimberg: anzahl parameter stimmt nicht
-					continue NEXT_CONSTRUCTOR;
+					continue;
 				}
 				for (int i = 0; i < parameterTypes.length; i++) {
 					if (args[i] != null) {
@@ -93,7 +88,7 @@ public class JpaResultMapper extends ResultMapper {
 		if (null == result) {
 			StringBuilder sb = new StringBuilder("No constructor taking:\n");
 			for (Object object : args) {
-				sb.append("\t").append(object.getClass().getName()).append("\n");
+				sb.append("\t").append(object != null ? object.getClass().getName() : null).append("\n");
 			}
 			throw new RuntimeException(sb.toString());
 		}
