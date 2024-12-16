@@ -34,12 +34,6 @@
  */
 package de.uni_koblenz.jgralab.impl.trans;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -47,8 +41,8 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -56,6 +50,12 @@ import de.uni_koblenz.jgralab.trans.ListPosition;
 import de.uni_koblenz.jgralab.trans.Transaction;
 import de.uni_koblenz.jgralab.trans.TransactionState;
 import de.uni_koblenz.jgralab.trans.VersionedDataObject;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 
 /**
  * The implementation of a <code>Vertex</edge> with versioning.
@@ -64,30 +64,34 @@ import de.uni_koblenz.jgralab.trans.VersionedDataObject;
  * 
  * @author Jose Monte(monte@uni-koblenz.de)
  */
-public abstract class VertexImpl extends
-		de.uni_koblenz.jgralab.impl.VertexBaseImpl {
+public abstract class VertexImpl extends VertexBaseImpl {
+	// next and previous vertex in Vseq
 	// next and previous vertex in Vseq
 	protected VersionedReferenceImpl<VertexImpl> nextVertex;
+
 	protected VersionedReferenceImpl<VertexImpl> prevVertex;
 
 	// represents begin and end of Iseq
+	// represents begin and end of Iseq
 	protected VersionedReferenceImpl<IncidenceImpl> firstIncidence;
+
 	protected VersionedReferenceImpl<IncidenceImpl> lastIncidence;
+
 	protected VersionedReferenceImpl<Long> incidenceListVersion;
 
 	/**
 	 * Initialization of versioned attributes is avoided here, to not have
 	 * persistent and temporary values for new instances within the transaction
 	 * this instance is created in.
-	 * 
+	 *
 	 * @param graphId
-	 *            the Id of the <code>Vertex</code>
+	 * 		the Id of the <code>Vertex</code>
 	 * @param graph
-	 *            the corresponding <code>Graph</code>
+	 * 		the corresponding <code>Graph</code>
 	 */
 	protected VertexImpl(int anId, Graph graph) {
 		super(anId, graph);
-		((GraphImpl) graph).addVertex(this);
+		((GraphImpl) (graph)).addVertex(this);
 	}
 
 	// --- getter ---//
@@ -151,7 +155,6 @@ public abstract class VertexImpl extends
 	}
 
 	// --- setter ---//
-
 	@Override
 	public void setId(int id) {
 		// initialize id
@@ -174,16 +177,13 @@ public abstract class VertexImpl extends
 	public void setFirstIncidence(InternalEdge firstIncidence) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
-			this.firstIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					this, (IncidenceImpl) firstIncidence, "$firstIncidence");
+			this.firstIncidence = new VersionedReferenceImpl<IncidenceImpl>(this, ((IncidenceImpl) (firstIncidence)), "$firstIncidence");
 		} else {
 			// initialize here
 			if (this.firstIncidence == null) {
-				this.firstIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-						this, null, "$firstIncidence");
+				this.firstIncidence = new VersionedReferenceImpl<IncidenceImpl>(this, null, "$firstIncidence");
 			}
-			this.firstIncidence.setValidValue((IncidenceImpl) firstIncidence,
-					graph.getCurrentTransaction());
+			this.firstIncidence.setValidValue(((IncidenceImpl) (firstIncidence)), graph.getCurrentTransaction());
 		}
 	}
 
@@ -191,16 +191,13 @@ public abstract class VertexImpl extends
 	public void setLastIncidence(InternalEdge lastIncidence) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
-			this.lastIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					this, (IncidenceImpl) lastIncidence, "$lastIncidence");
+			this.lastIncidence = new VersionedReferenceImpl<IncidenceImpl>(this, ((IncidenceImpl) (lastIncidence)), "$lastIncidence");
 		} else {
 			// initialize here
 			if (this.lastIncidence == null) {
-				this.lastIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-						this, null, "$lastIncidence");
+				this.lastIncidence = new VersionedReferenceImpl<IncidenceImpl>(this, null, "$lastIncidence");
 			}
-			this.lastIncidence.setValidValue((IncidenceImpl) lastIncidence,
-					graph.getCurrentTransaction());
+			this.lastIncidence.setValidValue(((IncidenceImpl) (lastIncidence)), graph.getCurrentTransaction());
 		}
 	}
 
@@ -208,11 +205,9 @@ public abstract class VertexImpl extends
 	public void setNextVertex(Vertex nextVertex) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
-			this.nextVertex = new VersionedReferenceImpl<VertexImpl>(this,
-					(VertexImpl) nextVertex, "$nextVertex");
+			this.nextVertex = new VersionedReferenceImpl<VertexImpl>(this, ((VertexImpl) (nextVertex)), "$nextVertex");
 		} else {
-			TransactionImpl transaction = (TransactionImpl) graph
-					.getCurrentTransaction();
+			TransactionImpl transaction = ((TransactionImpl) (graph.getCurrentTransaction()));
 			if (transaction == null) {
 				throw new GraphException("Current transaction is null.");
 			}
@@ -221,18 +216,13 @@ public abstract class VertexImpl extends
 			// relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedVseqVertices != null) {
-					explicitChange = transaction.changedVseqVertices
-							.containsKey(this)
-							&& (transaction.changedVseqVertices.get(this)
-									.containsKey(ListPosition.NEXT));
+					explicitChange = transaction.changedVseqVertices.containsKey(this) && transaction.changedVseqVertices.get(this).containsKey(ListPosition.NEXT);
 				}
 			}
 			if (this.nextVertex == null) {
-				this.nextVertex = new VersionedReferenceImpl<VertexImpl>(this,
-						null, "$nextVertex");
+				this.nextVertex = new VersionedReferenceImpl<VertexImpl>(this, null, "$nextVertex");
 			}
-			this.nextVertex.setValidValue((VertexImpl) nextVertex, transaction,
-					explicitChange);
+			this.nextVertex.setValidValue(((VertexImpl) (nextVertex)), transaction, explicitChange);
 		}
 	}
 
@@ -240,11 +230,9 @@ public abstract class VertexImpl extends
 	public void setPrevVertex(Vertex prevVertex) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
-			this.prevVertex = new VersionedReferenceImpl<VertexImpl>(this,
-					(VertexImpl) prevVertex, "$prevVertex");
+			this.prevVertex = new VersionedReferenceImpl<VertexImpl>(this, ((VertexImpl) (prevVertex)), "$prevVertex");
 		} else {
-			TransactionImpl transaction = (TransactionImpl) graph
-					.getCurrentTransaction();
+			TransactionImpl transaction = ((TransactionImpl) (graph.getCurrentTransaction()));
 			if (transaction == null) {
 				throw new GraphException("Current transaction is null.");
 			}
@@ -253,18 +241,13 @@ public abstract class VertexImpl extends
 			// relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedVseqVertices != null) {
-					explicitChange = transaction.changedVseqVertices
-							.containsKey(this)
-							&& (transaction.changedVseqVertices.get(this)
-									.containsKey(ListPosition.PREV));
+					explicitChange = transaction.changedVseqVertices.containsKey(this) && transaction.changedVseqVertices.get(this).containsKey(ListPosition.PREV);
 				}
 			}
 			if (this.prevVertex == null) {
-				this.prevVertex = new VersionedReferenceImpl<VertexImpl>(this,
-						null, "$prevVertex");
+				this.prevVertex = new VersionedReferenceImpl<VertexImpl>(this, null, "$prevVertex");
 			}
-			this.prevVertex.setValidValue((VertexImpl) prevVertex, transaction,
-					explicitChange);
+			this.prevVertex.setValidValue(((VertexImpl) (prevVertex)), transaction, explicitChange);
 		}
 	}
 
@@ -272,11 +255,9 @@ public abstract class VertexImpl extends
 	public void setIncidenceListVersion(long incidenceListVersion) {
 		// initialize here
 		if (this.incidenceListVersion == null) {
-			this.incidenceListVersion = new VersionedReferenceImpl<Long>(this,
-					null, "$incidenceListVersion");
+			this.incidenceListVersion = new VersionedReferenceImpl<Long>(this, null, "$incidenceListVersion");
 		}
-		this.incidenceListVersion.setValidValue(incidenceListVersion, graph
-				.getCurrentTransaction());
+		this.incidenceListVersion.setValidValue(incidenceListVersion, graph.getCurrentTransaction());
 	}
 
 	@Override
@@ -293,65 +274,53 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	public void putIncidenceBefore(InternalEdge targetIncidence,
-			InternalEdge movedIncidence) {
-		TransactionImpl transaction = (TransactionImpl) graph
-				.getCurrentTransaction();
+	public void putIncidenceBefore(InternalEdge targetIncidence, InternalEdge movedIncidence) {
+		TransactionImpl transaction = ((TransactionImpl) (graph.getCurrentTransaction()));
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
 		}
 		// It should not be possible to execute this method, if this instance
 		// isn't valid in the current transaction.
 		if (!isValid()) {
-			throw new GraphException("Vertex " + this
-					+ " is not valid within the current transaction.");
+			throw new GraphException(("Vertex " + this) + " is not valid within the current transaction.");
 		}
 		// It should not be possible to execute this method, if targetIncidence
 		// isn't valid
 		// in the current transaction.
 		if (!targetIncidence.isValid()) {
-			throw new GraphException("Incidence " + targetIncidence
-					+ " is not valid within the current transaction.");
+			throw new GraphException(("Incidence " + targetIncidence) + " is not valid within the current transaction.");
 		}
 		// It should not be possible to execute this method, if movedIncidence
 		// isn't valid
 		// in the current transaction.
 		if (!movedIncidence.isValid()) {
-			throw new GraphException("Incidence " + movedIncidence
-					+ " is not valid within the current transaction.");
+			throw new GraphException(("Incidence " + movedIncidence) + " is not valid within the current transaction.");
 		}
-		synchronized (transaction) {
+		synchronized(transaction) {
 			super.putIncidenceBefore(targetIncidence, movedIncidence);
-			assert ((transaction != null) && !transaction.isReadOnly()
-					&& transaction.isValid() && (transaction.getState() != TransactionState.NOTRUNNING));
+			assert (((transaction != null) && (!transaction.isReadOnly())) && transaction.isValid()) && (transaction.getState() != TransactionState.NOTRUNNING);
 			if (transaction.getState() == TransactionState.RUNNING) {
 				if (transaction.changedIncidences == null) {
-					transaction.changedIncidences = new HashMap<VertexImpl, Map<IncidenceImpl, Map<ListPosition, Boolean>>>(
-							1, TransactionManagerImpl.LOAD_FACTOR);
+					transaction.changedIncidences = new HashMap<VertexImpl, Map<IncidenceImpl, Map<ListPosition, Boolean>>>(1, TransactionManagerImpl.LOAD_FACTOR);
 				}
 				// changed incidences for this instance
-				Map<IncidenceImpl, Map<ListPosition, Boolean>> changedIncidences = transaction.changedIncidences
-						.get(this);
+				Map<IncidenceImpl, Map<ListPosition, Boolean>> changedIncidences = transaction.changedIncidences.get(this);
 				if (changedIncidences == null) {
-					changedIncidences = new HashMap<IncidenceImpl, Map<ListPosition, Boolean>>(
-							1, TransactionManagerImpl.LOAD_FACTOR);
+					changedIncidences = new HashMap<IncidenceImpl, Map<ListPosition, Boolean>>(1, TransactionManagerImpl.LOAD_FACTOR);
 					transaction.changedIncidences.put(this, changedIncidences);
 				}
 				// movedIncidence
-				Map<ListPosition, Boolean> positionsMap = changedIncidences
-						.get(movedIncidence);
+				Map<ListPosition, Boolean> positionsMap = changedIncidences.get(movedIncidence);
 				if (positionsMap == null) {
-					positionsMap = new HashMap<ListPosition, Boolean>(1, 0.2f);
-					changedIncidences.put((IncidenceImpl) movedIncidence,
-							positionsMap);
+					positionsMap = new HashMap<ListPosition, Boolean>(1, 0.2F);
+					changedIncidences.put(((IncidenceImpl) (movedIncidence)), positionsMap);
 				}
 				positionsMap.put(ListPosition.NEXT, true);
 				// targetIncidence
 				positionsMap = changedIncidences.get(targetIncidence);
 				if (positionsMap == null) {
-					positionsMap = new HashMap<ListPosition, Boolean>(1, 0.2f);
-					changedIncidences.put((IncidenceImpl) targetIncidence,
-							positionsMap);
+					positionsMap = new HashMap<ListPosition, Boolean>(1, 0.2F);
+					changedIncidences.put(((IncidenceImpl) (targetIncidence)), positionsMap);
 				}
 				positionsMap.put(ListPosition.PREV, false);
 			}
@@ -359,65 +328,53 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	public void putIncidenceAfter(InternalEdge targetIncidence,
-			InternalEdge movedIncidence) {
-		TransactionImpl transaction = (TransactionImpl) graph
-				.getCurrentTransaction();
+	public void putIncidenceAfter(InternalEdge targetIncidence, InternalEdge movedIncidence) {
+		TransactionImpl transaction = ((TransactionImpl) (graph.getCurrentTransaction()));
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
 		}
 		// It should not be possible to execute this method, if this instance
 		// isn't valid in the current transaction.
 		if (!isValid()) {
-			throw new GraphException("Vertex " + this
-					+ " is not valid within the current transaction.");
+			throw new GraphException(("Vertex " + this) + " is not valid within the current transaction.");
 		}
 		// It should not be possible to execute this method, if targetIncidence
 		// isn't valid
 		// in the current transaction.
 		if (!targetIncidence.isValid()) {
-			throw new GraphException("Incidence " + targetIncidence
-					+ " is not valid within the current transaction.");
+			throw new GraphException(("Incidence " + targetIncidence) + " is not valid within the current transaction.");
 		}
 		// It should not be possible to execute this method, if movedIncidence
 		// isn't valid
 		// in the current transaction.
 		if (!movedIncidence.isValid()) {
-			throw new GraphException("Incidence " + movedIncidence
-					+ " is not valid within the current transaction.");
+			throw new GraphException(("Incidence " + movedIncidence) + " is not valid within the current transaction.");
 		}
-		synchronized (transaction) {
+		synchronized(transaction) {
 			super.putIncidenceAfter(targetIncidence, movedIncidence);
-			assert ((transaction != null) && !transaction.isReadOnly()
-					&& transaction.isValid() && (transaction.getState() != TransactionState.NOTRUNNING));
+			assert (((transaction != null) && (!transaction.isReadOnly())) && transaction.isValid()) && (transaction.getState() != TransactionState.NOTRUNNING);
 			if (transaction.getState() == TransactionState.RUNNING) {
 				if (transaction.changedIncidences == null) {
-					transaction.changedIncidences = new HashMap<VertexImpl, Map<IncidenceImpl, Map<ListPosition, Boolean>>>(
-							1, TransactionManagerImpl.LOAD_FACTOR);
+					transaction.changedIncidences = new HashMap<VertexImpl, Map<IncidenceImpl, Map<ListPosition, Boolean>>>(1, TransactionManagerImpl.LOAD_FACTOR);
 				}
 				// changed incidences for this instance
-				Map<IncidenceImpl, Map<ListPosition, Boolean>> changedIncidences = transaction.changedIncidences
-						.get(this);
+				Map<IncidenceImpl, Map<ListPosition, Boolean>> changedIncidences = transaction.changedIncidences.get(this);
 				if (changedIncidences == null) {
-					changedIncidences = new HashMap<IncidenceImpl, Map<ListPosition, Boolean>>(
-							1, TransactionManagerImpl.LOAD_FACTOR);
+					changedIncidences = new HashMap<IncidenceImpl, Map<ListPosition, Boolean>>(1, TransactionManagerImpl.LOAD_FACTOR);
 					transaction.changedIncidences.put(this, changedIncidences);
 				}
 				// movedIncidence
-				Map<ListPosition, Boolean> positionsMap = changedIncidences
-						.get(movedIncidence);
+				Map<ListPosition, Boolean> positionsMap = changedIncidences.get(movedIncidence);
 				if (positionsMap == null) {
-					positionsMap = new HashMap<ListPosition, Boolean>(1, 0.2f);
-					changedIncidences.put((IncidenceImpl) movedIncidence,
-							positionsMap);
+					positionsMap = new HashMap<ListPosition, Boolean>(1, 0.2F);
+					changedIncidences.put(((IncidenceImpl) (movedIncidence)), positionsMap);
 				}
 				positionsMap.put(ListPosition.PREV, true);
 				// targetIncidence
 				positionsMap = changedIncidences.get(targetIncidence);
 				if (positionsMap == null) {
-					positionsMap = new HashMap<ListPosition, Boolean>(1, 0.2f);
-					changedIncidences.put((IncidenceImpl) targetIncidence,
-							positionsMap);
+					positionsMap = new HashMap<ListPosition, Boolean>(1, 0.2F);
+					changedIncidences.put(((IncidenceImpl) (targetIncidence)), positionsMap);
 				}
 				positionsMap.put(ListPosition.NEXT, false);
 			}
@@ -485,15 +442,15 @@ public abstract class VertexImpl extends
 
 	@Override
 	public Iterable<Edge> incidences(EdgeClass eclass, EdgeDirection dir) {
-		return new AttributedElementIterable<Edge>(super
-				.incidences(eclass, dir), graph);
+		return new AttributedElementIterable<Edge>(
+				super.incidences(eclass, dir), graph);
 	}
 
 	@Override
 	public Iterable<Edge> incidences(Class<? extends Edge> eclass,
 			EdgeDirection dir) {
-		return new AttributedElementIterable<Edge>(super
-				.incidences(eclass, dir), graph);
+		return new AttributedElementIterable<Edge>(
+				super.incidences(eclass, dir), graph);
 	}
 
 	@Override

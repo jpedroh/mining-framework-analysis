@@ -34,17 +34,6 @@
  */
 package de.uni_koblenz.jgralab.impl.trans;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.logging.Logger;
-
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
@@ -69,17 +58,28 @@ import de.uni_koblenz.jgralab.trans.Transaction;
 import de.uni_koblenz.jgralab.trans.TransactionManager;
 import de.uni_koblenz.jgralab.trans.TransactionState;
 import de.uni_koblenz.jgralab.trans.VersionedDataObject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.logging.Logger;
+
 
 /**
  * The implementation of a <code>Graph</edge> with versioning.
  * 
  * @author Jose Monte(monte@uni-koblenz.de)
  */
-public abstract class GraphImpl extends
-		de.uni_koblenz.jgralab.impl.GraphBaseImpl {
+public abstract class GraphImpl extends GraphBaseImpl {
 	private static Logger logger = JGraLab
 			.getLogger("de.uni_koblenz.jgralab.impl.trans");
 
+	// the transactions of this instance are managed by a transaction manager
 	// the transactions of this instance are managed by a transaction manager
 	private TransactionManager transactionManager;
 
@@ -88,31 +88,47 @@ public abstract class GraphImpl extends
 	// With this eCount and vCount maybe could be removed (for saving memory)!?
 	// represents Eset
 	protected VersionedArrayImpl<EdgeImpl[]> edge;
+
+	// TODO maybe think about removing revEdge completely (for saving memory)?!
 	// TODO maybe think about removing revEdge completely (for saving memory)?!
 	protected VersionedArrayImpl<ReversedEdgeImpl[]> revEdge;
+
 	private VersionedReferenceImpl<Integer> eCount;
 
 	// represents Vset
+	// represents Vset
 	protected VersionedArrayImpl<VertexImpl[]> vertex;
+
 	private VersionedReferenceImpl<Integer> vCount;
 
 	// represents begin and end of Eseq
+	// represents begin and end of Eseq
 	private VersionedReferenceImpl<EdgeImpl> firstEdge;
+
 	private VersionedReferenceImpl<EdgeImpl> lastEdge;
+
 	protected VersionedReferenceImpl<Long> edgeListVersion;
 
 	// represents begin and end of Vseq
+	// represents begin and end of Vseq
 	private VersionedReferenceImpl<VertexImpl> firstVertex;
+
 	private VersionedReferenceImpl<VertexImpl> lastVertex;
+
 	protected VersionedReferenceImpl<Long> vertexListVersion;
 
 	// for synchronization when expanding graph...
+	// for synchronization when expanding graph...
 	protected ReadWriteLock vertexSync;
+
 	protected ReadWriteLock edgeSync;
 
 	// holds indexes of <code>GraphElement</code>s which couldn't be freed after
 	// a COMMIT or an ABORT...these indexes should be freed later.
+	// holds indexes of <code>GraphElement</code>s which couldn't be freed after
+	// a COMMIT or an ABORT...these indexes should be freed later.
 	protected List<Integer> edgeIndexesToBeFreed;
+
 	protected List<Integer> vertexIndexesToBeFreed;
 
 	/**
@@ -132,11 +148,16 @@ public abstract class GraphImpl extends
 	}
 
 	/**
-	 * 
+	 *
+	 *
 	 * @param id
+	 * 		
 	 * @param cls
+	 * 		
 	 * @param max
+	 * 		
 	 * @param max2
+	 * 		
 	 */
 	protected GraphImpl(String id, GraphClass cls, int max, int max2) {
 		super(id, cls, max, max2);
@@ -144,8 +165,12 @@ public abstract class GraphImpl extends
 	}
 
 	/**
+	 *
+	 *
 	 * @param id
+	 * 		
 	 * @param cls
+	 * 		
 	 */
 	public GraphImpl(String id, GraphClass cls) {
 		super(id, cls);
@@ -290,14 +315,14 @@ public abstract class GraphImpl extends
 
 	@Override
 	public FreeIndexList getFreeVertexList() {
-		synchronized (freeVertexList) {
+		synchronized(freeVertexList) {
 			return freeVertexList;
 		}
 	}
 
 	@Override
 	public FreeIndexList getFreeEdgeList() {
-		synchronized (freeEdgeList) {
+		synchronized(freeEdgeList) {
 			return freeEdgeList;
 		}
 	}
@@ -332,9 +357,8 @@ public abstract class GraphImpl extends
 	 */
 	@Override
 	public List<InternalVertex> getDeleteVertexList() {
-		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
-		assert ((transaction != null) && ((transaction.getState() == TransactionState.RUNNING) || (transaction
-				.getState() == TransactionState.WRITING)));
+		TransactionImpl transaction = ((TransactionImpl) (getCurrentTransaction()));
+		assert (transaction != null) && ((transaction.getState() == TransactionState.RUNNING) || (transaction.getState() == TransactionState.WRITING));
 		if (transaction.deleteVertexList == null) {
 			transaction.deleteVertexList = new LinkedList<InternalVertex>();
 		}
@@ -381,7 +405,7 @@ public abstract class GraphImpl extends
 	public void setEdge(InternalEdge[] edge) {
 		edgeSync.readLock().lock();
 		try {
-			this.edge.setValidValue((EdgeImpl[]) edge, getCurrentTransaction());
+			this.edge.setValidValue(((EdgeImpl[]) (edge)), getCurrentTransaction());
 		} finally {
 			edgeSync.readLock().unlock();
 		}
@@ -390,44 +414,36 @@ public abstract class GraphImpl extends
 	@Override
 	public void setFirstEdgeInGraph(InternalEdge firstEdge) {
 		if ((this.firstEdge == null) || isLoading()) {
-			this.firstEdge = new VersionedReferenceImpl<EdgeImpl>(this,
-					(EdgeImpl) firstEdge, "$firstEdge");
+			this.firstEdge = new VersionedReferenceImpl<EdgeImpl>(this, ((EdgeImpl) (firstEdge)), "$firstEdge");
 		} else {
-			this.firstEdge.setValidValue((EdgeImpl) firstEdge,
-					getCurrentTransaction());
+			this.firstEdge.setValidValue(((EdgeImpl) (firstEdge)), getCurrentTransaction());
 		}
 	}
 
 	@Override
 	public void setFirstVertex(InternalVertex firstVertex) {
 		if ((this.firstVertex == null) || isLoading()) {
-			this.firstVertex = new VersionedReferenceImpl<VertexImpl>(this,
-					(VertexImpl) firstVertex, "$firstVertex");
+			this.firstVertex = new VersionedReferenceImpl<VertexImpl>(this, ((VertexImpl) (firstVertex)), "$firstVertex");
 		} else {
-			this.firstVertex.setValidValue((VertexImpl) firstVertex,
-					getCurrentTransaction());
+			this.firstVertex.setValidValue(((VertexImpl) (firstVertex)), getCurrentTransaction());
 		}
 	}
 
 	@Override
 	public void setLastEdgeInGraph(InternalEdge lastEdge) {
 		if ((this.lastEdge == null) || isLoading()) {
-			this.lastEdge = new VersionedReferenceImpl<EdgeImpl>(this,
-					(EdgeImpl) lastEdge, "$lastEdge");
+			this.lastEdge = new VersionedReferenceImpl<EdgeImpl>(this, ((EdgeImpl) (lastEdge)), "$lastEdge");
 		} else {
-			this.lastEdge.setValidValue((EdgeImpl) lastEdge,
-					getCurrentTransaction());
+			this.lastEdge.setValidValue(((EdgeImpl) (lastEdge)), getCurrentTransaction());
 		}
 	}
 
 	@Override
 	public void setLastVertex(InternalVertex lastVertex) {
 		if ((this.lastVertex == null) || isLoading()) {
-			this.lastVertex = new VersionedReferenceImpl<VertexImpl>(this,
-					(VertexImpl) lastVertex, "$lastVertex");
+			this.lastVertex = new VersionedReferenceImpl<VertexImpl>(this, ((VertexImpl) (lastVertex)), "$lastVertex");
 		} else {
-			this.lastVertex.setValidValue((VertexImpl) lastVertex,
-					getCurrentTransaction());
+			this.lastVertex.setValidValue(((VertexImpl) (lastVertex)), getCurrentTransaction());
 		}
 	}
 
@@ -435,8 +451,7 @@ public abstract class GraphImpl extends
 	public void setRevEdge(InternalEdge[] revEdge) {
 		edgeSync.readLock().lock();
 		try {
-			this.revEdge.setValidValue((ReversedEdgeImpl[]) revEdge,
-					getCurrentTransaction());
+			this.revEdge.setValidValue(((ReversedEdgeImpl[]) (revEdge)), getCurrentTransaction());
 		} finally {
 			edgeSync.readLock().unlock();
 		}
@@ -455,8 +470,7 @@ public abstract class GraphImpl extends
 	public void setVertex(InternalVertex[] vertex) {
 		vertexSync.readLock().lock();
 		try {
-			this.vertex.setValidValue((VertexImpl[]) vertex,
-					getCurrentTransaction());
+			this.vertex.setValidValue(((VertexImpl[]) (vertex)), getCurrentTransaction());
 		} finally {
 			vertexSync.readLock().unlock();
 		}
@@ -465,21 +479,17 @@ public abstract class GraphImpl extends
 	@Override
 	public void setVertexListVersion(long vertexListVersion) {
 		if (this.vertexListVersion == null) {
-			this.vertexListVersion = new VersionedReferenceImpl<Long>(this,
-					vertexListVersion, "$vertexListVersion");
+			this.vertexListVersion = new VersionedReferenceImpl<Long>(this, vertexListVersion, "$vertexListVersion");
 		}
-		this.vertexListVersion.setValidValue(vertexListVersion,
-				getCurrentTransaction());
+		this.vertexListVersion.setValidValue(vertexListVersion, getCurrentTransaction());
 	}
 
 	@Override
 	public void setEdgeListVersion(long edgeListVersion) {
 		if (this.edgeListVersion == null) {
-			this.edgeListVersion = new VersionedReferenceImpl<Long>(this,
-					edgeListVersion, "$edgeListVersion");
+			this.edgeListVersion = new VersionedReferenceImpl<Long>(this, edgeListVersion, "$edgeListVersion");
 		}
-		this.edgeListVersion.setValidValue(edgeListVersion,
-				getCurrentTransaction());
+		this.edgeListVersion.setValidValue(edgeListVersion, getCurrentTransaction());
 	}
 
 	/**
@@ -553,8 +563,8 @@ public abstract class GraphImpl extends
 		if (logger != null) {
 			logger.fine("tx id=" + transaction.getID());
 		}
-		transactionManager.setTransactionForThread(transaction, Thread
-				.currentThread());
+		transactionManager.setTransactionForThread(transaction,
+				Thread.currentThread());
 	}
 
 	@Override
@@ -608,9 +618,9 @@ public abstract class GraphImpl extends
 		int vId = 0;
 		try {
 			Transaction transaction = getCurrentTransaction();
-			assert (transaction.getState() != null);
+			assert transaction.getState() != null;
 			if (transaction.getState() == TransactionState.RUNNING) {
-				synchronized (freeVertexList) {
+				synchronized(freeVertexList) {
 					vId = freeVertexList.allocateIndex();
 					if (vId == 0) {
 						int newSize = getExpandedVertexCount();
@@ -633,7 +643,7 @@ public abstract class GraphImpl extends
 		int eId = 0;
 		try {
 			Transaction transaction = getCurrentTransaction();
-			assert (transaction.getState() != null);
+			assert transaction.getState() != null;
 			if (transaction.getState() == TransactionState.RUNNING) {
 				eId = freeEdgeList.allocateIndex();
 				if (eId == 0) {
@@ -653,10 +663,9 @@ public abstract class GraphImpl extends
 	@Override
 	public void freeEdgeIndex(int index) {
 		Transaction transaction = getCurrentTransaction();
-		assert ((transaction != null) && !transaction.isReadOnly() && (freeEdgeList != null));
-		if ((transaction.getState() == TransactionState.COMMITTING)
-				|| (transaction.getState() == TransactionState.ABORTING)) {
-			synchronized (freeEdgeList) {
+		assert ((transaction != null) && (!transaction.isReadOnly())) && (freeEdgeList != null);
+		if ((transaction.getState() == TransactionState.COMMITTING) || (transaction.getState() == TransactionState.ABORTING)) {
+			synchronized(freeEdgeList) {
 				if (isEdgeIndexReferenced(index)) {
 					if (edgeIndexesToBeFreed == null) {
 						edgeIndexesToBeFreed = new ArrayList<Integer>();
@@ -667,7 +676,7 @@ public abstract class GraphImpl extends
 				} else {
 					freeEdgeList.freeIndex(index);
 					if (edgeIndexesToBeFreed != null) {
-						edgeIndexesToBeFreed.remove((Object) index);
+						edgeIndexesToBeFreed.remove(((Object) (index)));
 					}
 				}
 			}
@@ -713,10 +722,9 @@ public abstract class GraphImpl extends
 	@Override
 	public void freeVertexIndex(int index) {
 		Transaction transaction = getCurrentTransaction();
-		assert ((transaction != null) && !transaction.isReadOnly() && (freeVertexList != null));
-		if ((transaction.getState() == TransactionState.COMMITTING)
-				|| (transaction.getState() == TransactionState.ABORTING)) {
-			synchronized (freeVertexList) {
+		assert ((transaction != null) && (!transaction.isReadOnly())) && (freeVertexList != null);
+		if ((transaction.getState() == TransactionState.COMMITTING) || (transaction.getState() == TransactionState.ABORTING)) {
+			synchronized(freeVertexList) {
 				if (isVertexIndexReferenced(index)) {
 					if (vertexIndexesToBeFreed == null) {
 						vertexIndexesToBeFreed = new ArrayList<Integer>();
@@ -727,7 +735,7 @@ public abstract class GraphImpl extends
 				} else {
 					freeVertexList.freeIndex(index);
 					if (vertexIndexesToBeFreed != null) {
-						vertexIndexesToBeFreed.remove((Object) index);
+						vertexIndexesToBeFreed.remove(((Object) (index)));
 					}
 				}
 			}
@@ -773,9 +781,8 @@ public abstract class GraphImpl extends
 	@Override
 	public boolean canAddGraphElement(int graphElementId) {
 		Transaction transaction = getCurrentTransaction();
-		assert (transaction != null);
-		return ((transaction.getState() == TransactionState.WRITING) || (transaction
-				.getState() == TransactionState.RUNNING));
+		assert transaction != null;
+		return (transaction.getState() == TransactionState.WRITING) || (transaction.getState() == TransactionState.RUNNING);
 	}
 
 	@Override
@@ -786,8 +793,7 @@ public abstract class GraphImpl extends
 		vertexSync.writeLock().lock();
 		try {
 			if (newSize <= vMax) {
-				throw new GraphException("newSize must > vSize: vSize=" + vMax
-						+ ", newSize=" + newSize);
+				throw new GraphException((("newSize must > vSize: vSize=" + vMax) + ", newSize=") + newSize);
 			}
 			// mark if freeVertexList has been initialized in this method
 			// invocation...
@@ -797,14 +803,13 @@ public abstract class GraphImpl extends
 				firstInit = true;
 				freeVertexList = new FreeIndexList(newSize);
 			}
-			synchronized (freeVertexList) {
+			synchronized(freeVertexList) {
 				// initialization of vertex should be done with initialization
 				// of graph...
 				if (vertex == null) {
-					vertex = new VersionedArrayImpl<VertexImpl[]>(this,
-							new VertexImpl[newSize + 1], "$vertex[]");
+					vertex = new VersionedArrayImpl<VertexImpl[]>(this, new VertexImpl[newSize + 1], "$vertex[]");
 				} else {
-					synchronized (vertex) {
+					synchronized(vertex) {
 						// expand all vertex-values for all active
 						// transactions
 						vertex.expandVertexArrays(newSize);
@@ -831,8 +836,7 @@ public abstract class GraphImpl extends
 		edgeSync.writeLock().lock();
 		try {
 			if (newSize <= eMax) {
-				throw new GraphException("newSize must be > eSize: eSize="
-						+ eMax + ", newSize=" + newSize);
+				throw new GraphException((("newSize must be > eSize: eSize=" + eMax) + ", newSize=") + newSize);
 			}
 			// mark if freeEdgeList has been initialized in this method
 			// invocation...
@@ -841,20 +845,18 @@ public abstract class GraphImpl extends
 				firstInit = true;
 				freeEdgeList = new FreeIndexList(newSize);
 			}
-			synchronized (freeEdgeList) {
+			synchronized(freeEdgeList) {
 				// initialization edge and revEdge
 				if (edge == null) {
-					edge = new VersionedArrayImpl<EdgeImpl[]>(this,
-							new EdgeImpl[newSize + 1], "$edge[]");
-					assert (revEdge == null);
-					revEdge = new VersionedArrayImpl<ReversedEdgeImpl[]>(this,
-							new ReversedEdgeImpl[newSize + 1], "$revEdge[]");
+					edge = new VersionedArrayImpl<EdgeImpl[]>(this, new EdgeImpl[newSize + 1], "$edge[]");
+					assert revEdge == null;
+					revEdge = new VersionedArrayImpl<ReversedEdgeImpl[]>(this, new ReversedEdgeImpl[newSize + 1], "$revEdge[]");
 				} else {
 					// lock Array edge
-					synchronized (edge) {
+					synchronized(edge) {
 						edge.expandEdgeArrays(newSize);
 						// lock Array revEdge
-						synchronized (revEdge) {
+						synchronized(revEdge) {
 							// expand all edge- and revEdge-values for all
 							// active
 							// transactions
@@ -878,29 +880,24 @@ public abstract class GraphImpl extends
 		if (isLoading()) {
 			super.addEdge(newEdge, alpha, omega);
 		} else {
-			TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
+			TransactionImpl transaction = ((TransactionImpl) (getCurrentTransaction()));
 			if (transaction == null) {
 				throw new GraphException("Current transaction is null.");
 			}
 			if (transaction.isReadOnly()) {
-				throw new GraphException(
-						"Read-only transactions are not allowed to add edges.");
+				throw new GraphException("Read-only transactions are not allowed to add edges.");
 			}
 			// It should not be possible to add newEdge, if alpha isn't
 			// valid in the current transaction.
 			if (!alpha.isValid()) {
-				throw new GraphException("Alpha-vertex " + alpha
-						+ " is not valid within the current transaction "
-						+ transaction + ".");
+				throw new GraphException(((("Alpha-vertex " + alpha) + " is not valid within the current transaction ") + transaction) + ".");
 			}
 			// It should not be possible to add newEdge, if omega isn't
 			// valid in the current transaction.
 			if (!omega.isValid()) {
-				throw new GraphException("Omega-vertex " + omega
-						+ " is not valid within the current transaction "
-						+ transaction + ".");
+				throw new GraphException(((("Omega-vertex " + omega) + " is not valid within the current transaction ") + transaction) + ".");
 			}
-			synchronized (transaction) {
+			synchronized(transaction) {
 				// create temporary versions of edge and revEdge if not already
 				// existing
 				if (transaction.getState() == TransactionState.RUNNING) {
@@ -914,14 +911,12 @@ public abstract class GraphImpl extends
 				} catch (GraphException e) {
 					throw e;
 				}
-				assert ((transaction != null) && !transaction.isReadOnly()
-						&& transaction.isValid() && (transaction.getState() != TransactionState.NOTRUNNING));
+				assert (((transaction != null) && (!transaction.isReadOnly())) && transaction.isValid()) && (transaction.getState() != TransactionState.NOTRUNNING);
 				if (transaction.getState() == TransactionState.RUNNING) {
 					if (transaction.addedEdges == null) {
 						transaction.addedEdges = new ArrayList<EdgeImpl>(1);
 					}
-					transaction.addedEdges
-							.add((de.uni_koblenz.jgralab.impl.trans.EdgeImpl) (newEdge));
+					transaction.addedEdges.add(((EdgeImpl) (newEdge)));
 					if (transaction.deletedEdges != null) {
 						transaction.deletedEdges.remove(newEdge);
 					}
@@ -935,15 +930,14 @@ public abstract class GraphImpl extends
 		if (isLoading()) {
 			super.addVertex(newVertex);
 		} else {
-			TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
+			TransactionImpl transaction = ((TransactionImpl) (getCurrentTransaction()));
 			if (transaction == null) {
 				throw new GraphException("Current transaction is null.");
 			}
 			if (transaction.isReadOnly()) {
-				throw new GraphException(
-						"Read-only transactions are not allowed to add vertices.");
+				throw new GraphException("Read-only transactions are not allowed to add vertices.");
 			}
-			synchronized (transaction) {
+			synchronized(transaction) {
 				if (transaction.getState() == TransactionState.RUNNING) {
 					vertexSync.writeLock().lock();
 					vertex.prepareValueChangeAfterReference(transaction);
@@ -954,14 +948,12 @@ public abstract class GraphImpl extends
 				} catch (GraphException e) {
 					throw e;
 				}
-				assert ((transaction != null) && !transaction.isReadOnly()
-						&& transaction.isValid() && (transaction.getState() != TransactionState.NOTRUNNING));
+				assert (((transaction != null) && (!transaction.isReadOnly())) && transaction.isValid()) && (transaction.getState() != TransactionState.NOTRUNNING);
 				if (transaction.getState() == TransactionState.RUNNING) {
 					if (transaction.addedVertices == null) {
 						transaction.addedVertices = new ArrayList<VertexImpl>(1);
 					}
-					transaction.addedVertices
-							.add((de.uni_koblenz.jgralab.impl.trans.VertexImpl) (newVertex));
+					transaction.addedVertices.add(((VertexImpl) (newVertex)));
 					if (transaction.deletedVertices != null) {
 						transaction.deletedVertices.remove(newVertex);
 					}
@@ -971,10 +963,8 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
-			Vertex omega) {
-		return graphFactory.createEdgeWithTransactionSupport(cls, 0, this,
-				alpha, omega);
+	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha, Vertex omega) {
+		return graphFactory.createEdgeWithTransactionSupport(cls, 0, this, alpha, omega);
 	}
 
 	@Override
@@ -1015,23 +1005,18 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void edgeAfterDeleted(Edge edgeToBeDeleted, Vertex oldAlpha,
-			Vertex oldOmega) {
-		InternalEdge deletedEdge = (InternalEdge) edgeToBeDeleted;
-		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
-		assert ((transaction != null) && !transaction.isReadOnly()
-				&& transaction.isValid() && (transaction.getState() != TransactionState.NOTRUNNING));
+	public void edgeAfterDeleted(Edge edgeToBeDeleted, Vertex oldAlpha, Vertex oldOmega) {
+		InternalEdge deletedEdge = ((InternalEdge) (edgeToBeDeleted));
+		TransactionImpl transaction = ((TransactionImpl) (getCurrentTransaction()));
+		assert (((transaction != null) && (!transaction.isReadOnly())) && transaction.isValid()) && (transaction.getState() != TransactionState.NOTRUNNING);
 		if (transaction.getState() == TransactionState.RUNNING) {
-			if ((transaction.addedEdges != null)
-					&& transaction.addedEdges.contains(deletedEdge)) {
+			if ((transaction.addedEdges != null) && transaction.addedEdges.contains(deletedEdge)) {
 				transaction.addedEdges.remove(deletedEdge);
 			} else {
 				if (transaction.deletedEdges == null) {
 					transaction.deletedEdges = new ArrayList<EdgeImpl>(1);
 				}
-				transaction.deletedEdges
-						.add((de.uni_koblenz.jgralab.impl.trans.EdgeImpl) (deletedEdge
-								.getNormalEdge()));
+				transaction.deletedEdges.add(((EdgeImpl) (deletedEdge.getNormalEdge())));
 			}
 			// delete references to edgeToBeDeleted in other change sets
 			if (transaction.changedAttributes != null) {
@@ -1044,8 +1029,7 @@ public abstract class GraphImpl extends
 				transaction.changedEseqEdges.remove(deletedEdge);
 				Edge prevEdge = deletedEdge.getPrevIncidenceInISeq();
 				if (transaction.changedEseqEdges.containsKey(prevEdge)) {
-					if (transaction.changedEseqEdges.get(prevEdge).containsKey(
-							ListPosition.NEXT)) {
+					if (transaction.changedEseqEdges.get(prevEdge).containsKey(ListPosition.NEXT)) {
 						transaction.changedEseqEdges.remove(prevEdge);
 					}
 				}
@@ -1053,21 +1037,18 @@ public abstract class GraphImpl extends
 				// check if current (temporary) nextEdge has been changed
 				// explicitly
 				if (transaction.changedEseqEdges.containsKey(nextEdge)) {
-					if (transaction.changedEseqEdges.get(nextEdge).containsKey(
-							ListPosition.PREV)) {
+					if (transaction.changedEseqEdges.get(nextEdge).containsKey(ListPosition.PREV)) {
 						transaction.changedEseqEdges.remove(nextEdge);
 					}
 				}
 			}
 			if (transaction.changedIncidences != null) {
 				// remove edgeToBeDeleted from incidence lists
-				Map<IncidenceImpl, Map<ListPosition, Boolean>> changedAlphaIncidences = transaction.changedIncidences
-						.get(oldAlpha);
+				Map<IncidenceImpl, Map<ListPosition, Boolean>> changedAlphaIncidences = transaction.changedIncidences.get(oldAlpha);
 				if (changedAlphaIncidences != null) {
 					changedAlphaIncidences.remove(deletedEdge);
 				}
-				Map<IncidenceImpl, Map<ListPosition, Boolean>> changedOmegaIncidences = transaction.changedIncidences
-						.get(oldOmega);
+				Map<IncidenceImpl, Map<ListPosition, Boolean>> changedOmegaIncidences = transaction.changedIncidences.get(oldOmega);
 				if (changedOmegaIncidences != null) {
 					changedOmegaIncidences.remove(deletedEdge);
 				}
@@ -1108,13 +1089,11 @@ public abstract class GraphImpl extends
 
 	@Override
 	public void vertexAfterDeleted(Vertex vertexToBeDeleted) {
-		InternalVertex deletedVertex = (InternalVertex) vertexToBeDeleted;
-		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
-		assert ((transaction != null) && !transaction.isReadOnly()
-				&& transaction.isValid() && (transaction.getState() != TransactionState.NOTRUNNING));
+		InternalVertex deletedVertex = ((InternalVertex) (vertexToBeDeleted));
+		TransactionImpl transaction = ((TransactionImpl) (getCurrentTransaction()));
+		assert (((transaction != null) && (!transaction.isReadOnly())) && transaction.isValid()) && (transaction.getState() != TransactionState.NOTRUNNING);
 		if (transaction.getState() == TransactionState.RUNNING) {
-			if ((transaction.addedVertices != null)
-					&& transaction.addedVertices.contains(deletedVertex)) {
+			if ((transaction.addedVertices != null) && transaction.addedVertices.contains(deletedVertex)) {
 				transaction.addedVertices.remove(deletedVertex);
 			} else {
 				if (transaction.deletedVertices == null) {
@@ -1122,8 +1101,7 @@ public abstract class GraphImpl extends
 					// 0.2f);
 					transaction.deletedVertices = new ArrayList<VertexImpl>(1);
 				}
-				transaction.deletedVertices
-						.add((de.uni_koblenz.jgralab.impl.trans.VertexImpl) (deletedVertex));
+				transaction.deletedVertices.add(((VertexImpl) (deletedVertex)));
 			}
 			if (transaction.changedAttributes != null) {
 				// delete references to vertexToBeDeleted in other change sets
@@ -1133,8 +1111,7 @@ public abstract class GraphImpl extends
 				transaction.changedVseqVertices.remove(deletedVertex);
 				Vertex prevVertex = deletedVertex.getPrevVertexInVSeq();
 				if (transaction.changedVseqVertices.containsKey(prevVertex)) {
-					if (transaction.changedVseqVertices.get(prevVertex)
-							.containsKey(ListPosition.NEXT)) {
+					if (transaction.changedVseqVertices.get(prevVertex).containsKey(ListPosition.NEXT)) {
 						transaction.changedVseqVertices.remove(prevVertex);
 					}
 				}
@@ -1142,8 +1119,7 @@ public abstract class GraphImpl extends
 				// check if current (temporary) nextVertex has been changed
 				// explicitly
 				if (transaction.changedVseqVertices.containsKey(nextVertex)) {
-					if (transaction.changedVseqVertices.get(nextVertex)
-							.containsKey(ListPosition.PREV)) {
+					if (transaction.changedVseqVertices.get(nextVertex).containsKey(ListPosition.PREV)) {
 						transaction.changedVseqVertices.remove(nextVertex);
 					}
 				}
@@ -1154,19 +1130,15 @@ public abstract class GraphImpl extends
 		}
 		if (transaction.getState() == TransactionState.WRITING) {
 			if (transaction.deletedVerticesWhileWriting == null) {
-				transaction.deletedVerticesWhileWriting = new ArrayList<VertexImpl>(
-						1);
+				transaction.deletedVerticesWhileWriting = new ArrayList<VertexImpl>(1);
 			}
-			transaction.deletedVerticesWhileWriting
-					.add((de.uni_koblenz.jgralab.impl.trans.VertexImpl) deletedVertex);
+			transaction.deletedVerticesWhileWriting.add(((VertexImpl) (deletedVertex)));
 		}
-
 	}
 
 	@Override
-	public void putEdgeBeforeInGraph(InternalEdge targetEdge,
-			InternalEdge movedEdge) {
-		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
+	public void putEdgeBeforeInGraph(InternalEdge targetEdge, InternalEdge movedEdge) {
+		TransactionImpl transaction = ((TransactionImpl) (getCurrentTransaction()));
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
 		}
@@ -1174,60 +1146,44 @@ public abstract class GraphImpl extends
 		// isn't valid
 		// in the current transaction.
 		if (!targetEdge.isValid()) {
-			throw new GraphException("Edge " + targetEdge
-					+ " is not valid within the current transaction "
-					+ transaction + ".");
+			throw new GraphException(((("Edge " + targetEdge) + " is not valid within the current transaction ") + transaction) + ".");
 		}
 		// It should not be possible to execute this method, if movedEdge
 		// isn't valid
 		// in the current transaction.
 		if (!movedEdge.isValid()) {
-			throw new GraphException("Edge " + movedEdge
-					+ " is not valid within the current transaction "
-					+ transaction + ".");
+			throw new GraphException(((("Edge " + movedEdge) + " is not valid within the current transaction ") + transaction) + ".");
 		}
-		synchronized (transaction) {
+		synchronized(transaction) {
 			super.putEdgeBeforeInGraph(targetEdge, movedEdge);
-			assert ((transaction != null) && !transaction.isReadOnly()
-					&& transaction.isValid() && (transaction.getState() != TransactionState.NOTRUNNING));
+			assert (((transaction != null) && (!transaction.isReadOnly())) && transaction.isValid()) && (transaction.getState() != TransactionState.NOTRUNNING);
 			if (transaction.getState() == TransactionState.RUNNING) {
 				if (transaction.changedEseqEdges == null) {
-					transaction.changedEseqEdges = new HashMap<EdgeImpl, Map<ListPosition, Boolean>>(
-							1, TransactionManagerImpl.LOAD_FACTOR);
+					transaction.changedEseqEdges = new HashMap<EdgeImpl, Map<ListPosition, Boolean>>(1, TransactionManagerImpl.LOAD_FACTOR);
 				}
-				Map<ListPosition, Boolean> positionsMap = transaction.changedEseqEdges
-						.get(movedEdge);
+				Map<ListPosition, Boolean> positionsMap = transaction.changedEseqEdges.get(movedEdge);
 				if (positionsMap == null) {
-					positionsMap = new HashMap<ListPosition, Boolean>(1,
-							TransactionManagerImpl.LOAD_FACTOR);
+					positionsMap = new HashMap<ListPosition, Boolean>(1, TransactionManagerImpl.LOAD_FACTOR);
 				}
 				positionsMap.put(ListPosition.NEXT, true);
 				if (transaction.changedEseqEdges.get(movedEdge) == null) {
-					transaction.changedEseqEdges
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.EdgeImpl) movedEdge,
-									positionsMap);
+					transaction.changedEseqEdges.put(((EdgeImpl) (movedEdge)), positionsMap);
 				}
 				positionsMap = transaction.changedEseqEdges.get(targetEdge);
 				if (positionsMap == null) {
-					positionsMap = new HashMap<ListPosition, Boolean>(1,
-							TransactionManagerImpl.LOAD_FACTOR);
+					positionsMap = new HashMap<ListPosition, Boolean>(1, TransactionManagerImpl.LOAD_FACTOR);
 				}
 				positionsMap.put(ListPosition.PREV, false);
 				if (transaction.changedEseqEdges.get(targetEdge) == null) {
-					transaction.changedEseqEdges
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.EdgeImpl) targetEdge,
-									positionsMap);
+					transaction.changedEseqEdges.put(((EdgeImpl) (targetEdge)), positionsMap);
 				}
 			}
 		}
 	}
 
 	@Override
-	public void putEdgeAfterInGraph(InternalEdge targetEdge,
-			InternalEdge movedEdge) {
-		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
+	public void putEdgeAfterInGraph(InternalEdge targetEdge, InternalEdge movedEdge) {
+		TransactionImpl transaction = ((TransactionImpl) (getCurrentTransaction()));
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
 		}
@@ -1235,60 +1191,44 @@ public abstract class GraphImpl extends
 		// isn't valid
 		// in the current transaction.
 		if (!targetEdge.isValid()) {
-			throw new GraphException("Edge " + targetEdge
-					+ " is not valid within the current transaction "
-					+ transaction + ".");
+			throw new GraphException(((("Edge " + targetEdge) + " is not valid within the current transaction ") + transaction) + ".");
 		}
 		// It should not be possible to execute this method, if movedEdge
 		// isn't valid
 		// in the current transaction.
 		if (!movedEdge.isValid()) {
-			throw new GraphException("Edge " + movedEdge
-					+ " is not valid within the current transaction "
-					+ transaction + ".");
+			throw new GraphException(((("Edge " + movedEdge) + " is not valid within the current transaction ") + transaction) + ".");
 		}
-		synchronized (transaction) {
+		synchronized(transaction) {
 			super.putEdgeAfterInGraph(targetEdge, movedEdge);
-			assert ((transaction != null) && !transaction.isReadOnly()
-					&& transaction.isValid() && (transaction.getState() != TransactionState.NOTRUNNING));
+			assert (((transaction != null) && (!transaction.isReadOnly())) && transaction.isValid()) && (transaction.getState() != TransactionState.NOTRUNNING);
 			if (transaction.getState() == TransactionState.RUNNING) {
 				if (transaction.changedEseqEdges == null) {
-					transaction.changedEseqEdges = new HashMap<EdgeImpl, Map<ListPosition, Boolean>>(
-							1, TransactionManagerImpl.LOAD_FACTOR);
+					transaction.changedEseqEdges = new HashMap<EdgeImpl, Map<ListPosition, Boolean>>(1, TransactionManagerImpl.LOAD_FACTOR);
 				}
-				Map<ListPosition, Boolean> positionsMap = transaction.changedEseqEdges
-						.get(movedEdge);
+				Map<ListPosition, Boolean> positionsMap = transaction.changedEseqEdges.get(movedEdge);
 				if (positionsMap == null) {
-					positionsMap = new HashMap<ListPosition, Boolean>(1,
-							TransactionManagerImpl.LOAD_FACTOR);
+					positionsMap = new HashMap<ListPosition, Boolean>(1, TransactionManagerImpl.LOAD_FACTOR);
 				}
 				positionsMap.put(ListPosition.PREV, true);
 				if (transaction.changedEseqEdges.get(movedEdge) == null) {
-					transaction.changedEseqEdges
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.EdgeImpl) movedEdge,
-									positionsMap);
+					transaction.changedEseqEdges.put(((EdgeImpl) (movedEdge)), positionsMap);
 				}
 				positionsMap = transaction.changedEseqEdges.get(targetEdge);
 				if (positionsMap == null) {
-					positionsMap = new HashMap<ListPosition, Boolean>(1,
-							TransactionManagerImpl.LOAD_FACTOR);
+					positionsMap = new HashMap<ListPosition, Boolean>(1, TransactionManagerImpl.LOAD_FACTOR);
 				}
 				positionsMap.put(ListPosition.NEXT, false);
 				if (transaction.changedEseqEdges.get(targetEdge) == null) {
-					transaction.changedEseqEdges
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.EdgeImpl) targetEdge,
-									positionsMap);
+					transaction.changedEseqEdges.put(((EdgeImpl) (targetEdge)), positionsMap);
 				}
 			}
 		}
 	}
 
 	@Override
-	public void putVertexAfter(InternalVertex targetVertex,
-			InternalVertex movedVertex) {
-		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
+	public void putVertexAfter(InternalVertex targetVertex, InternalVertex movedVertex) {
+		TransactionImpl transaction = ((TransactionImpl) (getCurrentTransaction()));
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
 		}
@@ -1296,61 +1236,44 @@ public abstract class GraphImpl extends
 		// isn't valid
 		// in the current transaction.
 		if (!targetVertex.isValid()) {
-			throw new GraphException("Edge " + targetVertex
-					+ " is not valid within the current transaction "
-					+ transaction + ".");
+			throw new GraphException(((("Edge " + targetVertex) + " is not valid within the current transaction ") + transaction) + ".");
 		}
 		// It should not be possible to execute this method, if movedVertex
 		// isn't valid
 		// in the current transaction.
 		if (!movedVertex.isValid()) {
-			throw new GraphException("Edge " + movedVertex
-					+ " is not valid within the current transaction "
-					+ transaction + ".");
+			throw new GraphException(((("Edge " + movedVertex) + " is not valid within the current transaction ") + transaction) + ".");
 		}
-		synchronized (transaction) {
+		synchronized(transaction) {
 			super.putVertexAfter(targetVertex, movedVertex);
-			assert ((transaction != null) && !transaction.isReadOnly()
-					&& transaction.isValid() && (transaction.getState() != TransactionState.NOTRUNNING));
+			assert (((transaction != null) && (!transaction.isReadOnly())) && transaction.isValid()) && (transaction.getState() != TransactionState.NOTRUNNING);
 			if (transaction.getState() == TransactionState.RUNNING) {
 				if (transaction.changedVseqVertices == null) {
-					transaction.changedVseqVertices = new HashMap<VertexImpl, Map<ListPosition, Boolean>>(
-							1, TransactionManagerImpl.LOAD_FACTOR);
+					transaction.changedVseqVertices = new HashMap<VertexImpl, Map<ListPosition, Boolean>>(1, TransactionManagerImpl.LOAD_FACTOR);
 				}
-				Map<ListPosition, Boolean> positionsMap = transaction.changedVseqVertices
-						.get(movedVertex);
+				Map<ListPosition, Boolean> positionsMap = transaction.changedVseqVertices.get(movedVertex);
 				if (positionsMap == null) {
-					positionsMap = new HashMap<ListPosition, Boolean>(1,
-							TransactionManagerImpl.LOAD_FACTOR);
+					positionsMap = new HashMap<ListPosition, Boolean>(1, TransactionManagerImpl.LOAD_FACTOR);
 				}
 				positionsMap.put(ListPosition.PREV, true);
 				if (transaction.changedVseqVertices.get(movedVertex) == null) {
-					transaction.changedVseqVertices
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.VertexImpl) movedVertex,
-									positionsMap);
+					transaction.changedVseqVertices.put(((VertexImpl) (movedVertex)), positionsMap);
 				}
-				positionsMap = transaction.changedVseqVertices
-						.get(targetVertex);
+				positionsMap = transaction.changedVseqVertices.get(targetVertex);
 				if (positionsMap == null) {
-					positionsMap = new HashMap<ListPosition, Boolean>(1,
-							TransactionManagerImpl.LOAD_FACTOR);
+					positionsMap = new HashMap<ListPosition, Boolean>(1, TransactionManagerImpl.LOAD_FACTOR);
 				}
 				positionsMap.put(ListPosition.NEXT, false);
 				if (transaction.changedVseqVertices.get(targetVertex) == null) {
-					transaction.changedVseqVertices
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.VertexImpl) targetVertex,
-									positionsMap);
+					transaction.changedVseqVertices.put(((VertexImpl) (targetVertex)), positionsMap);
 				}
 			}
 		}
 	}
 
 	@Override
-	public void putVertexBefore(InternalVertex targetVertex,
-			InternalVertex movedVertex) {
-		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
+	public void putVertexBefore(InternalVertex targetVertex, InternalVertex movedVertex) {
+		TransactionImpl transaction = ((TransactionImpl) (getCurrentTransaction()));
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
 		}
@@ -1358,52 +1281,36 @@ public abstract class GraphImpl extends
 		// isn't valid
 		// in the current transaction.
 		if (!targetVertex.isValid()) {
-			throw new GraphException("Edge " + targetVertex
-					+ " is not valid within the current transaction "
-					+ transaction + ".");
+			throw new GraphException(((("Edge " + targetVertex) + " is not valid within the current transaction ") + transaction) + ".");
 		}
 		// It should not be possible to execute this method, if movedVertex
 		// isn't valid
 		// in the current transaction.
 		if (!movedVertex.isValid()) {
-			throw new GraphException("Edge " + movedVertex
-					+ " is not valid within the current transaction "
-					+ transaction + ".");
+			throw new GraphException(((("Edge " + movedVertex) + " is not valid within the current transaction ") + transaction) + ".");
 		}
-		synchronized (transaction) {
+		synchronized(transaction) {
 			super.putVertexBefore(targetVertex, movedVertex);
-			assert ((transaction != null) && !transaction.isReadOnly()
-					&& transaction.isValid() && (transaction.getState() != TransactionState.NOTRUNNING));
+			assert (((transaction != null) && (!transaction.isReadOnly())) && transaction.isValid()) && (transaction.getState() != TransactionState.NOTRUNNING);
 			if (transaction.getState() == TransactionState.RUNNING) {
 				if (transaction.changedVseqVertices == null) {
-					transaction.changedVseqVertices = new HashMap<VertexImpl, Map<ListPosition, Boolean>>(
-							1, TransactionManagerImpl.LOAD_FACTOR);
+					transaction.changedVseqVertices = new HashMap<VertexImpl, Map<ListPosition, Boolean>>(1, TransactionManagerImpl.LOAD_FACTOR);
 				}
-				Map<ListPosition, Boolean> positionsMap = transaction.changedVseqVertices
-						.get(movedVertex);
+				Map<ListPosition, Boolean> positionsMap = transaction.changedVseqVertices.get(movedVertex);
 				if (positionsMap == null) {
-					positionsMap = new HashMap<ListPosition, Boolean>(1,
-							TransactionManagerImpl.LOAD_FACTOR);
+					positionsMap = new HashMap<ListPosition, Boolean>(1, TransactionManagerImpl.LOAD_FACTOR);
 				}
 				positionsMap.put(ListPosition.NEXT, true);
 				if (transaction.changedVseqVertices.get(movedVertex) == null) {
-					transaction.changedVseqVertices
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.VertexImpl) movedVertex,
-									positionsMap);
+					transaction.changedVseqVertices.put(((VertexImpl) (movedVertex)), positionsMap);
 				}
-				positionsMap = transaction.changedVseqVertices
-						.get(targetVertex);
+				positionsMap = transaction.changedVseqVertices.get(targetVertex);
 				if (positionsMap == null) {
-					positionsMap = new HashMap<ListPosition, Boolean>(1,
-							TransactionManagerImpl.LOAD_FACTOR);
+					positionsMap = new HashMap<ListPosition, Boolean>(1, TransactionManagerImpl.LOAD_FACTOR);
 				}
 				positionsMap.put(ListPosition.PREV, false);
 				if (transaction.changedVseqVertices.get(targetVertex) == null) {
-					transaction.changedVseqVertices
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.VertexImpl) targetVertex,
-									positionsMap);
+					transaction.changedVseqVertices.put(((VertexImpl) (targetVertex)), positionsMap);
 				}
 			}
 		}
@@ -1428,14 +1335,14 @@ public abstract class GraphImpl extends
 
 	@Override
 	public Iterable<Vertex> vertices(Class<? extends Vertex> vertexClass) {
-		return new AttributedElementIterable<Vertex>(super
-				.vertices(vertexClass), this);
+		return new AttributedElementIterable<Vertex>(
+				super.vertices(vertexClass), this);
 	}
 
 	@Override
 	public Iterable<Vertex> vertices(VertexClass vertexClass) {
-		return new AttributedElementIterable<Vertex>(super
-				.vertices(vertexClass), this);
+		return new AttributedElementIterable<Vertex>(
+				super.vertices(vertexClass), this);
 	}
 
 	@Override
