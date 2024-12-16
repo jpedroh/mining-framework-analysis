@@ -16,6 +16,9 @@
  */
 package net.tridentsdk.base;
 
+import java.util.Collection;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import net.tridentsdk.world.World;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,20 +30,18 @@ import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-
-import java.util.Collection;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
 
 @State(Scope.Benchmark)
 public class VectorsTest {
     // close eyes, put hand on numpad to get these values
     // numbers selected from "fair dice roll"
     private static final double CHANGE_TO = -1.382;
+
     private static final int CHANGE_TO_I = 2919;
+
     private final Vector vec = new Vector();
 
     public static Vector rand() {
@@ -65,7 +66,6 @@ public class VectorsTest {
         this.vec.setX(CHANGE_TO);
         this.vec.setY(CHANGE_TO);
         this.vec.setZ(CHANGE_TO);
-
         assertEquals(CHANGE_TO, this.vec.getX(), 0);
         assertEquals(CHANGE_TO, this.vec.getY(), 0);
         assertEquals(CHANGE_TO, this.vec.getZ(), 0);
@@ -76,7 +76,6 @@ public class VectorsTest {
         this.vec.setX(CHANGE_TO_I);
         this.vec.setY(CHANGE_TO_I);
         this.vec.setZ(CHANGE_TO_I);
-
         assertEquals(CHANGE_TO_I, this.vec.getIntX());
         assertEquals(CHANGE_TO_I, this.vec.getIntY());
         assertEquals(CHANGE_TO_I, this.vec.getIntZ());
@@ -124,7 +123,6 @@ public class VectorsTest {
     public void testNormalize() {
         Vector v2 = new Vector(CHANGE_TO_I, CHANGE_TO_I, CHANGE_TO_I);
         v2.normalize();
-
         assertEquals(1, v2.getMagnitude(), 0);
     }
 
@@ -151,20 +149,17 @@ public class VectorsTest {
     // -server -XX:+UnlockDiagnosticVMOptions -XX:+PrintInlining
     public static void m1() {
         Vector vec = new Vector(0, 0, 0);
-        int recursions = 600_000_000;
+        int recursions = 600000000;
         long modulo = 100;
-
         p("Attempting to inline add(i, i, i)");
-
         int curMod = 0;
         for (int i = 0; i < recursions; i++) {
             if ((i & modulo) == 0) {
-                curMod = i ^ (int) System.currentTimeMillis();
+                curMod = i ^ ((int) (System.currentTimeMillis()));
             }
             vec.add(curMod, curMod, curMod);
         }
-
-        p("Finished attempt at " + (vec.getX() + vec.getY() + vec.getZ()));
+        p("Finished attempt at " + ((vec.getX() + vec.getY()) + vec.getZ()));
     }
 
     private static void p(String s) {
@@ -202,6 +197,7 @@ public class VectorsTest {
     }
 
     private int modifier;
+
     private Vector adder;
 
     @Setup(Level.Iteration)
@@ -262,7 +258,7 @@ public class VectorsTest {
 
     @TearDown(Level.Trial)
     public void teardown(Blackhole bh) {
-        bh.consume(this.vec.getX() + this.vec.getY() + this.vec.getZ());
+        bh.consume((this.vec.getX() + this.vec.getY()) + this.vec.getZ());
     }
 
     // JVM tuning test dummy

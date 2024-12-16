@@ -19,12 +19,12 @@ package net.tridentsdk.base;
 import net.tridentsdk.world.World;
 import org.junit.Test;
 import org.mockito.Mockito;
-
 import static org.junit.Assert.*;
+
 
 public class PositionTest {
     private final World world = Mockito.mock(World.class);
-    
+
     @Test
     public void testWorld() {
         assertNotNull(new Position(this.world).world());
@@ -32,7 +32,7 @@ public class PositionTest {
 
     @Test
     public void testYaw() {
-        assertEquals(0, new Position(this.world, 0D, 0D, 0D, 0F, 0F).getYaw(), 0);
+        assertEquals(0, new Position(this.world, 0.0, 0.0, 0.0, 0.0F, 0.0F).getYaw(), 0);
     }
 
     @Test
@@ -97,9 +97,16 @@ public class PositionTest {
         assertEquals(3, p0.getZ(), 0);
         assertEquals(4, p0.getYaw(), 0);
         assertEquals(5, p0.getPitch(), 0);
-
         assertEquals(p0.getIntX() / 16, p0.getChunkX());
         assertEquals(p0.getIntZ() / 16, p0.getChunkZ());
+        p0.set(1.0, 2.0, 3.0);
+        assertEquals(1, p0.x(), 0);
+        assertEquals(2, p0.y(), 0);
+        assertEquals(3, p0.z(), 0);
+        assertEquals(4, p0.yaw(), 0);
+        assertEquals(5, p0.pitch(), 0);
+        assertEquals(p0.intX() / 16, p0.getChunkX());
+        assertEquals(p0.intZ() / 16, p0.getChunkZ());
     }
 
     @Test

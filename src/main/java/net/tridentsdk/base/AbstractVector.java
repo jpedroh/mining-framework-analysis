@@ -16,13 +16,13 @@
  */
 package net.tridentsdk.base;
 
+import java.io.Serializable;
+import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrent.ThreadSafe;
 import net.tridentsdk.doc.Internal;
 import net.tridentsdk.doc.Policy;
 import net.tridentsdk.world.World;
 
-import javax.annotation.concurrent.GuardedBy;
-import javax.annotation.concurrent.ThreadSafe;
-import java.io.Serializable;
 
 /**
  * A vector is a container of 3 number values that can be
@@ -82,8 +82,10 @@ public class AbstractVector<T extends AbstractVector<T>> implements Serializable
      */
     @GuardedBy("lock")
     protected double x;
+
     @GuardedBy("lock")
     protected double y;
+
     @GuardedBy("lock")
     protected double z;
 
@@ -107,26 +109,32 @@ public class AbstractVector<T extends AbstractVector<T>> implements Serializable
      * {@code 0}.
      */
     public AbstractVector() {
-        this(0D, 0D, 0D);
+        this(0.0, 0.0, 0.0);
     }
 
     /**
      * Creates a new AbstractVector object using {@code int}s.
      *
-     * @param x the x value
-     * @param y the y value
-     * @param z the z value
+     * @param x
+     * 		the x value
+     * @param y
+     * 		the y value
+     * @param z
+     * 		the z value
      */
     public AbstractVector(int x, int y, int z) {
-        this((double) x, (double) y, (double) z);
+        this(((double) (x)), ((double) (y)), ((double) (z)));
     }
 
     /**
      * Creates a new AbstractVector object using {@code double}s.
      *
-     * @param x the x value
-     * @param y the y value
-     * @param z the z value
+     * @param x
+     * 		the x value
+     * @param y
+     * 		the y value
+     * @param z
+     * 		the z value
      */
     public AbstractVector(double x, double y, double z) {
         this.x = x;
@@ -141,7 +149,7 @@ public class AbstractVector<T extends AbstractVector<T>> implements Serializable
      * @return the x value
      */
     public double getX() {
-        synchronized (this.lock) {
+        synchronized(this.lock) {
             return this.x;
         }
     }
@@ -153,8 +161,8 @@ public class AbstractVector<T extends AbstractVector<T>> implements Serializable
      * @return the x value
      */
     public int getIntX() {
-        synchronized (this.lock) {
-            return (int) this.x;
+        synchronized(this.lock) {
+            return ((int) (this.x));
         }
     }
 
@@ -165,7 +173,7 @@ public class AbstractVector<T extends AbstractVector<T>> implements Serializable
      * @return the y value
      */
     public double getY() {
-        synchronized (this.lock) {
+        synchronized(this.lock) {
             return this.y;
         }
     }
@@ -177,8 +185,8 @@ public class AbstractVector<T extends AbstractVector<T>> implements Serializable
      * @return the y value
      */
     public int getIntY() {
-        synchronized (this.lock) {
-            return (int) this.y;
+        synchronized(this.lock) {
+            return ((int) (this.y));
         }
     }
 
@@ -189,7 +197,7 @@ public class AbstractVector<T extends AbstractVector<T>> implements Serializable
      * @return the z value
      */
     public double getZ() {
-        synchronized (this.lock) {
+        synchronized(this.lock) {
             return this.z;
         }
     }
@@ -201,8 +209,8 @@ public class AbstractVector<T extends AbstractVector<T>> implements Serializable
      * @return the z value
      */
     public int getIntZ() {
-        synchronized (this.lock) {
-            return (int) this.z;
+        synchronized(this.lock) {
+            return ((int) (this.z));
         }
     }
 
@@ -647,12 +655,11 @@ public class AbstractVector<T extends AbstractVector<T>> implements Serializable
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof AbstractVector) {
-            AbstractVector v = (AbstractVector) obj;
-            synchronized (this.lock) {
-                return eq(this.x, v.x) && eq(this.y, v.y) && eq(this.z, v.z);
+            AbstractVector v = ((AbstractVector) (obj));
+            synchronized(this.lock) {
+                return (eq(this.x, v.x) && eq(this.y, v.y)) && eq(this.z, v.z);
             }
         }
-
         return false;
     }
 
@@ -661,19 +668,19 @@ public class AbstractVector<T extends AbstractVector<T>> implements Serializable
         // Ignore IntelliJ warning for final field not in hashcode
         // anyone who uses a vector or position object as a
         // key is probably mentally retarded
-        synchronized (this.lock) {
+        synchronized(this.lock) {
             int hash = 1;
-            hash = 31 * hash + Long.hashCode(Double.doubleToLongBits(this.x));
-            hash = 31 * hash + Long.hashCode(Double.doubleToLongBits(this.y));
-            hash = 31 * hash + Long.hashCode(Double.doubleToLongBits(this.z));
+            hash = (31 * hash) + Long.hashCode(Double.doubleToLongBits(this.x));
+            hash = (31 * hash) + Long.hashCode(Double.doubleToLongBits(this.y));
+            hash = (31 * hash) + Long.hashCode(Double.doubleToLongBits(this.z));
             return hash;
         }
     }
 
     @Override
     public String toString() {
-        synchronized (this.lock) {
-            return "Vector{" + this.x + ',' + this.y + ',' + this.z + '}';
+        synchronized(this.lock) {
+            return ((((("Vector{" + this.x) + ',') + this.y) + ',') + this.z) + '}';
         }
     }
 }

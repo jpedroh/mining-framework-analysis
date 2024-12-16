@@ -16,16 +16,15 @@
  */
 package net.tridentsdk.config;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import net.tridentsdk.Impl;
 import net.tridentsdk.util.Misc;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import static org.junit.Assert.assertNotNull;
+
 
 public class ConfigTest {
     private static final String TEST_PATH = Misc.HOME + "/kek/cfg.json";

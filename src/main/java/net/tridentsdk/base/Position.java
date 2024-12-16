@@ -16,10 +16,10 @@
  */
 package net.tridentsdk.base;
 
-import net.tridentsdk.world.World;
-
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
+import net.tridentsdk.world.World;
+
 
 /**
  * Position is a container class that represents a three-
@@ -40,7 +40,9 @@ public final class Position extends AbstractVector<Position> implements Cloneabl
      * position
      */
     private final World world;
+
     private float yaw;
+
     private float pitch;
 
     @Override
@@ -60,11 +62,13 @@ public final class Position extends AbstractVector<Position> implements Cloneabl
      * {@link #add(double, double, double)} methods
      * can be used in addition to this</p>
      *
-     * @param world the world that this position is set to
-     * reside in
+     * @param world
+     * 		the world that this position is set to
+     * 		reside in
      */
-    public Position(@Nonnull World world) {
-        this(world, 0D, 0D, 0D, 0F, 0F);
+    public Position(@Nonnull
+    World world) {
+        this(world, 0.0, 0.0, 0.0, 0.0F, 0.0F);
     }
 
     /**
@@ -78,19 +82,23 @@ public final class Position extends AbstractVector<Position> implements Cloneabl
      * {@link #add(double, double, double)} methods
      * can be used in addition to this</p>
      *
-     * @param world the world that this position is set to
-     * reside in
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param z the z coordinate
+     * @param world
+     * 		the world that this position is set to
+     * 		reside in
+     * @param x
+     * 		the x coordinate
+     * @param y
+     * 		the y coordinate
+     * @param z
+     * 		the z coordinate
      */
-    public Position(@Nonnull World world, int x, int y, int z) {
-        this(world, (double) x, (double) y, (double) z, 0F, 0F);
+    public Position(@Nonnull
+    World world, int x, int y, int z) {
+        this(world, ((double) (x)), ((double) (y)), ((double) (z)), 0.0F, 0.0F);
     }
 
     /**
-     * Creates a Position in a given world and {@code
-     * double}
+     * Creates a Position in a given world and {@code double}
      * Cartesian coordinates with all directions set to 0.
      *
      * <p>While it is recommended for the given world to be
@@ -100,14 +108,19 @@ public final class Position extends AbstractVector<Position> implements Cloneabl
      * {@link #add(double, double, double)} methods
      * can be used in addition to this</p>
      *
-     * @param world the world that this position is set to
-     * reside in
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param z the z coordinate
+     * @param world
+     * 		the world that this position is set to
+     * 		reside in
+     * @param x
+     * 		the x coordinate
+     * @param y
+     * 		the y coordinate
+     * @param z
+     * 		the z coordinate
      */
-    public Position(@Nonnull World world, double x, double y, double z) {
-        this(world, x, y, z, 0F, 0F);
+    public Position(@Nonnull
+    World world, double x, double y, double z) {
+        this(world, x, y, z, 0.0F, 0.0F);
     }
 
     /**
@@ -121,15 +134,22 @@ public final class Position extends AbstractVector<Position> implements Cloneabl
      * {@link #add(double, double, double)} methods
      * can be used in addition to this</p>
      *
-     * @param world the world in which this position is set
-     * to reside
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param z the z coordinate
-     * @param yaw the yaw directional
-     * @param pitch the pitch directional
+     * @param world
+     * 		the world in which this position is set
+     * 		to reside
+     * @param x
+     * 		the x coordinate
+     * @param y
+     * 		the y coordinate
+     * @param z
+     * 		the z coordinate
+     * @param yaw
+     * 		the yaw directional
+     * @param pitch
+     * 		the pitch directional
      */
-    public Position(@Nonnull World world, double x, double y, double z, float yaw, float pitch) {
+    public Position(@Nonnull
+    World world, double x, double y, double z, float yaw, float pitch) {
         super(x, y, z);
         this.world = world;
         this.yaw = yaw;
@@ -165,7 +185,7 @@ public final class Position extends AbstractVector<Position> implements Cloneabl
      * @return this position's yaw
      */
     public float getYaw() {
-        synchronized (this.lock) {
+        synchronized(this.lock) {
             return this.yaw;
         }
     }
@@ -189,7 +209,7 @@ public final class Position extends AbstractVector<Position> implements Cloneabl
      * @return this position's pitch
      */
     public float getPitch() {
-        synchronized (this.lock) {
+        synchronized(this.lock) {
             return this.pitch;
         }
     }
@@ -213,7 +233,7 @@ public final class Position extends AbstractVector<Position> implements Cloneabl
      * @return the copy of the current state of this vector
      */
     public ImmutableWorldVector toWorldVector() {
-        synchronized (this.lock) {
+        synchronized(this.lock) {
             return new ImmutableWorldVector(this.world, this.getIntX(), this.getIntY(), this.getIntZ());
         }
     }
@@ -299,34 +319,29 @@ public final class Position extends AbstractVector<Position> implements Cloneabl
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Position) {
-            Position v = (Position) obj;
-            synchronized (this.lock) {
-                return eq(this.x, v.x) && eq(this.y, v.y) && eq(this.z, v.z) &&
-                        this.world.equals(v.world) &&
-                        eq(this.pitch, v.pitch) && eq(this.yaw, v.yaw);
+            Position v = ((Position) (obj));
+            synchronized(this.lock) {
+                return ((((eq(this.x, v.x) && eq(this.y, v.y)) && eq(this.z, v.z)) && this.world.equals(v.world)) && eq(this.pitch, v.pitch)) && eq(this.yaw, v.yaw);
             }
         }
-
         return false;
     }
 
     @Override
     public int hashCode() {
-        synchronized (this.lock) {
+        synchronized(this.lock) {
             int hash = super.hashCode();
-            hash = 31 * hash + this.world.hashCode();
-            hash = 31 * hash + Float.floatToIntBits(this.pitch);
-            hash = 31 * hash + Float.floatToIntBits(this.yaw);
+            hash = (31 * hash) + this.world.hashCode();
+            hash = (31 * hash) + Float.floatToIntBits(this.pitch);
+            hash = (31 * hash) + Float.floatToIntBits(this.yaw);
             return hash;
         }
     }
 
     @Override
     public String toString() {
-        synchronized (this.lock) {
-            return String.format(
-                    "Position{%s-%f,%f,%f-pitch=%f,yaw=%f}",
-                    this.world.getName(), this.x, this.y, this.z, this.pitch, this.yaw);
+        synchronized(this.lock) {
+            return String.format("Position{%s-%f,%f,%f-pitch=%f,yaw=%f}", this.world.getName(), this.x, this.y, this.z, this.pitch, this.yaw);
         }
     }
 
