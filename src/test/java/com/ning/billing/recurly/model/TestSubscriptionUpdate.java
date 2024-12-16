@@ -14,14 +14,13 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 package com.ning.billing.recurly.model;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class TestSubscriptionUpdate extends TestModelBase {
 
+public class TestSubscriptionUpdate extends TestModelBase {
     @Test(groups = "fast")
     public void testDeserialization() throws Exception {
         // See https://dev.recurly.com/docs/list-subscriptions
@@ -50,14 +49,8 @@ public class TestSubscriptionUpdate extends TestModelBase {
         subscription.setTimeframe(SubscriptionUpdate.Timeframe.now);
         subscription.setUnitAmountInCents(800);
         subscription.setQuantity(1);
-
         final String xml = xmlMapper.writeValueAsString(subscription);
-        Assert.assertEquals(xml, "<subscription>" +
-                                 "<timeframe>now</timeframe>" +
-                                 "<unit_amount_in_cents>800</unit_amount_in_cents>" +
-                                 "<quantity>1</quantity>" +
-                                 "<plan_code>gold</plan_code>" +
-                                 "</subscription>");
+        Assert.assertEquals(xml, "<subscription>" + (((("<timeframe>now</timeframe>" + "<unit_amount_in_cents>800</unit_amount_in_cents>") + "<quantity>1</quantity>") + "<plan_code>gold</plan_code>") + "</subscription>"));
     }
 
     @Test(groups = "fast")
@@ -68,15 +61,8 @@ public class TestSubscriptionUpdate extends TestModelBase {
         subscription.setUnitAmountInCents(800);
         subscription.setQuantity(1);
         subscription.setAddOns(new SubscriptionAddOns());
-
         final String xml = xmlMapper.writeValueAsString(subscription);
-        Assert.assertEquals(xml, "<subscription>" +
-                                 "<timeframe>now</timeframe>" +
-                                 "<unit_amount_in_cents>800</unit_amount_in_cents>" +
-                                 "<quantity>1</quantity>" +
-                                 "<subscription_add_ons/>" +
-                                 "<plan_code>gold</plan_code>" +
-                                 "</subscription>");
+        Assert.assertEquals(xml, "<subscription>" + ((((("<timeframe>now</timeframe>" + "<unit_amount_in_cents>800</unit_amount_in_cents>") + "<quantity>1</quantity>") + "<subscription_add_ons/>") + "<plan_code>gold</plan_code>") + "</subscription>"));
     }
 
     @Test(groups = "fast")
@@ -93,23 +79,9 @@ public class TestSubscriptionUpdate extends TestModelBase {
         addOn.setUnitAmountInCents(1000);
         addOns.add(addOn);
         subscription.setAddOns(addOns);
-
         final String xml = xmlMapper.writeValueAsString(subscription);
-        Assert.assertEquals(xml, "<subscription>" +
-                                 "<timeframe>now</timeframe>" +
-                                 "<unit_amount_in_cents>800</unit_amount_in_cents>" +
-                                 "<quantity>1</quantity>" +
-                                 "<subscription_add_ons>" +
-                                 "<subscription_add_on>" +
-                                 "<add_on_code>extra_users</add_on_code>" +
-                                 "<unit_amount_in_cents>1000</unit_amount_in_cents>" +
-                                 "<quantity>2</quantity>" +
-                                 "</subscription_add_on>" +
-                                 "</subscription_add_ons>" +
-                                 "<plan_code>gold</plan_code>" +
-                                 "</subscription>");
+        Assert.assertEquals(xml, "<subscription>" + ((((((((((("<timeframe>now</timeframe>" + "<unit_amount_in_cents>800</unit_amount_in_cents>") + "<quantity>1</quantity>") + "<subscription_add_ons>") + "<subscription_add_on>") + "<add_on_code>extra_users</add_on_code>") + "<unit_amount_in_cents>1000</unit_amount_in_cents>") + "<quantity>2</quantity>") + "</subscription_add_on>") + "</subscription_add_ons>") + "<plan_code>gold</plan_code>") + "</subscription>"));
     }
-
 
     @Test(groups = "fast")
     public void testSerializationWithCustomFields() throws Exception {
@@ -148,14 +120,7 @@ public class TestSubscriptionUpdate extends TestModelBase {
         subscription.setUnitAmountInCents(800);
         subscription.setQuantity(1);
         subscription.setCouponCode("my_coupon");
-
         final String xml = xmlMapper.writeValueAsString(subscription);
-        Assert.assertEquals(xml, "<subscription>" +
-                                 "<timeframe>now</timeframe>" +
-                                 "<unit_amount_in_cents>800</unit_amount_in_cents>" +
-                                 "<quantity>1</quantity>" +
-                                 "<plan_code>gold</plan_code>" +
-                                 "<coupon_code>my_coupon</coupon_code>" +
-                                 "</subscription>");
+        Assert.assertEquals(xml, "<subscription>" + ((((("<timeframe>now</timeframe>" + "<unit_amount_in_cents>800</unit_amount_in_cents>") + "<quantity>1</quantity>") + "<plan_code>gold</plan_code>") + "<coupon_code>my_coupon</coupon_code>") + "</subscription>"));
     }
 }
