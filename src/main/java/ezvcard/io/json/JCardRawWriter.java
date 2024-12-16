@@ -1,65 +1,70 @@
 package ezvcard.io.json;
 
-import static ezvcard.util.StringUtils.NEWLINE;
-
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator.Feature;
+import com.fasterxml.jackson.core.JsonGenerator;
+import ezvcard.Messages;
+import ezvcard.VCardDataType;
+import ezvcard.parameter.VCardParameters;
+import ezvcard.util.StringUtils;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 import java.util.Map;
+import static ezvcard.util.StringUtils.NEWLINE;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonGenerator.Feature;
 
-import ezvcard.Messages;
-import ezvcard.VCardDataType;
-import ezvcard.parameter.VCardParameters;
-import ezvcard.util.StringUtils;
+/* Copyright (c) 2012-2016, Michael Angstadt
+All rights reserved.
 
-/*
- Copyright (c) 2012-2016, Michael Angstadt
- All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met: 
 
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions are met: 
+1. Redistributions of source code must retain the above copyright notice, this
+list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+this list of conditions and the following disclaimer in the documentation
+and/or other materials provided with the distribution. 
 
- 1. Redistributions of source code must retain the above copyright notice, this
- list of conditions and the following disclaimer. 
- 2. Redistributions in binary form must reproduce the above copyright notice,
- this list of conditions and the following disclaimer in the documentation
- and/or other materials provided with the distribution. 
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 /**
  * Writes data to an vCard JSON data stream (jCard).
  * @author Michael Angstadt
  * @see <a href="http://tools.ietf.org/html/rfc7095">RFC 7095</a>
  */
-public class JCardRawWriter implements Closeable, Flushable {
+public class JCardRawWriter implements Closeable , Flushable {
 	private final Writer writer;
+
 	private final boolean wrapInArray;
+
 	private JsonGenerator generator;
+
 	private boolean indent = false;
+
 	private boolean open = false;
+
 	private boolean closeGenerator = true;
 
 	/**
-	 * @param writer the writer to wrap
-	 * @param wrapInArray true to wrap everything in an array, false not to
-	 * (useful when writing more than one vCard)
+	 *
+	 *
+	 * @param writer
+	 * 		the writer to wrap
+	 * @param wrapInArray
+	 * 		true to wrap everything in an array, false not to
+	 * 		(useful when writing more than one vCard)
 	 */
 	public JCardRawWriter(Writer writer, boolean wrapInArray) {
 		this.writer = writer;
@@ -67,7 +72,10 @@ public class JCardRawWriter implements Closeable, Flushable {
 	}
 
 	/**
-	 * @param generator the generator to write to
+	 *
+	 *
+	 * @param generator
+	 * 		the generator to write to
 	 */
 	public JCardRawWriter(JsonGenerator generator) {
 		this.writer = null;
@@ -293,16 +301,13 @@ public class JCardRawWriter implements Closeable, Flushable {
 		if (generator == null) {
 			return;
 		}
-
 		while (open) {
 			writeEndVCard();
-		}
-
+		} 
 		if (wrapInArray) {
 			indent(0);
 			generator.writeEndArray();
 		}
-
 		if (closeGenerator) {
 			generator.close();
 		}
@@ -317,7 +322,6 @@ public class JCardRawWriter implements Closeable, Flushable {
 		if (generator == null) {
 			return;
 		}
-
 		closeJsonStream();
 		if (writer != null) {
 			writer.close();

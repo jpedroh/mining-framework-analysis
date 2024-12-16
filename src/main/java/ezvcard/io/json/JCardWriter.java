@@ -1,16 +1,6 @@
 package ezvcard.io.json;
 
-import static ezvcard.util.IOUtils.utf8Writer;
-
-import java.io.File;
-import java.io.Flushable;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.util.List;
-
 import com.fasterxml.jackson.core.JsonGenerator;
-
 import ezvcard.VCard;
 import ezvcard.VCardDataType;
 import ezvcard.VCardVersion;
@@ -20,36 +10,42 @@ import ezvcard.io.StreamWriter;
 import ezvcard.io.scribe.VCardPropertyScribe;
 import ezvcard.parameter.VCardParameters;
 import ezvcard.property.VCardProperty;
+import java.io.File;
+import java.io.Flushable;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.util.List;
+import static ezvcard.util.IOUtils.utf8Writer;
 
-/*
- Copyright (c) 2012-2016, Michael Angstadt
- All rights reserved.
 
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions are met: 
+/* Copyright (c) 2012-2016, Michael Angstadt
+All rights reserved.
 
- 1. Redistributions of source code must retain the above copyright notice, this
- list of conditions and the following disclaimer. 
- 2. Redistributions in binary form must reproduce the above copyright notice,
- this list of conditions and the following disclaimer in the documentation
- and/or other materials provided with the distribution. 
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met: 
 
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+1. Redistributions of source code must retain the above copyright notice, this
+list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+this list of conditions and the following disclaimer in the documentation
+and/or other materials provided with the distribution. 
 
- The views and conclusions contained in the software and documentation are those
- of the authors and should not be interpreted as representing official policies, 
- either expressed or implied, of the FreeBSD Project.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies, 
+either expressed or implied, of the FreeBSD Project.
  */
-
 /**
  * <p>
  * Writes {@link VCard} objects to a JSON data stream (jCard format).
@@ -77,60 +73,87 @@ import ezvcard.property.VCardProperty;
  */
 public class JCardWriter extends StreamWriter implements Flushable {
 	private final JCardRawWriter writer;
+
 	private final VCardVersion targetVersion = VCardVersion.V4_0;
 
 	/**
-	 * @param out the output stream to write to (UTF-8 encoding will be used)
+	 *
+	 *
+	 * @param out
+	 * 		the output stream to write to (UTF-8 encoding will be used)
 	 */
 	public JCardWriter(OutputStream out) {
 		this(utf8Writer(out));
 	}
 
 	/**
-	 * @param out the output stream to write to (UTF-8 encoding will be used)
-	 * @param wrapInArray true to enclose all written vCards in a JSON array,
-	 * false not to
+	 *
+	 *
+	 * @param out
+	 * 		the output stream to write to (UTF-8 encoding will be used)
+	 * @param wrapInArray
+	 * 		true to enclose all written vCards in a JSON array,
+	 * 		false not to
 	 */
 	public JCardWriter(OutputStream out, boolean wrapInArray) {
 		this(utf8Writer(out), wrapInArray);
 	}
 
 	/**
-	 * @param file the file to write to (UTF-8 encoding will be used)
-	 * @throws IOException if there's a problem opening the file
+	 *
+	 *
+	 * @param file
+	 * 		the file to write to (UTF-8 encoding will be used)
+	 * @throws IOException
+	 * 		if there's a problem opening the file
 	 */
 	public JCardWriter(File file) throws IOException {
 		this(utf8Writer(file));
 	}
 
 	/**
-	 * @param file the file to write to (UTF-8 encoding will be used)
-	 * @param wrapInArray true to enclose all written vCards in a JSON array,
-	 * false not to
-	 * @throws IOException if there's a problem opening the file
+	 *
+	 *
+	 * @param file
+	 * 		the file to write to (UTF-8 encoding will be used)
+	 * @param wrapInArray
+	 * 		true to enclose all written vCards in a JSON array,
+	 * 		false not to
+	 * @throws IOException
+	 * 		if there's a problem opening the file
 	 */
 	public JCardWriter(File file, boolean wrapInArray) throws IOException {
 		this(utf8Writer(file), wrapInArray);
 	}
 
 	/**
-	 * @param writer the writer to write to
+	 *
+	 *
+	 * @param writer
+	 * 		the writer to write to
 	 */
 	public JCardWriter(Writer writer) {
 		this(writer, false);
 	}
 
 	/**
-	 * @param writer the writer to write to
-	 * @param wrapInArray true to enclose all written vCards in a JSON array,
-	 * false not to
+	 *
+	 *
+	 * @param writer
+	 * 		the writer to write to
+	 * @param wrapInArray
+	 * 		true to enclose all written vCards in a JSON array,
+	 * 		false not to
 	 */
 	public JCardWriter(Writer writer, boolean wrapInArray) {
 		this.writer = new JCardRawWriter(writer, wrapInArray);
 	}
 
 	/**
-	 * @param generator the generator to write to
+	 *
+	 *
+	 * @param generator
+	 * 		the generator to write to
 	 */
 	public JCardWriter(JsonGenerator generator) {
 		this.writer = new JCardRawWriter(generator);

@@ -1,5 +1,28 @@
 package ezvcard.io.json;
 
+import ezvcard.VCard;
+import ezvcard.VCardDataType;
+import ezvcard.VCardVersion;
+import ezvcard.io.MyFormattedNameProperty.MyFormattedNameScribe;
+import ezvcard.io.MyFormattedNameProperty;
+import ezvcard.io.scribe.CannotParseScribe;
+import ezvcard.io.scribe.SkipMeScribe;
+import ezvcard.io.scribe.VCardPropertyScribe;
+import ezvcard.parameter.AddressType;
+import ezvcard.parameter.EmailType;
+import ezvcard.parameter.TelephoneType;
+import ezvcard.parameter.VCardParameters;
+import ezvcard.property.VCardProperty;
+import ezvcard.util.IOUtils;
+import ezvcard.util.PartialDate;
+import ezvcard.util.TelUri;
+import ezvcard.util.UtcOffset;
+import java.io.File;
+import java.io.Writer;
+import java.util.List;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import static ezvcard.VCardVersion.V4_0;
 import static ezvcard.property.asserter.PropertyAsserter.assertAddress;
 import static ezvcard.property.asserter.PropertyAsserter.assertBinaryProperty;
@@ -20,61 +43,34 @@ import static ezvcard.util.TestUtils.assertWarnings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.Writer;
-import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+/* Copyright (c) 2012-2016, Michael Angstadt
+All rights reserved.
 
-import ezvcard.VCard;
-import ezvcard.VCardDataType;
-import ezvcard.VCardVersion;
-import ezvcard.io.MyFormattedNameProperty;
-import ezvcard.io.MyFormattedNameProperty.MyFormattedNameScribe;
-import ezvcard.io.scribe.CannotParseScribe;
-import ezvcard.io.scribe.SkipMeScribe;
-import ezvcard.io.scribe.VCardPropertyScribe;
-import ezvcard.parameter.AddressType;
-import ezvcard.parameter.EmailType;
-import ezvcard.parameter.TelephoneType;
-import ezvcard.parameter.VCardParameters;
-import ezvcard.property.VCardProperty;
-import ezvcard.util.IOUtils;
-import ezvcard.util.PartialDate;
-import ezvcard.util.TelUri;
-import ezvcard.util.UtcOffset;
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met: 
 
-/*
- Copyright (c) 2012-2016, Michael Angstadt
- All rights reserved.
+1. Redistributions of source code must retain the above copyright notice, this
+list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+this list of conditions and the following disclaimer in the documentation
+and/or other materials provided with the distribution. 
 
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions are met: 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
- 1. Redistributions of source code must retain the above copyright notice, this
- list of conditions and the following disclaimer. 
- 2. Redistributions in binary form must reproduce the above copyright notice,
- this list of conditions and the following disclaimer in the documentation
- and/or other materials provided with the distribution. 
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
- The views and conclusions contained in the software and documentation are those
- of the authors and should not be interpreted as representing official policies, 
- either expressed or implied, of the FreeBSD Project.
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies, 
+either expressed or implied, of the FreeBSD Project.
  */
-
 /**
  * @author Michael Angstadt
  */
@@ -319,22 +315,14 @@ public class JCardReaderTest {
 
 	@Test
 	public void readExtendedType_override_standard_type_classes() throws Throwable {
-		//@formatter:off
-		String json =
-		  "[\"vcard\"," +
-		    "[" +
-		      "[\"version\", {}, \"text\", \"4.0\"]," +
-		      "[\"fn\", {}, \"text\", \"John Doe\"]" +
-		    "]" +
-		  "]";
-		//@formatter:on
-
+		// @formatter:off
+		String json = "[\"vcard\"," + (((("[" + "[\"version\", {}, \"text\", \"4.0\"],") + "[\"fn\", {}, \"text\", \"John Doe\"]") + "]") + "]");
+		// @formatter:on
 		JCardReader reader = new JCardReader(json);
 		reader.registerScribe(new MyFormattedNameScribe());
 		VCard vcard = reader.readNext();
 		assertPropertyCount(1, vcard);
 		assertVersion(V4_0, vcard);
-
 		MyFormattedNameProperty prop = vcard.getProperty(MyFormattedNameProperty.class);
 		assertEquals("JOHN DOE", prop.value);
 		assertWarnings(0, reader);
@@ -436,7 +424,7 @@ public class JCardReaderTest {
 
 	private static class TypeForTestingScribe extends VCardPropertyScribe<TypeForTesting> {
 		public TypeForTestingScribe() {
-			super(TypeForTesting.class, "X-TYPE");
+			super(JCardReaderTest.TypeForTesting.class, "X-TYPE");
 		}
 
 		@Override
@@ -458,17 +446,13 @@ public class JCardReaderTest {
 		protected TypeForTesting _parseJson(JCardValue value, VCardDataType dataType, VCardParameters parameters, List<String> warnings) {
 			return new TypeForTesting(value);
 		}
-
 	}
 
 	@Test
 	public void jcard_example() throws Throwable {
 		JCardReader reader = new JCardReader(getClass().getResourceAsStream("jcard-example.json"));
-
 		VCard vcard = reader.readNext();
-		
 		validateExampleJCard(vcard);
-		
 		assertWarnings(0, reader);
 		assertNoMoreVCards(reader);
 	}
@@ -476,86 +460,22 @@ public class JCardReaderTest {
 	public static void validateExampleJCard(VCard vcard) {
 		assertVersion(V4_0, vcard);
 		assertPropertyCount(16, vcard);
-
 		//@formatter:off
-		assertSimpleProperty(vcard.getFormattedNames())
-			.value("Simon Perreault")
-		.noMore();
-		
-		assertStructuredName(vcard)
-			.family("Perreault")
-			.given("Simon")
-			.suffixes("ing. jr", "M.Sc.")
-			.noMore();
-		
-		assertDateProperty(vcard.getBirthdays())
-			.partialDate(PartialDate.builder().month(2).date(3).build())
-		.noMore();
-		
-		assertDateProperty(vcard.getAnniversaries())
-			.date("2009-08-08 19:30:00 +0000")
-		.noMore();
-		
+		assertSimpleProperty(vcard.getFormattedNames()).value("Simon Perreault").noMore();
+		assertStructuredName(vcard).family("Perreault").given("Simon").suffixes("ing. jr", "M.Sc.").noMore();
+		assertDateProperty(vcard.getBirthdays()).partialDate(PartialDate.builder().month(2).date(3).build()).noMore();
+		assertDateProperty(vcard.getAnniversaries()).date("2009-08-08 19:30:00 +0000").noMore();
 		assertTrue(vcard.getGender().isMale());
-		
-		assertSimpleProperty(vcard.getLanguages())
-			.value("fr")
-			.param("PREF", "1")
-		.next()
-			.value("en")
-			.param("PREF", "2")
-		.noMore();
-		
-		assertListProperty(vcard.getOrganizations())
-			.values("Viagenie")
-			.param("TYPE", "work")
-		.noMore();
-		
-		assertAddress(vcard)
-			.extendedAddress("Suite D2-630")
-			.streetAddress("2875 Laurier")
-			.locality("Quebec")
-			.region("QC")
-			.postalCode("G1V 2M2")
-			.country("Canada")
-			.types(AddressType.WORK)
-		.noMore();
-		
-		assertTelephone(vcard)
-			.uri(new TelUri.Builder("+1-418-656-9254").extension("102").build())
-			.types(TelephoneType.WORK, TelephoneType.VOICE)
-			.param("PREF", "1")
-		.next()
-			.uri(new TelUri.Builder("+1-418-262-6501").build())
-			.types(TelephoneType.WORK, TelephoneType.CELL, TelephoneType.VOICE, TelephoneType.VIDEO, TelephoneType.TEXT)
-		.noMore();
-		
-		assertEmail(vcard)
-			.value("simon.perreault@viagenie.ca")
-			.types(EmailType.WORK)
-		.noMore();
-		
-		assertGeo(vcard)
-			.latitude(46.772673)
-			.longitude(-71.282945)
-			.param("TYPE", "work")
-		.noMore();
-		
-		assertBinaryProperty(vcard.getKeys())
-			.url("http://www.viagenie.ca/simon.perreault/simon.asc")
-			.param("TYPE","work")
-		.noMore();
-		
-		assertTimezone(vcard)
-			.offset(new UtcOffset(false, -5, 0))
-		.noMore();
-		
-		assertSimpleProperty(vcard.getUrls())
-			.value("http://nomis80.org")
-			.param("TYPE", "home")
-		.noMore();
+		assertSimpleProperty(vcard.getLanguages()).value("fr").param("PREF", "1").next().value("en").param("PREF", "2").noMore();
+		assertListProperty(vcard.getOrganizations()).values("Viagenie").param("TYPE", "work").noMore();
+		assertAddress(vcard).extendedAddress("Suite D2-630").streetAddress("2875 Laurier").locality("Quebec").region("QC").postalCode("G1V 2M2").country("Canada").types(AddressType.WORK).noMore();
+		assertTelephone(vcard).uri(new TelUri.Builder("+1-418-656-9254").extension("102").build()).types(TelephoneType.WORK, TelephoneType.VOICE).param("PREF", "1").next().uri(new TelUri.Builder("+1-418-262-6501").build()).types(TelephoneType.WORK, TelephoneType.CELL, TelephoneType.VOICE, TelephoneType.VIDEO, TelephoneType.TEXT).noMore();
+		assertEmail(vcard).value("simon.perreault@viagenie.ca").types(EmailType.WORK).noMore();
+		assertGeo(vcard).latitude(46.772673).longitude(-71.282945).param("TYPE", "work").noMore();
+		assertBinaryProperty(vcard.getKeys()).url("http://www.viagenie.ca/simon.perreault/simon.asc").param("TYPE", "work").noMore();
+		assertTimezone(vcard).offset(new UtcOffset(false, -5, 0)).noMore();
+		assertSimpleProperty(vcard.getUrls()).value("http://nomis80.org").param("TYPE", "home").noMore();
 		//@formatter:on
-
 		assertValidate(vcard).versions(vcard.getVersion()).run();
 	}
 }

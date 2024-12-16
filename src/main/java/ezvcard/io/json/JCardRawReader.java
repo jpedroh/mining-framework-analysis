@@ -1,5 +1,11 @@
 package ezvcard.io.json;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import ezvcard.VCardDataType;
+import ezvcard.parameter.VCardParameters;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Reader;
@@ -8,67 +14,65 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 
-import ezvcard.VCardDataType;
-import ezvcard.parameter.VCardParameters;
+/* Copyright (c) 2012-2016, Michael Angstadt
+All rights reserved.
 
-/*
- Copyright (c) 2012-2016, Michael Angstadt
- All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met: 
 
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions are met: 
+1. Redistributions of source code must retain the above copyright notice, this
+list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+this list of conditions and the following disclaimer in the documentation
+and/or other materials provided with the distribution. 
 
- 1. Redistributions of source code must retain the above copyright notice, this
- list of conditions and the following disclaimer. 
- 2. Redistributions in binary form must reproduce the above copyright notice,
- this list of conditions and the following disclaimer in the documentation
- and/or other materials provided with the distribution. 
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 /**
  * Parses an vCard JSON data stream (jCard).
- * 
  * @author Michael Angstadt
  * @see <a href="http://tools.ietf.org/html/rfc7095">RFC 7095</a>
  */
 public class JCardRawReader implements Closeable {
 	private final Reader reader;
+
 	private JsonParser parser;
+
 	private boolean eof = false;
+
 	private JCardDataStreamListener listener;
+
 	private boolean strict = false;
 
 	/**
+	 *
+	 *
 	 * @param reader
-	 *            the reader to wrap
+	 * 		the reader to wrap
 	 */
 	public JCardRawReader(Reader reader) {
 		this.reader = reader;
 	}
 
 	/**
+	 *
+	 *
 	 * @param parser
-	 *            the parser to read from
+	 * 		the parser to read from
 	 * @param strict
-	 *            ensure that the parser is pointing to the first token of a
-	 *            valid jcard at the start of parsing, and that parsing consumes
-	 *            the final token of that jcard before returning
+	 * 		ensure that the parser is pointing to the first token of a
+	 * 		valid jcard at the start of parsing, and that parsing consumes
+	 * 		the final token of that jcard before returning
 	 */
 	public JCardRawReader(JsonParser parser, boolean strict) {
 		reader = null;
@@ -78,7 +82,6 @@ public class JCardRawReader implements Closeable {
 
 	/**
 	 * Gets the current line number.
-	 * 
 	 * @return the line number
 	 */
 	public int getLineNum() {
@@ -87,16 +90,11 @@ public class JCardRawReader implements Closeable {
 
 	/**
 	 * Reads the next vCard from the jCard data stream.
-	 * 
-	 * @param listener
-	 *            handles the vCard data as it is read off the wire
-	 * @throws JCardParseException
-	 *             if the jCard syntax is incorrect (the JSON syntax may be
-	 *             valid, but it is not in the correct jCard format).
-	 * @throws JsonParseException
-	 *             if the JSON syntax is incorrect
-	 * @throws IOException
-	 *             if there is a problem reading from the data stream
+	 * @param listener handles the vCard data as it is read off the wire
+	 * @throws JCardParseException if the jCard syntax is incorrect (the JSON
+	 * syntax may be valid, but it is not in the correct jCard format).
+	 * @throws JsonParseException if the JSON syntax is incorrect
+	 * @throws IOException if there is a problem reading from the data stream
 	 */
 	public void readNext(JCardDataStreamListener listener) throws IOException {
 		if (parser == null) {
@@ -105,15 +103,12 @@ public class JCardRawReader implements Closeable {
 		} else if (parser.isClosed()) {
 			return;
 		}
-
 		this.listener = listener;
-
-		// find the next vCard object
+		//find the next vCard object
 		JsonToken prev = parser.getCurrentToken();
 		JsonToken cur;
 		while ((cur = parser.nextToken()) != null) {
-			if (prev == JsonToken.START_ARRAY && cur == JsonToken.VALUE_STRING
-					&& "vcard".equals(parser.getValueAsString())) {
+			if (((prev == JsonToken.START_ARRAY) && (cur == JsonToken.VALUE_STRING)) && "vcard".equals(parser.getValueAsString())) {
 				break;
 			} else if (strict) {
 				if (prev != JsonToken.START_ARRAY) {
@@ -121,56 +116,53 @@ public class JCardRawReader implements Closeable {
 				} else if (cur != JsonToken.VALUE_STRING) {
 					throw new JCardParseException(JsonToken.VALUE_STRING, cur);
 				} else {
-					throw new JCardParseException("Invalid value for first token: expected \"vcard\" , was \""
-							+ parser.getValueAsString() + "\"", JsonToken.VALUE_STRING, cur);
+					throw new JCardParseException(("Invalid value for first token: expected \"vcard\" , was \"" + parser.getValueAsString()) + "\"", JsonToken.VALUE_STRING, cur);
 				}
 			}
 			prev = cur;
-		}
+		} 
 		if (cur == null) {
 			// EOF
 			eof = true;
 			return;
 		}
-
 		listener.beginVCard();
 		parseProperties();
-
 		check(JsonToken.END_ARRAY, parser.nextToken());
 	}
 
 	private void parseProperties() throws IOException {
 		// start properties array
 		checkNext(JsonToken.START_ARRAY);
-
-		// read properties
-		while (parser.nextToken() != JsonToken.END_ARRAY) { // until we reach
+		//read properties
+		while (parser.nextToken() != JsonToken.END_ARRAY) {
+		// until we reach
 															// the end
-															// properties array
+			// properties array
 			checkCurrent(JsonToken.START_ARRAY);
 			parser.nextToken();
 			parseProperty();
-		}
+		} 
 	}
 
 	private void parseProperty() throws IOException {
-		// get property name
+		//get property name
 		checkCurrent(JsonToken.VALUE_STRING);
 		String propertyName = parser.getValueAsString().toLowerCase();
 
-		// get parameters
+		//get parameters
 		VCardParameters parameters = parseParameters();
 
-		// get group
+		//get group
 		List<String> removed = parameters.removeAll("group");
 		String group = removed.isEmpty() ? null : removed.get(0);
 
-		// get data type
+		//get data type
 		checkNext(JsonToken.VALUE_STRING);
 		String dataTypeStr = parser.getText().toLowerCase();
 		VCardDataType dataType = "unknown".equals(dataTypeStr) ? null : VCardDataType.get(dataTypeStr);
 
-		// get property value(s)
+		//get property value(s)
 		List<JsonValue> values = parseValues();
 
 		JCardValue value = new JCardValue(values);
@@ -185,7 +177,7 @@ public class JCardRawReader implements Closeable {
 			String parameterName = parser.getText();
 
 			if (parser.nextToken() == JsonToken.START_ARRAY) {
-				// multi-valued parameter
+				//multi-valued parameter
 				while (parser.nextToken() != JsonToken.END_ARRAY) {
 					parameters.put(parameterName, parser.getText());
 				}
@@ -199,12 +191,13 @@ public class JCardRawReader implements Closeable {
 
 	private List<JsonValue> parseValues() throws IOException {
 		List<JsonValue> values = new ArrayList<JsonValue>();
-		while (parser.nextToken() != JsonToken.END_ARRAY) { // until we reach
+		while (parser.nextToken() != JsonToken.END_ARRAY) {
+			// until we reach
 															// the end of the
 															// property array
 			JsonValue value = parseValue();
 			values.add(value);
-		}
+		} 
 		return values;
 	}
 
@@ -279,7 +272,6 @@ public class JCardRawReader implements Closeable {
 
 	/**
 	 * Determines whether the end of the data stream has been reached.
-	 * 
 	 * @return true if the end has been reached, false if not
 	 */
 	public boolean eof() {
@@ -288,7 +280,6 @@ public class JCardRawReader implements Closeable {
 
 	/**
 	 * Handles the vCard data as it is read off the data stream.
-	 * 
 	 * @author Michael Angstadt
 	 */
 	public interface JCardDataStreamListener {
@@ -299,20 +290,13 @@ public class JCardRawReader implements Closeable {
 
 		/**
 		 * Called when a property is read.
-		 * 
-		 * @param group
-		 *            the group or null if there is not group
-		 * @param propertyName
-		 *            the property name (e.g. "summary")
-		 * @param parameters
-		 *            the parameters
-		 * @param dataType
-		 *            the data type or null for "unknown"
-		 * @param value
-		 *            the property value
+		 * @param group the group or null if there is not group
+		 * @param propertyName the property name (e.g. "summary")
+		 * @param parameters the parameters
+		 * @param dataType the data type or null for "unknown"
+		 * @param value the property value
 		 */
-		void readProperty(String group, String propertyName, VCardParameters parameters, VCardDataType dataType,
-				JCardValue value);
+		void readProperty(String group, String propertyName, VCardParameters parameters, VCardDataType dataType, JCardValue value);
 	}
 
 	/**
