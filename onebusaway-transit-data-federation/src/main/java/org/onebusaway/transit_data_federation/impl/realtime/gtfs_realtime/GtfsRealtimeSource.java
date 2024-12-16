@@ -15,6 +15,18 @@
  */
 package org.onebusaway.transit_data_federation.impl.realtime.gtfs_realtime;
 
+import com.google.protobuf.ExtensionRegistry;
+import com.google.transit.realtime.*;
+import com.google.transit.realtime.GtfsRealtime.Alert;
+import com.google.transit.realtime.GtfsRealtime.FeedEntity;
+import com.google.transit.realtime.GtfsRealtime.FeedHeader;
+import com.google.transit.realtime.GtfsRealtime.FeedMessage;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,12 +44,17 @@ import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-
-import com.google.transit.realtime.*;
 import org.apache.commons.lang.StringUtils;
+import org.onebusaway.alerts.impl.ServiceAlertLocalizedString;
+import org.onebusaway.alerts.impl.ServiceAlertRecord;
+import org.onebusaway.alerts.impl.ServiceAlertSituationConsequenceClause;
+import org.onebusaway.alerts.impl.ServiceAlertTimeRange;
+import org.onebusaway.alerts.impl.ServiceAlertsSituationAffectsClause;
+import org.onebusaway.alerts.service.ServiceAlerts.ServiceAlert;
+import org.onebusaway.alerts.service.ServiceAlerts;
+import org.onebusaway.alerts.service.ServiceAlertsService;
 import org.onebusaway.api.model.transit.realtime.GtfsRealtimeConstantsV2;
 import org.onebusaway.geospatial.model.CoordinatePoint;
 import org.onebusaway.geospatial.services.SphericalGeometryLibrary;
@@ -49,11 +66,6 @@ import org.onebusaway.realtime.api.VehicleOccupancyRecord;
 import org.onebusaway.transit_data.model.TransitDataConstants;
 import org.onebusaway.transit_data.model.service_alerts.ECause;
 import org.onebusaway.transit_data.model.service_alerts.ESeverity;
-import org.onebusaway.alerts.impl.ServiceAlertLocalizedString;
-import org.onebusaway.alerts.impl.ServiceAlertRecord;
-import org.onebusaway.alerts.impl.ServiceAlertSituationConsequenceClause;
-import org.onebusaway.alerts.impl.ServiceAlertTimeRange;
-import org.onebusaway.alerts.impl.ServiceAlertsSituationAffectsClause;
 import org.onebusaway.transit_data_federation.impl.transit_graph.StopTimeEntriesFactory;
 import org.onebusaway.transit_data_federation.services.AgencyService;
 import org.onebusaway.transit_data_federation.services.ConsolidatedStopsService;
@@ -65,32 +77,19 @@ import org.onebusaway.transit_data_federation.services.blocks.DynamicBlockIndexS
 import org.onebusaway.transit_data_federation.services.narrative.NarrativeService;
 import org.onebusaway.transit_data_federation.services.realtime.BlockLocation;
 import org.onebusaway.transit_data_federation.services.realtime.BlockLocationService;
-import org.onebusaway.alerts.service.ServiceAlerts;
-import org.onebusaway.alerts.service.ServiceAlerts.ServiceAlert;
-import org.onebusaway.alerts.service.ServiceAlertsService;
 import org.onebusaway.transit_data_federation.services.shapes.ShapePointService;
 import org.onebusaway.transit_data_federation.services.transit_graph.TransitGraphDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.protobuf.ExtensionRegistry;
-import com.google.transit.realtime.GtfsRealtime.Alert;
-import com.google.transit.realtime.GtfsRealtime.FeedEntity;
-import com.google.transit.realtime.GtfsRealtime.FeedHeader;
-import com.google.transit.realtime.GtfsRealtime.FeedMessage;
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpException;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-public class GtfsRealtimeSource implements MonitoredDataSource {
 
+public class GtfsRealtimeSource implements MonitoredDataSource {
   public static final String GTFS_CONNECT_TIMEOUT = "gtfs.connect_timeout";
+
   public static final String GTFS_READ_TIMEOUT = "gtfs.read_timeout";
+
   private static final Logger _log = LoggerFactory.getLogger(GtfsRealtimeSource.class);
 
   private static final ExtensionRegistry _registry = ExtensionRegistry.newInstance();
@@ -98,7 +97,8 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
   static {
     _registry.add(GtfsRealtimeOneBusAway.obaFeedEntity);
     _registry.add(GtfsRealtimeOneBusAway.obaTripUpdate);
-    _registry.add(GtfsRealtimeMTARR.mtaRailroadStopTimeUpdate); // track number
+    _registry.add(GtfsRealtimeMTARR.mtaRailroadStopTimeUpdate);// track number
+
     _registry.add(GtfsRealtimeServiceStatus.mercuryAlert);
     // NYCT support for added trips
     _registry.add(GtfsRealtimeNYCT.nyctFeedHeader);
@@ -136,11 +136,12 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
 
   private int _refreshInterval = 30;
 
+  // by default don't validate
   private Integer _maxDeltaLocationMeters = null; // by default don't validate
 
   private boolean _showNegativeScheduledArrivals = true;
 
-  private Map<String,String> _headersMap;
+  private Map<String, String> _headersMap;
 
   private Map _alertAgencyIdMap;
 
@@ -164,18 +165,18 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
 
   private GtfsRealtimeEntitySource _entitySource = new GtfsRealtimeEntitySource();
 
-  private GtfsRealtimeServiceSource _serviceSource  = new GtfsRealtimeServiceSource();
+  private GtfsRealtimeServiceSource _serviceSource = new GtfsRealtimeServiceSource();
 
   private GtfsRealtimeTripLibrary _tripsLibrary;
 
   private GtfsRealtimeAlertLibrary _alertLibrary;
-  
+
   private MonitoredResult _monitoredResult = new MonitoredResult();
-  
+
   private String _feedId = null;
-  
+
   private StopModificationStrategy _stopModificationStrategy = null;
-  
+
   private boolean _scheduleAdherenceFromLocation = false;
 
   private boolean _enabled = true;
@@ -189,6 +190,11 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
   // this is a change from the default, but is much safer
   private boolean _validateCurrentTime = false;
 
+  // some systems mis-report service data at midnight
+  // some systems mis-report service data at midnight
+  private boolean _hackServiceDate = false;
+
+  // a special case of some specific integration - drop unassigned trips
   // a special case of some specific integration - drop unassigned trips
   private boolean _filterUnassigned = false;
 
@@ -231,6 +237,7 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
   public void setDataSourceMonitor(DataSourceMonitor monitor) {
     this._monitor = monitor;
   }
+
   @Autowired
   public void setNarrativeService(NarrativeService service) {
     _serviceSource.setNarrativeService(service);
@@ -257,10 +264,10 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
       ScheduledExecutorService scheduledExecutorService) {
     _scheduledExecutorService = scheduledExecutorService;
   }
-  
+
   @Autowired
   public void setBlockGeospatialService(BlockGeospatialService blockGeospatialService) {
-   _serviceSource.setBlockGeospatialService(blockGeospatialService);
+    _serviceSource.setBlockGeospatialService(blockGeospatialService);
   }
 
   @Autowired
@@ -287,11 +294,10 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
     _stopModificationStrategy = strategy;
   }
 
-
   public void setTripUpdatesUrl(URL tripUpdatesUrl) {
     _tripUpdatesUrl = tripUpdatesUrl;
   }
-  
+
   public URL getTripUpdatesUrl() {
     return _tripUpdatesUrl;
   }
@@ -307,7 +313,7 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
   public URL getVehiclePositionsUrl() {
     return _vehiclePositionsUrl;
   }
-  
+
   public void setSftpVehiclePositionsUrl(String sftpVehiclePositionsUrl) {
     _sftpVehiclePositionsUrl = sftpVehiclePositionsUrl;
   }
@@ -325,7 +331,7 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
   }
 
   public URL getAlertCollectionUrl() { return _alertCollectionUrl; }
-  
+
   public void setSftpAlertsUrl(String sftpAlertsUrl) {
     _sftpAlertsUrl = sftpAlertsUrl;
   }
@@ -333,7 +339,7 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
   public void setRefreshInterval(int refreshInterval) {
     _refreshInterval = refreshInterval;
   }
-  
+
   public int getRefreshInterval() {
     return _refreshInterval;
   }
@@ -348,11 +354,11 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
   public Integer getMaxDeltaLocationMeters() { return _maxDeltaLocationMeters; }
 
   public void setHeadersMap(Map<String,String> headersMap) {
-	_headersMap = headersMap;
+  	_headersMap = headersMap;
   }
 
   public void setAlertAgencyIdMap(Map alertAgencyIdMap) {
-	_alertAgencyIdMap = alertAgencyIdMap;
+  	_alertAgencyIdMap = alertAgencyIdMap;
   }
 
   public void setAgencyId(String agencyId) {
@@ -362,15 +368,15 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
   public void setAgencyIds(List<String> agencyIds) {
     _agencyIds.addAll(agencyIds);
   }
-  
+
   public void setShowNegativeScheduledArrivals(boolean _showNegativeScheduledArrivals) {
     this._showNegativeScheduledArrivals = _showNegativeScheduledArrivals;
   }
-  
+
   public boolean getShowNegativeScheduledArrivals() {
     return _showNegativeScheduledArrivals;
   }
-  
+
   public List<String> getAgencyIds() {
     return _agencyIds;
   }
@@ -378,29 +384,29 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
   public void setMonitoredResult(MonitoredResult result) {
     _monitoredResult = result;
   }
-  
+
   public MonitoredResult getMonitoredResult() {
     return _monitoredResult;
   }
-  
+
   public String getFeedId() {
     if (_feedId == null)
       _feedId = _agencyIds.toString();
     return _feedId;
   }
-  
+
   public void setFeedId(String id) {
     _feedId = id;
   }
-  
+
   public void setScheduleAdherenceFromLocation(boolean scheduleAdherenceFromLocation) {
     _scheduleAdherenceFromLocation = scheduleAdherenceFromLocation;
   }
-  
+
   public void setEnabled(boolean enabled) {
     this._enabled = enabled;
   }
-  
+
   public boolean getEnabled() {
     return _enabled;
   }
@@ -457,10 +463,15 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
     _filterUnassigned = flag;
   }
 
+  public void setHackServiceDate(boolean flag) {
+    _hackServiceDate = flag;
+  }
+
   @Autowired
   public void setGtfsRealtimeCancelService(GtfsRealtimeCancelService service) {
     _cancelService = service;
   }
+
   @PostConstruct
   public void start() {
     if (_agencyIds.isEmpty()) {
@@ -486,7 +497,12 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
     _tripsLibrary.setScheduleAdherenceFromLocation(_scheduleAdherenceFromLocation);
     _tripsLibrary.setUseLabelAsVehicleId(_useLabelAsId);
     _tripsLibrary.setValidateCurrentTime(_validateCurrentTime);
+<<<<<<< LEFT
+    _tripsLibrary.setHackServiceDate(_hackServiceDate);
+    _tripsLibrary.setAddedTripService(new AddedTripServiceImpl());
+=======
 
+>>>>>>> RIGHT
     _tripsLibrary.setFilterUnassigned(_filterUnassigned);
     DuplicatedTripServiceImpl duplicatedTripService = new DuplicatedTripServiceImpl();
     duplicatedTripService.setGtfsRealtimeEntitySource(_entitySource);
@@ -505,7 +521,7 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
           new RefreshTask(), 0, _refreshInterval, TimeUnit.SECONDS);
     }
   }
-  
+
   public void reset() {
     _lastVehicleUpdate.clear();
   }
@@ -520,29 +536,19 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
 
   public void refresh() throws IOException {
     if (!graphReady()) {
-      _log.warn("skipping update " + getAgencyIds() + ", bundle not ready");
+      _log.warn(("skipping update " + getAgencyIds()) + ", bundle not ready");
       return;
     }
-    FeedMessage tripUpdates = _sftpTripUpdatesUrl != null ?
-        readOrReturnDefault(_sftpTripUpdatesUrl)
-        : readOrReturnDefault(_tripUpdatesUrl);
-    FeedMessage vehiclePositions = _sftpVehiclePositionsUrl != null ?
-        readOrReturnDefault(_sftpVehiclePositionsUrl)
-        : readOrReturnDefault(_vehiclePositionsUrl);
-    FeedMessage alerts = _sftpAlertsUrl != null ?
-        readOrReturnDefault(_sftpAlertsUrl)
-        : readOrReturnDefault(_alertsUrl);
-    ServiceAlerts.ServiceAlertsCollection alertCollection
-            = readOrReturnDefaultCollection(_alertCollectionUrl);
-
+    FeedMessage tripUpdates = (_sftpTripUpdatesUrl != null) ? readOrReturnDefault(_sftpTripUpdatesUrl) : readOrReturnDefault(_tripUpdatesUrl);
+    FeedMessage vehiclePositions = (_sftpVehiclePositionsUrl != null) ? readOrReturnDefault(_sftpVehiclePositionsUrl) : readOrReturnDefault(_vehiclePositionsUrl);
+    FeedMessage alerts = (_sftpAlertsUrl != null) ? readOrReturnDefault(_sftpAlertsUrl) : readOrReturnDefault(_alertsUrl);
+    ServiceAlerts.ServiceAlertsCollection alertCollection = readOrReturnDefaultCollection(_alertCollectionUrl);
     MonitoredResult result = new MonitoredResult();
     result.setAgencyIds(_agencyIds);
     result.setFeedId(getFeedId());
-
     if (_routeIdsToCancel != null) {
       _cancelService.cancelServiceForRoutes(_routeIdsToCancel);
     }
-
     handleUpdates(result, tripUpdates, vehiclePositions, alerts, alertCollection);
     // update reference in a thread safe manner
     _monitoredResult = result;
@@ -555,10 +561,9 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
   /****
    * Private Methods
    ****/
-
   // test if the transit graph is ready
   protected boolean graphReady() {
-      return _entitySource.isGraphReady();
+    return _entitySource.isGraphReady();
   }
 
   /**
@@ -567,15 +572,10 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
    * @param vehiclePositions
    * @param alerts
    */
-  private synchronized void handleUpdates(MonitoredResult result, FeedMessage tripUpdates,
-                                          FeedMessage vehiclePositions, FeedMessage alerts,
-                                          ServiceAlerts.ServiceAlertsCollection alertCollection) {
-	  
-	long time = tripUpdates.getHeader().getTimestamp() * 1000;
-	_tripsLibrary.setCurrentTime(time);
-
-    List<CombinedTripUpdatesAndVehiclePosition> combinedUpdates = _tripsLibrary.groupTripUpdatesAndVehiclePositions(result,
-            tripUpdates, vehiclePositions);
+  private synchronized void handleUpdates(MonitoredResult result, FeedMessage tripUpdates, FeedMessage vehiclePositions, FeedMessage alerts, ServiceAlerts.ServiceAlertsCollection alertCollection) {
+    long time = tripUpdates.getHeader().getTimestamp() * 1000;
+    _tripsLibrary.setCurrentTime(time);
+    List<CombinedTripUpdatesAndVehiclePosition> combinedUpdates = _tripsLibrary.groupTripUpdatesAndVehiclePositions(result, tripUpdates, vehiclePositions);
     result.setRecordsTotal(combinedUpdates.size());
     handleCombinedUpdatesLogged(result, combinedUpdates);
     cacheVehicleLocations(vehiclePositions);
@@ -598,30 +598,30 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
     }
   }
 
-  void handleCombinedUpdatesLogged(MonitoredResult result,
-                             List<CombinedTripUpdatesAndVehiclePosition> updates) {
+  void handleCombinedUpdatesLogged(MonitoredResult result, List<CombinedTripUpdatesAndVehiclePosition> updates) {
     try {
       handleCombinedUpdates(result, updates);
-    } catch (Throwable t) {
+    } catch (java.lang.Throwable t) {
       _log.error("handleCombinedUpdates source-exception: {}", t, t);
     }
   }
+
   // package private for unit tests
-   void handleCombinedUpdates(MonitoredResult result,
-      List<CombinedTripUpdatesAndVehiclePosition> updates) {
-
+  void handleCombinedUpdates(MonitoredResult result, List<CombinedTripUpdatesAndVehiclePosition> updates) {
     // exit if we are configured in alerts mode
-    if (_tripUpdatesUrl == null) return;
-
+    if (_tripUpdatesUrl == null) {
+      return;
+    }
     Set<AgencyAndId> seenVehicles = new HashSet<AgencyAndId>();
-
     try {
       for (CombinedTripUpdatesAndVehiclePosition update : updates) {
         if (update.block == null) {
           String tripId = null;
-          if (update.getTripUpdates() != null && update.getTripUpdatesSize() > 0)
-            if (update.getTripUpdates().get(0).hasTrip())
+          if ((update.getTripUpdates() != null) && (update.getTripUpdatesSize() > 0)) {
+            if (update.getTripUpdates().get(0).hasTrip()) {
               tripId = update.getTripUpdates().get(0).getTrip().getTripId();
+            }
+          }
           _log.error("null block {} for agencies {}, bailing...", tripId, _agencyIds);
           continue;
         }
@@ -630,9 +630,7 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
           _log.error("no schedule relationship for update {}", update);
           continue;
         }
-        boolean isDynamicTrip = TransitDataConstants.STATUS_ADDED.equals(scheduleRelationship.name())
-                || TransitDataConstants.STATUS_DUPLICATED.equals(scheduleRelationship.name());
-
+        boolean isDynamicTrip = TransitDataConstants.STATUS_ADDED.equals(scheduleRelationship.name()) || TransitDataConstants.STATUS_DUPLICATED.equals(scheduleRelationship.name());
         VehicleLocationRecord record = _tripsLibrary.createVehicleLocationRecordForUpdate(result, update);
         if (record != null) {
           if (isDynamicTrip) {
@@ -650,80 +648,75 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
           // here we try to get a more accurate count of updates
           // some providers re-send old data or future data cluttering the feed
           // the TDS will discard these
-          if (!isDynamicTrip && blockNotActive(record)) {
-            _log.debug("discarding v: " + vehicleId + " as block not active");
+          if ((!isDynamicTrip) && blockNotActive(record)) {
+            _log.debug(("discarding v: " + vehicleId) + " as block not active");
             continue;
           }
-          if (!isDynamicTrip && !isValidLocation(record, update)) {
-            _log.debug("discarding v: " + vehicleId + " as location is bad");
+          if ((!isDynamicTrip) && (!isValidLocation(record, update))) {
+            _log.debug(("discarding v: " + vehicleId) + " as location is bad");
             continue;
           }
           seenVehicles.add(vehicleId);
           VehicleOccupancyRecord vor = _tripsLibrary.createVehicleOccupancyRecordForUpdate(result, update);
           Date timestamp = new Date(record.getTimeOfRecord());
           Date prev = _lastVehicleUpdate.get(vehicleId);
-          if (prev == null || prev.before(timestamp)) {
-            _log.debug("matched vehicle " + vehicleId + " on block=" + record.getBlockId() + " with scheduleDeviation=" + record.getScheduleDeviation());
+          if ((prev == null) || prev.before(timestamp)) {
+            _log.debug((((("matched vehicle " + vehicleId) + " on block=") + record.getBlockId()) + " with scheduleDeviation=") + record.getScheduleDeviation());
             _vehicleLocationListener.handleVehicleLocationRecord(record);
             if (vor != null) {
               _vehicleOccupancyListener.handleVehicleOccupancyRecord(vor);
             }
             _lastVehicleUpdate.put(vehicleId, timestamp);
           } else {
-            _log.debug("discarding: update for vehicle " + vehicleId + " as timestamp in past");
+            _log.debug(("discarding: update for vehicle " + vehicleId) + " as timestamp in past");
           }
         }
       }
-
-    } catch (Throwable t) {
+    } catch (java.lang.Throwable t) {
       _log.error("fatal exception {}", t, t);
     }
     Calendar c = Calendar.getInstance();
     c.add(Calendar.MINUTE, -15);
     Date staleRecordThreshold = c.getTime();
-    long newestUpdate = 0; 
+    long newestUpdate = 0;
     Iterator<Map.Entry<AgencyAndId, Date>> it = _lastVehicleUpdate.entrySet().iterator();
     while (it.hasNext()) {
       Map.Entry<AgencyAndId, Date> entry = it.next();
       AgencyAndId vehicleId = entry.getKey();
       Date lastUpdateTime = entry.getValue();
-      if (lastUpdateTime != null && lastUpdateTime.getTime() > newestUpdate) {
+      if ((lastUpdateTime != null) && (lastUpdateTime.getTime() > newestUpdate)) {
         newestUpdate = lastUpdateTime.getTime();
       }
-      if (!seenVehicles.contains(vehicleId)
-          && lastUpdateTime.before(staleRecordThreshold)) {
+      if ((!seenVehicles.contains(vehicleId)) && lastUpdateTime.before(staleRecordThreshold)) {
         _log.debug("removing stale vehicleId=" + vehicleId);
         it.remove();
       }
-    }
+    } 
     // NOTE: this implies receiving stale updates is equivalent to not being updated at all
     result.setLastUpdate(newestUpdate);
     if (_monitor != null) {
       _monitor.logUpdate(result);
     }
-    _log.info("Agency " + getFeedId() + " has active vehicles=" + seenVehicles.size()
-            + ", matched=" + result.getMatchedTripIds().size()
-            + ", added=" + result.getAddedTripIds().size()
-            + ", duplicated=" + result.getDuplicatedTripIds().size()
-            + ", cancelled=" + result.getCancelledTripIds().size()
-            + " for updates=" + updates.size() + " with most recent timestamp " + new Date(newestUpdate));
-
+    _log.info((((((((((((((("Agency " + getFeedId()) + " has active vehicles=") + seenVehicles.size()) + ", matched=") + result.getMatchedTripIds().size()) + ", added=") + result.getAddedTripIds().size()) + ", duplicated=") + result.getDuplicatedTripIds().size()) + ", cancelled=") + result.getCancelledTripIds().size()) + " for updates=") + updates.size()) + " with most recent timestamp ") + new Date(newestUpdate));
   }
 
   private boolean isValidLocation(VehicleLocationRecord record, CombinedTripUpdatesAndVehiclePosition update) {
-    if (_maxDeltaLocationMeters == null) return true; // validation turned off
-    CoordinatePoint reported = new CoordinatePoint(update.vehiclePosition.getPosition().getLatitude(),
-            update.vehiclePosition.getPosition().getLongitude());
-
-    BlockLocation blockLocation = _serviceSource.getBlockLocationService().getScheduledLocationForBlockInstance(update.block.getBlockInstance(), record.getTimeOfRecord());
-      if (blockLocation == null) return true; // this record will be tossed for other reasons
-    CoordinatePoint calculated = blockLocation.getLocation();
-    double delta = SphericalGeometryLibrary.distanceFaster(reported.getLat(), reported.getLon(),
-            calculated.getLat(), calculated.getLon());
-    if (delta < _maxDeltaLocationMeters)
+    if (_maxDeltaLocationMeters == null) {
       return true;
-    _log.info("dropped vehicle {} has distance of {} with deviation {} when limit is {}",
-            record.getVehicleId(), delta, record.getScheduleDeviation(), _maxDeltaLocationMeters);
+    }// validation turned off
+
+    CoordinatePoint reported = new CoordinatePoint(update.vehiclePosition.getPosition().getLatitude(), update.vehiclePosition.getPosition().getLongitude());
+    BlockLocation blockLocation = _serviceSource.getBlockLocationService().getScheduledLocationForBlockInstance(update.block.getBlockInstance(), record.getTimeOfRecord());
+    if (blockLocation == null) {
+      return true;
+    }// this record will be tossed for other reasons
+
+    CoordinatePoint calculated = blockLocation.getLocation();
+    double delta = SphericalGeometryLibrary.distanceFaster(reported.getLat(), reported.getLon(), calculated.getLat(), calculated.getLon());
+    if (delta < _maxDeltaLocationMeters) {
+      return true;
+    }
+    _log.info("dropped vehicle {} has distance of {} with deviation {} when limit is {}", record.getVehicleId(), delta, record.getScheduleDeviation(), _maxDeltaLocationMeters);
     return false;
   }
 
@@ -1114,7 +1107,7 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
     builder.setHeader(header);
     return builder.build();
   }
-  
+
   /**
    * 
    * @param url the {@link URL} to read from
@@ -1244,7 +1237,7 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
        _log.error("error closing url stream " + url);
      }
    }
- }
+   }
 
 /**
  * Set the headers to the urlConnection if any
@@ -1258,19 +1251,18 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
 	  }
 	}
   }
+
   /****
    *
    ****/
-
   private class RefreshTask implements Runnable {
-
     @Override
     public void run() {
       try {
         if (_enabled) {
           refresh();
         }
-      } catch (Throwable ex) {
+      } catch (java.lang.Throwable ex) {
         _log.warn("Error updating from GTFS-realtime data sources for config {}, {}", getFeedId(), ex, ex);
         ex.printStackTrace();
       }
