@@ -1,19 +1,15 @@
 package org.w3.ldp.testsuite.test;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-import static org.w3.ldp.testsuite.matcher.HeaderMatchers.isValidEntityTag;
-import static org.w3.ldp.testsuite.matcher.HttpStatusSuccessMatcher.isSuccessful;
-
+import com.google.common.collect.ImmutableMap;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.response.Response;
+import com.jayway.restassured.specification.RequestSpecification;
+import com.jayway.restassured.specification.ResponseSpecification;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.testng.SkipException;
@@ -22,28 +18,29 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import org.w3.ldp.testsuite.LdpTestSuite;
-import org.w3.ldp.testsuite.annotations.SpecTest;
 import org.w3.ldp.testsuite.annotations.SpecTest.METHOD;
 import org.w3.ldp.testsuite.annotations.SpecTest.STATUS;
+import org.w3.ldp.testsuite.annotations.SpecTest;
 import org.w3.ldp.testsuite.exception.SkipMethodNotAllowedException;
 import org.w3.ldp.testsuite.exception.SkipNotTestableException;
 import org.w3.ldp.testsuite.http.HttpMethod;
 import org.w3.ldp.testsuite.vocab.LDP;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import static org.w3.ldp.testsuite.matcher.HeaderMatchers.isValidEntityTag;
+import static org.w3.ldp.testsuite.matcher.HttpStatusSuccessMatcher.isSuccessful;
 
-import com.google.common.collect.ImmutableMap;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
-import com.jayway.restassured.specification.ResponseSpecification;
 
 /**
  * Common tests for all LDP resources, RDF source and non-RDF source.
  */
 public abstract class CommonResourceTest extends LdpTest {
-
 	private Set<String> options = new HashSet<String>();
 
-	protected Map<String,String> auth;
+	protected Map<String, String> auth;
 
 	protected abstract String getResourceUri();
 
@@ -64,10 +61,11 @@ public abstract class CommonResourceTest extends LdpTest {
 	}
 
 	@Parameters("auth")
-	public CommonResourceTest(@Optional String auth) throws IOException {
+	public CommonResourceTest(@Optional
+	String auth) throws IOException {
 		if (StringUtils.isNotBlank(auth) && auth.contains(":")) {
 			String[] split = auth.split(":");
-			if (split.length == 2 && StringUtils.isNotBlank(split[0]) && StringUtils.isNotBlank(split[1])) {
+			if (((split.length == 2) && StringUtils.isNotBlank(split[0])) && StringUtils.isNotBlank(split[1])) {
 				this.auth = ImmutableMap.of("username", split[0], "password", split[1]);
 			}
 		} else {
@@ -84,57 +82,24 @@ public abstract class CommonResourceTest extends LdpTest {
 		}
 	}
 
-	@Test(
-			groups = {MUST, MANUAL},
-			description = "LDP servers MUST at least be"
-					+ " HTTP/1.1 conformant servers [HTTP11].")
-	@SpecTest(
-			specRefUri = LdpTestSuite.SPEC_URI + "#ldpr-gen-http",
-			testMethod = METHOD.MANUAL,
-			approval = STATUS.WG_APPROVED,
-			comment = "Covers only part of the specification requirement. "
-					+ "testIsHttp11Server covers the rest.")
+	@Test(groups = { MUST, MANUAL }, description = "LDP servers MUST at least be" + " HTTP/1.1 conformant servers [HTTP11].")
+	@SpecTest(specRefUri = LdpTestSuite.SPEC_URI + "#ldpr-gen-http", testMethod = METHOD.MANUAL, approval = STATUS.WG_APPROVED, comment = "testIsHttp11Manual covers only part of the specification requirement. " + "testIsHttp11Server covers the rest.")
 	public void testIsHttp11Manual() throws URISyntaxException {
 		throw new SkipNotTestableException();
 	}
 
-	@Test(
-			groups = {MUST},
-			description = "LDP server responses MUST use entity tags "
-					+ "(either weak or strong ones) as response "
-					+ "ETag header values.")
-	@SpecTest(
-			specRefUri = LdpTestSuite.SPEC_URI + "#ldpr-gen-etags",
-			testMethod = METHOD.AUTOMATED,
-			approval = STATUS.WG_PENDING,
-			comment = "Covers only part of the specification requirement. "
-					+ "testETagHeadersHead covers the rest.")
+	@Test(groups = { MUST }, description = "LDP server responses MUST use entity tags " + ("(either weak or strong ones) as response " + "ETag header values."))
+	@SpecTest(specRefUri = LdpTestSuite.SPEC_URI + "#ldpr-gen-etags", testMethod = METHOD.AUTOMATED, approval = STATUS.WG_PENDING, comment = "testETagHeadersGet covers only part of the specification requirement. " + "testETagHeadersHead covers the rest.")
 	public void testETagHeadersGet() {
 		// GET requests
-		buildBaseRequestSpecification()
-			.expect()
-				.statusCode(isSuccessful())
-				.header(ETAG, isValidEntityTag())
-			.when()
-				.get(getResourceUri());
+		buildBaseRequestSpecification().expect().statusCode(isSuccessful()).header(ETAG, isValidEntityTag()).when().get(getResourceUri());
 	}
 
-	@Test(
-			groups = {MUST},
-			description = "LDP server responses MUST use entity tags "
-					+ "(either weak or strong ones) as response "
-					+ "ETag header values.")
-	@SpecTest(
-			specRefUri = LdpTestSuite.SPEC_URI + "#ldpr-gen-etags",
-			testMethod = METHOD.AUTOMATED,
-			approval = STATUS.WG_APPROVED,
-			comment = "Covers only part of the specification requirement. "
-					+ "testETagHeadersGet covers the rest.")
+	@Test(groups = { MUST }, description = "LDP server responses MUST use entity tags " + ("(either weak or strong ones) as response " + "ETag header values."))
+	@SpecTest(specRefUri = LdpTestSuite.SPEC_URI + "#ldpr-gen-etags", testMethod = METHOD.AUTOMATED, approval = STATUS.WG_APPROVED, comment = "testETagHeadersHead covers only part of the specification requirement. " + "testETagHeadersGet covers the rest.")
 	public void testETagHeadersHead() {
 		// GET requests
-		buildBaseRequestSpecification()
-				.expect().statusCode(isSuccessful()).header(ETAG, isValidEntityTag())
-				.when().head(getResourceUri());
+		buildBaseRequestSpecification().expect().statusCode(isSuccessful()).header(ETAG, isValidEntityTag()).when().head(getResourceUri());
 	}
 
 	@Test(
@@ -200,168 +165,56 @@ public abstract class CommonResourceTest extends LdpTest {
 		expectResponse.when().get(getResourceUri());
 	}
 
-
-
-
-	@Test(
-			groups = {SHOULD},
-			description = "LDP clients SHOULD use the HTTP If-Match header and HTTP ETags "
-					+ "to ensure it isn’t modifying a resource that has changed since the "
-					+ "client last retrieved its representation. LDP servers SHOULD require "
-					+ "the HTTP If-Match header and HTTP ETags to detect collisions.")
-	@SpecTest(
-			specRefUri = LdpTestSuite.SPEC_URI + "#ldpr-put-precond",
-			testMethod = METHOD.AUTOMATED,
-			approval = STATUS.WG_APPROVED,
-			comment = "Covers only part of the specification requirement. "
-					+ "testConditionFailedStatusCode, testPreconditionRequiredStatusCode "
-					+ "and testPutBadETag covers the rest.")
+	@Test(groups = { SHOULD }, description = "LDP clients SHOULD use the HTTP If-Match header and HTTP ETags " + (("to ensure it isn’t modifying a resource that has changed since the " + "client last retrieved its representation. LDP servers SHOULD require ") + "the HTTP If-Match header and HTTP ETags to detect collisions."))
+	@SpecTest(specRefUri = LdpTestSuite.SPEC_URI + "#ldpr-put-precond", testMethod = METHOD.AUTOMATED, approval = STATUS.WG_APPROVED, comment = "testPutRequiresIfMatch covers only part of the specification requirement. " + ("testConditionFailedStatusCode, testPreconditionRequiredStatusCode " + "and testPutBadETag covers the rest."))
 	public void testPutRequiresIfMatch() throws URISyntaxException {
 		skipIfMethodNotAllowed(HttpMethod.PUT);
-
 		String resourceUri = getResourceUri();
-		Response response = buildBaseRequestSpecification()
-			.expect()
-				.statusCode(isSuccessful())
-				.header(ETAG, isValidEntityTag())
-			.when()
-				.get(resourceUri);
-
-		buildBaseRequestSpecification()
-				.contentType(response.getContentType())
-				.body(response.asByteArray())
-			.expect()
-				.statusCode(not(isSuccessful()))
-			.when()
-				.put(resourceUri);
+		Response response = buildBaseRequestSpecification().expect().statusCode(isSuccessful()).header(ETAG, isValidEntityTag()).when().get(resourceUri);
+		buildBaseRequestSpecification().contentType(response.getContentType()).body(response.asByteArray()).expect().statusCode(not(isSuccessful())).when().put(resourceUri);
 	}
 
-	@Test(
-			groups = {MUST},
-			description = "LDP servers MUST respond with status code 412 "
-					+ "(Condition Failed) if ETags fail to match when there "
-					+ "are no other errors with the request [HTTP11]. LDP "
-					+ "servers that require conditional requests MUST respond "
-					+ "with status code 428 (Precondition Required) when the "
-					+ "absence of a precondition is the only reason for rejecting "
-					+ "the request [RFC6585].")
-	@SpecTest(
-			specRefUri = LdpTestSuite.SPEC_URI + "#ldpr-put-precond",
-			testMethod = METHOD.AUTOMATED,
-			approval = STATUS.WG_APPROVED,
-			comment = "Covers only part of the specification requirement. "
-					+ "testPutBadETag, testPreconditionRequiredStatusCode "
-					+ "and testPutRequiresIfMatch covers the rest.")
+	@Test(groups = { MUST }, description = "LDP servers MUST respond with status code 412 " + ((((("(Condition Failed) if ETags fail to match when there " + "are no other errors with the request [HTTP11]. LDP ") + "servers that require conditional requests MUST respond ") + "with status code 428 (Precondition Required) when the ") + "absence of a precondition is the only reason for rejecting ") + "the request [RFC6585]."))
+	@SpecTest(specRefUri = LdpTestSuite.SPEC_URI + "#ldpr-put-precond", testMethod = METHOD.AUTOMATED, approval = STATUS.WG_APPROVED, comment = "testConditionFailedStatusCode covers only part of the specification requirement. " + ("testPutBadETag, testPreconditionRequiredStatusCode " + "and testPutRequiresIfMatch covers the rest."))
 	public void testConditionFailedStatusCode() {
 		skipIfMethodNotAllowed(HttpMethod.PUT);
-
 		String resourceUri = getResourceUri();
-		Response response = buildBaseRequestSpecification()
-				.expect()
-					.statusCode(isSuccessful()).header(ETAG, isValidEntityTag())
-				.when()
-					.get(resourceUri);
+		Response response = buildBaseRequestSpecification().expect().statusCode(isSuccessful()).header(ETAG, isValidEntityTag()).when().get(resourceUri);
 		String contentType = response.getContentType();
-
-		buildBaseRequestSpecification()
-					.contentType(contentType)
-					.header(IF_MATCH, "These aren't the ETags you're looking for.")
-					.body(response.asByteArray())
-				.expect()
-					.statusCode(HttpStatus.SC_PRECONDITION_FAILED)
-				.when()
-					.put(resourceUri);
+		buildBaseRequestSpecification().contentType(contentType).header(IF_MATCH, "These aren't the ETags you're looking for.").body(response.asByteArray()).expect().statusCode(HttpStatus.SC_PRECONDITION_FAILED).when().put(resourceUri);
 	}
 
-	@Test(
-			groups = {MUST},
-			description = "LDP servers MUST respond with status code 412 "
-					+ "(Condition Failed) if ETags fail to match when there "
-					+ "are no other errors with the request [HTTP11]. LDP "
-					+ "servers that require conditional requests MUST respond "
-					+ "with status code 428 (Precondition Required) when the "
-					+ "absence of a precondition is the only reason for rejecting "
-					+ "the request [RFC6585].")
-	@SpecTest(
-			specRefUri = LdpTestSuite.SPEC_URI + "#ldpr-put-precond",
-			testMethod = METHOD.AUTOMATED,
-			approval = STATUS.WG_APPROVED,
-			comment = "Covers only part of the specification requirement. "
-					+ "testConditionFailedStatusCode,  testPutBadETag"
-					+ "and testPutRequiresIfMatch covers the rest.")
+	@Test(groups = { MUST }, description = "LDP servers MUST respond with status code 412 " + ((((("(Condition Failed) if ETags fail to match when there " + "are no other errors with the request [HTTP11]. LDP ") + "servers that require conditional requests MUST respond ") + "with status code 428 (Precondition Required) when the ") + "absence of a precondition is the only reason for rejecting ") + "the request [RFC6585]."))
+	@SpecTest(specRefUri = LdpTestSuite.SPEC_URI + "#ldpr-put-precond", testMethod = METHOD.AUTOMATED, approval = STATUS.WG_APPROVED, comment = "testPreconditionRequiredStatusCode covers only part of the specification requirement. " + ("testConditionFailedStatusCode,  testPutBadETag" + "and testPutRequiresIfMatch covers the rest."))
 	public void testPreconditionRequiredStatusCode() {
 		skipIfMethodNotAllowed(HttpMethod.PUT);
-
 		String resourceUri = getResourceUri();
-		Response getResponse = buildBaseRequestSpecification()
-				.expect()
-				.statusCode(isSuccessful())
-				.header(ETAG, isValidEntityTag())
-				.when()
-				.get(resourceUri);
-
+		Response getResponse = buildBaseRequestSpecification().expect().statusCode(isSuccessful()).header(ETAG, isValidEntityTag()).when().get(resourceUri);
 		// Verify that we can successfully PUT the resource WITH an If-Match header.
-		Response ifMatchResponse = buildBaseRequestSpecification()
-					.header(IF_MATCH, getResponse.getHeader(ETAG))
-					.contentType(getResponse.contentType())
-					.body(getResponse.asByteArray())
-				.when()
-					.put(resourceUri);
+		Response ifMatchResponse = buildBaseRequestSpecification().header(IF_MATCH, getResponse.getHeader(ETAG)).contentType(getResponse.contentType()).body(getResponse.asByteArray()).when().put(resourceUri);
 		if (!isSuccessful().matches(ifMatchResponse.getStatusCode())) {
 			throw new SkipException("Skipping test because PUT request failed with valid If-Match header.");
 		}
-
 		// Now try WITHOUT the If-Match header. If the result is NOT successful,
 		// it should be because the header is missing and we can check the error
 		// code.
-		Response noIfMatchResponse = buildBaseRequestSpecification()
-					.contentType(getResponse.contentType())
-					.body(getResponse.asByteArray())
-				.when()
-					.put(resourceUri);
+		Response noIfMatchResponse = buildBaseRequestSpecification().contentType(getResponse.contentType()).body(getResponse.asByteArray()).when().put(resourceUri);
 		if (isSuccessful().matches(noIfMatchResponse.getStatusCode())) {
 			// It worked. This server doesn't require If-Match, which is only a
 			// SHOULD requirement (see testPutRequiresIfMatch). Skip the test.
 			throw new SkipException("Server does not require If-Match header.");
 		}
-
 		assertEquals(428, noIfMatchResponse.getStatusCode(), "Expected 428 Precondition Required error on PUT request with no If-Match header");
 	}
 
-	@Test(
-			groups = {MUST},
-			description = "LDP servers MUST respond with status code 412 "
-					+ "(Condition Failed) if ETags fail to match when there "
-					+ "are no other errors with the request [HTTP11]. LDP "
-					+ "servers that require conditional requests MUST respond "
-					+ "with status code 428 (Precondition Required) when the "
-					+ "absence of a precondition is the only reason for rejecting "
-					+ "the request [RFC6585].")
-	@SpecTest(
-			specRefUri = LdpTestSuite.SPEC_URI + "#ldpr-put-precond",
-			testMethod = METHOD.AUTOMATED,
-			approval = STATUS.WG_APPROVED,
-			comment = "Covers only part of the specification requirement. "
-					+ "testConditionFailedStatusCode, testPreconditionRequiredStatusCode "
-					+ "and testPutRequiresIfMatch covers the rest.")
+	@Test(groups = { MUST }, description = "LDP servers MUST respond with status code 412 " + ((((("(Condition Failed) if ETags fail to match when there " + "are no other errors with the request [HTTP11]. LDP ") + "servers that require conditional requests MUST respond ") + "with status code 428 (Precondition Required) when the ") + "absence of a precondition is the only reason for rejecting ") + "the request [RFC6585]."))
+	@SpecTest(specRefUri = LdpTestSuite.SPEC_URI + "#ldpr-put-precond", testMethod = METHOD.AUTOMATED, approval = STATUS.WG_APPROVED, comment = "testPutBadETag covers only part of the specification requirement. " + ("testConditionFailedStatusCode, testPreconditionRequiredStatusCode " + "and testPutRequiresIfMatch covers the rest."))
 	public void testPutBadETag() {
 		skipIfMethodNotAllowed(HttpMethod.PUT);
-
 		String resourceUri = getResourceUri();
-		Response response = buildBaseRequestSpecification()
-			.expect()
-				.statusCode(isSuccessful()).header(ETAG, isValidEntityTag())
-			.when()
-				.get(resourceUri);
-
-		buildBaseRequestSpecification()
-				.contentType(response.getContentType())
-				.header(IF_MATCH, "\"This is not the ETag you're looking for\"") // bad ETag value
-				.body(response.asByteArray())
-			.expect()
-				.statusCode(HttpStatus.SC_PRECONDITION_FAILED)
-			.when()
-				.put(resourceUri);
+		Response response = buildBaseRequestSpecification().expect().statusCode(isSuccessful()).header(ETAG, isValidEntityTag()).when().get(resourceUri);
+		// bad ETag value
+		buildBaseRequestSpecification().contentType(response.getContentType()).header(IF_MATCH, "\"This is not the ETag you\'re looking for\"").body(response.asByteArray()).expect().statusCode(HttpStatus.SC_PRECONDITION_FAILED).when().put(resourceUri);
 	}
 
 	@Test(
