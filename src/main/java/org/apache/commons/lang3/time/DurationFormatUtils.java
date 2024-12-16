@@ -24,24 +24,24 @@ import java.util.GregorianCalendar;
 import java.util.Objects;
 import java.util.TimeZone;
 import java.util.stream.Stream;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+
 
 /**
  * Duration formatting utilities and constants. The following table describes the tokens
  * used in the pattern language for formatting.
  * <table border="1">
- *  <caption>Pattern Tokens</caption>
- *  <tr><th>character</th><th>duration element</th></tr>
- *  <tr><td>y</td><td>years</td></tr>
- *  <tr><td>M</td><td>months</td></tr>
- *  <tr><td>d</td><td>days</td></tr>
- *  <tr><td>H</td><td>hours</td></tr>
- *  <tr><td>m</td><td>minutes</td></tr>
- *  <tr><td>s</td><td>seconds</td></tr>
- *  <tr><td>S</td><td>milliseconds</td></tr>
- *  <tr><td>'text'</td><td>arbitrary text content</td></tr>
+ * <caption>Pattern Tokens</caption>
+ * <tr><th>character</th><th>duration element</th></tr>
+ * <tr><td>y</td><td>years</td></tr>
+ * <tr><td>M</td><td>months</td></tr>
+ * <tr><td>d</td><td>days</td></tr>
+ * <tr><td>H</td><td>hours</td></tr>
+ * <tr><td>m</td><td>minutes</td></tr>
+ * <tr><td>s</td><td>seconds</td></tr>
+ * <tr><td>S</td><td>milliseconds</td></tr>
+ * <tr><td>'text'</td><td>arbitrary text content</td></tr>
  * </table>
  *
  * <b>Note: It's not currently possible to include a single-quote in a format.</b>
@@ -74,7 +74,6 @@ import org.apache.commons.lang3.Validate;
  * @since 2.1
  */
 public class DurationFormatUtils {
-
     /**
      * DurationFormatUtils instances should NOT be constructed in standard programming.
      *
@@ -441,9 +440,7 @@ public class DurationFormatUtils {
      * @param padWithZeros  whether to pad
      * @return the formatted string
      */
-    static String format(final Token[] tokens, final long years, final long months, final long days, final long hours, final long minutes,
-            final long seconds,
-            final long milliseconds, final boolean padWithZeros) {
+    static String format(final Token[] tokens, final long years, final long months, final long days, final long hours, final long minutes, final long seconds, final long milliseconds, final boolean padWithZeros) {
         final StringBuilder buffer = new StringBuilder();
         boolean lastOutputSeconds = false;
         boolean lastOutputZero = false;
@@ -456,64 +453,64 @@ public class DurationFormatUtils {
             final boolean isLiteral = value instanceof StringBuilder;
             final int count = token.getCount();
             if (optionalIndex != token.optionalIndex) {
-              optionalIndex = token.optionalIndex;
-              if (optionalIndex > -1) {
-                //entering new optional block
-                optionalStart = buffer.length();
-                lastOutputZero = false;
-                inOptional = true;
-                firstOptionalNonLiteral = false;
-              } else {
-                //leaving optional block
-                inOptional = false;
-              }
+                optionalIndex = token.optionalIndex;
+                if (optionalIndex > (-1)) {
+                    // entering new optional block
+                    optionalStart = buffer.length();
+                    lastOutputZero = false;
+                    inOptional = true;
+                    firstOptionalNonLiteral = false;
+                } else {
+                    // leaving optional block
+                    inOptional = false;
+                }
             }
             if (isLiteral) {
-               if (!inOptional || !lastOutputZero) {
-                     buffer.append(value.toString());
-               }
+                if ((!inOptional) || (!lastOutputZero)) {
+                    buffer.append(value.toString());
+                }
             } else if (value.equals(y)) {
                 lastOutputSeconds = false;
                 lastOutputZero = years == 0;
-                if (!inOptional || !lastOutputZero) {
+                if ((!inOptional) || (!lastOutputZero)) {
                     buffer.append(paddedValue(years, padWithZeros, count));
                 }
             } else if (value.equals(M)) {
                 lastOutputSeconds = false;
                 lastOutputZero = months == 0;
-                if (!inOptional || !lastOutputZero) {
+                if ((!inOptional) || (!lastOutputZero)) {
                     buffer.append(paddedValue(months, padWithZeros, count));
                 }
             } else if (value.equals(d)) {
                 lastOutputSeconds = false;
                 lastOutputZero = days == 0;
-                if (!inOptional || !lastOutputZero) {
+                if ((!inOptional) || (!lastOutputZero)) {
                     buffer.append(paddedValue(days, padWithZeros, count));
                 }
             } else if (value.equals(H)) {
                 lastOutputSeconds = false;
                 lastOutputZero = hours == 0;
-                if (!inOptional || !lastOutputZero) {
+                if ((!inOptional) || (!lastOutputZero)) {
                     buffer.append(paddedValue(hours, padWithZeros, count));
                 }
             } else if (value.equals(m)) {
                 lastOutputSeconds = false;
                 lastOutputZero = minutes == 0;
-                if (!inOptional || !lastOutputZero) {
+                if ((!inOptional) || (!lastOutputZero)) {
                     buffer.append(paddedValue(minutes, padWithZeros, count));
                 }
             } else if (value.equals(s)) {
                 lastOutputSeconds = true;
                 lastOutputZero = seconds == 0;
-                if (!inOptional || !lastOutputZero) {
+                if ((!inOptional) || (!lastOutputZero)) {
                     buffer.append(paddedValue(seconds, padWithZeros, count));
                 }
             } else if (value.equals(S)) {
                 lastOutputZero = milliseconds == 0;
-                if (!inOptional || !lastOutputZero) {
+                if ((!inOptional) || (!lastOutputZero)) {
                     if (lastOutputSeconds) {
                         // ensure at least 3 digits are displayed even if padding is not selected
-                        final int width = padWithZeros ? Math.max(3, count) : 3;
+                        final int width = (padWithZeros) ? Math.max(3, count) : 3;
                         buffer.append(paddedValue(milliseconds, true, width));
                     } else {
                         buffer.append(paddedValue(milliseconds, padWithZeros, count));
@@ -521,8 +518,8 @@ public class DurationFormatUtils {
                 }
                 lastOutputSeconds = false;
             }
-            //as soon as we hit first nonliteral in optional, check for literal prefix
-            if (inOptional && !isLiteral && !firstOptionalNonLiteral){
+            // as soon as we hit first nonliteral in optional, check for literal prefix
+            if ((inOptional && (!isLiteral)) && (!firstOptionalNonLiteral)) {
                 firstOptionalNonLiteral = true;
                 if (lastOutputZero) {
                     buffer.delete(optionalStart, buffer.length());
@@ -547,11 +544,17 @@ public class DurationFormatUtils {
     }
 
     static final String y = "y";
+
     static final String M = "M";
+
     static final String d = "d";
+
     static final String H = "H";
+
     static final String m = "m";
+
     static final String s = "s";
+
     static final String S = "S";
 
     /**
@@ -562,7 +565,6 @@ public class DurationFormatUtils {
      */
     static Token[] lexx(final String format) {
         final ArrayList<Token> list = new ArrayList<>(format.length());
-
         boolean inLiteral = false;
         // Although the buffer is stored in a Token, the Tokens are only
         // used internally, so cannot be accessed by other threads
@@ -572,67 +574,67 @@ public class DurationFormatUtils {
         int optionalIndex = -1;
         for (int i = 0; i < format.length(); i++) {
             final char ch = format.charAt(i);
-            if (inLiteral && ch != '\'') {
-                buffer.append(ch); // buffer can't be null if inLiteral is true
+            if (inLiteral && (ch != '\'')) {
+                buffer.append(ch);// buffer can't be null if inLiteral is true
+
                 continue;
             }
             String value = null;
             switch (ch) {
-            // TODO: Need to handle escaping of '
-            case '[':
-                if (inOptional) {
-                  throw new IllegalArgumentException("Nested optional block at index: "+i);
-                }
-                optionalIndex++;
-                inOptional = true;
-                break;
-            case ']':
-                if (!inOptional) {
-                  throw new IllegalArgumentException("Attempting to close unopened optional block at index: "+i);
-                }
-                inOptional = false;
-                break;
-            case '\'':
-                if (inLiteral) {
-                    buffer = null;
-                    inLiteral = false;
-                } else {
-                    buffer = new StringBuilder();
-                    list.add(new Token(buffer, inOptional, optionalIndex));
-                    inLiteral = true;
-                }
-                break;
-            case 'y':
-                value = y;
-                break;
-            case 'M':
-                value = M;
-                break;
-            case 'd':
-                value = d;
-                break;
-            case 'H':
-                value = H;
-                break;
-            case 'm':
-                value = m;
-                break;
-            case 's':
-                value = s;
-                break;
-            case 'S':
-                value = S;
-                break;
-            default:
-                if (buffer == null) {
-                    buffer = new StringBuilder();
-                    list.add(new Token(buffer, inOptional, optionalIndex));
-                }
-                buffer.append(ch);
+                // TODO: Need to handle escaping of '
+                case '[' :
+                    if (inOptional) {
+                        throw new IllegalArgumentException("Nested optional block at index: " + i);
+                    }
+                    optionalIndex++;
+                    inOptional = true;
+                    break;
+                case ']' :
+                    if (!inOptional) {
+                        throw new IllegalArgumentException("Attempting to close unopened optional block at index: " + i);
+                    }
+                    inOptional = false;
+                    break;
+                case '\'' :
+                    if (inLiteral) {
+                        buffer = null;
+                        inLiteral = false;
+                    } else {
+                        buffer = new StringBuilder();
+                        list.add(new Token(buffer, inOptional, optionalIndex));
+                        inLiteral = true;
+                    }
+                    break;
+                case 'y' :
+                    value = y;
+                    break;
+                case 'M' :
+                    value = M;
+                    break;
+                case 'd' :
+                    value = d;
+                    break;
+                case 'H' :
+                    value = H;
+                    break;
+                case 'm' :
+                    value = m;
+                    break;
+                case 's' :
+                    value = s;
+                    break;
+                case 'S' :
+                    value = S;
+                    break;
+                default :
+                    if (buffer == null) {
+                        buffer = new StringBuilder();
+                        list.add(new Token(buffer, inOptional, optionalIndex));
+                    }
+                    buffer.append(ch);
             }
-
             if (value != null) {
-                if (previous != null && previous.getValue().equals(value)) {
+                if ((previous != null) && previous.getValue().equals(value)) {
                     previous.increment();
                 } else {
                     final Token token = new Token(value, inOptional, optionalIndex);
@@ -642,10 +644,12 @@ public class DurationFormatUtils {
                 buffer = null;
             }
         }
-        if (inLiteral) { // i.e. we have not found the end of the literal
+        if (inLiteral) {
+            // i.e. we have not found the end of the literal
             throw new IllegalArgumentException("Unmatched quote in format: " + format);
         }
-        if (inOptional) { // i.e. we have not found the end of the literal
+        if (inOptional) {
+            // i.e. we have not found the end of the literal
             throw new IllegalArgumentException("Unmatched optional in format: " + format);
         }
         return list.toArray(Token.EMPTY_ARRAY);
@@ -655,7 +659,6 @@ public class DurationFormatUtils {
      * Element that is parsed from the format pattern.
      */
     static class Token {
-
         /** Empty array. */
         private static final Token[] EMPTY_ARRAY = {};
 
@@ -671,8 +674,11 @@ public class DurationFormatUtils {
         }
 
         private final Object value;
+
         private int count;
+
         private int optionalIndex = -1;
+
         Token(final Object value) {
             this.value = value;
             this.count = 1;
@@ -681,22 +687,26 @@ public class DurationFormatUtils {
         /**
          * Wraps a token around a value. A value would be something like a 'Y'.
          *
-         * @param value to wrap, non-null.
+         * @param value to wrap
          */
         Token(final Object value, final boolean optional, final int optionalIndex) {
+<<<<<<< LEFT
             this.value = value;
             this.count = 1;
             if (optional) {
                 this.optionalIndex = optionalIndex;
             }
+=======
+            this(value, 1);
+>>>>>>> RIGHT
         }
 
         /**
          * Wraps a token around a repeated number of a value, for example it would
          * store 'yyyy' as a value for y and a count of 4.
          *
-         * @param value to wrap, non-null.
-         * @param count to wrap.
+         * @param value to wrap
+         * @param count to wrap
          */
         Token(final Object value, final int count) {
             this.value = Objects.requireNonNull(value, "value");
@@ -722,7 +732,7 @@ public class DurationFormatUtils {
         /**
          * Gets the particular value this token represents.
          *
-         * @return Object value, non-null.
+         * @return Object value
          */
         Object getValue() {
             return value;
@@ -777,5 +787,4 @@ public class DurationFormatUtils {
             return StringUtils.repeat(this.value.toString(), this.count);
         }
     }
-
 }
