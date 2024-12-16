@@ -1,12 +1,12 @@
 package com.mojang.minecraft.level.tile;
 
-import org.lwjgl.opengl.GL11;
-
 import com.mojang.minecraft.ColorCache;
 import com.mojang.minecraft.MovingObjectPosition;
-import com.mojang.util.Vec3D;
 import com.mojang.minecraft.phys.AABB;
 import com.mojang.minecraft.render.ShapeRenderer;
+import com.mojang.util.Vec3D;
+import org.lwjgl.opengl.GL11;
+
 
 public class BlockModelRenderer {
     public int textureId;
@@ -14,9 +14,13 @@ public class BlockModelRenderer {
     public float x1;
 
     public float y1;
+
     public float z1;
+
     public float x2;
+
     public float y2;
+
     public float z2;
 
     public BlockModelRenderer(int id) {
@@ -40,52 +44,40 @@ public class BlockModelRenderer {
         if (!xIntersects(var6)) {
             var6 = null;
         }
-
         if (!xIntersects(var7)) {
             var7 = null;
         }
-
         if (!yIntersects(var8)) {
             var8 = null;
         }
-
         if (!yIntersects(var9)) {
             var9 = null;
         }
-
         if (!zIntersects(var10)) {
             var10 = null;
         }
-
         if (!zIntersects(var5)) {
             var5 = null;
         }
-
         Vec3D var11 = null;
         if (var6 != null) {
             var11 = var6;
         }
-
-        if (var7 != null && (var11 == null || var4.distance(var7) < var4.distance(var11))) {
+        if ((var7 != null) && ((var11 == null) || (var4.distance(var7) < var4.distance(var11)))) {
             var11 = var7;
         }
-
-        if (var8 != null && (var11 == null || var4.distance(var8) < var4.distance(var11))) {
+        if ((var8 != null) && ((var11 == null) || (var4.distance(var8) < var4.distance(var11)))) {
             var11 = var8;
         }
-
-        if (var9 != null && (var11 == null || var4.distance(var9) < var4.distance(var11))) {
+        if ((var9 != null) && ((var11 == null) || (var4.distance(var9) < var4.distance(var11)))) {
             var11 = var9;
         }
-
-        if (var10 != null && (var11 == null || var4.distance(var10) < var4.distance(var11))) {
+        if ((var10 != null) && ((var11 == null) || (var4.distance(var10) < var4.distance(var11)))) {
             var11 = var10;
         }
-
-        if (var5 != null && (var11 == null || var4.distance(var5) < var4.distance(var11))) {
+        if ((var5 != null) && ((var11 == null) || (var4.distance(var5) < var4.distance(var11)))) {
             var11 = var5;
         }
-
         if (var11 == null) {
             return null;
         } else {
@@ -93,27 +85,21 @@ public class BlockModelRenderer {
             if (var11 == var6) {
                 var12 = 4;
             }
-
             if (var11 == var7) {
                 var12 = 5;
             }
-
             if (var11 == var8) {
                 var12 = 0;
             }
-
             if (var11 == var9) {
                 var12 = 1;
             }
-
             if (var11 == var10) {
                 var12 = 2;
             }
-
             if (var11 == var5) {
                 var12 = 3;
             }
-
             return new MovingObjectPosition(var1, var2, var3, var12, var11.add(var1, var2, var3));
         }
     }
@@ -174,32 +160,25 @@ public class BlockModelRenderer {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_SRC_COLOR);
         shapeRenderer.begin();
-
         for (int face = 0; face < 6; ++face) {
             if (face == 0) {
                 shapeRenderer.normal(0.0F, 1.0F, 0.0F);
             }
-
             if (face == 1) {
                 shapeRenderer.normal(0.0F, -1.0F, 0.0F);
             }
-
             if (face == 2) {
                 shapeRenderer.normal(0.0F, 0.0F, 1.0F);
             }
-
             if (face == 3) {
                 shapeRenderer.normal(0.0F, 0.0F, -1.0F);
             }
-
             if (face == 4) {
                 shapeRenderer.normal(1.0F, 0.0F, 0.0F);
             }
-
             if (face == 5) {
                 shapeRenderer.normal(-1.0F, 0.0F, 0.0F);
             }
-
             renderInside(shapeRenderer, 0, 0, 0, face);
         }
         GL11.glDisable(GL11.GL_BLEND);
@@ -331,15 +310,14 @@ public class BlockModelRenderer {
     }
 
     private boolean xIntersects(Vec3D var1) {
-        return var1 == null ? false : var1.y >= y1 && var1.y <= y2 && var1.z >= z1 && var1.z <= z2;
+        return var1 == null ? false : (((var1.y >= y1) && (var1.y <= y2)) && (var1.z >= z1)) && (var1.z <= z2);
     }
 
     private boolean yIntersects(Vec3D var1) {
-        return var1 == null ? false : var1.x >= x1 && var1.x <= x2 && var1.z >= z1 && var1.z <= z2;
+        return var1 == null ? false : (((var1.x >= x1) && (var1.x <= x2)) && (var1.z >= z1)) && (var1.z <= z2);
     }
 
     private boolean zIntersects(Vec3D var1) {
-        return var1 == null ? false : var1.x >= x1 && var1.x <= x2 && var1.y >= y1 && var1.y <= y2;
+        return var1 == null ? false : (((var1.x >= x1) && (var1.x <= x2)) && (var1.y >= y1)) && (var1.y <= y2);
     }
-
 }

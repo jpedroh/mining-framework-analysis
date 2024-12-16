@@ -1,18 +1,11 @@
 package com.mojang.minecraft.level;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
 import com.mojang.minecraft.ColorCache;
 import com.mojang.minecraft.Entity;
 import com.mojang.minecraft.Minecraft;
 import com.mojang.minecraft.MovingObjectPosition;
 import com.mojang.minecraft.level.liquid.LiquidType;
 import com.mojang.minecraft.level.tile.Block;
-import com.mojang.util.Vec3D;
 import com.mojang.minecraft.particle.ParticleManager;
 import com.mojang.minecraft.phys.AABB;
 import com.mojang.minecraft.render.LevelRenderer;
@@ -20,43 +13,83 @@ import com.mojang.minecraft.sound.AudioInfo;
 import com.mojang.minecraft.sound.EntitySoundPos;
 import com.mojang.minecraft.sound.LevelSoundPos;
 import com.mojang.util.MathHelper;
+import com.mojang.util.Vec3D;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
 
 public class Level implements Serializable {
-
     public static final long serialVersionUID = 0L;
+
     public int width;
+
     public int length;
+
     public int height;
+
     public byte[] blocks;
+
     public String name;
+
     public String creator;
+
     public long createTime;
+
     public int xSpawn;
+
     public int ySpawn;
+
     public int zSpawn;
+
     public float rotSpawn;
+
     private transient ArrayList<LevelRenderer> listeners = new ArrayList<LevelRenderer>();
+
     private transient int[] blockers;
+
     public transient Random random = new Random();
+
     private transient int randId;
+
     private transient ArrayList<NextTickListEntry> tickList;
+
     public BlockMap blockMap;
+
     private boolean networkMode;
+
     public transient Minecraft rendererContext$5cd64a7f;
+
     public boolean creativeMode;
+
     public int cloudLevel = -1;
+
     public int waterLevel;
+
     public int skyColor;
+
     public int fogColor;
+
     public int cloudColor;
+
     int unprocessed;
+
     private int tickCount;
+
     public Entity player;
+
     public transient ParticleManager particleEngine;
+
     public transient Object font;
+
     public boolean growTrees;
+
     public ColorCache customShadowColour;
+
     public ColorCache customLightColour;
+
     public short[] desiredSpawn;
 
     public Level() {
@@ -115,52 +148,43 @@ public class Level implements Serializable {
     }
 
     public MovingObjectPosition clip(Vec3D var1, Vec3D var2) {
-        if (!Float.isNaN(var1.x) && !Float.isNaN(var1.y) && !Float.isNaN(var1.z)) {
-            if (!Float.isNaN(var2.x) && !Float.isNaN(var2.y) && !Float.isNaN(var2.z)) {
-                int var3 = (int) Math.floor(var2.x);
-                int var4 = (int) Math.floor(var2.y);
-                int var5 = (int) Math.floor(var2.z);
-                int var6 = (int) Math.floor(var1.x);
-                int var7 = (int) Math.floor(var1.y);
-                int var8 = (int) Math.floor(var1.z);
+        if (((!Float.isNaN(var1.x)) && (!Float.isNaN(var1.y))) && (!Float.isNaN(var1.z))) {
+            if (((!Float.isNaN(var2.x)) && (!Float.isNaN(var2.y))) && (!Float.isNaN(var2.z))) {
+                int var3 = ((int) (Math.floor(var2.x)));
+                int var4 = ((int) (Math.floor(var2.y)));
+                int var5 = ((int) (Math.floor(var2.z)));
+                int var6 = ((int) (Math.floor(var1.x)));
+                int var7 = ((int) (Math.floor(var1.y)));
+                int var8 = ((int) (Math.floor(var1.z)));
                 int var9 = 1024;
-
-                while (var9-- >= 0) {
-                    if (Float.isNaN(var1.x) || Float.isNaN(var1.y) || Float.isNaN(var1.z)) {
+                while ((var9--) >= 0) {
+                    if ((Float.isNaN(var1.x) || Float.isNaN(var1.y)) || Float.isNaN(var1.z)) {
                         return null;
                     }
-
-                    if (var6 == var3 && var7 == var4 && var8 == var5) {
+                    if (((var6 == var3) && (var7 == var4)) && (var8 == var5)) {
                         return null;
                     }
-
                     float var10 = 999.0F;
                     float var11 = 999.0F;
                     float var12 = 999.0F;
                     if (var3 > var6) {
                         var10 = var6 + 1.0F;
                     }
-
                     if (var3 < var6) {
                         var10 = var6;
                     }
-
                     if (var4 > var7) {
                         var11 = var7 + 1.0F;
                     }
-
                     if (var4 < var7) {
                         var11 = var7;
                     }
-
                     if (var5 > var8) {
                         var12 = var8 + 1.0F;
                     }
-
                     if (var5 < var8) {
                         var12 = var8;
                     }
-
                     float var13 = 999.0F;
                     float var14 = 999.0F;
                     float var15 = 999.0F;
@@ -170,23 +194,19 @@ public class Level implements Serializable {
                     if (var10 != 999.0F) {
                         var13 = (var10 - var1.x) / var16;
                     }
-
                     if (var11 != 999.0F) {
                         var14 = (var11 - var1.y) / var17;
                     }
-
                     if (var12 != 999.0F) {
                         var15 = (var12 - var1.z) / var18;
                     }
-
                     byte var24;
-                    if (var13 < var14 && var13 < var15) {
+                    if ((var13 < var14) && (var13 < var15)) {
                         if (var3 > var6) {
                             var24 = 4;
                         } else {
                             var24 = 5;
                         }
-
                         var1.x = var10;
                         var1.y += var17 * var13;
                         var1.z += var18 * var13;
@@ -196,7 +216,6 @@ public class Level implements Serializable {
                         } else {
                             var24 = 1;
                         }
-
                         var1.x += var16 * var14;
                         var1.y = var11;
                         var1.z += var18 * var14;
@@ -206,35 +225,29 @@ public class Level implements Serializable {
                         } else {
                             var24 = 3;
                         }
-
                         var1.x += var16 * var15;
                         var1.y += var17 * var15;
                         var1.z = var12;
                     }
-
                     Vec3D var20;
-                    var6 = (int) ((var20 = new Vec3D(var1.x, var1.y, var1.z)).x = (float) Math
-                            .floor(var1.x));
+                    var6 = ((int) ((var20 = new Vec3D(var1.x, var1.y, var1.z)).x = ((float) (Math.floor(var1.x)))));
                     if (var24 == 5) {
                         --var6;
                         ++var20.x;
                     }
-
-                    var7 = (int) (var20.y = (float) Math.floor(var1.y));
+                    var7 = ((int) (var20.y = ((float) (Math.floor(var1.y)))));
                     if (var24 == 1) {
                         --var7;
                         ++var20.y;
                     }
-
-                    var8 = (int) (var20.z = (float) Math.floor(var1.z));
+                    var8 = ((int) (var20.z = ((float) (Math.floor(var1.z)))));
                     if (var24 == 3) {
                         --var8;
                         ++var20.z;
                     }
-
                     int var22 = getTile(var6, var7, var8);
                     Block var21 = Block.blocks[var22];
-                    if (var22 > 0 && var21.getLiquidType() == LiquidType.notLiquid) {
+                    if ((var22 > 0) && (var21.getLiquidType() == LiquidType.notLiquid)) {
                         MovingObjectPosition var23;
                         if (var21.isCube()) {
                             if ((var23 = var21.clip(var6, var7, var8, var1, var2)) != null) {
@@ -244,8 +257,7 @@ public class Level implements Serializable {
                             return var23;
                         }
                     }
-                }
-
+                } 
                 return null;
             } else {
                 return null;
@@ -560,98 +572,82 @@ public class Level implements Serializable {
     }
 
     public float getCaveness(Entity var1) {
-        float var2 = MathHelper.cos(-var1.yRot * (float) (Math.PI / 180D) + (float) Math.PI);
-        float var3 = MathHelper.sin(-var1.yRot * (float) (Math.PI / 180D) + (float) Math.PI);
-        float var4 = MathHelper.cos(-var1.xRot * (float) (Math.PI / 180D));
-        float var5 = MathHelper.sin(-var1.xRot * (float) (Math.PI / 180D));
+        float var2 = MathHelper.cos(((-var1.yRot) * ((float) (Math.PI / 180.0))) + ((float) (Math.PI)));
+        float var3 = MathHelper.sin(((-var1.yRot) * ((float) (Math.PI / 180.0))) + ((float) (Math.PI)));
+        float var4 = MathHelper.cos((-var1.xRot) * ((float) (Math.PI / 180.0)));
+        float var5 = MathHelper.sin((-var1.xRot) * ((float) (Math.PI / 180.0)));
         float var6 = var1.x;
         float var7 = var1.y;
         float var21 = var1.z;
         float var8 = 1.6F;
         float var9 = 0.0F;
         float var10 = 0.0F;
-
         for (int var11 = 0; var11 <= 200; ++var11) {
-            float var12 = ((float) var11 / (float) 200 - 0.5F) * 2.0F;
+            float var12 = ((((float) (var11)) / ((float) (200))) - 0.5F) * 2.0F;
             int var13 = 0;
-
             while (var13 <= 200) {
-                float var14 = ((float) var13 / (float) 200 - 0.5F) * var8;
-                float var16 = var4 * var14 + var5;
-                var14 = var4 - var5 * var14;
-                float var17 = var2 * var12 + var3 * var14;
-                var14 = var2 * var14 - var3 * var12;
+                float var14 = ((((float) (var13)) / ((float) (200))) - 0.5F) * var8;
+                float var16 = (var4 * var14) + var5;
+                var14 = var4 - (var5 * var14);
+                float var17 = (var2 * var12) + (var3 * var14);
+                var14 = (var2 * var14) - (var3 * var12);
                 int var15 = 0;
-
                 // here
                 if (var15 < 10) {
-                    float var18 = var6 + var17 * var15 * 0.8F;
-                    float var19 = var7 + var16 * var15 * 0.8F;
-                    float var20 = var21 + var14 * var15 * 0.8F;
+                    float var18 = var6 + ((var17 * var15) * 0.8F);
+                    float var19 = var7 + ((var16 * var15) * 0.8F);
+                    float var20 = var21 + ((var14 * var15) * 0.8F);
                     if (!this.isSolid(var18, var19, var20)) {
                         ++var9;
-                        if (isLit((int) var18, (int) var19, (int) var20)) {
+                        if (isLit(((int) (var18)), ((int) (var19)), ((int) (var20)))) {
                             ++var10;
                         }
-
                         ++var15;
                     }
                 }
-
                 ++var13;
-            }
+            } 
         }
-
         if (var9 == 0.0F) {
             return 0.0F;
         } else {
             float var22;
-            if ((var22 = var10 / var9 / 0.1F) > 1.0F) {
+            if ((var22 = (var10 / var9) / 0.1F) > 1.0F) {
                 var22 = 1.0F;
             }
-
             var22 = 1.0F - var22;
-            return 1.0F - var22 * var22 * var22;
+            return 1.0F - ((var22 * var22) * var22);
         }
     }
 
     public float getCaveness(float var1, float var2, float var3, float var4) {
-        int var5 = (int) var1;
-        int var14 = (int) var2;
-        int var6 = (int) var3;
+        int var5 = ((int) (var1));
+        int var14 = ((int) (var2));
+        int var6 = ((int) (var3));
         float var7 = 0.0F;
         float var8 = 0.0F;
-
-        for (int var9 = var5 - 6; var9 <= var5 + 6; ++var9) {
-            for (int var10 = var6 - 6; var10 <= var6 + 6; ++var10) {
-                if (isInBounds(var9, var14, var10) && !isSolidTile(var9, var14, var10)) {
-                    float var11 = var9 + 0.5F - var1;
-
+        for (int var9 = var5 - 6; var9 <= (var5 + 6); ++var9) {
+            for (int var10 = var6 - 6; var10 <= (var6 + 6); ++var10) {
+                if (isInBounds(var9, var14, var10) && (!isSolidTile(var9, var14, var10))) {
+                    float var11 = (var9 + 0.5F) - var1;
                     float var12;
                     float var13;
-                    for (var13 = (float) (Math.atan2(var12 = var10 + 0.5F - var3, var11) - var4
-                            * (float) Math.PI / 180.0F + 1.5707963705062866D); var13 < -(float) Math.PI; var13 += 6.2831855F) {
-                        ;
+                    for (var13 = ((float) ((Math.atan2(var12 = (var10 + 0.5F) - var3, var11) - ((var4 * ((float) (Math.PI))) / 180.0F)) + 1.5707963705062866)); var13 < (-((float) (Math.PI))); var13 += 6.2831855F) {
                     }
-
-                    while (var13 >= (float) Math.PI) {
+                    while (var13 >= ((float) (Math.PI))) {
                         var13 -= 6.2831855F;
-                    }
-
+                    } 
                     if (var13 < 0.0F) {
                         var13 = -var13;
                     }
-
-                    var11 = MathHelper.sqrt(var11 * var11 + 4.0F + var12 * var12);
+                    var11 = MathHelper.sqrt(((var11 * var11) + 4.0F) + (var12 * var12));
                     var11 = 1.0F / var11;
                     if (var13 > 1.0F) {
                         var11 = 0.0F;
                     }
-
                     if (var11 < 0.0F) {
                         var11 = 0.0F;
                     }
-
                     var8 += var11;
                     if (isLit(var9, var14, var10)) {
                         var7 += var11;
@@ -659,7 +655,6 @@ public class Level implements Serializable {
                 }
             }
         }
-
         if (var8 == 0.0F) {
             return 0.0F;
         } else {
@@ -735,7 +730,7 @@ public class Level implements Serializable {
     }
 
     public int getTile(int x, int y, int z) {
-        return x >= 0 && y >= 0 && z >= 0 && x < width && y < height && z < length ? blocks[(y * length + z) * width + x] & 255 : 0;
+        return (((((x >= 0) && (y >= 0)) && (z >= 0)) && (x < width)) && (y < height)) && (z < length) ? blocks[(((y * length) + z) * width) + x] & 255 : 0;
     }
 
     public float getWaterLevel() {

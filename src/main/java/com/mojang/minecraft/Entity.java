@@ -1,69 +1,110 @@
 package com.mojang.minecraft;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-
 import com.mojang.minecraft.level.BlockMap;
 import com.mojang.minecraft.level.Level;
 import com.mojang.minecraft.level.liquid.LiquidType;
 import com.mojang.minecraft.level.tile.Block;
-import com.mojang.util.Vec3D;
 import com.mojang.minecraft.net.PositionUpdate;
 import com.mojang.minecraft.phys.AABB;
 import com.mojang.minecraft.player.Player;
 import com.mojang.minecraft.render.TextureManager;
 import com.mojang.minecraft.sound.StepSound;
 import com.mojang.util.MathHelper;
+import com.mojang.util.Vec3D;
+import java.io.Serializable;
+import java.util.ArrayList;
+
 
 public abstract class Entity implements Serializable {
-
     public static final long serialVersionUID = 0L;
+
     public Level level;
+
     public float xo;
+
     public float yo;
+
     public float zo;
+
     public float x;
+
     public float y;
+
     public float z;
+
     public float xd;
+
     public float yd;
+
     public float zd;
+
     public float yRot;
+
     public float xRot;
+
     public float yRotO;
+
     public float xRotO;
+
     /**
      * The bounding box of this Entity.
      */
     public AABB bb;
+
     public boolean onGround = false;
+
     public boolean horizontalCollision = false;
+
     public boolean collision = false;
+
     public boolean slide = true;
+
     public boolean removed = false;
+
     public float heightOffset = 0.0F;
+
     public float bbWidth = 0.6F;
+
     public float bbHeight = 1.8F;
+
     public float walkDistO = 0.0F;
+
     public float walkDist = 0.0F;
+
     public boolean makeStepSound = true;
+
     public float fallDistance = 0.0F;
+
     private int nextStep = 1;
+
     public BlockMap blockMap;
+
     public float xOld;
+
     public float yOld;
+
     public float zOld;
+
     public int textureId = 0;
+
     public float ySlideOffset = 0.0F;
+
     public float footSize = 0.0F;
+
     public boolean noPhysics = false;
+
     public float pushthrough = 0.0F;
+
     public boolean hovered = false;
+
     public boolean flyingMode = false;
 
     private int nextStepDistance;
+
     public float prevDistanceWalkedModified;
+
     public float distanceWalkedModified;
+
     public float distanceWalkedOnStepModified;
 
     public Entity(Level var1) {
@@ -79,7 +120,7 @@ public abstract class Entity implements Serializable {
 
     /**
      * Calculates the distance from this entity to the specified entity.
-     *
+     * 
      * @param otherEntity
      *            Entity to calculate the distance to.
      * @return The distance between the two entities.
@@ -90,7 +131,7 @@ public abstract class Entity implements Serializable {
 
     /**
      * Calculates the distance from this entity to the specified position.
-     *
+     * 
      * @param posX
      *            X-Coordinate of the position to calculate the distance to.
      * @param posY
@@ -111,7 +152,7 @@ public abstract class Entity implements Serializable {
      * Calculates the distance from this entity to the specified entity squared.
      * This is basically calculating distance without using the expensive
      * Math.sqrt function. Should only be used for relative distance.
-     *
+     * 
      * @param otherEntity
      *            Entity to calculate the distance to.
      * @return The distance between the two entities squared.
@@ -125,7 +166,7 @@ public abstract class Entity implements Serializable {
 
     /**
      * Gets the brightness of this entity
-     *
+     * 
      * @return Brightness of the entity.
      */
     public float getBrightness() {
@@ -137,7 +178,7 @@ public abstract class Entity implements Serializable {
 
     /**
      * Gets the brightness color of this entity.
-     *
+     * 
      * @return ColorCache containing brightness color information.
      */
     public ColorCache getBrightnessColor() {
@@ -149,7 +190,7 @@ public abstract class Entity implements Serializable {
 
     /**
      * Gets the texture ID of this entity.
-     *
+     * 
      * @return Entity's Texture ID.
      */
     public int getTexture() {
@@ -408,20 +449,18 @@ public abstract class Entity implements Serializable {
     }
 
     public void moveRelative(float x, float y, float z) {
-
         float var4;
-        if ((var4 = MathHelper.sqrt(x * x + y * y)) >= 0.01F) {
+        if ((var4 = MathHelper.sqrt((x * x) + (y * y))) >= 0.01F) {
             if (var4 < 1.0F) {
                 var4 = 1.0F;
             }
-
             var4 = z / var4;
             x *= var4;
             y *= var4;
-            z = MathHelper.sin(yRot * (float) Math.PI / 180.0F);
-            var4 = MathHelper.cos(yRot * (float) Math.PI / 180.0F);
-            xd += x * var4 - y * z;
-            zd += y * var4 + x * z;
+            z = MathHelper.sin((yRot * ((float) (Math.PI))) / 180.0F);
+            var4 = MathHelper.cos((yRot * ((float) (Math.PI))) / 180.0F);
+            xd += (x * var4) - (y * z);
+            zd += (y * var4) + (x * z);
         }
     }
 
@@ -549,7 +588,7 @@ public abstract class Entity implements Serializable {
         float var2 = x - var1.x;
         float var3 = y - var1.y;
         float var4 = z - var1.z;
-        var4 = var2 * var2 + var3 * var3 + var4 * var4;
+        var4 = ((var2 * var2) + (var3 * var3)) + (var4 * var4);
         return shouldRenderAtSqrDistance(var4);
     }
 

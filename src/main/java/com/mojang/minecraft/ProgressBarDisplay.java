@@ -1,5 +1,8 @@
 package com.mojang.minecraft;
 
+import com.mojang.minecraft.gui.HUDScreen;
+import com.mojang.minecraft.render.ShapeRenderer;
+import com.oyasunadev.mcraft.client.util.Constants;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,23 +17,23 @@ import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
-
-import com.oyasunadev.mcraft.client.util.Constants;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
-import com.mojang.minecraft.gui.HUDScreen;
-import com.mojang.minecraft.render.ShapeRenderer;
 
 public final class ProgressBarDisplay {
-
     public static String text = "";
+
     private Minecraft minecraft;
+
     public static String title = "";
+
     private long start = System.currentTimeMillis();
 
     public static String terrainId = "";
+
     public static String sideId = "";
+
     public static String edgeId = "";
 
     public static HashMap<String, String> serverConfig = new HashMap<String, String>();
@@ -56,12 +59,14 @@ public final class ProgressBarDisplay {
                 if (fileChannel1 != null) {
                     fileChannel1.close();
                 }
-            } catch (IOException ex) {}
+            } catch (IOException ex) {
+            }
             try {
                 if (fileChannel2 != null) {
                     fileChannel2.close();
                 }
-            } catch (IOException ex) {}
+            } catch (IOException ex) {
+            }
         }
     }
 
@@ -141,8 +146,7 @@ public final class ProgressBarDisplay {
         return (InputStream) localObject;
     }
 
-    private static URLConnection makeConnection(String url, String body)
-            throws IOException {
+    private static URLConnection makeConnection(String url, String body) throws IOException {
         return makeConnection(url, body, url);
     }
 
@@ -150,10 +154,8 @@ public final class ProgressBarDisplay {
         // System.out.println(new
         // StringBuilder().append("Making connection to ").append(url)
         // .toString());
-
         URLConnection localURLConnection = new URL(url).openConnection();
         localURLConnection.addRequestProperty("Referer", referrer);
-
         localURLConnection.setReadTimeout(40000);
         localURLConnection.setConnectTimeout(15000);
         localURLConnection.setDoInput(true);
@@ -162,18 +164,15 @@ public final class ProgressBarDisplay {
         localURLConnection.addRequestProperty("Accept-Language", "en-us,en;q=0.5");
         localURLConnection.addRequestProperty("Accept-Encoding", "gzip, deflate, compress");
         localURLConnection.addRequestProperty("Connection", "keep-alive");
-
         if (body.length() > 0) {
             localURLConnection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             localURLConnection.addRequestProperty("Content-Length", Integer.toString(body.length()));
             localURLConnection.setDoOutput(true);
-
             OutputStreamWriter localOutputStreamWriter = new OutputStreamWriter(localURLConnection.getOutputStream());
             localOutputStreamWriter.write(body);
             localOutputStreamWriter.flush();
             localOutputStreamWriter.close();
         }
-
         localURLConnection.connect();
         return localURLConnection;
     }
@@ -189,22 +188,22 @@ public final class ProgressBarDisplay {
         }
         if (lineText.contains("cfg=")) {
             int i = lineText.indexOf("cfg=");
-            if (i > -1) {
+            if (i > (-1)) {
                 String splitlineText = lineText.substring(i + 4).split(" ")[0];
                 String Url = "http://" + splitlineText.replace("$U", minecraft.session.username);
-
                 // System.out.println("Fetching config from: " + Url);
                 serverConfig = fetchConfig(Url);
                 if (serverConfig.containsKey("server.detail")) {
                     try {
                         text = serverConfig.get("server.detail");
-                    } catch (Exception e) {
+                    } catch (java.lang.Exception e) {
                         System.out.println(e.getMessage());
                     }
                 }
             }
         } else {
-            return false; // return false if no "cfg=" was found
+            return false;// return false if no "cfg=" was found
+
         }
         if (serverConfig.containsKey("server.name")) {
             HUDScreen.ServerName = serverConfig.get("server.name");
@@ -212,7 +211,6 @@ public final class ProgressBarDisplay {
         if (serverConfig.containsKey("user.detail")) {
             HUDScreen.UserDetail = serverConfig.get("user.detail");
         }
-
         return true;
     }
 
@@ -221,10 +219,10 @@ public final class ProgressBarDisplay {
             throw new StopGameException();
         } else {
             long var2;
-            if ((var2 = System.currentTimeMillis()) - start < 0L || var2 - start >= 20L) {
+            if ((((var2 = System.currentTimeMillis()) - start) < 0L) || ((var2 - start) >= 20L)) {
                 start = var2;
-                int var4 = minecraft.width * 240 / minecraft.height;
-                int var5 = minecraft.height * 240 / minecraft.height;
+                int var4 = (minecraft.width * 240) / minecraft.height;
+                int var5 = (minecraft.height * 240) / minecraft.height;
                 GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
                 ShapeRenderer var6 = ShapeRenderer.instance;
                 int var7 = minecraft.textureManager.load("/dirt.png");
@@ -238,16 +236,18 @@ public final class ProgressBarDisplay {
                 var6.vertexUV(0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
                 var6.end();
                 if (progress >= 0) {
-                    var7 = var4 / 2 - 50;
-                    int var8 = var5 / 2 + 16;
+                    var7 = (var4 / 2) - 50;
+                    int var8 = (var5 / 2) + 16;
                     GL11.glDisable(GL11.GL_TEXTURE_2D);
                     var6.begin();
-                    var6.color(128, 128, 128); // #808080
+                    // #808080
+                    var6.color(128, 128, 128);
                     var6.vertex(var7, var8, 0.0F);
                     var6.vertex(var7, var8 + 2, 0.0F);
                     var6.vertex(var7 + 100, var8 + 2, 0.0F);
                     var6.vertex(var7 + 100, var8, 0.0F);
-                    var6.color(128, 255, 128); // #80FF80
+                    // #80FF80
+                    var6.color(128, 255, 128);
                     var6.vertex(var7, var8, 0.0F);
                     var6.vertex(var7, var8 + 2, 0.0F);
                     var6.vertex(var7 + progress, var8 + 2, 0.0F);
@@ -255,14 +255,13 @@ public final class ProgressBarDisplay {
                     var6.end();
                     GL11.glEnable(GL11.GL_TEXTURE_2D);
                 }
-
-                minecraft.fontRenderer.render(title, (var4 - minecraft.fontRenderer.getWidth(title)) / 2, var5 / 2 - 4 - 16, 16777215);
-                minecraft.fontRenderer.render(text, (var4 - minecraft.fontRenderer.getWidth(text)) / 2, var5 / 2 - 4 + 8,  16777215);
+                minecraft.fontRenderer.render(title, (var4 - minecraft.fontRenderer.getWidth(title)) / 2, ((var5 / 2) - 4) - 16, 16777215);
+                minecraft.fontRenderer.render(text, (var4 - minecraft.fontRenderer.getWidth(text)) / 2, ((var5 / 2) - 4) + 8, 16777215);
                 Display.update();
-
                 try {
                     Thread.yield();
-                } catch (Exception e) {}
+                } catch (java.lang.Exception e) {
+                }
             }
         }
     }
@@ -273,17 +272,15 @@ public final class ProgressBarDisplay {
         } else {
             text = message;
             passServerCommand(message);
-
             if (minecraft.session == null) {
                 HackState.setAllEnabled();
                 return;
             }
-
             String joinedString = new StringBuilder().append(title).append(" ").append(text).toString().toLowerCase();
-
             if (joinedString.contains("-hax")) {
                 HackState.setAllDisabled();
-            } else { // enable all, it's either +hax or nothing at all
+            } else {
+                // enable all, it's either +hax or nothing at all
                 HackState.setAllEnabled();
             }
             // then we can manually disable others here
@@ -292,25 +289,22 @@ public final class ProgressBarDisplay {
             } else if (joinedString.contains("-fly")) {
                 HackState.Fly = false;
             }
-             if (joinedString.contains("+noclip")) {
+            if (joinedString.contains("+noclip")) {
                 HackState.Noclip = true;
             } else if (joinedString.contains("-noclip")) {
                 HackState.Noclip = false;
             }
-
             if (joinedString.contains("+speed")) {
                 HackState.Speed = true;
             } else if (joinedString.contains("-speed")) {
                 HackState.Speed = false;
             }
-
             if (joinedString.contains("+respawn")) {
                 HackState.Respawn = true;
             } else if (joinedString.contains("-respawn")) {
                 HackState.Respawn = false;
             }
-
-            if ((joinedString.contains("+ophax")) && minecraft.player.userType >= 100) {
+            if (joinedString.contains("+ophax") && (minecraft.player.userType >= 100)) {
                 HackState.setAllEnabled();
             }
         }
@@ -322,12 +316,12 @@ public final class ProgressBarDisplay {
             throw new StopGameException();
         } else {
             ProgressBarDisplay.title = title;
-            int x = minecraft.width * 240 / minecraft.height;
-            int y = minecraft.height * 240 / minecraft.height;
+            int x = (minecraft.width * 240) / minecraft.height;
+            int y = (minecraft.height * 240) / minecraft.height;
             GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
             GL11.glMatrixMode(GL11.GL_PROJECTION);
             GL11.glLoadIdentity();
-            GL11.glOrtho(0.0D, x, y, 0.0D, 100.0D, 300.0D);
+            GL11.glOrtho(0.0, x, y, 0.0, 100.0, 300.0);
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glLoadIdentity();
             GL11.glTranslatef(0.0F, 0.0F, -200.0F);
