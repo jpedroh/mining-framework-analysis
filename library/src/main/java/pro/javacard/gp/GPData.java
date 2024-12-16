@@ -27,10 +27,6 @@ import com.payneteasy.tlv.BerTag;
 import com.payneteasy.tlv.BerTlv;
 import com.payneteasy.tlv.BerTlvParser;
 import com.payneteasy.tlv.BerTlvs;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.math.BigInteger;
 import java.time.DateTimeException;
@@ -38,8 +34,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
-
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static pro.javacard.gp.GPSession.CLA_GP;
+
 
 // Various constants from GP specification and other sources
 // Methods to pretty-print those structures and constants.
@@ -392,13 +391,19 @@ public final class GPData {
         }
     }
 
+<<<<<<< LEFT
     private static String logAndGetOidFromByteArray(byte[] tag, byte[] tlv) {
         String oid = oid2string(tlv);
         System.out.println("Tag " + new BigInteger(1, tag).toString(16) + ": " + oid);
         return oid;
     }
 
+    public enum GPSpec {OP201, GP211, GP22, GP221}
+
+    public static GPSpec oid2version(byte[] bytes) throws GPDataException {
+=======
     public static String oid2version(byte[] bytes) throws GPDataException {
+>>>>>>> RIGHT
         String oid = oid2string(bytes);
         return oid.substring("1.2.840.114283.2.".length());
     }
@@ -482,8 +487,13 @@ public final class GPData {
         }
 
         public static Optional<LocalDate> toRelativeDate(byte[] v, LocalDate now) throws GPDataException {
+<<<<<<< LEFT
             if ((v[0] == 0 && v[1] == 0) || (v[0] == (byte) 0xFF && v[1] == (byte) 0xFF)) {
-                logger.debug("0x0000/0xFFFF does not represent a valid date");
+=======
+            // 0xFFFF is caught below.
+            if (v[0] == 0 && v[1] == 0) {
+>>>>>>> RIGHT
+                logger.debug("0x0000 does not represent a valid date");
                 return Optional.empty();
             }
             String sv = HexUtils.bin2hex(v);
