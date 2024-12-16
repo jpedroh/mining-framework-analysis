@@ -22,6 +22,17 @@ package org.apache.kerby.kerberos.kdc.identitybackend;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import org.apache.kerby.config.Config;
 import org.apache.kerby.kerberos.kdc.identitybackend.typeAdapter.EncryptionKeyAdapter;
 import org.apache.kerby.kerberos.kdc.identitybackend.typeAdapter.KerberosTimeAdapter;
@@ -37,17 +48,6 @@ import org.apache.kerby.util.IOUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A Json file based backend implementation.
@@ -57,24 +57,27 @@ public class JsonIdentityBackend extends AbstractIdentityBackend {
             LoggerFactory.getLogger(JsonIdentityBackend.class);
 
     public static final String JSON_IDENTITY_BACKEND_DIR = "backend.json.dir";
+
     private File jsonKdbFile;
+
     private Gson gson;
 
     // Identities loaded from file
-    private final Map<String, KrbIdentity> identities =
-        new ConcurrentHashMap<>(new TreeMap<String, KrbIdentity>());
+    private final Map<String, KrbIdentity> identities = new ConcurrentHashMap<>(new TreeMap<String, KrbIdentity>());
+
     private long kdbFileUpdateTime = -1;
 
     private Lock lock = new ReentrantLock();
 
     public JsonIdentityBackend() {
-
     }
 
     /**
      * Constructing an instance using specified config that contains anything
      * to be used to initialize the json format database.
-     * @param config The configuration for json identity backend
+     *
+     * @param config
+     * 		The configuration for json identity backend
      */
     public JsonIdentityBackend(Config config) {
         setConfig(config);
@@ -263,11 +266,15 @@ public class JsonIdentityBackend extends AbstractIdentityBackend {
     private void persistToFile() throws KrbException {
         String newJsonContent = gson.toJson(identities);
         try {
+<<<<<<< LEFT
+            IOUtil.writeFile(newJsonContent, jsonKdbFile);
+=======
             File newJsonKdbFile = File.createTempFile("kerby-kdb",
                     ".json", jsonKdbFile.getParentFile());
             IOUtil.writeFile(newJsonContent, newJsonKdbFile);
             jsonKdbFile.delete();
             newJsonKdbFile.renameTo(jsonKdbFile);
+>>>>>>> RIGHT
             kdbFileUpdateTime = jsonKdbFile.lastModified();
         } catch (IOException e) {
             LOG.error("Error occurred while writing identities to file: " + jsonKdbFile);
@@ -276,7 +283,6 @@ public class JsonIdentityBackend extends AbstractIdentityBackend {
     }
 
     class JsonBatchTrans implements BatchTrans {
-
         @Override
         public void commit() throws KrbException {
             try {
@@ -299,8 +305,7 @@ public class JsonIdentityBackend extends AbstractIdentityBackend {
 
         @Override
         public BatchTrans addIdentity(KrbIdentity identity) throws KrbException {
-            if (identity != null
-                    && identities.containsKey(identity.getPrincipalName())) {
+            if ((identity != null) && identities.containsKey(identity.getPrincipalName())) {
                 identities.put(identity.getPrincipalName(), identity);
             }
             return this;
@@ -308,8 +313,7 @@ public class JsonIdentityBackend extends AbstractIdentityBackend {
 
         @Override
         public BatchTrans updateIdentity(KrbIdentity identity) throws KrbException {
-            if (identity != null
-                    && identities.containsKey(identity.getPrincipalName())) {
+            if ((identity != null) && identities.containsKey(identity.getPrincipalName())) {
                 identities.put(identity.getPrincipalName(), identity);
             }
             return this;
@@ -317,7 +321,7 @@ public class JsonIdentityBackend extends AbstractIdentityBackend {
 
         @Override
         public BatchTrans deleteIdentity(String principalName) throws KrbException {
-            if (principalName != null && identities.containsKey(principalName)) {
+            if ((principalName != null) && identities.containsKey(principalName)) {
                 identities.remove(principalName);
             }
             return this;
