@@ -14,9 +14,6 @@ import com.mitchellbosecke.pebble.extension.core.LengthFilter;
 import com.mitchellbosecke.pebble.extension.core.ReplaceFilter;
 import com.mitchellbosecke.pebble.loader.StringLoader;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
-
-import org.junit.Test;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -36,13 +33,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
+import org.junit.Test;
 import static java.lang.Boolean.TRUE;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 
-public class CoreFiltersTest extends AbstractTest {
 
+public class CoreFiltersTest extends AbstractTest {
     @Test
     public void testAbs() throws PebbleException, IOException {
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(false).build();
@@ -171,7 +168,6 @@ public class CoreFiltersTest extends AbstractTest {
         template.evaluate(writer, context);
         assertEquals("2017-06-30T13:30:352017-06-30 13:30:352017-06-30 13:30:35+01:002017-06-3013:30:35", writer.toString());
     }
-
 
     @Test
     public void testDateWithNamedArguments() throws ParseException, PebbleException, IOException {
@@ -855,7 +851,6 @@ public class CoreFiltersTest extends AbstractTest {
     }
 
     public class User {
-
         private final String username;
 
         public User(String username) {
@@ -925,12 +920,9 @@ public class CoreFiltersTest extends AbstractTest {
     @Test(expected = PebbleException.class)
     public void testSliceWithInvalidSecondArg() throws PebbleException, IOException {
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(false).build();
-
         PebbleTemplate template = pebble.getTemplate("{{ name | slice(0,-1) }}");
-
         Map<String, Object> context = new HashMap<>();
         context.put("name", "Alex");
-
         Writer writer = new StringWriter();
         template.evaluate(writer, context);
     }
@@ -938,12 +930,9 @@ public class CoreFiltersTest extends AbstractTest {
     @Test(expected = PebbleException.class)
     public void testSliceWithInvalidSecondArg2() throws PebbleException, IOException {
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(false).build();
-
         PebbleTemplate template = pebble.getTemplate("{{ name | slice(0,1000) }}");
-
         Map<String, Object> context = new HashMap<>();
         context.put("name", "Alex");
-
         Writer writer = new StringWriter();
         template.evaluate(writer, context);
     }
@@ -1066,12 +1055,9 @@ public class CoreFiltersTest extends AbstractTest {
     @Test(expected = PebbleException.class)
     public void testSliceWithInvalidInputType() throws PebbleException, IOException {
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(false).build();
-
         PebbleTemplate template = pebble.getTemplate("{{ names | slice(2,5) }}");
-
         Map<String, Object> context = new HashMap<>();
         context.put("names", Long.valueOf(1));
-
         Writer writer = new StringWriter();
         template.evaluate(writer, context);
     }
@@ -1082,7 +1068,6 @@ public class CoreFiltersTest extends AbstractTest {
     @Test
     public void testLengthFilterInputs() {
         LengthFilter filter = new LengthFilter();
-
         assertEquals(0, filter.apply(null, null, null, null, 0));
         assertEquals(4, filter.apply("test", null, null, null, 0));
         assertEquals(0, filter.apply(Collections.EMPTY_LIST, null, null, null, 0));
@@ -1161,11 +1146,8 @@ public class CoreFiltersTest extends AbstractTest {
     @Test(expected = PebbleException.class)
     public void testMergeListWithStringAndFail() throws PebbleException, IOException {
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(false).build();
-
         PebbleTemplate template = pebble.getTemplate("{{ [1]|merge('No way!') }}");
-
         Map<String, Object> context = new HashMap<>();
-
         Writer writer = new StringWriter();
         template.evaluate(writer, context);
     }
@@ -1173,15 +1155,11 @@ public class CoreFiltersTest extends AbstractTest {
     @Test(expected = PebbleException.class)
     public void testMergeDifferentArraysAndFail() throws PebbleException, IOException {
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(false).build();
-
         PebbleTemplate template = pebble.getTemplate("{{ arr1|merge(arr2) }}");
-
         Map<String, Object> context = new HashMap<>();
-        context.put("arr1", new int[] {1});
-        context.put("arr2", new String[] {"2"});
-
+        context.put("arr1", new int[]{ 1 });
+        context.put("arr2", new String[]{ "2" });
         Writer writer = new StringWriter();
         template.evaluate(writer, context);
     }
-
 }
