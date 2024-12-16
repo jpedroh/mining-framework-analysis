@@ -1,5 +1,6 @@
 package org.fluentlenium.core.events;
 
+import java.util.Objects;
 import org.fluentlenium.core.components.ComponentInstantiator;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.By;
@@ -7,11 +8,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.events.WebDriverEventListener;
 
-import java.util.Objects;
 
 class EventAdapter implements WebDriverEventListener {
-
     private final EventListener listener;
+
     private final ComponentInstantiator instantiator;
 
     EventAdapter(final EventListener listener, final ComponentInstantiator instantiator) {
@@ -83,14 +83,12 @@ class EventAdapter implements WebDriverEventListener {
 
     @Override
     public void beforeChangeValueOf(WebElement element, WebDriver driver, CharSequence[] charSequences) {
-        this.listener
-                .beforeChangeValueOf(element == null ? null : instantiator.newComponent(FluentWebElement.class, element), driver);
+        this.listener.beforeChangeValueOf(element == null ? null : instantiator.newComponent(FluentWebElement.class, element), driver);
     }
 
     @Override
     public void afterChangeValueOf(WebElement element, WebDriver driver, CharSequence[] charSequences) {
-        this.listener
-                .afterChangeValueOf(element == null ? null : instantiator.newComponent(FluentWebElement.class, element), driver);
+        this.listener.afterChangeValueOf(element == null ? null : instantiator.newComponent(FluentWebElement.class, element), driver);
     }
 
     @Override
@@ -113,10 +111,10 @@ class EventAdapter implements WebDriverEventListener {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if ((o == null) || (getClass() != o.getClass())) {
             return false;
         }
-        final EventAdapter that = (EventAdapter) o;
+        final EventAdapter that = ((EventAdapter) (o));
         return Objects.equals(listener, that.listener);
     }
 

@@ -1,6 +1,10 @@
 package org.fluentlenium.core.events;
 
 import com.google.common.base.Function;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Set;
 import org.fluentlenium.core.components.ComponentsAccessor;
 import org.fluentlenium.core.events.annotations.AfterChangeValueOf;
 import org.fluentlenium.core.events.annotations.AfterClickOn;
@@ -14,10 +18,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.events.WebDriverEventListener;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Set;
 
 public class AnnotationsComponentListener implements WebDriverEventListener {
     private final ComponentsAccessor componentsAccessor;
@@ -26,8 +26,7 @@ public class AnnotationsComponentListener implements WebDriverEventListener {
         this.componentsAccessor = componentsAccessor;
     }
 
-    protected void findByHandler(final Class<? extends Annotation> annotation, final By by, final WebElement element,
-            final WebDriver driver) {
+    protected void findByHandler(final Class<? extends Annotation> annotation, final By by, final WebElement element, final WebDriver driver) {
         if (element == null) {
             return;
         }
@@ -38,7 +37,6 @@ public class AnnotationsComponentListener implements WebDriverEventListener {
         for (final Object component : components) {
             for (final Method method : ReflectionUtils.getDeclaredMethodsWithAnnotation(component, annotation)) {
                 final Class<?>[] parameterTypes = method.getParameterTypes();
-
                 final Object[] args = ReflectionUtils.toArgs(new Function<Class<?>, Object>() {
                     @Override
                     public Object apply(final Class<?> input) {
@@ -48,16 +46,15 @@ public class AnnotationsComponentListener implements WebDriverEventListener {
                         return null;
                     }
                 }, parameterTypes);
-
                 try {
                     ReflectionUtils.invoke(method, component, args);
-                } catch (final IllegalAccessException e) {
+                } catch (final java.lang.IllegalAccessException e) {
                     throw new EventAnnotationsException("An error has occured in @BeforeFindBy " + method, e);
                 } catch (final InvocationTargetException e) {
                     if (e.getTargetException() instanceof RuntimeException) {
-                        throw (RuntimeException) e.getTargetException();
+                        throw ((RuntimeException) (e.getTargetException()));
                     } else if (e.getTargetException() instanceof Error) {
-                        throw (Error) e.getTargetException();
+                        throw ((Error) (e.getTargetException()));
                     }
                     throw new EventAnnotationsException("An error has occured in @BeforeFindBy " + method, e);
                 }
@@ -75,8 +72,7 @@ public class AnnotationsComponentListener implements WebDriverEventListener {
         findByHandler(AfterFindBy.class, by, element, driver);
     }
 
-    protected void defaultHandler(final Class<? extends Annotation> annotation, final WebElement element,
-            final WebDriver driver) {
+    protected void defaultHandler(final Class<? extends Annotation> annotation, final WebElement element, final WebDriver driver) {
         if (element == null) {
             return;
         }
@@ -87,27 +83,23 @@ public class AnnotationsComponentListener implements WebDriverEventListener {
         for (final Object component : components) {
             for (final Method method : ReflectionUtils.getDeclaredMethodsWithAnnotation(component, annotation)) {
                 final Class<?>[] parameterTypes = method.getParameterTypes();
-
                 final Object[] args = ReflectionUtils.toArgs(new Function<Class<?>, Object>() {
                     @Override
                     public Object apply(final Class<?> input) {
                         return null;
                     }
                 }, parameterTypes);
-
                 try {
                     ReflectionUtils.invoke(method, component, args);
-                } catch (final IllegalAccessException e) {
-                    throw new EventAnnotationsException("An error has occured in @" + annotation.getSimpleName() + " " + method,
-                            e);
+                } catch (final java.lang.IllegalAccessException e) {
+                    throw new EventAnnotationsException((("An error has occured in @" + annotation.getSimpleName()) + " ") + method, e);
                 } catch (final InvocationTargetException e) {
                     if (e.getTargetException() instanceof RuntimeException) {
-                        throw (RuntimeException) e.getTargetException();
+                        throw ((RuntimeException) (e.getTargetException()));
                     } else if (e.getTargetException() instanceof Error) {
-                        throw (Error) e.getTargetException();
+                        throw ((Error) (e.getTargetException()));
                     }
-                    throw new EventAnnotationsException("An error has occured in @" + annotation.getSimpleName() + " " + method,
-                            e);
+                    throw new EventAnnotationsException((("An error has occured in @" + annotation.getSimpleName()) + " ") + method, e);
                 }
             }
         }
@@ -124,13 +116,13 @@ public class AnnotationsComponentListener implements WebDriverEventListener {
     }
 
     @Override
-    public void beforeChangeValueOf(final WebElement element, final WebDriver driver) {
+    public void beforeChangeValueOf(final WebElement element, final WebDriver driver, CharSequence[] charSequences) {
         defaultHandler(BeforeChangeValueOf.class, element, driver);
     }
 
     @Override
-    public void afterChangeValueOf(final WebElement element, final WebDriver driver) {
-        defaultHandler(AfterChangeValueOf.class, element, driver);
+    public void afterChangeValueOf(final WebElement element, final WebDriver webDriver, CharSequence[] charSequences) {
+        defaultHandler(AfterChangeValueOf.class, element, webDriver);
     }
 
     @Override
