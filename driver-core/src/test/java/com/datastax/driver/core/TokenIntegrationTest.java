@@ -1,22 +1,20 @@
 package com.datastax.driver.core;
 
-import java.net.InetSocketAddress;
-import java.util.*;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
 import com.datastax.driver.core.exceptions.InvalidTypeException;
 import com.datastax.driver.core.policies.LoadBalancingPolicy;
 import com.datastax.driver.core.policies.RoundRobinPolicy;
 import com.datastax.driver.core.policies.WhiteListPolicy;
 import com.datastax.driver.core.utils.CassandraVersion;
-
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import java.net.InetSocketAddress;
+import java.util.*;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 import static com.datastax.driver.core.Assertions.assertThat;
+
 
 /**
  * This class uses subclasses for each type of partitioner.
@@ -25,23 +23,20 @@ import static com.datastax.driver.core.Assertions.assertThat;
  * but it doesn't seem to work with multiple methods.
  */
 public abstract class TokenIntegrationTest {
-
-    List<String> schema = Lists.newArrayList(
-        "CREATE KEYSPACE test WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1}",
-        "CREATE KEYSPACE test2 WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 2}",
-        "USE test",
-        "CREATE TABLE foo(i int primary key)",
-        "INSERT INTO foo (i) VALUES (1)",
-        "INSERT INTO foo (i) VALUES (2)",
-        "INSERT INTO foo (i) VALUES (3)"
-    );
+    List<String> schema = Lists.newArrayList("CREATE KEYSPACE test WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1}", "CREATE KEYSPACE test2 WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 2}", "USE test", "CREATE TABLE foo(i int primary key)", "INSERT INTO foo (i) VALUES (1)", "INSERT INTO foo (i) VALUES (2)", "INSERT INTO foo (i) VALUES (3)");
 
     private final String ccmOptions;
+
     private final DataType expectedTokenType;
+
     private final int numTokens;
+
     private final boolean useVnodes;
+
     CCMBridge ccm;
+
     Cluster cluster;
+
     Session session;
 
     public TokenIntegrationTest(String ccmOptions, DataType expectedTokenType) {
@@ -50,8 +45,8 @@ public abstract class TokenIntegrationTest {
 
     public TokenIntegrationTest(String ccmOptions, DataType expectedTokenType, boolean useVnodes) {
         this.expectedTokenType = expectedTokenType;
-        this.numTokens = useVnodes ? 256 : 1;
-        this.ccmOptions = useVnodes ? ccmOptions + " --vnodes" : ccmOptions;
+        this.numTokens = (useVnodes) ? 256 : 1;
+        this.ccmOptions = (useVnodes) ? ccmOptions + " --vnodes" : ccmOptions;
         this.useVnodes = useVnodes;
     }
 
@@ -74,12 +69,14 @@ public abstract class TokenIntegrationTest {
             session.execute(statement);
     }
 
-    @AfterClass(groups = "short", alwaysRun=true)
+    @AfterClass(groups = "short", alwaysRun = true)
     public void teardown() {
-        if (cluster != null)
+        if (cluster != null) {
             cluster.close();
-        if (ccm != null)
+        }
+        if (ccm != null) {
             ccm.remove();
+        }
     }
 
     /**
@@ -96,27 +93,21 @@ public abstract class TokenIntegrationTest {
     @Test(groups = "short")
     public void should_expose_token_ranges() throws Exception {
         Metadata metadata = cluster.getMetadata();
-
         // Find the replica for a given partition key
         int testKey = 1;
         Set<Host> replicas = metadata.getReplicas("test", DataType.cint().serialize(testKey, cluster.getConfiguration().getProtocolOptions().getProtocolVersionEnum()));
         assertThat(replicas).hasSize(1);
         Host replica = replicas.iterator().next();
-
         // Iterate the cluster's token ranges. For each one, use a range query to ask Cassandra which partition keys
         // are in this range.
-
         PreparedStatement rangeStmt = session.prepare("SELECT i FROM foo WHERE token(i) > ? and token(i) <= ?");
-
         TokenRange foundRange = null;
         for (TokenRange range : metadata.getTokenRanges()) {
             List<Row> rows = rangeQuery(rangeStmt, range);
             for (Row row : rows) {
                 if (row.getInt("i") == testKey) {
                     // We should find our test key exactly once
-                    assertThat(foundRange)
-                        .describedAs("found the same key in two ranges: " + foundRange + " and " + range)
-                        .isNull();
+                    assertThat(foundRange).describedAs((("found the same key in two ranges: " + foundRange) + " and ") + range).isNull();
                     foundRange = range;
                     // That range should be managed by the replica
                     assertThat(metadata.getReplicas("test", range)).contains(replica);

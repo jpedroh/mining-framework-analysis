@@ -15,10 +15,10 @@
  */
 package com.datastax.driver.core.querybuilder;
 
-import java.util.*;
-
 import com.datastax.driver.core.RegularStatement;
 import com.datastax.driver.core.TableMetadata;
+import java.util.*;
+
 
 /**
  * Static methods to build a CQL3 query.
@@ -36,8 +36,8 @@ import com.datastax.driver.core.TableMetadata;
  * Note that it could be convenient to use an 'import static' to use the methods of this class.
  */
 public final class QueryBuilder {
-
-    private QueryBuilder() {}
+    private QueryBuilder() {
+    }
 
     /**
      * Start building a new SELECT query that selects the provided names.
@@ -286,7 +286,7 @@ public final class QueryBuilder {
     public static Clause in(String name, Object... values) {
         return new Clause.InClause(name, Arrays.asList(values));
     }
-	
+
     /**
      * Create an "in" where clause stating the provided column must be equal
      * to one of the provided values.
@@ -295,9 +295,9 @@ public final class QueryBuilder {
      * @param values the values
      * @return the corresponding where clause.
      */
-	public static Clause in(String name, List<?> values) {
-		return new Clause.InClause(name, values);
-	}
+    public static Clause in(String name, List<?> values) {
+        return new Clause.InClause(name, values);
+    }
 
     /**
      * Creates a "lesser than" where clause stating the provided column must be less than
@@ -326,9 +326,9 @@ public final class QueryBuilder {
      * @throws IllegalArgumentException if {@code names.size() != values.size()}.
      */
     public static Clause lt(List<String> names, List<?> values) {
-        if (names.size() != values.size())
+        if (names.size() != values.size()) {
             throw new IllegalArgumentException(String.format("The number of names (%d) and values (%d) don't match", names.size(), values.size()));
-
+        }
         return new Clause.CompoundClause(names, "<", values);
     }
 
@@ -359,9 +359,9 @@ public final class QueryBuilder {
      * @throws IllegalArgumentException if {@code names.size() != values.size()}.
      */
     public static Clause lte(List<String> names, List<?> values) {
-        if (names.size() != values.size())
+        if (names.size() != values.size()) {
             throw new IllegalArgumentException(String.format("The number of names (%d) and values (%d) don't match", names.size(), values.size()));
-
+        }
         return new Clause.CompoundClause(names, "<=", values);
     }
 
@@ -392,9 +392,9 @@ public final class QueryBuilder {
      * @throws IllegalArgumentException if {@code names.size() != values.size()}.
      */
     public static Clause gt(List<String> names, List<?> values) {
-        if (names.size() != values.size())
+        if (names.size() != values.size()) {
             throw new IllegalArgumentException(String.format("The number of names (%d) and values (%d) don't match", names.size(), values.size()));
-
+        }
         return new Clause.CompoundClause(names, ">", values);
     }
 
@@ -425,9 +425,9 @@ public final class QueryBuilder {
      * @throws IllegalArgumentException if {@code names.size() != values.size()}.
      */
     public static Clause gte(List<String> names, List<?> values) {
-        if (names.size() != values.size())
+        if (names.size() != values.size()) {
             throw new IllegalArgumentException(String.format("The number of names (%d) and values (%d) don't match", names.size(), values.size()));
-
+        }
         return new Clause.CompoundClause(names, ">=", values);
     }
 
@@ -457,7 +457,7 @@ public final class QueryBuilder {
      * @param timestamp the timestamp (in microseconds) to use.
      * @return the corresponding option
      *
-     * @throws IllegalArgumentException if {@code timestamp &lt; 0}.
+     * @throws IllegalArgumentException if {@code timestamp &gt; 0}.
      */
     public static Using timestamp(long timestamp) {
         if (timestamp < 0)
@@ -482,7 +482,7 @@ public final class QueryBuilder {
      * @param ttl the ttl (in seconds) to use.
      * @return the corresponding option
      *
-     * @throws IllegalArgumentException if {@code ttl &lt; 0}.
+     * @throws IllegalArgumentException if {@code ttl &gt; 0}.
      */
     public static Using ttl(int ttl) {
         if (ttl < 0)

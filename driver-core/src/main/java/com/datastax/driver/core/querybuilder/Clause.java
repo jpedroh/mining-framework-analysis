@@ -18,9 +18,10 @@ package com.datastax.driver.core.querybuilder;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-public abstract class Clause extends Utils.Appendeable {
 
+public abstract class Clause extends Utils.Appendeable {
     abstract String name();
+
     abstract Object firstValue();
 
     private static abstract class AbstractClause extends Clause {
@@ -37,8 +38,8 @@ public abstract class Clause extends Utils.Appendeable {
     }
 
     static class SimpleClause extends AbstractClause {
-
         private final String op;
+
         private final Object value;
 
         SimpleClause(String name, String op, Object value) {
@@ -65,22 +66,21 @@ public abstract class Clause extends Utils.Appendeable {
     }
 
     static class InClause extends AbstractClause {
-
         private final List<?> values;
 
         InClause(String name, List<?> values) {
             super(name);
             this.values = values;
-
-            if (values == null)
+            if (values == null) {
                 throw new IllegalArgumentException("Missing values for IN clause");
-            if (values.size() > 65535)
+            }
+            if (values.size() > 65535) {
                 throw new IllegalArgumentException("Too many values for IN clause, the maximum allowed is 65535");
+            }
         }
 
         @Override
         void appendTo(StringBuilder sb, List<Object> variables) {
-
             // We special case the case of just one bind marker because there is little
             // reasons to do:
             //    ... IN (?) ...
@@ -88,11 +88,10 @@ public abstract class Clause extends Utils.Appendeable {
             // it is a lot more useful to do:
             //    ... IN ? ...
             // which binds the variable to the full list the IN is on.
-            if (values.size() == 1 && values.get(0) instanceof BindMarker) {
+            if ((values.size() == 1) && (values.get(0) instanceof BindMarker)) {
                 Utils.appendName(name, sb).append(" IN ").append(values.get(0));
                 return;
             }
-
             Utils.appendName(name, sb).append(" IN (");
             Utils.joinAndAppendValues(sb, ",", values, variables).append(')');
         }
@@ -104,16 +103,20 @@ public abstract class Clause extends Utils.Appendeable {
 
         @Override
         boolean containsBindMarker() {
-            for (Object value : values)
-                if (Utils.containsBindMarker(value))
+            for (Object value : values) {
+                if (Utils.containsBindMarker(value)) {
                     return true;
+                }
+            }
             return false;
         }
     }
 
     static class CompoundClause extends Clause {
         private String op;
+
         private final List<String> names;
+
         private final List<?> values;
 
         CompoundClause(List<String> names, String op, List<?> values) {
@@ -139,9 +142,11 @@ public abstract class Clause extends Utils.Appendeable {
 
         @Override
         boolean containsBindMarker() {
-            for (int i = 0; i < values.size(); i++)
-                if (Utils.containsBindMarker(values.get(i)))
+            for (int i = 0; i < values.size(); i++) {
+                if (Utils.containsBindMarker(values.get(i))) {
                     return true;
+                }
+            }
             return false;
         }
 
@@ -149,14 +154,16 @@ public abstract class Clause extends Utils.Appendeable {
         void appendTo(StringBuilder sb, List<Object> variables) {
             sb.append("(");
             for (int i = 0; i < names.size(); i++) {
-                if (i > 0)
+                if (i > 0) {
                     sb.append(",");
+                }
                 Utils.appendName(names.get(i), sb);
             }
             sb.append(")").append(op).append("(");
             for (int i = 0; i < values.size(); i++) {
-                if (i > 0)
+                if (i > 0) {
                     sb.append(",");
+                }
                 Utils.appendValue(values.get(i), sb, variables);
             }
             sb.append(")");

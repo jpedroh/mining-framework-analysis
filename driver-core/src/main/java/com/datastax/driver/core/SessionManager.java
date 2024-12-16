@@ -15,40 +15,41 @@
  */
 package com.datastax.driver.core;
 
+import com.datastax.driver.core.exceptions.DriverInternalError;
+import com.datastax.driver.core.exceptions.UnsupportedFeatureException;
+import com.datastax.driver.core.policies.LoadBalancingPolicy;
+import com.datastax.driver.core.policies.ReconnectionPolicy;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.*;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
-
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-import com.datastax.driver.core.exceptions.DriverInternalError;
-import com.datastax.driver.core.exceptions.UnsupportedFeatureException;
-import com.datastax.driver.core.policies.LoadBalancingPolicy;
-import com.datastax.driver.core.policies.ReconnectionPolicy;
 
 /**
  * Driver implementation of the Session interface.
  */
 class SessionManager extends AbstractSession {
-
     private static final Logger logger = LoggerFactory.getLogger(Session.class);
 
     final Cluster cluster;
+
     final ConcurrentMap<Host, HostConnectionPool> pools;
+
     final HostConnectionPool.PoolState poolsState;
+
     final AtomicReference<CloseFuture> closeFuture = new AtomicReference<CloseFuture>();
 
     private final Striped<Lock> poolCreationLocks = Striped.lazyWeakLock(5);
 
     private volatile boolean isInit;
+
     private volatile boolean isClosing;
 
     // Package protected, only Cluster should construct that.
@@ -157,37 +158,38 @@ class SessionManager extends AbstractSession {
     }
 
     private ListenableFuture<PreparedStatement> toPreparedStatement(final String query, final Connection.Future future) {
+        // Since the transformation involves querying other nodes, we should not do that in an I/O thread
         return Futures.transform(future, new Function<Message.Response, PreparedStatement>() {
             public PreparedStatement apply(Message.Response response) {
                 switch (response.type) {
-                    case RESULT:
-                        Responses.Result rm = (Responses.Result)response;
+                    case RESULT :
+                        Responses.Result rm = ((Responses.Result) (response));
                         switch (rm.kind) {
-                            case PREPARED:
-                                Responses.Result.Prepared pmsg = (Responses.Result.Prepared)rm;
+                            case PREPARED :
+                                Responses.Result.Prepared pmsg = ((Responses.Result.Prepared) (rm));
                                 PreparedStatement stmt = DefaultPreparedStatement.fromMessage(pmsg, cluster.getMetadata(), cluster.getConfiguration().getProtocolOptions().getProtocolVersionEnum(), query, poolsState.keyspace);
                                 stmt = cluster.manager.addPrepared(stmt);
                                 try {
                                     // All Sessions are connected to the same nodes so it's enough to prepare only the nodes of this session.
                                     // If that changes, we'll have to make sure this propagate to other sessions too.
                                     prepare(stmt.getQueryString(), future.getAddress());
-                                } catch (InterruptedException e) {
+                                } catch (java.lang.InterruptedException e) {
                                     Thread.currentThread().interrupt();
                                     // This method doesn't propagate interruption, at least not for now. However, if we've
                                     // interrupted preparing queries on other node it's not a problem as we'll re-prepare
                                     // later if need be. So just ignore.
                                 }
                                 return stmt;
-                            default:
+                            default :
                                 throw new DriverInternalError(String.format("%s response received when prepared statement was expected", rm.kind));
                         }
-                    case ERROR:
-                        throw ((Responses.Error)response).asException(future.getAddress());
-                    default:
+                    case ERROR :
+                        throw ((Responses.Error) (response)).asException(future.getAddress());
+                    default :
                         throw new DriverInternalError(String.format("%s response received when prepared statement was expected", response.type));
                 }
             }
-        }, executor()); // Since the transformation involves querying other nodes, we should not do that in an I/O thread
+        }, executor());
     }
 
     Connection.Factory connectionFactory() {
@@ -217,19 +219,18 @@ class SessionManager extends AbstractSession {
     // Returns whether there was problem creating the pool
     ListenableFuture<Boolean> forceRenewPool(final Host host, ListeningExecutorService executor) {
         final HostDistance distance = cluster.manager.loadBalancingPolicy().distance(host);
-        if (distance == HostDistance.IGNORED)
+        if (distance == HostDistance.IGNORED) {
             return Futures.immediateFuture(true);
-
+        }
         // Creating a pool is somewhat long since it has to create the connection, so do it asynchronously.
         return executor.submit(new Callable<Boolean>() {
             public Boolean call() {
                 while (true) {
                     try {
-                        if (isClosing)
+                        if (isClosing) {
                             return true;
-
-                        HostConnectionPool newPool = HostConnectionPool.newInstance(host, distance, SessionManager.this,
-                                                                                    cluster.getConfiguration().getProtocolOptions().getProtocolVersionEnum());
+                        }
+                        HostConnectionPool newPool = HostConnectionPool.newInstance(host, distance, SessionManager.this, cluster.getConfiguration().getProtocolOptions().getProtocolVersionEnum());
                         HostConnectionPool previous = pools.put(host, newPool);
                         if (previous == null) {
                             logger.debug("Added connection pool for {}", host);
@@ -237,17 +238,16 @@ class SessionManager extends AbstractSession {
                             logger.debug("Renewed connection pool for {}", host);
                             previous.closeAsync();
                         }
-
                         // If we raced with a session shutdown, ensure that the pool will be closed.
-                        if (isClosing)
+                        if (isClosing) {
                             newPool.closeAsync();
-
+                        }
                         return true;
-                    } catch (Exception e) {
+                    } catch (java.lang.Exception e) {
                         logger.error("Error creating pool to " + host, e);
                         return false;
                     }
-                }
+                } 
             }
         });
     }
@@ -258,28 +258,26 @@ class SessionManager extends AbstractSession {
     // ConcurrentMap only for that since it's the duplicate HostConnectionPool creation we
     // want to avoid
     private boolean replacePool(Host host, HostDistance distance, HostConnectionPool condition) throws ConnectionException, UnsupportedProtocolVersionException, ClusterNameMismatchException {
-        if (isClosing)
+        if (isClosing) {
             return true;
-
+        }
         Lock l = poolCreationLocks.get(host);
         l.lock();
         try {
             HostConnectionPool previous = pools.get(host);
-            if (previous != condition)
+            if (previous != condition) {
                 return false;
-
-            HostConnectionPool newPool = HostConnectionPool.newInstance(host, distance, SessionManager.this,
-                                                                        cluster.getConfiguration().getProtocolOptions().getProtocolVersionEnum());
+            }
+            HostConnectionPool newPool = HostConnectionPool.newInstance(host, distance, this, cluster.getConfiguration().getProtocolOptions().getProtocolVersionEnum());
             previous = pools.put(host, newPool);
-            if (previous != null && !previous.isClosed()) {
+            if ((previous != null) && (!previous.isClosed())) {
                 logger.warn("Replacing a pool that wasn't closed. Closing it now, but this was not expected.");
                 previous.closeAsync();
             }
-
             // If we raced with a session shutdown, ensure that the pool will be closed.
-            if (isClosing)
+            if (isClosing) {
                 newPool.closeAsync();
-
+            }
             return true;
         } finally {
             l.unlock();
@@ -289,27 +287,27 @@ class SessionManager extends AbstractSession {
     // Returns whether there was problem creating the pool
     ListenableFuture<Boolean> maybeAddPool(final Host host, ListeningExecutorService executor) {
         final HostDistance distance = cluster.manager.loadBalancingPolicy().distance(host);
-        if (distance == HostDistance.IGNORED)
+        if (distance == HostDistance.IGNORED) {
             return Futures.immediateFuture(true);
-
+        }
         HostConnectionPool previous = pools.get(host);
-        if (previous != null && !previous.isClosed())
+        if ((previous != null) && (!previous.isClosed())) {
             return Futures.immediateFuture(true);
-
+        }
         // Creating a pool is somewhat long since it has to create the connection, so do it asynchronously.
         return executor.submit(new Callable<Boolean>() {
             public Boolean call() {
                 try {
                     while (true) {
                         HostConnectionPool previous = pools.get(host);
-                        if (previous != null && !previous.isClosed())
+                        if ((previous != null) && (!previous.isClosed())) {
                             return true;
-
+                        }
                         if (replacePool(host, distance, previous)) {
                             logger.debug("Added connection pool for {}", host);
                             return true;
                         }
-                    }
+                    } 
                 } catch (UnsupportedProtocolVersionException e) {
                     cluster.manager.logUnsupportedVersionProtocol(host);
                     cluster.manager.triggerOnDown(host, false);
@@ -318,7 +316,7 @@ class SessionManager extends AbstractSession {
                     cluster.manager.logClusterNameMismatch(host, e.expectedClusterName, e.actualClusterName);
                     cluster.manager.triggerOnDown(host, false);
                     return false;
-                } catch (Exception e) {
+                } catch (java.lang.Exception e) {
                     logger.error("Error creating pool to " + host, e);
                     return false;
                 }
@@ -440,84 +438,79 @@ class SessionManager extends AbstractSession {
     Message.Request makeRequestMessage(Statement statement, ByteBuffer pagingState) {
         // We need the protocol version, which is only available once the cluster has initialized. Initialize the session to ensure this is the case.
         // init() locks, so avoid if we know we don't need it.
-        if (!isInit)
+        if (!isInit) {
             init();
+        }
         ProtocolVersion version = cluster.manager.protocolVersion();
-
         ConsistencyLevel consistency = statement.getConsistencyLevel();
-        if (consistency == null)
+        if (consistency == null) {
             consistency = configuration().getQueryOptions().getConsistencyLevel();
-
+        }
         ConsistencyLevel serialConsistency = statement.getSerialConsistencyLevel();
-        if (version.compareTo(ProtocolVersion.V3) < 0 && statement instanceof BatchStatement) {
-            if (serialConsistency != null)
+        if ((version.compareTo(ProtocolVersion.V3) < 0) && (statement instanceof BatchStatement)) {
+            if (serialConsistency != null) {
                 throw new UnsupportedFeatureException(version, "Serial consistency on batch statements is not supported");
-        } else if (serialConsistency == null)
+            }
+        } else if (serialConsistency == null) {
             serialConsistency = configuration().getQueryOptions().getSerialConsistencyLevel();
-
+        }
         long defaultTimestamp = Long.MIN_VALUE;
         if (cluster.manager.protocolVersion().compareTo(ProtocolVersion.V3) >= 0) {
             defaultTimestamp = statement.getDefaultTimestamp();
-            if (defaultTimestamp == Long.MIN_VALUE)
+            if (defaultTimestamp == Long.MIN_VALUE) {
                 defaultTimestamp = cluster.getConfiguration().getPolicies().getTimestampGenerator().next();
+            }
         }
-
         return makeRequestMessage(statement, consistency, serialConsistency, pagingState, defaultTimestamp);
     }
 
     Message.Request makeRequestMessage(Statement statement, ConsistencyLevel cl, ConsistencyLevel scl, ByteBuffer pagingState, long defaultTimestamp) {
         ProtocolVersion protoVersion = cluster.manager.protocolVersion();
         int fetchSize = statement.getFetchSize();
-
         if (protoVersion == ProtocolVersion.V1) {
             assert pagingState == null;
             // We don't let the user change the fetchSize globally if the proto v1 is used, so we just need to
             // check for the case of a per-statement override
-            if (fetchSize <= 0)
+            if (fetchSize <= 0) {
                 fetchSize = -1;
-            else if (fetchSize != Integer.MAX_VALUE)
+            } else if (fetchSize != Integer.MAX_VALUE) {
                 throw new UnsupportedFeatureException(protoVersion, "Paging is not supported");
+            }
         } else if (fetchSize <= 0) {
             fetchSize = configuration().getQueryOptions().getFetchSize();
         }
-
-        if (fetchSize == Integer.MAX_VALUE)
+        if (fetchSize == Integer.MAX_VALUE) {
             fetchSize = -1;
-
+        }
         if (statement instanceof RegularStatement) {
-            RegularStatement rs = (RegularStatement)statement;
-
+            RegularStatement rs = ((RegularStatement) (statement));
             // It saddens me that we special case for the query builder here, but for now this is simpler.
             // We could provide a general API in RegularStatement instead at some point but it's unclear what's
             // the cleanest way to do that is right now (and it's probably not really that useful anyway).
-            if (protoVersion == ProtocolVersion.V1 && rs instanceof com.datastax.driver.core.querybuilder.BuiltStatement)
-                ((com.datastax.driver.core.querybuilder.BuiltStatement)rs).setForceNoValues(true);
-
+            if ((protoVersion == ProtocolVersion.V1) && (rs instanceof com.datastax.driver.core.querybuilder.BuiltStatement)) {
+                ((com.datastax.driver.core.querybuilder.BuiltStatement) (rs)).setForceNoValues(true);
+            }
             ByteBuffer[] rawValues = rs.getValues(protoVersion);
-
-            if (protoVersion == ProtocolVersion.V1 && rawValues != null)
+            if ((protoVersion == ProtocolVersion.V1) && (rawValues != null)) {
                 throw new UnsupportedFeatureException(protoVersion, "Binary values are not supported");
-
-            List<ByteBuffer> values = rawValues == null ? Collections.<ByteBuffer>emptyList() : Arrays.asList(rawValues);
+            }
+            List<ByteBuffer> values = (rawValues == null) ? Collections.<ByteBuffer>emptyList() : Arrays.asList(rawValues);
             String qString = rs.getQueryString();
-            Requests.QueryProtocolOptions options = new Requests.QueryProtocolOptions(cl, values, false,
-                                                                                      fetchSize, pagingState, scl, defaultTimestamp);
+            Requests.QueryProtocolOptions options = new Requests.QueryProtocolOptions(cl, values, false, fetchSize, pagingState, scl, defaultTimestamp);
             return new Requests.Query(qString, options);
         } else if (statement instanceof BoundStatement) {
-            BoundStatement bs = (BoundStatement)statement;
+            BoundStatement bs = ((BoundStatement) (statement));
             bs.ensureAllSet();
-            boolean skipMetadata = protoVersion != ProtocolVersion.V1 && bs.statement.getPreparedId().resultSetMetadata != null;
-            Requests.QueryProtocolOptions options = new Requests.QueryProtocolOptions(cl, Arrays.asList(bs.wrapper.values), skipMetadata,
-                                                                                      fetchSize, pagingState, scl, defaultTimestamp);
+            boolean skipMetadata = (protoVersion != ProtocolVersion.V1) && (bs.statement.getPreparedId().resultSetMetadata != null);
+            Requests.QueryProtocolOptions options = new Requests.QueryProtocolOptions(cl, Arrays.asList(bs.wrapper.values), skipMetadata, fetchSize, pagingState, scl, defaultTimestamp);
             return new Requests.Execute(bs.statement.getPreparedId().id, options);
         } else {
             assert statement instanceof BatchStatement : statement;
             assert pagingState == null;
-
-            if (protoVersion == ProtocolVersion.V1)
+            if (protoVersion == ProtocolVersion.V1) {
                 throw new UnsupportedFeatureException(protoVersion, "Protocol level batching is not supported");
-
-            BatchStatement bs = (BatchStatement)statement;
+            }
+            BatchStatement bs = ((BatchStatement) (statement));
             bs.ensureAllSet();
             BatchStatement.IdAndValues idAndVals = bs.getIdAndValues(protoVersion);
             Requests.BatchProtocolOptions options = new Requests.BatchProtocolOptions(cl, scl, defaultTimestamp);
@@ -570,28 +563,28 @@ class SessionManager extends AbstractSession {
     }
 
     ResultSetFuture executeQuery(Message.Request msg, Statement statement) {
-        if (statement.isTracing())
+        if (statement.isTracing()) {
             msg.setTracingRequested();
-
+        }
         DefaultResultSetFuture future = new DefaultResultSetFuture(this, configuration().getProtocolOptions().getProtocolVersionEnum(), msg);
         execute(future, statement);
         return future;
     }
 
     private static class State implements Session.State {
-
         private final SessionManager session;
+
         private final List<Host> connectedHosts;
+
         private final int[] openConnections;
+
         private final int[] inFlightQueries;
 
         private State(SessionManager session) {
             this.session = session;
             this.connectedHosts = ImmutableList.copyOf(session.pools.keySet());
-
             this.openConnections = new int[connectedHosts.size()];
             this.inFlightQueries = new int[connectedHosts.size()];
-
             int i = 0;
             for (Host h : connectedHosts) {
                 HostConnectionPool p = session.pools.get(h);
@@ -603,7 +596,6 @@ class SessionManager extends AbstractSession {
                     inFlightQueries[i] = 0;
                     continue;
                 }
-
                 openConnections[i] = p.opened();
                 inFlightQueries[i] = p.inFlightQueriesCount();
                 i++;

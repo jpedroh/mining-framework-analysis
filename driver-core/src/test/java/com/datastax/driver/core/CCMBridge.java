@@ -19,14 +19,8 @@ import com.datastax.driver.core.Cluster.Builder;
 import com.datastax.driver.core.exceptions.AlreadyExistsException;
 import com.datastax.driver.core.exceptions.DriverException;
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
-
 import com.google.common.base.Joiner;
 import com.google.common.io.Files;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -38,16 +32,17 @@ import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import static org.testng.Assert.fail;
-
-import static com.google.common.base.Preconditions.checkArgument;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import static com.datastax.driver.core.TestUtils.CREATE_KEYSPACE_SIMPLE_FORMAT;
 import static com.datastax.driver.core.TestUtils.SIMPLE_KEYSPACE;
+import static com.google.common.base.Preconditions.checkArgument;
+import static org.testng.Assert.fail;
+
 
 public class CCMBridge {
-
     private static final Logger logger = LoggerFactory.getLogger(CCMBridge.class);
 
     public static final String IP_PREFIX;
@@ -55,7 +50,9 @@ public class CCMBridge {
     private static final String CASSANDRA_VERSION_REGEXP = "\\d\\.\\d\\.\\d+(-\\w+)?";
 
     static final File CASSANDRA_DIR;
+
     static final String CASSANDRA_VERSION;
+
     static {
         String version = System.getProperty("cassandra.version");
         if (version.matches(CASSANDRA_VERSION_REGEXP)) {
@@ -65,15 +62,15 @@ public class CCMBridge {
             CASSANDRA_DIR = new File(version);
             CASSANDRA_VERSION = "";
         }
-
         String ip_prefix = System.getProperty("ipprefix");
-        if (ip_prefix == null || ip_prefix.isEmpty()) {
+        if ((ip_prefix == null) || ip_prefix.isEmpty()) {
             ip_prefix = "127.0.1.";
         }
         IP_PREFIX = ip_prefix;
     }
 
     private final Runtime runtime = Runtime.getRuntime();
+
     private final File ccmDir;
 
     private CCMBridge() {
@@ -312,19 +309,21 @@ public class CCMBridge {
     }
 
     // One cluster for the whole test class
-    public static abstract class PerClassSingleNodeCluster {
-
+    public abstract static class PerClassSingleNodeCluster {
         protected static CCMBridge cassandraCluster;
+
         private static boolean erroredOut;
+
         private static boolean schemaCreated;
 
         protected static Cluster cluster;
+
         protected static Session session;
 
         protected abstract Collection<String> getTableDefinitions();
 
         // Give individual tests a chance to customize the cluster configuration
-        protected Cluster.Builder configure(Cluster.Builder builder) {
+        protected Builder configure(Cluster.Builder builder) {
             return builder;
         }
 
@@ -343,48 +342,46 @@ public class CCMBridge {
                 session = cluster.connect();
             } catch (NoHostAvailableException e) {
                 erroredOut = true;
-                for (Map.Entry<InetSocketAddress, Throwable> entry : e.getErrors().entrySet())
-                    logger.info("Error connecting to " + entry.getKey() + ": " + entry.getValue());
+                for (Map.Entry<InetSocketAddress, Throwable> entry : e.getErrors().entrySet()) {
+                    logger.info((("Error connecting to " + entry.getKey()) + ": ") + entry.getValue());
+                }
                 throw new RuntimeException(e);
             }
         }
 
-        @AfterClass(groups = {"short", "long"})
+        @AfterClass(groups = { "short", "long" })
         public static void discardCluster() {
-            if (cluster != null)
+            if (cluster != null) {
                 cluster.close();
-
+            }
             if (cassandraCluster == null) {
                 logger.error("No cluster to discard");
             } else if (erroredOut) {
                 cassandraCluster.stop();
-                logger.info("Error during tests, kept C* logs in " + cassandraCluster.ccmDir);
+                logger.info("Error during tests, kept C* logs in " + CCMBridge.PerClassSingleNodeCluster.cassandraCluster.ccmDir);
             } else {
                 cassandraCluster.remove();
-                cassandraCluster.ccmDir.delete();
+                CCMBridge.PerClassSingleNodeCluster.cassandraCluster.ccmDir.delete();
             }
         }
 
-        @BeforeClass(groups = {"short", "long"})
+        @BeforeClass(groups = { "short", "long" })
         public void beforeClass() {
             createCluster();
             maybeCreateSchema();
         }
 
         public void maybeCreateSchema() {
-
             try {
-                if (schemaCreated)
+                if (schemaCreated) {
                     return;
-
+                }
                 try {
                     session.execute(String.format(CREATE_KEYSPACE_SIMPLE_FORMAT, SIMPLE_KEYSPACE, 1));
                 } catch (AlreadyExistsException e) {
                     // It's ok, ignore
                 }
-
                 session.execute("USE " + SIMPLE_KEYSPACE);
-
                 for (String tableDef : getTableDefinitions()) {
                     try {
                         session.execute(tableDef);
@@ -392,7 +389,6 @@ public class CCMBridge {
                         // It's ok, ignore
                     }
                 }
-
                 schemaCreated = true;
             } catch (DriverException e) {
                 erroredOut = true;
@@ -402,8 +398,8 @@ public class CCMBridge {
     }
 
     public static class CCMCluster {
-
         public final Cluster cluster;
+
         public final Session session;
 
         public final CCMBridge cassandraCluster;
@@ -411,16 +407,16 @@ public class CCMBridge {
         private boolean erroredOut;
 
         public static CCMCluster create(int nbNodes, Cluster.Builder builder) {
-            if (nbNodes == 0)
+            if (nbNodes == 0) {
                 throw new IllegalArgumentException();
-
+            }
             return new CCMCluster(CCMBridge.create("test", nbNodes), builder, nbNodes);
         }
 
         public static CCMCluster create(int nbNodesDC1, int nbNodesDC2, Cluster.Builder builder) {
-            if (nbNodesDC1 == 0)
+            if (nbNodesDC1 == 0) {
                 throw new IllegalArgumentException();
-
+            }
             return new CCMCluster(CCMBridge.create("test", nbNodesDC1, nbNodesDC2), builder, nbNodesDC1 + nbNodesDC2);
         }
 
@@ -432,16 +428,19 @@ public class CCMBridge {
             this.cassandraCluster = cassandraCluster;
             try {
                 String[] contactPoints = new String[totalNodes];
-                for (int i = 0; i < totalNodes; i++)
-                    contactPoints[i] = IP_PREFIX + (i+1);
-
-                try { Thread.sleep(1000); } catch (Exception e) {}
-
+                for (int i = 0; i < totalNodes; i++) {
+                    contactPoints[i] = IP_PREFIX + (i + 1);
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (java.lang.Exception e) {
+                }
                 this.cluster = builder.addContactPoints(contactPoints).build();
                 this.session = cluster.connect();
             } catch (NoHostAvailableException e) {
-                for (Map.Entry<InetSocketAddress, Throwable> entry : e.getErrors().entrySet())
-                    logger.info("Error connecting to " + entry.getKey() + ": " + entry.getValue());
+                for (Map.Entry<InetSocketAddress, Throwable> entry : e.getErrors().entrySet()) {
+                    logger.info((("Error connecting to " + entry.getKey()) + ": ") + entry.getValue());
+                }
                 discard();
                 throw new RuntimeException(e);
             }
@@ -452,9 +451,9 @@ public class CCMBridge {
         }
 
         public void discard() {
-            if (cluster != null)
+            if (cluster != null) {
                 cluster.close();
-
+            }
             if (cassandraCluster == null) {
                 logger.error("No cluster to discard");
             } else if (erroredOut) {

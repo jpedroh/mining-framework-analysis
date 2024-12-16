@@ -15,22 +15,26 @@
  */
 package com.datastax.driver.core.querybuilder;
 
+import com.datastax.driver.core.TableMetadata;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.datastax.driver.core.TableMetadata;
 
 /**
  * A built DELETE statement.
  */
 public class Delete extends BuiltStatement {
-
     private final String table;
+
     private final List<?> columnNames;
+
     private final Where where;
+
     private final Options usings;
+
     private final Conditions conditions;
+
     private boolean ifExists;
 
     Delete(String keyspace, String table, List<?> columnNames) {
@@ -54,34 +58,30 @@ public class Delete extends BuiltStatement {
     @Override
     StringBuilder buildQueryString(List<Object> variables) {
         StringBuilder builder = new StringBuilder();
-
         builder.append("DELETE");
-        if (columnNames != null)
+        if (columnNames != null) {
             Utils.joinAndAppendNames(builder.append(" "), ",", columnNames);
-
+        }
         builder.append(" FROM ");
-        if (keyspace != null)
+        if (keyspace != null) {
             Utils.appendName(keyspace, builder).append('.');
+        }
         Utils.appendName(table, builder);
         if (!usings.usings.isEmpty()) {
             builder.append(" USING ");
             Utils.joinAndAppend(builder, " AND ", usings.usings, variables);
         }
-
         if (!where.clauses.isEmpty()) {
             builder.append(" WHERE ");
             Utils.joinAndAppend(builder, " AND ", where.clauses, variables);
         }
-
         if (ifExists) {
             builder.append(" IF EXISTS ");
         }
-
         if (!conditions.conditions.isEmpty()) {
             builder.append(" IF ");
             Utils.joinAndAppend(builder, " AND ", conditions.conditions, variables);
         }
-
         return builder;
     }
 
@@ -162,7 +162,6 @@ public class Delete extends BuiltStatement {
      * The WHERE clause of a DELETE statement.
      */
     public static class Where extends BuiltStatement.ForwardingStatement<Delete> {
-
         private final List<Clause> clauses = new ArrayList<Clause>();
 
         Where(Delete statement) {
@@ -172,11 +171,11 @@ public class Delete extends BuiltStatement {
         /**
          * Adds the provided clause to this WHERE clause.
          *
-         * @param clause the clause to add.
+         * @param clause
+         * 		the clause to add.
          * @return this WHERE clause.
          */
-        public Where and(Clause clause)
-        {
+        public Where and(Clause clause) {
             clauses.add(clause);
             statement.maybeAddRoutingKey(clause.name(), clause.firstValue());
             checkForBindMarkers(clause);
@@ -186,7 +185,8 @@ public class Delete extends BuiltStatement {
         /**
          * Adds an option to the DELETE statement this WHERE clause is part of.
          *
-         * @param using the using clause to add.
+         * @param using
+         * 		the using clause to add.
          * @return the options of the DELETE statement this WHERE clause is part of.
          */
         public Options using(Using using) {
@@ -217,7 +217,8 @@ public class Delete extends BuiltStatement {
         /**
          * Adds a condition to the DELETE statement this WHERE clause is part of.
          *
-         * @param condition the condition to add.
+         * @param condition
+         * 		the condition to add.
          * @return the conditions for the DELETE statement this WHERE clause is part of.
          */
         public Conditions onlyIf(Clause condition) {
@@ -229,7 +230,6 @@ public class Delete extends BuiltStatement {
      * The options of a DELETE statement.
      */
     public static class Options extends BuiltStatement.ForwardingStatement<Delete> {
-
         private final List<Using> usings = new ArrayList<Using>();
 
         Options(Delete statement) {
@@ -239,7 +239,8 @@ public class Delete extends BuiltStatement {
         /**
          * Adds the provided option.
          *
-         * @param using a DELETE option.
+         * @param using
+         * 		a DELETE option.
          * @return this {@code Options} object.
          */
         public Options and(Using using) {
@@ -251,7 +252,8 @@ public class Delete extends BuiltStatement {
         /**
          * Adds a where clause to the DELETE statement these options are part of.
          *
-         * @param clause clause to add.
+         * @param clause
+         * 		clause to add.
          * @return the WHERE clause of the DELETE statement these options are part of.
          */
         public Where where(Clause clause) {
@@ -263,10 +265,10 @@ public class Delete extends BuiltStatement {
      * An in-construction DELETE statement.
      */
     public static class Builder {
-
         List<Object> columnNames;
 
-        Builder() {}
+        Builder() {
+        }
 
         Builder(List<Object> columnNames) {
             this.columnNames = columnNames;
@@ -308,31 +310,31 @@ public class Delete extends BuiltStatement {
      * An column selection clause for an in-construction DELETE statement.
      */
     public static class Selection extends Builder {
-
         /**
          * Deletes all columns (i.e. "DELETE FROM ...")
          *
          * @return an in-build DELETE statement.
-         *
-         * @throws IllegalStateException if some columns had already been selected for this builder.
+         * @throws IllegalStateException
+         * 		if some columns had already been selected for this builder.
          */
         public Builder all() {
-            if (columnNames != null)
+            if (columnNames != null) {
                 throw new IllegalStateException(String.format("Some columns (%s) have already been selected.", columnNames));
-
-            return (Builder)this;
+            }
+            return ((Builder) (this));
         }
 
         /**
          * Deletes the provided column.
          *
-         * @param name the column name to select for deletion.
+         * @param name
+         * 		the column name to select for deletion.
          * @return this in-build DELETE Selection
          */
         public Selection column(String name) {
-            if (columnNames == null)
+            if (columnNames == null) {
                 columnNames = new ArrayList<Object>();
-
+            }
             columnNames.add(name);
             return this;
         }
@@ -340,8 +342,10 @@ public class Delete extends BuiltStatement {
         /**
          * Deletes the provided list element.
          *
-         * @param columnName the name of the list column.
-         * @param idx the index of the element to delete.
+         * @param columnName
+         * 		the name of the list column.
+         * @param idx
+         * 		the index of the element to delete.
          * @return this in-build DELETE Selection
          */
         public Selection listElt(String columnName, int idx) {
@@ -353,8 +357,10 @@ public class Delete extends BuiltStatement {
         /**
          * Deletes a map element given a key.
          *
-         * @param columnName the name of the map column.
-         * @param key the key for the element to delete.
+         * @param columnName
+         * 		the name of the map column.
+         * @param key
+         * 		the key for the element to delete.
          * @return this in-build DELETE Selection
          */
         public Selection mapElt(String columnName, Object key) {
@@ -378,7 +384,6 @@ public class Delete extends BuiltStatement {
      * </p>
      */
     public static class Conditions extends BuiltStatement.ForwardingStatement<Delete> {
-
         private final List<Clause> conditions = new ArrayList<Clause>();
 
         Conditions(Delete statement) {
@@ -391,7 +396,8 @@ public class Delete extends BuiltStatement {
          * Note that while the query builder accept any type of {@code Clause}
          * as conditions, Cassandra currently only allows equality ones.
          *
-         * @param condition the condition to add.
+         * @param condition
+         * 		the condition to add.
          * @return this {@code Conditions} clause.
          */
         public Conditions and(Clause condition) {
@@ -403,7 +409,8 @@ public class Delete extends BuiltStatement {
         /**
          * Adds a where clause to the DELETE statement these conditions are part of.
          *
-         * @param clause clause to add.
+         * @param clause
+         * 		clause to add.
          * @return the WHERE clause of the DELETE statement these conditions are part of.
          */
         public Where where(Clause clause) {
@@ -413,7 +420,8 @@ public class Delete extends BuiltStatement {
         /**
          * Adds an option to the DELETE statement these conditions are part of.
          *
-         * @param using the using clause to add.
+         * @param using
+         * 		the using clause to add.
          * @return the options of the DELETE statement these conditions are part of.
          */
         public Options using(Using using) {
