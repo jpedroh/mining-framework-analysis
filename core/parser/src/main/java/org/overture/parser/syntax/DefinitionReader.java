@@ -20,13 +20,11 @@
  *	along with VDMJ.  If not, see <http://www.gnu.org/licenses/>.
  *
  ******************************************************************************/
-
 package org.overture.parser.syntax;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
-
 import org.overture.ast.definitions.AAssignmentDefinition;
 import org.overture.ast.definitions.AEqualsDefinition;
 import org.overture.ast.definitions.AImplicitOperationDefinition;
@@ -85,22 +83,16 @@ import org.overture.parser.lex.LexException;
 import org.overture.parser.lex.LexTokenReader;
 import org.overture.parser.messages.LocatedException;
 
+
 /**
  * A syntax analyser to parse definitions.
  */
-
-public class DefinitionReader extends SyntaxReader
-{
-
-	public DefinitionReader(LexTokenReader reader)
-	{
+public class DefinitionReader extends SyntaxReader {
+	public DefinitionReader(LexTokenReader reader) {
 		super(reader);
 	}
 
-	private static VDMToken[] sectionArray = { VDMToken.TYPES,
-			VDMToken.FUNCTIONS, VDMToken.STATE, VDMToken.VALUES,
-			VDMToken.OPERATIONS, VDMToken.INSTANCE, VDMToken.THREAD,
-			VDMToken.SYNC, VDMToken.TRACES, VDMToken.END, VDMToken.EOF };
+	private static VDMToken[] sectionArray = new VDMToken[]{ VDMToken.TYPES, VDMToken.FUNCTIONS, VDMToken.STATE, VDMToken.VALUES, VDMToken.OPERATIONS, VDMToken.INSTANCE, VDMToken.THREAD, VDMToken.SYNC, VDMToken.TRACES, VDMToken.END, VDMToken.EOF };
 
 	private static VDMToken[] afterArray = { VDMToken.SEMICOLON };
 
@@ -376,113 +368,36 @@ public class DefinitionReader extends SyntaxReader
 		return AstFactory.newAAccessSpecifierAccessSpecifier(access, isStatic, isAsync, isPure);
 	}
 
-	public ATypeDefinition readTypeDefinition() throws ParserException,
-			LexException
-	{
+	public ATypeDefinition readTypeDefinition() throws ParserException, LexException {
 		LexIdentifierToken id = readIdToken("Expecting new type identifier");
 		TypeReader tr = getTypeReader();
 		SInvariantType invtype = null;
-
-		switch (lastToken().type)
-		{
-			case EQUALS:
+		switch (lastToken().type) {
+			case EQUALS :
 				nextToken();
 				PType type = tr.readType();
 				ANamedInvariantType nt = AstFactory.newANamedInvariantType(idToName(id), type);
-
-				if (type instanceof AUnresolvedType
-						&& ((AUnresolvedType) type).getName().equals(idToName(id)))
-				{
+				if ((type instanceof AUnresolvedType) && ((AUnresolvedType) (type)).getName().equals(idToName(id))) {
 					throwMessage(2014, "Recursive type declaration");
 				}
-
 				invtype = nt;
 				break;
-
-			case COLONCOLON:
+			case COLONCOLON :
 				nextToken();
 				invtype = AstFactory.newARecordInvariantType(idToName(id), tr.readFieldList());
 				break;
-
-			default:
+			default :
 				throwMessage(2015, "Expecting =<type> or ::<field list>");
 		}
-
 		PPattern invPattern = null;
 		PExp invExpression = null;
-		
-		PPattern eqPattern1 = null;
-		PPattern eqPattern2 = null;
-		PExp eqExpression = null;
-		AEqRelation eqRel = null;
-		
-		PPattern ordPattern1 = null;
-		PPattern ordPattern2 = null;
-		PExp ordExpression = null;
-		AOrdRelation ordRel = null;
-
-		while (lastToken().is(VDMToken.INV) || lastToken().is(VDMToken.EQ) || lastToken().is(VDMToken.ORD))
-		{
-    		switch (lastToken().type)
-    		{
-    			case INV:
-    				if (invPattern != null)
-    				{
-    					throwMessage(2332, "Duplicate inv clause");
-    				}
-    				
-        			nextToken();
-        			invPattern = getPatternReader().readPattern();
-        			checkFor(VDMToken.EQUALSEQUALS, 2087, "Expecting '==' after pattern in invariant");
-        			invExpression = getExpressionReader().readExpression();
-        			break;
-        			
-    			case EQ:
-    				if (Settings.release == Release.CLASSIC)
-    				{
-    					throwMessage(2333, "Type eq/ord clauses not available in classic");
-    				}
-
-    				if (eqPattern1 != null)
-    				{
-    					throwMessage(2332, "Duplicate eq clause");
-    				}
-    				
-        			nextToken();
-        			eqPattern1 = getPatternReader().readPattern();
-        			checkFor(VDMToken.EQUALS, 2087, "Expecting '=' between patterns in eq clause");
-        			eqPattern2 = getPatternReader().readPattern();
-        			checkFor(VDMToken.EQUALSEQUALS, 2087, "Expecting '==' after patterns in eq clause");
-        			eqExpression = getExpressionReader().readExpression();
-        			eqRel = AstFactory.newAEqRelation(eqPattern1, eqPattern2, eqExpression);
-    				break;
-    				
-    			case ORD:
-    				if (Settings.release == Release.CLASSIC)
-    				{
-    					throwMessage(2333, "Type eq/ord clauses not available in classic");
-    				}
-
-    				if (ordPattern1 != null)
-    				{
-    					throwMessage(2332, "Duplicate ord clause");
-    				}
-    				
-        			nextToken();
-        			ordPattern1 = getPatternReader().readPattern();
-        			checkFor(VDMToken.LT, 2087, "Expecting '<' between patterns in ord clause");
-        			ordPattern2 = getPatternReader().readPattern();
-        			checkFor(VDMToken.EQUALSEQUALS, 2087, "Expecting '==' after patterns in ord clause");
-        			ordExpression = getExpressionReader().readExpression();
-        			ordRel = AstFactory.newAOrdRelation(ordPattern1, ordPattern2, ordExpression);
-    				break;
-
-    			default:
-    				throwMessage(2331, "Expecting inv, eq or ord clause");
-    		}
+		if (lastToken().is(VDMToken.INV)) {
+			nextToken();
+			invPattern = getPatternReader().readPattern();
+			checkFor(VDMToken.EQUALSEQUALS, 2087, "Expecting '==' after pattern in invariant");
+			invExpression = getExpressionReader().readExpression();
 		}
-		
-		return AstFactory.newATypeDefinition(idToName(id), invtype, invPattern, invExpression, eqRel, ordRel);
+		return AstFactory.newATypeDefinition(idToName(id), invtype, invPattern, invExpression);
 	}
 
 	private List<PDefinition> readTypes() throws LexException, ParserException

@@ -24,7 +24,6 @@ package org.overture.typechecker.assistant;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.overture.ast.analysis.AnalysisAdaptor;
 import org.overture.ast.analysis.AnswerAdaptor;
 import org.overture.ast.analysis.intf.IAnalysis;
@@ -46,11 +45,11 @@ import org.overture.ast.types.AFunctionType;
 import org.overture.ast.types.AOperationType;
 import org.overture.ast.types.AProductType;
 import org.overture.ast.types.ARecordInvariantType;
-import org.overture.ast.types.SSetType;
 import org.overture.ast.types.AUnionType;
 import org.overture.ast.types.PType;
 import org.overture.ast.types.SMapType;
 import org.overture.ast.types.SSeqType;
+import org.overture.ast.types.SSetType;
 import org.overture.ast.util.PTypeSet;
 import org.overture.typechecker.Environment;
 import org.overture.typechecker.LexNameTokenAssistant;
@@ -91,15 +90,14 @@ import org.overture.typechecker.utilities.type.ConcreateTypeImplementor;
 import org.overture.typechecker.utilities.type.PTypeResolver;
 import org.overture.typechecker.utilities.type.QualifiedDefinition;
 
+
 //TODO Add assistant Javadoc
 /**
  * The Interface specifying what is offered by the Overture TC assistant functionalities.
  * 
  * @author ldc
  */
-public interface ITypeCheckerAssistantFactory extends IAstAssistantFactory
-{
-
+public interface ITypeCheckerAssistantFactory extends IAstAssistantFactory {
 //	ABusClassDefinitionAssistantTC createABusClassDefinitionAssistant();
 
 //	ACpuClassDefinitionAssistantTC createACpuClassDefinitionAssistant();
@@ -122,9 +120,9 @@ public interface ITypeCheckerAssistantFactory extends IAstAssistantFactory
 
 	// ASystemClassDefinitionAssistantTC createASystemClassDefinitionAssistant();
 
-//	AThreadDefinitionAssistantTC createAThreadDefinitionAssistant();
+	//	AThreadDefinitionAssistantTC createAThreadDefinitionAssistant();
 
-//	ATypeDefinitionAssistantTC createATypeDefinitionAssistant();
+	//	ATypeDefinitionAssistantTC createATypeDefinitionAssistant();
 
 	// AValueDefinitionAssistantTC createAValueDefinitionAssistant();
 
@@ -141,7 +139,7 @@ public interface ITypeCheckerAssistantFactory extends IAstAssistantFactory
 	SClassDefinitionAssistantTC createSClassDefinitionAssistant();
 
 	SFunctionDefinitionAssistantTC createSFunctionDefinitionAssistant();
-	
+
 	// expression
 	//AApplyExpAssistantTC createAApplyExpAssistant();
 
@@ -149,7 +147,7 @@ public interface ITypeCheckerAssistantFactory extends IAstAssistantFactory
 
 	//PExpAssistantTC createPExpAssistant();
 
-//	SBinaryExpAssistantTC createSBinaryExpAssistant();
+	//	SBinaryExpAssistantTC createSBinaryExpAssistant();
 
 	// module
 
@@ -173,10 +171,10 @@ public interface ITypeCheckerAssistantFactory extends IAstAssistantFactory
 	// ACharacterPatternAssistantTC createACharacterPatternAssistant();
 
 	// AConcatenationPatternAssistantTC createAConcatenationPatternAssistant();
-	
+
 	// AExpressionPatternAssistantTC createAExpressionPatternAssistant();
 
-//	AMapletPatternMapletAssistantTC createAMapletPatternMapletAssistant();
+	//	AMapletPatternMapletAssistantTC createAMapletPatternMapletAssistant();
 
 	// AMapPatternAssistantTC createAMapPatternAssistant();
 
@@ -213,30 +211,30 @@ public interface ITypeCheckerAssistantFactory extends IAstAssistantFactory
 	// statement
 	// AAlwaysStmAssistantTC createAAlwaysStmAssistant();
 	// AAssignmentStmAssistantTC createAAssignmentStmAssistant();
-//	ABlockSimpleBlockStmAssistantTC createABlockSimpleBlockStmAssistant();
+	//	ABlockSimpleBlockStmAssistantTC createABlockSimpleBlockStmAssistant();
 
-//	ACallObjectStatementAssistantTC createACallObjectStatementAssistant();
+	//	ACallObjectStatementAssistantTC createACallObjectStatementAssistant();
 
-//	ACallStmAssistantTC createACallStmAssistant();
+	//	ACallStmAssistantTC createACallStmAssistant();
 
 	// ACaseAlternativeStmAssistantTC createACaseAlternativeStmAssistant();
 	// ACasesStmAssistantTC createACasesStmAssistant();
 	// AElseIfStmAssistantTC createAElseIfStmAssistant();
 	// AExitStmAssistantTC createAExitStmAssistant();
-//	AExternalClauseAssistantTC createAExternalClauseAssistant();
+	//	AExternalClauseAssistantTC createAExternalClauseAssistant();
 
 	// AForAllStmAssistantTC createAForAllStmAssistant();
 	// AForIndexStmAssistantTC createAForIndexStmAssistant();
 	// AForPatternBindStmAssitantTC createAForPatternBindStmAssitant();
 	// AIfStmAssistantTC createAIfStmAssistant();
 	// ALetBeStStmAssistantTC createALetBeStStmAssistant();
-//	ANonDeterministicSimpleBlockStmAssistantTC createANonDeterministicSimpleBlockStmAssistant();
+	//	ANonDeterministicSimpleBlockStmAssistantTC createANonDeterministicSimpleBlockStmAssistant();
 
 	// AReturnStmAssistantTC createAReturnStmAssistant();
 	// ATixeStmAssistantTC createATixeStmAssistant();
 	// ATrapStmAssistantTC createATrapStmAssistant();
 	// AWhileStmAssistantTC createAWhileStmAssistant();
-//	PStateDesignatorAssistantTC createPStateDesignatorAssistant();
+	//	PStateDesignatorAssistantTC createPStateDesignatorAssistant();
 
 	//PStmAssistantTC createPStmAssistant();
 
@@ -244,7 +242,7 @@ public interface ITypeCheckerAssistantFactory extends IAstAssistantFactory
 	// SSimpleBlockStmAssistantTC createSSimpleBlockStmAssistant();
 
 	// Type
-//	AApplyObjectDesignatorAssistantTC createAApplyObjectDesignatorAssistant();
+	//	AApplyObjectDesignatorAssistantTC createAApplyObjectDesignatorAssistant();
 
 	// ABracketTypeAssistantTC createABracketTypeAssistant();
 
@@ -401,7 +399,7 @@ public interface ITypeCheckerAssistantFactory extends IAstAssistantFactory
 	LexNameTokenAssistant getLexNameTokenAssistant();
 
 	IQuestionAnswer<TypeCheckInfo, List<QualifiedDefinition>> getQualificationVisitor();
-	
+
 	IAnswer<Boolean> getInstanceVariableChecker();
 
 	IAnswer<Boolean> getTypeDefinitionChecker();

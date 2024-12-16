@@ -52,47 +52,33 @@ import org.overture.interpreter.values.ValueList;
 import org.overture.interpreter.values.ValueMap;
 import org.overture.interpreter.values.ValueSet;
 
-public class BinaryExpressionEvaluator extends UnaryExpressionEvaluator
-{
 
+public class BinaryExpressionEvaluator extends UnaryExpressionEvaluator {
 	/*
 	 * Boolean
 	 */
-
 	@Override
-	public Value caseAAndBooleanBinaryExp(AAndBooleanBinaryExp node,
-			Context ctxt) throws AnalysisException
-	{
+	public Value caseAAndBooleanBinaryExp(AAndBooleanBinaryExp node, Context ctxt) throws AnalysisException {
 		// breakpoint.check(location, ctxt);
-		node.getLocation().hit(); // Mark as covered
+		node.getLocation().hit();// Mark as covered
 
-		try
-		{
+		try {
 			Value lv = node.getLeft().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
-
-			if (lv.isUndefined())
-			{
+			if (lv.isUndefined()) {
 				return lv;
 			}
-
 			boolean lb = lv.boolValue(ctxt);
+			if (!lb) {
+				return lv;// Stop after LHS
 
-			if (!lb)
-			{
-				return lv; // Stop after LHS
 			}
-
 			Value rv = node.getRight().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
 			boolean rb = rv.boolValue(ctxt);
-
-			if (lb && rb)
-			{
+			if (lb && rb) {
 				return rv;
 			}
-
 			return new BooleanValue(false);
-		} catch (ValueException e)
-		{
+		} catch (ValueException e) {
 			return VdmRuntimeError.abort(node.getLocation(), e);
 		}
 	}
@@ -153,41 +139,29 @@ public class BinaryExpressionEvaluator extends UnaryExpressionEvaluator
 	}
 
 	@Override
-	public Value caseAOrBooleanBinaryExp(AOrBooleanBinaryExp node, Context ctxt)
-			throws AnalysisException
-	{
+	public Value caseAOrBooleanBinaryExp(AOrBooleanBinaryExp node, Context ctxt) throws AnalysisException {
 		// breakpoint.check(location, ctxt);
-		node.getLocation().hit(); // Mark as covered
+		node.getLocation().hit();// Mark as covered
 
-		try
-		{
+		try {
 			Value lv = node.getLeft().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
-
-			if (lv.isUndefined())
-			{
+			if (lv.isUndefined()) {
 				return lv;
-			} else
-			{
+			} else {
 				boolean lb = lv.boolValue(ctxt);
+				if (lb) {
+					return lv;// Stop after LHS
 
-				if (lb)
-				{
-					return lv; // Stop after LHS
 				}
-
 				Value rv = node.getRight().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
 				boolean rb = rv.boolValue(ctxt);
-
-				if (lb || rb)
-				{
+				if (lb || rb) {
 					return new BooleanValue(true);
-				} else
-				{
+				} else {
 					return rv;
 				}
 			}
-		} catch (ValueException e)
-		{
+		} catch (ValueException e) {
 			return VdmRuntimeError.abort(node.getLocation(), e);
 		}
 	}
@@ -470,79 +444,57 @@ public class BinaryExpressionEvaluator extends UnaryExpressionEvaluator
 	}
 
 	@Override
-	public Value caseAGreaterEqualNumericBinaryExp(
-			AGreaterEqualNumericBinaryExp node, Context ctxt)
-			throws AnalysisException
-	{
+	public Value caseAGreaterEqualNumericBinaryExp(AGreaterEqualNumericBinaryExp node, Context ctxt) throws AnalysisException {
 		// breakpoint.check(location, ctxt);
-		node.getLocation().hit(); // Mark as covered
+		node.getLocation().hit();// Mark as covered
 
 		Value lv = node.getLeft().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
 		Value rv = node.getRight().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
-
-		try
-		{
+		try {
 			return new BooleanValue(lv.realValue(ctxt) >= rv.realValue(ctxt));
-		} catch (ValueException e)
-		{
+		} catch (ValueException e) {
 			return VdmRuntimeError.abort(node.getLocation(), e);
 		}
 	}
 
 	@Override
-	public Value caseAGreaterNumericBinaryExp(AGreaterNumericBinaryExp node,
-			Context ctxt) throws AnalysisException
-	{
+	public Value caseAGreaterNumericBinaryExp(AGreaterNumericBinaryExp node, Context ctxt) throws AnalysisException {
 		// breakpoint.check(location, ctxt);
-		node.getLocation().hit(); // Mark as covered
+		node.getLocation().hit();// Mark as covered
 
 		Value lv = node.getLeft().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
 		Value rv = node.getRight().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
-
-		try
-		{
+		try {
 			return new BooleanValue(lv.realValue(ctxt) > rv.realValue(ctxt));
-		} catch (ValueException e)
-		{
+		} catch (ValueException e) {
 			return VdmRuntimeError.abort(node.getLocation(), e);
 		}
 	}
 
 	@Override
-	public Value caseALessEqualNumericBinaryExp(
-			ALessEqualNumericBinaryExp node, Context ctxt)
-			throws AnalysisException
-	{
+	public Value caseALessEqualNumericBinaryExp(ALessEqualNumericBinaryExp node, Context ctxt) throws AnalysisException {
 		// breakpoint.check(location, ctxt);
-		node.getLocation().hit(); // Mark as covered
+		node.getLocation().hit();// Mark as covered
 
 		Value lv = node.getLeft().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
 		Value rv = node.getRight().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
-
-		try
-		{
+		try {
 			return new BooleanValue(lv.realValue(ctxt) <= rv.realValue(ctxt));
-		} catch (ValueException e)
-		{
+		} catch (ValueException e) {
 			return VdmRuntimeError.abort(node.getLocation(), e);
 		}
 	}
 
 	@Override
-	public Value caseALessNumericBinaryExp(ALessNumericBinaryExp node,
-			Context ctxt) throws AnalysisException
-	{
+	public Value caseALessNumericBinaryExp(ALessNumericBinaryExp node, Context ctxt) throws AnalysisException {
 		// breakpoint.check(location, ctxt);
-		node.getLocation().hit(); // Mark as covered
+		node.getLocation().hit();// Mark as covered
 
 		Value lv = node.getLeft().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
 		Value rv = node.getRight().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
-
-		try
-		{
+		try {
 			return new BooleanValue(lv.realValue(ctxt) < rv.realValue(ctxt));
-		} catch (ValueException e)
-		{
+		} catch (ValueException e) {
 			return VdmRuntimeError.abort(node.getLocation(), e);
 		}
 	}
@@ -590,8 +542,8 @@ public class BinaryExpressionEvaluator extends UnaryExpressionEvaluator
 
 		try
 		{
-    		Value l = node.getLeft().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
-    		Value r = node.getRight().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
+	   		Value l = node.getLeft().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
+	   		Value r = node.getRight().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
 
 			if (NumericValue.areIntegers(l, r))
 			{
@@ -656,8 +608,8 @@ public class BinaryExpressionEvaluator extends UnaryExpressionEvaluator
 
 		try
 		{
-    		Value l = node.getLeft().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
-    		Value r = node.getRight().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
+	   		Value l = node.getLeft().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
+	   		Value r = node.getRight().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
 
 			if (NumericValue.areIntegers(l, r))
 			{
@@ -687,8 +639,8 @@ public class BinaryExpressionEvaluator extends UnaryExpressionEvaluator
 
 		try
 		{
-    		Value l = node.getLeft().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
-    		Value r = node.getRight().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
+	   		Value l = node.getLeft().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
+	   		Value r = node.getRight().apply(VdmRuntime.getExpressionEvaluator(), ctxt);
 
 			if (NumericValue.areIntegers(l, r))
 			{
@@ -871,29 +823,20 @@ public class BinaryExpressionEvaluator extends UnaryExpressionEvaluator
 	}
 
 	@Override
-	public Value caseASetDifferenceBinaryExp(ASetDifferenceBinaryExp node,
-			Context ctxt) throws AnalysisException
-	{
+	public Value caseASetDifferenceBinaryExp(ASetDifferenceBinaryExp node, Context ctxt) throws AnalysisException {
 		// breakpoint.check(location, ctxt);
-		node.getLocation().hit(); // Mark as covered
+		node.getLocation().hit();// Mark as covered
 
 		ValueSet result = new ValueSet();
 		ValueSet togo = null;
-
-		try
-		{
+		try {
 			togo = node.getRight().apply(VdmRuntime.getExpressionEvaluator(), ctxt).setValue(ctxt);
 			result.addAll(node.getLeft().apply(VdmRuntime.getExpressionEvaluator(), ctxt).setValue(ctxt));
-
-			for (Value r : togo)
-			{
+			for (Value r : togo) {
 				result.remove(r);
 			}
-
 			return new SetValue(result);
-		}
-		catch (ValueException e)
-		{
+		} catch (ValueException e) {
 			return VdmRuntimeError.abort(node.getLocation(), e);
 		}
 	}
@@ -1040,7 +983,7 @@ public class BinaryExpressionEvaluator extends UnaryExpressionEvaluator
 			return (long) Math.floor(Math.abs(-lv / rv));
 		}
 	}
-	
+
 	private long addExact(long x, long y, Context ctxt) throws ValueException
 	{
 		try
@@ -1065,15 +1008,15 @@ public class BinaryExpressionEvaluator extends UnaryExpressionEvaluator
 		}
 	}
 
-    private long multiplyExact(long x, long y, Context ctxt) throws ValueException
-    {
-		try
-		{
-			return Math.multiplyExact(x, y);
-		}
-		catch (ArithmeticException e)
-		{
-			throw new ValueException(4169, "Arithmetic overflow", ctxt);
-		}
-    }
+				private long multiplyExact(long x, long y, Context ctxt) throws ValueException
+				{
+						try
+						{
+							return Math.multiplyExact(x, y);
+						}
+						catch (ArithmeticException e)
+						{
+							throw new ValueException(4169, "Arithmetic overflow", ctxt);
+						}
+				}
 }

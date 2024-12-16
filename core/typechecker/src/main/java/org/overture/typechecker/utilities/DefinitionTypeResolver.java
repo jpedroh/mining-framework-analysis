@@ -22,7 +22,6 @@
 package org.overture.typechecker.utilities;
 
 import java.util.List;
-
 import org.overture.ast.analysis.AnalysisException;
 import org.overture.ast.analysis.QuestionAdaptor;
 import org.overture.ast.analysis.intf.IQuestionAnswer;
@@ -57,23 +56,19 @@ import org.overture.typechecker.TypeCheckInfo;
 import org.overture.typechecker.TypeCheckerErrors;
 import org.overture.typechecker.assistant.ITypeCheckerAssistantFactory;
 
+
 /**
  * This class implements a way to resolve types from a node in the AST
  * 
  * @author kel
  */
-
-public class DefinitionTypeResolver extends
-		QuestionAdaptor<DefinitionTypeResolver.NewQuestion>
-{
-	public static class NewQuestion
-	{
+public class DefinitionTypeResolver extends QuestionAdaptor<DefinitionTypeResolver.NewQuestion> {
+	public static class NewQuestion {
 		public final IQuestionAnswer<TypeCheckInfo, PType> rootVisitor;
+
 		public final TypeCheckInfo question;
 
-		public NewQuestion(IQuestionAnswer<TypeCheckInfo, PType> rootVisitor,
-				TypeCheckInfo question)
-		{
+		public NewQuestion(IQuestionAnswer<TypeCheckInfo, PType> rootVisitor, TypeCheckInfo question) {
 			this.rootVisitor = rootVisitor;
 			this.question = question;
 		}
@@ -81,8 +76,7 @@ public class DefinitionTypeResolver extends
 
 	protected ITypeCheckerAssistantFactory af;
 
-	public DefinitionTypeResolver(ITypeCheckerAssistantFactory af)
-	{
+	public DefinitionTypeResolver(ITypeCheckerAssistantFactory af) {
 		this.af = af;
 	}
 
@@ -288,6 +282,7 @@ public class DefinitionTypeResolver extends
 		{
 			node.setType(af.createPTypeAssistant().typeResolve(question.question.assistantFactory.createPDefinitionAssistant().getType(node), null, question.rootVisitor, question.question));
 		}
+
 	}
 
 	@Override
@@ -331,65 +326,42 @@ public class DefinitionTypeResolver extends
 	}
 
 	@Override
-	public void caseATypeDefinition(ATypeDefinition node, NewQuestion question)
-			throws AnalysisException
-	{
-		try
-		{
+	public void caseATypeDefinition(ATypeDefinition node, NewQuestion question) throws AnalysisException {
+		try {
 			node.setInfinite(false);
-			node.setInvType((SInvariantType) af.createPTypeAssistant().typeResolve((SInvariantType) node.getInvType(), node, question.rootVisitor, question.question));
-
-			if (node.getInfinite())
-			{
-				TypeCheckerErrors.report(3050, "Type '" + node.getName()
-						+ "' is infinite", node.getLocation(), node);
+			node.setInvType(((SInvariantType) (af.createPTypeAssistant().typeResolve(((SInvariantType) (node.getInvType())), node, question.rootVisitor, question.question))));
+			if (node.getInfinite()) {
+				TypeCheckerErrors.report(3050, ("Type '" + node.getName()) + "' is infinite", node.getLocation(), node);
 			}
-
 			// set type before in case the invdef uses a type defined in this one
 			node.setType(node.getInvType());
-
-			if (node.getInvdef() != null)
-			{
+			if (node.getInvdef() != null) {
 				node.getInvdef().apply(this, question);
 				af.createPPatternAssistant().typeResolve(node.getInvPattern(), question.rootVisitor, question.question);
 			}
-
-			if (node.getEqRelation() != null)
-			{
+			if (node.getEqRelation() != null) {
 				node.getEqRelation().getRelDef().apply(this, question);
 				af.createPPatternAssistant().typeResolve(node.getEqRelation().getLhsPattern(), question.rootVisitor, question.question);
 				af.createPPatternAssistant().typeResolve(node.getEqRelation().getRhsPattern(), question.rootVisitor, question.question);
 			}
-			
-			if (node.getOrdRelation() != null)
-			{
+			if (node.getOrdRelation() != null) {
 				node.getOrdRelation().getRelDef().apply(this, question);
 				af.createPPatternAssistant().typeResolve(node.getOrdRelation().getLhsPattern(), question.rootVisitor, question.question);
 				af.createPPatternAssistant().typeResolve(node.getOrdRelation().getRhsPattern(), question.rootVisitor, question.question);
-
-				if (node.getOrdRelation().getMinDef() != null)
-				{
+				if (node.getOrdRelation().getMinDef() != null) {
 					node.getOrdRelation().getMinDef().apply(this, question);
 				}
-				
-				if (node.getOrdRelation().getMaxDef() != null)
-				{
+				if (node.getOrdRelation().getMaxDef() != null) {
 					node.getOrdRelation().getMaxDef().apply(this, question);
 				}
 			}
-
 			node.setType(node.getInvType());
-
-			if (!node.getComposeDefinitions().isEmpty())
-			{
-				for (PDefinition compose : node.getComposeDefinitions())
-				{
+			if (!node.getComposeDefinitions().isEmpty()) {
+				for (PDefinition compose : node.getComposeDefinitions()) {
 					compose.apply(this, question);
 				}
 			}
-
-		} catch (TypeCheckException e)
-		{
+		} catch (TypeCheckException e) {
 			af.createPTypeAssistant().unResolve(node.getInvType());
 			throw e;
 		}
@@ -408,37 +380,26 @@ public class DefinitionTypeResolver extends
 		}
 	}
 
-	public void updateDefs(AValueDefinition node, TypeCheckInfo question)
-	{
+	public void updateDefs(AValueDefinition node, TypeCheckInfo question) {
 		PType type = node.getType();
 		PPattern pattern = node.getPattern();
-
 		List<PDefinition> newdefs = af.createPPatternAssistant().getDefinitions(pattern, type, node.getNameScope());
-
 		// The untyped definitions may have had "used" markers, so we copy
 		// those into the new typed definitions, lest we get warnings. We
 		// also mark the local definitions as "ValueDefintions" (proxies),
 		// so that classes can be constructed correctly (values are statics).
-
-		for (PDefinition d : newdefs)
-		{
-			for (PDefinition u : node.getDefs())
-			{
-				if (u.getName().equals(d.getName()))
-				{
-					if (af.createPDefinitionAssistant().isUsed(u))
-					{
+		for (PDefinition d : newdefs) {
+			for (PDefinition u : node.getDefs()) {
+				if (u.getName().equals(d.getName())) {
+					if (af.createPDefinitionAssistant().isUsed(u)) {
 						af.createPDefinitionAssistant().markUsed(d);
 					}
-
 					break;
 				}
 			}
-
-			ALocalDefinition ld = (ALocalDefinition) d;
+			ALocalDefinition ld = ((ALocalDefinition) (d));
 			ld.setValueDefinition(node.clone());
 		}
-
 		node.setDefs(newdefs);
 		List<PDefinition> defs = node.getDefs();
 		af.createPDefinitionListAssistant().setAccessibility(defs, node.getAccess().clone());

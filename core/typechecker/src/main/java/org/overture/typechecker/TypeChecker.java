@@ -20,7 +20,6 @@
  *	along with VDMJ.  If not, see <http://www.gnu.org/licenses/>.
  *
  ******************************************************************************/
-
 package org.overture.typechecker;
 
 import java.io.PrintWriter;
@@ -29,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
-
 import org.overture.ast.definitions.PDefinition;
 import org.overture.ast.intf.lex.ILexLocation;
 import org.overture.ast.intf.lex.ILexNameToken;
@@ -44,24 +42,25 @@ import org.overture.typechecker.assistant.TypeCheckerAssistantFactory;
 import org.overture.typechecker.assistant.definition.PDefinitionAssistantTC;
 import org.overture.typechecker.utilities.FreeVarInfo;
 
+
 /**
  * The abstract root of all type checker classes.
  */
-
-abstract public class TypeChecker
-{
+public abstract class TypeChecker {
 	private static boolean suppress=false;
 
-	public interface IStatusListener
-	{
-		void report(VDMError error);
+	public interface IStatusListener {
+		public abstract void report(VDMError error);
 
-		void warning(VDMWarning warning);
+		public abstract void warning(VDMWarning warning);
 	}
 
 	private static List<VDMError> errors = new Vector<VDMError>();
+
 	private static List<VDMWarning> warnings = new Vector<VDMWarning>();
+
 	private static VDMMessage lastMessage = null;
+
 	private static final int MAX = 200;
 
 	final protected ITypeCheckerAssistantFactory assistantFactory;
@@ -71,14 +70,12 @@ abstract public class TypeChecker
 	/**
 	 * VDM-only constructor. <b>NOT</b> for use by extensions.
 	 */
-	public TypeChecker()
-	{
+	public TypeChecker() {
 		clearErrors();
 		this.assistantFactory = new TypeCheckerAssistantFactory();
 	}
 
-	public TypeChecker(ITypeCheckerAssistantFactory factory)
-	{
+	public TypeChecker(ITypeCheckerAssistantFactory factory) {
 		clearErrors();
 		this.assistantFactory = factory;
 	}
@@ -100,18 +97,18 @@ abstract public class TypeChecker
 		LexNameSet skip = new LexNameSet();
 		PDefinitionAssistantTC assistant = assistantFactory.createPDefinitionAssistant();
 
-    	for (PDefinition def: defs)
-    	{
-    		Environment env = new FlatEnvironment(assistantFactory, new Vector<PDefinition>());
-    		FreeVarInfo empty = new FreeVarInfo(env, false);
+	   	for (PDefinition def: defs)
+	   	{
+	   		Environment env = new FlatEnvironment(assistantFactory, new Vector<PDefinition>());
+	   		FreeVarInfo empty = new FreeVarInfo(env, false);
 			LexNameSet freevars = assistant.getFreeVariables(def, empty);
 			
 			if (!freevars.isEmpty())
 			{
-    			for (ILexNameToken name: assistant.getVariableNames(def))
-    			{
-    				dependencies.put(nameFix(name.getExplicit(true)), nameFix(freevars));
-    			}
+	   			for (ILexNameToken name: assistant.getVariableNames(def))
+	   			{
+	   				dependencies.put(nameFix(name.getExplicit(true)), nameFix(freevars));
+	   			}
 			}
 			
 			// Skipped definition names occur in the cycle path, but are not checked
@@ -124,26 +121,26 @@ abstract public class TypeChecker
 					skip.add(nameFix(def.getName().getExplicit(true)));
 				}
 			}
-    	}
-    	
+	   	}
+	   	
 		for (ILexNameToken sought: dependencies.keySet())
 		{
 			if (!skip.contains(sought))
 			{
-    			Stack<ILexNameToken> stack = new Stack<ILexNameToken>();
-    			stack.push(sought);
-    			
-    			if (reachable(sought, dependencies.get(sought), dependencies, stack))
-    			{
-    	    		report(3355, "Cyclic dependency detected for " + sought, sought.getLocation());
-    	    		detail("Cycle", stack.toString());
-    			}
-    			
-    			stack.pop();
+	   			Stack<ILexNameToken> stack = new Stack<ILexNameToken>();
+	   			stack.push(sought);
+	   			
+	   			if (reachable(sought, dependencies.get(sought), dependencies, stack))
+	   			{
+	   	    		report(3355, "Cyclic dependency detected for " + sought, sought.getLocation());
+	   	    		detail("Cycle", stack.toString());
+	   			}
+	   			
+	   			stack.pop();
 			}
 		}
 	}
-	
+
 	/**
 	 * We have to "fix" names to include equals and hashcode methods that take the type qualifier
 	 * into account. This is so that we can distinguish (say) f(nat) and f(char). It also allows
@@ -238,42 +235,38 @@ abstract public class TypeChecker
 		}
 		
 		return false;
-    }
-    
+	}
+
 	public static void suppressErrors(boolean sup)
 	{
 		suppress =sup;
 	}
 
-	public static void report(int number, String problem, ILexLocation location)
-	{
-		if (suppress) return;
+	public static void report(int number, String problem, ILexLocation location) {
+		if (suppress) {
+			return;
+		}
 		VDMError error = new VDMError(number, problem, location);
 		// System.out.println(error.toString());
 		errors.add(error);
 		lastMessage = error;
-
-		for (IStatusListener listner : listners)
-		{
+		for (IStatusListener listner : listners) {
 			listner.report(error);
 		}
-
-		if (errors.size() >= MAX - 1)
-		{
+		if (errors.size() >= (MAX - 1)) {
 			errors.add(new VDMError(10, "Too many type checking errors", location));
 			throw new InternalException(10, "Too many type checking errors");
 		}
 	}
 
-	public static void warning(int number, String problem, ILexLocation location)
-	{
-		if (suppress) return;
+	public static void warning(int number, String problem, ILexLocation location) {
+		if (suppress) {
+			return;
+		}
 		VDMWarning warning = new VDMWarning(number, problem, location);
 		warnings.add(warning);
 		lastMessage = warning;
-
-		for (IStatusListener listner : listners)
-		{
+		for (IStatusListener listner : listners) {
 			listner.warning(warning);
 		}
 	}

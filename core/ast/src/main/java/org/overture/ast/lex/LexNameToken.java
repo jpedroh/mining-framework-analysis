@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
 import org.overture.ast.analysis.AnalysisException;
 import org.overture.ast.analysis.intf.IAnalysis;
 import org.overture.ast.analysis.intf.IAnswer;
@@ -39,14 +38,17 @@ import org.overture.ast.messages.InternalException;
 import org.overture.ast.types.PType;
 import org.overture.ast.util.Utils;
 
-public class LexNameToken extends LexToken implements ILexNameToken,
-		Serializable
-{
+
+public class LexNameToken extends LexToken implements ILexNameToken , Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public final String module;
+
 	public final String name;
+
 	public final boolean old;
+
+	// Name has an explicit module/class
 	public final boolean explicit; // Name has an explicit module/class
 
 	public List<PType> typeQualifier = null;
@@ -76,9 +78,7 @@ public class LexNameToken extends LexToken implements ILexNameToken,
 		return typeQualifier;
 	}
 
-	public LexNameToken(String module, String name, ILexLocation location,
-			boolean old, boolean explicit)
-	{
+	public LexNameToken(String module, String name, ILexLocation location, boolean old, boolean explicit) {
 		super(location, VDMToken.NAME);
 		this.module = module;
 		this.name = name;
@@ -86,13 +86,11 @@ public class LexNameToken extends LexToken implements ILexNameToken,
 		this.explicit = explicit;
 	}
 
-	public LexNameToken(String module, String name, ILexLocation location)
-	{
+	public LexNameToken(String module, String name, ILexLocation location) {
 		this(module, name, location, false, false);
 	}
 
-	public LexNameToken(String module, ILexIdentifierToken id)
-	{
+	public LexNameToken(String module, ILexIdentifierToken id) {
 		super(id.getLocation(), VDMToken.NAME);
 		this.module = module;
 		this.name = id.getName();
@@ -105,8 +103,7 @@ public class LexNameToken extends LexToken implements ILexNameToken,
 		return new LexIdentifierToken(name, old, location);
 	}
 
-	public LexNameToken getExplicit(boolean b)
-	{
+	public LexNameToken getExplicit(boolean b) {
 		LexNameToken ex = new LexNameToken(module, name, location, old, b);
 		ex.setTypeQualifier(typeQualifier);
 		return ex;
@@ -173,18 +170,9 @@ public class LexNameToken extends LexToken implements ILexNameToken,
 	{
 		return new LexNameToken(module, "init_" + name, l);
 	}
-	
-	public boolean isReserved()
-	{
-		return
-			name.startsWith("pre_") ||
-			name.startsWith("post_") ||
-			name.startsWith("inv_") ||
-			name.startsWith("eq_") ||
-			name.startsWith("ord_") ||
-			name.startsWith("min_") ||
-			name.startsWith("max_") ||
-			name.startsWith("init_");
+
+	public boolean isReserved() {
+		return ((((((name.startsWith("pre_") || name.startsWith("post_")) || name.startsWith("inv_")) || name.startsWith("eq_")) || name.startsWith("ord_")) || name.startsWith("min_")) || name.startsWith("max_")) || name.startsWith("init_");
 	}
 
 	public LexNameToken getModifiedName(String classname)

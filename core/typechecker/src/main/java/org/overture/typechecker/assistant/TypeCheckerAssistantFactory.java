@@ -24,7 +24,6 @@ package org.overture.typechecker.assistant;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.overture.ast.analysis.AnalysisAdaptor;
 import org.overture.ast.analysis.AnswerAdaptor;
 import org.overture.ast.analysis.intf.IAnswer;
@@ -45,11 +44,11 @@ import org.overture.ast.types.AFunctionType;
 import org.overture.ast.types.AOperationType;
 import org.overture.ast.types.AProductType;
 import org.overture.ast.types.ARecordInvariantType;
-import org.overture.ast.types.SSetType;
 import org.overture.ast.types.AUnionType;
 import org.overture.ast.types.PType;
 import org.overture.ast.types.SMapType;
 import org.overture.ast.types.SSeqType;
+import org.overture.ast.types.SSetType;
 import org.overture.ast.util.PTypeSet;
 import org.overture.typechecker.Environment;
 import org.overture.typechecker.LexNameTokenAssistant;
@@ -84,11 +83,11 @@ import org.overture.typechecker.utilities.CallableOperationChecker;
 import org.overture.typechecker.utilities.ComposeTypeCollector;
 import org.overture.typechecker.utilities.DefinitionCollector;
 import org.overture.typechecker.utilities.DefinitionEqualityChecker;
-import org.overture.typechecker.utilities.DefinitionFinder;
 import org.overture.typechecker.utilities.DefinitionFinder.Newquestion;
+import org.overture.typechecker.utilities.DefinitionFinder;
 import org.overture.typechecker.utilities.DefinitionTypeFinder;
-import org.overture.typechecker.utilities.DefinitionTypeResolver;
 import org.overture.typechecker.utilities.DefinitionTypeResolver.NewQuestion;
+import org.overture.typechecker.utilities.DefinitionTypeResolver;
 import org.overture.typechecker.utilities.Dereferer;
 import org.overture.typechecker.utilities.ExitTypeCollector;
 import org.overture.typechecker.utilities.FreeVarInfo;
@@ -122,31 +121,34 @@ import org.overture.typechecker.utilities.pattern.SimplePatternChecker;
 import org.overture.typechecker.utilities.type.*;
 import org.overture.typechecker.visitor.QualificationVisitor;
 
-//TODO Add assistant Javadoc
 
+//TODO Add assistant Javadoc
 /**
  * An assistant factory for the Overture Typecher. The methods supplied here only support pure VDM nodes.
  * Override/extend as needed.
- *
+ * 
  * @author ldc
  */
-public class TypeCheckerAssistantFactory extends AstAssistantFactory
-		implements ITypeCheckerAssistantFactory
-{
-
+public class TypeCheckerAssistantFactory extends AstAssistantFactory implements ITypeCheckerAssistantFactory {
+	// instance variables of things to return
 	// instance variables of things to return
 	transient TypeComparator typeComp;
+
 	transient LexNameTokenAssistant lnt;
+
 	transient SFunctionDefinitionAssistantTC sfd;
+
 	transient IsEqVisitor iEqV;
+
 	transient IsOrderedVisitor iOrdV;
+
 	transient MultipleEqualityChecker mulEqCheckr;
 
-	//	@Override
-	//	public AApplyObjectDesignatorAssistantTC createAApplyObjectDesignatorAssistant()
-	//	{
-	//		return new AApplyObjectDesignatorAssistantTC(this);
-	//	}
+//	@Override
+//	public AApplyObjectDesignatorAssistantTC createAApplyObjectDesignatorAssistant()
+//	{
+//		return new AApplyObjectDesignatorAssistantTC(this);
+//	}
 
 	// @Override
 	// public ABracketTypeAssistantTC createABracketTypeAssistant()
@@ -154,39 +156,44 @@ public class TypeCheckerAssistantFactory extends AstAssistantFactory
 	// return new ABracketTypeAssistantTC(this);
 	// }
 
-	@Override public AClassTypeAssistantTC createAClassTypeAssistant()
+	@Override
+	public AClassTypeAssistantTC createAClassTypeAssistant()
 	{
 		return new AClassTypeAssistantTC(this);
 	}
 
-	@Override public AFunctionTypeAssistantTC createAFunctionTypeAssistant()
+	@Override
+	public AFunctionTypeAssistantTC createAFunctionTypeAssistant()
 	{
 		return new AFunctionTypeAssistantTC(this);
 	}
 
-	@Override public AOperationTypeAssistantTC createAOperationTypeAssistant()
+	@Override
+	public AOperationTypeAssistantTC createAOperationTypeAssistant()
 	{
 		return new AOperationTypeAssistantTC(this);
 	}
 
-	//	@Override
-	//	public APatternListTypePairAssistantTC createAPatternListTypePairAssistant()
-	//	{
-	//		return new APatternListTypePairAssistantTC(this);
-	//	}
+//	@Override
+//	public APatternListTypePairAssistantTC createAPatternListTypePairAssistant()
+//	{
+//		return new APatternListTypePairAssistantTC(this);
+//	}
 
-	@Override public ARecordInvariantTypeAssistantTC createARecordInvariantTypeAssistant()
+	@Override
+	public ARecordInvariantTypeAssistantTC createARecordInvariantTypeAssistant()
 	{
 		return new ARecordInvariantTypeAssistantTC(this);
 	}
 
-	//	@Override
-	//	public AUnionTypeAssistantTC createAUnionTypeAssistant()
-	//	{
-	//		return new AUnionTypeAssistantTC(this);
-	//	}
+//	@Override
+//	public AUnionTypeAssistantTC createAUnionTypeAssistant()
+//	{
+//		return new AUnionTypeAssistantTC(this);
+//	}
 
-	@Override public PTypeAssistantTC createPTypeAssistant()
+	@Override
+	public PTypeAssistantTC createPTypeAssistant()
 	{
 		return new PTypeAssistantTC(this);
 	}
@@ -211,22 +218,26 @@ public class TypeCheckerAssistantFactory extends AstAssistantFactory
 	//		return new ACpuClassDefinitionAssistantTC(this);
 	//	}
 
-	@Override public AExplicitFunctionDefinitionAssistantTC createAExplicitFunctionDefinitionAssistant()
+	@Override
+	public AExplicitFunctionDefinitionAssistantTC createAExplicitFunctionDefinitionAssistant()
 	{
 		return new AExplicitFunctionDefinitionAssistantTC(this);
 	}
 
-	@Override public AExplicitOperationDefinitionAssistantTC createAExplicitOperationDefinitionAssistant()
+	@Override
+	public AExplicitOperationDefinitionAssistantTC createAExplicitOperationDefinitionAssistant()
 	{
 		return new AExplicitOperationDefinitionAssistantTC(this);
 	}
 
-	@Override public AImplicitFunctionDefinitionAssistantTC createAImplicitFunctionDefinitionAssistant()
+	@Override
+	public AImplicitFunctionDefinitionAssistantTC createAImplicitFunctionDefinitionAssistant()
 	{
 		return new AImplicitFunctionDefinitionAssistantTC(this);
 	}
 
-	@Override public AImplicitOperationDefinitionAssistantTC createAImplicitOperationDefinitionAssistant()
+	@Override
+	public AImplicitOperationDefinitionAssistantTC createAImplicitOperationDefinitionAssistant()
 	{
 		return new AImplicitOperationDefinitionAssistantTC(this);
 	}
@@ -279,33 +290,38 @@ public class TypeCheckerAssistantFactory extends AstAssistantFactory
 	// return new AValueDefinitionAssistantTC(this);
 	// }
 
-	@Override public PAccessSpecifierAssistantTC createPAccessSpecifierAssistant()
+	@Override
+	public PAccessSpecifierAssistantTC createPAccessSpecifierAssistant()
 	{
 		return new PAccessSpecifierAssistantTC(this);
 	}
 
-	@Override public PDefinitionAssistantTC createPDefinitionAssistant()
+	@Override
+	public PDefinitionAssistantTC createPDefinitionAssistant()
 	{
 		return new PDefinitionAssistantTC(this);
 	}
 
-	@Override public PDefinitionListAssistantTC createPDefinitionListAssistant()
+	@Override
+	public PDefinitionListAssistantTC createPDefinitionListAssistant()
 	{
 		return new PDefinitionListAssistantTC(this);
 	}
 
-	@Override public PDefinitionSet createPDefinitionSet()
+	@Override
+	public PDefinitionSet createPDefinitionSet()
 	{
 		return new PDefinitionSet(this);
 	}
 
-	//	@Override
-	//	public PTraceDefinitionAssistantTC createPTraceDefinitionAssistant()
-	//	{
-	//		return new PTraceDefinitionAssistantTC(this);
-	//	}
+//	@Override
+//	public PTraceDefinitionAssistantTC createPTraceDefinitionAssistant()
+//	{
+//		return new PTraceDefinitionAssistantTC(this);
+//	}
 
-	@Override public SClassDefinitionAssistantTC createSClassDefinitionAssistant()
+	@Override
+	public SClassDefinitionAssistantTC createSClassDefinitionAssistant()
 	{
 		return new SClassDefinitionAssistantTC(this);
 	}
@@ -344,17 +360,20 @@ public class TypeCheckerAssistantFactory extends AstAssistantFactory
 	//		return new AFromModuleImportsAssistantTC(this);
 	//	}
 
-	@Override public AModuleExportsAssistantTC createAModuleExportsAssistant()
+	@Override
+	public AModuleExportsAssistantTC createAModuleExportsAssistant()
 	{
 		return new AModuleExportsAssistantTC(this);
 	}
 
-	@Override public AModuleImportsAssistantTC createAModuleImportsAssistant()
+	@Override
+	public AModuleImportsAssistantTC createAModuleImportsAssistant()
 	{
 		return new AModuleImportsAssistantTC(this);
 	}
 
-	@Override public AModuleModulesAssistantTC createAModuleModulesAssistant()
+	@Override
+	public AModuleModulesAssistantTC createAModuleModulesAssistant()
 	{
 		return new AModuleModulesAssistantTC(this);
 	}
@@ -415,7 +434,8 @@ public class TypeCheckerAssistantFactory extends AstAssistantFactory
 	// return new AMapUnionPatternAssistantTC(this);
 	// }
 
-	@Override public APatternTypePairAssistant createAPatternTypePairAssistant()
+	@Override
+	public APatternTypePairAssistant createAPatternTypePairAssistant()
 	{
 		return new APatternTypePairAssistant(this);
 	}
@@ -450,7 +470,8 @@ public class TypeCheckerAssistantFactory extends AstAssistantFactory
 	// return new ATuplePatternAssistantTC(this);
 	// }
 
-	@Override public ATypeBindAssistantTC createATypeBindAssistant()
+	@Override
+	public ATypeBindAssistantTC createATypeBindAssistant()
 	{
 		return new ATypeBindAssistantTC(this);
 	}
@@ -461,33 +482,38 @@ public class TypeCheckerAssistantFactory extends AstAssistantFactory
 	// return new AUnionPatternAssistantTC(this);
 	// }
 
-	@Override public PatternListTC createPatternList()
+	@Override
+	public PatternListTC createPatternList()
 	{
 		return new PatternListTC(this);
 	}
 
-	@Override public PBindAssistantTC createPBindAssistant()
+	@Override
+	public PBindAssistantTC createPBindAssistant()
 	{
 		return new PBindAssistantTC(this);
 	}
 
-	@Override public PMultipleBindAssistantTC createPMultipleBindAssistant()
+	@Override
+	public PMultipleBindAssistantTC createPMultipleBindAssistant()
 	{
 		return new PMultipleBindAssistantTC(this);
 	}
 
-	@Override public PPatternAssistantTC createPPatternAssistant()
+	@Override
+	public PPatternAssistantTC createPPatternAssistant()
 	{
 		return new PPatternAssistantTC(this);
 	}
 
-	//	@Override
-	//	public PPatternBindAssistantTC createPPatternBindAssistant()
-	//	{
-	//		return new PPatternBindAssistantTC(this);
-	//	}
+//	@Override
+//	public PPatternBindAssistantTC createPPatternBindAssistant()
+//	{
+//		return new PPatternBindAssistantTC(this);
+//	}
 
-	@Override public PPatternListAssistantTC createPPatternListAssistant()
+	@Override
+	public PPatternListAssistantTC createPPatternListAssistant()
 	{
 		return new PPatternListAssistantTC(this);
 	}
@@ -640,328 +666,361 @@ public class TypeCheckerAssistantFactory extends AstAssistantFactory
 
 	/* New visitor utilities */
 
-	@Override public IAnswer<List<PDefinition>> getDefinitionCollector()
+	@Override
+	public IAnswer<List<PDefinition>> getDefinitionCollector()
 	{
 		return new DefinitionCollector(this);
 	}
 
-	@Override public IAnswer<PType> getDefinitionTypeFinder()
+	@Override
+	public IAnswer<PType> getDefinitionTypeFinder()
 	{
 		return new DefinitionTypeFinder(this);
 	}
 
-	@Override public IQuestionAnswer<Object, Boolean> getDefinitionEqualityChecker()
+	@Override
+	public IQuestionAnswer<Object, Boolean> getDefinitionEqualityChecker()
 	{
 		return new DefinitionEqualityChecker(this);
 	}
 
-	@Override public IAnswer<LexNameList> getVariableNameCollector()
+	@Override
+	public IAnswer<LexNameList> getVariableNameCollector()
 	{
 		return new VariableNameCollector(this);
 	}
 
-	@Override public IAnswer<PDefinition> getSelfDefinitionFinder()
+	@Override
+	public IAnswer<PDefinition> getSelfDefinitionFinder()
 	{
 		return new SelfDefinitionFinder(this);
 	}
 
-	@Override public IAnswer<PTypeSet> getExitTypeCollector()
+	@Override
+	public IAnswer<PTypeSet> getExitTypeCollector()
 	{
 		return new ExitTypeCollector(this);
 	}
 
-	@Override public IQuestionAnswer<Newquestion, PDefinition> getDefinitionFinder()
+	@Override
+	public IQuestionAnswer<Newquestion, PDefinition> getDefinitionFinder()
 	{
 		return new DefinitionFinder(this);
 	}
 
-	@Override public IQuestionAnswer<NameFinder.Newquestion, PDefinition> getNameFinder()
+	@Override
+	public IQuestionAnswer<NameFinder.Newquestion, PDefinition> getNameFinder()
 	{
 		return new NameFinder(this);
 	}
 
-	@Override public AnswerAdaptor<Boolean> getFunctionChecker()
+	@Override
+	public AnswerAdaptor<Boolean> getFunctionChecker()
 	{
 		return new FunctionChecker(this);
 	}
 
-	@Override public IAnswer<Boolean> getOperationChecker()
+	@Override
+	public IAnswer<Boolean> getOperationChecker()
 	{
 		return new OperationChecker(this);
 	}
 
-	@Override public IAnswer<String> getKindFinder()
+	@Override
+	public IAnswer<String> getKindFinder()
 	{
 		return new KindFinder(this);
 	}
 
-	@Override public IAnswer<Boolean> getUpdatableChecker()
+	@Override
+	public IAnswer<Boolean> getUpdatableChecker()
 	{
 		return new UpdatableChecker(this);
 	}
 
-	@Override public IAnswer<Boolean> getCallableOperationChecker()
+	@Override
+	public IAnswer<Boolean> getCallableOperationChecker()
 	{
 		return new CallableOperationChecker(this);
 	}
 
-	@Override public AnalysisAdaptor getUsedMarker()
+	@Override
+	public AnalysisAdaptor getUsedMarker()
 	{
 		return new UsedMarker(this);
 	}
 
-	@Override public IQuestion<Environment> getImplicitDefinitionFinder()
+	@Override
+	public IQuestion<Environment> getImplicitDefinitionFinder()
 	{
 		return new ImplicitDefinitionFinder(this);
 	}
 
-	@Override public IAnswer<Boolean> getUsedChecker()
+	@Override
+	public IAnswer<Boolean> getUsedChecker()
 	{
 		return new UsedChecker(this);
 	}
 
-	@Override public IAnswer<Boolean> getPTypeFunctionChecker()
+	@Override
+	public IAnswer<Boolean> getPTypeFunctionChecker()
 	{
 		return new PTypeFunctionChecker(this);
 	}
 
-	@Override public AnalysisAdaptor getUnusedChecker()
+	@Override
+	public AnalysisAdaptor getUnusedChecker()
 	{
 		return new UnusedChecker(this);
 	}
 
-	@Override public IAnswer<PDefinition> getDereferer()
+	@Override
+	public IAnswer<PDefinition> getDereferer()
 	{
 		return new Dereferer(this);
 	}
 
-	@Override public IQuestion<NewQuestion> getDefinitionTypeResolver()
+	@Override
+	public IQuestion<NewQuestion> getDefinitionTypeResolver()
 	{
 		return new DefinitionTypeResolver(this);
 	}
 
-	@Override public AnswerAdaptor<Boolean> getMapBasisChecker()
-	{
+	@Override
+	public AnswerAdaptor<Boolean> getMapBasisChecker() {
 		return new MapBasisChecker(this);
 	}
 
-	@Override public IAnswer<SMapType> getMapTypeFinder()
-	{
+	@Override
+	public IAnswer<SMapType> getMapTypeFinder() {
 		return new MapTypeFinder(this);
 	}
 
-	@Override public IAnswer<SSeqType> getSeqTypeFinder()
-	{
+	@Override
+	public IAnswer<SSeqType> getSeqTypeFinder() {
 		return new SeqTypeFinder(this);
 	}
 
-	@Override public AnswerAdaptor<Boolean> getSeqBasisChecker()
-	{
+	@Override
+	public AnswerAdaptor<Boolean> getSeqBasisChecker() {
 		return new SeqBasisChecker(this);
 	}
 
-	@Override public IAnswer<AOperationType> getOperationTypeFinder()
-	{
+	@Override
+	public IAnswer<AOperationType> getOperationTypeFinder() {
 		return new OperationTypeFinder(this);
 	}
 
-	@Override public AnswerAdaptor<Boolean> getOperationBasisChecker()
-	{
+	@Override
+	public AnswerAdaptor<Boolean> getOperationBasisChecker() {
 		return new OperationBasisChecker(this);
 	}
 
-	@Override public AnswerAdaptor<Boolean> getSetBasisChecker()
-	{
+	@Override
+	public AnswerAdaptor<Boolean> getSetBasisChecker() {
 		return new SetBasisChecker(this);
 	}
 
-	@Override public IAnswer<SSetType> getSetTypeFinder()
-	{
+	@Override
+	public IAnswer<SSetType> getSetTypeFinder() {
 		return new SetTypeFinder(this);
 	}
 
-	@Override public AnswerAdaptor<Boolean> getRecordBasisChecker()
-	{
+	@Override
+	public AnswerAdaptor<Boolean> getRecordBasisChecker() {
 		return new RecordBasisChecker(this);
 	}
 
-	@Override public AnswerAdaptor<Boolean> getTagBasisChecker()
-	{
+	@Override
+	public AnswerAdaptor<Boolean> getTagBasisChecker() {
 		return new TagBasisChecker(this);
 	}
 
-	@Override public IAnswer<ARecordInvariantType> getRecordTypeFinder()
-	{
+	@Override
+	public IAnswer<ARecordInvariantType> getRecordTypeFinder() {
 		return new RecordTypeFinder(this);
 	}
 
-	@Override public AnswerAdaptor<Boolean> getClassBasisChecker(
-			Environment env)
-	{
+	@Override
+	public AnswerAdaptor<Boolean> getClassBasisChecker(Environment env) {
 		return new ClassBasisChecker(this, env);
 	}
 
-	@Override public IAnswer<AClassType> getClassTypeFinder(Environment env)
-	{
+	@Override
+	public IAnswer<AClassType> getClassTypeFinder(Environment env) {
 		return new ClassTypeFinder(this, env);
 	}
 
-	@Override public IAnswer<AProductType> getProductTypeFinder()
-	{
+	@Override
+	public IAnswer<AProductType> getProductTypeFinder() {
 		return new ProductTypeFinder(this);
 	}
 
-	@Override public AnswerAdaptor<Boolean> getProductBasisChecker()
-	{
+	@Override
+	public AnswerAdaptor<Boolean> getProductBasisChecker() {
 		return new ProductBasisChecker(this);
 	}
 
-	@Override public IAnswer<AUnionType> getUnionTypeFinder()
-	{
+	@Override
+	public IAnswer<AUnionType> getUnionTypeFinder() {
 		return new UnionTypeFinder(this);
 	}
 
-	@Override public IQuestionAnswer<Object, Boolean> getTypeEqualityChecker()
-	{
+	@Override
+	public IQuestionAnswer<Object, Boolean> getTypeEqualityChecker() {
 		return new TypeEqualityChecker(this);
 	}
 
-	@Override public IAnswer<String> getTypeDisplayer()
-	{
+	@Override
+	public IAnswer<String> getTypeDisplayer() {
 		return new TypeDisplayer(this);
 	}
 
-	@Override public AnalysisAdaptor getTypeUnresolver()
-	{
+	@Override
+	public AnalysisAdaptor getTypeUnresolver() {
 		return new TypeUnresolver(this);
 	}
 
-	@Override public IQuestionAnswer<AAccessSpecifierAccessSpecifier, Boolean> getNarrowerThanComparator()
-	{
+	@Override
+	public IQuestionAnswer<AAccessSpecifierAccessSpecifier, Boolean> getNarrowerThanComparator() {
 		return new NarrowerThanComparator(this);
 	}
 
-	@Override public AnswerAdaptor<Boolean> getUnionBasisChecker()
-	{
+	@Override
+	public AnswerAdaptor<Boolean> getUnionBasisChecker() {
 		return new UnionBasisChecker(this);
 	}
 
-	@Override public IAnswer<AFunctionType> getFunctionTypeFinder()
-	{
+	@Override
+	public IAnswer<AFunctionType> getFunctionTypeFinder() {
 		return new FunctionTypeFinder(this);
 	}
 
-	@Override public IQuestionAnswer<org.overture.typechecker.utilities.type.ConcreateTypeImplementor.Newquestion, PType> getConcreateTypeImplementor()
-	{
+	@Override
+	public IQuestionAnswer<org.overture.typechecker.utilities.type.ConcreateTypeImplementor.Newquestion, PType> getConcreateTypeImplementor() {
 		return new ConcreateTypeImplementor(this);
 	}
 
-	@Override public IQuestionAnswer<org.overture.typechecker.utilities.type.PTypeResolver.Newquestion, PType> getPTypeResolver()
-	{
+	@Override
+	public IQuestionAnswer<org.overture.typechecker.utilities.type.PTypeResolver.Newquestion, PType> getPTypeResolver() {
 		return new PTypeResolver(this);
 	}
 
-	@Override public IQuestionAnswer<String, PType> getPTypeFinder()
-	{
+	@Override
+	public IQuestionAnswer<String, PType> getPTypeFinder() {
 		return new PTypeFinder(this);
 	}
 
-	@Override public IQuestionAnswer<Integer, Boolean> getProductExtendedChecker()
-	{
+	@Override
+	public IQuestionAnswer<Integer, Boolean> getProductExtendedChecker() {
 		return new ProductExtendedChecker(this);
 	}
 
-	@Override public IQuestionAnswer<Integer, AProductType> getProductExtendedTypeFinder()
-	{
+	@Override
+	public IQuestionAnswer<Integer, AProductType> getProductExtendedTypeFinder() {
 		return new ProductExtendedTypeFinder(this);
 	}
 
-	@Override public IQuestionAnswer<Class<? extends PType>, Boolean> getPTypeExtendedChecker()
-	{
+	@Override
+	public IQuestionAnswer<Class<? extends PType>, Boolean> getPTypeExtendedChecker() {
 		return new PTypeExtendedChecker(this);
 	}
 
-	@Override public IAnswer<Boolean> getVoidExistanceChecker()
-	{
+	@Override
+	public IAnswer<Boolean> getVoidExistanceChecker() {
 		return new VoidExistanceChecker(this);
 	}
 
-	@Override public IAnswer<Boolean> getVoidBasisChecker()
-	{
+	@Override
+	public IAnswer<Boolean> getVoidBasisChecker() {
 		return new VoidBasisChecker(this);
 	}
 
-	@Override public IAnswer<PType> getPossibleTypeFinder()
+	@Override
+	public IAnswer<PType> getPossibleTypeFinder()
 	{
 		return new PossibleTypeFinder(this);
 	}
 
-	@Override public IAnswer<Boolean> getSimplePatternChecker()
+	@Override
+	public IAnswer<Boolean> getSimplePatternChecker()
 	{
 		return new SimplePatternChecker(this);
 	}
 
-	@Override public IAnswer<Boolean> getAlwaysMatchingPatternChecker()
+	@Override
+	public IAnswer<Boolean> getAlwaysMatchingPatternChecker()
 	{
 		return new AlwaysMatchingPatternChecker(this);
 	}
 
-	@Override public AnalysisAdaptor getPatternUnresolver()
+	@Override
+	public AnalysisAdaptor getPatternUnresolver()
 	{
 		return new PatternUnresolver(this);
 	}
 
-	@Override public IQuestion<org.overture.typechecker.utilities.pattern.PatternResolver.NewQuestion> getPatternResolver()
+	@Override
+	public IQuestion<org.overture.typechecker.utilities.pattern.PatternResolver.NewQuestion> getPatternResolver()
 	{
 		return new PatternResolver(this);
 	}
 
-	@Override public IQuestionAnswer<org.overture.typechecker.utilities.pattern.AllDefinitionLocator.NewQuestion, List<PDefinition>> getAllDefinitionLocator()
+	@Override
+	public IQuestionAnswer<org.overture.typechecker.utilities.pattern.AllDefinitionLocator.NewQuestion, List<PDefinition>> getAllDefinitionLocator()
 	{
 		return new AllDefinitionLocator(this);
 	}
 
-	@Override public IAnswer<PType> getPossibleBindTypeFinder()
+	@Override
+	public IAnswer<PType> getPossibleBindTypeFinder()
 	{
 		return new PossibleBindTypeFinder(this);
 	}
 
-	@Override public IAnswer<List<PMultipleBind>> getMultipleBindLister()
+	@Override
+	public IAnswer<List<PMultipleBind>> getMultipleBindLister()
 	{
 		return new MultipleBindLister(this);
 	}
 
-	@Override public IAnswer<ILexNameToken> getPreNameFinder()
+	@Override
+	public IAnswer<ILexNameToken> getPreNameFinder()
 	{
 		return new PreNameFinder(this);
 	}
 
-	@Override public IQuestionAnswer<LinkedList<PDefinition>, Collection<? extends PDefinition>> getExportDefinitionFinder()
+	@Override
+	public IQuestionAnswer<LinkedList<PDefinition>, Collection<? extends PDefinition>> getExportDefinitionFinder()
 	{
 		return new ExportDefinitionFinder(this);
 	}
 
-	@Override public IAnswer<Collection<? extends PDefinition>> getExportDefinitionListFinder()
+	@Override
+	public IAnswer<Collection<? extends PDefinition>> getExportDefinitionListFinder()
 	{
 		return new ExportDefinitionListFinder(this);
 	}
 
-	@Override public IQuestionAnswer<AModuleModules, List<PDefinition>> getImportDefinitionFinder()
+	@Override
+	public IQuestionAnswer<AModuleModules, List<PDefinition>> getImportDefinitionFinder()
 	{
 		return new ImportDefinitionFinder(this);
 	}
 
-	@Override public IAnswer<PTypeList> getComposeTypeCollector()
+	@Override
+	public IAnswer<PTypeList> getComposeTypeCollector()
 	{
 		return new ComposeTypeCollector();
 	}
 
-	@Override public IQuestionAnswer<TypeCheckInfo, List<QualifiedDefinition>> getQualificationVisitor()
-	{
+	@Override
+	public IQuestionAnswer<TypeCheckInfo, List<QualifiedDefinition>> getQualificationVisitor() {
 		return new QualificationVisitor();
 	}
 
-	@Override public TypeComparator getTypeComparator()
+	@Override
+	public TypeComparator getTypeComparator()
 	{
 		if (typeComp == null)
 		{
@@ -971,7 +1030,8 @@ public class TypeCheckerAssistantFactory extends AstAssistantFactory
 
 	}
 
-	@Override public LexNameTokenAssistant getLexNameTokenAssistant()
+	@Override
+	public LexNameTokenAssistant getLexNameTokenAssistant()
 	{
 		if (lnt == null)
 		{
@@ -980,7 +1040,8 @@ public class TypeCheckerAssistantFactory extends AstAssistantFactory
 		return lnt;
 	}
 
-	@Override public SFunctionDefinitionAssistantTC createSFunctionDefinitionAssistant()
+	@Override
+	public SFunctionDefinitionAssistantTC createSFunctionDefinitionAssistant()
 	{
 		if (sfd == null)
 		{
@@ -989,7 +1050,8 @@ public class TypeCheckerAssistantFactory extends AstAssistantFactory
 		return sfd;
 	}
 
-	@Override public IAnswer<Boolean> getInstanceVariableChecker()
+	@Override
+	public IAnswer<Boolean> getInstanceVariableChecker()
 	{
 		return new InstanceVariableChecker(this);
 	}
@@ -1004,8 +1066,8 @@ public class TypeCheckerAssistantFactory extends AstAssistantFactory
 	public IQuestionAnswer<FreeVarInfo, LexNameSet> getFreeVariablesChecker()
 	{
 		return new FreeVariablesChecker(this);
-    }
-    
+	}
+
 	@Override public IQuestionAnswer<ILexLocation, Boolean> getIsOrderedVisitor()
 	{
 		if (iOrdV == null)

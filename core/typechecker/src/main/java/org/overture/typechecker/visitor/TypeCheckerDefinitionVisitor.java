@@ -24,9 +24,8 @@ package org.overture.typechecker.visitor;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 import java.util.Map.Entry;
-
+import java.util.Vector;
 import org.overture.ast.analysis.AnalysisException;
 import org.overture.ast.analysis.intf.IQuestionAnswer;
 import org.overture.ast.definitions.AAssignmentDefinition;
@@ -106,12 +105,9 @@ import org.overture.typechecker.assistant.definition.PAccessSpecifierAssistantTC
 import org.overture.typechecker.utilities.DefinitionTypeResolver;
 import org.overture.typechecker.utilities.type.QualifiedDefinition;
 
-public class TypeCheckerDefinitionVisitor extends AbstractTypeCheckVisitor
-{
 
-	public TypeCheckerDefinitionVisitor(
-			IQuestionAnswer<TypeCheckInfo, PType> typeCheckVisitor)
-	{
+public class TypeCheckerDefinitionVisitor extends AbstractTypeCheckVisitor {
+	public TypeCheckerDefinitionVisitor(IQuestionAnswer<TypeCheckInfo, PType> typeCheckVisitor) {
 		super(typeCheckVisitor);
 	}
 
@@ -1511,72 +1507,49 @@ public class TypeCheckerDefinitionVisitor extends AbstractTypeCheckVisitor
 	}
 
 	@Override
-	public PType caseATypeDefinition(ATypeDefinition node,
-			TypeCheckInfo question) throws AnalysisException
-	{
-		if (node.getInvdef() != null)
-		{
+	public PType caseATypeDefinition(ATypeDefinition node, TypeCheckInfo question) throws AnalysisException {
+		if (node.getInvdef() != null) {
 			question.scope = NameScope.NAMES;
 			node.getInvdef().apply(THIS, question);
 		}
-
-		if (node.getEqRelation() != null)
-		{
+		if (node.getEqRelation() != null) {
 			question.scope = NameScope.NAMES;
-			node.getEqRelation().apply(THIS,question);
+			node.getEqRelation().apply(THIS, question);
 		}
-
-		if (node.getOrdRelation() != null)
-		{
+		if (node.getOrdRelation() != null) {
 			question.scope = NameScope.NAMES;
-			node.getOrdRelation().apply(THIS,question);
+			node.getOrdRelation().apply(THIS, question);
 		}
-
 		PType type = question.assistantFactory.createPDefinitionAssistant().getType(node);
 		node.setType(type);
-
 		// We have to do the "top level" here, rather than delegating to the types
 		// because the definition pointer from these top level types just refers
 		// to the definition we are checking, which is never "narrower" than itself.
 		// See the narrowerThan method in NamedType and RecordType.
-
-		if (type instanceof ANamedInvariantType)
-		{
-			ANamedInvariantType ntype = (ANamedInvariantType) type;
-
+		if (type instanceof ANamedInvariantType) {
+			ANamedInvariantType ntype = ((ANamedInvariantType) (type));
 			// Rebuild the compose definitions, after we check whether they already exist
 			node.getComposeDefinitions().clear();
-
-			for (PType compose : question.assistantFactory.getTypeComparator().checkComposeTypes(ntype.getType(), question.env, true))
-			{
-				ARecordInvariantType rtype = (ARecordInvariantType) compose;
+			for (PType compose : question.assistantFactory.getTypeComparator().checkComposeTypes(ntype.getType(), question.env, true)) {
+				ARecordInvariantType rtype = ((ARecordInvariantType) (compose));
 				PDefinition cdef = AstFactory.newATypeDefinition(rtype.getName(), rtype, null, null);
 				cdef.setAccess(node.getAccess().clone());
 				node.getComposeDefinitions().add(cdef);
 				rtype.getDefinitions().get(0).setAccess(node.getAccess().clone());
 			}
-
-			if (question.assistantFactory.createPTypeAssistant().narrowerThan(ntype.getType(), node.getAccess()))
-			{
+			if (question.assistantFactory.createPTypeAssistant().narrowerThan(ntype.getType(), node.getAccess())) {
 				TypeCheckerErrors.report(3321, "Type component visibility less than type's definition", node.getLocation(), node);
 			}
-		} else if (type instanceof ARecordInvariantType)
-		{
-			ARecordInvariantType rtype = (ARecordInvariantType) type;
-
-			for (AFieldField field : rtype.getFields())
-			{
+		} else if (type instanceof ARecordInvariantType) {
+			ARecordInvariantType rtype = ((ARecordInvariantType) (type));
+			for (AFieldField field : rtype.getFields()) {
 				question.assistantFactory.getTypeComparator().checkComposeTypes(field.getType(), question.env, false);
-
-				if (question.assistantFactory.createPTypeAssistant().narrowerThan(field.getType(), node.getAccess()))
-				{
+				if (question.assistantFactory.createPTypeAssistant().narrowerThan(field.getType(), node.getAccess())) {
 					TypeCheckerErrors.report(3321, "Field type visibility less than type's definition", field.getTagname().getLocation(), field.getTagname());
 				}
 			}
 		}
-
 		return node.getType();
-
 	}
 
 	@Override
@@ -1742,8 +1715,8 @@ public class TypeCheckerDefinitionVisitor extends AbstractTypeCheckVisitor
 	}
 
 	public void typeCheck(List<PTraceDefinition> term,
-						  IQuestionAnswer<TypeCheckInfo, PType> rootVisitor,
-						  TypeCheckInfo question) throws AnalysisException
+			IQuestionAnswer<TypeCheckInfo, PType> rootVisitor,
+			TypeCheckInfo question) throws AnalysisException
 	{
 
 		for (PTraceDefinition def : term)
@@ -1752,7 +1725,7 @@ public class TypeCheckerDefinitionVisitor extends AbstractTypeCheckVisitor
 		}
 
 	}
-	
+
 	public Collection<? extends PDefinition> getDefinitions(
 			APatternListTypePair pltp, NameScope scope, ITypeCheckerAssistantFactory assistantFactory)
 	{
@@ -1765,7 +1738,7 @@ public class TypeCheckerDefinitionVisitor extends AbstractTypeCheckVisitor
 
 		return list;
 	}
-	
+
 	public void typeResolve(AExternalClause clause,
 			IQuestionAnswer<TypeCheckInfo, PType> rootVisitor,
 			TypeCheckInfo question)
@@ -1773,5 +1746,4 @@ public class TypeCheckerDefinitionVisitor extends AbstractTypeCheckVisitor
 		clause.setType(question.assistantFactory.createPTypeAssistant().typeResolve(clause.getType(), null, rootVisitor, question));
 
 	}
-
 }
