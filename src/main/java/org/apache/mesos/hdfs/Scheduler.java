@@ -3,11 +3,14 @@ package org.apache.mesos.hdfs;
 import com.google.inject.Inject;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mesos.MesosSchedulerDriver;
-import org.apache.mesos.Protos;
 import org.apache.mesos.Protos.*;
+import org.apache.mesos.Protos;
 import org.apache.mesos.SchedulerDriver;
 import org.apache.mesos.hdfs.config.SchedulerConf;
 import org.apache.mesos.hdfs.state.AcquisitionPhase;
@@ -15,19 +18,15 @@ import org.apache.mesos.hdfs.state.LiveState;
 import org.apache.mesos.hdfs.state.PersistentState;
 import org.apache.mesos.hdfs.util.HDFSConstants;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 
-public class Scheduler implements org.apache.mesos.Scheduler, Runnable {
-
+public class Scheduler implements Scheduler , Runnable {
   public static final Log log = LogFactory.getLog(Scheduler.class);
-  private final SchedulerConf conf;
-  private final LiveState liveState;
-  private PersistentState persistentState;
 
-  private Map<OfferID, Offer> pendingOffers = new ConcurrentHashMap<>();
-  private boolean initializingCluster = false;
+  private final SchedulerConf conf;
+
+  private final LiveState liveState;
+
+  private PersistentState persistentState;
 
   @Inject
   public Scheduler(SchedulerConf conf, LiveState liveState) {
@@ -78,6 +77,7 @@ public class Scheduler implements org.apache.mesos.Scheduler, Runnable {
     }
     log.info("Registered framework frameworkId=" + frameworkId.getValue());
   }
+
   @Override
   public void reregistered(SchedulerDriver driver, MasterInfo masterInfo) {
     log.info("Reregistered framework.");
@@ -85,26 +85,17 @@ public class Scheduler implements org.apache.mesos.Scheduler, Runnable {
 
   @Override
   public void statusUpdate(SchedulerDriver driver, TaskStatus status) {
-    log.info(String.format(
-        "Received status update for taskId=%s state=%s message='%s' stagingTasks.size=%d",
-        status.getTaskId().getValue(),
-        status.getState().toString(),
-        status.getMessage(),
-        liveState.getStagingTasksSize()));
-
+    log.info(String.format("Received status update for taskId=%s state=%s message='%s' stagingTasks.size=%d", status.getTaskId().getValue(), status.getState().toString(), status.getMessage(), liveState.getStagingTasksSize()));
     if (!isStagingState(status)) {
       liveState.removeStagingTask(status.getTaskId());
     }
-
     if (isTerminalState(status)) {
       liveState.removeTask(status.getTaskId());
     } else if (isRunningState(status)) {
-      liveState.updateTaskForStatus(status); // TODO(rubbish) could terminal/running get pushed to
-                                             // this
-
-      log.info(String.format("Current Acquisition Phase: %s", liveState
-          .getCurrentAcquisitionPhase().toString()));
-
+      // TODO(rubbish) could terminal/running get pushed to
+      liveState.updateTaskForStatus(status);
+                                            // this
+      log.info(String.format("Current Acquisition Phase: %s", liveState.getCurrentAcquisitionPhase().toString()));
       switch (liveState.getCurrentAcquisitionPhase()) {
         case JOURNAL_NODES :
           if (liveState.getJournalNodeSize() == conf.getJournalNodeCount()) {
@@ -112,26 +103,18 @@ public class Scheduler implements org.apache.mesos.Scheduler, Runnable {
           }
           break;
         case NAME_NODE_1 :
-          if (liveState.getNameNodeSize() == 1 && liveState.getFirstNameNodeTaskId() != null) {
-
+          if ((liveState.getNameNodeSize() == 1) && (liveState.getFirstNameNodeTaskId() != null)) {
             liveState.transitionTo(AcquisitionPhase.NAME_NODE_2);
           } else {
             log.info("Cannot locate first namenode task id");
           }
           break;
         case NAME_NODE_2 :
-          if (liveState.getNameNodeSize() == HDFSConstants.TOTAL_NAME_NODES
-              && liveState.getSecondNameNodeTaskId() != null) {
+          if ((liveState.getNameNodeSize() == HDFSConstants.TOTAL_NAME_NODES) && (liveState.getSecondNameNodeTaskId() != null)) {
             reloadConfigsOnAllRunningTasks(driver);
-            sendMessageTo(
-                driver,
-                liveState.getFirstNameNodeTaskId(), liveState.getFirstNameNodeSlaveId(),
-                HDFSConstants.NAME_NODE_INIT_MESSAGE);
+            sendMessageTo(driver, liveState.getFirstNameNodeTaskId(), liveState.getFirstNameNodeSlaveId(), HDFSConstants.NAME_NODE_INIT_MESSAGE);
             //TODO(nicgrayson) should we wait before sending the bootstrap message?
-            sendMessageTo(
-                driver,
-                liveState.getSecondNameNodeTaskId(), liveState.getSecondNameNodeSlaveId(),
-                HDFSConstants.NAME_NODE_BOOTSTRAP_MESSAGE);
+            sendMessageTo(driver, liveState.getSecondNameNodeTaskId(), liveState.getSecondNameNodeSlaveId(), HDFSConstants.NAME_NODE_BOOTSTRAP_MESSAGE);
             liveState.transitionTo(AcquisitionPhase.DATA_NODES);
           } else {
             log.info("Cannot locate second namenode task id");
@@ -141,15 +124,13 @@ public class Scheduler implements org.apache.mesos.Scheduler, Runnable {
           break;
       }
     } else {
-      log.warn(String.format("Don't know how to handle state=%s for taskId=%s",
-          status.getState(), status.getTaskId().getValue()));
+      log.warn(String.format("Don\'t know how to handle state=%s for taskId=%s", status.getState(), status.getTaskId().getValue()));
     }
   }
 
   @Override
-  synchronized public void resourceOffers(SchedulerDriver driver, List<Offer> offers) {
+  public synchronized void resourceOffers(SchedulerDriver driver, List<Offer> offers) {
     log.info(String.format("Received %d offers", offers.size()));
-
     if (liveState.getStagingTasksSize() != 0) {
       log.info("Declining offers because tasks are currently staging");
       for (Offer offer : offers) {
@@ -217,78 +198,29 @@ public class Scheduler implements org.apache.mesos.Scheduler, Runnable {
         conf.getMesosMasterUri());
     driver.run().getValueDescriptor().getFullName();
   }
-  private void launchNode(SchedulerDriver driver, Offer offer,
-                          String nodeName, List<String> taskNames, String executorName) {
-    log.info(String.format("Launching node of type %s with tasks %s", nodeName,
-        taskNames.toString()));
-    String taskIdName = String.format("%s.%s.%d", nodeName, executorName,
-        System.currentTimeMillis());
+
+  private void launchNode(SchedulerDriver driver, Offer offer, String nodeName, List<String> taskNames, String executorName) {
+    log.info(String.format("Launching node of type %s with tasks %s", nodeName, taskNames.toString()));
+    String taskIdName = String.format("%s.%s.%d", nodeName, executorName, System.currentTimeMillis());
     List<Resource> resources = getExecutorResources();
     ExecutorInfo executorInfo = createExecutor(taskIdName, nodeName, executorName, resources);
     List<TaskInfo> tasks = new ArrayList<>();
     for (String taskName : taskNames) {
       List<Resource> taskResources = getTaskResources(taskName);
-      TaskID taskId = TaskID.newBuilder()
-          .setValue(String.format("task.%s.%s", taskName, taskIdName))
-          .build();
-      TaskInfo task = TaskInfo.newBuilder()
-          .setExecutor(executorInfo)
-          .setName(taskName)
-          .setTaskId(taskId)
-          .setSlaveId(offer.getSlaveId())
-          .addAllResources(taskResources)
-          .setData(ByteString.copyFromUtf8(
-              String.format("bin/hdfs-mesos-%s", taskName)))
-          .build();
+      TaskID taskId = TaskID.newBuilder().setValue(String.format("task.%s.%s", taskName, taskIdName)).build();
+      TaskInfo task = TaskInfo.newBuilder().setExecutor(executorInfo).setName(taskName).setTaskId(taskId).setSlaveId(offer.getSlaveId()).addAllResources(taskResources).setData(ByteString.copyFromUtf8(String.format("bin/hdfs-mesos-%s", taskName))).build();
       tasks.add(task);
-
       liveState.addStagingTask(task);
       persistentState.addNode(taskId, offer.getHostname(), taskName);
     }
     driver.launchTasks(Arrays.asList(offer.getId()), tasks);
   }
-  private ExecutorInfo createExecutor(String taskIdName, String nodeName, String executorName,
-      List<Resource> resources) {
+
+  private ExecutorInfo createExecutor(String taskIdName, String nodeName, String executorName, List<Resource> resources) {
     int confServerPort = conf.getConfigServerPort();
-    return ExecutorInfo
-        .newBuilder()
-        .setName(nodeName + " executor")
-        .setExecutorId(ExecutorID.newBuilder().setValue("executor." + taskIdName).build())
-        .addAllResources(resources)
-        .setCommand(CommandInfo.newBuilder()
-        .addAllUris(Arrays.asList(
-            CommandInfo.URI.newBuilder().setValue(
-                String.format("http://%s:%d/%s", conf.getFrameworkHostAddress(), confServerPort,
-                    HDFSConstants.HDFS_BINARY_FILE_NAME))
-                .build(),
-            CommandInfo.URI.newBuilder().setValue(
-                String.format("http://%s:%d/%s", conf.getFrameworkHostAddress(), confServerPort,
-                    HDFSConstants.HDFS_CONFIG_FILE_NAME))
-                .build()))
-            .setEnvironment(Environment.newBuilder()
-                .addAllVariables(Arrays.asList(
-                Environment.Variable.newBuilder()
-                    .setName("HADOOP_OPTS")
-                    .setValue(conf.getJvmOpts()).build(),
-                Environment.Variable.newBuilder()
-                    .setName("HADOOP_HEAPSIZE")
-                    .setValue(String.format("%d", conf.getHadoopHeapSize())).build(),
-                Environment.Variable.newBuilder()
-                    .setName("HADOOP_NAMENODE_OPTS")
-                    .setValue("-Xmx" + conf.getNameNodeHeapSize() + "m").build(),
-                Environment.Variable.newBuilder()
-                    .setName("HADOOP_DATANODE_OPTS")
-                    .setValue("-Xmx" + conf.getDataNodeHeapSize() + "m").build(),
-                Environment.Variable.newBuilder()
-                    .setName("EXECUTOR_OPTS")
-                    .setValue("-Xmx" + conf.getExecutorHeap() + "m").build())))
-                    .setValue(
-                        "env ; cd hdfs-mesos-* && exec java $HADOOP_OPTS $EXECUTOR_OPTS " +
-                        "-cp lib/*.jar org.apache.mesos.hdfs.executor." + executorName)
-                        .build())
-                    .build();
-    }
-    
+    return ExecutorInfo.newBuilder().setName(nodeName + " executor").setExecutorId(ExecutorID.newBuilder().setValue("executor." + taskIdName).build()).addAllResources(resources).setCommand(CommandInfo.newBuilder().addAllUris(Arrays.asList(CommandInfo.URI.newBuilder().setValue(String.format("http://%s:%d/%s", conf.getFrameworkHostAddress(), confServerPort, HDFSConstants.HDFS_BINARY_FILE_NAME)).build(), CommandInfo.URI.newBuilder().setValue(String.format("http://%s:%d/%s", conf.getFrameworkHostAddress(), confServerPort, HDFSConstants.HDFS_CONFIG_FILE_NAME)).build())).setEnvironment(Environment.newBuilder().addAllVariables(Arrays.asList(Environment.Variable.newBuilder().setName("HADOOP_OPTS").setValue(conf.getJvmOpts()).build(), Environment.Variable.newBuilder().setName("HADOOP_HEAPSIZE").setValue(String.format("%d", conf.getHadoopHeapSize())).build(), Environment.Variable.newBuilder().setName("HADOOP_NAMENODE_OPTS").setValue(("-Xmx" + conf.getNameNodeHeapSize()) + "m").build(), Environment.Variable.newBuilder().setName("HADOOP_DATANODE_OPTS").setValue(("-Xmx" + conf.getDataNodeHeapSize()) + "m").build(), Environment.Variable.newBuilder().setName("EXECUTOR_OPTS").setValue(("-Xmx" + conf.getExecutorHeap()) + "m").build()))).setValue(("env ; cd hdfs-mesos-* && exec java $HADOOP_OPTS $EXECUTOR_OPTS " + "-cp lib/*.jar org.apache.mesos.hdfs.executor.") + executorName).build()).build();
+  }
+
   private List<Resource> getExecutorResources() {
     return Arrays.asList(
         Resource.newBuilder()
@@ -306,7 +238,7 @@ public class Scheduler implements org.apache.mesos.Scheduler, Runnable {
             .setRole("*")
             .build());
   }
-    
+
   private List<Resource> getTaskResources(String taskName) {
     return Arrays.asList(
         Resource.newBuilder()
@@ -330,12 +262,7 @@ public class Scheduler implements org.apache.mesos.Scheduler, Runnable {
       log.info(String.format("Already running journalnode on %s", offer.getHostname()));
       return false;
     } else {
-      launchNode(
-          driver,
-          offer,
-          HDFSConstants.JOURNAL_NODE_ID,
-          Arrays.asList(HDFSConstants.JOURNAL_NODE_ID),
-          HDFSConstants.NODE_EXECUTOR_ID);
+      launchNode(driver, offer, HDFSConstants.JOURNAL_NODE_ID, Arrays.asList(HDFSConstants.JOURNAL_NODE_ID), HDFSConstants.NODE_EXECUTOR_ID);
       return true;
     }
   }
@@ -345,64 +272,44 @@ public class Scheduler implements org.apache.mesos.Scheduler, Runnable {
       log.info(String.format("Already running namenode on %s", offer.getHostname()));
       return false;
     } else {
-      launchNode(
-          driver,
-          offer,
-          HDFSConstants.NAME_NODE_ID,
-          Arrays.asList(HDFSConstants.NAME_NODE_ID, HDFSConstants.ZKFC_NODE_ID),
-          HDFSConstants.NAME_NODE_EXECUTOR_ID);
+      launchNode(driver, offer, HDFSConstants.NAME_NODE_ID, Arrays.asList(HDFSConstants.NAME_NODE_ID, HDFSConstants.ZKFC_NODE_ID), HDFSConstants.NAME_NODE_EXECUTOR_ID);
       return true;
     }
   }
 
   private boolean maybeLaunchDataNode(SchedulerDriver driver, Offer offer) {
-    if (persistentState.dataNodeRunningOnSlave(offer.getHostname()) ||
-        persistentState.nameNodeRunningOnSlave(offer.getHostname()) ||
-        persistentState.journalNodeRunningOnSlave(offer.getHostname())) {
+    if ((persistentState.dataNodeRunningOnSlave(offer.getHostname()) || persistentState.nameNodeRunningOnSlave(offer.getHostname())) || persistentState.journalNodeRunningOnSlave(offer.getHostname())) {
       log.info(String.format("Already running hdfs task on %s", offer.getHostname()));
       return false;
     } else {
-      launchNode(
-          driver,
-          offer,
-          HDFSConstants.DATA_NODE_ID,
-          Arrays.asList(HDFSConstants.DATA_NODE_ID),
-          HDFSConstants.NODE_EXECUTOR_ID);
+      launchNode(driver, offer, HDFSConstants.DATA_NODE_ID, Arrays.asList(HDFSConstants.DATA_NODE_ID), HDFSConstants.NODE_EXECUTOR_ID);
       return true;
     }
   }
 
   private void sendMessageTo(SchedulerDriver driver, TaskID taskId, SlaveID slaveID, String message) {
-    log.info(String.format("Sending message '%s' to taskId=%s, slaveId=%s", message,
-        taskId.getValue(), slaveID.getValue()));
+    log.info(String.format("Sending message \'%s\' to taskId=%s, slaveId=%s", message, taskId.getValue(), slaveID.getValue()));
     String postfix = taskId.getValue();
     postfix = postfix.substring(postfix.indexOf(".") + 1, postfix.length());
     postfix = postfix.substring(postfix.indexOf(".") + 1, postfix.length());
-    driver.sendFrameworkMessage(
-        ExecutorID.newBuilder().setValue("executor." + postfix).build(),
-        slaveID,
-        message.getBytes());
+    driver.sendFrameworkMessage(ExecutorID.newBuilder().setValue("executor." + postfix).build(), slaveID, message.getBytes());
   }
 
   private boolean isTerminalState(TaskStatus taskStatus) {
-    return (taskStatus.getState().equals(TaskState.TASK_FAILED)
-        || taskStatus.getState().equals(TaskState.TASK_FINISHED)
-        || taskStatus.getState().equals(TaskState.TASK_KILLED)
-        || taskStatus.getState().equals(TaskState.TASK_LOST));
+    return ((taskStatus.getState().equals(TaskState.TASK_FAILED) || taskStatus.getState().equals(TaskState.TASK_FINISHED)) || taskStatus.getState().equals(TaskState.TASK_KILLED)) || taskStatus.getState().equals(TaskState.TASK_LOST);
   }
 
   private boolean isRunningState(TaskStatus taskStatus) {
-    return (taskStatus.getState().equals(TaskState.TASK_RUNNING));
+    return taskStatus.getState().equals(TaskState.TASK_RUNNING);
   }
 
   private boolean isStagingState(TaskStatus taskStatus) {
-    return (taskStatus.getState().equals(TaskState.TASK_STAGING));
+    return taskStatus.getState().equals(TaskState.TASK_STAGING);
   }
 
   private void reloadConfigsOnAllRunningTasks(SchedulerDriver driver) {
     for (Protos.TaskStatus taskStatus : liveState.getRunningTasks().values()) {
-      sendMessageTo(driver, taskStatus.getTaskId(), taskStatus.getSlaveId(),
-          HDFSConstants.RELOAD_CONFIG);
+      sendMessageTo(driver, taskStatus.getTaskId(), taskStatus.getSlaveId(), HDFSConstants.RELOAD_CONFIG);
     }
   }
 }
