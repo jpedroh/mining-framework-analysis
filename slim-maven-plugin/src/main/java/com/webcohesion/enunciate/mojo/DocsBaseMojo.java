@@ -18,7 +18,9 @@ package com.webcohesion.enunciate.mojo;
 import com.webcohesion.enunciate.Enunciate;
 import com.webcohesion.enunciate.module.DocumentationProviderModule;
 import com.webcohesion.enunciate.module.EnunciateModule;
-
+import java.io.File;
+import java.io.IOException;
+import java.util.Locale;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -29,22 +31,18 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Locale;
 
 /**
  * Generates the Enunciate documentation, including any client-side libraries.
  *
  * @author Ryan Heaton
  */
-@Mojo ( name = "docs", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, threadSafe = true )
+@Mojo(name = "docs", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, threadSafe = true)
 public class DocsBaseMojo extends ConfigMojo implements MavenReport {
-
   /**
    * The directory where the docs are put.
    */
-  @Parameter( defaultValue = "${project.reporting.outputDirectory}", property = "enunciate.docsDir", required = true )
+  @Parameter(defaultValue = "${project.reporting.outputDirectory}", property = "enunciate.docsDir", required = true)
   protected String docsDir;
 
   /**
@@ -56,7 +54,7 @@ public class DocsBaseMojo extends ConfigMojo implements MavenReport {
   /**
    * The temporary staging directory for Enunciate-generated documentation. This is only required for "site" inclusion.
    */
-  @Parameter( defaultValue = "${project.build.directory}/enunciate-docs-staging", required = true )
+  @Parameter(defaultValue = "${project.build.directory}/enunciate-docs-staging", required = true)
   protected String docsStagingDir;
 
   /**
@@ -100,27 +98,20 @@ public class DocsBaseMojo extends ConfigMojo implements MavenReport {
     super.execute();
   }
 
-  public void generate(org.codehaus.doxia.sink.Sink sink, Locale locale) throws MavenReportException {
-    generate();
-  }
-
-  public void generate(org.apache.maven.doxia.sink.Sink sink, java.util.Locale locale) throws MavenReportException {
-    generate();
-  }
-
-  private void generate() throws MavenReportException {
+<<<<<<< LEFT
+=======
+private
+>>>>>>> RIGHT
+   void generate(Locale locale) throws MavenReportException {
     if (this.siteError != null) {
       throw new MavenReportException("Unable to generate Enunciate documentation.", this.siteError);
     }
-
-    //first get rid of the empty page the site plugin puts there, in order to make room for the documentation.
+    // first get rid of the empty page the site plugin puts there, in order to make room for the documentation.
     new File(getReportOutputDirectory(), this.indexPageName == null ? "index.html" : this.indexPageName).delete();
-
-    Enunciate enunciate = (Enunciate) getPluginContext().get(ConfigMojo.ENUNCIATE_PROPERTY);
+    Enunciate enunciate = ((Enunciate) (getPluginContext().get(ConfigMojo.ENUNCIATE_PROPERTY)));
     try {
       enunciate.copyDir(getReportStagingDirectory(), getReportOutputDirectory());
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new MavenReportException("Unable to copy Enunciate documentation from the staging area to the report directory.", e);
     }
   }
@@ -196,5 +187,15 @@ public class DocsBaseMojo extends ConfigMojo implements MavenReport {
     }
 
     return new File(getReportStagingDirectory(), this.indexPageName == null ? "index.html" : this.indexPageName).exists();
+  }
+
+  // because of compatibility reasons, we do not add @Overwrite here - depending on the environment sink could be of type org.codehaus.doxia.sink.Sink or even org.apache.maven.doxia.sink.Sink (in older versions the codehaus version does NOT extend the apache-maven one)
+  public void generate(org.codehaus.doxia.sink.Sink sink, Locale locale) throws MavenReportException {
+    generate(locale);
+  }
+
+  // because of compatibility reasons, we just duplicate this one - depending on the environment sink could be of type org.codehaus.doxia.sink.Sink or even org.apache.maven.doxia.sink.Sink (in older versions the codehaus version does NOT extend the apache-maven one)
+  public void generate(Sink sink, Locale locale) throws MavenReportException {
+    generate(locale);
   }
 }
