@@ -3,46 +3,26 @@
  *
  * Created on Jun 26, 2012, 3:04:38 PM
  */
-
-/*
-    Copywrite 2012-2016 Will Winder
-
-    This file is part of Universal Gcode Sender (UGS).
-
-    UGS is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    UGS is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with UGS.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package com.willwinder.universalgcodesender;
 
+import com.willwinder.universalgcodesender.i18n.Localization;
+import com.willwinder.universalgcodesender.listeners.ControllerListener;
+import com.willwinder.universalgcodesender.listeners.UGSEventListener;
+import com.willwinder.universalgcodesender.model.BackendAPI;
+import com.willwinder.universalgcodesender.model.GUIBackend;
 import com.willwinder.universalgcodesender.model.Position;
+import com.willwinder.universalgcodesender.model.UGSEvent;
+import com.willwinder.universalgcodesender.model.Utils.Units;
+import com.willwinder.universalgcodesender.pendantui.PendantUI;
+import com.willwinder.universalgcodesender.types.GcodeCommand;
 import com.willwinder.universalgcodesender.uielements.*;
+import com.willwinder.universalgcodesender.uielements.LengthLimitedDocument;
 import com.willwinder.universalgcodesender.utils.CommUtils;
 import com.willwinder.universalgcodesender.utils.FirmwareUtils;
 import com.willwinder.universalgcodesender.utils.Settings;
 import com.willwinder.universalgcodesender.utils.SettingsFactory;
 import com.willwinder.universalgcodesender.utils.Version;
-import com.willwinder.universalgcodesender.i18n.Localization;
-import com.willwinder.universalgcodesender.model.BackendAPI;
-import com.willwinder.universalgcodesender.pendantui.PendantUI;
-import com.willwinder.universalgcodesender.types.GcodeCommand;
 import com.willwinder.universalgcodesender.visualizer.VisualizerWindow;
-import com.willwinder.universalgcodesender.model.UGSEvent;
-import com.willwinder.universalgcodesender.listeners.ControllerListener;
-import com.willwinder.universalgcodesender.model.GUIBackend;
-import com.willwinder.universalgcodesender.model.Utils.Units;
-import com.willwinder.universalgcodesender.uielements.LengthLimitedDocument;
-import static com.willwinder.universalgcodesender.utils.GUIHelpers.displayErrorDialog;
 import java.awt.Color;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
@@ -65,35 +45,46 @@ import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.text.DefaultCaret;
 import javax.vecmath.Point3d;
-import com.willwinder.universalgcodesender.listeners.UGSEventListener;
+import static com.willwinder.universalgcodesender.utils.GUIHelpers.displayErrorDialog;
+
 
 /**
  *
  * @author wwinder
  */
-public class MainWindow extends JFrame implements ControllerListener, UGSEventListener {
+    // End of variables declaration//GEN-END:variables
+public class MainWindow extends JFrame implements ControllerListener , UGSEventListener {
     private static final Logger logger = Logger.getLogger(MainWindow.class.getName());
 
     final private static String VERSION = Version.getVersion() + " / " + Version.getTimestamp();
 
     private PendantUI pendantUI;
+
     public Settings settings;
-    
+
     BackendAPI backend;
-    
+
+    // My Variables
     // My Variables
     private javax.swing.JFileChooser fileChooser;
+
     private final int consoleSize = 1024 * 1024;
 
     // TODO: Move command history box into a self contained object.
+    // TODO: Move command history box into a self contained object.
     private int commandNum = -1;
+
     private List<String> manualCommandHistory;
 
     // Other windows
+    // Other windows
     VisualizerWindow vw = null;
+
     String gcodeFile = null;
+
     String processedGcodeFile = null;
-    
+
+    // Duration timer
     // Duration timer
     private Timer timer;
 
@@ -102,22 +93,18 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
         this.backend = backend;
         this.settings = SettingsFactory.loadSettings();
         if (settings.isShowNightlyWarning() && MainWindow.VERSION.contains("nightly")) {
-            java.awt.EventQueue.invokeLater(new Runnable() { @Override public void run() {
-                String message =
-                        "This version of Universal Gcode Sender is a nightly build.\n"
-                                + "It contains all of the latest features and improvements, \n"
-                                + "but may also have bugs that still need to be fixed.\n"
-                                + "\n"
-                                + "If you encounter any problems, please report them on github.";
-                JOptionPane.showMessageDialog(new JFrame(), message,
-                        "", JOptionPane.INFORMATION_MESSAGE);
-            }});
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    String message = "This version of Universal Gcode Sender is a nightly build.\n" + ((("It contains all of the latest features and improvements, \n" + "but may also have bugs that still need to be fixed.\n") + "\n") + "If you encounter any problems, please report them on github.");
+                    JOptionPane.showMessageDialog(new JFrame(), message, "", JOptionPane.INFORMATION_MESSAGE);
+                }
+            });
         }
         initComponents();
         initProgram();
         backend.addControllerListener(this);
         backend.addUGSEventListener(this);
-        
         arrowMovementEnabled.setSelected(settings.isManualModeEnabled());
         stepSizeSpinner.setValue(settings.getManualModeStepSize());
         boolean unitsAreMM = settings.getDefaultUnits().equals("mm");
@@ -131,22 +118,17 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
         showVerboseOutputCheckBox.setSelected(settings.isVerboseOutputEnabled());
         showCommandTableCheckBox.setSelected(settings.isCommandTableEnabled());
         firmwareComboBox.setSelectedItem(settings.getFirmwareVersion());
-//        macroPanel.initMacroButtons(settings);
-
+        // macroPanel.initMacroButtons(settings);
         setSize(settings.getMainWindowSettings().width, settings.getMainWindowSettings().height);
         setLocation(settings.getMainWindowSettings().xLocation, settings.getMainWindowSettings().yLocation);
-//        mw.setSize(java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width, java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width);
-
-        
+        // mw.setSize(java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width, java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width);
         initFileChooser();
-        
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                if (fileChooser.getSelectedFile() != null ) {
+                if (fileChooser.getSelectedFile() != null) {
                     settings.setLastOpenedFilename(fileChooser.getSelectedFile().getAbsolutePath());
                 }
-                
                 settings.setDefaultUnits(inchRadioButton.isSelected() ? "inch" : "mm");
                 settings.setManualModeStepSize(getStepSize());
                 settings.setManualModeEnabled(arrowMovementEnabled.isSelected());
@@ -156,16 +138,14 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
                 settings.setVerboseOutputEnabled(showVerboseOutputCheckBox.isSelected());
                 settings.setCommandTableEnabled(showCommandTableCheckBox.isSelected());
                 settings.setFirmwareVersion(firmwareComboBox.getSelectedItem().toString());
-
                 SettingsFactory.saveSettings(settings);
-                
-                if(pendantUI!=null){
+                if (pendantUI != null) {
                     pendantUI.stop();
                 }
             }
         });
     }
-    
+
     /**
      * @param args the command line arguments
      */
@@ -245,7 +225,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
         });
         
         mw.initFileChooser();
-
+        
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -1278,40 +1258,40 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
     /** End of generated code.
      */
-    
+
     /** Generated callback functions, hand coded.
      */
     private void scrollWindowCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scrollWindowCheckBoxActionPerformed
         checkScrollWindow();
     }//GEN-LAST:event_scrollWindowCheckBoxActionPerformed
 
-    private void opencloseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_opencloseButtonActionPerformed
-        if( this.opencloseButton.getText().equalsIgnoreCase(Localization.getString("open")) ) {
+    //GEN-LAST:event_opencloseButtonActionPerformed
+    private void opencloseButtonActionPerformed(ActionEvent evt) {
+    //GEN-FIRST:event_opencloseButtonActionPerformed
+        if (this.opencloseButton.getText().equalsIgnoreCase(Localization.getString("open"))) {
             this.commandTable.clear();
             this.sentRowsValueLabel.setText("0");
-
             String firmware = this.firmwareComboBox.getSelectedItem().toString();
             String port = commPortComboBox.getSelectedItem().toString();
             int baudRate = Integer.parseInt(baudrateSelectionComboBox.getSelectedItem().toString());
-            
             try {
                 this.backend.connect(firmware, port, baudRate);
-                
                 // Let the command field grab focus.
                 commandTextField.grabFocus();
-            } catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 displayErrorDialog(e.getMessage());
             }
         } else {
             try {
                 this.backend.disconnect();
-            } catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 displayErrorDialog(e.getMessage());
             }
         }
-    }//GEN-LAST:event_opencloseButtonActionPerformed
+    }
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
         loadPortSelector();
@@ -1319,7 +1299,6 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
 
     private void baudrateSelectionComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_baudrateSelectionComboBoxActionPerformed
     }//GEN-LAST:event_baudrateSelectionComboBoxActionPerformed
-
 
     private void increaseStepActionPerformed(java.awt.event.ActionEvent evt) {                                             
         double stepSize = this.getStepSize();
@@ -1333,7 +1312,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
             stepSize = 0.01;
         }
         this.setStepSize(stepSize);
-    }                                            
+    }
 
     private void decreaseStepActionPerformed(java.awt.event.ActionEvent evt) {                                             
         double stepSize = this.getStepSize();
@@ -1345,8 +1324,8 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
             stepSize = stepSize - 0.01;
         }
         this.setStepSize(stepSize);
-    }                                            
-    
+    }
+
     private void divideStepActionPerformed(java.awt.event.ActionEvent evt) {                                             
         double stepSize = this.getStepSize();
 
@@ -1363,7 +1342,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
         } 
         
         this.setStepSize(stepSize);
-    }                                            
+    }
 
     private void multiplyStepActionPerformed(java.awt.event.ActionEvent evt) {                                             
         double stepSize = this.getStepSize();
@@ -1381,7 +1360,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
         }
 
         this.setStepSize(stepSize);
-    }                                            
+    }
 
     // TODO: It would be nice to streamline this somehow...
     private void grblConnectionSettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grblConnectionSettingsMenuItemActionPerformed
@@ -1431,26 +1410,29 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
         }
     }//GEN-LAST:event_grblConnectionSettingsMenuItemActionPerformed
 
-    private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonActionPerformed
+    //GEN-LAST:event_browseButtonActionPerformed
+    private void browseButtonActionPerformed(ActionEvent evt) {
+        // GEN-FIRST:event_browseButtonActionPerformed
         int returnVal = fileChooser.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             try {
                 fileTextField.setText(fileChooser.getSelectedFile().getAbsolutePath());
                 File gcodeFile = fileChooser.getSelectedFile();
                 backend.setGcodeFile(gcodeFile);
-            } catch (Exception ex) {
+            } catch (java.lang.Exception ex) {
                 displayErrorDialog(ex.getMessage());
             }
         } else {
             // Canceled file open.
         }
-    }//GEN-LAST:event_browseButtonActionPerformed
+    }
 
-    private void visualizeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visualizeButtonActionPerformed
+    //GEN-LAST:event_visualizeButtonActionPerformed
+    private void visualizeButtonActionPerformed(ActionEvent evt) {
+    //GEN-FIRST:event_visualizeButtonActionPerformed
         // Create new object if it is null.
         if (this.vw == null) {
             this.vw = new VisualizerWindow(settings.getVisualizerWindowSettings());
-            
             final MainWindow mw = this;
             vw.addComponentListener(new ComponentListener() {
                 @Override
@@ -1466,19 +1448,19 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
                 }
 
                 @Override
-                public void componentShown(ComponentEvent ce) {}
-                @Override
-                public void componentHidden(ComponentEvent ce) {}
-            });
+                public void componentShown(ComponentEvent ce) {
+                }
 
+                @Override
+                public void componentHidden(ComponentEvent ce) {
+                }
+            });
             vw.setMinArcLength(settings.getSmallArcThreshold());
             vw.setArcLength(settings.getSmallArcSegmentLength());
             setVisualizerFile();
-
             // Add listener
             this.backend.addControllerListener(vw);
         }
-
         // Display the form
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
@@ -1486,7 +1468,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
                 vw.setVisible(true);
             }
         });
-    }//GEN-LAST:event_visualizeButtonActionPerformed
+    }
 
     public void cancelButtonActionPerformed() {
         try {
@@ -1495,7 +1477,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
             displayErrorDialog(e.getMessage());
         }
     }
-    
+
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         cancelButtonActionPerformed();
     }//GEN-LAST:event_cancelButtonActionPerformed
@@ -1507,13 +1489,15 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
             displayErrorDialog(e.getMessage());
         }
     }
-    
+
     private void pauseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pauseButtonActionPerformed
     	pauseButtonActionPerformed();
     }//GEN-LAST:event_pauseButtonActionPerformed
-    
-    private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
-    	// Timer for updating duration labels.
+
+    //GEN-LAST:event_sendButtonActionPerformed
+    private void sendButtonActionPerformed(ActionEvent evt) {
+    //GEN-FIRST:event_sendButtonActionPerformed
+    // Timer for updating duration labels.
         ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -1523,44 +1507,38 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
                         try {
                             durationValueLabel.setText(Utils.formattedMillis(backend.getSendDuration()));
                             remainingTimeValueLabel.setText(Utils.formattedMillis(backend.getSendRemainingDuration()));
-
-                            //sentRowsValueLabel.setText(""+sentRows);
-                            sentRowsValueLabel.setText(""+backend.getNumSentRows());
+                            // sentRowsValueLabel.setText(""+sentRows);
+                            sentRowsValueLabel.setText("" + backend.getNumSentRows());
                             remainingRowsValueLabel.setText("" + backend.getNumRemainingRows());
-
                             if (backend.isSending()) {
                                 if (vw != null) {
-                                    vw.setCompletedCommandNumber((int)backend.getNumSentRows());
+                                    vw.setCompletedCommandNumber(((int) (backend.getNumSentRows())));
                                 }
                             }
-                        } catch (Exception e) {
+                        } catch (java.lang.Exception e) {
                             e.printStackTrace();
                         }
                     }
                 });
-
             }
         };
-
         this.resetTimerLabels();
-
-        if (timer != null){ timer.stop(); }
+        if (timer != null) {
+            timer.stop();
+        }
         timer = new Timer(1000, actionListener);
-
         // Note: there is a divide by zero error in the timer because it uses
-        //       the rowsValueLabel that was just reset.
-
+        // the rowsValueLabel that was just reset.
         try {
             this.backend.send();
             this.resetSentRowLabels(backend.getNumRows());
             timer.start();
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             timer.stop();
             logger.log(Level.INFO, "Exception in sendButtonActionPerformed.", e);
             displayErrorDialog(e.getMessage());
         }
-        
-    }//GEN-LAST:event_sendButtonActionPerformed
+    }
 
     private void grblFirmwareSettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grblFirmwareSettingsMenuItemActionPerformed
         try {
@@ -1604,17 +1582,17 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
     }//GEN-LAST:event_saveButtonActionPerformed
 
         private void startPendantServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startPendantServerButtonActionPerformed
-	    this.pendantUI = new PendantUI(backend);
-	    this.pendantUI.start();
-	    this.startPendantServerButton.setEnabled(false);
-	    this.stopPendantServerButton.setEnabled(true);
+        	    this.pendantUI = new PendantUI(backend);
+        	    this.pendantUI.start();
+        	    this.startPendantServerButton.setEnabled(false);
+        	    this.stopPendantServerButton.setEnabled(true);
             this.backend.addControllerListener(pendantUI);
         }//GEN-LAST:event_startPendantServerButtonActionPerformed
 
         private void stopPendantServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopPendantServerButtonActionPerformed
-	    this.pendantUI.stop();
-	    this.startPendantServerButton.setEnabled(true);
-	    this.stopPendantServerButton.setEnabled(false);
+        	    this.pendantUI.stop();
+        	    this.startPendantServerButton.setEnabled(true);
+        	    this.stopPendantServerButton.setEnabled(false);
         }//GEN-LAST:event_stopPendantServerButtonActionPerformed
 
     private void resetZCoordinateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetZCoordinateButtonActionPerformed
@@ -1714,7 +1692,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
             return Units.UNKNOWN;
         }
     }
-    
+
     private void adjustManualLocation(int x, int y, int z) {
         try {
             this.backend.adjustManualLocation(x, y, z, this.getStepSize(), getSelectedUnits());
@@ -1722,6 +1700,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
             displayErrorDialog(e.getMessage());
         }
     }
+
     private void yPlusButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yPlusButtonActionPerformed
         this.adjustManualLocation(0, 1, 0);
     }//GEN-LAST:event_yPlusButtonActionPerformed
@@ -1822,14 +1801,14 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
             this.commandNum = -1;
         }
     }
-    
+
     /**
      * FileChooser has to be initialized after JFrame is opened, otherwise the settings will not be applied.
      */
     private void initFileChooser() {
         this.fileChooser = GcodeFileTypeFilter.getGcodeFileChooser(settings.getLastOpenedFilename()); 
     }
-        
+
     private void initProgram() {
         Localization.initialize(this.settings.getLanguage());
         try {
@@ -1844,7 +1823,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
         this.loadFirmwareSelector();
         this.setTitle(Localization.getString("title") + " (" 
                 + Localization.getString("version") + " " + VERSION + ")");
-
+        
         // Command History
         this.manualCommandHistory = new ArrayList<>();
         
@@ -1932,7 +1911,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
         val = bd.doubleValue();
         this.stepSizeSpinner.setValue(val);
     }
-    
+
     private void setStatusColorForState(String state) {
         if (settings.isDisplayStateColor()) {
             java.awt.Color color = null; // default to a transparent background.
@@ -1955,7 +1934,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
             this.activeStateValueLabel.setBackground(null);
         }
     }
-    
+
     private void updateControls() {
         this.cancelButton.setEnabled(backend.canCancel());
         this.pauseButton.setEnabled(backend.canPause() || backend.isPaused());
@@ -1998,7 +1977,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
                 
         }
     }
-    
+
     /**
      * Enable/disable connection frame based on connection state.
      */
@@ -2015,7 +1994,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
             this.opencloseButton.setText(Localization.getString("open"));
         }
     }
-    
+
     /**
      * Enable/disable jogging controls.
      */
@@ -2033,7 +2012,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
         this.inchRadioButton.setEnabled(enabled);
         this.mmRadioButton.setEnabled(enabled);
     }
-    
+
     private void updateWorkflowControls(boolean enabled) {
         this.resetCoordinatesButton.setEnabled(enabled);
         this.resetXButton.setEnabled(enabled);
@@ -2046,7 +2025,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
         this.toggleCheckMode.setEnabled(enabled);
         this.requestStateInformation.setEnabled(enabled);
     }
-    
+
 //    private void updateCustomGcodeControls(boolean enabled) {
 //        for(JButton button : customGcodeButtons) {
 //            button.setEnabled(enabled);
@@ -2079,7 +2058,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
         this.remainingRowsValueLabel.setText(totalRows);
         this.rowsValueLabel.setText(totalRows);
     }
-    
+
     /**
      * Updates all text labels in the GUI with localized labels.
      */
@@ -2132,7 +2111,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
         this.inchRadioButton.setText(Localization.getString("mainWindow.swing.inchRadioButton"));
         this.mmRadioButton.setText(Localization.getString("mainWindow.swing.mmRadioButton"));
     }
-    
+
     // Scans for comm ports and puts them in the comm port combo box.
     private void loadPortSelector() {
         commPortComboBox.removeAllItems();
@@ -2152,12 +2131,9 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
             }
 
             commPortComboBox.setSelectedIndex(0);
-
-
-
         }
     }
-    
+
     private void loadFirmwareSelector() {
         firmwareComboBox.removeAllItems();
         List<String> firmwareList = FirmwareUtils.getFirmwareList();
@@ -2171,7 +2147,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
             }
         }
     }
-    
+
     private void checkScrollWindow() {
         // Console output.
         DefaultCaret caret = (DefaultCaret)consoleTextArea.getCaret();
@@ -2185,43 +2161,42 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
         // Command table.
         this.commandTable.setAutoWindowScroll(scrollWindowCheckBox.isSelected());
     }
-    
+
     void clearTable() {
         this.commandTable.clear();
     }
-        
+
     /** 
      * SerialCommunicatorListener implementation.
      */
-    
     @Override
     public void fileStreamComplete(String filename, boolean success) {
         remainingTimeValueLabel.setText(Utils.formattedMillis(0));
         remainingRowsValueLabel.setText("" + backend.getNumRemainingRows());
-
         final String durationLabelCopy = this.durationValueLabel.getText();
         if (success) {
-            java.awt.EventQueue.invokeLater(new Runnable() { @Override public void run() {
-                JOptionPane.showMessageDialog(new JFrame(),
-                        Localization.getString("mainWindow.ui.jobComplete") + " " + durationLabelCopy,
-                        Localization.getString("success"), JOptionPane.INFORMATION_MESSAGE);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {}
-
-                // Stop the timer after a delay to make sure it is updated.
-                timer.stop();
-            }});
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    JOptionPane.showMessageDialog(new JFrame(), (Localization.getString("mainWindow.ui.jobComplete") + " ") + durationLabelCopy, Localization.getString("success"), JOptionPane.INFORMATION_MESSAGE);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (java.lang.InterruptedException ex) {
+                    }
+                    // Stop the timer after a delay to make sure it is updated.
+                    timer.stop();
+                }
+            });
         } else {
             displayErrorDialog(Localization.getString("mainWindow.error.jobComplete"));
         }
     }
-    
+
     @Override
     public void commandSkipped(GcodeCommand command) {
         commandSent(command);
     }
-     
+
     @Override
     public void commandSent(final GcodeCommand command) {
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -2234,12 +2209,12 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
                 //commandTable.updateRow(command);
             }});
     }
-    
+
     @Override
     public void commandComment(String comment) {
         latestCommentValueLabel.setText(comment);
     }
-    
+
     @Override
     public void commandComplete(final GcodeCommand command) {
         //String gcodeString = command.getCommandString().toLowerCase();
@@ -2276,7 +2251,7 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
             }
         });
     }
-    
+
     @Override
     public void statusStringListener(String state, Position machineCoord, Position workCoord) {
         this.activeStateValueLabel.setText( state );
@@ -2294,18 +2269,19 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
             this.workPositionZValueLabel.setText( Utils.formatter.format(workCoord.z) + workCoord.getUnits().abbreviation );
         }
     }
-    
+
     @Override
     public void postProcessData(int numRows) {
     }
-    
+
     /**
      * Updates the visualizer with the processed gcode file if it is available,
      * otherwise uses the unprocessed file.
      */
     private void setVisualizerFile() {
-        if (vw == null) return;
-
+        if (vw == null) {
+            return;
+        }
         if (processedGcodeFile == null) {
             if (gcodeFile == null) {
                 return;
@@ -2322,123 +2298,222 @@ public class MainWindow extends JFrame implements ControllerListener, UGSEventLi
             this.updateControls();
         }
         if (evt.isFileChangeEvent()) {
-            switch(evt.getFileState()) {
-                case FILE_LOADING:
+            switch (evt.getFileState()) {
+                case FILE_LOADING :
                     processedGcodeFile = null;
                     gcodeFile = evt.getFile();
                     break;
-                case FILE_LOADED:
+                case FILE_LOADED :
                     processedGcodeFile = evt.getFile();
                     break;
             }
-
             setVisualizerFile();
         }
     }
 
     // Generated variables.
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Generated variables.
+    // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu PendantMenu;
-    private javax.swing.JLabel activeStateLabel;
-    private javax.swing.JLabel activeStateValueLabel;
-    private javax.swing.JCheckBox arrowMovementEnabled;
-    private javax.swing.JLabel baudLabel;
-    private javax.swing.JComboBox baudrateSelectionComboBox;
-    private javax.swing.JTabbedPane bottomTabbedPane;
-    private javax.swing.JButton browseButton;
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JComboBox commPortComboBox;
-    private javax.swing.JLabel commandLabel;
-    private com.willwinder.universalgcodesender.uielements.GcodeTable commandTable;
-    private javax.swing.JScrollPane commandTableScrollPane;
-    private javax.swing.JTextField commandTextField;
-    private javax.swing.JPanel commandsPanel;
-    private javax.swing.JPanel connectionPanel;
-    private javax.swing.JScrollPane consoleScrollPane;
-    private javax.swing.JTextArea consoleTextArea;
-    private javax.swing.JTabbedPane controlContextTabbedPane;
-    private javax.swing.JLabel durationLabel;
-    private javax.swing.JLabel durationValueLabel;
-    private javax.swing.JLabel fileLabel;
-    private javax.swing.JPanel fileModePanel;
-    private javax.swing.JPanel fileRunPanel;
-    private javax.swing.JTextField fileTextField;
-    private javax.swing.JComboBox firmwareComboBox;
-    private javax.swing.JLabel firmwareLabel;
-    private javax.swing.JMenu firmwareSettingsMenu;
-    private javax.swing.JMenuItem grblConnectionSettingsMenuItem;
-    private javax.swing.JMenuItem grblFirmwareSettingsMenuItem;
-    private javax.swing.JButton helpButtonMachineControl;
-    private javax.swing.JRadioButton inchRadioButton;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.ButtonGroup jogUnitsGroup;
-    private javax.swing.JPanel keyboardMovementPanel;
-    private javax.swing.JButton killAlarmLock;
-    private javax.swing.JLabel latestCommentLabel;
-    private javax.swing.JLabel latestCommentValueLabel;
-    private javax.swing.ButtonGroup lineBreakGroup;
-    private javax.swing.JPanel machineControlPanel;
-    private javax.swing.JLabel machinePosition;
-    private javax.swing.JLabel machinePositionXLabel;
-    private javax.swing.JLabel machinePositionXValueLabel;
-    private javax.swing.JLabel machinePositionYLabel;
-    private javax.swing.JLabel machinePositionYValueLabel;
-    private javax.swing.JLabel machinePositionZLabel;
-    private javax.swing.JLabel machinePositionZValueLabel;
-    private javax.swing.JScrollPane macroPane;
-    private com.willwinder.universalgcodesender.uielements.MacroPanel macroPanel;
-    private javax.swing.JMenuBar mainMenuBar;
-    private javax.swing.JRadioButton mmRadioButton;
-    private javax.swing.JPanel movementButtonPanel;
-    private javax.swing.JButton opencloseButton;
-    private javax.swing.JButton pauseButton;
-    private javax.swing.JButton performHomingCycleButton;
-    private javax.swing.JLabel portLabel;
-    private javax.swing.JButton refreshButton;
-    private javax.swing.JLabel remainingRowsLabel;
-    private javax.swing.JLabel remainingRowsValueLabel;
-    private javax.swing.JLabel remainingTimeLabel;
-    private javax.swing.JLabel remainingTimeValueLabel;
-    private javax.swing.JButton requestStateInformation;
-    private javax.swing.JButton resetCoordinatesButton;
-    private javax.swing.JButton resetXButton;
-    private javax.swing.JButton resetYButton;
-    private javax.swing.JButton resetZButton;
-    private javax.swing.JButton returnToZeroButton;
-    private javax.swing.JLabel rowsLabel;
-    private javax.swing.JLabel rowsValueLabel;
-    private javax.swing.JButton saveButton;
-    private javax.swing.JCheckBox scrollWindowCheckBox;
-    private javax.swing.JButton sendButton;
-    private javax.swing.JLabel sentRowsLabel;
-    private javax.swing.JLabel sentRowsValueLabel;
-    private javax.swing.JMenu settingsMenu;
-    private javax.swing.JCheckBox showCommandTableCheckBox;
-    private javax.swing.JCheckBox showVerboseOutputCheckBox;
-    private javax.swing.JButton softResetMachineControl;
-    private javax.swing.JMenuItem startPendantServerButton;
-    private javax.swing.JPanel statusPanel;
-    private javax.swing.JLabel stepSizeLabel;
-    private javax.swing.JSpinner stepSizeSpinner;
-    private javax.swing.JMenuItem stopPendantServerButton;
-    private javax.swing.JButton toggleCheckMode;
-    private javax.swing.JButton visualizeButton;
-    private javax.swing.JLabel workPositionLabel;
-    private javax.swing.JLabel workPositionXLabel;
-    private javax.swing.JLabel workPositionXValueLabel;
-    private javax.swing.JLabel workPositionYLabel;
-    private javax.swing.JLabel workPositionYValueLabel;
-    private javax.swing.JLabel workPositionZLabel;
-    private javax.swing.JLabel workPositionZValueLabel;
-    private javax.swing.JButton xMinusButton;
-    private javax.swing.JButton xPlusButton;
-    private javax.swing.JButton yMinusButton;
-    private javax.swing.JButton yPlusButton;
-    private javax.swing.JButton zMinusButton;
-    private javax.swing.JButton zPlusButton;
-    // End of variables declaration//GEN-END:variables
 
+    private javax.swing.JLabel activeStateLabel;
+
+    private javax.swing.JLabel activeStateValueLabel;
+
+    private javax.swing.JCheckBox arrowMovementEnabled;
+
+    private javax.swing.JLabel baudLabel;
+
+    private javax.swing.JComboBox baudrateSelectionComboBox;
+
+    private javax.swing.JTabbedPane bottomTabbedPane;
+
+    private javax.swing.JButton browseButton;
+
+    private javax.swing.JButton cancelButton;
+
+    private javax.swing.JComboBox commPortComboBox;
+
+    private javax.swing.JLabel commandLabel;
+
+    private com.willwinder.universalgcodesender.uielements.GcodeTable commandTable;
+
+    private javax.swing.JScrollPane commandTableScrollPane;
+
+    private javax.swing.JTextField commandTextField;
+
+    private javax.swing.JPanel commandsPanel;
+
+    private javax.swing.JPanel connectionPanel;
+
+    private javax.swing.JScrollPane consoleScrollPane;
+
+    private javax.swing.JTextArea consoleTextArea;
+
+    private javax.swing.JTabbedPane controlContextTabbedPane;
+
+    private javax.swing.JLabel durationLabel;
+
+    private javax.swing.JLabel durationValueLabel;
+
+    private javax.swing.JLabel fileLabel;
+
+    private javax.swing.JPanel fileModePanel;
+
+    private javax.swing.JPanel fileRunPanel;
+
+    private javax.swing.JTextField fileTextField;
+
+    private javax.swing.JComboBox firmwareComboBox;
+
+    private javax.swing.JLabel firmwareLabel;
+
+    private javax.swing.JMenu firmwareSettingsMenu;
+
+    private javax.swing.JMenuItem grblConnectionSettingsMenuItem;
+
+    private javax.swing.JMenuItem grblFirmwareSettingsMenuItem;
+
+    private javax.swing.JButton helpButtonMachineControl;
+
+    private javax.swing.JRadioButton inchRadioButton;
+
+    private javax.swing.JMenuItem jMenuItem1;
+
+    private javax.swing.JMenuItem jMenuItem3;
+
+    private javax.swing.JMenuItem jMenuItem4;
+
+    private javax.swing.JTabbedPane jTabbedPane1;
+
+    private javax.swing.ButtonGroup jogUnitsGroup;
+
+    private javax.swing.JPanel keyboardMovementPanel;
+
+    private javax.swing.JButton killAlarmLock;
+
+    private javax.swing.JLabel latestCommentLabel;
+
+    private javax.swing.JLabel latestCommentValueLabel;
+
+    private javax.swing.ButtonGroup lineBreakGroup;
+
+    private javax.swing.JPanel machineControlPanel;
+
+    private javax.swing.JLabel machinePosition;
+
+    private javax.swing.JLabel machinePositionXLabel;
+
+    private javax.swing.JLabel machinePositionXValueLabel;
+
+    private javax.swing.JLabel machinePositionYLabel;
+
+    private javax.swing.JLabel machinePositionYValueLabel;
+
+    private javax.swing.JLabel machinePositionZLabel;
+
+    private javax.swing.JLabel machinePositionZValueLabel;
+
+    private javax.swing.JScrollPane macroPane;
+
+    private com.willwinder.universalgcodesender.uielements.MacroPanel macroPanel;
+
+    private javax.swing.JMenuBar mainMenuBar;
+
+    private javax.swing.JRadioButton mmRadioButton;
+
+    private javax.swing.JPanel movementButtonPanel;
+
+    private javax.swing.JButton opencloseButton;
+
+    private javax.swing.JButton pauseButton;
+
+    private javax.swing.JButton performHomingCycleButton;
+
+    private javax.swing.JLabel portLabel;
+
+    private javax.swing.JButton refreshButton;
+
+    private javax.swing.JLabel remainingRowsLabel;
+
+    private javax.swing.JLabel remainingRowsValueLabel;
+
+    private javax.swing.JLabel remainingTimeLabel;
+
+    private javax.swing.JLabel remainingTimeValueLabel;
+
+    private javax.swing.JButton requestStateInformation;
+
+    private javax.swing.JButton resetCoordinatesButton;
+
+    private javax.swing.JButton resetXButton;
+
+    private javax.swing.JButton resetYButton;
+
+    private javax.swing.JButton resetZButton;
+
+    private javax.swing.JButton returnToZeroButton;
+
+    private javax.swing.JLabel rowsLabel;
+
+    private javax.swing.JLabel rowsValueLabel;
+
+    private javax.swing.JButton saveButton;
+
+    private javax.swing.JCheckBox scrollWindowCheckBox;
+
+    private javax.swing.JButton sendButton;
+
+    private javax.swing.JLabel sentRowsLabel;
+
+    private javax.swing.JLabel sentRowsValueLabel;
+
+    private javax.swing.JMenu settingsMenu;
+
+    private javax.swing.JCheckBox showCommandTableCheckBox;
+
+    private javax.swing.JCheckBox showVerboseOutputCheckBox;
+
+    private javax.swing.JButton softResetMachineControl;
+
+    private javax.swing.JMenuItem startPendantServerButton;
+
+    private javax.swing.JPanel statusPanel;
+
+    private javax.swing.JLabel stepSizeLabel;
+
+    private javax.swing.JSpinner stepSizeSpinner;
+
+    private javax.swing.JMenuItem stopPendantServerButton;
+
+    private javax.swing.JButton toggleCheckMode;
+
+    private javax.swing.JButton visualizeButton;
+
+    private javax.swing.JLabel workPositionLabel;
+
+    private javax.swing.JLabel workPositionXLabel;
+
+    private javax.swing.JLabel workPositionXValueLabel;
+
+    private javax.swing.JLabel workPositionYLabel;
+
+    private javax.swing.JLabel workPositionYValueLabel;
+
+    private javax.swing.JLabel workPositionZLabel;
+
+    private javax.swing.JLabel workPositionZValueLabel;
+
+    private javax.swing.JButton xMinusButton;
+
+    private javax.swing.JButton xPlusButton;
+
+    private javax.swing.JButton yMinusButton;
+
+    private javax.swing.JButton yPlusButton;
+
+    private javax.swing.JButton zMinusButton;
+
+    private javax.swing.JButton zPlusButton;
 }
