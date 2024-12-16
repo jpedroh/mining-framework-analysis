@@ -18,10 +18,16 @@ package me.zhengjie.modules.system.rest;
 import cn.hutool.core.lang.Dict;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
-import me.zhengjie.modules.system.domain.Role;
 import me.zhengjie.exception.BadRequestException;
+import me.zhengjie.modules.system.domain.Role;
 import me.zhengjie.modules.system.service.RoleService;
 import me.zhengjie.modules.system.service.dto.RoleDto;
 import me.zhengjie.modules.system.service.dto.RoleQueryCriteria;
@@ -34,12 +40,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+
 
 /**
  * @author Zheng Jie
@@ -50,15 +51,15 @@ import java.util.stream.Collectors;
 @Api(tags = "系统：角色管理")
 @RequestMapping("/api/roles")
 public class RoleController {
-
     private final RoleService roleService;
 
     private static final String ENTITY_NAME = "role";
 
     @ApiOperation("获取单个role")
-    @GetMapping(value = "/{id}")
+    @GetMapping("/{id}")
     @PreAuthorize("@el.check('roles:list')")
-    public ResponseEntity<RoleDto> findRoleById(@PathVariable Long id){
+    public ResponseEntity<RoleDto> findRoleById(@PathVariable
+    Long id) {
         return new ResponseEntity<>(roleService.findById(id), HttpStatus.OK);
     }
 
@@ -70,17 +71,17 @@ public class RoleController {
     }
 
     @ApiOperation("返回全部的角色")
-    @GetMapping(value = "/all")
+    @GetMapping("/all")
     @PreAuthorize("@el.check('roles:list','user:add','user:edit')")
-    public ResponseEntity<List<RoleDto>> queryAllRole(){
-        return new ResponseEntity<>(roleService.queryAll(),HttpStatus.OK);
+    public ResponseEntity<List<RoleDto>> queryAllRole() {
+        return new ResponseEntity<>(roleService.queryAll(), HttpStatus.OK);
     }
 
     @ApiOperation("查询角色")
     @GetMapping
     @PreAuthorize("@el.check('roles:list')")
-    public ResponseEntity<PageResult<RoleDto>> queryRole(RoleQueryCriteria criteria, Pageable pageable){
-        return new ResponseEntity<>(roleService.queryAll(criteria,pageable),HttpStatus.OK);
+    public ResponseEntity<PageResult<RoleDto>> queryRole(RoleQueryCriteria criteria, Pageable pageable) {
+        return new ResponseEntity<>(roleService.queryAll(criteria, pageable), HttpStatus.OK);
     }
 
     @ApiOperation("获取用户级别")
@@ -106,8 +107,10 @@ public class RoleController {
     @ApiOperation("修改角色")
     @PutMapping
     @PreAuthorize("@el.check('roles:edit')")
-    public ResponseEntity<Object> updateRole(@Validated(Role.Update.class) @RequestBody Role resources){
-        if(resources.getId() <= 1){
+    public ResponseEntity<Object> updateRole(@Validated(Role.Update.class)
+    @RequestBody
+    Role resources) {
+        if (resources.getId() <= 1) {
             throw new BadRequestException("演示环境不可操作");
         }
         getLevels(resources.getLevel());
@@ -117,15 +120,16 @@ public class RoleController {
 
     @Log("修改角色菜单")
     @ApiOperation("修改角色菜单")
-    @PutMapping(value = "/menu")
+    @PutMapping("/menu")
     @PreAuthorize("@el.check('roles:edit')")
-    public ResponseEntity<Object> updateRoleMenu(@RequestBody Role resources){
-        if(resources.getId() <= 1){
+    public ResponseEntity<Object> updateRoleMenu(@RequestBody
+    Role resources) {
+        if (resources.getId() <= 1) {
             throw new BadRequestException("演示环境不可操作");
         }
         RoleDto role = roleService.findById(resources.getId());
         getLevels(role.getLevel());
-        roleService.updateMenu(resources,role);
+        roleService.updateMenu(resources, role);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -133,9 +137,10 @@ public class RoleController {
     @ApiOperation("删除角色")
     @DeleteMapping
     @PreAuthorize("@el.check('roles:del')")
-    public ResponseEntity<Object> deleteRole(@RequestBody Set<Long> ids){
+    public ResponseEntity<Object> deleteRole(@RequestBody
+    Set<Long> ids) {
         for (Long id : ids) {
-            if(id <= 1){
+            if (id <= 1) {
                 throw new BadRequestException("演示环境不可操作");
             }
             RoleDto role = roleService.findById(id);

@@ -17,6 +17,9 @@ package me.zhengjie.modules.quartz.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.io.IOException;
+import java.util.Set;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.annotation.Log;
@@ -33,9 +36,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Set;
+
 
 /**
  * @author Zheng Jie
@@ -47,15 +48,15 @@ import java.util.Set;
 @RequestMapping("/api/jobs")
 @Api(tags = "系统:定时任务管理")
 public class QuartzJobController {
-
     private static final String ENTITY_NAME = "quartzJob";
+
     private final QuartzJobService quartzJobService;
 
     @ApiOperation("查询定时任务")
     @GetMapping
     @PreAuthorize("@el.check('timing:list')")
-    public ResponseEntity<PageResult<QuartzJob>> queryQuartzJob(JobQueryCriteria criteria, Pageable pageable){
-        return new ResponseEntity<>(quartzJobService.queryAll(criteria,pageable), HttpStatus.OK);
+    public ResponseEntity<PageResult<QuartzJob>> queryQuartzJob(JobQueryCriteria criteria, Pageable pageable) {
+        return new ResponseEntity<>(quartzJobService.queryAll(criteria, pageable), HttpStatus.OK);
     }
 
     @ApiOperation("导出任务数据")
@@ -73,17 +74,19 @@ public class QuartzJobController {
     }
 
     @ApiOperation("查询任务执行日志")
-    @GetMapping(value = "/logs")
+    @GetMapping("/logs")
     @PreAuthorize("@el.check('timing:list')")
-    public ResponseEntity<PageResult<QuartzLog>> queryQuartzJobLog(JobQueryCriteria criteria, Pageable pageable){
-        return new ResponseEntity<>(quartzJobService.queryAllLog(criteria,pageable), HttpStatus.OK);
+    public ResponseEntity<PageResult<QuartzLog>> queryQuartzJobLog(JobQueryCriteria criteria, Pageable pageable) {
+        return new ResponseEntity<>(quartzJobService.queryAllLog(criteria, pageable), HttpStatus.OK);
     }
 
     @Log("新增定时任务")
     @ApiOperation("新增定时任务")
     @PostMapping
     @PreAuthorize("@el.check('timing:add')")
-    public ResponseEntity<Object> createQuartzJob(@Validated @RequestBody QuartzJob resources){
+    public ResponseEntity<Object> createQuartzJob(@Validated
+    @RequestBody
+    QuartzJob resources) {
         throw new BadRequestException("演示环境不支持新增任务！");
     }
 
@@ -100,9 +103,10 @@ public class QuartzJobController {
 
     @Log("更改定时任务状态")
     @ApiOperation("更改定时任务状态")
-    @PutMapping(value = "/{id}")
+    @PutMapping("/{id}")
     @PreAuthorize("@el.check('timing:edit')")
-    public ResponseEntity<Object> updateQuartzJobStatus(@PathVariable Long id){
+    public ResponseEntity<Object> updateQuartzJobStatus(@PathVariable
+    Long id) {
         throw new BadRequestException("演示环境请使用执行按钮运行任务！");
     }
 
@@ -119,7 +123,8 @@ public class QuartzJobController {
     @ApiOperation("删除定时任务")
     @DeleteMapping
     @PreAuthorize("@el.check('timing:del')")
-    public ResponseEntity<Object> deleteQuartzJob(@RequestBody Set<Long> ids){
+    public ResponseEntity<Object> deleteQuartzJob(@RequestBody
+    Set<Long> ids) {
         throw new BadRequestException("演示环境不支持删除定时任务！");
     }
 

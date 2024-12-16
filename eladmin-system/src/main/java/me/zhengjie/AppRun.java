@@ -29,6 +29,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.RestController;
 
+
 /**
  * 开启审计功能 -> @EnableJpaAuditing
  *
@@ -42,7 +43,6 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableTransactionManagement
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
 public class AppRun {
-
     public static void main(String[] args) {
         SpringApplication springApplication = new SpringApplication(AppRun.class);
         // 监控应用的PID，启动时可指定PID路径：--spring.pid.file=/home/eladmin/app.pid

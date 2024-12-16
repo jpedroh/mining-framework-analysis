@@ -18,6 +18,8 @@ package me.zhengjie.modules.system.rest;
 import cn.hutool.core.collection.CollectionUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.*;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.exception.BadRequestException;
@@ -32,8 +34,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+
 
 /**
 * @author Zheng Jie
@@ -44,8 +45,8 @@ import java.util.*;
 @Api(tags = "系统：部门管理")
 @RequestMapping("/api/dept")
 public class DeptController {
-
     private final DeptService deptService;
+
     private static final String ENTITY_NAME = "dept";
 
     @ApiOperation("导出部门数据")
@@ -60,20 +61,21 @@ public class DeptController {
     @PreAuthorize("@el.check('user:list','dept:list')")
     public ResponseEntity<PageResult<DeptDto>> queryDept(DeptQueryCriteria criteria) throws Exception {
         List<DeptDto> depts = deptService.queryAll(criteria, true);
-        return new ResponseEntity<>(PageUtil.toPage(depts, depts.size()),HttpStatus.OK);
+        return new ResponseEntity<>(PageUtil.toPage(depts, depts.size()), HttpStatus.OK);
     }
 
     @ApiOperation("查询部门:根据ID获取同级与上级数据")
     @PostMapping("/superior")
     @PreAuthorize("@el.check('user:list','dept:list')")
-    public ResponseEntity<Object> getDeptSuperior(@RequestBody List<Long> ids) {
-        Set<DeptDto> deptSet  = new LinkedHashSet<>();
+    public ResponseEntity<Object> getDeptSuperior(@RequestBody
+    List<Long> ids) {
+        Set<DeptDto> deptSet = new LinkedHashSet<>();
         for (Long id : ids) {
             DeptDto deptDto = deptService.findById(id);
             List<DeptDto> depts = deptService.getSuperior(deptDto, new ArrayList<>());
             deptSet.addAll(depts);
         }
-        return new ResponseEntity<>(deptService.buildTree(new ArrayList<>(deptSet)),HttpStatus.OK);
+        return new ResponseEntity<>(deptService.buildTree(new ArrayList<>(deptSet)), HttpStatus.OK);
     }
 
     @Log("新增部门")
@@ -92,8 +94,10 @@ public class DeptController {
     @ApiOperation("修改部门")
     @PutMapping
     @PreAuthorize("@el.check('dept:edit')")
-    public ResponseEntity<Object> updateDept(@Validated(Dept.Update.class) @RequestBody Dept resources){
-        if(resources.getId() <= 11){
+    public ResponseEntity<Object> updateDept(@Validated(Dept.Update.class)
+    @RequestBody
+    Dept resources) {
+        if (resources.getId() <= 11) {
             throw new BadRequestException("演示环境不可操作");
         }
         deptService.update(resources);
@@ -104,15 +108,16 @@ public class DeptController {
     @ApiOperation("删除部门")
     @DeleteMapping
     @PreAuthorize("@el.check('dept:del')")
-    public ResponseEntity<Object> deleteDept(@RequestBody Set<Long> ids){
+    public ResponseEntity<Object> deleteDept(@RequestBody
+    Set<Long> ids) {
         Set<DeptDto> deptDtos = new HashSet<>();
         for (Long id : ids) {
-            if(id <= 11){
+            if (id <= 11) {
                 throw new BadRequestException("演示环境不可操作");
             }
             List<Dept> deptList = deptService.findByPid(id);
             deptDtos.add(deptService.findById(id));
-            if(CollectionUtil.isNotEmpty(deptList)){
+            if (CollectionUtil.isNotEmpty(deptList)) {
                 deptDtos = deptService.getDeleteDepts(deptList, deptDtos);
             }
         }

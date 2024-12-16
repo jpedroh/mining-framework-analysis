@@ -15,21 +15,22 @@
  */
 package me.zhengjie.modules.security.rest;
 
-import cn.hutool.db.PageResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.io.IOException;
+import java.util.Set;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.security.service.OnlineUserService;
 import me.zhengjie.modules.security.service.dto.OnlineUserDto;
+import me.zhengjie.utils.PageResult;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Set;
+
 
 /**
  * @author Zheng Jie
@@ -39,18 +40,17 @@ import java.util.Set;
 @RequestMapping("/auth/online")
 @Api(tags = "系统：在线用户管理")
 public class OnlineController {
-
     private final OnlineUserService onlineUserService;
 
     @ApiOperation("查询在线用户")
     @GetMapping
     @PreAuthorize("@el.check()")
-    public ResponseEntity<PageResult<OnlineUserDto>> queryOnlineUser(String username, Pageable pageable){
-        return new ResponseEntity<>(onlineUserService.getAll(username, pageable),HttpStatus.OK);
+    public ResponseEntity<PageResult<OnlineUserDto>> queryOnlineUser(String username, Pageable pageable) {
+        return new ResponseEntity<>(onlineUserService.getAll(username, pageable), HttpStatus.OK);
     }
 
     @ApiOperation("导出数据")
-    @GetMapping(value = "/download")
+    @GetMapping("/download")
     @PreAuthorize("@el.check()")
     public void exportOnlineUser(HttpServletResponse response, String username) throws IOException {
         onlineUserService.download(onlineUserService.getAll(username), response);
@@ -59,7 +59,8 @@ public class OnlineController {
     @ApiOperation("踢出用户")
     @DeleteMapping
     @PreAuthorize("@el.check()")
-    public ResponseEntity<Object> deleteOnlineUser(@RequestBody Set<String> keys) throws Exception {
+    public ResponseEntity<Object> deleteOnlineUser(@RequestBody
+    Set<String> keys) throws Exception {
         throw new BadRequestException("演示环境不可操作");
     }
 }

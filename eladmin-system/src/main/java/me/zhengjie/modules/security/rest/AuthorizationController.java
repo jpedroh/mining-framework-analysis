@@ -19,6 +19,11 @@ import cn.hutool.core.util.IdUtil;
 import com.wf.captcha.base.Captcha;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.annotation.Log;
@@ -31,11 +36,11 @@ import me.zhengjie.modules.security.config.bean.LoginCodeEnum;
 import me.zhengjie.modules.security.config.bean.LoginProperties;
 import me.zhengjie.modules.security.config.bean.SecurityProperties;
 import me.zhengjie.modules.security.security.TokenProvider;
+import me.zhengjie.modules.security.service.OnlineUserService;
 import me.zhengjie.modules.security.service.dto.AuthUserDto;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
-import me.zhengjie.modules.security.service.OnlineUserService;
-import me.zhengjie.utils.RsaUtils;
 import me.zhengjie.utils.RedisUtils;
+import me.zhengjie.utils.RsaUtils;
 import me.zhengjie.utils.SecurityUtils;
 import me.zhengjie.utils.StringUtils;
 import org.springframework.http.HttpStatus;
@@ -47,11 +52,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+
 
 /**
  * @author Zheng Jie
@@ -65,21 +66,28 @@ import java.util.concurrent.TimeUnit;
 @Api(tags = "系统：系统授权接口")
 public class AuthorizationController {
     private final SecurityProperties properties;
+
     private final RedisUtils redisUtils;
+
     private final OnlineUserService onlineUserService;
+
     private final TokenProvider tokenProvider;
+
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
     @Resource
     private LoginProperties loginProperties;
 
     @Log("用户登录")
     @ApiOperation("登录授权")
-    @AnonymousPostMapping(value = "/login")
-    public ResponseEntity<Object> login(@Validated @RequestBody AuthUserDto authUser, HttpServletRequest request) throws Exception {
+    @AnonymousPostMapping("/login")
+    public ResponseEntity<Object> login(@Validated
+    @RequestBody
+    AuthUserDto authUser, HttpServletRequest request) throws Exception {
         // 密码解密
         String password = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey, authUser.getPassword());
         // 查询验证码
-        String code = (String) redisUtils.get(authUser.getUuid());
+        String code = ((String) (redisUtils.get(authUser.getUuid())));
         // 清除验证码
         redisUtils.del(authUser.getUuid());
         if (StringUtils.isBlank(code)) {
@@ -89,15 +97,14 @@ public class AuthorizationController {
             errorData.put("status", 400);
             return new ResponseEntity<>(errorData, HttpStatus.BAD_REQUEST);
         }
-        if (StringUtils.isBlank(authUser.getCode()) || !authUser.getCode().equalsIgnoreCase(code)) {
+        if (StringUtils.isBlank(authUser.getCode()) || (!authUser.getCode().equalsIgnoreCase(code))) {
             log.error("验证码错误");
             Map<String, Object> errorData = new HashMap<>(2);
             errorData.put("message", "验证码错误");
             errorData.put("status", 400);
             return new ResponseEntity<>(errorData, HttpStatus.BAD_REQUEST);
         }
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(authUser.getUsername(), password);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(authUser.getUsername(), password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // 生成令牌与第三方系统获取令牌方式
@@ -105,14 +112,16 @@ public class AuthorizationController {
         // Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         // SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = tokenProvider.createToken(authentication);
-        final JwtUserDto jwtUserDto = (JwtUserDto) authentication.getPrincipal();
+        final JwtUserDto jwtUserDto = ((JwtUserDto) (authentication.getPrincipal()));
         // 返回 token 与 用户信息
-        Map<String, Object> authInfo = new HashMap<String, Object>(2) {{
-            put("token", properties.getTokenStartWith() + token);
-            put("user", jwtUserDto);
-        }};
+        Map<String, Object> authInfo = new HashMap<String, Object>(2) {
+            {
+                put("token", properties.getTokenStartWith() + token);
+                put("user", jwtUserDto);
+            }
+        };
         if (loginProperties.isSingleLogin()) {
-            // 踢掉之前已经登录的token
+            //踢掉之前已经登录的token
             onlineUserService.kickOutForUsername(authUser.getUsername());
         }
         // 保存在线信息
@@ -122,7 +131,7 @@ public class AuthorizationController {
     }
 
     @ApiOperation("获取用户信息")
-    @GetMapping(value = "/info")
+    @GetMapping("/info")
     public ResponseEntity<UserDetails> getUserInfo() {
         return ResponseEntity.ok(SecurityUtils.getCurrentUser());
     }

@@ -17,6 +17,9 @@ package me.zhengjie.modules.system.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.exception.BadRequestException;
@@ -33,9 +36,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 
 /**
 * @author Zheng Jie
@@ -46,15 +47,15 @@ import java.util.Map;
 @Api(tags = "系统：字典详情管理")
 @RequestMapping("/api/dictDetail")
 public class DictDetailController {
-
     private final DictDetailService dictDetailService;
+
     private static final String ENTITY_NAME = "dictDetail";
 
     @ApiOperation("查询字典详情")
     @GetMapping
-    public ResponseEntity<PageResult<DictDetailDto>> queryDictDetail(DictDetailQueryCriteria criteria,
-                                                                     @PageableDefault(sort = {"dictSort"}, direction = Sort.Direction.ASC) Pageable pageable){
-        return new ResponseEntity<>(dictDetailService.queryAll(criteria,pageable),HttpStatus.OK);
+    public ResponseEntity<PageResult<DictDetailDto>> queryDictDetail(DictDetailQueryCriteria criteria, @PageableDefault(sort = { "dictSort" }, direction = Sort.Direction.ASC)
+    Pageable pageable) {
+        return new ResponseEntity<>(dictDetailService.queryAll(criteria, pageable), HttpStatus.OK);
     }
 
     @ApiOperation("查询多个字典详情")
@@ -84,8 +85,10 @@ public class DictDetailController {
     @ApiOperation("修改字典详情")
     @PutMapping
     @PreAuthorize("@el.check('dict:edit')")
-    public ResponseEntity<Object> updateDictDetail(@Validated(DictDetail.Update.class) @RequestBody DictDetail resources){
-        if(resources.getId() <= 6){
+    public ResponseEntity<Object> updateDictDetail(@Validated(DictDetail.Update.class)
+    @RequestBody
+    DictDetail resources) {
+        if (resources.getId() <= 6) {
             throw new BadRequestException("演示环境不可操作");
         }
         dictDetailService.update(resources);
@@ -94,10 +97,11 @@ public class DictDetailController {
 
     @Log("删除字典详情")
     @ApiOperation("删除字典详情")
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("@el.check('dict:del')")
-    public ResponseEntity<Object> deleteDictDetail(@PathVariable Long id){
-        if(id <= 6){
+    public ResponseEntity<Object> deleteDictDetail(@PathVariable
+    Long id) {
+        if (id <= 6) {
             throw new BadRequestException("演示环境不可操作");
         }
         dictDetailService.delete(id);
