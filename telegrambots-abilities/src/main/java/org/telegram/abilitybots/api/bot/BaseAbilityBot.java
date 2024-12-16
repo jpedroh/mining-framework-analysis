@@ -1,8 +1,16 @@
 package org.telegram.abilitybots.api.bot;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -23,16 +31,6 @@ import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatAdm
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static java.lang.String.format;
 import static java.time.ZonedDateTime.now;
 import static java.util.Arrays.stream;
@@ -44,6 +42,7 @@ import static org.telegram.abilitybots.api.objects.MessageContext.newContext;
 import static org.telegram.abilitybots.api.objects.Privacy.*;
 import static org.telegram.abilitybots.api.util.AbilityMessageCodes.*;
 import static org.telegram.abilitybots.api.util.AbilityUtils.*;
+
 
 /**
  * The <b>father</b> of all ability bots. Bots that need to utilize abilities need to extend this bot.
@@ -77,27 +76,37 @@ import static org.telegram.abilitybots.api.util.AbilityUtils.*;
  *
  * @author Abbas Abou Daya
  */
-@SuppressWarnings({"ConfusingArgumentToVarargsMethod", "UnusedReturnValue", "WeakerAccess", "unused", "ConstantConditions"})
+@SuppressWarnings({ "ConfusingArgumentToVarargsMethod", "UnusedReturnValue", "WeakerAccess", "unused", "ConstantConditions" })
 public abstract class BaseAbilityBot extends DefaultAbsSender implements AbilityExtension {
     private static final Logger log = LogManager.getLogger(BaseAbilityBot.class);
 
     protected static final String DEFAULT = "default";
+
+    // DB objects
     // DB objects
     public static final String ADMINS = "ADMINS";
+
     public static final String USERS = "USERS";
+
     public static final String USER_ID = "USER_ID";
+
     public static final String BLACKLIST = "BLACKLIST";
 
     // DB and sender
+    // DB and sender
     protected final DBContext db;
+
     protected MessageSender sender;
+
     protected SilentSender silent;
 
     // Ability toggle
     private final AbilityToggle toggle;
 
     // Bot token and username
+    // Bot token and username
     private final String botToken;
+
     private final String botUsername;
 
     // Ability registry
@@ -110,14 +119,12 @@ public abstract class BaseAbilityBot extends DefaultAbsSender implements Ability
 
     protected BaseAbilityBot(String botToken, String botUsername, DBContext db, AbilityToggle toggle, DefaultBotOptions botOptions) {
         super(botOptions);
-
         this.botToken = botToken;
         this.botUsername = botUsername;
         this.db = db;
         this.toggle = toggle;
         this.sender = new DefaultSender(this);
         silent = new SilentSender(sender);
-
         registerAbilities();
     }
 
@@ -174,22 +181,7 @@ public abstract class BaseAbilityBot extends DefaultAbsSender implements Ability
         log.info(format("[%s] New update [%s] received at %s", botUsername, update.getUpdateId(), now()));
         log.info(update.toString());
         long millisStarted = System.currentTimeMillis();
-
-        Stream.of(update)
-                .filter(this::checkGlobalFlags)
-                .filter(this::checkBlacklist)
-                .map(this::addUser)
-                .filter(this::filterReply)
-                .map(this::getAbility)
-                .filter(this::validateAbility)
-                .filter(this::checkPrivacy)
-                .filter(this::checkLocality)
-                .filter(this::checkInput)
-                .filter(this::checkMessageFlags)
-                .map(this::getContext)
-                .map(this::consumeUpdate)
-                .forEach(this::postConsumption);
-
+        Stream.of(update).filter(this::checkGlobalFlags).filter(this::checkBlacklist).map(this::addUser).filter(this::filterReply).map(this::getAbility).filter(this::validateAbility).filter(this::checkPrivacy).filter(this::checkLocality).filter(this::checkInput).filter(this::checkMessageFlags).map(this::getContext).map(this::consumeUpdate).forEach(this::postConsumption);
         long processingTime = System.currentTimeMillis() - millisStarted;
         log.info(format("[%s] Processing of update [%s] ended at %s%n---> Processing time: [%d ms] <---%n", botUsername, update.getUpdateId(), now(), processingTime));
     }
@@ -222,51 +214,21 @@ public abstract class BaseAbilityBot extends DefaultAbsSender implements Ability
     private void registerAbilities() {
         try {
             // Collect all classes that implement AbilityExtension declared in the bot
-            List<AbilityExtension> extensions = stream(getClass().getMethods())
-                    .filter(checkReturnType(AbilityExtension.class))
-                    .map(returnExtension(this))
-                    .collect(Collectors.toList());
-
+            List<AbilityExtension> extensions = stream(getClass().getMethods()).filter(checkReturnType(AbilityExtension.class)).map(returnExtension(this)).collect(Collectors.toList());
             // Add the bot itself as it is an AbilityExtension
             extensions.add(this);
-
             DefaultAbilities defaultAbs = new DefaultAbilities(this);
-            Stream<Ability> defaultAbsStream = stream(DefaultAbilities.class.getMethods())
-                .filter(checkReturnType(Ability.class))
-                .map(returnAbility(defaultAbs))
-                .filter(ab -> !toggle.isOff(ab))
-                .map(toggle::processAbility);
-
+            Stream<Ability> defaultAbsStream = stream(DefaultAbilities.class.getMethods()).filter(checkReturnType(Ability.class)).map(returnAbility(defaultAbs)).filter(( ab) -> !toggle.isOff(ab)).map(toggle::processAbility);
             // Extract all abilities from every single extension instance
-            abilities = Stream.concat(defaultAbsStream,
-                extensions.stream()
-                    .flatMap(ext -> stream(ext.getClass().getMethods())
-                            .filter(checkReturnType(Ability.class))
-                            .map(returnAbility(ext))))
-                    // Abilities are immutable, build it respectively
-                    .collect(ImmutableMap::<String, Ability>builder,
-                            (b, a) -> b.put(a.name(), a),
-                            (b1, b2) -> b1.putAll(b2.build()))
-                    .build();
-
+            abilities = // Abilities are immutable, build it respectively
+            Stream.concat(defaultAbsStream, extensions.stream().flatMap(( ext) -> stream(ext.getClass().getMethods()).filter(checkReturnType(.class)).map(returnAbility(ext)))).collect(Ability::builder, ( b, a) -> b.put(a.name(), a), ( b1, b2) -> b1.putAll(b2.build())).build();
             // Extract all replies from every single extension instance
-            Stream<Reply> extensionReplies = extensions.stream()
-                    .flatMap(ext -> stream(ext.getClass().getMethods())
-                            .filter(checkReturnType(Reply.class))
-                            .map(returnReply(ext)))
-                            .flatMap(Reply::stream);
-
+            Stream<Reply> extensionReplies = extensions.stream().flatMap(( ext) -> stream(ext.getClass().getMethods()).filter(checkReturnType(.class)).map(returnReply(ext))).flatMap(Reply::stream);
             // Replies can be standalone or attached to abilities, fetch those too
-            Stream<Reply> abilityReplies = abilities.values().stream()
-                    .flatMap(ability -> ability.replies().stream());
-
+            Stream<Reply> abilityReplies = abilities.values().stream().flatMap(( ability) -> ability.replies().stream());
             // Now create the replies registry (list)
-            replies = Stream.concat(abilityReplies, extensionReplies).collect(
-                    ImmutableList::<Reply>builder,
-                    Builder::add,
-                    (b1, b2) -> b1.addAll(b2.build()))
-                    .build();
-        } catch (IllegalStateException e) {
+            replies = Stream.concat(abilityReplies, extensionReplies).collect(Reply::builder, Builder::add, ( b1, b2) -> b1.addAll(b2.build())).build();
+        } catch (java.lang.IllegalStateException e) {
             log.error("Duplicate names found while registering abilities. Make sure that the abilities declared don't clash with the reserved ones.", e);
             throw new RuntimeException(e);
         }
@@ -277,20 +239,20 @@ public abstract class BaseAbilityBot extends DefaultAbsSender implements Ability
      * @return a predicate testing the return type of the method corresponding to the class parameter
      */
     private static Predicate<Method> checkReturnType(Class<?> clazz) {
-        return method -> clazz.isAssignableFrom(method.getReturnType());
+        return ( method) -> clazz.isAssignableFrom(method.getReturnType());
     }
 
     /**
      * Invokes the method and retrieves its return {@link Reply}.
      *
-     * @param obj a bot or extension that this method is invoked with
+     * @param obj an bot or extension that this method is invoked with
      * @return a {@link Function} which returns the {@link Reply} returned by the given method
      */
     private Function<? super Method, AbilityExtension> returnExtension(Object obj) {
-        return method -> {
+        return ( method) -> {
             try {
-                return (AbilityExtension) method.invoke(obj);
-            } catch (IllegalAccessException | InvocationTargetException e) {
+                return ((AbilityExtension) (method.invoke(obj)));
+            } catch (java.lang.IllegalAccessException | InvocationTargetException e) {
                 log.error("Could not add ability extension", e);
                 throw new RuntimeException(e);
             }
@@ -300,14 +262,14 @@ public abstract class BaseAbilityBot extends DefaultAbsSender implements Ability
     /**
      * Invokes the method and retrieves its return {@link Ability}.
      *
-     * @param obj a bot or extension that this method is invoked with
+     * @param obj an bot or extension that this method is invoked with
      * @return a {@link Function} which returns the {@link Ability} returned by the given method
      */
     private static Function<? super Method, Ability> returnAbility(Object obj) {
-        return method -> {
+        return ( method) -> {
             try {
-                return (Ability) method.invoke(obj);
-            } catch (IllegalAccessException | InvocationTargetException e) {
+                return ((Ability) (method.invoke(obj)));
+            } catch (java.lang.IllegalAccessException | InvocationTargetException e) {
                 log.error("Could not add ability", e);
                 throw new RuntimeException(e);
             }
@@ -317,14 +279,14 @@ public abstract class BaseAbilityBot extends DefaultAbsSender implements Ability
     /**
      * Invokes the method and retrieves its return {@link Reply}.
      *
-     * @param obj a bot or extension that this method is invoked with
+     * @param obj an bot or extension that this method is invoked with
      * @return a {@link Function} which returns the {@link Reply} returned by the given method
      */
     private static Function<? super Method, Reply> returnReply(Object obj) {
-        return method -> {
+        return ( method) -> {
             try {
-                return (Reply) method.invoke(obj);
-            } catch (IllegalAccessException | InvocationTargetException e) {
+                return ((Reply) (method.invoke(obj)));
+            } catch (java.lang.IllegalAccessException | InvocationTargetException e) {
                 log.error("Could not add reply", e);
                 throw new RuntimeException(e);
             }
@@ -332,8 +294,7 @@ public abstract class BaseAbilityBot extends DefaultAbsSender implements Ability
     }
 
     private void postConsumption(Pair<MessageContext, Ability> pair) {
-        ofNullable(pair.b().postAction())
-                .ifPresent(consumer -> consumer.accept(pair.a()));
+        ofNullable(pair.b().postAction()).ifPresent(( consumer) -> consumer.accept(pair.a()));
     }
 
     Pair<MessageContext, Ability> consumeUpdate(Pair<MessageContext, Ability> pair) {
@@ -344,7 +305,6 @@ public abstract class BaseAbilityBot extends DefaultAbsSender implements Ability
     Pair<MessageContext, Ability> getContext(Trio<Update, Ability, String[]> trio) {
         Update update = trio.a();
         User user = AbilityUtils.getUser(update);
-
         return Pair.of(newContext(update, user, getChatId(update), trio.c()), trio.b());
     }
 
@@ -357,33 +317,21 @@ public abstract class BaseAbilityBot extends DefaultAbsSender implements Ability
     boolean checkInput(Trio<Update, Ability, String[]> trio) {
         String[] tokens = trio.c();
         int abilityTokens = trio.b().tokens();
-
-        boolean isOk = abilityTokens == 0 || (tokens.length > 0 && tokens.length == abilityTokens);
-
-        if (!isOk)
-            silent.send(
-                    getLocalizedMessage(
-                            CHECK_INPUT_FAIL,
-                            AbilityUtils.getUser(trio.a()).getLanguageCode(),
-                            abilityTokens, abilityTokens == 1 ? "input" : "inputs"),
-                    getChatId(trio.a()));
+        boolean isOk = (abilityTokens == 0) || ((tokens.length > 0) && (tokens.length == abilityTokens));
+        if (!isOk) {
+            silent.send(getLocalizedMessage(CHECK_INPUT_FAIL, AbilityUtils.getUser(trio.a()).getLanguageCode(), abilityTokens, abilityTokens == 1 ? "input" : "inputs"), getChatId(trio.a()));
+        }
         return isOk;
     }
 
     boolean checkLocality(Trio<Update, Ability, String[]> trio) {
         Update update = trio.a();
-        Locality locality = isUserMessage(update) ? USER : GROUP;
+        Locality locality = (isUserMessage(update)) ? USER : GROUP;
         Locality abilityLocality = trio.b().locality();
-
-        boolean isOk = abilityLocality == ALL || locality == abilityLocality;
-
-        if (!isOk)
-            silent.send(
-                    getLocalizedMessage(
-                            CHECK_LOCALITY_FAIL,
-                            AbilityUtils.getUser(trio.a()).getLanguageCode(),
-                            abilityLocality.toString().toLowerCase()),
-                    getChatId(trio.a()));
+        boolean isOk = (abilityLocality == ALL) || (locality == abilityLocality);
+        if (!isOk) {
+            silent.send(getLocalizedMessage(CHECK_LOCALITY_FAIL, AbilityUtils.getUser(trio.a()).getLanguageCode(), abilityLocality.toString().toLowerCase()), getChatId(trio.a()));
+        }
         return isOk;
     }
 
@@ -392,34 +340,22 @@ public abstract class BaseAbilityBot extends DefaultAbsSender implements Ability
         User user = AbilityUtils.getUser(update);
         Privacy privacy;
         int id = user.getId();
-
         privacy = getPrivacy(update, id);
-
         boolean isOk = privacy.compareTo(trio.b().privacy()) >= 0;
-
-        if (!isOk)
-            silent.send(
-                    getLocalizedMessage(
-                            CHECK_PRIVACY_FAIL,
-                            AbilityUtils.getUser(trio.a()).getLanguageCode()),
-                    getChatId(trio.a()));
+        if (!isOk) {
+            silent.send(getLocalizedMessage(CHECK_PRIVACY_FAIL, AbilityUtils.getUser(trio.a()).getLanguageCode()), getChatId(trio.a()));
+        }
         return isOk;
     }
 
     @NotNull
-    Privacy getPrivacy(Update update, int id) {
-        return isCreator(id) ?
-                CREATOR : isAdmin(id) ?
-                ADMIN : (isGroupUpdate(update) || isSuperGroupUpdate(update)) && isGroupAdmin(update, id) ?
-                GROUP_ADMIN : PUBLIC;
+    Privacy.Privacy getPrivacy(Update update, int id) {
+        return isCreator(id) ? CREATOR : isAdmin(id) ? ADMIN : (isGroupUpdate(update) || isSuperGroupUpdate(update)) && isGroupAdmin(update, id) ? GROUP_ADMIN : PUBLIC;
     }
 
     private boolean isGroupAdmin(Update update, int id) {
         GetChatAdministrators admins = new GetChatAdministrators().setChatId(getChatId(update));
-
-        return silent.execute(admins)
-                .orElse(new ArrayList<>()).stream()
-                .anyMatch(member -> member.getUser().getId() == id);
+        return silent.execute(admins).orElse(new ArrayList<>()).stream().anyMatch(( member) -> member.getUser().getId() == id);
     }
 
     private boolean isCreator(int id) {
@@ -438,11 +374,10 @@ public abstract class BaseAbilityBot extends DefaultAbsSender implements Ability
         // Handle updates without messages
         // Passing through this function means that the global flags have passed
         Message msg = update.getMessage();
-        if (!update.hasMessage() || !msg.hasText())
-            return Trio.of(update, abilities.get(DEFAULT), new String[]{});
-
+        if ((!update.hasMessage()) || (!msg.hasText())) {
+            return Trio.of(update, abilities.get(DEFAULT), new String[]{  });
+        }
         String[] tokens = msg.getText().split(" ");
-
         if (tokens[0].startsWith("/")) {
             String abilityToken = stripBotUsername(tokens[0].substring(1)).toLowerCase();
             Ability ability = abilities.get(abilityToken);
@@ -462,21 +397,17 @@ public abstract class BaseAbilityBot extends DefaultAbsSender implements Ability
 
     Update addUser(Update update) {
         User endUser = AbilityUtils.getUser(update);
-
-        users().compute(endUser.getId(), (id, user) -> {
+        users().compute(endUser.getId(), ( id, user) -> {
             if (user == null) {
                 updateUserId(user, endUser);
                 return endUser;
             }
-
             if (!user.equals(endUser)) {
                 updateUserId(user, endUser);
                 return endUser;
             }
-
             return user;
         });
-
         db.commit();
         return update;
     }
@@ -494,22 +425,17 @@ public abstract class BaseAbilityBot extends DefaultAbsSender implements Ability
     }
 
     boolean filterReply(Update update) {
-        return replies.stream()
-                .filter(reply -> reply.isOkFor(update))
-                .map(reply -> {
-                    reply.actOn(update);
-                    return false;
-                })
-                .reduce(true, Boolean::logicalAnd);
+        return replies.stream().filter(( reply) -> reply.isOkFor(update)).map(( reply) -> {
+            reply.actOn(update);
+            return false;
+        }).reduce(true, Boolean::logicalAnd);
     }
 
     boolean checkMessageFlags(Trio<Update, Ability, String[]> trio) {
         Ability ability = trio.b();
         Update update = trio.a();
-
         // The following variable is required to avoid bug #JDK-8044546
-        BiFunction<Boolean, Predicate<Update>, Boolean> flagAnd = (flag, nextFlag) -> flag && nextFlag.test(update);
-        return ability.flags().stream()
-                .reduce(true, flagAnd, Boolean::logicalAnd);
+        BiFunction<Boolean, Predicate<Update>, Boolean> flagAnd = ( flag, nextFlag) -> flag && nextFlag.test(update);
+        return ability.flags().stream().reduce(true, flagAnd, Boolean::logicalAnd);
     }
 }
