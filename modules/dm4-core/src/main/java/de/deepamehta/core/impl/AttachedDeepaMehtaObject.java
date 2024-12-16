@@ -14,12 +14,9 @@ import de.deepamehta.core.model.TopicModel;
 import de.deepamehta.core.service.Directives;
 import de.deepamehta.core.service.ResultList;
 import de.deepamehta.core.storage.spi.DeepaMehtaTransaction;
-
-import org.codehaus.jettison.json.JSONObject;
-
 import java.util.List;
 import java.util.logging.Logger;
-
+import org.codehaus.jettison.json.JSONObject;
 
 
 /**
@@ -35,11 +32,13 @@ import java.util.logging.Logger;
  *  - storeXX()         Stores current value (model) to DB. ### FIXDOC
  */
 abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
-
+    // ---------------------------------------------------------------------------------------------- Instance Variables
+    // underlying model
     // ---------------------------------------------------------------------------------------------- Instance Variables
 
     private DeepaMehtaObjectModel model;            // underlying model
 
+    // attached object cache
     private AttachedCompositeValue childTopics;     // attached object cache
 
     protected final EmbeddedService dms;
@@ -47,7 +46,6 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     private Logger logger = Logger.getLogger(getClass().getName());
 
     // ---------------------------------------------------------------------------------------------------- Constructors
-
     AttachedDeepaMehtaObject(DeepaMehtaObjectModel model, EmbeddedService dms) {
         this.model = model;
         this.dms = dms;
@@ -146,13 +144,14 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
 
     @Override
     public void setCompositeValue(CompositeValueModel comp, Directives directives) {
-        DeepaMehtaTransaction tx = dms.beginTx();   // ### TODO: only resource methods should create a transaction
+        DeepaMehtaTransaction tx = dms.beginTx();// ### TODO: only resource methods should create a transaction
+
         try {
             getCompositeValue().update(comp, directives);
             tx.success();
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             logger.warning("ROLLBACK!");
-            throw new RuntimeException("Setting composite value failed (" + comp + ")", e);
+            throw new RuntimeException(("Setting composite value failed (" + comp) + ")", e);
         } finally {
             tx.finish();
         }
@@ -177,10 +176,7 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
         return model;
     }
 
-
-
     // === Updating ===
-
     @Override
     public void update(DeepaMehtaObjectModel newModel, Directives directives) {
         updateUri(newModel.getUri());
@@ -189,20 +185,15 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     }
 
     // ---
-
     @Override
-    public void updateChildTopic(TopicModel newChildTopic, AssociationDefinition assocDef,
-                                                           Directives directives) {
+    public void updateChildTopic(TopicModel newChildTopic, AssociationDefinition assocDef, Directives directives) {
         getCompositeValue().updateChildTopics(newChildTopic, null, assocDef, directives);
     }
 
     @Override
-    public void updateChildTopics(List<TopicModel> newChildTopics, AssociationDefinition assocDef,
-                                                                   Directives directives) {
+    public void updateChildTopics(List<TopicModel> newChildTopics, AssociationDefinition assocDef, Directives directives) {
         getCompositeValue().updateChildTopics(null, newChildTopics, assocDef, directives);
     }
-
-
 
     // === Deletion ===
 
@@ -231,16 +222,10 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
         }
     }
 
-
-
     // === Traversal ===
-
     // --- Topic Retrieval ---
-
     @Override
-    public RelatedTopic getRelatedTopic(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri,
-                                                String othersTopicTypeUri, boolean fetchComposite,
-                                                boolean fetchRelatingComposite) {
+    public RelatedTopic getRelatedTopic(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, String othersTopicTypeUri, boolean fetchComposite, boolean fetchRelatingComposite) {
         RelatedTopicModel topic = fetchRelatedTopic(assocTypeUri, myRoleTypeUri, othersRoleTypeUri, othersTopicTypeUri);
         // fetchRelatedTopic() is abstract
         return topic != null ? dms.instantiateRelatedTopic(topic, fetchComposite, fetchRelatingComposite, true) : null;
@@ -263,17 +248,11 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
 
     // Note: this method is implemented in the subclasses (this is an abstract class):
     //     getRelatedTopics(List assocTypeUris, ...)
-
     // --- Association Retrieval ---
-
     // Note: these methods are implemented in the subclasses (this is an abstract class):
-    //     getAssociation(...)
-    //     getAssociations()
-
-
-
+    // getAssociation(...)
+    // getAssociations()
     // === Properties ===
-
     @Override
     public Object getProperty(String propUri) {
         return dms.getProperty(getId(), propUri);
@@ -287,17 +266,11 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     // Note: these methods are implemented in the subclasses:
     //     setProperty(...)
     //     removeProperty(...)
-
-
-
     // === Misc ===
-
     @Override
     public Object getDatabaseVendorObject() {
         return dms.storageDecorator.getDatabaseVendorObject(getId());
     }
-
-
 
     // **********************************
     // *** JSONEnabled Implementation ***
@@ -309,8 +282,6 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     public JSONObject toJSON() {
         return model.toJSON();
     }
-
-
 
     // ****************
     // *** Java API ***
@@ -332,8 +303,6 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     public String toString() {
         return model.toString();
     }
-
-
 
     // ----------------------------------------------------------------------------------------- Package Private Methods
 

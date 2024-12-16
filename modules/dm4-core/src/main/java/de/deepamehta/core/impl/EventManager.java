@@ -5,20 +5,15 @@ import de.deepamehta.core.service.DeepaMehtaEvent;
 import de.deepamehta.core.service.DeepaMehtaService;
 import de.deepamehta.core.service.EventListener;
 import de.deepamehta.core.service.accesscontrol.AccessControlException;
-
-import javax.ws.rs.WebApplicationException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import javax.ws.rs.WebApplicationException;
 
 
 class EventManager {
-
     // ---------------------------------------------------------------------------------------------- Instance Variables
-
     /**
      * The registered event listeners (key: event class name, value: event listeners).
      */
@@ -27,7 +22,6 @@ class EventManager {
     private DeepaMehtaService dms;
 
     // ---------------------------------------------------------------------------------------------------- Constructors
-
     EventManager(DeepaMehtaService dms) {
         this.dms = dms;
         // Note: actually the class CoreEvent does not need to be instantiated as it contains only statics.
@@ -66,7 +60,6 @@ class EventManager {
     }
 
     // ---
-
     /**
      * Delivers an event to a particular plugin.
      * If the plugin is not a listener for that event nothing is performed.
@@ -76,8 +69,8 @@ class EventManager {
         if (!isListener(pluginContext, event)) {
             return;
         }
-        //
-        deliverEvent((EventListener) pluginContext, event, params);
+        // 
+        deliverEvent(((EventListener) (pluginContext)), event, params);
     }
 
     /**
@@ -87,11 +80,10 @@ class EventManager {
      * Convenience method that takes a plugin URI.
      */
     void deliverEvent(String pluginUri, DeepaMehtaEvent event, Object... params) {
-        deliverEvent((PluginImpl) dms.getPlugin(pluginUri), event, params);
+        deliverEvent(((PluginImpl) (dms.getPlugin(pluginUri))), event, params);
     }
 
     // ------------------------------------------------------------------------------------------------- Private Methods
-
     private void deliverEvent(EventListener listener, DeepaMehtaEvent event, Object... params) {
         try {
             event.deliver(listener, params);
@@ -104,10 +96,10 @@ class EventManager {
             // Note: an AccessControlException thrown by a event listener must reach the caller in order to
             // recover.
             throw e;
-        } catch (Throwable e) {
+        } catch (java.lang.Throwable e) {
             // Note: here we also catch errors like NoSuchMethodError or AbstractMethodError.
             // These occur when plugins are not yet adapted to changed Core API.
-            throw new RuntimeException("Processing event by " + listener + " failed (event=" + event + ")", e);
+            throw new RuntimeException(((("Processing event by " + listener) + " failed (event=") + event) + ")", e);
         }
     }
 

@@ -14,9 +14,7 @@ import de.deepamehta.core.model.TopicTypeModel;
 import de.deepamehta.core.service.ResultList;
 import de.deepamehta.core.service.accesscontrol.AccessControl;
 import de.deepamehta.core.storage.spi.DeepaMehtaTransaction;
-
 import java.util.List;
-
 
 
 /**
@@ -34,9 +32,6 @@ import java.util.List;
  * DeepaMehta core service is available through the <code>dms</code> object.
  */
 public interface DeepaMehtaService {
-
-
-
     // === Topics ===
 
     Topic getTopic(long topicId, boolean fetchComposite);
@@ -80,14 +75,11 @@ public interface DeepaMehtaService {
     Iterable<Topic> getAllTopics();
 
     // ---
+    public abstract Topic createTopic(TopicModel model);
 
-    Topic createTopic(TopicModel model);
-
-    Directives updateTopic(TopicModel model);
+    public abstract Directives updateTopic(TopicModel model);
 
     Directives deleteTopic(long topicId);
-
-
 
     // === Associations ===
 
@@ -131,14 +123,11 @@ public interface DeepaMehtaService {
     long[] getPlayerIds(long assocId);
 
     // ---
+    public abstract Association createAssociation(AssociationModel model);
 
-    Association createAssociation(AssociationModel model);
-
-    Directives updateAssociation(AssociationModel model);
+    public abstract Directives updateAssociation(AssociationModel model);
 
     Directives deleteAssociation(long assocId);
-
-
 
     // === Topic Types ===
 
@@ -149,14 +138,11 @@ public interface DeepaMehtaService {
     List<TopicType> getAllTopicTypes();
 
     // ---
+    public abstract TopicType createTopicType(TopicTypeModel model);
 
-    TopicType createTopicType(TopicTypeModel model);
-
-    Directives updateTopicType(TopicTypeModel model);
+    public abstract Directives updateTopicType(TopicTypeModel model);
 
     Directives deleteTopicType(String topicTypeUri);
-
-
 
     // === Association Types ===
 
@@ -167,14 +153,11 @@ public interface DeepaMehtaService {
     List<AssociationType> getAllAssociationTypes();
 
     // ---
+    public abstract AssociationType createAssociationType(AssociationTypeModel model);
 
-    AssociationType createAssociationType(AssociationTypeModel model);
-
-    Directives updateAssociationType(AssociationTypeModel model);
+    public abstract Directives updateAssociationType(AssociationTypeModel model);
 
     Directives deleteAssociationType(String assocTypeUri);
-
-
 
     // === Plugins ===
 
@@ -182,15 +165,11 @@ public interface DeepaMehtaService {
 
     List<PluginInfo> getPluginInfo();
 
-
-
     // === Events ===
 
     void fireEvent(DeepaMehtaEvent event, Object... params);
 
     void deliverEvent(String pluginUri, DeepaMehtaEvent event, Object... params);
-
-
 
     // === Properties ===
 
@@ -205,8 +184,7 @@ public interface DeepaMehtaService {
     boolean hasProperty(long id, String propUri);
 
     // ---
-
-    List<Topic> getTopicsByProperty(String propUri, Object propValue);
+    public abstract List<Topic> getTopicsByProperty(String propUri, Object propValue);
 
     List<Topic> getTopicsByPropertyRange(String propUri, Number from, Number to);
 
@@ -214,13 +192,13 @@ public interface DeepaMehtaService {
 
     List<Association> getAssociationsByPropertyRange(String propUri, Number from, Number to);
 
-
-
     // === Misc ===
 
     DeepaMehtaTransaction beginTx();
 
-    TypeStorage getTypeStorage();       // ### TODO: drop this
+    // ### TODO: drop this
+    public abstract TypeStorage getTypeStorage();
+
     AccessControl getAccessControl();   // ### TODO: drop this
 
     Object getDatabaseVendorObject();

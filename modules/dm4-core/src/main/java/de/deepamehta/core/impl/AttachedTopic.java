@@ -14,47 +14,35 @@ import de.deepamehta.core.service.Directive;
 import de.deepamehta.core.service.Directives;
 import de.deepamehta.core.service.ResultList;
 import de.deepamehta.core.storage.spi.DeepaMehtaTransaction;
-
 import java.util.List;
 import java.util.logging.Logger;
-
 
 
 /**
  * A topic that is attached to the {@link DeepaMehtaService}.
  */
 class AttachedTopic extends AttachedDeepaMehtaObject implements Topic {
-
+    // ---------------------------------------------------------------------------------------------- Instance Variables
     // ---------------------------------------------------------------------------------------------- Instance Variables
 
     private Logger logger = Logger.getLogger(getClass().getName());
 
     // ---------------------------------------------------------------------------------------------------- Constructors
-
     AttachedTopic(TopicModel model, EmbeddedService dms) {
         super(model, dms);
     }
 
     // -------------------------------------------------------------------------------------------------- Public Methods
-
-
-
     // ******************************************
     // *** AttachedDeepaMehtaObject Overrides ***
     // ******************************************
-
-
-
     // === Updating ===
-
     @Override
     public void update(TopicModel model, Directives directives) {
         _update(model, directives);
-        //
+        // 
         dms.fireEvent(CoreEvent.POST_UPDATE_TOPIC_REQUEST, this);
     }
-
-
 
     // === Deletion ===
 
@@ -82,8 +70,6 @@ class AttachedTopic extends AttachedDeepaMehtaObject implements Topic {
         }
     }
 
-
-
     // ****************************
     // *** Topic Implementation ***
     // ****************************
@@ -95,20 +81,13 @@ class AttachedTopic extends AttachedDeepaMehtaObject implements Topic {
         return (TopicModel) super.getModel();
     }
 
-
-
     // === Traversal ===
-
     // --- Association Retrieval ---
-
     @Override
-    public RelatedAssociation getRelatedAssociation(String assocTypeUri, String myRoleTypeUri,
-                                                    String othersRoleTypeUri, String othersAssocTypeUri,
-                                                    boolean fetchComposite, boolean fetchRelatingComposite) {
-        RelatedAssociationModel assoc = dms.storageDecorator.fetchTopicRelatedAssociation(getId(), assocTypeUri,
-            myRoleTypeUri, othersRoleTypeUri, othersAssocTypeUri);
-        return assoc != null ? dms.instantiateRelatedAssociation(assoc, fetchComposite, fetchRelatingComposite, true)
-            : null;     // checkAccess=true
+    public RelatedAssociation getRelatedAssociation(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, String othersAssocTypeUri, boolean fetchComposite, boolean fetchRelatingComposite) {
+        RelatedAssociationModel assoc = dms.storageDecorator.fetchTopicRelatedAssociation(getId(), assocTypeUri, myRoleTypeUri, othersRoleTypeUri, othersAssocTypeUri);
+            // checkAccess=true
+        return assoc != null ? dms.instantiateRelatedAssociation(assoc, fetchComposite, fetchRelatingComposite, true) : null;
     }
 
     @Override
@@ -119,8 +98,6 @@ class AttachedTopic extends AttachedDeepaMehtaObject implements Topic {
             myRoleTypeUri, othersRoleTypeUri, othersAssocTypeUri);
         return dms.instantiateRelatedAssociations(assocs, fetchComposite, fetchRelatingComposite);
     }
-
-
 
     // ***************************************
     // *** DeepaMehtaObject Implementation ***
@@ -142,26 +119,21 @@ class AttachedTopic extends AttachedDeepaMehtaObject implements Topic {
     }
 
     // --- Association Retrieval ---
-
     @Override
-    public Association getAssociation(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri,
-                                                                                   long othersTopicId) {
-        AssociationModel assoc = dms.storageDecorator.fetchAssociation(assocTypeUri, getId(), othersTopicId,
-            myRoleTypeUri, othersRoleTypeUri);
-        return assoc != null ? dms.instantiateAssociation(assoc, false, true) : null;   // fetchComposite=false
+    public Association getAssociation(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, long othersTopicId) {
+        AssociationModel assoc = dms.storageDecorator.fetchAssociation(assocTypeUri, getId(), othersTopicId, myRoleTypeUri, othersRoleTypeUri);
+        // fetchComposite=false
+        return assoc != null ? dms.instantiateAssociation(assoc, false, true) : null;
                                                                                         // checkAccess=true
     }
 
     @Override
     public List<Association> getAssociations() {
         return dms.instantiateAssociations(dms.storageDecorator.fetchTopicAssociations(getId()), false);
-                                                                                        // fetchComposite=false
+                                                                                    // fetchComposite=false
     }
 
-
-
     // === Properties ===
-
     @Override
     public void setProperty(String propUri, Object propValue, boolean addToIndex) {
         dms.storageDecorator.storeTopicProperty(getId(), propUri, propValue, addToIndex);
@@ -171,8 +143,6 @@ class AttachedTopic extends AttachedDeepaMehtaObject implements Topic {
     public void removeProperty(String propUri) {
         dms.storageDecorator.removeTopicProperty(getId(), propUri);
     }
-
-
 
     // ----------------------------------------------------------------------------------------- Package Private Methods
 
@@ -190,19 +160,17 @@ class AttachedTopic extends AttachedDeepaMehtaObject implements Topic {
      * POST_UPDATE_TOPIC_REQUEST on the other hand must be fired only once (per update request).
      */
     void _update(TopicModel model, Directives directives) {
-        logger.info("Updating topic " + getId() + " (new " + model + ")");
-        //
+        logger.info(((("Updating topic " + getId()) + " (new ") + model) + ")");
+        // 
         dms.fireEvent(CoreEvent.PRE_UPDATE_TOPIC, this, model, directives);
-        //
+        // 
         TopicModel oldModel = getModel().clone();
         super.update(model, directives);
-        //
+        // 
         addUpdateDirective(directives);
         //
         dms.fireEvent(CoreEvent.POST_UPDATE_TOPIC, this, model, oldModel, directives);
     }
-
-
 
     // === Implementation of the abstract methods ===
 
@@ -243,8 +211,6 @@ class AttachedTopic extends AttachedDeepaMehtaObject implements Topic {
         return dms.storageDecorator.fetchTopicRelatedTopics(getId(), assocTypeUri, myRoleTypeUri, othersRoleTypeUri,
             othersTopicTypeUri, maxResultSize);
     }
-
-
 
     // ------------------------------------------------------------------------------------------------- Private Methods
 

@@ -6,15 +6,10 @@ import de.deepamehta.core.model.SimpleValue;
 import de.deepamehta.core.model.TopicModel;
 import de.deepamehta.core.service.Directives;
 import de.deepamehta.core.service.ResultList;
-
 import java.util.List;
 
 
-
-public interface DeepaMehtaObject extends Identifiable, JSONEnabled {
-
-
-
+public interface DeepaMehtaObject extends Identifiable , JSONEnabled {
     // === Model ===
 
     // --- ID ---
@@ -38,38 +33,38 @@ public interface DeepaMehtaObject extends Identifiable, JSONEnabled {
     SimpleValue getSimpleValue();
 
     void setSimpleValue(String value);
+
     void setSimpleValue(int value);
+
     void setSimpleValue(long value);
+
     void setSimpleValue(boolean value);
+
     void setSimpleValue(SimpleValue value);
 
     // --- Composite Value ---
 
     CompositeValue getCompositeValue();
 
-    void setCompositeValue(CompositeValueModel comp, Directives directives);
+    public abstract void setCompositeValue(CompositeValueModel comp, Directives directives);
 
     // ---
 
     void loadChildTopics();
+
     void loadChildTopics(String childTypeUri);
 
     // ---
 
     DeepaMehtaObjectModel getModel();
 
-
-
     // === Updating ===
-
-    void update(DeepaMehtaObjectModel model, Directives directives);
+    public abstract void update(DeepaMehtaObjectModel model, Directives directives);
 
     // ---
+    public abstract void updateChildTopic(TopicModel newChildTopic, AssociationDefinition assocDef, Directives directives);
 
-    void updateChildTopic(TopicModel newChildTopic, AssociationDefinition assocDef, Directives directives);
-    void updateChildTopics(List<TopicModel> newChildTopics, AssociationDefinition assocDef, Directives directives);
-
-
+    public abstract void updateChildTopics(List<TopicModel> newChildTopics, AssociationDefinition assocDef, Directives directives);
 
     // === Deletion ===
 
@@ -80,8 +75,6 @@ public interface DeepaMehtaObject extends Identifiable, JSONEnabled {
      * - all the remaining direct associations, e.g. "dm4.core.instantiation"
      */
     void delete(Directives directives);
-
-
 
     // === Traversal ===
 
@@ -123,14 +116,12 @@ public interface DeepaMehtaObject extends Identifiable, JSONEnabled {
                                     String othersTopicTypeUri, boolean fetchComposite, boolean fetchRelatingComposite,
                                     int maxResultSize);
 
-     // --- Association Retrieval ---
+    // --- Association Retrieval ---
 
-     Association getAssociation(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri,
-                                                                             long othersTopicId);
+    Association getAssociation(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri,
+                                                                            long othersTopicId);
 
-     List<Association> getAssociations();
-
-
+    List<Association> getAssociations();
 
     // === Properties ===
 
@@ -141,8 +132,6 @@ public interface DeepaMehtaObject extends Identifiable, JSONEnabled {
     void setProperty(String propUri, Object propValue, boolean addToIndex);
 
     void removeProperty(String propUri);
-
-
 
     // === Misc ===
 
