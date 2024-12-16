@@ -39,7 +39,6 @@
 
  Portions Copyrighted 2011 Gephi Consortium.
  */
-
 package org.gephi.desktop.datalab;
 
 import java.awt.AWTEvent;
@@ -117,121 +116,168 @@ import org.pushingpixels.flamingo.api.common.popup.JCommandPopupMenu;
 import org.pushingpixels.flamingo.api.common.popup.JPopupPanel;
 import org.pushingpixels.flamingo.api.common.popup.PopupPanelCallback;
 
+
 /**
  * @author Mathieu Bastian
  */
-@ConvertAsProperties(dtd = "-//org.gephi.desktop.datalab//DataTable//EN",
-    autostore = false)
-@TopComponent.Description(preferredID = "DataTableTopComponent",
-    iconBase = "org/gephi/desktop/datalab/resources/small.png",
-    persistenceType = TopComponent.PERSISTENCE_ALWAYS)
-@TopComponent.Registration(mode = "editor", openAtStartup = true, roles = {"datalab"})
+@ConvertAsProperties(dtd = "-//org.gephi.desktop.datalab//DataTable//EN", autostore = false)
+@TopComponent.Description(preferredID = "DataTableTopComponent", iconBase = "org/gephi/desktop/datalab/resources/small.png", persistenceType = TopComponent.PERSISTENCE_ALWAYS)
+@TopComponent.Registration(mode = "editor", openAtStartup = true, roles = { "datalab" })
 @ActionID(category = "Window", id = "org.gephi.desktop.datalab.DataTableTopComponent")
 @ActionReference(path = "Menu/Window", position = 300)
-@TopComponent.OpenActionRegistration(displayName = "#CTL_DataTableTopComponent",
-    preferredID = "DataTableTopComponent")
-public class DataTableTopComponent extends TopComponent implements AWTEventListener, DataTablesEventListener {
+@TopComponent.OpenActionRegistration(displayName = "#CTL_DataTableTopComponent", preferredID = "DataTableTopComponent")
+public class DataTableTopComponent extends TopComponent implements AWTEventListener , DataTablesEventListener {
+    //Settings
     //Settings
     private static final long AUTO_REFRESH_RATE_MILLISECONDS = 100;
+
     private static final String DATA_LABORATORY_DYNAMIC_FILTERING = "DataLaboratory_Dynamic_Filtering";
+
     private static final String DATA_LABORATORY_ONLY_VISIBLE = "DataLaboratory_visibleOnly";
+
     private static final String DATA_LABORATORY_SPARKLINES = "DataLaboratory_useSparklines";
+
     private static final String DATA_LABORATORY_TIME_INTERVAL_GRAPHICS = "DataLaboratory_timeIntervalGraphics";
+
     private static final String DATA_LABORATORY_EDGES_NODES_LABELS = "DataLaboratory_showEdgesNodesLabels";
+
     private static final Color INVALID_FILTER_COLOR = new Color(254, 150, 150);
+
     private final boolean dynamicFiltering;
+
+    //Data
     //Data
     private final ProjectController pc;
+
     private final GraphController gc;
+
     private boolean visibleOnly = true;
+
     private boolean useSparklines = false;
+
     private boolean timeIntervalGraphics = false;
+
     private boolean showEdgesNodesLabels = false;
-    private final Map<Integer, ContextMenuItemManipulator> nodesActionMappings = new HashMap<>();//For key bindings
-    private final Map<Integer, ContextMenuItemManipulator> edgesActionMappings = new HashMap<>();//For key bindings
+
+    // For key bindings
+    private final Map<Integer, ContextMenuItemManipulator> nodesActionMappings = new HashMap<>();
+
+    // For key bindings
+    private final Map<Integer, ContextMenuItemManipulator> edgesActionMappings = new HashMap<>();
+
     private volatile GraphModel graphModel;
+
     private volatile DataTablesModel dataTablesModel;
+
     private volatile AvailableColumnsModel nodeAvailableColumnsModel;
+
     private volatile AvailableColumnsModel edgeAvailableColumnsModel;
+
+    //Observers for auto-refreshing:
     //Observers for auto-refreshing:
     private volatile boolean autoRefreshEnabled = false;
+
     private DataTablesObservers dataTablesObservers;
+
+    //Timer for the observers:
     //Timer for the observers:
     private java.util.Timer observersTimer;
+
+    //Table
     //Table
     private final NodesDataTable nodeTable;
+
     private final EdgesDataTable edgeTable;
+
+    //General actions buttons
     //General actions buttons
     private final ArrayList<JComponent> generalActionsButtons = new ArrayList<>();
+
+    //States
+    //Display nodes by default at first.
     //States
     private DisplayTable displayTable = DisplayTable.NODE;//Display nodes by default at first.
+
     private ArrayList previousNodeFilterColumns = new ArrayList();
+
     private ArrayList previousEdgeFilterColumns = new ArrayList();
-    private final Map<DisplayTable, String> filterTextByDisplayTable = new EnumMap<>(DisplayTable.class);
-    private final Map<DisplayTable, Integer> filterColumnIndexByDisplayTable = new EnumMap<>(DisplayTable.class);
+
+    private final Map<DisplayTable, String> filterTextByDisplayTable = new EnumMap<>(DataTableTopComponent.DisplayTable.class);
+
+    private final Map<DisplayTable, Integer> filterColumnIndexByDisplayTable = new EnumMap<>(DataTableTopComponent.DisplayTable.class);
+
+    //Refresh executor
     //Refresh executor
     private RefreshOnceHelperThread refreshOnceHelperThread;
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane attributeColumnsScrollPane;
+
     private javax.swing.JButton availableColumnsButton;
+
     private javax.swing.JPanel bannerPanel;
+
     private javax.swing.JLabel boxGlue;
+
     private javax.swing.JComboBox columnComboBox;
+
     private javax.swing.JPanel columnManipulatorsPanel;
+
     private javax.swing.JButton configurationButton;
+
     private javax.swing.JToolBar controlToolbar;
+
     private javax.swing.JToggleButton edgesButton;
+
     private javax.swing.ButtonGroup elementGroup;
+
     private javax.swing.JTextField filterTextField;
+
     private javax.swing.JLabel labelBanner;
+
     private org.jdesktop.swingx.JXLabel labelFilter;
+
     private javax.swing.JToggleButton nodesButton;
+
     private javax.swing.JButton refreshButton;
+
     private javax.swing.JToolBar.Separator separator;
+
     private javax.swing.JToolBar.Separator separator2;
+
     private javax.swing.JScrollPane tableScrollPane;
+
     // End of variables declaration//GEN-END:variables
-
     public DataTableTopComponent() {
-
-        //Get saved preferences if existing:
-        dynamicFiltering =
-            NbPreferences.forModule(DataTableTopComponent.class).getBoolean(DATA_LABORATORY_DYNAMIC_FILTERING, true);
-        visibleOnly =
-            NbPreferences.forModule(DataTableTopComponent.class).getBoolean(DATA_LABORATORY_ONLY_VISIBLE, true);
-        useSparklines =
-            NbPreferences.forModule(DataTableTopComponent.class).getBoolean(DATA_LABORATORY_SPARKLINES, false);
-        timeIntervalGraphics = NbPreferences.forModule(DataTableTopComponent.class)
-            .getBoolean(DATA_LABORATORY_TIME_INTERVAL_GRAPHICS, false);
-        showEdgesNodesLabels =
-            NbPreferences.forModule(DataTableTopComponent.class).getBoolean(DATA_LABORATORY_EDGES_NODES_LABELS, false);
-
+        // Get saved preferences if existing:
+        dynamicFiltering = NbPreferences.forModule(DataTableTopComponent.class).getBoolean(DATA_LABORATORY_DYNAMIC_FILTERING, true);
+        visibleOnly = NbPreferences.forModule(DataTableTopComponent.class).getBoolean(DATA_LABORATORY_ONLY_VISIBLE, true);
+        useSparklines = NbPreferences.forModule(DataTableTopComponent.class).getBoolean(DATA_LABORATORY_SPARKLINES, false);
+        timeIntervalGraphics = NbPreferences.forModule(DataTableTopComponent.class).getBoolean(DATA_LABORATORY_TIME_INTERVAL_GRAPHICS, false);
+        showEdgesNodesLabels = NbPreferences.forModule(DataTableTopComponent.class).getBoolean(DATA_LABORATORY_EDGES_NODES_LABELS, false);
         initComponents();
         if (UIUtils.isAquaLookAndFeel()) {
             columnManipulatorsPanel.setBackground(UIManager.getColor("NbExplorerView.background"));
         }
-
         columnManipulatorsPanel.setLayout(new WrapLayout(WrapLayout.CENTER, 25, 20));
         setName(NbBundle.getMessage(DataTableTopComponent.class, "CTL_DataTableTopComponent"));
+        // toolbar
+        Border b = ((Border) (UIManager.get("Nb.Editor.Toolbar.border")));// NOI18N
 
-        //toolbar
-        Border b = (Border) UIManager.get("Nb.Editor.Toolbar.border"); //NOI18N
         controlToolbar.setBorder(b);
         if (UIUtils.isAquaLookAndFeel()) {
             controlToolbar.setOpaque(true);
         }
-
-        //Init tables
+        // Init tables
         nodeTable = new NodesDataTable();
         edgeTable = new EdgesDataTable();
-
         nodeTable.setDrawSparklines(useSparklines);
         nodeTable.setDrawTimeIntervalGraphics(timeIntervalGraphics);
         edgeTable.setDrawSparklines(useSparklines);
         edgeTable.setDrawTimeIntervalGraphics(timeIntervalGraphics);
         edgeTable.setShowEdgesNodesLabels(showEdgesNodesLabels);
-
-        //Init
+        // Init
         pc = Lookup.getDefault().lookup(ProjectController.class);
         gc = Lookup.getDefault().lookup(GraphController.class);
         Workspace workspace = pc.getCurrentWorkspace();
@@ -246,7 +292,6 @@ public class DataTableTopComponent extends TopComponent implements AWTEventListe
             edgeAvailableColumnsModel = dataTablesModel.getEdgeAvailableColumnsModel();
             refreshAllOnce();
         }
-
         initEvents();
         bannerPanel.setVisible(false);
     }
@@ -957,50 +1002,39 @@ public class DataTableTopComponent extends TopComponent implements AWTEventListe
      * @param acm        AttributeColumnsManipulator
      * @return Prepared JCommandButton
      */
-    private JCommandButton prepareJCommandButton(final GraphModel graphModel, final Table table, final Column[] columns,
-                                                 final AttributeColumnsManipulator acm) {
+    private JCommandButton prepareJCommandButton(final GraphModel graphModel, final Table table, final Column[] columns, final AttributeColumnsManipulator acm) {
         JCommandButton manipulatorButton;
         if (acm.getIcon() != null) {
-            manipulatorButton = new JCommandButton(acm.getName(),
-                ImageWrapperResizableIcon.getIcon(acm.getIcon(), new Dimension(16, 16)));
+            manipulatorButton = new JCommandButton(acm.getName(), ImageWrapperResizableIcon.getIcon(acm.getIcon(), new Dimension(16, 16)));
         } else {
             manipulatorButton = new JCommandButton(acm.getName());
         }
         manipulatorButton.setCommandButtonKind(JCommandButton.CommandButtonKind.POPUP_ONLY);
         manipulatorButton.setDisplayState(CommandButtonDisplayState.MEDIUM);
-        if (acm.getDescription() != null && !acm.getDescription().isEmpty()) {
+        if ((acm.getDescription() != null) && (!acm.getDescription().isEmpty())) {
             // Turn off rich tooltip for now due to issue #2498
-//            manipulatorButton.setPopupRichTooltip(new RichTooltip(
-//                NbBundle.getMessage(DataTableTopComponent.class, "DataTableTopComponent.RichToolTip.title.text"),
-//                acm.getDescription()));
+            // manipulatorButton.setPopupRichTooltip(new RichTooltip(
+            // NbBundle.getMessage(DataTableTopComponent.class, "DataTableTopComponent.RichToolTip.title.text"),
+            // acm.getDescription()));
         }
-
         final ArrayList<Column> availableColumns = new ArrayList<>();
         for (final Column column : columns) {
             if (acm.canManipulateColumn(table, column)) {
                 availableColumns.add(column);
             }
         }
-
         if (!availableColumns.isEmpty()) {
             manipulatorButton.setPopupCallback(new PopupPanelCallback() {
-
                 @Override
                 public JPopupPanel getPopupPanel(JCommandButton jcb) {
                     JCommandPopupMenu popup = new JCommandPopupMenu();
-
                     JCommandMenuButton button;
                     for (final Column column : availableColumns) {
-
-                        button = new JCommandMenuButton(column.getTitle(), ImageWrapperResizableIcon
-                            .getIcon(ImageUtilities.loadImage("org/gephi/desktop/datalab/resources/column.png", false),
-                                new Dimension(16, 16)));
+                        button = new JCommandMenuButton(column.getTitle(), ImageWrapperResizableIcon.getIcon(ImageUtilities.loadImage("org/gephi/desktop/datalab/resources/column.png", false), new Dimension(16, 16)));
                         button.addActionListener(new ActionListener() {
-
                             @Override
                             public void actionPerformed(ActionEvent e) {
-                                DataLaboratoryHelper.getDefault()
-                                    .executeAttributeColumnsManipulator(acm, graphModel, table, column);
+                                DataLaboratoryHelper.getDefault().executeAttributeColumnsManipulator(acm, graphModel, table, column);
                             }
                         });
                         popup.addMenuButton(button);
@@ -1011,7 +1045,6 @@ public class DataTableTopComponent extends TopComponent implements AWTEventListe
         } else {
             manipulatorButton.setEnabled(false);
         }
-
         return manipulatorButton;
     }
 
@@ -1219,9 +1252,9 @@ public class DataTableTopComponent extends TopComponent implements AWTEventListe
         button.setCommandButtonKind(JCommandButton.CommandButtonKind.ACTION_ONLY);
         if (m.getDescription() != null && !m.getDescription().isEmpty()) {
             // Turn off rich tooltip for now due to issue #2498
-//            button.setPopupRichTooltip(new RichTooltip(
-//                NbBundle.getMessage(DataTableTopComponent.class, "DataTableTopComponent.RichToolTip.title.text"),
-//                m.getDescription()));
+    //            button.setPopupRichTooltip(new RichTooltip(
+    //                NbBundle.getMessage(DataTableTopComponent.class, "DataTableTopComponent.RichToolTip.title.text"),
+    //                m.getDescription()));
         }
         if (m.canExecute()) {
             button.addActionListener(new ActionListener() {
@@ -1292,123 +1325,114 @@ public class DataTableTopComponent extends TopComponent implements AWTEventListe
      * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // </editor-fold>//GEN-END:initComponents
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
-
         elementGroup = new javax.swing.ButtonGroup();
         controlToolbar = new javax.swing.JToolBar();
         nodesButton = new javax.swing.JToggleButton();
         edgesButton = new javax.swing.JToggleButton();
         separator = new javax.swing.JToolBar.Separator();
-        configurationButton = new javax.swing.JButton();
+        configurationButton = new JButton();
         separator2 = new javax.swing.JToolBar.Separator();
-        boxGlue = new javax.swing.JLabel();
+        boxGlue = new JLabel();
         labelFilter = new org.jdesktop.swingx.JXLabel();
         filterTextField = new javax.swing.JTextField();
         columnComboBox = new javax.swing.JComboBox();
-        availableColumnsButton = new javax.swing.JButton();
+        availableColumnsButton = new JButton();
         tableScrollPane = new javax.swing.JScrollPane();
         bannerPanel = new javax.swing.JPanel();
-        labelBanner = new javax.swing.JLabel();
-        refreshButton = new javax.swing.JButton();
+        labelBanner = new JLabel();
+        refreshButton = new JButton();
         attributeColumnsScrollPane = new javax.swing.JScrollPane();
         columnManipulatorsPanel = new javax.swing.JPanel();
-
         setLayout(new java.awt.GridBagLayout());
         setOpaque(true);
-
         controlToolbar.setFloatable(false);
         controlToolbar.setRollover(true);
-
         elementGroup.add(nodesButton);
-        org.openide.awt.Mnemonics.setLocalizedText(nodesButton, org.openide.util.NbBundle
-            .getMessage(DataTableTopComponent.class, "DataTableTopComponent.nodesButton.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(nodesButton, NbBundle.getMessage(DataTableTopComponent.class, "DataTableTopComponent.nodesButton.text"));// NOI18N
+
         nodesButton.setFocusable(false);
-        nodesButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        nodesButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        nodesButton.addActionListener(new java.awt.event.ActionListener() {
+        nodesButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        nodesButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        nodesButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 nodesButtonActionPerformed(evt);
             }
         });
         controlToolbar.add(nodesButton);
-
         elementGroup.add(edgesButton);
-        org.openide.awt.Mnemonics.setLocalizedText(edgesButton, org.openide.util.NbBundle
-            .getMessage(DataTableTopComponent.class, "DataTableTopComponent.edgesButton.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(edgesButton, NbBundle.getMessage(DataTableTopComponent.class, "DataTableTopComponent.edgesButton.text"));// NOI18N
+
         edgesButton.setFocusable(false);
-        edgesButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        edgesButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        edgesButton.addActionListener(new java.awt.event.ActionListener() {
+        edgesButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        edgesButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        edgesButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 edgesButtonActionPerformed(evt);
             }
         });
         controlToolbar.add(edgesButton);
         controlToolbar.add(separator);
+        configurationButton.setFont(new java.awt.Font("Tahoma", 1, 11));// NOI18N
 
-        configurationButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        configurationButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/datalab/resources/gear-small.png", false)); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(configurationButton, org.openide.util.NbBundle
-            .getMessage(DataTableTopComponent.class, "DataTableTopComponent.configurationButton.text")); // NOI18N
+            // NOI18N
+        configurationButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/datalab/resources/gear-small.png", false));
+        org.openide.awt.Mnemonics.setLocalizedText(configurationButton, NbBundle.getMessage(DataTableTopComponent.class, "DataTableTopComponent.configurationButton.text"));// NOI18N
+
         configurationButton.setFocusable(false);
-        configurationButton.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        configurationButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        configurationButton.addActionListener(new java.awt.event.ActionListener() {
+        configurationButton.setHorizontalTextPosition(SwingConstants.RIGHT);
+        configurationButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        configurationButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 configurationButtonActionPerformed(evt);
             }
         });
         controlToolbar.add(configurationButton);
         controlToolbar.add(separator2);
+        org.openide.awt.Mnemonics.setLocalizedText(boxGlue, NbBundle.getMessage(DataTableTopComponent.class, "DataTableTopComponent.boxGlue.text"));// NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(boxGlue, org.openide.util.NbBundle
-            .getMessage(DataTableTopComponent.class, "DataTableTopComponent.boxGlue.text")); // NOI18N
-        boxGlue.setMaximumSize(new java.awt.Dimension(32767, 32767));
+        boxGlue.setMaximumSize(new Dimension(32767, 32767));
         controlToolbar.add(boxGlue);
+        org.openide.awt.Mnemonics.setLocalizedText(labelFilter, NbBundle.getMessage(DataTableTopComponent.class, "DataTableTopComponent.labelFilter.text"));// NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(labelFilter, org.openide.util.NbBundle
-            .getMessage(DataTableTopComponent.class, "DataTableTopComponent.labelFilter.text")); // NOI18N
         controlToolbar.add(labelFilter);
+        filterTextField.setText(NbBundle.getMessage(DataTableTopComponent.class, "DataTableTopComponent.filterTextField.text"));// NOI18N
 
-        filterTextField.setText(org.openide.util.NbBundle
-            .getMessage(DataTableTopComponent.class, "DataTableTopComponent.filterTextField.text")); // NOI18N
-        filterTextField.setToolTipText(org.openide.util.NbBundle
-            .getMessage(DataTableTopComponent.class, "DataTableTopComponent.filterTextField.toolTipText")); // NOI18N
-        filterTextField.setMaximumSize(new java.awt.Dimension(1000, 30));
-        filterTextField.setPreferredSize(new java.awt.Dimension(150, 20));
+        filterTextField.setToolTipText(NbBundle.getMessage(DataTableTopComponent.class, "DataTableTopComponent.filterTextField.toolTipText"));// NOI18N
+
+        filterTextField.setMaximumSize(new Dimension(1000, 30));
+        filterTextField.setPreferredSize(new Dimension(150, 20));
         controlToolbar.add(filterTextField);
-
-        columnComboBox.setMaximumSize(new java.awt.Dimension(2000, 20));
-        columnComboBox.setPreferredSize(new java.awt.Dimension(120, 20));
+        columnComboBox.setMaximumSize(new Dimension(2000, 20));
+        columnComboBox.setPreferredSize(new Dimension(120, 20));
         controlToolbar.add(columnComboBox);
+            // NOI18N
+        availableColumnsButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/datalab/resources/light-bulb.png", false));
+        org.openide.awt.Mnemonics.setLocalizedText(availableColumnsButton, NbBundle.getMessage(DataTableTopComponent.class, "DataTableTopComponent.availableColumnsButton.text"));// NOI18N
 
-        availableColumnsButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/datalab/resources/light-bulb.png", false)); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(availableColumnsButton, org.openide.util.NbBundle
-            .getMessage(DataTableTopComponent.class, "DataTableTopComponent.availableColumnsButton.text")); // NOI18N
-        availableColumnsButton.setToolTipText(org.openide.util.NbBundle.getMessage(DataTableTopComponent.class,
-            "DataTableTopComponent.availableColumnsButton.toolTipText")); // NOI18N
+        availableColumnsButton.setToolTipText(NbBundle.getMessage(DataTableTopComponent.class, "DataTableTopComponent.availableColumnsButton.toolTipText"));// NOI18N
+
         availableColumnsButton.setFocusable(false);
-        availableColumnsButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        availableColumnsButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        availableColumnsButton.addActionListener(new java.awt.event.ActionListener() {
+        availableColumnsButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        availableColumnsButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        availableColumnsButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 availableColumnsButtonActionPerformed(evt);
             }
         });
         controlToolbar.add(availableColumnsButton);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(controlToolbar, gridBagConstraints);
-
-        tableScrollPane.setMinimumSize(new java.awt.Dimension(100, 100));
+        tableScrollPane.setMinimumSize(new Dimension(100, 100));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -1416,14 +1440,13 @@ public class DataTableTopComponent extends TopComponent implements AWTEventListe
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         add(tableScrollPane, gridBagConstraints);
-
-        bannerPanel.setBackground(new java.awt.Color(178, 223, 240));
+        bannerPanel.setBackground(new Color(178, 223, 240));
         bannerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
         bannerPanel.setLayout(new java.awt.GridBagLayout());
+            // NOI18N
+        labelBanner.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/datalab/resources/info.png", false));
+        org.openide.awt.Mnemonics.setLocalizedText(labelBanner, NbBundle.getMessage(DataTableTopComponent.class, "DataTableTopComponent.labelBanner.text"));// NOI18N
 
-        labelBanner.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/datalab/resources/info.png", false)); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(labelBanner, org.openide.util.NbBundle
-            .getMessage(DataTableTopComponent.class, "DataTableTopComponent.labelBanner.text")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -1431,12 +1454,11 @@ public class DataTableTopComponent extends TopComponent implements AWTEventListe
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 0);
         bannerPanel.add(labelBanner, gridBagConstraints);
+        org.openide.awt.Mnemonics.setLocalizedText(refreshButton, NbBundle.getMessage(DataTableTopComponent.class, "DataTableTopComponent.refreshButton.text"));// NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(refreshButton, org.openide.util.NbBundle
-            .getMessage(DataTableTopComponent.class, "DataTableTopComponent.refreshButton.text")); // NOI18N
-        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+        refreshButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 refreshButtonActionPerformed(evt);
             }
         });
@@ -1447,7 +1469,6 @@ public class DataTableTopComponent extends TopComponent implements AWTEventListe
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(1, 0, 1, 1);
         bannerPanel.add(refreshButton, gridBagConstraints);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -1455,20 +1476,17 @@ public class DataTableTopComponent extends TopComponent implements AWTEventListe
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         add(bannerPanel, gridBagConstraints);
-
-        attributeColumnsScrollPane.setMinimumSize(new java.awt.Dimension(200, 100));
-        attributeColumnsScrollPane.setPreferredSize(new java.awt.Dimension(200, 100));
-
-        columnManipulatorsPanel.setMinimumSize(new java.awt.Dimension(200, 100));
+        attributeColumnsScrollPane.setMinimumSize(new Dimension(200, 100));
+        attributeColumnsScrollPane.setPreferredSize(new Dimension(200, 100));
+        columnManipulatorsPanel.setMinimumSize(new Dimension(200, 100));
         columnManipulatorsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 25, 20));
         attributeColumnsScrollPane.setViewportView(columnManipulatorsPanel);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         add(attributeColumnsScrollPane, gridBagConstraints);
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
     private void refreshButtonActionPerformed(
         java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
@@ -1551,8 +1569,9 @@ public class DataTableTopComponent extends TopComponent implements AWTEventListe
     }
 
     private enum DisplayTable {
-        NODE, EDGE
-    }
+
+        NODE,
+        EDGE;}
 
     /**
      * This thread is used for processing graphChanged and attributesChanged
@@ -1560,9 +1579,11 @@ public class DataTableTopComponent extends TopComponent implements AWTEventListe
      * lot of events come in a short period of time.
      */
     class RefreshOnceHelperThread extends Thread {
+        private static final int CHECK_TIME_INTERVAL = 100;// 100 ms.
 
-        private static final int CHECK_TIME_INTERVAL = 100;//100 ms.
+
         private volatile boolean moreEvents = false;
+
         private final boolean refreshTableOnly;
 
         public RefreshOnceHelperThread() {
@@ -1579,14 +1600,13 @@ public class DataTableTopComponent extends TopComponent implements AWTEventListe
                 do {
                     moreEvents = false;
                     Thread.sleep(CHECK_TIME_INTERVAL);
-                } while (moreEvents);
-
+                } while (moreEvents );
                 if (refreshTableOnly) {
                     DataTableTopComponent.this.refreshTable();
                 } else {
                     DataTableTopComponent.this.refreshAll();
                 }
-            } catch (InterruptedException ex) {
+            } catch (java.lang.InterruptedException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }

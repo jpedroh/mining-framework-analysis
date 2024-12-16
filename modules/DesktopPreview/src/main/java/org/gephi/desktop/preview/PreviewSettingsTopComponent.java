@@ -39,7 +39,6 @@
 
  Portions Copyrighted 2011 Gephi Consortium.
  */
-
 package org.gephi.desktop.preview;
 
 import java.awt.BorderLayout;
@@ -77,91 +76,97 @@ import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 
+
 /**
  * @author Jérémy Subtil, Mathieu Bastian
  */
-@ConvertAsProperties(dtd = "-//org.gephi.desktop.preview//PreviewSettings//EN",
-    autostore = false)
-@TopComponent.Description(preferredID = "PreviewSettingsTopComponent",
-    iconBase = "org/gephi/desktop/preview/resources/settings.png",
-    persistenceType = TopComponent.PERSISTENCE_NEVER)
-@TopComponent.Registration(mode = "layoutmode", openAtStartup = true, roles = {"preview"})
+@ConvertAsProperties(dtd = "-//org.gephi.desktop.preview//PreviewSettings//EN", autostore = false)
+@TopComponent.Description(preferredID = "PreviewSettingsTopComponent", iconBase = "org/gephi/desktop/preview/resources/settings.png", persistenceType = TopComponent.PERSISTENCE_NEVER)
+@TopComponent.Registration(mode = "layoutmode", openAtStartup = true, roles = { "preview" })
 @ActionID(category = "Window", id = "org.gephi.desktop.preview.PreviewSettingsTopComponent")
 @ActionReference(path = "Menu/Window", position = 1000)
-@TopComponent.OpenActionRegistration(displayName = "#CTL_PreviewSettingsTopComponent",
-    preferredID = "PreviewSettingsTopComponent")
+@TopComponent.OpenActionRegistration(displayName = "#CTL_PreviewSettingsTopComponent", preferredID = "PreviewSettingsTopComponent")
 public final class PreviewSettingsTopComponent extends TopComponent implements PropertyChangeListener {
-
     private final String NO_SELECTION = "---";
+
+    //Component
     //Component
     private final transient PropertySheet propertySheet;
+
     private final transient RendererManager rendererManager;
+
     private final transient JTabbedPane tabbedPane;
+
+    //State
     //State
     private int defaultPresetLimit;
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel box;
-    private javax.swing.JLabel labelExport;
-    private javax.swing.JLabel labelPreset;
-    private javax.swing.JLabel labelRatio;
-    private javax.swing.JPanel mainPanel;
-    private javax.swing.JComboBox presetComboBox;
-    private javax.swing.JPanel presetPanel;
-    private javax.swing.JToolBar presetToolbar;
-    private javax.swing.JPanel propertiesPanel;
-    private javax.swing.JLabel ratioLabel;
-    private javax.swing.JSlider ratioSlider;
-    private javax.swing.JButton refreshButton;
-    private javax.swing.JButton saveButton;
-    private javax.swing.JToolBar southToolbar;
-    private javax.swing.JButton svgExportButton;
-    // End of variables declaration//GEN-END:variables
 
+    private javax.swing.JLabel labelExport;
+
+    private javax.swing.JLabel labelPreset;
+
+    private javax.swing.JLabel labelRatio;
+
+    private javax.swing.JPanel mainPanel;
+
+    private javax.swing.JComboBox presetComboBox;
+
+    private javax.swing.JPanel presetPanel;
+
+    private javax.swing.JToolBar presetToolbar;
+
+    private javax.swing.JPanel propertiesPanel;
+
+    private javax.swing.JLabel ratioLabel;
+
+    private javax.swing.JSlider ratioSlider;
+
+    private javax.swing.JButton refreshButton;
+
+    private javax.swing.JButton saveButton;
+
+    private javax.swing.JToolBar southToolbar;
+
+    private javax.swing.JButton svgExportButton;
+
+    // End of variables declaration//GEN-END:variables
     public PreviewSettingsTopComponent() {
         initComponents();
         setName(NbBundle.getMessage(PreviewSettingsTopComponent.class, "CTL_PreviewSettingsTopComponent"));
-
         if (UIUtils.isAquaLookAndFeel()) {
             mainPanel.setBackground(UIManager.getColor("NbExplorerView.background"));
         }
-
         // property sheet
         propertySheet = new PropertySheet();
-        propertySheet.setNodes(new Node[] {new PreviewNode(propertySheet)});
+        propertySheet.setNodes(new Node[]{ new PreviewNode(propertySheet) });
         propertySheet.setDescriptionAreaVisible(false);
-
         rendererManager = new RendererManager();
-        //Tabs for property sheet, manager and preview UI
+        // Tabs for property sheet, manager and preview UI
         tabbedPane = new JTabbedPane();
-        tabbedPane.addTab(
-            NbBundle.getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.propertySheetTab"),
-            propertySheet);
-        tabbedPane.addTab(
-            NbBundle.getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.rendererManagerTab"),
-            rendererManager);
+        tabbedPane.addTab(NbBundle.getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.propertySheetTab"), propertySheet);
+        tabbedPane.addTab(NbBundle.getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.rendererManagerTab"), rendererManager);
         propertiesPanel.add(tabbedPane, BorderLayout.CENTER);
-
         tabbedPane.addChangeListener(new ChangeListener() {
-
             @Override
             public void stateChanged(ChangeEvent e) {
                 if (tabbedPane.getSelectedComponent() == propertySheet) {
-                    propertySheet.setNodes(new Node[] {new PreviewNode(propertySheet)});
+                    propertySheet.setNodes(new Node[]{ new PreviewNode(propertySheet) });
                 }
             }
         });
-
-        //Ratio
+        // Ratio
         ratioSlider.addChangeListener(new ChangeListener() {
-
             final NumberFormat formatter = NumberFormat.getPercentInstance();
 
             @Override
             public void stateChanged(ChangeEvent e) {
-                float val = ratioSlider.getValue() / 100f;
-                if (val == 0f) {
-                    ratioLabel.setText(NbBundle
-                        .getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.ratio.minimum"));
+                float val = ratioSlider.getValue() / 100.0F;
+                if (val == 0.0F) {
+                    ratioLabel.setText(NbBundle.getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.ratio.minimum"));
                 } else {
                     ratioLabel.setText(formatter.format(val));
                 }
@@ -169,26 +174,22 @@ public final class PreviewSettingsTopComponent extends TopComponent implements P
                 puic.setVisibilityRatio(getVisibilityRatio());
             }
         });
-
-        //Presets
+        // Presets
         presetComboBox.addItemListener(new ItemListener() {
-
             @Override
             public void itemStateChanged(ItemEvent e) {
                 PreviewUIController pc = Lookup.getDefault().lookup(PreviewUIController.class);
                 PreviewUIModel previewModel = pc.getModel();
-                if (previewModel != null && presetComboBox.getSelectedItem() instanceof PreviewPreset) {
+                if ((previewModel != null) && (presetComboBox.getSelectedItem() instanceof PreviewPreset)) {
                     if (previewModel.getCurrentPreset() != presetComboBox.getSelectedItem()) {
-                        pc.setCurrentPreset((PreviewPreset) presetComboBox.getSelectedItem());
-                        propertySheet.setNodes(new Node[] {new PreviewNode(propertySheet)});
+                        pc.setCurrentPreset(((PreviewPreset) (presetComboBox.getSelectedItem())));
+                        propertySheet.setNodes(new Node[]{ new PreviewNode(propertySheet) });
                     }
                 }
             }
         });
-
-        //Export
+        // Export
         svgExportButton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 VectorialFileExporterUI ui = Lookup.getDefault().lookup(VectorialFileExporterUI.class);
@@ -196,10 +197,8 @@ public final class PreviewSettingsTopComponent extends TopComponent implements P
             }
         });
         setup(null);
-
         PreviewUIController controller = Lookup.getDefault().lookup(PreviewUIController.class);
         controller.addPropertyChangeListener(this);
-
         PreviewUIModel m = controller.getModel();
         if (m != null) {
             setup(m);
@@ -229,18 +228,17 @@ public final class PreviewSettingsTopComponent extends TopComponent implements P
     }
 
     public void setup(PreviewUIModel previewModel) {
-        propertySheet.setNodes(new Node[] {new PreviewNode(propertySheet)});
+        propertySheet.setNodes(new Node[]{ new PreviewNode(propertySheet) });
         PreviewUIController previewUIController = Lookup.getDefault().lookup(PreviewUIController.class);
         if (previewModel != null) {
-            ratioSlider.setValue((int) (previewModel.getVisibilityRatio() * 100));
+            ratioSlider.setValue(((int) (previewModel.getVisibilityRatio() * 100)));
         }
-
         //Presets
         if (previewModel == null) {
             saveButton.setEnabled(false);
             labelPreset.setEnabled(false);
             presetComboBox.setEnabled(false);
-            presetComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] {"---"}));
+            presetComboBox.setModel(new DefaultComboBoxModel(new String[]{ "---" }));
         } else {
             saveButton.setEnabled(true);
             labelPreset.setEnabled(true);
@@ -261,10 +259,10 @@ public final class PreviewSettingsTopComponent extends TopComponent implements P
             comboBoxModel.setSelectedItem(previewModel.getCurrentPreset());
             presetComboBox.setModel(comboBoxModel);
         }
-
-        //Refresh tabs
+        // Refresh tabs
         int tabCount = tabbedPane.getTabCount();
-        for (int i = 2; i < tabCount; i++) {//Start at 2, not removing settings and renderer manager tabs
+        for (int i = 2; i < tabCount; i++) {
+            // Start at 2, not removing settings and renderer manager tabs
             tabbedPane.removeTabAt(i);
         }
         for (PreviewUI pui : Lookup.getDefault().lookupAll(PreviewUI.class)) {
@@ -273,7 +271,7 @@ public final class PreviewSettingsTopComponent extends TopComponent implements P
         if (previewModel != null) {
             PreviewController previewController = Lookup.getDefault().lookup(PreviewController.class);
             PreviewModel pModel = previewController.getModel();
-            //Add new tabs
+            // Add new tabs
             for (PreviewUI pui : Lookup.getDefault().lookupAll(PreviewUI.class)) {
                 pui.setup(pModel);
                 JPanel pluginPanel = pui.getPanel();
@@ -347,33 +345,29 @@ public final class PreviewSettingsTopComponent extends TopComponent implements P
      * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this method is always regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // </editor-fold>//GEN-END:initComponents
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
-
-        mainPanel = new javax.swing.JPanel();
-        presetPanel = new javax.swing.JPanel();
+        mainPanel = new JPanel();
+        presetPanel = new JPanel();
         presetComboBox = new javax.swing.JComboBox();
         presetToolbar = new javax.swing.JToolBar();
         box = new javax.swing.JLabel();
         saveButton = new javax.swing.JButton();
         labelPreset = new javax.swing.JLabel();
         refreshButton = new javax.swing.JButton();
-        propertiesPanel = new javax.swing.JPanel();
+        propertiesPanel = new JPanel();
         labelRatio = new javax.swing.JLabel();
         ratioLabel = new javax.swing.JLabel();
         ratioSlider = new javax.swing.JSlider();
         southToolbar = new javax.swing.JToolBar();
         labelExport = new javax.swing.JLabel();
         svgExportButton = new javax.swing.JButton();
-
-        setLayout(new java.awt.BorderLayout());
-
+        setLayout(new BorderLayout());
         mainPanel.setLayout(new java.awt.GridBagLayout());
-
         presetPanel.setOpaque(false);
         presetPanel.setLayout(new java.awt.GridBagLayout());
-
-        presetComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] {"---"}));
+        presetComboBox.setModel(new DefaultComboBoxModel(new String[]{ "---" }));
         presetComboBox.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -384,43 +378,40 @@ public final class PreviewSettingsTopComponent extends TopComponent implements P
         gridBagConstraints.weightx = 2.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 10, 5);
         presetPanel.add(presetComboBox, gridBagConstraints);
-
         presetToolbar.setBorder(null);
         presetToolbar.setFloatable(false);
         presetToolbar.setRollover(true);
         presetToolbar.setOpaque(false);
+        org.openide.awt.Mnemonics.setLocalizedText(box, NbBundle.getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.box.text"));// NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(box, org.openide.util.NbBundle
-            .getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.box.text")); // NOI18N
         box.setMaximumSize(new java.awt.Dimension(32767, 32767));
         presetToolbar.add(box);
+            // NOI18N
+        saveButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/preview/resources/save.png", false));
+        org.openide.awt.Mnemonics.setLocalizedText(saveButton, NbBundle.getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.saveButton.text"));// NOI18N
 
-        saveButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/preview/resources/save.png", false)); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(saveButton, org.openide.util.NbBundle
-            .getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.saveButton.text")); // NOI18N
-        saveButton.setToolTipText(org.openide.util.NbBundle.getMessage(PreviewSettingsTopComponent.class,
-            "PreviewSettingsTopComponent.saveButton.toolTipText")); // NOI18N
+        saveButton.setToolTipText(NbBundle.getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.saveButton.toolTipText"));// NOI18N
+
         saveButton.setEnabled(false);
         saveButton.setFocusable(false);
         saveButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        saveButton.addActionListener(new java.awt.event.ActionListener() {
+        saveButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 saveButtonActionPerformed(evt);
             }
         });
         presetToolbar.add(saveButton);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(3, 5, 0, 5);
         presetPanel.add(presetToolbar, gridBagConstraints);
+            // NOI18N
+        labelPreset.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/preview/resources/preset.png", false));
+        org.openide.awt.Mnemonics.setLocalizedText(labelPreset, NbBundle.getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.labelPreset.text"));// NOI18N
 
-        labelPreset.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/preview/resources/preset.png", false)); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(labelPreset, org.openide.util.NbBundle
-            .getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.labelPreset.text")); // NOI18N
         labelPreset.setEnabled(false);
         labelPreset.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -428,22 +419,21 @@ public final class PreviewSettingsTopComponent extends TopComponent implements P
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(3, 5, 0, 0);
         presetPanel.add(labelPreset, gridBagConstraints);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         mainPanel.add(presetPanel, gridBagConstraints);
+            // NOI18N
+        refreshButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/preview/resources/refresh.png", false));
+        org.openide.awt.Mnemonics.setLocalizedText(refreshButton, NbBundle.getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.refreshButton.text"));// NOI18N
 
-        refreshButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/preview/resources/refresh.png", false)); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(refreshButton, org.openide.util.NbBundle
-            .getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.refreshButton.text")); // NOI18N
         refreshButton.setEnabled(false);
         refreshButton.setMargin(new java.awt.Insets(10, 14, 10, 14));
-        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+        refreshButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 refreshButtonActionPerformed(evt);
             }
         });
@@ -454,9 +444,8 @@ public final class PreviewSettingsTopComponent extends TopComponent implements P
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(7, 5, 0, 10);
         mainPanel.add(refreshButton, gridBagConstraints);
-
         propertiesPanel.setOpaque(false);
-        propertiesPanel.setLayout(new java.awt.BorderLayout());
+        propertiesPanel.setLayout(new BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -465,9 +454,8 @@ public final class PreviewSettingsTopComponent extends TopComponent implements P
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         mainPanel.add(propertiesPanel, gridBagConstraints);
+        org.openide.awt.Mnemonics.setLocalizedText(labelRatio, NbBundle.getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.labelRatio.text"));// NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(labelRatio, org.openide.util.NbBundle
-            .getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.labelRatio.text")); // NOI18N
         labelRatio.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -475,9 +463,8 @@ public final class PreviewSettingsTopComponent extends TopComponent implements P
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 7, 3, 5);
         mainPanel.add(labelRatio, gridBagConstraints);
+        org.openide.awt.Mnemonics.setLocalizedText(ratioLabel, NbBundle.getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.ratioLabel.text"));// NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(ratioLabel, org.openide.util.NbBundle
-            .getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.ratioLabel.text")); // NOI18N
         ratioLabel.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -487,7 +474,6 @@ public final class PreviewSettingsTopComponent extends TopComponent implements P
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 3, 0);
         mainPanel.add(ratioLabel, gridBagConstraints);
-
         ratioSlider.setEnabled(false);
         ratioSlider.setPreferredSize(new java.awt.Dimension(120, 23));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -498,29 +484,24 @@ public final class PreviewSettingsTopComponent extends TopComponent implements P
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 5, 20);
         mainPanel.add(ratioSlider, gridBagConstraints);
-
         southToolbar.setFloatable(false);
         southToolbar.setRollover(true);
         southToolbar.setOpaque(false);
-
         labelExport.setFont(new java.awt.Font("Tahoma", 0, 10));
-        org.openide.awt.Mnemonics.setLocalizedText(labelExport, org.openide.util.NbBundle
-            .getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.labelExport.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(labelExport, NbBundle.getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.labelExport.text"));// NOI18N
+
         labelExport.setEnabled(false);
         southToolbar.add(labelExport);
+        org.openide.awt.Mnemonics.setLocalizedText(svgExportButton, NbBundle.getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.svgExportButton.text"));// NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(svgExportButton, org.openide.util.NbBundle
-            .getMessage(PreviewSettingsTopComponent.class,
-                "PreviewSettingsTopComponent.svgExportButton.text")); // NOI18N
-        svgExportButton.setToolTipText(org.openide.util.NbBundle.getMessage(PreviewSettingsTopComponent.class,
-            "PreviewSettingsTopComponent.svgExportButton.toolTipText")); // NOI18N
+        svgExportButton.setToolTipText(NbBundle.getMessage(PreviewSettingsTopComponent.class, "PreviewSettingsTopComponent.svgExportButton.toolTipText"));// NOI18N
+
         svgExportButton.setEnabled(false);
         svgExportButton.setFocusable(false);
         svgExportButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         svgExportButton.setMargin(new java.awt.Insets(2, 8, 2, 8));
         svgExportButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         southToolbar.add(svgExportButton);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
@@ -529,9 +510,8 @@ public final class PreviewSettingsTopComponent extends TopComponent implements P
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         mainPanel.add(southToolbar, gridBagConstraints);
-
-        add(mainPanel, java.awt.BorderLayout.CENTER);
-    }// </editor-fold>//GEN-END:initComponents
+        add(mainPanel, BorderLayout.CENTER);
+    }
 
     private void refreshButtonActionPerformed(
         java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed

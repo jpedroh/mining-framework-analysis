@@ -39,7 +39,6 @@
 
  Portions Copyrighted 2011 Gephi Consortium.
  */
-
 package org.gephi.desktop.appearance;
 
 import java.awt.BorderLayout;
@@ -72,65 +71,84 @@ import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 
-@ConvertAsProperties(dtd = "-//org.gephi.desktop.appearance//Appearance//EN",
-    autostore = false)
-@TopComponent.Description(preferredID = "AppearanceTopComponent",
-    iconBase = "org/gephi/desktop/appearance/resources/small.png",
-    persistenceType = TopComponent.PERSISTENCE_ALWAYS)
-@TopComponent.Registration(mode = "rankingmode", openAtStartup = true, roles = {"overview"})
+
+@ConvertAsProperties(dtd = "-//org.gephi.desktop.appearance//Appearance//EN", autostore = false)
+@TopComponent.Description(preferredID = "AppearanceTopComponent", iconBase = "org/gephi/desktop/appearance/resources/small.png", persistenceType = TopComponent.PERSISTENCE_ALWAYS)
+@TopComponent.Registration(mode = "rankingmode", openAtStartup = true, roles = { "overview" })
 @ActionID(category = "Window", id = "org.gephi.desktop.appearance.AppearanceTopComponent")
 @ActionReference(path = "Menu/Window", position = 1100)
-@TopComponent.OpenActionRegistration(displayName = "#CTL_AppearanceAction",
-    preferredID = "AppearanceTopComponent")
-public class AppearanceTopComponent extends TopComponent implements Lookup.Provider, AppearanceUIModelListener {
+@TopComponent.OpenActionRegistration(displayName = "#CTL_AppearanceAction", preferredID = "AppearanceTopComponent")
+public class AppearanceTopComponent extends TopComponent implements Lookup.Provider , AppearanceUIModelListener {
+    // Const
+    private final String NO_SELECTION = NbBundle.getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.choose.text");
 
-    //Const
-    private final String NO_SELECTION =
-        NbBundle.getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.choose.text");
     private transient final AppearanceToolbar toolbar;
+
+    //Model
     //Model
     private transient final AppearanceUIController controller;
+
+    //UI
     //UI
     private transient JPanel transformerPanel;
+
     private transient JToggleButton listButton;
+
     private transient ItemListener attributeListener;
+
     private transient SplineEditor splineEditor;
+
     private transient AppearanceUIModel model;
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
-    private javax.swing.JComboBox attibuteBox;
-    private javax.swing.JPanel attributePanel;
-    private javax.swing.JToggleButton autoApplyButton;
-    private javax.swing.JToolBar autoApplyToolbar;
-    private javax.swing.JToolBar categoryToolbar;
-    private javax.swing.JPanel centerPanel;
-    private javax.swing.JPanel controlPanel;
-    private javax.swing.JToolBar controlToolbar;
-    private javax.swing.JToggleButton enableAutoButton;
-    private javax.swing.JToggleButton rankingLocalScaleButton;
-    private javax.swing.JToggleButton partitionLocalScaleButton;
-    private javax.swing.JToggleButton transformNullValuesButton;
-    private javax.swing.JPanel mainPanel;
-    private org.jdesktop.swingx.JXHyperlink splineButton;
-    private javax.swing.JToggleButton stopAutoApplyButton;
-    private javax.swing.JToolBar tranformerToolbar;
-    // End of variables declaration//GEN-END:variables
 
+    private javax.swing.JComboBox attibuteBox;
+
+    private javax.swing.JPanel attributePanel;
+
+    private javax.swing.JToggleButton autoApplyButton;
+
+    private javax.swing.JToolBar autoApplyToolbar;
+
+    private javax.swing.JToolBar categoryToolbar;
+
+    private javax.swing.JPanel centerPanel;
+
+    private javax.swing.JPanel controlPanel;
+
+    private javax.swing.JToolBar controlToolbar;
+
+    private javax.swing.JToggleButton enableAutoButton;
+
+    private javax.swing.JToggleButton rankingLocalScaleButton;
+
+    private javax.swing.JToggleButton partitionLocalScaleButton;
+
+    private javax.swing.JToggleButton transformNullValuesButton;
+
+    private javax.swing.JPanel mainPanel;
+
+    private org.jdesktop.swingx.JXHyperlink splineButton;
+
+    private javax.swing.JToggleButton stopAutoApplyButton;
+
+    private javax.swing.JToolBar tranformerToolbar;
+
+    // End of variables declaration//GEN-END:variables
     public AppearanceTopComponent() {
         setName(NbBundle.getMessage(AppearanceTopComponent.class, "CTL_AppearanceTopComponent"));
-
         controller = Lookup.getDefault().lookup(AppearanceUIController.class);
         model = controller.getModel();
         controller.addPropertyChangeListener(this);
         toolbar = new AppearanceToolbar(controller);
-
         initComponents();
         initControls();
         if (UIUtils.isAquaLookAndFeel()) {
             mainPanel.setBackground(UIManager.getColor("NbExplorerView.background"));
             centerPanel.setBackground(UIManager.getColor("NbExplorerView.background"));
         }
-
         refreshModel(model);
     }
 
@@ -191,27 +209,27 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
          * barChartPanel.setVisible(model.isBarChartVisible()); revalidate();
          * repaint(); }
          */
-//        ((ResultListPanel) listResultPanel).unselect();
-//        if (model != null) {
-//            ((ResultListPanel) listResultPanel).select(model);
-//            if (listResultPanel.isVisible() != model.isListVisible()) {
-//                listResultPanel.setVisible(model.isListVisible());
-//                revalidate();
-//                repaint();
-//            }
-//
-//            //barChartButton.setSelected(model.isBarChartVisible());
-//            listButton.setSelected(model.isListVisible());
-//            localScaleButton.setSelected(model.isLocalScale());
-//        } else {
-//            listResultPanel.setVisible(false);
-//            listButton.setSelected(false);
-//            localScaleButton.setSelected(false);
-//        }
+    //        ((ResultListPanel) listResultPanel).unselect();
+    //        if (model != null) {
+    //            ((ResultListPanel) listResultPanel).select(model);
+    //            if (listResultPanel.isVisible() != model.isListVisible()) {
+    //                listResultPanel.setVisible(model.isListVisible());
+    //                revalidate();
+    //                repaint();
+    //            }
+    //
+    //            //barChartButton.setSelected(model.isBarChartVisible());
+    //            listButton.setSelected(model.isListVisible());
+    //            localScaleButton.setSelected(model.isLocalScale());
+    //        } else {
+    //            listResultPanel.setVisible(false);
+    //            listButton.setSelected(false);
+    //            localScaleButton.setSelected(false);
+    //        }
         //Chooser
-//        ((RankingChooser) centerPanel).refreshModel(model);
+    //        ((RankingChooser) centerPanel).refreshModel(model);
         //Toolbar
-//        ((RankingToolbar) categoryToolbar).refreshModel(model);
+    //        ((RankingToolbar) categoryToolbar).refreshModel(model);
     }
 
     private void refreshCenterPanel() {
@@ -358,16 +376,14 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
     }
 
     private void initControls() {
-        //Add ranking controls
+        // Add ranking controls
         toolbar.addRankingControl(splineButton);
         toolbar.addRankingControl(rankingLocalScaleButton);
         toolbar.addRankingControl(transformNullValuesButton);
-
-        //Add partition controls
+        // Add partition controls
         toolbar.addPartitionControl(partitionLocalScaleButton);
         toolbar.addPartitionControl(transformNullValuesButton);
-
-        //Actions
+        // Actions
         rankingLocalScaleButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -389,14 +405,13 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
         splineButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                RankingFunction function = (RankingFunction) model.getSelectedFunction();
+                RankingFunction function = ((RankingFunction) (model.getSelectedFunction()));
                 if (splineEditor == null) {
-                    splineEditor = new SplineEditor(
-                        NbBundle.getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.splineEditor.title"));
+                    splineEditor = new SplineEditor(NbBundle.getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.splineEditor.title"));
                 }
                 Interpolator interpolator = function.getInterpolator();
                 if (interpolator instanceof Interpolator.BezierInterpolator) {
-                    Interpolator.BezierInterpolator bezierInterpolator = (Interpolator.BezierInterpolator) interpolator;
+                    Interpolator.BezierInterpolator bezierInterpolator = ((Interpolator.BezierInterpolator) (interpolator));
                     splineEditor.setControl1(bezierInterpolator.getControl1());
                     splineEditor.setControl2(bezierInterpolator.getControl2());
                 } else {
@@ -404,10 +419,7 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
                     splineEditor.setControl2(new Point2D.Float(1, 1));
                 }
                 splineEditor.setVisible(true);
-                function.setInterpolator(
-                    new Interpolator.BezierInterpolator(
-                        (float) splineEditor.getControl1().getX(), (float) splineEditor.getControl1().getY(),
-                        (float) splineEditor.getControl2().getX(), (float) splineEditor.getControl2().getY()));
+                function.setInterpolator(new Interpolator.BezierInterpolator(((float) (splineEditor.getControl1().getX())), ((float) (splineEditor.getControl1().getY())), ((float) (splineEditor.getControl2().getX())), ((float) (splineEditor.getControl2().getY()))));
             }
         });
         applyButton.addActionListener(new ActionListener() {
@@ -417,22 +429,18 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
             }
         });
         autoApplyButton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 controller.startAutoApply();
             }
         });
         stopAutoApplyButton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 controller.stopAutoApply();
             }
-
         });
         enableAutoButton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 controller.setAutoApply(model.getAutoApplyTransformer() == null);
@@ -440,23 +448,21 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
         });
         stopAutoApplyButton.setVisible(false);
         autoApplyButton.setVisible(false);
-
 //        listButton = new JToggleButton();
-//        listButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/ranking/resources/list.png", false)); // NOI18N
+        // listButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/ranking/resources/list.png", false)); // NOI18N
 //        listButton.setToolTipText(NbBundle.getMessage(RankingTopComponent.class, "RankingTopComponent.listButton.text"));
 //        listButton.setEnabled(false);
 //        listButton.setFocusable(false);
 //        southToolbar.add(listButton);
-        /*
-         * barChartButton = new JToggleButton(); barChartButton.setIcon(new
-         * javax.swing.ImageIcon(getClass().getResource("/org/gephi/desktop/ranking/resources/barchart.png", false));
-         * // NOI18N NbBundle.getMessage(RankingTopComponent.class,
-         * "RankingTopComponent.barchartButton.text");
-         * barChartButton.setEnabled(false); barChartButton.setFocusable(false);
-         * southToolbar.add(barChartButton);
+        /* barChartButton = new JToggleButton(); barChartButton.setIcon(new
+        javax.swing.ImageIcon(getClass().getResource("/org/gephi/desktop/ranking/resources/barchart.png", false));
+        // NOI18N NbBundle.getMessage(RankingTopComponent.class,
+        "RankingTopComponent.barchartButton.text");
+        barChartButton.setEnabled(false); barChartButton.setFocusable(false);
+        southToolbar.add(barChartButton);
          */
 //        localScaleButton = new JToggleButton();
-//        localScaleButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/ranking/resources/funnel.png", false)); // NOI18N
+        // localScaleButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/ranking/resources/funnel.png", false)); // NOI18N
 //        localScaleButton.setToolTipText(NbBundle.getMessage(RankingTopComponent.class, "RankingTopComponent.localScaleButton.text"));
 //        localScaleButton.setEnabled(false);
 //        localScaleButton.setFocusable(false);
@@ -481,7 +487,6 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
 //                model.setLocalScale(localScaleButton.isSelected());
 //            }
 //        });
-
         /*
          * barChartButton.addActionListener(new ActionListener() {
          *
@@ -494,11 +499,11 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
         boolean modelEnabled = isModelEnabled();
 
         //barChartButton.setEnabled(modelEnabled);
-//        listButton.setEnabled(modelEnabled);
-//        localScaleButton.setEnabled(modelEnabled && model.isLocalScaleEnabled());
-//        rankingChooser.setEnabled(modelEnabled);
-//        rankingToolbar.setEnabled(modelEnabled);
-//        listResultPanel.setEnabled(modelEnabled);
+    //        listButton.setEnabled(modelEnabled);
+    //        localScaleButton.setEnabled(modelEnabled && model.isLocalScaleEnabled());
+    //        rankingChooser.setEnabled(modelEnabled);
+    //        rankingToolbar.setEnabled(modelEnabled);
+    //        listResultPanel.setEnabled(modelEnabled);
     }
 
     private boolean isModelEnabled() {
@@ -511,33 +516,30 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
      * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // </editor-fold>//GEN-END:initComponents
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
-
-        mainPanel = new javax.swing.JPanel();
+        mainPanel = new JPanel();
         categoryToolbar = toolbar.getCategoryToolbar();
         tranformerToolbar = toolbar.getTransformerToolbar();
-        attributePanel = new javax.swing.JPanel();
+        attributePanel = new JPanel();
         attibuteBox = new javax.swing.JComboBox();
-        centerPanel = new javax.swing.JPanel();
+        centerPanel = new JPanel();
         controlToolbar = toolbar.getControlToolbar();
-        rankingLocalScaleButton = new javax.swing.JToggleButton();
-        partitionLocalScaleButton = new javax.swing.JToggleButton();
-        transformNullValuesButton = new javax.swing.JToggleButton();
+        rankingLocalScaleButton = new JToggleButton();
+        partitionLocalScaleButton = new JToggleButton();
+        transformNullValuesButton = new JToggleButton();
         splineButton = new org.jdesktop.swingx.JXHyperlink();
-        controlPanel = new javax.swing.JPanel();
+        controlPanel = new JPanel();
         applyButton = new javax.swing.JButton();
-        stopAutoApplyButton = new javax.swing.JToggleButton();
+        stopAutoApplyButton = new JToggleButton();
         autoApplyToolbar = new javax.swing.JToolBar();
-        enableAutoButton = new javax.swing.JToggleButton();
-        autoApplyButton = new javax.swing.JToggleButton();
-
+        enableAutoButton = new JToggleButton();
+        autoApplyButton = new JToggleButton();
         setOpaque(true);
-        setLayout(new java.awt.BorderLayout());
-
+        setLayout(new BorderLayout());
         mainPanel.setLayout(new java.awt.GridBagLayout());
         mainPanel.setOpaque(true);
-
         categoryToolbar.setFloatable(false);
         categoryToolbar.setRollover(true);
         categoryToolbar.setOpaque(true);
@@ -548,7 +550,6 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         mainPanel.add(categoryToolbar, gridBagConstraints);
-
         tranformerToolbar.setFloatable(false);
         tranformerToolbar.setRollover(true);
         tranformerToolbar.setOpaque(true);
@@ -559,10 +560,8 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         mainPanel.add(tranformerToolbar, gridBagConstraints);
-
         attributePanel.setOpaque(true);
         attributePanel.setLayout(new java.awt.GridBagLayout());
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -570,7 +569,6 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         attributePanel.add(attibuteBox, gridBagConstraints);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -578,9 +576,8 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         mainPanel.add(attributePanel, gridBagConstraints);
-
         centerPanel.setOpaque(true);
-        centerPanel.setLayout(new java.awt.BorderLayout());
+        centerPanel.setLayout(new BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -588,49 +585,43 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         mainPanel.add(centerPanel, gridBagConstraints);
-
         controlToolbar.setFloatable(false);
         controlToolbar.setRollover(true);
         controlToolbar.setMargin(new java.awt.Insets(0, 4, 0, 0));
         controlToolbar.setOpaque(true);
+            // NOI18N
+        rankingLocalScaleButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/funnel.png", false));
+        rankingLocalScaleButton.setToolTipText(NbBundle.getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.localScaleButton.toolTipText"));// NOI18N
 
-        rankingLocalScaleButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/funnel.png", false)); // NOI18N
-        rankingLocalScaleButton.setToolTipText(org.openide.util.NbBundle
-            .getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.localScaleButton.toolTipText")); // NOI18N
         rankingLocalScaleButton.setFocusable(false);
-        rankingLocalScaleButton
-            .setSelectedIcon(new javax.swing.ImageIcon(UIUtils.generateSelectedDarkImage((ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/funnel.png", false).getImage())))); // NOI18N
+                // NOI18N
+        rankingLocalScaleButton.setSelectedIcon(new javax.swing.ImageIcon(UIUtils.generateSelectedDarkImage(ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/funnel.png", false).getImage())));
         controlToolbar.add(rankingLocalScaleButton);
+            // NOI18N
+        partitionLocalScaleButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/funnel.png", false));
+        partitionLocalScaleButton.setToolTipText(NbBundle.getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.partitionLocalScaleButton.toolTipText"));// NOI18N
 
-        partitionLocalScaleButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/funnel.png", false)); // NOI18N
-        partitionLocalScaleButton.setToolTipText(org.openide.util.NbBundle
-            .getMessage(AppearanceTopComponent.class,
-                "AppearanceTopComponent.partitionLocalScaleButton.toolTipText")); // NOI18N
         partitionLocalScaleButton.setFocusable(false);
-        partitionLocalScaleButton
-            .setSelectedIcon(new javax.swing.ImageIcon(UIUtils.generateSelectedDarkImage((ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/funnel.png", false).getImage())))); // NOI18N
+                // NOI18N
+        partitionLocalScaleButton.setSelectedIcon(new javax.swing.ImageIcon(UIUtils.generateSelectedDarkImage(ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/funnel.png", false).getImage())));
         controlToolbar.add(partitionLocalScaleButton);
+            // NOI18N
+        transformNullValuesButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/transformNull.png", false));
+        transformNullValuesButton.setToolTipText(NbBundle.getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.transformNullValues.toolTipText"));// NOI18N
 
-        transformNullValuesButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/transformNull.png", false)); // NOI18N
-        transformNullValuesButton.setToolTipText(org.openide.util.NbBundle
-            .getMessage(AppearanceTopComponent.class,
-                "AppearanceTopComponent.transformNullValues.toolTipText")); // NOI18N
         transformNullValuesButton.setFocusable(false);
-        transformNullValuesButton
-            .setSelectedIcon(new javax.swing.ImageIcon(UIUtils.generateSelectedDarkImage((ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/transformNull.png", false)
-                .getImage())))); // NOI18N
+                // NOI18N
+        transformNullValuesButton.setSelectedIcon(new javax.swing.ImageIcon(UIUtils.generateSelectedDarkImage(ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/transformNull.png", false).getImage())));
         controlToolbar.add(transformNullValuesButton);
+        org.openide.awt.Mnemonics.setLocalizedText(splineButton, NbBundle.getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.splineButton.text"));// NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(splineButton, org.openide.util.NbBundle
-            .getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.splineButton.text")); // NOI18N
-        splineButton.setToolTipText(org.openide.util.NbBundle
-            .getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.splineButton.toolTipText")); // NOI18N
+        splineButton.setToolTipText(NbBundle.getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.splineButton.toolTipText"));// NOI18N
+
         splineButton.setFocusPainted(false);
         splineButton.setFocusable(false);
         splineButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         splineButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         controlToolbar.add(splineButton);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
@@ -639,15 +630,14 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
         mainPanel.add(controlToolbar, gridBagConstraints);
-
         controlPanel.setOpaque(true);
         controlPanel.setLayout(new java.awt.GridBagLayout());
+            // NOI18N
+        applyButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/apply.gif", false));
+        org.openide.awt.Mnemonics.setLocalizedText(applyButton, NbBundle.getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.applyButton.text"));// NOI18N
 
-        applyButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/apply.gif", false)); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(applyButton, org.openide.util.NbBundle
-            .getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.applyButton.text")); // NOI18N
-        applyButton.setToolTipText(org.openide.util.NbBundle
-            .getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.applyButton.toolTipText")); // NOI18N
+        applyButton.setToolTipText(NbBundle.getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.applyButton.toolTipText"));// NOI18N
+
         applyButton.setMargin(new java.awt.Insets(0, 14, 0, 14));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
@@ -655,13 +645,13 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 18, 3, 5);
         controlPanel.add(applyButton, gridBagConstraints);
-
-        stopAutoApplyButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/stop.png", false)); // NOI18N
+            // NOI18N
+        stopAutoApplyButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/stop.png", false));
         stopAutoApplyButton.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(stopAutoApplyButton, org.openide.util.NbBundle
-            .getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.stopAutoApplyButton.text")); // NOI18N
-        stopAutoApplyButton.setToolTipText(org.openide.util.NbBundle.getMessage(AppearanceTopComponent.class,
-            "AppearanceTopComponent.stopAutoApplyButton.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(stopAutoApplyButton, NbBundle.getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.stopAutoApplyButton.text"));// NOI18N
+
+        stopAutoApplyButton.setToolTipText(NbBundle.getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.stopAutoApplyButton.toolTipText"));// NOI18N
+
         stopAutoApplyButton.setFocusable(false);
         stopAutoApplyButton.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         stopAutoApplyButton.setMargin(new java.awt.Insets(0, 7, 0, 7));
@@ -672,32 +662,30 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 3, 5);
         controlPanel.add(stopAutoApplyButton, gridBagConstraints);
-
         autoApplyToolbar.setFloatable(false);
         autoApplyToolbar.setRollover(true);
         autoApplyToolbar.setOpaque(true);
+            // NOI18N
+        enableAutoButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/chain.png", false));
+        enableAutoButton.setToolTipText(NbBundle.getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.enableAutoButton.toolTipText"));// NOI18N
 
-        enableAutoButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/chain.png", false)); // NOI18N
-        enableAutoButton.setToolTipText(org.openide.util.NbBundle
-            .getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.enableAutoButton.toolTipText")); // NOI18N
         enableAutoButton.setFocusable(false);
         enableAutoButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         enableAutoButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         autoApplyToolbar.add(Box.createHorizontalGlue());
         autoApplyToolbar.add(enableAutoButton);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         controlPanel.add(autoApplyToolbar, gridBagConstraints);
+            // NOI18N
+        autoApplyButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/apply.gif", false));
+        org.openide.awt.Mnemonics.setLocalizedText(autoApplyButton, NbBundle.getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.autoApplyButton.text"));// NOI18N
 
-        autoApplyButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/appearance/resources/apply.gif", false)); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(autoApplyButton, org.openide.util.NbBundle
-            .getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.autoApplyButton.text")); // NOI18N
-        autoApplyButton.setToolTipText(org.openide.util.NbBundle
-            .getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.autoApplyButton.toolTipText")); // NOI18N
+        autoApplyButton.setToolTipText(NbBundle.getMessage(AppearanceTopComponent.class, "AppearanceTopComponent.autoApplyButton.toolTipText"));// NOI18N
+
         autoApplyButton.setFocusable(false);
         autoApplyButton.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         autoApplyButton.setMargin(new java.awt.Insets(0, 7, 0, 7));
@@ -708,16 +696,14 @@ public class AppearanceTopComponent extends TopComponent implements Lookup.Provi
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 3, 5);
         controlPanel.add(autoApplyButton, gridBagConstraints);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         mainPanel.add(controlPanel, gridBagConstraints);
-
-        add(mainPanel, java.awt.BorderLayout.CENTER);
-    }// </editor-fold>//GEN-END:initComponents
+        add(mainPanel, BorderLayout.CENTER);
+    }
 
     void writeProperties(java.util.Properties p) {
         // better to version settings since initial version as advocated at
