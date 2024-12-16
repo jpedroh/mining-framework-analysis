@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ninja.utils;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Maps;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +28,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import ninja.ContentTypes;
 import ninja.Context;
 import ninja.Cookie;
@@ -35,14 +38,8 @@ import ninja.session.Session;
 import ninja.uploads.FileItem;
 import ninja.validation.Validation;
 import ninja.validation.ValidationImpl;
-
 import org.apache.commons.fileupload.FileItemIterator;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Maps;
 
 /**
  * A fake context
@@ -51,24 +48,37 @@ public class FakeContext implements Context {
     private String requestContentType;
 
     private String requestPath;
-    
+
     private String contextPath;
 
     /** please use the requestPath stuff */
     @Deprecated
     private String requestUri;
+
     private String hostname;
+
     private String remoteAddr;
+
     private String scheme;
+
     private FlashScope flashScope;
+
     private Session session;
+
     private List<Cookie> addedCookies = new ArrayList<Cookie>();
+
     private Map<String, String> cookieValues = new HashMap<String, String>();
+
     private ListMultimap<String, String> params = ArrayListMultimap.create();
+
     private Map<String, String> pathParams = new HashMap<String, String>();
+
     private ListMultimap<String, String> headers = ArrayListMultimap.create();
+
     private Map<String, Object> attributes = new HashMap<String, Object>();
+
     private Object body;
+
     private Validation validation = new ValidationImpl();
 
     private String acceptContentType;
@@ -100,7 +110,6 @@ public class FakeContext implements Context {
         this.requestUri = requestUri;
         return this;
     }
-
 
     /**
      * Please use the getServletPath and setServletPath facilities.
@@ -154,7 +163,7 @@ public class FakeContext implements Context {
     public FlashScope getFlashCookie() {
         return flashScope;
     }
-    
+
     @Override
     public Session getSession() {
         return session;
@@ -164,7 +173,7 @@ public class FakeContext implements Context {
     public FlashScope getFlashScope() {
         return flashScope;
     }
-    
+
     public FakeContext addParameter(String key, String value) {
         params.put(key, value);
         return this;
@@ -310,7 +319,7 @@ public class FakeContext implements Context {
     public boolean isAsync() {
         throw new UnsupportedOperationException("Not supported in fake context");
     }
-    
+
     @Override
     public void handleAsync() {
         throw new UnsupportedOperationException("Not supported in fake context");
@@ -335,7 +344,7 @@ public class FakeContext implements Context {
     public ResponseStreams finalizeHeaders(Result result) {
         throw new UnsupportedOperationException("Not supported in fake context");
     }
-    
+
     @Override
     public ResponseStreams finalizeHeadersWithoutFlashAndSessionCookie(Result result) {
         throw new UnsupportedOperationException("Not supported in fake context");
@@ -356,15 +365,15 @@ public class FakeContext implements Context {
         throw new UnsupportedOperationException("Not supported in fake context");
     }
 
-	public FakeContext setRequestPath(String path) {
-		this.requestPath = path;
-		return this;
-	}
+public FakeContext setRequestPath(String path) {
+	this.requestPath = path;
+	return this;
+}
 
-	@Override
-	public String getRequestPath() {
-		return this.requestPath;
-	}
+@Override
+public String getRequestPath() {
+	return this.requestPath;
+}
 
     @Override
     public Validation getValidation() {
@@ -451,15 +460,15 @@ public class FakeContext implements Context {
     public Map<String, Object> getAttributes() {
         return attributes;
     }
-    
-	@Override
-	public String getContextPath() {
-		return contextPath;
-	}
-	
-	public void setContextPath(String contextPath){
-		this.contextPath = contextPath;
-	}
+
+@Override
+public String getContextPath() {
+	return contextPath;
+}
+
+public void setContextPath(String contextPath){
+	this.contextPath = contextPath;
+}
 
     @Override
     public boolean isRequestJson() {

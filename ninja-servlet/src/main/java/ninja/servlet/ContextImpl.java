@@ -15,6 +15,9 @@
  */
 package ninja.servlet;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,13 +32,11 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-
+import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import ninja.ContentTypes;
 import ninja.Context;
 import ninja.Cookie;
@@ -58,7 +59,6 @@ import ninja.utils.ResponseStreams;
 import ninja.utils.ResultHandler;
 import ninja.utils.SwissKnife;
 import ninja.validation.Validation;
-
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
@@ -68,12 +68,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 
 public class ContextImpl implements Context.Impl {
-
     private ServletContext servletContext;
 
     private HttpServletRequest httpServletRequest;
@@ -83,39 +79,38 @@ public class ContextImpl implements Context.Impl {
     private Route route;
 
     private AsyncStrategy asyncStrategy;
+
     private final Object asyncLock = new Object();
 
     private final BodyParserEngineManager bodyParserEngineManager;
 
     private final FlashScope flashScope;
-    
+
     private final NinjaProperties ninjaProperties;
 
     private final Session session;
+
     private final ResultHandler resultHandler;
+
     private final Validation validation;
+
     private final Injector injector;
-    
+
     private boolean formFieldsProcessed = false;
+
     private Map<String, String[]> formFieldsMap;
+
     private Map<String, FileItem[]> fileFieldsMap;
 
     // In Async mode, these values will be set to null, so save them
     private String requestPath;
+
     private String contextPath;
 
     private Logger logger = LoggerFactory.getLogger(ContextImpl.class);
 
     @Inject
-    public ContextImpl (
-            BodyParserEngineManager bodyParserEngineManager,
-            FlashScope flashCookie,
-            NinjaProperties ninjaProperties,
-            ResultHandler resultHandler,
-            Session sessionCookie,
-            Validation validation,
-            Injector injector) {
-
+    public ContextImpl(BodyParserEngineManager bodyParserEngineManager, FlashScope flashCookie, NinjaProperties ninjaProperties, ResultHandler resultHandler, Session sessionCookie, Validation validation, Injector injector) {
         this.bodyParserEngineManager = bodyParserEngineManager;
         this.flashScope = flashCookie;
         this.ninjaProperties = ninjaProperties;
@@ -139,7 +134,7 @@ public class ContextImpl implements Context.Impl {
 
         // init session scope:
         session.init(this);
-        
+
         contextPath = httpServletRequest.getContextPath();
         requestPath = performGetRequestPath();
     }
@@ -180,20 +175,25 @@ public class ContextImpl implements Context.Impl {
 
     @Override
     public String getParameter(String key) {
-        if (!formFieldsProcessed) processFormFields();
+        if (!formFieldsProcessed) {
+            processFormFields();
+        }
         if (formFieldsMap == null) {
             return httpServletRequest.getParameter(key);
         } else {
             String[] values = formFieldsMap.get(key);
-            if (values == null || values.length == 0)
+            if ((values == null) || (values.length == 0)) {
                 return null;
+            }
             return values[0];
         }
     }
 
     @Override
     public List<String> getParameterValues(String name) {
-        if (!formFieldsProcessed) processFormFields();
+        if (!formFieldsProcessed) {
+            processFormFields();
+        }
         if (formFieldsMap == null) {
             String[] params = httpServletRequest.getParameterValues(name);
             if (params == null) {
@@ -202,8 +202,9 @@ public class ContextImpl implements Context.Impl {
             return Arrays.asList(params);
         } else {
             String[] values = formFieldsMap.get(name);
-            if (values == null || values.length == 0)
+            if ((values == null) || (values.length == 0)) {
                 return Collections.emptyList();
+            }
             return Arrays.asList(values);
         }
     }
@@ -234,7 +235,7 @@ public class ContextImpl implements Context.Impl {
             return defaultValue;
         }
     }
-    
+
     @Override
     public FileItem getParameterAsFileItem(String key) {
         if (!formFieldsProcessed) processFormFields();
@@ -243,7 +244,7 @@ public class ContextImpl implements Context.Impl {
         if (fileItems == null || fileItems.length == 0) return null;
         return fileItems[0];
     }
-    
+
     @Override
     public List<FileItem> getParameterAsFileItems(String key) {
         if (!formFieldsProcessed) processFormFields();
@@ -259,7 +260,6 @@ public class ContextImpl implements Context.Impl {
         return fileFieldsMap;
     }
 
-    
     @Override
     public <T> T getParameterAs(String key, Class<T> clazz) {
         return getParameterAs(key, clazz, null);
@@ -278,7 +278,9 @@ public class ContextImpl implements Context.Impl {
 
     @Override
     public Map<String, String[]> getParameters() {
-        if (!formFieldsProcessed) processFormFields();
+        if (!formFieldsProcessed) {
+            processFormFields();
+        }
         if (formFieldsMap == null) {
             return httpServletRequest.getParameterMap();
         } else {
@@ -383,27 +385,23 @@ public class ContextImpl implements Context.Impl {
 
     @Override
     public List<Cookie> getCookies() {
-        javax.servlet.http.Cookie[] servletCookies = httpServletRequest.getCookies();
-        
+        servlet[] servletCookies = httpServletRequest.getCookies();
         if (servletCookies == null) {
             return Collections.EMPTY_LIST;
         }
-        
         List<Cookie> ninjaCookies = new ArrayList<>(servletCookies.length);
-
         for (javax.servlet.http.Cookie cookie : servletCookies) {
             Cookie ninjaCookie = CookieHelper.convertServletCookieToNinjaCookie(cookie);
             ninjaCookies.add(ninjaCookie);
         }
-
         return ninjaCookies;
     }
-    
+
     @Override
     public void addCookie(Cookie cookie) {
         httpServletResponse.addCookie(CookieHelper.convertNinjaCookieToServletCookie(cookie));
     }
-    
+
     @Override
     public void unsetCookie(Cookie cookie) {
         httpServletResponse.addCookie(CookieHelper
@@ -443,7 +441,7 @@ public class ContextImpl implements Context.Impl {
         
         return remoteAddr;
     }
-    
+
     private String calculateRemoteAddrAndTakeIntoAccountXForwardHeader() {
         
         String remoteAddr = getHeader(X_FORWARD_HEADER);
@@ -644,23 +642,17 @@ public class ContextImpl implements Context.Impl {
 
     @Override
     public FileItemIterator getFileItemIterator() {
-
         long maxFileSize = ninjaProperties.getIntegerWithDefault(NinjaConstant.UPLOADS_MAX_FILE_SIZE, -1);
         long maxTotalSize = ninjaProperties.getIntegerWithDefault(NinjaConstant.UPLOADS_MAX_TOTAL_SIZE, -1);
-        
         ServletFileUpload upload = new ServletFileUpload();
         upload.setFileSizeMax(maxFileSize);
         upload.setSizeMax(maxTotalSize);
-        
         FileItemIterator fileItemIterator = null;
-
         try {
             fileItemIterator = upload.getItemIterator(httpServletRequest);
         } catch (FileUploadException | IOException e) {
-            logger.error("Error while trying to process mulitpart file upload",
-                    e);
+            logger.error("Error while trying to process mulitpart file upload", e);
         }
-
         return fileItemIterator;
     }
 
@@ -804,7 +796,7 @@ public class ContextImpl implements Context.Impl {
 
         return contentType.startsWith(ContentTypes.APPLICATION_XML);
     }
-    
+
     private void processFormFields() {
         if (formFieldsProcessed) return;
         formFieldsProcessed = true;
@@ -880,7 +872,7 @@ public class ContextImpl implements Context.Impl {
         }
         fileFieldsMap = Collections.unmodifiableMap(fileFieldsMap);
     }
-    
+
     @Override
     public void cleanup() {
         // call cleanup on all file items

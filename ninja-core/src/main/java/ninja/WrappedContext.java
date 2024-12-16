@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ninja;
 
 import java.io.BufferedReader;
@@ -21,14 +20,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-
 import ninja.session.FlashScope;
 import ninja.session.Session;
 import ninja.uploads.FileItem;
 import ninja.utils.ResponseStreams;
 import ninja.validation.Validation;
-
 import org.apache.commons.fileupload.FileItemIterator;
+
 
 /**
  * A wrapped context. Useful if filters want to modify the context before
@@ -72,7 +70,7 @@ public class WrappedContext implements Context {
     public Session getSessionCookie() {
         return wrapped.getSessionCookie();
     }
-    
+
     @Override
     public FlashScope getFlashScope() {
         return wrapped.getFlashScope();
@@ -177,7 +175,7 @@ public class WrappedContext implements Context {
     public boolean isAsync() {
         return wrapped.isAsync();
     }
-    
+
     @Override
     public void handleAsync() {
         wrapped.handleAsync();
@@ -202,7 +200,7 @@ public class WrappedContext implements Context {
     public ResponseStreams finalizeHeaders(Result result) {
         return wrapped.finalizeHeaders(result);
     }
-    
+
     @Override
     public ResponseStreams finalizeHeadersWithoutFlashAndSessionCookie(Result result) {
         return wrapped.finalizeHeadersWithoutFlashAndSessionCookie(result);
@@ -307,7 +305,7 @@ public class WrappedContext implements Context {
     public void setAttribute(String name, Object value) {
         wrapped.setAttribute(name, value);
     }
-    
+
     @Override
     public Map<String,Object> getAttributes() {
         return wrapped.getAttributes();

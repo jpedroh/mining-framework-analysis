@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ninja;
 
 import java.io.BufferedReader;
@@ -21,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-
 import ninja.bodyparser.BodyParserEngineJson;
 import ninja.bodyparser.BodyParserEngineManager;
 import ninja.bodyparser.BodyParserEngineXml;
@@ -32,18 +30,16 @@ import ninja.uploads.FileItemProvider;
 import ninja.uploads.FileProvider;
 import ninja.utils.ResponseStreams;
 import ninja.validation.Validation;
-
 import org.apache.commons.fileupload.FileItemIterator;
 
-public interface Context {
 
+public interface Context {
     /**
-     * Impl is used to hide stuff that a user should not see on 
+     * Impl is used to hide stuff that a user should not see on
      * code completion. Internal stuff like setting routes should go here.
      */
     interface Impl extends Context {
-        
-        void setRoute(Route route);
+        public abstract void setRoute(Route route);
     }
 
     /**
@@ -54,25 +50,30 @@ public interface Context {
     /**
      * X Forwarded for header, used when behind fire walls and proxies.
      */
-    public String X_FORWARD_HEADER = "X-Forwarded-For";
-    
+    public static final String X_FORWARD_HEADER = "X-Forwarded-For";
+
     /**
      * Used to enable or disable usage of X-Forwarded-For header in
      * getRemoteAddr(). Can be set in application.conf to true or false. If
      * not set it's assumed to be false;
      */
     public String NINJA_PROPERTIES_X_FORWARDED_FOR = "ninja.x_forwarded_for_enabled";
-        
+
     /**
      * please use Result.SC_*
-     * 
+     *
      * @author rbauer
-     * 
      */
     @Deprecated
     enum HTTP_STATUS {
-        notFound404(404), ok200(200), forbidden403(403), teapot418(418), badRequest400(
-                400), noContent204(204), created201(201);
+
+        notFound404(404),
+        ok200(200),
+        forbidden403(403),
+        teapot418(418),
+        badRequest400(400),
+        noContent204(204),
+        created201(201);
         public final int code;
 
         private HTTP_STATUS(int code) {
@@ -171,7 +172,7 @@ public interface Context {
      * @return the flash scope of that request.
      */
     FlashScope getFlashScope();
-    
+
     /**
      * Deprecated  => please use getFlashScope()
      * @return FlashScope of this request.
@@ -189,14 +190,14 @@ public interface Context {
      * @return the Session of that request / response cycle.
      */
     Session getSession();
-    
+
     /**
      * Deprecated => please use getSession();
      * @return the Session of that request / response cycle.
      */
     @Deprecated
     Session getSessionCookie();
-    
+
     /**
      * Get cookie from context.
      * 
@@ -205,7 +206,7 @@ public interface Context {
      * @return the cookie with that name or null.
      */
     Cookie getCookie(String cookieName);
-    
+
     /**
      * Checks whether the context contains a given cookie.
      *
@@ -221,7 +222,7 @@ public interface Context {
      * @return the cookie with that name or null.
      */
     List<Cookie> getCookies();
-    
+
     /**
      * Get the context path on which the application is running
      * 
@@ -311,7 +312,6 @@ public interface Context {
      */
     Integer getParameterAsInteger(String name, Integer defaultValue);
 
-
     /**
      * Same like {@link #getParameter(String, String)}, but converts the
      * parameter to File if found.
@@ -325,7 +325,6 @@ public interface Context {
      */
     FileItem getParameterAsFileItem(String name);
 
-
     /**
      * Get the files parameter with the given key from the request.
      *
@@ -335,7 +334,6 @@ public interface Context {
      */
     List<FileItem> getParameterAsFileItems(String name);
 
-
     /**
      * Get all the file parameters from the request
      * 
@@ -343,7 +341,6 @@ public interface Context {
      */
     Map<String, FileItem[]> getParameterFileItems();
 
-    
     /**
      * Same like {@link #getParameter(String)}, but converts the parameter to
      * Class type if found.
@@ -471,9 +468,8 @@ public interface Context {
      */
     <T> T parseBody(Class<T> classOfT);
 
-    
     boolean isAsync();
-        
+
     /**
      * Indicate that this request is going to be handled asynchronously
      */
@@ -498,7 +494,7 @@ public interface Context {
      * After finalizing the headers you can access the responseStreams.
      */
     ResponseStreams finalizeHeaders(Result result);
-    
+
     /**
      * Finalizing the headers copies all stuff into the headers.
      * 
@@ -548,19 +544,18 @@ public interface Context {
 
     /**
      * Gets the FileItemIterator of the input.
-     * 
+     *
      * Can be used to process uploads in a streaming fashion. Check out:
      * http://commons.apache.org/fileupload/streaming.html
-     * 
+     *
      * @return the FileItemIterator of the request or null if there was an
-     *         error.
-     *         
+    error.
      * @deprecated This method is kept for backward compatibility, use {@link FileProvider}
-     * to specify which {@link FileItemProvider} should be used to handle uploaded files, and
-     * access them using {@link #getParameterAsFileItem(String)}.
+    to specify which {@link FileItemProvider} should be used to handle uploaded files, and
+    access them using {@link #getParameterAsFileItem(String)}.
      */
     @Deprecated
-    FileItemIterator getFileItemIterator();
+    public abstract FileItemIterator getFileItemIterator();
 
     /**
      * Get the validation context
@@ -635,20 +630,20 @@ public interface Context {
      * @return the charset that is acceptable for the client
      */
     String getAcceptCharset();
-    
-   /**
-    *
-    * Returns the name of the HTTP method with which this 
-    * request was made, for example, GET, POST, or PUT.
-    * Same as the value of the CGI variable REQUEST_METHOD.
-    *
-    * @return a <code>String</code> 
-    *        specifying the name
-    *        of the method with which
-    *        this request was made (eg GET, POST, PUT...)
-    *
-    */
-    String getMethod();
+
+/**
+ *
+ * Returns the name of the HTTP method with which this 
+ * request was made, for example, GET, POST, or PUT.
+ * Same as the value of the CGI variable REQUEST_METHOD.
+ *
+ * @return a <code>String</code> 
+ *        specifying the name
+ *        of the method with which
+ *        this request was made (eg GET, POST, PUT...)
+ *
+ */
+ String getMethod();
 
     /**
      * Gets an attribute value previously set by {@link #setAttribute}.
@@ -690,14 +685,14 @@ public interface Context {
      * @see #getAttribute(String, Class)
      */
     void setAttribute(String name, Object value);
-    
+
     /**
      * Get all the attributes from the request
      * 
      * @return The attributes
      */
     Map<String, Object> getAttributes();
-    
+
     /**
      * Check to see if the request content type is JSON.
      * <p>
@@ -729,7 +724,7 @@ public interface Context {
      * @param cookie Ninja Cookie
      */
     void unsetCookie(Cookie cookie);
-    
+
     /**
      * Cleanup context
      */
