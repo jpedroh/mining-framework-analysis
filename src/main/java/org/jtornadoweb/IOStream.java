@@ -8,29 +8,42 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-
 import org.jtornadoweb.IOLoop.EventHandler;
 
-public class IOStream implements EventHandler {
 
+public class IOStream implements EventHandler {
 	static interface StreamHandler {
-		public void execute(String data) throws Exception;
+		public abstract void execute(String data) throws Exception;
 	}
 
 	private static Charset charSet = Charset.forName("UTF-8");
+
 	private final SocketChannel client;
+
 	private final int maxBufferSize;
+
 	private final int readChunckSize;
+
 	private final ByteBuffer readBuffer;
+
 	private final ByteBuffer writeBuffer;
+
 	private final CharBuffer stream;
+
 	private String delimiter;
+
 	private StreamHandler callback;
+
 	private IOLoop loop;
+
 	private final CharBuffer streamRead;
+
 	boolean writing;
+
 	boolean closing;
+
 	boolean closed;
+
 	private StreamHandler writeCallback;
 
 	public IOStream(SocketChannel client, IOLoop loop) {
@@ -173,36 +186,39 @@ public class IOStream implements EventHandler {
 	 */
 	private void handleRead() throws Exception {
 		readBuffer.mark();
-		streamRead.mark();
+		//streamRead.mark();
 		stream.mark();
 		int read;
 		while ((read = client.read(readBuffer)) > 0) {
-
 			CharsetDecoder decoder = charSet.newDecoder();
 			ByteBuffer dupReadBuffer = readBuffer.duplicate();
 			dupReadBuffer.reset();
 			decoder.decode(dupReadBuffer, stream, true);
-			decoder.flush(stream);
-			if (stream.position() != stream.limit())
+			stream.position(read);
+			if (stream.position() != stream.limit()) {
 				stream.position(stream.position() + read);
+			}
+			//decoder.flush(stream);
 			readBuffer.mark();
-		}
-
+		} 
 		System.out.println("leu  :" + streamRead.toString());
 		System.out.println("read bytes" + read);
-		if (read == -1) {
+		if (read == (-1)) {
 			System.out.println("conn closed");
 			close();
 			return;
 		} else {
+<<<<<<< LEFT
+			//stream.reset();
+			//streamRead.reset();
+=======
 			// stream.reset();
 			streamRead.reset();
+>>>>>>> RIGHT
 		}
-
 		// If delimiter is still present, callback should be excecuted if the
 		// content is found.
 		if (delimiter != null) {
-
 			String found = find(delimiter);
 			if (found != "") {
 				StreamHandler cback = callback;
@@ -213,9 +229,7 @@ public class IOStream implements EventHandler {
 				// content not yet available. lets wait for it.
 				loop.addHandler(client, this, SelectionKey.OP_READ);
 			}
-
 		}
-
 	}
 
 	/**
@@ -227,19 +241,16 @@ public class IOStream implements EventHandler {
 	 * @return "" or the found string.
 	 */
 	private String find(String searchString) {
-
-		String sStream = streamRead.subSequence(streamRead.position(),
-				stream.position()).toString();
+		String sStream = streamRead.subSequence(streamRead.position(), stream.position()).toString();
 		int index = sStream.indexOf(searchString);
-		if (index > -1) {
+		if (index > (-1)) {
 			String found = sStream.substring(0, index + searchString.length());
-			int forwardPosition = index + searchString.length() - 1;
+			int forwardPosition = (index + searchString.length()) - 1;
 			streamRead.position(forwardPosition);
 			// stream.position(forwardPosition);
 			return found;
 		}
 		return "";
-
 	}
 
 	public void close() throws Exception {
@@ -252,5 +263,4 @@ public class IOStream implements EventHandler {
 			this.client.close();
 		}
 	}
-
 }
