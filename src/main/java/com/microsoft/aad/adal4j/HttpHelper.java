@@ -1,67 +1,31 @@
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
 package com.microsoft.aad.adal4j;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.Map;
-
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import org.slf4j.Logger;
 
-class HttpHelper {
 
-    static String executeHttpGet(final Logger log,  final Logger piiLog, final String url,
-            final Proxy proxy, final SSLSocketFactory sslSocketFactory)
-            throws Exception {
+class HttpHelper {
+    static String executeHttpGet(final Logger log, final Logger piiLog, final String url, final Proxy proxy, final SSLSocketFactory sslSocketFactory) throws Exception {
         return executeHttpGet(log, piiLog, url, null, proxy, sslSocketFactory);
     }
 
-    static String executeHttpGet(final Logger log, final Logger piiLog, final String url,
-            final Map<String, String> headers, final Proxy proxy,
-            final SSLSocketFactory sslSocketFactory) throws Exception {
-        final HttpsURLConnection conn = HttpHelper.openConnection(url, proxy,
-                sslSocketFactory);
+    static String executeHttpGet(final Logger log, final Logger piiLog, final String url, final Map<String, String> headers, final Proxy proxy, final SSLSocketFactory sslSocketFactory) throws Exception {
+        final HttpsURLConnection conn = HttpHelper.openConnection(url, proxy, sslSocketFactory);
         return executeGetRequest(log, piiLog, headers, conn);
     }
 
-    static String executeHttpPost(final Logger log, final Logger piiLog, final String url,
-            String postData, final Proxy proxy,
-            final SSLSocketFactory sslSocketFactory) throws Exception {
-        return executeHttpPost(log, piiLog, url, postData, null, proxy,
-                sslSocketFactory);
+    static String executeHttpPost(final Logger log, final Logger piiLog, final String url, String postData, final Proxy proxy, final SSLSocketFactory sslSocketFactory) throws Exception {
+        return executeHttpPost(log, piiLog, url, postData, null, proxy, sslSocketFactory);
     }
 
-    static String executeHttpPost(final Logger log, final Logger piiLog, final String url,
-            String postData, final Map<String, String> headers,
-            final Proxy proxy, final SSLSocketFactory sslSocketFactory)
-            throws Exception {
-        final HttpsURLConnection conn = HttpHelper.openConnection(url, proxy,
-                sslSocketFactory);
+    static String executeHttpPost(final Logger log, final Logger piiLog, final String url, String postData, final Map<String, String> headers, final Proxy proxy, final SSLSocketFactory sslSocketFactory) throws Exception {
+        final HttpsURLConnection conn = HttpHelper.openConnection(url, proxy, sslSocketFactory);
         return executePostRequest(log, piiLog, postData, headers, conn);
     }
 
@@ -129,36 +93,20 @@ class HttpHelper {
         return conn;
     }
 
-    static void verifyReturnedCorrelationId(Logger log, Logger piilog,
-            HttpsURLConnection conn, String sentCorrelationId) {
-        if (StringHelper
-                .isBlank(conn
-                        .getHeaderField(ClientDataHttpHeaders.CORRELATION_ID_HEADER_NAME))
-                || !conn.getHeaderField(
-                ClientDataHttpHeaders.CORRELATION_ID_HEADER_NAME)
-                .equals(sentCorrelationId)) {
-
-            String msg = LogHelper.createMessage(
-                    String.format(
-                            "Sent (%s) Correlation Id is not same as received (%s).",
-                            sentCorrelationId,
-                            conn.getHeaderField(ClientDataHttpHeaders.CORRELATION_ID_HEADER_NAME)),
-                    sentCorrelationId);
+    static void verifyReturnedCorrelationId(Logger log, Logger piilog, HttpsURLConnection conn, String sentCorrelationId) {
+        if (StringHelper.isBlank(conn.getHeaderField(ClientDataHttpHeaders.CORRELATION_ID_HEADER_NAME)) || (!conn.getHeaderField(ClientDataHttpHeaders.CORRELATION_ID_HEADER_NAME).equals(sentCorrelationId))) {
+            String msg = LogHelper.createMessage(String.format("Sent (%s) Correlation Id is not same as received (%s).", sentCorrelationId, conn.getHeaderField(ClientDataHttpHeaders.CORRELATION_ID_HEADER_NAME)), sentCorrelationId);
             log.info(msg);
             piilog.info(msg);
         }
     }
 
-    private static String executeGetRequest(Logger log, Logger piiLog,
-            Map<String, String> headers, HttpsURLConnection conn)
-            throws IOException {
+    private static String executeGetRequest(Logger log, Logger piiLog, Map<String, String> headers, HttpsURLConnection conn) throws IOException {
         configureAdditionalHeaders(conn, headers);
         return getResponse(log, piiLog, headers, conn);
     }
 
-    private static String executePostRequest(Logger log, Logger piiLog, String postData,
-            Map<String, String> headers, HttpsURLConnection conn)
-            throws IOException {
+    private static String executePostRequest(Logger log, Logger piiLog, String postData, Map<String, String> headers, HttpsURLConnection conn) throws IOException {
         configureAdditionalHeaders(conn, headers);
         conn.setRequestMethod("POST");
         conn.setDoOutput(true);
@@ -167,22 +115,18 @@ class HttpHelper {
             wr = new DataOutputStream(conn.getOutputStream());
             wr.writeBytes(postData);
             wr.flush();
-
             return getResponse(log, piiLog, headers, conn);
-        }
-        finally {
+        } finally {
             if (wr != null) {
                 wr.close();
             }
         }
     }
 
-    private static String getResponse(Logger log, Logger piiLog, Map<String, String> headers,
-            HttpsURLConnection conn) throws IOException {
+    private static String getResponse(Logger log, Logger piiLog, Map<String, String> headers, HttpsURLConnection conn) throws IOException {
         String response = readResponseFromConnection(conn);
         if (headers != null) {
-            HttpHelper.verifyReturnedCorrelationId(log, piiLog, conn, headers
-                    .get(ClientDataHttpHeaders.CORRELATION_ID_HEADER_NAME));
+            HttpHelper.verifyReturnedCorrelationId(log, piiLog, conn, headers.get(ClientDataHttpHeaders.CORRELATION_ID_HEADER_NAME));
         }
         return response;
     }
