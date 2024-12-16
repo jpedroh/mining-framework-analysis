@@ -1,3 +1,4 @@
+<<<<<<< LEFT
 /*
  * Copyright 2012 the original author or authors.
  *
@@ -13,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+=======
+>>>>>>> RIGHT
 package silvertip;
 
 import java.io.IOException;
@@ -22,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 
 /**
  * The <code>Events</code> class is the heart of Silvertip, an event
@@ -68,7 +72,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class Events {
   private List<EventSource> sources = new ArrayList<EventSource>();
+
   private Selector selector;
+
   private boolean stopped;
 
   public static Events open() throws IOException {
@@ -159,27 +165,29 @@ public class Events {
     Iterator<SelectionKey> it = selector.selectedKeys().iterator();
     while (it.hasNext()) {
       SelectionKey key = it.next();
-      EventSource source = (EventSource) key.attachment();
+      EventSource source = ((EventSource) (key.attachment()));
       if (key.isValid()) {
         if (key.isAcceptable()) {
           EventSource newSource = source.accept(key);
-          if (newSource != null)
+          if (newSource != null) {
             newSources.add(newSource);
-          else
+          } else {
             key.cancel();
+          }
         }
-
         if (key.isValid()) {
-          if (key.isReadable())
+          if (key.isReadable()) {
             source.read(key);
-          else if (key.isWritable())
+          } else if (key.isWritable()) {
             source.write(key);
+          }
         }
       }
       it.remove();
-    }
-    for (EventSource source : newSources)
+    } 
+    for (EventSource source : newSources) {
       register(source);
+    }
   }
 
   public void stop() {

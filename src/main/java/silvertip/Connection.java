@@ -1,3 +1,4 @@
+<<<<<<< LEFT
 /*
  * Copyright 2012 the original author or authors.
  *
@@ -13,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+=======
+>>>>>>> RIGHT
 package silvertip;
 
 import java.io.IOException;
@@ -31,24 +34,30 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+
 public class Connection<T> implements EventSource {
   public interface Callback<T> {
-    void connected(Connection<T> connection);
+    public abstract void connected(Connection<T> connection);
 
-    void messages(Connection<T> connection, Iterator<T> messages);
+    public abstract void messages(Connection<T> connection, Iterator<T> messages);
 
-    void idle(Connection<T> connection);
+    public abstract void idle(Connection<T> connection);
 
-    void closed(Connection<T> connection);
+    public abstract void closed(Connection<T> connection);
 
-    void garbledMessage(Connection<T> connection, String message, byte[] data);
+    public abstract void garbledMessage(Connection<T> connection, String message, byte[] data);
   }
 
   private List<ByteBuffer> txBuffers = Collections.synchronizedList(new LinkedList<ByteBuffer>());
+
   private ByteBuffer rxBuffer = ByteBuffer.allocate(4096);
+
   private SelectionKey selectionKey;
+
   private SocketChannel channel;
+
   private MessageParser<T> parser;
+
   private Callback<T> callback;
 
   public static <T> Connection<T> attemptToConnect(InetSocketAddress address, MessageParser<T> parser, Callback<T> callback)
@@ -168,14 +177,13 @@ public class Connection<T> implements EventSource {
 
   public void close() {
     try {
-      while (!txBuffers.isEmpty())
+      while (!txBuffers.isEmpty()) {
         flush();
+      } 
     } catch (IOException e) {
     }
-
-    SocketChannel sc = (SocketChannel) selectionKey.channel();
+    SocketChannel sc = ((SocketChannel) (selectionKey.channel()));
     SocketChannels.close(sc);
-
     selectionKey.attach(null);
     selectionKey.cancel();
     selectionKey.selector().wakeup();

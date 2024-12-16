@@ -1,3 +1,4 @@
+<<<<<<< LEFT
 /*
  * Copyright 2012 the original author or authors.
  *
@@ -13,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+=======
+>>>>>>> RIGHT
 package silvertip;
 
 import java.io.IOException;
@@ -25,29 +28,36 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-
 import org.junit.Assert;
 import org.junit.Test;
+
 
 public class ConnectionTest {
   private static final int IDLE_MSEC = 50;
 
   private static class Callback implements Connection.Callback<Message> {
-    @Override public void connected(Connection<Message> connection) {}
+    @Override
+    public void connected(Connection<Message> connection) {
+    }
 
-    @Override public void messages(Connection<Message> connection, Iterator<Message> messages) {
+    @Override
+    public void messages(Connection<Message> connection, Iterator<Message> messages) {
       Assert.fail("messages detected");
       connection.close();
     }
 
-    @Override public void idle(Connection<Message> connection) {
+    @Override
+    public void idle(Connection<Message> connection) {
       Assert.fail("idle detected");
       connection.close();
     }
 
-    @Override public void closed(Connection<Message> connection) {}
+    @Override
+    public void closed(Connection<Message> connection) {
+    }
 
-    @Override public void garbledMessage(Connection<Message> connection, String message, byte[] data) {
+    @Override
+    public void garbledMessage(Connection<Message> connection, String message, byte[] data) {
       Assert.fail("garbled message detected");
       connection.close();
     }
@@ -152,7 +162,6 @@ public class ConnectionTest {
     final String message = "The quick brown fox jumps over the lazy dog";
     final AtomicBoolean connectionClosed = new AtomicBoolean(false);
     final AtomicReference<String> receivedMessage = new AtomicReference(null);
-
     Callback callback = new Callback() {
       @Override public void messages(Connection<Message> connection, Iterator<Message> messages) {
         if (messages.hasNext())
@@ -163,17 +172,15 @@ public class ConnectionTest {
         connectionClosed.set(true);
       }
     };
-
     MessageParser<Message> parser = new MessageParser<Message>() {
-      @Override public Message parse(ByteBuffer buffer) throws PartialMessageException {
+      @Override
+      public Message parse(ByteBuffer buffer) throws PartialMessageException {
         byte[] message = new byte[buffer.limit() - buffer.position()];
         buffer.get(message);
         return new Message(message);
       }
     };
-
     sendMessage(message, callback, parser, TestServer.OPTION_CLOSE);
-
     Assert.assertTrue("callback not called", connectionClosed.get());
     Assert.assertEquals(message, receivedMessage.get());
   }
@@ -182,15 +189,12 @@ public class ConnectionTest {
   public void denied() throws Exception {
     final String message = "The quick brown fox jumps over the lazy dog";
     final AtomicBoolean connectionClosed = new AtomicBoolean(false);
-
     Callback callback = new Callback() {
       @Override public void closed(Connection<Message> connection) {
         connectionClosed.set(true);
       }
     };
-
     sendMessage(message, callback, null, TestServer.OPTION_DENY);
-
     Assert.assertTrue("callback not called", connectionClosed.get());
   }
 
@@ -223,11 +227,15 @@ public class ConnectionTest {
 
   private final class TestServer implements Runnable {
     public static final int OPTION_CLOSE = 0x01;
+
     public static final int OPTION_DENY = 0x02;
 
     private final CountDownLatch serverStopped = new CountDownLatch(1);
+
     private final CountDownLatch serverStarted = new CountDownLatch(1);
+
     private final Server server;
+
     private final int options;
 
     public TestServer(int port, String message, int options) throws IOException {
@@ -237,28 +245,40 @@ public class ConnectionTest {
 
     private Server serve(final String message, int port) throws IOException {
       final Connection.Callback<String> callback = new Connection.Callback<String>() {
-        @Override public void connected(Connection<String> connection) {
+        @Override
+        public void connected(Connection<String> connection) {
           connection.send(message.getBytes());
-
-          if ((options & OPTION_CLOSE) != 0)
+          if ((options & TestServer.OPTION_CLOSE) != 0) {
             connection.close();
+          }
         }
 
-        @Override public void messages(Connection<String> connection, Iterator<String> messages) {}
-        @Override public void idle(Connection<String> connection) {}
-        @Override public void closed(Connection<String> connection) {}
-        @Override public void garbledMessage(Connection<String> connection, String garbledMessage, byte[] data) {}
-      };
+        @Override
+        public void messages(Connection<String> connection, Iterator<String> messages) {
+        }
 
+        @Override
+        public void idle(Connection<String> connection) {
+        }
+
+        @Override
+        public void closed(Connection<String> connection) {
+        }
+
+        @Override
+        public void garbledMessage(Connection<String> connection, String garbledMessage, byte[] data) {
+        }
+      };
       Server server = Server.accept(port, new Server.ConnectionFactory<String>() {
-        @Override public Connection<String> newConnection(SocketChannel channel) {
-          if ((options & OPTION_DENY) != 0)
+        @Override
+        public Connection<String> newConnection(SocketChannel channel) {
+          if ((options & TestServer.OPTION_DENY) != 0) {
             return null;
-          else
+          } else {
             return new Connection(channel, null, callback);
+          }
         }
       });
-
       return server;
     }
 
