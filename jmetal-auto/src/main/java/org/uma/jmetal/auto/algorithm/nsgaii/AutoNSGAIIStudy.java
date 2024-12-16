@@ -1,5 +1,9 @@
 package org.uma.jmetal.auto.algorithm.nsgaii;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.algorithm.multiobjective.smpso.SMPSOBuilder;
@@ -23,13 +27,8 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
-
 import picocli.CommandLine;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Example of experimental study based on solving the ZDT problems with four versions of NSGA-II,
@@ -45,9 +44,7 @@ public class AutoNSGAIIStudy {
       throw new JMetalException("Missing argument: experimentBaseDirectory");
     }
     String experimentBaseDirectory = args[0];
-
     List<ExperimentProblem<DoubleSolution>> problemList = new ArrayList<>();
-
     /*
     problemList.add(new ExperimentProblem<>(new ZDT1()));
     problemList.add(new ExperimentProblem<>(new ZDT2()));
@@ -72,41 +69,20 @@ public class AutoNSGAIIStudy {
     problemList.add(new ExperimentProblem<>(new DTLZ5()).changeReferenceFrontTo("DTLZ5.2D.pf"));
     problemList.add(new ExperimentProblem<>(new DTLZ6()).changeReferenceFrontTo("DTLZ6.2D.pf"));
     problemList.add(new ExperimentProblem<>(new DTLZ7()).changeReferenceFrontTo("DTLZ7.2D.pf"));
-*/
+    */
     problemList.add(new ExperimentProblem<>(new DTLZ1()).changeReferenceFrontTo("DTLZ1.2D.pf"));
     problemList.add(new ExperimentProblem<>(new DTLZ3()).changeReferenceFrontTo("DTLZ3.2D.pf"));
     problemList.add(new ExperimentProblem<>(new WFG8()).changeReferenceFrontTo("WFG8.2D.pf"));
-
-    List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithmList =
-        configureAlgorithmList(problemList);
-
-    Experiment<DoubleSolution, List<DoubleSolution>> experiment =
-        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("AutoNSGAIIStudy2")
-            .setAlgorithmList(algorithmList)
-            .setProblemList(problemList)
-            .setExperimentBaseDirectory(experimentBaseDirectory)
-            .setOutputParetoFrontFileName("FUN")
-            .setOutputParetoSetFileName("VAR")
-            .setReferenceFrontDirectory("/pareto_fronts")
-            .setIndicatorList(
-                Arrays.asList(
-                    new Epsilon<DoubleSolution>(),
-                    new Spread<DoubleSolution>(),
-                    // new GenerationalDistance<DoubleSolution>(),
-                    new PISAHypervolume<DoubleSolution>(),
-                    // new InvertedGenerationalDistance<DoubleSolution>(),
-                    new InvertedGenerationalDistancePlus<DoubleSolution>()))
-            .setIndependentRuns(INDEPENDENT_RUNS)
-            .setNumberOfCores(8)
-            .build();
-
-    //new ExecuteAlgorithms<>(org.uma.jmetal.experiment).run();
-
-    //new ComputeQualityIndicators<>(org.uma.jmetal.experiment).run();
-    //new GenerateLatexTablesWithStatistics(org.uma.jmetal.experiment).run();
-      new GenerateWilcoxonTestTablesWithR<>(experiment).run();
-    //new GenerateFriedmanTestTables<>(org.uma.jmetal.experiment).run();
-    //new GenerateBoxplotsWithR<>(org.uma.jmetal.experiment).setRows(4).setColumns(4).run();
+    List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithmList = configureAlgorithmList(problemList);
+    Experiment<DoubleSolution, List<DoubleSolution>> experiment = new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("AutoNSGAIIStudy2").setAlgorithmList(algorithmList).setProblemList(problemList).setExperimentBaseDirectory(experimentBaseDirectory).setOutputParetoFrontFileName("FUN").setOutputParetoSetFileName("VAR").setReferenceFrontDirectory("/pareto_fronts").setIndicatorList(// new GenerationalDistance<DoubleSolution>(),
+    // new InvertedGenerationalDistance<DoubleSolution>(),
+    Arrays.asList(new Epsilon<DoubleSolution>(), new Spread<DoubleSolution>(), new PISAHypervolume<DoubleSolution>(), new InvertedGenerationalDistancePlus<DoubleSolution>())).setIndependentRuns(INDEPENDENT_RUNS).setNumberOfCores(8).build();
+    // new ExecuteAlgorithms<>(experiment).run();
+    new ComputeQualityIndicators<>(experiment).run();
+    new GenerateLatexTablesWithStatistics(experiment).run();
+    new GenerateWilcoxonTestTablesWithR<>(experiment).run();
+    new GenerateFriedmanTestTables<>(experiment).run();
+    new GenerateBoxplotsWithR<>(experiment).setRows(5).setColumns(5).run();
   }
 
   /**
@@ -115,40 +91,19 @@ public class AutoNSGAIIStudy {
    * ExperimentAlgorithm} has an optional tag component, that can be set as it is shown in this
    * example, where four variants of a same algorithm are defined.
    */
-  static List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> configureAlgorithmList(
-      List<ExperimentProblem<DoubleSolution>> problemList) {
+  static List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> configureAlgorithmList(List<ExperimentProblem<DoubleSolution>> problemList) {
     List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithms = new ArrayList<>();
-
     for (int run = 0; run < INDEPENDENT_RUNS; run++) {
-
       for (int i = 0; i < problemList.size(); i++) {
-        Algorithm<List<DoubleSolution>> algorithm =
-            new NSGAIIBuilder<>(
-                    problemList.get(i).getProblem(),
-                    new SBXCrossover(1.0, 5),
-                    new PolynomialMutation(
-                        1.0 / problemList.get(i).getProblem().getNumberOfVariables(), 10.0),
-                    100)
-                .setMaxEvaluations(25000)
-                .build();
+        Algorithm<List<DoubleSolution>> algorithm = new NSGAIIBuilder<>(problemList.get(i).getProblem(), new SBXCrossover(1.0, 5), new PolynomialMutation(1.0 / problemList.get(i).getProblem().getNumberOfVariables(), 10.0), 100).setMaxEvaluations(25000).build();
         algorithms.add(new ExperimentAlgorithm<>(algorithm, "NSGAII", problemList.get(i), run));
       }
-
       for (int i = 0; i < problemList.size(); i++) {
         double mutationProbability = 1.0 / problemList.get(i).getProblem().getNumberOfVariables();
         double mutationDistributionIndex = 20.0;
-        Algorithm<List<DoubleSolution>> algorithm =
-            new SMPSOBuilder(
-                    (DoubleProblem) problemList.get(i).getProblem(),
-                    new CrowdingDistanceArchive<DoubleSolution>(100))
-                .setMutation(new PolynomialMutation(mutationProbability, mutationDistributionIndex))
-                .setMaxIterations(250)
-                .setSwarmSize(100)
-                .setSolutionListEvaluator(new SequentialSolutionListEvaluator<DoubleSolution>())
-                .build();
+        Algorithm<List<DoubleSolution>> algorithm = new SMPSOBuilder(((DoubleProblem) (problemList.get(i).getProblem())), new CrowdingDistanceArchive<DoubleSolution>(100)).setMutation(new PolynomialMutation(mutationProbability, mutationDistributionIndex)).setMaxIterations(250).setSwarmSize(100).setSolutionListEvaluator(new SequentialSolutionListEvaluator<DoubleSolution>()).build();
         algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i), run));
       }
-
       for (int i = 0; i < problemList.size(); i++) {
         String problemName = problemList.get(i).getProblem().getClass().toString();
         problemName = problemName.substring(6);
@@ -188,9 +143,7 @@ public class AutoNSGAIIStudy {
                   "random"
                 };
         */
-        String argumentString =  "--problemName " + problemName +
-                " --referenceFront " +  problemList.get(i).getReferenceFront() +
-                /*
+        String argumentString = ((((((((("--problemName " + problemName) + " --referenceFront ") + problemList.get(i).getReferenceFront()) + /*
                 " --algorithmResult externalArchive --populationSizeWithArchive 20 --offspringPopulationSize 200 " +
                 "--variation crossoverAndMutationVariation --createInitialSolutions scatterSearch " +
                 "--crossover BLX_ALPHA --crossoverProbability 0.9874 " +
@@ -199,30 +152,21 @@ public class AutoNSGAIIStudy {
                 "--mutationRepairStrategy random --polynomialMutationDistributionIndex 158.0489 " +
                 "--selection tournament --selectionTournamentSize 9  " ;
                 */
-                " --algorithmResult externalArchive --populationSizeWithArchive 20 --offspringPopulationSize 5 " +
-                "--variation crossoverAndMutationVariation --createInitialSolutions latinHypercubeSampling " +
-                "--crossover SBX --crossoverProbability 0.9791 " +
-                "--crossoverRepairStrategy round --sbxCrossoverDistributionIndex 5.0587 " +
-                "--mutation uniform --mutationProbability 0.0463 " +
-                "--mutationRepairStrategy random --uniformMutationPerturbation 0.2307 " +
-                "--selection tournament --selectionTournamentSize 4  " ;
-                /*
-                " --algorithmResult population --populationSize 100 " +
-                "--crossover BLX_ALPHA --crossoverProbability 0.964 " +
-                "--crossoverRepairStrategy bounds " +
-                "--blxAlphaCrossoverAlphaValue 0.7965 " +
-                "--mutation polynomial --mutationProbability 0.017 " +
-                "--mutationRepairStrategy random " +
-                "--polynomialMutationDistributionIndex 6.2659 " +
-                "--selection tournament --selectionTournamentSize 10 " +
-                "--offspringPopulationSize 1 " +
-                "--variation crossoverAndMutationVariation " +
-                "--createInitialSolutions random  ";*/
-
-        String[] arguments = argumentString.split(" ") ;
-        AutoNSGAIIConfigurator configurator =
-            CommandLine.populateCommand(new AutoNSGAIIConfigurator(), arguments);
-
+        " --algorithmResult externalArchive --populationSizeWithArchive 20 --offspringPopulationSize 5 ") + "--variation crossoverAndMutationVariation --createInitialSolutions latinHypercubeSampling ") + "--crossover SBX --crossoverProbability 0.9791 ") + "--crossoverRepairStrategy round --sbxCrossoverDistributionIndex 5.0587 ") + "--mutation uniform --mutationProbability 0.0463 ") + "--mutationRepairStrategy random --uniformMutationPerturbation 0.2307 ") + "--selection tournament --selectionTournamentSize 4  ";
+        /* " --algorithmResult population --populationSize 100 " +
+        "--crossover BLX_ALPHA --crossoverProbability 0.964 " +
+        "--crossoverRepairStrategy bounds " +
+        "--blxAlphaCrossoverAlphaValue 0.7965 " +
+        "--mutation polynomial --mutationProbability 0.017 " +
+        "--mutationRepairStrategy random " +
+        "--polynomialMutationDistributionIndex 6.2659 " +
+        "--selection tournament --selectionTournamentSize 10 " +
+        "--offspringPopulationSize 1 " +
+        "--variation crossoverAndMutationVariation " +
+        "--createInitialSolutions random  ";
+         */
+        String[] arguments = argumentString.split(" ");
+        AutoNSGAIIConfigurator configurator = CommandLine.populateCommand(new AutoNSGAIIConfigurator(), arguments);
         EvolutionaryAlgorithm<DoubleSolution> algorithm = configurator.configureAndGetAlgorithm();
         algorithms.add(new ExperimentAlgorithm<>(algorithm, "AutoNSGAIIb", problemList.get(i), run));
       }
