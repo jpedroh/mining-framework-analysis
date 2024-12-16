@@ -15,21 +15,20 @@ import com.mitchellbosecke.pebble.node.ArgumentsNode;
 import com.mitchellbosecke.pebble.node.RootNode;
 import com.mitchellbosecke.pebble.utils.FutureWriter;
 import com.mitchellbosecke.pebble.utils.Pair;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
+
 
 /**
  * The actual implementation of a PebbleTemplate
  */
 public class PebbleTemplateImpl implements PebbleTemplate {
-
     /**
      * A template has to store a reference to the main engine so that it can
      * compile other templates when using the "import" or "include" tags.
@@ -62,9 +61,12 @@ public class PebbleTemplateImpl implements PebbleTemplate {
     /**
      * Constructor
      *
-     * @param engine The pebble engine used to construct this template
-     * @param root   The root not to evaluate
-     * @param name   The name of the template
+     * @param engine
+     * 		The pebble engine used to construct this template
+     * @param root
+     * 		The root not to evaluate
+     * @param name
+     * 		The name of the template
      */
     public PebbleTemplateImpl(PebbleEngine engine, RootNode root, String name) {
         this.engine = engine;
@@ -163,20 +165,21 @@ public class PebbleTemplateImpl implements PebbleTemplate {
      * @return The evaluation context
      */
     private EvaluationContext initContext(Locale locale) {
-        locale = locale == null ? this.engine.getDefaultLocale() : locale;
-
+        locale = (locale == null) ? this.engine.getDefaultLocale() : locale;
         // globals
         Map<String, Object> globals = new HashMap<>();
         globals.put("locale", locale);
         globals.put("template", this);
         ScopeChain scopeChain = new ScopeChain(globals);
-
         // global vars provided from extensions
         scopeChain.pushScope(this.engine.getExtensionRegistry().getGlobalVariables());
-
-        return new EvaluationContext(this, this.engine.isStrictVariables(), locale, this.engine.getExtensionRegistry(), this.engine.getTagCache(),
-                        this.engine.getExecutorService(), new ArrayList<PebbleTemplateImpl>(), new HashMap<String, PebbleTemplateImpl>(), scopeChain,
-                        null, this.engine.getEvaluationOptions());
+        return new EvaluationContext(this, this.engine.isStrictVariables(), locale, this.engine.getExtensionRegistry(), this.engine.getTagCache(), this.engine.getExecutorService(), new ArrayList<PebbleTemplateImpl>(), 
+<<<<<<< LEFT
+new HashMap<String, PebbleTemplateImpl>()
+=======
+new HashMap<String, PebbleTemplateImpl>()
+>>>>>>> RIGHT
+        , scopeChain, null, this.engine.getEvaluationOptions());
     }
 
     /**
@@ -192,24 +195,31 @@ public class PebbleTemplateImpl implements PebbleTemplate {
     /**
      * Imports a named template.
      *
-     * @param context The evaluation context
-     * @param name    The template name
-     * @param alias   The template alias
+     * @param context
+     * 		The evaluation context
+     * @param name
+     * 		The template name
+     * @param alias
+     * 		The template alias
      */
     public void importNamedTemplate(EvaluationContext context, String name, String alias) {
-        context.addNamedImportedTemplates(alias, (PebbleTemplateImpl) this.engine.getTemplate(this.resolveRelativePath(name)));
+        context.addNamedImportedTemplates(alias, ((PebbleTemplateImpl) (this.engine.getTemplate(this.resolveRelativePath(name)))));
     }
 
     /**
      * Imports named macros from specified template.
      *
-     * @param context     The evaluation context
-     * @param name        The template name
-     * @param namedMacros named macros
+     * @param context
+     * 		The evaluation context
+     * @param name
+     * 		The template name
+     * @param namedMacros
+     * 		named macros
      * @throws PebbleException
+     * 		
      */
     public void importNamedMacrosFromTemplate(EvaluationContext context, String name, List<Pair<String, String>> namedMacros) {
-        PebbleTemplateImpl templateImpl = (PebbleTemplateImpl) this.engine.getTemplate(this.resolveRelativePath(name));
+        PebbleTemplateImpl templateImpl = ((PebbleTemplateImpl) (this.engine.getTemplate(this.resolveRelativePath(name))));
         for (Pair<String, String> pair : namedMacros) {
             Macro m = templateImpl.macros.get(pair.getRight());
             registerMacro(pair.getLeft(), m);
@@ -219,8 +229,10 @@ public class PebbleTemplateImpl implements PebbleTemplate {
     /**
      * Returns a named template.
      *
-     * @param context The evaluation context
-     * @param alias   The template alias
+     * @param context
+     * 		The evaluation context
+     * @param alias
+     * 		The template alias
      */
     public PebbleTemplateImpl getNamedImportedTemplate(EvaluationContext context, String alias) {
         return context.getNamedImportedTemplate(alias);
@@ -308,8 +320,10 @@ public class PebbleTemplateImpl implements PebbleTemplate {
     /**
      * Registers a macro with alias
      *
-     * @param macro The macro
-     * @throws PebbleException Throws exception if macro already exists with the same name
+     * @param macro
+     * 		The macro
+     * @throws PebbleException
+     * 		Throws exception if macro already exists with the same name
      */
     public void registerMacro(String alias, Macro macro) {
         if (this.macros.containsKey(alias)) {
