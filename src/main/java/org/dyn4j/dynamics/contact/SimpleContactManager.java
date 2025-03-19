@@ -41,7 +41,13 @@ import org.dyn4j.resources.Messages;
 /**
  * Represents a basic {@link ContactManager} that reports new and old contacts.
  * @author William Bittle
+<<<<<<< /usr/src/app/output/wnbittle/dyn4j/bc4a8d51912dc9956fb3d64324b0323e238bf5cb/src/main/java/org/dyn4j/dynamics/contact/SimpleContactManager.java/left.java
  * @version 3.3.0
+||||||| /usr/src/app/output/wnbittle/dyn4j/bc4a8d51912dc9956fb3d64324b0323e238bf5cb/src/main/java/org/dyn4j/dynamics/contact/SimpleContactManager.java/base.java
+ * @version 3.2.0
+=======
+ * @version 3.2.5
+>>>>>>> /usr/src/app/output/wnbittle/dyn4j/bc4a8d51912dc9956fb3d64324b0323e238bf5cb/src/main/java/org/dyn4j/dynamics/contact/SimpleContactManager.java/right.java
  * @since 3.2.0
  */
 public class SimpleContactManager implements ContactManager, Shiftable {

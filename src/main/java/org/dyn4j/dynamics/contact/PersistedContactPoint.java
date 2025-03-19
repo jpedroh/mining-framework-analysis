@@ -36,7 +36,13 @@ import org.dyn4j.geometry.Vector2;
  * normal, and depth.
  * @author William Bittle
  * @see ContactPoint
+<<<<<<< /usr/src/app/output/wnbittle/dyn4j/bc4a8d51912dc9956fb3d64324b0323e238bf5cb/src/main/java/org/dyn4j/dynamics/contact/PersistedContactPoint.java/left.java
  * @version 3.3.0
+||||||| /usr/src/app/output/wnbittle/dyn4j/bc4a8d51912dc9956fb3d64324b0323e238bf5cb/src/main/java/org/dyn4j/dynamics/contact/PersistedContactPoint.java/base.java
+ * @version 3.2.0
+=======
+ * @version 3.2.5
+>>>>>>> /usr/src/app/output/wnbittle/dyn4j/bc4a8d51912dc9956fb3d64324b0323e238bf5cb/src/main/java/org/dyn4j/dynamics/contact/PersistedContactPoint.java/right.java
  * @since 1.0.0
  */
 public class PersistedContactPoint extends ContactPoint {

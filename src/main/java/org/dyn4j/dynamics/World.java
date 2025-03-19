@@ -86,7 +86,13 @@ import org.dyn4j.resources.Messages;
  * there are multiple {@link CollisionListener}s and <b>any</b> one of them returns false for an event, the collision is skipped.  However,
  * all listeners will still be called no matter if the first returned false.
  * @author William Bittle
+<<<<<<< /usr/src/app/output/wnbittle/dyn4j/bc4a8d51912dc9956fb3d64324b0323e238bf5cb/src/main/java/org/dyn4j/dynamics/World.java/left.java
  * @version 3.3.0
+||||||| /usr/src/app/output/wnbittle/dyn4j/bc4a8d51912dc9956fb3d64324b0323e238bf5cb/src/main/java/org/dyn4j/dynamics/World.java/base.java
+ * @version 3.2.4
+=======
+ * @version 3.2.5
+>>>>>>> /usr/src/app/output/wnbittle/dyn4j/bc4a8d51912dc9956fb3d64324b0323e238bf5cb/src/main/java/org/dyn4j/dynamics/World.java/right.java
  * @since 1.0.0
  */
 public class World implements Shiftable, DataContainer {

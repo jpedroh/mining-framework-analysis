@@ -32,7 +32,13 @@ import org.dyn4j.resources.Messages;
 /**
  * Represents a contact point and used to report events via the {@link ContactListener}.
  * @author William Bittle
+<<<<<<< /usr/src/app/output/wnbittle/dyn4j/bc4a8d51912dc9956fb3d64324b0323e238bf5cb/src/main/java/org/dyn4j/dynamics/contact/ContactPoint.java/left.java
  * @version 3.3.0
+||||||| /usr/src/app/output/wnbittle/dyn4j/bc4a8d51912dc9956fb3d64324b0323e238bf5cb/src/main/java/org/dyn4j/dynamics/contact/ContactPoint.java/base.java
+ * @version 3.2.0
+=======
+ * @version 3.2.5
+>>>>>>> /usr/src/app/output/wnbittle/dyn4j/bc4a8d51912dc9956fb3d64324b0323e238bf5cb/src/main/java/org/dyn4j/dynamics/contact/ContactPoint.java/right.java
  * @since 1.0.0
  */
 public class ContactPoint {
