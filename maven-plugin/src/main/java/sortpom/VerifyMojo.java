@@ -1,5 +1,4 @@
 package sortpom;
-
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -13,50 +12,31 @@ import sortpom.parameter.PluginParameters;
  *
  * @author Bjorn Ekryd
  */
-@Mojo(name = "verify", threadSafe = true, defaultPhase = LifecyclePhase.VALIDATE)
-@SuppressWarnings({"UnusedDeclaration"})
-public class VerifyMojo extends AbstractParentMojo {
-
-    /**
+@Mojo(name = "verify", threadSafe = true, defaultPhase = LifecyclePhase.VALIDATE) @SuppressWarnings(value = { "UnusedDeclaration" }) public class VerifyMojo extends AbstractParentMojo {
+  /**
      * What should happen if verification fails. Can be either 'sort', 'warn' or 'stop'
      */
-    @Parameter(property = "sort.verifyFail", defaultValue = "sort")
-    private String verifyFail;
+  @Parameter(property = "sort.verifyFail", defaultValue = "sort") private String verifyFail;
 
-    /**
+  /**
      * What kind of differences should trigger verify failure. Can be either 'xmlElements' or 'strict'. Can be combined
      * with ignoreLineSeparators
      */
-    @Parameter(property = "sort.verifyFailOn", defaultValue = "xmlElements")
-    private String verifyFailOn;
+  @Parameter(property = "sort.verifyFailOn", defaultValue = "xmlElements") private String verifyFailOn;
 
-    /**
+  /**
      * Saves the verification failure to an external xml file, recommended filename is 'target/sortpom_reports/violation.xml'.
      */
-    @Parameter(property = "sort.violationFilename")
-    private String violationFilename;
+  @Parameter(property = "sort.violationFilename") private String violationFilename;
 
-    public void setup() throws MojoFailureException {
-        new ExceptionConverter(() -> {
+  public void setup() throws MojoFailureException {
+    new ExceptionConverter(() -> {
+      PluginParameters pluginParameters = PluginParameters.builder().setPomFile(pomFile).setFileOutput(createBackupFile, backupFileExtension, violationFilename, keepTimestamp).setEncoding(encoding).setFormatting(lineSeparator, expandEmptyElements, spaceBeforeCloseEmptyElement, keepBlankLines).setIndent(nrOfIndentSpace, indentBlankLines, indentSchemaLocation).setSortOrder(sortOrderFile, predefinedSortOrder).setSortEntities(sortDependencies, sortDependencyExclusions, sortPlugins, sortProperties, sortModules, sortExecutions).setVerifyFail(verifyFail, verifyFailOn).build();
+      sortPomImpl.setup(new MavenLogger(getLog()), pluginParameters);
+    }).executeAndConvertException();
+  }
 
-            PluginParameters pluginParameters = PluginParameters.builder()
-                    .setPomFile(pomFile)
-                    .setFileOutput(createBackupFile, backupFileExtension, violationFilename, keepTimestamp)
-                    .setEncoding(encoding)
-                    .setFormatting(lineSeparator, expandEmptyElements, spaceBeforeCloseEmptyElement, keepBlankLines)
-                    .setIndent(nrOfIndentSpace, indentBlankLines, indentSchemaLocation)
-                    .setSortOrder(sortOrderFile, predefinedSortOrder)
-                    .setSortEntities(sortDependencies, sortDependencyExclusions, sortPlugins, sortProperties, sortModules, sortExecutions)
-                    .setVerifyFail(verifyFail, verifyFailOn)
-                    .build();
-
-            sortPomImpl.setup(new MavenLogger(getLog()), pluginParameters);
-
-        }).executeAndConvertException();
-    }
-
-    protected void sortPom() throws MojoFailureException {
-        new ExceptionConverter(sortPomImpl::verifyPom).executeAndConvertException();
-    }
-
+  protected void sortPom() throws MojoFailureException {
+    new ExceptionConverter(sortPomImpl::verifyPom).executeAndConvertException();
+  }
 }
