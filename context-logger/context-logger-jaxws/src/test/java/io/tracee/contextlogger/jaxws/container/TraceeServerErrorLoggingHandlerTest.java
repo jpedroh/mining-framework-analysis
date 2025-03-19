@@ -6,16 +6,16 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
-
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
-
+import io.tracee.contextlogger.TraceeContextLogger;
+import io.tracee.contextlogger.api.ImplicitContext;
+import io.tracee.contextlogger.contextprovider.jaxws.JaxWsWrapper;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,9 +27,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import io.tracee.NoopTraceeLoggerFactory;
 import io.tracee.Tracee;
 import io.tracee.TraceeBackend;
-import io.tracee.contextlogger.TraceeContextLogger;
-import io.tracee.contextlogger.api.ImplicitContext;
-import io.tracee.contextlogger.contextprovider.jaxws.JaxWsWrapper;
 
 /**
  * Test class for {@link io.tracee.contextlogger.jaxws.container.AbstractTraceeErrorLoggingHandler} and

@@ -1,10 +1,10 @@
 package io.tracee.contextlogger.integrationtest;
 
+
+import io.tracee.contextlogger.TraceeContextLogger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-
-import io.tracee.contextlogger.TraceeContextLogger;
 import io.tracee.contextlogger.profile.Profile;
 
 public class ExternalWrapperIntegrationTest {

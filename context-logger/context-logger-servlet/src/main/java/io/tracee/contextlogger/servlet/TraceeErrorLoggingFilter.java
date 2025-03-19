@@ -3,6 +3,7 @@ package io.tracee.contextlogger.servlet;
 import java.io.IOException;
 
 import io.tracee.contextlogger.TraceeContextLogger;
+
 import io.tracee.contextlogger.api.ImplicitContext;
 
 import javax.servlet.*;

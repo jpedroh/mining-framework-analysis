@@ -47,8 +47,7 @@ public abstract class AbstractTraceeErrorLoggingHandler extends AbstractTraceeHa
                 ImplicitContext.COMMON,
                 ImplicitContext.TRACEE,
                 JaxWsWrapper.wrap(THREAD_LOCAL_SOAP_MESSAGE_STR.get(),
-                        convertSoapMessageAsString(soapMessage)));
-
+						convertSoapMessageAsString(soapMessage)));
         return true;
     }
 
@@ -69,7 +68,7 @@ public abstract class AbstractTraceeErrorLoggingHandler extends AbstractTraceeHa
         }
     }
 
-    Charset determineMessageEncoding(SOAPMessage soapMessage) {
+    final Charset determineMessageEncoding(SOAPMessage soapMessage) {
         try {
             final Object encProp = soapMessage.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
             if (encProp != null) {
