@@ -223,9 +223,15 @@ public interface NodeTypes
     public static final int AT_ADD_INDEX_NODE = 163;
     public static final int INDEX_CONSTRAINT_NODE = 164;
     public static final int DROP_GROUP_NODE = 165;
+<<<<<<< /usr/src/app/output/brunoribeiro/sql-parser/b41794d7af49d6c07e339f51eac8209f2a0bb9d1/src/main/java/com/akiban/sql/parser/NodeTypes.java/left.java
+    public static final int GROUP_CONCAT_NODE = 166;
+    // 167 - 182 available
+||||||| /usr/src/app/output/brunoribeiro/sql-parser/b41794d7af49d6c07e339f51eac8209f2a0bb9d1/src/main/java/com/akiban/sql/parser/NodeTypes.java/base.java
+    // 166 - 182 available
+=======
     public static final int ROW_CTOR_NODE = 166;
-    public static final int GROUP_CONCAT_NODE = 167;
-    // 168 - 182 available
+    // 167 - 182 available
+>>>>>>> /usr/src/app/output/brunoribeiro/sql-parser/b41794d7af49d6c07e339f51eac8209f2a0bb9d1/src/main/java/com/akiban/sql/parser/NodeTypes.java/right.java
     public static final int ALTER_SERVER_NODE = 183;
     public static final int TIMESTAMP_ADD_FN_NODE = 184;
     public static final int TIMESTAMP_DIFF_FN_NODE = 185;
