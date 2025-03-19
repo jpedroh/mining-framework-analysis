@@ -10,8 +10,8 @@ import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapred.*;
 
 import com.microsoft.hadoop.azure.*;
-import com.microsoft.windowsazure.storage.*;
 import com.microsoft.windowsazure.storage.table.*;
+import com.microsoft.windowsazure.storage.*;
 
 /**
  * An input format using the deprecated mapred.* API for reading Azure Tables.

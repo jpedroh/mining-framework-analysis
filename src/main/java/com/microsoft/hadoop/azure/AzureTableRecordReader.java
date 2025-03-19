@@ -38,6 +38,19 @@ public class AzureTableRecordReader
 		String tableName = getTableName(job);
 		TableQuery<WritableEntity> query =
 				((AzureTableInputSplit)split).getQuery();
+<<<<<<< /usr/src/app/output/mooso/azure-tables-hadoop/f5ae55a8d5024fba05bd9a188ae18116b624a69d/src/main/java/com/microsoft/hadoop/azure/AzureTableRecordReader.java/left.java
+		try {
+			queryResults = tableClient.getTableReference(tableName).execute(query).iterator();
+		} catch (StorageException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+||||||| /usr/src/app/output/mooso/azure-tables-hadoop/f5ae55a8d5024fba05bd9a188ae18116b624a69d/src/main/java/com/microsoft/hadoop/azure/AzureTableRecordReader.java/base.java
+		queryResults = tableClient.execute(query).iterator();
+=======
 		try {
 			queryResults = tableClient.getTableReference(tableName).execute(query).iterator();
 		} catch (StorageException e) {
@@ -45,6 +58,7 @@ public class AzureTableRecordReader
 		} catch (URISyntaxException e) {
 			throw new IllegalArgumentException(e);
 		}
+>>>>>>> /usr/src/app/output/mooso/azure-tables-hadoop/f5ae55a8d5024fba05bd9a188ae18116b624a69d/src/main/java/com/microsoft/hadoop/azure/AzureTableRecordReader.java/right.java
 	}
 
 	/**

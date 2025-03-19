@@ -7,8 +7,8 @@ import org.apache.hadoop.conf.*;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.*;
 
-import com.microsoft.windowsazure.storage.StorageException;
 import com.microsoft.windowsazure.storage.table.*;
+import com.microsoft.windowsazure.storage.StorageException;
 
 import static com.microsoft.hadoop.azure.AzureTableConfiguration.*;
 

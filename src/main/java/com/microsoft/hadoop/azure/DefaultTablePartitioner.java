@@ -62,10 +62,15 @@ public class DefaultTablePartitioner implements AzureTablePartitioner {
 				getFirstRowNoFields();
 		TableEntity currentEntity;
 		ArrayList<String> ret = new ArrayList<String>();
-		while ((currentEntity = GetSingleton(table.execute(getNextKeyQuery))) != null) {
-			ret.add(currentEntity.getPartitionKey());
-			getNextKeyQuery = getFirstRowNoFields()
-					.where("PartitionKey gt '" + currentEntity.getPartitionKey() + "'");
+		try {
+			while ((currentEntity = GetSingleton(table.execute(getNextKeyQuery))) != null) {
+				ret.add(currentEntity.getPartitionKey());
+				getNextKeyQuery = getFirstRowNoFields()
+						.where("PartitionKey gt '" + currentEntity.getPartitionKey() + "'");
+			}
+		} catch (StorageException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return ret;
 	}
