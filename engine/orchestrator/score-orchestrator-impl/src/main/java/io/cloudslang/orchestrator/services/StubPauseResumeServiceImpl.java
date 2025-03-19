@@ -50,6 +50,16 @@ public class StubPauseResumeServiceImpl implements PauseResumeService {
     }
 
     @Override
+    public void injectInterrupts(Long executionId, Map<String, ArrayList<String>> interrupts) {
+
+    }
+
+    @Override
+    public void deleteInterrupts(Long executionId, Map<String, ArrayList<String>> interrupts) {
+
+    }
+
+    @Override
     public void injectInterrupts(Long executionId, Map<String, Set<String>> interrupts) {
 
     }

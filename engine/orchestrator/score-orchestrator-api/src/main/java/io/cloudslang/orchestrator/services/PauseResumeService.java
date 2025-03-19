@@ -45,6 +45,24 @@ public interface PauseResumeService {
      */
     Long pauseExecution(Long executionId, String branchId, PauseReason reason);
 
+<<<<<<< /usr/src/app/output/cloudslang/score/f92795bfa18c186a327a2f0749817c0a78950862/engine/orchestrator/score-orchestrator-api/src/main/java/io/cloudslang/orchestrator/services/PauseResumeService.java/left.java
+    /**
+     * Add interrupts to the system context under USER_INTERRUPT
+     *
+     * @param executionId id of the execution
+     * @return add interrupts to the current execution
+     */
+    void injectInterrupts(Long executionId, Map<String, ArrayList<String>> interrupts);
+
+    /**
+     * removes interrupts
+     *
+     * @param executionId id of the execution
+     * @return add interrupts to the current execution
+     */
+    void deleteInterrupts(Long executionId, Map<String, ArrayList<String>> interrupts);
+||||||| /usr/src/app/output/cloudslang/score/f92795bfa18c186a327a2f0749817c0a78950862/engine/orchestrator/score-orchestrator-api/src/main/java/io/cloudslang/orchestrator/services/PauseResumeService.java/base.java
+=======
     /**
      * Add interrupts to the system context under USER_INTERRUPT
      *
@@ -60,14 +78,15 @@ public interface PauseResumeService {
      * @return add interrupts to the current execution
      */
     void deleteInterrupts(Long executionId, Map<String, Set<String>> interrupts);
+>>>>>>> /usr/src/app/output/cloudslang/score/f92795bfa18c186a327a2f0749817c0a78950862/engine/orchestrator/score-orchestrator-api/src/main/java/io/cloudslang/orchestrator/services/PauseResumeService.java/right.java
 
     /**
-     * Resumes execution and puts it back to execution queue
-     *
-     * @param executionId id of the paused execution we want to resume
-     * @param branchId    id of the branch of the execution we want to resume
-     * @param map         the values to run with
-     */
+ * Resumes execution and puts it back to execution queue
+ *
+ * @param executionId id of the paused execution we want to resume
+ * @param branchId    id of the branch of the execution we want to resume
+ * @param map         the values to run with
+ */
     void resumeExecution(Long executionId, String branchId, Map<String, Serializable> map);
 
     /**
