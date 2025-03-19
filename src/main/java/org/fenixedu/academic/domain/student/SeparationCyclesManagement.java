@@ -581,8 +581,14 @@ public class SeparationCyclesManagement {
             final StudentCurricularPlan newStudentCurricularPlan) {
 
         if (!oldStudentCurricularPlan.hasGratuityEvent(getExecutionYear(), GratuityEventWithPaymentPlan.class)
-                || oldStudentCurricularPlan.getGratuityEvent(getExecutionYear(), GratuityEventWithPaymentPlan.class)
-                        .anyMatch(Event::isCancelled)) {
+                ||  oldStudentCurricularPlan.getGratuityEvent(getExecutionYear(), GratuityEventWithPaymentPlan.class)
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/student/SeparationCyclesManagement.java/left.java
+                        .anyMatch(Event::isCancelled).orElse(false)) {
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/student/SeparationCyclesManagement.java/base.java
+                        .isCancelled(Event::isCancelled).orElse(false)) {
+=======
+                        .map(Event::isCancelled).orElse(false)) {
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/student/SeparationCyclesManagement.java/right.java
             return;
         }
 
@@ -592,13 +598,24 @@ public class SeparationCyclesManagement {
         }
 
         final GratuityEvent firstEvent =
-                oldStudentCurricularPlan.getGratuityEvent(getExecutionYear(), GratuityEventWithPaymentPlan.class).findAny()
-                        .orElseThrow(
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/student/SeparationCyclesManagement.java/left.java
+                oldStudentCurricularPlan.getGratuityEvent(getExecutionYear(), GratuityEventWithPaymentPlan.class).findAny().orElseThrow(
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/student/SeparationCyclesManagement.java/base.java
+                oldStudentCurricularPlan.orElseThrow(
+=======
+                oldStudentCurricularPlan.getGratuityEvent(getExecutionYear(), GratuityEventWithPaymentPlan.class).orElseThrow(
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/student/SeparationCyclesManagement.java/right.java
                         UnsupportedOperationException::new);
         final GratuityEvent secondEvent =
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/student/SeparationCyclesManagement.java/left.java
                 newStudentCurricularPlan.getGratuityEvent(getExecutionYear(), GratuityEventWithPaymentPlan.class).findAny()
                         .orElseThrow(
                         UnsupportedOperationException::new);
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/student/SeparationCyclesManagement.java/base.java
+                newStudentCurricularPlan.getGratuityEvent(getExecutionYear(), GratuityEventWithPaymentPlan.class);
+=======
+                newStudentCurricularPlan.getGratuityEvent(getExecutionYear(), GratuityEventWithPaymentPlan.class).findAny();
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/student/SeparationCyclesManagement.java/right.java
 
         if (!firstEvent.isGratuityEventWithPaymentPlan() || !secondEvent.isGratuityEventWithPaymentPlan()) {
             throw new DomainException("error.SeparationCyclesManagement.unexpected.event.types");

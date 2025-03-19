@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -1539,26 +1540,55 @@ public class StudentCurricularPlan extends StudentCurricularPlan_Base {
         return null;
     }
 
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/StudentCurricularPlan.java/left.java
     final public <T extends GratuityEvent> Stream<T> getGratuityEvent(final ExecutionYear executionYear,
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/StudentCurricularPlan.java/base.java
+    final public <T extends GratuityEvent>  getGratuityEvent(final ExecutionYear executionYear,
+=======
+    final public <T extends GratuityEvent> Optional<T> getGratuityEvent(final ExecutionYear executionYear,
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/StudentCurricularPlan.java/right.java
             final Class<T> type) {
         return getGratuityEvent(executionYear, type, true);
     }
 
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/StudentCurricularPlan.java/left.java
     final public <T extends GratuityEvent> Stream<T> getGratuityEvent(final ExecutionYear executionYear,
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/StudentCurricularPlan.java/base.java
+    final public <T extends GratuityEvent>  getGratuityEvent(final ExecutionYear executionYear,
+=======
+    final public <T extends GratuityEvent> Optional<T> getGratuityEvent(final ExecutionYear executionYear,
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/StudentCurricularPlan.java/right.java
             final Class<T> type, boolean excludeCanceled) {
 
         Stream<T> eventStream = getGratuityEventsSet().stream().filter(g -> g.getExecutionYear().equals(executionYear))
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/StudentCurricularPlan.java/left.java
                 .filter(type::isInstance).map(type::cast);
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/StudentCurricularPlan.java/base.java
+                .filter.map(type::cast);
+=======
+                .filter(g -> g.getClass().equals(type)).map(type::cast);
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/StudentCurricularPlan.java/right.java
 
         if (excludeCanceled) {
             eventStream = eventStream.filter(g -> !g.isCancelled());
         }
 
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/StudentCurricularPlan.java/left.java
         return eventStream;
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/StudentCurricularPlan.java/base.java
+=======
+        return eventStream.findAny();
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/StudentCurricularPlan.java/right.java
     }
 
     final public boolean hasGratuityEvent(final ExecutionYear executionYear, final Class<? extends GratuityEvent> type) {
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/StudentCurricularPlan.java/left.java
         return getGratuityEvent(executionYear, type).count() > 0;
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/StudentCurricularPlan.java/base.java
+        return getGratuityEvent(executionYear, type) != null;
+=======
+        return getGratuityEvent(executionYear, type).isPresent();
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/StudentCurricularPlan.java/right.java
     }
 
     final public Set<GratuityEvent> getNotPayedGratuityEvents() {

@@ -21,15 +21,26 @@ package org.fenixedu.academic.domain.accounting.postingRules;
 import java.util.Optional;
 
 import org.fenixedu.academic.domain.accounting.EntryType;
+
 import org.fenixedu.academic.domain.accounting.Event;
+
 import org.fenixedu.academic.domain.accounting.EventType;
+
 import org.fenixedu.academic.domain.accounting.ServiceAgreementTemplate;
+
 import org.fenixedu.academic.domain.accounting.events.administrativeOfficeFee.IAdministrativeOfficeFeeEvent;
+
 import org.fenixedu.academic.domain.exceptions.DomainException;
+
 import org.fenixedu.academic.util.Money;
+
 import org.joda.time.DateTime;
+
 import org.joda.time.LocalDate;
+
 import org.joda.time.YearMonthDay;
+
+import org.fenixedu.academic.domain.accounting.events.AdministrativeOfficeFeeAndInsuranceEvent;
 
 public class AdministrativeOfficeFeePR extends AdministrativeOfficeFeePR_Base implements IAdministrativeOfficeFeeAndInsurancePR {
 
@@ -45,6 +56,7 @@ public class AdministrativeOfficeFeePR extends AdministrativeOfficeFeePR_Base im
 
     }
 
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/postingRules/AdministrativeOfficeFeePR.java/left.java
     @Override
     protected Optional<LocalDate> getPenaltyDueDate(Event event) {
         final IAdministrativeOfficeFeeEvent administrativeOfficeFeeEvent = (IAdministrativeOfficeFeeEvent) event;
@@ -55,6 +67,20 @@ public class AdministrativeOfficeFeePR extends AdministrativeOfficeFeePR_Base im
 
         return Optional.of(paymentEndDate.toLocalDate());
     }
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/postingRules/AdministrativeOfficeFeePR.java/base.java
+=======
+    @Override
+    protected Optional<LocalDate> getPenaltyDueDate(Event event) {
+        final AdministrativeOfficeFeeAndInsuranceEvent administrativeOfficeFeeAndInsuranceEvent =
+            (AdministrativeOfficeFeeAndInsuranceEvent) event;
+
+        final YearMonthDay paymentEndDate =
+            administrativeOfficeFeeAndInsuranceEvent.getPaymentEndDate() != null ? administrativeOfficeFeeAndInsuranceEvent
+                                                                                       .getPaymentEndDate() : getWhenToApplyFixedAmountPenalty();
+
+        return Optional.of(paymentEndDate.toLocalDate());
+    }
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/postingRules/AdministrativeOfficeFeePR.java/right.java
 
     public AdministrativeOfficeFeePR edit(DateTime startDate, Money fixedAmount, Money penaltyAmount,
             YearMonthDay whenToApplyFixedAmountPenalty) {

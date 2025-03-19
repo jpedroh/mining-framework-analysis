@@ -107,8 +107,13 @@ public class RegistrationRegime extends RegistrationRegime_Base {
     }
 
     public void delete() {
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/student/RegistrationRegime.java/left.java
         DomainException.throwWhenDeleteBlocked(getDeletionBlockers());
         clearPartialRegimeEvents();
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/student/RegistrationRegime.java/base.java
+=======
+        DomainException.throwWhenDeleteBlocked(getDeletionBlockers());
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/student/RegistrationRegime.java/right.java
         setRegistration(null);
         setExecutionYear(null);
         setRootDomainObject(null);

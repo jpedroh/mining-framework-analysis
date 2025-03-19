@@ -72,6 +72,7 @@ public class Discount extends Discount_Base {
     @Atomic
     public void delete() {
         DomainException.throwWhenDeleteBlocked(getDeletionBlockers());
+        DomainException.throwWhenDeleteBlocked(getDeletionBlockers());
         setRootDomainObject(null);
         final Event event = getEvent();
         super.setEvent(null);

@@ -28,8 +28,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/Event.java/left.java
 import java.util.stream.Stream;
+import java.util.stream.Stream;
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/Event.java/base.java
+=======
+import java.util.stream.Stream;
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/Event.java/right.java
+import java.util.stream.Collectors;
 
 import org.fenixedu.academic.FenixEduAcademicConfiguration;
 import org.fenixedu.academic.domain.DomainObjectUtil;
@@ -516,6 +522,7 @@ public abstract class Event extends Event_Base {
      * @param whenRegistered
      * @return
      */
+
     public Money calculateAmountToPay(DateTime whenRegistered) {
         final Money totalAmountToPay = calculateTotalAmountToPay(whenRegistered);
 
@@ -528,11 +535,11 @@ public abstract class Event extends Event_Base {
         return null;
     }
 
-
     /**
      * Should return entries representing the due date and the corresponding amount
      *
      */
+
     public final Map<LocalDate, Money> getDueDateAmountMap(DateTime when) {
         return getDueDateAmountMap(getPostingRule(), when);
     }
@@ -633,7 +640,7 @@ public abstract class Event extends Event_Base {
     public Money getTotalAmount() {
         return getTotalAmount(new DateTime());
     }
-    
+
     public Money getTotalAmount(DateTime when) {
         return new Money(getDebtInterestCalculator(when).getTotalAmount());
     }

@@ -47,11 +47,21 @@ public class ResidencePR extends ResidencePR_Base {
         if (residenceEvent.getPaymentLimitDate().isAfter(when)) {
             return Collections.emptyMap();
         }
-
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/postingRules/ResidencePR.java/left.java
+    
         final BigDecimal daysBetween = BigDecimal.valueOf(Days.daysBetween(residenceEvent.getPaymentLimitDate().toLocalDate(),
                 when.toLocalDate()).getDays());
         final Money amount = getPenaltyPerDay().multiply(daysBetween);
         return Collections.singletonMap(residenceEvent.getPaymentLimitDate().toLocalDate(), amount);
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/postingRules/ResidencePR.java/base.java
+        return baseValue.add(getPenaltyPerDay().multiply(
+                BigDecimal.valueOf(Days.daysBetween(residenceEvent.getPaymentLimitDate(), when).getDays())));
+=======
+    
+        final BigDecimal daysBetween = BigDecimal.valueOf(Days.daysBetween(residenceEvent.getPaymentLimitDate(), when).getDays());
+        final Money amount = getPenaltyPerDay().multiply(daysBetween);
+        return Collections.singletonMap(residenceEvent.getPaymentLimitDate().toLocalDate(), amount);
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/postingRules/ResidencePR.java/right.java
     }
 
     @Override

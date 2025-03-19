@@ -312,8 +312,15 @@ public class UTLScholarshipReportBeanFromRegistration implements Serializable, I
 
         StudentCurricularPlan lastStudentCurricularPlan = registration.getLastStudentCurricularPlan();
 
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/student/scholarship/report/UTLScholarshipReportBeanFromRegistration.java/left.java
         return lastStudentCurricularPlan.getGratuityEvent(readCurrentExecutionYear(), GratuityEventWithPaymentPlan.class).map
                         (Event::getOriginalAmountToPay).findAny().orElse(Money.ZERO);
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/student/scholarship/report/UTLScholarshipReportBeanFromRegistration.java/base.java
+        return event != null ? event.getOriginalAmountToPay() : Money.ZERO;
+=======
+        return lastStudentCurricularPlan.getGratuityEvent(readCurrentExecutionYear(), GratuityEventWithPaymentPlan.class).map
+                        (Event::getOriginalAmountToPay).findAny();
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/student/scholarship/report/UTLScholarshipReportBeanFromRegistration.java/right.java
     }
 
     @Override

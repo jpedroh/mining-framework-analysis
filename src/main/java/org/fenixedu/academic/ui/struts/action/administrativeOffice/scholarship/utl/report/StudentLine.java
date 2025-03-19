@@ -348,8 +348,15 @@ public class StudentLine implements java.io.Serializable {
         }
 
         return
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/ui/struts/action/administrativeOffice/scholarship/utl/report/StudentLine.java/left.java
                 getStudentCurricularPlan().getGratuityEvent(getForExecutionYear(), GratuityEventWithPaymentPlan.class).map
                         (Event::getOriginalAmountToPay).findAny().orElse(Money.ZERO);
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/ui/struts/action/administrativeOffice/scholarship/utl/report/StudentLine.java/base.java
+                event.orElse(Money.ZERO);
+=======
+                getStudentCurricularPlan().getGratuityEvent(getForExecutionYear(), GratuityEventWithPaymentPlan.class).map
+                        (Event::getOriginalAmountToPay).orElse(Money.ZERO);
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/ui/struts/action/administrativeOffice/scholarship/utl/report/StudentLine.java/right.java
 
     }
 
@@ -359,8 +366,15 @@ public class StudentLine implements java.io.Serializable {
         }
 
         GratuityEventWithPaymentPlan gratuityEventWithPaymentPlan =
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/ui/struts/action/administrativeOffice/scholarship/utl/report/StudentLine.java/left.java
                 getStudentCurricularPlan().getGratuityEvent(getForExecutionYear(), GratuityEventWithPaymentPlan.class)
-                        .findAny().orElseThrow(UnsupportedOperationException::new);
+                        .findAny(getForExecutionYear(), GratuityEventWithPaymentPlan.class)
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/ui/struts/action/administrativeOffice/scholarship/utl/report/StudentLine.java/base.java
+                getStudentCurricularPlan(getForExecutionYear(), GratuityEventWithPaymentPlan.class)
+=======
+                getStudentCurricularPlan().getGratuityEvent(getForExecutionYear(), GratuityEventWithPaymentPlan.class)
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/ui/struts/action/administrativeOffice/scholarship/utl/report/StudentLine.java/right.java
+                        .orElseThrow(UnsupportedOperationException::new);
 
         Installment firstInstallment = gratuityEventWithPaymentPlan.getInstallments().iterator().next();
 

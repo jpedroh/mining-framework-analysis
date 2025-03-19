@@ -401,6 +401,7 @@ public abstract class PostingRule extends PostingRule_Base {
                 result.add(bean);
             }
 
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/PostingRule.java/left.java
             if (openInterestAmount.isPositive()) {
                 EntryDTO e = new EntryDTO(entryType, event, openInterestAmount);
                 e.setSelected(true);
@@ -409,7 +410,19 @@ public abstract class PostingRule extends PostingRule_Base {
                 e.setDescription(entryDescription);
                 result.add(e);
             }
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/PostingRule.java/base.java
+            if (openInterestAmount.isPositive()) 
+=======
+            if (openInterestAmount.isPositive()) {
+                EntryDTO e = new EntryDTO(entryType, event, openInterestAmount);
+                entryDescription = event.getDescriptionForEntryType(entryType);
+                entryDescription.appendLabel(String.format(" [ %s ]  / Juros", d.getDueDate().toString("dd-MM-yyyy")));
+                e.setDescription(entryDescription);
+                result.add(e);
+            }
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/PostingRule.java/right.java
 
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/PostingRule.java/left.java
             if (openFineAmount.isPositive()) {
                 EntryDTO e = new EntryDTO(entryType, event, openFineAmount);
                 e.setSelected(true);
@@ -418,6 +431,17 @@ public abstract class PostingRule extends PostingRule_Base {
                 e.setDescription(entryDescription);
                 result.add(e);
             }
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/PostingRule.java/base.java
+            if (openFineAmount.isPositive()) 
+=======
+            if (openFineAmount.isPositive()) {
+                EntryDTO e = new EntryDTO(entryType, event, openFineAmount);
+                entryDescription = event.getDescriptionForEntryType(entryType);
+                entryDescription.appendLabel(String.format(" [ %s ]  / Multa", d.getDueDate().toString("dd-MM-yyyy")));
+                e.setDescription(entryDescription);
+                result.add(e);
+            }
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/PostingRule.java/right.java
         });
 
         return result;

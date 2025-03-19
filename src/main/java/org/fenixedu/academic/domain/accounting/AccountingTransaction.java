@@ -238,13 +238,21 @@ public class AccountingTransaction extends AccountingTransaction_Base {
 
         checkRulesToAnnul();
 
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/AccountingTransaction.java/left.java
         annulReceipts();
+
         Signal.emit(SIGNAL_ANNUL, new DomainObjectEvent<AccountingTransaction>(this));
 
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/AccountingTransaction.java/base.java
+=======
+        Signal.emit(SIGNAL_ANNUL, new DomainObjectEvent<AccountingTransaction>(this));
+
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/AccountingTransaction.java/right.java
         reimburseWithoutRules(responsibleUser, getTransactionDetail().getPaymentMode(), getAmountWithAdjustment(), reason);
 
     }
 
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/AccountingTransaction.java/left.java
     private void checkRulesToAnnul() {
         final List<String> operationsAfter = getEvent().getOperationsAfter(getWhenProcessed());
         if (!operationsAfter.isEmpty()) {
@@ -252,6 +260,21 @@ public class AccountingTransaction extends AccountingTransaction_Base {
                     .stream().collect(Collectors.joining(",")));
         }
     }
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/AccountingTransaction.java/base.java
+    private void checkRulesToAnnul() 
+=======
+    private void checkRulesToAnnul() {
+        if (getToAccountEntry().isAssociatedToAnyActiveReceipt()) {
+            throw new DomainException("error.accounting.AccountingTransaction.cannot.annul.while.associated.to.active.receipt");
+        }
+
+        final List<String> operationsAfter = getEvent().getOperationsAfter(getWhenProcessed());
+        if (!operationsAfter.isEmpty()) {
+            throw new DomainException("error.accounting.AccountingTransaction.cannot.annul.operations.after", operationsAfter
+                    .stream().collect(Collectors.joining(",")));
+        }
+    }
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/5b7496ed218ab8234f16d55853dd5af5f4dc86f9/src/main/java/org/fenixedu/academic/domain/accounting/AccountingTransaction.java/right.java
 
     private void annulReceipts() {
         getToAccountEntry().getReceiptsSet().stream().filter(Receipt::isActive).forEach(r -> {

@@ -60,6 +60,14 @@ public abstract class Exemption extends Exemption_Base {
             throw new DomainException("error.accounting.Exemption.cannot.create.operations.after", operationsAfter.stream()
                     .collect(Collectors.joining(",")));
         }
+
+        //check for operations after this one being created
+        
+        final List<String> operationsAfter = event.getOperationsAfter(getWhenCreated());
+        if (!operationsAfter.isEmpty()) {
+            throw new DomainException("error.accounting.Exemption.cannot.create.operations.after", operationsAfter.stream()
+                    .collect(Collectors.joining(",")));
+        }
     }
 
     @Override
