@@ -58,6 +58,18 @@ public class GenerateIraceParameterFile {
     offspringPopulationSize.addValue("200");
     offspringPopulationSize.addValue("400");
 
+<<<<<<< /usr/src/app/output/jmetal/jmetal/0c224cfc205ab6c358148fc8ed0fe0e2a1a591b9/jmetal-auto/src/main/java/org/uma/jmetal/auto/irace/parameter/GenerateIraceParameterFile.java/left.java
+||||||| /usr/src/app/output/jmetal/jmetal/0c224cfc205ab6c358148fc8ed0fe0e2a1a591b9/jmetal-auto/src/main/java/org/uma/jmetal/auto/irace/parameter/GenerateIraceParameterFile.java/base.java
+    CategoricalParameterType variation = new CategoricalParameterType("variation");
+    variation.addValue(VariationType.crossoverAndMutationVariation.toString());
+    variation.addValue(VariationType.DE.toString());
+
+=======
+    CategoricalParameterType variation = new CategoricalParameterType("variation");
+    variation.addValue(VariationType.crossoverAndMutationVariation.toString());
+    //variation.addValue(VariationType.DE.toString());
+
+>>>>>>> /usr/src/app/output/jmetal/jmetal/0c224cfc205ab6c358148fc8ed0fe0e2a1a591b9/jmetal-auto/src/main/java/org/uma/jmetal/auto/irace/parameter/GenerateIraceParameterFile.java/right.java
     CategoricalParameterType createInitialSolutions =
         new CategoricalParameterType("createInitialSolutions");
     createInitialSolutions.addValue("random");
@@ -78,13 +90,24 @@ public class GenerateIraceParameterFile {
 
     // Crossover
     CrossoverParameter crossover = new CrossoverParameter();
+<<<<<<< /usr/src/app/output/jmetal/jmetal/0c224cfc205ab6c358148fc8ed0fe0e2a1a591b9/jmetal-auto/src/main/java/org/uma/jmetal/auto/irace/parameter/GenerateIraceParameterFile.java/left.java
     crossover.addSpecificParameter(new SBXCrossoverDistributionIndexParameter(5.0, 400.0));
     crossover.addSpecificParameter(new BLXAlphaCrossoverAlphaValueParameter());
     crossover.setParent(variation);
     crossover.setParentTag(VariationType.crossoverAndMutationVariation.name());
+||||||| /usr/src/app/output/jmetal/jmetal/0c224cfc205ab6c358148fc8ed0fe0e2a1a591b9/jmetal-auto/src/main/java/org/uma/jmetal/auto/irace/parameter/GenerateIraceParameterFile.java/base.java
+    crossover.addAssociatedParameter(new SBXCrossoverDistributionIndexParameter(5.0, 400.0));
+    crossover.addAssociatedParameter(new BLXAlphaCrossoverAlphaValueParameter());
+    crossover.addAssociatedParameter(new DifferentialEvolutionCRValueParameter());
+    crossover.addAssociatedParameter(new DifferentialEvolutionFValueParameter());
+    //crossover.addValue(CrossoverType.DE.toString());
+=======
+    crossover.addAssociatedParameter(new SBXCrossoverDistributionIndexParameter(5.0, 400.0));
+    crossover.addAssociatedParameter(new BLXAlphaCrossoverAlphaValueParameter());
     //crossover.addAssociatedParameter(new DifferentialEvolutionCRValueParameter());
     //crossover.addAssociatedParameter(new DifferentialEvolutionFValueParameter());
     //crossover.addValue(CrossoverType.DE.toString());
+>>>>>>> /usr/src/app/output/jmetal/jmetal/0c224cfc205ab6c358148fc8ed0fe0e2a1a591b9/jmetal-auto/src/main/java/org/uma/jmetal/auto/irace/parameter/GenerateIraceParameterFile.java/right.java
 
     parameters.add(crossover);
 
