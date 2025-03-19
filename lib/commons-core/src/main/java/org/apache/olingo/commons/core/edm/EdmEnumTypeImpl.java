@@ -1,30 +1,10 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.apache.olingo.commons.core.edm;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmException;
@@ -40,52 +20,47 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
-
   private final EdmPrimitiveType underlyingType;
+
   private final CsdlEnumType enumType;
+
   private final String uriPrefix;
+
   private final String uriSuffix;
+
   private List<String> memberNames;
+
   private Map<String, EdmMember> membersMap;
 
   public EdmEnumTypeImpl(final Edm edm, final FullQualifiedName enumName, final CsdlEnumType enumType) {
     super(edm, enumName, EdmTypeKind.ENUM, enumType);
-
     if (enumType.getUnderlyingType() == null) {
       underlyingType = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32);
     } else {
       final EdmPrimitiveTypeKind underlyingTypeKind = EdmPrimitiveTypeKind.valueOfFQN(enumType.getUnderlyingType());
-      if (underlyingTypeKind == EdmPrimitiveTypeKind.Byte
-          || underlyingTypeKind == EdmPrimitiveTypeKind.SByte
-          || underlyingTypeKind == EdmPrimitiveTypeKind.Int16
-          || underlyingTypeKind == EdmPrimitiveTypeKind.Int32
-          || underlyingTypeKind == EdmPrimitiveTypeKind.Int64) {
+      if (underlyingTypeKind == EdmPrimitiveTypeKind.Byte || underlyingTypeKind == EdmPrimitiveTypeKind.SByte || underlyingTypeKind == EdmPrimitiveTypeKind.Int16 || underlyingTypeKind == EdmPrimitiveTypeKind.Int32 || underlyingTypeKind == EdmPrimitiveTypeKind.Int64) {
         underlyingType = EdmPrimitiveTypeFactory.getInstance(underlyingTypeKind);
       } else {
         throw new EdmException("Not allowed as underlying type: " + underlyingTypeKind);
       }
     }
-
     this.enumType = enumType;
     uriPrefix = enumName.getFullQualifiedNameAsString() + '\'';
-    uriSuffix = "'";
+    uriSuffix = "\'";
   }
 
-  @Override
-  public EdmPrimitiveType getUnderlyingType() {
+  @Override public EdmPrimitiveType getUnderlyingType() {
     return underlyingType;
   }
 
-  @Override
-  public EdmMember getMember(final String name) {
+  @Override public EdmMember getMember(final String name) {
     if (membersMap == null) {
       createEdmMembers();
     }
     return membersMap.get(name);
   }
 
-  @Override
-  public List<String> getMemberNames() {
+  @Override public List<String> getMemberNames() {
     if (memberNames == null) {
       createEdmMembers();
     }
@@ -100,26 +75,20 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
         membersMapLocal.put(member.getName(), new EdmMemberImpl(edm, member));
         memberNamesLocal.add(member.getName());
       }
-
       membersMap = membersMapLocal;
       memberNames = memberNamesLocal;
     }
   }
 
-  @Override
-  public boolean isCompatible(final EdmPrimitiveType primitiveType) {
+  @Override public boolean isCompatible(final EdmPrimitiveType primitiveType) {
     return equals(primitiveType);
   }
 
-  @Override
-  public Class<?> getDefaultType() {
+  @Override public Class<?> getDefaultType() {
     return getUnderlyingType().getDefaultType();
   }
 
-  @Override
-  public boolean validate(final String value, final Boolean isNullable, final Integer maxLength,
-      final Integer precision, final Integer scale, final Boolean isUnicode) {
-
+  @Override public boolean validate(final String value, final Boolean isNullable, final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode) {
     try {
       valueOfString(value, isNullable, maxLength, precision, scale, isUnicode, getDefaultType());
       return true;
@@ -138,30 +107,24 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
         }
       }
       if (memberValueLong == null) {
-        throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
+        throw new EdmPrimitiveTypeException("The literal \'" + value + "\' has illegal content.");
       }
       result = result == null ? memberValueLong : result | memberValueLong;
     }
     return result;
   }
 
-  @Override
-  public <T> T valueOfString(final String value, final Boolean isNullable, final Integer maxLength,
-      final Integer precision, final Integer scale, final Boolean isUnicode, final Class<T> returnType)
-      throws EdmPrimitiveTypeException {
-
+  @Override public <T extends java.lang.Object> T valueOfString(final String value, final Boolean isNullable, final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
     if (value == null) {
       if (isNullable != null && !isNullable) {
-        throw new EdmPrimitiveTypeException("The literal 'null' is not allowed.");
+        throw new EdmPrimitiveTypeException("The literal \'null\' is not allowed.");
       }
       return null;
     }
-
     try {
       return EdmInt64.convertNumber(parseEnumValue(value), returnType);
     } catch (final IllegalArgumentException e) {
-      throw new EdmPrimitiveTypeException("The literal '" + value
-          + "' cannot be converted to value type " + returnType + ".", e);
+      throw new EdmPrimitiveTypeException("The literal \'" + value + "\' cannot be converted to value type " + returnType + ".", e);
     } catch (final ClassCastException e) {
       throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.", e);
     }
@@ -170,7 +133,6 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   private String constructEnumValue(final long value) throws EdmPrimitiveTypeException {
     long remaining = value;
     StringBuilder result = new StringBuilder();
-
     final boolean flags = isFlags();
     for (final EdmMember member : getMembers()) {
       final long memberValue = Long.parseLong(member.getValue());
@@ -188,9 +150,8 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
         }
       }
     }
-
     if (remaining != 0) {
-      throw new EdmPrimitiveTypeException("The value '" + value + "' is not valid.");
+      throw new EdmPrimitiveTypeException("The value \'" + value + "\' is not valid.");
     }
     return result.toString();
   }
@@ -202,10 +163,7 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
     return membersMap.values();
   }
 
-  @Override
-  public String valueToString(final Object value, final Boolean isNullable, final Integer maxLength,
-      final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
-
+  @Override public String valueToString(final Object value, final Boolean isNullable, final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
     if (value == null) {
       if (isNullable != null && !isNullable) {
         throw new EdmPrimitiveTypeException("The value NULL is not allowed.");
@@ -219,38 +177,31 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
     }
   }
 
-  @Override
-  public String toUriLiteral(final String literal) {
+  @Override public String toUriLiteral(final String literal) {
     return literal == null ? null : uriPrefix + literal + uriSuffix;
   }
 
-  @Override
-  public String fromUriLiteral(final String literal) throws EdmPrimitiveTypeException {
+  @Override public String fromUriLiteral(final String literal) throws EdmPrimitiveTypeException {
     if (literal == null) {
       return null;
-    } else if (literal.length() >= uriPrefix.length() + uriSuffix.length()
-        && literal.startsWith(uriPrefix) && literal.endsWith(uriSuffix)) {
-      return literal.substring(uriPrefix.length(), literal.length() - uriSuffix.length());
     } else {
-      throw new EdmPrimitiveTypeException("The literal '" + literal + "' has illegal content.");
+      if (literal.length() >= uriPrefix.length() + uriSuffix.length() && literal.startsWith(uriPrefix) && literal.endsWith(uriSuffix)) {
+        return literal.substring(uriPrefix.length(), literal.length() - uriSuffix.length());
+      } else {
+        throw new EdmPrimitiveTypeException("The literal \'" + literal + "\' has illegal content.");
+      }
     }
   }
 
-  @Override
-  public boolean isFlags() {
+  @Override public boolean isFlags() {
     return enumType.isFlags();
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return getFullQualifiedName().getFullQualifiedNameAsString().hashCode();
   }
 
-  @Override
-  public boolean equals(final Object obj) {
-    return obj != null
-        && (obj == this
-        || obj instanceof EdmEnumType
-            && getFullQualifiedName().equals(((EdmEnumType) obj).getFullQualifiedName()));
+  @Override public boolean equals(final Object obj) {
+    return obj != null && (obj == this || obj instanceof EdmEnumType && getFullQualifiedName().equals(((EdmEnumType) obj).getFullQualifiedName()));
   }
 }
