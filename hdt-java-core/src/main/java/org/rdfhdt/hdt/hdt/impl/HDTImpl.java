@@ -356,8 +356,16 @@ public class HDTImpl implements HDTPrivate {
 					return false;
 				}
 				@Override
+				public TripleString previous() {
+					return null;
+				}
+				@Override
 				public ResultEstimationType numResultEstimation() {
 					return ResultEstimationType.EXACT;
+				}
+				@Override
+				public boolean hasPrevious() {
+					return false;
 				}
 				@Override
 				public void goToStart() {
@@ -489,6 +497,12 @@ public class HDTImpl implements HDTPrivate {
 			} else {
 				triples.loadIndex(in, ci, listener);
 			}
+<<<<<<< /usr/src/app/output/rdfhdt/hdt-java/cd88626a4e665e548f0981fdd26994e4819de68c/hdt-java-core/src/main/java/org/rdfhdt/hdt/hdt/impl/HDTImpl.java/left.java
+||||||| /usr/src/app/output/rdfhdt/hdt-java/cd88626a4e665e548f0981fdd26994e4819de68c/hdt-java-core/src/main/java/org/rdfhdt/hdt/hdt/impl/HDTImpl.java/base.java
+			in.close();
+=======
+			//in.close();
+>>>>>>> /usr/src/app/output/rdfhdt/hdt-java/cd88626a4e665e548f0981fdd26994e4819de68c/hdt-java-core/src/main/java/org/rdfhdt/hdt/hdt/impl/HDTImpl.java/right.java
 		} catch (Exception e) {
 			if(e instanceof FileNotFoundException) {
 //				System.out.println("The .hdt.index doesn't exist, generating a new one.");
@@ -503,7 +517,24 @@ public class HDTImpl implements HDTPrivate {
 
 			// SAVE
 			if(this.hdtFileName!=null) {
+<<<<<<< /usr/src/app/output/rdfhdt/hdt-java/cd88626a4e665e548f0981fdd26994e4819de68c/hdt-java-core/src/main/java/org/rdfhdt/hdt/hdt/impl/HDTImpl.java/left.java
 				FileOutputStream out=null;
+||||||| /usr/src/app/output/rdfhdt/hdt-java/cd88626a4e665e548f0981fdd26994e4819de68c/hdt-java-core/src/main/java/org/rdfhdt/hdt/hdt/impl/HDTImpl.java/base.java
+				System.out.println("Could not read .hdt.index, Generating a new one.");
+
+				// GENERATE
+				triples.generateIndex(listener);
+
+				// SAVE
+=======
+				System.out.println("Could not read .hdt.index, Generating a new one.");
+
+				// GENERATE
+				triples.generateIndex(listener);
+
+				FileOutputStream out=null;
+				// SAVE
+>>>>>>> /usr/src/app/output/rdfhdt/hdt-java/cd88626a4e665e548f0981fdd26994e4819de68c/hdt-java-core/src/main/java/org/rdfhdt/hdt/hdt/impl/HDTImpl.java/right.java
 				try {
 					out = new FileOutputStream(versionName);
 					ci.clear();
@@ -511,10 +542,17 @@ public class HDTImpl implements HDTPrivate {
 					out.close();
 					System.out.println("Index generated and saved in "+st.stopAndShow());
 				} catch (IOException e2) {
+<<<<<<< /usr/src/app/output/rdfhdt/hdt-java/cd88626a4e665e548f0981fdd26994e4819de68c/hdt-java-core/src/main/java/org/rdfhdt/hdt/hdt/impl/HDTImpl.java/left.java
 					System.err.println("Error writing index file.");
 					e2.printStackTrace();
 				} finally {
 					IOUtil.closeQuietly(out);
+||||||| /usr/src/app/output/rdfhdt/hdt-java/cd88626a4e665e548f0981fdd26994e4819de68c/hdt-java-core/src/main/java/org/rdfhdt/hdt/hdt/impl/HDTImpl.java/base.java
+=======
+			
+				} finally {
+					IOUtil.closeQuietly(out);
+>>>>>>> /usr/src/app/output/rdfhdt/hdt-java/cd88626a4e665e548f0981fdd26994e4819de68c/hdt-java-core/src/main/java/org/rdfhdt/hdt/hdt/impl/HDTImpl.java/right.java
 				}
 			}
 		} finally {
