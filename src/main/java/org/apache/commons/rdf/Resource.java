@@ -1,4 +1,1 @@
-package org.apache.commons.rdf;
-
-public interface Resource extends RDFTerm {
-}
+  fatal : path  'src/main/java/org/apache/commons/rdf/Resource.java' does not exist in 'f9cc0cc0ed7b8a23f46fdba49ed50cb839b6e8b5'   public interface Resource  extends  RDFTerm  { }
