@@ -31,7 +31,6 @@ import org.campagnelab.metar.tables.behavior.Heatmap_Behavior;
 import jetbrains.mps.internal.collections.runtime.IVisitor;
 import org.campagnelab.metar.tables.behavior.Plot_Behavior;
 import jetbrains.mps.lang.smodel.generator.smodelAdapter.SConceptOperations;
-import org.campagnelab.metar.tables.behavior.Statement_Behavior;
 import org.campagnelab.metar.tables.behavior.Multiplot_Behavior;
 import jetbrains.mps.smodel.behaviour.BehaviorReflection;
 import org.campagnelab.metar.tables.behavior.Render_Behavior;
