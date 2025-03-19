@@ -52,26 +52,42 @@ public abstract class BasicDocumentParser implements Parser {
       return false;
     }
 
+<<<<<<< /usr/src/app/output/recruit-tech/redpen/b0bae90319a3edcfcdce388f61c053e017e72748/document-validator-core/src/main/java/org/unigram/docvalidator/parser/BasicDocumentParser.java/left.java
     CharacterTable characterTable = resource.getCharacterTable();
-
+    this.period = DefaultSymbols.getInstance().get("FULL_STOP").getValue();
+||||||| /usr/src/app/output/recruit-tech/redpen/b0bae90319a3edcfcdce388f61c053e017e72748/document-validator-core/src/main/java/org/unigram/docvalidator/parser/BasicDocumentParser.java/base.java
+    this.period = DefaultSymbols.get("FULL_STOP").getValue();
+=======
     // set full stop characters
+>>>>>>> /usr/src/app/output/recruit-tech/redpen/b0bae90319a3edcfcdce388f61c053e017e72748/document-validator-core/src/main/java/org/unigram/docvalidator/parser/BasicDocumentParser.java/right.java
     if (characterTable.isContainCharacter("FULL_STOP")) {
+<<<<<<< /usr/src/app/output/recruit-tech/redpen/b0bae90319a3edcfcdce388f61c053e017e72748/document-validator-core/src/main/java/org/unigram/docvalidator/parser/BasicDocumentParser.java/left.java
+      this.period = characterTable.getCharacter("FULL_STOP").getValue();
+      LOG.info("Full stop is set to \"" + this.period + "\"");
+    } else {
+      LOG.warn("FULL_STOP does not exist in the configuration");
+      LOG.info("Set FULL_STOP as \"" + this.period + "\"");
+||||||| /usr/src/app/output/recruit-tech/redpen/b0bae90319a3edcfcdce388f61c053e017e72748/document-validator-core/src/main/java/org/unigram/docvalidator/parser/BasicDocumentParser.java/base.java
+      this.period = characterTable.getCharacter("FULL_STOP").getValue();
+      LOG.info("full stop is set to \"" + this.period + "\"");
+=======
       this.periods.add(characterTable.getCharacter("FULL_STOP").getValue());
     } else {
-      this.periods.add(DefaultSymbols.getInstance().get("FULL_STOP").getValue());
+      this.periods.add(DefaultSymbols.get("FULL_STOP").getValue());
+>>>>>>> /usr/src/app/output/recruit-tech/redpen/b0bae90319a3edcfcdce388f61c053e017e72748/document-validator-core/src/main/java/org/unigram/docvalidator/parser/BasicDocumentParser.java/right.java
     }
 
     if (characterTable.isContainCharacter("QUESTION_MARK")) {
       this.periods.add(characterTable.getCharacter("QUESTION_MARK").getValue());
     } else {
-      this.periods.add(DefaultSymbols.getInstance().get("QUESTION_MARK").getValue());
+      this.periods.add(DefaultSymbols.get("QUESTION_MARK").getValue());
     }
 
     if (characterTable.isContainCharacter("EXCLAMATION_MARK")) {
       this.periods.add(
           characterTable.getCharacter("EXCLAMATION_MARK").getValue());
     } else {
-      this.periods.add(DefaultSymbols.getInstance().get("EXCLAMATION_MARK").getValue());
+      this.periods.add(DefaultSymbols.get("EXCLAMATION_MARK").getValue());
     }
 
     for (String period : this.periods) {
