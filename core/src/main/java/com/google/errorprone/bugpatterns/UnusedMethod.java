@@ -105,9 +105,13 @@ public final class UnusedMethod extends BugChecker implements CompilationUnitTre
           "javax.annotation.PostConstruct",
           "javax.inject.Inject",
           "javax.persistence.PostLoad",
+<<<<<<< /usr/src/app/output/google/error-prone/c77eec536553d66d9500dcad5f962cce744b89d7/core/src/main/java/com/google/errorprone/bugpatterns/UnusedMethod.java/left.java
           "javax.validation.constraints.AssertFalse",
           "javax.validation.constraints.AssertTrue",
+||||||| /usr/src/app/output/google/error-prone/c77eec536553d66d9500dcad5f962cce744b89d7/core/src/main/java/com/google/errorprone/bugpatterns/UnusedMethod.java/base.java
+=======
           "org.apache.beam.sdk.transforms.DoFn.ProcessElement",
+>>>>>>> /usr/src/app/output/google/error-prone/c77eec536553d66d9500dcad5f962cce744b89d7/core/src/main/java/com/google/errorprone/bugpatterns/UnusedMethod.java/right.java
           "org.aspectj.lang.annotation.Pointcut",
           "org.aspectj.lang.annotation.Before",
           "org.springframework.context.annotation.Bean",
