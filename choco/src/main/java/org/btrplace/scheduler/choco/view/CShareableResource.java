@@ -453,7 +453,7 @@ public class CShareableResource implements ChocoView {
             }
             if (d != null) {
                 int m = getFutureVMAllocation(rp.getVM(vm));
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/btrplace/scheduler/8a939c1deed03406d77b6bcc81aae4dc91b2c9c6/choco/src/main/java/org/btrplace/scheduler/choco/view/CShareableResource.java/left.java
                 final IntVar var;
                 if (rp.labelVariables()) {
                     var = rp.fixed(m, "vmAllocation('", getResourceIdentifier(), "', '", vm, "'");
@@ -461,9 +461,15 @@ public class CShareableResource implements ChocoView {
                     var = csp.intVar(m);
                 }
                 dUse.add(var);
+||||||| /usr/src/app/output/btrplace/scheduler/8a939c1deed03406d77b6bcc81aae4dc91b2c9c6/choco/src/main/java/org/btrplace/scheduler/choco/view/CShareableResource.java/base.java
+                if (rp.labelVariables()) {
+                    dUse.add(rp.fixed(m, "vmAllocation('", getResourceIdentifier(), "', '", vm, "'"));
+                } else {
+                    dUse.add(rp.getModel().intVar(m));
+                }
 =======
                 dUse.add(rp.fixed(m, "vmAllocation('", getResourceIdentifier(), "', '", vm, "'"));
->>>>>>> aeac23d36a2933e852d4384eebde16c5e8ddbc87
+>>>>>>> /usr/src/app/output/btrplace/scheduler/8a939c1deed03406d77b6bcc81aae4dc91b2c9c6/choco/src/main/java/org/btrplace/scheduler/choco/view/CShareableResource.java/right.java
             }
         }
 
