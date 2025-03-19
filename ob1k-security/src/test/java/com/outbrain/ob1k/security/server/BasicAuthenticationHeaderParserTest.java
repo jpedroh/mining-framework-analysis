@@ -1,69 +1,68 @@
 package com.outbrain.ob1k.security.server;
-
 import com.outbrain.ob1k.Request;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import java.util.Base64;
 
 public class BasicAuthenticationHeaderParserTest {
-
   private static final String USER = "user";
+
   private static final String PASSWORD = "password";
+
   private static final String CREDENTIALS = USER + ":" + PASSWORD;
-  private static final String ENCODED_CREDENTIALS = new String(Base64.getEncoder().encode(CREDENTIALS.getBytes()));
+
+  private static final String ENCODED_CREDENTIALS = 
+<<<<<<< /usr/src/app/output/outbrain/ob1k/3f7bdcaadc669ba2d14a424104ee4e09433edf88/ob1k-security/src/test/java/com/outbrain/ob1k/security/server/BasicAuthenticationHeaderParserTest.java/left.java
+  Base64.getEncoder().encodeToString(CREDENTIALS.getBytes())
+=======
+  new String(Base64.getEncoder().encode(CREDENTIALS.getBytes()))
+>>>>>>> /usr/src/app/output/outbrain/ob1k/3f7bdcaadc669ba2d14a424104ee4e09433edf88/ob1k-security/src/test/java/com/outbrain/ob1k/security/server/BasicAuthenticationHeaderParserTest.java/right.java
+  ;
 
   private BasicAuthenticationHeaderParser parser;
+
   private Request request;
 
-  @Before
-  public void setup() {
+  @Before public void setup() {
     parser = new BasicAuthenticationHeaderParser();
     request = mock(Request.class);
   }
 
-  @After
-  public void tearDown() {
+  @After public void tearDown() {
     parser = null;
     request = null;
   }
 
-  @Test
-  public void testNoHeader() {
+  @Test public void testNoHeader() {
     when(request.getHeader("Authorization")).thenReturn(null);
     final Credentials<UserPasswordToken> extractedCredentials = parser.extractCredentials(request);
     assertNull(extractedCredentials);
   }
 
-  @Test
-  public void testHeaderWithoutBasicPrefix() {
+  @Test public void testHeaderWithoutBasicPrefix() {
     when(request.getHeader("Authorization")).thenReturn("user:password");
     final Credentials<UserPasswordToken> extractedCredentials = parser.extractCredentials(request);
     assertNull(extractedCredentials);
   }
 
-  @Test
-  public void testHeaderWithInvalidEncodingCredentials() {
+  @Test public void testHeaderWithInvalidEncodingCredentials() {
     when(request.getHeader("Authorization")).thenReturn("Basic something");
     final Credentials<UserPasswordToken> extractedCredentials = parser.extractCredentials(request);
     assertNull(extractedCredentials);
   }
 
-  @Test
-  public void testInvalidHeader() {
+  @Test public void testInvalidHeader() {
     when(request.getHeader("Authorization")).thenReturn("Basic c29tZXRoaW5n");
     final Credentials<UserPasswordToken> extractedCredentials = parser.extractCredentials(request);
     assertNull(extractedCredentials);
   }
 
-  @Test
-  public void testValidHeader() {
+  @Test public void testValidHeader() {
     when(request.getHeader("Authorization")).thenReturn("Basic " + ENCODED_CREDENTIALS);
     final Credentials<UserPasswordToken> extractedCredentials = parser.extractCredentials(request);
     assertEquals(USER, extractedCredentials.get().getUsername());

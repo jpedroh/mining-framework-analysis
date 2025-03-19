@@ -1,5 +1,4 @@
 package com.outbrain.ob1k.security.server;
-
 import java.util.Base64;
 import com.outbrain.ob1k.Request;
 import io.netty.util.CharsetUtil;
@@ -11,10 +10,10 @@ import org.slf4j.LoggerFactory;
  * Parses an "Authorization" header of a HTTP request
  */
 public class BasicAuthenticationHeaderParser {
-
   private final static Logger logger = LoggerFactory.getLogger(BasicAuthenticationHeaderParser.class);
 
   public static final String BASIC_AUTHORIZATION_HEADER = "Authorization";
+
   public static final String BASIC_PREFIX = "Basic";
 
   /**
@@ -47,7 +46,6 @@ public class BasicAuthenticationHeaderParser {
     final String encodedCredentials = basicAuthHeader.substring(BASIC_PREFIX.length()).trim();
     if (StringUtils.isNotBlank(encodedCredentials)) {
       final String decodedCredentials = decode(encodedCredentials);
-
       if (StringUtils.isNotBlank(decodedCredentials)) {
         return splitCredentials(decodedCredentials);
       } else {
@@ -58,26 +56,29 @@ public class BasicAuthenticationHeaderParser {
     }
   }
 
-  //Splits a string in the form "username:password" into the UsernamePasswordTuple
   private Credentials<UserPasswordToken> splitCredentials(final String credentials) {
     final String[] splitCredentials = credentials.split(":");
     if (splitCredentials.length != 2) {
       logger.error("Error splitting credentials {}", credentials);
       return null;
     } else {
-      final UserPasswordToken userPassTuple = new UserPasswordToken(splitCredentials[0],
-                                                                            splitCredentials[1].toCharArray());
+      final UserPasswordToken userPassTuple = new UserPasswordToken(splitCredentials[0], splitCredentials[1].toCharArray());
       return new HttpBasicCredentials(userPassTuple);
     }
   }
 
   private String decode(final String encodedCredentials) {
     try {
-      return new String(Base64.getDecoder().decode(encodedCredentials), CharsetUtil.UTF_8);
+      return new String(
+<<<<<<< /usr/src/app/output/outbrain/ob1k/3f7bdcaadc669ba2d14a424104ee4e09433edf88/ob1k-security/src/main/java/com/outbrain/ob1k/security/server/BasicAuthenticationHeaderParser.java/left.java
+      java.util.Base64
+=======
+      Base64
+>>>>>>> /usr/src/app/output/outbrain/ob1k/3f7bdcaadc669ba2d14a424104ee4e09433edf88/ob1k-security/src/main/java/com/outbrain/ob1k/security/server/BasicAuthenticationHeaderParser.java/right.java
+      .getDecoder().decode(encodedCredentials), CharsetUtil.UTF_8);
     } catch (final Exception e) {
       logger.error("Error decoding credentials " + encodedCredentials, e);
       return null;
     }
   }
-
 }
