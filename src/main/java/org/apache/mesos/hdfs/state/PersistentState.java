@@ -1,5 +1,4 @@
 package org.apache.mesos.hdfs.state;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -13,7 +12,6 @@ import org.apache.mesos.hdfs.config.SchedulerConf;
 import org.apache.mesos.hdfs.util.HDFSConstants;
 import org.apache.mesos.state.Variable;
 import org.apache.mesos.state.ZooKeeperState;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,30 +28,34 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-@Singleton
-public class PersistentState {
+@Singleton public class PersistentState {
   public static final Log log = LogFactory.getLog(PersistentState.class);
+
   private String FRAMEWORK_ID_KEY = "frameworkId";
+
   private String NAMENODES_KEY = "nameNodes";
+
   private String JOURNALNODES_KEY = "journalNodes";
+
   private String DATANODES_KEY = "dataNodes";
+
   private ZooKeeperState zkState;
+
   private SchedulerConf conf;
 
   private Timestamp deadJournalNodeTimeStamp = null;
+
   private Timestamp deadNameNodeTimeStamp = null;
+
   private Timestamp deadDataNodeTimeStamp = null;
 
-  @Inject
-  public PersistentState(SchedulerConf conf) {
+  @Inject public PersistentState(SchedulerConf conf) {
     MesosNativeLibrary.load(conf.getNativeLibrary());
-    this.zkState = new ZooKeeperState(conf.getStateZkServers(),
-        conf.getStateZkTimeout(), TimeUnit.MILLISECONDS, "/hdfs-mesos/" + conf.getFrameworkName());
+    this.zkState = new ZooKeeperState(conf.getStateZkServers(), conf.getStateZkTimeout(), TimeUnit.MILLISECONDS, "/hdfs-mesos/" + conf.getFrameworkName());
     this.conf = conf;
   }
 
-  public FrameworkID getFrameworkID() throws InterruptedException, ExecutionException,
-      InvalidProtocolBufferException {
+  public FrameworkID getFrameworkID() throws InterruptedException, ExecutionException, InvalidProtocolBufferException {
     byte[] existingFrameworkId = zkState.fetch(FRAMEWORK_ID_KEY).get().value();
     if (existingFrameworkId.length > 0) {
       return FrameworkID.parseFrom(existingFrameworkId);
@@ -62,8 +64,7 @@ public class PersistentState {
     }
   }
 
-  public void setFrameworkId(FrameworkID frameworkId) throws InterruptedException,
-      ExecutionException {
+  public void setFrameworkId(FrameworkID frameworkId) throws InterruptedException, ExecutionException {
     Variable value = zkState.fetch(FRAMEWORK_ID_KEY).get();
     value = value.mutate(frameworkId.toByteArray());
     zkState.store(value).get();
@@ -103,57 +104,56 @@ public class PersistentState {
   }
 
   public List<String> getDeadJournalNodes() {
-      if (deadJournalNodeTimeStamp != null && deadJournalNodeTimeStamp.before(new Date())) {
-          removeDeadJournalNodes();
-          return new ArrayList<>();
-      } else {
-        HashMap<String, String> journalNodes = getJournalNodes();
-        Set<String> journalHosts = journalNodes.keySet();
-        List<String> deadJournalHosts = new ArrayList<>();
-        for (String journalHost: journalHosts) {
-          if (journalNodes.get(journalHost) == null) {
-            deadJournalHosts.add(journalHost);
-          }
+    if (deadJournalNodeTimeStamp != null && deadJournalNodeTimeStamp.before(new Date())) {
+      removeDeadJournalNodes();
+      return new ArrayList<>();
+    } else {
+      HashMap<String, String> journalNodes = getJournalNodes();
+      Set<String> journalHosts = journalNodes.keySet();
+      List<String> deadJournalHosts = new ArrayList<>();
+      for (String journalHost : journalHosts) {
+        if (journalNodes.get(journalHost) == null) {
+          deadJournalHosts.add(journalHost);
         }
-        return deadJournalHosts;
       }
+      return deadJournalHosts;
+    }
   }
 
   public List<String> getDeadNameNodes() {
-      if (deadNameNodeTimeStamp != null && deadNameNodeTimeStamp.before(new Date())) {
-          removeDeadNameNodes();
-          return new ArrayList<>();
-      } else {
-        HashMap<String, String> nameNodes = getNameNodes();
-        Set<String> nameHosts = nameNodes.keySet();
-        List<String> deadNameHosts = new ArrayList<>();
-        for (String nameHost : nameHosts) {
-          if (nameNodes.get(nameHost) == null) {
-            deadNameHosts.add(nameHost);
-          }
+    if (deadNameNodeTimeStamp != null && deadNameNodeTimeStamp.before(new Date())) {
+      removeDeadNameNodes();
+      return new ArrayList<>();
+    } else {
+      HashMap<String, String> nameNodes = getNameNodes();
+      Set<String> nameHosts = nameNodes.keySet();
+      List<String> deadNameHosts = new ArrayList<>();
+      for (String nameHost : nameHosts) {
+        if (nameNodes.get(nameHost) == null) {
+          deadNameHosts.add(nameHost);
         }
-        return deadNameHosts;
       }
+      return deadNameHosts;
+    }
   }
 
   public List<String> getDeadDataNodes() {
-      if (deadDataNodeTimeStamp != null && deadDataNodeTimeStamp.before(new Date())) {
-          removeDeadDataNodes();
-          return new ArrayList<>();
-      } else {
-        HashMap<String, String> dataNodes = getDataNodes();
-        Set<String> dataHosts = dataNodes.keySet();
-        List<String> deadDataHosts = new ArrayList<>();
-        for (String dataHost : dataHosts) {
+    if (deadDataNodeTimeStamp != null && deadDataNodeTimeStamp.before(new Date())) {
+      removeDeadDataNodes();
+      return new ArrayList<>();
+    } else {
+      HashMap<String, String> dataNodes = getDataNodes();
+      Set<String> dataHosts = dataNodes.keySet();
+      List<String> deadDataHosts = new ArrayList<>();
+      for (String dataHost : dataHosts) {
         if (dataNodes.get(dataHost) == null) {
           deadDataHosts.add(dataHost);
         }
-       }
-       return deadDataHosts;
       }
+      return deadDataHosts;
+    }
   }
 
-  // TODO (nicgrayson) add tests with in-memory state implementation for zookeeper
   public HashMap<String, String> getJournalNodes() {
     return getHashMap(JOURNALNODES_KEY);
   }
@@ -175,30 +175,28 @@ public class PersistentState {
 
   public void addHdfsNode(Protos.TaskID taskId, String hostname, String taskName) {
     switch (taskName) {
-      case HDFSConstants.NAME_NODE_ID :
-        HashMap<String, String> nameNodes = getNameNodes();
-        nameNodes.put(hostname, taskId.getValue());
-        setNameNodes(nameNodes);
-        break;
-      case HDFSConstants.JOURNAL_NODE_ID :
-        HashMap<String, String> journalNodes = getJournalNodes();
-        journalNodes.put(hostname, taskId.getValue());
-        setJournalNodes(journalNodes);
-        break;
-      case HDFSConstants.DATA_NODE_ID :
-        HashMap<String, String> dataNodes = getDataNodes();
-        dataNodes.put(hostname, taskId.getValue());
-        setDataNodes(dataNodes);
-        break;
-      case HDFSConstants.ZKFC_NODE_ID :
-        break;
-      default :
-        log.error("Task name unknown");
+      case HDFSConstants.NAME_NODE_ID:
+      HashMap<String, String> nameNodes = getNameNodes();
+      nameNodes.put(hostname, taskId.getValue());
+      setNameNodes(nameNodes);
+      break;
+      case HDFSConstants.JOURNAL_NODE_ID:
+      HashMap<String, String> journalNodes = getJournalNodes();
+      journalNodes.put(hostname, taskId.getValue());
+      setJournalNodes(journalNodes);
+      break;
+      case HDFSConstants.DATA_NODE_ID:
+      HashMap<String, String> dataNodes = getDataNodes();
+      dataNodes.put(hostname, taskId.getValue());
+      setDataNodes(dataNodes);
+      break;
+      case HDFSConstants.ZKFC_NODE_ID:
+      break;
+      default:
+      log.error("Task name unknown");
     }
   }
 
-  // TODO (elingg) optimize this method/ Possibly index by task id instead of hostname/
-  // Possibly call removeTask(slaveId, taskId) to avoid iterating through all maps
   public void removeTaskId(String taskId) {
     HashMap<String, String> journalNodes = getJournalNodes();
     if (journalNodes.values().contains(taskId)) {
@@ -296,9 +294,7 @@ public class PersistentState {
    * @throws IOException
    * @throws ClassNotFoundException
    */
-  @SuppressWarnings("unchecked")
-  private <T extends Object> T get(String key) throws InterruptedException, ExecutionException,
-      IOException, ClassNotFoundException {
+  @SuppressWarnings(value = { "unchecked" }) private <T extends Object> T get(String key) throws InterruptedException, ExecutionException, IOException, ClassNotFoundException {
     byte[] existingNodes = zkState.fetch(key).get().value();
     if (existingNodes.length > 0) {
       ByteArrayInputStream bis = new ByteArrayInputStream(existingNodes);
@@ -306,10 +302,10 @@ public class PersistentState {
       try {
         in = new ObjectInputStream(bis);
         return (T) in.readObject();
-      } finally {
+      }  finally {
         try {
           bis.close();
-        } finally {
+        }  finally {
           if (in != null) {
             in.close();
           }
@@ -327,8 +323,7 @@ public class PersistentState {
    * @throws InterruptedException
    * @throws IOException
    */
-  private <T extends Object> void set(String key, T object) throws InterruptedException,
-      ExecutionException, IOException {
+  private <T extends Object> void set(String key, T object) throws InterruptedException, ExecutionException, IOException {
     Variable value = zkState.fetch(key).get();
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
     ObjectOutputStream out = null;
@@ -337,12 +332,12 @@ public class PersistentState {
       out.writeObject(object);
       value = value.mutate(bos.toByteArray());
       zkState.store(value).get();
-    } finally {
+    }  finally {
       try {
         if (out != null) {
           out.close();
         }
-      } finally {
+      }  finally {
         bos.close();
       }
     }
