@@ -22,7 +22,6 @@ import io.cloudslang.engine.queue.entities.ExecutionMessageConverter;
 import io.cloudslang.engine.queue.repositories.ExecutionQueueRepository;
 import io.cloudslang.engine.queue.services.QueueDispatcherService;
 import io.cloudslang.score.events.FastEventBus;
-import io.cloudslang.score.facade.entities.Execution;
 import io.cloudslang.orchestrator.entities.BranchContexts;
 import io.cloudslang.orchestrator.entities.FinishedBranch;
 import io.cloudslang.orchestrator.entities.SplitMessage;
