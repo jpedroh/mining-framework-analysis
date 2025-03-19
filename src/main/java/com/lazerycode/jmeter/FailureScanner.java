@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 class FailureScanner {
 
 	private static final String REQUEST_FAILURE = "s=\"false\"";
+	private static final String REQUEST_SUCCESS_PATTERN = "s=\"true\"";
 	private static final Pattern ERROR_PATTERN = Pattern.compile(REQUEST_FAILURE);
 	private static final String REQUEST_SUCCESS = "s=\"true\"";
 	private static final Pattern SUCCESS_PATTERN = Pattern.compile(REQUEST_SUCCESS);
@@ -46,6 +47,14 @@ class FailureScanner {
 		successCount = 0;
 
 		Scanner resultFileScanner;
+<<<<<<< /usr/src/app/output/jmeter-maven-plugin/jmeter-maven-plugin/5c0ee1fed07099b1a36b13deb121c0aca639dd1d/src/main/java/com/lazerycode/jmeter/FailureScanner.java/left.java
+		Pattern errorPattern = Pattern.compile(REQUEST_FAILURE_PATTERN);
+		Pattern successPattern = Pattern.compile(REQUEST_SUCCESS_PATTERN);
+
+||||||| /usr/src/app/output/jmeter-maven-plugin/jmeter-maven-plugin/5c0ee1fed07099b1a36b13deb121c0aca639dd1d/src/main/java/com/lazerycode/jmeter/FailureScanner.java/base.java
+		Pattern errorPattern = Pattern.compile(REQUEST_FAILURE_PATTERN);
+=======
+>>>>>>> /usr/src/app/output/jmeter-maven-plugin/jmeter-maven-plugin/5c0ee1fed07099b1a36b13deb121c0aca639dd1d/src/main/java/com/lazerycode/jmeter/FailureScanner.java/right.java
 		resultFileScanner = new Scanner(file);
 		while(resultFileScanner.hasNextLine()) {
 			String line = resultFileScanner.nextLine();
@@ -57,6 +66,18 @@ class FailureScanner {
 			}
 		}
 		resultFileScanner.close();
+<<<<<<< /usr/src/app/output/jmeter-maven-plugin/jmeter-maven-plugin/5c0ee1fed07099b1a36b13deb121c0aca639dd1d/src/main/java/com/lazerycode/jmeter/FailureScanner.java/left.java
+	
+		resultFileScanner = new Scanner(file);
+		while (resultFileScanner.findWithinHorizon(successPattern, 0) != null) {
+			successCount++;
+		}
+		resultFileScanner.close();
+||||||| /usr/src/app/output/jmeter-maven-plugin/jmeter-maven-plugin/5c0ee1fed07099b1a36b13deb121c0aca639dd1d/src/main/java/com/lazerycode/jmeter/FailureScanner.java/base.java
+	
+		return this.failureCount > 0;
+=======
+>>>>>>> /usr/src/app/output/jmeter-maven-plugin/jmeter-maven-plugin/5c0ee1fed07099b1a36b13deb121c0aca639dd1d/src/main/java/com/lazerycode/jmeter/FailureScanner.java/right.java
 	}
 
 	/**
