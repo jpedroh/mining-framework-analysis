@@ -1,5 +1,4 @@
 package wrm;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -12,11 +11,9 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-
 import wrm.libsass.SassCompilationException;
 import wrm.libsass.SassCompiler;
 
@@ -57,27 +54,22 @@ public class CompilationMojo extends AbstractMojo {
 
   public void execute() throws MojoExecutionException, MojoFailureException {
     inputPath = inputPath.replaceAll("\\\\", "/");
-
     getLog().debug("Input Path=" + inputPath);
     getLog().debug("Output Path=" + outputPath);
-
     final Path root = Paths.get(inputPath);
-		String globPattern = "glob:"+inputPath+"{**/,}*.scss";
+    String globPattern = "glob:" + inputPath + "{**/,}*.scss";
     getLog().debug("Glob = " + globPattern);
     final PathMatcher matcher = FileSystems.getDefault().getPathMatcher(globPattern);
     try {
       Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        @Override public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
           if (matcher.matches(file) && !file.getFileName().toString().startsWith("_")) {
             processFile(root, file);
           }
-
           return FileVisitResult.CONTINUE;
         }
 
-        @Override
-        public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+        @Override public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
           return FileVisitResult.CONTINUE;
         }
       });
@@ -86,9 +78,7 @@ public class CompilationMojo extends AbstractMojo {
     }
   }
 
-
-  private void processFile(final Path root, Path file)
-      throws FileNotFoundException, IOException {
+  private void processFile(final Path root, Path file) throws FileNotFoundException, IOException {
     getLog().debug("Processing File " + file);
     Path relPath = root.relativize(file);
     String outputFile = outputPath + File.separator + relPath.toString();
@@ -96,10 +86,7 @@ public class CompilationMojo extends AbstractMojo {
     convertFile(file.toString(), includePath, imgPath, outputFile);
   }
 
-
-  private void convertFile(String inputFile, String includePath,
-                           String imgPath, String outputFile) throws FileNotFoundException,
-                           IOException {
+  private void convertFile(String inputFile, String includePath, String imgPath, String outputFile) throws FileNotFoundException, IOException {
     String content;
     try {
       content = compiler.compileFile(inputFile, includePath, imgPath);
@@ -108,9 +95,7 @@ public class CompilationMojo extends AbstractMojo {
       getLog().debug(e);
       return;
     }
-
     getLog().debug("Compilation finished.");
-
     writeContentToFile(outputFile, content);
   }
 
