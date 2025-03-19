@@ -3,13 +3,18 @@ package com.github.oxo42.stateless4j.triggers;
 import com.github.oxo42.stateless4j.OutVar;
 import com.github.oxo42.stateless4j.delegates.Func2;
 import com.github.oxo42.stateless4j.delegates.FuncBoolean;
-import com.github.oxo42.stateless4j.validation.Enforce;
 
 public class DynamicTriggerBehaviour<TState, TTrigger> extends TriggerBehaviour<TState, TTrigger> {
 
     private final Func2<Object[], TState> destination;
 
-    public DynamicTriggerBehaviour(TTrigger trigger, Func2<Object[], TState> destination, FuncBoolean guard) {
+<<<<<<< /usr/src/app/output/oxo42/stateless4j/26ac62ceca4d74ab85952e8fe26a1dcf201eeda7/src/main/java/com/github/oxo42/stateless4j/triggers/DynamicTriggerBehaviour.java/left.java
+    public DynamicTriggerBehaviour(final TTrigger trigger, final Func2<Object[], TState> destination, FuncBoolean guard) {
+||||||| /usr/src/app/output/oxo42/stateless4j/26ac62ceca4d74ab85952e8fe26a1dcf201eeda7/src/main/java/com/github/oxo42/stateless4j/triggers/DynamicTriggerBehaviour.java/base.java
+    public DynamicTriggerBehaviour(final TTrigger trigger, final Func2<Object[], TState> destination, Func<Boolean> guard) {
+=======
+    public DynamicTriggerBehaviour(final TTrigger trigger, final Func2<Object[], TState> destination, final Func<Boolean> guard) {
+>>>>>>> /usr/src/app/output/oxo42/stateless4j/26ac62ceca4d74ab85952e8fe26a1dcf201eeda7/src/main/java/com/github/oxo42/stateless4j/triggers/DynamicTriggerBehaviour.java/right.java
         super(trigger, guard);
         assert destination != null : "destination is null";
         this.destination = destination;
