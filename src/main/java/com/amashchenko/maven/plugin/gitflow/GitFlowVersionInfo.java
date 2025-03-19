@@ -113,12 +113,7 @@ public class GitFlowVersionInfo extends DefaultVersionInfo {
         if (versionPolicy != null) {
             try {
                 VersionPolicyRequest request = new VersionPolicyRequest().setVersion(this.toString());
-                if (snapshot) {
-                    return versionPolicy.getDevelopmentVersion(request).getVersion();
-                }
-                else {
-                    return versionPolicy.getReleaseVersion(request).getVersion();
-                }
+                return versionPolicy.getDevelopmentVersion(request).getVersion();
             } catch (PolicyException ex) {
                 throw new RuntimeException("Unable to get development version from policy.", ex);
             } catch (VersionParseException ex) {
