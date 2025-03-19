@@ -103,6 +103,19 @@ public class EventController {
         return resource;
     }
 
+
+<<<<<<< /usr/src/app/output/dschulten/hydra-java/31477c32b5705e46811843bfede533dae9682322/hydra-spring/src/test/java/de/escalon/hypermedia/spring/sample/EventController.java/left.java
+    @RequestMapping(value = "/regex/{eventId:.+}", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Resource<Event> getEventWithRegexPathVariableMapping(@PathVariable @Expose("ex:eventId") Integer eventId) {
+
+        Resource<Event> resource = new Resource<Event>(getEvents().get(eventId));
+        resource.add(linkTo(ReviewController.class).withRel("review"));
+        return resource;
+    }
+||||||| /usr/src/app/output/dschulten/hydra-java/31477c32b5705e46811843bfede533dae9682322/hydra-spring/src/test/java/de/escalon/hypermedia/spring/sample/EventController.java/base.java
+=======
     @RequestMapping(value = "/regex/{eventId:+}", method = RequestMethod.GET)
     public
     @ResponseBody
@@ -111,23 +124,24 @@ public class EventController {
         resource.add(linkTo(ReviewController.class).withRel("review"));
         return resource;
     }
+>>>>>>> /usr/src/app/output/dschulten/hydra-java/31477c32b5705e46811843bfede533dae9682322/hydra-spring/src/test/java/de/escalon/hypermedia/spring/sample/EventController.java/right.java
 
     @RequestMapping(method = RequestMethod.GET, params = {"eventName"})
-    public
-    @ResponseBody
-    Resource<Event> getEvent(@RequestParam @Expose("http://schema.org/name") String eventName) {
-        Resource<Event> ret = null;
-        for (Event event : getEvents()) {
-            if (event.getWorkPerformed()
-                    .getContent().name.startsWith(eventName)) {
-                Resource<Event> resource = new Resource<Event>(event);
-                resource.add(linkTo(ReviewController.class).withRel("review"));
-                ret = resource;
-                break;
-            }
+public
+@ResponseBody
+Resource<Event> getEvent(@RequestParam @Expose("http://schema.org/name") String eventName) {
+    Resource<Event> ret = null;
+    for (Event event : getEvents()) {
+        if (event.getWorkPerformed()
+                .getContent().name.startsWith(eventName)) {
+            Resource<Event> resource = new Resource<Event>(event);
+            resource.add(linkTo(ReviewController.class).withRel("review"));
+            ret = resource;
+            break;
         }
-        return ret;
     }
+    return ret;
+}
 
     @RequestMapping("/resourcesupport/{eventId}")
     public
