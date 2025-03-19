@@ -146,7 +146,9 @@ public class PluginsRegistryImpl implements PluginsRegistry {
         if (this.tokenManager == null) {
             var tm = PluginsFactory.getInstance().tokenManager();
 
-            this.tokenManager = tm == null ? Optional.empty() : Optional.of(tm);
+            this.tokenManager = tm == null
+                    ? Optional.empty()
+                    : Optional.of(tm);
         }
 
         return this.tokenManager.isPresent() ? this.tokenManager.get() : null;

@@ -161,22 +161,38 @@ public class PluginsFactory implements AutoCloseable {
                     .disableNestedJarScanning()           // added for GraalVM
                     .disableRuntimeInvisibleAnnotations() // added for GraalVM
                     .addClassLoader(getPluginsClassloader(jars))
+<<<<<<< /usr/src/app/output/softinstigate/restheart/943a7d3d2101512a2ef426240cab3b5fe095f475/core/src/main/java/org/restheart/plugins/PluginsFactory.java/left.java
                     .addClassLoader(ClassLoader.getSystemClassLoader()) // see https://github.com/oracle/graal/issues/470#issuecomment-401022008
+||||||| /usr/src/app/output/softinstigate/restheart/943a7d3d2101512a2ef426240cab3b5fe095f475/core/src/main/java/org/restheart/plugins/PluginsFactory.java/base.java
+=======
+                    .addClassLoader(ClassLoader.getSystemClassLoader())
+>>>>>>> /usr/src/app/output/softinstigate/restheart/943a7d3d2101512a2ef426240cab3b5fe095f475/core/src/main/java/org/restheart/plugins/PluginsFactory.java/right.java
                     .enableAnnotationInfo()
                     .enableMethodInfo()
                     .initializeLoadedClasses()
                     .scan(8); // use parallel scan for better startup time
         } else {
+<<<<<<< /usr/src/app/output/softinstigate/restheart/943a7d3d2101512a2ef426240cab3b5fe095f475/core/src/main/java/org/restheart/plugins/PluginsFactory.java/left.java
             this.scanResult = new ClassGraph()
                     .disableModuleScanning()              // added for GraalVM
                     .disableDirScanning()                 // added for GraalVM
                     .disableNestedJarScanning()           // added for GraalVM
                     .disableRuntimeInvisibleAnnotations() // added for GraalVM
-                    .addClassLoader(ClassLoader.getSystemClassLoader()) // see https://github.com/oracle/graal/issues/470#issuecomment-401022008
+                    //.addClassLoader(ClassLoader.getSystemClassLoader()) // see https://github.com/oracle/graal/issues/470#issuecomment-401022008
                     .enableAnnotationInfo()
                     .enableMethodInfo()
                     .initializeLoadedClasses()
                     .scan(8); // use parallel scan for better startup time
+||||||| /usr/src/app/output/softinstigate/restheart/943a7d3d2101512a2ef426240cab3b5fe095f475/core/src/main/java/org/restheart/plugins/PluginsFactory.java/base.java
+            this.scanResult = null; // use parallel scan for better startup time
+=======
+            this.scanResult = new ClassGraph()
+                    .enableAnnotationInfo()
+                    .enableMethodInfo()
+                    .addClassLoader(ClassLoader.getSystemClassLoader())
+                    .initializeLoadedClasses()
+                    .scan(8); // use parallel scan for better startup time
+>>>>>>> /usr/src/app/output/softinstigate/restheart/943a7d3d2101512a2ef426240cab3b5fe095f475/core/src/main/java/org/restheart/plugins/PluginsFactory.java/right.java
         }
     }
 
@@ -279,11 +295,6 @@ public class PluginsFactory implements AutoCloseable {
     private <T extends Plugin> Set<PluginRecord<T>> createPlugins(
             Class type, Map<String, Map<String, Object>> confs) {
         Set<PluginRecord<T>> ret = new LinkedHashSet<>();
-
-        // scanResult is null if the plugins directory is empty
-        if (this.scanResult == null) {
-            return ret;
-        }
 
         ClassInfoList registeredPlugins = getRegisteredPlugins(type);
 
