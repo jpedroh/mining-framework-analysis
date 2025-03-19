@@ -72,7 +72,7 @@ public class RedPenResource {
     /**
      * Detect language of document
      *
-     * @param document       the source text of the document
+     * @param document the source text of the document
      */
     @Path("/language")
     @POST
@@ -99,10 +99,10 @@ public class RedPenResource {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
     @WinkAPIDescriber.Description("Validate a document and return any redpen errors")
     public Response validateDocument(@FormParam("document") @DefaultValue("") String document,
-                                     @FormParam("documentParser") @DefaultValue(DEFAULT_DOCUMENT_PARSER) String documentParser,
-                                     @FormParam("lang") @DefaultValue(DEFAULT_CONFIGURATION) String lang,
-                                     @FormParam("format") @DefaultValue(DEFAULT_FORMAT) String format,
-                                     @FormParam("config") String config) throws RedPenException {
+                                   @FormParam("documentParser") @DefaultValue(DEFAULT_DOCUMENT_PARSER) String documentParser,
+                                   @FormParam("lang") @DefaultValue(DEFAULT_CONFIGURATION) String lang,
+                                   @FormParam("format") @DefaultValue(DEFAULT_FORMAT) String format,
+                                   @FormParam("config") String config) throws RedPenException {
 
         LOG.info("Validating document");
         RedPen redPen;
