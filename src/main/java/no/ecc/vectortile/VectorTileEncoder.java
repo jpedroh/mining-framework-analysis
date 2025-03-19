@@ -294,7 +294,6 @@ public class VectorTileEncoder {
                 if (feature.id >= 0) {
                     featureBuilder.setId(feature.id);
                 }
-
                 featureBuilder.setType(toGeomType(geometry));
                 featureBuilder.addAllGeometry(commands(geometry));
 

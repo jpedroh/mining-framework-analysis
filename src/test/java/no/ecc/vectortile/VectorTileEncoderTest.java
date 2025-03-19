@@ -26,13 +26,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.locationtech.jts.algorithm.Orientation;
+import no.ecc.vectortile.VectorTileDecoder.Feature;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 
 import junit.framework.TestCase;
-import no.ecc.vectortile.VectorTileDecoder.Feature;
 import vector_tile.VectorTile;
 
 public class VectorTileEncoderTest extends TestCase {
