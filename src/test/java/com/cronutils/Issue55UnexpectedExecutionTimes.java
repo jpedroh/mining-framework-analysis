@@ -109,6 +109,7 @@ public class Issue55UnexpectedExecutionTimes {
     }
 
     private List<Instant> getInstants(final ExecutionTime executionTime, final ZonedDateTime startTime, final ZonedDateTime endTime) {
+<<<<<<< /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue55UnexpectedExecutionTimes.java/left.java
         final List<Instant> instantList = new ArrayList<>();
         final Optional<ZonedDateTime> startTimeExecution = executionTime.nextExecution(startTime);
         if (startTimeExecution.isPresent()) {
@@ -125,6 +126,23 @@ public class Issue55UnexpectedExecutionTimes {
             return instantList;
         } else {
             throw new NullPointerException("starttime execution was not present");
+||||||| /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue55UnexpectedExecutionTimes.java/base.java
+        List<Instant> instantList = new ArrayList<>();
+        ZonedDateTime next = executionTime.nextExecution(startTime).get();
+        while (next.isBefore(endTime)) {
+            instantList.add(next.toInstant());
+            next = executionTime.nextExecution(next).get();
+=======
+        List<Instant> instantList = new ArrayList<>();
+
+        Optional<ZonedDateTime> onext = executionTime.nextExecution(startTime);
+        ZonedDateTime next = onext.orElse(null);
+
+        while (next!=null && next.isBefore(endTime)) {
+            instantList.add(next.toInstant());
+            onext = executionTime.nextExecution(next);
+            next = onext.orElse(null);
+>>>>>>> /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue55UnexpectedExecutionTimes.java/right.java
         }
     }
 

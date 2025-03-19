@@ -45,6 +45,21 @@ public class Issue143Test {
         parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.QUARTZ));
     }
 
+<<<<<<< /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue143Test.java/left.java
+    @Test
+    public void testCase1() {
+        final ExecutionTime et = ExecutionTime.forCron(parser.parse("0 0 12 31 12 ? *"));
+        final Optional<ZonedDateTime> lastExecution = et.lastExecution(currentDateTime);
+        if (lastExecution.isPresent()) {
+            final ZonedDateTime actual = lastExecution.get();
+
+            final ZonedDateTime expected = ZonedDateTime.of(LocalDateTime.of(2015, 12, 31, 12, 00),
+                    ZoneId.systemDefault());
+            Assert.assertEquals(expected, actual);
+        }
+    }
+||||||| /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue143Test.java/base.java
+=======
     @Test
     public void testCase1() {
         ExecutionTime et = ExecutionTime.forCron(parser.parse("0 0 12 31 12 ? *"));
@@ -55,7 +70,9 @@ public class Issue143Test {
                 ZoneId.systemDefault());
         Assert.assertEquals(expected, last);
     }
+>>>>>>> /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue143Test.java/right.java
 
+<<<<<<< /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue143Test.java/left.java
     @Test
     public void testCase2() {
         final ExecutionTime et = ExecutionTime.forCron(parser.parse("0 0 12 ? 12 SAT#5 *"));
@@ -67,7 +84,30 @@ public class Issue143Test {
             fail(LAST_EXECUTION_NOT_PRESENT_ERROR);
         }
     }
+||||||| /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue143Test.java/base.java
+    @Test
+    public void testCase2() {
+        ExecutionTime et = ExecutionTime.forCron(parser.parse("0 0 12 ? 12 SAT#5 *"));
+        ZonedDateTime actual = et.lastExecution(currentDateTime).get();
 
+        ZonedDateTime expected = ZonedDateTime.of(LocalDateTime.of(2012, 12, 29, 12, 00),
+                ZoneId.systemDefault());
+        Assert.assertEquals(expected, actual);
+    }
+=======
+    @Test
+    public void testCase2() {
+        ExecutionTime et = ExecutionTime.forCron(parser.parse("0 0 12 ? 12 SAT#5 *"));
+        Optional<ZonedDateTime> olast = et.lastExecution(currentDateTime);
+        ZonedDateTime last = olast.orElse(null);
+
+        ZonedDateTime expected = ZonedDateTime.of(LocalDateTime.of(2012, 12, 29, 12, 0),
+                ZoneId.systemDefault());
+        Assert.assertEquals(expected, last);
+    }
+>>>>>>> /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue143Test.java/right.java
+
+<<<<<<< /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue143Test.java/left.java
     @Test
     @Ignore //FIXME Fix this test
     public void testCase3() {
@@ -80,7 +120,20 @@ public class Issue143Test {
             fail(LAST_EXECUTION_NOT_PRESENT_ERROR);
         }
     }
+||||||| /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue143Test.java/base.java
+=======
+    public void testCase3() {
+        ExecutionTime et = ExecutionTime.forCron(parser.parse("0 0 12 31 1/1 ? *"));
+        Optional<ZonedDateTime> olast = et.lastExecution(currentDateTime);
+        ZonedDateTime last = olast.orElse(null);
 
+        ZonedDateTime expected = ZonedDateTime.of(LocalDateTime.of(2015, 12, 31, 12, 0),
+                ZoneId.systemDefault());
+        Assert.assertEquals(expected, last);
+    }
+>>>>>>> /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue143Test.java/right.java
+
+<<<<<<< /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue143Test.java/left.java
     @Test
     public void testCase4() {
         final ExecutionTime et = ExecutionTime.forCron(parser.parse("0 0 12 ? 1/1 SAT#5 *"));
@@ -92,5 +145,29 @@ public class Issue143Test {
             fail(LAST_EXECUTION_NOT_PRESENT_ERROR);
         }
     }
+||||||| /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue143Test.java/base.java
+    @Test
+    public void testCase4() {
+        ExecutionTime et = ExecutionTime.forCron(parser.parse("0 0 12 ? 1/1 SAT#5 *"));
+        ZonedDateTime actual = et.lastExecution(currentDateTime).get();
+
+        ZonedDateTime expected = ZonedDateTime.of(LocalDateTime.of(2016, 10, 29, 12, 00),
+                ZoneId.systemDefault());
+        Assert.assertEquals(expected, actual);
+    }
+=======
+    @Test
+    public void testCase4() {
+        ExecutionTime et = ExecutionTime.forCron(parser.parse("0 0 12 ? 1/1 SAT#5 *"));
+        Optional<ZonedDateTime> olast = et.lastExecution(currentDateTime);
+        ZonedDateTime last = olast.orElse(null);
+
+        ZonedDateTime expected = ZonedDateTime.of(LocalDateTime.of(2016, 10, 29, 12, 0),
+                ZoneId.systemDefault());
+        Assert.assertEquals(expected, last);
+    }
+>>>>>>> /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue143Test.java/right.java
+
+    //@Test TODO #289
 
 }

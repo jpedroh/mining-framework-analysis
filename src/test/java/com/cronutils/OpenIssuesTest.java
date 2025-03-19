@@ -60,12 +60,18 @@ public class OpenIssuesTest {
 
         final ExecutionTime executionTime = ExecutionTime.forCron(cron);
 
+<<<<<<< /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/OpenIssuesTest.java/left.java
         final Optional<ZonedDateTime> nextExecution = executionTime.nextExecution(lastExecution);
         if (nextExecution.isPresent()) {
             return nextExecution.get();
         } else {
             throw new NullPointerException("next execution is not present");
         }
+||||||| /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/OpenIssuesTest.java/base.java
+        return executionTime.nextExecution(lastExecution).get();
+=======
+        return executionTime.nextExecution(lastExecution).isPresent()?executionTime.nextExecution(lastExecution).get():null;
+>>>>>>> /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/OpenIssuesTest.java/right.java
     }
 }
 

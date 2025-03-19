@@ -39,21 +39,39 @@ public class Issue223Test {
         final CronParser parser = new CronParser(cronDefinition);
         final Cron myCron = parser.parse("* * * * 3");
         ZonedDateTime time = ZonedDateTime.parse("2017-09-05T11:31:55.407-05:00");
+<<<<<<< /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue223Test.java/left.java
         final Optional<ZonedDateTime> nextExecution = ExecutionTime.forCron(myCron).nextExecution(time);
         if (nextExecution.isPresent()) {
             assertEquals(ZonedDateTime.parse("2017-09-06T00:00-05:00"), nextExecution.get());
         } else {
             fail("next execution was not present");
         }
+||||||| /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue223Test.java/base.java
+        assertEquals(ZonedDateTime.parse("2017-09-06T00:00-05:00"), ExecutionTime.forCron(myCron).nextExecution(time).get());
+=======
+        Optional<ZonedDateTime> onext = ExecutionTime.forCron(myCron).nextExecution(time);
+        ZonedDateTime next = onext.orElse(null);
+        assertEquals(ZonedDateTime.parse("2017-09-06T00:00-05:00"), next);
+>>>>>>> /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue223Test.java/right.java
 
         final Cron myCron2 = parser.parse("* * */1 * 3");
         time = ZonedDateTime.parse("2017-09-05T11:31:55.407-05:00");
+<<<<<<< /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue223Test.java/left.java
         final Optional<ZonedDateTime> nextExecution2 = ExecutionTime.forCron(myCron2).nextExecution(time);
         if (nextExecution2.isPresent()) {
             assertEquals(ZonedDateTime.parse("2017-09-06T00:00-05:00"), nextExecution2.get());
         } else {
             fail("next execution was not present");
         }
+||||||| /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue223Test.java/base.java
+        assertEquals(ZonedDateTime.parse("2017-09-06T00:00-05:00"), ExecutionTime.forCron(myCron2).nextExecution
+                (time).get());
+=======
+    
+        Optional<ZonedDateTime> onext2 = ExecutionTime.forCron(myCron2).nextExecution(time);
+        ZonedDateTime next2 = onext2.orElse(null);
+        assertEquals(ZonedDateTime.parse("2017-09-06T00:00-05:00"), next2);
+>>>>>>> /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue223Test.java/right.java
     }
 
 }

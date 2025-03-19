@@ -48,9 +48,23 @@ public class Issue228Test {
         final CronParser parser = new CronParser(cronDefinition);
 
         // This is 9am on a day between the 1st and 7th which is a Monday (in this case it should be Oct 2
+<<<<<<< /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue228Test.java/left.java
         final Cron myCron = parser.parse("0 9 1-7 * 1");
         final ZonedDateTime time = ZonedDateTime.parse(TEST_DATE);
         assertEquals(ZonedDateTime.parse("2017-10-02T09:00-07:00"), getNextExecutionTime(myCron, time));
+||||||| /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue228Test.java/base.java
+        Cron myCron = parser.parse("0 9 1-7 * 1");
+        ZonedDateTime time = ZonedDateTime.parse("2017-09-29T14:46:01.166-07:00");
+        assertEquals(ZonedDateTime.parse("2017-10-02T09:00-07:00"), ExecutionTime.forCron(myCron).nextExecution(time).get());
+=======
+        Cron myCron = parser.parse("0 9 1-7 * 1");
+        ZonedDateTime time = ZonedDateTime.parse("2017-09-29T14:46:01.166-07:00");
+
+        Optional<ZonedDateTime> onext = ExecutionTime.forCron(myCron).nextExecution(time);
+        ZonedDateTime next = onext.orElse(null);
+
+        assertEquals(ZonedDateTime.parse("2017-10-02T09:00-07:00"), next);
+>>>>>>> /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue228Test.java/right.java
     }
 
     @Test
@@ -58,9 +72,23 @@ public class Issue228Test {
         final CronParser parser = new CronParser(cronDefinition);
 
         // This is 9am on Mon-Fri day between the 1st and 7th (in this case it should be Oct 2)
+<<<<<<< /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue228Test.java/left.java
         final Cron myCron = parser.parse("0 9 1-7 * 1-5");
         final ZonedDateTime time = ZonedDateTime.parse(TEST_DATE);
         assertEquals(ZonedDateTime.parse("2017-10-02T09:00-07:00"), getNextExecutionTime(myCron, time));
+||||||| /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue228Test.java/base.java
+        Cron myCron = parser.parse("0 9 1-7 * 1-5");
+        ZonedDateTime time = ZonedDateTime.parse("2017-09-29T14:46:01.166-07:00");
+        assertEquals(ZonedDateTime.parse("2017-10-02T09:00-07:00"), ExecutionTime.forCron(myCron).nextExecution(time).get());
+=======
+        Cron myCron = parser.parse("0 9 1-7 * 1-5");
+        ZonedDateTime time = ZonedDateTime.parse("2017-09-29T14:46:01.166-07:00");
+
+        Optional<ZonedDateTime> onext = ExecutionTime.forCron(myCron).nextExecution(time);
+        ZonedDateTime next = onext.orElse(null);
+
+        assertEquals(ZonedDateTime.parse("2017-10-02T09:00-07:00"), next);
+>>>>>>> /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue228Test.java/right.java
     }
 
     @Test
@@ -68,9 +96,23 @@ public class Issue228Test {
         final CronParser parser = new CronParser(cronDefinition);
 
         // This is 9am on Sat and Sun day between the 1st and 7th (in this case it should be Oct 1)
+<<<<<<< /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue228Test.java/left.java
         final Cron myCron = parser.parse("0 9 1-7 * 6-7");
         final ZonedDateTime time = ZonedDateTime.parse(TEST_DATE);
         assertEquals(ZonedDateTime.parse("2017-10-01T09:00-07:00"), getNextExecutionTime(myCron, time));
+||||||| /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue228Test.java/base.java
+        Cron myCron = parser.parse("0 9 1-7 * 6-7");
+        ZonedDateTime time = ZonedDateTime.parse("2017-09-29T14:46:01.166-07:00");
+        assertEquals(ZonedDateTime.parse("2017-10-01T09:00-07:00"), ExecutionTime.forCron(myCron).nextExecution(time).get());
+=======
+        Cron myCron = parser.parse("0 9 1-7 * 6-7");
+        ZonedDateTime time = ZonedDateTime.parse("2017-09-29T14:46:01.166-07:00");
+
+        Optional<ZonedDateTime> onext = ExecutionTime.forCron(myCron).nextExecution(time);
+        ZonedDateTime next = onext.orElse(null);
+
+        assertEquals(ZonedDateTime.parse("2017-10-01T09:00-07:00"), next);
+>>>>>>> /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue228Test.java/right.java
     }
 
     @Test
@@ -78,9 +120,22 @@ public class Issue228Test {
         final CronParser parser = new CronParser(cronDefinition);
 
         // This is 9am on Mon-Fri day between the 8th and 14th (in this case it should be Oct 9 Mon)
+<<<<<<< /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue228Test.java/left.java
         final Cron myCron = parser.parse("0 9 8-14 * 1-5");
         final ZonedDateTime time = ZonedDateTime.parse(TEST_DATE);
         assertEquals(ZonedDateTime.parse("2017-10-09T09:00-07:00"), getNextExecutionTime(myCron, time));
+||||||| /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue228Test.java/base.java
+        Cron myCron = parser.parse("0 9 8-14 * 1-5");
+        ZonedDateTime time = ZonedDateTime.parse("2017-09-29T14:46:01.166-07:00");
+        assertEquals(ZonedDateTime.parse("2017-10-09T09:00-07:00"), ExecutionTime.forCron(myCron).nextExecution(time).get());
+=======
+        Cron myCron = parser.parse("0 9 8-14 * 1-5");
+        ZonedDateTime time = ZonedDateTime.parse("2017-09-29T14:46:01.166-07:00");
+
+        Optional<ZonedDateTime> onext = ExecutionTime.forCron(myCron).nextExecution(time);
+        ZonedDateTime next = onext.orElse(null);
+        assertEquals(ZonedDateTime.parse("2017-10-09T09:00-07:00"), next);
+>>>>>>> /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue228Test.java/right.java
     }
 
     @Test
@@ -88,6 +143,7 @@ public class Issue228Test {
         final CronParser parser = new CronParser(cronDefinition);
 
         // This is 9am on Sat and Sun day between the 22nd and 28th (in this case it should be Oct 22)
+<<<<<<< /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue228Test.java/left.java
         final Cron myCron = parser.parse("0 9 22-28 * 6-7");
         final ZonedDateTime time = ZonedDateTime.parse(TEST_DATE);
         assertEquals(ZonedDateTime.parse("2017-10-22T09:00-07:00"), getNextExecutionTime(myCron, time));
@@ -100,5 +156,18 @@ public class Issue228Test {
         } else {
             throw new NullPointerException("next execution was not present");
         }
+||||||| /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue228Test.java/base.java
+        Cron myCron = parser.parse("0 9 22-28 * 6-7");
+        ZonedDateTime time = ZonedDateTime.parse("2017-09-29T14:46:01.166-07:00");
+        assertEquals(ZonedDateTime.parse("2017-10-22T09:00-07:00"), ExecutionTime.forCron(myCron).nextExecution(time).get());
+=======
+        Cron myCron = parser.parse("0 9 22-28 * 6-7");
+        ZonedDateTime time = ZonedDateTime.parse("2017-09-29T14:46:01.166-07:00");
+
+        Optional<ZonedDateTime> onext = ExecutionTime.forCron(myCron).nextExecution(time);
+        ZonedDateTime next = onext.orElse(null);
+
+        assertEquals(ZonedDateTime.parse("2017-10-22T09:00-07:00"), next);
+>>>>>>> /usr/src/app/output/jmrozanec/cron-utils/219633080b459601437e67784e60a42ca6d53e10/src/test/java/com/cronutils/Issue228Test.java/right.java
     }
 }
