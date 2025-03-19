@@ -1,21 +1,4 @@
-/*
- * Copyright 2017 Composable Systems Limited
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
-
 package systems.composable.dropwizard.cassandra;
-
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.datastax.driver.core.*;
@@ -34,12 +17,10 @@ import systems.composable.dropwizard.cassandra.reconnection.ReconnectionPolicyFa
 import systems.composable.dropwizard.cassandra.retry.RetryPolicyFactory;
 import systems.composable.dropwizard.cassandra.speculativeexecution.SpeculativeExecutionPolicyFactory;
 import systems.composable.dropwizard.cassandra.ssl.SSLOptionsFactory;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
-
 import static com.codahale.metrics.MetricRegistry.name;
 
 /**
@@ -153,289 +134,228 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         <td>30 seconds</td>
  *         <td>The time to wait while the cluster closes gracefully; after which, the cluster will be forcefully terminated.</td>
  *     </tr>
- *     <tr>
- *         <td>addressTranslator</td>
- *         <td>No default.</td>
- *         <td>The {@link com.datastax.driver.core.policies.AddressTranslator} to use.</td>
- *     </tr>
  * </table>
  */
-@SuppressWarnings({"WeakerAccess", "OptionalUsedAsFieldOrParameterType"})
-public class CassandraFactory {
+@SuppressWarnings(value = { "WeakerAccess", "OptionalUsedAsFieldOrParameterType" }) public class CassandraFactory {
+  private static final Logger LOG = LoggerFactory.getLogger(CassandraFactory.class);
 
-    private static final Logger LOG = LoggerFactory.getLogger(CassandraFactory.class);
+  private String clusterName;
 
-    private String clusterName;
-    private String keyspace;
+  private String keyspace;
 
-    @NotEmpty
-    private String validationQuery = "SELECT key FROM system.local";
+  @NotEmpty private String validationQuery = "SELECT key FROM system.local";
 
-    @NotEmpty
-    private String[] contactPoints;
+  @NotEmpty private String[] contactPoints;
 
-    @Min(1)
-    private int port = ProtocolOptions.DEFAULT_PORT;
+  @Min(value = 1) private int port = ProtocolOptions.DEFAULT_PORT;
 
-    private Optional<ProtocolVersion> protocolVersion = Optional.empty();
+  private Optional<ProtocolVersion> protocolVersion = Optional.empty();
 
-    @Valid
-    private Optional<SSLOptionsFactory> ssl = Optional.empty();
+  @Valid private Optional<SSLOptionsFactory> ssl = Optional.empty();
 
-    @NotNull
-    private ProtocolOptions.Compression compression = ProtocolOptions.Compression.NONE;
+  @NotNull private ProtocolOptions.Compression compression = ProtocolOptions.Compression.NONE;
 
-    private Optional<Duration> maxSchemaAgreementWait = Optional.empty();
+  private Optional<Duration> maxSchemaAgreementWait = Optional.empty();
 
-    @Valid
-    private Optional<ReconnectionPolicyFactory> reconnectionPolicy = Optional.empty();
+  @Valid private Optional<ReconnectionPolicyFactory> reconnectionPolicy = Optional.empty();
 
-    @Valid
-    private Optional<AuthProviderFactory> authProvider = Optional.empty();
+  @Valid private Optional<AuthProviderFactory> authProvider = Optional.empty();
 
-    @Valid
-    private Optional<RetryPolicyFactory> retryPolicy = Optional.empty();
+  @Valid private Optional<RetryPolicyFactory> retryPolicy = Optional.empty();
 
-    @Valid
-    private Optional<LoadBalancingPolicyFactory> loadBalancingPolicy = Optional.empty();
+  @Valid private Optional<LoadBalancingPolicyFactory> loadBalancingPolicy = Optional.empty();
 
-    @Valid
-    private Optional<SpeculativeExecutionPolicyFactory> speculativeExecutionPolicy = Optional.empty();
+  @Valid private Optional<SpeculativeExecutionPolicyFactory> speculativeExecutionPolicy = Optional.empty();
 
-    private Optional<QueryOptions> queryOptions = Optional.empty();
-    private Optional<SocketOptions> socketOptions = Optional.empty();
+  private Optional<QueryOptions> queryOptions = Optional.empty();
 
-    @Valid
-    private Optional<PoolingOptionsFactory> poolingOptions = Optional.empty();
+  private Optional<SocketOptions> socketOptions = Optional.empty();
 
-    @Valid
-    private Optional<AddressTranslatorFactory> addressTranslator = Optional.empty();
+  @Valid private Optional<PoolingOptionsFactory> poolingOptions = Optional.empty();
 
-    private boolean metricsEnabled = true;
-    private boolean jmxEnabled = false;
+  @Valid private Optional<AddressTranslatorFactory> addressTranslator = Optional.empty();
 
-    @NotNull
-    private Duration shutdownGracePeriod = Duration.seconds(30);
+  private boolean metricsEnabled = true;
 
-    @NotNull
-    private Duration healthCheckTimeout = Duration.seconds(2);
+  private boolean jmxEnabled = false;
 
-    @JsonProperty
-    public String getClusterName() {
-        return clusterName;
-    }
+  @NotNull private Duration shutdownGracePeriod = Duration.seconds(30);
 
-    @JsonProperty
-    public void setClusterName(String clusterName) {
-        this.clusterName = clusterName;
-    }
-
-    @JsonProperty
-    public String getKeyspace() {
-        return keyspace;
-    }
-
-    @JsonProperty
-    public void setKeyspace(String keyspace) {
-        this.keyspace = keyspace;
-    }
-
-    @JsonProperty
-    public String getValidationQuery() {
-        return validationQuery;
-    }
-
-    @JsonProperty
-    public void setValidationQuery(String validationQuery) {
-        this.validationQuery = validationQuery;
-    }
-
-    @JsonProperty
-    public String[] getContactPoints() {
-        return contactPoints;
-    }
-
-    @JsonProperty
-    public void setContactPoints(String[] contactPoints) {
-        this.contactPoints = contactPoints;
-    }
-
-    @JsonProperty
-    public int getPort() {
-        return port;
-    }
-
-    @JsonProperty
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    @JsonProperty
-    public Optional<ProtocolVersion> getProtocolVersion() {
-        return protocolVersion;
-    }
-
-    @JsonProperty
-    public void setProtocolVersion(Optional<ProtocolVersion> protocolVersion) {
-        this.protocolVersion = protocolVersion;
-    }
-
-    @JsonProperty
-    public Optional<SSLOptionsFactory> getSsl() {
-        return ssl;
-    }
-
-    @JsonProperty
-    public void setSsl(Optional<SSLOptionsFactory> ssl) {
-        this.ssl = ssl;
-    }
-
-    @JsonProperty
-    public ProtocolOptions.Compression getCompression() {
-        return compression;
-    }
-
-    @JsonProperty
-    public void setCompression(ProtocolOptions.Compression compression) {
-        this.compression = compression;
-    }
-
-    @JsonProperty
-    public void setMaxSchemaAgreementWait(Optional<Duration> maxSchemaAgreementWait) {
-        this.maxSchemaAgreementWait = maxSchemaAgreementWait;
-    }
-
-    @JsonProperty
-    public Optional<ReconnectionPolicyFactory> getReconnectionPolicy() {
-        return reconnectionPolicy;
-    }
-
-    @JsonProperty
-    public void setReconnectionPolicy(Optional<ReconnectionPolicyFactory> reconnectionPolicy) {
-        this.reconnectionPolicy = reconnectionPolicy;
-    }
-
-    @JsonProperty
-    public Optional<AuthProviderFactory> getAuthProvider() {
-        return authProvider;
-    }
-
-    @JsonProperty
-    public void setAuthProvider(Optional<AuthProviderFactory> authProvider) {
-        this.authProvider = authProvider;
-    }
-
-    @JsonProperty
-    public Optional<RetryPolicyFactory> getRetryPolicy() {
-        return retryPolicy;
-    }
-
-    @JsonProperty
-    public void setRetryPolicy(Optional<RetryPolicyFactory> retryPolicy) {
-        this.retryPolicy = retryPolicy;
-    }
-
-    @JsonProperty
-    public Optional<LoadBalancingPolicyFactory> getLoadBalancingPolicy() {
-        return loadBalancingPolicy;
-    }
-
-    @JsonProperty
-    public void setLoadBalancingPolicy(Optional<LoadBalancingPolicyFactory> loadBalancingPolicy) {
-        this.loadBalancingPolicy = loadBalancingPolicy;
-    }
-
-    @JsonProperty
-    public Optional<SpeculativeExecutionPolicyFactory> getSpeculativeExecutionPolicy() {
-        return speculativeExecutionPolicy;
-    }
-
-    @JsonProperty
-    public void setSpeculativeExecutionPolicy(Optional<SpeculativeExecutionPolicyFactory> speculativeExecutionPolicy) {
-        this.speculativeExecutionPolicy = speculativeExecutionPolicy;
-    }
-
-    @JsonProperty
-    public Optional<QueryOptions> getQueryOptions() {
-        return queryOptions;
-    }
-
-    @JsonProperty
-    public void setQueryOptions(Optional<QueryOptions> queryOptions) {
-        this.queryOptions = queryOptions;
-    }
-
-    @JsonProperty
-    public Optional<SocketOptions> getSocketOptions() {
-        return socketOptions;
-    }
-
-    @JsonProperty
-    public void setSocketOptions(Optional<SocketOptions> socketOptions) {
-        this.socketOptions = socketOptions;
-    }
-
-    @JsonProperty
-    public Optional<PoolingOptionsFactory> getPoolingOptions() {
-        return poolingOptions;
-    }
-
-    @JsonProperty
-    public void setPoolingOptions(Optional<PoolingOptionsFactory> poolingOptions) {
-        this.poolingOptions = poolingOptions;
-    }
-
-    @JsonProperty
-    public boolean isMetricsEnabled() {
-        return metricsEnabled;
-    }
-
-    @JsonProperty
-    public void setMetricsEnabled(boolean metricsEnabled) {
-        this.metricsEnabled = metricsEnabled;
-    }
-
-    @JsonProperty
-    public boolean isJmxEnabled() {
-        return jmxEnabled;
-    }
-
-    @JsonProperty
-    public void setJmxEnabled(boolean jmxEnabled) {
-        this.jmxEnabled = jmxEnabled;
-    }
-
-    @JsonProperty
-    public Duration getShutdownGracePeriod() {
-        return shutdownGracePeriod;
-    }
-
-    @JsonProperty
-    public void setShutdownGracePeriod(Duration shutdownGracePeriod) {
-        this.shutdownGracePeriod = shutdownGracePeriod;
-    }
-
-    @JsonProperty
-    public Duration getHealthCheckTimeout() {
-        return healthCheckTimeout;
-    }
-
-    @JsonProperty
-    public void setHealthCheckTimeout(Duration healthCheckTimeout) {
-        this.healthCheckTimeout = healthCheckTimeout;
-    }
-
-    @JsonProperty
-    public Optional<AddressTranslatorFactory> getAddressTranslator() {
-        return addressTranslator;
-    }
-
-    @JsonProperty
-    public void setAddressTranslator(Optional<AddressTranslatorFactory> addressTranslator) {
-        this.addressTranslator = addressTranslator;
-    }
-
-    /**
+  @NotNull private Duration healthCheckTimeout = Duration.seconds(2);
+
+  @JsonProperty public String getClusterName() {
+    return clusterName;
+  }
+
+  @JsonProperty public void setClusterName(String clusterName) {
+    this.clusterName = clusterName;
+  }
+
+  @JsonProperty public String getKeyspace() {
+    return keyspace;
+  }
+
+  @JsonProperty public void setKeyspace(String keyspace) {
+    this.keyspace = keyspace;
+  }
+
+  @JsonProperty public String getValidationQuery() {
+    return validationQuery;
+  }
+
+  @JsonProperty public void setValidationQuery(String validationQuery) {
+    this.validationQuery = validationQuery;
+  }
+
+  @JsonProperty public String[] getContactPoints() {
+    return contactPoints;
+  }
+
+  @JsonProperty public void setContactPoints(String[] contactPoints) {
+    this.contactPoints = contactPoints;
+  }
+
+  @JsonProperty public int getPort() {
+    return port;
+  }
+
+  @JsonProperty public void setPort(int port) {
+    this.port = port;
+  }
+
+  @JsonProperty public Optional<ProtocolVersion> getProtocolVersion() {
+    return protocolVersion;
+  }
+
+  @JsonProperty public void setProtocolVersion(Optional<ProtocolVersion> protocolVersion) {
+    this.protocolVersion = protocolVersion;
+  }
+
+  @JsonProperty public Optional<SSLOptionsFactory> getSsl() {
+    return ssl;
+  }
+
+  @JsonProperty public void setSsl(Optional<SSLOptionsFactory> ssl) {
+    this.ssl = ssl;
+  }
+
+  @JsonProperty public ProtocolOptions.Compression getCompression() {
+    return compression;
+  }
+
+  @JsonProperty public void setCompression(ProtocolOptions.Compression compression) {
+    this.compression = compression;
+  }
+
+  @JsonProperty public void setMaxSchemaAgreementWait(Optional<Duration> maxSchemaAgreementWait) {
+    this.maxSchemaAgreementWait = maxSchemaAgreementWait;
+  }
+
+  @JsonProperty public Optional<ReconnectionPolicyFactory> getReconnectionPolicy() {
+    return reconnectionPolicy;
+  }
+
+  @JsonProperty public void setReconnectionPolicy(Optional<ReconnectionPolicyFactory> reconnectionPolicy) {
+    this.reconnectionPolicy = reconnectionPolicy;
+  }
+
+  @JsonProperty public Optional<AuthProviderFactory> getAuthProvider() {
+    return authProvider;
+  }
+
+  @JsonProperty public void setAuthProvider(Optional<AuthProviderFactory> authProvider) {
+    this.authProvider = authProvider;
+  }
+
+  @JsonProperty public Optional<RetryPolicyFactory> getRetryPolicy() {
+    return retryPolicy;
+  }
+
+  @JsonProperty public void setRetryPolicy(Optional<RetryPolicyFactory> retryPolicy) {
+    this.retryPolicy = retryPolicy;
+  }
+
+  @JsonProperty public Optional<LoadBalancingPolicyFactory> getLoadBalancingPolicy() {
+    return loadBalancingPolicy;
+  }
+
+  @JsonProperty public void setLoadBalancingPolicy(Optional<LoadBalancingPolicyFactory> loadBalancingPolicy) {
+    this.loadBalancingPolicy = loadBalancingPolicy;
+  }
+
+  @JsonProperty public Optional<SpeculativeExecutionPolicyFactory> getSpeculativeExecutionPolicy() {
+    return speculativeExecutionPolicy;
+  }
+
+  @JsonProperty public void setSpeculativeExecutionPolicy(Optional<SpeculativeExecutionPolicyFactory> speculativeExecutionPolicy) {
+    this.speculativeExecutionPolicy = speculativeExecutionPolicy;
+  }
+
+  @JsonProperty public Optional<QueryOptions> getQueryOptions() {
+    return queryOptions;
+  }
+
+  @JsonProperty public void setQueryOptions(Optional<QueryOptions> queryOptions) {
+    this.queryOptions = queryOptions;
+  }
+
+  @JsonProperty public Optional<SocketOptions> getSocketOptions() {
+    return socketOptions;
+  }
+
+  @JsonProperty public void setSocketOptions(Optional<SocketOptions> socketOptions) {
+    this.socketOptions = socketOptions;
+  }
+
+  @JsonProperty public Optional<PoolingOptionsFactory> getPoolingOptions() {
+    return poolingOptions;
+  }
+
+  @JsonProperty public void setPoolingOptions(Optional<PoolingOptionsFactory> poolingOptions) {
+    this.poolingOptions = poolingOptions;
+  }
+
+  @JsonProperty public boolean isMetricsEnabled() {
+    return metricsEnabled;
+  }
+
+  @JsonProperty public void setMetricsEnabled(boolean metricsEnabled) {
+    this.metricsEnabled = metricsEnabled;
+  }
+
+  @JsonProperty public boolean isJmxEnabled() {
+    return jmxEnabled;
+  }
+
+  @JsonProperty public void setJmxEnabled(boolean jmxEnabled) {
+    this.jmxEnabled = jmxEnabled;
+  }
+
+  @JsonProperty public Duration getShutdownGracePeriod() {
+    return shutdownGracePeriod;
+  }
+
+  @JsonProperty public void setShutdownGracePeriod(Duration shutdownGracePeriod) {
+    this.shutdownGracePeriod = shutdownGracePeriod;
+  }
+
+  @JsonProperty public Duration getHealthCheckTimeout() {
+    return healthCheckTimeout;
+  }
+
+  @JsonProperty public void setHealthCheckTimeout(Duration healthCheckTimeout) {
+    this.healthCheckTimeout = healthCheckTimeout;
+  }
+
+  @JsonProperty public Optional<AddressTranslatorFactory> getAddressTranslator() {
+    return addressTranslator;
+  }
+
+  @JsonProperty public void setAddressTranslator(Optional<AddressTranslatorFactory> addressTranslator) {
+    this.addressTranslator = addressTranslator;
+  }
+
+  /**
      * Builds a {@link Cluster} instance for the given {@link Environment}.
      * <p/>
      * The {@code environment} will be used for lifecycle management, as well as metrics and
@@ -444,59 +364,50 @@ public class CassandraFactory {
      * @param environment the environment to manage the lifecycle, metrics and health-checks.
      * @return a fully configured and managed {@link Cluster}.
      */
-    public Cluster build(Environment environment) {
-        final Cluster cluster = build(environment.metrics(), environment.healthChecks());
+  public Cluster build(Environment environment) {
+    final Cluster cluster = build(environment.metrics(), environment.healthChecks());
+    LOG.debug("Registering {} Cassandra cluster for lifecycle management", cluster.getClusterName());
+    environment.lifecycle().manage(new CassandraManager(cluster, getShutdownGracePeriod()));
+    return cluster;
+  }
 
-        LOG.debug("Registering {} Cassandra cluster for lifecycle management", cluster.getClusterName());
-        environment.lifecycle().manage(new CassandraManager(cluster, getShutdownGracePeriod()));
-
-        return cluster;
-    }
-
-    /**
+  /**
      * Builds a {@link Cluster} instance.
      *
      * @return a fully configured {@link Cluster}.
      */
-    public Cluster build() {
-        final Cluster.Builder builder = Cluster.builder();
-
-        for (String contactPoint : contactPoints) {
-            builder.addContactPoints(contactPoint);
-        }
-
-        builder.withPort(port);
-        builder.withCompression(compression);
-
-        protocolVersion.ifPresent(builder::withProtocolVersion);
-        ssl.map(SSLOptionsFactory::build).ifPresent(builder::withSSL);
-        maxSchemaAgreementWait.map(Duration::toSeconds).map(Long::intValue).ifPresent(builder::withMaxSchemaAgreementWaitSeconds);
-        authProvider.map(AuthProviderFactory::build).ifPresent(builder::withAuthProvider);
-        reconnectionPolicy.map(ReconnectionPolicyFactory::build).ifPresent(builder::withReconnectionPolicy);
-        retryPolicy.map(RetryPolicyFactory::build).ifPresent(builder::withRetryPolicy);
-        loadBalancingPolicy.map(LoadBalancingPolicyFactory::build).ifPresent(builder::withLoadBalancingPolicy);
-        speculativeExecutionPolicy.map(SpeculativeExecutionPolicyFactory::build).ifPresent(builder::withSpeculativeExecutionPolicy);
-        queryOptions.ifPresent(builder::withQueryOptions);
-        socketOptions.ifPresent(builder::withSocketOptions);
-        poolingOptions.map(PoolingOptionsFactory::build).ifPresent(builder::withPoolingOptions);
-        addressTranslator.map(AddressTranslatorFactory::build).ifPresent(builder::withAddressTranslator);
-
-        if (!metricsEnabled) {
-            builder.withoutMetrics();
-        }
-
-        if (!jmxEnabled) {
-            builder.withoutJMXReporting();
-        }
-
-        if (!Strings.isNullOrEmpty(clusterName)) {
-            builder.withClusterName(clusterName);
-        }
-
-        return builder.build();
+  public Cluster build() {
+    final Cluster.Builder builder = Cluster.builder();
+    for (String contactPoint : contactPoints) {
+      builder.addContactPoints(contactPoint);
     }
+    builder.withPort(port);
+    builder.withCompression(compression);
+    protocolVersion.ifPresent(builder::withProtocolVersion);
+    ssl.map(SSLOptionsFactory::build).ifPresent(builder::withSSL);
+    maxSchemaAgreementWait.map(Duration::toSeconds).map(Long::intValue).ifPresent(builder::withMaxSchemaAgreementWaitSeconds);
+    authProvider.map(AuthProviderFactory::build).ifPresent(builder::withAuthProvider);
+    reconnectionPolicy.map(ReconnectionPolicyFactory::build).ifPresent(builder::withReconnectionPolicy);
+    retryPolicy.map(RetryPolicyFactory::build).ifPresent(builder::withRetryPolicy);
+    loadBalancingPolicy.map(LoadBalancingPolicyFactory::build).ifPresent(builder::withLoadBalancingPolicy);
+    speculativeExecutionPolicy.map(SpeculativeExecutionPolicyFactory::build).ifPresent(builder::withSpeculativeExecutionPolicy);
+    queryOptions.ifPresent(builder::withQueryOptions);
+    socketOptions.ifPresent(builder::withSocketOptions);
+    poolingOptions.map(PoolingOptionsFactory::build).ifPresent(builder::withPoolingOptions);
+    addressTranslator.map(AddressTranslatorFactory::build).ifPresent(builder::withAddressTranslator);
+    if (!metricsEnabled) {
+      builder.withoutMetrics();
+    }
+    if (!jmxEnabled) {
+      builder.withoutJMXReporting();
+    }
+    if (!Strings.isNullOrEmpty(clusterName)) {
+      builder.withClusterName(clusterName);
+    }
+    return builder.build();
+  }
 
-    /**
+  /**
      * Builds a {@link Cluster} instance.
      * <p/>
      * The {@link MetricRegistry} will be used to register client metrics, and the {@link
@@ -506,18 +417,15 @@ public class CassandraFactory {
      * @param healthChecks the registry to register client health-checks.
      * @return a fully configured {@link Cluster}.
      */
-    public Cluster build(MetricRegistry metrics, HealthCheckRegistry healthChecks) {
-        final Cluster cluster = build();
-
-        LOG.debug("Registering {} Cassandra health check", cluster.getClusterName());
-        CassandraHealthCheck healthCheck = new CassandraHealthCheck(cluster, validationQuery, healthCheckTimeout);
-        healthChecks.register(name("cassandra", cluster.getClusterName()), healthCheck);
-
-        if (isMetricsEnabled()) {
-            LOG.debug("Registering {} Cassandra metrics", cluster.getClusterName());
-            metrics.registerAll(new CassandraMetricSet(cluster));
-        }
-
-        return cluster;
+  public Cluster build(MetricRegistry metrics, HealthCheckRegistry healthChecks) {
+    final Cluster cluster = build();
+    LOG.debug("Registering {} Cassandra health check", cluster.getClusterName());
+    CassandraHealthCheck healthCheck = new CassandraHealthCheck(cluster, validationQuery, healthCheckTimeout);
+    healthChecks.register(name("cassandra", cluster.getClusterName()), healthCheck);
+    if (isMetricsEnabled()) {
+      LOG.debug("Registering {} Cassandra metrics", cluster.getClusterName());
+      metrics.registerAll(new CassandraMetricSet(cluster));
     }
+    return cluster;
+  }
 }

@@ -1,20 +1,4 @@
-/*
- * Copyright 2017 Composable Systems Limited
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
 package systems.composable.dropwizard.cassandra;
-
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -115,38 +99,32 @@ import systems.composable.dropwizard.cassandra.cli.MigrationFactory;
  *   public void setMigrationFactory(MigrationFactory migrationFactory) { this.migrationFactory = migrationFactory; }
  * }
  * </pre>
+ *
+ * @author <a href="mailto:max@dominichenko.com">Max Dominichenko</a>
  */
-public abstract class CassandraBundle<T extends Configuration>
-		implements ConfiguredBundle<T>, CassandraConfiguration<T>, MigrationConfiguration<T> {
-
-	/**
+public abstract class CassandraBundle<T extends Configuration> implements ConfiguredBundle<T>, CassandraConfiguration<T>, MigrationConfiguration<T> {
+  /**
 	 * Initializes Cassandra in application bootstrap.
 	 * Does nothing for now.
 	 *
 	 * @param bootstrap The application bootstrap
 	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void initialize(Bootstrap<?> bootstrap) {
-		bootstrap.addCommand(new CommandCassandra<T>(this, this,
-				Generics.getTypeParameter(getClass(), Configuration.class)));
-	}
+  @SuppressWarnings(value = { "unchecked" }) @Override public void initialize(Bootstrap<?> bootstrap) {
+    bootstrap.addCommand(new CommandCassandra<T>(this, this, Generics.getTypeParameter(getClass(), Configuration.class)));
+  }
 
-	/**
+  /**
 	 * Initializes the Cassandra environment: registers context binder for
 	 * {@link com.datastax.driver.core.Cluster} and {@link com.datastax.driver.core.Session} instances.
 	 *
 	 * @param configuration The configuration object
 	 * @param environment The application's Environment
 	 */
-	@Override
-	public void run(T configuration, Environment environment) throws Exception {
-		environment.jersey().register(CassandraProvider.binder(getCassandraFactory(configuration), environment));
-	}
+  @Override public void run(T configuration, Environment environment) throws Exception {
+    environment.jersey().register(CassandraProvider.binder(getCassandraFactory(configuration), environment));
+  }
 
-	@Override
-	public MigrationFactory getMigrationFactory(T configuration) {
-		// Default migration configuration
-		return new MigrationFactory();
-	}
+  @Override public MigrationFactory getMigrationFactory(T configuration) {
+    return new MigrationFactory();
+  }
 }
