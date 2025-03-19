@@ -228,10 +228,18 @@ public final class NullableCollectionFieldsBuilder {
     return new NullableCollectionFieldsBuilder(v);
   }
 
+<<<<<<< /usr/src/app/output/danielnorberg/auto-matter/054c1290e1ad16d254c0c854ad35f387e715e248/processor/src/test/resources/expected/NullableCollectionFieldsBuilder.java/left.java
+  private static final class Value implements NullableCollectionFields {
+||||||| /usr/src/app/output/danielnorberg/auto-matter/054c1290e1ad16d254c0c854ad35f387e715e248/processor/src/test/resources/expected/NullableCollectionFieldsBuilder.java/base.java
+  private static final class Value
+      implements NullableCollectionFields {
+
+=======
   @AutoMatter.Generated
   private static final class Value
       implements NullableCollectionFields {
 
+>>>>>>> /usr/src/app/output/danielnorberg/auto-matter/054c1290e1ad16d254c0c854ad35f387e715e248/processor/src/test/resources/expected/NullableCollectionFieldsBuilder.java/right.java
     private final List<String> strings;
 
     private final Map<String, Integer> integers;
