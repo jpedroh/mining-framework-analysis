@@ -25,9 +25,6 @@
 package com.kscs.util.plugins.xjc;
 
 import com.kscs.util.jaxb.*;
-import com.kscs.util.jaxb.PartialCloneable;
-import com.kscs.util.jaxb.PropertyTree;
-import com.kscs.util.jaxb.PropertyTreeUse;
 import com.sun.codemodel.ClassType;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JDefinedClass;
