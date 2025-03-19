@@ -427,8 +427,17 @@ public interface Bytes<Underlying> extends BytesStore<Bytes<Underlying>, Underly
         return StringUtils.isEqual(this, s);
     }
 
+<<<<<<< /usr/src/app/output/openhft/chronicle-bytes/fe2283fa7ded0e29970f0f10aaa251e6cf9fad77/src/main/java/net/openhft/chronicle/bytes/Bytes.java/left.java
     default boolean isEmpty() {
         return readRemaining() == 0;
     }
-
+||||||| /usr/src/app/output/openhft/chronicle-bytes/fe2283fa7ded0e29970f0f10aaa251e6cf9fad77/src/main/java/net/openhft/chronicle/bytes/Bytes.java/base.java
+=======
+    /**
+     * Compact these Bytes by moving the readPosition to the start.
+     *
+     * @return this
+     */
+    Bytes<Underlying> compact();
+>>>>>>> /usr/src/app/output/openhft/chronicle-bytes/fe2283fa7ded0e29970f0f10aaa251e6cf9fad77/src/main/java/net/openhft/chronicle/bytes/Bytes.java/right.java
 }
