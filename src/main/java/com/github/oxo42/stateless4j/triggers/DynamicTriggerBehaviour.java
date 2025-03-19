@@ -14,6 +14,7 @@ public class DynamicTriggerBehaviour<TState, TTrigger> extends TriggerBehaviour<
         this.destination = Enforce.argumentNotNull(destination, "destination");
     }
 
+    @Override @Override
     public boolean resultsInTransitionFrom(TState source, Object[] args, OutVar<TState> dest) {
         dest.set(destination.call(args));
         return true;

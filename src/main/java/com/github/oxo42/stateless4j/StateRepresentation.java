@@ -25,7 +25,7 @@ public class StateRepresentation<TState, TTrigger> {
         return triggerBehaviours;
     }
 
-    public Boolean canHandle(TTrigger trigger) {
+    public boolean canHandle(TTrigger trigger) {
         return tryFindHandler(trigger) != null;
     }
 
