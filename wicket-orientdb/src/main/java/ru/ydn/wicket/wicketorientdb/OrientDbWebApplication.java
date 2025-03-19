@@ -1,243 +1,219 @@
 package ru.ydn.wicket.wicketorientdb;
-
 import com.orientechnologies.orient.core.Orient;
+import java.util.ArrayList;
 import com.orientechnologies.orient.core.db.ODatabase;
+import java.util.List;
 import com.orientechnologies.orient.core.db.ODatabaseInternal;
+import java.util.Set;
 import com.orientechnologies.orient.core.db.ODatabaseLifecycleListener;
-import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
-import com.orientechnologies.orient.core.db.record.OIdentifiable;
-import com.orientechnologies.orient.core.hook.ORecordHook;
-import com.orientechnologies.orient.core.metadata.schema.OClass;
-import com.orientechnologies.orient.core.metadata.security.ORole;
-import com.orientechnologies.orient.core.metadata.security.ORule.ResourceGeneric;
-import com.orientechnologies.orient.core.metadata.security.OSecurity;
-import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.server.OServer;
 import org.apache.wicket.Application;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import org.apache.wicket.ConverterLocator;
+import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import org.apache.wicket.IApplicationListener;
+import com.orientechnologies.orient.core.hook.ORecordHook;
 import org.apache.wicket.IConverterLocator;
+import com.orientechnologies.orient.core.metadata.schema.OClass;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
+import com.orientechnologies.orient.core.metadata.security.ORole;
 import org.apache.wicket.core.util.lang.PropertyResolver;
+import com.orientechnologies.orient.core.metadata.security.ORule.ResourceGeneric;
 import org.apache.wicket.protocol.http.WebApplication;
+import com.orientechnologies.orient.core.metadata.security.OSecurity;
 import ru.ydn.wicket.wicketorientdb.components.IHookPosition;
 import ru.ydn.wicket.wicketorientdb.converter.HexConverter;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import ru.ydn.wicket.wicketorientdb.converter.ODocumentConverter;
+import com.orientechnologies.orient.server.OServer;
 import ru.ydn.wicket.wicketorientdb.converter.OIdentifiableConverter;
 import ru.ydn.wicket.wicketorientdb.rest.OrientDBHttpAPIResource;
 import ru.ydn.wicket.wicketorientdb.security.WicketOrientDbAuthorizationStrategy;
 import ru.ydn.wicket.wicketorientdb.utils.FixFormEncTypeListener;
 import ru.ydn.wicket.wicketorientdb.utils.ODocumentPropertyLocator;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 /**
  * {@link WebApplication} realization for applications on top of OrientDB
  */
 public abstract class OrientDbWebApplication extends AuthenticatedWebApplication {
-	
-	private IOrientDbSettings orientDbSettings = new OrientDbSettings();
-	private OServer server;
+  private IOrientDbSettings orientDbSettings = new OrientDbSettings();
 
-	@Override
-	protected Class<? extends OrientDbWebSession> getWebSessionClass()
-	{
-		return OrientDbWebSession.class;
-	}
-	
-	/**
+  private OServer server;
+
+  @Override protected Class<? extends OrientDbWebSession> getWebSessionClass() {
+    return OrientDbWebSession.class;
+  }
+
+  /**
 	 * @return settings for the application
 	 */
-	public IOrientDbSettings getOrientDbSettings()
-	{
-		return orientDbSettings;
-	}
-	
-	/**
+  public IOrientDbSettings getOrientDbSettings() {
+    return orientDbSettings;
+  }
+
+  /**
 	 * Explicit set of settings for the application. Doesn't recommended to use this method. Consider to use getOrientDBSettings().setXXX()
 	 * @param orientDbSettings whole {@link IOrientDbSettings} to be set
 	 */
-	public void setOrientDbSettings(IOrientDbSettings orientDbSettings)
-	{
-		this.orientDbSettings=orientDbSettings;
-	}
-	
-	public static OrientDbWebApplication get()
-    {
-        return (OrientDbWebApplication) WebApplication.get();
+  public void setOrientDbSettings(IOrientDbSettings orientDbSettings) {
+    this.orientDbSettings = orientDbSettings;
+  }
+
+  public static OrientDbWebApplication get() {
+    return (OrientDbWebApplication) WebApplication.get();
+  }
+
+  public static OrientDbWebApplication lookupApplication() {
+    return lookupApplication(OrientDbWebApplication.class);
+  }
+
+  protected static <T extends OrientDbWebApplication> T lookupApplication(Class<T> appClass) {
+    Application app = Application.exists() ? Application.get() : null;
+    if (app != null && appClass.isInstance(app)) {
+      return (T) app;
+    } else {
+      for (String appKey : Application.getApplicationKeys()) {
+        app = Application.get(appKey);
+        if (appClass.isInstance(app)) {
+          return (T) app;
+        }
+      }
     }
-	
-	public static OrientDbWebApplication lookupApplication()
-	{
-		return lookupApplication(OrientDbWebApplication.class);
-	}
-	
-	protected static <T extends OrientDbWebApplication> T lookupApplication(Class<T> appClass)
-	{
-		Application app = Application.exists()?Application.get():null;
-		if(app!=null && appClass.isInstance(app)) return (T)app;
-		else
-		{
-			for(String appKey: Application.getApplicationKeys())
-			{
-				app = Application.get(appKey);
-				if(appClass.isInstance(app)) return (T)app;
-			}
-		}
-		return null;
-	}
+    return null;
+  }
 
-	@Override
-	protected void init() {
-		super.init();
-		Orient.instance().registerThreadDatabaseFactory(new DefaultODatabaseThreadLocalFactory(this));
-		Orient.instance().addDbLifecycleListener(new ODatabaseLifecycleListener() {
-			
-			private ORecordHook createHook(Class<? extends ORecordHook> clazz, ODatabaseInternal iDatabase) {
-				if(!(iDatabase instanceof ODatabaseDocument)) return null;
-				try {
-					return (ORecordHook) clazz.getConstructor(ODatabaseDocument.class).newInstance(iDatabase);
-				} catch (Exception e) {
-					try {
-						return (ORecordHook) clazz.newInstance();
-					} catch (Exception e1) {
-						throw new IllegalStateException("Can't initialize hook "+clazz.getName(), e);
-					}
-				}
-			}
-			@Override
-			public void onOpen(ODatabaseInternal iDatabase) {
-				registerHooks(iDatabase);
-			}
-			
-			@Override
-			public void onCreate(ODatabaseInternal iDatabase) {
-				registerHooks(iDatabase);
-				//Fix for "feature" appeared in OrientDB 2.1.1
-				//Issue: https://github.com/orientechnologies/orientdb/issues/4906
-				fixOrientDBRights(iDatabase);
-			}
-			
-			public void registerHooks(ODatabaseInternal iDatabase) {
-				Set<ORecordHook> hooks = iDatabase.getHooks().keySet();
-				List<Class<? extends ORecordHook>> hooksToRegister = new ArrayList<Class<? extends ORecordHook>>(getOrientDbSettings().getORecordHooks());
-				for(ORecordHook hook : hooks)
-				{
-					if(hooksToRegister.contains(hook.getClass())) hooksToRegister.remove(hook.getClass());
-				}
-				for (Class<? extends ORecordHook> oRecordHookClass : hooksToRegister)
-				{
-					ORecordHook hook = createHook(oRecordHookClass, iDatabase);
-					if(hook!=null){
-						if (hook instanceof IHookPosition){
-							iDatabase.registerHook(hook,((IHookPosition) hook).getPosition());		
-						}else{
-							iDatabase.registerHook(hook);		
-						}
-					}
-				}
-			}
-			
-			@Override
-			public void onClose(ODatabaseInternal iDatabase) {/*NOP*/}
-			
-			@Override
-			public void onDrop(ODatabaseInternal iDatabase) {/*NOP*/}
-			
-			
-			public PRIORITY getPriority() {
-				return PRIORITY.REGULAR;
-			}
+  @Override protected void init() {
+    super.init();
+    Orient.instance().registerThreadDatabaseFactory(new DefaultODatabaseThreadLocalFactory(this));
+    Orient.instance().addDbLifecycleListener(new ODatabaseLifecycleListener() {
+      private ORecordHook createHook(Class<? extends ORecordHook> clazz, ODatabaseInternal iDatabase) {
+        if (!(iDatabase instanceof ODatabaseDocument)) {
+          return null;
+        }
+        try {
+          return (ORecordHook) clazz.getConstructor(ODatabaseDocument.class).newInstance(iDatabase);
+        } catch (Exception e) {
+          try {
+            return (ORecordHook) clazz.newInstance();
+          } catch (Exception e1) {
+            throw new IllegalStateException("Can\'t initialize hook " + clazz.getName(), e);
+          }
+        }
+      }
 
-			@Override
-			public void onCreateClass(ODatabaseInternal iDatabase, OClass iClass) {/*NOP*/}
+      @Override public void onOpen(ODatabaseInternal iDatabase) {
+        registerHooks(iDatabase);
+      }
 
-			@Override
-			public void onDropClass(ODatabaseInternal iDatabase, OClass iClass) {/*NOP*/}
-			
-			@Override
-			public void onLocalNodeConfigurationRequest(ODocument arg0) {/*NOP*/}
-			
-			
-		});
-		getRequestCycleListeners().add(newTransactionRequestCycleListener());
-		getRequestCycleListeners().add(new OrientDefaultExceptionsHandlingListener());
-		getSecuritySettings().setAuthorizationStrategy(new WicketOrientDbAuthorizationStrategy(this));
-		getApplicationListeners().add(new IApplicationListener() {
-			
-			
-			@Override
-			public void onAfterInitialized(Application application) {
-				Orient.instance().startup();
-				Orient.instance().removeShutdownHook();
-			}
-			@Override
-			public void onBeforeDestroyed(Application application) {
-				Orient.instance().shutdown();
-			}
-		});
-		getAjaxRequestTargetListeners().add(new FixFormEncTypeListener());
-		//workaround to support changing system users passwords in web interface
-		getOrientDbSettings().getORecordHooks().add(OUserCatchPasswordHook.class);
-		PropertyResolver.setLocator(this, new ODocumentPropertyLocator(new PropertyResolver.CachingPropertyLocator(new PropertyResolver.DefaultPropertyLocator())));
-	}
-	
-	/**
+      @Override public void onCreate(ODatabaseInternal iDatabase) {
+        registerHooks(iDatabase);
+        fixOrientDBRights(iDatabase);
+      }
+
+      public void registerHooks(ODatabaseInternal iDatabase) {
+        Set<ORecordHook> hooks = iDatabase.getHooks().keySet();
+        List<Class<? extends ORecordHook>> hooksToRegister = new ArrayList<Class<? extends ORecordHook>>(getOrientDbSettings().getORecordHooks());
+        for (ORecordHook hook : hooks) {
+          if (hooksToRegister.contains(hook.getClass())) {
+            hooksToRegister.remove(hook.getClass());
+          }
+        }
+        for (Class<? extends ORecordHook> oRecordHookClass : hooksToRegister) {
+          ORecordHook hook = createHook(oRecordHookClass, iDatabase);
+          if (hook != null) {
+            if (hook instanceof IHookPosition) {
+              iDatabase.registerHook(hook, ((IHookPosition) hook).getPosition());
+            } else {
+              iDatabase.registerHook(hook);
+            }
+          }
+        }
+      }
+
+      @Override public void onClose(ODatabaseInternal iDatabase) {
+      }
+
+      @Override public void onDrop(ODatabaseInternal iDatabase) {
+      }
+
+      public PRIORITY getPriority() {
+        return PRIORITY.REGULAR;
+      }
+
+      @Override public void onCreateClass(ODatabaseInternal iDatabase, OClass iClass) {
+      }
+
+      @Override public void onDropClass(ODatabaseInternal iDatabase, OClass iClass) {
+      }
+
+      @Override public void onLocalNodeConfigurationRequest(ODocument arg0) {
+      }
+    });
+    getRequestCycleListeners().add(newTransactionRequestCycleListener());
+    getRequestCycleListeners().add(new OrientDefaultExceptionsHandlingListener());
+    getSecuritySettings().setAuthorizationStrategy(new WicketOrientDbAuthorizationStrategy(this));
+    getApplicationListeners().add(new IApplicationListener() {
+      @Override public void onAfterInitialized(Application application) {
+        Orient.instance().startup();
+        Orient.instance().removeShutdownHook();
+      }
+
+      @Override public void onBeforeDestroyed(Application application) {
+        Orient.instance().shutdown();
+      }
+    });
+    getAjaxRequestTargetListeners().add(new FixFormEncTypeListener());
+    getOrientDbSettings().getORecordHooks().add(OUserCatchPasswordHook.class);
+    PropertyResolver.setLocator(this, new ODocumentPropertyLocator(new PropertyResolver.CachingPropertyLocator(new PropertyResolver.DefaultPropertyLocator())));
+  }
+
+  /**
 	 * Required for explicit update of rights due to changes in OrientDB 2.2.23
 	 * Related issue: https://github.com/orientechnologies/orientdb/issues/7549
 	 * @param db - database to apply fix on
 	 */
-	public void fixOrientDBRights(ODatabase<?> db) {
-		OSecurity security = db.getMetadata().getSecurity();
-		ORole readerRole = security.getRole("reader");
-		readerRole.grant(ResourceGeneric.CLUSTER, "orole", ORole.PERMISSION_READ);
-		readerRole.grant(ResourceGeneric.CLUSTER, "ouser", ORole.PERMISSION_READ);
-		readerRole.grant(ResourceGeneric.CLASS, "orole", ORole.PERMISSION_READ);
-		readerRole.grant(ResourceGeneric.CLASS, "ouser", ORole.PERMISSION_READ);
-		readerRole.grant(ResourceGeneric.SYSTEM_CLUSTERS, null, ORole.PERMISSION_READ);
-		readerRole.save();
-		ORole writerRole = security.getRole("writer");
-		writerRole.grant(ResourceGeneric.CLUSTER, "orole", ORole.PERMISSION_READ);
-		writerRole.grant(ResourceGeneric.CLUSTER, "ouser", ORole.PERMISSION_READ);
-		writerRole.grant(ResourceGeneric.CLASS, "orole", ORole.PERMISSION_READ);
-		writerRole.grant(ResourceGeneric.CLASS, "ouser", ORole.PERMISSION_READ);
-		writerRole.grant(ResourceGeneric.SYSTEM_CLUSTERS, null, ORole.PERMISSION_READ);
-		writerRole.save();
-	}
-	
-	protected TransactionRequestCycleListener newTransactionRequestCycleListener()
-	{
-		return new TransactionRequestCycleListener();
-	}
-	
-	@Override
-	protected IConverterLocator newConverterLocator()
-	{
-		ConverterLocator locator =  new ConverterLocator();
-		locator.set(OIdentifiable.class, new OIdentifiableConverter<OIdentifiable>());
-		locator.set(ODocument.class, new ODocumentConverter());
-		locator.set(byte[].class, new HexConverter());
-		return locator;
-	}
+  public void fixOrientDBRights(ODatabase<?> db) {
+    OSecurity security = db.getMetadata().getSecurity();
+    ORole readerRole = security.getRole("reader");
+    readerRole.grant(ResourceGeneric.CLUSTER, "orole", ORole.PERMISSION_READ);
+    readerRole.grant(ResourceGeneric.CLUSTER, "ouser", ORole.PERMISSION_READ);
+    readerRole.grant(ResourceGeneric.CLASS, "orole", ORole.PERMISSION_READ);
+    readerRole.grant(ResourceGeneric.CLASS, "ouser", ORole.PERMISSION_READ);
+    readerRole.grant(ResourceGeneric.SYSTEM_CLUSTERS, null, ORole.PERMISSION_READ);
+    readerRole.save();
+    ORole writerRole = security.getRole("writer");
+    writerRole.grant(ResourceGeneric.CLUSTER, "orole", ORole.PERMISSION_READ);
+    writerRole.grant(ResourceGeneric.CLUSTER, "ouser", ORole.PERMISSION_READ);
+    writerRole.grant(ResourceGeneric.CLASS, "orole", ORole.PERMISSION_READ);
+    writerRole.grant(ResourceGeneric.CLASS, "ouser", ORole.PERMISSION_READ);
+    writerRole.grant(ResourceGeneric.SYSTEM_CLUSTERS, null, ORole.PERMISSION_READ);
+    writerRole.save();
+  }
 
-	public OServer getServer() {
-		return server;
-	}
+  protected TransactionRequestCycleListener newTransactionRequestCycleListener() {
+    return new TransactionRequestCycleListener();
+  }
 
-	public void setServer(OServer server) {
-		this.server = server;
-	}
+  @Override protected IConverterLocator newConverterLocator() {
+    ConverterLocator locator = new ConverterLocator();
+    locator.set(OIdentifiable.class, new OIdentifiableConverter<OIdentifiable>());
+    locator.set(ODocument.class, new ODocumentConverter());
+    locator.set(byte[].class, new HexConverter());
+    return locator;
+  }
 
-	protected void mountOrientDbRestApi()
-	{
-		OrientDBHttpAPIResource.mountOrientDbRestApi(this);
-	}
-	
-	public String getOrientDBVersion() 
-	{
-		return Orient.class.getPackage().getImplementationVersion();
-	}
-	
+  public OServer getServer() {
+    return server;
+  }
+
+  public void setServer(OServer server) {
+    this.server = server;
+  }
+
+  protected void mountOrientDbRestApi() {
+    OrientDBHttpAPIResource.mountOrientDbRestApi(this);
+  }
+
+  public String getOrientDBVersion() {
+    return Orient.class.getPackage().getImplementationVersion();
+  }
 }
