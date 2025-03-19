@@ -1,22 +1,4 @@
-/*
- * Copyright 2016-2020 chronicle.software
- *
- * https://chronicle.software
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package net.openhft.chronicle.threads;
-
 import net.openhft.chronicle.core.Jvm;
 import net.openhft.chronicle.core.io.AbstractCloseable;
 import net.openhft.chronicle.core.io.Closeable;
@@ -28,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.LockSupport;
@@ -36,19 +17,19 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class VanillaEventLoop extends MediumEventLoop {
-    public static final Set<HandlerPriority> ALLOWED_PRIORITIES =
-            Collections.unmodifiableSet(
-                    EnumSet.of(HandlerPriority.HIGH,
-                            HandlerPriority.MEDIUM,
-                            HandlerPriority.TIMER,
-                            HandlerPriority.DAEMON));
-    private static final Logger LOG = LoggerFactory.getLogger(VanillaEventLoop.class);
-    private final List<EventHandler> timerHandlers = new CopyOnWriteArrayList<>();
-    private final List<EventHandler> daemonHandlers = new CopyOnWriteArrayList<>();
-    private final long timerIntervalMS;
-    private final Set<HandlerPriority> priorities;
+  public static final Set<HandlerPriority> ALLOWED_PRIORITIES = Collections.unmodifiableSet(EnumSet.of(HandlerPriority.HIGH, HandlerPriority.MEDIUM, HandlerPriority.TIMER, HandlerPriority.DAEMON));
 
-    /**
+  private static final Logger LOG = LoggerFactory.getLogger(VanillaEventLoop.class);
+
+  private final List<EventHandler> timerHandlers = new CopyOnWriteArrayList<>();
+
+  private final List<EventHandler> daemonHandlers = new CopyOnWriteArrayList<>();
+
+  private final long timerIntervalMS;
+
+  private final Set<HandlerPriority> priorities;
+
+  /**
      * @param parent          the parent event loop
      * @param name            the name of this event handler
      * @param pauser          the pause strategy
@@ -56,228 +37,184 @@ public class VanillaEventLoop extends MediumEventLoop {
      * @param daemon          is a demon thread
      * @param binding         set affinity description, "any", "none", "1", "last-1"
      */
-    public VanillaEventLoop(final EventLoop parent,
-                            final String name,
-                            final Pauser pauser,
-                            final long timerIntervalMS,
-                            final boolean daemon,
-                            final String binding,
-                            final Set<HandlerPriority> priorities) {
-        super(parent, name, pauser, daemon, binding);
-        this.timerIntervalMS = timerIntervalMS;
-        this.priorities = EnumSet.copyOf(priorities);
+  public VanillaEventLoop(final EventLoop parent, final String name, final Pauser pauser, final long timerIntervalMS, final boolean daemon, final String binding, final Set<HandlerPriority> priorities) {
+    super(parent, name, pauser, daemon, binding);
+    this.timerIntervalMS = timerIntervalMS;
+    this.priorities = EnumSet.copyOf(priorities);
+  }
+
+  @Deprecated public VanillaEventLoop(final EventLoop parent, final String name, final Pauser pauser, final long timerIntervalMS, final boolean daemon, final boolean binding, final int bindingCpu) {
+    this(parent, name, pauser, timerIntervalMS, daemon, bindingCpu != NO_CPU ? Integer.toString(bindingCpu) : binding ? "any" : "none", ALLOWED_PRIORITIES);
+  }
+
+  @Deprecated public VanillaEventLoop(@Nullable final EventLoop parent, final String name, final Pauser pauser, final long timerIntervalMS, final boolean daemon, final boolean binding) {
+    this(parent, name, pauser, timerIntervalMS, daemon, binding ? "any" : "none", ALLOWED_PRIORITIES);
+  }
+
+  public static void closeAll(@NotNull final List<EventHandler> handlers) {
+    Closeable.closeQuietly(handlers);
+  }
+
+  private static void clearUsedByThread(@NotNull EventHandler handler) {
+    if (handler instanceof AbstractCloseable) {
+      ((AbstractCloseable) handler).clearUsedByThread();
     }
+  }
 
-    @Deprecated
-    public VanillaEventLoop(final EventLoop parent,
-                            final String name,
-                            final Pauser pauser,
-                            final long timerIntervalMS,
-                            final boolean daemon,
-                            final boolean binding,
-                            final int bindingCpu) {
-        this(parent, name, pauser, timerIntervalMS, daemon, bindingCpu != NO_CPU ? Integer.toString(bindingCpu) : binding ? "any" : "none", ALLOWED_PRIORITIES);
+  @NotNull @Override public String toString() {
+    return "VanillaEventLoop{" + "name=\'" + name + '\'' + ", parent=" + parent + ", service=" + service + ", highHandler=" + highHandler + ", mediumHandlers=" + mediumHandlers + ", timerHandlers=" + timerHandlers + ", daemonHandlers=" + daemonHandlers + ", newHandler=" + newHandler + ", pauser=" + pauser + '}';
+  }
+
+  @Override public void addHandler(@NotNull final EventHandler handler) {
+    throwExceptionIfClosed();
+    checkInterrupted();
+    final HandlerPriority priority = handler.priority();
+    if (DEBUG_ADDING_HANDLERS) {
+      System.out.println("Adding " + priority + " " + handler + " to " + this.name);
     }
-
-    @Deprecated
-    public VanillaEventLoop(@Nullable final EventLoop parent,
-                            final String name,
-                            final Pauser pauser,
-                            final long timerIntervalMS,
-                            final boolean daemon,
-                            final boolean binding) {
-        this(parent, name, pauser, timerIntervalMS, daemon, binding ? "any" : "none", ALLOWED_PRIORITIES);
+    if (!priorities.contains(priority)) {
+      throw new IllegalStateException(name() + ": Unexpected priority " + priority + " for " + handler + " allows " + priorities);
     }
-
-    public static void closeAll(@NotNull final List<EventHandler> handlers) {
-        // do not remove the handler here, remove all at end instead
-        Closeable.closeQuietly(handlers);
+    if (thread == null || thread == Thread.currentThread()) {
+      addNewHandler(handler);
+      return;
     }
+    do {
+      pauser.unpause();
+      throwExceptionIfClosed();
+      checkInterrupted();
+    } while(!newHandler.compareAndSet(null, handler));
+  }
 
-    private static void clearUsedByThread(@NotNull EventHandler handler) {
-        if (handler instanceof AbstractCloseable)
-            ((AbstractCloseable) handler).clearUsedByThread();
+  @Override protected void loopStartedAllHandlers() {
+    super.loopStartedAllHandlers();
+    if (!timerHandlers.isEmpty()) {
+      timerHandlers.forEach(EventHandler::loopStarted);
     }
-
-    @NotNull
-    @Override
-    public String toString() {
-        return "VanillaEventLoop{" +
-                "name='" + name + '\'' +
-                ", parent=" + parent +
-                ", service=" + service +
-                ", highHandler=" + highHandler +
-                ", mediumHandlers=" + mediumHandlers +
-                ", timerHandlers=" + timerHandlers +
-                ", daemonHandlers=" + daemonHandlers +
-                ", newHandler=" + newHandler +
-                ", pauser=" + pauser +
-                '}';
+    if (!daemonHandlers.isEmpty()) {
+      daemonHandlers.forEach(EventHandler::loopStarted);
     }
+  }
 
-    @Override
-    public void addHandler(@NotNull final EventHandler handler) {
-        throwExceptionIfClosed();
-
-        checkInterrupted();
-
-        final HandlerPriority priority = handler.priority();
-        if (DEBUG_ADDING_HANDLERS)
-            System.out.println("Adding " + priority + " " + handler + " to " + this.name);
-        if (!priorities.contains(priority))
-            throw new IllegalStateException(name() + ": Unexpected priority " + priority + " for " + handler + " allows " + priorities);
-
-        if (thread == null || thread == Thread.currentThread()) {
-            addNewHandler(handler);
-            return;
-        }
-        do {
-            pauser.unpause();
-            throwExceptionIfClosed();
-
-            checkInterrupted();
-        } while (!newHandler.compareAndSet(null, handler));
+  protected void loopFinishedAllHandlers() {
+    super.loopFinishedAllHandlers();
+    if (!timerHandlers.isEmpty()) {
+      timerHandlers.forEach(Threads::loopFinishedQuietly);
     }
-
-    @Override
-    protected void loopStartedAllHandlers() {
-        super.loopStartedAllHandlers();
-        if (!timerHandlers.isEmpty())
-            timerHandlers.forEach(EventHandler::loopStarted);
-        if (!daemonHandlers.isEmpty())
-            daemonHandlers.forEach(EventHandler::loopStarted);
+    if (!daemonHandlers.isEmpty()) {
+      daemonHandlers.forEach(Threads::loopFinishedQuietly);
     }
+  }
 
-    protected void loopFinishedAllHandlers() {
-        super.loopFinishedAllHandlers();
-        if (!timerHandlers.isEmpty())
-            timerHandlers.forEach(Threads::loopFinishedQuietly);
-        if (!daemonHandlers.isEmpty())
-            daemonHandlers.forEach(Threads::loopFinishedQuietly);
+  @Override protected long timerIntervalMS() {
+    return timerIntervalMS;
+  }
+
+  protected void runTimerHandlers() {
+    for (int i = 0; i < timerHandlers.size(); i++) {
+      EventHandler handler = null;
+      try {
+        handler = timerHandlers.get(i);
+        handler.action();
+      } catch (InvalidEventHandlerException e) {
+        removeHandler(handler, timerHandlers);
+      } catch (Throwable e) {
+        Jvm.warn().on(getClass(), e);
+      }
     }
+  }
 
-    @Override
-    protected long timerIntervalMS() {
-        return timerIntervalMS;
+  protected void runDaemonHandlers() {
+    for (int i = 0; i < daemonHandlers.size(); i++) {
+      EventHandler handler = null;
+      try {
+        handler = daemonHandlers.get(i);
+        handler.action();
+      } catch (InvalidEventHandlerException e) {
+        removeHandler(handler, daemonHandlers);
+      } catch (Throwable e) {
+        Jvm.warn().on(getClass(), e);
+      }
     }
+  }
 
-    protected void runTimerHandlers() {
-        for (int i = 0; i < timerHandlers.size(); i++) {
-            EventHandler handler = null;
-            try {
-                handler = timerHandlers.get(i);
-                handler.action();
-            } catch (InvalidEventHandlerException e) {
-                removeHandler(handler, timerHandlers);
-
-            } catch (Throwable e) {
-                Jvm.warn().on(getClass(), e);
-            }
-        }
+  protected void addNewHandler(@NotNull final EventHandler handler) {
+    final HandlerPriority t1 = handler.priority();
+    switch (t1.alias()) {
+      case HIGH:
+      if (highHandler == EventHandlers.NOOP || highHandler == handler) {
+        highHandler = handler;
+        break;
+      } else {
+        Jvm.warn().on(getClass(), "Only one high handler supported was " + highHandler + ", treating " + handler + " as MEDIUM");
+      }
+      case MEDIUM:
+      if (!mediumHandlers.contains(handler)) {
+        clearUsedByThread(handler);
+        mediumHandlers.add(handler);
+        mediumHandlers.sort(Comparator.comparing(EventHandler::priority).reversed());
+        mediumHandlersArray = mediumHandlers.toArray(NO_EVENT_HANDLERS);
+      }
+      break;
+      case TIMER:
+      if (!timerHandlers.contains(handler)) {
+        clearUsedByThread(handler);
+        timerHandlers.add(handler);
+      }
+      break;
+      case DAEMON:
+      if (!daemonHandlers.contains(handler)) {
+        clearUsedByThread(handler);
+        daemonHandlers.add(handler);
+      }
+      break;
+      default:
+      throw new IllegalArgumentException("Cannot add a " + handler.priority() + " task to a busy waiting thread");
     }
-
-    protected void runDaemonHandlers() {
-        for (int i = 0; i < daemonHandlers.size(); i++) {
-            EventHandler handler = null;
-            try {
-                handler = daemonHandlers.get(i);
-                handler.action();
-            } catch (InvalidEventHandlerException e) {
-                removeHandler(handler, daemonHandlers);
-
-            } catch (Throwable e) {
-                Jvm.warn().on(getClass(), e);
-            }
-        }
+    handler.eventLoop(parent != null ? parent : this);
+    if (thread != null) {
+      handler.loopStarted();
     }
+  }
 
-    protected void addNewHandler(@NotNull final EventHandler handler) {
-        final HandlerPriority t1 = handler.priority();
-        switch (t1.alias()) {
-            case HIGH:
-                if (highHandler == EventHandlers.NOOP || highHandler == handler) {
-                    highHandler = handler;
-                    break;
-                } else {
-                    Jvm.warn().on(getClass(), "Only one high handler supported was " + highHandler + ", treating " + handler + " as MEDIUM");
-                    // fall through to MEDIUM
-                }
+  public int handlerCount() {
+    return nonDaemonHandlerCount() + daemonHandlers.size() + timerHandlers.size();
+  }
 
-            case MEDIUM:
-                if (!mediumHandlers.contains(handler)) {
-                    clearUsedByThread(handler);
-                    mediumHandlers.add(handler);
-                    mediumHandlers.sort(Comparator.comparing(EventHandler::priority).reversed());
-                    mediumHandlersArray = mediumHandlers.toArray(NO_EVENT_HANDLERS);
-                }
-                break;
-
-            case TIMER:
-                if (!timerHandlers.contains(handler)) {
-                    clearUsedByThread(handler);
-                    timerHandlers.add(handler);
-                }
-                break;
-
-            case DAEMON:
-                if (!daemonHandlers.contains(handler)) {
-                    clearUsedByThread(handler);
-                    daemonHandlers.add(handler);
-                }
-                break;
-
-            default:
-                throw new IllegalArgumentException("Cannot add a " + handler.priority() + " task to a busy waiting thread");
-        }
-        handler.eventLoop(parent != null ? parent : this);
-        if (thread != null)
-            handler.loopStarted();
+  @Override protected void performClose() {
+    try {
+      super.performClose();
+    }  finally {
+      daemonHandlers.clear();
+      timerHandlers.clear();
     }
+  }
 
-    public int handlerCount() {
-        return nonDaemonHandlerCount() + daemonHandlers.size() + timerHandlers.size();
-    }
+  protected void closeAllHandlers() {
+    closeAll(daemonHandlers);
+    closeAll(timerHandlers);
+    super.closeAllHandlers();
+  }
 
-    @Override
-    protected void performClose() {
-        try {
-            super.performClose();
-        } finally {
-            daemonHandlers.clear();
-            timerHandlers.clear();
-        }
+  public void dumpRunningHandlers() {
+    final int handlerCount = handlerCount();
+    if (handlerCount <= 0) {
+      return;
     }
+    final List<EventHandler> collect = Stream.of(Collections.singletonList(highHandler), mediumHandlers, daemonHandlers, timerHandlers).flatMap(List::stream).filter((e) -> e != EventHandlers.NOOP).filter((e) -> e instanceof Closeable).collect(Collectors.toList());
+    if (collect.isEmpty()) {
+      return;
+    }
+    LOG.info("Handlers still running after being closed, handlerCount=" + handlerCount);
+    collect.forEach((h) -> LOG.info("\t" + h));
+  }
 
-    protected void closeAllHandlers() {
-        closeAll(daemonHandlers);
-        closeAll(timerHandlers);
-        super.closeAllHandlers();
-    }
+  @Override public boolean isAlive() {
+    final Thread thread = this.thread;
+    return thread != null && thread.isAlive();
+  }
 
-    public void dumpRunningHandlers() {
-        final int handlerCount = handlerCount();
-        if (handlerCount <= 0)
-            return;
-        final List<EventHandler> collect = Stream.of(Collections.singletonList(highHandler), mediumHandlers, daemonHandlers, timerHandlers)
-                .flatMap(List::stream)
-                .filter(e -> e != EventHandlers.NOOP)
-                .filter(e -> e instanceof Closeable)
-                .collect(Collectors.toList());
-        if (collect.isEmpty())
-            return;
-        LOG.info("Handlers still running after being closed, handlerCount=" + handlerCount);
-        collect.forEach(h -> LOG.info("\t" + h));
-    }
-
-@Override
-    public boolean isAlive() {
-        final Thread thread = this.thread;
-        return thread != null && thread.isAlive();
-    }
-
-    @Override
-    protected boolean threadSafetyCheck(boolean isUsed) {
-        // Thread safe component.
-        return true;
-    }
+  @Override protected boolean threadSafetyCheck(boolean isUsed) {
+    return true;
+  }
 }
