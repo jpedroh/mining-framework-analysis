@@ -295,11 +295,34 @@ public class FindbugsExecutor {
     }
   }
 
+<<<<<<< /usr/src/app/output/sonarsource/sonar-findbugs/4a8de43c4fe22d8397f9fcaad2f27b202f875a7d/src/main/java/org/sonar/plugins/findbugs/FindbugsExecutor.java/left.java
   public static void disableUnnecessaryDetectors(UserPreferences userPreferences, ActiveRules activeRules) {
     for (DetectorFactory detectorFactory : DetectorFactoryCollection.instance().getFactories()) {
       boolean enabled = !detectorFactory.isReportingDetector() || detectorFactoryHasActiveRules(detectorFactory, activeRules);
       
       userPreferences.enableDetector(detectorFactory, enabled);
+||||||| /usr/src/app/output/sonarsource/sonar-findbugs/4a8de43c4fe22d8397f9fcaad2f27b202f875a7d/src/main/java/org/sonar/plugins/findbugs/FindbugsExecutor.java/base.java
+  private static void resetCustomPluginList(Collection<Plugin> customPlugins) {
+    if (customPlugins != null) {
+      for (Plugin plugin : customPlugins) {
+        Plugin.removeCustomPlugin(plugin);
+      }
+=======
+  private static void resetCustomPluginList(Collection<Plugin> customPlugins) {
+    if (customPlugins != null) {
+      for (Plugin plugin : customPlugins) {
+        Plugin.removeCustomPlugin(plugin);
+
+        try {
+          // We have copied the plugin jar in the project's build directory
+          // Now we need to close the classloaders pointing to that jar
+          // so we do not prevent the deletion of the build folder
+          plugin.close();
+        } catch (IOException e) {
+          LOG.error("Error closing plugin", e);
+        }
+      }
+>>>>>>> /usr/src/app/output/sonarsource/sonar-findbugs/4a8de43c4fe22d8397f9fcaad2f27b202f875a7d/src/main/java/org/sonar/plugins/findbugs/FindbugsExecutor.java/right.java
     }
   }
   
@@ -320,7 +343,6 @@ public class FindbugsExecutor {
         if (activeRules.find(ruleKey) != null) {
           return true;
         }
-        // No need to close the plugin
       }
     }
     
