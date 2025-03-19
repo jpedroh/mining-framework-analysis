@@ -22,6 +22,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.opentosca.container.core.model.csar.Csar;
 import org.opentosca.container.core.next.model.DeploymentTestResult;
 import org.opentosca.container.core.next.model.NodeTemplateInstance;
@@ -45,8 +46,14 @@ public class TestExecutor {
 
     @Inject
     @Deprecated
+<<<<<<< /usr/src/app/output/opentosca/container/80fdfb631c41eb16eeb1f0b35c0c9c718ee5c502/org.opentosca.deployment.checks/src/main/java/org/opentosca/deployment/checks/TestExecutor.java/left.java
+    public TestExecutor() {
+||||||| /usr/src/app/output/opentosca/container/80fdfb631c41eb16eeb1f0b35c0c9c718ee5c502/org.opentosca.deployment.checks/src/main/java/org/opentosca/deployment/checks/TestExecutor.java/base.java
+    public TestExecutor(CamelContext camelContext) {
+=======
     public TestExecutor(@Named("deployment-checks-camel-context") CamelContext camelContext) {
-        this(Lists.newArrayList(new HttpTest(), new ManagementOperationTest(camelContext), new TcpPingTest()
+>>>>>>> /usr/src/app/output/opentosca/container/80fdfb631c41eb16eeb1f0b35c0c9c718ee5c502/org.opentosca.deployment.checks/src/main/java/org/opentosca/deployment/checks/TestExecutor.java/right.java
+        this(Lists.newArrayList(new HttpTest(), new ManagementOperationTest(new DefaultCamelContext()), new TcpPingTest()
             // new PortBindingTest(),
             // new SqlConnectionTest()
         ));
