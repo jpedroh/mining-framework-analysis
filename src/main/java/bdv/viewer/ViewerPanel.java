@@ -645,6 +645,7 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 	/**
 	 * Set the {@link Interpolation} mode.
 	 */
+<<<<<<< /usr/src/app/output/tpietzsch/bigdataviewer-core/6a23498e499ca4705744af0848c6a07407b65c71/src/main/java/bdv/viewer/ViewerPanel.java/left.java
 	public synchronized void setInterpolation( final Interpolation mode )
 	{
 		final Interpolation interpolation = state.getInterpolation();
@@ -657,6 +658,18 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 			requestRepaint();
 		}
 	}
+||||||| /usr/src/app/output/tpietzsch/bigdataviewer-core/6a23498e499ca4705744af0848c6a07407b65c71/src/main/java/bdv/viewer/ViewerPanel.java/base.java
+=======
+	public synchronized void setInterpolation( final Interpolation method )
+	{
+		state.setInterpolation( method );
+		requestRepaint();
+	}
+>>>>>>> /usr/src/app/output/tpietzsch/bigdataviewer-core/6a23498e499ca4705744af0848c6a07407b65c71/src/main/java/bdv/viewer/ViewerPanel.java/right.java
+
+	/**
+	 * Set interpolation to specified method.
+	 */
 
 	/**
 	 * Set the {@link DisplayMode}.
