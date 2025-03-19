@@ -26,11 +26,18 @@ class EveryFieldValueGenerator extends FieldValueGenerator {
     private static final Logger log = LoggerFactory.getLogger(EveryFieldValueGenerator.class);
 
     public EveryFieldValueGenerator(CronField cronField) {
-        super(cronField);
+<<<<<<< /usr/src/app/output/jmrozanec/cron-utils/158dd6b782778d47182b84bfdef11de82eeff238/src/main/java/com/cronutils/model/time/generator/EveryFieldValueGenerator.java/left.java
+        super(expression);
         log.debug(String.format(
                 "processing \"%s\" at %s",
                 expression.asString(), DateTime.now()
         ));
+||||||| /usr/src/app/output/jmrozanec/cron-utils/158dd6b782778d47182b84bfdef11de82eeff238/src/main/java/com/cronutils/model/time/generator/EveryFieldValueGenerator.java/base.java
+        super(expression);
+        log.info("Strting");
+=======
+        super(cronField);
+>>>>>>> /usr/src/app/output/jmrozanec/cron-utils/158dd6b782778d47182b84bfdef11de82eeff238/src/main/java/com/cronutils/model/time/generator/EveryFieldValueGenerator.java/right.java
     }
 
     @Override
