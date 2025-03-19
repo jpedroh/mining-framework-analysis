@@ -1,22 +1,4 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.commons.rdf;
-
 import java.util.stream.Stream;
 
 /**
@@ -26,16 +8,15 @@ import java.util.stream.Stream;
  * Syntax</a>, a W3C Recommendation published on 25 February 2014.
  */
 public interface Graph {
-
-    /**
+  /**
      * Add a triple to the graph.
      *
      * @param triple
      *            The triple to add
      */
-    void add(Triple triple);
+  void add(Triple triple);
 
-    /**
+  /**
      * Add a triple to the graph.
      *
      * @param subject
@@ -45,18 +26,18 @@ public interface Graph {
      * @param object
      *            The triple object
      */
-    void add(BlankNodeOrIRI subject, IRI predicate, RDFTerm object);
+  void add(BlankNodeOrIRI subject, IRI predicate, RDFTerm object);
 
-    /**
+  /**
      * Check if graph contains triple.
      *
      * @param triple
      *            The triple to check.
      * @return True if the Graph contains the given Triple.
      */
-    boolean contains(Triple triple);
+  boolean contains(Triple triple);
 
-    /**
+  /**
      * Check if graph contains a pattern of triples.
      *
      * @param subject
@@ -68,17 +49,17 @@ public interface Graph {
      * @return True if the Graph contains any Triples that match
      *            the given pattern.
      */
-    boolean contains(BlankNodeOrIRI subject, IRI predicate, RDFTerm object);
+  boolean contains(BlankNodeOrIRI subject, IRI predicate, RDFTerm object);
 
-    /**
+  /**
      * Remove a concrete triple from the graph.
      *
      * @param triple
      *            triple to remove
      */
-    void remove(Triple triple);
+  void remove(Triple triple);
 
-    /**
+  /**
      * Remove a concrete pattern of triples from the graph.
      *
      * @param subject
@@ -88,40 +69,40 @@ public interface Graph {
      * @param object
      *            The triple object (null is a wildcard)
      */
-    void remove(BlankNodeOrIRI subject, IRI predicate, RDFTerm object);
+  void remove(BlankNodeOrIRI subject, IRI predicate, RDFTerm object);
 
-    /**
+  /**
      * Clear the graph.
      */
-    void clear();
+  void clear();
 
-    /**
+  /**
      * Number of triples contained by the graph.
      *
      * @return The size of the graph.
      */
-    long size();
+  long size();
 
-    /**
+  /**
      * Get all triples contained by the graph.<br>
      *
-     * The behaviour of the Stream is not specified if add, remove, or clear,
+     * The behaviour of the Stream is not specified if add, remove, or clear, 
      * are called on the Stream before it terminates.<br>
      *
-     * Implementations may throw ConcurrentModificationException from Stream
+     * Implementations may throw ConcurrentModificationException from Stream 
      * methods if they detect a conflict while the Stream is active.
      *
      * @return A {@link Stream} over all of the triples in the graph.
      */
-    Stream<? extends Triple> getTriples();
+  Stream<? extends Triple> getTriples();
 
-    /**
+  /**
      * Get all triples contained by the graph matched with the pattern.
      *
-     * The behaviour of the Stream is not specified if add, remove, or clear,
+     * The behaviour of the Stream is not specified if add, remove, or clear, 
      * are called on the Stream before it terminates.<br>
      *
-     * Implementations may throw ConcurrentModificationException from Stream
+     * Implementations may throw ConcurrentModificationException from Stream 
      * methods if they detect a conflict while the Stream is active.
      *
      * @param subject
@@ -132,6 +113,5 @@ public interface Graph {
      *            The triple object (null is a wildcard)
      * @return A {@link Stream} over the matched triples.
      */
-    Stream<? extends Triple> getTriples(BlankNodeOrIRI subject, IRI predicate, RDFTerm object);
-
+  Stream<? extends Triple> getTriples(BlankNodeOrIRI subject, IRI predicate, RDFTerm object);
 }
