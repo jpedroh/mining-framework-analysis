@@ -408,6 +408,17 @@ public class EnderPlayer extends Entity implements CommandSender {
 		}
 	}
 
+	public void setOnGround(boolean onGround) {
+		if (this.isOnGround == false && onGround == true) {
+			// fall damage
+			double change = this.yLocation - this.getLocation().getY() - 3;
+		} else if (this.isOnGround == true && onGround == false) {
+			// save Y location
+			this.yLocation = this.getLocation().getY();
+		}
+		this.isOnGround = onGround;
+	}
+
 	public void onPlayerChatComplete(final PacketInTabComplete packet) {
 		assert Thread.currentThread() != Main.getInstance().mainThread;
 		Main.getInstance().sendToMainThread(new Runnable() {
@@ -442,14 +453,4 @@ public class EnderPlayer extends Entity implements CommandSender {
 		return true;
 	}
 
-	public void setOnGround(boolean onGround) {
-		if (this.isOnGround == false && onGround == true) {
-			// fall damage
-			double change = this.yLocation - this.getLocation().getY() - 3;
-		} else if (this.isOnGround == true && onGround == false) {
-			// save Y location
-			this.yLocation = this.getLocation().getY();
-		}
-		this.isOnGround = onGround;
-	}
 }
