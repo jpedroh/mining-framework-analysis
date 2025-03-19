@@ -1,25 +1,4 @@
-/*-
- * ========================LICENSE_START=================================
- * restheart-graphql
- * %%
- * Copyright (C) 2020 - 2021 SoftInstigate
- * %%
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * =========================LICENSE_END==================================
- */
 package org.restheart.graphql;
-
 import com.google.gson.Gson;
 import com.mongodb.MongoClient;
 import graphql.ExecutionInput;
@@ -49,160 +28,126 @@ import org.restheart.utils.BsonUtils;
 import org.restheart.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@RegisterPlugin(name = "graphql", description = "Service that handles GraphQL requests", secure = true, enabledByDefault = true, defaultURI = "/graphql") public class GraphQLService implements Service<GraphQLRequest, MongoResponse> {
+  public static final String DEFAULT_APP_DEF_DB = "restheart";
 
-@RegisterPlugin(name= "graphql",
-                description = "Service that handles GraphQL requests",
-                secure = true,
-                enabledByDefault = true,
-                defaultURI = "/graphql")
+  public static final String DEFAULT_APP_DEF_COLLECTION = "gqlapps";
 
-public class GraphQLService implements Service<GraphQLRequest, MongoResponse> {
-    public static final String DEFAULT_APP_DEF_DB = "restheart";
-    public static final String DEFAULT_APP_DEF_COLLECTION = "gqlapps";
+  private static final Logger LOGGER = LoggerFactory.getLogger(GraphQLService.class);
 
+  private GraphQL gql;
 
+  private MongoClient mongoClient = null;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GraphQLService.class);
+  private String db = DEFAULT_APP_DEF_DB;
 
-    private GraphQL gql;
-    private MongoClient mongoClient = null;
-    private String db = DEFAULT_APP_DEF_DB;
-    private String collection = DEFAULT_APP_DEF_COLLECTION;
+  private String collection = DEFAULT_APP_DEF_COLLECTION;
 
-    @InjectConfiguration
-    public void initConf(Map<String, Object> args) throws ConfigurationException, NoSuchFieldException, IllegalAccessException {
-        CoercingUtils.replaceBuiltInCoercing();
+  @InjectConfiguration public void initConf(Map<String, Object> args) throws ConfigurationException, NoSuchFieldException, IllegalAccessException {
+    CoercingUtils.replaceBuiltInCoercing();
+    if (args != null) {
+      try {
+        this.db = ConfigurablePlugin.argValue(args, "db");
+        this.collection = ConfigurablePlugin.argValue(args, "collection");
+      } catch (ConfigurationException ex) {
+      }
+    }
+    if (mongoClient != null) {
+      QueryBatchLoader.setMongoClient(mongoClient);
+      GraphQLDataFetcher.setMongoClient(mongoClient);
+      AppDefinitionLoader.setup(db, collection, mongoClient);
+    }
+  }
 
-        if (args != null) {
-            try {
-                this.db = ConfigurablePlugin.argValue(args, "db");
-                this.collection = ConfigurablePlugin.argValue(args, "collection");
-            } catch(ConfigurationException ex) {
-                // nothing to do, using default values
-            }
+  @InjectMongoClient public void initMongoClient(MongoClient mClient) {
+    this.mongoClient = mClient;
+    if (db != null && collection != null) {
+      QueryBatchLoader.setMongoClient(mongoClient);
+      GraphQLDataFetcher.setMongoClient(mongoClient);
+      AppDefinitionLoader.setup(db, collection, mongoClient);
+    }
+  }
+
+  @Override @SuppressWarnings(value = { "unchecked" }) public void handle(GraphQLRequest request, MongoResponse response) throws Exception {
+    if (request.isOptions()) {
+      handleOptions(request);
+      return;
+    }
+    GraphQLApp graphQLApp = request.getAppDefinition();
+    DataLoaderRegistry dataLoaderRegistry = setDataloaderRegistry(graphQLApp.getMappings());
+    ExecutionInput.Builder inputBuilder = ExecutionInput.newExecutionInput().query(request.getQuery()).dataLoaderRegistry(dataLoaderRegistry);
+    inputBuilder.operationName(request.getOperationName());
+    if (request.hasVariables()) {
+      inputBuilder.variables((new Gson()).fromJson(request.getVariables(), Map.class));
+    }
+    this.gql = GraphQL.newGraphQL(graphQLApp.getExecutableSchema()).build();
+    var result = this.gql.execute(inputBuilder.build());
+    logDataLoadersStatistics(dataLoaderRegistry);
+    if (!result.getErrors().isEmpty()) {
+      response.setInError(400, "Bad Request");
+    }
+    response.setContent(BsonUtils.toBsonDocument(result.toSpecification()));
+  }
+
+  private void logDataLoadersStatistics(DataLoaderRegistry dataLoaderRegistry) {
+    LOGGER.debug("##### DATALOADERS STATISTICS #####");
+    dataLoaderRegistry.getKeys().forEach((key) -> {
+      LOGGER.debug(key.toUpperCase() + ": " + dataLoaderRegistry.getDataLoader(key).getStatistics());
+    });
+    LOGGER.debug("##################################");
+  }
+
+  private DataLoaderRegistry setDataloaderRegistry(Map<String, TypeMapping> mappings) {
+    DataLoaderRegistry dataLoaderRegistry = new DataLoaderRegistry();
+    mappings.forEach((type, typeMapping) -> {
+      typeMapping.getFieldMappingMap().forEach((field, fieldMapping) -> {
+        if (fieldMapping instanceof QueryMapping) {
+          DataLoader<BsonValue, BsonValue> dataLoader = ((QueryMapping) fieldMapping).getDataloader();
+          if (dataLoader != null) {
+            dataLoaderRegistry.register(type + "_" + field, dataLoader);
+          }
         }
+      });
+    });
+    return dataLoaderRegistry;
+  }
 
-        if(mongoClient != null){
-            QueryBatchLoader.setMongoClient(mongoClient);
-            GraphQLDataFetcher.setMongoClient(mongoClient);
-            AppDefinitionLoader.setup(db, collection, mongoClient);
+  @Override public Consumer<HttpServerExchange> requestInitializer() {
+    return (e) -> {
+      try {
+        if (e.getRequestMethod().equalToString(ExchangeKeys.METHOD.POST.name()) || e.getRequestMethod().equalToString(ExchangeKeys.METHOD.OPTIONS.name())) {
+          var cache = AppDefinitionLoadingCache.getInstance();
+          String[] splitPath = e.getRequestPath().split("/");
+          var appUri = String.join("/", Arrays.copyOfRange(splitPath, 2, splitPath.length));
+          var appDef = cache.get(appUri);
+          GraphQLRequest.init(e, appUri, appDef);
+        } else {
+          throw new BadRequestException(HttpStatus.SC_METHOD_NOT_ALLOWED);
         }
-    }
+      } catch (GraphQLAppDefNotFoundException notFoundException) {
+        LOGGER.error(notFoundException.getMessage());
+        throw new BadRequestException(HttpStatus.SC_NOT_FOUND);
+      } catch (GraphQLIllegalAppDefinitionException illegalException) {
+        LOGGER.error(illegalException.getMessage());
+        throw new BadRequestException(illegalException.getMessage(), HttpStatus.SC_BAD_REQUEST);
+      }
+    };
+  }
 
-    @InjectMongoClient
-    public void initMongoClient(MongoClient mClient){
-        this.mongoClient = mClient;
-        if (db!= null && collection != null){
-            QueryBatchLoader.setMongoClient(mongoClient);
-            GraphQLDataFetcher.setMongoClient(mongoClient);
-            AppDefinitionLoader.setup(db, collection, mongoClient);
-        }
-    }
+  @Override public Consumer<HttpServerExchange> responseInitializer() {
+    return (e) -> MongoResponse.init(e);
+  }
 
+  @Override public Function<HttpServerExchange, GraphQLRequest> request() {
+    return (e) -> GraphQLRequest.of(e);
+  }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void handle(GraphQLRequest request, MongoResponse response) throws Exception {
-        if (request.isOptions()) {
-            handleOptions(request);
-            return;
-        }
-
-        GraphQLApp graphQLApp = request.getAppDefinition();
-
-        DataLoaderRegistry dataLoaderRegistry = setDataloaderRegistry(graphQLApp.getMappings());
-
-        ExecutionInput.Builder inputBuilder = ExecutionInput.newExecutionInput()
-                .query(request.getQuery())
-                .dataLoaderRegistry(dataLoaderRegistry);
-
-        inputBuilder.operationName(request.getOperationName());
-        if (request.hasVariables()){
-            inputBuilder.variables((new Gson()).fromJson(request.getVariables(), Map.class));
-        }
-
-        this.gql = GraphQL.newGraphQL(graphQLApp.getExecutableSchema()).build();
-
-        var result = this.gql.execute(inputBuilder.build());
-        logDataLoadersStatistics(dataLoaderRegistry);
-
-        if (!result.getErrors().isEmpty()){
-            response.setInError(400, "Bad Request");
-        }
-        response.setContent(BsonUtils.toBsonDocument(result.toSpecification()));
-    }
-
-
-    private void logDataLoadersStatistics(DataLoaderRegistry dataLoaderRegistry){
-        LOGGER.debug("##### DATALOADERS STATISTICS #####");
-        dataLoaderRegistry.getKeys().forEach(key -> {
-            LOGGER.debug(key.toUpperCase() + ": " + dataLoaderRegistry.getDataLoader(key).getStatistics());
-        });
-        LOGGER.debug("##################################");
-    }
-
-    private DataLoaderRegistry setDataloaderRegistry(Map<String, TypeMapping> mappings){
-
-        DataLoaderRegistry dataLoaderRegistry = new DataLoaderRegistry();
-
-        mappings.forEach((type, typeMapping) -> {
-            typeMapping.getFieldMappingMap().forEach((field, fieldMapping) -> {
-                if (fieldMapping instanceof QueryMapping){
-                    DataLoader<BsonValue, BsonValue> dataLoader = ((QueryMapping) fieldMapping).getDataloader();
-                    if (dataLoader != null){
-                        dataLoaderRegistry.register(type + "_" + field, dataLoader);
-                    }
-                }
-            } );
-        });
-
-        return dataLoaderRegistry;
-
-    }
-
-
-    @Override
-    public Consumer<HttpServerExchange> requestInitializer() {
-        return e -> {
-            try {
-                if (e.getRequestMethod().equalToString(ExchangeKeys.METHOD.POST.name())
-                    || e.getRequestMethod().equalToString(ExchangeKeys.METHOD.OPTIONS.name())){
-                    var cache = AppDefinitionLoadingCache.getInstance();
-                    String[] splitPath = e.getRequestPath().split("/");
-                    var appUri = String.join("/", Arrays.copyOfRange(splitPath, 2, splitPath.length));
-                    var appDef = cache.get(appUri);
-                    GraphQLRequest.init(e, appUri, appDef);
-                } else {
-                    throw new BadRequestException(HttpStatus.SC_METHOD_NOT_ALLOWED);
-                }
-            } catch (GraphQLAppDefNotFoundException notFoundException){
-                LOGGER.error(notFoundException.getMessage());
-                throw new BadRequestException(HttpStatus.SC_NOT_FOUND);
-            } catch (GraphQLIllegalAppDefinitionException illegalException){
-                LOGGER.error(illegalException.getMessage());
-                throw new BadRequestException(illegalException.getMessage(), HttpStatus.SC_BAD_REQUEST);
-            }
-        };
-    }
-
-    @Override
-    public Consumer<HttpServerExchange> responseInitializer() {
-        return e -> MongoResponse.init(e);
-    }
-
-    @Override
-    public Function<HttpServerExchange, GraphQLRequest> request() {
-        return e -> GraphQLRequest.of(e);
-    }
-
-    @Override
-    public Function<HttpServerExchange, MongoResponse> response() {
-        return e -> MongoResponse.of(e);
-    }
+  @Override public Function<HttpServerExchange, MongoResponse> response() {
+    return (e) -> MongoResponse.of(e);
+  }
 }
