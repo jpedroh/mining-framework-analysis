@@ -9,7 +9,6 @@ import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.util.FixedBitSet;
-import org.apache.lucene.util.FixedBitSet;
 
 import pitt.search.semanticvectors.utils.VerbatimLogger;
 import pitt.search.semanticvectors.vectors.RealVector.RealBindMethod;
