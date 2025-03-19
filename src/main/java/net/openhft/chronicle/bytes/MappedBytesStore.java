@@ -455,13 +455,29 @@ public class MappedBytesStore extends NativeBytesStore<Void> {
         if (syncMode == SyncMode.NONE)
             return;
         long start0 = System.currentTimeMillis();
+<<<<<<< /usr/src/app/output/openhft/chronicle-bytes/20efa4f597975a7f1276c4a8f338543e7766d92e/src/main/java/net/openhft/chronicle/bytes/MappedBytesStore.java/left.java
         boolean full = offset == 0;
         int ret = PosixAPI.posix().msync(address + offset, length, syncMode.mSyncFlag());
         if (ret != 0)
             Jvm.error().on(MappedBytesStore.class, "msync failed, " + PosixAPI.posix().lastErrorStr() + ", ret=" + ret + " " + mappedFile.file() + " " + Long.toHexString(offset) + " " + Long.toHexString(length));
+||||||| /usr/src/app/output/openhft/chronicle-bytes/20efa4f597975a7f1276c4a8f338543e7766d92e/src/main/java/net/openhft/chronicle/bytes/MappedBytesStore.java/base.java
+        PosixAPI.posix().msync(address + offset, length, syncMode.mSyncFlag());
+=======
+        int ret = PosixAPI.posix().msync(address + offset, length, syncMode.mSyncFlag());
+        if (ret != 0)
+            Jvm.error().on(MappedBytesStore.class, "msync failed, " + PosixAPI.posix().lastErrorStr() + ", ret=" + ret + " " + mappedFile.file() + " " + Long.toHexString(offset) + " " + Long.toHexString(length));
+>>>>>>> /usr/src/app/output/openhft/chronicle-bytes/20efa4f597975a7f1276c4a8f338543e7766d92e/src/main/java/net/openhft/chronicle/bytes/MappedBytesStore.java/right.java
         long time0 = System.currentTimeMillis() - start0;
+<<<<<<< /usr/src/app/output/openhft/chronicle-bytes/20efa4f597975a7f1276c4a8f338543e7766d92e/src/main/java/net/openhft/chronicle/bytes/MappedBytesStore.java/left.java
         if (time0 >= 200)
             Jvm.perf().on(getClass(), "Took " + time0 + " ms to " + syncMode + " " + mappedFile.file() + (full ? " (full)" : ""));
+||||||| /usr/src/app/output/openhft/chronicle-bytes/20efa4f597975a7f1276c4a8f338543e7766d92e/src/main/java/net/openhft/chronicle/bytes/MappedBytesStore.java/base.java
+        if (time0 >= 20)
+            Jvm.perf().on(getClass(), "Took " + time0 / 1e3 + " seconds to " + syncMode + " " + mappedFile.file());
+=======
+        if (time0 >= 200)
+            Jvm.perf().on(getClass(), "Took " + time0 / 1e3 + " seconds to " + syncMode + " " + mappedFile.file());
+>>>>>>> /usr/src/app/output/openhft/chronicle-bytes/20efa4f597975a7f1276c4a8f338543e7766d92e/src/main/java/net/openhft/chronicle/bytes/MappedBytesStore.java/right.java
     }
 
     /**
@@ -502,11 +518,29 @@ public class MappedBytesStore extends NativeBytesStore<Void> {
         long positionFromStart = Math.min(safeLimit, position) - start;
         if (positionFromStart <= syncLength)
             return;
+<<<<<<< /usr/src/app/output/openhft/chronicle-bytes/20efa4f597975a7f1276c4a8f338543e7766d92e/src/main/java/net/openhft/chronicle/bytes/MappedBytesStore.java/left.java
         int mask = ~0xFFF;
         long pageEnd = (positionFromStart + 0xFFF) & mask;
         long syncStart = syncLength & mask;
         final long length2 = pageEnd - syncStart;
         performMsync(syncStart, length2, syncMode);
+||||||| /usr/src/app/output/openhft/chronicle-bytes/20efa4f597975a7f1276c4a8f338543e7766d92e/src/main/java/net/openhft/chronicle/bytes/MappedBytesStore.java/base.java
+        final long maxLength = safeLimit - start;
+        if (length > maxLength)
+            length = maxLength;
+        long pageEnd = (length + 0xFFF) & ~0xFFF;
+        final long length2 = pageEnd - syncLength;
+        performMsync(syncLength, length2);
+=======
+        final long maxLength = safeLimit - start;
+        if (length > maxLength)
+            length = maxLength;
+        int mask = ~0xFFF;
+        long pageEnd = (length + 0xFFF) & mask;
+        long syncStart = syncLength & mask;
+        final long length2 = pageEnd - syncStart;
+        performMsync(syncStart, length2);
+>>>>>>> /usr/src/app/output/openhft/chronicle-bytes/20efa4f597975a7f1276c4a8f338543e7766d92e/src/main/java/net/openhft/chronicle/bytes/MappedBytesStore.java/right.java
         syncLength = position;
     }
 }
