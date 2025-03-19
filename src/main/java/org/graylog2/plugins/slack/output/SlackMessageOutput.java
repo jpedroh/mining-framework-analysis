@@ -87,6 +87,10 @@ public class SlackMessageOutput extends SlackPluginBase implements MessageOutput
             streamLink = "_" + stream.getTitle() + "_";
         }
 
+<<<<<<< /usr/src/app/output/graylog2/graylog2-alarmcallback-slack/63afb94bcd157b7ffe10dcef43743a33946c65ff/src/main/java/org/graylog2/plugins/slack/output/SlackMessageOutput.java/left.java
+        String audience = notifyChannel ? "@channel " : "";
+||||||| /usr/src/app/output/graylog2/graylog2-alarmcallback-slack/63afb94bcd157b7ffe10dcef43743a33946c65ff/src/main/java/org/graylog2/plugins/slack/output/SlackMessageOutput.java/base.java
+=======
         String messageLink;
         if (!isNullOrEmpty(graylogUri)) {
             String index = "graylog_deflector"; // would use msg.getFieldAs(String.class, "_index"), but it returns null
@@ -94,10 +98,16 @@ public class SlackMessageOutput extends SlackPluginBase implements MessageOutput
         } else {
             messageLink = "New message";
         }
+>>>>>>> /usr/src/app/output/graylog2/graylog2-alarmcallback-slack/63afb94bcd157b7ffe10dcef43743a33946c65ff/src/main/java/org/graylog2/plugins/slack/output/SlackMessageOutput.java/right.java
 
-        String audience = notifyChannel ? "@channel " : "";
-        return String.format("%s*%s in Graylog stream %s*:\n> %s",
-                audience, messageLink, streamLink, msg.getMessage());
+<<<<<<< /usr/src/app/output/graylog2/graylog2-alarmcallback-slack/63afb94bcd157b7ffe10dcef43743a33946c65ff/src/main/java/org/graylog2/plugins/slack/output/SlackMessageOutput.java/left.java
+        return String.format("%s*New message in Graylog stream %s*:\n> %s",
+                audience, titleLink, msg.getMessage());
+||||||| /usr/src/app/output/graylog2/graylog2-alarmcallback-slack/63afb94bcd157b7ffe10dcef43743a33946c65ff/src/main/java/org/graylog2/plugins/slack/output/SlackMessageOutput.java/base.java
+        return (notifyChannel ? "@channel " : "") + "*New message in Graylog stream " + titleLink + "*:\n" + "> " + msg.getMessage();
+=======
+        return (notifyChannel ? "@channel " : "") + "*" + messageLink + " in Graylog stream " + streamLink + "*:\n" + "> " + msg.getMessage();
+>>>>>>> /usr/src/app/output/graylog2/graylog2-alarmcallback-slack/63afb94bcd157b7ffe10dcef43743a33946c65ff/src/main/java/org/graylog2/plugins/slack/output/SlackMessageOutput.java/right.java
     }
 
     private String buildShortMessageBody(Message msg) {
