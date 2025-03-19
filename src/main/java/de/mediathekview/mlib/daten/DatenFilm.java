@@ -1,30 +1,7 @@
-/*
- *   MediathekView
- *   Copyright (C) 2008 W. Xaver
- *   W.Xaver[at]googlemail.com
- *   http://zdfmediathk.sourceforge.net/
- *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package de.mediathekview.mlib.daten;
-
 import java.text.Normalizer;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
 import org.apache.commons.lang3.time.FastDateFormat;
-
 import de.mediathekview.mlib.Const;
 import de.mediathekview.mlib.tool.DatumFilm;
 import de.mediathekview.mlib.tool.FileSize;
@@ -36,114 +13,148 @@ import de.mediathekview.mlib.tool.MSLong;
 import java.time.LocalDate;
 
 public class DatenFilm implements Comparable<DatenFilm> {
-
   private static final String COPYRIGHT_CHAR_HTML = "&copy;";
 
   private static final DateTimeFormatter DATUM_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
   public static final String AUFLOESUNG_NORMAL = "normal";
+
   public static final String AUFLOESUNG_HD = "hd";
+
   public static final String AUFLOESUNG_KLEIN = "klein";
-  public static final String GEO_DE = "DE"; // nur in .. zu sehen
+
+  public static final String GEO_DE = "DE";
+
   public static final String GEO_AT = "AT";
+
   public static final String GEO_CH = "CH";
+
   public static final String GEO_EU = "EU";
+
   public static final String GEO_WELT = "WELT";
-  //
-  public static final int FILM_NR = 0; // wird vor dem Speichern gelöscht!
+
+  public static final int FILM_NR = 0;
+
   public static final int FILM_SENDER = 1;
+
   public static final int FILM_THEMA = 2;
+
   public static final int FILM_TITEL = 3;
+
   public static final int FILM_ABSPIELEN = 4;
+
   public static final int FILM_AUFZEICHNEN = 5;
+
   public static final int FILM_DATUM = 6;
+
   public static final int FILM_ZEIT = 7;
+
   public static final int FILM_DAUER = 8;
+
   public static final int FILM_GROESSE = 9;
+
   public static final int FILM_HD = 10;
+
   public static final int FILM_UT = 11;
+
   public static final int FILM_BESCHREIBUNG = 12;
-  public static final int FILM_GEO = 13;// Geoblocking
+
+  public static final int FILM_GEO = 13;
+
   public static final int FILM_URL = 14;
-  public static final int FILM_WEBSEITE = 15; //URL der Website des Films beim Sender
-  public static final int FILM_ABO_NAME = 16;// wird vor dem Speichern gelöscht!
+
+  public static final int FILM_WEBSEITE = 15;
+
+  public static final int FILM_ABO_NAME = 16;
+
   public static final int FILM_URL_SUBTITLE = 17;
+
   public static final int FILM_URL_RTMP = 18;
-  public static final int FILM_URL_AUTH = 19;//frei für andere Sachen
+
+  public static final int FILM_URL_AUTH = 19;
+
   public static final int FILM_URL_KLEIN = 20;
+
   public static final int FILM_URL_RTMP_KLEIN = 21;
+
   public static final int FILM_URL_HD = 22;
+
   public static final int FILM_URL_RTMP_HD = 23;
+
   public static final int FILM_URL_HISTORY = 24;
+
   public static final int FILM_NEU = 25;
-  public static final int FILM_DATUM_LONG = 26;// Datum als Long ABER Sekunden!!
-  public static final int FILM_REF = 27;// Referenz auf this
+
+  public static final int FILM_DATUM_LONG = 26;
+
+  public static final int FILM_REF = 27;
+
   public static final int MAX_ELEM = 28;
+
   public static final String TAG = "Filme";
+
   public static final String TAG_JSON_LIST = "X";
-  public static final String[] COLUMN_NAMES = {"Nr", "Sender", "Thema", "Titel",
-    "", "", "Datum", "Zeit", "Dauer", "Größe [MB]", "HD", "UT",
-    "Beschreibung", "Geo", "Url", "Website", "Abo",
-    "Url Untertitel", "Url RTMP", "Url Auth", "Url Klein", "Url RTMP Klein", "Url HD", "Url RTMP HD", "Url History", "neu",
-    "DatumL", "Ref"};
-  // neue Felder werden HINTEN angefügt!!!!!
-  public static final int[] JSON_NAMES = {FILM_SENDER, FILM_THEMA, FILM_TITEL,
-    FILM_DATUM, FILM_ZEIT, FILM_DAUER, FILM_GROESSE,
-    FILM_BESCHREIBUNG, FILM_URL, FILM_WEBSEITE,
-    FILM_URL_SUBTITLE, FILM_URL_RTMP, FILM_URL_KLEIN, FILM_URL_RTMP_KLEIN, FILM_URL_HD, FILM_URL_RTMP_HD, FILM_DATUM_LONG,
-    FILM_URL_HISTORY, FILM_GEO, FILM_NEU};
+
+  public static final String[] COLUMN_NAMES = { "Nr", "Sender", "Thema", "Titel", "", "", "Datum", "Zeit", "Dauer", "Gr\u00f6\u00dfe [MB]", "HD", "UT", "Beschreibung", "Geo", "Url", "Website", "Abo", "Url Untertitel", "Url RTMP", "Url Auth", "Url Klein", "Url RTMP Klein", "Url HD", "Url RTMP HD", "Url History", "neu", "DatumL", "Ref" };
+
+  public static final int[] JSON_NAMES = { FILM_SENDER, FILM_THEMA, FILM_TITEL, FILM_DATUM, FILM_ZEIT, FILM_DAUER, FILM_GROESSE, FILM_BESCHREIBUNG, FILM_URL, FILM_WEBSEITE, FILM_URL_SUBTITLE, FILM_URL_RTMP, FILM_URL_KLEIN, FILM_URL_RTMP_KLEIN, FILM_URL_HD, FILM_URL_RTMP_HD, FILM_DATUM_LONG, FILM_URL_HISTORY, FILM_GEO, FILM_NEU };
+
   private static final GermanStringSorter sorter = GermanStringSorter.getInstance();
+
   private static final FastDateFormat sdf_datum_zeit = FastDateFormat.getInstance("dd.MM.yyyyHH:mm:ss");
+
   private static final FastDateFormat sdf_datum = FastDateFormat.getInstance("dd.MM.yyyy");
-  private static final String[] LEGAL_NOTICES = {
-    "+++ Aus rechtlichen Gründen ist der Film nur innerhalb von Deutschland abrufbar. +++",
-    "+++ Aus rechtlichen Gründen ist diese Sendung nur innerhalb von Deutschland abrufbar. +++",
-    "+++ Aus rechtlichen Gründen ist dieses Video nur innerhalb von Deutschland abrufbar. +++",
-    "+++ Aus rechtlichen Gründen ist dieses Video nur innerhalb von Deutschland verfügbar. +++",
-    "+++ Aus rechtlichen Gründen kann das Video nur innerhalb von Deutschland abgerufen werden. +++ Due to legal reasons the video is only available in Germany.+++",
-    "+++ Aus rechtlichen Gründen kann das Video nur innerhalb von Deutschland abgerufen werden. +++",
-    "+++ Due to legal reasons the video is only available in Germany.+++",
-    "+++ Aus rechtlichen Gründen kann das Video nur in Deutschland abgerufen werden. +++",
-    "[Aus rechtlichen Günden können wir die Partie nicht als Einzelclip anbieten.]",
-    "+++ Aus rechtlichen Gründen ist das Video nur innerhalb von Deutschland abrufbar. +++",
-    "+++Aus rechtlichen Gründen kann die Sendung nur innerhalb von Deutschland abgerufen werden. +++",
-    "+++ Aus rechtlichen Gründen dürfen wir dieses Video nur innerhalb von Deutschland anbieten. +++",
-    "+++Aus rechtlichen Gründen kann dieses Video nur innerhalb von Deutschland abgerufen werden.+++"
-  };
-  private static final long MAX_DAUER = 3600 * 99L;  /* Werte über 99 Stunden */
+
+  private static final String[] LEGAL_NOTICES = { "+++ Aus rechtlichen Gr\u00fcnden ist der Film nur innerhalb von Deutschland abrufbar. +++", "+++ Aus rechtlichen Gr\u00fcnden ist diese Sendung nur innerhalb von Deutschland abrufbar. +++", "+++ Aus rechtlichen Gr\u00fcnden ist dieses Video nur innerhalb von Deutschland abrufbar. +++", "+++ Aus rechtlichen Gr\u00fcnden ist dieses Video nur innerhalb von Deutschland verf\u00fcgbar. +++", "+++ Aus rechtlichen Gr\u00fcnden kann das Video nur innerhalb von Deutschland abgerufen werden. +++ Due to legal reasons the video is only available in Germany.+++", "+++ Aus rechtlichen Gr\u00fcnden kann das Video nur innerhalb von Deutschland abgerufen werden. +++", "+++ Due to legal reasons the video is only available in Germany.+++", "+++ Aus rechtlichen Gr\u00fcnden kann das Video nur in Deutschland abgerufen werden. +++", "[Aus rechtlichen G\u00fcnden k\u00f6nnen wir die Partie nicht als Einzelclip anbieten.]", "+++ Aus rechtlichen Gr\u00fcnden ist das Video nur innerhalb von Deutschland abrufbar. +++", "+++Aus rechtlichen Gr\u00fcnden kann die Sendung nur innerhalb von Deutschland abgerufen werden. +++", "+++ Aus rechtlichen Gr\u00fcnden d\u00fcrfen wir dieses Video nur innerhalb von Deutschland anbieten. +++", "+++Aus rechtlichen Gr\u00fcnden kann dieses Video nur innerhalb von Deutschland abgerufen werden.+++" };
+
+  private static final long MAX_DAUER = 3600 * 99L;
+
   public static boolean[] spaltenAnzeigen = new boolean[MAX_ELEM];
-  public final String[] arr = new String[]{
-    "", "", "", "", "", "", "", "", "", "",
-    "", "", "", "", "", "", "", "", "", "", "", "",
-    "", "", "", "", "", ""}; //ist einen Tick schneller, hoffentlich :)
+
+  public final String[] arr = new String[] { "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "" };
+
   public DatumFilm datumFilm = new DatumFilm(0);
-  public long dauerL = 0; // Sekunden
+
+  public long dauerL = 0;
+
   public Object abo = null;
-  public MSLong dateigroesseL = new MSLong(0); // Dateigröße in MByte
+
+  public MSLong dateigroesseL = new MSLong(0);
+
   public int nr;
+
   private boolean neuerFilm = false;
+
   private Hash hashValueIndexAddOld = null;
+
   private Hash hashValueUrl = null;
 
   public DatenFilm() {
-    dateigroesseL = new MSLong(0); // Dateigröße in MByte
+    dateigroesseL = new MSLong(0);
   }
 
-  public DatenFilm(String ssender, String tthema, String filmWebsite, String ttitel, String uurl, String uurlRtmp,
-          String datum, String zeit,
-          long dauerSekunden, String description) {
-    // da werden die gefundenen Filme beim Absuchen der Senderwebsites erstellt, und nur die!!
+  public DatenFilm(String ssender, String tthema, String filmWebsite, String ttitel, String uurl, String uurlRtmp, String datum, String zeit, long dauerSekunden, String description) {
     arr[FILM_SENDER] = ssender;
-    arr[FILM_THEMA] = tthema.isEmpty() ? ssender : normalize(cleanWhitespaces(tthema.trim()));
+    arr[FILM_THEMA] = tthema.isEmpty() ? ssender : 
+<<<<<<< /usr/src/app/output/xaverw/msearch/ab544f9464acace234ed164113e9d6fc42fcc898/src/main/java/de/mediathekview/mlib/daten/DatenFilm.java/left.java
+    cleanWhitespaces(tthema.trim())
+=======
+    normalize(tthema.trim())
+>>>>>>> /usr/src/app/output/xaverw/msearch/ab544f9464acace234ed164113e9d6fc42fcc898/src/main/java/de/mediathekview/mlib/daten/DatenFilm.java/right.java
+    ;
     setTitle(ttitel.isEmpty() ? tthema : ttitel.trim());
     arr[FILM_URL] = uurl;
     arr[FILM_URL_RTMP] = uurlRtmp;
     arr[FILM_WEBSEITE] = filmWebsite;
     checkDatum(datum, arr[FILM_SENDER] + ' ' + arr[FILM_THEMA] + ' ' + arr[FILM_TITEL]);
     checkZeit(arr[FILM_DATUM], zeit, arr[FILM_SENDER] + ' ' + arr[FILM_THEMA] + ' ' + arr[FILM_TITEL]);
-    arr[FILM_BESCHREIBUNG] = normalize(cleanDescription(description));
-
-    // Filmlänge
+    arr[FILM_BESCHREIBUNG] = 
+<<<<<<< /usr/src/app/output/xaverw/msearch/ab544f9464acace234ed164113e9d6fc42fcc898/src/main/java/de/mediathekview/mlib/daten/DatenFilm.java/left.java
+    cleanDescription(description)
+=======
+    normalize(cleanDescription(description, tthema, ttitel))
+>>>>>>> /usr/src/app/output/xaverw/msearch/ab544f9464acace234ed164113e9d6fc42fcc898/src/main/java/de/mediathekview/mlib/daten/DatenFilm.java/right.java
+    ;
     checkFilmDauer(dauerSekunden);
   }
 
@@ -152,7 +163,13 @@ public class DatenFilm implements Comparable<DatenFilm> {
       title = title.substring(0, title.indexOf(COPYRIGHT_CHAR_HTML));
       title = title.trim();
     }
-    arr[FILM_TITEL] = normalize(cleanWhitespaces(title));
+    arr[FILM_TITEL] = 
+<<<<<<< /usr/src/app/output/xaverw/msearch/ab544f9464acace234ed164113e9d6fc42fcc898/src/main/java/de/mediathekview/mlib/daten/DatenFilm.java/left.java
+    cleanWhitespaces(title)
+=======
+    normalize(title)
+>>>>>>> /usr/src/app/output/xaverw/msearch/ab544f9464acace234ed164113e9d6fc42fcc898/src/main/java/de/mediathekview/mlib/daten/DatenFilm.java/right.java
+    ;
   }
 
   /**
@@ -164,29 +181,22 @@ public class DatenFilm implements Comparable<DatenFilm> {
     }
   }
 
+  public static String cleanWhitespaces(String text) {
+    return text.replaceAll("[\\t\\n\\x0B\\f\\r]", "").replace("\u00a0", " ");
+  }
+
   private static String normalize(String s) {
-    // some websites uses NFD normalization instead of NFC => normalize
     if (s != null) {
       return Normalizer.normalize(s, Normalizer.Form.NFC);
     }
-
     return null;
   }
 
-  public static String cleanWhitespaces(String text) {
-    return text.replaceAll("[\\t\\n\\x0B\\f\\r]", "")
-            .replace("\u00a0", " ") // repalce no-break-space with space
-            ;
-  }
-
   public static String cleanDescription(String description) {
-    // die Beschreibung auf x Zeichen beschränken
-
-    description = Functions.removeHtml(description); // damit die Beschreibung nicht unnötig kurz wird wenn es erst später gemacht wird
-
+    description = Functions.removeHtml(description);
     for (String legalNotice : LEGAL_NOTICES) {
       if (description.contains(legalNotice)) {
-        description = description.replace(legalNotice, ""); // steht auch mal in der Mitte
+        description = description.replace(legalNotice, "");
       }
     }
     if (description.startsWith("|")) {
@@ -198,8 +208,7 @@ public class DatenFilm implements Comparable<DatenFilm> {
     if (description.startsWith(":") || description.startsWith(",") || description.startsWith("\n")) {
       description = description.substring(1).trim();
     }
-
-    if (description.contains("\\\"")) { // wegen " in json-Files
+    if (description.contains("\\\"")) {
       description = description.replace("\\\"", "\"");
     }
     if (description.length() > Const.MAX_BESCHREIBUNG) {
@@ -234,7 +243,6 @@ public class DatenFilm implements Comparable<DatenFilm> {
   }
 
   public boolean hasUT() {
-    //Film hat Untertitel
     return !arr[DatenFilm.FILM_URL_SUBTITLE].isEmpty();
   }
 
@@ -284,13 +292,10 @@ public class DatenFilm implements Comparable<DatenFilm> {
   }
 
   public String getIndex() {
-    // liefert einen eindeutigen Index für die Filmliste
-    // URL beim KiKa und ORF ändern sich laufend!
     return (arr[FILM_SENDER] + arr[FILM_THEMA]).toLowerCase() + getUrl();
   }
 
   public String getIndexAddOld() {
-    // liefert einen eindeutigen Index zum Anhängen einer alten Liste
     return arr[FILM_SENDER] + repl(arr[FILM_THEMA]) + repl(arr[FILM_TITEL]);
   }
 
@@ -302,7 +307,6 @@ public class DatenFilm implements Comparable<DatenFilm> {
     if (hashValueIndexAddOld == null) {
       hashValueIndexAddOld = new Hash(getIndexAddOld());
     }
-
     return hashValueIndexAddOld;
   }
 
@@ -310,12 +314,10 @@ public class DatenFilm implements Comparable<DatenFilm> {
     if (hashValueUrl == null) {
       hashValueUrl = new Hash(getUrl());
     }
-
     return hashValueUrl;
   }
 
   public String getUrl() {
-    // liefert die URL zum VERGLEICHEN!!
     String url = "";
     if (arr[DatenFilm.FILM_SENDER].equals(Const.ORF)) {
       final String uurl = arr[DatenFilm.FILM_URL];
@@ -343,19 +345,12 @@ public class DatenFilm implements Comparable<DatenFilm> {
     } else {
       return arr[DatenFilm.FILM_URL];
     }
-
   }
 
   public boolean isHD() {
-    //Film gibts in HD
     return !arr[DatenFilm.FILM_URL_HD].isEmpty() || !arr[DatenFilm.FILM_URL_RTMP_HD].isEmpty();
   }
 
-//    public void clean() {
-//        // vor dem Speichern nicht benötigte Felder löschen
-//        arr[FILM_NR] = "";
-//        arr[FILM_ABO_NAME] = "";
-//    }
   public DatenFilm getCopy() {
     DatenFilm ret = new DatenFilm();
     System.arraycopy(this.arr, 0, ret.arr, 0, arr.length);
@@ -367,8 +362,7 @@ public class DatenFilm implements Comparable<DatenFilm> {
     return ret;
   }
 
-  @Override
-  public int compareTo(DatenFilm arg0) {
+  @Override public int compareTo(DatenFilm arg0) {
     int ret;
     if ((ret = sorter.compare(arr[FILM_SENDER], arg0.arr[FILM_SENDER])) == 0) {
       return sorter.compare(arr[FILM_THEMA], arg0.arr[FILM_THEMA]);
@@ -377,15 +371,12 @@ public class DatenFilm implements Comparable<DatenFilm> {
   }
 
   private void preserveMemory() {
-//================================
-    // Speicher sparen
     if (arr[DatenFilm.FILM_GROESSE].length() < 3) {
       arr[DatenFilm.FILM_GROESSE] = arr[DatenFilm.FILM_GROESSE].intern();
     }
     if (arr[DatenFilm.FILM_URL_KLEIN].length() < 15) {
       arr[DatenFilm.FILM_URL_KLEIN] = arr[DatenFilm.FILM_URL_KLEIN].intern();
     }
-
     arr[DatenFilm.FILM_DATUM] = arr[DatenFilm.FILM_DATUM].intern();
     arr[DatenFilm.FILM_ZEIT] = arr[DatenFilm.FILM_ZEIT].intern();
   }
@@ -393,7 +384,6 @@ public class DatenFilm implements Comparable<DatenFilm> {
   private void setFilmdauer() {
     try {
       if (!this.arr[DatenFilm.FILM_DAUER].contains(":") && !this.arr[DatenFilm.FILM_DAUER].isEmpty()) {
-        // nur als Übergang bis die Liste umgestellt ist
         long l = Long.parseLong(this.arr[DatenFilm.FILM_DAUER]);
         dauerL = l;
         if (l > 0) {
@@ -425,7 +415,6 @@ public class DatenFilm implements Comparable<DatenFilm> {
 
   private void setDatum() {
     if (!arr[DatenFilm.FILM_DATUM].isEmpty()) {
-      // nur dann gibts ein Datum
       try {
         if (arr[DatenFilm.FILM_DATUM_LONG].isEmpty()) {
           if (arr[DatenFilm.FILM_ZEIT].isEmpty()) {
@@ -436,10 +425,10 @@ public class DatenFilm implements Comparable<DatenFilm> {
           arr[FILM_DATUM_LONG] = String.valueOf(datumFilm.getTime() / 1000);
         } else {
           long l = Long.parseLong(arr[DatenFilm.FILM_DATUM_LONG]);
-          datumFilm = new DatumFilm(l * 1000 /* sind SEKUNDEN!!*/);
+          datumFilm = new DatumFilm(l * 1000);
         }
       } catch (Exception ex) {
-        Log.errorLog(915236701, ex, new String[]{"Datum: " + arr[DatenFilm.FILM_DATUM], "Zeit: " + arr[DatenFilm.FILM_ZEIT]});
+        Log.errorLog(915236701, ex, new String[] { "Datum: " + arr[DatenFilm.FILM_DATUM], "Zeit: " + arr[DatenFilm.FILM_ZEIT] });
         datumFilm = new DatumFilm(0);
         arr[DatenFilm.FILM_DATUM] = "";
         arr[DatenFilm.FILM_ZEIT] = "";
@@ -449,22 +438,12 @@ public class DatenFilm implements Comparable<DatenFilm> {
 
   public void init() {
     preserveMemory();
-
-    //================================
-    // Dateigröße
     dateigroesseL = new MSLong(this);
-
-    //================================
-    // Filmdauer
     setFilmdauer();
-
-    //================================
-    // Datum
     setDatum();
   }
 
   private String getUrlNormalKlein() {
-    // liefert die kleine normale URL
     if (!arr[DatenFilm.FILM_URL_KLEIN].isEmpty()) {
       try {
         final int i = Integer.parseInt(arr[DatenFilm.FILM_URL_KLEIN].substring(0, arr[DatenFilm.FILM_URL_KLEIN].indexOf('|')));
@@ -476,7 +455,6 @@ public class DatenFilm implements Comparable<DatenFilm> {
   }
 
   private String getUrlNormalHd() {
-    // liefert die HD normale URL
     if (!arr[DatenFilm.FILM_URL_HD].isEmpty()) {
       try {
         final int i = Integer.parseInt(arr[DatenFilm.FILM_URL_HD].substring(0, arr[DatenFilm.FILM_URL_HD].indexOf('|')));
@@ -491,33 +469,29 @@ public class DatenFilm implements Comparable<DatenFilm> {
     String ret;
     if (!arr[DatenFilm.FILM_URL_RTMP].isEmpty()) {
       ret = arr[DatenFilm.FILM_URL_RTMP];
-    } else if (arr[DatenFilm.FILM_URL].startsWith(Const.RTMP_PRTOKOLL)) {
-      ret = Const.RTMP_FLVSTREAMER + arr[DatenFilm.FILM_URL];
     } else {
-      ret = arr[DatenFilm.FILM_URL];
+      if (arr[DatenFilm.FILM_URL].startsWith(Const.RTMP_PRTOKOLL)) {
+        ret = Const.RTMP_FLVSTREAMER + arr[DatenFilm.FILM_URL];
+      } else {
+        ret = arr[DatenFilm.FILM_URL];
+      }
     }
     return ret;
   }
 
   private String getUrlFlvstreamerKlein() {
-    // liefert die kleine flvstreamer URL
     String ret;
     if (!arr[DatenFilm.FILM_URL_RTMP_KLEIN].isEmpty()) {
-      // es gibt eine kleine RTMP
       try {
         int i = Integer.parseInt(arr[DatenFilm.FILM_URL_RTMP_KLEIN].substring(0, arr[DatenFilm.FILM_URL_RTMP_KLEIN].indexOf('|')));
         return arr[DatenFilm.FILM_URL_RTMP].substring(0, i) + arr[DatenFilm.FILM_URL_RTMP_KLEIN].substring(arr[DatenFilm.FILM_URL_RTMP_KLEIN].indexOf('|') + 1);
       } catch (Exception ignored) {
       }
     }
-    // es gibt keine kleine RTMP
     if (!arr[DatenFilm.FILM_URL_RTMP].isEmpty()) {
-      // dann gibts keine kleine
       ret = arr[DatenFilm.FILM_URL_RTMP];
     } else {
-      // dann gibts überhaupt nur die normalen URLs
       ret = getUrlNormalKlein();
-      // und jetzt noch "-r" davorsetzten wenn nötig
       if (ret.startsWith(Const.RTMP_PRTOKOLL)) {
         ret = Const.RTMP_FLVSTREAMER + ret;
       }
@@ -526,16 +500,13 @@ public class DatenFilm implements Comparable<DatenFilm> {
   }
 
   private String getUrlFlvstreamerHd() {
-    // liefert die HD flvstreamer URL
     if (!arr[DatenFilm.FILM_URL_RTMP_HD].isEmpty()) {
-      // es gibt eine HD RTMP
       try {
         final int i = Integer.parseInt(arr[DatenFilm.FILM_URL_RTMP_HD].substring(0, arr[DatenFilm.FILM_URL_RTMP_HD].indexOf('|')));
         return arr[DatenFilm.FILM_URL_RTMP].substring(0, i) + arr[DatenFilm.FILM_URL_RTMP_HD].substring(arr[DatenFilm.FILM_URL_RTMP_HD].indexOf('|') + 1);
       } catch (Exception ignored) {
       }
     }
-    // es gibt keine HD RTMP
     return getUrlFlvstreamer();
   }
 
@@ -545,7 +516,6 @@ public class DatenFilm implements Comparable<DatenFilm> {
       try {
         LocalDate filmDate = LocalDate.parse(datum, DATUM_FORMATTER);
         if (filmDate.getYear() < 1900) {
-          //Datum vor 1970
           Log.errorLog(923012125, "Unsinniger Wert: [" + datum + "] " + fehlermeldung);
         } else {
           arr[FILM_DATUM] = datum;
@@ -560,7 +530,6 @@ public class DatenFilm implements Comparable<DatenFilm> {
   private void checkZeit(String datum, String zeit, String fehlermeldung) {
     zeit = zeit.trim();
     if (!datum.isEmpty() && !zeit.isEmpty()) {
-      //wenn kein Datum, macht die Zeit auch keinen Sinn
       if (zeit.contains(":") && zeit.length() == 8) {
         arr[FILM_ZEIT] = zeit;
       } else {
@@ -575,5 +544,4 @@ public class DatenFilm implements Comparable<DatenFilm> {
     }
     return s;
   }
-
 }
