@@ -1,56 +1,55 @@
 package me.atam.atam4jsampleapp.testsupport;
-
 import io.dropwizard.testing.DropwizardTestSupport;
 import me.atam.atam4j.PollingPredicate;
 import me.atam.atam4jdomain.TestsRunResult;
 import me.atam.atam4jsampleapp.ApplicationConfiguration;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.After;
-
+import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
-
 import static me.atam.atam4jsampleapp.testsupport.AcceptanceTestTimeouts.MAX_ATTEMPTS;
 import static me.atam.atam4jsampleapp.testsupport.AcceptanceTestTimeouts.RETRY_POLL_INTERVAL;
 import static org.junit.Assert.assertTrue;
 
 public abstract class AcceptanceTest {
+  private static final Client client = new JerseyClientBuilder().build();
 
-    protected DropwizardTestSupport<ApplicationConfiguration> dropwizardTestSupportAppConfig;
+  protected DropwizardTestSupport<ApplicationConfiguration> dropwizardTestSupportAppConfig;
 
-    @After
-    public void stopApplication() {
-        dropwizardTestSupportAppConfig.after();
-    }
+  @After public void stopApplication() {
+    dropwizardTestSupportAppConfig.after();
+  }
 
-    public Response getTestRunResultFromServer(String testsURI){
-        return new JerseyClientBuilder().build().target(
-                testsURI)
-                .request()
-                .get();
-    }
+  public Response getTestRunResultFromServer(String testsURI) {
+    return client.target(String.format("http://localhost:%d/tests", dropwizardTestSupportAppConfig.getLocalPort())).
+<<<<<<< /usr/src/app/output/atam4j/atam4j/71fcecb071270981bc92b14d2cc3b0e56828c011/acceptance-tests/src/test/java/me/atam/atam4jsampleapp/testsupport/AcceptanceTest.java/left.java
+    target(testsURI)
+=======
+    request()
+>>>>>>> /usr/src/app/output/atam4j/atam4j/71fcecb071270981bc92b14d2cc3b0e56828c011/acceptance-tests/src/test/java/me/atam/atam4jsampleapp/testsupport/AcceptanceTest.java/right.java
+    .get();
+  }
 
-    public String getTestsURI() {
-        return String.format("http://localhost:%d/tests", dropwizardTestSupportAppConfig.getLocalPort());
-    }
+  public String getTestsURI() {
+    return String.format("http://localhost:%d/tests", dropwizardTestSupportAppConfig.getLocalPort());
+  }
 
-    public Response getResponseFromTestsWithCategoryOnceTestRunHasCompleted(String category) {
-        waitUntilTestRunHasCompleted();
-        return getTestRunResultFromServer(getTestsURI() + "/" + category);
-    }
+  public Response getCriticalTestRunResultFromServer() {
+    return client.target(String.format("http://localhost:%d/tests/priority-1", dropwizardTestSupportAppConfig.getLocalPort())).request().get();
+  }
 
-    public Response getResponseFromTestsEndpointOnceTestsRunHasCompleted() {
-        waitUntilTestRunHasCompleted();
-        return getTestRunResultFromServer(getTestsURI());
-    }
+  public Response getResponseFromTestsWithCategoryOnceTestRunHasCompleted(String category) {
+    waitUntilTestRunHasCompleted();
+    return getTestRunResultFromServer(getTestsURI() + "/" + category);
+  }
 
-    private void waitUntilTestRunHasCompleted() {
-        PollingPredicate<Response> responsePollingPredicate = new PollingPredicate<>(
-                MAX_ATTEMPTS,
-                RETRY_POLL_INTERVAL,
-                response -> !response.readEntity(TestsRunResult.class).getStatus().equals(TestsRunResult.Status.TOO_EARLY),
-                () ->  getTestRunResultFromServer(getTestsURI()));
+  public Response getResponseFromTestsEndpointOnceTestsRunHasCompleted() {
+    waitUntilTestRunHasCompleted();
+    return getTestRunResultFromServer(getTestsURI());
+  }
 
-        assertTrue(responsePollingPredicate.pollUntilPassedOrMaxAttemptsExceeded());
-    }
-
+  private void waitUntilTestRunHasCompleted() {
+    PollingPredicate<Response> responsePollingPredicate = new PollingPredicate<>(MAX_ATTEMPTS, RETRY_POLL_INTERVAL, (response) -> !response.readEntity(TestsRunResult.class).getStatus().equals(TestsRunResult.Status.TOO_EARLY), () -> getTestRunResultFromServer(getTestsURI()));
+    assertTrue(responsePollingPredicate.pollUntilPassedOrMaxAttemptsExceeded());
+  }
 }
