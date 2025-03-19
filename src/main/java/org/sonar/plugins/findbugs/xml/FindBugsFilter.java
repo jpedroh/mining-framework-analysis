@@ -1,49 +1,27 @@
-/*
- * SonarQube Findbugs Plugin
- * Copyright (C) 2012 SonarSource
- * sonarqube@googlegroups.com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
- */
 package org.sonar.plugins.findbugs.xml;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
-
 import org.apache.commons.lang3.StringUtils;
 import org.sonar.api.rule.Severity;
 import org.sonar.plugins.findbugs.FindbugsLevelUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@XStreamAlias("FindBugsFilter")
-public class FindBugsFilter {
-
+@XStreamAlias(value = "FindBugsFilter") public class FindBugsFilter {
   private static final String PATTERN_SEPARATOR = ",";
-  private static final String CODE_SEPARATOR = ",";
-  private static final String CATEGORY_SEPARATOR = ",";
-  private static final Class<?>[] ALL_XSTREAM_TYPES = {Bug.class, ClassFilter.class, FieldFilter.class, FindBugsFilter.class, LocalFilter.class, Match.class, MethodFilter.class, OrFilter.class, PackageFilter.class, Priority.class};
 
-  @XStreamImplicit
-  private List<Match> matchs;
+  private static final String CODE_SEPARATOR = ",";
+
+  private static final String CATEGORY_SEPARATOR = ",";
+
+  private static final Class<?>[] ALL_XSTREAM_TYPES = { Bug.class, ClassFilter.class, FieldFilter.class, FindBugsFilter.class, LocalFilter.class, Match.class, MethodFilter.class, OrFilter.class, PackageFilter.class, Priority.class };
+
+  @XStreamImplicit private List<Match> matchs;
 
   public FindBugsFilter() {
     matchs = new ArrayList<>();
@@ -131,10 +109,9 @@ public class FindBugsFilter {
   public static XStream createXStream() {
     XStream xstream = new XStream(new StaxDriver());
     xstream.setClassLoader(FindBugsFilter.class.getClassLoader());
-
     for (Class<?> modelClass : ALL_XSTREAM_TYPES) {
       xstream.processAnnotations(modelClass);
-      xstream.allowTypeHierarchy(modelClass); //Build a whitelist of the class allowed
+      xstream.allowTypeHierarchy(modelClass);
     }
     return xstream;
   }
@@ -146,37 +123,31 @@ public class FindBugsFilter {
   }
 
   private static class PatternSplitter implements BugInfoSplitter {
-    @Override
-    public String getSeparator() {
+    @Override public String getSeparator() {
       return PATTERN_SEPARATOR;
     }
 
-    @Override
-    public String getVar(Bug bug) {
+    @Override public String getVar(Bug bug) {
       return bug.getPattern();
     }
   }
 
   private static class CodeSplitter implements BugInfoSplitter {
-    @Override
-    public String getSeparator() {
+    @Override public String getSeparator() {
       return CODE_SEPARATOR;
     }
 
-    @Override
-    public String getVar(Bug bug) {
+    @Override public String getVar(Bug bug) {
       return bug.getCode();
     }
   }
 
   private static class CategorySplitter implements BugInfoSplitter {
-    @Override
-    public String getSeparator() {
+    @Override public String getSeparator() {
       return CATEGORY_SEPARATOR;
     }
 
-    @Override
-    public String getVar(Bug bug) {
+    @Override public String getVar(Bug bug) {
       return bug.getCategory();
     }
   }
