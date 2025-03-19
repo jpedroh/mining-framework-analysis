@@ -56,12 +56,12 @@ public class AlwaysStartOnPrimaryConnectionStrategy extends SelfDescribingMarsha
         this.clientConnectionMonitor = fatalFailureMonitor;
         return this;
     }
+    
 
     @Override
     public ClientConnectionMonitor clientConnectionMonitor() {
         return clientConnectionMonitor;
     }
-
 
     @Nullable
     @Override
