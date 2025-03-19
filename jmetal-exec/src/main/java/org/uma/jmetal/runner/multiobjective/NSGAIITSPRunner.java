@@ -56,18 +56,26 @@ public class NSGAIITSPRunner extends AbstractAlgorithmRunner {
 
     selection = new BinaryTournamentSelection<PermutationSolution<Integer>>(new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
 /**
- * List<Double> inters = new ArrayList<>();
- inters.add(0.0);
- inters.add(0.0);
- double epsilon =0.0001;
- algorithm = new RNSGAIIBuilder<>(problem, crossover, mutation,inters,epsilon)
-
- */
+   * List<Double> inters = new ArrayList<>();
+   inters.add(0.0);
+   inters.add(0.0);
+   double epsilon =0.0001;
+   algorithm = new RNSGAIIBuilder<>(problem, crossover, mutation,inters,epsilon)
+  
+   */
     int populationSize = 100;
     algorithm = new NSGAIIBuilder<PermutationSolution<Integer>>(problem, crossover, mutation, populationSize)
             .setSelectionOperator(selection)
+<<<<<<< /usr/src/app/output/jmetal/jmetal/7dbc673d548dfbe2fe62cc31f7a207d0431485c7/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/NSGAIITSPRunner.java/left.java
             .setMaxEvaluations(100000)
+            .setPopulationSize(populationSize) ;
+||||||| /usr/src/app/output/jmetal/jmetal/7dbc673d548dfbe2fe62cc31f7a207d0431485c7/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/NSGAIITSPRunner.java/base.java
+            .setMaxEvaluations(10000)
+            .setPopulationSize(100) ;
+=======
+            .setMaxEvaluations(10000)
             .build() ;
+>>>>>>> /usr/src/app/output/jmetal/jmetal/7dbc673d548dfbe2fe62cc31f7a207d0431485c7/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/NSGAIITSPRunner.java/right.java
 
     AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
             .execute() ;
