@@ -1,35 +1,16 @@
-/*****************************************************************************
- * Copyright (C) Codehaus.org                                                *
- * ------------------------------------------------------------------------- *
- * Licensed under the Apache License, Version 2.0 (the "License");           *
- * you may not use this file except in compliance with the License.          *
- * You may obtain a copy of the License at                                   *
- *                                                                           *
- * http://www.apache.org/licenses/LICENSE-2.0                                *
- *                                                                           *
- * Unless required by applicable law or agreed to in writing, software       *
- * distributed under the License is distributed on an "AS IS" BASIS,         *
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  *
- * See the License for the specific language governing permissions and       *
- * limitations under the License.                                            *
- *****************************************************************************/
 package org.codehaus.jparsec;
-
 import org.codehaus.jparsec.annotations.Private;
 import org.codehaus.jparsec.error.ParserException;
 import org.codehaus.jparsec.functors.Map;
 import org.codehaus.jparsec.functors.Map2;
 import org.codehaus.jparsec.functors.Maps;
 import org.codehaus.jparsec.util.Checks;
-
 import java.io.IOException;
 import java.nio.CharBuffer;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
 import static org.codehaus.jparsec.util.Checks.checkArgument;
-
 
 /**
  * Defines grammar and encapsulates parsing logic. A {@link Parser} takes as input a {@link CharSequence} source and
@@ -61,23 +42,8 @@ import static org.codehaus.jparsec.util.Checks.checkArgument;
  *
  * @author Ben Yu
  */
-public abstract class Parser<T> {
-
-  /**
-   * An atomic mutable reference to {@link Parser}. Is useful to work around circular dependency between parser
-   * objects.
-   * <p/>
-   * <p>Example usage:
-   * <p/>
-   * <pre>
-   * Parser.Reference&lt;Foo> ref = Parser.newReference();
-   * ...
-   * Parser&lt;Bar> barParser = barParser(ref.lazy());
-   * Parser&lt;Foo> fooParser = fooParser(barParser);
-   * ref.set(fooParser);
-   * </pre>
-   */
-  public static final class Reference<T> extends AtomicReference<Parser<T>> {
+public abstract class Parser<T extends java.lang.Object> {
+  public static final class Reference<T extends java.lang.Object> extends AtomicReference<Parser<T>> {
     private static final long serialVersionUID = -8778697271614979497L;
 
     private final Parser<T> lazy = new LazyParser<T>(this);
@@ -96,14 +62,14 @@ public abstract class Parser<T> {
   /**
    * Creates a new instance of {@link Reference}.
    */
-  public static <T> Reference<T> newReference() {
+  public static <T extends java.lang.Object> Reference<T> newReference() {
     return new Reference<T>();
   }
 
   /**
    * A {@link Parser} that executes {@code this}, and returns {@code value} if succeeds.
    */
-  public final <R> Parser<R> retn(R value) {
+  public final <R extends java.lang.Object> Parser<R> retn(R value) {
     return next(Parsers.constant(value));
   }
 
@@ -111,7 +77,7 @@ public abstract class Parser<T> {
    * A {@link Parser} that sequentially executes {@code this} and then {@code parser}. The return value of {@code
    * parser} is preserved.
    */
-  public final <R> Parser<R> next(Parser<R> parser) {
+  public final <R extends java.lang.Object> Parser<R> next(Parser<R> parser) {
     return Parsers.sequence(this, parser);
   }
 
@@ -119,7 +85,7 @@ public abstract class Parser<T> {
    * A {@link Parser} that executes {@code this}, maps the result using {@code map} to another {@code Parser} object
    * to be executed as the next step.
    */
-  public final <To> Parser<To> next(Map<? super T, ? extends Parser<? extends To>> map) {
+  public final <To extends java.lang.Object> Parser<To> next(Map<? super T, ? extends Parser<? extends To>> map) {
     return new BindNextParser<T, To>(this, map);
   }
 
@@ -219,7 +185,7 @@ public abstract class Parser<T> {
   /**
    * A {@link Parser} that runs {@code this} parser and transforms the return value using {@code map}.
    */
-  public final <R> Parser<R> map(Map<? super T, ? extends R> map) {
+  public final <R extends java.lang.Object> Parser<R> map(Map<? super T, ? extends R> map) {
     return new MapParser<T, R>(this, map);
   }
 
@@ -228,8 +194,7 @@ public abstract class Parser<T> {
    *
    * @param alternative the alternative parser to run if this fails.
    */
-  @SuppressWarnings("unchecked")
-  public final Parser<T> or(Parser<? extends T> alternative) {
+  @SuppressWarnings(value = { "unchecked" }) public final Parser<T> or(Parser<? extends T> alternative) {
     return Parsers.or(this, alternative);
   }
 
@@ -295,14 +260,14 @@ public abstract class Parser<T> {
   /**
    * A {@link Parser} that runs {@code consequence} if {@code this} succeeds, or {@code alternative} otherwise.
    */
-  public final <R> Parser<R> ifelse(Parser<? extends R> consequence, Parser<? extends R> alternative) {
+  public final <R extends java.lang.Object> Parser<R> ifelse(Parser<? extends R> consequence, Parser<? extends R> alternative) {
     return ifelse(Maps.constant(consequence), alternative);
   }
 
   /**
    * A {@link Parser} that runs {@code consequence} if {@code this} succeeds, or {@code alternative} otherwise.
    */
-  public final <R> Parser<R> ifelse(Map<? super T, ? extends Parser<? extends R>> consequence, Parser<? extends R> alternative) {
+  public final <R extends java.lang.Object> Parser<R> ifelse(Map<? super T, ? extends Parser<? extends R>> consequence, Parser<? extends R> alternative) {
     return new IfElseParser<R, T>(this, consequence, alternative);
   }
 
@@ -318,8 +283,7 @@ public abstract class Parser<T> {
    * Casts {@code this} to a {@link Parser} of type {@code R}. Use it only if you know the parser actually returns
    * value of type {@code R}.
    */
-  @SuppressWarnings("unchecked")
-  public final <R> Parser<R> cast() {
+  @SuppressWarnings(value = { "unchecked" }) public final <R extends java.lang.Object> Parser<R> cast() {
     return (Parser<R>) this;
   }
 
@@ -406,8 +370,7 @@ public abstract class Parser<T> {
    * <p/>
    * <p> {@code p.prefix(op)} is equivalent to {@code op* p} in EBNF.
    */
-  @SuppressWarnings("unchecked")
-  public final Parser<T> prefix(Parser<? extends Map<? super T, ? extends T>> op) {
+  @SuppressWarnings(value = { "unchecked" }) public final Parser<T> prefix(Parser<? extends Map<? super T, ? extends T>> op) {
     return Parsers.sequence(op.many(), this, Parsers.PREFIX_OPERATOR_MAP2);
   }
 
@@ -417,8 +380,7 @@ public abstract class Parser<T> {
    * <p/>
    * <p> {@code p.postfix(op)} is equivalent to {@code p op*} in EBNF.
    */
-  @SuppressWarnings("unchecked")
-  public final Parser<T> postfix(Parser<? extends Map<? super T, ? extends T>> op) {
+  @SuppressWarnings(value = { "unchecked" }) public final Parser<T> postfix(Parser<? extends Map<? super T, ? extends T>> op) {
     return Parsers.sequence(this, op.many(), Parsers.POSTFIX_OPERATOR_MAP2);
   }
 
@@ -442,7 +404,6 @@ public abstract class Parser<T> {
    * <p> {@code p.infixl(op)} is equivalent to {@code p (op p)*} in EBNF.
    */
   public final Parser<T> infixl(Parser<? extends Map2<? super T, ? super T, ? extends T>> op) {
-    // somehow generics doesn't work if we inline the code here.
     return Parsers.infixl(this, op);
   }
 
@@ -475,14 +436,26 @@ public abstract class Parser<T> {
     return new ReturnSourceParser(this);
   }
 
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  /**
+   * A {@link Parser} that, when run successfully, annotates the result with the source of the parse and its location,
+   * provided the result is an instance of {@link Locatable}.
+   */
+  public final Parser<T> locate() {
+    return new LocatableParser<T>(this);
+  }
+>>>>>>> /usr/src/app/output/jparsec/jparsec/ef02642abd641e654abd504ed36a5eb1571ec40c/src/main/java/org/codehaus/jparsec/Parser.java/right.java
+
+
   /**
    * A {@link Parser} that, when run successfully, calls a handler with the source and location of the parse.
    */
-  public final <U> Parser<T> locate(LocatableHandler<U> handler) {
+  public final <U extends java.lang.Object> Parser<T> locate(LocatableHandler<U> handler) {
     return new LocatableParser2<T, U>(this, handler);
   }
 
-  
   /**
    * A {@link Parser} that takes as input the {@link Token} collection returned by {@code lexer}, and runs {@code
    * this} to parse the tokens.
@@ -562,13 +535,13 @@ public abstract class Parser<T> {
   /**
    * Copies all content from {@code from} to {@code to}.
    */
-  @Private
-  static void copy(Readable from, Appendable to) throws IOException {
+  @Private static void copy(Readable from, Appendable to) throws IOException {
     CharBuffer buf = CharBuffer.allocate(2048);
-    for (; ; ) {
+    for ( ; ; ) {
       int r = from.read(buf);
-      if (r == -1)
+      if (r == -1) {
         break;
+      }
       buf.flip();
       to.append(buf, 0, r);
     }
@@ -594,8 +567,7 @@ public abstract class Parser<T> {
     return Parsers.parse(source, followedBy(Parsers.EOF), sourceLocator, moduleName);
   }
 
-  @SuppressWarnings("unchecked")
-  final T getReturn(ParseContext ctxt) {
+  @SuppressWarnings(value = { "unchecked" }) final T getReturn(ParseContext ctxt) {
     return (T) ctxt.result;
   }
 
@@ -608,9 +580,9 @@ public abstract class Parser<T> {
   }
 
   private ParserException asParserException(Throwable e, ParseContext ctxt) {
-    if (e instanceof ParserException)
+    if (e instanceof ParserException) {
       return (ParserException) e;
+    }
     return new ParserException(e, null, ctxt.module, ctxt.locator.locate(ctxt.getIndex()));
   }
-
 }
