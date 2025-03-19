@@ -25,7 +25,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -107,7 +109,7 @@ public class ExternalPythonExecutor {
         try {
             Process process = buildProcess(payload, processBuilder);
 
-            ScriptResults scriptResults = objectMapper.readValue(process.getInputStream(), ScriptResults.class);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String exception = scriptResults.getException();
             if (!StringUtils.isEmpty(exception)) {
                 logger.error(String.format("Failed to execute script {%s}", exception));
@@ -167,7 +169,24 @@ public class ExternalPythonExecutor {
         printWriter.println(payload);
         printWriter.flush();
 
+<<<<<<< /usr/src/app/output/cloudslang/score/95aa2f61f2de75969cc85f0718245c81203eeef7/runtime-management/runtime-management-impl/src/main/java/io/cloudslang/runtime/impl/python/external/ExternalPythonExecutor.java/left.java
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line;
+        StringBuilder returnResult = new StringBuilder();
+        while ((line = reader.readLine()) != null) {
+            returnResult.append(line);
+        }
+
+        boolean isInTime = process.waitFor(timeout, TimeUnit.MINUTES);
+        ScriptResults scriptResults = objectMapper.readValue(returnResult.toString(), ScriptResults.class);
+
+||||||| /usr/src/app/output/cloudslang/score/95aa2f61f2de75969cc85f0718245c81203eeef7/runtime-management/runtime-management-impl/src/main/java/io/cloudslang/runtime/impl/python/external/ExternalPythonExecutor.java/base.java
+        ScriptResults scriptResults = objectMapper.readValue(process.getInputStream(), ScriptResults.class);
+
+        boolean isInTime = process.waitFor(timeout, TimeUnit.MINUTES);
+=======
         boolean isInTime = process.waitFor(EXECUTION_TIMEOUT, TimeUnit.MINUTES);
+>>>>>>> /usr/src/app/output/cloudslang/score/95aa2f61f2de75969cc85f0718245c81203eeef7/runtime-management/runtime-management-impl/src/main/java/io/cloudslang/runtime/impl/python/external/ExternalPythonExecutor.java/right.java
         if (!isInTime) {
             process.destroy();
             throw new RuntimeException("Execution timed out");
