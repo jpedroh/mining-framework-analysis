@@ -45,7 +45,13 @@ public class IndexService {
         }
     }
 
-    public Map<String, String> getPaths(String tenant, List<String> wildcards) throws TooMuchDataExpectedException {
+<<<<<<< /usr/src/app/output/einsamhauer/disthene-reader/28a8ab2adb083fdca0b512255193aeb06dc1726a/src/main/java/net/iponweb/disthene/reader/service/index/IndexService.java/left.java
+    public Map<String, String> getPaths(String tenant, List<String> wildcards) {
+||||||| /usr/src/app/output/einsamhauer/disthene-reader/28a8ab2adb083fdca0b512255193aeb06dc1726a/src/main/java/net/iponweb/disthene/reader/service/index/IndexService.java/base.java
+    public List<String> getPaths(String tenant, List<String> wildcards) {
+=======
+    public List<String> getPaths(String tenant, List<String> wildcards) throws TooMuchDataExpectedException {
+>>>>>>> /usr/src/app/output/einsamhauer/disthene-reader/28a8ab2adb083fdca0b512255193aeb06dc1726a/src/main/java/net/iponweb/disthene/reader/service/index/IndexService.java/right.java
         List<String> regExs = new ArrayList<>();
         for(String wildcard : wildcards) {
             regExs.add(WildcardUtil.getPathsRegExFromWildcard(wildcard));
@@ -69,19 +75,56 @@ public class IndexService {
         }
 
         while (response.getHits().getHits().length > 0) {
+            for (SearchHit hit : response.getHits()) {
+                String path = (String) hit.field("path").getValue();
+
+<<<<<<< /usr/src/app/output/einsamhauer/disthene-reader/28a8ab2adb083fdca0b512255193aeb06dc1726a/src/main/java/net/iponweb/disthene/reader/service/index/IndexService.java/left.java
+                if (hit.getFields().containsKey("origin")) {
+                    result.put(path, (String) hit.field("origin").getValue());
+                } else {
+                    result.put(path, path);
+||||||| /usr/src/app/output/einsamhauer/disthene-reader/28a8ab2adb083fdca0b512255193aeb06dc1726a/src/main/java/net/iponweb/disthene/reader/service/index/IndexService.java/base.java
+        if (regExs.size() > 0) {
+            String regEx = Joiner.on("|").skipNulls().join(regExs);
+
+            SearchResponse response = client.prepareSearch(indexConfiguration.getIndex())
+                    .setScroll(new TimeValue(indexConfiguration.getTimeout()))
+                    .setSize(indexConfiguration.getScroll())
+                    .setQuery(QueryBuilders.filteredQuery(QueryBuilders.regexpQuery("path", regEx),
+                            FilterBuilders.termFilter("tenant", tenant)))
+                    .addField("path")
+                    .execute().actionGet();
+
+            // if total hits exceeds maximum - abort right away returning empty array
+            if (response.getHits().totalHits() > indexConfiguration.getMaxPaths()) {
+                return Collections.emptyList();
+            }
+
+            while (response.getHits().getHits().length > 0) {
+                for (SearchHit hit : response.getHits()) {
+                    result.add((String) hit.field("path").getValue());
+=======
+        if (regExs.size() > 0) {
+            String regEx = Joiner.on("|").skipNulls().join(regExs);
+
+            SearchResponse response = client.prepareSearch(indexConfiguration.getIndex())
+                    .setScroll(new TimeValue(indexConfiguration.getTimeout()))
+                    .setSize(indexConfiguration.getScroll())
+                    .setQuery(QueryBuilders.filteredQuery(QueryBuilders.regexpQuery("path", regEx),
+                            FilterBuilders.termFilter("tenant", tenant)))
+                    .addField("path")
+                    .execute().actionGet();
+
             // if total hits exceeds maximum - abort right away returning empty array
             if (response.getHits().totalHits() > indexConfiguration.getMaxPaths()) {
                 logger.debug("Total number of paths exceeds the limit: " + response.getHits().totalHits());
                 throw new TooMuchDataExpectedException("Total number of paths exceeds the limit: " + response.getHits().totalHits() + " (the limit is " + indexConfiguration.getMaxPaths() + ")");
             }
 
-            for (SearchHit hit : response.getHits()) {
-                String path = (String) hit.field("path").getValue();
-
-                if (hit.getFields().containsKey("origin")) {
-                    result.put(path, (String) hit.field("origin").getValue());
-                } else {
-                    result.put(path, path);
+            while (response.getHits().getHits().length > 0) {
+                for (SearchHit hit : response.getHits()) {
+                    result.add((String) hit.field("path").getValue());
+>>>>>>> /usr/src/app/output/einsamhauer/disthene-reader/28a8ab2adb083fdca0b512255193aeb06dc1726a/src/main/java/net/iponweb/disthene/reader/service/index/IndexService.java/right.java
                 }
             }
             response = client.prepareSearchScroll(response.getScrollId())
