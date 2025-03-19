@@ -1,39 +1,4 @@
-/*
- * #%L
- * ImgLib2: a general-purpose, multidimensional image processing library.
- * %%
- * Copyright (C) 2009 - 2015 Tobias Pietzsch, Stephan Preibisch, Barry DeZonia,
- * Stephan Saalfeld, Curtis Rueden, Albert Cardona, Christian Dietz, Jean-Yves
- * Tinevez, Johannes Schindelin, Jonathan Hale, Lee Kamentsky, Larry Lindsey, Mark
- * Hiner, Michael Zinsmaier, Martin Horn, Grant Harris, Aivar Grislis, John
- * Bogovic, Steffen Jaensch, Stefan Helfrich, Jan Funke, Nick Perry, Mark Longair,
- * Melissa Linkert and Dimiter Prodanov.
- * %%
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- * #L%
- */
-
 package net.imglib2.view;
-
 import net.imglib2.AbstractEuclideanSpace;
 import net.imglib2.Interval;
 import net.imglib2.Localizable;
@@ -54,186 +19,131 @@ import net.imglib2.View;
  * @author ImgLib2 developers
  * @author Stephan Saalfeld <saalfeld@mpi-cbg.de>
  */
-public class RandomAccessibleOnRealRandomAccessible< T > extends AbstractEuclideanSpace implements RandomAccessible< T >, View
-{
-	final protected RealRandomAccessible< T > source;
+public class RandomAccessibleOnRealRandomAccessible<T extends java.lang.Object> extends AbstractEuclideanSpace implements RandomAccessible<T>, View {
+  final protected RealRandomAccessible<T> source;
 
-	final protected class RandomAccessOnRealRandomAccessible implements RandomAccess< T >
-	{
-		final protected RealRandomAccess< T > sourceAccess;
+  final protected class RandomAccessOnRealRandomAccessible implements RandomAccess<T> {
+    final protected RealRandomAccess<T> sourceAccess;
 
-		public RandomAccessOnRealRandomAccessible( final RealRandomAccess< T > sourceAccess )
-		{
-			this.sourceAccess = sourceAccess;
-		}
+    public RandomAccessOnRealRandomAccessible(final RealRandomAccess<T> sourceAccess) {
+      this.sourceAccess = sourceAccess;
+    }
 
-		@Override
-		public void localize( final int[] position )
-		{
-			for ( int d = 0; d < n; ++d )
-				position[ d ] = ( int ) Math.round( sourceAccess.getDoublePosition( d ) );
-		}
+    @Override public void localize(final int[] position) {
+      for (int d = 0; d < n; ++d) {
+        position[d] = (int) Math.round(sourceAccess.getDoublePosition(d));
+      }
+    }
 
-		@Override
-		public void localize( final long[] position )
-		{
-			for ( int d = 0; d < n; ++d )
-				position[ d ] = Math.round( sourceAccess.getDoublePosition( d ) );
-		}
+    @Override public void localize(final long[] position) {
+      for (int d = 0; d < n; ++d) {
+        position[d] = Math.round(sourceAccess.getDoublePosition(d));
+      }
+    }
 
-		@Override
-		public int getIntPosition( final int d )
-		{
-			return ( int ) Math.round( sourceAccess.getDoublePosition( d ) );
-		}
+    @Override public int getIntPosition(final int d) {
+      return (int) Math.round(sourceAccess.getDoublePosition(d));
+    }
 
-		@Override
-		public long getLongPosition( final int d )
-		{
-			return Math.round( sourceAccess.getDoublePosition( d ) );
-		}
+    @Override public long getLongPosition(final int d) {
+      return Math.round(sourceAccess.getDoublePosition(d));
+    }
 
-		@Override
-		public void localize( final float[] position )
-		{
-			sourceAccess.localize( position );
-		}
+    @Override public void localize(final float[] position) {
+      sourceAccess.localize(position);
+    }
 
-		@Override
-		public void localize( final double[] position )
-		{
-			sourceAccess.localize( position );
-		}
+    @Override public void localize(final double[] position) {
+      sourceAccess.localize(position);
+    }
 
-		@Override
-		public float getFloatPosition( final int d )
-		{
-			return sourceAccess.getFloatPosition( d );
-		}
+    @Override public float getFloatPosition(final int d) {
+      return sourceAccess.getFloatPosition(d);
+    }
 
-		@Override
-		public double getDoublePosition( final int d )
-		{
-			return sourceAccess.getDoublePosition( d );
-		}
+    @Override public double getDoublePosition(final int d) {
+      return sourceAccess.getDoublePosition(d);
+    }
 
-		@Override
-		public void fwd( final int d )
-		{
-			sourceAccess.fwd( d );
-		}
+    @Override public void fwd(final int d) {
+      sourceAccess.fwd(d);
+    }
 
-		@Override
-		public void bck( final int d )
-		{
-			sourceAccess.bck( d );
-		}
+    @Override public void bck(final int d) {
+      sourceAccess.bck(d);
+    }
 
-		@Override
-		public void move( final int distance, final int d )
-		{
-			sourceAccess.move( distance, d );
-		}
+    @Override public void move(final int distance, final int d) {
+      sourceAccess.move(distance, d);
+    }
 
-		@Override
-		public void move( final long distance, final int d )
-		{
-			sourceAccess.move( distance, d );
-		}
+    @Override public void move(final long distance, final int d) {
+      sourceAccess.move(distance, d);
+    }
 
-		@Override
-		public void move( final Localizable localizable )
-		{
-			sourceAccess.move( localizable );
-		}
+    @Override public void move(final Localizable localizable) {
+      sourceAccess.move(localizable);
+    }
 
-		@Override
-		public void move( final int[] distance )
-		{
-			sourceAccess.move( distance );
-		}
+    @Override public void move(final int[] distance) {
+      sourceAccess.move(distance);
+    }
 
-		@Override
-		public void move( final long[] distance )
-		{
-			sourceAccess.move( distance );
-		}
+    @Override public void move(final long[] distance) {
+      sourceAccess.move(distance);
+    }
 
-		@Override
-		public void setPosition( final Localizable localizable )
-		{
-			sourceAccess.setPosition( localizable );
-		}
+    @Override public void setPosition(final Localizable localizable) {
+      sourceAccess.setPosition(localizable);
+    }
 
-		@Override
-		public void setPosition( final int[] position )
-		{
-			sourceAccess.setPosition( position );
-		}
+    @Override public void setPosition(final int[] position) {
+      sourceAccess.setPosition(position);
+    }
 
-		@Override
-		public void setPosition( final long[] position )
-		{
-			sourceAccess.setPosition( position );
-		}
+    @Override public void setPosition(final long[] position) {
+      sourceAccess.setPosition(position);
+    }
 
-		@Override
-		public void setPosition( final int position, final int d )
-		{
-			sourceAccess.setPosition( position, d );
-		}
+    @Override public void setPosition(final int position, final int d) {
+      sourceAccess.setPosition(position, d);
+    }
 
-		@Override
-		public void setPosition( final long position, final int d )
-		{
-			sourceAccess.setPosition( position, d );
-		}
+    @Override public void setPosition(final long position, final int d) {
+      sourceAccess.setPosition(position, d);
+    }
 
-		@Override
-		public T get()
-		{
-			return sourceAccess.get();
-		}
+    @Override public T get() {
+      return sourceAccess.get();
+    }
 
-		@Override
-		public RandomAccessOnRealRandomAccessible copy()
-		{
-			return new RandomAccessOnRealRandomAccessible( sourceAccess.copyRealRandomAccess() );
-		}
+    @Override public RandomAccessOnRealRandomAccessible copy() {
+      return new RandomAccessOnRealRandomAccessible(sourceAccess.copyRealRandomAccess());
+    }
 
-		@Override
-		public RandomAccessOnRealRandomAccessible copyRandomAccess()
-		{
-			return copy();
-		}
+    @Override public RandomAccessOnRealRandomAccessible copyRandomAccess() {
+      return copy();
+    }
 
-		@Override
-		public int numDimensions()
-		{
-			return n;
-		}
-	}
+    @Override public int numDimensions() {
+      return n;
+    }
+  }
 
-	public RealRandomAccessible< T > getSource()
-	{
-	    return source;
-	}
+  public RealRandomAccessible<T> getSource() {
+    return source;
+  }
 
-	public RandomAccessibleOnRealRandomAccessible( final RealRandomAccessible< T > source )
-	{
-		super( source.numDimensions() );
-		this.source = source;
-	}
+  public RandomAccessibleOnRealRandomAccessible(final RealRandomAccessible<T> source) {
+    super(source.numDimensions());
+    this.source = source;
+  }
 
-	@Override
-	public RandomAccess< T > randomAccess()
-	{
-		return new RandomAccessOnRealRandomAccessible( source.realRandomAccess() );
-	}
+  @Override public RandomAccess<T> randomAccess() {
+    return new RandomAccessOnRealRandomAccessible(source.realRandomAccess());
+  }
 
-	@Override
-	public RandomAccess< T > randomAccess( final Interval interval )
-	{
-		return new RandomAccessOnRealRandomAccessible( source.realRandomAccess( interval ) );
-	}
+  @Override public RandomAccess<T> randomAccess(final Interval interval) {
+    return new RandomAccessOnRealRandomAccessible(source.realRandomAccess(interval));
+  }
 }
