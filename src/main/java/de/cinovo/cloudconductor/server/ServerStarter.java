@@ -1,6 +1,7 @@
 package de.cinovo.cloudconductor.server;
 
 /*
+<<<<<<< /usr/src/app/output/cinovo/cloudconductor-server/55b31adbcbc6413b1b147d6f6259f51de37e0ec0/src/main/java/de/cinovo/cloudconductor/server/ServerStarter.java/left.java
  * #%L
  * cloudconductor-server
  * %%
@@ -9,6 +10,20 @@ package de.cinovo.cloudconductor.server;
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
  *
+||||||| /usr/src/app/output/cinovo/cloudconductor-server/55b31adbcbc6413b1b147d6f6259f51de37e0ec0/src/main/java/de/cinovo/cloudconductor/server/ServerStarter.java/base.java
+ * #%L
+ * cloudconductor-server
+ * %%
+ * Copyright (C) 2013 - 2014 Cinovo AG
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of the License at
+ * 
+=======
+ * #%L cloudconductor-server %% Copyright (C) 2013 - 2014 Cinovo AG %% Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may obtain a copy of the License at
+ * 
+>>>>>>> /usr/src/app/output/cinovo/cloudconductor-server/55b31adbcbc6413b1b147d6f6259f51de37e0ec0/src/main/java/de/cinovo/cloudconductor/server/ServerStarter.java/right.java
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
@@ -61,14 +76,14 @@ public class ServerStarter extends SpringDaemonAdapter {
 	public static final String INSTALLING_DAEMON_NAME = "cloudconductor_INSTALLING";
 	/** the logger */
 	private static final Logger log = Logger.getLogger(ServerStarter.class);
-	
+
 	/** scheduler service */
 	public static final ScheduledExecutorService ses = Executors.newScheduledThreadPool(10);
-	
+
 	private static final int CLEANUP_TIMER = 30;
 	private static final int INDEX_TIMER = 60;
-	
-	
+
+
 	/**
 	 * Main method.
 	 *
@@ -81,12 +96,12 @@ public class ServerStarter extends SpringDaemonAdapter {
 			DaemonStarter.startDaemon(ServerStarter.INSTALLING_DAEMON_NAME, new InstallationAdapter());
 		}
 	}
-	
+
 	private static boolean checkInstalled() {
 		File f = new File(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
 		return f.exists();
 	}
-	
+
 	@Override
 	protected void doBeforeSpringStart() {
 		// In dev mode all classes related to the config server should log on the level DEBUG.
@@ -96,17 +111,17 @@ public class ServerStarter extends SpringDaemonAdapter {
 		Velocity.setProperty("runtime.log.logsystem.log4j.logger", "org.apache.velocity");
 		super.doBeforeSpringStart();
 	}
-	
+
 	@Override
 	protected void doAfterSpringStart() {
 		CleanUpTask cleanup = this.getContext().getBean("cleanuptask", CleanUpTask.class);
 		ServerStarter.ses.scheduleAtFixedRate(cleanup, 0, ServerStarter.CLEANUP_TIMER, TimeUnit.MINUTES);
-		
+
 		if (System.getProperty("repo.indexscan", "false").equals("true")) {
 			IndexTask index = this.getContext().getBean("indextask", IndexTask.class);
 			ServerStarter.ses.scheduleAtFixedRate(index, 0, ServerStarter.INDEX_TIMER, TimeUnit.SECONDS);
 		}
-		
+
 		JMXResourceProvider prov = this.getContext().getBean(JMXResourceProvider.class);
 		final String name = prov.getClass().getName() + ":type=" + prov.getClass().getSimpleName();
 		try {
@@ -116,12 +131,12 @@ public class ServerStarter extends SpringDaemonAdapter {
 		}
 		super.doAfterSpringStart();
 	}
-	
+
 	@Override
 	public void exception(LifecyclePhase phase, Throwable exception) {
 		ServerStarter.log.error(String.format(ServerStarter.EXCEPTION_IN_PHASE, phase.name()), exception);
 	}
-	
+
 	@Override
 	public IPropertyProvider getPropertyProvider() {
 		return new FilePropertyProvider(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
