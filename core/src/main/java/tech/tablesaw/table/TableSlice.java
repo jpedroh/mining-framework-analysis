@@ -224,6 +224,7 @@ public class TableSlice extends Relation {
    * Iterate over the underlying rows in the source table. If you set one of the
    * rows while iterating it will change the row in the source table.
    */
+  /** Iterate of a copy of the table. */
   @Override
   public Iterator<Row> iterator() {
 
