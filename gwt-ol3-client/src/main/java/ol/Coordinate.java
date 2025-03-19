@@ -1,7 +1,5 @@
 package ol;
-
 import javax.validation.constraints.NotNull;
-
 import com.google.gwt.core.client.JavaScriptObject;
 
 /**
@@ -10,23 +8,21 @@ import com.google.gwt.core.client.JavaScriptObject;
  * @author sbaumhekel
  */
 public class Coordinate extends JavaScriptObject {
+  @Deprecated protected Coordinate() {
+  }
 
-    @Deprecated
-    protected Coordinate() {
-    }
-
-    /**
+  /**
      * Creates an instance.
      *
-     * @param x X-coordinate (longitude)
-     * @param y Y-coordinate (latitude)
+     * @param x
+     *            X-coordinate (longitude)
+     * @param y
+     *            Y-coordinate (latitude)
      * @return {@link Coordinate}
      */
-    public static native Coordinate create(@NotNull double x, @NotNull double y) /*-{
-        return [x, y];
-    }-*/;
+  public static native Coordinate create(@NotNull double x, @NotNull double y);
 
-    /**
+  /**
      * Add `delta` to `coordinate`. `coordinate` is modified in place and
      * returned by the function. Example: var coord = [7.85, 47.983333];
      * ol.coordinate.add(coord, [-2, 4]); // coord is now [5.85, 51.983333]
@@ -35,137 +31,127 @@ public class Coordinate extends JavaScriptObject {
      *            {ol.Coordinate} delta Delta.
      * @return {ol.Coordinate} The input coordinate adjusted by the given delta.
      */
-    public final native Coordinate add(Coordinate delta) /*-{
-    	return $wnd.ol.coordinate.add(this, delta);
-    }-*/;
+  public final native Coordinate add(Coordinate delta);
 
-    /**
+  /**
      * Clones this object.
      *
      * @return {ol.Coordinate} clone
      */
-    public final native Coordinate cloneObject() /*-{
-    	return this.slice(0);
-    }-*/;
+  public final native Coordinate cloneObject();
 
-    /**
+  /**
      * Gets the value at a given index.
      *
      * @param index
      *            the index to be retrieved
      * @return the value at the given index
      */
-    private final native double get(int index) /*-{
-    	return this[index];
-    }-*/;
+  private final native double get(int index);
 
-	/**
+  /**
 	 * Sets the value at a given index.
 	 *
 	 * @param index the index to be retrieved
 	 * @param value to set
 	 */
-	private final native double set(int index, double value) /*-{
-		this[index] = value;
-	}-*/;
+  private final native double set(int index, double value);
 
-    /**
+  /**
      * Gets the dimension of this coordinate.
      *
      * @return dimension
      */
-    public final int getDimension() {
-        return this.length();
-    }
+  public final int getDimension() {
+    return this.length();
+  }
 
-    /**
+  /**
      * Gets the X-coordinate (longitude).
      *
      * @return X-coordinate (longitude)
      */
-    public final double getX() {
-        if (this.getDimension() > 0) {
-            return this.get(0);
-        }
-        return Double.NaN;
+  public final double getX() {
+    if (this.getDimension() > 0) {
+      return this.get(0);
     }
+    return Double.NaN;
+  }
 
-	/**
+  /**
 	 * Sets the X-coordinate (longitude).
 	 *
 	 * @param x X-coordinate (longitude)
 	 */
-	public final double setX(double x) {
-		if (this.getDimension() > 0) {
-			return this.set(0, x);
-		}
-		return Double.NaN;
-	}
+  public final double setX(double x) {
+    if (this.getDimension() > 0) {
+      return this.set(0, x);
+    }
+    return Double.NaN;
+  }
 
-    /**
+  /**
      * Gets the Y-coordinate (latitude).
      *
      * @return Y-coordinate (latitude)
      */
-    public final double getY() {
-        if (this.getDimension() > 1) {
-            return this.get(1);
-        }
-        return Double.NaN;
+  public final double getY() {
+    if (this.getDimension() > 1) {
+      return this.get(1);
     }
+    return Double.NaN;
+  }
 
-	/**
+  /**
 	 * Sets the Y-coordinate (latitude).
 	 *
 	 * @param y Y-coordinate (latitude)
 	 */
-	public final double setY(double y) {
-		if (this.getDimension() > 1) {
-			return this.set(1, y);
-		}
-		return Double.NaN;
-	}
+  public final double setY(double y) {
+    if (this.getDimension() > 1) {
+      return this.set(1, y);
+    }
+    return Double.NaN;
+  }
 
-    /**
+  /**
      * Gets the Y-coordinate (latitude).
      *
      * @return Y-coordinate (latitude)
      */
-    public final double getZ() {
-        if (this.getDimension() > 2) {
-            return this.get(2);
-        }
-        return Double.NaN;
+  public final double getZ() {
+    if (this.getDimension() > 2) {
+      return this.get(2);
     }
+    return Double.NaN;
+  }
 
-    /**
+  /**
      * Gets the latitude.
      *
      * @return latitude
      */
-    public final double lat() {
-        return this.getY();
-    }
+  public final double lat() {
+    return this.getY();
+  }
 
-    /**
+  /**
      * Gets the length of the array.
      *
      * @return the array length
      */
-    public final native int length() /*-{
-    	return this.length;
-    }-*/;
+  public final native int length();
 
-    /**
+  /**
      * Gets the longitude.
      *
      * @return longitude
      */
-    public final double lon() {
-        return this.getX();
-    }
+  public final double lon() {
+    return this.getX();
+  }
 
-    /**
+  /**
      * Returns a {@link ol.CoordinateFormatType} function that can be used to format
      * a {ol.Coordinate} to a string.
      *
@@ -173,12 +159,9 @@ public class Coordinate extends JavaScriptObject {
      * Default is `0`
      * @return format function
      */
-    public final static native JavaScriptObject createStringXY(int fractionDigits)
-    /*-{
-    	return $wnd.ol.coordinate.createStringXY(fractionDigits);
-    }-*/;
+  public final static native JavaScriptObject createStringXY(int fractionDigits);
 
-    /**
+  /**
      * Format a coordinate as a comma delimited string. Example without
      * specifying fractional digits: var coord = [7.85, 47.983333]; var out =
      * ol.coordinate.toStringXY(coord); // out is now '8, 48' Example explicitly
@@ -191,8 +174,5 @@ public class Coordinate extends JavaScriptObject {
      * @return {string} XY.
      * @api stable
      */
-    public final native String toStringXY(int fractionDigits) /*-{
-    	return $wnd.ol.coordinate.toStringXY(this, fractionDigits);
-    }-*/;
-
+  public final native String toStringXY(int fractionDigits);
 }

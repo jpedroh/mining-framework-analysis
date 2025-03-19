@@ -1,5 +1,4 @@
 package ol;
-
 import com.google.gwt.junit.tools.GWTTestSuite;
 import junit.framework.TestSuite;
 import ol.control.FullScreenTest;
@@ -32,6 +31,8 @@ import ol.interaction.SnapTest;
 import ol.interaction.TranslateTest;
 import ol.layer.LayerGroupTest;
 import ol.proj.ProjectionTest;
+import ol.source.ImageArcGISRestTest;
+import ol.source.TileWMSTest;
 import ol.style.RegularShapeTest;
 
 /**
@@ -41,78 +42,50 @@ import ol.style.RegularShapeTest;
  *
  */
 public class GwtOL3TestSuite extends GWTTestSuite {
-
-    public static TestSuite suite() {
-
-        TestSuite suite = new TestSuite("Tests for GwtOL3-Wrapper");
-
-        suite.addTestSuite(AttributionTest.class);
-        suite.addTestSuite(CollectionTest.class);
-        suite.addTestSuite(FeatureTest.class);
-        suite.addTestSuite(GraticuleTest.class);
-        suite.addTestSuite(MapTest.class);
-        suite.addTestSuite(OverlayTest.class);
-        suite.addTestSuite(SphereTest.class);
-        suite.addTestSuite(ViewTest.class);
-
-        // controls
-        suite.addTestSuite(ol.control.AttributionTest.class);
-        suite.addTestSuite(FullScreenTest.class);
-        suite.addTestSuite(MousePositionTest.class);
-        suite.addTestSuite(RotateTest.class);
-        suite.addTestSuite(ScaleLineTest.class);
-        suite.addTestSuite(ZoomSliderTest.class);
-        suite.addTestSuite(ZoomToExtentTest.class);
-
-        // formats
-        suite.addTestSuite(GeoJSONTest.class);
-
-        // geometries
-        suite.addTestSuite(CircleTest.class);
-        suite.addTestSuite(GeometryCollectionTest.class);
-        suite.addTestSuite(PointTest.class);
-
-        // interactions
-        suite.addTestSuite(DoubleClickZoomTest.class);
-        suite.addTestSuite(DragAndDropTest.class);
-        suite.addTestSuite(DragBoxTest.class);
-        suite.addTestSuite(DragPanTest.class);
-        suite.addTestSuite(DragRotateAndZoomTest.class);
-        suite.addTestSuite(DragRotateTest.class);
-        suite.addTestSuite(DragZoomTest.class);
-        suite.addTestSuite(DrawTest.class);
-        suite.addTestSuite(ExtentTest.class);
-        suite.addTestSuite(KeyboardPanTest.class);
-        suite.addTestSuite(KeyboardZoomTest.class);
-        suite.addTestSuite(ModifyTest.class);
-        suite.addTestSuite(MouseWheelZoomTest.class);
-        suite.addTestSuite(PinchRotateTest.class);
-        suite.addTestSuite(PinchZoomTest.class);
-        suite.addTestSuite(SelectTest.class);
-        suite.addTestSuite(SnapTest.class);
-        suite.addTestSuite(TranslateTest.class);
-
-        // layers
-        suite.addTestSuite(LayerGroupTest.class);
-        
-        //source
-        suite.addTestSuite(ImageArcGISRestTest.class);
-        suite.addTestSuite(TileWMSTest.class);
-
-        // source
-        suite.addTestSuite(ImageArcGISRestTest.class);
-
-        // projection
-        suite.addTestSuite(ProjectionTest.class);
-
-        // style
-        suite.addTestSuite(RegularShapeTest.class);
-
-        return suite;
-
-    }
-
+  public static TestSuite suite() {
+    TestSuite suite = new TestSuite("Tests for GwtOL3-Wrapper");
+    suite.addTestSuite(AttributionTest.class);
+    suite.addTestSuite(CollectionTest.class);
+    suite.addTestSuite(FeatureTest.class);
+    suite.addTestSuite(GraticuleTest.class);
+    suite.addTestSuite(MapTest.class);
+    suite.addTestSuite(OverlayTest.class);
+    suite.addTestSuite(SphereTest.class);
+    suite.addTestSuite(ViewTest.class);
+    suite.addTestSuite(ol.control.AttributionTest.class);
+    suite.addTestSuite(FullScreenTest.class);
+    suite.addTestSuite(MousePositionTest.class);
+    suite.addTestSuite(RotateTest.class);
+    suite.addTestSuite(ScaleLineTest.class);
+    suite.addTestSuite(ZoomSliderTest.class);
+    suite.addTestSuite(ZoomToExtentTest.class);
+    suite.addTestSuite(GeoJSONTest.class);
+    suite.addTestSuite(CircleTest.class);
+    suite.addTestSuite(GeometryCollectionTest.class);
+    suite.addTestSuite(PointTest.class);
+    suite.addTestSuite(DoubleClickZoomTest.class);
+    suite.addTestSuite(DragAndDropTest.class);
+    suite.addTestSuite(DragBoxTest.class);
+    suite.addTestSuite(DragPanTest.class);
+    suite.addTestSuite(DragRotateAndZoomTest.class);
+    suite.addTestSuite(DragRotateTest.class);
+    suite.addTestSuite(DragZoomTest.class);
+    suite.addTestSuite(DrawTest.class);
+    suite.addTestSuite(ExtentTest.class);
+    suite.addTestSuite(KeyboardPanTest.class);
+    suite.addTestSuite(KeyboardZoomTest.class);
+    suite.addTestSuite(ModifyTest.class);
+    suite.addTestSuite(MouseWheelZoomTest.class);
+    suite.addTestSuite(PinchRotateTest.class);
+    suite.addTestSuite(PinchZoomTest.class);
+    suite.addTestSuite(SelectTest.class);
+    suite.addTestSuite(SnapTest.class);
+    suite.addTestSuite(TranslateTest.class);
+    suite.addTestSuite(LayerGroupTest.class);
+    suite.addTestSuite(ImageArcGISRestTest.class);
+    suite.addTestSuite(TileWMSTest.class);
+    suite.addTestSuite(ProjectionTest.class);
+    suite.addTestSuite(RegularShapeTest.class);
+    return suite;
+  }
 }
-
-
-import ol.source.ImageArcGISRestTest;

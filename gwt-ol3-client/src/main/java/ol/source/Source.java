@@ -1,9 +1,9 @@
 package ol.source;
-
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 import ol.Attribution;
+import ol.Constant;
 import ol.LogoOptions;
 import ol.proj.Projection;
 
@@ -16,68 +16,63 @@ import ol.proj.Projection;
  * @author Tino Desjardins
  *
  */
-@JsType(isNative = true)
-public class Source extends ol.Object {
-    
-    /**
+@JsType(isNative = true) public class Source extends ol.Object {
+  /**
      * Get the attributions of the source.
      * 
      * @return {Array.<ol.Attribution>} Attributions.
      */
-    public native Attribution[] getAttributions();
+  public native Attribution[] getAttributions();
 
-  	/**
+  /**
   	 * Get the logo of the source.
   	 *
   	 * @return {@link LogoOptions}
   	 */
-  	public native LogoOptions getLogo();
-  	
-    /**
+  public native LogoOptions getLogo();
+
+  /**
      * Get the projection of the source.
      * 
      * @return {ol.proj.Projection} Projection.
      */
-    public native Projection getProjection();
+  public native Projection getProjection();
 
-    /**
+  /**
      * @return {Array.<number>|undefined} Resolutions.
      */
-    public native double[] getResolutions();
+  public native double[] getResolutions();
 
-    /**
+  /**
      * Get the state of the source: one of 'undefined', 'loading', 'ready' or
      * 'error'.
      * 
      * @return {ol.source.State} State.
      */
-  	@JsMethod(name = "getState")
-    public native String getStateString();
+  @JsMethod(name = "getState") public native String getStateString();
 
-  	@JsOverlay
-  	public final State getState() {
-  		return Constant.of(State.class, getStateString());
-  	}
-  	
-    /**
+  @JsOverlay public final State getState() {
+    return Constant.of(State.class, getStateString());
+  }
+
+  /**
      * Refreshes the source and finally dispatches a 'change' event.
      */
-    public native void refresh();
-    
-    /**
+  public native void refresh();
+
+  /**
      * Set the attributions of the source.
      * 
      * @param attributions
      *            Attributions.
      */
-    public native void setAttributions(Attribution[] attributions);
+  public native void setAttributions(Attribution[] attributions);
 
-    /**
+  /**
      * Set the projection of the source.
      * 
      * @param projection
      *            Projection.
      */
-    public native void setProjection(Projection projection);
-    
+  public native void setProjection(Projection projection);
 }
