@@ -46,9 +46,19 @@ public class CronParserCron4JIntegrationTest {
         String cronExpr = "* * L * *";
     }
 
+    //@Test TODO issue 202
+
+<<<<<<< /usr/src/app/output/jmrozanec/cron-utils/2b5dd7d8b481e7159e10af22ea628451c93303bf/src/test/java/com/cronutils/parser/CronParserCron4JIntegrationTest.java/left.java
+    public void testParseSunday() throws Exception {
+        String cronExpr = "* * * * sun";
+        cron4jParser.parse(cronExpr);
+    }
+||||||| /usr/src/app/output/jmrozanec/cron-utils/2b5dd7d8b481e7159e10af22ea628451c93303bf/src/test/java/com/cronutils/parser/CronParserCron4JIntegrationTest.java/base.java
+=======
     @Test //issue 202
     public void testParseSunday() {
         String cronExpr = "* * * * sun";
         cron4jParser.parse(cronExpr);
     }
+>>>>>>> /usr/src/app/output/jmrozanec/cron-utils/2b5dd7d8b481e7159e10af22ea628451c93303bf/src/test/java/com/cronutils/parser/CronParserCron4JIntegrationTest.java/right.java
 }
