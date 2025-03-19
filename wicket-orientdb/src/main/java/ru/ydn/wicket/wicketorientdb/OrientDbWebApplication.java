@@ -1,5 +1,5 @@
 package ru.ydn.wicket.wicketorientdb;
-
+import ru.ydn.wicket.wicketorientdb.converter.HexConverter;
 import com.orientechnologies.orient.core.Orient;
 import com.orientechnologies.orient.core.db.ODatabase;
 import com.orientechnologies.orient.core.db.ODatabaseInternal;
@@ -21,7 +21,6 @@ import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
 import org.apache.wicket.core.util.lang.PropertyResolver;
 import org.apache.wicket.protocol.http.WebApplication;
 import ru.ydn.wicket.wicketorientdb.components.IHookPosition;
-import ru.ydn.wicket.wicketorientdb.converter.HexConverter;
 import ru.ydn.wicket.wicketorientdb.converter.ODocumentConverter;
 import ru.ydn.wicket.wicketorientdb.converter.OIdentifiableConverter;
 import ru.ydn.wicket.wicketorientdb.rest.OrientDBHttpAPIResource;
