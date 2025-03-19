@@ -349,7 +349,6 @@ public class Converters
 			return ( IterableRealInterval< B > ) source;
 		return new ConvertedIterableRealInterval<>( source, converter, b );
 	}
-
 	/**
 	 * Create a {@link RandomAccessibleInterval} whose {@link RandomAccess
 	 * RandomAccesses} {@link RandomAccess#get()} you a converted sample.
@@ -649,6 +648,14 @@ public class Converters
 				argbChannel( source, 2 ),
 				argbChannel( source, 3 ) );
 	}
+	final static public RandomAccessibleInterval< UnsignedByteType > argbChannels( final RandomAccessibleInterval< ARGBType > source, final int... channels )
+	{
+		final ArrayList< RandomAccessibleInterval< UnsignedByteType > > hyperSlices = new ArrayList<>();
+		for ( final int channel : channels )
+			hyperSlices.add( argbChannel( source, channel ) );
+
+		return Views.stack( hyperSlices );
+	}
 
 	/**
 	 * Create an (<em>n</em>+1)-dimensional {@link RandomAccessible} of an
@@ -665,14 +672,6 @@ public class Converters
 	 *         into and from the corresponding channels of the original
 	 *         {@link ARGBType}.
 	 */
-	final static public RandomAccessibleInterval< UnsignedByteType > argbChannels( final RandomAccessibleInterval< ARGBType > source, final int... channels )
-	{
-		final ArrayList< RandomAccessibleInterval< UnsignedByteType > > hyperSlices = new ArrayList<>();
-		for ( final int channel : channels )
-			hyperSlices.add( argbChannel( source, channel ) );
-
-		return Views.stack( hyperSlices );
-	}
 
 	/**
 	 * Create an <em>n</em>-dimensional color image from an
