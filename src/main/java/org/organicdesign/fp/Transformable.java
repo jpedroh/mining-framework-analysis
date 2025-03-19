@@ -67,7 +67,7 @@ public interface Transformable<T> extends Realizable<T> {
      @return the first item that passes the test, or null if no such item is found
      */
     @Deprecated
-    Option<T> firstMatching(Predicate<T> pred);
+    T firstMatching(Predicate<T> pred);
 
     // TODO: You can always use foldLeft for this operation.  Does having reduceLeft add more clarity to the underlying code, or does it provide some useful additional functionality?
 //    /**
