@@ -1,5 +1,4 @@
 package com.plaid.client.response;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -9,6 +8,7 @@ import java.util.Objects;
  **/
 public class AssetReportGetResponse extends BaseResponse {
   private AssetReport report;
+
   private List<Warning> warnings;
 
   public AssetReport getReport() {
@@ -21,10 +21,15 @@ public class AssetReportGetResponse extends BaseResponse {
 
   public static final class AssetReport {
     private String assetReportId;
+
     private String clientReportId;
+
     private Date dateGenerated;
+
     private Integer daysRequested;
+
     private User user;
+
     private List<Item> items;
 
     public String getAssetReportId() {
@@ -54,11 +59,17 @@ public class AssetReportGetResponse extends BaseResponse {
 
   public static final class User {
     private String clientUserId;
+
     private String firstName;
+
     private String middleName;
+
     private String lastName;
+
     private String ssn;
+
     private String phoneNumber;
+
     private String email;
 
     public String getClientUserId() {
@@ -89,8 +100,7 @@ public class AssetReportGetResponse extends BaseResponse {
       return email;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
       if (this == obj) {
         return true;
       }
@@ -98,27 +108,23 @@ public class AssetReportGetResponse extends BaseResponse {
         return false;
       }
       User user = (User) obj;
-      return Objects.equals(clientUserId, user.clientUserId) &&
-          Objects.equals(firstName, user.firstName) &&
-          Objects.equals(middleName, user.middleName) &&
-          Objects.equals(lastName, user.lastName) &&
-          Objects.equals(ssn, user.ssn) &&
-          Objects.equals(phoneNumber, user.phoneNumber) &&
-          Objects.equals(email, user.email);
+      return Objects.equals(clientUserId, user.clientUserId) && Objects.equals(firstName, user.firstName) && Objects.equals(middleName, user.middleName) && Objects.equals(lastName, user.lastName) && Objects.equals(ssn, user.ssn) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(email, user.email);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
       return Objects.hash(clientUserId, firstName, middleName, lastName, ssn, phoneNumber, email);
     }
   }
 
-  // The item object returned in an asset report
   public static final class Item {
     private String itemId;
+
     private String institutionName;
+
     private String institutionId;
+
     private Date dateLastUpdated;
+
     private List<Account> accounts;
 
     public String getItemId() {
@@ -141,8 +147,7 @@ public class AssetReportGetResponse extends BaseResponse {
       return accounts;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
       if (this == obj) {
         return true;
       }
@@ -150,29 +155,35 @@ public class AssetReportGetResponse extends BaseResponse {
         return false;
       }
       Item item = (Item) obj;
-      return Objects.equals(itemId, item.itemId) &&
-          Objects.equals(institutionName, item.institutionName) &&
-          Objects.equals(institutionId, item.institutionId) &&
-          Objects.equals(accounts, item.accounts);
+      return Objects.equals(itemId, item.itemId) && Objects.equals(institutionName, item.institutionName) && Objects.equals(institutionId, item.institutionId) && Objects.equals(accounts, item.accounts);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
       return Objects.hash(itemId, institutionName, institutionId, accounts);
     }
   }
 
   public static final class Account {
     private String accountId;
+
     private String mask;
+
     private String name;
+
     private String officialName;
+
     private String type;
+
     private String subtype;
+
     private List<Owner> owners;
+
     private Balance balances;
+
     private List<HistoricalBalance> historicalBalances;
+
     private List<Transaction> transactions;
+
     private Integer daysAvailable;
 
     public String getAccountId() {
@@ -219,8 +230,7 @@ public class AssetReportGetResponse extends BaseResponse {
       return daysAvailable;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
       if (this == obj) {
         return true;
       }
@@ -228,30 +238,21 @@ public class AssetReportGetResponse extends BaseResponse {
         return false;
       }
       Account account = (Account) obj;
-      return Objects.equals(accountId, account.accountId) &&
-          Objects.equals(mask, account.mask) &&
-          Objects.equals(name, account.name) &&
-          Objects.equals(officialName, account.officialName) &&
-          Objects.equals(type, account.type) &&
-          Objects.equals(subtype, account.subtype) &&
-          Objects.equals(owners, account.owners) &&
-          Objects.equals(balances, account.balances) &&
-          Objects.equals(historicalBalances, account.historicalBalances) &&
-          Objects.equals(transactions, account.transactions) &&
-          Objects.equals(daysAvailable, account.daysAvailable);
+      return Objects.equals(accountId, account.accountId) && Objects.equals(mask, account.mask) && Objects.equals(name, account.name) && Objects.equals(officialName, account.officialName) && Objects.equals(type, account.type) && Objects.equals(subtype, account.subtype) && Objects.equals(owners, account.owners) && Objects.equals(balances, account.balances) && Objects.equals(historicalBalances, account.historicalBalances) && Objects.equals(transactions, account.transactions) && Objects.equals(daysAvailable, account.daysAvailable);
     }
 
-    @Override
-    public int hashCode() {
-      return Objects.hash(accountId, mask, name, officialName, type, subtype, owners, balances,
-          historicalBalances, transactions, daysAvailable);
+    @Override public int hashCode() {
+      return Objects.hash(accountId, mask, name, officialName, type, subtype, owners, balances, historicalBalances, transactions, daysAvailable);
     }
   }
 
   public static final class Owner {
     private List<String> names;
+
     private List<PhoneNumber> phoneNumbers;
+
     private List<Email> emails;
+
     private List<Address> addresses;
 
     public List<String> getNames() {
@@ -270,8 +271,7 @@ public class AssetReportGetResponse extends BaseResponse {
       return addresses;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
       if (this == obj) {
         return true;
       }
@@ -279,21 +279,19 @@ public class AssetReportGetResponse extends BaseResponse {
         return false;
       }
       Owner owner = (Owner) obj;
-      return Objects.equals(names, owner.names) &&
-          Objects.equals(phoneNumbers, owner.phoneNumbers) &&
-          Objects.equals(emails, owner.emails) &&
-          Objects.equals(addresses, owner.addresses);
+      return Objects.equals(names, owner.names) && Objects.equals(phoneNumbers, owner.phoneNumbers) && Objects.equals(emails, owner.emails) && Objects.equals(addresses, owner.addresses);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
       return Objects.hash(names, phoneNumbers, emails, addresses);
     }
   }
 
   public static final class PhoneNumber {
     private String data;
+
     private boolean primary;
+
     private String type;
 
     public String getData() {
@@ -308,8 +306,7 @@ public class AssetReportGetResponse extends BaseResponse {
       return type;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
       if (this == obj) {
         return true;
       }
@@ -317,20 +314,19 @@ public class AssetReportGetResponse extends BaseResponse {
         return false;
       }
       PhoneNumber that = (PhoneNumber) obj;
-      return primary == that.primary &&
-          Objects.equals(data, that.data) &&
-          Objects.equals(type, that.type);
+      return primary == that.primary && Objects.equals(data, that.data) && Objects.equals(type, that.type);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
       return Objects.hash(data, primary, type);
     }
   }
 
   public static final class Email {
     private String data;
+
     private boolean primary;
+
     private String type;
 
     public String getData() {
@@ -345,8 +341,7 @@ public class AssetReportGetResponse extends BaseResponse {
       return type;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
       if (this == obj) {
         return true;
       }
@@ -354,19 +349,17 @@ public class AssetReportGetResponse extends BaseResponse {
         return false;
       }
       Email email = (Email) obj;
-      return primary == email.primary &&
-          Objects.equals(data, email.data) &&
-          Objects.equals(type, email.type);
+      return primary == email.primary && Objects.equals(data, email.data) && Objects.equals(type, email.type);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
       return Objects.hash(data, primary, type);
     }
   }
 
   public static final class Address {
     private AddressData data;
+
     private boolean primary;
 
     public AddressData getData() {
@@ -377,8 +370,7 @@ public class AssetReportGetResponse extends BaseResponse {
       return primary;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
       if (this == obj) {
         return true;
       }
@@ -386,20 +378,21 @@ public class AssetReportGetResponse extends BaseResponse {
         return false;
       }
       Address address = (Address) obj;
-      return primary == address.primary &&
-          Objects.equals(data, address.data);
+      return primary == address.primary && Objects.equals(data, address.data);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
       return Objects.hash(data, primary);
     }
   }
 
   public static final class AddressData {
     private String city;
+
     private String state;
+
     private String street;
+
     private String zip;
 
     public String getCity() {
@@ -418,8 +411,7 @@ public class AssetReportGetResponse extends BaseResponse {
       return zip;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
       if (this == obj) {
         return true;
       }
@@ -427,22 +419,21 @@ public class AssetReportGetResponse extends BaseResponse {
         return false;
       }
       AddressData that = (AddressData) obj;
-      return Objects.equals(city, that.city) &&
-          Objects.equals(state, that.state) &&
-          Objects.equals(street, that.street) &&
-          Objects.equals(zip, that.zip);
+      return Objects.equals(city, that.city) && Objects.equals(state, that.state) && Objects.equals(street, that.street) && Objects.equals(zip, that.zip);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
       return Objects.hash(city, state, street, zip);
     }
   }
 
   public static final class Balance {
     private Double avaliable;
+
     private Double current;
+
     private String unofficialCurrencyCode;
+
     private String isoCurrencyCode;
 
     public Double getAvaliable() {
@@ -461,8 +452,7 @@ public class AssetReportGetResponse extends BaseResponse {
       return isoCurrencyCode;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
       if (this == obj) {
         return true;
       }
@@ -470,22 +460,21 @@ public class AssetReportGetResponse extends BaseResponse {
         return false;
       }
       Balance balance = (Balance) obj;
-      return Objects.equals(avaliable, balance.avaliable) &&
-          Objects.equals(current, balance.current) &&
-          Objects.equals(unofficialCurrencyCode, balance.unofficialCurrencyCode) &&
-          Objects.equals(isoCurrencyCode, balance.isoCurrencyCode);
+      return Objects.equals(avaliable, balance.avaliable) && Objects.equals(current, balance.current) && Objects.equals(unofficialCurrencyCode, balance.unofficialCurrencyCode) && Objects.equals(isoCurrencyCode, balance.isoCurrencyCode);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
       return Objects.hash(avaliable, current, unofficialCurrencyCode, isoCurrencyCode);
     }
   }
 
   public static final class HistoricalBalance {
     private Date date;
+
     private Double current;
+
     private String unofficialCurrencyCode;
+
     private String isoCurrencyCode;
 
     public Date getDate() {
@@ -504,8 +493,7 @@ public class AssetReportGetResponse extends BaseResponse {
       return isoCurrencyCode;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
       if (this == obj) {
         return true;
       }
@@ -513,26 +501,29 @@ public class AssetReportGetResponse extends BaseResponse {
         return false;
       }
       HistoricalBalance that = (HistoricalBalance) obj;
-      return Objects.equals(date, that.date) &&
-          Objects.equals(current, that.current) &&
-          Objects.equals(unofficialCurrencyCode, that.unofficialCurrencyCode) &&
-          Objects.equals(isoCurrencyCode, that.isoCurrencyCode);
+      return Objects.equals(date, that.date) && Objects.equals(current, that.current) && Objects.equals(unofficialCurrencyCode, that.unofficialCurrencyCode) && Objects.equals(isoCurrencyCode, that.isoCurrencyCode);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
       return Objects.hash(date, current, unofficialCurrencyCode, isoCurrencyCode);
     }
   }
 
   public static final class Transaction {
     private String accountId;
+
     private String transactionId;
+
     private Date date;
+
     private String originalDescription;
+
     private String pending;
+
     private Double amount;
+
     private String unofficialCurrencyCode;
+
     private String isoCurrencyCode;
 
     public String getAccountId() {
@@ -567,8 +558,7 @@ public class AssetReportGetResponse extends BaseResponse {
       return isoCurrencyCode;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
       if (this == obj) {
         return true;
       }
@@ -576,26 +566,19 @@ public class AssetReportGetResponse extends BaseResponse {
         return false;
       }
       Transaction that = (Transaction) obj;
-      return Objects.equals(accountId, that.accountId) &&
-          Objects.equals(transactionId, that.transactionId) &&
-          Objects.equals(date, that.date) &&
-          Objects.equals(originalDescription, that.originalDescription) &&
-          Objects.equals(pending, that.pending) &&
-          Objects.equals(amount, that.amount) &&
-          Objects.equals(unofficialCurrencyCode, that.unofficialCurrencyCode) &&
-          Objects.equals(isoCurrencyCode, that.isoCurrencyCode);
+      return Objects.equals(accountId, that.accountId) && Objects.equals(transactionId, that.transactionId) && Objects.equals(date, that.date) && Objects.equals(originalDescription, that.originalDescription) && Objects.equals(pending, that.pending) && Objects.equals(amount, that.amount) && Objects.equals(unofficialCurrencyCode, that.unofficialCurrencyCode) && Objects.equals(isoCurrencyCode, that.isoCurrencyCode);
     }
 
-    @Override
-    public int hashCode() {
-      return Objects.hash(accountId, transactionId, date, originalDescription, pending, amount,
-          unofficialCurrencyCode, isoCurrencyCode);
+    @Override public int hashCode() {
+      return Objects.hash(accountId, transactionId, date, originalDescription, pending, amount, unofficialCurrencyCode, isoCurrencyCode);
     }
   }
 
   public static final class Warning {
     private String warningType;
+
     private String warningCode;
+
     private Cause cause;
 
     public String getWarningType() {
@@ -613,6 +596,7 @@ public class AssetReportGetResponse extends BaseResponse {
 
   public static final class Cause {
     private Error error;
+
     private String itemId;
 
     public Error getError() {
@@ -626,10 +610,15 @@ public class AssetReportGetResponse extends BaseResponse {
 
   public static final class Error {
     private String errorType;
+
     private String errorCode;
+
     private String errorMessage;
+
     private String displayMessage;
+
     private Integer status;
+
     private List<Cause> causes;
 
     public String getErrorType() {
