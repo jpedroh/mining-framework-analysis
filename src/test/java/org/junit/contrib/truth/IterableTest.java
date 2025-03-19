@@ -62,6 +62,7 @@ public class IterableTest {
     }
   }
 
+
   @Test public void iteratesOverSequence() {
     ASSERT.that(iterable(1, 2, 3)).iteratesOverSequence(1, 2, 3);
   }
