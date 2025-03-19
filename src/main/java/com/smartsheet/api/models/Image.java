@@ -88,8 +88,16 @@ public class Image {
 	
 	/**
 	 * sets the width (in pixels) of the uploaded image
+<<<<<<< /usr/src/app/output/smartsheet-platform/smartsheet-java-sdk/1f165550865167adebef205696294cfd60d94993/src/main/java/com/smartsheet/api/models/Image.java/left.java
+	 * 
+	 * @param height
+||||||| /usr/src/app/output/smartsheet-platform/smartsheet-java-sdk/1f165550865167adebef205696294cfd60d94993/src/main/java/com/smartsheet/api/models/Image.java/base.java
+	 * 
+	 * @param heigth
+=======
 	 *
 	 * @param height
+>>>>>>> /usr/src/app/output/smartsheet-platform/smartsheet-java-sdk/1f165550865167adebef205696294cfd60d94993/src/main/java/com/smartsheet/api/models/Image.java/right.java
 	 */
 	public Image setHeight(Long height) {
 		this.height = height;
