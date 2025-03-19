@@ -175,16 +175,25 @@ public class CamundaPlanEnginePlugin implements IPlanEnginePlanRefPluginService 
             final String planDefinitionID = planProcessDefinition.get("id").toString();
             final URI endpointUri = new URI(Settings.ENGINE_PLAN_BPMN_URL + PROCESS_DEFINITION_SUFFIX + "/"
                 + planDefinitionID + INSTANCE_CREATION_SUFFIX);
-
-
+<<<<<<< /usr/src/app/output/opentosca/container/6b594e8970fa00400d0566a726502e3a846316e5/org.opentosca.container.engine.plan.plugin.camunda/src/main/java/org/opentosca/container/engine/plan/plugin/camunda/CamundaPlanEnginePlugin.java/left.java
+            final Endpoint endpoint = new Endpoint(endpointUri, Settings.OPENTOSCA_CONTAINER_HOSTNAME,
+                Settings.OPENTOSCA_CONTAINER_HOSTNAME, csarId, null, Collections.emptyMap(), null, null, null, planId);
+            endpointService.storeEndpoint(endpoint);
+||||||| /usr/src/app/output/opentosca/container/6b594e8970fa00400d0566a726502e3a846316e5/org.opentosca.container.engine.plan.plugin.camunda/src/main/java/org/opentosca/container/engine/plan/plugin/camunda/CamundaPlanEnginePlugin.java/base.java
+            final WSDLEndpoint wsdlEndpoint = new WSDLEndpoint(endpoint, null, Settings.OPENTOSCA_CONTAINER_HOSTNAME,
+                Settings.OPENTOSCA_CONTAINER_HOSTNAME, csarId, null, planId, null, null, Collections.emptyMap());
+            endpointService.storeWSDLEndpoint(wsdlEndpoint);
+=======
+        
             Map<String,String> endpointMetadata = new HashMap<String, String>();
+
             endpointMetadata.put("PlanType", "BPMN");
             endpointMetadata.put("EndpointType", "Invoke");
 
-            final Endpoint endpoint = new Endpoint(endpointUri, Settings.OPENTOSCA_CONTAINER_HOSTNAME,
-                Settings.OPENTOSCA_CONTAINER_HOSTNAME, csarId, null, endpointMetadata, null, null, null, planId);
-            endpointService.storeEndpoint(endpoint);
-
+            final WSDLEndpoint wsdlEndpoint = new WSDLEndpoint(endpoint, null, Settings.OPENTOSCA_CONTAINER_HOSTNAME,
+                Settings.OPENTOSCA_CONTAINER_HOSTNAME, csarId, null, planId, null, null, endpointMetadata);
+            endpointService.storeWSDLEndpoint(wsdlEndpoint);
+>>>>>>> /usr/src/app/output/opentosca/container/6b594e8970fa00400d0566a726502e3a846316e5/org.opentosca.container.engine.plan.plugin.camunda/src/main/java/org/opentosca/container/engine/plan/plugin/camunda/CamundaPlanEnginePlugin.java/right.java
             return true;
         } catch (final ClientProtocolException e) {
             LOG.error("A ClientProtocolException occured while sending post to the engine: ", e);
@@ -208,7 +217,8 @@ public class CamundaPlanEnginePlugin implements IPlanEnginePlanRefPluginService 
         // get endpoint related to the plan and extract process definition ID from the URI
         final List<Endpoint> endpoints = endpointService.getEndpointsForPlanId(Settings.OPENTOSCA_CONTAINER_HOSTNAME, csarId, planId);
 
-        final List<Endpoint> endpointsToRemove = new ArrayList<>();
+        final List<WSDLEndpoint> endpointsToRemove = new ArrayList<>();
+
         for (Endpoint endpoint : endpoints) {
 
             final String[] endpointParts = endpoint.getUri().toString().split("/");
@@ -272,7 +282,7 @@ public class CamundaPlanEnginePlugin implements IPlanEnginePlanRefPluginService 
             }
         }
 
-        endpointsToRemove.forEach(this.endpointService::removeEndpoint);
+        endpointsToRemove.forEach(endpoint -> this.endpointService.removeWSDLEndpoint(endpoint));
 
         return true;
     }

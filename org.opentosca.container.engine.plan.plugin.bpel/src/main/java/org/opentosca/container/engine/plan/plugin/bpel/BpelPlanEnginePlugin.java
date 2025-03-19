@@ -182,6 +182,7 @@ public class BpelPlanEnginePlugin implements IPlanEnginePlanRefPluginService {
             BpelPlanEnginePlugin.LOG.debug("Endpoint for ProcessID \"" + processId + "\" is \"" + endpoints + "\".");
             BpelPlanEnginePlugin.LOG.debug("Deployment of Plan was successfull: {}", planId);
 
+
             Map<String, String> invokeEndpointMetaData = new HashMap<>();
             Map<String, String> callbackEndpointMetaData = new HashMap<>();
 
@@ -196,14 +197,27 @@ public class BpelPlanEnginePlugin implements IPlanEnginePlanRefPluginService {
             // save endpoint
             final String localContainer = Settings.OPENTOSCA_CONTAINER_HOSTNAME;
             final Endpoint endpoint = new Endpoint(endpointUri, localContainer, localContainer,
+<<<<<<< /usr/src/app/output/opentosca/container/6b594e8970fa00400d0566a726502e3a846316e5/org.opentosca.container.engine.plan.plugin.bpel/src/main/java/org/opentosca/container/engine/plan/plugin/bpel/BpelPlanEnginePlugin.java/left.java
                 csarId, null, endpointMetadata, portType, null, null, planId);
+||||||| /usr/src/app/output/opentosca/container/6b594e8970fa00400d0566a726502e3a846316e5/org.opentosca.container.engine.plan.plugin.bpel/src/main/java/org/opentosca/container/engine/plan/plugin/bpel/BpelPlanEnginePlugin.java/base.java
+                csarId, null, endpointMetadata, portType, null, null, endpointMetadata);
+=======
+                csarId, null, endpointMetadata, portType, null, null, invokeEndpointMetaData);
+>>>>>>> /usr/src/app/output/opentosca/container/6b594e8970fa00400d0566a726502e3a846316e5/org.opentosca.container.engine.plan.plugin.bpel/src/main/java/org/opentosca/container/engine/plan/plugin/bpel/BpelPlanEnginePlugin.java/right.java
             this.endpointService.storeEndpoint(endpoint);
 
             if (Objects.nonNull(callbackEndpoint)) {
                 final QName callbackPortType = QName.valueOf("{http://schemas.xmlsoap.org/wsdl/}CallbackPortType");
                 LOG.debug("Storing callback endpoint: {}", callbackEndpoint);
+                endpointMetadata.put("EndpointType", "Callback");
                 this.endpointService.storeEndpoint(new Endpoint(callbackEndpoint,
+<<<<<<< /usr/src/app/output/opentosca/container/6b594e8970fa00400d0566a726502e3a846316e5/org.opentosca.container.engine.plan.plugin.bpel/src/main/java/org/opentosca/container/engine/plan/plugin/bpel/BpelPlanEnginePlugin.java/left.java
                     localContainer, localContainer, csarId, null, endpointMetadata, callbackPortType, null, null, planId));
+||||||| /usr/src/app/output/opentosca/container/6b594e8970fa00400d0566a726502e3a846316e5/org.opentosca.container.engine.plan.plugin.bpel/src/main/java/org/opentosca/container/engine/plan/plugin/bpel/BpelPlanEnginePlugin.java/base.java
+                    localContainer, localContainer, csarId, null, endpointMetadata, callbackPortType, null, null, endpointMetadata));
+=======
+                    localContainer, localContainer, csarId, null, endpointMetadata, callbackPortType, null, null, callbackEndpointMetaData));
+>>>>>>> /usr/src/app/output/opentosca/container/6b594e8970fa00400d0566a726502e3a846316e5/org.opentosca.container.engine.plan.plugin.bpel/src/main/java/org/opentosca/container/engine/plan/plugin/bpel/BpelPlanEnginePlugin.java/right.java
             }
         } else {
             BpelPlanEnginePlugin.LOG.error("Error while processing plan");
