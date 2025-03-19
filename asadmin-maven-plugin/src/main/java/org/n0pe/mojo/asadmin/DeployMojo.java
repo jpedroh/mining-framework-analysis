@@ -30,12 +30,10 @@ public class DeployMojo
      * @parameter
      */
     private String target;
-    
     /**
      * @parameter default-value="false"
      */
     private boolean force;
-    
     /**
      * @parameter
      */
@@ -53,8 +51,13 @@ public class DeployMojo
         if ( !StringUtils.isEmpty( appName ) ) {
             d.appName( appName );
         }
+<<<<<<< /usr/src/app/output/eskatos/asadmin/6fb154963dfd021025038412792ef1dcc5399017/asadmin-maven-plugin/src/main/java/org/n0pe/mojo/asadmin/DeployMojo.java/left.java
         list.add( d.force( force ).deploy() );
+||||||| /usr/src/app/output/eskatos/asadmin/6fb154963dfd021025038412792ef1dcc5399017/asadmin-maven-plugin/src/main/java/org/n0pe/mojo/asadmin/DeployMojo.java/base.java
+        list.add( d.deploy() );
+=======
         list.add( d.availability(availabilityenabled).deploy() );
+>>>>>>> /usr/src/app/output/eskatos/asadmin/6fb154963dfd021025038412792ef1dcc5399017/asadmin-maven-plugin/src/main/java/org/n0pe/mojo/asadmin/DeployMojo.java/right.java
         setPatterns(d);
         return list;
     }
