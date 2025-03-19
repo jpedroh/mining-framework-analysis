@@ -148,6 +148,7 @@ public abstract class OrientDbWebApplication extends AuthenticatedWebApplication
 					ORecordHook hook = createHook(oRecordHookClass, iDatabase);
 					if(hook!=null) iDatabase.registerHook(hook);
 				}
+<<<<<<< /usr/src/app/output/phantomydn/wicket-orientdb/464f977e4a730a3baf05339503fada6001ee2cf1/wicket-orientdb/src/main/java/ru/ydn/wicket/wicketorientdb/OrientDbWebApplication.java/left.java
 				//strange workaround to support changing system users passwords in web interface
 				iDatabase.registerHook(new ODocumentHookAbstract(){
 					@Override
@@ -176,6 +177,31 @@ public abstract class OrientDbWebApplication extends AuthenticatedWebApplication
 						return DISTRIBUTED_EXECUTION_MODE.TARGET_NODE;
 					}
 				}.setIncludeClasses("OUser"),HOOK_POSITION.FIRST);
+||||||| /usr/src/app/output/phantomydn/wicket-orientdb/464f977e4a730a3baf05339503fada6001ee2cf1/wicket-orientdb/src/main/java/ru/ydn/wicket/wicketorientdb/OrientDbWebApplication.java/base.java
+=======
+				//strange workaround to support changing system users passwords in web interface
+				iDatabase.registerHook(new ODocumentHookAbstract(){
+					@Override
+					public RESULT onRecordBeforeUpdate(final ODocument iDocument) {
+						String name = iDocument.field("name");
+						String password = iDocument.field("password");
+						if (	orientDbSettings.getDBInstallatorUserName()!=null && 
+								orientDbSettings.getDBInstallatorUserName().equals(name)){
+							orientDbSettings.setDBInstallatorUserPassword(password);
+						}
+						if (orientDbSettings.getDBUserName()!=null && 
+								orientDbSettings.getDBUserName().equals(name)){
+							orientDbSettings.setDBUserPassword(password);
+						}
+						return RESULT.RECORD_NOT_CHANGED;
+					}
+					
+					@Override
+					public DISTRIBUTED_EXECUTION_MODE getDistributedExecutionMode() {
+						return DISTRIBUTED_EXECUTION_MODE.BOTH;
+					}
+				}.setIncludeClasses("OUser"),HOOK_POSITION.FIRST);
+>>>>>>> /usr/src/app/output/phantomydn/wicket-orientdb/464f977e4a730a3baf05339503fada6001ee2cf1/wicket-orientdb/src/main/java/ru/ydn/wicket/wicketorientdb/OrientDbWebApplication.java/right.java
 			}
 			
 			@Override
