@@ -10,7 +10,6 @@ import org.junit.runners.model.TestClass;
 
 import junitparams.testnaming.MacroSubstitutionNamingStrategy;
 import junitparams.testnaming.TestCaseNamingStrategy;
-
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,15 +23,32 @@ public class TestMethod {
     private FrameworkMethod frameworkMethod;
     private Class<?> testClass;
     private ParametersReader parametersReader;
-    private Object[] cachedParameters;
     private TestCaseNamingStrategy namingStrategy;
+    private Object[] cachedParameters;
 
     public TestMethod(FrameworkMethod method, TestClass testClass) {
         this.frameworkMethod = method;
         this.testClass = testClass.getJavaClass();
-        parametersReader = new ParametersReader(testClass(), frameworkMethod);
+<<<<<<< /usr/src/app/output/pragmatists/junitparams/762ec95b8e26869a888d9125b48be59927d1de81/src/main/java/junitparams/internal/TestMethod.java/left.java
+        this.parametersAnnotation = frameworkMethod.getAnnotation(Parameters.class);
+        this.fileParametersAnnotation = frameworkMethod.getAnnotation(FileParameters.class);
 
-		namingStrategy = new MacroSubstitutionNamingStrategy(this);
+        if (parametersAnnotation != null && fileParametersAnnotation != null) {
+            throw new IllegalArgumentException("Both @Parameters and @FileParameters exist on " + frameworkMethod.getName()
+                + ". Remove one of them!");
+        }
+        namingStrategy = new MacroSubstitutionNamingStrategy(this);
+||||||| /usr/src/app/output/pragmatists/junitparams/762ec95b8e26869a888d9125b48be59927d1de81/src/main/java/junitparams/internal/TestMethod.java/base.java
+        this.parametersAnnotation = frameworkMethod.getAnnotation(Parameters.class);
+        this.fileParametersAnnotation = frameworkMethod.getAnnotation(FileParameters.class);
+
+        if (parametersAnnotation != null && fileParametersAnnotation != null) {
+            throw new IllegalArgumentException("Both @Parameters and @FileParameters exist on " + frameworkMethod.getName()
+                + ". Remove one of them!");
+        }
+=======
+        parametersReader = new ParametersReader(testClass(), frameworkMethod);
+>>>>>>> /usr/src/app/output/pragmatists/junitparams/762ec95b8e26869a888d9125b48be59927d1de81/src/main/java/junitparams/internal/TestMethod.java/right.java
     }
 
     public String name() {
