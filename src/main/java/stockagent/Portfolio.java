@@ -28,13 +28,11 @@ public class Portfolio implements TraderPortfolio {
         }
 
 
-
         //need to figure out how to get specific pricing for a day instead of getting the entire list in getStockPrice
         //@Override
         public void buyStock(MarketSensor sensor, String symbol, int shares) throws IOException {
             Stock stock = YahooFinance.get(symbol);
             BigDecimal pricing = sensor.getStockPrice(symbol);
-
 
             double cost = pricing.doubleValue() * shares;
 
@@ -79,7 +77,7 @@ public class Portfolio implements TraderPortfolio {
 
         }
         @Override
-        public HashMap<Stock, Integer> getPorfolio() {
+        public HashMap<Stock, Integer> getPortfolio() {
 
             return portfolio;
 
