@@ -31,7 +31,6 @@ import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.parser.util.TestUtils;
 import io.swagger.parser.util.SwaggerDeserializationResult;
-import io.swagger.parser.util.TestUtils;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 import org.testng.Assert;
