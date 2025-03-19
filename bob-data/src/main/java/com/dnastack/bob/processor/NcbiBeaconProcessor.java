@@ -46,6 +46,8 @@ import static com.dnastack.bob.util.QueryUtils.denormalizeReference;
  * @author Miroslav Cupak (mirocupak@gmail.com)
  * @version 1.0
  */
+@Processor
+@Ncbi
 public class NcbiBeaconProcessor extends AbstractBeaconProcessor {
 
     private static final long serialVersionUID = 12L;

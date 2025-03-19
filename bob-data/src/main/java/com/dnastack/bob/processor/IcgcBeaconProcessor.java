@@ -47,6 +47,8 @@ import static com.dnastack.bob.util.QueryUtils.denormalizeReference;
  * @author Miroslav Cupak (mirocupak@gmail.com)
  * @version 1.0
  */
+@Processor
+@Icgc
 public class IcgcBeaconProcessor extends AbstractBeaconProcessor {
 
     private static final String BASE_URL = "https://dcc.icgc.org/api/v1/beacon/query";

@@ -48,6 +48,8 @@ import static com.dnastack.bob.util.QueryUtils.denormalizePosition;
  * @author Miroslav Cupak (mirocupak@gmail.com)
  * @version 1.0
  */
+@Processor
+@Ebi
 public class EbiBeaconProcessor extends AbstractBeaconProcessor {
 
     private static final long serialVersionUID = 11L;

@@ -45,6 +45,8 @@ import static com.dnastack.bob.util.QueryUtils.denormalizePosition;
  * @author Miroslav Cupak (mirocupak@gmail.com)
  * @version 1.0
  */
+@Processor
+@Broad
 public class BroadInstituteBeaconProcessor extends AbstractBeaconProcessor {
 
     private static final long serialVersionUID = 6477729900179823208L;

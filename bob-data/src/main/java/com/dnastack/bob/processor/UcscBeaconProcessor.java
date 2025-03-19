@@ -45,6 +45,8 @@ import static com.dnastack.bob.util.QueryUtils.denormalizeChromosome;
  * @author Miroslav Cupak (mirocupak@gmail.com)
  * @version 1.0
  */
+@Processor
+@Ucsc
 public class UcscBeaconProcessor extends AbstractBeaconProcessor {
 
     private static final long serialVersionUID = 13L;
