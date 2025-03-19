@@ -121,7 +121,6 @@ public enum DiskSpaceMonitor implements Runnable, Closeable {
     }
 
     static final class DiskAttributes {
-
         private final FileStore fileStore;
 
         volatile boolean polled;
