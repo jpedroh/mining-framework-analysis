@@ -53,7 +53,13 @@ public class JstermJsonPipleine implements PageModelPipeline<OschinaBlog> {
             }
         }
         try {
+<<<<<<< /usr/src/app/output/code4craft/termblog/794189f4401f172745bbc2ab1e17edf70a476b66/src/main/java/us/codecraft/blog/spider/JstermJsonPipleine.java/left.java
+            JSON.writeJSONStringTo(root, new FileWriter(filePath + java.io.File.separator + "oschina.json"), SerializerFeature.PrettyFormat, SerializerFeature.BrowserCompatible);
+||||||| /usr/src/app/output/code4craft/termblog/794189f4401f172745bbc2ab1e17edf70a476b66/src/main/java/us/codecraft/blog/spider/JstermJsonPipleine.java/base.java
+            JSON.writeJSONStringTo(root, new FileWriter(filePath + java.io.File.separator + "oschina.json"));
+=======
             JSON.writeJSONStringTo(root, new FileWriter(filePath + java.io.File.separator + "oschina.json"), SerializerFeature.PrettyFormat,SerializerFeature.BrowserCompatible);
+>>>>>>> /usr/src/app/output/code4craft/termblog/794189f4401f172745bbc2ab1e17edf70a476b66/src/main/java/us/codecraft/blog/spider/JstermJsonPipleine.java/right.java
         } catch (IOException e) {
             e.printStackTrace();
         }
