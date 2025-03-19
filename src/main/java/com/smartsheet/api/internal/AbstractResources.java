@@ -244,6 +244,7 @@ public abstract class AbstractResources {
 		} finally {
 			smartsheet.getHttpClient().releaseConnection();
 		}
+		
 		return obj;
 	}
 
