@@ -1,22 +1,4 @@
-/* 
- * Enderstone
- * Copyright (C) 2014 Sander Gielisse and Fernando van Loenhout
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.enderstone.server.entity;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -64,575 +46,555 @@ import org.enderstone.server.regions.EnderWorld.ChunkInformer;
 import org.json.JSONObject;
 
 public class EnderPlayer extends Entity implements CommandSender {
+  private static final int MAX_CHUNKS_EVERY_UPDATE = 16;
 
-	private static final int MAX_CHUNKS_EVERY_UPDATE = 16;
+  private final InventoryHandler inventoryHandler = new InventoryHandler(this);
 
-	private final InventoryHandler inventoryHandler = new InventoryHandler(this);
-	public final ClientSettings clientSettings = new ClientSettings();
-	public final NetworkManager networkManager;
-	public final String playerName;
-	public HashSet<String> visiblePlayers = new HashSet<>();
-	public HashSet<Entity> canSeeEntity = new HashSet<>();
-	/**
+  public final ClientSettings clientSettings = new ClientSettings();
+
+  public final NetworkManager networkManager;
+
+  public final String playerName;
+
+  public HashSet<String> visiblePlayers = new HashSet<>();
+
+  public HashSet<Entity> canSeeEntity = new HashSet<>();
+
+  /**
 	 * If this is above 0, then the server is waiting for a correction on the
 	 * last teleport the server sended
 	 */
-	public int waitingForValidMoveAfterTeleport = 0;
-	public final UUID uuid;
-	public volatile boolean isOnline = true;
-	public boolean isCreative = false;
-	public boolean godMode = false;
-	public boolean canFly = false;
-	public boolean isFlying = false;
-	public boolean isOnFire = false;
-	public boolean isSneaking = false;
-	public boolean isSprinting = false;
-	public boolean isEating = false;
-	private boolean isInvisible = false;
+  public int waitingForValidMoveAfterTeleport = 0;
 
-	public volatile boolean isOnGround = true;
-	public double yLocation;
-	public short food = 20;
-	public float foodSaturation = 0;
-	
-	/**
+  public final UUID uuid;
+
+  public volatile boolean isOnline = true;
+
+  public boolean isCreative = false;
+
+  public boolean godMode = false;
+
+  public boolean canFly = false;
+
+  public boolean isFlying = false;
+
+  public boolean isOnFire = false;
+
+  public boolean isSneaking = false;
+
+  public boolean isSprinting = false;
+
+  public boolean isEating = false;
+
+  private boolean isInvisible = false;
+
+  public volatile boolean isOnGround = true;
+
+  public double yLocation;
+
+  public short food = 20;
+
+  public float foodSaturation = 0;
+
+  /**
 	 * Inventory of the player
 	 * @deprecated Use getInventoryHandler().getPlayerInventory() instead
 	 */
-	@Deprecated
-	private final PlayerInventory inventory = inventoryHandler.getPlayerInventory();
+  @Deprecated private final PlayerInventory inventory = inventoryHandler.getPlayerInventory();
 
-	public EnderWorld world = Main.getInstance().mainWorld;
-	private final String textureValue;
-	private final String textureSignature;
-	public int keepAliveID = 0;
+  public EnderWorld world = Main.getInstance().mainWorld;
 
-	public ChunkInformer chunkInformer = new ChunkInformer() {
+  private final String textureValue;
 
-		List<EnderChunk> cache = new ArrayList<>();
+  private final String textureSignature;
 
-		@Override
-		public void sendChunk(EnderChunk chunk) {
-			cache.add(chunk);
-		}
+  public int keepAliveID = 0;
 
-		@Override
-		public void removeChunk(EnderChunk chunk) {
-			networkManager.sendPacket(PacketOutChunkData.clearChunk(chunk.getX(), chunk.getZ()));
-		}
+  public ChunkInformer chunkInformer = new ChunkInformer() {
+    List<EnderChunk> cache = new ArrayList<>();
 
-		@Override
-		public void done() {
-			int size = cache.size();
-			if (size == 0)
-				return;
-			Packet[] packets = new Packet[size];
-			for (int i = 0; i < size; i++) {
-				EnderChunk c = cache.get(i);
-				packets[i] = c.getCompressedChunk().toPacket(c.getX(), c.getZ());
-			}
-			cache.clear();
-			networkManager.sendPacket(packets);
-		}
+    @Override public void sendChunk(EnderChunk chunk) {
+      cache.add(chunk);
+    }
 
-		@Override
-		public int maxChunks() {
-			return MAX_CHUNKS_EVERY_UPDATE;
-		}
-	};
+    @Override public void removeChunk(EnderChunk chunk) {
+      networkManager.sendPacket(PacketOutChunkData.clearChunk(chunk.getX(), chunk.getZ()));
+    }
 
-	public EnderPlayer(String userName, NetworkManager networkManager, UUID uuid, PlayerTextureStore textures) {
-		super(new Location());
-		this.networkManager = networkManager;
-		this.playerName = userName;
-		this.uuid = uuid;
-		this.textureValue = textures.getSkin().value;
-		this.textureSignature = textures.getSkin().signature;
-		EnderLogger.info(userName + " logged in with uuid " + uuid);
-	}
+    @Override public void done() {
+      int size = cache.size();
+      if (size == 0) {
+        return;
+      }
+      Packet[] packets = new Packet[size];
+      for (int i = 0; i < size; i++) {
+        EnderChunk c = cache.get(i);
+        packets[i] = c.getCompressedChunk().toPacket(c.getX(), c.getZ());
+      }
+      cache.clear();
+      networkManager.sendPacket(packets);
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
-		return result;
-	}
+    @Override public int maxChunks() {
+      return MAX_CHUNKS_EVERY_UPDATE;
+    }
+  };
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		EnderPlayer other = (EnderPlayer) obj;
-		if (uuid == null) {
-			if (other.uuid != null)
-				return false;
-		} else if (!uuid.equals(other.uuid))
-			return false;
-		return true;
-	}
+  public EnderPlayer(String userName, NetworkManager networkManager, UUID uuid, PlayerTextureStore textures) {
+    super(new Location());
+    this.networkManager = networkManager;
+    this.playerName = userName;
+    this.uuid = uuid;
+    this.textureValue = textures.getSkin().value;
+    this.textureSignature = textures.getSkin().signature;
+    EnderLogger.info(userName + " logged in with uuid " + uuid);
+  }
 
-	public NetworkManager getNetworkManager() {
-		return networkManager;
-	}
+  @Override public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+    return result;
+  }
 
-	public String getPlayerName() {
-		return playerName;
-	}
+  @Override public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    EnderPlayer other = (EnderPlayer) obj;
+    if (uuid == null) {
+      if (other.uuid != null) {
+        return false;
+      }
+    } else {
+      if (!uuid.equals(other.uuid)) {
+        return false;
+      }
+    }
+    return true;
+  }
 
-	public ProfileProperty getTextureProperty() {
-		return new ProfileProperty("textures", textureValue, true, textureSignature);
-	}
+  public NetworkManager getNetworkManager() {
+    return networkManager;
+  }
 
-	public ProfileProperty[] getProfileProperties() {
-		ProfileProperty[] list = new ProfileProperty[1];
-		list[0] = getTextureProperty();
-		return list;
-	}
+  public String getPlayerName() {
+    return playerName;
+  }
 
-	@Override
-	public void onSpawn() {
-		this.inventoryHandler.tryPickup(new ItemStack(BlockId.GLASS.getId(), (byte) 1, (short) 0));
-		this.inventoryHandler.tryPickup(new ItemStack(BlockId.DAYLIGHT_DETECTOR.getId(), (byte) 1, (short) 0));
-		this.inventoryHandler.tryPickup(new ItemStack(BlockId.BLAZE_ROD.getId(), (byte) 1, (short) 0));
-		this.inventoryHandler.tryPickup(new ItemStack(BlockId.DIRT.getId(), (byte) 1, (short) 0));
-		this.inventoryHandler.tryPickup(new ItemStack(BlockId.COBBLESTONE.getId(), (byte) 1, (short) 0));
-		this.inventoryHandler.tryPickup(new ItemStack(BlockId.BAKED_POTATO.getId(), (byte) 1, (short) 0));
-		this.updateDataWatcher();
+  public ProfileProperty getTextureProperty() {
+    return new ProfileProperty("textures", textureValue, true, textureSignature);
+  }
 
-		this.getNetworkManager().sendPacket(new PacketOutPlayerListHeaderFooter(ChatColor.GOLD+ "" + ChatColor.BOLD + "Enderstone Test Server", ChatColor.RED + "" + ChatColor.BOLD + "This server is running an Enderstone build"));
-		PacketOutPlayerListItem packet = new PacketOutPlayerListItem(new Action[] { new ActionAddPlayer(this.uuid, this.getPlayerName(), getProfileProperties(), GameMode.SURVIVAL.getId(), 1, false, "") });
-		for (EnderPlayer player : Main.getInstance().onlinePlayers) {
-			player.getNetworkManager().sendPacket(packet);
-			this.getNetworkManager().sendPacket(new PacketOutPlayerListItem(new Action[] { new ActionAddPlayer(player.uuid, player.getPlayerName(), player.getProfileProperties(), GameMode.SURVIVAL.getId(), 1, false, "") }));
-		}
-		Main.getInstance().broadcastMessage(new SimpleMessage(ChatColor.YELLOW + this.getPlayerName() + " joined the game!"));
-	}
+  public ProfileProperty[] getProfileProperties() {
+    ProfileProperty[] list = new ProfileProperty[1];
+    list[0] = getTextureProperty();
+    return list;
+  }
 
-	@Override
-	public void updateDataWatcher() {
-		int meaning = 0;
+  @Override public void onSpawn() {
+    this.inventoryHandler.tryPickup(new ItemStack(BlockId.GLASS.getId(), (byte) 1, (short) 0));
+    this.inventoryHandler.tryPickup(new ItemStack(BlockId.DAYLIGHT_DETECTOR.getId(), (byte) 1, (short) 0));
+    this.inventoryHandler.tryPickup(new ItemStack(BlockId.BLAZE_ROD.getId(), (byte) 1, (short) 0));
+    this.inventoryHandler.tryPickup(new ItemStack(BlockId.DIRT.getId(), (byte) 1, (short) 0));
+    this.inventoryHandler.tryPickup(new ItemStack(BlockId.COBBLESTONE.getId(), (byte) 1, (short) 0));
+    this.inventoryHandler.tryPickup(new ItemStack(BlockId.BAKED_POTATO.getId(), (byte) 1, (short) 0));
+    this.updateDataWatcher();
+    this.getNetworkManager().sendPacket(new PacketOutPlayerListHeaderFooter(ChatColor.GOLD + "" + ChatColor.BOLD + "Enderstone Test Server", ChatColor.RED + "" + ChatColor.BOLD + "This server is running an Enderstone build"));
+    PacketOutPlayerListItem packet = new PacketOutPlayerListItem(new Action[] { new ActionAddPlayer(this.uuid, this.getPlayerName(), getProfileProperties(), GameMode.SURVIVAL.getId(), 1, false, "") });
+    for (EnderPlayer player : Main.getInstance().onlinePlayers) {
+      player.getNetworkManager().sendPacket(packet);
+      this.getNetworkManager().sendPacket(new PacketOutPlayerListItem(new Action[] { new ActionAddPlayer(player.uuid, player.getPlayerName(), player.getProfileProperties(), GameMode.SURVIVAL.getId(), 1, false, "") }));
+    }
+    Main.getInstance().broadcastMessage(new SimpleMessage(ChatColor.YELLOW + this.getPlayerName() + " joined the game!"));
+  }
 
-		if (isOnFire)
-			meaning = (byte) (meaning | 0x01);
-		if (isSneaking)
-			meaning = (byte) (meaning | 0x02);
-		if (isSprinting)
-			meaning = (byte) (meaning | 0x08);
-		if (isEating)
-			meaning = (byte) (meaning | 0x10);
-		if (isInvisible)
-			meaning = (byte) (meaning | 0x20);
+  @Override public void updateDataWatcher() {
+    int meaning = 0;
+    if (isOnFire) {
+      meaning = (byte) (meaning | 0x01);
+    }
+    if (isSneaking) {
+      meaning = (byte) (meaning | 0x02);
+    }
+    if (isSprinting) {
+      meaning = (byte) (meaning | 0x08);
+    }
+    if (isEating) {
+      meaning = (byte) (meaning | 0x10);
+    }
+    if (isInvisible) {
+      meaning = (byte) (meaning | 0x20);
+    }
+    this.getDataWatcher().watch(0, (byte) meaning);
+    this.getDataWatcher().watch(1, (short) 0);
+    this.getDataWatcher().watch(6, 1F);
+    this.getDataWatcher().watch(8, (byte) 0);
+  }
 
-		this.getDataWatcher().watch(0, (byte) meaning);
-		this.getDataWatcher().watch(1, (short) 0);
-		this.getDataWatcher().watch(6, 1F);
-		this.getDataWatcher().watch(8, (byte) 0);
-	}
+  @Override public Packet getSpawnPacket() {
+    return new PacketOutSpawnPlayer(this.getEntityId(), this.uuid, (int) (this.getLocation().getX() * 32.0D), (int) (this.getLocation().getY() * 32.0D), (int) (this.getLocation().getZ() * 32.0D), (byte) 0, (byte) 0, (short) 0, this.getDataWatcher());
+  }
 
-	@Override
-	public Packet getSpawnPacket() {
-		return new PacketOutSpawnPlayer(this.getEntityId(), this.uuid, (int) (this.getLocation().getX() * 32.0D), (int) (this.getLocation().getY() * 32.0D), (int) (this.getLocation().getZ() * 32.0D), (byte) 0, (byte) 0, (short) 0, this.getDataWatcher());
-	}
+  public void onPlayerChat(final String message) {
+    if (message.startsWith("/")) {
+      final String fullCommand = message.substring(1);
+      final String[] split = fullCommand.split(" ");
+      final String[] args;
+      if (split.length != 1) {
+        args = new String[split.length - 1];
+        System.arraycopy(split, 1, args, 0, args.length);
+      } else {
+        args = new String[0];
+      }
+      Main.getInstance().sendToMainThread(new Runnable() {
+        @Override public void run() {
+          Main.getInstance().commands.executeCommand(null, split[0], EnderPlayer.this, args);
+        }
+      });
+    } else {
+      Main.getInstance().sendToMainThread(new Runnable() {
+        @Override public void run() {
+          Utill.broadcastMessage("<" + getPlayerName() + "> " + message);
+        }
+      });
+    }
+  }
 
-	public void onPlayerChat(final String message) {
-		if (message.startsWith("/")) {
-			final String fullCommand = message.substring(1);
-			final String[] split = fullCommand.split(" ");
-			final String[] args;
-			if (split.length != 1) {
-				args = new String[split.length - 1];
-				System.arraycopy(split, 1, args, 0, args.length);
-			} else
-				args = new String[0];
+  public void onDisconnect() {
+    this.isOnline = false;
+    Main.getInstance().mainWorld.players.remove(this);
+    for (EnderPlayer p : Main.getInstance().onlinePlayers) {
+      p.getNetworkManager().sendPacket(new PacketOutPlayerListItem(new Action[] { new ActionRemovePlayer(this.uuid) }));
+    }
+    if (Main.getInstance().onlinePlayers.contains(this)) {
+      Main.getInstance().onlinePlayers.remove(this);
+      for (EnderPlayer ep : Main.getInstance().onlinePlayers) {
+        for (String name : ep.visiblePlayers) {
+          if (name.equals(this.getPlayerName()) && !this.getPlayerName().equals(ep.getPlayerName())) {
+            ep.getNetworkManager().sendPacket(new PacketOutEntityDestroy(new Integer[] { this.getEntityId() }));
+          }
+        }
+      }
+    }
+    Main.getInstance().broadcastMessage(new SimpleMessage(ChatColor.YELLOW + playerName + " left the game!"));
+  }
 
-			Main.getInstance().sendToMainThread(new Runnable() {
+  @Override public boolean isOnline() {
+    return this.isOnline;
+  }
 
-				@Override
-				public void run() {
+  @Override public void updatePlayers(List<EnderPlayer> onlinePlayers) {
+    Set<Integer> toDespawn = new HashSet<>();
+    for (EnderPlayer pl : onlinePlayers) {
+      if (!pl.getPlayerName().equals(this.getPlayerName()) && !this.visiblePlayers.contains(pl.getPlayerName()) && pl.getLocation().isInRange(50, this.getLocation(), true) && (!pl.isDead())) {
+        this.visiblePlayers.add(pl.getPlayerName());
+        this.networkManager.sendPacket(pl.getSpawnPacket());
+      }
+      if (!pl.getPlayerName().equals(this.getPlayerName()) && this.visiblePlayers.contains(pl.getPlayerName()) && !pl.getLocation().isInRange(50, this.getLocation(), true)) {
+        this.visiblePlayers.remove(pl.getPlayerName());
+        toDespawn.add(pl.getEntityId());
+      }
+    }
+    if (!toDespawn.isEmpty()) {
+      this.networkManager.sendPacket(new PacketOutEntityDestroy(toDespawn.toArray(new Integer[0])));
+    }
+  }
 
-					Main.getInstance().commands.executeCommand(null, split[0], EnderPlayer.this, args);
-				}
-			});
-		} else {
-			Main.getInstance().sendToMainThread(new Runnable() {
+  private int latestCheck = 0;
 
-				@Override
-				public void run() {
-					Utill.broadcastMessage("<" + getPlayerName() + "> " + message);
-				}
-			});
-		}
-	}
+  private final List<Entity> toRemove = new ArrayList<>();
 
-	public void onDisconnect() {
-		this.isOnline = false;
-		Main.getInstance().mainWorld.players.remove(this);
+  public void checkCollision() {
+    if (latestCheck++ % 3 == 0) {
+      for (Entity e : this.world.entities) {
+        if (e.getLocation().isInRange(2, this.getLocation(), true)) {
+          boolean remove = e.onCollision(this);
+          if (remove) {
+            toRemove.add(e);
+          }
+        }
+      }
+      for (Entity e : toRemove) {
+        this.world.removeEntity(e);
+        this.world.broadcastSound("random.pop", 1F, (byte) 63, this.getLocation(), null);
+      }
+      toRemove.clear();
+    }
+  }
 
-		for (EnderPlayer p : Main.getInstance().onlinePlayers) {
-			p.getNetworkManager().sendPacket(new PacketOutPlayerListItem(new Action[] { new ActionRemovePlayer(this.uuid) }));
-		}
-		if (Main.getInstance().onlinePlayers.contains(this)) {
-			Main.getInstance().onlinePlayers.remove(this);
-			for (EnderPlayer ep : Main.getInstance().onlinePlayers) {
-				for (String name : ep.visiblePlayers) {
-					if (name.equals(this.getPlayerName()) && !this.getPlayerName().equals(ep.getPlayerName())) {
-						ep.getNetworkManager().sendPacket(new PacketOutEntityDestroy(new Integer[]{this.getEntityId()}));
-					}
-				}
-			}
-		}
-		Main.getInstance().broadcastMessage(new SimpleMessage(ChatColor.YELLOW + playerName + " left the game!"));
-	}
+  private int moveUpdates = 0;
 
-	@Override
-	public boolean isOnline() {
-		return this.isOnline;
-	}
+  @Override public void broadcastLocation(Location newLocation) {
+    if (this.isDead()) {
+      return;
+    }
+    checkCollision();
+    double dx = (newLocation.getX() - this.getLocation().getX()) * 32;
+    double dy = (newLocation.getY() - this.getLocation().getY()) * 32;
+    double dz = (newLocation.getZ() - this.getLocation().getZ()) * 32;
+    Packet packet;
+    if (moveUpdates++ % 40 == 0 || dx > 127 || dx < -127 || dy > 127 || dy < -127 || dz > 127 || dz < -127) {
+      packet = new PacketOutEntityTeleport(this.getEntityId(), (int) (this.getLocation().getX() * 32.0D), (int) (this.getLocation().getY() * 32.0D), (int) (this.getLocation().getZ() * 32.0D), (byte) this.getLocation().getYaw(), (byte) this.getLocation().getPitch(), false);
+    } else {
+      packet = new PacketOutEntityRelativeMove(this.getEntityId(), (byte) dx, (byte) dy, (byte) dz, false);
+    }
+    Iterator<String> players = this.visiblePlayers.iterator();
+    while (players.hasNext()) {
+      EnderPlayer ep = Main.getInstance().getPlayer(players.next());
+      if (ep == null) {
+        players.remove();
+        continue;
+      }
+      if (ep.getLocation().isInRange(50, this.getLocation(), true)) {
+        ep.networkManager.sendPacket(packet);
+      }
+    }
+  }
 
-	@Override
-	public void updatePlayers(List<EnderPlayer> onlinePlayers) {
-		Set<Integer> toDespawn = new HashSet<>();
-		for (EnderPlayer pl : onlinePlayers) {
-			if (!pl.getPlayerName().equals(this.getPlayerName()) && !this.visiblePlayers.contains(pl.getPlayerName()) && pl.getLocation().isInRange(50, this.getLocation(), true) && (!pl.isDead())) {
-				this.visiblePlayers.add(pl.getPlayerName());
-				this.networkManager.sendPacket(pl.getSpawnPacket());
-			}
-			if (!pl.getPlayerName().equals(this.getPlayerName()) && this.visiblePlayers.contains(pl.getPlayerName()) && !pl.getLocation().isInRange(50, this.getLocation(), true)) {
-				this.visiblePlayers.remove(pl.getPlayerName());
-				toDespawn.add(pl.getEntityId());
-			}
-		}
-		if (!toDespawn.isEmpty()) {
-			this.networkManager.sendPacket(new PacketOutEntityDestroy(toDespawn.toArray(new Integer[0])));
-		}
-	}
-	
-	private int latestCheck = 0;
-	private final List<Entity> toRemove = new ArrayList<>();
-	
-	public void checkCollision(){
-		if(latestCheck++ % 3 == 0){
-			//check if item entities nearby
-			
-			for(Entity e : this.world.entities){
-				if(e.getLocation().isInRange(2, this.getLocation(), true)){
-					boolean remove = e.onCollision(this);
-					if(remove){
-						toRemove.add(e);
-					}
-				}
-			}
-			for(Entity e : toRemove){
-				this.world.removeEntity(e);
-				this.world.broadcastSound("random.pop", 1F, (byte) 63, this.getLocation(), null);
-			}
-			toRemove.clear();
-		}
-	}
-	
-	private int moveUpdates = 0;	
-	
-	@Override
-	public void broadcastLocation(Location newLocation) {
-		if(this.isDead()){
-			return;
-		}
-		checkCollision();
+  @Override public void broadcastRotation(float pitch, float yaw) {
+    if (isDead()) {
+      return;
+    }
+    Iterator<String> players = this.visiblePlayers.iterator();
+    Packet pack1 = new PacketOutEntityLook(this.getEntityId(), (byte) Utill.calcYaw(yaw * 256.0F / 360.0F), (byte) Utill.calcYaw(pitch * 256.0F / 360.0F), false);
+    Packet pack2 = new PacketOutEntityHeadLook(this.getEntityId(), (byte) Utill.calcYaw(yaw * 256.0F / 360.0F));
+    while (players.hasNext()) {
+      EnderPlayer ep = Main.getInstance().getPlayer(players.next());
+      if (ep == null) {
+        players.remove();
+        continue;
+      }
+      if (ep.getLocation().isInRange(50, this.getLocation(), true)) {
+        ep.networkManager.sendPacket(pack1);
+        ep.networkManager.sendPacket(pack2);
+      }
+    }
+  }
 
-		double dx = (newLocation.getX() - this.getLocation().getX()) * 32;
-		double dy = (newLocation.getY() - this.getLocation().getY()) * 32;
-		double dz = (newLocation.getZ() - this.getLocation().getZ()) * 32;
+  public void playSound(String soundName, float volume, byte pitch) {
+    networkManager.sendPacket(new PacketOutSoundEffect(soundName, getLocation().getBlockX(), getLocation().getBlockY(), getLocation().getBlockZ(), volume, pitch));
+  }
 
-		Packet packet;
+  @Override public boolean sendMessage(Message message) {
+    return this.sendRawMessage(message);
+  }
 
-		if (moveUpdates++ % 40 == 0 || dx > 127 || dx < -127 || dy > 127 || dy < -127 || dz > 127 || dz < -127) {
-			// teleport
-			packet = new PacketOutEntityTeleport(this.getEntityId(), (int) (this.getLocation().getX() * 32.0D), (int) (this.getLocation().getY() * 32.0D), (int) (this.getLocation().getZ() * 32.0D), (byte) this.getLocation().getYaw(), (byte) this.getLocation().getPitch(), false);
-		} else {
-			// movement
-			packet = new PacketOutEntityRelativeMove(this.getEntityId(), (byte) dx, (byte) dy, (byte) dz, false);
-		}
+  @Override public boolean sendRawMessage(Message message) {
+    if (!this.isOnline) {
+      return false;
+    }
+    try {
+      this.networkManager.sendPacket(new PacketOutChatMessage(message, (byte) 1));
+      return true;
+    } catch (Exception ex) {
+      try {
+        this.networkManager.channelInactive(networkManager.ctx);
+        EnderLogger.logger.throwing(null, null, ex);
+      } catch (Exception ex1) {
+        ex.addSuppressed(ex1);
+        EnderLogger.logger.throwing(null, null, ex);
+      }
+    }
+    return false;
+  }
 
-		Iterator<String> players = this.visiblePlayers.iterator();
+  @Override public String getName() {
+    return this.getPlayerName();
+  }
 
-		while (players.hasNext()) {
-			EnderPlayer ep = Main.getInstance().getPlayer(players.next());
+  @Override public void teleport(Entity entity) {
+    this.teleport(entity.getLocation());
+  }
 
-			if (ep == null) {
-				players.remove();
-				continue;
-			}
+  @Override public void teleport(Location newLocation) {
+    this.waitingForValidMoveAfterTeleport = 1;
+    Location oldLocation = this.getLocation();
+    oldLocation.setX(newLocation.getX());
+    oldLocation.setY(newLocation.getY());
+    oldLocation.setZ(newLocation.getZ());
+    oldLocation.setPitch(newLocation.getPitch());
+    oldLocation.setYaw(newLocation.getYaw());
+    this.getNetworkManager().sendPacket(new PacketOutPlayerPositionLook(newLocation.getX(), newLocation.getY(), newLocation.getZ(), newLocation.getYaw(), newLocation.getPitch(), (byte) 0b00000));
+    PacketOutEntityTeleport packet = new PacketOutEntityTeleport(this.getEntityId(), (int) (newLocation.getX() * 32.0D), (int) (newLocation.getY() * 32.0D), (int) (newLocation.getZ() * 32.0D), (byte) newLocation.getYaw(), (byte) newLocation.getPitch(), false);
+    for (EnderPlayer ep : Main.getInstance().onlinePlayers) {
+      if (!ep.equals(this)) {
+        ep.getNetworkManager().sendPacket(packet);
+      }
+    }
+  }
 
-			if (ep.getLocation().isInRange(50, this.getLocation(), true)) {
-				ep.networkManager.sendPacket(packet);
-			}
-		}
-	}
+  public void onPlayerChatComplete(final PacketInTabComplete packet) {
+    assert Thread.currentThread() != Main.getInstance().mainThread;
+    Main.getInstance().sendToMainThread(new Runnable() {
+      @Override public void run() {
+        String message = packet.getHalfCommand();
+        List<String> out;
+        if (message.startsWith("/")) {
+          final String fullCommand = message.substring(1);
+          final String[] split = fullCommand.split(" ", -1);
+          final String[] args;
+          if (split.length != 1) {
+            args = new String[split.length - 1];
+            System.arraycopy(split, 1, args, 0, args.length);
+          } else {
+            args = new String[0];
+          }
+          out = Main.getInstance().commands.executeTabList(null, split[0], EnderPlayer.this, args);
+        } else {
+          final String[] split = message.split(" ", -1);
+          String lastPart = split[split.length - 1];
+          out = Command.calculateMissingArgumentsPlayer(lastPart, EnderPlayer.this);
+        }
+        EnderPlayer.this.networkManager.sendPacket(new PacketOutTabComplete(out));
+      }
+    });
+  }
 
-	@Override
-	public void broadcastRotation(float pitch, float yaw) {
-		if(isDead()){
-			return;
-		}
-		
-		Iterator<String> players = this.visiblePlayers.iterator();
+  public boolean canSee(EnderPlayer player) {
+    return true;
+  }
 
-		Packet pack1 = new PacketOutEntityLook(this.getEntityId(), (byte) Utill.calcYaw(yaw * 256.0F / 360.0F), (byte) Utill.calcYaw(pitch * 256.0F / 360.0F), false);
-		Packet pack2 = new PacketOutEntityHeadLook(this.getEntityId(), (byte) Utill.calcYaw(yaw * 256.0F / 360.0F));
+  @Override public void damage(float damage) {
+    if (damage <= 0) {
+      throw new IllegalArgumentException("Damage cannot be smaller or equal to zero.");
+    }
+    if (this.godMode) {
+      return;
+    }
+    super.damage(damage);
+  }
 
-		while (players.hasNext()) {
-			EnderPlayer ep = Main.getInstance().getPlayer(players.next());
+  @Override protected void onHealthUpdate(float health, float oldHealth) {
+    networkManager.sendPacket(new PacketOutUpdateHealth(health, food, foodSaturation));
+    if (health > 0) {
+      return;
+    }
+    Packet packet = new PacketOutEntityDestroy(new Integer[] { this.getEntityId() });
+    for (EnderPlayer ep : Main.getInstance().onlinePlayers) {
+      if (ep.visiblePlayers.contains(this.getPlayerName())) {
+        ep.visiblePlayers.remove(this.getPlayerName());
+        ep.getNetworkManager().sendPacket(packet);
+      }
+    }
+    for (ItemStack inv : this.getInventoryHandler().getPlayerInventory().getRawItems()) {
+      if (inv != null) {
+        world.dropItem(inv, getLocation(), 20);
+      }
+    }
+    Collections.fill(this.getInventoryHandler().getPlayerInventory().getRawItems(), null);
+  }
 
-			if (ep == null) {
-				players.remove();
-				continue;
-			}
-			if (ep.getLocation().isInRange(50, this.getLocation(), true)) {
-				ep.networkManager.sendPacket(pack1);
-				ep.networkManager.sendPacket(pack2);
-			}
-		}
-	}
+  @Override protected String getDamageSound() {
+    return "game.player.hurt";
+  }
 
-	public void playSound(String soundName, float volume, byte pitch) {
-		networkManager.sendPacket(new PacketOutSoundEffect(soundName, getLocation().getBlockX(), getLocation().getBlockY(), getLocation().getBlockZ(), volume, pitch));
-	}
+  @Override protected String getDeadSound() {
+    return "game.player.dead";
+  }
 
-	@Override
-	public boolean sendMessage(Message message) {
-		return this.sendRawMessage(message);
-	}
+  @Override protected float getBaseHealth() {
+    return 20;
+  }
 
-	@Override
-	public boolean sendRawMessage(Message message) {
-		if (!this.isOnline)
-			return false;
-		try {
-			this.networkManager.sendPacket(new PacketOutChatMessage(message, (byte) 1));
-			return true;
-		} catch (Exception ex) {
-			try {
-				this.networkManager.channelInactive(networkManager.ctx);
-				EnderLogger.logger.throwing(null, null, ex);
-			} catch (Exception ex1) {
-				ex.addSuppressed(ex1);
-				EnderLogger.logger.throwing(null, null, ex);
-			}
-		}
-		return false;
-	}
+  @Override protected float getBaseMaxHealth() {
+    return 20;
+  }
 
-	@Override
-	public String getName() {
-		return this.getPlayerName();
-	}
+  public void setOnGround(boolean onGround) {
+    if (this.isOnGround == false && onGround == true) {
+      if (this.canFly) {
+        return;
+      }
+      double change = this.yLocation - this.getLocation().getY() - 3;
+      if (change > 0) {
+        damage((float) change);
+        if (change > 5) {
+        } else {
+          Main.getInstance().mainWorld.broadcastSound("damage.fallsmall", 1F, (byte) 63, getLocation(), null);
+        }
+      }
+    } else {
+      if (this.isOnGround == true && onGround == false) {
+        this.yLocation = this.getLocation().getY();
+      }
+    }
+    this.isOnGround = onGround;
+  }
 
-	@Override
-	public void teleport(Entity entity) {
-		this.teleport(entity.getLocation());
-	}
+  @Override public void onRightClick(EnderPlayer attacker) {
+  }
 
-	@Override
-	public void teleport(Location newLocation) {
-		this.waitingForValidMoveAfterTeleport = 1;
-		Location oldLocation = this.getLocation();
-		oldLocation.setX(newLocation.getX());
-		oldLocation.setY(newLocation.getY());
-		oldLocation.setZ(newLocation.getZ());
-		oldLocation.setPitch(newLocation.getPitch());
-		oldLocation.setYaw(newLocation.getYaw());
+  @Override public void onLeftClick(EnderPlayer attacker) {
+    this.damage(1F);
+  }
 
-		this.getNetworkManager().sendPacket(new PacketOutPlayerPositionLook(newLocation.getX(), newLocation.getY(), newLocation.getZ(), newLocation.getYaw(), newLocation.getPitch(), (byte) 0b00000));
+  @Override public boolean isValid() {
+    return this.isOnline;
+  }
 
-		PacketOutEntityTeleport packet = new PacketOutEntityTeleport(this.getEntityId(), (int) (newLocation.getX() * 32.0D), (int) (newLocation.getY() * 32.0D), (int) (newLocation.getZ() * 32.0D), (byte) newLocation.getYaw(), (byte) newLocation.getPitch(), false);
-		for (EnderPlayer ep : Main.getInstance().onlinePlayers) {
-			if (!ep.equals(this)) {
-				ep.getNetworkManager().sendPacket(packet);
-			}
-		}
-	}
-
-	public void onPlayerChatComplete(final PacketInTabComplete packet) {
-		assert Thread.currentThread() != Main.getInstance().mainThread;
-		Main.getInstance().sendToMainThread(new Runnable() {
-
-			@Override
-			public void run() {
-				String message = packet.getHalfCommand();
-				List<String> out;
-				if (message.startsWith("/")) {
-					final String fullCommand = message.substring(1);
-					final String[] split = fullCommand.split(" ", -1);
-					final String[] args;
-					if (split.length != 1) {
-						args = new String[split.length - 1];
-						System.arraycopy(split, 1, args, 0, args.length);
-					} else
-						args = new String[0];
-					out = Main.getInstance().commands.executeTabList(null, split[0], EnderPlayer.this, args);
-				} else {
-					final String[] split = message.split(" ", -1);
-					String lastPart = split[split.length - 1];
-					out = Command.calculateMissingArgumentsPlayer(lastPart, EnderPlayer.this);
-				}
-				EnderPlayer.this.networkManager.sendPacket(new PacketOutTabComplete(out));
-			}
-		});
-	}
-
-	public boolean canSee(EnderPlayer player) {
-		return true;
-	}
-
-	@Override
-	public void damage(float damage) {
-		if (damage <= 0) {
-			throw new IllegalArgumentException("Damage cannot be smaller or equal to zero.");
-		}
-		if (this.godMode)
-			return;
-		super.damage(damage);
-	}
-
-	@Override
-	protected void onHealthUpdate(float health, float oldHealth) {
-		networkManager.sendPacket(new PacketOutUpdateHealth(health, food, foodSaturation));
-		if (health > 0)
-			return;
-		Packet packet = new PacketOutEntityDestroy(new Integer[] { this.getEntityId() });
-		for (EnderPlayer ep : Main.getInstance().onlinePlayers) {
-			if (ep.visiblePlayers.contains(this.getPlayerName())) {
-				ep.visiblePlayers.remove(this.getPlayerName());
-				ep.getNetworkManager().sendPacket(packet);
-			}
-		}
-		for(ItemStack inv : this.getInventoryHandler().getPlayerInventory().getRawItems())
-			if(inv != null)
-				world.dropItem(inv, getLocation(), 20);
-		Collections.fill(this.getInventoryHandler().getPlayerInventory().getRawItems(), null);
-	}
-
-	@Override
-	protected String getDamageSound() {
-		return "game.player.hurt";
-	}
-
-	@Override
-	protected String getDeadSound() {
-		return "game.player.dead";
-	}
-
-	@Override
-	protected float getBaseHealth() {
-		return 20;
-	}
-
-	@Override
-	protected float getBaseMaxHealth() {
-		return 20;
-	}
-
-	public void setOnGround(boolean onGround) {
-		if (this.isOnGround == false && onGround == true) {
-			if (this.canFly)
-				return; // Flying players don't get damage in vanilla
-			// fall damage
-			double change = this.yLocation - this.getLocation().getY() - 3;
-			if (change > 0) {
-				damage((float) change);
-				if (change > 5) {
-					// can't find correct sound name
-				} else {
-					Main.getInstance().mainWorld.broadcastSound("damage.fallsmall", 1F, (byte) 63, getLocation(), null);
-				}
-			}
-		} else if (this.isOnGround == true && onGround == false) {
-			// save Y location
-			this.yLocation = this.getLocation().getY();
-		}
-		this.isOnGround = onGround;
-	}
-
-	@Override
-	public void onRightClick(EnderPlayer attacker) {
-		// TODO
-	}
-
-	@Override
-	public void onLeftClick(EnderPlayer attacker) {
-		this.damage(1F);
-	}
-
-	@Override
-	public boolean isValid() {
-		return this.isOnline;
-	}
-
-	/**
+  /**
 	 * @return the inventoryHandler
 	 */
-	public InventoryHandler getInventoryHandler() {
-		return inventoryHandler;
-	}
+  public InventoryHandler getInventoryHandler() {
+    return inventoryHandler;
+  }
 
-	/**
-	 * Class used to store the client side settings from the user, the reason I
-	 * included setters and getters is that we can add a event or simulair to
-	 * the code later on
-	 *
-	 * @author ferrybig
-	 */
-	public final class ClientSettings {
+  public final class ClientSettings {
+    private String locale = "en_US";
 
-		private String locale = "en_US";
-		private byte renderDistance = 3;
-		private byte chatFlags = 0;
-		private boolean chatColors = true;
-		private int displayedSkinParts = 0;
+    private byte renderDistance = 3;
 
-		public String getLocale() {
-			return locale;
-		}
+    private byte chatFlags = 0;
 
-		public void setLocale(String locale) {
-			this.locale = locale;
-		}
+    private boolean chatColors = true;
 
-		public byte getRenderDistance() {
-			return renderDistance;
-		}
+    private int displayedSkinParts = 0;
 
-		public void setRenderDistance(byte renderDistance) {
-			this.renderDistance = renderDistance;
-		}
+    public String getLocale() {
+      return locale;
+    }
 
-		public byte getChatFlags() {
-			return chatFlags;
-		}
+    public void setLocale(String locale) {
+      this.locale = locale;
+    }
 
-		public void setChatFlags(byte chatFlags) {
-			this.chatFlags = chatFlags;
-		}
+    public byte getRenderDistance() {
+      return renderDistance;
+    }
 
-		public boolean isChatColors() {
-			return chatColors;
-		}
+    public void setRenderDistance(byte renderDistance) {
+      this.renderDistance = renderDistance;
+    }
 
-		public void setChatColors(boolean chatColors) {
-			this.chatColors = chatColors;
-		}
+    public byte getChatFlags() {
+      return chatFlags;
+    }
 
-		public int getDisplayedSkinParts() {
-			return displayedSkinParts;
-		}
+    public void setChatFlags(byte chatFlags) {
+      this.chatFlags = chatFlags;
+    }
 
-		public void setDisplayedSkinParts(int displayedSkinParts) {
-			this.displayedSkinParts = displayedSkinParts;
-		}
-	}
+    public boolean isChatColors() {
+      return chatColors;
+    }
+
+    public void setChatColors(boolean chatColors) {
+      this.chatColors = chatColors;
+    }
+
+    public int getDisplayedSkinParts() {
+      return displayedSkinParts;
+    }
+
+    public void setDisplayedSkinParts(int displayedSkinParts) {
+      this.displayedSkinParts = displayedSkinParts;
+    }
+  }
 }
