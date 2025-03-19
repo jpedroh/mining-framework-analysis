@@ -57,7 +57,6 @@ import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.academic.util.UniqueAcronymCreator;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.commons.StringNormalizer;
-import org.fenixedu.commons.i18n.LocalizedString;
 import org.joda.time.YearMonthDay;
 
 public class CompetenceCourse extends CompetenceCourse_Base {
@@ -196,6 +195,7 @@ public class CompetenceCourse extends CompetenceCourse_Base {
      * {@link org.fenixedu.academic.domain.degreeStructure.CompetenceCourseInformation CompetenceCourseInformation}
      * object.
      */
+
     @Deprecated
     public void edit(String code, String name, Collection<Department> departments) {
         fillFields(code, name);
@@ -878,6 +878,7 @@ public class CompetenceCourse extends CompetenceCourse_Base {
     /**
      * @see #getDepartmentUnit(ExecutionYear)
      */
+
     public DepartmentUnit getDepartmentUnit() {
         return getDepartmentUnit(ExecutionSemester.readActualExecutionSemester());
     }
@@ -885,6 +886,7 @@ public class CompetenceCourse extends CompetenceCourse_Base {
     /**
      * @see #getDepartmentUnit(ExecutionSemester)
      */
+
     public DepartmentUnit getDepartmentUnit(ExecutionYear executionYear) {
         ExecutionSemester semester = ExecutionSemester.readBySemesterAndExecutionYear(2, executionYear.getYear());
         return getDepartmentUnit(semester);
@@ -909,6 +911,7 @@ public class CompetenceCourse extends CompetenceCourse_Base {
      * @param semester semester of the competence course to be searched for
      * @return Department unit for the given semester
      */
+
     public DepartmentUnit getDepartmentUnit(ExecutionSemester semester) {
         return getMostRecentCompetenceCourseInformationUntil(semester).getDepartmentUnit();
     }
@@ -916,6 +919,7 @@ public class CompetenceCourse extends CompetenceCourse_Base {
     /**
      * @see #getDepartmentUnit(ExecutionSemester)
      */
+
     public CompetenceCourseGroupUnit getCompetenceCourseGroupUnit() {
         return getCompetenceCourseGroupUnit(ExecutionSemester.readActualExecutionSemester());
     }
@@ -924,6 +928,7 @@ public class CompetenceCourse extends CompetenceCourse_Base {
      * @see #getDepartmentUnit(ExecutionSemester)
      * @return
      */
+
     public CompetenceCourseGroupUnit getCompetenceCourseGroupUnit(ExecutionYear executionYear) {
         ExecutionSemester semester = ExecutionSemester.readBySemesterAndExecutionYear(2, executionYear.getYear());
         return getCompetenceCourseGroupUnit(semester);
@@ -1255,6 +1260,20 @@ public class CompetenceCourse extends CompetenceCourse_Base {
         }
         return result;
     }
+
+    /**
+     * @see #getDepartmentUnit(ExecutionSemester)
+     */
+
+    /**
+     * @see #getDepartmentUnit(ExecutionSemester)
+     */
+
+    // -------------------------------------------------------------
+
+    // read static methods
+
+    // -------------------------------------------------------------
 
     @Deprecated
     public java.util.Date getCreationDate() {
