@@ -189,9 +189,14 @@ public abstract class OrientDbWebApplication extends AuthenticatedWebApplication
 				Orient.instance().shutdown();
 			}
 		});
-		getAjaxRequestTargetListeners().add(new FixFormEncTypeListener());
+		
+<<<<<<< /usr/src/app/output/phantomydn/wicket-orientdb/19e9f8c8ff01f4ef6b39006032470baa83079eff/wicket-orientdb/src/main/java/ru/ydn/wicket/wicketorientdb/OrientDbWebApplication.java/left.java
 		//strange workaround to support changing system users passwords in web interface
 		getOrientDbSettings().getORecordHooks().add(OUserCatchPasswordHook.class);
+||||||| /usr/src/app/output/phantomydn/wicket-orientdb/19e9f8c8ff01f4ef6b39006032470baa83079eff/wicket-orientdb/src/main/java/ru/ydn/wicket/wicketorientdb/OrientDbWebApplication.java/base.java
+=======
+		getAjaxRequestTargetListeners().add(new FixFormEncTypeListener());
+>>>>>>> /usr/src/app/output/phantomydn/wicket-orientdb/19e9f8c8ff01f4ef6b39006032470baa83079eff/wicket-orientdb/src/main/java/ru/ydn/wicket/wicketorientdb/OrientDbWebApplication.java/right.java
 	}
 	
 	protected TransactionRequestCycleListener newTransactionRequestCycleListener()
