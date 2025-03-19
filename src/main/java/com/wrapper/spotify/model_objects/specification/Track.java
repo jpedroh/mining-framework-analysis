@@ -1,5 +1,4 @@
 package com.wrapper.spotify.model_objects.specification;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.neovisionaries.i18n.CountryCode;
@@ -10,33 +9,49 @@ import com.wrapper.spotify.requests.data.personalization.interfaces.IArtistTrack
 import com.wrapper.spotify.requests.data.search.interfaces.ISearchModelObject;
 
 /**
- * Retrieve information about <a href="https://developer.spotify.com/web-api/object-model/#track-object-full">
- *     Track objects</a> by building instances from this class.
+ * Retrieve information about tracks by building instances from this class.
  */
 public class Track extends AbstractModelObject implements IArtistTrackModelObject, ISearchModelObject {
   private final AlbumSimplified album;
+
   private final ArtistSimplified[] artists;
+
   private final CountryCode[] availableMarkets;
+
   private final Integer discNumber;
+
   private final Integer durationMs;
+
   private final Boolean explicit;
+
   private final ExternalId externalIds;
+
   private final ExternalUrl externalUrls;
+
   private final String href;
+
   private final String id;
+
   private final Boolean isPlayable;
+
   private final TrackLink linkedFrom;
+
   private final Restrictions restrictions;
+
   private final String name;
+
   private final Integer popularity;
+
   private final String previewUrl;
+
   private final Integer trackNumber;
+
   private final ModelObjectType type;
+
   private final String uri;
 
   private Track(final Builder builder) {
     super(builder);
-
     this.album = builder.album;
     this.artists = builder.artists;
     this.availableMarkets = builder.availableMarkets;
@@ -59,141 +74,129 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
   }
 
   /**
-   * Get the album on which the track appears.
+   * Get the album of a track.
    *
-   * @return The album on which the track appears. The (simplified) album object includes a link in href to full
-   * information about the album.
+   * @return A simplified album.
    */
   public AlbumSimplified getAlbum() {
     return album;
   }
 
   /**
-   * Get the artists who performed the track.
+   * Get the artists of a track.
    *
-   * @return The artists who performed the track. Each artist object includes a link in {@code href} to more detailed
-   *         information about the artist.
+   * @return An array of simplified artists.
    */
   public ArtistSimplified[] getArtists() {
     return artists;
   }
 
   /**
-   * Get the country codes of all countries, in which the track is available.
+   * Get the country codes of all countries, in which a track is available.
    *
-   * @return A list of the countries in which the track can be played, identified by their
-   *         <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1 alpha-2</a> code.
+   * @return An array of ISO 3166-1 alpha-2 country codes.
    */
   public CountryCode[] getAvailableMarkets() {
     return availableMarkets;
   }
 
   /**
-   * Get the disc number of the track in its album.
+   * Get the disc number of a track in its album.
    *
-   * @return The disc number (usually 1 unless the album consists of more than one disc).
+   * @return A disc number.
    */
   public Integer getDiscNumber() {
     return discNumber;
   }
 
   /**
-   * Get the duration of the track in milliseconds.
+   * Get the duration of a track in milliseconds.
    *
-   * @return The track length in milliseconds.
+   * @return Duration of track in milliseconds.
    */
   public Integer getDurationMs() {
     return durationMs;
   }
 
   /**
-   * Check whether the track is explicit or not.
+   * Check whether a track is explicit or not.
    *
-   * @return Whether or not the track has explicit lyrics ({@code true} = yes it does; {@code false} = no it does not
-   *         <b>OR</b> unknown).
+   * @return "true" if explicit, "false" if not.
    */
   public Boolean getIsExplicit() {
     return explicit;
   }
 
   /**
-   * Get the external IDs of the track.<br>
+   * Get the external ids of a track.<br>
    * Example: isrc -&gt; "International Standard Recording Code".
    *
-   * @return Known external IDs for the track.
+   * @return All external ids of the track.
    */
   public ExternalId getExternalIds() {
     return externalIds;
   }
 
   /**
-   * Get the external URLs of the track.<br>
+   * Get the external urls of a track.<br>
    * Example: Spotify-URL.
    *
-   * @return Known external URLs for this track.
+   * @return The external urls of the track.
    */
   public ExternalUrl getExternalUrls() {
     return externalUrls;
   }
 
   /**
-   * Get the full Spotify Web API endpoint URL of the track.
+   * Get the full Spotify API endpoint url of a track.
    *
-   * @return A link to the Web API endpoint providing full details of the track.
+   * @return A Spotify API endpoint url.
    */
   public String getHref() {
     return href;
   }
 
   /**
-   * Get the <a href="https://developer.spotify.com/web-api/user-guide/#spotify-uris-and-ids">Spotify ID</a> of the
-   * track.
+   * Get the Spotify id of a track.
    *
-   * @return The Spotify ID for the track.
+   * @return A Spotify track id.
    */
   public String getId() {
     return id;
   }
 
   /**
-   * Check whether the track is playable in the market, which may has been specified somewhere before requesting it.
-   * Part of the response when <a href="https://developer.spotify.com/web-api/track-relinking-guide/">Track Relinking
-   * </a> is applied.
+   * Check whether a track is playable in the market, which may has been specified
+   * somewhere before requesting it.
    *
-   * @return If {@code true}, the track is playable in the given market. Otherwise {@code false}.
+   * @return "true" if the track is playable in the specified market, "false" if not.
    */
   public Boolean getIsPlayable() {
     return isPlayable;
   }
 
   /**
-   * Get the track link object of the track if <a href="https://developer.spotify.com/web-api/track-relinking-guide/">
-   * Track Relinking</a> was applied and the requested track has been replaced with a different track. The track in the
-   * {@code linked_from} object contains information about the originally requested track.
+   * Get the track link object of a track if the given track has been relinked.<br>
+   * This happens mostly when a specific track is not available in a specific market.
    *
-   * @return The track in the {@code linked_from} object contains information about the originally requested track.
+   * @return A track link object.
    */
   public TrackLink getLinkedFrom() {
     return linkedFrom;
   }
 
   /**
-   * Get the restrictions of the track. Part of the response when
-   * <a href="https://developer.spotify.com/web-api/track-relinking-guide/">Track Relinking</a> is applied, the original
-   * track is not available in the given market, and Spotify did not have any tracks to relink it with. The track
-   * response will still contain metadata for the original track, and a restrictions object containing the reason why
-   * the track is not available. <br>
-   * Example: {@code "restrictions" : {"reason" : "market"}}
+   * Get the restrictions of a track.<br>
+   * Example: The reason why a track may not be available.
    *
-   * @return The track response will still contain metadata for the original track, and a restrictions object containing
-   *         the reason why the track is not available.
+   * @return The restrictions of a track.
    */
   public Restrictions getRestrictions() {
     return restrictions;
   }
 
   /**
-   * Get the name of the track.
+   * Get the name of a track.
    *
    * @return Track name.
    */
@@ -202,37 +205,29 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
   }
 
   /**
-   * Get the popularity of the track. The value will be between 0 and 100, with 100 being the most popular. <br><br>
+   * Get the popularity of a track in a range between 0 and 100. (higher = more popular)<br>
+   * The popularity of a track is based on how often a track has been played recently.
    *
-   * The popularity of a track is a value between 0 and 100, with 100 being the most popular. The popularity is
-   * calculated by algorithm and is based, in the most part, on the total number of plays the track has had and how
-   * recent those plays are.<br><br>
-   *
-   * Generally speaking, songs that are being played a lot now will have a higher popularity than songs that were played
-   * a lot in the past. Duplicate tracks (e.g. the same track from a single and an album) are rated independently.
-   * Artist and album popularity is derived mathematically from track popularity. Note that the popularity value may lag
-   * actual popularity by a few days: the value is not updated in real time.
-   *
-   * @return The popularity of the track. The value will be between 0 and 100, with 100 being the most popular.
+   * @return The popularity of a track.
    */
   public Integer getPopularity() {
     return popularity;
   }
 
   /**
-   * Get a link to a 30 second preview (MP3 format) of the track. {@code null} if not available.
+   * Get an url to a 30 seconds long track preview in MP3 format.<br>
+   * If there is no track preview available, null will be returned.
    *
-   * @return A link to a 30 second preview (MP3 format) of the track. {@code null} if not available.
+   * @return A track preview url if available, null if not available.
    */
   public String getPreviewUrl() {
     return previewUrl;
   }
 
   /**
-   * Get the track number of the track. If an album has several discs, the track number is the number on the specified
-   * disc.
+   * Get the track number of a track.
    *
-   * @return The number of the track.
+   * @return A track number.
    */
   public Integer getTrackNumber() {
     return trackNumber;
@@ -241,56 +236,69 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
   /**
    * Get the model object type, which should be a "track" in this case.
    *
-   * @return The object type: "track".
+   * @return A model object type.
    */
   public ModelObjectType getType() {
     return type;
   }
 
   /**
-   * Get the Spotify track URI.
+   * Get a Spotify track uri.
    *
-   * @return The <a href="https://developer.spotify.com/web-api/user-guide/#spotify-uris-and-ids">Spotify URI</a> for
-   *         the track.
+   * @return A Spotify track uri.
    */
   public String getUri() {
     return uri;
   }
 
-  @Override
-  public Builder builder() {
+  @Override public Builder builder() {
     return new Builder();
   }
 
-  /**
-   * Builder class for building {@link Track} instances.
-   */
   public static final class Builder extends AbstractModelObject.Builder {
     private AlbumSimplified album;
+
     private ArtistSimplified[] artists;
+
     private CountryCode[] availableMarkets;
+
     private Integer discNumber;
+
     private Integer durationMs;
+
     private Boolean explicit;
+
     private ExternalId externalIds;
+
     private ExternalUrl externalUrls;
+
     private String href;
+
     private String id;
+
     private Boolean isPlayable;
+
     private TrackLink linkedFrom;
+
     private Restrictions restrictions;
+
     private String name;
+
     private Integer popularity;
+
     private String previewUrl;
+
     private Integer trackNumber;
+
     private ModelObjectType type;
+
     private String uri;
 
     /**
      * Set the album of the track to be built.
      *
-     * @param album The album on which the track appears.
-     * @return A {@link Track.Builder}.
+     * @param album The simplified album the track belongs to.
+     * @return A builder object.
      */
     public Builder setAlbum(AlbumSimplified album) {
       this.album = album;
@@ -300,8 +308,8 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
     /**
      * Set the artists of the track to be built.
      *
-     * @param artists The artists who performed the track.
-     * @return A {@link Track.Builder}.
+     * @param artists An array of simplified artists.
+     * @return A builder object.
      */
     public Builder setArtists(ArtistSimplified... artists) {
       this.artists = artists;
@@ -311,9 +319,8 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
     /**
      * Set the available markets of the track to be built.
      *
-     * @param availableMarkets A list of the countries in which the track can be played, identified by their
-     *                         <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1 alpha-2</a> code.
-     * @return A {@link Track.Builder}.
+     * @param availableMarkets An array of ISO 3166-1 alpha-2 country codes.
+     * @return A builder object.
      */
     public Builder setAvailableMarkets(CountryCode... availableMarkets) {
       this.availableMarkets = availableMarkets;
@@ -323,8 +330,8 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
     /**
      * Set the disc numer of the track to be built.
      *
-     * @param discNumber The disc number (usually 1 unless the album consists of more than one disc).
-     * @return A {@link Track.Builder}.
+     * @param discNumber The disc number.
+     * @return A builder object.
      */
     public Builder setDiscNumber(Integer discNumber) {
       this.discNumber = discNumber;
@@ -334,8 +341,8 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
     /**
      * Set the duration in milliseconds of the track to be built.
      *
-     * @param durationMs The track length in milliseconds.
-     * @return A {@link Track.Builder}.
+     * @param durationMs Duration in milliseconds.
+     * @return A builder object.
      */
     public Builder setDurationMs(Integer durationMs) {
       this.durationMs = durationMs;
@@ -345,9 +352,8 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
     /**
      * Set whether the track to be built is explicit or not.
      *
-     * @param explicit Whether or not the track has explicit lyrics ({@code true} = yes it does; {@code false} = no it
-     *                 does not <b>OR</b> unknown).
-     * @return A {@link Track.Builder}.
+     * @param explicit Set "true" for explicit, "false" for not explicit.
+     * @return A builder object.
      */
     public Builder setExplicit(Boolean explicit) {
       this.explicit = explicit;
@@ -355,10 +361,10 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
     }
 
     /**
-     * Set the external IDs of the track to be built.
+     * Set the external ids of the track to be built.
      *
-     * @param externalIds Known external IDs for the track.
-     * @return A {@link Track.Builder}.
+     * @param externalIds External ids object.
+     * @return A builder object.
      */
     public Builder setExternalIds(ExternalId externalIds) {
       this.externalIds = externalIds;
@@ -366,10 +372,10 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
     }
 
     /**
-     * Set external URLs of the track to be built.
+     * Set external urls of the track to be built.
      *
-     * @param externalUrls Known external URLs for the track.
-     * @return A {@link Track.Builder}.
+     * @param externalUrls External urls object.
+     * @return A builder object.
      */
     public Builder setExternalUrls(ExternalUrl externalUrls) {
       this.externalUrls = externalUrls;
@@ -377,10 +383,10 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
     }
 
     /**
-     * Set href of Spotify Web API endpoint of the track to be built.
+     * Set href of Spotify api endpoint of the track to be built.
      *
-     * @param href A link to the Web API endpoint providing full details of the track.
-     * @return A {@link Track.Builder}.
+     * @param href Spotify api endpoint url.
+     * @return A builder object.
      */
     public Builder setHref(String href) {
       this.href = href;
@@ -388,10 +394,10 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
     }
 
     /**
-     * Set track ID of the track to be built.
+     * Set track id of the track to be built.
      *
-     * @param id The Spotify ID for the track.
-     * @return A {@link Track.Builder}.
+     * @param id Track id.
+     * @return A builder object.
      */
     public Builder setId(String id) {
       this.id = id;
@@ -401,8 +407,8 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
     /**
      * Set whether the track to be built is playable in your market region or not.
      *
-     * @param isPlayable If {@code true}, the track is playable in the given market. Otherwise {@code false}.
-     * @return A {@link Track.Builder}.
+     * @param isPlayable "true" for playable, "false" for not playable.
+     * @return A builder object.
      */
     public Builder setIsPlayable(Boolean isPlayable) {
       this.isPlayable = isPlayable;
@@ -412,9 +418,8 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
     /**
      * Set the track link object of the track to be built.
      *
-     * @param linkedFrom The track in the {@code linked_from} object contains information about the originally requested
-     *                   track.
-     * @return A {@link Track.Builder}.
+     * @param linkedFrom Track link object.
+     * @return A builder object.
      */
     public Builder setLinkedFrom(TrackLink linkedFrom) {
       this.linkedFrom = linkedFrom;
@@ -424,9 +429,8 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
     /**
      * Set the restrictions object of the track to be built.
      *
-     * @param restrictions The track response will still contain metadata for the original track, and a restrictions
-     *                     object containing the reason why the track is not available.
-     * @return A {@link Track.Builder}.
+     * @param restrictions Restrictions object.
+     * @return A builder object.
      */
     public Builder setRestrictions(Restrictions restrictions) {
       this.restrictions = restrictions;
@@ -437,7 +441,7 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
      * Set the name of the track to be built.
      *
      * @param name Track name.
-     * @return A {@link Track.Builder}.
+     * @return A builder object.
      */
     public Builder setName(String name) {
       this.name = name;
@@ -447,9 +451,8 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
     /**
      * Set the popularity of the track to be built.
      *
-     * @param popularity The popularity of the track. The value will be between 0 and 100, with 100 being the most
-     *                   popular.
-     * @return A {@link Track.Builder}.
+     * @param popularity The popularity in a range between 0 and 100.
+     * @return A builder object.
      */
     public Builder setPopularity(Integer popularity) {
       this.popularity = popularity;
@@ -457,10 +460,10 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
     }
 
     /**
-     * Set the preview URL of the track to be built.
+     * Set the preview url of the track to be built.
      *
-     * @param previewUrl A link to a 30 second preview (MP3 format) of the track. {@code null} if not available.
-     * @return A {@link Track.Builder}.
+     * @param previewUrl The url of a track preview.
+     * @return A builder object.
      */
     public Builder setPreviewUrl(String previewUrl) {
       this.previewUrl = previewUrl;
@@ -471,7 +474,7 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
      * Set the track number of the track to be built.
      *
      * @param trackNumber The track number.
-     * @return A {@link Track.Builder}.
+     * @return A builder object.
      */
     public Builder setTrackNumber(Integer trackNumber) {
       this.trackNumber = trackNumber;
@@ -481,8 +484,8 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
     /**
      * Set the type of the model object. In this case "track".
      *
-     * @param type The object type: "track".
-     * @return A {@link Track.Builder}.
+     * @param type Type of the model object.
+     * @return A builder object.
      */
     public Builder setType(ModelObjectType type) {
       this.type = type;
@@ -490,118 +493,27 @@ public class Track extends AbstractModelObject implements IArtistTrackModelObjec
     }
 
     /**
-     * Set Spotify URI of the track to be built.
+     * Set Spotify uri of the track to be built.
      *
-     * @param uri The <a href="https://developer.spotify.com/web-api/user-guide/#spotify-uris-and-ids">Spotify URI</a>
-     *            for the track.
-     * @return A {@link Track.Builder}.
+     * @param uri The Spotify track uri.
+     * @return A builder object.
      */
     public Builder setUri(String uri) {
       this.uri = uri;
       return this;
     }
 
-    @Override
-    public Track build() {
+    @Override public Track build() {
       return new Track(this);
     }
   }
 
-  /**
-   * JsonUtil class for building {@link Track} instances.
-   */
   public static final class JsonUtil extends AbstractModelObject.JsonUtil<Track> {
     public Track createModelObject(JsonObject jsonObject) {
       if (jsonObject == null || jsonObject.isJsonNull()) {
         return null;
       }
-
-      return new Track.Builder()
-              .setAlbum(
-                      hasAndNotNull(jsonObject, "album")
-                              ? new AlbumSimplified.JsonUtil().createModelObject(
-                              jsonObject.getAsJsonObject("album"))
-                              : null)
-              .setArtists(
-                      hasAndNotNull(jsonObject, "artists")
-                              ? new ArtistSimplified.JsonUtil().createModelObjectArray(
-                              jsonObject.getAsJsonArray("artists"))
-                              : null)
-              .setAvailableMarkets(
-                      hasAndNotNull(jsonObject, "available_markets")
-                              ? new Gson().fromJson(
-                              jsonObject.getAsJsonArray("available_markets"), CountryCode[].class)
-                              : null)
-              .setDiscNumber(
-                      hasAndNotNull(jsonObject, "disc_number")
-                              ? jsonObject.get("disc_number").getAsInt()
-                              : null)
-              .setDurationMs(
-                      hasAndNotNull(jsonObject, "duration_ms")
-                              ? jsonObject.get("duration_ms").getAsInt()
-                              : null)
-              .setExplicit(
-                      hasAndNotNull(jsonObject, "explicit")
-                              ? jsonObject.get("explicit").getAsBoolean()
-                              : null)
-              .setExternalIds(
-                      hasAndNotNull(jsonObject, "external_ids")
-                              ? new ExternalId.JsonUtil().createModelObject(
-                              jsonObject.getAsJsonObject("external_ids"))
-                              : null)
-              .setExternalUrls(
-                      hasAndNotNull(jsonObject, "external_urls")
-                              ? new ExternalUrl.JsonUtil().createModelObject(
-                              jsonObject.getAsJsonObject("external_urls"))
-                              : null)
-              .setHref(
-                      hasAndNotNull(jsonObject, "href")
-                              ? jsonObject.get("href").getAsString()
-                              : null)
-              .setId(
-                      hasAndNotNull(jsonObject, "id")
-                              ? jsonObject.get("id").getAsString()
-                              : null)
-              .setIsPlayable(
-                      hasAndNotNull(jsonObject, "is_playable")
-                              ? jsonObject.get("is_playable").getAsBoolean()
-                              : null)
-              .setLinkedFrom(
-                      hasAndNotNull(jsonObject, "linked_from")
-                              ? new TrackLink.JsonUtil().createModelObject(
-                              jsonObject.get("linked_from").getAsJsonObject())
-                              : null)
-              .setRestrictions(
-                      hasAndNotNull(jsonObject, "restrictions")
-                              ? new Restrictions.JsonUtil().createModelObject(
-                              jsonObject.get("restrictions").getAsJsonObject())
-                              : null)
-              .setName(
-                      hasAndNotNull(jsonObject, "name")
-                              ? jsonObject.get("name").getAsString()
-                              : null)
-              .setPopularity(
-                      hasAndNotNull(jsonObject, "popularity")
-                              ? jsonObject.get("popularity").getAsInt()
-                              : null)
-              .setPreviewUrl(
-                      hasAndNotNull(jsonObject, "preview_url")
-                              ? jsonObject.get("preview_url").getAsString()
-                              : null)
-              .setTrackNumber(
-                      hasAndNotNull(jsonObject, "track_number")
-                              ? jsonObject.get("track_number").getAsInt()
-                              : null)
-              .setType(
-                      hasAndNotNull(jsonObject, "type")
-                              ? ModelObjectType.valueOf(
-                              jsonObject.get("type").getAsString().toUpperCase())
-                              : null)
-              .setUri(
-                      hasAndNotNull(jsonObject, "uri")
-                              ? jsonObject.get("uri").getAsString()
-                              : null)
-              .build();
+      return new Track.Builder().setAlbum(hasAndNotNull(jsonObject, "album") ? new AlbumSimplified.JsonUtil().createModelObject(jsonObject.getAsJsonObject("album")) : null).setArtists(hasAndNotNull(jsonObject, "artists") ? new ArtistSimplified.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("artists")) : null).setAvailableMarkets(hasAndNotNull(jsonObject, "available_markets") ? new Gson().fromJson(jsonObject.getAsJsonArray("available_markets"), CountryCode[].class) : null).setDiscNumber(hasAndNotNull(jsonObject, "disc_number") ? jsonObject.get("disc_number").getAsInt() : null).setDurationMs(hasAndNotNull(jsonObject, "duration_ms") ? jsonObject.get("duration_ms").getAsInt() : null).setExplicit(hasAndNotNull(jsonObject, "explicit") ? jsonObject.get("explicit").getAsBoolean() : null).setExternalIds(hasAndNotNull(jsonObject, "external_ids") ? new ExternalId.JsonUtil().createModelObject(jsonObject.getAsJsonObject("external_ids")) : null).setExternalUrls(hasAndNotNull(jsonObject, "external_urls") ? new ExternalUrl.JsonUtil().createModelObject(jsonObject.getAsJsonObject("external_urls")) : null).setHref(hasAndNotNull(jsonObject, "href") ? jsonObject.get("href").getAsString() : null).setId(hasAndNotNull(jsonObject, "id") ? jsonObject.get("id").getAsString() : null).setIsPlayable(hasAndNotNull(jsonObject, "is_playable") ? jsonObject.get("is_playable").getAsBoolean() : null).setLinkedFrom(hasAndNotNull(jsonObject, "linked_from") ? new TrackLink.JsonUtil().createModelObject(jsonObject.get("linked_from").getAsJsonObject()) : null).setRestrictions(hasAndNotNull(jsonObject, "restrictions") ? new Restrictions.JsonUtil().createModelObject(jsonObject.get("restrictions").getAsJsonObject()) : null).setName(hasAndNotNull(jsonObject, "name") ? jsonObject.get("name").getAsString() : null).setPopularity(hasAndNotNull(jsonObject, "popularity") ? jsonObject.get("popularity").getAsInt() : null).setPreviewUrl(hasAndNotNull(jsonObject, "preview_url") ? jsonObject.get("preview_url").getAsString() : null).setTrackNumber(hasAndNotNull(jsonObject, "track_number") ? jsonObject.get("track_number").getAsInt() : null).setType(hasAndNotNull(jsonObject, "type") ? ModelObjectType.valueOf(jsonObject.get("type").getAsString().toUpperCase()) : null).setUri(hasAndNotNull(jsonObject, "uri") ? jsonObject.get("uri").getAsString() : null).build();
     }
   }
 }
