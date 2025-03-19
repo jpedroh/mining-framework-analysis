@@ -64,7 +64,10 @@ public class tarql extends CmdGeneral {
 	private final ArgDecl withoutHeaderArg = new ArgDecl(false, "no-header-row", "no-header", "H");
 	private final ArgDecl encodingArg = new ArgDecl(true, "encoding", "e");
 	private final ArgDecl nTriplesArg = new ArgDecl(false, "ntriples");
+	private final ArgDecl jsonFormatArg = new ArgDecl(false, "json_format");
+	private final ArgDecl xmlFormatArg = new ArgDecl(false, "xml_format");
 	private final ArgDecl jsonLDArg = new ArgDecl(false, "jsonld");
+
 	private final ArgDecl delimiterArg = new ArgDecl(true, "delimiter", "d");
 	private final ArgDecl tabsArg = new ArgDecl(false, "tabs", "tab", "t");
 	private final ArgDecl quoteArg = new ArgDecl(true, "quotechar");
@@ -72,8 +75,6 @@ public class tarql extends CmdGeneral {
 	private final ArgDecl baseArg = new ArgDecl(true, "base");
 	private final ArgDecl writeBaseArg = new ArgDecl(false, "write-base");
 	private final ArgDecl dedupArg = new ArgDecl(true, "dedup");
-  private final ArgDecl jsonFormatArg = new ArgDecl(false, "json_format");
-	private final ArgDecl xmlFormatArg = new ArgDecl(false, "xml_format");
 	
 	private String queryFile;
 	private List<String> csvFiles = new ArrayList<String>();
@@ -98,8 +99,15 @@ public class tarql extends CmdGeneral {
 		add(testQueryArg,     "--test", "Show CONSTRUCT template and first rows only (for query debugging)");
 		add(writeBaseArg,     "--write-base", "Write @base if output is Turtle");
 		add(nTriplesArg,      "--ntriples", "Write N-Triples instead of Turtle");
+<<<<<<< /usr/src/app/output/tarql/tarql/0644473c2bd9194e86eed5131e12cc580cf2956b/src/main/java/org/deri/tarql/tarql.java/left.java
+		add(jsonFormatArg,    "--json-format", "Write the output in JSON Format");
+		add(xmlFormatArg,     "--xml-format", "Write the output in XML Format");
+||||||| /usr/src/app/output/tarql/tarql/0644473c2bd9194e86eed5131e12cc580cf2956b/src/main/java/org/deri/tarql/tarql.java/base.java
+=======
 		add(jsonLDArg,        "--josnld", "Write JSON-LD instead of Turtle");
+>>>>>>> /usr/src/app/output/tarql/tarql/0644473c2bd9194e86eed5131e12cc580cf2956b/src/main/java/org/deri/tarql/tarql.java/right.java
 		add(dedupArg, "--dedup", "Window size in which to remove duplicate triples");
+
 		getUsage().startCategory("Input options");
 		add(stdinArg,         "--stdin", "Read input from STDIN instead of file");
 		add(delimiterArg,     "-d   --delimiter", "Delimiting character of the input file");
@@ -110,8 +118,7 @@ public class tarql extends CmdGeneral {
 		add(withoutHeaderArg, "-H   --no-header-row", "Input file has no header row; use variable names ?a, ?b, ...");
 		add(withHeaderArg,    "--header-row", "Input file's first row is a header with variable names (default)");
 		add(baseArg,          "--base", "Base IRI for resolving relative IRIs");
-		add(jsonFormatArg,    "--json-format", "Write the output in JSON Format");
-		add(xmlFormatArg,     "--xml-format", "Write the output in XML Format");
+		
 		getUsage().startCategory("Main arguments");
 		getUsage().addUsage("query.sparql", "File containing a SPARQL query to be applied to an input file");
 		getUsage().addUsage("table.csv", "CSV/TSV file to be processed; can be omitted if specified in FROM clause");
