@@ -482,8 +482,9 @@ public final class GPData {
         }
 
         public static Optional<LocalDate> toRelativeDate(byte[] v, LocalDate now) throws GPDataException {
+            // 0xFFFF is caught below.
             if ((v[0] == 0 && v[1] == 0) || (v[0] == (byte) 0xFF && v[1] == (byte) 0xFF)) {
-                logger.debug("0x0000/0xFFFF does not represent a valid date");
+                logger.debug("0x0000 does not represent a valid date");
                 return Optional.empty();
             }
             String sv = HexUtils.bin2hex(v);
