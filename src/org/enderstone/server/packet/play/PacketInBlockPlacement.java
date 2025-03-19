@@ -1,27 +1,9 @@
-/* 
- * Enderstone
- * Copyright (C) 2014 Sander Gielisse and Fernando van Loenhout
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.enderstone.server.packet.play;
-
 import java.io.IOException;
 import org.enderstone.server.Main;
 import org.enderstone.server.api.Location;
-import org.enderstone.server.api.event.player.PlayerEatEvent;
 import org.enderstone.server.blocks.BlockDefinition;
+import org.enderstone.server.api.event.player.PlayerEatEvent;
 import org.enderstone.server.blocks.BlockDefinitions;
 import org.enderstone.server.entity.EnderPlayer;
 import org.enderstone.server.entity.FoodType;
@@ -32,133 +14,131 @@ import org.enderstone.server.packet.PacketDataWrapper;
 import org.enderstone.server.regions.BlockId;
 
 public class PacketInBlockPlacement extends Packet {
+  private Location loc;
 
-	private Location loc;
-	private byte direction;
-	private ItemStack heldItem;
-	private byte cursorX;
-	private byte cursorY;
-	private byte cursorZ;
+  private byte direction;
 
-	@Override
-	public void read(PacketDataWrapper wrapper) throws IOException {
-		this.loc = wrapper.readLocation();
-		this.direction = wrapper.readByte();
-		this.heldItem = wrapper.readItemStack();
-		this.cursorX = wrapper.readByte(); // The position of the crosshair on the block
-		this.cursorY = wrapper.readByte();
-		this.cursorZ = wrapper.readByte();
-	}
+  private ItemStack heldItem;
 
-	@Override
-	public void write(PacketDataWrapper wrapper) throws IOException {
-		throw new RuntimeException("Packet " + this.getClass().getSimpleName() + " with ID 0x" + Integer.toHexString(getId()) + " cannot be written.");
-	}
+  private byte cursorX;
 
-	@Override
-	public int getSize() throws IOException {
-		return getLocationSize() + 4 + getItemStackSize(heldItem) + getVarIntSize(getId());
-	}
+  private byte cursorY;
 
-	@Override
-	public byte getId() {
-		return 0x08;
-	}
+  private byte cursorZ;
 
-	@Override
-	public void onRecieve(final NetworkManager networkManager) {
-		if (getHeldItem() == null || getHeldItem().getBlockId() == -1) {
-			return;
-		}
-		Main.getInstance().sendToMainThread(new Runnable() {
+  @Override public void read(PacketDataWrapper wrapper) throws IOException {
+    this.loc = wrapper.readLocation();
+    this.direction = wrapper.readByte();
+    this.heldItem = wrapper.readItemStack();
+    this.cursorX = wrapper.readByte();
+    this.cursorY = wrapper.readByte();
+    this.cursorZ = wrapper.readByte();
+  }
 
-			@Override
-			public void run() {
-				int x = getLocation().getBlockX();
-				int y = getLocation().getBlockY();
-				int z = getLocation().getBlockZ();
+  @Override public void write(PacketDataWrapper wrapper) throws IOException {
+    throw new RuntimeException("Packet " + this.getClass().getSimpleName() + " with ID 0x" + Integer.toHexString(getId()) + " cannot be written.");
+  }
 
-				byte direct = getDirection();
+  @Override public int getSize() throws IOException {
+    return getLocationSize() + 4 + getItemStackSize(heldItem) + getVarIntSize(getId());
+  }
 
-				//called when started eating, pulling bow etc.
-				if (x == -1 && z == -1 && direct == -1) {
-					if (FoodType.fromBlockId(getHeldItem().getBlockId()) != null) {
-						if(Main.getInstance().callEvent(new PlayerEatEvent(networkManager.player))){
-							return;
-						}
-						networkManager.player.clientSettings.isEatingTicks = 1;
-						networkManager.player.updateDataWatcher();
-						networkManager.player.getWorld().broadcastPacket(new PacketOutEntityMetadata(networkManager.player.getEntityId(), networkManager.player.getDataWatcher()), networkManager.player.getLocation());
-					}
-					return;
-				}
-				
-				if (direct == 0) {
-					y--;
-				} else if (direct == 1) {
-					y++;
-				} else if (direct == 2) {
-					z--;
-				} else if (direct == 3) {
-					z++;
-				} else if (direct == 4) {
-					x--;
-				} else if (direct == 5) {
-					x++;
-				}
-				loc.setWorld(networkManager.player.getWorld());
-				if (networkManager.player.getLocation().isInRange(6, loc, true)) {
-					EnderPlayer pl = networkManager.player;
+  @Override public byte getId() {
+    return 0x08;
+  }
 
-					if (getHeldItem() == null || pl.getInventoryHandler().getItemInHand() == null) {
-						if (Main.getInstance().getWorld(pl).getBlockIdAt(x, y, z).getId() == 0) {
-							pl.sendBlockUpdate(new Location(pl.getWorld(), x, y, z, (byte) 0, (byte) 0), (short)0, (byte) 0); //tell client it failed and set the block back to air
-						}
-						return;
-					}
-					if (pl.getInventoryHandler().getItemInHand().getBlockId() != getHeldItem().getBlockId() && pl.getInventoryHandler().getItemInHand().getAmount() != getHeldItem().getAmount()) {
-						if (Main.getInstance().getWorld(pl).getBlockIdAt(x, y, z).getId() == 0) {
-							pl.sendBlockUpdate(new Location(pl.getWorld(), x, y, z, (byte) 0, (byte) 0), (short)0, (byte) 0); //tell client it failed and set the block back to air
-						}
-						return;
-					}
-					
-					if (BlockId.byId(getHeldItem().getBlockId()).isValidBlock()) {
+  @Override public void onRecieve(final NetworkManager networkManager) {
+    if (getHeldItem() == null || getHeldItem().getBlockId() == -1) {
+      return;
+    }
+    Main.getInstance().sendToMainThread(new Runnable() {
+      @Override public void run() {
+        int x = getLocation().getBlockX();
+        int y = getLocation().getBlockY();
+        int z = getLocation().getBlockZ();
+        byte direct = getDirection();
+        if (x == -1 && z == -1 && direct == -1) {
+          if (FoodType.fromBlockId(getHeldItem().getBlockId()) != null) {
+            if (Main.getInstance().callEvent(new PlayerEatEvent(networkManager.player))) {
+              return;
+            }
+            networkManager.player.clientSettings.isEatingTicks = 1;
+            networkManager.player.updateDataWatcher();
+            networkManager.player.getWorld().broadcastPacket(new PacketOutEntityMetadata(networkManager.player.getEntityId(), networkManager.player.getDataWatcher()), networkManager.player.getLocation());
+          }
+          return;
+        }
+        if (direct == 0) {
+          y--;
+        } else {
+          if (direct == 1) {
+            y++;
+          } else {
+            if (direct == 2) {
+              z--;
+            } else {
+              if (direct == 3) {
+                z++;
+              } else {
+                if (direct == 4) {
+                  x--;
+                } else {
+                  if (direct == 5) {
+                    x++;
+                  }
+                }
+              }
+            }
+          }
+        }
+        loc.setWorld(networkManager.player.getWorld());
+        if (networkManager.player.getLocation().isInRange(6, loc, true)) {
+          EnderPlayer pl = networkManager.player;
+          if (getHeldItem() == null || pl.getInventoryHandler().getItemInHand() == null) {
+            if (Main.getInstance().getWorld(pl).getBlockIdAt(x, y, z).getId() == 0) {
+              pl.sendBlockUpdate(new Location(pl.getWorld(), x, y, z, (byte) 0, (byte) 0), (short) 0, (byte) 0);
+            }
+            return;
+          }
+          if (pl.getInventoryHandler().getItemInHand().getBlockId() != getHeldItem().getBlockId() && pl.getInventoryHandler().getItemInHand().getAmount() != getHeldItem().getAmount()) {
+            if (Main.getInstance().getWorld(pl).getBlockIdAt(x, y, z).getId() == 0) {
+              pl.sendBlockUpdate(new Location(pl.getWorld(), x, y, z, (byte) 0, (byte) 0), (short) 0, (byte) 0);
+            }
+            return;
+          }
+          if (BlockId.byId(getHeldItem().getBlockId()).isValidBlock()) {
+            Main.getInstance().getWorld(pl).setBlockAt(x, y, z, BlockId.byId(getHeldItem().getBlockId()), (byte) getHeldItem().getDamage());
+            BlockDefinition definition = BlockDefinitions.getBlock(networkManager.player.getWorld().getBlockIdAt(x, y, z));
+            pl.getInventoryHandler().decreaseItemInHand(1);
+            Main.getInstance().getWorld(networkManager.player).broadcastSound(definition.getPlaceSound(), 1F, (byte) 63, loc, null);
+            return;
+          }
+        }
+      }
+    });
+  }
 
-						Main.getInstance().getWorld(pl).setBlockAt(x, y, z, BlockId.byId(getHeldItem().getBlockId()), (byte) getHeldItem().getDamage());
+  public Location getLocation() {
+    return loc;
+  }
 
-						BlockDefinition definition = BlockDefinitions.getBlock(networkManager.player.getWorld().getBlockIdAt(x, y, z));
+  public byte getDirection() {
+    return direction;
+  }
 
-						pl.getInventoryHandler().decreaseItemInHand(1);
-						Main.getInstance().getWorld(networkManager.player).broadcastSound(definition.getPlaceSound(), 1F, (byte) 63, loc, null);
-						return;
-					}
-				}
-			}
-		});
-	}
+  public ItemStack getHeldItem() {
+    return heldItem;
+  }
 
-	public Location getLocation(){
-		return loc;
-	}
+  public byte getCursorX() {
+    return cursorX;
+  }
 
-	public byte getDirection() {
-		return direction;
-	}
+  public byte getCursorY() {
+    return cursorY;
+  }
 
-	public ItemStack getHeldItem() {
-		return heldItem;
-	}
-
-	public byte getCursorX() {
-		return cursorX;
-	}
-
-	public byte getCursorY() {
-		return cursorY;
-	}
-
-	public byte getCursorZ() {
-		return cursorZ;
-	}
+  public byte getCursorZ() {
+    return cursorZ;
+  }
 }
