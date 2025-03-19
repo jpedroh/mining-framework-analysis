@@ -437,7 +437,12 @@ public class BenchmarksRTree {
     public static void main(String[] args) {
         BenchmarksRTree b = new BenchmarksRTree();
         System.out.println("starting searches");
+<<<<<<< /usr/src/app/output/davidmoten/rtree/dd478c4ea8eeeede9848bc596dda5454a648541d/src/test/java/com/github/davidmoten/rtree/BenchmarksRTree.java/left.java
+||||||| /usr/src/app/output/davidmoten/rtree/dd478c4ea8eeeede9848bc596dda5454a648541d/src/test/java/com/github/davidmoten/rtree/BenchmarksRTree.java/base.java
+        Blackhole bh = new Blackhole("hello");
+=======
         Blackhole bh = new Blackhole();
+>>>>>>> /usr/src/app/output/davidmoten/rtree/dd478c4ea8eeeede9848bc596dda5454a648541d/src/test/java/com/github/davidmoten/rtree/BenchmarksRTree.java/right.java
         while (true)
             b.starTreeM4.search(searchRectangle()).subscribe();
     }
