@@ -1,43 +1,19 @@
-/*
- * Copyright (c) 2011 David Saff
- * Copyright (c) 2011 Christian Gruber
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.junit.contrib.truth.subjects;
-
 import static org.junit.contrib.truth.subjects.SubjectUtils.accumulate;
 import static org.junit.contrib.truth.subjects.SubjectUtils.countOf;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.contrib.truth.FailureStrategy;
 import org.junit.contrib.truth.util.GwtCompatible;
 
-@GwtCompatible
-public class CollectionSubject<S extends CollectionSubject<S, T, C>, T, C extends Collection<T>> extends IterableSubject<S, T, C> {
-
-  @SuppressWarnings({ "unchecked", "rawtypes" })
-  public static <T, C extends Collection<T>> CollectionSubject<? extends CollectionSubject<?, T, C>, T, C> create(
-      FailureStrategy failureStrategy, Collection<T> list) {
+@GwtCompatible public class CollectionSubject<S extends CollectionSubject<S, T, C>, T extends java.lang.Object, C extends Collection<T>> extends IterableSubject<S, T, C> {
+  @SuppressWarnings(value = { "unchecked", "rawtypes" }) public static <T extends java.lang.Object, C extends Collection<T>> CollectionSubject<? extends CollectionSubject<?, T, C>, T, C> create(FailureStrategy failureStrategy, Collection<T> list) {
     return new CollectionSubject(failureStrategy, list);
   }
 
-  // TODO: Arguably this should even be package private
   protected CollectionSubject(FailureStrategy failureStrategy, C list) {
     super(failureStrategy, list);
   }
@@ -66,7 +42,7 @@ public class CollectionSubject<S extends CollectionSubject<S, T, C>, T, C extend
    * Attests that a Collection contains at least one of the provided
    * objects or fails.
    */
-  public And<S> containsAnyOf(Object first, Object second, Object ... rest) {
+  public And<S> containsAnyOf(Object first, Object second, Object... rest) {
     Collection<?> collection = getSubject();
     for (Object item : accumulate(first, second, rest)) {
       if (collection.contains(item)) {
@@ -77,20 +53,17 @@ public class CollectionSubject<S extends CollectionSubject<S, T, C>, T, C extend
     return nextChain();
   }
 
-
   /**
    * Attests that a Collection contains all of the provided objects or fails.
    * This copes with duplicates in both the Collection and the parameters.
    */
-  public Ordered<S> contains(Object first, Object second, Object ... rest) {
+  public Ordered<S> contains(Object first, Object second, Object... rest) {
     Collection<?> collection = getSubject();
-    // Arrays.asList() does not support remove() so we need a mutable copy.
     List<Object> required = accumulate(first, second, rest);
     for (Object item : collection) {
       required.remove(item);
     }
     if (!required.isEmpty()) {
-      // Try and make a useful message when dealing with duplicates.
       Set<Object> missing = new HashSet<Object>(required);
       Object[] params = new Object[missing.size()];
       int n = 0;
@@ -100,7 +73,6 @@ public class CollectionSubject<S extends CollectionSubject<S, T, C>, T, C extend
       }
       fail("contains", params);
     }
-
     final List<?> expectedItems = accumulate(first, second, rest);
     return new Ordered<S>() {
       @Override public And<S> inOrder() {
@@ -122,10 +94,10 @@ public class CollectionSubject<S extends CollectionSubject<S, T, C>, T, C extend
         }
         return nextChain();
       }
+
       @Override public S and() {
         return nextChain().and();
       }
     };
   }
-
 }
