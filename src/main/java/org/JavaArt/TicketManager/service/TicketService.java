@@ -7,6 +7,7 @@ import org.JavaArt.TicketManager.entities.Sector;
 import org.JavaArt.TicketManager.entities.Ticket;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -14,8 +15,8 @@ import java.util.TreeMap;
 
 @Service
 public class TicketService {
-    private TicketRepository ticketRepository = new TicketRepositoryImpl();
     private static TicketService ticketService;
+    private TicketRepository ticketRepository = new TicketRepositoryImpl();
 
     private TicketService() {
     }
@@ -70,10 +71,6 @@ public class TicketService {
         ticketRepository.saveOrUpdateTickets(tickets);
     }
 
-    public void updateTickets(List<Ticket> tickets) {
-        ticketRepository.updateTickets(tickets);
-    }
-
     public void deleteNonConfirmedTickets(int minutes) {
         ticketRepository.deleteNonConfirmedTickets(minutes);
     }
@@ -82,7 +79,7 @@ public class TicketService {
         Map<Integer, String> seatsMap = new TreeMap<>();
         List<Ticket> ticket = ticketRepository.getAllTicketsBySectorAndRow(sector, row);
         for (int i = 1; i <= sector.getMaxSeats(); i++) {
-            if (ticketRepository.isPlaceFree(sector, row, i)) {
+            if (ticketRepository.isPlaceFree(sector, row, i)==0) {
                 if(order.size()>0&&order!=null){
                     for (Ticket ord : order) {
                         if (ord.getSector().equals(sector) && ord.getRow() == row && ord.getSeat() == i){
