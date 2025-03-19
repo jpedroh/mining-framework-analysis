@@ -91,7 +91,7 @@ public class TemplateCompilerContext {
             } catch (TypeException ex) {
                 throw new ContextException("Can't use " + name + " for rendering", ex);
             }
-            return new TemplateCompilerContext(generator, variables, enclosedField, new EnclosedRelation(name, this));
+            return new TemplateCompilerContext(generator, writerExpression, enclosedField, new EnclosedRelation(name, this));
         }
     }
 
