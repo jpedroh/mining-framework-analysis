@@ -610,14 +610,14 @@ public class APC40Mk2 extends LXMidiSurface implements LXMidiSurface.Bidirection
         sendSwatch(i);
       }
     }
-
-    sendSwatch(-1);
   }
 
   private void clearChannelGrid() {
     for (int i = 0; i < NUM_CHANNELS; ++i) {
       sendChannel(i, null);
     }
+
+    sendSwatch(-1);
   }
 
   private void sendChannel(int index, LXAbstractChannel channel) {
@@ -686,9 +686,6 @@ public class APC40Mk2 extends LXMidiSurface implements LXMidiSurface.Bidirection
 
   private void sendChannelClips(int index, LXAbstractChannel channel) {
     for (int i = 0; i < CLIP_LAUNCH_ROWS; ++i) {
-      int color = LED_OFF;
-      int mode = LED_MODE_PRIMARY;
-      int pitch = CLIP_LAUNCH + index + CLIP_LAUNCH_COLUMNS * (CLIP_LAUNCH_ROWS - 1 - i);
       LXClip clip = null;
       if (channel != null) {
         clip = channel.getClip(i);
@@ -697,11 +694,19 @@ public class APC40Mk2 extends LXMidiSurface implements LXMidiSurface.Bidirection
     }
   }
 
+<<<<<<< /usr/src/app/output/heronarts/lx/4fa8fcff072d18fe7c1b3449d3654c0788f3b881/src/main/java/heronarts/lx/midi/surface/APC40Mk2.java/left.java
   private void sendClip(int channelIndex, LXAbstractChannel channel, int clipIndex, LXClip clip) {
-    if (this.bankOn || this.deviceLockOn ||
-            channelIndex >= CLIP_LAUNCH_COLUMNS || clipIndex >= CLIP_LAUNCH_ROWS) {
+    if (this.bankOn || channelIndex >= CLIP_LAUNCH_COLUMNS || clipIndex >= CLIP_LAUNCH_ROWS) {
+||||||| /usr/src/app/output/heronarts/lx/4fa8fcff072d18fe7c1b3449d3654c0788f3b881/src/main/java/heronarts/lx/midi/surface/APC40Mk2.java/base.java
+  private void sendChannelClips(int index, LXAbstractChannel channel) {
+    if (index >= CLIP_LAUNCH_COLUMNS || this.bankOn) {
+=======
+  private void sendChannelClips(int index, LXAbstractChannel channel) {
+    if (index >= CLIP_LAUNCH_COLUMNS || this.bankOn || this.deviceLockOn) {
+>>>>>>> /usr/src/app/output/heronarts/lx/4fa8fcff072d18fe7c1b3449d3654c0788f3b881/src/main/java/heronarts/lx/midi/surface/APC40Mk2.java/right.java
       return;
     }
+<<<<<<< /usr/src/app/output/heronarts/lx/4fa8fcff072d18fe7c1b3449d3654c0788f3b881/src/main/java/heronarts/lx/midi/surface/APC40Mk2.java/left.java
     int color = LED_OFF;
     int mode = LED_MODE_PRIMARY;
     int pitch = CLIP_LAUNCH + channelIndex + CLIP_LAUNCH_COLUMNS * (CLIP_LAUNCH_ROWS - 1 - clipIndex);
@@ -712,9 +717,44 @@ public class APC40Mk2 extends LXMidiSurface implements LXMidiSurface.Bidirection
         sendNoteOn(LED_MODE_PRIMARY, pitch, color);
         mode = LED_MODE_PULSE;
         color = channel.arm.isOn() ? LED_RED_HALF : LED_GREEN_HALF;
+||||||| /usr/src/app/output/heronarts/lx/4fa8fcff072d18fe7c1b3449d3654c0788f3b881/src/main/java/heronarts/lx/midi/surface/APC40Mk2.java/base.java
+    for (int i = 0; i < CLIP_LAUNCH_ROWS; ++i) {
+      int color = LED_OFF;
+      int mode = LED_MODE_PRIMARY;
+      if (channel != null) {
+        int pitch = CLIP_LAUNCH + index + CLIP_LAUNCH_COLUMNS * (CLIP_LAUNCH_ROWS - 1 - i);
+        LXClip clip = channel.getClip(i);
+        if (clip != null) {
+          color = channel.arm.isOn() ? LED_RED_HALF : LED_GRAY;
+          if (clip.isRunning()) {
+            color = channel.arm.isOn() ? LED_RED : LED_GREEN;
+            sendNoteOn(LED_MODE_PRIMARY, pitch, color);
+            mode = LED_MODE_PULSE;
+            color = channel.arm.isOn() ? LED_RED_HALF : LED_GREEN_HALF;
+          }
+        }
+        sendNoteOn(mode, pitch, color);
+=======
+    for (int i = 0; i < CLIP_LAUNCH_ROWS; ++i) {
+      int color = LED_OFF;
+      int mode = LED_MODE_PRIMARY;
+      int pitch = CLIP_LAUNCH + index + CLIP_LAUNCH_COLUMNS * (CLIP_LAUNCH_ROWS - 1 - i);
+
+      if (channel != null) {
+        LXClip clip = channel.getClip(i);
+        if (clip != null) {
+          color = channel.arm.isOn() ? LED_RED_HALF : LED_GRAY;
+          if (clip.isRunning()) {
+            color = channel.arm.isOn() ? LED_RED : LED_GREEN;
+            sendNoteOn(LED_MODE_PRIMARY, pitch, color);
+            mode = LED_MODE_PULSE;
+            color = channel.arm.isOn() ? LED_RED_HALF : LED_GREEN_HALF;
+          }
+        }
+>>>>>>> /usr/src/app/output/heronarts/lx/4fa8fcff072d18fe7c1b3449d3654c0788f3b881/src/main/java/heronarts/lx/midi/surface/APC40Mk2.java/right.java
       }
+      sendNoteOn(mode, pitch, color);
     }
-    sendNoteOn(mode, pitch, color);
   }
 
   private void clearSceneLaunch() {
@@ -760,6 +800,7 @@ public class APC40Mk2 extends LXMidiSurface implements LXMidiSurface.Bidirection
         if (++color >= APC40Mk2Colors.COLORCODE_COUNT) color = 0;
       }
     }
+    sendNoteOn(mode, pitch, color);
   }
 
   private void sendChannelFocus() {
