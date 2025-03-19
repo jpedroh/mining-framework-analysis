@@ -636,9 +636,10 @@ public class FlywayFactory {
     }
 
     private FluentConfiguration createConfiguration() {
-        final String[] emptyStringArray = new String[0];
         FluentConfiguration flyway = classLoader == null ? Flyway.configure() : Flyway.configure(classLoader);
-        flyway = flyway
+
+        final String[] emptyStringArray = new String[0];
+        flyway = flyway.baselineDescription(baselineDescription)
                 .baselineOnMigrate(baselineOnMigrate)
                 .baselineVersion(baseLineVersion)
                 .callbacks(callbacks.toArray(emptyStringArray))
@@ -657,7 +658,8 @@ public class FlywayFactory {
                 .placeholderSuffix(placeholderSuffix)
                 .placeholders(placeholders)
                 .resolvers(resolvers.toArray(emptyStringArray))
-                .schemas(schemas.toArray(emptyStringArray))
+              .initSql(initSql)
+              .schemas(schemas.toArray(emptyStringArray))
                 .skipDefaultCallbacks(skipDefaultCallbacks)
                 .skipDefaultResolvers(skipDefaultResolvers)
                 .sqlMigrationPrefix(sqlMigrationPrefix)
