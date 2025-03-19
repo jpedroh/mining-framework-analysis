@@ -62,6 +62,8 @@ import org.sonar.plugins.findbugs.xml.Match;
 import org.sonar.plugins.java.Java;
 import org.sonar.plugins.java.api.JavaResourceLocator;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.thoughtworks.xstream.XStream;
 
 import edu.umd.cs.findbugs.ClassScreener;
