@@ -1,8 +1,6 @@
 package org.lancoder.master.api.web;
-
 import java.util.Properties;
 import java.util.logging.Logger;
-
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
@@ -18,70 +16,56 @@ import org.lancoder.common.RunnableServiceAdapter;
 import org.lancoder.master.impl.Master;
 
 public class ApiServer extends RunnableServiceAdapter {
+  private static final String WEB_DIR = "web_resources/";
 
-	private static final String WEB_DIR = "web_resources/";
+  private Master master;
 
-	private Master master;
-	Server server;
+  Server server;
 
-	public ApiServer(Master master) {
-		this.master = master;
-	}
+  public ApiServer(Master master) {
+    this.master = master;
+  }
 
-	@Override
-	public void run() {
-		try {
-			Properties jettyShutUpProperties = new Properties();
-			jettyShutUpProperties.setProperty("org.eclipse.jetty.LEVEL", "WARN");
-			StdErrLog.setProperties(jettyShutUpProperties);
+  @Override public void run() {
+    try {
+      Properties jettyShutUpProperties = new Properties();
+      jettyShutUpProperties.setProperty("org.eclipse.jetty.LEVEL", "WARN");
+      StdErrLog.setProperties(jettyShutUpProperties);
+      server = new Server(master.getConfig().getApiServerPort());
+      ContextHandler ctxStatic = new ContextHandler("/");
+      ResourceHandler staticHandler = new ResourceHandler();
+      staticHandler.setResourceBase(this.getClass().getClassLoader().getResource(WEB_DIR).toExternalForm());
+      staticHandler.setDirectoriesListed(true);
+      ctxStatic.setHandler(staticHandler);
+      ContextHandler ctxApi = buildServletContextHandler();
+      ctxApi.setContextPath("/api");
+      ContextHandlerCollection contexts = new ContextHandlerCollection();
+      contexts.setHandlers(new Handler[] { ctxStatic, ctxApi });
+      server.setHandler(contexts);
+      server.start();
+      server.join();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
-			server = new Server(master.getConfig().getApiServerPort());
+  private ContextHandler buildServletContextHandler() throws Exception {
+    WebApi webapp = new WebApi(master, master.getMasterEventCatcher());
+    final ResourceConfig app = new ResourceConfig().packages("jersey.jetty.embedded").register(webapp);
+    ServletHolder servletHolder = new ServletHolder(new ServletContainer(app));
+    ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+    servletContextHandler.setSessionHandler(new SessionHandler());
+    servletContextHandler.addServlet(servletHolder, "/*");
+    return servletContextHandler;
+  }
 
-			// static resources handler
-			ContextHandler ctxStatic = new ContextHandler("/");
-			ResourceHandler staticHandler = new ResourceHandler();
-			staticHandler.setResourceBase(this.getClass().getClassLoader().getResource(WEB_DIR).toExternalForm());
-			// staticHandler.setResourceBase("src/main/web/web_resources");
-			staticHandler.setDirectoriesListed(true);
-			ctxStatic.setHandler(staticHandler);
-
-			// api handler
-			ContextHandler ctxApi = buildServletContextHandler();
-			ctxApi.setContextPath("/api");
-
-			ContextHandlerCollection contexts = new ContextHandlerCollection();
-			contexts.setHandlers(new Handler[] { ctxStatic, ctxApi });
-			server.setHandler(contexts);
-
-			server.start();
-			server.join();
-		} catch (Exception e) {
-			// TODO alert master api server api crashed
-			e.printStackTrace();
-		}
-	}
-
-	private ContextHandler buildServletContextHandler() throws Exception {
-		WebApi webapp = new WebApi(master, master.getMasterEventCatcher());
-		final ResourceConfig app = new ResourceConfig()
-                .packages("jersey.jetty.embedded")
-                .register(webapp);
-
-        ServletHolder servletHolder = new ServletHolder(new ServletContainer(app));
-		ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-		servletContextHandler.setSessionHandler(new SessionHandler());
-		servletContextHandler.addServlet(servletHolder, "/*");
-		return servletContextHandler;
-	}
-
-	@Override
-	public void stop() {
-		super.stop();
-		try {
-			server.stop();
-		} catch (Exception e) {
-			Logger logger = Logger.getLogger("lancoder");
-			logger.severe(e.getMessage());
-		}
-	}
+  @Override public void stop() {
+    super.stop();
+    try {
+      server.stop();
+    } catch (Exception e) {
+      Logger logger = Logger.getLogger("lancoder");
+      logger.severe(e.getMessage());
+    }
+  }
 }
