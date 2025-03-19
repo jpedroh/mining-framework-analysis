@@ -57,7 +57,6 @@ public class SkipTimeTest {
     @Test
     public void testSkip() {
 
-
         final Database dbsDAO = new DatabaseImpl();
         MongoCollection<BsonDocument> coll = dbsDAO.getCollection(TEST_DB_PREFIX, "huge");
 

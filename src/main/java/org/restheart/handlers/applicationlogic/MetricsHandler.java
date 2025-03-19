@@ -47,7 +47,7 @@ import org.restheart.handlers.PipedHttpHandler;
 import org.restheart.handlers.RequestContext;
 import org.restheart.handlers.RequestContext.METHOD;
 import static org.restheart.handlers.RequestContext.REPRESENTATION_FORMAT_KEY;
-import org.restheart.representation.Resource;
+import org.restheart.representation.Resource.REPRESENTATION_FORMAT;
 import org.restheart.utils.HttpStatus;
 import org.restheart.utils.MetricsJsonGenerator;
 import org.restheart.utils.ResponseHelper;
@@ -72,8 +72,8 @@ public class MetricsHandler extends PipedHttpHandler {
         super(next);
     }
 
-    public MetricsHandler(PipedHttpHandler next, DatabaseImpl db) {
-        super(next, db);
+    public MetricsHandler(PipedHttpHandler next, DatabaseImpl dbsDao) {
+        super(next, dbsDao);
     }
 
     /**
@@ -113,7 +113,8 @@ public class MetricsHandler extends PipedHttpHandler {
     }
 
     private boolean isFilledAndNotMetrics(String dbOrCollectionName) {
-        return dbOrCollectionName != null && !dbOrCollectionName.equalsIgnoreCase(RequestContext._METRICS);
+        return dbOrCollectionName != null
+                && !dbOrCollectionName.equalsIgnoreCase(RequestContext._METRICS);
     }
 
     /**
@@ -126,13 +127,15 @@ public class MetricsHandler extends PipedHttpHandler {
         switch (metricsLevel) {
             case ROOT: return metrics.registry();
             case DATABASE: return metrics.registry(context.getDBName());
-            case COLLECTION: return metrics.registry(context.getDBName(), context.getCollectionName());
+            case COLLECTION: return metrics.registry(context.getDBName(),
+                    context.getCollectionName());
             default: return null;
         }
     }
 
     @Override
-    public void handleRequest(HttpServerExchange exchange, RequestContext context) throws Exception {
+    public void handleRequest(HttpServerExchange exchange, RequestContext context)
+            throws Exception {
 
         METRICS_GATHERING_LEVEL metricsLevelForRequest = getMetricsLevelForRequest(context);
         MetricRegistry registry = getMetricsRegistry(context, metricsLevelForRequest);
@@ -162,19 +165,22 @@ public class MetricsHandler extends PipedHttpHandler {
                     ResponseHelper.endExchangeWithMessage(exchange,
                             context,
                             HttpStatus.SC_NOT_ACCEPTABLE,
-                            "not acceptable, acceptable content types are: " + acceptableTypes
+                            "not acceptable, acceptable content types are: "
+                            + acceptableTypes
                     );
                     next(exchange, context);
                 }
             } else {
                 exchange.setStatusCode(HttpStatus.SC_OK);
                 if (context.getContent() != null) {
-                    exchange.getResponseSender().send(context.getContent().toString());
+                    exchange.getResponseSender().send(
+                            context.getContent().toString());
                 }
                 exchange.endExchange();
             }
         } else {  //no matching registry found
-            ResponseHelper.endExchangeWithMessage(exchange, context, HttpStatus.SC_NOT_FOUND, "not found");
+            ResponseHelper.endExchangeWithMessage(exchange, context,
+                    HttpStatus.SC_NOT_FOUND, "not found");
             next(exchange, context);
         }
     }
@@ -189,9 +195,11 @@ public class MetricsHandler extends PipedHttpHandler {
          */
         JSON("application/json") {
             @Override
-            public String generateResponse(METRICS_GATHERING_LEVEL metricsLevel, MetricRegistry registry) throws IOException {
+            public String generateResponse(METRICS_GATHERING_LEVEL metricsLevel, MetricRegistry registry)
+                    throws IOException {
                 BsonDocument document = MetricsJsonGenerator
-                        .generateMetricsBson(registry, TimeUnit.SECONDS, TimeUnit.MILLISECONDS);
+                        .generateMetricsBson(registry,
+                                TimeUnit.SECONDS, TimeUnit.MILLISECONDS);
                 return document.toJson(
                         JsonWriterSettings.builder()
                                 .outputMode(JsonMode.RELAXED)
@@ -260,21 +268,27 @@ public class MetricsHandler extends PipedHttpHandler {
             public String generateResponse(MetricRegistry registry, String databaseName, String collectionName, long timestamp) {
 
                 // fetch metrics registry and build json data
-                BsonDocument root = MetricsJsonGenerator.generateMetricsBson(registry, TimeUnit.SECONDS, TimeUnit.MILLISECONDS);
+                BsonDocument root = MetricsJsonGenerator
+                        .generateMetricsBson(registry,
+                                TimeUnit.SECONDS, TimeUnit.MILLISECONDS);
                 root.remove("version");
 
                 // convert json data to prometheus format
                 StringBuilder sb = new StringBuilder();
                 root.forEach((groupKey, groupContent)
-                        -> groupContent.asDocument().forEach((metricKey, metricContent) -> {
+                        -> groupContent.asDocument().forEach((
+                                metricKey, metricContent) -> {
                             final String[] split = metricKey.split("\\.");
                             final String type = split[0];
                             final String method = split[1];
-                            final String responseCode = split.length >= 3 ? split[2] : null;
+                            final String responseCode = split.length >= 3
+                                    ? split[2] : null;
 
-                            metricContent.asDocument().forEach((metricType, value) -> {
+                            metricContent.asDocument().forEach((metricType, value)
+                                    -> {
                                 if (value.isNumber()) {
-                                    sb.append("http_response_").append(groupKey).append("_").append(metricType);
+                                    sb.append("http_response_").append(groupKey)
+                                            .append("_").append(metricType);
                                     sb.append("{");
                                     if(databaseName != null) {
                                         sb.append("database=\"").append(databaseName).append("\",");
@@ -282,8 +296,10 @@ public class MetricsHandler extends PipedHttpHandler {
                                     if(collectionName != null) {
                                         sb.append("collection=\"").append(collectionName).append("\",");
                                     }
-                                    sb.append("type=\"").append(type).append("\",");
-                                    sb.append("method=\"").append(method).append("\"");
+                                    sb.append("type=\"").append(type)
+                                            .append("\",");
+                                    sb.append("method=\"").append(method)
+                                            .append("\"");
                                     if (responseCode != null) {
                                         sb.append(",code=\"").append(responseCode).append("\"");
                                     }
@@ -328,7 +344,8 @@ public class MetricsHandler extends PipedHttpHandler {
          */
         String specialization;
 
-        abstract public String generateResponse(METRICS_GATHERING_LEVEL context, MetricRegistry registry) throws IOException;
+        abstract public String generateResponse(METRICS_GATHERING_LEVEL context, MetricRegistry registry)
+                throws IOException;
 
         ResponseType(String contentType) {
             this(contentType, null);
@@ -368,12 +385,15 @@ public class MetricsHandler extends PipedHttpHandler {
         public boolean isAcceptableFor(AcceptHeaderEntry entry) {
             return entry.contentType.equalsIgnoreCase("*/*")
                     || (entry.contentType.equalsIgnoreCase(contentType)
-                    && (entry.specialization == null || entry.specialization.equalsIgnoreCase(specialization)))
+                    && (entry.specialization == null || entry.specialization
+                            .equalsIgnoreCase(specialization)))
                     || entry.contentType.equalsIgnoreCase(mediaRange);
         }
 
-        public void writeTo(HttpServerExchange exchange, METRICS_GATHERING_LEVEL metricsLevel, MetricRegistry registry) throws IOException {
-            exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, getOutputContentType());
+        public void writeTo(HttpServerExchange exchange, METRICS_GATHERING_LEVEL metricsLevel, MetricRegistry registry)
+                throws IOException {
+            exchange.getResponseHeaders().put(
+                    Headers.CONTENT_TYPE, getOutputContentType());
             exchange.getResponseSender().send(generateResponse(metricsLevel, registry));
         }
 
@@ -391,7 +411,8 @@ public class MetricsHandler extends PipedHttpHandler {
             public static AcceptHeaderEntry of(String acceptHeaderEntry) {
                 List<String> entries = Arrays.asList(acceptHeaderEntry.split(";"));
 
-                final String contentType = entries.stream().findFirst().orElse(null);
+                final String contentType = entries.stream()
+                        .findFirst().orElse(null);
                 double qValue = 1.0;
                 String specialization = null;
                 for (int i = 1; i < entries.size(); i++) {
@@ -409,7 +430,8 @@ public class MetricsHandler extends PipedHttpHandler {
                 if (contentType == null) {
                     return null;
                 } else {
-                    return new AcceptHeaderEntry(contentType, specialization, qValue);
+                    return new AcceptHeaderEntry(contentType,
+                            specialization, qValue);
                 }
             }
 
@@ -421,7 +443,8 @@ public class MetricsHandler extends PipedHttpHandler {
                 this(contentType, null, Double.MAX_VALUE);
             }
 
-            AcceptHeaderEntry(String contentType, String specialization, double qValue) {
+            AcceptHeaderEntry(String contentType, String specialization,
+                    double qValue) {
                 this.contentType = contentType;
                 this.specialization = specialization;
                 this.qValue = qValue;
@@ -440,8 +463,8 @@ public class MetricsHandler extends PipedHttpHandler {
         /**
          * sorts large q-values first, smaller ones later
          */
-        static class AcceptHeaderEntryComparator implements Comparator<AcceptHeaderEntry>, Serializable {
-
+        static class AcceptHeaderEntryComparator
+                implements Comparator<AcceptHeaderEntry>, Serializable {
             @Override
             public int compare(AcceptHeaderEntry one, AcceptHeaderEntry two) {
                 return Double.compare(two.qValue, one.qValue);
@@ -463,16 +486,19 @@ public class MetricsHandler extends PipedHttpHandler {
                     .map(String::trim)
                     .map(AcceptHeaderEntry::of).filter(Objects::nonNull) //parse
                     .sorted(new AcceptHeaderEntryComparator()) //sort by q-value
-                    .flatMap(x -> Arrays.stream(ResponseType.values()).filter(rt -> rt.isAcceptableFor(x)))
+                    .flatMap(x -> Arrays.stream(ResponseType.values()).filter(rt
+                    -> rt.isAcceptableFor(x)))
                     .findFirst()
                     .orElse(null);
         }
 
         public static ResponseType forQueryParameter(String rep) {
-            if (Resource.REPRESENTATION_FORMAT.STANDARD.name().equalsIgnoreCase(rep) 
-                    || Resource.REPRESENTATION_FORMAT.SHAL.name().equalsIgnoreCase(rep)
-                    || Resource.REPRESENTATION_FORMAT.PLAIN_JSON.name().equalsIgnoreCase(rep)
-                    || Resource.REPRESENTATION_FORMAT.PJ.name().equalsIgnoreCase(rep)) {
+            if (REPRESENTATION_FORMAT.SHAL.name().equalsIgnoreCase(rep)
+                    || REPRESENTATION_FORMAT.PLAIN_JSON.name()
+                            .equalsIgnoreCase(rep)
+                    || REPRESENTATION_FORMAT.PJ.name().equalsIgnoreCase(rep)
+                    || REPRESENTATION_FORMAT.STANDARD.name().equalsIgnoreCase(rep)
+                    || REPRESENTATION_FORMAT.S.name().equalsIgnoreCase(rep)) {
                 return ResponseType.JSON;
             } else {
                 return null;
