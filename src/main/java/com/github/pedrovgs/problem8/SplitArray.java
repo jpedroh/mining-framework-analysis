@@ -26,31 +26,31 @@ package com.github.pedrovgs.problem8;
  */
 public class SplitArray {
 
-  /**
-   * First solution implemented for this problem. It's is based on a sorting algorithm called
-   * "Bubble Sorting Algorithm".
-   *
-   * The complexity order in this O(N^2) where N is number of elements in the array. Is even worst
-   * than the bubble sorting algorithm because to check if we have to swap any element is really
-   * expensive. In space terms, the complexity order of this algorithm is O(1) because we are not
-   * using any additional data structure.
-   */
-  public void splitSorting(int[] array) {
-    if (array == null) {
-      throw new IllegalArgumentException("Array passed as parameter can't be null.");
-    }
-
-    boolean flag = true;
-    while (flag) {
-      flag = false;
-      for (int j = 0; j < array.length - 1; j++) {
-        if (array[j] > array[j + 1]) {
-          swap(array, j, j + 1);
-          flag = true;
+    /**
+     * First solution implemented for this problem. It's is based on a sorting algorithm called
+     * "Bubble Sorting Algorithm".
+     *
+     * The complexity order in this O(N^2) where N is number of elements in the array. Is even worst
+     * than the bubble sorting algorithm because to check if we have to swap any element is really
+     * expensive. In space terms, the complexity order of this algorithm is O(1) because we are not
+     * using any additional data structure.
+     */
+    public void splitSorting(int[] array) {
+        if (array == null) {
+            throw new IllegalArgumentException("Array passed as parameter can't be null.");
         }
-      }
+
+        boolean flag = true;
+        while (flag) {
+            flag = false;
+            for (int j = 0; j < array.length - 1; j++) {
+                if (array[j] > array[j + 1]) {
+                    swap(array, j, j + 1);
+                    flag = true;
+                }
+            }
+        }
     }
-  }
 
   /**
    * This solution for the problem is much faster than the previous one. Instead of use a sorting
@@ -60,29 +60,28 @@ public class SplitArray {
    * data structure.
    */
   public void splitSwappingIterative(int[] array) {
-    if (array == null) {
-      throw new IllegalArgumentException("Array passed as parameter can't be null.");
-    }
-
-    int left = 0;
-    int right = array.length - 1;
-    while (left < right) {
-      boolean shouldChangeLeft = array[left] >= 0;
-      boolean shouldChangeRight = array[right] < 0;
-      if (shouldChangeLeft && shouldChangeRight) {
-        swap(array, left, right);
-        left++;
-        right--;
-      } else {
-        if (!shouldChangeLeft) {
-          left++;
-        } else if (!shouldChangeRight) {
-          right--;
-        }
+      if (array == null) {
+          throw new IllegalArgumentException("Array passed as parameter can't be null.");
       }
-    }
-  }
 
+      int left = 0;
+      int right = array.length - 1;
+      while (left < right) {
+          boolean shouldChangeLeft = array[left] >= 0;
+          boolean shouldChangeRight = array[right] < 0;
+          if (shouldChangeLeft && shouldChangeRight) {
+              swap(array, left, right);
+              left++;
+              right--;
+          } else {
+              if (!shouldChangeLeft) {
+                  left++;
+              } else if (!shouldChangeRight) {
+                  right--;
+              }
+          }
+      }
+  }
   /**
    * Using partition Method of quicksort to split array
    */
@@ -94,12 +93,24 @@ public class SplitArray {
     int left = 0;
     int right = array.length - 1;
     while (left < right) {
+<<<<<<< /usr/src/app/output/pedrovgs/algorithms/d7e0b1c03fa7cacf40b32dcfde30871e8947445a/src/main/java/com/github/pedrovgs/problem8/SplitArray.java/left.java
       while (array[left] < 0 && left < right) {
         left++;
       }
+||||||| /usr/src/app/output/pedrovgs/algorithms/d7e0b1c03fa7cacf40b32dcfde30871e8947445a/src/main/java/com/github/pedrovgs/problem8/SplitArray.java/base.java
+=======
+      while (array[left] < 0 && left < right)
+          left++;
+>>>>>>> /usr/src/app/output/pedrovgs/algorithms/d7e0b1c03fa7cacf40b32dcfde30871e8947445a/src/main/java/com/github/pedrovgs/problem8/SplitArray.java/right.java
+<<<<<<< /usr/src/app/output/pedrovgs/algorithms/d7e0b1c03fa7cacf40b32dcfde30871e8947445a/src/main/java/com/github/pedrovgs/problem8/SplitArray.java/left.java
       while (array[right] >= 0 && left < right) {
         right--;
       }
+||||||| /usr/src/app/output/pedrovgs/algorithms/d7e0b1c03fa7cacf40b32dcfde30871e8947445a/src/main/java/com/github/pedrovgs/problem8/SplitArray.java/base.java
+=======
+      while (array[right] >= 0 && left < right)
+          right--;
+>>>>>>> /usr/src/app/output/pedrovgs/algorithms/d7e0b1c03fa7cacf40b32dcfde30871e8947445a/src/main/java/com/github/pedrovgs/problem8/SplitArray.java/right.java
       if (left < right) {
         swap(array, left, right);
         left++;
@@ -107,7 +118,6 @@ public class SplitArray {
       }
     }
   }
-
   /**
    * Tail recursive solution for this problem. This implementation has the same complexity order
    * O(N) and the only change is how we are going to iterate over the array, with the previous
@@ -115,38 +125,41 @@ public class SplitArray {
    * recursion to iterate. In space terms is O(1) because we are not using any additional data
    * structure.
    */
+    /**
+     * Using partition Method of quicksort to split array
+     */
   public void splitSwappingRecursive(int[] array) {
-    if (array == null) {
-      throw new IllegalArgumentException("Array passed as parameter can't be null.");
-    }
-
-    if (array.length == 0) {
-      return;
-    }
-
-    splitSwappingRecursiveInner(array, 0, array.length - 1);
-  }
-
-  private void splitSwappingRecursiveInner(int[] array, int left, int right) {
-    if (left < right) {
-      boolean shouldChangeLeft = array[left] >= 0;
-      boolean shouldChangeRight = array[right] < 0;
-      if (shouldChangeLeft && shouldChangeRight) {
-        swap(array, left, right);
-        splitSwappingRecursiveInner(array, left + 1, right - 1);
-      } else {
-        if (!shouldChangeLeft) {
-          splitSwappingRecursiveInner(array, left + 1, right);
-        } else if (!shouldChangeRight) {
-          splitSwappingRecursiveInner(array, left, right - 1);
-        }
+      if (array == null) {
+          throw new IllegalArgumentException("Array passed as parameter can't be null.");
       }
-    }
+
+      if (array.length == 0) {
+          return;
+      }
+
+      splitSwappingRecursiveInner(array, 0, array.length - 1);
   }
 
-  private void swap(int[] array, int left, int right) {
-    int aux = array[right];
-    array[right] = array[left];
-    array[left] = aux;
-  }
+    private void splitSwappingRecursiveInner(int[] array, int left, int right) {
+        if (left < right) {
+            boolean shouldChangeLeft = array[left] >= 0;
+            boolean shouldChangeRight = array[right] < 0;
+            if (shouldChangeLeft && shouldChangeRight) {
+                swap(array, left, right);
+                splitSwappingRecursiveInner(array, left + 1, right - 1);
+            } else {
+                if (!shouldChangeLeft) {
+                    splitSwappingRecursiveInner(array, left + 1, right);
+                } else if (!shouldChangeRight) {
+                    splitSwappingRecursiveInner(array, left, right - 1);
+                }
+            }
+        }
+    }
+
+    private void swap(int[] array, int left, int right) {
+        int aux = array[right];
+        array[right] = array[left];
+        array[left] = aux;
+    }
 }
