@@ -389,6 +389,7 @@ public class SQSMessageConsumerPrefetch implements Runnable, PrefetchManager {
         return jmsMessage;
     }
 
+<<<<<<< /usr/src/app/output/awslabs/amazon-sqs-java-messaging-lib/016338972c443427e3b9f46c5e00f254a10c7095/src/main/java/com/amazon/sqs/javamessaging/SQSMessageConsumerPrefetch.java/left.java
     private long getJMSTimestamp(Message message) {
         Map<String, String> systemAttributes = message.attributesAsStrings();
         String timestamp = systemAttributes.get(SQSMessagingClientConstants.SENT_TIMESTAMP);
@@ -398,6 +399,19 @@ public class SQSMessageConsumerPrefetch implements Runnable, PrefetchManager {
             return 0L;
         }
     }
+||||||| /usr/src/app/output/awslabs/amazon-sqs-java-messaging-lib/016338972c443427e3b9f46c5e00f254a10c7095/src/main/java/com/amazon/sqs/javamessaging/SQSMessageConsumerPrefetch.java/base.java
+    private long getJMSTimestamp(Message message) 
+=======
+    private long getJMSTimestamp(Message message) {
+        Map<String, String> systemAttributes = message.getAttributes();
+        String timestamp = systemAttributes.get(SQSMessagingClientConstants.SENT_TIMESTAMP);
+        if (timestamp != null) {
+            return Long.parseLong(timestamp);
+        } else {
+            return 0L;
+        }
+    }
+>>>>>>> /usr/src/app/output/awslabs/amazon-sqs-java-messaging-lib/016338972c443427e3b9f46c5e00f254a10c7095/src/main/java/com/amazon/sqs/javamessaging/SQSMessageConsumerPrefetch.java/right.java
 
     protected void nackQueueMessages() {
         // Also nack messages already in the messageQueue
