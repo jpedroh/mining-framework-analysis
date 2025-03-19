@@ -209,7 +209,14 @@ public class EnderPlayer extends Entity implements CommandSender {
 		return new PacketOutSpawnPlayer(this.getEntityId(), this.uuid, this.getPlayerName(), list, this.getLocation().getBlockX(), this.getLocation().getBlockY(), this.getLocation().getBlockZ(), (byte) this.getLocation().getYaw(), (byte) this.getLocation().getPitch(), (short) 0, this.dataWatcher);
 	}
 
+<<<<<<< /usr/src/app/output/sandergielisse/enderstone/27f9c43869468a75a469b9d40b3e3e946da5c687/src/org/enderstone/server/entity/EnderPlayer.java/left.java
 	public void onPlayerChat(String message) {
+		Utill.broadcastMessage("<" + this.getPlayerName() + "> " + message);
+||||||| /usr/src/app/output/sandergielisse/enderstone/27f9c43869468a75a469b9d40b3e3e946da5c687/src/org/enderstone/server/entity/EnderPlayer.java/base.java
+	public void onPlayerChat(String message) throws Exception {
+		Utill.broadcastMessage("<" + this.getPlayerName() + "> " + message);
+=======
+	public void onPlayerChat(String message) throws Exception {
 		if (message.startsWith("/")) {
 			final String fullCommand = message.substring(1);
 			final String[] split = fullCommand.split(" ");
@@ -231,6 +238,7 @@ public class EnderPlayer extends Entity implements CommandSender {
 		}
 		else
 			Utill.broadcastMessage("<" + this.getPlayerName() + "> " + message);
+>>>>>>> /usr/src/app/output/sandergielisse/enderstone/27f9c43869468a75a469b9d40b3e3e946da5c687/src/org/enderstone/server/entity/EnderPlayer.java/right.java
 	}
 
 	public void onDisconnect() throws Exception {
@@ -243,16 +251,12 @@ public class EnderPlayer extends Entity implements CommandSender {
 		}
 	}
 
-<<<<<<< HEAD
-	public void updatePlayers(List<EnderPlayer> onlinePlayers) {
-=======
 	@Override
 	public boolean isOnline() {
 		return this.isOnline;
 	}
 
-	public void updatePlayers(List<EnderPlayer> onlinePlayers) throws Exception {
->>>>>>> ferrybig
+	public void updatePlayers(List<EnderPlayer> onlinePlayers) {
 		Set<Integer> toDespawn = new HashSet<>();
 		for (EnderPlayer pl : onlinePlayers) {
 			if (!pl.getPlayerName().equals(this.getPlayerName()) && !this.visiblePlayers.contains(pl.getPlayerName()) && pl.getLocation().isInRange(50, this.getLocation())) {
@@ -321,12 +325,15 @@ public class EnderPlayer extends Entity implements CommandSender {
 				ep.networkManager.sendPacket(pack2);
 			}
 		}
+<<<<<<< /usr/src/app/output/sandergielisse/enderstone/27f9c43869468a75a469b9d40b3e3e946da5c687/src/org/enderstone/server/entity/EnderPlayer.java/left.java
 	}
 
-<<<<<<< HEAD
 	public void playSound(String soundName, float volume, byte pitch) {
 		networkManager.sendPacket(new PacketOutSoundEffect(soundName, getLocation().getBlockX(), getLocation().getBlockY(), getLocation().getBlockZ(), volume, pitch));
+||||||| /usr/src/app/output/sandergielisse/enderstone/27f9c43869468a75a469b9d40b3e3e946da5c687/src/org/enderstone/server/entity/EnderPlayer.java/base.java
 =======
+	}
+
 	@Override
 	public boolean sendMessage(Message message) {
 		return this.sendRawMessage(message);
@@ -353,6 +360,6 @@ public class EnderPlayer extends Entity implements CommandSender {
 	@Override
 	public String getName() {
 		return this.getPlayerName();
->>>>>>> ferrybig
+>>>>>>> /usr/src/app/output/sandergielisse/enderstone/27f9c43869468a75a469b9d40b3e3e946da5c687/src/org/enderstone/server/entity/EnderPlayer.java/right.java
 	}
 }

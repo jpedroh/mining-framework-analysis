@@ -21,8 +21,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
-import javax.xml.bind.DatatypeConverter;
+
 import javax.imageio.ImageIO;
+import javax.xml.bind.DatatypeConverter;
 import org.enderstone.server.commands.CommandMap;
 import org.enderstone.server.commands.enderstone.PingCommand;
 import org.enderstone.server.commands.enderstone.VersionCommand;
