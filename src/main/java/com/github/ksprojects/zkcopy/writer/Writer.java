@@ -58,6 +58,14 @@ public class Writer {
      */
     public void write() {
         try {
+<<<<<<< /usr/src/app/output/kshchepanovskyi/zkcopy/31218157e3efd720cd9fc792af1027a6e129dabb/src/main/java/com/github/ksprojects/zkcopy/writer/Writer.java/left.java
+||||||| /usr/src/app/output/kshchepanovskyi/zkcopy/31218157e3efd720cd9fc792af1027a6e129dabb/src/main/java/com/github/ksprojects/zkcopy/writer/Writer.java/base.java
+            zk = new ZooKeeper(server, 3000, this);
+            checkCreatePath(path);
+=======
+            zk = new ZooKeeper(server, 40000, this);
+            checkCreatePath(path);
+>>>>>>> /usr/src/app/output/kshchepanovskyi/zkcopy/31218157e3efd720cd9fc792af1027a6e129dabb/src/main/java/com/github/ksprojects/zkcopy/writer/Writer.java/right.java
             Node dest = sourceRoot;
             dest.setPath(destPath);
             logger.info("Writing data...");
@@ -76,6 +84,14 @@ public class Writer {
 
         } catch (KeeperException | InterruptedException e) {
             logger.error("Exception caught while writing nodes", e);
+        } finally {
+            try {
+                if (zk != null) {
+                    zk.close();
+                }
+            } catch (InterruptedException e) {
+                logger.error("Exception caught while closing session", e);
+            }
         }
     }
 
