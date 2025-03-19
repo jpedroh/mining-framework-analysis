@@ -1,5 +1,4 @@
 package org.graylog2.plugins.slack.output;
-
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import org.graylog2.plugin.Message;
@@ -18,129 +17,122 @@ import org.graylog2.plugins.slack.configuration.SlackConfiguration;
 import org.graylog2.plugins.slack.configuration.SlackConfigurationRequestFactory;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class SlackMessageOutput extends SlackPluginBase implements MessageOutput {
-    private AtomicBoolean running = new AtomicBoolean(false);
+  private AtomicBoolean running = new AtomicBoolean(false);
 
-    private final Configuration configuration;
-    private final Stream stream;
+  private final Configuration configuration;
 
-    private final SlackClient client;
+  private final Stream stream;
 
-    @Inject
-    public SlackMessageOutput(
-            @Assisted Stream stream,
-            @Assisted Configuration configuration)
-            throws MessageOutputConfigurationException {
-        this.configuration = configuration;
-        this.stream = stream;
+  private final SlackClient client;
 
-        // Check configuration.
-        try {
-            checkConfiguration(configuration);
-        } catch (ConfigurationException e) {
-            throw new MessageOutputConfigurationException("Missing configuration: " + e.getMessage());
-        }
-
-        this.client = new SlackClient(configuration);
-
-        running.set(true);
+  @Inject public SlackMessageOutput(@Assisted Stream stream, @Assisted Configuration configuration) throws MessageOutputConfigurationException {
+    this.configuration = configuration;
+    this.stream = stream;
+    try {
+      checkConfiguration(configuration);
+    } catch (ConfigurationException e) {
+      throw new MessageOutputConfigurationException("Missing configuration: " + e.getMessage());
     }
+    this.client = new SlackClient(configuration);
+    running.set(true);
+  }
 
-    @Override
-    public void stop() {
-        running.set(false);
+  @Override public void stop() {
+    running.set(false);
+  }
+
+  @Override public boolean isRunning() {
+    return running.get();
+  }
+
+  @Override public void write(Message msg) throws Exception {
+    boolean shortMode = configuration.getBoolean(SlackConfiguration.CK_SHORT_MODE);
+    String message = shortMode ? buildShortMessageBody(msg) : buildFullMessageBody(stream, msg);
+    SlackMessage slackMessage = createSlackMessage(configuration, message);
+    try {
+      client.send(slackMessage);
+    } catch (SlackClient.SlackClientException e) {
+      throw new RuntimeException("Could not send message to Slack.", e);
     }
+  }
 
-    @Override
-    public boolean isRunning() {
-        return running.get();
+  private String buildFullMessageBody(Stream stream, Message msg) {
+    String graylogUri = configuration.getString(SlackConfiguration.CK_GRAYLOG2_URL);
+    boolean notifyChannel = configuration.getBoolean(SlackConfiguration.CK_NOTIFY_CHANNEL);
+    String titleLink;
+    if (!isNullOrEmpty(graylogUri)) {
+      titleLink = "<" + buildStreamLink(graylogUri, stream) + "|" + stream.getTitle() + ">";
+    } else {
+      titleLink = "_" + stream.getTitle() + "_";
     }
+    String audience = notifyChannel ? "@channel " : "";
+    return String.format("%s*New message in Graylog stream %s*:\n> %s", audience, titleLink, msg.getMessage());
+  }
 
-    @Override
-    public void write(Message msg) throws Exception {
-        boolean shortMode = configuration.getBoolean(SlackConfiguration.CK_SHORT_MODE);
-        String message = shortMode ? buildShortMessageBody(msg) : buildFullMessageBody(stream, msg);
-        SlackMessage slackMessage = createSlackMessage(configuration, message);
 
-        try {
-            client.send(slackMessage);
-        } catch (SlackClient.SlackClientException e) {
-            throw new RuntimeException("Could not send message to Slack.", e);
-        }
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  public String buildMessage(Stream stream, Message msg) {
+    if (configuration.getBoolean(CK_SHORT_MODE)) {
+      return msg.getTimestamp().toDateTime(DateTimeZone.getDefault()).toString(DateTimeFormat.shortTime()) + ": " + msg.getMessage();
     }
-
-    private String buildFullMessageBody(Stream stream, Message msg) {
-        String graylogUri = configuration.getString(SlackConfiguration.CK_GRAYLOG2_URL);
-        boolean notifyChannel = configuration.getBoolean(SlackConfiguration.CK_NOTIFY_CHANNEL);
-
-        String streamLink;
-        if (!isNullOrEmpty(graylogUri)) {
-            streamLink = "<" + buildStreamLink(graylogUri, stream) + "|" + stream.getTitle() + ">";
-        } else {
-            streamLink = "_" + stream.getTitle() + "_";
-        }
-
-        String messageLink;
-        if (!isNullOrEmpty(graylogUri)) {
-            String index = "graylog_deflector"; // would use msg.getFieldAs(String.class, "_index"), but it returns null
-            messageLink = "<" + buildMessageLink(graylogUri, index, msg.getId()) + "|New message>";
-        } else {
-            messageLink = "New message";
-        }
-
-        String audience = notifyChannel ? "@channel " : "";
-        return String.format("%s*%s in Graylog stream %s*:\n> %s",
-                audience, messageLink, streamLink, msg.getMessage());
+    String graylogUri = configuration.getString(CK_GRAYLOG2_URL);
+    boolean notifyChannel = configuration.getBoolean(CK_NOTIFY_CHANNEL);
+    String streamLink;
+    if (!isNullOrEmpty(graylogUri)) {
+      streamLink = "<" + buildStreamLink(graylogUri, stream) + "|" + stream.getTitle() + ">";
+    } else {
+      streamLink = "_" + stream.getTitle() + "_";
     }
-
-    private String buildShortMessageBody(Message msg) {
-        return String.format("%s: %s", msg.getTimestamp()
-                .toDateTime(DateTimeZone.getDefault())
-                .toString(DateTimeFormat.shortTime()), msg.getMessage()
-        );
+    String messageLink;
+    if (!isNullOrEmpty(graylogUri)) {
+      String index = "graylog_deflector";
+      messageLink = "<" + buildMessageLink(graylogUri, index, msg.getId()) + "|New message>";
+    } else {
+      messageLink = "New message";
     }
+    return (notifyChannel ? "@channel " : "") + "*" + messageLink + " in Graylog stream " + streamLink + "*:\n" + "> " + msg.getMessage();
+  }
+>>>>>>> /usr/src/app/output/graylog2/graylog2-alarmcallback-slack/63afb94bcd157b7ffe10dcef43743a33946c65ff/src/main/java/org/graylog2/plugins/slack/output/SlackMessageOutput.java/right.java
 
-    @Override
-    public void write(List<Message> list) throws Exception {
-        for (Message message : list) {
-            write(message);
-        }
+
+  private String buildShortMessageBody(Message msg) {
+    return String.format("%s: %s", msg.getTimestamp().toDateTime(DateTimeZone.getDefault()).toString(DateTimeFormat.shortTime()), msg.getMessage());
+  }
+
+  @Override public void write(List<Message> list) throws Exception {
+    for (Message message : list) {
+      write(message);
     }
+  }
 
-    public Map<String, Object> getConfiguration() {
-        return configuration.getSource();
+  public Map<String, Object> getConfiguration() {
+    return configuration.getSource();
+  }
+
+  @FactoryClass public interface Factory extends MessageOutput.Factory<SlackMessageOutput> {
+    @Override SlackMessageOutput create(Stream stream, Configuration configuration);
+
+    @Override Config getConfig();
+
+    @Override Descriptor getDescriptor();
+  }
+
+  @ConfigClass public static class Config extends MessageOutput.Config {
+    @Override public ConfigurationRequest getRequestedConfiguration() {
+      return SlackConfigurationRequestFactory.createSlackMessageOutputConfigurationRequest();
     }
+  }
 
-    @FactoryClass
-    public interface Factory extends MessageOutput.Factory<SlackMessageOutput> {
-        @Override
-        SlackMessageOutput create(Stream stream, Configuration configuration);
-
-        @Override
-        Config getConfig();
-
-        @Override
-        Descriptor getDescriptor();
+  public static class Descriptor extends MessageOutput.Descriptor {
+    public Descriptor() {
+      super("Slack Output", false, "", "Writes messages to a Slack chat room.");
     }
-
-    @ConfigClass
-    public static class Config extends MessageOutput.Config {
-        @Override
-        public ConfigurationRequest getRequestedConfiguration() {
-            return SlackConfigurationRequestFactory.createSlackMessageOutputConfigurationRequest();
-        }
-    }
-
-    public static class Descriptor extends MessageOutput.Descriptor {
-        public Descriptor() {
-            super("Slack Output", false, "", "Writes messages to a Slack chat room.");
-        }
-    }
+  }
 }
