@@ -83,11 +83,13 @@ public final class SuiteResult implements Serializable {
     /**
      * Optional ID attribute of a test suite. E.g., Eclipse plug-ins tests always have the name 'tests' but a different id.
      **/
+    /** Optional ID attribute of a test suite. E.g., Eclipse plug-ins tests always have the name 'tests' but a different id. **/
     private String id;
 
     /**
      * Optional time attribute of a test suite. E.g., Suites can use their own time attribute or the sum of their cases' times as before.
      **/
+    /** Optional time attribute of a test suite. E.g., Suites can use their own time attribute or the sum of their cases' times as before.**/
     private String time;
 
     /**
@@ -152,6 +154,10 @@ public final class SuiteResult implements Serializable {
      * Passed to {@link ParserConfigurator}.
      *
      * @since 1.416
+     */
+    /**
+     * Passed to {@link ParserConfigurator}.
+     * @since 1.416
      * @deprecated with no replacement.
      */
     @Deprecated
@@ -179,6 +185,7 @@ public final class SuiteResult implements Serializable {
 
         FileInputStream xmlReportStream = new FileInputStream(xmlReport);
         try {
+
             Document result = saxReader.read(xmlReportStream);
             Element root = result.getRootElement();
 
@@ -296,12 +303,13 @@ public final class SuiteResult implements Serializable {
         this.stderr = stderr;
     }
 
+    /*package*/
     /*package*/ void addCase(CaseResult cr) {
         cases.add(cr);
         casesByName().put(cr.getName(), cr);
 
         //if suite time was not specified use sum of the cases' times
-        if( !hasTimeAttr() ){
+        if ( !hasTimeAttr() ) {
             duration += cr.getDuration();
         }
     }
@@ -323,7 +331,6 @@ public final class SuiteResult implements Serializable {
         }
         return "";
     }
-
     /**
      * Returns true if the time attribute is present in this Suite.
      */
@@ -478,6 +485,7 @@ public final class SuiteResult implements Serializable {
         this.parent = parent;
     }
 
+    /*package*/
     /*package*/ boolean freeze(hudson.tasks.junit.TestResult owner) {
         if(this.parent!=null)
             return false;   // already frozen
