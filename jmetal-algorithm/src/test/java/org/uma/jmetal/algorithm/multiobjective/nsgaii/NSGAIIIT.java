@@ -1,5 +1,4 @@
 package org.uma.jmetal.algorithm.multiobjective.nsgaii;
-
 import org.junit.Test;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.component.termination.Termination;
@@ -18,98 +17,55 @@ import org.uma.jmetal.util.front.imp.ArrayFront;
 import org.uma.jmetal.util.front.util.FrontNormalizer;
 import org.uma.jmetal.util.front.util.FrontUtils;
 import org.uma.jmetal.util.point.PointSolution;
-
 import java.util.List;
-
 import static org.junit.Assert.assertTrue;
 
 public class NSGAIIIT {
   Algorithm<List<DoubleSolution>> algorithm;
 
-  @Test
-  public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem() throws Exception {
-    DoubleProblem problem = new Kursawe() ;
+  @Test public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem() throws Exception {
+    DoubleProblem problem = new Kursawe();
     CrossoverOperator<DoubleSolution> crossover;
     MutationOperator<DoubleSolution> mutation;
-
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
     crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
-
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
-
     int populationSize = 100;
     int offspringPopulationSize = 100;
-
     Termination termination = new TerminationByEvaluations(25000);
-
-    algorithm =
-            new NSGAII<>(
-                    problem,
-                    populationSize,
-                    offspringPopulationSize,
-                    crossover,
-                    mutation,
-                    termination);
-
+    algorithm = new NSGAII<>(problem, populationSize, offspringPopulationSize, crossover, mutation, termination);
     algorithm.run();
-
-    List<DoubleSolution> population = algorithm.getResult() ;
-
-    /*
-    Rationale: the default problem is Kursawe, and usually NSGA-II, configured with standard
-    settings, should return 100 solutions
-    */
-    assertTrue(population.size() >= 98) ;
+    List<DoubleSolution> population = algorithm.getResult();
+    assertTrue(population.size() >= 98);
   }
 
-  @Test
-  public void shouldTheAlgorithmReturnAGoodQualityFrontWhenSolvingAConstrainedProblem() throws Exception {
-    ConstrEx problem = new ConstrEx() ;
+  @Test public void shouldTheAlgorithmReturnAGoodQualityFrontWhenSolvingAConstrainedProblem() throws Exception {
+    ConstrEx problem = new ConstrEx();
     CrossoverOperator<DoubleSolution> crossover;
     MutationOperator<DoubleSolution> mutation;
-
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
     crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
-
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
-
     int populationSize = 100;
     int offspringPopulationSize = 100;
-
     Termination termination = new TerminationByEvaluations(25000);
-
-    algorithm =
-            new NSGAII<>(
-                    problem,
-                    populationSize,
-                    offspringPopulationSize,
-                    crossover,
-                    mutation,
-                    termination);
-
+    algorithm = new NSGAII<>(problem, populationSize, offspringPopulationSize, crossover, mutation, termination);
     algorithm.run();
-
-    List<DoubleSolution> population = algorithm.getResult() ;
-
-    String referenceFrontFileName = "../referenceFronts/ConstrEx.pf" ;
-
+    List<DoubleSolution> population = algorithm.getResult();
+    String referenceFrontFileName = "../referenceFronts/ConstrEx.pf";
     Front referenceFront = new ArrayFront(referenceFrontFileName);
-    FrontNormalizer frontNormalizer = new FrontNormalizer(referenceFront) ;
-
-    Front normalizedReferenceFront = frontNormalizer.normalize(referenceFront) ;
-    Front normalizedFront = frontNormalizer.normalize(new ArrayFront(population)) ;
-    List<PointSolution> normalizedPopulation = FrontUtils
-        .convertFrontToSolutionList(normalizedFront) ;
-
-    double hv = new PISAHypervolume<PointSolution>(normalizedReferenceFront).evaluate(normalizedPopulation) ;
-
-    assertTrue(population.size() >= 98) ;
-    assertTrue(hv > 0.77) ;
+    FrontNormalizer frontNormalizer = new FrontNormalizer(referenceFront);
+    Front normalizedReferenceFront = frontNormalizer.normalize(referenceFront);
+    Front normalizedFront = frontNormalizer.normalize(new ArrayFront(population));
+    List<PointSolution> normalizedPopulation = FrontUtils.convertFrontToSolutionList(normalizedFront);
+    double hv = new PISAHypervolume<PointSolution>(normalizedReferenceFront).evaluate(normalizedPopulation);
+    assertTrue(population.size() >= 98);
+    assertTrue(hv > 0.77);
   }
 }
