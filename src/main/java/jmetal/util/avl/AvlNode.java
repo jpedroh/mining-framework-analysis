@@ -1,25 +1,3 @@
-//  AvlNode
-//
-//  Author:
-//       Antonio J. Nebro <antonio@lcc.uma.es>
-//       Juan J. Durillo <durillo@lcc.uma.es>
-//
-//  Copyright (c) 2011 Antonio J. Nebro, Juan J. Durillo
-//
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU Lesser General Public License for more details.
-//
-//  You should have received a copy of the GNU Lesser General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//
-
 package jmetal.util.avl;
 
 /**
@@ -29,9 +7,11 @@ package jmetal.util.avl;
  * Time: 15:46
  * To change this template use File | Settings | File Templates.
  */
-public class AvlNode<T> {
+public class AvlNode<T extends java.lang.Object> {
   private AvlNode<T> left_;
+
   private AvlNode<T> right_;
+
   private AvlNode<T> parent_;
 
   private int height_;
@@ -39,7 +19,6 @@ public class AvlNode<T> {
   private AvlNode<T> closestNode_;
 
   private T item_;
-
 
   /**
    * Constructor
@@ -52,7 +31,6 @@ public class AvlNode<T> {
     this.parent_ = null;
     height_ = 0;
     closestNode_ = null;
-
     this.item_ = item_;
   }
 
@@ -99,12 +77,16 @@ public class AvlNode<T> {
   public void updateHeight() {
     if (!hasLeft() && !hasRight()) {
       height_ = 0;
-    } else if (!hasRight()) {
-      height_ = 1 + getLeft().getHeight();
-    } else if (!hasLeft()) {
-      height_ = 1 + getRight().getHeight();
     } else {
-      height_ = 1 + Math.max(getLeft().getHeight(), getRight().getHeight());
+      if (!hasRight()) {
+        height_ = 1 + getLeft().getHeight();
+      } else {
+        if (!hasLeft()) {
+          height_ = 1 + getRight().getHeight();
+        } else {
+          height_ = 1 + Math.max(getLeft().getHeight(), getRight().getHeight());
+        }
+      }
     }
   }
 
@@ -129,15 +111,32 @@ public class AvlNode<T> {
   }
 
   public boolean isLeaf() {
-
-    return (!hasLeft() && !hasRight()) ;
+    return 
+<<<<<<< /usr/src/app/output/jmetal/jmetal/e4779bb8d29bc4ce6f4e0f0df52062a7992e5423/src/main/java/jmetal/util/avl/AvlNode.java/left.java
+    !(hasLeft() || hasRight())
+=======
+    (!hasLeft() && !hasRight())
+>>>>>>> /usr/src/app/output/jmetal/jmetal/e4779bb8d29bc4ce6f4e0f0df52062a7992e5423/src/main/java/jmetal/util/avl/AvlNode.java/right.java
+    ;
   }
 
   public boolean hasOnlyALeftChild() {
-    return (hasLeft() && !hasRight()) ;
+    return 
+<<<<<<< /usr/src/app/output/jmetal/jmetal/e4779bb8d29bc4ce6f4e0f0df52062a7992e5423/src/main/java/jmetal/util/avl/AvlNode.java/left.java
+    hasLeft() && !hasRight()
+=======
+    (hasLeft() && !hasRight())
+>>>>>>> /usr/src/app/output/jmetal/jmetal/e4779bb8d29bc4ce6f4e0f0df52062a7992e5423/src/main/java/jmetal/util/avl/AvlNode.java/right.java
+    ;
   }
 
   public boolean hasOnlyARightChild() {
-    return  (hasRight() && !hasLeft()) ;
+    return 
+<<<<<<< /usr/src/app/output/jmetal/jmetal/e4779bb8d29bc4ce6f4e0f0df52062a7992e5423/src/main/java/jmetal/util/avl/AvlNode.java/left.java
+    hasRight() && !hasLeft()
+=======
+    (hasRight() && !hasLeft())
+>>>>>>> /usr/src/app/output/jmetal/jmetal/e4779bb8d29bc4ce6f4e0f0df52062a7992e5423/src/main/java/jmetal/util/avl/AvlNode.java/right.java
+    ;
   }
 }
