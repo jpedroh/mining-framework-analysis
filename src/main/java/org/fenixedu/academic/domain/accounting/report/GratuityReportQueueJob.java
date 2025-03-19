@@ -29,9 +29,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.fenixedu.academic.domain.Enrolment;
+
 import org.fenixedu.academic.domain.ExecutionYear;
+
 import org.fenixedu.academic.domain.QueueJob;
+
 import org.fenixedu.academic.domain.QueueJobResult;
+
 import org.fenixedu.academic.domain.QueueJob_Base;
 import org.fenixedu.academic.domain.accounting.AccountingTransaction;
 import org.fenixedu.academic.domain.accounting.Receipt;
@@ -425,8 +429,15 @@ public class GratuityReportQueueJob extends GratuityReportQueueJob_Base {
     }
 
     public static List<GratuityReportQueueJob> retrieveAllGeneratedReports(final ExecutionYear executionYear) {
-         return executionYear.getGratuityReportQueueJobsSet().stream()
-                .filter(QueueJob::getDone)
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/dbf46cbd199c66d9722542ec033bd6ce8de9b88e/src/main/java/org/fenixedu/academic/domain/accounting/report/GratuityReportQueueJob.java/left.java
+        return executionYear.getGratuityReportQueueJobsSet().stream()
+                .filter(QueueJob_Base::getDone)
+||||||| /usr/src/app/output/fenixedu/fenixedu-academic/dbf46cbd199c66d9722542ec033bd6ce8de9b88e/src/main/java/org/fenixedu/academic/domain/accounting/report/GratuityReportQueueJob.java/base.java
+        return 
+=======
+        return executionYear.getGratuityReportQueueJobsSet().stream()
+               .filter(QueueJob::getDone)
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/dbf46cbd199c66d9722542ec033bd6ce8de9b88e/src/main/java/org/fenixedu/academic/domain/accounting/report/GratuityReportQueueJob.java/right.java
                 .collect(Collectors.toList());
     }
 
