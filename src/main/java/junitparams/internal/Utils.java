@@ -78,7 +78,7 @@ public class Utils {
         if (paramSet instanceof Object[]) {
             params = (Object[]) paramSet;
         } else {
-            params = new Object[]{paramSet};
+            params = new Object[] {paramSet};
         }
         return params;
     }
