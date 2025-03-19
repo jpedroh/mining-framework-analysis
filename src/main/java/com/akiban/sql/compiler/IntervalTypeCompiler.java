@@ -140,6 +140,7 @@ public class IntervalTypeCompiler extends TypeCompiler
         TypeId leftTypeId = leftType.getTypeId();
         boolean nullable = leftType.isNullable() || rightType.isNullable();
 
+<<<<<<< /usr/src/app/output/brunoribeiro/sql-parser/4ecca111d3214fb0d1d66d34fa2559a0dd0b50b0/src/main/java/com/akiban/sql/compiler/IntervalTypeCompiler.java/left.java
         if (operator.equals(PLUS_OP) || operator.equals(MINUS_OP))
         {
             // date/time and interval
@@ -167,7 +168,35 @@ public class IntervalTypeCompiler extends TypeCompiler
                  (varcharType = rightType).getTypeId().isStringTypeId() && leftTypeId.isIntervalTypeId()
                     && operator.equals(PLUS_OP)) // when left is interval, only + is legal
                 return new DataTypeDescriptor(varcharType.getPrecision() > 10 ? TypeId.DATETIME_ID : TypeId.DATE_ID, nullable);
+||||||| /usr/src/app/output/brunoribeiro/sql-parser/4ecca111d3214fb0d1d66d34fa2559a0dd0b50b0/src/main/java/com/akiban/sql/compiler/IntervalTypeCompiler.java/base.java
+        if (rightTypeId.isIntervalTypeId() &&
+            (operator.equals(TypeCompiler.PLUS_OP) ||
+             operator.equals(TypeCompiler.MINUS_OP)) &&
+            (getStoredFormatIdFromTypeId() == rightTypeId.getTypeFormatId())) {
+            // +/- of compatible intervals.
+            if (leftType.getTypeId() == rightTypeId)
+                // Keep the specific interval range if the same.
+                return leftType.getNullabilityType(nullable);
+            else if (getStoredFormatIdFromTypeId() == TypeId.FormatIds.INTERVAL_YEAR_MONTH_ID)
+                return new DataTypeDescriptor(TypeId.INTERVAL_MONTH_ID, nullable);
+            else
+                return new DataTypeDescriptor(TypeId.INTERVAL_DAY_ID, nullable);
+=======
+        if (rightTypeId.isIntervalTypeId() &&
+            (operator.equals(TypeCompiler.PLUS_OP) ||
+             operator.equals(TypeCompiler.MINUS_OP)) &&
+            (getStoredFormatIdFromTypeId() == rightTypeId.getTypeFormatId())) {
+            // +/- of compatible intervals.
+            if (leftType.getTypeId() == rightTypeId)
+                // Keep the specific interval range if the same.
+                return leftType.getNullabilityType(nullable);
+            else if (getStoredFormatIdFromTypeId() == TypeId.FormatIds.INTERVAL_YEAR_MONTH_ID)
+                return new DataTypeDescriptor(TypeId.INTERVAL_MONTH_ID, nullable);
+            else
+                return new DataTypeDescriptor(TypeId.INTERVAL_SECOND_ID, nullable);
+>>>>>>> /usr/src/app/output/brunoribeiro/sql-parser/4ecca111d3214fb0d1d66d34fa2559a0dd0b50b0/src/main/java/com/akiban/sql/compiler/IntervalTypeCompiler.java/right.java
         }
+<<<<<<< /usr/src/app/output/brunoribeiro/sql-parser/4ecca111d3214fb0d1d66d34fa2559a0dd0b50b0/src/main/java/com/akiban/sql/compiler/IntervalTypeCompiler.java/left.java
         else if (operator.equals(TIMES_OP) || operator.equals(DIVIDE_OP))
         {   
             // numeric / varchar and interval
@@ -179,6 +208,27 @@ public class IntervalTypeCompiler extends TypeCompiler
                     operator.equals(TIMES_OP)) // when right is interval, only * is legal
                 return new DataTypeDescriptor(intervalId, nullable);            
         }        
+||||||| /usr/src/app/output/brunoribeiro/sql-parser/4ecca111d3214fb0d1d66d34fa2559a0dd0b50b0/src/main/java/com/akiban/sql/compiler/IntervalTypeCompiler.java/base.java
+
+        if (rightTypeId.isNumericTypeId() &&
+            (operator.equals(TypeCompiler.TIMES_OP) ||
+             operator.equals(TypeCompiler.DIVIDE_OP))) {
+            if (getStoredFormatIdFromTypeId() == TypeId.FormatIds.INTERVAL_YEAR_MONTH_ID)
+                return new DataTypeDescriptor(TypeId.INTERVAL_MONTH_ID, nullable);
+            else
+                return new DataTypeDescriptor(TypeId.INTERVAL_DAY_ID, nullable);
+        }
+=======
+
+        if (rightTypeId.isNumericTypeId() &&
+            (operator.equals(TypeCompiler.TIMES_OP) ||
+             operator.equals(TypeCompiler.DIVIDE_OP))) {
+            if (getStoredFormatIdFromTypeId() == TypeId.FormatIds.INTERVAL_YEAR_MONTH_ID)
+                return new DataTypeDescriptor(TypeId.INTERVAL_MONTH_ID, nullable);
+            else
+                return new DataTypeDescriptor(TypeId.INTERVAL_SECOND_ID, nullable);
+        }
+>>>>>>> /usr/src/app/output/brunoribeiro/sql-parser/4ecca111d3214fb0d1d66d34fa2559a0dd0b50b0/src/main/java/com/akiban/sql/compiler/IntervalTypeCompiler.java/right.java
 
         // Unsupported
         return super.resolveArithmeticOperation(leftType, rightType, operator);
