@@ -51,7 +51,6 @@ import org.enderstone.server.packet.play.PacketOutEntityHeadLook;
 import org.enderstone.server.packet.play.PacketOutEntityLook;
 import org.enderstone.server.packet.play.PacketOutEntityRelativeMove;
 import org.enderstone.server.packet.play.PacketOutEntityTeleport;
-import org.enderstone.server.packet.play.PacketOutPlayerAbilities;
 import org.enderstone.server.packet.play.PacketOutPlayerListHeaderFooter;
 import org.enderstone.server.packet.play.PacketOutPlayerListItem;
 import org.enderstone.server.packet.play.PacketOutPlayerListItem.Action;
@@ -69,7 +68,6 @@ import org.enderstone.server.regions.BlockId;
 import org.enderstone.server.regions.EnderChunk;
 import org.enderstone.server.regions.EnderWorld;
 import org.enderstone.server.regions.EnderWorld.ChunkInformer;
-import org.enderstone.server.regions.RegionSet;
 
 public class EnderPlayer extends Entity implements CommandSender, Player {
 
@@ -182,9 +180,7 @@ public class EnderPlayer extends Entity implements CommandSender, Player {
 		this.getNetworkManager().sendPacket(new PacketOutRespawn(0, (byte) 0, (byte) GameMode.SURVIVAL.getId(), "default"));
 		EnderWorld currentWorld = this.getWorld();
 		EnderLogger.warn("Switching player " + this.getPlayerName() + " from world " + currentWorld.worldName + " to " + toWorld.worldName + ".");
-		if (currentWorld.players.contains(this)) {
-			currentWorld.players.remove(this);
-		}
+		assert currentWorld.players.remove(this);
 		toWorld.players.add(this);
 		this.getLocation().cloneFrom(toWorld.getSpawn());
 		this.loadedChunks.clear();
@@ -458,6 +454,10 @@ public class EnderPlayer extends Entity implements CommandSender, Player {
 	public void teleport(Location newLocation) {
 		this.waitingForValidMoveAfterTeleport = 1;
 		Location oldLocation = this.getLocation();
+		
+		if(!oldLocation.getWorld().equals(newLocation.getWorld())){
+			this.switchWorld(newLocation.getWorld());
+		}
 		oldLocation.cloneFrom(newLocation);
 
 		this.getNetworkManager().sendPacket(new PacketOutPlayerPositionLook(newLocation.getX(), newLocation.getY(), newLocation.getZ(), newLocation.getYaw(), newLocation.getPitch(), (byte) 0b00000));
@@ -631,6 +631,10 @@ public class EnderPlayer extends Entity implements CommandSender, Player {
 	public InventoryHandler getInventoryHandler() {
 		return inventoryHandler;
 	}
+
+	public RegionSet getLoadedChunks() {
+		return this.loadedChunks;
+	}
 	
 	public void updateAbilities(){
 		int i = 0;
@@ -653,10 +657,6 @@ public class EnderPlayer extends Entity implements CommandSender, Player {
 		INVENTORY, PACKET, OTHER, 
 	}
 
-	public RegionSet getLoadedChunks() {
-		return this.loadedChunks;
-	}
-	
 	@Override
 	public void sendMessage(Message message, ChatPosition position) {
 		this.getNetworkManager().sendPacket(new PacketOutChatMessage(message, (byte) position.getId()));
