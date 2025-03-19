@@ -280,14 +280,6 @@ public class JDatePickerImpl extends JPanel implements JDatePicker {
         formattedTextField.setColumns(columns);
     }
 
-    @Override
-    public void setVisible(boolean aFlag) {
-        if (!aFlag) {
-            hidePopup();
-        }
-        super.setVisible(aFlag);
-    }
-
     /**
 	 * This internal class hides the public event methods from the outside 
 	 */
@@ -354,4 +346,11 @@ public class JDatePickerImpl extends JPanel implements JDatePicker {
 
     }
 
+	@Override
+	public void setVisible(boolean aFlag) {
+		if (!aFlag) {
+			hidePopup();
+		}
+		super.setVisible(aFlag);
+	}
 }
