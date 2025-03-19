@@ -70,13 +70,22 @@ public class GerritRestClient implements RestClient {
     private static final Pattern GERRIT_AUTH_PATTERN = Pattern.compile(".*?xGerritAuth=\"(.+?)\"");
     private static final int CONNECTION_TIMEOUT_MS = 30000;
     private static final String PREEMPTIVE_AUTH = "preemptive-auth";
+<<<<<<< /usr/src/app/output/uwolfer/gerrit-rest-java-client/8e688db7026ac124bd5984b8353d7095e994cac3/src/main/java/com/urswolfer/gerrit/client/rest/http/GerritRestClient.java/left.java
+    private static final Gson GSON = initGson();
+||||||| /usr/src/app/output/uwolfer/gerrit-rest-java-client/8e688db7026ac124bd5984b8353d7095e994cac3/src/main/java/com/urswolfer/gerrit/client/rest/http/GerritRestClient.java/base.java
+    private static final Gson GSON = initGson();
+=======
     private static final Gson GSON = GsonFactory.create();
+>>>>>>> /usr/src/app/output/uwolfer/gerrit-rest-java-client/8e688db7026ac124bd5984b8353d7095e994cac3/src/main/java/com/urswolfer/gerrit/client/rest/http/GerritRestClient.java/right.java
 
     private final GerritAuthData authData;
+
     private final HttpRequestExecutor httpRequestExecutor;
+
     private final List<HttpClientBuilderExtension> httpClientBuilderExtensions;
 
     private final BasicCookieStoreHC4 cookieStore;
+
     private final LoginCache loginCache;
 
     public GerritRestClient(GerritAuthData authData,
@@ -98,11 +107,6 @@ public class GerritRestClient implements RestClient {
     @Override
     public JsonElement getRequest(String path) throws RestApiException {
         return requestJson(path, null, HttpVerb.GET);
-    }
-
-    @Override
-    public JsonElement postRequest(String path) throws RestApiException {
-        return postRequest(path, null);
     }
 
     @Override
@@ -147,27 +151,12 @@ public class GerritRestClient implements RestClient {
         }
     }
 
-    @Override
-    public HttpResponse requestRest(String path,
-                                    String requestBody,
-                                    HttpVerb verb) throws IOException, HttpStatusException {
-        return requestRest(path, requestBody, verb, false);
-    }
-
     private HttpResponse requestRest(String path,
                                      String requestBody,
                                      HttpVerb verb,
                                      boolean isRetry) throws IOException, HttpStatusException {
         BasicHeader acceptHeader = new BasicHeader("Accept", JSON_MIME_TYPE);
         return request(path, requestBody, verb, isRetry, acceptHeader);
-    }
-
-    @Override
-    public HttpResponse request(String path,
-                                String requestBody,
-                                HttpVerb verb,
-                                Header... headers) throws IOException, HttpStatusException {
-        return request(path, requestBody, verb, false, headers);
     }
 
     private HttpResponse request(String path,
@@ -259,6 +248,7 @@ public class GerritRestClient implements RestClient {
     /**
      * Handles LDAP auth (but not LDAP_HTTP) which uses a HTML form.
      */
+
     private Optional<String> tryGerritHttpFormAuth(HttpClientBuilder client, HttpContext httpContext) throws IOException, HttpStatusException {
         if (!authData.isLoginAndPasswordAvailable()) {
             return Optional.absent();
@@ -293,36 +283,13 @@ public class GerritRestClient implements RestClient {
      * [Gerrit documentation].
      * [Gerrit documentation]: https://gerrit-review.googlesource.com/Documentation/rest-api.html#authentication
      */
-    private Optional<String> tryGerritHttpAuth(HttpClientBuilder client, HttpContext httpContext) throws IOException, HttpStatusException {
+
+    private Optional<String> tryGerritHttpAuth(HttpClientBuilder client, HttpContext httpContext) throws IOException {
         String loginUrl = authData.getHost() + "/login/";
         HttpResponse loginResponse = httpRequestExecutor.execute(client, new HttpGetHC4(loginUrl), httpContext);
         return extractGerritAuth(loginResponse);
     }
 
-    private Optional<String> extractGerritAuth(HttpResponse loginResponse) throws IOException, HttpStatusException {
-        checkStatusCodeServerError(loginResponse);
-        if (loginResponse.getStatusLine().getStatusCode() != HttpStatus.SC_UNAUTHORIZED) {
-            return getXsrfCookie().or(getXsrfFromHtmlBody(loginResponse));
-        }
-        return Optional.absent();
-    }
-
-    /**
-     * In Gerrit >= 2.12 the XSRF token got moved to a cookie.
-     * Introduced in: https://gerrit-review.googlesource.com/72031/
-     */
-    private Optional<String> getXsrfCookie() {
-        Optional<Cookie> xsrfCookie = findCookie("XSRF_TOKEN");
-        if (xsrfCookie.isPresent()) {
-            return Optional.of(xsrfCookie.get().getValue());
-        }
-        return Optional.absent();
-    }
-
-
-    /**
-     * In Gerrit < 2.12 the XSRF token was included in the start page HTML.
-     */
     private Optional<String> getXsrfFromHtmlBody(HttpResponse loginResponse) throws IOException {
         Optional<Cookie> gerritAccountCookie = findGerritAccountCookie();
         if (gerritAccountCookie.isPresent()) {
@@ -332,10 +299,6 @@ public class GerritRestClient implements RestClient {
             }
         }
         return Optional.absent();
-    }
-
-    private Optional<Cookie> findGerritAccountCookie() {
-        return findCookie("GerritAccount");
     }
 
     private Optional<Cookie> findCookie(final String cookieName) {
@@ -391,6 +354,7 @@ public class GerritRestClient implements RestClient {
      * When server returns status code 401, the HTTP client provides the same credentials forever.
      * Since we create a new HTTP client for every request, we can handle it this way.
      */
+
     private BasicCredentialsProviderHC4 getCredentialsProvider() {
         return new BasicCredentialsProviderHC4() {
             private Set<AuthScope> authAlreadyTried = Sets.newHashSet();
@@ -414,36 +378,6 @@ public class GerritRestClient implements RestClient {
             throw new IOException(String.format("Couldn't parse response: %n%s", CharStreams.toString(reader)), jse);
         } finally {
             reader.close();
-        }
-    }
-
-    /**
-     * @throws HttpStatusException on any error (client 4xx and server 5xx).
-     */
-    private void checkStatusCode(HttpResponse response) throws HttpStatusException, IOException {
-        checkStatusCodeClientError(response);
-        checkStatusCodeServerError(response);
-    }
-
-    /**
-     * @throws HttpStatusException on client error (4xx).
-     */
-    private void checkStatusCodeClientError(HttpResponse response) throws HttpStatusException, IOException {
-        checkStatusCodeError(response, 400, 499);
-    }
-
-    /**
-     * @throws HttpStatusException on server error (5xx).
-     */
-    private void checkStatusCodeServerError(HttpResponse response) throws HttpStatusException, IOException {
-        checkStatusCodeError(response, 500, 599);
-    }
-
-    private void checkStatusCodeError(HttpResponse response, int errorIfMin, int errorIfMax) throws HttpStatusException, IOException {
-        StatusLine statusLine = response.getStatusLine();
-        int code = statusLine.getStatusCode();
-        if (code >= errorIfMin && code <= errorIfMax) {
-            throwHttpStatusException(response);
         }
     }
 
@@ -473,6 +407,7 @@ public class GerritRestClient implements RestClient {
      * Based on:
      * https://subversion.jfrog.org/jfrog/build-info/trunk/build-info-client/src/main/java/org/jfrog/build/client/PreemptiveHttpClient.java
      */
+
     private static class PreemptiveAuthHttpRequestInterceptor implements HttpRequestInterceptor {
         private GerritAuthData authData;
 
@@ -518,6 +453,88 @@ public class GerritRestClient implements RestClient {
             String userAgent = String.format("gerrit-rest-java-client/%s", Version.get());
             userAgent += " using " + existingUserAgent.getValue();
             request.setHeader(HttpHeaders.USER_AGENT, userAgent);
+        }
+    }
+
+    @Override
+    public JsonElement postRequest(String path) throws RestApiException {
+        return postRequest(path, null);
+    }
+
+    @Override
+    public HttpResponse requestRest(String path,
+                                    String requestBody,
+                                    HttpVerb verb) throws IOException, HttpStatusException {
+        return requestRest(path, requestBody, verb, false);
+    }
+
+    @Override
+    public HttpResponse request(String path,
+                                String requestBody,
+                                HttpVerb verb,
+                                Header... headers) throws IOException, HttpStatusException {
+        return request(path, requestBody, verb, false, headers);
+    }
+
+    private Optional<String> extractGerritAuth(HttpResponse loginResponse) throws IOException, HttpStatusException {
+        checkStatusCodeServerError(loginResponse);
+        if (loginResponse.getStatusLine().getStatusCode() != HttpStatus.SC_UNAUTHORIZED) {
+            return getXsrfCookie().or(getXsrfFromHtmlBody(loginResponse));
+        }
+        return Optional.absent();
+    }
+
+    /**
+     * In Gerrit >= 2.12 the XSRF token got moved to a cookie.
+     * Introduced in: https://gerrit-review.googlesource.com/72031/
+     */
+
+    private Optional<String> getXsrfCookie() {
+        Optional<Cookie> xsrfCookie = findCookie("XSRF_TOKEN");
+        if (xsrfCookie.isPresent()) {
+            return Optional.of(xsrfCookie.get().getValue());
+        }
+        return Optional.absent();
+    }
+
+    /**
+     * In Gerrit < 2.12 the XSRF token was included in the start page HTML.
+     */
+
+    private Optional<Cookie> findGerritAccountCookie() {
+        return findCookie("GerritAccount");
+    }
+
+    /**
+     * @throws HttpStatusException on any error (client 4xx and server 5xx).
+     */
+
+    private void checkStatusCode(HttpResponse response) throws HttpStatusException, IOException {
+        checkStatusCodeClientError(response);
+        checkStatusCodeServerError(response);
+    }
+
+    /**
+     * @throws HttpStatusException on client error (4xx).
+     */
+
+    private void checkStatusCodeClientError(HttpResponse response) throws HttpStatusException, IOException {
+        checkStatusCodeError(response, 400, 499);
+    }
+
+    /**
+     * @throws HttpStatusException on server error (5xx).
+     */
+
+    private void checkStatusCodeServerError(HttpResponse response) throws HttpStatusException, IOException {
+        checkStatusCodeError(response, 500, 599);
+    }
+
+    private void checkStatusCodeError(HttpResponse response, int errorIfMin, int errorIfMax) throws HttpStatusException, IOException {
+        StatusLine statusLine = response.getStatusLine();
+        int code = statusLine.getStatusCode();
+        if (code >= errorIfMin && code <= errorIfMax) {
+            throwHttpStatusException(response);
         }
     }
 }
