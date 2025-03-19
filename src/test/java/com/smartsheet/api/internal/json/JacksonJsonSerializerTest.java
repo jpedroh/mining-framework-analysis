@@ -178,7 +178,11 @@ public class JacksonJsonSerializerTest {
 		User user = jjs.deserialize(User.class, new ByteArrayInputStream(b.toByteArray()));
 
 		assertEquals(originalUser.getFirstName(), user.getFirstName());
-		assertNotEquals("The id was not deserialized into the User object.", originalUser.getId(), user.getId());
+		assertNotEquals("The id was not deserialized into the User object.", (Long)originalUser.getId(), (Long)user.getId());
+
+
+
+
 	}
 	
 	@Test
