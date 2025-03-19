@@ -298,8 +298,8 @@ public class Vector implements Serializable, Cloneable {
     public Vector normalize() {
         return this.divide(this.magnitude());
     }
-    
-	/**
+
+    /**
      * Calculates the dot product of this vector and another
      *
      * @param vec the other vector

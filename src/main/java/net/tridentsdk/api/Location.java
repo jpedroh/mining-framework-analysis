@@ -209,6 +209,7 @@ public class Location implements Serializable, Cloneable {
      *
      *  @return New Vector containing this Location's coordinates
      */
+
     public Vector toVector() {
         return new Vector(getX(), getY(), getZ());
     }
@@ -221,6 +222,7 @@ public class Location implements Serializable, Cloneable {
      *  @param location the location to measure distance with
      *  @return distance from this location to another
      */
+
     public double distance(Location location) {
         return Math.sqrt(distanceSquared(location));
     }
@@ -231,6 +233,7 @@ public class Location implements Serializable, Cloneable {
      *  @param location the location to measure distance with
      *  @return distance squared from this location to another
      */
+
     public double distanceSquared(Location location) {
         Validate.notNull(location, "Location cannot be null.");
         if(getWorld() != location.getWorld()) return 0;
