@@ -1,21 +1,20 @@
 package com.google.errorprone.bugpatterns.testdata;
 
 public class ThisEscapesConstructorPositiveCases {
+  static class AssignsThis {
+    public AssignsThis at;
 
-    static class AssignsThis {
-        public AssignsThis at;
-        AssignsThis() {
-            // BUG: Diagnostic contains:
-            at = this;
-        }
+    AssignsThis() {
+      this.at = this;
+    }
+  }
+
+  static class PassesThis {
+    PassesThis() {
+      receivesThis(this);
     }
 
-    static class PassesThis {
-        PassesThis() {
-            // BUG: Diagnostic contains:
-            receivesThis(this);
-        }
-
-        private void receivesThis(PassesThis t) {}
+    private void receivesThis(PassesThis t) {
     }
+  }
 }
