@@ -263,11 +263,20 @@ public class JsonIdentityBackend extends AbstractIdentityBackend {
     private void persistToFile() throws KrbException {
         String newJsonContent = gson.toJson(identities);
         try {
+<<<<<<< /usr/src/app/output/apache/directory-kerby/2daee238dbcf01170a01936f0feddb65e7dd0726/kerby-backend/json-backend/src/main/java/org/apache/kerby/kerberos/kdc/identitybackend/JsonIdentityBackend.java/left.java
+            IOUtil.writeFile(newJsonContent, jsonKdbFile);
+||||||| /usr/src/app/output/apache/directory-kerby/2daee238dbcf01170a01936f0feddb65e7dd0726/kerby-backend/json-backend/src/main/java/org/apache/kerby/kerberos/kdc/identitybackend/JsonIdentityBackend.java/base.java
+            File newJsonKdbFile = File.createTempFile("kerby-kdb",
+                    ".json", jsonKdbFile.getParentFile());
+            IOUtil.writeFile(newJsonContent, newJsonKdbFile);
+            newJsonKdbFile.renameTo(jsonKdbFile);
+=======
             File newJsonKdbFile = File.createTempFile("kerby-kdb",
                     ".json", jsonKdbFile.getParentFile());
             IOUtil.writeFile(newJsonContent, newJsonKdbFile);
             jsonKdbFile.delete();
             newJsonKdbFile.renameTo(jsonKdbFile);
+>>>>>>> /usr/src/app/output/apache/directory-kerby/2daee238dbcf01170a01936f0feddb65e7dd0726/kerby-backend/json-backend/src/main/java/org/apache/kerby/kerberos/kdc/identitybackend/JsonIdentityBackend.java/right.java
             kdbFileUpdateTime = jsonKdbFile.lastModified();
         } catch (IOException e) {
             LOG.error("Error occurred while writing identities to file: " + jsonKdbFile);
