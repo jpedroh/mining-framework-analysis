@@ -39,7 +39,10 @@ public final class TridentLogger {
             "Bukkit 1.8 not found, contact Dinnerbone",
             "Huston, we have a problem",
             "Oh great, a stacktrace. Can't we write good software for once?",
-            "Trust me this isn't a bug, it's a feature!"
+            "Trust me this isn't a bug, it's a feature!",
+            "Vilsol screamed your JVM to death",
+            "Herobrine",
+            "1 + 1 = 3"
     };
 
     private TridentLogger() {
