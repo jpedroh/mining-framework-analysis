@@ -45,7 +45,6 @@ public class DictionaryFactory {
 
 	public static final String MOD_DICT_IMPL_HASH = "hash";
 	public static final String DICTIONARY_TYPE_FOUR_SECTION_BIG ="dictionaryFourBig";
-
 	private DictionaryFactory() {}
 
 	/**
