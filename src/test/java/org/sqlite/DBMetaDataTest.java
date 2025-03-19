@@ -4,7 +4,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -18,13 +17,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * These tests are designed to stress Statements on memory databases.
  */
@@ -1075,8 +1072,20 @@ public class DBMetaDataTest {
         final ResultSet rs = meta.getPrimaryKeys(null, null, tableName);
         assertTrue(rs.next());
         for (int i = 0; i < pkColumns.length; i++) {
+<<<<<<< /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/DBMetaDataTest.java/left.java
             assertNull(rs.getString("TABLE_CAT"), "DatabaseMetaData.getPrimaryKeys: TABLE_CAT");
+||||||| /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/DBMetaDataTest.java/base.java
+            assertNull("DatabaseMetaData.getPrimaryKeys: TABLE_CAT", null, rs.getString("TABLE_CAT"));
+=======
+            assertNull(null, rs.getString("TABLE_CAT"), "DatabaseMetaData.getPrimaryKeys: TABLE_CAT");
+>>>>>>> /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/DBMetaDataTest.java/right.java
+<<<<<<< /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/DBMetaDataTest.java/left.java
             assertNull(rs.getString("TABLE_SCHEM"), "DatabaseMetaData.getPrimaryKeys: TABLE_SCHEM");
+||||||| /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/DBMetaDataTest.java/base.java
+            assertNull("DatabaseMetaData.getPrimaryKeys: TABLE_SCHEM", null, rs.getString("TABLE_SCHEM"));
+=======
+            assertNull(null, rs.getString("TABLE_SCHEM"), "DatabaseMetaData.getPrimaryKeys: TABLE_SCHEM");
+>>>>>>> /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/DBMetaDataTest.java/right.java
             assertEquals(tableName, rs.getString("TABLE_NAME"), "DatabaseMetaData.getPrimaryKeys: TABLE_NAME");
             assertEquals(pkColumns[i], rs.getString("COLUMN_NAME"), "DatabaseMetaData.getPrimaryKeys: COLUMN_NAME");
             assertEquals(pkName, rs.getString("PK_NAME"), "DatabaseMetaData.getPrimaryKeys: PK_NAME");
@@ -1251,7 +1260,13 @@ public class DBMetaDataTest {
         assertEquals(versionString, meta.getDatabaseProductVersion(), "db version");
         assertEquals(majorVersion, meta.getDatabaseMajorVersion(), "db major version");
         assertEquals(minorVersion, meta.getDatabaseMinorVersion(), "db minor version");
+<<<<<<< /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/DBMetaDataTest.java/left.java
         assertNull(meta.getUserName(), "user name");
+||||||| /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/DBMetaDataTest.java/base.java
+        assertNull("user name", null, meta.getUserName());
+=======
+        assertNull(null, meta.getUserName(), "user name");
+>>>>>>> /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/DBMetaDataTest.java/right.java
     }
 
 }

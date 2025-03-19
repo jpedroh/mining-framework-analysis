@@ -15,6 +15,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.containsString;
 
 public class ErrorMessageTest {
     static class VendorCodeMatcher extends BaseMatcher<Object> {
@@ -83,7 +85,14 @@ public class ErrorMessageTest {
         assumeTrue(from.renameTo(to));
 
         Exception exception = assertThrows(SQLException.class, () -> stmt.executeUpdate("insert into sample values(2, \"bar\")"));
+
+<<<<<<< /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/ErrorMessageTest.java/left.java
         assertTrue(exception.getMessage().contains("[SQLITE_READONLY_DBMOVED]"));
+||||||| /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/ErrorMessageTest.java/base.java
+        thrown.expectMessage(JUnitMatchers.containsString("[SQLITE_READONLY_DBMOVED]"));
+=======
+        assertThat(exception.getMessage(), containsString("[SQLITE_READONLY_DBMOVED]"));
+>>>>>>> /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/ErrorMessageTest.java/right.java
 
         stmt.close();
         conn.close();
@@ -107,7 +116,13 @@ public class ErrorMessageTest {
         stmt = conn.createStatement();
         Statement finalStmt = stmt;
         Exception exception = assertThrows(SQLException.class, () -> finalStmt.executeUpdate("insert into sample values(2, \"bar\")"));
+<<<<<<< /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/ErrorMessageTest.java/left.java
         assertTrue(exception.getMessage().contains("[SQLITE_READONLY]"));
+||||||| /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/ErrorMessageTest.java/base.java
+        thrown.expectMessage(JUnitMatchers.containsString("[SQLITE_READONLY]"));
+=======
+        assertThat(exception.getMessage(), containsString("[SQLITE_READONLY]"));
+>>>>>>> /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/ErrorMessageTest.java/right.java
         stmt.close();
         conn.close();
     }
@@ -120,8 +135,18 @@ public class ErrorMessageTest {
         dir.deleteOnExit();
 
         Exception exception = assertThrows(SQLException.class, () -> DriverManager.getConnection("jdbc:sqlite:" + dir.getAbsolutePath()));
+<<<<<<< /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/ErrorMessageTest.java/left.java
         assertTrue(exception.getMessage().contains("[SQLITE_CANTOPEN]")
             || exception.getMessage().contains("[SQLITE_CANTOPEN_ISDIR]"));
+||||||| /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/ErrorMessageTest.java/base.java
+        JUnitMatchers.either(
+            JUnitMatchers.containsString("[SQLITE_CANTOPEN]")).or(
+            JUnitMatchers.containsString("[SQLITE_CANTOPEN_ISDIR]"));
+=======
+        assertThat(exception.getMessage(), anyOf(
+            containsString("[SQLITE_CANTOPEN]"),
+            containsString("[SQLITE_CANTOPEN_ISDIR]")));
+>>>>>>> /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/ErrorMessageTest.java/right.java
     }
 
     @Test
@@ -135,11 +160,20 @@ public class ErrorMessageTest {
         stmt.executeUpdate("insert into sample values(1, \"foo\")");
 
         File to = File.createTempFile("error-message-test-plain-2", ".sqlite");
+//        assumeTrue(to.delete());
+//        assumeTrue(from.renameTo(to));
         assumeTrue(to.delete());
-        assumeTrue(from.renameTo(to));
+        from.renameTo(to);
 
         Exception exception = assertThrows(SQLException.class, () -> stmt.executeUpdate("insert into sample values(2, \"bar\")"));
+
+<<<<<<< /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/ErrorMessageTest.java/left.java
         assertTrue(exception.getMessage().contains("[SQLITE_READONLY_DBMOVED]"));
+||||||| /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/ErrorMessageTest.java/base.java
+        thrown.expectMessage(JUnitMatchers.containsString("[SQLITE_READONLY_DBMOVED]"));
+=======
+        assertThat(exception.getMessage(), containsString("[SQLITE_READONLY_DBMOVED]"));
+>>>>>>> /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/ErrorMessageTest.java/right.java
         assertThat(exception, new VendorCodeMatcher(SQLiteErrorCode.SQLITE_READONLY));
         assertThat(exception, new ResultCodeMatcher(SQLiteErrorCode.SQLITE_READONLY_DBMOVED));
 

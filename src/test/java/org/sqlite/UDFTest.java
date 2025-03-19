@@ -16,6 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests User Defined Functions.
@@ -240,6 +241,32 @@ public class UDFTest {
         prep.close();
     }
 
+<<<<<<< /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/UDFTest.java/left.java
+||||||| /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/UDFTest.java/base.java
+    @Test(expected = SQLException.class)
+    public void customErr() throws SQLException {
+        Function.create(conn, "f9", new Function() {
+            @Override
+            public void xFunc() throws SQLException {
+                throw new SQLException("myErr");
+            }
+        });
+        stat.executeQuery("select f9();");
+    }
+
+=======
+    @Test
+    public void customErr() throws SQLException {
+        Function.create(conn, "f9", new Function() {
+            @Override
+            public void xFunc() throws SQLException {
+                throw new SQLException("myErr");
+            }
+        });
+        assertThrows(SQLException.class, () -> stat.executeQuery("select f9();"));
+    }
+
+>>>>>>> /usr/src/app/output/xerial/sqlite-jdbc/4787e24110c952e1241fe5c44b862906bd40292b/src/test/java/org/sqlite/UDFTest.java/right.java
     @Test
     public void trigger() throws SQLException {
         Function.create(conn, "inform", new Function() {
