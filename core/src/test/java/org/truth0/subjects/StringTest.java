@@ -1,29 +1,9 @@
-/*
- * Copyright (c) 2011 David Saff
- * Copyright (c) 2011 Christian Gruber
- * Copyright (c) 2014 Google, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.truth0.subjects;
-
 import static org.truth0.Truth.ASSERT;
-
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
 import java.util.regex.Pattern;
 
 /**
@@ -32,9 +12,7 @@ import java.util.regex.Pattern;
  * @author David Saff
  * @author Christian Gruber (cgruber@israfil.net)
  */
-@RunWith(JUnit4.class)
-public class StringTest {
-
+@RunWith(value = JUnit4.class) public class StringTest {
   @Test public void stringContains() {
     ASSERT.that("abc").contains("c");
   }
@@ -44,8 +22,7 @@ public class StringTest {
       ASSERT.that("abc").contains("d");
       throw new Error("Expected to fail.");
     } catch (AssertionError expected) {
-      ASSERT.that(expected.getMessage())
-          .contains("Not true that <\"abc\"> contains <\"d\">");
+      ASSERT.that(expected.getMessage()).contains("Not true that <\"abc\"> contains <\"d\">");
     }
   }
 
@@ -57,8 +34,7 @@ public class StringTest {
     try {
       ASSERT.that("abc").doesNotContain("b");
     } catch (AssertionError expected) {
-      ASSERT.that(expected.getMessage())
-          .contains("<\"abc\"> unexpectedly contains <\"b\">");
+      ASSERT.that(expected.getMessage()).contains("<\"abc\"> unexpectedly contains <\"b\">");
       return;
     }
     fail("Should have thrown");
@@ -74,8 +50,7 @@ public class StringTest {
       ASSERT.that("abc").is(null);
       throw new Error("Expected to fail.");
     } catch (AssertionError expected) {
-      ASSERT.that(expected.getMessage())
-          .contains("Not true that <\"abc\"> is null");
+      ASSERT.that(expected.getMessage()).contains("Not true that <\"abc\"> is null");
     }
   }
 
@@ -84,8 +59,7 @@ public class StringTest {
       ASSERT.that("abc").is("abd");
       throw new Error("Expected to fail.");
     } catch (ComparisonFailure expected) {
-      ASSERT.that(expected.getMessage())
-          .contains("expected:<ab[d]> but was:<ab[c]>");
+      ASSERT.that(expected.getMessage()).contains("expected:<ab[d]> but was:<ab[c]>");
     }
   }
 
@@ -98,8 +72,7 @@ public class StringTest {
       ASSERT.that("abc").startsWith("bc");
       throw new Error("Expected to fail.");
     } catch (AssertionError expected) {
-      ASSERT.that(expected.getMessage())
-          .contains("Not true that <\"abc\"> starts with <\"bc\">");
+      ASSERT.that(expected.getMessage()).contains("Not true that <\"abc\"> starts with <\"bc\">");
     }
   }
 
@@ -112,8 +85,7 @@ public class StringTest {
       ASSERT.that("abc").endsWith("ab");
       throw new Error("Expected to fail.");
     } catch (AssertionError expected) {
-      ASSERT.that(expected.getMessage())
-          .contains("Not true that <\"abc\"> ends with <\"ab\">");
+      ASSERT.that(expected.getMessage()).contains("Not true that <\"abc\"> ends with <\"ab\">");
     }
   }
 
@@ -127,53 +99,54 @@ public class StringTest {
   }
 
   @Test public void stringNullNullTests() {
-    ASSERT.that((String)null).is(null);
-    ASSERT.that((String)null).isEqualTo(null);
+    ASSERT.that((String) null).is(null);
+    ASSERT.that((String) null).isEqualTo(null);
     try {
-      ASSERT.that((String)null).contains(null);
+      ASSERT.that((String) null).contains(null);
       ASSERT.fail("Expected to throw");
-    } catch (IllegalArgumentException expected) {}
+    } catch (IllegalArgumentException expected) {
+    }
     try {
-      ASSERT.that((String)null).doesNotContain(null);
+      ASSERT.that((String) null).doesNotContain(null);
       ASSERT.fail("Expected to throw");
-    } catch (IllegalArgumentException expected) {}
+    } catch (IllegalArgumentException expected) {
+    }
     try {
-      ASSERT.that((String)null).startsWith(null);
+      ASSERT.that((String) null).startsWith(null);
       ASSERT.fail("Expected to throw");
-    } catch (IllegalArgumentException expected) {}
+    } catch (IllegalArgumentException expected) {
+    }
     try {
-      ASSERT.that((String)null).endsWith(null);
+      ASSERT.that((String) null).endsWith(null);
       ASSERT.fail("Expected to throw");
-    } catch (IllegalArgumentException expected) {}
+    } catch (IllegalArgumentException expected) {
+    }
   }
 
   @Test public void stringNullContains() {
     try {
-      ASSERT.that((String)null).contains("a");
+      ASSERT.that((String) null).contains("a");
       throw new Error("Expected to fail.");
     } catch (AssertionError expected) {
-      ASSERT.that(expected.getMessage())
-          .contains("Not true that null reference contains <\"a\">");
+      ASSERT.that(expected.getMessage()).contains("Not true that null reference contains <\"a\">");
     }
   }
 
   @Test public void stringNullStartsWith() {
     try {
-      ASSERT.that((String)null).startsWith("a");
+      ASSERT.that((String) null).startsWith("a");
       throw new Error("Expected to fail.");
     } catch (AssertionError expected) {
-      ASSERT.that(expected.getMessage())
-          .contains("Not true that null reference starts with <\"a\">");
+      ASSERT.that(expected.getMessage()).contains("Not true that null reference starts with <\"a\">");
     }
   }
 
   @Test public void stringNullEndsWith() {
     try {
-      ASSERT.that((String)null).endsWith("a");
+      ASSERT.that((String) null).endsWith("a");
       throw new Error("Expected to fail.");
     } catch (AssertionError expected) {
-      ASSERT.that(expected.getMessage())
-          .contains("Not true that null reference ends with <\"a\">");
+      ASSERT.that(expected.getMessage()).contains("Not true that null reference ends with <\"a\">");
     }
   }
 
@@ -186,8 +159,7 @@ public class StringTest {
       ASSERT.that("abcaqadev").matches(".*aaa.*");
       throw new Error("Expected to fail.");
     } catch (AssertionError expected) {
-      ASSERT.that(expected.getMessage())
-          .contains("Not true that <\"abcaqadev\"> matches <.*aaa.*>");
+      ASSERT.that(expected.getMessage()).contains("Not true that <\"abcaqadev\"> matches <.*aaa.*>");
     }
   }
 
@@ -200,8 +172,7 @@ public class StringTest {
       ASSERT.that("abcaaadev").doesNotMatch(Pattern.compile(".*aaa.*"));
       throw new Error("Expected to fail.");
     } catch (AssertionError expected) {
-      ASSERT.that(expected.getMessage())
-          .contains("Not true that <\"abcaaadev\"> fails to match <.*aaa.*>");
+      ASSERT.that(expected.getMessage()).contains("Not true that <\"abcaaadev\"> fails to match <.*aaa.*>");
     }
   }
 }
