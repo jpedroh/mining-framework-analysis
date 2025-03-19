@@ -20,7 +20,6 @@
 package de.mediathekview.mlib.daten;
 
 import java.text.Normalizer;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -134,7 +133,13 @@ public class DatenFilm implements Comparable<DatenFilm> {
           long dauerSekunden, String description) {
     // da werden die gefundenen Filme beim Absuchen der Senderwebsites erstellt, und nur die!!
     arr[FILM_SENDER] = ssender;
-    arr[FILM_THEMA] = tthema.isEmpty() ? ssender : normalize(cleanWhitespaces(tthema.trim()));
+<<<<<<< /usr/src/app/output/xaverw/msearch/ab544f9464acace234ed164113e9d6fc42fcc898/src/main/java/de/mediathekview/mlib/daten/DatenFilm.java/left.java
+    arr[FILM_THEMA] = tthema.isEmpty() ? ssender : cleanWhitespaces(tthema.trim());
+||||||| /usr/src/app/output/xaverw/msearch/ab544f9464acace234ed164113e9d6fc42fcc898/src/main/java/de/mediathekview/mlib/daten/DatenFilm.java/base.java
+    arr[FILM_THEMA] = tthema.isEmpty() ? ssender : ;
+=======
+    arr[FILM_THEMA] = tthema.isEmpty() ? ssender : normalize(tthema.trim());
+>>>>>>> /usr/src/app/output/xaverw/msearch/ab544f9464acace234ed164113e9d6fc42fcc898/src/main/java/de/mediathekview/mlib/daten/DatenFilm.java/right.java
     setTitle(ttitel.isEmpty() ? tthema : ttitel.trim());
     arr[FILM_URL] = uurl;
     arr[FILM_URL_RTMP] = uurlRtmp;
@@ -152,7 +157,13 @@ public class DatenFilm implements Comparable<DatenFilm> {
       title = title.substring(0, title.indexOf(COPYRIGHT_CHAR_HTML));
       title = title.trim();
     }
-    arr[FILM_TITEL] = normalize(cleanWhitespaces(title));
+<<<<<<< /usr/src/app/output/xaverw/msearch/ab544f9464acace234ed164113e9d6fc42fcc898/src/main/java/de/mediathekview/mlib/daten/DatenFilm.java/left.java
+    arr[FILM_TITEL] = cleanWhitespaces(title);
+||||||| /usr/src/app/output/xaverw/msearch/ab544f9464acace234ed164113e9d6fc42fcc898/src/main/java/de/mediathekview/mlib/daten/DatenFilm.java/base.java
+    arr[FILM_TITEL] = title;
+=======
+    arr[FILM_TITEL] = normalize(title);
+>>>>>>> /usr/src/app/output/xaverw/msearch/ab544f9464acace234ed164113e9d6fc42fcc898/src/main/java/de/mediathekview/mlib/daten/DatenFilm.java/right.java
   }
 
   /**
