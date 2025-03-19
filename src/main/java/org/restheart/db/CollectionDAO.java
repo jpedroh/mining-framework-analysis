@@ -39,9 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Data Access Object for the mongodb Collection resource. NOTE: this class
- * is package-private and only meant to be used as a delagate within the DbsDAO
- * class.
+ * The Data Access Object for the mongodb Collection resource. NOTE: this class is package-private and only meant to be
+ * used as a delagate within the DbsDAO class.
  *
  * @author Andrea Di Cesare <andrea@softinstigate.com>
  */
@@ -67,8 +66,8 @@ class CollectionDAO {
     /**
      * Checks if the collection exists.
      *
-     * WARNING: slow method. perf tests show this can take up to 35% overall
-     * requests processing time when getting data from a collection
+     * WARNING: slow method. perf tests show this can take up to 35% overall requests processing time when getting data
+     * from a collection
      *
      * @deprecated
      * @param dbName the database name of the collection
@@ -88,8 +87,7 @@ class CollectionDAO {
     /**
      * Returns the mongodb DBCollection object for the collection in db dbName.
      *
-     * @param dbName the database name of the collection the database name of
-     * the collection
+     * @param dbName the database name of the collection the database name of the collection
      * @param collName the collection name
      * @return the mongodb DBCollection object for the collection in db dbName
      */
@@ -98,10 +96,8 @@ class CollectionDAO {
     }
 
     /**
-     * Checks if the given collection is empty. Note that RESTHeart creates a
-     * reserved properties document in every collection (with _id
-     * '_properties'). This method returns true even if the collection contains
-     * such document.
+     * Checks if the given collection is empty. Note that RESTHeart creates a reserved properties document in every
+     * collection (with _id '_properties'). This method returns true even if the collection contains such document.
      *
      * @param coll the mongodb DBCollection object
      * @return true if the commection is empty
@@ -111,14 +107,11 @@ class CollectionDAO {
     }
 
     /**
-     * Returns the number of documents in the given collection (taking into
-     * account the filters in case).
+     * Returns the number of documents in the given collection (taking into account the filters in case).
      *
      * @param coll the mongodb DBCollection object.
-     * @param filters the filters to apply. it is a Deque collection of mongodb
-     * query conditions.
-     * @return the number of documents in the given collection (taking into
-     * account the filters in case)
+     * @param filters the filters to apply. it is a Deque collection of mongodb query conditions.
+     * @return the number of documents in the given collection (taking into account the filters in case)
      */
     public long getCollectionSize(final DBCollection coll, final Deque<String> filters) {
         final BasicDBObject query = new BasicDBObject();
@@ -139,23 +132,32 @@ class CollectionDAO {
     /**
      * Returs the DBCursor of the collection applying sorting and filtering.
      *
-     * @param coll the mongodb DBCollection object <<<<<<< HEAD
+     * @param coll the mongodb DBCollection object
+<<<<<<< /usr/src/app/output/softinstigate/restheart/85f0f2f7299a20457cb5f113b00aca8f230c3019/src/main/java/org/restheart/db/CollectionDAO.java/left.java
      * @param sortBy the Deque collection of fields to use for sorting (prepend
      * field name with - for descending sorting)
      * @param filters the filters to apply. it is a Deque collection of mongodb
-     * query conditions. =======
-     * @param sortBy the Deque collection of fields to use for sorting (prepend
-     * field name with - for descending sorting)
-     * @param filters the filters to apply. it is a Deque collection of mongodb
-     * query conditions. >>>>>>> 3d60559d7f3582061f69b35b54ef03c3a01c20de
+     * query conditions.
      * @param keys
+||||||| /usr/src/app/output/softinstigate/restheart/85f0f2f7299a20457cb5f113b00aca8f230c3019/src/main/java/org/restheart/db/CollectionDAO.java/base.java
+     * @param sortBy the Deque collection of fields to use for sorting (prepend
+     * field name with - for descending sorting)
+     * @param filters the filters to apply. it is a Deque collection of mongodb
+     * query conditions.
+     * @param keys 
+=======
+     * @param sortBy the Deque collection of fields to use for sorting (prepend field name with - for descending
+     * sorting)
+     * @param filters the filters to apply. it is a Deque collection of mongodb query conditions.
+     * @param keys
+>>>>>>> /usr/src/app/output/softinstigate/restheart/85f0f2f7299a20457cb5f113b00aca8f230c3019/src/main/java/org/restheart/db/CollectionDAO.java/right.java
      * @return
      * @throws JSONParseException
      */
     DBCursor getCollectionDBCursor(
-            final DBCollection coll,
-            final Deque<String> sortBy,
-            final Deque<String> filters,
+            final DBCollection coll, 
+            final Deque<String> sortBy, 
+            final Deque<String> filters, 
             final Deque<String> keys) throws JSONParseException {
         // apply sort_by
         DBObject sort = new BasicDBObject();
@@ -208,7 +210,7 @@ class CollectionDAO {
             final Deque<String> sortBy,
             final Deque<String> filters,
             final Deque<String> keys, DBCursorPool.EAGER_CURSOR_ALLOCATION_POLICY eager) throws JSONParseException {
-
+        
         ArrayList<DBObject> ret = new ArrayList<>();
 
         int toskip = pagesize * (page - 1);
@@ -220,17 +222,15 @@ class CollectionDAO {
             _cursor = DBCursorPool.getInstance().get(new DBCursorPoolEntryKey(coll, sortBy, filters, keys, toskip, 0), eager);
         }
 
-        int _pagesize = pagesize;
-
         // in case there is not cursor in the pool to reuse
         DBCursor cursor;
         if (_cursor == null) {
             cursor = getCollectionDBCursor(coll, sortBy, filters, keys);
             cursor.skip(toskip);
-
-            while (_pagesize > 0 && cursor.hasNext()) {
+            
+            while (pagesize > 0 && cursor.hasNext()) {
                 ret.add(cursor.next());
-                _pagesize--;
+                pagesize--;
             }
         } else {
             int alreadySkipped;
@@ -243,10 +243,21 @@ class CollectionDAO {
                 alreadySkipped++;
             }
 
-            while (_pagesize > 0 && cursor.hasNext()) {
+<<<<<<< /usr/src/app/output/softinstigate/restheart/85f0f2f7299a20457cb5f113b00aca8f230c3019/src/main/java/org/restheart/db/CollectionDAO.java/left.java
+            while (pagesize > 0 && cursor.hasNext()) {
                 ret.add(cursor.next());
-                _pagesize--;
+                pagesize--;
             }
+||||||| /usr/src/app/output/softinstigate/restheart/85f0f2f7299a20457cb5f113b00aca8f230c3019/src/main/java/org/restheart/db/CollectionDAO.java/base.java
+        while (pagesize > 0 && cursor.hasNext()) {
+            ret.add(cursor.next());
+            pagesize--;
+=======
+        int _pagesize = pagesize;
+        while (_pagesize > 0 && cursor.hasNext()) {
+            ret.add(cursor.next());
+            _pagesize--;
+>>>>>>> /usr/src/app/output/softinstigate/restheart/85f0f2f7299a20457cb5f113b00aca8f230c3019/src/main/java/org/restheart/db/CollectionDAO.java/right.java
         }
 
         // add the _lastupdated_on and _created_on
@@ -263,9 +274,11 @@ class CollectionDAO {
             if (row.get("_created_on") == null && id != null && id instanceof ObjectId) {
                 row.put("_created_on", Instant.ofEpochSecond(((ObjectId) id).getTimestamp()).toString());
             }
-        });
+        }
+        );
 
-        
+        DBCursorPool.getInstance().populateCache(new DBCursorPoolEntryKey(coll, sortBy, filters, keys, toskip, 0), eager);
+
         return ret;
     }
 
@@ -303,20 +316,19 @@ class CollectionDAO {
      * @param dbName the database name of the collection
      * @param collName the collection name
      * @param properties the new collection properties
-     * @param requestEtag the entity tag. must match to allow actual write
-     * (otherwise http error code is returned)
+     * @param requestEtag the entity tag. must match to allow actual write (otherwise http error code is returned)
      * @param updating true if updating existing document
      * @param patching true if use patch semantic (update only specified fields)
      * @return the HttpStatus code to set in the http response
      */
     OperationResult upsertCollection(
-            final String dbName,
-            final String collName,
-            final DBObject properties,
-            final ObjectId requestEtag,
-            final boolean updating,
+            final String dbName, 
+            final String collName, 
+            final DBObject properties, 
+            final ObjectId requestEtag, 
+            final boolean updating, 
             final boolean patching) {
-
+        
         DB db = client.getDB(dbName);
 
         if (patching && !updating) {
@@ -361,7 +373,7 @@ class CollectionDAO {
         }
 
         if (patching) {
-            propsColl.update(new BasicDBObject("_id", "_properties.".concat(collName)),
+            propsColl.update(new BasicDBObject("_id", "_properties.".concat(collName)), 
                     new BasicDBObject("$set", content), true, false);
             return new OperationResult(HttpStatus.SC_OK, newEtag);
         } else {
@@ -392,7 +404,7 @@ class CollectionDAO {
                 // need to readd the @created_on field 
                 BasicDBObject createdContent = new BasicDBObject("_created_on", now.toString());
                 createdContent.markAsPartialObject();
-                propsColl.update(new BasicDBObject("_id", "_properties.".concat(collName)),
+                propsColl.update(new BasicDBObject("_id", "_properties.".concat(collName)), 
                         new BasicDBObject("$set", createdContent), true, false);
 
                 initDefaultIndexes(db.getCollection(collName));
@@ -407,8 +419,7 @@ class CollectionDAO {
      *
      * @param dbName the database name of the collection
      * @param collName the collection name
-     * @param requestEtag the entity tag. must match to allow actual write
-     * (otherwise http error code is returned)
+     * @param requestEtag the entity tag. must match to allow actual write (otherwise http error code is returned)
      * @return the HttpStatus code to set in the http response
      */
     OperationResult deleteCollection(final String dbName, final String collName, final ObjectId requestEtag) {
