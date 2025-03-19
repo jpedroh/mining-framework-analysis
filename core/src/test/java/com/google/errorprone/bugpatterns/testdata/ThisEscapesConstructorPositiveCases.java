@@ -6,7 +6,7 @@ public class ThisEscapesConstructorPositiveCases {
         public AssignsThis at;
         AssignsThis() {
             // BUG: Diagnostic contains:
-            at = this;
+            this.at = this;
         }
     }
 
