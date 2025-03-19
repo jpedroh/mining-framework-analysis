@@ -114,7 +114,7 @@ public class CommandLineApp {
         });
 
         for (File pdfFile : pdfs) {
-          File outputFile = new File(getOutputFilename(pdfFile));
+            File outputFile = new File(getOutputFilename(pdfFile));
           try {
             extractFileInto(pdfFile, outputFile);
           } catch (ParseException e) {
