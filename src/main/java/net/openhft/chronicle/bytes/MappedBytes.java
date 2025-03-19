@@ -203,8 +203,14 @@ public class MappedBytes extends AbstractBytes<Void> implements Closeable {
 
     @Override
     protected void writeCheckOffset(long offset, long adding) throws BufferOverflowException {
+<<<<<<< /usr/src/app/output/openhft/chronicle-bytes/2944fec37487ea4ac84a7407e1449890665af18c/src/main/java/net/openhft/chronicle/bytes/MappedBytes.java/left.java
         assert singleThreadedAccess();
+        if (offset < 0 || offset > capacity() - adding)
+||||||| /usr/src/app/output/openhft/chronicle-bytes/2944fec37487ea4ac84a7407e1449890665af18c/src/main/java/net/openhft/chronicle/bytes/MappedBytes.java/base.java
+        if (offset < 0 || offset > capacity() - adding)
+=======
         if (offset < 0 || offset > mappedFile.capacity() - adding)
+>>>>>>> /usr/src/app/output/openhft/chronicle-bytes/2944fec37487ea4ac84a7407e1449890665af18c/src/main/java/net/openhft/chronicle/bytes/MappedBytes.java/right.java
             throw writeBufferOverflowException(offset);
         if (!bytesStore.inside(offset)) {
             acquireNextByteStore(offset, false);
@@ -362,6 +368,25 @@ public class MappedBytes extends AbstractBytes<Void> implements Closeable {
             return super.append8bit(cs, start, end);
         }
         return append8bit0((String) cs, start, end - start);
+<<<<<<< /usr/src/app/output/openhft/chronicle-bytes/2944fec37487ea4ac84a7407e1449890665af18c/src/main/java/net/openhft/chronicle/bytes/MappedBytes.java/left.java
+    }
+
+    @NotNull
+    @Override
+    public Bytes<Void> writeUtf8(String s) throws BufferOverflowException {
+        assert singleThreadedAccess();
+        BytesInternal.writeUtf8(this, s);
+        return this;
+||||||| /usr/src/app/output/openhft/chronicle-bytes/2944fec37487ea4ac84a7407e1449890665af18c/src/main/java/net/openhft/chronicle/bytes/MappedBytes.java/base.java
+    }
+
+    @NotNull
+    @Override
+    public Bytes<Void> writeUtf8(String s) throws BufferOverflowException {
+        BytesInternal.writeUtf8(this, s);
+        return this;
+=======
+>>>>>>> /usr/src/app/output/openhft/chronicle-bytes/2944fec37487ea4ac84a7407e1449890665af18c/src/main/java/net/openhft/chronicle/bytes/MappedBytes.java/right.java
     }
 
     @Override
@@ -589,10 +614,26 @@ public class MappedBytes extends AbstractBytes<Void> implements Closeable {
         return this;
     }
 
+<<<<<<< /usr/src/app/output/openhft/chronicle-bytes/2944fec37487ea4ac84a7407e1449890665af18c/src/main/java/net/openhft/chronicle/bytes/MappedBytes.java/left.java
+    private boolean singleThreadedAccess() {
+        if (lastAccessedThread == null) {
+            lastAccessedThread = Thread.currentThread();
+        }
+        final boolean isSingleThreaded = lastAccessedThread == Thread.currentThread();
+        if (!isSingleThreaded) {
+            LOGGER.warn("Detected multi-threaded write access. Initial write stack:", writeStack);
+            LOGGER.warn("Current write stack: ", new RuntimeException());
+        }
+        if (writeStack == null) {
+            writeStack = new RuntimeException();
+        }
+        return isSingleThreaded;
+    }
+||||||| /usr/src/app/output/openhft/chronicle-bytes/2944fec37487ea4ac84a7407e1449890665af18c/src/main/java/net/openhft/chronicle/bytes/MappedBytes.java/base.java
+=======
     @NotNull
     @Override
     public Bytes<Void> writeUtf8(CharSequence str) throws BufferOverflowException {
-        assert singleThreadedAccess();
         if (str instanceof String) {
             writeUtf8((String) str);
             return this;
@@ -614,7 +655,6 @@ public class MappedBytes extends AbstractBytes<Void> implements Closeable {
 
     @Override
     public Bytes<Void> writeUtf8(String str) throws BufferOverflowException {
-        assert singleThreadedAccess();
         if (str == null) {
             writeStopBit(-1);
             return this;
@@ -642,7 +682,6 @@ public class MappedBytes extends AbstractBytes<Void> implements Closeable {
     @NotNull
     @Override
     public Bytes<Void> appendUtf8(char[] chars, int offset, int length) throws BufferOverflowException, IllegalArgumentException {
-        assert singleThreadedAccess();
         if (writePosition < 0 || writePosition > capacity() - (long) 1 + length)
             throw writeBufferOverflowException(writePosition);
         int i;
@@ -671,7 +710,6 @@ public class MappedBytes extends AbstractBytes<Void> implements Closeable {
     @NotNull
     @Override
     public Bytes<Void> writeStopBit(long n) throws BufferOverflowException {
-        assert singleThreadedAccess();
         if ((n & ~0x7F) == 0) {
             writeByte((byte) (n & 0x7f));
             return this;
@@ -690,19 +728,5 @@ public class MappedBytes extends AbstractBytes<Void> implements Closeable {
         BytesInternal.writeStopBit0(this, n);
         return this;
     }
-
-    private boolean singleThreadedAccess() {
-        if (lastAccessedThread == null) {
-            lastAccessedThread = Thread.currentThread();
-        }
-        final boolean isSingleThreaded = lastAccessedThread == Thread.currentThread();
-        if (!isSingleThreaded) {
-            LOGGER.warn("Detected multi-threaded write access. Initial write stack:", writeStack);
-            LOGGER.warn("Current write stack: ", new RuntimeException());
-        }
-        if (writeStack == null) {
-            writeStack = new RuntimeException();
-        }
-        return isSingleThreaded;
-    }
+>>>>>>> /usr/src/app/output/openhft/chronicle-bytes/2944fec37487ea4ac84a7407e1449890665af18c/src/main/java/net/openhft/chronicle/bytes/MappedBytes.java/right.java
 }
