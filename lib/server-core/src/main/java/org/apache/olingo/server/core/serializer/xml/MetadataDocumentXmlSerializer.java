@@ -928,13 +928,18 @@ public class MetadataDocumentXmlSerializer {
       for (String memberName : enumType.getMemberNames()) {
         writer.writeEmptyElement(XML_MEMBER);
         writer.writeAttribute(XML_NAME, memberName);
-        
+<<<<<<< /usr/src/app/output/apache/olingo-odata4/9f663baf5c3747e105dcbbfad46e0312f28f74ee/lib/server-core/src/main/java/org/apache/olingo/server/core/serializer/xml/MetadataDocumentXmlSerializer.java/left.java
         EdmMember member = enumType.getMember(memberName);
-        if (member.getValue() != null) {
-          writer.writeAttribute(XML_VALUE, member.getValue());
-        }
-        
+        writer.writeAttribute(XML_VALUE, member.getValue());
         appendAnnotations(writer, member);
+||||||| /usr/src/app/output/apache/olingo-odata4/9f663baf5c3747e105dcbbfad46e0312f28f74ee/lib/server-core/src/main/java/org/apache/olingo/server/core/serializer/xml/MetadataDocumentXmlSerializer.java/base.java
+        writer.writeAttribute(XML_VALUE, enumType.getMember(memberName).getValue());
+=======
+        final String value = enumType.getMember(memberName).getValue();
+        if (value != null) {
+          writer.writeAttribute(XML_VALUE, value);
+        }
+>>>>>>> /usr/src/app/output/apache/olingo-odata4/9f663baf5c3747e105dcbbfad46e0312f28f74ee/lib/server-core/src/main/java/org/apache/olingo/server/core/serializer/xml/MetadataDocumentXmlSerializer.java/right.java
       }
 
       writer.writeEndElement();
