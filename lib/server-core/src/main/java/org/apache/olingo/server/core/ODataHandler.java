@@ -1,26 +1,6 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.apache.olingo.server.core;
-
 import java.util.LinkedList;
 import java.util.List;
-
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -51,23 +31,26 @@ import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
 
 public class ODataHandler {
-
   private final OData odata;
+
   private final ServiceMetadata serviceMetadata;
+
   private final List<Processor> processors = new LinkedList<Processor>();
+
   private final ServerCoreDebugger debugger;
 
   private CustomContentTypeSupport customContentTypeSupport;
+
   private CustomETagSupport customETagSupport;
 
   private UriInfo uriInfo;
+
   private Exception lastThrownException;
 
   public ODataHandler(final OData server, final ServiceMetadata serviceMetadata, final ServerCoreDebugger debugger) {
     odata = server;
     this.serviceMetadata = serviceMetadata;
     this.debugger = debugger;
-
     register(new DefaultRedirectProcessor());
     register(new DefaultProcessor());
   }
@@ -115,10 +98,8 @@ public class ODataHandler {
     return response;
   }
 
-  private void processInternal(final ODataRequest request, final ODataResponse response)
-      throws ODataApplicationException, ODataLibraryException {
+  private void processInternal(final ODataRequest request, final ODataResponse response) throws ODataApplicationException, ODataLibraryException {
     final int measurementHandle = debugger.startRuntimeMeasurement("ODataHandler", "processInternal");
-
     response.setHeader(HttpHeader.ODATA_VERSION, ODataServiceVersion.V40.toString());
     try {
       validateODataVersion(request);
@@ -126,18 +107,15 @@ public class ODataHandler {
       debugger.stopRuntimeMeasurement(measurementHandle);
       throw e;
     }
-
     final int measurementUriParser = debugger.startRuntimeMeasurement("UriParser", "parseUri");
     try {
-      uriInfo = new Parser(serviceMetadata.getEdm(), odata)
-          .parseUri(request.getRawODataPath(), request.getRawQueryPath(), null);
+      uriInfo = new Parser(serviceMetadata.getEdm(), odata).parseUri(request.getRawODataPath(), request.getRawQueryPath(), null);
     } catch (final ODataLibraryException e) {
       debugger.stopRuntimeMeasurement(measurementUriParser);
       debugger.stopRuntimeMeasurement(measurementHandle);
       throw e;
     }
     debugger.stopRuntimeMeasurement(measurementUriParser);
-
     final int measurementUriValidator = debugger.startRuntimeMeasurement("UriValidator", "validate");
     final HttpMethod method = request.getMethod();
     try {
@@ -148,31 +126,26 @@ public class ODataHandler {
       throw e;
     }
     debugger.stopRuntimeMeasurement(measurementUriValidator);
-
     final int measurementDispatcher = debugger.startRuntimeMeasurement("ODataDispatcher", "dispatch");
     try {
       new ODataDispatcher(uriInfo, this).dispatch(request, response);
-    } finally {
+    }  finally {
       debugger.stopRuntimeMeasurement(measurementDispatcher);
       debugger.stopRuntimeMeasurement(measurementHandle);
     }
   }
 
-  public void handleException(final ODataRequest request, final ODataResponse response,
-      final ODataServerError serverError, final Exception exception) {
+  public void handleException(final ODataRequest request, final ODataResponse response, final ODataServerError serverError, final Exception exception) {
     lastThrownException = exception;
     ErrorProcessor exceptionProcessor;
     try {
       exceptionProcessor = selectProcessor(ErrorProcessor.class);
     } catch (ODataHandlerException e) {
-      // This cannot happen since there is always an ExceptionProcessor registered.
       exceptionProcessor = new DefaultProcessor();
     }
     ContentType requestedContentType;
     try {
-      requestedContentType = ContentNegotiator.doContentNegotiation(
-          uriInfo == null ? null : uriInfo.getFormatOption(), request, getCustomContentTypeSupport(),
-              RepresentationType.ERROR);
+      requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo == null ? null : uriInfo.getFormatOption(), request, getCustomContentTypeSupport(), RepresentationType.ERROR);
     } catch (final ContentNegotiatorException e) {
       requestedContentType = ContentType.JSON;
     }
@@ -184,8 +157,7 @@ public class ODataHandler {
   private void validateODataVersion(final ODataRequest request) throws ODataHandlerException {
     final String maxVersion = request.getHeader(HttpHeader.ODATA_MAX_VERSION);
     if (maxVersion != null && ODataServiceVersion.isBiggerThan(ODataServiceVersion.V40.toString(), maxVersion)) {
-      throw new ODataHandlerException("ODataVersion not supported: " + maxVersion,
-          ODataHandlerException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED, maxVersion);
+      throw new ODataHandlerException("ODataVersion not supported: " + maxVersion, ODataHandlerException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED, maxVersion);
     }
   }
 
@@ -196,8 +168,7 @@ public class ODataHandler {
         return cls.cast(processor);
       }
     }
-    throw new ODataHandlerException("Processor: " + cls.getSimpleName() + " not registered.",
-        ODataHandlerException.MessageKeys.PROCESSOR_NOT_IMPLEMENTED, cls.getSimpleName());
+    throw new ODataHandlerException("Processor: " + cls.getSimpleName() + " not registered.", ODataHandlerException.MessageKeys.PROCESSOR_NOT_IMPLEMENTED, cls.getSimpleName());
   }
 
   public void register(final Processor processor) {
