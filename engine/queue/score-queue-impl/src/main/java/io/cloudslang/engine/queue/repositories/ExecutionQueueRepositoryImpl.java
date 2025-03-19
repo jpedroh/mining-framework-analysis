@@ -73,12 +73,18 @@ public class ExecutionQueueRepositoryImpl implements ExecutionQueueRepository {
             " WHERE " +
             "        (STATUS = "+ExecStatus.TERMINATED.getNumber()+") OR " +
             "        (STATUS = "+ExecStatus.FAILED.getNumber()+") OR " +
-            "        (STATUS = "+ExecStatus.FINISHED.getNumber()+")";
+            "        (STATUS = "+ExecStatus.FINISHED.getNumber()+") ";
 
     final private String SELECT_CANCELED_STEPS_IDS = " SELECT DISTINCT EXEC_STATE_ID FROM OO_EXECUTION_QUEUES "
             + "WHERE EXEC_STATE_ID IN "
             + "(SELECT DISTINCT ESS.ID FROM OO_EXECUTION_STATES ESS JOIN OO_EXECUTION_STATE ES ON "
+<<<<<<< /usr/src/app/output/cloudslang/score/caeb87d5b1f92f72cb9fb76e630e7ded4e562e1a/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/left.java
             + "ESS.MSG_ID = CONCAT(ES.EXECUTION_ID, '') "
+||||||| /usr/src/app/output/cloudslang/score/caeb87d5b1f92f72cb9fb76e630e7ded4e562e1a/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/base.java
+            + 
+=======
+            + "ESS.MSG_ID = CAST(ES.EXECUTION_ID AS VARCHAR(255)) "
+>>>>>>> /usr/src/app/output/cloudslang/score/caeb87d5b1f92f72cb9fb76e630e7ded4e562e1a/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/right.java
             + "WHERE ES.STATUS = 'PENDING_CANCEL')";
 
     final private String QUERY_DELETE_FINISHED_STEPS_FROM_QUEUES = "DELETE FROM OO_EXECUTION_QUEUES " +
