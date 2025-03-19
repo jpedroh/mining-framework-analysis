@@ -12,9 +12,32 @@ import org.junit.Before;
 import static org.junit.Assert.assertEquals;
 
 public class Issue228Test {
+<<<<<<< /usr/src/app/output/jmrozanec/cron-utils/bcf4e0c11d739b5dc52f6376197b78af3529bdd9/src/test/java/com/cronutils/Issue228Test.java/left.java
+	private CronDefinition cronDefinition;
+	@Before
+	public void setUp(){
+		cronDefinition = CronDefinitionBuilder.defineCron()
+        	.withMinutes().and()
+        	.withHours().and()
+        	.withDayOfMonth().supportsL().and()
+        	.withMonth().and()
+        	.withDayOfWeek().withValidRange(0,7).withMondayDoWValue(1).and()
+        	.enforceStrictRanges()
+        	.matchDayOfWeekAndDayOfMonth()
+        	.instance();
+	}
+||||||| /usr/src/app/output/jmrozanec/cron-utils/bcf4e0c11d739b5dc52f6376197b78af3529bdd9/src/test/java/com/cronutils/Issue228Test.java/base.java
+=======
+
+>>>>>>> /usr/src/app/output/jmrozanec/cron-utils/bcf4e0c11d739b5dc52f6376197b78af3529bdd9/src/test/java/com/cronutils/Issue228Test.java/right.java
     /**
      * This is the UNIX cron definition with a single modification to match both Day Of Week and Day Of Month
      */
+<<<<<<< /usr/src/app/output/jmrozanec/cron-utils/bcf4e0c11d739b5dc52f6376197b78af3529bdd9/src/test/java/com/cronutils/Issue228Test.java/left.java
+    @Test
+||||||| /usr/src/app/output/jmrozanec/cron-utils/bcf4e0c11d739b5dc52f6376197b78af3529bdd9/src/test/java/com/cronutils/Issue228Test.java/base.java
+    //@Test
+=======
     private CronDefinition cronDefinition = CronDefinitionBuilder.defineCron()
         .withMinutes().and()
         .withHours().and()
@@ -26,6 +49,7 @@ public class Issue228Test {
         .instance();
 
     @Test
+>>>>>>> /usr/src/app/output/jmrozanec/cron-utils/bcf4e0c11d739b5dc52f6376197b78af3529bdd9/src/test/java/com/cronutils/Issue228Test.java/right.java
     public void testFirstMondayOfTheMonthNextExecution() {
         CronParser parser = new CronParser(cronDefinition);
 
