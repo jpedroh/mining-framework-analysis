@@ -2430,6 +2430,36 @@ public final class TypeSpecTest {
     assertThat(TypeSpec.annotationBuilder(className).build().name).isEqualTo("Example");
   }
 
+  @Test public void javadocWithTrailingLineDoesNotAddAnother() {
+    TypeSpec spec = TypeSpec.classBuilder("Taco")
+        .addJavadoc("Some doc with a newline\n")
+        .build();
+
+    assertThat(toString(spec)).isEqualTo(""
+        + "package com.squareup.tacos;\n"
+        + "\n"
+        + "/**\n"
+        + " * Some doc with a newline\n"
+        + " */\n"
+        + "class Taco {\n"
+        + "}\n");
+  }
+
+  @Test public void javadocEnsuresTrailingLine() {
+    TypeSpec spec = TypeSpec.classBuilder("Taco")
+        .addJavadoc("Some doc with a newline")
+        .build();
+
+    assertThat(toString(spec)).isEqualTo(""
+        + "package com.squareup.tacos;\n"
+        + "\n"
+        + "/**\n"
+        + " * Some doc with a newline\n"
+        + " */\n"
+        + "class Taco {\n"
+        + "}\n");
+  }
+
   @Test
   public void modifyAnnotations() {
     TypeSpec.Builder builder =
@@ -2516,35 +2546,5 @@ public final class TypeSpecTest {
 
     builder.originatingElements.clear();
     assertThat(builder.build().originatingElements).isEmpty();
-  }
-    
-  @Test public void javadocWithTrailingLineDoesNotAddAnother() {
-    TypeSpec spec = TypeSpec.classBuilder("Taco")
-        .addJavadoc("Some doc with a newline\n")
-        .build();
-
-    assertThat(toString(spec)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
-        + "\n"
-        + "/**\n"
-        + " * Some doc with a newline\n"
-        + " */\n"
-        + "class Taco {\n"
-        + "}\n");
-  }
-
-  @Test public void javadocEnsuresTrailingLine() {
-    TypeSpec spec = TypeSpec.classBuilder("Taco")
-        .addJavadoc("Some doc with a newline")
-        .build();
-
-    assertThat(toString(spec)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
-        + "\n"
-        + "/**\n"
-        + " * Some doc with a newline\n"
-        + " */\n"
-        + "class Taco {\n"
-        + "}\n");
   }
 }
