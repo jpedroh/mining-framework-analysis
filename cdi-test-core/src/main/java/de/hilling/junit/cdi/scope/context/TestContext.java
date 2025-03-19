@@ -9,12 +9,20 @@ import java.util.logging.Logger;
 import de.hilling.junit.cdi.annotations.BypassTestInterceptor;
 import de.hilling.junit.cdi.scope.TestScoped;
 import de.hilling.junit.cdi.scope.TestSuiteScoped;
-
+<<<<<<< /usr/src/app/output/guhilling/cdi-test/728b39ab384467c2a5bd8949528901cc9e532da6/cdi-test-core/src/main/java/de/hilling/junit/cdi/scope/context/TestContext.java/left.java
+/**
+ * Implementation of context for {@link TestScoped} beans.
+ *
+ * @see TestScoped
+ */
+||||||| /usr/src/app/output/guhilling/cdi-test/728b39ab384467c2a5bd8949528901cc9e532da6/cdi-test-core/src/main/java/de/hilling/junit/cdi/scope/context/TestContext.java/base.java
+=======
 /**
  *  Implementation of context for {@link TestScoped} beans.
  *
  * @see TestScoped
  */
+>>>>>>> /usr/src/app/output/guhilling/cdi-test/728b39ab384467c2a5bd8949528901cc9e532da6/cdi-test-core/src/main/java/de/hilling/junit/cdi/scope/context/TestContext.java/right.java
 @BypassTestInterceptor
 @TestSuiteScoped
 public class TestContext extends AbstractScopeContext implements Context, Serializable {

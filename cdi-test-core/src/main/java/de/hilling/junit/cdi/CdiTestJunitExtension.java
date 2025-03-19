@@ -5,13 +5,22 @@ import jakarta.inject.Inject;
 import java.lang.reflect.Field;
 
 import org.jboss.weld.proxy.WeldClientProxy;
+
 import org.junit.jupiter.api.extension.AfterAllCallback;
+
 import org.junit.jupiter.api.extension.AfterEachCallback;
+
 import org.junit.jupiter.api.extension.BeforeAllCallback;
+
 import org.junit.jupiter.api.extension.BeforeEachCallback;
+
 import org.junit.jupiter.api.extension.ExtensionContext;
+
 import org.junit.jupiter.api.extension.TestInstancePostProcessor;
+
 import org.mockito.Mockito;
+
+import javax.inject.Inject;
 
 import de.hilling.junit.cdi.annotations.ActivatableTestImplementation;
 import de.hilling.junit.cdi.lifecycle.LifecycleNotifier;
