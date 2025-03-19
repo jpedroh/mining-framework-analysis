@@ -16,14 +16,16 @@
 
 package com.google.gcloud.spi;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.gcloud.datastore.DatastoreOptions;
 import com.google.gcloud.spi.DatastoreRpc.DatastoreRpcException.Reason;
-
 import java.net.InetAddress;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.UnknownHostException;
+import java.net.URL;
+import com.google.common.base.Preconditions;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,17 +48,16 @@ public class DefaultDatastoreRpc implements DatastoreRpc {
   }
 
   public DefaultDatastoreRpc(DatastoreOptions options) {
+<<<<<<< /usr/src/app/output/googlecloudplatform/gcloud-java/bba6925b685635ccf0890a168192f093e1b6138d/gcloud-java-datastore/src/main/java/com/google/gcloud/spi/DefaultDatastoreRpc.java/left.java
     com.google.datastore.v1beta3.client.DatastoreOptions.Builder clientBuilder = 
         new com.google.datastore.v1beta3.client.DatastoreOptions.Builder()
             .projectId(options.projectId())
             .initializer(options.httpRequestInitializer());
-    String normalizedHost = options.host() != null ? options.host().toLowerCase() : "";
-    if (isLocalHost(normalizedHost)) {
-      clientBuilder = clientBuilder.localHost(removeScheme(normalizedHost));
-    } else if (!removeScheme(com.google.datastore.v1beta3.client.DatastoreFactory.DEFAULT_HOST)
-                    .equals(removeScheme(normalizedHost))
-        && !normalizedHost.isEmpty()) {
-      String fullURL = normalizedHost;
+    if (isLocalHost(options.host())) {
+      clientBuilder = clientBuilder.localHost(removeScheme(options.host()));
+    } else if (!com.google.datastore.v1beta3.client.DatastoreFactory.DEFAULT_HOST
+        .equals(options.host()) && !Strings.isNullOrEmpty(options.host())) {
+      String fullURL = options.host();
       if (fullURL.charAt(fullURL.length() - 1) != '/') {
         fullURL = fullURL + '/';
       }
@@ -65,14 +66,45 @@ public class DefaultDatastoreRpc implements DatastoreRpc {
           + options.projectId();
       clientBuilder = clientBuilder.projectId(null).projectEndpoint(fullURL);
     }
+||||||| /usr/src/app/output/googlecloudplatform/gcloud-java/bba6925b685635ccf0890a168192f093e1b6138d/gcloud-java-datastore/src/main/java/com/google/gcloud/spi/DefaultDatastoreRpc.java/base.java
+=======
+    String normalizedHost = normalizeHost(options.host());
+>>>>>>> /usr/src/app/output/googlecloudplatform/gcloud-java/bba6925b685635ccf0890a168192f093e1b6138d/gcloud-java-datastore/src/main/java/com/google/gcloud/spi/DefaultDatastoreRpc.java/right.java
     client = com.google.datastore.v1beta3.client.DatastoreFactory.get()
-        .create(clientBuilder.build());
+<<<<<<< /usr/src/app/output/googlecloudplatform/gcloud-java/bba6925b685635ccf0890a168192f093e1b6138d/gcloud-java-datastore/src/main/java/com/google/gcloud/spi/DefaultDatastoreRpc.java/left.java
+      .create(clientBuilder.build());
+||||||| /usr/src/app/output/googlecloudplatform/gcloud-java/bba6925b685635ccf0890a168192f093e1b6138d/gcloud-java-datastore/src/main/java/com/google/gcloud/spi/DefaultDatastoreRpc.java/base.java
+      .create(new Builder()
+          .dataset(options.projectId())
+          .host(options.host())
+          .initializer(options.httpRequestInitializer())
+          .build());
+=======
+      .create(new Builder()
+          .dataset(options.projectId())
+          .host(normalizedHost)
+          .initializer(options.httpRequestInitializer())
+          .build());
+>>>>>>> /usr/src/app/output/googlecloudplatform/gcloud-java/bba6925b685635ccf0890a168192f093e1b6138d/gcloud-java-datastore/src/main/java/com/google/gcloud/spi/DefaultDatastoreRpc.java/right.java
+  }
+
+  private static String normalizeHost(String host) {
+    host = host.toLowerCase();
+    if (includesScheme(host)) {
+      Preconditions.checkArgument(!(host.startsWith("https://") && isLocalHost(host)), 
+          "\"https\" is not supported for localhost.  Use \"http\" instead.");
+      return host;
+    }
+    return "http://" + host;
   }
 
   private static boolean isLocalHost(String host) {
-    if (!host.isEmpty()) {
+    if (host != null) {
       try {
-        String normalizedHost = "http://" + removeScheme(host);
+        String normalizedHost = host;
+        if (!includesScheme(normalizedHost)) {
+          normalizedHost = "http://" + normalizedHost;
+        }
         InetAddress hostAddr = InetAddress.getByName(new URL(normalizedHost).getHost());
         return hostAddr.isAnyLocalAddress() || hostAddr.isLoopbackAddress();
       } catch (UnknownHostException | MalformedURLException e) {
@@ -80,6 +112,10 @@ public class DefaultDatastoreRpc implements DatastoreRpc {
       }
     }
     return false;
+  }
+
+  private static boolean includesScheme(String url) {
+    return url.startsWith("http://") || url.startsWith("https://");
   }
 
   private static String removeScheme(String url) {

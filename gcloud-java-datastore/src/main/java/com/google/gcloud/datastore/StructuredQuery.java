@@ -531,6 +531,10 @@ public class StructuredQuery<V> extends Query<V> {
     }
   }
 
+  /**
+   * A class representing a projection based on a property.
+   */
+
   static class BaseBuilder<V, B extends BaseBuilder<V, B>> {
 
     private final ResultType<V> resultType;

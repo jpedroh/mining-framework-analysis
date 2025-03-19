@@ -768,11 +768,8 @@ public class DatastoreTest {
   public void testRetryableException() throws Exception {
     com.google.datastore.v1beta3.LookupRequest requestPb =
         com.google.datastore.v1beta3.LookupRequest.newBuilder().addKeys(KEY1.toPb()).build();
-    com.google.datastore.v1beta3.LookupResponse responsePb =
-        com.google.datastore.v1beta3.LookupResponse.newBuilder()
-            .addFound(
-                com.google.datastore.v1beta3.EntityResult.newBuilder().setEntity(ENTITY1.toPb()))
-            .build();
+    com.google.datastore.v1beta3.LookupResponse responsePb = com.google.datastore.v1beta3.LookupResponse.newBuilder()
+        .addFound(com.google.datastore.v1beta3.EntityResult.newBuilder().setEntity(ENTITY1.toPb())).build();
     DatastoreRpcFactory rpcFactoryMock = EasyMock.createStrictMock(DatastoreRpcFactory.class);
     DatastoreRpc rpcMock = EasyMock.createStrictMock(DatastoreRpc.class);
     EasyMock.expect(rpcFactoryMock.create(EasyMock.anyObject(DatastoreOptions.class)))
@@ -793,8 +790,8 @@ public class DatastoreTest {
 
   @Test
   public void testNonRetryableException() throws Exception {
-    com.google.datastore.v1beta3.LookupRequest requestPb =
-        com.google.datastore.v1beta3.LookupRequest.newBuilder().addKeys(KEY1.toPb()).build();
+    DatastoreV1.LookupRequest requestPb =
+        DatastoreV1.LookupRequest.newBuilder().addKey(KEY1.toPb()).build();
     DatastoreRpcFactory rpcFactoryMock = EasyMock.createStrictMock(DatastoreRpcFactory.class);
     DatastoreRpc rpcMock = EasyMock.createStrictMock(DatastoreRpc.class);
     EasyMock.expect(rpcFactoryMock.create(EasyMock.anyObject(DatastoreOptions.class)))
@@ -817,8 +814,8 @@ public class DatastoreTest {
 
   @Test
   public void testRuntimeException() throws Exception {
-    com.google.datastore.v1beta3.LookupRequest requestPb =
-        com.google.datastore.v1beta3.LookupRequest.newBuilder().addKeys(KEY1.toPb()).build();
+    DatastoreV1.LookupRequest requestPb =
+        DatastoreV1.LookupRequest.newBuilder().addKey(KEY1.toPb()).build();
     DatastoreRpcFactory rpcFactoryMock = EasyMock.createStrictMock(DatastoreRpcFactory.class);
     DatastoreRpc rpcMock = EasyMock.createStrictMock(DatastoreRpc.class);
     EasyMock.expect(rpcFactoryMock.create(EasyMock.anyObject(DatastoreOptions.class)))
