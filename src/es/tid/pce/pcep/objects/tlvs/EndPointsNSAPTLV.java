@@ -1,13 +1,7 @@
 package es.tid.pce.pcep.objects.tlvs;
-
-
 import es.tid.pce.pcep.objects.ObjectParameters;
 
 /**
- * EndPointsNSAP TLV, Experimental & Propietary from GEYSERS.
- * Encoding: propietary from GEYSERS
- * TLV Type: 999 (non-standard)
- * 
  All PCEP TLVs have the following format:
 
    Type:   2 bytes
@@ -77,63 +71,59 @@ where a single End-point pair block has the following format:
  *
  */
 public class EndPointsNSAPTLV extends PCEPTLV {
-	
-	/**
+  /**
 	 * Source IPv6 address
 	 */
-	public byte[] sourceNSAP;
-	/**
+  public byte[] sourceNSAP;
+
+  /**
 	 * Destination IPv6 address
 	 */
-	public byte[] destNSAP;
-	
-	
-	public EndPointsNSAPTLV(){
-		this.setTLVType(ObjectParameters.PCEP_TLV_TYPE_ENDPOINTS_NSAP);
-		
-	}
-	
-	public EndPointsNSAPTLV(byte[] bytes, int offset){
-		super(bytes,offset);
-		decode();
-	}
+  public byte[] destNSAP;
 
-	/**
+  public EndPointsNSAPTLV() {
+    this.setTLVType(ObjectParameters.PCEP_TLV_TYPE_ENDPOINTS_NSAP);
+  }
+
+  public EndPointsNSAPTLV(byte[] bytes, int offset) {
+    super(bytes, offset);
+    decode();
+  }
+
+  /**
 	 * Encode RequestedStorageSize TLV
 	 */
-	public void encode() {
-		this.setTLVValueLength(40);
-		this.tlv_bytes=new byte[this.getTotalTLVLength()];
-		this.encodeHeader();
-		System.arraycopy(sourceNSAP,0, this.tlv_bytes, 4, 20);
-		System.arraycopy(destNSAP,0, this.tlv_bytes, 24, 20);
-	}
+  public void encode() {
+    this.setTLVValueLength(40);
+    this.tlv_bytes = new byte[this.getTotalTLVLength()];
+    this.encodeHeader();
+    System.arraycopy(sourceNSAP, 0, this.tlv_bytes, 4, 20);
+    System.arraycopy(destNSAP, 0, this.tlv_bytes, 24, 20);
+  }
 
-	
-	public void decode(){
-		log.debug("Decoding NSAP Addreess");
-		System.arraycopy(this.tlv_bytes,4, sourceNSAP, 0, 20);
-		System.arraycopy(this.tlv_bytes,24, destNSAP, 0, 20); 	 
-	}
+  public void decode() {
+    log.debug("Decoding NSAP Addreess");
+    System.arraycopy(this.tlv_bytes, 4, sourceNSAP, 0, 20);
+    System.arraycopy(this.tlv_bytes, 24, destNSAP, 0, 20);
+  }
 
-	public byte[] getSourceIP() {
-		return sourceNSAP;
-	}
+  public byte[] getSourceIP() {
+    return sourceNSAP;
+  }
 
-	public void setSourceNSAP(byte[] sourceNSAP) {
-		this.sourceNSAP = sourceNSAP;
-	}
+  public void setSourceNSAP(byte[] sourceNSAP) {
+    this.sourceNSAP = sourceNSAP;
+  }
 
-	public byte[] getDestNSAP() {
-		return destNSAP;
-	}
+  public byte[] getDestNSAP() {
+    return destNSAP;
+  }
 
-	public void setDestNSAP(byte[] destNSAP) {
-		this.destNSAP = destNSAP;
-	}
-		
-	public String toString(){
-		return "Source NSAP: "+sourceNSAP+" Destination NSAP: "+destNSAP;
-	}
+  public void setDestNSAP(byte[] destNSAP) {
+    this.destNSAP = destNSAP;
+  }
 
+  public String toString() {
+    return "Source NSAP: " + sourceNSAP + " Destination NSAP: " + destNSAP;
+  }
 }
