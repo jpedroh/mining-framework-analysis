@@ -1,31 +1,11 @@
-/**
- * redpen: a text inspection tool
- * Copyright (C) 2014 Recruit Technologies Co., Ltd. and contributors
- * (see CONTRIBUTORS.md)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package cc.redpen;
-
 import cc.redpen.model.Sentence;
-
 import java.util.Optional;
 
 /**
  * Error to report invalid point from Validators.
  */
 public class ValidationError {
-
   /**
    * Constructor.
    *
@@ -33,8 +13,7 @@ public class ValidationError {
    * @param errorMessage    error message
    * @param errorLineNumber error position (line number)
    */
-  public ValidationError(Class validatorClass,
-                         String errorMessage, int errorLineNumber) {
+  public ValidationError(Class validatorClass, String errorMessage, int errorLineNumber) {
     this.lineNumber = errorLineNumber;
     this.message = errorMessage;
     this.validatorName = validatorClass.getSimpleName();
@@ -47,9 +26,7 @@ public class ValidationError {
    * @param errorMessage      error message
    * @param sentenceWithError sentence containing validation error
    */
-  public ValidationError(Class validatorClass,
-                         String errorMessage,
-                         Sentence sentenceWithError) {
+  public ValidationError(Class validatorClass, String errorMessage, Sentence sentenceWithError) {
     this(validatorClass, errorMessage, sentenceWithError.position);
     this.sentence = Optional.of(sentenceWithError);
   }
@@ -115,21 +92,19 @@ public class ValidationError {
    */
   public String getValidatorName() {
     if (validatorName.endsWith("Validator")) {
-      return validatorName
-          .substring(0, validatorName.length() - "Validator".length());
+      return validatorName.substring(0, validatorName.length() - "Validator".length());
     } else {
       return validatorName;
     }
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     final StringBuilder sb = new StringBuilder("ValidationError{");
     sb.append("lineNumber=").append(lineNumber);
-    sb.append(", message='").append(message).append('\'');
-    sb.append(", fileName='").append(fileName).append('\'');
+    sb.append(", message=\'").append(message).append('\'');
+    sb.append(", fileName=\'").append(fileName).append('\'');
     sb.append(", sentence=").append(sentence);
-    sb.append(", validatorName='").append(validatorName).append('\'');
+    sb.append(", validatorName=\'").append(validatorName).append('\'');
     sb.append('}');
     return sb.toString();
   }
