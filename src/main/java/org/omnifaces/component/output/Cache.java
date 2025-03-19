@@ -1,17 +1,4 @@
-/*
- * Copyright 2012 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.component.output;
-
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static javax.faces.event.PhaseId.RENDER_RESPONSE;
@@ -25,18 +12,15 @@ import static org.omnifaces.filter.OnDemandResponseBufferFilter.BUFFERED_RESPONS
 import static org.omnifaces.util.Events.subscribeToRequestAfterPhase;
 import static org.omnifaces.util.Events.subscribeToViewEvent;
 import static org.omnifaces.util.Faces.getRequestAttribute;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-
 import javax.faces.component.FacesComponent;
 import javax.faces.component.visit.VisitContext;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import javax.faces.event.PreRenderViewEvent;
 import javax.faces.event.SystemEvent;
-
 import org.omnifaces.component.output.cache.CacheFactory;
 import org.omnifaces.component.output.cache.CacheInitializerListener;
 import org.omnifaces.component.output.cache.el.CacheValue;
@@ -61,7 +45,7 @@ import org.omnifaces.util.State;
  * removed following a least recently used policy (LRU).
  * <p>
  * Via a cache provider mechanism an alternative cache implementation can be configured in web.xml. The default
- * cache is based on <a href="https://github.com/ben-manes/concurrentlinkedhashmap">https://github.com/ben-manes/concurrentlinkedhashmap</a>.
+ * cache is based on <a href="http://code.google.com/p/concurrentlinkedhashmap">http://code.google.com/p/concurrentlinkedhashmap</a>.
  *
  * <h3>Setting a custom caching provider</h3>
  * <p>
@@ -145,125 +129,96 @@ import org.omnifaces.util.State;
  * @author Arjan Tijms
  * @see CacheValue
  */
-@FacesComponent(Cache.COMPONENT_TYPE)
-public class Cache extends OutputFamily {
+@FacesComponent(value = Cache.COMPONENT_TYPE) public class Cache extends OutputFamily {
+  public static final String COMPONENT_TYPE = "org.omnifaces.component.output.Cache";
 
-	public static final String COMPONENT_TYPE = "org.omnifaces.component.output.Cache";
-	public static final String VALUE_SET = "org.omnifaces.cache.VALUE_SET";
-	public static final String DEFAULT_SCOPE = "session";
-	public static final String START_CONTENT_MARKER = "<!-- START CACHE FOR %s -->";
-	public static final String END_CONTENT_MARKER = "<!-- END CACHE FOR %s -->";
+  public static final String VALUE_SET = "org.omnifaces.cache.VALUE_SET";
 
-	private static final String ERROR_NO_BUFFERED_RESPONSE = String.format(
-		"No buffered response found in request, but 'useBuffer' set to true. Check setting the '%s' context parameter or installing the '%s' filter manually.",
-		CacheInitializerListener.CACHE_INSTALL_BUFFER_FILTER, OnDemandResponseBufferFilter.class
-	);
-	private static final Class<? extends SystemEvent> PRE_RENDER = PreRenderViewEvent.class;
+  public static final String DEFAULT_SCOPE = "session";
 
-	private final State state = new State(getStateHelper());
+  public static final String START_CONTENT_MARKER = "<!-- START CACHE FOR %s -->";
 
-	enum PropertyKeys {
-		key, scope, time, useBuffer, reset, disabled
-	}
+  public static final String END_CONTENT_MARKER = "<!-- END CACHE FOR %s -->";
 
-	public Cache() {
+  private static final String ERROR_NO_BUFFERED_RESPONSE = String.format("No buffered response found in request, but \'useBuffer\' set to true. Check setting the \'%s\' context parameter or installing the \'%s\' filter manually.", CacheInitializerListener.CACHE_INSTALL_BUFFER_FILTER, OnDemandResponseBufferFilter.class);
 
-		final FacesContext context = FacesContext.getCurrentInstance();
+  private static final Class<? extends SystemEvent> PRE_RENDER = PreRenderViewEvent.class;
 
-		// Execute the following code in PreRenderView, since at construction time the "useBuffer" and "key" attributes
-		// have not been set, and there is no @PostContruct for UIComponents.
-		subscribeToViewEvent(PRE_RENDER, new Callback.SerializableVoid() {
+  private final State state = new State(getStateHelper());
 
-			private static final long serialVersionUID = 1L;
+  enum PropertyKeys {
+    key,
+    scope,
+    time,
+    useBuffer,
+    reset,
+    disabled
+  }
 
-			@Override
-			public void invoke() {
+  public Cache() {
+    final FacesContext context = FacesContext.getCurrentInstance();
+    subscribeToViewEvent(PRE_RENDER, new Callback.SerializableVoid() {
+      private static final long serialVersionUID = 1L;
 
-				if (!isDisabled() && isUseBuffer() && !hasCachedValue(context)) {
+      @Override public void invoke() {
+        if (!isDisabled() && isUseBuffer() && !hasCachedValue(context)) {
+          final BufferedHttpServletResponse bufferedHttpServletResponse = getRequestAttribute(BUFFERED_RESPONSE);
+          if (bufferedHttpServletResponse == null) {
+            throw new IllegalStateException(ERROR_NO_BUFFERED_RESPONSE);
+          }
+          bufferedHttpServletResponse.setPassThrough(false);
+          subscribeToRequestAfterPhase(RENDER_RESPONSE, new Callback.Void() {
+            @Override public void invoke() {
+              String content = null;
+              try {
+                content = getContentFromBuffer(bufferedHttpServletResponse.getBufferAsString());
+              } catch (IOException e) {
+                throw new IllegalStateException(e);
+              }
+              if (content != null) {
+                cacheContent(context, content);
+              }
+            }
+          });
+        }
+      }
+    });
+  }
 
-					final BufferedHttpServletResponse bufferedHttpServletResponse = getRequestAttribute(BUFFERED_RESPONSE);
+  @Override public void encodeChildren(FacesContext context) throws IOException {
+    if (isDisabled()) {
+      super.encodeChildren(context);
+      return;
+    }
+    String key = getKeyWithDefault(context);
+    ResponseWriter responseWriter = context.getResponseWriter();
+    org.omnifaces.component.output.cache.Cache scopedCache = getCacheImpl(context);
+    if (isReset()) {
+      scopedCache.remove(key);
+    }
+    String childRendering = scopedCache.get(key);
+    if (childRendering == null) {
+      Writer bufferWriter = new StringWriter();
+      ResponseWriter bufferedResponseWriter = responseWriter.cloneWithWriter(bufferWriter);
+      context.setResponseWriter(bufferedResponseWriter);
+      try {
+        if (isUseBuffer()) {
+          bufferedResponseWriter.write(getStartContentMarker());
+        }
+        super.encodeChildren(context);
+        if (isUseBuffer()) {
+          bufferedResponseWriter.write(getEndContentMarker());
+        }
+      }  finally {
+        context.setResponseWriter(responseWriter);
+      }
+      childRendering = bufferWriter.toString();
+      cacheContent(context, scopedCache, key, childRendering);
+    }
+    responseWriter.write(childRendering);
+  }
 
-					if (bufferedHttpServletResponse == null) {
-						throw new IllegalStateException(ERROR_NO_BUFFERED_RESPONSE);
-					}
-
-					// Start buffering the response from now on
-					bufferedHttpServletResponse.setPassThrough(false);
-
-					// After the RENDER_RESPONSE phase, copy the area we need to cache from the response buffer
-					// and insert it into our cache
-					subscribeToRequestAfterPhase(RENDER_RESPONSE, new Callback.Void() {
-						@Override
-						public void invoke() {
-							String content = null;
-
-							try {
-								content = getContentFromBuffer(bufferedHttpServletResponse.getBufferAsString());
-							}
-							catch (IOException e) {
-								throw new IllegalStateException(e);
-							}
-
-							if (content != null) {
-								cacheContent(context, content);
-							}
-						}
-
-					});
-				}
-			}
-		});
-	}
-
-	@Override
-	public void encodeChildren(FacesContext context) throws IOException {
-
-		if (isDisabled()) {
-			super.encodeChildren(context);
-			return;
-		}
-
-		String key = getKeyWithDefault(context);
-
-		ResponseWriter responseWriter = context.getResponseWriter();
-		org.omnifaces.component.output.cache.Cache scopedCache = getCacheImpl(context);
-
-		if (isReset()) {
-			scopedCache.remove(key);
-		}
-
-		String childRendering = scopedCache.get(key);
-
-		if (childRendering == null) {
-			Writer bufferWriter = new StringWriter();
-
-			ResponseWriter bufferedResponseWriter = responseWriter.cloneWithWriter(bufferWriter);
-
-			context.setResponseWriter(bufferedResponseWriter);
-
-			try {
-				if (isUseBuffer()) {
-					bufferedResponseWriter.write(getStartContentMarker());
-				}
-
-				super.encodeChildren(context);
-
-				if (isUseBuffer()) {
-					bufferedResponseWriter.write(getEndContentMarker());
-				}
-			} finally {
-				context.setResponseWriter(responseWriter);
-			}
-
-			childRendering = bufferWriter.toString();
-
-			cacheContent(context, scopedCache, key, childRendering);
-		}
-
-		responseWriter.write(childRendering);
-	}
-
-	/**
+  /**
 	 * Gets a named attribute associated with the main cache entry this component is using to store
 	 * the rendering of its child components.
 	 *
@@ -272,11 +227,11 @@ public class Cache extends OutputFamily {
 	 * @return value associated with the named attribute
 	 * @since 1.2
 	 */
-	public Object getCacheAttribute(FacesContext context, String name) {
-		return getCacheImpl(context).getAttribute(getKeyWithDefault(context), name);
-	}
+  public Object getCacheAttribute(FacesContext context, String name) {
+    return getCacheImpl(context).getAttribute(getKeyWithDefault(context), name);
+  }
 
-	/**
+  /**
 	 * Sets a named attribute associated with the main cache entry this component is using to store
 	 * the rendering of its child components.
 	 *
@@ -285,152 +240,135 @@ public class Cache extends OutputFamily {
 	 * @param value the value that is to be stored
 	 * @since 1.2
 	 */
-	public void setCacheAttribute(FacesContext context, String name, Object value) {
-		getCacheImpl(context).putAttribute(getKeyWithDefault(context), name, value, getTime());
-	}
+  public void setCacheAttribute(FacesContext context, String name, Object value) {
+    getCacheImpl(context).putAttribute(getKeyWithDefault(context), name, value, getTime());
+  }
 
-	@Override
-	protected boolean isVisitable(VisitContext visitContext) {
+  @Override protected boolean isVisitable(VisitContext visitContext) {
+    FacesContext context = visitContext.getFacesContext();
+    return isDisabled() || isCachedValueJustSet(context) || !hasCachedValue(context);
+  }
 
-		FacesContext context = visitContext.getFacesContext();
+  private void cacheContent(FacesContext context, String content) {
+    cacheContent(context, CacheFactory.getCache(context, getScope()), getKeyWithDefault(context), content);
+  }
 
-		// Visit us and our children if a value for the cache was set in this request, or
-		// if no value was cached yet.
-		return isDisabled() || isCachedValueJustSet(context) || !hasCachedValue(context);
-	}
+  private void cacheContent(FacesContext context, org.omnifaces.component.output.cache.Cache scopedCache, String key, String content) {
+    int time = getTime();
+    if (time > 0) {
+      scopedCache.put(key, content, time);
+    } else {
+      scopedCache.put(key, content);
+    }
+    context.getExternalContext().getRequestMap().put(VALUE_SET, TRUE);
+  }
 
-	private void cacheContent(FacesContext context, String content) {
-		cacheContent(context, CacheFactory.getCache(context, getScope()), getKeyWithDefault(context), content);
-	}
+  private String getKeyWithDefault(FacesContext context) {
+    String key = getKey();
+    if (key == null) {
+      key = context.getViewRoot().getViewId() + "_" + this.getClientId(context);
+    }
+    return key;
+  }
 
-	private void cacheContent(FacesContext context, org.omnifaces.component.output.cache.Cache scopedCache, String key, String content) {
-		int time = getTime();
-		if (time > 0) {
-			scopedCache.put(key, content, time);
-		} else {
-			scopedCache.put(key, content);
-		}
+  private org.omnifaces.component.output.cache.Cache getCacheImpl(FacesContext context) {
+    return CacheFactory.getCache(context, getScope());
+  }
 
-		// Marker to register we added a value to the cache during this request
-		context.getExternalContext().getRequestMap().put(VALUE_SET, TRUE);
-	}
-
-	private String getKeyWithDefault(FacesContext context) {
-		String key = getKey();
-		if (key == null) {
-			key = context.getViewRoot().getViewId() + "_" + this.getClientId(context);
-		}
-
-		return key;
-	}
-
-	private org.omnifaces.component.output.cache.Cache getCacheImpl(FacesContext context) {
-		return CacheFactory.getCache(context, getScope());
-	}
-
-	/**
+  /**
 	 *
 	 * @param context the FacesContext
 	 * @return true if a value was inserted in the cache during this request, false otherwise
 	 */
-	private boolean isCachedValueJustSet(FacesContext context) {
-		return TRUE.equals(context.getExternalContext().getRequestMap().get(VALUE_SET));
-	}
+  private boolean isCachedValueJustSet(FacesContext context) {
+    return TRUE.equals(context.getExternalContext().getRequestMap().get(VALUE_SET));
+  }
 
-	/**
+  /**
 	 *
 	 * @param context the FacesContext
 	 * @return true if there is a value in the cache corresponding to this component, false otherwise
 	 */
-	private boolean hasCachedValue(FacesContext context) {
-		return CacheFactory.getCache(context, getScope()).get(getKeyWithDefault(context)) != null;
-	}
+  private boolean hasCachedValue(FacesContext context) {
+    return CacheFactory.getCache(context, getScope()).get(getKeyWithDefault(context)) != null;
+  }
 
-	private String getStartContentMarker() {
-		return String.format(START_CONTENT_MARKER, getClientId());
-	}
+  private String getStartContentMarker() {
+    return String.format(START_CONTENT_MARKER, getClientId());
+  }
 
-	private String getEndContentMarker() {
-		return String.format(END_CONTENT_MARKER, getClientId());
-	}
+  private String getEndContentMarker() {
+    return String.format(END_CONTENT_MARKER, getClientId());
+  }
 
-	private String getContentFromBuffer(String buffer) {
-		String startMarker = getStartContentMarker();
-		int startIndex = buffer.indexOf(startMarker);
+  private String getContentFromBuffer(String buffer) {
+    String startMarker = getStartContentMarker();
+    int startIndex = buffer.indexOf(startMarker);
+    if (startIndex != -1) {
+      String endMarker = getEndContentMarker();
+      int endIndex = buffer.indexOf(endMarker);
+      if (endIndex != -1) {
+        return buffer.substring(startIndex + startMarker.length(), endIndex);
+      }
+    }
+    return null;
+  }
 
-		if (startIndex != -1) {
+  public String getKey() {
+    return state.get(key);
+  }
 
-			String endMarker = getEndContentMarker();
-			int endIndex = buffer.indexOf(endMarker);
+  public void setKey(String keyValue) {
+    state.put(key, keyValue);
+  }
 
-			if (endIndex != -1) {
+  public String getScope() {
+    return state.get(scope, DEFAULT_SCOPE);
+  }
 
-				return buffer.substring(startIndex + startMarker.length(), endIndex);
-			}
-		}
+  public void setScope(String scopeValue) {
+    state.put(scope, scopeValue);
+  }
 
-		return null;
-	}
+  public Integer getTime() {
+    return state.get(time, -1);
+  }
 
+  public void setTime(Integer timeValue) {
+    state.put(time, timeValue);
+  }
 
-	// Attribute getters/setters --------------------------------------------------------------------------------------
+  public boolean isUseBuffer() {
+    return state.get(useBuffer, FALSE);
+  }
 
-	public String getKey() {
-		return state.get(key);
-	}
+  public void setUseBuffer(boolean useBufferValue) {
+    state.put(useBuffer, useBufferValue);
+  }
 
-	public void setKey(String keyValue) {
-		state.put(key, keyValue);
-	}
+  public boolean isReset() {
+    return state.get(reset, FALSE);
+  }
 
-	public String getScope() {
-		return state.get(scope, DEFAULT_SCOPE);
-	}
+  public void setReset(boolean resetValue) {
+    state.put(reset, resetValue);
+  }
 
-	public void setScope(String scopeValue) {
-		state.put(scope, scopeValue);
-	}
-
-	public Integer getTime() {
-		return state.get(time, -1);
-	}
-
-	public void setTime(Integer timeValue) {
-		state.put(time, timeValue);
-	}
-
-	public boolean isUseBuffer() {
-		return state.get(useBuffer, FALSE);
-	}
-
-	public void setUseBuffer(boolean useBufferValue) {
-		state.put(useBuffer, useBufferValue);
-	}
-
-	public boolean isReset() {
-		return state.get(reset, FALSE);
-	}
-
-	public void setReset(boolean resetValue) {
-		state.put(reset, resetValue);
-	}
-
-	/**
+  /**
 	 * Returns whether this cache is disabled.
 	 * @return Whether this cache is disabled.
 	 * @since 1.8
 	 */
-	public boolean isDisabled() {
-		return state.get(disabled, FALSE);
-	}
+  public boolean isDisabled() {
+    return state.get(disabled, FALSE);
+  }
 
-	/**
+  /**
 	 * Sets whether this cache is disabled.
 	 * @param disabledValue Whether this cache is disabled.
 	 * @since 1.8
 	 */
-	public void setDisabled(boolean disabledValue) {
-		state.put(disabled, disabledValue);
-	}
-
+  public void setDisabled(boolean disabledValue) {
+    state.put(disabled, disabledValue);
+  }
 }
