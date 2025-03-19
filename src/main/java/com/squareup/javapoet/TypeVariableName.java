@@ -1,20 +1,4 @@
-/*
- * Copyright (C) 2015 Square, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.squareup.javapoet;
-
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -23,16 +7,15 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
-
 import static com.squareup.javapoet.Util.checkArgument;
 import static com.squareup.javapoet.Util.checkNotNull;
 
 public final class TypeVariableName extends TypeName {
   public final String name;
+
   public final List<TypeName> bounds;
 
   private TypeVariableName(String name, List<TypeName> bounds) {
@@ -43,7 +26,6 @@ public final class TypeVariableName extends TypeName {
     super(annotations);
     this.name = checkNotNull(name, "name == null");
     this.bounds = bounds;
-
     for (TypeName bound : this.bounds) {
       checkArgument(!bound.isPrimitive() && bound != VOID, "invalid bound: %s", bound);
     }
@@ -73,7 +55,6 @@ public final class TypeVariableName extends TypeName {
   }
 
   private static TypeVariableName of(String name, List<TypeName> bounds) {
-    // Strip java.lang.Object from bounds if it is present.
     List<TypeName> boundsNoObject = new ArrayList<>(bounds);
     boundsNoObject.remove(OBJECT);
     return new TypeVariableName(name, Collections.unmodifiableList(boundsNoObject));
@@ -112,13 +93,10 @@ public final class TypeVariableName extends TypeName {
    * constructing the bounds, we can just return it from the map. And, the code that put the entry
    * in {@code variables} will make sure that the bounds are filled in before returning.
    */
-  static TypeVariableName get(
-      TypeVariable mirror, Map<TypeParameterElement, TypeVariableName> typeVariables) {
+  static TypeVariableName get(TypeVariable mirror, Map<TypeParameterElement, TypeVariableName> typeVariables) {
     TypeParameterElement element = (TypeParameterElement) mirror.asElement();
     TypeVariableName typeVariableName = typeVariables.get(element);
     if (typeVariableName == null) {
-      // Since the bounds field is public, we need to make it an unmodifiableList. But we control
-      // the List that that wraps, which means we can change it before returning.
       List<TypeName> bounds = new ArrayList<>();
       List<TypeName> visibleBounds = Collections.unmodifiableList(bounds);
       typeVariableName = new TypeVariableName(element.getSimpleName().toString(), visibleBounds);
@@ -135,12 +113,10 @@ public final class TypeVariableName extends TypeName {
   public static TypeVariableName get(TypeParameterElement element) {
     String name = element.getSimpleName().toString();
     List<? extends TypeMirror> boundsMirrors = element.getBounds();
-
     List<TypeName> boundsTypeNames = new ArrayList<>();
     for (TypeMirror typeMirror : boundsMirrors) {
       boundsTypeNames.add(TypeName.get(typeMirror));
     }
-
     return TypeVariableName.of(name, boundsTypeNames);
   }
 
@@ -150,8 +126,7 @@ public final class TypeVariableName extends TypeName {
   }
 
   /** @see #get(java.lang.reflect.TypeVariable, Map) */
-  static TypeVariableName get(java.lang.reflect.TypeVariable<?> type,
-      Map<Type, TypeVariableName> map) {
+  static TypeVariableName get(java.lang.reflect.TypeVariable<?> type, Map<Type, TypeVariableName> map) {
     TypeVariableName result = map.get(type);
     if (result == null) {
       List<TypeName> bounds = new ArrayList<>();

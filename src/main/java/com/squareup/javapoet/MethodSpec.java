@@ -1,20 +1,4 @@
-/*
- * Copyright (C) 2015 Square, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.squareup.javapoet;
-
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -34,7 +18,6 @@ import javax.lang.model.type.ExecutableType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.Types;
-
 import static com.squareup.javapoet.Util.checkArgument;
 import static com.squareup.javapoet.Util.checkNotNull;
 import static com.squareup.javapoet.Util.checkState;
@@ -44,24 +27,31 @@ public final class MethodSpec {
   static final String CONSTRUCTOR = "<init>";
 
   public final String name;
+
   public final CodeBlock javadoc;
+
   public final List<AnnotationSpec> annotations;
+
   public final Set<Modifier> modifiers;
+
   public final List<TypeVariableName> typeVariables;
+
   public final TypeName returnType;
+
   public final List<ParameterSpec> parameters;
+
   public final boolean varargs;
+
   public final List<TypeName> exceptions;
+
   public final CodeBlock code;
+
   public final CodeBlock defaultValue;
 
   private MethodSpec(Builder builder) {
     CodeBlock code = builder.code.build();
-    checkArgument(code.isEmpty() || !builder.modifiers.contains(Modifier.ABSTRACT),
-        "abstract method %s cannot have code", builder.name);
-    checkArgument(!builder.varargs || lastParameterIsArray(builder.parameters),
-        "last parameter of varargs method %s must be an array", builder.name);
-
+    checkArgument(code.isEmpty() || !builder.modifiers.contains(Modifier.ABSTRACT), "abstract method %s cannot have code", builder.name);
+    checkArgument(!builder.varargs || lastParameterIsArray(builder.parameters), "last parameter of varargs method %s must be an array", builder.name);
     this.name = checkNotNull(builder.name, "name == null");
     this.javadoc = builder.javadoc.build();
     this.annotations = Util.immutableList(builder.annotations);
@@ -76,66 +66,60 @@ public final class MethodSpec {
   }
 
   private boolean lastParameterIsArray(List<ParameterSpec> parameters) {
-    return !parameters.isEmpty()
-        && TypeName.asArray((parameters.get(parameters.size() - 1).type)) != null;
+    return !parameters.isEmpty() && TypeName.asArray((parameters.get(parameters.size() - 1).type)) != null;
   }
 
-  void emit(CodeWriter codeWriter, String enclosingName, Set<Modifier> implicitModifiers)
-      throws IOException {
+  void emit(CodeWriter codeWriter, String enclosingName, Set<Modifier> implicitModifiers) throws IOException {
     codeWriter.emitJavadoc(javadoc);
     codeWriter.emitAnnotations(annotations, false);
     codeWriter.emitModifiers(modifiers, implicitModifiers);
-
     if (!typeVariables.isEmpty()) {
       codeWriter.emitTypeVariables(typeVariables);
       codeWriter.emit(" ");
     }
-
     if (isConstructor()) {
       codeWriter.emit("$L($Z", enclosingName);
     } else {
       codeWriter.emit("$T $L($Z", returnType, name);
     }
-
     boolean firstParameter = true;
     for (Iterator<ParameterSpec> i = parameters.iterator(); i.hasNext(); ) {
       ParameterSpec parameter = i.next();
-      if (!firstParameter) codeWriter.emit(",").emitWrappingSpace();
+      if (!firstParameter) {
+        codeWriter.emit(",").emitWrappingSpace();
+      }
       parameter.emit(codeWriter, !i.hasNext() && varargs);
       firstParameter = false;
     }
-
     codeWriter.emit(")");
-
     if (defaultValue != null && !defaultValue.isEmpty()) {
       codeWriter.emit(" default ");
       codeWriter.emit(defaultValue);
     }
-
     if (!exceptions.isEmpty()) {
       codeWriter.emitWrappingSpace().emit("throws");
       boolean firstException = true;
       for (TypeName exception : exceptions) {
-        if (!firstException) codeWriter.emit(",");
+        if (!firstException) {
+          codeWriter.emit(",");
+        }
         codeWriter.emitWrappingSpace().emit("$T", exception);
         firstException = false;
       }
     }
-
     if (hasModifier(Modifier.ABSTRACT)) {
       codeWriter.emit(";\n");
-    } else if (hasModifier(Modifier.NATIVE)) {
-      // Code is allowed to support stuff like GWT JSNI.
-      codeWriter.emit(code);
-      codeWriter.emit(";\n");
     } else {
-      codeWriter.emit(" {\n");
-
-      codeWriter.indent();
-      codeWriter.emit(code);
-      codeWriter.unindent();
-
-      codeWriter.emit("}\n");
+      if (hasModifier(Modifier.NATIVE)) {
+        codeWriter.emit(code);
+        codeWriter.emit(";\n");
+      } else {
+        codeWriter.emit(" {\n");
+        codeWriter.indent();
+        codeWriter.emit(code);
+        codeWriter.unindent();
+        codeWriter.emit("}\n");
+      }
     }
   }
 
@@ -148,9 +132,15 @@ public final class MethodSpec {
   }
 
   @Override public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null) return false;
-    if (getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null) {
+      return false;
+    }
+    if (getClass() != o.getClass()) {
+      return false;
+    }
     return toString().equals(o.toString());
   }
 
@@ -188,42 +178,31 @@ public final class MethodSpec {
    */
   public static Builder overriding(ExecutableElement method) {
     checkNotNull(method, "method == null");
-
     Element enclosingClass = method.getEnclosingElement();
     if (enclosingClass.getModifiers().contains(Modifier.FINAL)) {
       throw new IllegalArgumentException("Cannot override method on final class " + enclosingClass);
     }
-
     Set<Modifier> modifiers = method.getModifiers();
-    if (modifiers.contains(Modifier.PRIVATE)
-        || modifiers.contains(Modifier.FINAL)
-        || modifiers.contains(Modifier.STATIC)) {
+    if (modifiers.contains(Modifier.PRIVATE) || modifiers.contains(Modifier.FINAL) || modifiers.contains(Modifier.STATIC)) {
       throw new IllegalArgumentException("cannot override method with modifiers: " + modifiers);
     }
-
     String methodName = method.getSimpleName().toString();
     MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(methodName);
-
     methodBuilder.addAnnotation(Override.class);
-
     modifiers = new LinkedHashSet<>(modifiers);
     modifiers.remove(Modifier.ABSTRACT);
     modifiers.remove(Modifier.DEFAULT);
     methodBuilder.addModifiers(modifiers);
-
     for (TypeParameterElement typeParameterElement : method.getTypeParameters()) {
       TypeVariable var = (TypeVariable) typeParameterElement.asType();
       methodBuilder.addTypeVariable(TypeVariableName.get(var));
     }
-
     methodBuilder.returns(TypeName.get(method.getReturnType()));
     methodBuilder.addParameters(ParameterSpec.parametersOf(method));
     methodBuilder.varargs(method.isVarArgs());
-
     for (TypeMirror thrownType : method.getThrownTypes()) {
       methodBuilder.addException(TypeName.get(thrownType));
     }
-
     return methodBuilder;
   }
 
@@ -239,13 +218,11 @@ public final class MethodSpec {
    * <p>Note that in JavaPoet 1.2 through 1.7 this method retained annotations from the method and
    * parameters of the overridden method. Since JavaPoet 1.8 annotations must be added separately.
    */
-  public static Builder overriding(
-      ExecutableElement method, DeclaredType enclosing, Types types) {
+  public static Builder overriding(ExecutableElement method, DeclaredType enclosing, Types types) {
     ExecutableType executableType = (ExecutableType) types.asMemberOf(enclosing, method);
     List<? extends TypeMirror> resolvedParameterTypes = executableType.getParameterTypes();
     List<? extends TypeMirror> resolvedThrownTypes = executableType.getThrownTypes();
     TypeMirror resolvedReturnType = executableType.getReturnType();
-
     Builder builder = overriding(method);
     builder.returns(TypeName.get(resolvedReturnType));
     for (int i = 0, size = builder.parameters.size(); i < size; i++) {
@@ -257,7 +234,6 @@ public final class MethodSpec {
     for (int i = 0, size = resolvedThrownTypes.size(); i < size; i++) {
       builder.addException(TypeName.get(resolvedThrownTypes.get(i)));
     }
-
     return builder;
   }
 
@@ -280,20 +256,28 @@ public final class MethodSpec {
     private final String name;
 
     private final CodeBlock.Builder javadoc = CodeBlock.builder();
+
     private final List<AnnotationSpec> annotations = new ArrayList<>();
+
     private final List<Modifier> modifiers = new ArrayList<>();
+
     private List<TypeVariableName> typeVariables = new ArrayList<>();
+
     private TypeName returnType;
+
     private final List<ParameterSpec> parameters = new ArrayList<>();
+
     private final Set<TypeName> exceptions = new LinkedHashSet<>();
+
     private final CodeBlock.Builder code = CodeBlock.builder();
+
     private boolean varargs;
+
     private CodeBlock defaultValue;
 
     private Builder(String name) {
       checkNotNull(name, "name == null");
-      checkArgument(name.equals(CONSTRUCTOR) || SourceVersion.isName(name),
-          "not a valid name: %s", name);
+      checkArgument(name.equals(CONSTRUCTOR) || SourceVersion.isName(name), "not a valid name: %s", name);
       this.name = name;
       this.returnType = name.equals(CONSTRUCTOR) ? null : TypeName.VOID;
     }

@@ -1,20 +1,4 @@
-/*
- * Copyright (C) 2015 Square, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.squareup.javapoet;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +19,6 @@ import javax.lang.model.element.Element;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import javax.tools.SimpleJavaFileObject;
-
 import static com.squareup.javapoet.Util.checkArgument;
 import static com.squareup.javapoet.Util.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -46,19 +29,26 @@ public final class JavaFile {
     @Override public Appendable append(CharSequence charSequence) {
       return this;
     }
+
     @Override public Appendable append(CharSequence charSequence, int start, int end) {
       return this;
     }
+
     @Override public Appendable append(char c) {
       return this;
     }
   };
 
   public final CodeBlock fileComment;
+
   public final String packageName;
+
   public final TypeSpec typeSpec;
+
   public final boolean skipJavaLangImports;
+
   private final Set<String> staticImports;
+
   private final String indent;
 
   private JavaFile(Builder builder) {
@@ -71,20 +61,16 @@ public final class JavaFile {
   }
 
   public void writeTo(Appendable out) throws IOException {
-    // First pass: emit the entire class, just to collect the types we'll need to import.
     CodeWriter importsCollector = new CodeWriter(NULL_APPENDABLE, indent, staticImports);
     emit(importsCollector);
     Map<String, ClassName> suggestedImports = importsCollector.suggestedImports();
-
-    // Second pass: write the code, taking advantage of the imports.
     CodeWriter codeWriter = new CodeWriter(out, indent, suggestedImports, staticImports);
     emit(codeWriter);
   }
 
   /** Writes this to {@code directory} as UTF-8 using the standard directory structure. */
   public void writeTo(Path directory) throws IOException {
-    checkArgument(Files.notExists(directory) || Files.isDirectory(directory),
-        "path %s exists but is not a directory.", directory);
+    checkArgument(Files.notExists(directory) || Files.isDirectory(directory), "path %s exists but is not a directory.", directory);
     Path outputDirectory = directory;
     if (!packageName.isEmpty()) {
       for (String packageComponent : packageName.split("\\.")) {
@@ -92,7 +78,6 @@ public final class JavaFile {
       }
       Files.createDirectories(outputDirectory);
     }
-
     Path outputPath = outputDirectory.resolve(typeSpec.name + ".java");
     try (Writer writer = new OutputStreamWriter(Files.newOutputStream(outputPath), UTF_8)) {
       writeTo(writer);
@@ -106,12 +91,9 @@ public final class JavaFile {
 
   /** Writes this to {@code filer}. */
   public void writeTo(Filer filer) throws IOException {
-    String fileName = packageName.isEmpty()
-        ? typeSpec.name
-        : packageName + "." + typeSpec.name;
+    String fileName = packageName.isEmpty() ? typeSpec.name : packageName + "." + typeSpec.name;
     List<Element> originatingElements = typeSpec.originatingElements;
-    JavaFileObject filerSourceFile = filer.createSourceFile(fileName,
-        originatingElements.toArray(new Element[originatingElements.size()]));
+    JavaFileObject filerSourceFile = filer.createSourceFile(fileName, originatingElements.toArray(new Element[originatingElements.size()]));
     try (Writer writer = filerSourceFile.openWriter()) {
       writeTo(writer);
     } catch (Exception e) {
@@ -125,43 +107,44 @@ public final class JavaFile {
 
   private void emit(CodeWriter codeWriter) throws IOException {
     codeWriter.pushPackage(packageName);
-
     if (!fileComment.isEmpty()) {
       codeWriter.emitComment(fileComment);
     }
-
     if (!packageName.isEmpty()) {
       codeWriter.emit("package $L;\n", packageName);
       codeWriter.emit("\n");
     }
-
     if (!staticImports.isEmpty()) {
       for (String signature : staticImports) {
         codeWriter.emit("import static $L;\n", signature);
       }
       codeWriter.emit("\n");
     }
-
     int importedTypesCount = 0;
     for (ClassName className : new TreeSet<>(codeWriter.importedTypes().values())) {
-      if (skipJavaLangImports && className.packageName().equals("java.lang")) continue;
+      if (skipJavaLangImports && className.packageName().equals("java.lang")) {
+        continue;
+      }
       codeWriter.emit("import $L;\n", className.withoutAnnotations());
       importedTypesCount++;
     }
-
     if (importedTypesCount > 0) {
       codeWriter.emit("\n");
     }
-
     typeSpec.emit(codeWriter, null, Collections.emptySet());
-
     codeWriter.popPackage();
   }
 
   @Override public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null) return false;
-    if (getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null) {
+      return false;
+    }
+    if (getClass() != o.getClass()) {
+      return false;
+    }
     return toString().equals(o.toString());
   }
 
@@ -180,18 +163,18 @@ public final class JavaFile {
   }
 
   public JavaFileObject toJavaFileObject() {
-    URI uri = URI.create((packageName.isEmpty()
-        ? typeSpec.name
-        : packageName.replace('.', '/') + '/' + typeSpec.name)
-        + Kind.SOURCE.extension);
+    URI uri = URI.create((packageName.isEmpty() ? typeSpec.name : packageName.replace('.', '/') + '/' + typeSpec.name) + Kind.SOURCE.extension);
     return new SimpleJavaFileObject(uri, Kind.SOURCE) {
       private final long lastModified = System.currentTimeMillis();
+
       @Override public String getCharContent(boolean ignoreEncodingErrors) {
         return JavaFile.this.toString();
       }
+
       @Override public InputStream openInputStream() throws IOException {
         return new ByteArrayInputStream(getCharContent(true).getBytes(UTF_8));
       }
+
       @Override public long getLastModified() {
         return lastModified;
       }
@@ -214,10 +197,15 @@ public final class JavaFile {
 
   public static final class Builder {
     private final String packageName;
+
     private final TypeSpec typeSpec;
+
     private final CodeBlock.Builder fileComment = CodeBlock.builder();
+
     private final Set<String> staticImports = new TreeSet<>();
+
     private boolean skipJavaLangImports;
+
     private String indent = "  ";
 
     private Builder(String packageName, TypeSpec typeSpec) {
