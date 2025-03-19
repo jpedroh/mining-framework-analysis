@@ -248,7 +248,6 @@ public class Utils {
             && VersionUtils.getNameWithoutVersion(nodeType.getLocalPart())
             .equalsIgnoreCase(Types.planQKPlatformNodeType.getLocalPart());
     }
-
     public static boolean isSupportedPlattformPatternNodeType(final QName nodeTypeId, Csar csar) {
         TNodeType nodeType = ModelUtils.findNodeType(nodeTypeId, csar);
         for (TInterface iface : nodeType.getInterfaces()) {
