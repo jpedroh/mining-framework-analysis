@@ -29,6 +29,81 @@ public class ValidatorFactory {
   public static Validator<?> getInstance(ValidatorConfiguration config,
                                          SymbolTable symbolTable)
       throws DocumentValidatorException {
+<<<<<<< /usr/src/app/output/recruit-tech/redpen/ecf22b654b8d945be1bc8426615ddcb7515c40bb/redpen-core/src/main/java/cc/redpen/validator/ValidatorFactory.java/left.java
+    switch (config.getConfigurationName()) {
+      case "SentenceLength":
+        return new SentenceLengthValidator(config, symbolTable);
+      case "InvalidExpression":
+        return new InvalidExpressionValidator(config, symbolTable);
+      case "InvalidWord":
+        return new InvalidWordValidator(config, symbolTable);
+      case "SpaceAfterPeriod":
+        return new SpaceBeginningOfSentenceValidator(config, symbolTable);
+      case "CommaNumber":
+        return new CommaNumberValidator(config, symbolTable);
+      case "WordNumber":
+        return new WordNumberValidator(config, symbolTable);
+      case "SuggestExpression":
+        return new SuggestExpressionValidator(config, symbolTable);
+      case "InvalidSymbol":
+        return new InvalidSymbolValidator(config, symbolTable);
+      case "SpaceWithSymbol":
+        return new SymbolWithSpaceValidator(config, symbolTable);
+      case "KatakanaEndHyphen":
+        return new KatakanaEndHyphenValidator(config, symbolTable);
+      case "KatakanaSpellCheck":
+        return new KatakanaSpellCheckValidator(config, symbolTable);
+      case "Spelling":
+        return new SpellingValidator(config, symbolTable);
+      case "SpaceBetweenAlphabeticalWord":
+        return new SpaceBetweenAlphabeticalWord();
+      case "SectionLength":
+        return new SectionLengthValidator(config, symbolTable);
+      case "MaxParagraphNumber":
+        return new ParagraphNumberValidator(config, symbolTable);
+      case "ParagraphStartWith":
+        return new ParagraphStartWithValidator(config, symbolTable);
+      default:
+        throw new DocumentValidatorException(
+            "There is no Validator like " + config.getConfigurationName());
+||||||| /usr/src/app/output/recruit-tech/redpen/ecf22b654b8d945be1bc8426615ddcb7515c40bb/redpen-core/src/main/java/cc/redpen/validator/ValidatorFactory.java/base.java
+    switch (config.getConfigurationName()) {
+      case "SentenceLength":
+        return new SentenceLengthValidator(config, characterTable);
+      case "InvalidExpression":
+        return new InvalidExpressionValidator(config, characterTable);
+      case "InvalidWord":
+        return new InvalidWordValidator(config, characterTable);
+      case "SpaceAfterPeriod":
+        return new SpaceBeginningOfSentenceValidator(config, characterTable);
+      case "CommaNumber":
+        return new CommaNumberValidator(config, characterTable);
+      case "WordNumber":
+        return new WordNumberValidator(config, characterTable);
+      case "SuggestExpression":
+        return new SuggestExpressionValidator(config, characterTable);
+      case "InvalidCharacter":
+        return new InvalidCharacterValidator(config, characterTable);
+      case "SpaceWithSymbol":
+        return new SymbolWithSpaceValidator(config, characterTable);
+      case "KatakanaEndHyphen":
+        return new KatakanaEndHyphenValidator(config, characterTable);
+      case "KatakanaSpellCheck":
+        return new KatakanaSpellCheckValidator(config, characterTable);
+      case "Spelling":
+        return new SpellingValidator(config, characterTable);
+      case "SpaceBetweenAlphabeticalWord":
+        return new SpaceBetweenAlphabeticalWord();
+      case "SectionLength":
+        return new SectionLengthValidator(config, characterTable);
+      case "MaxParagraphNumber":
+        return new ParagraphNumberValidator(config, characterTable);
+      case "ParagraphStartWith":
+        return new ParagraphStartWithValidator(config, characterTable);
+      default:
+        throw new DocumentValidatorException(
+            "There is no Validator like " + config.getConfigurationName());
+=======
     try {
       for (String validatorPackage : VALIDATOR_PACKAGES) {
         String validatorClassName = validatorPackage + "." + config.getConfigurationName() + "Validator";
@@ -46,13 +121,14 @@ public class ValidatorFactory {
             throw new RuntimeException(validatorClassName + " doesn't implement cc.redpen.validator.Validator");
           }
 
-          Constructor<?> constructor = clazz.getConstructor(ValidatorConfiguration.class, SymbolTable.class);
-          return (Validator<?>) constructor.newInstance(config, symbolTable);
+          Constructor<?> constructor = clazz.getConstructor(ValidatorConfiguration.class, CharacterTable.class);
+          return (Validator<?>) constructor.newInstance(config, characterTable);
         } catch (ClassNotFoundException ignore) {
         }
       }
     } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
       throw new RuntimeException(e);
+>>>>>>> /usr/src/app/output/recruit-tech/redpen/ecf22b654b8d945be1bc8426615ddcb7515c40bb/redpen-core/src/main/java/cc/redpen/validator/ValidatorFactory.java/right.java
     }
     throw new DocumentValidatorException(
         "There is no such Validator: " + config.getConfigurationName());
