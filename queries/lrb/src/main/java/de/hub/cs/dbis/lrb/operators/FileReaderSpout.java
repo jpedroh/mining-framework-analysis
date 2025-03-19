@@ -48,6 +48,7 @@ public class FileReaderSpout extends AbstractOrderedFileInputSpout {
 	private final static long serialVersionUID = 8536833427236986702L;
 	
 	/** The prefix of all input file names. */
+	/** The prefix of all input file names. */
 	private final String defaultPrefix = "xway";
 	
 	
