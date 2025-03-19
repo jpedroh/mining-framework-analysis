@@ -218,13 +218,23 @@ public interface NodeTypes
     public static final int LEFT_FN_NODE = 158;
     public static final int RIGHT_FN_NODE = 159;
     public static final int ROWS_RESULT_SET_NODE = 160;
+<<<<<<< /usr/src/app/output/brunoribeiro/sql-parser/99bbf93e0dd33479341dbb3b553f1f2514c14a2e/src/main/java/com/akiban/sql/parser/NodeTypes.java/left.java
+    public static final int ROW_CTOR_NODE = 161;
+    public static final int SPECIAL_INDEX_FUNC_NODE = 162;
+    public static final int DROP_GROUP_NODE = 163;
+    // 164 - 182 available
+||||||| /usr/src/app/output/brunoribeiro/sql-parser/99bbf93e0dd33479341dbb3b553f1f2514c14a2e/src/main/java/com/akiban/sql/parser/NodeTypes.java/base.java
+    public static final int SPECIAL_INDEX_FUNC_NODE = 161;
+    public static final int DROP_GROUP_NODE = 162;
+    // 163 - 182 available
+=======
     public static final int SPECIAL_INDEX_FUNC_NODE = 161;
     public static final int AT_DROP_INDEX_NODE = 162;
     public static final int AT_ADD_INDEX_NODE = 163;
     public static final int INDEX_CONSTRAINT_NODE = 164;
     public static final int DROP_GROUP_NODE = 165;
-    public static final int ROW_CTOR_NODE = 166;
-    // 167 - 182 available
+    // 166 - 182 available
+>>>>>>> /usr/src/app/output/brunoribeiro/sql-parser/99bbf93e0dd33479341dbb3b553f1f2514c14a2e/src/main/java/com/akiban/sql/parser/NodeTypes.java/right.java
     public static final int ALTER_SERVER_NODE = 183;
     public static final int TIMESTAMP_ADD_FN_NODE = 184;
     public static final int TIMESTAMP_DIFF_FN_NODE = 185;
