@@ -590,8 +590,16 @@ public enum ColorBrewer {
 	 private Color[] toColor(int numberOfColors) {
 		 Color[] colors = new Color[numberOfColors];
 		 for (int i = 0; i < numberOfColors; i++) {
+			 int hex = hexColors[numberOfColors-1][i];
+
+<<<<<<< /usr/src/app/output/rcsb/colorbrewer/c551ca68b2e9bdc50824f990db085754ffa6dbdb/src/main/java/org/jcolorbrewer/ColorBrewer.java/left.java
+			 colors[i] = new Color(hex);
+||||||| /usr/src/app/output/rcsb/colorbrewer/c551ca68b2e9bdc50824f990db085754ffa6dbdb/src/main/java/org/jcolorbrewer/ColorBrewer.java/base.java
+			 colors[i] = new Color(hexColors[numberOfColors][i]);
+=======
 			 colors[i] = new Color(hexColors[numberOfColors-1][i]);
-		 }
+>>>>>>> /usr/src/app/output/rcsb/colorbrewer/c551ca68b2e9bdc50824f990db085754ffa6dbdb/src/main/java/org/jcolorbrewer/ColorBrewer.java/right.java
+	 }
 		 return colors;
 	 }
 }
