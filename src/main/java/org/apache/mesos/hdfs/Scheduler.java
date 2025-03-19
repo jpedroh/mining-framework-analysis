@@ -331,10 +331,10 @@ public class Scheduler implements org.apache.mesos.Scheduler, Runnable {
                                 + "m -Xms" + conf.getExecutorHeap() + "m").build())))
                 .setValue(
                     "env ; cd hdfs-mesos-* && " +
-                    "exec `if [ -z \"$JAVA_HOME\" ]; then echo java; else echo $JAVA_HOME/bin/java; fi` " +
-                    "$HADOOP_OPTS " +
-                    "$EXECUTOR_OPTS " +
-                    "-cp lib/*.jar org.apache.mesos.hdfs.executor." + executorName).build())
+                      "exec `if [ -z \"$JAVA_HOME\" ]; then echo java; else echo $JAVA_HOME/bin/java; fi` " +
+                        "$HADOOP_OPTS " +
+                        "$EXECUTOR_OPTS " +
+                        "-cp lib/*.jar org.apache.mesos.hdfs.executor." + executorName)
                 .build())
         .build();
   }
@@ -381,8 +381,54 @@ public class Scheduler implements org.apache.mesos.Scheduler, Runnable {
       return false;
     }
 
+<<<<<<< /usr/src/app/output/brndnmtthws/hdfs/752d91ed4f28a1b040e2bd85b8c3b47c4efc7dbe/src/main/java/org/apache/mesos/hdfs/Scheduler.java/left.java
     boolean launch = false;
     List<String> deadJournalNodes = persistentState.getDeadJournalNodes();
+||||||| /usr/src/app/output/brndnmtthws/hdfs/752d91ed4f28a1b040e2bd85b8c3b47c4efc7dbe/src/main/java/org/apache/mesos/hdfs/Scheduler.java/base.java
+    if (liveState.getNameNodes().size() == 0 && liveState.getJournalNodes().size() == 0) {
+      log.info("No NameNodes or JournalNodes found.  Collecting offers until we have sufficient "
+          + "capacity to launch.");
+      for (Offer offer: offers) {
+          pendingOffers.put(offer.getId(), offer);
+      }
+        
+      if (!initializingCluster) {
+        log.info(String.format("Launching initial nodes with %d pending offers",
+            pendingOffers.size()));
+        initializingCluster = true;
+        launchInitialJournalNodes(driver, pendingOffers.values());
+        launchInitialNameNodes(driver, pendingOffers.values());
+        // Decline any remaining offer
+        for (OfferID offerID : pendingOffers.keySet()) {
+          driver.declineOffer(offerID);
+        }
+        pendingOffers.clear();
+      }
+      return;
+    }
+=======
+    if (liveState.getNameNodes().size() == 0 && liveState.getJournalNodes().size() == 0) {
+      log.info("No NameNodes or JournalNodes found.  Collecting offers until we have sufficient "
+          + "capacity to launch.");
+      for (Offer offer: offers) {
+          pendingOffers.put(offer.getId(), offer);
+      }
+        
+      if (!initializingCluster && pendingOffers.size() >= (HDFSConstants.TOTAL_NAME_NODES + conf.getJournalNodeCount())) {
+        log.info(String.format("Launching initial nodes with %d pending offers",
+            pendingOffers.size()));
+        initializingCluster = true;
+        launchInitialJournalNodes(driver, pendingOffers.values());
+        launchInitialNameNodes(driver, pendingOffers.values());
+        // Decline any remaining offer
+        for (OfferID offerID : pendingOffers.keySet()) {
+          driver.declineOffer(offerID);
+        }
+        pendingOffers.clear();
+      }
+      return;
+    }
+>>>>>>> /usr/src/app/output/brndnmtthws/hdfs/752d91ed4f28a1b040e2bd85b8c3b47c4efc7dbe/src/main/java/org/apache/mesos/hdfs/Scheduler.java/right.java
 
     log.info(deadJournalNodes);
 
@@ -454,9 +500,41 @@ public class Scheduler implements org.apache.mesos.Scheduler, Runnable {
   }
 
   private boolean tryToLaunchDataNode(SchedulerDriver driver, Offer offer) {
+<<<<<<< /usr/src/app/output/brndnmtthws/hdfs/752d91ed4f28a1b040e2bd85b8c3b47c4efc7dbe/src/main/java/org/apache/mesos/hdfs/Scheduler.java/left.java
     if (offerNotEnoughResources(offer, conf.getDataNodeCpus(), conf.getDataNodeHeapSize())) {
       log.info("Offer does not have enough resources");
       return false;
+||||||| /usr/src/app/output/brndnmtthws/hdfs/752d91ed4f28a1b040e2bd85b8c3b47c4efc7dbe/src/main/java/org/apache/mesos/hdfs/Scheduler.java/base.java
+    FrameworkInfo.Builder frameworkInfo = FrameworkInfo.newBuilder()
+        .setName("HDFS " + conf.getClusterName())
+        .setFailoverTimeout(conf.getFailoverTimeout())
+        .setUser(conf.getHdfsUser())
+        .setRole(conf.getHdfsRole())
+        .setCheckpoint(true);
+
+    try {
+      FrameworkID frameworkID = persistentState.getFrameworkID();
+      if (frameworkID != null) {
+        frameworkInfo.setId(frameworkID);
+      }
+    } catch (InterruptedException | ExecutionException | InvalidProtocolBufferException e) {
+      throw new RuntimeException(e);
+=======
+    FrameworkInfo.Builder frameworkInfo = FrameworkInfo.newBuilder()
+        .setName(conf.getFrameworkName())
+        .setFailoverTimeout(conf.getFailoverTimeout())
+        .setUser(conf.getHdfsUser())
+        .setRole(conf.getHdfsRole())
+        .setCheckpoint(true);
+
+    try {
+      FrameworkID frameworkID = persistentState.getFrameworkID();
+      if (frameworkID != null) {
+        frameworkInfo.setId(frameworkID);
+      }
+    } catch (InterruptedException | ExecutionException | InvalidProtocolBufferException e) {
+      throw new RuntimeException(e);
+>>>>>>> /usr/src/app/output/brndnmtthws/hdfs/752d91ed4f28a1b040e2bd85b8c3b47c4efc7dbe/src/main/java/org/apache/mesos/hdfs/Scheduler.java/right.java
     }
 
     boolean launch = false;
@@ -521,7 +599,7 @@ public class Scheduler implements org.apache.mesos.Scheduler, Runnable {
           HDFSConstants.RELOAD_CONFIG);
     }
   }
-        
+
   private void correctCurrentPhase() {
     if (liveState.getJournalNodeSize() < conf.getJournalNodeCount()) {
       liveState.transitionTo(AcquisitionPhase.JOURNAL_NODES);

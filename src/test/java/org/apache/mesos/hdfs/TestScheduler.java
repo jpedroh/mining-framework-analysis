@@ -200,8 +200,30 @@ public class TestScheduler {
     scheduler.statusUpdate(driver, createTaskStatus(createTaskId("3"),
         Protos.TaskState.TASK_LOST));
 
+<<<<<<< /usr/src/app/output/brndnmtthws/hdfs/752d91ed4f28a1b040e2bd85b8c3b47c4efc7dbe/src/test/java/org/apache/mesos/hdfs/TestScheduler.java/left.java
     verify(liveState, times(4)).removeStagingTask(any(Protos.TaskID.class));
     verify(liveState, times(4)).removeRunningTask(any(Protos.TaskID.class));
+||||||| /usr/src/app/output/brndnmtthws/hdfs/752d91ed4f28a1b040e2bd85b8c3b47c4efc7dbe/src/test/java/org/apache/mesos/hdfs/TestScheduler.java/base.java
+    scheduler.resourceOffers(driver,
+        Lists.newArrayList(
+            createTestOffer(0)
+            )
+        );
+
+    verify(liveState, times(1)).addTask(any(Protos.TaskID.class),
+        eq(createTestOffer(0).getHostname()), eq(createTestOffer(0).getSlaveId().getValue()));
+=======
+    scheduler.resourceOffers(driver,
+        Lists.newArrayList(
+            createTestOffer(0),
+            createTestOffer(1),
+            createTestOffer(2)
+            )
+        );
+
+    verify(liveState, times(7)).addTask(any(Protos.TaskID.class),
+        anyString(), anyString());
+>>>>>>> /usr/src/app/output/brndnmtthws/hdfs/752d91ed4f28a1b040e2bd85b8c3b47c4efc7dbe/src/test/java/org/apache/mesos/hdfs/TestScheduler.java/right.java
   }
 
   @Test
