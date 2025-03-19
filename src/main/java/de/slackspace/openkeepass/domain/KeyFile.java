@@ -23,7 +23,7 @@ public class KeyFile {
 	}
 
 	public Key getKey() {
-		return key;
+	    return key;
 	}
 
 	public boolean isXmlFile() {
