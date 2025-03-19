@@ -1,97 +1,82 @@
-/* 
- * Enderstone
- * Copyright (C) 2014 Sander Gielisse and Fernando van Loenhout
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.enderstone.server.entity.goals;
-
 import java.util.List;
 import org.enderstone.server.api.Location;
 import org.enderstone.server.entity.EntityMob;
 import org.enderstone.server.entity.pathfinding.PathFinder;
 import org.enderstone.server.entity.pathfinding.PathTile;
+import org.enderstone.server.entity.player.EnderPlayer;
 
 /**
  *
  * @author gyroninja
  */
 public class GoalAttackEntity implements Goal {
+  private final EntityMob mob;
 
-	private final EntityMob mob;
+  private int lastUpdate;
 
-	private int lastUpdate;
+  public GoalAttackEntity(EntityMob mob) {
+    this.mob = mob;
+  }
 
-	public GoalAttackEntity(EntityMob mob) {
 
-		this.mob = mob;
-	}
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  @SuppressWarnings(value = { "unchecked" }) @Override public boolean shouldStart() {
+    Collection<EnderEntity> entities = (Collection<EnderEntity>) (targetType == EnderPlayer.class ? mob.getWorld().getPlayers() : mob.getWorld().getEntities());
+    for (Entity e : entities) {
+      if (e.getClass().equals(targetType)) {
+        if (mob.getLocation().distanceSquared(e.getLocation()) < (16 * 16)) {
+          target = (EnderEntity) e;
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+>>>>>>> /usr/src/app/output/sandergielisse/enderstone/17ed8520dacfc399023efb73188f3fd9c599bf01/src/org/enderstone/server/entity/goals/GoalAttackEntity.java/right.java
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean start() {
 
-		if (mob.getNavigator().getTarget() == null) {
+  @Override public boolean start() {
+    if (mob.getNavigator().getTarget() == null) {
+      return false;
+    }
+    pathfindToTarget(mob.getLocation());
+    return mob.getNavigator().getPathfinder().hasPath();
+  }
 
-			return false;
-		}
+  @Override public boolean shouldContinue() {
+    return mob.getNavigator().getPath() != null;
+  }
 
-		pathfindToTarget(mob.getLocation());
+  @Override public void run() {
+    lastUpdate++;
+    if (lastUpdate > 20) {
+      lastUpdate = 0;
+      PathTile currentTile = mob.getNavigator().getCurrentTile();
+      if (currentTile != null) {
+        pathfindToTarget(currentTile.getLocation(mob.getNavigator().getPathfinder().getStartLocation()));
+      }
+    }
+  }
 
-		return mob.getNavigator().getPathfinder() != null && mob.getNavigator().getPathfinder().hasPath();
-	}
 
-	@Override
-	public boolean shouldContinue() {
 
-		return mob.getNavigator().getPath() != null;
-	}
+  @Override public void reset() {
+    mob.getNavigator().setPath(null, null);
+  }
 
-	@Override
-	public void run() {
-		lastUpdate++;
-		if (lastUpdate > 20) {
-			lastUpdate = 0;
-			PathTile currentTile = mob.getNavigator().getCurrentTile();
-			if (currentTile != null) {
-				pathfindToTarget(currentTile.getLocation(mob.getNavigator().getPathfinder().getStartLocation()));
-			}
-		}
-	};
+  private void pathfindToTarget(Location start) {
+    PathFinder pathfinder = new PathFinder(mob, mob.getLocation(), mob.getNavigator().getTarget().getLocation(), 32);
+    List<PathTile> path = pathfinder.calculatePath();
+    if (pathfinder.hasPath()) {
+      mob.getNavigator().setPath(pathfinder, path);
+    } else {
+      mob.getNavigator().setPath(null, null);
+    }
+  }
 
-	@Override
-	public void reset() {
-
-		mob.getNavigator().setPath(null, null);
-	}
-
-	private void pathfindToTarget(Location start) {
-
-		if (mob.getNavigator().getTarget() != null) {
-
-			PathFinder pathfinder = new PathFinder(mob, mob.getLocation(), mob.getNavigator().getTarget().getLocation(), 32);
-
-			List<PathTile> path = pathfinder.calculatePath();
-			if (pathfinder.hasPath()) {
-				mob.getNavigator().setPath(pathfinder, path);
-			} else {
-				mob.getNavigator().setPath(null, null);
-			}
-		}
-
-		else {
-			mob.getNavigator().setPath(null, null);
-		}
-	}
+  @Override public EnderEntity getCurrentTarget() {
+    return this.target;
+  }
 }
