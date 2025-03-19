@@ -97,7 +97,7 @@ public class IndexAndCacheAspect implements MethodInterceptor {
 	 * @throws Throwable error
 	 */
 	public Object invoke(MethodInvocation mi) throws Throwable {
-		Method m = mi.getMethod();
+		Method method = mi.getMethod();
 		Object[] args = mi.getArguments();
 		String appid = AOPUtils.getFirstArgOfString(args);
 
@@ -107,7 +107,7 @@ public class IndexAndCacheAspect implements MethodInterceptor {
 
 		try {
 			detectNestedInvocations(m);
-			superMethod = DAO.class.getMethod(m.getName(), m.getParameterTypes());
+			superMethod = DAO.class.getMethod(method.getName(), method.getParameterTypes());
 			indexedAnno = Config.isSearchEnabled() ? superMethod.getAnnotation(Indexed.class) : null;
 			cachedAnno = Config.isCacheEnabled() ? superMethod.getAnnotation(Cached.class) : null;
 		} catch (Exception e) {
@@ -115,7 +115,7 @@ public class IndexAndCacheAspect implements MethodInterceptor {
 		}
 
 		if (!Modifier.isPublic(mi.getMethod().getModifiers())) {
-			return invokeDAO(appid, m, mi);
+			return invokeDAO(appid, method, mi);
 		}
 
 		List<IOListener> ioListeners = Para.getIOListeners();
@@ -124,8 +124,8 @@ public class IndexAndCacheAspect implements MethodInterceptor {
 			logger.debug("Executed {}.onPreInvoke().", ioListener.getClass().getName());
 		}
 
-		Object result = handleIndexing(indexedAnno, appid, m, args, mi);
-		Object cachingResult = handleCaching(cachedAnno, appid, m, args, mi);
+		Object result = handleIndexing(indexedAnno, appid, method, args, mi);
+		Object cachingResult = handleCaching(cachedAnno, appid, method, args, mi);
 
 		// we have a read operation without any result but we get back objects from cache
 		if (result == null && cachingResult != null) {
@@ -134,7 +134,7 @@ public class IndexAndCacheAspect implements MethodInterceptor {
 
 		// both searching and caching are disabled - pass it through
 		if (indexedAnno == null && cachedAnno == null) {
-			result = invokeDAO(appid, m, mi);
+			result = invokeDAO(appid, method, mi);
 		}
 
 		for (IOListener ioListener : ioListeners) {
