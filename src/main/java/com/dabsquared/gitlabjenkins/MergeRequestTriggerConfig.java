@@ -1,23 +1,22 @@
 package com.dabsquared.gitlabjenkins;
-
 import com.dabsquared.gitlabjenkins.trigger.TriggerOpenMergeRequest;
 
 public interface MergeRequestTriggerConfig {
-    boolean getTriggerOnMergeRequest();
+  boolean getTriggerOnMergeRequest();
 
-    boolean isTriggerOnlyIfNewCommitsPushed();
+  boolean isTriggerOnlyIfNewCommitsPushed();
 
-    boolean isTriggerOnAcceptedMergeRequest();
+  boolean isTriggerOnAcceptedMergeRequest();
 
-    boolean isTriggerOnApprovedMergeRequest();
+  boolean isTriggerOnApprovedMergeRequest();
 
-    boolean isTriggerOnClosedMergeRequest();
+  boolean isTriggerOnClosedMergeRequest();
 
-    TriggerOpenMergeRequest getTriggerOpenMergeRequestOnPush();
+  TriggerOpenMergeRequest getTriggerOpenMergeRequestOnPush();
 
-    boolean isSkipWorkInProgressMergeRequest();
+  boolean isSkipWorkInProgressMergeRequest();
 
-    String getLabelsThatForcesBuildIfAdded();
+  String getLabelsThatForcesBuildIfAdded();
 
-    boolean getCancelPendingBuildsOnUpdate();
+  boolean getCancelPendingBuildsOnUpdate();
 }
