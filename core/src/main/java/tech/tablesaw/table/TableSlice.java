@@ -1,19 +1,4 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package tech.tablesaw.table;
-
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.IntArrays;
 import it.unimi.dsi.fastutil.ints.IntComparator;
@@ -41,13 +26,13 @@ import tech.tablesaw.sorting.comparators.IntComparatorChain;
  * <p>A TableSlice is only good until the structure of the underlying table changes.
  */
 public class TableSlice extends Relation {
-
   private final Table table;
+
+  @Nullable private Selection selection;
+
   private String name;
-  @Nullable
-  private Selection selection;
-  @Nullable
-  private int[] sortOrder = null;
+
+  @Nullable private int[] sortOrder = null;
 
   /**
    * Returns a new View constructed from the given table, containing only the rows represented by
@@ -68,37 +53,34 @@ public class TableSlice extends Relation {
     this.table = table;
   }
 
-  @Override
-  public Column<?> column(int columnIndex) {
+  @Override public Column<?> column(int columnIndex) {
     Column<?> col = table.column(columnIndex);
     if (isSorted()) {
       return col.subset(sortOrder);
-    } else if(hasSelection()) {
-      return col.where(selection);
+    } else {
+      if (hasSelection()) {
+        return col.where(selection);
+      }
     }
     return col;
   }
 
-  @Override
-  public Column<?> column(String columnName) {
+  @Override public Column<?> column(String columnName) {
     return column(table.columnIndex(columnName));
   }
 
-  @Override
-  public int columnCount() {
+  @Override public int columnCount() {
     return table.columnCount();
   }
 
-  @Override
-  public int rowCount() {
-    if(hasSelection()) {
+  @Override public int rowCount() {
+    if (hasSelection()) {
       return selection.size();
     }
     return table.rowCount();
   }
 
-  @Override
-  public List<Column<?>> columns() {
+  @Override public List<Column<?>> columns() {
     List<Column<?>> columns = new ArrayList<>();
     for (int i = 0; i < columnCount(); i++) {
       columns.add(column(i));
@@ -106,18 +88,15 @@ public class TableSlice extends Relation {
     return columns;
   }
 
-  @Override
-  public int columnIndex(Column<?> column) {
+  @Override public int columnIndex(Column<?> column) {
     return table.columnIndex(column);
   }
 
-  @Override
-  public Object get(int r, int c) {
+  @Override public Object get(int r, int c) {
     return table.get(mappedRowNumber(r), c);
   }
 
-  @Override
-  public String name() {
+  @Override public String name() {
     return name;
   }
 
@@ -126,8 +105,7 @@ public class TableSlice extends Relation {
   }
 
   /** Clears all rows from this View, leaving the structure in place */
-  @Override
-  public void clear() {
+  @Override public void clear() {
     sortOrder = null;
     selection = Selection.with();
   }
@@ -143,25 +121,19 @@ public class TableSlice extends Relation {
     this.selection = null;
   }
 
-  @Override
-  public List<String> columnNames() {
+  @Override public List<String> columnNames() {
     return table.columnNames();
   }
 
-  @Override
-  public TableSlice addColumns(Column<?>... column) {
-    throw new UnsupportedOperationException(
-        "Class TableSlice does not support the addColumns operation");
+  @Override public TableSlice addColumns(Column<?>... column) {
+    throw new UnsupportedOperationException("Class TableSlice does not support the addColumns operation");
   }
 
-  @Override
-  public TableSlice removeColumns(Column<?>... columns) {
-    throw new UnsupportedOperationException(
-        "Class TableSlice does not support the removeColumns operation");
+  @Override public TableSlice removeColumns(Column<?>... columns) {
+    throw new UnsupportedOperationException("Class TableSlice does not support the removeColumns operation");
   }
 
-  @Override
-  public Table first(int nRows) {
+  @Override public Table first(int nRows) {
     int count = 0;
     PrimitiveIterator.OfInt it = sourceRowNumberIterator();
     Table copy = table.emptyCopy();
@@ -173,8 +145,7 @@ public class TableSlice extends Relation {
     return copy;
   }
 
-  @Override
-  public TableSlice setName(String name) {
+  @Override public TableSlice setName(String name) {
     this.name = name;
     return this;
   }
@@ -195,10 +166,12 @@ public class TableSlice extends Relation {
    * @return an int iterator of row numbers in the source table that are present in this view.
    */
   public PrimitiveIterator.OfInt sourceRowNumberIterator() {
-    if(this.isSorted()) {
+    if (this.isSorted()) {
       return Arrays.stream(sortOrder).iterator();
-    } else if (this.hasSelection()) {
-      return selection.iterator();
+    } else {
+      if (this.hasSelection()) {
+        return selection.iterator();
+      }
     }
     return Selection.withRange(0, table.rowCount()).iterator();
   }
@@ -214,7 +187,7 @@ public class TableSlice extends Relation {
    */
   public double reduce(String numberColumnName, NumericAggregateFunction function) {
     NumberColumn<?> column = table.numberColumn(numberColumnName);
-    if(hasSelection()) {
+    if (hasSelection()) {
       return function.summarize(column.where(selection));
     }
     return function.summarize(column);
@@ -224,20 +197,15 @@ public class TableSlice extends Relation {
    * Iterate over the underlying rows in the source table. If you set one of the
    * rows while iterating it will change the row in the source table.
    */
-  @Override
-  public Iterator<Row> iterator() {
-
+  @Override public Iterator<Row> iterator() {
     return new Iterator<Row>() {
-
       private final Row row = new Row(TableSlice.this);
 
-      @Override
-      public Row next() {
+      @Override public Row next() {
         return row.next();
       }
 
-      @Override
-      public boolean hasNext() {
+      @Override public boolean hasNext() {
         return row.hasNext();
       }
     };
@@ -260,8 +228,10 @@ public class TableSlice extends Relation {
   public int mappedRowNumber(int rowNumber) {
     if (isSorted()) {
       return sortOrder[rowNumber];
-    } else if (hasSelection()) {
-      return selection.get(rowNumber);
+    } else {
+      if (hasSelection()) {
+        return selection.get(rowNumber);
+      }
     }
     return rowNumber;
   }
@@ -273,7 +243,7 @@ public class TableSlice extends Relation {
     Preconditions.checkArgument(!key.isEmpty());
     if (key.size() == 1) {
       IntComparator comparator = SortUtils.getComparator(table, key);
-      this.sortOrder =  sortOn(comparator);
+      this.sortOrder = sortOn(comparator);
     } else {
       IntComparatorChain chain = SortUtils.getChain(table, key);
       this.sortOrder = sortOn(chain);
@@ -283,7 +253,7 @@ public class TableSlice extends Relation {
   /** Returns an array of integers representing the source table indexes in sorted order.*/
   private int[] sortOn(IntComparator rowComparator) {
     int[] newRows;
-    if(hasSelection()) {
+    if (hasSelection()) {
       newRows = this.selection.toArray();
     } else {
       newRows = IntStream.range(0, table.rowCount()).toArray();
