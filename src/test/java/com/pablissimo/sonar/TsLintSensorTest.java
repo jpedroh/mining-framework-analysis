@@ -168,7 +168,7 @@ public class TsLintSensorTest {
     @Test
     public void analyse_callsExecutorWithSuppliedTimeout() throws IOException {
         this.sensor.analyse(mock(Project.class), mock(SensorContext.class));
-     
+
         verify(this.executor, times(1)).execute(any(String.class), any(String.class), any(String.class), any(List.class), eq(45000));
     }
 
@@ -177,7 +177,7 @@ public class TsLintSensorTest {
         when(this.settings.getInt(TypeScriptPlugin.SETTING_TS_LINT_TIMEOUT)).thenReturn(-500);
 
         this.sensor.analyse(mock(Project.class), mock(SensorContext.class));
-        
+
         verify(this.executor, times(1)).execute(any(String.class), any(String.class), any(String.class), any(List.class), eq(5000));
     }
 }
