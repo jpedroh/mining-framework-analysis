@@ -61,14 +61,12 @@ public class TestFullResourcePath {
   private static final OData oData = OData.newInstance();
   private final TestUriValidator testUri;
   private final FilterValidator testFilter;
-
   public TestFullResourcePath() {
     final Edm edm = oData.createServiceMetadata(new EdmTechProvider(), Collections.<EdmxReference> emptyList())
         .getEdm();
     testUri = new TestUriValidator().setEdm(edm);
     testFilter = new FilterValidator().setEdm(edm);
   }
-
   @Test
   public void testFunctionBound_varOverloading() throws Exception {
     // on ESTwoKeyNav
@@ -98,7 +96,6 @@ public class TestFullResourcePath {
     .isUriPathInfoKind(UriResourceKind.function)
     .isType(EntityTypeProvider.nameETTwoKeyNav);
   }
-
   @Test
   public void runBfuncBnCpropCastRtEs() throws Exception {
 
@@ -136,7 +133,6 @@ public class TestFullResourcePath {
         .isUriPathInfoKind(UriResourceKind.count);
 
   }
-
   @Test
   public void runBfuncBnCpropCollRtEs() throws Exception {
     testUri.run("ESKeyNav(PropertyInt16=1)/CollPropertyComp/olingo.odata.test1.BFCCollCTPrimCompRTESAllPrim()")
@@ -167,7 +163,6 @@ public class TestFullResourcePath {
     .n()
     .isUriPathInfoKind(UriResourceKind.count);
   }
-
   @Test
   public void runBfuncBnCpropRtEs() throws Exception {
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')"
@@ -202,7 +197,6 @@ public class TestFullResourcePath {
         .isUriPathInfoKind(UriResourceKind.count);
 
   }
-
   @Test
   public void runBfuncBnEntityRtEs() throws Exception {
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.BFCETTwoKeyNavRTESTwoKeyNav()")
@@ -214,7 +208,6 @@ public class TestFullResourcePath {
     .n()
     .isFunction("BFCETTwoKeyNavRTESTwoKeyNav");
   }
-
   @Test
   public void runBfuncBnEntityCastRtEs() throws Exception {
     testUri
@@ -243,7 +236,6 @@ public class TestFullResourcePath {
         .n()
         .isFunction("BFCETBaseTwoKeyNavRTESTwoKeyNav");
   }
-
   @Test
   public void runBfuncBnEsCastRtEs() throws Exception {
     testUri.run("ESTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav"
@@ -284,7 +276,6 @@ public class TestFullResourcePath {
         .isKeyPredicate(1, "PropertyString", "'2'")
         .isTypeFilterOnEntry(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
   }
-
   @Test
   public void runBfuncBnEsRtCprop() throws Exception {
     testUri.run("ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim()")
@@ -304,7 +295,6 @@ public class TestFullResourcePath {
     .isType(ComplexTypeProvider.nameCTTwoPrim, false)
     .isTypeFilterOnEntry(ComplexTypeProvider.nameCTBase);
   }
-
   @Test
   public void runBfuncBnEsRtCpropColl() throws Exception {
     testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTCollCTTwoPrim()")
@@ -325,7 +315,6 @@ public class TestFullResourcePath {
     .n()
     .isUriPathInfoKind(UriResourceKind.count);
   }
-
   @Test
   public void runBfuncBnEsRtEntityPpNp() throws Exception {
     testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTTwoKeyNav()/NavPropertyETKeyNavOne")
@@ -434,7 +423,6 @@ public class TestFullResourcePath {
     testUri.runEx("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString=wrong)")
     .isExSemantic(MessageKeys.INVALID_KEY_VALUE);
   }
-
   @Test
   public void runBfuncBnEsRtEntyPpNpCast() throws Exception {
     testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTTwoKeyNav()"
@@ -466,7 +454,6 @@ public class TestFullResourcePath {
         .isTypeFilterOnEntry(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
 
   }
-
   @Test
   public void runBfuncBnEsRtEntityPpCp() throws Exception {
 
@@ -507,7 +494,6 @@ public class TestFullResourcePath {
     .isValue();
 
   }
-
   @Test
   public void runBfuncBnEsRtEntyPpCpCast() throws Exception {
 
@@ -542,7 +528,6 @@ public class TestFullResourcePath {
         .isType(ComplexTypeProvider.nameCTTwoPrim)
         .isTypeFilter(ComplexTypeProvider.nameCTTwoBase);
   }
-
   @Test
   public void runBfuncBnEsRtEntityPpSp() throws Exception {
     testUri.run("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNav()/PropertyInt16")
@@ -566,7 +551,6 @@ public class TestFullResourcePath {
     .isValue();
 
   }
-
   @Test
   public void runBfuncBnEsRtEs() throws Exception {
 
@@ -624,7 +608,6 @@ public class TestFullResourcePath {
     .isKeyPredicate(1, "PropertyString", "'2'");
 
   }
-
   @Test
   public void runBfuncBnEsRtEsBa() throws Exception {
 
@@ -643,7 +626,6 @@ public class TestFullResourcePath {
         .isAction("BAESAllPrimRTETAllPrim");
 
   }
-
   @Test
   public void runBfuncBnEsRtPrim() throws Exception {
     testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTString()")
@@ -663,7 +645,6 @@ public class TestFullResourcePath {
     .n()
     .isValue();
   }
-
   @Test
   public void runbfuncBnEsRtPrimColl() throws Exception {
     testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTCollString()")
@@ -684,7 +665,6 @@ public class TestFullResourcePath {
     .n()
     .isCount();
   }
-
   @Test
   public void runBfuncBnPpropCollRtEs() throws Exception {
     testUri.run("ESKeyNav(1)/CollPropertyString/olingo.odata.test1.BFCCollStringRTESTwoKeyNav()")
@@ -711,7 +691,6 @@ public class TestFullResourcePath {
     .n()
     .isCount();
   }
-
   @Test
   public void runBfuncBnPpropRtEs() throws Exception {
 
@@ -752,7 +731,6 @@ public class TestFullResourcePath {
     .n()
     .isRef();
   }
-
   @Test
   public void runBfuncBnSingleRtEs() throws Exception {
 
@@ -764,7 +742,6 @@ public class TestFullResourcePath {
     .n()
     .isFunction("BFCSINavRTESTwoKeyNav");
   }
-
   @Test
   public void runBfuncBnSingleCastRtEs() throws Exception {
     testUri.run("SINav/olingo.odata.test1.ETBaseTwoKeyNav/olingo.odata.test1.BFCETBaseTwoKeyNavRTESBaseTwoKey()")
@@ -776,7 +753,6 @@ public class TestFullResourcePath {
     .n()
     .isFunction("BFCETBaseTwoKeyNavRTESBaseTwoKey");
   }
-
   @Test
   public void runActionBound_on_EntityEntry() throws Exception {
 
@@ -797,7 +773,6 @@ public class TestFullResourcePath {
     .n()
     .isAction("BAETTwoKeyNavRTETTwoKeyNav");
   }
-
   @Test
   public void runActionBound_on_EntityCollection() throws Exception {
     testUri.run("ESTwoKeyNav/olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav")
@@ -807,7 +782,6 @@ public class TestFullResourcePath {
     .n()
     .isAction("BAESTwoKeyNavRTESTwoKeyNav");
   }
-
   @Test
   public void runFunctionBound_on_var_Types() throws Exception {
 
@@ -874,7 +848,6 @@ public class TestFullResourcePath {
     .at(1).isUriPathInfoKind(UriResourceKind.function)
     .isType(EntityTypeProvider.nameETTwoKeyNav);
   }
-
   @Test
   public void runActionBound_on_EntityCast() throws Exception {
 
@@ -901,7 +874,6 @@ public class TestFullResourcePath {
         .n()
         .isAction("BAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav");
   }
-
   @Test
   public void runCrossjoin() throws Exception {
     testUri.run("$crossjoin(ESKeyNav)")
@@ -912,7 +884,6 @@ public class TestFullResourcePath {
     .isKind(UriInfoKind.crossjoin)
     .isCrossJoinEntityList(Arrays.asList("ESKeyNav", "ESTwoKeyNav"));
   }
-
   @Test
   public void runCrossjoinError() throws Exception {
     testUri.runEx("$crossjoin").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
@@ -921,7 +892,6 @@ public class TestFullResourcePath {
     testUri.runEx("$crossjoin(ESKeyNav, ESTwoKeyNav)/invalid")
     .isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);
   }
-
   @Test
   public void runEntityId() throws Exception {
     testUri.run("$entity", "$id=ESKeyNav(1)")
@@ -932,7 +902,6 @@ public class TestFullResourcePath {
     .isEntityType(EntityTypeProvider.nameETKeyNav)
     .isIdText("ESKeyNav(1)");
   }
-
   @Test
   public void runEsName() throws Exception {
     testUri.run("ESAllPrim")
@@ -949,7 +918,6 @@ public class TestFullResourcePath {
     .n()
     .isCount();
   }
-
   @Test
   public void runEsNameError() {
 
@@ -990,7 +958,6 @@ public class TestFullResourcePath {
 
     testUri.runEx("ETMixPrimCollComp(1)/ComplexProperty/$value").isExSemantic(MessageKeys.RESOURCE_NOT_FOUND);
   }
-
   @Test
   public void runResourcePathWithApostrophe() {
     // TODO Currently "'" is not allowed in OData identifiers, but the specification allows this character (Unicode Cf)
@@ -1009,7 +976,6 @@ public class TestFullResourcePath {
     testUri.runEx("ESAllPrim", "$filter=PropertyInt16 eq 'dsd''")
       .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
-  
   @Test
   public void runFunctionsWithKeyPredicates() throws Exception {
     testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterString='1',ParameterInt16=1)")
@@ -1121,7 +1087,6 @@ public class TestFullResourcePath {
     testUri.runEx("FICRTString()(0)")
       .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
   }
-  
   @Test
   public void runNonComposableFunctions() throws Exception {
     testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')")
@@ -1177,7 +1142,6 @@ public class TestFullResourcePath {
           + "/PropertyString")
       .isExValidation(UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH);
   }
-  
   @Test
   public void runEsNameCast() throws Exception {
     testUri.run("ESTwoPrim/olingo.odata.test1.ETBase")
@@ -1213,7 +1177,6 @@ public class TestFullResourcePath {
     .isKeyPredicate(0, "PropertyInt16", "-32768");
 
   }
-
   @Test
   public void runEsNamePpSpCast() throws Exception {
 
@@ -1242,7 +1205,6 @@ public class TestFullResourcePath {
         .n()
         .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
   }
-
   @Test
   public void runEsNameKey() throws Exception {
     testUri.run("ESCollAllPrim(1)")
@@ -1267,7 +1229,6 @@ public class TestFullResourcePath {
     testUri.runEx("ESTwoPrim(wrong)").isExSemantic(MessageKeys.INVALID_KEY_VALUE);
     testUri.runEx("ESTwoPrim(PropertyInt16=wrong)").isExSemantic(MessageKeys.INVALID_KEY_VALUE);
   }
-
   @Test
   public void runEsNameParaKeys() throws Exception {
     testUri.run(encode("ESAllKey(PropertyString='O''Neil',PropertyBoolean=true,PropertyByte=255,"
@@ -1294,7 +1255,6 @@ public class TestFullResourcePath {
         .isKeyPredicate(11, "PropertyGuid", "12345678-1234-1234-1234-123456789012")
         .isKeyPredicate(12, "PropertyTimeOfDay", "12:34:55");
   }
-
   @Test
   public void runEsNameKeyCast() throws Exception {
     // testUri.runEx("ESTwoPrim(1)/olingo.odata.test1.ETBase(1)")
@@ -1352,7 +1312,6 @@ public class TestFullResourcePath {
     .isType(EntityTypeProvider.nameETTwoPrim)
     .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBase);
   }
-
   @Test
   public void runEsNameParaKeysCast() throws Exception {
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav")
@@ -1373,7 +1332,6 @@ public class TestFullResourcePath {
     .isKeyPredicate(0, "PropertyInt16", "1")
     .isKeyPredicate(1, "PropertyString", "'2'");
   }
-
   @Test
   public void run_EsNamePpCp() throws Exception {
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyComp")
@@ -1396,7 +1354,6 @@ public class TestFullResourcePath {
     .n()
     .isComplex("PropertyComp");
   }
-
   @Test
   public void runEsNamePpCpColl() throws Exception {
     testUri.run("ESMixPrimCollComp(5)/CollPropertyComp")
@@ -1430,7 +1387,6 @@ public class TestFullResourcePath {
     .n()
     .isCount();
   }
-
   @Test
   public void runEsNamePpCpCast() throws Exception {
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav/PropertyComp")
@@ -1490,7 +1446,6 @@ public class TestFullResourcePath {
         .isType(ComplexTypeProvider.nameCTTwoPrim)
         .isTypeFilter(ComplexTypeProvider.nameCTTwoBase);
   }
-
   @Test
   public void runNsNamePpNp() throws Exception {
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany")
@@ -1636,7 +1591,6 @@ public class TestFullResourcePath {
         .n()
         .isRef();
   }
-
   @Test
   public void runEsNamePpNpCast() throws Exception {
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav"
@@ -1719,7 +1673,6 @@ public class TestFullResourcePath {
         .n()
         .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
   }
-
   @Test
   public void runEsNamePpNpRc() throws Exception {
     // checks for using referential constrains to fill missing keys
@@ -1742,7 +1695,6 @@ public class TestFullResourcePath {
     .isKeyPredicate(1, "PropertyString", "'2'");
 
   }
-
   @Test
   public void runEsNamePpSp() throws Exception {
     testUri.run("ESAllPrim(1)/PropertyByte")
@@ -1773,7 +1725,6 @@ public class TestFullResourcePath {
     .n()
     .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
   }
-
   @Test
   public void runEsNamePpSpColl() throws Exception {
     testUri.run("ESCollAllPrim(1)/CollPropertyString")
@@ -1809,7 +1760,6 @@ public class TestFullResourcePath {
     .isCount();
 
   }
-
   @Test
   public void runEsNameRef() throws Exception {
     testUri.run("ESAllPrim/$ref")
@@ -1847,13 +1797,11 @@ public class TestFullResourcePath {
     .n()
     .isRef();
   }
-
   @Test
   public void runFunctionImpBf() throws Exception {
 
     testUri.run("FICRTString()/olingo.odata.test1.BFCStringRTESTwoKeyNav()");
   }
-
   @Test
   public void runFunctionImpCastBf() throws Exception {
 
@@ -1892,7 +1840,6 @@ public class TestFullResourcePath {
            .isParameter(0, "ParameterInt16", "1")
            .isParameter(1, "ParameterString", null);
   }
-
   @Test
   public void runFunctionImpEntity() throws Exception {
 
@@ -1962,7 +1909,6 @@ public class TestFullResourcePath {
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'3'");
   }
-
   @Test
   public void runFunctionImpEs() throws Exception {
     /**/
@@ -1995,7 +1941,6 @@ public class TestFullResourcePath {
     .n()
     .isCount();
   }
-
   @Test
   public void runFunctionImpError() {
     testUri.runEx("FICRTCollCTTwoPrimTwoParam")
@@ -2003,7 +1948,6 @@ public class TestFullResourcePath {
     testUri.runEx("FICRTCollCTTwoPrimTwoParam()").isExSemantic(MessageKeys.FUNCTION_NOT_FOUND);
     testUri.runEx("FICRTCollCTTwoPrimTwoParam(invalidParam=2)").isExSemantic(MessageKeys.FUNCTION_NOT_FOUND);
   }
-
   @Test
   public void runFunctionImpEsAlias() throws Exception {
 
@@ -2012,7 +1956,6 @@ public class TestFullResourcePath {
     testUri.runEx("FICRTCollESTwoKeyNavParam(ParameterInt16=@invalidAlias)", "@validAlias=1")
       .isExValidation(UriValidationException.MessageKeys.MISSING_PARAMETER);
   }
-
   @Test
   public void runFunctionImpEsCast() throws Exception {
 
@@ -2063,7 +2006,6 @@ public class TestFullResourcePath {
         .isTypeFilterOnEntry(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
 
   }
-
   @Test
   public void runSingletonEntityValue() throws Exception {
     testUri.run("SIMedia/$value")
@@ -2072,7 +2014,6 @@ public class TestFullResourcePath {
     .isSingleton("SIMedia")
     .n().isValue();
   }
-
   @Test
   public void runSingletonPpNpCast() throws Exception {
     testUri.run("SINav/olingo.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany")
@@ -2095,7 +2036,6 @@ public class TestFullResourcePath {
     .isKeyPredicate(0, "PropertyInt16", "1");
 
   }
-
   @Test
   public void runSingletonPpCpCast() throws Exception {
     testUri.run("SINav/olingo.odata.test1.ETBaseTwoKeyNav/PropertyComp")
@@ -2130,7 +2070,6 @@ public class TestFullResourcePath {
     .isTypeFilter(ComplexTypeProvider.nameCTBase);
 
   }
-
   @Test
   public void runSingletonPpSpCast() throws Exception {
     testUri.run("SINav/olingo.odata.test1.ETBaseTwoKeyNav/PropertyInt16")
@@ -2153,7 +2092,6 @@ public class TestFullResourcePath {
     .isType(PropertyProvider.nameString, true);
 
   }
-
   @Test
   public void runSingletonEntityPpNp() throws Exception {
     testUri.run("SINav/NavPropertyETKeyNavMany")
@@ -2173,7 +2111,6 @@ public class TestFullResourcePath {
     .isKeyPredicate(1, "PropertyString", "'2'");
 
   }
-
   @Test
   public void runSingletonEntityPpCp() throws Exception {
     testUri.run("SINav/PropertyComp")
@@ -2193,7 +2130,6 @@ public class TestFullResourcePath {
     .isComplex("PropertyComp");
 
   }
-
   @Test
   public void runSingletonEntityPpCpColl() throws Exception {
     testUri.run("SINav/CollPropertyComp")
@@ -2214,7 +2150,6 @@ public class TestFullResourcePath {
     .n()
     .isCount();
   }
-
   @Test
   public void runSingletonEntityPpSp() throws Exception {
     testUri.run("SINav/PropertyString")
@@ -2224,7 +2159,6 @@ public class TestFullResourcePath {
     .n()
     .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
   }
-
   @Test
   public void runSingletonEntityPpSpColl() throws Exception {
     testUri.run("SINav/CollPropertyString")
@@ -2243,7 +2177,6 @@ public class TestFullResourcePath {
     .n()
     .isCount();
   }
-
   @Test
   public void runExpand() throws Exception {
 
@@ -2693,7 +2626,6 @@ public class TestFullResourcePath {
     testUri.runEx("ESTwoKeyNav", "$expand=PropertyCompNav/undefined")
     .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
   }
-
   @Test
   public void runDuplicatedSystemQueryOptionsInExpand() throws UriParserException, UriValidationException {
       testUri.runEx("ESKeyNav", "$expand=NavPropertyETKeyNavOne($select=PropertyInt16;$select=PropertyInt16)")
@@ -2720,14 +2652,12 @@ public class TestFullResourcePath {
       testUri.runEx("ESKeyNav", "$expand=NavPropertyETKeyNavOne($skip=2;$skip=2)")
         .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
   }
-  
   @Test
   @Ignore("$search currently not implemented")
   public void runDuplicatedSearchExpand() throws UriParserException, UriValidationException {
       testUri.runEx("ESKeyNav", "$expand=NavPropertyETKeyNavOne($search=Test;$search=Test)")
         .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
   }
-  
   @Test
   public void runTop() throws Exception {
     // top
@@ -2751,7 +2681,6 @@ public class TestFullResourcePath {
     testUri.runEx("ESKeyNav", "$top=")
     .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
   }
-
   @Test
   public void runFormat() throws Exception {
     // format
@@ -2784,7 +2713,6 @@ public class TestFullResourcePath {
     testUri.runEx("ESKeyNav(1)", "$format=")
     .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT);
   }
-
   @Test
   public void runCount() throws Exception {
     // count
@@ -2799,7 +2727,6 @@ public class TestFullResourcePath {
     testUri.runEx("ESAllPrim", "$count=")
     .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
   }
-
   @Test
   public void skip() throws Exception {
     // skip
@@ -2817,20 +2744,17 @@ public class TestFullResourcePath {
     testUri.runEx("ESAllPrim", "$skip=")
     .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
   }
-
   @Test
   public void skiptoken() throws Exception {
     testUri.run("ESAllPrim", "$skiptoken=foo")
     .isKind(UriInfoKind.resource).goPath()
     .isSkipTokenText("foo");
   }
-
   @Test
   public void notExistingSystemQueryOption() throws Exception {
     testUri.runEx("ESAllPrim", "$wrong=error")
     .isExSyntax(UriParserSyntaxException.MessageKeys.UNKNOWN_SYSTEM_QUERY_OPTION);
   }
-
   @Test
   public void misc() throws Exception {
 
@@ -3057,7 +2981,6 @@ public class TestFullResourcePath {
     .n().isValue();
 
   }
-
   @Test
   public void testFilter() throws UriParserException {
 
@@ -3600,7 +3523,6 @@ public class TestFullResourcePath {
     testFilter.runOnETAllPrim("PropertyDecimal sub INF")
     .right().isLiteral("INF").isType(PropertyProvider.nameDecimal);
   }
-
   @Test
   public void testFilterProperties() throws UriParserException {
     testFilter.runOnETAllPrim("PropertyByte mod 0")
@@ -3765,7 +3687,6 @@ public class TestFullResourcePath {
         .n()
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
   }
-
   @Test
   public void testFilterPMethods() throws ExpressionVisitException, ODataApplicationException, UriParserException {
 
@@ -4383,7 +4304,6 @@ public class TestFullResourcePath {
     testFilter.runOnETKeyNav("any()")
     .isMember().goPath().first().isUriPathInfoKind(UriResourceKind.lambdaAny);
   }
-
   @Test
   public void runLamdbaFunctions() throws ExpressionVisitException, ODataApplicationException, UriParserException {
 
@@ -4530,7 +4450,6 @@ public class TestFullResourcePath {
             .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
   }
-
   @Test
   public void runIsOf() throws ExpressionVisitException, ODataApplicationException, UriParserException {
 
@@ -4661,7 +4580,6 @@ public class TestFullResourcePath {
     .goUpFilterValidator()
     .root().goParameter(1).isTypedLiteral(PropertyProvider.nameGuid);
   }
-
   @Test
   public void testHas() throws ExpressionVisitException, ODataApplicationException, UriParserException {
 
@@ -4976,7 +4894,6 @@ public class TestFullResourcePath {
     testFilter.runUriEx("ESMixEnumDefCollComp", "$filter=PropertyEnumString has olingo.odata.test1.Wrong'String1'")
         .isExSemantic(MessageKeys.UNKNOWN_TYPE);
   }
-
   @Test
   public void filterOnCountAndRef() throws Exception {
     testUri.run("ESKeyNav/$count", "$filter=PropertyInt16 ge 0")
@@ -4990,7 +4907,6 @@ public class TestFullResourcePath {
         .left().goPath().first().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false)
         .goUpFilterValidator().root().right().isLiteral("0");
   }
-  
   @Test
   public void testOrderby() throws UriParserException, UnsupportedEncodingException {
 
@@ -5331,7 +5247,6 @@ public class TestFullResourcePath {
     testFilter.runOrderByOnETTwoKeyNavEx("PropertyComp/undefined")
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
   }
-
   @Test
   @Ignore("$search currently not implemented")
   public void testSearch() throws Exception {
@@ -5368,7 +5283,6 @@ public class TestFullResourcePath {
     testUri.run("ESTwoKeyNav", "$search=  abc AND (def    OR  ghi)");
     testUri.run("ESTwoKeyNav", "$search=  abc AND (def        ghi)");
   }
-
   @Test
   public void testErrors() {
     testUri.runEx("FICRTString(wrong1='ABC')/olingo.odata.test1.BFCStringRTESTwoKeyNav()")
@@ -5431,7 +5345,6 @@ public class TestFullResourcePath {
     testUri.runEx("ESTwoKeyNav/olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav/$count")
         .isExValidation(UriValidationException.MessageKeys.UNALLOWED_KIND_BEFORE_COUNT);
   }
-
   @Test
   public void testAlias() throws Exception {
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString=@A)", "@A='2'").goPath()
@@ -5441,31 +5354,26 @@ public class TestFullResourcePath {
     .goUpUriValidator()
     .isCustomParameter(0, "@A", "'2'");
   }
-
   @Test
   public void doublePercentDecoding() throws Exception {
     testUri.runEx("ESAllPrim%252832767%29").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
-
   @Test
   public void multipleKeysInResourcePath() throws Exception {
     // See OLINGO-730
     testUri.runEx("ESAllPrim(32767)(1)(2)").isExSemantic(MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES);
   }
-
   @Test
   public void simpleKeyInExpandSystemQueryOption() throws Exception {
     testUri.runEx("ESAllPrim(0)", "$expand=NavPropertyETTwoPrimMany(-365)($filter=PropertyString eq 'Test String1')")
         .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
   }
-
   @Test
   public void compoundKeyInExpandSystemQueryOption() throws Exception {
     testUri.runEx("ESAllPrim(0)", "$expand=NavPropertyETTwoPrimMany(PropertyInt16=1,PropertyString=2)"
         + "($filter=PropertyString eq 'Test String1')")
         .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
   }
-
   @Test
   public void keyPredicatesInExpandFilter() throws Exception {
     testUri.run("ESKeyNav(0)", "$expand=NavPropertyETTwoKeyNavMany($filter=NavPropertyETTwoKeyNavMany" 
@@ -5474,7 +5382,6 @@ public class TestFullResourcePath {
         .goUpExpandValidator()
         .isFilterSerialized("<<NavPropertyETTwoKeyNavMany/PropertyInt16> eq <1>>");
   }
-
   @Test
   public void KeyPredicatesInDoubleExpandedFilter() throws Exception {
     testUri.run("ESKeyNav(0)", "$expand=NavPropertyETTwoKeyNavMany($expand=NavPropertyETTwoKeyNavMany" 
@@ -5486,19 +5393,16 @@ public class TestFullResourcePath {
         .goUpExpandValidator()
         .isFilterSerialized("<<NavPropertyETTwoKeyNavMany/PropertyInt16> eq <1>>");
   }
-
   @Test
   public void filterSystemQueryOptionAnyWithKeyAny() throws Exception {
     testUri.runEx("ESAllPrim", "$filter=NavPropertyETTwoPrimMany(1)/any(d:d/PropertyInt16 eq 0)")
         .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
   }
-
   @Test
   public void filterSystemQueryOptionAnyWithKeyAll() throws Exception {
     testUri.runEx("ESAllPrim", "$filter=NavPropertyETTwoPrimMany(1)/all(d:d/PropertyInt16 eq 0)")
         .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
   }
-
   @Test
   public void navigationPropertyWithCount() throws Exception {
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany/$count")
@@ -5506,14 +5410,12 @@ public class TestFullResourcePath {
            .at(1).isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
            .at(2).isCount();
   }
-
   @Test
   public void navigationWithMoreThanOneKey() throws Exception {
     testUri.runEx("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt=1,PropertyString='2')" 
         + "(PropertyInt=1,PropertyString='2')")
         .isExSemantic(MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES);
   }
-  
   @Test
   public void startElementsInsteadOfNavigationProperties() {
     testUri.runEx("ESAllPrim(0)/ESAllPrim(0)/ESAllPrim(0)").isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
@@ -5533,13 +5435,11 @@ public class TestFullResourcePath {
     testUri.runEx("AIRTESAllPrimParam/FICRTString()").isExSemantic(MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
     testUri.runEx("AIRTESAllPrimParam/AIRTString").isExSemantic(MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
   }
-  
   @Test
   public void invalidTypeCast() {
     testUri.runEx("ESAllPrim/namespace.Invalid").isExSemantic(MessageKeys.UNKNOWN_TYPE);
     testUri.runEx("ESAllPrim(0)/namespace.Invalid").isExSemantic(MessageKeys.UNKNOWN_TYPE);
   }
-  
   @Test
   public void testFirstResourcePathWithNamespace() {
     testUri.runEx("olingo.odata.test1.ESAllPrim").isExSemantic(MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT);
@@ -5548,7 +5448,6 @@ public class TestFullResourcePath {
     testUri.runEx("olingo.odata.test1.AIRTString").isExSemantic(MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT);
     testUri.runEx("olingo.odata.test1.SINav").isExSemantic(MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT);
   }
-  
   @Test
   public void navPropertySameNameAsEntitySet() throws Exception {
     final String namespace = "namespace";
@@ -5588,7 +5487,6 @@ public class TestFullResourcePath {
         .at(2).isKeyPredicate(0, keyPropertyName, "3")
         .at(3).isNavProperty(entitySetName, nameETNavProp, true);
   }
-
   @Test
   public void filterLiteralTypes() throws Exception {
     testUri.run("ESAllPrim", "$filter='1' eq 42")
@@ -5675,7 +5573,9 @@ public class TestFullResourcePath {
       .right().isLiteral(Long.toString(Long.MAX_VALUE))
       .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int64));
   }
-  
+  public static String encode(final String decoded) {
+    return decoded.replaceAll(":", "%3A");
+  }
   @Test
   public void parameterAliasLiteralValidation() throws Exception {
     testUri.run("ESAllPrim(PropertyInt16=@p1)", "@p1=1");
@@ -5685,7 +5585,6 @@ public class TestFullResourcePath {
     testUri.runEx("ESAllPrim(PropertyInt16=@p1)", "@p1='ewe")
       .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
-  
   @Test
   public void functionsWithComplexParameters() throws Exception {
     testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTStringParam" 
@@ -5753,7 +5652,6 @@ public class TestFullResourcePath {
     testUri.runEx("ESAllPrim", "$filter=FINRTInt16() eq 0")
       .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_IMPORT_NOT_ALLOWED);
   }
-  
   @Test
   @Ignore("Key predicates in filter/orderby expression are not validated currently")
   public void testKeyPredicatesInExpressions() throws Exception {
@@ -5761,9 +5659,5 @@ public class TestFullResourcePath {
           + "/PropertyInt16 eq 1");
     testUri.runEx("ESTwoKeyNav", "$filter=NavPropertyETTwoKeyNavMany(Prop='22',P=2)/PropertyInt16 eq 0")
       .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
-  }
-  
-  public static String encode(final String decoded) throws UnsupportedEncodingException {
-    return Encoder.encode(decoded);
   }
 }

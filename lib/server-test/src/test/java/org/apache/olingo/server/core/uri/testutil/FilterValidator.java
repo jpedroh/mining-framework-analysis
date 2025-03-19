@@ -31,7 +31,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoKind;
-import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.server.api.uri.queryoption.expression.Binary;
@@ -44,13 +43,12 @@ import org.apache.olingo.server.api.uri.queryoption.expression.Member;
 import org.apache.olingo.server.api.uri.queryoption.expression.Method;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.TypeLiteral;
+import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.core.uri.UriResourceFunctionImpl;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
-import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
-import org.apache.olingo.server.core.uri.queryoption.expression.MethodImpl;
 
 public class FilterValidator implements TestValidator {
   private Edm edm;
@@ -385,8 +383,8 @@ public class FilterValidator implements TestValidator {
   public FilterValidator isParameterText(final int parameterIndex, final String parameterText)
       throws ExpressionVisitException, ODataApplicationException {
 
-    if (curExpression instanceof MethodImpl) {
-      MethodImpl methodCall = (MethodImpl) curExpression;
+    if (curExpression instanceof Method) {
+      Method methodCall = (Method) curExpression;
 
       Expression parameter = methodCall.getParameters().get(parameterIndex);
       String actualParameterText = FilterTreeToText.Serialize(parameter);

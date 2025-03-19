@@ -2016,9 +2016,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       } else {
         typeKind = EdmPrimitiveTypeKind.Int64;
       }
-    } catch (NumberFormatException e) {
-      return new LiteralImpl().setText(ctx.getText())
-          .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal));
+    } catch (final NumberFormatException e) {
+      typeKind = EdmPrimitiveTypeKind.Decimal;
     }
     return new LiteralImpl().setText(ctx.getText())
         .setType(EdmPrimitiveTypeFactory.getInstance(typeKind));
@@ -2143,7 +2142,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   @Override
   public Object visitSelectEOF(final SelectEOFContext ctx) {
     context.contextReadingQueryPart = true;
-    List<SelectItemImpl> selectItems = new ArrayList<SelectItemImpl>();
+    List<SelectItem> selectItems = new ArrayList<SelectItem>();
     for (SelectItemContext si : ctx.vlSI) {
       selectItems.add((SelectItem) si.accept(this));
     }
