@@ -90,6 +90,7 @@ public abstract class Routing implements Copyable<Routing> {
      * @param l     the link to check
      * @return  null if *not* crossed, true for DownLink, false for UpLink
      */
+
     abstract public Boolean getLinkDirection(Node n1, Node n2, Link l);
 
     /**

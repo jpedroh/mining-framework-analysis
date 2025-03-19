@@ -28,6 +28,7 @@ import org.btrplace.scheduler.choco.ReconfigurationProblem;
 import org.btrplace.scheduler.choco.SliceUtils;
 import org.btrplace.scheduler.choco.constraint.mttr.MovementGraph;
 import org.btrplace.scheduler.choco.constraint.mttr.MyInputOrder;
+import org.btrplace.scheduler.choco.transition.NodeTransition;
 import org.btrplace.scheduler.choco.constraint.mttr.OnStableNodeFirst;
 import org.btrplace.scheduler.choco.constraint.mttr.StartOnLeafNodes;
 import org.btrplace.scheduler.choco.transition.*;
@@ -131,7 +132,7 @@ public class CMinMTTRMig implements org.btrplace.scheduler.choco.constraint.CObj
         // Migrate VMs
         ///SCHEDULING PROBLEM
         MovementGraph gr = new MovementGraph(rp);
-        OnStableNodeFirst schedHeuristic = new OnStableNodeFirst(rp);
+        OnStableNodeFirst schedHeuristic = new OnStableNodeFirst(rp, this);
         strategies.add(new IntStrategy(SliceUtils.extractStarts(TransitionUtils.getDSlices(rp.getVMActions())), new StartOnLeafNodes(rp, gr), new IntDomainMin()));
         strategies.add(new IntStrategy(schedHeuristic.getScope(), schedHeuristic, new IntDomainMin()));
 
@@ -164,6 +165,9 @@ public class CMinMTTRMig implements org.btrplace.scheduler.choco.constraint.CObj
                     endVars.toArray(new IntVar[endVars.size()])
             ));
         }
+
+        //strategies.add(ISF.minDom_LB(TransitionUtils.getEnds(rp.getVMActions())));
+        //strategies.add(ISF.minDom_LB(TransitionUtils.getEnds(rp.getNodeActions())));
 
         /* Symmetric decommissioning heuristic
         for (Node n : rp.getNodes()) {
@@ -200,7 +204,143 @@ public class CMinMTTRMig implements org.btrplace.scheduler.choco.constraint.CObj
                 ));
                 //strategies.add(ISF.minDom_LB(endVars.toArray(new IntVar[endVars.size()])));
             }
+        }
+
+        // Per decommissioning per link
+        /*endVars.clear();
+        CNetworkView cnv = (CNetworkView) rp.getView(CNetworkView.VIEW_ID);
+        if (cnv == null) {
+            throw new SchedulerException(rp.getSourceModel(), "Solver View '" + CNetworkView.VIEW_ID +
+                    "' is required but missing");
+        }
+        List<List<MigrateVMTransition>> tasksPerLink = cnv.getMigrationsPerLink();
+        if (!tasksPerLink.isEmpty()) {
+            Collections.sort(tasksPerLink, (tasks, tasks2) -> tasks2.size() - tasks.size());
+            for (List<MigrateVMTransition> migrations : tasksPerLink) {
+                if (!migrations.isEmpty()) {
+                    endVars.clear();
+
+                    for (MigrateVMTransition m : migrations) {
+                        endVars.add(m.getEnd());
+
+                        Node src = map.getVMLocation(m.getVM());
+                        Node dst = rp.getNode(m.getDSlice().getHoster().getValue());
+
+                    }
+                    strategies.add(ISF.custom(
+                            ISF.minDomainSize_var_selector(),
+                            ISF.mid_value_selector(),//.max_value_selector(),
+                            ISF.split(), // Split from max
+                            endVars.toArray(new IntVar[endVars.size()])
+                    ));
+                }
+            }
         }*/
+
+        /* End vars for all Nodes actions
+        endVars.clear();
+        for (NodeTransition a : rp.getNodeActions()) {
+            endVars.add(a.getEnd());
+        }
+        if (!endVars.isEmpty()) {
+            strategies.add(ISF.custom(
+                    ISF.maxDomainSize_var_selector(),
+                    ISF.mid_value_selector(),//.max_value_selector(),
+                    ISF.split(), // Split from max
+                    endVars.toArray(new IntVar[endVars.size()])
+            ));
+        }*/
+
+        /* End vars for all Nodes shutdown actions
+        endVars.clear();
+        for (NodeTransition a : rp.getNodeActions()) {
+            if (a instanceof ShutdownableNode) {
+                endVars.add(a.getHostingEnd());
+            }
+        }
+        if (!endVars.isEmpty()) {
+            /*strategies.add(ISF.custom(
+                    ISF.maxDomainSize_var_selector(),
+                    ISF.mid_value_selector(),//.max_value_selector(),
+                    ISF.split(), // Split from max
+                    endVars.toArray(new IntVar[endVars.size()])
+            ));*//*
+            strategies.add(ISF.maxDom_Split(endVars.toArray(new IntVar[endVars.size()])));
+        }*/
+
+        /* End vars for all Nodes boot actions
+        endVars.clear();
+        for (NodeTransition a : rp.getNodeActions()) {
+            if (a instanceof BootableNode) {
+                endVars.add(a.getHostingStart());
+            }
+        }
+        if (!endVars.isEmpty()) {
+            /*strategies.add(ISF.custom(
+                    ISF.maxDomainSize_var_selector(),
+                    ISF.mid_value_selector(),//.max_value_selector(),
+                    ISF.split(), // Split from max
+                    endVars.toArray(new IntVar[endVars.size()])
+            ));*//*
+            strategies.add(ISF.maxDom_Split(endVars.toArray(new IntVar[endVars.size()])));
+        }*/
+
+        // End vars for all VMs actions
+        /*endVars.clear();
+        for (VMTransition a : rp.getVMActions()) {
+            endVars.add(a.getEnd());
+        }
+        if (!endVars.isEmpty()) {
+            /*strategies.add(ISF.custom(
+                    ISF.maxDomainSize_var_selector(),
+                    ISF.mid_value_selector(),//.max_value_selector(),
+                    ISF.split(), // Split from max
+                    endVars.toArray(new IntVar[endVars.size()])
+            ));*//*
+            strategies.add(ISF.maxDom_Split(endVars.toArray(new IntVar[endVars.size()])));
+        }*/
+
+        /* End vars for all actions
+        endVars.clear();
+        for (Transition m : rp.getVMActions()) { endVars.add(m.getEnd()); }
+        for (Transition m : rp.getNodeActions()) { endVars.add(m.getEnd()); }
+        endVars.add(rp.getEnd());
+        strategies.add(ISF.custom(
+                ISF.minDomainSize_var_selector(),
+                ISF.mid_value_selector(),//.max_value_selector(),
+                ISF.split(), // Split from max
+                endVars.toArray(new IntVar[endVars.size()])
+        ));*/
+        //strategies.add(ISF.maxDom_Split(endVars.toArray(new IntVar[endVars.size()])));
+
+
+        /* End vars for all VMs actions PER NODE
+        for (Node n : rp.getNodes()) {
+            endVars.clear();
+            for (VMTransition a : rp.getVMActions()) {
+                if (rp.getNode(n) == (a.getCSlice().getHoster().getValue())) {
+                    endVars.add(a.getEnd());
+                }
+            }
+            if (!endVars.isEmpty()) {
+                //endVars.add(rp.getNodeAction(n).getHostingEnd());
+                strategies.add(ISF.custom(
+                        ISF.minDomainSize_var_selector(),
+                        ISF.mid_value_selector(),//.max_value_selector(),
+                        ISF.split(), // Split from max
+                        endVars.toArray(new IntVar[endVars.size()])
+                ));
+            }
+        }*/
+
+        /* Add strategy for the cost constraint
+        strategies.add(ISF.custom(
+                ISF.minDomainSize_var_selector(),
+                ISF.mid_value_selector(), //.max_value_selector(),
+                ISF.split(), // Split from max
+                new IntVar[]{rp.getEnd()}
+        ));*/
+
 
         // Set the strategies in the correct order (as added before)
         strategies.add(new IntStrategy(new IntVar[]{rp.getEnd(), cost}, new MyInputOrder<>(rp.getSolver(), this), new IntDomainMin()));

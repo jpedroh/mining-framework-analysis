@@ -60,6 +60,14 @@ public class CNetwork implements ChocoView {
     private Network net;
     private Solver solver;
     private Model source;
+<<<<<<< /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/view/CNetwork.java/left.java
+    private List<Task> tasksList;
+    private List<IntVar> heightsList;
+||||||| /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/view/CNetwork.java/base.java
+    List<Task> tasksList;
+    List<IntVar> heightsList;
+=======
+>>>>>>> /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/view/CNetwork.java/right.java
 
     /**
      * Make a new network view.
@@ -199,7 +207,10 @@ public class CNetwork implements ChocoView {
                 return false;
             }
         }
-
+<<<<<<< /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/view/CNetwork.java/left.java
+||||||| /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/view/CNetwork.java/base.java
+=======
+>>>>>>> /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/view/CNetwork.java/right.java
         // Links limitation
         List<Task> tasksListUp = new ArrayList<>(), tasksListDown = new ArrayList<>();
         List<IntVar> heightsListUp = new ArrayList<>(), heightsListDown = new ArrayList<>();
@@ -215,32 +226,83 @@ public class CNetwork implements ChocoView {
                     Node dst = rp.getNode(a.getDSlice().getHoster().getValue());
                     List<Link> path = net.getRouting().getPath(src, dst);
 
-                    // Check first if the link is on migration path
+<<<<<<< /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/view/CNetwork.java/left.java
+                    // If the link is on migration path
                     if (path.contains(l)) {
-                        // Get link direction
-                        Boolean upDown = net.getRouting().getLinkDirection(src, dst, l);
-                        // UpLink
-                        if (upDown) {
-                            //tasksListUp.add(new Task(a.getStart(), a.getDuration(), a.getEnd()));
-                            tasksListUp.add(((RelocatableVM) a).getMigrationTask());
-                            heightsListUp.add(((RelocatableVM) a).getBandwidth());
+                        tasksList.add(new Task(a.getStart(), a.getDuration(), a.getEnd()));
+                        heightsList.add(((RelocatableVM) a).getBandwidth());
+||||||| /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/view/CNetwork.java/base.java
+                            Node src = source.getMapping().getVMLocation(vm);
+                            Node dst = rp.getNode(a.getDSlice().getHoster().getValue());
+                            List<Link> path = net.getRouting().getPath(src, dst);
+
+                            // If the link is on migration path
+                            if (path.contains(l)) {
+                                tasksList.add(new Task(a.getStart(), a.getDuration(), a.getEnd()));
+                                heightsList.add(((RelocatableVM) a).getBandwidth());
+                            }
                         }
-                        // DownLink
-                        else {
-                            //tasksListDown.add(new Task(a.getStart(), a.getDuration(), a.getEnd()));
-                            tasksListDown.add(((RelocatableVM) a).getMigrationTask());
-                            heightsListDown.add(((RelocatableVM) a).getBandwidth());
+=======
+                            Node src = source.getMapping().getVMLocation(vm);
+                            Node dst = rp.getNode(a.getDSlice().getHoster().getValue());
+                            List<Link> path = net.getRouting().getPath(src, dst);
+
+                            // Check first if the link is on migration path
+                            if (path.contains(l)) {
+                                // Get link direction
+                                Boolean upDown = net.getRouting().getLinkDirection(src, dst, l);
+                                // UpLink
+                                if (upDown) {
+                                    //tasksListUp.add(new Task(a.getStart(), a.getDuration(), a.getEnd()));
+                                    tasksListUp.add(((RelocatableVM) a).getMigrationTask());
+                                    heightsListUp.add(((RelocatableVM) a).getBandwidth());
+                                }
+                                // DownLink
+                                else {
+                                    //tasksListDown.add(new Task(a.getStart(), a.getDuration(), a.getEnd()));
+                                    tasksListDown.add(((RelocatableVM) a).getMigrationTask());
+                                    heightsListDown.add(((RelocatableVM) a).getBandwidth());
+                                }
+                            }
                         }
+>>>>>>> /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/view/CNetwork.java/right.java
                     }
                 }
             }
+<<<<<<< /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/view/CNetwork.java/left.java
+            if (!tasksList.isEmpty()) {
+
+                // Post the cumulative constraint for the current link
+                solver.post(ICF.cumulative(
+                        tasksList.toArray(new Task[tasksList.size()]),
+                        heightsList.toArray(new IntVar[heightsList.size()]),
+||||||| /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/view/CNetwork.java/base.java
+            if (!tasksList.isEmpty()) {
+                
+                // Post the cumulative constraint for the current link
+                solver.post(ICF.cumulative(
+                        tasksList.toArray(new Task[tasksList.size()]),
+                        heightsList.toArray(new IntVar[heightsList.size()]),
+=======
             if (!tasksListUp.isEmpty()) {
 
                 // Post the cumulative constraint for the current UpLink
                 /*solver.post(new Cumulative(
                         tasksListUp.toArray(new Task[tasksListUp.size()]),
                         heightsListUp.toArray(new IntVar[heightsListUp.size()]),
+>>>>>>> /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/view/CNetwork.java/right.java
                         VF.fixed(l.getCapacity(), solver),
+<<<<<<< /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/view/CNetwork.java/left.java
+                        true
+||||||| /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/view/CNetwork.java/base.java
+                        true
+                        /* Try to tune the filters to improve the constraint efficiency
+                        Cumulative.Filter.TIME,
+                        //Cumulative.Filter.SWEEP,
+                        //Cumulative.Filter.SWEEP_HEI_SORT,
+                        Cumulative.Filter.NRJ,
+                        Cumulative.Filter.HEIGHTS*/
+=======
                         true,
                         // Try to tune the filters to improve the constraint efficiency
                         Cumulative.Filter.TIME,
@@ -254,6 +316,7 @@ public class CNetwork implements ChocoView {
                         heightsListUp.toArray(new IntVar[heightsListUp.size()]),
                         VF.fixed(l.getCapacity(), solver),
                         true
+>>>>>>> /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/view/CNetwork.java/right.java
                 ));
 
                 tasksListUp.clear();

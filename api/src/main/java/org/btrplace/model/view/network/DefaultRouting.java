@@ -22,7 +22,6 @@ import org.btrplace.model.Node;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -36,55 +35,6 @@ import java.util.List;
  * @see #setNetwork(Network)
  */
 public class DefaultRouting extends Routing {
-
-    /**
-     * Make a new default routing
-     */
-    public DefaultRouting() {}
-
-    /**
-     * Recursive method to get the first physical path found from a switch to a destination node
-     *
-     * @param   currentPath the current or initial path containing the link(s) crossed
-     * @param   sw the current switch to browse
-     * @param   dst the destination node to reach
-     * @return  the ordered list of links that make the path to dst
-     */
-    private LinkedHashMap<Link, Boolean> getFirstPhysicalPath(LinkedHashMap<Link, Boolean> currentPath, Switch sw, Node dst) {
-
-        // Iterate through the current switch's links
-        for (Link l : net.getConnectedLinks(sw)) {
-            // Wrong link
-            if (currentPath.keySet().contains(l)) continue;
-            // Go through the link and track the direction for full-duplex purpose
-            if (l.getSwitch().equals(sw)) {
-                // From switch to element => false : DownLink
-                currentPath.put(l, false);
-            }
-            else {
-                // From element to switch => true : UpLink
-                currentPath.put(l, true);
-            }
-
-            // Check what is after
-            if (l.getElement() instanceof Node) {
-                // Node found, path complete
-                if (l.getElement().equals(dst)) return currentPath;
-            }
-            else {
-                // Go to the next switch
-                LinkedHashMap<Link, Boolean>  recall = getFirstPhysicalPath(
-                        currentPath, l.getSwitch().equals(sw) ? (Switch) l.getElement() : l.getSwitch(), dst);
-                // Return the complete path if found
-                if (!recall.isEmpty()) return recall;
-            }
-            // Wrong link, go back
-            //currentPath.remove(new ArrayList<>(currentPath.keySet()).get(currentPath.size()-1));//Use list to keep order
-            currentPath.remove(l);
-        }
-        // No path found through this switch
-        return new LinkedHashMap<>();
-    }
 
     @Override
     public List<Link> getPath(Node n1, Node n2) {
@@ -104,7 +54,13 @@ public class DefaultRouting extends Routing {
             // Get the first physical path found between the two nodes
             LinkedHashMap<Link, Boolean> initialPath = new LinkedHashMap<Link, Boolean>();
             // From element to switch => true : UpLink
+<<<<<<< /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/api/src/main/java/org/btrplace/model/view/network/DefaultRouting.java/left.java
+            Collections.singletonList(net.getConnectedLinks(n1).get(0), true);
+||||||| /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/api/src/main/java/org/btrplace/model/view/network/DefaultRouting.java/base.java
+            Arrays.asList(net.getConnectedLinks(n1).get(0), true);
+=======
             initialPath.put(net.getConnectedLinks(n1).get(0), true);
+>>>>>>> /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/api/src/main/java/org/btrplace/model/view/network/DefaultRouting.java/right.java
             routingCache[n1.id()][n2.id()] =
                     getFirstPhysicalPath(
                             initialPath, // Only one link per node
@@ -115,7 +71,6 @@ public class DefaultRouting extends Routing {
 
         return new ArrayList<Link>(routingCache[n1.id()][n2.id()].keySet());
     }
-
     @Override
     public Boolean getLinkDirection(Node n1, Node n2, Link l) {
 
