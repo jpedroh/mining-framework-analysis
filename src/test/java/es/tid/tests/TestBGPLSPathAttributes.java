@@ -7,6 +7,18 @@ import es.tid.bgp.bgp4.update.fields.pathAttributes.BGP_LS_MP_Reach_Attribute;
 import es.tid.bgp.bgp4.update.fields.pathAttributes.Generic_MP_Unreach_Attribute;
 import es.tid.bgp.bgp4.update.fields.pathAttributes.MP_Unreach_Attribute;
 import es.tid.bgp.bgp4.update.tlv.LocalNodeDescriptorsTLV;
+import es.tid.protocol.commons.ByteHandler;
+import junit.framework.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized.Parameters;
+
+import java.lang.reflect.Constructor;
+import java.net.Inet4Address;
+import java.util.Arrays;
+import java.util.Collection;
+
+import static org.junit.Assert.assertTrue;
 import es.tid.bgp.bgp4.update.tlv.RemoteNodeDescriptorsTLV;
 import es.tid.bgp.bgp4.update.tlv.node_link_prefix_descriptor_subTLVs.IPv4InterfaceAddressLinkDescriptorsSubTLV;
 import es.tid.bgp.bgp4.update.tlv.node_link_prefix_descriptor_subTLVs.IPv4NeighborAddressLinkDescriptorSubTLV;
@@ -21,18 +33,6 @@ import es.tid.bgp.bgp4.update.tlv.node_link_prefix_descriptor_subTLVs.Undirectio
 import es.tid.bgp.bgp4.update.tlv.node_link_prefix_descriptor_subTLVs.UndirectionalLinkLossDescriptorSubTLV;
 import es.tid.bgp.bgp4.update.tlv.node_link_prefix_descriptor_subTLVs.UndirectionalResidualBandwidthDescriptorSubTLV;
 import es.tid.bgp.bgp4.update.tlv.node_link_prefix_descriptor_subTLVs.UndirectionalUtilizedBandwidthDescriptorSubTLV;
-import es.tid.protocol.commons.ByteHandler;
-import junit.framework.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized.Parameters;
-
-import java.lang.reflect.Constructor;
-import java.net.Inet4Address;
-import java.util.Arrays;
-import java.util.Collection;
-
-import static org.junit.Assert.assertTrue;
 
 @RunWith(org.junit.runners.Parameterized.class)
 public class TestBGPLSPathAttributes {
