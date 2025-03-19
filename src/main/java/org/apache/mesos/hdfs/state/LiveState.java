@@ -1,20 +1,20 @@
 package org.apache.mesos.hdfs.state;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 import com.google.inject.Singleton;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.mesos.Protos;
 import org.apache.mesos.hdfs.util.HDFSConstants;
-
 import java.sql.Timestamp;
 import java.util.*;
 
-@Singleton
-public class LiveState {
+@Singleton public class LiveState {
   private Set<Protos.TaskInfo> stagingTasks = new HashSet<>();
+
   private AcquisitionPhase currentAcquisitionPhase = AcquisitionPhase.RECONCILING_TASKS;
+
   private LinkedHashMap<Protos.TaskID, Protos.TaskStatus> runningTasks = new LinkedHashMap<>();
+
   private Timestamp ReconciliationTimestamp;
 
   public boolean reconciliationComplete() {
@@ -22,7 +22,7 @@ public class LiveState {
   }
 
   public void updateReconciliationTimestamp() {
-    Date date = DateUtils.addSeconds(new Date(), 30); //TODO(nicgrayson) add config for this value
+    Date date = DateUtils.addSeconds(new Date(), 30);
     ReconciliationTimestamp = new Timestamp(date.getTime());
   }
 
@@ -36,7 +36,7 @@ public class LiveState {
 
   public void removeStagingTask(final Protos.TaskID taskID) {
     Set<Protos.TaskInfo> toRemove = new HashSet<>();
-    for (Protos.TaskInfo taskInfo : stagingTasks ) {
+    for (Protos.TaskInfo taskInfo : stagingTasks) {
       if (taskInfo.getTaskId().equals(taskID)) {
         toRemove.add(taskInfo);
       }
@@ -126,8 +126,7 @@ public class LiveState {
 
   private int countOfRunningTasksWith(final String nodeId) {
     return Sets.filter(runningTasks.keySet(), new Predicate<Protos.TaskID>() {
-      @Override
-      public boolean apply(Protos.TaskID taskID) {
+      @Override public boolean apply(Protos.TaskID taskID) {
         return taskID.getValue().contains(nodeId);
       }
     }).size();
