@@ -111,8 +111,14 @@ public class MultiGetActionHandlerTest extends AbstractTest {
         Assertions.assertThat(errors.get(0).getIndex()).isEqualTo(THE_INDEX);
         Assertions.assertThat(errors.get(0).getType()).isEqualTo(THE_TYPE);
         Assertions.assertThat(errors.get(0).getId()).isEqualTo(THE_ID);
+<<<<<<< /usr/src/app/output/obourgain/elasticsearch-http/37df8773d873cc3155de5231165beff1a7564b99/src/test/java/com/github/obourgain/elasticsearch/http/handler/document/MultiGetActionHandlerTest.java/left.java
+        Assertions.assertThat(errors.get(0).getError()).contains("VersionConflictEngineException").contains("version conflict, current [2], provided [1]]");
+||||||| /usr/src/app/output/obourgain/elasticsearch-http/37df8773d873cc3155de5231165beff1a7564b99/src/test/java/com/github/obourgain/elasticsearch/http/handler/document/MultiGetActionHandlerTest.java/base.java
+        Assertions.assertThat(errors.get(0).getError()).isEqualTo("VersionConflictEngineException[[the_index][2] [the_type][the_id]: version conflict, current [2], provided [1]]");
+=======
         Assertions.assertThat(errors.get(0).getError()).contains("VersionConflictEngineException[[the_index]") // skip the shard number
                 .contains("[the_type][the_id]: version conflict, current [2], provided [1]]");
+>>>>>>> /usr/src/app/output/obourgain/elasticsearch-http/37df8773d873cc3155de5231165beff1a7564b99/src/test/java/com/github/obourgain/elasticsearch/http/handler/document/MultiGetActionHandlerTest.java/right.java
     }
 
 }
