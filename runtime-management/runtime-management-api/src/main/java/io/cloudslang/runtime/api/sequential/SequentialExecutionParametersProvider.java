@@ -22,6 +22,7 @@ import java.util.Map;
 
 public interface SequentialExecutionParametersProvider {
     Map<String, Pair<Serializable, Boolean>> getExecutionParameters();
+    Object [] getCurrentContext();
 
     boolean getExternal();
 }
