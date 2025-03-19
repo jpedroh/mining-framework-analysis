@@ -2001,9 +2001,15 @@ public class StdEntropyDecoder extends EntropyDecoder
         sscanw = cblk.w+2;
         jstep = sscanw*STRIPE_HEIGHT/2-cblk.w;
         kstep = dscanw*STRIPE_HEIGHT-cblk.w;
+<<<<<<< /usr/src/app/output/jai-imageio/jai-imageio-jpeg2000/96f3e9ffc1450a7b27819ca751a462e1048517d4/src/main/java/jj2000/j2k/entropy/decoder/StdEntropyDecoder.java/left.java
         int one = 1 << bp;      // To avoid overflow when bp >= 30 (confirmed case)
         int half = one >> 1;
         setmask = one | half;
+||||||| /usr/src/app/output/jai-imageio/jai-imageio-jpeg2000/96f3e9ffc1450a7b27819ca751a462e1048517d4/src/main/java/jj2000/j2k/entropy/decoder/StdEntropyDecoder.java/base.java
+        setmask = (3<<bp)>>1;
+=======
+        setmask = 3<<(bp-1);
+>>>>>>> /usr/src/app/output/jai-imageio/jai-imageio-jpeg2000/96f3e9ffc1450a7b27819ca751a462e1048517d4/src/main/java/jj2000/j2k/entropy/decoder/StdEntropyDecoder.java/right.java
         data = (int[]) cblk.getData();
         nstripes = (cblk.h+STRIPE_HEIGHT-1)/STRIPE_HEIGHT;
         causal = (options & OPT_VERT_STR_CAUSAL) != 0;
