@@ -1,7 +1,5 @@
 package org.graylog2.plugins.slack.callback;
 
-import com.google.common.collect.Lists;
-import org.graylog2.plugin.Message;
 import org.graylog2.plugin.MessageSummary;
 import org.graylog2.plugin.alarms.AlertCondition;
 import org.graylog2.plugin.alarms.callbacks.AlarmCallback;
@@ -14,8 +12,13 @@ import org.graylog2.plugin.streams.Stream;
 import org.graylog2.plugins.slack.SlackClient;
 import org.graylog2.plugins.slack.SlackMessage;
 import org.graylog2.plugins.slack.SlackPluginBase;
-
-import java.util.*;
+import java.util.Arrays;
+import com.google.common.collect.Lists;
+import org.graylog2.plugin.Message;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;

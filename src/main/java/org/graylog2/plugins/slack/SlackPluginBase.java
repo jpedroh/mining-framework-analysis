@@ -87,16 +87,20 @@ public class SlackPluginBase {
                 "URL to your Graylog web interface. Used to build links in alarm notification.",
                 ConfigurationField.Optional.OPTIONAL)
         );
-        configurationRequest.addField(new TextField(
-                CK_PROXY_ADDRESS, "Proxy", null,
-                "Please insert the proxy information in the follwoing format: <ProxyAddress>:<Port>",
-                ConfigurationField.Optional.OPTIONAL)
-        );
+<<<<<<< /usr/src/app/output/graylog2/graylog2-alarmcallback-slack/c9a4912adaef3596c44b1fb7f501dcdb96190977/src/main/java/org/graylog2/plugins/slack/SlackPluginBase.java/left.java
         configurationRequest.addField(new TextField(
                 CK_FIELDS, "Custom fields", null,
                 "Add fields into alert (field1, field2...)",
                 ConfigurationField.Optional.OPTIONAL)
         );
+||||||| /usr/src/app/output/graylog2/graylog2-alarmcallback-slack/c9a4912adaef3596c44b1fb7f501dcdb96190977/src/main/java/org/graylog2/plugins/slack/SlackPluginBase.java/base.java
+=======
+        configurationRequest.addField(new TextField(
+                CK_PROXY_ADDRESS, "Proxy", null,
+                "Please insert the proxy information in the follwoing format: <ProxyAddress>:<Port>",
+                ConfigurationField.Optional.OPTIONAL)
+        );
+>>>>>>> /usr/src/app/output/graylog2/graylog2-alarmcallback-slack/c9a4912adaef3596c44b1fb7f501dcdb96190977/src/main/java/org/graylog2/plugins/slack/SlackPluginBase.java/right.java
 
         return configurationRequest;
     }
