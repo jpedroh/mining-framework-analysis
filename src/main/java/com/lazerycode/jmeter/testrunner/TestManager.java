@@ -54,7 +54,7 @@ public class TestManager extends JMeterMojo {
 		List<String> tests = generateTestList();
 		List<String> results = new ArrayList<String>();
 		for (String file : tests) {
-			if (remoteServerConfiguration != null) {
+			if(remoteServerConfiguration != null) {
 				if ((remoteServerConfiguration.isStartServersBeforeTests() && tests.get(0).equals(file)) || remoteServerConfiguration.isStartAndStopServersForEachTest()) {
 					thisTestArgs.setRemoteStart();
 					thisTestArgs.setRemoteStartServerList(remoteServerConfiguration.getServerList());
@@ -85,7 +85,7 @@ public class TestManager extends JMeterMojo {
 		testArgs.setTestFile(test);
 		//Delete results file if it already exists
 		new File(testArgs.getResultsLogFileName()).delete();
-		List<String> argumentsArray = testArgs.buildArgumentsArray();
+		List<String> argumentsArray = testArgs.buildArgumentsArray(); 
 		argumentsArray.addAll(buildRemoteArgs(remoteServerConfiguration));
 		getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(argumentsArray));
 		getLog().info("Executing test: " + test.getName());
@@ -118,13 +118,13 @@ public class TestManager extends JMeterMojo {
 		return testArgs.getResultsLogFileName();
 	}
 
-	private List<String> buildRemoteArgs(RemoteConfiguration remoteConfig) {
-		if (remoteConfig == null) {
-			return Collections.emptyList();
-		}
-		return new RemoteArgumentsArrayBuilder().buildRemoteArgumentsArray(remoteConfig.getMasterPropertiesMap());
+	private List<String> buildRemoteArgs(RemoteConfiguration remoteConfig){
+		 if(remoteConfig == null){
+			 return Collections.emptyList();
+		 }
+		 return new RemoteArgumentsArrayBuilder().buildRemoteArgumentsArray(remoteConfig.getMasterPropertiesMap()); 
 	}
-
+	
 	/**
 	 * Scan Project directories for JMeter Test Files according to includes and excludes
 	 *
