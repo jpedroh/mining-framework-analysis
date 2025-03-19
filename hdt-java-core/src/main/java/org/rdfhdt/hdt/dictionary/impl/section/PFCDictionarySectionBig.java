@@ -38,11 +38,13 @@ import java.io.OutputStream;
 import java.util.Iterator;
 
 import org.rdfhdt.hdt.compact.integer.VByte;
-import org.rdfhdt.hdt.compact.sequence.SequenceLog64Big;
+import org.rdfhdt.hdt.compact.sequence.SequenceLog64;
+import org.rdfhdt.hdt.compact.sequence.SequenceLog64Jarray;
 import org.rdfhdt.hdt.dictionary.DictionarySectionPrivate;
 import org.rdfhdt.hdt.dictionary.TempDictionarySection;
 import org.rdfhdt.hdt.exceptions.CRCException;
 import org.rdfhdt.hdt.exceptions.IllegalFormatException;
+import org.rdfhdt.hdt.exceptions.NotImplementedException;
 import org.rdfhdt.hdt.listener.ProgressListener;
 import org.rdfhdt.hdt.options.HDTOptions;
 import org.rdfhdt.hdt.util.BitUtil;
@@ -73,7 +75,7 @@ public class PFCDictionarySectionBig implements DictionarySectionPrivate {
 	
 	byte [][] data;
 	long [] posFirst;
-	protected SequenceLog64Big blocks;
+	protected SequenceLog64Jarray blocks;
 	protected int blocksize;
 	protected int numstrings;
 	protected long size;
@@ -91,7 +93,7 @@ public class PFCDictionarySectionBig implements DictionarySectionPrivate {
 	 */
 	@Override
 	public void load(TempDictionarySection other, ProgressListener listener) {
-		this.blocks = new SequenceLog64Big(BitUtil.log2(other.size()), other.getNumberOfElements()/blocksize);
+		this.blocks = new SequenceLog64Jarray(BitUtil.log2(other.size()), other.getNumberOfElements()/blocksize);
 		System.out.println("numbits:"+BitUtil.log2(other.size()));
 		Iterator<? extends CharSequence> it = other.getSortedEntries();		
 		this.load((Iterator<CharSequence>)it, other.getNumberOfElements(), listener);
@@ -102,7 +104,7 @@ public class PFCDictionarySectionBig implements DictionarySectionPrivate {
 	
 	public void load(Iterator<CharSequence> it, long numentries, ProgressListener listener)  {		
 		
-		this.blocks = new SequenceLog64Big(64, numentries/blocksize);
+		this.blocks = new SequenceLog64Jarray(64, numentries/blocksize);
 		this.numstrings = 0;
 		
 		filecounter++;
@@ -462,7 +464,7 @@ public class PFCDictionarySectionBig implements DictionarySectionPrivate {
 		}
 		
 		// Load block pointers
-		blocks = new SequenceLog64Big();
+		blocks = new SequenceLog64Jarray();
 		blocks.load(input, listener);
 		
 		// Initialize global block array
