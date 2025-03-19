@@ -4,17 +4,28 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
+import javax.tools.*;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 /**
+<<<<<<< /usr/src/app/output/trung/inmemoryjavacompiler/6460eed46a2343e156dcb3a6f13b286a75f81667/src/main/java/org/mdkt/compiler/InMemoryJavaCompiler.java/left.java
  * Complile Java sources in-memory
+||||||| /usr/src/app/output/trung/inmemoryjavacompiler/6460eed46a2343e156dcb3a6f13b286a75f81667/src/main/java/org/mdkt/compiler/InMemoryJavaCompiler.java/base.java
+ * Created by trung on 5/3/15.
+=======
+ * Created by trung on 5/3/15.
+ * Changed by PKeidel on 13.10.15.
+>>>>>>> /usr/src/app/output/trung/inmemoryjavacompiler/6460eed46a2343e156dcb3a6f13b286a75f81667/src/main/java/org/mdkt/compiler/InMemoryJavaCompiler.java/right.java
  */
 public class InMemoryJavaCompiler {
 	private JavaCompiler javac;
 	private DynamicClassLoader classLoader;
 
+<<<<<<< /usr/src/app/output/trung/inmemoryjavacompiler/6460eed46a2343e156dcb3a6f13b286a75f81667/src/main/java/org/mdkt/compiler/InMemoryJavaCompiler.java/left.java
 	private Map<String, SourceCode> sourceCodes = new HashMap<String, SourceCode>();
 
 	public static InMemoryJavaCompiler newInstance() {
@@ -89,4 +100,40 @@ public class InMemoryJavaCompiler {
 		sourceCodes.put(className, new SourceCode(className, sourceCode));
 		return this;
 	}
+||||||| /usr/src/app/output/trung/inmemoryjavacompiler/6460eed46a2343e156dcb3a6f13b286a75f81667/src/main/java/org/mdkt/compiler/InMemoryJavaCompiler.java/base.java
+    public static Class<?> compile(String className, String sourceCodeInText) throws Exception {
+        SourceCode sourceCode = new SourceCode(className, sourceCodeInText);
+        CompiledCode compiledCode = new CompiledCode(className);
+        Iterable<? extends JavaFileObject> compilationUnits = Arrays.asList(sourceCode);
+        DynamicClassLoader cl = new DynamicClassLoader(ClassLoader.getSystemClassLoader());
+        ExtendedStandardJavaFileManager fileManager = new ExtendedStandardJavaFileManager(javac.getStandardFileManager(null, null, null), compiledCode, cl);
+        JavaCompiler.CompilationTask task = javac.getTask(null, fileManager, null, null, null, compilationUnits);
+        boolean result = task.call();
+        return cl.loadClass(className);
+    }
+=======
+    public static Class<?> compile(String className, String sourceCodeInText) throws Exception {
+        final DiagnosticCollector<JavaFileObject> diagnosticsCollector = new DiagnosticCollector<>();
+        SourceCode sourceCode = new SourceCode(className, sourceCodeInText);
+        CompiledCode compiledCode = new CompiledCode(className);
+        Iterable<? extends JavaFileObject> compilationUnits = Collections.singletonList(sourceCode);
+        DynamicClassLoader cl = new DynamicClassLoader(ClassLoader.getSystemClassLoader());
+        ExtendedStandardJavaFileManager fileManager = new ExtendedStandardJavaFileManager(javac.getStandardFileManager(diagnosticsCollector, null, null), compiledCode, cl);
+        JavaCompiler.CompilationTask task = javac.getTask(null, fileManager, diagnosticsCollector, null, null, compilationUnits);
+        boolean result = task.call();
+        fileManager.close();
+
+        if (!result) {
+            StringBuilder sb = new StringBuilder();
+            List<Diagnostic<? extends JavaFileObject>> diagnostics = diagnosticsCollector.getDiagnostics();
+            for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics) {
+                // read error dertails from the diagnostic object
+                sb.append("=> ").append(diagnostic.getMessage(null)).append("\n");
+            }
+            throw new CompileException(sb.toString());
+        }
+
+        return cl.loadClass(className);
+    }
+>>>>>>> /usr/src/app/output/trung/inmemoryjavacompiler/6460eed46a2343e156dcb3a6f13b286a75f81667/src/main/java/org/mdkt/compiler/InMemoryJavaCompiler.java/right.java
 }
