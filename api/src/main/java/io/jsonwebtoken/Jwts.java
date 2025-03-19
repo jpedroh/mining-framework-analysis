@@ -1,22 +1,5 @@
-/*
- * Copyright (C) 2014 jsonwebtoken.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.jsonwebtoken;
-
 import io.jsonwebtoken.lang.Classes;
-
 import java.util.Map;
 
 /**
@@ -26,72 +9,67 @@ import java.util.Map;
  * @since 0.1
  */
 public final class Jwts {
+  @SuppressWarnings(value = { "rawtypes" }) private static final Class[] MAP_ARG = new Class[] { Map.class };
 
-    @SuppressWarnings("rawtypes")
-    private static final Class[] MAP_ARG = new Class[]{Map.class};
+  private Jwts() {
+  }
 
-    private Jwts() {
-    }
-
-    /**
+  /**
      * Creates a new {@link Header} instance suitable for <em>plaintext</em> (not digitally signed) JWTs.  As this
      * is a less common use of JWTs, consider using the {@link #jwsHeader()} factory method instead if you will later
      * digitally sign the JWT.
      *
      * @return a new {@link Header} instance suitable for <em>plaintext</em> (not digitally signed) JWTs.
      */
-    public static Header<?> header() {
-        return Classes.newInstance("io.jsonwebtoken.impl.DefaultHeader");
-    }
+  public static Header<?> header() {
+    return Classes.newInstance("io.jsonwebtoken.impl.DefaultHeader");
+  }
 
-    /**
+  /**
      * Creates a new {@link Header} instance suitable for <em>plaintext</em> (not digitally signed) JWTs, populated
      * with the specified name/value pairs.  As this is a less common use of JWTs, consider using the
      * {@link #jwsHeader(java.util.Map)} factory method instead if you will later digitally sign the JWT.
      *
-     * @param header map of name/value pairs used to create a <em>plaintext</em> (not digitally signed) JWT
-     *               {@code Header} instance.
      * @return a new {@link Header} instance suitable for <em>plaintext</em> (not digitally signed) JWTs.
      */
-    public static Header<?> header(Map<String, Object> header) {
-        return Classes.newInstance("io.jsonwebtoken.impl.DefaultHeader", MAP_ARG, header);
-    }
+  public static Header<?> header(Map<String, Object> header) {
+    return Classes.newInstance("io.jsonwebtoken.impl.DefaultHeader", MAP_ARG, header);
+  }
 
-    /**
+  /**
      * Returns a new {@link JwsHeader} instance suitable for digitally signed JWTs (aka 'JWS's).
      *
      * @return a new {@link JwsHeader} instance suitable for digitally signed JWTs (aka 'JWS's).
      * @see JwtBuilder#setHeader(Header)
      */
-    public static JwsHeader jwsHeader() {
-        return Classes.newInstance("io.jsonwebtoken.impl.DefaultJwsHeader");
-    }
+  public static JwsHeader jwsHeader() {
+    return Classes.newInstance("io.jsonwebtoken.impl.DefaultJwsHeader");
+  }
 
-    /**
+  /**
      * Returns a new {@link JwsHeader} instance suitable for digitally signed JWTs (aka 'JWS's), populated with the
      * specified name/value pairs.
      *
-     * @param header map of name/value pairs used to create a new {@link JwsHeader} instance.
      * @return a new {@link JwsHeader} instance suitable for digitally signed JWTs (aka 'JWS's), populated with the
      * specified name/value pairs.
      * @see JwtBuilder#setHeader(Header)
      */
-    public static JwsHeader jwsHeader(Map<String, Object> header) {
-        return Classes.newInstance("io.jsonwebtoken.impl.DefaultJwsHeader", MAP_ARG, header);
-    }
+  public static JwsHeader jwsHeader(Map<String, Object> header) {
+    return Classes.newInstance("io.jsonwebtoken.impl.DefaultJwsHeader", MAP_ARG, header);
+  }
 
-    /**
+  /**
      * Returns a new {@link JweHeader} instance suitable for encrypted JWTs (aka 'JWE's).
      *
      * @return a new {@link JweHeader} instance suitable for encrypted JWTs (aka 'JWE's).
      * @see JwtBuilder#setHeader(Header)
      * @since JJWT_RELEASE_VERSION
      */
-    public static JweHeader jweHeader() {
-        return Classes.newInstance("io.jsonwebtoken.impl.DefaultJweHeader");
-    }
+  public static JweHeader jweHeader() {
+    return Classes.newInstance("io.jsonwebtoken.impl.DefaultJweHeader");
+  }
 
-    /**
+  /**
      * Returns a new {@link JweHeader} instance suitable for encrypted JWTs (aka 'JWE's), populated with the
      * specified name/value pairs.
      *
@@ -100,30 +78,30 @@ public final class Jwts {
      * @see JwtBuilder#setHeader(Header)
      * @since JJWT_RELEASE_VERSION
      */
-    public static JweHeader jweHeader(Map<String, Object> header) {
-        return Classes.newInstance("io.jsonwebtoken.impl.DefaultJweHeader", MAP_ARG, header);
-    }
+  public static JweHeader jweHeader(Map<String, Object> header) {
+    return Classes.newInstance("io.jsonwebtoken.impl.DefaultJweHeader", MAP_ARG, header);
+  }
 
-    /**
+  /**
      * Returns a new {@link Claims} instance to be used as a JWT body.
      *
      * @return a new {@link Claims} instance to be used as a JWT body.
      */
-    public static Claims claims() {
-        return Classes.newInstance("io.jsonwebtoken.impl.DefaultClaims");
-    }
+  public static Claims claims() {
+    return Classes.newInstance("io.jsonwebtoken.impl.DefaultClaims");
+  }
 
-    /**
+  /**
      * Returns a new {@link Claims} instance populated with the specified name/value pairs.
      *
      * @param claims the name/value pairs to populate the new Claims instance.
      * @return a new {@link Claims} instance populated with the specified name/value pairs.
      */
-    public static Claims claims(Map<String, Object> claims) {
-        return Classes.newInstance("io.jsonwebtoken.impl.DefaultClaims", MAP_ARG, claims);
-    }
+  public static Claims claims(Map<String, Object> claims) {
+    return Classes.newInstance("io.jsonwebtoken.impl.DefaultClaims", MAP_ARG, claims);
+  }
 
-    /**
+  /**
      * Returns a new {@link JwtParser} instance that can be configured and then used to parse JWT strings.
      *
      * @return a new {@link JwtParser} instance that can be configured and then used to parse JWT strings.
@@ -144,39 +122,38 @@ public final class Jwts {
      * }</pre>
      * <p><b>NOTE: this method will be removed before version 1.0</b>
      */
-    @Deprecated
-    public static JwtParser parser() {
-        return Classes.newInstance("io.jsonwebtoken.impl.DefaultJwtParser");
-    }
+  @Deprecated public static JwtParser parser() {
+    return Classes.newInstance("io.jsonwebtoken.impl.DefaultJwtParser");
+  }
 
-    /**
-     * Returns a new {@link JwtParserBuilder} instance that can be configured to create an immutable/thread-safe {@link JwtParser}.
+  /**
+     * Returns a new {@link JwtParserBuilder} instance that can be configured to create an immutable/thread-safe {@link JwtParser).
      *
-     * @return a new {@link JwtParser} instance that can be configured create an immutable/thread-safe {@link JwtParser}.
+     * @return a new {@link JwtParser} instance that can be configured create an immutable/thread-safe {@link JwtParser).
      */
-    public static JwtParserBuilder parserBuilder() {
-        return Classes.newInstance("io.jsonwebtoken.impl.DefaultJwtParserBuilder");
-    }
+  public static JwtParserBuilder parserBuilder() {
+    return Classes.newInstance("io.jsonwebtoken.impl.DefaultJwtParserBuilder");
+  }
 
-    /**
+  /**
      * Returns a new {@link JwtBuilder} instance that can be configured and then used to create JWT compact serialized
      * strings.
      *
      * @return a new {@link JwtBuilder} instance that can be configured and then used to create JWT compact serialized
      * strings.
      */
-    public static JwtBuilder<?> builder() {
-        return Classes.newInstance("io.jsonwebtoken.impl.DefaultJwtBuilder");
-    }
+  public static JwtBuilder<?> builder() {
+    return Classes.newInstance("io.jsonwebtoken.impl.DefaultJwtBuilder");
+  }
 
-    /**
+  /**
      * Returns a new {@link JweBuilder} instance that can be configured and then used to create encrypted JWT compact
      * serialized strings.
      *
      * @return a new {@link JweBuilder} instance that can be configured and then used to create encrypted JWT compact
      * serialized strings.
      */
-    public static JweBuilder jweBuilder() {
-        return Classes.newInstance("io.jsonwebtoken.impl.DefaultJweBuilder");
-    }
+  public static JweBuilder jweBuilder() {
+    return Classes.newInstance("io.jsonwebtoken.impl.DefaultJweBuilder");
+  }
 }

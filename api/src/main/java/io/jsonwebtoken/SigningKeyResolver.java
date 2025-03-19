@@ -1,20 +1,4 @@
-/*
- * Copyright (C) 2014 jsonwebtoken.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.jsonwebtoken;
-
 import java.security.Key;
 
 /**
@@ -38,7 +22,7 @@ import java.security.Key;
  *
  * <p>A {@code SigningKeyResolver} is invoked once during parsing before the signature is verified.</p>
  *
- * <h2>Using an Adapter</h2>
+ * <h3>SigningKeyResolverAdapter</h3>
  *
  * <p>If you only need to resolve a signing key for a particular JWS (either a plaintext or Claims JWS), consider using
  * the {@link io.jsonwebtoken.SigningKeyResolverAdapter} and overriding only the method you need to support instead of
@@ -48,10 +32,8 @@ import java.security.Key;
  * @deprecated since JJWT_RELEASE_VERSION. Implement {@link io.jsonwebtoken.Locator Locator<?, Key>} instead.
  * @see io.jsonwebtoken.JwtParserBuilder#setKeyLocator(Locator)
  */
-@Deprecated
-public interface SigningKeyResolver {
-
-    /**
+@Deprecated public interface SigningKeyResolver {
+  /**
      * Returns the signing key that should be used to validate a digital signature for the Claims JWS with the specified
      * header and claims.
      *
@@ -60,9 +42,9 @@ public interface SigningKeyResolver {
      * @return the signing key that should be used to validate a digital signature for the Claims JWS with the specified
      * header and claims.
      */
-    Key resolveSigningKey(JwsHeader header, Claims claims);
+  Key resolveSigningKey(JwsHeader header, Claims claims);
 
-    /**
+  /**
      * Returns the signing key that should be used to validate a digital signature for the Plaintext JWS with the
      * specified header and plaintext payload.
      *
@@ -71,5 +53,5 @@ public interface SigningKeyResolver {
      * @return the signing key that should be used to validate a digital signature for the Plaintext JWS with the
      * specified header and plaintext payload.
      */
-    Key resolveSigningKey(JwsHeader header, String plaintext);
+  Key resolveSigningKey(JwsHeader header, String plaintext);
 }
