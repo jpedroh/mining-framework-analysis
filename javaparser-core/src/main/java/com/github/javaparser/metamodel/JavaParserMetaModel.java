@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The model contains meta-data about all nodes in the AST.
+ */
 public final class JavaParserMetaModel {
 
     private JavaParserMetaModel() {
@@ -561,7 +564,17 @@ public final class JavaParserMetaModel {
         methodReferenceExprMetaModel.getDerivedPropertyMetaModels().add(methodReferenceExprMetaModel.usingDiamondOperatorPropertyMetaModel);
         nameExprMetaModel.namePropertyMetaModel = new PropertyMetaModel(nameExprMetaModel, "name", com.github.javaparser.ast.expr.SimpleName.class, Optional.of(simpleNameMetaModel), false, false, false, false);
         nameExprMetaModel.getDeclaredPropertyMetaModels().add(nameExprMetaModel.namePropertyMetaModel);
+<<<<<<< /usr/src/app/output/javaparser/javaparser/9e13aaf139747aecce2944c7205cc592aa23d97a/javaparser-core/src/main/java/com/github/javaparser/metamodel/JavaParserMetaModel.java/left.java
+        nameMetaModel.identifierPropertyMetaModel = new PropertyMetaModel(nameMetaModel, "identifier", java.lang.String.class, Optional.empty(), false, true, false, false, false);
+||||||| /usr/src/app/output/javaparser/javaparser/9e13aaf139747aecce2944c7205cc592aa23d97a/javaparser-core/src/main/java/com/github/javaparser/metamodel/JavaParserMetaModel.java/base.java
+        nameMetaModel.annotationsPropertyMetaModel = new PropertyMetaModel(nameMetaModel, "annotations", com.github.javaparser.ast.expr.AnnotationExpr.class, Optional.of(annotationExprMetaModel), false, false, true, false, false);
+        nameMetaModel.getDeclaredPropertyMetaModels().add(nameMetaModel.annotationsPropertyMetaModel);
+        nameMetaModel.identifierPropertyMetaModel = new PropertyMetaModel(nameMetaModel, "identifier", java.lang.String.class, Optional.empty(), false, true, false, false, false);
+=======
+        nameMetaModel.annotationsPropertyMetaModel = new PropertyMetaModel(nameMetaModel, "annotations", com.github.javaparser.ast.expr.AnnotationExpr.class, Optional.of(annotationExprMetaModel), false, false, true, false);
+        nameMetaModel.getDeclaredPropertyMetaModels().add(nameMetaModel.annotationsPropertyMetaModel);
         nameMetaModel.identifierPropertyMetaModel = new PropertyMetaModel(nameMetaModel, "identifier", java.lang.String.class, Optional.empty(), false, true, false, false);
+>>>>>>> /usr/src/app/output/javaparser/javaparser/9e13aaf139747aecce2944c7205cc592aa23d97a/javaparser-core/src/main/java/com/github/javaparser/metamodel/JavaParserMetaModel.java/right.java
         nameMetaModel.getDeclaredPropertyMetaModels().add(nameMetaModel.identifierPropertyMetaModel);
         nameMetaModel.qualifierPropertyMetaModel = new PropertyMetaModel(nameMetaModel, "qualifier", com.github.javaparser.ast.expr.Name.class, Optional.of(nameMetaModel), true, false, false, false);
         nameMetaModel.getDeclaredPropertyMetaModels().add(nameMetaModel.qualifierPropertyMetaModel);
