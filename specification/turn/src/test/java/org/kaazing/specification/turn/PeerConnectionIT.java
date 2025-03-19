@@ -115,7 +115,6 @@ public class PeerConnectionIT {
     public void shouldSuccessfullySendDataMessage() throws Exception {
         k3po.finish();
     }
-
     /**
      * See <a href="https://tools.ietf.org/html/rfc5766">RFC 5766: Turn Protocol</a>.
      */
@@ -126,18 +125,6 @@ public class PeerConnectionIT {
     public void shouldFailSendingDataMessageTooShortLength() throws Exception {
         k3po.finish();
     }
-
-    /**
-     * See <a href="https://tools.ietf.org/html/rfc5766">RFC 5766: Turn Protocol</a>.
-     */
-    @Test
-    @Specification({
-            "incorrect.channel.data.message.reserved.channel.number/request",
-            "incorrect.channel.data.message.reserved.channel.number/response" })
-    public void shouldFailSendingDataMessageReservedChannelNumbber() throws Exception {
-        k3po.finish();
-    }
-
     /**
      * See <a href="https://tools.ietf.org/html/rfc5766">RFC 5766: Turn Protocol</a>.
      */
@@ -148,7 +135,6 @@ public class PeerConnectionIT {
     public void shouldFailSendingDataMessageWrongChannelNumber() throws Exception {
         k3po.finish();
     }
-
     /**
      * See <a href="https://tools.ietf.org/html/rfc5766">RFC 5766: Turn Protocol</a>.
      */
@@ -159,7 +145,6 @@ public class PeerConnectionIT {
     public void shouldFailSendingDataMessageWithoutPermissions() throws Exception {
         k3po.finish();
     }
-
     /**
      * See <a href="https://tools.ietf.org/html/rfc5766">RFC 5766: Turn Protocol</a>.
      */
@@ -170,7 +155,6 @@ public class PeerConnectionIT {
     public void shouldFailSendingIndicationMessageWithoutPermissions() throws Exception {
         k3po.finish();
     }
-
     /**
      * See <a href="https://tools.ietf.org/html/rfc5766">RFC 5766: Turn Protocol</a>.
      */
@@ -181,7 +165,16 @@ public class PeerConnectionIT {
     public void shouldSucceedSendingIndicationAndChannelDataMessages() throws Exception {
         k3po.finish();
     }
-
+    /**
+     * See <a href="https://tools.ietf.org/html/rfc5766">RFC 5766: Turn Protocol</a>.
+     */
+    @Test
+    @Specification({
+            "incorrect.channel.data.message.reserved.channel.number/request",
+            "incorrect.channel.data.message.reserved.channel.number/response" })
+    public void shouldFailSendingDataMessageReservedChannelNumbber() throws Exception {
+        k3po.finish();
+    }
     /**
      * See <a href="https://tools.ietf.org/html/rfc5766">RFC 5766: Turn Protocol</a>.
      */
@@ -192,7 +185,6 @@ public class PeerConnectionIT {
     public void shouldFailSendingIndicationWithInvalidPeerAddress() throws Exception {
         k3po.finish();
     }
-
     /**
      * See <a href="https://tools.ietf.org/html/rfc5766">RFC 5766: Turn Protocol</a>.
      */
@@ -203,7 +195,6 @@ public class PeerConnectionIT {
     public void shouldFailSendingIndicationWithoutAllocation() throws Exception {
         k3po.finish();
     }
-
     /**
      * See <a href="https://tools.ietf.org/html/rfc5766">RFC 5766: Turn Protocol</a>.
      */
@@ -214,5 +205,14 @@ public class PeerConnectionIT {
     public void shouldFailSendingIndicationWithoutChannelBind() throws Exception {
         k3po.finish();
     }
-
+    /**
+     * See <a href="https://tools.ietf.org/html/rfc5766">RFC 5766: Turn Protocol</a>.
+     */
+    @Test
+    @Specification({
+        "turn.protocol.with.invalid.requested.transport.attribute/request",
+        "turn.protocol.with.invalid.requested.transport.attribute/response" })
+    public void shouldFailSendingData() throws Exception {
+        k3po.finish();
+    }
 }
