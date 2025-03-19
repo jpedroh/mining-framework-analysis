@@ -153,5 +153,29 @@ public final class ConstructorDeclaration extends CallableDeclaration<Constructo
         return sb.toString();
     }
 
+    @Override
+    public boolean remove(Node node) {
+        if (node == null)
+            return false;
+        for (int i = 0; i < parameters.size(); i++) {
+            if (parameters.get(i) == node) {
+                parameters.remove(i);
+                return true;
+            }
+        }
+        for (int i = 0; i < thrownExceptions.size(); i++) {
+            if (thrownExceptions.get(i) == node) {
+                thrownExceptions.remove(i);
+                return true;
+            }
+        }
+        for (int i = 0; i < typeParameters.size(); i++) {
+            if (typeParameters.get(i) == node) {
+                typeParameters.remove(i);
+                return true;
+            }
+        }
+        return super.remove(node);
+    }
 }
 
