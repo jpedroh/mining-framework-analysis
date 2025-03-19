@@ -8,7 +8,6 @@ import com.wrapper.spotify.model_objects.PlaylistTrackPosition;
 import com.wrapper.spotify.requests.authentication.AuthorizationCodeGrantRequest;
 import com.wrapper.spotify.requests.authentication.AuthorizationUriRequest;
 import com.wrapper.spotify.requests.authentication.ClientCredentialsGrantRequest;
-import com.wrapper.spotify.requests.authentication.RefreshAccessTokenRequest;
 import com.wrapper.spotify.requests.data.albums.GetAlbumRequest;
 import com.wrapper.spotify.requests.data.albums.GetAlbumsTracksRequest;
 import com.wrapper.spotify.requests.data.albums.GetSeveralAlbumsRequest;
@@ -286,6 +285,14 @@ public class Api {
     builder.basicAuthorizationHeader(clientId, clientSecret);
     builder.code(code);
     builder.redirectUri(redirectURI);
+    return builder;
+  }
+  public RefreshAccessTokenRequest.Builder refreshAccessToken() {
+    RefreshAccessTokenRequest.Builder builder = new RefreshAccessTokenRequest.Builder(accessToken);
+    builder.setDefaults(httpManager, scheme, host, port);
+    builder.grantType("refresh_token");
+    builder.refreshToken(refreshToken);
+    builder.basicAuthorizationHeader(clientId, clientSecret);
     return builder;
   }
 
