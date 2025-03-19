@@ -1421,7 +1421,7 @@ public class Client {
         StringBuilder body = new StringBuilder();
         for(String object : objects) {
             final String path = region.getStorageUrl(container, object).getRawPath();
-            body.append(path.substring(region.getStorageUrl().getRawPath().length() + 1)).append('\n');
+            body.append(path.substring(region.getStorageUrl().getRawPath().length() + 1) + "\n").append('\n');
         }
         method.setEntity(new StringEntity(body.toString(), "UTF-8"));
         this.execute(method, new DefaultResponseHandler());
