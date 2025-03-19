@@ -129,15 +129,32 @@ public class AvlNode<T> {
   }
 
   public boolean isLeaf() {
-
-    return (!hasLeft() && !hasRight()) ;
+<<<<<<< /usr/src/app/output/jmetal/jmetal/e4779bb8d29bc4ce6f4e0f0df52062a7992e5423/src/main/java/jmetal/util/avl/AvlNode.java/left.java
+      return !(hasLeft() || hasRight());
+||||||| /usr/src/app/output/jmetal/jmetal/e4779bb8d29bc4ce6f4e0f0df52062a7992e5423/src/main/java/jmetal/util/avl/AvlNode.java/base.java
+      return result;
+=======
+      return (!hasLeft() && !hasRight());
+>>>>>>> /usr/src/app/output/jmetal/jmetal/e4779bb8d29bc4ce6f4e0f0df52062a7992e5423/src/main/java/jmetal/util/avl/AvlNode.java/right.java
   }
 
   public boolean hasOnlyALeftChild() {
-    return (hasLeft() && !hasRight()) ;
+<<<<<<< /usr/src/app/output/jmetal/jmetal/e4779bb8d29bc4ce6f4e0f0df52062a7992e5423/src/main/java/jmetal/util/avl/AvlNode.java/left.java
+      returnhasLeft() && !hasRight();
+||||||| /usr/src/app/output/jmetal/jmetal/e4779bb8d29bc4ce6f4e0f0df52062a7992e5423/src/main/java/jmetal/util/avl/AvlNode.java/base.java
+      returnresult;
+=======
+      return(hasLeft() && !hasRight());
+>>>>>>> /usr/src/app/output/jmetal/jmetal/e4779bb8d29bc4ce6f4e0f0df52062a7992e5423/src/main/java/jmetal/util/avl/AvlNode.java/right.java
   }
 
   public boolean hasOnlyARightChild() {
-    return  (hasRight() && !hasLeft()) ;
+<<<<<<< /usr/src/app/output/jmetal/jmetal/e4779bb8d29bc4ce6f4e0f0df52062a7992e5423/src/main/java/jmetal/util/avl/AvlNode.java/left.java
+      returnhasRight() && !hasLeft();
+||||||| /usr/src/app/output/jmetal/jmetal/e4779bb8d29bc4ce6f4e0f0df52062a7992e5423/src/main/java/jmetal/util/avl/AvlNode.java/base.java
+      returnresult;
+=======
+      return(hasRight() && !hasLeft());
+>>>>>>> /usr/src/app/output/jmetal/jmetal/e4779bb8d29bc4ce6f4e0f0df52062a7992e5423/src/main/java/jmetal/util/avl/AvlNode.java/right.java
   }
 }
