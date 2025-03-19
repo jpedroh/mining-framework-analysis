@@ -1,12 +1,10 @@
 package de.hilling.junit.cdi;
-
 import de.hilling.junit.cdi.beans.Person;
 import de.hilling.junit.cdi.service.BackendServiceTestPartialImplementation;
 import de.hilling.junit.cdi.service.SampleService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import jakarta.inject.Inject;
 
 /**
@@ -17,18 +15,13 @@ import jakarta.inject.Inject;
  *     methods that you might not even expect to be used!
  * </p>
  */
-@ExtendWith(CdiTestJunitExtension.class)
-class ActivatePartialAlternativeForRegularBeanTest {
+@ExtendWith(value = CdiTestJunitExtension.class) class ActivatePartialAlternativeForRegularBeanTest {
+  @Inject private SampleService sampleService;
 
-    @Inject
-    private SampleService sampleService;
-    @Inject
-    private BackendServiceTestPartialImplementation testBackendService;
+  @Inject private BackendServiceTestPartialImplementation testBackendService;
 
-    @Test
-    void callTestActivatedService() {
-        Person person = new Person();
-        Assertions.assertThrows(IllegalStateException.class, () -> sampleService.storePerson(person));
-    }
-
+  @Test void callTestActivatedService() {
+    Person person = new Person();
+    Assertions.assertThrows(IllegalStateException.class, () -> sampleService.storePerson(person));
+  }
 }

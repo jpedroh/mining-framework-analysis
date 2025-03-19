@@ -1,10 +1,7 @@
 package de.hilling.junit.cdi.scope.context;
-
 import jakarta.enterprise.context.spi.Context;
-
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
-
 import de.hilling.junit.cdi.annotations.BypassTestInterceptor;
 import de.hilling.junit.cdi.scope.TestSuiteScoped;
 
@@ -13,18 +10,16 @@ import de.hilling.junit.cdi.scope.TestSuiteScoped;
  *
  * @see TestSuiteScoped
  */
-@BypassTestInterceptor
-public class TestSuiteContext extends AbstractScopeContext implements Context, Serializable {
-    private static final long serialVersionUID = 1L;
-    private static final CustomScopeContextHolder CONTEXT_HOLDER = new CustomScopeContextHolder();
+@BypassTestInterceptor public class TestSuiteContext extends AbstractScopeContext implements Context, Serializable {
+  private static final long serialVersionUID = 1L;
 
-    @Override
-    public Class<? extends Annotation> getScope() {
-        return TestSuiteScoped.class;
-    }
+  private static final CustomScopeContextHolder CONTEXT_HOLDER = new CustomScopeContextHolder();
 
-    @Override
-    protected CustomScopeContextHolder getScopeContextHolder() {
-        return CONTEXT_HOLDER;
-    }
+  @Override public Class<? extends Annotation> getScope() {
+    return TestSuiteScoped.class;
+  }
+
+  @Override protected CustomScopeContextHolder getScopeContextHolder() {
+    return CONTEXT_HOLDER;
+  }
 }

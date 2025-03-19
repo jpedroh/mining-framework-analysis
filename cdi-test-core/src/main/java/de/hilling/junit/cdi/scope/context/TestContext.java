@@ -1,55 +1,48 @@
 package de.hilling.junit.cdi.scope.context;
-
 import jakarta.enterprise.context.spi.Context;
-
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
-import java.util.logging.Logger;
-
 import de.hilling.junit.cdi.annotations.BypassTestInterceptor;
+import java.lang.annotation.Annotation;
 import de.hilling.junit.cdi.scope.TestScoped;
+import java.util.logging.Logger;
 import de.hilling.junit.cdi.scope.TestSuiteScoped;
 
 /**
- *  Implementation of context for {@link TestScoped} beans.
+ * Implementation of context for {@link TestScoped} beans.
  *
  * @see TestScoped
  */
-@BypassTestInterceptor
-@TestSuiteScoped
-public class TestContext extends AbstractScopeContext implements Context, Serializable {
-    private static final long serialVersionUID = 1L;
-    private static final Logger LOG = Logger.getLogger(TestContext.class.getCanonicalName());
-    private static final CustomScopeContextHolder CONTEXT_HOLDER = new CustomScopeContextHolder();
+@BypassTestInterceptor @TestSuiteScoped public class TestContext extends AbstractScopeContext implements Context, Serializable {
+  private static final long serialVersionUID = 1L;
 
-    private static boolean active = false;
+  private static final Logger LOG = Logger.getLogger(TestContext.class.getCanonicalName());
 
-    public TestContext() {
-        LOG.fine("created");
-    }
+  private static final CustomScopeContextHolder CONTEXT_HOLDER = new CustomScopeContextHolder();
 
-    @Override
-    public Class<? extends Annotation> getScope() {
-        return TestScoped.class;
-    }
+  private static boolean active = false;
 
-    public static void activate() {
-        active = true;
-    }
+  public TestContext() {
+    LOG.fine("created");
+  }
 
-    public static void deactivate() {
-        CONTEXT_HOLDER.clear();
-        active = false;
-    }
+  @Override public Class<? extends Annotation> getScope() {
+    return TestScoped.class;
+  }
 
-    @Override
-    public boolean isActive() {
-        return active;
-    }
+  public static void activate() {
+    active = true;
+  }
 
-    @Override
-    protected CustomScopeContextHolder getScopeContextHolder() {
-        return CONTEXT_HOLDER;
-    }
+  public static void deactivate() {
+    CONTEXT_HOLDER.clear();
+    active = false;
+  }
 
+  @Override public boolean isActive() {
+    return active;
+  }
+
+  @Override protected CustomScopeContextHolder getScopeContextHolder() {
+    return CONTEXT_HOLDER;
+  }
 }
