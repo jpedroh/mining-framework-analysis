@@ -1,26 +1,6 @@
-/*
- * Copyright (c) 2016 University Nice Sophia Antipolis
- *
- * This file is part of btrplace.
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package org.btrplace.model.view.network;
-
 import org.btrplace.Copyable;
 import org.btrplace.model.Node;
-
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,63 +16,51 @@ import java.util.List;
  * @see #setNetwork(Network)
  */
 public abstract class Routing implements Copyable<Routing> {
+  protected Network net;
 
-    protected Network net;
-    protected LinkedHashMap<Link, Boolean>[][] routingCache;
+  protected LinkedHashMap<Link, Boolean>[][] routingCache;
 
-    /**
+  /**
      * Set the network view (recursively).
      */
-    public void setNetwork(Network net) {
-        this.net = net;
-        if (net.getRouting() != this) {
-            net.setRouting(this);
-        }
+  public void setNetwork(Network net) {
+    this.net = net;
+    if (net.getRouting() != this) {
+      net.setRouting(this);
     }
-    
-    /**
+  }
+
+  /**
      * Get the path between two nodes.
      *
      * @param n1    the source node
      * @param n2    the destination node
      * @return the path consisting of an ordered list of links
      */
-    public abstract List<Link> getPath(Node n1, Node n2);
+  public abstract List<Link> getPath(Node n1, Node n2);
 
-    /**
+  /**
      * Get the maximal bandwidth available between two nodes.
      *
      * @param n1    the source node
      * @param n2    the destination node
      * @return  the bandwidth
      */
-    public int getMaxBW(Node n1, Node n2) {
-        int max = Integer.MAX_VALUE;
-        for (Link inf : getPath(n1, n2)) {
-            if (inf.getCapacity() < max) {
-                max = inf.getCapacity();
-            }
-            Switch sw = inf.getSwitch();
-            if (sw.getCapacity() >= 0 && sw.getCapacity() < max) {
-                //The >= 0 stays for historical reasons
-                max = sw.getCapacity();
-            }
-
-        }
-        return max;
+  public int getMaxBW(Node n1, Node n2) {
+    int max = Integer.MAX_VALUE;
+    for (Link inf : getPath(n1, n2)) {
+      if (inf.getCapacity() < max) {
+        max = inf.getCapacity();
+      }
+      Switch sw = inf.getSwitch();
+      if (sw.getCapacity() >= 0 && sw.getCapacity() < max) {
+        max = sw.getCapacity();
+      }
     }
+    return max;
+  }
 
-    /**
-     * Get the direction of a crossed link between two given nodes
-     *
-     * @param n1    the source node
-     * @param n2    the destination node
-     * @param l     the link to check
-     * @return  null if *not* crossed, true for DownLink, false for UpLink
-     */
-    abstract public Boolean getLinkDirection(Node n1, Node n2, Link l);
-
-    /**
+  /**
      * Recursive method to get the first physical path found from a switch to a destination node.
      *
      * @param currentPath the current or initial path containing the link(s) crossed
@@ -100,36 +68,34 @@ public abstract class Routing implements Copyable<Routing> {
      * @param dst         the destination node to reach
      * @return the ordered list of links that make the path to dst
      */
-    protected List<Link> getFirstPhysicalPath(List<Link> currentPath, Switch sw, Node dst) {
-
-        // Iterate through the current switch's links
-        for (Link l : net.getConnectedLinks(sw)) {
-            // Wrong link
-            if (currentPath.contains(l)) {
-                continue;
-            }
-            // Go through the link
-            currentPath.add(l);
-            // Check what is after
-            if (l.getElement() instanceof Node) {
-                // Node found, path complete
-                if (l.getElement().equals(dst)) {
-                    return currentPath;
-                }
-            } else {
-                // Go to the next switch
-                List<Link> recall = getFirstPhysicalPath(
-                        currentPath, l.getSwitch().equals(sw) ? (Switch) l.getElement() : l.getSwitch(), dst);
-                // Return the complete path if found
-                if (!recall.isEmpty()) {
-                    return recall;
-                }
-            }
-            // Wrong link, go back
-            currentPath.remove(currentPath.size() - 1);
+  protected List<Link> getFirstPhysicalPath(List<Link> currentPath, Switch sw, Node dst) {
+    for (Link l : net.getConnectedLinks(sw)) {
+      if (currentPath.contains(l)) {
+        continue;
+      }
+      currentPath.add(l);
+      if (l.getElement() instanceof Node) {
+        if (l.getElement().equals(dst)) {
+          return currentPath;
         }
-        // No path found through this switch
-        return Collections.emptyList();
+      } else {
+        List<Link> recall = getFirstPhysicalPath(currentPath, l.getSwitch().equals(sw) ? (Switch) l.getElement() : l.getSwitch(), dst);
+        if (!recall.isEmpty()) {
+          return recall;
+        }
+      }
+      currentPath.remove(currentPath.size() - 1);
     }
+    return Collections.emptyList();
+  }
 
+  /**
+     * Get the direction of a crossed link between two given nodes
+     *
+     * @param n1    the source node
+     * @param n2    the destination node
+     * @param l     the link to check
+     * @return  null if *not* crossed, true for DownLink, false for UpLink
+     */
+  abstract public Boolean getLinkDirection(Node n1, Node n2, Link l);
 }

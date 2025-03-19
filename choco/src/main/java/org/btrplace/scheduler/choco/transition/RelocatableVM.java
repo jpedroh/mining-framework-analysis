@@ -1,23 +1,4 @@
-/*
- * Copyright (c) 2016 University Nice Sophia Antipolis
- *
- * This file is part of btrplace.
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package org.btrplace.scheduler.choco.transition;
-
 import org.btrplace.model.Model;
 import org.btrplace.model.Node;
 import org.btrplace.model.VM;
@@ -41,7 +22,6 @@ import org.chocosolver.solver.constraints.Operator;
 import org.chocosolver.solver.search.solution.Solution;
 import org.chocosolver.solver.variables.*;
 
-
 /**
  * Model an action that allow a running VM to be relocate elsewhere if necessary.
  * The relocation can be performed through a live-migration or a re-instantiation.
@@ -63,322 +43,244 @@ import org.chocosolver.solver.variables.*;
  * @author Vincent Kherbache
  */
 public class RelocatableVM implements KeepRunningVM {
+  public static final String PREFIX = "relocatable(";
 
-    public static final String PREFIX = "relocatable(";
-    public static final String PREFIX_STAY = "stayRunningOn(";
-    private final VM vm;
-    private Slice cSlice;
-    private Slice dSlice;
-    private ReconfigurationProblem rp;
-    private BoolVar state;
-    private BoolVar stay;
-    private IntVar duration;
-    private IntVar start;
-    private IntVar end;
-    private IntVar bandwidth;
-    private Node src;
-    private boolean manageable = true;
-    private boolean postCopy = false;
-    private Task migrationTask;
-    /**
+  public static final String PREFIX_STAY = "stayRunningOn(";
+
+  private final VM vm;
+
+  private Slice cSlice;
+
+  private 
+<<<<<<< /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/transition/RelocatableVM.java/left.java
+  Slice
+=======
+  Task
+>>>>>>> /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/transition/RelocatableVM.java/right.java
+   
+<<<<<<< /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/transition/RelocatableVM.java/left.java
+  dSlice
+=======
+  migrationTask
+>>>>>>> /usr/src/app/output/btrplace/scheduler/d42500d47b1f8f88aada61e71e4880f680cee32f/choco/src/main/java/org/btrplace/scheduler/choco/transition/RelocatableVM.java/right.java
+  ;
+
+  private ReconfigurationProblem rp;
+
+  private BoolVar state;
+
+  private BoolVar stay;
+
+  private IntVar duration;
+
+  private IntVar start;
+
+  private IntVar end;
+
+  private IntVar bandwidth;
+
+  private Node src;
+
+  private boolean manageable = true;
+
+  private boolean postCopy = false;
+
+  /**
      * The relocation method. 0 for migration, 1 for relocation.
      */
-    private BoolVar doReinstantiation;
+  private BoolVar doReinstantiation;
 
-    /**
+  /**
      * Make a new model.
      *
      * @param p the RP to use as a basis.
      * @param e the VM managed by the action
      * @throws org.btrplace.scheduler.SchedulerException if an error occurred
      */
-    public RelocatableVM(ReconfigurationProblem p, VM e) throws SchedulerException {
+  public RelocatableVM(ReconfigurationProblem p, VM e) throws SchedulerException {
+    vm = e;
+    rp = p;
+    src = rp.getSourceModel().getMapping().getVMLocation(e);
+    Solver s = rp.getSolver();
+    Model mo = rp.getSourceModel();
+    start = rp.getStart();
+    end = rp.getStart();
+    duration = VariableFactory.zero(s);
+    state = VariableFactory.one(s);
+    if (!p.getManageableVMs().contains(e)) {
+      stay = VariableFactory.one(s);
+      doReinstantiation = VariableFactory.zero(s);
+      manageable = false;
+      IntVar host = rp.makeCurrentHost(vm, PREFIX_STAY, vm, ").host");
+      cSlice = new SliceBuilder(rp, vm, PREFIX_STAY, vm.toString(), ").cSlice").setHoster(host).setEnd(rp.makeUnboundedDuration(PREFIX_STAY, vm, ").cSlice_end")).build();
+      dSlice = new SliceBuilder(rp, vm, PREFIX_STAY, vm, ").dSlice").setHoster(host).setStart(cSlice.getEnd()).build();
+      s.post(new Arithmetic(cSlice.getEnd(), Operator.LE, rp.getEnd()));
+      return;
+    }
+    stay = VF.bool(vm + "stay", s);
+    cSlice = new SliceBuilder(rp, vm, PREFIX, vm, ").cSlice").setHoster(rp.getNode(rp.getSourceModel().getMapping().getVMLocation(vm))).setEnd(rp.makeUnboundedDuration(PREFIX, vm, ").cSlice_end")).build();
+    dSlice = new SliceBuilder(rp, vm, PREFIX, vm, ").dSlice").setStart(rp.makeUnboundedDuration(PREFIX, vm, ").dSlice_start")).build();
+    s.post(new Arithmetic(cSlice.getEnd(), Operator.LE, rp.getEnd()));
+    start = dSlice.getStart();
+    end = cSlice.getEnd();
+    DurationEvaluators dev = rp.getDurationEvaluators();
+    int migrateDuration = dev.evaluate(rp.getSourceModel(), MigrateVM.class, vm);
+    int bootDuration = dev.evaluate(rp.getSourceModel(), org.btrplace.plan.event.BootVM.class, vm);
+    int forgeD = p.getDurationEvaluators().evaluate(p.getSourceModel(), org.btrplace.plan.event.ForgeVM.class, vm);
+    int reInstantiateDuration = bootDuration + forgeD;
+    reInstantiateDuration = forgeD;
+    Network network = Network.get(mo);
+    IntVar migrationDuration;
+    if (network != null) {
+      postCopy = mo.getAttributes().get(vm, "postCopy", false);
+      migrationDuration = p.makeUnboundedDuration(PREFIX, vm, ").duration");
+      bandwidth = VF.bounded(PREFIX + vm + ").bandwidth", 0, Integer.MAX_VALUE / 100, s);
+    } else {
+      migrationDuration = VariableFactory.enumerated(rp.makeVarLabel(PREFIX, vm, ").duration"), new int[] { 0, migrateDuration }, s);
+      bandwidth = null;
+    }
+    if (mo.getAttributes().get(vm, "clone", false) && mo.getAttributes().isSet(vm, "template")) {
+      doReinstantiation = VariableFactory.bool(rp.makeVarLabel("relocation_method(", vm, ")"), s);
+      duration = VariableFactory.bounded(rp.makeVarLabel(PREFIX, vm, ").duration"), Math.min(migrationDuration.getLB(), reInstantiateDuration), Math.max(migrationDuration.getUB(), reInstantiateDuration), s);
+      LCF.ifThenElse(LCF.or(new Arithmetic(doReinstantiation, Operator.EQ, 0), new Arithmetic(migrationDuration, Operator.LT, reInstantiateDuration)), new Arithmetic(duration, Operator.EQ, migrationDuration), new Arithmetic(duration, Operator.EQ, reInstantiateDuration));
+      IntVar time = VariableFactory.enumerated(rp.makeVarLabel(doReinstantiation.getName(), " * ", forgeD), 0, forgeD, s);
+      s.post(IntConstraintFactory.times(doReinstantiation, forgeD, time));
+      s.post(new Arithmetic(start, Operator.GE, time));
+      s.post(new FastIFFEq(doReinstantiation, duration, reInstantiateDuration));
+    } else {
+      doReinstantiation = VariableFactory.zero(s);
+      duration = migrationDuration;
+    }
+    s.post(new FastIFFEq(stay, dSlice.getHoster(), cSlice.getHoster().getValue()));
+    s.post(new FastIFFEq(stay, duration, 0));
+    migrationTask = VariableFactory.task(start, duration, end);
+  }
 
-        // Get vars
-        vm = e;
-        rp = p;
-        src = rp.getSourceModel().getMapping().getVMLocation(e);
-        Solver s = rp.getSolver();
-        Model mo = rp.getSourceModel();
+  public Task getMigrationTask() {
+    return migrationTask;
+  }
 
-        // Default values
-        start = rp.getStart();
-        end = rp.getStart();
-        duration =  VariableFactory.zero(s);
-        state = VariableFactory.one(s);
-        
-        // If not manageable, the VM stays on the current host
-        if (!p.getManageableVMs().contains(e)) {
-            stay = VariableFactory.one(s);
-            doReinstantiation = VariableFactory.zero(s);
-            manageable = false;
-            
-            IntVar host = rp.makeCurrentHost(vm, PREFIX_STAY, vm, ").host");
-            cSlice = new SliceBuilder(rp, vm, PREFIX_STAY, vm.toString(), ").cSlice")
-                    .setHoster(host)
-                    .setEnd(rp.makeUnboundedDuration(PREFIX_STAY, vm, ").cSlice_end"))
-                    .build();
-            dSlice = new SliceBuilder(rp, vm, PREFIX_STAY, vm, ").dSlice")
-                    .setHoster(host)
-                    .setStart(cSlice.getEnd())
-                    .build();
+  private static String prettyMethod(IntVar method) {
+    if (method.isInstantiatedTo(0)) {
+      return "migration";
+    } else {
+      if (method.isInstantiatedTo(1)) {
+        return "re-instantiation";
+      }
+    }
+    return "(migration || re-instantiation)";
+  }
 
-            // The action always terminate before the end of the reconfiguration plan
-            s.post(new Arithmetic(cSlice.getEnd(), Operator.LE, rp.getEnd()));
-            return;
+  @Override public boolean isManaged() {
+    return manageable;
+  }
+
+  @Override public boolean insertActions(Solution s, ReconfigurationPlan plan) {
+    DurationEvaluators dev = rp.getDurationEvaluators();
+    if (!s.getIntVal(cSlice.getHoster()).equals(s.getIntVal(dSlice.getHoster()))) {
+      assert s.getIntVal(stay) == 0;
+      Action a;
+      Node dst = rp.getNode(s.getIntVal(dSlice.getHoster()));
+      if (s.getIntVal(doReinstantiation) == 0) {
+        int st = s.getIntVal(getStart());
+        int ed = s.getIntVal(getEnd());
+        if (getBandwidth() != null) {
+          a = new MigrateVM(vm, src, dst, st, ed, s.getIntVal(getBandwidth()));
+        } else {
+          a = new MigrateVM(vm, src, dst, st, ed);
         }
-
-        // The VM can move (to re-instantiate or migrate) OR STAY to the same host
-        stay = VF.bool(vm + "stay", s);
-        cSlice = new SliceBuilder(rp, vm, PREFIX, vm, ").cSlice")
-                .setHoster(rp.getNode(rp.getSourceModel().getMapping().getVMLocation(vm)))
-                .setEnd(rp.makeUnboundedDuration(PREFIX, vm, ").cSlice_end"))
-                .build();
-
-        dSlice = new SliceBuilder(rp, vm, PREFIX, vm, ").dSlice")
-                .setStart(rp.makeUnboundedDuration(PREFIX, vm, ").dSlice_start"))
-                .build();
-
-        // The action always terminate before the end of the reconfiguration plan
-        s.post(new Arithmetic(cSlice.getEnd(), Operator.LE, rp.getEnd()));
-
-        // Update start and end vars of the action
-        start = dSlice.getStart();
-        end = cSlice.getEnd();
-
-        // Get some static durations from evaluators
-        DurationEvaluators dev = rp.getDurationEvaluators();
-        int migrateDuration = dev.evaluate(rp.getSourceModel(), MigrateVM.class, vm);
-        int bootDuration = dev.evaluate(rp.getSourceModel(), org.btrplace.plan.event.BootVM.class, vm);
-        //int shutdownDuration = dev.evaluate(rp.getSourceModel(), org.btrplace.plan.event.ShutdownVM.class, vm);
-        int forgeD = p.getDurationEvaluators().evaluate(p.getSourceModel(), org.btrplace.plan.event.ForgeVM.class, vm);
-
-        // Compute the re-instantiation duration
-        int reInstantiateDuration = bootDuration + forgeD;
-        reInstantiateDuration = forgeD; // Compliant with CMaxOnlineTest and others
-        
-        // Get the networking view if attached
-        Network network = Network.get(mo);
-        IntVar migrationDuration;
-        if (network != null) {
-
-            // Set the migration algorithm
-            postCopy = mo.getAttributes().get(vm, "postCopy", false);
-
-            // Create unbounded/large domain vars for migration duration and bandwidth
-            migrationDuration = p.makeUnboundedDuration(PREFIX, vm, ").duration");
-            bandwidth = VF.bounded(PREFIX + vm + ").bandwidth", 0, Integer.MAX_VALUE/100, s);
+        boolean b = plan.add(a);
+        assert b;
+      } else {
+        VM newVM = rp.cloneVM(vm);
+        if (newVM == null) {
+          rp.getLogger().error("Unable to get a new int to plan the re-instantiate of VM {}", vm);
+          return false;
         }
-        // No networking view, set the duration from the evaluator
-        else {
-            // The duration can still be 0 => the VM STAY !
-            migrationDuration = VariableFactory.enumerated(rp.makeVarLabel(PREFIX, vm, ").duration"),
-                    new int[]{0, migrateDuration}, s);
-            bandwidth = null;
-        }
-
-        // Possibly re-instantiate (if some attributes are defined)
-        if (mo.getAttributes().get(vm, "clone", false) && mo.getAttributes().isSet(vm, "template")) {
-
-            doReinstantiation = VariableFactory.bool(rp.makeVarLabel("relocation_method(", vm, ")"), s);
-
-            duration = VariableFactory.bounded(rp.makeVarLabel(PREFIX, vm, ").duration"),
-                    Math.min(migrationDuration.getLB(), reInstantiateDuration),
-                    Math.max(migrationDuration.getUB(), reInstantiateDuration), s
-            );
-
-            // Re-instantiate or migrate
-            // (Prefer the re-instantiation if the duration are the same, otherwise choose the min)
-            LCF.ifThenElse(LCF.or(new Arithmetic(doReinstantiation, Operator.EQ, 0), // can be instantiated externally !
-                                  new Arithmetic(migrationDuration, Operator.LT, reInstantiateDuration)),
-                    new Arithmetic(duration, Operator.EQ, migrationDuration),
-                    new Arithmetic(duration, Operator.EQ, reInstantiateDuration)
-            );
-
-            // If it is a re-instantiation then specify that the dSlice must start AFTER the Forge delay
-            IntVar time = VariableFactory.enumerated(
-                    rp.makeVarLabel(doReinstantiation.getName(), " * ", forgeD), 0, forgeD, s);
-            s.post(IntConstraintFactory.times(doReinstantiation, forgeD, time));
-            s.post(new Arithmetic(start, Operator.GE, time));
-
-            // Be sure that doReinstantiation will be instantiated
-            s.post(new FastIFFEq(doReinstantiation, duration, reInstantiateDuration));
-            //s.post(ICF.arithm(doReinstantiation, "=", 0));
-        }
-        // The VM either migrate or stay but won't be re-instantiated for sure
-        else {
-            doReinstantiation = VariableFactory.zero(s);
-            duration = migrationDuration;
-        }
-
-        // If the VM stay (src host == dst host), then duration = 0
-        s.post(new FastIFFEq(stay, dSlice.getHoster(), cSlice.getHoster().getValue()));
-        s.post(new FastIFFEq(stay, duration, 0));
-
-        // Create the task ('default' cumulative constraint with a height of 1)
-        migrationTask = VariableFactory.task(start, duration, end);
+        org.btrplace.plan.event.ForgeVM fvm = new org.btrplace.plan.event.ForgeVM(newVM, s.getIntVal(dSlice.getStart()) - dev.evaluate(rp.getSourceModel(), org.btrplace.plan.event.ForgeVM.class, vm), s.getIntVal(dSlice.getStart()));
+        boolean b = plan.add(fvm);
+        assert b;
+        int endForging = fvm.getEnd();
+        org.btrplace.plan.event.BootVM boot = new org.btrplace.plan.event.BootVM(newVM, dst, endForging, endForging + dev.evaluate(rp.getSourceModel(), org.btrplace.plan.event.BootVM.class, newVM));
+        boot.addEvent(Action.Hook.PRE, new SubstitutedVMEvent(vm, newVM));
+        return plan.add(boot) && plan.add(new org.btrplace.plan.event.ShutdownVM(vm, src, boot.getEnd(), s.getIntVal(cSlice.getEnd())));
+      }
     }
+    return true;
+  }
 
-    public Task getMigrationTask() {
-        return migrationTask;
-    }
+  public IntVar getBandwidth() {
+    return bandwidth;
+  }
 
-    private static String prettyMethod(IntVar method) {
-        if (method.isInstantiatedTo(0)) {
-            return "migration";
-        } else if (method.isInstantiatedTo(1)) {
-            return "re-instantiation";
-        }
-        return "(migration || re-instantiation)";
-    }
+  public boolean usesPostCopy() {
+    return postCopy;
+  }
 
-    @Override
-    public boolean isManaged() {
-        return manageable;
-    }
+  @Override public VM getVM() {
+    return vm;
+  }
 
-    @Override
-    public boolean insertActions(Solution s, ReconfigurationPlan plan) {
-        DurationEvaluators dev = rp.getDurationEvaluators();
-        // Only if the VM doesn't stay
-        if (!s.getIntVal(cSlice.getHoster()).equals(s.getIntVal(dSlice.getHoster()))) {
-            assert s.getIntVal(stay) == 0;
-            Action a;
-            Node dst = rp.getNode(s.getIntVal(dSlice.getHoster()));
-            // Migration
-            if (s.getIntVal(doReinstantiation) == 0) {
-                int st = s.getIntVal(getStart());
-                int ed = s.getIntVal(getEnd());
+  @Override public IntVar getStart() {
+    return start;
+  }
 
-                if (getBandwidth() != null) {
-                    a = new MigrateVM(vm, src, dst, st, ed, s.getIntVal(getBandwidth()));
-                }
-                else {
-                    a = new MigrateVM(vm, src, dst, st, ed);
-                }
-                boolean b = plan.add(a);
-                assert b;
-            // Re-instantiation
-            } else {
-                    VM newVM = rp.cloneVM(vm);
-                    if (newVM == null) {
-                        rp.getLogger().error("Unable to get a new int to plan the re-instantiate of VM {}", vm);
-                        return false;
-                    }
-                    org.btrplace.plan.event.ForgeVM fvm = new org.btrplace.plan.event.ForgeVM(
-                            newVM,
-                            s.getIntVal(dSlice.getStart()) - 
-                                    dev.evaluate(rp.getSourceModel(), org.btrplace.plan.event.ForgeVM.class, vm),
-                            s.getIntVal(dSlice.getStart())
-                    );
-                    //forge the new VM from a template
-                    boolean b = plan.add(fvm);
-                    assert b;
-                    //Boot the new VM
-                    int endForging = fvm.getEnd();
-                    org.btrplace.plan.event.BootVM boot = new org.btrplace.plan.event.BootVM(
-                            newVM,
-                            dst,
-                            endForging,
-                            endForging + dev.evaluate(rp.getSourceModel(), org.btrplace.plan.event.BootVM.class, newVM)
-                    );
-                    boot.addEvent(Action.Hook.PRE, new SubstitutedVMEvent(vm, newVM));
-                    return plan.add(boot) && plan.add(new org.btrplace.plan.event.ShutdownVM(
-                                                        vm, src, boot.getEnd(), s.getIntVal(cSlice.getEnd())));
-            }
-        }
-        return true;
-    }
+  @Override public IntVar getEnd() {
+    return end;
+  }
 
-    public IntVar getBandwidth() {
-        return bandwidth;
-    }
+  @Override public IntVar getDuration() {
+    return duration;
+  }
 
-    public boolean usesPostCopy() { return postCopy; }
+  @Override public Slice getCSlice() {
+    return cSlice;
+  }
 
-    @Override
-    public VM getVM() {
-        return vm;
-    }
+  @Override public Slice getDSlice() {
+    return dSlice;
+  }
 
-    @Override
-    public IntVar getStart() {
-        return start;
-    }
+  @Override public BoolVar getState() {
+    return state;
+  }
 
-    @Override
-    public IntVar getEnd() {
-        return end;
-    }
+  @Override public BoolVar isStaying() {
+    return stay;
+  }
 
-    @Override
-    public IntVar getDuration() {
-        return duration;
-    }
-
-    @Override
-    public Slice getCSlice() {
-        return cSlice;
-    }
-
-    @Override
-    public Slice getDSlice() {
-        return dSlice;
-    }
-
-    @Override
-    public BoolVar getState() {
-        return state;
-    }
-
-    @Override
-    public BoolVar isStaying() {
-        return stay;
-    }
-
-    /**
+  /**
      * Tells if the VM can be migrated or re-instantiated.
      *
      * @return a variable instantiated to {@code 0} for a migration based relocation or {@code 1}
      * for a re-instantiation based relocation
      */
-    public IntVar getRelocationMethod() {
-        return doReinstantiation;
-    }
+  public IntVar getRelocationMethod() {
+    return doReinstantiation;
+  }
 
-    @Override
-    public String toString() {
-        return "relocate(doReinstantiation=" + prettyMethod(doReinstantiation) +
-                " ,vm=" + vm +
-                " ,from=" + src + "(" + rp.getNode(src) + ")" +
-                " ,to=" + (dSlice.getHoster().isInstantiated() ? rp.getNode(dSlice.getHoster().getValue()) : dSlice.getHoster().toString()) + ")";
-    }
+  @Override public String toString() {
+    return "relocate(doReinstantiation=" + prettyMethod(doReinstantiation) + " ,vm=" + vm + " ,from=" + src + "(" + rp.getNode(src) + ")" + " ,to=" + (dSlice.getHoster().isInstantiated() ? rp.getNode(dSlice.getHoster().getValue()) : dSlice.getHoster().toString()) + ")";
+  }
 
-    @Override
-    public VMState getSourceState() {
-        return VMState.RUNNING;
-    }
+  @Override public VMState getSourceState() {
+    return VMState.RUNNING;
+  }
 
-    @Override
-    public VMState getFutureState() {
-        return VMState.RUNNING;
-    }
+  @Override public VMState getFutureState() {
+    return VMState.RUNNING;
+  }
 
+  public static class Builder extends VMTransitionBuilder {
     /**
-     * The builder devoted to a running->running transition.
-     */
-    public static class Builder extends VMTransitionBuilder {
-
-        /**
          * New builder
          */
-        public Builder() {
-            super("relocatable", VMState.RUNNING, VMState.RUNNING);
-        }
-
-        @Override
-        public VMTransition build(ReconfigurationProblem r, VM v) throws SchedulerException {
-            return new RelocatableVM(r, v);
-        }
+    public Builder() {
+      super("relocatable", VMState.RUNNING, VMState.RUNNING);
     }
+
+    @Override public VMTransition build(ReconfigurationProblem r, VM v) throws SchedulerException {
+      return new RelocatableVM(r, v);
+    }
+  }
 }
