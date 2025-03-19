@@ -1,4 +1,3 @@
-
 package cz.habarta.typescript.generator.compiler;
 
 import cz.habarta.typescript.generator.DateMapping;
@@ -674,7 +673,13 @@ public class ModelCompiler {
                 if (restQueryParam instanceof RestQueryParam.Single) {
                     final MethodParameterModel queryParam = ((RestQueryParam.Single) restQueryParam).getQueryParam();
                     final TsType type = typeFromJava(symbolTable, queryParam.getType(), method.getName(), method.getOriginClass());
+<<<<<<< /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-core/src/main/java/cz/habarta/typescript/generator/compiler/ModelCompiler.java/left.java
                     currentSingles.add(new TsProperty(queryParam.getName(), !queryParam.isNullable() ? type : new TsType.OptionalType(type)));
+||||||| /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-core/src/main/java/cz/habarta/typescript/generator/compiler/ModelCompiler.java/base.java
+                    currentSingles.add(new TsProperty(queryParam.getName(), new TsType.OptionalType(type)));
+=======
+                    currentSingles.add(new TsProperty(queryParam.getName(), restQueryParam.required ? type : new TsType.OptionalType(type)));
+>>>>>>> /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-core/src/main/java/cz/habarta/typescript/generator/compiler/ModelCompiler.java/right.java
                 }
                 if (restQueryParam instanceof RestQueryParam.Bean) {
                     final BeanModel queryBean = ((RestQueryParam.Bean) restQueryParam).getBean();
@@ -700,6 +705,7 @@ public class ModelCompiler {
                 }
             }
             flushSingles.run();
+<<<<<<< /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-core/src/main/java/cz/habarta/typescript/generator/compiler/ModelCompiler.java/left.java
             boolean allQueryParamsOptional = queryParams.stream().allMatch(restQueryParam -> {
                 if (restQueryParam instanceof RestQueryParam.Single) {
                     final MethodParameterModel queryParam = ((RestQueryParam.Single) restQueryParam).getQueryParam();
@@ -711,6 +717,13 @@ public class ModelCompiler {
 
             TsType.IntersectionType queryParamType = new TsType.IntersectionType(types);
             queryParameter = new TsParameterModel("queryParams", allQueryParamsOptional ? new TsType.OptionalType(queryParamType) : queryParamType);
+||||||| /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-core/src/main/java/cz/habarta/typescript/generator/compiler/ModelCompiler.java/base.java
+            queryParameter = new TsParameterModel("queryParams", new TsType.OptionalType(new TsType.IntersectionType(types)));
+=======
+            boolean allQueryParamsOptional = queryParams.stream().noneMatch(queryParam -> queryParam.required);
+            TsType.IntersectionType queryParamType = new TsType.IntersectionType(types);
+            queryParameter = new TsParameterModel("queryParams", allQueryParamsOptional ? new TsType.OptionalType(queryParamType) : queryParamType);
+>>>>>>> /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-core/src/main/java/cz/habarta/typescript/generator/compiler/ModelCompiler.java/right.java
             parameters.add(queryParameter);
         } else {
             queryParameter = null;

@@ -1,4 +1,3 @@
-
 package cz.habarta.typescript.generator.parser;
 
 import cz.habarta.typescript.generator.JaxrsApplicationScanner;
@@ -194,7 +193,7 @@ public class JaxrsApplicationParser extends RestApplicationParser {
                 final QueryParam queryParamAnnotation = param.getAnnotation(QueryParam.class);
                 if (queryParamAnnotation != null) {
                     final KType parameterKType = KotlinUtils.getParameterKType(i, method);
-                    queryParams.add(new RestQueryParam.Single(new MethodParameterModel(queryParamAnnotation.value(), param.getParameterizedType(), parameterKType, false)));
+                    queryParams.add(new RestQueryParam.Single(new MethodParameterModel(queryParamAnnotation.value(), param.getParameterizedType(), parameterKType, false), false));
                     foundType(result, param.getParameterizedType(), parameterKType, resourceClass, method.getName());
                 }
                 final BeanParam beanParamAnnotation = param.getAnnotation(BeanParam.class);

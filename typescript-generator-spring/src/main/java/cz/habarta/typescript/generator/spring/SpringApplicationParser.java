@@ -1,4 +1,3 @@
-
 package cz.habarta.typescript.generator.spring;
 
 import cz.habarta.typescript.generator.KotlinUtils;
@@ -305,26 +304,69 @@ public class SpringApplicationParser extends RestApplicationParser {
                 Parameter parameter = parameters[i];
 
                 if (parameter.getType() == Pageable.class) {
+<<<<<<< /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-spring/src/main/java/cz/habarta/typescript/generator/spring/SpringApplicationParser.java/left.java
                     queryParams.add(new RestQueryParam.Single(new MethodParameterModel("page", Long.class, null, false)));
                     foundType(result, Long.class, null, controllerClass, method.getName());
+||||||| /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-spring/src/main/java/cz/habarta/typescript/generator/spring/SpringApplicationParser.java/base.java
+                    queryParams.add(new RestQueryParam.Single(new MethodParameterModel("page", Long.class)));
+                    foundType(result, Long.class, controllerClass, method.getName());
+=======
+                    queryParams.add(new RestQueryParam.Single(new MethodParameterModel("page", Long.class), false));
+                    foundType(result, Long.class, controllerClass, method.getName());
+>>>>>>> /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-spring/src/main/java/cz/habarta/typescript/generator/spring/SpringApplicationParser.java/right.java
 
+<<<<<<< /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-spring/src/main/java/cz/habarta/typescript/generator/spring/SpringApplicationParser.java/left.java
                     queryParams.add(new RestQueryParam.Single(new MethodParameterModel("size", Long.class, null, false)));
                     foundType(result, Long.class, null, controllerClass, method.getName());
+||||||| /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-spring/src/main/java/cz/habarta/typescript/generator/spring/SpringApplicationParser.java/base.java
+                    queryParams.add(new RestQueryParam.Single(new MethodParameterModel("size", Long.class)));
+                    foundType(result, Long.class, controllerClass, method.getName());
+=======
+                    queryParams.add(new RestQueryParam.Single(new MethodParameterModel("size", Long.class), false));
+                    foundType(result, Long.class, controllerClass, method.getName());
+>>>>>>> /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-spring/src/main/java/cz/habarta/typescript/generator/spring/SpringApplicationParser.java/right.java
 
+<<<<<<< /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-spring/src/main/java/cz/habarta/typescript/generator/spring/SpringApplicationParser.java/left.java
                     queryParams.add(new RestQueryParam.Single(new MethodParameterModel("sort", String.class, null, false)));
                     foundType(result, String.class, null, controllerClass, method.getName());
+||||||| /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-spring/src/main/java/cz/habarta/typescript/generator/spring/SpringApplicationParser.java/base.java
+                    queryParams.add(new RestQueryParam.Single(new MethodParameterModel("sort", String.class)));
+                    foundType(result, String.class, controllerClass, method.getName());
+=======
+                    queryParams.add(new RestQueryParam.Single(new MethodParameterModel("sort", String.class), false));
+                    foundType(result, String.class, controllerClass, method.getName());
+>>>>>>> /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-spring/src/main/java/cz/habarta/typescript/generator/spring/SpringApplicationParser.java/right.java
                 } else {
                     final RequestParam requestParamAnnotation = AnnotationUtils.findAnnotation(parameter, RequestParam.class);
                     if (requestParamAnnotation != null) {
-
+<<<<<<< /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-spring/src/main/java/cz/habarta/typescript/generator/spring/SpringApplicationParser.java/left.java
+                
                         final boolean isRequired = requestParamAnnotation.required() && requestParamAnnotation.defaultValue().equals(ValueConstants.DEFAULT_NONE);
 
                         final KType parameterKType = KotlinUtils.getParameterKType(i, method);
+||||||| /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-spring/src/main/java/cz/habarta/typescript/generator/spring/SpringApplicationParser.java/base.java
+=======
+                
+                        final boolean isRequired = requestParamAnnotation.required() && requestParamAnnotation.defaultValue().equals(ValueConstants.DEFAULT_NONE);
+
+>>>>>>> /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-spring/src/main/java/cz/habarta/typescript/generator/spring/SpringApplicationParser.java/right.java
                         queryParams.add(new RestQueryParam.Single(new MethodParameterModel(firstOf(
+<<<<<<< /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-spring/src/main/java/cz/habarta/typescript/generator/spring/SpringApplicationParser.java/left.java
                                 requestParamAnnotation.value(),
                                 parameter.getName()
                         ), parameter.getParameterizedType(), parameterKType, isRequired)));
                         foundType(result, parameter.getParameterizedType(), parameterKType, controllerClass, method.getName());
+||||||| /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-spring/src/main/java/cz/habarta/typescript/generator/spring/SpringApplicationParser.java/base.java
+                            requestParamAnnotation.value(),
+                            parameter.getName()
+                        ), parameter.getParameterizedType())));
+                        foundType(result, parameter.getParameterizedType(), controllerClass, method.getName());
+=======
+                            requestParamAnnotation.value(),
+                            parameter.getName()
+                        ), parameter.getParameterizedType()), isRequired));
+                        foundType(result, parameter.getParameterizedType(), controllerClass, method.getName());
+>>>>>>> /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-spring/src/main/java/cz/habarta/typescript/generator/spring/SpringApplicationParser.java/right.java
                     }
                 }
 
