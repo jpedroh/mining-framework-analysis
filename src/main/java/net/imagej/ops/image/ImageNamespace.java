@@ -57,6 +57,7 @@ public class ImageNamespace extends AbstractNamespace {
 	// -- ascii --
 
 	/** Executes the "ascii" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.image.ascii.DefaultASCII.class)
 	public <T extends RealType<T>> String ascii(final IterableInterval<T> image) {
 		final String result = (String) ops().run(
@@ -65,6 +66,7 @@ public class ImageNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "ascii" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.image.ascii.DefaultASCII.class)
 	public <T extends RealType<T>> String ascii(final IterableInterval<T> image,
 		final T min)
@@ -75,6 +77,7 @@ public class ImageNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "ascii" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.image.ascii.DefaultASCII.class)
 	public <T extends RealType<T>> String ascii(final IterableInterval<T> image,
 		final T min, final T max)
@@ -101,6 +104,7 @@ public class ImageNamespace extends AbstractNamespace {
 	// -- distance transform --
 
 	/** Executes the "distancetransform" operation on the given arguments. */
+
 	@OpMethod(ops = { net.imagej.ops.image.distancetransform.DefaultDistanceTransform.class,
 			net.imagej.ops.image.distancetransform.DistanceTransform2D.class,
 			net.imagej.ops.image.distancetransform.DistanceTransform3D.class })
@@ -113,6 +117,7 @@ public class ImageNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "distancetransform" operation on the given arguments. */
+
 	@OpMethod(ops = { net.imagej.ops.image.distancetransform.DefaultDistanceTransform.class,
 			net.imagej.ops.image.distancetransform.DistanceTransform2D.class,
 			net.imagej.ops.image.distancetransform.DistanceTransform3D.class })
@@ -123,8 +128,19 @@ public class ImageNamespace extends AbstractNamespace {
 				.run(Ops.Image.DistanceTransform.class, in);
 		return result;
 	}
+	@OpMethod(ops = { net.imagej.ops.image.distancetransform.DefaultDistanceTransformCalibration.class,
+			net.imagej.ops.image.distancetransform.DistanceTransform2DCalibration.class,
+			net.imagej.ops.image.distancetransform.DistanceTransform3DCalibration.class })
+	public <B extends BooleanType<B>, T extends RealType<T>> RandomAccessibleInterval<T> distancetransform(
+			final RandomAccessibleInterval<B> in, final double... calibration) {
+		@SuppressWarnings("unchecked")
+		final RandomAccessibleInterval<T> result = (RandomAccessibleInterval<T>) ops()
+				.run(Ops.Image.DistanceTransform.class, in, calibration);
+		return result;
+	}
 
 	/** Executes the "distancetransform" operation on the given arguments. */
+
 	@OpMethod(ops = { net.imagej.ops.image.distancetransform.DefaultDistanceTransformCalibration.class,
 			net.imagej.ops.image.distancetransform.DistanceTransform2DCalibration.class,
 			net.imagej.ops.image.distancetransform.DistanceTransform3DCalibration.class })
@@ -137,20 +153,11 @@ public class ImageNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "distancetransform" operation on the given arguments. */
-	@OpMethod(ops = { net.imagej.ops.image.distancetransform.DefaultDistanceTransformCalibration.class,
-			net.imagej.ops.image.distancetransform.DistanceTransform2DCalibration.class,
-			net.imagej.ops.image.distancetransform.DistanceTransform3DCalibration.class })
-	public <B extends BooleanType<B>, T extends RealType<T>> RandomAccessibleInterval<T> distancetransform(
-			final RandomAccessibleInterval<B> in, final double... calibration) {
-		@SuppressWarnings("unchecked")
-		final RandomAccessibleInterval<T> result = (RandomAccessibleInterval<T>) ops()
-				.run(Ops.Image.DistanceTransform.class, in, calibration);
-		return result;
-	}
 
 	// -- equation --
 
 	/** Executes the "equation" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.image.equation.DefaultEquation.class)
 	public <T extends RealType<T>> IterableInterval<T> equation(final String in) {
 		@SuppressWarnings("unchecked")
@@ -160,6 +167,7 @@ public class ImageNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "equation" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.image.equation.DefaultEquation.class)
 	public <T extends RealType<T>> IterableInterval<T> equation(
 			final IterableInterval<T> out, final String in) {
@@ -172,6 +180,7 @@ public class ImageNamespace extends AbstractNamespace {
 	// -- fill --
 
 	/** Executes the "fill" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.image.fill.DefaultFill.class)
 	public <T extends Type<T>> Iterable<T> fill(final Iterable<T> out,
 		final T in)
@@ -185,6 +194,7 @@ public class ImageNamespace extends AbstractNamespace {
 	// -- histogram --
 
 	/** Executes the "histogram" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.image.histogram.HistogramCreate.class)
 	public <T extends RealType<T>> Histogram1d<T> histogram(final Iterable<T> in) {
 		@SuppressWarnings("unchecked")
@@ -194,6 +204,7 @@ public class ImageNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "histogram" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.image.histogram.HistogramCreate.class)
 	public <T extends RealType<T>> Histogram1d<T> histogram(
 			final Iterable<T> in, final int numBins) {
@@ -255,6 +266,28 @@ public class ImageNamespace extends AbstractNamespace {
 	// -- invert --
 
 	/** Executes the "invert" operation on the given arguments. */
+
+<<<<<<< /usr/src/app/output/imagej/imagej-ops/47f2fe1a7a9d39451ea3235b48889f1d61a5a095/src/main/java/net/imagej/ops/image/ImageNamespace.java/left.java
+	@OpMethod(op = net.imagej.ops.image.invert.InvertII.class)
+	public <I extends RealType<I>, O extends RealType<O>> IterableInterval<O> invert(
+			final IterableInterval<O> out, final IterableInterval<I> in) {
+		@SuppressWarnings("unchecked")
+		final IterableInterval<O> result = (IterableInterval<O>) ops().run(
+				net.imagej.ops.Ops.Image.Invert.class, out,
+				in);
+		return result;
+	}
+||||||| /usr/src/app/output/imagej/imagej-ops/47f2fe1a7a9d39451ea3235b48889f1d61a5a095/src/main/java/net/imagej/ops/image/ImageNamespace.java/base.java
+	@OpMethod(op = net.imagej.ops.image.invert.InvertII.class)
+	public <I extends RealType<I>, O extends RealType<O>> IterableInterval<O> invert(
+			final IterableInterval<O> out, final IterableInterval<I> in) {
+		@SuppressWarnings("unchecked")
+		final IterableInterval<O> result = (IterableInterval<O>) ops().run(
+				net.imagej.ops.Ops.Image.Invert.class, out,
+				in);
+		return result;
+	}
+=======
 	@OpMethod(ops = {net.imagej.ops.image.invert.InvertII.class,
 									net.imagej.ops.image.invert.InvertIIInteger.class})
 	public <I extends RealType<I>, O extends RealType<O>> IterableInterval<O> invert(
@@ -265,50 +298,7 @@ public class ImageNamespace extends AbstractNamespace {
 				in);
 		return result;
 	}
-
-	/** Executes the "invert" operation on the given arguments, given a {@link RealType} minimum. */
-	@OpMethod(op = net.imagej.ops.image.invert.InvertII.class)
-	public <I extends RealType<I>, O extends RealType<O>> IterableInterval<O> invert(
-			final IterableInterval<O> out, final IterableInterval<I> in, final RealType<I> min) {
-		@SuppressWarnings("unchecked")
-		final IterableInterval<O> result = (IterableInterval<O>) ops().run(
-				net.imagej.ops.Ops.Image.Invert.class, out,
-				in);
-		return result;
-	}
-
-	/** Executes the "invert" operation on the given arguments, given a {@link IntegerType} minimum. */
-	@OpMethod(op = net.imagej.ops.image.invert.InvertIIInteger.class)
-	public <I extends RealType<I>, O extends RealType<O>> IterableInterval<O> invert(
-			final IterableInterval<O> out, final IterableInterval<I> in, final IntegerType min) {
-		@SuppressWarnings("unchecked")
-		final IterableInterval<O> result = (IterableInterval<O>) ops().run(
-				net.imagej.ops.Ops.Image.Invert.class, out,
-				in);
-		return result;
-	}
-
-	/** Executes the "invert" operation on the given arguments, given a {@link RealType} minimum. */
-	@OpMethod(op = net.imagej.ops.image.invert.InvertII.class)
-	public <I extends RealType<I>, O extends RealType<O>> IterableInterval<O> invert(
-			final IterableInterval<O> out, final IterableInterval<I> in, final RealType<I> min, final RealType<I> max) {
-		@SuppressWarnings("unchecked")
-		final IterableInterval<O> result = (IterableInterval<O>) ops().run(
-				net.imagej.ops.Ops.Image.Invert.class, out,
-				in);
-		return result;
-	}
-
-	/** Executes the "invert" operation on the given arguments, given a {@link IntegerType} minimum. */
-	@OpMethod(op =	net.imagej.ops.image.invert.InvertIIInteger.class)
-	public <I extends RealType<I>, O extends RealType<O>> IterableInterval<O> invert(
-			final IterableInterval<O> out, final IterableInterval<I> in, final IntegerType min, final IntegerType max) {
-		@SuppressWarnings("unchecked")
-		final IterableInterval<O> result = (IterableInterval<O>) ops().run(
-				net.imagej.ops.Ops.Image.Invert.class, out,
-				in);
-		return result;
-	}
+>>>>>>> /usr/src/app/output/imagej/imagej-ops/47f2fe1a7a9d39451ea3235b48889f1d61a5a095/src/main/java/net/imagej/ops/image/ImageNamespace.java/right.java
 
 	// -- normalize --
 
@@ -472,6 +462,7 @@ public class ImageNamespace extends AbstractNamespace {
 	// -- watershed --
 
 	/** Executes the "watershed" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.image.watershed.Watershed.class)
 	public <T extends RealType<T>> ImgLabeling<Integer, IntType> watershed(final ImgLabeling<Integer, IntType> out,
 			final RandomAccessibleInterval<T> in, final boolean eightConnectivity, final boolean drawWatersheds) {
@@ -482,6 +473,7 @@ public class ImageNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "watershed" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.image.watershed.Watershed.class)
 	public <T extends RealType<T>> ImgLabeling<Integer, IntType> watershed(final RandomAccessibleInterval<T> in,
 			final boolean eightConnectivity, final boolean drawWatersheds) {
@@ -492,6 +484,7 @@ public class ImageNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "watershed" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.image.watershed.Watershed.class)
 	public <B extends BooleanType<B>, T extends RealType<T>> ImgLabeling<Integer, IntType> watershed(
 			final ImgLabeling<Integer, IntType> out, final RandomAccessibleInterval<T> in,
@@ -530,7 +523,7 @@ public class ImageNamespace extends AbstractNamespace {
 			eightConnectivity, drawWatersheds, sigma);
 		return result;
 	}
-	
+
 	@OpMethod(op = net.imagej.ops.image.watershed.WatershedBinary.class)
 	public <B extends BooleanType<B>> ImgLabeling<Integer, IntType> watershed(final ImgLabeling<Integer, IntType> out, 
 		final RandomAccessibleInterval<B> in, final boolean useEightConnectivity, final boolean drawWatersheds, 
@@ -543,7 +536,7 @@ public class ImageNamespace extends AbstractNamespace {
 	}
 
 	// -- watershedBinarySingleSigma --
-	
+
 	@OpMethod(op = net.imagej.ops.image.watershed.WatershedBinarySingleSigma.class)
 	public <T extends BooleanType<T>> ImgLabeling<Integer, IntType> watershed(final RandomAccessibleInterval<T> in, 
 		final boolean useEightConnectivity, final boolean drawWatersheds, final double sigma) {
@@ -574,10 +567,11 @@ public class ImageNamespace extends AbstractNamespace {
 				in, useEightConnectivity, drawWatersheds, sigma, mask);
 		return result;
 	}
-	
+
 	// -- watershedSeeded --
 
 	/** Executes the "watershedSeeded" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.image.watershed.WatershedSeeded.class)
 	public <T extends RealType<T>> ImgLabeling<Integer, IntType> watershed(final RandomAccessibleInterval<T> in,
 			final ImgLabeling<Integer, IntType> seeds, final boolean eightConnectivity, final boolean drawWatersheds) {
@@ -588,6 +582,7 @@ public class ImageNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "watershedSeeded" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.image.watershed.WatershedSeeded.class)
 	public <T extends RealType<T>> ImgLabeling<Integer, IntType> watershed(final ImgLabeling<Integer, IntType> out,
 			final RandomAccessibleInterval<T> in, final ImgLabeling<Integer, IntType> seeds,
@@ -600,6 +595,7 @@ public class ImageNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "watershedSeeded" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.image.watershed.WatershedSeeded.class)
 	public <B extends BooleanType<B>, T extends RealType<T>> ImgLabeling<Integer, IntType> watershed(
 			final ImgLabeling<Integer, IntType> out, final RandomAccessibleInterval<T> in,
@@ -611,6 +607,100 @@ public class ImageNamespace extends AbstractNamespace {
 				mask);
 		return result;
 	}
+
+	// -- Named methods --
+
+	// -- ascii --
+
+	/** Executes the "ascii" operation on the given arguments. */
+
+	/** Executes the "ascii" operation on the given arguments. */
+
+	/** Executes the "ascii" operation on the given arguments. */
+
+	// -- cooccurrence matrix --
+
+	// -- distance transform --
+
+	/** Executes the "distancetransform" operation on the given arguments. */
+
+	/** Executes the "distancetransform" operation on the given arguments. */
+
+	/** Executes the "distancetransform" operation on the given arguments. */
+
+	/** Executes the "distancetransform" operation on the given arguments. */
+
+	// -- equation --
+
+	/** Executes the "equation" operation on the given arguments. */
+
+	/** Executes the "equation" operation on the given arguments. */
+
+	// -- fill --
+
+	/** Executes the "fill" operation on the given arguments. */
+
+	// -- histogram --
+
+	/** Executes the "histogram" operation on the given arguments. */
+
+	/** Executes the "histogram" operation on the given arguments. */
+
+	//-- integral --
+
+	// -- invert --
+
+	/** Executes the "invert" operation on the given arguments. */
+
+	/** Executes the "invert" operation on the given arguments, given a {@link RealType} minimum. */
+
+	@OpMethod(op = net.imagej.ops.image.invert.InvertII.class)
+	public <I extends RealType<I>, O extends RealType<O>> IterableInterval<O> invert(
+			final IterableInterval<O> out, final IterableInterval<I> in, final RealType<I> min) {
+		@SuppressWarnings("unchecked")
+		final IterableInterval<O> result = (IterableInterval<O>) ops().run(
+				net.imagej.ops.Ops.Image.Invert.class, out,
+				in);
+		return result;
+	}
+
+	/** Executes the "invert" operation on the given arguments, given a {@link IntegerType} minimum. */
+
+	@OpMethod(op = net.imagej.ops.image.invert.InvertIIInteger.class)
+	public <I extends RealType<I>, O extends RealType<O>> IterableInterval<O> invert(
+			final IterableInterval<O> out, final IterableInterval<I> in, final IntegerType min) {
+		@SuppressWarnings("unchecked")
+		final IterableInterval<O> result = (IterableInterval<O>) ops().run(
+				net.imagej.ops.Ops.Image.Invert.class, out,
+				in);
+		return result;
+	}
+
+	/** Executes the "invert" operation on the given arguments, given a {@link RealType} minimum. */
+
+	@OpMethod(op = net.imagej.ops.image.invert.InvertII.class)
+	public <I extends RealType<I>, O extends RealType<O>> IterableInterval<O> invert(
+			final IterableInterval<O> out, final IterableInterval<I> in, final RealType<I> min, final RealType<I> max) {
+		@SuppressWarnings("unchecked")
+		final IterableInterval<O> result = (IterableInterval<O>) ops().run(
+				net.imagej.ops.Ops.Image.Invert.class, out,
+				in);
+		return result;
+	}
+
+	/** Executes the "invert" operation on the given arguments, given a {@link IntegerType} minimum. */
+
+	@OpMethod(op =	net.imagej.ops.image.invert.InvertIIInteger.class)
+	public <I extends RealType<I>, O extends RealType<O>> IterableInterval<O> invert(
+			final IterableInterval<O> out, final IterableInterval<I> in, final IntegerType min, final IntegerType max) {
+		@SuppressWarnings("unchecked")
+		final IterableInterval<O> result = (IterableInterval<O>) ops().run(
+				net.imagej.ops.Ops.Image.Invert.class, out,
+				in);
+		return result;
+	}
+
+	// -- normalize --
 
 	// -- Named methods --
 
