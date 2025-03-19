@@ -27,7 +27,6 @@ import io.jsonwebtoken.InvalidClaimException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.MissingClaimException;
-import io.jsonwebtoken.SigningKeyResolver;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.JwtHandler;
 import io.jsonwebtoken.JwtHandlerAdapter;
@@ -65,8 +64,6 @@ public class DefaultJwtParser implements JwtParser {
     private Key key;
 
     private SigningKeyResolver signingKeyResolver;
-
-    private CompressionCodecResolver compressionCodecResolver = new DefaultCompressionCodecResolver();
 
     Claims expectedClaims = new DefaultClaims();
 
@@ -127,6 +124,8 @@ public class DefaultJwtParser implements JwtParser {
 
         return this;
     }
+
+    private CompressionCodecResolver compressionCodecResolver = new DefaultCompressionCodecResolver();
 
     @Override
     public JwtParser setSigningKey(byte[] key) {
