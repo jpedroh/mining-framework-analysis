@@ -48,7 +48,27 @@ public abstract class WeixinControllerSupport extends WeixinSupport {
      * @throws IOException      IO异常
      */
     @RequestMapping(method = RequestMethod.POST)
+<<<<<<< /usr/src/app/output/sd4324530/fastweixin/b9c911aea2bd0710b54afc94fb09c55e813ed9b6/src/main/java/com/github/sd4324530/fastweixin/servlet/WeixinControllerSupport.java/left.java
+    protected final void process(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+||||||| /usr/src/app/output/sd4324530/fastweixin/b9c911aea2bd0710b54afc94fb09c55e813ed9b6/src/main/java/com/github/sd4324530/fastweixin/servlet/WeixinControllerSupport.java/base.java
+    protected final void process(HttpServletRequest request) throws ServletException, IOException {
+=======
     protected final void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+>>>>>>> /usr/src/app/output/sd4324530/fastweixin/b9c911aea2bd0710b54afc94fb09c55e813ed9b6/src/main/java/com/github/sd4324530/fastweixin/servlet/WeixinControllerSupport.java/right.java
+<<<<<<< /usr/src/app/output/sd4324530/fastweixin/b9c911aea2bd0710b54afc94fb09c55e813ed9b6/src/main/java/com/github/sd4324530/fastweixin/servlet/WeixinControllerSupport.java/left.java
+    //        if (!isLegal(request)) {
+    //            return "";
+    //        }
+        String result=processRequest(request);
+        response.setContentType("text/xml;charset=UTF-8");
+        response.getWriter().write(result);
+        return null;
+||||||| /usr/src/app/output/sd4324530/fastweixin/b9c911aea2bd0710b54afc94fb09c55e813ed9b6/src/main/java/com/github/sd4324530/fastweixin/servlet/WeixinControllerSupport.java/base.java
+        if (!isLegal(request)) {
+            return "";
+        }
+        return processRequest(request);
+=======
         if (isLegal(request)) {
             String result = processRequest(request);
             //设置正确的 content-type 以防止中文乱码
@@ -57,5 +77,6 @@ public abstract class WeixinControllerSupport extends WeixinSupport {
             writer.write(result);
             writer.close();
         }
+>>>>>>> /usr/src/app/output/sd4324530/fastweixin/b9c911aea2bd0710b54afc94fb09c55e813ed9b6/src/main/java/com/github/sd4324530/fastweixin/servlet/WeixinControllerSupport.java/right.java
     }
 }
