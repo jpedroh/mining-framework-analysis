@@ -1,5 +1,4 @@
 package org.restheart.test.performance;
-
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -27,93 +26,65 @@ import static org.restheart.test.integration.AbstactIT.TEST_DB_PREFIX;
  *
  * @author Andrea Di Cesare {@literal <andrea@softinstigate.com>}
  */
-@Ignore
-public class SkipTimeTest {
+@Ignore public class SkipTimeTest {
+  private static final int N = 5;
 
-    private static final int N = 5;
-    private static final int REQUESTED_SKIPS = 1500000;
-    private static final int POOL_SKIPS = 1400000;
+  private static final int REQUESTED_SKIPS = 1500000;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        MongoDBClientSingleton.init(new Configuration(Paths.get("etc/test/restheart-integrationtest.yml")).getMongoUri());
+  private static final int POOL_SKIPS = 1400000;
+
+  @BeforeClass public static void setUpClass() throws Exception {
+    MongoDBClientSingleton.init(new Configuration(Paths.get("etc/test/restheart-integrationtest.yml")).getMongoUri());
+  }
+
+  @AfterClass public static void tearDownClass() {
+  }
+
+  public SkipTimeTest() {
+  }
+
+  @Before public void setUp() {
+  }
+
+  @After public void tearDown() {
+  }
+
+  @Test public void testSkip() {
+    final Database dbsDAO = new DatabaseImpl();
+    MongoCollection<BsonDocument> coll = dbsDAO.getCollection(TEST_DB_PREFIX, "huge");
+    long tot = 0;
+    for (int cont = 0; cont < N; cont++) {
+      long start = System.nanoTime();
+      FindIterable<BsonDocument> docs = coll.find().sort(new BasicDBObject("_id", -1)).skip(REQUESTED_SKIPS);
+      docs.iterator().next();
+      long end = System.nanoTime();
+      tot = tot + end - start;
     }
+  }
 
-    @AfterClass
-    public static void tearDownClass() {
+  @Test public void testTwoSkips() {
+    final Database dbsDAO = new DatabaseImpl();
+    MongoCollection<BsonDocument> coll = dbsDAO.getCollection(TEST_DB_PREFIX, "huge");
+    long tot = 0;
+    for (int cont = 0; cont < N; cont++) {
+      int ACTUAL_POOL_SKIPS;
+      FindIterable<BsonDocument> docs;
+      if (REQUESTED_SKIPS - POOL_SKIPS <= Math.round(MIN_SKIP_DISTANCE_PERCENTAGE * REQUESTED_SKIPS)) {
+        docs = coll.find().sort(new BasicDBObject("_id", -1)).skip(POOL_SKIPS);
+        docs.first();
+        ACTUAL_POOL_SKIPS = POOL_SKIPS;
+      } else {
+        docs = coll.find().sort(new BasicDBObject("_id", -1)).skip(REQUESTED_SKIPS);
+        ACTUAL_POOL_SKIPS = REQUESTED_SKIPS;
+      }
+      long start = System.nanoTime();
+      MongoCursor<BsonDocument> cursor = docs.iterator();
+      for (int cont2 = 0; cont2 < REQUESTED_SKIPS - ACTUAL_POOL_SKIPS; cont2++) {
+        cursor.next();
+      }
+      cursor.next();
+      long end = System.nanoTime();
+      tot = tot + end - start;
     }
-
-    public SkipTimeTest() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
-    @Test
-    public void testSkip() {
-
-
-        final Database dbsDAO = new DatabaseImpl();
-        MongoCollection<BsonDocument> coll = dbsDAO.getCollection(TEST_DB_PREFIX, "huge");
-
-        long tot = 0;
-
-        for (int cont = 0; cont < N; cont++) {
-            long start = System.nanoTime();
-
-            FindIterable<BsonDocument> docs = coll
-                    .find()
-                    .sort(new BasicDBObject("_id", -1))
-                    .skip(REQUESTED_SKIPS);
-
-            docs.iterator().next();
-
-            long end = System.nanoTime();
-
-            tot = tot + end - start;
-        }
-
-    }
-
-    @Test
-    public void testTwoSkips() {
-
-        final Database dbsDAO = new DatabaseImpl();
-        MongoCollection<BsonDocument> coll = dbsDAO.getCollection(TEST_DB_PREFIX, "huge");
-
-        long tot = 0;
-
-        for (int cont = 0; cont < N; cont++) {
-            int ACTUAL_POOL_SKIPS;
-
-            FindIterable<BsonDocument> docs;
-
-            if (REQUESTED_SKIPS - POOL_SKIPS <= Math.round(MIN_SKIP_DISTANCE_PERCENTAGE * REQUESTED_SKIPS)) {
-                docs = coll.find().sort(new BasicDBObject("_id", -1)).skip(POOL_SKIPS);
-                docs.first(); // force skips
-                ACTUAL_POOL_SKIPS = POOL_SKIPS;
-            } else {
-                docs = coll.find().sort(new BasicDBObject("_id", -1)).skip(REQUESTED_SKIPS);
-                ACTUAL_POOL_SKIPS = REQUESTED_SKIPS;
-            }
-
-            long start = System.nanoTime();
-
-            MongoCursor<BsonDocument> cursor = docs.iterator();
-
-            for (int cont2 = 0; cont2 < REQUESTED_SKIPS - ACTUAL_POOL_SKIPS; cont2++) {
-                cursor.next();
-            }
-
-            cursor.next();
-            long end = System.nanoTime();
-            tot = tot + end - start;
-        }
-
-    }
+  }
 }
