@@ -1,16 +1,13 @@
 package com.wrapper.spotify.requests.data.player;
-
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.requests.data.AbstractDataRequest;
 import org.apache.http.entity.ContentType;
-
 import java.io.IOException;
 
 /**
  * Set the volume for the user’s current playback device.
  */
 public class SetVolumeForUsersPlaybackRequest extends AbstractDataRequest {
-
   /**
    * The private {@link SetVolumeForUsersPlaybackRequest} constructor.
    *
@@ -27,18 +24,11 @@ public class SetVolumeForUsersPlaybackRequest extends AbstractDataRequest {
    * @throws IOException            In case of networking issues.
    * @throws SpotifyWebApiException The Web API returned an error further specified in this exception's root cause.
    */
-  @SuppressWarnings("unchecked")
-  public String execute() throws
-          IOException,
-          SpotifyWebApiException {
+  @SuppressWarnings(value = { "unchecked" }) public String execute() throws IOException, SpotifyWebApiException {
     return putJson();
   }
 
-  /**
-   * Builder class for building a {@link SetVolumeForUsersPlaybackRequest}.
-   */
   public static final class Builder extends AbstractDataRequest.Builder<Builder> {
-
     /**
      * Create a new {@link SetVolumeForUsersPlaybackRequest.Builder}.
      * <p>
@@ -82,8 +72,7 @@ public class SetVolumeForUsersPlaybackRequest extends AbstractDataRequest {
      *
      * @return A custom {@link SetVolumeForUsersPlaybackRequest}.
      */
-    @Override
-    public SetVolumeForUsersPlaybackRequest build() {
+    @Override public SetVolumeForUsersPlaybackRequest build() {
       setContentType(ContentType.APPLICATION_JSON);
       setPath("/v1/me/player/volume");
       return new SetVolumeForUsersPlaybackRequest(this);
