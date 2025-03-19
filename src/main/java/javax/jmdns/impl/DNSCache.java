@@ -238,10 +238,10 @@ public class DNSCache {
                 if (entryList != null) {    
                     result = entryList.remove(dnsEntry);
                 }
-                /* Remove from DNS cache when no records remain with this key */
-                if (result && entryList.isEmpty()) {
-                    cacheMap.remove(dnsEntry.getKey());
-                }
+            }
+            /* Remove from DNS cache when no records remain with this key */
+            if (result && entryList.isEmpty()) {
+                this.remove(dnsEntry.getKey());
             }
         }
         return result;
@@ -313,11 +313,4 @@ public class DNSCache {
     public void clear() {
         cacheMap.clear();
     }
-
-    /**
-     * Get List of DNSEntry entries for provided key.
-     */
-    List<DNSEntry> get(String key) {
-        return cacheMap.get(key);
-    } 
 }
