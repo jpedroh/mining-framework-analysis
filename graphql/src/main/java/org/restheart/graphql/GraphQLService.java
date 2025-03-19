@@ -58,8 +58,8 @@ import org.restheart.utils.HttpStatus;
 import org.restheart.utils.BsonUtils;
 import org.restheart.metrics.MetricLabel;
 import org.restheart.metrics.Metrics;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -135,12 +135,12 @@ public class GraphQLService implements Service<GraphQLRequest, MongoResponse> {
         } else {
             try {
                 // check query syntax
-                var doc = GQL_PARSER.parseDocument(req.getQuery());
+                var doc = GQL_PARSER.parseDocument(request.getQuery());
 
                 // add metric label
-                Metrics.attachMetricLabel(req, new MetricLabel("query", queryNames(doc)));
+                Metrics.attachMetricLabel(request, new MetricLabel("query", queryNames(doc)));
             } catch(InvalidSyntaxException ise) {
-                res.setInError(HttpStatus.SC_BAD_REQUEST, "Syntax error in query", ise);
+                response.setInError(HttpStatus.SC_BAD_REQUEST, "Syntax error in query", ise);
                 return;
             }
 
