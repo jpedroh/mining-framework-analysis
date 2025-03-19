@@ -2,9 +2,8 @@ package com.github.oxo42.stateless4j.triggers;
 
 import com.github.oxo42.stateless4j.conversion.ParameterConversion;
 
-
 public abstract class TriggerWithParameters<TTrigger> {
-
+    
     private final TTrigger underlyingTrigger;
     private final Class<?>[] argumentTypes;
     
