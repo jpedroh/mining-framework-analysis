@@ -43,7 +43,7 @@ public class XSLTBuilder
     {
 	return new XSLTBuilder();
     }
-    
+
     public XSLTBuilder fromDocument(Source doc)
     {
 	return newInstance().document(doc);
@@ -202,6 +202,29 @@ public class XSLTBuilder
     public XSLTBuilder stylesheet(Node n, String systemId) throws TransformerConfigurationException
     {
         return stylesheet(new DOMSource(n, systemId));
+    }
+
+    //private Source stylesheet = null;
+
+    public XSLTBuilder fromDocument(Document doc)
+    {
+	return newInstance().document(doc);
+    }
+
+    public XSLTBuilder fromStylesheet(Document doc) throws TransformerConfigurationException
+    {
+	return newInstance().stylesheet(doc);
+    }
+
+    public XSLTBuilder document(Document doc)
+    {
+	document(new DOMSource(doc));
+	return this;
+    }
+
+    public XSLTBuilder stylesheet(Document doc) throws TransformerConfigurationException
+    {
+        return stylesheet(new DOMSource(doc));
     }
 
     public XSLTBuilder stylesheet(File file) throws TransformerConfigurationException
