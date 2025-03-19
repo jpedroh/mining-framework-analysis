@@ -26,18 +26,32 @@ public class GsonMultiResultsParserTest extends BaseTest<Responses<Results<UserR
 
 	
 	
-	public static class CustomMultiResponse extends Responses<Results<UserResponse>, Results<UserBadgesResponse>> implements DefinedType, GetResponseBase{
+	public static class CustomMultiResponse extends Responses<Results<UserResponse>, Results<UsersBadgesResponse>> implements DefinedType, GetResponseBase{
 
 		@Override
 		public Type defineType() {
+<<<<<<< /usr/src/app/output/thepoofy/foursquare_v2_java_adapter/dacecfc813308901bc17bdf1bc849c3ca820eb01/src/test/com/williamvanderhoef/foursquare/test/parsers/GsonMultiResultsParserTest.java/left.java
+			return this.getClass();
+||||||| /usr/src/app/output/thepoofy/foursquare_v2_java_adapter/dacecfc813308901bc17bdf1bc849c3ca820eb01/src/test/com/williamvanderhoef/foursquare/test/parsers/GsonMultiResultsParserTest.java/base.java
+			return new TypeToken<Results<Responses<Results<UserResponse>, Results<UsersBadgesResponse>>>>() {}.getType();
+=======
 			return new TypeToken<Results<Responses<ResultsTypes.UserResults, ResultsTypes.UsersBadgesResults>>>() {}.getType();
+>>>>>>> /usr/src/app/output/thepoofy/foursquare_v2_java_adapter/dacecfc813308901bc17bdf1bc849c3ca820eb01/src/test/com/williamvanderhoef/foursquare/test/parsers/GsonMultiResultsParserTest.java/right.java
 		}
 	}
 	
 	public static DefinedType getTypeDefinition()
 	{
+		//Results<Responses<Results<UserResponse>, Results<UsersBadgesResponse>>> results = new Results<Responses<Results<UserResponse>, Results<UsersBadgesResponse>>>(){};
+<<<<<<< /usr/src/app/output/thepoofy/foursquare_v2_java_adapter/dacecfc813308901bc17bdf1bc849c3ca820eb01/src/test/com/williamvanderhoef/foursquare/test/parsers/GsonMultiResultsParserTest.java/left.java
+		CustomMultiResponse results = new CustomMultiResponse();
+||||||| /usr/src/app/output/thepoofy/foursquare_v2_java_adapter/dacecfc813308901bc17bdf1bc849c3ca820eb01/src/test/com/williamvanderhoef/foursquare/test/parsers/GsonMultiResultsParserTest.java/base.java
+		Results<Responses<Results<UserResponse>, Results<UsersBadgesResponse>>> results = new Results<Responses<Results<UserResponse>, Results<UsersBadgesResponse>>>(){};
+=======
 		Results<Responses<ResultsTypes.UserResults, ResultsTypes.UsersBadgesResults>> results  = new Results<Responses<ResultsTypes.UserResults, ResultsTypes.UsersBadgesResults>>();
+>>>>>>> /usr/src/app/output/thepoofy/foursquare_v2_java_adapter/dacecfc813308901bc17bdf1bc849c3ca820eb01/src/test/com/williamvanderhoef/foursquare/test/parsers/GsonMultiResultsParserTest.java/right.java
 	// 	Results<Responses<Results<UserResponse>, Results<UsersBadgesResponse>>> results = new Results<Responses<Results<UserResponse>, Results<UsersBadgesResponse>>>(){};
+		
 		
 		return results;
 	}
@@ -54,6 +68,7 @@ public class GsonMultiResultsParserTest extends BaseTest<Responses<Results<UserR
 		DefinedType endpoint = getTypeDefinition();
 		
 		Type endpointType = endpoint.defineType();
+		
 		
 		Type tokenizedType = new TypeToken<Results<Responses<Results<UserResponse>, Results<UserBadgesResponse>>>>() {}.getType();
 
@@ -77,7 +92,7 @@ public class GsonMultiResultsParserTest extends BaseTest<Responses<Results<UserR
 	public void testUser()
 	{
 		Results<UserResponse> user = this.getResults().getResponse().getResult1();
-		Results<UserBadgesResponse> badges = this.getResults().getResponse().getResult2();
+		Results<UsersBadgesResponse> badges = this.getResults().getResponse().getResult2();
 		
 		Assert.assertNotNull(user);
 		Assert.assertNotNull(badges);
