@@ -68,6 +68,24 @@ public class LoggingTest {
 		verifyNoMoreInteractions(logger);
 	}
 
+    @Test
+    public void testBackpressurePassedThrough() {
+        final AtomicLong requests = new AtomicLong();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>(0);
+        Observable.range(1, 5).doOnRequest(new Action1<Long>() {
+
+            @Override
+            public void call(Long n) {
+                requests.addAndGet(n);
+            }
+        }).lift(Logging.<Integer> log()).subscribe(ts);
+        assertEquals(0, requests.get());
+        ts.requestMore(1);
+        assertEquals(1, requests.get());
+        ts.requestMore(2);
+        assertEquals(3, requests.get());
+    }
+
 	@Test
 	public void testLoggingTransformationErrorIsLogged() {
 		Logger logger = mock(Logger.class);
@@ -92,25 +110,6 @@ public class LoggingTest {
 
 	}
 
-	
-    @Test
-    public void testBackpressurePassedThrough() {
-        final AtomicLong requests = new AtomicLong();
-        TestSubscriber<Integer> ts = new TestSubscriber<Integer>(0);
-        Observable.range(1, 5).doOnRequest(new Action1<Long>() {
-
-            @Override
-            public void call(Long n) {
-                requests.addAndGet(n);
-            }
-        }).lift(Logging.<Integer> log()).subscribe(ts);
-        assertEquals(0, requests.get());
-        ts.requestMore(1);
-        assertEquals(1, requests.get());
-        ts.requestMore(2);
-        assertEquals(3, requests.get());
-    }
-    
 	@Test
 	public void testAgain() {
 		int count = Observable
@@ -218,7 +217,7 @@ public class LoggingTest {
 				// run
 				.subscribe();
 	}
- 
+
 	@Test
 	public void testKitchenSink() {
 		Observable.range(1, 100)
@@ -264,5 +263,4 @@ public class LoggingTest {
 				// block and get the answer
 				.toBlocking().last();
 	}
->>>>>>> e0e2a3a97fbb66f524ff624a52ea40629de09bb4
 }
