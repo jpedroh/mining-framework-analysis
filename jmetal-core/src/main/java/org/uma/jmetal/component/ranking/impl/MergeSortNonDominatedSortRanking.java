@@ -6,6 +6,9 @@ import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.util.attribute.util.attributecomparator.AttributeComparator;
 import org.uma.jmetal.solution.util.attribute.util.attributecomparator.impl.IntegerValueAttributeComparator;
 import org.uma.jmetal.util.JMetalException;
+import org.uma.jmetal.util.comparator.DominanceComparator;
+import org.uma.jmetal.util.comparator.impl.OverallConstraintViolationComparator;
+import org.uma.jmetal.util.solutionattribute.impl.DominanceRanking;
 
 import java.util.*;
 
@@ -32,12 +35,48 @@ public class MergeSortNonDominatedSortRanking<S extends Solution<?>> implements 
   private ArrayList<int[]> _duplicatedSolutions;
   private MNDSBitsetManager bsManager;
   private List<ArrayList<S>> rankedSubPopulations;
-
   public MergeSortNonDominatedSortRanking() {
     this.solutionComparator =
-        this.solutionComparator =
-            new IntegerValueAttributeComparator<>(
-                attributeId, AttributeComparator.Ordering.ASCENDING);
+        new IntegerValueAttributeComparator<>(attributeId, AttributeComparator.Ordering.ASCENDING);
+  }
+
+<<<<<<< /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/left.java
+  public MergeSortNonDominatedSortRanking(int populationSize, int nObjectives) {
+    _initialPopulationSize = populationSize;
+    _n = populationSize;
+    _m = nObjectives;
+    bsManager = new MNDSBitsetManager(_n);
+    SORT_INDEX = _m + 1;
+    SOL_ID = _m;
+    _work = new double[_n][SORT_INDEX + 1]; // m=solID, m+1=solNewIndex
+    _nonDomEarlyDetection = 0;
+
+    this.solutionComparator =
+        new IntegerValueAttributeComparator<>(attributeId, AttributeComparator.Ordering.ASCENDING);
+  }
+
+||||||| /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/base.java
+  public MergeSortNonDominatedSortRanking(int populationSize, int nObjectives) {
+    _initialPopulationSize = populationSize;
+    _n = populationSize;
+    _m = nObjectives;
+    bsManager = new MNDSBitsetManager(_n);
+    SORT_INDEX = _m + 1;
+    SOL_ID = _m;
+    _work = new double[_n][SORT_INDEX + 1]; //m=solID, m+1=solNewIndex
+    _nonDomEarlyDetection = 0;
+
+    this.solutionComparator = new IntegerValueAttributeComparator<>(attributeId, AttributeComparator.Ordering.ASCENDING) ;
+  }
+
+=======
+>>>>>>> /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/right.java
+  public final void freeMem() {
+    _population = null;
+    _work = null;
+    _duplicatedSolutions = null;
+    _ranking = null;
+    bsManager.freeMem();
   }
 
   @Override
@@ -48,7 +87,15 @@ public class MergeSortNonDominatedSortRanking<S extends Solution<?>> implements 
     bsManager = new MNDSBitsetManager(_n);
     SORT_INDEX = _m + 1;
     SOL_ID = _m;
+<<<<<<< /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/left.java
     _work = new double[_n][SORT_INDEX + 1]; // m=solID, m+1=solNewIndex
+    _nonDomEarlyDetection = 0;
+||||||| /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/base.java
+    _work = new double[_n][SORT_INDEX + 1]; //m=solID, m+1=solNewIndex
+    _nonDomEarlyDetection = 0;
+=======
+    _work = new double[_n][SORT_INDEX + 1]; //m=solID, m+1=solNewIndex
+>>>>>>> /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/right.java
 
     _population =
         new double[_n]
@@ -69,11 +116,59 @@ public class MergeSortNonDominatedSortRanking<S extends Solution<?>> implements 
     }
     return this;
   }
+<<<<<<< /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/left.java
+
+  public final long getNumberOfEarlyDetections() {
+    return _nonDomEarlyDetection;
+  }
+
+  public final long getComparisonCounter() {
+    return _comparisonCounter;
+  }
+
+  public final int getNumberOfDuplicatedSolutions() {
+    return _duplicatedSolutions.size();
+  }
 
   private final int compare_lex(double[] s1, double[] s2, int fromObj, int toObj) {
+||||||| /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/base.java
+
+
+  final public long getNumberOfEarlyDetections() {
+    return _nonDomEarlyDetection;
+  }
+
+  final public long getComparisonCounter() {
+    return _comparisonCounter;
+  }
+
+  final public int getNumberOfDuplicatedSolutions() {
+    return _duplicatedSolutions.size();
+  }
+
+  final private int compare_lex(double[] s1, double[] s2, int fromObj, int toObj) {
+=======
+  final private int compare_lex(double[] s1, double[] s2, int fromObj, int toObj) {
+>>>>>>> /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/right.java
     for (; fromObj < toObj; fromObj++) {
+<<<<<<< /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/left.java
+      _comparisonCounter++;
       if (s1[fromObj] < s2[fromObj]) return -1;
+      _comparisonCounter++;
       if (s1[fromObj] > s2[fromObj]) return 1;
+||||||| /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/base.java
+      _comparisonCounter++;
+      if (s1[fromObj] < s2[fromObj])
+        return -1;
+      _comparisonCounter++;
+      if (s1[fromObj] > s2[fromObj])
+        return 1;
+=======
+      if (s1[fromObj] < s2[fromObj])
+        return -1;
+      if (s1[fromObj] > s2[fromObj])
+        return 1;
+>>>>>>> /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/right.java
     }
     return 0;
   }
@@ -150,6 +245,13 @@ public class MergeSortNonDominatedSortRanking<S extends Solution<?>> implements 
         bsManager.computeSolutionRanking(solutionId, initSolId);
       }
     }
+<<<<<<< /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/left.java
+    if (!dominance) _nonDomEarlyDetection++;
+||||||| /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/base.java
+    if (!dominance)
+      _nonDomEarlyDetection++;
+=======
+>>>>>>> /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/right.java
     return dominance;
   }
 
@@ -157,15 +259,25 @@ public class MergeSortNonDominatedSortRanking<S extends Solution<?>> implements 
     int p, solutionId, initSolId, lastObjective = _m - 1;
     boolean dominance;
     System.arraycopy(_population, 0, _work, 0, _n);
-    for (int obj = 2; obj < _m; obj++) {
+<<<<<<< /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/left.java
+    for (_obj++; _obj < _m; _obj++) {
       if (merge_sort(
           _population,
           _work,
           0,
           _n,
-          obj,
-          obj + 1)) { // Population has the same order as in previous objective
+          _obj,
+          _obj + 1)) { // Population has the same order as in previous objective
+        if (_obj == lastObjective) {
+||||||| /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/base.java
+    for (_obj++; _obj < _m; _obj++) {
+      if (merge_sort(_population, _work, 0, _n, _obj, _obj + 1)) {//Population has the same order as in previous objective
+        if (_obj == lastObjective) {
+=======
+    for (int obj = 2; obj < _m; obj++) {
+      if (merge_sort(_population, _work, 0, _n, obj, obj + 1)) {//Population has the same order as in previous objective
         if (obj == lastObjective) {
+>>>>>>> /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/right.java
           for (p = 0; p < _n; p++)
             bsManager.computeSolutionRanking(
                 (int) _population[p][SORT_INDEX], (int) _population[p][SOL_ID]);
@@ -178,8 +290,20 @@ public class MergeSortNonDominatedSortRanking<S extends Solution<?>> implements 
       for (p = 0; p < _n; p++) {
         initSolId = ((int) _population[p][SOL_ID]);
         solutionId = ((int) _population[p][SORT_INDEX]);
-        if (obj < lastObjective) dominance |= bsManager.updateSolutionDominance(solutionId);
+<<<<<<< /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/left.java
+        if (_obj < lastObjective) dominance |= bsManager.updateSolutionDominance(solutionId);
         else bsManager.computeSolutionRanking(solutionId, initSolId);
+||||||| /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/base.java
+        if (_obj < lastObjective)
+          dominance |= bsManager.updateSolutionDominance(solutionId);
+        else
+          bsManager.computeSolutionRanking(solutionId, initSolId);
+=======
+        if (obj < lastObjective)
+          dominance |= bsManager.updateSolutionDominance(solutionId);
+        else
+          bsManager.computeSolutionRanking(solutionId, initSolId);
+>>>>>>> /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/right.java
         bsManager.updateIncrementalBitset(solutionId);
       }
       if (!dominance) {
@@ -189,8 +313,18 @@ public class MergeSortNonDominatedSortRanking<S extends Solution<?>> implements 
   }
 
   // main
+<<<<<<< /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/left.java
   public final int[] sort(double[][] populationData) {
     // INITIALIZATION
+    _comparisonCounter = 0;
+||||||| /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/base.java
+  final public int[] sort(double[][] populationData) {
+    //INITIALIZATION
+    _comparisonCounter = 0;
+=======
+  final public int[] sort(double[][] populationData) {
+    //INITIALIZATION
+>>>>>>> /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-core/src/main/java/org/uma/jmetal/component/ranking/impl/MergeSortNonDominatedSortRanking.java/right.java
     _population = populationData;
     _duplicatedSolutions = new ArrayList<int[]>(_n);
     // SORTING

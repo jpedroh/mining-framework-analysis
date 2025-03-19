@@ -32,6 +32,7 @@ import java.util.List;
 
 /**
  * Class to configure and run the NSGA-II algorithm using the {@Link MergeSortNonDominatedSortRanking} algorithm.
+ * This algorithm can be applied to problems having three or more objectives.
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
@@ -42,8 +43,8 @@ public class NSGAIIWithMNDSRankingExample extends AbstractAlgorithmRunner {
     CrossoverOperator<DoubleSolution> crossover;
     MutationOperator<DoubleSolution> mutation;
 
-    String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2";
-    String referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/DTLZ2.3D.pf";
+    String problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT4";
+    String referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT4.pf";
 
     problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
 
@@ -58,7 +59,13 @@ public class NSGAIIWithMNDSRankingExample extends AbstractAlgorithmRunner {
     int populationSize = 100;
     int offspringPopulationSize = populationSize;
 
-    Termination termination = new TerminationByEvaluations(75000);
+<<<<<<< /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-example/src/main/java/org/uma/jmetal/example/multiobjective/nsgaii/NSGAIIWithMNDSRankingExample.java/left.java
+    Termination termination = new TerminationByEvaluations(100000);
+||||||| /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-example/src/main/java/org/uma/jmetal/example/multiobjective/nsgaii/NSGAIIWithMNDSRankingExample.java/base.java
+    Termination termination = new TerminationByEvaluations(000);
+=======
+    Termination termination = new TerminationByEvaluations(25000);
+>>>>>>> /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-example/src/main/java/org/uma/jmetal/example/multiobjective/nsgaii/NSGAIIWithMNDSRankingExample.java/right.java
 
     Ranking<DoubleSolution> ranking =
         new MergeSortNonDominatedSortRanking<>();
