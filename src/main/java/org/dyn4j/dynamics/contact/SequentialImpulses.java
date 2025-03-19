@@ -549,14 +549,45 @@ public class SequentialImpulses implements ContactConstraintSolver {
 			// get the masses
 			Mass m1 = b1.getMass();
 			Mass m2 = b2.getMass();
-		  
+			
+<<<<<<< /usr/src/app/output/wnbittle/dyn4j/ec92ecfb6a92d441058d670eafa0c2ed22e6dbbe/src/main/java/org/dyn4j/dynamics/contact/SequentialImpulses.java/left.java
+||||||| /usr/src/app/output/wnbittle/dyn4j/ec92ecfb6a92d441058d670eafa0c2ed22e6dbbe/src/main/java/org/dyn4j/dynamics/contact/SequentialImpulses.java/base.java
+			double mass1 = m1.getMass();
+			double mass2 = m2.getMass();
+			
+			// get the contact list
+			List<Contact> contacts = contactConstraint.contacts;
+			int cSize = contacts.size();
+			if (cSize == 0) continue;
+			
+=======
+			// get the contact list
+			List<Contact> contacts = contactConstraint.contacts;
+			int cSize = contacts.size();
+			if (cSize == 0) continue;
+			
+>>>>>>> /usr/src/app/output/wnbittle/dyn4j/ec92ecfb6a92d441058d670eafa0c2ed22e6dbbe/src/main/java/org/dyn4j/dynamics/contact/SequentialImpulses.java/right.java
 			// get the penetration axis
 			Vector2 N = contactConstraint.normal;
 			
+<<<<<<< /usr/src/app/output/wnbittle/dyn4j/ec92ecfb6a92d441058d670eafa0c2ed22e6dbbe/src/main/java/org/dyn4j/dynamics/contact/SequentialImpulses.java/left.java
 			// get the world centers of mass
 			Vector2 c1 = t1.getTransformed(m1.getCenter());
 			Vector2 c2 = t2.getTransformed(m2.getCenter());
 			Vector2 cdiff = c1.subtract(c2);
+||||||| /usr/src/app/output/wnbittle/dyn4j/ec92ecfb6a92d441058d670eafa0c2ed22e6dbbe/src/main/java/org/dyn4j/dynamics/contact/SequentialImpulses.java/base.java
+			// could be 1 or 0 if one object has infinite mass
+			double invMass1 = mass1 * m1.getInverseMass();
+			double invI1 = mass1 * m1.getInverseInertia();
+			// could be 1 or 0 if one object has infinite mass
+			double invMass2 = mass2 * m2.getInverseMass();
+			double invI2 = mass2 * m2.getInverseInertia();
+=======
+			double invMass1 = m1.getInverseMass();
+			double invI1 = m1.getInverseInertia();
+			double invMass2 = m2.getInverseMass();
+			double invI2 = m2.getInverseInertia();
+>>>>>>> /usr/src/app/output/wnbittle/dyn4j/ec92ecfb6a92d441058d670eafa0c2ed22e6dbbe/src/main/java/org/dyn4j/dynamics/contact/SequentialImpulses.java/right.java
 			
 			// solve normal constraints
 			for (int k = 0; k < cSize; k++) {
