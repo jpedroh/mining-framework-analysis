@@ -57,7 +57,12 @@ public class CommandLineApp {
             this.password = line.getOptionValue('s');
         }
         if (line.hasOption('c')) {
-            this.verticalRulingPositions = parseFloatList(line.getOptionValue('c'));
+            String optionString = line.getOptionValue('c');
+            if (optionString.startsWith("%")) {
+                extractor.setVerticalRulingPositionsRelative(true);
+                optionString = optionString.substring(1);
+            }
+            this.verticalRulingPositions = parseFloatList(optionString);
         }
 
     }
@@ -271,15 +276,6 @@ public class CommandLineApp {
         extractor.setMethod(CommandLineApp.whichExtractionMethod(line));
         extractor.setUseLineReturns(line.hasOption('u'));
 
-        if (line.hasOption('c')) {
-            String optionString = line.getOptionValue('c');
-            if (optionString.startsWith("%")) {
-                extractor.setVerticalRulingPositionsRelative(true);
-                optionString = optionString.substring(1);
-            }
-            extractor.setVerticalRulingPositions(parseFloatList(optionString));
-        }
-
         return extractor;
     }
 
@@ -372,18 +368,13 @@ public class CommandLineApp {
         private boolean useLineReturns = false;
         private BasicExtractionAlgorithm basicExtractor = new BasicExtractionAlgorithm();
         private SpreadsheetExtractionAlgorithm spreadsheetExtractor = new SpreadsheetExtractionAlgorithm();
-
-        private boolean verticalRulingPositionsRelative = false;
-        private List<Float> verticalRulingPositions = null;
-
         private ExtractionMethod method = ExtractionMethod.BASIC;
 
         public TableExtractor() {
         }
 
-        public void setVerticalRulingPositions(List<Float> positions) {
-            this.verticalRulingPositions = positions;
-        }
+        private boolean verticalRulingPositionsRelative = false;
+
         public void setVerticalRulingPositionsRelative(boolean relative) {
             this.verticalRulingPositionsRelative = relative;
         }
@@ -432,6 +423,12 @@ public class CommandLineApp {
                 return tables;
             }
 
+<<<<<<< /usr/src/app/output/tabulapdf/tabula-java/2639edd65dc370068bdc9b438daa70f29cc5bb00/src/main/java/technology/tabula/CommandLineApp.java/left.java
+||||||| /usr/src/app/output/tabulapdf/tabula-java/2639edd65dc370068bdc9b438daa70f29cc5bb00/src/main/java/technology/tabula/CommandLineApp.java/base.java
+            if (verticalRulingPositions != null) {
+                return basicExtractor.extract(page, verticalRulingPositions);
+            }
+=======
             if (verticalRulingPositions != null) {
                 List<Float> absoluteRulingPositions;
 
@@ -447,7 +444,7 @@ public class CommandLineApp {
                 }
                 return basicExtractor.extract(page, absoluteRulingPositions);
             }
-
+>>>>>>> /usr/src/app/output/tabulapdf/tabula-java/2639edd65dc370068bdc9b438daa70f29cc5bb00/src/main/java/technology/tabula/CommandLineApp.java/right.java
             return basicExtractor.extract(page);
         }
 
