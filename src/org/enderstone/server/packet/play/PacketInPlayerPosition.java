@@ -1,7 +1,5 @@
 package org.enderstone.server.packet.play;
-
 import org.enderstone.server.EnderLogger;
-
 import io.netty.buffer.ByteBuf;
 import org.enderstone.server.Location;
 import org.enderstone.server.Main;
@@ -10,96 +8,98 @@ import org.enderstone.server.packet.NetworkManager;
 import org.enderstone.server.packet.Packet;
 
 public class PacketInPlayerPosition extends Packet {
+  private double x;
 
-	private double x;
-	private double feetY;
-	private double headY;
-	private double z;
-	private boolean onGround;
+  private double feetY;
 
-	public PacketInPlayerPosition() {
-	}
+  private double headY;
 
-	public PacketInPlayerPosition(double x, double feetY, double headY, double z, boolean onGround) {
-		this.x = x;
-		this.feetY = feetY;
-		this.headY = headY;
-		this.z = z;
-		this.onGround = onGround;
-	}
+  private double z;
 
-	@Override
-	public void read(ByteBuf buf) throws Exception {
-		this.x = buf.readDouble();
-		this.feetY = buf.readDouble();
-		this.headY = buf.readDouble();
-		this.z = buf.readDouble();
-		this.onGround = buf.readBoolean();
-	}
+  private boolean onGround;
 
-	@Override
-	public void write(ByteBuf buf) throws Exception {
-		throw new RuntimeException("Packet " + this.getClass().getSimpleName() + " with ID 0x" + Integer.toHexString(getId()) + " cannot be written.");
-	}
+  public PacketInPlayerPosition() {
+  }
 
-	@Override
-	public int getSize() throws Exception {
-		return (getDoubleSize() * 4) + 1 + getVarIntSize(getId());
-	}
+  public PacketInPlayerPosition(double x, double feetY, double headY, double z, boolean onGround) {
+    this.x = x;
+    this.feetY = feetY;
+    this.headY = headY;
+    this.z = z;
+    this.onGround = onGround;
+  }
 
-	@Override
-	public byte getId() {
-		return 0x04;
-	}
+  @Override public void read(ByteBuf buf) throws Exception {
+    this.x = buf.readDouble();
+    this.feetY = buf.readDouble();
+    this.headY = buf.readDouble();
+    this.z = buf.readDouble();
+    this.onGround = buf.readBoolean();
+  }
 
-	@Override
-	public void onRecieve(final NetworkManager networkManager) {
-		Main.getInstance().sendToMainThread(new Runnable() {
+  @Override public void write(ByteBuf buf) throws Exception {
+    throw new RuntimeException("Packet " + this.getClass().getSimpleName() + " with ID 0x" + Integer.toHexString(getId()) + " cannot be written.");
+  }
 
-			@Override
-			public void run() {
-				if (networkManager.player != null) {
-					Location loc = networkManager.player.getLocation();
-					if (networkManager.player.waitingForValidMoveAfterTeleport > 0) {
-						if (Math.max(Math.max(
-								getX() < loc.getX() ? loc.getX() - getX() : getX() - loc.getX(),
-								getHeadY() < loc.getY() ? loc.getY() - getHeadY() : getHeadY() - loc.getY()),
-								getZ() < loc.getZ() ? loc.getZ() - getZ() : getZ() - loc.getZ()
-						) > 0.1) {
-							if (networkManager.player.waitingForValidMoveAfterTeleport++ > 100) {
-								networkManager.player.teleport(loc);
-							}
-							return;
-						}
-						networkManager.player.sendMessage(new SimpleMessage("Position corrected!"));
-						networkManager.player.waitingForValidMoveAfterTeleport = 0;
-					}
-					networkManager.player.broadcastLocation(new Location("", getX(), getFeetY(), getZ(), networkManager.player.getLocation().getYaw(), networkManager.player.getLocation().getPitch()));
-					loc.setX(getX());
-					loc.setY(getFeetY());
-					loc.setZ(getZ());
-				}
-			}
-		});
-	}
+  @Override public int getSize() throws Exception {
+    return (getDoubleSize() * 4) + 1 + getVarIntSize(getId());
+  }
 
-	public double getX() {
-		return x;
-	}
+  @Override public byte getId() {
+    return 0x04;
+  }
 
-	public double getFeetY() {
-		return feetY;
-	}
+  @Override public void onRecieve(final NetworkManager networkManager) {
+    Main.getInstance().sendToMainThread(new Runnable() {
+      @Override public void run() {
 
-	public double getHeadY() {
-		return headY;
-	}
+<<<<<<< /usr/src/app/output/sandergielisse/enderstone/c4d13e39a8b2d2c937be6f97b06a870718e8fd9c/src/org/enderstone/server/packet/play/PacketInPlayerPosition.java/left.java
+        if (networkManager.player != null) {
+          Location loc = networkManager.player.getLocation();
+          try {
+            networkManager.player.broadcastLocation(new Location("", getX(), getFeetY(), getZ(), networkManager.player.getLocation().getYaw(), networkManager.player.getLocation().getPitch()));
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+          loc.setX(getX());
+          loc.setY(getFeetY());
+          loc.setZ(getZ());
+        }
+=======
+        if (networkManager.player.waitingForValidMoveAfterTeleport > 0) {
+          if (Math.max(Math.max(getX() < loc.getX() ? loc.getX() - getX() : getX() - loc.getX(), getHeadY() < loc.getY() ? loc.getY() - getHeadY() : getHeadY() - loc.getY()), getZ() < loc.getZ() ? loc.getZ() - getZ() : getZ() - loc.getZ()) > 0.1) {
+            if (networkManager.player.waitingForValidMoveAfterTeleport++ > 100) {
+              networkManager.player.teleport(loc);
+            }
+            return;
+          }
+          networkManager.player.sendMessage(new SimpleMessage("Position corrected!"));
+          networkManager.player.waitingForValidMoveAfterTeleport = 0;
+        }
+>>>>>>> /usr/src/app/output/sandergielisse/enderstone/c4d13e39a8b2d2c937be6f97b06a870718e8fd9c/src/org/enderstone/server/packet/play/PacketInPlayerPosition.java/right.java
 
-	public double getZ() {
-		return z;
-	}
+        networkManager.player.broadcastLocation(new Location("", getX(), getFeetY(), getZ(), networkManager.player.getLocation().getYaw(), networkManager.player.getLocation().getPitch()));
+      }
+    });
+  }
 
-	public boolean isOnGround() {
-		return onGround;
-	}
+  public double getX() {
+    return x;
+  }
+
+  public double getFeetY() {
+    return feetY;
+  }
+
+  public double getHeadY() {
+    return headY;
+  }
+
+  public double getZ() {
+    return z;
+  }
+
+  public boolean isOnGround() {
+    return onGround;
+  }
 }
