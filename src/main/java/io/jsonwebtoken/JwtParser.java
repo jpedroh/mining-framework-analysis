@@ -1,20 +1,4 @@
-/*
- * Copyright (C) 2014 jsonwebtoken.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.jsonwebtoken;
-
 import java.security.Key;
 import java.util.Date;
 
@@ -24,10 +8,9 @@ import java.util.Date;
  * @since 0.1
  */
 public interface JwtParser {
+  public static final char SEPARATOR_CHAR = '.';
 
-    public static final char SEPARATOR_CHAR = '.';
-
-    /**
+  /**
      * Ensures that the specified {@code jti} exists in the parsed JWT.  If missing or if the parsed
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
@@ -37,9 +20,9 @@ public interface JwtParser {
      * @see MissingClaimException
      * @see IncorrectClaimException
      */
-    JwtParser requireId(String id);
+  JwtParser requireId(String id);
 
-    /**
+  /**
      * Ensures that the specified {@code sub} exists in the parsed JWT.  If missing or if the parsed
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
@@ -49,9 +32,9 @@ public interface JwtParser {
      * @see MissingClaimException
      * @see IncorrectClaimException
      */
-    JwtParser requireSubject(String subject);
+  JwtParser requireSubject(String subject);
 
-    /**
+  /**
      * Ensures that the specified {@code aud} exists in the parsed JWT.  If missing or if the parsed
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
@@ -61,9 +44,9 @@ public interface JwtParser {
      * @see MissingClaimException
      * @see IncorrectClaimException
      */
-    JwtParser requireAudience(String audience);
+  JwtParser requireAudience(String audience);
 
-    /**
+  /**
      * Ensures that the specified {@code iss} exists in the parsed JWT.  If missing or if the parsed
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
@@ -73,9 +56,9 @@ public interface JwtParser {
      * @see MissingClaimException
      * @see IncorrectClaimException
      */
-    JwtParser requireIssuer(String issuer);
+  JwtParser requireIssuer(String issuer);
 
-    /**
+  /**
      * Ensures that the specified {@code iat} exists in the parsed JWT.  If missing or if the parsed
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
@@ -85,9 +68,9 @@ public interface JwtParser {
      * @see MissingClaimException
      * @see IncorrectClaimException
      */
-    JwtParser requireIssuedAt(Date issuedAt);
+  JwtParser requireIssuedAt(Date issuedAt);
 
-    /**
+  /**
      * Ensures that the specified {@code exp} exists in the parsed JWT.  If missing or if the parsed
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
@@ -97,9 +80,9 @@ public interface JwtParser {
      * @see MissingClaimException
      * @see IncorrectClaimException
      */
-    JwtParser requireExpiration(Date expiration);
+  JwtParser requireExpiration(Date expiration);
 
-    /**
+  /**
      * Ensures that the specified {@code nbf} exists in the parsed JWT.  If missing or if the parsed
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
@@ -109,9 +92,9 @@ public interface JwtParser {
      * @see MissingClaimException
      * @see IncorrectClaimException
      */
-    JwtParser requireNotBefore(Date notBefore);
+  JwtParser requireNotBefore(Date notBefore);
 
-    /**
+  /**
      * Ensures that the specified {@code claimName} exists in the parsed JWT.  If missing or if the parsed
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
@@ -122,9 +105,9 @@ public interface JwtParser {
      * @see MissingClaimException
      * @see IncorrectClaimException
      */
-    JwtParser require(String claimName, Object value);
+  JwtParser require(String claimName, Object value);
 
-    /**
+  /**
      * Sets the signing key used to verify any discovered JWS digital signature.  If the specified JWT string is not
      * a JWS (no signature), this key is not used.
      *
@@ -137,9 +120,9 @@ public interface JwtParser {
      *            signature.
      * @return the parser for method chaining.
      */
-    JwtParser setSigningKey(byte[] key);
+  JwtParser setSigningKey(byte[] key);
 
-    /**
+  /**
      * Sets the signing key used to verify any discovered JWS digital signature.  If the specified JWT string is not
      * a JWS (no signature), this key is not used.
      *
@@ -155,9 +138,9 @@ public interface JwtParser {
      *                              any discovered JWS digital signature.
      * @return the parser for method chaining.
      */
-    JwtParser setSigningKey(String base64EncodedKeyBytes);
+  JwtParser setSigningKey(String base64EncodedKeyBytes);
 
-    /**
+  /**
      * Sets the signing key used to verify any discovered JWS digital signature.  If the specified JWT string is not
      * a JWS (no signature), this key is not used.
      *
@@ -173,9 +156,9 @@ public interface JwtParser {
      *            signature.
      * @return the parser for method chaining.
      */
-    JwtParser setSigningKey(Key key);
+  JwtParser setSigningKey(Key key);
 
-    /**
+  /**
      * Sets the {@link SigningKeyResolver} used to acquire the <code>signing key</code> that should be used to verify
      * a JWS's signature.  If the parsed String is not a JWS (no signature), this resolver is not used.
      *
@@ -203,17 +186,17 @@ public interface JwtParser {
      * @return the parser for method chaining.
      * @since 0.4
      */
-    JwtParser setSigningKeyResolver(SigningKeyResolver signingKeyResolver);
+  JwtParser setSigningKeyResolver(SigningKeyResolver signingKeyResolver);
 
-    /**
+  /**
      *
      * @param compressionCodecResolver
      * @return the parser for method chaining.
      * @since 0.5.2
      */
-    JwtParser setCompressionCodecResolver(CompressionCodecResolver compressionCodecResolver);
+  JwtParser setCompressionCodecResolver(CompressionCodecResolver compressionCodecResolver);
 
-    /**
+  /**
      * Returns {@code true} if the specified JWT compact string represents a signed JWT (aka a 'JWS'), {@code false}
      * otherwise.
      *
@@ -224,9 +207,9 @@ public interface JwtParser {
      * @return {@code true} if the specified JWT compact string represents a signed JWT (aka a 'JWS'), {@code false}
      * otherwise.
      */
-    boolean isSigned(String jwt);
+  boolean isSigned(String jwt);
 
-    /**
+  /**
      * Parses the specified compact serialized JWT string based on the builder's current configuration state and
      * returns the resulting JWT or JWS instance.
      *
@@ -251,9 +234,9 @@ public interface JwtParser {
      * @see #parsePlaintextJws(String)
      * @see #parseClaimsJws(String)
      */
-    Jwt parse(String jwt) throws ExpiredJwtException, MalformedJwtException, SignatureException, IllegalArgumentException;
+  Jwt parse(String jwt) throws ExpiredJwtException, MalformedJwtException, SignatureException, IllegalArgumentException;
 
-    /**
+  /**
      * Parses the specified compact serialized JWT string based on the builder's current configuration state and
      * invokes the specified {@code handler} with the resulting JWT or JWS instance.
      *
@@ -299,10 +282,9 @@ public interface JwtParser {
      * @see #parse(String)
      * @since 0.2
      */
-    <T> T parse(String jwt, JwtHandler<T> handler)
-        throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException;
+  <T extends java.lang.Object> T parse(String jwt, JwtHandler<T> handler) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException;
 
-    /**
+  /**
      * Parses the specified compact serialized JWT string based on the builder's current configuration state and
      * returns
      * the resulting unsigned plaintext JWT instance.
@@ -329,10 +311,9 @@ public interface JwtParser {
      * @see #parse(String)
      * @since 0.2
      */
-    Jwt<Header, String> parsePlaintextJwt(String plaintextJwt)
-        throws UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException;
+  Jwt<Header, String> parsePlaintextJwt(String plaintextJwt) throws UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException;
 
-    /**
+  /**
      * Parses the specified compact serialized JWT string based on the builder's current configuration state and
      * returns
      * the resulting unsigned plaintext JWT instance.
@@ -360,10 +341,9 @@ public interface JwtParser {
      * @see #parse(String)
      * @since 0.2
      */
-    Jwt<Header, Claims> parseClaimsJwt(String claimsJwt)
-        throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException;
+  Jwt<Header, Claims> parseClaimsJwt(String claimsJwt) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException;
 
-    /**
+  /**
      * Parses the specified compact serialized JWS string based on the builder's current configuration state and
      * returns
      * the resulting plaintext JWS instance.
@@ -388,10 +368,9 @@ public interface JwtParser {
      * @see #parse(String)
      * @since 0.2
      */
-    Jws<String> parsePlaintextJws(String plaintextJws)
-        throws UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException;
+  Jws<String> parsePlaintextJws(String plaintextJws) throws UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException;
 
-    /**
+  /**
      * Parses the specified compact serialized JWS string based on the builder's current configuration state and
      * returns
      * the resulting Claims JWS instance.
@@ -417,6 +396,5 @@ public interface JwtParser {
      * @see #parse(String)
      * @since 0.2
      */
-    Jws<Claims> parseClaimsJws(String claimsJws)
-        throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException;
+  Jws<Claims> parseClaimsJws(String claimsJws) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException;
 }
