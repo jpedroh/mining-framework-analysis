@@ -2754,21 +2754,6 @@ public class OpenAPIV3ParserTest {
         Assert.assertNotNull(cat);
     }
 
-
-    // Relative external refs failed on windows due to \ issue
-    @Test
-    public void testRelativePathIssue1543() {
-        OpenAPIV3Parser parser = new OpenAPIV3Parser();
-        ParseOptions options = new ParseOptions();
-        options.setResolveFully(true);
-        options.setResolve(true);
-        SwaggerParseResult readResult = parser.readLocation("src/test/resources/issue-1543/openapi.yaml", null, options);
-
-        if (readResult.getMessages().size() > 0) {
-        	Assert.assertFalse(readResult.getMessages().get(0).contains("end -1"));
-        }
-    }
-
     @Test
     public void testIssue1540() throws Exception{
         OpenAPI openAPI = new OpenAPIV3Parser().read("./issue-1540/a.json");
@@ -2782,5 +2767,19 @@ public class OpenAPIV3ParserTest {
         Assert.assertTrue(!testPutExtensions.isEmpty());
         Assert.assertNotNull(testPutExtensions.get("x-order"));
         Assert.assertEquals((String)testPutExtensions.get("x-order"),"2147483647");
+    }
+
+    // Relative external refs failed on windows due to \ issue
+    @Test
+    public void testRelativePathIssue1543() {
+        OpenAPIV3Parser parser = new OpenAPIV3Parser();
+        ParseOptions options = new ParseOptions();
+        options.setResolveFully(true);
+        options.setResolve(true);
+        SwaggerParseResult readResult = parser.readLocation("src/test/resources/issue-1543/openapi.yaml", null, options);
+
+        if (readResult.getMessages().size() > 0) {
+        	Assert.assertFalse(readResult.getMessages().get(0).contains("end -1"));
+        }
     }
 }
