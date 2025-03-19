@@ -243,7 +243,7 @@ public class GridFsDAO implements GridFsRepository {
                 LOGGER.info("Succesfully deleted fileId {}", fileId);
             } catch (MongoGridFSException e) {
                 LOGGER.error("Can't delete fileId '{}'", fileId, e);
-                return new OperationResult(SC_NOT_FOUND);
+                return new OperationResult(HttpStatus.SC_NOT_FOUND);
             }
 
             return new OperationResult(SC_NO_CONTENT);
@@ -255,10 +255,9 @@ public class GridFsDAO implements GridFsRepository {
 
     private GridFSFile getFileForId(GridFSBucket gridFSBucket, BsonValue fileId) {
         return gridFSBucket
-            .find(eq("_id", fileId))
-            .limit(1).iterator().tryNext();
+                    .find(eq("_id", fileId))
+                    .limit(1).iterator().tryNext();
     }
-
     /**
      *
      * @param db
