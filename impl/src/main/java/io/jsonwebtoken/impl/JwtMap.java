@@ -29,6 +29,8 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.Calendar;
+import java.util.Date;
 
 public class JwtMap implements Map<String, Object>, FieldReadable, Nameable {
 

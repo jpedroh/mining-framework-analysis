@@ -40,6 +40,8 @@ import io.jsonwebtoken.PrematureJwtException;
 import io.jsonwebtoken.SigningKeyResolver;
 import io.jsonwebtoken.UnprotectedHeader;
 import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.ClaimJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.compression.DefaultCompressionCodecResolver;
 import io.jsonwebtoken.impl.lang.Bytes;
 import io.jsonwebtoken.impl.lang.ConstantFunction;

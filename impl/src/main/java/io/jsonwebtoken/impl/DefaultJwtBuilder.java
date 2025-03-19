@@ -36,6 +36,8 @@ import io.jsonwebtoken.io.Encoder;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.io.SerializationException;
 import io.jsonwebtoken.io.Serializer;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.lang.Assert;
 import io.jsonwebtoken.lang.Builder;
 import io.jsonwebtoken.lang.Collections;
