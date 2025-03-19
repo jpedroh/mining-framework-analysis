@@ -286,7 +286,19 @@ public class DNSQuestion extends DNSEntry {
             
             // Apple Homesharing feature
             if (this.getType().equalsIgnoreCase(constructedType) && info.getPropertyString("hG") != null && this.getName().equalsIgnoreCase(constructedName)) {
+<<<<<<< /usr/src/app/output/openhab/jmdns/437ad89e74909605df7580af282a585b90e71e49/src/main/java/javax/jmdns/impl/DNSQuestion.java/left.java
+                final javax.jmdns.impl.DNSRecord.Pointer subPtr = new DNSRecord.Pointer(constructedName, DNSRecordClass.CLASS_IN, DNSRecordClass.UNIQUE, DNSConstants.DNS_TTL, info.getName() + "." + constructedType);
+                answers.add(subPtr);
+                final javax.jmdns.impl.DNSRecord.Pointer servicePtr = new DNSRecord.Pointer(constructedType, DNSRecordClass.CLASS_IN, DNSRecordClass.UNIQUE, DNSConstants.DNS_TTL, info.getName() + "." + constructedType);
+                answers.add(servicePtr);
+||||||| /usr/src/app/output/openhab/jmdns/437ad89e74909605df7580af282a585b90e71e49/src/main/java/javax/jmdns/impl/DNSQuestion.java/base.java
+                final javax.jmdns.impl.DNSRecord.Pointer ptr = new DNSRecord.Pointer(constructedName, DNSRecordClass.CLASS_IN, DNSRecordClass.UNIQUE, DNSConstants.DNS_TTL, info.getName() + "." + constructedType);
+                final List<DNSRecord.Pointer> l = new LinkedList<DNSRecord.Pointer>();
+                l.add(ptr);
+                answers.addAll(l);
+=======
                 answers.add(new DNSRecord.Pointer(constructedName, DNSRecordClass.CLASS_IN, DNSRecordClass.UNIQUE, DNSConstants.DNS_TTL, info.getName() + "." + constructedType));
+>>>>>>> /usr/src/app/output/openhab/jmdns/437ad89e74909605df7580af282a585b90e71e49/src/main/java/javax/jmdns/impl/DNSQuestion.java/right.java
             }
 
             if (logger.isLoggable(Level.FINER)) {
