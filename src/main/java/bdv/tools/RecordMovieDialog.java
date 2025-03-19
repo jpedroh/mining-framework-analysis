@@ -29,8 +29,8 @@
  */
 package bdv.tools;
 
-import bdv.tools.bookmarks.bookmark.DynamicBookmark;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -64,6 +64,7 @@ import javax.swing.border.EmptyBorder;
 
 import bdv.cache.CacheControl;
 import bdv.export.ProgressWriter;
+import bdv.tools.bookmarks.bookmark.DynamicBookmark;
 import bdv.util.Prefs;
 import bdv.viewer.ViewerPanel;
 import bdv.viewer.overlay.ScaleBarOverlayRenderer;
@@ -94,7 +95,13 @@ public class RecordMovieDialog extends JDialog implements OverlayRenderer
 
 	private final JSpinner spinnerHeight;
 
+	private JProgressBar progressBar;
+
 	private final JProgressBar progressBar;
+
+	private boolean isRecordThreadRunning;
+
+	private JButton cancelButton;
 
 	private volatile boolean stopRecording;
 
@@ -178,6 +185,50 @@ public class RecordMovieDialog extends JDialog implements OverlayRenderer
 		spinnerHeight.setModel( new SpinnerNumberModel( 600, 10, 5000, 1 ) );
 		content.add( spinnerHeight, c );
 
+<<<<<<< /usr/src/app/output/tpietzsch/bigdataviewer-core/df89915fd4c7e1ddef4ebeb94e3e68fe76e49be0/src/main/java/bdv/tools/RecordMovieDialog.java/left.java
+		final JPanel progressPanel = new JPanel();
+		progressPanel.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
+		boxes.add( progressPanel );
+		final GridBagLayout gbl_progressPanel = new GridBagLayout();
+		gbl_progressPanel.columnWidths = new int[] { 332, 0, 0 };
+		gbl_progressPanel.rowHeights = new int[] { 19, 0 };
+		gbl_progressPanel.columnWeights = new double[] { 1.0, 0.0, Double.MIN_VALUE };
+		gbl_progressPanel.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
+		progressPanel.setLayout( gbl_progressPanel );
+
+		progressBar = new JProgressBar();
+		progressBar.setStringPainted( true );
+		final GridBagConstraints gbc_progressBar = new GridBagConstraints();
+		gbc_progressBar.fill = GridBagConstraints.HORIZONTAL;
+		gbc_progressBar.insets = new Insets( 0, 0, 0, 5 );
+		gbc_progressBar.gridx = 0;
+		gbc_progressBar.gridy = 0;
+		progressPanel.add( progressBar, gbc_progressBar );
+
+		cancelButton = new JButton( "Cancel" );
+		cancelButton.setEnabled( false );
+		final GridBagConstraints gbc_cancelButton = new GridBagConstraints();
+		gbc_cancelButton.gridx = 1;
+		gbc_cancelButton.gridy = 0;
+		progressPanel.add( cancelButton, gbc_cancelButton );
+		cancelButton.addActionListener( new ActionListener()
+		{
+
+			@Override
+			public void actionPerformed( final ActionEvent e )
+			{
+				isRecordThreadRunning = false;
+			}
+		} );
+
+		final JPanel buttonsPanel = new JPanel();
+		boxes.add( buttonsPanel );
+		buttonsPanel.setLayout( new FlowLayout( FlowLayout.RIGHT, 5, 5 ) );
+||||||| /usr/src/app/output/tpietzsch/bigdataviewer-core/df89915fd4c7e1ddef4ebeb94e3e68fe76e49be0/src/main/java/bdv/tools/RecordMovieDialog.java/base.java
+		final JPanel buttonsPanel = new JPanel();
+		boxes.add( buttonsPanel );
+		buttonsPanel.setLayout(new BorderLayout(0, 0));
+=======
 		// --------------------------------------------------------
 		c.gridy++;
 		c.gridx = 0;
@@ -187,6 +238,7 @@ public class RecordMovieDialog extends JDialog implements OverlayRenderer
 		progressBar.setStringPainted( true );
 		content.add( progressBar, c );
 		c.gridheight = 1;
+>>>>>>> /usr/src/app/output/tpietzsch/bigdataviewer-core/df89915fd4c7e1ddef4ebeb94e3e68fe76e49be0/src/main/java/bdv/tools/RecordMovieDialog.java/right.java
 
 		c.gridx += c.gridwidth;
 		c.gridwidth = 1;
@@ -198,7 +250,13 @@ public class RecordMovieDialog extends JDialog implements OverlayRenderer
 		c.gridy++;
 		c.insets = new Insets( 0, 0, 0, 0 );
 		final JButton recordButton = new JButton( "Record" );
+<<<<<<< /usr/src/app/output/tpietzsch/bigdataviewer-core/df89915fd4c7e1ddef4ebeb94e3e68fe76e49be0/src/main/java/bdv/tools/RecordMovieDialog.java/left.java
+		buttonsPanel.add( recordButton );
+||||||| /usr/src/app/output/tpietzsch/bigdataviewer-core/df89915fd4c7e1ddef4ebeb94e3e68fe76e49be0/src/main/java/bdv/tools/RecordMovieDialog.java/base.java
+		buttonsPanel.add( recordButton, BorderLayout.EAST );
+=======
 		content.add( recordButton, c );
+>>>>>>> /usr/src/app/output/tpietzsch/bigdataviewer-core/df89915fd4c7e1ddef4ebeb94e3e68fe76e49be0/src/main/java/bdv/tools/RecordMovieDialog.java/right.java
 
 		// ========================================================
 
@@ -209,11 +267,35 @@ public class RecordMovieDialog extends JDialog implements OverlayRenderer
 				spinnerMaxTimepoint.setValue( min );
 		} );
 
+<<<<<<< /usr/src/app/output/tpietzsch/bigdataviewer-core/df89915fd4c7e1ddef4ebeb94e3e68fe76e49be0/src/main/java/bdv/tools/RecordMovieDialog.java/left.java
+		spinnerMaxTimepoint.addChangeListener( new ChangeListener()
+		{
+			@Override
+			public void stateChanged( final ChangeEvent e )
+			{
+				final int min = ( Integer ) spinnerMinTimepoint.getValue();
+				final int max = ( Integer ) spinnerMaxTimepoint.getValue();
+				if ( min > max )
+					spinnerMinTimepoint.setValue( max );
+			}
+||||||| /usr/src/app/output/tpietzsch/bigdataviewer-core/df89915fd4c7e1ddef4ebeb94e3e68fe76e49be0/src/main/java/bdv/tools/RecordMovieDialog.java/base.java
+		spinnerMaxTimepoint.addChangeListener( new ChangeListener()
+		{
+			@Override
+			public void stateChanged( final ChangeEvent e )
+			{
+				final int min = ( Integer ) spinnerMinTimepoint.getValue();
+				final int max = ( Integer ) spinnerMaxTimepoint.getValue();
+				if (min > max)
+					spinnerMinTimepoint.setValue( max );
+			}
+=======
 		spinnerMaxTimepoint.addChangeListener( e -> {
 			final int min = ( Integer ) spinnerMinTimepoint.getValue();
 			final int max = ( Integer ) spinnerMaxTimepoint.getValue();
 			if ( min > max )
 				spinnerMinTimepoint.setValue( max );
+>>>>>>> /usr/src/app/output/tpietzsch/bigdataviewer-core/df89915fd4c7e1ddef4ebeb94e3e68fe76e49be0/src/main/java/bdv/tools/RecordMovieDialog.java/right.java
 		} );
 
 		final JFileChooser fileChooser = new JFileChooser();
@@ -241,8 +323,79 @@ public class RecordMovieDialog extends JDialog implements OverlayRenderer
 				dir.mkdirs();
 			if ( !dir.exists() || !dir.isDirectory() )
 			{
+<<<<<<< /usr/src/app/output/tpietzsch/bigdataviewer-core/df89915fd4c7e1ddef4ebeb94e3e68fe76e49be0/src/main/java/bdv/tools/RecordMovieDialog.java/left.java
+				final String dirname = pathTextField.getText();
+				final File dir = new File( dirname );
+				if ( !dir.exists() )
+					dir.mkdirs();
+				if ( !dir.exists() || !dir.isDirectory() )
+				{
+					System.err.println( "Invalid export directory " + dirname );
+					return;
+				}
+				final int minTimepointIndex = ( Integer ) spinnerMinTimepoint.getValue();
+				final int maxTimepointIndex = ( Integer ) spinnerMaxTimepoint.getValue();
+				final int width = ( Integer ) spinnerWidth.getValue();
+				final int height = ( Integer ) spinnerHeight.getValue();
+				new Thread()
+				{
+					@Override
+					public void run()
+					{
+						try
+						{
+							isRecordThreadRunning = true;
+							recordButton.setEnabled( false );
+							cancelButton.setEnabled( true );
+
+							recordMovie( width, height, minTimepointIndex, maxTimepointIndex, dir );
+
+							progressBar.setValue( 0 );
+							recordButton.setEnabled( true );
+							cancelButton.setEnabled( false );
+							isRecordThreadRunning = false;
+						}
+						catch ( final Exception ex )
+						{
+							ex.printStackTrace();
+						}
+					}
+				}.start();
+||||||| /usr/src/app/output/tpietzsch/bigdataviewer-core/df89915fd4c7e1ddef4ebeb94e3e68fe76e49be0/src/main/java/bdv/tools/RecordMovieDialog.java/base.java
+				final String dirname = pathTextField.getText();
+				final File dir = new File( dirname );
+				if ( !dir.exists() )
+					dir.mkdirs();
+				if ( !dir.exists() || !dir.isDirectory() )
+				{
+					System.err.println( "Invalid export directory " + dirname );
+					return;
+				}
+				final int minTimepointIndex = ( Integer ) spinnerMinTimepoint.getValue();
+				final int maxTimepointIndex = ( Integer ) spinnerMaxTimepoint.getValue();
+				final int width = ( Integer ) spinnerWidth.getValue();
+				final int height = ( Integer ) spinnerHeight.getValue();
+				new Thread()
+				{
+					@Override
+					public void run()
+					{
+						try
+						{
+							recordButton.setEnabled( false );
+							recordMovie( width, height, minTimepointIndex, maxTimepointIndex, dir );
+							recordButton.setEnabled( true );
+						}
+						catch ( final Exception ex )
+						{
+							ex.printStackTrace();
+						}
+					}
+				}.start();
+=======
 				System.err.println( "Invalid export directory " + dirname );
 				return;
+>>>>>>> /usr/src/app/output/tpietzsch/bigdataviewer-core/df89915fd4c7e1ddef4ebeb94e3e68fe76e49be0/src/main/java/bdv/tools/RecordMovieDialog.java/right.java
 			}
 			final int minTimepointIndex = ( Integer ) spinnerMinTimepoint.getValue();
 			final int maxTimepointIndex = ( Integer ) spinnerMaxTimepoint.getValue();
@@ -333,8 +486,9 @@ public class RecordMovieDialog extends JDialog implements OverlayRenderer
 		setProgress( 0 );
 		for ( int timepoint = minTimepointIndex; timepoint <= maxTimepointIndex; ++timepoint )
 		{
+<<<<<<< /usr/src/app/output/tpietzsch/bigdataviewer-core/df89915fd4c7e1ddef4ebeb94e3e68fe76e49be0/src/main/java/bdv/tools/RecordMovieDialog.java/left.java
 			// stop recording if requested
-			if ( stopRecording )
+			if ( !isRecordThreadRunning )
 				break;
 
 			final AffineTransform3D affine = getTransformation( renderState, canvasW, canvasH, timepoint );
@@ -342,7 +496,12 @@ public class RecordMovieDialog extends JDialog implements OverlayRenderer
 			affine.set( affine.get( 0, 3 ) + width / 2, 0, 3 );
 			affine.set( affine.get( 1, 3 ) + height / 2, 1, 3 );
 			renderState.setViewerTransform( affine );
-
+||||||| /usr/src/app/output/tpietzsch/bigdataviewer-core/df89915fd4c7e1ddef4ebeb94e3e68fe76e49be0/src/main/java/bdv/tools/RecordMovieDialog.java/base.java
+=======
+			// stop recording if requested
+			if ( stopRecording )
+				break;
+>>>>>>> /usr/src/app/output/tpietzsch/bigdataviewer-core/df89915fd4c7e1ddef4ebeb94e3e68fe76e49be0/src/main/java/bdv/tools/RecordMovieDialog.java/right.java
 			renderState.setCurrentTimepoint( timepoint );
 			renderer.requestRepaint();
 			renderer.paint( renderState );
