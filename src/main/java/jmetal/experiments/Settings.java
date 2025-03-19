@@ -55,9 +55,8 @@ public abstract class Settings {
   /**
    * Constructor
    */
-
   public Settings(String problemName) throws JMException {
-    problemName_ = problemName;
+    problemName_ = problemName ;
   }
 
   /**
@@ -76,7 +75,7 @@ public abstract class Settings {
    */
   public Algorithm configure(Properties configuration) throws JMException {
     return null;
-  }
+  } 
 
   /**
    * Configure method. Change the default configuration
@@ -91,24 +90,24 @@ public abstract class Settings {
     throws JMException, IllegalArgumentException, IllegalAccessException, ClassNotFoundException {
     if (settings != null) {
       Field[] fields = this.getClass().getFields();
-      for (int i = 0; i < fields.length; i++) {
+      for (int i=0; i < fields.length; i++) {
         if (fields[i].getName().endsWith("_")) {
           // it is a configuration field
           if (fields[i].getType().equals(int.class) ||
-            fields[i].getType().equals(Integer.class)) {
+              fields[i].getType().equals(Integer.class)) {
             if (settings.containsKey(fields[i].getName())) {
-              Integer value = (Integer) settings.get(fields[i].getName());
+              Integer value = (Integer)settings.get(fields[i].getName());
               fields[i].setInt(this, value.intValue());
             }
           } else if (fields[i].getType().equals(double.class) ||
-            fields[i].getType().equals(Double.class)) {
+              fields[i].getType().equals(Double.class)) {
             Double value = (Double) settings.get(fields[i].getName());
 
             if (settings.containsKey(fields[i].getName())) {
               if ("mutationProbability_".equals(fields[i].getName()) &&
-                value == null) {
+                  value == null) {
                 if ((RealSolutionType.class == problem_.getSolutionType().getClass()) ||
-                  (ArrayRealSolutionType.class == problem_.getSolutionType().getClass())) {
+                    (ArrayRealSolutionType.class == problem_.getSolutionType().getClass())) {
                   value = 1.0 / problem_.getNumberOfVariables();
                 } else if (BinarySolutionType.class == problem_.getSolutionType().getClass() ||
                     BinaryRealSolutionType.class == problem_.getSolutionType().getClass()) {
@@ -117,7 +116,7 @@ public abstract class Settings {
                 } else {
                   int length = 0;
                   for (int j = 0; j < problem_.getNumberOfVariables(); j++) {
-                    length += problem_.getLength(j);
+                    length+= problem_.getLength(j);
                   }
                   value = 1.0 / length;
                 }
@@ -128,15 +127,17 @@ public abstract class Settings {
             }
           } else {
             Object value = settings.get(fields[i].getName());
-            if (value != null) {
+            if (value!=null) {
               if (fields[i].getType().equals(Crossover.class)) {
-                Object value2 = CrossoverFactory.getCrossoverOperator((String) value, settings);
+                Object value2 = CrossoverFactory.getCrossoverOperator((String)value,settings);
                 value = value2;
               }
+
               if (fields[i].getType().equals(Mutation.class)) {
-                Object value2 = MutationFactory.getMutationOperator((String) value, settings);
+                Object value2 = MutationFactory.getMutationOperator((String)value, settings);
                 value = value2;
               }
+
               fields[i].set(this, value);
             }
           }
@@ -148,7 +149,7 @@ public abstract class Settings {
       // be initialized. However, there is still mandatory to configure them
       for (int i = 0; i < fields.length; i++) {
         if (fields[i].getType().equals(Crossover.class) ||
-          fields[i].getType().equals(Mutation.class)) {
+            fields[i].getType().equals(Mutation.class)) {
           Operator operator = (Operator) fields[i].get(this);
           // This field stores a crossover operator
           String tmp = fields[i].getName();
@@ -162,10 +163,10 @@ public abstract class Settings {
 
                 if (fields[j].get(this) != null) {
                   if (fields[j].getType().equals(int.class) ||
-                    fields[j].getType().equals(Integer.class)) {
+                      fields[j].getType().equals(Integer.class)) {
                     operator.setParameter(tmp, fields[j].getInt(this));
                   } else if (fields[j].getType().equals(double.class) ||
-                    fields[j].getType().equals(Double.class)) {
+                      fields[j].getType().equals(Double.class)) {
                     operator.setParameter(tmp, fields[j].getDouble(this));
                   }
                 }
@@ -174,7 +175,6 @@ public abstract class Settings {
           }
         }
       }
-
       paretoFrontFile_ = (String) settings.get("paretoFrontFileList_");
     }
 
@@ -185,7 +185,7 @@ public abstract class Settings {
    * Returns the problem
    */
   Problem getProblem() {
-    return problem_;
+    return problem_ ;
   }
 
   /**
@@ -194,6 +194,6 @@ public abstract class Settings {
    * @param problem
    */
   void setProblem(Problem problem) {
-    problem_ = problem;
+    problem_ = problem ;
   }
 }

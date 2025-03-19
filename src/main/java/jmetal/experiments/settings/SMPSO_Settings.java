@@ -37,9 +37,43 @@ import java.util.logging.Level;
 /**
  * Settings class of algorithm SMPSO
  */
-
 public class SMPSO_Settings extends Settings {
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/left.java
+  
+  private int    swarmSize_                 ;
+  private int    maxIterations_             ;
+  private int    archiveSize_               ;
+  private double mutationDistributionIndex_ ;
+  private double mutationProbability_       ;
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/base.java
+  
+  public int    swarmSize_                 ;
+  public int    maxIterations_             ;
+  public int    archiveSize_               ;
+  public double mutationDistributionIndex_ ;
+  public double mutationProbability_       ;
+=======
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/right.java
 
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/left.java
+  private double C1Max_;
+  private double C1Min_;
+  private double C2Max_;
+  private double C2Min_;
+  private double WMax_;
+  private double WMin_;
+  private double ChVel1_;
+  private double ChVel2_;
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/base.java
+  double C1Max_;
+  double C1Min_;
+  double C2Max_;
+  double C2Min_;
+  double WMax_;
+  double WMin_;
+  double ChVel1_;
+  double ChVel2_;
+=======
   private int swarmSize_;
   private int maxIterations_;
   private int archiveSize_;
@@ -54,11 +88,29 @@ public class SMPSO_Settings extends Settings {
   private double weightMin_;
   private double changeVelocity1_;
   private double changeVelocity2_;
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/right.java
 
   /**
    * Constructor
    * @throws JMException 
    */
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/left.java
+  public SMPSO_Settings(String problem) throws JMException {
+    super(problem) ;
+    
+    Object [] problemParams = {"Real"};
+	    problem_ = (new ProblemFactory()).getProblem(problemName_, problemParams);
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/base.java
+  public SMPSO_Settings(String problem) {
+    super(problem) ;
+    
+    Object [] problemParams = {"Real"};
+    try {
+	    problem_ = (new ProblemFactory()).getProblem(problemName_, problemParams);
+    } catch (JMException e) {
+      Configuration.logger_.log(Level.SEVERE, "Unable to get problem", e);
+    }      
+=======
   public SMPSO_Settings(String problem) {
     super(problem);
 
@@ -68,6 +120,7 @@ public class SMPSO_Settings extends Settings {
     } catch (JMException e) {
       Configuration.logger_.log(Level.SEVERE, "Unable to get problem", e);
     }
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/right.java
 
     // Default experiments.settings
     swarmSize_ = 100;
@@ -76,6 +129,29 @@ public class SMPSO_Settings extends Settings {
     mutationDistributionIndex_ = 20.0;
     mutationProbability_ = 1.0 / problem_.getNumberOfVariables();
 
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/left.java
+    C1Max_ = 2.5;
+    C1Min_ = 1.5;
+    C2Max_ = 2.5;
+    C2Min_ = 1.5;
+    WMax_ = 0.1;
+    WMin_ = 0.1;
+    ChVel1_ = -1;
+    ChVel2_ = -1;
+  } 
+  
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/base.java
+    C1Max_ = 2.5;
+    C1Min_ = 1.5;
+    C2Max_ = 2.5;
+    C2Min_ = 1.5;
+    WMax_ = 0.1;
+    WMin_ = 0.1;
+    ChVel1_ = -1;
+    ChVel2_ = -1;
+  } // SMPSO_Settings
+  
+=======
     c1Max_ = 2.5;
     c1Min_ = 1.5;
     c2Max_ = 2.5;
@@ -86,6 +162,7 @@ public class SMPSO_Settings extends Settings {
     changeVelocity2_ = -1;
   } 
 
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/right.java
   /**
    * Configure SMPSO with user-defined parameter experiments.settings
    *
@@ -120,8 +197,16 @@ public class SMPSO_Settings extends Settings {
 
     algorithm.addOperator("mutation", mutation);
 
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/left.java
+		return algorithm ;
+  } 
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/base.java
+		return algorithm ;
+  } // Configure
+=======
     return algorithm;
-  }
+  } 
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/right.java
 
   /**
    * Configure SMPSO with user-defined parameter experiments.settings
@@ -130,6 +215,22 @@ public class SMPSO_Settings extends Settings {
    */
   @Override
   public Algorithm configure(Properties configuration) throws JMException {
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/left.java
+    swarmSize_ = Integer.parseInt(configuration.getProperty("swarmSize",String.valueOf(swarmSize_)));
+    maxIterations_  = Integer.parseInt(configuration.getProperty("maxIterations",String.valueOf(maxIterations_)));
+    archiveSize_ = Integer.parseInt(configuration.getProperty("archiveSize", String.valueOf(archiveSize_)));
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/base.java
+    Algorithm algorithm ;
+    Mutation  mutation ;
+
+    // Creating the algorithm.
+    algorithm = new SMPSO(problem_) ;
+
+    // Algorithm parameters
+    swarmSize_ = Integer.parseInt(configuration.getProperty("swarmSize",String.valueOf(swarmSize_)));
+    maxIterations_  = Integer.parseInt(configuration.getProperty("maxIterations",String.valueOf(maxIterations_)));
+    archiveSize_ = Integer.parseInt(configuration.getProperty("archiveSize", String.valueOf(archiveSize_)));
+=======
     Algorithm algorithm;
     Mutation mutation;
 
@@ -144,6 +245,7 @@ public class SMPSO_Settings extends Settings {
       Integer.parseInt(configuration.getProperty("maxIterations", String.valueOf(maxIterations_)));
     archiveSize_ =
       Integer.parseInt(configuration.getProperty("archiveSize", String.valueOf(archiveSize_)));
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/right.java
 
     c1Min_ = Double.parseDouble(configuration.getProperty("C1Min", String.valueOf(c1Min_)));
     c1Max_ = Double.parseDouble(configuration.getProperty("C1Max", String.valueOf(c1Max_)));
@@ -152,6 +254,25 @@ public class SMPSO_Settings extends Settings {
     weightMin_ = Double.parseDouble(configuration.getProperty("weightMin", String.valueOf(weightMin_)));
     weightMax_ = Double.parseDouble(configuration.getProperty("weightMax", String.valueOf(weightMax_)));
 
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/left.java
+    mutationProbability_ = Double.parseDouble(configuration.getProperty("mutationProbability",String.valueOf(mutationProbability_)));
+    mutationDistributionIndex_ = Double.parseDouble(configuration.getProperty("mutationDistributionIndex",String.valueOf(mutationDistributionIndex_)));
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/base.java
+    algorithm.setInputParameter("swarmSize", swarmSize_);
+    algorithm.setInputParameter("maxIterations", maxIterations_);
+    algorithm.setInputParameter("archiveSize", archiveSize_);
+    algorithm.setInputParameter("C1Min",C1Min_);
+    algorithm.setInputParameter("C1Max",C1Max_);
+    algorithm.setInputParameter("C2Min",C2Min_);
+    algorithm.setInputParameter("C2Max",C2Max_);
+    algorithm.setInputParameter("WMin",WMin_);
+    algorithm.setInputParameter("WMax",WMax_);
+    algorithm.setInputParameter("ChVel1",ChVel1_);
+    algorithm.setInputParameter("ChVel2",ChVel2_);
+
+    mutationProbability_ = Double.parseDouble(configuration.getProperty("mutationProbability",String.valueOf(mutationProbability_)));
+    mutationDistributionIndex_ = Double.parseDouble(configuration.getProperty("mutationDistributionIndex",String.valueOf(mutationDistributionIndex_)));
+=======
     algorithm.setInputParameter("swarmSize", swarmSize_);
     algorithm.setInputParameter("maxIterations", maxIterations_);
     algorithm.setInputParameter("archiveSize", archiveSize_);
@@ -168,13 +289,34 @@ public class SMPSO_Settings extends Settings {
       configuration.getProperty("mutationProbability", String.valueOf(mutationProbability_)));
     mutationDistributionIndex_ = Double.parseDouble(configuration
       .getProperty("mutationDistributionIndex", String.valueOf(mutationDistributionIndex_)));
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/right.java
 
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/left.java
+    mutationProbability_ = Double.parseDouble(configuration.getProperty("mutationProbability",String.valueOf(mutationProbability_)));
+    mutationDistributionIndex_ = Double.parseDouble(configuration.getProperty("mutationDistributionIndex",String.valueOf(mutationDistributionIndex_)));
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/base.java
+    mutationProbability_ = Double.parseDouble(configuration.getProperty("mutationProbability",String.valueOf(mutationProbability_)));
+    mutationDistributionIndex_ = Double.parseDouble(configuration.getProperty("mutationDistributionIndex",String.valueOf(mutationDistributionIndex_)));
+    HashMap<String, Object> parameters = new HashMap<String, Object>() ;
+=======
     mutationProbability_ = Double.parseDouble(
       configuration.getProperty("mutationProbability", String.valueOf(mutationProbability_)));
     mutationDistributionIndex_ = Double.parseDouble(configuration
       .getProperty("mutationDistributionIndex", String.valueOf(mutationDistributionIndex_)));
     HashMap<String, Object> parameters = new HashMap<String, Object>();
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/right.java
 
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/left.java
+    return configure() ;
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/base.java
+    parameters.put("probability", mutationProbability_) ;
+    parameters.put("distributionIndex", mutationDistributionIndex_) ;
+    mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);
+
+    algorithm.addOperator("mutation",mutation);
+
+    return algorithm ;
+=======
     parameters.put("probability", mutationProbability_);
     parameters.put("distributionIndex", mutationDistributionIndex_);
     mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);
@@ -182,5 +324,6 @@ public class SMPSO_Settings extends Settings {
     algorithm.addOperator("mutation", mutation);
 
     return algorithm;
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSO_Settings.java/right.java
   }
 } 

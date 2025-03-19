@@ -115,7 +115,6 @@ public class pMOEAD_Settings extends Settings {
     HashMap<String, Object> parameters = new HashMap<String, Object>() ;
     parameters.put("CR", cr_);
     parameters.put("F", f_);
-
     crossover = CrossoverFactory.getCrossoverOperator("DifferentialEvolutionCrossover", parameters);
 
     // Mutation operator
@@ -137,15 +136,114 @@ public class pMOEAD_Settings extends Settings {
    */
   @Override
   public Algorithm configure(Properties configuration) throws JMException {
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/pMOEAD_Settings.java/left.java
     populationSize_ = Integer.parseInt(configuration.getProperty("populationSize",String.valueOf(populationSize_)));
     maxEvaluations_  = Integer.parseInt(configuration.getProperty("maxEvaluations",String.valueOf(maxEvaluations_)));
     numberOfThreads_  = Integer.parseInt(configuration.getProperty("numberOfThreads",String.valueOf(numberOfThreads_)));
     dataDirectory_  = configuration.getProperty("dataDirectory", dataDirectory_);
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/pMOEAD_Settings.java/base.java
+    Algorithm algorithm ;
+    Crossover crossover ;
+    Mutation mutation  ;
 
+    // Creating the algorithm.
+    algorithm = new pMOEAD(problem_) ;
+
+    // Algorithm parameters
+    populationSize_ = Integer.parseInt(configuration.getProperty("populationSize",String.valueOf(populationSize_)));
+    maxEvaluations_  = Integer.parseInt(configuration.getProperty("maxEvaluations",String.valueOf(maxEvaluations_)));
+    numberOfThreads_  = Integer.parseInt(configuration.getProperty("numberOfThreads",String.valueOf(numberOfThreads_)));
+    dataDirectory_  = configuration.getProperty("dataDirectory", dataDirectory_);
+=======
+    Algorithm algorithm;
+    Crossover crossover;
+    Mutation mutation;
+
+    // Creating the algorithm.
+    algorithm = new pMOEAD();
+    algorithm.setProblem(problem_);
+
+    // Algorithm parameters
+    populationSize_ = Integer
+      .parseInt(configuration.getProperty("populationSize", String.valueOf(populationSize_)));
+    maxEvaluations_ = Integer
+      .parseInt(configuration.getProperty("maxEvaluations", String.valueOf(maxEvaluations_)));
+    numberOfThreads_ = Integer
+      .parseInt(configuration.getProperty("numberOfThreads", String.valueOf(numberOfThreads_)));
+    dataDirectory_ = configuration.getProperty("dataDirectory", dataDirectory_);
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/pMOEAD_Settings.java/right.java
     delta_ = Double.parseDouble(configuration.getProperty("delta", String.valueOf(delta_)));
     t_ = Integer.parseInt(configuration.getProperty("T", String.valueOf(t_)));
     nr_ = Integer.parseInt(configuration.getProperty("nr", String.valueOf(nr_)));
 
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/pMOEAD_Settings.java/left.java
     return configure() ;
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/pMOEAD_Settings.java/base.java
+    algorithm.setInputParameter("numberOfThreads", numberOfThreads_);
+    algorithm.setInputParameter("populationSize",populationSize_);
+    algorithm.setInputParameter("maxEvaluations",maxEvaluations_);
+    algorithm.setInputParameter("dataDirectory",dataDirectory_);
+    algorithm.setInputParameter("T", T_) ;
+    algorithm.setInputParameter("delta", delta_) ;
+    algorithm.setInputParameter("nr", nr_) ;
+
+    // Crossover operator
+    CR_ = Double.parseDouble(configuration.getProperty("CR",String.valueOf(CR_)));
+    F_ = Double.parseDouble(configuration.getProperty("F",String.valueOf(F_)));
+
+    HashMap<String, Object> parameters = new HashMap<String, Object>() ;
+    parameters.put("CR", CR_) ;
+    parameters.put("F", F_) ;
+    crossover = CrossoverFactory.getCrossoverOperator("DifferentialEvolutionCrossover", parameters);
+
+    // Mutation parameters
+    mutationProbability_ = Double.parseDouble(configuration.getProperty("mutationProbability",String.valueOf(mutationProbability_)));
+    mutationDistributionIndex_ = Double.parseDouble(configuration.getProperty("mutationDistributionIndex",String.valueOf(mutationDistributionIndex_)));
+
+    parameters = new HashMap<String, Object>() ;
+    parameters.put("probability", mutationProbability_) ;
+    parameters.put("distributionIndex", mutationDistributionIndex_) ;
+    mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);
+
+    // Add the operators to the algorithm
+    algorithm.addOperator("crossover",crossover);
+    algorithm.addOperator("mutation",mutation);
+
+    return algorithm ;
+=======
+    algorithm.setInputParameter("numberOfThreads", numberOfThreads_);
+    algorithm.setInputParameter("populationSize", populationSize_);
+    algorithm.setInputParameter("maxEvaluations", maxEvaluations_);
+    algorithm.setInputParameter("dataDirectory", dataDirectory_);
+    algorithm.setInputParameter("T", T_);
+    algorithm.setInputParameter("delta", delta_);
+    algorithm.setInputParameter("nr", nr_);
+
+    // Crossover operator
+    CR_ = Double.parseDouble(configuration.getProperty("CR", String.valueOf(CR_)));
+    F_ = Double.parseDouble(configuration.getProperty("F", String.valueOf(F_)));
+
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("CR", CR_);
+    parameters.put("F", F_);
+    crossover = CrossoverFactory.getCrossoverOperator("DifferentialEvolutionCrossover", parameters);
+
+    // Mutation parameters
+    mutationProbability_ = Double.parseDouble(
+      configuration.getProperty("mutationProbability", String.valueOf(mutationProbability_)));
+    mutationDistributionIndex_ = Double.parseDouble(configuration
+      .getProperty("mutationDistributionIndex", String.valueOf(mutationDistributionIndex_)));
+
+    parameters = new HashMap<String, Object>();
+    parameters.put("probability", mutationProbability_);
+    parameters.put("distributionIndex", mutationDistributionIndex_);
+    mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);
+
+    // Add the operators to the algorithm
+    algorithm.addOperator("crossover", crossover);
+    algorithm.addOperator("mutation", mutation);
+
+    return algorithm;
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/pMOEAD_Settings.java/right.java
   }
 } 

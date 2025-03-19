@@ -47,7 +47,7 @@ public class RandomSearch_Settings extends Settings {
   public RandomSearch_Settings(String problem) throws JMException {
     super(problem);
 
-    Object [] problemParams = {"Real"};
+    Object[] problemParams = {"Real"};
     problem_ = (new ProblemFactory()).getProblem(problemName_, problemParams);
   } 
 
@@ -77,8 +77,38 @@ public class RandomSearch_Settings extends Settings {
    */
   @Override
   public Algorithm configure(Properties configuration) throws JMException {
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/RandomSearch_Settings.java/left.java
     maxEvaluations_  = Integer.parseInt(configuration.getProperty("maxEvaluations",String.valueOf(maxEvaluations_)));
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/RandomSearch_Settings.java/base.java
+    Algorithm algorithm ;
 
+    // Creating the algorithm.
+    algorithm = new RandomSearch(problem_) ;
+
+    // Algorithm parameters
+    maxEvaluations_  = Integer.parseInt(configuration.getProperty("maxEvaluations",String.valueOf(maxEvaluations_)));
+=======
+    Algorithm algorithm;
+
+    // Creating the algorithm.
+    algorithm = new RandomSearch();
+    algorithm.setProblem(problem_);
+
+    // Algorithm parameters
+    maxEvaluations_ = Integer
+      .parseInt(configuration.getProperty("maxEvaluations", String.valueOf(maxEvaluations_)));
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/RandomSearch_Settings.java/right.java
+
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/RandomSearch_Settings.java/left.java
     return configure() ;
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/RandomSearch_Settings.java/base.java
+    algorithm.setInputParameter("maxEvaluations", maxEvaluations_);
+
+    return algorithm ;
+=======
+    algorithm.setInputParameter("maxEvaluations", maxEvaluations_);
+
+    return algorithm;
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/RandomSearch_Settings.java/right.java
   }
-}
+} 

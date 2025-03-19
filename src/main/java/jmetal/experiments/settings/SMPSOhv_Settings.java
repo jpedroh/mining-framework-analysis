@@ -30,7 +30,6 @@ import jmetal.problems.ProblemFactory;
 import jmetal.util.Configuration;
 import jmetal.util.JMException;
 
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -38,30 +37,30 @@ import java.util.logging.Level;
 /**
  * Settings class of algorithm SMPSOhv
  */
-public class SMPSOhv_Settings extends Settings{
-  private int    swarmSize_                 ;
-  private int    maxIterations_             ;
-  private int    archiveSize_               ;
-  private double mutationDistributionIndex_ ;
-  private double mutationProbability_       ;
+public class SMPSOhv_Settings extends Settings {
+  private int swarmSize_;
+  private int maxIterations_;
+  private int archiveSize_;
+  private double mutationDistributionIndex_;
+  private double mutationProbability_;
 
   /**
    * Constructor
    * @throws JMException 
    */
   public SMPSOhv_Settings(String problem) throws JMException {
-    super(problem) ;
+    super(problem);
 
-    Object [] problemParams = {"Real"};
+    Object[] problemParams = {"Real"};
     problem_ = (new ProblemFactory()).getProblem(problemName_, problemParams);
 
     // Default experiments.settings
-    swarmSize_                 = 100 ;
-    maxIterations_             = 250 ;
-    archiveSize_               = 100 ;
-    mutationDistributionIndex_ = 20.0 ;
-    mutationProbability_       = 1.0/problem_.getNumberOfVariables() ;
-  }
+    swarmSize_ = 100;
+    maxIterations_ = 250;
+    archiveSize_ = 100;
+    mutationDistributionIndex_ = 20.0;
+    mutationProbability_ = 1.0 / problem_.getNumberOfVariables();
+  } 
 
   /**
    * Configure SMPSPhv with user-defined parameter experiments.settings
@@ -69,23 +68,18 @@ public class SMPSOhv_Settings extends Settings{
    * @return A SMPSOhv algorithm object
    * @throws jmetal.util.JMException
    */
-  public Algorithm configure() throws JMException, FileNotFoundException {
+  public Algorithm configure() throws JMException {
     Algorithm algorithm;
     Mutation mutation;
 
     // Creating the problem
-    algorithm = new SMPSOhv() ;
+    algorithm = new SMPSOhv();
     algorithm.setProblem(problem_);
 
     // Algorithm parameters
     algorithm.setInputParameter("swarmSize", swarmSize_);
     algorithm.setInputParameter("maxIterations", maxIterations_);
     algorithm.setInputParameter("archiveSize", archiveSize_);
-
-    HashMap<String, Object> parameters = new HashMap<String, Object>() ;
-    parameters.put("probability", mutationProbability_) ;
-    parameters.put("distributionIndex", mutationDistributionIndex_) ;
-    mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("probability", mutationProbability_);
@@ -104,13 +98,79 @@ public class SMPSOhv_Settings extends Settings{
    */
   @Override
   public Algorithm configure(Properties configuration) throws JMException {
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSOhv_Settings.java/left.java
     swarmSize_ = Integer.parseInt(configuration.getProperty("swarmSize",String.valueOf(swarmSize_)));
     maxIterations_  = Integer.parseInt(configuration.getProperty("maxIterations",String.valueOf(maxIterations_)));
     archiveSize_ = Integer.parseInt(configuration.getProperty("archiveSize", String.valueOf(archiveSize_)));
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSOhv_Settings.java/base.java
+    Algorithm algorithm ;
+    Mutation  mutation ;
+
+    // Creating the algorithm.
+    algorithm = new SMPSOhv(problem_) ;
+
+    // Algorithm parameters
+    swarmSize_ = Integer.parseInt(configuration.getProperty("swarmSize",String.valueOf(swarmSize_)));
+    maxIterations_  = Integer.parseInt(configuration.getProperty("maxIterations",String.valueOf(maxIterations_)));
+    archiveSize_ = Integer.parseInt(configuration.getProperty("archiveSize", String.valueOf(archiveSize_)));
+=======
+    Algorithm algorithm;
+    Mutation mutation;
+
+    // Creating the algorithm.
+    algorithm = new SMPSOhv();
+    algorithm.setProblem(problem_);
+
+    // Algorithm parameters
+    swarmSize_ =
+      Integer.parseInt(configuration.getProperty("swarmSize", String.valueOf(swarmSize_)));
+    maxIterations_ =
+      Integer.parseInt(configuration.getProperty("maxIterations", String.valueOf(maxIterations_)));
+    archiveSize_ =
+      Integer.parseInt(configuration.getProperty("archiveSize", String.valueOf(archiveSize_)));
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSOhv_Settings.java/right.java
+
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSOhv_Settings.java/left.java
+    mutationProbability_ = Double.parseDouble(configuration.getProperty("mutationProbability",String.valueOf(mutationProbability_)));
+    mutationDistributionIndex_ = Double.parseDouble(configuration.getProperty("mutationDistributionIndex",String.valueOf(mutationDistributionIndex_)));
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSOhv_Settings.java/base.java
+    algorithm.setInputParameter("swarmSize", swarmSize_);
+    algorithm.setInputParameter("maxIterations", maxIterations_);
+    algorithm.setInputParameter("archiveSize", archiveSize_);
 
     mutationProbability_ = Double.parseDouble(configuration.getProperty("mutationProbability",String.valueOf(mutationProbability_)));
     mutationDistributionIndex_ = Double.parseDouble(configuration.getProperty("mutationDistributionIndex",String.valueOf(mutationDistributionIndex_)));
+=======
+    algorithm.setInputParameter("swarmSize", swarmSize_);
+    algorithm.setInputParameter("maxIterations", maxIterations_);
+    algorithm.setInputParameter("archiveSize", archiveSize_);
 
+    mutationProbability_ = Double.parseDouble(
+      configuration.getProperty("mutationProbability", String.valueOf(mutationProbability_)));
+    mutationDistributionIndex_ = Double.parseDouble(configuration
+      .getProperty("mutationDistributionIndex", String.valueOf(mutationDistributionIndex_)));
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSOhv_Settings.java/right.java
+
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSOhv_Settings.java/left.java
     return configure() ;
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSOhv_Settings.java/base.java
+    HashMap<String, Object> parameters = new HashMap<String, Object>() ;
+    parameters.put("probability", mutationProbability_) ;
+    parameters.put("distributionIndex", mutationDistributionIndex_) ;
+    mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);
+
+    algorithm.addOperator("mutation",mutation);
+
+    return algorithm ;
+=======
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("probability", mutationProbability_);
+    parameters.put("distributionIndex", mutationDistributionIndex_);
+    mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);
+
+    algorithm.addOperator("mutation", mutation);
+
+    return algorithm;
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/SMPSOhv_Settings.java/right.java
   }
 } 

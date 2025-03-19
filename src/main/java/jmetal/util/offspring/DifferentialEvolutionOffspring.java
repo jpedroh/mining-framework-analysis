@@ -17,29 +17,31 @@ import jmetal.operators.selection.SelectionFactory;
 import jmetal.util.JMException;
 import jmetal.util.random.PseudoRandom;
 
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class DifferentialEvolutionOffspring extends Offspring {
-  private double cr_ ;
-  private double f_  ;
-
-  private Operator crossover_ ;
-  private Operator selection_ ;
+  private double cr_;
+  private double f_;
+  private Operator crossover_;
+  private Operator selection_;
   private Operator mutation_;
-
   /**
    * Constructor
    *
    * @param CR
    * @param F
    */
-  public DifferentialEvolutionOffspring(double CR, double F)  {
-    cr_ = CR ;
-    f_  = F  ;
+  public DifferentialEvolutionOffspring(double CR, double F) {
+    cr_ = CR;
+    f_  = F;
     try {
       // Crossover operator
-      HashMap<String, Object> crossoverParameters = new HashMap<String, Object>() ;
-      crossoverParameters.put("CR", cr_) ;
-      crossoverParameters.put("F", f_) ;      
-      crossover_ = new DifferentialEvolutionCrossover(crossoverParameters) ;
+      HashMap<String, Object> crossoverParameters = new HashMap<String, Object>();
+      crossoverParameters.put("CR", cr_);
+      crossoverParameters.put("F", f_);
+      crossover_ = new DifferentialEvolutionCrossover(crossoverParameters);
 
       // Selecion operator
       HashMap<String, Object> selectionParameters = null; // FIXME: why we are passing null?
@@ -50,7 +52,6 @@ public class DifferentialEvolutionOffspring extends Offspring {
     }
     id_ = "DE";
   }
-
   public Solution getOffspring(SolutionSet solutionSet, int index) {
     Solution[] parents = new Solution[3];
     Solution offSpring = null;
@@ -74,7 +75,7 @@ public class DifferentialEvolutionOffspring extends Offspring {
     }
 
     //Create a new solution, using DE
-    return offSpring ;
+    return offSpring;
   }
 
   /**
@@ -99,10 +100,10 @@ public class DifferentialEvolutionOffspring extends Offspring {
   } // getOffpring
 
   public String configuration() {
-    String result = "-----\n" ;
-    result += "Operator: " + id_ + "\n" ;
-    result += "CR: " + cr_ + "\n" ;
-    result += "F: " + f_ ;
+    String result = "-----\n";
+    result += "Operator: " + id_ + "\n";
+    result += "CR: " + cr_ + "\n";
+    result += "F: " + f_;
 
     return result;
   }

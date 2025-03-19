@@ -35,27 +35,24 @@ import java.util.logging.Logger;
  */
 public class ReadInstance {
 
-  private String fileName_;
-  private int [][]   a_matrix;   
-  private int [][][] b_matrixs;  
-  private int facilities_ = -1;          
-  private int objectives_ = -1;
-
-  private String singleObjectiveFirstLine_ = "";
-
+  private String fileName_;        
+  private int[][] a_matrix;   
+  private int[][][] b_matrixs;   
+  private int facilities_ = -1;   
+  private int objectives_ = -1;   
+  private String singleObjectiveFirstLine_ = "";   
   /**
    * @param name the name of the file
    * @author Juan J. Durillo
    * Creates a new ReadInstance for the mQAP problem
-   */
+   */   
   public ReadInstance(String name) {
     fileName_ = name;
-  }
-
+  }   
   /**
    * Reads the instance from file
    * This method should be called for reading all the data from file.
-   */
+   */   
   public void loadInstance() {
     try {
       File archivo = new File(fileName_);
@@ -66,8 +63,13 @@ public class ReadInstance {
 
       // File reading
       String line;
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/problems/mqap/ReadInstance.java/left.java
+      // reading the first line (special case) 
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/problems/mqap/ReadInstance.java/base.java
+=======
       // reading the first line (special case)
-      line = br.readLine();     
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/problems/mqap/ReadInstance.java/right.java
+     line = br.readLine();     
 
       // first line must contain the number of utilities and objectives
       StringTokenizer st = new StringTokenizer(line);
@@ -86,9 +88,9 @@ public class ReadInstance {
             } catch (NumberFormatException ne) {
               Configuration.logger_.log(Level.WARNING, "Number Format Exception", ne);
               newLine += aux + " ";
-              continue;
+              continue;            
             }
-          } while (facilities_ < 0);
+          } while (facilities_ < 0);       
         } else if (newToken.toUpperCase().contains("OBJECTIVES")) {
           newLine += newToken + " ";
           String aux = "";
@@ -100,14 +102,13 @@ public class ReadInstance {
             } catch (NumberFormatException ne) {
               Configuration.logger_.log(Level.WARNING, "NumberFormatException", ne);
               newLine += aux + " ";
-              continue;
+              continue;            
             }
           } while (objectives_ < 0);       
         } else {
           newLine += newToken + " "; 
         }         
       }
-      //System.out.println(newLine);
       singleObjectiveFirstLine_ = newLine;
 
       // reading A matrix (discarding empty lines on the way)
@@ -140,11 +141,14 @@ public class ReadInstance {
         }
       }
 
+
       // comprobation
-      for (int i = 0; i < facilities_; i++) {
+      for (int i = 0; i < facilities_; i++) {        
         for (int j = 0; j < facilities_; j++) {
         }
       }
+
+
       // at this point the instances has been read
       br.close();
     } catch (FileNotFoundException ex) {
@@ -154,33 +158,71 @@ public class ReadInstance {
       Logger.getLogger(ReadInstance.class.getName())
       .log(Level.SEVERE, "Error reading from file", ex2);
     }
-  } 
-
+  }   
   /**
-   * @param weights vector containing the weights for the aggregative approach
+   * @param a vector containing the weights for the aggregative approach
    * @author Juan J. Durillo
    * This methods creates a single-objective instance using a weighted aggregative approach
    * and write all the information to file
-   */
+   */   
   public void createSingleObjectiveInstance(int[] weights) {
     // safe comprobation: is the number of weights == objectives_?
     if (weights.length != objectives_) {
       Logger.getLogger(ReadInstance.class.getName()).log(Level.SEVERE,
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/problems/mqap/ReadInstance.java/left.java
           "The number of weights and number of objectives don't match");
-    }
+
+    } 
 
     // generating the intance
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/problems/mqap/ReadInstance.java/base.java
+              "The number of weights and number of objectives don't match");
+        
+    } // safe comprobation
+    
+    // generating the intance
+=======
+          "The number of weights and number of objectives don't match");
+    } 
+
+    // generating the instance
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/problems/mqap/ReadInstance.java/right.java
     try {
       String name = "";
       for (int k = 0; k < objectives_; k++) {
         name += "_" + weights[k];
       }
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/problems/mqap/ReadInstance.java/left.java
       System.out.println(name);
       System.out.println(fileName_+name);
       FileOutputStream fos   = new FileOutputStream(fileName_+name)     ;
       OutputStreamWriter osw = new OutputStreamWriter(fos)    ;
       BufferedWriter bw      = new BufferedWriter(osw)        ;
 
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/problems/mqap/ReadInstance.java/base.java
+      System.out.println(name);
+      System.out.println(fileName_+name);
+      FileOutputStream fos   = new FileOutputStream(fileName_+name)     ;
+      OutputStreamWriter osw = new OutputStreamWriter(fos)    ;
+      BufferedWriter bw      = new BufferedWriter(osw)        ;
+                       
+      
+      // generating a new first line with weight information
+      /* Fran's sofware does not need this, but the number of facilities
+      String newFirstLine = "";
+      for (int k = 0; k < objectives_; k++) {
+        newFirstLine += " weight " + k + " " + weights[k]; 
+      }
+      bw.write(singleObjectiveFirstLine_+ newFirstLine);
+      bw.newLine(); */
+=======
+      Configuration.logger_.info(name);
+      Configuration.logger_.info(fileName_ + name);
+      FileOutputStream fos = new FileOutputStream(fileName_ + name);
+      OutputStreamWriter osw = new OutputStreamWriter(fos);
+      BufferedWriter bw = new BufferedWriter(osw);
+
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/problems/mqap/ReadInstance.java/right.java
       bw.write(facilities_ + "");
       bw.newLine();
       bw.newLine();
@@ -220,25 +262,20 @@ public class ReadInstance {
       Logger.getLogger(ReadInstance.class.getName())
       .log(Level.SEVERE, "Error writting in the file", ex1);
     }
-  }
-
-  int [][] get_a_Matrix() {
+  }   
+  int[][] get_a_Matrix() {
     return a_matrix;
-  }
-
-  int [][][] get_b_Matrixs() {
+  }   
+  int[][][] get_b_Matrixs() {
     return b_matrixs;
-  }
-
+  }   
   int getNumberOfObjectives() {
     return objectives_;
-  }
-
+  }   
   int getNumberOfFacilities() {
     return facilities_;
-  }
-
-  public static void main(String [] args) {
+  }   
+  public static void main(String[] args) {
     ReadInstance ri = new ReadInstance(args[0]);
     ri.loadInstance();
 
@@ -246,7 +283,8 @@ public class ReadInstance {
       // second argument should indicate if we do want to generte the aggregatives
       if (args[1].toUpperCase().contains("Y")) {
         if (ri.getNumberOfObjectives() > 3) {
-          Logger.getLogger(ReadInstance.class.getName()).log(Level.SEVERE, "Aggregation approach with more than 2 objectives not implemented yet");
+          Logger.getLogger(ReadInstance.class.getName()).log(Level.SEVERE,
+              "Aggregation approach with more than 2 objectives not implemented yet");
         } else if (ri.getNumberOfObjectives() == 3) {                                       
           try {
             // Open the file
@@ -260,15 +298,15 @@ public class ReadInstance {
             while (aux != null) {
               StringTokenizer st = new StringTokenizer(aux);        
               numberOfObjectives = st.countTokens();
-              int [] weight = new int[numberOfObjectives];
+              int[] weight = new int[numberOfObjectives];
               for (int k = 0; k < numberOfObjectives; k++) {
-                weight[k] =       (new Integer(st.nextToken()).intValue());
-                System.out.println(weight[k]);
+                weight[k] = (Integer.parseInt(st.nextToken()));
+                Configuration.logger_.info(""+weight[k]);
               }                                                
               ri.createSingleObjectiveInstance(weight);
 
 
-              aux = br.readLine();          
+              aux = br.readLine();
             }
             br.close();
           } catch (Exception e) {
@@ -280,7 +318,7 @@ public class ReadInstance {
         } else {
           int a = 100, b = 0;
           while (a >= 0) {
-            int [] weight = {a, b};
+            int[] weight = {a, b};
             ri.createSingleObjectiveInstance(weight);
             a--;
             b = 100 - a;

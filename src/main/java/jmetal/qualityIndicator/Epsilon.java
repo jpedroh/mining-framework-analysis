@@ -38,19 +38,53 @@ public class Epsilon {
 
   /* stores a reference to qualityIndicatorUtils */
   public jmetal.qualityIndicator.util.MetricsUtil utils_ =
-    new jmetal.qualityIndicator.util.MetricsUtil();
+      new jmetal.qualityIndicator.util.MetricsUtil();
   /* stores the number of objectives */
-  private int  dim_   ;
-  /* obj_[i]=0 means objective i is to be minimized. This code always assume the minimization of all the objectives
+  private int  dim_;
+  /*
+   * obj_[i]=0 means objective i is to be minimized. This code always assume the
+   * minimization of all the objectives
    */
-  private int  [] obj_    ;     
-  /* method_ = 0 means apply additive epsilon and method_ = 1 means multiplicative
-   * epsilon. This code always apply additive epsilon
+  private int[] obj_;     
+  /*
+   * method_ = 0 means apply additive epsilon and method_ = 1 means
+   * multiplicative epsilon. This code always apply additive epsilon
    */
   private int method_;
-  /* stores a reference to  qualityIndicatorUtils */
-  public jmetal.qualityIndicator.util.MetricsUtil utils_ =
-      new jmetal.qualityIndicator.util.MetricsUtil();
+
+  /**
+   * Returns the additive-epsilon value of the paretoFront. This method call to
+   * the calculate epsilon-indicator one
+   *
+   * @throws JMException
+   * @throws NumberFormatException
+   */
+  public static void main(String[] args) throws NumberFormatException,
+    JMException {
+    double indicatorvalue;
+
+    if (args.length < 2) {
+      throw new JMException("Error using Epsilon. Type: \n java AdditiveEpsilon " +
+          "<FrontFile>" +
+          "<TrueFrontFile> + <getNumberOfObjectives>");
+    }
+
+    Epsilon qualityIndicator = new Epsilon();
+    double[][] solutionFront = qualityIndicator.utils_.readFront(args[0]);
+    double[][] trueFront = qualityIndicator.utils_.readFront(args[1]);
+
+    indicatorvalue = qualityIndicator.epsilon(trueFront,
+        solutionFront,
+        new Integer(args[2]));
+
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/qualityIndicator/Epsilon.java/left.java
+    Configuration.logger_.info(""+indicatorvalue);
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/qualityIndicator/Epsilon.java/base.java
+    Configuration.logger_.info(ind_value);
+=======
+    Configuration.logger_.info(""+ind_value);
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/qualityIndicator/Epsilon.java/right.java
+  }
 
   /**
    * Returns the epsilon indicator.
@@ -64,8 +98,8 @@ public class Epsilon {
     int i, j, k;
     double eps, eps_j = 0.0, eps_k = 0.0, eps_temp;
 
-    dim_ = dim ;
-    setParameters() ;
+    dim_ = dim;
+    setParameters();
 
     if (method_ == 0) {
       eps = Double.MIN_VALUE;
@@ -123,37 +157,11 @@ public class Epsilon {
    * Established the default parameters
    */
   void  setParameters() {
-    int  i;
+    int i;
     obj_ = new int[dim_];
     for (i = 0; i < dim_; i++) {
       obj_[i] = 0;
     }
     method_ = 0;
-  }
-
-  /**
-   * Returns the additive-epsilon value of the paretoFront. This method call to the
-   * calculate epsilon-indicator one
-   * @throws JMException
-   * @throws NumberFormatException
-   */
-  public static void main(String [] args) throws NumberFormatException, JMException {
-    double indicatorvalue;
-
-    if (args.length < 2) {
-      throw new JMException("Error using Epsilon. Type: \n java AdditiveEpsilon " +
-          "<FrontFile>" +
-          "<TrueFrontFile> + <getNumberOfObjectives>");
-    }
-
-    Epsilon qualityIndicator = new Epsilon();
-    double [][] solutionFront = qualityIndicator.utils_.readFront(args[0]);
-    double [][] trueFront     = qualityIndicator.utils_.readFront(args[1]);
-
-    indicatorvalue = qualityIndicator.epsilon(trueFront,
-        solutionFront,
-        new Integer(args[2]));
-
-    Configuration.logger_.info(""+indicatorvalue);
   }
 }

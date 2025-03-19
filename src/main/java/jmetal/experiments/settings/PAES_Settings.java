@@ -38,30 +38,29 @@ import java.util.logging.Level;
  * Settings class of algorithm PAES
  */
 public class PAES_Settings extends Settings {
-
-  public int maxEvaluations_;
-  public int archiveSize_;
-  public int biSections_;
-  public double mutationProbability_;
-  public double mutationDistributionIndex_;
+  private int maxEvaluations_;
+  private int archiveSize_;
+  private int biSections_;
+  private double mutationProbability_;
+  private double mutationDistributionIndex_;
 
   /**
    * Constructor
    * @throws JMException 
    */
   public PAES_Settings(String problem) throws JMException {
-    super(problem) ;
+    super(problem);
 
-    Object [] problemParams = {"Real"};
+    Object[] problemParams = {"Real"};
     problem_ = (new ProblemFactory()).getProblem(problemName_, problemParams);
 
     // Default experiments.settings
-    maxEvaluations_ = 25000 ;
-    archiveSize_    = 100   ;
-    biSections_     = 5     ;
-    mutationProbability_ = 1.0/problem_.getNumberOfVariables() ;
-    mutationDistributionIndex_ = 20.0 ;
-  }
+    maxEvaluations_ = 25000;
+    archiveSize_ = 100;
+    biSections_ = 5;
+    mutationProbability_ = 1.0 / problem_.getNumberOfVariables();
+    mutationDistributionIndex_ = 20.0;
+  } 
 
   /**
    * Configure the MOCell algorithm with default parameter experiments.settings
@@ -91,7 +90,7 @@ public class PAES_Settings extends Settings {
     // Add the operators to the algorithm
     algorithm.addOperator("mutation", mutation);
 
-    return algorithm ;
+    return algorithm;
   } 
 
   /**
@@ -101,15 +100,73 @@ public class PAES_Settings extends Settings {
    */
   @Override
   public Algorithm configure(Properties configuration) throws JMException {
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/PAES_Settings.java/left.java
     archiveSize_ = Integer.parseInt(configuration.getProperty("archiveSize",String.valueOf(archiveSize_)));
     maxEvaluations_  = Integer.parseInt(configuration.getProperty("maxEvaluations",String.valueOf(maxEvaluations_)));
     biSections_  = Integer.parseInt(configuration.getProperty("biSections",String.valueOf(biSections_)));
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/PAES_Settings.java/base.java
+    Algorithm algorithm ;
+    Mutation   mutation  ;
+
+    // Creating the algorithm.
+    algorithm = new PAES(problem_) ;
+
+    // Algorithm parameters
+    archiveSize_ = Integer.parseInt(configuration.getProperty("archiveSize",String.valueOf(archiveSize_)));
+    maxEvaluations_  = Integer.parseInt(configuration.getProperty("maxEvaluations",String.valueOf(maxEvaluations_)));
+    biSections_  = Integer.parseInt(configuration.getProperty("biSections",String.valueOf(biSections_)));
+    algorithm.setInputParameter("maxEvaluations", maxEvaluations_);
+    algorithm.setInputParameter("biSections", biSections_);
+    algorithm.setInputParameter("archiveSize",archiveSize_ );
+
+=======
+    Algorithm algorithm;
+    Mutation mutation;
+
+    // Creating the algorithm.
+    algorithm = new PAES();
+    algorithm.setProblem(problem_);
+
+    // Algorithm parameters
+    archiveSize_ =
+      Integer.parseInt(configuration.getProperty("archiveSize", String.valueOf(archiveSize_)));
+    maxEvaluations_ = Integer
+      .parseInt(configuration.getProperty("maxEvaluations", String.valueOf(maxEvaluations_)));
+    biSections_ =
+      Integer.parseInt(configuration.getProperty("biSections", String.valueOf(biSections_)));
+    algorithm.setInputParameter("maxEvaluations", maxEvaluations_);
+    algorithm.setInputParameter("biSections", biSections_);
+    algorithm.setInputParameter("archiveSize", archiveSize_);
+
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/PAES_Settings.java/right.java
 
     mutationProbability_ = Double.parseDouble(
       configuration.getProperty("mutationProbability", String.valueOf(mutationProbability_)));
     mutationDistributionIndex_ = Double.parseDouble(configuration
       .getProperty("mutationDistributionIndex", String.valueOf(mutationDistributionIndex_)));
 
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/PAES_Settings.java/left.java
     return configure() ;
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/PAES_Settings.java/base.java
+    HashMap<String, Object> parameters = new HashMap<String, Object>() ;
+    parameters.put("probability", mutationProbability_) ;
+    parameters.put("distributionIndex", mutationDistributionIndex_) ;
+    mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);
+
+    // Add the operators to the algorithm
+    algorithm.addOperator("mutation",mutation);
+
+    return algorithm ;
+=======
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("probability", mutationProbability_);
+    parameters.put("distributionIndex", mutationDistributionIndex_);
+    mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);
+
+    // Add the operators to the algorithm
+    algorithm.addOperator("mutation", mutation);
+
+    return algorithm;
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/PAES_Settings.java/right.java
   }
 } 

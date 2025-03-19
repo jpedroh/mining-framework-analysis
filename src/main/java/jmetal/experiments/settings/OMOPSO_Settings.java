@@ -28,39 +28,41 @@ import jmetal.operators.mutation.Mutation;
 import jmetal.operators.mutation.NonUniformMutation;
 import jmetal.operators.mutation.UniformMutation;
 import jmetal.problems.ProblemFactory;
+import jmetal.util.Configuration;
 import jmetal.util.JMException;
 
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.logging.Level;
 
 /**
  * Settings class of algorithm OMOPSO
  */
-public class OMOPSO_Settings extends Settings{
-  private int    swarmSize_         ;
-  private int    maxIterations_     ;
-  private int    archiveSize_       ;
-  private double perturbationIndex_ ;
-  private double mutationProbability_ ;
+public class OMOPSO_Settings extends Settings { 
+  private int swarmSize_;
+  private int maxIterations_;
+  private int archiveSize_;
+  private double perturbationIndex_;
+  private double mutationProbability_;
 
   /**
    * Constructor
    * @throws JMException 
    */
   public OMOPSO_Settings(String problem) throws JMException {
-    super(problem) ;
-    
-    Object [] problemParams = {"Real"};
+    super(problem);
+
+    Object[] problemParams = {"Real"};
 	    problem_ = (new ProblemFactory()).getProblem(problemName_, problemParams);
 
 	    // Default experiments.settings
-    swarmSize_         = 100 ;
-    maxIterations_     = 250 ;
-    archiveSize_       = 100 ;
-    perturbationIndex_ = 0.5 ;
-    mutationProbability_ = 1.0/problem_.getNumberOfVariables() ;
+    swarmSize_ = 100;
+    maxIterations_ = 250;
+    archiveSize_ = 100;
+    perturbationIndex_ = 0.5;
+    mutationProbability_ = 1.0 / problem_.getNumberOfVariables();
   } 
-
+  
   /**
    * Configure OMOPSO with user-defined parameter experiments.settings
    *
@@ -97,8 +99,8 @@ public class OMOPSO_Settings extends Settings{
     algorithm.addOperator("uniformMutation", uniformMutation);
     algorithm.addOperator("nonUniformMutation", nonUniformMutation);
 
-    return algorithm ;
-  }
+    return algorithm;
+  } 
 
   /**
    * Configure dMOPSO with user-defined parameter experiments.settings
@@ -107,13 +109,95 @@ public class OMOPSO_Settings extends Settings{
    */
   @Override
   public Algorithm configure(Properties configuration) throws JMException {
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/OMOPSO_Settings.java/left.java
     swarmSize_ = Integer.parseInt(configuration.getProperty("swarmSize",String.valueOf(swarmSize_)));
     maxIterations_  = Integer.parseInt(configuration.getProperty("maxIterations",String.valueOf(maxIterations_)));
     archiveSize_ = Integer.parseInt(configuration.getProperty("archiveSize", String.valueOf(archiveSize_)));
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/OMOPSO_Settings.java/base.java
+    Algorithm algorithm ;
+    Mutation  uniformMutation ;
+    Mutation nonUniformMutation ;
+
+    // Creating the algorithm.
+    algorithm = new OMOPSO(problem_) ;
+
+    // Algorithm parameters
+    swarmSize_ = Integer.parseInt(configuration.getProperty("swarmSize",String.valueOf(swarmSize_)));
+    maxIterations_  = Integer.parseInt(configuration.getProperty("maxIterations",String.valueOf(maxIterations_)));
+    archiveSize_ = Integer.parseInt(configuration.getProperty("archiveSize", String.valueOf(archiveSize_)));
+=======
+    Algorithm algorithm;
+    Mutation uniformMutation;
+    Mutation nonUniformMutation;
+
+    // Creating the algorithm.
+    algorithm = new OMOPSO();
+    algorithm.setProblem(problem_);
+
+    // Algorithm parameters
+    swarmSize_ =
+      Integer.parseInt(configuration.getProperty("swarmSize", String.valueOf(swarmSize_)));
+    maxIterations_ =
+      Integer.parseInt(configuration.getProperty("maxIterations", String.valueOf(maxIterations_)));
+    archiveSize_ =
+      Integer.parseInt(configuration.getProperty("archiveSize", String.valueOf(archiveSize_)));
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/OMOPSO_Settings.java/right.java
+
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/OMOPSO_Settings.java/left.java
+    mutationProbability_ = Double.parseDouble(configuration.getProperty("mutationProbability",String.valueOf(mutationProbability_)));
+    perturbationIndex_ = Double.parseDouble(configuration.getProperty("perturbationIndex",String.valueOf(mutationProbability_)));
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/OMOPSO_Settings.java/base.java
+    algorithm.setInputParameter("swarmSize",swarmSize_);
+    algorithm.setInputParameter("maxIterations",maxIterations_);
+    algorithm.setInputParameter("archiveSize",archiveSize_);
 
     mutationProbability_ = Double.parseDouble(configuration.getProperty("mutationProbability",String.valueOf(mutationProbability_)));
     perturbationIndex_ = Double.parseDouble(configuration.getProperty("perturbationIndex",String.valueOf(mutationProbability_)));
+=======
+    algorithm.setInputParameter("swarmSize", swarmSize_);
+    algorithm.setInputParameter("maxIterations", maxIterations_);
+    algorithm.setInputParameter("archiveSize", archiveSize_);
 
+    mutationProbability_ = Double.parseDouble(
+      configuration.getProperty("mutationProbability", String.valueOf(mutationProbability_)));
+    perturbationIndex_ = Double.parseDouble(
+      configuration.getProperty("perturbationIndex", String.valueOf(mutationProbability_)));
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/OMOPSO_Settings.java/right.java
+
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/OMOPSO_Settings.java/left.java
     return configure() ;
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/OMOPSO_Settings.java/base.java
+    HashMap<String, Object> parameters = new HashMap<String, Object>() ;
+    parameters.put("probability", mutationProbability_) ;
+    parameters.put("perturbation", perturbationIndex_) ;
+    uniformMutation = new UniformMutation(parameters);
+
+    parameters = new HashMap<String, Object>() ;
+    parameters.put("probability", mutationProbability_) ;
+    parameters.put("perturbation", perturbationIndex_) ;
+    parameters.put("maxIterations", maxIterations_) ;
+    nonUniformMutation = new NonUniformMutation(parameters);
+
+    // Add the operators to the algorithm
+    algorithm.addOperator("uniformMutation",uniformMutation);
+    algorithm.addOperator("nonUniformMutation",nonUniformMutation);
+    return algorithm ;
+=======
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("probability", mutationProbability_);
+    parameters.put("perturbation", perturbationIndex_);
+    uniformMutation = new UniformMutation(parameters);
+
+    parameters = new HashMap<String, Object>();
+    parameters.put("probability", mutationProbability_);
+    parameters.put("perturbation", perturbationIndex_);
+    parameters.put("maxIterations", maxIterations_);
+    nonUniformMutation = new NonUniformMutation(parameters);
+
+    // Add the operators to the algorithm
+    algorithm.addOperator("uniformMutation", uniformMutation);
+    algorithm.addOperator("nonUniformMutation", nonUniformMutation);
+    return algorithm;
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/OMOPSO_Settings.java/right.java
   }
 } 

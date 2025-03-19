@@ -79,8 +79,8 @@ public class ProblemFactory {
         i++;
       }
       // constructors[i] is the selected one constructor
-      return (Problem)constructors[i].newInstance(params);
-    } catch(Exception e) {
+      return (Problem) constructors[i].newInstance(params);
+    } catch (Exception e) {
       Configuration.logger_.log(
         Level.SEVERE,
         "ProblemFactory.getProblem: " + "Problem '" + name + "' does not exist. " +

@@ -21,6 +21,7 @@
 
 package jmetal.qualityIndicator;
 
+import jmetal.util.Configuration;
 import jmetal.util.JMException;
 
 import java.util.Arrays;
@@ -36,7 +37,7 @@ import java.util.Arrays;
  */
 public class GeneralizedSpread {
 
-  public static jmetal.qualityIndicator.util.MetricsUtil utils_;
+  public static jmetal.qualityIndicator.util.MetricsUtil utils_; 
 
   /**
    * Constructor
@@ -44,18 +45,50 @@ public class GeneralizedSpread {
    */
   public GeneralizedSpread() {
     utils_ = new jmetal.qualityIndicator.util.MetricsUtil();
+  } 
+
+  /**
+   * This class can be invoked from the command line. Three params are required:
+   * 1) the name of the file containing the front,
+   * 2) the name of the file containig the true Pareto front
+   * 3) the number of objectives
+   *
+   * @throws JMException
+   */
+  public static void main(String args[]) throws JMException {
+    if (args.length < 3) {
+      throw new JMException("Error using GeneralizedSpread. " +
+        "Usage: \n java GeneralizedSpread" +
+        " <SolutionFrontFile> " +
+        " <TrueFrontFile> + <getNumberOfObjectives>");
+    }
+
+    //Create a new instance of the metric
+    GeneralizedSpread qualityIndicator = new GeneralizedSpread();
+
+    //Read the front from the files
+    double[][] solutionFront = utils_.readFront(args[0]);
+    double[][] trueFront = utils_.readFront(args[1]);
+
+    //Obtain delta value
+    double value = qualityIndicator.generalizedSpread(solutionFront,
+        trueFront,
+        new Integer(args[2]));
+
+    Configuration.logger_.info(""+value);
   }
 
   /**
-   *  Calculates the generalized spread metric. Given the 
-   *  pareto front, the true pareto front as <code>double []</code>
-   *  and the number of objectives, the method return the value for the
-   *  metric.
-   *  @param paretoFront The pareto front.
-   *  @param paretoTrueFront The true pareto front.
-   *  @param numberOfObjectives The number of objectives.
-   *  @return the value of the generalized spread metric
-   **/
+   * Calculates the generalized spread metric. Given the
+   * pareto front, the true pareto front as <code>double []</code>
+   * and the number of objectives, the method return the value for the
+   * metric.
+   *
+   * @param paretoFront        The pareto front.
+   * @param paretoTrueFront    The true pareto front.
+   * @param numberOfObjectives The number of objectives.
+   * @return the value of the generalized spread metric
+   */
   public double generalizedSpread(double [][] paretoFront,
       double [][] paretoTrueFront,                                         
       int numberOfObjectives) {
@@ -63,17 +96,17 @@ public class GeneralizedSpread {
     /**
      * Stores the maximum values of true pareto front.
      */
-    double [] maximumValue;
+    double[] maximumValue;
 
     /**
      * Stores the minimum values of the true pareto front.
      */
-    double [] minimumValue;
+    double[] minimumValue;
 
     /**
      * Stores the normalized front.
      */
-    double [][] normalizedFront;
+    double[][] normalizedFront;
 
     /**
      * Stores the normalized true Pareto front.
@@ -81,8 +114,8 @@ public class GeneralizedSpread {
     double[][] normalizedParetoFront;
 
     // STEP 1. Obtain the maximum and minimum values of the Pareto front
-    maximumValue = utils_.getMaximumValues(paretoTrueFront,numberOfObjectives);
-    minimumValue = utils_.getMinimumValues(paretoTrueFront,numberOfObjectives);
+    maximumValue = utils_.getMaximumValues(paretoTrueFront, numberOfObjectives);
+    minimumValue = utils_.getMinimumValues(paretoTrueFront, numberOfObjectives);
 
     normalizedFront = utils_.getNormalizedFront(paretoFront,
         maximumValue,
@@ -100,8 +133,9 @@ public class GeneralizedSpread {
       System.arraycopy(normalizedParetoFront[normalizedParetoFront.length - 1], 0, extremValues[i], 0, numberOfObjectives);
     }
 
-    int numberOfPoints     = normalizedFront.length;
+    int numberOfPoints = normalizedFront.length;
     int numberOfTruePoints = normalizedParetoFront.length;
+
 
     // STEP 4. Sorts the normalized front
     Arrays.sort(normalizedFront, new jmetal.qualityIndicator.util.LexicoGraphicalComparator());
@@ -133,37 +167,7 @@ public class GeneralizedSpread {
             dmean);
       }
 
-      return (dExtrems + mean) / (dExtrems + (numberOfPoints*dmean));      
+      return (dExtrems + mean) / (dExtrems + (numberOfPoints * dmean));      
     }
-  }
-
-  /**
-   * This class can be invoked from the command line. Three params are required:
-   * 1) the name of the file containing the front,  
-   * 2) the name of the file containig the true Pareto front
-   * 3) the number of objectives
-   * @throws JMException 
-   */
-  public static void main(String args[]) throws JMException {
-    if (args.length < 3) {
-      throw new JMException("Error using GeneralizedSpread. " +
-          "Usage: \n java GeneralizedSpread" +
-          " <SolutionFrontFile> " +
-          " <TrueFrontFile> + <getNumberOfObjectives>") ;
-    }
-
-    //Create a new instance of the metric
-    GeneralizedSpread qualityIndicator = new GeneralizedSpread();
-
-    //Read the front from the files
-    double [][] solutionFront = utils_.readFront(args[0]);
-    double [][] trueFront     = utils_.readFront(args[1]);
-
-    //Obtain delta value
-    double value = qualityIndicator.generalizedSpread(solutionFront,
-        trueFront,
-        new Integer(args[2]));
-
-    System.out.println(value);
   }
 }

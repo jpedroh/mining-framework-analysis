@@ -38,33 +38,33 @@ import java.util.logging.Level;
 /**
  * Settings class of algorithm pSMPSO
  */
-public class pSMPSO_Settings extends Settings{
-  private int    swarmSize_                 ;
-  private int    maxIterations_             ;
-  private int    archiveSize_               ;
-  private double mutationDistributionIndex_ ;
-  private double mutationProbability_       ;
-  private int    numberOfThreads_           ;
+public class pSMPSO_Settings extends Settings {
+  private int swarmSize_;
+  private int maxIterations_;
+  private int archiveSize_;
+  private double mutationDistributionIndex_;
+  private double mutationProbability_;
+  private int numberOfThreads_;
 
   /**
    * Constructor
    * @throws JMException 
    */
   public pSMPSO_Settings(String problem) throws JMException {
-    super(problem) ;
+    super(problem);
 
-    Object [] problemParams = {"Real"};
+    Object[] problemParams = {"Real"};
     problem_ = (new ProblemFactory()).getProblem(problemName_, problemParams);
 
     // Default experiments.settings
-    swarmSize_                 = 100 ;
-    maxIterations_             = 250 ;
-    archiveSize_               = 100 ;
-    mutationDistributionIndex_ = 20.0 ;
-    mutationProbability_       = 1.0/problem_.getNumberOfVariables() ;
+    swarmSize_ = 100;
+    maxIterations_ = 250;
+    archiveSize_ = 100;
+    mutationDistributionIndex_ = 20.0;
+    mutationProbability_ = 1.0 / problem_.getNumberOfVariables();
     // 0 - number of available cores
-    numberOfThreads_           = 8 ; 
-  }
+    numberOfThreads_ = 8; 
+  } 
 
   /**
    * Configure SMPSO with user-defined parameter experiments.settings
@@ -78,22 +78,20 @@ public class pSMPSO_Settings extends Settings{
 
     SynchronousParallelTaskExecutor parallelEvaluator = new MultithreadedEvaluator(numberOfThreads_);
 
-    algorithm = new pSMPSO(problem_, parallelEvaluator) ;
-
+    algorithm = new pSMPSO();
+    algorithm.setProblem(problem_);
+    ((pSMPSO)algorithm).setEvaluator(parallelEvaluator);
     // Algorithm parameters
     algorithm.setInputParameter("swarmSize", swarmSize_);
     algorithm.setInputParameter("maxIterations", maxIterations_);
     algorithm.setInputParameter("archiveSize", archiveSize_);
 
-    HashMap<String, Object> parameters = new HashMap<String, Object>() ;
-    parameters.put("probability", mutationProbability_) ;
-    parameters.put("distributionIndex", mutationDistributionIndex_) ;
-    mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);                    
-
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("probability", mutationProbability_);
     parameters.put("distributionIndex", mutationDistributionIndex_);
     mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);
+
+    algorithm.addOperator("mutation", mutation);
 
     return algorithm ;
   } 
@@ -105,13 +103,88 @@ public class pSMPSO_Settings extends Settings{
    */
   @Override
   public Algorithm configure(Properties configuration) throws JMException {
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/pSMPSO_Settings.java/left.java
     numberOfThreads_  = Integer.parseInt(configuration.getProperty("numberOfThreads",String.valueOf(numberOfThreads_)));
     swarmSize_ = Integer.parseInt(configuration.getProperty("swarmSize",String.valueOf(swarmSize_)));
     maxIterations_  = Integer.parseInt(configuration.getProperty("maxIterations",String.valueOf(maxIterations_)));
     archiveSize_ = Integer.parseInt(configuration.getProperty("archiveSize", String.valueOf(archiveSize_)));
     mutationProbability_ = Double.parseDouble(configuration.getProperty("mutationProbability",String.valueOf(mutationProbability_)));
     mutationDistributionIndex_ = Double.parseDouble(configuration.getProperty("mutationDistributionIndex",String.valueOf(mutationDistributionIndex_)));
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/pSMPSO_Settings.java/base.java
+    Algorithm algorithm ;
+    Mutation  mutation ;
 
+    numberOfThreads_  = Integer.parseInt(configuration.getProperty("numberOfThreads",String.valueOf(numberOfThreads_)));
+
+    SynchronousParallelRunner parallelEvaluator = new MultithreadedEvaluator(numberOfThreads_) ;
+
+    // Creating the algorithm.
+    algorithm = new pSMPSO(problem_, parallelEvaluator) ;
+
+    // Algorithm parameters
+    swarmSize_ = Integer.parseInt(configuration.getProperty("swarmSize",String.valueOf(swarmSize_)));
+    maxIterations_  = Integer.parseInt(configuration.getProperty("maxIterations",String.valueOf(maxIterations_)));
+    archiveSize_ = Integer.parseInt(configuration.getProperty("archiveSize", String.valueOf(archiveSize_)));
+
+    algorithm.setInputParameter("swarmSize", swarmSize_);
+    algorithm.setInputParameter("maxIterations", maxIterations_);
+    algorithm.setInputParameter("archiveSize", archiveSize_);
+
+    mutationProbability_ = Double.parseDouble(configuration.getProperty("mutationProbability",String.valueOf(mutationProbability_)));
+    mutationDistributionIndex_ = Double.parseDouble(configuration.getProperty("mutationDistributionIndex",String.valueOf(mutationDistributionIndex_)));
+=======
+    Algorithm algorithm;
+    Mutation mutation;
+
+    numberOfThreads_ = Integer
+      .parseInt(configuration.getProperty("numberOfThreads", String.valueOf(numberOfThreads_)));
+
+    SynchronousParallelTaskExecutor parallelEvaluator = new MultithreadedEvaluator(numberOfThreads_);
+
+    // Creating the algorithm.
+    algorithm = new pSMPSO();
+    algorithm.setProblem(problem_);
+    ((pSMPSO)algorithm).setEvaluator(parallelEvaluator);
+    // Algorithm parameters
+    swarmSize_ =
+      Integer.parseInt(configuration.getProperty("swarmSize", String.valueOf(swarmSize_)));
+    maxIterations_ =
+      Integer.parseInt(configuration.getProperty("maxIterations", String.valueOf(maxIterations_)));
+    archiveSize_ =
+      Integer.parseInt(configuration.getProperty("archiveSize", String.valueOf(archiveSize_)));
+
+    algorithm.setInputParameter("swarmSize", swarmSize_);
+    algorithm.setInputParameter("maxIterations", maxIterations_);
+    algorithm.setInputParameter("archiveSize", archiveSize_);
+
+    mutationProbability_ = Double.parseDouble(
+      configuration.getProperty("mutationProbability", String.valueOf(mutationProbability_)));
+    mutationDistributionIndex_ = Double.parseDouble(configuration
+      .getProperty("mutationDistributionIndex", String.valueOf(mutationDistributionIndex_)));
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/pSMPSO_Settings.java/right.java
+
+<<<<<<< /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/pSMPSO_Settings.java/left.java
     return configure() ;
+||||||| /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/pSMPSO_Settings.java/base.java
+    HashMap<String, Object> parameters = new HashMap<String, Object>() ;
+    parameters = new HashMap() ;
+    parameters.put("probability", mutationProbability_) ;
+    parameters.put("distributionIndex", mutationDistributionIndex_) ;
+    mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);
+
+    algorithm.addOperator("mutation",mutation);
+
+    return algorithm ;
+=======
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters = new HashMap();
+    parameters.put("probability", mutationProbability_);
+    parameters.put("distributionIndex", mutationDistributionIndex_);
+    mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);
+
+    algorithm.addOperator("mutation", mutation);
+
+    return algorithm;
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/experiments/settings/pSMPSO_Settings.java/right.java
   }
 }

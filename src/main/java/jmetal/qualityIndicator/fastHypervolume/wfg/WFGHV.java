@@ -118,9 +118,9 @@ public class WFGHV {
     double[] points = new double[dimensions];
 
     if (args.length == (dimensions + 1)) {
-      for (int i = 1; i <= dimensions; i++) {
-        points[i - 1] = Double.parseDouble(args[i]);
-      }
+       for (int i = 1; i <= dimensions; i++) {
+         points[i - 1] = Double.parseDouble(args[i]);
+       }
     } else {
       for (int i = 1; i <= dimensions; i++) {
         points[i - 1] = 0.0;
@@ -128,10 +128,11 @@ public class WFGHV {
     }
 
     referencePoint = new Point(points);
-    Configuration.logger_.info("Using reference point: " + referencePoint);
 
     WFGHV wfghv =
       new WFGHV(referencePoint.getNumberOfObjectives(), front.getNumberOfPoints(), referencePoint);
+    Configuration.logger_.info("Using reference point: " + referencePoint);
+    Configuration.logger_.info("Hypervolume value: " + wfghv.get2DHV(front));
   }
 
   public int getLessContributorHV(SolutionSet set) {
@@ -160,25 +161,25 @@ public class WFGHV {
   }
 
   public double getHV(Front front, Solution referencePoint) {
-    referencePoint_ = new Point(referencePoint);
-    double volume = 0.0;
-    sort(front);
+    referencePoint_ = new Point(referencePoint) ;
+    double volume = 0.0 ;
+    sort(front) ;
 
     if (currentDimension_ == 2) {
       volume = get2DHV(front);
     } else {
       volume = 0.0 ;
 
-      currentDimension_--;
-      for (int i = front.nPoints_ - 1; i >= 0; i--) {
+      currentDimension_ -- ;
+      for (int i = front.nPoints_-1; i >= 0; i--) {
         volume += Math.abs(front.getPoint(i).objectives_[currentDimension_] -
-          referencePoint_.objectives_[currentDimension_]) *
-          this.getExclusiveHV(front, i);
+                referencePoint_.objectives_[currentDimension_])*
+                this.getExclusiveHV(front, i) ;
       }
-      currentDimension_++;
+      currentDimension_ ++ ;
     }
 
-    return volume;
+    return volume ;
   }
 
   public double getHV(Front front) {
@@ -203,14 +204,14 @@ public class WFGHV {
   }
 
   public double get2DHV(Front front) {
-    double hv = 0.0;
+    double hv = 0.0 ;
 
     hv = Math.abs((front.getPoint(0).getObjectives()[0] - referencePoint_.objectives_[0]) *
-      (front.getPoint(0).getObjectives()[1] - referencePoint_.objectives_[1]));
+            (front.getPoint(0).getObjectives()[1] - referencePoint_.objectives_[1])) ;
 
     for (int i = 1; i < front.nPoints_; i++) {
       hv += Math.abs((front.getPoint(i).getObjectives()[0] - referencePoint_.objectives_[0]) *
-        (front.getPoint(i).getObjectives()[1] - front.getPoint(i - 1).getObjectives()[1]));
+              (front.getPoint(i).getObjectives()[1] - front.getPoint(i-1).getObjectives()[1])) ;
 
     }
     return hv ;
@@ -301,8 +302,8 @@ public class WFGHV {
   }
 
   int dominates2way(Point p, Point q) {
-    // returns -1 if p dominates q, 1 if q dominates p, 2 if p == q, 0 otherwise
-    // ASSUMING MINIMIZATION
+// returns -1 if p dominates q, 1 if q dominates p, 2 if p == q, 0 otherwise
+  // ASSUMING MINIMIZATION
 
     // domination could be checked in either order
     for (int i = currentDimension_ - 1; i >= 0; i--) {
@@ -327,37 +328,5 @@ public class WFGHV {
 
   public void sort(Front front) {
     Arrays.sort(front.points_, 0, front.nPoints_, pointComparator_);
-  }
-
-  public static void main(String args[]) throws IOException, JMException {
-    Front front = new Front() ;
-
-    if (args.length == 0) {
-      throw new JMException("Usage: WFGHV front [reference point]") ;
-    }
-
-    if (args.length > 0) {
-      front.readFront(args[0]);
-    }
-
-    int dimensions = front.getNumberOfObjectives() ;
-    Point referencePoint ;
-    double [] points = new double[dimensions] ;
-
-    if (args.length == (dimensions + 1)) {
-       for (int i = 1; i <= dimensions; i++) {
-         points[i - 1] = Double.parseDouble(args[i]);
-       }
-    } else {
-      for (int i = 1; i <= dimensions; i++) {
-        points[i - 1] = 0.0;
-      }
-    }
-
-    referencePoint = new Point(points) ;
-
-    WFGHV wfghv = new WFGHV(referencePoint.getNumberOfObjectives(), front.getNumberOfPoints(), referencePoint) ;
-    Configuration.logger_.info("Using reference point: " + referencePoint) ;
-    Configuration.logger_.info("Hypervolume value: " + wfghv.get2DHV(front));
   }
 }
