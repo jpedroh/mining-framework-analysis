@@ -1,15 +1,4 @@
-/*******************************************************************************
-* (c) Copyright 2014 Hewlett-Packard Development Company, L.P.
-* All rights reserved. This program and the accompanying materials
-* are made available under the terms of the Apache License v2.0 which accompany this distribution.
-*
-* The Apache License is available at
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-*******************************************************************************/
-
 package io.cloudslang.engine.queue.services.cleaner;
-
 import io.cloudslang.engine.data.IdentityGenerator;
 import io.cloudslang.engine.data.LocalMemIncrementGenerator;
 import io.cloudslang.engine.node.services.WorkerNodeService;
@@ -40,12 +29,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import static org.mockito.Mockito.mock;
 
 /**
@@ -53,157 +40,117 @@ import static org.mockito.Mockito.mock;
  * Date: 04/12/13
  * Time: 11:13
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration
-public class QueueCleanerServiceTest {
+@RunWith(value = SpringJUnit4ClassRunner.class) @ContextConfiguration public class QueueCleanerServiceTest {
+  @Autowired public ExecutionQueueService executionQueueService;
 
-	@Autowired
-	public ExecutionQueueService executionQueueService;
+  @Autowired public QueueCleanerService queueCleanerService;
 
-	@Autowired
-	public QueueCleanerService queueCleanerService;
+  @Autowired private JdbcTemplate jdbcTemplate;
 
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+  @Before public void before() {
+    jdbcTemplate.execute("delete from OO_EXECUTION_QUEUES");
+    jdbcTemplate.execute("delete from OO_EXECUTION_STATES");
+  }
 
+  @Test public void cleanTest() throws Exception {
+    List<ExecutionMessage> msgs = new ArrayList<>();
+    ExecutionMessage message15 = generateMessage(1, "group1", "1", ExecStatus.IN_PROGRESS, 1);
+    ExecutionMessage message16 = generateMessage(1, "group1", "1", ExecStatus.FINISHED, 2);
+    ExecutionMessage message25 = generateMessage(2, "group1", "2", ExecStatus.IN_PROGRESS, 1);
+    ExecutionMessage message26 = generateMessage(2, "group1", "2", ExecStatus.FINISHED, 2);
+    msgs.clear();
+    msgs.add(message15);
+    executionQueueService.enqueue(msgs);
+    Set<Long> ids = queueCleanerService.getFinishedExecStateIds();
+    Assert.assertEquals(0, ids.size());
+    msgs.clear();
+    msgs.add(message16);
+    executionQueueService.enqueue(msgs);
+    executionQueueService.poll("myWorker", 100, ExecStatus.IN_PROGRESS, ExecStatus.FINISHED);
+    ids = queueCleanerService.getFinishedExecStateIds();
+    Assert.assertEquals(1, ids.size());
+    msgs.clear();
+    msgs.add(message26);
+    executionQueueService.enqueue(msgs);
+    ids = queueCleanerService.getFinishedExecStateIds();
+    Assert.assertEquals(2, ids.size());
+    msgs.clear();
+    msgs.add(message25);
+    executionQueueService.enqueue(msgs);
+    ids = queueCleanerService.getFinishedExecStateIds();
+    Assert.assertEquals(2, ids.size());
+    queueCleanerService.cleanFinishedSteps(ids);
+    ids = queueCleanerService.getFinishedExecStateIds();
+    Assert.assertEquals(0, ids.size());
+  }
 
-	@Before
-	public void before() {
-		jdbcTemplate.execute("delete from OO_EXECUTION_QUEUES");
-		jdbcTemplate.execute("delete from OO_EXECUTION_STATES");
-	}
+  private ExecutionMessage generateMessage(long execStateId, String groupName, String msgId, ExecStatus status, int msg_seq_id) {
+    byte[] payloadData;
+    payloadData = "This is just a test".getBytes();
+    Payload payload = new Payload(payloadData);
+    return new ExecutionMessage(execStateId, "myWorker", groupName, msgId, status, payload, msg_seq_id);
+  }
 
-	@Test
-	public void cleanTest() throws Exception {
-		List<ExecutionMessage> msgs = new ArrayList<>();
-		ExecutionMessage message15 = generateMessage(1, "group1", "1", ExecStatus.IN_PROGRESS, 1);
-		ExecutionMessage message16 = generateMessage(1, "group1", "1", ExecStatus.FINISHED, 2);
+  @Configuration @EnableTransactionManagement static class Configurator {
+    @Bean DataSource dataSource() {
+      return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
+    }
 
-		ExecutionMessage message25 = generateMessage(2, "group1", "2", ExecStatus.IN_PROGRESS, 1);
-		ExecutionMessage message26 = generateMessage(2, "group1", "2", ExecStatus.FINISHED, 2);
+    @Bean SpringLiquibase liquibase(DataSource dataSource) {
+      SpringLiquibase liquibase = new SpringLiquibase();
+      liquibase.setDataSource(dataSource);
+      liquibase.setChangeLog("classpath:/META-INF/database/test.changes.xml");
+      return liquibase;
+    }
 
-		msgs.clear();
-		msgs.add(message15);
-		executionQueueService.enqueue(msgs);
+    @Bean PlatformTransactionManager transactionManager(DataSource dataSource) {
+      return new DataSourceTransactionManager(dataSource);
+    }
 
-		Set<Long> ids = queueCleanerService.getFinishedExecStateIds();
-		Assert.assertEquals(0, ids.size());
+    @Bean JdbcTemplate jdbcTemplate(DataSource dataSource) {
+      return new JdbcTemplate(dataSource);
+    }
 
-		msgs.clear();
-		msgs.add(message16);
-		executionQueueService.enqueue(msgs);
+    @Bean IdentityGenerator identifierGenerator() {
+      return new IdentityGenerator() {
+        long id = 1;
 
-		executionQueueService.poll("myWorker", 100, ExecStatus.IN_PROGRESS, ExecStatus.FINISHED);
+        @Override public synchronized Long next() {
+          return id++;
+        }
 
-		ids = queueCleanerService.getFinishedExecStateIds();
-		Assert.assertEquals(1, ids.size());
+        @Override public List<Long> bulk(int bulkSize) {
+          return null;
+        }
+      };
+    }
 
-		msgs.clear();
-		msgs.add(message26);
-		executionQueueService.enqueue(msgs);
+    @Bean QueueCleanerService queueCleanerService() {
+      return new QueueCleanerServiceImpl();
+    }
 
-		ids = queueCleanerService.getFinishedExecStateIds();
-		Assert.assertEquals(2, ids.size());
+    @Bean WorkerNodeService workerNodeService() {
+      return mock(WorkerNodeService.class);
+    }
 
-		msgs.clear();
-		msgs.add(message25);
-		executionQueueService.enqueue(msgs);
+    @Bean VersionService queueVersionService() {
+      return mock(VersionService.class);
+    }
 
-		ids = queueCleanerService.getFinishedExecStateIds();
-		Assert.assertEquals(2, ids.size());
+    @Bean ExecutionQueueRepository executionQueueRepository() {
+      return new ExecutionQueueRepositoryImpl();
+    }
 
-		queueCleanerService.cleanFinishedSteps(ids);
+    @Bean ExecutionQueueService executionQueueService() {
+      return new ExecutionQueueServiceImpl();
+    }
 
-		ids = queueCleanerService.getFinishedExecStateIds();
-		Assert.assertEquals(0, ids.size());
-	}
+    @Bean ExecutionAssignerService executionAssignerService() {
+      return new ExecutionAssignerServiceImpl();
+    }
 
-	private ExecutionMessage generateMessage(long execStateId, String groupName, String msgId, ExecStatus status, int msg_seq_id) {
-		byte[] payloadData;
-		payloadData = "This is just a test".getBytes();
-		Payload payload = new Payload(payloadData);
-		return new ExecutionMessage(execStateId, "myWorker", groupName, msgId, status, payload, msg_seq_id);
-	}
-
-
-	@Configuration
-	@EnableTransactionManagement
-	static class Configurator {
-		@Bean
-		DataSource dataSource() {
-			return new EmbeddedDatabaseBuilder()
-					.setType(EmbeddedDatabaseType.H2)
-					.build();
-		}
-
-		@Bean
-		SpringLiquibase liquibase(DataSource dataSource) {
-			SpringLiquibase liquibase = new SpringLiquibase();
-			liquibase.setDataSource(dataSource);
-			liquibase.setChangeLog("classpath:/META-INF/database/test.changes.xml");
-			return liquibase;
-		}
-
-		@Bean
-		PlatformTransactionManager transactionManager(DataSource dataSource){
-			return new DataSourceTransactionManager(dataSource);
-		}
-
-		@Bean
-		JdbcTemplate jdbcTemplate(DataSource dataSource){
-			return new JdbcTemplate(dataSource);
-		}
-
-		@Bean
-		IdentityGenerator identifierGenerator() {
-			return new IdentityGenerator() {
-				long id = 1;
-
-				@Override
-				public synchronized Long next() {
-					return id++;
-				}
-
-				@Override
-				public List<Long> bulk(int bulkSize) {
-					return null;
-				}
-			};
-		}
-
-		@Bean
-		QueueCleanerService queueCleanerService() {
-			return new QueueCleanerServiceImpl();
-		}
-
-		@Bean
-		WorkerNodeService workerNodeService() {
-			return mock(WorkerNodeService.class);
-		}
-
-		@Bean
-		VersionService queueVersionService() {
-			return mock(VersionService.class);
-		}
-
-		@Bean
-		ExecutionQueueRepository executionQueueRepository(){
-			return new ExecutionQueueRepositoryImpl();
-		}
-
-		@Bean
-		ExecutionQueueService executionQueueService(){
-			return new ExecutionQueueServiceImpl();
-		}
-
-		@Bean
-		ExecutionAssignerService executionAssignerService(){
-			return new ExecutionAssignerServiceImpl();
-		}
-
-		@Bean
-		ExecutionMessageConverter executionMessageConverter(){
-			return new ExecutionMessageConverter();
-		}
-	}
+    @Bean ExecutionMessageConverter executionMessageConverter() {
+      return new ExecutionMessageConverter();
+    }
+  }
 }
