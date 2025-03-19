@@ -367,7 +367,16 @@ public class AlbumSimplified extends AbstractModelObject implements ISearchModel
           hasAndNotNull(jsonObject, "name")
             ? jsonObject.get("name").getAsString()
             : null)
-        .setType(
+              .setReleaseDate(
+                      hasAndNotNull(jsonObject, "release_date")
+                              ? jsonObject.get("release_date").getAsString()
+                              : null)
+              .setReleaseDatePrecision(
+                      hasAndNotNull(jsonObject, "release_date_precision")
+                              ? ReleaseDatePrecision.keyOf(
+                              jsonObject.get("release_date_precision").getAsString().toLowerCase())
+                              : null)
+              .setType(
           hasAndNotNull(jsonObject, "type")
             ? ModelObjectType.keyOf(
             jsonObject.get("type").getAsString().toLowerCase())
