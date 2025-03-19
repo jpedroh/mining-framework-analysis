@@ -17,9 +17,17 @@ import com.digi.xbee.api.exceptions.OperationNotSupportedException;
 import com.digi.xbee.api.utils.ByteUtils;
 
 /**
+<<<<<<< /usr/src/app/output/digidotcom/xbeejavalibrary/7436990c0ba30d4245bba56cbc344978648ec7f5/src/com/digi/xbee/api/io/IOSample.java/left.java
  * This class represents an IO Data Sample. The sample is built using the
+ * parameters of the constructor.
+||||||| /usr/src/app/output/digidotcom/xbeejavalibrary/7436990c0ba30d4245bba56cbc344978648ec7f5/src/com/digi/xbee/api/io/IOSample.java/base.java
+ * This class represents an IO Data Sample. The sample is built using the parameters of 
+ * the constructor.
+=======
+ * This class represents an IO Data Sample. The sample is built using the parameters of 
  * the constructor. The sample contains an analog and digital mask indicating which IO lines 
  * are configured with that functionality.
+>>>>>>> /usr/src/app/output/digidotcom/xbeejavalibrary/7436990c0ba30d4245bba56cbc344978648ec7f5/src/com/digi/xbee/api/io/IOSample.java/right.java
  * 
  * <p>Depending on the protocol the XBee device is executing, the digital and analog masks are 
  * retrieved in separated bytes (2 bytes for the digital mask and 1 for the analog mask) or 
@@ -125,8 +133,17 @@ public class IOSample {
 	 * 
 	 * @param ioSamplePayload The payload corresponding to an IO sample.
 	 * 
-	 * @throws IllegalArgumentException if {@code ioSamplePayload.length < 4}.
+	 * @throws IllegalArgumentException if {@code ioSamplePayload.length < 5}.
 	 * @throws NullPointerException if {@code ioSamplePayload == null}.
+	 */
+	/**
+	 * Class constructor. Instances a new object of type {@code IOSample} with the given 
+	 * IO sample payload.
+	 * 
+	 * @param ioSamplePayload The payload corresponding to an IO sample.
+	 * 
+	 * @throws NullPointerException if {@code ioSamplePayload == null}.
+	 * @throws IllegalArgumentException if {@code ioSamplePayload.length < 4}.
 	 */
 	public IOSample(byte[] ioSamplePayload) {
 		if (ioSamplePayload == null)
@@ -145,6 +162,10 @@ public class IOSample {
 	/**
 	 * Parses the information contained in the IO sample bytes reading the 
 	 * value of each configured DIO and ADC.
+	 */
+	/**
+	 * Parses the information contained in the IO sample bytes reading the value of 
+	 * each configured DIO and ADC.
 	 */
 	private void parseRawIOSample() {
 		int dataIndex = 3;
@@ -195,7 +216,6 @@ public class IOSample {
 			adcIndex += 1;
 		}
 	}
-	
 	/**
 	 * Parses the information contained in the IO sample bytes reading the value of 
 	 * each configured DIO and ADC.
