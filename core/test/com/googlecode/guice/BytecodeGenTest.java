@@ -219,7 +219,7 @@ public class BytecodeGenTest extends TestCase {
     }
   }
 
-  public void testProxyClassUnloading() {
+  private WeakReference<Class<?>> getWeakReference() {
     Object testObject = Guice.createInjector(interceptorModule, testModule)
         .getInstance(proxyTestClass);
     assertNotNull(testObject.getClass().getClassLoader());
@@ -232,7 +232,31 @@ public class BytecodeGenTest extends TestCase {
 
     // null the proxy
     testObject = null;
+<<<<<<< /usr/src/app/output/google/guice/8f227682888fdd3fa656bb2b244cae95f710e442/core/test/com/googlecode/guice/BytecodeGenTest.java/left.java
+    return clazzRef;
+||||||| /usr/src/app/output/google/guice/8f227682888fdd3fa656bb2b244cae95f710e442/core/test/com/googlecode/guice/BytecodeGenTest.java/base.java
+  
+    /*
+     * this should be enough to queue the weak reference
+     * unless something is holding onto it accidentally.
+     */
+    final int MAX_COUNT = 100;
+    String[] buf;
+    System.gc();
+    //TODO(cgruber): Use com.google.common.testing.GcFinalization and a countdown latch to un-flake.
+    for (int count = 0 ; clazzRef.get() != null ; count++) {
+      buf = new String[8 * 1024 * 1024];
+      buf = null;
+      System.gc();
+      assertTrue("Timeout waiting for class to be unloaded.  This may be a flaky result.",
+          count <= MAX_COUNT);
+    }
 
+    // This test could be somewhat flaky when the GC isn't working.
+    // If it fails, run the test again to make sure it's failing reliably.
+    assertNull("Proxy class was not unloaded.", clazzRef.get());
+=======
+  
     /*
      * this should be enough to queue the weak reference
      * unless something is holding onto it accidentally.
@@ -242,6 +266,11 @@ public class BytecodeGenTest extends TestCase {
     // This test could be somewhat flaky when the GC isn't working.
     // If it fails, run the test again to make sure it's failing reliably.
     assertNull("Proxy class was not unloaded.", clazzRef.get());
+>>>>>>> /usr/src/app/output/google/guice/8f227682888fdd3fa656bb2b244cae95f710e442/core/test/com/googlecode/guice/BytecodeGenTest.java/right.java
+  }
+
+  public void testProxyClassUnloading() {
+    GcFinalization.awaitClear(getWeakReference());
   }
 
   public void testProxyingPackagePrivateMethods() {
