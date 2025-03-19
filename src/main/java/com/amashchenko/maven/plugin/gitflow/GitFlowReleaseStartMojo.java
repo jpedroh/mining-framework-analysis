@@ -122,20 +122,20 @@ public class GitFlowReleaseStartMojo extends AbstractGitFlowMojo {
     private String fromCommit;
 
     /**
+     * Name of the created release branch.<br>
+     * The effective branch name will be a composite of this branch name and the <code>releaseBranchPrefix</code>.<br>
+     */
+    @Parameter(property = "branchName", defaultValue = "")
+    private String branchNameSuffix;
+
+    /**
      * Whether to use snapshot in release.
      * 
      * @since 1.10.0
      */
     @Parameter(property = "useSnapshotInRelease", defaultValue = "false")
     private boolean useSnapshotInRelease;
-  
-    /**
-     * Name of the created release branch.<br>
-     * The effective branch name will be a composite of this branch name and the <code>releaseBranchPrefix</code>.
-     */
-    @Parameter(property = "branchName")
-    private String branchNameSuffix;
-  
+
     /** {@inheritDoc} */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -192,7 +192,7 @@ public class GitFlowReleaseStartMojo extends AbstractGitFlowMojo {
 
             // get release branch
             String branchName = gitFlowConfig.getReleaseBranchPrefix();
-            if (StringUtils.isNotBlank(branchNameSuffix)) {
+            if(StringUtils.isNotBlank(branchNameSuffix)){
                 branchName += branchNameSuffix;
             } else if (!sameBranchName) {
                 branchName += releaseVersion;
