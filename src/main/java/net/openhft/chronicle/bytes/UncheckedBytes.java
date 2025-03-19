@@ -55,8 +55,8 @@ public class UncheckedBytes<Underlying>
     public void setBytes(@NotNull Bytes bytes)
             throws IllegalStateException {
         requireNonNull(bytes);
-        BytesStore underlyingBytes = bytes.bytesStore();
-        if (bytesStore != underlyingBytes) {
+        BytesStore underlying = bytes.bytesStore();
+        if (bytesStore != underlying) {
             bytesStore.release(this);
             this.bytesStore(underlying);
             bytesStore.reserve(this);

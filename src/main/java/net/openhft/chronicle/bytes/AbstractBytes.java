@@ -35,7 +35,6 @@ import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
-
 import static net.openhft.chronicle.core.util.ObjectUtils.requireNonNull;
 /**
  * Abstract representation of Bytes.
@@ -207,6 +206,7 @@ public abstract class AbstractBytes<Underlying>
         return bytesStore.compareAndSwapLong(offset, expected, value);
     }
 
+    @Override
     public @NotNull AbstractBytes<Underlying> append(double d)
             throws BufferOverflowException, IllegalStateException {
         boolean fits = canWriteDirect(380);
@@ -684,8 +684,8 @@ public abstract class AbstractBytes<Underlying>
     @Override
     public void write(long offsetInRDO, @NotNull ByteBuffer bytes, int offset, int length)
             throws BufferOverflowException, IllegalStateException {
-        requireNonNull(bytes);
         if (this.bytesStore.inside(offsetInRDO, length)) {
+            requireNonNull(bytes);
             writeCheckOffset(offsetInRDO, length);
             bytesStore.write(offsetInRDO, bytes, offset, length);
         } else if (bytes.remaining() <= writeRemaining()) {

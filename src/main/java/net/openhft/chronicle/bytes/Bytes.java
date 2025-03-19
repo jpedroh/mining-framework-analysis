@@ -61,9 +61,13 @@ import static net.openhft.chronicle.core.util.ObjectUtils.requireNonNull;
  * Generally, a Bytes object is a resource that is ReferenceCounted and certain operations invoked on a Bytes
  * object that has been released, might result in an {@link IllegalStateException} being thrown.
  *
+<<<<<<< /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/left.java
  * @see BytesStore
+||||||| /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/base.java
+=======
  * @param <Underlying> Underlying type
  *
+>>>>>>> /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/right.java
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public interface Bytes<U> extends
@@ -495,11 +499,18 @@ public interface Bytes<U> extends
      * @throws NullPointerException if the provided {@code text} is {@code null}
      */
     @NotNull
-    static Bytes<byte[]> from(@NotNull CharSequence text) {
+<<<<<<< /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/left.java
+    static Bytes<?> from(@NotNull CharSequence text) {
         requireNonNull(text);
+||||||| /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/base.java
+    static Bytes<?> from(@NotNull CharSequence text) {
+=======
+    static Bytes<byte[]> from(@NotNull CharSequence text) {
+>>>>>>> /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/right.java
         return from(text.toString());
     }
 
+<<<<<<< /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/left.java
     /**
      * Creates and returns a new ISO-8859-1 coded Bytes object from the {@code text}.
      * <p>
@@ -511,8 +522,13 @@ public interface Bytes<U> extends
      * @return a new Bytes containing text
      * @throws NullPointerException if the provided {@code text} is {@code null}
      */
-    static Bytes<Void> fromDirect(@NotNull CharSequence text) {
+    static Bytes<?> fromDirect(@NotNull CharSequence text) {
         requireNonNull(text);
+||||||| /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/base.java
+    static Bytes<?> fromDirect(@NotNull CharSequence text) {
+=======
+    static Bytes<Void> fromDirect(@NotNull CharSequence text) {
+>>>>>>> /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/right.java
         return NativeBytes.nativeBytes(text.length()).append(text);
     }
 
@@ -829,9 +845,17 @@ public interface Bytes<U> extends
                 /* Found first character, now look at the rest of v2 */
                 if (i <= max) {
                     long j = i + 1;
+<<<<<<< /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/left.java
                     long end = j + otherCount - 1;
                     for (long k = otherOffset + 1; j < end && source.readByte(j) == other.readByte(k); j++, k++) {
+||||||| /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/base.java
+                    long end = j + targetCount - 1;
+                    for (long k = targetOffset + 1; j < end && source.readByte(j) == target.readByte(k); j++, k++) {
+=======
+                    long end = j + targetCount - 1;
+                    for (long k = targetOffset + 1; j < end && source.readByte(j) == target.readByte(k); j++, k++) {
                         // Do nothing
+>>>>>>> /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/right.java
                     }
 
                     if (j == end) {
@@ -953,8 +977,16 @@ public interface Bytes<U> extends
      */
     @NotNull
     default String toHexString(long offset, long maxLength) {
+<<<<<<< /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/left.java
         requireNonNegative(offset);
         requireNonNegative(maxLength);
+//        if (Jvm.isDebug() && Jvm.stackTraceEndsWith("Bytes", 3))
+//            return "Not Available";
+||||||| /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/base.java
+//        if (Jvm.isDebug() && Jvm.stackTraceEndsWith("Bytes", 3))
+//            return "Not Available";
+=======
+>>>>>>> /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/right.java
 
         long maxLength2 = Math.min(maxLength, readLimit() - offset);
         try {
@@ -1134,8 +1166,14 @@ public interface Bytes<U> extends
                 return BigInteger.ZERO;
             } else {
                 throw new BufferUnderflowException();
+<<<<<<< /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/left.java
+        byte[] bytes = new byte[length];
+||||||| /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/base.java
+        @NotNull byte[] bytes = new byte[length];
+=======
             }
         byte[] bytes = new byte[length];
+>>>>>>> /usr/src/app/output/openhft/chronicle-bytes/b68a8c3b3487312f2fc6e9c57c4394f38c71dee6/src/main/java/net/openhft/chronicle/bytes/Bytes.java/right.java
         read(bytes);
         return new BigInteger(bytes);
     }
