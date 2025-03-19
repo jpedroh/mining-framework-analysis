@@ -34,10 +34,11 @@ import java.util.*;
  */
 public class CovarianceMatrixAdaptationEvolutionStrategy
     extends AbstractEvolutionStrategy<DoubleSolution, DoubleSolution> {
-  private Comparator<Solution> comparator ;
-  private int lambda ;
-  private int evaluations ;
-  private int maxEvaluations ;
+
+  private Comparator<Solution> comparator;
+  private int lambda;
+  private int evaluations;
+  private int maxEvaluations;
   private double[] typicalX;
 
   private DoubleProblem problem;
@@ -106,11 +107,13 @@ public class CovarianceMatrixAdaptationEvolutionStrategy
 
   private Random rand;
 
-  /** Constructor */
-  private CovarianceMatrixAdaptationEvolutionStrategy (Builder builder) {
-    this.problem = builder.problem ;
-    this.lambda = builder.lambda ;
-    this.maxEvaluations = builder.maxEvaluations ;
+  /**
+   * Constructor
+   */
+  private CovarianceMatrixAdaptationEvolutionStrategy(Builder builder) {
+    this.problem = builder.problem;
+    this.lambda = builder.lambda;
+    this.maxEvaluations = builder.maxEvaluations;
     this.typicalX = builder.typicalX;
 
     long seed = System.currentTimeMillis();
@@ -134,12 +137,13 @@ public class CovarianceMatrixAdaptationEvolutionStrategy
    * Buider class
    */
   public static class Builder {
-    private static final int DEFAULT_LAMBDA = 10 ;
-    private static final int DEFAULT_MAX_EVALUATIONS = 1000000 ;
+    private DoubleProblem problem;
 
-    private DoubleProblem problem ;
-    private int lambda ;
-    private int maxEvaluations ;
+    private static final int DEFAULT_LAMBDA = 10;
+    private static final int DEFAULT_MAX_EVALUATIONS = 1000000;
+
+    private int lambda;
+    private int maxEvaluations;
     private double [] typicalX;
 
     public Builder(DoubleProblem problem) {
@@ -404,10 +408,9 @@ public class CovarianceMatrixAdaptationEvolutionStrategy
       hsig = 1;
     }
     for (int i = 0; i < numberOfVariables; i++) {
-      pathsC[i] = (1. - cumulationC) * pathsC[i]
-            + hsig * Math.sqrt(cumulationC * (2. - cumulationC) * muEff)
-            * (distributionMean[i] - oldDistributionMean[i])
-            / sigma;
+      pathsC[i] = (1. - cumulationC) * pathsC[i] +
+          hsig * Math.sqrt(cumulationC * (2. - cumulationC) * muEff) * (distributionMean[i]
+              - oldDistributionMean[i]) / sigma;
     }
 
     return hsig;
@@ -420,10 +423,9 @@ public class CovarianceMatrixAdaptationEvolutionStrategy
 
     for (int i = 0; i < numberOfVariables; i++) {
       for (int j = 0; j <= i; j++) {
-        c[i][j] = (1 - c1 - cmu) * c[i][j]
-              + c1
-              * (pathsC[i] * pathsC[j] + (1 - hsig) * cumulationC
-              * (2. - cumulationC) * c[i][j]);
+        c[i][j] =
+            (1 - c1 - cmu) * c[i][j] + c1 * (pathsC[i] * pathsC[j] + (1 - hsig) * cumulationC * (2.
+                - cumulationC) * c[i][j]);
         for (int k = 0; k < mu; k++) {
           /*
            * additional rank mu
@@ -431,11 +433,8 @@ public class CovarianceMatrixAdaptationEvolutionStrategy
            */
           double valueI = getPopulation().get(k).getVariableValue(i);
           double valueJ = getPopulation().get(k).getVariableValue(j);
-          c[i][j] += cmu
-                * weights[k]
-                * (valueI - oldDistributionMean[i])
-                * (valueJ - oldDistributionMean[j]) /sigma
-                / sigma;
+          c[i][j] +=
+              cmu * weights[k] * (valueI - oldDistributionMean[i]) * (valueJ - oldDistributionMean[j]) / sigma / sigma;
         }
       }
     }
@@ -471,8 +470,8 @@ public class CovarianceMatrixAdaptationEvolutionStrategy
       for (int i = 0; i < numberOfVariables; i++) {
         if (diagD[i] < 0) { // numerical problem?
           JMetalLogger.logger.severe(
-                "CovarianceMatrixAdaptationEvolutionStrategy.updateDistribution:" +
-                      " WARNING - an eigenvalue has become negative.");
+              "CovarianceMatrixAdaptationEvolutionStrategy.updateDistribution:"
+                  + " WARNING - an eigenvalue has become negative.");
           evaluations = maxEvaluations;
         }
         diagD[i] = Math.sqrt(diagD[i]);
