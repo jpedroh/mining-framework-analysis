@@ -43,12 +43,12 @@ public class BitmapTriplesIterator implements IteratorTripleID {
 	private final BitmapTriples triples;
 	private final TripleID pattern, returnTriple;
 	private long patX, patY, patZ;
-	
+
 	private AdjacencyList adjY, adjZ;
 	long posY, posZ, minY, minZ, maxY, maxZ;
 	private long nextY, nextZ;
 	private long x, y, z;
-	
+
 	public BitmapTriplesIterator(BitmapTriples triples, TripleID pattern) {
 		this.triples = triples;
 		this.returnTriple = new TripleID();
@@ -152,13 +152,13 @@ public class BitmapTriplesIterator implements IteratorTripleID {
 	@Override
 	public TripleID next() {
 		z = adjZ.get(posZ);
-		if(posZ==nextZ) {
+		if (posZ == nextZ) {
 			posY++;
 			y = adjY.get(posY);
-//			nextZ = adjZ.find(posY+1);
-			nextZ = adjZ.findNext(nextZ)+1;
-			
-			if(posY==nextY) {
+			// nextZ = adjZ.find(posY+1);
+			nextZ = adjZ.findNext(nextZ) + 1;
+
+			if (posY == nextY) {
 				x++;
 				// nextY = adjY.find(x);
 				nextY = adjY.findNext(nextY) + 1;
@@ -195,7 +195,7 @@ public class BitmapTriplesIterator implements IteratorTripleID {
 
 		z = adjZ.get(posZ);
 		y = adjY.get(posY);
-		x = adjY.findListIndex(posY)+1;
+		x = adjY.findListIndex(posY)+ 1;
 
 		nextY = adjY.last(x - 1) + 1;
 		nextZ = adjZ.last(posY) + 1;
@@ -215,9 +215,9 @@ public class BitmapTriplesIterator implements IteratorTripleID {
 		posZ = minZ;
 		posY = adjZ.findListIndex(posZ);
 
-        z = adjZ.get(posZ);
-        y = adjY.get(posY);
-        x = adjY.findListIndex(posY)+1;
+		z = adjZ.get(posZ);
+		y = adjY.get(posY);
+		x = adjY.findListIndex(posY)+ 1;
 
 		nextY = adjY.last(x - 1) + 1;
 		nextZ = adjZ.last(posY) + 1;
@@ -276,7 +276,7 @@ public class BitmapTriplesIterator implements IteratorTripleID {
 
 		z = adjZ.get(posZ);
 		y = adjY.get(posY);
-		x = adjY.findListIndex(posY)+1;
+		x = adjY.findListIndex(posY)+ 1;
 
 		nextY = adjY.last(x - 1) + 1;
 		nextZ = adjZ.last(posY) + 1;
