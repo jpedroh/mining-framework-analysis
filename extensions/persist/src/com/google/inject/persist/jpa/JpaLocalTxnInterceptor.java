@@ -18,10 +18,6 @@ package com.google.inject.persist.jpa;
 
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
-
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
-
 import java.lang.reflect.Method;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -36,7 +32,13 @@ class JpaLocalTxnInterceptor implements MethodInterceptor {
   
   // TODO(gak): Move this arg to the cxtor & make this final.
   @Inject
+<<<<<<< /usr/src/app/output/google/guice/bcb6b21359eae2e095ef68b3d9f6380fa41e8414/extensions/persist/src/com/google/inject/persist/jpa/JpaLocalTxnInterceptor.java/left.java
   private UnitOfWorkHandler unitOfWorkHandler;
+||||||| /usr/src/app/output/google/guice/bcb6b21359eae2e095ef68b3d9f6380fa41e8414/extensions/persist/src/com/google/inject/persist/jpa/JpaLocalTxnInterceptor.java/base.java
+  private UnitOfWorkHandler didWeStartWork = new ThreadLocal<Boolean>();
+=======
+  private UnitOfWorkHandler didWeStartWork = new ThreadLocal<>();
+>>>>>>> /usr/src/app/output/google/guice/bcb6b21359eae2e095ef68b3d9f6380fa41e8414/extensions/persist/src/com/google/inject/persist/jpa/JpaLocalTxnInterceptor.java/right.java
   
   @Override
   public Object invoke(MethodInvocation methodInvocation) throws Throwable {
