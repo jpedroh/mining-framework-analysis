@@ -337,9 +337,18 @@ public class QueryBuilder<T> {
 
         r.namespace().set(getClazz());
         try {
+<<<<<<< /usr/src/app/output/feroult/yawp/918dcec5fbd9a540c7c2cb692da4499f2b4944aa/yawp-core/src/main/java/io/yawp/repository/query/QueryBuilder.java/left.java
             List<IdRef<T>> ids = r.driver().query().ids(this);
             RepositoryHooks.afterQueryIds(this, ids);
             return ids;
+||||||| /usr/src/app/output/feroult/yawp/918dcec5fbd9a540c7c2cb692da4499f2b4944aa/yawp-core/src/main/java/io/yawp/repository/query/QueryBuilder.java/base.java
+            List<IdRef<T>> ids = r.driver().query().ids(this);
+
+
+            return ids;
+=======
+            return r.driver().query().ids(this);
+>>>>>>> /usr/src/app/output/feroult/yawp/918dcec5fbd9a540c7c2cb692da4499f2b4944aa/yawp-core/src/main/java/io/yawp/repository/query/QueryBuilder.java/right.java
         } finally {
             r.namespace().reset();
         }
