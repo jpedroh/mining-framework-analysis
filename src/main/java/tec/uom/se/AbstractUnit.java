@@ -1,34 +1,4 @@
-/*
- * Units of Measurement Implementation for Java SE
- * Copyright (c) 2005-2017, Jean-Marie Dautelle, Werner Keil, V2COM.
- *
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions
- *    and the following disclaimer in the documentation and/or other materials provided with the distribution.
- *
- * 3. Neither the name of JSR-363 nor the names of its contributors may be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
- * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 package tec.uom.se;
-
 import tec.uom.se.format.SimpleUnitFormat;
 import tec.uom.se.function.AddConverter;
 import tec.uom.se.function.MultiplyConverter;
@@ -39,10 +9,8 @@ import tec.uom.se.unit.AlternateUnit;
 import tec.uom.se.unit.AnnotatedUnit;
 import tec.uom.se.unit.ProductUnit;
 import tec.uom.se.unit.TransformedUnit;
-
 import javax.measure.*;
 import javax.measure.quantity.Dimensionless;
-
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,7 +35,6 @@ import java.lang.reflect.Type;
  * @since 1.0
  */
 public abstract class AbstractUnit<Q extends Quantity<Q>> implements ComparableUnit<Q> {
-
   /**
    * 
    */
@@ -184,14 +151,9 @@ public abstract class AbstractUnit<Q extends Quantity<Q>> implements ComparableU
    *
    * @return <code>SimpleUnitFormat.getInstance().format(this)</code>
    */
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return SimpleUnitFormat.getInstance().format(this);
   }
-
-  // ///////////////////////////////////////////////////////
-  // Implements org.unitsofmeasurement.Unit<Q> interface //
-  // ///////////////////////////////////////////////////////
 
   /**
    * Returns the system unit (unscaled SI unit) from which this unit is derived. They can be be used to identify a quantity given the unit. For
@@ -201,8 +163,7 @@ public abstract class AbstractUnit<Q extends Quantity<Q>> implements ComparableU
    *
    * @return the unscaled metric unit from which this unit is derived.
    */
-  @Override
-  public final Unit<Q> getSystemUnit() {
+  @Override public final Unit<Q> getSystemUnit() {
     return toSystemUnit();
   }
 
@@ -215,26 +176,26 @@ public abstract class AbstractUnit<Q extends Quantity<Q>> implements ComparableU
    * @return <code>true</code> if this unit and that unit have equals fundamental dimension according to the current physics model; <code>false</code>
    *         otherwise.
    */
-  @Override
-  public final boolean isCompatible(Unit<?> that) {
-    if ((this == that) || this.equals(that))
+  @Override public final boolean isCompatible(Unit<?> that) {
+    if ((this == that) || this.equals(that)) {
       return true;
-    if (!(that instanceof AbstractUnit))
+    }
+    if (!(that instanceof AbstractUnit)) {
       return false;
+    }
     Dimension thisDimension = this.getDimension();
     Dimension thatDimension = that.getDimension();
-    if (thisDimension.equals(thatDimension))
+    if (thisDimension.equals(thatDimension)) {
       return true;
-    DimensionalModel model = DimensionalModel.current(); // Use
-    // dimensional
-    // analysis
-    // model.
+    }
+    DimensionalModel model = DimensionalModel.current();
     return model.getFundamentalDimension(thisDimension).equals(model.getFundamentalDimension(thatDimension));
   }
 
   public boolean isEquivalentOf(Unit<Q> that) {
-    if (this.compareTo(that) == 0)
+    if (this.compareTo(that) == 0) {
       return true;
+    }
     return this.getConverterTo(that).equals(that.getConverterTo(this));
   }
 
@@ -248,20 +209,17 @@ public abstract class AbstractUnit<Q extends Quantity<Q>> implements ComparableU
    *           if the dimension of this unit is different from the SI dimension of the specified type.
    * @see Units#getUnit(Class)
    */
-  @SuppressWarnings("unchecked")
-  @Override
-  public final <T extends Quantity<T>> AbstractUnit<T> asType(Class<T> type) {
+  @SuppressWarnings(value = { "unchecked" }) @Override public final <T extends Quantity<T>> AbstractUnit<T> asType(Class<T> type) {
     Dimension typeDimension = QuantityDimension.of(type);
-    if ((typeDimension != null) && (!typeDimension.equals(this.getDimension())))
+    if ((typeDimension != null) && (!typeDimension.equals(this.getDimension()))) {
       throw new ClassCastException("The unit: " + this + " is not compatible with quantities of type " + type);
+    }
     return (AbstractUnit<T>) this;
   }
 
-  @Override
-  public abstract Map<? extends Unit<?>, Integer> getBaseUnits();
+  @Override public abstract Map<? extends Unit<?>, Integer> getBaseUnits();
 
-  @Override
-  public abstract Dimension getDimension();
+  @Override public abstract Dimension getDimension();
 
   protected void setName(String name) {
     this.name = name;
@@ -279,32 +237,29 @@ public abstract class AbstractUnit<Q extends Quantity<Q>> implements ComparableU
     this.symbol = s;
   }
 
-  @Override
-  public final UnitConverter getConverterTo(Unit<Q> that) throws UnconvertibleException {
-    if ((this == that) || this.equals(that))
-      return AbstractConverter.IDENTITY; // Shortcut.
+  @Override public final UnitConverter getConverterTo(Unit<Q> that) throws UnconvertibleException {
+    if ((this == that) || this.equals(that)) {
+      return AbstractConverter.IDENTITY;
+    }
     Unit<Q> thisSystemUnit = this.getSystemUnit();
     Unit<Q> thatSystemUnit = that.getSystemUnit();
-    if (!thisSystemUnit.equals(thatSystemUnit))
+    if (!thisSystemUnit.equals(thatSystemUnit)) {
       try {
         return getConverterToAny(that);
       } catch (IncommensurableException e) {
         throw new UnconvertibleException(e);
       }
+    }
     UnitConverter thisToSI = this.getSystemConverter();
     UnitConverter thatToSI = that.getConverterTo(thatSystemUnit);
     return thatToSI.inverse().concatenate(thisToSI);
   }
 
-  @SuppressWarnings("rawtypes")
-  @Override
-  public final UnitConverter getConverterToAny(Unit<?> that) throws IncommensurableException, UnconvertibleException {
-    if (!isCompatible(that))
+  @SuppressWarnings(value = { "rawtypes" }) @Override public final UnitConverter getConverterToAny(Unit<?> that) throws IncommensurableException, UnconvertibleException {
+    if (!isCompatible(that)) {
       throw new IncommensurableException(this + " is not compatible with " + that);
-    AbstractUnit thatAbstr = (AbstractUnit) that; // Since both units are
-    // compatible they must
-    // be both physics
-    // units.
+    }
+    AbstractUnit thatAbstr = (AbstractUnit) that;
     DimensionalModel model = DimensionalModel.current();
     Unit thisSystemUnit = this.getSystemUnit();
     UnitConverter thisToDimension = model.getDimensionalTransform(thisSystemUnit.getDimension()).concatenate(this.getSystemConverter());
@@ -313,14 +268,11 @@ public abstract class AbstractUnit<Q extends Quantity<Q>> implements ComparableU
     return thatToDimension.inverse().concatenate(thisToDimension);
   }
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
-  @Override
-  public final AbstractUnit<Q> alternate(String symbol) {
+  @SuppressWarnings(value = { "rawtypes", "unchecked" }) @Override public final AbstractUnit<Q> alternate(String symbol) {
     return new AlternateUnit(this, symbol);
   }
 
-  @Override
-  public final AbstractUnit<Q> transform(UnitConverter operation) {
+  @Override public final AbstractUnit<Q> transform(UnitConverter operation) {
     Unit<Q> systemUnit = this.getSystemUnit();
     UnitConverter cvtr;
     if (this.isSystemUnit()) {
@@ -335,19 +287,20 @@ public abstract class AbstractUnit<Q extends Quantity<Q>> implements ComparableU
     }
   }
 
-  @Override
-  public final AbstractUnit<Q> shift(double offset) {
-    if (offset == 0)
+  @Override public final AbstractUnit<Q> shift(double offset) {
+    if (offset == 0) {
       return this;
+    }
     return transform(new AddConverter(offset));
   }
 
-  @Override
-  public final AbstractUnit<Q> multiply(double factor) {
-    if (factor == 1)
+  @Override public final AbstractUnit<Q> multiply(double factor) {
+    if (factor == 1) {
       return this;
-    if (isLongValue(factor))
+    }
+    if (isLongValue(factor)) {
       return transform(new RationalConverter(BigInteger.valueOf((long) factor), BigInteger.ONE));
+    }
     return transform(new MultiplyConverter(factor));
   }
 
@@ -366,11 +319,10 @@ public abstract class AbstractUnit<Q extends Quantity<Q>> implements ComparableU
    *          the unit multiplicand.
    * @return <code>this * that</code>
    */
-  @Override
-  public final AbstractUnit<?> multiply(Unit<?> that) {
-    if (that instanceof AbstractUnit)
+  @Override public final AbstractUnit<?> multiply(Unit<?> that) {
+    if (that instanceof AbstractUnit) {
       return multiply((AbstractUnit<?>) that);
-    // return that.multiply(this); // Commutatif.
+    }
     return ProductUnit.getProductInstance(this, that);
   }
 
@@ -382,10 +334,12 @@ public abstract class AbstractUnit<Q extends Quantity<Q>> implements ComparableU
    * @return <code>this * that</code>
    */
   protected final AbstractUnit<?> multiply(AbstractUnit<?> that) {
-    if (this.equals(ONE))
+    if (this.equals(ONE)) {
       return that;
-    if (that.equals(ONE))
+    }
+    if (that.equals(ONE)) {
       return this;
+    }
     return ProductUnit.getProductInstance(this, that);
   }
 
@@ -394,10 +348,10 @@ public abstract class AbstractUnit<Q extends Quantity<Q>> implements ComparableU
    *
    * @return <code>1 / this</code>
    */
-  @Override
-  public final AbstractUnit<?> inverse() {
-    if (this.equals(ONE))
+  @Override public final AbstractUnit<?> inverse() {
+    if (this.equals(ONE)) {
       return this;
+    }
     return ProductUnit.getQuotientInstance(ONE, this);
   }
 
@@ -414,12 +368,13 @@ public abstract class AbstractUnit<Q extends Quantity<Q>> implements ComparableU
    *          the divisor value.
    * @return this unit divided by the specified divisor.
    */
-  @Override
-  public final AbstractUnit<Q> divide(double divisor) {
-    if (divisor == 1)
+  @Override public final AbstractUnit<Q> divide(double divisor) {
+    if (divisor == 1) {
       return this;
-    if (isLongValue(divisor))
+    }
+    if (isLongValue(divisor)) {
       return transform(new RationalConverter(BigInteger.ONE, BigInteger.valueOf((long) divisor)));
+    }
     return transform(new MultiplyConverter(1.0 / divisor));
   }
 
@@ -430,8 +385,7 @@ public abstract class AbstractUnit<Q extends Quantity<Q>> implements ComparableU
    *          the unit divisor.
    * @return <code>this.multiply(that.inverse())</code>
    */
-  @Override
-  public final AbstractUnit<?> divide(Unit<?> that) {
+  @Override public final AbstractUnit<?> divide(Unit<?> that) {
     return this.multiply(that.inverse());
   }
 
@@ -455,15 +409,16 @@ public abstract class AbstractUnit<Q extends Quantity<Q>> implements ComparableU
    * @throws ArithmeticException
    *           if <code>n == 0</code> or if this operation would result in an unit with a fractional exponent.
    */
-  @Override
-  public final AbstractUnit<?> root(int n) {
-    if (n > 0)
+  @Override public final AbstractUnit<?> root(int n) {
+    if (n > 0) {
       return ProductUnit.getRootInstance(this, n);
-    else if (n == 0)
-      throw new ArithmeticException("Root's order of zero");
-    else
-      // n < 0
-      return ONE.divide(this.root(-n));
+    } else {
+      if (n == 0) {
+        throw new ArithmeticException("Root\'s order of zero");
+      } else {
+        return ONE.divide(this.root(-n));
+      }
+    }
   }
 
   /**
@@ -473,15 +428,16 @@ public abstract class AbstractUnit<Q extends Quantity<Q>> implements ComparableU
    *          the exponent.
    * @return the result of raising this unit to the exponent.
    */
-  @Override
-  public final AbstractUnit<?> pow(int n) {
-    if (n > 0)
+  @Override public final AbstractUnit<?> pow(int n) {
+    if (n > 0) {
       return this.multiply(this.pow(n - 1));
-    else if (n == 0)
-      return ONE;
-    else
-      // n < 0
-      return ONE.divide(this.pow(-n));
+    } else {
+      if (n == 0) {
+        return ONE;
+      } else {
+        return ONE.divide(this.pow(-n));
+      }
+    }
   }
 
   /**
@@ -492,30 +448,28 @@ public abstract class AbstractUnit<Q extends Quantity<Q>> implements ComparableU
   public int compareTo(Unit<Q> that) {
     if (name != null && getSymbol() != null) {
       return name.compareTo(that.getName()) + getSymbol().compareTo(that.getSymbol());
-    } else if (name == null) {
-      if (getSymbol() != null && that.getSymbol() != null) {
-        return getSymbol().compareTo(that.getSymbol());
-      } else {
-        return -1;
-      }
-    } else if (getSymbol() == null) {
-      if (name != null) {
-        return name.compareTo(that.getName());
-      } else {
-        return -1;
-      }
     } else {
-      return -1;
+      if (name == null) {
+        if (getSymbol() != null && that.getSymbol() != null) {
+          return getSymbol().compareTo(that.getSymbol());
+        } else {
+          return -1;
+        }
+      } else {
+        if (getSymbol() == null) {
+          if (name != null) {
+            return name.compareTo(that.getName());
+          } else {
+            return -1;
+          }
+        } else {
+          return -1;
+        }
+      }
     }
   }
 
-  // //////////////////////////////////////////////////////////////
-  // Ensures that sub-classes implements hashCode/equals method.
-  // //////////////////////////////////////////////////////////////
+  @Override public abstract int hashCode();
 
-  @Override
-  public abstract int hashCode();
-
-  @Override
-  public abstract boolean equals(Object that);
+  @Override public abstract boolean equals(Object that);
 }

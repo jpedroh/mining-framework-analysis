@@ -1,43 +1,11 @@
-/*
- * Units of Measurement Implementation for Java SE
- * Copyright (c) 2005-2017, Jean-Marie Dautelle, Werner Keil, V2COM.
- *
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions
- *    and the following disclaimer in the documentation and/or other materials provided with the distribution.
- *
- * 3. Neither the name of JSR-363 nor the names of its contributors may be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
- * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 package tec.uom.se.unit;
-
 import tec.uom.se.AbstractConverter;
 import tec.uom.se.AbstractUnit;
 import tec.uom.se.quantity.QuantityDimension;
-
 import javax.measure.Dimension;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
-
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -62,7 +30,6 @@ import java.util.Objects;
  * @version 0.3, June 10, 2014
  */
 public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
-
   /**
 	 *
 	 */
@@ -107,9 +74,7 @@ public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
    */
   private ProductUnit(Element[] elements) {
     this.elements = elements;
-    this.symbol = elements[0].getUnit().getSymbol(); // FIXME this should
-    // contain ALL
-    // elements
+    this.symbol = elements[0].getUnit().getSymbol();
   }
 
   /**
@@ -148,10 +113,11 @@ public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
    */
   public static AbstractUnit<?> getQuotientInstance(Unit<?> left, Unit<?> right) {
     Element[] leftElems;
-    if (left instanceof ProductUnit<?>)
+    if (left instanceof ProductUnit<?>) {
       leftElems = ((ProductUnit<?>) left).elements;
-    else
+    } else {
       leftElems = new Element[] { new Element(left, 1, 1) };
+    }
     Element[] rightElems;
     if (right instanceof ProductUnit<?>) {
       Element[] elems = ((ProductUnit<?>) right).elements;
@@ -159,8 +125,9 @@ public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
       for (int i = 0; i < elems.length; i++) {
         rightElems[i] = new Element(elems[i].unit, -elems[i].pow, elems[i].root);
       }
-    } else
+    } else {
       rightElems = new Element[] { new Element(right, -1, 1) };
+    }
     return getInstance(leftElems, rightElems);
   }
 
@@ -184,8 +151,9 @@ public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
         int gcd = gcd(Math.abs(elems[i].pow), elems[i].root * n);
         unitElems[i] = new Element(elems[i].unit, elems[i].pow / gcd, elems[i].root * n / gcd);
       }
-    } else
+    } else {
       unitElems = new Element[] { new Element(unit, 1, n) };
+    }
     return getInstance(unitElems, new Element[0]);
   }
 
@@ -207,8 +175,9 @@ public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
         int gcd = gcd(Math.abs(elems[i].pow * n), elems[i].root);
         unitElems[i] = new Element(elems[i].unit, elems[i].pow * n / gcd, elems[i].root / gcd);
       }
-    } else
+    } else {
       unitElems = new Element[] { new Element(unit, n, 1) };
+    }
     return getInstance(unitElems, new Element[0]);
   }
 
@@ -260,17 +229,15 @@ public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
     return elements[index].getRoot();
   }
 
-  @Override
-  public Map<Unit<?>, Integer> getBaseUnits() {
-    final Map<Unit<?>, Integer> units = new HashMap<>(); // Diamond (Java7+)
+  @Override public Map<Unit<?>, Integer> getBaseUnits() {
+    final Map<Unit<?>, Integer> units = new HashMap<>();
     for (int i = 0; i < getUnitCount(); i++) {
       units.put(getUnit(i), getUnitPow(i));
     }
     return units;
   }
 
-  @Override
-  public boolean equals(Object obj) {
+  @Override public boolean equals(Object obj) {
     if (this == obj) {
       return true;
     }
@@ -281,14 +248,12 @@ public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
       return Arrays.equals(elements, other.elements);
     }
     if (obj instanceof Unit<?>) {
-      // A wrapper ProductUnit is equal to the unit it wraps
       return elements.length == 1 && elements[0].pow == elements[0].root && obj.equals(elements[0].unit);
     }
     return false;
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     if (elements.length == 1 && equals(elements[0])) {
       return elements[0].hashCode();
     }
@@ -296,9 +261,7 @@ public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
     return Arrays.hashCode(elements);
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public AbstractUnit<Q> toSystemUnit() {
+  @SuppressWarnings(value = { "unchecked" }) @Override public AbstractUnit<Q> toSystemUnit() {
     Unit<?> systemUnit = AbstractUnit.ONE;
     for (Element element : elements) {
       Unit<?> unit = element.unit.getSystemUnit();
@@ -309,8 +272,7 @@ public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
     return (AbstractUnit<Q>) systemUnit;
   }
 
-  @Override
-  public boolean isSystemUnit() {
+  @Override public boolean isSystemUnit() {
     for (Element element : elements) {
       if (!(element.unit instanceof AbstractUnit<?> && ((AbstractUnit<?>) element.unit).isSystemUnit())) {
         return super.isSystemUnit();
@@ -319,18 +281,19 @@ public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
     return true;
   }
 
-  @Override
-  public UnitConverter getSystemConverter() {
+  @Override public UnitConverter getSystemConverter() {
     UnitConverter converter = AbstractConverter.IDENTITY;
     for (Element e : elements) {
       if (e.unit instanceof AbstractUnit) {
         UnitConverter cvtr = ((AbstractUnit) e.unit).getSystemConverter();
-        if (!(cvtr.isLinear()))
+        if (!(cvtr.isLinear())) {
           throw new UnsupportedOperationException(e.unit + " is non-linear, cannot convert");
-        if (e.root != 1)
+        }
+        if (e.root != 1) {
           throw new UnsupportedOperationException(e.unit + " holds a base unit with fractional exponent");
+        }
         int pow = e.pow;
-        if (pow < 0) { // Negative power.
+        if (pow < 0) {
           pow = -pow;
           cvtr = cvtr.inverse();
         }
@@ -342,8 +305,7 @@ public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
     return converter;
   }
 
-  @Override
-  public Dimension getDimension() {
+  @Override public Dimension getDimension() {
     Dimension dimension = QuantityDimension.NONE;
     for (int i = 0; i < this.getUnitCount(); i++) {
       Unit<?> unit = this.getUnit(i);
@@ -364,10 +326,7 @@ public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
    *          right multiplicand elements.
    * @return the corresponding unit.
    */
-  @SuppressWarnings("rawtypes")
-  private static AbstractUnit<?> getInstance(Element[] leftElems, Element[] rightElems) {
-
-    // Merges left elements with right elements.
+  @SuppressWarnings(value = { "rawtypes" }) private static AbstractUnit<?> getInstance(Element[] leftElems, Element[] rightElems) {
     Element[] result = new Element[leftElems.length + rightElems.length];
     int resultIndex = 0;
     for (Element leftElem : leftElems) {
@@ -380,7 +339,7 @@ public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
         if (unit.equals(rightElem.unit)) {
           p2 = rightElem.pow;
           r2 = rightElem.root;
-          break; // No duplicate.
+          break;
         }
       }
       int pow = (p1 * r2) + (p2 * r1);
@@ -390,8 +349,6 @@ public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
         result[resultIndex++] = new Element(unit, pow / gcd, root / gcd);
       }
     }
-
-    // Appends remaining right elements not merged.
     for (Element rightElem : rightElems) {
       Unit<?> unit = rightElem.unit;
       boolean hasBeenMerged = false;
@@ -401,19 +358,20 @@ public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
           break;
         }
       }
-      if (!hasBeenMerged)
+      if (!hasBeenMerged) {
         result[resultIndex++] = rightElem;
+      }
     }
-
-    // Returns or creates instance.
-    if (resultIndex == 0)
+    if (resultIndex == 0) {
       return AbstractUnit.ONE;
-    else if ((resultIndex == 1) && (result[0].pow == result[0].root))
-      return maybeWrap(result[0].unit);
-    else {
-      Element[] elems = new Element[resultIndex];
-      System.arraycopy(result, 0, elems, 0, resultIndex);
-      return new ProductUnit(elems);
+    } else {
+      if ((resultIndex == 1) && (result[0].pow == result[0].root)) {
+        return maybeWrap(result[0].unit);
+      } else {
+        Element[] elems = new Element[resultIndex];
+        System.arraycopy(result, 0, elems, 0, resultIndex);
+        return new ProductUnit(elems);
+      }
     }
   }
 
@@ -438,17 +396,14 @@ public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
    * @return the greatest common divisor.
    */
   private static int gcd(int m, int n) {
-    if (n == 0)
+    if (n == 0) {
       return m;
-    else
+    } else {
       return gcd(n, m % n);
+    }
   }
 
-  /**
-   * Inner product element represents a rational power of a single unit.
-   */
   private final static class Element implements Serializable, Comparable<Element> {
-
     /**
 		 *
 		 */
@@ -512,47 +467,43 @@ public final class ProductUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
       return root;
     }
 
-    @Override
-    public boolean equals(Object o) {
-      if (this == o)
+    @Override public boolean equals(Object o) {
+      if (this == o) {
         return true;
-      if (o == null || getClass() != o.getClass())
+      }
+      if (o == null || getClass() != o.getClass()) {
         return false;
-
+      }
       Element element = (Element) o;
-
       if (pow != element.pow) {
         return false;
       }
       return root == element.root && (unit != null ? unit.equals(element.unit) : element.unit == null);
-
     }
 
     /**
      * Arbitrary ordering, to be used only in sorting arrays for {@link ProductUnit#equals} and {@link ProductUnit#hashCode}.
      */
-    @Override
-    public int compareTo(Element other) {
-      // hashCode() - other.hashCode() may overflow
+    @Override public int compareTo(Element other) {
       long ourHash = hashCode();
       long theirHash = other.hashCode();
       if (ourHash < theirHash) {
         return -1;
-      } else if (ourHash == theirHash) {
-        return 0;
       } else {
-        return 1;
+        if (ourHash == theirHash) {
+          return 0;
+        } else {
+          return 1;
+        }
       }
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
       return Objects.hash(unit, ((double) pow) / root);
     }
   }
 
-  @Override
-  public String getSymbol() {
+  @Override public String getSymbol() {
     return symbol;
   }
 }
