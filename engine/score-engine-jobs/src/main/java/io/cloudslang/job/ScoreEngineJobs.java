@@ -45,7 +45,11 @@ public interface ScoreEngineJobs {
 
     void cleanSuspendedExecutionsJob();
 
+<<<<<<< /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/score-engine-jobs/src/main/java/io/cloudslang/job/ScoreEngineJobs.java/left.java
     void miMergeBranchesContexts();
-
+||||||| /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/score-engine-jobs/src/main/java/io/cloudslang/job/ScoreEngineJobs.java/base.java
+=======
     void monitorLargeMessagesJob();
+>>>>>>> /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/score-engine-jobs/src/main/java/io/cloudslang/job/ScoreEngineJobs.java/right.java
+
 }

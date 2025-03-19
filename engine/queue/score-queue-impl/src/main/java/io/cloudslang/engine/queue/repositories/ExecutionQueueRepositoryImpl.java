@@ -91,6 +91,48 @@ public class ExecutionQueueRepositoryImpl implements ExecutionQueueRepository {
                     "      (q.MSG_VERSION < ?) ";
 
 
+<<<<<<< /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/left.java
+	final private String QUERY_WORKER_SQL =
+			"SELECT EXEC_STATE_ID,      " +
+					"       ASSIGNED_WORKER,      " +
+					"       EXEC_GROUP ,       " +
+					"       STATUS,       " +
+					"       PAYLOAD,       " +
+					"       MSG_SEQ_ID ,      " +
+					"       MSG_ID," +
+					"       q.CREATE_TIME " +
+					" FROM  OO_EXECUTION_QUEUES q,  " +
+					"      OO_EXECUTION_STATES s   " +
+					" WHERE  " +
+					"      (q.ASSIGNED_WORKER =  ?)  AND " +
+					"      (q.STATUS IN (:status)) AND " +
+					" 	   (s.ACTIVE = 1) AND " +
+					" (q.EXEC_STATE_ID = s.ID) AND " +
+					" (NOT EXISTS (SELECT qq.MSG_SEQ_ID " +
+					"              FROM OO_EXECUTION_QUEUES qq " +
+					"              WHERE (qq.EXEC_STATE_ID = q.EXEC_STATE_ID) AND qq.MSG_SEQ_ID > q.MSG_SEQ_ID)) " +
+					" ORDER BY q.CREATE_TIME  ";
+||||||| /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/base.java
+	final private String QUERY_WORKER_SQL =
+			"SELECT EXEC_STATE_ID,      " +
+					"       ASSIGNED_WORKER,      " +
+					"       EXEC_GROUP ,       " +
+					"       STATUS,       " +
+					"       PAYLOAD,       " +
+					"       MSG_SEQ_ID ,      " +
+					"       MSG_ID," +
+					"       q.CREATE_TIME " +
+					" FROM  OO_EXECUTION_QUEUES q,  " +
+					"      OO_EXECUTION_STATES s   " +
+					" WHERE  " +
+					"      (q.ASSIGNED_WORKER =  ?)  AND " +
+					"      (q.STATUS IN (:status)) AND " +
+					" (q.EXEC_STATE_ID = s.ID) AND " +
+					" (NOT EXISTS (SELECT qq.MSG_SEQ_ID " +
+					"              FROM OO_EXECUTION_QUEUES qq " +
+					"              WHERE (qq.EXEC_STATE_ID = q.EXEC_STATE_ID) AND qq.MSG_SEQ_ID > q.MSG_SEQ_ID)) " +
+					" ORDER BY q.CREATE_TIME  ";
+=======
     final private String QUERY_COUNT_MESSAGES_WITHOUT_ACK_FOR_WORKER_SQL =
             "SELECT COUNT(*)  " +
                     "  FROM  OO_EXECUTION_QUEUES  q  " +
@@ -104,6 +146,7 @@ public class ExecutionQueueRepositoryImpl implements ExecutionQueueRepository {
                     "                 )" +
                     "      ) AND " +
                     "      (q.MSG_VERSION < ?)  ";
+>>>>>>> /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/right.java
 
     final private String QUERY_WORKER_SQL =
             "SELECT EXEC_STATE_ID, " +
@@ -129,7 +172,6 @@ public class ExecutionQueueRepositoryImpl implements ExecutionQueueRepository {
                     "   WHERE (q.ASSIGNED_WORKER = ?)  AND " +
                     "       (q.STATUS IN (:status)) AND " +
                     "       (s.PAYLOAD_SIZE < ?) AND " +
-                    " 	    (s.ACTIVE = 1) AND " +
                     "       (q.EXEC_STATE_ID = s.ID) AND " +
                     "       (NOT EXISTS (SELECT qq.MSG_SEQ_ID " +
                     "                 FROM  OO_EXECUTION_QUEUES qq " +
@@ -183,11 +225,9 @@ public class ExecutionQueueRepositoryImpl implements ExecutionQueueRepository {
                     "              WHERE (qq.EXEC_STATE_ID = q.EXEC_STATE_ID) AND qq.MSG_SEQ_ID > q.MSG_SEQ_ID)) " +
                     " GROUP BY ASSIGNED_WORKER";
 
-    final private String INSERT_EXEC_STATE = "INSERT INTO OO_EXECUTION_STATES  (ID, MSG_ID,  PAYLOAD, PAYLOAD_SIZE, CREATE_TIME, ACTIVE) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, ?)";
+    final private String INSERT_EXEC_STATE = "INSERT INTO OO_EXECUTION_STATES  (ID, MSG_ID,  PAYLOAD, PAYLOAD_SIZE, CREATE_TIME) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)";
 
     final private String INSERT_QUEUE = "INSERT INTO OO_EXECUTION_QUEUES (ID, EXEC_STATE_ID, ASSIGNED_WORKER, EXEC_GROUP, STATUS,MSG_SEQ_ID, CREATE_TIME,MSG_VERSION) VALUES (?, ?, ?, ?, ?, ?,?,?)";
-
-	final private String INSERT_EXECUTION_STATE_MAPPING = "INSERT INTO OO_EXECS_STATES_EXECS_MAPPINGS (ID, EXEC_STATE_ID, EXEC_ID) VALUES (?, ?, ?)";
 
     private static final String QUERY_PAYLOAD_BY_EXECUTION_IDS = "SELECT ID, PAYLOAD FROM OO_EXECUTION_STATES WHERE ID IN (:IDS)";
 
@@ -204,7 +244,13 @@ public class ExecutionQueueRepositoryImpl implements ExecutionQueueRepository {
             "q.EXEC_STATE_ID = t.EXEC_STATE_ID";
 
 
+<<<<<<< /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/left.java
+	final private String INSERT_EXEC_STATE = "INSERT INTO OO_EXECUTION_STATES  (ID, MSG_ID,  PAYLOAD, CREATE_TIME, ACTIVE) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)";
+||||||| /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/base.java
+	final private String INSERT_EXEC_STATE = "INSERT INTO OO_EXECUTION_STATES  (ID, MSG_ID,  PAYLOAD, CREATE_TIME) VALUES (?, ?, ?, CURRENT_TIMESTAMP)";
+=======
     private static final String FIND_EXEC_IDS = "SELECT DISTINCT MSG_ID FROM OO_EXECUTION_STATES WHERE ID IN (:IDS)";
+>>>>>>> /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/right.java
 
     //We use dedicated JDBC templates for each query since JDBCTemplate is state-full object and we have different settings for each query.
     private StatementAwareJdbcTemplateWrapper pollJdbcTemplate;
@@ -216,20 +262,42 @@ public class ExecutionQueueRepositoryImpl implements ExecutionQueueRepository {
     private StatementAwareJdbcTemplateWrapper findLargeJdbcTemplate;
     private StatementAwareJdbcTemplateWrapper findExecIDsJdbcTemplate;
 
-	private JdbcTemplate insertExecutionJdbcTemplate;
-	private JdbcTemplate deleteFinishedStepsJdbcTemplate;
-	private JdbcTemplate findPayloadByExecutionIdsJdbcTemplate;
-	private JdbcTemplate getBusyWorkersJdbcTemplate;
-    private JdbcTemplate getFirstPendingBranchJdbcTemplate;
-    private JdbcTemplate updateExecutionStateStatusJdbcTemplate;
-    private JdbcTemplate deletePendingExecutionStateJdbcTemplate;
+<<<<<<< /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/left.java
+	final private String INSERT_EXECUTION_STATE_MAPPING = "INSERT INTO OO_EXECS_STATES_EXECS_MAPPINGS (ID, EXEC_STATE_ID, EXEC_ID) VALUES (?, ?, ?)";
+||||||| /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/base.java
+	private static final String QUERY_PAYLOAD_BY_EXECUTION_IDS = "SELECT ID, PAYLOAD FROM OO_EXECUTION_STATES WHERE ID IN (:IDS)";
+=======
+    private JdbcTemplate insertExecutionJdbcTemplate;
+    private JdbcTemplate deleteFinishedStepsJdbcTemplate;
+    private JdbcTemplate findPayloadByExecutionIdsJdbcTemplate;
+    private JdbcTemplate getBusyWorkersJdbcTemplate;
+>>>>>>> /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/right.java
 
+<<<<<<< /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/left.java
+	private static final String QUERY_PAYLOAD_BY_EXECUTION_IDS = "SELECT ID, PAYLOAD FROM OO_EXECUTION_STATES WHERE ID IN (:IDS)";
+||||||| /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/base.java
+=======
     @Autowired
     private IdentityGenerator idGen;
+>>>>>>> /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/right.java
 
     @Autowired
     private DataSource dataSource;
 
+<<<<<<< /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/left.java
+	private JdbcTemplate insertExecutionJdbcTemplate;
+	private JdbcTemplate deleteFinishedStepsJdbcTemplate;
+	private JdbcTemplate findPayloadByExecutionIdsJdbcTemplate;
+	private JdbcTemplate getBusyWorkersJdbcTemplate;
+	private JdbcTemplate getFirstPendingBranchJdbcTemplate;
+	private JdbcTemplate updateExecutionStateStatusJdbcTemplate;
+	private JdbcTemplate deletePendingExecutionStateJdbcTemplate;
+||||||| /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/base.java
+	private JdbcTemplate insertExecutionJdbcTemplate;
+	private JdbcTemplate deleteFinishedStepsJdbcTemplate;
+	private JdbcTemplate findPayloadByExecutionIdsJdbcTemplate;
+	private JdbcTemplate getBusyWorkersJdbcTemplate;
+=======
     @PostConstruct
     public void init() {
         //We use dedicated JDBCTemplates for each query since JDBCTemplate is state-full object and we have different settings for each query.
@@ -241,14 +309,12 @@ public class ExecutionQueueRepositoryImpl implements ExecutionQueueRepository {
         findByStatusesJdbcTemplate = new StatementAwareJdbcTemplateWrapper(dataSource, "findByStatusesJdbcTemplate");
         findLargeJdbcTemplate = new StatementAwareJdbcTemplateWrapper(dataSource, "findLargeJdbcTemplate");
         findExecIDsJdbcTemplate = new StatementAwareJdbcTemplateWrapper(dataSource, "findExecIDsJdbcTemplate");
+>>>>>>> /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/right.java
 
         insertExecutionJdbcTemplate = new JdbcTemplate(dataSource);
         deleteFinishedStepsJdbcTemplate = new JdbcTemplate(dataSource);
         findPayloadByExecutionIdsJdbcTemplate = new JdbcTemplate(dataSource);
         getBusyWorkersJdbcTemplate = new JdbcTemplate(dataSource);
-        getFirstPendingBranchJdbcTemplate = new JdbcTemplate(dataSource);
-        updateExecutionStateStatusJdbcTemplate = new JdbcTemplate(dataSource);
-        deletePendingExecutionStateJdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @Override
@@ -261,15 +327,31 @@ public class ExecutionQueueRepositoryImpl implements ExecutionQueueRepository {
         String insertExecStateSQL = INSERT_EXEC_STATE;
         insertExecutionJdbcTemplate.batchUpdate(insertExecStateSQL, new BatchPreparedStatementSetter() {
 
-			@Override
-			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				ExecutionMessage msg = stateMessages.get(i);
-				ps.setLong(1, msg.getExecStateId());
-				ps.setString(2, msg.getMsgId());
-				ps.setBytes(3, msg.getPayload().getData());
+<<<<<<< /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/left.java
+		insertExecutionJdbcTemplate = new JdbcTemplate(dataSource);
+		deleteFinishedStepsJdbcTemplate = new JdbcTemplate(dataSource);
+		findPayloadByExecutionIdsJdbcTemplate = new JdbcTemplate(dataSource);
+		getBusyWorkersJdbcTemplate = new JdbcTemplate(dataSource);
+		getFirstPendingBranchJdbcTemplate = new JdbcTemplate(dataSource);
+		updateExecutionStateStatusJdbcTemplate = new JdbcTemplate(dataSource);
+		deletePendingExecutionStateJdbcTemplate = new JdbcTemplate(dataSource);
+	}
+||||||| /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/base.java
+		insertExecutionJdbcTemplate = new JdbcTemplate(dataSource);
+		deleteFinishedStepsJdbcTemplate = new JdbcTemplate(dataSource);
+		findPayloadByExecutionIdsJdbcTemplate = new JdbcTemplate(dataSource);
+		getBusyWorkersJdbcTemplate = new JdbcTemplate(dataSource);
+	}
+=======
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ExecutionMessage msg = stateMessages.get(i);
+                ps.setLong(1, msg.getExecStateId());
+                ps.setString(2, msg.getMsgId());
+                ps.setBytes(3, msg.getPayload().getData());
                 ps.setLong(4, msg.getPayloadSize());
-                ps.setInt(5, msg.isActive() ? 1 : 0);
-			}
+            }
+>>>>>>> /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/right.java
 
             @Override
             public int getBatchSize() {
@@ -284,6 +366,24 @@ public class ExecutionQueueRepositoryImpl implements ExecutionQueueRepository {
         // id, exec_state_id, assigned_worker, status, create_time
         String insertQueueSQL = INSERT_QUEUE;
 
+<<<<<<< /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/left.java
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				ExecutionMessage msg = stateMessages.get(i);
+				ps.setLong(1, msg.getExecStateId());
+				ps.setString(2, msg.getMsgId());
+				ps.setBytes(3, msg.getPayload().getData());
+				ps.setInt(4, msg.isActive() ? 1 : 0);
+			}
+||||||| /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/base.java
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				ExecutionMessage msg = stateMessages.get(i);
+				ps.setLong(1, msg.getExecStateId());
+				ps.setString(2, msg.getMsgId());
+				ps.setBytes(3, msg.getPayload().getData());
+			}
+=======
         long t = System.currentTimeMillis();
         insertExecutionJdbcTemplate.batchUpdate(insertQueueSQL, new BatchPreparedStatementSetter() {
             @Override
@@ -298,6 +398,7 @@ public class ExecutionQueueRepositoryImpl implements ExecutionQueueRepository {
                 ps.setLong(7, Calendar.getInstance().getTimeInMillis());
                 ps.setLong(8, version);
             }
+>>>>>>> /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/right.java
 
             @Override
             public int getBatchSize() {
@@ -308,56 +409,125 @@ public class ExecutionQueueRepositoryImpl implements ExecutionQueueRepository {
         if (logger.isDebugEnabled()) logger.debug("Insert to queue: " + messages.size() + "/" + t + " messages/ms");
     }
 
-    @Override
+<<<<<<< /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/left.java
+	@Override
+	public void insertExecutionQueue(final List<ExecutionMessage> messages, final long version) {
+		// insert execution queue table
+		// id, exec_state_id, assigned_worker, status, create_time
+		String insertQueueSQL = INSERT_QUEUE;
+
+		long t = System.currentTimeMillis();
+		insertExecutionJdbcTemplate.batchUpdate(insertQueueSQL, new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				ExecutionMessage msg = messages.get(i);
+				ps.setLong(1, idGen.next());
+				ps.setLong(2, msg.getExecStateId());
+				ps.setString(3, msg.getWorkerId());
+				ps.setString(4, msg.getWorkerGroup());
+				ps.setInt(5, msg.getStatus().getNumber());
+				ps.setInt(6, msg.getMsgSeqId());
+				ps.setLong(7, Calendar.getInstance().getTimeInMillis());
+				ps.setLong(8, version);
+			}
+
+			@Override
+			public int getBatchSize() {
+				return messages.size();
+			}
+		});
+		t = System.currentTimeMillis() - t;
+		if (logger.isDebugEnabled()) logger.debug("Insert to queue: " + messages.size() + "/" + t + " messages/ms");
+	}
+
+	@Override
     public void saveNotActiveExecutionsQueues(List<ExecutionMessage> notActiveMessages) {
         insertExecutionJdbcTemplate.batchUpdate(INSERT_EXECUTION_STATE_MAPPING, new BatchPreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {
-                ExecutionMessage executionMessage = notActiveMessages.get(i);
-                preparedStatement.setLong(1, idGen.next());
-                preparedStatement.setLong(2, executionMessage.getExecStateId());
-                preparedStatement.setLong(3, executionMessage.getExecutionId());
-            }
+			@Override
+			public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {
+				ExecutionMessage executionMessage = notActiveMessages.get(i);
+				preparedStatement.setLong(1, idGen.next());
+				preparedStatement.setLong(2, executionMessage.getExecStateId());
+				preparedStatement.setLong(3, executionMessage.getExecutionId());
+			}
 
-            @Override
-            public int getBatchSize() {
-                return notActiveMessages.size();
-            }
-        });
+			@Override
+			public int getBatchSize() {
+				return notActiveMessages.size();
+			}
+		});
     }
 
-    @Override
-    public StartNewBranchPayload getFirstPendingBranch(final long executionId) {
-        final String sql = "SELECT ID, EXEC_STATE_ID FROM OO_EXECS_STATES_EXECS_MAPPINGS WHERE EXEC_ID = ?";
-        getFirstPendingBranchJdbcTemplate.setMaxRows(1);
-        Object[] inputs = {executionId};
-        StartNewBranchPayload startNewBranchPayload = null;
-        try {
-            startNewBranchPayload = getFirstPendingBranchJdbcTemplate.queryForObject(sql, inputs,
-                    (resultSet, rowNumber) -> new StartNewBranchPayload(resultSet.getLong("EXEC_STATE_ID"), resultSet.getLong("ID")));
-        } catch (EmptyResultDataAccessException ignored) {
-        }
-        return startNewBranchPayload;
-    }
+	@Override
+	public StartNewBranchPayload getFirstPendingBranch(final long executionId) {
+		final String sql = "SELECT ID, EXEC_STATE_ID FROM OO_EXECS_STATES_EXECS_MAPPINGS WHERE EXEC_ID = ?";
+		getFirstPendingBranchJdbcTemplate.setMaxRows(1);
+		Object[] inputs = {executionId};
+		StartNewBranchPayload startNewBranchPayload = null;
+		try {
+			startNewBranchPayload = getFirstPendingBranchJdbcTemplate.queryForObject(sql, inputs,
+					(resultSet, rowNumber) -> new StartNewBranchPayload(resultSet.getLong("EXEC_STATE_ID"), resultSet.getLong("ID")));
+		} catch (EmptyResultDataAccessException ignored) {
+		}
+		return startNewBranchPayload;
+	}
 
-    @Override
-    public void activatePendingExecutionStateForAnExecution(long executionId) {
-        final String sql = "UPDATE OO_EXECUTION_STATES SET ACTIVE = 1 WHERE ID = ?";
-        Object[] args = {executionId};
-        updateExecutionStateStatusJdbcTemplate.update(sql, args);
-    }
+	@Override
+	public void activatePendingExecutionStateForAnExecution(long executionId) {
+		final String sql = "UPDATE OO_EXECUTION_STATES SET ACTIVE = 1 WHERE ID = ?";
+		Object[] args = {executionId};
+		updateExecutionStateStatusJdbcTemplate.update(sql, args);
+	}
 
-    @Override
-    public void deletePendingExecutionState(long executionStatesId) {
-        final String sql = "DELETE FROM OO_EXECS_STATES_EXECS_MAPPINGS WHERE ID = ?";
-        Object[] args = {executionStatesId};
-        deletePendingExecutionStateJdbcTemplate.update(sql, args);
-    }
+	@Override
+	public void deletePendingExecutionState(long executionStatesId) {
+		final String sql = "DELETE FROM OO_EXECS_STATES_EXECS_MAPPINGS WHERE ID = ?";
+		Object[] args = {executionStatesId};
+		deletePendingExecutionStateJdbcTemplate.update(sql, args);
+	}
 
+	@Override
+	public List<ExecutionMessage> pollRecovery(String workerId, int maxSize, ExecStatus... statuses) {
+		pollForRecoveryJdbcTemplate.setStatementBatchSize(maxSize);
+||||||| /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/base.java
+	@Override
+	public void insertExecutionQueue(final List<ExecutionMessage> messages, final long version) {
+		// insert execution queue table
+		// id, exec_state_id, assigned_worker, status, create_time
+		String insertQueueSQL = INSERT_QUEUE;
 
+		long t = System.currentTimeMillis();
+		insertExecutionJdbcTemplate.batchUpdate(insertQueueSQL, new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				ExecutionMessage msg = messages.get(i);
+				ps.setLong(1, idGen.next());
+				ps.setLong(2, msg.getExecStateId());
+				ps.setString(3, msg.getWorkerId());
+				ps.setString(4, msg.getWorkerGroup());
+				ps.setInt(5, msg.getStatus().getNumber());
+				ps.setInt(6, msg.getMsgSeqId());
+				ps.setLong(7, Calendar.getInstance().getTimeInMillis());
+				ps.setLong(8, version);
+			}
+
+			@Override
+			public int getBatchSize() {
+				return messages.size();
+			}
+		});
+		t = System.currentTimeMillis() - t;
+		if (logger.isDebugEnabled()) logger.debug("Insert to queue: " + messages.size() + "/" + t + " messages/ms");
+	}
+
+	@Override
+	public List<ExecutionMessage> pollRecovery(String workerId, int maxSize, ExecStatus... statuses) {
+		pollForRecoveryJdbcTemplate.setStatementBatchSize(maxSize);
+=======
     @Override
     public List<ExecutionMessage> pollRecovery(String workerId, int maxSize, ExecStatus... statuses) {
         pollForRecoveryJdbcTemplate.setStatementBatchSize(maxSize);
+>>>>>>> /usr/src/app/output/cloudslang/score/81931e79cb404922acf07270cfdbee65f5b4b1c2/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/right.java
         try {
             // prepare the sql statement
             String sqlStatPrvTable = QUERY_WORKER_RECOVERY_SQL

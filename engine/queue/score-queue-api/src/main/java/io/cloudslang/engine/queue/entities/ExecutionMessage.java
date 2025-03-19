@@ -96,6 +96,24 @@ public class ExecutionMessage implements Message, Cloneable {
     	                        Payload payload,
     	                        int msgSeqId,
                                 Long createDate) {
+    		this.execStateId = execStateId;
+    		this.workerId = workerId;
+    		this.workerGroup = workerGroup;
+    		this.msgId = msgId;
+    		this.status = status;
+    		this.payload = payload;
+    		this.msgSeqId = msgSeqId;
+            this.createDate = createDate;
+            this.active = true;
+   }
+    public ExecutionMessage(long execStateId,
+    	                        String workerId,
+    	                        String workerGroup,
+    	                        String msgId,
+    	                        ExecStatus status,
+    	                        Payload payload,
+    	                        int msgSeqId,
+                                Long createDate) {
 		this.execStateId = execStateId;
 		this.workerId = workerId;
 		this.workerGroup = workerGroup;
@@ -105,7 +123,6 @@ public class ExecutionMessage implements Message, Cloneable {
 		this.payloadSize = getPayloadSize(payload);
 		this.msgSeqId = msgSeqId;
 		this.createDate = createDate;
-		this.active = true;
    }
 
 	public ExecutionMessage(long execStateId,
@@ -275,16 +292,16 @@ public class ExecutionMessage implements Message, Cloneable {
 		return this;
 	}
 
-	private int getPayloadSize(Payload payload) {
-		return payload != null ? payload.getData().length : 0;
-	}
-
 	public long getExecutionId() {
 		return executionId;
 	}
 
 	public void setExecutionId(long executionId) {
 		this.executionId = executionId;
+	}
+
+	private int getPayloadSize(Payload payload) {
+		return payload != null ? payload.getData().length : 0;
 	}
 
 	@Override

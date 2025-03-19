@@ -161,16 +161,6 @@ public class ScoreEngineJobsImpl implements ScoreEngineJobs {
     }
 
     @Override
-    public void monitorLargeMessagesJob() {
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("MonitorLargeMessagesJob woke up!");
-        }
-
-        largeMessagesMonitorService.monitor();
-    }
-
-    @Override
     public void miMergeBranchesContexts() {
         try {
             if (logger.isDebugEnabled()) logger.debug("MiMergeBranchesContextsJob woke up at " + new Date());
@@ -190,5 +180,15 @@ public class ScoreEngineJobsImpl implements ScoreEngineJobs {
         } catch (Exception ex) {
             logger.error("SplitJoinJob failed", ex);
         }
+    }
+
+    @Override
+    public void monitorLargeMessagesJob() {
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("MonitorLargeMessagesJob woke up!");
+        }
+
+        largeMessagesMonitorService.monitor();
     }
 }
