@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.logging.Level;
+
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
@@ -77,12 +78,28 @@ public class SlackBungee extends Plugin implements Listener {
         }
     }
 
+<<<<<<< /usr/src/app/output/circuitsoftgroup/slackmc/6e2ed14486ced20af34a942ad5955026e20adae7/src/main/java/us/circuitsoft/slack/bungee/SlackBungee.java/left.java
     public void send(String message, String name) {
         send(message, name, null);
+||||||| /usr/src/app/output/circuitsoftgroup/slackmc/6e2ed14486ced20af34a942ad5955026e20adae7/src/main/java/us/circuitsoft/slack/bungee/SlackBungee.java/base.java
+    public void send(String m, String p) {
+        Executors.newSingleThreadExecutor().submit(new SlackBungeePoster(this, con, m, p, null));
+=======
+    public void send(String m, String p) {
+        getProxy().getScheduler().runAsync(this, new SlackBungeePoster(this, con, m, p, null));
+>>>>>>> /usr/src/app/output/circuitsoftgroup/slackmc/6e2ed14486ced20af34a942ad5955026e20adae7/src/main/java/us/circuitsoft/slack/bungee/SlackBungee.java/right.java
     }
 
+<<<<<<< /usr/src/app/output/circuitsoftgroup/slackmc/6e2ed14486ced20af34a942ad5955026e20adae7/src/main/java/us/circuitsoft/slack/bungee/SlackBungee.java/left.java
+    public void send(String message, String name, String iconUrl) {
+        getProxy().getScheduler().runAsync(this, new SlackBungeePoster(this, config, message, name, iconUrl));
+||||||| /usr/src/app/output/circuitsoftgroup/slackmc/6e2ed14486ced20af34a942ad5955026e20adae7/src/main/java/us/circuitsoft/slack/bungee/SlackBungee.java/base.java
+    public void send(String m, String p, String i) {
+        Executors.newSingleThreadExecutor().submit(new SlackBungeePoster(this, con, m, p, i));
+=======
     public void send(String m, String p, String i) {
         getProxy().getScheduler().runAsync(this, new SlackBungeePoster(this, con, m, p, i));
+>>>>>>> /usr/src/app/output/circuitsoftgroup/slackmc/6e2ed14486ced20af34a942ad5955026e20adae7/src/main/java/us/circuitsoft/slack/bungee/SlackBungee.java/right.java
     }
 
     private boolean isOnBlacklist(String name) {

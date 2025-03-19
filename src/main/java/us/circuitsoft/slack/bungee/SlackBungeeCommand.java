@@ -14,7 +14,6 @@ public class SlackBungeeCommand extends Command {
     private static final BaseComponent[] sendHelpMsg = new ComponentBuilder("/slack send <username> <image URL or null for username's skin> <message>").color(ChatColor.GOLD).create();
     private static final BaseComponent[] reloadMsg = new ComponentBuilder("Slack has been reloaded.").color(ChatColor.GREEN).create();
     private static final BaseComponent[] noPermMsg = new ComponentBuilder("You are not allowed to execute this command!").color(ChatColor.DARK_RED).create();
-
     private final SlackBungee plugin;
 
     public SlackBungeeCommand(SlackBungee plugin) {
@@ -38,7 +37,12 @@ public class SlackBungeeCommand extends Command {
             } else {
                 sender.sendMessage(noPermMsg);
             }
+<<<<<<< /usr/src/app/output/circuitsoftgroup/slackmc/6e2ed14486ced20af34a942ad5955026e20adae7/src/main/java/us/circuitsoft/slack/bungee/SlackBungeeCommand.java/left.java
+||||||| /usr/src/app/output/circuitsoftgroup/slackmc/6e2ed14486ced20af34a942ad5955026e20adae7/src/main/java/us/circuitsoft/slack/bungee/SlackBungeeCommand.java/base.java
+            Executors.newSingleThreadExecutor().submit(new BungeePoster(m, strings[1], strings[2]));
+=======
             plugin.getProxy().getScheduler().runAsync(plugin, new BungeePoster(m, strings[1], strings[2]));
+>>>>>>> /usr/src/app/output/circuitsoftgroup/slackmc/6e2ed14486ced20af34a942ad5955026e20adae7/src/main/java/us/circuitsoft/slack/bungee/SlackBungeeCommand.java/right.java
         } else if (args[0].equals("send")) {
             if (sender.hasPermission("slack.send")) {
                 if (args.length <= 3) {
