@@ -144,6 +144,16 @@ public class BeanSheetWriter<T> extends AbstractSheetWriter<T> {
         }
     }
 
+    /**
+     * Takes one object instance of the specified type and writes it to the
+     * {@link XceliteSheet} object this writer is operating on.
+     *
+     * @param data of the specified type
+     * @param excelRow the row object in the spreadsheet to write to
+     * @param rowIndex row index of the row object in the spreadsheet to write to
+     * @since 1.0
+     */
+
     @SuppressWarnings("unchecked")
     @SneakyThrows
     private void writeData(Collection<T> data) {
@@ -156,6 +166,11 @@ public class BeanSheetWriter<T> extends AbstractSheetWriter<T> {
         addColumns(columnsToAdd, true);
 
         for (T t: data) {
+<<<<<<< /usr/src/app/output/ebay/xcelite/66cde34b01ea5ac3a5db132e6f11a8038db98a84/src/main/java/com/ebay/xcelite/writer/BeanSheetWriter.java/left.java
+            Row excelRow = sheet.getNativeSheet().createRow(rowIndex);
+||||||| /usr/src/app/output/ebay/xcelite/66cde34b01ea5ac3a5db132e6f11a8038db98a84/src/main/java/com/ebay/xcelite/writer/BeanSheetWriter.java/base.java
+            Row row = sheet.getNativeSheet().createRow(rowIndex);
+=======
             if (null == t) {
                 switch(options.getMissingRowPolicy()) {
                     case SKIP: {
@@ -184,6 +199,7 @@ public class BeanSheetWriter<T> extends AbstractSheetWriter<T> {
 
             }
             Row row = sheet.getNativeSheet().createRow(rowIndex++);
+>>>>>>> /usr/src/app/output/ebay/xcelite/66cde34b01ea5ac3a5db132e6f11a8038db98a84/src/main/java/com/ebay/xcelite/writer/BeanSheetWriter.java/right.java
             int i = 0;
             for (Col col: columns) {
                 Set<Field> fields = ReflectionUtils.getAllFields(t.getClass(), withName(col.getFieldName()));
@@ -196,8 +212,14 @@ public class BeanSheetWriter<T> extends AbstractSheetWriter<T> {
                 } else {
                     fieldValueObj = field.get(t);
                 }
+<<<<<<< /usr/src/app/output/ebay/xcelite/66cde34b01ea5ac3a5db132e6f11a8038db98a84/src/main/java/com/ebay/xcelite/writer/BeanSheetWriter.java/left.java
+                Cell cell = excelRow.createCell(i);
+||||||| /usr/src/app/output/ebay/xcelite/66cde34b01ea5ac3a5db132e6f11a8038db98a84/src/main/java/com/ebay/xcelite/writer/BeanSheetWriter.java/base.java
+                Cell cell = row.createCell(i);
+=======
                 checkHasThrowPolicyMustThrow(fieldValueObj, col);
                 Cell cell = row.createCell(i);
+>>>>>>> /usr/src/app/output/ebay/xcelite/66cde34b01ea5ac3a5db132e6f11a8038db98a84/src/main/java/com/ebay/xcelite/writer/BeanSheetWriter.java/right.java
                 writeToCell(cell, col, fieldValueObj);
                 i++;
             }

@@ -116,26 +116,10 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
         }
     }
 
-    @Override
-    public void write(final Collection<T> data) {
-        if (options.isGenerateHeaderRow()) {
-            writeHeader();
-        }
-        final AtomicInteger i = new AtomicInteger(0);
-        data.forEach(row -> {
-            Row excelRow = sheet.getNativeSheet().createRow(i.intValue());
-            final AtomicInteger j = new AtomicInteger(0);
-            writeRow(row, excelRow, i.intValue());
-            i.incrementAndGet();
-        });
-    }
-
-    abstract void writeHeader();
-
-
     /**
      * @deprecated since 1.2. Use {@link #setGenerateHeaderRow(boolean) instead}
      */
+<<<<<<< /usr/src/app/output/ebay/xcelite/66cde34b01ea5ac3a5db132e6f11a8038db98a84/src/main/java/com/ebay/xcelite/writer/AbstractSheetWriter.java/left.java
     @Deprecated
     @Override
     public void write(final Collection<T> data) {
@@ -150,14 +134,33 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
             i.incrementAndGet();
         });
     }
-
+||||||| /usr/src/app/output/ebay/xcelite/66cde34b01ea5ac3a5db132e6f11a8038db98a84/src/main/java/com/ebay/xcelite/writer/AbstractSheetWriter.java/base.java
+=======
+    @Override
+    public void write(final Collection<T> data) {
+        if (options.isGenerateHeaderRow()) {
+            writeHeader();
+        }
+        final AtomicInteger i = new AtomicInteger(0);
+        data.forEach(row -> {
+            Row excelRow = sheet.getNativeSheet().createRow(i.intValue());
+            final AtomicInteger j = new AtomicInteger(0);
+            writeRow(row, excelRow, i.intValue());
+            i.incrementAndGet();
+        });
+    }
+>>>>>>> /usr/src/app/output/ebay/xcelite/66cde34b01ea5ac3a5db132e6f11a8038db98a84/src/main/java/com/ebay/xcelite/writer/AbstractSheetWriter.java/right.java
     abstract void writeHeader();
-
     @Override
     public void generateHeaderRow(boolean generateHeaderRow) {
         options.setGenerateHeaderRow(generateHeaderRow);
     }
-
+    /**
+     * @deprecated since 1.2. Use {@link #setGenerateHeaderRow(boolean) instead}
+     */
+    /**
+     * @deprecated since 1.2. Use {@link #setGenerateHeaderRow(boolean) instead}
+     */
     /**
      * @deprecated since 1.2. Use {@link #setGenerateHeaderRow(boolean) instead}
      */

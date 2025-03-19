@@ -18,6 +18,7 @@ package com.ebay.xcelite.writer;
 import com.ebay.xcelite.options.XceliteOptions;
 import com.ebay.xcelite.sheet.XceliteSheet;
 import com.ebay.xcelite.styles.CellStylesBank;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -77,15 +78,7 @@ public class SimpleSheetWriter extends AbstractSheetWriter<Collection<Object>> {
 
         data.forEach(row -> {
             Row excelRow = sheet.getNativeSheet().createRow(i.intValue());
-            final AtomicInteger j = new AtomicInteger(0);
-            row.forEach(column -> {
-                Cell cell = excelRow.createCell(j.intValue());
-                if (options.isGenerateHeaderRow() && i.intValue() == 0) {
-                    cell.setCellStyle(boldStyle);
-                }
-                writeToCell(cell, column, null);
-                j.incrementAndGet();
-            });
+            writeRow(row, excelRow, i.intValue());
             i.incrementAndGet();
         });
     }
