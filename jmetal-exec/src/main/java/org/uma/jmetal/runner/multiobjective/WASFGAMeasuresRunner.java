@@ -53,8 +53,20 @@ public class WASFGAMeasuresRunner extends AbstractAlgorithmRunner {
     problem = ProblemUtils.<DoubleSolution> loadProblem(problemName);
 
     referencePoint = new ArrayList<>();
+<<<<<<< /usr/src/app/output/jmetal/jmetal/c90d14c54d0fc71f08ba2f14aeef7f43af52a61d/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/WASFGAMeasuresRunner.java/left.java
     referencePoint.add(2.0);
+||||||| /usr/src/app/output/jmetal/jmetal/c90d14c54d0fc71f08ba2f14aeef7f43af52a61d/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/WASFGAMeasuresRunner.java/base.java
+    referencePoint.add(200.0);
+=======
+    referencePoint.add(0.5);
+>>>>>>> /usr/src/app/output/jmetal/jmetal/c90d14c54d0fc71f08ba2f14aeef7f43af52a61d/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/WASFGAMeasuresRunner.java/right.java
+<<<<<<< /usr/src/app/output/jmetal/jmetal/c90d14c54d0fc71f08ba2f14aeef7f43af52a61d/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/WASFGAMeasuresRunner.java/left.java
     referencePoint.add(2.0);
+||||||| /usr/src/app/output/jmetal/jmetal/c90d14c54d0fc71f08ba2f14aeef7f43af52a61d/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/WASFGAMeasuresRunner.java/base.java
+    referencePoint.add(0.0);
+=======
+    referencePoint.add(0.8);
+>>>>>>> /usr/src/app/output/jmetal/jmetal/c90d14c54d0fc71f08ba2f14aeef7f43af52a61d/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/WASFGAMeasuresRunner.java/right.java
 
     double crossoverProbability = 0.9 ;
     double crossoverDistributionIndex = 20.0 ;
