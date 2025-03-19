@@ -1,5 +1,4 @@
 package es.tid.pce.pcep.objects;
-
 import es.tid.pce.pcep.objects.tlvs.LSPDatabaseVersionTLV;
 import es.tid.pce.pcep.objects.tlvs.LSPErrorCodeTLV;
 import es.tid.pce.pcep.objects.tlvs.LSPIdentifiersTLV;
@@ -7,8 +6,6 @@ import es.tid.pce.pcep.objects.tlvs.PCEPTLV;
 import es.tid.pce.pcep.objects.tlvs.RSVPErrorSpecTLV;
 import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import es.tid.protocol.commons.ByteHandler;
-
-
 
 /**
  * 
@@ -119,312 +116,255 @@ The LSP object MUST be present within PCRpt and PCUpd messages.  The
  * @author Fernando Mu�oz del Nuevo
  * @author Oscar Gonzalez de Dios
  */
+public class LSP extends PCEPObject {
+  protected int lspId;
 
-public class LSP extends PCEPObject{
+  protected boolean dFlag;
 
-	protected int lspId;
-	protected boolean dFlag;
-	
-	protected boolean sFlag;
-	
-	protected boolean rFlag;
-	
-	protected boolean aFlag;
-	
-	protected int opFlags;
-	
-	private int LSP_sig_type;
-	
-	
-	private SymbolicPathNameTLV symbolicPathNameTLV_tlv = null;
-	
-	private LSPIdentifiersTLV lspIdentifiers_tlv = null;
-	
-	private LSPErrorCodeTLV lspErrorCodes_tlv = null;
-	
-	private RSVPErrorSpecTLV rsvpErrorSpec_tlv = null;
-	
-	private LSPDatabaseVersionTLV lspDBVersion_tlv = null;
-		
-	public LSP(){
-		super();
-		this.ObjectClass = ObjectParameters.PCEP_OBJECT_CLASS_LSP;
-		this.setOT(1);
-		
-	}
-	
-	public LSP(byte []bytes, int offset)throws MalformedPCEPObjectException {
-		super(bytes, offset);
-		decode();
-	}
-	
-	@Override
-	public void encode() 
-	{
-		
-		ObjectLength = 4 + 4 + 4;
-		if (symbolicPathNameTLV_tlv!=null){
-			symbolicPathNameTLV_tlv.encode();
-			ObjectLength=ObjectLength+symbolicPathNameTLV_tlv.getTotalTLVLength();
-		}
-		if (lspIdentifiers_tlv!=null){
-			lspIdentifiers_tlv.encode();
-			ObjectLength=ObjectLength+lspIdentifiers_tlv.getTotalTLVLength();
-		}
-		if (lspErrorCodes_tlv!=null){
-			lspErrorCodes_tlv.encode();
-			ObjectLength=ObjectLength+lspErrorCodes_tlv.getTotalTLVLength();
-		}
-		if (rsvpErrorSpec_tlv!=null){
-			rsvpErrorSpec_tlv.encode();
-			ObjectLength=ObjectLength+rsvpErrorSpec_tlv.getTotalTLVLength();
-		}
-	
-		if (lspDBVersion_tlv!=null){
-			lspDBVersion_tlv.encode();
-			ObjectLength=ObjectLength+lspDBVersion_tlv.getTotalTLVLength();
-		}
-		object_bytes = new byte[ObjectLength];
-		encode_header();
-		
-		int offset = 4;
-		
-		
-		ByteHandler.IntToBuffer(12,offset*8, 20,lspId,this.object_bytes);
-		
-		offset += 3;
-		
-		ByteHandler.IntToBuffer (1, offset*8, 3, opFlags, this.object_bytes);
-		ByteHandler.BoolToBuffer(4 + offset*8, aFlag,object_bytes);
-		ByteHandler.BoolToBuffer(5 + offset*8, rFlag,object_bytes);
-		ByteHandler.BoolToBuffer(6 + offset*8, sFlag,object_bytes);
-		ByteHandler.BoolToBuffer(7 + offset*8, dFlag,object_bytes);
+  protected boolean sFlag;
 
-//		offset += 1;
-//		offset += 3;
-//		
-//		ByteHandler.IntToBuffer(0,offset*8, 8, LSP_sig_type, this.object_bytes);
-		
-		offset += 1;
-		
-		if (symbolicPathNameTLV_tlv!=null){
-			System.arraycopy(symbolicPathNameTLV_tlv.getTlv_bytes(),0,this.object_bytes,offset,symbolicPathNameTLV_tlv.getTotalTLVLength());
-			offset=offset+symbolicPathNameTLV_tlv.getTotalTLVLength();		
-		}
-		if (lspIdentifiers_tlv!=null){
-			System.arraycopy(lspIdentifiers_tlv.getTlv_bytes(),0,this.object_bytes,offset,lspIdentifiers_tlv.getTotalTLVLength());
-			offset=offset+lspIdentifiers_tlv.getTotalTLVLength();
-		}
-		if (lspErrorCodes_tlv!=null){
-			System.arraycopy(lspErrorCodes_tlv.getTlv_bytes(),0,this.object_bytes,offset,lspErrorCodes_tlv.getTotalTLVLength());
-			offset=offset+lspErrorCodes_tlv.getTotalTLVLength();
-		}
-		if (rsvpErrorSpec_tlv!=null){
-			System.arraycopy(rsvpErrorSpec_tlv.getTlv_bytes(),0,this.object_bytes,offset,rsvpErrorSpec_tlv.getTotalTLVLength());
-			offset=offset+rsvpErrorSpec_tlv.getTotalTLVLength();
-		}
+  protected boolean rFlag;
 
-		if (lspDBVersion_tlv!=null){
-			System.arraycopy(lspDBVersion_tlv.getTlv_bytes(),0,this.object_bytes,offset,lspDBVersion_tlv.getTotalTLVLength());
-			offset=offset+lspDBVersion_tlv.getTotalTLVLength();
-		}	
-	}
+  protected boolean aFlag;
 
-	@Override
-	public void decode() throws MalformedPCEPObjectException {		
-		symbolicPathNameTLV_tlv = null;
-		lspIdentifiers_tlv = null;
-		lspErrorCodes_tlv = null;
-		rsvpErrorSpec_tlv = null;
-		lspDBVersion_tlv = null;
-		
-		if (ObjectLength<12){
-			throw new MalformedPCEPObjectException();
-		}
-		
-		lspId = ByteHandler.easyCopy(0,19,object_bytes[4],object_bytes[5],object_bytes[6]);
-				
-		opFlags = ByteHandler.easyCopy(1,3,object_bytes[7]);
-		aFlag = (ByteHandler.easyCopy(4,4,object_bytes[7]) == 1) ? true : false ;
-		rFlag = (ByteHandler.easyCopy(5,5,object_bytes[7]) == 1) ? true : false ;
-		sFlag = (ByteHandler.easyCopy(6,6,object_bytes[7]) == 1) ? true : false ;
-		dFlag = (ByteHandler.easyCopy(7,7,object_bytes[7]) == 1) ? true : false ;
-			
-		boolean fin;
-		int offset = 8;
-		
-		LSP_sig_type = ByteHandler.easyCopy(0,7,object_bytes[offset+3]);
-		offset += 4;
-		
-		if (ObjectLength==12){
-			fin=true;
-		}else {
-			fin = false;
-		}
-				
-		while (!fin) {
-			int tlvtype=PCEPTLV.getType(this.getObject_bytes(), offset);
-			int tlvlength=PCEPTLV.getTotalTLVLength(this.getObject_bytes(), offset);
-			
-			switch (tlvtype){
-				case ObjectParameters.PCEP_TLV_TYPE_SYMBOLIC_PATH_NAME:
-					symbolicPathNameTLV_tlv=new SymbolicPathNameTLV(this.getObject_bytes(), offset);
-					break;
-				case ObjectParameters.PCEP_TLV_TYPE_LSP_IDENTIFIERS:
-					lspIdentifiers_tlv =new LSPIdentifiersTLV(this.getObject_bytes(), offset);
-					break;
-				case ObjectParameters.PCEP_TLV_TYPE_LSP_ERROR_CODE:
-					lspErrorCodes_tlv =new LSPErrorCodeTLV(this.getObject_bytes(), offset);
-					break;
-				case ObjectParameters.PCEP_TLV_TYPE_RSVP_ERROR_SPEC:
-					rsvpErrorSpec_tlv =new RSVPErrorSpecTLV(this.getObject_bytes(), offset);
-					break;
-				case ObjectParameters.PCEP_TLV_TYPE_LSP_DATABASE_VERSION:
-					lspDBVersion_tlv =new LSPDatabaseVersionTLV(this.getObject_bytes(), offset);
-					break;
-				
-				/*
-				 * In the future Delegation TLV will be here
-				 */
-				 
-				default:
-					log.warn("Unknown or unexpected TLV found");
-					//FIXME: Que hacemos con los desconocidos
-					break;
-			}
-			
-			offset=offset+tlvlength;
-			if (offset>=ObjectLength){
-				fin=true;
-			}
-		}
-		
-	}
-	
-	
-	//GETTERS & SETTERS
+  protected int opFlags;
 
-	
-	
-	public int getLspId() 
-	{
-		return lspId;
-	}
-	public SymbolicPathNameTLV getSymbolicPathNameTLV_tlv() 
-	{
-		return symbolicPathNameTLV_tlv;
-	}
+  private int LSP_sig_type;
 
-	public void setSymbolicPathNameTLV_tlv(
-			SymbolicPathNameTLV symbolicPathNameTLV_tlv) 
-	{
-		this.symbolicPathNameTLV_tlv = symbolicPathNameTLV_tlv;
-	}
+  private SymbolicPathNameTLV symbolicPathNameTLV_tlv = null;
 
-	public LSPIdentifiersTLV getLspIdentifiers_tlv() 
-	{
-		return lspIdentifiers_tlv;
-	}
+  private LSPIdentifiersTLV lspIdentifiers_tlv = null;
 
-	public void setLspIdentifiers_tlv(LSPIdentifiersTLV lspIdentifiers_tlv) 
-	{
-		this.lspIdentifiers_tlv = lspIdentifiers_tlv;
-	}
+  private LSPErrorCodeTLV lspErrorCodes_tlv = null;
 
-	public LSPErrorCodeTLV getLspErrorCodes_tlv() 
-	{
-		return lspErrorCodes_tlv;
-	}
+  private RSVPErrorSpecTLV rsvpErrorSpec_tlv = null;
 
-	public void setLspErrorCodes_tlv(LSPErrorCodeTLV lspErrorCodes_tlv) 
-	{
-		this.lspErrorCodes_tlv = lspErrorCodes_tlv;
-	}
+  private LSPDatabaseVersionTLV lspDBVersion_tlv = null;
 
-	public RSVPErrorSpecTLV getRsvpErrorSpec_tlv() 
-	{
-		return rsvpErrorSpec_tlv;
-	}
+  public LSP() {
+    super();
+    this.ObjectClass = ObjectParameters.PCEP_OBJECT_CLASS_LSP;
+    this.setOT(1);
+  }
 
-	public void setRsvpErrorSpec_tlv(RSVPErrorSpecTLV rsvpErrorSpec_tlv) 
-	{
-		this.rsvpErrorSpec_tlv = rsvpErrorSpec_tlv;
-	}
+  public LSP(byte[] bytes, int offset) throws MalformedPCEPObjectException {
+    super(bytes, offset);
+    decode();
+  }
 
-	public void setLspId(int lspId) 
-	{
-		this.lspId = lspId;
-	}
-	public boolean isdFlag() 
-	{
-		return dFlag;
-	}
-	public void setdFlag(boolean dFlag) 
-	{
-		this.dFlag = dFlag;
-	}
-	public boolean issFlag() 
-	{
-		return sFlag;
-	}
-	public void setsFlag(boolean sFlag) 
-	{
-		this.sFlag = sFlag;
-	}
-	public int getOpFlags() 
-	{
-		return opFlags;
-	}
+  @Override public void encode() {
+    ObjectLength = 4 + 4 + 4;
+    if (symbolicPathNameTLV_tlv != null) {
+      symbolicPathNameTLV_tlv.encode();
+      ObjectLength = ObjectLength + symbolicPathNameTLV_tlv.getTotalTLVLength();
+    }
+    if (lspIdentifiers_tlv != null) {
+      lspIdentifiers_tlv.encode();
+      ObjectLength = ObjectLength + lspIdentifiers_tlv.getTotalTLVLength();
+    }
+    if (lspErrorCodes_tlv != null) {
+      lspErrorCodes_tlv.encode();
+      ObjectLength = ObjectLength + lspErrorCodes_tlv.getTotalTLVLength();
+    }
+    if (rsvpErrorSpec_tlv != null) {
+      rsvpErrorSpec_tlv.encode();
+      ObjectLength = ObjectLength + rsvpErrorSpec_tlv.getTotalTLVLength();
+    }
+    if (lspDBVersion_tlv != null) {
+      lspDBVersion_tlv.encode();
+      ObjectLength = ObjectLength + lspDBVersion_tlv.getTotalTLVLength();
+    }
+    object_bytes = new byte[ObjectLength];
+    encode_header();
+    int offset = 4;
+    ByteHandler.IntToBuffer(12, offset * 8, 20, lspId, this.object_bytes);
+    offset += 3;
+    ByteHandler.IntToBuffer(1, offset * 8, 3, opFlags, this.object_bytes);
+    ByteHandler.BoolToBuffer(4 + offset * 8, aFlag, object_bytes);
+    ByteHandler.BoolToBuffer(5 + offset * 8, rFlag, object_bytes);
+    ByteHandler.BoolToBuffer(6 + offset * 8, sFlag, object_bytes);
+    ByteHandler.BoolToBuffer(7 + offset * 8, dFlag, object_bytes);
+    offset += 1;
+    if (symbolicPathNameTLV_tlv != null) {
+      System.arraycopy(symbolicPathNameTLV_tlv.getTlv_bytes(), 0, this.object_bytes, offset, symbolicPathNameTLV_tlv.getTotalTLVLength());
+      offset = offset + symbolicPathNameTLV_tlv.getTotalTLVLength();
+    }
+    if (lspIdentifiers_tlv != null) {
+      System.arraycopy(lspIdentifiers_tlv.getTlv_bytes(), 0, this.object_bytes, offset, lspIdentifiers_tlv.getTotalTLVLength());
+      offset = offset + lspIdentifiers_tlv.getTotalTLVLength();
+    }
+    if (lspErrorCodes_tlv != null) {
+      System.arraycopy(lspErrorCodes_tlv.getTlv_bytes(), 0, this.object_bytes, offset, lspErrorCodes_tlv.getTotalTLVLength());
+      offset = offset + lspErrorCodes_tlv.getTotalTLVLength();
+    }
+    if (rsvpErrorSpec_tlv != null) {
+      System.arraycopy(rsvpErrorSpec_tlv.getTlv_bytes(), 0, this.object_bytes, offset, rsvpErrorSpec_tlv.getTotalTLVLength());
+      offset = offset + rsvpErrorSpec_tlv.getTotalTLVLength();
+    }
+    if (lspDBVersion_tlv != null) {
+      System.arraycopy(lspDBVersion_tlv.getTlv_bytes(), 0, this.object_bytes, offset, lspDBVersion_tlv.getTotalTLVLength());
+      offset = offset + lspDBVersion_tlv.getTotalTLVLength();
+    }
+  }
 
-	public void setOpFlags(int opFlags) 
-	{
-		this.opFlags = opFlags;
-	}
+  @Override public void decode() throws MalformedPCEPObjectException {
+    symbolicPathNameTLV_tlv = null;
+    lspIdentifiers_tlv = null;
+    lspErrorCodes_tlv = null;
+    rsvpErrorSpec_tlv = null;
+    lspDBVersion_tlv = null;
+    if (ObjectLength < 12) {
+      throw new MalformedPCEPObjectException();
+    }
+    lspId = ByteHandler.easyCopy(0, 19, object_bytes[4], object_bytes[5], object_bytes[6]);
+    opFlags = ByteHandler.easyCopy(1, 3, object_bytes[7]);
+    aFlag = (ByteHandler.easyCopy(4, 4, object_bytes[7]) == 1) ? true : false;
+    rFlag = (ByteHandler.easyCopy(5, 5, object_bytes[7]) == 1) ? true : false;
+    sFlag = (ByteHandler.easyCopy(6, 6, object_bytes[7]) == 1) ? true : false;
+    dFlag = (ByteHandler.easyCopy(7, 7, object_bytes[7]) == 1) ? true : false;
+    boolean fin;
+    int offset = 8;
+    LSP_sig_type = ByteHandler.easyCopy(0, 7, object_bytes[offset + 3]);
+    offset += 4;
+    if (ObjectLength == 12) {
+      fin = true;
+    } else {
+      fin = false;
+    }
+    while (!fin) {
+      int tlvtype = PCEPTLV.getType(this.getObject_bytes(), offset);
+      int tlvlength = PCEPTLV.getTotalTLVLength(this.getObject_bytes(), offset);
+      switch (tlvtype) {
+        case ObjectParameters.PCEP_TLV_TYPE_SYMBOLIC_PATH_NAME:
+        symbolicPathNameTLV_tlv = new SymbolicPathNameTLV(this.getObject_bytes(), offset);
+        break;
+        case ObjectParameters.PCEP_TLV_TYPE_LSP_IDENTIFIERS:
+        lspIdentifiers_tlv = new LSPIdentifiersTLV(this.getObject_bytes(), offset);
+        break;
+        case ObjectParameters.PCEP_TLV_TYPE_LSP_ERROR_CODE:
+        lspErrorCodes_tlv = new LSPErrorCodeTLV(this.getObject_bytes(), offset);
+        break;
+        case ObjectParameters.PCEP_TLV_TYPE_RSVP_ERROR_SPEC:
+        rsvpErrorSpec_tlv = new RSVPErrorSpecTLV(this.getObject_bytes(), offset);
+        break;
+        case ObjectParameters.PCEP_TLV_TYPE_LSP_DATABASE_VERSION:
+        lspDBVersion_tlv = new LSPDatabaseVersionTLV(this.getObject_bytes(), offset);
+        break;
+        default:
+        log.warn("Unknown or unexpected TLV found");
+        break;
+      }
+      offset = offset + tlvlength;
+      if (offset >= ObjectLength) {
+        fin = true;
+      }
+    }
+  }
 
-	public int getLSP_sig_type() 
-	{
-		return LSP_sig_type;
-	}
-	public void setLSP_sig_type(int lSP_sig_type) 
-	{
-		LSP_sig_type = lSP_sig_type;
-	}
-	public boolean isrFlag() 
-	{
-		return rFlag;
-	}
-	public void setrFlag(boolean rFlag) 
-	{
-		this.rFlag = rFlag;
-	}
-	public boolean isaFlag() 
-	{
-		return aFlag;
-	}
-	public void setaFlag(boolean aFlag) 
-	{
-		this.aFlag = aFlag;
-	}
-	public LSPDatabaseVersionTLV getLspDBVersion_tlv() 
-	{
-		return lspDBVersion_tlv;
-	}
-	public void setLspDBVersion_tlv(LSPDatabaseVersionTLV lspDBVersion_tlv) 
-	{
-		this.lspDBVersion_tlv = lspDBVersion_tlv;
-	}
-	
-	public String toString(){
-		StringBuffer sb=new StringBuffer(100);
-		sb.append("<LSP id = ");
-		sb.append(lspId);	
-		if (symbolicPathNameTLV_tlv!=null){
-			sb.append(symbolicPathNameTLV_tlv.toString());
-		}
-		sb.append(">");
-		return sb.toString();	
-	}
+  public int getLspId() {
+    return lspId;
+  }
 
-	
-	
+  public SymbolicPathNameTLV getSymbolicPathNameTLV_tlv() {
+    return symbolicPathNameTLV_tlv;
+  }
+
+  public void setSymbolicPathNameTLV_tlv(SymbolicPathNameTLV symbolicPathNameTLV_tlv) {
+    this.symbolicPathNameTLV_tlv = symbolicPathNameTLV_tlv;
+  }
+
+  public LSPIdentifiersTLV getLspIdentifiers_tlv() {
+    return lspIdentifiers_tlv;
+  }
+
+  public void setLspIdentifiers_tlv(LSPIdentifiersTLV lspIdentifiers_tlv) {
+    this.lspIdentifiers_tlv = lspIdentifiers_tlv;
+  }
+
+  public LSPErrorCodeTLV getLspErrorCodes_tlv() {
+    return lspErrorCodes_tlv;
+  }
+
+  public void setLspErrorCodes_tlv(LSPErrorCodeTLV lspErrorCodes_tlv) {
+    this.lspErrorCodes_tlv = lspErrorCodes_tlv;
+  }
+
+  public RSVPErrorSpecTLV getRsvpErrorSpec_tlv() {
+    return rsvpErrorSpec_tlv;
+  }
+
+  public void setRsvpErrorSpec_tlv(RSVPErrorSpecTLV rsvpErrorSpec_tlv) {
+    this.rsvpErrorSpec_tlv = rsvpErrorSpec_tlv;
+  }
+
+  public void setLspId(int lspId) {
+    this.lspId = lspId;
+  }
+
+  public boolean isdFlag() {
+    return dFlag;
+  }
+
+  public void setdFlag(boolean dFlag) {
+    this.dFlag = dFlag;
+  }
+
+  public boolean issFlag() {
+    return sFlag;
+  }
+
+  public void setsFlag(boolean sFlag) {
+    this.sFlag = sFlag;
+  }
+
+  public int getOpFlags() {
+    return opFlags;
+  }
+
+  public void setOpFlags(int opFlags) {
+    this.opFlags = opFlags;
+  }
+
+  public int getLSP_sig_type() {
+    return LSP_sig_type;
+  }
+
+  public void setLSP_sig_type(int lSP_sig_type) {
+    LSP_sig_type = lSP_sig_type;
+  }
+
+  public boolean isrFlag() {
+    return rFlag;
+  }
+
+  public void setrFlag(boolean rFlag) {
+    this.rFlag = rFlag;
+  }
+
+  public boolean isaFlag() {
+    return aFlag;
+  }
+
+  public void setaFlag(boolean aFlag) {
+    this.aFlag = aFlag;
+  }
+
+  public LSPDatabaseVersionTLV getLspDBVersion_tlv() {
+    return lspDBVersion_tlv;
+  }
+
+  public void setLspDBVersion_tlv(LSPDatabaseVersionTLV lspDBVersion_tlv) {
+    this.lspDBVersion_tlv = lspDBVersion_tlv;
+  }
+
+  public String toString() {
+    StringBuffer sb = new StringBuffer(100);
+    sb.append("<LSP id = ");
+    sb.append(lspId);
+    if (symbolicPathNameTLV_tlv != null) {
+      sb.append(symbolicPathNameTLV_tlv.toString());
+    }
+    sb.append(">");
+    return sb.toString();
+  }
 }

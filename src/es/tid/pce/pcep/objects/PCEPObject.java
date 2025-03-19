@@ -1,10 +1,9 @@
 package es.tid.pce.pcep.objects;
-
 import es.tid.pce.pcep.PCEPElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
- /**
+/**
  * Base class for PCEPObject.
  * Implements PCEP Object Header as defined in RFC 5440.
  * PCEP Object must extend this class.
@@ -65,24 +64,23 @@ import org.slf4j.LoggerFactory;
  * @serial 0.1
 */
 public abstract class PCEPObject implements PCEPElement {
-
-	/**
+  /**
 	 * Object-Class (8 bits):  identifies the PCEP object class.
 	 */
-	protected int ObjectClass;//Object Class
+  protected int ObjectClass;
 
-	/**
+  /**
 	 * OT (Object-Type - 4 bits):  identifies the PCEP object type.
 	 */
-	protected int OT;//Object Type
+  protected int OT;
 
-	/**
+  /**
 	 * Res flags (2 bits):  Reserved field.  This field MUST be set to zero
      * on transmission and MUST be ignored on receipt.
 	 */
-	protected int Res;
+  protected int Res;
 
-	/**
+  /**
 	 * P flag (Processing-Rule - 1-bit):  the P flag allows a PCC to specify
       in a PCReq message sent to a PCE whether the object must be taken
       into account by the PCE during path computation or is just
@@ -90,9 +88,9 @@ public abstract class PCEPObject implements PCEPElement {
       account by the PCE.  Conversely, when the P flag is cleared, the
       object is optional and the PCE is free to ignore it.
 	 */
-	protected boolean Pbit;
+  protected boolean Pbit;
 
-	/**
+  /**
 	 *  I flag (Ignore - 1 bit):  the I flag is used by a PCE in a PCRep
       message to indicate to a PCC whether or not an optional object was
       processed.  The PCE MAY include the ignored optional object in its
@@ -104,251 +102,230 @@ public abstract class PCEPObject implements PCEPElement {
       PCRep message when the P flag has been set in the corresponding
       PCReq message.
 	 */
-	protected boolean Ibit;
+  protected boolean Ibit;
 
-	/**
+  /**
 	 * Object Length (16 bits):  Specifies the total object length including
       the header, in bytes.  The Object Length field MUST always be a
       multiple of 4, and at least 4.  The maximum object content length
       is 65528 bytes.
 	 */
-	protected int ObjectLength;
+  protected int ObjectLength;
 
-	/**
+  /**
 	 * Bytes of the object
 	 */
-	protected byte object_bytes[];
+  protected byte object_bytes[];
 
-	protected static final Logger log = LoggerFactory.getLogger("PCEPParser");
+  protected static final Logger log = LoggerFactory.getLogger("PCEPParser");
 
-	/**
+  /**
 	 * Constructs a PCEPObject 
 	 */
-	public PCEPObject() {
-		// Default values
-		Res=0;
-		Pbit=false;
-		Ibit=false;
+  public PCEPObject() {
+    Res = 0;
+    Pbit = false;
+    Ibit = false;
+  }
 
-	}
-
-	/**
+  /**
 	 * Construct a new PCEP Object from a sequence of bytes.
 	 * @param bytes
 	 * @param offset
 	 * @throws MalformedPCEPObjectException
 	 */
-	public PCEPObject(byte []bytes, int offset) throws MalformedPCEPObjectException{
-		ObjectLength=((bytes[offset+2]<<8)& 0xFF00) |  (bytes[offset+3] & 0xFF);
-		this.object_bytes=new byte[ObjectLength];
-		System.arraycopy(bytes, offset, object_bytes, 0, ObjectLength);
-		decodeHeader();	
-	}
+  public PCEPObject(byte[] bytes, int offset) throws MalformedPCEPObjectException {
+    ObjectLength = ((bytes[offset + 2] << 8) & 0xFF00) | (bytes[offset + 3] & 0xFF);
+    this.object_bytes = new byte[ObjectLength];
+    System.arraycopy(bytes, offset, object_bytes, 0, ObjectLength);
+    decodeHeader();
+  }
 
-
-	/**
+  /**
 	 * Encode the object. It is specific to the PCEP Object. Must be implemented
 	 * in each object!!!!!
 	 */
-	public abstract void encode();
+  public abstract void encode();
 
-	/**
+  /**
 	 * Decode the object. It is specific to the PCEP Object. Must be implemented
 	 * in each object!!!!
 	 */
-	public abstract void decode() throws MalformedPCEPObjectException;
+  public abstract void decode() throws MalformedPCEPObjectException;
 
-	/**
+  /**
 	 * Decodes an object from a sequence of bytes starting in offset. It is the same as calling
 	 * the constructor with the sequence of bytes. 
 	 * @param bytes
 	 * @param offset
 	 * @throws MalformedPCEPObjectException
 	 */
-	public void decode(byte[] bytes,int offset) throws MalformedPCEPObjectException{
-		ObjectLength=((bytes[offset+2]<<8)& 0xFF00) |  (bytes[offset+3] & 0xFF);
-		this.object_bytes=new byte[ObjectLength];
-		System.arraycopy(bytes, offset, object_bytes, 0, ObjectLength);
-		decodeHeader();
-		decode();
-	}
+  public void decode(byte[] bytes, int offset) throws MalformedPCEPObjectException {
+    ObjectLength = ((bytes[offset + 2] << 8) & 0xFF00) | (bytes[offset + 3] & 0xFF);
+    this.object_bytes = new byte[ObjectLength];
+    System.arraycopy(bytes, offset, object_bytes, 0, ObjectLength);
+    decodeHeader();
+    decode();
+  }
 
-	/**
+  /**
 	 * Encodes the header of the PCEP object (4 bytes)
 	 */
-	public void encode_header() {
-		object_bytes[0]=(byte)ObjectClass;
-		object_bytes[1]=(byte)( ( (OT<<4) & 0xF0) | ( (Res<<2) & 0x0C) | (((Pbit?1:0)<<1) & 0x02) | (Ibit?1:0));
-		object_bytes[2]=(byte)((ObjectLength>>8) & 0xFF);
-		object_bytes[3]=(byte)(ObjectLength & 0xFF);
-	}
+  public void encode_header() {
+    object_bytes[0] = (byte) ObjectClass;
+    object_bytes[1] = (byte) (((OT << 4) & 0xF0) | ((Res << 2) & 0x0C) | (((Pbit ? 1 : 0) << 1) & 0x02) | (Ibit ? 1 : 0));
+    object_bytes[2] = (byte) ((ObjectLength >> 8) & 0xFF);
+    object_bytes[3] = (byte) (ObjectLength & 0xFF);
+  }
 
-	/**
+  /**
 	 * Decodes the PCEP Object Header
 	 */
-	public void decodeHeader(){
-		ObjectClass=(int)object_bytes[0];
-		OT=(object_bytes[1]>>4)& 0x0F;
-		ObjectLength=((object_bytes[2]<<8)& 0xFF00) |  (object_bytes[3] & 0xFF);
-		Res=(object_bytes[1]&0x0C)>>2;
-		Pbit=(object_bytes[1]&0x02)==0x02;
-		Ibit=(object_bytes[1]&0x01)==0x01;
-	}
+  public void decodeHeader() {
+    ObjectClass = (int) object_bytes[0];
+    OT = (object_bytes[1] >> 4) & 0x0F;
+    ObjectLength = ((object_bytes[2] << 8) & 0xFF00) | (object_bytes[3] & 0xFF);
+    Res = (object_bytes[1] & 0x0C) >> 2;
+    Pbit = (object_bytes[1] & 0x02) == 0x02;
+    Ibit = (object_bytes[1] & 0x01) == 0x01;
+  }
 
-	/**
+  /**
 	 * Returns the Object-Class (8 bits) which  identifies the PCEP object class.
 	 */
-	public int getObjectClass() {
-		return ObjectClass;
-	}
+  public int getObjectClass() {
+    return ObjectClass;
+  }
 
-	/**
+  /**
 	 * Sets the Object-Class (8 bits) which  identifies the PCEP object class.
 	 * @param objectClass Object-Class
 	 */
-	public void setObjectClass(int objectClass) {
-		ObjectClass = objectClass;
-	}
+  public void setObjectClass(int objectClass) {
+    ObjectClass = objectClass;
+  }
 
-	/**
+  /**
 	 * 
 	 * @return OT
 	 */
-	public int getOT(){
-		return OT;
-	}
+  public int getOT() {
+    return OT;
+  }
 
-	/**
+  /**
 	 * 
 	 * @param oT
 	 */
-	public void setOT(int oT){
-		OT = oT;
-	}
+  public void setOT(int oT) {
+    OT = oT;
+  }
 
-	/**
+  /**
 	 * 
 	 * @return Res
 	 */
-	public int getRes() {
-		return Res;
-	}
+  public int getRes() {
+    return Res;
+  }
 
-	/**
+  /**
 	 * 
 	 * @param res
 	 */
-	public void setRes(int res) {
-		Res = res;
-	}
+  public void setRes(int res) {
+    Res = res;
+  }
 
+  public boolean isPbit() {
+    return Pbit;
+  }
 
+  public void setPbit(boolean pbit) {
+    Pbit = pbit;
+  }
 
-	public boolean isPbit() {
-		return Pbit;
-	}
+  public boolean isIbit() {
+    return Ibit;
+  }
 
-	public void setPbit(boolean pbit) {
-		Pbit = pbit;
-	}
+  public void setIbit(boolean ibit) {
+    Ibit = ibit;
+  }
 
-	public boolean isIbit() {
-		return Ibit;
-	}
-
-	public void setIbit(boolean ibit) {
-		Ibit = ibit;
-	}
-
-	/**
+  /**
 	 * Get the object Length. Generic for all objects
 	 * @return Object Length
 	 */
-	public int getLength() {
-		return ObjectLength;
-	}
+  public int getLength() {
+    return ObjectLength;
+  }
 
+  protected void setObjectLength(int objectLength) {
+    ObjectLength = objectLength;
+  }
 
+  public byte[] getObject_bytes() {
+    return object_bytes;
+  }
 
-//	/**
-//	 * 
-//	 * @param objectLength
-//	 */
-//	public void setObjectLength(int objectLength) {
-//		ObjectLength = objectLength;
-//	}
+  public void setObject_bytes(byte[] object_bytes) {
+    this.object_bytes = object_bytes;
+  }
 
-	protected void setObjectLength(int objectLength) {
-		ObjectLength = objectLength;
-	}
-
-	public byte[] getObject_bytes() {
-		return object_bytes;
-	}
-
-	public void setObject_bytes(byte[] object_bytes) {
-		this.object_bytes = object_bytes;
-	}
-
-	/**
+  /**
 	 * Get the bytes of the message. Remember to call encode first!!!
 	 * @return Bytes of the message
 	 */
-	public byte[] getBytes() {
-		return object_bytes;
-	}	
+  public byte[] getBytes() {
+    return object_bytes;
+  }
 
-
-	/**
+  /**
 	 * Static method to obtain the object class of an object encoded in a byte array
 	 * @param bytes Byte array where the object appears
 	 * @param offset Byte where the the object starts in the byte array
 	 * @return ObjectClass
 	 */
-	public static int getObjectClass(byte[] bytes, int offset){
-		try {
-			int obc= (int)(bytes[offset]&0xFF);
-			return obc;
-		}
-		catch (ArrayIndexOutOfBoundsException e){
-			return 0;
-		}
+  public static int getObjectClass(byte[] bytes, int offset) {
+    try {
+      int obc = (int) (bytes[offset] & 0xFF);
+      return obc;
+    } catch (ArrayIndexOutOfBoundsException e) {
+      return 0;
+    }
+  }
 
-	}
-
-	/**
+  /**
 	 * Static method to get the Object type of an object encoded in a byte array
 	 * @param bytes Byte array where the object appears
 	 * @param offset Byte where the the object starts in the byte array
 	 * @return ObjectType
 	 */
-	public static int getObjectType(byte[] bytes, int offset){
-		try {
-			int obc=(((bytes[offset+1]&0xFF)>>>4)& 0x0F);
-			return obc;
-		}
-		catch (ArrayIndexOutOfBoundsException e){
-			return 0;
-		}
-	}
+  public static int getObjectType(byte[] bytes, int offset) {
+    try {
+      int obc = (((bytes[offset + 1] & 0xFF) >>> 4) & 0x0F);
+      return obc;
+    } catch (ArrayIndexOutOfBoundsException e) {
+      return 0;
+    }
+  }
 
-	/**
+  /**
 	 * Static method to get the length of an object in a sequence of bytes
 	 * @param bytes Byte array where the object appears
 	 * @param offset Byte where the the object starts in the byte array
 	 * @return ObjectLegth
 	 */
-	public static int getObjectLength(byte[] bytes, int offset){
-		return (((int)((bytes[offset+2]&0xFF)<<8)& 0xFF00)|  ((int)bytes[offset+3] & 0xFF));
-	}
+  public static int getObjectLength(byte[] bytes, int offset) {
+    return (((int) ((bytes[offset + 2] & 0xFF) << 8) & 0xFF00) | ((int) bytes[offset + 3] & 0xFF));
+  }
 
-
-	public static boolean supportedObject(int oc){
-		if ((oc>ObjectParameters.PCEP_OBJECT_CLASS_CLOSE)|(oc==0)){
-			return false;
-		}
-		else {
-			return true;
-		}
-	}
+  public static boolean supportedObject(int oc) {
+    if ((oc > ObjectParameters.PCEP_OBJECT_CLASS_CLOSE) | (oc == 0)) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 }

@@ -1,5 +1,4 @@
 package es.tid.pce.pcep.objects;
-
 import es.tid.pce.pcep.objects.tlvs.PCEPTLV;
 import es.tid.pce.pcep.objects.tlvs.PathSetupTLV;
 import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
@@ -67,168 +66,132 @@ import es.tid.protocol.commons.ByteHandler;
  * @author jaume fixed by ogondio
  *
  */
+public class SRP extends PCEPObject {
+  private long SRP_ID_number;
 
-public class SRP extends PCEPObject
-{
+  private SymbolicPathNameTLV symPathName;
 
-	private long SRP_ID_number;
+  private boolean rFlag;
 
-	private SymbolicPathNameTLV symPathName;
+  private PathSetupTLV pathSetupTLV;
 
-	private boolean rFlag;
+  public SRP() {
+    super();
+    this.setObjectClass(ObjectParameters.PCEP_OBJECT_CLASS_SRP);
+    this.setOT(1);
+  }
 
-	private PathSetupTLV pathSetupTLV;
+  public SRP(byte[] bytes, int offset) throws MalformedPCEPObjectException {
+    super(bytes, offset);
+    decode();
+  }
 
+  public void encode() {
+    ObjectLength = 4 + 4 + 4;
+    if (symPathName != null) {
+      symPathName.encode();
+      ObjectLength = ObjectLength + symPathName.getTotalTLVLength();
+    }
+    if (pathSetupTLV != null) {
+      try {
+        pathSetupTLV.encode();
+        this.ObjectLength += pathSetupTLV.getTotalTLVLength();
+      } catch (Exception e) {
+        log.warn(e.getMessage());
+      }
+    }
+    object_bytes = new byte[ObjectLength];
+    encode_header();
+    int offset = 4;
+    offset += 3;
+    ByteHandler.BoolToBuffer(7 + offset * 8, rFlag, object_bytes);
+    offset += 1;
+    ByteHandler.IntToBuffer(0, offset * 8, 32, (int) SRP_ID_number, this.object_bytes);
+    offset += 4;
+    if (symPathName != null) {
+      System.arraycopy(symPathName.getTlv_bytes(), 0, this.object_bytes, offset, symPathName.getTotalTLVLength());
+      offset = offset + symPathName.getTotalTLVLength();
+    }
+    if (pathSetupTLV != null) {
+      System.arraycopy(pathSetupTLV.getTlv_bytes(), 0, this.object_bytes, offset, pathSetupTLV.getTotalTLVLength());
+      offset += pathSetupTLV.getTotalTLVLength();
+    }
+  }
 
-	public SRP()
-	{
-		super();
-		this.setObjectClass(ObjectParameters.PCEP_OBJECT_CLASS_SRP);
-		this.setOT(1);
-	}
+  @Override public void decode() throws MalformedPCEPObjectException {
+    if (ObjectLength < 12) {
+      throw new MalformedPCEPObjectException();
+    }
+    rFlag = (ByteHandler.easyCopy(7, 7, object_bytes[7]) == 1) ? true : false;
+    SRP_ID_number = ByteHandler.easyCopy(0, 31, object_bytes[8], object_bytes[9], object_bytes[10], object_bytes[11]);
+    boolean fin;
+    int offset = 12;
+    if (ObjectLength == 12) {
+      fin = true;
+    } else {
+      fin = false;
+    }
+    while (!fin) {
+      int tlvtype = PCEPTLV.getType(this.getObject_bytes(), offset);
+      int tlvlength = PCEPTLV.getTotalTLVLength(this.getObject_bytes(), offset);
+      switch (tlvtype) {
+        case ObjectParameters.PCEP_TLV_TYPE_SYMBOLIC_PATH_NAME:
+        symPathName = new SymbolicPathNameTLV(this.getObject_bytes(), offset);
+        break;
+        case ObjectParameters.PCEP_TLV_PATH_SETUP:
+        pathSetupTLV = new PathSetupTLV(this.getObject_bytes(), offset);
+        break;
+        default:
+        log.warn("Unknown or unexpected TLV found");
+        break;
+      }
+      offset = offset + tlvlength;
+      if (offset >= ObjectLength) {
+        fin = true;
+      }
+    }
+  }
 
-	public SRP(byte []bytes, int offset)throws MalformedPCEPObjectException 
-	{
-		super(bytes, offset);
-		decode();
-	}
+  public long getSRP_ID_number() {
+    return SRP_ID_number;
+  }
 
-	public void encode() 
-	{
-		ObjectLength = 4 + 4 + 4;
-		if (symPathName!=null)
-		{
-			symPathName.encode();
-			ObjectLength=ObjectLength+symPathName.getTotalTLVLength();
-		}
+  public void setSRP_ID_number(long sRP_ID_number) {
+    SRP_ID_number = sRP_ID_number;
+  }
 
-		if (pathSetupTLV!=null){
-			try {
-				pathSetupTLV.encode();
-				this.ObjectLength+=pathSetupTLV.getTotalTLVLength();	
+  public SymbolicPathNameTLV getSymPathName() {
+    return symPathName;
+  }
 
-			}catch (Exception e){
-				log.warn(e.getMessage());
-			}
+  public void setSymPathName(SymbolicPathNameTLV symPathName) {
+    this.symPathName = symPathName;
+  }
 
-		}
-		object_bytes = new byte[ObjectLength];
-		encode_header();		
-		int offset = 4;
-		offset += 3;
-		ByteHandler.BoolToBuffer(7 + offset*8, rFlag,object_bytes);
+  public boolean isrFlag() {
+    return rFlag;
+  }
 
-		offset += 1;
-		//FIXME
-		ByteHandler.IntToBuffer(0,offset*8, 32,(int)SRP_ID_number,this.object_bytes);
+  public void setrFlag(boolean rFlag) {
+    this.rFlag = rFlag;
+  }
 
-		offset += 4;
+  public PathSetupTLV getPathSetupTLV() {
+    return pathSetupTLV;
+  }
 
-		if (symPathName != null)
-		{
-			System.arraycopy(symPathName.getTlv_bytes(),0,this.object_bytes,offset,symPathName.getTotalTLVLength());
-			offset=offset+symPathName.getTotalTLVLength();
-		}
+  public void setPathSetupTLV(PathSetupTLV pathSetupTLV) {
+    this.pathSetupTLV = pathSetupTLV;
+  }
 
-		if (pathSetupTLV!=null){
-			System.arraycopy(pathSetupTLV.getTlv_bytes(), 0,this.object_bytes, offset, pathSetupTLV.getTotalTLVLength());
-			offset += pathSetupTLV.getTotalTLVLength();
-		}
-
-	}
-
-	@Override
-	public void decode() throws MalformedPCEPObjectException 
-	{
-
-		if (ObjectLength<12){
-			throw new MalformedPCEPObjectException();
-		}
-
-		rFlag = (ByteHandler.easyCopy(7,7,object_bytes[7]) == 1) ? true : false ;
-
-		SRP_ID_number = ByteHandler.easyCopy(0,31,object_bytes[8],object_bytes[9],object_bytes[10],object_bytes[11]);
-
-		boolean fin;
-		int offset = 12;
-
-		if (ObjectLength==12){
-			fin=true;
-		}else {
-			fin = false;
-		}
-
-		while (!fin) {
-			int tlvtype=PCEPTLV.getType(this.getObject_bytes(), offset);
-			int tlvlength=PCEPTLV.getTotalTLVLength(this.getObject_bytes(), offset);
-
-			switch (tlvtype){
-				case ObjectParameters.PCEP_TLV_TYPE_SYMBOLIC_PATH_NAME:
-					symPathName=new SymbolicPathNameTLV(this.getObject_bytes(), offset);
-					break;		
-				case ObjectParameters.PCEP_TLV_PATH_SETUP:
-					pathSetupTLV=new PathSetupTLV(this.getObject_bytes(), offset);				
-					break;								
-				default:
-					log.warn("Unknown or unexpected TLV found");
-					//FIXME: Que hacemos con los desconocidos
-					break;
-			}
-
-			offset=offset+tlvlength;
-			if (offset>=ObjectLength){
-				fin=true;
-			}
-		}		
-	}
-
-	public long getSRP_ID_number() 
-	{
-		return SRP_ID_number;
-	}
-
-	public void setSRP_ID_number(long sRP_ID_number) 
-	{
-		SRP_ID_number = sRP_ID_number;
-	}
-
-	public SymbolicPathNameTLV getSymPathName() 
-	{
-		return symPathName;
-	}
-
-	public void setSymPathName(SymbolicPathNameTLV symPathName) 
-	{
-		this.symPathName = symPathName;
-	}
-
-	public boolean isrFlag() 
-	{
-		return rFlag;
-	}
-
-	public void setrFlag(boolean rFlag) 
-	{
-		this.rFlag = rFlag;
-	}
-
-	public PathSetupTLV getPathSetupTLV() {
-		return pathSetupTLV;
-	}
-
-	public void setPathSetupTLV(PathSetupTLV pathSetupTLV) {
-		this.pathSetupTLV = pathSetupTLV;
-	}
-
-	public String toString() {
-		StringBuffer sb=new StringBuffer(100);
-		sb.append("<SRP id = ");
-		sb.append(SRP_ID_number);	
-		if (symPathName!=null){
-			sb.append(symPathName.toString());
-		}
-		sb.append(">");
-		return sb.toString();	
-	}
-
+  public String toString() {
+    StringBuffer sb = new StringBuffer(100);
+    sb.append("<SRP id = ");
+    sb.append(SRP_ID_number);
+    if (symPathName != null) {
+      sb.append(symPathName.toString());
+    }
+    sb.append(">");
+    return sb.toString();
+  }
 }
