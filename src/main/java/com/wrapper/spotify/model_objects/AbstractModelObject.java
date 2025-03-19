@@ -78,7 +78,6 @@ public abstract class AbstractModelObject implements IModelObject {
     public T[] createModelObjectArray(String json, String key) {
       return createModelObjectArray(new JsonParser().parse(json).getAsJsonObject().get(key).getAsJsonArray());
     }
-
     /**
      * Create an array of model objects out of a json array object and type token.
      *
