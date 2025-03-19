@@ -1,15 +1,5 @@
-/*
- * Title:        CloudSim Toolkit
- * Description:  CloudSim (Cloud Simulation) Toolkit for Modeling and Simulation of Clouds
- * Licence:      GPL - http://www.gnu.org/copyleft/gpl.html
- *
- * Copyright (c) 2009-2012, The University of Melbourne, Australia
- */
-
 package org.cloudbus.cloudsim.lists;
-
 import java.util.List;
-
 import org.cloudbus.cloudsim.Host;
 
 /**
@@ -19,8 +9,7 @@ import org.cloudbus.cloudsim.Host;
  * @since CloudSim Toolkit 2.0
  */
 public class HostList {
-
-	/**
+  /**
 	 * Gets a {@link Host} with a given id.
 	 * 
 	 * @param <T> the generic type
@@ -31,16 +20,16 @@ public class HostList {
 	 * @pre id >= 0
 	 * @post $none
 	 */
-	public static <T extends Host> T getById(List<T> hostList, int id) {
-		for (T host : hostList) {
-			if (host.getId() == id) {
-				return host;
-			}
-		}
-		return null;
-	}
+  public static <T extends Host> T getById(List<T> hostList, int id) {
+    for (T host : hostList) {
+      if (host.getId() == id) {
+        return host;
+      }
+    }
+    return null;
+  }
 
-	/**
+  /**
 	 * Gets the total number of PEs for all Hosts.
 	 * 
 	 * @param <T> the generic type
@@ -49,15 +38,15 @@ public class HostList {
 	 * @pre $none
 	 * @post $result >= 0
 	 */
-	public static <T extends Host> int getNumberOfPes(List<T> hostList) {
-		int numberOfPes = 0;
-		for (T host : hostList) {
-			numberOfPes += host.getPeList().size();
-		}
-		return numberOfPes;
-	}
+  public static <T extends Host> int getNumberOfPes(List<T> hostList) {
+    int numberOfPes = 0;
+    for (T host : hostList) {
+      numberOfPes += host.getPeList().size();
+    }
+    return numberOfPes;
+  }
 
-	/**
+  /**
 	 * Gets the total number of <tt>FREE</tt> (non-busy) PEs for all Hosts.
 	 * 
 	 * @param <T> the generic type
@@ -66,15 +55,15 @@ public class HostList {
 	 * @pre $none
 	 * @post $result >= 0
 	 */
-	public static <T extends Host> int getNumberOfFreePes(List<T> hostList) {
-		int numberOfFreePes = 0;
-		for (T host : hostList) {
-			numberOfFreePes += PeList.getNumberOfFreePes(host.getPeList());
-		}
-		return numberOfFreePes;
-	}
+  public static <T extends Host> int getNumberOfFreePes(List<T> hostList) {
+    int numberOfFreePes = 0;
+    for (T host : hostList) {
+      numberOfFreePes += PeList.getNumberOfFreePes(host.getPeList());
+    }
+    return numberOfFreePes;
+  }
 
-	/**
+  /**
 	 * Gets the total number of <tt>BUSY</tt> PEs for all Hosts.
 	 * 
 	 * @param <T> the generic type
@@ -83,15 +72,15 @@ public class HostList {
 	 * @pre $none
 	 * @post $result >= 0
 	 */
-	public static <T extends Host> int getNumberOfBusyPes(List<T> hostList) {
-		int numberOfBusyPes = 0;
-		for (T host : hostList) {
-			numberOfBusyPes += PeList.getNumberOfBusyPes(host.getPeList());
-		}
-		return numberOfBusyPes;
-	}
+  public static <T extends Host> int getNumberOfBusyPes(List<T> hostList) {
+    int numberOfBusyPes = 0;
+    for (T host : hostList) {
+      numberOfBusyPes += PeList.getNumberOfBusyPes(host.getPeList());
+    }
+    return numberOfBusyPes;
+  }
 
-	/**
+  /**
 	 * Gets the first host with free PEs.
 	 * 
 	 * @param <T> the generic type
@@ -100,11 +89,11 @@ public class HostList {
 	 * @pre $none
 	 * @post $none
 	 */
-	public static <T extends Host> T getHostWithFreePe(List<T> hostList) {
-		return getHostWithFreePe(hostList, 1);
-	}
+  public static <T extends Host> T getHostWithFreePe(List<T> hostList) {
+    return getHostWithFreePe(hostList, 1);
+  }
 
-	/**
+  /**
 	 * Gets the first Host with a specified number of free PEs.
 	 * 
 	 * @param <T> the generic type
@@ -114,16 +103,16 @@ public class HostList {
 	 * @pre $none
 	 * @post $none
 	 */
-	public static <T extends Host> T getHostWithFreePe(List<T> hostList, int pesNumber) {
-		for (T host : hostList) {
-			if (PeList.getNumberOfFreePes(host.getPeList()) >= pesNumber) {
-				return host;
-			}
-		}
-		return null;
-	}
+  public static <T extends Host> T getHostWithFreePe(List<T> hostList, int pesNumber) {
+    for (T host : hostList) {
+      if (PeList.getNumberOfFreePes(host.getPeList()) >= pesNumber) {
+        return host;
+      }
+    }
+    return null;
+  }
 
-	/**
+  /**
 	 * Sets the status of a particular PE on a given Host.
 	 * 
 	 * @param <T> the generic type
@@ -137,12 +126,11 @@ public class HostList {
 	 * @pre peId >= 0
 	 * @post $none
 	 */
-	public static <T extends Host> boolean setPeStatus(List<T> hostList, int status, int hostId, int peId) {
-		T host = getById(hostList, hostId);
-		if (host == null) {
-			return false;
-		}
-		return host.setPeStatus(peId, status);
-	}
-
+  public static <T extends Host> boolean setPeStatus(List<T> hostList, int status, int hostId, int peId) {
+    T host = getById(hostList, hostId);
+    if (host == null) {
+      return false;
+    }
+    return host.setPeStatus(peId, status);
+  }
 }

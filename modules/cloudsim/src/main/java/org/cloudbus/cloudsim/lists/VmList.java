@@ -1,15 +1,5 @@
-/*
- * Title:        CloudSim Toolkit
- * Description:  CloudSim (Cloud Simulation) Toolkit for Modeling and Simulation of Clouds
- * Licence:      GPL - http://www.gnu.org/copyleft/gpl.html
- *
- * Copyright (c) 2009-2012, The University of Melbourne, Australia
- */
-
 package org.cloudbus.cloudsim.lists;
-
 import java.util.List;
-
 import org.cloudbus.cloudsim.Vm;
 
 /**
@@ -19,8 +9,7 @@ import org.cloudbus.cloudsim.Vm;
  * @since CloudSim Toolkit 2.0
  */
 public class VmList {
-
-	/**
+  /**
 	 * Gets a {@link Vm} with a given id.
 	 * 
 	 * @param id ID of required VM
@@ -46,16 +35,16 @@ public class VmList {
          * effect on the entire project and in the creation of simulations
          * that has to be priorly assessed.
 	 */
-	public static <T extends Vm> T getById(List<T> vmList, int id) {
-		for (T vm : vmList) {
-			if (vm.getId() == id) {
-				return vm;
-			}
-		}
-		return null;
-	}
+  public static <T extends Vm> T getById(List<T> vmList, int id) {
+    for (T vm : vmList) {
+      if (vm.getId() == id) {
+        return vm;
+      }
+    }
+    return null;
+  }
 
-	/**
+  /**
 	 * Gets a {@link Vm} with a given id and owned by a given user.
 	 * 
 	 * @param vmList list of existing VMs
@@ -65,13 +54,12 @@ public class VmList {
 	 * @pre $none
 	 * @post $none
 	 */
-	public static <T extends Vm> T getByIdAndUserId(List<T> vmList, int id, int userId) {
-		for (T vm : vmList) {
-			if (vm.getId() == id && vm.getUserId() == userId) {
-				return vm;
-			}
-		}
-		return null;
-	}
-
+  public static <T extends Vm> T getByIdAndUserId(List<T> vmList, int id, int userId) {
+    for (T vm : vmList) {
+      if (vm.getId() == id && vm.getUserId() == userId) {
+        return vm;
+      }
+    }
+    return null;
+  }
 }
