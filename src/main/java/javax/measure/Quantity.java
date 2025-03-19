@@ -1,24 +1,16 @@
-/**
- * Unit-API - Units of Quantity API for Java
- * Copyright (c) 2014 Jean-Marie Dautelle, Werner Keil, V2COM
- * All rights reserved.
- *
- * See LICENSE.txt for details.
- */
 package javax.measure;
-
 import javax.measure.function.ValueSupplier;
 
 /**
  * <p>
- * Represents quantitative properties or attributes of thing. {@link javax.measure.quantity.Mass Mass}, time,
+ * Represents a quantitative properties or attributes of thing. Mass, time,
  * distance, heat, and angular separation are among the familiar examples of
  * quantitative properties.
  * </p>
  *
  * <p>
- * This interface extends {@link Measurement} to specify the quantitative property associated to a
- * class through class parameterization and to provide some compile time
+ * This interface is used to specify the quantitative property associated to a
+ * class through class parameterization and to provide limited compile time
  * dimension consistency. <br>
  * <br>
  * <code> Unit<Mass> pound = ... Quantity<Length> size = ... Sensor<Temperature><br>
@@ -37,21 +29,19 @@ import javax.measure.function.ValueSupplier;
  *      Quantity</a>
  * @see <a href="http://en.wikipedia.org/wiki/Conversion_of_units">Wikipedia:
  *      Conversion of units</a>
- * @see Measurement
- * @version 0.14, Date: 2014-09-16
+ * @version 0.13, Date: 2014-09-06
  */
 public interface Quantity<Q extends Quantity<Q>> extends Measurement<Q>, ValueSupplier<Number> {
-
-	/**
+  /**
 	 * Returns the sum of this {@code Quantity} with the one specified.
 	 *
 	 * @param that
 	 *            the {@code Quantity} to be added.
 	 * @return <code>this + that</code>.
 	 */
-	Quantity<Q> add(Quantity<Q> that);
+  Quantity<Q> add(Quantity<Q> that);
 
-	/**
+  /**
 	 * Returns the difference between this {@code Quantity} and the one
 	 * specified.
 	 *
@@ -59,9 +49,9 @@ public interface Quantity<Q extends Quantity<Q>> extends Measurement<Q>, ValueSu
 	 *            the {@code Quantity} to be subtracted.
 	 * @return <code>this - that</code>.
 	 */
-	Quantity<Q> subtract(Quantity<Q> that);
+  Quantity<Q> subtract(Quantity<Q> that);
 
-	/**
+  /**
 	 * Returns the product of this {@code Quantity} divided by the {@code V}
 	 * value specified.
 	 *
@@ -71,9 +61,9 @@ public interface Quantity<Q extends Quantity<Q>> extends Measurement<Q>, ValueSu
 	 *            the {@code V} divisor.
 	 * @return <code>this / that</code>.
 	 */
-	Quantity<?> divide(Quantity<?> divisor);
+  Quantity<?> divide(Quantity<?> divisor);
 
-	/**
+  /**
 	 * Returns the product of this {@code Quantity} divided by the {@code Number}
 	 * specified.
 	 *
@@ -81,18 +71,18 @@ public interface Quantity<Q extends Quantity<Q>> extends Measurement<Q>, ValueSu
 	 *            the {@code V} divisor.
 	 * @return <code>this / that</code>.
 	 */
-	Quantity<Q> divide(Number that);
+  Quantity<Q> divide(Number that);
 
-	/**
+  /**
 	 * Returns the product of this {@code Quantity} with the one specified.
 	 *
 	 * @param that
 	 *            the {@code Quantity} multiplier.
 	 * @return <code>this * that</code>.
 	 */
-	Quantity<?> multiply(Quantity<?> multiplier);
+  Quantity<?> multiply(Quantity<?> multiplier);
 
-	/**
+  /**
 	 * Returns the product of this {@code Quantity} with the {@code Number} value
 	 * specified.
 	 *
@@ -100,21 +90,20 @@ public interface Quantity<Q extends Quantity<Q>> extends Measurement<Q>, ValueSu
 	 *            the {@code Number} multiplier.
 	 * @return <code>this * that</code>.
 	 */
-	Quantity<Q> multiply(Number multiplier);
+  Quantity<Q> multiply(Number multiplier);
 
-	/**
+  /**
 	 * Returns a {@code Quantity} whose unit is {@code unit.inverse()}.
 	 *
 	 * @return {@code Quantity with this.getUnit().inverse()}.
 	 */
-	Quantity<Q> inverse();
+  Quantity<Q> inverse();
 
-    /**
+  /**
      * Returns this {@code Quantity} converted into another (compatible) {@code Unit}.
      *
      * @param unit
      * @return the converted result.
      */
-	@Override
-    Quantity<Q> to(Unit<Q> unit);
+  @Override Quantity<Q> to(Unit<Q> unit);
 }
