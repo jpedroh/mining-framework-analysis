@@ -1,13 +1,8 @@
-/**
- * Copyright 2014 Google Inc. All Rights Reserved.
- */
 package com.google.appengine.gcloudapp;
-
 import com.google.appengine.repackaged.com.google.api.client.util.Throwables;
 import com.google.appengine.repackaged.com.google.common.io.ByteStreams;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -25,7 +20,6 @@ import java.util.List;
  * @threadSafe false
  */
 public class GCloudAppRun extends AbstractGcloudMojo {
-
   /**
    * The host and port on which to start the API server (in the format
    * host:port)
@@ -74,6 +68,7 @@ public class GCloudAppRun extends AbstractGcloudMojo {
    * @parameter expression="${gcloud.log_level}"
    */
   private String log_level;
+
   /**
    * Path to a file used to store request logs (defaults to a file in
    * --storage-path if not set)
@@ -81,6 +76,7 @@ public class GCloudAppRun extends AbstractGcloudMojo {
    * @parameter expression="${gcloud.logs_path}"
    */
   private String logs_path;
+
   /**
    * name of the authorization domain to use (default: gmail.com)
    *
@@ -130,6 +126,7 @@ public class GCloudAppRun extends AbstractGcloudMojo {
    * @parameter expression="${gcloud.datastore_path}"
    */
   private String datastore_path;
+
   /**
    * clear the datastore on startup (default: False)
    *
@@ -161,6 +158,7 @@ public class GCloudAppRun extends AbstractGcloudMojo {
    * @parameter expression="${gcloud.enable_sendmail}"
    */
   private boolean enable_sendmail;
+
   /**
    * Use mtime polling for detecting source code changes - useful if modifying
    * code from a remote machine using a distributed file system
@@ -168,6 +166,7 @@ public class GCloudAppRun extends AbstractGcloudMojo {
    * @parameter expression="${gcloud.use_mtime_file_watcher}"
    */
   private boolean use_mtime_file_watcher;
+
   /**
    * JVM_FLAG Additional arguments to pass to the java command when launching an
    * instance of the app. May be specified more than once. Example:
@@ -184,6 +183,7 @@ public class GCloudAppRun extends AbstractGcloudMojo {
    * @parameter expression="${gcloud.default_gcs_bucket_name}"
    */
   private String default_gcs_bucket_name;
+
   /**
    * enable_cloud_datastore
    *
@@ -205,6 +205,7 @@ public class GCloudAppRun extends AbstractGcloudMojo {
    * @parameter expression="${gcloud.php_executable_path}"
    */
   private String php_executable_path;
+
   /**
    * The script to run at the startup of new Python runtime instances (useful
    * for tools such as debuggers)
@@ -212,6 +213,7 @@ public class GCloudAppRun extends AbstractGcloudMojo {
    * @parameter expression="${gcloud.python_startup_script}"
    */
   private String python_startup_script;
+
   /**
    * Generate an error on datastore queries that require a composite index not
    * found in index.yaml
@@ -219,12 +221,14 @@ public class GCloudAppRun extends AbstractGcloudMojo {
    * @parameter expression="${gcloud.require_indexes}"
    */
   private boolean require_indexes;
+
   /**
    * Logs the contents of e-mails sent using the Mail API
    *
    * @parameter expression="${gcloud.show_mail_body}"
    */
   private boolean show_mail_body;
+
   /**
    * Allow TLS to be used when the SMTP server announces TLS support (ignored if
    * --smtp-host is not set)
@@ -232,6 +236,7 @@ public class GCloudAppRun extends AbstractGcloudMojo {
    * @parameter expression="${gcloud.smtp_allow_tls}"
    */
   private boolean smtp_allow_tls;
+
   /**
    * The host and port of an SMTP server to use to transmit e-mail sent using
    * the Mail API, in the format host:port
@@ -239,6 +244,7 @@ public class GCloudAppRun extends AbstractGcloudMojo {
    * @parameter expression="${gcloud.smtp_host}"
    */
   private String smtp_host;
+
   /**
    * Password to use when connecting to the SMTP server specified with
    * --smtp-host
@@ -246,6 +252,7 @@ public class GCloudAppRun extends AbstractGcloudMojo {
    * @parameter expression="${gcloud.smtp_password}"
    */
   private String smtp_password;
+
   /**
    * Username to use when connecting to the SMTP server specified with
    * --smtp-host
@@ -262,11 +269,9 @@ public class GCloudAppRun extends AbstractGcloudMojo {
    *
    * @parameter expression="${gcloud.custom_entrypoint}"
    */
-   
   private String custom_entrypoint;
 
-  @Override
-  public void execute() throws MojoExecutionException, MojoFailureException {
+  @Override public void execute() throws MojoExecutionException, MojoFailureException {
     getLog().info("");
     if (application_directory == null) {
       application_directory = maven_project.getBuild().getDirectory() + "/" + maven_project.getBuild().getFinalName();
@@ -283,9 +288,7 @@ public class GCloudAppRun extends AbstractGcloudMojo {
     if (!appDirFile.isDirectory()) {
       throw new MojoExecutionException("The application directory is not a directory : " + application_directory);
     }
-    //Just before starting, just to make sure, shut down any running devserver on this port.
     stopDevAppServer();
-
     try {
       ArrayList<String> devAppServerCommand = getCommand(application_directory);
       startCommand(appDirFile, devAppServerCommand, WaitDirective.WAIT_SERVER_STOPPED);
@@ -295,23 +298,17 @@ public class GCloudAppRun extends AbstractGcloudMojo {
     }
   }
 
-  @Override
-  protected ArrayList<String> getCommand(String appDir) throws MojoExecutionException {
-
+  @Override protected ArrayList<String> getCommand(String appDir) throws MojoExecutionException {
     getLog().info("Running gcloud app run...");
-
     ArrayList<String> devAppServerCommand = new ArrayList<>();
     setupInitialCommands(devAppServerCommand);
-
-    //devAppServerCommand.add("run");
     File appDirectory = new File(appDir);
     File f = new File(appDirectory, "WEB-INF/appengine-web.xml");
-    if (!f.exists()) { // EAR project possibly, add all modules one by one:
+    if (!f.exists()) {
       f = new File(appDirectory, "app.yaml");
-      boolean isAppYamlGenerated = new File (appDirectory, ".appyamlgenerated").exists();
+      boolean isAppYamlGenerated = new File(appDirectory, ".appyamlgenerated").exists();
       if (f.exists() && !isAppYamlGenerated) {
-          //executeAppCfgStagingCommand(appDir);
-          devAppServerCommand.add(f.getAbsolutePath());
+        devAppServerCommand.add(f.getAbsolutePath());
       } else {
         boolean oneMod = false;
         for (File w : appDirectory.listFiles()) {
@@ -322,36 +319,26 @@ public class GCloudAppRun extends AbstractGcloudMojo {
           }
         }
         if (!oneMod) {
-         executeAppCfgStagingCommand(application_directory);
-         devAppServerCommand.add(appDirectory.getAbsolutePath());
-
+          executeAppCfgStagingCommand(application_directory);
+          devAppServerCommand.add(appDirectory.getAbsolutePath());
         }
       }
-
     } else {
       f = new File(appDirectory, "app.yaml");
-      boolean isAppYamlGenerated = new File (appDirectory, ".appyamlgenerated").exists();
+      boolean isAppYamlGenerated = new File(appDirectory, ".appyamlgenerated").exists();
       if (f.exists() && !isAppYamlGenerated) {
-        //executeAppCfgStagingCommand(appDir);
         devAppServerCommand.add(f.getAbsolutePath());
       } else {
-        // Point to our application
         executeAppCfgStagingCommand(application_directory);
-      devAppServerCommand.add(appDirectory.getAbsolutePath()+"/app.yaml");
+        devAppServerCommand.add(appDirectory.getAbsolutePath() + "/app.yaml");
       }
     }
-
     if ((modules != null) && !modules.isEmpty()) {
       for (String modDir : modules) {
         getLog().info("Running gcloud app run with extra module in " + modDir);
         devAppServerCommand.add(new File(modDir).getAbsolutePath());
-
       }
-
     }
-
-    // Add in additional options for starting the DevAppServer
-
     if (host != null) {
       String[] parts = host.split(":");
       devAppServerCommand.add("--host");
@@ -373,7 +360,6 @@ public class GCloudAppRun extends AbstractGcloudMojo {
       devAppServerCommand.add("--admin_port");
       devAppServerCommand.add(parts[1]);
     }
-
     if (storage_path != null) {
       devAppServerCommand.add("--storage_path=" + storage_path);
     }
@@ -392,7 +378,6 @@ public class GCloudAppRun extends AbstractGcloudMojo {
     if (appidentity_email_address != null) {
       devAppServerCommand.add("--appidentity_email_address=" + appidentity_email_address);
     }
-
     if (appidentity_private_key_path != null) {
       devAppServerCommand.add("--appidentity_private_key_path=" + appidentity_private_key_path);
     }
@@ -402,7 +387,6 @@ public class GCloudAppRun extends AbstractGcloudMojo {
     if (datastore_path != null) {
       devAppServerCommand.add("--datastore_path=" + datastore_path);
     }
-
     if (clear_datastore) {
       devAppServerCommand.add("--clear_datastore");
     }
@@ -438,7 +422,7 @@ public class GCloudAppRun extends AbstractGcloudMojo {
     if (python_startup_script != null) {
       devAppServerCommand.add("--python_startup_script=" + python_startup_script);
     }
-    if (require_indexes) { 
+    if (require_indexes) {
       devAppServerCommand.add("--require_indexes");
     }
     if (show_mail_body) {
@@ -482,16 +466,10 @@ public class GCloudAppRun extends AbstractGcloudMojo {
       connection.setDoOutput(true);
       connection.setDoInput(true);
       connection.setRequestMethod("GET");
-      //     connection.getOutputStream().write(110);
       ByteStreams.toByteArray(connection.getInputStream());
       connection.setReadTimeout(4000);
-//      connection.getOutputStream().flush();
-//      connection.getOutputStream().close();
-//      connection.getInputStream().close();
       connection.disconnect();
-
-      getLog().info("Shutting down Cloud SDK Server on port " + 8000
-              + " and waiting 4 seconds...");
+      getLog().info("Shutting down Cloud SDK Server on port " + 8000 + " and waiting 4 seconds...");
       Thread.sleep(4000);
     } catch (MalformedURLException e) {
       throw new MojoExecutionException("URL malformed attempting to stop the devserver : " + e.getMessage());
@@ -501,5 +479,4 @@ public class GCloudAppRun extends AbstractGcloudMojo {
       Throwables.propagate(e);
     }
   }
-
 }
