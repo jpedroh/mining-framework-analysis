@@ -1,22 +1,4 @@
-/**
- * redpen: a text inspection tool
- * Copyright (C) 2014 Recruit Technologies Co., Ltd. and contributors
- * (see CONTRIBUTORS.md)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.unigram.docvalidator.parser;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,31 +12,24 @@ import org.unigram.docvalidator.util.DVResource;
 import org.unigram.docvalidator.util.DocumentValidatorException;
 import org.unigram.docvalidator.util.ValidationConfigurationLoader;
 import org.unigram.docvalidator.util.ValidatorConfiguration;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-
 import static org.junit.Assert.*;
 
 public class MarkdownParserTest {
-
-  @Before
-  public void setup() {
+  @Before public void setup() {
   }
 
-  @Test
-  public void testNullDocument() {
+  @Test public void testNullDocument() {
     try {
       createFileContentFromInputStream(null);
       fail("no error");
     } catch (AssertionError as) {
-
     }
   }
 
-  @Test
-  public void testBasicDocument() throws UnsupportedEncodingException {
+  @Test public void testBasicDocument() throws UnsupportedEncodingException {
     String sampleText = "";
     sampleText += "# About Gekioko.\n";
     sampleText += "Gekioko pun pun maru means very very angry.\n";
@@ -71,19 +46,15 @@ public class MarkdownParserTest {
     sampleText += "    * Japan\n";
     sampleText += "\n";
     sampleText += "The word also have posive meaning. Hower it is a bit wired.";
-
     FileContent doc = createFileContent(sampleText);
     assertNotNull("doc is null", doc);
     assertEquals(3, doc.getNumberOfSections());
-    // first section
     final Section firstSection = doc.getSection(0);
     assertEquals(1, firstSection.getHeaderContentsListSize());
     assertEquals("", firstSection.getHeaderContent(0).content);
     assertEquals(0, firstSection.getNumberOfLists());
     assertEquals(0, firstSection.getNumberOfParagraphs());
     assertEquals(1, firstSection.getNumberOfSubsections());
-
-    // 2nd section
     final Section secondSection = doc.getSection(1);
     assertEquals(1, secondSection.getHeaderContentsListSize());
     assertEquals("About Gekioko.", secondSection.getHeaderContent(0).content);
@@ -92,14 +63,12 @@ public class MarkdownParserTest {
     assertEquals(2, secondSection.getNumberOfParagraphs());
     assertEquals(1, secondSection.getNumberOfSubsections());
     assertEquals(firstSection, secondSection.getParentSection());
-    // check paragraph in 2nd section
     assertEquals(1, secondSection.getParagraph(0).getNumberOfSentences());
     assertEquals(true, secondSection.getParagraph(0).getSentence(0).isFirstSentence);
     assertEquals(1, secondSection.getParagraph(0).getSentence(0).position);
     assertEquals(1, secondSection.getParagraph(1).getNumberOfSentences());
     assertEquals(true, secondSection.getParagraph(1).getSentence(0).isFirstSentence);
     assertEquals(3, secondSection.getParagraph(1).getSentence(0).position);
-
     Section lastSection = doc.getSection(doc.getNumberOfSections() - 1);
     assertEquals(1, lastSection.getNumberOfLists());
     assertEquals(5, lastSection.getListBlock(0).getNumberOfListElements());
@@ -108,8 +77,6 @@ public class MarkdownParserTest {
     assertEquals(0, lastSection.getNumberOfSubsections());
     assertEquals("About Gunma.", lastSection.getHeaderContent(0).content);
     assertEquals(secondSection, lastSection.getParentSection());
-
-    // check paragraph in last section
     assertEquals(1, lastSection.getParagraph(0).getNumberOfSentences());
     assertEquals(true, lastSection.getParagraph(0).getSentence(0).isFirstSentence);
     assertEquals(6, lastSection.getParagraph(0).getSentence(0).position);
@@ -120,10 +87,8 @@ public class MarkdownParserTest {
     assertEquals(14, lastSection.getParagraph(1).getSentence(1).position);
   }
 
-  @Test
-  public void testGenerateDocumentWithList() {
-    String sampleText =
-        "Threre are several railway companies in Japan as follows.\n";
+  @Test public void testGenerateDocumentWithList() {
+    String sampleText = "Threre are several railway companies in Japan as follows.\n";
     sampleText += "\n";
     sampleText += "- Tokyu\n";
     sampleText += "    - Toyoko Line\n";
@@ -144,12 +109,9 @@ public class MarkdownParserTest {
     assertEquals(1, doc.getSection(0).getListBlock(0).getListElement(4).getLevel());
   }
 
-  @Test
-  public void testGenerateDocumentWithMultipleSentenceInOneSentence() {
-    String sampleText =
-        "Tokyu is a good railway company. The company is reliable. In addition it is rich.";
-    String[] expectedResult = {"Tokyu is a good railway company.",
-        " The company is reliable.", " In addition it is rich."};
+  @Test public void testGenerateDocumentWithMultipleSentenceInOneSentence() {
+    String sampleText = "Tokyu is a good railway company. The company is reliable. In addition it is rich.";
+    String[] expectedResult = { "Tokyu is a good railway company.", " The company is reliable.", " In addition it is rich." };
     FileContent doc = createFileContent(sampleText);
     Section firstSections = doc.getSection(0);
     Paragraph firstParagraph = firstSections.getParagraph(0);
@@ -159,8 +121,7 @@ public class MarkdownParserTest {
     }
   }
 
-  @Test
-  public void testGenerateDocumentWithMultipleSentencesWithVaraiousStopCharacters() {
+  @Test public void testGenerateDocumentWithMultipleSentencesWithVaraiousStopCharacters() {
     String sampleText = "Is Tokyu a good railway company? The company is reliable. In addition it is rich!\n";
     FileContent doc = createFileContent(sampleText);
     Section firstSections = doc.getSection(0);
@@ -171,8 +132,7 @@ public class MarkdownParserTest {
     assertEquals(" In addition it is rich!", doc.getSection(0).getParagraph(0).getSentence(2).content);
   }
 
-  @Test
-  public void testGenerateDocumentWithMultipleSentenceInMultipleSentences() {
+  @Test public void testGenerateDocumentWithMultipleSentenceInMultipleSentences() {
     String sampleText = "Tokyu is a good railway company. The company is reliable. In addition it is rich.\n";
     sampleText += "I like the company. Howerver someone does not like it.";
     FileContent doc = createFileContent(sampleText);
@@ -181,16 +141,14 @@ public class MarkdownParserTest {
     assertEquals(5, firstParagraph.getNumberOfSentences());
   }
 
-  @Test
-  public void testGenerateDocumentWitVoidContent() {
+  @Test public void testGenerateDocumentWitVoidContent() {
     String sampleText = "";
     FileContent doc = createFileContent(sampleText);
     Section firstSections = doc.getSection(0);
     assertEquals(false, firstSections.getParagraphs().hasNext());
   }
 
-  @Test
-  public void testGenerateDocumentWithPeriodInSuccession() {
+  @Test public void testGenerateDocumentWithPeriodInSuccession() {
     String sampleText = "...";
     FileContent doc = createFileContent(sampleText);
     Section firstSections = doc.getSection(0);
@@ -198,9 +156,7 @@ public class MarkdownParserTest {
     assertEquals(1, firstParagraph.getNumberOfSentences());
   }
 
-
-  @Test
-  public void testGenerateDocumentWitoutPeriodInLastSentence() {
+  @Test public void testGenerateDocumentWitoutPeriodInLastSentence() {
     String sampleText = "Hongo is located at the west of Tokyo. Saitama is located at the north";
     FileContent doc = createFileContent(sampleText);
     Section firstSections = doc.getSection(0);
@@ -208,8 +164,7 @@ public class MarkdownParserTest {
     assertEquals(2, firstParagraph.getNumberOfSentences());
   }
 
-  @Test
-  public void testGenerateDocumentWithSentenceLongerThanOneLine() {
+  @Test public void testGenerateDocumentWithSentenceLongerThanOneLine() {
     String sampleText = "This is a good day.\n";
     sampleText += "Hongo is located at the west of Tokyo ";
     sampleText += "which is the capital of Japan ";
@@ -220,23 +175,18 @@ public class MarkdownParserTest {
     assertEquals(2, firstParagraph.getNumberOfSentences());
   }
 
-  @Test
-  public void testPlainLink() {
+  @Test public void testPlainLink() {
     String sampleText = "this is not a [pen], but also this is not [Google](http://google.com) either.";
     FileContent doc = createFileContent(sampleText);
     Section firstSections = doc.getSection(0);
     Paragraph firstParagraph = firstSections.getParagraph(0);
     assertEquals(1, firstParagraph.getNumberOfSentences());
     assertEquals(1, firstParagraph.getSentence(0).links.size());
-    // PegDown Parser is related to visit(RefLinkNode) method
     assertEquals("http://google.com", firstParagraph.getSentence(0).links.get(0));
-    assertEquals("this is not a [pen], but also this is not Google either.",
-        firstParagraph.getSentence(0).content);
+    assertEquals("this is not a [pen], but also this is not Google either.", firstParagraph.getSentence(0).content);
   }
 
-  @Test
-  public void testPlainLinkWithSpaces() {
-    // PegDown Parser is related to visit(ExpLinkNode) method
+  @Test public void testPlainLinkWithSpaces() {
     String sampleText = "the url is not [Google]( http://google.com ).";
     FileContent doc = createFileContent(sampleText);
     Section firstSections = doc.getSection(0);
@@ -244,13 +194,10 @@ public class MarkdownParserTest {
     assertEquals(1, firstParagraph.getNumberOfSentences());
     assertEquals(1, firstParagraph.getSentence(0).links.size());
     assertEquals("http://google.com", firstParagraph.getSentence(0).links.get(0));
-    assertEquals("the url is not Google.",
-        firstParagraph.getSentence(0).content);
+    assertEquals("the url is not Google.", firstParagraph.getSentence(0).content);
   }
 
-  @Test
-  public void testLinkWithoutTag() {
-    // PegDown Parser is related tovisit(AutoLinkNode) method
+  @Test public void testLinkWithoutTag() {
     String sampleText = "url of google is http://google.com.";
     FileContent doc = createFileContent(sampleText);
     Section firstSections = doc.getSection(0);
@@ -258,12 +205,10 @@ public class MarkdownParserTest {
     assertEquals(1, firstParagraph.getNumberOfSentences());
     assertEquals(1, firstParagraph.getSentence(0).links.size());
     assertEquals("http://google.com", firstParagraph.getSentence(0).links.get(0));
-    assertEquals("url of google is http://google.com.",
-        firstParagraph.getSentence(0).content);
+    assertEquals("url of google is http://google.com.", firstParagraph.getSentence(0).content);
   }
 
-  @Test
-  public void testDocumentWithItalicWord() {
+  @Test public void testDocumentWithItalicWord() {
     String sampleText = "This is a *good* day.\n";
     FileContent doc = createFileContent(sampleText);
     Section firstSections = doc.getSection(0);
@@ -271,8 +216,7 @@ public class MarkdownParserTest {
     assertEquals("This is a good day.", firstParagraph.getSentence(0).content);
   }
 
-  @Test
-  public void testDocumentWithMultipleItalicWords() {
+  @Test public void testDocumentWithMultipleItalicWords() {
     String sampleText = "*This* is a _good_ day.\n";
     FileContent doc = createFileContent(sampleText);
     Section firstSections = doc.getSection(0);
@@ -280,8 +224,7 @@ public class MarkdownParserTest {
     assertEquals("This is a good day.", firstParagraph.getSentence(0).content);
   }
 
-  @Test
-  public void testDocumentWithMultipleNearStrongWords() {
+  @Test public void testDocumentWithMultipleNearStrongWords() {
     String sampleText = "This is **a** __good__ day.\n";
     FileContent doc = createFileContent(sampleText);
     Section firstSections = doc.getSection(0);
@@ -289,8 +232,7 @@ public class MarkdownParserTest {
     assertEquals("This is a good day.", firstParagraph.getSentence(0).content);
   }
 
-  @Test
-  public void testDocumentWithItalicExpression() {
+  @Test public void testDocumentWithItalicExpression() {
     String sampleText = "This is *a good* day.\n";
     FileContent doc = createFileContent(sampleText);
     Section firstSections = doc.getSection(0);
@@ -298,15 +240,11 @@ public class MarkdownParserTest {
     assertEquals("This is a good day.", firstParagraph.getSentence(0).content);
   }
 
-
-  @Test
-  public void testDocumentWithHeaderCotainingMultipleSentences()
-      throws UnsupportedEncodingException {
+  @Test public void testDocumentWithHeaderCotainingMultipleSentences() throws UnsupportedEncodingException {
     String sampleText = "";
     sampleText += "# About Gunma. About Saitama.\n";
     sampleText += "Gunma is located at west of Saitama.\n";
     sampleText += "The word also have posive meaning. Hower it is a bit wired.";
-
     FileContent doc = createFileContent(sampleText);
     Section lastSection = doc.getSection(doc.getNumberOfSections() - 1);
     assertEquals(2, lastSection.getHeaderContentsListSize());
@@ -314,117 +252,84 @@ public class MarkdownParserTest {
     assertEquals(" About Saitama.", lastSection.getHeaderContent(1).content);
   }
 
-  @Test
-  public void testDocumentWithHeaderWitoutPeriod()
-      throws UnsupportedEncodingException {
+  @Test public void testDocumentWithHeaderWitoutPeriod() throws UnsupportedEncodingException {
     String sampleText = "";
     sampleText += "# About Gunma\n";
     sampleText += "Gunma is located at west of Saitama.\n";
     sampleText += "The word also have posive meaning. Hower it is a bit wired.";
-
     FileContent doc = createFileContent(sampleText);
     Section lastSection = doc.getSection(doc.getNumberOfSections() - 1);
     assertEquals(1, lastSection.getHeaderContentsListSize());
     assertEquals("About Gunma", lastSection.getHeaderContent(0).content);
   }
 
-  @Test
-  public void testDocumentWithList()
-      throws UnsupportedEncodingException {
+  @Test public void testDocumentWithList() throws UnsupportedEncodingException {
     String sampleText = "";
     sampleText += "# About Gunma. About Saitama.\n";
     sampleText += "* Gunma is located at west of Saitama.\n";
     sampleText += "* The word also have posive meaning. Hower it is a bit wired.";
-
     FileContent doc = createFileContent(sampleText);
     Section lastSection = doc.getSection(doc.getNumberOfSections() - 1);
     ListBlock listBlock = lastSection.getListBlock(0);
     assertEquals(2, listBlock.getNumberOfListElements());
     assertEquals(1, listBlock.getListElement(0).getNumberOfSentences());
-    assertEquals("Gunma is located at west of Saitama.",
-        listBlock.getListElement(0).getSentence(0).content);
-    assertEquals("The word also have posive meaning.",
-        listBlock.getListElement(1).getSentence(0).content);
-    assertEquals(" Hower it is a bit wired.",
-        listBlock.getListElement(1).getSentence(1).content);
+    assertEquals("Gunma is located at west of Saitama.", listBlock.getListElement(0).getSentence(0).content);
+    assertEquals("The word also have posive meaning.", listBlock.getListElement(1).getSentence(0).content);
+    assertEquals(" Hower it is a bit wired.", listBlock.getListElement(1).getSentence(1).content);
   }
 
-  @Test
-  public void testDocumentWithListWithoutPeriod()
-      throws UnsupportedEncodingException {
+  @Test public void testDocumentWithListWithoutPeriod() throws UnsupportedEncodingException {
     String sampleText = "";
     sampleText += "# About Gunma. About Saitama.\n";
     sampleText += "* Gunma is located at west of Saitama\n";
-
     FileContent doc = createFileContent(sampleText);
     Section lastSection = doc.getSection(doc.getNumberOfSections() - 1);
     ListBlock listBlock = lastSection.getListBlock(0);
     assertEquals(1, listBlock.getNumberOfListElements());
     assertEquals(1, listBlock.getListElement(0).getNumberOfSentences());
-    assertEquals("Gunma is located at west of Saitama",
-        listBlock.getListElement(0).getSentence(0).content);
+    assertEquals("Gunma is located at west of Saitama", listBlock.getListElement(0).getSentence(0).content);
   }
 
-  @Test
-  public void testDocumentWithMultipleSections()
-      throws UnsupportedEncodingException {
+  @Test public void testDocumentWithMultipleSections() throws UnsupportedEncodingException {
     String sampleText = "# Prefectures in Japan.\n";
     sampleText += "There are 47 prefectures in Japan.\n";
     sampleText += "\n";
     sampleText += "Each prefectures has its features.\n";
     sampleText += "## Gunma \n";
     sampleText += "Gumma is very beautiful";
-
     FileContent doc = createFileContent(sampleText);
     assertEquals(3, doc.getNumberOfSections());
     Section rootSection = doc.getSection(0);
     Section h1Section = doc.getSection(1);
     Section h2Section = doc.getSection(2);
-
     assertEquals(0, rootSection.getLevel());
     assertEquals(1, h1Section.getLevel());
     assertEquals(2, h2Section.getLevel());
-
     assertEquals(rootSection.getSubSection(0), h1Section);
     assertEquals(h1Section.getParentSection(), rootSection);
     assertEquals(h2Section.getParentSection(), h1Section);
     assertEquals(rootSection.getParentSection(), null);
-
     assertEquals(0, rootSection.getHeaderContent(0).position);
     assertEquals(0, h1Section.getHeaderContent(0).position);
     assertEquals(4, h2Section.getHeaderContent(0).position);
   }
 
-  @Test
-  public void testGenerateJapaneseDocument() {
-    String japaneseConfiguraitonStr = new String(
-        "<?xml version=\"1.0\"?>" +
-            "<component name=\"Validator\">" +
-            "</component>");
-
-    String japaneseCharTableStr = new String(
-        "<?xml version=\"1.0\"?>" +
-            "<character-table>" +
-            "<character name=\"FULL_STOP\" value=\"。\" />" +
-            "</character-table>");
-
-    String sampleText = "埼玉は東京の北に存在する。";
-    sampleText += "大きなベッドタウンであり、多くの人が住んでいる。";
+  @Test public void testGenerateJapaneseDocument() {
+    String japaneseConfiguraitonStr = new String("<?xml version=\"1.0\"?>" + "<component name=\"Validator\">" + "</component>");
+    String japaneseCharTableStr = new String("<?xml version=\"1.0\"?>" + "<character-table>" + "<character name=\"FULL_STOP\" value=\"\u3002\" />" + "</character-table>");
+    String sampleText = "\u57fc\u7389\u306f\u6771\u4eac\u306e\u5317\u306b\u5b58\u5728\u3059\u308b\u3002";
+    sampleText += "\u5927\u304d\u306a\u30d9\u30c3\u30c9\u30bf\u30a6\u30f3\u3067\u3042\u308a\u3001\u591a\u304f\u306e\u4eba\u304c\u4f4f\u3093\u3067\u3044\u308b\u3002";
     FileContent doc = null;
-
     try {
-      doc = createFileContent(sampleText, japaneseConfiguraitonStr,
-          japaneseCharTableStr);
+      doc = createFileContent(sampleText, japaneseConfiguraitonStr, japaneseCharTableStr);
     } catch (DocumentValidatorException e1) {
       e1.printStackTrace();
       fail();
     }
-
     Section firstSections = doc.getSection(0);
     Paragraph firstParagraph = firstSections.getParagraph(0);
     assertEquals(2, firstParagraph.getNumberOfSentences());
   }
-
 
   private Parser loadParser(DVResource resource) {
     Parser parser = null;
@@ -437,50 +342,30 @@ public class MarkdownParserTest {
     return parser;
   }
 
-  private FileContent createFileContent(String inputDocumentString,
-                                        String configurationString,
-                                        String characterTableString)
-      throws DocumentValidatorException {
-
+  private FileContent createFileContent(String inputDocumentString, String configurationString, String characterTableString) throws DocumentValidatorException {
     InputStream configStream = IOUtils.toInputStream(configurationString);
-
-    ValidatorConfiguration conf =
-        ValidationConfigurationLoader.loadConfiguration(configStream);
-
+    ValidatorConfiguration conf = ValidationConfigurationLoader.loadConfiguration(configStream);
     CharacterTable characterTable = null;
-
-    if (characterTableString.length() > 0)
-
-    {
-      InputStream characterTableStream =
-          IOUtils.toInputStream(characterTableString);
+    if (characterTableString.length() > 0) {
+      InputStream characterTableStream = IOUtils.toInputStream(characterTableString);
       characterTable = CharacterTableLoader.load(characterTableStream);
     }
-
-    return
-
-        createFileContent(inputDocumentString, conf, characterTable);
-
+    return createFileContent(inputDocumentString, conf, characterTable);
   }
 
-  private FileContent createFileContent(String inputDocumentString,
-                                        ValidatorConfiguration conf,
-                                        CharacterTable characterTable) {
+  private FileContent createFileContent(String inputDocumentString, ValidatorConfiguration conf, CharacterTable characterTable) {
     InputStream inputDocumentStream = null;
     try {
-      inputDocumentStream =
-          new ByteArrayInputStream(inputDocumentString.getBytes("utf-8"));
+      inputDocumentStream = new ByteArrayInputStream(inputDocumentString.getBytes("utf-8"));
     } catch (UnsupportedEncodingException e1) {
       fail();
     }
-
     Parser parser = null;
     if (characterTable != null) {
       parser = loadParser(new DVResource(conf, characterTable));
     } else {
       parser = loadParser(new DVResource(conf));
     }
-
     try {
       return parser.generateDocument(inputDocumentStream);
     } catch (DocumentValidatorException e) {
@@ -489,8 +374,7 @@ public class MarkdownParserTest {
     }
   }
 
-  private FileContent createFileContentFromInputStream(
-      InputStream inputStream) {
+  private FileContent createFileContentFromInputStream(InputStream inputStream) {
     ValidatorConfiguration conf = new ValidatorConfiguration("dummy");
     Parser parser = loadParser(new DVResource(conf));
     FileContent doc = null;
@@ -503,8 +387,7 @@ public class MarkdownParserTest {
     return doc;
   }
 
-  private FileContent createFileContent(
-      String inputDocumentString) {
+  private FileContent createFileContent(String inputDocumentString) {
     ValidatorConfiguration conf = new ValidatorConfiguration("dummy");
     Parser parser = loadParser(new DVResource(conf));
     InputStream is;
@@ -524,6 +407,4 @@ public class MarkdownParserTest {
     }
     return doc;
   }
-
-
 }
