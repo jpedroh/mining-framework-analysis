@@ -285,7 +285,6 @@ public abstract class BaseProcessor extends AbstractProcessor {
         writer.append("`").append(node.getBody().getBody()).append("`");
         return super.visitLiteral(node, aVoid);
       }
-
       @Override
       public Void visitEntity(EntityTree node, Void aVoid) {
         writer.append(EntityUtils.unescapeEntity(node.getName().toString()));
