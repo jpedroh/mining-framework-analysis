@@ -1,11 +1,9 @@
 package com.github.javaparser.ast.imports;
-
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.observer.ObservableProperty;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
-
 import static com.github.javaparser.utils.Utils.assertNotNull;
 
 /**
@@ -13,45 +11,41 @@ import static com.github.javaparser.utils.Utils.assertNotNull;
  * Static-Import-on-Demand Declarations</a></p>
  */
 public class StaticImportOnDemandDeclaration extends ImportDeclaration {
-    private ClassOrInterfaceType type;
+  private ClassOrInterfaceType type;
 
-    public StaticImportOnDemandDeclaration() {
-        this(null, new ClassOrInterfaceType());
-    }
+  public StaticImportOnDemandDeclaration() {
+    this(null, new ClassOrInterfaceType());
+  }
 
-    public StaticImportOnDemandDeclaration(Range range, ClassOrInterfaceType type) {
-        super(range);
-        setType(type);
-    }
+  public StaticImportOnDemandDeclaration(Range range, ClassOrInterfaceType type) {
+    super(range);
+    setType(type);
+  }
 
-    @Override
-    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        return v.visit(this, arg);
-    }
+  @Override public <R extends java.lang.Object, A extends java.lang.Object> R accept(GenericVisitor<R, A> v, A arg) {
+    return v.visit(this, arg);
+  }
 
-    @Override
-    public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
-    }
+  @Override public <A extends java.lang.Object> void accept(VoidVisitor<A> v, A arg) {
+    v.visit(this, arg);
+  }
 
-    public ClassOrInterfaceType getType() {
-        return type;
-    }
+  public ClassOrInterfaceType getType() {
+    return type;
+  }
 
-    public StaticImportOnDemandDeclaration setType(ClassOrInterfaceType type) {
-        notifyPropertyChange(ObservableProperty.TYPE, this.type, type);
-        this.type = assertNotNull(type);
-        setAsParentNodeOf(type);
-        return this;
-    }
+  public StaticImportOnDemandDeclaration setType(ClassOrInterfaceType type) {
+    notifyPropertyChange(ObservableProperty.TYPE, this.type, type);
+    this.type = assertNotNull(type);
+    setAsParentNodeOf(type);
+    return this;
+  }
 
-    @Override
-    public boolean isAsterisk() {
-        return true;
-    }
+  @Override public boolean isAsterisk() {
+    return true;
+  }
 
-    @Override
-    public boolean isStatic() {
-        return true;
-    }
+  @Override public boolean isStatic() {
+    return true;
+  }
 }

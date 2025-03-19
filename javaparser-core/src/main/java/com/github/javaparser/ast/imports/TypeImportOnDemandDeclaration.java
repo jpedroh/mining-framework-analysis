@@ -1,12 +1,10 @@
 package com.github.javaparser.ast.imports;
-
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.nodeTypes.NodeWithName;
 import com.github.javaparser.ast.observer.ObservableProperty;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
-
 import static com.github.javaparser.utils.Utils.assertNotNull;
 
 /**
@@ -16,58 +14,52 @@ import static com.github.javaparser.utils.Utils.assertNotNull;
  * Declarations</a></p>
  */
 public class TypeImportOnDemandDeclaration extends ImportDeclaration implements NodeWithName<TypeImportOnDemandDeclaration> {
-    private Name name;
+  private Name name;
 
-    public TypeImportOnDemandDeclaration() {
-        this(null, new Name());
-    }
+  public TypeImportOnDemandDeclaration() {
+    this(null, new Name());
+  }
 
-    public TypeImportOnDemandDeclaration(Range range, Name name) {
-        super(range);
-        setName(name);
-    }
+  public TypeImportOnDemandDeclaration(Range range, Name name) {
+    super(range);
+    setName(name);
+  }
 
-    @Override
-    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        return v.visit(this, arg);
-    }
+  @Override public <R extends java.lang.Object, A extends java.lang.Object> R accept(GenericVisitor<R, A> v, A arg) {
+    return v.visit(this, arg);
+  }
 
-    @Override
-    public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
-    }
+  @Override public <A extends java.lang.Object> void accept(VoidVisitor<A> v, A arg) {
+    v.visit(this, arg);
+  }
 
-    /**
+  /**
      * Retrieves the name of the import.
      *
      * @return the name of the import
      * @throws UnsupportedOperationException when invoked on an empty import declaration
      */
-    @Override
-    public Name getName() {
-        return name;
-    }
+  @Override public Name getName() {
+    return name;
+  }
 
-    /**
+  /**
      * Sets the name this import.
      *
      * @param name the name to set
      */
-    @Override
-    public TypeImportOnDemandDeclaration setName(Name name) {
-        notifyPropertyChange(ObservableProperty.NAME, this.name, name);
-        this.name = assertNotNull(name);
-        setAsParentNodeOf(this.name);
-        return this;
-    }
+  @Override public TypeImportOnDemandDeclaration setName(Name name) {
+    notifyPropertyChange(ObservableProperty.NAME, this.name, name);
+    this.name = assertNotNull(name);
+    setAsParentNodeOf(this.name);
+    return this;
+  }
 
-    @Override
-    public boolean isAsterisk() {
-        return true;
-    }
+  @Override public boolean isAsterisk() {
+    return true;
+  }
 
-    @Override
-    public boolean isStatic() {
-        return false;
-    }
+  @Override public boolean isStatic() {
+    return false;
+  }
 }
