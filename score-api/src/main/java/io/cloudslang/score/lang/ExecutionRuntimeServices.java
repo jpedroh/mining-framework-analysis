@@ -18,6 +18,7 @@ package io.cloudslang.score.lang;
 
 import io.cloudslang.score.api.EndBranchDataContainer;
 import io.cloudslang.score.api.StartBranchDataContainer;
+import io.cloudslang.score.api.StatefulSessionStack;
 import io.cloudslang.score.api.execution.ExecutionParametersConsts;
 import io.cloudslang.score.events.ScoreEvent;
 import io.cloudslang.score.facade.execution.ExecutionStatus;
@@ -99,6 +100,8 @@ public class ExecutionRuntimeServices implements Serializable {
 
     public static final String ENTERPRISE_MODE = "ENTERPRISE_MODE";
 
+    private static final String STATEFUL_STACK = "STATEFUL_STACK";
+
     private static final String SC_NESTED_FOR_PARALLELISM_LEVEL = "SC_NESTED_FOR_PARALLELISM_LEVEL";
 
     protected Map<String, Serializable> contextMap = new HashMap<>();
@@ -109,6 +112,7 @@ public class ExecutionRuntimeServices implements Serializable {
     /**
      * copy constructor that clean the NEW_SPLIT_ID & BRANCH_ID keys
      */
+
     public ExecutionRuntimeServices(ExecutionRuntimeServices executionRuntimeServices) {
         contextMap.putAll(executionRuntimeServices.contextMap);
         contextMap.remove(NEW_SPLIT_ID);
@@ -120,6 +124,7 @@ public class ExecutionRuntimeServices implements Serializable {
      *
      * @param data - list of EndBranchDataContainer
      */
+
     public void setFinishedChildBranchesData(ArrayList<EndBranchDataContainer> data) {
         Validate.isTrue(!contextMap.containsKey(ExecutionParametersConsts.FINISHED_CHILD_BRANCHES_DATA),
                 "not allowed to overwrite finished branches data");
@@ -132,6 +137,7 @@ public class ExecutionRuntimeServices implements Serializable {
      * @param runningPlansIds - map of flowUUID to runningPlanId
      * @param beginStepsIds -  map of flowUUID to beginStepId
      */
+
     public void setSubFlowsData(Map<String, Long> runningPlansIds, Map<String, Long> beginStepsIds) {
         contextMap.put(RUNNING_PLANS_MAP, (Serializable) runningPlansIds);
         contextMap.put(BEGIN_STEPS_MAP, (Serializable) beginStepsIds);
@@ -141,6 +147,7 @@ public class ExecutionRuntimeServices implements Serializable {
      * @param subFlowUuid - the required sub flow UUID
      * @return the id of the runningPlan of the given flow
      */
+
     public Long getSubFlowRunningExecutionPlan(String subFlowUuid) {
         return ((Map<String, Long>) contextMap.get(RUNNING_PLANS_MAP)).get(subFlowUuid);
     }
@@ -149,6 +156,7 @@ public class ExecutionRuntimeServices implements Serializable {
      * @param subFlowUuid - the required sub flow UUID
      * @return the begin step of the given flow
      */
+
     public Long getSubFlowBeginStep(String subFlowUuid) {
         return ((Map<String, Long>) contextMap.get(BEGIN_STEPS_MAP)).get(subFlowUuid);
     }
@@ -164,6 +172,7 @@ public class ExecutionRuntimeServices implements Serializable {
     /**
      * @return the brunchId of the current execution
      */
+
     public String getBranchId() {
         return getFromMap(BRANCH_ID);
     }
@@ -171,6 +180,7 @@ public class ExecutionRuntimeServices implements Serializable {
     /**
      * setter for the brunch id of the current Execution
      */
+
     public void setBranchId(String brunchId) {
         Validate.isTrue(StringUtils.isEmpty(getBranchId()), "not allowed to overwrite branch id");
         contextMap.put(BRANCH_ID, brunchId);
@@ -179,6 +189,7 @@ public class ExecutionRuntimeServices implements Serializable {
     /**
      * @return the flow termination type : one of ExecutionStatus values
      */
+
     public ExecutionStatus getFlowTerminationType() {
         return getFromMap(FLOW_TERMINATION_TYPE);
     }
@@ -188,6 +199,7 @@ public class ExecutionRuntimeServices implements Serializable {
      *
      * @param flowTerminationType - from ExecutionStatus
      */
+
     public void setFlowTerminationType(ExecutionStatus flowTerminationType) {
         contextMap.put(FLOW_TERMINATION_TYPE, flowTerminationType);
     }
@@ -198,6 +210,7 @@ public class ExecutionRuntimeServices implements Serializable {
      *
      * @param runningExecutionPlanId the new running execution plan id
      */
+
     public void requestToChangeExecutionPlan(Long runningExecutionPlanId) {
         contextMap.put(REQUESTED_EXECUTION_PLAN_ID, runningExecutionPlanId);
     }
@@ -208,6 +221,7 @@ public class ExecutionRuntimeServices implements Serializable {
      *
      * @return the id of the requested running execution plan
      */
+
     public Long pullRequestForChangingExecutionPlan() {
         return removeFromMap(REQUESTED_EXECUTION_PLAN_ID);
     }
@@ -215,6 +229,7 @@ public class ExecutionRuntimeServices implements Serializable {
     /**
      * @return the error key of the step
      */
+
     public String getStepErrorKey() {
         return getFromMap(EXECUTION_STEP_ERROR_KEY);
     }
@@ -222,6 +237,7 @@ public class ExecutionRuntimeServices implements Serializable {
     /**
      * set the step error key
      */
+
     public void setStepErrorKey(String stepErrorKey) {
         contextMap.put(EXECUTION_STEP_ERROR_KEY, stepErrorKey);
     }
@@ -229,6 +245,7 @@ public class ExecutionRuntimeServices implements Serializable {
     /**
      * @return true if there is step error
      */
+
     public boolean hasStepErrorKey() {
         return contextMap.containsKey(EXECUTION_STEP_ERROR_KEY);
     }
@@ -238,6 +255,7 @@ public class ExecutionRuntimeServices implements Serializable {
      *
      * @return the values cleaned
      */
+
     public String removeStepErrorKey() {
         return (String) removeFromMap(EXECUTION_STEP_ERROR_KEY);
     }
@@ -273,6 +291,7 @@ public class ExecutionRuntimeServices implements Serializable {
     /**
      * @return the execution id
      */
+
     public Long getExecutionId() {
         return getFromMap(EXECUTION_ID_CONTEXT);
     }
@@ -280,6 +299,7 @@ public class ExecutionRuntimeServices implements Serializable {
     /**
      * set the execution id - should be called only once in score triggering!
      */
+
     public void setExecutionId(Long executionId) {
         contextMap.put(EXECUTION_ID_CONTEXT, executionId);
     }
@@ -287,6 +307,7 @@ public class ExecutionRuntimeServices implements Serializable {
     /**
      * @return the split id
      */
+
     public String getSplitId() {
         return getFromMap(NEW_SPLIT_ID);
     }
@@ -294,6 +315,7 @@ public class ExecutionRuntimeServices implements Serializable {
     /**
      * set teh split id
      */
+
     public void setSplitId(String splitId) {
         Validate.isTrue(StringUtils.isEmpty(getSplitId()), "not allowed to overwrite split id");
         contextMap.put(NEW_SPLIT_ID, splitId);
@@ -315,12 +337,12 @@ public class ExecutionRuntimeServices implements Serializable {
         contextMap.put(SC_NESTED_FOR_PARALLELISM_LEVEL, level);
     }
 
-
     public String getRobotGroupName() {
         return getFromMap(ROBOT_GROUP_NAME);
     }
 
     /** This flag is set if the current execution step needs to go through group resolving */
+
     public void setShouldCheckGroup() {
         contextMap.put(SHOULD_CHECK_GROUP, true);
     }
@@ -360,6 +382,7 @@ public class ExecutionRuntimeServices implements Serializable {
     /**
      * used for asking score to pause your run
      */
+
     public void pause() {
         contextMap.put(EXECUTION_PAUSED, TRUE);
     }
@@ -367,6 +390,7 @@ public class ExecutionRuntimeServices implements Serializable {
     /**
      * @return true if the execution should be paused
      */
+
     public boolean isPaused() {
         // This is called lots of times, the flipped order is for performance considerations
         return TRUE.equals(contextMap.get(EXECUTION_PAUSED));
@@ -378,6 +402,7 @@ public class ExecutionRuntimeServices implements Serializable {
      * @param eventType - string which is the key you can listen to
      * @param eventData - the event data
      */
+
     public void addEvent(String eventType, Serializable eventData) {
         @SuppressWarnings("unchecked")
         Queue<ScoreEvent> eventsQueue = getFromMap(SCORE_EVENTS_QUEUE);
@@ -391,6 +416,7 @@ public class ExecutionRuntimeServices implements Serializable {
     /**
      * @return all the added events
      */
+
     public ArrayDeque<ScoreEvent> getEvents() {
         return getFromMap(SCORE_EVENTS_QUEUE);
     }
@@ -400,6 +426,7 @@ public class ExecutionRuntimeServices implements Serializable {
      *
      * @param groupName - the name of the missing group
      */
+
     public void setNoWorkerInGroup(String groupName) {
         contextMap.put(NO_WORKERS_IN_GROUP, groupName);
     }
@@ -407,6 +434,7 @@ public class ExecutionRuntimeServices implements Serializable {
     /**
      * @return the missing group name
      */
+
     public String getNoWorkerInGroupName() {
         return getFromMap(NO_WORKERS_IN_GROUP);
     }
@@ -423,6 +451,7 @@ public class ExecutionRuntimeServices implements Serializable {
      * @param flowUuid - the flow uuid
      * @param context - the context of the created brunch
      */
+
     public void addBranch(Long startPosition, String flowUuid, Map<String, Serializable> context) {
         Map<String, Long> runningPlansIds = getFromMap(RUNNING_PLANS_MAP);
         Long runningPlanId = runningPlansIds.get(flowUuid);
@@ -439,6 +468,13 @@ public class ExecutionRuntimeServices implements Serializable {
         Map<String, Serializable> contextMapForBranch = new HashMap<>(executionRuntimeServices.contextMap);
         contextMapForBranch.remove(BRANCH_DATA);
         contextMapForBranch.put(SCORE_EVENTS_QUEUE, (ArrayDeque) new ArrayDeque<>());
+        StatefulSessionStack statefulSessionStack = executionRuntimeServices.getStatefulSessionStack();
+        if (statefulSessionStack != null) {
+            statefulSessionStack.pushSessionStack(new HashMap<>());
+        } else {
+            statefulSessionStack = new StatefulSessionStack();
+        }
+        executionRuntimeServices.setStatefulStack(statefulSessionStack);
 
         branchesData.add(new StartBranchDataContainer(startPosition, executionPlanId, context,
                 new SystemContext(contextMapForBranch)));
@@ -447,6 +483,7 @@ public class ExecutionRuntimeServices implements Serializable {
     /**
      * Removes the branches data and returns it
      */
+
     public List<StartBranchDataContainer> removeBranchesData() {
         return removeFromMap(BRANCH_DATA);
     }
@@ -454,6 +491,7 @@ public class ExecutionRuntimeServices implements Serializable {
     /**
      * @return a list of all branches ended.
      */
+
     public List<EndBranchDataContainer> getFinishedChildBranchesData() {
         return (List<EndBranchDataContainer>) removeFromMap(ExecutionParametersConsts.FINISHED_CHILD_BRANCHES_DATA);
     }
@@ -533,6 +571,16 @@ public class ExecutionRuntimeServices implements Serializable {
         }
         contextMap.put(ExecutionParametersConsts.EXECUTION_TOTAL_ROI, currentRoiValue + roiValue);
     }
+
+    public StatefulSessionStack getStatefulSessionStack() {
+        return getFromMap(STATEFUL_STACK);
+    }
+
+    public void setStatefulStack(StatefulSessionStack statefulStack) {
+        contextMap.put(STATEFUL_STACK, statefulStack);
+    }
+
+    /** This flag is set if the current execution step needs to go through group resolving */
 
     private <T> T removeFromMap(String key) {
         //noinspection unchecked
