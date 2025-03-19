@@ -441,7 +441,7 @@ public class MappedBytesStore extends NativeBytesStore<Void> {
     @Override
     protected void performRelease() {
         if (address != 0 && syncMode != SyncMode.NONE) {
-            performMsync(0, safeLimit - start);
+            performMsync(0, safeLimit - start, this.syncMode());
         }
         // must sync before releasing
         super.performRelease();
