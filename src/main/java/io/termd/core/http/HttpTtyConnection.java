@@ -1,21 +1,4 @@
-/*
- * Copyright 2015 Julien Viet
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.termd.core.http;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.termd.core.io.BinaryDecoder;
 import io.termd.core.io.BinaryEncoder;
@@ -28,7 +11,6 @@ import io.termd.core.tty.TtyOutputMode;
 import io.termd.core.util.Dimension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -42,19 +24,24 @@ import java.util.function.Consumer;
  * @author <a href="mailto:matejonnet@gmail.com">Matej Lazar</a>
  */
 public abstract class HttpTtyConnection implements TtyConnection {
-
   private static Logger log = LoggerFactory.getLogger(HttpTtyConnection.class);
 
-  private Dimension size = new Dimension(80, 24); // For now hardcoded
+  private Dimension size = new Dimension(80, 24);
+
   private Consumer<Dimension> sizeHandler;
+
   private final ReadBuffer readBuffer;
+
   private final TtyEventDecoder onCharSignalDecoder;
+
   private final BinaryDecoder decoder;
+
   private final Consumer<int[]> stdout;
+
   private Consumer<Void> closeHandler;
 
   public HttpTtyConnection() {
-    readBuffer = new ReadBuffer(command -> {
+    readBuffer = new ReadBuffer((command) -> {
       log.debug("Server read buffer executing command: {}" + command);
       schedule(command);
     });
@@ -69,34 +56,30 @@ public abstract class HttpTtyConnection implements TtyConnection {
     ObjectMapper mapper = new ObjectMapper();
     Map<String, String> obj = null;
     String action;
-
     try {
       obj = mapper.readValue(msg, Map.class);
       action = obj.get("action");
     } catch (IOException e) {
       throw new RuntimeException("Cannot deserialize object from json", e);
     }
-
     if (obj != null) {
       switch (action) {
         case "read":
-          String data = obj.get("data");
-          decoder.write(data.getBytes()); //write back echo
-          break;
+        String data = obj.get("data");
+        decoder.write(data.getBytes());
+        break;
       }
     }
   }
 
   public Consumer<String> getTermHandler() {
-    return null; //TODO
+    return null;
   }
 
   public void setTermHandler(Consumer<String> handler) {
-      //TODO
   }
 
-  @Override
-  public Dimension size() {
+  @Override public Dimension size() {
     return size;
   }
 
@@ -111,13 +94,11 @@ public abstract class HttpTtyConnection implements TtyConnection {
     }
   }
 
-  @Override
-  public Consumer<TtyEvent> getEventHandler() {
+  @Override public Consumer<TtyEvent> getEventHandler() {
     return onCharSignalDecoder.getEventHandler();
   }
 
-  @Override
-  public void setEventHandler(Consumer<TtyEvent> handler) {
+  @Override public void setEventHandler(Consumer<TtyEvent> handler) {
     onCharSignalDecoder.setEventHandler(handler);
   }
 
@@ -133,19 +114,14 @@ public abstract class HttpTtyConnection implements TtyConnection {
     return stdout;
   }
 
-  @Override
-  public void setCloseHandler(Consumer<Void> closeHandler) {
+  @Override public void setCloseHandler(Consumer<Void> closeHandler) {
     this.closeHandler = closeHandler;
   }
 
-  @Override
-  public Consumer<Void> getCloseHandler() {
+  @Override public Consumer<Void> getCloseHandler() {
     return closeHandler;
   }
 
-  @Override
-  public void close() {
-    // Should we call the close handler ? there is no close handler on sockjs socket
-    //socket.close(); //TODO
+  @Override public void close() {
   }
 }
