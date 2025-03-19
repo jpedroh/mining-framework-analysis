@@ -138,7 +138,8 @@ public class Coordinator {
     if (message.getPayload().containsKey("sponsor_request")){
       return sponsorCoordinator.handleSponsorRequest(message);
     }
-    if (message instanceof MetaDataMessage ) {
+    
+    if (SYSTEM_KEYSPACE.equals(message.getKeyspace()) || message instanceof MetaDataMessage ) {
       return metaDataCoordinator.handleSystemMessage(message);
     }
     Keyspace keyspace = server.getKeyspaces().get(message.getKeyspace());
