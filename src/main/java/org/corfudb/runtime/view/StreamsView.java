@@ -155,8 +155,16 @@ public class StreamsView {
                         log.trace("Acquisition rejected overwrite at {}, not retrying.", token);
                         return -1L;
                     }
+<<<<<<< /usr/src/app/output/corfudb/corfudb/233e1eb18c40db72da1f101cea0b4935f8c6c880/src/main/java/org/corfudb/runtime/view/StreamsView.java/left.java
                     replexOverwrite = true;
                     overwrite = false;
+                    //return -1L;
+||||||| /usr/src/app/output/corfudb/corfudb/233e1eb18c40db72da1f101cea0b4935f8c6c880/src/main/java/org/corfudb/runtime/view/StreamsView.java/base.java
+                    return -1L;
+=======
+                    //
+                    return tokenResponse.getToken(); // uh, probably should figure out what is going on here.
+>>>>>>> /usr/src/app/output/corfudb/corfudb/233e1eb18c40db72da1f101cea0b4935f8c6c880/src/main/java/org/corfudb/runtime/view/StreamsView.java/right.java
                 } catch (OverwriteException oe) {
                     if (deacquisitionCallback != null && !deacquisitionCallback.apply(tokenResponse)) {
                         log.trace("Acquisition rejected overwrite at {}, not retrying.", token);
