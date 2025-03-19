@@ -1,17 +1,4 @@
-/*
- * Copyright 2016 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.cdi.push;
-
 import static java.lang.Boolean.TRUE;
 import static java.lang.Boolean.parseBoolean;
 import static org.omnifaces.util.Beans.getReference;
@@ -20,12 +7,10 @@ import static org.omnifaces.util.Facelets.getObject;
 import static org.omnifaces.util.Facelets.getString;
 import static org.omnifaces.util.Facelets.getValueExpression;
 import static org.omnifaces.util.FacesLocal.getApplicationAttribute;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.regex.Pattern;
-
 import javax.el.ValueExpression;
 import javax.enterprise.event.Observes;
 import javax.faces.FacesException;
@@ -43,7 +28,6 @@ import javax.servlet.ServletContext;
 import javax.websocket.CloseReason.CloseCodes;
 import javax.websocket.server.ServerContainer;
 import javax.websocket.server.ServerEndpointConfig;
-
 import org.omnifaces.cdi.Push;
 import org.omnifaces.cdi.PushContext;
 import org.omnifaces.cdi.push.event.Closed;
@@ -326,10 +310,11 @@ import org.omnifaces.util.Json;
  * </ul>
  * <p>
  * The optional <strong><code>onclose</code></strong> JavaScript listener function can be used to listen on (ab)normal
- * close of a web socket. This will be invoked when the very first connection attempt fails, or the server has returned
- * close reason code <code>1000</code> (normal closure) or <code>1008</code> (policy violated), or the maximum reconnect
- * attempts has exceeded. This will not be invoked when the web socket can make an auto-reconnect attempt on a broken
- * connection after the first successful connection.
+ * close of a web socket. This will be invoked when the very first connection attempt fails, or the maximum reconnect
+ * attempts has exceeded, or the server has returned close reason code <code>1000</code> or <code>1008</code> (policy
+ * violated, which usually only happens when the channel name is unknown, or the session has expired). This will not be
+ * invoked when the web socket can make an auto-reconnect attempt on a broken connection after the first successful
+ * connection.
  * <pre>
  * &lt;o:socket ... onclose="socketCloseListener" /&gt;
  * </pre>
@@ -337,10 +322,8 @@ import org.omnifaces.util.Json;
  * function socketCloseListener(code, channel, event) {
  *     if (code == -1) {
  *         // Web sockets not supported by client.
- *     } else if (code == 1000) {
- *         // Normal close (as result of expired session or view).
- *     } else {
- *         // Abnormal close reason (as result of an error).
+ *     } else if (code != 1000) {
+ *         // Abnormal close reason.
  *     }
  * }
  * </pre>
@@ -364,8 +347,7 @@ import org.omnifaces.util.Json;
  * a view scoped socket the handling depends on the reason of the view expiration. A view can be expired when the
  * associated session has expired, but it can also be expired as result of (accidental) navigation or rebuild, or when
  * the JSF "views per session" configuration setting is set relatively low and the client has many views (windows/tabs)
- * open in the same session. You might take the opportunity to warn the client and/or let JavaScript reload the page as
- * submitting any form in it would throw <code>ViewExpiredException</code> anyway.
+ * open in the same session. You might take the opportunity to let JavaScript reload the page.
  *
  *
  * <h3 id="events-server"><a href="#events-server">Events (server)</a></h3>
@@ -373,8 +355,8 @@ import org.omnifaces.util.Json;
  * When a web socket has been opened, a new CDI <strong>{@link SocketEvent}</strong> will be fired with
  * <strong><code>&#64;</code>{@link Opened}</strong> qualifier. When a web socket has been closed, a new CDI
  * {@link SocketEvent} will be fired with <strong><code>&#64;</code>{@link Closed}</strong> qualifier. They can only be
- * observed and collected in an application scoped CDI bean as below. Observing in a request/view/session scoped CDI
- * bean is not possible as there's no means of a HTTP request anywhere at that moment.
+ * observed and collected in an application scoped CDI bean as below. A request/view/session scoped one wouldn't work as
+ * there's no means of a HTTP request anywhere at that moment.
  * <pre>
  * &#64;ApplicationScoped
  * public class SocketObserver {
@@ -439,12 +421,12 @@ import org.omnifaces.util.Json;
  * As extra security, particularly for those public channels which can't be restricted by security constraints, the
  * <code>&lt;o:socket&gt;</code> will register all so far declared channels in the current HTTP session, and any
  * incoming web socket open request will be checked whether they match the so far registered channels in the current
- * HTTP session. In case the channel is unknown (e.g. randomly guessed or spoofed by endusers or manually reconnected
- * after the session is expired), then the web socket will immediately be closed with close reason code
- * {@link CloseCodes#VIOLATED_POLICY} (<code>1008</code>). Also, when the HTTP session gets destroyed, all session and
- * view scoped channels which are still open will explicitly be closed from server side with close reason code
- * {@link CloseCodes#NORMAL_CLOSURE} (<code>1000</code>). Only application scoped sockets remain open and are still
- * reachable from server end even when the session or view associated with the page in client side is expired.
+ * HTTP session. In case the channel is unknown (e.g. randomly guessed or spoofed by endusers), then the web socket will
+ * immediately be closed with close reason code {@link CloseCodes#VIOLATED_POLICY} (<code>1008</code>). Also, when the
+ * HTTP session gets destroyed, all session and view scoped channels which are still open will explicitly be closed
+ * from server side with close reason code {@link CloseCodes#NORMAL_CLOSURE} (<code>1000</code>). Only application
+ * scoped sockets remain open and are still reachable from server end even when the session or view is expired on client
+ * side.
  *
  *
  * <h3 id="ejb"><a href="#ejb">EJB design hints</a></h3>
@@ -453,7 +435,7 @@ import org.omnifaces.util.Json;
  * of CDI events. First create a custom bean class representing the push event something like <code>PushEvent</code>
  * below taking whatever you'd like to pass as push message.
  * <pre>
- * public final class PushEvent {
+ * public class PushEvent {
  *
  *     private final String message;
  *
@@ -518,7 +500,7 @@ import org.omnifaces.util.Json;
  * &#64;Inject &#64;Push
  * private PushContext someChannel;
  *
- * public void someAction() {
+ * public void submit() {
  *     someService.someAsyncServiceMethod(entity, message -&gt; someChannel.send(message));
  * }
  * </pre>
@@ -540,7 +522,7 @@ import org.omnifaces.util.Json;
  * <p>
  * Which is invoked in WAR as below.
  * <pre>
- * public void someAction() {
+ * public void submit() {
  *     someService.someAsyncServiceMethod(entity, new Runnable() {
  *         public void run() {
  *             someChannel.send(entity.getSomeProperty());
@@ -587,56 +569,50 @@ import org.omnifaces.util.Json;
  * @since 2.3
  */
 public class Socket extends TagHandler {
+  /** The boolean context parameter name to register web socket endpoint during startup. */
+  public static final String PARAM_ENABLE_SOCKET_ENDPOINT = "org.omnifaces.ENABLE_SOCKET_ENDPOINT";
 
-	// Constants ------------------------------------------------------------------------------------------------------
+  private static final Pattern PATTERN_CHANNEL = Pattern.compile("[\\w.-]+");
 
-	/** The boolean context parameter name to register web socket endpoint during startup. */
-	public static final String PARAM_ENABLE_SOCKET_ENDPOINT = "org.omnifaces.ENABLE_SOCKET_ENDPOINT";
+  private static final String ERROR_ENDPOINT_NOT_ENABLED = "o:socket endpoint is not enabled." + " You need to set web.xml context param \'" + PARAM_ENABLE_SOCKET_ENDPOINT + "\' with value \'true\'.";
 
-	private static final Pattern PATTERN_CHANNEL = Pattern.compile("[\\w.-]+");
+  private static final String ERROR_INVALID_CHANNEL = "o:socket \'channel\' attribute \'%s\' does not represent a valid channel name. It may not be an EL expression and" + " it may only contain alphanumeric characters, hyphens, underscores and periods.";
 
-	private static final String ERROR_ENDPOINT_NOT_ENABLED =
-		"o:socket endpoint is not enabled."
-			+ " You need to set web.xml context param '" + PARAM_ENABLE_SOCKET_ENDPOINT + "' with value 'true'.";
-	private static final String ERROR_INVALID_CHANNEL =
-		"o:socket 'channel' attribute '%s' does not represent a valid channel name. It may not be an EL expression and"
-			+ " it may only contain alphanumeric characters, hyphens, underscores and periods.";
-	private static final String ERROR_INVALID_USER =
-		"o:socket 'user' attribute '%s' does not represent a valid user identifier. It must implement Serializable and"
-			+ " preferably have low memory footprint. Suggestion: use #{request.remoteUser} or #{someLoggedInUser.id}.";
+  private static final String ERROR_INVALID_USER = "o:socket \'user\' attribute \'%s\' does not represent a valid user identifier. It must implement Serializable and" + " preferably have low memory footprint. Suggestion: use #{request.remoteUser} or #{someLoggedInUser.id}.";
 
-	// Properties -----------------------------------------------------------------------------------------------------
+  private TagAttribute port;
 
-	private TagAttribute port;
-	private TagAttribute channel;
-	private TagAttribute scope;
-	private TagAttribute user;
-	private TagAttribute onopen;
-	private TagAttribute onmessage;
-	private TagAttribute onclose;
-	private TagAttribute connected;
+  private TagAttribute channel;
 
-	// Constructors ---------------------------------------------------------------------------------------------------
+  private TagAttribute scope;
 
-	/**
+  private TagAttribute user;
+
+  private TagAttribute onopen;
+
+  private TagAttribute onmessage;
+
+  private TagAttribute onclose;
+
+  private TagAttribute connected;
+
+  /**
 	 * The tag constructor. It will extract and validate the attributes.
 	 * @param config The tag config.
 	 */
-	public Socket(TagConfig config) {
-		super(config);
-		port = getAttribute("port");
-		channel = getRequiredAttribute("channel");
-		scope = getAttribute("scope");
-		user = getAttribute("user");
-		onopen = getAttribute("onopen");
-		onmessage = getRequiredAttribute("onmessage");
-		onclose = getAttribute("onclose");
-		connected = getAttribute("connected");
-	}
+  public Socket(TagConfig config) {
+    super(config);
+    port = getAttribute("port");
+    channel = getRequiredAttribute("channel");
+    scope = getAttribute("scope");
+    user = getAttribute("user");
+    onopen = getAttribute("onopen");
+    onmessage = getRequiredAttribute("onmessage");
+    onclose = getAttribute("onclose");
+    connected = getAttribute("connected");
+  }
 
-	// Actions --------------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * First check if the web socket endpoint is enabled in <code>web.xml</code> and the channel name and scope is
 	 * valid, then register it in {@link SocketChannelManager} and get the channel ID, then subcribe the
 	 * {@link SocketFacesListener}.
@@ -647,69 +623,56 @@ public class Socket extends TagHandler {
 	 * The channel name must be uniquely tied to the channel scope.
 	 * The user, if any, must implement <code>Serializable</code>.
 	 */
-	@Override
-	public void apply(FaceletContext context, UIComponent parent) throws IOException {
-		if (!ComponentHandler.isNew(parent)) {
-			return;
-		}
+  @Override public void apply(FaceletContext context, UIComponent parent) throws IOException {
+    if (!ComponentHandler.isNew(parent)) {
+      return;
+    }
+    if (!TRUE.equals(getApplicationAttribute(context.getFacesContext(), Socket.class.getName()))) {
+      throw new IllegalStateException(ERROR_ENDPOINT_NOT_ENABLED);
+    }
+    Integer portNumber = getObject(context, port, Integer.class);
+    String channelName = getChannelName(context, channel);
+    String channelId = getChannelId(context, channelName, scope, user);
+    String functions = getString(context, onopen) + "," + onmessage.getValue(context) + "," + getString(context, onclose);
+    ValueExpression connectedExpression = getValueExpression(context, connected, Boolean.class);
+    SystemEventListener listener = new SocketFacesListener(portNumber, channelName, channelId, functions, connectedExpression);
+    subscribeToViewEvent(PostAddToViewEvent.class, listener);
+    subscribeToViewEvent(PreRenderViewEvent.class, listener);
+  }
 
-		if (!TRUE.equals(getApplicationAttribute(context.getFacesContext(), Socket.class.getName()))) {
-			throw new IllegalStateException(ERROR_ENDPOINT_NOT_ENABLED);
-		}
+  private static String getChannelName(FaceletContext context, TagAttribute channel) {
+    String channelName = channel.isLiteral() ? channel.getValue(context) : null;
+    if (channelName == null || !PATTERN_CHANNEL.matcher(channelName).matches()) {
+      throw new IllegalArgumentException(String.format(ERROR_INVALID_CHANNEL, channelName));
+    }
+    return channelName;
+  }
 
-		Integer portNumber = getObject(context, port, Integer.class);
-		String channelName = getChannelName(context, channel);
-		String channelId = getChannelId(context, channelName, scope, user);
-		String functions = getString(context, onopen) + "," + onmessage.getValue(context) + "," + getString(context, onclose);
-		ValueExpression connectedExpression = getValueExpression(context, connected, Boolean.class);
+  private static String getChannelId(FaceletContext context, String channelName, TagAttribute scope, TagAttribute user) {
+    Object userObject = getObject(context, user);
+    if (userObject != null && !(userObject instanceof Serializable)) {
+      throw new IllegalArgumentException(String.format(ERROR_INVALID_USER, userObject));
+    }
+    SocketChannelManager channelManager = getReference(SocketChannelManager.class);
+    String scopeName = (scope == null) ? null : scope.isLiteral() ? getString(context, scope) : "";
+    return channelManager.register(channelName, scopeName, (Serializable) userObject);
+  }
 
-		SystemEventListener listener = new SocketFacesListener(portNumber, channelName, channelId, functions, connectedExpression);
-		subscribeToViewEvent(PostAddToViewEvent.class, listener);
-		subscribeToViewEvent(PreRenderViewEvent.class, listener);
-	}
-
-	private static String getChannelName(FaceletContext context, TagAttribute channel) {
-		String channelName = channel.isLiteral() ? channel.getValue(context) : null;
-
-		if (channelName == null || !PATTERN_CHANNEL.matcher(channelName).matches()) {
-			throw new IllegalArgumentException(String.format(ERROR_INVALID_CHANNEL, channelName));
-		}
-
-		return channelName;
-	}
-
-	private static String getChannelId(FaceletContext context, String channelName, TagAttribute scope, TagAttribute user) {
-		Object userObject = getObject(context, user);
-
-		if (userObject != null && !(userObject instanceof Serializable)) {
-			throw new IllegalArgumentException(String.format(ERROR_INVALID_USER, userObject));
-		}
-
-		SocketChannelManager channelManager = getReference(SocketChannelManager.class);
-		String scopeName = (scope == null) ? null : scope.isLiteral() ? getString(context, scope) : "";
-		return channelManager.register(channelName, scopeName, (Serializable) userObject);
-	}
-
-	// Helpers --------------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Register web socket endpoint if necessary, i.e. when it's enabled via context param and not already installed.
 	 * @param context The involved servlet context.
 	 */
-	public static void registerEndpointIfNecessary(ServletContext context) {
-		if (TRUE.equals(context.getAttribute(Socket.class.getName())) || !parseBoolean(context.getInitParameter(PARAM_ENABLE_SOCKET_ENDPOINT))) {
-			return;
-		}
-
-		try {
-			ServerContainer container = (ServerContainer) context.getAttribute(ServerContainer.class.getName());
-			ServerEndpointConfig config = ServerEndpointConfig.Builder.create(SocketEndpoint.class, SocketEndpoint.URI_TEMPLATE).build();
-			container.addEndpoint(config);
-			context.setAttribute(Socket.class.getName(), TRUE);
-		}
-		catch (Exception e) {
-			throw new FacesException(e);
-		}
-	}
-
+  public static void registerEndpointIfNecessary(ServletContext context) {
+    if (TRUE.equals(context.getAttribute(Socket.class.getName())) || !parseBoolean(context.getInitParameter(PARAM_ENABLE_SOCKET_ENDPOINT))) {
+      return;
+    }
+    try {
+      ServerContainer container = (ServerContainer) context.getAttribute(ServerContainer.class.getName());
+      ServerEndpointConfig config = ServerEndpointConfig.Builder.create(SocketEndpoint.class, SocketEndpoint.URI_TEMPLATE).build();
+      container.addEndpoint(config);
+      context.setAttribute(Socket.class.getName(), TRUE);
+    } catch (Exception e) {
+      throw new FacesException(e);
+    }
+  }
 }
