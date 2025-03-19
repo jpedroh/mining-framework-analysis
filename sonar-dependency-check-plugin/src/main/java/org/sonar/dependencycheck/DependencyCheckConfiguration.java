@@ -111,6 +111,14 @@ public class DependencyCheckConfiguration {
                         .description("When enabled Filepath is used instead of Filename.")
                         .defaultValue(Boolean.toString(DependencyCheckConstants.USE_FILEPATH_DEFAULT))
                         .type(PropertyType.BOOLEAN)
+                        .build(),
+                PropertyDefinition.builder(DependencyCheckConstants.USE_FILEPATH)
+                        .onQualifiers(Qualifiers.PROJECT)
+                        .subCategory(DependencyCheckConstants.SUB_CATEGORY_GENERAL)
+                        .name("Use Filepath")
+                        .description("When enabled Filepath is used instead of Filename.")
+                        .defaultValue(Boolean.toString(DependencyCheckConstants.USE_FILEPATH_DEFAULT))
+                        .type(PropertyType.BOOLEAN)
                         .build()
         );
     }
