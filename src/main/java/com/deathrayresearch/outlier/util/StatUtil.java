@@ -1,5 +1,4 @@
 package com.deathrayresearch.outlier.util;
-
 import com.deathrayresearch.outlier.columns.FloatColumn;
 import com.deathrayresearch.outlier.columns.IntColumn;
 import com.deathrayresearch.outlier.columns.LongColumn;
@@ -10,15 +9,14 @@ import org.apache.commons.math3.exception.NullArgumentException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.util.FastMath;
-
 import java.util.List;
 
 /**
  *
  */
 public class StatUtil {
-
-  private StatUtil() {}
+  private StatUtil() {
+  }
 
   public static float sum(final FloatColumn values) {
     float sum;
@@ -119,9 +117,7 @@ public class StatUtil {
       float sqrdDiff = diff * diff;
       sumSquaredDiffs += sqrdDiff;
     }
-    //float sumMinusAverage = sum(column) - mean(column) * column.size();
     return sumSquaredDiffs / (column.size() - 1);
-    //return (sumMinusAverage * sumMinusAverage) / (column.size() - 1);
   }
 
   /**
@@ -147,7 +143,7 @@ public class StatUtil {
     return (float) (values.sum()) / (float) values.size();
   }
 
-  public static Stats stats(final FloatColumn  values) {
+  public static Stats stats(final FloatColumn values) {
     Stats stats = new Stats();
     stats.min = min(values);
     stats.max = max(values);
@@ -179,7 +175,6 @@ public class StatUtil {
     return stats;
   }
 
-
   public static IntStats stats(final LongColumn ints) {
     FloatColumn values = FloatColumn.create(ints.name(), ints.toFloatArray());
     IntStats stats = new IntStats();
@@ -190,7 +185,6 @@ public class StatUtil {
     stats.variance = variance(values);
     return stats;
   }
-
 
   /**
    * Returns the sample mode(s).  The mode is the most frequently occurring
@@ -241,15 +235,12 @@ public class StatUtil {
     if (sample == null) {
       throw new NullArgumentException(LocalizedFormats.INPUT_ARRAY);
     }
-
     if (begin < 0) {
       throw new NotPositiveException(LocalizedFormats.START_POSITION, begin);
     }
-
     if (length < 0) {
       throw new NotPositiveException(LocalizedFormats.LENGTH, length);
     }
-
     return getMode(sample, begin, length);
   }
 
@@ -263,7 +254,6 @@ public class StatUtil {
    * @return array of array of the most frequently occurring element(s) sorted in ascending order.
    */
   private static float[] getMode(float[] values, final int begin, final int length) {
-    // Add the values to the frequency table
     Frequency freq = new Frequency();
     for (int i = begin; i < begin + length; i++) {
       final float value = values[i];
@@ -272,7 +262,6 @@ public class StatUtil {
       }
     }
     List<Comparable<?>> list = freq.getMode();
-    // Convert the list to an array of primitive double
     float[] modes = new float[list.size()];
     int i = 0;
     for (Comparable<?> c : list) {

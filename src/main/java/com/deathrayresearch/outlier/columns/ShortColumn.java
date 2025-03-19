@@ -1,5 +1,4 @@
 package com.deathrayresearch.outlier.columns;
-
 import com.deathrayresearch.outlier.Table;
 import com.deathrayresearch.outlier.io.TypeUtils;
 import com.deathrayresearch.outlier.mapper.ShortMapUtils;
@@ -15,7 +14,6 @@ import it.unimi.dsi.fastutil.shorts.ShortArrays;
 import it.unimi.dsi.fastutil.shorts.ShortComparator;
 import it.unimi.dsi.fastutil.shorts.ShortIterator;
 import org.roaringbitmap.RoaringBitmap;
-
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,7 +22,6 @@ import java.util.regex.Pattern;
  * A column that contains signed 4 byte integer values
  */
 public class ShortColumn extends AbstractColumn implements ShortMapUtils {
-
   public static final short MISSING_VALUE = (short) ColumnType.SHORT_INT.getMissingValue();
 
   private static final int DEFAULT_ARRAY_SIZE = 128;
@@ -68,8 +65,7 @@ public class ShortColumn extends AbstractColumn implements ShortMapUtils {
     return data.size();
   }
 
-  @Override
-  public ColumnType type() {
+  @Override public ColumnType type() {
     return ColumnType.SHORT_INT;
   }
 
@@ -149,13 +145,11 @@ public class ShortColumn extends AbstractColumn implements ShortMapUtils {
     return results;
   }
 
-  @Override
-  public Table summary() {
+  @Override public Table summary() {
     return StatUtil.stats(this).asTable(name());
   }
 
-  @Override
-  public int countUnique() {
+  @Override public int countUnique() {
     RoaringBitmap roaringBitmap = new RoaringBitmap();
     for (int i : data) {
       roaringBitmap.add(i);
@@ -163,8 +157,7 @@ public class ShortColumn extends AbstractColumn implements ShortMapUtils {
     return roaringBitmap.getCardinality();
   }
 
-  @Override
-  public ShortColumn unique() {
+  @Override public ShortColumn unique() {
     RoaringBitmap roaringBitmap = new RoaringBitmap();
     for (short i : data) {
       roaringBitmap.add(i);
@@ -177,44 +170,35 @@ public class ShortColumn extends AbstractColumn implements ShortMapUtils {
     return ShortColumn.create(name() + " Unique values", ShortArrayList.wrap(shorts));
   }
 
-  @Override
-  public String getString(int row) {
+  @Override public String getString(int row) {
     return String.valueOf(data.getShort(row));
   }
 
-  @Override
-  public ShortColumn emptyCopy() {
+  @Override public ShortColumn emptyCopy() {
     return new ShortColumn(name(), DEFAULT_ARRAY_SIZE);
   }
 
-  @Override
-  public void clear() {
+  @Override public void clear() {
     data.clear();
   }
 
-  @Override
-  public void sortAscending() {
+  @Override public void sortAscending() {
     Arrays.parallelSort(data.elements());
   }
 
-  @Override
-  public void sortDescending() {
+  @Override public void sortDescending() {
     ShortArrays.parallelQuickSort(data.elements(), reverseIntComparator);
   }
 
-  ShortComparator reverseIntComparator =  new ShortComparator() {
-
-    @Override
-    public int compare(Short o2, Short o1) {
+  ShortComparator reverseIntComparator = new ShortComparator() {
+    @Override public int compare(Short o2, Short o1) {
       return (o1 < o2 ? -1 : (o1.equals(o2) ? 0 : 1));
     }
 
-    @Override
-    public int compare(short o2, short o1) {
+    @Override public int compare(short o2, short o1) {
       return (o1 < o2 ? -1 : (o1 == o2 ? 0 : 1));
     }
   };
-
 
   private ShortColumn copy() {
     ShortColumn copy = emptyCopy();
@@ -224,21 +208,17 @@ public class ShortColumn extends AbstractColumn implements ShortMapUtils {
     return copy;
   }
 
-  @Override
-  public boolean isEmpty() {
+  @Override public boolean isEmpty() {
     return data.isEmpty();
   }
 
-  @Override
-  public void addCell(String object) {
+  @Override public void addCell(String object) {
     try {
       add(convert(object));
     } catch (NumberFormatException nfe) {
       throw new NumberFormatException(name() + ": " + nfe.getMessage());
     } catch (NullPointerException e) {
-      throw new RuntimeException(name() + ": "
-          + String.valueOf(object) + ": "
-          + e.getMessage());
+      throw new RuntimeException(name() + ": " + String.valueOf(object) + ": " + e.getMessage());
     }
   }
 
@@ -261,15 +241,12 @@ public class ShortColumn extends AbstractColumn implements ShortMapUtils {
     return data.getShort(index);
   }
 
-  @Override
-  public IntComparator rowComparator() {
+  @Override public IntComparator rowComparator() {
     return comparator;
   }
 
   final IntComparator comparator = new IntComparator() {
-
-    @Override
-    public int compare(Integer i1, Integer i2) {
+    @Override public int compare(Integer i1, Integer i2) {
       return compare((int) i1, (int) i2);
     }
 
@@ -378,20 +355,18 @@ public class ShortColumn extends AbstractColumn implements ShortMapUtils {
   public String print() {
     StringBuilder builder = new StringBuilder();
     builder.append(title());
-    for (short i : data){
+    for (short i : data) {
       builder.append(String.valueOf(i));
       builder.append('\n');
     }
     return builder.toString();
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return "ShortInt column: " + name();
   }
 
-  @Override
-  public void appendColumnData(Column column) {
+  @Override public void appendColumnData(Column column) {
     Preconditions.checkArgument(column.type() == this.type());
     ShortColumn shortColumn = (ShortColumn) column;
     for (int i = 0; i < shortColumn.size(); i++) {
@@ -399,8 +374,7 @@ public class ShortColumn extends AbstractColumn implements ShortMapUtils {
     }
   }
 
-  @Override
-  public ShortIterator iterator() {
+  @Override public ShortIterator iterator() {
     return data.iterator();
   }
 }

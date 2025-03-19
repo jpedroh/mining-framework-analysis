@@ -1,5 +1,4 @@
 package com.deathrayresearch.outlier.columns;
-
 import com.deathrayresearch.outlier.Table;
 import com.deathrayresearch.outlier.io.TypeUtils;
 import com.deathrayresearch.outlier.mapper.DateTimeMapUtils;
@@ -9,7 +8,6 @@ import com.google.common.base.Strings;
 import it.unimi.dsi.fastutil.ints.IntComparator;
 import it.unimi.dsi.fastutil.longs.*;
 import org.roaringbitmap.RoaringBitmap;
-
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.temporal.ChronoField;
@@ -19,16 +17,13 @@ import java.util.Arrays;
  * A column in a base table that contains float values
  */
 public class LocalDateTimeColumn extends AbstractColumn implements DateTimeMapUtils {
-
   public static final long MISSING_VALUE = Long.MIN_VALUE;
 
   private static int DEFAULT_ARRAY_SIZE = 128;
 
   private LongArrayList data;
 
-  @Override
-  public void addCell(String stringValue) {
-
+  @Override public void addCell(String stringValue) {
     if (stringValue == null) {
       add(Long.MIN_VALUE);
     } else {
@@ -47,9 +42,7 @@ public class LocalDateTimeColumn extends AbstractColumn implements DateTimeMapUt
   }
 
   public LocalDateTime convert(String value) {
-    if (Strings.isNullOrEmpty(value)
-        || TypeUtils.MISSING_INDICATORS.contains(value)
-        || value.equals("-1")) {
+    if (Strings.isNullOrEmpty(value) || TypeUtils.MISSING_INDICATORS.contains(value) || value.equals("-1")) {
       return null;
     }
     value = Strings.padStart(value, 4, '0');
@@ -83,8 +76,7 @@ public class LocalDateTimeColumn extends AbstractColumn implements DateTimeMapUt
     return data;
   }
 
-  @Override
-  public ColumnType type() {
+  @Override public ColumnType type() {
     return ColumnType.LOCAL_DATE_TIME;
   }
 
@@ -92,18 +84,15 @@ public class LocalDateTimeColumn extends AbstractColumn implements DateTimeMapUt
     data.add(dateTime);
   }
 
-  @Override
-  public String getString(int row) {
+  @Override public String getString(int row) {
     return PackedLocalDateTime.toString(getLong(row));
   }
 
-  @Override
-  public LocalDateTimeColumn emptyCopy() {
+  @Override public LocalDateTimeColumn emptyCopy() {
     return new LocalDateTimeColumn(name());
   }
 
-  @Override
-  public void clear() {
+  @Override public void clear() {
     data.clear();
   }
 
@@ -113,37 +102,29 @@ public class LocalDateTimeColumn extends AbstractColumn implements DateTimeMapUt
     return copy;
   }
 
-  @Override
-  public void sortAscending() {
+  @Override public void sortAscending() {
     Arrays.parallelSort(data.elements());
   }
 
-  @Override
-  public void sortDescending() {
+  @Override public void sortDescending() {
     LongArrays.parallelQuickSort(data.elements(), reverseLongComparator);
   }
 
-  LongComparator reverseLongComparator =  new LongComparator() {
-
-    @Override
-    public int compare(Long o2, Long o1) {
+  LongComparator reverseLongComparator = new LongComparator() {
+    @Override public int compare(Long o2, Long o1) {
       return (o1 < o2 ? -1 : (o1.equals(o2) ? 0 : 1));
     }
 
-    @Override
-    public int compare(long o2, long o1) {
+    @Override public int compare(long o2, long o1) {
       return (o1 < o2 ? -1 : (o1 == o2 ? 0 : 1));
     }
   };
 
-  // TODO(lwhite): Implement column summary()
-  @Override
-  public Table summary() {
+  @Override public Table summary() {
     return new Table("Unimplemented");
   }
 
-  @Override
-  public int countUnique() {
+  @Override public int countUnique() {
     LongSet ints = new LongOpenHashSet(data.size());
     for (long i : data) {
       ints.add(i);
@@ -151,18 +132,15 @@ public class LocalDateTimeColumn extends AbstractColumn implements DateTimeMapUt
     return ints.size();
   }
 
-  @Override
-  public LocalDateTimeColumn unique() {
+  @Override public LocalDateTimeColumn unique() {
     LongSet ints = new LongOpenHashSet(data.size());
     for (long i : data) {
       ints.add(i);
     }
-    return LocalDateTimeColumn.create(name() + " Unique values",
-            LongArrayList.wrap(ints.toLongArray()));
+    return LocalDateTimeColumn.create(name() + " Unique values", LongArrayList.wrap(ints.toLongArray()));
   }
 
-  @Override
-  public boolean isEmpty() {
+  @Override public boolean isEmpty() {
     return data.isEmpty();
   }
 
@@ -174,20 +152,16 @@ public class LocalDateTimeColumn extends AbstractColumn implements DateTimeMapUt
     return PackedLocalDateTime.asLocalDateTime(getLong(index));
   }
 
-  @Override
-  public IntComparator rowComparator() {
+  @Override public IntComparator rowComparator() {
     return comparator;
   }
 
   IntComparator comparator = new IntComparator() {
-
-    @Override
-    public int compare(Integer r1, Integer r2) {
+    @Override public int compare(Integer r1, Integer r2) {
       return compare((int) r1, (int) r2);
     }
 
-    @Override
-    public int compare(int r1, int r2) {
+    @Override public int compare(int r1, int r2) {
       long f1 = getLong(r1);
       long f2 = getLong(r2);
       return Long.compare(f1, f2);
@@ -195,7 +169,7 @@ public class LocalDateTimeColumn extends AbstractColumn implements DateTimeMapUt
   };
 
   public CategoryColumn dayOfWeek() {
-    CategoryColumn newColumn = CategoryColumn.create(this.name() + " day of week" , this.size());
+    CategoryColumn newColumn = CategoryColumn.create(this.name() + " day of week", this.size());
     for (int r = 0; r < this.size(); r++) {
       long c1 = this.getLong(r);
       if (c1 == (LocalDateTimeColumn.MISSING_VALUE)) {
@@ -302,13 +276,11 @@ public class LocalDateTimeColumn extends AbstractColumn implements DateTimeMapUt
     return builder.toString();
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return "LocalDateTime column: " + name();
   }
 
-  @Override
-  public void appendColumnData(Column column) {
+  @Override public void appendColumnData(Column column) {
     Preconditions.checkArgument(column.type() == this.type());
     LocalDateTimeColumn intColumn = (LocalDateTimeColumn) column;
     for (int i = 0; i < intColumn.size(); i++) {
@@ -329,7 +301,6 @@ public class LocalDateTimeColumn extends AbstractColumn implements DateTimeMapUt
         max = (max > aData) ? max : aData;
       }
     }
-
     if (missing == max) {
       return null;
     }
@@ -339,7 +310,6 @@ public class LocalDateTimeColumn extends AbstractColumn implements DateTimeMapUt
   public LocalDateTime min() {
     long min;
     long missing = Long.MIN_VALUE;
-
     if (!isEmpty()) {
       min = getLong(0);
     } else {
@@ -369,5 +339,4 @@ public class LocalDateTimeColumn extends AbstractColumn implements DateTimeMapUt
     }
     return newColumn;
   }
-
 }

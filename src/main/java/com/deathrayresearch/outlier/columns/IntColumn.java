@@ -1,5 +1,4 @@
 package com.deathrayresearch.outlier.columns;
-
 import com.deathrayresearch.outlier.Table;
 import com.deathrayresearch.outlier.io.TypeUtils;
 import com.deathrayresearch.outlier.mapper.IntMapUtils;
@@ -14,7 +13,6 @@ import it.unimi.dsi.fastutil.ints.IntArrays;
 import it.unimi.dsi.fastutil.ints.IntComparator;
 import it.unimi.dsi.fastutil.ints.IntIterator;
 import org.roaringbitmap.RoaringBitmap;
-
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,8 +21,8 @@ import java.util.regex.Pattern;
  * A column that contains signed 4 byte integer values
  */
 public class IntColumn extends AbstractColumn implements IntMapUtils {
-
   public static final int MISSING_VALUE = (int) ColumnType.INTEGER.getMissingValue();
+
   private static final int DEFAULT_ARRAY_SIZE = 128;
 
   private IntArrayList data;
@@ -70,8 +68,7 @@ public class IntColumn extends AbstractColumn implements IntMapUtils {
     return data.size();
   }
 
-  @Override
-  public ColumnType type() {
+  @Override public ColumnType type() {
     return ColumnType.INTEGER;
   }
 
@@ -151,13 +148,11 @@ public class IntColumn extends AbstractColumn implements IntMapUtils {
     return results;
   }
 
-  @Override
-  public Table summary() {
+  @Override public Table summary() {
     return StatUtil.stats(this).asTable(name());
   }
 
-  @Override
-  public int countUnique() {
+  @Override public int countUnique() {
     RoaringBitmap roaringBitmap = new RoaringBitmap();
     for (int i : data) {
       roaringBitmap.add(i);
@@ -165,8 +160,7 @@ public class IntColumn extends AbstractColumn implements IntMapUtils {
     return roaringBitmap.getCardinality();
   }
 
-  @Override
-  public IntColumn unique() {
+  @Override public IntColumn unique() {
     RoaringBitmap roaringBitmap = new RoaringBitmap();
     for (int i : data) {
       roaringBitmap.add(i);
@@ -174,44 +168,35 @@ public class IntColumn extends AbstractColumn implements IntMapUtils {
     return IntColumn.create(name() + " Unique values", IntArrayList.wrap(roaringBitmap.toArray()));
   }
 
-  @Override
-  public String getString(int row) {
+  @Override public String getString(int row) {
     return String.valueOf(data.getInt(row));
   }
 
-  @Override
-  public IntColumn emptyCopy() {
+  @Override public IntColumn emptyCopy() {
     return new IntColumn(name(), DEFAULT_ARRAY_SIZE);
   }
 
-  @Override
-  public void clear() {
+  @Override public void clear() {
     data.clear();
   }
 
-  @Override
-  public void sortAscending() {
+  @Override public void sortAscending() {
     Arrays.parallelSort(data.elements());
   }
 
-  @Override
-  public void sortDescending() {
+  @Override public void sortDescending() {
     IntArrays.parallelQuickSort(data.elements(), reverseIntComparator);
   }
 
-  IntComparator reverseIntComparator =  new IntComparator() {
-
-    @Override
-    public int compare(Integer o2, Integer o1) {
+  IntComparator reverseIntComparator = new IntComparator() {
+    @Override public int compare(Integer o2, Integer o1) {
       return (o1 < o2 ? -1 : (o1.equals(o2) ? 0 : 1));
     }
 
-    @Override
-    public int compare(int o2, int o1) {
+    @Override public int compare(int o2, int o1) {
       return (o1 < o2 ? -1 : (o1 == o2 ? 0 : 1));
     }
   };
-
 
   private IntColumn copy() {
     IntColumn copy = emptyCopy();
@@ -221,21 +206,17 @@ public class IntColumn extends AbstractColumn implements IntMapUtils {
     return copy;
   }
 
-  @Override
-  public boolean isEmpty() {
+  @Override public boolean isEmpty() {
     return data.isEmpty();
   }
 
-  @Override
-  public void addCell(String object) {
+  @Override public void addCell(String object) {
     try {
       add(convert(object));
     } catch (NumberFormatException nfe) {
       throw new NumberFormatException(name() + ": " + nfe.getMessage());
     } catch (NullPointerException e) {
-      throw new RuntimeException(name() + ": "
-          + String.valueOf(object) + ": "
-          + e.getMessage());
+      throw new RuntimeException(name() + ": " + String.valueOf(object) + ": " + e.getMessage());
     }
   }
 
@@ -258,15 +239,12 @@ public class IntColumn extends AbstractColumn implements IntMapUtils {
     return data.getInt(index);
   }
 
-  @Override
-  public it.unimi.dsi.fastutil.ints.IntComparator rowComparator() {
+  @Override public it.unimi.dsi.fastutil.ints.IntComparator rowComparator() {
     return comparator;
   }
 
   final it.unimi.dsi.fastutil.ints.IntComparator comparator = new it.unimi.dsi.fastutil.ints.IntComparator() {
-
-    @Override
-    public int compare(Integer i1, Integer i2) {
+    @Override public int compare(Integer i1, Integer i2) {
       return compare((int) i1, (int) i2);
     }
 
@@ -375,20 +353,18 @@ public class IntColumn extends AbstractColumn implements IntMapUtils {
   public String print() {
     StringBuilder builder = new StringBuilder();
     builder.append(title());
-    for (int i : data){
+    for (int i : data) {
       builder.append(String.valueOf(i));
       builder.append('\n');
     }
     return builder.toString();
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return "Int column: " + name();
   }
 
-  @Override
-  public void appendColumnData(Column column) {
+  @Override public void appendColumnData(Column column) {
     Preconditions.checkArgument(column.type() == this.type());
     IntColumn intColumn = (IntColumn) column;
     for (int i = 0; i < intColumn.size(); i++) {
@@ -396,8 +372,7 @@ public class IntColumn extends AbstractColumn implements IntMapUtils {
     }
   }
 
-  @Override
-  public IntIterator iterator() {
+  @Override public IntIterator iterator() {
     return data.iterator();
   }
 }
