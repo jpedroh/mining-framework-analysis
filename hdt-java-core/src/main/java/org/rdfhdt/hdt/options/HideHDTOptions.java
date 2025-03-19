@@ -1,5 +1,4 @@
 package org.rdfhdt.hdt.options;
-
 import java.util.*;
 import java.util.function.Function;
 
@@ -9,56 +8,54 @@ import java.util.function.Function;
  * @author Antoine Willerval
  */
 public class HideHDTOptions implements HDTOptions {
-    private final HDTOptions spec;
-    private final Function<String, String> mapper;
-    private final Map<String, String> customOptions = new HashMap<>();
+  private final HDTOptions spec;
 
-    /**
+  private final Function<String, String> mapper;
+
+  private final Map<String, String> customOptions = new HashMap<>();
+
+  /**
      * @param spec   wrapped options
      * @param mapper mapping function (key) {@literal ->} newKey?
      */
-    public HideHDTOptions(HDTOptions spec, Function<String, String> mapper) {
-        this.spec = spec;
-        this.mapper = mapper;
-    }
+  public HideHDTOptions(HDTOptions spec, Function<String, String> mapper) {
+    this.spec = spec;
+    this.mapper = mapper;
+  }
 
-    /**
+  /**
      * override a value from the wrapped, set to null to cancel the override
      *
      * @param key key
      * @param value value, null to disable the override
      */
-    public void overrideValue(String key, Object value) {
-        if (value != null) {
-            customOptions.put(key, String.valueOf(value));
-        } else {
-            customOptions.remove(key);
-        }
+  public void overrideValue(String key, Object value) {
+    if (value != null) {
+      customOptions.put(key, String.valueOf(value));
+    } else {
+      customOptions.remove(key);
     }
+  }
 
-    @Override
-    public Set<Object> getKeys() {
-        return spec.getKeys();
-    }
+  @Override public Set<Object> getKeys() {
+    return spec.getKeys();
+  }
 
-    private String map(String key) {
-        return Objects.requireNonNullElse(mapper.apply(key), "");
-    }
+  private String map(String key) {
+    return Objects.requireNonNullElse(mapper.apply(key), "");
+  }
 
-    @Override
-    public String get(String key) {
-        String newKey = map(key);
-        String overrideValue = customOptions.get(newKey);
-        return overrideValue != null ? overrideValue : spec.get(newKey);
-    }
+  @Override public String get(String key) {
+    String newKey = map(key);
+    String overrideValue = customOptions.get(newKey);
+    return overrideValue != null ? overrideValue : spec.get(newKey);
+  }
 
-    @Override
-    public void set(String key, String value) {
-        spec.set(map(key), value);
-    }
+  @Override public void set(String key, String value) {
+    spec.set(map(key), value);
+  }
 
-    @Override
-    public void clear() {
-        spec.clear();
-    }
+  @Override public void clear() {
+    spec.clear();
+  }
 }
