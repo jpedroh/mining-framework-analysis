@@ -12,7 +12,7 @@ public enum LogicalOperator {
 	public Filter join(Class<?> clazz, BaseCondition... conditions) throws FalsePredicateException {
 		return performJoin(this, clazz, conditions);
 	}
-	
+
 	public static Filter performJoin(LogicalOperator operation, Class<?> clazz, BaseCondition... conditions) throws FalsePredicateException {
 		List<Filter> filters = new ArrayList<>();
 		for (int i = 0; i < conditions.length; i++) {
