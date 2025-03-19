@@ -64,12 +64,53 @@ public class LocalCachesSingleton {
         }
 
         if (enabled) {
+<<<<<<< /usr/src/app/output/softinstigate/restheart/c05198d3ef50cb4e96bfede52da7166a48afa0c7/src/main/java/org/restheart/handlers/injectors/LocalCachesSingleton.java/left.java
             this.dbPropsCache = CacheFactory.createLocalLoadingCache(maxCacheSize, Cache.EXPIRE_POLICY.AFTER_WRITE, ttl, DBDAO::getDbProps);
+||||||| /usr/src/app/output/softinstigate/restheart/c05198d3ef50cb4e96bfede52da7166a48afa0c7/src/main/java/org/restheart/handlers/injectors/LocalCachesSingleton.java/base.java
+            this.dbPropsCache = CacheFactory.createLocalLoadingCache(
+                    new CacheLoader<String, Optional<DBObject>>() {
+                        @Override
+                        public Optional<DBObject> load(String key) throws Exception {
+                            return Optional.ofNullable(DBDAO.getDbProps(key));
+                        }
+                    });
+=======
+            this.dbPropsCache = CacheFactory.createLocalLoadingCache(new CacheLoader<String, Optional<DBObject>>() {
+                final DbsDAO dbsDAO = new DbsDAO();
 
+                @Override
+                public Optional<DBObject> load(String key) throws Exception {
+                    return Optional.ofNullable(dbsDAO.getDbProps(key));
+                }
+            });
+>>>>>>> /usr/src/app/output/softinstigate/restheart/c05198d3ef50cb4e96bfede52da7166a48afa0c7/src/main/java/org/restheart/handlers/injectors/LocalCachesSingleton.java/right.java
+
+<<<<<<< /usr/src/app/output/softinstigate/restheart/c05198d3ef50cb4e96bfede52da7166a48afa0c7/src/main/java/org/restheart/handlers/injectors/LocalCachesSingleton.java/left.java
             this.collectionPropsCache = CacheFactory.createLocalLoadingCache(maxCacheSize, Cache.EXPIRE_POLICY.AFTER_WRITE, ttl, (String key) -> {
                 String[] dbNameAndCollectionName = key.split(SEPARATOR);
                 return CollectionDAO.getCollectionProps(dbNameAndCollectionName[0], dbNameAndCollectionName[1]);
             });
+||||||| /usr/src/app/output/softinstigate/restheart/c05198d3ef50cb4e96bfede52da7166a48afa0c7/src/main/java/org/restheart/handlers/injectors/LocalCachesSingleton.java/base.java
+            this.collectionPropsCache = builder.build(
+                    new CacheLoader<String, Optional<DBObject>>() {
+                        @Override
+                        public Optional<DBObject> load(String key) throws Exception {
+                            String[] dbNameAndCollectionName = key.split(SEPARATOR);
+                            return Optional.ofNullable(CollectionDAO.getCollectionProps(dbNameAndCollectionName[0], dbNameAndCollectionName[1]));
+                        }
+                    });
+=======
+            this.collectionPropsCache = builder.build(
+                    new CacheLoader<String, Optional<DBObject>>() {
+                        final CollectionDAO collectionDAO = new CollectionDAO();
+
+                        @Override
+                        public Optional<DBObject> load(String key) throws Exception {
+                            String[] dbNameAndCollectionName = key.split(SEPARATOR);
+                            return Optional.ofNullable(collectionDAO.getCollectionProps(dbNameAndCollectionName[0], dbNameAndCollectionName[1]));
+                        }
+                    });
+>>>>>>> /usr/src/app/output/softinstigate/restheart/c05198d3ef50cb4e96bfede52da7166a48afa0c7/src/main/java/org/restheart/handlers/injectors/LocalCachesSingleton.java/right.java
         }
     }
 

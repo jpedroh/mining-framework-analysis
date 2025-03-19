@@ -72,9 +72,60 @@ public class DBCursorPool {
     }
 
     private DBCursorPool() {
+<<<<<<< /usr/src/app/output/softinstigate/restheart/c05198d3ef50cb4e96bfede52da7166a48afa0c7/src/main/java/org/restheart/db/DBCursorPool.java/left.java
         cache = CacheFactory.createLocalCache(POOL_SIZE, Cache.EXPIRE_POLICY.AFTER_READ, TTL, (Map.Entry<DBCursorPoolEntryKey, Optional<DBCursor>> entry) -> {
             if (entry != null && entry.getValue() != null) {
                 entry.getValue().ifPresent(v -> v.close());
+||||||| /usr/src/app/output/softinstigate/restheart/c05198d3ef50cb4e96bfede52da7166a48afa0c7/src/main/java/org/restheart/db/DBCursorPool.java/base.java
+        CacheBuilder builder = CacheBuilder.newBuilder()
+                .maximumSize(POOL_SIZE)
+                .expireAfterAccess(TTL, TimeUnit.MINUTES)
+                .removalListener((RemovalNotification<DBCursorPoolEntryKey, DBCursor> notification) -> {
+                    if (notification != null && notification.getValue() != null) {
+                        notification.getValue().close();
+                    }
+                });
+
+        if (LOGGER.isDebugEnabled()) {
+            builder.recordStats();
+        }
+
+        cache = builder.build();
+
+        CacheBuilder builder2 = CacheBuilder.newBuilder()
+                .maximumSize(100)
+                .expireAfterAccess(5, TimeUnit.MINUTES);
+
+        collSizes = builder2.build(new CacheLoader<DBCursorPoolEntryKey, Long>() {
+            @Override
+            public Long load(DBCursorPoolEntryKey key) throws Exception {
+                return CollectionDAO.getCollectionSize(key.getCollection(), key.getFilter());
+=======
+        CacheBuilder builder = CacheBuilder.newBuilder()
+                .maximumSize(POOL_SIZE)
+                .expireAfterAccess(TTL, TimeUnit.MINUTES)
+                .removalListener((RemovalNotification<DBCursorPoolEntryKey, DBCursor> notification) -> {
+                    if (notification != null && notification.getValue() != null) {
+                        notification.getValue().close();
+                    }
+                });
+
+        if (LOGGER.isDebugEnabled()) {
+            builder.recordStats();
+        }
+
+        cache = builder.build();
+
+        CacheBuilder builder2 = CacheBuilder.newBuilder()
+                .maximumSize(100)
+                .expireAfterAccess(5, TimeUnit.MINUTES);
+
+        final CollectionDAO collectionDAO = new CollectionDAO();
+        collSizes = builder2.build(new CacheLoader<DBCursorPoolEntryKey, Long>() {
+            @Override
+            public Long load(DBCursorPoolEntryKey key) throws Exception {
+                return collectionDAO.getCollectionSize(key.getCollection(), key.getFilter());
+>>>>>>> /usr/src/app/output/softinstigate/restheart/c05198d3ef50cb4e96bfede52da7166a48afa0c7/src/main/java/org/restheart/db/DBCursorPool.java/right.java
             }
         });
 
