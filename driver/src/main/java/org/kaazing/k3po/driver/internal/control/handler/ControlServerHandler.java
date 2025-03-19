@@ -1,26 +1,9 @@
-/**
- * Copyright 2007-2015, Kaazing Corporation. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.kaazing.k3po.driver.internal.control.handler;
-
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.FileSystems.newFileSystem;
 import static org.kaazing.k3po.lang.internal.parser.ScriptParseStrategy.PROPERTY_NODE;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
-
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
@@ -58,416 +40,360 @@ import org.kaazing.k3po.lang.internal.parser.ScriptParseException;
 import org.kaazing.k3po.lang.internal.parser.ScriptParserImpl;
 
 public class ControlServerHandler extends ControlUpstreamHandler {
+  private static final Map<String, Object> EMPTY_ENVIRONMENT = Collections.<String, Object>emptyMap();
 
-    private static final Map<String, Object> EMPTY_ENVIRONMENT = Collections.<String, Object>emptyMap();
+  private static final InternalLogger logger = InternalLoggerFactory.getInstance(ControlServerHandler.class);
 
-    private static final InternalLogger logger = InternalLoggerFactory.getInstance(ControlServerHandler.class);
-    private static final String ERROR_MSG_NOT_PREPARED = "Script has not been prepared or is still preparing\n";
-    private static final String ERROR_MSG_ALREADY_PREPARED = "Script already prepared\n";
-    private static final String ERROR_MSG_ALREADY_STARTED = "Script has already been started\n";
+  private static final String ERROR_MSG_NOT_PREPARED = "Script has not been prepared or is still preparing\n";
 
-    private Robot robot;
-    private ChannelFutureListener whenAbortedOrFinished;
-    
-    private volatile boolean isFinishedSent = false;
+  private static final String ERROR_MSG_ALREADY_PREPARED = "Script already prepared\n";
 
-    private final ChannelFuture channelClosedFuture = Channels.future(null);
+  private static final String ERROR_MSG_ALREADY_STARTED = "Script has already been started\n";
 
-    private ClassLoader scriptLoader;
-    
-    public void setScriptLoader(ClassLoader scriptLoader) {
-        this.scriptLoader = scriptLoader;
+  private Robot robot;
+
+  private ChannelFutureListener whenAbortedOrFinished;
+
+  private volatile boolean isFinishedSent = false;
+
+  private final ChannelFuture channelClosedFuture = Channels.future(null);
+
+  private ClassLoader scriptLoader;
+
+  public void setScriptLoader(ClassLoader scriptLoader) {
+    this.scriptLoader = scriptLoader;
+  }
+
+  public ChannelFuture getChannelClosedFuture() {
+    return channelClosedFuture;
+  }
+
+  @Override public void channelClosed(final ChannelHandlerContext ctx, final ChannelStateEvent e) throws Exception {
+    if (robot != null) {
+      robot.dispose().addListener(new ChannelFutureListener() {
+        @Override public void operationComplete(ChannelFuture future) throws Exception {
+          channelClosedFuture.setSuccess();
+          ctx.sendUpstream(e);
+        }
+      });
     }
+  }
 
-    // Note that this is more than just the channel close future. It's a future that means not only
-    // that this channel has closed but it is a future that tells us when this obj has processed the closed event.
-    public ChannelFuture getChannelClosedFuture() {
-        return channelClosedFuture;
+  @Override public void prepareReceived(final ChannelHandlerContext ctx, MessageEvent evt) throws Exception {
+    if (robot != null && robot.getPreparedFuture() != null) {
+      sendErrorMessage(ctx, ERROR_MSG_ALREADY_PREPARED);
+      return;
     }
-
-    @Override
-    public void channelClosed(final ChannelHandlerContext ctx, final ChannelStateEvent e) throws Exception {
-        if (robot != null) {
-            robot.dispose().addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    channelClosedFuture.setSuccess();
-                    ctx.sendUpstream(e);
-                }
-            });
-        }
-
+    final PrepareMessage prepare = (PrepareMessage) evt.getMessage();
+    String version = prepare.getVersion();
+    if (!"2.0".equals(version)) {
+      sendVersionError(ctx);
+      return;
     }
-
-    @Override
-    public void prepareReceived(final ChannelHandlerContext ctx, MessageEvent evt) throws Exception {
-        if (robot != null && robot.getPreparedFuture() != null) {
-            sendErrorMessage(ctx, ERROR_MSG_ALREADY_PREPARED);
-            return;
-        }
-
-        final PrepareMessage prepare = (PrepareMessage) evt.getMessage();
-
-        // enforce control protocol version
-        String version = prepare.getVersion();
-        if (!"2.0".equals(version)) {
-            sendVersionError(ctx);
-            return;
-        }
-
-        List<String> scriptNames = prepare.getNames();
-        if (logger.isDebugEnabled()) {
-            logger.debug("preparing script(s) " + scriptNames);
-        }
-
-        whenAbortedOrFinished = whenAbortedOrFinished(ctx);
-
-        String originScript = "";
-        String origin = prepare.getOrigin();
-        if (origin != null) {
-            try {
-                originScript = OriginScript.get(origin);
-            } catch (URISyntaxException e) {
-                throw new Exception("Could not find origin: ", e);
-            }
-        }
-
-        ChannelFuture prepareFuture;
+    List<String> scriptNames = prepare.getNames();
+    if (logger.isDebugEnabled()) {
+      logger.debug("preparing script(s) " + scriptNames);
+    }
+    whenAbortedOrFinished = whenAbortedOrFinished(ctx);
+    String originScript = "";
+    String origin = prepare.getOrigin();
+    if (origin != null) {
+      try {
+        originScript = OriginScript.get(origin);
+      } catch (URISyntaxException e) {
+        throw new Exception("Could not find origin: ", e);
+      }
+    }
+    ChannelFuture prepareFuture;
+    try {
+      String aggregatedScript = originScript + aggregateScript(scriptNames, scriptLoader);
+      List<String> properyOverrides = prepare.getProperties();
+      if (!"2.0".equals(version)) {
+        sendVersionError(ctx);
+      }
+      aggregatedScript = injectOverridenProperties(aggregatedScript, properyOverrides);
+      robot = new Robot();
+      if (scriptLoader != null) {
+        Thread currentThread = currentThread();
+        ClassLoader contextClassLoader = currentThread.getContextClassLoader();
         try {
-
-            String aggregatedScript = originScript + aggregateScript(scriptNames, scriptLoader);
-            List<String> properyOverrides = prepare.getProperties();
-            // consider hard fail in the future, when test frameworks support
-            // override per test method
-
-            // Checks that it is a supported version
-            if (!"2.0".equals(version)) {
-                sendVersionError(ctx);
-            }
-
-            aggregatedScript = injectOverridenProperties(aggregatedScript, properyOverrides);
-
-            robot = new Robot();
-
-            if (scriptLoader != null) {
-                Thread currentThread = currentThread();
-                ClassLoader contextClassLoader = currentThread.getContextClassLoader();
-                try {
-                    currentThread.setContextClassLoader(scriptLoader);
-                    prepareFuture = robot.prepare(aggregatedScript);
-                } finally {
-                    currentThread.setContextClassLoader(contextClassLoader);
-                }
-            } else {
-                prepareFuture = robot.prepare(aggregatedScript);
-            }
-
-            final String scriptToRun = aggregatedScript;
-            prepareFuture.addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(final ChannelFuture f) {
-                    PreparedMessage prepared = new PreparedMessage();
-                    prepared.setScript(scriptToRun);
-                    prepared.getBarriers().addAll(robot.getBarriersByName().keySet());
-                    writeEvent(ctx, prepared);
-                }
-            });
-        } catch (Exception e) {
-            sendErrorMessage(ctx, e);
-            return;
+          currentThread.setContextClassLoader(scriptLoader);
+          prepareFuture = robot.prepare(aggregatedScript);
+        }  finally {
+          currentThread.setContextClassLoader(contextClassLoader);
         }
+      } else {
+        prepareFuture = robot.prepare(aggregatedScript);
+      }
+      final String scriptToRun = aggregatedScript;
+      prepareFuture.addListener(new ChannelFutureListener() {
+        @Override public void operationComplete(final ChannelFuture f) {
+          PreparedMessage prepared = new PreparedMessage();
+          prepared.setScript(scriptToRun);
+          prepared.getBarriers().addAll(robot.getBarriersByName().keySet());
+          writeEvent(ctx, prepared);
+        }
+      });
+    } catch (Exception e) {
+      sendErrorMessage(ctx, e);
+      return;
     }
+  }
 
-    private String injectOverridenProperties(String aggregatedScript, List<String> scriptProperties)
-            throws Exception, ScriptParseException {
-
-        ScriptParserImpl parser = new ScriptParserImpl();
-
-        for (String propertyToInject : scriptProperties) {
-            String propertyName = parser.parseWithStrategy(propertyToInject, PROPERTY_NODE).getPropertyName();
-            StringBuilder replacementScript = new StringBuilder();
-            Pattern pattern = Pattern.compile("property\\s+" + propertyName + "\\s+.+");
-            boolean matchFound = false;
-            for (String scriptLine : aggregatedScript.split("\\r?\\n")) {
-                if (pattern.matcher(scriptLine).matches()) {
-                    matchFound = true;
-                    replacementScript.append(propertyToInject + "\n");
-                } else {
-                    replacementScript.append(scriptLine + "\n");
-                }
-            }
-            if (!matchFound) {
-                String errorMsg = "Received " + propertyToInject + " in PREPARE but found no where to substitute it";
-                logger.error(errorMsg);
-                throw new Exception(errorMsg);
-            }
-            aggregatedScript = replacementScript.toString();
-        }
-        return aggregatedScript;
-    }
-
-    /*
-     * Public static because it is used in test utils
-     */
-    public static String aggregateScript(List<String> scriptNames, ClassLoader scriptLoader)
-            throws URISyntaxException, IOException {
-        final StringBuilder aggregatedScript = new StringBuilder();
-        for (String scriptName : scriptNames) {
-            String scriptNameWithExtension = format("%s.rpt", scriptName);
-            Path scriptPath = Paths.get(scriptNameWithExtension);
-            scriptNameWithExtension = URI.create(scriptNameWithExtension).normalize().getPath();
-            String script = null;
-
-            assert !scriptPath.isAbsolute();
-
-            // resolve relative scripts in local file system
-            if (scriptLoader != null) {
-                // resolve relative scripts from class loader to support
-                // separated specification projects that include Robot scripts only
-                URL resource = scriptLoader.getResource(scriptNameWithExtension);
-                if (resource != null) {
-                    URI resourceURI = resource.toURI();
-                    if ("file".equals(resourceURI.getScheme())) {
-                        Path resourcePath = Paths.get(resourceURI);
-                        script = readScript(resourcePath);
-                    } else {
-                        try (FileSystem fileSystem = newFileSystem(resourceURI, EMPTY_ENVIRONMENT)) {
-                            Path resourcePath = Paths.get(resourceURI);
-                            script = readScript(resourcePath);
-                        }
-                    }
-                }
-            }
-
-            if (script == null) {
-                throw new RuntimeException("Script not found: " + scriptPath);
-            }
-
-            aggregatedScript.append(script);
-        }
-        return aggregatedScript.toString();
-    }
-
-    private static String readScript(Path scriptPath) throws IOException {
-        List<String> lines = Files.readAllLines(scriptPath, UTF_8);
-        StringBuilder sb = new StringBuilder();
-        for (String line : lines) {
-            sb.append(line);
-            sb.append("\n");
-        }
-        String script = sb.toString();
-        return script;
-    }
-
-    @Override
-    public void startReceived(final ChannelHandlerContext ctx, MessageEvent evt) throws Exception {
-        if (robot == null || robot.getPreparedFuture() == null) {
-            sendErrorMessage(ctx, ERROR_MSG_NOT_PREPARED);
-            return;
-        }
-        
-        if (robot.getStartedFuture().isDone()) {
-            sendErrorMessage(ctx, ERROR_MSG_ALREADY_STARTED);
-            return;
-        }
-        
-        try {
-            ChannelFuture startFuture = robot.start();
-            startFuture.addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(final ChannelFuture f) {
-                    if (f.isSuccess()) {
-                        final StartedMessage started = new StartedMessage();
-                        writeEvent(ctx, started);
-                    } else {
-                        sendErrorMessage(ctx, f.getCause());
-                    }
-                }
-            });
-        } catch (Exception e) {
-            sendErrorMessage(ctx, e);
-            return;
-        }
-
-        assert whenAbortedOrFinished != null;
-        robot.finish().addListener(whenAbortedOrFinished);
-    }
-
-    @Override
-    public void abortReceived(final ChannelHandlerContext ctx, MessageEvent evt) throws Exception {
-        if (logger.isInfoEnabled()) {
-            logger.info("ABORT");
-        }
-
-        if (robot == null || robot.getPreparedFuture() == null) {
-            sendErrorMessage(ctx, ERROR_MSG_NOT_PREPARED);
-            return;
-        }
-        
-        assert whenAbortedOrFinished != null;
-        try {
-            robot.abort().addListener(whenAbortedOrFinished);
-        } catch (Exception e) {
-            sendErrorMessage(ctx, e);
-            return;
-        }
-    }
-
-    @Override
-    public void notifyReceived(final ChannelHandlerContext ctx, MessageEvent evt) throws Exception {
-        NotifyMessage notifyMessage = (NotifyMessage) evt.getMessage();
-        final String barrier = notifyMessage.getBarrier();
-        if (logger.isDebugEnabled()) {
-            logger.debug("NOTIFY: " + barrier);
-        }
-
-        if (robot == null || robot.getPreparedFuture() == null) {
-            sendErrorMessage(ctx, ERROR_MSG_NOT_PREPARED);
-            return;
-        }
-        
-        try {
-            writeNotifiedOnBarrier(barrier, ctx);
-            robot.notifyBarrier(barrier);
-        } catch (Exception e) {
-            sendErrorMessage(ctx, e);
-            return;
-        }
-    }
-
-    @Override
-    public void awaitReceived(final ChannelHandlerContext ctx, MessageEvent evt) throws Exception {
-        AwaitMessage awaitMessage = (AwaitMessage) evt.getMessage();
-        final String barrier = awaitMessage.getBarrier();
-        if (logger.isDebugEnabled()) {
-            logger.debug("AWAIT: " + barrier);
-        }
-
-        if (robot == null || robot.getPreparedFuture() == null) {
-            sendErrorMessage(ctx, ERROR_MSG_NOT_PREPARED);
-            return;
-        }
-        
-        try {
-            writeNotifiedOnBarrier(barrier, ctx);
-        } catch (Exception e) {
-            sendErrorMessage(ctx, e);
-            return;
-        }
-    }
-
-    private void writeNotifiedOnBarrier(final String barrier, final ChannelHandlerContext ctx) throws Exception {
-        robot.awaitBarrier(barrier).addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
-                if (future.isSuccess()) {
-                    logger.debug("sending NOTIFIED: " + barrier);
-                    final NotifiedMessage notified = new NotifiedMessage();
-                    notified.setBarrier(barrier);
-                    writeEvent(ctx, notified);
-                }
-            }
-        });
-    }
-
-    @Override
-    public void disposeReceived(final ChannelHandlerContext ctx, MessageEvent evt) throws Exception {
-//        if (robot == null || robot.getPreparedFuture() == null) {
-        if (robot == null) {
-            sendErrorMessage(ctx, ERROR_MSG_NOT_PREPARED);
-            return;
-        }
-        
-        try {
-            robot.dispose().addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    writeDisposed(ctx);
-                }
-            });
-        } catch (Exception e) {
-            sendErrorMessage(ctx, e);
-            return;
-        }
-    }
-
-    private void writeDisposed(ChannelHandlerContext ctx) {
-        DisposedMessage disposedMessage = new DisposedMessage();
-        writeEvent(ctx, disposedMessage);
-    }
-
-    private ChannelFutureListener whenAbortedOrFinished(final ChannelHandlerContext ctx) {
-        final AtomicBoolean oneTimeOnly = new AtomicBoolean();
-        return new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
-                if (oneTimeOnly.compareAndSet(false, true)) {
-                    sendFinishedMessage(ctx);
-                }
-            }
-        };
-    }
-
-    private void sendFinishedMessage(ChannelHandlerContext ctx) {
-
-        String observedScript = robot.getObservedScript();
-
-        FinishedMessage finishedMessage = new FinishedMessage();
-        finishedMessage.setScript(observedScript);
-        Map<String, Barrier> barriers = robot.getBarriersByName();
-        
-        for (String name : barriers.keySet()) {
-            if (barriers.get(name).getFuture().isSuccess())
-                finishedMessage.getCompletedBarriers().add(name);
-            else
-                finishedMessage.getIncompleteBarriers().add(name);
-        }
-        writeEvent(ctx, finishedMessage);
-    }
-
-    private void sendVersionError(ChannelHandlerContext ctx) {
-        ErrorMessage errorMessage = new ErrorMessage();
-        errorMessage.setSummary("Bad control protocol version");
-        errorMessage.setDescription("Robot requires control protocol version 2.0");
-        writeEvent(ctx, errorMessage);
-    }
-
-    private void sendErrorMessage(ChannelHandlerContext ctx, Throwable throwable) {
-        ErrorMessage errorMessage = new ErrorMessage();
-        errorMessage.setDescription(throwable.getMessage());
-
-        if (throwable instanceof ScriptParseException) {
-            if (logger.isDebugEnabled()) {
-                logger.error("Caught exception trying to parse script. Sending error to client", throwable);
-            } else {
-                logger.error("Caught exception trying to parse script. Sending error to client. Due to " + throwable);
-            }
-            errorMessage.setSummary("Parse Error");
-            writeEvent(ctx, errorMessage);
+  private String injectOverridenProperties(String aggregatedScript, List<String> scriptProperties) throws Exception, ScriptParseException {
+    ScriptParserImpl parser = new ScriptParserImpl();
+    for (String propertyToInject : scriptProperties) {
+      String propertyName = parser.parseWithStrategy(propertyToInject, PROPERTY_NODE).getPropertyName();
+      StringBuilder replacementScript = new StringBuilder();
+      Pattern pattern = Pattern.compile("property\\s+" + propertyName + "\\s+.+");
+      boolean matchFound = false;
+      for (String scriptLine : aggregatedScript.split("\\r?\\n")) {
+        if (pattern.matcher(scriptLine).matches()) {
+          matchFound = true;
+          replacementScript.append(propertyToInject + "\n");
         } else {
-            logger.error("Internal error. Sending error to client", throwable);
-            errorMessage.setSummary("Internal error");
-            writeEvent(ctx, errorMessage);
+          replacementScript.append(scriptLine + "\n");
         }
+      }
+      if (!matchFound) {
+        String errorMsg = "Received " + propertyToInject + " in PREPARE but found no where to substitute it";
+        logger.error(errorMsg);
+        throw new Exception(errorMsg);
+      }
+      aggregatedScript = replacementScript.toString();
     }
-    
-    private void sendErrorMessage(ChannelHandlerContext ctx, String description) {
-        ErrorMessage errorMessage = new ErrorMessage();
-        errorMessage.setSummary("Internal error");
-        errorMessage.setDescription(description);
-        if (logger.isDebugEnabled())
-            logger.error("Sending error to client:" + description);
-        writeEvent(ctx, errorMessage);
-    }
+    return aggregatedScript;
+  }
 
-    // will send only the DISPOSED message after the FINISHED one
-    private void writeEvent(final ChannelHandlerContext ctx, final Object message) {
-        if (message instanceof FinishedMessage) {
-            isFinishedSent = true;
-            Channels.write(ctx, Channels.future(null), message);
+  public static String aggregateScript(List<String> scriptNames, ClassLoader scriptLoader) throws URISyntaxException, IOException {
+    final StringBuilder aggregatedScript = new StringBuilder();
+    for (String scriptName : scriptNames) {
+      String scriptNameWithExtension = format("%s.rpt", scriptName);
+      Path scriptPath = Paths.get(scriptNameWithExtension);
+      scriptNameWithExtension = URI.create(scriptNameWithExtension).normalize().getPath();
+      String script = null;
+      assert !scriptPath.isAbsolute();
+      if (scriptLoader != null) {
+        URL resource = scriptLoader.getResource(scriptNameWithExtension);
+        if (resource != null) {
+          URI resourceURI = resource.toURI();
+          if ("file".equals(resourceURI.getScheme())) {
+            Path resourcePath = Paths.get(resourceURI);
+            script = readScript(resourcePath);
+          } else {
+            try (FileSystem fileSystem = newFileSystem(resourceURI, EMPTY_ENVIRONMENT)) {
+              Path resourcePath = Paths.get(resourceURI);
+              script = readScript(resourcePath);
+            }
+          }
         }
-        else if (! isFinishedSent || message instanceof DisposedMessage) {
-            Channels.write(ctx, Channels.future(null), message);
-        }
+      }
+      if (script == null) {
+        throw new RuntimeException("Script not found: " + scriptPath);
+      }
+      aggregatedScript.append(script);
     }
+    return aggregatedScript.toString();
+  }
+
+  private static String readScript(Path scriptPath) throws IOException {
+    List<String> lines = Files.readAllLines(scriptPath, UTF_8);
+    StringBuilder sb = new StringBuilder();
+    for (String line : lines) {
+      sb.append(line);
+      sb.append("\n");
+    }
+    String script = sb.toString();
+    return script;
+  }
+
+  @Override public void startReceived(final ChannelHandlerContext ctx, MessageEvent evt) throws Exception {
+    if (robot == null || robot.getPreparedFuture() == null) {
+      sendErrorMessage(ctx, ERROR_MSG_NOT_PREPARED);
+      return;
+    }
+    if (robot.getStartedFuture().isDone()) {
+      sendErrorMessage(ctx, ERROR_MSG_ALREADY_STARTED);
+      return;
+    }
+    try {
+      ChannelFuture startFuture = robot.start();
+      startFuture.addListener(new ChannelFutureListener() {
+        @Override public void operationComplete(final ChannelFuture f) {
+          if (f.isSuccess()) {
+            final StartedMessage started = new StartedMessage();
+            writeEvent(ctx, started);
+          } else {
+            sendErrorMessage(ctx, f.getCause());
+          }
+        }
+      });
+    } catch (Exception e) {
+      sendErrorMessage(ctx, e);
+      return;
+    }
+    assert whenAbortedOrFinished != null;
+    robot.finish().addListener(whenAbortedOrFinished);
+  }
+
+  @Override public void abortReceived(final ChannelHandlerContext ctx, MessageEvent evt) throws Exception {
+    if (logger.isInfoEnabled()) {
+      logger.info("ABORT");
+    }
+    if (robot == null || robot.getPreparedFuture() == null) {
+      sendErrorMessage(ctx, ERROR_MSG_NOT_PREPARED);
+      return;
+    }
+    assert whenAbortedOrFinished != null;
+    try {
+      robot.abort().addListener(whenAbortedOrFinished);
+    } catch (Exception e) {
+      sendErrorMessage(ctx, e);
+      return;
+    }
+  }
+
+  @Override public void notifyReceived(final ChannelHandlerContext ctx, MessageEvent evt) throws Exception {
+    NotifyMessage notifyMessage = (NotifyMessage) evt.getMessage();
+    final String barrier = notifyMessage.getBarrier();
+    if (logger.isDebugEnabled()) {
+      logger.debug("NOTIFY: " + barrier);
+    }
+    if (robot == null || robot.getPreparedFuture() == null) {
+      sendErrorMessage(ctx, ERROR_MSG_NOT_PREPARED);
+      return;
+    }
+    try {
+      writeNotifiedOnBarrier(barrier, ctx);
+      robot.notifyBarrier(barrier);
+    } catch (Exception e) {
+      sendErrorMessage(ctx, e);
+      return;
+    }
+  }
+
+  @Override public void awaitReceived(final ChannelHandlerContext ctx, MessageEvent evt) throws Exception {
+    AwaitMessage awaitMessage = (AwaitMessage) evt.getMessage();
+    final String barrier = awaitMessage.getBarrier();
+    if (logger.isDebugEnabled()) {
+      logger.debug("AWAIT: " + barrier);
+    }
+    if (robot == null || robot.getPreparedFuture() == null) {
+      sendErrorMessage(ctx, ERROR_MSG_NOT_PREPARED);
+      return;
+    }
+    try {
+      writeNotifiedOnBarrier(barrier, ctx);
+    } catch (Exception e) {
+      sendErrorMessage(ctx, e);
+      return;
+    }
+  }
+
+  private void writeNotifiedOnBarrier(final String barrier, final ChannelHandlerContext ctx) throws Exception {
+    robot.awaitBarrier(barrier).addListener(new ChannelFutureListener() {
+      @Override public void operationComplete(ChannelFuture future) throws Exception {
+        if (future.isSuccess()) {
+          logger.debug("sending NOTIFIED: " + barrier);
+          final NotifiedMessage notified = new NotifiedMessage();
+          notified.setBarrier(barrier);
+          writeEvent(ctx, notified);
+        }
+      }
+    });
+  }
+
+  @Override public void disposeReceived(final ChannelHandlerContext ctx, MessageEvent evt) throws Exception {
+    if (robot == null) {
+      sendErrorMessage(ctx, ERROR_MSG_NOT_PREPARED);
+      return;
+    }
+    try {
+      robot.dispose().addListener(new ChannelFutureListener() {
+        @Override public void operationComplete(ChannelFuture future) throws Exception {
+          writeDisposed(ctx);
+        }
+      });
+    } catch (Exception e) {
+      sendErrorMessage(ctx, e);
+      return;
+    }
+  }
+
+  private void writeDisposed(ChannelHandlerContext ctx) {
+    DisposedMessage disposedMessage = new DisposedMessage();
+    writeEvent(ctx, disposedMessage);
+  }
+
+  private ChannelFutureListener whenAbortedOrFinished(final ChannelHandlerContext ctx) {
+    final AtomicBoolean oneTimeOnly = new AtomicBoolean();
+    return new ChannelFutureListener() {
+      @Override public void operationComplete(ChannelFuture future) throws Exception {
+        if (oneTimeOnly.compareAndSet(false, true)) {
+          sendFinishedMessage(ctx);
+        }
+      }
+    };
+  }
+
+  private void sendFinishedMessage(ChannelHandlerContext ctx) {
+    String observedScript = robot.getObservedScript();
+    FinishedMessage finishedMessage = new FinishedMessage();
+    finishedMessage.setScript(observedScript);
+    Map<String, Barrier> barriers = robot.getBarriersByName();
+    for (String name : barriers.keySet()) {
+      if (barriers.get(name).getFuture().isSuccess()) {
+        finishedMessage.getCompletedBarriers().add(name);
+      } else {
+        finishedMessage.getIncompleteBarriers().add(name);
+      }
+    }
+    writeEvent(ctx, finishedMessage);
+  }
+
+  private void sendVersionError(ChannelHandlerContext ctx) {
+    ErrorMessage errorMessage = new ErrorMessage();
+    errorMessage.setSummary("Bad control protocol version");
+    errorMessage.setDescription("Robot requires control protocol version 2.0");
+    writeEvent(ctx, errorMessage);
+  }
+
+  private void sendErrorMessage(ChannelHandlerContext ctx, Throwable throwable) {
+    ErrorMessage errorMessage = new ErrorMessage();
+    errorMessage.setDescription(throwable.getMessage());
+    if (throwable instanceof ScriptParseException) {
+      if (logger.isDebugEnabled()) {
+        logger.error("Caught exception trying to parse script. Sending error to client", throwable);
+      } else {
+        logger.error("Caught exception trying to parse script. Sending error to client. Due to " + throwable);
+      }
+      errorMessage.setSummary("Parse Error");
+      writeEvent(ctx, errorMessage);
+    } else {
+      logger.error("Internal error. Sending error to client", throwable);
+      errorMessage.setSummary("Internal error");
+      writeEvent(ctx, errorMessage);
+    }
+  }
+
+  private void sendErrorMessage(ChannelHandlerContext ctx, String description) {
+    ErrorMessage errorMessage = new ErrorMessage();
+    errorMessage.setSummary("Internal error");
+    errorMessage.setDescription(description);
+    if (logger.isDebugEnabled()) {
+      logger.error("Sending error to client:" + description);
+    }
+    writeEvent(ctx, errorMessage);
+  }
+
+  private void writeEvent(final ChannelHandlerContext ctx, final Object message) {
+    if (message instanceof FinishedMessage) {
+      isFinishedSent = true;
+      Channels.write(ctx, Channels.future(null), message);
+    } else {
+      if (!isFinishedSent || message instanceof DisposedMessage) {
+        Channels.write(ctx, Channels.future(null), message);
+      }
+    }
+  }
 }
