@@ -26,6 +26,7 @@ import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
+import org.springframework.context.ApplicationContext;
 
 /**
  * Mongobee runner
