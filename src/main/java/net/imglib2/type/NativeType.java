@@ -1,39 +1,4 @@
-/*
- * #%L
- * ImgLib2: a general-purpose, multidimensional image processing library.
- * %%
- * Copyright (C) 2009 - 2016 Tobias Pietzsch, Stephan Preibisch, Stephan Saalfeld,
- * John Bogovic, Albert Cardona, Barry DeZonia, Christian Dietz, Jan Funke,
- * Aivar Grislis, Jonathan Hale, Grant Harris, Stefan Helfrich, Mark Hiner,
- * Martin Horn, Steffen Jaensch, Lee Kamentsky, Larry Lindsey, Melissa Linkert,
- * Mark Longair, Brian Northan, Nick Perry, Curtis Rueden, Johannes Schindelin,
- * Jean-Yves Tinevez and Michael Zinsmaier.
- * %%
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- * #L%
- */
-
 package net.imglib2.type;
-
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.img.NativeImg;
@@ -68,9 +33,8 @@ import net.imglib2.util.Fraction;
  * @author Stephan Saalfeld
  * @author Tobias Pietzsch
  */
-public interface NativeType< T extends NativeType< T >> extends Type< T >
-{
-	/**
+public interface NativeType<T extends NativeType<T>> extends Type<T> {
+  /**
 	 * Get the number of entities in the storage array required to store one
 	 * pixel value. A pixel value may be spread over several or less than one
 	 * entity. For example, a complex number may require 2 entries of a float[]
@@ -80,9 +44,9 @@ public interface NativeType< T extends NativeType< T >> extends Type< T >
 	 * @return the number of storage type entities required to store one pixel
 	 *         value.
 	 */
-	public Fraction getEntitiesPerPixel();
+  public Fraction getEntitiesPerPixel();
 
-	/**
+  /**
 	 * The {@link NativeType} creates the {@link NativeImg} used for storing
 	 * image data; based on the given storage strategy and its size. It
 	 * basically only decides here which BasicType it uses (float, int, byte,
@@ -98,18 +62,18 @@ public interface NativeType< T extends NativeType< T >> extends Type< T >
 	 * @return the instantiated {@link NativeImg} where only the {@link Type}
 	 *         knows the BasicType it contains.
 	 */
-	public NativeImg< T, ? > createSuitableNativeImg( final NativeImgFactory< T > storageFactory, final long[] dim );
+  public NativeImg<T, ?> createSuitableNativeImg(final NativeImgFactory<T> storageFactory, final long[] dim);
 
-	/**
+  /**
 	 * Creates a new {@link NativeType} which stores in the same physical array.
 	 * This is only used internally.
 	 *
 	 * @return a new {@link NativeType} instance working on the same
 	 *         {@link NativeImg}
 	 */
-	public T duplicateTypeOnSameNativeImg();
+  public T duplicateTypeOnSameNativeImg();
 
-	/**
+  /**
 	 * This method is used by an accessor (e.g., a {@link Cursor}) to request an
 	 * update of the current data array.
 	 *
@@ -143,9 +107,9 @@ public interface NativeType< T extends NativeType< T >> extends Type< T >
 	 *            reference to an accessor which can be passed on to the
 	 *            container (which will know what to do with it).
 	 */
-	public void updateContainer( Object c );
+  public void updateContainer(Object c);
 
-	/**
+  /**
 	 * Set the index into the current data array.
 	 *
 	 * <p>
@@ -155,9 +119,9 @@ public interface NativeType< T extends NativeType< T >> extends Type< T >
 	 * @param i
 	 *            the new array index
 	 */
-	public void updateIndex( final int i );
+  public void updateIndex(final int i);
 
-	/**
+  /**
 	 * Get the current index into the current data array.
 	 *
 	 * <p>
@@ -166,18 +130,18 @@ public interface NativeType< T extends NativeType< T >> extends Type< T >
 	 *
 	 * @return the current index into the underlying data array
 	 */
-	public int getIndex();
+  public int getIndex();
 
-	/**
+  /**
 	 * Increment the index into the current data array.
 	 *
 	 * <p>
 	 * This is used by accessors (e.g., a {@link Cursor}) to position the
 	 * {@link NativeType} in the container.
 	 */
-	public void incIndex();
+  public void incIndex();
 
-	/**
+  /**
 	 * Increases the index into the current data array by {@code increment}
 	 * steps.
 	 *
@@ -188,18 +152,18 @@ public interface NativeType< T extends NativeType< T >> extends Type< T >
 	 * @param increment
 	 *            how many steps
 	 */
-	public void incIndex( final int increment );
+  public void incIndex(final int increment);
 
-	/**
+  /**
 	 * Decrement the index into the current data array.
 	 *
 	 * <p>
 	 * This is used by accessors (e.g., a {@link Cursor}) to position the
 	 * {@link NativeType} in the container.
 	 */
-	public void decIndex();
+  public void decIndex();
 
-	/**
+  /**
 	 * Decrease the index into the current data array by {@code decrement}
 	 * steps.
 	 *
@@ -210,5 +174,5 @@ public interface NativeType< T extends NativeType< T >> extends Type< T >
 	 * @param decrement
 	 *            how many steps
 	 */
-	public void decIndex( final int decrement );
+  public void decIndex(final int decrement);
 }
