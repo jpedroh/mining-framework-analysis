@@ -1,22 +1,4 @@
-/**
- * redpen: a text inspection tool
- * Copyright (c) 2014-2015 Recruit Technologies Co., Ltd. and contributors
- * (see CONTRIBUTORS.md)
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package cc.redpen.validator.sentence;
-
 import cc.redpen.RedPenException;
 import cc.redpen.model.Sentence;
 import cc.redpen.util.LevenshteinDistance;
@@ -24,7 +6,6 @@ import cc.redpen.util.StringUtils;
 import cc.redpen.validator.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.*;
 
@@ -49,174 +30,160 @@ import java.util.*;
  * the similarity.
  */
 final public class KatakanaSpellCheckValidator extends Validator {
-    /**
-     * The default threshold of similarity ratio between the length and the distance. <br>
-     * <p>
+  /**
+     * The default threshold of similarity ratio between the length and the distance. <br/>
+     * <p/>
      * The similarities are computed by edit distance.
      */
-    private static final float DEFAULT_SIMILARITY_RATIO = 0.3f;
-    /**
+  private static final float DEFAULT_SIMILARITY_RATIO = 0.3f;
+
+  /**
      * The default threshold of word frequencies of Katakana Words.
      */
-    private static final int DEFAULT_MINIMUM_FREQUENCIES = 5;
-    /**
+  private static final int DEFAULT_MINIMUM_FREQUENCIES = 5;
+
+  /**
      * The default threshold value for the length of Katakana word
      * to ignore.
      */
-    private static final int MAX_IGNORE_KATAKANA_LENGTH = 3;
-    /**
+  private static final int MAX_IGNORE_KATAKANA_LENGTH = 3;
+
+  /**
      * Default dictionary for Katakana spell checking.
      */
-    private static final String DEFAULT_RESOURCE_PATH = "default-resources/katakana";
-    /**
+  private static final String DEFAULT_RESOURCE_PATH = "default-resources/katakana";
+
+  /**
      * Logger
      */
-    private static final Logger LOG =
-            LoggerFactory.getLogger(KatakanaSpellCheckValidator.class);
+  private static final Logger LOG = LoggerFactory.getLogger(KatakanaSpellCheckValidator.class);
 
-    /**
+  /**
      * Katakana word dic with line number.
      */
-    private HashMap<String, Integer> dic = new HashMap<>();
-    /**
+  private HashMap<String, Integer> dic = new HashMap<>();
+
+  /**
      * Exception word list.
      */
-    private Set<String> exceptions = new HashSet<>();
+  private Set<String> exceptions = new HashSet<>();
 
-    private Set<String> customExceptions = new HashSet<>();
+  private Set<String> customExceptions = new HashSet<>();
 
-    private Map<String, Integer> katakanaWordFrequencies = new HashMap<>();
+  private Map<String, Integer> katakanaWordFrequencies = new HashMap<>();
 
-    private float minimumRatio = DEFAULT_SIMILARITY_RATIO;
+  private float minimumRatio = DEFAULT_SIMILARITY_RATIO;
 
-    private int minimumFrequencies = DEFAULT_MINIMUM_FREQUENCIES;
+  private int minimumFrequencies = DEFAULT_MINIMUM_FREQUENCIES;
 
-    @Override
-    public List<String> getSupportedLanguages() {
-        return Arrays.asList(Locale.JAPANESE.getLanguage());
+  @Override public List<String> getSupportedLanguages() {
+    return Arrays.asList(Locale.JAPANESE.getLanguage());
+  }
+
+  @Override public void preValidate(Sentence sentence) {
+    StringBuilder katakana = new StringBuilder();
+    for (int i = 0; i < sentence.getContent().length(); i++) {
+      char c = sentence.getContent().charAt(i);
+      if (StringUtils.isKatakana(c)) {
+        katakana.append(c);
+      } else {
+        String katakanaWord = katakana.toString();
+        addKatakana(katakanaWord);
+        katakana.delete(0, katakana.length());
+      }
     }
-
-    @Override
-    public void preValidate(Sentence sentence) {
-        // collect katakana words
-        StringBuilder katakana = new StringBuilder();
-        for (int i = 0; i < sentence.getContent().length(); i++) {
-            char c = sentence.getContent().charAt(i);
-            if (StringUtils.isKatakana(c)) {
-                katakana.append(c);
-            } else {
-                String katakanaWord = katakana.toString();
-                addKatakana(katakanaWord);
-                katakana.delete(0, katakana.length());
-            }
-        }
-        if (katakana.length() > 0) {
-            addKatakana(katakana.toString());
-        }
+    if (katakana.length() > 0) {
+      addKatakana(katakana.toString());
     }
+  }
 
-    private void addKatakana(String katakanaWord) {
-        if (katakanaWordFrequencies.get(katakanaWord) == null) {
-            katakanaWordFrequencies.put(katakanaWord, 0);
-        }
-        katakanaWordFrequencies.put(katakanaWord,
-                katakanaWordFrequencies.get(katakanaWord)+1);
+  private void addKatakana(String katakanaWord) {
+    if (katakanaWordFrequencies.get(katakanaWord) == null) {
+      katakanaWordFrequencies.put(katakanaWord, 0);
     }
+    katakanaWordFrequencies.put(katakanaWord, katakanaWordFrequencies.get(katakanaWord) + 1);
+  }
 
-    @Override
-    public void validate(Sentence sentence) {
-        StringBuilder katakana = new StringBuilder();
-        for (int i = 0; i < sentence.getContent().length(); i++) {
-            char c = sentence.getContent().charAt(i);
-            if (StringUtils.isKatakana(c)) {
-                katakana.append(c);
-            } else {
-                this.checkKatakanaSpell(sentence, katakana.toString());
-                katakana.delete(0, katakana.length());
-            }
-        }
-        checkKatakanaSpell(sentence, katakana.toString());
+  @Override public void validate(Sentence sentence) {
+    StringBuilder katakana = new StringBuilder();
+    for (int i = 0; i < sentence.getContent().length(); i++) {
+      char c = sentence.getContent().charAt(i);
+      if (StringUtils.isKatakana(c)) {
+        katakana.append(c);
+      } else {
+        this.checkKatakanaSpell(sentence, katakana.toString());
+        katakana.delete(0, katakana.length());
+      }
     }
+    checkKatakanaSpell(sentence, katakana.toString());
+  }
 
-    private void checkKatakanaSpell(Sentence sentence, String katakana) {
-        if (katakana.length() <= MAX_IGNORE_KATAKANA_LENGTH) {
-            return;
-        }
-        if (dic.containsKey(katakana) || exceptions.contains(katakana)
-                || customExceptions.contains(katakana) ||
-                (katakanaWordFrequencies.get(katakana) != null
-                        && katakanaWordFrequencies.get(katakana) > minimumFrequencies)) {
-            return;
-        }
-        final int minLsDistance = Math.round(katakana.length() * minimumRatio);
-        boolean found = false;
-        for (String key : dic.keySet()) {
-            if (LevenshteinDistance.getDistance(key, katakana) <= minLsDistance) {
-                found = true;
-                addLocalizedError(sentence, katakana, key, dic.get(key).toString());
-            }
-        }
-        if (!found) {
-            dic.put(katakana, sentence.getLineNumber());
-        }
+  private void checkKatakanaSpell(Sentence sentence, String katakana) {
+    if (katakana.length() <= MAX_IGNORE_KATAKANA_LENGTH) {
+      return;
     }
-
-    @Override
-    protected void init() throws RedPenException {
-        boolean disableDefault = getConfigAttributeAsBoolean("disable-default", false);
-        if (!disableDefault) {
-            String defaultDictionaryFile = DEFAULT_RESOURCE_PATH
-                    + "/katakana-spellcheck.dat";
-            exceptions = WORD_LIST.loadCachedFromResource(defaultDictionaryFile, "katakana word dictionary");
-        }
-
-        Optional<String> confFile = getConfigAttribute("dict");
-        if (confFile.isPresent()) {
-            LOG.info("User defined Katakana word dictionary found.");
-            customExceptions.addAll(WORD_LIST.loadCachedFromFile(new File(confFile.get()),
-                    "KatakanaSpellCheckValidator user dictionary"));
-            LOG.info("Succeeded to add elements of user defined dictionary.");
-        }
-
-        getConfigAttribute("list").ifPresent((f -> {
-            LOG.info("User defined Katakana words list found.");
-            customExceptions.addAll(Arrays.asList(f.split(",")));
-            LOG.info("Succeeded to add elements of user defined list.");
-        }));
-
-        minimumRatio = (float) getConfigAttributeAsDouble("min_ratio", DEFAULT_SIMILARITY_RATIO);
-        minimumFrequencies = getConfigAttributeAsInt("min_freq", DEFAULT_MINIMUM_FREQUENCIES);
-
-        //TODO : configurable MAX_IGNORE_KATAKANA_LENGTH.
+    if (dic.containsKey(katakana) || exceptions.contains(katakana) || customExceptions.contains(katakana) || (katakanaWordFrequencies.get(katakana) != null && katakanaWordFrequencies.get(katakana) > minimumFrequencies)) {
+      return;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        KatakanaSpellCheckValidator that = (KatakanaSpellCheckValidator) o;
-
-        if (dic != null ? !dic.equals(that.dic) : that.dic != null) return false;
-        if (exceptions != null ? !exceptions.equals(that.exceptions) : that.exceptions != null) return false;
-        return !(customExceptions != null ? !customExceptions.equals(that.customExceptions) : that.customExceptions != null);
-
+    final int minLsDistance = Math.round(katakana.length() * minimumRatio);
+    boolean found = false;
+    for (String key : dic.keySet()) {
+      if (LevenshteinDistance.getDistance(key, katakana) <= minLsDistance) {
+        found = true;
+        addLocalizedError(sentence, katakana, key, dic.get(key).toString());
+      }
     }
-
-    @Override
-    public int hashCode() {
-        int result = dic != null ? dic.hashCode() : 0;
-        result = 31 * result + (exceptions != null ? exceptions.hashCode() : 0);
-        result = 31 * result + (customExceptions != null ? customExceptions.hashCode() : 0);
-        return result;
+    if (!found) {
+      dic.put(katakana, sentence.getLineNumber());
     }
+  }
 
-    @Override
-    public String toString() {
-        return "KatakanaSpellCheckValidator{" +
-                "dic=" + dic +
-                ", exceptions=" + exceptions +
-                ", customExceptions=" + customExceptions +
-                '}';
+  @Override protected void init() throws RedPenException {
+    boolean disableDefault = getConfigAttributeAsBoolean("disable-default", false);
+    if (!disableDefault) {
+      String defaultDictionaryFile = DEFAULT_RESOURCE_PATH + "/katakana-spellcheck.dat";
+      exceptions = WORD_LIST.loadCachedFromResource(defaultDictionaryFile, "katakana word dictionary");
     }
+    Optional<String> confFile = getConfigAttribute("dict");
+    if (confFile.isPresent()) {
+      LOG.info("User defined Katakana word dictionary found.");
+      customExceptions.addAll(WORD_LIST.loadCachedFromFile(new File(confFile.get()), "KatakanaSpellCheckValidator user dictionary"));
+      LOG.info("Succeeded to add elements of user defined dictionary.");
+    }
+    getConfigAttribute("list").ifPresent(((f) -> {
+      LOG.info("User defined Katakana words list found.");
+      customExceptions.addAll(Arrays.asList(f.split(",")));
+      LOG.info("Succeeded to add elements of user defined list.");
+    }));
+    minimumRatio = (float) getConfigAttributeAsDouble("min_ratio", DEFAULT_SIMILARITY_RATIO);
+    minimumFrequencies = getConfigAttributeAsInt("min_freq", DEFAULT_MINIMUM_FREQUENCIES);
+  }
+
+  @Override public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    KatakanaSpellCheckValidator that = (KatakanaSpellCheckValidator) o;
+    if (dic != null ? !dic.equals(that.dic) : that.dic != null) {
+      return false;
+    }
+    if (exceptions != null ? !exceptions.equals(that.exceptions) : that.exceptions != null) {
+      return false;
+    }
+    return !(customExceptions != null ? !customExceptions.equals(that.customExceptions) : that.customExceptions != null);
+  }
+
+  @Override public int hashCode() {
+    int result = dic != null ? dic.hashCode() : 0;
+    result = 31 * result + (exceptions != null ? exceptions.hashCode() : 0);
+    result = 31 * result + (customExceptions != null ? customExceptions.hashCode() : 0);
+    return result;
+  }
+
+  @Override public String toString() {
+    return "KatakanaSpellCheckValidator{" + "dic=" + dic + ", exceptions=" + exceptions + ", customExceptions=" + customExceptions + '}';
+  }
 }
