@@ -1,5 +1,4 @@
 package com.wrapper.spotify;
-
 import com.google.common.base.Joiner;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -31,7 +30,6 @@ import com.wrapper.spotify.requests.data.tracks.GetSeveralTracksRequest;
 import com.wrapper.spotify.requests.data.tracks.GetTrackRequest;
 import com.wrapper.spotify.requests.data.users_profile.GetCurrentUsersProfileRequest;
 import com.wrapper.spotify.requests.data.users_profile.GetUsersProfileRequest;
-
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
@@ -40,17 +38,21 @@ import java.util.List;
  * Instances of the Api class provide access to the Spotify Web API.
  */
 public class Api {
-
   public static final String DEFAULT_AUTHENTICATION_HOST = "accounts.spotify.com";
-
-  public static final int DEFAULT_AUTHENTICATION_PORT = 443;
-
-  public static final String DEFAULT_AUTHENTICATION_SCHEME = "https";
 
   /**
    * The default host of Spotify API calls.
    */
   public static final String DEFAULT_HOST = "api.spotify.com";
+
+  public static final int DEFAULT_AUTHENTICATION_PORT = 443;
+
+  /**
+   * The default port of Spotify API calls.
+   */
+  public static final int DEFAULT_PORT = 443;
+
+  public static final String DEFAULT_AUTHENTICATION_SCHEME = "https";
 
   /**
    * A HttpManager configured with default settings.
@@ -58,32 +60,41 @@ public class Api {
   public static final IHttpManager DEFAULT_HTTP_MANAGER = new SpotifyHttpManager.Builder().build();
 
   /**
-   * The default port of Spotify API calls.
-   */
-  public static final int DEFAULT_PORT = 443;
-
-  /**
    * The default http scheme of Spotify API calls.
    */
   public static final String DEFAULT_SCHEME = "https";
 
   private final IHttpManager httpManager;
-  private final String scheme;
-  private final String host;
-  private final int port;
-  private final String proxyUrl;
+
+  /**
+   * Api instance with the default settings.
+   */
   private final int proxyPort;
-  private final int proxyUsername;
-  private final int proxyPassword;
+
+  private final String scheme;
+
   private final String clientId;
+
+  private final String host;
+
   private final String clientSecret;
+
+  private final int port;
+
+  private final String proxyUrl;
+
+  private final int proxyUsername;
+
+  private final int proxyPassword;
+
   private final String redirectUri;
+
   private final String accessToken;
+
   private final String refreshToken;
 
   private Api(Builder builder) {
     assert (builder.httpManager != null);
-
     this.httpManager = builder.httpManager;
     this.scheme = builder.scheme;
     this.host = builder.host;
@@ -200,9 +211,7 @@ public class Api {
     return builder;
   }
 
-  public GetAlbumsTracksRequest.Builder getTracksForAlbum(
-          String albumId
-  ) {
+  public GetAlbumsTracksRequest.Builder getTracksForAlbum(String albumId) {
     GetAlbumsTracksRequest.Builder builder = new GetAlbumsTracksRequest.Builder(accessToken);
     builder.setDefaults(httpManager, scheme, host, port);
     builder.id(albumId);
@@ -300,12 +309,6 @@ public class Api {
     SearchTrackRequest.Builder builder = new SearchTrackRequest.Builder(accessToken);
     builder.setDefaults(httpManager, scheme, host, port);
     builder.q(query);
-    /**
-     * Search for an artist.
-     *
-     * @param query A search query string.
-     * @return A builder that builds a request to search for an artist.
-     */
     return builder;
   }
 
@@ -537,7 +540,6 @@ public class Api {
    */
   public AddTracksToPlaylistRequest.Builder addTracksToPlaylist(String userId, String playlistId, String[] trackUris) {
     final AddTracksToPlaylistRequest.Builder builder = new AddTracksToPlaylistRequest.Builder(accessToken);
-
     builder.setDefaults(httpManager, scheme, host, port);
     builder.user_id(userId);
     builder.playlist_id(playlistId);
@@ -572,11 +574,9 @@ public class Api {
    */
   public RemoveTracksFromPlaylistRequest.Builder removeTrackFromPlaylist(String userId, String playlistId, String[] trackUris) {
     final RemoveTracksFromPlaylistRequest.Builder builder = new RemoveTracksFromPlaylistRequest.Builder(accessToken);
-
     builder.setDefaults(httpManager, scheme, host, port);
     builder.setQueryParameter("uris", Joiner.on(",").join(trackUris));
     builder.setPath("/v1/users/" + userId + "/playlists/" + playlistId + "/tracks");
-
     return builder;
   }
 
@@ -597,32 +597,22 @@ public class Api {
 
   public RemoveTracksFromPlaylistRequest.Builder removeTrackFromPlaylist(String userId, String playlistId, PlaylistTrackPosition[] playlistTrackPositions) {
     final RemoveTracksFromPlaylistRequest.Builder builder = new RemoveTracksFromPlaylistRequest.Builder(accessToken);
-
     builder.setDefaults(httpManager, scheme, host, port);
-
     JsonArray playlistTrackPositionJsonArray = new JsonArray();
-
     for (PlaylistTrackPosition playlistTrackPosition : playlistTrackPositions) {
       JsonObject playlistTrackPositionJsonObject = new JsonObject();
-
       playlistTrackPositionJsonObject.addProperty("uri", playlistTrackPosition.getUri());
-
       if (playlistTrackPosition.getPositions() != null) {
         JsonArray positionArray = new JsonArray();
-
         for (int position : playlistTrackPosition.getPositions()) {
           positionArray.add(position);
         }
-
         playlistTrackPositionJsonObject.add("positions", positionArray);
       }
-
       playlistTrackPositionJsonArray.add(playlistTrackPositionJsonObject);
     }
-
     JsonObject tracks = new JsonObject();
     tracks.add("tracks", playlistTrackPositionJsonArray);
-
     builder.setFormParameter("tracks", tracks.toString());
     builder.user_id(userId);
     builder.playlist_id(playlistId);
@@ -719,23 +709,17 @@ public class Api {
    */
   public URI createAuthorizeUri(String[] scopes, String state, boolean showDialog) {
     final AuthorizationCodeUriRequest.Builder builder = new AuthorizationCodeUriRequest.Builder();
-
     builder.setDefaults(httpManager, scheme, host, port);
-
     builder.setClientId(clientId);
     builder.setResponseType("code");
     builder.setRedirectUri(redirectUri);
-
     if (scopes != null) {
       builder.setScope(Joiner.on(" ").join(scopes));
     }
-
     if (state != null) {
       builder.setState(state);
     }
-
     builder.setShowDialog(showDialog);
-
     return builder.build().getUri();
   }
 
@@ -749,21 +733,16 @@ public class Api {
    */
   public URI createAuthorizeUri(String[] scopes, String state) {
     final AuthorizationCodeUriRequest.Builder builder = new AuthorizationCodeUriRequest.Builder();
-
     builder.setDefaults(httpManager, scheme, host, port);
-
     builder.setClientId(clientId);
     builder.setResponseType("code");
     builder.setRedirectUri(redirectUri);
-
     if (scopes != null) {
       builder.setScope(Joiner.on(" ").join(scopes));
     }
-
     if (state != null) {
       builder.setState(state);
     }
-
     return builder.build().getUri();
   }
 
@@ -776,17 +755,13 @@ public class Api {
    */
   public URI createAuthorizeUri(String... scopes) {
     final AuthorizationCodeUriRequest.Builder builder = new AuthorizationCodeUriRequest.Builder();
-
     builder.setDefaults(httpManager, scheme, host, port);
-
     builder.setClientId(clientId);
     builder.setResponseType("code");
     builder.setRedirectUri(redirectUri);
-
     if (scopes != null) {
       builder.setScope(Joiner.on(" ").join(scopes));
     }
-
     return builder.build().getUri();
   }
 
@@ -818,27 +793,34 @@ public class Api {
   public GetCategorysPlaylistsRequest.Builder getPlaylistsForCategory(String categoryId) {
     GetCategorysPlaylistsRequest.Builder builder = new GetCategorysPlaylistsRequest.Builder(accessToken);
     builder.setDefaults(httpManager, scheme, host, port);
-    return builder
-            .category_id(categoryId);
+    return builder.category_id(categoryId);
   }
 
-  /**
-   * Builder class for building a Spotify API instance.
-   */
   public static class Builder {
-
     private IHttpManager httpManager = DEFAULT_HTTP_MANAGER;
-    private String scheme = DEFAULT_SCHEME;
+
     private String host = DEFAULT_HOST;
+
+    private String scheme = DEFAULT_SCHEME;
+
     private int port = DEFAULT_PORT;
+
     private String proxyUrl;
-    private int proxyPort;
-    private int proxyUsername;
-    private int proxyPassword;
-    private String clientId;
-    private String clientSecret;
-    private String redirectUri;
+
     private String accessToken;
+
+    private int proxyPort;
+
+    private int proxyUsername;
+
+    private int proxyPassword;
+
+    private String clientId;
+
+    private String clientSecret;
+
+    private String redirectUri;
+
     private String refreshToken;
 
     /**
