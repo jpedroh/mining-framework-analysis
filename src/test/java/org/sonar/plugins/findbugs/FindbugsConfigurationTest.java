@@ -19,7 +19,6 @@
  */
 package org.sonar.plugins.findbugs;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -52,6 +51,8 @@ import org.sonar.plugins.findbugs.configuration.SimpleConfiguration;
 import org.sonar.plugins.findbugs.rule.FakeActiveRules;
 import org.sonar.plugins.findbugs.util.JupiterLogTester;
 import org.sonar.plugins.java.api.JavaResourceLocator;
+
+import com.google.common.collect.ImmutableList;
 
 import edu.umd.cs.findbugs.ClassScreener;
 import edu.umd.cs.findbugs.Project;
