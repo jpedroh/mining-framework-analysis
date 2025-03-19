@@ -1,5 +1,4 @@
 package org.enderstone.server;
-
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -21,8 +20,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
-import javax.xml.bind.DatatypeConverter;
 import javax.imageio.ImageIO;
+import javax.xml.bind.DatatypeConverter;
 import org.enderstone.server.commands.CommandMap;
 import org.enderstone.server.commands.enderstone.PingCommand;
 import org.enderstone.server.commands.enderstone.VersionCommand;
@@ -33,195 +32,200 @@ import org.enderstone.server.regions.EnderWorld;
 import org.enderstone.server.uuid.UUIDFactory;
 
 public class Main implements Runnable {
+  public static final String NAME = "Enderstone";
 
-	public static final String NAME = "Enderstone";
-	public static final String PROTOCOL_VERSION = "1.7.6";
-	public static final Set<Integer> PROTOCOL = Collections.unmodifiableSet(new HashSet<Integer>() {
-		private static final long serialVersionUID = 1L;
+  public static final String PROTOCOL_VERSION = "1.7.6";
 
-		{
-			this.add(5); // 1.7.9
-		}
-	});
-	public static final String[] AUTHORS = new String[] { "bigteddy98", "ferrybig", "timbayens" };
-	public static final Random random = new Random();
+  public static final Set<Integer> PROTOCOL = Collections.unmodifiableSet(new HashSet<Integer>() {
+    private static final long serialVersionUID = 1L;
 
-	public Properties prop = null;
-	public UUIDFactory uuidFactory = new UUIDFactory();
-	public String FAVICON = null;
-	public int port;
-	public final EnderWorld mainWorld = new EnderWorld();
-	public volatile boolean isRunning = true;
-	public final CommandMap commands;
-	{
-		commands = new CommandMap();
-		commands.registerCommand(new TellCommand());
-		commands.registerCommand(new PingCommand());
-		commands.registerCommand(new VersionCommand());
-	}
-			
-	private static Main instance;
+    {
+      this.add(5);
+    }
+  });
 
-	public final List<EnderPlayer> onlinePlayers = new ArrayList<>();
-	private final List<Runnable> sendToMainThread = Collections.synchronizedList(new ArrayList<Runnable>());
+  public static final String[] AUTHORS = new String[] { "bigteddy98", "ferrybig", "timbayens" };
 
-	public Main() {
-		instance = this;
-	}
+  public static final Random random = new Random();
 
-	public static Main getInstance() {
-		return instance;
-	}
+  public UUIDFactory uuidFactory = new UUIDFactory();
 
-	public void sendToMainThread(Runnable run) {
-		synchronized (sendToMainThread) {
-			sendToMainThread.add(run);
-		}
-	}
+  public Properties prop = null;
 
-	public static void main(String[] args) {
-		new Thread(new Main()).start();
-	}
+  public final 
+<<<<<<< /usr/src/app/output/sandergielisse/enderstone/27f9c43869468a75a469b9d40b3e3e946da5c687/src/org/enderstone/server/Main.java/left.java
+  String
+=======
+  CommandMap
+>>>>>>> /usr/src/app/output/sandergielisse/enderstone/27f9c43869468a75a469b9d40b3e3e946da5c687/src/org/enderstone/server/Main.java/right.java
+   
+<<<<<<< /usr/src/app/output/sandergielisse/enderstone/27f9c43869468a75a469b9d40b3e3e946da5c687/src/org/enderstone/server/Main.java/left.java
+  FAVICON = null
+=======
+  commands
+>>>>>>> /usr/src/app/output/sandergielisse/enderstone/27f9c43869468a75a469b9d40b3e3e946da5c687/src/org/enderstone/server/Main.java/right.java
+  ;
 
-	@Override
-	public void run() {
-		EnderLogger.info("Starting " + NAME + " server version " + PROTOCOL_VERSION + ".");
-		EnderLogger.info("Authors: " + Arrays.asList(AUTHORS).toString());
+  public int port;
 
-		EnderLogger.info("Loading config.ender file...");
-		this.loadConfigFromDisk();
+  public final EnderWorld mainWorld = new EnderWorld();
 
-		EnderLogger.info("Loading favicon...");
-		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-			BufferedImage image = ImageIO.read(new File("server-icon.png"));
-			if (image.getWidth() == 64 && image.getHeight() == 64) {
-				ImageIO.write(image, "png", baos);
-				baos.flush();
-				FAVICON = "data:image/png;base64," + DatatypeConverter.printBase64Binary(baos.toByteArray());
-			} else {
-				EnderLogger.exception(new IllegalArgumentException("Your server-icon.png needs to be 64*64!"));
-			}
-		} catch (IOException e) {
-			EnderLogger.exception(new FileNotFoundException("server-icon.png not found!"));
-		}
+  public volatile boolean isRunning = true;
 
-		EnderLogger.info("Favicon server-icon.png loaded!");
+  {
+    commands = new CommandMap();
+    commands.registerCommand(new TellCommand());
+    commands.registerCommand(new PingCommand());
+    commands.registerCommand(new VersionCommand());
+  }
 
-		EnderLogger.info("Starting Netty Server at port " + this.port + "...");
+  private static Main instance;
 
-		new Thread(new Runnable() {
+  public final List<EnderPlayer> onlinePlayers = new ArrayList<>();
 
-			@Override
-			public void run() {
-				EnderLogger.info("Netty Server Started!");
+  private final List<Runnable> sendToMainThread = Collections.synchronizedList(new ArrayList<Runnable>());
 
-				EventLoopGroup bossGroup = new NioEventLoopGroup();
-				EventLoopGroup workerGroup = new NioEventLoopGroup();
+  public Main() {
+    instance = this;
+  }
 
-				try {
-					ServerBootstrap bootstrap = new ServerBootstrap();
-					bootstrap.group(bossGroup, workerGroup);
-					bootstrap.channel(NioServerSocketChannel.class);
-					bootstrap.childHandler(new MinecraftServerInitializer());
+  public static Main getInstance() {
+    return instance;
+  }
 
-					bootstrap.bind(port).sync().channel().closeFuture().sync();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				} finally {
-					bossGroup.shutdownGracefully();
-					workerGroup.shutdownGracefully();
-				}
-			}
-		}).start();
+  public void sendToMainThread(Runnable run) {
+    synchronized (sendToMainThread) {
+      sendToMainThread.add(run);
+    }
+  }
 
-		EnderLogger.info("Initializing main Server Thread...");
-		new Thread(new Runnable() {
+  public static void main(String[] args) {
+    new Thread(new Main()).start();
+  }
 
-			@Override
-			public void run() {
-				while (isRunning) {
-					synchronized (sendToMainThread) {
-						for (Runnable run : sendToMainThread) {
-							try {
-								run.run();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-						sendToMainThread.clear();
-					}
+  @Override public void run() {
+    EnderLogger.info("Starting " + NAME + " server version " + PROTOCOL_VERSION + ".");
+    EnderLogger.info("Authors: " + Arrays.asList(AUTHORS).toString());
+    EnderLogger.info("Loading config.ender file...");
+    this.loadConfigFromDisk();
+    EnderLogger.info("Loading favicon...");
+    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+      BufferedImage image = ImageIO.read(new File("server-icon.png"));
+      if (image.getWidth() == 64 && image.getHeight() == 64) {
+        ImageIO.write(image, "png", baos);
+        baos.flush();
+        FAVICON = "data:image/png;base64," + DatatypeConverter.printBase64Binary(baos.toByteArray());
+      } else {
+        EnderLogger.exception(new IllegalArgumentException("Your server-icon.png needs to be 64*64!"));
+      }
+    } catch (IOException e) {
+      EnderLogger.exception(new FileNotFoundException("server-icon.png not found!"));
+    }
+    EnderLogger.info("Favicon server-icon.png loaded!");
+    EnderLogger.info("Starting Netty Server at port " + this.port + "...");
+    new Thread(new Runnable() {
+      @Override public void run() {
+        EnderLogger.info("Netty Server Started!");
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        try {
+          ServerBootstrap bootstrap = new ServerBootstrap();
+          bootstrap.group(bossGroup, workerGroup);
+          bootstrap.channel(NioServerSocketChannel.class);
+          bootstrap.childHandler(new MinecraftServerInitializer());
+          bootstrap.bind(port).sync().channel().closeFuture().sync();
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        } finally {
+          bossGroup.shutdownGracefully();
+          workerGroup.shutdownGracefully();
+        }
+      }
+    }).start();
+    EnderLogger.info("Initializing main Server Thread...");
+    new Thread(new Runnable() {
+      @Override public void run() {
+        while (isRunning) {
+          synchronized (sendToMainThread) {
+            for (Runnable run : sendToMainThread) {
+              try {
+                run.run();
+              } catch (Exception e) {
+                e.printStackTrace();
+              }
+            }
+            sendToMainThread.clear();
+          }
+          try {
+            serverTick();
+          } catch (Exception e1) {
+            e1.printStackTrace();
+          }
+          try {
+            Thread.sleep(50L);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+    }).start();
+    EnderLogger.info("Main Server Thread initialized and started!");
+    EnderLogger.info(NAME + " Server started, " + PROTOCOL_VERSION + " clients can now connect to port " + this.port + "!");
+  }
 
-					try {
-						serverTick();
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
+  public void saveConfigToDisk(boolean defaultt) {
+    try (OutputStream output = new FileOutputStream("config.ender")) {
+      if (defaultt) {
+        prop.setProperty("motd", "Another Enderstone server!");
+        prop.setProperty("port", "25565");
+        prop.setProperty("max-players", "20");
+        prop.setProperty("view-distance", "7");
+      }
+      prop.store(output, "Enderstone Server Config!");
+    } catch (IOException e1) {
+      EnderLogger.exception(e1);
+    }
+  }
 
-					try {
-						Thread.sleep(50L);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}).start();
-		EnderLogger.info("Main Server Thread initialized and started!");
-		EnderLogger.info(NAME + " Server started, " + PROTOCOL_VERSION + " clients can now connect to port " + this.port + "!");
-	}
+  public Properties loadConfigFromDisk() {
+    prop = new Properties();
+    try (InputStream input = new FileInputStream("config.ender")) {
+      prop.load(input);
+      port = Integer.parseInt(prop.getProperty("port"));
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+      this.saveConfigToDisk(true);
+      this.loadConfigFromDisk();
+    } catch (IOException e) {
+      EnderLogger.exception(e);
+    }
+    return prop;
+  }
 
-	public void saveConfigToDisk(boolean defaultt) {
-		try (OutputStream output = new FileOutputStream("config.ender")) {
-			if (defaultt) {
-				prop.setProperty("motd", "Another Enderstone server!");
-				prop.setProperty("port", "25565");
-				prop.setProperty("max-players", "20");
-				prop.setProperty("view-distance", "7");
-			}
-			prop.store(output, "Enderstone Server Config!");
-		} catch (IOException e1) {
-			EnderLogger.exception(e1);
-		}
-	}
+  public EnderPlayer getPlayer(String name) {
+    for (EnderPlayer ep : this.onlinePlayers) {
+      if (ep.getPlayerName().equals(name)) {
+        return ep;
+      }
+    }
+    return null;
+  }
 
-	public Properties loadConfigFromDisk() {
-		prop = new Properties();
-		try (InputStream input = new FileInputStream("config.ender")) {
-			prop.load(input);
-			port = Integer.parseInt(prop.getProperty("port"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			this.saveConfigToDisk(true);
-			this.loadConfigFromDisk();
-		} catch (IOException e) {
-			EnderLogger.exception(e);
-		}
-		return prop;
-	}
+  private int latestKeepAlive = 0;
 
-	public EnderPlayer getPlayer(String name) {
-		for (EnderPlayer ep : this.onlinePlayers) {
-			if (ep.getPlayerName().equals(name)) {
-				return ep;
-			}
-		}
-		return null;
-	}
+  private int latestChunkUpdate = 0;
 
-	private int latestKeepAlive = 0;
-	private int latestChunkUpdate = 0;
-
-	private void serverTick() {
-		if ((latestKeepAlive++ & 0b1111111) == 0) { // faster than % .. == 0
-			for (EnderPlayer p : onlinePlayers) {
-				p.getNetworkManager().sendPacket(new PacketKeepAlive(p.keepAliveID = random.nextInt(Integer.MAX_VALUE)));
-			}
-		}
-
-		if ((latestChunkUpdate++ & 0b111111) == 0) { // faster than % .. == 0
-			for (EnderPlayer p : onlinePlayers) {
-				mainWorld.doChunkUpdatesForPlayer(p, p.chunkInformer, 10);
-				p.updatePlayers(onlinePlayers);
-			}
-		}
-	}
+  private void serverTick() {
+    if ((latestKeepAlive++ & 0b1111111) == 0) {
+      for (EnderPlayer p : onlinePlayers) {
+        p.getNetworkManager().sendPacket(new PacketKeepAlive(p.keepAliveID = random.nextInt(Integer.MAX_VALUE)));
+      }
+    }
+    if ((latestChunkUpdate++ & 0b111111) == 0) {
+      for (EnderPlayer p : onlinePlayers) {
+        mainWorld.doChunkUpdatesForPlayer(p, p.chunkInformer, 10);
+        p.updatePlayers(onlinePlayers);
+      }
+    }
+  }
 }
