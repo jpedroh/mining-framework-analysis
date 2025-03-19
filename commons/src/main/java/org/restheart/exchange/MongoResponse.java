@@ -42,16 +42,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import org.bson.BsonArray;
-import org.bson.BsonDocument;
-import org.bson.BsonInt32;
-import org.bson.BsonString;
-import org.bson.BsonValue;
-import org.bson.conversions.Bson;
-import org.bson.json.JsonParseException;
-import org.restheart.utils.HttpStatus;
-import org.restheart.utils.JsonUtils;
-import org.slf4j.LoggerFactory;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
