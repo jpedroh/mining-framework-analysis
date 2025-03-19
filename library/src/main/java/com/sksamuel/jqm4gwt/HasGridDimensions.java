@@ -1,29 +1,28 @@
 package com.sksamuel.jqm4gwt;
-
 import com.sksamuel.jqm4gwt.form.elements.JQMTextArea;
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 11 May 2011 13:54:02
- * <br>
- * This interface is for widgets that have two dimensions, eg a {@link JQMTextArea}
+ *         <br>
+ *         This interface is for widgets that have two dimensions, eg a
+ *         {@link JQMTextArea}
  */
-public interface HasGridDimensions<T> {
-
-    /**
+public interface HasGridDimensions<T extends java.lang.Object> {
+  /**
      * Returns the number of columns
      */
-    int getColumns();
+  int getColumns();
 
-    /**
+  /**
      * Returns the number of rows
      */
-    int getRows();
+  int getRows();
 
-    void setColumns(int columns);
+  void setColumns(int columns);
 
-    T withColumns(int columns);
+  T withColumns(int columns);
 
-    void setRows(int rows);
+  void setRows(int rows);
 
-    T withRows(int rows);
+  T withRows(int rows);
 }

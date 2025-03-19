@@ -1,5 +1,4 @@
 package com.sksamuel.jqm4gwt.form.elements;
-
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -46,319 +45,263 @@ import com.sksamuel.jqm4gwt.html.FormLabel;
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 11 May 2011 13:49:09
- * <br>
- * An implementation of a standard HTML text input.
+ *         <br>
+ *         An implementation of a standard HTML text input.
  */
-public class JQMText extends JQMFieldContainer implements HasText<JQMText>, HasFocusHandlers,
-        HasClickHandlers, HasTapHandlers, HasChangeHandlers, HasValue<String>, HasReadOnly<JQMText>,
-        JQMFormWidget, HasKeyDownHandlers, HasKeyUpHandlers, HasMouseOverHandlers,
-        HasMouseOutHandlers, HasPreventFocusZoom, HasMini<JQMText>,
-        HasPlaceHolder<JQMText>, Focusable, HasClearButton<JQMText>, HasCorners<JQMText> {
-
-    /**
+public class JQMText extends JQMFieldContainer implements HasText<JQMText>, HasFocusHandlers, HasClickHandlers, HasTapHandlers, HasChangeHandlers, HasValue<String>, HasReadOnly<JQMText>, JQMFormWidget, HasKeyDownHandlers, HasKeyUpHandlers, HasMouseOverHandlers, HasMouseOutHandlers, HasPreventFocusZoom, HasMini<JQMText>, HasPlaceHolder<JQMText>, Focusable, HasClearButton<JQMText>, HasCorners<JQMText> {
+  /**
      * The widget used for the label
      */
-    protected final FormLabel label;
+  protected final FormLabel label;
 
-    /**
+  /**
      * The widget used for the input element
      */
-    protected final TextBox input;
+  protected final TextBox input;
 
-    /**
+  /**
      * Create a new {@link JQMText} element with no label
      */
-    public JQMText() {
-        this(null);
-    }
+  public JQMText() {
+    this(null);
+  }
 
-    /**
+  /**
      * Create a new {@link JQMText} element with the given label text
      */
-    public JQMText(String text) {
-        String id = Document.get().createUniqueId();
+  public JQMText(String text) {
+    String id = Document.get().createUniqueId();
+    label = new FormLabel();
+    label.setFor(id);
+    input = new TextBox();
+    input.getElement().setId(id);
+    input.setName(id);
+    add(label);
+    add(input);
+    setText(text);
+  }
 
-        label = new FormLabel();
-        label.setFor(id);
+  @Override public HandlerRegistration addBlurHandler(BlurHandler handler) {
+    return input.addBlurHandler(handler);
+  }
 
-        input = new TextBox();
-        input.getElement().setId(id);
-        input.setName(id);
+  @Override public HandlerRegistration addChangeHandler(ChangeHandler handler) {
+    return input.addChangeHandler(handler);
+  }
 
-        add(label);
-        add(input);
+  @Override public HandlerRegistration addClickHandler(ClickHandler handler) {
+    return addDomHandler(handler, ClickEvent.getType());
+  }
 
-        setText(text);
-    }
+  @Override public HandlerRegistration addTapHandler(TapHandler handler) {
+    return JQMHandlerRegistration.registerJQueryHandler(new WidgetHandlerCounter() {
+      @Override public int getHandlerCountForWidget(Type<?> type) {
+        return getHandlerCount(type);
+      }
+    }, this, handler, JQMComponentEvents.TAP_EVENT, TapEvent.getType());
+  }
 
-    @Override
-    public HandlerRegistration addBlurHandler(BlurHandler handler) {
-        return input.addBlurHandler(handler);
-    }
+  @Override public Label addErrorLabel() {
+    return null;
+  }
 
-    @Override
-    public HandlerRegistration addChangeHandler(ChangeHandler handler) {
-        return input.addChangeHandler(handler);
-    }
+  @Override public HandlerRegistration addFocusHandler(FocusHandler handler) {
+    return input.addFocusHandler(handler);
+  }
 
-    @Override
-    public HandlerRegistration addClickHandler(ClickHandler handler) {
-        return addDomHandler(handler, ClickEvent.getType());
-    }
+  @Override public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
+    return input.addKeyDownHandler(handler);
+  }
 
-    @Override
-    public HandlerRegistration addTapHandler(TapHandler handler) {
-        // this is not a native browser event so we will have to manage it via JS
-        return JQMHandlerRegistration.registerJQueryHandler(new WidgetHandlerCounter() {
-            @Override
-            public int getHandlerCountForWidget(Type<?> type) {
-                return getHandlerCount(type);
-            }
-        }, this, handler, JQMComponentEvents.TAP_EVENT, TapEvent.getType());
-    }
+  @Override public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
+    return input.addKeyUpHandler(handler);
+  }
 
-    @Override
-    public Label addErrorLabel() {
-        return null;
-    }
+  @Override public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
+    return flow.addDomHandler(handler, MouseOutEvent.getType());
+  }
 
-    @Override
-    public HandlerRegistration addFocusHandler(FocusHandler handler) {
-        return input.addFocusHandler(handler);
-    }
+  @Override public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
+    return flow.addDomHandler(handler, MouseOverEvent.getType());
+  }
 
-    @Override
-    public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
-        return input.addKeyDownHandler(handler);
-    }
+  @Override public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
+    return input.addValueChangeHandler(handler);
+  }
 
-    @Override
-    public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
-        return input.addKeyUpHandler(handler);
-    }
+  public void disable() {
+    disable(input.getElement());
+  }
 
-    @Override
-    public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
-        return flow.addDomHandler(handler, MouseOutEvent.getType());
-    }
+  private static native void disable(Element elt);
 
-    @Override
-    public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
-        return flow.addDomHandler(handler, MouseOverEvent.getType());
-    }
+  public void enable() {
+    enable(input.getElement());
+  }
 
-    @Override
-    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
-        return input.addValueChangeHandler(handler);
-    }
+  private static native void enable(Element elt);
 
-    public void disable() {
-        disable(input.getElement());
-    }
+  @Override public int getTabIndex() {
+    return input.getTabIndex();
+  }
 
-    private static native void disable(Element elt)/*-{
-        $wnd.$(elt).textinput('disable');
-    }-*/;
-
-    public void enable() {
-        enable(input.getElement());
-    }
-
-    private static native void enable(Element elt) /*-{
-        $wnd.$(elt).textinput('enable');
-    }-*/;
-
-    @Override
-    public int getTabIndex() {
-        return input.getTabIndex();
-    }
-
-    /**
+  /**
      * Returns the text of the label
      */
-    @Override
-    public String getText() {
-        return label == null ? null : label.getText();
-    }
+  @Override public String getText() {
+    return label == null ? null : label.getText();
+  }
 
-    @Override
-    public String getValue() {
-        return input.getValue();
-    }
+  @Override public String getValue() {
+    return input.getValue();
+  }
 
-    @Override
-    public boolean isMini() {
-        return "true".equals(getAttribute("data-mini"));
-    }
+  @Override public boolean isMini() {
+    return "true".equals(getAttribute("data-mini"));
+  }
 
-    @Override
-    public boolean isPreventFocusZoom() {
-        return "true".equals(input.getElement().getAttribute("data-prevent-focus-zoom"));
-    }
+  @Override public boolean isPreventFocusZoom() {
+    return "true".equals(input.getElement().getAttribute("data-prevent-focus-zoom"));
+  }
 
-    @Override
-    public void setAccessKey(char key) {
-        input.setAccessKey(key);
-    }
+  @Override public void setAccessKey(char key) {
+    input.setAccessKey(key);
+  }
 
-    @Override
-    public void setFocus(boolean focused) {
-        input.setFocus(focused);
-    }
+  @Override public void setFocus(boolean focused) {
+    input.setFocus(focused);
+  }
 
-    /**
+  /**
      * If set to true then renders a smaller version of the standard-sized element.
      */
-    @Override
-    public void setMini(boolean mini) {
-        setAttribute("data-mini", String.valueOf(mini));
-    }
+  @Override public void setMini(boolean mini) {
+    setAttribute("data-mini", String.valueOf(mini));
+  }
 
-    /**
+  /**
      * If set to true then renders a smaller version of the standard-sized element.
      */
-    @Override
-    public JQMText withMini(boolean mini) {
-        setMini(mini);
-        return this;
-    }
+  @Override public JQMText withMini(boolean mini) {
+    setMini(mini);
+    return this;
+  }
 
-    /**
+  /**
      * This option disables page zoom temporarily when a custom select is focused, which prevents iOS devices from zooming the page into the select.
      * By default, iOS often zooms into form controls, and the behavior is often unnecessary and intrusive in mobile-optimized layouts.
      */
-    @Override
-    public void setPreventFocusZoom(boolean b) {
-        setAttribute("data-prevent-focus-zoom", String.valueOf(b));
-    }
+  @Override public void setPreventFocusZoom(boolean b) {
+    setAttribute("data-prevent-focus-zoom", String.valueOf(b));
+  }
 
-    @Override
-    public void setTabIndex(int index) {
-        input.setTabIndex(index);
-    }
+  @Override public void setTabIndex(int index) {
+    input.setTabIndex(index);
+  }
 
-    /**
+  /**
      * Set the text of the label to the given @param text
      */
-    @Override
-    public void setText(String text) {
-        label.setText(text);
-    }
+  @Override public void setText(String text) {
+    label.setText(text);
+  }
 
-    protected void setType(String type) {
-        input.getElement().setAttribute("type", type);
-    }
+  protected void setType(String type) {
+    input.getElement().setAttribute("type", type);
+  }
 
-    @Override
-    public void setValue(String value) {
-        setValue(value, false);
-    }
+  @Override public void setValue(String value) {
+    setValue(value, false);
+  }
 
-    @Override
-    public void setValue(String value, boolean fireEvents) {
-        input.setValue(value, fireEvents);
-    }
+  @Override public void setValue(String value, boolean fireEvents) {
+    input.setValue(value, fireEvents);
+  }
 
-    @Override
-    public JQMText withText(String text) {
-        setText(text);
-        return this;
-    }
+  @Override public JQMText withText(String text) {
+    setText(text);
+    return this;
+  }
 
-    @Override
-    public boolean isReadOnly() {
-        return input.isReadOnly();
-    }
+  @Override public boolean isReadOnly() {
+    return input.isReadOnly();
+  }
 
-    @Override
-    public void setReadOnly(boolean readOnly)
-    {
-        input.setReadOnly(readOnly);
-    }
+  @Override public void setReadOnly(boolean readOnly) {
+    input.setReadOnly(readOnly);
+  }
 
-    @Override
-    public JQMText withReadOnly(boolean readOnly)
-    {
-        setReadOnly(readOnly);
-        return this;
-    }
+  @Override public JQMText withReadOnly(boolean readOnly) {
+    setReadOnly(readOnly);
+    return this;
+  }
 
-    @Override
-    public String getPlaceHolder()
-    {
-        return input.getElement().getAttribute(HasPlaceHolder.ATTRIBUTE_PLACEHOLDER);
-    }
+  @Override public String getPlaceHolder() {
+    return input.getElement().getAttribute(HasPlaceHolder.ATTRIBUTE_PLACEHOLDER);
+  }
 
-    @Override
-    public void setPlaceHolder(String placeHolderText) {
-        input.getElement().setAttribute(HasPlaceHolder.ATTRIBUTE_PLACEHOLDER,placeHolderText);
-    }
+  @Override public void setPlaceHolder(String placeHolderText) {
+    input.getElement().setAttribute(HasPlaceHolder.ATTRIBUTE_PLACEHOLDER, placeHolderText);
+  }
 
-    @Override
-    public JQMText withPlaceHolder(String placeHolderText) {
-        setPlaceHolder(placeHolderText);
-        return this;
-    }
+  @Override public JQMText withPlaceHolder(String placeHolderText) {
+    setPlaceHolder(placeHolderText);
+    return this;
+  }
 
-    public String getInputId() {
-        return input.getElement().getId();
-    }
+  public String getInputId() {
+    return input.getElement().getId();
+  }
 
-    public void setInputId(String id) {
-        input.getElement().setId(id);
-        input.setName(id);
-        label.setFor(id);
-    }
+  public void setInputId(String id) {
+    input.getElement().setId(id);
+    input.setName(id);
+    label.setFor(id);
+  }
 
-    /**
+  /**
      * Could be useful when submitting form to external service with pre-required element names.
      * See <a href="http://jquerymobile.com/demos/1.2.1/docs/forms/forms-sample.html">Submitting Forms</a>
      */
-    public void setInputName(String id) {
-        input.setName(id);
-    }
+  public void setInputName(String id) {
+    input.setName(id);
+  }
 
-    public String getInputName() {
-        return input.getName();
-    }
+  public String getInputName() {
+    return input.getName();
+  }
 
-    public void setInputAttrs(String attrs) {
-        JQMCommon.setAttributes(input.getElement(), attrs);
-    }
+  public void setInputAttrs(String attrs) {
+    JQMCommon.setAttributes(input.getElement(), attrs);
+  }
 
-    public void removeInputAttrs(String attrs) {
-        JQMCommon.removeAttributes(input.getElement(), attrs);
-    }
+  public void removeInputAttrs(String attrs) {
+    JQMCommon.removeAttributes(input.getElement(), attrs);
+  }
 
-    @Override
-    public boolean isClearButton() {
-        return JQMCommon.isClearButton(input);
-    }
+  @Override public boolean isClearButton() {
+    return JQMCommon.isClearButton(input);
+  }
 
-    @Override
-    public void setClearButton(boolean value) {
-        JQMCommon.setClearButton(input, value);
-    }
+  @Override public void setClearButton(boolean value) {
+    JQMCommon.setClearButton(input, value);
+  }
 
-    @Override
-    public JQMText withClearButton(boolean value) {
-        setClearButton(value);
-        return this;
-    }
+  @Override public JQMText withClearButton(boolean value) {
+    setClearButton(value);
+    return this;
+  }
 
-    @Override
-    public boolean isCorners() {
-        return JQMCommon.isCorners(input);
-    }
+  @Override public boolean isCorners() {
+    return JQMCommon.isCorners(input);
+  }
 
-    @Override
-    public void setCorners(boolean corners) {
-        JQMCommon.setCorners(input, corners);
-    }
+  @Override public void setCorners(boolean corners) {
+    JQMCommon.setCorners(input, corners);
+  }
 
-    @Override
-    public JQMText withCorners(boolean corners) {
-        setCorners(corners);
-        return this;
-    }
+  @Override public JQMText withCorners(boolean corners) {
+    setCorners(corners);
+    return this;
+  }
 }

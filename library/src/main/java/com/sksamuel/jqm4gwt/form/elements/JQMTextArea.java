@@ -1,5 +1,4 @@
 package com.sksamuel.jqm4gwt.form.elements;
-
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusHandler;
@@ -24,42 +23,38 @@ import com.sksamuel.jqm4gwt.html.FormLabel;
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 11 May 2011 13:49:09
- * <br>
- * An implementation of a standard HTML Textarea
+ *         <br>
+ *         An implementation of a standard HTML Textarea
  */
-public class JQMTextArea extends JQMFieldContainer implements HasGridDimensions<JQMTextArea>, HasText<JQMTextArea>, HasValue<String>, HasReadOnly<JQMTextArea>,
-		HasPlaceHolder<JQMTextArea>,HasMini<JQMTextArea>, HasKeyDownHandlers, HasKeyUpHandlers, HasFocusHandlers, HasBlurHandlers, Focusable {
+public class JQMTextArea extends JQMFieldContainer implements HasGridDimensions<JQMTextArea>, HasText<JQMTextArea>, HasValue<String>, HasReadOnly<JQMTextArea>, HasPlaceHolder<JQMTextArea>, HasMini<JQMTextArea>, HasKeyDownHandlers, HasKeyUpHandlers, HasFocusHandlers, HasBlurHandlers, Focusable {
+  private final FormLabel label = new FormLabel();
 
-    private final FormLabel label = new FormLabel();
-    private final TextArea input = new TextArea();
+  private final TextArea input = new TextArea();
 
-    /**
+  /**
      * Create a new {@link JQMTextArea} with no label text
      */
-    public JQMTextArea() {
-        this(null);
-    }
+  public JQMTextArea() {
+    this(null);
+  }
 
-    /**
+  /**
      * Create a new {@link JQMTextArea} with the given label text and with the
      * default size
      *
      * @param text the display text for the label
      */
-    public JQMTextArea(String text) {
-        String id = Document.get().createUniqueId();
+  public JQMTextArea(String text) {
+    String id = Document.get().createUniqueId();
+    setText(text);
+    label.setFor(id);
+    input.getElement().setId(id);
+    input.setName(id);
+    add(label);
+    add(input);
+  }
 
-        setText(text);
-        label.setFor(id);
-
-        input.getElement().setId(id);
-        input.setName(id);
-
-        add(label);
-        add(input);
-    }
-
-    /**
+  /**
      * Create a new {@link JQMTextArea} with the given label text and with the
      * specified number of columns and rows.
      *
@@ -67,177 +62,141 @@ public class JQMTextArea extends JQMFieldContainer implements HasGridDimensions<
      * @param cols the number of cols to display
      * @param rows the number of rows to display.
      */
-    public JQMTextArea(String text, int cols, int rows) {
-        this(text);
-        withColumns(cols);
-        withRows(rows);
-    }
+  public JQMTextArea(String text, int cols, int rows) {
+    this(text);
+    withColumns(cols);
+    withRows(rows);
+  }
 
-    @Override
-    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
-        return input.addValueChangeHandler(handler);
-    }
+  @Override public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
+    return input.addValueChangeHandler(handler);
+  }
 
+  @Override public int getColumns() {
+    return Integer.parseInt(input.getElement().getAttribute("cols"));
+  }
 
-    @Override
-    public int getColumns() {
-        return Integer.parseInt(input.getElement().getAttribute("cols"));
-    }
+  @Override public int getRows() {
+    return Integer.parseInt(input.getElement().getAttribute("rows"));
+  }
 
-    @Override
-    public int getRows() {
-        return Integer.parseInt(input.getElement().getAttribute("rows"));
-    }
+  @Override public int getTabIndex() {
+    return input.getTabIndex();
+  }
 
-    @Override
-    public int getTabIndex() {
-        return input.getTabIndex();
-    }
+  @Override public String getText() {
+    return label.getText();
+  }
 
-    @Override
-    public String getText() {
-        return label.getText();
-    }
+  @Override public String getValue() {
+    return input.getValue();
+  }
 
-    @Override
-    public String getValue() {
-        return input.getValue();
-    }
+  @Override public boolean isMini() {
+    return "true".equals(getAttribute("data-mini"));
+  }
 
-    @Override
-    public boolean isMini() {
-        return "true".equals(getAttribute("data-mini"));
-    }
+  @Override public void setAccessKey(char key) {
+    input.setAccessKey(key);
+  }
 
-    @Override
-    public void setAccessKey(char key) {
-        input.setAccessKey(key);
-    }
+  @Override public void setColumns(int cols) {
+    input.getElement().setAttribute("cols", String.valueOf(cols));
+  }
 
-    @Override
-    public void setColumns(int cols) {
-        input.getElement().setAttribute("cols", String.valueOf(cols));
-    }
+  @Override public JQMTextArea withColumns(int cols) {
+    setColumns(cols);
+    return this;
+  }
 
-    @Override
-    public JQMTextArea withColumns(int cols) {
-        setColumns(cols);
-        return this;
-    }
+  @Override public void setFocus(boolean focused) {
+    input.setFocus(focused);
+  }
 
-    @Override
-    public void setFocus(boolean focused) {
-        input.setFocus(focused);
-    }
+  @Override public void setTabIndex(int index) {
+    input.setTabIndex(index);
+  }
 
+  @Override public void setText(String text) {
+    label.setText(text);
+  }
 
-    @Override
-    public void setTabIndex(int index) {
-        input.setTabIndex(index);
-    }
+  @Override public void setRows(int rows) {
+    input.getElement().setAttribute("rows", String.valueOf(rows));
+  }
 
-    @Override
-    public void setText(String text) {
-        label.setText(text);
-    }
+  @Override public JQMTextArea withRows(int rows) {
+    setRows(rows);
+    return this;
+  }
 
-    @Override
-    public void setRows(int rows) {
-        input.getElement().setAttribute("rows", String.valueOf(rows));
-    }
-
-    @Override
-    public JQMTextArea withRows(int rows) {
-        setRows(rows);
-        return this;
-    }
-
-    /**
+  /**
      * If set to true then renders a smaller version of the standard-sized element.
      */
-    @Override
-    public void setMini(boolean mini) {
-        setAttribute("data-mini", String.valueOf(mini));
-    }
+  @Override public void setMini(boolean mini) {
+    setAttribute("data-mini", String.valueOf(mini));
+  }
 
-    /**
+  /**
      * If set to true then renders a smaller version of the standard-sized element.
      */
-    @Override
-    public JQMTextArea withMini(boolean mini) {
-        setMini(mini);
-        return this;
-    }
+  @Override public JQMTextArea withMini(boolean mini) {
+    setMini(mini);
+    return this;
+  }
 
-    @Override
-    public void setValue(String value, boolean fireEvents) {
-        input.setValue(value, fireEvents);
-    }
+  @Override public void setValue(String value, boolean fireEvents) {
+    input.setValue(value, fireEvents);
+  }
 
-    @Override
-    public void setValue(String value) {
-        setValue(value, false);
-    }
+  @Override public void setValue(String value) {
+    setValue(value, false);
+  }
 
+  @Override public HandlerRegistration addBlurHandler(BlurHandler handler) {
+    return input.addBlurHandler(handler);
+  }
 
-    @Override
-    public HandlerRegistration addBlurHandler(BlurHandler handler) {
-        return input.addBlurHandler(handler);
-    }
+  @Override public HandlerRegistration addFocusHandler(FocusHandler handler) {
+    return input.addFocusHandler(handler);
+  }
 
-    @Override
-    public HandlerRegistration addFocusHandler(FocusHandler handler) {
-        return input.addFocusHandler(handler);
-    }
+  @Override public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
+    return input.addKeyUpHandler(handler);
+  }
 
-    @Override
-    public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
-        return input.addKeyUpHandler(handler);
-    }
+  @Override public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
+    return input.addKeyDownHandler(handler);
+  }
 
-    @Override
-    public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
-        return input.addKeyDownHandler(handler);
-    }
+  @Override public JQMTextArea withText(String text) {
+    setText(text);
+    return this;
+  }
 
-    @Override
-    public JQMTextArea withText(String text) {
-        setText(text);
-        return this;
-    }
+  @Override public boolean isReadOnly() {
+    return input.isReadOnly();
+  }
 
-	@Override
-	public boolean isReadOnly() {
-		return input.isReadOnly();
-	}
+  @Override public void setReadOnly(boolean readOnly) {
+    input.setReadOnly(readOnly);
+  }
 
-	@Override
-	public void setReadOnly(boolean readOnly)
-	{
-		input.setReadOnly(readOnly);
-	}
+  @Override public JQMTextArea withReadOnly(boolean readOnly) {
+    setReadOnly(readOnly);
+    return this;
+  }
 
-	@Override
-	public JQMTextArea withReadOnly(boolean readOnly)
-	{
-		setReadOnly(readOnly);
-		return this;
-	}
+  @Override public String getPlaceHolder() {
+    return input.getElement().getAttribute(HasPlaceHolder.ATTRIBUTE_PLACEHOLDER);
+  }
 
-	@Override
-	public String getPlaceHolder()
-	{
-		return input.getElement().getAttribute(HasPlaceHolder.ATTRIBUTE_PLACEHOLDER);
-	}
+  @Override public void setPlaceHolder(String placeHolderText) {
+    input.getElement().setAttribute(HasPlaceHolder.ATTRIBUTE_PLACEHOLDER, placeHolderText);
+  }
 
-	@Override
-	public void setPlaceHolder(String placeHolderText) {
-		input.getElement().setAttribute(HasPlaceHolder.ATTRIBUTE_PLACEHOLDER,placeHolderText);
-	}
-
-	@Override
-	public JQMTextArea withPlaceHolder(String placeHolderText) {
-		setPlaceHolder(placeHolderText);
-		return this;
-	}
+  @Override public JQMTextArea withPlaceHolder(String placeHolderText) {
+    setPlaceHolder(placeHolderText);
+    return this;
+  }
 }

@@ -1,5 +1,4 @@
 package com.sksamuel.jqm4gwt.examples;
-
 import com.sksamuel.jqm4gwt.examples.uibinder.TestView1;
 
 /**
@@ -16,27 +15,22 @@ import com.sksamuel.jqm4gwt.examples.uibinder.TestView1;
  *         Date: 4/4/13
  *         Time: 9:09 AM
  */
-public class GWTTestUiBinder /* extends GWTTestCase */ {
-
-    /**
+public class GWTTestUiBinder {
+  /**
      * Must refer to a valid module that sources this class.
      */
-    public String getModuleName() {
-        return "com.sksamuel.jqm4gwt.jqm4gwtJUnit";
-    }
+  public String getModuleName() {
+    return "com.sksamuel.jqm4gwt.jqm4gwtJUnit";
+  }
 
-
-    /**
+  /**
      * This test simply brings up a UiBinder generated view.
      */
-    public void onModuleLoad() {
-        TestView1 view1 = new TestView1();
-        view1.show();
-    }
+  public void onModuleLoad() {
+    TestView1 view1 = new TestView1();
+    view1.show();
+  }
 
-    public void testUiBinderView() {
-//        assertTrue(true); // This proves successful compilation.
-    }
-
-
+  public void testUiBinderView() {
+  }
 }

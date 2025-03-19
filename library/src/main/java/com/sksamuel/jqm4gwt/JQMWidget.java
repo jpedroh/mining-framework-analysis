@@ -1,5 +1,4 @@
 package com.sksamuel.jqm4gwt;
-
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
@@ -36,151 +35,136 @@ import com.sksamuel.jqm4gwt.list.JQMList;
  *         composition in use. Implementating subclasses must decide how to
  *         compose and thus call initWidget() themselves.
  */
-public abstract class JQMWidget extends Composite implements HasTheme<JQMWidget>, HasId<JQMWidget>,
-        HasDataRole, HasEnabled, HasJQMEventHandlers, HasFilterable {
+public abstract class JQMWidget extends Composite implements HasTheme<JQMWidget>, HasId<JQMWidget>, HasDataRole, HasEnabled, HasJQMEventHandlers, HasFilterable {
+  private boolean boundFilterEvents;
 
-    private boolean boundFilterEvents;
-    private boolean boundFilterCallback;
-    private JavaScriptObject origFilter;
+  private boolean boundFilterCallback;
 
-    /**
+  private JavaScriptObject origFilter;
+
+  /**
      * Returns the value of the attribute with the given name
      */
-    public String getAttribute(String name) {
-        return JQMCommon.getAttribute(this, name);
-    }
+  public String getAttribute(String name) {
+    return JQMCommon.getAttribute(this, name);
+  }
 
-    public boolean getAttributeBoolean(String name) {
-        return "true".equalsIgnoreCase(getAttribute(name));
-    }
+  public boolean getAttributeBoolean(String name) {
+    return "true".equalsIgnoreCase(getAttribute(name));
+  }
 
-    @Override
-    public String getDataRole() {
-        return JQMCommon.getDataRole(this);
-    }
+  @Override public String getDataRole() {
+    return JQMCommon.getDataRole(this);
+  }
 
-    @Override
-    public String getTheme() {
-        return JQMCommon.getTheme(this);
-    }
+  @Override public String getTheme() {
+    return JQMCommon.getTheme(this);
+  }
 
-    /**
+  /**
      * Removes the attribute with the given name
      *
      * @param name the name of the attribute to remove
      */
-    protected void removeAttribute(String name) {
-        getElement().removeAttribute(name);
-    }
+  protected void removeAttribute(String name) {
+    getElement().removeAttribute(name);
+  }
 
-    public void removeDataRole() {
-        JQMCommon.removeDataRole(this);
-    }
+  public void removeDataRole() {
+    JQMCommon.removeDataRole(this);
+  }
 
-    /**
+  /**
      * Sets the value of the attribute with the given name to the given value.
      */
-    public void setAttribute(String name, String value) {
-        JQMCommon.setAttribute(this, name, value);
-    }
+  public void setAttribute(String name, String value) {
+    JQMCommon.setAttribute(this, name, value);
+  }
 
-    /**
+  /**
      * Sets the data-role attribute to the given value.
      *
      * @param value the value to set the data-role attribute to
      */
-    @Override
-    public void setDataRole(String value) {
-        JQMCommon.setDataRole(this, value);
-    }
+  @Override public void setDataRole(String value) {
+    JQMCommon.setDataRole(this, value);
+  }
 
-    /** Returns this widget's ID (set on the main element) */
-    @Override
-    public final String getId() {
-        return getElement().getId();
-    }
+  /** Returns this widget's ID (set on the main element) */
+  @Override public final String getId() {
+    return getElement().getId();
+  }
 
-    /** The same as {@link JQMWidget#getId()}, but needed for UiBinder templates */
-    public final String getWidgetId() {
-        return getId();
-    }
+  /** The same as {@link JQMWidget#getId()}, but needed for UiBinder templates */
+  public final String getWidgetId() {
+    return getId();
+  }
 
-    /**
+  /**
      * Assigns an automatically generated ID to this widget. This method uses
      * the default GWT id creation methods in Document.get().createUniqueId()
      */
-    protected final void setId() {
-        setId(Document.get().createUniqueId());
-    }
+  protected final void setId() {
+    setId(Document.get().createUniqueId());
+  }
 
-    @Override
-    public final void setId(String id) {
-        getElement().setId(id);
-    }
+  @Override public final void setId(String id) {
+    getElement().setId(id);
+  }
 
-    /**
+  /**
      * The same as {@link JQMWidget#setId(String)}, but needed for UiBinder templates
      * where setId() cannot be used, because id="xxx" has different predefined meaning.
      */
-    public final void setWidgetId(String id) {
-        setId(id);
-    }
+  public final void setWidgetId(String id) {
+    setId(id);
+  }
 
-    @Override
-    public final JQMWidget withId(String id) {
-        setId(id);
-        return this;
-    }
+  @Override public final JQMWidget withId(String id) {
+    setId(id);
+    return this;
+  }
 
-    @Override
-    public void setTheme(String themeName) {
-        JQMCommon.setTheme(this, themeName);
-    }
+  @Override public void setTheme(String themeName) {
+    JQMCommon.setTheme(this, themeName);
+  }
 
-    @Override
-    public JQMWidget withTheme(String themeName) {
-        setTheme(themeName);
-        return this;
-    }
+  @Override public JQMWidget withTheme(String themeName) {
+    setTheme(themeName);
+    return this;
+  }
 
-    @Override
-    public void setEnabled(boolean b) {
-        JQMCommon.setEnabled(this, b);
-    }
+  @Override public void setEnabled(boolean b) {
+    JQMCommon.setEnabled(this, b);
+  }
 
-    @Override
-    public boolean isEnabled() {
-        return JQMCommon.isEnabled(this);
-    }
+  @Override public boolean isEnabled() {
+    return JQMCommon.isEnabled(this);
+  }
 
-    /**
+  /**
      * Gives realistic visibility (parent chain considered, ...)
      * If you need logical visibility of this particular widget,
      * use {@link UIObject#isVisible(Element elem)}
      */
-    @Override
-    public boolean isVisible() {
-        return super.isVisible() && JQMCommon.isVisible(this);
-    }
+  @Override public boolean isVisible() {
+    return super.isVisible() && JQMCommon.isVisible(this);
+  }
 
-    @Override
-    public HandlerRegistration addJQMEventHandler(String jqmEventName, EventHandler handler) {
+  @Override public HandlerRegistration addJQMEventHandler(String jqmEventName, EventHandler handler) {
+    Type<EventHandler> t = JQMEventFactory.getType(jqmEventName, EventHandler.class);
+    return JQMHandlerRegistration.registerJQueryHandler(new WidgetHandlerCounter() {
+      @Override public int getHandlerCountForWidget(Type<?> type) {
+        return getHandlerCount(type);
+      }
+    }, this, handler, jqmEventName, t);
+  }
 
-        Type<EventHandler> t = JQMEventFactory.getType(jqmEventName, EventHandler.class);
+  public String getFilterText() {
+    return JQMCommon.getFilterText(getDataFilterWidget());
+  }
 
-        return JQMHandlerRegistration.registerJQueryHandler(new WidgetHandlerCounter() {
-            @Override
-            public int getHandlerCountForWidget(Type<?> type) {
-                return getHandlerCount(type);
-            }
-        }, this, handler, jqmEventName, t);
-    }
-
-    public String getFilterText() {
-        return JQMCommon.getFilterText(getDataFilterWidget());
-    }
-
-    /**
+  /**
      * {@link JQMFilterable} will use this text when searching through this widget.
      * <br><b>Detail description:</b> By default, the filter simply searches against
      * the contents of each list item.
@@ -192,30 +176,30 @@ public abstract class JQMWidget extends Composite implements HasTheme<JQMWidget>
      * and full company names to be searched, or for covering common spellings
      * and abbreviations for countries.
      */
-    public void setFilterText(String filterText) {
-        JQMCommon.setFilterText(getDataFilterWidget(), filterText);
-    }
+  public void setFilterText(String filterText) {
+    JQMCommon.setFilterText(getDataFilterWidget(), filterText);
+  }
 
-    /** Can be overridden in descendants to provide proper data filter widget */
-    protected Widget getDataFilterWidget() {
-        return this;
-    }
+  /** Can be overridden in descendants to provide proper data filter widget */
+  protected Widget getDataFilterWidget() {
+    return this;
+  }
 
-    /** @return true if this list is set to filterable, false otherwise. */
-    public boolean isFilterable() {
-        return JQMCommon.isFilterable(getDataFilterWidget());
-    }
+  /** @return true if this list is set to filterable, false otherwise. */
+  public boolean isFilterable() {
+    return JQMCommon.isFilterable(getDataFilterWidget());
+  }
 
-    public void setFilterable(boolean value) {
-        JQMCommon.setFilterable(getDataFilterWidget(), value);
-        checkFilterEvents();
-    }
+  public void setFilterable(boolean value) {
+    JQMCommon.setFilterable(getDataFilterWidget(), value);
+    checkFilterEvents();
+  }
 
-    public String getDataFilter() {
-        return JQMCommon.getDataFilter(getDataFilterWidget());
-    }
+  public String getDataFilter() {
+    return JQMCommon.getDataFilter(getDataFilterWidget());
+  }
 
-    /**
+  /**
      * To be used in conjunction with {@link JQMFilterable}.
      * <br> May not work for any widget or require {@link JQMWidget#getDataFilterWidget()} override
      * for composite widgets like {@link JQMSelect}.
@@ -224,94 +208,100 @@ public abstract class JQMWidget extends Composite implements HasTheme<JQMWidget>
      * @param filterSelector - a jQuery selector that will be used to retrieve the element
      * that will serve as the input source, UiBinder example: dataFilter="#{fltr1.getFilterId}"
      */
-    public void setDataFilter(String filterSelector) {
-        JQMCommon.setDataFilter(getDataFilterWidget(), filterSelector);
-        checkFilterEvents();
-    }
+  public void setDataFilter(String filterSelector) {
+    JQMCommon.setDataFilter(getDataFilterWidget(), filterSelector);
+    checkFilterEvents();
+  }
 
-    /**
+  /**
      * @return - associated JQMFilterable.filter.getElement()
      */
-    protected Element getFilterSearchElt() {
-        String s = getDataFilter();
-        if (s == null || s.isEmpty()) return null;
-        return findElt(s);
+  protected Element getFilterSearchElt() {
+    String s = getDataFilter();
+    if (s == null || s.isEmpty()) {
+      return null;
     }
+    return findElt(s);
+  }
 
-    protected static native Element findElt(String selector) /*-{
-        return $wnd.$( selector ).first()[0];
-    }-*/;
+  protected static native Element findElt(String selector);
 
-    public String getFilterSearchText() {
-        Element elt = getFilterSearchElt();
-        if (elt == null) return null;
-        return JQMCommon.getAttribute(elt, "data-lastval");
+  public String getFilterSearchText() {
+    Element elt = getFilterSearchElt();
+    if (elt == null) {
+      return null;
     }
+    return JQMCommon.getAttribute(elt, "data-lastval");
+  }
 
-    /**
+  /**
      * Complimentary to setDataFilter(). Sets filter search text of associated JQMFilterable widget.
      */
-    public void setFilterSearchText(String value) {
-        Element elt = getFilterSearchElt();
-        if (elt == null) return;
-        refreshFilterSearch(elt, value);
+  public void setFilterSearchText(String value) {
+    Element elt = getFilterSearchElt();
+    if (elt == null) {
+      return;
     }
+    refreshFilterSearch(elt, value);
+  }
 
-    protected static native void refreshFilterSearch(Element elt, String text) /*-{
-        $wnd.$(elt).val(text).attr('data-lastval', '').trigger('change');
-    }-*/;
+  protected static native void refreshFilterSearch(Element elt, String text);
 
-    public String getFilterChildren() {
-        return JQMCommon.getFilterChildren(getDataFilterWidget());
-    }
+  public String getFilterChildren() {
+    return JQMCommon.getFilterChildren(getDataFilterWidget());
+  }
 
-    /**
+  /**
      * See <a href="http://api.jquerymobile.com/filterable/#option-children">Filterable Children</a>
      */
-    public void setFilterChildren(String filterChildren) {
-        JQMCommon.setFilterChildren(getDataFilterWidget(), filterChildren);
-    }
+  public void setFilterChildren(String filterChildren) {
+    JQMCommon.setFilterChildren(getDataFilterWidget(), filterChildren);
+  }
 
-    public boolean isFilterReveal() {
-        return JQMCommon.isFilterReveal(getDataFilterWidget());
-    }
+  public boolean isFilterReveal() {
+    return JQMCommon.isFilterReveal(getDataFilterWidget());
+  }
 
-    public void setFilterReveal(boolean value) {
-        JQMCommon.setFilterReveal(getDataFilterWidget(), value);
-    }
+  public void setFilterReveal(boolean value) {
+    JQMCommon.setFilterReveal(getDataFilterWidget(), value);
+  }
 
-    @Override
-    public void refreshFilter() {
-        if (isFilterable()) JQMCommon.refreshFilter(getDataFilterWidget());
+  @Override public void refreshFilter() {
+    if (isFilterable()) {
+      JQMCommon.refreshFilter(getDataFilterWidget());
     }
+  }
 
-    /** @param filter - currently entered filter text */
-    protected void onBeforeFilter(String filter) {
+  /** @param filter - currently entered filter text */
+  protected void onBeforeFilter(String filter) {
+  }
+
+  @Override public void doBeforeFilter(String filter) {
+    onBeforeFilter(filter);
+    JQMFilterableEvent.fire(this, JQMFilterableEvent.FilterableState.BEFORE_FILTER, filter);
+  }
+
+  public HandlerRegistration addFilterableHandler(JQMFilterableEvent.Handler handler) {
+    return addHandler(handler, JQMFilterableEvent.getType());
+  }
+
+  private void bindFilterEvents() {
+    if (boundFilterEvents) {
+      return;
     }
+    JQMCommon.bindFilterEvents(this, getDataFilterWidget().getElement());
+    boundFilterEvents = true;
+  }
 
-    @Override
-    public void doBeforeFilter(String filter) {
-        onBeforeFilter(filter);
-        JQMFilterableEvent.fire(this, JQMFilterableEvent.FilterableState.BEFORE_FILTER, filter);
+  private void unbindFilterEvents() {
+    if (!boundFilterEvents) {
+      return;
     }
+    JQMCommon.unbindFilterEvents(getDataFilterWidget().getElement());
+    boundFilterEvents = false;
+  }
 
-    public HandlerRegistration addFilterableHandler(JQMFilterableEvent.Handler handler) {
-        return addHandler(handler, JQMFilterableEvent.getType());
-    }
-
-    private void bindFilterEvents() {
-        if (boundFilterEvents) return;
-        JQMCommon.bindFilterEvents(this, getDataFilterWidget().getElement());
-        boundFilterEvents = true;
-    }
-
-    private void unbindFilterEvents() {
-        if (!boundFilterEvents) return;
-        JQMCommon.unbindFilterEvents(getDataFilterWidget().getElement());
-        boundFilterEvents = false;
-    }
-
-    /**
+  /**
      * @param elt - current filtering element, JQMCommon.getTextForFiltering(elt) can be used to get filtering text
      * @param index - filtering element's index
      * @param searchValue - filtering text
@@ -321,72 +311,71 @@ public abstract class JQMWidget extends Composite implements HasTheme<JQMWidget>
      * <br> - null means default filtering should be used.
      * <br> JQMCommon.getTextForFiltering(elt) can be used to get filtering element's text
      */
-    protected Boolean onFiltering(Element elt, Integer index, String searchValue) {
-        //String s = JQMCommon.getTextForFiltering(elt);
-        return null;
+  protected Boolean onFiltering(Element elt, Integer index, String searchValue) {
+    return null;
+  }
+
+  @Override public Boolean doFiltering(Element elt, Integer index, String searchValue) {
+    Boolean rslt = onFiltering(elt, index, searchValue);
+    Boolean eventRslt = JQMFilterableEvent.fire(this, JQMFilterableEvent.FilterableState.FILTERING, searchValue, elt, index);
+    if (rslt != null && rslt || eventRslt != null && eventRslt) {
+      return true;
     }
-
-    @Override
-    public Boolean doFiltering(Element elt, Integer index, String searchValue) {
-        Boolean rslt = onFiltering(elt, index, searchValue);
-        Boolean eventRslt = JQMFilterableEvent.fire(this, JQMFilterableEvent.FilterableState.FILTERING,
-                searchValue, elt, index);
-        // return the worst (from "filter out" to "default filtering") result
-        if (rslt != null && rslt || eventRslt != null && eventRslt) return true;
-        if (rslt != null) return rslt;
-        if (eventRslt != null) return eventRslt;
-        return null;
+    if (rslt != null) {
+      return rslt;
     }
-
-    private void bindFilterCallback() {
-        if (boundFilterCallback) return;
-        Element elt = getDataFilterWidget().getElement();
-        origFilter = JQMCommon.getFilterCallback(elt);
-        JQMCommon.bindFilterCallback(this, elt, origFilter);
-        boundFilterCallback = true;
+    if (eventRslt != null) {
+      return eventRslt;
     }
+    return null;
+  }
 
-    private void unbindFilterCallback() {
-        if (!boundFilterCallback) return;
-        JQMCommon.unbindFilterCallback(getDataFilterWidget().getElement(), origFilter);
-        origFilter = null;
-        boundFilterCallback = false;
+  private void bindFilterCallback() {
+    if (boundFilterCallback) {
+      return;
     }
+    Element elt = getDataFilterWidget().getElement();
+    origFilter = JQMCommon.getFilterCallback(elt);
+    JQMCommon.bindFilterCallback(this, elt, origFilter);
+    boundFilterCallback = true;
+  }
 
-    private void checkFilterEvents() {
-        if (isAttached()) {
-            boolean b = isFilterable();
-            if (!b) {
-                unbindFilterEvents();
-                unbindFilterCallback();
-            } else {
-                bindFilterEvents();
-                bindFilterableCreated(getDataFilterWidget().getElement(), this);
-            }
-        }
+  private void unbindFilterCallback() {
+    if (!boundFilterCallback) {
+      return;
     }
+    JQMCommon.unbindFilterCallback(getDataFilterWidget().getElement(), origFilter);
+    origFilter = null;
+    boundFilterCallback = false;
+  }
 
-    private static native void bindFilterableCreated(Element elt, JQMWidget w) /*-{
-        $wnd.$(elt).on( 'filterablecreate', function( event, ui ) {
-            w.@com.sksamuel.jqm4gwt.JQMWidget::filterableCreated()();
-        });
-    }-*/;
-
-    private void filterableCreated() {
-        bindFilterCallback();
-    }
-
-    @Override
-    protected void onLoad() {
-        super.onLoad();
-        checkFilterEvents();
-    }
-
-    @Override
-    protected void onUnload() {
+  private void checkFilterEvents() {
+    if (isAttached()) {
+      boolean b = isFilterable();
+      if (!b) {
         unbindFilterEvents();
         unbindFilterCallback();
-        super.onUnload();
+      } else {
+        bindFilterEvents();
+        bindFilterableCreated(getDataFilterWidget().getElement(), this);
+      }
     }
+  }
 
+  private static native void bindFilterableCreated(Element elt, JQMWidget w);
+
+  private void filterableCreated() {
+    bindFilterCallback();
+  }
+
+  @Override protected void onLoad() {
+    super.onLoad();
+    checkFilterEvents();
+  }
+
+  @Override protected void onUnload() {
+    unbindFilterEvents();
+    unbindFilterCallback();
+    super.onUnload();
+  }
 }

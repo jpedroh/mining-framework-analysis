@@ -1,5 +1,4 @@
 package com.sksamuel.jqm4gwt.form.elements;
-
 import com.google.gwt.event.dom.client.HasBlurHandlers;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -10,10 +9,9 @@ import com.google.gwt.user.client.ui.Label;
  *
  */
 public interface JQMFormWidget extends IsWidget, HasValue<String>, HasBlurHandlers {
-
-    /**
+  /**
      * Optional, can return null, then JQMForm will create label by itself.
      * <br> Create and return a new Label for displaying errors and attach to the form widget.
      **/
-    Label addErrorLabel();
+  Label addErrorLabel();
 }

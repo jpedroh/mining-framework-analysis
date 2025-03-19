@@ -9,50 +9,48 @@ package com.sksamuel.jqm4gwt;
  * {@link com.google.gwt.uibinder.client.UiBinder UiBinder} templates in defining it in the 'icon attribute.
  * For example:
  * <pre>
- * &lt;jqm:button.JQMButton icon="RIGHT"/&gt;
+ * &lt;jqm:button.JQMButton icon="RIGHT"/>
  * </pre>
  *
  * Valid values for the icon attribute are defined in @see DataIcon
  *
  */
-public interface HasIcon<T> extends HasIconPos<T> {
-
-	/**
+public interface HasIcon<T extends java.lang.Object> extends HasIconPos<T> {
+  /**
 	 * Removes any icon previously set on the implementing class, i.e. reverts back to default icon (if any).
 	 * <br> If no icon has been previously set then this has no effect.
 	 * <br> To hide icon use {@link HasIcon#setBuiltInIcon(DataIcon)} with DataIcon.NONE parameter.
 	 */
-	T removeIcon();
+  T removeIcon();
 
-    /**
+  /**
    	 * Sets the data icon to use, overriding any previously built-in or URL-defined icons specified.
    	 *
    	 * @param icon  of the standard built in icon types
    	 */
-   	void setBuiltInIcon(DataIcon icon);
+  void setBuiltInIcon(DataIcon icon);
 
-   	/**
+  /**
    	 * Sets the icon to be a custom URL, overriding any previously built-in or URL-defined icons specified.
    	 *
    	 * @param src
    	 *              the src of the custom icon
    	 */
-   	void setIconURL(String src);
+  void setIconURL(String src);
 
-	/**
+  /**
 	 * Sets the data icon to use, overriding any previously built-in or URL-defined icons specified.
 	 *
 	 * @param icon
 	 *              of the standard built in icon types
 	 */
-	T withBuiltInIcon(DataIcon icon);
+  T withBuiltInIcon(DataIcon icon);
 
-	/**
+  /**
 	 * Sets the icon to be a custom URL, overriding any previously built-in or URL-defined icons specified.
 	 *
 	 * @param src
 	 *              the src of the custom icon
 	 */
-	T withIconURL(String src);
-
+  T withIconURL(String src);
 }

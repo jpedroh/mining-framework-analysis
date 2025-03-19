@@ -1,5 +1,4 @@
 package com.sksamuel.jqm4gwt;
-
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -13,29 +12,27 @@ import com.google.gwt.user.client.ui.Widget;
  *
  */
 public class JQMDialog extends JQMPage {
+  public JQMDialog() {
+    super();
+    JQMCommon.setDataDialog(this, true);
+  }
 
-    public JQMDialog() {
-        super();
-        JQMCommon.setDataDialog(this, true);
-    }
-
-    /**
+  /**
      * Creates a {@link JQMDialog} with the given id
      *
      * @param containerId the id to use as this dialog's id
      */
-    public @UiConstructor JQMDialog(String containerId) {
-        super(containerId);
-        JQMCommon.setDataDialog(this, true);
-    }
+  public @UiConstructor JQMDialog(String containerId) {
+    super(containerId);
+    JQMCommon.setDataDialog(this, true);
+  }
 
-    /**
+  /**
      * Create a new {@link JQMDialog} with an automatically assigned dialog id,
      * and then add the given widgets serially to the dialog layout.
      */
-    public JQMDialog(Widget... widgets) {
-        super(widgets);
-        JQMCommon.setDataDialog(this, true);
-    }
-
+  public JQMDialog(Widget... widgets) {
+    super(widgets);
+    JQMCommon.setDataDialog(this, true);
+  }
 }

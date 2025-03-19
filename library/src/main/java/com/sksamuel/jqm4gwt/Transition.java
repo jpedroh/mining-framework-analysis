@@ -6,29 +6,39 @@ package com.sksamuel.jqm4gwt;
  * <br> Enum representing the different transitions methods available in JQM.
  * <br> See <a href="http://demos.jquerymobile.com/1.4.5/transitions/">Transitions</a>
  *
- */
-public enum Transition {
-    FADE("fade"), POP("pop"), FLIP("flip"), TURN("turn"), FLOW("flow"),
-    SLIDE_FADE("slidefade"), SLIDE("slide"), SLIDE_UP("slideup"), SLIDE_DOWN("slidedown"),
-    NONE("none");
+ */public enum Transition {
+  FADE("fade"),
+  POP("pop"),
+  FLIP("flip"),
+  TURN("turn"),
+  FLOW("flow"),
+  SLIDE_FADE("slidefade"),
+  SLIDE("slide"),
+  SLIDE_UP("slideup"),
+  SLIDE_DOWN("slidedown"),
+  NONE("none")
+  ;
 
-    private final String jqmValue;
+  private final String jqmValue;
 
-    private Transition(String jqmValue) {
-        this.jqmValue = jqmValue;
+  private Transition(String jqmValue) {
+    this.jqmValue = jqmValue;
+  }
+
+  /** Returns the string value that JQM expects */
+  public String getJqmValue() {
+    return jqmValue;
+  }
+
+  public static Transition fromJqmValue(String jqmValue) {
+    if (jqmValue == null || jqmValue.isEmpty()) {
+      return null;
     }
-
-    /** Returns the string value that JQM expects */
-    public String getJqmValue() {
-        return jqmValue;
+    for (Transition i : Transition.values()) {
+      if (i.getJqmValue().equals(jqmValue)) {
+        return i;
+      }
     }
-
-    public static Transition fromJqmValue(String jqmValue) {
-        if (jqmValue == null || jqmValue.isEmpty()) return null;
-        for (Transition i : Transition.values()) {
-            if (i.getJqmValue().equals(jqmValue)) return i;
-        }
-        return null;
-    }
-
+    return null;
+  }
 }
