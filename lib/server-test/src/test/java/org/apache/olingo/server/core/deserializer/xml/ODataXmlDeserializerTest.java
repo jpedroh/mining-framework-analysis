@@ -531,8 +531,52 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
         + "  <data:PropertyString metadata:null=\"true\"/>\n"
         + "</data:PropertyComp>";
 
+<<<<<<< /usr/src/app/output/apache/olingo-odata4/b1d03d6ba98677e71a9db13b27f75fab77862058/lib/server-test/src/test/java/org/apache/olingo/server/core/deserializer/xml/ODataXmlDeserializerTest.java/left.java
+    CsdlProperty street = new CsdlProperty().setName("Street")
+        .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
+    CsdlProperty city = new CsdlProperty().setName("City")
+        .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
+    CsdlProperty region = new CsdlProperty().setName("Region")
+        .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
+    CsdlProperty postalcode = new CsdlProperty().setName("PostalCode")
+        .setType(EdmPrimitiveTypeKind.Int64.getFullQualifiedName());
+    
+    CsdlComplexType ct = new CsdlComplexType()
+        .setName("Model.Address")
+        .setProperties(Arrays.asList(street, city, region, postalcode));
+    EdmComplexTypeImpl complexType = new EdmComplexTypeImpl(edm, new FullQualifiedName("Model.Address"), ct);
+    
+    Mockito.stub(edm.getComplexType(new FullQualifiedName("Model.Address"))).toReturn(complexType);
+    
+    CsdlProperty prop = new CsdlProperty();
+    prop.setName("ShipTo");
+    prop.setType(new FullQualifiedName("Model.Address"));
+    EdmPropertyImpl edmProperty = new EdmPropertyImpl(edm, prop);
+||||||| /usr/src/app/output/apache/olingo-odata4/b1d03d6ba98677e71a9db13b27f75fab77862058/lib/server-test/src/test/java/org/apache/olingo/server/core/deserializer/xml/ODataXmlDeserializerTest.java/base.java
+    CsdlProperty street = new CsdlProperty().setName("Street")
+        .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
+    CsdlProperty city = new CsdlProperty().setName("City")
+        .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
+    CsdlProperty region = new CsdlProperty().setName("Region")
+        .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
+    CsdlProperty postalcode = new CsdlProperty().setName("PostalCode")
+        .setType(EdmPrimitiveTypeKind.Int64.getFullQualifiedName());
+    
+    CsdlComplexType ct = new CsdlComplexType()
+        .setName("Model.Address")
+        .setProperties(Arrays.asList(street, city, region, postalcode));
+    EdmComplexTypeImpl complexType = new EdmComplexTypeImpl(edm, new FullQualifiedName("Model.Address"), ct);
+    
+    Mockito.stub(edm.getComplexType(new FullQualifiedName("Model.Address"))).toReturn(complexType);
+    
+    CsdlProperty prop = new CsdlProperty();
+    prop.setName("ShipTo");
+    prop.setType(new FullQualifiedName("Model.Address"));
+    EdmPropertyImpl edmProperty = new EdmPropertyImpl(edm, null, prop);
+=======
     final Property result = deserializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty)
         .getProperty();
+>>>>>>> /usr/src/app/output/apache/olingo-odata4/b1d03d6ba98677e71a9db13b27f75fab77862058/lib/server-test/src/test/java/org/apache/olingo/server/core/deserializer/xml/ODataXmlDeserializerTest.java/right.java
 
     Assert.assertEquals("PropertyComp", result.getName());
     Assert.assertTrue(result.isComplex());
