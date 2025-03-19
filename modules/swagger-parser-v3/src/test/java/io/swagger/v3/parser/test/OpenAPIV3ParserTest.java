@@ -132,7 +132,7 @@ public class OpenAPIV3ParserTest {
         Yaml.prettyPrint(result.getOpenAPI().getServers().equals("/api/v3"));
         assertTrue(result.getMessages().isEmpty());
     }
-  
+
     @Test
     public void testIssue251() throws IOException {
         String pathFile = FileUtils.readFileToString(new File("src/test/resources/domain.yaml"), "UTF-8");
@@ -156,7 +156,7 @@ public class OpenAPIV3ParserTest {
         assertTrue(parseResult.getOpenAPI().getComponents().getSchemas().size() == 2);
         assertTrue(parseResult.getOpenAPI().getPaths().get("/parse").getGet().getParameters().get(0).getSchema().get$ref().equals("#/components/schemas/Parse"));
     }
-    
+
     @Test
     public void testCantReadDeepProperties() {
         OpenAPIV3Parser parser = new OpenAPIV3Parser();
@@ -168,7 +168,7 @@ public class OpenAPIV3ParserTest {
         Schema projects = (Schema) parseResult.getOpenAPI().getComponents().getSchemas().get("Project").getProperties().get("project_type");
         assertEquals(projects.getType(), "integer");
     }
-  
+
     @Test
     public void testIssueSameRefsDifferentModel() throws IOException {
         String pathFile = FileUtils.readFileToString(new File("src/test/resources/same-refs-different-model-domain.yaml"), "UTF-8");
