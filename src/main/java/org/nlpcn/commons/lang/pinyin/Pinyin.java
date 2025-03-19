@@ -52,6 +52,22 @@ public class Pinyin {
 	 * @param spearator
 	 * @return
 	 */
+<<<<<<< /usr/src/app/output/nlpchina/nlp-lang/cec0dd677bf90156ba3adaea1ffd6c69f64df9a1/src/main/java/org/nlpcn/commons/lang/pinyin/Pinyin.java/left.java
+	public static String list2String(List<String> list, String spearator) {
+
+		StringBuilder sb = new StringBuilder();
+
+		for (String string : list) {
+			if (sb.length() > 0) {
+				sb.append(spearator);
+			}
+			sb.append(String.valueOf(string));
+		}
+
+		return sb.toString();
+	}
+||||||| /usr/src/app/output/nlpchina/nlp-lang/cec0dd677bf90156ba3adaea1ffd6c69f64df9a1/src/main/java/org/nlpcn/commons/lang/pinyin/Pinyin.java/base.java
+=======
 	public static String list2String(List<String> list, String spearator) {
 		StringBuilder sb = new StringBuilder();
 		boolean flag = true;
@@ -71,39 +87,36 @@ public class Pinyin {
 		}
 		return sb.toString();
 	}
-
+>>>>>>> /usr/src/app/output/nlpchina/nlp-lang/cec0dd677bf90156ba3adaea1ffd6c69f64df9a1/src/main/java/org/nlpcn/commons/lang/pinyin/Pinyin.java/right.java
 	/**
 	 * list 转换为字符串 默认空格
 	 * 
 	 * @param list
 	 * @return
 	 */
-	public static String list2String(List<String> list) {
-		return list2String(list, " ");
-	}
-
-	/**
-	 * 动态增加到拼音词典中
-	 *
-	 * @param word
-	 *            大长今
-	 * @param pinyins
-	 *            ['da4', 'chang2' ,'jing1']
-	 */
-	public static void insertPinyin(String word, String[] pinyins) {
-		PinyinUtil.INSTANCE.insertPinyin(word, pinyins);
-	}
-
+    public static String list2String(List<String> list) {
+    	return list2String(list, " ");
+    }
+    /**
+     * 动态增加到拼音词典中
+     *
+     * @param word
+     *            大长今
+     * @param pinyins
+     *            ['da4', 'chang2' ,'jing1']
+     */
+    public static void insertPinyin(String word, String[] pinyins) {
+    	PinyinUtil.INSTANCE.insertPinyin(word, pinyins);
+    }
 	/**
 	 * list 转换为字符串 默认空格,忽略null
 	 * 
 	 * @param list
 	 * @return
 	 */
-	public static String list2StringSkipNull(List<String> list) {
-		return list2StringSkipNull(list, " ");
-	}
-
+    public static String list2StringSkipNull(List<String> list) {
+    	return list2StringSkipNull(list, " ");
+    }
 	/**
 	 * list 转换为字符串
 	 * 
@@ -111,6 +124,24 @@ public class Pinyin {
 	 * @param spearator
 	 * @return
 	 */
+<<<<<<< /usr/src/app/output/nlpchina/nlp-lang/cec0dd677bf90156ba3adaea1ffd6c69f64df9a1/src/main/java/org/nlpcn/commons/lang/pinyin/Pinyin.java/left.java
+	public static String list2StringSkipNull(List<String> list, String spearator) {
+		StringBuilder sb = new StringBuilder();
+
+		for (String string : list) {
+			if (sb.length() > 0) {
+				sb.append(spearator);
+			}
+			if(string==null){
+				continue ;
+			}
+			sb.append(String.valueOf(string));
+		}
+
+		return sb.toString();
+	}
+||||||| /usr/src/app/output/nlpchina/nlp-lang/cec0dd677bf90156ba3adaea1ffd6c69f64df9a1/src/main/java/org/nlpcn/commons/lang/pinyin/Pinyin.java/base.java
+=======
 	public static String list2StringSkipNull(List<String> list, String spearator) {
 		StringBuilder sb = new StringBuilder();
 		boolean flag = true;
@@ -130,4 +161,31 @@ public class Pinyin {
 		}
 		return sb.toString();
 	}
+>>>>>>> /usr/src/app/output/nlpchina/nlp-lang/cec0dd677bf90156ba3adaea1ffd6c69f64df9a1/src/main/java/org/nlpcn/commons/lang/pinyin/Pinyin.java/right.java
+	/**
+	 * list 转换为字符串
+	 * 
+	 * @param list
+	 * @param spearator
+	 * @return
+	 */
+	/**
+	 * list 转换为字符串 默认空格
+	 * 
+	 * @param list
+	 * @return
+	 */
+	/**
+	 * list 转换为字符串 默认空格,忽略null
+	 * 
+	 * @param list
+	 * @return
+	 */
+	/**
+	 * list 转换为字符串
+	 * 
+	 * @param list
+	 * @param spearator
+	 * @return
+	 */
 }
