@@ -1,16 +1,13 @@
 package org.unigram.docvalidator.util;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unigram.docvalidator.symbol.DVSymbols;
@@ -23,12 +20,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class CharacterTableLoader {
-
   /**
-   * Load CharacterTable.
-   *
+   * load CharacterTable.
    * @param fileName configuration file name
-   * @return generated character table or null if loading was failed
+   * @return generated character table or null if loading was failed.
    */
   public static CharacterTable load(String fileName) {
     InputStream fis;
@@ -42,12 +37,11 @@ public class CharacterTableLoader {
   }
 
   /**
-   * Load CharacterTable.
-   *
+   * load CharacterTable.
    * @param stream input stream for configuration settings
    * @return generated character table or null if loading was failed.
    */
-  public static CharacterTable load(InputStream stream){
+  public static CharacterTable load(InputStream stream) {
     return load(stream, "en");
   }
 
@@ -56,7 +50,7 @@ public class CharacterTableLoader {
    * @param fileName configuration file name
    * @return generated character table or null if loading was failed.
    */
-  public static CharacterTable load(String fileName, String lang){
+  public static CharacterTable load(String fileName, String lang) {
     InputStream fis;
     try {
       fis = new FileInputStream(fileName);
@@ -67,10 +61,9 @@ public class CharacterTableLoader {
     return load(fis, lang);
   }
 
-  public static CharacterTable load(InputStream stream, String lang){
+  public static CharacterTable load(InputStream stream, String lang) {
     CharacterTable characterTable = new CharacterTable();
-    Map<String, DVCharacter> characterDictionary =
-        characterTable.getCharacterDictionary();
+    Map<String, DVCharacter> characterDictionary = characterTable.getCharacterDictionary();
     loadDefaultCharacterTable(characterDictionary, lang);
     if (loadTable(stream, characterDictionary)) {
       return characterTable;
@@ -80,28 +73,27 @@ public class CharacterTableLoader {
   }
 
   /**
-   * Load input character configuration.
-   *
-   * @param stream         input configuration
-   * @param characterTable character settings
-   * @return true when the table is successfully loaded, false otherwise
+   * load input character configuration.
+   * @param stream input configuration
+   * @param characterTable TODO
+   * @return TODO
    */
-  private static boolean loadTable(InputStream stream,
-                                   Map<String, DVCharacter> characterTable) {
+  private static boolean loadTable(InputStream stream, Map<String, DVCharacter> characterTable) {
     Document document = parseCharTableString(stream);
     if (document == null) {
       LOG.error("Failed to parse character table");
       return false;
     }
-
     document.getDocumentElement().normalize();
     NodeList rootNodeList = document.getElementsByTagName("character-table");
     if (rootNodeList.getLength() == 0) {
       LOG.error("No \"character-table\" block found...");
       return false;
-    } else if (rootNodeList.getLength() > 1) {
-      LOG.warn("Found more than one \"character-table\" blocks.");
-      LOG.warn("Use the first block ...");
+    } else {
+      if (rootNodeList.getLength() > 1) {
+        LOG.warn("Found more than one \"character-table\" blocks.");
+        LOG.warn("Use the first block ...");
+      }
     }
     Node root = rootNodeList.item(0);
     NodeList nodeList = root.getChildNodes();
@@ -118,8 +110,7 @@ public class CharacterTableLoader {
             characterTable.put(currentChar.getName(), currentChar);
           }
         } else {
-          LOG.error("Invalid Node Name \"" +
-              element.getNodeName() + "\" exist.");
+          LOG.error("Invalid Node Name \"" + element.getNodeName() + "\" exist.");
           return false;
         }
       }
@@ -137,9 +128,7 @@ public class CharacterTableLoader {
       LOG.error("In parseCharTableString: " + e.getMessage());
       return null;
     }
-
     dBuilder.setErrorHandler(new SAXErrorHandler());
-
     Document doc = null;
     try {
       doc = dBuilder.parse(input);
@@ -158,24 +147,16 @@ public class CharacterTableLoader {
       LOG.warn("Found element does not have name and value attribute...");
       return null;
     }
-    return new DVCharacter(
-        element.getAttribute("name"),
-        element.getAttribute("value"),
-        element.getAttribute("invalid-chars"),
-        Boolean.parseBoolean(element.getAttribute("before-space")),
-        Boolean.parseBoolean(element.getAttribute("after-space")));
+    return new DVCharacter(element.getAttribute("name"), element.getAttribute("value"), element.getAttribute("invalid-chars"), Boolean.parseBoolean(element.getAttribute("before-space")), Boolean.parseBoolean(element.getAttribute("after-space")));
   }
 
-
-  private static void loadDefaultCharacterTable(
-      Map<String, DVCharacter> characterTable, String lang) {
+  private static void loadDefaultCharacterTable(Map<String, DVCharacter> characterTable, String lang) {
     DVSymbols symbolSettings;
     if (lang.equals("ja")) {
       symbolSettings = JaDefaultSymbols.getInstance();
     } else {
       symbolSettings = DefaultSymbols.getInstance();
     }
-
     Iterator<String> characterNames = symbolSettings.getAllCharacterNames();
     while (characterNames.hasNext()) {
       String charName = characterNames.next();
