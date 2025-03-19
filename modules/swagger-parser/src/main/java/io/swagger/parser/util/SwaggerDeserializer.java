@@ -420,7 +420,7 @@ public class SwaggerDeserializer {
         List<SecurityRequirement> security = securityRequirements(array, location, result);
         if (security != null) {
             List<Map<String, List<String>>> ss = new ArrayList<>();
-            for(SecurityRequirement s : security) {
+            for (SecurityRequirement s : security) {
                 if(s.getRequirements() != null) {
                     if (s.getRequirements().size() > 0) {
                         ss.add(s.getRequirements());
