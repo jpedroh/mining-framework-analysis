@@ -86,6 +86,18 @@ public class CronParserQuartzIntegrationTest {
         parser.parse("* * * W-3 * ?");
     }
 
+    /**
+     * Issue #151: L-7 in day of month should work to find the day 7 days prior to the last day of the month.
+     */
+    //@Test
+    public void testLSupportedInDoMRangeNextExecutionCalculation() {
+        ExecutionTime executionTime = ExecutionTime.forCron(parser.parse("0 15 10 L-7 * ?"));
+        ZonedDateTime now = ZonedDateTime.parse("2017-01-31T10:00:00Z");
+        ZonedDateTime nextExecution = executionTime.nextExecution(now).get();
+        ZonedDateTime assertDate = ZonedDateTime.parse("2017-02-21T10:15:00Z");
+        assertEquals(assertDate, nextExecution);
+    }
+
     @Test
     public void testNLSupported() throws Exception {
         parser.parse("* * * 3L * ?");
@@ -262,13 +274,6 @@ public class CronParserQuartzIntegrationTest {
      * Issue #151: L-7 in day of month should work to find the day 7 days prior to the last day of the month.
      */
 //    @Test TODO
-    public void testLSupportedInDoMRangeNextExecutionCalculation() {
-        ExecutionTime executionTime = ExecutionTime.forCron(parser.parse("0 15 10 L-7 * ?"));
-        ZonedDateTime now = ZonedDateTime.parse("2017-01-31T10:00:00Z");
-        ZonedDateTime nextExecution = executionTime.nextExecution(now).get();
-        ZonedDateTime assertDate = ZonedDateTime.parse("2017-02-21T10:15:00Z");
-        assertEquals(assertDate, nextExecution);
-    }
 
     /**
      * Issue #154: Quartz Cron Year Pattern is not fully supported - i.e. increments on years are not supported
