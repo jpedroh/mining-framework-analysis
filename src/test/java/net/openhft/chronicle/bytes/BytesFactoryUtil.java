@@ -219,7 +219,6 @@ final class BytesFactoryUtil {
         private final long realCapacity;
         private final boolean directMemory;
         private final boolean elastic;
-
         public BytesInitialInfo(Bytes<?> bytes) {
             this.readPosition = bytes.readPosition();
             this.writePosition = bytes.writePosition();
@@ -229,7 +228,6 @@ final class BytesFactoryUtil {
             this.directMemory = bytes.isDirectMemory();
             this.elastic = bytes.isElastic();
         }
-
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -245,7 +243,6 @@ final class BytesFactoryUtil {
             if (directMemory != that.directMemory) return false;
             return elastic == that.elastic;
         }
-
         @Override
         public int hashCode() {
             int result = (int) (readPosition ^ (readPosition >>> 32));
@@ -257,7 +254,6 @@ final class BytesFactoryUtil {
             result = 31 * result + (elastic ? 1 : 0);
             return result;
         }
-
         @Override
         public String toString() {
             return "BytesInitialInfo{" +
@@ -270,5 +266,6 @@ final class BytesFactoryUtil {
                     ", elastic=" + elastic +
                     '}';
         }
+        //
     }
 }
