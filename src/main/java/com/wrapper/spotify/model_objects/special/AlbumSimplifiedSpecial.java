@@ -1,5 +1,4 @@
 package com.wrapper.spotify.model_objects.special;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -21,25 +20,35 @@ import com.wrapper.spotify.requests.data.search.interfaces.ISearchModelObject;
  * This class exists because it includes the property {@code totalTracks}, which is not documented in the official
  * specification, although the albums object as returned by the searches API includes it.
  */
-@JsonDeserialize(builder = AlbumSimplifiedSpecial.Builder.class)
-public class AlbumSimplifiedSpecial extends AbstractModelObject implements ISearchModelObject {
+@JsonDeserialize(builder = AlbumSimplifiedSpecial.Builder.class) public class AlbumSimplifiedSpecial extends AbstractModelObject implements ISearchModelObject {
   private final AlbumType albumType;
+
   private final ArtistSimplified[] artists;
+
   private final CountryCode[] availableMarkets;
+
   private final ExternalUrl externalUrls;
+
   private final String href;
+
   private final String id;
+
   private final Image[] images;
+
   private final String name;
+
   private final String releaseDate;
+
   private final ReleaseDatePrecision releaseDatePrecision;
+
   private final int totalTracks;
+
   private final ModelObjectType type;
+
   private final String uri;
 
   private AlbumSimplifiedSpecial(final Builder builder) {
     super(builder);
-
     this.albumType = builder.albumType;
     this.artists = builder.artists;
     this.availableMarkets = builder.availableMarkets;
@@ -174,47 +183,53 @@ public class AlbumSimplifiedSpecial extends AbstractModelObject implements ISear
     return uri;
   }
 
-  @Override
-  public Builder builder() {
+  @Override public Builder builder() {
     return new Builder();
   }
 
-  /**
-   * Builder class for building {@link AlbumSimplifiedSpecial} instances.
-   */
   public static final class Builder extends AbstractModelObject.Builder {
-
     private AlbumType albumType;
+
     private ArtistSimplified[] artists;
+
     private CountryCode[] availableMarkets;
+
     private ExternalUrl externalUrls;
+
     private String href;
+
     private String id;
+
     private Image[] images;
+
     private String name;
+
     private String releaseDate;
+
     private ReleaseDatePrecision releaseDatePrecision;
+
     private int totalTracks;
+
     private ModelObjectType type;
+
     private String uri;
 
     /**
      * Set the type of the album to be built.
      *
      * @param albumType The {@link AlbumType}.
-     * @return A {@link AlbumSimplifiedSpecial.Builder}.
+     * @return A {@link Album.Builder}.
      */
     public Builder setAlbumType(AlbumType albumType) {
       this.albumType = albumType;
       return this;
-
     }
 
     /**
      * Set the artists of the album to be built.
      *
      * @param artists {@link ArtistSimplified} objects.
-     * @return A {@link AlbumSimplifiedSpecial.Builder}.
+     * @return A {@link Album.Builder}.
      */
     public Builder setArtists(ArtistSimplified... artists) {
       this.artists = artists;
@@ -226,7 +241,7 @@ public class AlbumSimplifiedSpecial extends AbstractModelObject implements ISear
      *
      * @param availableMarkets <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">
      *                         ISO 3166-1 alpha-2 country codes</a>.
-     * @return A {@link AlbumSimplifiedSpecial.Builder}.
+     * @return A {@link Album.Builder}.
      */
     public Builder setAvailableMarkets(CountryCode... availableMarkets) {
       this.availableMarkets = availableMarkets;
@@ -237,7 +252,7 @@ public class AlbumSimplifiedSpecial extends AbstractModelObject implements ISear
      * Set external URLs of the album to be built.
      *
      * @param externalUrls {@link ExternalUrl} object.
-     * @return A {@link AlbumSimplifiedSpecial.Builder}.
+     * @return A {@link Album.Builder}.
      */
     public Builder setExternalUrls(ExternalUrl externalUrls) {
       this.externalUrls = externalUrls;
@@ -248,7 +263,7 @@ public class AlbumSimplifiedSpecial extends AbstractModelObject implements ISear
      * Set href of Spotify Web API endpoint of the album to be built.
      *
      * @param href Spotify Web API endpoint URL.
-     * @return A {@link AlbumSimplifiedSpecial.Builder}.
+     * @return A {@link Album.Builder}.
      */
     public Builder setHref(String href) {
       this.href = href;
@@ -270,7 +285,7 @@ public class AlbumSimplifiedSpecial extends AbstractModelObject implements ISear
      * Set the cover art in different sizes of the album to be built.
      *
      * @param images {@link Image} objects.
-     * @return A {@link AlbumSimplifiedSpecial.Builder}.
+     * @return A {@link Album.Builder}.
      */
     public Builder setImages(Image... images) {
       this.images = images;
@@ -281,7 +296,7 @@ public class AlbumSimplifiedSpecial extends AbstractModelObject implements ISear
      * Set the name of the album to be built.
      *
      * @param name The album name.
-     * @return A {@link AlbumSimplifiedSpecial.Builder}.
+     * @return A {@link Album.Builder}.
      */
     public Builder setName(String name) {
       this.name = name;
@@ -292,7 +307,7 @@ public class AlbumSimplifiedSpecial extends AbstractModelObject implements ISear
      * Set the release date of the album to be built.
      *
      * @param releaseDate The release date of the album.
-     * @return A {@link AlbumSimplifiedSpecial.Builder}.
+     * @return A {@link Album.Builder}.
      */
     public Builder setReleaseDate(String releaseDate) {
       this.releaseDate = releaseDate;
@@ -303,7 +318,7 @@ public class AlbumSimplifiedSpecial extends AbstractModelObject implements ISear
      * Set the release date precision of the album to be built.
      *
      * @param releaseDatePrecision The {@link ReleaseDatePrecision} of the album.
-     * @return A {@link AlbumSimplifiedSpecial.Builder}.
+     * @return A {@link Album.Builder}.
      */
     public Builder setReleaseDatePrecision(ReleaseDatePrecision releaseDatePrecision) {
       this.releaseDatePrecision = releaseDatePrecision;
@@ -314,7 +329,7 @@ public class AlbumSimplifiedSpecial extends AbstractModelObject implements ISear
      * Set the number of total tracks of the album to be built.
      *
      * @param totalTracks The number of total tracks of the album.
-     * @return A {@link AlbumSimplifiedSpecial.Builder}.
+     * @return A {@link Album.Builder}.
      */
     public Builder setTotalTracks(Integer totalTracks) {
       this.totalTracks = totalTracks;
@@ -325,7 +340,7 @@ public class AlbumSimplifiedSpecial extends AbstractModelObject implements ISear
      * Set the type of the model object. In this case "album".
      *
      * @param type The {@link ModelObjectType}.
-     * @return A {@link AlbumSimplifiedSpecial.Builder}.
+     * @return A {@link Album.Builder}.
      */
     public Builder setType(ModelObjectType type) {
       this.type = type;
@@ -337,89 +352,24 @@ public class AlbumSimplifiedSpecial extends AbstractModelObject implements ISear
      *
      * @param uri <a href="https://developer.spotify.com/web-api/user-guide/#spotify-uris-and-ids">
      *            Spotify album URI</a>.
-     * @return A {@link AlbumSimplifiedSpecial.Builder}.
+     * @return A {@link Album.Builder}.
      */
     public Builder setUri(String uri) {
       this.uri = uri;
       return this;
     }
 
-    @Override
-    public AlbumSimplifiedSpecial build() {
+    @Override public AlbumSimplifiedSpecial build() {
       return new AlbumSimplifiedSpecial(this);
     }
   }
 
-  /**
-   * JsonUtil class for building {@link AlbumSimplifiedSpecial} instances.
-   */
   public static final class JsonUtil extends AbstractModelObject.JsonUtil<AlbumSimplifiedSpecial> {
     public AlbumSimplifiedSpecial createModelObject(JsonObject jsonObject) {
       if (jsonObject == null || jsonObject.isJsonNull()) {
         return null;
       }
-
-      return new AlbumSimplifiedSpecial.Builder()
-              .setAlbumType(
-                      hasAndNotNull(jsonObject, "album_type")
-                              ? AlbumType.keyOf(
-                              jsonObject.get("album_type").getAsString().toLowerCase())
-                              : null)
-              .setArtists(
-                      hasAndNotNull(jsonObject, "artists")
-                              ? new ArtistSimplified.JsonUtil().createModelObjectArray(
-                              jsonObject.getAsJsonArray("artists"))
-                              : null)
-              .setAvailableMarkets(
-                      hasAndNotNull(jsonObject, "available_markets")
-                              ? new Gson().fromJson(
-                              jsonObject.get("available_markets"), CountryCode[].class)
-                              : null)
-              .setExternalUrls(
-                      hasAndNotNull(jsonObject, "external_urls")
-                              ? new ExternalUrl.JsonUtil().createModelObject(
-                              jsonObject.getAsJsonObject("external_urls"))
-                              : null)
-              .setHref(
-                      hasAndNotNull(jsonObject, "href")
-                              ? jsonObject.get("href").getAsString()
-                              : null)
-              .setId(
-                      hasAndNotNull(jsonObject, "id")
-                              ? jsonObject.get("id").getAsString()
-                              : null)
-              .setImages(
-                      hasAndNotNull(jsonObject, "images")
-                              ? new Image.JsonUtil().createModelObjectArray(
-                              jsonObject.getAsJsonArray("images"))
-                              : null)
-              .setName(
-                      hasAndNotNull(jsonObject, "name")
-                              ? jsonObject.get("name").getAsString()
-                              : null)
-              .setReleaseDate(
-                      hasAndNotNull(jsonObject, "release_date")
-                              ? jsonObject.get("release_date").getAsString()
-                              : null)
-              .setReleaseDatePrecision(
-                      hasAndNotNull(jsonObject, "release_date_precision")
-                              ? ReleaseDatePrecision.keyOf(
-                              jsonObject.get("release_date_precision").getAsString().toLowerCase())
-                              : null)
-              .setTotalTracks(
-                      hasAndNotNull(jsonObject, "total_tracks")
-                              ? jsonObject.get("total_tracks").getAsInt()
-                              : null)
-              .setType(
-                      hasAndNotNull(jsonObject, "type")
-                              ? ModelObjectType.keyOf(
-                              jsonObject.get("type").getAsString().toLowerCase())
-                              : null)
-              .setUri(
-                      hasAndNotNull(jsonObject, "uri")
-                              ? jsonObject.get("uri").getAsString()
-                              : null)
-              .build();
+      return new AlbumSimplifiedSpecial.Builder().setAlbumType(hasAndNotNull(jsonObject, "album_type") ? AlbumType.keyOf(jsonObject.get("album_type").getAsString().toLowerCase()) : null).setArtists(hasAndNotNull(jsonObject, "artists") ? new ArtistSimplified.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("artists")) : null).setAvailableMarkets(hasAndNotNull(jsonObject, "available_markets") ? new Gson().fromJson(jsonObject.get("available_markets"), CountryCode[].class) : null).setExternalUrls(hasAndNotNull(jsonObject, "external_urls") ? new ExternalUrl.JsonUtil().createModelObject(jsonObject.getAsJsonObject("external_urls")) : null).setHref(hasAndNotNull(jsonObject, "href") ? jsonObject.get("href").getAsString() : null).setId(hasAndNotNull(jsonObject, "id") ? jsonObject.get("id").getAsString() : null).setImages(hasAndNotNull(jsonObject, "images") ? new Image.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("images")) : null).setName(hasAndNotNull(jsonObject, "name") ? jsonObject.get("name").getAsString() : null).setReleaseDate(hasAndNotNull(jsonObject, "release_date") ? jsonObject.get("release_date").getAsString() : null).setReleaseDatePrecision(hasAndNotNull(jsonObject, "release_date_precision") ? ReleaseDatePrecision.keyOf(jsonObject.get("release_date_precision").getAsString().toLowerCase()) : null).setTotalTracks(hasAndNotNull(jsonObject, "total_tracks") ? jsonObject.get("total_tracks").getAsInt() : null).setType(hasAndNotNull(jsonObject, "type") ? ModelObjectType.keyOf(jsonObject.get("type").getAsString().toLowerCase()) : null).setUri(hasAndNotNull(jsonObject, "uri") ? jsonObject.get("uri").getAsString() : null).build();
     }
   }
 }
