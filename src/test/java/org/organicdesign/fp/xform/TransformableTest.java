@@ -20,18 +20,18 @@ import static org.organicdesign.fp.FunctionUtils.ordinal;
 public class TransformableTest {
     static final List<Integer> controlList = Collections.unmodifiableList(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9));
 
-    @Test public void testAny() {
-        assertTrue(Xform.of(controlList)
+    @Test public void testAny() throws Exception {
+        assertTrue(Xform.of(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9))
                         .any(i -> i > 3));
-        assertTrue(Xform.of(controlList)
+        assertTrue(Xform.of(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9))
                         .any(i -> i > 8));
-        assertTrue(Xform.of(controlList)
+        assertTrue(Xform.of(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9))
                         .any(i -> i < 2));
-        assertTrue(Xform.of(controlList)
+        assertTrue(Xform.of(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9))
                         .any(i -> i == 5));
-        assertFalse(Xform.of(controlList)
+        assertFalse(Xform.of(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9))
                         .any(i -> i == 0));
-        assertFalse(Xform.of(controlList)
+        assertFalse(Xform.of(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9))
                          .any(Fn1.reject()));
         assertFalse(Xform.of(Collections.emptyList())
                          .any(Fn1.accept()));
@@ -39,28 +39,43 @@ public class TransformableTest {
                          .any(Fn1.accept()));
     }
 
-    @Test public void testHead() {
-        // TODO: I'm not getting test coverage from this.  It seems to be using the UnmodIterable implementation instead (which is probably more efficient)
-        Transformable<Integer> tint1 = Xform.of(controlList);
-        assertEquals(Option.some(1), tint1.head());
-
-        Transformable<Integer> tint2 = Xform.of(Collections.emptyList());
-        assertEquals(Option.none(), tint2.head());
+<<<<<<< /usr/src/app/output/glenkpeterson/j-sicle/bf4de20006b5405bf4c84c50a037ef0b28a060ab/src/test/java/org/organicdesign/fp/xform/TransformableTest.java/left.java
+    @Test public void testToMutableList() throws Exception {
+        List<Integer> control = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
+        Transformable<Integer> trans = Xform.of(control);
+        assertEquals(control, trans.toMutList());
     }
 
-    @Test public void testToMutList() {
+    @Test public void testToMutableList() {
         Transformable<Integer> trans = Xform.of(controlList);
-        assertEquals(controlList, trans.toMutList());
+        assertEquals(controlList, trans.toMutableList());
     }
+||||||| /usr/src/app/output/glenkpeterson/j-sicle/bf4de20006b5405bf4c84c50a037ef0b28a060ab/src/test/java/org/organicdesign/fp/xform/TransformableTest.java/base.java
+    @Test public void testToMutableList() throws Exception {
+        List<Integer> control = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
+        Transformable<Integer> trans = Xform.of(control);
+        assertEquals(control, trans.toMutableList());
+    }
+
+    @Test public void testToMutableList() {
+        Transformable<Integer> trans = Xform.of(controlList);
+        assertEquals(controlList, trans.toMutableList());
+    }
+=======
+    @Test public void testToMutableList() {
+        Transformable<Integer> trans = Xform.of(controlList);
+        assertEquals(controlList, trans.toMutableList());
+    }
+>>>>>>> /usr/src/app/output/glenkpeterson/j-sicle/bf4de20006b5405bf4c84c50a037ef0b28a060ab/src/test/java/org/organicdesign/fp/xform/TransformableTest.java/right.java
 
     @Test public void testToImList() {
         Transformable<Integer> trans = Xform.of(controlList);
         assertEquals(controlList, trans.toImList());
     }
 
-    @Test public void testToMutRrbt() {
+    @Test public void testToMutableRrbt() {
         Transformable<Integer> trans = Xform.of(controlList);
-        assertEquals(controlList, trans.toMutRrbt());
+        assertEquals(controlList, trans.toMutableRrbt());
     }
 
     @Test public void testToImRrbt() {
@@ -68,7 +83,7 @@ public class TransformableTest {
         assertEquals(controlList, trans.toImRrbt());
     }
 
-    @Test public void testToMutMap() {
+    @Test public void testToMutableMap() {
         Map<Integer,String> control = new HashMap<>();
         for (int i = 1; i < 12; i++) {
             control.put(i, ordinal(i));
@@ -77,7 +92,7 @@ public class TransformableTest {
         assertEquals(control, trans.toMutMap(x -> x));
     }
 
-    @Test public void testToMutSortedMap() {
+    @Test public void testToMutableSortedMap() {
         Comparator<Integer> comp = (a, b) -> a - b;
         SortedMap<Integer,String> control = new TreeMap<>(comp);
         for (int i : controlList) {
@@ -107,7 +122,7 @@ public class TransformableTest {
         assertEquals(control, trans.toImSortedMap(comp, i -> Tuple2.of(i, ordinal(i))));
     }
 
-    @Test public void testToMutSortedSet() {
+    @Test public void testToMutableSortedSet() {
         SortedSet<Integer> control = new TreeSet<>(controlList);
         Transformable<Integer> trans = Xform.of(control);
         assertTrue(UnmodSortedIterable.equal(UnmodSortedIterable.castFromSortedSet(control),
@@ -130,9 +145,18 @@ public class TransformableTest {
                                              trans.toImSortedSet(comp)));
     }
 
-    @Test public void testToMutSet() {
+    @Test public void testToMutableSet() {
         Set<Integer> control = new HashSet<>(controlList);
         Transformable<Integer> trans = Xform.of(control);
         assertEquals(control, trans.toMutSet());
+    }
+
+    @Test public void testHead() {
+        // TODO: I'm not getting test coverage from this.  It seems to be using the UnmodIterable implementation instead (which is probably more efficient)
+        Transformable<Integer> tint1 = Xform.of(controlList);
+        assertEquals(Option.some(1), ((Transformable<Integer>) tint1).head());
+
+        Transformable<Integer> tint2 = Xform.of(Collections.emptyList());
+        assertEquals(Option.none(), ((Transformable<Integer>) tint2).head());
     }
 }
