@@ -1,5 +1,4 @@
 package com.wrapper.spotify.requests;
-
 import com.google.common.base.Joiner;
 import com.google.common.util.concurrent.SettableFuture;
 import com.google.gson.JsonParser;
@@ -7,11 +6,9 @@ import com.wrapper.spotify.exceptions.*;
 import com.wrapper.spotify.model_objects.AlbumSimplified;
 import com.wrapper.spotify.model_objects.AlbumType;
 import com.wrapper.spotify.model_objects.Paging;
-
 import java.io.IOException;
 
 public class AlbumsForArtistRequest extends AbstractRequest {
-
   private AlbumsForArtistRequest(final Builder builder) {
     super(builder);
   }
@@ -20,36 +17,15 @@ public class AlbumsForArtistRequest extends AbstractRequest {
     return new Builder();
   }
 
-  public Paging<AlbumSimplified> get() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public Paging<AlbumSimplified> get() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     return new AlbumSimplified.JsonUtil().createModelObjectPaging(new JsonParser().parse(getJson()).getAsJsonObject());
   }
 
-  public SettableFuture<Paging<AlbumSimplified>> getAsync() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public SettableFuture<Paging<AlbumSimplified>> getAsync() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     return getAsync(new AlbumSimplified.JsonUtil().createModelObjectPaging(new JsonParser().parse(getJson()).getAsJsonObject()));
   }
 
   public static final class Builder extends AbstractRequest.Builder<Builder> {
-
     public Builder forArtist(final String id) {
       assert (id != null);
       return setPath(String.format("/v1/artists/%s/albums", id));
@@ -77,11 +53,8 @@ public class AlbumsForArtistRequest extends AbstractRequest {
       return setParameter("offset", String.valueOf(offset));
     }
 
-    @Override
-    public AlbumsForArtistRequest build() {
+    @Override public AlbumsForArtistRequest build() {
       return new AlbumsForArtistRequest(this);
     }
-
   }
-
 }

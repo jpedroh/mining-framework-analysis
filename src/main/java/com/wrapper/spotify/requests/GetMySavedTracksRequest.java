@@ -1,14 +1,11 @@
 package com.wrapper.spotify.requests;
-
 import com.google.common.util.concurrent.SettableFuture;
 import com.wrapper.spotify.exceptions.*;
 import com.wrapper.spotify.model_objects.LibraryTrack;
 import com.wrapper.spotify.model_objects.Paging;
-
 import java.io.IOException;
 
 public class GetMySavedTracksRequest extends AbstractRequest {
-
   private GetMySavedTracksRequest(final Builder builder) {
     super(builder);
   }
@@ -17,36 +14,15 @@ public class GetMySavedTracksRequest extends AbstractRequest {
     return new Builder();
   }
 
-  public Paging<LibraryTrack> get() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public Paging<LibraryTrack> get() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     return new LibraryTrack.JsonUtil().createModelObjectPaging(getJson());
   }
 
-  public SettableFuture<Paging<LibraryTrack>> getAsync() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public SettableFuture<Paging<LibraryTrack>> getAsync() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     return getAsync(new LibraryTrack.JsonUtil().createModelObjectPaging(getJson()));
   }
 
   public static final class Builder extends AbstractRequest.Builder<Builder> {
-
     public Builder accessToken(final String accessToken) {
       return setHeaderParameter("Authorization", "Bearer " + accessToken);
     }
@@ -61,10 +37,8 @@ public class GetMySavedTracksRequest extends AbstractRequest {
       return setParameter("offset", String.valueOf(offset));
     }
 
-    @Override
-    public GetMySavedTracksRequest build() {
+    @Override public GetMySavedTracksRequest build() {
       return new GetMySavedTracksRequest(this);
     }
   }
-
 }

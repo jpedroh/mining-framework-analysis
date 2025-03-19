@@ -1,16 +1,13 @@
 package com.wrapper.spotify.requests;
-
 import com.google.common.util.concurrent.SettableFuture;
 import com.wrapper.spotify.exceptions.*;
 import com.wrapper.spotify.model_objects.FeaturedPlaylists;
-
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class FeaturedPlaylistsRequest extends AbstractRequest {
-
   private FeaturedPlaylistsRequest(final Builder builder) {
     super(builder);
   }
@@ -34,17 +31,7 @@ public class FeaturedPlaylistsRequest extends AbstractRequest {
    * @throws UnauthorizedException        The request requires user authentication or, if the request included authorization credentials, authorization has been refused for those credentials.
    * @throws ServiceUnavailableException  The server is currently unable to handle the request due to a temporary condition which will be alleviated after some delay. You can choose to resend the request again.
    */
-  public FeaturedPlaylists get() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public FeaturedPlaylists get() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     return new FeaturedPlaylists.JsonUtil().createModelObject(getJson());
   }
 
@@ -63,22 +50,11 @@ public class FeaturedPlaylistsRequest extends AbstractRequest {
    * @throws UnauthorizedException        The request requires user authentication or, if the request included authorization credentials, authorization has been refused for those credentials.
    * @throws ServiceUnavailableException  The server is currently unable to handle the request due to a temporary condition which will be alleviated after some delay. You can choose to resend the request again.
    */
-  public SettableFuture<FeaturedPlaylists> getAsync() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public SettableFuture<FeaturedPlaylists> getAsync() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     return getAsync(new FeaturedPlaylists.JsonUtil().createModelObject(getJson()));
   }
 
   public static final class Builder extends AbstractRequest.Builder<Builder> {
-
     public Builder limit(final int limit) {
       assert (limit > 0);
       return setParameter("limit", String.valueOf(limit));
@@ -101,7 +77,7 @@ public class FeaturedPlaylistsRequest extends AbstractRequest {
 
     public Builder timestamp(final Date timestamp) {
       assert (timestamp != null);
-      final DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      final DateFormat format = new SimpleDateFormat("yyyy-MM-dd\'T\'HH:mm:ss");
       return setParameter("timestamp", format.format(timestamp));
     }
 
@@ -109,11 +85,9 @@ public class FeaturedPlaylistsRequest extends AbstractRequest {
       return setHeaderParameter("Authorization", "Bearer " + accessToken);
     }
 
-    @Override
-    public FeaturedPlaylistsRequest build() {
+    @Override public FeaturedPlaylistsRequest build() {
       setPath("/v1/browse/featured-playlists");
       return new FeaturedPlaylistsRequest(this);
     }
-
   }
 }

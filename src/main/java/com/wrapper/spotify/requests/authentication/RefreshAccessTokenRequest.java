@@ -1,18 +1,15 @@
 package com.wrapper.spotify.requests.authentication;
-
 import com.google.common.util.concurrent.SettableFuture;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.wrapper.spotify.Api;
 import com.wrapper.spotify.exceptions.*;
-import com.wrapper.spotify.objects.RefreshAccessTokenCredentials;
 import com.wrapper.spotify.requests.AbstractRequest;
+import com.wrapper.spotify.model_objects.RefreshAccessTokenCredentials;
 import org.apache.commons.codec.binary.Base64;
-
 import java.io.IOException;
 
 public class RefreshAccessTokenRequest extends AbstractRequest {
-
   protected RefreshAccessTokenRequest(Builder builder) {
     super(builder);
   }
@@ -23,41 +20,26 @@ public class RefreshAccessTokenRequest extends AbstractRequest {
 
   public SettableFuture<RefreshAccessTokenCredentials> getAsync() {
     final SettableFuture<RefreshAccessTokenCredentials> future = SettableFuture.create();
-
     try {
       JsonObject jsonObject = new JsonParser().parse(postJson()).getAsJsonObject();
       future.set(new RefreshAccessTokenCredentials.JsonUtil().createModelObject(jsonObject));
     } catch (Exception e) {
       future.setException(e);
     }
-
     return future;
   }
 
-  public RefreshAccessTokenCredentials get() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public RefreshAccessTokenCredentials get() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     JsonObject jsonObject = new JsonParser().parse(postJson()).getAsJsonObject();
     return new RefreshAccessTokenCredentials.JsonUtil().createModelObject(jsonObject);
   }
 
   public static final class Builder extends AbstractRequest.Builder<Builder> {
-
     public Builder basicAuthorizationHeader(String clientId, String clientSecret) {
       assert (clientId != null);
       assert (clientSecret != null);
-
       String idSecret = clientId + ":" + clientSecret;
       String idSecretEncoded = new String(Base64.encodeBase64(idSecret.getBytes()));
-
       return setHeaderParameter("Authorization", "Basic " + idSecretEncoded);
     }
 
@@ -76,9 +58,7 @@ public class RefreshAccessTokenRequest extends AbstractRequest {
       setPort(Api.DEFAULT_AUTHENTICATION_PORT);
       setScheme(Api.DEFAULT_AUTHENTICATION_SCHEME);
       setPath("/api/token");
-
       return new RefreshAccessTokenRequest(this);
     }
   }
-
 }

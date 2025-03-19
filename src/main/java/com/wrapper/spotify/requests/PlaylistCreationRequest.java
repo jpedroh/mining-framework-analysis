@@ -1,14 +1,11 @@
 package com.wrapper.spotify.requests;
-
 import com.google.common.util.concurrent.SettableFuture;
 import com.google.gson.JsonObject;
 import com.wrapper.spotify.exceptions.*;
-import com.wrapper.spotify.objects.Playlist;
-
+import com.wrapper.spotify.model_objects.Playlist;
 import java.io.IOException;
 
 public class PlaylistCreationRequest extends AbstractRequest {
-
   private PlaylistCreationRequest(final Builder builder) {
     super(builder);
   }
@@ -17,36 +14,15 @@ public class PlaylistCreationRequest extends AbstractRequest {
     return new Builder();
   }
 
-  public Playlist get() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public Playlist get() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     return new Playlist.JsonUtil().createModelObject(postJson());
   }
 
-  public SettableFuture<Playlist> getAsync() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public SettableFuture<Playlist> getAsync() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     return getAsync(new Playlist.JsonUtil().createModelObject(postJson()));
   }
 
   public static final class Builder extends AbstractRequest.Builder<Builder> {
-
     private JsonObject jsonBody;
 
     public Builder publicAccess(final boolean publicAccess) {
@@ -65,12 +41,9 @@ public class PlaylistCreationRequest extends AbstractRequest {
       return setBodyParameter(jsonBody);
     }
 
-    @Override
-    public PlaylistCreationRequest build() {
+    @Override public PlaylistCreationRequest build() {
       setHeaderParameter("Content-Type", "application/json");
       return new PlaylistCreationRequest(this);
     }
-
   }
-
 }

@@ -1,13 +1,10 @@
 package com.wrapper.spotify.requests;
-
 import com.google.common.util.concurrent.SettableFuture;
 import com.wrapper.spotify.exceptions.*;
 import com.wrapper.spotify.model_objects.AudioFeature;
-
 import java.io.IOException;
 
 public class AudioFeatureRequest extends AbstractRequest {
-
   private AudioFeatureRequest(final Builder builder) {
     super(builder);
   }
@@ -16,36 +13,15 @@ public class AudioFeatureRequest extends AbstractRequest {
     return new Builder();
   }
 
-  public AudioFeature get() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public AudioFeature get() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     return new AudioFeature.JsonUtil().createModelObject(getJson());
   }
 
-  public SettableFuture<AudioFeature> getAsync() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public SettableFuture<AudioFeature> getAsync() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     return getAsync(new AudioFeature.JsonUtil().createModelObject(getJson()));
   }
 
   public static final class Builder extends AbstractRequest.Builder<Builder> {
-
     /**
      * The audio request with the given song id.
      *
@@ -57,11 +33,8 @@ public class AudioFeatureRequest extends AbstractRequest {
       return setPath(String.format("/v1/audio-features/%s", id));
     }
 
-    @Override
-    public AudioFeatureRequest build() {
+    @Override public AudioFeatureRequest build() {
       return new AudioFeatureRequest(this);
     }
-
   }
-
 }

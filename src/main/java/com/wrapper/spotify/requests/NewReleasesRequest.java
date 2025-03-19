@@ -1,13 +1,10 @@
 package com.wrapper.spotify.requests;
-
 import com.google.common.util.concurrent.SettableFuture;
 import com.wrapper.spotify.exceptions.*;
-import com.wrapper.spotify.objects.NewReleases;
-
+import com.wrapper.spotify.model_objects.NewReleases;
 import java.io.IOException;
 
 public class NewReleasesRequest extends AbstractRequest {
-
   private NewReleasesRequest(final Builder builder) {
     super(builder);
   }
@@ -16,36 +13,15 @@ public class NewReleasesRequest extends AbstractRequest {
     return new Builder();
   }
 
-  public NewReleases get() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public NewReleases get() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     return new NewReleases.JsonUtil().createModelObject(getJson());
   }
 
-  public SettableFuture<NewReleases> getAsync() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public SettableFuture<NewReleases> getAsync() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     return getAsync(new NewReleases.JsonUtil().createModelObject(getJson()));
   }
 
   public static final class Builder extends AbstractRequest.Builder<Builder> {
-
     public Builder limit(final int limit) {
       assert (limit > 0);
       return setParameter("limit", String.valueOf(limit));
@@ -61,11 +37,9 @@ public class NewReleasesRequest extends AbstractRequest {
       return setParameter("country", countryCode);
     }
 
-    @Override
-    public NewReleasesRequest build() {
+    @Override public NewReleasesRequest build() {
       setPath("/v1/browse/new-releases");
       return new NewReleasesRequest(this);
     }
-
   }
 }

@@ -1,13 +1,10 @@
 package com.wrapper.spotify.requests;
-
 import com.google.common.util.concurrent.SettableFuture;
 import com.wrapper.spotify.exceptions.*;
 import com.wrapper.spotify.model_objects.Album;
-
 import java.io.IOException;
 
 public class AlbumRequest extends AbstractRequest {
-
   private AlbumRequest(final Builder builder) {
     super(builder);
   }
@@ -16,36 +13,15 @@ public class AlbumRequest extends AbstractRequest {
     return new Builder();
   }
 
-  public Album get() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public Album get() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     return new Album.JsonUtil().createModelObject(getJson());
   }
 
-  public SettableFuture<Album> getAsync() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public SettableFuture<Album> getAsync() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     return getAsync(new Album.JsonUtil().createModelObject(getJson()));
   }
 
   public static final class Builder extends AbstractRequest.Builder<Builder> {
-
     /**
      * The album with the given id.
      *
@@ -57,11 +33,8 @@ public class AlbumRequest extends AbstractRequest {
       return setPath(String.format("/v1/albums/%s", id));
     }
 
-    @Override
-    public AlbumRequest build() {
+    @Override public AlbumRequest build() {
       return new AlbumRequest(this);
     }
-
   }
-
 }

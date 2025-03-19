@@ -1,14 +1,11 @@
 package com.wrapper.spotify.requests;
-
 import com.google.common.util.concurrent.SettableFuture;
 import com.wrapper.spotify.exceptions.*;
 import com.wrapper.spotify.model_objects.Paging;
 import com.wrapper.spotify.model_objects.PlaylistSimplified;
-
 import java.io.IOException;
 
 public class UserPlaylistsRequest extends AbstractRequest {
-
   private UserPlaylistsRequest(final Builder builder) {
     super(builder);
   }
@@ -17,36 +14,15 @@ public class UserPlaylistsRequest extends AbstractRequest {
     return new Builder();
   }
 
-  public Paging<PlaylistSimplified> get() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public Paging<PlaylistSimplified> get() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     return new PlaylistSimplified.JsonUtil().createModelObjectPaging(getJson());
   }
 
-  public SettableFuture<Paging<PlaylistSimplified>> getAsync() throws
-          IOException,
-          NoContentException,
-          BadRequestException,
-          UnauthorizedException,
-          ForbiddenException,
-          NotFoundException,
-          TooManyRequestsException,
-          InternalServerErrorException,
-          BadGatewayException,
-          ServiceUnavailableException {
+  public SettableFuture<Paging<PlaylistSimplified>> getAsync() throws IOException, NoContentException, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, TooManyRequestsException, InternalServerErrorException, BadGatewayException, ServiceUnavailableException {
     return getAsync(new PlaylistSimplified.JsonUtil().createModelObjectPaging(getJson()));
   }
 
   public static final class Builder extends AbstractRequest.Builder<Builder> {
-
     public Builder username(final String username) {
       assert (username != null);
       return setPath(String.format("/v1/users/%s/playlists", username));
@@ -66,10 +42,8 @@ public class UserPlaylistsRequest extends AbstractRequest {
       return setHeaderParameter("Authorization", "Bearer " + accessToken);
     }
 
-    @Override
-    public UserPlaylistsRequest build() {
+    @Override public UserPlaylistsRequest build() {
       return new UserPlaylistsRequest(this);
     }
-
   }
 }
