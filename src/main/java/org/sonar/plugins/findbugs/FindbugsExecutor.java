@@ -1,24 +1,4 @@
-/*
- * SonarQube Findbugs Plugin
- * Copyright (C) 2012 SonarSource
- * sonarqube@googlegroups.com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
- */
 package org.sonar.plugins.findbugs;
-
 import edu.umd.cs.findbugs.BugCollection;
 import edu.umd.cs.findbugs.BugInstance;
 import edu.umd.cs.findbugs.BugPattern;
@@ -44,7 +24,6 @@ import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.plugins.findbugs.rules.FindbugsRules;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -60,15 +39,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-@ScannerSide
-public class FindbugsExecutor {
-
+@ScannerSide public class FindbugsExecutor {
   private static final String FINDBUGS_CORE_PLUGIN_ID = "edu.umd.cs.findbugs.plugins.core";
 
   private static final Logger LOG = LoggerFactory.getLogger(FindbugsExecutor.class);
-  public static final List<String> EXISTING_FINDBUGS_REPORT_PATHS = Arrays.asList("/target/findbugsXml.xml","/target/spotbugsXml.xml");
+
+  public static final List<String> EXISTING_FINDBUGS_REPORT_PATHS = Arrays.asList("/target/findbugsXml.xml", "/target/spotbugsXml.xml");
 
   private FileSystem fs;
+
   private Configuration config;
 
   /**
@@ -92,51 +71,37 @@ public class FindbugsExecutor {
     this.fs = fs;
     this.config = config;
   }
-  
+
   public Collection<ReportedBug> execute(ActiveRules activeRules) {
-    // We keep a handle on the current security manager because FB plays with it and we need to restore it before shutting down the executor
-    // service
     SecurityManager currentSecurityManager = System.getSecurityManager();
     ClassLoader initialClassLoader = Thread.currentThread().getContextClassLoader();
     Thread.currentThread().setContextClassLoader(FindBugs2.class.getClassLoader());
-
-    // This is a dirty workaround, but unfortunately there is no other way to make Findbugs generate english messages only - see SONARJAVA-380
     Locale initialLocale = Locale.getDefault();
     Locale.setDefault(Locale.ENGLISH);
-
     OutputStream xmlOutput = null;
     ExecutorService executorService = Executors.newSingleThreadExecutor();
     try (FindBugs2 engine = new FindBugs2(); Project project = new Project()) {
       configuration.initializeFindbugsProject(project);
-
-      if(project.getFileCount() == 0) {
+      if (project.getFileCount() == 0) {
         LOG.info("Findbugs analysis skipped for this project.");
         return new ArrayList<>();
       }
-
       loadFindbugsPlugins();
       disableUnnecessaryDetectors(project.getConfiguration(), activeRules);
       disableUpdateChecksOnEveryPlugin();
-
       engine.setProject(project);
-
       XMLBugReporter xmlBugReporter = new XMLBugReporter(project);
       xmlBugReporter.setPriorityThreshold(determinePriorityThreshold());
       xmlBugReporter.setAddMessages(true);
-
       File xmlReport = configuration.getTargetXMLReport();
       LOG.info("Findbugs output report: " + xmlReport.getAbsolutePath());
       xmlOutput = FileUtils.openOutputStream(xmlReport);
       xmlBugReporter.setOutputStream(new PrintStream(xmlOutput));
-
       engine.setBugReporter(xmlBugReporter);
-
       UserPreferences userPreferences = UserPreferences.createDefaultUserPreferences();
       userPreferences.setEffort(configuration.getEffort());
       engine.setUserPreferences(userPreferences);
-
       engine.addFilter(configuration.saveIncludeConfigXml().getAbsolutePath(), true);
-
       for (File filterFile : configuration.getExcludesFilters()) {
         if (filterFile.isFile()) {
           LOG.info("Use filter-file: {}", filterFile);
@@ -145,33 +110,27 @@ public class FindbugsExecutor {
           LOG.warn("FindBugs filter-file not found: {}", filterFile);
         }
       }
-
       engine.setDetectorFactoryCollection(DetectorFactoryCollection.instance());
       engine.setAnalysisFeatureSettings(FindBugs.DEFAULT_EFFORT);
-
       engine.finishSettings();
-
-      //Load findbugs report location
       List<String> potentialReportPaths = new ArrayList<>();
       potentialReportPaths.addAll(EXISTING_FINDBUGS_REPORT_PATHS);
       String[] paths = config.getStringArray(FindbugsConstants.REPORT_PATHS);
-      if(paths != null) potentialReportPaths.addAll(Arrays.asList(paths));
+      if (paths != null) {
+        potentialReportPaths.addAll(Arrays.asList(paths));
+      }
       boolean foundExistingReport = false;
-
-      //Look for existing reports relative to subproject directory
-      reportPaths : for(String potentialPath : potentialReportPaths) {
+      reportPaths:
+      for (String potentialPath : potentialReportPaths) {
         File findbugsReport = new File(fs.baseDir(), potentialPath);
-        
-        // File.length() is unspecified for directories
-        if(findbugsReport.exists() && !findbugsReport.isDirectory() && findbugsReport.length() > 0) {
-          LOG.info("FindBugs report is already generated {}. Reusing the report.",findbugsReport.getAbsolutePath());
+        if (findbugsReport.exists() && !findbugsReport.isDirectory() && findbugsReport.length() > 0) {
+          LOG.info("FindBugs report is already generated {}. Reusing the report.", findbugsReport.getAbsolutePath());
           xmlBugReporter.getBugCollection().readXML(new FileReader(findbugsReport));
           foundExistingReport = true;
           break reportPaths;
         }
       }
-
-      if(!foundExistingReport) { //Avoid rescanning the project if FindBugs was run already
+      if (!foundExistingReport) {
         executorService.submit(new FindbugsTask(engine)).get(configuration.getTimeout(), TimeUnit.MILLISECONDS);
       }
       return toReportedBugs(xmlBugReporter.getBugCollection());
@@ -180,7 +139,6 @@ public class FindbugsExecutor {
     } catch (Exception e) {
       throw new IllegalStateException("Can not execute Findbugs", e);
     } finally {
-      // we set back the original security manager BEFORE shutting down the executor service, otherwise there's a problem with Java 5
       System.setSecurityManager(currentSecurityManager);
       executorService.shutdown();
       IOUtils.closeQuietly(xmlOutput);
@@ -190,16 +148,12 @@ public class FindbugsExecutor {
   }
 
   private static Collection<ReportedBug> toReportedBugs(BugCollection bugCollection) {
-    // We need to retrieve information such as the message before we shut everything down as we will lose any custom
-    // bug messages
     final Collection<ReportedBug> bugs = new ArrayList<ReportedBug>();
-
     for (final BugInstance bugInstance : bugCollection) {
       if (bugInstance.getPrimarySourceLineAnnotation() == null) {
         LOG.warn("No source line for " + bugInstance.getType());
         continue;
       }
-
       bugs.add(new ReportedBug(bugInstance));
     }
     return bugs;
@@ -214,15 +168,13 @@ public class FindbugsExecutor {
   }
 
   private static class FindbugsTask implements Callable<Object> {
-
     private final FindBugs2 engine;
 
     public FindbugsTask(FindBugs2 engine) {
       this.engine = engine;
     }
 
-    @Override
-    public Object call() {
+    @Override public Object call() {
       try {
         engine.execute();
         return null;
@@ -240,7 +192,6 @@ public class FindbugsExecutor {
 
   public static Map<String, Plugin> loadFindbugsPlugins() {
     ClassLoader contextClassLoader = FindbugsExecutor.class.getClassLoader();
-
     List<String> pluginJarPathList = new ArrayList<>();
     try {
       Enumeration<URL> urls = contextClassLoader.getResources("findbugs.xml");
@@ -254,31 +205,26 @@ public class FindbugsExecutor {
       throw new IllegalStateException(e);
     }
     Map<String, Plugin> plugins = new HashMap<>();
-
     for (String path : pluginJarPathList) {
       try {
-      	URI uri = new File(path).toURI();
-      	Plugin plugin = Plugin.getAllPluginsMap().get(uri);
-      	if (plugin == null) {
-      		LOG.info("Loading findbugs plugin: " + path);
-      	  plugin = Plugin.addCustomPlugin(uri, contextClassLoader);
-      	}
-      	
-      	if (plugin != null) {
-      	  plugins.put(plugin.getPluginId(), plugin);
-      	}
+        URI uri = new File(path).toURI();
+        Plugin plugin = Plugin.getAllPluginsMap().get(uri);
+        if (plugin == null) {
+          LOG.info("Loading findbugs plugin: " + path);
+          plugin = Plugin.addCustomPlugin(uri, contextClassLoader);
+        }
+        if (plugin != null) {
+          plugins.put(plugin.getPluginId(), plugin);
+        }
       } catch (PluginException e) {
         LOG.warn("Failed to load plugin for custom detector: " + path);
         LOG.debug("Cause of failure", e);
       } catch (DuplicatePluginIdException e) {
-        // FB Core plugin is always loaded, so we'll get an exception for it always
         if (!FINDBUGS_CORE_PLUGIN_ID.equals(e.getPluginId())) {
-          // log only if it's not the FV Core plugin
           LOG.debug("Plugin already loaded: exception ignored: " + e.getMessage(), e);
         }
       }
     }
-
     return plugins;
   }
 
@@ -298,32 +244,43 @@ public class FindbugsExecutor {
   public static void disableUnnecessaryDetectors(UserPreferences userPreferences, ActiveRules activeRules) {
     for (DetectorFactory detectorFactory : DetectorFactoryCollection.instance().getFactories()) {
       boolean enabled = !detectorFactory.isReportingDetector() || detectorFactoryHasActiveRules(detectorFactory, activeRules);
-      
       userPreferences.enableDetector(detectorFactory, enabled);
     }
   }
-  
+
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  private static void resetCustomPluginList(Collection<Plugin> customPlugins) {
+    if (customPlugins != null) {
+      for (Plugin plugin : customPlugins) {
+        Plugin.removeCustomPlugin(plugin);
+        try {
+          plugin.close();
+        } catch (IOException e) {
+          LOG.error("Error closing plugin", e);
+        }
+      }
+    }
+  }
+>>>>>>> /usr/src/app/output/sonarsource/sonar-findbugs/4a8de43c4fe22d8397f9fcaad2f27b202f875a7d/src/main/java/org/sonar/plugins/findbugs/FindbugsExecutor.java/right.java
+
+
   private static boolean detectorFactoryHasActiveRules(DetectorFactory detectorFactory, ActiveRules activeRules) {
     Collection<String> repositories = FindbugsRules.repositoriesForPlugin(detectorFactory.getPlugin());
-    
     if (repositories.isEmpty()) {
       LOG.warn("Detector {} is activated because it is not from a built-in plugin, cannot check if there are some active rules", detectorFactory);
       return true;
     }
-    
     for (BugPattern bugPattern : detectorFactory.getReportedBugPatterns()) {
       String bugPatternType = bugPattern.getType();
-      
       for (String repository : repositories) {
         RuleKey ruleKey = RuleKey.of(repository, bugPatternType);
-
         if (activeRules.find(ruleKey) != null) {
           return true;
         }
-        // No need to close the plugin
       }
     }
-    
     return false;
   }
 }
