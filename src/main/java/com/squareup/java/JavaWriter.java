@@ -1,6 +1,4 @@
-// Copyright 2013 Square, Inc.
 package com.squareup.java;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
@@ -20,13 +18,16 @@ import java.util.regex.Pattern;
 /** A utility class which aids in generating Java source files. */
 public final class JavaWriter implements Closeable {
   private static final Pattern TYPE_PATTERN = Pattern.compile("(?:[\\w$]+\\.)*([\\w\\.*$]+)");
+
   private static final String INDENT = "  ";
 
   /** Map fully qualified type names to their short names. */
   private final Map<String, String> importedTypes = new LinkedHashMap<String, String>();
 
   private String packagePrefix;
+
   private final List<Scope> scopes = new ArrayList<Scope>();
+
   private final Writer out;
 
   /**
@@ -123,36 +124,34 @@ public final class JavaWriter implements Closeable {
     if (this.packagePrefix == null) {
       throw new IllegalStateException();
     }
-
     Matcher m = TYPE_PATTERN.matcher(type);
     int pos = 0;
     while (true) {
       boolean found = m.find(pos);
-
-      // Copy non-matching characters like "<".
       int typeStart = found ? m.start() : type.length();
       sb.append(type, pos, typeStart);
-
       if (!found) {
         break;
       }
-
-      // Copy a single class name, shortening it if possible.
       String name = m.group(0);
       String imported = importedTypes.get(name);
       if (imported != null) {
         sb.append(imported);
-      } else if (isClassInPackage(name)) {
-        String compressed = name.substring(packagePrefix.length());
-        if (isAmbiguous(compressed)) {
-          sb.append(name);
-        } else {
-          sb.append(compressed);
-        }
-      } else if (name.startsWith("java.lang.")) {
-        sb.append(name.substring("java.lang.".length()));
       } else {
-        sb.append(name);
+        if (isClassInPackage(name)) {
+          String compressed = name.substring(packagePrefix.length());
+          if (isAmbiguous(compressed)) {
+            sb.append(name);
+          } else {
+            sb.append(compressed);
+          }
+        } else {
+          if (name.startsWith("java.lang.")) {
+            sb.append(name.substring("java.lang.".length()));
+          } else {
+            sb.append(name);
+          }
+        }
       }
       pos = m.end();
     }
@@ -221,8 +220,7 @@ public final class JavaWriter implements Closeable {
    * @param kind such as "class", "interface" or "enum".
    * @param extendsType the class to extend, or null for no extends clause.
    */
-  public JavaWriter beginType(String type, String kind, int modifiers, String extendsType,
-      String... implementsTypes) throws IOException {
+  public JavaWriter beginType(String type, String kind, int modifiers, String extendsType, String... implementsTypes) throws IOException {
     indent();
     out.write(modifiers(modifiers));
     out.write(kind);
@@ -261,14 +259,12 @@ public final class JavaWriter implements Closeable {
     return emitField(type, name, modifiers, null);
   }
 
-  public JavaWriter emitField(String type, String name, int modifiers, String initialValue)
-      throws IOException {
+  public JavaWriter emitField(String type, String name, int modifiers, String initialValue) throws IOException {
     indent();
     out.write(modifiers(modifiers));
     emitType(type);
     out.write(" ");
     out.write(name);
-
     if (initialValue != null) {
       out.write(" = ");
       out.write(initialValue);
@@ -284,8 +280,7 @@ public final class JavaWriter implements Closeable {
    * @param name the method name, or the fully qualified class name for constructors.
    * @param parameters alternating parameter types and names.
    */
-  public JavaWriter beginMethod(String returnType, String name, int modifiers, String... parameters)
-      throws IOException {
+  public JavaWriter beginMethod(String returnType, String name, int modifiers, String... parameters) throws IOException {
     indent();
     out.write(modifiers(modifiers));
     if (returnType != null) {
@@ -296,7 +291,7 @@ public final class JavaWriter implements Closeable {
       emitType(name);
     }
     out.write("(");
-    for (int p = 0; p < parameters.length;) {
+    for (int p = 0; p < parameters.length; ) {
       if (p != 0) {
         out.write(", ");
       }
@@ -318,7 +313,6 @@ public final class JavaWriter implements Closeable {
   /** Emits some Javadoc comments with line separated by {@code \n}. */
   public JavaWriter emitJavadoc(String javadoc, Object... params) throws IOException {
     String formatted = String.format(javadoc, params);
-
     indent();
     out.write("/**\n");
     for (String line : formatted.split("\n")) {
@@ -369,8 +363,7 @@ public final class JavaWriter implements Closeable {
    *     be encoded using Object.toString(); use {@link #stringLiteral} for String values. Object
    *     arrays are written one element per line.
    */
-  public JavaWriter emitAnnotation(Class<? extends Annotation> annotationType, Object value)
-      throws IOException {
+  public JavaWriter emitAnnotation(Class<? extends Annotation> annotationType, Object value) throws IOException {
     return emitAnnotation(type(annotationType), value);
   }
 
@@ -393,8 +386,7 @@ public final class JavaWriter implements Closeable {
   }
 
   /** Equivalent to {@code annotation(annotationType.getName(), attributes)}. */
-  public JavaWriter emitAnnotation(Class<? extends Annotation> annotationType,
-      Map<String, ?> attributes) throws IOException {
+  public JavaWriter emitAnnotation(Class<? extends Annotation> annotationType, Map<String, ?> attributes) throws IOException {
     return emitAnnotation(type(annotationType), attributes);
   }
 
@@ -405,8 +397,7 @@ public final class JavaWriter implements Closeable {
    *     using Object.toString(); use {@link #stringLiteral} for String values. Object arrays are
    *     written one element per line.
    */
-  public JavaWriter emitAnnotation(String annotation, Map<String, ?> attributes)
-      throws IOException {
+  public JavaWriter emitAnnotation(String annotation, Map<String, ?> attributes) throws IOException {
     indent();
     out.write("@");
     emitType(annotation);
@@ -537,8 +528,10 @@ public final class JavaWriter implements Closeable {
     if (popped == Scope.NON_ABSTRACT_METHOD) {
       indent();
       out.write("}\n");
-    } else if (popped != Scope.ABSTRACT_METHOD) {
-      throw new IllegalStateException();
+    } else {
+      if (popped != Scope.ABSTRACT_METHOD) {
+        throw new IllegalStateException();
+      }
     }
     return this;
   }
@@ -546,36 +539,36 @@ public final class JavaWriter implements Closeable {
   /** Returns the string literal representing {@code data}, including wrapping quotes. */
   public static String stringLiteral(String data) {
     StringBuilder result = new StringBuilder();
-    result.append('"');
+    result.append('\"');
     for (int i = 0; i < data.length(); i++) {
       char c = data.charAt(i);
       switch (c) {
-        case '"':
-          result.append("\\\"");
-          break;
+        case '\"':
+        result.append("\\\"");
+        break;
         case '\\':
-          result.append("\\\\");
-          break;
+        result.append("\\\\");
+        break;
         case '\t':
-          result.append("\\\t");
-          break;
+        result.append("\\\t");
+        break;
         case '\b':
-          result.append("\\\b");
-          break;
+        result.append("\\\b");
+        break;
         case '\n':
-          result.append("\\\n");
-          break;
+        result.append("\\\n");
+        break;
         case '\r':
-          result.append("\\\r");
-          break;
+        result.append("\\\r");
+        break;
         case '\f':
-          result.append("\\\f");
-          break;
+        result.append("\\\f");
+        break;
         default:
-          result.append(c);
+        result.append(c);
       }
     }
-    result.append('"');
+    result.append('\"');
     return result.toString();
   }
 
@@ -650,8 +643,7 @@ public final class JavaWriter implements Closeable {
 
   private void checkInMethod() {
     Scope scope = peekScope();
-    if (scope != Scope.NON_ABSTRACT_METHOD && scope != Scope.CONTROL_FLOW
-        && scope != Scope.INITIALIZER) {
+    if (scope != Scope.NON_ABSTRACT_METHOD && scope != Scope.CONTROL_FLOW && scope != Scope.INITIALIZER) {
       throw new IllegalArgumentException();
     }
   }
