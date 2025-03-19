@@ -192,14 +192,14 @@ public class GitkitClient {
         .setEmailVerified(jsonToken.has(JsonTokenHelper.ID_TOKEN_EMAIL_VERIFIED) &&
                           jsonToken.get(JsonTokenHelper.ID_TOKEN_EMAIL_VERIFIED).getAsBoolean())
         .setCurrentProvider(jsonToken.has(JsonTokenHelper.ID_TOKEN_PROVIDER)
-            ? jsonToken.get(JsonTokenHelper.ID_TOKEN_PROVIDER).getAsString()
-            : null)
+                            ? jsonToken.get(JsonTokenHelper.ID_TOKEN_PROVIDER).getAsString()
+                            : null)
         .setName(jsonToken.has(JsonTokenHelper.ID_TOKEN_DISPLAY_NAME)
-            ? jsonToken.get(JsonTokenHelper.ID_TOKEN_DISPLAY_NAME).getAsString()
-            : null)
+                 ? jsonToken.get(JsonTokenHelper.ID_TOKEN_DISPLAY_NAME).getAsString()
+                 : null)
         .setPhotoUrl(jsonToken.has(JsonTokenHelper.ID_TOKEN_PHOTO_URL)
-            ? jsonToken.get(JsonTokenHelper.ID_TOKEN_PHOTO_URL).getAsString()
-            : null);
+                     ? jsonToken.get(JsonTokenHelper.ID_TOKEN_PHOTO_URL).getAsString()
+                     : null);
   }
 
   /**
