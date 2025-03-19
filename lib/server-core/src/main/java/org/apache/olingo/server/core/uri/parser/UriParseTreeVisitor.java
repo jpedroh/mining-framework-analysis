@@ -1,27 +1,7 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.apache.olingo.server.core.uri.parser;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -225,9 +205,7 @@ import org.apache.olingo.server.core.uri.queryoption.expression.UnaryImpl;
  * </ul>
  */
 public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
-
   public class TypeInformation {
-
     boolean isCollection;
 
     EdmType type;
@@ -237,7 +215,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       this.isCollection = isCollection;
     }
 
-    public TypeInformation() {}
+    public TypeInformation() {
+    }
   }
 
   public UriContext context = null;
@@ -246,15 +225,13 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   public EdmEntityContainer edmEntityContainer;
 
-  // --- class ---
   public UriParseTreeVisitor(final Edm edm, final UriContext context) {
     this.edm = edm;
     this.context = context;
     edmEntityContainer = edm.getEntityContainer(null);
   }
 
-  @Override
-  protected Object aggregateResult(final Object aggregate, final Object nextResult) {
+  @Override protected Object aggregateResult(final Object aggregate, final Object nextResult) {
     if (aggregate != null) {
       return aggregate;
     } else {
@@ -264,7 +241,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   private FullQualifiedName getFullNameFromContext(final NamespaceContext vNS, final String odi) {
     String namespace = vNS.getText();
-    namespace = namespace.substring(0, namespace.length() - 1); // vNS contains a trailing point that has to be removed
+    namespace = namespace.substring(0, namespace.length() - 1);
     return new FullQualifiedName(namespace, odi);
   }
 
@@ -278,46 +255,37 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   TypeInformation getTypeInformation(final UriResource lastResourcePart) {
-
     TypeInformation typeInformation = new TypeInformation();
     if (lastResourcePart instanceof UriResourceWithKeysImpl) {
       UriResourceWithKeysImpl lastPartWithKeys = (UriResourceWithKeysImpl) lastResourcePart;
-
       if (lastPartWithKeys.getTypeFilterOnEntry() != null) {
         typeInformation.type = lastPartWithKeys.getTypeFilterOnEntry();
-      } else if (lastPartWithKeys.getTypeFilterOnCollection() != null) {
-        typeInformation.type = lastPartWithKeys.getTypeFilterOnCollection();
       } else {
-        typeInformation.type = lastPartWithKeys.getType();
+        if (lastPartWithKeys.getTypeFilterOnCollection() != null) {
+          typeInformation.type = lastPartWithKeys.getTypeFilterOnCollection();
+        } else {
+          typeInformation.type = lastPartWithKeys.getType();
+        }
       }
       typeInformation.isCollection = lastPartWithKeys.isCollection();
-
-    } else if (lastResourcePart instanceof UriResourceTypedImpl) {
-      UriResourceTypedImpl lastPartTyped = (UriResourceTypedImpl) lastResourcePart;
-
-      if (lastPartTyped.getTypeFilter() != null) {
-        typeInformation.type = lastPartTyped.getTypeFilter();
-      } else {
-        typeInformation.type = lastPartTyped.getType();
+    } else {
+      if (lastResourcePart instanceof UriResourceTypedImpl) {
+        UriResourceTypedImpl lastPartTyped = (UriResourceTypedImpl) lastResourcePart;
+        if (lastPartTyped.getTypeFilter() != null) {
+          typeInformation.type = lastPartTyped.getTypeFilter();
+        } else {
+          typeInformation.type = lastPartTyped.getType();
+        }
+        typeInformation.isCollection = lastPartTyped.isCollection();
       }
-
-      typeInformation.isCollection = lastPartTyped.isCollection();
     }
-
     return typeInformation;
   }
 
   public UriResourceTypedImpl readResourcePathSegment(final PathSegmentContext ctx) {
-
-    final boolean checkFirst =
-        context.contextUriInfo.getLastResourcePart() == null
-            || context.contextUriInfo.getLastResourcePart() instanceof UriResourceRootImpl;
-
+    final boolean checkFirst = context.contextUriInfo.getLastResourcePart() == null || context.contextUriInfo.getLastResourcePart() instanceof UriResourceRootImpl;
     String odi = ctx.vODI.getText();
-
     boolean searchInContainer = true;
-    // validate if context type and according property is available
-    // otherwise search in container for first element
     if (checkFirst && ctx.vNS == null && !context.contextTypes.empty()) {
       TypeInformation source = context.contextTypes.peek();
       if (source.type instanceof EdmStructuredType) {
@@ -328,124 +296,74 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         }
       }
     }
-
     if (searchInContainer) {
       final List<UriResource> parts = context.contextUriInfo.getUriResourceParts();
-      // check EntitySet
       EdmEntitySet edmEntitySet = edmEntityContainer.getEntitySet(odi);
-      if (edmEntitySet != null
-          && (parts.isEmpty() || !(parts.get(0) instanceof UriResourcePartTyped)
-              || parts.get(0) instanceof UriResourceRoot)) {
+      if (edmEntitySet != null && (parts.isEmpty() || !(parts.get(0) instanceof UriResourcePartTyped) || parts.get(0) instanceof UriResourceRoot)) {
         ensureNamespaceIsNull(ctx.vNS);
-        context.contextUriInfo.addResourcePart(
-            new UriResourceEntitySetImpl().setEntitSet(edmEntitySet));
+        context.contextUriInfo.addResourcePart(new UriResourceEntitySetImpl().setEntitSet(edmEntitySet));
         return null;
       }
-
-      // check Singleton
       EdmSingleton edmSingleton = edmEntityContainer.getSingleton(odi);
-      if (edmSingleton != null
-          && (parts.isEmpty() || !(parts.get(0) instanceof UriResourcePartTyped)
-              || parts.get(0) instanceof UriResourceRoot)) {
+      if (edmSingleton != null && (parts.isEmpty() || !(parts.get(0) instanceof UriResourcePartTyped) || parts.get(0) instanceof UriResourceRoot)) {
         ensureNamespaceIsNull(ctx.vNS);
-        context.contextUriInfo.addResourcePart(
-            new UriResourceSingletonImpl().setSingleton(edmSingleton));
+        context.contextUriInfo.addResourcePart(new UriResourceSingletonImpl().setSingleton(edmSingleton));
         return null;
       }
-
-      // check ActionImport
       EdmActionImport edmActionImport = edmEntityContainer.getActionImport(odi);
-      if (edmActionImport != null
-          && (parts.isEmpty() || !(parts.get(0) instanceof UriResourcePartTyped)
-              || parts.get(0) instanceof UriResourceRoot)) {
+      if (edmActionImport != null && (parts.isEmpty() || !(parts.get(0) instanceof UriResourcePartTyped) || parts.get(0) instanceof UriResourceRoot)) {
         ensureNamespaceIsNull(ctx.vNS);
-        context.contextUriInfo.addResourcePart(
-            new UriResourceActionImpl().setActionImport(edmActionImport));
+        context.contextUriInfo.addResourcePart(new UriResourceActionImpl().setActionImport(edmActionImport));
         return null;
       }
-
-      // check FunctionImport
       EdmFunctionImport edmFunctionImport = edmEntityContainer.getFunctionImport(odi);
-      
-      if(edmFunctionImport != null && context.contextReadingQueryPart) {
-        throw wrap(new UriParserSemanticException("Function Imports are not allowed in $filter or $orderby", 
-            UriParserSemanticException.MessageKeys.FUNCTION_IMPORT_NOT_ALLOWED, odi));
+      if (edmFunctionImport != null && context.contextReadingQueryPart) {
+        throw wrap(new UriParserSemanticException("Function Imports are not allowed in $filter or $orderby", UriParserSemanticException.MessageKeys.FUNCTION_IMPORT_NOT_ALLOWED, odi));
       }
-      
-      if (edmFunctionImport != null
-          && (parts.isEmpty() || !(parts.get(0) instanceof UriResourcePartTyped)
-              || parts.get(0) instanceof UriResourceRoot)) {
-
-        // read the URI parameters
+      if (edmFunctionImport != null && (parts.isEmpty() || !(parts.get(0) instanceof UriResourcePartTyped) || parts.get(0) instanceof UriResourceRoot)) {
         if (ctx.vlNVO.isEmpty()) {
-          throw wrap(new UriParserSyntaxException(
-              "Function imports must have a (possibly empty) parameter list written in parentheses",
-              UriParserSyntaxException.MessageKeys.SYNTAX));
+          throw wrap(new UriParserSyntaxException("Function imports must have a (possibly empty) parameter list written in parentheses", UriParserSyntaxException.MessageKeys.SYNTAX));
         }
         context.contextReadingFunctionParameters = true;
-        @SuppressWarnings("unchecked")
-        List<UriParameter> parameters = (List<UriParameter>) ctx.vlNVO.get(0).accept(this);
+        @SuppressWarnings(value = { "unchecked" }) List<UriParameter> parameters = (List<UriParameter>) ctx.vlNVO.get(0).accept(this);
         context.contextReadingFunctionParameters = false;
-
-        // mark parameters as consumed
         ctx.vlNVO.remove(0);
-
-        UriResourceFunctionImpl uriResource = new UriResourceFunctionImpl()
-            .setFunctionImport(edmFunctionImport, parameters);
-
-        // collect parameter names
+        UriResourceFunctionImpl uriResource = new UriResourceFunctionImpl().setFunctionImport(edmFunctionImport, parameters);
         List<String> names = new ArrayList<String>();
         for (UriParameter item : parameters) {
           names.add(item.getName());
         }
-
-        // get function from function import
         EdmFunction function = edmFunctionImport.getUnboundFunction(names);
         if (function == null) {
           StringBuilder tmp = new StringBuilder();
           for (String name : names) {
             tmp.append((tmp.length() != 0 ? "," : "")).append(name);
           }
-          throw wrap(new UriParserSemanticException("Function of functionimport '" + edmFunctionImport.getName()
-              + "' with parameters [" + tmp.toString() + "] not found",
-              UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND, edmFunctionImport.getName(), tmp.toString()));
+          throw wrap(new UriParserSemanticException("Function of functionimport \'" + edmFunctionImport.getName() + "\' with parameters [" + tmp.toString() + "] not found", UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND, edmFunctionImport.getName(), tmp.toString()));
         }
-
         ensureNamespaceIsNull(ctx.vNS);
         uriResource.setFunction(edmFunctionImport.getUnboundFunction(names));
         context.contextUriInfo.addResourcePart(uriResource);
         return null;
       }
     }
-
     final TypeInformation source;
     final UriResource lastResourcePart = context.contextUriInfo.getLastResourcePart();
-
     if (lastResourcePart == null) {
       if (context.contextTypes.empty()) {
         if (checkFirst && ctx.vNS == null) {
-          throw wrap(new UriParserSemanticException(
-              "Cannot find EntitySet, Singleton, ActionImport or FunctionImport with name '" + odi + "'.",
-              UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND, odi));
+          throw wrap(new UriParserSemanticException("Cannot find EntitySet, Singleton, ActionImport or FunctionImport with name \'" + odi + "\'.", UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND, odi));
         }
-        throw wrap(new UriParserSemanticException(
-            "Resource part '" + odi + "' can only applied on typed resource parts",
-            UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS, odi));
+        throw wrap(new UriParserSemanticException("Resource part \'" + odi + "\' can only applied on typed resource parts", UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS, odi));
       }
       source = context.contextTypes.peek();
     } else {
       source = getTypeInformation(lastResourcePart);
-
       if (source.type == null) {
-        throw wrap(new UriParserSemanticException(
-            "Resource part '" + odi + "' can only be applied on typed resource parts.",
-            UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS, odi));
+        throw wrap(new UriParserSemanticException("Resource part \'" + odi + "\' can only be applied on typed resource parts.", UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS, odi));
       }
     }
-
-    if (ctx.vNS == null) { // without namespace
-
-      // first check for lambda variable because a newly add property should not shadow a long used lambda variable
+    if (ctx.vNS == null) {
       UriContext.LambdaVariables lVar = getLambdaVar(odi);
       if (lVar != null) {
         UriResourceLambdaVarImpl lambdaResource = new UriResourceLambdaVarImpl();
@@ -455,85 +373,49 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         context.contextUriInfo.addResourcePart(lambdaResource);
         return null;
       }
-
       if (!(source.type instanceof EdmStructuredType)) {
-        throw wrap(new UriParserSemanticException(
-            "Cannot parse '" + odi + "'; previous path segment is not a structural type.",
-            UriParserSemanticException.MessageKeys.RESOURCE_PART_MUST_BE_PRECEDED_BY_STRUCTURAL_TYPE, odi));
+        throw wrap(new UriParserSemanticException("Cannot parse \'" + odi + "\'; previous path segment is not a structural type.", UriParserSemanticException.MessageKeys.RESOURCE_PART_MUST_BE_PRECEDED_BY_STRUCTURAL_TYPE, odi));
       }
-
-      if ((ctx.depth() <= 2 // path evaluation for the resource path
-          || lastResourcePart instanceof UriResourceTypedImpl
-          || lastResourcePart instanceof UriResourceNavigationPropertyImpl)
-          && source.isCollection) {
-        throw wrap(new UriParserSemanticException("Property '" + odi + "' is not allowed after collection.",
-            UriParserSemanticException.MessageKeys.PROPERTY_AFTER_COLLECTION, odi));
+      if ((ctx.depth() <= 2 || lastResourcePart instanceof UriResourceTypedImpl || lastResourcePart instanceof UriResourceNavigationPropertyImpl) && source.isCollection) {
+        throw wrap(new UriParserSemanticException("Property \'" + odi + "\' is not allowed after collection.", UriParserSemanticException.MessageKeys.PROPERTY_AFTER_COLLECTION, odi));
       }
-
       EdmStructuredType structType = (EdmStructuredType) source.type;
-
       EdmElement property = structType.getProperty(odi);
       if (property == null) {
-        throw wrap(new UriParserSemanticException("Property '" + odi + "' not found in type '"
-            + structType.getFullQualifiedName().getFullQualifiedNameAsString() + "'",
-            ctx.depth() > 2 ? // path evaluation inside an expression or for the resource path?
-                UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE
-                : UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE,
-            structType.getFullQualifiedName().getFullQualifiedNameAsString(), odi));
+        throw wrap(new UriParserSemanticException("Property \'" + odi + "\' not found in type \'" + structType.getFullQualifiedName().getFullQualifiedNameAsString() + "\'", ctx.depth() > 2 ? UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE : UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE, structType.getFullQualifiedName().getFullQualifiedNameAsString(), odi));
       }
-
       if (property instanceof EdmProperty) {
         if (((EdmProperty) property).isPrimitive()) {
-          // create simple property
-          UriResourcePrimitivePropertyImpl simpleResource = new UriResourcePrimitivePropertyImpl()
-              .setProperty((EdmProperty) property);
+          UriResourcePrimitivePropertyImpl simpleResource = new UriResourcePrimitivePropertyImpl().setProperty((EdmProperty) property);
           context.contextUriInfo.addResourcePart(simpleResource);
           return null;
         } else {
-          // create complex property
-          UriResourceComplexPropertyImpl complexResource = new UriResourceComplexPropertyImpl()
-              .setProperty((EdmProperty) property);
+          UriResourceComplexPropertyImpl complexResource = new UriResourceComplexPropertyImpl().setProperty((EdmProperty) property);
           context.contextUriInfo.addResourcePart(complexResource);
           return null;
         }
-      } else if (property instanceof EdmNavigationProperty) {
-        // create navigation property
-        if (context.contextVisitExpandResourcePath && ctx.vlNVO.size() > 0) {
-          throw wrap(new UriParserSemanticException(
-              "Navigation properties in expand system query options must not be followed by a key.",
-              UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED));
-        }
-
-        UriResourceNavigationPropertyImpl navigationResource = new UriResourceNavigationPropertyImpl()
-            .setNavigationProperty((EdmNavigationProperty) property);
-        context.contextUriInfo.addResourcePart(navigationResource);
-        return null;
       } else {
-        throw wrap(new UriParserSemanticException("Unkown type for property '" + property + "'",
-            UriParserSemanticException.MessageKeys.UNKNOWN_PROPERTY_TYPE, property.getName()));
+        if (property instanceof EdmNavigationProperty) {
+          if (context.contextVisitExpandResourcePath && ctx.vlNVO.size() > 0) {
+            throw wrap(new UriParserSemanticException("Navigation properties in expand system query options must not be followed by a key.", UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED));
+          }
+          UriResourceNavigationPropertyImpl navigationResource = new UriResourceNavigationPropertyImpl().setNavigationProperty((EdmNavigationProperty) property);
+          context.contextUriInfo.addResourcePart(navigationResource);
+          return null;
+        } else {
+          throw wrap(new UriParserSemanticException("Unkown type for property \'" + property + "\'", UriParserSemanticException.MessageKeys.UNKNOWN_PROPERTY_TYPE, property.getName()));
+        }
       }
-
-    } else { // with namespace
-
+    } else {
       FullQualifiedName fullFilterName = getFullNameFromContext(ctx.vNS, odi);
-
-      // EdmType lastType = getLastType(lastTyped);
       if (source.type instanceof EdmEntityType) {
-
         EdmEntityType filterEntityType = edm.getEntityType(fullFilterName);
         if (filterEntityType != null) {
-          // is entity type cast
           if (!(filterEntityType.compatibleTo(source.type))) {
-            throw wrap(new UriParserSemanticException(
-                "Entity typefilter not compatible to previous path segment: " + fullFilterName.toString(),
-                UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER, fullFilterName.toString()));
+            throw wrap(new UriParserSemanticException("Entity typefilter not compatible to previous path segment: " + fullFilterName.toString(), UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER, fullFilterName.toString()));
           }
-
           if (lastResourcePart == null) {
-            // this may be the case if a member expression within a filter starts with a typeCast
-            UriResourceStartingTypeFilterImpl uriResource = new UriResourceStartingTypeFilterImpl()
-                .setType(filterEntityType)
-                .setCollection(source.isCollection);
+            UriResourceStartingTypeFilterImpl uriResource = new UriResourceStartingTypeFilterImpl().setType(filterEntityType).setCollection(source.isCollection);
             if (source.isCollection) {
               uriResource.setCollectionTypeFilter(filterEntityType);
             } else {
@@ -542,131 +424,84 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
             context.contextUriInfo.addResourcePart(uriResource);
             return null;
           } else {
-
-            // check if last segment may contain key properties
             if (lastResourcePart instanceof UriResourceWithKeysImpl) {
               UriResourceWithKeysImpl lastPartWithKeys = (UriResourceWithKeysImpl) lastResourcePart;
-
               if (!lastPartWithKeys.isCollection()) {
                 if (lastPartWithKeys.getTypeFilterOnEntry() != null) {
-                  throw wrap(new UriParserSemanticException("Entry typefilters are not chainable, used '"
-                      + getName(filterEntityType) + "' behind '"
-                      + getName(lastPartWithKeys.getTypeFilterOnEntry()) + "'",
-                      UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE,
-                      getName(lastPartWithKeys.getTypeFilterOnEntry()), getName(filterEntityType)));
+                  throw wrap(new UriParserSemanticException("Entry typefilters are not chainable, used \'" + getName(filterEntityType) + "\' behind \'" + getName(lastPartWithKeys.getTypeFilterOnEntry()) + "\'", UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE, getName(lastPartWithKeys.getTypeFilterOnEntry()), getName(filterEntityType)));
                 }
                 lastPartWithKeys.setEntryTypeFilter(filterEntityType);
                 return null;
               } else {
                 if (lastPartWithKeys.getTypeFilterOnCollection() != null) {
-                  throw wrap(new UriParserSemanticException("Collection typefilters are not chainable, used '"
-                      + getName(filterEntityType) + "' behind '"
-                      + getName(lastPartWithKeys.getTypeFilterOnCollection()) + "'",
-                      UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE,
-                      getName(lastPartWithKeys.getTypeFilterOnCollection()), getName(filterEntityType)));
+                  throw wrap(new UriParserSemanticException("Collection typefilters are not chainable, used \'" + getName(filterEntityType) + "\' behind \'" + getName(lastPartWithKeys.getTypeFilterOnCollection()) + "\'", UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE, getName(lastPartWithKeys.getTypeFilterOnCollection()), getName(filterEntityType)));
                 }
                 lastPartWithKeys.setCollectionTypeFilter(filterEntityType);
                 return null;
               }
-            } else if (lastResourcePart instanceof UriResourceTypedImpl) {
-              UriResourceTypedImpl lastPartTyped = (UriResourceTypedImpl) lastResourcePart;
-              if (lastPartTyped.getTypeFilter() != null) {
-                throw wrap(new UriParserSemanticException("Typefilters are not chainable, used '"
-                    + getName(filterEntityType) + "' behind '"
-                    + getName(lastPartTyped.getTypeFilter()) + "'",
-                    UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE,
-                    getName(lastPartTyped.getTypeFilter()), getName(filterEntityType)));
-              }
-
-              lastPartTyped.setTypeFilter(filterEntityType);
-              return null;
             } else {
-              throw wrap(new UriParserSemanticException("Path segment before '" + getName(filterEntityType)
-                  + "' not typed",
-                  UriParserSemanticException.MessageKeys.PREVIOUS_PART_NOT_TYPED, getName(filterEntityType)));
+              if (lastResourcePart instanceof UriResourceTypedImpl) {
+                UriResourceTypedImpl lastPartTyped = (UriResourceTypedImpl) lastResourcePart;
+                if (lastPartTyped.getTypeFilter() != null) {
+                  throw wrap(new UriParserSemanticException("Typefilters are not chainable, used \'" + getName(filterEntityType) + "\' behind \'" + getName(lastPartTyped.getTypeFilter()) + "\'", UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE, getName(lastPartTyped.getTypeFilter()), getName(filterEntityType)));
+                }
+                lastPartTyped.setTypeFilter(filterEntityType);
+                return null;
+              } else {
+                throw wrap(new UriParserSemanticException("Path segment before \'" + getName(filterEntityType) + "\' not typed", UriParserSemanticException.MessageKeys.PREVIOUS_PART_NOT_TYPED, getName(filterEntityType)));
+              }
             }
           }
         }
-
-      } else if (source.type instanceof EdmComplexType) {
-
-        EdmComplexType filterComplexType = edm.getComplexType(fullFilterName);
-
-        if (filterComplexType != null) {
-
-          // is complex type cast
-          if (!(filterComplexType.compatibleTo(source.type))) {
-            throw wrap(new UriParserSemanticException(
-                "Complex typefilter '" + getName(source.type) + "'not compatible type of previous path segment '"
-                    + getName(filterComplexType) + "'",
-                UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER, getName(source.type)));
-          }
-
-          // is simple complex type cast
-          if (lastResourcePart == null) {
-            // this may be the case if a member expression within a filter starts with a typeCast
-            UriResourceStartingTypeFilterImpl uriResource = new UriResourceStartingTypeFilterImpl()
-                .setType(filterComplexType)
-                .setCollection(source.isCollection);
-
-            if (source.isCollection) {
-              uriResource.setCollectionTypeFilter(filterComplexType);
-            } else {
-              uriResource.setEntryTypeFilter(filterComplexType);
+      } else {
+        if (source.type instanceof EdmComplexType) {
+          EdmComplexType filterComplexType = edm.getComplexType(fullFilterName);
+          if (filterComplexType != null) {
+            if (!(filterComplexType.compatibleTo(source.type))) {
+              throw wrap(new UriParserSemanticException("Complex typefilter \'" + getName(source.type) + "\'not compatible type of previous path segment \'" + getName(filterComplexType) + "\'", UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER, getName(source.type)));
             }
-            context.contextUriInfo.addResourcePart(uriResource);
-            return null;
-          } else {
-            if (lastResourcePart instanceof UriResourceWithKeysImpl) {
-              // e.g. in case of function returning complex data or a list of complex data
-              UriResourceWithKeysImpl lastPartWithKeys = (UriResourceWithKeysImpl) lastResourcePart;
-
-              if (!lastPartWithKeys.isCollection()) {
-                if (lastPartWithKeys.getTypeFilterOnEntry() != null) {
-                  throw wrap(new UriParserSemanticException("Entry typefilters are not chainable, used '"
-                      + getName(filterComplexType) + "' behind '"
-                      + getName(lastPartWithKeys.getTypeFilterOnEntry()) + "'",
-                      UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE,
-                      getName(lastPartWithKeys.getTypeFilterOnEntry()), getName(filterComplexType)));
-                }
-                lastPartWithKeys.setEntryTypeFilter(filterComplexType);
-                return null;
+            if (lastResourcePart == null) {
+              UriResourceStartingTypeFilterImpl uriResource = new UriResourceStartingTypeFilterImpl().setType(filterComplexType).setCollection(source.isCollection);
+              if (source.isCollection) {
+                uriResource.setCollectionTypeFilter(filterComplexType);
               } else {
-                if (lastPartWithKeys.getTypeFilterOnCollection() != null) {
-                  throw wrap(new UriParserSemanticException("Collection typefilters are not chainable, used '"
-                      + getName(filterComplexType) + "' behind '"
-                      + getName(lastPartWithKeys.getTypeFilterOnCollection()) + "'",
-                      UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE,
-                      getName(lastPartWithKeys.getTypeFilterOnCollection()), getName(filterComplexType)));
-                }
-                lastPartWithKeys.setCollectionTypeFilter(filterComplexType);
-                return null;
+                uriResource.setEntryTypeFilter(filterComplexType);
               }
-
-            } else if (lastResourcePart instanceof UriResourceTypedImpl) {
-              UriResourceTypedImpl lastPartTyped = (UriResourceTypedImpl) lastResourcePart;
-              if (lastPartTyped.getTypeFilter() != null) {
-                throw wrap(new UriParserSemanticException("Typefilters are not chainable, used '"
-                    + getName(filterComplexType) + "' behind '"
-                    + getName(lastPartTyped.getTypeFilter()) + "'",
-                    UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE,
-                    getName(lastPartTyped.getTypeFilter()), getName(filterComplexType)));
-              }
-
-              lastPartTyped.setTypeFilter(filterComplexType);
+              context.contextUriInfo.addResourcePart(uriResource);
               return null;
             } else {
-              throw wrap(new UriParserSemanticException("Path segment before '" + getName(filterComplexType)
-                  + "' not typed",
-                  UriParserSemanticException.MessageKeys.PREVIOUS_PART_NOT_TYPED, getName(filterComplexType)));
+              if (lastResourcePart instanceof UriResourceWithKeysImpl) {
+                UriResourceWithKeysImpl lastPartWithKeys = (UriResourceWithKeysImpl) lastResourcePart;
+                if (!lastPartWithKeys.isCollection()) {
+                  if (lastPartWithKeys.getTypeFilterOnEntry() != null) {
+                    throw wrap(new UriParserSemanticException("Entry typefilters are not chainable, used \'" + getName(filterComplexType) + "\' behind \'" + getName(lastPartWithKeys.getTypeFilterOnEntry()) + "\'", UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE, getName(lastPartWithKeys.getTypeFilterOnEntry()), getName(filterComplexType)));
+                  }
+                  lastPartWithKeys.setEntryTypeFilter(filterComplexType);
+                  return null;
+                } else {
+                  if (lastPartWithKeys.getTypeFilterOnCollection() != null) {
+                    throw wrap(new UriParserSemanticException("Collection typefilters are not chainable, used \'" + getName(filterComplexType) + "\' behind \'" + getName(lastPartWithKeys.getTypeFilterOnCollection()) + "\'", UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE, getName(lastPartWithKeys.getTypeFilterOnCollection()), getName(filterComplexType)));
+                  }
+                  lastPartWithKeys.setCollectionTypeFilter(filterComplexType);
+                  return null;
+                }
+              } else {
+                if (lastResourcePart instanceof UriResourceTypedImpl) {
+                  UriResourceTypedImpl lastPartTyped = (UriResourceTypedImpl) lastResourcePart;
+                  if (lastPartTyped.getTypeFilter() != null) {
+                    throw wrap(new UriParserSemanticException("Typefilters are not chainable, used \'" + getName(filterComplexType) + "\' behind \'" + getName(lastPartTyped.getTypeFilter()) + "\'", UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE, getName(lastPartTyped.getTypeFilter()), getName(filterComplexType)));
+                  }
+                  lastPartTyped.setTypeFilter(filterComplexType);
+                  return null;
+                } else {
+                  throw wrap(new UriParserSemanticException("Path segment before \'" + getName(filterComplexType) + "\' not typed", UriParserSemanticException.MessageKeys.PREVIOUS_PART_NOT_TYPED, getName(filterComplexType)));
+                }
+              }
             }
           }
         }
       }
-
       FullQualifiedName fullBindingTypeName = new FullQualifiedName(source.type.getNamespace(), source.type.getName());
-
-      // check for action
       EdmAction action = edm.getBoundAction(fullFilterName, fullBindingTypeName, source.isCollection);
       if (action != null) {
         UriResourceActionImpl pathInfoAction = new UriResourceActionImpl();
@@ -674,53 +509,31 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         context.contextUriInfo.addResourcePart(pathInfoAction);
         return null;
       }
-
-      // do a check for bound functions (which requires a parameter list)
       if (ctx.vlNVO.size() == 0) {
-        throw wrap(new UriParserSemanticException("Unknown type for type cast " + fullFilterName.toString()
-            + " not found", UriParserSemanticException.MessageKeys.UNKNOWN_TYPE, fullFilterName.toString()));
+        throw wrap(new UriParserSemanticException("Unknown type for type cast " + fullFilterName.toString() + " not found", UriParserSemanticException.MessageKeys.UNKNOWN_TYPE, fullFilterName.toString()));
       }
-
       context.contextReadingFunctionParameters = true;
-      @SuppressWarnings("unchecked")
-      List<UriParameter> parameters = (List<UriParameter>) ctx.vlNVO.get(0).accept(this);
+      @SuppressWarnings(value = { "unchecked" }) List<UriParameter> parameters = (List<UriParameter>) ctx.vlNVO.get(0).accept(this);
       context.contextReadingFunctionParameters = false;
-
-      // get names of function parameters
       List<String> names = new ArrayList<String>();
       for (UriParameter item : parameters) {
         names.add(item.getName());
       }
-
       EdmFunction function = edm.getBoundFunction(fullFilterName, fullBindingTypeName, source.isCollection, names);
-
       if (function != null) {
-        UriResourceFunctionImpl pathInfoFunction = new UriResourceFunctionImpl()
-            .setFunction(function)
-            .setParameters(parameters);
+        UriResourceFunctionImpl pathInfoFunction = new UriResourceFunctionImpl().setFunction(function).setParameters(parameters);
         context.contextUriInfo.addResourcePart(pathInfoFunction);
-
-        // mark parameters as consumed
         ctx.vlNVO.remove(0);
         return null;
       }
-
-      // check for unbound function in the $filter case ( where the previous resource segment is a $it)
       function = edm.getUnboundFunction(fullFilterName, names);
-
       if (function != null) {
-        UriResourceFunctionImpl pathInfoFunction = new UriResourceFunctionImpl()
-            .setFunction(function)
-            .setParameters(parameters);
+        UriResourceFunctionImpl pathInfoFunction = new UriResourceFunctionImpl().setFunction(function).setParameters(parameters);
         context.contextUriInfo.addResourcePart(pathInfoFunction);
-
-        // mark parameters as consumed
         ctx.vlNVO.remove(0);
         return null;
       }
-
-      throw wrap(new UriParserSemanticException("Unknown resource path segment:" + fullFilterName.toString(),
-          UriParserSemanticException.MessageKeys.UNKNOWN_PART, fullFilterName.toString()));
+      throw wrap(new UriParserSemanticException("Unknown resource path segment:" + fullFilterName.toString(), UriParserSemanticException.MessageKeys.UNKNOWN_PART, fullFilterName.toString()));
     }
   }
 
@@ -730,10 +543,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
    */
   private void ensureNamespaceIsNull(final NamespaceContext vNS) {
     if (vNS != null && context.contextUriInfo.getLastResourcePart() == null) {
-      // First resource part and namespace is not null!
-      throw wrap(new UriParserSemanticException("Namespace is not allowed for EntitySets, Singeltons, "
-          + " Action Imports and Function Imports. Found " + vNS.getText(),
-          UriParserSemanticException.MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT, vNS.getText()));
+      throw wrap(new UriParserSemanticException("Namespace is not allowed for EntitySets, Singeltons, " + " Action Imports and Function Imports. Found " + vNS.getText(), UriParserSemanticException.MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT, vNS.getText()));
     }
   }
 
@@ -741,33 +551,27 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return type.getFullQualifiedName().getFullQualifiedNameAsString();
   }
 
-  @Override
-  public Object visitAllEOF(final AllEOFContext ctx) {
+  @Override public Object visitAllEOF(final AllEOFContext ctx) {
     context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.all);
     return null;
   }
 
-  @Override
-  public Object visitAllExpr(final AllExprContext ctx) {
+  @Override public Object visitAllExpr(final AllExprContext ctx) {
     UriResourceLambdaAllImpl all = new UriResourceLambdaAllImpl();
-
     UriResource obj = context.contextUriInfo.getLastResourcePart();
     if (!(obj instanceof UriResourcePartTyped)) {
-      throw wrap(new UriParserSemanticException("all only allowed on typed path segments",
-          UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS, "all"));
-    } else if (obj instanceof UriResourceNavigation) {
-      if (!((UriResourceNavigation) obj).getKeyPredicates().isEmpty()) {
-        throw wrap(new UriParserSemanticException(
-            "Any lamdba expression must not be following navigation properties with key predicates.",
-            UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED));
+      throw wrap(new UriParserSemanticException("all only allowed on typed path segments", UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS, "all"));
+    } else {
+      if (obj instanceof UriResourceNavigation) {
+        if (!((UriResourceNavigation) obj).getKeyPredicates().isEmpty()) {
+          throw wrap(new UriParserSemanticException("Any lamdba expression must not be following navigation properties with key predicates.", UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED));
+        }
       }
     }
-
     UriContext.LambdaVariables var = new UriContext.LambdaVariables();
     var.name = ctx.vLV.getText();
     var.type = getTypeInformation(obj).type;
     var.isCollection = false;
-
     all.setLamdaVariable(ctx.vLV.getText());
     context.allowedLambdaVariables.push(var);
     all.setExpression((ExpressionImpl) ctx.vLE.accept(this));
@@ -775,88 +579,69 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return all;
   }
 
-  @Override
-  public ExpressionImpl visitAltAdd(final AltAddContext ctx) {
+  @Override public ExpressionImpl visitAltAdd(final AltAddContext ctx) {
     BinaryImpl binary = new BinaryImpl();
-
     int tokenIndex = ctx.vO.getType();
-
     if (tokenIndex == UriLexer.ADD) {
       binary.setOperator(BinaryOperatorKind.ADD);
-    } else if (tokenIndex == UriLexer.SUB) {
-      binary.setOperator(BinaryOperatorKind.SUB);
+    } else {
+      if (tokenIndex == UriLexer.SUB) {
+        binary.setOperator(BinaryOperatorKind.SUB);
+      }
     }
-
     binary.setLeftOperand((ExpressionImpl) ctx.vE1.accept(this));
     binary.setRightOperand((ExpressionImpl) ctx.vE2.accept(this));
     return binary;
   }
 
-  @Override
-  public Object visitAltAll(final AltAllContext ctx) {
-
+  @Override public Object visitAltAll(final AltAllContext ctx) {
     UriInfoImpl uriInfoImplpath = new UriInfoImpl().setKind(UriInfoKind.resource);
-
     uriInfoImplpath.addResourcePart((UriResourceImpl) super.visitAltAll(ctx));
-
     EdmType startType = removeUriResourceStartingTypeFilterImpl(uriInfoImplpath);
-
     MemberImpl ret = new MemberImpl();
-
     ret.setResourcePath(uriInfoImplpath);
     if (startType != null) {
       ret.setTypeFilter(startType);
     }
-
     return ret;
   }
 
   private EdmType removeUriResourceStartingTypeFilterImpl(final UriInfoImpl uriInfoImplpath) {
-
     List<UriResource> segments = uriInfoImplpath.getUriResourceParts();
     if (segments.size() == 0) {
       return null;
     }
-
     UriResource segment = segments.get(0);
     if (segment instanceof UriResourceStartingTypeFilterImpl) {
       UriResourceStartingTypeFilterImpl startingTypeFilter = (UriResourceStartingTypeFilterImpl) segment;
-
       EdmType type = null;
       if (startingTypeFilter.getTypeFilterOnEntry() != null) {
         type = startingTypeFilter.getTypeFilterOnEntry();
-      } else if (startingTypeFilter.getTypeFilterOnCollection() != null) {
-        type = startingTypeFilter.getTypeFilterOnCollection();
       } else {
-        type = startingTypeFilter.getType();
+        if (startingTypeFilter.getTypeFilterOnCollection() != null) {
+          type = startingTypeFilter.getTypeFilterOnCollection();
+        } else {
+          type = startingTypeFilter.getType();
+        }
       }
-
       uriInfoImplpath.removeResourcePart(0);
       return type;
     }
-
     return null;
   }
 
-  @Override
-  public ExpressionImpl visitAltAnd(final AltAndContext ctx) {
+  @Override public ExpressionImpl visitAltAnd(final AltAndContext ctx) {
     BinaryImpl binary = new BinaryImpl();
-
     binary.setOperator(BinaryOperatorKind.AND);
     binary.setLeftOperand((ExpressionImpl) ctx.vE1.accept(this));
     binary.setRightOperand((ExpressionImpl) ctx.vE2.accept(this));
-
     return binary;
   }
 
-  @Override
-  public Object visitAltAny(final AltAnyContext ctx) {
+  @Override public Object visitAltAny(final AltAnyContext ctx) {
     UriInfoImpl uriInfoImplpath = new UriInfoImpl().setKind(UriInfoKind.resource);
-
     uriInfoImplpath.addResourcePart((UriResourceImpl) super.visitAltAny(ctx));
-
     EdmType startType = removeUriResourceStartingTypeFilterImpl(uriInfoImplpath);
-
     MemberImpl ret = new MemberImpl();
     ret.setResourcePath(uriInfoImplpath);
     if (startType != null) {
@@ -865,60 +650,49 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return ret;
   }
 
-  @Override
-  public Object visitBatchEOF(final BatchEOFContext ctx) {
+  @Override public Object visitBatchEOF(final BatchEOFContext ctx) {
     context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.batch);
     return null;
   }
 
-  @Override
-  public ExpressionImpl visitAltComparism(final AltComparismContext ctx) {
+  @Override public ExpressionImpl visitAltComparism(final AltComparismContext ctx) {
     BinaryImpl binary = new BinaryImpl();
-
     int tokenIndex = ctx.vO.getType();
-
     if (tokenIndex == UriLexer.GT) {
       binary.setOperator(BinaryOperatorKind.GT);
-    } else if (tokenIndex == UriLexer.GE) {
-      binary.setOperator(BinaryOperatorKind.GE);
-    } else if (tokenIndex == UriLexer.LT) {
-      binary.setOperator(BinaryOperatorKind.LT);
-    } else if (tokenIndex == UriLexer.LE) {
-      binary.setOperator(BinaryOperatorKind.LE);
+    } else {
+      if (tokenIndex == UriLexer.GE) {
+        binary.setOperator(BinaryOperatorKind.GE);
+      } else {
+        if (tokenIndex == UriLexer.LT) {
+          binary.setOperator(BinaryOperatorKind.LT);
+        } else {
+          if (tokenIndex == UriLexer.LE) {
+            binary.setOperator(BinaryOperatorKind.LE);
+          }
+        }
+      }
     }
-
     binary.setLeftOperand((ExpressionImpl) ctx.vE1.accept(this));
     binary.setRightOperand((ExpressionImpl) ctx.vE2.accept(this));
     return binary;
   }
 
-  @Override
-  public Object visitEntityEOF(final EntityEOFContext ctx) {
+  @Override public Object visitEntityEOF(final EntityEOFContext ctx) {
     String odi = ctx.vODI.getText();
     FullQualifiedName fullName = getFullNameFromContext(ctx.vNS, odi);
-
     EdmEntityType type = edm.getEntityType(fullName);
     if (type == null) {
-      throw wrap(new UriParserSemanticException("Expected EntityTypeName",
-          UriParserSemanticException.MessageKeys.UNKNOWN_ENTITY_TYPE, fullName.toString()));
+      throw wrap(new UriParserSemanticException("Expected EntityTypeName", UriParserSemanticException.MessageKeys.UNKNOWN_ENTITY_TYPE, fullName.toString()));
     }
     context.contextUriInfo.setEntityTypeCast(type);
-
-    // contextUriInfo = uriInfo;
     context.contextTypes.push(new TypeInformation(context.contextUriInfo.getEntityTypeCast(), true));
-
-    // @SuppressWarnings("unchecked")
-    // List<QueryOptionImpl> list = (List<QueryOptionImpl>) ctx.vEO.accept(this);
-    // uriInfo.setQueryOptions(list);
     return null;
   }
 
-  @Override
-  public ExpressionImpl visitAltEquality(final AltEqualityContext ctx) {
+  @Override public ExpressionImpl visitAltEquality(final AltEqualityContext ctx) {
     BinaryImpl binary = new BinaryImpl();
-
     int tokenIndex = ctx.vO.getType();
-
     if (tokenIndex == UriLexer.EQ_ALPHA) {
       binary.setOperator(BinaryOperatorKind.EQ);
     } else {
@@ -926,79 +700,64 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     }
     binary.setLeftOperand((ExpressionImpl) ctx.vE1.accept(this));
     binary.setRightOperand((ExpressionImpl) ctx.vE2.accept(this));
-
     return binary;
   }
 
-  @Override
-  public Object visitAltHas(final AltHasContext ctx) {
+  @Override public Object visitAltHas(final AltHasContext ctx) {
     BinaryImpl binary = new BinaryImpl();
-
     binary.setOperator(BinaryOperatorKind.HAS);
     binary.setLeftOperand((ExpressionImpl) ctx.vE1.accept(this));
     binary.setRightOperand((ExpressionImpl) ctx.vE2.accept(this));
-
     return binary;
   }
 
-  @Override
-  public Object visitMetadataEOF(final MetadataEOFContext ctx) {
-
+  @Override public Object visitMetadataEOF(final MetadataEOFContext ctx) {
     context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.metadata);
     return null;
   }
 
-  @Override
-  public ExpressionImpl visitAltMult(final AltMultContext ctx) {
+  @Override public ExpressionImpl visitAltMult(final AltMultContext ctx) {
     BinaryImpl binary = new BinaryImpl();
-
     int tokenIndex = ctx.vO.getType();
-
     if (tokenIndex == UriLexer.MUL) {
       binary.setOperator(BinaryOperatorKind.MUL);
-    } else if (tokenIndex == UriLexer.DIV) {
-      binary.setOperator(BinaryOperatorKind.DIV);
     } else {
-      binary.setOperator(BinaryOperatorKind.MOD);
+      if (tokenIndex == UriLexer.DIV) {
+        binary.setOperator(BinaryOperatorKind.DIV);
+      } else {
+        binary.setOperator(BinaryOperatorKind.MOD);
+      }
     }
     binary.setLeftOperand((ExpressionImpl) ctx.vE1.accept(this));
     binary.setRightOperand((ExpressionImpl) ctx.vE2.accept(this));
-
     return binary;
   }
 
-  @Override
-  public ExpressionImpl visitAltOr(final AltOrContext ctx) {
+  @Override public ExpressionImpl visitAltOr(final AltOrContext ctx) {
     BinaryImpl binary = new BinaryImpl();
-
     binary.setOperator(BinaryOperatorKind.OR);
     binary.setLeftOperand((ExpressionImpl) ctx.vE1.accept(this));
     binary.setRightOperand((ExpressionImpl) ctx.vE2.accept(this));
-
     return binary;
   }
 
-  @Override
-  public Object visitAnyExpr(final AnyExprContext ctx) {
+  @Override public Object visitAnyExpr(final AnyExprContext ctx) {
     UriResourceLambdaAnyImpl any = new UriResourceLambdaAnyImpl();
     if (ctx.vLV != null) {
       UriResourceImpl lastResourcePart = (UriResourceImpl) context.contextUriInfo.getLastResourcePart();
       if (!(lastResourcePart instanceof UriResourcePartTyped)) {
-        throw wrap(new UriParserSemanticException("any only allowed on typed path segments",
-            UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS, "any"));
-      } else if (lastResourcePart instanceof UriResourceNavigation) {
-        if (!((UriResourceNavigation) lastResourcePart).getKeyPredicates().isEmpty()) {
-          throw wrap(new UriParserSemanticException(
-              "Any lamdba expression must not be following navigation properties with key predicates",
-              UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED));
+        throw wrap(new UriParserSemanticException("any only allowed on typed path segments", UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS, "any"));
+      } else {
+        if (lastResourcePart instanceof UriResourceNavigation) {
+          if (!((UriResourceNavigation) lastResourcePart).getKeyPredicates().isEmpty()) {
+            throw wrap(new UriParserSemanticException("Any lamdba expression must not be following navigation properties with key predicates", UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED));
+          }
         }
       }
-
       UriContext.LambdaVariables var = new UriContext.LambdaVariables();
       var.name = ctx.vLV.getText();
       var.type = getTypeInformation(lastResourcePart).type;
       var.isCollection = false;
-
       any.setLamdaVariable(ctx.vLV.getText());
       context.allowedLambdaVariables.push(var);
       any.setExpression((ExpressionImpl) ctx.vLE.accept(this));
@@ -1007,25 +766,19 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return any;
   }
 
-  @Override
-  public Object visitBooleanNonCaseLiteral(final BooleanNonCaseLiteralContext ctx) {
+  @Override public Object visitBooleanNonCaseLiteral(final BooleanNonCaseLiteralContext ctx) {
     final String text = ctx.getText().toLowerCase();
-    return new LiteralImpl().setText(text.equals("false") ? "false" : "true")
-        .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean));
+    return new LiteralImpl().setText(text.equals("false") ? "false" : "true").setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean));
   }
 
-  @Override
-  public ExpressionImpl visitCastExpr(final CastExprContext ctx) {
+  @Override public ExpressionImpl visitCastExpr(final CastExprContext ctx) {
     MethodImpl method = new MethodImpl();
     if (ctx.vE1 != null) {
-      // is optional parameter
       ExpressionImpl onExpression = (ExpressionImpl) ctx.vE1.accept(this);
       method.addParameter(onExpression);
     }
-
     String namespace = ctx.vNS.getText();
     namespace = namespace.substring(0, namespace.length() - 1);
-
     FullQualifiedName fullName = new FullQualifiedName(namespace, ctx.vODI.getText());
     EdmType type = getType(fullName);
     method.setMethod(MethodKind.CAST);
@@ -1035,22 +788,18 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   private EdmType getType(final FullQualifiedName fullName) {
     EdmType type = null;
-
     type = edm.getEntityType(fullName);
     if (type != null) {
       return type;
     }
-
     type = edm.getComplexType(fullName);
     if (type != null) {
       return type;
     }
-
     type = edm.getEnumType(fullName);
     if (type != null) {
       return type;
     }
-
     if (fullName.getNamespace().equals(EdmPrimitiveType.EDM_NAMESPACE)) {
       final EdmPrimitiveTypeKind typeKind = EdmPrimitiveTypeKind.valueOf(fullName.getName());
       type = EdmPrimitiveTypeFactory.getInstance(typeKind);
@@ -1058,270 +807,201 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         return type;
       }
     }
-
     return null;
-
   }
 
-  @Override
-  public ExpressionImpl visitCeilingMethodCallExpr(final CeilingMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.CEILING)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitCeilingMethodCallExpr(final CeilingMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.CEILING).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public ExpressionImpl visitConcatMethodCallExpr(final ConcatMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.CONCAT)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this))
-        .addParameter((ExpressionImpl) ctx.vE2.accept(this));
+  @Override public ExpressionImpl visitConcatMethodCallExpr(final ConcatMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.CONCAT).addParameter((ExpressionImpl) ctx.vE1.accept(this)).addParameter((ExpressionImpl) ctx.vE2.accept(this));
   }
 
-  @Override
-  public Object visitConstSegment(final ConstSegmentContext ctx) {
+  @Override public Object visitConstSegment(final ConstSegmentContext ctx) {
     UriInfoImpl uriInfoResource = context.contextUriInfo;
     UriResource pathInfo = uriInfoResource.getLastResourcePart();
-
     if (ctx.vV != null) {
       if (pathInfo instanceof UriResourcePartTyped) {
         if (!((UriResourcePartTyped) pathInfo).isCollection()) {
           context.contextUriInfo.addResourcePart(new UriResourceValueImpl());
         } else {
-          throw wrap(new UriParserSemanticException("$value only allowed on typed path segments",
-              UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS, "$value"));
+          throw wrap(new UriParserSemanticException("$value only allowed on typed path segments", UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS, "$value"));
         }
         return null;
       } else {
-        throw wrap(new UriParserSemanticException("$value only allowed on typed path segments",
-            UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS, "$value"));
+        throw wrap(new UriParserSemanticException("$value only allowed on typed path segments", UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS, "$value"));
       }
-
-    } else if (ctx.vC != null) {
-      if (pathInfo instanceof UriResourcePartTyped) {
-        if (((UriResourcePartTyped) pathInfo).isCollection()) {
-          context.contextUriInfo.addResourcePart(new UriResourceCountImpl());
+    } else {
+      if (ctx.vC != null) {
+        if (pathInfo instanceof UriResourcePartTyped) {
+          if (((UriResourcePartTyped) pathInfo).isCollection()) {
+            context.contextUriInfo.addResourcePart(new UriResourceCountImpl());
+          } else {
+            throw wrap(new UriParserSemanticException("$count only allowed on collection properties", UriParserSemanticException.MessageKeys.ONLY_FOR_COLLECTIONS, "$count"));
+          }
         } else {
-          throw wrap(new UriParserSemanticException("$count only allowed on collection properties",
-              UriParserSemanticException.MessageKeys.ONLY_FOR_COLLECTIONS, "$count"));
+          throw wrap(new UriParserSemanticException("$count only allowed on typed properties", UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS, "$count"));
         }
       } else {
-        throw wrap(new UriParserSemanticException("$count only allowed on typed properties",
-            UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS, "$count"));
-      }
-    } else if (ctx.vR != null) {
-      if (pathInfo instanceof UriResourcePartTyped) {
-        EdmType type = ((UriResourcePartTyped) pathInfo).getType();
-        if (type instanceof EdmEntityType) {
-          context.contextUriInfo.addResourcePart(new UriResourceRefImpl());
+        if (ctx.vR != null) {
+          if (pathInfo instanceof UriResourcePartTyped) {
+            EdmType type = ((UriResourcePartTyped) pathInfo).getType();
+            if (type instanceof EdmEntityType) {
+              context.contextUriInfo.addResourcePart(new UriResourceRefImpl());
+            } else {
+              throw wrap(new UriParserSemanticException("$ref only allowed on entity types", UriParserSemanticException.MessageKeys.ONLY_FOR_ENTITY_TYPES, "$ref"));
+            }
+          } else {
+            throw wrap(new UriParserSemanticException("$ref only allowed on typed properties", UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PROPERTIES, "$ref"));
+          }
         } else {
-          throw wrap(new UriParserSemanticException("$ref only allowed on entity types",
-              UriParserSemanticException.MessageKeys.ONLY_FOR_ENTITY_TYPES, "$ref"));
+          if (ctx.vAll != null) {
+            context.contextUriInfo.addResourcePart((UriResourceLambdaAllImpl) ctx.vAll.accept(this));
+          } else {
+            if (ctx.vAny != null) {
+              context.contextUriInfo.addResourcePart((UriResourceLambdaAnyImpl) ctx.vAny.accept(this));
+            }
+          }
         }
-      } else {
-        throw wrap(new UriParserSemanticException("$ref only allowed on typed properties",
-            UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PROPERTIES, "$ref"));
       }
-
-    } else if (ctx.vAll != null) {
-      context.contextUriInfo.addResourcePart((UriResourceLambdaAllImpl) ctx.vAll.accept(this));
-    } else if (ctx.vAny != null) {
-      context.contextUriInfo.addResourcePart((UriResourceLambdaAnyImpl) ctx.vAny.accept(this));
     }
     return null;
   }
 
-  @Override
-  public ExpressionImpl visitContainsMethodCallExpr(final ContainsMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.CONTAINS)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this))
-        .addParameter((ExpressionImpl) ctx.vE2.accept(this));
+  @Override public ExpressionImpl visitContainsMethodCallExpr(final ContainsMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.CONTAINS).addParameter((ExpressionImpl) ctx.vE1.accept(this)).addParameter((ExpressionImpl) ctx.vE2.accept(this));
   }
 
-  @Override
-  public Object visitCrossjoinEOF(final CrossjoinEOFContext ctx) {
+  @Override public Object visitCrossjoinEOF(final CrossjoinEOFContext ctx) {
     UriInfoImpl crossJoin = new UriInfoImpl().setKind(UriInfoKind.crossjoin);
-
     for (OdataIdentifierContext obj : ctx.vlODI) {
       String odi = obj.getText();
       crossJoin.addEntitySetName(odi);
-
       EdmEntitySet edmEntitySet = edmEntityContainer.getEntitySet(odi);
       if (edmEntitySet == null) {
-        throw wrap(new UriParserSemanticException("Expected EntityTypeName",
-            UriParserSemanticException.MessageKeys.UNKNOWN_PART, odi));
+        throw wrap(new UriParserSemanticException("Expected EntityTypeName", UriParserSemanticException.MessageKeys.UNKNOWN_PART, odi));
       }
-
       EdmEntityType type = edmEntitySet.getEntityType();
       if (type == null) {
-        throw wrap(new UriParserSemanticException("Expected EntityTypeName",
-            UriParserSemanticException.MessageKeys.UNKNOWN_ENTITY_TYPE, odi));
+        throw wrap(new UriParserSemanticException("Expected EntityTypeName", UriParserSemanticException.MessageKeys.UNKNOWN_ENTITY_TYPE, odi));
       }
-      // contextUriInfo = uriInfo;
       context.contextTypes.push(new TypeInformation(type, true));
     }
-
     context.contextUriInfo = crossJoin;
     return null;
   }
 
-  @Override
-  public Object visitDateMethodCallExpr(final DateMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.DATE)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public Object visitDateMethodCallExpr(final DateMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.DATE).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public ExpressionImpl visitDayMethodCallExpr(final DayMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.DAY)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitDayMethodCallExpr(final DayMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.DAY).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public ExpressionImpl visitGeoDistanceMethodCallExpr(final GeoDistanceMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.GEODISTANCE)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this))
-        .addParameter((ExpressionImpl) ctx.vE2.accept(this));
+  @Override public ExpressionImpl visitGeoDistanceMethodCallExpr(final GeoDistanceMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.GEODISTANCE).addParameter((ExpressionImpl) ctx.vE1.accept(this)).addParameter((ExpressionImpl) ctx.vE2.accept(this));
   }
 
-  @Override
-  public Object visitEndsWithMethodCallExpr(final EndsWithMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.ENDSWITH)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this))
-        .addParameter((ExpressionImpl) ctx.vE2.accept(this));
+  @Override public Object visitEndsWithMethodCallExpr(final EndsWithMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.ENDSWITH).addParameter((ExpressionImpl) ctx.vE1.accept(this)).addParameter((ExpressionImpl) ctx.vE2.accept(this));
   }
 
-  @Override
-  public Object visitEnumLiteral(final EnumLiteralContext ctx) {
+  @Override public Object visitEnumLiteral(final EnumLiteralContext ctx) {
     EnumerationImpl enum1 = new EnumerationImpl();
-
-    // get type
     final String odi = ctx.vODI.getText();
-
     final FullQualifiedName fullName = getFullNameFromContext(ctx.vNS, odi);
     final EdmEnumType edmEnumType = edm.getEnumType(fullName);
     if (edmEnumType == null) {
-      throw wrap(new UriParserSemanticException(
-          "Enum type '" + fullName.getFullQualifiedNameAsString() + "' not found!",
-          UriParserSemanticException.MessageKeys.UNKNOWN_TYPE, fullName.getFullQualifiedNameAsString()));
+      throw wrap(new UriParserSemanticException("Enum type \'" + fullName.getFullQualifiedNameAsString() + "\' not found!", UriParserSemanticException.MessageKeys.UNKNOWN_TYPE, fullName.getFullQualifiedNameAsString()));
     }
     enum1.setType(edmEnumType);
-
     String valueString = ctx.vValues.getText();
     valueString = valueString.substring(1, valueString.length() - 1);
-
     String[] values = valueString.split(",");
     for (String item : values) {
       enum1.addValue(item);
     }
-
     return enum1;
   }
 
-  @Override
-  public Object visitExpandItems(final ExpandItemsContext ctx) {
+  @Override public Object visitExpandItems(final ExpandItemsContext ctx) {
     ExpandOptionImpl expand = new ExpandOptionImpl();
     expand.setText(ctx.getText());
     for (ExpandItemContext eI : ctx.vlEI) {
       expand.addExpandItem((ExpandItemImpl) eI.accept(this));
     }
-
     return expand;
   }
 
-  @Override
-  public Object visitExpandItem(final ExpandItemContext ctx) {
-
+  @Override public Object visitExpandItem(final ExpandItemContext ctx) {
     ExpandItemImpl expandItem = null;
     if (ctx.vS != null) {
       expandItem = new ExpandItemImpl().setIsStar(true);
       if (ctx.vR != null) {
         expandItem.setIsRef(true);
-      } else if (ctx.vM != null) {
-        LevelsOptionImpl levels = new LevelsOptionImpl().setMax();
-        levels.setText(ctx.vM.getText());
-        try {
-          expandItem.setSystemQueryOption(levels);
-        } catch (ODataRuntimeException e) {
-          // Thrown if duplicated system query options are detected
-          throw wrap(new UriParserSyntaxException("Double system query option!", e,
-              UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION, e.getMessage()));
-        }
-      } else if (ctx.vL != null) {
-        LevelsOptionImpl levels = new LevelsOptionImpl();
-        String text = ctx.vL.getText();
-        levels.setText(text);
-        levels.setValue(Integer.parseInt(text));
-        try {
-          expandItem.setSystemQueryOption(levels);
-        } catch (ODataRuntimeException e) {
-          // Thrown if duplicated system query options are detected
-          throw wrap(new UriParserSyntaxException("Double system query option!", e,
-              UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION, e.getMessage()));
+      } else {
+        if (ctx.vM != null) {
+          LevelsOptionImpl levels = new LevelsOptionImpl().setMax();
+          levels.setText(ctx.vM.getText());
+          try {
+            expandItem.setSystemQueryOption(levels);
+          } catch (ODataRuntimeException e) {
+            throw wrap(new UriParserSyntaxException("Double system query option!", e, UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION, e.getMessage()));
+          }
+        } else {
+          if (ctx.vL != null) {
+            LevelsOptionImpl levels = new LevelsOptionImpl();
+            String text = ctx.vL.getText();
+            levels.setText(text);
+            levels.setValue(Integer.parseInt(text));
+            try {
+              expandItem.setSystemQueryOption(levels);
+            } catch (ODataRuntimeException e) {
+              throw wrap(new UriParserSyntaxException("Double system query option!", e, UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION, e.getMessage()));
+            }
+          }
         }
       }
-
-    } else if (ctx.vEP != null) {
-      expandItem = (ExpandItemImpl) ctx.vEP.accept(this);
-
-      if (ctx.vEPE != null) {
-        ExpandItemImpl contextExpandItemPathBU = context.contextExpandItemPath;
-        context.contextExpandItemPath = expandItem;
-
-        @SuppressWarnings("unchecked")
-        List<SystemQueryOptionImpl> list = (List<SystemQueryOptionImpl>) ctx.vEPE.accept(this);
-        try {
-          for (SystemQueryOptionImpl option : list) {
-            expandItem.setSystemQueryOption(option);
+    } else {
+      if (ctx.vEP != null) {
+        expandItem = (ExpandItemImpl) ctx.vEP.accept(this);
+        if (ctx.vEPE != null) {
+          ExpandItemImpl contextExpandItemPathBU = context.contextExpandItemPath;
+          context.contextExpandItemPath = expandItem;
+          @SuppressWarnings(value = { "unchecked" }) List<SystemQueryOptionImpl> list = (List<SystemQueryOptionImpl>) ctx.vEPE.accept(this);
+          try {
+            for (SystemQueryOptionImpl option : list) {
+              expandItem.setSystemQueryOption(option);
+            }
+          } catch (ODataRuntimeException e) {
+            throw wrap(new UriParserSyntaxException("Double system query option!", e, UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION, e.getMessage()));
           }
-        } catch (ODataRuntimeException e) {
-          // Thrown if duplicated system query options are detected
-          throw wrap(new UriParserSyntaxException("Double system query option!", e,
-              UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION, e.getMessage()));
+          context.contextExpandItemPath = contextExpandItemPathBU;
         }
-        context.contextExpandItemPath = contextExpandItemPathBU;
       }
     }
-
     return expandItem;
-
   }
 
-  @Override
-  public Object visitExpandPath(final ExpandPathContext ctx) {
+  @Override public Object visitExpandPath(final ExpandPathContext ctx) {
     ExpandItemImpl expandItem = new ExpandItemImpl();
-
-    // save context
     ExpandItemImpl contextExpandItemPathBU = context.contextExpandItemPath;
     UriInfoImpl uriInfoResourceBU = context.contextUriInfo;
-
-    // set tmp context
     context.contextExpandItemPath = expandItem;
     context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
-
     context.contextVisitExpandResourcePath = true;
     super.visitExpandPath(ctx);
     context.contextVisitExpandResourcePath = false;
-
     EdmType startType = removeUriResourceStartingTypeFilterImpl(context.contextUriInfo);
     expandItem.setResourcePath(context.contextUriInfo);
     if (startType != null) {
       expandItem.setTypeFilter(startType);
     }
-
-    // reset context
     context.contextUriInfo = uriInfoResourceBU;
     context.contextExpandItemPath = contextExpandItemPathBU;
-
-    // test
     validate(uriInfoResourceBU.asUriInfoResource(), expandItem);
-    //
-
     return expandItem;
   }
 
@@ -1329,16 +1009,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     if (uriInfoResource != null) {
       EdmEntityType type = getEntityType(uriInfoResource);
       EdmEntityType name = getEntityType(expandItem.getResourcePath());
-
       if (name != null && type != null) {
         EdmElement property = type.getProperty(name.getName());
         if (!(property instanceof EdmNavigationProperty)) {
-          throw wrap(new UriParserSemanticException(
-              "NavigationProperty '" + name.getName() + "' not found in type '"
-                  + type.getFullQualifiedName().getFullQualifiedNameAsString() + "'",
-              UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE,
-              name.getFullQualifiedName().getFullQualifiedNameAsString(),
-              type.getFullQualifiedName().getFullQualifiedNameAsString()));
+          throw wrap(new UriParserSemanticException("NavigationProperty \'" + name.getName() + "\' not found in type \'" + type.getFullQualifiedName().getFullQualifiedNameAsString() + "\'", UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE, name.getFullQualifiedName().getFullQualifiedNameAsString(), type.getFullQualifiedName().getFullQualifiedNameAsString()));
         }
       }
     }
@@ -1356,480 +1030,309 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return null;
   }
 
-  @Override
-  public Object visitExpandPathExtension(final ExpandPathExtensionContext ctx) {
+  @Override public Object visitExpandPathExtension(final ExpandPathExtensionContext ctx) {
     List<SystemQueryOptionImpl> list = new ArrayList<SystemQueryOptionImpl>();
-
     EdmType targetType = null;
     boolean isColl = false;
     if (context.contextExpandItemPath == null) {
-      // use the type of the last resource path segement
       UriResourceTypedImpl lastSegment = (UriResourceTypedImpl) context.contextUriInfo.getLastResourcePart();
       targetType = getTypeInformation(lastSegment).type;
       isColl = lastSegment.isCollection();
     } else {
       if (context.contextExpandItemPath.getResourcePath() == null) {
-        // use the type of the last resource path segement
         UriResourceTypedImpl lastSegment = (UriResourceTypedImpl) context.contextUriInfo.getLastResourcePart();
         targetType = getTypeInformation(lastSegment).type;
         isColl = lastSegment.isCollection();
       } else {
-        // use the type of the last ''expand'' path segement
         UriInfoImpl info = (UriInfoImpl) context.contextExpandItemPath.getResourcePath();
         targetType = getTypeInformation(info.getLastResourcePart()).type;
         isColl = ((UriResourcePartTyped) info.getLastResourcePart()).isCollection();
       }
     }
-
     context.contextTypes.push(new TypeInformation(targetType, isColl));
-
     if (ctx.vC != null) {
       UriInfoImpl resourcePath = (UriInfoImpl) context.contextExpandItemPath.getResourcePath();
       resourcePath.addResourcePart(new UriResourceCountImpl());
-
       for (ExpandCountOptionContext s : ctx.vlEOC) {
         list.add((SystemQueryOptionImpl) s.accept(this));
       }
-    } else if (ctx.vR != null) {
-      UriInfoImpl resourcePath = (UriInfoImpl) context.contextExpandItemPath.getResourcePath();
-      resourcePath.addResourcePart(new UriResourceRefImpl());
-
-      for (ExpandRefOptionContext s : ctx.vlEOR) {
-        list.add((SystemQueryOptionImpl) s.accept(this));
-      }
     } else {
-      for (ExpandOptionContext s : ctx.vlEO) {
-        list.add((SystemQueryOptionImpl) s.accept(this));
+      if (ctx.vR != null) {
+        UriInfoImpl resourcePath = (UriInfoImpl) context.contextExpandItemPath.getResourcePath();
+        resourcePath.addResourcePart(new UriResourceRefImpl());
+        for (ExpandRefOptionContext s : ctx.vlEOR) {
+          list.add((SystemQueryOptionImpl) s.accept(this));
+        }
+      } else {
+        for (ExpandOptionContext s : ctx.vlEO) {
+          list.add((SystemQueryOptionImpl) s.accept(this));
+        }
       }
     }
-
     context.contextTypes.pop();
     return list;
-
   }
 
-  @Override
-  public Object visitFilter(final FilterContext ctx) {
+  @Override public Object visitFilter(final FilterContext ctx) {
     context.contextReadingQueryPart = true;
-    final FilterOptionImpl result = new FilterOptionImpl().setExpression((ExpressionImpl) ctx.children.get(2)
-                                                          .accept(this));
+    final FilterOptionImpl result = new FilterOptionImpl().setExpression((ExpressionImpl) ctx.children.get(2).accept(this));
     context.contextReadingQueryPart = false;
-
     return result;
   }
 
-  @Override
-  public Object visitFilterExpressionEOF(final FilterExpressionEOFContext ctx) {
+  @Override public Object visitFilterExpressionEOF(final FilterExpressionEOFContext ctx) {
     context.contextReadingQueryPart = true;
-    final FilterOptionImpl result = new FilterOptionImpl().setExpression((ExpressionImpl) ctx.children.get(0)
-                                                          .accept(this));
+    final FilterOptionImpl result = new FilterOptionImpl().setExpression((ExpressionImpl) ctx.children.get(0).accept(this));
     context.contextReadingQueryPart = false;
-
     return result;
   }
 
-  @Override
-  public ExpressionImpl visitFloorMethodCallExpr(final FloorMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.FLOOR)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitFloorMethodCallExpr(final FloorMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.FLOOR).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public ExpressionImpl visitFractionalsecondsMethodCallExpr(final FractionalsecondsMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.FRACTIONALSECONDS)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitFractionalsecondsMethodCallExpr(final FractionalsecondsMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.FRACTIONALSECONDS).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public ExpressionImpl visitGeoLengthMethodCallExpr(final GeoLengthMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.GEOLENGTH)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitGeoLengthMethodCallExpr(final GeoLengthMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.GEOLENGTH).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public ExpressionImpl visitHourMethodCallExpr(final HourMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.HOUR)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitHourMethodCallExpr(final HourMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.HOUR).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public ExpressionImpl visitIndexOfMethodCallExpr(final IndexOfMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.INDEXOF)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this))
-        .addParameter((ExpressionImpl) ctx.vE2.accept(this));
+  @Override public ExpressionImpl visitIndexOfMethodCallExpr(final IndexOfMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.INDEXOF).addParameter((ExpressionImpl) ctx.vE1.accept(this)).addParameter((ExpressionImpl) ctx.vE2.accept(this));
   }
 
-  @Override
-  public Object visitInlinecount(final InlinecountContext ctx) {
+  @Override public Object visitInlinecount(final InlinecountContext ctx) {
     CountOptionImpl inlineCount = new CountOptionImpl();
-
     String text = ctx.children.get(2).getText();
-
     return inlineCount.setValue(text.toLowerCase().equals("true") ? true : false).setText(text);
   }
 
-  @Override
-  public ExpressionImpl visitGeoIntersectsMethodCallExpr(final GeoIntersectsMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.GEOINTERSECTS)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this))
-        .addParameter((ExpressionImpl) ctx.vE2.accept(this));
+  @Override public ExpressionImpl visitGeoIntersectsMethodCallExpr(final GeoIntersectsMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.GEOINTERSECTS).addParameter((ExpressionImpl) ctx.vE1.accept(this)).addParameter((ExpressionImpl) ctx.vE2.accept(this));
   }
 
-  @Override
-  public ExpressionImpl visitIsofExpr(final IsofExprContext ctx) {
+  @Override public ExpressionImpl visitIsofExpr(final IsofExprContext ctx) {
     MethodImpl method = new MethodImpl();
     if (ctx.vE1 != null) {
       ExpressionImpl onExpression = (ExpressionImpl) ctx.vE1.accept(this);
       method.addParameter(onExpression);
     }
-
     String namespace = ctx.vNS.getText();
     namespace = namespace.substring(0, namespace.length() - 1);
-
     FullQualifiedName fullName = new FullQualifiedName(namespace, ctx.vODI.getText());
     EdmType type = getType(fullName);
     method.setMethod(MethodKind.ISOF);
     method.addParameter(new TypeLiteralImpl().setType(type));
-
     return method;
   }
 
-  @Override
-  public ExpressionImpl visitLengthMethodCallExpr(final LengthMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.LENGTH)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitLengthMethodCallExpr(final LengthMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.LENGTH).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public Object visitLevels(final LevelsContext ctx) {
-
+  @Override public Object visitLevels(final LevelsContext ctx) {
     LevelsOptionImpl levels = new LevelsOptionImpl();
-
     String text = ctx.children.get(2).getText();
-
     if (text.equals("max")) {
       levels.setMax();
     } else {
       levels.setValue(Integer.parseInt(text));
     }
     levels.setText(text);
-
     return levels;
-
   }
 
-  @Override
-  public ExpressionImpl visitMaxDateTimeMethodCallExpr(final MaxDateTimeMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.MAXDATETIME);
+  @Override public ExpressionImpl visitMaxDateTimeMethodCallExpr(final MaxDateTimeMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.MAXDATETIME);
   }
 
-  @Override
-  public Object visitMemberExpr(final MemberExprContext ctx) {
-
+  @Override public Object visitMemberExpr(final MemberExprContext ctx) {
     UriInfoImpl uriInfoImplpath = new UriInfoImpl().setKind(UriInfoKind.resource);
-
     if (context.contextTypes.isEmpty()) {
-      throw wrap(new UriParserSemanticException("Expression '" + ctx.getText() + "' is not allowed as key value.",
-          UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE, ctx.getText()));
+      throw wrap(new UriParserSemanticException("Expression \'" + ctx.getText() + "\' is not allowed as key value.", UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE, ctx.getText()));
     }
     TypeInformation lastTypeInfo = context.contextTypes.peek();
-
     if (ctx.vIt != null || ctx.vIts != null) {
       UriResourceItImpl pathInfoIT = new UriResourceItImpl();
       pathInfoIT.setType(lastTypeInfo.type);
       pathInfoIT.setCollection(lastTypeInfo.isCollection);
       uriInfoImplpath.addResourcePart(pathInfoIT);
     }
-
     if (ctx.vPs != null) {
-      // save the context
       UriInfoImpl backupUriInfoPath = context.contextUriInfo;
-
-      // set temporary uriInfoPath
       context.contextUriInfo = uriInfoImplpath;
-
       ctx.vPs.accept(this);
-
-      // reset context
       context.contextUriInfo = backupUriInfoPath;
     }
-
     if (ctx.vALL != null) {
       uriInfoImplpath.addResourcePart((UriResourceImpl) ctx.vALL.accept(this));
     }
     if (ctx.vANY != null) {
       uriInfoImplpath.addResourcePart((UriResourceImpl) ctx.vANY.accept(this));
     }
-
     EdmType startType = removeUriResourceStartingTypeFilterImpl(uriInfoImplpath);
-
     MemberImpl ret = new MemberImpl();
     ret.setResourcePath(uriInfoImplpath);
     if (startType != null) {
       ret.setTypeFilter(startType);
     }
-
     return ret;
   }
 
-  @Override
-  public ExpressionImpl visitMinDateTimeMethodCallExpr(final MinDateTimeMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.MINDATETIME);
+  @Override public ExpressionImpl visitMinDateTimeMethodCallExpr(final MinDateTimeMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.MINDATETIME);
   }
 
-  @Override
-  public ExpressionImpl visitMinuteMethodCallExpr(final MinuteMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.MINUTE)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitMinuteMethodCallExpr(final MinuteMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.MINUTE).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public ExpressionImpl visitMonthMethodCallExpr(final MonthMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.MONTH)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitMonthMethodCallExpr(final MonthMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.MONTH).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public Object visitNameValueOptList(final NameValueOptListContext ctx) {
+  @Override public Object visitNameValueOptList(final NameValueOptListContext ctx) {
     if (ctx.vVO != null) {
-      // This branch is chosen if the key predicate is a common expression e.g. EntitySet(0)
-
-      // is single key predicate without a name
       String valueText = ctx.vVO.getText();
       ExpressionImpl expression = null;
       try {
         expression = (ExpressionImpl) ctx.vVO.accept(this);
       } catch (final RuntimeException e) {
-        throw wrap(new UriParserSemanticException("Invalid key value: " + valueText, e,
-            UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE, valueText));
+        throw wrap(new UriParserSemanticException("Invalid key value: " + valueText, e, UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE, valueText));
       }
-
-      // get type of last resource part
       UriResource last = context.contextUriInfo.getLastResourcePart();
       if (!(last instanceof UriResourcePartTyped)) {
-        throw wrap(new UriParserSemanticException("Parameters list on untyped resource path segment not allowed",
-            UriParserSemanticException.MessageKeys.PARAMETERS_LIST_ONLY_FOR_TYPED_PARTS));
-
-      } else if (last instanceof UriResourceFunction) {
-        // Handle functions
-        final UriResourceFunction uriResourceFunction =
-            (UriResourceFunction) context.contextUriInfo.getLastResourcePart();
-        final EdmReturnType returnType = uriResourceFunction.getFunction().getReturnType();
-
-        if (returnType.getType().getKind() != EdmTypeKind.ENTITY || !returnType.isCollection()) {
-          throw wrap(new UriParserSemanticException("No keys allowed",
-              UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED));
-        } else {
-          // The functions returns a collection of entities
-          // Get the EDM Type and determine how many key predicates are needed. In this case only one
-          // key predicate is allowed. If the entity type needs more than one key predicate, the client
-          // has to use the key value syntax e.g. EntitySet(ID=1,Order=2)
-          final EdmEntityType entityType = (EdmEntityType) uriResourceFunction.getFunction().getReturnType().getType();
-          final List<String> lastKeyPredicates = entityType.getKeyPredicateNames();
-
-          if (lastKeyPredicates.size() == 1) {
-            return Collections.singletonList(new UriParameterImpl()
-                .setName(lastKeyPredicates.get(0))
-                .setText(valueText)
-                .setExpression(expression));
-          } else {
-            throw wrap(new UriParserSemanticException("Wrong number of key properties.",
-                UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES,
-                Integer.toString(lastKeyPredicates.size()), "1"));
-          }
-        }
+        throw wrap(new UriParserSemanticException("Parameters list on untyped resource path segment not allowed", UriParserSemanticException.MessageKeys.PARAMETERS_LIST_ONLY_FOR_TYPED_PARTS));
       } else {
-        // Handle EntitySets
-        EdmEntityType lastType = (EdmEntityType) ((UriResourcePartTyped) last).getType();
-
-        // get list of keys for lastType
-        List<String> lastKeyPredicates = lastType.getKeyPredicateNames();
-
-        // If there is exactly one key defined in the EDM, then this key is the key written in the URI,
-        // so fill the keylist with this key and return.
-        if (lastKeyPredicates.size() == 1) {
-          return Collections.singletonList(new UriParameterImpl()
-              .setName(lastKeyPredicates.get(0))
-              .setText(valueText)
-              .setExpression(expression));
-        }
-
-        // There are more keys defined in the EDM, but only one is written in the URI. This is allowed only if
-        // referential constraints are defined on this navigation property which can be used to fill up all
-        // required keys.
-        // For using referential constraints the last resource part must be a navigation property.
-        if (!(context.contextUriInfo.getLastResourcePart() instanceof UriResourceNavigationPropertyImpl)) {
-          throw wrap(new UriParserSemanticException("Wrong number of key properties.",
-              UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES,
-              Integer.toString(lastKeyPredicates.size()), "1"));
-        }
-        UriResourceNavigationPropertyImpl lastNav = (UriResourceNavigationPropertyImpl) last;
-
-        // get the partner of the navigation property
-        EdmNavigationProperty partner = lastNav.getProperty().getPartner();
-        if (partner == null) {
-          throw wrap(new UriParserSemanticException("Wrong number of key properties.",
-              UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES,
-              Integer.toString(lastKeyPredicates.size()), "1"));
-        }
-
-        // create the keylist
-        List<UriParameterImpl> list = new ArrayList<UriParameterImpl>();
-
-        // Find the keys not filled by referential constraints
-        // and collect the other keys filled by referential constraints.
-        String missedKey = null;
-        for (String item : lastKeyPredicates) {
-          String property = partner.getReferencingPropertyName(item);
-          if (property != null) {
-            list.add(new UriParameterImpl().setName(item).setRefencedProperty(property));
+        if (last instanceof UriResourceFunction) {
+          final UriResourceFunction uriResourceFunction = (UriResourceFunction) context.contextUriInfo.getLastResourcePart();
+          final EdmReturnType returnType = uriResourceFunction.getFunction().getReturnType();
+          if (returnType.getType().getKind() != EdmTypeKind.ENTITY || !returnType.isCollection()) {
+            throw wrap(new UriParserSemanticException("No keys allowed", UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED));
           } else {
-            if (missedKey == null) {
-              missedKey = item;
+            final EdmEntityType entityType = (EdmEntityType) uriResourceFunction.getFunction().getReturnType().getType();
+            final List<String> lastKeyPredicates = entityType.getKeyPredicateNames();
+            if (lastKeyPredicates.size() == 1) {
+              return Collections.singletonList(new UriParameterImpl().setName(lastKeyPredicates.get(0)).setText(valueText).setExpression(expression));
             } else {
-              // two of more keys are missing
-              throw wrap(new UriParserSemanticException("Not enough referential constraints defined",
-                  UriParserSemanticException.MessageKeys.NOT_ENOUGH_REFERENTIAL_CONSTRAINTS));
+              throw wrap(new UriParserSemanticException("Wrong number of key properties.", UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES, Integer.toString(lastKeyPredicates.size()), "1"));
             }
           }
-        }
-
-        // the missing key is the one which is defined in the URI
-        list.add(new UriParameterImpl().setName(missedKey).setText(valueText).setExpression(expression));
-
-        return list;
-      }
-    } else if (ctx.vNVL != null) {
-      // The client provided a list of key values pairs e.g. EntitySet(ID=1,Order=2)
-      List<UriParameterImpl> list = new ArrayList<UriParameterImpl>();
-
-      for (ParseTree c : ctx.vNVL.vlNVP) {
-        list.add((UriParameterImpl) c.accept(this));
-      }
-
-      if (context.contextReadingFunctionParameters) {
-        return list;
-      }
-
-      UriResource last = context.contextUriInfo.getLastResourcePart();
-
-      // get type of last resource part
-      if (!(last instanceof UriResourcePartTyped)) {
-        throw wrap(new UriParserSemanticException("Parameters list on untyped resource path segment not allowed",
-            UriParserSemanticException.MessageKeys.PARAMETERS_LIST_ONLY_FOR_TYPED_PARTS));
-      }
-      if (last instanceof UriResourceFunction) {
-        final UriResourceFunction uriResourceFunction = (UriResourceFunction) context.contextUriInfo
-            .getLastResourcePart();
-        final EdmReturnType returnType = uriResourceFunction.getFunction().getReturnType();
-
-        if (returnType.getType().getKind() != EdmTypeKind.ENTITY || !returnType.isCollection()) {
-          throw wrap(new UriParserSemanticException("No keys allowed",
-              UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED));
         } else {
-          // The functions returns a collection of entities
-          // Get the EDM Type and determine how many key predicates are needed.
-          // In case of functions all key predicates must be provided by the client.
-          final EdmEntityType entityType = (EdmEntityType) uriResourceFunction.getFunction().getReturnType().getType();
-          final List<String> lastKeyPredicates = entityType.getKeyPredicateNames();
-
-          if (lastKeyPredicates.size() == list.size()) {
-            return list;
-          } else {
-            throw wrap(new UriParserSemanticException("Wrong number of key properties.",
-                UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES,
-                Integer.toString(lastKeyPredicates.size()), "1"));
+          EdmEntityType lastType = (EdmEntityType) ((UriResourcePartTyped) last).getType();
+          List<String> lastKeyPredicates = lastType.getKeyPredicateNames();
+          if (lastKeyPredicates.size() == 1) {
+            return Collections.singletonList(new UriParameterImpl().setName(lastKeyPredicates.get(0)).setText(valueText).setExpression(expression));
           }
-        }
-      } else {
-        // Handle entity sets
-        EdmEntityType lastType = (EdmEntityType) ((UriResourcePartTyped) last).getType();
-
-        // get list of keys for lastType
-        List<String> lastKeyPredicates = lastType.getKeyPredicateNames();
-
-        // check if all key are filled from the URI
-        if (list.size() == lastKeyPredicates.size()) {
-          return list;
-        }
-
-        // if not, check if the missing key predicates can be satisfied with help of the defined
-        // referential constraints
-        // for using referential constraints the last resource part must be a navigation property
-        if (!(context.contextUriInfo.getLastResourcePart() instanceof UriResourceNavigationPropertyImpl)) {
-          throw wrap(new UriParserSemanticException("Wrong number of key properties.",
-              UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES,
-              Integer.toString(lastKeyPredicates.size()), Integer.toString(list.size())));
-        }
-        UriResourceNavigationPropertyImpl lastNav = (UriResourceNavigationPropertyImpl) last;
-
-        // get the partner of the navigation property
-        EdmNavigationProperty partner = lastNav.getProperty().getPartner();
-        if (partner == null) {
-          throw wrap(new UriParserSemanticException("Wrong number of key properties.",
-              UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES,
-              Integer.toString(lastKeyPredicates.size()), Integer.toString(list.size())));
-        }
-
-        // fill missing keys from referential constraints
-        for (String key : lastKeyPredicates) {
-          boolean found = false;
-          for (UriParameterImpl item : list) {
-            if (item.getName().equals(key)) {
-              found = true;
-              break;
-            }
+          if (!(context.contextUriInfo.getLastResourcePart() instanceof UriResourceNavigationPropertyImpl)) {
+            throw wrap(new UriParserSemanticException("Wrong number of key properties.", UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES, Integer.toString(lastKeyPredicates.size()), "1"));
           }
-
-          if (!found) {
-            String property = partner.getReferencingPropertyName(key);
+          UriResourceNavigationPropertyImpl lastNav = (UriResourceNavigationPropertyImpl) last;
+          EdmNavigationProperty partner = lastNav.getProperty().getPartner();
+          if (partner == null) {
+            throw wrap(new UriParserSemanticException("Wrong number of key properties.", UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES, Integer.toString(lastKeyPredicates.size()), "1"));
+          }
+          List<UriParameterImpl> list = new ArrayList<UriParameterImpl>();
+          String missedKey = null;
+          for (String item : lastKeyPredicates) {
+            String property = partner.getReferencingPropertyName(item);
             if (property != null) {
-              // store the key name as referenced property
-              list.add(0, new UriParameterImpl().setName(key).setRefencedProperty(property));
+              list.add(new UriParameterImpl().setName(item).setRefencedProperty(property));
+            } else {
+              if (missedKey == null) {
+                missedKey = item;
+              } else {
+                throw wrap(new UriParserSemanticException("Not enough referential constraints defined", UriParserSemanticException.MessageKeys.NOT_ENOUGH_REFERENTIAL_CONSTRAINTS));
+              }
             }
           }
-        }
-
-        // check again if all key predicates are filled from the URI
-        if (list.size() == lastKeyPredicates.size()) {
+          list.add(new UriParameterImpl().setName(missedKey).setText(valueText).setExpression(expression));
           return list;
-        } else {
-          throw wrap(new UriParserSemanticException("Wrong number of key properties.",
-              UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES,
-              Integer.toString(lastKeyPredicates.size()), Integer.toString(list.size())));
         }
       }
     } else {
-      // No key predicates are provided by the client
-
-      if (context.contextReadingFunctionParameters) {
-        return Collections.emptyList();
+      if (ctx.vNVL != null) {
+        List<UriParameterImpl> list = new ArrayList<UriParameterImpl>();
+        for (ParseTree c : ctx.vNVL.vlNVP) {
+          list.add((UriParameterImpl) c.accept(this));
+        }
+        if (context.contextReadingFunctionParameters) {
+          return list;
+        }
+        UriResource last = context.contextUriInfo.getLastResourcePart();
+        if (!(last instanceof UriResourcePartTyped)) {
+          throw wrap(new UriParserSemanticException("Parameters list on untyped resource path segment not allowed", UriParserSemanticException.MessageKeys.PARAMETERS_LIST_ONLY_FOR_TYPED_PARTS));
+        }
+        if (last instanceof UriResourceFunction) {
+          final UriResourceFunction uriResourceFunction = (UriResourceFunction) context.contextUriInfo.getLastResourcePart();
+          final EdmReturnType returnType = uriResourceFunction.getFunction().getReturnType();
+          if (returnType.getType().getKind() != EdmTypeKind.ENTITY || !returnType.isCollection()) {
+            throw wrap(new UriParserSemanticException("No keys allowed", UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED));
+          } else {
+            final EdmEntityType entityType = (EdmEntityType) uriResourceFunction.getFunction().getReturnType().getType();
+            final List<String> lastKeyPredicates = entityType.getKeyPredicateNames();
+            if (lastKeyPredicates.size() == list.size()) {
+              return list;
+            } else {
+              throw wrap(new UriParserSemanticException("Wrong number of key properties.", UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES, Integer.toString(lastKeyPredicates.size()), "1"));
+            }
+          }
+        } else {
+          EdmEntityType lastType = (EdmEntityType) ((UriResourcePartTyped) last).getType();
+          List<String> lastKeyPredicates = lastType.getKeyPredicateNames();
+          if (list.size() == lastKeyPredicates.size()) {
+            return list;
+          }
+          if (!(context.contextUriInfo.getLastResourcePart() instanceof UriResourceNavigationPropertyImpl)) {
+            throw wrap(new UriParserSemanticException("Wrong number of key properties.", UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES, Integer.toString(lastKeyPredicates.size()), Integer.toString(list.size())));
+          }
+          UriResourceNavigationPropertyImpl lastNav = (UriResourceNavigationPropertyImpl) last;
+          EdmNavigationProperty partner = lastNav.getProperty().getPartner();
+          if (partner == null) {
+            throw wrap(new UriParserSemanticException("Wrong number of key properties.", UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES, Integer.toString(lastKeyPredicates.size()), Integer.toString(list.size())));
+          }
+          for (String key : lastKeyPredicates) {
+            boolean found = false;
+            for (UriParameterImpl item : list) {
+              if (item.getName().equals(key)) {
+                found = true;
+                break;
+              }
+            }
+            if (!found) {
+              String property = partner.getReferencingPropertyName(key);
+              if (property != null) {
+                list.add(0, new UriParameterImpl().setName(key).setRefencedProperty(property));
+              }
+            }
+          }
+          if (list.size() == lastKeyPredicates.size()) {
+            return list;
+          } else {
+            throw wrap(new UriParserSemanticException("Wrong number of key properties.", UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES, Integer.toString(lastKeyPredicates.size()), Integer.toString(list.size())));
+          }
+        }
       } else {
-        final UriResource last = context.contextUriInfo.getLastResourcePart();
-        final int number = last instanceof UriResourcePartTyped ? ((EdmEntityType) ((UriResourcePartTyped) last)
-            .getType()).getKeyPredicateNames().size() : 0;
-        throw wrap(new UriParserSemanticException("Wrong number of key properties.",
-            UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES, Integer.toString(number), "0"));
+        if (context.contextReadingFunctionParameters) {
+          return Collections.emptyList();
+        } else {
+          final UriResource last = context.contextUriInfo.getLastResourcePart();
+          final int number = last instanceof UriResourcePartTyped ? ((EdmEntityType) ((UriResourcePartTyped) last).getType()).getKeyPredicateNames().size() : 0;
+          throw wrap(new UriParserSemanticException("Wrong number of key properties.", UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES, Integer.toString(number), "0"));
+        }
       }
     }
   }
 
-  @Override
-  public UriParameterImpl visitNameValuePair(final NameValuePairContext ctx) {
+  @Override public UriParameterImpl visitNameValuePair(final NameValuePairContext ctx) {
     UriParameterImpl uriParameter = new UriParameterImpl();
     uriParameter.setName(ctx.vODI.getText());
-
     if (ctx.vCOM != null) {
       final String text = ctx.vCOM.getText();
       uriParameter.setText("null".equals(text) ? null : text);
@@ -1837,339 +1340,211 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     } else {
       uriParameter.setAlias("@" + ctx.vALI.getText());
     }
-
     return uriParameter;
   }
 
-  @Override
-  public Object visitNaninfinityLiteral(final NaninfinityLiteralContext ctx) {
-    return new LiteralImpl().setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal)).setText(ctx
-        .getText());
+  @Override public Object visitNaninfinityLiteral(final NaninfinityLiteralContext ctx) {
+    return new LiteralImpl().setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal)).setText(ctx.getText());
   }
 
-  @Override
-  public ExpressionImpl visitNowMethodCallExpr(final NowMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.NOW);
+  @Override public ExpressionImpl visitNowMethodCallExpr(final NowMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.NOW);
   }
 
-  @Override
-  public Object visitNullruleLiteral(final NullruleLiteralContext ctx) {
+  @Override public Object visitNullruleLiteral(final NullruleLiteralContext ctx) {
     return new LiteralImpl().setText("null");
   }
 
-  /*
-   * @Override
-   * public Object visitOdataRelativeUriEOF(final OdataRelativeUriEOFContext ctx) {
-   * contextUriInfo = null;
-   * super.visitOdataRelativeUriEOF(ctx);
-   * return contextUriInfo;
-   * }
-   */
-  @Override
-  public Object visitOrderBy(final OrderByContext ctx) {
-
+  @Override public Object visitOrderBy(final OrderByContext ctx) {
     OrderByOptionImpl orderBy = new OrderByOptionImpl();
-
     for (OrderByItemContext item : ((OrderListContext) ctx.getChild(2)).vlOI) {
       OrderByItemImpl oItem = (OrderByItemImpl) item.accept(this);
       orderBy.addOrder(oItem);
     }
-
     return orderBy;
   }
 
-  @Override
-  public Object visitOrderByEOF(final OrderByEOFContext ctx) {
+  @Override public Object visitOrderByEOF(final OrderByEOFContext ctx) {
     context.contextReadingQueryPart = true;
-    
     OrderByOptionImpl orderBy = new OrderByOptionImpl();
-
     for (OrderByItemContext item : ((OrderListContext) ctx.getChild(0)).vlOI) {
       OrderByItemImpl oItem = (OrderByItemImpl) item.accept(this);
       orderBy.addOrder(oItem);
     }
-
     context.contextReadingFunctionParameters = false;
     return orderBy;
   }
 
-  @Override
-  public Object visitOrderByItem(final OrderByItemContext ctx) {
+  @Override public Object visitOrderByItem(final OrderByItemContext ctx) {
     OrderByItemImpl oItem = new OrderByItemImpl();
     if (ctx.vD != null) {
       oItem.setDescending(true);
     }
-
     oItem.setExpression((ExpressionImpl) ctx.vC.accept(this));
     return oItem;
   }
 
-  @Override
-  public Object visitPathSegment(final PathSegmentContext ctx) {
+  @Override public Object visitPathSegment(final PathSegmentContext ctx) {
     readResourcePathSegment(ctx);
-    /*
-     * if (contextUriInfo.getLastResourcePart() == null ||
-     * contextUriInfo.getLastResourcePart() instanceof UriResourceRootImpl) {
-     * 
-     * } else {
-     * readNextPathInfoSegment(ctx);
-     * }
-     */
     UriResourceImpl pathInfoSegment = (UriResourceImpl) context.contextUriInfo.getLastResourcePart();
-
     if (ctx.vlNVO.size() > 0) {
-      // check for keyPredicates
       if (pathInfoSegment instanceof UriResourceWithKeysImpl) {
         if (ctx.vlNVO.size() > 1) {
-          throw wrap(new UriParserSemanticException("More than one key predicates found",
-              UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES, "1",
-              Integer.toString(ctx.vlNVO.size())));
+          throw wrap(new UriParserSemanticException("More than one key predicates found", UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES, "1", Integer.toString(ctx.vlNVO.size())));
         }
-
-        @SuppressWarnings("unchecked")
-        List<UriParameter> list = (List<UriParameter>) ctx.vlNVO.get(0).accept(this);
-        ((UriResourceWithKeysImpl) pathInfoSegment)
-            .setKeyPredicates(list);
+        @SuppressWarnings(value = { "unchecked" }) List<UriParameter> list = (List<UriParameter>) ctx.vlNVO.get(0).accept(this);
+        ((UriResourceWithKeysImpl) pathInfoSegment).setKeyPredicates(list);
       } else {
-        throw wrap(new UriParserSemanticException("Key properties not allowed",
-            UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED));
+        throw wrap(new UriParserSemanticException("Key properties not allowed", UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED));
       }
     }
-
     return pathInfoSegment;
   }
 
-  @Override
-  public Object visitPathSegments(final PathSegmentsContext ctx) {
-    // path segment
+  @Override public Object visitPathSegments(final PathSegmentsContext ctx) {
     for (PathSegmentContext it : ctx.vlPS) {
       it.accept(this);
     }
-
-    // const segment
     if (ctx.vCS != null) {
       ctx.vCS.accept(this);
     }
     return null;
   }
 
-  @Override
-  public Object visitPrimitiveLiteral(final PrimitiveLiteralContext ctx) {
+  @Override public Object visitPrimitiveLiteral(final PrimitiveLiteralContext ctx) {
     ParseTree child1 = ctx.children.get(0);
-
-    if (child1 instanceof EnumLiteralContext
-        || child1 instanceof BooleanNonCaseLiteralContext
-        || child1 instanceof NullruleLiteralContext
-        || child1 instanceof NaninfinityLiteralContext
-        || child1 instanceof StringLiteralContext
-        || child1 instanceof IntLiteralContext
-        || child1 instanceof BinaryLiteralContext
-        || child1 instanceof DateLiteralContext
-        || child1 instanceof DatetimeoffsetLiteralContext
-        || child1 instanceof DurationLiteralContext
-        || child1 instanceof GuidLiteralContext
-        || child1 instanceof TimeofdayLiteralContext
-        || child1 instanceof DecimalLiteralContext
-        || child1 instanceof BinaryLiteralContext) {
+    if (child1 instanceof EnumLiteralContext || child1 instanceof BooleanNonCaseLiteralContext || child1 instanceof NullruleLiteralContext || child1 instanceof NaninfinityLiteralContext || child1 instanceof StringLiteralContext || child1 instanceof IntLiteralContext || child1 instanceof BinaryLiteralContext || child1 instanceof DateLiteralContext || child1 instanceof DatetimeoffsetLiteralContext || child1 instanceof DurationLiteralContext || child1 instanceof GuidLiteralContext || child1 instanceof TimeofdayLiteralContext || child1 instanceof DecimalLiteralContext || child1 instanceof BinaryLiteralContext) {
       return child1.accept(this);
     }
-
-    // TODO Implement geography types and set a proper type
     return new LiteralImpl().setText(ctx.getText());
   }
 
-  @Override
-  public Object visitBinaryLiteral(BinaryLiteralContext ctx) {
-    return new LiteralImpl().setText(ctx.getText())
-        .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary));
+  @Override public Object visitBinaryLiteral(BinaryLiteralContext ctx) {
+    return new LiteralImpl().setText(ctx.getText()).setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary));
   }
 
-  @Override
-  public Object visitStringLiteral(final StringLiteralContext ctx) {
-    return new LiteralImpl().setText(ctx.getText())
-        .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String));
+  @Override public Object visitStringLiteral(final StringLiteralContext ctx) {
+    return new LiteralImpl().setText(ctx.getText()).setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String));
   }
 
-  @Override
-  public Object visitDecimalLiteral(final DecimalLiteralContext ctx) {
-    final EdmType type = EdmPrimitiveTypeFactory.getInstance(
-        ctx.getText().contains("e") || ctx.getText().contains("E") ? EdmPrimitiveTypeKind.Double
-            : EdmPrimitiveTypeKind.Decimal);
-
+  @Override public Object visitDecimalLiteral(final DecimalLiteralContext ctx) {
+    final EdmType type = EdmPrimitiveTypeFactory.getInstance(ctx.getText().contains("e") || ctx.getText().contains("E") ? EdmPrimitiveTypeKind.Double : EdmPrimitiveTypeKind.Decimal);
     return new LiteralImpl().setText(ctx.getText()).setType(type);
   }
 
-  @Override
-  public Object visitIntLiteral(final IntLiteralContext ctx) {
+  @Override public Object visitIntLiteral(final IntLiteralContext ctx) {
     EdmPrimitiveTypeKind typeKind = null;
     try {
       final long value = Long.parseLong(ctx.getText());
       if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
         typeKind = EdmPrimitiveTypeKind.SByte;
-      } else if (value >= 0 && value <= 255) {
-        typeKind = EdmPrimitiveTypeKind.Byte;
-      } else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
-        typeKind = EdmPrimitiveTypeKind.Int16;
-      } else if (value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE) {
-        typeKind = EdmPrimitiveTypeKind.Int32;
       } else {
-        typeKind = EdmPrimitiveTypeKind.Int64;
+        if (value >= 0 && value <= 255) {
+          typeKind = EdmPrimitiveTypeKind.Byte;
+        } else {
+          if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
+            typeKind = EdmPrimitiveTypeKind.Int16;
+          } else {
+            if (value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE) {
+              typeKind = EdmPrimitiveTypeKind.Int32;
+            } else {
+              typeKind = EdmPrimitiveTypeKind.Int64;
+            }
+          }
+        }
       }
-    } catch (NumberFormatException e) {
-      return new LiteralImpl().setText(ctx.getText())
-          .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal));
+    } catch (final NumberFormatException e) {
+      typeKind = EdmPrimitiveTypeKind.Decimal;
     }
-    return new LiteralImpl().setText(ctx.getText())
-        .setType(EdmPrimitiveTypeFactory.getInstance(typeKind));
+    return new LiteralImpl().setText(ctx.getText()).setType(EdmPrimitiveTypeFactory.getInstance(typeKind));
   }
 
-  @Override
-  public Object visitDateLiteral(final DateLiteralContext ctx) {
-    return new LiteralImpl().setText(ctx.getText())
-        .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Date));
+  @Override public Object visitDateLiteral(final DateLiteralContext ctx) {
+    return new LiteralImpl().setText(ctx.getText()).setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Date));
   }
 
-  @Override
-  public Object visitDatetimeoffsetLiteral(final DatetimeoffsetLiteralContext ctx) {
-    return new LiteralImpl().setText(ctx.getText())
-        .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.DateTimeOffset));
+  @Override public Object visitDatetimeoffsetLiteral(final DatetimeoffsetLiteralContext ctx) {
+    return new LiteralImpl().setText(ctx.getText()).setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.DateTimeOffset));
   }
 
-  @Override
-  public Object visitDurationLiteral(final DurationLiteralContext ctx) {
-    return new LiteralImpl().setText(ctx.getText())
-        .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Duration));
+  @Override public Object visitDurationLiteral(final DurationLiteralContext ctx) {
+    return new LiteralImpl().setText(ctx.getText()).setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Duration));
   }
 
-  @Override
-  public Object visitGuidLiteral(final GuidLiteralContext ctx) {
-    return new LiteralImpl().setText(ctx.getText())
-        .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Guid));
+  @Override public Object visitGuidLiteral(final GuidLiteralContext ctx) {
+    return new LiteralImpl().setText(ctx.getText()).setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Guid));
   }
 
-  @Override
-  public Object visitTimeofdayLiteral(final TimeofdayLiteralContext ctx) {
-    return new LiteralImpl().setText(ctx.getText())
-        .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.TimeOfDay));
+  @Override public Object visitTimeofdayLiteral(final TimeofdayLiteralContext ctx) {
+    return new LiteralImpl().setText(ctx.getText()).setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.TimeOfDay));
   }
 
-  @Override
-  public Object visitQueryOptions(final QueryOptionsContext ctx) {
-
+  @Override public Object visitQueryOptions(final QueryOptionsContext ctx) {
     List<QueryOptionImpl> qpList = new ArrayList<QueryOptionImpl>();
     for (QueryOptionContext entityOption : ctx.vlQO) {
       qpList.add((QueryOptionImpl) entityOption.accept(this));
     }
-
     return qpList;
   }
 
-  /*
-   * @Override
-   * public Object visitResourcePath(final ResourcePathContext ctx) {
-   * if (ctx.vAll != null) {
-   * contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.all);
-   * } else if (ctx.vCJ != null) {
-   * ctx.vCJ.accept(this);
-   * } else if (ctx.vlPS != null) {
-   * UriInfoImpl uriInfoPath = new UriInfoImpl().setKind(UriInfoKind.resource);
-   * contextUriInfo = uriInfoPath;
-   * super.visitResourcePath(ctx); // visit all children of ctx
-   * }
-   * return contextUriInfo;
-   * }
-   */
-  @Override
-  public Object visitRootExpr(final RootExprContext ctx) {
-
+  @Override public Object visitRootExpr(final RootExprContext ctx) {
     UriResource lastResource = context.contextUriInfo.getLastResourcePart();
-
     if (!(lastResource instanceof UriResourcePartTyped)) {
-      throw wrap(new UriParserSemanticException("Resource path not typed",
-          UriParserSemanticException.MessageKeys.RESOURCE_PATH_NOT_TYPED));
+      throw wrap(new UriParserSemanticException("Resource path not typed", UriParserSemanticException.MessageKeys.RESOURCE_PATH_NOT_TYPED));
     }
-
     UriResourcePartTyped lastType = (UriResourcePartTyped) lastResource;
-
     UriResourceRootImpl pathInfoRoot = new UriResourceRootImpl();
     pathInfoRoot.setCollection(lastType.isCollection());
     pathInfoRoot.setType(getTypeInformation(lastType).type);
-
     UriInfoImpl uriInfoImplpath = new UriInfoImpl().setKind(UriInfoKind.resource);
     uriInfoImplpath.addResourcePart(pathInfoRoot);
-
     if (ctx.vPs != null) {
-      // store the context uriInfoPath
       UriInfoImpl backupUriInfoPath = context.contextUriInfo;
-
-      // set temporary uriInfoPath to collect the path information of the memberExpression
       context.contextUriInfo = uriInfoImplpath;
-
       ctx.vPs.accept(this);
-
       context.contextUriInfo = backupUriInfoPath;
-
     }
-    return new MemberImpl()
-        .setResourcePath(uriInfoImplpath);
-
+    return new MemberImpl().setResourcePath(uriInfoImplpath);
   }
 
-  @Override
-  public ExpressionImpl visitRoundMethodCallExpr(final RoundMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.ROUND)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitRoundMethodCallExpr(final RoundMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.ROUND).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public ExpressionImpl visitSecondMethodCallExpr(final SecondMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.SECOND)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitSecondMethodCallExpr(final SecondMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.SECOND).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public Object visitSelect(final SelectContext ctx) {
+  @Override public Object visitSelect(final SelectContext ctx) {
     List<SelectItem> selectItems = new ArrayList<SelectItem>();
     for (SelectItemContext si : ctx.vlSI) {
       selectItems.add((SelectItem) si.accept(this));
     }
-
     return new SelectOptionImpl().setSelectItems(selectItems).setText(ctx.children.get(2).getText());
   }
 
-  @Override
-  public Object visitSelectEOF(final SelectEOFContext ctx) {
+  @Override public Object visitSelectEOF(final SelectEOFContext ctx) {
     context.contextReadingQueryPart = true;
-    List<SelectItemImpl> selectItems = new ArrayList<SelectItemImpl>();
+    List<SelectItem> selectItems = new ArrayList<SelectItem>();
     for (SelectItemContext si : ctx.vlSI) {
       selectItems.add((SelectItem) si.accept(this));
     }
-
     final QueryOptionImpl result = new SelectOptionImpl().setSelectItems(selectItems).setText(ctx.getText());
     context.contextReadingQueryPart = false;
-    
     return result;
   }
 
-  @Override
-  public Object visitSelectItem(final SelectItemContext ctx) {
+  @Override public Object visitSelectItem(final SelectItemContext ctx) {
     SelectItemImpl selectItem = new SelectItemImpl();
-
     context.contextSelectItem = selectItem;
     for (SelectSegmentContext si : ctx.vlSS) {
       si.accept(this);
     }
     context.contextSelectItem = null;
-
     return selectItem;
   }
 
-  @Override
-  public Object visitSelectSegment(final SelectSegmentContext ctx) {
-
+  @Override public Object visitSelectSegment(final SelectSegmentContext ctx) {
     if (ctx.vS != null) {
       if (ctx.vNS != null) {
         String namespace = ctx.vNS.getText();
@@ -2181,56 +1556,40 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       }
       return null;
     }
-
     String odi = ctx.vODI.getText();
     if (ctx.vNS == null) {
-
       EdmType prevType = null;
       if (context.contextSelectItem.getResourcePath() == null) {
         prevType = context.contextTypes.peek().type;
       } else {
         UriInfoImpl uriInfo = (UriInfoImpl) context.contextSelectItem.getResourcePath();
         UriResource last = uriInfo.getLastResourcePart();
-
         prevType = getTypeInformation(last).type;
         if (prevType == null) {
-          throw wrap(new UriParserSemanticException("prev segment not typed",
-              UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS, "select"));
+          throw wrap(new UriParserSemanticException("prev segment not typed", UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS, "select"));
         }
       }
-
       if (!(prevType instanceof EdmStructuredType)) {
-        throw wrap(new UriParserSemanticException("Previous select item is not a structural type",
-            UriParserSemanticException.MessageKeys.ONLY_FOR_STRUCTURAL_TYPES, "select"));
+        throw wrap(new UriParserSemanticException("Previous select item is not a structural type", UriParserSemanticException.MessageKeys.ONLY_FOR_STRUCTURAL_TYPES, "select"));
       }
-
       EdmStructuredType structType = (EdmStructuredType) prevType;
       EdmElement element = structType.getProperty(odi);
       if (element == null) {
-        throw wrap(new UriParserSemanticException("Previous select item has not property: " + odi,
-            UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE, structType.getName(), odi));
+        throw wrap(new UriParserSemanticException("Previous select item has not property: " + odi, UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE, structType.getName(), odi));
       }
-
-      // create new segment
-      // SelectSegmentImpl newSegment = new SelectSegmentImpl().setProperty(property);
-      // contextSelectItem.addSegment(newSegment);
       if (element instanceof EdmProperty) {
         EdmProperty property = (EdmProperty) element;
         if (property.isPrimitive()) {
-
           UriResourcePrimitivePropertyImpl simple = new UriResourcePrimitivePropertyImpl();
           simple.setProperty(property);
-
           UriInfoImpl uriInfo = (UriInfoImpl) context.contextSelectItem.getResourcePath();
           if (uriInfo == null) {
             uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
             uriInfo.addResourcePart(simple);
-
             EdmType startType = removeUriResourceStartingTypeFilterImpl(uriInfo);
             if (startType != null) {
               context.contextSelectItem.setTypeFilter(startType);
             }
-
             context.contextSelectItem.setResourcePath(uriInfo);
           } else {
             uriInfo.addResourcePart(simple);
@@ -2238,19 +1597,15 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
           return this;
         } else {
           UriInfoImpl uriInfo = (UriInfoImpl) context.contextSelectItem.getResourcePath();
-
           UriResourceComplexPropertyImpl complex = new UriResourceComplexPropertyImpl();
           complex.setProperty(property);
-
           if (uriInfo == null) {
             uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
             uriInfo.addResourcePart(complex);
-
             EdmType startType = removeUriResourceStartingTypeFilterImpl(uriInfo);
             if (startType != null) {
               context.contextSelectItem.setTypeFilter(startType);
             }
-
             context.contextSelectItem.setResourcePath(uriInfo);
           } else {
             uriInfo.addResourcePart(complex);
@@ -2258,104 +1613,76 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
           return this;
         }
       } else {
-        throw wrap(new UriParserSemanticException("Only Simple and Complex properties within select allowed",
-            UriParserSemanticException.MessageKeys.ONLY_SIMPLE_AND_COMPLEX_PROPERTIES_IN_SELECT));
+        throw wrap(new UriParserSemanticException("Only Simple and Complex properties within select allowed", UriParserSemanticException.MessageKeys.ONLY_SIMPLE_AND_COMPLEX_PROPERTIES_IN_SELECT));
       }
     } else {
       String namespace = ctx.vNS.getText();
       namespace = namespace.substring(0, namespace.length() - 1);
-
       FullQualifiedName fullName = new FullQualifiedName(namespace, odi);
-      // contextSelectItem.addQualifiedThing(fullName);
-
       if (context.contextSelectItem.getResourcePath() == null) {
         EdmType prevType = context.contextTypes.peek().type;
-
-        // check for complex type cast
         if (prevType instanceof EdmComplexType) {
           EdmComplexType ct = edm.getComplexType(fullName);
           if (ct != null) {
             if ((ct.compatibleTo(prevType))) {
               UriResourceStartingTypeFilterImpl resourcePart = new UriResourceStartingTypeFilterImpl();
               resourcePart.setCollectionTypeFilter(ct);
-
               UriInfoImpl uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
               uriInfo.addResourcePart(resourcePart);
-
               EdmType startType = removeUriResourceStartingTypeFilterImpl(uriInfo);
               if (startType != null) {
                 context.contextSelectItem.setTypeFilter(startType);
               }
-
-              context.contextSelectItem.setResourcePath(uriInfo);
-              return this;
-            }
-          }
-        } else if (prevType instanceof EdmEntityType) {
-          EdmEntityType et = edm.getEntityType(fullName);
-          if (et != null) {
-            if ((et.compatibleTo(prevType))) {
-              UriResourceStartingTypeFilterImpl resourcePart = new UriResourceStartingTypeFilterImpl();
-              resourcePart.setCollectionTypeFilter(et);
-
-              UriInfoImpl uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
-              uriInfo.addResourcePart(resourcePart);
-
-              EdmType startType = removeUriResourceStartingTypeFilterImpl(uriInfo);
-              if (startType != null) {
-                context.contextSelectItem.setTypeFilter(startType);
-              }
-
               context.contextSelectItem.setResourcePath(uriInfo);
               return this;
             }
           }
         } else {
-          throw wrap(new UriParserSemanticException("prev segment must be complex of entity type",
-              UriParserSemanticException.MessageKeys.COMPLEX_PROPERTY_OF_ENTITY_TYPE_EXPECTED));
+          if (prevType instanceof EdmEntityType) {
+            EdmEntityType et = edm.getEntityType(fullName);
+            if (et != null) {
+              if ((et.compatibleTo(prevType))) {
+                UriResourceStartingTypeFilterImpl resourcePart = new UriResourceStartingTypeFilterImpl();
+                resourcePart.setCollectionTypeFilter(et);
+                UriInfoImpl uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
+                uriInfo.addResourcePart(resourcePart);
+                EdmType startType = removeUriResourceStartingTypeFilterImpl(uriInfo);
+                if (startType != null) {
+                  context.contextSelectItem.setTypeFilter(startType);
+                }
+                context.contextSelectItem.setResourcePath(uriInfo);
+                return this;
+              }
+            }
+          } else {
+            throw wrap(new UriParserSemanticException("prev segment must be complex of entity type", UriParserSemanticException.MessageKeys.COMPLEX_PROPERTY_OF_ENTITY_TYPE_EXPECTED));
+          }
         }
-
       } else {
         UriInfoImpl uriInfo = (UriInfoImpl) context.contextSelectItem.getResourcePath();
         UriResource last = uriInfo.getLastResourcePart();
         if (!(last instanceof UriResourceTypedImpl)) {
-          throw wrap(new UriParserSemanticException("prev segment typed",
-              UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS, "select"));
+          throw wrap(new UriParserSemanticException("prev segment typed", UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS, "select"));
         }
         EdmType prevType = getTypeInformation(last).type;
-
         if (prevType instanceof EdmComplexType) {
           EdmComplexType ct = edm.getComplexType(fullName);
           if (ct != null) {
             if ((ct.compatibleTo(prevType))) {
               UriResourceStartingTypeFilterImpl resourcePart = new UriResourceStartingTypeFilterImpl();
               resourcePart.setCollectionTypeFilter(ct);
-
               uriInfo.addResourcePart(resourcePart);
               return this;
             }
           }
-        } else if (prevType instanceof EdmEntityType) {
-          throw wrap(new UriParserSemanticException("Error",
-              UriParserSemanticException.MessageKeys.NOT_FOR_ENTITY_TYPE));
-          /*
-           * EdmEntityType et = edm.getEntityType(fullName);
-           * if (et != null) {
-           * if ((et.compatibleTo((EdmStructuralType) prevType))) {
-           * UriResourceStartingTypeFilterImpl resourcePart = new UriResourceStartingTypeFilterImpl();
-           * resourcePart.setEntryTypeFilter(et);
-           * 
-           * uriInfo.addResourcePart(resourcePart);
-           * return this;
-           * }
-           * }
-           */
         } else {
-          throw wrap(new UriParserSemanticException("prev segment must be complex of entity type",
-              UriParserSemanticException.MessageKeys.COMPLEX_PROPERTY_OF_ENTITY_TYPE_EXPECTED));
+          if (prevType instanceof EdmEntityType) {
+            throw wrap(new UriParserSemanticException("Error", UriParserSemanticException.MessageKeys.NOT_FOR_ENTITY_TYPE));
+          } else {
+            throw wrap(new UriParserSemanticException("prev segment must be complex of entity type", UriParserSemanticException.MessageKeys.COMPLEX_PROPERTY_OF_ENTITY_TYPE_EXPECTED));
+          }
         }
       }
-
       EdmType prevType = null;
       if (context.contextSelectItem.getResourcePath() == null) {
         prevType = context.contextTypes.peek().type;
@@ -2363,32 +1690,22 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         UriInfoImpl uriInfo = (UriInfoImpl) context.contextSelectItem.getResourcePath();
         UriResource last = uriInfo.getLastResourcePart();
         if (!(last instanceof UriResourceTypedImpl)) {
-          throw wrap(new UriParserSemanticException("prev segment typed",
-              UriParserSemanticException.MessageKeys.PREVIOUS_PART_TYPED));
+          throw wrap(new UriParserSemanticException("prev segment typed", UriParserSemanticException.MessageKeys.PREVIOUS_PART_TYPED));
         }
         prevType = getTypeInformation(last).type;
       }
-
       final FullQualifiedName finalTypeName = prevType.getFullQualifiedName();
-
-      // check for action
       EdmAction action = edm.getBoundAction(fullName, finalTypeName, null);
-
       if (action != null) {
         UriResourceActionImpl uriAction = new UriResourceActionImpl();
         uriAction.setAction(action);
-
         UriInfoImpl resourcePath = (UriInfoImpl) context.contextSelectItem.getResourcePath();
         resourcePath.addResourcePart(uriAction);
       }
-
-      // check for function
       EdmFunction function = edm.getBoundFunction(fullName, finalTypeName, null, null);
-
       if (function != null) {
         UriResourceFunctionImpl uriFunction = new UriResourceFunctionImpl();
         uriFunction.setFunction(function);
-
         UriInfoImpl resourcePath = (UriInfoImpl) context.contextSelectItem.getResourcePath();
         resourcePath.addResourcePart(uriFunction);
       }
@@ -2396,146 +1713,99 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return null;
   }
 
-  @Override
-  public Object visitSkip(final SkipContext ctx) {
+  @Override public Object visitSkip(final SkipContext ctx) {
     SkipOptionImpl skiptoken = new SkipOptionImpl();
-
     String text = ctx.children.get(2).getText();
-
     return skiptoken.setValue(Integer.parseInt(text)).setText(text);
   }
 
-  @Override
-  public Object visitSkiptoken(final SkiptokenContext ctx) {
+  @Override public Object visitSkiptoken(final SkiptokenContext ctx) {
     SkipTokenOptionImpl skiptoken = new SkipTokenOptionImpl();
-
     String text = ctx.children.get(2).getText();
-
     return skiptoken.setValue(text).setText(text);
   }
 
-  @Override
-  public ExpressionImpl visitStartsWithMethodCallExpr(final StartsWithMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.STARTSWITH)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this))
-        .addParameter((ExpressionImpl) ctx.vE2.accept(this));
+  @Override public ExpressionImpl visitStartsWithMethodCallExpr(final StartsWithMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.STARTSWITH).addParameter((ExpressionImpl) ctx.vE1.accept(this)).addParameter((ExpressionImpl) ctx.vE2.accept(this));
   }
 
-  @Override
-  public ExpressionImpl visitSubstringMethodCallExpr(final SubstringMethodCallExprContext ctx) {
+  @Override public ExpressionImpl visitSubstringMethodCallExpr(final SubstringMethodCallExprContext ctx) {
     MethodImpl ret = new MethodImpl();
     ret.setMethod(MethodKind.SUBSTRING);
     ret.addParameter((ExpressionImpl) ctx.vE1.accept(this));
     ret.addParameter((ExpressionImpl) ctx.vE2.accept(this));
-
     if (ctx.vE3 != null) {
       ret.addParameter((ExpressionImpl) ctx.vE3.accept(this));
     }
-
     return ret;
-
   }
 
-  @Override
-  public ExpressionImpl visitTimeMethodCallExpr(final TimeMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.TIME)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitTimeMethodCallExpr(final TimeMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.TIME).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public Object visitTop(final TopContext ctx) {
+  @Override public Object visitTop(final TopContext ctx) {
     TopOptionImpl top = new TopOptionImpl();
-
     String text = ctx.children.get(2).getText();
-
     return top.setValue(Integer.parseInt(text)).setText(text);
   }
 
-  @Override
-  public ExpressionImpl visitToLowerMethodCallExpr(final ToLowerMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.TOLOWER)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitToLowerMethodCallExpr(final ToLowerMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.TOLOWER).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public ExpressionImpl visitTotalOffsetMinutesMethodCallExpr(final TotalOffsetMinutesMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.TOTALOFFSETMINUTES)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitTotalOffsetMinutesMethodCallExpr(final TotalOffsetMinutesMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.TOTALOFFSETMINUTES).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public ExpressionImpl visitTotalsecondsMethodCallExpr(final TotalsecondsMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.TOTALSECONDS)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitTotalsecondsMethodCallExpr(final TotalsecondsMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.TOTALSECONDS).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public ExpressionImpl visitToUpperMethodCallExpr(final ToUpperMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.TOUPPER)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitToUpperMethodCallExpr(final ToUpperMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.TOUPPER).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public ExpressionImpl visitTrimMethodCallExpr(final TrimMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.TRIM)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitTrimMethodCallExpr(final TrimMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.TRIM).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  @Override
-  public ExpressionImpl visitYearMethodCallExpr(final YearMethodCallExprContext ctx) {
-    return new MethodImpl()
-        .setMethod(MethodKind.YEAR)
-        .addParameter((ExpressionImpl) ctx.vE1.accept(this));
+  @Override public ExpressionImpl visitYearMethodCallExpr(final YearMethodCallExprContext ctx) {
+    return new MethodImpl().setMethod(MethodKind.YEAR).addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
   private ParseCancellationException wrap(final UriParserException uriParserException) {
     return new ParseCancellationException(uriParserException);
   }
 
-  @Override
-  public ExpressionImpl visitAltUnary(@NotNull final UriParserParser.AltUnaryContext ctx) {
+  @Override public ExpressionImpl visitAltUnary(@NotNull final UriParserParser.AltUnaryContext ctx) {
     UnaryImpl unary = new UnaryImpl();
     unary.setOperator(ctx.unary().NOT() == null ? UnaryOperatorKind.MINUS : UnaryOperatorKind.NOT);
     unary.setOperand((ExpressionImpl) ctx.commonExpr().accept(this));
     return unary;
   }
 
-  @Override
-  public ExpressionImpl visitAltAlias(@NotNull final UriParserParser.AltAliasContext ctx) {
+  @Override public ExpressionImpl visitAltAlias(@NotNull final UriParserParser.AltAliasContext ctx) {
     AliasImpl alias = new AliasImpl();
     alias.setParameter("@" + ctx.odataIdentifier().getChild(0).getText());
     return alias;
   }
 
-  @Override
-  public Object visitSearchSpecialToken(final SearchSpecialTokenContext ctx) {
-    throw wrap(new UriParserSemanticException("System query option '$search' not implemented!",
-        UriParserSemanticException.MessageKeys.NOT_IMPLEMENTED, "System query option '$search"));
+  @Override public Object visitSearchSpecialToken(final SearchSpecialTokenContext ctx) {
+    throw wrap(new UriParserSemanticException("System query option \'$search\' not implemented!", UriParserSemanticException.MessageKeys.NOT_IMPLEMENTED, "System query option \'$search"));
   }
 
-  @Override
-  public Object visitArrayOrObject(final ArrayOrObjectContext ctx) {
+  @Override public Object visitArrayOrObject(final ArrayOrObjectContext ctx) {
     if (!context.contextReadingQueryPart) {
-      throw wrap(new UriParserSemanticException("Complex parameter are not allowed in resource path",
-          MessageKeys.COMPLEX_PARAMETER_IN_RESOURCE_PATH, ctx.getText()));
+      throw wrap(new UriParserSemanticException("Complex parameter are not allowed in resource path", MessageKeys.COMPLEX_PARAMETER_IN_RESOURCE_PATH, ctx.getText()));
     }
-
     return new LiteralImpl().setText(ctx.getText()).setType(null);
   }
-  
-  @Override
-  public Object visitExpandItemsEOF(ExpandItemsEOFContext ctx) {
+
+  @Override public Object visitExpandItemsEOF(ExpandItemsEOFContext ctx) {
     context.contextReadingQueryPart = true;
     final Object result = super.visitExpandItemsEOF(ctx);
     context.contextReadingQueryPart = false;
-    
     return result;
   }
 }
