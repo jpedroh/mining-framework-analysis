@@ -474,7 +474,9 @@ public abstract class Parser<T> {
   public final Parser<String> source() {
     return new ReturnSourceParser(this);
   }
-
+  public final Parser<T> locate() {
+    return new LocatableParser<T>(this);
+  }
   /**
    * A {@link Parser} that, when run successfully, calls a handler with the source and location of the parse.
    */
