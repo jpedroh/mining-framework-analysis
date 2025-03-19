@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -160,7 +160,7 @@ public class SearchParserAndTokenizerTest {
     // <TestCase Name="5.1.7 Search - multiple" Rule="queryOptions">
     // <Input>$search=foo AND bar OR foo AND baz OR that AND bar OR that AND baz</Input>
     assertQuery("foo AND bar OR foo AND baz OR that AND bar OR that AND baz")
-        .resultsIn("{{{{'foo' AND 'bar'} OR {'foo' AND 'baz'}} OR {'that' AND 'bar'}} OR {'that' AND 'baz'}}");
+    .resultsIn("{{{{'foo' AND 'bar'} OR {'foo' AND 'baz'}} OR {'that' AND 'bar'}} OR {'that' AND 'baz'}}");
 
     // <TestCase Name="5.1.7 Search - multiple" Rule="queryOptions">
     // <Input>$search=(foo OR that) AND (bar OR baz)</Input>
@@ -193,8 +193,17 @@ public class SearchParserAndTokenizerTest {
     // <Input>http://serviceRoot/$all?$search=blue</Input>
   }
 
+<<<<<<< /usr/src/app/output/apache/olingo-odata4/010642c506d593c83cfb136cd9f5ddb815bf8ba7/lib/server-core/src/test/java/org/apache/olingo/server/core/uri/parser/search/SearchParserAndTokenizerTest.java/left.java
+  private static Validator assertQuery(String searchQuery) {
+    return new Validator(searchQuery);
+||||||| /usr/src/app/output/apache/olingo-odata4/010642c506d593c83cfb136cd9f5ddb815bf8ba7/lib/server-core/src/test/java/org/apache/olingo/server/core/uri/parser/search/SearchParserAndTokenizerTest.java/base.java
+
+  private static Validator assertQuery(String searchQuery) {
+    return Validator.init(searchQuery);
+=======
   private static Validator assertQuery(final String searchQuery) {
     return Validator.init(searchQuery);
+>>>>>>> /usr/src/app/output/apache/olingo-odata4/010642c506d593c83cfb136cd9f5ddb815bf8ba7/lib/server-core/src/test/java/org/apache/olingo/server/core/uri/parser/search/SearchParserAndTokenizerTest.java/right.java
   }
 
   private static class Validator {
@@ -204,18 +213,46 @@ public class SearchParserAndTokenizerTest {
       this.searchQuery = searchQuery;
     }
 
+<<<<<<< /usr/src/app/output/apache/olingo-odata4/010642c506d593c83cfb136cd9f5ddb815bf8ba7/lib/server-core/src/test/java/org/apache/olingo/server/core/uri/parser/search/SearchParserAndTokenizerTest.java/left.java
+    private void resultsIn(SearchParserException.MessageKey key) throws SearchTokenizerException {
+||||||| /usr/src/app/output/apache/olingo-odata4/010642c506d593c83cfb136cd9f5ddb815bf8ba7/lib/server-core/src/test/java/org/apache/olingo/server/core/uri/parser/search/SearchParserAndTokenizerTest.java/base.java
+    private static Validator init(String searchQuery) {
+      return new Validator(searchQuery);
+    }
+
+    @SuppressWarnings("unused")
+    private Validator withLogging() {
+      log = true;
+      return this;
+    }
+
+    private void resultsIn(SearchParserException.MessageKey key)
+            throws SearchTokenizerException {
+=======
     private static Validator init(final String searchQuery) {
       return new Validator(searchQuery);
     }
 
     private void resultsIn(final SearchParserException.MessageKey key)
         throws SearchTokenizerException {
-
+>>>>>>> /usr/src/app/output/apache/olingo-odata4/010642c506d593c83cfb136cd9f5ddb815bf8ba7/lib/server-core/src/test/java/org/apache/olingo/server/core/uri/parser/search/SearchParserAndTokenizerTest.java/right.java
       try {
         resultsIn(searchQuery);
       } catch (SearchParserException e) {
         Assert.assertEquals("SearchParserException with unexpected message '" + e.getMessage() +
             "' was thrown.", key, e.getMessageKey());
+<<<<<<< /usr/src/app/output/apache/olingo-odata4/010642c506d593c83cfb136cd9f5ddb815bf8ba7/lib/server-core/src/test/java/org/apache/olingo/server/core/uri/parser/search/SearchParserAndTokenizerTest.java/left.java
+||||||| /usr/src/app/output/apache/olingo-odata4/010642c506d593c83cfb136cd9f5ddb815bf8ba7/lib/server-core/src/test/java/org/apache/olingo/server/core/uri/parser/search/SearchParserAndTokenizerTest.java/base.java
+        if(log) {
+          System.out.println("Caught SearchParserException with message key " +
+              e.getMessageKey() + " and message " + e.getMessage());
+        }
+=======
+        if (log) {
+          System.out.println("Caught SearchParserException with message key " +
+              e.getMessageKey() + " and message " + e.getMessage());
+        }
+>>>>>>> /usr/src/app/output/apache/olingo-odata4/010642c506d593c83cfb136cd9f5ddb815bf8ba7/lib/server-core/src/test/java/org/apache/olingo/server/core/uri/parser/search/SearchParserAndTokenizerTest.java/right.java
         return;
       }
       Assert.fail("SearchParserException with message key " + key.getKey() + " was not thrown.");
@@ -229,8 +266,17 @@ public class SearchParserAndTokenizerTest {
         Assert.assertEquals("Expected PHRASE||WORD found: " + actualToken, e.getMessage());
       }
     }
+<<<<<<< /usr/src/app/output/apache/olingo-odata4/010642c506d593c83cfb136cd9f5ddb815bf8ba7/lib/server-core/src/test/java/org/apache/olingo/server/core/uri/parser/search/SearchParserAndTokenizerTest.java/left.java
 
     private void resultsIn(String expectedSearchExpression) throws SearchTokenizerException, SearchParserException {
+||||||| /usr/src/app/output/apache/olingo-odata4/010642c506d593c83cfb136cd9f5ddb815bf8ba7/lib/server-core/src/test/java/org/apache/olingo/server/core/uri/parser/search/SearchParserAndTokenizerTest.java/base.java
+    
+    private void resultsIn(String expectedSearchExpression) throws SearchTokenizerException, SearchParserException {
+=======
+
+    private void resultsIn(final String expectedSearchExpression) throws SearchTokenizerException,
+        SearchParserException {
+>>>>>>> /usr/src/app/output/apache/olingo-odata4/010642c506d593c83cfb136cd9f5ddb815bf8ba7/lib/server-core/src/test/java/org/apache/olingo/server/core/uri/parser/search/SearchParserAndTokenizerTest.java/right.java
       final SearchExpression searchExpression = getSearchExpression();
       Assert.assertEquals(expectedSearchExpression, searchExpression.toString());
     }

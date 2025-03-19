@@ -86,7 +86,7 @@ public class UriParserSemanticException extends UriParserException {
     FUNCTION_IMPORT_NOT_ALLOWED, 
     /** parameters: left type, right type */
     TYPES_NOT_COMPATIBLE;
-    
+
     @Override
     public String getKey() {
       return name();

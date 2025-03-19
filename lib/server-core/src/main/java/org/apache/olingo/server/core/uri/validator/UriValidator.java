@@ -222,6 +222,7 @@ public class UriValidator {
 
   private RowIndexForUriType rowIndexForResourceKind(final UriInfo uriInfo) throws UriValidationException {
     RowIndexForUriType idx;
+
     int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
     UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
 
@@ -284,7 +285,7 @@ public class UriValidator {
       final EdmFunction function = uriFunction.getFunction();
       idx = function.getReturnType().getType().getKind() == EdmTypeKind.ENTITY ?
           RowIndexForUriType.mediaStream : RowIndexForUriType.propertyPrimitiveValue;
-      break;
+          break;
     default:
       throw new UriValidationException("Unexpected kind in path segment before $value: "
           + secondLastPathSegment.getKind(), UriValidationException.MessageKeys.UNALLOWED_KIND_BEFORE_VALUE,
@@ -420,23 +421,23 @@ public class UriValidator {
       final UriResourceFunction uriFunction = (UriResourceFunction) secondLastPathSegment;
       final EdmFunction function = uriFunction.getFunction();
       final EdmType returnType = function.getReturnType().getType();
-      switch (returnType.getKind()) {
-      case ENTITY:
-        idx = RowIndexForUriType.entitySetCount;
-        break;
-      case COMPLEX:
-        idx = RowIndexForUriType.propertyComplexCollectionCount;
-        break;
-      case PRIMITIVE:
-      case ENUM:
-      case DEFINITION:
-        idx = RowIndexForUriType.propertyPrimitiveCollectionCount;
-        break;
-      default:
-        throw new UriValidationException("Unsupported return type: " + returnType.getKind(),
-            UriValidationException.MessageKeys.UNSUPPORTED_FUNCTION_RETURN_TYPE, returnType.getKind().toString());
-      }
-      break;
+          switch (returnType.getKind()) {
+          case ENTITY:
+            idx = RowIndexForUriType.entitySetCount;
+            break;
+          case COMPLEX:
+            idx = RowIndexForUriType.propertyComplexCollectionCount;
+            break;
+          case PRIMITIVE:
+          case ENUM:
+          case DEFINITION:
+            idx = RowIndexForUriType.propertyPrimitiveCollectionCount;
+            break;
+          default:
+            throw new UriValidationException("Unsupported return type: " + returnType.getKind(),
+                UriValidationException.MessageKeys.UNSUPPORTED_FUNCTION_RETURN_TYPE, returnType.getKind().toString());
+          }
+          break;
     default:
       throw new UriValidationException("Illegal path part kind before $count: " + secondLastPathSegment.getKind(),
           UriValidationException.MessageKeys.UNALLOWED_KIND_BEFORE_COUNT, secondLastPathSegment.toString());
