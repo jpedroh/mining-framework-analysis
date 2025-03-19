@@ -1,23 +1,4 @@
-/*
- * redpen: a text inspection tool
- * Copyright (C) 2014 Recruit Technologies Co., Ltd. and contributors
- * (see CONTRIBUTORS.md)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package cc.redpen.server.api;
-
 import cc.redpen.RedPen;
 import cc.redpen.RedPenException;
 import cc.redpen.model.Document;
@@ -30,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import javax.servlet.ServletContext;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -43,75 +23,57 @@ import java.util.List;
 /**
  * Resource to validate documents.
  */
-@Path("/document")
-public class DocumentValidateResource {
+@Path(value = "/document") public class DocumentValidateResource {
+  private static final Logger LOG = LogManager.getLogger(DocumentValidateResource.class);
 
-    private static final Logger LOG = LogManager.getLogger(
-            DocumentValidateResource.class
-    );
-    private final static String DEFAULT_INTERNAL_CONFIG_PATH = "/conf/redpen-conf.xml";
-    @Context
-    private ServletContext context;
-    private RedPen redPen = null;
+  private final static String DEFAULT_INTERNAL_CONFIG_PATH = "/conf/redpen-conf.xml";
 
-    private RedPen getRedPen() {
-        if (redPen == null) {
-            LOG.info("Starting Document Validator Server.");
-            String configPath = null;
-            if (context != null) {
-                configPath = context.getInitParameter("redpen.conf.path");
-            }
-            // if config path is not set, fallback to default config path
-            if (configPath == null) {
-                configPath = DEFAULT_INTERNAL_CONFIG_PATH;
-            }
+  @Context private ServletContext context;
 
-            LOG.info("Config Path is set to " + "\"" + configPath + "\"");
-            try {
-                redPen = new RedPen.Builder().setConfigPath(configPath).build();
-                LOG.info("Document Validator Server is running.");
-            } catch (RedPenException e) {
-                LOG.error("Unable to initialize RedPen", e);
-                throw new ExceptionInInitializerError(e);
-            }
-        }
-        return redPen;
+  private RedPen redPen = null;
+
+  private RedPen getRedPen() {
+    if (redPen == null) {
+      LOG.info("Starting Document Validator Server.");
+      String configPath = null;
+      if (context != null) {
+        configPath = context.getInitParameter("redpen.conf.path");
+      }
+      if (configPath == null) {
+        configPath = DEFAULT_INTERNAL_CONFIG_PATH;
+      }
+      LOG.info("Config Path is set to " + "\"" + configPath + "\"");
+      try {
+        redPen = new RedPen.Builder().setConfigPath(configPath).build();
+        LOG.info("Document Validator Server is running.");
+      } catch (RedPenException e) {
+        LOG.error("Unable to initialize RedPen", e);
+        throw new ExceptionInInitializerError(e);
+      }
     }
-    @Path("/validate")
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response validateDocument(@FormParam("textarea") @DefaultValue("") String document) throws
-            JSONException, RedPenException, UnsupportedEncodingException {
+    return redPen;
+  }
 
-        LOG.info("Validating document");
-        RedPen server = getRedPen();
-        JSONObject json = new JSONObject();
-
-        json.put("document", document);
-
-        Parser parser = DocumentParserFactory.generate(
-                Parser.Type.PLAIN, server.getConfiguration(), new DocumentCollection.Builder());
-        Document fileContent = parser.generateDocument(new
-                ByteArrayInputStream(document.getBytes("UTF-8")));
-
-        DocumentCollection d = new DocumentCollection();
-        d.addDocument(fileContent);
-
-        List<ValidationError> errors = server.check(d);
-
-        JSONArray jsonErrors = new JSONArray();
-
-        for (ValidationError error : errors) {
-            JSONObject jsonError = new JSONObject();
-            if (error.getSentence().isPresent()) {
-                jsonError.put("sentence", error.getSentence().get().content);
-            }
-            jsonError.put("message", error.getMessage());
-            jsonErrors.put(jsonError);
-        }
-
-        json.put("errors", jsonErrors);
-
-        return Response.ok().entity(json).build();
+  @Path(value = "/validate") @POST @Produces(value = MediaType.APPLICATION_JSON) public Response validateDocument(@FormParam(value = "textarea") @DefaultValue(value = "") String document) throws JSONException, RedPenException, UnsupportedEncodingException {
+    LOG.info("Validating document");
+    RedPen server = getRedPen();
+    JSONObject json = new JSONObject();
+    json.put("document", document);
+    Parser parser = DocumentParserFactory.generate(Parser.Type.PLAIN, server.getConfiguration(), new DocumentCollection.Builder());
+    Document fileContent = parser.generateDocument(new ByteArrayInputStream(document.getBytes("UTF-8")));
+    DocumentCollection d = new DocumentCollection();
+    d.addDocument(fileContent);
+    List<ValidationError> errors = server.check(d);
+    JSONArray jsonErrors = new JSONArray();
+    for (ValidationError error : errors) {
+      JSONObject jsonError = new JSONObject();
+      if (error.getSentence().isPresent()) {
+        jsonError.put("sentence", error.getSentence().get().content);
+      }
+      jsonError.put("message", error.getMessage());
+      jsonErrors.put(jsonError);
     }
+    json.put("errors", jsonErrors);
+    return Response.ok().entity(json).build();
+  }
 }
