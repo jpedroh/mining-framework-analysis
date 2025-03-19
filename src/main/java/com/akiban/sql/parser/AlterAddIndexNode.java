@@ -125,7 +125,13 @@ public class AlterAddIndexNode extends TableElementNode
         return properties;
     }
     
+<<<<<<< /usr/src/app/output/brunoribeiro/sql-parser/500615ba36368e2d307655bbfeab7f59476c7867/src/main/java/com/akiban/sql/parser/AlterAddIndexNode.java/left.java
     public StorageLocation getStorageLocation()
+||||||| /usr/src/app/output/brunoribeiro/sql-parser/500615ba36368e2d307655bbfeab7f59476c7867/src/main/java/com/akiban/sql/parser/AlterAddIndexNode.java/base.java
+    public Location getLocation()
+=======
+    public StorageLocation getLocation()
+>>>>>>> /usr/src/app/output/brunoribeiro/sql-parser/500615ba36368e2d307655bbfeab7f59476c7867/src/main/java/com/akiban/sql/parser/AlterAddIndexNode.java/right.java
     {
         return storageLocation;
     }
