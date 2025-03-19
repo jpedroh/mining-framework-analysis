@@ -37,7 +37,13 @@ public interface JwtParser {
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
      *
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/left.java
+     * @param id the id to assert exists
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/base.java
+     * @param id
+=======
      * @param id the {@code jti} value that must exist in the parsed JWT.
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/right.java
      * @return the parser method for chaining.
      * @see MissingClaimException
      * @see IncorrectClaimException
@@ -54,7 +60,13 @@ public interface JwtParser {
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
      *
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/left.java
+     * @param subject the subject value to assert
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/base.java
+     * @param subject
+=======
      * @param subject the {@code sub} value that must exist in the parsed JWT.
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/right.java
      * @return the parser for method chaining.
      * @see MissingClaimException
      * @see IncorrectClaimException
@@ -71,7 +83,13 @@ public interface JwtParser {
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
      *
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/left.java
+     * @param audience the tag value to assert
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/base.java
+     * @param audience
+=======
      * @param audience the {@code aud} value that must exist in the parsed JWT.
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/right.java
      * @return the parser for method chaining.
      * @see MissingClaimException
      * @see IncorrectClaimException
@@ -88,7 +106,13 @@ public interface JwtParser {
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
      *
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/left.java
+     * @param issuer the issuer value to assert
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/base.java
+     * @param issuer
+=======
      * @param issuer the {@code iss} value that must exist in the parsed JWT.
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/right.java
      * @return the parser for method chaining.
      * @see MissingClaimException
      * @see IncorrectClaimException
@@ -105,7 +129,13 @@ public interface JwtParser {
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
      *
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/left.java
+     * @param issuedAt the {@code iat} value to assert.
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/base.java
+     * @param issuedAt
+=======
      * @param issuedAt the {@code iat} value that must exist in the parsed JWT.
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/right.java
      * @return the parser for method chaining.
      * @see MissingClaimException
      * @see IncorrectClaimException
@@ -122,7 +152,13 @@ public interface JwtParser {
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
      *
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/left.java
+     * @param expiration the {@code exp} value to assert.
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/base.java
+     * @param expiration
+=======
      * @param expiration the {@code exp} value that must exist in the parsed JWT.
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/right.java
      * @return the parser for method chaining.
      * @see MissingClaimException
      * @see IncorrectClaimException
@@ -139,7 +175,13 @@ public interface JwtParser {
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
      *
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/left.java
+     * @param notBefore the {@code nbf} value to assert.
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/base.java
+     * @param notBefore
+=======
      * @param notBefore the {@code nbf} value that must exist in the parsed JWT.
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/right.java
      * @return the parser for method chaining
      * @see MissingClaimException
      * @see IncorrectClaimException
@@ -156,8 +198,16 @@ public interface JwtParser {
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
      *
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/left.java
+     * @param claimName the name of the claim to assert
+     * @param value the value of the claim to assert
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/base.java
+     * @param claimName
+     * @param value
+=======
      * @param claimName the name of a claim that must exist in the parsed JWT.
      * @param value     the value that must exist for the specified {@code claimName} in the JWT.
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParser.java/right.java
      * @return the parser for method chaining.
      * @see MissingClaimException
      * @see IncorrectClaimException
@@ -594,7 +644,7 @@ public interface JwtParser {
      * @since 0.2
      */
     Jws<Claims> parseClaimsJws(String claimsJws)
-        throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException;
+            throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException;
 
     /**
      * @since JJWT_RELEASE_VERSION

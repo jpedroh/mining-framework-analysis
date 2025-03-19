@@ -40,9 +40,19 @@ public final class Maps {
      *
      * @param key   the key of an map entry to be added
      * @param value the value of map entry to be added
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/lang/Maps.java/left.java
+     * @param <K>   the maps key type
+     * @param <V>   the maps value type
+     *              Creates a new map builder with a single entry.
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/lang/Maps.java/base.java
+     * @param <K> the maps key type
+     * @param <V> the maps value type
+     * Creates a new map builder with a single entry.
+=======
      * @param <K> the maps key type
      * @param <V> the maps value type
      * @return a new map builder with a single entry.
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/lang/Maps.java/right.java
      */
     public static <K, V> MapBuilder<K, V> of(K key, V value) {
         return new HashMapBuilder<K, V>().and(key, value);

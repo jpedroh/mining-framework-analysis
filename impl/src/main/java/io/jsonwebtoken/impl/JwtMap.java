@@ -24,12 +24,8 @@ import io.jsonwebtoken.lang.Assert;
 import io.jsonwebtoken.lang.Collections;
 import io.jsonwebtoken.lang.Strings;
 import io.jsonwebtoken.security.Jwk;
-
 import java.lang.reflect.Array;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class JwtMap implements Map<String, Object> {
 
@@ -61,6 +57,10 @@ public class JwtMap implements Map<String, Object> {
         Field<?> field = FIELDS.get(id);
         return field != null && field.isSecret();
     }
+
+    // @since 0.10.0
+
+    // @since 0.10.0
 
     public static boolean isReduceableToNull(Object v) {
         return v == null ||

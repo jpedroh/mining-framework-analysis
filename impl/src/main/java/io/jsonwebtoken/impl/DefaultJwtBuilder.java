@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 package io.jsonwebtoken.impl;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.CompressionCodec;
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.JwsHeader;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.impl.lang.Function;
 import io.jsonwebtoken.impl.lang.LegacyServices;
 import io.jsonwebtoken.impl.lang.PropagatingExceptionFunction;
 import io.jsonwebtoken.impl.security.DefaultSignatureRequest;
 import io.jsonwebtoken.impl.security.SignatureAlgorithmsBridge;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.io.Encoder;
-import io.jsonwebtoken.io.Encoders;
-import io.jsonwebtoken.io.Serializer;
 import io.jsonwebtoken.lang.Arrays;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.*;
 import io.jsonwebtoken.lang.Assert;
 import io.jsonwebtoken.lang.Collections;
 import io.jsonwebtoken.lang.Strings;
@@ -160,6 +151,15 @@ public class DefaultJwtBuilder<T extends JwtBuilder<T>> implements JwtBuilder<T>
     public <K extends Key> T signWith(K key, final SignatureAlgorithm<K,?> alg) throws InvalidKeyException {
         Assert.notNull(key, "Key argument cannot be null.");
         Assert.notNull(alg, "SignatureAlgorithm cannot be null.");
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/impl/src/main/java/io/jsonwebtoken/impl/DefaultJwtBuilder.java/left.java
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/impl/src/main/java/io/jsonwebtoken/impl/DefaultJwtBuilder.java/base.java
+        alg.assertValidSigningKey(key); //since 0.10.0 for https://github.com/jwtk/jjwt/issues/334
+        this.algorithm = alg;
+=======
+        alg.assertValidSigningKey(key); //since 0.10.0 for https://github.com/jwtk/jjwt/issues/334
+        createSigner(alg, key); // since 0.11.5: fail fast if key cannot be used for alg.
+        this.algorithm = alg;
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/impl/src/main/java/io/jsonwebtoken/impl/DefaultJwtBuilder.java/right.java
         this.key = key;
         this.algorithm = (SignatureAlgorithm<Key,?>)alg;
         this.signFunction = new PropagatingExceptionFunction<>(SignatureException.class,
@@ -176,7 +176,6 @@ public class DefaultJwtBuilder<T extends JwtBuilder<T>> implements JwtBuilder<T>
     @Override
     public T signWith(Key key, io.jsonwebtoken.SignatureAlgorithm alg) throws InvalidKeyException {
         Assert.notNull(alg, "SignatureAlgorithm cannot be null.");
-        alg.assertValidSigningKey(key); //since 0.10.0 for https://github.com/jwtk/jjwt/issues/334
         return signWith(key, (SignatureAlgorithm<Key,?>)SignatureAlgorithmsBridge.forId(alg.getValue()));
     }
 

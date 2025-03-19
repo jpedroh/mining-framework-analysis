@@ -15,16 +15,10 @@
  */
 package io.jsonwebtoken.lang;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
+import java.util.*;
 
 public final class Collections {
 
@@ -183,7 +177,9 @@ public final class Collections {
             throw new IllegalArgumentException("Collection must not be null");
         }
         Object[] arr = Objects.toObjectArray(array);
-        java.util.Collections.addAll(collection, arr);
+        for (Object elem : arr) {
+            collection.add(elem);
+        }
     }
 
     /**
@@ -318,8 +314,14 @@ public final class Collections {
      * Find a single value of the given type in the given Collection.
      *
      * @param collection the Collection to search
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/lang/Collections.java/left.java
      * @param type       the type to look for
-     * @param <T>        the generic type parameter for {@code type}
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/lang/Collections.java/base.java
+     * @param type the type to look for
+=======
+     * @param type the type to look for
+     * @param <T> the generic type parameter for {@code type}
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/lang/Collections.java/right.java
      * @return a value of the given type found if there is a clear match,
      * or <code>null</code> if none or more than one such value found
      */
@@ -416,11 +418,10 @@ public final class Collections {
      * Marshal the elements from the given enumeration into an array of the given type.
      * Enumeration elements must be assignable to the type of the given array. The array
      * returned will be a different instance than the array given.
-     *
      * @param enumeration the collection to convert to an array
-     * @param array       an array instance that matches the type of array to return
-     * @param <A>         the element type of the array that will be created
-     * @param <E>         the element type contained within the enumeration.
+     * @param array an array instance that matches the type of array to return
+     * @param <A> the element type of the array that will be created
+     * @param <E> the element type contained within the enumeration.
      * @return a new array of type {@code A} that contains the elements in the specified {@code enumeration}.
      */
     public static <A, E extends A> A[] toArray(Enumeration<E> enumeration, A[] array) {
@@ -435,7 +436,7 @@ public final class Collections {
      * Adapt an enumeration to an iterator.
      *
      * @param enumeration the enumeration
-     * @param <E>         the type of elements in the enumeration
+     * @param <E> the type of elements in the enumeration
      * @return the iterator
      */
     public static <E> Iterator<E> toIterator(Enumeration<E> enumeration) {

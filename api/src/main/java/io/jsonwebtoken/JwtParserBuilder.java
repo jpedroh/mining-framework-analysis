@@ -76,7 +76,13 @@ public interface JwtParserBuilder extends Builder<JwtParser> {
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
      *
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/left.java
+     * @param id {@code jti} value
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/base.java
+     * @param id
+=======
      * @param id the required value of the {@code jti} header parameter.
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/right.java
      * @return the parser builder for method chaining.
      * @see MissingClaimException
      * @see IncorrectClaimException
@@ -88,7 +94,13 @@ public interface JwtParserBuilder extends Builder<JwtParser> {
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
      *
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/left.java
+     * @param subject the required subject value
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/base.java
+     * @param subject
+=======
      * @param subject the required value of the {@code sub} header parameter.
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/right.java
      * @return the parser builder for method chaining.
      * @see MissingClaimException
      * @see IncorrectClaimException
@@ -100,7 +112,13 @@ public interface JwtParserBuilder extends Builder<JwtParser> {
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
      *
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/left.java
+     * @param audience the required audience value
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/base.java
+     * @param audience
+=======
      * @param audience the required value of the {@code aud} header parameter.
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/right.java
      * @return the parser builder for method chaining.
      * @see MissingClaimException
      * @see IncorrectClaimException
@@ -112,7 +130,13 @@ public interface JwtParserBuilder extends Builder<JwtParser> {
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
      *
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/left.java
+     * @param issuer the required issuer value
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/base.java
+     * @param issuer
+=======
      * @param issuer the required value of the {@code iss} header parameter.
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/right.java
      * @return the parser builder for method chaining.
      * @see MissingClaimException
      * @see IncorrectClaimException
@@ -124,7 +148,13 @@ public interface JwtParserBuilder extends Builder<JwtParser> {
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
      *
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/left.java
+     * @param issuedAt the required issuedAt value
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/base.java
+     * @param issuedAt
+=======
      * @param issuedAt the required value of the {@code iat} header parameter.
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/right.java
      * @return the parser builder for method chaining.
      * @see MissingClaimException
      * @see IncorrectClaimException
@@ -136,7 +166,13 @@ public interface JwtParserBuilder extends Builder<JwtParser> {
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
      *
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/left.java
+     * @param expiration the required expiration value
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/base.java
+     * @param expiration
+=======
      * @param expiration the required value of the {@code exp} header parameter.
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/right.java
      * @return the parser builder for method chaining.
      * @see MissingClaimException
      * @see IncorrectClaimException
@@ -148,7 +184,13 @@ public interface JwtParserBuilder extends Builder<JwtParser> {
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
      *
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/left.java
+     * @param notBefore the required not before {@code nbf} value.
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/base.java
+     * @param notBefore
+=======
      * @param notBefore the required value of the {@code npf} header parameter.
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/right.java
      * @return the parser builder for method chaining
      * @see MissingClaimException
      * @see IncorrectClaimException
@@ -160,8 +202,16 @@ public interface JwtParserBuilder extends Builder<JwtParser> {
      * value does not equal the specified value, an exception will be thrown indicating that the
      * JWT is invalid and may not be used.
      *
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/left.java
+     * @param claimName the name of the claim to require
+     * @param value the value the claim value must equal
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/base.java
+     * @param claimName
+     * @param value
+=======
      * @param claimName the name of a claim that must exist
      * @param value     the required value of the specified {@code claimName}
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/right.java
      * @return the parser builder for method chaining.
      * @see MissingClaimException
      * @see IncorrectClaimException
@@ -242,27 +292,49 @@ public interface JwtParserBuilder extends Builder<JwtParser> {
      * @param base64EncodedSecretKey the BASE64-encoded algorithm-specific signature verification key to use to validate
      *                               any discovered JWS digital signature.
      * @return the parser builder for method chaining.
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/left.java
+     * @deprecated as of 0.10.0.
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/base.java
+=======
      * @deprecated in favor of {@link #setSigningKey(Key)} as explained in the above <b>Deprecation Notice</b>,
      * and will be removed in 1.0.0.
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/right.java
      */
     @Deprecated
     JwtParserBuilder setSigningKey(String base64EncodedSecretKey);
 
     /**
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/left.java
      * Sets the signature verification key used to verify all encountered JWS signatures. If the encountered JWT
      * string is not a JWS (e.g. unsigned or a JWE), this key is not used.
-     *
+     * <p/>
      * <p>This is a convenience method to use in specific circumstances: when the parser will only ever encounter
      * JWSs with signatures that can always be verified by a single key.  This also implies that this key
      * <em>MUST</em> be a valid key for the signature algorithm ({@code alg} header) used for the JWS.</p>
-     *
+     * <p/>
      * <p>If there is any chance that the parser will encounter JWSs
      * that need different signature verification keys based on the JWS being parsed, it is strongly
      * recommended to configure your own {@link Locator Locator<?,Key>} via the
      * {@link #setKeyLocator(Locator) setKeyLocator} method instead of using this one.</p>
-     *
+     * <p/>
      * <p>Calling this method overrides any previously set signature verification key.</p>
+||||||| /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/base.java
+     * Sets the signing key used to verify any discovered JWS digital signature.  If the specified JWT string is not
+     * a JWS (no signature), this key is not used.
+     * <p>
+     * <p>Note that this key <em>MUST</em> be a valid key for the signature algorithm found in the JWT header
+     * (as the {@code alg} header parameter).</p>
+     * <p>
+     * <p>This method overwrites any previously set key.</p>
+=======
+     * Sets the signing key used to verify any discovered JWS digital signature.  If the specified JWT string is not
+     * a JWS (no signature), this key is not used.
+     *
+     * <p>Note that this key <em>MUST</em> be a valid key for the signature algorithm found in the JWT header
+     * (as the {@code alg} header parameter).</p>
+     *
+     * <p>This method overwrites any previously set key.</p>
+>>>>>>> /usr/src/app/output/jwtk/jjwt/1e9b969946df0584a8942a189059cee80558a184/api/src/main/java/io/jsonwebtoken/JwtParserBuilder.java/right.java
      *
      * @param key the algorithm-specific signature verification key to use to verify all encountered JWS digital
      *            signatures.
