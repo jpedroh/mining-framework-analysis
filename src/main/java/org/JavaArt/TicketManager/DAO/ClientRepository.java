@@ -1,8 +1,6 @@
 package org.JavaArt.TicketManager.DAO;
-
 import org.JavaArt.TicketManager.entities.Client;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 /**
@@ -11,18 +9,16 @@ import java.util.List;
  * Date: 06.06.2014
  * Time: 10:27
  */
+@Repository public interface ClientRepository {
+  public void saveOrUpdateClient(Client client);
 
-@Repository
+  public List<Client> getClientsByName(String clientName);
 
-public interface ClientRepository {
-    public void saveOrUpdateClient(Client client);
+  public void deleteClientsWithoutOrders(int minutes);
 
-    public List<Client> getClientsByName(String clientName);
+  public Client getClientById(int id);
 
-    public void deleteClientsWithoutOrders(int minutes);
+  public List<Client> getAllClients();
 
-    public Client getClientById(int id);
-
-    public List<Client> getAllClients();
-    public void deleteClient(Client client) ;
+  public void deleteClient(Client client);
 }

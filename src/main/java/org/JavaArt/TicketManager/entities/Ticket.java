@@ -1,129 +1,109 @@
 package org.JavaArt.TicketManager.entities;
-
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.util.Date;
 
+@Entity @Table(name = "ticket") public class Ticket {
+  @Id @GeneratedValue(generator = "increment") @GenericGenerator(name = "increment", strategy = "increment") @Column(name = "id") private Integer id;
 
-@Entity
-@Table(name = "ticket")
-public class Ticket {
+  @ManyToOne @JoinColumn(name = "sector_id") private Sector sector;
 
-    @Id
-    @GeneratedValue(generator = "increment")
-    @GenericGenerator(name = "increment", strategy = "increment")
-    @Column(name = "id")
-    private Integer id;
+  @Column(name = "row") private Integer row;
 
-    @ManyToOne
-    @JoinColumn(name = "sector_id")
-    private Sector sector;
+  @Column(name = "seat") private Integer seat;
 
-    @Column(name = "row")
-    private Integer row;
+  @ManyToOne @JoinColumn(name = "operator_id") private Operator operator;
 
-    @Column(name = "seat")
-    private Integer seat;
+  @Column(name = "isReserved") private boolean isReserved;
 
-    @ManyToOne
-    @JoinColumn(name = "operator_id")
-    private Operator operator;
+  @Column(name = "isDeleted") private boolean isDeleted;
 
-    @Column(name = "isReserved")
-    private boolean isReserved;
+  @Column(name = "TimeStamp") private Date timeStamp = new Date();
 
-    @Column(name = "isDeleted")
-    private boolean isDeleted;
+  @Column private boolean isConfirmed;
 
+  @ManyToOne @JoinColumn(name = "client_ID") private Client client;
 
-    @Column(name = "TimeStamp")
-    private Date timeStamp = new Date();
+  public Ticket() {
+  }
 
-    @Column
-    private boolean isConfirmed;
+  public boolean getDeleted() {
+    return isDeleted;
+  }
 
+  public void setDeleted(boolean isDeleted) {
+    this.isDeleted = isDeleted;
+  }
 
-    @ManyToOne
-    @JoinColumn(name = "client_ID")
-    private Client client;
+  public boolean getConfirmed() {
+    return isConfirmed;
+  }
 
+  public void setConfirmed(boolean isConfirmed) {
+    this.isConfirmed = isConfirmed;
+  }
 
+  public Date getTimeStamp() {
+    return timeStamp;
+  }
 
-    public Ticket() {}
+  public boolean getReserved() {
+    return isReserved;
+  }
 
-    public boolean isDeleted() {
-        return isDeleted;
-    }
+  public void setTimeStamp(Date timeStamp) {
+    this.timeStamp = timeStamp;
+  }
 
-    public void setDeleted(boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
+  public void setReserved(boolean isReserved) {
+    this.isReserved = isReserved;
+  }
 
-    public boolean isConfirmed() {
-        return isConfirmed;
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public void setConfirmed(boolean isConfirmed) {
-        this.isConfirmed = isConfirmed;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public boolean isReserved() {
-        return isReserved;
-    }
+  public Integer getRow() {
+    return row;
+  }
 
-    public Date getTimeStamp() {
-        return timeStamp;
-    }
+  public void setRow(Integer row) {
+    this.row = row;
+  }
 
-    public void setTimeStamp(Date timeStamp) {
-        this.timeStamp = timeStamp;
-    }
+  public Integer getSeat() {
+    return seat;
+  }
 
-    public Integer getId() {
-        return id;
-    }
+  public void setSeat(Integer seat) {
+    this.seat = seat;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public Sector getSector() {
+    return sector;
+  }
 
-    public Integer getRow() {
-        return row;
-    }
+  public void setSector(Sector sector) {
+    this.sector = sector;
+  }
 
-    public void setRow(Integer row) {
-        this.row = row;
-    }
+  public Client getClient() {
+    return client;
+  }
 
-    public Integer getSeat() {return seat;}
+  public void setClient(Client client) {
+    this.client = client;
+  }
 
-    public void setSeat(Integer seat) {this.seat = seat;}
+  public Operator getOperator() {
+    return operator;
+  }
 
-    public boolean getReserved() {return isReserved;}
-
-    public void setReserved(boolean isReserved) {
-        this.isReserved = isReserved;
-    }
-
-    public Sector getSector() {return sector;}
-
-    public void setSector(Sector sector) {
-        this.sector = sector;
-    }
-
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
-    public Operator getOperator() {return operator;}
-
-    public void setOperator(Operator operator) {
-        this.operator = operator;
-    }
+  public void setOperator(Operator operator) {
+    this.operator = operator;
+  }
 }
-
