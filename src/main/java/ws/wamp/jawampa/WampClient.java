@@ -799,24 +799,11 @@ public class WampClient {
      * publication ID) and will then be completed or will be completed with
      * an error if the event could not be published.
      */
-    public Observable<Long> publish(final String topic, final ArrayNode arguments, final ObjectNode argumentsKw)
+    public Observable<Long> publish(String topic, ArrayNode arguments, ObjectNode argumentsKw)
     {
         return publish(topic, null, arguments, argumentsKw);
     }
 
-    /**
-     * Publishes an event under the given topic.
-     * @param topic The topic that should be used for publishing the event
-     * @param options A WAMP options dictionary. May contain advanced options
-     * for the publish call.
-     * @param arguments The positional arguments for the published event
-     * @param argumentsKw The keyword arguments for the published event.
-     * These will only be taken into consideration if arguments is not null.
-     * @return An observable that provides a notification whether the event
-     * publication was successful. This contains either a single value (the
-     * publication ID) and will then be completed or will be completed with
-     * an error if the event could not be published.
-     */
     public Observable<Long> publish(final String topic, final ObjectNode options, final ArrayNode arguments,
         final ObjectNode argumentsKw)
     {

@@ -678,15 +678,17 @@ public class WampRouter {
             Subscription subscription = handler.realm.subscriptionsByTopic.get(pub.topic);
             if (subscription != null) {
                 for (WampRouterHandler receiver : subscription.subscribers) {
-                    if (receiver == handler) { // Potentially skip the publisher
+                    if (receiver == handler) {
                         boolean skipPublisher = true;
                         if (pub.options != null) {
                             JsonNode excludeMeNode = pub.options.get("exclude_me");
                             if (excludeMeNode != null) {
-                                skipPublisher = excludeMeNode.asBoolean(true);
+                                skipPublisher = excludeMeNode.asBoolean();
                             }
                         }
-                        if (skipPublisher) continue;
+                        if (skipPublisher) {
+                            continue;
+                        }
                     }
                     // Publish the event to the subscriber
                     EventMessage ev = new EventMessage(subscription.subscriptionId, publicationId,
