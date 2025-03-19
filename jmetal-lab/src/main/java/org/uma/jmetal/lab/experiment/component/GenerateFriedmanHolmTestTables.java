@@ -29,8 +29,15 @@ import java.util.List;
  * J.C. Fernández, F. Herrera. KEEL: A Software Tool to Assess Evolutionary Algorithms to Data
  * Mining Problems. Soft Computing 13:3 (2009) 307-318 Doi: 10.1007/s00500-008-0323-y
  *
+<<<<<<< /usr/src/app/output/jmetal/jmetal/c46e79f292c381c39b67e3aff025ed39aa663e3e/jmetal-lab/src/main/java/org/uma/jmetal/lab/experiment/component/GenerateFriedmanHolmTestTables.java/left.java
+ * @author Antonio J. Nebro
+ * @author Javier Pérez
+||||||| /usr/src/app/output/jmetal/jmetal/c46e79f292c381c39b67e3aff025ed39aa663e3e/jmetal-lab/src/main/java/org/uma/jmetal/lab/experiment/component/GenerateFriedmanHolmTestTables.java/base.java
+ * @author Antonio J. Nebro <antonio@lcc.uma.es>
+=======
  * @author Antonio J. Nebro
  * @author Javier Pérez Abad
+>>>>>>> /usr/src/app/output/jmetal/jmetal/c46e79f292c381c39b67e3aff025ed39aa663e3e/jmetal-lab/src/main/java/org/uma/jmetal/lab/experiment/component/GenerateFriedmanHolmTestTables.java/right.java
  */
 public class GenerateFriedmanHolmTestTables<Result extends List<? extends Solution<?>>>
     implements ExperimentComponent {
