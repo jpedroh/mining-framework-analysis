@@ -77,6 +77,7 @@ class LatencyMonitor extends UntypedActor {
 
         // This function will add elements in timeoutTargets
         boolean timeout() {
+<<<<<<< /usr/src/app/output/taotaotheripper/sault/c42a266c8aca381fb541ecf5cabf1ad9594f7026/src/main/java/com/pku/sault/engine/operator/LatencyMonitor.java/left.java
             timeoutTargets.clear();
             for (Map.Entry<ActorRef, Boolean> probeEntry : probes.entrySet()) {
                 if (!probeEntry.getValue()) {
@@ -94,6 +95,17 @@ class LatencyMonitor extends UntypedActor {
             }
             ++currentId; // Probes with old id will be treated as timeout probe
             return !timeoutTargets.isEmpty();
+||||||| /usr/src/app/output/taotaotheripper/sault/c42a266c8aca381fb541ecf5cabf1ad9594f7026/src/main/java/com/pku/sault/engine/operator/LatencyMonitor.java/base.java
+            // If the queue is not full, the oldest probe must not be timeout
+            if (newestId - oldestId <= queueSize) return false;
+            assert newestId - oldestId == queueSize;
+            return !probes[id(oldestId++)];
+=======
+            // If the queue is not full, the oldest probe must not be timeout
+            if (newestId - oldestId < queueSize) return false;
+            assert newestId - oldestId == queueSize;
+            return !probes[id(oldestId++)];
+>>>>>>> /usr/src/app/output/taotaotheripper/sault/c42a266c8aca381fb541ecf5cabf1ad9594f7026/src/main/java/com/pku/sault/engine/operator/LatencyMonitor.java/right.java
         }
 
         Probe newProbe(ActorRef target) {

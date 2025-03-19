@@ -99,7 +99,13 @@ class RouteTree implements Serializable {
 	// Set target in new sub range, return new lowerBound
 	int split(int lowerBound, ActorRef target) {
 		assert(isValidLowerBound(lowerBound));
+<<<<<<< /usr/src/app/output/taotaotheripper/sault/c42a266c8aca381fb541ecf5cabf1ad9594f7026/src/main/java/com/pku/sault/engine/operator/RouteTree.java/left.java
 		// assert(target != null); Remove this assertion because the cell may be empty at first and filled later.
+||||||| /usr/src/app/output/taotaotheripper/sault/c42a266c8aca381fb541ecf5cabf1ad9594f7026/src/main/java/com/pku/sault/engine/operator/RouteTree.java/base.java
+		assert(target != null);
+=======
+		// assert(target != null); When just insert empty cell, target == null
+>>>>>>> /usr/src/app/output/taotaotheripper/sault/c42a266c8aca381fb541ecf5cabf1ad9594f7026/src/main/java/com/pku/sault/engine/operator/RouteTree.java/right.java
 
 		int upperBound = getUpperBound(lowerBound);
 		
