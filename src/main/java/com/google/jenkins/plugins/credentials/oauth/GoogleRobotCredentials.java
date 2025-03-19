@@ -40,8 +40,7 @@ import jenkins.model.Jenkins;
  *
  * @author Matt Moore
  */
-public abstract class GoogleRobotCredentials extends BaseStandardCredentials
-    implements GoogleOAuth2Credentials {
+public abstract class GoogleRobotCredentials extends BaseStandardCredentials implements GoogleOAuth2Credentials {
 
   /**
    * Base constructor for populating the name and id and project id for Google credentials. Leave
@@ -57,8 +56,27 @@ public abstract class GoogleRobotCredentials extends BaseStandardCredentials
       String id,
       String projectId,
       GoogleRobotCredentialsModule module) {
+    this("", projectId, module);
+  }
+
+  /**
+   * Base constructor for populating the name and id and project id for Google credentials. Leave
+   * the id empty to generate a new one, populate the id when updating an existing credential or
+   * migrating from using the project id as the credential id.
+   *
+   * @param id the credential ID to assign.
+   * @param projectId The project id with which this credential is associated.
+   * @param module The module to use for instantiating the dependencies of credentials.
+   */
+  protected GoogleRobotCredentials(
+      String id, String projectId, GoogleRobotCredentialsModule module) {
+<<<<<<< /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/main/java/com/google/jenkins/plugins/credentials/oauth/GoogleRobotCredentials.java/left.java
     super(scope, id == null ? "" : id, Messages.GoogleRobotCredentials_Description());
     this.scope = scope;
+||||||| /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/main/java/com/google/jenkins/plugins/credentials/oauth/GoogleRobotCredentials.java/base.java
+=======
+    super(id == null ? "" : id, Messages.GoogleRobotCredentials_Description());
+>>>>>>> /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/main/java/com/google/jenkins/plugins/credentials/oauth/GoogleRobotCredentials.java/right.java
     this.projectId = checkNotNull(projectId);
     if (module != null) {
       this.module = module;

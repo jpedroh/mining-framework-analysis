@@ -67,7 +67,7 @@ public final class GoogleRobotMetadataCredentials extends GoogleRobotCredentials
       throws Exception {
     super(scope, id, projectId, module);
   }
-
+<<<<<<< /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/main/java/com/google/jenkins/plugins/credentials/oauth/GoogleRobotMetadataCredentials.java/left.java
   @SuppressFBWarnings(
       value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
       justification =
@@ -80,14 +80,24 @@ public final class GoogleRobotMetadataCredentials extends GoogleRobotCredentials
         getProjectId(),
         getModule());
   }
-
+||||||| /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/main/java/com/google/jenkins/plugins/credentials/oauth/GoogleRobotMetadataCredentials.java/base.java
+=======
+  @SuppressFBWarnings(
+      value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
+      justification =
+          "for migrating older credentials that did not have a separate id field, and would really "
+              + "have a null id when attempted to deserialize. readResolve overwrites these nulls")
+  private Object readResolve() throws Exception {
+    return new GoogleRobotMetadataCredentials(
+        getId() == null ? getProjectId() : getId(), getProjectId(), getModule());
+  }
+>>>>>>> /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/main/java/com/google/jenkins/plugins/credentials/oauth/GoogleRobotMetadataCredentials.java/right.java
   /** {@inheritDoc} */
   @Override
   public GoogleRobotMetadataCredentialsModule getModule() {
     // down-cast to our required type
     return (GoogleRobotMetadataCredentialsModule) super.getModule();
   }
-
   /** {@inheritDoc} */
   @Override
   public synchronized boolean matches(List<DomainRequirement> requirements) {
@@ -101,9 +111,7 @@ public final class GoogleRobotMetadataCredentials extends GoogleRobotCredentials
     }
     return metadataScopes.test(requirements);
   }
-
   @Nullable private transient Domain metadataScopes;
-
   /** {@inheritDoc} */
   @Override
   public String getUsername() {
@@ -114,19 +122,16 @@ public final class GoogleRobotMetadataCredentials extends GoogleRobotCredentials
           Messages.GoogleRobotMetadataCredentials_DefaultIdentityError(), e);
     }
   }
-
   /**
    * The endpoint of the {@code METADATA_SERVER} for resolving the identity (email) of the service
    * account.
    */
   private static final String IDENTITY_PATH = "/instance/service-accounts/default/email";
-
   /** {@inheritDoc} */
   @Override
   public CredentialsScope getScope() {
     return getCredentialsScope();
   }
-
   /** {@inheritDoc} */
   @Override
   public ComputeCredential getGoogleCredential(GoogleOAuth2ScopeRequirement requirement)
@@ -135,13 +140,11 @@ public final class GoogleRobotMetadataCredentials extends GoogleRobotCredentials
     // providing a given library.
     return new ComputeCredential(getModule().getHttpTransport(), getModule().getJsonFactory());
   }
-
   /** {@inheritDoc} */
   @Override
   public Descriptor getDescriptor() {
     return (Descriptor) super.getDescriptor();
   }
-
   /** Descriptor for our unlimited service account extension. */
   public static class Descriptor extends AbstractGoogleRobotCredentialsDescriptor {
     /**
@@ -229,7 +232,36 @@ public final class GoogleRobotMetadataCredentials extends GoogleRobotCredentials
      */
     private static final String SCOPES_PATH = "/instance/service-accounts/default/scopes";
   }
-
+  /** For {@link java.io.Serializable} */
+  public GoogleRobotMetadataCredentials(
+      @CheckForNull CredentialsScope scope,
+      String id,
+      String projectId,
+      @Nullable GoogleRobotMetadataCredentialsModule module) throws Exception {
+    super("", projectId, module);
+  }
+  /**
+   * Construct a set of service account credentials with a specific id. It helps for updating
+   * credentials, as well as for migrating old credentials that had no id and relied on the project
+   * id.
+   *
+   * @param id the id to assign
+   * @param projectId The Pantheon project id associated with this service account
+   * @param module The module for instantiating dependent objects, or null.
+   */
+  @DataBoundConstructor
+  public GoogleRobotMetadataCredentials(
+      String id, String projectId, @Nullable GoogleRobotMetadataCredentialsModule module)
+      throws Exception {
+    super(id, projectId, module);
+  }
+  /** {@inheritDoc} */
+  /** {@inheritDoc} */
+  /** {@inheritDoc} */
+  /** {@inheritDoc} */
+  /** {@inheritDoc} */
+  /** {@inheritDoc} */
+  /** Descriptor for our unlimited service account extension. */
   /** For {@link java.io.Serializable} */
   private static final long serialVersionUID = 1L;
 }

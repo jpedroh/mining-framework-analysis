@@ -72,7 +72,13 @@ public class GoogleRobotCredentialsTest {
   @RequiresDomain(value = TestRequirement.class)
   public static class FakeGoogleCredentials extends GoogleRobotCredentials {
     public FakeGoogleCredentials(String projectId, GoogleCredential credential) {
-      super(CREDENTIALS_SCOPE, "", projectId, new GoogleRobotCredentialsModule());
+<<<<<<< /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/test/java/com/google/jenkins/plugins/credentials/oauth/GoogleRobotCredentialsTest.java/left.java
+      super(CREDENTIALS_SCOPE, "",projectId, new GoogleRobotCredentialsModule());
+||||||| /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/test/java/com/google/jenkins/plugins/credentials/oauth/GoogleRobotCredentialsTest.java/base.java
+      super(projectId, new GoogleRobotCredentialsModule());
+=======
+      super("",projectId, new GoogleRobotCredentialsModule());
+>>>>>>> /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/test/java/com/google/jenkins/plugins/credentials/oauth/GoogleRobotCredentialsTest.java/right.java
 
       this.credential = credential;
     }

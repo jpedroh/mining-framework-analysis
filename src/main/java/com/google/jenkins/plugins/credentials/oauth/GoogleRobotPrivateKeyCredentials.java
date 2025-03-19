@@ -60,7 +60,6 @@ public final class GoogleRobotPrivateKeyCredentials extends GoogleRobotCredentia
    * @param serviceAccountConfig The ServiceAccountConfig to use
    * @param module The module for instantiating dependent objects, or null.
    */
-  @DataBoundConstructor
   public GoogleRobotPrivateKeyCredentials(
       @CheckForNull CredentialsScope scope,
       String id,
@@ -68,7 +67,33 @@ public final class GoogleRobotPrivateKeyCredentials extends GoogleRobotCredentia
       ServiceAccountConfig serviceAccountConfig,
       @Nullable GoogleRobotCredentialsModule module)
       throws Exception {
-    super(scope, id, projectId, module);
+    super("", projectId, module);
+    this.serviceAccountConfig = serviceAccountConfig;
+  }
+
+  /**
+   * Construct a set of service account credentials with a specific id. It helps for updating
+   * credentials, as well as for migrating old credentials that had no id and relied on the project
+   * id.
+   *
+   * @param projectId The project id associated with this service account
+   * @param serviceAccountConfig The ServiceAccountConfig to use
+   * @param module The module for instantiating dependent objects, or null.
+   */
+  @DataBoundConstructor
+  public GoogleRobotPrivateKeyCredentials(
+      String id,
+      String projectId,
+      ServiceAccountConfig serviceAccountConfig,
+      @Nullable GoogleRobotCredentialsModule module)
+      throws Exception {
+<<<<<<< /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/main/java/com/google/jenkins/plugins/credentials/oauth/GoogleRobotPrivateKeyCredentials.java/left.java
+    super(scope, id,projectId, module);
+||||||| /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/main/java/com/google/jenkins/plugins/credentials/oauth/GoogleRobotPrivateKeyCredentials.java/base.java
+    super(projectId, module);
+=======
+    super(id,projectId, module);
+>>>>>>> /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/main/java/com/google/jenkins/plugins/credentials/oauth/GoogleRobotPrivateKeyCredentials.java/right.java
     this.serviceAccountConfig = serviceAccountConfig;
   }
 
@@ -83,12 +108,22 @@ public final class GoogleRobotPrivateKeyCredentials extends GoogleRobotCredentia
       String clientEmail = getClientEmailFromSecretsFileAndLogErrors();
       serviceAccountConfig = new P12ServiceAccountConfig(clientEmail, null, p12File);
     }
+<<<<<<< /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/main/java/com/google/jenkins/plugins/credentials/oauth/GoogleRobotPrivateKeyCredentials.java/left.java
     return new GoogleRobotPrivateKeyCredentials(
         getCredentialsScope() == null ? CredentialsScope.GLOBAL : getCredentialsScope(),
         getId() == null ? getProjectId() : getId(),
         getProjectId(),
         serviceAccountConfig,
         getModule());
+||||||| /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/main/java/com/google/jenkins/plugins/credentials/oauth/GoogleRobotPrivateKeyCredentials.java/base.java
+    return this;
+=======
+    return new GoogleRobotPrivateKeyCredentials(
+        getId() == null ? getProjectId() : getId(),
+        getProjectId(),
+        serviceAccountConfig,
+        getModule());
+>>>>>>> /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/main/java/com/google/jenkins/plugins/credentials/oauth/GoogleRobotPrivateKeyCredentials.java/right.java
   }
 
   private String getClientEmailFromSecretsFileAndLogErrors() {

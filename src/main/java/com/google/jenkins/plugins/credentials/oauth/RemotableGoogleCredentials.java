@@ -52,11 +52,16 @@ final class RemotableGoogleCredentials extends GoogleRobotCredentials {
       GoogleRobotCredentialsModule module)
       throws GeneralSecurityException {
     super(
+<<<<<<< /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/main/java/com/google/jenkins/plugins/credentials/oauth/RemotableGoogleCredentials.java/left.java
         credentials.getCredentialsScope() == null
             ? CredentialsScope.GLOBAL
             : credentials.getScope(),
-        "",
+        "",checkNotNull(credentials).getProjectId(),
+||||||| /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/main/java/com/google/jenkins/plugins/credentials/oauth/RemotableGoogleCredentials.java/base.java
         checkNotNull(credentials).getProjectId(),
+=======
+        "",checkNotNull(credentials).getProjectId(),
+>>>>>>> /usr/src/app/output/jenkinsci/google-oauth-plugin/94f08c7c32d576d99ddd3e215b67653fc99eaeca/src/main/java/com/google/jenkins/plugins/credentials/oauth/RemotableGoogleCredentials.java/right.java
         checkNotNull(module));
 
     this.username = credentials.getUsername();
@@ -85,17 +90,31 @@ final class RemotableGoogleCredentials extends GoogleRobotCredentials {
    * for migrating old credentials that had no id and relied on the projectId during readResolve().
    */
   private RemotableGoogleCredentials(
-      CredentialsScope scope,
       String id,
       String projectId,
       GoogleRobotCredentialsModule module,
       String username,
       String accessToken,
       long expiration) {
-    super(scope, id, projectId, module);
+    super(id, projectId, module);
     this.username = username;
     this.accessToken = accessToken;
     this.expiration = expiration;
+  }
+
+  @SuppressFBWarnings(
+      value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
+      justification =
+          "for migrating older credentials that did not have a separate id field, and would really "
+              + "have a null id when attempted to deserialize. readResolve overwrites these nulls")
+  private Object readResolve() throws Exception {
+    return new RemotableGoogleCredentials(
+        getId() == null ? getProjectId() : getId(),
+        getProjectId(),
+        getModule(),
+        username,
+        accessToken,
+        expiration);
   }
 
   @SuppressFBWarnings(
@@ -112,6 +131,23 @@ final class RemotableGoogleCredentials extends GoogleRobotCredentials {
         username,
         accessToken,
         expiration);
+  }
+  /**
+   * Construct a remotable credential. This should never be used directly - this constructor is only
+   * for migrating old credentials that had no id and relied on the projectId during readResolve().
+   */
+  private RemotableGoogleCredentials(
+      CredentialsScope scope,
+      String id,
+      String projectId,
+      GoogleRobotCredentialsModule module,
+      String username,
+      String accessToken,
+      long expiration) {
+    super(scope, id, projectId, module);
+    this.username = username;
+    this.accessToken = accessToken;
+    this.expiration = expiration;
   }
 
   /** {@inheritDoc} */
