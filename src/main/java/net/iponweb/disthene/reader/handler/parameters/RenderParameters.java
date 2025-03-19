@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  * @author Andrei Ivanov
  */
 public class RenderParameters {
-    final static Logger logger = LogManager.getLogger(RenderParameters.class);
+    private final static Logger logger = LogManager.getLogger(RenderParameters.class);
 
     final private static Pattern EXTENDED_TIME_PATTERN = Pattern.compile("-*([0-9]+)([a-zA-Z]+)");
 
@@ -66,7 +66,7 @@ public class RenderParameters {
         return until;
     }
 
-    public void setUntil(Long until) {
+    private void setUntil(Long until) {
         this.until = until;
     }
 
@@ -82,7 +82,7 @@ public class RenderParameters {
         return tz;
     }
 
-    public void setTz(DateTimeZone tz) {
+    private void setTz(DateTimeZone tz) {
         this.tz = tz;
     }
 
@@ -90,14 +90,13 @@ public class RenderParameters {
         return maxDataPoints;
     }
 
-    public void setMaxDataPoints(int maxDataPoints) {
+    private void setMaxDataPoints(int maxDataPoints) {
         this.maxDataPoints = maxDataPoints;
     }
 
     public ImageParameters getImageParameters() {
         return imageParameters;
     }
-
 
     @Override
     public String toString() {
