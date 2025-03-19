@@ -23,7 +23,6 @@ import org.springframework.stereotype.Component;
  *
  * @author Michael Zimmermann - zimmerml@studi.informatik.uni-stuttgart.de
  */
-
 @Component
 @Named("application-bus-soaphttp-route")
 public class Route extends RouteBuilder {

@@ -284,6 +284,9 @@ public class BpelPlanEnginePlugin implements IPlanEnginePlanRefPluginService {
 
     @Nullable
     private Path planLocationOnDisk(CsarId csarId, QName planId, PlanModelReference planRef) {
+        if (storage == null) {
+            return null;
+        }
 
         Csar csar = storage.findById(csarId);
 
