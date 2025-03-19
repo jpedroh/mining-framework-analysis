@@ -305,10 +305,12 @@ public class ExecutionQueueRepositoryImpl implements ExecutionQueueRepository {
         deleteFinishedStepsJdbcTemplate = new JdbcTemplate(dataSource);
         findPayloadByExecutionIdsJdbcTemplate = new JdbcTemplate(dataSource);
         getBusyWorkersJdbcTemplate = new JdbcTemplate(dataSource);
+<<<<<<< /usr/src/app/output/cloudslang/score/9dc424b83174dfe40de8b738888e2a6eb61c0a6c/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/left.java
         getFirstPendingBranchJdbcTemplate = new JdbcTemplate(dataSource);
         updateExecutionStateStatusJdbcTemplate = new JdbcTemplate(dataSource);
         deletePendingExecutionStateJdbcTemplate = new JdbcTemplate(dataSource);
-
+||||||| /usr/src/app/output/cloudslang/score/9dc424b83174dfe40de8b738888e2a6eb61c0a6c/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/base.java
+=======
         useLargeMessageQuery = Boolean.parseBoolean(System.getProperty("score.poll.use.large.message.query", "true"));
         workerQuery = isMssql() ? QUERY_WORKER_SQL_MSSQL : QUERY_WORKER_SQL;
 
@@ -325,6 +327,7 @@ public class ExecutionQueueRepositoryImpl implements ExecutionQueueRepository {
         }
 
         logger.info("Poll using large message query: " + useLargeMessageQuery);
+>>>>>>> /usr/src/app/output/cloudslang/score/9dc424b83174dfe40de8b738888e2a6eb61c0a6c/engine/queue/score-queue-impl/src/main/java/io/cloudslang/engine/queue/repositories/ExecutionQueueRepositoryImpl.java/right.java
     }
 
     @Override
