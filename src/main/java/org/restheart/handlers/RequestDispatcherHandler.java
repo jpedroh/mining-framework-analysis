@@ -150,7 +150,7 @@ public class RequestDispatcherHandler extends PipedHttpHandler {
                                         PHASE.RESPONSE,
                                         new AggregationTransformer(),
                                         new RepresentationTransformer()))));
-        
+
         putPipedHttpHandler(TYPE.DB_SIZE, METHOD.GET,
                 new RequestTransformerHandler(
                         new TransformersListHandler(
