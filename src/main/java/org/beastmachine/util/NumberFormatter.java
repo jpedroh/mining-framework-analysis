@@ -5,8 +5,8 @@ import static java.lang.Math.max;
 public class NumberFormatter {
 	private static final int ZEROS_LIMIT=5;
 
-
 	public static String format(double d) {
+<<<<<<< /usr/src/app/output/beastmachine/ggplot/e2841b05bab86e238732649229f3d0a2834badf7/src/main/java/org/beastmachine/util/NumberFormatter.java/left.java
 		String naive = String.valueOf(d);
 		String postFix = "";
 		if(naive.contains("E")){
@@ -55,10 +55,86 @@ public class NumberFormatter {
 			}
 		}
 		return naive+postFix;
+||||||| /usr/src/app/output/beastmachine/ggplot/e2841b05bab86e238732649229f3d0a2834badf7/src/main/java/org/beastmachine/util/NumberFormatter.java/base.java
+	  String naive = String.format("%f",d);
+	  int decimal = naive.length();
+	  for (int ii=0; ii<naive.length(); ii++) {
+	    char c = naive.charAt(ii);
+	    if (c == '.') {
+	      decimal = ii;
+	      break;
+	    }
+	  }
+	  
+	  int firstZero = -1;
+	  int zeroCount = 0;
+	  for (int ii=0; ii<naive.length(); ii++) {
+	    char c = naive.charAt(ii);
+	    if (c == '.') {
+	      continue;
+	    } else if (c=='0') {
+	      if (zeroCount==0) {
+	        firstZero = ii;
+	      }
+	      zeroCount++;
+	    } else if (zeroCount >= ZEROS_LIMIT) {
+	      naive = naive.substring(0,max(firstZero,decimal));
+	      if (naive.endsWith(".")) {
+	        naive = naive.substring(0,naive.length()-1);
+	      }
+	      return naive;
+	    } else {
+	      zeroCount = 0;
+	      firstZero = -1;
+	    }
+	  }
+	  return naive;
+=======
+	  String naive = String.format("%f",d);
+	  System.out.println(naive);
+	  int decimal = naive.indexOf(".");
+	  if (decimal == -1) { decimal = naive.length(); }
+
+	  int firstZero = -1;
+	  int zeroCount = 0;
+	  for (int ii=0; ii<naive.length(); ii++) {
+	    char c = naive.charAt(ii);
+	    if (c == '.') {
+	      continue;
+	    } else if (c=='0') {
+	      if (zeroCount==0) {
+	        firstZero = ii;
+	      }
+	      zeroCount++;
+	    } else if (zeroCount >= ZEROS_LIMIT) {
+	      naive = naive.substring(0,max(firstZero,decimal));
+	      if (naive.endsWith(".")) {
+	        naive = naive.substring(0,naive.length()-1);
+	      }
+	      return naive;
+	    } else {
+	      zeroCount = 0;
+	      firstZero = -1;
+	    }
+	  }
+	  if (zeroCount >= ZEROS_LIMIT) {
+	    naive = naive.substring(0,max(firstZero,decimal));
+	    if (naive.endsWith(".")) {
+	      naive = naive.substring(0,naive.length()-1);
+	    }
+	    return naive;
+	  }
+	  return naive;
+>>>>>>> /usr/src/app/output/beastmachine/ggplot/e2841b05bab86e238732649229f3d0a2834badf7/src/main/java/org/beastmachine/util/NumberFormatter.java/right.java
 	}
 
 	public static void main(String[] args) {
-		System.out.println(format(-11));
+<<<<<<< /usr/src/app/output/beastmachine/ggplot/e2841b05bab86e238732649229f3d0a2834badf7/src/main/java/org/beastmachine/util/NumberFormatter.java/left.java
+		System.out.println(format(-100.00001));
+||||||| /usr/src/app/output/beastmachine/ggplot/e2841b05bab86e238732649229f3d0a2834badf7/src/main/java/org/beastmachine/util/NumberFormatter.java/base.java
+		System.out.println(format(200000001));
+=======
+		System.out.println(format(1));
+>>>>>>> /usr/src/app/output/beastmachine/ggplot/e2841b05bab86e238732649229f3d0a2834badf7/src/main/java/org/beastmachine/util/NumberFormatter.java/right.java
 	}
-
 }
