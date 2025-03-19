@@ -1,54 +1,4 @@
-/**
- * END USER LICENSE AGREEMENT (“EULA”)
- *
- * READ THIS AGREEMENT CAREFULLY (date: 9/13/2011):
- * http://www.akiban.com/licensing/20110913
- *
- * BY INSTALLING OR USING ALL OR ANY PORTION OF THE SOFTWARE, YOU ARE ACCEPTING
- * ALL OF THE TERMS AND CONDITIONS OF THIS AGREEMENT. YOU AGREE THAT THIS
- * AGREEMENT IS ENFORCEABLE LIKE ANY WRITTEN AGREEMENT SIGNED BY YOU.
- *
- * IF YOU HAVE PAID A LICENSE FEE FOR USE OF THE SOFTWARE AND DO NOT AGREE TO
- * THESE TERMS, YOU MAY RETURN THE SOFTWARE FOR A FULL REFUND PROVIDED YOU (A) DO
- * NOT USE THE SOFTWARE AND (B) RETURN THE SOFTWARE WITHIN THIRTY (30) DAYS OF
- * YOUR INITIAL PURCHASE.
- *
- * IF YOU WISH TO USE THE SOFTWARE AS AN EMPLOYEE, CONTRACTOR, OR AGENT OF A
- * CORPORATION, PARTNERSHIP OR SIMILAR ENTITY, THEN YOU MUST BE AUTHORIZED TO SIGN
- * FOR AND BIND THE ENTITY IN ORDER TO ACCEPT THE TERMS OF THIS AGREEMENT. THE
- * LICENSES GRANTED UNDER THIS AGREEMENT ARE EXPRESSLY CONDITIONED UPON ACCEPTANCE
- * BY SUCH AUTHORIZED PERSONNEL.
- *
- * IF YOU HAVE ENTERED INTO A SEPARATE WRITTEN LICENSE AGREEMENT WITH AKIBAN FOR
- * USE OF THE SOFTWARE, THE TERMS AND CONDITIONS OF SUCH OTHER AGREEMENT SHALL
- * PREVAIL OVER ANY CONFLICTING TERMS OR CONDITIONS IN THIS AGREEMENT.
- */
-
-/* The original from which this derives bore the following: */
-
-/*
-
-   Derby - Class org.apache.derby.impl.sql.compile.BinaryOperatorNode
-
-   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  See the NOTICE file distributed with
-   this work for additional information regarding copyright ownership.
-   The ASF licenses this file to you under the Apache License, Version 2.0
-   (the "License"); you may not use this file except in compliance with
-   the License.  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-
- */
-
 package com.akiban.sql.parser;
-
 import com.akiban.sql.StandardException;
 import com.akiban.sql.types.ValueClassName;
 
@@ -59,26 +9,49 @@ import com.akiban.sql.types.ValueClassName;
  * methods to be called from expressions, but not Java operators.
  *
  */
+public class BinaryOperatorNode extends ValueNode {
+  protected String operator;
 
-public class BinaryOperatorNode extends ValueNode
-{
-    protected String operator;
-    protected String methodName;
+  protected String methodName;
 
-    public static enum OperatorType {
-        PLUS, MINUS, TIMES, DIVIDE, CONCATENATE, MOD, DIV,
-        EQ, NE, GT, GE, LT, LE, AND, OR, LIKE, LTRIM, TRIM, RTRIM,
-        BITAND, BITOR, BITXOR, LEFT_SHIFT, RIGHT_SHIFT
-    }
+  public static enum OperatorType {
+    PLUS,
+    MINUS,
+    TIMES,
+    DIVIDE,
+    CONCATENATE,
+    MOD,
+    DIV,
+    EQ,
+    NE,
+    GT,
+    GE,
+    LT,
+    LE,
+    AND,
+    OR,
+    LIKE,
+    LTRIM,
+    TRIM,
+    RTRIM,
+    BITAND,
+    BITOR,
+    BITXOR,
+    LEFT_SHIFT,
+    RIGHT_SHIFT
+  }
 
-    protected ValueNode leftOperand;
-    protected ValueNode rightOperand;
+  protected ValueNode leftOperand;
 
-    protected String leftInterfaceType;
-    protected String rightInterfaceType;
-    protected String resultInterfaceType;
+  protected ValueNode rightOperand;
 
-    /**
+  protected String leftInterfaceType;
+
+  protected String rightInterfaceType;
+
+  protected String resultInterfaceType;
+
+  /**
      * Initializer for a BinaryOperatorNode
      *
      * @param leftOperand The left operand of the node
@@ -88,190 +61,171 @@ public class BinaryOperatorNode extends ValueNode
      * @param leftInterfaceType The name of the interface for the left operand
      * @param rightInterfaceType The name of the interface for the right operand
      */
+  public void init(Object leftOperand, Object rightOperand, Object operator, Object methodName, Object leftInterfaceType, Object rightInterfaceType) {
+    this.leftOperand = (ValueNode) leftOperand;
+    this.rightOperand = (ValueNode) rightOperand;
+    this.operator = (String) operator;
+    this.methodName = (String) methodName;
+    this.leftInterfaceType = (String) leftInterfaceType;
+    this.rightInterfaceType = (String) rightInterfaceType;
+  }
 
-    public void init(Object leftOperand, Object rightOperand,
-                     Object operator, Object methodName,
-                     Object leftInterfaceType, Object rightInterfaceType) {
-        this.leftOperand = (ValueNode)leftOperand;
-        this.rightOperand = (ValueNode)rightOperand;
-        this.operator = (String)operator;
-        this.methodName = (String)methodName;
-        this.leftInterfaceType = (String)leftInterfaceType;
-        this.rightInterfaceType = (String)rightInterfaceType;
-    }
+  public void init(Object leftOperand, Object rightOperand, Object leftInterfaceType, Object rightInterfaceType) {
+    this.leftOperand = (ValueNode) leftOperand;
+    this.rightOperand = (ValueNode) rightOperand;
+    this.leftInterfaceType = (String) leftInterfaceType;
+    this.rightInterfaceType = (String) rightInterfaceType;
+  }
 
-    public void init(Object leftOperand, Object rightOperand, 
-                     Object leftInterfaceType, Object rightInterfaceType) {
-        this.leftOperand = (ValueNode)leftOperand;
-        this.rightOperand = (ValueNode)rightOperand;
-        this.leftInterfaceType = (String)leftInterfaceType;
-        this.rightInterfaceType = (String)rightInterfaceType;
-    }
-
-    /**
+  /**
      * Fill this node with a deep copy of the given node.
      */
-    public void copyFrom(QueryTreeNode node) throws StandardException {
-        super.copyFrom(node);
+  public void copyFrom(QueryTreeNode node) throws StandardException {
+    super.copyFrom(node);
+    BinaryOperatorNode other = (BinaryOperatorNode) node;
+    this.operator = other.operator;
+    this.methodName = other.methodName;
+    this.leftOperand = (ValueNode) getNodeFactory().copyNode(other.leftOperand, getParserContext());
+    this.rightOperand = (ValueNode) getNodeFactory().copyNode(other.rightOperand, getParserContext());
+    this.leftInterfaceType = other.leftInterfaceType;
+    this.rightInterfaceType = other.rightInterfaceType;
+    this.resultInterfaceType = other.resultInterfaceType;
+  }
 
-        BinaryOperatorNode other = (BinaryOperatorNode)node;
-        this.operator = other.operator;
-        this.methodName = other.methodName;
-        this.leftOperand = (ValueNode)
-            getNodeFactory().copyNode(other.leftOperand, getParserContext());
-        this.rightOperand = (ValueNode)
-            getNodeFactory().copyNode(other.rightOperand, getParserContext());
-        this.leftInterfaceType = other.leftInterfaceType;
-        this.rightInterfaceType = other.rightInterfaceType;
-        this.resultInterfaceType = other.resultInterfaceType;
-    }
-
-    /**
+  /**
      * Convert this object to a String.  See comments in QueryTreeNode.java
      * for how this should be done for tree printing.
      *
      * @return This object as a String
      */
+  public String toString() {
+    return "operator: " + operator + "\n" + "methodName: " + methodName + "\n" + super.toString();
+  }
 
-    public String toString() {
-        return "operator: " + operator + "\n" +
-            "methodName: " + methodName + "\n" + 
-            super.toString();
-    }
-
-    /**
+  /**
      * Set the operator.
      *
      * @param operator The operator.
      */
-    void setOperator(String operator) {
-        this.operator = operator;
-    }
+  void setOperator(String operator) {
+    this.operator = operator;
+  }
 
-    public String getOperator() {
-        return operator;
-    }
+  public String getOperator() {
+    return operator;
+  }
 
-    /**
+  /**
      * Set the methodName.
      *
      * @param methodName The methodName.
      */
-    void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
+  void setMethodName(String methodName) {
+    this.methodName = methodName;
+  }
 
-    public String getMethodName() {
-        return methodName;
-    }
+  public String getMethodName() {
+    return methodName;
+  }
 
-    /**
+  /**
      * Set the interface type for the left and right arguments.
      * Used when we don't know the interface type until
      * later in binding.
      */
-    public void setLeftRightInterfaceType(String iType) {
-        leftInterfaceType = iType;
-        rightInterfaceType = iType;
-    }
+  public void setLeftRightInterfaceType(String iType) {
+    leftInterfaceType = iType;
+    rightInterfaceType = iType;
+  }
 
-    /**
+  /**
      * Prints the sub-nodes of this object.  See QueryTreeNode.java for
      * how tree printing is supposed to work.
      *
      * @param depth The depth of this node in the tree
      */
-
-    public void printSubNodes(int depth) {
-        super.printSubNodes(depth);
-
-        if (leftOperand != null) {
-            printLabel(depth, "leftOperand: ");
-            leftOperand.treePrint(depth + 1);
-        }
-
-        if (rightOperand != null) {
-            printLabel(depth, "rightOperand: ");
-            rightOperand.treePrint(depth + 1);
-        }
+  public void printSubNodes(int depth) {
+    super.printSubNodes(depth);
+    if (leftOperand != null) {
+      printLabel(depth, "leftOperand: ");
+      leftOperand.treePrint(depth + 1);
     }
+    if (rightOperand != null) {
+      printLabel(depth, "rightOperand: ");
+      rightOperand.treePrint(depth + 1);
+    }
+  }
 
-    /**
+  /**
      * Set the leftOperand to the specified ValueNode
      *
      * @param newLeftOperand The new leftOperand
      */
-    public void setLeftOperand(ValueNode newLeftOperand) {
-        leftOperand = newLeftOperand;
-    }
+  public void setLeftOperand(ValueNode newLeftOperand) {
+    leftOperand = newLeftOperand;
+  }
 
-    /**
+  /**
      * Get the leftOperand
      *
      * @return The current leftOperand.
      */
-    public ValueNode getLeftOperand() {
-        return leftOperand;
-    }
+  public ValueNode getLeftOperand() {
+    return leftOperand;
+  }
 
-    /**
+  /**
      * Set the rightOperand to the specified ValueNode
      *
      * @param newRightOperand The new rightOperand
      */
-    public void setRightOperand(ValueNode newRightOperand) {
-        rightOperand = newRightOperand;
-    }
+  public void setRightOperand(ValueNode newRightOperand) {
+    rightOperand = newRightOperand;
+  }
 
-    /**
+  /**
      * Get the rightOperand
      *
      * @return The current rightOperand.
      */
-    public ValueNode getRightOperand() {
-        return rightOperand;
-    }
+  public ValueNode getRightOperand() {
+    return rightOperand;
+  }
 
-    /**
+  /**
      * Return whether or not this expression tree represents a constant expression.
      *
      * @return Whether or not this expression tree represents a constant expression.
      */
-    public boolean isConstantExpression() {
-        return (leftOperand.isConstantExpression() &&
-                rightOperand.isConstantExpression());
-    }
+  public boolean isConstantExpression() {
+    return (leftOperand.isConstantExpression() && rightOperand.isConstantExpression());
+  }
 
-    /**
+  /**
      * Accept the visitor for all visitable children of this node.
      * 
      * @param v the visitor
      *
      * @exception StandardException on error
      */
-    void acceptChildren(Visitor v) throws StandardException {
-        super.acceptChildren(v);
-
-        if (leftOperand != null) {
-            leftOperand = (ValueNode)leftOperand.accept(v);
-        }
-
-        if (rightOperand != null) {
-            rightOperand = (ValueNode)rightOperand.accept(v);
-        }
+  void acceptChildren(Visitor v) throws StandardException {
+    super.acceptChildren(v);
+    if (leftOperand != null) {
+      leftOperand = (ValueNode) leftOperand.accept(v);
     }
+    if (rightOperand != null) {
+      rightOperand = (ValueNode) rightOperand.accept(v);
+    }
+  }
 
-    /**
+  /**
      * @inheritDoc
      */
-    protected boolean isEquivalent(ValueNode o) throws StandardException {
-        if (!isSameNodeType(o)) {
-            return false;
-        }
-        BinaryOperatorNode other = (BinaryOperatorNode)o;
-        return methodName.equals(other.methodName) && 
-            leftOperand.isEquivalent(other.leftOperand) && 
-            rightOperand.isEquivalent(other.rightOperand);
+  protected boolean isEquivalent(ValueNode o) throws StandardException {
+    if (!isSameNodeType(o)) {
+      return false;
     }
-
+    BinaryOperatorNode other = (BinaryOperatorNode) o;
+    return methodName.equals(other.methodName) && leftOperand.isEquivalent(other.leftOperand) && rightOperand.isEquivalent(other.rightOperand);
+  }
 }
