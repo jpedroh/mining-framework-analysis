@@ -1,5 +1,4 @@
 package org.uma.jmetal.algorithm.multiobjective.abyss;
-
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.localsearch.LocalSearchOperator;
@@ -15,23 +14,33 @@ import org.uma.jmetal.util.comparator.DominanceComparator;
 import org.uma.jmetal.util.comparator.DominanceComparatorV2;
 import org.uma.jmetal.util.comparator.MultiComparator;
 import org.uma.jmetal.util.comparator.impl.OverallConstraintViolationComparator;
-
 import java.util.Arrays;
 import java.util.Comparator;
 
-/** @author Cristobal Barba */
+/**
+ *  @author Cristobal Barba
+ */
 public class ABYSSBuilder implements AlgorithmBuilder<ABYSS> {
   private DoubleProblem problem;
+
   private CrossoverOperator<DoubleSolution> crossoverOperator;
+
   protected LocalSearchOperator<DoubleSolution> improvementOperator;
 
   private MutationOperator<DoubleSolution> mutationOperator;
+
   private int numberOfSubranges;
+
   private int populationSize;
+
   private int refSet1Size;
+
   private int refSet2Size;
+
   private int archiveSize;
+
   private int maxEvaluations;
+
   private CrowdingDistanceArchive<DoubleSolution> archive;
 
   public ABYSSBuilder(DoubleProblem problem, Archive<DoubleSolution> archive) {
@@ -49,15 +58,8 @@ public class ABYSSBuilder implements AlgorithmBuilder<ABYSS> {
     this.mutationOperator = new PolynomialMutation(mutationProbability, distributionIndex);
     int improvementRounds = 1;
     this.archive = (CrowdingDistanceArchive<DoubleSolution>) archive;
-
-    Comparator<DoubleSolution> comparator =
-        new MultiComparator<>(
-            Arrays.asList(
-                new OverallConstraintViolationComparator<>(), new DominanceComparatorV2<>()));
-
-    this.improvementOperator =
-        new BasicLocalSearch<>(
-            improvementRounds, mutationOperator, comparator, problem);
+    Comparator<DoubleSolution> comparator = new MultiComparator<>(Arrays.asList(new OverallConstraintViolationComparator<>(), new DominanceComparatorV2<>()));
+    this.improvementOperator = new BasicLocalSearch<>(improvementRounds, mutationOperator, comparator, problem);
   }
 
   public CrossoverOperator<DoubleSolution> getCrossoverOperator() {
@@ -73,8 +75,7 @@ public class ABYSSBuilder implements AlgorithmBuilder<ABYSS> {
     return improvementOperator;
   }
 
-  public ABYSSBuilder setImprovementOperator(
-      LocalSearchOperator<DoubleSolution> improvementOperator) {
+  public ABYSSBuilder setImprovementOperator(LocalSearchOperator<DoubleSolution> improvementOperator) {
     this.improvementOperator = improvementOperator;
     return this;
   }
@@ -142,18 +143,7 @@ public class ABYSSBuilder implements AlgorithmBuilder<ABYSS> {
     return this;
   }
 
-  @Override
-  public ABYSS build() {
-    return new ABYSS(
-        problem,
-        maxEvaluations,
-        populationSize,
-        refSet1Size,
-        refSet2Size,
-        archiveSize,
-        archive,
-        improvementOperator,
-        crossoverOperator,
-        numberOfSubranges);
+  @Override public ABYSS build() {
+    return new ABYSS(problem, maxEvaluations, populationSize, refSet1Size, refSet2Size, archiveSize, archive, improvementOperator, crossoverOperator, numberOfSubranges);
   }
 }
