@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 package com.bunjlabs.fuga;
+import org.junit.Assert;
 
 public class TemplateTest {
 
