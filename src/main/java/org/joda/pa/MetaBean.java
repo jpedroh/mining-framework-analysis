@@ -1,20 +1,4 @@
-/*
- *  Copyright 2014-present Stephen Colebourne
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
 package org.joda.pa;
-
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Repeatable;
 import java.util.Optional;
@@ -38,8 +22,7 @@ import java.util.stream.Stream;
  * creating properties and/or annotations on demand.
  */
 public interface MetaBean {
-
-    /**
+  /**
      * Obtains a meta-bean for a {@code Class}.
      * <p>
      * A {@code MetaBean} provides an abstraction on top of a {@code Class}.
@@ -47,12 +30,11 @@ public interface MetaBean {
      * @param cls  the class whose associated {@code MetaBean} will be obtained
      * @return the meta-bean associated with the class, not null
      */
-    static MetaBean of(Class<?> cls) {
-        return null;
-    }
+  static MetaBean of(Class<?> cls) {
+    return null;
+  }
 
-    //-------------------------------------------------------------------------
-    /**
+  /**
      * Gets the type of the bean, represented as a {@code Class}.
      * <p>
      * A {@code MetaBean} can be thought of as the equivalent of {@link Class} but for beans.
@@ -60,9 +42,9 @@ public interface MetaBean {
      * 
      * @return the type of the bean, not null
      */
-    Class<?> beanType();
+  Class<?> beanType();
 
-    /**
+  /**
      * Checks whether this bean is buildable or not.
      * <p>
      * A buildable bean can be constructed using {@link #beanBuilder()}.
@@ -71,9 +53,9 @@ public interface MetaBean {
      * 
      * @return true if this bean is buildable
      */
-    boolean isBuildable();
+  boolean isBuildable();
 
-    /**
+  /**
      * Creates a bean builder that can be used to create an instance of this bean.
      * <p>
      * The builder is used in two main ways.
@@ -87,10 +69,9 @@ public interface MetaBean {
      * @throws UnsupportedOperationException if the bean cannot be created
      * @see #isBuildable()
      */
-    BeanBuilder<?> beanBuilder();
+  BeanBuilder<?> beanBuilder();
 
-    //-----------------------------------------------------------------------
-    /**
+  /**
      * Gets the stream of properties associated with this bean.
      * <p>
      * The properties are queried from the bean.
@@ -103,9 +84,9 @@ public interface MetaBean {
      * 
      * @return the stream of properties on the bean, not null
      */
-    Stream<MetaProperty<?>> metaProperties();
+  Stream<MetaProperty<?>> metaProperties();
 
-    /**
+  /**
      * Gets a single property by name.
      * <p>
      * The properties are queried from the bean.
@@ -124,14 +105,11 @@ public interface MetaBean {
      *                      (question by nipa@codefx.org: why is null permitted?)
      * @return the property, or optional empty if no such property
      */
-    default Optional<MetaProperty<?>> metaProperty(String propertyName) {
-        return metaProperties()
-                .filter(mp -> mp.name().equals(propertyName))
-                .findFirst();
-    }
+  default Optional<MetaProperty<?>> metaProperty(String propertyName) {
+    return metaProperties().filter((mp) -> mp.name().equals(propertyName)).findFirst();
+  }
 
-    //-----------------------------------------------------------------------
-    /**
+  /**
      * Gets the stream of annotations associated with this bean.
      * <p>
      * The annotations are queried from the bean.
@@ -144,9 +122,9 @@ public interface MetaBean {
      * 
      * @return the stream of annotations, not null
      */
-    Stream<Annotation> annotations();
+  Stream<Annotation> annotations();
 
-    /**
+  /**
      * Gets the stream of annotations associated with this bean by type.
      * <p>
      * The annotations are queried from the bean.
@@ -166,10 +144,7 @@ public interface MetaBean {
      * @param annotationType  the annotation type to find, not null
      * @return the annotations matching the specified type, not null
      */
-    default <A extends Annotation> Stream<A> annotations(Class<A> annotationType) {
-        return annotations()
-                .filter(a -> a.annotationType() == annotationType)
-                .map(a -> annotationType.cast(a));
-    }
-
+  default <A extends Annotation> Stream<A> annotations(Class<A> annotationType) {
+    return annotations().filter((a) -> a.annotationType() == annotationType).map((a) -> annotationType.cast(a));
+  }
 }
