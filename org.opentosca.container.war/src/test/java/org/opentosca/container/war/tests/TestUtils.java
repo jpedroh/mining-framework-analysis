@@ -433,7 +433,41 @@ public class TestUtils {
 
         // TODO we should remove this, it is only necessary right now because the bpmn plans don't log properly
         if (buildPlan.getPlanLanguage().contains("BPMN")) {
-            return this.waitForServiceInstanceCreation(serviceTemplateInstanceService, serviceTemplate);
+<<<<<<< /usr/src/app/output/opentosca/container/a0811bdc4455ec849baec6f11bc2942a223b10af/org.opentosca.container.war/src/test/java/org/opentosca/container/war/tests/TestUtils.java/left.java
+            Collection<ServiceTemplateInstance> coll = serviceTemplateInstanceService.getServiceTemplateInstances(serviceTemplate.getId());
+            ServiceTemplateInstance s = new ServiceTemplateInstance();
+            while (coll.size() != 1) {
+                coll = serviceTemplateInstanceService.getServiceTemplateInstances(serviceTemplate.getId());
+            }
+
+            for (ServiceTemplateInstance serviceTemplateInstance : coll) {
+                s = serviceTemplateInstance;
+            }
+            ServiceTemplateInstanceState state = serviceTemplateInstanceService.getServiceTemplateInstanceState(s.getId());
+
+            while ((state != ServiceTemplateInstanceState.CREATED)) {
+                state = serviceTemplateInstanceService.getServiceTemplateInstanceState(s.getId());
+            }
+            return s;
+||||||| /usr/src/app/output/opentosca/container/a0811bdc4455ec849baec6f11bc2942a223b10af/org.opentosca.container.war/src/test/java/org/opentosca/container/war/tests/TestUtils.java/base.java
+            Collection<ServiceTemplateInstance> coll = instanceService.getServiceTemplateInstances(serviceTemplate.getId());
+            ServiceTemplateInstance s = new ServiceTemplateInstance();
+            while (coll.size() != 1) {
+                coll = instanceService.getServiceTemplateInstances(serviceTemplate.getId());
+            }
+
+            for (ServiceTemplateInstance serviceTemplateInstance : coll) {
+                s = serviceTemplateInstance;
+            }
+            ServiceTemplateInstanceState state = instanceService.getServiceTemplateInstanceState(s.getId());
+
+            while ((state != ServiceTemplateInstanceState.CREATED)) {
+                state = instanceService.getServiceTemplateInstanceState(s.getId());
+            }
+            return s;
+=======
+            return this.waitForServiceInstanceCreation(instanceService, serviceTemplate);
+>>>>>>> /usr/src/app/output/opentosca/container/a0811bdc4455ec849baec6f11bc2942a223b10af/org.opentosca.container.war/src/test/java/org/opentosca/container/war/tests/TestUtils.java/right.java
         }
 
         PlanInstance buildPlanInstance = (PlanInstance) planInstanceService.waitForInstanceAvailable(buildPlanCorrelationId).joinAndGet();
@@ -445,10 +479,44 @@ public class TestUtils {
 
     public ServiceTemplateInstance runDefrostPlanExecution(PlanInstanceService planInstanceService, PlanInvokerService planInvokerService, ServiceTemplateInstanceService serviceTemplateInstanceService, Csar csar, TServiceTemplate serviceTemplate, TPlan defrostPlan, List<org.opentosca.container.core.extension.TParameter> buildPlanInputParams) {
         String defrostPlanCorrelationId = planInvokerService.invokePlan(csar, serviceTemplate, -1L, defrostPlan.getId(), buildPlanInputParams, PlanType.BUILD);
-        
+
         // TODO we should remove this, it is only necessary right now because the bpmn plans don't log properly
         if (defrostPlan.getPlanLanguage().contains("BPMN")) {
-            return this.waitForServiceInstanceCreation(serviceTemplateInstanceService, serviceTemplate);
+<<<<<<< /usr/src/app/output/opentosca/container/a0811bdc4455ec849baec6f11bc2942a223b10af/org.opentosca.container.war/src/test/java/org/opentosca/container/war/tests/TestUtils.java/left.java
+            Collection<ServiceTemplateInstance> coll = serviceTemplateInstanceService.getServiceTemplateInstances(serviceTemplate.getId());
+            ServiceTemplateInstance s = new ServiceTemplateInstance();
+            while (coll.size() != 1) {
+                coll = serviceTemplateInstanceService.getServiceTemplateInstances(serviceTemplate.getId());
+            }
+
+            for (ServiceTemplateInstance serviceTemplateInstance : coll) {
+                s = serviceTemplateInstance;
+            }
+            ServiceTemplateInstanceState state = serviceTemplateInstanceService.getServiceTemplateInstanceState(s.getId());
+
+            while ((state != ServiceTemplateInstanceState.CREATED)) {
+                state = serviceTemplateInstanceService.getServiceTemplateInstanceState(s.getId());
+            }
+            return s;
+||||||| /usr/src/app/output/opentosca/container/a0811bdc4455ec849baec6f11bc2942a223b10af/org.opentosca.container.war/src/test/java/org/opentosca/container/war/tests/TestUtils.java/base.java
+            Collection<ServiceTemplateInstance> coll = instanceService.getServiceTemplateInstances(serviceTemplate.getId());
+            ServiceTemplateInstance s = new ServiceTemplateInstance();
+            while (coll.size() != 1) {
+                coll = instanceService.getServiceTemplateInstances(serviceTemplate.getId());
+            }
+
+            for (ServiceTemplateInstance serviceTemplateInstance : coll) {
+                s = serviceTemplateInstance;
+            }
+            ServiceTemplateInstanceState state = instanceService.getServiceTemplateInstanceState(s.getId());
+
+            while ((state != ServiceTemplateInstanceState.CREATED)) {
+                state = instanceService.getServiceTemplateInstanceState(s.getId());
+            }
+            return s;
+=======
+            return this.waitForServiceInstanceCreation(instanceService, serviceTemplate);
+>>>>>>> /usr/src/app/output/opentosca/container/a0811bdc4455ec849baec6f11bc2942a223b10af/org.opentosca.container.war/src/test/java/org/opentosca/container/war/tests/TestUtils.java/right.java
         }
 
         PlanInstance defrostPlanInstance = (PlanInstance) planInstanceService.waitForInstanceAvailable(defrostPlanCorrelationId).joinAndGet();
@@ -491,20 +559,20 @@ public class TestUtils {
         return null;
     }
 
-    public ServiceTemplateInstance waitForServiceInstanceCreation(ServiceTemplateInstanceService serviceTemplateInstanceService, TServiceTemplate serviceTemplate) {
-        Collection<ServiceTemplateInstance> coll = serviceTemplateInstanceService.getServiceTemplateInstances(serviceTemplate.getId());
+    public ServiceTemplateInstance waitForServiceInstanceCreation(InstanceService instanceService, TServiceTemplate serviceTemplate) {
+        Collection<ServiceTemplateInstance> coll = instanceService.getServiceTemplateInstances(serviceTemplate.getId());
         ServiceTemplateInstance s = new ServiceTemplateInstance();
         while (coll.size() != 1) {
-            coll = serviceTemplateInstanceService.getServiceTemplateInstances(serviceTemplate.getId());
+            coll = instanceService.getServiceTemplateInstances(serviceTemplate.getId());
         }
 
         for (ServiceTemplateInstance serviceTemplateInstance : coll) {
             s = serviceTemplateInstance;
         }
-        ServiceTemplateInstanceState state = serviceTemplateInstanceService.getServiceTemplateInstanceState(s.getId());
+        ServiceTemplateInstanceState state = instanceService.getServiceTemplateInstanceState(s.getId());
 
         while ((state != ServiceTemplateInstanceState.CREATED)) {
-            state = serviceTemplateInstanceService.getServiceTemplateInstanceState(s.getId());
+            state = instanceService.getServiceTemplateInstanceState(s.getId());
         }
         return s;
     }
