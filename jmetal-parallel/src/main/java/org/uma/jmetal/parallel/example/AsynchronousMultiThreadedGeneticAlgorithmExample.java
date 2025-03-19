@@ -3,7 +3,9 @@ package org.uma.jmetal.parallel.example;
 import static java.lang.Math.sin;
 
 import java.util.List;
+
 import org.uma.jmetal.experimental.componentbasedalgorithm.catalogue.ea.replacement.Replacement;
+
 import org.uma.jmetal.experimental.componentbasedalgorithm.catalogue.ea.replacement.impl.MuPlusLambdaReplacement;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.crossover.impl.UniformCrossover;

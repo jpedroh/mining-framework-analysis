@@ -3,8 +3,9 @@ package org.uma.jmetal.example.operator;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Comparator;
+
 import org.uma.jmetal.lab.visualization.plot.PlotFront;
 import org.uma.jmetal.lab.visualization.plot.impl.PlotSmile;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;

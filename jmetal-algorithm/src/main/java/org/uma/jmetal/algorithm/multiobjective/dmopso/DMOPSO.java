@@ -239,7 +239,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
         //       String path =
         // Paths.get(VectorFileUtils.class.getClassLoader().getResource(filePath).toURI()).toString
         // ();
-        String path = "/" + dataDirectory + "/" + dataFileName;
+        String path = "/" + dataDirectory + "/" + dataFileName ;
 
         InputStream inputStream =
             getClass()
@@ -267,8 +267,8 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
         }
         br.close();
       } catch (Exception e) {
-        throw new JMetalException("initializeUniformWeight: failed when reading for file: "
-            + dataDirectory + "/" + dataFileName, e);
+        throw new JMetalException("initializeUniformWeight: failed when reading for file:  "
+            + dataDirectory + "/" + dataFileName, e) ;
       }
     }
   }

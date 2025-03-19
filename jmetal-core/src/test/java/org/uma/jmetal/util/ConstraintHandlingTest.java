@@ -1,18 +1,22 @@
 package org.uma.jmetal.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import static org.junit.Assert.assertEquals;
+import static org.uma.jmetal.util.ConstraintHandling.feasibilityRatio;
+import static org.uma.jmetal.util.ConstraintHandling.isFeasible;
+import static org.uma.jmetal.util.ConstraintHandling.numberOfViolatedConstraints;
+import static org.uma.jmetal.util.ConstraintHandling.overallConstraintViolationDegree;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.jupiter.api.Test;
 import org.uma.jmetal.problem.doubleproblem.impl.DummyDoubleProblem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.exception.EmptyCollectionException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 public class ConstraintHandlingTest {
   private static final double EPSILON = 0.0000000001 ;

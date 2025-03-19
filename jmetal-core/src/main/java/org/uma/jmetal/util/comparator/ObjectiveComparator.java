@@ -3,6 +3,7 @@ package org.uma.jmetal.util.comparator;
 import java.io.Serializable;
 import java.util.Comparator;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.errorchecking.Check;
 
 /**

@@ -3,11 +3,7 @@ package org.uma.jmetal.util;
 import java.util.List;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.errorchecking.Check;
-
 import java.util.stream.IntStream;
-import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.util.errorchecking.Check;
-
 /**
  * This class offers a set of static methods for setting and getting information about constraints
  * in solutions.
