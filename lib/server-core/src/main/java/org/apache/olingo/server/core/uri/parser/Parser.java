@@ -58,8 +58,8 @@ import org.apache.olingo.server.core.uri.antlr.UriParserParser.MetadataEOFContex
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.OrderByEOFContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.PathSegmentEOFContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.SelectEOFContext;
-import org.apache.olingo.server.core.uri.parser.search.SearchParser;
 import org.apache.olingo.server.core.uri.queryoption.AliasQueryOptionImpl;
+import org.apache.olingo.server.core.uri.parser.search.SearchParser;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
