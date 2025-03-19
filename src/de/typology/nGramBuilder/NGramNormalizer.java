@@ -140,7 +140,13 @@ public class NGramNormalizer {
 				}
 				this.reader.close();
 				this.writer.close();
+<<<<<<< /usr/src/app/output/renepickhardt/generalized-language-modeling-toolkit/2a4775b0e660f3488de5b6d15f1647436d0a5efb/src/de/typology/nGramBuilder/NGramNormalizer.java/left.java
 				//file.delete();
+||||||| /usr/src/app/output/renepickhardt/generalized-language-modeling-toolkit/2a4775b0e660f3488de5b6d15f1647436d0a5efb/src/de/typology/nGramBuilder/NGramNormalizer.java/base.java
+				file.delete();
+=======
+				//	file.delete();
+>>>>>>> /usr/src/app/output/renepickhardt/generalized-language-modeling-toolkit/2a4775b0e660f3488de5b6d15f1647436d0a5efb/src/de/typology/nGramBuilder/NGramNormalizer.java/right.java
 			}
 		}
 		long endTime = System.currentTimeMillis();
