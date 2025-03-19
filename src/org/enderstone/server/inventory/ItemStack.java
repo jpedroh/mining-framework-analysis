@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.enderstone.server.regions.BlockId;
 import org.jnbt.ByteTag;
 import org.jnbt.CompoundTag;
@@ -45,21 +43,21 @@ public class ItemStack implements Cloneable {
 	private short damage;
 	private CompoundTag compoundTag;
 
-	public ItemStack(short blockId, byte amount, short damage) {
-		this(blockId, amount, damage, null);
+	public ItemStack(short blockId, byte amount, short damage, boolean generateNBT) {
+		this(blockId, amount, damage, null, generateNBT);
 	}
 
-	public ItemStack(short blockId, byte amount, short damage, CompoundTag compoundTag) {
+	public ItemStack(short blockId, byte amount, short damage, CompoundTag compoundTag, boolean generateNBT) {
 		this.blockId = blockId;
 		this.amount = amount;
 		this.damage = damage;
 		this.compoundTag = compoundTag;
-		if (compoundTag == null) {
+		if (compoundTag == null && generateNBT) {
 			this.updateNBTData();
 		}
 	}
 
-	private void updateNBTData() {
+	public void updateNBTData() {
 		Map<String, Tag> map = new HashMap<>();
 		if (map.isEmpty()) return;
 		this.compoundTag = new CompoundTag("Item", map);

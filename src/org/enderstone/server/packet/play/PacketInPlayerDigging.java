@@ -72,7 +72,7 @@ public class PacketInPlayerDigging extends Packet {
 							Main.getInstance().mainWorld.setBlockAt(x, y, z, BlockId.AIR, (byte) 0);
 						}
 						Main.getInstance().mainWorld.broadcastSound("dig.grass", x, y, z, 1F, (byte) 63, loc, networkManager.player);
-						Main.getInstance().mainWorld.addEntity(new EntityItem(loc, new ItemStack(blockId, (byte) 1, (short) networkManager.player.world.getBlockDataAt(x, y, z))));
+						Main.getInstance().mainWorld.addEntity(new EntityItem(loc, new ItemStack(blockId, (byte) 1, (short) networkManager.player.world.getBlockDataAt(x, y, z), false)));
 					}
 					break;
 					case 3:
