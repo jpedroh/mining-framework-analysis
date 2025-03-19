@@ -1,11 +1,9 @@
 package com.outbrain.ob1k.example.hello.server;
-
 import com.outbrain.ob1k.example.hello.server.services.HelloServiceImpl;
 import com.outbrain.ob1k.server.Server;
 import com.outbrain.ob1k.server.builder.ServerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
@@ -21,11 +19,12 @@ import java.util.concurrent.TimeUnit;
  * @author marenzon
  */
 public class HelloServer {
-
   private static final Logger logger = LoggerFactory.getLogger(HelloServer.class);
 
   public static final int PORT = 8080;
+
   public static final String CTX_PATH = "/services";
+
   public static final String HELLO_SERVICE_PATH = "/hello";
 
   Server server;
@@ -42,15 +41,18 @@ public class HelloServer {
   }
 
   public void stop() {
-    if (server != null)
+    if (server != null) {
       server.stop();
+    }
   }
 
   private Server buildServer(final int port) {
-    return ServerBuilder.newBuilder().
-            contextPath(CTX_PATH).
-            configure(builder -> builder.usePort(port).requestTimeout(50, TimeUnit.MILLISECONDS)).
-            service(builder -> builder.register(new HelloServiceImpl(0), HELLO_SERVICE_PATH)).
-            build();
+    return ServerBuilder.newBuilder().contextPath(CTX_PATH).configure((builder) -> builder.usePort(port).requestTimeout(50, TimeUnit.MILLISECONDS)).
+<<<<<<< /usr/src/app/output/outbrain/ob1k/8b2c257efe1aa01d49cc595d4af6f8d386d9b535/ob1k-example/src/main/java/com/outbrain/ob1k/example/hello/server/HelloServer.java/left.java
+    withServices((builder) -> builder.addService(new HelloServiceImpl(0), HELLO_SERVICE_PATH))
+=======
+    service((builder) -> builder.register(new HelloServiceImpl(), HELLO_SERVICE_PATH))
+>>>>>>> /usr/src/app/output/outbrain/ob1k/8b2c257efe1aa01d49cc595d4af6f8d386d9b535/ob1k-example/src/main/java/com/outbrain/ob1k/example/hello/server/HelloServer.java/right.java
+    .build();
   }
 }
