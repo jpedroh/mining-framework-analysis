@@ -221,18 +221,21 @@ public class MetricService {
 	// DELETE ME -- BEGIN
 	long deployTime = 1541548800;
 	AbstractMap.SimpleEntry<Integer, Integer> desiredRoll = from > deployTime ? 
-							 new AbstractMap.SimpleEntry<>(60, 21600) : 
-					 		 new AbstractMap.SimpleEntry<>(3600, 360);
+    						 new AbstractMap.SimpleEntry<>(60, 21600) : 
+    				 		 new AbstractMap.SimpleEntry<>(3600, 360);
 	/*
-	//And then I realised that this is Java7 :C
-	return distheneReaderConfiguration
-		.getReader()
-		.getRollups()
-		.stream()
-		.filter(roll -> roll.getRollup() == desiredRoll.getKey() && roll.getPeriod() == desiredRoll.getKey())
-		.findAny()
-		.orElse(null);
-	*/
+    						 new AbstractMap.SimpleEntry<>(60, 21600) : 
+    				 		 new AbstractMap.SimpleEntry<>(3600, 360);
+    /*
+    //And then I realised that this is Java7 :C
+    return distheneReaderConfiguration
+    	.getReader()
+    	.getRollups()
+    	.stream()
+    	.filter(roll -> roll.getRollup() == desiredRoll.getKey() && roll.getPeriod() == desiredRoll.getKey())
+    	.findAny()
+    	.orElse(null);
+    */
 	
         for (Rollup rollup : distheneReaderConfiguration.getReader().getRollups()) {
             if (rollup.getRollup() == desiredRoll.getKey() && rollup.getPeriod() == desiredRoll.getValue()) {
