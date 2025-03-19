@@ -39,13 +39,13 @@ public class CommitMessages {
     private String tagHotfixMessage;
     private String tagReleaseMessage;
 
-    private String suportStartMessage;
-  
     private String updateDevToAvoidConflictsMessage;
     private String updateDevBackPreMergeStateMessage;
 
     private String updateReleaseToAvoidConflictsMessage;
     private String updateReleaseBackPreMergeStateMessage;
+
+    private String suportStartMessage;
 
     public CommitMessages() {
         featureStartMessage = "Update versions for feature branch";
@@ -66,14 +66,18 @@ public class CommitMessages {
 
         tagHotfixMessage = "Tag hotfix";
         tagReleaseMessage = "Tag release";
-
-        suportStartMessage = "Update versions for support";
-      
+<<<<<<< /usr/src/app/output/aleksandr-m/gitflow-maven-plugin/21e89d1e201502c297cc8d03fae44c05bc51dfc4/src/main/java/com/amashchenko/maven/plugin/gitflow/CommitMessages.java/left.java
+    
+        suportStartMessage = "update versions for support";
+||||||| /usr/src/app/output/aleksandr-m/gitflow-maven-plugin/21e89d1e201502c297cc8d03fae44c05bc51dfc4/src/main/java/com/amashchenko/maven/plugin/gitflow/CommitMessages.java/base.java
+=======
+    
         updateDevToAvoidConflictsMessage = "Update develop to production version to avoid merge conflicts";
         updateDevBackPreMergeStateMessage = "Update develop version back to pre-merge state";
 
         updateReleaseToAvoidConflictsMessage = "Update release to hotfix version to avoid merge conflicts";
         updateReleaseBackPreMergeStateMessage = "Update release version back to pre-merge state";
+>>>>>>> /usr/src/app/output/aleksandr-m/gitflow-maven-plugin/21e89d1e201502c297cc8d03fae44c05bc51dfc4/src/main/java/com/amashchenko/maven/plugin/gitflow/CommitMessages.java/right.java
     }
 
     /**
