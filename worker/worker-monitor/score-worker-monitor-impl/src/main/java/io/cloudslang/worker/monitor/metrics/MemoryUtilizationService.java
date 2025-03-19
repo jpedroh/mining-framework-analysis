@@ -44,9 +44,15 @@ public class MemoryUtilizationService extends WorkerPerformanceMetricBase {
 		return memUsage;
 	}
 
-    public double getCurrentValue() {
-        this.usedRamProcess = process.getResidentSetSize();
-        double ramUsed =  ((double)usedRamProcess * 100 / totalRam);
-        return formatTo2Decimal(ramUsed);
-    }
+	public double getCurrentValue() {
+		this.usedRamProcess = process.getResidentSetSize();
+<<<<<<< /usr/src/app/output/cloudslang/score/bfe7c0dad895f1f0fdfbdab5611568a717cab295/worker/worker-monitor/score-worker-monitor-impl/src/main/java/io/cloudslang/worker/monitor/metrics/MemoryUtilizationService.java/left.java
+		double ramUsed =  ((double)usedRamProcess * 100 / totalRam);
+||||||| /usr/src/app/output/cloudslang/score/bfe7c0dad895f1f0fdfbdab5611568a717cab295/worker/worker-monitor/score-worker-monitor-impl/src/main/java/io/cloudslang/worker/monitor/metrics/MemoryUtilizationService.java/base.java
+		double ramUsed =  (double) (usedRamProcess * 100 / totalRam);
+=======
+		double ramUsed =  (((double) usedRamProcess) / totalRam) * 100;
+>>>>>>> /usr/src/app/output/cloudslang/score/bfe7c0dad895f1f0fdfbdab5611568a717cab295/worker/worker-monitor/score-worker-monitor-impl/src/main/java/io/cloudslang/worker/monitor/metrics/MemoryUtilizationService.java/right.java
+		return formatTo2Decimal(ramUsed);
+	}
 }
