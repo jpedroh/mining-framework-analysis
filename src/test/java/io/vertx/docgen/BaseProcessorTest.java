@@ -1,7 +1,5 @@
 package io.vertx.docgen;
-
 import org.junit.Test;
-
 import javax.annotation.processing.Processor;
 import javax.lang.model.element.TypeElement;
 import javax.tools.StandardLocation;
@@ -22,202 +20,128 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-
 import static org.junit.Assert.*;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 public class BaseProcessorTest {
-
-  @Test
-  public void testIncludePkg() throws Exception {
+  @Test public void testIncludePkg() throws Exception {
     assertEquals("before_includesub_contentafter_include", assertDoc("io.vertx.test.includepkg"));
   }
 
-  @Test
-  public void testIncludeNonExisting() throws Exception {
+  @Test public void testIncludeNonExisting() throws Exception {
     assertTrue(failDoc("io.vertx.test.includenonexisting").containsKey("io.vertx.test.includenonexisting"));
   }
 
-  @Test
-  public void testIncludeCircular() throws Exception {
+  @Test public void testIncludeCircular() throws Exception {
     assertTrue(failDoc("io.vertx.test.includecircular").containsKey("io.vertx.test.includecircular"));
   }
 
-  @Test
-  public void testLinkToClass() throws Exception {
+  @Test public void testLinkToClass() throws Exception {
     assertEquals("`link:type[TheClass]`", assertDoc("io.vertx.test.linktoclass"));
   }
 
-  @Test
-  public void testLinkToEnum() throws Exception {
+  @Test public void testLinkToEnum() throws Exception {
     assertEquals("`link:enum[TheEnum]`", assertDoc("io.vertx.test.linktoenum"));
   }
 
-  @Test
-  public void testLinkToField() throws Exception {
+  @Test public void testLinkToField() throws Exception {
     assertEquals("`link:field[f1]`", assertDoc("io.vertx.test.linktofield"));
   }
 
-  @Test
-  public void testLinkToEnumConstant() throws Exception {
+  @Test public void testLinkToEnumConstant() throws Exception {
     assertEquals("`link:enumConstant[THE_CONSTANT]`", assertDoc("io.vertx.test.linktoenumconstant"));
   }
 
-  @Test
-  public void testLinkToStaticField() throws Exception {
+  @Test public void testLinkToStaticField() throws Exception {
     assertEquals("`link:field[TheClass.f1]`", assertDoc("io.vertx.test.linktostaticfield"));
   }
 
-  @Test
-  public void testLinkToMethodMember() throws Exception {
+  @Test public void testLinkToMethodMember() throws Exception {
     assertEquals("`link:method[m]`", assertDoc("io.vertx.test.linktomethodmember"));
   }
 
-  @Test
-  public void testLinkToMethod() throws Exception {
-    assertEquals(
-        "`link:method[m1]`\n" +
-        "`link:method[m1]`\n" +
-        "`link:method[m2]`\n" +
-        "`link:method[m2]`\n" +
-        "`link:method[m2]`\n" +
-        "`link:method[m3]`\n" +
-        "`link:method[m3]`\n" +
-        "`link:method[m3]`\n" +
-        "`link:method[m4]`\n" +
-        "`link:method[m5]`\n" +
-        "`link:method[m6]`\n" +
-        "`link:method[m7]`\n" +
-        "`link:method[m8]`\n" +
-        "`link:method[m9]`\n" +
-        "`link:method[m10]`\n" +
-        "`link:method[m11]`\n" +
-        "`link:method[m12]`\n" +
-        "`link:method[m13]`\n" +
-        "`link:method[m14]`\n" +
-        "`link:method[m15]`\n" +
-        "`link:method[m16]`\n" +
-        "`link:method[m17]`" +
-        "", assertDoc("io.vertx.test.linktomethod"));
+  @Test public void testLinkToMethod() throws Exception {
+    assertEquals("`link:method[m1]`\n" + "`link:method[m1]`\n" + "`link:method[m2]`\n" + "`link:method[m2]`\n" + "`link:method[m2]`\n" + "`link:method[m3]`\n" + "`link:method[m3]`\n" + "`link:method[m3]`\n" + "`link:method[m4]`\n" + "`link:method[m5]`\n" + "`link:method[m6]`\n" + "`link:method[m7]`\n" + "`link:method[m8]`\n" + "`link:method[m9]`\n" + "`link:method[m10]`\n" + "`link:method[m11]`\n" + "`link:method[m12]`\n" + "`link:method[m13]`\n" + "`link:method[m14]`\n" + "`link:method[m15]`\n" + "`link:method[m16]`\n" + "`link:method[m17]`" + "", assertDoc("io.vertx.test.linktomethod"));
   }
 
-  @Test
-  public void testLinkToStaticMethod() throws Exception {
-    assertEquals(
-        "`link:method[TheClass.m]`", assertDoc("io.vertx.test.linktostaticmethod"));
+  @Test public void testLinkToStaticMethod() throws Exception {
+    assertEquals("`link:method[TheClass.m]`", assertDoc("io.vertx.test.linktostaticmethod"));
   }
 
-  @Test
-  public void testLinkToMethodWithSimpleTypeName() throws Exception {
-    assertEquals(
-        "`link:method[m1]`\n" +
-        "`link:method[m2]`\n" +
-        "`link:method[m3]`\n" +
-        "`link:method[m4]`" +
-        "", assertDoc("io.vertx.test.linktomethodwithsimpletypename"));
+  @Test public void testLinkToMethodWithSimpleTypeName() throws Exception {
+    assertEquals("`link:method[m1]`\n" + "`link:method[m2]`\n" + "`link:method[m3]`\n" + "`link:method[m4]`" + "", assertDoc("io.vertx.test.linktomethodwithsimpletypename"));
   }
 
-  @Test
-  public void testLinkToMethodWithUnresolvableType() throws Exception {
+  @Test public void testLinkToMethodWithUnresolvableType() throws Exception {
     assertTrue(failDoc("io.vertx.test.linktomethodwithunresolvabletype").containsKey("io.vertx.test.linktomethodwithunresolvabletype"));
   }
 
-  @Test
-  public void testLinkToConstructor() throws Exception {
+  @Test public void testLinkToConstructor() throws Exception {
     assertEquals("`link:constructor[<init>]`\n`link:constructor[<init>]`", assertDoc("io.vertx.test.linktoconstructor"));
   }
 
-  @Test
-  public void testLinkToSameNameFieldAndMethod() throws Exception {
+  @Test public void testLinkToSameNameFieldAndMethod() throws Exception {
     assertEquals("`link:field[member]`\n`link:method[member]`", assertDoc("io.vertx.test.linktosamenamefieldandmethod"));
   }
 
-  @Test
-  public void testLinkToSameNameConstructorAndMethod() throws Exception {
+  @Test public void testLinkToSameNameConstructorAndMethod() throws Exception {
     assertEquals("`link:constructor[<init>]`\n`link:constructor[<init>]`\n`link:constructor[<init>]`", assertDoc("io.vertx.test.linktosamenameconstructorandmethod"));
   }
 
-  @Test
-  public void testLinkWithLabel() throws Exception {
+  @Test public void testLinkWithLabel() throws Exception {
     assertEquals("`link:method[the label value]`", assertDoc("io.vertx.test.linkwithlabel"));
   }
 
-  @Test
-  public void testMargin() throws Exception {
+  @Test public void testMargin() throws Exception {
     assertEquals("A\nB\nC", assertDoc("io.vertx.test.margin"));
   }
 
-  @Test
-  public void testCommentStructure() throws Exception {
+  @Test public void testCommentStructure() throws Exception {
     assertEquals("the_first_sentence\n\nthe_body", assertDoc("io.vertx.test.commentstructure"));
   }
 
-  @Test
-  public void testIncludeMethodFromAnnotatedClass() throws Exception {
-    assertEquals(
-        "Map<String, String> map = new HashMap<>();\n" +
-        "// Some comment\n" +
-        "\n" +
-        "if (true) {\n" +
-        "  // Indented 1\n" +
-        "  if (false) {\n" +
-        "    // Indented 2\n" +
-        "  }\n" +
-        "}\n" +
-        "map.put(\"abc\", \"def\");\n" +
-        "map.get(\"abc\"); // Beyond last statement", assertDoc("io.vertx.test.includemethodfromannotatedclass"));
+  @Test public void testIncludeMethodFromAnnotatedClass() throws Exception {
+    assertEquals("Map<String, String> map = new HashMap<>();\n" + "// Some comment\n" + "\n" + "if (true) {\n" + "  // Indented 1\n" + "  if (false) {\n" + "    // Indented 2\n" + "  }\n" + "}\n" + "map.put(\"abc\", \"def\");\n" + "map.get(\"abc\"); // Beyond last statement", assertDoc("io.vertx.test.includemethodfromannotatedclass"));
   }
 
-  @Test
-  public void testIncludeMethodFromAnnotatedMethod() throws Exception {
-    assertEquals(
-        "int a = 0;", assertDoc("io.vertx.test.includemethodfromannotatedmethod"));
+  @Test public void testIncludeMethodFromAnnotatedMethod() throws Exception {
+    assertEquals("int a = 0;", assertDoc("io.vertx.test.includemethodfromannotatedmethod"));
   }
 
-  @Test
-  public void testIncludeMethodFromAnnotatedPackage() throws Exception {
-    assertEquals(
-        "int a = 0;", assertDoc("io.vertx.test.includemethodfromannotatedpkg"));
+  @Test public void testIncludeMethodFromAnnotatedPackage() throws Exception {
+    assertEquals("int a = 0;", assertDoc("io.vertx.test.includemethodfromannotatedpkg"));
   }
 
-  @Test
-  public void testLinkToPackage() throws Exception {
+  @Test public void testLinkToPackage() throws Exception {
     assertEquals("package[io.vertx.test.linktopackage.sub]", assertDoc("io.vertx.test.linktopackage"));
   }
 
-  @Test
-  public void testMarkup() throws Exception {
+  @Test public void testMarkup() throws Exception {
     assertEquals("<abc>abc_content</abc>\n<def attr=\"value\">def_content</def>\n<ghi>", assertDoc("io.vertx.test.markup"));
   }
 
-  @Test
-  public void testCode() throws Exception {
+  @Test public void testCode() throws Exception {
     assertEquals("This comment contains `some code here` and a `literal`.", assertDoc("io.vertx.test.code"));
   }
 
-  @Test
-  public void testLang() throws Exception {
+  @Test public void testLang() throws Exception {
     assertEquals("The $lang is : java", assertDoc("io.vertx.test.lang"));
   }
 
-
-  @Test
-  public void testEntities() throws Exception {
+  @Test public void testEntities() throws Exception {
     final String doc = assertDoc("io.vertx.test.entities");
-    assertTrue("Contains 'Foo & Bar'", doc.contains("Foo &amp; Bar"));
-    assertTrue("Contains '10 $'", doc.contains("10 $"));
-    assertTrue("Contains '10 €", doc.contains("10 €"));
-    assertTrue("Contains 'ß'", doc.contains("<p>Straße</p>"));
-    assertTrue("Contains 'ß'", doc.contains("<p>Straßen</p>"));
-    assertTrue("Contains '\\u00DF'", doc.contains("<p>\\u00DF</p>"));
-    assertTrue("Contains correct json", doc.contains("json.put(\"key\", " +
-        "\"\\u0000\\u0001\\u0080\\u009f\\u00a0\\u00ff\");\n"));
+    assertTrue("Contains \'Foo & Bar\'", doc.contains("Foo &amp; Bar"));
+    assertTrue("Contains \'10 $\'", doc.contains("10 $"));
+    assertTrue("Contains \'10 \u20ac", doc.contains("10 \u20ac"));
+    assertTrue("Contains \'\u00df\'", doc.contains("<p>Stra\u00dfe</p>"));
+    assertTrue("Contains \'\u00df\'", doc.contains("<p>Stra\u00dfen</p>"));
+    assertTrue("Contains \'\\u00DF\'", doc.contains("<p>\\u00DF</p>"));
+    assertTrue("Contains correct json", doc.contains("json.put(\"key\", " + "\"\\u0000\\u0001\\u0080\\u009f\\u00a0\\u00ff\");\n"));
   }
 
-  @Test
-  public void testResolveLinkWithClass() throws Exception {
+  @Test public void testResolveLinkWithClass() throws Exception {
     Compiler<TestGenProcessor> compiler = buildCompiler(new TestGenProcessor(), "io.vertx.test.linkresolution.resolvable");
     compiler.assertCompile();
     File dependency = compiler.classOutput;
@@ -234,8 +158,7 @@ public class BaseProcessorTest {
     }
     LinkedList<Coordinate> resolved = new LinkedList<>();
     compiler = buildCompiler(new TestGenProcessor() {
-      @Override
-      protected String resolveTypeLink(TypeElement elt, Coordinate coordinate) {
+      @Override protected String resolveTypeLink(TypeElement elt, Coordinate coordinate) {
         resolved.add(coordinate);
         return super.resolveTypeLink(elt, coordinate);
       }
@@ -253,8 +176,7 @@ public class BaseProcessorTest {
     assertEquals("1.2.3", resolved.get(0).getVersion());
   }
 
-  @Test
-  public void testResolveLinkWithSourceAndClass() throws Exception {
+  @Test public void testResolveLinkWithSourceAndClass() throws Exception {
     Compiler<TestGenProcessor> compiler = buildCompiler(new TestGenProcessor(), "io.vertx.test.linkresolution.resolvable");
     compiler.assertCompile();
     File dependency = compiler.classOutput;
@@ -271,8 +193,7 @@ public class BaseProcessorTest {
     }
     LinkedList<Coordinate> resolved = new LinkedList<>();
     compiler = buildCompiler(new TestGenProcessor() {
-      @Override
-      protected String resolveTypeLink(TypeElement elt, Coordinate coordinate) {
+      @Override protected String resolveTypeLink(TypeElement elt, Coordinate coordinate) {
         resolved.add(coordinate);
         return super.resolveTypeLink(elt, coordinate);
       }
@@ -287,11 +208,9 @@ public class BaseProcessorTest {
     assertEquals(Collections.<Coordinate>singletonList(null), resolved);
   }
 
-  @Test
-  public void testLinkUnresolved() throws Exception {
+  @Test public void testLinkUnresolved() throws Exception {
     Compiler<TestGenProcessor> compiler = buildCompiler(new TestGenProcessor() {
-      @Override
-      protected String resolveTypeLink(TypeElement elt, Coordinate coordinate) {
+      @Override protected String resolveTypeLink(TypeElement elt, Coordinate coordinate) {
         return null;
       }
     }, "io.vertx.test.linkunresolved");
@@ -300,8 +219,7 @@ public class BaseProcessorTest {
     assertEquals("`TheClass`", s);
   }
 
-  @Test
-  public void testLinkUnresolvedTypeWithSignature() throws Exception {
+  @Test public void testLinkUnresolvedTypeWithSignature() throws Exception {
     failDoc("io.vertx.test.linkunresolvedtypewithsignature");
   }
 
@@ -323,24 +241,22 @@ public class BaseProcessorTest {
     do {
       output = new File("target/" + pkg + (index == 0 ? "" : "" + index));
       index++;
-    }
-    while (output.exists());
+    } while(output.exists());
     Path sourcePath = new File(output, "src/" + pkg.replace('.', '/')).toPath();
     File classOutput = new File(output, "classes");
     assertTrue(sourcePath.toFile().mkdirs());
     ArrayList<File> sources = new ArrayList<>();
     Path fromPath = new File("src/test/java/" + pkg.replace('.', '/')).toPath();
-    SimpleFileVisitor<Path> visitor =  new SimpleFileVisitor<Path>() {
-      @Override
-      public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+    SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
+      @Override public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         Path targetPath = sourcePath.resolve(fromPath.relativize(dir));
         if (!Files.exists(targetPath)) {
           Files.createDirectory(targetPath);
         }
         return FileVisitResult.CONTINUE;
       }
-      @Override
-      public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+
+      @Override public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         Path copy = Files.copy(file, sourcePath.resolve(fromPath.relativize(file)));
         if (copy.toString().endsWith(".java")) {
           sources.add(copy.toFile());

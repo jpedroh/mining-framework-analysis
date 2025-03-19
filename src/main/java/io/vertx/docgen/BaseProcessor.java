@@ -1,11 +1,9 @@
 package io.vertx.docgen;
-
 import com.sun.source.doctree.*;
 import com.sun.source.util.DocTreeScanner;
 import com.sun.source.util.DocTrees;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
-
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -43,30 +41,29 @@ import java.util.regex.Matcher;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 public abstract class BaseProcessor extends AbstractProcessor {
-
   protected DocTrees docTrees;
+
   protected Types typeUtils;
+
   protected Elements elementUtils;
+
   protected Helper helper;
+
   Map<String, String> failures = new HashMap<>();
 
-  @Override
-  public SourceVersion getSupportedSourceVersion() {
+  @Override public SourceVersion getSupportedSourceVersion() {
     return SourceVersion.RELEASE_8;
   }
 
-  @Override
-  public Set<String> getSupportedOptions() {
+  @Override public Set<String> getSupportedOptions() {
     return new HashSet<>(Arrays.asList("docgen.output", "docgen.extension"));
   }
 
-  @Override
-  public Set<String> getSupportedAnnotationTypes() {
+  @Override public Set<String> getSupportedAnnotationTypes() {
     return Collections.singleton(Document.class.getName());
   }
 
-  @Override
-  public synchronized void init(ProcessingEnvironment processingEnv) {
+  @Override public synchronized void init(ProcessingEnvironment processingEnv) {
     super.init(processingEnv);
     docTrees = DocTrees.instance(processingEnv);
     typeUtils = processingEnv.getTypeUtils();
@@ -77,21 +74,18 @@ public abstract class BaseProcessor extends AbstractProcessor {
   private String render(List<? extends DocTree> trees) {
     StringBuilder buffer = new StringBuilder();
     DocTreeVisitor<Void, Void> visitor = new DocTreeScanner<Void, Void>() {
-      @Override
-      public Void visitText(TextTree node, Void aVoid) {
+      @Override public Void visitText(TextTree node, Void aVoid) {
         buffer.append(node.getBody());
         return super.visitText(node, aVoid);
       }
     };
-    trees.forEach(tree -> tree.accept(visitor, null));
+    trees.forEach((tree) -> tree.accept(visitor, null));
     return buffer.toString();
   }
 
-
-  @Override
-  public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+  @Override public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
     if (failures.isEmpty()) {
-      roundEnv.getElementsAnnotatedWith(Document.class).forEach(elt -> {
+      roundEnv.getElementsAnnotatedWith(Document.class).forEach((elt) -> {
         PackageElement pkgElt = (PackageElement) elt;
         try {
           handleGen(pkgElt);
@@ -152,7 +146,6 @@ public abstract class BaseProcessor extends AbstractProcessor {
     try {
       Symbol.ClassSymbol cs = (Symbol.ClassSymbol) typeElt;
       if (cs.sourcefile != null && getURL(cs.sourcefile) != null) {
-        // .java source we can link locally
         return null;
       }
       if (cs.classfile != null) {
@@ -172,7 +165,6 @@ public abstract class BaseProcessor extends AbstractProcessor {
         }
       }
     } catch (Exception ignore) {
-      //
     }
     return new Coordinate(null, null, null);
   }
@@ -206,8 +198,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
    */
   protected String resolveLabel(Element elt) {
     String label = elt.getSimpleName().toString();
-    if (elt.getModifiers().contains(Modifier.STATIC) &&
-        (elt.getKind() == ElementKind.METHOD || elt.getKind() == ElementKind.FIELD)) {
+    if (elt.getModifiers().contains(Modifier.STATIC) && (elt.getKind() == ElementKind.METHOD || elt.getKind() == ElementKind.FIELD)) {
       label = elt.getEnclosingElement().getSimpleName() + "." + label;
     }
     return label;
@@ -221,28 +212,25 @@ public abstract class BaseProcessor extends AbstractProcessor {
   private final LinkedList<PackageElement> stack = new LinkedList<>();
 
   protected final void process(Writer buffer, PackageElement pkgElt) {
-
     for (PackageElement stackElt : stack) {
       if (pkgElt.getQualifiedName().equals(stackElt.getQualifiedName())) {
         throw new DocException(stack.peekLast(), "Circular include");
       }
     }
     stack.addLast(pkgElt);
-
     DocWriter writer = new DocWriter(buffer);
     String pkgSource = helper.readSource(pkgElt);
     TreePath pkgTree = docTrees.getPath(pkgElt);
     DocCommentTree doc = docTrees.getDocCommentTree(pkgTree);
     DocTreeVisitor<Void, Void> visitor = new DocTreeScanner<Void, Void>() {
-
       private void copyContent(DocTree node) {
         int from = (int) docTrees.getSourcePositions().getStartPosition(pkgTree.getCompilationUnit(), doc, node);
-        int to = (int) docTrees.getSourcePositions().getEndPosition(pkgTree.getCompilationUnit(), doc, node);;
+        int to = (int) docTrees.getSourcePositions().getEndPosition(pkgTree.getCompilationUnit(), doc, node);
+        ;
         writer.append(pkgSource, from, to);
       }
 
-      @Override
-      public Void visitDocComment(DocCommentTree node, Void v) {
+      @Override public Void visitDocComment(DocCommentTree node, Void v) {
         v = scan(node.getFirstSentence(), v);
         List<? extends DocTree> body = node.getBody();
         if (body.size() > 0) {
@@ -253,20 +241,17 @@ public abstract class BaseProcessor extends AbstractProcessor {
         return v;
       }
 
-      @Override
-      public Void visitErroneous(ErroneousTree node, Void v) {
+      @Override public Void visitErroneous(ErroneousTree node, Void v) {
         return visitText(node, v);
       }
 
-      @Override
-      public Void visitText(TextTree node, Void v) {
+      @Override public Void visitText(TextTree node, Void v) {
         String body = node.getBody();
         Matcher matcher = Helper.LANG_PATTERN.matcher(body);
         int prev = 0;
         while (matcher.find()) {
           writer.append(body, prev, matcher.start());
           if (matcher.group(1) != null) {
-            // \$lang
             writer.append("$lang");
           } else {
             writer.append(getName());
@@ -280,52 +265,48 @@ public abstract class BaseProcessor extends AbstractProcessor {
       /**
        * Handles both literal and code. We generate the asciidoc output using {@literal `}.
        */
-      @Override
-      public Void visitLiteral(LiteralTree node, Void aVoid) {
+      @Override public Void visitLiteral(LiteralTree node, Void aVoid) {
         writer.append("`").append(node.getBody().getBody()).append("`");
         return super.visitLiteral(node, aVoid);
       }
 
-      @Override
-      public Void visitEntity(EntityTree node, Void aVoid) {
+      @Override public Void visitEntity(EntityTree node, Void aVoid) {
         writer.append(EntityUtils.unescapeEntity(node.getName().toString()));
         return super.visitEntity(node, aVoid);
       }
 
-      @Override
-      public Void visitStartElement(StartElementTree node, Void v) {
+      @Override public Void visitStartElement(StartElementTree node, Void v) {
         copyContent(node);
         return v;
       }
 
-      @Override
-      public Void visitEndElement(EndElementTree node, Void v) {
+      @Override public Void visitEndElement(EndElementTree node, Void v) {
         writer.write("</");
         writer.append(node.getName());
         writer.append('>');
         return v;
       }
 
-      @Override
-      public Void visitLink(LinkTree node, Void v) {
+      @Override public Void visitLink(LinkTree node, Void v) {
         String signature = node.getReference().getSignature();
         Element resolvedElt = helper.resolveLink(signature);
         if (resolvedElt == null) {
           throw new DocGenException(pkgElt, "Could not resolve " + signature);
-        } else if (resolvedElt instanceof PackageElement) {
-          PackageElement includedElt = (PackageElement) resolvedElt;
-          if (includedElt.getAnnotation(Document.class) == null) {
-            process(writer, includedElt);
-          } else {
-            String link = resolveLinkToPackageDoc((PackageElement) resolvedElt);
-            writer.append(link);
-          }
         } else {
-          if (helper.isExample(resolvedElt)) {
-            String source = helper.readSource(resolvedElt);
-            switch (resolvedElt.getKind()) {
-              case CONSTRUCTOR:
-              case METHOD:
+          if (resolvedElt instanceof PackageElement) {
+            PackageElement includedElt = (PackageElement) resolvedElt;
+            if (includedElt.getAnnotation(Document.class) == null) {
+              process(writer, includedElt);
+            } else {
+              String link = resolveLinkToPackageDoc((PackageElement) resolvedElt);
+              writer.append(link);
+            }
+          } else {
+            if (helper.isExample(resolvedElt)) {
+              String source = helper.readSource(resolvedElt);
+              switch (resolvedElt.getKind()) {
+                case CONSTRUCTOR:
+                case METHOD:
                 String fragment = renderSource((ExecutableElement) resolvedElt, source);
                 if (fragment != null) {
                   writer.literalMode();
@@ -333,49 +314,54 @@ public abstract class BaseProcessor extends AbstractProcessor {
                   writer.commentMode();
                 }
                 return v;
-              default:
+                default:
                 throw new UnsupportedOperationException("todo");
+              }
             }
-          }
-          String link;
-          switch (resolvedElt.getKind()) {
-            case CLASS:
-            case INTERFACE:
-            case ENUM: {
-              TypeElement typeElt = (TypeElement) resolvedElt;
-              link = resolveTypeLink(typeElt, resolveCoordinate(typeElt));
-              break;
-            }
-            case METHOD: {
-              ExecutableElement methodElt = (ExecutableElement) resolvedElt;
-              TypeElement typeElt = (TypeElement) methodElt.getEnclosingElement();
-              link = resolveMethodLink(methodElt, resolveCoordinate(typeElt));
-              break;
-            }
-            case CONSTRUCTOR: {
-              ExecutableElement constructorElt = (ExecutableElement) resolvedElt;
-              TypeElement typeElt = (TypeElement) constructorElt.getEnclosingElement();
-              link = resolveConstructorLink(constructorElt, resolveCoordinate(typeElt));
-              break;
-            }
-            case FIELD:
-            case ENUM_CONSTANT: {
-              VariableElement variableElt = (VariableElement) resolvedElt;
-              TypeElement typeElt = (TypeElement) variableElt.getEnclosingElement();
-              link = resolveFieldLink(variableElt, resolveCoordinate(typeElt));
-              break;
-            }
-            default:
+            String link;
+            switch (resolvedElt.getKind()) {
+              case CLASS:
+              case INTERFACE:
+              case ENUM:
+              {
+                TypeElement typeElt = (TypeElement) resolvedElt;
+                link = resolveTypeLink(typeElt, resolveCoordinate(typeElt));
+                break;
+              }
+              case METHOD:
+              {
+                ExecutableElement methodElt = (ExecutableElement) resolvedElt;
+                TypeElement typeElt = (TypeElement) methodElt.getEnclosingElement();
+                link = resolveMethodLink(methodElt, resolveCoordinate(typeElt));
+                break;
+              }
+              case CONSTRUCTOR:
+              {
+                ExecutableElement constructorElt = (ExecutableElement) resolvedElt;
+                TypeElement typeElt = (TypeElement) constructorElt.getEnclosingElement();
+                link = resolveConstructorLink(constructorElt, resolveCoordinate(typeElt));
+                break;
+              }
+              case FIELD:
+              case ENUM_CONSTANT:
+              {
+                VariableElement variableElt = (VariableElement) resolvedElt;
+                TypeElement typeElt = (TypeElement) variableElt.getEnclosingElement();
+                link = resolveFieldLink(variableElt, resolveCoordinate(typeElt));
+                break;
+              }
+              default:
               throw new UnsupportedOperationException("Not yet implemented " + resolvedElt + " with kind " + resolvedElt.getKind());
-          }
-          String label = render(node.getLabel()).trim();
-          if (label.length() == 0) {
-            label = resolveLabel(resolvedElt);
-          }
-          if (link != null)  {
-            writer.append("`link:").append(link).append("[").append(label).append("]`");
-          } else {
-            writer.append("`").append(label).append("`");
+            }
+            String label = render(node.getLabel()).trim();
+            if (label.length() == 0) {
+              label = resolveLabel(resolvedElt);
+            }
+            if (link != null) {
+              writer.append("`link:").append(link).append("[").append(label).append("]`");
+            } else {
+              writer.append("`").append(label).append("`");
+            }
           }
         }
         return v;
@@ -396,7 +382,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
           relativeName = docElt.getQualifiedName() + getExtension();
         }
         File dir = new File(outputOpt);
-        for (int i = relativeName.indexOf('/');i != -1;i = relativeName.indexOf('/', i + 1)) {
+        for (int i = relativeName.indexOf('/'); i != -1; i = relativeName.indexOf('/', i + 1)) {
           dir = new File(dir, relativeName.substring(0, i));
           relativeName = relativeName.substring(i + 1);
         }
@@ -416,8 +402,10 @@ public abstract class BaseProcessor extends AbstractProcessor {
       if (!dir.isDirectory()) {
         throw new DocGenException(elt, "File " + dir.getAbsolutePath() + " is not a dir");
       }
-    } else if (!dir.mkdirs()) {
-      throw new DocGenException(elt, "could not create dir " + dir.getAbsolutePath());
+    } else {
+      if (!dir.mkdirs()) {
+        throw new DocGenException(elt, "could not create dir " + dir.getAbsolutePath());
+      }
     }
   }
 }
