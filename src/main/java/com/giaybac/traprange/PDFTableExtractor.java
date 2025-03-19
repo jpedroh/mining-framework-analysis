@@ -53,12 +53,7 @@ public class PDFTableExtractor {
     private PDDocument document;
     private String password;
 
-    private final int magicPageNumber = Integer.MAX_VALUE;    //--------------------------------------------------------------------------
-    //  Initialization and releasation
-    //--------------------------------------------------------------------------
-    //  Getter N Setter
-    //--------------------------------------------------------------------------
-    //  Method binding
+    private final int magicPageNumber = Integer.MAX_VALUE;
     public PDFTableExtractor setSource(InputStream inputStream) {
         this.inputStream = inputStream;
         return this;
@@ -132,8 +127,8 @@ public class PDFTableExtractor {
      * @param lineIdxes
      * @return
      */
-    public PDFTableExtractor exceptLine(int[] lineIdxs) {
-        this.exceptLine(magicPageNumber, lineIdxs);
+    public PDFTableExtractor exceptLine(int[] lineIdxes) {
+        this.exceptLine(magicPageNumber, lineIdxes);
         return this;
     }
 
