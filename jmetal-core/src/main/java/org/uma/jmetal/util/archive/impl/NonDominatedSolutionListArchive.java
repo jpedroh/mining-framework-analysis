@@ -50,7 +50,6 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
   public NonDominatedSolutionListArchive() {
     this(new DominanceComparator<S>());
   }
-
   /**
    * Constructor
    */
@@ -59,7 +58,6 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
 
     solutionList = new ArrayList<>();
   }
-
   /**
    * Inserts a solution in the list
    *
@@ -68,8 +66,8 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
    * identical individual exists. The decision variables can be null if the solution is read from a
    * file; in that case, the domination tests are omitted
    */
-  @Override
-  public boolean add(S solution) {
+  public
+  @Override boolean add(S solution) {
     boolean solutionInserted = false ;
     if (solutionList.size() == 0) {
       solutionList.add(solution) ;
@@ -103,22 +101,66 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
 
     return solutionInserted ;
   }
+/*
+  @Override
+  public boolean add(S solution) {
+    boolean hasTheSolutionBeenInserted = false;
+    solutionList.removeIf(sol ->
+            ((dominanceComparator.compare(solution, sol) == -1) ||
+                    equalSolutions.compare(sol, solution) == 0)
+    );
+    S foundSolution = solutionList.stream()
+            .filter(sol -> dominanceComparator.compare(solution, sol) == 1)
+            .findFirst()
+            .orElse(null);
 
+    if (foundSolution == null) {
+      solutionList.add(solution);
+      hasTheSolutionBeenInserted = true;
+    }
+
+    return hasTheSolutionBeenInserted;
+  }
+*/
   @Override
   public List<S> getSolutionList() {
     return solutionList;
   }
-
   @Override
   public int size() {
     return solutionList.size();
   }
-
   @Override
   public S get(int index) {
     return solutionList.get(index);
   }
+  /**
+   * Constructor
+   */
+  /**
+   * Constructor
+   */
+/*
+  @Override
+  public boolean add(S solution) {
+    boolean hasTheSolutionBeenInserted = false;
 
+    boolean solutionIsInTheArchive = solutionList.stream()
+            .anyMatch(sol -> equalSolutions.compare(sol, solution) == 0);
+
+    if (!solutionIsInTheArchive) {
+      solutionList.removeIf(sol -> dominanceComparator.compare(solution, sol) == -1);
+      boolean aSolutionHasBeenFound = solutionList.stream()
+              .anyMatch(sol -> dominanceComparator.compare(solution, sol) == 1) ;
+
+      if (!aSolutionHasBeenFound) {
+        solutionList.add(solution);
+        hasTheSolutionBeenInserted = true;
+      }
+    }
+    return hasTheSolutionBeenInserted;
+  }
+*/
   public static void main(String args[]) {
     JMetalRandom.getInstance().setSeed(1L);
     Archive<DoubleSolution> archive = new NonDominatedSolutionListArchive<>() ;
@@ -131,7 +173,6 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
     }
     System.out.println("Time: " + (System.currentTimeMillis() - initTime)) ;
   }
-
   private static class MockedDoubleProblem1 extends AbstractDoubleProblem {
     public MockedDoubleProblem1(int numberOfVariables) {
       setNumberOfVariables(numberOfVariables);
