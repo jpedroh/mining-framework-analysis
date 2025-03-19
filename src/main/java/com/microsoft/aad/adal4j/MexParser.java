@@ -138,7 +138,17 @@ class MexParser {
 
     static BindingPolicy getWsTrustEndpointFromMexResponse(String mexResponse)
             throws Exception {
+<<<<<<< /usr/src/app/output/azuread/azure-activedirectory-library-for-java/7ba3f410c7ea8203968eeb2c99ab62442eca40a6/src/main/java/com/microsoft/aad/adal4j/MexParser.java/left.java
         return getPolicy(mexResponse, new WsTrustEndpointPolicySelector());
+||||||| /usr/src/app/output/azuread/azure-activedirectory-library-for-java/7ba3f410c7ea8203968eeb2c99ab62442eca40a6/src/main/java/com/microsoft/aad/adal4j/MexParser.java/base.java
+        String mexResponse = HttpHelper.executeHttpGet(log, metadataEndpoint,
+                proxy, sslSocketFactory);
+        return getWsTrustEndpointFromMexResponse(mexResponse);
+=======
+        String mexResponse = HttpHelper.executeHttpGet(log, piiLog, metadataEndpoint,
+                proxy, sslSocketFactory);
+        return getWsTrustEndpointFromMexResponse(mexResponse);
+>>>>>>> /usr/src/app/output/azuread/azure-activedirectory-library-for-java/7ba3f410c7ea8203968eeb2c99ab62442eca40a6/src/main/java/com/microsoft/aad/adal4j/MexParser.java/right.java
     }
 
     private static BindingPolicy selectSingleMatchingPolicy(

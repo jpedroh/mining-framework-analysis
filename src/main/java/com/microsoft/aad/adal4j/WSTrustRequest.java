@@ -69,7 +69,7 @@ class WSTrustRequest {
 
         String body = buildMessage(policy.getUrl(), username, password,
                 policy.getVersion(), cloudAudienceUrn).toString();
-      
+
         String response = HttpHelper.executeHttpPost(log, piiLog, policy.getUrl(),
                 body, headers, proxy, sslSocketFactory);
 
