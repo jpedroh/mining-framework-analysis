@@ -17,16 +17,39 @@
 /**
  * A client to Google Translation.
  *
- * <p>Here's a simple usage example for Google Cloud Translation. This example shows how to detect
- * the language of some text and how to translate some text. The example assumes that either
- * Application Default Credentials are available or that the {@code GOOGLE_API_KEY} environment
- * variable is set and contains a valid API key. Alternatively, you can use
- * {@link com.google.cloud.ServiceOptions.Builder#setCredentials setCredentials} to set credentials,
- * or {@link com.google.cloud.translate.TranslateOptions.Builder#setApiKey(java.lang.String)} to set
+<<<<<<< /usr/src/app/output/googlecloudplatform/gcloud-java/c37d55e13b304e10bef6983ac559fa514ce8aa89/google-cloud-translate/src/main/java/com/google/cloud/translate/package-info.java/left.java
+ * <p>Here's a simple usage example for using google-cloud. This example shows how to detect the
+ * language of some text and how to translate some text. The example assumes that either Application
+ * Default Credentials are available or that the {@code GOOGLE_API_KEY} environment variable is set
+ * and contains a valid API key. Alternatively, you can use
+ * {@link com.google.cloud.ServiceOptions.Builder#setCredentials setCredentials} to set credentials, or
+||||||| /usr/src/app/output/googlecloudplatform/gcloud-java/c37d55e13b304e10bef6983ac559fa514ce8aa89/google-cloud-translate/src/main/java/com/google/cloud/translate/package-info.java/base.java
+ * <p>Here's a simple usage example for using google-cloud. This example shows how to detect the
+ * language of some text and how to translate some text. The example assumes that the
+ * {@code GOOGLE_API_KEY} is set and contains a valid API key. Alternatively, you can use
+=======
+ * <p>Here's a simple usage example for using Google Cloud Translation. This example shows how to
+ * detect the language of some text and how to translate some text. The example assumes that the
+ * {@code GOOGLE_API_KEY} is set and contains a valid API key. Alternatively, you can use
+>>>>>>> /usr/src/app/output/googlecloudplatform/gcloud-java/c37d55e13b304e10bef6983ac559fa514ce8aa89/google-cloud-translate/src/main/java/com/google/cloud/translate/package-info.java/right.java
+ * {@link com.google.cloud.translate.TranslateOptions.Builder#setApiKey(java.lang.String)} to set
+<<<<<<< /usr/src/app/output/googlecloudplatform/gcloud-java/c37d55e13b304e10bef6983ac559fa514ce8aa89/google-cloud-translate/src/main/java/com/google/cloud/translate/package-info.java/left.java
  * an API key. For the complete source code see <a
  * href="https://github.com/GoogleCloudPlatform/google-cloud-java/tree/master/google-cloud-examples/src/main/java/com/google/cloud/examples/translate/snippets/DetectLanguageAndTranslate.java">
  * DetectLanguageAndTranslate.java</a>.  <pre>
  * {@code Translate translate = TranslateOptions.getDefaultInstance().getService();
+||||||| /usr/src/app/output/googlecloudplatform/gcloud-java/c37d55e13b304e10bef6983ac559fa514ce8aa89/google-cloud-translate/src/main/java/com/google/cloud/translate/package-info.java/base.java
+ * the API key. For the complete source code see
+ * <a href="https://github.com/GoogleCloudPlatform/google-cloud-java/tree/master/google-cloud-examples/src/main/java/com/google/cloud/examples/translate/snippets/DetectLanguageAndTranslate.java">
+ * DetectLanguageAndTranslate.java</a>.
+ * <pre> {@code
+ * Translate translate = TranslateOptions.getDefaultInstance().getService();
+=======
+ * the API key. For the complete source code, see: <a
+ * href="https://github.com/GoogleCloudPlatform/google-cloud-java/tree/master/google-cloud-examples/src/main/java/com/google/cloud/examples/translate/snippets/DetectLanguageAndTranslate.java">
+ * DetectLanguageAndTranslate.java</a>.  <pre>
+ * {@code Translate translate = TranslateOptions.getDefaultInstance().getService();
+>>>>>>> /usr/src/app/output/googlecloudplatform/gcloud-java/c37d55e13b304e10bef6983ac559fa514ce8aa89/google-cloud-translate/src/main/java/com/google/cloud/translate/package-info.java/right.java
  *
  * Detection detection = translate.detect("Hola");
  * String detectedLanguage = detection.getLanguage();
