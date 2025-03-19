@@ -54,7 +54,6 @@ import com.google.common.collect.Sets;
  */
 public class BeanSheetReader<T> extends SheetReaderAbs<T> {
 
-  private final LinkedHashSet<Col> columns;
   private final Col anyColumn;
   private final ColumnsMapper mapper;  
   private final Class<T> type;
@@ -66,7 +65,7 @@ public class BeanSheetReader<T> extends SheetReaderAbs<T> {
     this.type = type;
     ColumnsExtractor extractor = new ColumnsExtractor(type);
     extractor.extract();
-    columns = extractor.getColumns();
+    LinkedHashSet<Col> columns = extractor.getColumns();
     anyColumn = extractor.getAnyColumn();    
     mapper = new ColumnsMapper(columns);
   }
@@ -76,10 +75,24 @@ public class BeanSheetReader<T> extends SheetReaderAbs<T> {
   @SneakyThrows
   public Collection<T> read() {
     buildHeader();
-    if(anyColumn == null) {
-      validateColumns();
-    }
+<<<<<<< /usr/src/app/output/ebay/xcelite/84006743928a35e4725ea470f36fd1a3efcc1dcd/src/main/java/com/ebay/xcelite/reader/BeanSheetReader.java/left.java
     List<T> data = Lists.newArrayList();
+
+    while (rowIterator.hasNext()) {
+      Row row = rowIterator.next();
+      if (isBlankRow(row)) continue;
+      T object = type.newInstance();
+
+      int i = 0;
+      for (String columnName : header) {
+        Cell cell = row.getCell(i, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+        Col col = mapper.getColumn(columnName);
+        if (col == null) {
+          if (anyColumn != null) {
+            Set<Field> fields = ReflectionUtils.getAllFields(object.getClass(), withName(anyColumn.getFieldName()));
+||||||| /usr/src/app/output/ebay/xcelite/84006743928a35e4725ea470f36fd1a3efcc1dcd/src/main/java/com/ebay/xcelite/reader/BeanSheetReader.java/base.java
+    List<T> data = Lists.newArrayList();    
+    try {
       while (rowIterator.hasNext()) {
         Row row = rowIterator.next();
         if (isBlankRow(row)) continue;
@@ -87,7 +100,7 @@ public class BeanSheetReader<T> extends SheetReaderAbs<T> {
         
         int i = 0;
         for (String columnName : header) {
-          Cell cell = row.getCell(i, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+          Cell cell = row.getCell(i, Row.RETURN_BLANK_AS_NULL);
           Col col = mapper.getColumn(columnName);
           if (col == null) {            
             if (anyColumn != null) {
@@ -99,8 +112,41 @@ public class BeanSheetReader<T> extends SheetReaderAbs<T> {
             }           
           } else {
             Set<Field> fields = ReflectionUtils.getAllFields(object.getClass(), withName(col.getFieldName()));
+=======
+    if(anyColumn == null) {
+      validateColumns();
+    }
+    List<T> data = Lists.newArrayList();    
+    try {
+      while (rowIterator.hasNext()) {
+        Row row = rowIterator.next();
+        if (isBlankRow(row)) continue;
+        T object = type.newInstance();
+        
+        int i = 0;
+        for (String columnName : header) {
+          Cell cell = row.getCell(i, Row.RETURN_BLANK_AS_NULL);
+          Col col = mapper.getColumn(columnName);
+          if (col == null) {            
+            if (anyColumn != null) {
+              Set<Field> fields = ReflectionUtils.getAllFields(object.getClass(), withName(anyColumn.getFieldName()));
+              Field field = fields.iterator().next();
+              if (!isColumnInIgnoreList(field, columnName)) {
+                writeToAnyColumnField(field, object, cell, columnName);
+              }
+            }           
+          } else {
+            Set<Field> fields = ReflectionUtils.getAllFields(object.getClass(), withName(col.getFieldName()));
+>>>>>>> /usr/src/app/output/ebay/xcelite/84006743928a35e4725ea470f36fd1a3efcc1dcd/src/main/java/com/ebay/xcelite/reader/BeanSheetReader.java/right.java
             Field field = fields.iterator().next();
-            writeToField(field, object, cell, col);
+            if (!isColumnInIgnoreList(field, columnName)) {
+              writeToAnyColumnField(field, object, cell, columnName);
+            }
+          }
+        } else {
+          Set<Field> fields = ReflectionUtils.getAllFields(object.getClass(), withName(col.getFieldName()));
+          Field field = fields.iterator().next();
+          writeToField(field, object, cell, col);
         }
         i++;
       }
