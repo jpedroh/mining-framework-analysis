@@ -1,5 +1,6 @@
 package com.wrapper.spotify;
-
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
@@ -21,7 +22,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClients;
 import org.apache.http.util.EntityUtils;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -31,19 +31,12 @@ import java.util.logging.Level;
 
 public class SpotifyHttpManager implements IHttpManager {
 
-  private static final int DEFAULT_CACHE_MAX_ENTRIES = 1000;
-  private static final int DEFAULT_CACHE_MAX_OBJECT_SIZE = 8192;
-  private static CloseableHttpClient httpClient = CachingHttpClients.custom().build();
-  private final HttpHost proxy;
-  private final UsernamePasswordCredentials proxyCredentials;
-  private final Integer cacheMaxEntries;
-  private final Integer cacheMaxObjectSize;
-
   /**
    * Construct a new SpotifyHttpManager instance.
    *
    * @param builder The builder.
    */
+
   public SpotifyHttpManager(Builder builder) {
     this.proxy = builder.proxy;
     this.proxyCredentials = builder.proxyCredentials;
@@ -86,6 +79,200 @@ public class SpotifyHttpManager implements IHttpManager {
             .setDefaultRequestConfig(requestConfig)
             .build();
   }
+
+  @Override
+  public String get(Url url) throws WebApiException, IOException {
+    assert (url != null);
+
+    String uri = UrlUtil.assemble(url);
+
+    if (url.getParametersList() != null && url.getParametersList().size() > 0) {
+      uri = uri + parseQueryStringFromParameters(url.getParametersList());
+    }
+
+    final HttpGet method = new HttpGet(uri);
+
+    for (Url.Parameter header : url.getHeaderParametersList()) {
+      method.setHeader(header.getName(), header.getValue());
+    }
+
+    return execute(method);
+  }
+
+  private String parseQueryStringFromParameters(List<Url.Parameter> parameterList) {
+    StringBuilder queryStrBuilder = new StringBuilder();
+    String queryStr;
+
+    queryStrBuilder.append("?");
+
+    for (Url.Parameter param : parameterList) {
+      try {
+        queryStrBuilder.append(param.getName())
+                .append("=")
+                .append(URLEncoder.encode(param.getValue(), "UTF-8"))
+                .append("&");
+      } catch (UnsupportedEncodingException e) {
+        e.printStackTrace();
+      }
+    }
+
+    queryStr = queryStrBuilder.toString()
+            .substring(0, queryStrBuilder.length() - 1);
+
+    return queryStr;
+  }
+
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/86bf0c7f5b0988b67d0191025981674cc6afe430/src/main/java/com/wrapper/spotify/SpotifyHttpManager.java/left.java
+  private String execute(HttpRequestBase method) throws WebApiException, IOException {
+    final ConnectionConfig connectionConfig = ConnectionConfig
+            .custom()
+            .setCharset(Charset.forName("UTF-8"))
+            .build();
+    final RequestConfig requestConfig = RequestConfig
+            .custom()
+            .setCookieSpec(CookieSpecs.DEFAULT)
+            .build();
+    final CloseableHttpClient httpClient = HttpClients.custom()
+            .setConnectionManager(connectionManager)
+            .setDefaultConnectionConfig(connectionConfig)
+            .setDefaultRequestConfig(requestConfig)
+            .build();
+
+    try {
+      CloseableHttpResponse httpResponse = httpClient.execute(method);
+
+      handleErrorStatusCode(httpResponse);
+
+      String responseBody = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+
+      handleErrorResponseBody(responseBody);
+
+      return responseBody;
+    } catch (IOException e) {
+      throw new IOException();
+    } finally {
+      method.releaseConnection();
+    }
+  }
+||||||| /usr/src/app/output/thelinmichael/spotify-web-api-java/86bf0c7f5b0988b67d0191025981674cc6afe430/src/main/java/com/wrapper/spotify/SpotifyHttpManager.java/base.java
+  private String execute(HttpRequestBase method) throws WebApiException, IOException {
+    final ConnectionConfig connectionConfig = ConnectionConfig
+            .custom()
+            .setCharset(Charset.forName("UTF-8"))
+            .build();
+    final RequestConfig requestConfig = RequestConfig
+            .custom()
+            .setCookieSpec(CookieSpecs.DEFAULT)
+            .build();
+    final CloseableHttpClient httpClient = HttpClients.custom()
+            .setConnectionManager(connectionManager)
+            .setDefaultConnectionConfig(connectionConfig)
+            .setDefaultRequestConfig(requestConfig)
+            .build();
+
+    try {
+      CloseableHttpResponse httpResponse = httpClient.execute(method);
+
+      handleErrorStatusCode(httpResponse);
+
+      String responseBody = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+
+      handleErrorResponseBody(responseBody);
+
+      return responseBody;
+    } catch (IOException e) {
+      throw new IOException();
+    } finally {
+      method.releaseConnection();
+    }
+  }
+=======
+  private HttpResponse execute(HttpRequestBase method) throws
+          IOException {
+    HttpCacheContext context = HttpCacheContext.create();
+    HttpResponse response = httpClient.execute(method, context);
+
+    try {
+      CacheResponseStatus responseStatus = context.getCacheResponseStatus();
+      switch (responseStatus) {
+        case CACHE_HIT:
+          SpotifyApi.LOGGER.log(
+                  Level.CONFIG,
+                  "A response was generated from the cache with no requests sent upstream");
+          break;
+        case CACHE_MODULE_RESPONSE:
+          SpotifyApi.LOGGER.log(
+                  Level.CONFIG,
+                  "The response was generated directly by the caching module");
+          break;
+        case CACHE_MISS:
+          SpotifyApi.LOGGER.log(
+                  Level.CONFIG,
+                  "The response came from an upstream server");
+          break;
+        case VALIDATED:
+          SpotifyApi.LOGGER.log(
+                  Level.CONFIG,
+                  "The response was generated from the cache after validating the entry with the origin server");
+          break;
+      }
+    } catch (Exception e) {
+      SpotifyApi.LOGGER.log(Level.SEVERE, e.getMessage());
+    }
+
+    return response;
+  }
+>>>>>>> /usr/src/app/output/thelinmichael/spotify-web-api-java/86bf0c7f5b0988b67d0191025981674cc6afe430/src/main/java/com/wrapper/spotify/SpotifyHttpManager.java/right.java
+
+  /*
+   * It could also look into the JSON object to find an error message.
+   */
+
+  private void handleErrorStatusCode(CloseableHttpResponse httpResponse) throws BadRequestException, ServerErrorException {
+    int statusCode = httpResponse.getStatusLine().getStatusCode();
+
+    if (statusCode >= 400 && statusCode < 500) {
+      throw new BadRequestException(String.valueOf(statusCode));
+    }
+    if (statusCode >= 500) {
+      throw new ServerErrorException(String.valueOf(statusCode));
+    }
+
+  }
+
+  private void handleErrorResponseBody(String responseBody) throws WebApiException {
+    if (responseBody == null) {
+      throw new EmptyResponseException("No response body");
+    }
+
+    if (!responseBody.equals("") && responseBody.startsWith("{")) {
+      final JSONObject jsonObject = JSONObject.fromObject(responseBody);
+
+      if (jsonObject.has("error")) {
+        throw new WebApiException(jsonObject.getString("error"));
+      }
+    }
+  }
+
+  private static final int DEFAULT_CACHE_MAX_ENTRIES = 1000;
+
+  private static final int DEFAULT_CACHE_MAX_OBJECT_SIZE = 8192;
+
+  private static CloseableHttpClient httpClient = CachingHttpClients.custom().build();
+
+  private final HttpHost proxy;
+
+  private final UsernamePasswordCredentials proxyCredentials;
+
+  private final Integer cacheMaxEntries;
+
+  private final Integer cacheMaxObjectSize;
+
+  /**
+   * Construct a new SpotifyHttpManager instance.
+   *
+   * @param builder The builder.
+   */
 
   public static URI makeUri(String uriString) {
     try {
@@ -189,42 +376,6 @@ public class SpotifyHttpManager implements IHttpManager {
     httpDelete.releaseConnection();
 
     return responseBody;
-  }
-
-  private HttpResponse execute(HttpRequestBase method) throws
-          IOException {
-    HttpCacheContext context = HttpCacheContext.create();
-    HttpResponse response = httpClient.execute(method, context);
-
-    try {
-      CacheResponseStatus responseStatus = context.getCacheResponseStatus();
-      switch (responseStatus) {
-        case CACHE_HIT:
-          SpotifyApi.LOGGER.log(
-                  Level.CONFIG,
-                  "A response was generated from the cache with no requests sent upstream");
-          break;
-        case CACHE_MODULE_RESPONSE:
-          SpotifyApi.LOGGER.log(
-                  Level.CONFIG,
-                  "The response was generated directly by the caching module");
-          break;
-        case CACHE_MISS:
-          SpotifyApi.LOGGER.log(
-                  Level.CONFIG,
-                  "The response came from an upstream server");
-          break;
-        case VALIDATED:
-          SpotifyApi.LOGGER.log(
-                  Level.CONFIG,
-                  "The response was generated from the cache after validating the entry with the origin server");
-          break;
-      }
-    } catch (Exception e) {
-      SpotifyApi.LOGGER.log(Level.SEVERE, e.getMessage());
-    }
-
-    return response;
   }
 
   private String getResponseBody(HttpResponse httpResponse) throws

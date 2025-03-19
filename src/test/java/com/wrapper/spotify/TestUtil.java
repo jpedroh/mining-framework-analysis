@@ -24,13 +24,10 @@ public class TestUtil {
     BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
     StringBuilder out = new StringBuilder();
     String line;
-
     while ((line = in.readLine()) != null) {
       out.append(line);
     }
-
     in.close();
-
     return out.toString();
   }
 
