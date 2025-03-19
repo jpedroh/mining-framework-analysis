@@ -300,8 +300,9 @@ public class ElasticSearchRestDataContext extends QueryPostprocessDataContext im
 
     @Override
     protected DataSet materializeMainSchemaTable(Table table, Column[] columns, int maxRows) {
-        SearchResult searchResult = executeSearch(table, createSearchRequest(1, maxRows, null), scrollNeeded(
-                maxRows));
+        SearchResult searchResult = executeSearch(table, createSearchRequest(1, maxRows, null),
+                scrollNeeded(
+                        maxRows));
 
         return new JestElasticSearchDataSet(elasticSearchClient, searchResult, columns);
     }
