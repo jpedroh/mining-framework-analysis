@@ -1,6 +1,4 @@
-
 package cz.habarta.typescript.generator.parser;
-
 import cz.habarta.typescript.generator.JaxrsApplicationScanner;
 import cz.habarta.typescript.generator.KotlinUtils;
 import cz.habarta.typescript.generator.Settings;
@@ -46,328 +44,303 @@ import javax.ws.rs.core.StreamingOutput;
 import kotlin.reflect.KType;
 
 public class JaxrsApplicationParser extends RestApplicationParser {
-
-    public static class Factory extends RestApplicationParser.Factory {
-
-        @Override
-        public TypeProcessor getSpecificTypeProcessor() {
-            return new TypeProcessor() {
-                @Override
-                public Result processType(Type javaType, Context context) {
-                    return processType(javaType, null, context);
-                }
-
-                @Override
-                public Result processType(Type javaType, KType kType, Context context) {
-                    final Class<?> rawClass = Utils.getRawClassOrNull(javaType);
-                    if (rawClass != null) {
-                        for (Map.Entry<Class<?>, TsType> entry : getStandardEntityClassesMapping().entrySet()) {
-                            final Class<?> cls = entry.getKey();
-                            final TsType type = entry.getValue();
-                            if (cls.isAssignableFrom(rawClass)) {
-                                return type != null ? new TypeProcessor.Result(type, kType) : null;
-                            }
-                        }
-                        if (getDefaultExcludedClassNames().contains(rawClass.getName())) {
-                            return new TypeProcessor.Result(TsType.Any, kType);
-                        }
-                    }
-                    return null;
-                }
-            };
+  public static class Factory extends RestApplicationParser.Factory {
+    @Override public TypeProcessor getSpecificTypeProcessor() {
+      return new TypeProcessor() {
+        @Override public Result processType(Type javaType, Context context) {
+          return processType(javaType, null, context);
         }
 
-        @Override
-        public JaxrsApplicationParser create(Settings settings, TypeProcessor commonTypeProcessor) {
-            return new JaxrsApplicationParser(settings, commonTypeProcessor);
+        @Override public Result processType(Type javaType, KType kType, Context context) {
+          final Class<?> rawClass = Utils.getRawClassOrNull(javaType);
+          if (rawClass != null) {
+            for (Map.Entry<Class<?>, TsType> entry : getStandardEntityClassesMapping().entrySet()) {
+              final Class<?> cls = entry.getKey();
+              final TsType type = entry.getValue();
+              if (cls.isAssignableFrom(rawClass)) {
+                return type != null ? new TypeProcessor.Result(type, kType) : null;
+              }
+            }
+            if (getDefaultExcludedClassNames().contains(rawClass.getName())) {
+              return new TypeProcessor.Result(TsType.Any, kType);
+            }
+          }
+          return null;
         }
-
-    };
-
-    public JaxrsApplicationParser(Settings settings, TypeProcessor commonTypeProcessor) {
-        super(settings, commonTypeProcessor, new RestApplicationModel(RestApplicationType.Jaxrs));
+      };
     }
 
-    @Override
-    public Result tryParse(SourceType<?> sourceType) {
-        if (!(sourceType.type instanceof Class<?>)) {
-            return null;
-        }
-        final Class<?> cls = (Class<?>) sourceType.type;
-
-        // application
-        if (Application.class.isAssignableFrom(cls)) {
-            final ApplicationPath applicationPathAnnotation = cls.getAnnotation(ApplicationPath.class);
-            if (applicationPathAnnotation != null) {
-                model.setApplicationPath(applicationPathAnnotation.value());
-            }
-            model.setApplicationName(cls.getSimpleName());
-            final List<SourceType<Type>> discoveredTypes = JaxrsApplicationScanner.scanJaxrsApplication(cls, isClassNameExcluded);
-            return new Result(discoveredTypes);
-        }
-
-        // resource
-        final Path path = cls.getAnnotation(Path.class);
-        if (path != null) {
-            TypeScriptGenerator.getLogger().verbose("Parsing JAX-RS resource: " + cls.getName());
-            final Result result = new Result();
-            parseResource(result, new ResourceContext(cls, path.value()), cls);
-            return result;
-        }
-
-        return null;
+    @Override public JaxrsApplicationParser create(Settings settings, TypeProcessor commonTypeProcessor) {
+      return new JaxrsApplicationParser(settings, commonTypeProcessor);
     }
+  }
 
-    private void parseResource(Result result, ResourceContext context, Class<?> resourceClass) {
-        // subContext
-        final Map<String, MethodParameterModel> pathParamTypes = new LinkedHashMap<>();
-        for (Field field : resourceClass.getDeclaredFields()) {
-            final PathParam pathParamAnnotation = field.getAnnotation(PathParam.class);
-            if (pathParamAnnotation != null) {
-                final String name = pathParamAnnotation.value();
-                pathParamTypes.put(name, new MethodParameterModel(name, field.getType(), KotlinUtils.getFieldKType(field), true));
-            }
-        }
-        final ResourceContext subContext = context.subPathParamTypes(pathParamTypes);
-        // parse resource methods
-        final List<Method> methods = Arrays.asList(resourceClass.getMethods());
-        Collections.sort(methods, Utils.methodComparator());
-        for (Method method : methods) {
-            parseResourceMethod(result, subContext, resourceClass, method);
-        }
+
+
+  public JaxrsApplicationParser(Settings settings, TypeProcessor commonTypeProcessor) {
+    super(settings, commonTypeProcessor, new RestApplicationModel(RestApplicationType.Jaxrs));
+  }
+
+  @Override public Result tryParse(SourceType<?> sourceType) {
+    if (!(sourceType.type instanceof Class<?>)) {
+      return null;
     }
-
-    private void parseResourceMethod(Result result, ResourceContext context, Class<?> resourceClass, Method method) {
-        final Path pathAnnotation = method.getAnnotation(Path.class);
-        // subContext
-        context = context.subPath(pathAnnotation != null ? pathAnnotation.value() : null);
-        final Map<String, MethodParameterModel> pathParamTypes = new LinkedHashMap<>();
-        final Parameter[] parameters = method.getParameters();
-
-        for (int i = 0; i < parameters.length; i++) {
-            Parameter parameter = parameters[i];
-            final PathParam pathParamAnnotation = parameter.getAnnotation(PathParam.class);
-            if (pathParamAnnotation != null) {
-                final String name = pathParamAnnotation.value();
-                pathParamTypes.put(name, new MethodParameterModel(name, parameter.getParameterizedType(), KotlinUtils.getParameterKType(i, method), true));
-            }
-        }
-
-        context = context.subPathParamTypes(pathParamTypes);
-        // JAX-RS specification - 3.3 Resource Methods
-        final HttpMethod httpMethod = getHttpMethod(method);
-        if (httpMethod != null) {
-            // swagger
-            final SwaggerOperation swaggerOperation = settings.ignoreSwaggerAnnotations
-                    ? new SwaggerOperation()
-                    : Swagger.parseSwaggerAnnotations(method);
-            if (swaggerOperation.possibleResponses != null) {
-                for (SwaggerResponse response : swaggerOperation.possibleResponses) {
-                    if (response.responseType != null) {
-                        foundType(result, response.responseType, null, resourceClass, method.getName());
-                    }
-                }
-            }
-            if (swaggerOperation.hidden) {
-                return;
-            }
-            // path parameters
-            final List<MethodParameterModel> pathParams = new ArrayList<>();
-            final PathTemplate pathTemplate = PathTemplate.parse(context.path);
-            for (PathTemplate.Part part : pathTemplate.getParts()) {
-                if (part instanceof PathTemplate.Parameter) {
-                    final PathTemplate.Parameter parameter = (PathTemplate.Parameter) part;
-                    final MethodParameterModel methodParameterModel = context.pathParamTypes.get(parameter.getOriginalName());
-                    final Type type = methodParameterModel != null ? methodParameterModel.getType() : null;
-                    final KType ktype = methodParameterModel != null ? methodParameterModel.getkType() : null;
-                    final Type paramType = type != null ? type : String.class;
-                    final Type resolvedParamType = GenericsResolver.resolveType(resourceClass, paramType, method.getDeclaringClass());
-                    pathParams.add(new MethodParameterModel(parameter.getValidName(), resolvedParamType, ktype, true));
-                    foundType(result, resolvedParamType, ktype, resourceClass, method.getName());
-                }
-            }
-            // query parameters
-            final List<RestQueryParam> queryParams = new ArrayList<>();
-            for (int i = 0; i < parameters.length; i++) {
-                Parameter param = parameters[i];
-
-                final QueryParam queryParamAnnotation = param.getAnnotation(QueryParam.class);
-                if (queryParamAnnotation != null) {
-                    final KType parameterKType = KotlinUtils.getParameterKType(i, method);
-                    queryParams.add(new RestQueryParam.Single(new MethodParameterModel(queryParamAnnotation.value(), param.getParameterizedType(), parameterKType, false)));
-                    foundType(result, param.getParameterizedType(), parameterKType, resourceClass, method.getName());
-                }
-                final BeanParam beanParamAnnotation = param.getAnnotation(BeanParam.class);
-                if (beanParamAnnotation != null) {
-                    final Class<?> beanParamClass = param.getType();
-                    final BeanModel paramBean = getQueryParameters(beanParamClass);
-                    if (paramBean != null) {
-                        final KType parameterKType = KotlinUtils.getParameterKType(i, method);
-                        queryParams.add(new RestQueryParam.Bean(paramBean));
-                        for (PropertyModel property : paramBean.getProperties()) {
-                            foundType(result, property.getType(), parameterKType, beanParamClass, property.getName());
-                        }
-                    }
-                }
-
-            }
-
-            // JAX-RS specification - 3.3.2.1 Entity Parameters
-            final MethodParameterModel entityParameter = getEntityParameter(resourceClass, method);
-            if (entityParameter != null) {
-                foundType(result, entityParameter.getType(), entityParameter.getkType(), resourceClass, method.getName());
-            }
-            // JAX-RS specification - 3.3.3 Return Type
-            final Class<?> returnType = method.getReturnType();
-            final Type genericReturnType = method.getGenericReturnType();
-            final Type modelReturnType;
-            if (returnType == void.class) {
-                //for async response also use swagger
-                if (hasAnyAnnotation(parameters, Collections.singletonList(Suspended.class))) {
-                    if (swaggerOperation.responseType != null) {
-                        modelReturnType = swaggerOperation.responseType;
-                    } else {
-                        modelReturnType = Object.class;
-                    }
-                } else {
-                    modelReturnType = returnType;
-                }
-            } else if (returnType == Response.class) {
-                if (swaggerOperation.responseType != null) {
-                    modelReturnType = swaggerOperation.responseType;
-                } else {
-                    modelReturnType = Object.class;
-                }
-            } else if (genericReturnType instanceof ParameterizedType && returnType == GenericEntity.class) {
-                final ParameterizedType parameterizedReturnType = (ParameterizedType) genericReturnType;
-                modelReturnType = parameterizedReturnType.getActualTypeArguments()[0];
-            } else {
-                modelReturnType = genericReturnType;
-            }
-
-            final Type resolvedModelReturnType = GenericsResolver.resolveType(resourceClass, modelReturnType, method.getDeclaringClass());
-            final KType kType = KotlinUtils.getReturnKType(method, null);
-            foundType(result, resolvedModelReturnType, kType, resourceClass, method.getName());
-            final ReturnTypeModel returnTypeModel = new ReturnTypeModel(resolvedModelReturnType, kType);
-
-            // comments
-            final List<String> comments = Swagger.getOperationComments(swaggerOperation);
-            // create method
-            model.getMethods().add(new RestMethodModel(resourceClass, method.getName(), returnTypeModel,
-                    context.rootResource, httpMethod.value(), context.path, pathParams, queryParams, entityParameter, comments));
-        }
-        // JAX-RS specification - 3.4.1 Sub Resources
-        if (pathAnnotation != null && httpMethod == null) {
-            parseResource(result, context, method.getReturnType());
-        }
+    final Class<?> cls = (Class<?>) sourceType.type;
+    if (Application.class.isAssignableFrom(cls)) {
+      final ApplicationPath applicationPathAnnotation = cls.getAnnotation(ApplicationPath.class);
+      if (applicationPathAnnotation != null) {
+        model.setApplicationPath(applicationPathAnnotation.value());
+      }
+      model.setApplicationName(cls.getSimpleName());
+      final List<SourceType<Type>> discoveredTypes = JaxrsApplicationScanner.scanJaxrsApplication(cls, isClassNameExcluded);
+      return new Result(discoveredTypes);
     }
-
-    private static HttpMethod getHttpMethod(Method method) {
-        for (Annotation annotation : method.getAnnotations()) {
-            final HttpMethod httpMethodAnnotation = annotation.annotationType().getAnnotation(HttpMethod.class);
-            if (httpMethodAnnotation != null) {
-                return httpMethodAnnotation;
-            }
-        }
-        return null;
+    final Path path = cls.getAnnotation(Path.class);
+    if (path != null) {
+      TypeScriptGenerator.getLogger().verbose("Parsing JAX-RS resource: " + cls.getName());
+      final Result result = new Result();
+      parseResource(result, new ResourceContext(cls, path.value()), cls);
+      return result;
     }
+    return null;
+  }
 
-    private static BeanModel getQueryParameters(Class<?> paramBean) {
-        final List<PropertyModel> properties = new ArrayList<>();
-        final List<Field> fields = Utils.getAllFields(paramBean);
-        for (Field field : fields) {
-            final QueryParam annotation = field.getAnnotation(QueryParam.class);
-            if (annotation != null) {
-                properties.add(new PropertyModel(annotation.value(), field.getGenericType(), KotlinUtils.getFieldKType(field), true, field, null, null, null));
-            }
+  private void parseResource(Result result, ResourceContext context, Class<?> resourceClass) {
+    final Map<String, MethodParameterModel> pathParamTypes = new LinkedHashMap<>();
+    for (Field field : resourceClass.getDeclaredFields()) {
+      final PathParam pathParamAnnotation = field.getAnnotation(PathParam.class);
+      if (pathParamAnnotation != null) {
+        final String name = pathParamAnnotation.value();
+        pathParamTypes.put(name, new MethodParameterModel(name, field.getType(), KotlinUtils.getFieldKType(field), true));
+      }
+    }
+    final ResourceContext subContext = context.subPathParamTypes(pathParamTypes);
+    final List<Method> methods = Arrays.asList(resourceClass.getMethods());
+    Collections.sort(methods, Utils.methodComparator());
+    for (Method method : methods) {
+      parseResourceMethod(result, subContext, resourceClass, method);
+    }
+  }
+
+  private void parseResourceMethod(Result result, ResourceContext context, Class<?> resourceClass, Method method) {
+    final Path pathAnnotation = method.getAnnotation(Path.class);
+    context = context.subPath(pathAnnotation != null ? pathAnnotation.value() : null);
+    final Map<String, MethodParameterModel> pathParamTypes = new LinkedHashMap<>();
+    final Parameter[] parameters = method.getParameters();
+    for (int i = 0; i < parameters.length; i++) {
+      Parameter parameter = parameters[i];
+      final PathParam pathParamAnnotation = parameter.getAnnotation(PathParam.class);
+      if (pathParamAnnotation != null) {
+        final String name = pathParamAnnotation.value();
+        pathParamTypes.put(name, new MethodParameterModel(name, parameter.getParameterizedType(), KotlinUtils.getParameterKType(i, method), true));
+      }
+    }
+    context = context.subPathParamTypes(pathParamTypes);
+    final HttpMethod httpMethod = getHttpMethod(method);
+    if (httpMethod != null) {
+      final SwaggerOperation swaggerOperation = settings.ignoreSwaggerAnnotations ? new SwaggerOperation() : Swagger.parseSwaggerAnnotations(method);
+      if (swaggerOperation.possibleResponses != null) {
+        for (SwaggerResponse response : swaggerOperation.possibleResponses) {
+          if (response.responseType != null) {
+            foundType(result, response.responseType, null, resourceClass, method.getName());
+          }
         }
-        try {
-            final BeanInfo beanInfo = Introspector.getBeanInfo(paramBean);
-            for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
-                final Method writeMethod = propertyDescriptor.getWriteMethod();
-                if (writeMethod != null) {
-                    final QueryParam annotation = writeMethod.getAnnotation(QueryParam.class);
-                    if (annotation != null) {
-                        properties.add(new PropertyModel(annotation.value(), propertyDescriptor.getPropertyType(), null, true, writeMethod, null, null, null));
-                    }
-                }
-            }
-        } catch (IntrospectionException e) {
-            TypeScriptGenerator.getLogger().warning(String.format("Cannot introspect '%s' class: " + e.getMessage(), paramBean));
+      }
+      if (swaggerOperation.hidden) {
+        return;
+      }
+      final List<MethodParameterModel> pathParams = new ArrayList<>();
+      final PathTemplate pathTemplate = PathTemplate.parse(context.path);
+      for (PathTemplate.Part part : pathTemplate.getParts()) {
+        if (part instanceof PathTemplate.Parameter) {
+          final PathTemplate.Parameter parameter = (PathTemplate.Parameter) part;
+          final MethodParameterModel methodParameterModel = context.pathParamTypes.get(parameter.getOriginalName());
+          final Type type = methodParameterModel != null ? methodParameterModel.getType() : null;
+          final KType ktype = methodParameterModel != null ? methodParameterModel.getkType() : null;
+          final Type paramType = type != null ? type : String.class;
+          final Type resolvedParamType = GenericsResolver.resolveType(resourceClass, paramType, method.getDeclaringClass());
+          pathParams.add(new MethodParameterModel(parameter.getValidName(), resolvedParamType, ktype, true));
+          foundType(result, resolvedParamType, ktype, resourceClass, method.getName());
         }
-        if (properties.isEmpty()) {
-            return null;
+      }
+      final List<RestQueryParam> queryParams = new ArrayList<>();
+
+<<<<<<< /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-core/src/main/java/cz/habarta/typescript/generator/parser/JaxrsApplicationParser.java/left.java
+      for (int i = 0; i < parameters.length; i++) {
+        Parameter param = parameters[i];
+        final QueryParam queryParamAnnotation = param.getAnnotation(QueryParam.class);
+        if (queryParamAnnotation != null) {
+          final KType parameterKType = KotlinUtils.getParameterKType(i, method);
+          queryParams.add(new RestQueryParam.Single(new MethodParameterModel(queryParamAnnotation.value(), param.getParameterizedType(), parameterKType, false)));
+          foundType(result, param.getParameterizedType(), parameterKType, resourceClass, method.getName());
+        }
+        final BeanParam beanParamAnnotation = param.getAnnotation(BeanParam.class);
+        if (beanParamAnnotation != null) {
+          final Class<?> beanParamClass = param.getType();
+          final BeanModel paramBean = getQueryParameters(beanParamClass);
+          if (paramBean != null) {
+            final KType parameterKType = KotlinUtils.getParameterKType(i, method);
+            queryParams.add(new RestQueryParam.Bean(paramBean));
+            for (PropertyModel property : paramBean.getProperties()) {
+              foundType(result, property.getType(), parameterKType, beanParamClass, property.getName());
+            }
+          }
+        }
+      }
+=======
+      for (Parameter param : method.getParameters()) {
+        final QueryParam queryParamAnnotation = param.getAnnotation(QueryParam.class);
+        if (queryParamAnnotation != null) {
+          queryParams.add(new RestQueryParam.Single(new MethodParameterModel(queryParamAnnotation.value(), param.getParameterizedType()), false));
+          foundType(result, param.getParameterizedType(), resourceClass, method.getName());
+        }
+        final BeanParam beanParamAnnotation = param.getAnnotation(BeanParam.class);
+        if (beanParamAnnotation != null) {
+          final Class<?> beanParamClass = param.getType();
+          final BeanModel paramBean = getQueryParameters(beanParamClass);
+          if (paramBean != null) {
+            queryParams.add(new RestQueryParam.Bean(paramBean));
+            for (PropertyModel property : paramBean.getProperties()) {
+              foundType(result, property.getType(), beanParamClass, property.getName());
+            }
+          }
+        }
+      }
+>>>>>>> /usr/src/app/output/vojtechhabarta/typescript-generator/1dd5804a22357810c9e2d62636441440f13a6b0a/typescript-generator-core/src/main/java/cz/habarta/typescript/generator/parser/JaxrsApplicationParser.java/right.java
+
+      final MethodParameterModel entityParameter = getEntityParameter(resourceClass, method);
+      if (entityParameter != null) {
+        foundType(result, entityParameter.getType(), entityParameter.getkType(), resourceClass, method.getName());
+      }
+      final Class<?> returnType = method.getReturnType();
+      final Type genericReturnType = method.getGenericReturnType();
+      final Type modelReturnType;
+      if (returnType == void.class) {
+        if (hasAnyAnnotation(parameters, Collections.singletonList(Suspended.class))) {
+          if (swaggerOperation.responseType != null) {
+            modelReturnType = swaggerOperation.responseType;
+          } else {
+            modelReturnType = Object.class;
+          }
         } else {
-            return new BeanModel(paramBean, null, null, null, null, null, properties, null);
+          modelReturnType = returnType;
         }
-    }
-
-    private static MethodParameterModel getEntityParameter(Class<?> resourceClass, Method method) {
-        final Parameter[] parameters = method.getParameters();
-        for (int i = 0; i < parameters.length; i++) {
-            final Parameter parameter = parameters[i];
-            if (!Utils.hasAnyAnnotation(parameter::getAnnotation, Arrays.asList(
-                    MatrixParam.class,
-                    QueryParam.class,
-                    PathParam.class,
-                    CookieParam.class,
-                    HeaderParam.class,
-                    Suspended.class,
-                    Context.class,
-                    FormParam.class,
-                    BeanParam.class
-            ))) {
-                final Type resolvedType = GenericsResolver.resolveType(resourceClass, parameter.getParameterizedType(), method.getDeclaringClass());
-                return new MethodParameterModel(parameter.getName(), resolvedType, KotlinUtils.getParameterKType(i, method), true);
-            }
-
+      } else {
+        if (returnType == Response.class) {
+          if (swaggerOperation.responseType != null) {
+            modelReturnType = swaggerOperation.responseType;
+          } else {
+            modelReturnType = Object.class;
+          }
+        } else {
+          if (genericReturnType instanceof ParameterizedType && returnType == GenericEntity.class) {
+            final ParameterizedType parameterizedReturnType = (ParameterizedType) genericReturnType;
+            modelReturnType = parameterizedReturnType.getActualTypeArguments()[0];
+          } else {
+            modelReturnType = genericReturnType;
+          }
         }
+      }
+      final Type resolvedModelReturnType = GenericsResolver.resolveType(resourceClass, modelReturnType, method.getDeclaringClass());
+      final KType kType = KotlinUtils.getReturnKType(method, null);
+      foundType(result, resolvedModelReturnType, kType, resourceClass, method.getName());
+      final ReturnTypeModel returnTypeModel = new ReturnTypeModel(resolvedModelReturnType, kType);
+      final List<String> comments = Swagger.getOperationComments(swaggerOperation);
+      model.getMethods().add(new RestMethodModel(resourceClass, method.getName(), returnTypeModel, context.rootResource, httpMethod.value(), context.path, pathParams, queryParams, entityParameter, comments));
+    }
+    if (pathAnnotation != null && httpMethod == null) {
+      parseResource(result, context, method.getReturnType());
+    }
+  }
 
-        return null;
+  private static HttpMethod getHttpMethod(Method method) {
+    for (Annotation annotation : method.getAnnotations()) {
+      final HttpMethod httpMethodAnnotation = annotation.annotationType().getAnnotation(HttpMethod.class);
+      if (httpMethodAnnotation != null) {
+        return httpMethodAnnotation;
+      }
     }
-    
-    private static boolean hasAnyAnnotation(Parameter[] parameters, List<Class<? extends Annotation>> annotationClasses) {
-        return Stream.of(parameters)
-                .anyMatch(parameter -> Utils.hasAnyAnnotation(parameter::getAnnotation, annotationClasses));
+    return null;
+  }
+
+  private static BeanModel getQueryParameters(Class<?> paramBean) {
+    final List<PropertyModel> properties = new ArrayList<>();
+    final List<Field> fields = Utils.getAllFields(paramBean);
+    for (Field field : fields) {
+      final QueryParam annotation = field.getAnnotation(QueryParam.class);
+      if (annotation != null) {
+        properties.add(new PropertyModel(annotation.value(), field.getGenericType(), KotlinUtils.getFieldKType(field), true, field, null, null, null));
+      }
     }
-    
-    private static Map<Class<?>, TsType> getStandardEntityClassesMapping() {
-        // JAX-RS specification - 4.2.4 Standard Entity Providers
-        if (standardEntityClassesMapping == null) {
-            final Map<Class<?>, TsType> map = new LinkedHashMap<>();
-            // null value means that class is handled by DefaultTypeProcessor
-            map.put(byte[].class, TsType.Any);
-            map.put(java.lang.String.class, null);
-            map.put(java.io.InputStream.class, TsType.Any);
-            map.put(java.io.Reader.class, TsType.Any);
-            map.put(java.io.File.class, TsType.Any);
-            map.put(javax.activation.DataSource.class, TsType.Any);
-            map.put(javax.xml.transform.Source.class, TsType.Any);
-            map.put(javax.xml.bind.JAXBElement.class, null);
-            map.put(MultivaluedMap.class, TsType.Any);
-            map.put(StreamingOutput.class, TsType.Any);
-            map.put(java.lang.Boolean.class, null);
-            map.put(java.lang.Character.class, null);
-            map.put(java.lang.Number.class, null);
-            map.put(long.class, null);
-            map.put(int.class, null);
-            map.put(short.class, null);
-            map.put(byte.class, null);
-            map.put(double.class, null);
-            map.put(float.class, null);
-            map.put(boolean.class, null);
-            map.put(char.class, null);
-            standardEntityClassesMapping = map;
+    try {
+      final BeanInfo beanInfo = Introspector.getBeanInfo(paramBean);
+      for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
+        final Method writeMethod = propertyDescriptor.getWriteMethod();
+        if (writeMethod != null) {
+          final QueryParam annotation = writeMethod.getAnnotation(QueryParam.class);
+          if (annotation != null) {
+            properties.add(new PropertyModel(annotation.value(), propertyDescriptor.getPropertyType(), null, true, writeMethod, null, null, null));
+          }
         }
-        return standardEntityClassesMapping;
+      }
+    } catch (IntrospectionException e) {
+      TypeScriptGenerator.getLogger().warning(String.format("Cannot introspect \'%s\' class: " + e.getMessage(), paramBean));
     }
-
-    private static Map<Class<?>, TsType> standardEntityClassesMapping;
-
-    private static List<String> getDefaultExcludedClassNames() {
-        return Arrays.asList(
-                "org.glassfish.jersey.media.multipart.FormDataBodyPart"
-        );
+    if (properties.isEmpty()) {
+      return null;
+    } else {
+      return new BeanModel(paramBean, null, null, null, null, null, properties, null);
     }
+  }
 
+  private static MethodParameterModel getEntityParameter(Class<?> resourceClass, Method method) {
+    final Parameter[] parameters = method.getParameters();
+    for (int i = 0; i < parameters.length; i++) {
+      final Parameter parameter = parameters[i];
+      if (!Utils.hasAnyAnnotation(parameter::getAnnotation, Arrays.asList(MatrixParam.class, QueryParam.class, PathParam.class, CookieParam.class, HeaderParam.class, Suspended.class, Context.class, FormParam.class, BeanParam.class))) {
+        final Type resolvedType = GenericsResolver.resolveType(resourceClass, parameter.getParameterizedType(), method.getDeclaringClass());
+        return new MethodParameterModel(parameter.getName(), resolvedType, KotlinUtils.getParameterKType(i, method), true);
+      }
+    }
+    return null;
+  }
+
+  private static boolean hasAnyAnnotation(Parameter[] parameters, List<Class<? extends Annotation>> annotationClasses) {
+    return Stream.of(parameters).anyMatch((parameter) -> Utils.hasAnyAnnotation(parameter::getAnnotation, annotationClasses));
+  }
+
+  private static Map<Class<?>, TsType> getStandardEntityClassesMapping() {
+    if (standardEntityClassesMapping == null) {
+      final Map<Class<?>, TsType> map = new LinkedHashMap<>();
+      map.put(byte[].class, TsType.Any);
+      map.put(java.lang.String.class, null);
+      map.put(java.io.InputStream.class, TsType.Any);
+      map.put(java.io.Reader.class, TsType.Any);
+      map.put(java.io.File.class, TsType.Any);
+      map.put(javax.activation.DataSource.class, TsType.Any);
+      map.put(javax.xml.transform.Source.class, TsType.Any);
+      map.put(javax.xml.bind.JAXBElement.class, null);
+      map.put(MultivaluedMap.class, TsType.Any);
+      map.put(StreamingOutput.class, TsType.Any);
+      map.put(java.lang.Boolean.class, null);
+      map.put(java.lang.Character.class, null);
+      map.put(java.lang.Number.class, null);
+      map.put(long.class, null);
+      map.put(int.class, null);
+      map.put(short.class, null);
+      map.put(byte.class, null);
+      map.put(double.class, null);
+      map.put(float.class, null);
+      map.put(boolean.class, null);
+      map.put(char.class, null);
+      standardEntityClassesMapping = map;
+    }
+    return standardEntityClassesMapping;
+  }
+
+  private static Map<Class<?>, TsType> standardEntityClassesMapping;
+
+  private static List<String> getDefaultExcludedClassNames() {
+    return Arrays.asList("org.glassfish.jersey.media.multipart.FormDataBodyPart");
+  }
 }
