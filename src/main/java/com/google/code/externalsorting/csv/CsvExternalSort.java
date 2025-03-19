@@ -71,7 +71,7 @@ public class CsvExternalSort {
 	}
 
 	public static int mergeSortedFiles(BufferedWriter fbw, final CsvSortOptions sortOptions,
-			ArrayList<CSVRecordBuffer> bfbs) throws IOException, ClassNotFoundException {
+			ArrayList<CSVRecordBuffer> bfbs, CSVFormat format) throws IOException, ClassNotFoundException {
 		PriorityQueue<CSVRecordBuffer> pq = new PriorityQueue<CSVRecordBuffer>(11, new Comparator<CSVRecordBuffer>() {
 			@Override
 			public int compare(CSVRecordBuffer i, CSVRecordBuffer j) {
@@ -111,7 +111,7 @@ public class CsvExternalSort {
 
 	}
 
-	public static int mergeSortedFiles(List<File> files, File outputfile, final CsvSortOptions sortOptions, boolean append) throws IOException, ClassNotFoundException {
+	public static int mergeSortedFiles(List<File> files, File outputfile, final CsvSortOptions sortOptions, boolean append, CSVFormat format) throws IOException, ClassNotFoundException {
 
 		ArrayList<CSVRecordBuffer> bfbs = new ArrayList<CSVRecordBuffer>();
 		for (File f : files) {
@@ -121,22 +121,19 @@ public class CsvExternalSort {
 			CSVRecordBuffer bfb = new CSVRecordBuffer(parser);
 			bfbs.add(bfb);
 		}
-
 		BufferedWriter fbw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputfile, append), sortOptions.getCharset()));
 
-		int rowcounter = mergeSortedFiles(fbw, sortOptions, bfbs);
+		int rowcounter = mergeSortedFiles(fbw, sortOptions, bfbs, format);
 		for (File f : files) {
 			if(!f.delete()) {
 				LOG.log(Level.WARNING,String.format("The file %s was not deleted", f.getName()));
 			}
 		}
-
 		return rowcounter;
 	}
 
 	public static List<File> sortInBatch(final BufferedReader fbr,
-			final File tmpdirectory, final CsvSortOptions sortOptions) throws IOException {
-
+			final File tmpdirectory, final CsvSortOptions sortOptions, CSVFormat format) throws IOException {
 		List<File> files = new ArrayList<File>();
 		long blocksize = estimateBestSizeOfBlocks(sortOptions.getDataLength(), sortOptions.getMaxTmpFiles(), sortOptions.getMaxMemory());// in
 		// bytes
@@ -144,7 +141,6 @@ public class CsvExternalSort {
 		List<CSVRecord> tmplist = new ArrayList<CSVRecord>();
 		final CSVRecord[] header = new CSVRecord[1];
 
-		try (CSVParser parser = new CSVParser(fbr, CSVFormat.DEFAULT)) {
 		try (CSVParser parser = new CSVParser(fbr, format)) {
 			parser.spliterator().forEachRemaining(e -> {
 				if (currentBlock.get() < blocksize) {
@@ -156,7 +152,13 @@ public class CsvExternalSort {
 					}
 				} else {
 					try {
+<<<<<<< /usr/src/app/output/lemire/externalsortinginjava/5d3676023c04d823a56b85ca77a8b5fc90f24a5c/src/main/java/com/google/code/externalsorting/csv/CsvExternalSort.java/left.java
 						files.add(sortAndSave(tmplist, tmpdirectory, sortOptions, header[0]));
+||||||| /usr/src/app/output/lemire/externalsortinginjava/5d3676023c04d823a56b85ca77a8b5fc90f24a5c/src/main/java/com/google/code/externalsorting/csv/CsvExternalSort.java/base.java
+						files.add(sortAndSave(tmplist, cmp, cs, tmpdirectory, distinct));
+=======
+						files.add(sortAndSave(tmplist, cmp, cs, tmpdirectory, distinct, format));
+>>>>>>> /usr/src/app/output/lemire/externalsortinginjava/5d3676023c04d823a56b85ca77a8b5fc90f24a5c/src/main/java/com/google/code/externalsorting/csv/CsvExternalSort.java/right.java
 					} catch (IOException e1) {
 						LOG.log(Level.WARNING,String.format("Error during the sort in batch"),e1);
 					}
@@ -167,20 +169,26 @@ public class CsvExternalSort {
 			});
 		}
 		if (!tmplist.isEmpty()) {
+<<<<<<< /usr/src/app/output/lemire/externalsortinginjava/5d3676023c04d823a56b85ca77a8b5fc90f24a5c/src/main/java/com/google/code/externalsorting/csv/CsvExternalSort.java/left.java
 			files.add(sortAndSave(tmplist, tmpdirectory, sortOptions, header[0]));
+||||||| /usr/src/app/output/lemire/externalsortinginjava/5d3676023c04d823a56b85ca77a8b5fc90f24a5c/src/main/java/com/google/code/externalsorting/csv/CsvExternalSort.java/base.java
+			files.add(sortAndSave(tmplist, cmp, cs, tmpdirectory, distinct));
+=======
+			files.add(sortAndSave(tmplist, cmp, cs, tmpdirectory, distinct, format));
+>>>>>>> /usr/src/app/output/lemire/externalsortinginjava/5d3676023c04d823a56b85ca77a8b5fc90f24a5c/src/main/java/com/google/code/externalsorting/csv/CsvExternalSort.java/right.java
 		}
 
 		return files;
 	}
 
-	public static File sortAndSave(List<CSVRecord> tmplist, File tmpdirectory, final CsvSortOptions sortOptions, final CSVRecord header) throws IOException {
+	public static File sortAndSave(List<CSVRecord> tmplist, File tmpdirectory, final CsvSortOptions sortOptions, final CSVRecord header, CSVFormat format) throws IOException {
 		Collections.sort(tmplist, sortOptions.getComparator());
 		File newtmpfile = File.createTempFile("sortInBatch", "flatfile", tmpdirectory);
 		newtmpfile.deleteOnExit();
 
 		CSVRecord lastLine = null;
 		try (Writer writer = new OutputStreamWriter(new FileOutputStream(newtmpfile), sortOptions.getCharset());
-			 CSVPrinter printer = new CSVPrinter(new BufferedWriter(writer), CSVFormat.DEFAULT);
+			 CSVPrinter printer = new CSVPrinter(new BufferedWriter(writer), format);
 		){
 			if (!sortOptions.isSkipHeader() && (header != null)){
 				printer.printRecord(header);
@@ -212,9 +220,17 @@ public class CsvExternalSort {
 		return true;
 	}
 
-	public static List<File> sortInBatch(File file, File tmpdirectory, final CsvSortOptions sortOptions) throws IOException {
+	public static List<File> sortInBatch(File file, File tmpdirectory, final CsvSortOptions sortOptions, CSVFormat format) throws IOException {
 		try(BufferedReader fbr = new BufferedReader(new InputStreamReader(new FileInputStream(file), sortOptions.getCharset()))){
+<<<<<<< /usr/src/app/output/lemire/externalsortinginjava/5d3676023c04d823a56b85ca77a8b5fc90f24a5c/src/main/java/com/google/code/externalsorting/csv/CsvExternalSort.java/left.java
 			return sortInBatch(fbr, tmpdirectory, sortOptions);
+||||||| /usr/src/app/output/lemire/externalsortinginjava/5d3676023c04d823a56b85ca77a8b5fc90f24a5c/src/main/java/com/google/code/externalsorting/csv/CsvExternalSort.java/base.java
+			return sortInBatch(fbr, file.length(), cmp, maxtmpfiles, estimateAvailableMemory(), cs, tmpdirectory, distinct,
+					numHeader);
+=======
+			return sortInBatch(fbr, file.length(), cmp, maxtmpfiles, estimateAvailableMemory(), cs, tmpdirectory, distinct,
+					numHeader, format);
+>>>>>>> /usr/src/app/output/lemire/externalsortinginjava/5d3676023c04d823a56b85ca77a8b5fc90f24a5c/src/main/java/com/google/code/externalsorting/csv/CsvExternalSort.java/right.java
 		}
 	}
 
