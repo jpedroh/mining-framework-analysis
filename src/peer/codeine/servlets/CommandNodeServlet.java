@@ -157,9 +157,10 @@ public class CommandNodeServlet extends AbstractServlet {
             env.put(Constants.EXECUTION_ENV_COMMAND_NAME, commandInfo.name());
             env.put(Constants.EXECUTION_ENV_NODE_NAME, commandInfo2.node_name());
             env.put(Constants.EXECUTION_ENV_NODE_ALIAS, commandInfo2.node_alias());
-            env.put(Constants.EXECUTION_ENV_NODE_TAGS, StringUtils
-                .collectionToString(projectStatusUpdater.getTags(commandInfo.project_name(), commandInfo2.node_name()),
-                    ";"));
+            env.put(Constants.EXECUTION_ENV_NODE_TAGS,
+                StringUtils
+                    .collectionToString(getTags(commandInfo.project_name(), commandInfo2.node_name()),
+                        ";"));
             env.put(Constants.EXECUTION_ENV_CODEINE_SERVER, globalConfigurationJsonStore.get().web_server_host());
             env.put(Constants.EXECUTION_ENV_CODEINE_SERVER_PORT,
                 globalConfigurationJsonStore.get().web_server_port().toString());
