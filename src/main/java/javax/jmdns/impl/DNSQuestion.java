@@ -291,8 +291,6 @@ public class DNSQuestion extends DNSEntry {
                 answers.add(new DNSRecord.Pointer(constructedName, DNSRecordClass.CLASS_IN, DNSRecordClass.UNIQUE, DNSConstants.DNS_TTL, info.getName() + "." + constructedType));
             }
 
-            if (logger.isLoggable(Level.FINER)) {
-                logger.finer(jmDNSImpl.getName() + " DNSQuestion(" + this.getName() + ").addAnswersForServiceInfo(): info: " + info + "\n" + answers);
             if (logger.isDebugEnabled()) {
                 logger.debug(jmDNSImpl.getName() + " DNSQuestion(" + this.getName() + ").addAnswersForServiceInfo(): info: " + info + "\n" + answers);
             }
