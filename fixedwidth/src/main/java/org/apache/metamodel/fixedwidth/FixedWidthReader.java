@@ -34,11 +34,10 @@ import java.util.List;
 /**
  * Reader capable of separating values based on a fixed width setting.
  */
-class FixedWidthReader implements Closeable {
+ class FixedWidthReader implements Closeable {
     private static final int END_OF_STREAM = -1;
     private static final int LINE_FEED = '\n';
     private static final int CARRIAGE_RETURN = '\r';
-    
     protected final String _charsetName;
     private final int _fixedValueWidth;
     private final int[] _valueWidths;
@@ -49,12 +48,10 @@ class FixedWidthReader implements Closeable {
     protected final BufferedInputStream _stream;
     protected Reader _reader;
     protected final int _expectedLineLength;
-
     public FixedWidthReader(InputStream stream, String charsetName, int fixedValueWidth,
             boolean failOnInconsistentLineWidth) {
         this(new BufferedInputStream(stream), charsetName, fixedValueWidth, failOnInconsistentLineWidth);
     }
-
     private FixedWidthReader(BufferedInputStream stream, String charsetName, int fixedValueWidth,
             boolean failOnInconsistentLineWidth) {
         _stream = stream;
@@ -67,13 +64,12 @@ class FixedWidthReader implements Closeable {
         _constantWidth = true;
         _expectedLineLength = -1;
     }
-
     public FixedWidthReader(InputStream stream, String charsetName, int[] valueWidths,
             boolean failOnInconsistentLineWidth) {
         this(new BufferedInputStream(stream), charsetName, valueWidths, failOnInconsistentLineWidth);
     }
-
     FixedWidthReader(BufferedInputStream stream, String charsetName, int[] valueWidths,
+<<<<<<< /usr/src/app/output/apache/metamodel/e8ac28efa6fa4e994203fceacb7fbffcbea55246/fixedwidth/src/main/java/org/apache/metamodel/fixedwidth/FixedWidthReader.java/left.java
             boolean failOnInconsistentLineWidth) {
         _stream = stream;
         _charsetName = charsetName;
@@ -91,7 +87,26 @@ class FixedWidthReader implements Closeable {
 
         _expectedLineLength = expectedLineLength;
     }
+||||||| /usr/src/app/output/apache/metamodel/e8ac28efa6fa4e994203fceacb7fbffcbea55246/fixedwidth/src/main/java/org/apache/metamodel/fixedwidth/FixedWidthReader.java/base.java
+            boolean failOnInconsistentLineWidth) 
+=======
+            boolean failOnInconsistentLineWidth) {
+        _stream = stream;
+        _charsetName = charsetName;
+        _fixedValueWidth = -1;
+        _valueWidths = valueWidths;
+        _failOnInconsistentLineWidth = failOnInconsistentLineWidth;
+        _rowNumber = 0;
+        _constantWidth = false;
+        int expectedLineLength = 0;
 
+        for (final int _valueWidth : _valueWidths) {
+            expectedLineLength += _valueWidth;
+        }
+
+        _expectedLineLength = expectedLineLength;
+    }
+>>>>>>> /usr/src/app/output/apache/metamodel/e8ac28efa6fa4e994203fceacb7fbffcbea55246/fixedwidth/src/main/java/org/apache/metamodel/fixedwidth/FixedWidthReader.java/right.java
     private void initReader() {
         try {
             InputStreamReader inputStreamReader = new InputStreamReader(_stream, _charsetName);
@@ -100,7 +115,6 @@ class FixedWidthReader implements Closeable {
             throw new IllegalArgumentException(String.format("Encoding '%s' was not recognized. ", _charsetName));
         }
     }
-    
     /**
      * This reads and returns the next record from the file. Usually, it is a line but in case the new line characters
      * are not present, the length of the content depends on the column-widths setting.
@@ -108,23 +122,21 @@ class FixedWidthReader implements Closeable {
      * @return an array of values in the next line, or null if the end of the file has been reached.
      * @throws IllegalStateException if an exception occurs while reading the file.
      */
-    public String[] readLine() throws IllegalStateException {
-        try {
-            beforeReadLine();
-            _rowNumber++;
-            return getValues();
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
+	public String[] readLine() throws IllegalStateException {
+	    try {
+	        beforeReadLine();
+	        _rowNumber++;
+	        return getValues();
+	    } catch (IOException e) {
+	        throw new IllegalStateException(e);
+	    }
+	}
     /**
      * Empty hook that enables special behavior in sub-classed readers (by overriding this method). 
      */
     protected void beforeReadLine() {
         return;
     }
-
     private String[] getValues() throws IOException {
         final List<String> values = new ArrayList<>();
         final String singleRecordData = readSingleRecordData();
@@ -144,7 +156,6 @@ class FixedWidthReader implements Closeable {
 
         return result;
     }
-
     private void validateConsistentValue(String recordData, String[] result, int valuesSize) {
         if (!_failOnInconsistentLineWidth) {
             return;
@@ -164,7 +175,6 @@ class FixedWidthReader implements Closeable {
             throw inconsistentValueException;
         }
     }
-
     private void processSingleRecordData(final String singleRecordData, final List<String> values) {
         StringBuilder nextValue = new StringBuilder();
         final CharacterIterator it = new StringCharacterIterator(singleRecordData);
@@ -178,7 +188,7 @@ class FixedWidthReader implements Closeable {
             addNewValueIfAppropriate(values, nextValue);
         }
     }
-
+<<<<<<< /usr/src/app/output/apache/metamodel/e8ac28efa6fa4e994203fceacb7fbffcbea55246/fixedwidth/src/main/java/org/apache/metamodel/fixedwidth/FixedWidthReader.java/left.java
     String readSingleRecordData() throws IOException {
         StringBuilder line = new StringBuilder();
 
@@ -197,7 +207,24 @@ class FixedWidthReader implements Closeable {
 
         return (line.length()) > 0 ? line.toString() : null;
     }
-    
+||||||| /usr/src/app/output/apache/metamodel/e8ac28efa6fa4e994203fceacb7fbffcbea55246/fixedwidth/src/main/java/org/apache/metamodel/fixedwidth/FixedWidthReader.java/base.java
+=======
+    String readSingleRecordData() throws IOException {
+        StringBuilder line = new StringBuilder();
+        int ch;
+
+        for (ch = _stream.read(); !isEndingCharacter(ch); ch = _stream.read()) {
+            line.append((char) ch);
+        }
+
+        if (ch == CARRIAGE_RETURN) {
+            readLineFeedIfFollows();
+        }
+
+        return (line.length()) > 0 ? line.toString() : null;
+    }
+>>>>>>> /usr/src/app/output/apache/metamodel/e8ac28efa6fa4e994203fceacb7fbffcbea55246/fixedwidth/src/main/java/org/apache/metamodel/fixedwidth/FixedWidthReader.java/right.java
+<<<<<<< /usr/src/app/output/apache/metamodel/e8ac28efa6fa4e994203fceacb7fbffcbea55246/fixedwidth/src/main/java/org/apache/metamodel/fixedwidth/FixedWidthReader.java/left.java
     private void readLineFeedIfFollows() throws IOException {
         _reader.mark(1);
         
@@ -205,11 +232,19 @@ class FixedWidthReader implements Closeable {
             _reader.reset();
         }
     }
+||||||| /usr/src/app/output/apache/metamodel/e8ac28efa6fa4e994203fceacb7fbffcbea55246/fixedwidth/src/main/java/org/apache/metamodel/fixedwidth/FixedWidthReader.java/base.java
+=======
+    private void readLineFeedIfFollows() throws IOException {
+        _stream.mark(1);
 
+        if (_stream.read() != LINE_FEED) {
+            _stream.reset();
+        }
+    }
+>>>>>>> /usr/src/app/output/apache/metamodel/e8ac28efa6fa4e994203fceacb7fbffcbea55246/fixedwidth/src/main/java/org/apache/metamodel/fixedwidth/FixedWidthReader.java/right.java
     private boolean isEndingCharacter(int ch) {
         return (ch == CARRIAGE_RETURN || ch == LINE_FEED || ch == END_OF_STREAM);
     }
-    
     private void processCharacter(char c, StringBuilder nextValue, List<String> values, String recordData) {
         nextValue.append(c);
         final int valueWidth = getValueWidth(values, recordData);
@@ -223,7 +258,6 @@ class FixedWidthReader implements Closeable {
             }
         }
     }
-
     private int getValueWidth(List<String> values, String recordData) {
         if (_constantWidth) {
             return _fixedValueWidth;
@@ -240,7 +274,6 @@ class FixedWidthReader implements Closeable {
             return _valueWidths[_valueIndex];
         }
     }
-
     private void addNewValueIfAppropriate(List<String> values, StringBuilder nextValue) {
         if (_valueWidths != null) {
             if (values.size() < _valueWidths.length) {
@@ -250,7 +283,6 @@ class FixedWidthReader implements Closeable {
             values.add(nextValue.toString().trim());
         }
     }
-
     private String[] correctResult(String[] result) {
         if (result.length != _valueWidths.length) {
             String[] correctedResult = new String[_valueWidths.length];
@@ -264,9 +296,30 @@ class FixedWidthReader implements Closeable {
 
         return result;
     }
-
     @Override
     public void close() throws IOException {
         _stream.close();
     }
+    private FixedWidthReader(BufferedInputStream stream, String charsetName, int fixedValueWidth,
+            boolean failOnInconsistentLineWidth) {
+        _stream = stream;
+        _charsetName = charsetName;
+        _fixedValueWidth = fixedValueWidth;
+        _failOnInconsistentLineWidth = failOnInconsistentLineWidth;
+        _rowNumber = 0;
+        _valueWidths = null;
+        _constantWidth = true;
+        _expectedLineLength = -1;
+    }
+    /**
+     * This reads and returns the next record from the file. Usually, it is a line but in case the new line characters
+     * are not present, the length of the content depends on the column-widths setting.
+     *
+     * @return an array of values in the next line, or null if the end of the file has been reached.
+     * @throws IllegalStateException if an exception occurs while reading the file.
+     */
+    /**
+     * Empty hook that enables special behavior in sub-classed readers (by overriding this method). 
+     */
+
 }
