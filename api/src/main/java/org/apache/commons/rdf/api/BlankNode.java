@@ -1,22 +1,4 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.commons.rdf.api;
-
 import java.util.UUID;
 
 /**
@@ -56,8 +38,7 @@ import java.util.UUID;
  * Blank Node</a>
  */
 public interface BlankNode extends BlankNodeOrIRI {
-
-    /**
+  /**
      * Return a reference for uniquely identifying the blank node.
      * <p>
      * The reference string MUST universally and uniquely identify this blank
@@ -81,9 +62,9 @@ public interface BlankNode extends BlankNodeOrIRI {
      *
      * @return A universally unique reference to identify this {@link BlankNode}
      */
-    String uniqueReference();
+  String uniqueReference();
 
-    /**
+  /**
      * Check it this BlankNode is equal to another BlankNode. Two BlankNodes
      * MUST be equal if, and only if, they have the same
      * {@link #uniqueReference()}.
@@ -95,16 +76,11 @@ public interface BlankNode extends BlankNodeOrIRI {
      * @return true if other is a BlankNode instance that represent the same blank node
      * @see Object#equals(Object)
      */
-    @Override
-    public boolean equals(Object other);
+  @Override public boolean equals(Object other);
 
-    /**
+  /**
      * Calculate a hash code for this BlankNode.
-     * <p>
-     * The returned hash code MUST be equal to the
-     * {@link String#hashCode()} of the
-     * {@link #uniqueReference()}.
-     * <p>
+     *
      * This method MUST be implemented in conjunction with
      * {@link #equals(Object)} so that two equal BlankNodes produce the same
      * hash code.
@@ -112,7 +88,5 @@ public interface BlankNode extends BlankNodeOrIRI {
      * @return a hash code value for this BlankNode.
      * @see Object#hashCode()
      */
-    @Override
-    public int hashCode();
-
+  @Override public int hashCode();
 }
