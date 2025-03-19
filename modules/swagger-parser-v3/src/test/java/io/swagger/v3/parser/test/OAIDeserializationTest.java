@@ -61,6 +61,7 @@ public class OAIDeserializationTest {
         assertNotNull(result.getOpenAPI());
     }
 
+<<<<<<< /usr/src/app/output/swagger-api/swagger-parser/9c6ec9e5c91fa04147c9e52ad7fabf9bd7caf192/modules/swagger-parser-v3/src/test/java/io/swagger/v3/parser/test/OAIDeserializationTest.java/left.java
     @Test
     public void testDeserializeYamlDefinitionMissingSchema_Issue1951() throws Exception {
         // Create Spec missing schema but with schema items referenced in responses
@@ -137,4 +138,77 @@ public class OAIDeserializationTest {
         assertTrue(result.getMessages().contains("attribute components.responses.ErrorObj.content.'application/json'.schema.NotAddedYet is missing"));
         assertTrue(result.getMessages().contains("attribute paths.'/thingy'(post).requestBody.content.'application/json'.schema.#/components/schemas/ThingRequest is missing"));
     }
+||||||| /usr/src/app/output/swagger-api/swagger-parser/9c6ec9e5c91fa04147c9e52ad7fabf9bd7caf192/modules/swagger-parser-v3/src/test/java/io/swagger/v3/parser/test/OAIDeserializationTest.java/base.java
+=======
+    @Test
+    public void testDeserializeYamlDefinition() throws Exception {
+        OpenAPI api = new OpenAPI();
+        api.setSpecVersion(SpecVersion.V30);
+        api.setComponents(new Components());
+        ApiResponse errorResponse = new ApiResponse();
+        errorResponse.setContent(new Content());
+        errorResponse.setDescription("asdad");
+        MediaType errorType = new MediaType();
+        errorResponse.getContent().addMediaType("application/json", errorType);
+    //        ObjectSchema errorObjType = new ObjectSchema();
+    //        errorObjType.addProperty("code", new StringSchema());
+    //        errorType.setSchema(errorObjType);
+        errorType.setSchema(new ComposedSchema().$ref("NotAddedYet").type("schema"));
+        api.getComponents().setResponses(new HashMap<>());
+        api.getComponents().getResponses().put("ErrorObj", errorResponse);
+        Paths path = new Paths();
+        PathItem pathItem = new PathItem();
+        Operation post = new Operation();
+        RequestBody body = new RequestBody();
+        Content content = new Content();
+        MediaType type = new MediaType();
+        ApiResponses resp = new ApiResponses();
+        resp.addApiResponse("401", new ApiResponse().$ref("#/components/responses/ErrorObj"));
+    //        resp.addApiResponse("401", new ApiResponse().description("Bad request").content(new Content().addMediaType("application/json", new MediaType().schema(new ComposedSchema().$ref("#/components/responses/ErrorObj")))));
+        resp.setDefault(new ApiResponse().description("Default response is just a string").content(new Content().addMediaType("application/json", new MediaType().schema(new StringSchema()))));
+        post.setResponses(resp);
+        ComposedSchema schema = new ComposedSchema();
+        schema.set$ref("ThingRequest");
+        schema.setType("schema");
+    //        type.setSchema(new ObjectSchema().addProperty("mything", new StringSchema()));
+        type.setSchema(schema);
+        content.addMediaType("application/json", type);
+        body.setContent(content);
+        post.setRequestBody(body);
+        pathItem.post(post);
+        path.addPathItem("/thingy", pathItem);
+        api.setPaths(path);
+        String yaml = Yaml.mapper().writeValueAsString(api);
+        System.out.println(yaml);
+
+        // openapi: 3.0.1
+        // paths:
+        //   /thingy:
+        //     post:
+        //       requestBody:
+        //         content:
+        //           application/json:
+        //             schema:
+        //               $ref: '#/components/schemas/ThingRequest'
+        // components:
+        //   responses:
+        //     ErrorObj:
+        //       content:
+        //         application/json:
+        //           schema:
+        //             type: object
+        //             properties:
+        //               code:
+        //                 type: string
+
+        ParseOptions options = new ParseOptions();
+        options.setResolve(true);
+        SwaggerParseResult result = new OpenAPIV3Parser().readContents(yaml, null, options);
+
+        assertNotNull(result.getOpenAPI());
+        assertTrue(result.getMessages().contains("attribute info is missing"));
+        assertTrue(result.getMessages().contains("attribute components.responses.ErrorObj.content.'application/json'.schema.NotAddedYet is missing"));
+        assertTrue(result.getMessages().contains("attribute paths.'/thingy'(post).requestBody.content.'application/json'.schema.#/components/schemas/ThingRequest is missing"));
+    }
+>>>>>>> /usr/src/app/output/swagger-api/swagger-parser/9c6ec9e5c91fa04147c9e52ad7fabf9bd7caf192/modules/swagger-parser-v3/src/test/java/io/swagger/v3/parser/test/OAIDeserializationTest.java/right.java
 }
