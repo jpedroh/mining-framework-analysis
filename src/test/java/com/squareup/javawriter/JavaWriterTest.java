@@ -12,19 +12,16 @@ import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrow
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
 import javax.lang.model.element.Modifier;
-
 import org.junit.Test;
-
 import com.example.Binding;
+import java.util.ArrayList;
 
 public final class JavaWriterTest {
   private final StringWriter stringWriter = new StringWriter();
