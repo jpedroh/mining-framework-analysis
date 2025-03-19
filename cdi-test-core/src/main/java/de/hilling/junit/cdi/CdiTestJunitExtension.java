@@ -1,20 +1,28 @@
 package de.hilling.junit.cdi;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.List;
 
-import org.jboss.weld.proxy.WeldClientProxy;
 import org.junit.jupiter.api.extension.AfterAllCallback;
+
 import org.junit.jupiter.api.extension.AfterEachCallback;
+
 import org.junit.jupiter.api.extension.BeforeAllCallback;
+
 import org.junit.jupiter.api.extension.BeforeEachCallback;
+
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.InvocationInterceptor;
-import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
+
 import org.junit.jupiter.api.extension.TestInstanceFactory;
+
 import org.junit.jupiter.api.extension.TestInstanceFactoryContext;
+
 import org.junit.jupiter.api.extension.TestInstantiationException;
+
+import java.lang.reflect.Method;
+
+import org.junit.jupiter.api.extension.InvocationInterceptor;
+
+import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
 import org.mockito.Mockito;
 
 import de.hilling.junit.cdi.annotations.ActivatableTestImplementation;
@@ -50,6 +58,20 @@ public class CdiTestJunitExtension implements TestInstanceFactory, InvocationInt
         lifecycleNotifier = contextControl.getContextualReference(LifecycleNotifier.class);
     }
 
+<<<<<<< /usr/src/app/output/guhilling/cdi-test/d8cb85a75cdde55aed2e44322ba1e458a51ff41a/cdi-test-core/src/main/java/de/hilling/junit/cdi/CdiTestJunitExtension.java/left.java
+    @Override
+    public Object createTestInstance(TestInstanceFactoryContext factoryContext,
+                                     ExtensionContext extensionContext) throws TestInstantiationException {
+        Class<?> testClass = factoryContext.getTestClass();
+        TestContext.activate();
+        contextControl.startContexts();
+        Object testInstance = contextControl.getContextualReference(testClass);
+        testEnvironment = contextControl.getContextualReference(TestEnvironment.class);
+        testEnvironment.setTestInstance(testInstance);
+        return testInstance;
+    }
+||||||| /usr/src/app/output/guhilling/cdi-test/d8cb85a75cdde55aed2e44322ba1e458a51ff41a/cdi-test-core/src/main/java/de/hilling/junit/cdi/CdiTestJunitExtension.java/base.java
+=======
     @Override
     public Object createTestInstance(TestInstanceFactoryContext factoryContext,
                                      ExtensionContext extensionContext) throws TestInstantiationException {
@@ -61,18 +83,7 @@ public class CdiTestJunitExtension implements TestInstanceFactory, InvocationInt
         testEnvironment.setTestInstance(testInstance);
         return testInstance.getMetadata().getContextualInstance();
     }
-
-    @Override
-    public void interceptTestMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext,
-                                     ExtensionContext extensionContext) throws Throwable {
-        Object testProxy = testEnvironment.getTestInstance();
-        Method testMethod = testEnvironment.getTestMethod();
-        List<Object> arguments = invocationContext.getArguments();
-        testMethod.setAccessible(true);
-        testMethod.invoke(testProxy, arguments.toArray());
-        invocation.skip();
-    }
-
+>>>>>>> /usr/src/app/output/guhilling/cdi-test/d8cb85a75cdde55aed2e44322ba1e458a51ff41a/cdi-test-core/src/main/java/de/hilling/junit/cdi/CdiTestJunitExtension.java/right.java
 
     @Override
     public void beforeEach(ExtensionContext context) {
@@ -105,6 +116,17 @@ public class CdiTestJunitExtension implements TestInstanceFactory, InvocationInt
     public void afterAll(ExtensionContext context) {
         Mockito.framework()
                .removeListener(invocationTargetManager);
+    }
+
+    @Override
+    public void interceptTestMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext,
+                                     ExtensionContext extensionContext) throws Throwable {
+        Object testProxy = testEnvironment.getTestInstance();
+        Method testMethod = testEnvironment.getTestMethod();
+        List<Object> arguments = invocationContext.getArguments();
+        testMethod.setAccessible(true);
+        testMethod.invoke(testProxy, arguments.toArray());
+        invocation.skip();
     }
 
     private boolean isTestActivatable(Field field) {

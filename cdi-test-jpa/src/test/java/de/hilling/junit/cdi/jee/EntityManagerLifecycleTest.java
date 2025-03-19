@@ -7,8 +7,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceUnit;
 import jakarta.transaction.Transactional;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.jboss.weld.transaction.spi.TransactionServices;
 import org.junit.jupiter.api.DisplayName;
@@ -63,6 +62,7 @@ class EntityManagerLifecycleTest {
     @Test
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     void globalTransactionActive() {
+        assertTrue(transactionServices.isTransactionActive());
         assertFalse(transactionServices.isTransactionActive());
         entityManagerJta.persist(new UserEntity());
         assertFalse(transactionServices.isTransactionActive());
