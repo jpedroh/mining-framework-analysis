@@ -20,13 +20,17 @@
 package net.technicpack.launchercore.install;
 
 import net.technicpack.launchercore.exception.PackNotAvailableOfflineException;
+import net.technicpack.launchercore.install.tasks.*;
+import net.technicpack.launchercore.util.DownloadListener;
+import net.technicpack.launchercore.util.Utils;
+import net.technicpack.launchercore.util.ZipUtils;
+import org.apache.commons.io.FileUtils;
+import javax.swing.*;
+import java.awt.*;
 import net.technicpack.launchercore.modpacks.ModpackModel;
 import net.technicpack.platform.IPlatformApi;
-
 import net.technicpack.utilslib.Utils;
 import net.technicpack.utilslib.ZipUtils;
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;

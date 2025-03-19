@@ -50,32 +50,32 @@ public class EnsureFileTask implements IInstallTask {
     }
 
 	public EnsureFileTask(File fileLocation, IFileVerifier fileVerifier, File zipExtractLocation, String sourceUrl, String friendlyFileName, ITasksQueue downloadTaskQueue, ITasksQueue copyTaskQueue, IZipFileFilter fileFilter) {
-		this.cacheLocation = fileLocation;
-		this.zipExtractLocation = zipExtractLocation;
-		this.sourceUrl = sourceUrl;
-		this.fileVerifier = fileVerifier;
+	    this.cacheLocation = fileLocation;
+	    this.zipExtractLocation = zipExtractLocation;
+	    this.sourceUrl = sourceUrl;
+	    this.fileVerifier = fileVerifier;
 		this.friendlyFileName = friendlyFileName;
         this.downloadTaskQueue = downloadTaskQueue;
         this.copyTaskQueue = copyTaskQueue;
         this.filter = fileFilter;
 	}
 
-	@Override
-	public String getTaskDescription() {
-		return "Verifying "+this.cacheLocation.getName();
-	}
+    @Override
+    public String getTaskDescription() {
+        return "Verifying " + this.cacheLocation.getName();
+    }
 
-	@Override
-	public float getTaskProgress() {
-		return 0;
-	}
+    @Override
+    public float getTaskProgress() {
+        return 0;
+    }
 
-	@Override
-	public void runTask(InstallTasksQueue queue) throws IOException {
-		if (this.zipExtractLocation != null)
-			copyTaskQueue.addNextTask(new UnzipFileTask(this.cacheLocation, this.zipExtractLocation, this.filter));
+    @Override
+    public void runTask(InstallTasksQueue queue) throws IOException {
+        if (this.zipExtractLocation != null)
+            copyTaskQueue.addNextTask(new UnzipFileTask(this.cacheLocation, this.zipExtractLocation, this.filter));
 
-		if (sourceUrl != null && (!this.cacheLocation.exists() || (fileVerifier != null && !fileVerifier.isFileValid(this.cacheLocation))))
-			downloadTaskQueue.addNextTask(new DownloadFileTask(this.sourceUrl, this.cacheLocation, this.fileVerifier, this.friendlyFileName));
-	}
+        if (sourceUrl != null && (!this.cacheLocation.exists() || (fileVerifier != null && !fileVerifier.isFileValid(this.cacheLocation))))
+        	downloadTaskQueue.addNextTask(new DownloadFileTask(this.sourceUrl, this.cacheLocation, this.fileVerifier, this.friendlyFileName));
+    }
 }
