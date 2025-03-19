@@ -59,13 +59,8 @@ import java.util.List;
     name = "Forbidden configuration parameters",
     description = "Comma-separated list of <code>key=value</code> pairs that should break the build.",
     global = true,
-    project = false),
-  @Property(key = BuildBreakerPlugin.ALTERNATIVE_SERVER_URL_KEY,
-    name = "Alternative server URL",
-    description = "URL to use for web service requests. If unset, uses the <code>serverUrl</code> property from " +
-      "<code>${sonar.working.directory}/report-task.txt</code>.",
-    global = true,
-    project = false),
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-build-breaker/0a474ef6d91248a199a65c9ca24556e598116fd1/src/main/java/org/sonar/plugins/buildbreaker/BuildBreakerPlugin.java/left.java
+    project = false) ,
   @Property(key = BuildBreakerPlugin.FAIL_FOR_ISSUES_WITH_SEVERITY_KEY,
     name = "Severity to fail preview analysis",
     description = "Fails the build for preview analysis modes if the severity of issues is equal or more severe",
@@ -75,6 +70,17 @@ import java.util.List;
     defaultValue = Severity.MAJOR,
     global = true,
     project = true)
+||||||| /usr/src/app/output/sonarcommunity/sonar-build-breaker/0a474ef6d91248a199a65c9ca24556e598116fd1/src/main/java/org/sonar/plugins/buildbreaker/BuildBreakerPlugin.java/base.java
+    project = false) 
+=======
+    project = false) ,
+  @Property(key = BuildBreakerPlugin.ALTERNATIVE_SERVER_URL_KEY,
+    name = "Alternative server URL",
+    description = "URL to use for web service requests. If unset, uses the <code>serverUrl</code> property from " +
+      "<code>${sonar.working.directory}/report-task.txt</code>.",
+    global = true,
+    project = false)
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-build-breaker/0a474ef6d91248a199a65c9ca24556e598116fd1/src/main/java/org/sonar/plugins/buildbreaker/BuildBreakerPlugin.java/right.java
 })
 public class BuildBreakerPlugin extends SonarPlugin {
 
@@ -96,6 +102,7 @@ public class BuildBreakerPlugin extends SonarPlugin {
   public static final String FAIL_FOR_ISSUES_WITH_SEVERITY_KEY = "sonar.buildbreaker.preview.failForIssuesWithSeverity";
   public static final String FAIL_FOR_ISSUES_DISABLED = "DISABLED";
 
+  
   @Override
   public List getExtensions() {
     return Arrays.asList(ForbiddenConfigurationBreaker.class, QualityGateBreaker.class, BasicIssuesBuildBreaker.class);
