@@ -1,3 +1,140 @@
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/a34bc69082c58aafcb062b66f928d7035285cc5e/src/main/java/com/wrapper/spotify/objects/Playlist.java/left.java
+fatal: path 'src/main/java/com/wrapper/spotify/objects/Playlist.java' does not exist in '57e229e23b58d6dca00779c45f91586f39a22499'
+||||||| /usr/src/app/output/thelinmichael/spotify-web-api-java/a34bc69082c58aafcb062b66f928d7035285cc5e/src/main/java/com/wrapper/spotify/objects/Playlist.java/base.java
+package com.wrapper.spotify.objects;
+
+import java.util.List;
+
+public class Playlist {
+
+  private boolean collaborative;
+  private String description;
+  private ExternalUrls externalUrls;
+  private Followers followers;
+  private String href;
+  private String id;
+  private List<Image> images;
+  private String name;
+  private User owner;
+  private boolean publicAccess;
+  private String snapshotId;
+  private Paging<PlaylistTrack> tracks;
+  private ObjectType type = ObjectType.PLAYLIST;
+  private String uri;
+
+  public boolean getIsCollaborative() {
+    return collaborative;
+  }
+
+  public void setCollaborative(boolean collaborative) {
+    this.collaborative = collaborative;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public ExternalUrls getExternalUrls() {
+    return externalUrls;
+  }
+
+  public void setExternalUrls(ExternalUrls externalUrls) {
+    this.externalUrls = externalUrls;
+  }
+
+  public Followers getFollowers() {
+    return followers;
+  }
+
+  public void setFollowers(Followers followers) {
+    this.followers = followers;
+  }
+
+  public String getHref() {
+    return href;
+  }
+
+  public void setHref(String href) {
+    this.href = href;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public List<Image> getImages() {
+    return images;
+  }
+
+  public void setImages(List<Image> images) {
+    this.images = images;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public User getOwner() {
+    return owner;
+  }
+
+  public void setOwner(User owner) {
+    this.owner = owner;
+  }
+
+  public boolean getIsPublicAccess() {
+    return publicAccess;
+  }
+
+  public void setPublicAccess(boolean publicAccess) {
+    this.publicAccess = publicAccess;
+  }
+
+  public String getSnapshotId() {
+    return snapshotId;
+  }
+
+  public void setSnapshotId(String snapshotId) {
+    this.snapshotId = snapshotId;
+  }
+
+  public Paging<PlaylistTrack> getTracks() {
+    return tracks;
+  }
+
+  public void setTracks(Paging<PlaylistTrack> tracks) {
+    this.tracks = tracks;
+  }
+
+  public ObjectType getType() {
+    return type;
+  }
+
+  public void setType(ObjectType type) {
+    this.type = type;
+  }
+
+  public String getUri() {
+    return uri;
+  }
+
+  public void setUri(String uri) {
+    this.uri = uri;
+  }
+}
+=======
 package com.wrapper.spotify.objects;
 
 import com.google.gson.JsonNull;
@@ -216,3 +353,4 @@ public class Playlist extends AbstractModelObject {
     }
   }
 }
+>>>>>>> /usr/src/app/output/thelinmichael/spotify-web-api-java/a34bc69082c58aafcb062b66f928d7035285cc5e/src/main/java/com/wrapper/spotify/objects/Playlist.java/right.java
