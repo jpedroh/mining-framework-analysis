@@ -509,6 +509,15 @@ public class MergeRequestHookTriggerHandlerImplTest {
 	}
 
     @After
+<<<<<<< /usr/src/app/output/dabsquared/gitlab-plugin/54a137828a819767d40981e5fcc3d1b252dcaaa4/src/test/java/com/dabsquared/gitlabjenkins/trigger/handler/merge/MergeRequestHookTriggerHandlerImplTest.java/left.java
+    public void after() {
+        if (Functions.isWindows()) {
+            Thread.sleep(5000);
+        }
+    }
+||||||| /usr/src/app/output/dabsquared/gitlab-plugin/54a137828a819767d40981e5fcc3d1b252dcaaa4/src/test/java/com/dabsquared/gitlabjenkins/trigger/handler/merge/MergeRequestHookTriggerHandlerImplTest.java/base.java
+    public void after() 
+=======
     public void after() {
         /*
          * Add Thread.sleep(5000) to avoid the following error on Windows:
@@ -524,4 +533,5 @@ public class MergeRequestHookTriggerHandlerImplTest {
             }
         }
     }
+>>>>>>> /usr/src/app/output/dabsquared/gitlab-plugin/54a137828a819767d40981e5fcc3d1b252dcaaa4/src/test/java/com/dabsquared/gitlabjenkins/trigger/handler/merge/MergeRequestHookTriggerHandlerImplTest.java/right.java
 }
