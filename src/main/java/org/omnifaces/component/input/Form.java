@@ -168,6 +168,68 @@ public class Form extends HtmlForm {
 		super.encodeBegin(new ActionURLDecorator(context, this));
 	}
 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/513e06404724a0c2fe2db0e0ce70e68a8430c18c/src/main/java/org/omnifaces/component/input/Form.java/left.java
+	/**
+	 * Collect the necessary parameters for query string in action URL.
+	 */
+	private Map<String, List<String>> collectParams(FacesContext context) {
+		Map<String, List<String>> params;
+
+		if (isUseRequestURI() || isIncludeRequestParams()) {
+			params = getRequestQueryStringMap(context);
+		}
+		else if (isIncludeViewParams()) {
+			params = getViewParameterMap(context);
+		}
+		else {
+			params = new LinkedHashMap<String, List<String>>(0);
+		}
+
+		for (ParamHolder param : getParams(this)) {
+			Object value = param.getValue();
+
+			if (isEmpty(value)) {
+				continue;
+			}
+
+			params.put(param.getName(), asList(value.toString()));
+		}
+
+		return params;
+	}
+
+||||||| /usr/src/app/output/omnifaces/omnifaces/513e06404724a0c2fe2db0e0ce70e68a8430c18c/src/main/java/org/omnifaces/component/input/Form.java/base.java
+	/**
+	 * Collect the necessary parameters for query string in action URL.
+	 */
+	private Map<String, List<String>> collectParams(FacesContext context) {
+		Map<String, List<String>> params;
+
+		if (isUseRequestURI() || isIncludeRequestParams()) {
+			params = getRequestQueryStringMap(context);
+		}
+		else if (isIncludeViewParams()) {
+			params = getViewParameterMap(context);
+		}
+		else {
+			params = new LinkedHashMap<>(0);
+		}
+
+		for (ParamHolder param : getParams(this)) {
+			Object value = param.getValue();
+
+			if (isEmpty(value)) {
+				continue;
+			}
+
+			params.put(param.getName(), asList(value.toString()));
+		}
+
+		return params;
+	}
+
+=======
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/513e06404724a0c2fe2db0e0ce70e68a8430c18c/src/main/java/org/omnifaces/component/input/Form.java/right.java
 	// Getters/setters ------------------------------------------------------------------------------------------------
 
 	/**

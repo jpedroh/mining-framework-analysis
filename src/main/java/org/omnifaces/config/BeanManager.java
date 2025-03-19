@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import javax.servlet.ServletContext;
 import org.omnifaces.util.JNDI;
 
 /**
@@ -50,14 +50,25 @@ public enum BeanManager {
 
 	// Private constants ----------------------------------------------------------------------------------------------
 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/513e06404724a0c2fe2db0e0ce70e68a8430c18c/src/main/java/org/omnifaces/config/BeanManager.java/left.java
 	private static final Logger logger = Logger.getLogger(BeanManager.class.getName());
 	private static final String LOG_INITIALIZATION_ERROR = "BeanManager enum singleton failed to initialize.";
+||||||| /usr/src/app/output/omnifaces/omnifaces/513e06404724a0c2fe2db0e0ce70e68a8430c18c/src/main/java/org/omnifaces/config/BeanManager.java/base.java
+=======
+	private static final String WELD_BEAN_MANAGER = "org.jboss.weld.environment.servlet.javax.enterprise.inject.spi.BeanManager";
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/513e06404724a0c2fe2db0e0ce70e68a8430c18c/src/main/java/org/omnifaces/config/BeanManager.java/right.java
 	private static final Annotation[] NO_ANNOTATIONS = new Annotation[0];
 
 	// Properties -----------------------------------------------------------------------------------------------------
 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/513e06404724a0c2fe2db0e0ce70e68a8430c18c/src/main/java/org/omnifaces/config/BeanManager.java/left.java
 	private AtomicBoolean initialized = new AtomicBoolean();
 	private Object beanManager;
+||||||| /usr/src/app/output/omnifaces/omnifaces/513e06404724a0c2fe2db0e0ce70e68a8430c18c/src/main/java/org/omnifaces/config/BeanManager.java/base.java
+	private Object beanManager;
+=======
+	private volatile Object beanManager;
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/513e06404724a0c2fe2db0e0ce70e68a8430c18c/src/main/java/org/omnifaces/config/BeanManager.java/right.java
 	private Method getBeans;
 	private Method resolve;
 	private Method createCreationalContext;
@@ -79,6 +90,7 @@ public enum BeanManager {
 				return; // CDI or JNDI not supported on this environment.
 			}
 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/513e06404724a0c2fe2db0e0ce70e68a8430c18c/src/main/java/org/omnifaces/config/BeanManager.java/left.java
 			try {
 				Object beanManager = JNDI.lookup("java:comp/BeanManager"); // CDI spec.
 
@@ -108,6 +120,44 @@ public enum BeanManager {
 				logger.log(Level.SEVERE, LOG_INITIALIZATION_ERROR, e);
 				throw new RuntimeException(e);
 			}
+||||||| /usr/src/app/output/omnifaces/omnifaces/513e06404724a0c2fe2db0e0ce70e68a8430c18c/src/main/java/org/omnifaces/config/BeanManager.java/base.java
+		if (beanManager == null) {
+			throw new IllegalStateException(ERROR_CDI_IMPL_UNAVAILABLE);
+		}
+
+		try {
+			getBeans = beanManagerClass.getMethod("getBeans", Type.class, Annotation[].class);
+			resolve = beanManagerClass.getMethod("resolve", Set.class);
+			createCreationalContext = beanManagerClass.getMethod("createCreationalContext", contextualClass);
+			getReference = beanManagerClass.getMethod("getReference", beanClass, Type.class, creationalContextClass);
+		}
+		catch (Exception e) {
+			throw new IllegalStateException(ERROR_INITIALIZATION_FAIL, e);
+=======
+		try {
+			getBeans = beanManagerClass.getMethod("getBeans", Type.class, Annotation[].class);
+			resolve = beanManagerClass.getMethod("resolve", Set.class);
+			createCreationalContext = beanManagerClass.getMethod("createCreationalContext", contextualClass);
+			getReference = beanManagerClass.getMethod("getReference", beanClass, Type.class, creationalContextClass);
+		}
+		catch (Exception e) {
+			throw new IllegalStateException(ERROR_INITIALIZATION_FAIL, e);
+		}
+	}
+
+	/**
+	 * Perform manual initialization whereby the bean manager is looked up from servlet context when not available.
+	 * @param servletContext The servlet context to obtain the BeanManager from, if necessary.
+	 * @throws IllegalStateException When initialization fails.
+	 */
+	public void init(ServletContext servletContext) {
+		if (beanManager == null) {
+			beanManager = servletContext.getAttribute(WELD_BEAN_MANAGER);
+		}
+
+		if (beanManager == null) {
+			throw new IllegalStateException(ERROR_CDI_IMPL_UNAVAILABLE);
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/513e06404724a0c2fe2db0e0ce70e68a8430c18c/src/main/java/org/omnifaces/config/BeanManager.java/right.java
 		}
 	}
 

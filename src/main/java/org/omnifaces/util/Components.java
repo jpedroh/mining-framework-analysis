@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -1057,7 +1056,7 @@ public final class Components {
 			params = getViewParameterMap(context);
 		}
 		else {
-			params = new LinkedHashMap<String, List<String>>(0);
+			params = new LinkedHashMap<>(0);
 		}
 
 		for (ParamHolder param : getParams(component)) {
@@ -1208,7 +1207,7 @@ public final class Components {
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<String> getActionExpressionsAndListeners(UIComponent component) {
-        List<String> actions = new ArrayList<String>();
+        List<String> actions = new ArrayList<>();
 
         if (component instanceof ActionSource2) {
         	ActionSource2 source = (ActionSource2) component;

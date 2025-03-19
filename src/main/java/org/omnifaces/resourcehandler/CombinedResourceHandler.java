@@ -586,7 +586,7 @@ public class CombinedResourceHandler extends DefaultResourceHandler implements S
 				componentResource.setRendererType(rendererType);
 
 				if (RENDERER_TYPE_JS.equals(rendererType)) {
-					// componentResource.getPassThroughAttributes().put("crossorigin", "anonymous"); Not supported in JSF 2.0.
+					componentResource.getPassThroughAttributes().put("crossorigin", "anonymous");
 				}
 			}
 

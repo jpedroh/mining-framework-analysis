@@ -157,6 +157,7 @@ import org.omnifaces.util.State;
  * @see org.omnifaces.component.output.cache.Cache
  * @see CacheEntry
  * @see CacheFactory
+ * @see CacheInitializer
  * @see CacheInstancePerScopeProvider
  * @see CacheProvider
  * @see DefaultCache

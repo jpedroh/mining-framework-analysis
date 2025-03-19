@@ -89,7 +89,7 @@ public final class Utils {
 	private static final int UNICODE_BEGIN_PRINTABLE_ASCII = 0x20;
 	private static final Map<Class<?>, Object> PRIMITIVE_DEFAULTS = createPrimitiveDefaults();
 	private static Map<Class<?>, Object> createPrimitiveDefaults() {
-		Map<Class<?>, Object> primitiveDefaults = new HashMap<Class<?>, Object>();
+		Map<Class<?>, Object> primitiveDefaults = new HashMap<>();
 		primitiveDefaults.put(boolean.class, false);
 		primitiveDefaults.put(byte.class, (byte) 0);
 		primitiveDefaults.put(short.class, (short) 0);
@@ -393,18 +393,12 @@ public final class Utils {
 	 * @since 2.4
 	 */
 	public static boolean isSerializable(Object object) {
-		ObjectOutputStream output = null;
-
-		try {
-			output = new ObjectOutputStream(new NullOutputStream());
+		try (ObjectOutputStream output = new ObjectOutputStream(new NullOutputStream())) {
 			output.writeObject(object);
 			return true;
 		}
 		catch (IOException e) {
 			return false;
-		}
-		finally {
-			close(output);
 		}
 	}
 
