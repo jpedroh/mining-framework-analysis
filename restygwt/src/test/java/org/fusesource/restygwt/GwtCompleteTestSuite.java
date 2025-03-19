@@ -85,7 +85,7 @@ public class GwtCompleteTestSuite extends TestCase {
         suite.addTestSuite(MapInRestServiceEncoderDecoderTestGwt.class);
         suite.addTestSuite(EncoderDecoderTestGwt.class);
         suite.addTestSuite(PolymorphicEncoderDecoderTestGwt.class);
-
+        
         suite.addTestSuite(FlakyTestGwt.class);
         suite.addTestSuite(TimeoutTestGwt.class);
         suite.addTestSuite(CachingTestGwt.class);
@@ -115,5 +115,4 @@ public class GwtCompleteTestSuite extends TestCase {
 
         return suite;
     }
-
 }
