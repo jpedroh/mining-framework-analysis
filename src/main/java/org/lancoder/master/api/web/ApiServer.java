@@ -37,17 +37,13 @@ public class ApiServer extends RunnableServiceAdapter {
 
 			server = new Server(master.getConfig().getApiServerPort());
 
-			// static resources handler
 			ContextHandler ctxStatic = new ContextHandler("/");
+			// static resources handler
 			ResourceHandler staticHandler = new ResourceHandler();
 			staticHandler.setResourceBase(this.getClass().getClassLoader().getResource(WEB_DIR).toExternalForm());
 			// staticHandler.setResourceBase("src/main/web/web_resources");
 			staticHandler.setDirectoriesListed(true);
 			ctxStatic.setHandler(staticHandler);
-
-			// api handler
-			ContextHandler ctxApi = buildServletContextHandler();
-			ctxApi.setContextPath("/api");
 
 			ContextHandlerCollection contexts = new ContextHandlerCollection();
 			contexts.setHandlers(new Handler[] { ctxStatic, ctxApi });
