@@ -1,25 +1,6 @@
-/**
- * redpen: a text inspection tool
- * Copyright (C) 2014 Recruit Technologies Co., Ltd. and contributors
- * (see CONTRIBUTORS.md)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.unigram.docvalidator.validator.sentence.lang.ja;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unigram.docvalidator.store.Sentence;
@@ -33,7 +14,7 @@ import org.unigram.docvalidator.validator.SentenceValidator;
 /**
  * Validate the end hyphens of Katakana words in Japanese documents.
  * Japanese Katakana words have variations in end hyphen.
- * For example, "computer" is written in Katakana by
+ * For example, "computer" is written in Katakana by 
  * "コンピュータ (without hyphen) ", and "コンピューター (with hypen) ".
  * This validator check if Katakana words ending format is match
  * the predefined standard. See JIS Z8301, G.6.2.2 b) G.3.
@@ -54,14 +35,16 @@ public class KatakanaEndHyphenValidator implements SentenceValidator {
    * Default Katakana limit length without hypen.
    */
   private static final int DEFAULT_KATAKANA_LIMIT_LENGTH = 3;
+
   /**
    * Katakana end hyphen character.
    */
-  private static final char HYPHEN = 'ー';
+  private static final char HYPHEN = '\u30fc';
+
   /**
    * Katakana middle dot character.
    */
-  private static final char KATAKANA_MIDDLE_DOT = '・';
+  private static final char KATAKANA_MIDDLE_DOT = '\u30fb';
 
   public List<ValidationError> check(Sentence sentence) {
     List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -86,32 +69,25 @@ public class KatakanaEndHyphenValidator implements SentenceValidator {
     return errors;
   }
 
-  private List<ValidationError> checkKatakanaEndHyphen(Sentence sentence,
-      StringBuffer katakana) {
+  private List<ValidationError> checkKatakanaEndHyphen(Sentence sentence, StringBuffer katakana) {
     List<ValidationError> errors = new ArrayList<ValidationError>();
     if (isKatakanaEndHyphen(katakana)) {
-      errors.add(new ValidationError(
-          "Invalid Katakana end hypen found \"" + katakana.toString() + "\"",
-          sentence));
+      errors.add(new ValidationError("Invalid Katakana end hypen found \"" + katakana.toString() + "\"", sentence));
     }
     return errors;
   }
+
   public static boolean isKatakanaEndHyphen(StringBuffer katakana) {
-    return (DEFAULT_KATAKANA_LIMIT_LENGTH < katakana.length()
-            && katakana.charAt(katakana.length() - 1) == HYPHEN);
+    return (DEFAULT_KATAKANA_LIMIT_LENGTH < katakana.length() && katakana.charAt(katakana.length() - 1) == HYPHEN);
   }
 
   public KatakanaEndHyphenValidator() {
     super();
   }
 
-  public boolean initialize(
-      ValidatorConfiguration conf, CharacterTable characterTable)
-        throws DocumentValidatorException {
-    //TODO support exception word list.
+  public boolean initialize(ValidatorConfiguration conf, CharacterTable characterTable) throws DocumentValidatorException {
     return true;
   }
 
-  private static Logger LOG =
-      LoggerFactory.getLogger(KatakanaEndHyphenValidator.class);
+  private static Logger LOG = LoggerFactory.getLogger(KatakanaEndHyphenValidator.class);
 }

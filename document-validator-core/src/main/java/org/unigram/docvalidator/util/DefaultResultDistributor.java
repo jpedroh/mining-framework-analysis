@@ -1,22 +1,4 @@
-/**
- * redpen: a text inspection tool
- * Copyright (C) 2014 Recruit Technologies Co., Ltd. and contributors
- * (see CONTRIBUTORS.md)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.unigram.docvalidator.util;
-
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -39,8 +21,7 @@ public class DefaultResultDistributor implements ResultDistributor {
     try {
       writer = new PrintStream(os, true, "UTF-8");
     } catch (UnsupportedEncodingException e) {
-      throw new IllegalStateException("Specified output stream is illegal: "
-          + e.getMessage());
+      throw new IllegalStateException("Specified output stream is illegal: " + e.getMessage());
     }
     myFormatter = new PlainFormatter();
   }
@@ -57,8 +38,7 @@ public class DefaultResultDistributor implements ResultDistributor {
     try {
       writer = new PrintStream(ps, true, "UTF-8");
     } catch (UnsupportedEncodingException e) {
-      throw new IllegalStateException("Specified output stream is illegal: "
-          + e.getMessage());
+      throw new IllegalStateException("Specified output stream is illegal: " + e.getMessage());
     }
   }
 
@@ -76,16 +56,14 @@ public class DefaultResultDistributor implements ResultDistributor {
     return 0;
   }
 
-  @Override
-  public void flushHeader() {
+  @Override public void flushHeader() {
     String header = myFormatter.header();
     if (header != null) {
       writer.println(header);
     }
   }
 
-  @Override
-  public void flushFooter() {
+  @Override public void flushFooter() {
     String footer = myFormatter.footer();
     if (footer != null) {
       writer.println(footer);
@@ -93,8 +71,7 @@ public class DefaultResultDistributor implements ResultDistributor {
     }
   }
 
-  @Override
-  public void setFormatter(Formatter formatter) {
+  @Override public void setFormatter(Formatter formatter) {
     if (formatter == null) {
       throw new IllegalArgumentException("argument formatter is null");
     }
@@ -104,5 +81,4 @@ public class DefaultResultDistributor implements ResultDistributor {
   private Formatter myFormatter;
 
   private PrintStream writer;
-
 }
