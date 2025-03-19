@@ -1,5 +1,4 @@
 package org.enderstone.server.packet;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerAdapter;
@@ -39,268 +38,265 @@ import org.enderstone.server.packet.play.PacketOutUpdateHealth;
 import org.enderstone.server.regions.EnderWorld;
 
 public class NetworkManager extends ChannelHandlerAdapter {
+  public ChannelHandlerContext ctx;
 
-	public ChannelHandlerContext ctx;
-	private Channel channel;
-	public EnderPlayer player;
-	public String wantedName;
-	private EncryptionSettings encryptionSettings;
-	public UUID uuid;
-	public PlayerTextureStore skinBlob;
-	public int clientVersion;
+  private Channel channel;
 
-	public PacketHandshake latestHandshakePacket;
-	public volatile int handShakeStatus = -1;
-	private int length;
+  public EnderPlayer player;
 
-	private final Queue<Packet> packets = new LinkedList<>();
-	private volatile boolean isConnected = true;
+  public String wantedName;
 
-	public EncryptionSettings getEncryptionSettings() {
-		return encryptionSettings;
-	}
+  private EncryptionSettings encryptionSettings;
 
-	public void regenerateEncryptionSettings() {
-		encryptionSettings = new EncryptionSettings();
-		// encryptionSettings.serverid = new BigInteger(130,
-		// Main.random).toString(32).substring(0, 20);
-		encryptionSettings.serverid = "";
-		KeyPairGenerator keyPairGenerator;
-		try {
-			keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-		} catch (NoSuchAlgorithmException ex) {
-			throw new RuntimeException("Server platfrom unsuported, cannot hash rsa", ex);
-		}
-		keyPairGenerator.initialize(1024);
-		encryptionSettings.keyPair = keyPairGenerator.genKeyPair();
-		encryptionSettings.verifyToken = new byte[16];
-		Main.random.nextBytes(encryptionSettings.verifyToken);
-	}
+  public UUID uuid;
 
-	public void forcePacketFlush() {
-		synchronized (packets) {
-			Packet p;
-			while ((p = packets.poll()) != null) {
-				ctx.write(p);
-				// EnderLogger.debug("Out: "+p.toString());
-				p.onSend(this);
-			}
-			ctx.flush();
-		}
-	}
+  public PlayerTextureStore skinBlob;
 
-	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object msg) {
-		if (this.ctx == null)
-			this.ctx = ctx;
-		((Packet) msg).onRecieve(this);
-		// EnderLogger.debug("in: " + msg);
-		forcePacketFlush();
-	}
+  public int clientVersion;
 
-	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		EnderLogger.exception(cause);
-		ctx.close();
-		super.exceptionCaught(ctx, cause);
-	}
+  public PacketHandshake latestHandshakePacket;
 
-	@Override
-	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		this.onDisconnect();
-		super.channelInactive(ctx);
-	}
+  public volatile int handShakeStatus = -1;
 
-	private void onDisconnect() {
-		if (this.isConnected == false) return;
-		synchronized (packets) {
-			if (this.isConnected == false) return;
-			this.isConnected = false;
-			this.packets.clear();
-			if (player != null && player.isOnline()) {
-				final EnderPlayer subPlayer = player;
-				Main.getInstance().sendToMainThread(new Runnable() {
+  private int length;
 
-					@Override
-					public void run() {
-						subPlayer.onDisconnect();
-					}
-				});
-				player.isOnline = false;
-			}
-		}
-	}
+  private final Queue<Packet> packets = new LinkedList<>();
 
-	private MinecraftServerCodex codex;
+  private volatile boolean isConnected = true;
 
-	public MinecraftServerCodex createCodex() {
-		return codex = new MinecraftServerCodex(this);
-	}
+  public EncryptionSettings getEncryptionSettings() {
+    return encryptionSettings;
+  }
 
-	public MinecraftServerCodex getCodex() {
-		return codex;
-	}
+  public void regenerateEncryptionSettings() {
+    encryptionSettings = new EncryptionSettings();
+    encryptionSettings.serverid = "";
+    KeyPairGenerator keyPairGenerator;
+    try {
+      keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+    } catch (NoSuchAlgorithmException ex) {
+      throw new RuntimeException("Server platfrom unsuported, cannot hash rsa", ex);
+    }
+    keyPairGenerator.initialize(1024);
+    encryptionSettings.keyPair = keyPairGenerator.genKeyPair();
+    encryptionSettings.verifyToken = new byte[16];
+    Main.random.nextBytes(encryptionSettings.verifyToken);
+  }
 
-	public void sendPacket(Packet... packets) {
-		if (this.isConnected == false) return;
-		synchronized (packets) {
-			if (this.isConnected == false) return;
-			for (Packet packet : packets) {
-				this.packets.offer(packet);
-			}
-		}
-	}
+  public void forcePacketFlush() {
+    synchronized (packets) {
+      Packet p;
+      while ((p = packets.poll()) != null) {
+        ctx.write(p);
+        p.onSend(this);
+      }
+      ctx.flush();
+    }
+  }
 
-	public void setupEncryption(final SecretKey key) throws IOException {
-		final Cipher decrypter = generateKey(2, key);
-		final Cipher encrypter = generateKey(1, key);
-		ctx.pipeline().addBefore("decrypt", "packet_rw_converter", new MessageToMessageDecoder<ByteBuf>() {
+  @Override public void channelRead(ChannelHandlerContext ctx, Object msg) {
+    if (this.ctx == null) {
+      this.ctx = ctx;
+    }
+    ((Packet) msg).onRecieve(this);
+    forcePacketFlush();
+  }
 
-			NetworkEncrypter chipper = new NetworkEncrypter(decrypter);
+  @Override public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    EnderLogger.exception(cause);
+    ctx.close();
+    super.exceptionCaught(ctx, cause);
+  }
 
-			@Override
-			protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws ShortBufferException {
-				System.out.println("Decrypting " + in.readableBytes());
-				this.chipper.decrypt(ctx, in);
-			}
+  @Override public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    this.onDisconnect();
+    super.channelInactive(ctx);
+  }
 
-		});
-		ctx.pipeline().addBefore("encrypt", "packet_rw_converter", new MessageToByteEncoder<ByteBuf>() {
+  private void onDisconnect() {
+    if (this.isConnected == false) {
+      return;
+    }
+    synchronized (packets) {
+      if (this.isConnected == false) {
+        return;
+      }
+      this.isConnected = false;
+      this.packets.clear();
+      if (player != null && player.isOnline()) {
+        final EnderPlayer subPlayer = player;
+        Main.getInstance().sendToMainThread(new Runnable() {
+          @Override public void run() {
+            subPlayer.onDisconnect();
+          }
+        });
+        player.isOnline = false;
+      }
+    }
+  }
 
-			NetworkEncrypter chipper = new NetworkEncrypter(encrypter);
+  private MinecraftServerCodex codex;
 
-			@Override
-			protected void encode(ChannelHandlerContext ctx, ByteBuf msg, ByteBuf out) throws Exception {
-				System.out.println("Encrypting " + msg.readableBytes());
-				this.chipper.encrypt(msg, out);
-			}
+  public MinecraftServerCodex createCodex() {
+    return codex = new MinecraftServerCodex(this);
+  }
 
-		});
-	}
+  public MinecraftServerCodex getCodex() {
+    return codex;
+  }
 
-	private static Cipher generateKey(int keyType, Key secretKey) throws IOException {
-		try {
-			Cipher localCipher = Cipher.getInstance("AES/CFB8/NoPadding");
-			localCipher.init(keyType, secretKey, new IvParameterSpec(secretKey.getEncoded()));
-			return localCipher;
-		} catch (GeneralSecurityException localGeneralSecurityException) {
-			throw new IOException("Unable to generate a encryption key", localGeneralSecurityException);
-		}
-	}
+  public void sendPacket(Packet... packets) {
+    if (this.isConnected == false) {
+      return;
+    }
+    synchronized (packets) {
+      if (this.isConnected == false) {
+        return;
+      }
+      for (Packet packet : packets) {
+        this.packets.offer(packet);
+      }
+    }
+  }
 
-	public void spawnPlayer() {
-		if (player != null)
-			throw new IllegalStateException();
-		if (this.uuid == null) {
-			this.disconnect("Illegal uuid");
-			return;
-		}
-		if (this.skinBlob == null)
-			this.skinBlob = PlayerTextureStore.DEFAULT_STORE; // Null oject
-																// design
-																// pattern
+  public void setupEncryption(final SecretKey key) throws IOException {
+    final Cipher decrypter = generateKey(2, key);
+    final Cipher encrypter = generateKey(1, key);
+    ctx.pipeline().addBefore("decrypt", "packet_rw_converter", new MessageToMessageDecoder<ByteBuf>() {
+      NetworkEncrypter chipper = new NetworkEncrypter(decrypter);
 
-		player = new EnderPlayer(wantedName, this, uuid, this.skinBlob);
-		final Object lock = new Object();
-		synchronized (lock) {
-			Main.getInstance().sendToMainThread(new Runnable() {
+      @Override protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws ShortBufferException {
+        System.out.println("Decrypting " + in.readableBytes());
+        this.chipper.decrypt(ctx, in);
+      }
+    });
+    ctx.pipeline().addBefore("encrypt", "packet_rw_converter", new MessageToByteEncoder<ByteBuf>() {
+      NetworkEncrypter chipper = new NetworkEncrypter(encrypter);
 
-				@Override
-				public void run() {
-					Main.getInstance().onlinePlayers.add(player);
-					try {
+      @Override protected void encode(ChannelHandlerContext ctx, ByteBuf msg, ByteBuf out) throws Exception {
+        System.out.println("Encrypting " + msg.readableBytes());
+        this.chipper.encrypt(msg, out);
+      }
+    });
+  }
 
-						sendPacket(new PacketOutLoginSucces(player.uuid.toString(), player.getPlayerName()));
-						sendPacket(new PacketOutJoinGame(player.getEntityId(), (byte) GameMode.SURVIVAL.getId(), (byte) 0, (byte) 1, (byte) 60, "default", false));
+  private static Cipher generateKey(int keyType, Key secretKey) throws IOException {
+    try {
+      Cipher localCipher = Cipher.getInstance("AES/CFB8/NoPadding");
+      localCipher.init(keyType, secretKey, new IvParameterSpec(secretKey.getEncoded()));
+      return localCipher;
+    } catch (GeneralSecurityException localGeneralSecurityException) {
+      throw new IOException("Unable to generate a encryption key", localGeneralSecurityException);
+    }
+  }
 
-						EnderWorld mainWorld = Main.getInstance().mainWorld;
-						Location spawn = mainWorld.getSpawn();
-						Location loc = player.getLocation();
-						loc.setX(spawn.getX());
-						loc.setY(spawn.getY());
-						loc.setZ(spawn.getZ());
-						loc.setYaw(spawn.getYaw());
-						loc.setPitch(spawn.getPitch());
+  public void spawnPlayer() {
+    if (player != null) {
+      throw new IllegalStateException();
+    }
+    if (this.uuid == null) {
+      this.disconnect("Illegal uuid");
+      return;
+    }
+    if (this.skinBlob == null) {
+      this.skinBlob = PlayerTextureStore.DEFAULT_STORE;
+    }
+    player = new EnderPlayer(wantedName, this, uuid, this.skinBlob);
+    final Object lock = new Object();
+    synchronized (lock) {
+      Main.getInstance().sendToMainThread(new Runnable() {
+        @Override public void run() {
+          Main.getInstance().onlinePlayers.add(player);
+          try {
+            sendPacket(new PacketOutLoginSucces(player.uuid.toString(), player.getPlayerName()));
+            sendPacket(new PacketOutJoinGame(player.getEntityId(), (byte) GameMode.SURVIVAL.getId(), (byte) 0, (byte) 1, (byte) 60, "default", false));
+            EnderWorld mainWorld = Main.getInstance().mainWorld;
+            Location spawn = mainWorld.getSpawn();
+            Location loc = player.getLocation();
+            loc.setX(spawn.getX());
+            loc.setY(spawn.getY());
+            loc.setZ(spawn.getZ());
+            loc.setYaw(spawn.getYaw());
+            loc.setPitch(spawn.getPitch());
+            mainWorld.doChunkUpdatesForPlayer(player, player.chunkInformer, 1);
+            player.onSpawn();
+            sendPacket(new PacketOutSpawnPosition(spawn));
+            int i = 0;
+            if (player.isCreative) {
+              i = (byte) (i | 0x1);
+            }
+            if (player.isFlying) {
+              i = (byte) (i | 0x2);
+            }
+            if (player.canFly) {
+              i = (byte) (i | 0x4);
+            }
+            if (player.godMode) {
+              i = (byte) (i | 0x8);
+            }
+            sendPacket(new PacketOutPlayerAbilities((byte) i, 0.1F, 0.1F));
+            sendPacket(new PacketOutPlayerPositionLook(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch(), (byte) 0b00000));
+            sendPacket(new PacketOutUpdateHealth(player.getHealth(), player.food, player.foodSaturation));
+          } catch (Exception e) {
+            EnderLogger.exception(e);
+          } finally {
+            synchronized (lock) {
+              lock.notifyAll();
+            }
+          }
+        }
+      });
+      try {
+        lock.wait();
+      } catch (InterruptedException ex) {
+        Thread.currentThread().interrupt();
+      }
+    }
+  }
 
-						mainWorld.doChunkUpdatesForPlayer(player, player.chunkInformer, 1);
-						player.onSpawn();
-						sendPacket(new PacketOutSpawnPosition(spawn));
+  public class EncryptionSettings {
+    private String serverid;
 
-						int i = 0;
-						if (player.isCreative)
-							i = (byte) (i | 0x1);
-						if (player.isFlying)
-							i = (byte) (i | 0x2);
-						if (player.canFly)
-							i = (byte) (i | 0x4);
-						if (player.godMode)
-							i = (byte) (i | 0x8);
+    private KeyPair keyPair;
 
-						sendPacket(new PacketOutPlayerAbilities((byte) i, 0.1F, 0.1F));
-						sendPacket(new PacketOutPlayerPositionLook(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch(), (byte) 0b00000));
-						sendPacket(new PacketOutUpdateHealth(player.getHealth(), player.food, player.foodSaturation));
+    private byte[] verifyToken;
 
-					} catch (Exception e) {
-						EnderLogger.exception(e);
-					} finally {
-						synchronized (lock) {
-							lock.notifyAll();
-						}
-					}
+    public String getServerid() {
+      return serverid;
+    }
 
-				}
-			});
-			try {
-				lock.wait();
-			} catch (InterruptedException ex) {
-				Thread.currentThread().interrupt();
-			}
-		}
+    public KeyPair getKeyPair() {
+      return keyPair;
+    }
 
-	}
+    public byte[] getVerifyToken() {
+      return verifyToken;
+    }
+  }
 
-	public class EncryptionSettings {
+  public void disconnect(String message) {
+    this.disconnect(new SimpleMessage(message));
+  }
 
-		private String serverid;
-		private KeyPair keyPair;
-		private byte[] verifyToken;
-
-		public String getServerid() {
-			return serverid;
-		}
-
-		public KeyPair getKeyPair() {
-			return keyPair;
-		}
-
-		public byte[] getVerifyToken() {
-			return verifyToken;
-		}
-	}
-
-	public void disconnect(String message) {
-		this.disconnect(new SimpleMessage(message));
-	}
-
-	public void disconnect(Message message) {
-		try {
-			this.ctx.channel().pipeline().addFirst("packet_r_disconnected", new DiscardingReader());
-			if (this.player == null)
-				EnderLogger.info("Kicking unregistered channel (" + this.wantedName + "" + this.uuid + "): " + message.toPlainText());
-			else
-				EnderLogger.info("Kicking (" + this.wantedName + "," + this.uuid + "): " + message.toPlainText());
-			Packet p = codex.getDisconnectionPacket(message);
-			System.out.println(p);
-			this.ctx.channel().pipeline().addFirst(new DiscardingReader());
-			if (p != null)
-				ctx.write(p);
-		} catch (Exception ex) {
-			EnderLogger.exception(ex);
-		}
-		finally
-		{
-			this.onDisconnect();
-			ctx.close();
-		}
-	}
+  public void disconnect(Message message) {
+    try {
+      this.ctx.channel().pipeline().addFirst("packet_r_disconnected", new DiscardingReader());
+      if (this.player == null) {
+        EnderLogger.info("Kicking unregistered channel (" + this.wantedName + "" + this.uuid + "): " + message.toPlainText());
+      } else {
+        EnderLogger.info("Kicking (" + this.wantedName + "," + this.uuid + "): " + message.toPlainText());
+      }
+      Packet p = codex.getDisconnectionPacket(message);
+      System.out.println(p);
+      this.ctx.channel().pipeline().addFirst(new DiscardingReader());
+      if (p != null) {
+        ctx.write(p);
+      }
+    } catch (Exception ex) {
+      EnderLogger.exception(ex);
+    } finally {
+      this.onDisconnect();
+      ctx.close();
+    }
+  }
 }
