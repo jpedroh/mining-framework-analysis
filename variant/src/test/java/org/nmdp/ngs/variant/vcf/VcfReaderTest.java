@@ -423,6 +423,13 @@ public final class VcfReaderTest {
     }
 
     @Test
+    public void testCephGatkHaplotypeJoint() throws Exception {
+        VcfRecord record = records(createInputStream("ceph-bwa-j-gatk-haplotype-joint.excerpt.vcf")).iterator().next();
+        assertNull(record.getGenotypes().get("NA12878-3").getGt());
+        assertEquals("0/1", record.getGenotypes().get("NA12891-3").getGt());
+        assertEquals("0/0", record.getGenotypes().get("NA12892-3").getGt());
+    }
+    @Test
     public void testGatkGvcf() throws Exception {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(createInputStream("gatk-example.gvcf")))) {
             stream(reader, new VcfStreamListener() {
@@ -459,14 +466,6 @@ public final class VcfReaderTest {
                 }
             });
         }
-    }
-
-    @Test
-    public void testCephGatkHaplotypeJoint() throws Exception {
-        VcfRecord record = records(createInputStream("ceph-bwa-j-gatk-haplotype-joint.excerpt.vcf")).iterator().next();
-        assertNull(record.getGenotypes().get("NA12878-3").getGt());
-        assertEquals("0/1", record.getGenotypes().get("NA12891-3").getGt());
-        assertEquals("0/0", record.getGenotypes().get("NA12892-3").getGt());
     }
 
     private static void validateHeader(final VcfHeader header) {
