@@ -169,6 +169,9 @@ public class SFNode {
                 }
 
             }
+
+            System.out.println("+++++++++++++++ " + level + " " + child);
+
         }
     }
     
@@ -244,7 +247,6 @@ public class SFNode {
     public int getCount() {
         return count;
     }
-
     
     public boolean isNull(){
     	return sf==null;
@@ -273,5 +275,4 @@ public class SFNode {
         if (depthB == Integer.MAX_VALUE) depthB = 0;
         return depthB;
     }
-
 }
