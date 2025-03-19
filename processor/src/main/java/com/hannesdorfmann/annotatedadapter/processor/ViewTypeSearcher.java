@@ -21,19 +21,22 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 /**
- * Searches for @ViewTypes and collects data about annotated field and surrounding adapter classes
- *
  * @author Hannes Dorfmann
  */
 public class ViewTypeSearcher {
 
   @Inject ProcessorMessage logger;
+
   @Inject TypeHelper typeHelper;
+
   @Inject Elements elementUtils;
+
   @Inject Types typeUtils;
+
   /**
    * Maps the
    */
+
   private Map<String, TypeElement> classMap = new LinkedHashMap<String, TypeElement>();
 
   public ViewTypeSearcher(ObjectGraph graph) {
@@ -44,9 +47,6 @@ public class ViewTypeSearcher {
 
     if (isValidField(field) && isFieldInValidClass((VariableElement) field)) {
       Element surroundingClass = field.getEnclosingElement();
-      if (surroundingClass.getModifiers().contains(Modifier.ABSTRACT)) {
-        return; // Skip abstract classes
-      }
       String className = surroundingClass.asType().toString();
       if (classMap.get(className) == null) {
         classMap.put(className, (TypeElement) surroundingClass);
@@ -142,6 +142,7 @@ public class ViewTypeSearcher {
    *
    * @return null if its not a subclass of an Abslist adapter or RecyclerViewAdapter
    */
+
   private AdapterInfo.AdapterType isValidAdapterClass(TypeElement adapterClass) {
 
     TypeElement recyclerAdapter =
@@ -160,17 +161,19 @@ public class ViewTypeSearcher {
             + "Make %s extends one of those adapter classes", adapterClass.getSimpleName(),
         ViewType.class.getSimpleName(), AnnotatedAdapter.class.getCanonicalName(),
         AbsListViewAnnotatedAdapter.class.getCanonicalName(), adapterClass.getSimpleName());
-
+    
     return null;
   }
 
   /**
    * Get all the classes that have annoatated fields
    */
+
   public List<AdapterInfo> getAdapterInfos() {
 
     List<AdapterInfo> adapterInfos = new ArrayList<AdapterInfo>();
 
+<<<<<<< /usr/src/app/output/sockeqwe/annotatedadapter/62c7d43b5adeee8c47a42f4ab48ff106a6444b7c/processor/src/main/java/com/hannesdorfmann/annotatedadapter/processor/ViewTypeSearcher.java/left.java
     for (TypeElement element : classMap.values()) {
 
       AdapterInfo.AdapterType adapterType = isValidAdapterClass(element);
@@ -187,7 +190,29 @@ public class ViewTypeSearcher {
         }
       }
     }
+||||||| /usr/src/app/output/sockeqwe/annotatedadapter/62c7d43b5adeee8c47a42f4ab48ff106a6444b7c/processor/src/main/java/com/hannesdorfmann/annotatedadapter/processor/ViewTypeSearcher.java/base.java
+=======
+    for (TypeElement element : classMap.values()) {
+
+      AdapterInfo adapterInfo = new AdapterInfo(element);
+      adapterInfos.add(adapterInfo);
+
+      for (Element field : elementUtils.getAllMembers(element)) {
+        if (field.getKind().isField()) {
+          ViewType annotation = field.getAnnotation(ViewType.class);
+          if (annotation != null && isValidAnnotation(field, annotation)) {
+            adapterInfo.addViewTypeInfo(new ViewTypeInfo(field, annotation));
+          }
+        }
+      }
+    }
+>>>>>>> /usr/src/app/output/sockeqwe/annotatedadapter/62c7d43b5adeee8c47a42f4ab48ff106a6444b7c/processor/src/main/java/com/hannesdorfmann/annotatedadapter/processor/ViewTypeSearcher.java/right.java
 
     return adapterInfos;
   }
+
+  /**
+   * Get all the classes that have annoatated fields
+   */
+
 }
