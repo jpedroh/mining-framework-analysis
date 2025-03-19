@@ -1,5 +1,4 @@
 package org.uma.jmetal.auto.algorithm.nsgaii;
-
 import org.uma.jmetal.auto.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.auto.component.createinitialsolutions.CreateInitialSolutions;
 import org.uma.jmetal.auto.component.createinitialsolutions.impl.RandomSolutionsCreation;
@@ -27,80 +26,43 @@ import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.solution.util.RepairDoubleSolution;
-import org.uma.jmetal.solution.util.impl.RepairDoubleSolutionWithRandomValue;
 import org.uma.jmetal.util.AlgorithmDefaultOutputData;
+import org.uma.jmetal.solution.util.impl.RepairDoubleSolutionWithRandomValue;
 import org.uma.jmetal.util.comparator.DominanceComparator;
 import org.uma.jmetal.util.comparator.MultiComparator;
-
 import java.util.Arrays;
 
 public class NSGAII {
   public static void main(String[] args) {
     DoubleProblem problem = new ZDT1();
-    String referenceParetoFront = "pareto_fronts/ZDT1.pf" ;
-
+    String referenceParetoFront = "pareto_fronts/ZDT1.pf";
     int populationSize = 100;
     int offspringPopulationSize = 100;
     int maxNumberOfEvaluations = 25000;
-
-    RepairDoubleSolution crossoverSolutionRepair = new RepairDoubleSolutionWithRandomValue() ;
+    RepairDoubleSolution crossoverSolutionRepair = new RepairDoubleSolutionWithRandomValue();
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
-    CrossoverOperator<DoubleSolution> crossover =
-        new SBXCrossover(crossoverProbability, crossoverDistributionIndex, crossoverSolutionRepair);
-
-    RepairDoubleSolution muutationSolutionRepair = new RepairDoubleSolutionWithRandomValue() ;
+    CrossoverOperator<DoubleSolution> crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex, crossoverSolutionRepair);
+    RepairDoubleSolution muutationSolutionRepair = new RepairDoubleSolutionWithRandomValue();
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
     double mutationDistributionIndex = 20.0;
-    MutationOperator<DoubleSolution> mutation =
-        new PolynomialMutation(mutationProbability, mutationDistributionIndex, muutationSolutionRepair);
-
+    MutationOperator<DoubleSolution> mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex, muutationSolutionRepair);
     Evaluation<DoubleSolution> evaluation = new SequentialEvaluation<>(problem);
-
-    CreateInitialSolutions<DoubleSolution> createInitialPopulation =
-        new RandomSolutionsCreation<>(problem, populationSize);
-
+    CreateInitialSolutions<DoubleSolution> createInitialPopulation = new RandomSolutionsCreation<>(problem, populationSize);
     Termination termination = new TerminationByEvaluations(maxNumberOfEvaluations);
-
-    Variation<DoubleSolution> variation =
-        new CrossoverAndMutationVariation<>(offspringPopulationSize, crossover, mutation);
-
-    Ranking<DoubleSolution> ranking = new DominanceRanking<>(new DominanceComparator<>()) ;
-    DensityEstimator<DoubleSolution> densityEstimator = new CrowdingDistanceDensityEstimator<>() ;
-
-    MultiComparator<DoubleSolution> rankingAndCrowdingComparator = new MultiComparator<>(
-        Arrays.asList(
-                ranking.getSolutionComparator(),
-                densityEstimator.getSolutionComparator()));
-
-    MatingPoolSelection<DoubleSolution> selection =
-        new NaryTournamentMatingPoolSelection<>(
-            2, variation.getMatingPoolSize(), rankingAndCrowdingComparator);
-
-    Replacement<DoubleSolution> replacement = new RankingAndDensityEstimatorReplacement<>(ranking, densityEstimator) ;
-
-    EvolutionaryAlgorithm<DoubleSolution> algorithm =
-        new EvolutionaryAlgorithm<>(
-                "NSGA-II",
-                evaluation,
-                createInitialPopulation,
-                termination,
-                selection,
-                variation,
-                replacement);
-
+    Variation<DoubleSolution> variation = new CrossoverAndMutationVariation<>(offspringPopulationSize, crossover, mutation);
+    Ranking<DoubleSolution> ranking = new DominanceRanking<>(new DominanceComparator<>());
+    DensityEstimator<DoubleSolution> densityEstimator = new CrowdingDistanceDensityEstimator<>();
+    MultiComparator<DoubleSolution> rankingAndCrowdingComparator = new MultiComparator<>(Arrays.asList(ranking.getSolutionComparator(), densityEstimator.getSolutionComparator()));
+    MatingPoolSelection<DoubleSolution> selection = new NaryTournamentMatingPoolSelection<>(2, variation.getMatingPoolSize(), rankingAndCrowdingComparator);
+    Replacement<DoubleSolution> replacement = new RankingAndDensityEstimatorReplacement<>(ranking, densityEstimator);
+    EvolutionaryAlgorithm<DoubleSolution> algorithm = new EvolutionaryAlgorithm<>("NSGA-II", evaluation, createInitialPopulation, termination, selection, variation, replacement);
     EvaluationObserver evaluationObserver = new EvaluationObserver(1000);
-    RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
-        new RunTimeChartObserver<>("NSGA-II", 80, referenceParetoFront) ;
-
+    RunTimeChartObserver<DoubleSolution> runTimeChartObserver = new RunTimeChartObserver<>("NSGA-II", 80, referenceParetoFront);
     algorithm.getObservable().register(evaluationObserver);
     algorithm.getObservable().register(runTimeChartObserver);
-
     algorithm.run();
-
-    AlgorithmDefaultOutputData.generateMultiObjectiveAlgorithmOutputData(
-        algorithm.getResult(), algorithm.getTotalComputingTime());
-
+    AlgorithmDefaultOutputData.generateMultiObjectiveAlgorithmOutputData(algorithm.getResult(), algorithm.getTotalComputingTime());
     System.exit(0);
   }
 }
