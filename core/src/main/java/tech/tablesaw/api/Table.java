@@ -92,15 +92,15 @@ public class Table extends Relation implements Iterable<Row> {
     public static Table create(String tableName) {
         return new Table(tableName);
     }
+    public static Table create(final String tableName, final Column<?>... columns) {
+        return new Table(tableName, columns);
+    }
 
     /**
      * Returns a new table with the given columns and given name
      *
      * @param columns One or more columns, all of the same @code{column.size()}
      */
-    public static Table create(final String tableName, final Column<?>... columns) {
-        return new Table(tableName, columns);
-    }
 
     /**
      * Returns a sort Key that can be used for simple or chained comparator sorting
@@ -561,6 +561,11 @@ public class Table extends Relation implements Iterable<Row> {
         return rowIndexes;
     }
 
+    public Table rows(int... rowNumbers) {
+        Preconditions.checkArgument(Ints.max(rowNumbers) <= rowCount());
+        return where(Selection.with(rowNumbers));
+    }
+
     /**
      * Adds a single row to this table from sourceTable, copying every column in sourceTable
      *
@@ -572,16 +577,11 @@ public class Table extends Relation implements Iterable<Row> {
             column(i).appendObj(sourceTable.column(i).get(rowIndex));
         }
     }
-    
+
     public void addRow(Row row) {
         for (int i = 0; i < row.columnCount(); i++) {
             column(i).appendObj(row.getObject(i));
         }
-    }
-
-    public Table rows(int... rowNumbers) {
-        Preconditions.checkArgument(Ints.max(rowNumbers) <= rowCount());
-        return where(Selection.with(rowNumbers));
     }
 
     public Table dropRows(int... rowNumbers) {
@@ -864,6 +864,10 @@ public class Table extends Relation implements Iterable<Row> {
         return groupingColumn.countByCategory();
     }
 
+    /**
+     * Join on the given {@code columnName}  
+     * @param columnName  The column name to join on
+     */
     /**
      * Returns a new DataFrameJoiner initialized with multiple {@code columnNames}
      * @param columnNames	Name of the columns to join on.
