@@ -24,19 +24,6 @@ import static com.google.inject.multibindings.SpiUtils.providerInstance;
 import static com.google.inject.multibindings.SpiUtils.providerKey;
 import static com.google.inject.name.Names.named;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import junit.framework.TestCase;
-
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -66,6 +53,19 @@ import com.google.inject.spi.HasDependencies;
 import com.google.inject.spi.InstanceBinding;
 import com.google.inject.util.Modules;
 import com.google.inject.util.Providers;
+
+import junit.framework.TestCase;
+
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * @author sameb@google.com (Sam Berlin)
@@ -140,8 +140,8 @@ public class OptionalBinderTest extends TestCase {
           "1) Explicit bindings are required and java.lang.String is not explicitly bound.");
       assertEquals(1, ce.getErrorMessages().size());
     }
-  } 
-  
+  }
+
   public void testOptionalIsAbsentByDefault() throws Exception {
     Module module = new AbstractModule() {
       @Override protected void configure() {
@@ -173,7 +173,7 @@ public class OptionalBinderTest extends TestCase {
       assertFalse(optionalJxP.isPresent());
     }
   }
-  
+
   public void testUsesUserBoundValue() throws Exception {
     Module module = new AbstractModule() {
       @Override protected void configure() {
@@ -214,7 +214,7 @@ public class OptionalBinderTest extends TestCase {
       assertEquals("foo", optionalJxP.get().get());
     }
   }
-  
+
   public void testSetDefault() throws Exception {
     Module module = new AbstractModule() {
       @Override protected void configure() {
@@ -253,7 +253,7 @@ public class OptionalBinderTest extends TestCase {
       assertEquals("a", optionalJxP.get().get());
     }
   }
-  
+
   public void testSetBinding() throws Exception {
     Module module = new AbstractModule() {
       @Override protected void configure() {
@@ -292,7 +292,7 @@ public class OptionalBinderTest extends TestCase {
       assertEquals("a", optionalJxP.get().get());
     }
   }
-  
+
   public void testSetBindingOverridesDefault() throws Exception {
     Module module = new AbstractModule() {
       @Override protected void configure() {
@@ -340,7 +340,7 @@ public class OptionalBinderTest extends TestCase {
       assertEquals("b", optionalJxP.get().get());
     }
   }
-  
+
   public void testSpreadAcrossModules() throws Exception {
     Module module1 = new AbstractModule() {
       @Override protected void configure() {
@@ -396,7 +396,7 @@ public class OptionalBinderTest extends TestCase {
       assertEquals("b", optionalJxP.get().get());
     }
   }
-  
+
   public void testExactSameBindingCollapses_defaults() throws Exception {
     Module module = new AbstractModule() {
       @Override protected void configure() {
@@ -438,7 +438,7 @@ public class OptionalBinderTest extends TestCase {
       assertEquals("a", optionalJxP.get().get());
     }
   }
-  
+
   public void testExactSameBindingCollapses_actual() throws Exception {
     Module module = new AbstractModule() {
       @Override protected void configure() {
@@ -546,7 +546,7 @@ public class OptionalBinderTest extends TestCase {
           "at " + module.getClass().getName() + ".configure(");
     }
   }
-  
+
   public void testQualifiedAggregatesTogether() throws Exception {
     Module module1 = new AbstractModule() {
       @Override
@@ -634,7 +634,7 @@ public class OptionalBinderTest extends TestCase {
     assertOptionalVisitor(bKey, setOf(module), VisitType.BOTH, 3, instance("b"), null, null);
     assertOptionalVisitor(cKey, setOf(module), VisitType.BOTH, 3, instance("c"), null, null);
   }
-  
+
   public void testOptionalIsAppropriatelyLazy() throws Exception {
     Module module = new AbstractModule() {
       int nextValue = 1;
@@ -687,7 +687,7 @@ public class OptionalBinderTest extends TestCase {
       assertEquals(14, optionalJxP.get().get().intValue());
     }
   }
-  
+
   public void testLinkedToNullProvidersMakeAbsentValuesAndPresentProviders_default()
       throws Exception {
     Module module = new AbstractModule() {
@@ -710,7 +710,7 @@ public class OptionalBinderTest extends TestCase {
         injector.getInstance(Key.get(optionalOfJavaxProviderString));
     assertTrue(optionalJxP.isPresent());
     assertNull(optionalJxP.get().get());
-    
+
     assertOptionalVisitor(stringKey,
         setOf(module),
         VisitType.BOTH,
@@ -732,7 +732,7 @@ public class OptionalBinderTest extends TestCase {
       assertNull(optionalJxP.get().get());
     }
   }
-  
+
   public void testLinkedToNullProvidersMakeAbsentValuesAndPresentProviders_actual()
       throws Exception {
     Module module = new AbstractModule() {
@@ -755,7 +755,7 @@ public class OptionalBinderTest extends TestCase {
         injector.getInstance(Key.get(optionalOfJavaxProviderString));
     assertTrue(optionalJxP.isPresent());
     assertNull(optionalJxP.get().get());
-    
+
     assertOptionalVisitor(stringKey,
         setOf(module),
         VisitType.BOTH,
@@ -888,7 +888,7 @@ public class OptionalBinderTest extends TestCase {
     elements.addAll(recurseForDependencies(injector, withDependencies));
     assertEquals(ImmutableSet.of("A"), elements);
   }
-  
+
   @SuppressWarnings("rawtypes")
   private Set<String> recurseForDependencies(Injector injector, HasDependencies hasDependencies) {
     Set<String> elements = Sets.newHashSet();
@@ -1204,7 +1204,7 @@ public class OptionalBinderTest extends TestCase {
 
    // Clear the ref, GC, and ensure that we are no longer blacklisting.
    childInjector = null;
-   
+
    WeakKeySetUtils.awaitClear(weakRef);
    WeakKeySetUtils.assertNotBlacklisted(parentInjector, Key.get(Integer.class));
  }
@@ -1228,7 +1228,7 @@ public class OptionalBinderTest extends TestCase {
   @OptionalBinder.Default("foo")
   static class Dummy {}
   
-  @SuppressWarnings("unchecked") 
+  @SuppressWarnings("unchecked")
   private <V> Set<V> setOf(V... elements) {
     return ImmutableSet.copyOf(elements);
   }

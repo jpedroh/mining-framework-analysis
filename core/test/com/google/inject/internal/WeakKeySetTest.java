@@ -260,7 +260,7 @@ public class WeakKeySetTest extends TestCase {
  // Same source so still only one value.
     assertInSet(set, key, 1, source);
     assertInSet(set, key1, 1, source);
-    
+
     source = null;
 
     awaitFullGc();

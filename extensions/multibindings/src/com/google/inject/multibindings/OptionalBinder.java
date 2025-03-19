@@ -17,24 +17,13 @@
 package com.google.inject.multibindings;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.inject.internal.RehashableKeys.Keys.needsRehashing;
+import static com.google.inject.internal.RehashableKeys.Keys.rehash;
 import static com.google.inject.multibindings.Multibinder.checkConfiguration;
 import static com.google.inject.util.Types.newParameterizedType;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.io.Serializable;
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Retention;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.Set;
-
-import javax.inject.Qualifier;
-
 import com.google.common.base.Optional;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.inject.Binder;
 import com.google.inject.Binding;
 import com.google.inject.Inject;
@@ -44,17 +33,20 @@ import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.binder.LinkedBindingBuilder;
+import com.google.inject.internal.Errors;
+import com.google.inject.multibindings.Element.Type;
+import com.google.inject.multibindings.MapBinder.RealMapBinder;
 import com.google.inject.spi.BindingTargetVisitor;
 import com.google.inject.spi.Dependency;
-import com.google.inject.spi.Element;
+import com.google.inject.spi.HasDependencies;
 import com.google.inject.spi.ProviderInstanceBinding;
 import com.google.inject.spi.ProviderLookup;
 import com.google.inject.spi.ProviderWithDependencies;
 import com.google.inject.spi.ProviderWithExtensionVisitor;
 import com.google.inject.spi.Toolable;
 import com.google.inject.util.Types;
-
-
+import java.util.Map;
+import java.util.Set;
 /**
  * An API to bind optional values, optionally with a default value.
  * OptionalBinder fulfills two roles: <ol>
@@ -79,19 +71,10 @@ import com.google.inject.util.Types;
  * {@code null}.  If it does, the Optional bindings will be absent.  Binding
  * setBinding to a Provider that returns null will not cause OptionalBinder
  * to fall back to the setDefault binding.
-<<<<<<< HEAD
  *
  * <p>If neither setDefault nor setBinding are called, the optionals will be
  * absent.  Otherwise, the optionals will return present if they are bound
  * to a non-null value.
-=======
- * 
- * <p>If neither setDefault nor setBinding are called, it will try to link to a
- * user-supplied binding of the same type.  If no binding exists, the optionals
- * will be absent.  Otherwise, if a user-supplied binding of that type exists,
- * or if setBinding or setDefault are called, the optionals will return present
- * if they are bound to a non-null value.
->>>>>>> master
  *
  * <p>Values are resolved at injection time. If a value is bound to a
  * provider, that provider's get method will be called each time the optional
@@ -109,11 +92,98 @@ import com.google.inject.util.Types;
  * }</code></pre>
  *
  * <p>With this module, an {@link Optional}{@code <Renamer>} can now be
-<<<<<<< HEAD
  * injected.  With no other bindings, the optional will be absent.  However,
  * once a user adds a binding:
  *
-=======
+ * <pre><code>
+ * public class UserRenamerModule extends AbstractModule {
+ *   protected void configure() {
+ *     OptionalBinder.newOptionalBinder(binder(), Renamer.class)
+ *         .setBinding().to(ReplacingRenamer.class);
+ *   }
+ * }</code></pre>
+ * .. then the {@code Optional<Renamer>} will be present and supply the
+ * ReplacingRenamer.
+ *
+ * <p>Default values can be supplied using:
+ * <pre><code>
+ * public class FrameworkModule extends AbstractModule {
+ *   protected void configure() {
+ *     OptionalBinder.newOptionalBinder(binder(), Key.get(String.class, LookupUrl.class))
+ *         .setDefault().to(DEFAULT_LOOKUP_URL);
+ *   }
+ * }</code></pre>
+ * With the above module, code can inject an {@code @LookupUrl String} and it
+ * will supply the DEFAULT_LOOKUP_URL.  A user can change this value by binding
+ * <pre><code>
+ * public class UserLookupModule extends AbstractModule {
+ *   protected void configure() {
+ *     OptionalBinder.newOptionalBinder(binder(), Key.get(String.class, LookupUrl.class))
+ *         .setBinding().to(CUSTOM_LOOKUP_URL);
+ *   }
+ * }</code></pre>
+ * ... which will override the default value.
+ *
+ * @author sameb@google.com (Sam Berlin)
+ */
+import static com.google.common.base.Preconditions.checkState;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import com.google.common.base.Throwables;
+import com.google.inject.spi.Element;
+import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.Retention;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import javax.inject.Qualifier;
+/**
+ * An API to bind optional values, optionally with a default value.
+ * OptionalBinder fulfills two roles: <ol>
+ * <li>It allows a framework to define an injection point that may or
+ *     may not be bound by users.
+ * <li>It allows a framework to supply a default value that can be changed
+ *     by users.
+ * </ol>
+ * 
+ * <p>When an OptionalBinder is added, it will always supply the bindings:
+ * {@code Optional<T>} and {@code Optional<Provider<T>>}.  If
+ * {@link #setBinding} or {@link #setDefault} are called, it will also
+ * bind {@code T}.
+ * 
+ * <p>{@code setDefault} is intended for use by frameworks that need a default
+ * value.  User code can call {@code setBinding} to override the default.
+ * <b>Warning: Even if setBinding is called, the default binding
+ * will still exist in the object graph.  If it is a singleton, it will be
+ * instantiated in {@code Stage.PRODUCTION}.</b>
+ * 
+ * <p>If setDefault or setBinding are linked to Providers, the Provider may return
+ * {@code null}.  If it does, the Optional bindings will be absent.  Binding
+ * setBinding to a Provider that returns null will not cause OptionalBinder
+ * to fall back to the setDefault binding.
+ * 
+ * <p>If neither setDefault nor setBinding are called, it will try to link to a
+ * user-supplied binding of the same type.  If no binding exists, the optionals
+ * will be absent.  Otherwise, if a user-supplied binding of that type exists,
+ * or if setBinding or setDefault are called, the optionals will return present
+ * if they are bound to a non-null value.
+ *
+ * <p>Values are resolved at injection time. If a value is bound to a
+ * provider, that provider's get method will be called each time the optional
+ * is injected (unless the binding is also scoped, or an optional of provider is
+ * injected).
+ * 
+ * <p>Annotations are used to create different optionals of the same key/value
+ * type. Each distinct annotation gets its own independent binding.
+ *  
+ * <pre><code>
+ * public class FrameworkModule extends AbstractModule {
+ *   protected void configure() {
+ *     OptionalBinder.newOptionalBinder(binder(), Renamer.class);
+ *   }
+ * }</code></pre>
+ *
+ * <p>With this module, an {@link Optional}{@code <Renamer>} can now be
  * injected.  With no other bindings, the optional will be absent.
  * Users can specify bindings in one of two ways:
  * 
@@ -126,7 +196,6 @@ import com.google.inject.util.Types;
  * }</code></pre>
  * 
  * <p>or Option 2:
->>>>>>> master
  * <pre><code>
  * public class UserRenamerModule extends AbstractModule {
  *   protected void configure() {
@@ -134,15 +203,9 @@ import com.google.inject.util.Types;
  *         .setBinding().to(ReplacingRenamer.class);
  *   }
  * }</code></pre>
-<<<<<<< HEAD
- * .. then the {@code Optional<Renamer>} will be present and supply the
- * ReplacingRenamer.
- *
-=======
  * With both options, the {@code Optional<Renamer>} will be present and supply the
  * ReplacingRenamer. 
  * 
->>>>>>> master
  * <p>Default values can be supplied using:
  * <pre><code>
  * public class FrameworkModule extends AbstractModule {
@@ -313,12 +376,16 @@ public abstract class OptionalBinder<T> {
     private final Key<Optional<javax.inject.Provider<T>>> optionalJavaxProviderKey;
     private final Key<Optional<Provider<T>>> optionalProviderKey;
     private final Provider<Optional<Provider<T>>> optionalProviderT;
+<<<<<<< /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/left.java
+||||||| /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/base.java
+=======
     private final Key<T> defaultKey;
     private final Key<T> actualKey;
 
     private final Key javaOptionalKey;
     private final Key javaOptionalJavaxProviderKey;
     private final Key javaOptionalProviderKey;
+>>>>>>> /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/right.java
 
     /** the target injector's binder. non-null until initialization, null afterwards */
     private Binder binder;
@@ -365,26 +432,221 @@ public abstract class OptionalBinder<T> {
      * bindings.
      */
     private void addDirectTypeBinding(Binder binder) {
+<<<<<<< /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/left.java
+      binder.bind(typeKey).toProvider(new RealOptionalBinderProviderWithDependencies<T>(typeKey) {
+        @Override
+  		public T get() {
+          Optional<Provider<T>> optional = optionalProviderT.get();
+          if (optional.isPresent()) {
+            return optional.get().get();
+          }
+          // Let Guice handle blowing up if the injection point doesn't have @Nullable
+          // (If it does have @Nullable, that's fine.  This would only happen if
+          //  setBinding/setDefault themselves were bound to 'null').
+          return null;
+        }
+
+        @Override
+  		public Set<Dependency<?>> getDependencies() {
+          return dependencies;
+        }
+      });
+||||||| /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/base.java
+      binder.bind(typeKey).toProvider(new RealOptionalBinderProviderWithDependencies<T>(typeKey) {
+        public T get() {
+          Optional<Provider<T>> optional = optionalProviderT.get();
+          if (optional.isPresent()) {
+            return optional.get().get();
+          }
+          // Let Guice handle blowing up if the injection point doesn't have @Nullable
+          // (If it does have @Nullable, that's fine.  This would only happen if
+          //  setBinding/setDefault themselves were bound to 'null').
+          return null; 
+        }
+
+        public Set<Dependency<?>> getDependencies() {
+          return dependencies;
+        }
+      });
+=======
       binder.bind(typeKey).toProvider(new RealDirectTypeProvider());
+>>>>>>> /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/right.java
     }
 
     @Override public LinkedBindingBuilder<T> setDefault() {
+<<<<<<< /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/left.java
+      checkConfiguration(!isInitialized(), "already initialized");
+
+||||||| /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/base.java
+      checkConfiguration(!isInitialized(), "already initialized");
+      
+=======
       checkConfiguration(!isInitialized(), "already initialized");      
+>>>>>>> /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/right.java
       addDirectTypeBinding(binder);
       return binder.bind(defaultKey);
     }
 
     @Override public LinkedBindingBuilder<T> setBinding() {
+<<<<<<< /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/left.java
+      checkConfiguration(!isInitialized(), "already initialized");
+
+||||||| /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/base.java
+      checkConfiguration(!isInitialized(), "already initialized");
+      
+=======
       checkConfiguration(!isInitialized(), "already initialized");      
+>>>>>>> /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/right.java
       addDirectTypeBinding(binder);
-      return binder.bind(actualKey);
+<<<<<<< /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/left.java
+  
+      RealElement.BindingBuilder<T> valueBinding = RealElement.addBinding(binder,
+          Element.Type.OPTIONALBINDER, typeKey.getTypeLiteral(), RealElement.nameOf(typeKey));
+      Key<T> valueKey = Key.get(typeKey.getTypeLiteral(), valueBinding.getAnnotation());
+      mapBinder.addBinding(Source.ACTUAL).toProvider(
+          new ValueProvider<T>(valueKey, binder.getProvider(valueKey)));
+      return valueBinding;
     }
 
+    /**
+     * Traverses through the dependencies of the providers in order to get to the user's binding.
+     */
+    private Binding<?> getBindingFromMapProvider(Injector injector, Provider<T> mapProvider) {
+      HasDependencies deps = (HasDependencies) mapProvider;
+      Key<?> depKey = Iterables.getOnlyElement(deps.getDependencies()).getKey();
+      // The dep flow is (and will stay this way, until we change the internals) --
+      //    Key[type=Provider<java.lang.String>, annotation=@Element(type=MAPBINDER)]
+      // -> Key[type=String, annotation=@Element(type=MAPBINDER)]
+      // -> Key[type=Provider<String>, annotation=@Element(type=OPTIONALBINDER)]
+      // -> Key[type=String, annotation=@Element(type=OPTIONALBINDER)]
+      // The last one points to the user's binding.
+      for (int i = 0; i < 3; i++) {
+        deps = (HasDependencies) injector.getBinding(depKey);
+        depKey = Iterables.getOnlyElement(deps.getDependencies()).getKey();
+      }
+      return injector.getBinding(depKey);
+||||||| /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/base.java
+  
+      RealElement.BindingBuilder<T> valueBinding = RealElement.addBinding(binder,
+          Element.Type.OPTIONALBINDER, typeKey.getTypeLiteral(), RealElement.nameOf(typeKey));
+      Key<T> valueKey = Key.get(typeKey.getTypeLiteral(), valueBinding.getAnnotation());
+      mapBinder.addBinding(Source.ACTUAL).toProvider(
+          new ValueProvider<T>(valueKey, binder.getProvider(valueKey)));
+      return valueBinding;
+    }
+    
+    /**
+     * Traverses through the dependencies of the providers in order to get to the user's binding.
+     */
+    private Binding<?> getBindingFromMapProvider(Injector injector, Provider<T> mapProvider) {
+      HasDependencies deps = (HasDependencies) mapProvider;
+      Key<?> depKey = Iterables.getOnlyElement(deps.getDependencies()).getKey();
+      // The dep flow is (and will stay this way, until we change the internals) --
+      //    Key[type=Provider<java.lang.String>, annotation=@Element(type=MAPBINDER)]
+      // -> Key[type=String, annotation=@Element(type=MAPBINDER)]
+      // -> Key[type=Provider<String>, annotation=@Element(type=OPTIONALBINDER)]
+      // -> Key[type=String, annotation=@Element(type=OPTIONALBINDER)]
+      // The last one points to the user's binding.
+      for (int i = 0; i < 3; i++) {
+        deps = (HasDependencies) injector.getBinding(depKey);
+        depKey = Iterables.getOnlyElement(deps.getDependencies()).getKey();
+      }
+      return injector.getBinding(depKey);
+=======
+      return binder.bind(actualKey);
+>>>>>>> /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/right.java
+    }
+
+<<<<<<< /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/left.java
+    @Override
+  	public void configure(Binder binder) {
+||||||| /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/base.java
+    public void configure(Binder binder) {
+=======
     @Override public void configure(Binder binder) {
+>>>>>>> /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/right.java
       checkConfiguration(!isInitialized(), "OptionalBinder was already initialized");
 
       binder.bind(optionalProviderKey).toProvider(new RealOptionalProviderProvider());
 
+<<<<<<< /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/left.java
+        @Toolable @Inject void initialize(Injector injector) {
+          RealOptionalBinder.this.binder = null;
+          Map<Source, Provider<T>> map = mapProvider.get();
+          // Map might be null if duplicates prevented MapBinder from initializing
+          if (map != null) {
+            if (map.containsKey(Source.ACTUAL)) {
+              // TODO(sameb): Consider exposing an option that will allow
+              // ACTUAL to fallback to DEFAULT if ACTUAL's provider returns null.
+              // Right now, an ACTUAL binding can convert from present -> absent
+              // if it's bound to a provider that returns null.
+              optional = Optional.fromNullable(map.get(Source.ACTUAL));
+            } else if (map.containsKey(Source.DEFAULT)) {
+              optional = Optional.fromNullable(map.get(Source.DEFAULT));
+            } else {
+              optional = Optional.absent();
+            }
+
+            // Also set up the bindings for the SPI.
+            if (map.containsKey(Source.ACTUAL)) {
+              actualBinding = getBindingFromMapProvider(injector, map.get(Source.ACTUAL));
+            }
+            if (map.containsKey(Source.DEFAULT)) {
+              defaultBinding = getBindingFromMapProvider(injector, map.get(Source.DEFAULT));
+            }
+          }
+        }
+
+        @Override
+  		public Optional<Provider<T>> get() {
+          return optional;
+        }
+
+        @Override
+  		public Set<Dependency<?>> getDependencies() {
+          return dependencies;
+        }
+      });
+
+||||||| /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/base.java
+        @Toolable @Inject void initialize(Injector injector) {
+          RealOptionalBinder.this.binder = null;
+          Map<Source, Provider<T>> map = mapProvider.get();
+          // Map might be null if duplicates prevented MapBinder from initializing
+          if (map != null) {
+            if (map.containsKey(Source.ACTUAL)) {
+              // TODO(sameb): Consider exposing an option that will allow
+              // ACTUAL to fallback to DEFAULT if ACTUAL's provider returns null.
+              // Right now, an ACTUAL binding can convert from present -> absent
+              // if it's bound to a provider that returns null.
+              optional = Optional.fromNullable(map.get(Source.ACTUAL)); 
+            } else if (map.containsKey(Source.DEFAULT)) {
+              optional = Optional.fromNullable(map.get(Source.DEFAULT));
+            } else {
+              optional = Optional.absent();
+            }
+            
+            // Also set up the bindings for the SPI.
+            if (map.containsKey(Source.ACTUAL)) {
+              actualBinding = getBindingFromMapProvider(injector, map.get(Source.ACTUAL));
+            }
+            if (map.containsKey(Source.DEFAULT)) {
+              defaultBinding = getBindingFromMapProvider(injector, map.get(Source.DEFAULT));
+            }
+          }
+        }
+        
+        public Optional<Provider<T>> get() {
+          return optional;
+        }
+
+        public Set<Dependency<?>> getDependencies() {
+          return dependencies;
+        }
+      });
+      
+=======
+>>>>>>> /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/right.java
       // Optional is immutable, so it's safe to expose Optional<Provider<T>> as
       // Optional<javax.inject.Provider<T>> (since Guice provider implements javax Provider).
       @SuppressWarnings({"unchecked", "cast"})
@@ -571,8 +833,17 @@ public abstract class OptionalBinder<T> {
       private RealOptionalKeyProvider() {
         super(typeKey);
       }
+<<<<<<< /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/left.java
+  
+      @Override
+  	public Optional<T> get() {
+||||||| /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/base.java
+      
+      public Optional<T> get() {
+=======
       
       @Override public Optional<T> get() {
+>>>>>>> /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/right.java
         Optional<Provider<T>> optional = optionalProviderT.get();
         if (optional.isPresent()) {
           return Optional.fromNullable(optional.get().get());
@@ -581,12 +852,26 @@ public abstract class OptionalBinder<T> {
         }
       }
 
+<<<<<<< /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/left.java
+      @Override
+  	public Set<Dependency<?>> getDependencies() {
+||||||| /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/base.java
+      public Set<Dependency<?>> getDependencies() {
+=======
       @Override public Set<Dependency<?>> getDependencies() {
+>>>>>>> /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/right.java
         return dependencies;
       }
 
+<<<<<<< /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/left.java
+      @Override
+  	@SuppressWarnings("unchecked")
+||||||| /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/base.java
+      @SuppressWarnings("unchecked")
+=======
       @SuppressWarnings("unchecked")
       @Override
+>>>>>>> /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/right.java
       public <B, R> R acceptExtensionVisitor(BindingTargetVisitor<B, R> visitor,
           ProviderInstanceBinding<? extends B> binding) {
         if (visitor instanceof MultibindingsTargetVisitor) {
@@ -596,16 +881,106 @@ public abstract class OptionalBinder<T> {
         }
       }
 
+<<<<<<< /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/left.java
+      @Override
+  	public Key<Optional<T>> getKey() {
+||||||| /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/base.java
+      public Key<Optional<T>> getKey() {
+=======
       @Override public Key<Optional<T>> getKey() {
+>>>>>>> /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/right.java
         return optionalKey;
       }
-
-      @Override public Binding<?> getActualBinding() {
-        return RealOptionalBinder.this.getActualBinding();
+<<<<<<< /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/left.java
+  
+      @Override
+  	public Binding<?> getActualBinding() {
+        if (isInitialized()) {
+          return actualBinding;
+        } else {
+          throw new UnsupportedOperationException(
+              "getActualBinding() not supported from Elements.getElements, requires an Injector.");
+        }
       }
 
+      @Override
+  	public Binding<?> getDefaultBinding() {
+        if (isInitialized()) {
+          return defaultBinding;
+        } else {
+          throw new UnsupportedOperationException(
+              "getDefaultBinding() not supported from Elements.getElements, requires an Injector.");
+        }
+||||||| /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/base.java
+      
+      public Binding<?> getActualBinding() {
+        if (isInitialized()) {
+          return actualBinding;
+        } else {
+          throw new UnsupportedOperationException(
+              "getActualBinding() not supported from Elements.getElements, requires an Injector.");
+        }
+      }
+      
+      public Binding<?> getDefaultBinding() {
+        if (isInitialized()) {
+          return defaultBinding;
+        } else {
+          throw new UnsupportedOperationException(
+              "getDefaultBinding() not supported from Elements.getElements, requires an Injector.");
+        }
+=======
+  
+      @Override public Binding<?> getActualBinding() {
+        return RealOptionalBinder.this.getActualBinding();
+>>>>>>> /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/right.java
+      }
+
+<<<<<<< /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/left.java
+      @Override
+  	public boolean containsElement(com.google.inject.spi.Element element) {
+        if (mapBinder.containsElement(element)) {
+          return true;
+        } else {
+          Key<?> elementKey;
+          if (element instanceof Binding) {
+            elementKey = ((Binding<?>) element).getKey();
+          } else if (element instanceof ProviderLookup) {
+            elementKey = ((ProviderLookup<?>) element).getKey();
+          } else {
+            return false; // cannot match;
+          }
+
+          return elementKey.equals(optionalKey)
+              || elementKey.equals(optionalProviderKey)
+              || elementKey.equals(optionalJavaxProviderKey)
+              || matchesTypeKey(element, elementKey)
+              || matchesUserBinding(elementKey);
+        }
+||||||| /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/base.java
+      public boolean containsElement(com.google.inject.spi.Element element) {
+        if (mapBinder.containsElement(element)) {
+          return true;
+        } else {
+          Key<?> elementKey;
+          if (element instanceof Binding) {
+            elementKey = ((Binding<?>) element).getKey();
+          } else if (element instanceof ProviderLookup) {
+            elementKey = ((ProviderLookup<?>) element).getKey();
+          } else {
+            return false; // cannot match;
+          }
+
+          return elementKey.equals(optionalKey)
+              || elementKey.equals(optionalProviderKey)
+              || elementKey.equals(optionalJavaxProviderKey)
+              || matchesTypeKey(element, elementKey)
+              || matchesUserBinding(elementKey);
+        }
+=======
       @Override public Binding<?> getDefaultBinding() {
         return RealOptionalBinder.this.getDefaultBinding();
+>>>>>>> /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/right.java
       }
 
       @Override public boolean containsElement(Element element) {
@@ -658,7 +1033,7 @@ public abstract class OptionalBinder<T> {
       }
       return false;
     }
-    
+
     /** Returns true if the key & element indicate they were bound by this OptionalBinder. */
     private boolean matchesTypeKey(Element element, Key<?> elementKey) {
       // Just doing .equals(typeKey) isn't enough, because the user can bind that themselves.
@@ -678,7 +1053,111 @@ public abstract class OptionalBinder<T> {
     }
 
     @Override public int hashCode() {
+<<<<<<< /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/left.java
+      return mapKey.hashCode();
+    }
+
+    /** A Provider that bases equality & hashcodes off another key. */
+    private static final class ValueProvider<T> implements ProviderWithDependencies<T> {
+      private final Provider<T> provider;
+      private volatile Key<T> key;
+
+      private ValueProvider(Key<T> key, Provider<T> provider) {
+        this.key = key;
+        this.provider = provider;
+      }
+
+      @Override
+  	public T get() {
+        return provider.get();
+      }
+
+      @Override
+  	public Set<Dependency<?>> getDependencies() {
+        return ((HasDependencies) provider).getDependencies();
+      }
+
+      private Key<T> getCurrentKey() {
+        // Every time, check if the key needs rehashing.
+        // If so, update the field as an optimization for next time.
+        Key<T> currentKey = key;
+        if (needsRehashing(currentKey)) {
+          currentKey = rehash(currentKey);
+          key = currentKey;
+        }
+        return currentKey;
+      }
+
+      /**
+       * Equality is based on the key (which includes the target information, because of how
+       * RealElement works). This lets duplicate bindings collapse.
+       */
+      @Override public boolean equals(Object obj) {
+        return obj instanceof ValueProvider
+            && getCurrentKey().equals(((ValueProvider) obj).getCurrentKey());
+      }
+
+      /** We only use the hashcode of the typeliteral, which can't change. */
+      @Override public int hashCode() {
+        return key.getTypeLiteral().hashCode();
+      }
+
+      @Override public String toString() {
+        return provider.toString();
+      }
+||||||| /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/base.java
+      return mapKey.hashCode();
+    }
+
+    /** A Provider that bases equality & hashcodes off another key. */
+    private static final class ValueProvider<T> implements ProviderWithDependencies<T> {
+      private final Provider<T> provider;
+      private volatile Key<T> key;
+
+      private ValueProvider(Key<T> key, Provider<T> provider) {
+        this.key = key;
+        this.provider = provider;
+      }
+      
+      public T get() {
+        return provider.get();
+      }
+      
+      public Set<Dependency<?>> getDependencies() {
+        return ((HasDependencies) provider).getDependencies();
+      }
+
+      private Key<T> getCurrentKey() {
+        // Every time, check if the key needs rehashing.
+        // If so, update the field as an optimization for next time.
+        Key<T> currentKey = key;
+        if (needsRehashing(currentKey)) {
+          currentKey = rehash(currentKey);
+          key = currentKey;
+        }
+        return currentKey;
+      }
+
+      /**
+       * Equality is based on the key (which includes the target information, because of how
+       * RealElement works). This lets duplicate bindings collapse.
+       */
+      @Override public boolean equals(Object obj) {
+        return obj instanceof ValueProvider
+            && getCurrentKey().equals(((ValueProvider) obj).getCurrentKey());
+      }
+
+      /** We only use the hashcode of the typeliteral, which can't change. */
+      @Override public int hashCode() {
+        return key.getTypeLiteral().hashCode();
+      }
+
+      @Override public String toString() {
+        return provider.toString();
+      }
+=======
       return typeKey.hashCode();
+>>>>>>> /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/extensions/multibindings/src/com/google/inject/multibindings/OptionalBinder.java/right.java
     }
 
     /**

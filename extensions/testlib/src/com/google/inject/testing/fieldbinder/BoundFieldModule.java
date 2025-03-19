@@ -178,7 +178,7 @@ public final class BoundFieldModule implements Module {
       // type is requested.
       if (bindClass == Bind.class) {
         Preconditions.checkState(naturalType != null);
-        if (!this.naturalType.isPresent()) {
+        if (!naturalType.isPresent()) {
           throwBoundFieldException(
               field,
               "Non parameterized Provider fields must have an explicit "

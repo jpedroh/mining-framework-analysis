@@ -18,14 +18,6 @@ package com.google.inject.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Logger;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -41,6 +33,14 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.spi.Dependency;
 import com.google.inject.spi.Message;
 import com.google.inject.util.Modules;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Creates bindings to methods annotated with {@literal @}{@link Provides}. Use the scope and
@@ -59,10 +59,13 @@ public final class ProviderMethodsModule implements Module {
 
   private ProviderMethodsModule(Object delegate, boolean skipFastClassGeneration) {
     this.delegate = checkNotNull(delegate, "delegate");
-
     typeLiteral = TypeLiteral.get(this.delegate.getClass());
+<<<<<<< /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/core/src/com/google/inject/internal/ProviderMethodsModule.java/left.java
     filter = Guice.createHierarchyTraversalFilter();
+||||||| /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/core/src/com/google/inject/internal/ProviderMethodsModule.java/base.java
+=======
     this.skipFastClassGeneration = skipFastClassGeneration;
+>>>>>>> /usr/src/app/output/google/guice/3582277dd2180a3561c903f5baecef9817a41463/core/src/com/google/inject/internal/ProviderMethodsModule.java/right.java
   }
 
   /**
@@ -239,8 +242,8 @@ Multimap<Signature, Method> methodsBySignature = HashMultimap.create();
       binder.addError(message);
     }
 
-    return ProviderMethod.create(key, method, delegate, ImmutableSet.copyOf(dependencies),
-        parameterProviders, scopeAnnotation, skipFastClassGeneration);
+	  return ProviderMethod.create(key, method, delegate, ImmutableSet.copyOf(dependencies),
+    parameterProviders, scopeAnnotation, skipFastClassGeneration);
   }
 
   <T> Key<T> getKey(Errors errors, TypeLiteral<T> type, Member member, Annotation[] annotations) {
