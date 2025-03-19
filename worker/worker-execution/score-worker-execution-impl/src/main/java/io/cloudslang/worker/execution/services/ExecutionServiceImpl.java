@@ -17,8 +17,6 @@
 package io.cloudslang.worker.execution.services;
 
 import io.cloudslang.orchestrator.services.PauseResumeService;
-import io.cloudslang.orchestrator.services.PauseResumeService;
-import io.cloudslang.score.api.ControlActionMetadata;
 import io.cloudslang.score.api.ExecutionPlan;
 import io.cloudslang.score.api.ExecutionStep;
 import io.cloudslang.score.api.StartBranchDataContainer;
@@ -34,14 +32,12 @@ import io.cloudslang.score.facade.execution.ExecutionStatus;
 import io.cloudslang.score.facade.execution.ExecutionSummary;
 import io.cloudslang.score.facade.execution.PauseReason;
 import io.cloudslang.score.lang.SystemContext;
-import io.cloudslang.worker.execution.model.SandboxExecutionRunnable;
 import io.cloudslang.worker.execution.reflection.ReflectionAdapter;
 import io.cloudslang.worker.management.WorkerConfigurationService;
 import io.cloudslang.worker.management.services.dbsupport.WorkerDbSupportService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -51,7 +47,13 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeoutException;
-
+/**
+ * @author Avi Moradi
+ * @version $Id$
+ * @since 08/01/2011
+ */
+import io.cloudslang.score.api.ControlActionMetadata;
+import io.cloudslang.worker.execution.model.SandboxExecutionRunnable;
 import static io.cloudslang.score.facade.TempConstants.EXECUTE_CONTENT_ACTION;
 import static io.cloudslang.score.facade.TempConstants.EXECUTE_CONTENT_ACTION_CLASSNAME;
 import static io.cloudslang.score.facade.TempConstants.SC_TIMEOUT_MINS;
@@ -66,39 +68,20 @@ public final class ExecutionServiceImpl implements ExecutionService {
 
     private static final Logger logger = Logger.getLogger(ExecutionServiceImpl.class);
 
-    @Autowired
-    private PauseResumeService pauseService;
-
-    @Autowired
-    private ReflectionAdapter reflectionAdapter;
-
-    @Autowired
-    private WorkerDbSupportService workerDbSupportService;
-
-    @Autowired
-    private WorkerConfigurationService workerConfigurationService;
-
-    @Autowired
-    private EventBus eventBus;
-
-    @Autowired
-    private PauseResumeService pauseService;
-
-    @Autowired
-    private ReflectionAdapter reflectionAdapter;
-
-    @Autowired
-    private WorkerDbSupportService workerDbSupportService;
-
-    @Autowired
-    private WorkerConfigurationService workerConfigurationService;
-
-    @Autowired
-    private EventBus eventBus;
-
     public static final int DEFAULT_PLATFORM_LEVEL_OPERATION_TIMEOUT_IN_SECONDS = 24 * 60 * 60; // seconds in a day
     public static final int DEFAULT_PLATFORM_LEVEL_WAIT_PERIOD_FOR_TIMEOUT_IN_SECONDS = 5 * 60; // 5 minutes
     public static final long DEFAULT_PLATFORM_LEVEL_WAIT_PAUSE_FOR_TIMEOUT_IN_MILLIS = 200; // 200 milliseconds
+
+    @Autowired
+    private PauseResumeService pauseService;
+    @Autowired
+    private ReflectionAdapter reflectionAdapter;
+    @Autowired
+    private WorkerDbSupportService workerDbSupportService;
+    @Autowired
+    private WorkerConfigurationService workerConfigurationService;
+    @Autowired
+    private EventBus eventBus;
 
     private final long operationTimeoutMillis;
     private final long waitPauseForTimeoutMillis;
@@ -128,6 +111,72 @@ public final class ExecutionServiceImpl implements ExecutionService {
     @Override
     public Execution execute(Execution execution) throws InterruptedException {
         try {
+<<<<<<< /usr/src/app/output/cloudslang/score/6ee7769e25b9fe984fe9cd1ba6875c4f114721e7/worker/worker-execution/score-worker-execution-impl/src/main/java/io/cloudslang/worker/execution/services/ExecutionServiceImpl.java/left.java
+            // handle flow cancellation
+            if (handleCancelledFlow(execution)) {
+                return execution;
+            }
+            ExecutionStep currStep = loadExecutionStep(execution);
+            // Check if this execution was paused
+            if (!isDebuggerMode(execution.getSystemContext()) && handlePausedFlow(execution)) {
+                return null;
+            }
+            // dum bus event
+            dumpBusEvents(execution);
+            // Run the execution step
+            executeStep(execution, currStep);
+            if (currStep.getActionData().get("actionType") != null &&
+                    currStep.getActionData().get("actionType").toString().equalsIgnoreCase("rpa")) {
+                pauseFlow(PauseReason.RPA_EXECUTION, execution);
+                return null;
+            }
+            // Run the navigation
+            navigate(execution, currStep);
+            // currently handles groups and jms optimizations
+            postExecutionSettings(execution);
+            // If execution was paused in language - to avoid delay of configuration
+            if (execution.getSystemContext().isPaused()) {
+                if (handlePausedFlowAfterStep(execution)) {
+                    return null;
+                }
+            }
+            // dum bus event
+            dumpBusEvents(execution);
+            if (logger.isDebugEnabled()) {
+                logger.debug("End of step: " + execution.getPosition() + " in execution id: " + execution.getExecutionId());
+            }
+            return execution;
+||||||| /usr/src/app/output/cloudslang/score/6ee7769e25b9fe984fe9cd1ba6875c4f114721e7/worker/worker-execution/score-worker-execution-impl/src/main/java/io/cloudslang/worker/execution/services/ExecutionServiceImpl.java/base.java
+        	// handle flow cancellation
+        	if(handleCancelledFlow(execution)) {
+        		return execution;
+        	}
+        	ExecutionStep currStep = loadExecutionStep(execution);
+        	// Check if this execution was paused
+        	if(!isDebuggerMode(execution.getSystemContext()) && handlePausedFlow(execution)) {
+        		return null;
+        	}
+        	// dum bus event
+        	dumpBusEvents(execution);
+        	// Run the execution step
+        	executeStep(execution, currStep);
+        	// Run the navigation
+        	navigate(execution, currStep);
+        	// currently handles groups and jms optimizations
+        	postExecutionSettings(execution);
+        	// If execution was paused in language - to avoid delay of configuration
+        	if(execution.getSystemContext().isPaused()) {
+        		if(handlePausedFlowAfterStep(execution)) {
+        			return null;
+        		}
+        	}
+        	// dum bus event
+        	dumpBusEvents(execution);
+        	if(logger.isDebugEnabled()) {
+        		logger.debug("End of step: " + execution.getPosition() + " in execution id: " + execution.getExecutionId());
+        	}
+        	return execution;
+=======
             // handle flow cancellation
             if (handleCancelledFlow(execution)) {
                 return execution;
@@ -167,48 +216,10 @@ public final class ExecutionServiceImpl implements ExecutionService {
                         "End of step: " + execution.getPosition() + " in execution id: " + execution.getExecutionId());
             }
             return execution;
-        } catch (InterruptedException ex) {
-    @Override
-    public Execution execute(Execution execution) throws InterruptedException {
-        try {
-            // handle flow cancellation
-            if (handleCancelledFlow(execution)) {
-                return execution;
-            }
-            ExecutionStep currStep = loadExecutionStep(execution);
-            // Check if this execution was paused
-            if (!isDebuggerMode(execution.getSystemContext()) && handlePausedFlow(execution)) {
-                return null;
-            }
-            // dum bus event
-            dumpBusEvents(execution);
-            // Run the execution step
-            executeStep(execution, currStep);
-            if (currStep.getActionData().get("actionType") != null &&
-                    currStep.getActionData().get("actionType").toString().equalsIgnoreCase("rpa")) {
-                pauseFlow(PauseReason.RPA_EXECUTION, execution);
-                return null;
-            }
-            // Run the navigation
-            navigate(execution, currStep);
-            // currently handles groups and jms optimizations
-            postExecutionSettings(execution);
-            // If execution was paused in language - to avoid delay of configuration
-            if (execution.getSystemContext().isPaused()) {
-                if (handlePausedFlowAfterStep(execution)) {
-                    return null;
-                }
-            }
-            // dum bus event
-            dumpBusEvents(execution);
-            if (logger.isDebugEnabled()) {
-                logger.debug("End of step: " + execution.getPosition() + " in execution id: " + execution.getExecutionId());
-            }
-            return execution;
+>>>>>>> /usr/src/app/output/cloudslang/score/6ee7769e25b9fe984fe9cd1ba6875c4f114721e7/worker/worker-execution/score-worker-execution-impl/src/main/java/io/cloudslang/worker/execution/services/ExecutionServiceImpl.java/right.java
         } catch (InterruptedException ex) {
             throw ex;
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             logger.error("Error during execution: ", ex);
             execution.getSystemContext().setStepErrorKey(ex.getMessage()); // this is done only fo reporting
             execution.getSystemContext().setFlowTerminationType(ExecutionStatus.SYSTEM_FAILURE);
@@ -269,8 +280,7 @@ public final class ExecutionServiceImpl implements ExecutionService {
             execution.getSystemContext().setFlowTerminationType(ExecutionStatus.SYSTEM_FAILURE);
             execution.setPosition(null); // this ends the flow!!!
             try {
-                createErrorEvent(exception, "Error occurred during split step ", EventConstants.SCORE_STEP_SPLIT_ERROR,
-                        execution.getSystemContext());
+                createErrorEvent(exception, "Error occurred during split step ", EventConstants.SCORE_STEP_SPLIT_ERROR, execution.getSystemContext());
             } catch (RuntimeException eventEx) {
                 logger.error("Failed to create event: ", eventEx);
             }
@@ -283,8 +293,7 @@ public final class ExecutionServiceImpl implements ExecutionService {
         String splitId = UUID.randomUUID().toString();
         for (int i = 0; i < newBranches.size(); i++) {
             StartBranchDataContainer from = newBranches.get(i);
-            Execution to = new Execution(executionId, from.getExecutionPlanId(), from.getStartPosition(),
-                    from.getContexts(), from.getSystemContext());
+            Execution to = new Execution(executionId, from.getExecutionPlanId(), from.getStartPosition(), from.getContexts(), from.getSystemContext());
 
             to.getSystemContext().setSplitId(splitId);
             to.getSystemContext().setBranchId(splitId + ":" + (i + 1));
@@ -300,8 +309,7 @@ public final class ExecutionServiceImpl implements ExecutionService {
     }
 
     protected boolean handleCancelledFlow(Execution execution) {
-        boolean executionIsCancelled = workerConfigurationService.isExecutionCancelled(execution
-                .getExecutionId()); // in this case - just check if need to cancel. It will set as cancelled later on QueueEventListener
+        boolean executionIsCancelled = workerConfigurationService.isExecutionCancelled(execution.getExecutionId()); // in this case - just check if need to cancel. It will set as cancelled later on QueueEventListener
         // Another scenario of getting canceled - it was cancelled from the SplitJoinService (the configuration can still be not updated). Defect #:22060
         if (ExecutionStatus.CANCELED.equals(execution.getSystemContext().getFlowTerminationType())) {
             executionIsCancelled = true;
@@ -403,7 +411,7 @@ public final class ExecutionServiceImpl implements ExecutionService {
         return isDebuggerMode;
     }
 
-    private void dumpBusEvents(Execution execution) throws InterruptedException {
+    public void dumpBusEvents(Execution execution) throws InterruptedException {
         ArrayDeque<ScoreEvent> eventsQueue = execution.getSystemContext().getEvents();
         if (eventsQueue == null) {
             return;
@@ -414,7 +422,7 @@ public final class ExecutionServiceImpl implements ExecutionService {
         eventsQueue.clear();
     }
 
-    protected ExecutionStep loadExecutionStep(Execution execution) {
+    public ExecutionStep loadExecutionStep(Execution execution) {
         RunningExecutionPlan runningExecutionPlan;
         if (execution != null) {
             // Optimization for external workers - run the content only without loading the execution plan
@@ -423,14 +431,12 @@ public final class ExecutionServiceImpl implements ExecutionService {
             }
             Long position = execution.getPosition();
             if (position != null) {
-                runningExecutionPlan = workerDbSupportService
-                        .readExecutionPlanById(execution.getRunningExecutionPlanId());
+                runningExecutionPlan = workerDbSupportService.readExecutionPlanById(execution.getRunningExecutionPlanId());
                 if (runningExecutionPlan != null) {
                     updateMetadata(execution, runningExecutionPlan);
                     ExecutionStep currStep = runningExecutionPlan.getExecutionPlan().getStep(position);
                     if (logger.isDebugEnabled()) {
-                        logger.debug("Begin step: " + position + " in flow " + runningExecutionPlan.getExecutionPlan()
-                                .getFlowUuid() + " [" + execution.getExecutionId() + "]");
+                        logger.debug("Begin step: " + position + " in flow " + runningExecutionPlan.getExecutionPlan().getFlowUuid() + " [" + execution.getExecutionId() + "]");
                     }
                     if (currStep != null) {
                         return currStep;
@@ -443,8 +449,7 @@ public final class ExecutionServiceImpl implements ExecutionService {
     }
 
     private void updateMetadata(Execution execution, RunningExecutionPlan runningExecutionPlan) {
-        Map<String, Serializable> executionMetadata = (Map<String, Serializable>) execution.getSystemContext()
-                .getMetaData();
+        Map<String, Serializable> executionMetadata = (Map<String, Serializable>) execution.getSystemContext().getMetaData();
         ExecutionPlan executionPlan = runningExecutionPlan.getExecutionPlan();
         executionMetadata.put(ExecutionMetadataConsts.EXECUTION_PLAN_ID, executionPlan.getFlowUuid());
         executionMetadata.put(ExecutionMetadataConsts.EXECUTION_PLAN_NAME, executionPlan.getName());
@@ -533,15 +538,15 @@ public final class ExecutionServiceImpl implements ExecutionService {
         }
     }
 
-	private static void handleStepExecutionException(Execution execution, RuntimeException ex) {
-		logger.error("Error occurred during operation execution.  Execution id: " + execution.getExecutionId(), ex);
-		execution.getSystemContext().setStepErrorKey(ex.getMessage());
-	}
+    private static void handleStepExecutionException(Execution execution, RuntimeException ex) {
+        logger.error("Error occurred during operation execution.  Execution id: " + execution.getExecutionId(), ex);
+        execution.getSystemContext().setStepErrorKey(ex.getMessage());
+    }
 
-	private Map<String, Object> prepareStepData(Execution execution, ExecutionStep currStep) {
+    private Map<String, Object> prepareStepData(Execution execution, ExecutionStep currStep) {
         Map<String, ?> actionData = currStep.getActionData();
         Map<String, Object> stepData = new HashMap<>();
-        if (actionData != null){
+        if (actionData != null) {
             stepData.putAll(actionData);
         }
         // We add all the contexts to the step data - so inside of each control action we will have access to all contexts
@@ -552,8 +557,7 @@ public final class ExecutionServiceImpl implements ExecutionService {
         return stepData;
     }
 
-    private void createErrorEvent(String ex, String logMessage, String errorType, SystemContext systemContext)
-            throws InterruptedException {
+    private void createErrorEvent(String ex, String logMessage, String errorType, SystemContext systemContext) throws InterruptedException {
         HashMap<String, Serializable> eventData = new HashMap<>();
         eventData.put(ExecutionParametersConsts.SYSTEM_CONTEXT, new HashMap<>(systemContext));
         eventData.put(EventConstants.SCORE_ERROR_MSG, ex);
@@ -563,7 +567,7 @@ public final class ExecutionServiceImpl implements ExecutionService {
         eventBus.dispatch(eventWrapper);
     }
 
-    protected void navigate(Execution execution, ExecutionStep currStep) throws InterruptedException {
+    public void navigate(Execution execution, ExecutionStep currStep) throws InterruptedException {
         Long position;
         try {
             if (currStep.getNavigation() != null) {
@@ -578,14 +582,12 @@ public final class ExecutionServiceImpl implements ExecutionService {
         } catch (RuntimeException navEx) {
             // If Exception occurs in navigation (almost impossible since now we always have Flow Exception Step) we can not continue since we don't know which step is the next step...
             // terminating...
-            logger.error("Error occurred during navigation execution. Execution id: " + execution.getExecutionId(),
-                    navEx);
+            logger.error("Error occurred during navigation execution. Execution id: " + execution.getExecutionId(), navEx);
             execution.getSystemContext().setStepErrorKey(navEx.getMessage()); // this is done only fo reporting
             execution.getSystemContext().setFlowTerminationType(ExecutionStatus.SYSTEM_FAILURE);
             execution.setPosition(null); // this ends the flow!!!
             try {
-                createErrorEvent(navEx.getMessage(), "Error occurred during navigation execution ",
-                        EventConstants.SCORE_STEP_NAV_ERROR, execution.getSystemContext());
+                createErrorEvent(navEx.getMessage(), "Error occurred during navigation execution ", EventConstants.SCORE_STEP_NAV_ERROR, execution.getSystemContext());
             } catch (RuntimeException eventEx) {
                 logger.error("Failed to create event: ", eventEx);
             }
@@ -600,17 +602,17 @@ public final class ExecutionServiceImpl implements ExecutionService {
         return useDefaultGroup;
     }
 
-    protected static void postExecutionSettings(Execution execution) {
+    public static void postExecutionSettings(Execution execution) {
         // Decide on Group
         String group = (String) execution.getSystemContext().get(TempConstants.ACTUALLY_OPERATION_GROUP);
 
-		execution.setGroupName(group);
+        execution.setGroupName(group);
 
-		if(isDebuggerMode(execution.getSystemContext())) {
-			if(!StringUtils.isEmpty(group) && useDefaultGroup(execution)) {
-				execution.setGroupName(null);
-			}
-		}
+        if (isDebuggerMode(execution.getSystemContext())) {
+            if (!StringUtils.isEmpty(group) && useDefaultGroup(execution)) {
+                execution.setGroupName(null);
+            }
+        }
         //if there is a request to change the running execution plan id, we update the execution to the new execution plan ID
         Long requestForChangingExecutionPlan = execution.getSystemContext().pullRequestForChangingExecutionPlan();
         if (requestForChangingExecutionPlan != null) {
