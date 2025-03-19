@@ -93,25 +93,26 @@ final class JdbcCreateTableBuilder extends AbstractTableCreationBuilder<JdbcUpda
             sb.append(getUpdateCallback().quoteIfNescesary(column.getName()));
             sb.append(' ');
             final String nativeType = column.getNativeType();
-            final Integer columnSize = column.getColumnSize();
-            if (nativeType == null) {
-                ColumnType columnType = column.getType();
-                if (columnType == null) {
-                    columnType = ColumnType.VARCHAR;
-                }
-                final String columnTypeString = queryRewriter.rewriteColumnType(columnType, columnSize);
-                sb.append(columnTypeString);
-            } else {
-                sb.append(nativeType);
-                if (columnSize != null) {
-                    sb.append('(');
-                    sb.append(columnSize.intValue());
-                    sb.append(')');
-                }
-            }
-            if (column.isNullable() != null && !column.isNullable().booleanValue()) {
-                sb.append(" NOT NULL");
-            }
+        	final Integer columnSize = column.getColumnSize();
+        	if (nativeType == null) {
+        	    ColumnType columnType = column.getType();
+        	    if (columnType == null) {
+        	        columnType = ColumnType.VARCHAR;
+        	    }
+
+        	    final String columnTypeString = queryRewriter.rewriteColumnType(columnType, columnSize);
+        		sb.append(columnTypeString);
+        	} else {
+        	    sb.append(nativeType);
+        		if (columnSize != null) {
+        		    sb.append('(');
+        		    sb.append(columnSize.intValue());
+        		    sb.append(')');
+        		}
+        	}
+        	if (column.isNullable() != null && !column.isNullable().booleanValue()) {
+        	    sb.append(" NOT NULL");
+        	}
         }
         boolean primaryKeyExists = false;
         for (int i = 0; i < columns.length; i++) {
