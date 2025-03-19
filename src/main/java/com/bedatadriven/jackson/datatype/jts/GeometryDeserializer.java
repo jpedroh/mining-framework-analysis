@@ -28,6 +28,10 @@ public class GeometryDeserializer extends JsonDeserializer<Geometry> {
 		}
 	}
 
+	public GeometryDeserializer(GeometryFactory gf) {
+		this.gf = gf;
+	}
+
 	@Override
 	public Geometry deserialize(JsonParser jp, DeserializationContext ctxt)
 			throws IOException {
