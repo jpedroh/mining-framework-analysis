@@ -782,7 +782,13 @@ public class SQSSession implements Session, QueueSession {
 
     @Override
     public TemporaryQueue createTemporaryQueue() throws JMSException {
+<<<<<<< /usr/src/app/output/awslabs/amazon-sqs-java-messaging-lib/e7775ab4b261f2ec8145a31c0f688a89473d320c/src/main/java/com/amazon/sqs/javamessaging/SQSSession.java/left.java
         String tempQueueName = "tmp-" + UUID.randomUUID().toString();
+||||||| /usr/src/app/output/awslabs/amazon-sqs-java-messaging-lib/e7775ab4b261f2ec8145a31c0f688a89473d320c/src/main/java/com/amazon/sqs/javamessaging/SQSSession.java/base.java
+        String ;
+=======
+        String tempQueueName = UUID.randomUUID().toString();
+>>>>>>> /usr/src/app/output/awslabs/amazon-sqs-java-messaging-lib/e7775ab4b261f2ec8145a31c0f688a89473d320c/src/main/java/com/amazon/sqs/javamessaging/SQSSession.java/right.java
         amazonSQSClient.createQueue(tempQueueName);
         return new SqsTemporaryQueue(tempQueueName, amazonSQSClient);
     }
