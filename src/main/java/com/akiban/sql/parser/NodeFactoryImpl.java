@@ -622,11 +622,14 @@ public final class NodeFactoryImpl extends NodeFactory
         case NodeTypes.AT_ADD_INDEX_NODE:
             return NodeNames.AT_ADD_INDEX_NODE_NAME;
 
+<<<<<<< /usr/src/app/output/brunoribeiro/sql-parser/101b5461bd04057ce934915a66975c7f373918af/src/main/java/com/akiban/sql/parser/NodeFactoryImpl.java/left.java
         case NodeTypes.SPECIAL_INDEX_FUNC_NODE:
             return NodeNames.SPECIAL_INDEX_FUNC_NODE_NAME;
-
+||||||| /usr/src/app/output/brunoribeiro/sql-parser/101b5461bd04057ce934915a66975c7f373918af/src/main/java/com/akiban/sql/parser/NodeFactoryImpl.java/base.java
+=======
         case NodeTypes.ADD_INDEX_CONSTRAINT_NODE:
             return NodeNames.ADD_INDEX_CONSTRAINT_NAME;
+>>>>>>> /usr/src/app/output/brunoribeiro/sql-parser/101b5461bd04057ce934915a66975c7f373918af/src/main/java/com/akiban/sql/parser/NodeFactoryImpl.java/right.java
 
         default:
             throw new StandardException("Not implemented");

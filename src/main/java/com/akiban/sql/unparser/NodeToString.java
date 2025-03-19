@@ -210,10 +210,14 @@ public class NodeToString
             return sqlToJavaValueNode((SQLToJavaValueNode)node);
         case NodeTypes.STATIC_METHOD_CALL_NODE:
             return methodCallNode((MethodCallNode)node);
+<<<<<<< /usr/src/app/output/brunoribeiro/sql-parser/101b5461bd04057ce934915a66975c7f373918af/src/main/java/com/akiban/sql/unparser/NodeToString.java/left.java
         case NodeTypes.SPECIAL_INDEX_FUNC_NODE:
             return zorderFuncNode((SpecialIndexFuncNode)node);
+||||||| /usr/src/app/output/brunoribeiro/sql-parser/101b5461bd04057ce934915a66975c7f373918af/src/main/java/com/akiban/sql/unparser/NodeToString.java/base.java
+=======
         case NodeTypes.ADD_INDEX_CONSTRAINT_NODE:
             return indexConstraint((AddIndexConstraintDefinitionNode)node);
+>>>>>>> /usr/src/app/output/brunoribeiro/sql-parser/101b5461bd04057ce934915a66975c7f373918af/src/main/java/com/akiban/sql/unparser/NodeToString.java/right.java
         default:
             return "**UNKNOWN(" + node.getNodeType() +")**";
         }
