@@ -1,5 +1,6 @@
 package junitparams.internal;
 
+import junitparams.DatabaseParameters;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,6 @@ import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
-import junitparams.DatabaseParameters;
 import junitparams.FileParameters;
 import junitparams.Parameters;
 import junitparams.internal.parameters.ParametersReader;
