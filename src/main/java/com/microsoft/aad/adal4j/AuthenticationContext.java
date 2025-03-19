@@ -249,7 +249,13 @@ public class AuthenticationContext {
 
         ClientAuthenticationPost clientAuth = new ClientAuthenticationPost(ClientAuthenticationMethod.NONE, new ClientID(clientId));
 
+<<<<<<< /usr/src/app/output/azuread/azure-activedirectory-library-for-java/ee1814c0ac36dfd7d0ebce404b446f5e02b76a5d/src/main/java/com/microsoft/aad/adal4j/AuthenticationContext.java/left.java
         if (password != null) {
+||||||| /usr/src/app/output/azuread/azure-activedirectory-library-for-java/ee1814c0ac36dfd7d0ebce404b446f5e02b76a5d/src/main/java/com/microsoft/aad/adal4j/AuthenticationContext.java/base.java
+        if  {
+=======
+        if (!StringHelper.isBlank(password)) {
+>>>>>>> /usr/src/app/output/azuread/azure-activedirectory-library-for-java/ee1814c0ac36dfd7d0ebce404b446f5e02b76a5d/src/main/java/com/microsoft/aad/adal4j/AuthenticationContext.java/right.java
             return this.acquireToken(new AdalAuthorizatonGrant(
                     new ResourceOwnerPasswordCredentialsGrant(username, new Secret(
                             password)), resource), clientAuth, callback);
