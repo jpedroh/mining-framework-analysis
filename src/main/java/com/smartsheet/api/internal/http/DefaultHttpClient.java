@@ -40,7 +40,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -50,6 +49,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.io.ByteArrayOutputStream;
 
 /**
  * This is the Apache HttpClient (http://hc.apache.org/httpcomponents-client-ga/index.html) based HttpClient
@@ -94,13 +94,19 @@ public class DefaultHttpClient implements HttpClient {
      */
     private final CloseableHttpClient httpClient;
 
-    /** The apache http request. */
+    /**
+     * The apache http request.
+     */
     private HttpRequestBase apacheHttpRequest;
 
-    /** The apache http response. */
+    /**
+     * The apache http response.
+     */
     private CloseableHttpResponse apacheHttpResponse;
 
-    /** UserAgent string sent with each request */
+    /**
+     * UserAgent string sent with each request
+     */
     private final String userAgent;
 
     /** the set of Trace levels to use in trace-logging */
@@ -128,7 +134,8 @@ public class DefaultHttpClient implements HttpClient {
      * @param httpClient the http client
      */
     public DefaultHttpClient(CloseableHttpClient httpClient) {
-        this.httpClient = Util.throwIfNull(httpClient);
+        Util.throwIfNull(httpClient);
+        this.httpClient = httpClient;
         this.userAgent = generateUserAgent(getClass());
     }
 
@@ -172,6 +179,7 @@ public class DefaultHttpClient implements HttpClient {
         RequestConfig config = builder.build();
         apacheHttpRequest.setConfig(config);
 
+<<<<<<< /usr/src/app/output/smartsheet-platform/smartsheet-java-sdk/348be648192bbb4d9a3a21bcd5ef1daf5187e19c/src/main/java/com/smartsheet/api/internal/http/DefaultHttpClient.java/left.java
         // Set HTTP headers
         if (smartsheetRequest.getHeaders() != null) {
             for (Map.Entry<String, String> header : smartsheetRequest.getHeaders().entrySet()) {
@@ -181,6 +189,48 @@ public class DefaultHttpClient implements HttpClient {
 
         // Set User Agent
         apacheHttpRequest.setHeader(HttpHeaders.USER_AGENT, userAgent);
+||||||| /usr/src/app/output/smartsheet-platform/smartsheet-java-sdk/348be648192bbb4d9a3a21bcd5ef1daf5187e19c/src/main/java/com/smartsheet/api/internal/http/DefaultHttpClient.java/base.java
+	private static void append(StringBuilder buf, HttpEntity entity) {
+		String contentAsText = null;
+		try {
+			InputStream inputStream = entity.getContent();
+			if (inputStream.markSupported()) {
+				inputStream.mark(0);
+			}
+			byte[] contentBytes = StreamUtil.readBytesFromStream(inputStream);
+			try {
+				contentAsText = new String(contentBytes, "UTF-8");
+			} catch (UnsupportedEncodingException badEncodingOrNotText) {
+				contentAsText = new String(Hex.encodeHex(contentBytes));
+				logger.info("failed to create string with contentType '{}' from bytes '{}'",
+						entity.getContentType(), contentAsText);
+			}
+			// since we've consumed the stream we have to reset it (note, this will have real perf impact if the stream
+			// was to a large file or something else we'd rather not hold entirely in RAM if we can help it)
+			if (inputStream.markSupported()) {
+				inputStream.reset();
+			} else {
+				entity.setContent(new ByteArrayInputStream(contentBytes));
+			}
+
+		} catch (IOException iox) {
+			logger.error("failed to extract content from response - {}", iox);
+		}
+=======
+	private static void append(StringBuilder buf, HttpEntity entity) {
+		String contentAsText = null;
+		try {
+			InputStream inputStream = entity.getContent();
+			ByteArrayOutputStream contentCopyStream = new ByteArrayOutputStream();
+			InputStream resetStream = StreamUtil.cloneContent(inputStream, contentCopyStream);
+			if (resetStream != inputStream) {
+				entity.setContent(resetStream);
+			}
+			contentAsText = StreamUtil.toUtf8StringOrHex(contentCopyStream);
+		} catch (IOException iox) {
+			logger.error("failed to extract content from response - {}", iox);
+		}
+>>>>>>> /usr/src/app/output/smartsheet-platform/smartsheet-java-sdk/348be648192bbb4d9a3a21bcd5ef1daf5187e19c/src/main/java/com/smartsheet/api/internal/http/DefaultHttpClient.java/right.java
 
 
         HttpEntity originalRequestEntity = null;
@@ -320,4 +370,4 @@ public class DefaultHttpClient implements HttpClient {
                 + System.getProperty("java.vm.name") + " " + System.getProperty("java.vendor") + " "
                 + System.getProperty("java.version");
     }
-}		
+}
