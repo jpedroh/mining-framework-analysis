@@ -14,16 +14,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.heroku.sdk.jdbc.DatabaseUrl;
+
 import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
-
-import com.heroku.sdk.jdbc.DatabaseUrl;
 
 public class Application {
 	
 	public final static String PORT = "PORT";
 	
-	public void start(@SuppressWarnings("unused") String [] args) {
+	public void start(String [] args) {
 		port(getPort());
 	    staticFileLocation("/public");
 
@@ -95,7 +95,7 @@ public class Application {
 		return DatabaseUrl.extract().getConnection();
 	}
 
-	private static Integer getPort() {
+	private Integer getPort() {
 		String port = System.getenv(PORT);
 		if (port == null)
 			port = System.getProperty(PORT);
