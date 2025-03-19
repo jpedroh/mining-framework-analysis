@@ -102,12 +102,25 @@ public abstract class AbstractInternalKrbClient implements InternalKrbClient {
             principal = fixPrincipal(principal);
             asRequest.setClientPrincipal(new PrincipalName(principal));
         }
+        
+<<<<<<< /usr/src/app/output/apache/directory-kerby/798f1b43487286db6e708c7758b3e95cc645be3c/kerby-kerb/kerb-client/src/main/java/org/apache/kerby/kerberos/kerb/client/impl/AbstractInternalKrbClient.java/left.java
+        if (requestOptions.contains(KrbOption.SERVER_PRINCIPAL)) {
+            String serverPrincipalName = requestOptions.getStringOption(KrbOption.SERVER_PRINCIPAL);
+            serverPrincipalName = fixPrincipal(serverPrincipalName);
+            //PrincipalName serverPrincipal = new PrincipalName(serverPrincipalName, NameType.NT_SRV_INST);
+            PrincipalName serverPrincipal = new PrincipalName(serverPrincipalName, NameType.NT_PRINCIPAL);
+            asRequest.setServerPrincipal(serverPrincipal);
+        }
+||||||| /usr/src/app/output/apache/directory-kerby/798f1b43487286db6e708c7758b3e95cc645be3c/kerby-kerb/kerb-client/src/main/java/org/apache/kerby/kerberos/kerb/client/impl/AbstractInternalKrbClient.java/base.java
+        if (requestOptions.contains(KrbOption.SERVER_PRINCIPAL)) 
+=======
         if (requestOptions.contains(KrbOption.SERVER_PRINCIPAL)) {
             String serverPrincipalName = requestOptions.getStringOption(KrbOption.SERVER_PRINCIPAL);
             serverPrincipalName = fixPrincipal(serverPrincipalName);
             PrincipalName serverPrincipal = new PrincipalName(serverPrincipalName, NameType.NT_PRINCIPAL);
             asRequest.setServerPrincipal(serverPrincipal);
         }
+>>>>>>> /usr/src/app/output/apache/directory-kerby/798f1b43487286db6e708c7758b3e95cc645be3c/kerby-kerb/kerb-client/src/main/java/org/apache/kerby/kerberos/kerb/client/impl/AbstractInternalKrbClient.java/right.java
 
         asRequest.setKrbOptions(requestOptions);
 
