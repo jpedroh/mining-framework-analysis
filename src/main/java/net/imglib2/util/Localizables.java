@@ -47,7 +47,6 @@ import net.imglib2.view.Views;
 
 public class Localizables
 {
-
 	public static long[] asLongArray( final Localizable localizable )
 	{
 		final long[] result = new long[ localizable.numDimensions() ];
@@ -166,8 +165,7 @@ public class Localizables
 			return new LocationRandomAccess( n );
 		}
 
-		@Override
-		public RandomAccess< Localizable > randomAccess( final Interval interval )
+		@Override public RandomAccess< Localizable > randomAccess( final Interval interval )
 		{
 			return randomAccess();
 		}
