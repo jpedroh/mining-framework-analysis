@@ -92,7 +92,6 @@ public final class BytecodeUtil implements Opcodes {
 
         return types.toArray(new String[types.size()]);
     }
-
     // Use org.objectweb.asm.Type instead
     @Deprecated
     public static String toType(Class<?> cls) {
@@ -117,55 +116,42 @@ public final class BytecodeUtil implements Opcodes {
                 }
         }
     }
-
     public static int storeInstruction(Type type) {
         return type.getOpcode(ISTORE);
     }
-
     public static int loadInstruction(Type type) {
         return type.getOpcode(ILOAD);
     }
-
     public static int addInstruction(Type type) {
         return type.getOpcode(IADD);
     }
-
     public static int subtractInstruction(Type type) {
         return type.getOpcode(ISUB);
     }
-
     public static int multiplyInstruction(Type type) {
         return type.getOpcode(IMUL);
     }
-
     public static int divisionInstruction(Type type) {
         return type.getOpcode(IDIV);
     }
-
     public static int remainderInstruction(Type type) {
         return type.getOpcode(IREM);
     }
-
     public static int negateInstruction(Type type) {
         return type.getOpcode(INEG);
     }
-
     public static int fromOpcodeName(String name) {
         return OPCODES.getOrDefault(name, -1);
     }
-
     public static int fromAccName(String name) {
         return ACC_MODS.getOrDefault(name, -1);
     }
-
     public static Type fromSimpleName(String string) {
         return Type.getType(getDescriptor(string));
     }
-
     public static Type fromSimpleName(String string, int dims) {
         return Type.getType(getDescriptor(string, dims));
     }
-
     public static String getDescriptor(String str) {
         switch (str) {
             case "int":     return "I";
@@ -181,12 +167,10 @@ public final class BytecodeUtil implements Opcodes {
             default:        return "L" + str.replace('.', '/') + ";";
         }
     }
-
     public static String getDescriptor(String str, int dims) {
         String base = getDescriptor(str);
         return StringUtil.repeat('[', dims) + base;
     }
-
     public static void pushInt(MethodVisitor method, int num) {
         // we can use a iconst_<i>
         if (num >= -1 && num <= 5) {
@@ -213,7 +197,6 @@ public final class BytecodeUtil implements Opcodes {
             method.visitLdcInsn(num);
         }
     }
-
     public static void pushLong(MethodVisitor method, long num) {
         if (num == 0) {
             method.visitInsn(LCONST_0);
@@ -223,7 +206,6 @@ public final class BytecodeUtil implements Opcodes {
             method.visitLdcInsn(num);
         }
     }
-
     public static void pushFloat(MethodVisitor method, float num) {
         if (num == 0) {
             method.visitInsn(FCONST_0);
@@ -235,7 +217,6 @@ public final class BytecodeUtil implements Opcodes {
             method.visitLdcInsn(num);
         }
     }
-
     public static void pushDouble(MethodVisitor method, double num) {
         if (num == 0) {
             method.visitInsn(DCONST_0);
@@ -245,14 +226,10 @@ public final class BytecodeUtil implements Opcodes {
             method.visitLdcInsn(num);
         }
     }
-
     public static void pushNull(MethodVisitor method) {
         method.visitInsn(ACONST_NULL);
     }
-
-
     private static Set<Type> BOXED_TYPES;
-
     static {
         Class[] classes = new Class[]{
             Byte.class, Character.class, Short.class, Integer.class,
@@ -264,24 +241,19 @@ public final class BytecodeUtil implements Opcodes {
         for (Class cls : classes)
             BOXED_TYPES.add(Type.getType(cls));
     }
-
     public static boolean isBoxedType(Type type) {
         return BOXED_TYPES.contains(type);
     }
-
     public static boolean isPrimitive(Type type) {
         return type.getSort() >= Type.BOOLEAN && type.getSort() <= Type.DOUBLE;
     }
-
     public static boolean isIntegral(Type type) {
         return (type.getSort() >= Type.BYTE && type.getSort() <= Type.INT)
             || type.getSort() == Type.LONG;
     }
-
     public static boolean isNumeric(Type type) {
         return type.getSort() >= Type.CHAR && type.getSort() <= Type.DOUBLE;
     }
-
     public static Type numberType(Class<? extends Number> cls) {
         switch (cls.getSimpleName()) {
             case "Float":   return Type.FLOAT_TYPE;
@@ -293,7 +265,6 @@ public final class BytecodeUtil implements Opcodes {
             default:        return null;
         }
     }
-
     public static int castNumberOpcode(Type orig, Type target) {
         switch (orig.getSort()) {
             case Type.INT:
@@ -330,10 +301,8 @@ public final class BytecodeUtil implements Opcodes {
         }
         return -1;
     }
-
     // byte, char, short, int, long, float, double
     private static final String PRIMITIVE_ORDER = "BCSIJFD";
-
     public static int compareWidth(Type t1, Type t2) {
         if (!isNumeric(t1) || !isNumeric(t2)) return Integer.MAX_VALUE;
 
@@ -348,14 +317,12 @@ public final class BytecodeUtil implements Opcodes {
             return 0;
         }
     }
-
     public static boolean canWidenTo(Type orig, Type target) {
         // both types must be numeric
         if (!isNumeric(orig) || !isNumeric(target)) return false;
 
         return PRIMITIVE_ORDER.indexOf(orig.getDescriptor()) <= PRIMITIVE_ORDER.indexOf(target.getDescriptor());
     }
-
     public static Type widest(Type t1, Type t2) {
         // both types must be numeric
         if (!isNumeric(t1) || !isNumeric(t2)) return null;
@@ -366,19 +333,14 @@ public final class BytecodeUtil implements Opcodes {
             return t1;
         }
     }
-
     public static final Type STRING_TYPE = Type.getType(String.class);
-
     public static boolean isString(Type type) {
         return type.equals(STRING_TYPE);
     }
-
     public static boolean isObject(Type type) {
         return type.getSort() == Type.OBJECT;
     }
-
     private static final Type SB_TYPE = Type.getType(StringBuilder.class);
-
     public static void concatStringsBytecode(MethodVisitor method, BuildContext ctx, Expression... exprs) {
         // initialize StringBuilder instance
         method.visitTypeInsn(NEW, SB_TYPE.getInternalName());
@@ -408,32 +370,6 @@ public final class BytecodeUtil implements Opcodes {
             false
         );
     }
-
-    public static void createArray(MethodVisitor method, BuildContext ctx, Type type, Expression length) {
-        length.generate(method, ctx);
-
-        int typeOpcode = toArrayTypeOpcode(type);
-        if (typeOpcode >= 0) {
-            method.visitIntInsn(NEWARRAY, typeOpcode);
-        } else {
-            method.visitTypeInsn(ANEWARRAY, type.getInternalName());
-        }
-    }
-
-    public static int toArrayTypeOpcode(Type type) {
-        switch (type.getSort()) {
-            case Type.BOOLEAN: return T_BOOLEAN;
-            case Type.BYTE:    return T_BYTE;
-            case Type.CHAR:    return T_CHAR;
-            case Type.SHORT:   return T_SHORT;
-            case Type.INT:     return T_INT;
-            case Type.LONG:    return T_LONG;
-            case Type.FLOAT:   return T_FLOAT;
-            case Type.DOUBLE:  return T_DOUBLE;
-            default:           return -1;
-        }
-    }
-
     public static int negateCondition(int opcode) {
         switch (opcode) {
             case IFNULL:    return IFNONNULL;
@@ -459,7 +395,6 @@ public final class BytecodeUtil implements Opcodes {
             default:        return -1;
         }
     }
-
     public static int compareOpcode(Type type) {
         switch (type.getSort()) {
             case Type.DOUBLE: return DCMPL;
@@ -468,7 +403,6 @@ public final class BytecodeUtil implements Opcodes {
             default:          return -1;
         }
     }
-
     // Type#getOpcode doesn't work on xRETURN
     // opcodes for some reason...
     public static int returnOpcode(Type type) {
@@ -482,7 +416,6 @@ public final class BytecodeUtil implements Opcodes {
             default:          return IRETURN;
         }
     }
-
     public static int arrayLoadOpcode(Type type) {
         switch (type.getSort()) {
             case Type.BYTE:   return BALOAD;
@@ -497,7 +430,6 @@ public final class BytecodeUtil implements Opcodes {
             default:          return -1;
         }
     }
-
     public static int arrayStoreOpcode(Type type) {
         switch (type.getSort()) {
             case Type.BYTE:   return BASTORE;
@@ -512,7 +444,6 @@ public final class BytecodeUtil implements Opcodes {
             default:          return -1;
         }
     }
-
     public static Type componentType(Type type) {
         // not an array
         if (type.getDimensions() < 1) return null;
@@ -520,7 +451,6 @@ public final class BytecodeUtil implements Opcodes {
         String descriptor = type.getDescriptor();
         return Type.getType(descriptor.substring(1, descriptor.length()));
     }
-
     public static Type toBoxedType(Type type) {
         switch (type.getSort()) {
             case Type.BYTE:   return Type.getType(Byte.class);
@@ -533,7 +463,6 @@ public final class BytecodeUtil implements Opcodes {
             default:          return null;
         }
     }
-
     public static Type toUnboxedType(Type type) {
         String name = type.getClassName();
         switch (name) {
@@ -547,5 +476,32 @@ public final class BytecodeUtil implements Opcodes {
             default:                    return null;
         }
     }
+    // Use org.objectweb.asm.Type instead
+    // Use org.objectweb.asm.Type instead
+    // byte, char, short, int, long, float, double
+    public static void createArray(MethodVisitor method, BuildContext ctx, Type type, Expression length) {
+        length.generate(method, ctx);
 
+        int typeOpcode = toArrayTypeOpcode(type);
+        if (typeOpcode >= 0) {
+            method.visitIntInsn(NEWARRAY, typeOpcode);
+        } else {
+            method.visitTypeInsn(ANEWARRAY, type.getInternalName());
+        }
+    }
+    public static int toArrayTypeOpcode(Type type) {
+        switch (type.getSort()) {
+            case Type.BOOLEAN: return T_BOOLEAN;
+            case Type.BYTE:    return T_BYTE;
+            case Type.CHAR:    return T_CHAR;
+            case Type.SHORT:   return T_SHORT;
+            case Type.INT:     return T_INT;
+            case Type.LONG:    return T_LONG;
+            case Type.FLOAT:   return T_FLOAT;
+            case Type.DOUBLE:  return T_DOUBLE;
+            default:           return -1;
+        }
+    }
+    // Type#getOpcode doesn't work on xRETURN
+    // opcodes for some reason...
 }
