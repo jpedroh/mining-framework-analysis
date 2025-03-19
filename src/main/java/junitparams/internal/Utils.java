@@ -32,7 +32,7 @@ public class Utils {
     public static String getParameterStringByIndexOrEmpty(Object paramSet, int parameterIndex) {
         Object[] params = safelyCastParamsToArray(paramSet);
         if (paramSet instanceof String) {
-            params = splitAtCommaOrPipe((String) paramSet);
+            params = splitAtCommaOrPipe((String)paramSet);
         }
         if (parameterIndex >= 0 && parameterIndex < params.length) {
             return addParamToResult("", params[parameterIndex]);
@@ -48,7 +48,7 @@ public class Utils {
         char previousCharacter;
 
         StringBuilder value = new StringBuilder();
-        for (int i = 0; i < input.length(); i++) {
+        for (int i=0; i< input.length(); i++) {
             previousCharacter = character;
             character = input.charAt(i);
 
@@ -78,7 +78,7 @@ public class Utils {
         if (paramSet instanceof Object[]) {
             params = (Object[]) paramSet;
         } else {
-            params = new Object[]{paramSet};
+            params = new Object[] {paramSet};
         }
         return params;
     }
