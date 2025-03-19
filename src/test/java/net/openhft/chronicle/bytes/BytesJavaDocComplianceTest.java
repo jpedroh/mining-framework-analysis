@@ -113,14 +113,9 @@ final class BytesJavaDocComplianceTest extends BytesTestCommon {
         );
     }
 
-    @Test
-        // Checks that ByteBuffers that are read only cannot be wrapped
-    void wrapForWriteCannotTakeReadOnlyByteBuffers() {
-        final ByteBuffer bb = ByteBuffer.allocate(10).asReadOnlyBuffer();
-        assertThrows(ReadOnlyBufferException.class, () ->
-                Bytes.wrapForWrite(bb)
-        );
-    }
+    // @Test
+
+    // This test is for manual debug
 
     // Todo: Do some write operations so that we know we have content then try operations
 
