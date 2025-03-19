@@ -334,9 +334,16 @@ public class CommandLineApp {
                 .build());
         o.addOption(Option.builder("c")
                 .longOpt("columns")
+<<<<<<< /usr/src/app/output/tabulapdf/tabula-java/4aa9568a70b6748d28491648e13598e5cc097c3f/src/main/java/technology/tabula/CommandLineApp.java/left.java
                 .desc("X coordinates of column boundaries. Example --columns 10.1,20.2,30.3. "
                         + "If all values are between 0-100 (inclusive) and preceded by '%', input will be taken as % of actual width of the page. "
                         + "Example: --columns %25,50,80.6")
+||||||| /usr/src/app/output/tabulapdf/tabula-java/4aa9568a70b6748d28491648e13598e5cc097c3f/src/main/java/technology/tabula/CommandLineApp.java/base.java
+                .desc("X coordinates of column boundaries. Example --columns 10.1,20.2,30.3")
+=======
+                .desc("X coordinates of column boundaries where values are in points and relative to the left of the page. "
+                    + "Example --columns 10.1,20.2,30.3")
+>>>>>>> /usr/src/app/output/tabulapdf/tabula-java/4aa9568a70b6748d28491648e13598e5cc097c3f/src/main/java/technology/tabula/CommandLineApp.java/right.java
                 .hasArg()
                 .argName("COLUMNS")
                 .build());
