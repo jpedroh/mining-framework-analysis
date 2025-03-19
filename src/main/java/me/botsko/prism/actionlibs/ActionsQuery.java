@@ -36,22 +36,19 @@ public class ActionsQuery {
      * @param plugin
      * @return
      */
-    public ActionsQuery(Prism plugin) {
-        this.plugin = plugin;
-        this.qb = Prism.getPrismDataSource().createSelectQuery();
-    }
-
+	public ActionsQuery(Prism plugin) {
+	    this.plugin = plugin;
+	    this.qb = Prism.getPrismDataSource().createSelectQuery();
+	}
     public void setShouldPauseDB(boolean shouldPauseDB) {
         this.shouldPauseDB = shouldPauseDB;
     }
-
     /**
      * @return
      */
     public QueryResult lookup(QueryParameters parameters) {
         return lookup(parameters, null);
     }
-
     /**
      * @return
      */
@@ -97,7 +94,6 @@ public class ActionsQuery {
         return res;
 
     }
-
     /**
      * @param playername
      */
@@ -110,7 +106,6 @@ public class ActionsQuery {
         q.isLastProcessID();
         return q.getLastProcessIdQuery();
     }
-
     /**
      * @param id
      */
@@ -122,7 +117,6 @@ public class ActionsQuery {
         q.setShouldGroup(false);
         return q.executeProcessQuery();
     }
-
     /**
      * Returns the minimum id found that meets the parameters
      *
@@ -136,29 +130,40 @@ public class ActionsQuery {
         idQ.setParameters(parameters);
         return idQ.execute();
     }
-
     /**
      * Returns the maximum id found that meets the parameters
      *
      * @return
      */
-    public long getMaxIDForQuery(QueryParameters parameters) {
-        final SelectIDQuery idQ = Prism.getPrismDataSource().createSelectIDQuery();
-        idQ.setMax();
-        parameters.setMinPrimaryKey(0);
-        parameters.setMaxPrimaryKey(0);
-        idQ.setParameters(parameters);
-        return idQ.execute();
-    }
-
+	public long getMaxIDForQuery(QueryParameters parameters) {
+	    final SelectIDQuery idQ = Prism.getPrismDataSource().createSelectIDQuery();
+	    idQ.setMax();
+	    parameters.setMinPrimaryKey(0);
+	    parameters.setMaxPrimaryKey(0);
+	    idQ.setParameters(parameters);
+	    return idQ.execute();
+	}
     /**
      * @return
      */
     public int delete(QueryParameters parameters) {
+<<<<<<< /usr/src/app/output/prism/prism-bukkit/74927cacad04dc8d6037f2ccd53c2182e12312b7/src/main/java/me/botsko/prism/actionlibs/ActionsQuery.java/left.java
         final DeleteQuery dqb = Prism.getPrismDataSource().createDeleteQuery();
         dqb.setParameters(parameters);
         dqb.setShouldGroup(false);//make it clear that we dont want to group for deletes
         dqb.setShouldPause(shouldPauseDB); //will stop recording queue
         return dqb.execute();
+||||||| /usr/src/app/output/prism/prism-bukkit/74927cacad04dc8d6037f2ccd53c2182e12312b7/src/main/java/me/botsko/prism/actionlibs/ActionsQuery.java/base.java
+    		final DeleteQuery dqb =  Prism.getPrismDataSource().createDeleteQuery();
+    		dqb.setParameters(parameters);
+    		dqb.setShouldGroup(false);//make it clear that we dont want to group for deletes
+    		return dqb.execute();
+=======
+    		final DeleteQuery dqb =  Prism.getPrismDataSource().createDeleteQuery();
+    		dqb.setParameters(parameters);
+    		dqb.setShouldGroup(false);//make it clear that we dont want to group for deletes
+            dqb.setShouldPause(shouldPauseDB); //will stop recording queue
+    		return dqb.execute();
+>>>>>>> /usr/src/app/output/prism/prism-bukkit/74927cacad04dc8d6037f2ccd53c2182e12312b7/src/main/java/me/botsko/prism/actionlibs/ActionsQuery.java/right.java
     }
 }
