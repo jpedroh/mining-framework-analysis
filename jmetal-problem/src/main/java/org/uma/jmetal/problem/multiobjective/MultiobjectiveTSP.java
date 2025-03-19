@@ -1,20 +1,14 @@
 package org.uma.jmetal.problem.multiobjective;
-
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import org.uma.jmetal.problem.impl.AbstractIntegerPermutationProblem;
+import org.uma.jmetal.problem.impl.DynamicDoubleProblem;
+import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
 import org.uma.jmetal.util.solutionattribute.impl.OverallConstraintViolation;
-
 import java.io.*;
 
 /**
