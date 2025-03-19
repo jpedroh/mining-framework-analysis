@@ -1,50 +1,13 @@
-//  CMAESUtils.java
-//
-//  Author:
-//       Esteban López-Camacho <esteban@lcc.uma.es>
-//
-//  Copyright (c) 2014 Antonio J. Nebro
-//
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU Lesser General Public License for more details.
-//
-//  You should have received a copy of the GNU Lesser General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
 package org.uma.jmetal.algorithm.singleobjective.evolutionstrategy;
-
-
 import org.uma.jmetal.util.JMetalLogger;
 
 public class CMAESUtils {
+  private CMAESUtils() {
+  }
 
-  private CMAESUtils () { }
-
-  // Symmetric Householder reduction to tridiagonal form, taken from JAMA package.
-
-  public static void tred2(int n, double v[][], double d[], double e[]) {
-
-    //  This is derived from the Algol procedures tred2 by
-    //  Bowdler, Martin, Reinsch, and Wilkinson, Handbook for
-    //  Auto. Comp., Vol.ii-Linear Algebra, and the corresponding
-    //  Fortran subroutine in EISPACK.
-
+  public static void tred2(int n, double[][] v, double[] d, double[] e) {
     System.arraycopy(v[n - 1], 0, d, 0, n);
-
-    // Householder reduction to tridiagonal form.
-
     for (int i = n - 1; i > 0; i--) {
-
-      // Scale to avoid under/overflow.
-
       double scale = 0.0;
       double h = 0.0;
       for (int k = 0; k < i; k++) {
@@ -58,25 +21,16 @@ public class CMAESUtils {
           v[j][i] = 0.0;
         }
       } else {
-
         h = householderIteration(i, scale, v, d, e);
-
       }
       d[i] = h;
     }
-
-    // Accumulate transformations.
     accumulateTransformations(n, v, d);
-
     e[0] = 0.0;
   }
 
-  private static double householderIteration(int index, double scale,
-        double[][]v, double d[], double e[]) {
-
+  private static double householderIteration(int index, double scale, double[][] v, double[] d, double[] e) {
     double h = 0.0;
-
-    // Generate Householder vector.
     for (int k = 0; k < index; k++) {
       d[k] /= scale;
       h += d[k] * d[k];
@@ -92,8 +46,6 @@ public class CMAESUtils {
     for (int j = 0; j < index; j++) {
       e[j] = 0.0;
     }
-
-    // Apply similarity transformation to remaining columns.
     for (int j = 0; j < index; j++) {
       f = d[j];
       v[j][index] = f;
@@ -122,13 +74,10 @@ public class CMAESUtils {
       d[j] = v[index - 1][j];
       v[index][j] = 0.0;
     }
-
     return h;
-
   }
 
-  private static void accumulateTransformations(int n, double[][]v, double[]d) {
-
+  private static void accumulateTransformations(int n, double[][] v, double[] d) {
     for (int i = 0; i < n - 1; i++) {
       v[n - 1][i] = v[i][i];
       v[i][i] = 1.0;
@@ -156,28 +105,15 @@ public class CMAESUtils {
       v[n - 1][j] = 0.0;
     }
     v[n - 1][n - 1] = 1.0;
-
   }
 
-  // Symmetric tridiagonal QL algorithm, taken from JAMA package.
-
-  public static void tql2(int n, double d[], double e[], double v[][]) {
-
-    //  This is derived from the Algol procedures tql2, by
-    //  Bowdler, Martin, Reinsch, and Wilkinson, Handbook for
-    //  Auto. Comp., Vol.ii-Linear Algebra, and the corresponding
-    //  Fortran subroutine in EISPACK.
-
+  public static void tql2(int n, double[] d, double[] e, double[][] v) {
     System.arraycopy(e, 1, e, 0, n - 1);
     e[n - 1] = 0.0;
-
     double f = 0.0;
     double tst1 = 0.0;
     double eps = Math.pow(2.0, -52.0);
     for (int l = 0; l < n; l++) {
-
-      // Find small subdiagonal element
-
       tst1 = Math.max(tst1, Math.abs(d[l]) + Math.abs(e[l]));
       int m = l;
       while (m < n) {
@@ -186,36 +122,21 @@ public class CMAESUtils {
         }
         m++;
       }
-
-      // If m == l, d[l] is an eigenvalue,
-      // otherwise, iterate.
-
       if (m > l) {
         int iter = 0;
         do {
-          iter = iter + 1;  // (Could check iteration count here.)
-
-          // Compute implicit shift
+          iter = iter + 1;
           f += specificShift(l, n, d, e);
-
-          // Implicit QL transformation.
           implicitQLTransformation(l, m, n, v, d, e);
-
-          // Check for convergence.
-
-        } while (Math.abs(e[l]) > eps * tst1);
+        } while(Math.abs(e[l]) > eps * tst1);
       }
       d[l] = d[l] + f;
       e[l] = 0.0;
     }
-
-    // Sort eigenvalues and corresponding vectors.
     sortEigenValues(n, d, v);
-
-  } // tql2
+  }
 
   private static double specificShift(int idx, int n, double[] d, double[] e) {
-
     double g = d[idx];
     double p = (d[idx + 1] - g) / (2.0 * e[idx]);
     double r = hypot(p, 1.0);
@@ -224,18 +145,14 @@ public class CMAESUtils {
     }
     d[idx] = e[idx] / (p + r);
     d[idx + 1] = e[idx] * (p + r);
-
     double h = g - d[idx];
     for (int i = idx + 2; i < n; i++) {
       d[i] -= h;
     }
     return h;
-
   }
 
-  private static void implicitQLTransformation(int l, int m, int n, double v[][],
-        double[] d, double[] e) {
-
+  private static void implicitQLTransformation(int l, int m, int n, double[][] v, double[] d, double[] e) {
     double dl1 = d[l + 1];
     double p = d[m];
     double c = 1.0;
@@ -256,9 +173,6 @@ public class CMAESUtils {
       c = p / r;
       p = c * d[i] - s * g;
       d[i + 1] = h + s * (c * g + s * d[i]);
-
-      // Accumulate transformation.
-
       for (int k = 0; k < n; k++) {
         h = v[k][i + 1];
         v[k][i + 1] = s * v[k][i] + c * h;
@@ -268,22 +182,20 @@ public class CMAESUtils {
     p = -s * s2 * c3 * el1 * e[l] / dl1;
     e[l] = s * p;
     d[l] = c * p;
-
   }
 
   private static void sortEigenValues(int n, double[] d, double[][] v) {
-
     for (int i = 0; i < n - 1; i++) {
       int k = i;
       double p = d[i];
       for (int j = i + 1; j < n; j++) {
-        if (d[j] < p) { // NH find smallest k>i
+        if (d[j] < p) {
           k = j;
           p = d[j];
         }
       }
       if (k != i) {
-        d[k] = d[i]; // swap k and i
+        d[k] = d[i];
         d[i] = p;
         for (int j = 0; j < n; j++) {
           p = v[j][i];
@@ -292,43 +204,26 @@ public class CMAESUtils {
         }
       }
     }
-
   }
 
-  public static int checkEigenSystem(int n, double c[][], double diag[], double q[][]) {
-    /*
-     exhaustive org.uma.test of the output of the eigendecomposition
-     needs O(n^3) operations
-
-     produces error
-     returns number of detected inaccuracies
-    */
-
-    /* compute q diag q^T and q q^T to check */
+  public static int checkEigenSystem(int n, double[][] c, double[] diag, double[][] q) {
     int i, j, k, res = 0;
     double cc, dd;
     String s;
-
     for (i = 0; i < n; ++i) {
       for (j = 0; j < n; ++j) {
         for (cc = 0., dd = 0., k = 0; k < n; ++k) {
           cc += diag[k] * q[i][k] * q[j][k];
           dd += q[i][k] * q[j][k];
         }
-        /* check here, is the normalization the right one? */
-        if (Math.abs(cc - c[biggerValue(i,j)][smallerValue(i,j)])
-              / Math.sqrt(c[i][i] * c[j][j]) > 1e-10
-            && Math.abs(cc - c[biggerValue(i,j)][smallerValue(i,j)]) > 1e-9) {
-          s = " " + i + " " + j + " " + cc + " " + c[i > j ? i : j][i > j ? j : i] + " " + (cc - c[
-              i > j ? i : j][i > j ? j : i]);
-          JMetalLogger.logger.severe(
-              "CMAESUtils.checkEigenSystem: WARNING - imprecise experiment output detected " + s);
+        if (Math.abs(cc - c[biggerValue(i, j)][smallerValue(i, j)]) / Math.sqrt(c[i][i] * c[j][j]) > 1e-10 && Math.abs(cc - c[biggerValue(i, j)][smallerValue(i, j)]) > 1e-9) {
+          s = " " + i + " " + j + " " + cc + " " + c[i > j ? i : j][i > j ? j : i] + " " + (cc - c[i > j ? i : j][i > j ? j : i]);
+          JMetalLogger.logger.severe("CMAESUtils.checkEigenSystem: WARNING - imprecise experiment output detected " + s);
           ++res;
         }
         if (Math.abs(dd - (i == j ? 1 : 0)) > 1e-10) {
           s = i + " " + j + " " + dd;
-          JMetalLogger.logger.severe("CMAESUtils.checkEigenSystem():" +
-                  " WARNING - imprecise experiment output detected (Q not orthog.) " + s);
+          JMetalLogger.logger.severe("CMAESUtils.checkEigenSystem():" + " WARNING - imprecise experiment output detected (Q not orthog.) " + s);
           ++res;
         }
       }
@@ -352,9 +247,11 @@ public class CMAESUtils {
     if (Math.abs(a) > Math.abs(b)) {
       r = b / a;
       r = Math.abs(a) * Math.sqrt(1 + r * r);
-    } else if (b != 0) {
-      r = a / b;
-      r = Math.abs(b) * Math.sqrt(1 + r * r);
+    } else {
+      if (b != 0) {
+        r = a / b;
+        r = Math.abs(b) * Math.sqrt(1 + r * r);
+      }
     }
     return r;
   }
@@ -372,5 +269,4 @@ public class CMAESUtils {
   private static int smallerValue(int i, int j) {
     return (i > j ? j : i);
   }
-
 }
