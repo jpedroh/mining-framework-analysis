@@ -1,31 +1,14 @@
-/*******************************************************************************
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- * 
- *  http://aws.amazon.com/apache2.0
- * 
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- ******************************************************************************/
 package com.amazonaws.services.kinesis.log4j;
-
 import java.nio.ByteBuffer;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.ErrorCode;
 import org.apache.log4j.spi.LoggingEvent;
-
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
@@ -50,17 +33,29 @@ import com.amazonaws.services.kinesis.model.StreamStatus;
  */
 public class KinesisAppender extends AppenderSkeleton {
   private static final Logger LOGGER = Logger.getLogger(KinesisAppender.class);
+
   private String encoding = AppenderConstants.DEFAULT_ENCODING;
+
   private int maxRetries = AppenderConstants.DEFAULT_MAX_RETRY_COUNT;
+
   private int bufferSize = AppenderConstants.DEFAULT_BUFFER_SIZE;
+
   private int threadCount = AppenderConstants.DEFAULT_THREAD_COUNT;
+
   private int shutdownTimeout = AppenderConstants.DEFAULT_SHUTDOWN_TIMEOUT_SEC;
+
   private String endpoint;
+
   private String region;
+
   private String streamName;
+
   private boolean initializationFailed = false;
+
   private BlockingQueue<Runnable> taskBuffer;
+
   private AmazonKinesisAsyncClient kinesisClient;
+
   private AsyncPutCallStatsReporter asyncCallHander;
 
   private void error(String message) {
@@ -73,7 +68,7 @@ public class KinesisAppender extends AppenderSkeleton {
     throw new IllegalStateException(message, e);
   }
 
-    /**
+  /**
      * Set proxy configuration based on system properties. Some of the properties are standard
      * properties documented by Oracle (http.proxyHost, http.proxyPort, http.auth.ntlm.domain),
      * and others are from common convention (http.proxyUser, http.proxyPassword).
@@ -81,40 +76,33 @@ public class KinesisAppender extends AppenderSkeleton {
      * Finally, for NTLM authentication the workstation name is taken from the environment as
      * COMPUTERNAME. We set this on the client configuration only if the NTLM domain was specified.
      */
-    private ClientConfiguration setProxySettingsFromSystemProperties(ClientConfiguration clientConfiguration) {
-
-        final String proxyHost = System.getProperty("http.proxyHost");
-        if(proxyHost != null) {
-            clientConfiguration.setProxyHost(proxyHost);
-        }
-
-        final String proxyPort = System.getProperty("http.proxyPort");
-        if(proxyPort != null) {
-            clientConfiguration.setProxyPort(Integer.parseInt(proxyPort));
-        }
-
-        final String proxyUser = System.getProperty("http.proxyUser");
-        if(proxyUser != null) {
-            clientConfiguration.setProxyUsername(proxyUser);
-        }
-
-        final String proxyPassword = System.getProperty("http.proxyPassword");
-        if(proxyPassword != null) {
-            clientConfiguration.setProxyPassword(proxyPassword);
-        }
-
-        final String proxyDomain = System.getProperty("http.auth.ntlm.domain");
-        if(proxyDomain != null) {
-            clientConfiguration.setProxyDomain(proxyDomain);
-        }
-
-        final String workstation = System.getenv("COMPUTERNAME");
-        if(proxyDomain != null && workstation != null) {
-            clientConfiguration.setProxyWorkstation(workstation);
-        }
-
-        return clientConfiguration;
+  private ClientConfiguration setProxySettingsFromSystemProperties(ClientConfiguration clientConfiguration) {
+    final String proxyHost = System.getProperty("http.proxyHost");
+    if (proxyHost != null) {
+      clientConfiguration.setProxyHost(proxyHost);
     }
+    final String proxyPort = System.getProperty("http.proxyPort");
+    if (proxyPort != null) {
+      clientConfiguration.setProxyPort(Integer.parseInt(proxyPort));
+    }
+    final String proxyUser = System.getProperty("http.proxyUser");
+    if (proxyUser != null) {
+      clientConfiguration.setProxyUsername(proxyUser);
+    }
+    final String proxyPassword = System.getProperty("http.proxyPassword");
+    if (proxyPassword != null) {
+      clientConfiguration.setProxyPassword(proxyPassword);
+    }
+    final String proxyDomain = System.getProperty("http.auth.ntlm.domain");
+    if (proxyDomain != null) {
+      clientConfiguration.setProxyDomain(proxyDomain);
+    }
+    final String workstation = System.getenv("COMPUTERNAME");
+    if (proxyDomain != null && workstation != null) {
+      clientConfiguration.setProxyWorkstation(workstation);
+    }
+    return clientConfiguration;
+  }
 
   /**
    * Configures this appender instance and makes it ready for use by the
@@ -127,51 +115,36 @@ public class KinesisAppender extends AppenderSkeleton {
    * @throws IllegalStateException
    *           if we encounter issues configuring this appender instance
    */
-  @Override
-  public void activateOptions() {
+  @Override public void activateOptions() {
     if (streamName == null) {
       initializationFailed = true;
       error("Invalid configuration - streamName cannot be null for appender: " + name);
     }
-
     if (layout == null) {
       initializationFailed = true;
       error("Invalid configuration - No layout for appender: " + name);
     }
-
     ClientConfiguration clientConfiguration = new ClientConfiguration();
     clientConfiguration = setProxySettingsFromSystemProperties(clientConfiguration);
-
     clientConfiguration.setMaxErrorRetry(maxRetries);
-    clientConfiguration.setRetryPolicy(new RetryPolicy(PredefinedRetryPolicies.DEFAULT_RETRY_CONDITION,
-        PredefinedRetryPolicies.DEFAULT_BACKOFF_STRATEGY, maxRetries, true));
+    clientConfiguration.setRetryPolicy(new RetryPolicy(PredefinedRetryPolicies.DEFAULT_RETRY_CONDITION, PredefinedRetryPolicies.DEFAULT_BACKOFF_STRATEGY, maxRetries, true));
     clientConfiguration.setUserAgent(AppenderConstants.USER_AGENT_STRING);
-
     BlockingQueue<Runnable> taskBuffer = new LinkedBlockingDeque<Runnable>(bufferSize);
-    ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(threadCount, threadCount,
-        AppenderConstants.DEFAULT_THREAD_KEEP_ALIVE_SEC, TimeUnit.SECONDS, taskBuffer, new BlockFastProducerPolicy());
+    ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(threadCount, threadCount, AppenderConstants.DEFAULT_THREAD_KEEP_ALIVE_SEC, TimeUnit.SECONDS, taskBuffer, new BlockFastProducerPolicy());
     threadPoolExecutor.prestartAllCoreThreads();
-    kinesisClient = new AmazonKinesisAsyncClient(new CustomCredentialsProviderChain(), clientConfiguration,
-        threadPoolExecutor);
-
+    kinesisClient = new AmazonKinesisAsyncClient(new CustomCredentialsProviderChain(), clientConfiguration, threadPoolExecutor);
     boolean regionProvided = !Validator.isBlank(region);
     if (!regionProvided) {
       region = AppenderConstants.DEFAULT_REGION;
     }
     if (!Validator.isBlank(endpoint)) {
       if (regionProvided) {
-	LOGGER
-	    .warn("Received configuration for both region as well as Amazon Kinesis endpoint. ("
-		+ endpoint
-		+ ") will be used as endpoint instead of default endpoint for region ("
-		+ region + ")");
+        LOGGER.warn("Received configuration for both region as well as Amazon Kinesis endpoint. (" + endpoint + ") will be used as endpoint instead of default endpoint for region (" + region + ")");
       }
-      kinesisClient.setEndpoint(endpoint,
-	  AppenderConstants.DEFAULT_SERVICE_NAME, region);
+      kinesisClient.setEndpoint(endpoint, AppenderConstants.DEFAULT_SERVICE_NAME, region);
     } else {
       kinesisClient.setRegion(Region.getRegion(Regions.fromName(region)));
     }
-
     DescribeStreamResult describeResult = null;
     try {
       describeResult = kinesisClient.describeStream(streamName);
@@ -182,9 +155,8 @@ public class KinesisAppender extends AppenderSkeleton {
       }
     } catch (ResourceNotFoundException rnfe) {
       initializationFailed = true;
-      error("Stream " + streamName + " doesn't exist for appender: " + name, rnfe);
+      error("Stream " + streamName + " doesn\'t exist for appender: " + name, rnfe);
     }
-
     asyncCallHander = new AsyncPutCallStatsReporter(name);
   }
 
@@ -194,8 +166,7 @@ public class KinesisAppender extends AppenderSkeleton {
    * that doesn't finish within configured shutdownTimeout, it would drop all
    * the buffered log events.
    */
-  @Override
-  public void close() {
+  @Override public void close() {
     ThreadPoolExecutor threadpool = (ThreadPoolExecutor) kinesisClient.getExecutorService();
     threadpool.shutdown();
     BlockingQueue<Runnable> taskQueue = threadpool.getQueue();
@@ -204,14 +175,10 @@ public class KinesisAppender extends AppenderSkeleton {
     try {
       gracefulShutdown = threadpool.awaitTermination(shutdownTimeout, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
-      // we are anyways cleaning up
     } finally {
       int bufferSizeAfterShutdown = taskQueue.size();
       if (!gracefulShutdown || bufferSizeAfterShutdown > 0) {
-        String errorMsg = "Kinesis Log4J Appender (" + name + ") waited for " + shutdownTimeout
-            + " seconds before terminating but could send only " + (bufferSizeAfterShutdown - bufferSizeBeforeShutdown)
-            + " logevents, it failed to send " + bufferSizeAfterShutdown
-            + " pending log events from it's processing queue";
+        String errorMsg = "Kinesis Log4J Appender (" + name + ") waited for " + shutdownTimeout + " seconds before terminating but could send only " + (bufferSizeAfterShutdown - bufferSizeBeforeShutdown) + " logevents, it failed to send " + bufferSizeAfterShutdown + " pending log events from it\'s processing queue";
         LOGGER.error(errorMsg);
         errorHandler.error(errorMsg, null, ErrorCode.WRITE_FAILURE);
       }
@@ -219,8 +186,7 @@ public class KinesisAppender extends AppenderSkeleton {
     kinesisClient.shutdown();
   }
 
-  @Override
-  public boolean requiresLayout() {
+  @Override public boolean requiresLayout() {
     return true;
   }
 
@@ -234,22 +200,18 @@ public class KinesisAppender extends AppenderSkeleton {
    * If there is any error in parsing logevents, those logevents would be
    * dropped.
    */
-  @Override
-  public void append(LoggingEvent logEvent) {
+  @Override public void append(LoggingEvent logEvent) {
     if (initializationFailed) {
-      error("Check the configuration and whether the configured stream " + streamName
-          + " exists and is active. Failed to initialize kinesis log4j appender: " + name);
+      error("Check the configuration and whether the configured stream " + streamName + " exists and is active. Failed to initialize kinesis log4j appender: " + name);
       return;
     }
     try {
       String message = layout.format(logEvent);
       ByteBuffer data = ByteBuffer.wrap(message.getBytes(encoding));
-      kinesisClient.putRecordAsync(new PutRecordRequest().withPartitionKey(UUID.randomUUID().toString())
-          .withStreamName(streamName).withData(data), asyncCallHander);
+      kinesisClient.putRecordAsync(new PutRecordRequest().withPartitionKey(UUID.randomUUID().toString()).withStreamName(streamName).withData(data), asyncCallHander);
     } catch (Exception e) {
       LOGGER.error("Failed to schedule log entry for publishing into Kinesis stream: " + streamName);
-      errorHandler.error("Failed to schedule log entry for publishing into Kinesis stream: " + streamName, e,
-          ErrorCode.WRITE_FAILURE, logEvent);
+      errorHandler.error("Failed to schedule log entry for publishing into Kinesis stream: " + streamName, e, ErrorCode.WRITE_FAILURE, logEvent);
     }
   }
 
