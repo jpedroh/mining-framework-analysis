@@ -1,23 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.apache.olingo.server.core.requests;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +10,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
@@ -89,30 +69,33 @@ import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 
 public class DataRequest extends ServiceRequest {
   public static final int DEFAULT_BUFFER_SIZE = 8192;
+
   protected UriResourceEntitySet uriResourceEntitySet;
+
   private boolean countRequest;
+
   private UriResourceProperty uriResourceProperty;
+
   private boolean valueRequest;
+
   private final LinkedList<UriResourceNavigation> uriNavigations = new LinkedList<UriResourceNavigation>();
+
   private boolean references;
 
   private RequestType type;
+
   private UriResourceSingleton uriResourceSingleton;
 
-  /**
-   * This sub-categorizes the request so that code can be simplified
-   */
   interface RequestType {
     public HttpMethod[] allowedMethods();
-    
+
     public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException;
-    
+
     public ContentType getResponseContentType() throws ContentNegotiatorException;
 
     public ContextURL getContextURL(OData odata) throws SerializerException;
 
-    public void execute(ServiceHandler handler, ODataResponse response)
-        throws ODataLibraryException, ODataApplicationException;
+    public void execute(ServiceHandler handler, ODataResponse response) throws ODataLibraryException, ODataApplicationException;
   }
 
   public DataRequest(OData odata, ServiceMetadata serviceMetadata) {
@@ -168,7 +151,7 @@ public class DataRequest extends ServiceRequest {
     if (isPropertyComplex()) {
       return false;
     }
-    EdmProperty property = ((UriResourcePrimitiveProperty)this.uriResourceProperty).getProperty();
+    EdmProperty property = ((UriResourcePrimitiveProperty) this.uriResourceProperty).getProperty();
     return property.getType() == odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Stream);
   }
 
@@ -223,13 +206,11 @@ public class DataRequest extends ServiceRequest {
     this.type = new ValueRequest();
   }
 
-  public boolean assertHttpMethod(ODataResponse response)
-      throws ODataHandlerException {
+  public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
     return this.type.assertHttpMethod(response);
   }
-  
-  @Override
-  public HttpMethod[] allowedMethods() {
+
+  @Override public HttpMethod[] allowedMethods() {
     return this.type.allowedMethods();
   }
 
@@ -237,293 +218,207 @@ public class DataRequest extends ServiceRequest {
     return type.getContextURL(odata);
   }
 
-  @Override
-  public void execute(ServiceHandler handler, ODataResponse response)
-      throws ODataLibraryException, ODataApplicationException {
-
-    // check for valid HTTP Verb
+  @Override public void execute(ServiceHandler handler, ODataResponse response) throws ODataLibraryException, ODataApplicationException {
     assertHttpMethod(response);
-
     this.type.execute(handler, response);
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public <T> T getSerializerOptions(Class<T> serilizerOptions, ContextURL contextUrl, boolean references)
-      throws ContentNegotiatorException {   
+  @SuppressWarnings(value = { "unchecked" }) @Override public <T extends java.lang.Object> T getSerializerOptions(Class<T> serilizerOptions, ContextURL contextUrl, boolean references) throws ContentNegotiatorException {
     if (serilizerOptions.isAssignableFrom(PrimitiveSerializerOptions.class)) {
-      
       String xmlReplacement = null;
-      if (getResponseContentType().isCompatible(ContentType.APPLICATION_XML)
-          || getResponseContentType().isCompatible(ContentType.APPLICATION_ATOM_XML)) {
+      if (getResponseContentType().isCompatible(ContentType.APPLICATION_XML) || getResponseContentType().isCompatible(ContentType.APPLICATION_ATOM_XML)) {
         xmlReplacement = xml10IncompatibleCharReplacement();
-      }      
-      
-      return (T) PrimitiveSerializerOptions.with().contextURL(contextUrl)
-          .facetsFrom(getUriResourceProperty().getProperty())
-          .xml10InvalidCharReplacement(xmlReplacement)
-          .build();
+      }
+      return (T) PrimitiveSerializerOptions.with().contextURL(contextUrl).facetsFrom(getUriResourceProperty().getProperty()).xml10InvalidCharReplacement(xmlReplacement).build();
     }
     return super.getSerializerOptions(serilizerOptions, contextUrl, references);
   }
 
-  @Override
-  public ContentType getResponseContentType() throws ContentNegotiatorException {
+  @Override public ContentType getResponseContentType() throws ContentNegotiatorException {
     return type.getResponseContentType();
   }
 
   class EntityRequest implements RequestType {
-
-    @Override
-    public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
-      // the create/update/delete to navigation property is done through references
-      // see # 11.4.6
+    @Override public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
       if (!getNavigations().isEmpty()) {
         if (isPOST()) {
           UriResourceNavigation last = getNavigations().getLast();
-          if (!(getEntitySet().getRelatedBindingTarget(last.getProperty().getName()) 
-              instanceof EdmEntitySet)) {
-            return methodNotAllowed(response, httpMethod(), 
-                "navigation updates must be to an entity contained in an entity set", 
-                allowedMethods());
+          if (!(getEntitySet().getRelatedBindingTarget(last.getProperty().getName()) instanceof EdmEntitySet)) {
+            return methodNotAllowed(response, httpMethod(), "navigation updates must be to an entity contained in an entity set", allowedMethods());
           }
-        } else if (!isGET()) {
-          return methodNotAllowed(response, httpMethod(), 
-              "update/delete to navigation property is done through references", 
-              allowedMethods());
+        } else {
+          if (!isGET()) {
+            return methodNotAllowed(response, httpMethod(), "update/delete to navigation property is done through references", allowedMethods());
+          }
         }
       }
-      
       if ((isGET() || isDELETE()) && getReturnRepresentation() != ReturnRepresentation.NONE) {
-        return methodNotAllowed(response, httpMethod(), 
-            "Invalid prefer header used", 
-            allowedMethods());
+        return methodNotAllowed(response, httpMethod(), "Invalid prefer header used", allowedMethods());
       }
-      
-      // in update, delete entity cases, predicate must be there
-      if ((isPATCH() || isPUT() || isDELETE()) 
-          && (getKeyPredicates() == null || getKeyPredicates().isEmpty())) {
-        return methodNotAllowed(response, httpMethod(),
-            "No key predicates provided",allowedMethods());
+      if ((isPATCH() || isPUT() || isDELETE()) && (getKeyPredicates() == null || getKeyPredicates().isEmpty())) {
+        return methodNotAllowed(response, httpMethod(), "No key predicates provided", allowedMethods());
       }
       return ServiceRequest.assertHttpMethod(httpMethod(), allowedMethods(), response);
     }
 
-    @Override
-    public HttpMethod[] allowedMethods() {
-      return new HttpMethod[] { HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT,
-          HttpMethod.PATCH, HttpMethod.DELETE };
-    }     
-    
-    @Override
-    public ContentType getResponseContentType() throws ContentNegotiatorException {
-      return ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), getODataRequest(),
-          getCustomContentTypeSupport(), isCollection() ? RepresentationType.COLLECTION_ENTITY
-              : RepresentationType.ENTITY);
+    @Override public HttpMethod[] allowedMethods() {
+      return new HttpMethod[] { HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH, HttpMethod.DELETE };
     }
 
-    @Override
-    public void execute(ServiceHandler handler, ODataResponse response)
-        throws ODataLibraryException, ODataApplicationException {
+    @Override public ContentType getResponseContentType() throws ContentNegotiatorException {
+      return ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), getODataRequest(), getCustomContentTypeSupport(), isCollection() ? RepresentationType.COLLECTION_ENTITY : RepresentationType.ENTITY);
+    }
 
+    @Override public void execute(ServiceHandler handler, ODataResponse response) throws ODataLibraryException, ODataApplicationException {
       ContextURL contextURL = getContextURL(odata);
-      EntityResponse entityResponse = EntityResponse.getInstance(DataRequest.this,
-          contextURL, false, response);
-
+      EntityResponse entityResponse = EntityResponse.getInstance(DataRequest.this, contextURL, false, response);
       if (isGET()) {
         if (isCollection()) {
-          handler.read(DataRequest.this,
-              EntitySetResponse.getInstance(DataRequest.this, contextURL, false, response));
+          handler.read(DataRequest.this, EntitySetResponse.getInstance(DataRequest.this, contextURL, false, response));
         } else {
-          handler.read(DataRequest.this,entityResponse);
+          handler.read(DataRequest.this, entityResponse);
         }
-      } else if (isPUT() || isPATCH()) {
-        // RFC 2616: he result of a request having both an If-Match header field and either
-        // an If-None-Match or an If-Modified-Since header fields is undefined
-        // by this specification.
-        boolean ifMatch = getHeader(HttpHeader.IF_MATCH) != null;
-        boolean ifNoneMatch = (getHeader(HttpHeader.IF_NONE_MATCH)!= null 
-            && "*".equals(getHeader(HttpHeader.IF_NONE_MATCH)));
-        if(ifMatch) {
-          handler.updateEntity(DataRequest.this, getEntityFromClient(), isPATCH(), getETag(),
-              entityResponse);
-        } else if (ifNoneMatch) {
-          // 11.4.4
-          entityResponse = EntityResponse.getInstance(DataRequest.this,
-              contextURL, false, response, getReturnRepresentation());
-          handler.createEntity(DataRequest.this, getEntityFromClient(), entityResponse);
+      } else {
+        if (isPUT() || isPATCH()) {
+          boolean ifMatch = getHeader(HttpHeader.IF_MATCH) != null;
+          boolean ifNoneMatch = (getHeader(HttpHeader.IF_NONE_MATCH) != null && "*".equals(getHeader(HttpHeader.IF_NONE_MATCH)));
+          if (ifMatch) {
+            handler.updateEntity(DataRequest.this, getEntityFromClient(), isPATCH(), getETag(), entityResponse);
+          } else {
+            if (ifNoneMatch) {
+              entityResponse = EntityResponse.getInstance(DataRequest.this, contextURL, false, response, getReturnRepresentation());
+              handler.createEntity(DataRequest.this, getEntityFromClient(), entityResponse);
+            } else {
+              handler.upsertEntity(DataRequest.this, getEntityFromClient(), isPATCH(), getETag(), entityResponse);
+            }
+          }
         } else {
-          handler.upsertEntity(DataRequest.this, getEntityFromClient(), isPATCH(), getETag(),
-              entityResponse);
+          if (isPOST()) {
+            if (!getNavigations().isEmpty()) {
+              entityResponse = EntityResponse.getInstance(DataRequest.this, contextURL, false, response, getReturnRepresentation());
+              UriResourceNavigation last = getNavigations().getLast();
+              EdmEntityType navigationType = last.getProperty().getType();
+              Entity entity = getEntityFromClient(navigationType);
+              handler.createEntity(DataRequest.this, entity, entityResponse);
+            } else {
+              entityResponse = EntityResponse.getInstance(DataRequest.this, contextURL, false, response, getReturnRepresentation());
+              handler.createEntity(DataRequest.this, getEntityFromClient(), entityResponse);
+            }
+          } else {
+            if (isDELETE()) {
+              handler.deleteEntity(DataRequest.this, getETag(), entityResponse);
+            }
+          }
         }
-      } else if (isPOST()) {
-        if (!getNavigations().isEmpty()) {
-          entityResponse = EntityResponse.getInstance(DataRequest.this,
-              contextURL, false, response, getReturnRepresentation());
-          UriResourceNavigation last = getNavigations().getLast();
-          EdmEntityType navigationType = last.getProperty().getType();
-          Entity entity = getEntityFromClient(navigationType);
-          handler.createEntity(DataRequest.this, entity,entityResponse);
-        } else {
-          entityResponse = EntityResponse.getInstance(DataRequest.this,
-              contextURL, false, response, getReturnRepresentation());
-          handler.createEntity(DataRequest.this, getEntityFromClient(),entityResponse);
-        }
-      } else if (isDELETE()) {
-        handler.deleteEntity(DataRequest.this, getETag(), entityResponse);
       }
     }
 
     private Entity getEntityFromClient() throws DeserializerException {
       return getEntityFromClient(getEntitySet().getEntityType());
     }
-    
+
     private Entity getEntityFromClient(EdmEntityType entityType) throws DeserializerException {
       ODataDeserializer deserializer = odata.createDeserializer(getRequestContentType(), getServiceMetaData());
       return deserializer.entity(getODataRequest().getBody(), entityType).getEntity();
     }
 
-    @Override
-    public ContextURL getContextURL(OData odata) throws SerializerException {
-      // EntitySet based return
+    @Override public ContextURL getContextURL(OData odata) throws SerializerException {
       final UriHelper helper = odata.createUriHelper();
-      ContextURL.Builder builder = buildEntitySetContextURL(helper, getEntitySet(),
-          getKeyPredicates(), getUriInfo(), getNavigations(), isCollection(), false, getODataRequest());
+      ContextURL.Builder builder = buildEntitySetContextURL(helper, getEntitySet(), getKeyPredicates(), getUriInfo(), getNavigations(), isCollection(), false, getODataRequest());
       return builder.build();
     }
   }
 
   class CountRequest implements RequestType {
-
-    @Override
-    public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
+    @Override public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
       if (getReturnRepresentation() != ReturnRepresentation.NONE) {
-        return methodNotAllowed(response, httpMethod(), "Invalid Prefer header used", 
-            allowedMethods());
+        return methodNotAllowed(response, httpMethod(), "Invalid Prefer header used", allowedMethods());
       }
       return ServiceRequest.assertHttpMethod(httpMethod(), allowedMethods(), response);
     }
 
-    @Override
-    public HttpMethod[] allowedMethods() {
-      return new HttpMethod[] { HttpMethod.GET};
-    }     
-    
-    @Override
-    public ContentType getResponseContentType() throws ContentNegotiatorException {
+    @Override public HttpMethod[] allowedMethods() {
+      return new HttpMethod[] { HttpMethod.GET };
+    }
+
+    @Override public ContentType getResponseContentType() throws ContentNegotiatorException {
       return ContentType.TEXT_PLAIN;
     }
 
-    @Override
-    public void execute(ServiceHandler handler, ODataResponse response)
-        throws ODataLibraryException, ODataApplicationException {
+    @Override public void execute(ServiceHandler handler, ODataResponse response) throws ODataLibraryException, ODataApplicationException {
       handler.read(DataRequest.this, CountResponse.getInstance(DataRequest.this, response));
     }
 
-    @Override
-    public ContextURL getContextURL(OData odata) throws SerializerException {
+    @Override public ContextURL getContextURL(OData odata) throws SerializerException {
       return null;
     }
   }
 
-  /**
-   * Is NavigationProperty Reference.
-   */
   class ReferenceRequest implements RequestType {
-
-    @Override
-    public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
+    @Override public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
       if ((isGET() || isDELETE()) && getReturnRepresentation() != ReturnRepresentation.NONE) {
-        return methodNotAllowed(response, httpMethod(), "Invalid Prefer header used", 
-            allowedMethods());
+        return methodNotAllowed(response, httpMethod(), "Invalid Prefer header used", allowedMethods());
       }
-      
-      // references are only allowed on the navigation properties
       if (getNavigations().isEmpty()) {
-        return methodNotAllowed(response, httpMethod(),
-            "References can be only used on navigation properties",
-            allowedMethods());
+        return methodNotAllowed(response, httpMethod(), "References can be only used on navigation properties", allowedMethods());
       }
-
-      // 11.4.6.1 - post allowed on only collection valued navigation
       if (isPOST() && !getNavigations().getLast().isCollection()) {
-        return methodNotAllowed(response, httpMethod(),
-            "POST only allowed on collection valued navigation",
-            allowedMethods());
+        return methodNotAllowed(response, httpMethod(), "POST only allowed on collection valued navigation", allowedMethods());
       }
-
-      // 11.4.6.3 - PUT allowed on single valued navigation
       if (isPUT() && getNavigations().getLast().isCollection()) {
-        return methodNotAllowed(response, httpMethod(),
-            "PUT only allowed on single valued navigation", allowedMethods());
+        return methodNotAllowed(response, httpMethod(), "PUT only allowed on single valued navigation", allowedMethods());
       }
-      //PATCH is not defined in spec
       return ServiceRequest.assertHttpMethod(httpMethod(), allowedMethods(), response);
     }
 
-    @Override
-    public HttpMethod[] allowedMethods() {
-      return new HttpMethod[] { HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT,
-          HttpMethod.DELETE };
-    }
-    
-    @Override
-    public ContentType getResponseContentType() throws ContentNegotiatorException {
-      return ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), getODataRequest(),
-          getCustomContentTypeSupport(), isCollection() ? RepresentationType.COLLECTION_REFERENCE
-              : RepresentationType.REFERENCE);
+    @Override public HttpMethod[] allowedMethods() {
+      return new HttpMethod[] { HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE };
     }
 
-    @Override
-    public void execute(ServiceHandler handler, ODataResponse response)
-        throws ODataLibraryException, ODataApplicationException {
+    @Override public ContentType getResponseContentType() throws ContentNegotiatorException {
+      return ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), getODataRequest(), getCustomContentTypeSupport(), isCollection() ? RepresentationType.COLLECTION_REFERENCE : RepresentationType.REFERENCE);
+    }
+
+    @Override public void execute(ServiceHandler handler, ODataResponse response) throws ODataLibraryException, ODataApplicationException {
       if (isGET()) {
         if (isCollection()) {
-          handler.read(DataRequest.this,
-              EntitySetResponse.getInstance(DataRequest.this, getContextURL(odata), true, response));
+          handler.read(DataRequest.this, EntitySetResponse.getInstance(DataRequest.this, getContextURL(odata), true, response));
         } else {
-          handler.read(DataRequest.this,
-              EntityResponse.getInstance(DataRequest.this, getContextURL(odata), true, response));
+          handler.read(DataRequest.this, EntityResponse.getInstance(DataRequest.this, getContextURL(odata), true, response));
         }
-      } else if (isDELETE()) {
-        // if this against the collection, user need to look at $id param for entity ref #11.4.6.2
-        String id = getQueryParameter("$id");
-        if (id == null && isCollection()) {
-          throw new UriParserSemanticException("$id not specified for delete of reference", 
-              UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
-        }
-        if (id == null) {
-          handler.deleteReference(DataRequest.this, null, getETag(), new NoContentResponse(
-              getServiceMetaData(), response));
+      } else {
+        if (isDELETE()) {
+          String id = getQueryParameter("$id");
+          if (id == null && isCollection()) {
+            throw new UriParserSemanticException("$id not specified for delete of reference", UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
+          }
+          if (id == null) {
+            handler.deleteReference(DataRequest.this, null, getETag(), new NoContentResponse(getServiceMetaData(), response));
+          } else {
+            try {
+              handler.deleteReference(DataRequest.this, new URI(id), getETag(), new NoContentResponse(getServiceMetaData(), response));
+            } catch (URISyntaxException e) {
+              throw new DeserializerException("failed to read $id", e, MessageKeys.UNKNOWN_CONTENT);
+            }
+          }
         } else {
-          try {
-            handler.deleteReference(DataRequest.this, new URI(id), getETag(), new NoContentResponse(
-                getServiceMetaData(), response));
-          } catch (URISyntaxException e) {
-            throw new DeserializerException("failed to read $id", e, MessageKeys.UNKNOWN_CONTENT);
+          if (isPUT()) {
+            handler.updateReference(DataRequest.this, getETag(), getPayload().get(0), new NoContentResponse(getServiceMetaData(), response));
+          } else {
+            if (isPOST()) {
+              handler.addReference(DataRequest.this, getETag(), getPayload().get(0), new NoContentResponse(getServiceMetaData(), response));
+            }
           }
         }
-      } else if (isPUT()) {
-        // note this is always against single reference
-        handler.updateReference(DataRequest.this, getETag(), getPayload().get(0), new NoContentResponse(
-            getServiceMetaData(), response));
-      } else if (isPOST()) {
-        // this needs to be against collection of references
-        handler.addReference(DataRequest.this, getETag(), getPayload().get(0), new NoContentResponse(
-            getServiceMetaData(), response));
       }
     }
 
-    // http://docs.oasis-open.org/odata/odata-json-format/v4.0/errata02/os
-    // /odata-json-format-v4.0-errata02-os-complete.html#_Toc403940643
-    // The below code reads as property and converts to an URI
     private List<URI> getPayload() throws DeserializerException {
       ODataDeserializer deserializer = odata.createDeserializer(getRequestContentType(), getServiceMetaData());
       return deserializer.entityReferences(getODataRequest().getBody()).getEntityReferences();
     }
 
-    @Override
-    public ContextURL getContextURL(OData odata) throws SerializerException {
+    @Override public ContextURL getContextURL(OData odata) throws SerializerException {
       ContextURL.Builder builder = ContextURL.with().suffix(Suffix.REFERENCE);
       if (isCollection()) {
         builder.asCollection();
@@ -534,113 +429,83 @@ public class DataRequest extends ServiceRequest {
   }
 
   class PropertyRequest implements RequestType {
-
-    @Override
-    public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
-      if ((isGET() || isDELETE() || isPropertyStream())
-          && getReturnRepresentation() != ReturnRepresentation.NONE) {
-        return methodNotAllowed(response, httpMethod(), "Invalid Prefer header used", 
-            allowedMethods());
+    @Override public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
+      if ((isGET() || isDELETE() || isPropertyStream()) && getReturnRepresentation() != ReturnRepresentation.NONE) {
+        return methodNotAllowed(response, httpMethod(), "Invalid Prefer header used", allowedMethods());
       }
-      
-      // create of properties is not allowed,
-      // only read, update, delete. Note that delete is
-      // same as update with null
-
-      // 11.4.9.4, collection properties are not supported with merge
       if (isPATCH() && (isCollection() || isPropertyStream())) {
-        return methodNotAllowed(response, httpMethod(),
-            "collection properties are not supported for merge",
-            allowedMethods());
+        return methodNotAllowed(response, httpMethod(), "collection properties are not supported for merge", allowedMethods());
       }
-      
       return ServiceRequest.assertHttpMethod(httpMethod(), allowedMethods(), response);
     }
 
-    @Override
-    public HttpMethod[] allowedMethods() {
-      return new HttpMethod[] { HttpMethod.GET, HttpMethod.PUT,
-          HttpMethod.PATCH, HttpMethod.DELETE };
+    @Override public HttpMethod[] allowedMethods() {
+      return new HttpMethod[] { HttpMethod.GET, HttpMethod.PUT, HttpMethod.PATCH, HttpMethod.DELETE };
     }
-    
-    @Override
-    public ContentType getResponseContentType() throws ContentNegotiatorException {
+
+    @Override public ContentType getResponseContentType() throws ContentNegotiatorException {
       if (isPropertyComplex()) {
-        return ContentNegotiator.doContentNegotiation(getUriInfo().getFormatOption(),
-            getODataRequest(), getCustomContentTypeSupport(),
-            isCollection() ? RepresentationType.COLLECTION_COMPLEX : RepresentationType.COMPLEX);
-      } else if (isPropertyStream()) {
-        return ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request,
-            getCustomContentTypeSupport(), RepresentationType.BINARY);
+        return ContentNegotiator.doContentNegotiation(getUriInfo().getFormatOption(), getODataRequest(), getCustomContentTypeSupport(), isCollection() ? RepresentationType.COLLECTION_COMPLEX : RepresentationType.COMPLEX);
+      } else {
+        if (isPropertyStream()) {
+          return ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, getCustomContentTypeSupport(), RepresentationType.BINARY);
+        }
       }
-      return ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), getODataRequest(),
-          getCustomContentTypeSupport(), isCollection() ? RepresentationType.COLLECTION_PRIMITIVE
-              : RepresentationType.PRIMITIVE);
+      return ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), getODataRequest(), getCustomContentTypeSupport(), isCollection() ? RepresentationType.COLLECTION_PRIMITIVE : RepresentationType.PRIMITIVE);
     }
 
-    @Override
-    public void execute(ServiceHandler handler, ODataResponse response)
-        throws ODataLibraryException, ODataApplicationException {
-
+    @Override public void execute(ServiceHandler handler, ODataResponse response) throws ODataLibraryException, ODataApplicationException {
       EdmProperty edmProperty = getUriResourceProperty().getProperty();
-
       if (isGET()) {
         if (isPropertyStream()) {
           handler.read(DataRequest.this, new StreamResponse(getServiceMetaData(), response));
         } else {
           handler.read(DataRequest.this, buildResponse(response, edmProperty));
         }
-      } else if (isPATCH()) {
-        handler.updateProperty(DataRequest.this, getPropertyValueFromClient(edmProperty), false, true,
-            getETag(), buildResponse(response, edmProperty));
-      } else if (isPUT()) {
-        if (isPropertyStream()) {
-          handler.upsertStreamProperty(DataRequest.this, getETag(), request.getBody(),
-              new NoContentResponse(getServiceMetaData(), response));
+      } else {
+        if (isPATCH()) {
+          handler.updateProperty(DataRequest.this, getPropertyValueFromClient(edmProperty), false, true, getETag(), buildResponse(response, edmProperty));
         } else {
-          handler.updateProperty(DataRequest.this, getPropertyValueFromClient(edmProperty), false, false,
-              getETag(), buildResponse(response, edmProperty));
-        }
-      } else if (isDELETE()) {
-        if (isPropertyStream()) {
-          handler.upsertStreamProperty(DataRequest.this, getETag(), null,
-              new NoContentResponse(getServiceMetaData(), response));
-        } else {
-          Property property = new Property(edmProperty.getType().getFullQualifiedName()
-              .getFullQualifiedNameAsString(), edmProperty.getName());
-          handler.updateProperty(DataRequest.this, property, false, false, getETag(),
-              buildResponse(response, edmProperty));
+          if (isPUT()) {
+            if (isPropertyStream()) {
+              handler.upsertStreamProperty(DataRequest.this, getETag(), request.getBody(), new NoContentResponse(getServiceMetaData(), response));
+            } else {
+              handler.updateProperty(DataRequest.this, getPropertyValueFromClient(edmProperty), false, false, getETag(), buildResponse(response, edmProperty));
+            }
+          } else {
+            if (isDELETE()) {
+              if (isPropertyStream()) {
+                handler.upsertStreamProperty(DataRequest.this, getETag(), null, new NoContentResponse(getServiceMetaData(), response));
+              } else {
+                Property property = new Property(edmProperty.getType().getFullQualifiedName().getFullQualifiedNameAsString(), edmProperty.getName());
+                handler.updateProperty(DataRequest.this, property, false, false, getETag(), buildResponse(response, edmProperty));
+              }
+            }
+          }
         }
       }
     }
 
-    private PropertyResponse buildResponse(ODataResponse response, EdmProperty edmProperty)
-        throws ContentNegotiatorException, SerializerException {
-      PropertyResponse propertyResponse = PropertyResponse.getInstance(DataRequest.this, response,
-          edmProperty.getType(), getContextURL(odata), edmProperty.isCollection());
+    private PropertyResponse buildResponse(ODataResponse response, EdmProperty edmProperty) throws ContentNegotiatorException, SerializerException {
+      PropertyResponse propertyResponse = PropertyResponse.getInstance(DataRequest.this, response, edmProperty.getType(), getContextURL(odata), edmProperty.isCollection());
       return propertyResponse;
     }
 
-    @Override
-    public ContextURL getContextURL(OData odata) throws SerializerException {
+    @Override public ContextURL getContextURL(OData odata) throws SerializerException {
       final UriHelper helper = odata.createUriHelper();
       EdmProperty edmProperty = getUriResourceProperty().getProperty();
-
-      ContextURL.Builder builder =
-          ContextURL.with().entitySetOrSingletonOrType(getTargetEntitySet(getEntitySet(), getNavigations()));
-      builder.keyPath(helper.buildContextURLKeyPredicate(getUriResourceEntitySet()
-          .getKeyPredicates()));
+      ContextURL.Builder builder = ContextURL.with().entitySetOrSingletonOrType(getTargetEntitySet(getEntitySet(), getNavigations()));
+      builder.keyPath(helper.buildContextURLKeyPredicate(getUriResourceEntitySet().getKeyPredicates()));
       String navPath = buildNavPath(helper, getEntitySet().getEntityType(), getNavigations(), true);
       if (navPath != null && !navPath.isEmpty()) {
-        builder.navOrPropertyPath(navPath+"/"+edmProperty.getName());
+        builder.navOrPropertyPath(navPath + "/" + edmProperty.getName());
       } else {
         builder.navOrPropertyPath(edmProperty.getName());
       }
-      setServiceRoot(builder, getODataRequest());      
+      setServiceRoot(builder, getODataRequest());
       if (isPropertyComplex()) {
         EdmComplexType complexType = ((UriResourceComplexProperty) uriResourceProperty).getComplexType();
-        String select = helper.buildContextURLSelectList(complexType, getUriInfo().getExpandOption(),
-            getUriInfo().getSelectOption());
+        String select = helper.buildContextURLSelectList(complexType, getUriInfo().getExpandOption(), getUriInfo().getSelectOption());
         builder.selectList(select);
       }
       return builder.build();
@@ -648,107 +513,71 @@ public class DataRequest extends ServiceRequest {
   }
 
   class ValueRequest extends PropertyRequest {
-
-    @Override
-    public boolean assertHttpMethod(ODataResponse response)
-        throws ODataHandlerException {
-      //part2-url-conventions # 4.7
-      // Properties of type Edm.Stream already return the raw value of 
-      // the media stream and do not support appending the $value segment.
+    @Override public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
       if (isPropertyStream() && isGET()) {
-        return methodNotAllowed(response, httpMethod(), "Edm.Stream properties do not support $value", 
-            allowedMethods());
+        return methodNotAllowed(response, httpMethod(), "Edm.Stream properties do not support $value", allowedMethods());
       }
-
-      if ((isGET() || isDELETE() || isPropertyStream())
-          && getReturnRepresentation() != ReturnRepresentation.NONE) {
-        return methodNotAllowed(response, httpMethod(), "Invalid Prefer header used", 
-            allowedMethods());
+      if ((isGET() || isDELETE() || isPropertyStream()) && getReturnRepresentation() != ReturnRepresentation.NONE) {
+        return methodNotAllowed(response, httpMethod(), "Invalid Prefer header used", allowedMethods());
       }
-
       return ServiceRequest.assertHttpMethod(httpMethod(), allowedMethods(), response);
     }
 
-    @Override
-    public HttpMethod[] allowedMethods() {
+    @Override public HttpMethod[] allowedMethods() {
       return new HttpMethod[] { HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE };
     }
-    
-    @Override
-    public ContentType getResponseContentType() throws ContentNegotiatorException {
-      RepresentationType valueRepresentationType =
-          uriResourceProperty.getType() == odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Binary) ?
-              RepresentationType.BINARY :
-              RepresentationType.VALUE;
-      return ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request,
-          getCustomContentTypeSupport(), valueRepresentationType);
+
+    @Override public ContentType getResponseContentType() throws ContentNegotiatorException {
+      RepresentationType valueRepresentationType = uriResourceProperty.getType() == odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Binary) ? RepresentationType.BINARY : RepresentationType.VALUE;
+      return ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, getCustomContentTypeSupport(), valueRepresentationType);
     }
 
-    @Override
-    public void execute(ServiceHandler handler, ODataResponse response)
-        throws ODataLibraryException, ODataApplicationException {
+    @Override public void execute(ServiceHandler handler, ODataResponse response) throws ODataLibraryException, ODataApplicationException {
       EdmProperty edmProperty = getUriResourceProperty().getProperty();
       if (isGET()) {
-        handler.read(DataRequest.this, PrimitiveValueResponse.getInstance(DataRequest.this,
-            response, isCollection(), getUriResourceProperty().getProperty()));
-      } else if (isDELETE()) {
-        Property property = new Property(
-            edmProperty.getType().getFullQualifiedName().getFullQualifiedNameAsString(),
-            edmProperty.getName());
-        PropertyResponse propertyResponse = PropertyResponse.getInstance(DataRequest.this, response,
-            edmProperty.getType(), getContextURL(odata), edmProperty.isCollection());
-        handler.updateProperty(DataRequest.this, property, true, false, getETag(), propertyResponse);
-      } else if (isPUT()) {
-        PropertyResponse propertyResponse = PropertyResponse.getInstance(DataRequest.this, response,
-            edmProperty.getType(), getContextURL(odata), edmProperty.isCollection());
-        Property property = new Property(
-            edmProperty.getType().getFullQualifiedName().getFullQualifiedNameAsString(),
-            edmProperty.getName());
-        property.setValue(ValueType.PRIMITIVE, getRawValueFromClient());
-        handler.updateProperty(DataRequest.this, property, true, false,
-            getETag(), propertyResponse);
+        handler.read(DataRequest.this, PrimitiveValueResponse.getInstance(DataRequest.this, response, isCollection(), getUriResourceProperty().getProperty()));
+      } else {
+        if (isDELETE()) {
+          Property property = new Property(edmProperty.getType().getFullQualifiedName().getFullQualifiedNameAsString(), edmProperty.getName());
+          PropertyResponse propertyResponse = PropertyResponse.getInstance(DataRequest.this, response, edmProperty.getType(), getContextURL(odata), edmProperty.isCollection());
+          handler.updateProperty(DataRequest.this, property, true, false, getETag(), propertyResponse);
+        } else {
+          if (isPUT()) {
+            PropertyResponse propertyResponse = PropertyResponse.getInstance(DataRequest.this, response, edmProperty.getType(), getContextURL(odata), edmProperty.isCollection());
+            Property property = new Property(edmProperty.getType().getFullQualifiedName().getFullQualifiedNameAsString(), edmProperty.getName());
+            property.setValue(ValueType.PRIMITIVE, getRawValueFromClient());
+            handler.updateProperty(DataRequest.this, property, true, false, getETag(), propertyResponse);
+          }
+        }
       }
     }
 
-    @Override
-    public ContextURL getContextURL(OData odata) throws SerializerException {
+    @Override public ContextURL getContextURL(OData odata) throws SerializerException {
       return null;
     }
   }
 
   class SingletonRequest implements RequestType {
-
-    @Override
-    public boolean assertHttpMethod(ODataResponse response)
-        throws ODataHandlerException {
+    @Override public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
       return ServiceRequest.assertHttpMethod(httpMethod(), allowedMethods(), response);
     }
-    
-    @Override
-    public HttpMethod[] allowedMethods() {
-      return new HttpMethod[] {HttpMethod.GET};
-    }
-    
-    @Override
-    public ContentType getResponseContentType() throws ContentNegotiatorException {
-      return ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), getODataRequest(),
-          getCustomContentTypeSupport(), RepresentationType.ENTITY);
+
+    @Override public HttpMethod[] allowedMethods() {
+      return new HttpMethod[] { HttpMethod.GET };
     }
 
-    @Override
-    public ContextURL getContextURL(OData odata) throws SerializerException {
+    @Override public ContentType getResponseContentType() throws ContentNegotiatorException {
+      return ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), getODataRequest(), getCustomContentTypeSupport(), RepresentationType.ENTITY);
+    }
+
+    @Override public ContextURL getContextURL(OData odata) throws SerializerException {
       final UriHelper helper = odata.createUriHelper();
-      ContextURL.Builder builder = buildEntitySetContextURL(helper,
-          uriResourceSingleton.getSingleton(), null, getUriInfo(), getNavigations(), isCollection(), true, 
-          getODataRequest());
+      ContextURL.Builder builder = buildEntitySetContextURL(helper, uriResourceSingleton.getSingleton(), null, getUriInfo(), getNavigations(), isCollection(), true, getODataRequest());
       return builder.build();
     }
 
-    @Override
-    public void execute(ServiceHandler handler, ODataResponse response)
-        throws ODataLibraryException, ODataApplicationException {
-      handler.read(DataRequest.this,
-          EntityResponse.getInstance(DataRequest.this, getContextURL(odata), false, response));
+    @Override public void execute(ServiceHandler handler, ODataResponse response) throws ODataLibraryException, ODataApplicationException {
+      handler.read(DataRequest.this, EntityResponse.getInstance(DataRequest.this, getContextURL(odata), false, response));
     }
   }
 
@@ -759,74 +588,56 @@ public class DataRequest extends ServiceRequest {
       this.entitySetNames = entitySetNames;
     }
 
-    @Override
-    public boolean assertHttpMethod(ODataResponse response)
-        throws ODataHandlerException {
+    @Override public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
       return ServiceRequest.assertHttpMethod(httpMethod(), allowedMethods(), response);
     }
-    
-    @Override
-    public HttpMethod[] allowedMethods() {
-      return new HttpMethod[] {HttpMethod.GET};
+
+    @Override public HttpMethod[] allowedMethods() {
+      return new HttpMethod[] { HttpMethod.GET };
     }
 
-    @Override
-    public ContentType getResponseContentType() throws ContentNegotiatorException {
-      return ContentNegotiator.doContentNegotiation(getUriInfo().getFormatOption(),
-          getODataRequest(), getCustomContentTypeSupport(), RepresentationType.COLLECTION_COMPLEX);
+    @Override public ContentType getResponseContentType() throws ContentNegotiatorException {
+      return ContentNegotiator.doContentNegotiation(getUriInfo().getFormatOption(), getODataRequest(), getCustomContentTypeSupport(), RepresentationType.COLLECTION_COMPLEX);
     }
 
-    @Override
-    public void execute(ServiceHandler handler, ODataResponse response)
-        throws ODataLibraryException, ODataApplicationException {
+    @Override public void execute(ServiceHandler handler, ODataResponse response) throws ODataLibraryException, ODataApplicationException {
       handler.crossJoin(DataRequest.this, this.entitySetNames, response);
     }
 
-    @Override
-    public ContextURL getContextURL(OData odata) throws SerializerException {
+    @Override public ContextURL getContextURL(OData odata) throws SerializerException {
       ContextURL.Builder builder = ContextURL.with().asCollection();
       return builder.build();
     }
   }
-  
-  class ApplyRequest implements RequestType {
 
-    @Override
-    public boolean assertHttpMethod(ODataResponse response)
-        throws ODataHandlerException {
+  class ApplyRequest implements RequestType {
+    @Override public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
       return ServiceRequest.assertHttpMethod(httpMethod(), allowedMethods(), response);
     }
-    
-    @Override
-    public HttpMethod[] allowedMethods() {
-      return new HttpMethod[] {HttpMethod.GET};
+
+    @Override public HttpMethod[] allowedMethods() {
+      return new HttpMethod[] { HttpMethod.GET };
     }
 
-    @Override
-    public ContentType getResponseContentType() throws ContentNegotiatorException {
-      return ContentNegotiator.doContentNegotiation(getUriInfo().getFormatOption(),
-          getODataRequest(), getCustomContentTypeSupport(), RepresentationType.COLLECTION_COMPLEX);
+    @Override public ContentType getResponseContentType() throws ContentNegotiatorException {
+      return ContentNegotiator.doContentNegotiation(getUriInfo().getFormatOption(), getODataRequest(), getCustomContentTypeSupport(), RepresentationType.COLLECTION_COMPLEX);
     }
 
-    @Override
-    public void execute(ServiceHandler handler, ODataResponse response)
-        throws ODataLibraryException, ODataApplicationException {
+    @Override public void execute(ServiceHandler handler, ODataResponse response) throws ODataLibraryException, ODataApplicationException {
       handler.apply(DataRequest.this, response);
     }
 
-    @Override
-    public ContextURL getContextURL(OData odata) throws SerializerException {
+    @Override public ContextURL getContextURL(OData odata) throws SerializerException {
       ContextURL.Builder builder = ContextURL.with().asCollection();
       return builder.build();
     }
   }
-  
-  private org.apache.olingo.commons.api.data.Property getPropertyValueFromClient(
-      EdmProperty edmProperty) throws DeserializerException {
+
+  private org.apache.olingo.commons.api.data.Property getPropertyValueFromClient(EdmProperty edmProperty) throws DeserializerException {
     ODataDeserializer deserializer = odata.createDeserializer(getRequestContentType(), getServiceMetaData());
     return deserializer.property(getODataRequest().getBody(), edmProperty).getProperty();
   }
-  
+
   private Object getRawValueFromClient() throws DeserializerException {
     InputStream input = getODataRequest().getBody();
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -848,22 +659,14 @@ public class DataRequest extends ServiceRequest {
     return null;
   }
 
-  static ContextURL.Builder buildEntitySetContextURL(UriHelper helper,
-      EdmBindingTarget edmEntitySet, List<UriParameter> keyPredicates, UriInfo uriInfo,
-      LinkedList<UriResourceNavigation> navigations, boolean collectionReturn, boolean singleton, ODataRequest request)
-      throws SerializerException {
-
-    ContextURL.Builder builder =
-        ContextURL.with().entitySetOrSingletonOrType(getTargetEntitySet(edmEntitySet, navigations));
-    String select = helper.buildContextURLSelectList(edmEntitySet.getEntityType(),
-        uriInfo.getExpandOption(), uriInfo.getSelectOption());
+  static ContextURL.Builder buildEntitySetContextURL(UriHelper helper, EdmBindingTarget edmEntitySet, List<UriParameter> keyPredicates, UriInfo uriInfo, LinkedList<UriResourceNavigation> navigations, boolean collectionReturn, boolean singleton, ODataRequest request) throws SerializerException {
+    ContextURL.Builder builder = ContextURL.with().entitySetOrSingletonOrType(getTargetEntitySet(edmEntitySet, navigations));
+    String select = helper.buildContextURLSelectList(edmEntitySet.getEntityType(), uriInfo.getExpandOption(), uriInfo.getSelectOption());
     if (!singleton) {
       builder.suffix(collectionReturn ? null : Suffix.ENTITY);
     }
-
-    setServiceRoot(builder, request);    
+    setServiceRoot(builder, request);
     builder.selectList(select);
-
     final UriInfoResource resource = uriInfo.asUriInfoResource();
     final List<UriResource> resourceParts = resource.getUriResourceParts();
     final List<String> path = getPropertyPath(resourceParts);
@@ -874,7 +677,7 @@ public class DataRequest extends ServiceRequest {
         builder.keyPath(helper.buildContextURLKeyPredicate(keyPredicates));
       }
       if (propertyPath != null) {
-        propertyPath = navPath+"/"+propertyPath;
+        propertyPath = navPath + "/" + propertyPath;
       } else {
         propertyPath = navPath;
       }
@@ -892,7 +695,6 @@ public class DataRequest extends ServiceRequest {
         }
         builder.serviceRoot(URI.create(serviceRoot));
       } catch (IllegalArgumentException e) {
-        // ignore
       }
     }
   }
@@ -910,9 +712,9 @@ public class DataRequest extends ServiceRequest {
   private static String buildPropertyPath(final List<String> path) {
     StringBuilder result = new StringBuilder();
     for (final String segment : path) {
-      result.append(result.length() == 0 ? "" : '/').append(segment); //$NON-NLS-1$
+      result.append(result.length() == 0 ? "" : '/').append(segment);
     }
-    return result.length() == 0?null:result.toString();
+    return result.length() == 0 ? null : result.toString();
   }
 
   static String getTargetEntitySet(EdmBindingTarget root, LinkedList<UriResourceNavigation> navigations) {
@@ -920,35 +722,34 @@ public class DataRequest extends ServiceRequest {
     EdmBindingTarget targetEntitySet = root;
     String targetEntitySetName = root.getName();
     String name = null;
-    for (UriResourceNavigation nav:navigations) {
+    for (UriResourceNavigation nav : navigations) {
       name = nav.getProperty().getName();
       EdmNavigationProperty property = type.getNavigationProperty(name);
       if (property.containsTarget()) {
         return root.getName();
       }
       type = nav.getProperty().getType();
-      
-      for(EdmNavigationPropertyBinding enb:targetEntitySet.getNavigationPropertyBindings()) {
+      for (EdmNavigationPropertyBinding enb : targetEntitySet.getNavigationPropertyBindings()) {
         if (enb.getPath().equals(name)) {
           targetEntitySetName = enb.getTarget();
-        } else if (enb.getPath().endsWith("/"+name)) {
-          targetEntitySetName = enb.getTarget();
+        } else {
+          if (enb.getPath().endsWith("/" + name)) {
+            targetEntitySetName = enb.getTarget();
+          }
         }
       }
     }
     return targetEntitySetName;
   }
-  
-  static String buildNavPath(UriHelper helper, EdmEntityType rootType,
-      LinkedList<UriResourceNavigation> navigations, boolean includeLastPredicates)
-      throws SerializerException {
+
+  static String buildNavPath(UriHelper helper, EdmEntityType rootType, LinkedList<UriResourceNavigation> navigations, boolean includeLastPredicates) throws SerializerException {
     if (navigations.isEmpty()) {
       return null;
     }
     StringBuilder sb = new StringBuilder();
     boolean containsTarget = false;
     EdmEntityType type = rootType;
-    for (UriResourceNavigation nav:navigations) {
+    for (UriResourceNavigation nav : navigations) {
       String name = nav.getProperty().getName();
       EdmNavigationProperty property = type.getNavigationProperty(name);
       if (property.containsTarget()) {
@@ -956,7 +757,6 @@ public class DataRequest extends ServiceRequest {
       }
       type = nav.getProperty().getType();
     }
-
     if (containsTarget) {
       for (int i = 0; i < navigations.size(); i++) {
         UriResourceNavigation nav = navigations.get(i);
@@ -964,24 +764,21 @@ public class DataRequest extends ServiceRequest {
           sb.append("/");
         }
         sb.append(nav.getProperty().getName());
-
         boolean skipKeys = false;
-        if (navigations.size() == i+1 && !includeLastPredicates ) {
+        if (navigations.size() == i + 1 && !includeLastPredicates) {
           skipKeys = true;
         }
-
         if (!skipKeys && !nav.getKeyPredicates().isEmpty()) {
           sb.append("(");
           sb.append(helper.buildContextURLKeyPredicate(nav.getKeyPredicates()));
           sb.append(")");
         }
-
         if (nav.getTypeFilterOnCollection() != null) {
-          sb.append("/")
-            .append(nav.getTypeFilterOnCollection().getFullQualifiedName().getFullQualifiedNameAsString());
-        } else if (nav.getTypeFilterOnEntry() != null) {
-          sb.append("/")
-            .append(nav.getTypeFilterOnEntry().getFullQualifiedName().getFullQualifiedNameAsString());
+          sb.append("/").append(nav.getTypeFilterOnCollection().getFullQualifiedName().getFullQualifiedNameAsString());
+        } else {
+          if (nav.getTypeFilterOnEntry() != null) {
+            sb.append("/").append(nav.getTypeFilterOnEntry().getFullQualifiedName().getFullQualifiedNameAsString());
+          }
         }
       }
     }
