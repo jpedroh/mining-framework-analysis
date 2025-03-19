@@ -27,6 +27,21 @@ class Sample {
         name = iName;
     }
 
+<<<<<<< /usr/src/app/output/jkotlinski/lsdpatch/739c6593d8e03cf19f345d56a96db2886f48adbf/src/main/java/kitEditor/Sample.java/left.java
+    Sample(Sample s) {
+        file = s.file;
+        name = s.name;
+        originalSamples = s.originalSamples;
+        processedSamples = s.processedSamples;
+        untrimmedLengthInSamples = s.untrimmedLengthInSamples;
+        readPos = s.readPos;
+        volumeDb = s.volumeDb;
+        pitchSemitones = s.pitchSemitones;
+        trim = s.trim;
+        dither = s.dither;
+    }
+||||||| /usr/src/app/output/jkotlinski/lsdpatch/739c6593d8e03cf19f345d56a96db2886f48adbf/src/main/java/kitEditor/Sample.java/base.java
+=======
     public Sample(Sample s) {
         file = s.file;
         name = s.name;
@@ -39,6 +54,7 @@ class Sample {
         trim = s.trim;
         dither = s.dither;
     }
+>>>>>>> /usr/src/app/output/jkotlinski/lsdpatch/739c6593d8e03cf19f345d56a96db2886f48adbf/src/main/java/kitEditor/Sample.java/right.java
 
     public String getName() {
         return name;
@@ -83,6 +99,8 @@ class Sample {
     public boolean canAdjustVolume() {
         return originalSamples != null;
     }
+
+
 
 
 

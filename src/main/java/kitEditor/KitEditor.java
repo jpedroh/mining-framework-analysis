@@ -41,26 +41,47 @@ public class KitEditor extends JFrame implements SamplePicker.Listener {
 
     private final Sample[][] samples = new Sample[RomUtilities.BANK_COUNT][MAX_SAMPLES];
     
+<<<<<<< /usr/src/app/output/jkotlinski/lsdpatch/739c6593d8e03cf19f345d56a96db2886f48adbf/src/main/java/kitEditor/KitEditor.java/left.java
     private Sample[] clipboard = new Sample[MAX_SAMPLES];
+||||||| /usr/src/app/output/jkotlinski/lsdpatch/739c6593d8e03cf19f345d56a96db2886f48adbf/src/main/java/kitEditor/KitEditor.java/base.java
+=======
+    private final Sample[] clipboard = new Sample[MAX_SAMPLES];
+>>>>>>> /usr/src/app/output/jkotlinski/lsdpatch/739c6593d8e03cf19f345d56a96db2886f48adbf/src/main/java/kitEditor/KitEditor.java/right.java
 
     private final JButton previousBankButton = new JButton("<");
+
     private final JButton nextBankButton = new JButton(">");
 
     private final JButton loadKitButton = new JButton();
+
     private final JButton saveKitButton = new JButton();
+
     private final JButton saveRomButton = new JButton();
+
     private final JButton exportSampleButton = new JButton();
+
     private final JButton clearKitButton = new JButton("Clear kit");
+
     private final JButton renameKitButton = new JButton();
+
     private final JTextField kitNameTextField = new JTextField();
+
     private final JButton reloadSampleButton = new JButton("Reload sample");
+
     private final JButton addSampleButton = new JButton("Add sample");
+
     private final JLabel kitSizeLabel = new JLabel();
+
     private final SampleView sampleView = new SampleView();
+
     private final JSpinner volumeSpinner = new JSpinner();
+
     private final JSpinner pitchSpinner = new JSpinner();
+
     private final JSpinner trimSpinner = new JSpinner();
+
     private final JCheckBox halfSpeed = new JCheckBox("Half-speed");
+
     private final JCheckBox dither = new JCheckBox("Dither", true);
 
     public KitEditor(JFrame parent, Document document, Listener listener) {
@@ -182,7 +203,7 @@ public class KitEditor extends JFrame implements SamplePicker.Listener {
         }
         reloadAllSamples();
     }
-    
+
     private void reloadAllSamples() {
         int index = samplePicker.getSelectedIndex();
         try {
@@ -218,6 +239,7 @@ public class KitEditor extends JFrame implements SamplePicker.Listener {
     }
 
     static boolean handlingSpinnerChange = false;
+
     private void onSpinnerChanged() {
         if (handlingSpinnerChange) {
             return;
@@ -1030,6 +1052,7 @@ public class KitEditor extends JFrame implements SamplePicker.Listener {
     }
 
     private int modelMaxTrim;
+
     private void updateTrimModel(Sample sample) {
         if (sample == null) {
             return;
@@ -1143,6 +1166,7 @@ public class KitEditor extends JFrame implements SamplePicker.Listener {
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
+<<<<<<< /usr/src/app/output/jkotlinski/lsdpatch/739c6593d8e03cf19f345d56a96db2886f48adbf/src/main/java/kitEditor/KitEditor.java/left.java
     private void duplicateSample(Sample sample) {
         if (sample == null) {
           return;
@@ -1187,7 +1211,54 @@ public class KitEditor extends JFrame implements SamplePicker.Listener {
         playSample();
         updateButtonStates();
     }
-    
+||||||| /usr/src/app/output/jkotlinski/lsdpatch/739c6593d8e03cf19f345d56a96db2886f48adbf/src/main/java/kitEditor/KitEditor.java/base.java
+=======
+    private void duplicateSample(Sample sample) {
+        if (sample == null) {
+          return;
+        }
+        int dest = firstFreeSampleSlot();
+        Sample dupeSample;
+        if (dest != -1) {
+            // copy sample data
+            try {
+            dupeSample = new Sample(sample);
+            dupeSample.reload(halfSpeed.isSelected());
+            } catch (Exception e) {
+                showFileErrorMessage(e);
+                return;
+            }
+            samples[selectedBank][dest] = dupeSample;
+            renameSample(dest, sample.getName());
+            if (bytesFree() < 0 && sample.canAdjustVolume()) {
+                int fixedTrim = dupeSample.getTrim() - bytesFree() / 16;
+                assert fixedTrim > 0;
+                dupeSample.setTrim(fixedTrim);
+            } else if (bytesFree() < 0) {
+                samples[selectedBank][dest] = null;
+                JOptionPane.showMessageDialog(contentPane,
+                        "Can't add sample, kit is full!",
+                        "Kit full",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } else {
+            JOptionPane.showMessageDialog(contentPane,
+                    "Can't add sample, kit is full!",
+                    "Kit full",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        } 
+        reloadAllSamples();
+        compileKit();
+        updateRomView();
+        samplePicker.setSelectedIndex(dest);
+        playSample();
+        updateButtonStates();
+    }
+>>>>>>> /usr/src/app/output/jkotlinski/lsdpatch/739c6593d8e03cf19f345d56a96db2886f48adbf/src/main/java/kitEditor/KitEditor.java/right.java
+
+<<<<<<< /usr/src/app/output/jkotlinski/lsdpatch/739c6593d8e03cf19f345d56a96db2886f48adbf/src/main/java/kitEditor/KitEditor.java/left.java
     private void pasteSample() {
         for (int index = 0; index < clipboard.length; ++index) {
             if (clipboard[index] != null) {
@@ -1195,6 +1266,16 @@ public class KitEditor extends JFrame implements SamplePicker.Listener {
             }
         }
     }
+||||||| /usr/src/app/output/jkotlinski/lsdpatch/739c6593d8e03cf19f345d56a96db2886f48adbf/src/main/java/kitEditor/KitEditor.java/base.java
+=======
+    private void pasteSample() {
+        for (Sample sample : clipboard) {
+            if (sample != null) {
+                duplicateSample(sample);
+            }
+        }
+    }
+>>>>>>> /usr/src/app/output/jkotlinski/lsdpatch/739c6593d8e03cf19f345d56a96db2886f48adbf/src/main/java/kitEditor/KitEditor.java/right.java
 
     @Override
     public void dupeSample() {
