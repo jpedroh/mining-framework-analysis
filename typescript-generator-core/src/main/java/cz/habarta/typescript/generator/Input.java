@@ -1,4 +1,3 @@
-
 package cz.habarta.typescript.generator;
 
 import cz.habarta.typescript.generator.parser.*;
