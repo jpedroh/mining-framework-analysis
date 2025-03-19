@@ -49,7 +49,7 @@ public abstract class ClassName extends TypeName implements Comparable<ClassName
       super(simpleName, annotations);
       this.packageName = packageName == null ? "" : packageName;
       this.canonicalName = isDefaultPackage(packageName)
-          ? simpleName : String.join(".", Arrays.asList(packageName, simpleName));
+          ? simpleName : Util.join(".", Arrays.asList(packageName, simpleName));
       checkArgument(
           isDefaultPackage(simpleName) || SourceVersion.isName(simpleName),
           "part '%s' is keyword", simpleName);
@@ -81,7 +81,7 @@ public abstract class ClassName extends TypeName implements Comparable<ClassName
     public String reflectionName() {
       return isDefaultPackage(packageName)
           ? simpleName
-          : String.join(".", Arrays.asList(packageName, simpleName));
+          : Util.join(".", Arrays.asList(packageName, simpleName));
     }
 
     @Override
@@ -124,7 +124,7 @@ public abstract class ClassName extends TypeName implements Comparable<ClassName
       super(simpleName, annotations);
       this.enclosingClassName = enclosingClassName;
       this.canonicalName =
-          String.join(".", Arrays.asList(enclosingClassName.canonicalName, simpleName));
+          Util.join(".", Arrays.asList(enclosingClassName.canonicalName, simpleName));
     }
 
     @Override public NestedClassName annotated(List<AnnotationSpec> annotations) {
@@ -201,10 +201,50 @@ public abstract class ClassName extends TypeName implements Comparable<ClassName
 
   public static final ClassName OBJECT = ClassName.get(Object.class);
 
+<<<<<<< /usr/src/app/output/square/javapoet/123eb0bd25ef7c096e92c22c240d0521a3e04211/src/main/java/com/squareup/javapoet/ClassName.java/left.java
   private ClassName(String simpleName, List<AnnotationSpec> annotations) {
+||||||| /usr/src/app/output/square/javapoet/123eb0bd25ef7c096e92c22c240d0521a3e04211/src/main/java/com/squareup/javapoet/ClassName.java/base.java
+  /** From top to bottom. This will be ["java.util", "Map", "Entry"] for {@link Map.Entry}. */
+  final List<String> names;
+  final String canonicalName;
+
+  private ClassName(List<String> names) {
+    this(names, new ArrayList<AnnotationSpec>());
+  }
+
+  private ClassName(List<String> names, List<AnnotationSpec> annotations) {
+=======
+  /** From top to bottom. This will be ["java.util", "Map", "Entry"] for {@link Map.Entry}. */
+  final List<String> names;
+  final String canonicalName;
+
+  private ClassName(List<String> names) {
+    this(names, new ArrayList<>());
+  }
+
+  private ClassName(List<String> names, List<AnnotationSpec> annotations) {
+>>>>>>> /usr/src/app/output/square/javapoet/123eb0bd25ef7c096e92c22c240d0521a3e04211/src/main/java/com/squareup/javapoet/ClassName.java/right.java
     super(annotations);
+<<<<<<< /usr/src/app/output/square/javapoet/123eb0bd25ef7c096e92c22c240d0521a3e04211/src/main/java/com/squareup/javapoet/ClassName.java/left.java
     checkArgument(SourceVersion.isName(simpleName), "part '%s' is keyword", simpleName);
     this.simpleName = simpleName;
+||||||| /usr/src/app/output/square/javapoet/123eb0bd25ef7c096e92c22c240d0521a3e04211/src/main/java/com/squareup/javapoet/ClassName.java/base.java
+    for (int i = 1; i < names.size(); i++) {
+      checkArgument(SourceVersion.isName(names.get(i)), "part '%s' is keyword", names.get(i));
+    }
+    this.names = Util.immutableList(names);
+    this.canonicalName = (names.get(0).isEmpty()
+        ? Util.join(".", names.subList(1, names.size()))
+        : Util.join(".", names));
+=======
+    for (int i = 1; i < names.size(); i++) {
+      checkArgument(SourceVersion.isName(names.get(i)), "part '%s' is keyword", names.get(i));
+    }
+    this.names = Util.immutableList(names);
+    this.canonicalName = (names.get(0).isEmpty()
+        ? String.join(".", names.subList(1, names.size()))
+        : String.join(".", names));
+>>>>>>> /usr/src/app/output/square/javapoet/123eb0bd25ef7c096e92c22c240d0521a3e04211/src/main/java/com/squareup/javapoet/ClassName.java/right.java
   }
 
 

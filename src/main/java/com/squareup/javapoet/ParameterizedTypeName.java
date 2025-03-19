@@ -58,10 +58,11 @@ public final class ParameterizedTypeName extends TypeName {
         enclosingType, rawType, typeArguments, concatAnnotations(annotations));
   }
 
-  @Override
-  public TypeName withoutAnnotations() {
-    return new ParameterizedTypeName(
-        enclosingType, rawType.withoutAnnotations(), typeArguments, new ArrayList<>());
+  @Override public TypeName withoutAnnotations() {
+    return new ParameterizedTypeName(enclosingType,
+        rawType.withoutAnnotations(),
+        typeArguments,
+        new ArrayList<>());
   }
 
   @Override CodeWriter emit(CodeWriter out) throws IOException {
