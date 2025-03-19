@@ -1,41 +1,10 @@
-/*
- * #%L
- * BigDataViewer core classes with minimal dependencies
- * %%
- * Copyright (C) 2012 - 2016 Tobias Pietzsch, Stephan Saalfeld, Stephan Preibisch,
- * Jean-Yves Tinevez, HongKee Moon, Johannes Schindelin, Curtis Rueden, John Bogovic
- * %%
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- * #L%
- */
 package bdv;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.ActionMap;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
@@ -44,7 +13,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.filechooser.FileFilter;
-
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -53,7 +21,6 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.io.yaml.YamlConfigIO;
-
 import bdv.cache.CacheControl;
 import bdv.export.ProgressWriter;
 import bdv.export.ProgressWriterConsole;
@@ -97,222 +64,163 @@ import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.volatiles.VolatileARGBType;
 
-public class BigDataViewer
-{
-	protected final ViewerFrame viewerFrame;
+public class BigDataViewer {
+  protected final ViewerFrame viewerFrame;
 
-	protected final ViewerPanel viewer;
+  protected final ViewerPanel viewer;
 
-	protected final SetupAssignments setupAssignments;
+  protected final SetupAssignments setupAssignments;
 
-	protected final ManualTransformation manualTransformation;
+  protected final ManualTransformation manualTransformation;
 
-	protected final Bookmarks bookmarks;
+  protected final Bookmarks bookmarks;
 
-	protected final BrightnessDialog brightnessDialog;
+  protected final BrightnessDialog brightnessDialog;
 
-	protected final CropDialog cropDialog;
+  protected final CropDialog cropDialog;
 
-	protected final RecordMovieDialog movieDialog;
+  protected final RecordMovieDialog movieDialog;
 
-	protected final RecordMaxProjectionDialog movieMaxProjectDialog;
+  protected final RecordMaxProjectionDialog movieMaxProjectDialog;
 
-	protected final VisibilityAndGroupingDialog activeSourcesDialog;
+  protected final VisibilityAndGroupingDialog activeSourcesDialog;
 
-	protected final AddBookmarkDialog addBookmarkDialog;
+  protected final AddBookmarkDialog addBookmarkDialog;
 
-	protected final BookmarkManagementDialog bookmarkManagementDialog;
+  protected final BookmarkManagementDialog bookmarkManagementDialog;
 
-	protected final HelpDialog helpDialog;
+  protected final HelpDialog helpDialog;
 
-	protected final ManualTransformationEditor manualTransformationEditor;
+  protected final ManualTransformationEditor manualTransformationEditor;
 
-	protected final BookmarksEditor bookmarkEditor;
+  protected final BookmarksEditor bookmarkEditor;
 
-	protected final JFileChooser fileChooser;
+  protected final JFileChooser fileChooser;
 
-	protected File proposedSettingsFile;
+  protected File proposedSettingsFile;
 
-	public void toggleManualTransformation()
-	{
-		manualTransformationEditor.toggle();
-	}
+  public void toggleManualTransformation() {
+    manualTransformationEditor.toggle();
+  }
 
-	public void initSetBookmark()
-	{
-		bookmarkEditor.initSetBookmark();
-	}
+  public void initSetBookmark() {
+    bookmarkEditor.initSetBookmark();
+  }
 
-	public void initSetDynamicBookmark()
-	{
-		bookmarkEditor.initCreateDynamicBookmark();
-	}
+  public void initSetDynamicBookmark() {
+    bookmarkEditor.initCreateDynamicBookmark();
+  }
 
-	public void initGoToBookmark()
-	{
-		bookmarkEditor.initGoToBookmark();
-	}
+  public void initGoToBookmark() {
+    bookmarkEditor.initGoToBookmark();
+  }
 
-	public void initGoToBookmarkRotation()
-	{
-		bookmarkEditor.initGoToBookmarkRotation();
-	}
+  public void initGoToBookmarkRotation() {
+    bookmarkEditor.initGoToBookmarkRotation();
+  }
 
-	private static String createSetupName( final BasicViewSetup setup )
-	{
-		if ( setup.hasName() )
-			return setup.getName();
+  private static String createSetupName(final BasicViewSetup setup) {
+    if (setup.hasName()) {
+      return setup.getName();
+    }
+    String name = "";
+    final Angle angle = setup.getAttribute(Angle.class);
+    if (angle != null) {
+      name += (name.isEmpty() ? "" : " ") + "a " + angle.getName();
+    }
+    final Channel channel = setup.getAttribute(Channel.class);
+    if (channel != null) {
+      name += (name.isEmpty() ? "" : " ") + "c " + channel.getName();
+    }
+    return name;
+  }
 
-		String name = "";
+  private static <T extends RealType<T>, V extends Volatile<T> & RealType<V>> void initSetupRealType(final AbstractSpimData<?> spimData, final BasicViewSetup setup, final T type, final List<ConverterSetup> converterSetups, final List<SourceAndConverter<?>> sources) {
+    if (spimData.getSequenceDescription().getImgLoader() instanceof WrapBasicImgLoader) {
+      initSetupRealTypeNonVolatile(spimData, setup, type, converterSetups, sources);
+      return;
+    }
+    final double typeMin = Math.max(0, Math.min(type.getMinValue(), 65535));
+    final double typeMax = Math.max(0, Math.min(type.getMaxValue(), 65535));
+    final RealARGBColorConverter<V> vconverter = new RealARGBColorConverter.Imp0<>(typeMin, typeMax);
+    vconverter.setColor(new ARGBType(0xffffffff));
+    final RealARGBColorConverter<T> converter = new RealARGBColorConverter.Imp1<>(typeMin, typeMax);
+    converter.setColor(new ARGBType(0xffffffff));
+    final int setupId = setup.getId();
+    final String setupName = createSetupName(setup);
+    final VolatileSpimSource<T, V> vs = new VolatileSpimSource<>(spimData, setupId, setupName);
+    final SpimSource<T> s = vs.nonVolatile();
+    final TransformedSource<V> tvs = new TransformedSource<>(vs);
+    final TransformedSource<T> ts = new TransformedSource<>(s, tvs);
+    final SourceAndConverter<V> vsoc = new SourceAndConverter<>(tvs, vconverter);
+    final SourceAndConverter<T> soc = new SourceAndConverter<>(ts, converter, vsoc);
+    sources.add(soc);
+    converterSetups.add(new RealARGBColorConverterSetup(setupId, converter, vconverter));
+  }
 
-		final Angle angle = setup.getAttribute( Angle.class );
-		if ( angle != null )
-			name += ( name.isEmpty() ? "" : " " ) + "a " + angle.getName();
+  private static <T extends RealType<T>> void initSetupRealTypeNonVolatile(final AbstractSpimData<?> spimData, final BasicViewSetup setup, final T type, final List<ConverterSetup> converterSetups, final List<SourceAndConverter<?>> sources) {
+    final double typeMin = type.getMinValue();
+    final double typeMax = type.getMaxValue();
+    final RealARGBColorConverter<T> converter = new RealARGBColorConverter.Imp1<>(typeMin, typeMax);
+    converter.setColor(new ARGBType(0xffffffff));
+    final int setupId = setup.getId();
+    final String setupName = createSetupName(setup);
+    final SpimSource<T> s = new SpimSource<>(spimData, setupId, setupName);
+    final TransformedSource<T> ts = new TransformedSource<>(s);
+    final SourceAndConverter<T> soc = new SourceAndConverter<>(ts, converter);
+    sources.add(soc);
+    converterSetups.add(new RealARGBColorConverterSetup(setupId, converter));
+  }
 
-		final Channel channel = setup.getAttribute( Channel.class );
-		if ( channel != null )
-			name += ( name.isEmpty() ? "" : " " ) + "c " + channel.getName();
+  private static void initSetupARGBType(final AbstractSpimData<?> spimData, final BasicViewSetup setup, final ARGBType type, final List<ConverterSetup> converterSetups, final List<SourceAndConverter<?>> sources) {
+    if (spimData.getSequenceDescription().getImgLoader() instanceof WrapBasicImgLoader) {
+      initSetupARGBTypeNonVolatile(spimData, setup, type, converterSetups, sources);
+      return;
+    }
+    final ScaledARGBConverter.VolatileARGB vconverter = new ScaledARGBConverter.VolatileARGB(0, 255);
+    final ScaledARGBConverter.ARGB converter = new ScaledARGBConverter.ARGB(0, 255);
+    final int setupId = setup.getId();
+    final String setupName = createSetupName(setup);
+    final VolatileSpimSource<ARGBType, VolatileARGBType> vs = new VolatileSpimSource<>(spimData, setupId, setupName);
+    final SpimSource<ARGBType> s = vs.nonVolatile();
+    final TransformedSource<VolatileARGBType> tvs = new TransformedSource<>(vs);
+    final TransformedSource<ARGBType> ts = new TransformedSource<>(s, tvs);
+    final SourceAndConverter<VolatileARGBType> vsoc = new SourceAndConverter<>(tvs, vconverter);
+    final SourceAndConverter<ARGBType> soc = new SourceAndConverter<>(ts, converter, vsoc);
+    sources.add(soc);
+    converterSetups.add(new RealARGBColorConverterSetup(setupId, converter, vconverter));
+  }
 
-		return name;
-	}
+  private static void initSetupARGBTypeNonVolatile(final AbstractSpimData<?> spimData, final BasicViewSetup setup, final ARGBType type, final List<ConverterSetup> converterSetups, final List<SourceAndConverter<?>> sources) {
+    final ScaledARGBConverter.ARGB converter = new ScaledARGBConverter.ARGB(0, 255);
+    final int setupId = setup.getId();
+    final String setupName = createSetupName(setup);
+    final SpimSource<ARGBType> s = new SpimSource<>(spimData, setupId, setupName);
+    final TransformedSource<ARGBType> ts = new TransformedSource<>(s);
+    final SourceAndConverter<ARGBType> soc = new SourceAndConverter<>(ts, converter);
+    sources.add(soc);
+    converterSetups.add(new RealARGBColorConverterSetup(setupId, converter));
+  }
 
-	private static < T extends RealType< T >, V extends Volatile< T > & RealType< V > > void initSetupRealType(
-			final AbstractSpimData< ? > spimData,
-			final BasicViewSetup setup,
-			final T type,
-			final List< ConverterSetup > converterSetups,
-			final List< SourceAndConverter< ? > > sources )
-	{
-		if ( spimData.getSequenceDescription().getImgLoader() instanceof WrapBasicImgLoader )
-		{
-			initSetupRealTypeNonVolatile( spimData, setup, type, converterSetups, sources );
-			return;
-		}
-		final double typeMin = Math.max( 0, Math.min( type.getMinValue(), 65535 ) );
-		final double typeMax = Math.max( 0, Math.min( type.getMaxValue(), 65535 ) );
-		final RealARGBColorConverter< V > vconverter = new RealARGBColorConverter.Imp0<>( typeMin, typeMax );
-		vconverter.setColor( new ARGBType( 0xffffffff ) );
-		final RealARGBColorConverter< T > converter = new RealARGBColorConverter.Imp1<>( typeMin, typeMax );
-		converter.setColor( new ARGBType( 0xffffffff ) );
+  @SuppressWarnings(value = { "unchecked", "rawtypes" }) public static void initSetups(final AbstractSpimData<?> spimData, final List<ConverterSetup> converterSetups, final List<SourceAndConverter<?>> sources) {
+    final AbstractSequenceDescription<?, ?, ?> seq = spimData.getSequenceDescription();
+    final ViewerImgLoader imgLoader = (ViewerImgLoader) seq.getImgLoader();
+    for (final BasicViewSetup setup : seq.getViewSetupsOrdered()) {
+      final int setupId = setup.getId();
+      final Object type = imgLoader.getSetupImgLoader(setupId).getImageType();
+      if (RealType.class.isInstance(type)) {
+        initSetupRealType(spimData, setup, (RealType) type, converterSetups, sources);
+      } else {
+        if (ARGBType.class.isInstance(type)) {
+          initSetupARGBType(spimData, setup, (ARGBType) type, converterSetups, sources);
+        } else {
+          throw new IllegalArgumentException("ImgLoader of type " + type.getClass() + " not supported.");
+        }
+      }
+    }
+  }
 
-		final int setupId = setup.getId();
-		final String setupName = createSetupName( setup );
-		final VolatileSpimSource< T, V > vs = new VolatileSpimSource<>( spimData, setupId, setupName );
-		final SpimSource< T > s = vs.nonVolatile();
-
-		// Decorate each source with an extra transformation, that can be
-		// edited manually in this viewer.
-		final TransformedSource< V > tvs = new TransformedSource<>( vs );
-		final TransformedSource< T > ts = new TransformedSource<>( s, tvs );
-
-		final SourceAndConverter< V > vsoc = new SourceAndConverter<>( tvs, vconverter );
-		final SourceAndConverter< T > soc = new SourceAndConverter<>( ts, converter, vsoc );
-
-		sources.add( soc );
-		converterSetups.add( new RealARGBColorConverterSetup( setupId, converter, vconverter ) );
-	}
-
-	private static < T extends RealType< T > > void initSetupRealTypeNonVolatile(
-			final AbstractSpimData< ? > spimData,
-			final BasicViewSetup setup,
-			final T type,
-			final List< ConverterSetup > converterSetups,
-			final List< SourceAndConverter< ? > > sources )
-	{
-		final double typeMin = type.getMinValue();
-		final double typeMax = type.getMaxValue();
-		final RealARGBColorConverter< T > converter = new RealARGBColorConverter.Imp1<>( typeMin, typeMax );
-		converter.setColor( new ARGBType( 0xffffffff ) );
-
-		final int setupId = setup.getId();
-		final String setupName = createSetupName( setup );
-		final SpimSource< T > s = new SpimSource<>( spimData, setupId, setupName );
-
-		// Decorate each source with an extra transformation, that can be
-		// edited manually in this viewer.
-		final TransformedSource< T > ts = new TransformedSource<>( s );
-		final SourceAndConverter< T > soc = new SourceAndConverter<>( ts, converter );
-
-		sources.add( soc );
-		converterSetups.add( new RealARGBColorConverterSetup( setupId, converter ) );
-	}
-
-	private static void initSetupARGBType(
-			final AbstractSpimData< ? > spimData,
-			final BasicViewSetup setup,
-			final ARGBType type,
-			final List< ConverterSetup > converterSetups,
-			final List< SourceAndConverter< ? > > sources )
-	{
-		if ( spimData.getSequenceDescription().getImgLoader() instanceof WrapBasicImgLoader )
-		{
-			initSetupARGBTypeNonVolatile( spimData, setup, type, converterSetups, sources );
-			return;
-		}
-		final ScaledARGBConverter.VolatileARGB vconverter = new ScaledARGBConverter.VolatileARGB( 0, 255 );
-		final ScaledARGBConverter.ARGB converter = new ScaledARGBConverter.ARGB( 0, 255 );
-
-		final int setupId = setup.getId();
-		final String setupName = createSetupName( setup );
-		final VolatileSpimSource< ARGBType, VolatileARGBType > vs = new VolatileSpimSource<>( spimData, setupId, setupName );
-		final SpimSource< ARGBType > s = vs.nonVolatile();
-
-		// Decorate each source with an extra transformation, that can be
-		// edited manually in this viewer.
-		final TransformedSource< VolatileARGBType > tvs = new TransformedSource<>( vs );
-		final TransformedSource< ARGBType > ts = new TransformedSource<>( s, tvs );
-
-		final SourceAndConverter< VolatileARGBType > vsoc = new SourceAndConverter<>( tvs, vconverter );
-		final SourceAndConverter< ARGBType > soc = new SourceAndConverter<>( ts, converter, vsoc );
-
-		sources.add( soc );
-		converterSetups.add( new RealARGBColorConverterSetup( setupId, converter, vconverter ) );
-	}
-
-	private static void initSetupARGBTypeNonVolatile(
-			final AbstractSpimData< ? > spimData,
-			final BasicViewSetup setup,
-			final ARGBType type,
-			final List< ConverterSetup > converterSetups,
-			final List< SourceAndConverter< ? > > sources )
-	{
-		final ScaledARGBConverter.ARGB converter = new ScaledARGBConverter.ARGB( 0, 255 );
-
-		final int setupId = setup.getId();
-		final String setupName = createSetupName( setup );
-		final SpimSource< ARGBType > s = new SpimSource<>( spimData, setupId, setupName );
-
-		// Decorate each source with an extra transformation, that can be
-		// edited manually in this viewer.
-		final TransformedSource< ARGBType > ts = new TransformedSource<>( s );
-		final SourceAndConverter< ARGBType > soc = new SourceAndConverter<>( ts, converter );
-
-		sources.add( soc );
-		converterSetups.add( new RealARGBColorConverterSetup( setupId, converter ) );
-	}
-
-	@SuppressWarnings( { "unchecked", "rawtypes" } )
-	public static void initSetups(
-			final AbstractSpimData< ? > spimData,
-			final List< ConverterSetup > converterSetups,
-			final List< SourceAndConverter< ? > > sources )
-	{
-		final AbstractSequenceDescription< ?, ?, ? > seq = spimData.getSequenceDescription();
-		final ViewerImgLoader imgLoader = ( ViewerImgLoader ) seq.getImgLoader();
-		for ( final BasicViewSetup setup : seq.getViewSetupsOrdered() )
-		{
-			final int setupId = setup.getId();
-			final Object type = imgLoader.getSetupImgLoader( setupId ).getImageType();
-			if ( RealType.class.isInstance( type ) )
-				initSetupRealType( spimData, setup, ( RealType ) type, converterSetups, sources );
-			else if ( ARGBType.class.isInstance( type ) )
-				initSetupARGBType( spimData, setup, ( ARGBType ) type, converterSetups, sources );
-			else
-				throw new IllegalArgumentException( "ImgLoader of type " + type.getClass() + " not supported." );
-		}
-	}
-
-	/**
+  /**
 	 *
 	 * @param converterSetups
 	 *            list of {@link ConverterSetup} that control min/max and color
@@ -336,330 +244,238 @@ public class BigDataViewer
 	 * @param options
 	 *            optional parameters.
 	 */
-	public BigDataViewer(
-			final ArrayList< ConverterSetup > converterSetups,
-			final ArrayList< SourceAndConverter< ? > > sources,
-			final AbstractSpimData< ? > spimData,
-			final int numTimepoints,
-			final CacheControl cache,
-			final String windowTitle,
-			final ProgressWriter progressWriter,
-			final ViewerOptions options )
-	{
-		final InputTriggerConfig inputTriggerConfig = getInputTriggerConfig( options );
-		if ( options.values.getTransformEventHandlerFactory() instanceof BehaviourTransformEventHandlerFactory )
-			( ( BehaviourTransformEventHandlerFactory< ? > ) options.values.getTransformEventHandlerFactory() ).setConfig( inputTriggerConfig );
+  public BigDataViewer(final ArrayList<ConverterSetup> converterSetups, final ArrayList<SourceAndConverter<?>> sources, final AbstractSpimData<?> spimData, final int numTimepoints, final CacheControl cache, final String windowTitle, final ProgressWriter progressWriter, final ViewerOptions options) {
+    final InputTriggerConfig inputTriggerConfig = getInputTriggerConfig(options);
+    if (options.values.getTransformEventHandlerFactory() instanceof BehaviourTransformEventHandlerFactory) {
+      ((BehaviourTransformEventHandlerFactory<?>) options.values.getTransformEventHandlerFactory()).setConfig(inputTriggerConfig);
+    }
+    viewerFrame = new ViewerFrame(sources, numTimepoints, cache, options);
+    viewerFrame.setSaveOnCloseFunction(this::onViewerFrameOnClose);
+    if (windowTitle != null) {
+      viewerFrame.setTitle(windowTitle);
+    }
+    viewer = viewerFrame.getViewerPanel();
+    for (final ConverterSetup cs : converterSetups) {
+      cs.setViewer(viewer);
+    }
+    manualTransformation = new ManualTransformation(viewer);
+    manualTransformationEditor = new ManualTransformationEditor(viewer, viewerFrame.getKeybindings());
+    bookmarks = new Bookmarks();
+    bookmarkEditor = new BookmarksEditor(viewer, viewerFrame.getKeybindings(), bookmarks);
+    setupAssignments = new SetupAssignments(converterSetups, 0, 65535);
+    if (setupAssignments.getMinMaxGroups().size() > 0) {
+      final MinMaxGroup group = setupAssignments.getMinMaxGroups().get(0);
+      for (final ConverterSetup setup : setupAssignments.getConverterSetups()) {
+        setupAssignments.moveSetupToGroup(setup, group);
+      }
+    }
+    brightnessDialog = new BrightnessDialog(viewerFrame, setupAssignments);
+    if (spimData != null) {
+      viewer.getSourceInfoOverlayRenderer().setTimePointsOrdered(spimData.getSequenceDescription().getTimePoints().getTimePointsOrdered());
+    }
+    cropDialog = (spimData == null) ? null : new CropDialog(viewerFrame, viewer, spimData.getSequenceDescription());
+    movieDialog = new RecordMovieDialog(viewerFrame, viewer, progressWriter);
+    viewer.getDisplay().addOverlayRenderer(movieDialog);
+    movieMaxProjectDialog = new RecordMaxProjectionDialog(viewerFrame, viewer, progressWriter);
+    viewer.getDisplay().addOverlayRenderer(movieMaxProjectDialog);
+    activeSourcesDialog = new VisibilityAndGroupingDialog(viewerFrame, viewer.getVisibilityAndGrouping());
+    addBookmarkDialog = new AddBookmarkDialog(viewerFrame, bookmarkEditor);
+    bookmarkManagementDialog = new BookmarkManagementDialog(viewerFrame, bookmarkEditor);
+    helpDialog = new HelpDialog(viewerFrame);
+    fileChooser = new JFileChooser();
+    fileChooser.setFileFilter(new FileFilter() {
+      @Override public String getDescription() {
+        return "xml files";
+      }
 
-		viewerFrame = new ViewerFrame( sources, numTimepoints, cache, options );
+      @Override public boolean accept(final File f) {
+        if (f.isDirectory()) {
+          return true;
+        }
+        if (f.isFile()) {
+          final String s = f.getName();
+          final int i = s.lastIndexOf('.');
+          if (i > 0 && i < s.length() - 1) {
+            final String ext = s.substring(i + 1).toLowerCase();
+            return ext.equals("xml");
+          }
+        }
+        return false;
+      }
+    });
+    NavigationActions.installActionBindings(viewerFrame.getKeybindings(), viewer, inputTriggerConfig);
+    BigDataViewerActions.installActionBindings(viewerFrame.getKeybindings(), this, inputTriggerConfig);
+    final JMenuBar menubar = new JMenuBar();
+    JMenu menu = new JMenu("File");
+    menubar.add(menu);
+    final ActionMap actionMap = viewerFrame.getKeybindings().getConcatenatedActionMap();
+    final JMenuItem miLoadSettings = new JMenuItem(actionMap.get(BigDataViewerActions.LOAD_SETTINGS));
+    miLoadSettings.setText("Load settings");
+    menu.add(miLoadSettings);
+    final JMenuItem miSaveSettings = new JMenuItem(actionMap.get(BigDataViewerActions.SAVE_SETTINGS));
+    miSaveSettings.setText("Save settings");
+    menu.add(miSaveSettings);
+    menu = new JMenu("Settings");
+    menubar.add(menu);
+    final JMenuItem miBrightness = new JMenuItem(actionMap.get(BigDataViewerActions.BRIGHTNESS_SETTINGS));
+    miBrightness.setText("Brightness & Color");
+    menu.add(miBrightness);
+    final JMenuItem miVisibility = new JMenuItem(actionMap.get(BigDataViewerActions.VISIBILITY_AND_GROUPING));
+    miVisibility.setText("Visibility & Grouping");
+    menu.add(miVisibility);
+    menu = new JMenu("Tools");
+    menubar.add(menu);
+    if (cropDialog != null) {
+      final JMenuItem miCrop = new JMenuItem(actionMap.get(BigDataViewerActions.CROP));
+      miCrop.setText("Crop");
+      menu.add(miCrop);
+    }
+    final JMenuItem miMovie = new JMenuItem(actionMap.get(BigDataViewerActions.RECORD_MOVIE));
+    miMovie.setText("Record Movie");
+    menu.add(miMovie);
+    final JMenuItem miMaxProjectMovie = new JMenuItem(actionMap.get(BigDataViewerActions.RECORD_MAX_PROJECTION_MOVIE));
+    miMaxProjectMovie.setText("Record Max-Projection Movie");
+    menu.add(miMaxProjectMovie);
+    final JMenuItem miManualTransform = new JMenuItem(actionMap.get(BigDataViewerActions.MANUAL_TRANSFORM));
+    miManualTransform.setText("Manual Transform");
+    menu.add(miManualTransform);
+    menu = new JMenu("Bookmarks");
+    menubar.add(menu);
+    final JMenuItem miAddBookmark = new JMenuItem(actionMap.get(BigDataViewerActions.OPEN_ADD_BOOKMARK_DIALOG));
+    miAddBookmark.setText("Add Bookmark");
+    menu.add(miAddBookmark);
+    final JMenuItem miBookmarkMgmt = new JMenuItem(actionMap.get(BigDataViewerActions.OPEN_BOOKMARK_MANAGEMENT));
+    miBookmarkMgmt.setText("Bookmark Management");
+    menu.add(miBookmarkMgmt);
+    menu.add(new JSeparator());
+    final JMenuItem miDeselectBookmark = new JMenuItem(actionMap.get(BigDataViewerActions.DESELECT_BOOKMARK));
+    miDeselectBookmark.setText("Deselect Bookmark");
+    menu.add(miDeselectBookmark);
+    menu = new JMenu("Help");
+    menubar.add(menu);
+    final JMenuItem miHelp = new JMenuItem(actionMap.get(BigDataViewerActions.SHOW_HELP));
+    miHelp.setText("Show Help");
+    menu.add(miHelp);
+    viewerFrame.setJMenuBar(menubar);
+  }
 
-		viewerFrame.setSaveOnCloseFunction( this::onViewerFrameOnClose );
+  public static BigDataViewer open(final AbstractSpimData<?> spimData, final String windowTitle, final ProgressWriter progressWriter, final ViewerOptions options) {
+    if (WrapBasicImgLoader.wrapImgLoaderIfNecessary(spimData)) {
+      System.err.println("WARNING:\nOpening <SpimData> dataset that is not suited for interactive browsing.\nConsider resaving as HDF5 for better performance.");
+    }
+    final ArrayList<ConverterSetup> converterSetups = new ArrayList<>();
+    final ArrayList<SourceAndConverter<?>> sources = new ArrayList<>();
+    initSetups(spimData, converterSetups, sources);
+    final AbstractSequenceDescription<?, ?, ?> seq = spimData.getSequenceDescription();
+    final int numTimepoints = seq.getTimePoints().size();
+    final CacheControl cache = ((ViewerImgLoader) seq.getImgLoader()).getCacheControl();
+    final BigDataViewer bdv = new BigDataViewer(converterSetups, sources, spimData, numTimepoints, cache, windowTitle, progressWriter, options);
+    WrapBasicImgLoader.removeWrapperIfPresent(spimData);
+    bdv.viewerFrame.setVisible(true);
+    InitializeViewerState.initTransform(bdv.viewer);
+    return bdv;
+  }
 
-		if ( windowTitle != null )
-			viewerFrame.setTitle( windowTitle );
-		viewer = viewerFrame.getViewerPanel();
+  public static BigDataViewer open(final String xmlFilename, final String windowTitle, final ProgressWriter progressWriter, final ViewerOptions options) throws SpimDataException {
+    final SpimDataMinimal spimData = new XmlIoSpimDataMinimal().load(xmlFilename);
+    final BigDataViewer bdv = open(spimData, windowTitle, progressWriter, options);
+    if (!bdv.tryLoadSettings(xmlFilename)) {
+      InitializeViewerState.initBrightness(0.001, 0.999, bdv.viewer, bdv.setupAssignments);
+    }
+    return bdv;
+  }
 
-		for ( final ConverterSetup cs : converterSetups )
-			cs.setViewer( viewer );
+  public static BigDataViewer open(final ArrayList<ConverterSetup> converterSetups, final ArrayList<SourceAndConverter<?>> sources, final int numTimepoints, final CacheControl cache, final String windowTitle, final ProgressWriter progressWriter, final ViewerOptions options) {
+    final BigDataViewer bdv = new BigDataViewer(converterSetups, sources, null, numTimepoints, cache, windowTitle, progressWriter, options);
+    bdv.viewerFrame.setVisible(true);
+    InitializeViewerState.initTransform(bdv.viewer);
+    return bdv;
+  }
 
-		manualTransformation = new ManualTransformation( viewer );
-		manualTransformationEditor = new ManualTransformationEditor( viewer, viewerFrame.getKeybindings() );
+  public ViewerPanel getViewer() {
+    return viewer;
+  }
 
-		bookmarks = new Bookmarks();
-		bookmarkEditor = new BookmarksEditor( viewer, viewerFrame.getKeybindings(), bookmarks );
+  public ViewerFrame getViewerFrame() {
+    return viewerFrame;
+  }
 
-		setupAssignments = new SetupAssignments( converterSetups, 0, 65535 );
-		if ( setupAssignments.getMinMaxGroups().size() > 0 )
-		{
-			final MinMaxGroup group = setupAssignments.getMinMaxGroups().get( 0 );
-			for ( final ConverterSetup setup : setupAssignments.getConverterSetups() )
-				setupAssignments.moveSetupToGroup( setup, group );
-		}
+  public SetupAssignments getSetupAssignments() {
+    return setupAssignments;
+  }
 
-		brightnessDialog = new BrightnessDialog( viewerFrame, setupAssignments );
+  public ManualTransformationEditor getManualTransformEditor() {
+    return manualTransformationEditor;
+  }
 
-		if (spimData != null )
-			viewer.getSourceInfoOverlayRenderer().setTimePointsOrdered( spimData.getSequenceDescription().getTimePoints().getTimePointsOrdered() );
+  public boolean tryLoadSettings(final String xmlFilename) {
+    proposedSettingsFile = null;
+    if (xmlFilename.startsWith("http://")) {
+      final String settings = xmlFilename + "settings";
+      {
+        try {
+          loadSettings(settings);
+          return true;
+        } catch (final FileNotFoundException e) {
+        } catch (final Exception e) {
+          e.printStackTrace();
+        }
+      }
+    } else {
+      if (xmlFilename.endsWith(".xml")) {
+        final String settings = xmlFilename.substring(0, xmlFilename.length() - ".xml".length()) + ".settings" + ".xml";
+        proposedSettingsFile = new File(settings);
+        if (proposedSettingsFile.isFile()) {
+          try {
+            loadSettings(settings);
+            return true;
+          } catch (final Exception e) {
+            e.printStackTrace();
+          }
+        }
+      }
+    }
+    return false;
+  }
 
-		cropDialog = ( spimData == null ) ? null : new CropDialog( viewerFrame, viewer, spimData.getSequenceDescription() );
+  private UserSaveChoice onViewerFrameOnClose() {
+    final int confirmAnswer = JOptionPane.showConfirmDialog(viewerFrame, "Do you want to save your settings before you close the application?", "Closing", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+    switch (confirmAnswer) {
+      case JOptionPane.YES_OPTION:
+      saveSettings();
+      return UserSaveChoice.YES;
+      case JOptionPane.NO_OPTION:
+      return UserSaveChoice.NO;
+      default:
+      return UserSaveChoice.CANCEL;
+    }
+  }
 
-		movieDialog = new RecordMovieDialog( viewerFrame, viewer, progressWriter );
-		// this is just to get updates of window size:
-		viewer.getDisplay().addOverlayRenderer( movieDialog );
+  protected void saveSettings() {
+    fileChooser.setSelectedFile(proposedSettingsFile);
+    final int returnVal = fileChooser.showSaveDialog(null);
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      proposedSettingsFile = fileChooser.getSelectedFile();
+      try {
+        saveSettings(proposedSettingsFile.getCanonicalPath());
+      } catch (final IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
 
-		movieMaxProjectDialog = new RecordMaxProjectionDialog( viewerFrame, viewer, progressWriter );
-		// this is just to get updates of window size:
-		viewer.getDisplay().addOverlayRenderer( movieMaxProjectDialog );
+  public void saveSettings(final String xmlFilename) throws IOException {
+    final Element root = new Element("Settings");
+    root.addContent(viewer.stateToXml());
+    root.addContent(setupAssignments.toXml());
+    root.addContent(manualTransformation.toXml());
+    root.addContent(bookmarks.toXml());
+    final Document doc = new Document(root);
+    final XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
+    xout.output(doc, new FileWriter(xmlFilename));
+  }
 
-		activeSourcesDialog = new VisibilityAndGroupingDialog( viewerFrame, viewer.getVisibilityAndGrouping() );
-
-		addBookmarkDialog = new AddBookmarkDialog( viewerFrame, bookmarkEditor );
-		bookmarkManagementDialog = new BookmarkManagementDialog( viewerFrame, bookmarkEditor );
-
-		helpDialog = new HelpDialog( viewerFrame );
-
-		fileChooser = new JFileChooser();
-		fileChooser.setFileFilter( new FileFilter()
-		{
-			@Override
-			public String getDescription()
-			{
-				return "xml files";
-			}
-
-			@Override
-			public boolean accept( final File f )
-			{
-				if ( f.isDirectory() )
-					return true;
-				if ( f.isFile() )
-				{
-					final String s = f.getName();
-					final int i = s.lastIndexOf( '.' );
-					if ( i > 0 && i < s.length() - 1 )
-					{
-						final String ext = s.substring( i + 1 ).toLowerCase();
-						return ext.equals( "xml" );
-					}
-				}
-				return false;
-			}
-		} );
-
-		NavigationActions.installActionBindings( viewerFrame.getKeybindings(), viewer, inputTriggerConfig );
-		BigDataViewerActions.installActionBindings( viewerFrame.getKeybindings(), this, inputTriggerConfig );
-
-		final JMenuBar menubar = new JMenuBar();
-		JMenu menu = new JMenu( "File" );
-		menubar.add( menu );
-
-		final ActionMap actionMap = viewerFrame.getKeybindings().getConcatenatedActionMap();
-		final JMenuItem miLoadSettings = new JMenuItem( actionMap.get( BigDataViewerActions.LOAD_SETTINGS ) );
-		miLoadSettings.setText( "Load settings" );
-		menu.add( miLoadSettings );
-
-		final JMenuItem miSaveSettings = new JMenuItem( actionMap.get( BigDataViewerActions.SAVE_SETTINGS ) );
-		miSaveSettings.setText( "Save settings" );
-		menu.add( miSaveSettings );
-
-		menu = new JMenu( "Settings" );
-		menubar.add( menu );
-
-		final JMenuItem miBrightness = new JMenuItem( actionMap.get( BigDataViewerActions.BRIGHTNESS_SETTINGS ) );
-		miBrightness.setText( "Brightness & Color" );
-		menu.add( miBrightness );
-
-		final JMenuItem miVisibility = new JMenuItem( actionMap.get( BigDataViewerActions.VISIBILITY_AND_GROUPING ) );
-		miVisibility.setText( "Visibility & Grouping" );
-		menu.add( miVisibility );
-
-		menu = new JMenu( "Tools" );
-		menubar.add( menu );
-
-		if ( cropDialog != null )
-		{
-			final JMenuItem miCrop = new JMenuItem( actionMap.get( BigDataViewerActions.CROP ) );
-			miCrop.setText( "Crop" );
-			menu.add( miCrop );
-		}
-
-		final JMenuItem miMovie = new JMenuItem( actionMap.get( BigDataViewerActions.RECORD_MOVIE ) );
-		miMovie.setText( "Record Movie" );
-		menu.add( miMovie );
-
-		final JMenuItem miMaxProjectMovie = new JMenuItem( actionMap.get( BigDataViewerActions.RECORD_MAX_PROJECTION_MOVIE ) );
-		miMaxProjectMovie.setText( "Record Max-Projection Movie" );
-		menu.add( miMaxProjectMovie );
-
-		final JMenuItem miManualTransform = new JMenuItem( actionMap.get( BigDataViewerActions.MANUAL_TRANSFORM ) );
-		miManualTransform.setText( "Manual Transform" );
-		menu.add( miManualTransform );
-
-		menu = new JMenu( "Bookmarks" );
-		menubar.add( menu );
-
-		final JMenuItem miAddBookmark = new JMenuItem( actionMap.get( BigDataViewerActions.OPEN_ADD_BOOKMARK_DIALOG ) );
-		miAddBookmark.setText( "Add Bookmark" );
-		menu.add( miAddBookmark );
-
-		final JMenuItem miBookmarkMgmt = new JMenuItem( actionMap.get( BigDataViewerActions.OPEN_BOOKMARK_MANAGEMENT ) );
-		miBookmarkMgmt.setText( "Bookmark Management" );
-		menu.add( miBookmarkMgmt );
-
-		menu.add( new JSeparator() );
-
-		final JMenuItem miDeselectBookmark = new JMenuItem( actionMap.get( BigDataViewerActions.DESELECT_BOOKMARK ) );
-		miDeselectBookmark.setText( "Deselect Bookmark" );
-		menu.add( miDeselectBookmark );
-
-		menu = new JMenu( "Help" );
-		menubar.add( menu );
-
-		final JMenuItem miHelp = new JMenuItem( actionMap.get( BigDataViewerActions.SHOW_HELP ) );
-		miHelp.setText( "Show Help" );
-		menu.add( miHelp );
-
-		viewerFrame.setJMenuBar( menubar );
-	}
-
-	public static BigDataViewer open( final AbstractSpimData< ? > spimData, final String windowTitle, final ProgressWriter progressWriter, final ViewerOptions options )
-	{
-		if ( WrapBasicImgLoader.wrapImgLoaderIfNecessary( spimData ) )
-		{
-			System.err.println( "WARNING:\nOpening <SpimData> dataset that is not suited for interactive browsing.\nConsider resaving as HDF5 for better performance." );
-		}
-
-		final ArrayList< ConverterSetup > converterSetups = new ArrayList<>();
-		final ArrayList< SourceAndConverter< ? > > sources = new ArrayList<>();
-		initSetups( spimData, converterSetups, sources );
-
-		final AbstractSequenceDescription< ?, ?, ? > seq = spimData.getSequenceDescription();
-		final int numTimepoints = seq.getTimePoints().size();
-		final CacheControl cache = ( ( ViewerImgLoader ) seq.getImgLoader() ).getCacheControl();
-
-		final BigDataViewer bdv = new BigDataViewer( converterSetups, sources, spimData, numTimepoints, cache, windowTitle, progressWriter, options );
-
-		WrapBasicImgLoader.removeWrapperIfPresent( spimData );
-
-		bdv.viewerFrame.setVisible( true );
-		InitializeViewerState.initTransform( bdv.viewer );
-		return bdv;
-	}
-
-	public static BigDataViewer open( final String xmlFilename, final String windowTitle, final ProgressWriter progressWriter, final ViewerOptions options ) throws SpimDataException
-	{
-		final SpimDataMinimal spimData = new XmlIoSpimDataMinimal().load( xmlFilename );
-		final BigDataViewer bdv = open( spimData, windowTitle, progressWriter, options );
-		if ( !bdv.tryLoadSettings( xmlFilename ) )
-			InitializeViewerState.initBrightness( 0.001, 0.999, bdv.viewer, bdv.setupAssignments );
-		return bdv;
-	}
-
-	public static BigDataViewer open(
-			final ArrayList< ConverterSetup > converterSetups,
-			final ArrayList< SourceAndConverter< ? > > sources,
-			final int numTimepoints,
-			final CacheControl cache,
-			final String windowTitle,
-			final ProgressWriter progressWriter,
-			final ViewerOptions options )
-	{
-		final BigDataViewer bdv = new BigDataViewer( converterSetups, sources, null, numTimepoints, cache, windowTitle, progressWriter, options );
-		bdv.viewerFrame.setVisible( true );
-		InitializeViewerState.initTransform( bdv.viewer );
-		return bdv;
-	}
-
-	public ViewerPanel getViewer()
-	{
-		return viewer;
-	}
-
-	public ViewerFrame getViewerFrame()
-	{
-		return viewerFrame;
-	}
-
-	public SetupAssignments getSetupAssignments()
-	{
-		return setupAssignments;
-	}
-
-	public ManualTransformationEditor getManualTransformEditor()
-	{
-		return manualTransformationEditor;
-	}
-
-	public boolean tryLoadSettings( final String xmlFilename )
-	{
-		proposedSettingsFile = null;
-		if( xmlFilename.startsWith( "http://" ) )
-		{
-			// load settings.xml from the BigDataServer
-			final String settings = xmlFilename + "settings";
-			{
-				try
-				{
-					loadSettings( settings );
-					return true;
-				}
-				catch ( final FileNotFoundException e )
-				{}
-				catch ( final Exception e )
-				{
-					e.printStackTrace();
-				}
-			}
-		}
-		else if ( xmlFilename.endsWith( ".xml" ) )
-		{
-			final String settings = xmlFilename.substring( 0, xmlFilename.length() - ".xml".length() ) + ".settings" + ".xml";
-			proposedSettingsFile = new File( settings );
-			if ( proposedSettingsFile.isFile() )
-			{
-				try
-				{
-					loadSettings( settings );
-					return true;
-				}
-				catch ( final Exception e )
-				{
-					e.printStackTrace();
-				}
-			}
-		}
-		return false;
-	}
-
-	private UserSaveChoice onViewerFrameOnClose()
-	{
-		final int confirmAnswer = JOptionPane.showConfirmDialog( viewerFrame,
-				"Do you want to save your settings before you close the application?", "Closing",
-				JOptionPane.YES_NO_CANCEL_OPTION,
-				JOptionPane.QUESTION_MESSAGE );
-
-		switch ( confirmAnswer )
-		{
-		case JOptionPane.YES_OPTION:
-			saveSettings();
-			return UserSaveChoice.YES;
-		case JOptionPane.NO_OPTION:
-			return UserSaveChoice.NO;
-		default:
-			return UserSaveChoice.CANCEL;
-		}
-	}
-
-	protected void saveSettings()
-	{
-		fileChooser.setSelectedFile( proposedSettingsFile );
-		final int returnVal = fileChooser.showSaveDialog( null );
-		if ( returnVal == JFileChooser.APPROVE_OPTION )
-		{
-			proposedSettingsFile = fileChooser.getSelectedFile();
-			try
-			{
-				saveSettings( proposedSettingsFile.getCanonicalPath() );
-			}
-			catch ( final IOException e )
-			{
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void saveSettings( final String xmlFilename ) throws IOException
-	{
-		final Element root = new Element( "Settings" );
-		root.addContent( viewer.stateToXml() );
-		root.addContent( setupAssignments.toXml() );
-		root.addContent( manualTransformation.toXml() );
-		root.addContent( bookmarks.toXml() );
-		final Document doc = new Document( root );
-		final XMLOutputter xout = new XMLOutputter( Format.getPrettyFormat() );
-		xout.output( doc, new FileWriter( xmlFilename ) );
-	}
-
-	/**
+  /**
 	 * If {@code options} doesn't define a {@link InputTriggerConfig}, try to
 	 * load it from files in this order:
 	 * <ol>
@@ -672,116 +488,61 @@ public class BigDataViewer
 	 * @param options
 	 * @return
 	 */
-	public static InputTriggerConfig getInputTriggerConfig( final ViewerOptions options )
-	{
-		InputTriggerConfig conf = options.values.getInputTriggerConfig();
+  public static InputTriggerConfig getInputTriggerConfig(final ViewerOptions options) {
+    InputTriggerConfig conf = options.values.getInputTriggerConfig();
+    if (conf == null && new File("bdvkeyconfig.yaml").isFile()) {
+      try {
+        conf = new InputTriggerConfig(YamlConfigIO.read("bdvkeyconfig.yaml"));
+      } catch (final IOException e) {
+      }
+    }
+    if (conf == null) {
+      final String fn = System.getProperty("user.home") + "/.bdv/bdvkeyconfig.yaml";
+      if (new File(fn).isFile()) {
+        try {
+          conf = new InputTriggerConfig(YamlConfigIO.read(fn));
+        } catch (final IOException e) {
+        }
+      }
+    }
+    if (conf == null) {
+      conf = new InputTriggerConfig();
+    }
+    return conf;
+  }
 
-		// try "bdvkeyconfig.yaml" in current directory
-		if ( conf == null && new File( "bdvkeyconfig.yaml" ).isFile() )
-		{
-			try
-			{
-				conf = new InputTriggerConfig( YamlConfigIO.read( "bdvkeyconfig.yaml" ) );
-			}
-			catch ( final IOException e )
-			{}
-		}
+  protected void loadSettings() {
+    fileChooser.setSelectedFile(proposedSettingsFile);
+    final int returnVal = fileChooser.showOpenDialog(null);
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      proposedSettingsFile = fileChooser.getSelectedFile();
+      try {
+        loadSettings(proposedSettingsFile.getCanonicalPath());
+      } catch (final Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
 
-		// try "~/.bdv/bdvkeyconfig.yaml"
-		if ( conf == null )
-		{
-			final String fn = System.getProperty( "user.home" ) + "/.bdv/bdvkeyconfig.yaml";
-			if ( new File( fn ).isFile() )
-			{
-				try
-				{
-					conf = new InputTriggerConfig( YamlConfigIO.read( fn ) );
-				}
-				catch ( final IOException e )
-				{}
-			}
-		}
+  public void loadSettings(final String xmlFilename) throws IOException, JDOMException {
+    final SAXBuilder sax = new SAXBuilder();
+    final Document doc = sax.build(xmlFilename);
+    final Element root = doc.getRootElement();
+    viewer.stateFromXml(root);
+    setupAssignments.restoreFromXml(root);
+    manualTransformation.restoreFromXml(root);
+    bookmarks.restoreFromXml(root);
+    activeSourcesDialog.update();
+    viewer.requestRepaint();
+  }
 
-		if ( conf == null )
-		{
-			conf = new InputTriggerConfig();
-		}
-
-		return conf;
-	}
-
-	protected void loadSettings()
-	{
-		fileChooser.setSelectedFile( proposedSettingsFile );
-		final int returnVal = fileChooser.showOpenDialog( null );
-		if ( returnVal == JFileChooser.APPROVE_OPTION )
-		{
-			proposedSettingsFile = fileChooser.getSelectedFile();
-			try
-			{
-				loadSettings( proposedSettingsFile.getCanonicalPath() );
-			}
-			catch ( final Exception e )
-			{
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void loadSettings( final String xmlFilename ) throws IOException, JDOMException
-	{
-		final SAXBuilder sax = new SAXBuilder();
-		final Document doc = sax.build( xmlFilename );
-		final Element root = doc.getRootElement();
-		viewer.stateFromXml( root );
-		setupAssignments.restoreFromXml( root );
-		manualTransformation.restoreFromXml( root );
-		bookmarks.restoreFromXml( root );
-		activeSourcesDialog.update();
-		viewer.requestRepaint();
-	}
-
-	public static void main( final String[] args )
-	{
-//		final String fn = "http://tomancak-mac-17.mpi-cbg.de:8080/openspim/";
-//		final String fn = "/Users/Pietzsch/Desktop/openspim/datasetHDF.xml";
-		final String fn = "/Users/pietzsch/workspace/data/111010_weber_full.xml";
-//		final String fn = "/Users/Pietzsch/Desktop/spimrec2/dataset.xml";
-//		final String fn = "/Users/pietzsch/Desktop/HisYFP-SPIM/dataset.xml";
-//		final String fn = "/Users/Pietzsch/Desktop/bdv example/drosophila 2.xml";
-//		final String fn = "/Users/pietzsch/Desktop/data/clusterValia/140219-1/valia-140219-1.xml";
-//		final String fn = "/Users/Pietzsch/Desktop/data/catmaid.xml";
-//		final String fn = "src/main/resources/openconnectome-bock11-neariso.xml";
-//		final String fn = "/home/saalfeld/catmaid.xml";
-//		final String fn = "/home/saalfeld/catmaid-fafb00-v9.xml";
-//		final String fn = "/home/saalfeld/catmaid-fafb00-sample_A_cutout_3k.xml";
-//		final String fn = "/home/saalfeld/catmaid-thorsten.xml";
-//		final String fn = "/home/saalfeld/knossos-example.xml";
-//		final String fn = "/Users/Pietzsch/Desktop/data/catmaid-confocal.xml";
-//		final String fn = "/Users/pietzsch/desktop/data/BDV130418A325/BDV130418A325_NoTempReg.xml";
-//		final String fn = "/Users/pietzsch/Desktop/data/valia2/valia.xml";
-//		final String fn = "/Users/pietzsch/workspace/data/fast fly/111010_weber/combined.xml";
-//		final String fn = "/Users/pietzsch/workspace/data/mette/mette.xml";
-//		final String fn = "/Users/tobias/Desktop/openspim.xml";
-//		final String fn = "/Users/pietzsch/Desktop/data/fibsem.xml";
-//		final String fn = "/Users/pietzsch/Desktop/data/fibsem-remote.xml";
-//		final String fn = "/Users/pietzsch/Desktop/url-valia.xml";
-//		final String fn = "/Users/pietzsch/Desktop/data/clusterValia/140219-1/valia-140219-1.xml";
-//		final String fn = "/Users/pietzsch/workspace/data/111010_weber_full.xml";
-//		final String fn = "/Volumes/projects/tomancak_lightsheet/Mette/ZeissZ1SPIM/Maritigrella/021013_McH2BsGFP_CAAX-mCherry/11-use/hdf5/021013_McH2BsGFP_CAAX-mCherry-11-use.xml";
-//		final String fn = "C:\\Users\\maxkl\\Desktop\\weber_full\\111010_weber_full.xml";
-
-		try
-		{
-			System.setProperty( "apple.laf.useScreenMenuBar", "true" );
-
-			final BigDataViewer bdv = open( fn, new File( fn ).getName(), new ProgressWriterConsole(), ViewerOptions.options() );
-
-//			DumpInputConfig.writeToYaml( System.getProperty( "user.home" ) + "/.bdv/bdvkeyconfig.yaml", bdv.getViewerFrame() );
-		}
-		catch ( final Exception e )
-		{
-			e.printStackTrace();
-		}
-	}
+  public static void main(final String[] args) {
+    final String fn = "/Users/pietzsch/workspace/data/111010_weber_full.xml";
+    try {
+      System.setProperty("apple.laf.useScreenMenuBar", "true");
+      final BigDataViewer bdv = open(fn, new File(fn).getName(), new ProgressWriterConsole(), ViewerOptions.options());
+    } catch (final Exception e) {
+      e.printStackTrace();
+    }
+  }
 }
