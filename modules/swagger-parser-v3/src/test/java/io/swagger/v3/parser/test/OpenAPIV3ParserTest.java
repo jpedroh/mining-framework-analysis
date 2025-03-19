@@ -83,23 +83,39 @@ public class OpenAPIV3ParserTest {
     protected int serverPort = getDynamicPort();
     protected WireMockServer wireMockServer;
 
+<<<<<<< /usr/src/app/output/swagger-api/swagger-parser/2d1c96f61c4cce7a76bca334f56b96d75a6233aa/modules/swagger-parser-v3/src/test/java/io/swagger/v3/parser/test/OpenAPIV3ParserTest.java/left.java
     @Test
     public void testIssue1561() {
         ParseOptions options = new ParseOptions();
         options.setResolve(true);
         SwaggerParseResult result = new OpenAPIV3Parser().readLocation("issue-1561/swagger.yaml", null, options);
         OpenAPI openAPI = result.getOpenAPI();
+        Yaml.prettyPrint(openAPI);
         assertTrue(openAPI.getComponents().getResponses().size() == 3);
     }
-
+||||||| /usr/src/app/output/swagger-api/swagger-parser/2d1c96f61c4cce7a76bca334f56b96d75a6233aa/modules/swagger-parser-v3/src/test/java/io/swagger/v3/parser/test/OpenAPIV3ParserTest.java/base.java
+=======
     @Test
-    public void testAnonymousModelAllOf() {
+    public void testIssue1561() {
         ParseOptions options = new ParseOptions();
         options.setResolveFully(true);
-        SwaggerParseResult result = new OpenAPIV3Parser().readLocation("issue203/issue203AllOf.yaml", null, options);
+        options.setFlatten(true);
+        SwaggerParseResult result = new OpenAPIV3Parser().readLocation("issue-1561/swagger.yaml", null, options);
         OpenAPI openAPI = result.getOpenAPI();
-        assertEquals(openAPI.getComponents().getSchemas().get("Supplier").getXml().getName(),"supplierObject");
+        assertNotNull(openAPI);
+        assertNull(openAPI.getPaths().get("/operationalServices/tracks/scopes/{scopeId}/processes/{processId}/petitions")
+                .getPost().getResponses().get("400").get$ref());
     }
+>>>>>>> /usr/src/app/output/swagger-api/swagger-parser/2d1c96f61c4cce7a76bca334f56b96d75a6233aa/modules/swagger-parser-v3/src/test/java/io/swagger/v3/parser/test/OpenAPIV3ParserTest.java/right.java
+
+    @Test
+public void testAnonymousModelAllOf() {
+    ParseOptions options = new ParseOptions();
+    options.setResolveFully(true);
+    SwaggerParseResult result = new OpenAPIV3Parser().readLocation("issue203/issue203AllOf.yaml", null, options);
+    OpenAPI openAPI = result.getOpenAPI();
+    assertEquals(openAPI.getComponents().getSchemas().get("Supplier").getXml().getName(),"supplierObject");
+}
 
     @Test
     public void testIssue1518() {
