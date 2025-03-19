@@ -42,7 +42,7 @@ public class BinaryAsEscapedTextIT {
     public void shouldEchoEscapedCharacters() throws Exception {
         k3po.finish();
     }
-
+    @Test
     @Specification({"echo.non.escaped.characters/request",
         "echo.non.escaped.characters/response" })
     public void shouldEchoNonEscapedCharacters() throws Exception {
@@ -58,7 +58,7 @@ public class BinaryAsEscapedTextIT {
     }
 
     @Test
-    @Ignore("To be completed when wse spec is complete")
+    @Ignore("To be completed when wse spec is complete") @Ignore("Escaping is underspecified, see https://github.com/k3po/k3po/pull/280/files")
     @Specification({
         "echo.payload.length.127/request",
         "echo.payload.length.127/response" })
