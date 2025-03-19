@@ -77,6 +77,61 @@ public class RestorableViewHandler extends ViewHandlerWrapper { // TODO: rename 
 		}
 	}
 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/6421cc8340e71622018047b422b5a3c42230d06e/src/main/java/org/omnifaces/viewhandler/RestorableViewHandler.java/left.java
+||||||| /usr/src/app/output/omnifaces/omnifaces/6421cc8340e71622018047b422b5a3c42230d06e/src/main/java/org/omnifaces/viewhandler/RestorableViewHandler.java/base.java
+	/**
+	 * Restore only the view root state. This ensures that the view scope map and all view root component system event
+	 * listeners are also restored. Calling <code>super.restoreView()</code> would implicitly also build the entire view
+	 * and restore state of all other components in the tree. This is unnecessary during an unload request.
+	 */
+	@SuppressWarnings("unchecked")
+	private boolean restoreViewRootState(FacesContext context, ResponseStateManager manager, UIViewRoot view) {
+		Object[] state = (Object[]) manager.getState(context, view.getViewId());
+
+		if (state == null || state.length < 2 || !(state[1] instanceof Map)) {
+			return false;
+		}
+
+		Map<String, Object> states = (Map<String, Object>) state[1]; // Fortunately Mojarra and MyFaces have same structure.
+
+		if (view.getId() == null) {
+			view.setId(view.createUniqueId(context, null));
+		}
+
+		Object viewRootState = states.get(view.getClientId(context));
+		view.restoreState(context, viewRootState);
+		context.setViewRoot(view);
+		return true;
+	}
+
+=======
+	/**
+	 * Restore only the view root state. This ensures that the view scope map and all view root component system event
+	 * listeners are also restored. Calling <code>super.restoreView()</code> would implicitly also build the entire view
+	 * and restore state of all other components in the tree. This is unnecessary during an unload request.
+	 */
+	@SuppressWarnings("unchecked")
+	private boolean restoreViewRootState(FacesContext context, ResponseStateManager manager, UIViewRoot view) {
+		Object state = manager.getState(context, view.getViewId());
+
+		// TODO: this assumes partial state saving not full state saving (thus doesn't work on full state saving).
+		if (state == null || !(state instanceof Object[]) || ((Object[]) state).length < 2 || !(((Object[]) state)[1] instanceof Map)) {
+			return false;
+		}
+
+		Map<String, Object> states = (Map<String, Object>) ((Object[]) state)[1]; // Fortunately both Mojarra and MyFaces have same structure, otherwise this had to be in Hacks.
+
+		if (view.getId() == null) {
+			view.setId(view.createUniqueId(context, null));
+		}
+
+		Object viewRootState = states.get(view.getClientId(context));
+		view.restoreState(context, viewRootState);
+		context.setViewRoot(view);
+		return true;
+	}
+
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/6421cc8340e71622018047b422b5a3c42230d06e/src/main/java/org/omnifaces/viewhandler/RestorableViewHandler.java/right.java
 	private boolean isRestorableViewEnabled(FacesContext context) {
 		return TRUE.equals(getApplicationAttribute(context, EnableRestorableView.class.getName()));
 	}
