@@ -83,8 +83,12 @@ public class ValidatorFactory {
         registerValidator(SymbolWithSpaceValidator.class);
         registerValidator(WeakExpressionValidator.class);
         registerValidator(WordNumberValidator.class);
+<<<<<<< /usr/src/app/output/recruit-tech/redpen/6070b11414a006e8f3c05e457543200a9f558809/redpen-core/src/main/java/cc/redpen/validator/ValidatorFactory.java/left.java
         registerValidator(LongKanjiChainValidator.class);
+||||||| /usr/src/app/output/recruit-tech/redpen/6070b11414a006e8f3c05e457543200a9f558809/redpen-core/src/main/java/cc/redpen/validator/ValidatorFactory.java/base.java
+=======
         registerValidator(JapaneseAmbiguousNounConjunctionValidator.class);
+>>>>>>> /usr/src/app/output/recruit-tech/redpen/6070b11414a006e8f3c05e457543200a9f558809/redpen-core/src/main/java/cc/redpen/validator/ValidatorFactory.java/right.java
 
         // other
         registerValidator(JavaScriptValidator.class);
