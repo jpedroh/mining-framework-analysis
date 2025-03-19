@@ -271,7 +271,6 @@ public class AuthenticationContext {
                 credential.getClientSecret()));
         return acquireTokenOnBehalfOf(resource, userAssertion, clientAuth, callback);
     }
-
     /**
      * Acquires an access token from the authority on behalf of a user. It
      * requires using a user token previously received. Uses certificate to
@@ -303,7 +302,6 @@ public class AuthenticationContext {
         final ClientAuthentication clientAuth = createClientAuthFromClientAssertion(clientAssertion);
         return acquireTokenOnBehalfOf(resource, userAssertion, clientAuth, callback);
     }
-
     private Future<AuthenticationResult> acquireTokenOnBehalfOf(final String resource,
                                                      final UserAssertion userAssertion,
                                                      final ClientAuthentication clientAuthentication,
@@ -314,7 +312,7 @@ public class AuthenticationContext {
         params.put("requested_token_use", "on_behalf_of");
         try {
             AdalOAuthAuthorizationGrant grant = new AdalOAuthAuthorizationGrant(
-            new JWTBearerGrant(SignedJWT.parse(userAssertion.getAssertion())), params);
+                    new JWTBearerGrant(SignedJWT.parse(userAssertion.getAssertion())), params);
 
             return this.acquireToken(grant, clientAuthentication, callback);
         }
@@ -322,8 +320,6 @@ public class AuthenticationContext {
             throw new AuthenticationException(e);
         }
     }
-
-
     /**
      * Acquires security token from the authority.
      *
@@ -350,7 +346,6 @@ public class AuthenticationContext {
                 new ClientCredentialsGrant(), resource);
         return this.acquireToken(authGrant, clientAuth, callback);
     }
-
     /**
      * Acquires security token from the authority.
      *
@@ -375,7 +370,6 @@ public class AuthenticationContext {
                 this.authenticationAuthority.getSelfSignedJwtAudience()),
                 callback);
     }
-
     /**
      * Acquires security token from the authority using an authorization code
      * previously received.
@@ -410,7 +404,6 @@ public class AuthenticationContext {
                         authorizationCode), redirectUri), resource);
         return this.acquireToken(authGrant, clientAuth, callback);
     }
-
     /**
      * Acquires security token from the authority using an authorization code
      * previously received.
@@ -435,7 +428,6 @@ public class AuthenticationContext {
         return acquireTokenByAuthorizationCode(authorizationCode, redirectUri,
                 clientAssertion, (String) null, callback);
     }
-
     /**
      * Acquires security token from the authority using an authorization code
      * previously received.
@@ -470,7 +462,6 @@ public class AuthenticationContext {
                         authorizationCode), redirectUri), resource);
         return this.acquireToken(authGrant, clientAuth, callback);
     }
-
     /**
      * Acquires security token from the authority using an authorization code
      * previously received.
@@ -497,7 +488,6 @@ public class AuthenticationContext {
         return this.acquireTokenByAuthorizationCode(authorizationCode,
                 redirectUri, credential, null, callback);
     }
-
     /**
      * Acquires security token from the authority using an authorization code
      * previously received.
@@ -535,7 +525,6 @@ public class AuthenticationContext {
         return this.acquireToken(authGrant, clientAuth, callback);
 
     }
-
     /**
      * Acquires security token from the authority using an authorization code
      * previously received.
@@ -564,7 +553,6 @@ public class AuthenticationContext {
         return this.acquireTokenByAuthorizationCode(authorizationCode,
                 redirectUri, credential, null, callback);
     }
-
     /**
      * Acquires security token from the authority using an authorization code
      * previously received.
@@ -602,7 +590,6 @@ public class AuthenticationContext {
                                 .getSelfSignedJwtAudience()), resource,
                 callback);
     }
-
     /**
      * Acquires a device code from the authority
      *
@@ -621,7 +608,6 @@ public class AuthenticationContext {
         return service.submit(
                 new AcquireDeviceCodeCallable(this, clientId, resource, callback));
     }
-
     /**
      * Acquires security token from the authority using an device code previously received.
      *
@@ -648,7 +634,6 @@ public class AuthenticationContext {
 
         return this.acquireToken(deviceCodeGrant, clientAuth, callback);
     }
-
     /**
      * Acquires a security token from the authority using a Refresh Token
      * previously received.
@@ -672,7 +657,6 @@ public class AuthenticationContext {
         return acquireTokenByRefreshToken(refreshToken, clientId, clientAssertion,
                 null, callback);
     }
-
     /**
      * Acquires a security token from the authority using a Refresh Token
      * previously received.
@@ -707,7 +691,6 @@ public class AuthenticationContext {
                 new RefreshTokenGrant(new RefreshToken(refreshToken)), resource);
         return this.acquireToken(authGrant, clientAuth, callback);
     }
-
     /**
      * Acquires a security token from the authority using a Refresh Token
      * previously received.
@@ -728,7 +711,6 @@ public class AuthenticationContext {
         return acquireTokenByRefreshToken(refreshToken, credential,
                 (String) null, callback);
     }
-
     /**
      * Acquires a security token from the authority using a Refresh Token
      * previously received.
@@ -761,7 +743,6 @@ public class AuthenticationContext {
                 new RefreshTokenGrant(new RefreshToken(refreshToken)), resource);
         return this.acquireToken(authGrant, clientAuth, callback);
     }
-
     /**
      * Acquires a security token from the authority using a Refresh Token
      * previously received.
@@ -787,7 +768,6 @@ public class AuthenticationContext {
         return acquireTokenByRefreshToken(refreshToken, credential,
                 (String) null, callback);
     }
-
     /**
      * Acquires a security token from the authority using a Refresh Token
      * previously received.
@@ -825,7 +805,6 @@ public class AuthenticationContext {
                         this.authenticationAuthority.getSelfSignedJwtAudience()),
                 resource, callback);
     }
-
     /**
      * Acquires a security token from the authority using a Refresh Token
      * previously received. This method is suitable for the daemon OAuth2
@@ -849,7 +828,6 @@ public class AuthenticationContext {
 
         return acquireTokenByRefreshToken(refreshToken, clientId, (String)null, callback);
     }
-
     private Future<AuthenticationResult> acquireToken(
             final AdalAuthorizationGrant authGrant,
             final ClientAuthentication clientAuth,
@@ -858,7 +836,6 @@ public class AuthenticationContext {
         return service.submit(
                 new AcquireTokenCallable(this, authGrant, clientAuth, callback));
     }
-
     /**
      * Acquires a security token from the authority using a Refresh Token
      * previously received. This method is suitable for the daemon OAuth2
@@ -893,7 +870,6 @@ public class AuthenticationContext {
                 new RefreshTokenGrant(new RefreshToken(refreshToken)), resource);
         return this.acquireToken(authGrant, clientAuth, callback);
     }
-
     private void validateRefreshTokenRequestInput(final String refreshToken,
             final String clientId, final Object credential) {
 
@@ -906,7 +882,6 @@ public class AuthenticationContext {
         }
         this.validateInput(null, credential, false);
     }
-
     AuthenticationResult acquireTokenCommon(
             final AdalAuthorizationGrant authGrant,
             final ClientAuthentication clientAuth,
@@ -928,7 +903,6 @@ public class AuthenticationContext {
                 .executeOAuthRequestAndProcessResponse();
         return result;
     }
-
     private ClientAuthentication createClientAuthFromClientAssertion(
             final ClientAssertion clientAssertion) {
 
@@ -942,7 +916,6 @@ public class AuthenticationContext {
             throw new AuthenticationException(e);
         }
     }
-
     /**
      * Returns the correlation id configured by the user. It does not return the
      * id automatically generated by the API in case the user does not provide
@@ -953,7 +926,6 @@ public class AuthenticationContext {
     public String getCorrelationId() {
         return correlationId;
     }
-
     /**
      * Set optional correlation id to be used by the API. If not provided, the
      * API generates a random id.
@@ -964,7 +936,6 @@ public class AuthenticationContext {
     public void setCorrelationId(final String correlationId) {
         this.correlationId = correlationId;
     }
-
     /**
      * Returns validateAuthority boolean value passed as a constructor
      * parameter.
@@ -974,7 +945,6 @@ public class AuthenticationContext {
     public boolean shouldValidateAuthority() {
         return this.validateAuthority;
     }
-
     /**
      * Authority associated with the context instance
      *
@@ -983,7 +953,6 @@ public class AuthenticationContext {
     public String getAuthority() {
         return this.authority;
     }
-
     private void validateInput(final String resource, final Object credential,
                                final boolean validateResource) {
         if (validateResource && StringHelper.isBlank(resource)) {
@@ -993,7 +962,6 @@ public class AuthenticationContext {
             throw new IllegalArgumentException("credential is null");
         }
     }
-
     private void validateAuthCodeRequestInput(final String authorizationCode,
             final URI redirectUri, final Object clientCredential,
             final String resource) {
@@ -1006,8 +974,7 @@ public class AuthenticationContext {
         }
         this.validateInput(resource, clientCredential, false);
     }
-
-  private void validateDeviceCodeRequestInput(String clientId, String resource) {
+    private void validateDeviceCodeRequestInput(String clientId, String resource) {
         if (StringHelper.isBlank(clientId)) {
             throw new IllegalArgumentException("clientId is null or empty");
         }
@@ -1021,7 +988,6 @@ public class AuthenticationContext {
                     "Invalid authority type. Device Flow is not supported by ADFS authority");
         }
     }
-
     private void validateDeviceCodeRequestInput(final DeviceCode deviceCode,
                                                 final Object credential,
                                                 final String resource) {
@@ -1033,7 +999,6 @@ public class AuthenticationContext {
         }
         this.validateInput(resource, credential, true);
     }
-
     private void validateOnBehalfOfRequestInput(final String resource, final UserAssertion userAssertion,
                                                 final Object clientCredential, final boolean validateResource) {
         if (userAssertion == null) {
