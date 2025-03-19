@@ -2,7 +2,6 @@ package com.wrapper.spotify;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.wrapper.spotify.UtilProtos.Url;
 import com.wrapper.spotify.exceptions.*;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -18,11 +17,20 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
-
-import java.io.IOException;
 import java.nio.charset.Charset;
-
 import static com.wrapper.spotify.UrlUtil.getParametersList;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import com.google.common.net.HttpHeaders;
+import com.wrapper.spotify.UtilProtos.Url;
+import com.wrapper.spotify.exceptions.EmptyResponseException;
+import com.wrapper.spotify.exceptions.RateLimitException;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpConnectionManager;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.NameValuePair;
 
 public class SpotifyHttpManager implements HttpManager {
 
@@ -37,7 +45,339 @@ public class SpotifyHttpManager implements HttpManager {
     if (builder.connectionManager != null) {
       connectionManager = builder.connectionManager;
     } else {
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/1b1cd8eb1933453c6c1985aa960e69506070ecf5/src/main/java/com/wrapper/spotify/SpotifyHttpManager.java/left.java
       connectionManager = new PoolingHttpClientConnectionManager();
+||||||| /usr/src/app/output/thelinmichael/spotify-web-api-java/1b1cd8eb1933453c6c1985aa960e69506070ecf5/src/main/java/com/wrapper/spotify/SpotifyHttpManager.java/base.java
+      connectionManager = new MultiThreadedHttpConnectionManager();
+    }
+  }
+
+  @Override
+  public String get(Url url) throws WebApiException, IOException {
+    assert (url != null);
+
+    final String uri = UrlUtil.assemble(url);
+    final GetMethod method = new GetMethod(uri);
+
+    for (Url.Parameter header : url.getHeaderParametersList()) {
+      method.setRequestHeader(header.getName(), header.getValue());
+    }
+    method.setQueryString(getParametersAsNamedValuePairArray(url));
+    method.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+    method.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
+
+    return execute(method);
+  }
+
+  @Override
+  public String post(UtilProtos.Url url) throws IOException, WebApiException {
+    assert (url != null);
+
+    final String uri = UrlUtil.assemble(url);
+    final PostMethod method = new PostMethod(uri);
+
+    for (Url.Parameter header : url.getHeaderParametersList()) {
+      method.setRequestHeader(header.getName(), header.getValue());
+    }
+
+    if (url.hasJsonBody()) {
+
+      StringRequestEntity requestEntity = new StringRequestEntity(
+              url.getJsonBody(),
+              "application/json",
+              "UTF-8");
+      method.setRequestEntity(requestEntity);
+    } else {
+      method.setRequestBody(getBodyParametersAsNamedValuePairArray(url));
+    }
+    method.setQueryString(getParametersAsNamedValuePairArray(url));
+    method.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+    method.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
+
+    return execute(method);
+  }
+
+  @Override
+  public String put(UtilProtos.Url url) throws IOException, WebApiException {
+    assert (url != null);
+
+    final String uri = UrlUtil.assemble(url);
+    final PutMethod method = new PutMethod(uri);
+
+    for (Url.Parameter header : url.getHeaderParametersList()) {
+      method.setRequestHeader(header.getName(), header.getValue());
+    }
+
+    if (url.hasJsonBody()) {
+
+      StringRequestEntity requestEntity = new StringRequestEntity(
+          url.getJsonBody(),
+          "application/json",
+          "UTF-8");
+      method.setRequestEntity(requestEntity);
+    } else {
+      method.setRequestBody(String.valueOf(getBodyParametersAsNamedValuePairArray(url)));
+    }
+    method.setQueryString(getParametersAsNamedValuePairArray(url));
+    method.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+    method.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
+
+    return execute(method);
+  }
+
+
+  // TODO(michael): Allow JSON body to be sent.
+  @Override
+  public String delete(UtilProtos.Url url) throws IOException, WebApiException {
+    assert (url != null);
+
+    final String uri = UrlUtil.assemble(url);
+    final DeleteMethod method = new DeleteMethod(uri);
+
+    for (Url.Parameter header : url.getHeaderParametersList()) {
+      method.setRequestHeader(header.getName(), header.getValue());
+    }
+
+    method.setQueryString(getParametersAsNamedValuePairArray(url));
+    method.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+    method.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
+
+    return execute(method);
+  }
+
+  private NameValuePair[] getParametersAsNamedValuePairArray(Url url) {
+    List<NameValuePair> out = new ArrayList<NameValuePair>();
+    for (Url.Parameter parameter : url.getParametersList()) {
+      if (parameter.hasName() && parameter.hasValue()) {
+        out.add(new NameValuePair(parameter.getName(), parameter.getValue().toString()));
+      }
+    }
+    return out.toArray(new NameValuePair[out.size()]);
+  }
+
+  private NameValuePair[] getBodyParametersAsNamedValuePairArray(Url url) {
+    List<NameValuePair> out = new ArrayList<NameValuePair>();
+    for (Url.Parameter parameter : url.getBodyParametersList()) {
+      if (parameter.hasName() && parameter.hasValue()) {
+        out.add(new NameValuePair(parameter.getName(), parameter.getValue().toString()));
+      }
+    }
+    return out.toArray(new NameValuePair[out.size()]);
+  }
+
+  private String execute(HttpMethod method) throws WebApiException, IOException {
+    final HttpClient httpClient = new HttpClient(connectionManager);
+    try {
+      httpClient.executeMethod(method);
+
+      handleErrorStatusCode(method);
+      String responseBody = method.getResponseBodyAsString();
+
+      handleErrorResponseBody(responseBody);
+      return responseBody;
+
+    } catch (IOException e) {
+      throw new IOException();
+    } finally {
+      method.releaseConnection();
+    }
+  }
+
+  /*
+   * Todo: Error handling could be more granular and throw a different exception depending on status code.
+   * It could also look into the JSON object to find an error message.
+   */
+  private void handleErrorStatusCode(HttpMethod method) throws BadRequestException, ServerErrorException {
+    int statusCode = method.getStatusCode();
+
+    if (statusCode >= 400 && statusCode < 500) {
+      throw new BadRequestException(String.valueOf(statusCode));
+    }
+    if (statusCode >= 500) {
+      throw new ServerErrorException(String.valueOf(statusCode));
+    }
+
+  }
+
+  private void handleErrorResponseBody(String responseBody) throws WebApiException {
+    if (responseBody == null) {
+      throw new EmptyResponseException("No response body");
+    }
+
+    if (!responseBody.equals("") && responseBody.startsWith("{")) {
+      final JSONObject jsonObject = JSONObject.fromObject(responseBody);
+      if (jsonObject.has("error")) {
+        throw new WebApiException(jsonObject.getString("error"));
+      }
+=======
+      connectionManager = new MultiThreadedHttpConnectionManager();
+    }
+  }
+
+  @Override
+  public String get(Url url) throws WebApiException, IOException {
+    assert (url != null);
+
+    final String uri = UrlUtil.assemble(url);
+    final GetMethod method = new GetMethod(uri);
+
+    for (Url.Parameter header : url.getHeaderParametersList()) {
+      method.setRequestHeader(header.getName(), header.getValue());
+    }
+    method.setQueryString(getParametersAsNamedValuePairArray(url));
+    method.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+    method.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
+
+    return execute(method);
+  }
+
+  @Override
+  public String post(UtilProtos.Url url) throws IOException, WebApiException {
+    assert (url != null);
+
+    final String uri = UrlUtil.assemble(url);
+    final PostMethod method = new PostMethod(uri);
+
+    for (Url.Parameter header : url.getHeaderParametersList()) {
+      method.setRequestHeader(header.getName(), header.getValue());
+    }
+
+    if (url.hasJsonBody()) {
+
+      StringRequestEntity requestEntity = new StringRequestEntity(
+              url.getJsonBody(),
+              "application/json",
+              "UTF-8");
+      method.setRequestEntity(requestEntity);
+    } else {
+      method.setRequestBody(getBodyParametersAsNamedValuePairArray(url));
+    }
+    method.setQueryString(getParametersAsNamedValuePairArray(url));
+    method.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+    method.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
+
+    return execute(method);
+  }
+
+  @Override
+  public String put(UtilProtos.Url url) throws IOException, WebApiException {
+    assert (url != null);
+
+    final String uri = UrlUtil.assemble(url);
+    final PutMethod method = new PutMethod(uri);
+
+    for (Url.Parameter header : url.getHeaderParametersList()) {
+      method.setRequestHeader(header.getName(), header.getValue());
+    }
+
+    if (url.hasJsonBody()) {
+
+      StringRequestEntity requestEntity = new StringRequestEntity(
+          url.getJsonBody(),
+          "application/json",
+          "UTF-8");
+      method.setRequestEntity(requestEntity);
+    } else {
+      method.setRequestBody(String.valueOf(getBodyParametersAsNamedValuePairArray(url)));
+    }
+    method.setQueryString(getParametersAsNamedValuePairArray(url));
+    method.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+    method.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
+
+    return execute(method);
+  }
+
+
+  // TODO(michael): Allow JSON body to be sent.
+  @Override
+  public String delete(UtilProtos.Url url) throws IOException, WebApiException {
+    assert (url != null);
+
+    final String uri = UrlUtil.assemble(url);
+    final DeleteMethod method = new DeleteMethod(uri);
+
+    for (Url.Parameter header : url.getHeaderParametersList()) {
+      method.setRequestHeader(header.getName(), header.getValue());
+    }
+
+    method.setQueryString(getParametersAsNamedValuePairArray(url));
+    method.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+    method.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
+
+    return execute(method);
+  }
+
+  private NameValuePair[] getParametersAsNamedValuePairArray(Url url) {
+    List<NameValuePair> out = new ArrayList<NameValuePair>();
+    for (Url.Parameter parameter : url.getParametersList()) {
+      if (parameter.hasName() && parameter.hasValue()) {
+        out.add(new NameValuePair(parameter.getName(), parameter.getValue().toString()));
+      }
+    }
+    return out.toArray(new NameValuePair[out.size()]);
+  }
+
+  private NameValuePair[] getBodyParametersAsNamedValuePairArray(Url url) {
+    List<NameValuePair> out = new ArrayList<NameValuePair>();
+    for (Url.Parameter parameter : url.getBodyParametersList()) {
+      if (parameter.hasName() && parameter.hasValue()) {
+        out.add(new NameValuePair(parameter.getName(), parameter.getValue().toString()));
+      }
+    }
+    return out.toArray(new NameValuePair[out.size()]);
+  }
+
+  private String execute(HttpMethod method) throws WebApiException, IOException {
+    final HttpClient httpClient = new HttpClient(connectionManager);
+    try {
+      httpClient.executeMethod(method);
+
+      handleErrorStatusCode(method);
+      String responseBody = method.getResponseBodyAsString();
+
+      handleErrorResponseBody(responseBody);
+      return responseBody;
+
+    } catch (IOException e) {
+      throw new IOException();
+    } finally {
+      method.releaseConnection();
+    }
+  }
+
+  /*
+   * Todo: Error handling could be more granular and throw a different exception depending on status code.
+   * It could also look into the JSON object to find an error message.
+   */
+  private void handleErrorStatusCode(HttpMethod method) throws BadRequestException,
+      ServerErrorException, RateLimitException {
+    int statusCode = method.getStatusCode();
+
+    if (statusCode >= 400 && statusCode < 500) {
+      if(statusCode == 429) {
+        String value = method.getResponseHeader(HttpHeaders.RETRY_AFTER).getValue();
+        int secondsForWaiting = (value == null ? 2000 : Integer.parseInt(value));
+        throw new RateLimitException(String.valueOf(statusCode), secondsForWaiting);
+      }
+      throw new BadRequestException(String.valueOf(statusCode));
+    }
+    if (statusCode >= 500) {
+      throw new ServerErrorException(String.valueOf(statusCode));
+    }
+
+  }
+
+  private void handleErrorResponseBody(String responseBody) throws WebApiException {
+    if (responseBody == null) {
+      throw new EmptyResponseException("No response body");
+    }
+
+    if (!responseBody.equals("") && responseBody.startsWith("{")) {
+      final JSONObject jsonObject = JSONObject.fromObject(responseBody);
+      if (jsonObject.has("error")) {
+        throw new WebApiException(jsonObject.getString("error"));
+      }
+>>>>>>> /usr/src/app/output/thelinmichael/spotify-web-api-java/1b1cd8eb1933453c6c1985aa960e69506070ecf5/src/main/java/com/wrapper/spotify/SpotifyHttpManager.java/right.java
     }
   }
 

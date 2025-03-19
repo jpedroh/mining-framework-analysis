@@ -10,9 +10,40 @@ import com.wrapper.spotify.requests.authentication.AuthorizationCodeGrantRequest
 import com.wrapper.spotify.requests.authentication.AuthorizationURLRequest;
 import com.wrapper.spotify.requests.authentication.ClientCredentialsGrantRequest;
 import com.wrapper.spotify.requests.authentication.RefreshAccessTokenRequest;
-
 import java.util.Arrays;
 import java.util.List;
+import com.wrapper.spotify.methods.AbstractRequest;
+import com.wrapper.spotify.methods.AddToMySavedTracksRequest;
+import com.wrapper.spotify.methods.AddTrackToPlaylistRequest;
+import com.wrapper.spotify.methods.AlbumRequest;
+import com.wrapper.spotify.methods.AlbumSearchRequest;
+import com.wrapper.spotify.methods.AlbumsForArtistRequest;
+import com.wrapper.spotify.methods.AlbumsRequest;
+import com.wrapper.spotify.methods.ArtistRequest;
+import com.wrapper.spotify.methods.ArtistSearchRequest;
+import com.wrapper.spotify.methods.ArtistsRequest;
+import com.wrapper.spotify.methods.AudioFeatureRequest;
+import com.wrapper.spotify.methods.ChangePlaylistDetailsRequest;
+import com.wrapper.spotify.methods.ContainsMySavedTracksRequest;
+import com.wrapper.spotify.methods.CurrentUserRequest;
+import com.wrapper.spotify.methods.FeaturedPlaylistsRequest;
+import com.wrapper.spotify.methods.GetMySavedTracksRequest;
+import com.wrapper.spotify.methods.NewReleasesRequest;
+import com.wrapper.spotify.methods.PlaylistCreationRequest;
+import com.wrapper.spotify.methods.PlaylistRequest;
+import com.wrapper.spotify.methods.PlaylistTracksRequest;
+import com.wrapper.spotify.methods.PlaylistUnfollowRequest;
+import com.wrapper.spotify.methods.RelatedArtistsRequest;
+import com.wrapper.spotify.methods.RemoveFromMySavedTracksRequest;
+import com.wrapper.spotify.methods.ReplacePlaylistTracksRequest;
+import com.wrapper.spotify.methods.TopTracksRequest;
+import com.wrapper.spotify.methods.TrackRequest;
+import com.wrapper.spotify.methods.TrackSearchRequest;
+import com.wrapper.spotify.methods.TracksForAlbumRequest;
+import com.wrapper.spotify.methods.TracksRequest;
+import com.wrapper.spotify.methods.UserPlaylistsRequest;
+import com.wrapper.spotify.methods.UserRequest;
+import net.sf.json.JSONObject;
 
 /**
  * Instances of the Api class provide access to the Spotify Web API.
@@ -397,6 +428,25 @@ public class Api {
   }
 
   /**
+   * delete tracks from a playlist
+   * @param userId The owner's username.
+   * @param playlistId The playlist's ID.
+   * @param trackUris URIs of the tracks to remove.
+   * @return  A builder object that can be used to build a request to remove tracks from a playlist.
+   */
+  public RemoveTrackFromPlaylistRequest.Builder removeTrackFromPlaylist(String userId, String playlistId, String[] trackUris) {
+    final RemoveTrackFromPlaylistRequest.Builder builder = RemoveTrackFromPlaylistRequest.builder();
+
+    userId = UrlUtil.escapeUsername(userId);
+
+    setDefaults(builder);
+    builder.setBodyParameter(new JsonParser().parse(new Gson().toJson(trackUris)).getAsJsonArray());
+    builder.setPath("/v1/users/" + userId + "/playlists/" + playlistId + "/tracks");
+
+    return builder;
+  }
+
+  /**
    * Replace tracks in a playlist.
    * @param userId The owner's username.
    * @param playlistId The playlist's ID.
@@ -414,25 +464,6 @@ public class Api {
     urisObject.put("uris", jsonArrayUri);
     builder.body(urisObject);
     builder.path("/v1/users/" + userId + "/playlists/" + playlistId + "/tracks");
-    return builder;
-  }
-
-  /**
-   * delete tracks from a playlist
-   * @param userId The owner's username.
-   * @param playlistId The playlist's ID.
-   * @param trackUris URIs of the tracks to remove.
-   * @return  A builder object that can be used to build a request to remove tracks from a playlist.
-   */
-  public RemoveTrackFromPlaylistRequest.Builder removeTrackFromPlaylist(String userId, String playlistId, String[] trackUris) {
-    final RemoveTrackFromPlaylistRequest.Builder builder = RemoveTrackFromPlaylistRequest.builder();
-
-    userId = UrlUtil.escapeUsername(userId);
-
-    setDefaults(builder);
-    builder.setBodyParameter(new JsonParser().parse(new Gson().toJson(trackUris)).getAsJsonArray());
-    builder.setPath("/v1/users/" + userId + "/playlists/" + playlistId + "/tracks");
-
     return builder;
   }
 

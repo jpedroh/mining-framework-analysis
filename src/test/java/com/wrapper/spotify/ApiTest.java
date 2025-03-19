@@ -7,14 +7,16 @@ import com.wrapper.spotify.model_objects.AlbumType;
 import com.wrapper.spotify.requests.Request;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
-import static com.wrapper.spotify.Assertions.*;
 import static org.junit.Assert.assertEquals;
+import java.util.Collections;
+import static com.wrapper.spotify.Assertions.assertHasBodyParameter;
+import static com.wrapper.spotify.Assertions.assertHasHeader;
+import static com.wrapper.spotify.Assertions.assertHasJsonBody;
+import static com.wrapper.spotify.Assertions.assertHasParameter;
 
 public class ApiTest {
 
@@ -30,6 +32,13 @@ public class ApiTest {
     Api api = Api.DEFAULT_API;
     Request request = api.getAudioFeature("1hmNbafW4sAPNaGc7LeXAZ").build();
     assertEquals("https://api.spotify.com:443/v1/audio-features/1hmNbafW4sAPNaGc7LeXAZ", request.toString(false));
+  }
+
+  @Test
+  public void shouldCreateAGetRecentlyPlayedTracksUrl() {
+    Api api = Api.DEFAULT_API;
+    Request request = api.getRecentlyPlayedTracks().build();
+    assertEquals("https://api.spotify.com:443/v1/me/player/recently-played", request.toString(false));
   }
 
   @Test
@@ -64,13 +73,6 @@ public class ApiTest {
         "https://api.spotify.com:443/v1/users/userId/playlists/5oEljuMoe9MXH6tBIPbd5e/followers",
         request.toString()
     );
-  }
-
-  @Test
-  public void shouldCreateAGetRecentlyPlayedTracksUrl() {
-    Api api = Api.DEFAULT_API;
-    Request request = api.getRecentlyPlayedTracks().build();
-    assertEquals("https://api.spotify.com:443/v1/me/player/recently-played", request.toString(false));
   }
 
   @Test
