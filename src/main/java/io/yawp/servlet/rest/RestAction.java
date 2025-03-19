@@ -1,5 +1,4 @@
 package io.yawp.servlet.rest;
-
 import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
@@ -14,282 +13,267 @@ import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.shields.Shield;
 import io.yawp.repository.shields.ShieldInfo;
 import io.yawp.repository.transformers.RepositoryTransformers;
-
 import java.util.List;
 import java.util.Map;
 
 public abstract class RestAction {
+  private static final String DEFAULT_TRANSFORMER_NAME = "defaults";
 
-	private static final String DEFAULT_TRANSFORMER_NAME = "defaults";
+  protected static final String QUERY_OPTIONS = "q";
 
-	protected static final String QUERY_OPTIONS = "q";
+  protected static final String TRANSFORMER = "t";
 
-	protected static final String TRANSFORMER = "t";
+  protected Repository r;
 
-	protected Repository r;
+  protected boolean enableHooks;
 
-	protected boolean enableHooks;
+  protected Class<?> endpointClazz;
 
-	protected Class<?> endpointClazz;
+  protected IdRef<?> id;
 
-	protected IdRef<?> id;
+  protected Map<String, String> params;
 
-	protected Map<String, String> params;
+  protected ActionKey customActionKey;
 
-	protected ActionKey customActionKey;
+  protected String actionName;
 
-	protected String actionName;
+  protected String transformerName;
 
-	protected String transformerName;
+  protected Shield<?> shield;
 
-	protected Shield<?> shield;
+  private List<?> objects;
 
-	private List<?> objects;
+  protected String requestJson;
 
-	protected String requestJson;
+  private boolean requestBodyJsonArray;
 
-	private boolean requestBodyJsonArray;
+  public RestAction(String actionName) {
+    this.actionName = actionName;
+  }
 
-	public RestAction(String actionName) {
-		this.actionName = actionName;
-	}
+  public void setRepository(Repository r) {
+    this.r = r;
+  }
 
-	public void setRepository(Repository r) {
-		this.r = r;
-	}
+  public void setEnableHooks(boolean enableHooks) {
+    this.enableHooks = enableHooks;
+  }
 
-	public void setEnableHooks(boolean enableHooks) {
-		this.enableHooks = enableHooks;
-	}
+  public void setEndpointClazz(Class<?> clazz) {
+    this.endpointClazz = clazz;
+  }
 
-	public void setEndpointClazz(Class<?> clazz) {
-		this.endpointClazz = clazz;
-	}
+  public void setId(IdRef<?> id) {
+    this.id = id;
+  }
 
-	public void setId(IdRef<?> id) {
-		this.id = id;
-	}
+  public void setParams(Map<String, String> params) {
+    this.params = params;
+  }
 
-	public void setParams(Map<String, String> params) {
-		this.params = params;
-	}
+  public void setCustomActionKey(ActionKey customActionKey) {
+    this.customActionKey = customActionKey;
+  }
 
-	public void setCustomActionKey(ActionKey customActionKey) {
-		this.customActionKey = customActionKey;
-	}
+  public boolean isRequestBodyJsonArray() {
+    return requestBodyJsonArray;
+  }
 
-	public boolean isRequestBodyJsonArray() {
-		return requestBodyJsonArray;
-	}
+  public void setRequestJson(String requestJson) {
+    this.requestJson = requestJson;
+    this.requestBodyJsonArray = JsonUtils.isJsonArray(requestJson);
+  }
 
-	public void setRequestJson(String requestJson) {
-		this.requestJson = requestJson;
-		this.requestBodyJsonArray = JsonUtils.isJsonArray(requestJson);
-	}
+  public void setRequestBodyJsonArray(boolean requestBodyJsonArray) {
+    this.requestBodyJsonArray = requestBodyJsonArray;
+  }
 
-	public void setRequestBodyJsonArray(boolean requestBodyJsonArray) {
-		this.requestBodyJsonArray = requestBodyJsonArray;
-	}
+  protected void beforeShield() {
+  }
 
-	protected void beforeShield() {
+  public abstract void shield();
 
-	}
+  public abstract Object action();
 
-	public abstract void shield();
+  public HttpResponse execute() {
+    beforeShield();
+    if (hasShield()) {
+      shield();
+    }
+    Object object = action();
+    if (HttpResponse.class.isInstance(object)) {
+      return (HttpResponse) object;
+    }
+    return new JsonResponse(JsonUtils.to(object));
+  }
 
-	public abstract Object action();
+  protected QueryBuilder<?> query() {
+    if (enableHooks) {
+      return r.queryWithHooks(endpointClazz);
+    }
+    return r.query(endpointClazz);
+  }
 
-	public HttpResponse execute() {
-		beforeShield();
+  protected void save(Object object) {
+    if (enableHooks) {
+      r.saveWithHooks(object);
+    } else {
+      r.save(object);
+    }
+  }
 
-		if (hasShield()) {
-			shield();
-		}
+  protected FutureObject<Object> saveAsync(Object object) {
+    if (enableHooks) {
+      return r.async().saveWithHooks(object);
+    } else {
+      return r.async().save(object);
+    }
+  }
 
-		Object object = action();
+  protected Object transform(Object object) {
+    if (isList(object)) {
+      return transform((List<?>) object);
+    }
+    if (!hasTransformer() || !object.getClass().equals(endpointClazz)) {
+      return object;
+    }
+    return RepositoryTransformers.execute(r, object, getTransformerName());
+  }
 
-		if (HttpResponse.class.isInstance(object)) {
-			return (HttpResponse) object;
-		}
+  protected Object transform(List<?> objects) {
+    if (!hasTransformer()) {
+      return objects;
+    }
+    for (Object object : objects) {
+      if (!object.getClass().equals(endpointClazz)) {
+        continue;
+      }
+      RepositoryTransformers.execute(r, object, getTransformerName());
+    }
+    return objects;
+  }
 
-		return new JsonResponse(JsonUtils.to(object));
-	}
+  protected void applyGetFacade(Object object) {
+    if (isList(object)) {
+      applyGetFacade((List<?>) object);
+    }
+    if (!hasFacade()) {
+      return;
+    }
+    shield.applyGetFacade(object);
+  }
 
-	protected QueryBuilder<?> query() {
-		if (enableHooks) {
-			return r.queryWithHooks(endpointClazz);
-		}
-		return r.query(endpointClazz);
-	}
+  protected void applyGetFacade(List<?> objects) {
+    if (!hasFacade()) {
+      return;
+    }
+    for (Object object : objects) {
+      shield.applyGetFacade(object);
+    }
+  }
 
-	protected void save(Object object) {
-		if (enableHooks) {
-			r.saveWithHooks(object);
-		} else {
-			r.save(object);
-		}
-	}
+  protected String getTransformerName() {
+    return transformerName;
+  }
 
-	protected FutureObject<Object> saveAsync(Object object) {
-		if (enableHooks) {
-			return r.async().saveWithHooks(object);
-		} else {
-			return r.async().save(object);
-		}
-	}
+  protected boolean hasTransformer() {
+    return transformerName != null;
+  }
 
-	protected Object transform(Object object) {
-		if (isList(object)) {
-			return transform((List<?>) object);
-		}
+  public void defineTrasnformer() {
+    if (params.containsKey(TRANSFORMER)) {
+      transformerName = params.get(TRANSFORMER);
+      return;
+    }
+    if (r.getEndpointFeatures(endpointClazz).hasTranformer(actionName)) {
+      transformerName = actionName;
+      return;
+    }
+    if (r.getEndpointFeatures(endpointClazz).hasTranformer(DEFAULT_TRANSFORMER_NAME)) {
+      transformerName = DEFAULT_TRANSFORMER_NAME;
+      return;
+    }
+  }
 
-		if (!hasTransformer() || !object.getClass().equals(endpointClazz)) {
-			return object;
-		}
+  protected boolean hasShield() {
+    return shield != null;
+  }
 
-		return RepositoryTransformers.execute(r, object, getTransformerName());
-	}
+  protected boolean hasFacade() {
+    return shield != null && shield.hasFacade();
+  }
 
-	protected Object transform(List<?> objects) {
-		if (!hasTransformer()) {
-			return objects;
-		}
+  protected boolean hasShieldCondition() {
+    return hasShield() && shield.hasCondition();
+  }
 
-		for (Object object : objects) {
-			if (!object.getClass().equals(endpointClazz)) {
-				continue;
-			}
-			RepositoryTransformers.execute(r, object, getTransformerName());
-		}
+  public void defineShield() {
+    EndpointFeatures<?> endpointFeatures = r.getEndpointFeatures(endpointClazz);
+    if (endpointFeatures.hasShield()) {
+      shield = createShield(endpointFeatures);
+    }
+  }
 
-		return objects;
-	}
+  private Shield<?> createShield(EndpointFeatures<?> endpointFeatures) {
+    try {
+      ShieldInfo<?> shieldInfo = endpointFeatures.getShieldInfo();
+      Shield<?> shield = shieldInfo.getShieldClazz().newInstance();
+      shield.setRepository(r);
+      shield.setEndpointClazz(endpointClazz);
+      shield.setId(id);
+      shield.setObjects(objects);
+      shield.setParams(params);
+      shield.setActionKey(customActionKey);
+      shield.setActionMethods(shieldInfo.getActionMethods());
+      return shield;
+    } catch (InstantiationException | IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
-	protected void applyGetFacade(Object object) {
-		if (isList(object)) {
-			applyGetFacade((List<?>) object);
-		}
+  public void setObjects(List<?> objects) {
+    this.objects = objects;
+  }
 
-		if (!hasFacade()) {
-			return;
-		}
-		shield.applyGetFacade(object);
-	}
+  public List<?> getObjects() {
+    return requestBodyJsonArray ? objects : null;
+  }
 
-	protected void applyGetFacade(List<?> objects) {
-		if (!hasFacade()) {
-			return;
-		}
+  public Object getObject() {
+    return objects == null || requestBodyJsonArray ? null : objects.get(0);
+  }
 
-		for (Object object : objects) {
-			shield.applyGetFacade(object);
-		}
-	}
+  public static Class<? extends RestAction> getRestActionClazz(HttpVerb verb, boolean overCollection, boolean isCustomAction) {
+    if (isCustomAction) {
+      return CustomRestAction.class;
+    }
+    switch (verb) {
+      case GET:
+      return overCollection ? IndexRestAction.class : ShowRestAction.class;
+      case POST:
+      return CreateRestAction.class;
+      case PUT:
+      assertNotOverCollection(overCollection);
+      return UpdateRestAction.class;
+      case PATCH:
+      assertNotOverCollection(overCollection);
+      return PatchRestAction.class;
+      case DELETE:
+      assertNotOverCollection(overCollection);
+      return DestroyRestAction.class;
+      case OPTIONS:
+      return RoutesRestAction.class;
+    }
+    throw new HttpException(501, "Unsuported http verb " + verb);
+  }
 
-	protected String getTransformerName() {
-		return transformerName;
-	}
+  private static void assertNotOverCollection(boolean overCollection) {
+    if (overCollection) {
+      throw new HttpException(501);
+    }
+  }
 
-	protected boolean hasTransformer() {
-		return transformerName != null;
-	}
-
-	public void defineTrasnformer() {
-		if (params.containsKey(TRANSFORMER)) {
-			transformerName = params.get(TRANSFORMER);
-			return;
-		}
-		if (r.getEndpointFeatures(endpointClazz).hasTranformer(actionName)) {
-			transformerName = actionName;
-			return;
-		}
-		if (r.getEndpointFeatures(endpointClazz).hasTranformer(DEFAULT_TRANSFORMER_NAME)) {
-			transformerName = DEFAULT_TRANSFORMER_NAME;
-			return;
-		}
-	}
-
-	protected boolean hasShield() {
-		return shield != null;
-	}
-
-	protected boolean hasFacade() {
-		return shield != null && shield.hasFacade();
-	}
-
-	protected boolean hasShieldCondition() {
-		return hasShield() && shield.hasCondition();
-	}
-
-	public void defineShield() {
-		EndpointFeatures<?> endpointFeatures = r.getEndpointFeatures(endpointClazz);
-		if (endpointFeatures.hasShield()) {
-			shield = createShield(endpointFeatures);
-		}
-	}
-
-	private Shield<?> createShield(EndpointFeatures<?> endpointFeatures) {
-		try {
-			ShieldInfo<?> shieldInfo = endpointFeatures.getShieldInfo();
-
-			Shield<?> shield = shieldInfo.getShieldClazz().newInstance();
-			shield.setRepository(r);
-			shield.setEndpointClazz(endpointClazz);
-			shield.setId(id);
-			shield.setObjects(objects);
-			shield.setParams(params);
-			shield.setActionKey(customActionKey);
-			shield.setActionMethods(shieldInfo.getActionMethods());
-			return shield;
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public void setObjects(List<?> objects) {
-		this.objects = objects;
-	}
-
-	public List<?> getObjects() {
-		return requestBodyJsonArray ? objects : null;
-	}
-
-	public Object getObject() {
-		return objects == null || requestBodyJsonArray ? null : objects.get(0);
-	}
-
-	public static Class<? extends RestAction> getRestActionClazz(HttpVerb verb, boolean overCollection, boolean isCustomAction) {
-		if (isCustomAction) {
-			return CustomRestAction.class;
-		}
-
-		switch (verb) {
-		case GET:
-			return overCollection ? IndexRestAction.class : ShowRestAction.class;
-		case POST:
-			return CreateRestAction.class;
-		case PUT:
-			assertNotOverCollection(overCollection);
-			return UpdateRestAction.class;
-		case PATCH:
-			assertNotOverCollection(overCollection);
-			return PatchRestAction.class;
-		case DELETE:
-			assertNotOverCollection(overCollection);
-			return DestroyRestAction.class;
-		case OPTIONS:
-			return RoutesRestAction.class;
-		}
-		throw new HttpException(501, "Unsuported http verb " + verb);
-	}
-
-	private static void assertNotOverCollection(boolean overCollection) {
-		if (overCollection) {
-			throw new HttpException(501);
-		}
-	}
-
-	private boolean isList(Object object) {
-		return List.class.isAssignableFrom(object.getClass());
-	}
+  private boolean isList(Object object) {
+    return List.class.isAssignableFrom(object.getClass());
+  }
 }
