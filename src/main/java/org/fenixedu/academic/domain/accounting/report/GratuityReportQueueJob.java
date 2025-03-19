@@ -1,23 +1,4 @@
-/**
- * Copyright © 2002 Instituto Superior Técnico
- *
- * This file is part of FenixEdu Academic.
- *
- * FenixEdu Academic is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * FenixEdu Academic is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with FenixEdu Academic.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.fenixedu.academic.domain.accounting.report;
-
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.QueueJob;
@@ -48,396 +28,345 @@ import org.fenixedu.commons.spreadsheet.Spreadsheet.Row;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Strings;
 
 public class GratuityReportQueueJob extends GratuityReportQueueJob_Base {
+  private static final Logger logger = LoggerFactory.getLogger(GratuityReportQueueJob.class);
 
-    private static final Logger logger = LoggerFactory.getLogger(GratuityReportQueueJob.class);
+  private GratuityReportQueueJob() {
+    super();
+  }
 
-    private GratuityReportQueueJob() {
-        super();
+  public GratuityReportQueueJob(final GratuityReportQueueJobType type, final ExecutionYear executionYear, final DateTime beginDate, final DateTime endDate) {
+    this();
+    checkParameters(type, executionYear, beginDate, endDate);
+    setExecutionYear(executionYear);
+    setType(type);
+    setBeginDate(beginDate);
+    setEndDate(endDate);
+  }
+
+  protected void checkParameters(final GratuityReportQueueJobType type, final ExecutionYear executionYear, final DateTime beginDate, final DateTime endDate) {
+    if (executionYear == null) {
+      throw new DomainException("error.gratuity.report.execution.year.cannot.be.null");
     }
-
-    public GratuityReportQueueJob(final GratuityReportQueueJobType type, final ExecutionYear executionYear,
-            final DateTime beginDate, final DateTime endDate) {
-        this();
-
-        checkParameters(type, executionYear, beginDate, endDate);
-
-        setExecutionYear(executionYear);
-        setType(type);
-        setBeginDate(beginDate);
-        setEndDate(endDate);
+    if (type == null) {
+      throw new DomainException("error.gratuity.report.job.type.cannot.be.null");
     }
-
-    protected void checkParameters(final GratuityReportQueueJobType type, final ExecutionYear executionYear,
-            final DateTime beginDate, final DateTime endDate) {
-        if (executionYear == null) {
-            throw new DomainException("error.gratuity.report.execution.year.cannot.be.null");
-        }
-
-        if (type == null) {
-            throw new DomainException("error.gratuity.report.job.type.cannot.be.null");
-        }
-
-        if (type == GratuityReportQueueJobType.DATE_INTERVAL) {
-            if (beginDate == null) {
-                throw new DomainException("error.gratuity.report.job.beginDate.cannot.be.null");
-            }
-
-            if (endDate == null) {
-                throw new DomainException("error.gratuity.report.job.endDate.cannot.be.null");
-            }
-
-            if (!beginDate.isBefore(endDate)) {
-                throw new DomainException("error.gratuity.report.job.beginDate.must.be.before.endDate");
-            }
-        }
+    if (type == GratuityReportQueueJobType.DATE_INTERVAL) {
+      if (beginDate == null) {
+        throw new DomainException("error.gratuity.report.job.beginDate.cannot.be.null");
+      }
+      if (endDate == null) {
+        throw new DomainException("error.gratuity.report.job.endDate.cannot.be.null");
+      }
+      if (!beginDate.isBefore(endDate)) {
+        throw new DomainException("error.gratuity.report.job.beginDate.must.be.before.endDate");
+      }
     }
+  }
 
-    @Override
-    public QueueJobResult execute() throws Exception {
-        ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+  @Override public QueueJobResult execute() throws Exception {
+    ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+    buildReport().exportToCSV(byteArrayOS, ";");
+    byteArrayOS.close();
+    final QueueJobResult queueJobResult = new QueueJobResult();
+    queueJobResult.setContentType("text/csv");
+    queueJobResult.setContent(byteArrayOS.toByteArray());
+    logger.info("Job " + getFilename() + " completed");
+    return queueJobResult;
+  }
 
-        buildReport().exportToCSV(byteArrayOS, ";");
-
-        byteArrayOS.close();
-
-        final QueueJobResult queueJobResult = new QueueJobResult();
-        queueJobResult.setContentType("text/csv");
-        queueJobResult.setContent(byteArrayOS.toByteArray());
-
-        logger.info("Job " + getFilename() + " completed");
-
-        return queueJobResult;
-    }
-
-    private Spreadsheet buildReport() {
-        final Spreadsheet spreadsheet = new Spreadsheet(getFilename());
-
-        spreadsheet.setHeaders("Aluno", "Nome", "Nº Contribuinte", "Ano", "Curso", "Tipo de Curso", "Valor Em Dívida",
-                "Valor Total", "Valor Pago", "Valor Reembolsável", "Tipo de Isenção", "Valor de Isenção", "Percentagem de Isenção",
-                "Motivo", "Data de criação", "Data de entrada do pagamento", "Montante inicial", "Montante ajustado",
-                "Modo de pagamento", "Data de entrada do ajuste", "Montante do ajuste", "Justificação");
-
-        int i = 0;
-        for (final GratuityEvent gratuityEvent : getGratuityEvents()) {
-            GratuityEventEntry entry = new GratuityEventEntry(gratuityEvent);
-
-            for (TransactionEntryDetail transaction : entry.getNonAdjustingTransactions()) {
-                if (GratuityReportQueueJobType.DATE_INTERVAL == getType()) {
-                    if (transaction.getWhenRegisteredDateTime().isBefore(getBeginDate())) {
-                        continue;
-                    }
-
-                    if (transaction.getWhenRegisteredDateTime().isAfter(getEndDate())) {
-                        continue;
-                    }
-                }
-
-                Row row = spreadsheet.addRow();
-
-                fillWithGratuityEventInformation(row, entry);
-                fillWithTransactionsInformation(row, transaction);
-            }
-
-            if (++i % 100 == 0) {
-                logger.info(String.format("Lido %d propinas", i));
-            }
-        }
-
-        return spreadsheet;
-    }
-
-    private void fillWithTransactionsInformation(Row row, TransactionEntryDetail transaction) {
-        row.setCell(transaction.getWhenRegistered());
-        row.setCell(transaction.getOriginalAmount().toPlainString());
-        row.setCell(transaction.getAmountWithAdjustment().toPlainString());
-        row.setCell(transaction.getPaymentModeName());
-
-        for (TransactionEntryDetail adjustment : transaction.getBoundAdjustingTransactions()) {
-            row.setCell(adjustment.getWhenRegistered());
-            row.setCell(adjustment.getAmountWithAdjustment().toPlainString());
-            row.setCell(adjustment.getJustification());
-        }
-
-        if (transaction.getBoundAdjustingTransactions().isEmpty()) {
-            row.setCell("");
-            row.setCell("");
-            row.setCell("");
-        }
-
-        for (String name : transaction.getReceiptContributorsNameForOtherParties()) {
-            row.setCell(name);
-        }
-    }
-
-    private void fillWithGratuityEventInformation(Row row, GratuityEventEntry entry) {
-        row.setCell(entry.getStudentNumber());
-        row.setCell(entry.getStudentName());
-        row.setCell(entry.getSocialSecurityNumber());
-        row.setCell(entry.getGratuityExecutionYearName());
-        row.setCell(entry.getDegreeName());
-        row.setCell(entry.getDegreeTypeName());
-        row.setCell(entry.getDebtAmount().toPlainString());
-        row.setCell(entry.getTotalAmount().toPlainString());
-        row.setCell(entry.getPaidAmount().toPlainString());
-        row.setCell(entry.getReimbuisedAmount().toPlainString());
-
-        if (entry.hasExemption()) {
-            row.setCell(entry.getExemptionJustificationName());
-            row.setCell(entry.getExemptionValue().toPlainString());
-            row.setCell(entry.getExemptionPercentage());
-            row.setCell(entry.getExemptionReason());
-        } else {
-            row.setCell("");
-            row.setCell("");
-            row.setCell("");
-            row.setCell("");
-        }
-        row.setCell(entry.getWhenOccured());
-    }
-
-    @Override
-    public String getFilename() {
-        return String.format("PROPINAS_%s.csv", getRequestDate().toString("dd_MM_yyyy_hh_mm"));
-    }
-
-    private static class GratuityEventEntry {
-        GratuityEvent event;
-
-        public GratuityEventEntry(GratuityEvent event) {
-            this.event = event;
-        }
-
-        public String getStudentNumber() {
-            return event.getPerson().getStudent().getNumber().toString();
-        }
-
-        public String getStudentName() {
-            return event.getPerson().getName();
-        }
-
-        public String getSocialSecurityNumber() {
-            return event.getPerson().getSocialSecurityNumber();
-        }
-
-        public String getGratuityExecutionYearName() {
-            return event.getExecutionYear().getName();
-        }
-
-        public String getDegreeName() {
-            return event.getDegree().getNameI18N().getContent();
-        }
-
-        public String getDegreeTypeName() {
-            return event.getDegree().getDegreeType().getName().getContent();
-        }
-
-        public String getWhenOccured() {
-            return event.getWhenOccured().toString("dd/MM/yyyy");
-        }
-
-        public Money getTotalAmount() {
-            return event.getTotalAmountToPay();
-        }
-
-        public Money getDebtAmount() {
-            return event.getAmountToPay();
-        }
-
-        public Money getPaidAmount() {
-            return event.getPayedAmount();
-        }
-
-        public Money getReimbuisedAmount() {
-            return event.getReimbursableAmount();
-        }
-
-        public boolean hasExemption() {
-            return event.hasGratuityExemption();
-        }
-
-        public String getExemptionJustificationName() {
-            return hasExemption() ? event.getGratuityExemption().getJustificationType().getLocalizedName() : "";
-        }
-
-        public Money getExemptionValue() {
-            if (!hasExemption()) {
-                return Money.ZERO;
-            }
-
-            if (!event.getGratuityExemption().isValueExemption()) {
-                return Money.ZERO;
-            }
-
-            return ((ValueGratuityExemption) event.getGratuityExemption()).getValue();
-        }
-
-        public BigDecimal getExemptionPercentage() {
-            if (!hasExemption()) {
-                return new BigDecimal(0d);
-            }
-
-            if (!event.getGratuityExemption().isPercentageExemption()) {
-                return new BigDecimal(0d);
-            }
-
-            return ((PercentageGratuityExemption) event.getGratuityExemption()).getPercentage();
-        }
-
-        public String getExemptionReason() {
-            if (!hasExemption()) {
-                return "";
-            }
-
-            return event.getGratuityExemption().getReason();
-        }
-
-        public List<TransactionEntryDetail> getNonAdjustingTransactions() {
-            return event.getNonAdjustingTransactions().stream().map(TransactionEntryDetail::new).collect(Collectors.toList());
-        }
-    }
-
-    private static class TransactionEntryDetail {
-        AccountingTransaction transaction;
-
-        public TransactionEntryDetail(final AccountingTransaction transaction) {
-            this.transaction = transaction;
-        }
-
-        public String getWhenRegistered() {
-            return transaction.getWhenRegistered().toString("dd-MM-yyyy");
-        }
-
-        public DateTime getWhenRegisteredDateTime() {
-            return transaction.getWhenRegistered();
-        }
-
-        public String getPaymentModeName() {
-            return transaction.getPaymentMode().getLocalizedName();
-        }
-
-        public Money getOriginalAmount() {
-            return transaction.getOriginalAmount();
-        }
-
-        public Money getAmountWithAdjustment() {
-            return transaction.getAmountWithAdjustment();
-        }
-
-        public List<TransactionEntryDetail> getBoundAdjustingTransactions() {
-            return transaction.getAdjustmentTransactionsSet().stream().map(TransactionEntryDetail::new).collect(Collectors.toList());
-        }
-
-        public String getJustification() {
-            return transaction.getComments();
-        }
-
-        public boolean hasReceipts() {
-            return !transaction.getToAccountEntry().getReceiptsSet().isEmpty();
-        }
-
-        public String[] getReceiptContributorsNameForOtherParties() {
-            if (!hasReceipts()) {
-                return new ArrayList<String>().toArray(new String[0]);
-            }
-
-            List<String> contributorsNames = new ArrayList<>();
-            for (Receipt receipt : transaction.getEntryFor(transaction.getFromAccount()).getReceiptsSet()) {
-                if (!Strings.isNullOrEmpty(receipt.getContributorName())) {
-                    contributorsNames.add(receipt.getContributorName());
-                    continue;
-                }
-                if (!Strings.isNullOrEmpty(receipt.getContributorNumber())) {
-                    contributorsNames.add(receipt.getContributorNumber());
-                }
-            }
-
-            return contributorsNames.toArray(new String[0]);
-        }
-    }
-
-    protected Set<GratuityEvent> getGratuityEvents() {
-        final Set<GratuityEvent> result = new HashSet<>();
-
-        int i = 0;
-        List<ExecutionYear> executionYearList = null;
-
+  private Spreadsheet buildReport() {
+    final Spreadsheet spreadsheet = new Spreadsheet(getFilename());
+    spreadsheet.setHeaders("Aluno", "Nome", "N\u00ba Contribuinte", "Ano", "Curso", "Tipo de Curso", "Valor Em D\u00edvida", "Valor Total", "Valor Pago", "Valor Reembols\u00e1vel", "Tipo de Isen\u00e7\u00e3o", "Valor de Isen\u00e7\u00e3o", "Percentagem de Isen\u00e7\u00e3o", "Motivo", "Data de cria\u00e7\u00e3o", "Data de entrada do pagamento", "Montante inicial", "Montante ajustado", "Modo de pagamento", "Data de entrada do ajuste", "Montante do ajuste", "Justifica\u00e7\u00e3o");
+    int i = 0;
+    for (final GratuityEvent gratuityEvent : getGratuityEvents()) {
+      GratuityEventEntry entry = new GratuityEventEntry(gratuityEvent);
+      for (TransactionEntryDetail transaction : entry.getNonAdjustingTransactions()) {
         if (GratuityReportQueueJobType.DATE_INTERVAL == getType()) {
-            executionYearList = new ArrayList<>(Bennu.getInstance().getExecutionYearsSet());
+          if (transaction.getWhenRegisteredDateTime().isBefore(getBeginDate())) {
+            continue;
+          }
+          if (transaction.getWhenRegisteredDateTime().isAfter(getEndDate())) {
+            continue;
+          }
         }
-        else if (GratuityReportQueueJobType.EXECUTION_YEAR == getType()) {
-            executionYearList = Collections.singletonList(getExecutionYear());
-        }
+        Row row = spreadsheet.addRow();
+        fillWithGratuityEventInformation(row, entry);
+        fillWithTransactionsInformation(row, transaction);
+      }
+      if (++i % 100 == 0) {
+        logger.info(String.format("Lido %d propinas", i));
+      }
+    }
+    return spreadsheet;
+  }
 
-        for (ExecutionYear executionYear : executionYearList) {
-            for (AnnualEvent event : executionYear.getAnnualEventsSet()) {
-                if ((++i % 1000) == 0) {
-                    logger.info(String.format("Read %s events", i));
-                }
+  private void fillWithTransactionsInformation(Row row, TransactionEntryDetail transaction) {
+    row.setCell(transaction.getWhenRegistered());
+    row.setCell(transaction.getOriginalAmount().toPlainString());
+    row.setCell(transaction.getAmountWithAdjustment().toPlainString());
+    row.setCell(transaction.getPaymentModeName());
+    for (TransactionEntryDetail adjustment : transaction.getBoundAdjustingTransactions()) {
+      row.setCell(adjustment.getWhenRegistered());
+      row.setCell(adjustment.getAmountWithAdjustment().toPlainString());
+      row.setCell(adjustment.getJustification());
+    }
+    if (transaction.getBoundAdjustingTransactions().isEmpty()) {
+      row.setCell("");
+      row.setCell("");
+      row.setCell("");
+    }
+    for (String name : transaction.getReceiptContributorsNameForOtherParties()) {
+      row.setCell(name);
+    }
+  }
 
-                if (event.isCancelled()) {
-                    continue;
-                }
+  private void fillWithGratuityEventInformation(Row row, GratuityEventEntry entry) {
+    row.setCell(entry.getStudentNumber());
+    row.setCell(entry.getStudentName());
+    row.setCell(entry.getSocialSecurityNumber());
+    row.setCell(entry.getGratuityExecutionYearName());
+    row.setCell(entry.getDegreeName());
+    row.setCell(entry.getDegreeTypeName());
+    row.setCell(entry.getDebtAmount().toPlainString());
+    row.setCell(entry.getTotalAmount().toPlainString());
+    row.setCell(entry.getPaidAmount().toPlainString());
+    row.setCell(entry.getReimbuisedAmount().toPlainString());
+    if (entry.hasExemption()) {
+      row.setCell(entry.getExemptionJustificationName());
+      row.setCell(entry.getExemptionValue().toPlainString());
+      row.setCell(entry.getExemptionPercentage());
+      row.setCell(entry.getExemptionReason());
+    } else {
+      row.setCell("");
+      row.setCell("");
+      row.setCell("");
+      row.setCell("");
+    }
+    row.setCell(entry.getWhenOccured());
+  }
 
-                if (!event.isGratuity()) {
-                    continue;
-                }
+  @Override public String getFilename() {
+    return String.format("PROPINAS_%s.csv", getRequestDate().toString("dd_MM_yyyy_hh_mm"));
+  }
 
-                if (!isToDiscard((GratuityEvent) event)) {
-                    result.add((GratuityEvent) event);
-                }
+  private static class GratuityEventEntry {
+    GratuityEvent event;
 
-            }
-        }
-
-        return result;
+    public GratuityEventEntry(GratuityEvent event) {
+      this.event = event;
     }
 
-    private boolean isToDiscard(GratuityEvent gratuityEvent) {
-        if (!(gratuityEvent instanceof StandaloneEnrolmentGratuityEvent)) {
-            return false;
+    public String getStudentNumber() {
+      return event.getPerson().getStudent().getNumber().toString();
+    }
+
+    public String getStudentName() {
+      return event.getPerson().getName();
+    }
+
+    public String getSocialSecurityNumber() {
+      return event.getPerson().getSocialSecurityNumber();
+    }
+
+    public String getGratuityExecutionYearName() {
+      return event.getExecutionYear().getName();
+    }
+
+    public String getDegreeName() {
+      return event.getDegree().getNameI18N().getContent();
+    }
+
+    public String getDegreeTypeName() {
+      return event.getDegree().getDegreeType().getName().getContent();
+    }
+
+    public String getWhenOccured() {
+      return event.getWhenOccured().toString("dd/MM/yyyy");
+    }
+
+    public Money getTotalAmount() {
+      return event.getTotalAmountToPay();
+    }
+
+    public Money getDebtAmount() {
+      return event.getAmountToPay();
+    }
+
+    public Money getPaidAmount() {
+      return event.getPayedAmount();
+    }
+
+    public Money getReimbuisedAmount() {
+      return event.getReimbursableAmount();
+    }
+
+    public boolean hasExemption() {
+      return event.hasGratuityExemption();
+    }
+
+    public String getExemptionJustificationName() {
+      return hasExemption() ? event.getGratuityExemption().getJustificationType().getLocalizedName() : "";
+    }
+
+    public Money getExemptionValue() {
+      if (!hasExemption()) {
+        return Money.ZERO;
+      }
+      if (!event.getGratuityExemption().isValueExemption()) {
+        return Money.ZERO;
+      }
+      return ((ValueGratuityExemption) event.getGratuityExemption()).getValue();
+    }
+
+    public BigDecimal getExemptionPercentage() {
+      if (!hasExemption()) {
+        return new BigDecimal(0d);
+      }
+      if (!event.getGratuityExemption().isPercentageExemption()) {
+        return new BigDecimal(0d);
+      }
+      return ((PercentageGratuityExemption) event.getGratuityExemption()).getPercentage();
+    }
+
+    public String getExemptionReason() {
+      if (!hasExemption()) {
+        return "";
+      }
+      return event.getGratuityExemption().getReason();
+    }
+
+    public List<TransactionEntryDetail> getNonAdjustingTransactions() {
+      return event.getNonAdjustingTransactions().stream().map(TransactionEntryDetail::new).collect(Collectors.toList());
+    }
+  }
+
+  private static class TransactionEntryDetail {
+    AccountingTransaction transaction;
+
+    public TransactionEntryDetail(final AccountingTransaction transaction) {
+      this.transaction = transaction;
+    }
+
+    public String getWhenRegistered() {
+      return transaction.getWhenRegistered().toString("dd-MM-yyyy");
+    }
+
+    public DateTime getWhenRegisteredDateTime() {
+      return transaction.getWhenRegistered();
+    }
+
+    public String getPaymentModeName() {
+      return transaction.getPaymentMode().getLocalizedName();
+    }
+
+    public Money getOriginalAmount() {
+      return transaction.getOriginalAmount();
+    }
+
+    public Money getAmountWithAdjustment() {
+      return transaction.getAmountWithAdjustment();
+    }
+
+    public List<TransactionEntryDetail> getBoundAdjustingTransactions() {
+      return transaction.getAdjustmentTransactionsSet().stream().map(TransactionEntryDetail::new).collect(Collectors.toList());
+    }
+
+    public String getJustification() {
+      return transaction.getComments();
+    }
+
+    public boolean hasReceipts() {
+      return !transaction.getToAccountEntry().getReceiptsSet().isEmpty();
+    }
+
+    public String[] getReceiptContributorsNameForOtherParties() {
+      if (!hasReceipts()) {
+        return new ArrayList<String>().toArray(new String[0]);
+      }
+      List<String> contributorsNames = new ArrayList<>();
+      for (Receipt receipt : transaction.getEntryFor(transaction.getFromAccount()).getReceiptsSet()) {
+        if (!Strings.isNullOrEmpty(receipt.getContributorName())) {
+          contributorsNames.add(receipt.getContributorName());
+          continue;
         }
-
-        final Collection<Enrolment> enrolmentsToCalculateGratuity = getEnrolmentsToCalculateGratuity(gratuityEvent);
-
-        if (enrolmentsToCalculateGratuity.isEmpty()) {
-            return true;
+        if (!Strings.isNullOrEmpty(receipt.getContributorNumber())) {
+          contributorsNames.add(receipt.getContributorNumber());
         }
-
-        return enrolmentsToCalculateGratuity.stream().anyMatch(enrolment -> enrolment.getDegreeCurricularPlanOfDegreeModule().getDegree().isDEA());
-
+      }
+      return contributorsNames.toArray(new String[0]);
     }
+  }
 
-    private Collection<Enrolment> getEnrolmentsToCalculateGratuity(GratuityEvent gratuityEvent) {
-        if (!gratuityEvent.getDegree().isEmpty()) {
-            if (!gratuityEvent.getStudentCurricularPlan().hasStandaloneCurriculumGroup()) {
-                return Collections.emptySet();
-            }
-
-            return gratuityEvent.getStudentCurricularPlan().getStandaloneCurriculumGroup()
-                    .getEnrolmentsBy(gratuityEvent.getExecutionYear());
-        } else {
-            return gratuityEvent.getStudentCurricularPlan().getRoot().getEnrolmentsBy(gratuityEvent.getExecutionYear());
+  protected Set<GratuityEvent> getGratuityEvents() {
+    final Set<GratuityEvent> result = new HashSet<>();
+    int i = 0;
+    List<ExecutionYear> executionYearList = null;
+    if (GratuityReportQueueJobType.DATE_INTERVAL == getType()) {
+      executionYearList = new ArrayList<>(Bennu.getInstance().getExecutionYearsSet());
+    } else {
+      if (GratuityReportQueueJobType.EXECUTION_YEAR == getType()) {
+        executionYearList = Collections.singletonList(getExecutionYear());
+      }
+    }
+    for (ExecutionYear executionYear : executionYearList) {
+      for (AnnualEvent event : executionYear.getAnnualEventsSet()) {
+        if ((++i % 1000) == 0) {
+          logger.info(String.format("Read %s events", i));
         }
+        if (event.isCancelled()) {
+          continue;
+        }
+        if (!event.isGratuity()) {
+          continue;
+        }
+        if (!isToDiscard((GratuityEvent) event)) {
+          result.add((GratuityEvent) event);
+        }
+      }
     }
+    return result;
+  }
 
-    public static List<GratuityReportQueueJob> retrieveAllGeneratedReports(final ExecutionYear executionYear) {
-         return executionYear.getGratuityReportQueueJobsSet().stream()
-                .filter(QueueJob::getDone)
-                .collect(Collectors.toList());
+  private boolean isToDiscard(GratuityEvent gratuityEvent) {
+    if (!(gratuityEvent instanceof StandaloneEnrolmentGratuityEvent)) {
+      return false;
     }
-
-    public static List<GratuityReportQueueJob> retrieveNotGeneratedReports(final ExecutionYear executionYear) {
-        return executionYear.getGratuityReportQueueJobsSet().stream()
-                .filter(gratuityReportQueueJob -> !gratuityReportQueueJob.getDone())
-                .collect(Collectors.toList());
+    final Collection<Enrolment> enrolmentsToCalculateGratuity = getEnrolmentsToCalculateGratuity(gratuityEvent);
+    if (enrolmentsToCalculateGratuity.isEmpty()) {
+      return true;
     }
+    return enrolmentsToCalculateGratuity.stream().anyMatch((enrolment) -> enrolment.getDegreeCurricularPlanOfDegreeModule().getDegree().isDEA());
+  }
 
-    public static boolean canRequestReportGeneration() {
-        return QueueJob.getUndoneJobsForClass(GratuityReportQueueJob.class).isEmpty();
+  private Collection<Enrolment> getEnrolmentsToCalculateGratuity(GratuityEvent gratuityEvent) {
+    if (!gratuityEvent.getDegree().isEmpty()) {
+      if (!gratuityEvent.getStudentCurricularPlan().hasStandaloneCurriculumGroup()) {
+        return Collections.emptySet();
+      }
+      return gratuityEvent.getStudentCurricularPlan().getStandaloneCurriculumGroup().getEnrolmentsBy(gratuityEvent.getExecutionYear());
+    } else {
+      return gratuityEvent.getStudentCurricularPlan().getRoot().getEnrolmentsBy(gratuityEvent.getExecutionYear());
     }
+  }
 
+  public static List<GratuityReportQueueJob> retrieveAllGeneratedReports(final ExecutionYear executionYear) {
+    return executionYear.getGratuityReportQueueJobsSet().stream().filter(
+<<<<<<< /usr/src/app/output/fenixedu/fenixedu-academic/dbf46cbd199c66d9722542ec033bd6ce8de9b88e/src/main/java/org/fenixedu/academic/domain/accounting/report/GratuityReportQueueJob.java/left.java
+    QueueJob_Base
+=======
+    QueueJob
+>>>>>>> /usr/src/app/output/fenixedu/fenixedu-academic/dbf46cbd199c66d9722542ec033bd6ce8de9b88e/src/main/java/org/fenixedu/academic/domain/accounting/report/GratuityReportQueueJob.java/right.java
+    ::getDone).collect(Collectors.toList());
+  }
+
+  public static List<GratuityReportQueueJob> retrieveNotGeneratedReports(final ExecutionYear executionYear) {
+    return executionYear.getGratuityReportQueueJobsSet().stream().filter((gratuityReportQueueJob) -> !gratuityReportQueueJob.getDone()).collect(Collectors.toList());
+  }
+
+  public static boolean canRequestReportGeneration() {
+    return QueueJob.getUndoneJobsForClass(GratuityReportQueueJob.class).isEmpty();
+  }
 }
