@@ -1,12 +1,10 @@
 package junitparams;
 
+import junitparams.internal.Utils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import junitparams.internal.Utils;
-
-import static junitparams.JUnitParamsRunner.*;
-import static junitparams.internal.Utils.*;
+import static junitparams.JUnitParamsRunner.$;
+import static junitparams.internal.Utils.stringify;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
