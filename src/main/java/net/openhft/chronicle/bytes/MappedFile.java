@@ -52,17 +52,23 @@ public class MappedFile implements ReferenceCounted {
     private final ReferenceCounter refCount = ReferenceCounter.onReleased(this::performRelease);
     private final AtomicBoolean closed = new AtomicBoolean();
     private final long capacity;
+<<<<<<< /usr/src/app/output/openhft/chronicle-bytes/a9e7269a8440dcb1d70818a9d046882ad4cd4bb5/src/main/java/net/openhft/chronicle/bytes/MappedFile.java/left.java
+    private final File file;
+||||||| /usr/src/app/output/openhft/chronicle-bytes/a9e7269a8440dcb1d70818a9d046882ad4cd4bb5/src/main/java/net/openhft/chronicle/bytes/MappedFile.java/base.java
+=======
     @NotNull
     private final File file;
+>>>>>>> /usr/src/app/output/openhft/chronicle-bytes/a9e7269a8440dcb1d70818a9d046882ad4cd4bb5/src/main/java/net/openhft/chronicle/bytes/MappedFile.java/right.java
 
     MappedFile(@NotNull File file, long chunkSize, long overlapSize) throws FileNotFoundException {
-        this.file = file;
-        this.raf = new RandomAccessFile(file, "rw");
-        this.fileChannel = raf.getChannel();
-        this.chunkSize = OS.mapAlign(chunkSize);
-        this.overlapSize = overlapSize == 0 ? 0 : OS.mapAlign(overlapSize);
-        capacity = 1L << 40;
-    }
+    this.file = file;
+    this.raf = new RandomAccessFile(file, "rw");
+    this.fileChannel = raf.getChannel();
+    this.chunkSize = OS.mapAlign(chunkSize);
+    this.overlapSize = overlapSize == 0 ? 0 : OS.mapAlign(overlapSize);
+    capacity = 1L << 40;
+    this.file = file;
+}
 
     public File file() {
         return file;
@@ -241,5 +247,13 @@ public class MappedFile implements ReferenceCounted {
 
     public long capacity() {
         return capacity;
+    }
+
+    public long overlapSize() {
+        return overlapSize;
+    }
+
+    public long chunkSize() {
+        return chunkSize;
     }
 }
