@@ -35,7 +35,6 @@ import org.apache.http.*;
 import org.apache.http.auth.*;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntityHC4;
-import org.apache.http.client.entity.UrlEncodedFormEntityHC4;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.cookie.Cookie;
@@ -48,7 +47,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContextHC4;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtilsHC4;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -74,10 +72,13 @@ public class GerritRestClient implements RestClient {
     private static final Gson GSON = GsonFactory.create();
 
     private final GerritAuthData authData;
+
     private final HttpRequestExecutor httpRequestExecutor;
+
     private final List<HttpClientBuilderExtension> httpClientBuilderExtensions;
 
     private final BasicCookieStoreHC4 cookieStore;
+
     private final LoginCache loginCache;
 
     public GerritRestClient(GerritAuthData authData,
@@ -260,6 +261,7 @@ public class GerritRestClient implements RestClient {
     /**
      * Handles LDAP auth (but not LDAP_HTTP) which uses a HTML form.
      */
+
     private Optional<String> tryGerritHttpFormAuth(HttpClientBuilder client, HttpContext httpContext) throws IOException, HttpStatusException {
         if (!authData.isLoginAndPasswordAvailable()) {
             return Optional.absent();
@@ -294,7 +296,14 @@ public class GerritRestClient implements RestClient {
      * [Gerrit documentation].
      * [Gerrit documentation]: https://gerrit-review.googlesource.com/Documentation/rest-api.html#authentication
      */
+
+<<<<<<< /usr/src/app/output/uwolfer/gerrit-rest-java-client/40f0f42b12309ff45c5de67a1317acd4d2d79c14/src/main/java/com/urswolfer/gerrit/client/rest/http/GerritRestClient.java/left.java
     private Optional<String> tryGerritHttpAuth(HttpClientBuilder client, HttpContext httpContext) throws IOException, HttpStatusException {
+||||||| /usr/src/app/output/uwolfer/gerrit-rest-java-client/40f0f42b12309ff45c5de67a1317acd4d2d79c14/src/main/java/com/urswolfer/gerrit/client/rest/http/GerritRestClient.java/base.java
+    private Optional<String> tryGerritHttpAuth(HttpClientBuilder client, HttpContext httpContext)  {
+=======
+    private Optional<String> tryGerritHttpAuth(HttpClientBuilder client, HttpContext httpContext) throws IOException {
+>>>>>>> /usr/src/app/output/uwolfer/gerrit-rest-java-client/40f0f42b12309ff45c5de67a1317acd4d2d79c14/src/main/java/com/urswolfer/gerrit/client/rest/http/GerritRestClient.java/right.java
         String loginUrl = authData.getHost() + "/login/";
         HttpResponse loginResponse = httpRequestExecutor.execute(client, new HttpGetHC4(loginUrl), httpContext);
         return extractGerritAuth(loginResponse);
@@ -312,6 +321,7 @@ public class GerritRestClient implements RestClient {
      * In Gerrit >= 2.12 the XSRF token got moved to a cookie.
      * Introduced in: https://gerrit-review.googlesource.com/72031/
      */
+
     private Optional<String> getXsrfCookie() {
         Optional<Cookie> xsrfCookie = findCookie("XSRF_TOKEN");
         if (xsrfCookie.isPresent()) {
@@ -320,10 +330,10 @@ public class GerritRestClient implements RestClient {
         return Optional.absent();
     }
 
-
     /**
      * In Gerrit < 2.12 the XSRF token was included in the start page HTML.
      */
+
     private Optional<String> getXsrfFromHtmlBody(HttpResponse loginResponse) throws IOException {
         Optional<Cookie> gerritAccountCookie = findGerritAccountCookie();
         if (gerritAccountCookie.isPresent()) {
@@ -392,6 +402,7 @@ public class GerritRestClient implements RestClient {
      * When server returns status code 401, the HTTP client provides the same credentials forever.
      * Since we create a new HTTP client for every request, we can handle it this way.
      */
+
     private BasicCredentialsProviderHC4 getCredentialsProvider() {
         return new BasicCredentialsProviderHC4() {
             private Set<AuthScope> authAlreadyTried = Sets.newHashSet();
@@ -421,6 +432,7 @@ public class GerritRestClient implements RestClient {
     /**
      * @throws HttpStatusException on any error (client 4xx and server 5xx).
      */
+
     private void checkStatusCode(HttpResponse response) throws HttpStatusException, IOException {
         checkStatusCodeClientError(response);
         checkStatusCodeServerError(response);
@@ -429,6 +441,7 @@ public class GerritRestClient implements RestClient {
     /**
      * @throws HttpStatusException on client error (4xx).
      */
+
     private void checkStatusCodeClientError(HttpResponse response) throws HttpStatusException, IOException {
         checkStatusCodeError(response, 400, 499);
     }
@@ -436,6 +449,7 @@ public class GerritRestClient implements RestClient {
     /**
      * @throws HttpStatusException on server error (5xx).
      */
+
     private void checkStatusCodeServerError(HttpResponse response) throws HttpStatusException, IOException {
         checkStatusCodeError(response, 500, 599);
     }
@@ -474,6 +488,7 @@ public class GerritRestClient implements RestClient {
      * Based on:
      * https://subversion.jfrog.org/jfrog/build-info/trunk/build-info-client/src/main/java/org/jfrog/build/client/PreemptiveHttpClient.java
      */
+
     private static class PreemptiveAuthHttpRequestInterceptor implements HttpRequestInterceptor {
         private GerritAuthData authData;
 
