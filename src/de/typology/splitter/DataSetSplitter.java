@@ -36,27 +36,27 @@ public class DataSetSplitter {
 	public static void main(String[] args) {
 		String outputDirectory = Config.get().outputDirectory
 				+ Config.get().inputDataSet;
-
 		DataSetSplitter dss = new DataSetSplitter(new File(outputDirectory),
 				"normalized.txt");
-		dss.split("training.txt", "learning.txt", "testing.txt", 5);
+		dss.split(Config.get().trainingName, "learning.txt", "testing.txt", 5);
 		dss.splitIntoSequences(new File(outputDirectory + "/training.txt"),
 				Config.get().modelLength, Config.get().numberOfQueries);
 
 	}
 
+<<<<<<< /usr/src/app/output/renepickhardt/generalized-language-modeling-toolkit/b8670c933b7952cf06b007deb4668bb20fbb0b05/src/de/typology/splitter/DataSetSplitter.java/left.java
+	private String directory;
+||||||| /usr/src/app/output/renepickhardt/generalized-language-modeling-toolkit/b8670c933b7952cf06b007deb4668bb20fbb0b05/src/de/typology/splitter/DataSetSplitter.java/base.java
+	private String directory;
+=======
 	private File directory;
-
+>>>>>>> /usr/src/app/output/renepickhardt/generalized-language-modeling-toolkit/b8670c933b7952cf06b007deb4668bb20fbb0b05/src/de/typology/splitter/DataSetSplitter.java/right.java
 	private String inputName;
-
-	Logger logger = LogManager.getLogger(this.getClass().getName());
-
 	public DataSetSplitter(File directory, String inputName) {
 
 		this.directory = directory;
 		this.inputName = inputName;
 	}
-
 	/**
 	 * Takes a given input file and provides a 3 way split. The file can be
 	 * sampled via the sampleRatio. A high sample ratio means that a large
@@ -127,15 +127,59 @@ public class DataSetSplitter {
 			trainingDataWriter.close();
 			learningDataWriter.close();
 			testingDataWriter.close();
-
 			this.logger.info("splitting done");
-
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	public void splitIntoSequences(String fileName, int sequenceLength) {
 
+		Splitter splitter;
+		splitter = new Splitter(this.directory);
+
+		String[] fileNameSplit = fileName.split("\\.");
+		String newFileName = fileNameSplit[0] + "-splitted." + fileNameSplit[1];
+		// get total count from stats file
+
+		BufferedWriter writer = IOHelper.openWriteFile(this.directory
+				+ newFileName, Config.get().memoryLimitForWritingFiles);
+		IOHelper.strongLog("splitting " + fileName + " into sequences");
+		splitter.initializeForSequenceSplit(fileName);
+		long sequenceCount = 0L;
+		while (splitter.getNextSequence(sequenceLength)) {
+			sequenceCount++;
+		}
+
+		long skipDistance = sequenceCount / Config.get().numberOfQueries;
+		splitter.initializeForSequenceSplit(fileName);
+		int sequence = 0;
+		int query = 0;
+		while (splitter.getNextSequence(sequenceLength)) {
+			if (sequence % skipDistance == 0) {
+				query++;
+				try {
+					for (String word : splitter.sequence) {
+						writer.write(word + " ");
+					}
+					writer.write("\n");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			sequence++;
+			if (query >= Config.get().numberOfQueries) {
+				break;
+			}
+		}
+		try {
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+	Logger logger = LogManager.getLogger(this.getClass().getName());
 	public void splitIntoSequences(File inputFile, int maxSequenceLength,
 			int numberOfSequences) {
 		System.out.println(maxSequenceLength);
