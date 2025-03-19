@@ -203,10 +203,10 @@ public class ExternalSort {
          * @param cmp     A comparator object that tells us how to sort the
          *                lines.
          * @param distinct Pass <code>true</code> if duplicate lines should be
-         *                discarded.
+         *                discarded. 
          * @param buffers
          *                Where the data should be read.
-         * @return The number of lines sorted.
+         * @return The number of lines sorted. 
          * @throws IOException generic IO exception
          *
          */
@@ -287,7 +287,7 @@ public class ExternalSort {
          *
          * @param files The {@link List} of sorted {@link File}s to be merged.
          * @param outputfile The output {@link File} to merge the results to.
-         * @return The number of lines sorted.
+         * @return The number of lines sorted. 
          * @throws IOException generic IO exception
          */
         public static int mergeSortedFiles(List<File> files, File outputfile)
@@ -303,7 +303,7 @@ public class ExternalSort {
          * @param outputfile The output {@link File} to merge the results to.
          * @param cmp The {@link Comparator} to use to compare
          *                {@link String}s.
-         * @return The number of lines sorted.
+         * @return The number of lines sorted. 
          * @throws IOException generic IO exception
          */
         public static int mergeSortedFiles(List<File> files, File outputfile,
@@ -320,8 +320,8 @@ public class ExternalSort {
          * @param cmp The {@link Comparator} to use to compare
          *                {@link String}s.
          * @param distinct Pass <code>true</code> if duplicate lines should be
-         *                discarded.
-         * @return The number of lines sorted.
+         *                discarded. 
+         * @return The number of lines sorted. 
          * @throws IOException generic IO exception
          */
         public static int mergeSortedFiles(List<File> files, File outputfile,
@@ -340,7 +340,7 @@ public class ExternalSort {
          *                {@link String}s.
          * @param cs The {@link Charset} to be used for the byte to
          *                character conversion.
-         * @return The number of lines sorted.
+         * @return The number of lines sorted. 
          * @throws IOException generic IO exception
          */
         public static int mergeSortedFiles(List<File> files, File outputfile,
@@ -353,13 +353,13 @@ public class ExternalSort {
          *
          * @param files The {@link List} of sorted {@link File}s to be merged.
          * @param distinct Pass <code>true</code> if duplicate lines should be
-         *                discarded.
+         *                discarded. 
          * @param outputfile The output {@link File} to merge the results to.
          * @param cmp The {@link Comparator} to use to compare
          *                {@link String}s.
          * @param cs The {@link Charset} to be used for the byte to
          *                character conversion.
-         * @return The number of lines sorted.
+         * @return The number of lines sorted. 
          * @throws IOException generic IO exception
          * @since v0.1.2
          */
@@ -375,7 +375,7 @@ public class ExternalSort {
          *
          * @param files The {@link List} of sorted {@link File}s to be merged.
          * @param distinct Pass <code>true</code> if duplicate lines should be
-         *                discarded.
+         *                discarded. 
          * @param outputfile The output {@link File} to merge the results to.
          * @param cmp The {@link Comparator} to use to compare
          *                {@link String}s.
@@ -385,7 +385,7 @@ public class ExternalSort {
          *                {@link File} instead of overwrite. Default to be false
          *                for overloading methods.
          * @param usegzip assumes we used gzip compression for temporary files
-         * @return The number of lines sorted.
+         * @return The number of lines sorted. 
          * @throws IOException generic IO exception
          * @since v0.1.4
          */
@@ -475,7 +475,7 @@ public class ExternalSort {
         	    if (parallel) {
                   Collections.sort(tmplist, cmp);
         	    } else {
-        	      tmplist = tmplist.parallelStream().sorted(cmp).collect(Collectors.toCollection(ArrayList<String>::new));
+        	      tmplist = tmplist.parallelStream().sorted(cmp).collect(Collectors.toCollection(ArrayList<String>::new));	
         	    }
                 File newtmpfile = File.createTempFile("sortInBatch",
                         "flatfile", tmpdirectory);
@@ -560,7 +560,7 @@ public class ExternalSort {
          * This will simply load the file by blocks of lines, then sort them
          * in-memory, and write the result to temporary files that have to be
          * merged later.
-         *
+         * 
          * @param fbr data source
          * @param datalength estimated data volume (in bytes)
          * @param cmp string comparator
@@ -582,7 +582,7 @@ public class ExternalSort {
                 final long datalength, final Comparator<String> cmp,
                 final int maxtmpfiles, long maxMemory, final Charset cs,
                 final File tmpdirectory, final boolean distinct,
-                final int numHeader, final boolean usegzip, final boolean parallel)
+                final int numHeader, final boolean usegzip, final boolean parallel) 
                 		throws IOException {
                 List<File> files = new ArrayList<>();
                 long blocksize = estimateBestSizeOfBlocks(datalength,
@@ -691,11 +691,11 @@ public class ExternalSort {
                 File tmpdirectory,
                 boolean distinct, int numHeader)
                 throws IOException {
-                return sortInBatch(file, cmp, DEFAULTMAXTEMPFILES,
+                return sortInBatch(file, cmp, DEFAULTMAXTEMPFILES, 
                         Charset.defaultCharset(), tmpdirectory, distinct,
                         numHeader);
         }
-
+        
         /**
          * This will simply load the file by blocks of lines, then sort them
          * in-memory, and write the result to temporary files that have to be
@@ -720,7 +720,7 @@ public class ExternalSort {
                 return sortInBatch(file, cmp, maxtmpfiles, cs, tmpdirectory,
                         distinct, 0);
         }
-
+        
                  /**
          * This will simply load the file by blocks of lines, then sort them
          * in-memory, and write the result to temporary files that have to be
@@ -749,7 +749,7 @@ public class ExternalSort {
                         estimateAvailableMemory(), cs, tmpdirectory, distinct,
                         numHeader, false, true);
         }
-
+        
          /**
          * This will simply load the file by blocks of lines, then sort them
          * in-memory, and write the result to temporary files that have to be
@@ -779,7 +779,7 @@ public class ExternalSort {
                         estimateAvailableMemory(), cs, tmpdirectory, distinct,
                         numHeader, false, true);
         }
-
+        
         /**
          * This will simply load the file by blocks of lines, then sort them
          * in-memory, and write the result to temporary files that have to be
@@ -810,7 +810,7 @@ public class ExternalSort {
                         estimateAvailableMemory(), cs, tmpdirectory, distinct,
                         numHeader, usegzip, true);
         }
-
+        
         /**
          * This will simply load the file by blocks of lines, then sort them
          * in-memory, and write the result to temporary files that have to be
