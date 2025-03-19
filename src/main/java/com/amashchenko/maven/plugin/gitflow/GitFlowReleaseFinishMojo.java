@@ -245,7 +245,13 @@ public class GitFlowReleaseFinishMojo extends AbstractGitFlowMojo {
             gitCheckout(gitFlowConfig.getProductionBranch());
 
             gitMerge(releaseBranch, releaseRebase, releaseMergeNoFF, releaseMergeFFOnly,
-                    commitMessages.getReleaseFinishMergeMessage(), messageProperties, productionBranchMergeOptions);
+<<<<<<< /usr/src/app/output/aleksandr-m/gitflow-maven-plugin/0af75155f88504861517809c437b9e30fe9ea8ab/src/main/java/com/amashchenko/maven/plugin/gitflow/GitFlowReleaseFinishMojo.java/left.java
+                    commitMessages.getReleaseFinishMergeMessage(), productionBranchMergeOptions);
+||||||| /usr/src/app/output/aleksandr-m/gitflow-maven-plugin/0af75155f88504861517809c437b9e30fe9ea8ab/src/main/java/com/amashchenko/maven/plugin/gitflow/GitFlowReleaseFinishMojo.java/base.java
+                    commitMessages.getReleaseFinishMergeMessage());
+=======
+                    commitMessages.getReleaseFinishMergeMessage(), messageProperties);
+>>>>>>> /usr/src/app/output/aleksandr-m/gitflow-maven-plugin/0af75155f88504861517809c437b9e30fe9ea8ab/src/main/java/com/amashchenko/maven/plugin/gitflow/GitFlowReleaseFinishMojo.java/right.java
 
             // get current project version from pom
             final String currentVersion = getCurrentProjectVersion();

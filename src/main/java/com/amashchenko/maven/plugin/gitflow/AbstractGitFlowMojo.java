@@ -644,7 +644,7 @@ public abstract class AbstractGitFlowMojo extends AbstractMojo {
     protected void gitMerge(final String branchName, boolean rebase, boolean noff, boolean ffonly, String message,
             Map<String, String> messageProperties)
             throws MojoFailureException, CommandLineException {
-        gitMerge(branchName, rebase, noff, ffonly, message, messageProperties, additionalMergeOptions);
+        gitMerge(branchName, rebase, noff, ffonly, message, additionalMergeOptions);
     }
 
     /**
@@ -667,7 +667,7 @@ public abstract class AbstractGitFlowMojo extends AbstractMojo {
      * @throws CommandLineException
      */
     protected void gitMerge(final String branchName, boolean rebase, boolean noff, boolean ffonly,
-                            final String message, Map<String, String> messageProperties, final String additionalMergeOptions)
+                            final String message, final String additionalMergeOptions)
             throws MojoFailureException, CommandLineException {
         String sign = "";
         if (gpgSignCommit) {
