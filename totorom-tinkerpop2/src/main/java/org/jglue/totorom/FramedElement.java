@@ -1,77 +1,74 @@
 package org.jglue.totorom;
-
 import java.util.Set;
-
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 
+
+<<<<<<< /usr/src/app/output/syncleus/ferma/b273f174b303afbba124b948e959de1f0b4ea1d4/totorom-tinkerpop2/src/main/java/org/jglue/totorom/FramedElement.java/left.java
 /**
  * @author Bryn Cooke (http://jglue.org)
  */
-
 public abstract class FramedElement {
+  private Element element;
 
-	private Element element;
-	private FramedGraph graph;
+  private FramedGraph graph;
 
-	@SuppressWarnings("unchecked")
-	protected void init(FramedGraph graph, Element element) {
-		this.graph = graph;
-		this.element = element;
-	}
+  @SuppressWarnings(value = { "unchecked" }) protected void init(FramedGraph graph, Element element) {
+    this.graph = graph;
+    this.element = element;
+  }
 
-	protected void init() {
+  protected void init() {
+  }
 
-	}
-
-	/**
+  /**
 	 * @return The id of this element.
 	 */
-	protected Object getId() {
-		return element.getId();
-	}
+  protected Object getId() {
+    return element.getId();
+  }
 
-	/**
+  /**
 	 * @return The property keys of this element.
 	 */
-	protected Set<String> getPropertyKeys() {
-		return element.getPropertyKeys();
-	}
+  protected Set<String> getPropertyKeys() {
+    return element.getPropertyKeys();
+  }
 
-	/**
+  /**
 	 * Remove this element from the graph.
 	 */
-	protected void remove() {
-		element.remove();
-	}
+  protected void remove() {
+    element.remove();
+  }
 
-	/**
+  /**
 	 * @return The underlying element.
 	 */
-	protected Element element() {
-		return element;
-	}
+  protected Element element() {
+    return element;
+  }
 
-	/**
+  /**
 	 * @return The underlying graph.
 	 */
-	protected FramedGraph graph() {
-		return graph;
-	}
+  protected FramedGraph graph() {
+    return graph;
+  }
 
-	/**
+  /**
 	 * Return a property value.
 	 * 
 	 * @param name
 	 *            The name of the property.
 	 * @return the value of the property or null if none was present.
 	 */
-	protected <T> T getProperty(String name) {
-		return element.getProperty(name);
-	}
+  protected <T extends java.lang.Object> T getProperty(String name) {
+    return element.getProperty(name);
+  }
 
-	/**
+  /**
 	 * Set a property value.
 	 * 
 	 * @param name
@@ -79,75 +76,220 @@ public abstract class FramedElement {
 	 * @param value
 	 *            The value of the property.
 	 */
-	protected void setProperty(String name, Object value) {
-		element.setProperty(name, value);
-	}
+  protected void setProperty(String name, Object value) {
+    element.setProperty(name, value);
+  }
 
-	/**
+  /**
 	 * Query over all vertices in the graph.
 	 * 
 	 * @return The query.
 	 */
-	protected FramedVertexTraversal V() {
-		return graph.V();
-	}
+  protected FramedVertexTraversal<Vertex, Vertex> V() {
+    return graph.V();
+  }
 
-	/**
+  /**
 	 * Query over all edges in the graph.
 	 * 
 	 * @return The query.
 	 */
-	protected FramedEdgeTraversal E() {
-		return graph.E();
-	}
+  protected FramedEdgeTraversal<Edge, Edge> E() {
+    return graph.E();
+  }
 
-	/**
+  /**
 	 * Query over a list of vertices in the graph.
 	 * 
 	 * @param ids
 	 *            The ids of the vertices.
 	 * @return The query.
 	 */
-	public FramedVertexTraversal v(final Object... ids) {
-		return graph.v(ids);
-	}
+  public FramedVertexTraversal<Vertex, Vertex> v(final Object... ids) {
+    return graph.v(ids);
+  }
 
-	/**
+  /**
 	 * Query over a list of edges in the graph.
 	 * 
 	 * @param ids
 	 *            The ids of the edges.
 	 * @return The query.
 	 */
-	public FramedEdgeTraversal e(final Object... ids) {
-		return graph.e(ids);
-	}
+  public FramedEdgeTraversal<Edge, Edge> e(final Object... ids) {
+    return graph.e(ids);
+  }
 
-	
+  @Override public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((element == null) ? 0 : element.hashCode());
+    return result;
+  }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((element == null) ? 0 : element.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		FramedElement other = (FramedElement) obj;
-		if (element == null) {
-			if (other.element != null)
-				return false;
-		} else if (!element.equals(other.element))
-			return false;
-		return true;
-	}
-
+  @Override public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    FramedElement other = (FramedElement) obj;
+    if (element == null) {
+      if (other.element != null) {
+        return false;
+      }
+    } else {
+      if (!element.equals(other.element)) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
+=======
+/**
+ * @author Bryn Cooke (http://jglue.org)
+ */
+public abstract class FramedElement<E extends Element> {
+  private E element;
+
+  private FramedGraph graph;
+
+  @SuppressWarnings(value = { "unchecked" }) protected void init(FramedGraph graph, Element element) {
+    this.graph = graph;
+    this.element = (E) element;
+  }
+
+  protected void init() {
+  }
+
+  /**
+     * @return The id of this element.
+     */
+  protected Object getId() {
+    return element.getId();
+  }
+
+  /**
+     * @return The property keys of this element.
+     */
+  protected Set<String> getPropertyKeys() {
+    return element.getPropertyKeys();
+  }
+
+  /**
+     * Remove this element from the graph.
+     */
+  protected void remove() {
+    element.remove();
+  }
+
+  /**
+     * @return The underlying element. 
+     */
+  protected E element() {
+    return element;
+  }
+
+  /**
+     * @return The underlying graph.
+     */
+  protected FramedGraph graph() {
+    return graph;
+  }
+
+  /**
+     * Return a property value.
+     * @param name The name of the property.
+     * @return the value of the property or null if none was present.
+     */
+  protected <T extends java.lang.Object> T getProperty(String name) {
+    return element.getProperty(name);
+  }
+
+  /**
+     * Set a property value.
+     * @param name The name of the property.
+     * @param value The value of the property.
+     */
+  protected void setProperty(String name, Object value) {
+    element.setProperty(name, value);
+  }
+
+  /**
+     * Query over all vertices in the graph.
+     * @return The query.
+     */
+  protected FramedTraversal<Vertex, Vertex> V() {
+    return graph.V();
+  }
+
+  /**
+     * Query over all edges in the graph.
+     * @return The query.
+     */
+  protected FramedTraversal<Edge, Edge> E() {
+    return graph.E();
+  }
+
+  /**
+     * Query over a list of vertices in the graph.
+     * @param ids The ids of the vertices.
+     * @return The query.
+     */
+  public FramedTraversal<Vertex, Vertex> v(final Object... ids) {
+    return graph.v(ids);
+  }
+
+  /**
+     * Query over a list of edges in the graph.
+     * @param ids The ids of the edges.
+     * @return The query. 
+     */
+  public FramedTraversal<Edge, Edge> e(final Object... ids) {
+    return graph.e(ids);
+  }
+
+  /**
+     * Shortcut to get frameTraversal of current element
+     * @return
+     */
+  protected FramedTraversal<E, Vertex> traversal() {
+    return new FramedTraversal<>(graph(), element());
+  }
+
+  @Override public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((element == null) ? 0 : element.hashCode());
+    return result;
+  }
+
+  @Override public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    FramedElement other = (FramedElement) obj;
+    if (element == null) {
+      if (other.element != null) {
+        return false;
+      }
+    } else {
+      if (!element.equals(other.element)) {
+        return false;
+      }
+    }
+    return true;
+  }
+}
+>>>>>>> /usr/src/app/output/syncleus/ferma/b273f174b303afbba124b948e959de1f0b4ea1d4/totorom-tinkerpop2/src/main/java/org/jglue/totorom/FramedElement.java/right.java
