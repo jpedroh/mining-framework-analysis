@@ -1,5 +1,4 @@
 package com.wrapper.spotify.model_objects;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.neovisionaries.i18n.CountryCode;
@@ -9,27 +8,43 @@ import com.wrapper.spotify.enums.ReleaseDatePrecision;
 
 public class Album extends AbstractModelObject {
   private final AlbumType albumType;
+
   private final ArtistSimplified[] artists;
+
   private final CountryCode[] availableMarkets;
+
   private final Copyright[] copyrights;
+
   private final ExternalIds externalIds;
+
   private final ExternalUrls externalUrls;
+
   private final String[] genres;
+
   private final String href;
+
   private final String id;
+
   private final Image[] images;
+
   private final String label;
+
   private final String name;
+
   private final int popularity;
+
   private final String releaseDate;
+
   private final ReleaseDatePrecision releaseDatePrecision;
+
   private final Paging<TrackSimplified> tracks;
+
   private final ModelObjectType type;
+
   private final String uri;
 
   private Album(final Album.Builder builder) {
     super(builder);
-
     this.albumType = builder.albumType;
     this.artists = builder.artists;
     this.availableMarkets = builder.availableMarkets;
@@ -118,30 +133,45 @@ public class Album extends AbstractModelObject {
     return uri;
   }
 
-  @Override
-  public Builder builder() {
+  @Override public Builder builder() {
     return new Builder();
   }
 
   public static final class Builder extends AbstractModelObject.Builder {
-
     private AlbumType albumType;
+
     private ArtistSimplified[] artists;
+
     private CountryCode[] availableMarkets;
+
     private Copyright[] copyrights;
+
     private ExternalIds externalIds;
+
     private ExternalUrls externalUrls;
+
     private String[] genres;
+
     private String href;
+
     private String id;
+
     private Image[] images;
+
     private String label;
+
     private String name;
+
     private int popularity;
+
     private String releaseDate;
+
     private ReleaseDatePrecision releaseDatePrecision;
+
     private Paging<TrackSimplified> tracks;
+
     private ModelObjectType type;
+
     private String uri;
 
     public Builder setAlbumType(AlbumType albumType) {
@@ -234,8 +264,7 @@ public class Album extends AbstractModelObject {
       return this;
     }
 
-    @Override
-    public Album build() {
+    @Override public Album build() {
       return new Album(this);
     }
   }
@@ -245,27 +274,7 @@ public class Album extends AbstractModelObject {
       if (jsonObject == null || jsonObject.isJsonNull()) {
         return null;
       }
-
-      return new Album.Builder()
-              .setAlbumType(AlbumType.valueOf(jsonObject.get("album_type").getAsString().toUpperCase()))
-              .setArtists(new ArtistSimplified.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("artists")))
-              .setAvailableMarkets(new Gson().fromJson(jsonObject.getAsJsonArray("available_markets"), CountryCode[].class))
-              .setCopyrights(new Copyright.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("copyrights")))
-              .setExternalIds(new ExternalIds.JsonUtil().createModelObject(jsonObject.getAsJsonObject("external_ids")))
-              .setExternalUrls(new ExternalUrls.JsonUtil().createModelObject(jsonObject.getAsJsonObject("external_urls")))
-              .setGenres(new Gson().fromJson(jsonObject.getAsJsonArray("genres"), String[].class))
-              .setHref(jsonObject.get("href").getAsString())
-              .setId(jsonObject.get("id").getAsString())
-              .setImages(new Image.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("images")))
-              .setLabel(jsonObject.get("label").getAsString())
-              .setName(jsonObject.get("name").getAsString())
-              .setPopularity(jsonObject.get("popularity").getAsInt())
-              .setReleaseDate(jsonObject.get("release_date").getAsString())
-              .setReleaseDatePrecision(ReleaseDatePrecision.valueOf(jsonObject.get("release_date_precision").getAsString().toUpperCase()))
-              .setTracks(new TrackSimplified.JsonUtil().createModelObjectPaging(jsonObject.getAsJsonObject("tracks")))
-              .setType(ModelObjectType.valueOf(jsonObject.get("type").getAsString().toUpperCase()))
-              .setUri(jsonObject.get("uri").getAsString())
-              .build();
+      return new Album.Builder().setAlbumType(AlbumType.valueOf(jsonObject.get("album_type").getAsString().toUpperCase())).setArtists(new ArtistSimplified.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("artists"))).setAvailableMarkets(new Gson().fromJson(jsonObject.getAsJsonArray("available_markets"), CountryCode[].class)).setCopyrights(new Copyright.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("copyrights"))).setExternalIds(new ExternalIds.JsonUtil().createModelObject(jsonObject.getAsJsonObject("external_ids"))).setExternalUrls(new ExternalUrls.JsonUtil().createModelObject(jsonObject.getAsJsonObject("external_urls"))).setGenres(new Gson().fromJson(jsonObject.getAsJsonArray("genres"), String[].class)).setHref(jsonObject.get("href").getAsString()).setId(jsonObject.get("id").getAsString()).setImages(new Image.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("images"))).setLabel(jsonObject.get("label").getAsString()).setName(jsonObject.get("name").getAsString()).setPopularity(jsonObject.get("popularity").getAsInt()).setReleaseDate(jsonObject.get("release_date").getAsString()).setReleaseDatePrecision(ReleaseDatePrecision.valueOf(jsonObject.get("release_date_precision").getAsString().toUpperCase())).setTracks(new TrackSimplified.JsonUtil().createModelObjectPaging(jsonObject.getAsJsonObject("tracks"))).setType(ModelObjectType.valueOf(jsonObject.get("type").getAsString().toUpperCase())).setUri(jsonObject.get("uri").getAsString()).build();
     }
   }
 }

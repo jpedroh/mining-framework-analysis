@@ -1,28 +1,39 @@
 package com.wrapper.spotify.model_objects;
-
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.wrapper.spotify.enums.ModelObjectType;
 
 public class Playlist extends AbstractModelObject {
   private final boolean collaborative;
+
   private final String description;
+
   private final ExternalUrls externalUrls;
+
   private final Followers followers;
+
   private final String href;
+
   private final String id;
+
   private final Image[] images;
+
   private final String name;
+
   private final User owner;
+
   private final Boolean publicAccess;
+
   private final String snapshotId;
+
   private final Paging<PlaylistTrack> tracks;
+
   private final ModelObjectType type;
+
   private final String uri;
 
   private Playlist(final Playlist.Builder builder) {
     super(builder);
-
     this.collaborative = builder.collaborative;
     this.description = builder.description;
     this.externalUrls = builder.externalUrls;
@@ -95,25 +106,37 @@ public class Playlist extends AbstractModelObject {
     return uri;
   }
 
-  @Override
-  public Builder builder() {
+  @Override public Builder builder() {
     return new Builder();
   }
 
   public static final class Builder extends AbstractModelObject.Builder {
     private boolean collaborative;
+
     private String description;
+
     private ExternalUrls externalUrls;
+
     private Followers followers;
+
     private String href;
+
     private String id;
+
     private Image[] images;
+
     private String name;
+
     private User owner;
+
     private Boolean publicAccess;
+
     private String snapshotId;
+
     private Paging<PlaylistTrack> tracks;
+
     private ModelObjectType type;
+
     private String uri;
 
     public Builder setCollaborative(boolean collaborative) {
@@ -186,8 +209,7 @@ public class Playlist extends AbstractModelObject {
       return this;
     }
 
-    @Override
-    public Playlist build() {
+    @Override public Playlist build() {
       return new Playlist(this);
     }
   }
@@ -197,23 +219,7 @@ public class Playlist extends AbstractModelObject {
       if (jsonObject == null || jsonObject.isJsonNull()) {
         return null;
       }
-
-      return new Playlist.Builder()
-              .setCollaborative(jsonObject.get("collaborative").getAsBoolean())
-              .setDescription((jsonObject.get("description") instanceof JsonNull) ? null : jsonObject.get("description").getAsString())
-              .setExternalUrls(new ExternalUrls.JsonUtil().createModelObject(jsonObject.getAsJsonObject("external_urls")))
-              .setFollowers(new Followers.JsonUtil().createModelObject(jsonObject.getAsJsonObject("followers")))
-              .setHref(jsonObject.get("href").getAsString())
-              .setId(jsonObject.get("id").getAsString())
-              .setImages(new Image.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("images")))
-              .setName(jsonObject.get("name").getAsString())
-              .setOwner(new User.JsonUtil().createModelObject(jsonObject.getAsJsonObject("owner")))
-              .setPublicAccess((jsonObject.get("public") instanceof JsonNull) ? null : jsonObject.get("public").getAsBoolean())
-              .setSnapshotId(jsonObject.get("snapshot_id").getAsString())
-              .setTracks(new PlaylistTrack.JsonUtil().createModelObjectPaging(jsonObject.getAsJsonObject("tracks")))
-              .setType(ModelObjectType.valueOf(jsonObject.get("type").getAsString().toUpperCase()))
-              .setUri(jsonObject.get("uri").getAsString())
-              .build();
+      return new Playlist.Builder().setCollaborative(jsonObject.get("collaborative").getAsBoolean()).setDescription((jsonObject.get("description") instanceof JsonNull) ? null : jsonObject.get("description").getAsString()).setExternalUrls(new ExternalUrls.JsonUtil().createModelObject(jsonObject.getAsJsonObject("external_urls"))).setFollowers(new Followers.JsonUtil().createModelObject(jsonObject.getAsJsonObject("followers"))).setHref(jsonObject.get("href").getAsString()).setId(jsonObject.get("id").getAsString()).setImages(new Image.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("images"))).setName(jsonObject.get("name").getAsString()).setOwner(new User.JsonUtil().createModelObject(jsonObject.getAsJsonObject("owner"))).setPublicAccess((jsonObject.get("public") instanceof JsonNull) ? null : jsonObject.get("public").getAsBoolean()).setSnapshotId(jsonObject.get("snapshot_id").getAsString()).setTracks(new PlaylistTrack.JsonUtil().createModelObjectPaging(jsonObject.getAsJsonObject("tracks"))).setType(ModelObjectType.valueOf(jsonObject.get("type").getAsString().toUpperCase())).setUri(jsonObject.get("uri").getAsString()).build();
     }
   }
 }

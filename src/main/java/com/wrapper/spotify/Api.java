@@ -1,5 +1,4 @@
 package com.wrapper.spotify;
-
 import com.google.common.base.Joiner;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -8,7 +7,6 @@ import com.wrapper.spotify.model_objects.PlaylistTrackPosition;
 import com.wrapper.spotify.requests.authentication.AuthorizationCodeGrantRequest;
 import com.wrapper.spotify.requests.authentication.AuthorizationUriRequest;
 import com.wrapper.spotify.requests.authentication.ClientCredentialsGrantRequest;
-import com.wrapper.spotify.requests.authentication.RefreshAccessTokenRequest;
 import com.wrapper.spotify.requests.data.albums.GetAlbumRequest;
 import com.wrapper.spotify.requests.data.albums.GetAlbumsTracksRequest;
 import com.wrapper.spotify.requests.data.albums.GetSeveralAlbumsRequest;
@@ -32,7 +30,6 @@ import com.wrapper.spotify.requests.data.tracks.GetSeveralTracksRequest;
 import com.wrapper.spotify.requests.data.tracks.GetTrackRequest;
 import com.wrapper.spotify.requests.data.users_profile.GetCurrentUsersProfileRequest;
 import com.wrapper.spotify.requests.data.users_profile.GetUsersProfileRequest;
-
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +38,6 @@ import java.util.List;
  * Instances of the Api class provide access to the Spotify Web API.
  */
 public class Api {
-
   /**
    * The default host of Spotify API calls.
    */
@@ -72,26 +68,31 @@ public class Api {
    * Api instance with the default settings.
    */
   public static final Api DEFAULT_API = Api.builder().build();
+
   private final String clientId;
+
   private final String clientSecret;
+
   private final String redirectURI;
+
   private HttpManager httpManager = null;
+
   private String scheme;
+
   private int port;
+
   private String host;
+
   private String accessToken;
+
   private String refreshToken;
 
   private Api(Builder builder) {
     assert (builder.host != null);
     assert (builder.port > 0);
     assert (builder.scheme != null);
-
-
     if (builder.httpManager == null) {
-      this.httpManager = SpotifyHttpManager
-              .builder()
-              .build();
+      this.httpManager = SpotifyHttpManager.builder().build();
     } else {
       this.httpManager = builder.httpManager;
     }
@@ -137,9 +138,7 @@ public class Api {
     return builder;
   }
 
-  public GetAlbumsTracksRequest.Builder getTracksForAlbum(
-          String albumId
-  ) {
+  public GetAlbumsTracksRequest.Builder getTracksForAlbum(String albumId) {
     GetAlbumsTracksRequest.Builder builder = new GetAlbumsTracksRequest.Builder(accessToken);
     builder.setDefaults(httpManager, scheme, host, port);
     builder.id(albumId);
@@ -289,6 +288,26 @@ public class Api {
     return builder;
   }
 
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  /**
+   * Returns a builder that can be used to build requests to refresh an access token
+   * that has been retrieved using the authorization code grant flow.
+   *
+   * @return A builder that builds refresh access token requests.
+   */
+  public RefreshAccessTokenRequest.Builder refreshAccessToken() {
+    RefreshAccessTokenRequest.Builder builder = new RefreshAccessTokenRequest.Builder(accessToken);
+    builder.setDefaults(httpManager, scheme, host, port);
+    builder.grantType("refresh_token");
+    builder.refreshToken(refreshToken);
+    builder.basicAuthorizationHeader(clientId, clientSecret);
+    return builder;
+  }
+>>>>>>> /usr/src/app/output/thelinmichael/spotify-web-api-java/9899e12d3f8290f0096702389efd8d4d92a53401/src/main/java/com/wrapper/spotify/Api.java/right.java
+
+
   /**
    * Returns a builder that can be used to build requests for client credential grants.
    * Requires client ID and client secret to be set.
@@ -334,7 +353,7 @@ public class Api {
    * Create a playlist.
    *
    * @param userId The playlist's owner.
-   * @param name   The name of the playlist.
+   * @param title  The name of the playlist.
    * @return A builder object that can be used to build a request to create a playlist.
    */
   public CreatePlaylistRequest.Builder createPlaylist(String userId, String name) {
@@ -348,7 +367,7 @@ public class Api {
   /**
    * Get artists related/similar to an artist.
    *
-   * @param id The artist's id.
+   * @param artistId The artist's id.
    * @return A builder object that can be used to build a request to retrieve similar artists.
    */
   public GetArtistsRelatedArtistsRequest.Builder getArtistRelatedArtists(String id) {
@@ -398,9 +417,7 @@ public class Api {
    */
   public AddTracksToPlaylistRequest.Builder addTracksToPlaylist(String userId, String playlistId, String[] trackUris) {
     final AddTracksToPlaylistRequest.Builder builder = new AddTracksToPlaylistRequest.Builder(accessToken);
-
     userId = UriUtil.escapeUsername(userId);
-
     builder.setDefaults(httpManager, scheme, host, port);
     builder.user_id(userId);
     builder.playlist_id(playlistId);
@@ -435,13 +452,10 @@ public class Api {
    */
   public RemoveTracksFromPlaylistRequest.Builder removeTrackFromPlaylist(String userId, String playlistId, String[] trackUris) {
     final RemoveTracksFromPlaylistRequest.Builder builder = new RemoveTracksFromPlaylistRequest.Builder(accessToken);
-
     userId = UriUtil.escapeUsername(userId);
-
     builder.setDefaults(httpManager, scheme, host, port);
     builder.setQueryParameter("uris", Joiner.on(",").join(trackUris));
     builder.setPath("/v1/users/" + userId + "/playlists/" + playlistId + "/tracks");
-
     return builder;
   }
 
@@ -462,32 +476,22 @@ public class Api {
 
   public RemoveTracksFromPlaylistRequest.Builder removeTrackFromPlaylist(String userId, String playlistId, PlaylistTrackPosition[] playlistTrackPositions) {
     final RemoveTracksFromPlaylistRequest.Builder builder = new RemoveTracksFromPlaylistRequest.Builder(accessToken);
-
     builder.setDefaults(httpManager, scheme, host, port);
-
     JsonArray playlistTrackPositionJsonArray = new JsonArray();
-
     for (PlaylistTrackPosition playlistTrackPosition : playlistTrackPositions) {
       JsonObject playlistTrackPositionJsonObject = new JsonObject();
-
       playlistTrackPositionJsonObject.addProperty("uri", playlistTrackPosition.getUri());
-
       if (playlistTrackPosition.getPositions() != null) {
         JsonArray positionArray = new JsonArray();
-
         for (int position : playlistTrackPosition.getPositions()) {
           positionArray.add(position);
         }
-
         playlistTrackPositionJsonObject.add("positions", positionArray);
       }
-
       playlistTrackPositionJsonArray.add(playlistTrackPositionJsonObject);
     }
-
     JsonObject tracks = new JsonObject();
     tracks.add("tracks", playlistTrackPositionJsonArray);
-
     builder.setFormParameter("tracks", tracks.toString());
     builder.user_id(userId);
     builder.playlist_id(playlistId);
@@ -584,23 +588,17 @@ public class Api {
    */
   public URI createAuthorizeUri(String[] scopes, String state, boolean showDialog) {
     final AuthorizationUriRequest.Builder builder = new AuthorizationUriRequest.Builder(accessToken);
-
     builder.setDefaults(httpManager, scheme, host, port);
-
     builder.clientId(clientId);
     builder.responseType("code");
     builder.redirectURI(redirectURI);
-
     if (scopes != null) {
       builder.scopes(scopes);
     }
-
     if (state != null) {
       builder.state(state);
     }
-
     builder.showDialog(showDialog);
-
     return builder.build().getUri();
   }
 
@@ -614,21 +612,16 @@ public class Api {
    */
   public URI createAuthorizeUri(String[] scopes, String state) {
     final AuthorizationUriRequest.Builder builder = new AuthorizationUriRequest.Builder(accessToken);
-
     builder.setDefaults(httpManager, scheme, host, port);
-
     builder.clientId(clientId);
     builder.responseType("code");
     builder.redirectURI(redirectURI);
-
     if (scopes != null) {
       builder.scopes(scopes);
     }
-
     if (state != null) {
       builder.state(state);
     }
-
     return builder.build().getUri();
   }
 
@@ -641,17 +634,13 @@ public class Api {
    */
   public URI createAuthorizeUri(String... scopes) {
     final AuthorizationUriRequest.Builder builder = new AuthorizationUriRequest.Builder(accessToken);
-
     builder.setDefaults(httpManager, scheme, host, port);
-
     builder.clientId(clientId);
     builder.responseType("code");
     builder.redirectURI(redirectURI);
-
     if (scopes != null) {
       builder.scopes(scopes);
     }
-
     return builder.build().getUri();
   }
 
@@ -683,8 +672,7 @@ public class Api {
   public GetCategorysPlaylistsRequest.Builder getPlaylistsForCategory(String categoryId) {
     GetCategorysPlaylistsRequest.Builder builder = new GetCategorysPlaylistsRequest.Builder(accessToken);
     builder.setDefaults(httpManager, scheme, host, port);
-    return builder
-            .category_id(categoryId);
+    return builder.category_id(categoryId);
   }
 
   public void setAccessToken(String accessToken) {
@@ -695,17 +683,23 @@ public class Api {
     this.refreshToken = refreshToken;
   }
 
-
   public static class Builder {
-
     private String host = DEFAULT_HOST;
+
     private int port = DEFAULT_PORT;
+
     private HttpManager httpManager = null;
+
     private String scheme = DEFAULT_SCHEME;
+
     private String accessToken;
+
     private String redirectURI;
+
     private String clientId;
+
     private String clientSecret;
+
     private String refreshToken;
 
     public Builder scheme(String scheme) {
@@ -757,11 +751,7 @@ public class Api {
       assert (host != null);
       assert (port > 0);
       assert (scheme != null);
-
       return new Api(this);
     }
-
   }
-
 }
-
