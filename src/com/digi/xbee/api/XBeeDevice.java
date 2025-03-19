@@ -1109,7 +1109,6 @@ public class XBeeDevice {
 		XBeePacket xbeePacket = new TransmitPacket(getNextFrameID(), address64Bit, address16bit, 0, XBeeTransmitOptions.NONE, data);
 		sendAndCheckXBeePacket(xbeePacket, true);
 	}
-	
 	/**
 	 * Sends the provided data to the provided XBee device asynchronously.
 	 * 
@@ -1135,7 +1134,6 @@ public class XBeeDevice {
 			throw new NullPointerException("XBee device cannot be null");
 		sendSerialDataAsync(xbeeDevice.get64BitAddress(), data);
 	}
-	
 	/**
 	 * Sends the provided data to the XBee device of the network corresponding 
 	 * to the given 64-bit address.
@@ -1186,7 +1184,6 @@ public class XBeeDevice {
 		XBeePacket xbeePacket = new TransmitPacket(getNextFrameID(), address, XBee16BitAddress.UNKNOWN_ADDRESS, 0, XBeeTransmitOptions.NONE, data);
 		sendAndCheckXBeePacket(xbeePacket, false);
 	}
-	
 	/**
 	 * Sends the provided data to the XBee device of the network corresponding 
 	 * to the given 64-Bit/16-Bit address.
@@ -1249,7 +1246,6 @@ public class XBeeDevice {
 		XBeePacket xbeePacket = new TransmitPacket(getNextFrameID(), address64Bit, address16bit, 0, XBeeTransmitOptions.NONE, data);
 		sendAndCheckXBeePacket(xbeePacket, false);
 	}
-	
 	/**
 	 * Sends the provided data to the given XBee device.
 	 * 
@@ -1284,7 +1280,6 @@ public class XBeeDevice {
 			throw new NullPointerException("XBee device cannot be null");
 		sendSerialData(xbeeDevice.get64BitAddress(), data);
 	}
-	
 	/**
 	 * Sends the provided {@code XBeePacket} and determines if the transmission 
 	 * status is success for synchronous transmissions. If the status is not 
@@ -1334,7 +1329,6 @@ public class XBeeDevice {
 		} else
 			throw new TransmitException(null);
 	}
-	
 	/**
 	 * Sets the configuration of the given IO line.
 	 * 
@@ -1374,7 +1368,6 @@ public class XBeeDevice {
 		// Check if AT Command response is valid.
 		checkATCommandResponseIsValid(response);
 	}
-	
 	/**
 	 * Retrieves the configuration mode of the provided IO line.
 	 * 
@@ -1424,7 +1417,6 @@ public class XBeeDevice {
 		// Return the configuration mode.
 		return dioMode;
 	}
-	
 	/**
 	 * Sets the digital value (high or low) to the provided IO line.
 	 * 
@@ -1470,7 +1462,6 @@ public class XBeeDevice {
 		// Check if AT Command response is valid.
 		checkATCommandResponseIsValid(response);
 	}
-	
 	/**
 	 * Retrieves the digital value of the provided IO line (must be configured 
 	 * as digital I/O).
@@ -1503,7 +1494,6 @@ public class XBeeDevice {
 		// Return the digital value. 
 		return ioSample.getDigitalValues().get(ioLine);
 	}
-	
 	/**
 	 * Sets the duty cycle (in %) of the provided IO line. 
 	 * 
@@ -1557,7 +1547,6 @@ public class XBeeDevice {
 		// Check if AT Command response is valid.
 		checkATCommandResponseIsValid(response);
 	}
-	
 	/**
 	 * Gets the PWM duty cycle (in %) corresponding to the provided IO line.
 	 * 
@@ -1612,7 +1601,6 @@ public class XBeeDevice {
 		int readValue = ByteUtils.byteArrayToInt(response.getResponse());
 		return Math.round((readValue * 100.0/1023.0) * 100.0) / 100.0;
 	}
-	
 	/**
 	 * Retrieves the analog value of the provided IO line (must be configured 
 	 * as ADC).
@@ -1647,7 +1635,6 @@ public class XBeeDevice {
 		// Return the analog value.
 		return ioSample.getAnalogValues().get(ioLine);
 	}
-	
 	/**
 	 * Checks if the provided {@code ATCommandResponse} is valid throwing an 
 	 * {@code ATCommandException} in case it is not.
@@ -1663,7 +1650,6 @@ public class XBeeDevice {
 		else if (response.getResponseStatus() != ATCommandStatus.OK)
 			throw new ATCommandException(response.getResponseStatus());
 	}
-	
 	/**
 	 * Retrieves an IO sample from the XBee device containing the value of the 
 	 * provided IO line.
@@ -1708,6 +1694,28 @@ public class XBeeDevice {
 		}
 		return ioSample;
 	}
+	/**
+	 * Sends the provided data to the XBee device of the network corresponding 
+	 * to the given 16-bit address asynchronously.
+	 * 
+	 * <p>Asynchronous transmissions do not wait for answer from the remote 
+	 * device or for transmit status packet.</p>
+	 * 
+	 * @param address The 16-bit address of the XBee that will receive the data.
+	 * @param data Byte array containing data to be sent.
+	 * 
+	 * @throws XBeeException if there is any XBee related exception.
+	 * @throws InterfaceNotOpenException if the device is not open.
+	 * @throws NullPointerException if {@code address == null} or 
+	 *                              if {@code data == null}.
+	 * 
+	 * @see XBee16BitAddress
+	 * @see #sendSerialDataAsync(XBee64BitAddress, byte[])
+	 * @see #sendSerialDataAsync(XBeeDevice, byte[])
+	 * @see #sendSerialData(XBee16BitAddress, byte[])
+	 * @see #sendSerialData(XBee64BitAddress, byte[])
+	 * @see #sendSerialData(XBeeDevice, byte[])
+	 */
 	
 	/*
 	 * (non-Javadoc)
