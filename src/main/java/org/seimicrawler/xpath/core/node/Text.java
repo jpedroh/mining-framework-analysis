@@ -82,7 +82,13 @@ public class Text implements NodeTest {
                         public void tail(Node node, int depth) {
 
                         }
+<<<<<<< /usr/src/app/output/zhegexiaohuozi/jsoupxpath/7bb89fc158257cd01fef2bf643314aaa8f2bf782/src/main/java/org/seimicrawler/xpath/core/node/Text.java/left.java
                     }, e);
+||||||| /usr/src/app/output/zhegexiaohuozi/jsoupxpath/7bb89fc158257cd01fef2bf643314aaa8f2bf782/src/main/java/org/seimicrawler/xpath/core/node/Text.java/base.java
+                    });
+=======
+                    },e);
+>>>>>>> /usr/src/app/output/zhegexiaohuozi/jsoupxpath/7bb89fc158257cd01fef2bf643314aaa8f2bf782/src/main/java/org/seimicrawler/xpath/core/node/Text.java/right.java
                 }
             }else {
                 for (Element e:context){
