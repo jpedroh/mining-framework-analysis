@@ -212,10 +212,6 @@ public class QueriesGenerated {
     return FutureTable_Behavior.call_getCleanTableName_4166618652720345586(SLinkOperations.getTarget(_context.getNode(), "outputTable", true));
   }
 
-  public static Object propertyMacro_GetPropertyValue_3007013211740963720(final PropertyMacroContext _context) {
-    return Statement_Behavior.call_id_3007013211740741445(_context.getNode());
-  }
-
   public static Object propertyMacro_GetPropertyValue_5703306641526023067(final PropertyMacroContext _context) {
     return SPropertyOperations.getString(_context.getNode(), "id");
   }
@@ -242,7 +238,13 @@ public class QueriesGenerated {
         public boolean accept(SNode it) {
           return Sequence.fromIterable(ColumnGroup_Behavior.call_uses_8031339867721231487(SLinkOperations.getTarget(it, "columnGroup", false))).any(new IWhereFilter<SNode>() {
             public boolean accept(SNode use) {
+<<<<<<< /usr/src/app/output/campagnelaboratory/metar/525afacc7d4273fa86de1cd512773f54309cd226/languages/org.campagnelab.metaR.tables/generator/source_gen/org/campagnelab/metar/tables/generator/template/main/QueriesGenerated.java/left.java
               return eq_x583g4_a0a0a0a0a0a0a0a0a0a0a0a0a8a92(SPropertyOperations.getString(use, "name"), "heatmap");
+||||||| /usr/src/app/output/campagnelaboratory/metar/525afacc7d4273fa86de1cd512773f54309cd226/languages/org.campagnelab.metaR.tables/generator/source_gen/org/campagnelab/metar/tables/generator/template/main/QueriesGenerated.java/base.java
+              return eq_x583g4_a0a0a0a0a0a0a0a0a0a0a0a0a8a62(SPropertyOperations.getString(use, "name"), "heatmap");
+=======
+              return eq_x583g4_a0a0a0a0a0a0a0a0a0a0a0a0a8a72(SPropertyOperations.getString(use, "name"), "heatmap");
+>>>>>>> /usr/src/app/output/campagnelaboratory/metar/525afacc7d4273fa86de1cd512773f54309cd226/languages/org.campagnelab.metaR.tables/generator/source_gen/org/campagnelab/metar/tables/generator/template/main/QueriesGenerated.java/right.java
             }
           });
         }
@@ -298,7 +300,13 @@ public class QueriesGenerated {
         }
         ListSequence.fromList(colGroups).addElement(SPropertyOperations.getString(ListSequence.fromList(SLinkOperations.getTargets(AttributeOperations.getAttribute(ListSequence.fromList(SLinkOperations.getTargets(SLinkOperations.getTarget(SLinkOperations.getTarget(heatmap, "table", true), "table", false), "columns", true)).findFirst(new IWhereFilter<SNode>() {
           public boolean accept(SNode col) {
+<<<<<<< /usr/src/app/output/campagnelaboratory/metar/525afacc7d4273fa86de1cd512773f54309cd226/languages/org.campagnelab.metaR.tables/generator/source_gen/org/campagnelab/metar/tables/generator/template/main/QueriesGenerated.java/left.java
+            return eq_x583g4_a0a0a0a0a0a0a0a0a0a1a0a0a0a4a33(SPropertyOperations.getString(col, "name"), sampleName);
+||||||| /usr/src/app/output/campagnelaboratory/metar/525afacc7d4273fa86de1cd512773f54309cd226/languages/org.campagnelab.metaR.tables/generator/source_gen/org/campagnelab/metar/tables/generator/template/main/QueriesGenerated.java/base.java
+            return eq_x583g4_a0a0a0a0a0a0a0a0a0a1a0a0a0a4a03(SPropertyOperations.getString(col, "name"), sampleName);
+=======
             return eq_x583g4_a0a0a0a0a0a0a0a0a0a1a0a0a0a4a13(SPropertyOperations.getString(col, "name"), sampleName);
+>>>>>>> /usr/src/app/output/campagnelaboratory/metar/525afacc7d4273fa86de1cd512773f54309cd226/languages/org.campagnelab.metaR.tables/generator/source_gen/org/campagnelab/metar/tables/generator/template/main/QueriesGenerated.java/right.java
           }
         }), new IAttributeDescriptor.NodeAttribute("org.campagnelab.metar.tables.structure.ColumnAnnotation")), "groups", true)).where(new IWhereFilter<SNode>() {
           public boolean accept(SNode it) {
@@ -320,7 +328,13 @@ public class QueriesGenerated {
               }
             }).any(new IWhereFilter<SNode>() {
               public boolean accept(SNode usage) {
+<<<<<<< /usr/src/app/output/campagnelaboratory/metar/525afacc7d4273fa86de1cd512773f54309cd226/languages/org.campagnelab.metaR.tables/generator/source_gen/org/campagnelab/metar/tables/generator/template/main/QueriesGenerated.java/left.java
+                return eq_x583g4_a0a0a0a0a0a0a0a0a0a0a1a0a0a0a4a33(SPropertyOperations.getString(usage, "name"), SPropertyOperations.getString(_context.getNode(), "name"));
+||||||| /usr/src/app/output/campagnelaboratory/metar/525afacc7d4273fa86de1cd512773f54309cd226/languages/org.campagnelab.metaR.tables/generator/source_gen/org/campagnelab/metar/tables/generator/template/main/QueriesGenerated.java/base.java
+                return eq_x583g4_a0a0a0a0a0a0a0a0a0a0a1a0a0a0a4a03(SPropertyOperations.getString(usage, "name"), SPropertyOperations.getString(_context.getNode(), "name"));
+=======
                 return eq_x583g4_a0a0a0a0a0a0a0a0a0a0a1a0a0a0a4a13(SPropertyOperations.getString(usage, "name"), SPropertyOperations.getString(_context.getNode(), "name"));
+>>>>>>> /usr/src/app/output/campagnelaboratory/metar/525afacc7d4273fa86de1cd512773f54309cd226/languages/org.campagnelab.metaR.tables/generator/source_gen/org/campagnelab/metar/tables/generator/template/main/QueriesGenerated.java/right.java
               }
             });
           }
@@ -352,7 +366,13 @@ public class QueriesGenerated {
       public boolean accept(SNode it) {
         return ListSequence.fromList(SLinkOperations.getTargets(AttributeOperations.getAttribute(it, new IAttributeDescriptor.NodeAttribute("org.campagnelab.metar.tables.structure.ColumnAnnotation")), "groups", true)).any(new IWhereFilter<SNode>() {
           public boolean accept(SNode it) {
+<<<<<<< /usr/src/app/output/campagnelaboratory/metar/525afacc7d4273fa86de1cd512773f54309cd226/languages/org.campagnelab.metaR.tables/generator/source_gen/org/campagnelab/metar/tables/generator/template/main/QueriesGenerated.java/left.java
+            return eq_x583g4_a0a0a0a0a0a0a0a0a0a0a63(SPropertyOperations.getString(SLinkOperations.getTarget(it, "columnGroup", false), "name"), "ID");
+||||||| /usr/src/app/output/campagnelaboratory/metar/525afacc7d4273fa86de1cd512773f54309cd226/languages/org.campagnelab.metaR.tables/generator/source_gen/org/campagnelab/metar/tables/generator/template/main/QueriesGenerated.java/base.java
             return eq_x583g4_a0a0a0a0a0a0a0a0a0a0a33(SPropertyOperations.getString(SLinkOperations.getTarget(it, "columnGroup", false), "name"), "ID");
+=======
+            return eq_x583g4_a0a0a0a0a0a0a0a0a0a0a43(SPropertyOperations.getString(SLinkOperations.getTarget(it, "columnGroup", false), "name"), "ID");
+>>>>>>> /usr/src/app/output/campagnelaboratory/metar/525afacc7d4273fa86de1cd512773f54309cd226/languages/org.campagnelab.metaR.tables/generator/source_gen/org/campagnelab/metar/tables/generator/template/main/QueriesGenerated.java/right.java
           }
         });
       }
@@ -405,10 +425,6 @@ public class QueriesGenerated {
     return ((SNode) _context.getNode()).getNodeId().toString();
   }
 
-  public static Object propertyMacro_GetPropertyValue_3007013211741886898(final PropertyMacroContext _context) {
-    return Statement_Behavior.call_id_3007013211740741445(_context.getNode());
-  }
-
   public static Object propertyMacro_GetPropertyValue_4166618652718861915(final PropertyMacroContext _context) {
     return NameHelper.RName(SPropertyOperations.getString(SLinkOperations.getTarget(_context.getNode(), "destination", true), "name"));
   }
@@ -423,7 +439,13 @@ public class QueriesGenerated {
       public boolean accept(SNode col) {
         return ListSequence.fromList(SLinkOperations.getTargets(AttributeOperations.getAttribute(col, new IAttributeDescriptor.NodeAttribute("org.campagnelab.metar.tables.structure.ColumnAnnotation")), "groups", true)).any(new IWhereFilter<SNode>() {
           public boolean accept(SNode g) {
+<<<<<<< /usr/src/app/output/campagnelaboratory/metar/525afacc7d4273fa86de1cd512773f54309cd226/languages/org.campagnelab.metaR.tables/generator/source_gen/org/campagnelab/metar/tables/generator/template/main/QueriesGenerated.java/left.java
+            return eq_x583g4_a0a0a0a0a0a0a0a0a0a1a94("ID", SPropertyOperations.getString(SLinkOperations.getTarget(g, "columnGroup", false), "name"));
+||||||| /usr/src/app/output/campagnelaboratory/metar/525afacc7d4273fa86de1cd512773f54309cd226/languages/org.campagnelab.metaR.tables/generator/source_gen/org/campagnelab/metar/tables/generator/template/main/QueriesGenerated.java/base.java
+            return eq_x583g4_a0a0a0a0a0a0a0a0a0a1a64("ID", SPropertyOperations.getString(SLinkOperations.getTarget(g, "columnGroup", false), "name"));
+=======
             return eq_x583g4_a0a0a0a0a0a0a0a0a0a1a84("ID", SPropertyOperations.getString(SLinkOperations.getTarget(g, "columnGroup", false), "name"));
+>>>>>>> /usr/src/app/output/campagnelaboratory/metar/525afacc7d4273fa86de1cd512773f54309cd226/languages/org.campagnelab.metaR.tables/generator/source_gen/org/campagnelab/metar/tables/generator/template/main/QueriesGenerated.java/right.java
           }
         });
       }
@@ -1211,6 +1233,46 @@ public class QueriesGenerated {
 
   protected static Logger LOG = LogManager.getLogger(QueriesGenerated.class);
 
+  private static boolean eq_x583g4_a0a0a0a0a0a0a0a0a0a0a0a0a8a92(Object a, Object b) {
+    return (a != null ? a.equals(b) : a == b);
+  }
+
+  private static boolean eq_x583g4_a0a0a0a0a0a0a0a0a0a1a0a0a0a4a33(Object a, Object b) {
+    return (a != null ? a.equals(b) : a == b);
+  }
+
+  private static boolean eq_x583g4_a0a0a0a0a0a0a0a0a0a0a1a0a0a0a4a33(Object a, Object b) {
+    return (a != null ? a.equals(b) : a == b);
+  }
+
+  private static boolean eq_x583g4_a0a0a0a0a0a0a0a0a0a0a63(Object a, Object b) {
+    return (a != null ? a.equals(b) : a == b);
+  }
+
+  private static boolean eq_x583g4_a0a0a0a0a0a0a0a0a0a1a94(Object a, Object b) {
+    return (a != null ? a.equals(b) : a == b);
+  }
+
+  private static boolean isNotEmptyString(String str) {
+    return str != null && str.length() > 0;
+  }
+
+  private static boolean neq_x583g4_a0a0jg(Object a, Object b) {
+    return !((a != null ? a.equals(b) : a == b));
+  }
+
+  private static boolean eq_x583g4_a0a0a0a0a0a0a0a0a0a0a391(Object a, Object b) {
+    return (a != null ? a.equals(b) : a == b);
+  }
+
+  public static Object propertyMacro_GetPropertyValue_3007013211740963720(final PropertyMacroContext _context) {
+    return Statement_Behavior.call_id_3007013211740741445(_context.getNode());
+  }
+
+  public static Object propertyMacro_GetPropertyValue_3007013211741886898(final PropertyMacroContext _context) {
+    return Statement_Behavior.call_id_3007013211740741445(_context.getNode());
+  }
+
   private static boolean eq_x583g4_a0a0a0a0a0a0a0a0a0a0a0a0a8a72(Object a, Object b) {
     return (a != null ? a.equals(b) : a == b);
   }
@@ -1228,18 +1290,6 @@ public class QueriesGenerated {
   }
 
   private static boolean eq_x583g4_a0a0a0a0a0a0a0a0a0a1a84(Object a, Object b) {
-    return (a != null ? a.equals(b) : a == b);
-  }
-
-  private static boolean isNotEmptyString(String str) {
-    return str != null && str.length() > 0;
-  }
-
-  private static boolean neq_x583g4_a0a0jg(Object a, Object b) {
-    return !((a != null ? a.equals(b) : a == b));
-  }
-
-  private static boolean eq_x583g4_a0a0a0a0a0a0a0a0a0a0a391(Object a, Object b) {
     return (a != null ? a.equals(b) : a == b);
   }
 }
