@@ -1,5 +1,4 @@
 package org.uma.jmetal.runner.multiobjective;
-
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.moead.AbstractMOEAD;
 import org.uma.jmetal.algorithm.multiobjective.moead.MOEADBuilder;
@@ -12,7 +11,6 @@ import org.uma.jmetal.util.AbstractAlgorithmRunner;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.ProblemUtils;
-
 import java.io.FileNotFoundException;
 import java.util.List;
 
@@ -33,53 +31,34 @@ public class MOEADRunner extends AbstractAlgorithmRunner {
     Algorithm<List<DoubleSolution>> algorithm;
     MutationOperator<DoubleSolution> mutation;
     DifferentialEvolutionCrossover crossover;
-
-    String problemName ;
+    String problemName;
     String referenceParetoFront = "";
     if (args.length == 1) {
       problemName = args[0];
-    } else if (args.length == 2) {
-      problemName = args[0] ;
-      referenceParetoFront = args[1] ;
     } else {
-      problemName = "org.uma.jmetal.problem.multiobjective.lz09.LZ09F6";
-      referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/LZ09_F6.pf";
+      if (args.length == 2) {
+        problemName = args[0];
+        referenceParetoFront = args[1];
+      } else {
+        problemName = "org.uma.jmetal.problem.multiobjective.lz09.LZ09F6";
+        referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/LZ09_F6.pf";
+      }
     }
-
-    problem = (DoubleProblem)ProblemUtils.<DoubleSolution> loadProblem(problemName);
-
-    double cr = 1.0 ;
-    double f = 0.5 ;
+    problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
+    double cr = 1.0;
+    double f = 0.5;
     crossover = new DifferentialEvolutionCrossover(cr, f, "rand/1/bin");
-
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
-
-    algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.MOEADDRA)
-            .setCrossover(crossover)
-            .setMutation(mutation)
-            .setMaxEvaluations(350000)
-            .setPopulationSize(300)
-            .setResultPopulationSize(100)
-            .setNeighborhoodSelectionProbability(0.9)
-            .setMaximumNumberOfReplacedSolutions(2)
-            .setNeighborSize(20)
-            .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
-            .setDataDirectory("/Users/ajnebro/Softw/jMetal/jMetal/jmetal-core/src/main/resources/MOEAD_Weights")
-            .build() ;
-
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-        .execute() ;
-
-    List<DoubleSolution> population = algorithm.getResult() ;
-    long computingTime = algorithmRunner.getComputingTime() ;
-
+    algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.MOEADDRA).setCrossover(crossover).setMutation(mutation).setMaxEvaluations(350000).setPopulationSize(300).setResultPopulationSize(100).setNeighborhoodSelectionProbability(0.9).setMaximumNumberOfReplacedSolutions(2).setNeighborSize(20).setFunctionType(AbstractMOEAD.FunctionType.TCHE).setDataDirectory("/Users/ajnebro/Softw/jMetal/jMetal/jmetal-core/src/main/resources/MOEAD_Weights").build();
+    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+    List<DoubleSolution> population = algorithm.getResult();
+    long computingTime = algorithmRunner.getComputingTime();
     JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-
     printFinalSolutionSet(population);
     if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront) ;
+      printQualityIndicators(population, referenceParetoFront);
     }
   }
 }

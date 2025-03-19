@@ -1,5 +1,4 @@
 package org.uma.jmetal.runner.multiobjective;
-
 import org.knowm.xchart.BitmapEncoder;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.smpso.SMPSOBuilder;
@@ -20,7 +19,6 @@ import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
 import org.uma.jmetal.util.chartcontainer.ChartContainer;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 import org.uma.jmetal.util.pseudorandom.impl.MersenneTwisterGenerator;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -34,82 +32,56 @@ public class SMPSOMeasuresWithChartsRunner extends AbstractAlgorithmRunner {
    * Invoking command:
   java org.uma.jmetal.runner.multiobjective.NSGAIIMeasuresRunner problemName [referenceFront]
    */
-  public static void main(String[] args)
-          throws JMetalException, InterruptedException, IOException {
+  public static void main(String[] args) throws JMetalException, InterruptedException, IOException {
     DoubleProblem problem;
     Algorithm<List<DoubleSolution>> algorithm;
     MutationOperator<DoubleSolution> mutation;
-
-    String referenceParetoFront = "" ;
-
-    String problemName ;
+    String referenceParetoFront = "";
+    String problemName;
     if (args.length == 1) {
       problemName = args[0];
-    } else if (args.length == 2) {
-      problemName = args[0] ;
-      referenceParetoFront = args[1] ;
     } else {
-      problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT4";
-      referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT4.pf" ;
+      if (args.length == 2) {
+        problemName = args[0];
+        referenceParetoFront = args[1];
+      } else {
+        problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT4";
+        referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT4.pf";
+      }
     }
-
-    problem = (DoubleProblem) ProblemUtils.<DoubleSolution> loadProblem(problemName);
-
-    problem = new DTLZ3(7,2);
-    referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/DTLZ3.2D.pf" ;
-
-    BoundedArchive<DoubleSolution> archive = new CrowdingDistanceArchive<DoubleSolution>(100) ;
-
-    double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
-    double mutationDistributionIndex = 20.0 ;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex) ;
-
-    int maxIterations = 250 ;
-    int swarmSize = 100 ;
-
-    algorithm = new SMPSOBuilder(problem, archive)
-        .setMutation(mutation)
-        .setMaxIterations(maxIterations)
-        .setSwarmSize(swarmSize)
-        .setRandomGenerator(new MersenneTwisterGenerator())
-        .setSolutionListEvaluator(new SequentialSolutionListEvaluator<DoubleSolution>())
-        .setVariant(SMPSOBuilder.SMPSOVariant.Measures)
-        .build();
-
-    /* Measure management */
-    MeasureManager measureManager = ((SMPSOMeasures)algorithm).getMeasureManager() ;
-
-    BasicMeasure<List<DoubleSolution>> solutionListMeasure = (BasicMeasure<List<DoubleSolution>>) measureManager
-            .<List<DoubleSolution>>getPushMeasure("currentPopulation");
+    problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
+    problem = new DTLZ3(7, 2);
+    referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/DTLZ3.2D.pf";
+    BoundedArchive<DoubleSolution> archive = new CrowdingDistanceArchive<DoubleSolution>(100);
+    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    double mutationDistributionIndex = 20.0;
+    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+    int maxIterations = 250;
+    int swarmSize = 100;
+    algorithm = new SMPSOBuilder(problem, archive).setMutation(mutation).setMaxIterations(maxIterations).setSwarmSize(swarmSize).setRandomGenerator(new MersenneTwisterGenerator()).setSolutionListEvaluator(new SequentialSolutionListEvaluator<DoubleSolution>()).setVariant(SMPSOBuilder.SMPSOVariant.Measures).build();
+    MeasureManager measureManager = ((SMPSOMeasures) algorithm).getMeasureManager();
+    BasicMeasure<List<DoubleSolution>> solutionListMeasure = (BasicMeasure<List<DoubleSolution>>) measureManager.<List<DoubleSolution>>getPushMeasure("currentPopulation");
     CountingMeasure iterationMeasure = (CountingMeasure) measureManager.<Long>getPushMeasure("currentIteration");
-
     ChartContainer chart = new ChartContainer(algorithm.getName(), 80);
     chart.setFrontChart(0, 1, referenceParetoFront);
     chart.setVarChart(0, 1);
     chart.initChart();
-
     solutionListMeasure.register(new ChartListener(chart));
     iterationMeasure.register(new IterationListener(chart));
-
-    /* End of measure management */
-
     AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
     chart.saveChart("./chart", BitmapEncoder.BitmapFormat.PNG);
-
     List<DoubleSolution> population = algorithm.getResult();
     long computingTime = algorithmRunner.getComputingTime();
-
     JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-
     printFinalSolutionSet(population);
     if (!referenceParetoFront.equals("")) {
       printQualityIndicators(population, referenceParetoFront);
     }
-
   }
 
   private static class ChartListener implements MeasureListener<List<DoubleSolution>> {
     private ChartContainer chart;
+
     private int iteration = 0;
 
     public ChartListener(ChartContainer chart) {
@@ -126,8 +98,7 @@ public class SMPSOMeasuresWithChartsRunner extends AbstractAlgorithmRunner {
       }
     }
 
-    @Override
-    synchronized public void measureGenerated(List<DoubleSolution> solutions) {
+    @Override synchronized public void measureGenerated(List<DoubleSolution> solutions) {
       refreshChart(solutions);
     }
   }
@@ -140,8 +111,7 @@ public class SMPSOMeasuresWithChartsRunner extends AbstractAlgorithmRunner {
       this.chart.getFrontChart().setTitle("Iteration: " + 0);
     }
 
-    @Override
-    synchronized public void measureGenerated(Long iteration) {
+    @Override synchronized public void measureGenerated(Long iteration) {
       if (this.chart != null) {
         this.chart.getFrontChart().setTitle("Iteration: " + iteration);
       }
