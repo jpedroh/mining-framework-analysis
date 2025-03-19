@@ -205,7 +205,8 @@ public class RegexSearch {
 	 * @return ArrayList<Rectangle> The values stored in _matchingAreas for a given page	
 	 */
 
-
+	public String getPatternBefore() { return new String(_regexBeforeTable.toString());}
+	public String getPatternAfter() { return new String(_regexAfterTable.toString());}
 
 	public ArrayList<Rectangle> getMatchingAreasForPage(Integer pageNumber){
 		
@@ -227,19 +228,12 @@ public class RegexSearch {
 	// TODO: New code added to accommodate for for CLI Regex, see if it works
     public ArrayList<Rectangle> getAllMatchingAreas(){
 
-        ArrayList<TableArea> allPagesMatchData = new ArrayList<>();
         ArrayList<Rectangle> allPagesMatchingAreas = new ArrayList<>();
 
         for(MatchingArea matchingArea : _matchingAreas){
-            for( int i : matchingArea.keySet()){
-				allPagesMatchData.addAll(matchingArea.get(i));
-			}
+            for( int i : matchingArea.keySet())
+            allPagesMatchingAreas.addAll(matchingArea.get(i));
         }
-
-        for(TableArea matchData : allPagesMatchData){
-        	allPagesMatchingAreas.add(matchData.getArea());
-		}
-
         return allPagesMatchingAreas;
     }
 	
