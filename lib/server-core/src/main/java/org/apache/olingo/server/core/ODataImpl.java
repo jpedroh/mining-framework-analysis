@@ -1,26 +1,6 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.apache.olingo.server.core;
-
 import java.util.Collection;
 import java.util.List;
-
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
@@ -55,109 +35,87 @@ import org.apache.olingo.server.core.serializer.xml.ODataXmlSerializer;
 import org.apache.olingo.server.core.uri.UriHelperImpl;
 
 public class ODataImpl extends OData {
-
-  @Override
-  public ODataSerializer createSerializer(final ContentType contentType) throws SerializerException {
+  @Override public ODataSerializer createSerializer(final ContentType contentType) throws SerializerException {
     ODataSerializer serializer = null;
-
     if (contentType.isCompatible(ContentType.APPLICATION_JSON)) {
       serializer = new ODataJsonSerializer(contentType);
-    } else if (contentType.isCompatible(ContentType.APPLICATION_XML)
-        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
-      serializer = new ODataXmlSerializer();
+    } else {
+      if (contentType.isCompatible(ContentType.APPLICATION_XML) || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
+        serializer = new ODataXmlSerializer();
+      }
     }
-
     if (serializer == null) {
-      throw new SerializerException("Unsupported format: " + contentType.toContentTypeString(),
-          SerializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
+      throw new SerializerException("Unsupported format: " + contentType.toContentTypeString(), SerializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
     } else {
       return serializer;
     }
   }
 
-  @Override
-  public FixedFormatSerializer createFixedFormatSerializer() {
+  @Override public FixedFormatSerializer createFixedFormatSerializer() {
     return new FixedFormatSerializerImpl();
   }
 
-  @Override
-  public ODataHttpHandler createHandler(final ServiceMetadata serviceMetadata) {
+  @Override public ODataHttpHandler createHandler(final ServiceMetadata serviceMetadata) {
     return new ODataHttpHandlerImpl(this, serviceMetadata);
   }
 
-  @Override
-  public ODataHandler createRawHandler(ServiceMetadata serviceMetadata) {
+  @Override public ODataHandler createRawHandler(ServiceMetadata serviceMetadata) {
     return new ODataHandlerImpl(this, serviceMetadata, new ServerCoreDebugger(this));
   }
 
-  @Override
-  public ServiceMetadata createServiceMetadata(final CsdlEdmProvider edmProvider,
-      final List<EdmxReference> references) {
+  @Override public ServiceMetadata createServiceMetadata(final CsdlEdmProvider edmProvider, final List<EdmxReference> references) {
     return createServiceMetadata(edmProvider, references, null);
   }
 
-  @Override
-  public ServiceMetadata createServiceMetadata(final CsdlEdmProvider edmProvider,
-      final List<EdmxReference> references, final ServiceMetadataETagSupport serviceMetadataETagSupport) {
+  @Override public ServiceMetadata createServiceMetadata(final CsdlEdmProvider edmProvider, final List<EdmxReference> references, final ServiceMetadataETagSupport serviceMetadataETagSupport) {
     return new ServiceMetadataImpl(edmProvider, references, serviceMetadataETagSupport);
   }
 
-  @Override
-  public FixedFormatDeserializer createFixedFormatDeserializer() {
+  @Override public FixedFormatDeserializer createFixedFormatDeserializer() {
     return new FixedFormatDeserializerImpl();
   }
 
-  @Override
-  public UriHelper createUriHelper() {
+  @Override public UriHelper createUriHelper() {
     return new UriHelperImpl();
   }
 
-  @Override
-  public ODataDeserializer createDeserializer(final ContentType contentType) throws DeserializerException {
+  @Override public ODataDeserializer createDeserializer(final ContentType contentType) throws DeserializerException {
     if (contentType.isCompatible(ContentType.JSON)) {
       return new ODataJsonDeserializer(contentType);
-    } else if (contentType.isCompatible(ContentType.APPLICATION_XML)
-        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
-      return new ODataXmlDeserializer();
     } else {
-      throw new DeserializerException("Unsupported format: " + contentType.toContentTypeString(),
-          DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
-    }
-  }  
-  @Override
-  public ODataDeserializer createDeserializer(final ContentType contentType,
-      ServiceMetadata metadata) throws DeserializerException {
-    if (contentType.isCompatible(ContentType.JSON)) {
-      return new ODataJsonDeserializer(contentType, metadata);
-    } else if (contentType.isCompatible(ContentType.APPLICATION_XML)
-        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
-      return new ODataXmlDeserializer(metadata);
-    } else {
-      throw new DeserializerException("Unsupported format: " + contentType.toContentTypeString(),
-          DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
+      if (contentType.isCompatible(ContentType.APPLICATION_XML) || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
+        return new ODataXmlDeserializer();
+      } else {
+        throw new DeserializerException("Unsupported format: " + contentType.toContentTypeString(), DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
+      }
     }
   }
 
-  @Override
-  public EdmPrimitiveType createPrimitiveTypeInstance(final EdmPrimitiveTypeKind kind) {
+  @Override public ODataDeserializer createDeserializer(final ContentType contentType, ServiceMetadata metadata) throws DeserializerException {
+    if (contentType.isCompatible(ContentType.JSON)) {
+      return new ODataJsonDeserializer(contentType, metadata);
+    } else {
+      if (contentType.isCompatible(ContentType.APPLICATION_XML) || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
+        return new ODataXmlDeserializer(metadata);
+      } else {
+        throw new DeserializerException("Unsupported format: " + contentType.toContentTypeString(), DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
+      }
+    }
+  }
+
+  @Override public EdmPrimitiveType createPrimitiveTypeInstance(final EdmPrimitiveTypeKind kind) {
     return EdmPrimitiveTypeFactory.getInstance(kind);
   }
 
-  @Override
-  public ETagHelper createETagHelper() {
+  @Override public ETagHelper createETagHelper() {
     return new ETagHelperImpl();
   }
 
-  @Override
-  public Preferences createPreferences(final Collection<String> preferHeaders) {
+  @Override public Preferences createPreferences(final Collection<String> preferHeaders) {
     return new PreferencesImpl(preferHeaders);
   }
 
-  @Override
-  public DebugResponseHelper createDebugResponseHelper(final String debugFormat) {
-    // TODO: What should we do with invalid formats?
-    // TODO: Support more debug formats
+  @Override public DebugResponseHelper createDebugResponseHelper(final String debugFormat) {
     return new DebugResponseHelperImpl(debugFormat);
   }
-
 }
