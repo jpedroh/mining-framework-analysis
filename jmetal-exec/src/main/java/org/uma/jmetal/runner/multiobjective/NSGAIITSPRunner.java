@@ -1,5 +1,4 @@
 package org.uma.jmetal.runner.multiobjective;
-
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.operator.CrossoverOperator;
@@ -19,7 +18,6 @@ import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -28,7 +26,6 @@ import java.util.List;
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
-
 public class NSGAIITSPRunner extends AbstractAlgorithmRunner {
   /**
    * @param args Command line arguments.
@@ -40,47 +37,28 @@ public class NSGAIITSPRunner extends AbstractAlgorithmRunner {
    */
   public static void main(String[] args) throws JMetalException, IOException {
     JMetalRandom.getInstance().setSeed(100L);
-
     PermutationProblem<PermutationSolution<Integer>> problem;
     Algorithm<List<PermutationSolution<Integer>>> algorithm;
     CrossoverOperator<PermutationSolution<Integer>> crossover;
     MutationOperator<PermutationSolution<Integer>> mutation;
     SelectionOperator<List<PermutationSolution<Integer>>, PermutationSolution<Integer>> selection;
-
     problem = new MultiobjectiveTSP("/tspInstances/kroA100.tsp", "/tspInstances/kroB100.tsp");
-
-    crossover = new PMXCrossover(0.9) ;
-
-    double mutationProbability = 0.2 ;
-    mutation = new PermutationSwapMutation<Integer>(mutationProbability) ;
-
+    crossover = new PMXCrossover(0.9);
+    double mutationProbability = 0.2;
+    mutation = new PermutationSwapMutation<Integer>(mutationProbability);
     selection = new BinaryTournamentSelection<PermutationSolution<Integer>>(new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
-/**
- * List<Double> inters = new ArrayList<>();
- inters.add(0.0);
- inters.add(0.0);
- double epsilon =0.0001;
- algorithm = new RNSGAIIBuilder<>(problem, crossover, mutation,inters,epsilon)
-
- */
     int populationSize = 100;
-    algorithm = new NSGAIIBuilder<PermutationSolution<Integer>>(problem, crossover, mutation, populationSize)
-            .setSelectionOperator(selection)
-            .setMaxEvaluations(100000)
-            .build() ;
-
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-            .execute() ;
-
-    List<PermutationSolution<Integer>> population = algorithm.getResult() ;
-    long computingTime = algorithmRunner.getComputingTime() ;
-
-    new SolutionListOutput(population)
-            .setSeparator("\t")
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-            .print();
-
+    algorithm = new NSGAIIBuilder<PermutationSolution<Integer>>(problem, crossover, mutation, populationSize).setSelectionOperator(selection).setMaxEvaluations(100000).
+<<<<<<< /usr/src/app/output/jmetal/jmetal/7dbc673d548dfbe2fe62cc31f7a207d0431485c7/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/NSGAIITSPRunner.java/left.java
+    setPopulationSize(populationSize).build()
+=======
+    build()
+>>>>>>> /usr/src/app/output/jmetal/jmetal/7dbc673d548dfbe2fe62cc31f7a207d0431485c7/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/NSGAIITSPRunner.java/right.java
+    ;
+    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+    List<PermutationSolution<Integer>> population = algorithm.getResult();
+    long computingTime = algorithmRunner.getComputingTime();
+    new SolutionListOutput(population).setSeparator("\t").setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv")).setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv")).print();
     JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
     JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
     JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
