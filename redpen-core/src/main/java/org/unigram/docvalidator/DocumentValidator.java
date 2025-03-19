@@ -1,22 +1,4 @@
-/**
- * redpen: a text inspection tool
- * Copyright (C) 2014 Recruit Technologies Co., Ltd. and contributors
- * (see CONTRIBUTORS.md)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.unigram.docvalidator;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unigram.docvalidator.config.Configuration;
@@ -37,7 +19,6 @@ import org.unigram.docvalidator.validator.section.SectionValidator;
 import org.unigram.docvalidator.validator.section.SectionValidatorFactory;
 import org.unigram.docvalidator.validator.sentence.SentenceValidator;
 import org.unigram.docvalidator.validator.sentence.SentenceValidatorFactory;
-
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,42 +27,29 @@ import java.util.List;
  * Validate all input files using appended Validators.
  */
 public class DocumentValidator implements Validator {
+  private final List<SectionValidator> sectionValidators;
 
   private DocumentValidator(Builder builder) throws DocumentValidatorException {
     Configuration configuration = builder.configuration;
     this.distributor = builder.distributor;
-
     validators = new ArrayList<Validator>();
     sectionValidators = new ArrayList<SectionValidator>();
     sentenceValidators = new ArrayList<SentenceValidator>();
-
     loadValidators(configuration);
   }
+
+  private final List<SentenceValidator> sentenceValidators;
 
   /**
    * Load validators written in the configuration file.
    */
-  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-  private void loadValidators(Configuration configuration)
-      throws DocumentValidatorException {
-
-    //TODO duplicate code...
-    for (ValidatorConfiguration config : configuration
-        .getSectionValidatorConfigs()) {
-      sectionValidators.add(SectionValidatorFactory
-          .getInstance(config, configuration.getCharacterTable()));
+  @SuppressWarnings(value = { "BooleanMethodIsAlwaysInverted" }) private void loadValidators(Configuration configuration) throws DocumentValidatorException {
+    for (ValidatorConfiguration config : configuration.getSectionValidatorConfigs()) {
+      sectionValidators.add(SectionValidatorFactory.getInstance(config, configuration.getCharacterTable()));
     }
-
-    for (ValidatorConfiguration config : configuration
-        .getSentenceValidatorConfigs()) {
-      sentenceValidators.add(SentenceValidatorFactory
-          .getInstance(config, configuration.getCharacterTable()));
+    for (ValidatorConfiguration config : configuration.getSentenceValidatorConfigs()) {
+      sentenceValidators.add(SentenceValidatorFactory.getInstance(config, configuration.getCharacterTable()));
     }
-
-    //TODO execute document validator
-    //TODO execute paragraph validator
-
-
   }
 
   /**
@@ -93,31 +61,13 @@ public class DocumentValidator implements Validator {
   public List<ValidationError> check(DocumentCollection documentCollection) {
     distributor.flushHeader();
     List<ValidationError> errors = new ArrayList<ValidationError>();
-//    for (Validator validator : this.validators) {
-
-
-//      Iterator<Document> fileIterator = documentCollection.getDocuments();
-//      while (fileIterator.hasNext()) {
-//        try {
-//          List<ValidationError> currentErrors =
-//            validator.validate(fileIterator.next());
-//          errors.addAll(currentErrors);
-//        } catch (Throwable e) {
-//          LOG.error("Error occurs in validation: " + e.getMessage());
-//          LOG.error("Validator class: " + validator.getClass());
-//        }
-//      }
-//    }
-
     for (Document document : documentCollection) {
       errors = validateDocument(document);
-
-      for (ValidationError error : errors){
+      for (ValidationError error : errors) {
         error.setFileName(document.getFileName());
         distributor.flushResult(error);
       }
     }
-
     distributor.flushFooter();
     return errors;
   }
@@ -127,7 +77,6 @@ public class DocumentValidator implements Validator {
     for (Validator validator : validators) {
       errors.addAll(validator.validate(document));
     }
-
     for (Section section : document) {
       errors.addAll(validateSection(section));
     }
@@ -139,19 +88,14 @@ public class DocumentValidator implements Validator {
     for (SectionValidator sectionValidator : sectionValidators) {
       errors.addAll(sectionValidator.validate(section));
     }
-
     for (Paragraph paragraph : section.getParagraphs()) {
       errors.addAll(validateParagraph(paragraph));
     }
-
-
     errors.addAll(validateSentences(section.getHeaderContents()));
-
     for (ListBlock listBlock : section.getListBlocks()) {
       for (ListElement listElement : listBlock.getListElements()) {
         errors.addAll(validateSentences(listElement.getSentences()));
       }
-
     }
     return errors;
   }
@@ -176,9 +120,7 @@ public class DocumentValidator implements Validator {
    * Constructor only for testing.
    */
   protected DocumentValidator() {
-    this.distributor = ResultDistributorFactory
-        .createDistributor(Formatter.Type.PLAIN,
-            System.out);
+    this.distributor = ResultDistributorFactory.createDistributor(Formatter.Type.PLAIN, System.out);
     this.validators = new ArrayList<Validator>();
     sectionValidators = new ArrayList<SectionValidator>();
     sentenceValidators = new ArrayList<SentenceValidator>();
@@ -193,8 +135,7 @@ public class DocumentValidator implements Validator {
     this.validators.add(validator);
   }
 
-  @Override
-  public List<ValidationError> validate(Document document) {
+  @Override public List<ValidationError> validate(Document document) {
     return null;
   }
 
@@ -202,16 +143,10 @@ public class DocumentValidator implements Validator {
     sectionValidators.add(validator);
   }
 
-  /**
-   * Builder for DocumentValidator.
-   */
   public static class Builder {
-
     private Configuration configuration;
 
-    private ResultDistributor distributor = new DefaultResultDistributor(
-        new PrintStream(System.out)
-    );
+    private ResultDistributor distributor = new DefaultResultDistributor(new PrintStream(System.out));
 
     public Builder setConfiguration(Configuration configuration) {
       this.configuration = configuration;
@@ -230,12 +165,7 @@ public class DocumentValidator implements Validator {
 
   private final List<Validator> validators;
 
-  private final List<SectionValidator> sectionValidators;
-
-  private final List<SentenceValidator> sentenceValidators;
-
   private ResultDistributor distributor;
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(DocumentValidator.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DocumentValidator.class);
 }
