@@ -15,6 +15,7 @@ import org.junit.Test;
 import de.slackspace.openkeepass.KeePassDatabase;
 import de.slackspace.openkeepass.domain.CompressionAlgorithm;
 import de.slackspace.openkeepass.domain.CrsAlgorithm;
+import de.slackspace.openkeepass.domain.CustomIcons;
 import de.slackspace.openkeepass.domain.Entry;
 import de.slackspace.openkeepass.domain.KeePassFile;
 import de.slackspace.openkeepass.domain.KeePassHeader;
@@ -237,6 +238,34 @@ public class KeepassDatabaseReaderTest {
 
 		Entry entry = database.getEntryByUUID(UUID.fromString("1fbddfcd-52ff-1d4b-b2e8-27f671e4ea22"));
 		Assert.assertEquals("Sample Entry #2", entry.getTitle());
+	}
+
+	@Test
+	public void whenUsingCustomIconsShouldReturnImageData() throws IOException {
+		KeePassFile database = KeePassDatabase.getInstance("target/test-classes/IconsDatabase.kdbx").openDatabase("abcdefg");
+
+		CustomIcons customIcons = database.getMeta().getCustomIcons();
+		Assert.assertEquals(1, customIcons.getIcons().size());
+
+		List<Group> groups = database.getGroups();
+		Assert.assertEquals(1, groups.size());
+		
+		Group group = database.getGroupByName("SomeGroup");
+		Assert.assertNotNull(group);
+
+		Entry entry = database.getEntryByTitle("SomeEntry");
+		Assert.assertNotNull(entry);
+
+		byte[] groupData = group.getIconData();
+		Assert.assertNotNull(groupData);
+
+		byte[] entryData = entry.getIconData();
+		Assert.assertNotNull(entryData);
+
+		Assert.assertArrayEquals("group and entry icon are different", groupData, entryData);
+
+		// Note: can't seem to get a comparison with a static test.png file to work
+		// original file is different in size and even the exported custom icon via KeePass GUI has different bytes
 	}
 
 }
