@@ -113,396 +113,473 @@ public class Configuration {
     /**
      * default am implementation class.
      */
+
     public static final String DEFAULT_AM_IMPLEMENTATION_CLASS = null;
 
     /**
      * default idm implementation class.
      */
+
     public static final String DEFAULT_IDM_IMPLEMENTATION_CLASS = null;
 
     /**
      * default authMechanism implementation class.
      */
+
     public static final String DEFAULT_AUTH_MECHANISM_IMPLEMENTATION_CLASS = null;
 
     /**
      * default db etag check policy
      */
+
     public static final ETAG_CHECK_POLICY DEFAULT_DB_ETAG_CHECK_POLICY
             = ETAG_CHECK_POLICY.REQUIRED_FOR_DELETE;
 
     /**
      * default coll etag check policy
      */
+
     public static final ETAG_CHECK_POLICY DEFAULT_COLL_ETAG_CHECK_POLICY
             = ETAG_CHECK_POLICY.REQUIRED_FOR_DELETE;
 
     /**
      * default doc etag check policy
      */
+
     public static final ETAG_CHECK_POLICY DEFAULT_DOC_ETAG_CHECK_POLICY
             = ETAG_CHECK_POLICY.OPTIONAL;
 
     /**
      * default doc etag check policy
      */
+
     public static final int DEFAULT_MAX_DOC_ETAG_CHECK_POLICY = 1000;
 
     /**
      * default value for max-pagesize
      */
+
     public static final int DEFAULT_MAX_PAGESIZE = 1000;
 
     /**
      * default value for max-pagesize
      */
+
     public static final int DEFAULT_DEFAULT_PAGESIZE = 100;
 
     /**
      * default value for cursor batch size
      */
+
     public static final int DEFAULT_CURSOR_BATCH_SIZE = 1000;
 
     /**
      * the key for the local-cache-enabled property.
      */
+
     public static final String LOCAL_CACHE_ENABLED_KEY = "local-cache-enabled";
 
     /**
      * the key for the local-cache-ttl property.
      */
+
     public static final String LOCAL_CACHE_TTL_KEY = "local-cache-ttl";
 
     /**
      * the key for the schema-cache-enabled property.
      */
+
     public static final String SCHEMA_CACHE_ENABLED_KEY = "schema-cache-enabled";
 
     /**
      * the key for the schema-cache-ttl property.
      */
+
     public static final String SCHEMA_CACHE_TTL_KEY = "schema-cache-ttl";
 
     /**
      * the key for the force-gzip-encoding property.
      */
+
     public static final String FORCE_GZIP_ENCODING_KEY = "force-gzip-encoding";
 
     /**
      * the key for the direct-buffers property.
      */
+
     public static final String DIRECT_BUFFERS_KEY = "direct-buffers";
 
     /**
      * the key for the buffer-size property.
      */
+
     public static final String BUFFER_SIZE_KEY = "buffer-size";
 
     /**
      * the key for the worker-threads property.
      */
+
     public static final String WORKER_THREADS_KEY = "worker-threads";
 
     /**
      * the key for the io-threads property.
      */
+
     public static final String IO_THREADS_KEY = "io-threads";
 
     /**
      * the key for the requests-limit property.
      */
+
     public static final String REQUESTS_LIMIT_KEY = "requests-limit";
 
     /**
      * the key for the query-time-limit property.
      */
+
     public static final String QUERY_TIME_LIMIT_KEY = "query-time-limit";
 
     /**
      * the key for the aggregation-time-limit property
      */
+
     private static final String AGGREGATION_TIME_LIMIT_KEY = "aggregation-time-limit";
 
     /**
      * The key for enabling check that aggregation variables contains operators.
      */
+
     public static final String AGGREGATION_CHECK_OPERATORS = "aggregation-check-operators";
 
     /**
      * the key for the enable-log-file property.
      */
+
     public static final String ENABLE_LOG_FILE_KEY = "enable-log-file";
 
     /**
      * the key for the enable-log-console property.
      */
+
     public static final String ENABLE_LOG_CONSOLE_KEY = "enable-log-console";
 
     /**
      * the key for the log-level property.
      */
+
     public static final String LOG_LEVEL_KEY = "log-level";
 
     /**
      * the key for the log-file-path property.
      */
+
     public static final String LOG_FILE_PATH_KEY = "log-file-path";
 
     /**
      * the key for the requests-log-tracing-headers property.
      */
+
     public static final String REQUESTS_LOG_TRACE_HEADERS_KEY = "requests-log-trace-headers";
 
     /**
      * the key for the implementation-class property.
      */
+
     public static final String IMPLEMENTATION_CLASS_KEY = "implementation-class";
 
     /**
      * the key for the access-manager property.
      */
+
     public static final String ACCESS_MANAGER_KEY = "access-manager";
 
     /**
      * the key for the idm property.
      */
+
     public static final String IDM_KEY = "idm";
 
     /**
      * the key for the auth Mechanism.
      */
+
     public static final String AUTH_MECHANISM_KEY = "auth-mechanism";
 
     /**
      * the key for the mongo-uri property.
      */
+
     public static final String MONGO_URI_KEY = "mongo-uri";
 
     /**
      * the key for the mongo-mounts property.
      */
+
     public static final String MONGO_MOUNTS_KEY = "mongo-mounts";
 
     /**
      * the key for the what property.
      */
+
     public static final String MONGO_MOUNT_WHAT_KEY = "what";
 
     /**
      * the key for the where property.
      */
+
     public static final String MONGO_MOUNT_WHERE_KEY = "where";
 
     /**
      * the key for the auth-db property.
      */
+
     public static final String MONGO_AUTH_DB_KEY = "auth-db";
 
     /**
      * the key for the password property.
      */
+
     public static final String MONGO_PASSWORD_KEY = "password";
 
     /**
      * the key for the user property.
      */
+
     public static final String MONGO_USER_KEY = "user";
 
     /**
      * the key for the application-logic-mounts property.
      */
+
     public static final String APPLICATION_LOGIC_MOUNTS_KEY = "application-logic-mounts";
 
     /**
      * the key for the application-logic-mounts property.
      */
+
     public static final String METADATA_NAMED_SINGLETONS_KEY = "metadata-named-singletons";
 
     /**
      * the key for the args property.
      */
+
     public static final String APPLICATION_LOGIC_MOUNT_ARGS_KEY = "args";
 
     /**
      * the key for the what property.
      */
+
     public static final String APPLICATION_LOGIC_MOUNT_WHAT_KEY = "what";
 
     /**
      * the key for the where property.
      */
+
     public static final String APPLICATION_LOGIC_MOUNT_WHERE_KEY = "where";
 
     /**
      * the key for the static-resources-mounts property.
      */
+
     public static final String STATIC_RESOURCES_MOUNTS_KEY = "static-resources-mounts";
 
     /**
      * the key for the what property.
      */
+
     public static final String STATIC_RESOURCES_MOUNT_WHAT_KEY = "what";
 
     /**
      * the key for the where property.
      */
+
     public static final String STATIC_RESOURCES_MOUNT_WHERE_KEY = "where";
 
     /**
      * the key for the welcome-file property.
      */
+
     public static final String STATIC_RESOURCES_MOUNT_WELCOME_FILE_KEY = "welcome-file";
 
     /**
      * the key for the embedded property.
      */
-    public static final String STATIC_RESOURCES_MOUNT_EMBEDDED_KEY = "embedded";
 
+    public static final String STATIC_RESOURCES_MOUNT_EMBEDDED_KEY = "embedded";
 
     /**
      * the key for the certpassword property.
      */
+
     public static final String CERT_PASSWORD_KEY = "certpassword";
 
     /**
      * the key for the keystore-password property.
      */
+
     public static final String KEYSTORE_PASSWORD_KEY = "keystore-password";
 
     /**
      * the key for the keystore-file property.
      */
+
     public static final String KEYSTORE_FILE_KEY = "keystore-file";
 
     /**
      * the key for the use-embedded-keystore property.
      */
+
     public static final String USE_EMBEDDED_KEYSTORE_KEY = "use-embedded-keystore";
 
     /**
      * the key for the ajp-host property.
      */
+
     public static final String AJP_HOST_KEY = "ajp-host";
 
     /**
      * the key for the ajp-port property.
      */
+
     public static final String AJP_PORT_KEY = "ajp-port";
 
     /**
      * the key for the ajp-listener property.
      */
+
     public static final String AJP_LISTENER_KEY = "ajp-listener";
 
     /**
      * the key for the http-host property.
      */
+
     public static final String HTTP_HOST_KEY = "http-host";
 
     /**
      * the key for the http-port property.
      */
+
     public static final String HTTP_PORT_KEY = "http-port";
 
     /**
      * the key for http-listener the property.
      */
+
     public static final String HTTP_LISTENER_KEY = "http-listener";
 
     /**
      * the key for the https-host property.
      */
+
     private static final String HTTPS_HOST_KEY = "https-host";
 
     /**
      * the key for the https-port property.
      */
+
     private static final String HTTPS_PORT_KEY = "https-port";
 
     /**
      * the key for the https-listener property.
      */
+
     public static final String HTTPS_LISTENER = "https-listener";
 
     /**
      * the key for the instance-name property.
      */
+
     public static final String INSTANCE_NAME_KEY = "instance-name";
 
     /**
      * the key for the instance-base-url property.
      */
+
     public static final String INSTANCE_BASE_URL_KEY = "instance-base-url";
 
     /**
      * the key for the instance-name property.
      */
+
     public static final String REPRESENTATION_FORMAT_KEY = "default-representation-format";
 
     /**
      * the key for the eager-cursor-allocation-pool-size property.
      */
+
     public static final String EAGER_POOL_SIZE = "eager-cursor-allocation-pool-size";
 
     /**
      * the key for the eager-cursor-allocation-linear-slice-width property.
      */
+
     public static final String EAGER_LINEAR_SLICE_WIDHT = "eager-cursor-allocation-linear-slice-width";
 
     /**
      * the key for the eager-cursor-allocation-linear-slice-delta property.
      */
+
     public static final String EAGER_LINEAR_SLICE_DELTA = "eager-cursor-allocation-linear-slice-delta";
 
     /**
      * the key for the eager-cursor-allocation-linear-slice-heights property.
      */
+
     public static final String EAGER_LINEAR_HEIGHTS = "eager-cursor-allocation-linear-slice-heights";
 
     /**
      * the key for the eager-cursor-allocation-random-slice-min-width property.
      */
+
     public static final String EAGER_RND_SLICE_MIN_WIDHT = "eager-cursor-allocation-random-slice-min-width";
 
     /**
      * the key for the eager-cursor-allocation-random-slice-max-cursors
      * property.
      */
+
     public static final String EAGER_RND_MAX_CURSORS = "eager-cursor-allocation-random-max-cursors";
 
     /**
      * the key for the auth-token-enabled property.
      */
+
     public static final String AUTH_TOKEN_ENABLED = "auth-token-enabled";
 
     /**
      * the key for the auth-token-ttl property.
      */
+
     public static final String AUTH_TOKEN_TTL = "auth-token-ttl";
 
     /**
      * the key for the etag-check-policy property.
      */
+
     public static final String ETAG_CHECK_POLICY_KEY = "etag-check-policy";
 
     /**
      * the key for the etag-check-policy.db property.
      */
+
     public static final String ETAG_CHECK_POLICY_DB_KEY = "db";
 
     /**
      * the key for the etag-check-policy.coll property.
      */
+
     public static final String ETAG_CHECK_POLICY_COLL_KEY = "coll";
 
     /**
      * the key for the etag-check-policy.doc property.
      */
+
     public static final String ETAG_CHECK_POLICY_DOC_KEY = "doc";
 
     /**
      * Force http requests logging even if DEBUG is not set
      */
+
     public static final String LOG_REQUESTS_LEVEL_KEY = "requests-log-level";
 
     /**
@@ -510,36 +587,43 @@ public class Configuration {
      * OFF), gradually gathering less specific metrics. Every level contain the
      * upper level as well.
      */
+
     public static final String METRICS_GATHERING_LEVEL_KEY = "metrics-gathering-level";
 
     /**
      * The key for enabling the Ansi console (for logging with colors)
      */
+
     public static final String ANSI_CONSOLE_KEY = "ansi-console";
 
     /**
      * The key for specifying an initializer class
      */
+
     public static final String INITIALIZER_CLASS_KEY = "initializer-class";
 
     /**
      * The key for specifying the max pagesize
      */
+
     public static final String MAX_PAGESIZE_KEY = "max-pagesize";
 
     /**
      * The key for specifying the default pagesize
      */
+
     public static final String DEFAULT_PAGESIZE_KEY = "default-pagesize";
 
     /**
      * The key for specifying the cursor batch size
      */
+
     public static final String CURSOR_BATCH_SIZE_KEY = "cursor-batch-size";
 
     /**
      * The key to allow unescaped chars in URL
      */
+
     public static final String ALLOW_UNESCAPED_CHARACTERS_IN_URL = "allow-unescaped-characters-in-url";
 
     /**
@@ -548,6 +632,7 @@ public class Configuration {
      * @see
      * http://undertow.io/undertow-docs/undertow-docs-2.0.0/index.html#common-listener-options
      */
+
     public static final String CONNECTION_OPTIONS_KEY = "connection-options";
 
     @SuppressWarnings("unchecked")
@@ -572,6 +657,7 @@ public class Configuration {
      * @param integers
      * @return
      */
+
     public static int[] convertListToIntArray(List<Object> integers) {
         int[] ret = new int[integers.size()];
         Iterator<Object> iterator = integers.iterator();
@@ -587,77 +673,239 @@ public class Configuration {
 
         return ret;
     }
+
     private boolean silent = false;
+
     private final boolean httpsListener;
+
     private final int httpsPort;
+
     private final String httpsHost;
+
     private final boolean httpListener;
+
     private final int httpPort;
+
     private final String httpHost;
+
     private final boolean ajpListener;
+
     private final int ajpPort;
+
     private final String ajpHost;
+
     private final String instanceName;
+
     private final String instanceBaseURL;
+
     private final REPRESENTATION_FORMAT defaultRepresentationFormat;
+
     private final boolean useEmbeddedKeystore;
+
     private final String keystoreFile;
+
     private final String keystorePassword;
+
     private final String certPassword;
+
     private final MongoClientURI mongoUri;
+
     private final List<Map<String, Object>> mongoMounts;
+
     private final List<Map<String, Object>> staticResourcesMounts;
+
     private final List<Map<String, Object>> applicationLogicMounts;
+
     private final List<Map<String, Object>> metadataNamedSingletons;
+
     private final String logFilePath;
+
     private final Level logLevel;
+
     private final boolean logToConsole;
+
     private final boolean logToFile;
+
     private final List<String> traceHeaders;
+
     private final boolean localCacheEnabled;
+
     private final long localCacheTtl;
+
     private final boolean schemaCacheEnabled;
+
     private final long schemaCacheTtl;
+
     private final int requestsLimit;
+
     private final int ioThreads;
+
     private final int workerThreads;
+
     private final int bufferSize;
+
     private final boolean directBuffers;
+
     private final boolean forceGzipEncoding;
+
     private final int eagerPoolSize;
+
     private final int eagerLinearSliceWidht;
+
     private final int eagerLinearSliceDelta;
+
     private final int[] eagerLinearSliceHeights;
+
     private final int eagerRndSliceMinWidht;
+
     private final int eagerRndMaxCursors;
+
     private final boolean authTokenEnabled;
+
     private final int authTokenTtl;
+
     private final ETAG_CHECK_POLICY dbEtagCheckPolicy;
+
     private final ETAG_CHECK_POLICY collEtagCheckPolicy;
+
     private final ETAG_CHECK_POLICY docEtagCheckPolicy;
+
     private final Map<String, Object> connectionOptions;
+
     private final Integer logExchangeDump;
+
     private final METRICS_GATHERING_LEVEL metricsGatheringLevel;
+
     private final long queryTimeLimit;
+
     private final long aggregationTimeLimit;
+
     private final boolean aggregationCheckOperators;
+
     private final boolean ansiConsole;
+
     private final String initializerClass;
+
     private final int cursorBatchSize;
+
     private final int defaultPagesize;
+
     private final int maxPagesize;
+
     private final boolean allowUnescapedCharactersInUrl;
 
     /**
      * the configuration map
      */
+
     private final Map<String, Object> configurationFileMap;
 
     /**
      * Creates a new instance of Configuration with defaults values.
      */
+
     public Configuration() {
-        this (new HashMap<>(), false);
+        this.configurationFileMap = null;
+
+        ansiConsole = true;
+
+        httpsListener = true;
+        httpsPort = DEFAULT_HTTPS_PORT;
+        httpsHost = DEFAULT_HTTPS_HOST;
+
+        httpListener = true;
+        httpPort = DEFAULT_HTTP_PORT;
+        httpHost = DEFAULT_HTTP_HOST;
+
+        ajpListener = false;
+        ajpPort = DEFAULT_AJP_PORT;
+        ajpHost = DEFAULT_AJP_HOST;
+
+        instanceName = DEFAULT_INSTANCE_NAME;
+
+        instanceBaseURL = null;
+
+        defaultRepresentationFormat = DEFAULT_REPRESENTATION_FORMAT;
+
+        useEmbeddedKeystore = true;
+        keystoreFile = null;
+        keystorePassword = null;
+        certPassword = null;
+
+        mongoUri = new MongoClientURI(DEFAULT_MONGO_URI);
+
+        mongoMounts = new ArrayList<>();
+        Map<String, Object> defaultMongoMounts = new HashMap<>();
+        defaultMongoMounts.put(MONGO_MOUNT_WHAT_KEY, "*");
+        defaultMongoMounts.put(MONGO_MOUNT_WHERE_KEY, "/");
+        mongoMounts.add(defaultMongoMounts);
+
+        applicationLogicMounts = new ArrayList<>();
+
+        staticResourcesMounts = new ArrayList<>();
+
+        metadataNamedSingletons = new ArrayList<>();
+
+        HashMap<String, Object> browserStaticResourcesMountArgs = new HashMap<>();
+
+        browserStaticResourcesMountArgs.put(STATIC_RESOURCES_MOUNT_WHAT_KEY, "browser");
+        browserStaticResourcesMountArgs.put(STATIC_RESOURCES_MOUNT_WHERE_KEY, "/browser");
+        browserStaticResourcesMountArgs.put(STATIC_RESOURCES_MOUNT_WELCOME_FILE_KEY, "browser.html");
+        browserStaticResourcesMountArgs.put(STATIC_RESOURCES_MOUNT_EMBEDDED_KEY, true);
+
+        staticResourcesMounts.add(browserStaticResourcesMountArgs);
+
+        logFilePath = URLUtils.removeTrailingSlashes(System.getProperty("java.io.tmpdir"))
+                .concat(File.separator + "restheart.log");
+        logToConsole = true;
+        logToFile = true;
+        logLevel = Level.INFO;
+        traceHeaders = Collections.emptyList();
+
+        localCacheEnabled = true;
+        localCacheTtl = 1000;
+
+        schemaCacheEnabled = false;
+        schemaCacheTtl = 1000;
+
+        requestsLimit = 100;
+
+        queryTimeLimit = 0;
+        aggregationTimeLimit = 0;
+        aggregationCheckOperators = true;
+
+        ioThreads = 2;
+        workerThreads = 32;
+        bufferSize = 16384;
+        directBuffers = true;
+
+        forceGzipEncoding = false;
+
+        eagerPoolSize = 100;
+        eagerLinearSliceWidht = 1000;
+        eagerLinearSliceDelta = 100;
+        eagerLinearSliceHeights = new int[]{4, 2, 1};
+        eagerRndSliceMinWidht = 1000;
+        eagerRndMaxCursors = 50;
+
+        authTokenEnabled = true;
+        authTokenTtl = 15; // minutes
+
+        dbEtagCheckPolicy = DEFAULT_DB_ETAG_CHECK_POLICY;
+        collEtagCheckPolicy = DEFAULT_COLL_ETAG_CHECK_POLICY;
+        docEtagCheckPolicy = DEFAULT_DOC_ETAG_CHECK_POLICY;
+
+        logExchangeDump = 0;
+        metricsGatheringLevel = METRICS_GATHERING_LEVEL.ROOT;
+
+        connectionOptions = Maps.newHashMap();
+        initializerClass = null;
+
+        cursorBatchSize = DEFAULT_CURSOR_BATCH_SIZE;
+        defaultPagesize = DEFAULT_DEFAULT_PAGESIZE;
+        maxPagesize = DEFAULT_MAX_PAGESIZE;
+
+        allowUnescapedCharactersInUrl = true;
     }
 
     /**
@@ -667,6 +915,7 @@ public class Configuration {
      * @param confFilePath the path of the configuration file
      * @throws org.restheart.ConfigurationException
      */
+
     public Configuration(final Path confFilePath) throws ConfigurationException {
         this(confFilePath, false);
     }
@@ -679,6 +928,7 @@ public class Configuration {
      * @param silent
      * @throws org.restheart.ConfigurationException
      */
+
     public Configuration(final Path confFilePath, boolean silent) throws ConfigurationException {
         this(getConfigurationFromFile(confFilePath), silent);
     }
@@ -691,6 +941,7 @@ public class Configuration {
      * @param silent
      * @throws org.restheart.ConfigurationException
      */
+
     public Configuration(Map<String, Object> conf, boolean silent) throws ConfigurationException {
         this.configurationFileMap = conf;
 
@@ -757,6 +1008,7 @@ public class Configuration {
         browserStaticResourcesMountArgs.put(STATIC_RESOURCES_MOUNT_WHAT_KEY, "browser");
         browserStaticResourcesMountArgs.put(STATIC_RESOURCES_MOUNT_WHERE_KEY, "/browser");
         browserStaticResourcesMountArgs.put(STATIC_RESOURCES_MOUNT_WELCOME_FILE_KEY, "browser.html");
+        browserStaticResourcesMountArgs.put(STATIC_RESOURCES_MOUNT_SECURED_KEY, false);
         browserStaticResourcesMountArgs.put(STATIC_RESOURCES_MOUNT_EMBEDDED_KEY, true);
 
         ArrayList<Map<String, Object>> defaultStaticResourcesMounts=new ArrayList<>();
@@ -765,6 +1017,36 @@ public class Configuration {
         staticResourcesMounts = getAsListOfMaps(conf, STATIC_RESOURCES_MOUNTS_KEY, defaultStaticResourcesMounts);
 
         metadataNamedSingletons = getAsListOfMaps(conf, METADATA_NAMED_SINGLETONS_KEY, new ArrayList<>());
+<<<<<<< /usr/src/app/output/softinstigate/restheart/c3d33550b1d2c2b7e3561a9c3c2fc99ad9091fb1/src/main/java/org/restheart/Configuration.java/left.java
+||||||| /usr/src/app/output/softinstigate/restheart/c3d33550b1d2c2b7e3561a9c3c2fc99ad9091fb1/src/main/java/org/restheart/Configuration.java/base.java
+    
+        Map<String, Object> idm = getAsMap(conf, IDM_KEY);
+        Map<String, Object> authMech = getAsMap(conf, AUTH_MECHANISM_KEY);
+        Map<String, Object> am = getAsMap(conf, ACCESS_MANAGER_KEY);
+
+        idmImpl = getAsStringOrDefault(idm, IMPLEMENTATION_CLASS_KEY, DEFAULT_IDM_IMPLEMENTATION_CLASS);
+        idmArgs = idm;
+
+        authMechanismImpl = getAsStringOrDefault(authMech, IMPLEMENTATION_CLASS_KEY, DEFAULT_AUTH_MECHANISM_IMPLEMENTATION_CLASS);
+        authMechanismArgs = authMech;
+
+        amImpl = getAsStringOrDefault(am, IMPLEMENTATION_CLASS_KEY, DEFAULT_AM_IMPLEMENTATION_CLASS);
+        amArgs = am;
+=======
+    
+        Map<String, Object> idm = getAsMap(conf, IDM_KEY, Maps.newHashMap());
+        Map<String, Object> authMech = getAsMap(conf, AUTH_MECHANISM_KEY, Maps.newHashMap());
+        Map<String, Object> am = getAsMap(conf, ACCESS_MANAGER_KEY, Maps.newHashMap());
+
+        idmImpl = getAsStringOrDefault(idm, IMPLEMENTATION_CLASS_KEY, DEFAULT_IDM_IMPLEMENTATION_CLASS);
+        idmArgs = idm;
+
+        authMechanismImpl = getAsStringOrDefault(authMech, IMPLEMENTATION_CLASS_KEY, DEFAULT_AUTH_MECHANISM_IMPLEMENTATION_CLASS);
+        authMechanismArgs = authMech;
+
+        amImpl = getAsStringOrDefault(am, IMPLEMENTATION_CLASS_KEY, DEFAULT_AM_IMPLEMENTATION_CLASS);
+        amArgs = am;
+>>>>>>> /usr/src/app/output/softinstigate/restheart/c3d33550b1d2c2b7e3561a9c3c2fc99ad9091fb1/src/main/java/org/restheart/Configuration.java/right.java
 
         logFilePath = getAsStringOrDefault(conf, LOG_FILE_PATH_KEY,
                 URLUtils.removeTrailingSlashes(System.getProperty("java.io.tmpdir"))
@@ -973,6 +1255,7 @@ public class Configuration {
      *
      * @return true if the Ansi console is enabled
      */
+
     public boolean isAnsiConsole() {
         return ansiConsole;
     }
@@ -984,6 +1267,7 @@ public class Configuration {
      * @param defaultValue
      * @return
      */
+
     @SuppressWarnings("unchecked")
     private List<Map<String, Object>> getAsListOfMaps(final Map<String, Object> conf, final String key, final List<Map<String, Object>> defaultValue) {
         if (conf == null) {
@@ -1014,6 +1298,7 @@ public class Configuration {
      * @param key
      * @return
      */
+
     @SuppressWarnings("unchecked")
     private Map<String, Object> getAsMap(final Map<String, Object> conf, final String key, final Map<String, Object> defaultVal) {
         if (conf == null) {
@@ -1040,6 +1325,7 @@ public class Configuration {
      * @param key
      * @return the environment or java property variable, if found
      */
+
     private String overriddenValueFromEnv(final String key) {
         String shellKey = key.toUpperCase().replaceAll("-", "_");
         String envValue = System.getProperty(key);
@@ -1064,6 +1350,7 @@ public class Configuration {
      * @param defaultValue
      * @return
      */
+
     private Boolean getAsBooleanOrDefault(final Map<String, Object> conf, final String key, final Boolean defaultValue) {
         String envValue = overriddenValueFromEnv(key);
         if (envValue != null) {
@@ -1108,6 +1395,7 @@ public class Configuration {
      * @param defaultValue
      * @return
      */
+
     private String getAsStringOrDefault(final Map<String, Object> conf, final String key, final String defaultValue) {
         String envValue = overriddenValueFromEnv(key);
         if (envValue != null) {
@@ -1141,6 +1429,7 @@ public class Configuration {
      * @param defaultValue
      * @return
      */
+
     private Integer getAsIntegerOrDefault(final Map<String, Object> conf, final String key, final Integer defaultValue) {
         String envValue = overriddenValueFromEnv(key);
         if (envValue != null) {
@@ -1175,6 +1464,7 @@ public class Configuration {
      * @param defaultValue
      * @return
      */
+
     private Long getAsLongOrDefault(final Map<String, Object> conf, final String key, final Long defaultValue) {
         String envValue = overriddenValueFromEnv(key);
         if (envValue != null) {
@@ -1217,6 +1507,7 @@ public class Configuration {
      * @param defaultValue
      * @return
      */
+
     @SuppressWarnings("unchecked")
     private int[] getAsArrayOfInts(final Map<String, Object> conf, final String key, final int[] defaultValue) {
         if (conf == null || conf.get(key) == null) {
@@ -1288,6 +1579,7 @@ public class Configuration {
     /**
      * @return the httpsListener
      */
+
     public boolean isHttpsListener() {
         return httpsListener;
     }
@@ -1295,6 +1587,7 @@ public class Configuration {
     /**
      * @return the httpsPort
      */
+
     public int getHttpsPort() {
         return httpsPort;
     }
@@ -1302,6 +1595,7 @@ public class Configuration {
     /**
      * @return the httpsHost
      */
+
     public String getHttpsHost() {
         return httpsHost;
     }
@@ -1309,6 +1603,7 @@ public class Configuration {
     /**
      * @return the httpListener
      */
+
     public boolean isHttpListener() {
         return httpListener;
     }
@@ -1316,6 +1611,7 @@ public class Configuration {
     /**
      * @return the httpPort
      */
+
     public int getHttpPort() {
         return httpPort;
     }
@@ -1323,6 +1619,7 @@ public class Configuration {
     /**
      * @return the httpHost
      */
+
     public String getHttpHost() {
         return httpHost;
     }
@@ -1330,6 +1627,7 @@ public class Configuration {
     /**
      * @return the ajpListener
      */
+
     public boolean isAjpListener() {
         return ajpListener;
     }
@@ -1337,6 +1635,7 @@ public class Configuration {
     /**
      * @return the ajpPort
      */
+
     public int getAjpPort() {
         return ajpPort;
     }
@@ -1344,6 +1643,7 @@ public class Configuration {
     /**
      * @return the ajpHost
      */
+
     public String getAjpHost() {
         return ajpHost;
     }
@@ -1351,6 +1651,7 @@ public class Configuration {
     /**
      * @return the useEmbeddedKeystore
      */
+
     public boolean isUseEmbeddedKeystore() {
         return useEmbeddedKeystore;
     }
@@ -1358,6 +1659,7 @@ public class Configuration {
     /**
      * @return the keystoreFile
      */
+
     public String getKeystoreFile() {
         return keystoreFile;
     }
@@ -1365,6 +1667,7 @@ public class Configuration {
     /**
      * @return the keystorePassword
      */
+
     public String getKeystorePassword() {
         return keystorePassword;
     }
@@ -1372,6 +1675,7 @@ public class Configuration {
     /**
      * @return the certPassword
      */
+
     public String getCertPassword() {
         return certPassword;
     }
@@ -1379,6 +1683,7 @@ public class Configuration {
     /**
      * @return the logFilePath
      */
+
     public String getLogFilePath() {
         return logFilePath;
     }
@@ -1386,6 +1691,7 @@ public class Configuration {
     /**
      * @return the logLevel
      */
+
     public Level getLogLevel() {
 
         String logbackConfigurationFile = System.getProperty("logback.configurationFile");
@@ -1401,6 +1707,7 @@ public class Configuration {
     /**
      * @return the logToConsole
      */
+
     public boolean isLogToConsole() {
         return logToConsole;
     }
@@ -1408,6 +1715,7 @@ public class Configuration {
     /**
      * @return the logToFile
      */
+
     public boolean isLogToFile() {
         return logToFile;
     }
@@ -1419,6 +1727,7 @@ public class Configuration {
     /**
      * @return the ioThreads
      */
+
     public int getIoThreads() {
         return ioThreads;
     }
@@ -1426,6 +1735,7 @@ public class Configuration {
     /**
      * @return the workerThreads
      */
+
     public int getWorkerThreads() {
         return workerThreads;
     }
@@ -1433,6 +1743,7 @@ public class Configuration {
     /**
      * @return the bufferSize
      */
+
     public int getBufferSize() {
         return bufferSize;
     }
@@ -1440,6 +1751,7 @@ public class Configuration {
     /**
      * @return the directBuffers
      */
+
     public boolean isDirectBuffers() {
         return directBuffers;
     }
@@ -1447,6 +1759,7 @@ public class Configuration {
     /**
      * @return the forceGzipEncoding
      */
+
     public boolean isForceGzipEncoding() {
         return forceGzipEncoding;
     }
@@ -1454,6 +1767,7 @@ public class Configuration {
     /**
      * @return the requestsLimit
      */
+
     public int getRequestLimit() {
         return getRequestsLimit();
     }
@@ -1461,6 +1775,7 @@ public class Configuration {
     /**
      * @return the mongoMounts
      */
+
     public List<Map<String, Object>> getMongoMounts() {
         return Collections.unmodifiableList(mongoMounts);
     }
@@ -1468,6 +1783,7 @@ public class Configuration {
     /**
      * @return the localCacheEnabled
      */
+
     public boolean isLocalCacheEnabled() {
         return localCacheEnabled;
     }
@@ -1475,6 +1791,7 @@ public class Configuration {
     /**
      * @return the localCacheTtl
      */
+
     public long getLocalCacheTtl() {
         return localCacheTtl;
     }
@@ -1482,6 +1799,7 @@ public class Configuration {
     /**
      * @return the requestsLimit
      */
+
     public int getRequestsLimit() {
         return requestsLimit;
     }
@@ -1489,6 +1807,7 @@ public class Configuration {
     /**
      * @return the queryTimeLimit
      */
+
     public long getQueryTimeLimit() {
         return queryTimeLimit;
     }
@@ -1496,6 +1815,7 @@ public class Configuration {
     /**
      * @return the aggregationTimeLimit
      */
+
     public long getAggregationTimeLimit() {
         return aggregationTimeLimit;
     }
@@ -1503,6 +1823,7 @@ public class Configuration {
     /**
      * @return the aggregationCheckOperators
      */
+
     public boolean getAggregationCheckOperators() {
         return aggregationCheckOperators;
     }
@@ -1510,6 +1831,7 @@ public class Configuration {
     /**
      * @return the applicationLogicMounts
      */
+
     public List<Map<String, Object>> getApplicationLogicMounts() {
         return Collections.unmodifiableList(applicationLogicMounts);
     }
@@ -1517,6 +1839,7 @@ public class Configuration {
     /**
      * @return the staticResourcesMounts
      */
+
     public List<Map<String, Object>> getStaticResourcesMounts() {
         return Collections.unmodifiableList(staticResourcesMounts);
     }
@@ -1524,6 +1847,7 @@ public class Configuration {
     /**
      * @return the metadataNamedSingletons
      */
+
     public List<Map<String, Object>> getMetadataNamedSingletons() {
         return Collections.unmodifiableList(metadataNamedSingletons);
     }
@@ -1531,6 +1855,7 @@ public class Configuration {
     /**
      * @return the eagerLinearSliceWidht
      */
+
     public int getEagerLinearSliceWidht() {
         return eagerLinearSliceWidht;
     }
@@ -1538,6 +1863,7 @@ public class Configuration {
     /**
      * @return the eagerLinearSliceDelta
      */
+
     public int getEagerLinearSliceDelta() {
         return eagerLinearSliceDelta;
     }
@@ -1545,6 +1871,7 @@ public class Configuration {
     /**
      * @return the eagerLinearSliceHeights
      */
+
     public int[] getEagerLinearSliceHeights() {
         return eagerLinearSliceHeights;
     }
@@ -1552,6 +1879,7 @@ public class Configuration {
     /**
      * @return the eagerRndSliceMinWidht
      */
+
     public int getEagerRndSliceMinWidht() {
         return eagerRndSliceMinWidht;
     }
@@ -1559,6 +1887,7 @@ public class Configuration {
     /**
      * @return the eagerRndMaxCursors
      */
+
     public int getEagerRndMaxCursors() {
         return eagerRndMaxCursors;
     }
@@ -1566,6 +1895,7 @@ public class Configuration {
     /**
      * @return the eagerPoolSize
      */
+
     public int getEagerPoolSize() {
         return eagerPoolSize;
     }
@@ -1573,6 +1903,7 @@ public class Configuration {
     /**
      * @return the authTokenEnabled
      */
+
     public boolean isAuthTokenEnabled() {
         return authTokenEnabled;
     }
@@ -1580,6 +1911,7 @@ public class Configuration {
     /**
      * @return the authTokenTtl
      */
+
     public int getAuthTokenTtl() {
         return authTokenTtl;
     }
@@ -1587,6 +1919,7 @@ public class Configuration {
     /**
      * @return the mongoUri
      */
+
     public MongoClientURI getMongoUri() {
         return mongoUri;
     }
@@ -1594,6 +1927,7 @@ public class Configuration {
     /**
      * @return the schemaCacheEnabled
      */
+
     public boolean isSchemaCacheEnabled() {
         return schemaCacheEnabled;
     }
@@ -1601,6 +1935,7 @@ public class Configuration {
     /**
      * @return the schemaCacheTtl
      */
+
     public long getSchemaCacheTtl() {
         return schemaCacheTtl;
     }
@@ -1608,6 +1943,7 @@ public class Configuration {
     /**
      * @return the dbEtagCheckPolicy
      */
+
     public ETAG_CHECK_POLICY getDbEtagCheckPolicy() {
         return dbEtagCheckPolicy;
     }
@@ -1615,6 +1951,7 @@ public class Configuration {
     /**
      * @return the collEtagCheckPolicy
      */
+
     public ETAG_CHECK_POLICY getCollEtagCheckPolicy() {
         return collEtagCheckPolicy;
     }
@@ -1622,6 +1959,7 @@ public class Configuration {
     /**
      * @return the docEtagCheckPolicy
      */
+
     public ETAG_CHECK_POLICY getDocEtagCheckPolicy() {
         return docEtagCheckPolicy;
     }
@@ -1630,6 +1968,7 @@ public class Configuration {
      *
      * @return the logExchangeDump Boolean
      */
+
     public Integer logExchangeDump() {
         return logExchangeDump;
     }
@@ -1637,6 +1976,7 @@ public class Configuration {
     /**
      * @return the connectionOptions
      */
+
     public Map<String, Object> getConnectionOptions() {
         return Collections.unmodifiableMap(connectionOptions);
     }
@@ -1644,6 +1984,7 @@ public class Configuration {
     /**
      * @return the instanceName
      */
+
     public String getInstanceName() {
         return instanceName;
     }
@@ -1651,6 +1992,7 @@ public class Configuration {
     /**
      * @return the instanceBaseURL
      */
+
     public String getInstanceBaseURL() {
         return instanceBaseURL;
     }
@@ -1658,9 +2000,143 @@ public class Configuration {
     /**
      * @return the defaultRepresentationFromat
      */
+
     public REPRESENTATION_FORMAT getDefaultRepresentationFormat() {
         return defaultRepresentationFormat;
     }
+
+    /**
+     * default doc etag check policy
+     */
+
+    /**
+     * default doc etag check policy
+     */
+
+    /**
+     * default value for max-pagesize
+     */
+
+    /**
+     * default value for max-pagesize
+     */
+
+    /**
+     * the key for the what property.
+     */
+
+    /**
+     * the key for the where property.
+     */
+
+    /**
+     * the key for the application-logic-mounts property.
+     */
+
+    /**
+     * the key for the application-logic-mounts property.
+     */
+
+    /**
+     * the key for the what property.
+     */
+
+    /**
+     * the key for the where property.
+     */
+
+    /**
+     * the key for the secured property.
+     */
+
+    /**
+     * the key for the what property.
+     */
+
+    /**
+     * the key for the where property.
+     */
+
+    /**
+     * the key for the secured property.
+     */
+
+    /**
+     * the key for the instance-name property.
+     */
+
+    /**
+     * the key for the instance-name property.
+     */
+
+    public Configuration() {
+        this (new HashMap<>(), false);
+
+    }
+
+    /**
+     *
+     * @param conf
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+
+    /**
+     *
+     * @param conf
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+
+    /**
+     *
+     * @param conf
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+
+    /**
+     *
+     * @param conf
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+
+    /**
+     *
+     * @param conf
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+
+    /**
+     *
+     * @param conf
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+
+    /**
+     * @return the idmArgs
+     */
+
+    /**
+     * @return the idmArgs
+     */
+
+    /**
+     * @return the requestsLimit
+     */
+
+    /**
+     * @return the requestsLimit
+     */
 
     /**
      * @return the configurationFileMap
