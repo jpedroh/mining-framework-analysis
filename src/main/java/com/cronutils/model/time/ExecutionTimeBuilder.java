@@ -116,7 +116,7 @@ class ExecutionTimeBuilder {
                     ? new CronField(CronFieldName.DAY_OF_MONTH, always(), constraints)
                     : new CronField(CronFieldName.DAY_OF_MONTH, new On(new IntegerFieldValue(1)), constraints);
         } else {
-            lowestAssigned = true;
+            lowestAssigned=true;
         }
         if (daysOfWeekCronField == null) {
             FieldConstraints constraints = getConstraint(CronFieldName.DAY_OF_WEEK);
@@ -124,7 +124,7 @@ class ExecutionTimeBuilder {
                     ? new CronField(CronFieldName.DAY_OF_WEEK, always(), constraints)
                     : new CronField(CronFieldName.DAY_OF_WEEK, new On(new IntegerFieldValue(1)), constraints);
         } else {
-            lowestAssigned = true;
+            lowestAssigned=true;
         }
         if (months == null) {
             months = lowestAssigned ? timeNodeAlways(CronFieldName.MONTH, 1, 12) : timeNodeLowest(CronFieldName.MONTH, 1, 12);
@@ -135,9 +135,10 @@ class ExecutionTimeBuilder {
                             new CronField(CronFieldName.YEAR,always(), getConstraint(CronFieldName.YEAR))
                     );
         }
-        if(daysOfYearCronField == null){
-           FieldConstraints constraints = getConstraint(CronFieldName.DAY_OF_YEAR);
-           daysOfYearCronField=new CronField(CronFieldName.DAY_OF_YEAR, lowestAssigned ? FieldExpression.questionMark() :always(), constraints);
+        if (daysOfYearCronField == null) {
+            FieldConstraints constraints = getConstraint(CronFieldName.DAY_OF_YEAR);
+            daysOfYearCronField = new CronField(CronFieldName.DAY_OF_YEAR, lowestAssigned ? FieldExpression.questionMark() : always(),
+                    constraints);
         }
 
         return new ExecutionTime(cronDefinition,
