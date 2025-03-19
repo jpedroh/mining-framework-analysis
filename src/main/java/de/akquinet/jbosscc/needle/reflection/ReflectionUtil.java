@@ -207,7 +207,6 @@ public final class ReflectionUtil {
                     return true;
                 } catch (final NoSuchFieldException e) {
                     LOG.debug("could not set field " + fieldName + " value " + value, e);
-
                 }
                 return false;
             }
