@@ -72,7 +72,7 @@ public class AutoNSGAIIStudy {
     problemList.add(new ExperimentProblem<>(new DTLZ5()).changeReferenceFrontTo("DTLZ5.2D.pf"));
     problemList.add(new ExperimentProblem<>(new DTLZ6()).changeReferenceFrontTo("DTLZ6.2D.pf"));
     problemList.add(new ExperimentProblem<>(new DTLZ7()).changeReferenceFrontTo("DTLZ7.2D.pf"));
-*/
+  */
     problemList.add(new ExperimentProblem<>(new DTLZ1()).changeReferenceFrontTo("DTLZ1.2D.pf"));
     problemList.add(new ExperimentProblem<>(new DTLZ3()).changeReferenceFrontTo("DTLZ3.2D.pf"));
     problemList.add(new ExperimentProblem<>(new WFG8()).changeReferenceFrontTo("WFG8.2D.pf"));
@@ -102,11 +102,27 @@ public class AutoNSGAIIStudy {
 
     //new ExecuteAlgorithms<>(org.uma.jmetal.experiment).run();
 
+<<<<<<< /usr/src/app/output/jmetal/jmetal/4841ab3bfc32b131bbcde201d06408c4cc4d719a/jmetal-auto/src/main/java/org/uma/jmetal/auto/algorithm/nsgaii/AutoNSGAIIStudy.java/left.java
     //new ComputeQualityIndicators<>(org.uma.jmetal.experiment).run();
     //new GenerateLatexTablesWithStatistics(org.uma.jmetal.experiment).run();
       new GenerateWilcoxonTestTablesWithR<>(experiment).run();
     //new GenerateFriedmanTestTables<>(org.uma.jmetal.experiment).run();
     //new GenerateBoxplotsWithR<>(org.uma.jmetal.experiment).setRows(4).setColumns(4).run();
+
+||||||| /usr/src/app/output/jmetal/jmetal/4841ab3bfc32b131bbcde201d06408c4cc4d719a/jmetal-auto/src/main/java/org/uma/jmetal/auto/algorithm/nsgaii/AutoNSGAIIStudy.java/base.java
+    //new ComputeQualityIndicators<>(experiment).run();
+    //new GenerateLatexTablesWithStatistics(experiment).run();
+      new GenerateWilcoxonTestTablesWithR<>(experiment).run();
+    //new GenerateFriedmanTestTables<>(experiment).run();
+    //new GenerateBoxplotsWithR<>(experiment).setRows(4).setColumns(4).run();
+
+=======
+    new ComputeQualityIndicators<>(experiment).run();
+    new GenerateLatexTablesWithStatistics(experiment).run();
+    new GenerateWilcoxonTestTablesWithR<>(experiment).run();
+    new GenerateFriedmanTestTables<>(experiment).run();
+    new GenerateBoxplotsWithR<>(experiment).setRows(5).setColumns(5).run();
+>>>>>>> /usr/src/app/output/jmetal/jmetal/4841ab3bfc32b131bbcde201d06408c4cc4d719a/jmetal-auto/src/main/java/org/uma/jmetal/auto/algorithm/nsgaii/AutoNSGAIIStudy.java/right.java
   }
 
   /**
