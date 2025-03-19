@@ -60,7 +60,6 @@ public class PostgresProcess extends AbstractPGProcess<PostgresExecutable, Postg
     private static Logger LOGGER = getLogger(PostgresProcess.class);
     private final IRuntimeConfig runtimeConfig;
 
-    private volatile boolean processReady = false;
     private volatile boolean stopped = false;
 
     public PostgresProcess(Distribution distribution, PostgresConfig config,
@@ -341,10 +340,6 @@ public class PostgresProcess extends AbstractPGProcess<PostgresExecutable, Postg
                 "-f", file.getAbsolutePath(),
                 "-a"
         );
-    }
-
-    public boolean isProcessReady() {
-        return processReady;
     }
 
     @Override
