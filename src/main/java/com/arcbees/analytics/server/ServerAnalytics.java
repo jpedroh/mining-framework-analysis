@@ -45,7 +45,7 @@ public class ServerAnalytics extends AnalyticsImpl {
     @Inject
     ServerAnalytics(
             Provider<ServerOptionsCallback> serverOptionsCallbackProvider,
-            @GaAccount String userAccount) {
+            @GaAccount @GaAccount String userAccount) {
         super(userAccount);
 
         this.serverOptionsCallbackProvider = serverOptionsCallbackProvider;
