@@ -139,7 +139,6 @@ public class ServerMainTest {
         Assert.assertEquals(handler.failedDeliverSmList.size(), totalMessagesToSendSMSC);
         Assert.assertEquals(handler.successfulDeliverSmList.size(), 0);
     }
-
     /**
      * Source address does not match pattern specified
      */
@@ -160,7 +159,6 @@ public class ServerMainTest {
         Assert.assertEquals(handler.failedDeliverSmList.size(), 0);
         Assert.assertEquals(handler.successfulDeliverSmList.size(), totalMessagesToSendSMSC);
     }
-
     /**
      * Success rate is 40% Randomness is tested by using Pearson's chi square test (goodness of fit)
      * repeats 1000 sample by 5 times, 4 of 5 must succeed
@@ -211,6 +209,24 @@ public class ServerMainTest {
         session.close();
         Assert.assertTrue("4 of 5 cases must pass chi-square test", successCase >= 4);
     }
+    /**
+     * SMSC Sim should return a failed delivery receipt upon checking that the source address is "TEST"
+     **/
+    @Test
+    public void testFailDelivery() throws Exception {
+        SmppClient client = new SmppClient("localhost", PORT, SYSTEM_ID);
+        DeliveryReceiptCapturingAndBlockingSessionHandler handler = new DeliveryReceiptCapturingAndBlockingSessionHandler(smscServer.getSessionManager().getNextServerSession() ,smscConfiguration);
+        SmppSession session = client.connect(handler);
+        session.sendRequestPdu(createSubmitWithRegisteredDelivery("TEST"), 1000, false);
+        handler.blockUntilDelivered(1);
+        session.close();
+
+        byte[] shortMessage = handler.capturedDeliverSm.get(0).getShortMessage();
+        String decodedShortMessage = CharsetUtil.decode(shortMessage, CharsetUtil.CHARSET_GSM);
+        DeliveryReceipt deliveryReceipt = DeliveryReceipt.parseShortMessage(decodedShortMessage, DateTimeZone.UTC);
+        Assert.assertEquals(deliveryReceipt.getErrorCode(),500);
+        Assert.assertEquals(deliveryReceipt.getState(),SmppConstants.STATE_REJECTED);
+    }
 
     private SubmitSm createSubmitWithRegisteredDelivery(String sourceAddress) throws SmppInvalidArgumentException {
         SubmitSm submitSm = new SubmitSm();
@@ -230,9 +246,16 @@ public class ServerMainTest {
 
         private Semaphore deliverSem = new Semaphore(0);
 
+<<<<<<< /usr/src/app/output/mavocz/smscsim/8bfb11d2761aacc461674c06d3df511961252c0b/src/test/java/net/voldrich/smscsim/ServerMainTest.java/left.java
         public BlockingAndTallyingDeliveryReceiptSessionHandler(SmppServerSession session, SmscGlobalConfiguration config) {
             super(session, config);
         }
+||||||| /usr/src/app/output/mavocz/smscsim/8bfb11d2761aacc461674c06d3df511961252c0b/src/test/java/net/voldrich/smscsim/ServerMainTest.java/base.java
+=======
+        public DeliveryReceiptCapturingAndBlockingSessionHandler(SmppServerSession session, SmscGlobalConfiguration config) {
+            super(session, config);
+        }
+>>>>>>> /usr/src/app/output/mavocz/smscsim/8bfb11d2761aacc461674c06d3df511961252c0b/src/test/java/net/voldrich/smscsim/ServerMainTest.java/right.java
 
         @Override
         public PduResponse firePduRequestReceived(PduRequest pduRequest) {
@@ -252,6 +275,42 @@ public class ServerMainTest {
                     throw new RuntimeException(e);
                 }
 
+                deliverSem.release();
+            } else {
+                logger.warn("Unexpected message received: {}", pduRequest);
+            }
+            PduResponse response = pduRequest.createResponse();
+
+            return response;
+        }
+
+        public void blockUntilDelivered(int expectedDeliverSm) throws InterruptedException {
+            deliverSem.acquire(expectedDeliverSm);
+            logger.info("All delivers received");
+        }
+    }
+    public static class DeliveryReceiptCapturingAndBlockingSessionHandler extends SmscSmppSessionHandler {
+
+        private List<DeliverSm> capturedDeliverSm = new ArrayList<>();
+
+        private final Semaphore deliverSem = new Semaphore(0);
+
+<<<<<<< /usr/src/app/output/mavocz/smscsim/8bfb11d2761aacc461674c06d3df511961252c0b/src/test/java/net/voldrich/smscsim/ServerMainTest.java/left.java
+        public BlockingAndTallyingDeliveryReceiptSessionHandler(SmppServerSession session, SmscGlobalConfiguration config) {
+            super(session, config);
+        }
+||||||| /usr/src/app/output/mavocz/smscsim/8bfb11d2761aacc461674c06d3df511961252c0b/src/test/java/net/voldrich/smscsim/ServerMainTest.java/base.java
+=======
+        public DeliveryReceiptCapturingAndBlockingSessionHandler(SmppServerSession session, SmscGlobalConfiguration config) {
+            super(session, config);
+        }
+>>>>>>> /usr/src/app/output/mavocz/smscsim/8bfb11d2761aacc461674c06d3df511961252c0b/src/test/java/net/voldrich/smscsim/ServerMainTest.java/right.java
+
+        @Override
+        public PduResponse firePduRequestReceived(PduRequest pduRequest) {
+            if (pduRequest instanceof DeliverSm) {
+                logger.info("DeliverSm received: {}", pduRequest);
+                capturedDeliverSm.add((DeliverSm) pduRequest);
                 deliverSem.release();
             } else {
                 logger.warn("Unexpected message received: {}", pduRequest);
