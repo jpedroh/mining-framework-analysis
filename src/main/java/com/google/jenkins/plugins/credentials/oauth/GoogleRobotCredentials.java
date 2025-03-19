@@ -1,22 +1,5 @@
-/*
- * Copyright 2013 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.google.jenkins.plugins.credentials.oauth;
-
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.cloudbees.plugins.credentials.CredentialsNameProvider;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsScope;
@@ -40,8 +23,16 @@ import jenkins.model.Jenkins;
  *
  * @author Matt Moore
  */
-public abstract class GoogleRobotCredentials extends BaseStandardCredentials
-    implements GoogleOAuth2Credentials {
+public abstract class GoogleRobotCredentials extends BaseStandardCredentials implements GoogleOAuth2Credentials {
+  /**
+   * Base constructor for populating the name and id for Google credentials.
+   *
+   * @param projectId The project id with which this credential is associated.
+   * @param module The module to use for instantiating the dependencies of credentials.
+   */
+  protected GoogleRobotCredentials(String projectId, GoogleRobotCredentialsModule module) {
+    this("", projectId, module);
+  }
 
   /**
    * Base constructor for populating the name and id and project id for Google credentials. Leave
@@ -52,11 +43,7 @@ public abstract class GoogleRobotCredentials extends BaseStandardCredentials
    * @param projectId The project id with which this credential is associated.
    * @param module The module to use for instantiating the dependencies of credentials.
    */
-  protected GoogleRobotCredentials(
-      @CheckForNull CredentialsScope scope,
-      String id,
-      String projectId,
-      GoogleRobotCredentialsModule module) {
+  protected GoogleRobotCredentials(@CheckForNull CredentialsScope scope, String id, String projectId, GoogleRobotCredentialsModule module) {
     super(scope, id == null ? "" : id, Messages.GoogleRobotCredentials_Description());
     this.scope = scope;
     this.projectId = checkNotNull(projectId);
@@ -75,45 +62,34 @@ public abstract class GoogleRobotCredentials extends BaseStandardCredentials
   private final GoogleRobotCredentialsModule module;
 
   /** {@inheritDoc} */
-  @Override
-  public String getDescription() {
+  @Override public String getDescription() {
     return Messages.GoogleRobotCredentials_Description();
   }
 
   /** {@inheritDoc} */
-  @Override
-  public AbstractGoogleRobotCredentialsDescriptor getDescriptor() {
+  @Override public AbstractGoogleRobotCredentialsDescriptor getDescriptor() {
     return (AbstractGoogleRobotCredentialsDescriptor) Jenkins.get().getDescriptorOrDie(getClass());
   }
 
   /** {@inheritDoc} */
-  @Override
-  public Secret getAccessToken(GoogleOAuth2ScopeRequirement requirement) {
+  @Override public Secret getAccessToken(GoogleOAuth2ScopeRequirement requirement) {
     try {
       Credential credential = getGoogleCredential(requirement);
-
       Long rawExpiration = credential.getExpiresInSeconds();
       if ((rawExpiration == null) || (rawExpiration < MINIMUM_DURATION_SECONDS)) {
-        // Access token expired or is near expiration.
         if (!credential.refreshToken()) {
           return null;
         }
       }
-
       return Secret.fromString(credential.getAccessToken());
     } catch (IOException | GeneralSecurityException e) {
       return null;
     }
   }
 
-  /* 3 minutes*/
   /** The minimum duration to allow for an access token before attempting to refresh it. */
   private static final Long MINIMUM_DURATION_SECONDS = 180L;
 
-  /**
-   * A trivial tuple for wrapping the list box of matched credentials with the requirements that
-   * were used to filter them.
-   */
   public static class CredentialsListBoxModel extends ListBoxModel {
     public CredentialsListBoxModel(GoogleOAuth2ScopeRequirement requirement) {
       this.requirement = requirement;
@@ -126,8 +102,7 @@ public abstract class GoogleRobotCredentials extends BaseStandardCredentials
 
     private final GoogleOAuth2ScopeRequirement requirement;
 
-    @Override
-    public boolean equals(Object o) {
+    @Override public boolean equals(Object o) {
       if (this == o) {
         return true;
       }
@@ -141,8 +116,7 @@ public abstract class GoogleRobotCredentials extends BaseStandardCredentials
       return Objects.equals(requirement, options.requirement);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
       return Objects.hash(super.hashCode(), requirement);
     }
   }
@@ -158,19 +132,12 @@ public abstract class GoogleRobotCredentials extends BaseStandardCredentials
    *     configured.
    */
   public static CredentialsListBoxModel getCredentialsListBox(Class<?> clazz) {
-    GoogleOAuth2ScopeRequirement requirement =
-        DomainRequirementProvider.of(clazz, GoogleOAuth2ScopeRequirement.class);
-
+    GoogleOAuth2ScopeRequirement requirement = DomainRequirementProvider.of(clazz, GoogleOAuth2ScopeRequirement.class);
     if (requirement == null) {
-      throw new IllegalArgumentException(
-          Messages.GoogleRobotCredentials_NoAnnotation(clazz.getSimpleName()));
+      throw new IllegalArgumentException(Messages.GoogleRobotCredentials_NoAnnotation(clazz.getSimpleName()));
     }
-
     CredentialsListBoxModel listBox = new CredentialsListBoxModel(requirement);
-    Iterable<GoogleRobotCredentials> allGoogleCredentials =
-        CredentialsProvider.lookupCredentials(
-            GoogleRobotCredentials.class, Jenkins.get(), ACL.SYSTEM, ImmutableList.of(requirement));
-
+    Iterable<GoogleRobotCredentials> allGoogleCredentials = CredentialsProvider.lookupCredentials(GoogleRobotCredentials.class, Jenkins.get(), ACL.SYSTEM, ImmutableList.of(requirement));
     for (GoogleRobotCredentials credentials : allGoogleCredentials) {
       String name = CredentialsNameProvider.name(credentials);
       listBox.add(name, credentials.getId());
@@ -180,10 +147,7 @@ public abstract class GoogleRobotCredentials extends BaseStandardCredentials
 
   /** Retrieves the {@link GoogleRobotCredentials} identified by {@code id}. */
   public static GoogleRobotCredentials getById(String id) {
-    Iterable<GoogleRobotCredentials> allGoogleCredentials =
-        CredentialsProvider.lookupCredentials(
-            GoogleRobotCredentials.class, Jenkins.get(), ACL.SYSTEM, Collections.emptyList());
-
+    Iterable<GoogleRobotCredentials> allGoogleCredentials = CredentialsProvider.lookupCredentials(GoogleRobotCredentials.class, Jenkins.get(), ACL.SYSTEM, Collections.emptyList());
     for (GoogleRobotCredentials credentials : allGoogleCredentials) {
       if (credentials.getId().equals(id)) {
         return credentials;
@@ -193,8 +157,7 @@ public abstract class GoogleRobotCredentials extends BaseStandardCredentials
   }
 
   /** Retrieve a version of the credential that can be used on a remote machine. */
-  public GoogleRobotCredentials forRemote(GoogleOAuth2ScopeRequirement requirement)
-      throws GeneralSecurityException {
+  public GoogleRobotCredentials forRemote(GoogleOAuth2ScopeRequirement requirement) throws GeneralSecurityException {
     if (this instanceof RemotableGoogleCredentials) {
       return this;
     } else {
@@ -212,5 +175,6 @@ public abstract class GoogleRobotCredentials extends BaseStandardCredentials
   }
 
   private final String projectId;
+
   private final CredentialsScope scope;
 }
