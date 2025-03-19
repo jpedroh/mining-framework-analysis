@@ -297,6 +297,7 @@ public class Consumer implements Runnable {
 
         Map<String, Object> userHeaders = props.getHeaders();
 
+<<<<<<< /usr/src/app/output/aweber/rabbitmq-flume-plugin/ed70b2c5c33b52017f2528a587894c01be750ed7/src/main/java/com/aweber/flume/source/rabbitmq/Consumer.java/left.java
         if (userHeaders != null && userHeaders.size() > 0) {
             for (String key : userHeaders.keySet()) {
                 Object value = userHeaders.get(key);
@@ -308,6 +309,15 @@ public class Consumer implements Runnable {
                 }
             }
         }
+||||||| /usr/src/app/output/aweber/rabbitmq-flume-plugin/ed70b2c5c33b52017f2528a587894c01be750ed7/src/main/java/com/aweber/flume/source/rabbitmq/Consumer.java/base.java
+        if (userHeaders != null && userHeaders.size() > 0) 
+=======
+        if (userHeaders != null && userHeaders.size() > 0) {
+            for (String key : userHeaders.keySet()) {
+                headers.put(key, userHeaders.get(key).toString());
+            }
+        }
+>>>>>>> /usr/src/app/output/aweber/rabbitmq-flume-plugin/ed70b2c5c33b52017f2528a587894c01be750ed7/src/main/java/com/aweber/flume/source/rabbitmq/Consumer.java/right.java
 
         return headers;
     }
