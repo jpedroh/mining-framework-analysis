@@ -651,7 +651,7 @@ public final class JavaWriter implements Closeable {
   private void checkInMethod() {
     Scope scope = peekScope();
     if (scope != Scope.NON_ABSTRACT_METHOD && scope != Scope.CONTROL_FLOW
-        && scope != Scope.INITIALIZER) {
+            && scope != Scope.INITIALIZER) {
       throw new IllegalArgumentException();
     }
   }
