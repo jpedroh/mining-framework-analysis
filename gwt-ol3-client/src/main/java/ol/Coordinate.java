@@ -18,13 +18,29 @@ public class Coordinate extends JavaScriptObject {
     /**
      * Creates an instance.
      *
+     * @param x
+     *            X-coordinate (longitude)
+     * @param y
+     *            Y-coordinate (latitude)
+     * @return {@link Coordinate}
+     */
+<<<<<<< /usr/src/app/output/tdesjardins/gwt-ol3-playground/89bea69f8eea1dfa5e8cc75c0dc1a941e6306aa4/gwt-ol3-client/src/main/java/ol/Coordinate.java/left.java
+    public static native Coordinate create(@NotNull double x, @NotNull double y) /*-{
+    	return [ x, y ];
+    }-*/;
+||||||| /usr/src/app/output/tdesjardins/gwt-ol3-playground/89bea69f8eea1dfa5e8cc75c0dc1a941e6306aa4/gwt-ol3-client/src/main/java/ol/Coordinate.java/base.java
+=======
+    public static native Coordinate create(@NotNull double x, @NotNull double y) /*-{
+        return [x, y];
+    }-*/;
+>>>>>>> /usr/src/app/output/tdesjardins/gwt-ol3-playground/89bea69f8eea1dfa5e8cc75c0dc1a941e6306aa4/gwt-ol3-client/src/main/java/ol/Coordinate.java/right.java
+    /**
+     * Creates an instance.
+     *
      * @param x X-coordinate (longitude)
      * @param y Y-coordinate (latitude)
      * @return {@link Coordinate}
      */
-    public static native Coordinate create(@NotNull double x, @NotNull double y) /*-{
-        return [x, y];
-    }-*/;
 
     /**
      * Add `delta` to `coordinate`. `coordinate` is modified in place and
