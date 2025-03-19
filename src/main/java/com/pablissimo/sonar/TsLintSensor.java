@@ -33,25 +33,124 @@ public class TsLintSensor implements Sensor {
         this.executor = executor;
         this.parser = parser;
     }
-    
+
+<<<<<<< /usr/src/app/output/pablissimo/sonartsplugin/21c5ac9cfd807b5575685ea58ea31f243afeb018/src/main/java/com/pablissimo/sonar/TsLintSensor.java/left.java
     @Override
     public void describe(SensorDescriptor desc) {
         desc
             .name("Linting sensor for TypeScript files")
             .onlyOnLanguage(TypeScriptLanguage.LANGUAGE_KEY);
+||||||| /usr/src/app/output/pablissimo/sonartsplugin/21c5ac9cfd807b5575685ea58ea31f243afeb018/src/main/java/com/pablissimo/sonar/TsLintSensor.java/base.java
+    public boolean shouldExecuteOnProject(Project project) {
+        return hasFilesToAnalyze();
+=======
+    public boolean shouldExecuteOnProject(Project project) {
+        return settings.getBoolean(TypeScriptPlugin.SETTING_TS_LINT_ENABLED) && hasFilesToAnalyze();
+>>>>>>> /usr/src/app/output/pablissimo/sonartsplugin/21c5ac9cfd807b5575685ea58ea31f243afeb018/src/main/java/com/pablissimo/sonar/TsLintSensor.java/right.java
     }
 
+<<<<<<< /usr/src/app/output/pablissimo/sonartsplugin/21c5ac9cfd807b5575685ea58ea31f243afeb018/src/main/java/com/pablissimo/sonar/TsLintSensor.java/left.java
     @Override
-    public void execute(SensorContext ctx) {    
-        if (!this.settings.getBoolean(TypeScriptPlugin.SETTING_TS_LINT_ENABLED)) {
-            LOG.debug("Skipping tslint execution - " + TypeScriptPlugin.SETTING_TS_LINT_ENABLED + " set to false");
-            return;
-        }
-        
+    public void execute(SensorContext ctx) {        
         String pathToTsLint = this.resolver.getPath(ctx, TypeScriptPlugin.SETTING_TS_LINT_PATH, TSLINT_FALLBACK_PATH);
         String pathToTsLintConfig = this.resolver.getPath(ctx, TypeScriptPlugin.SETTING_TS_LINT_CONFIG_PATH, CONFIG_FILENAME);
         String rulesDir = this.resolver.getPath(ctx, TypeScriptPlugin.SETTING_TS_LINT_RULES_DIR, null);
         
+||||||| /usr/src/app/output/pablissimo/sonartsplugin/21c5ac9cfd807b5575685ea58ea31f243afeb018/src/main/java/com/pablissimo/sonar/TsLintSensor.java/base.java
+    private boolean hasFilesToAnalyze() {
+        return fileSystem.files(this.filePredicates.hasLanguage(TypeScriptLanguage.LANGUAGE_KEY)).iterator().hasNext();
+    }
+    
+    private String getPath(String settingKey, String defaultValue) {
+        // Prefer the specified path
+        String toReturn = settings.getString(settingKey);
+
+        // Fall back to a file system search if null or doesn't exist
+        if (toReturn == null || toReturn.isEmpty()) {
+            LOG.debug("Path " + settingKey + " not specified, falling back to " + defaultValue);
+            toReturn = defaultValue;
+        }
+        else {
+            LOG.debug("Found " + settingKey + " Lint path to be '" + toReturn + "'");
+        }
+        
+        return getAbsolutePath(toReturn);
+    }
+    
+    protected String getAbsolutePath(String toReturn) {
+        if (toReturn != null) {
+            File candidateFile = new java.io.File(toReturn);
+            if (!candidateFile.isAbsolute()) {
+                candidateFile = new java.io.File(this.fileSystem.baseDir().getAbsolutePath(), toReturn);
+            }
+            
+            if (!doesFileExist(candidateFile)) {
+                return null;
+            }
+
+            return candidateFile.getAbsolutePath();
+        }
+        
+        return null;
+    }
+    
+    protected boolean doesFileExist(File f) {
+        return f.exists();
+    }
+
+    public void analyse(Project project, SensorContext context) {
+        String pathToTsLint = this.getPath(TypeScriptPlugin.SETTING_TS_LINT_PATH, TSLINT_FALLBACK_PATH);
+        String pathToTsLintConfig = this.getPath(TypeScriptPlugin.SETTING_TS_LINT_CONFIG_PATH, CONFIG_FILENAME);
+        String rulesDir = this.getPath(TypeScriptPlugin.SETTING_TS_LINT_RULES_DIR, null);
+        
+=======
+    private boolean hasFilesToAnalyze() {
+        return fileSystem.files(this.filePredicates.hasLanguage(TypeScriptLanguage.LANGUAGE_KEY)).iterator().hasNext();
+    }
+
+    private String getPath(String settingKey, String defaultValue) {
+        // Prefer the specified path
+        String toReturn = settings.getString(settingKey);
+
+        // Fall back to a file system search if null or doesn't exist
+        if (toReturn == null || toReturn.isEmpty()) {
+            LOG.debug("Path " + settingKey + " not specified, falling back to " + defaultValue);
+            toReturn = defaultValue;
+        }
+        else {
+            LOG.debug("Found " + settingKey + " Lint path to be '" + toReturn + "'");
+        }
+
+        return getAbsolutePath(toReturn);
+    }
+
+    protected String getAbsolutePath(String toReturn) {
+        if (toReturn != null) {
+            File candidateFile = new java.io.File(toReturn);
+            if (!candidateFile.isAbsolute()) {
+                candidateFile = new java.io.File(this.fileSystem.baseDir().getAbsolutePath(), toReturn);
+            }
+
+            if (!doesFileExist(candidateFile)) {
+                return null;
+            }
+
+            return candidateFile.getAbsolutePath();
+        }
+
+        return null;
+    }
+
+    protected boolean doesFileExist(File f) {
+        return f.exists();
+    }
+
+    public void analyse(Project project, SensorContext context) {
+        String pathToTsLint = this.getPath(TypeScriptPlugin.SETTING_TS_LINT_PATH, TSLINT_FALLBACK_PATH);
+        String pathToTsLintConfig = this.getPath(TypeScriptPlugin.SETTING_TS_LINT_CONFIG_PATH, CONFIG_FILENAME);
+        String rulesDir = this.getPath(TypeScriptPlugin.SETTING_TS_LINT_RULES_DIR, null);
+
+>>>>>>> /usr/src/app/output/pablissimo/sonartsplugin/21c5ac9cfd807b5575685ea58ea31f243afeb018/src/main/java/com/pablissimo/sonar/TsLintSensor.java/right.java
         Integer tsLintTimeoutMs = Math.max(5000, settings.getInt(TypeScriptPlugin.SETTING_TS_LINT_TIMEOUT));
 
         if (pathToTsLint == null) {
@@ -106,7 +205,16 @@ public class TsLintSensor implements Sensor {
             if (batchIssues == null || batchIssues.size() == 0) {
                 continue;
             }
+<<<<<<< /usr/src/app/output/pablissimo/sonartsplugin/21c5ac9cfd807b5575685ea58ea31f243afeb018/src/main/java/com/pablissimo/sonar/TsLintSensor.java/left.java
+||||||| /usr/src/app/output/pablissimo/sonartsplugin/21c5ac9cfd807b5575685ea58ea31f243afeb018/src/main/java/com/pablissimo/sonar/TsLintSensor.java/base.java
 
+            String filePath = batchIssues[0].getName();
+            
+=======
+
+            String filePath = batchIssues[0].getName();
+
+>>>>>>> /usr/src/app/output/pablissimo/sonartsplugin/21c5ac9cfd807b5575685ea58ea31f243afeb018/src/main/java/com/pablissimo/sonar/TsLintSensor.java/right.java
             if (!fileMap.containsKey(filePath)) {
                 LOG.warn("TsLint reported issues against a file that wasn't sent to it - will be ignored: " + filePath);
                 continue;
