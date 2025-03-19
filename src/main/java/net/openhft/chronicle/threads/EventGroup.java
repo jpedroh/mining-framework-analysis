@@ -55,10 +55,11 @@ public class EventGroup implements EventLoop {
     public EventGroup(boolean daemon, Consumer<Throwable> onThrowable) {
         this.onThrowable = onThrowable;
         pauser = new LongPauser(1, 50, 500, Jvm.isDebug() ? 200_000 : 20_000, TimeUnit.MICROSECONDS);
+        monitor = new MonitorEventLoop(this, new LongPauser(0, 0, 1, 1, TimeUnit.SECONDS), onThrowable);
         monitor.addHandler(new PauserMonitor(pauser, "core pauser", 30));
-        core = new VanillaEventLoop(this, "core-event-loop", pauser, 1, daemon,onThrowable);
-        monitor = new MonitorEventLoop(this, new LongPauser(0, 0, 1, 1, TimeUnit.SECONDS),onThrowable);
+        core = new VanillaEventLoop(this, "core-event-loop", pauser, 1, daemon, onThrowable);
         blocking = new BlockingEventLoop(this, "blocking-event-loop", onThrowable);
+
     }
 
     public EventGroup(boolean daemon) {
@@ -172,7 +173,6 @@ public class EventGroup implements EventLoop {
                                 + blockingTimeMS + " ms.",
                         // check we are still in the loop.
                         () -> eventLoop.loopStartMS() == loopStartMS);
-
             } else {
                 lastInterval = Math.max(1, blockingInterval);
             }
