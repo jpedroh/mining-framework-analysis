@@ -41,7 +41,6 @@ public class Config {
   public static final String JETTY_BUFFER_SIZE = JETTY_PREFIX + "buffer.size";
   public static final String JETTY_STOP_AT_SHUTDOWN = JETTY_PREFIX + "stop-at-shutdown";
   public static final String JETTY_GRACEFUL_SHUTDOWN = JETTY_PREFIX + "graceful-shutdown";
-
   // Logging config
   public static final String LOGGING_PREFIX = GLOBAL_PREFIX + "logging.";
   public static final String LOGGING_ROUTE_JUL_TO_SLF4J = LOGGING_PREFIX + "route-jul-to-slf4j";
@@ -72,11 +71,17 @@ public class Config {
     DEFAULTS.setProperty(JETTY_PATH, "/schema-repo");
     DEFAULTS.setProperty(JETTY_HEADER_SIZE, "16384");
     DEFAULTS.setProperty(JETTY_BUFFER_SIZE, "16384");
+<<<<<<< /usr/src/app/output/schema-repo/schema-repo/f85f90da3d8305f4cd40870cf736123b49ae379f/common/src/main/java/org/schemarepo/config/Config.java/left.java
+    DEFAULTS.setProperty(JETTY_STOP_AT_SHUTDOWN, "true");
+    DEFAULTS.setProperty(JETTY_GRACEFUL_SHUTDOWN, "3000");
+||||||| /usr/src/app/output/schema-repo/schema-repo/f85f90da3d8305f4cd40870cf736123b49ae379f/common/src/main/java/org/schemarepo/config/Config.java/base.java
+=======
     DEFAULTS.setProperty(JETTY_STOP_AT_SHUTDOWN, "true");
     DEFAULTS.setProperty(JETTY_GRACEFUL_SHUTDOWN, "3000");
 
     // Logging defaults
     DEFAULTS.setProperty(LOGGING_ROUTE_JUL_TO_SLF4J, "true");
+>>>>>>> /usr/src/app/output/schema-repo/schema-repo/f85f90da3d8305f4cd40870cf736123b49ae379f/common/src/main/java/org/schemarepo/config/Config.java/right.java
 
     // Zookeeper backend defaults
     DEFAULTS.setProperty(ZK_ENSEMBLE, "");

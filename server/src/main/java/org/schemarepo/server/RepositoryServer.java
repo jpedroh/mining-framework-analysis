@@ -40,6 +40,7 @@ import org.schemarepo.config.Config;
 import org.schemarepo.config.ConfigModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -73,6 +74,13 @@ public class RepositoryServer {
    *
    */
   public RepositoryServer(Properties props) {
+<<<<<<< /usr/src/app/output/schema-repo/schema-repo/f85f90da3d8305f4cd40870cf736123b49ae379f/server/src/main/java/org/schemarepo/server/RepositoryServer.java/left.java
+    SLF4JBridgeHandler.removeHandlersForRootLogger();
+    SLF4JBridgeHandler.install();
+    this.injector = Guice.createInjector(
+||||||| /usr/src/app/output/schema-repo/schema-repo/f85f90da3d8305f4cd40870cf736123b49ae379f/server/src/main/java/org/schemarepo/server/RepositoryServer.java/base.java
+    Injector injector = Guice.createInjector(
+=======
     final Logger logger = LoggerFactory.getLogger(getClass());
     final String julToSlf4jDep = "jul-to-slf4j dependency";
     final String julPropName = Config.LOGGING_ROUTE_JUL_TO_SLF4J;
@@ -96,6 +104,7 @@ public class RepositoryServer {
     }
 
     this.injector = Guice.createInjector(
+>>>>>>> /usr/src/app/output/schema-repo/schema-repo/f85f90da3d8305f4cd40870cf736123b49ae379f/server/src/main/java/org/schemarepo/server/RepositoryServer.java/right.java
         new ConfigModule(props),
         new ServerModule());
     this.server = injector.getInstance(Server.class);
@@ -151,11 +160,27 @@ public class RepositoryServer {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Repository repo;
     private final Integer gracefulShutdown;
-    ShutDownListener(Repository repo, Integer gracefulShutdown) {
+    ShutDownListener(Repository repo,
+                     Integer gracefulShutdown) {
       this.repo = repo;
       this.gracefulShutdown = gracefulShutdown;
     }
-
+    @Override
+    public void lifeCycleStopping(LifeCycle event) {
+      logger.info("Going to wait {} ms to drain requests, then close the repo and exit.", gracefulShutdown);
+    }
+<<<<<<< /usr/src/app/output/schema-repo/schema-repo/f85f90da3d8305f4cd40870cf736123b49ae379f/server/src/main/java/org/schemarepo/server/RepositoryServer.java/left.java
+    @Override
+    public void lifeCycleStopped(LifeCycle event) {
+      logger.info("Closing the repo.");
+      try {
+        repo.close();
+      } catch (IOException e) {
+        logger.warn("Failed to properly close repo", e);
+      }
+    }
+||||||| /usr/src/app/output/schema-repo/schema-repo/f85f90da3d8305f4cd40870cf736123b49ae379f/server/src/main/java/org/schemarepo/server/RepositoryServer.java/base.java
+=======
     @Override
     public void lifeCycleStopped(LifeCycle event) {
       logger.info("Waited {} ms to drain requests before closing the repo and exiting. " +
@@ -169,7 +194,14 @@ public class RepositoryServer {
         logger.warn("Failed to properly close repo", e);
       }
     }
+>>>>>>> /usr/src/app/output/schema-repo/schema-repo/f85f90da3d8305f4cd40870cf736123b49ae379f/server/src/main/java/org/schemarepo/server/RepositoryServer.java/right.java
   }
+  /**
+   * Takes care of calling close() on the repo implementation.
+   *
+   * These hooks will not get called if stopAtShutdown is set to false, which can be set
+   * via the Config.JETTY_STOP_AT_SHUTDOWN property.
+   */
 
   private static class ServerModule extends JerseyServletModule {
 
