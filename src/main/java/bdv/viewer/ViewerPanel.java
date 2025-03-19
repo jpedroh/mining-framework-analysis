@@ -45,9 +45,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.LayoutManager;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
@@ -73,7 +73,6 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
-import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -334,6 +333,7 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 		mouseCoordinates = new MouseCoordinateListener();
 		display.addHandler( mouseCoordinates );
 
+<<<<<<< /usr/src/app/output/tpietzsch/bigdataviewer-core/30cb8bc274ba5c6332e34fefb3e193415c0d1c6e/src/main/java/bdv/viewer/ViewerPanel.java/left.java
 		final JPanel sliderPanel = new JPanel();
 		sliderPanel.setLayout( new BoxLayout( sliderPanel, BoxLayout.X_AXIS ) );
 
@@ -429,10 +429,10 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 		sliderPanel.add( timeKeyframePanel );
 		timeKeyframePanel.setLayout( new BoxLayout( timeKeyframePanel, BoxLayout.Y_AXIS ) );
 
-
-		sliderTime = new DefaultTimeSlider();
-		sliderTime.updateNumTimepoints( 0, numTimepoints );
-		sliderTime.addTimePointListener( this::setTimepoint );
+		sliderTime = new JSlider( 0, numTimepoints - 1, 0 );
+	//		sliderTime.setMinimumSize( new Dimension( 36, 26 ) );
+	//		sliderTime.setMaximumSize( new Dimension( 32767, 26 ) );
+		sliderTime.setSnapToTicks( true );
 
 		timeKeyframePanel.add( sliderTime );
 
@@ -440,6 +440,32 @@ public class ViewerPanel extends JPanel implements OverlayRenderer, TransformLis
 		keyframePanel.setMinimumSize( new Dimension( 36, 26 ) );
 		keyframePanel.setPreferredSize( new Dimension( 36, 26 ) );
 		timeKeyframePanel.add( keyframePanel );
+
+		sliderTime.addChangeListener( new ChangeListener()
+		{
+			@Override
+			public void stateChanged( final ChangeEvent e )
+			{
+				if ( e.getSource().equals( sliderTime ) )
+					setTimepoint( sliderTime.getValue() );
+			}
+		} );
+||||||| /usr/src/app/output/tpietzsch/bigdataviewer-core/30cb8bc274ba5c6332e34fefb3e193415c0d1c6e/src/main/java/bdv/viewer/ViewerPanel.java/base.java
+		sliderTime = new JSlider( SwingConstants.HORIZONTAL, 0, numTimepoints - 1, 0 );
+		sliderTime.addChangeListener( new ChangeListener()
+		{
+			@Override
+			public void stateChanged( final ChangeEvent e )
+			{
+				if ( e.getSource().equals( sliderTime ) )
+					setTimepoint( sliderTime.getValue() );
+			}
+		} );
+=======
+		sliderTime = new DefaultTimeSlider();
+		sliderTime.updateNumTimepoints( 0, numTimepoints );
+		sliderTime.addTimePointListener( this::setTimepoint );
+>>>>>>> /usr/src/app/output/tpietzsch/bigdataviewer-core/30cb8bc274ba5c6332e34fefb3e193415c0d1c6e/src/main/java/bdv/viewer/ViewerPanel.java/right.java
 
 		add( display, BorderLayout.CENTER );
 		if ( numTimepoints > 1 )
