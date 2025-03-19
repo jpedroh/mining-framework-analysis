@@ -511,6 +511,12 @@ public class GenerateMojo extends AbstractMojo {
     @Parameter
     private boolean debug;
 
+    /**
+     * Turns on Class to Enum Transformations for given class name pattern.
+     */
+    @Parameter
+    private String classEnumPattern;
+
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
@@ -588,6 +594,7 @@ public class GenerateMojo extends AbstractMojo {
                     ? outputFile
                     : new File(new File(projectBuildDirectory, "typescript-generator"), project.getArtifactId() + settings.getExtension());
             settings.validateFileName(output);
+            settings.classEnumPattern = classEnumPattern;
 
             // TypeScriptGenerator
             new TypeScriptGenerator(settings).generateTypeScript(
