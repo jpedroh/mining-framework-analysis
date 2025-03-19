@@ -116,10 +116,22 @@ public class QYUserAPI extends QYBaseAPI {
 
     /**
      * 通过部门列表获取部门成员信息
+<<<<<<< /usr/src/app/output/sd4324530/fastweixin/f4aa5c9e2a5e5009160e2d1062d540641e668ee1/src/main/java/com/github/sd4324530/fastweixin/company/api/QYUserAPI.java/left.java
+     * @param departmentId 部门ID
+     * @param isLoop 是否递归子部门成员
+     * @param status
+     * @return
+||||||| /usr/src/app/output/sd4324530/fastweixin/f4aa5c9e2a5e5009160e2d1062d540641e668ee1/src/main/java/com/github/sd4324530/fastweixin/company/api/QYUserAPI.java/base.java
+     * @param departmentId
+     * @param isLoop
+     * @param status
+     * @return
+=======
      * @param departmentId 部门ID
      * @param isLoop 是否递归获取子部门下面的成员
      * @param status 0获取全部成员，1获取已关注成员列表，2获取禁用成员列表，4获取未关注成员列表。status可叠加，未填写则默认为4
      * @return 部门成员详情信息
+>>>>>>> /usr/src/app/output/sd4324530/fastweixin/f4aa5c9e2a5e5009160e2d1062d540641e668ee1/src/main/java/com/github/sd4324530/fastweixin/company/api/QYUserAPI.java/right.java
      */
     public GetQYUserInfo4DepartmentResponse getList(Integer departmentId, boolean isLoop, Integer status){
         GetQYUserInfo4DepartmentResponse response;
