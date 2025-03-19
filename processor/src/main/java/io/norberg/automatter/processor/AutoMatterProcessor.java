@@ -1178,17 +1178,21 @@ public final class AutoMatterProcessor extends AbstractProcessor {
         return ParameterizedTypeName.get(
             ClassName.get(HashMap.class),
             genericArgument(field, 0), genericArgument(field, 1));
+<<<<<<< /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/main/java/io/norberg/automatter/processor/AutoMatterProcessor.java/left.java
       case "SortedMap":
       case "NavigableMap":
         return ParameterizedTypeName.get(
             ClassName.get(TreeMap.class),
             genericArgument(field, 0), genericArgument(field, 1));
+||||||| /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/main/java/io/norberg/automatter/processor/AutoMatterProcessor.java/base.java
+=======
       case "Collection":
         return ParameterizedTypeName.get(
             ClassName.get(ArrayList.class),
             genericArgument(field, 0));
+>>>>>>> /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/main/java/io/norberg/automatter/processor/AutoMatterProcessor.java/right.java
       default:
-        throw new IllegalStateException("invalid collection type " + field);
+      throw new IllegalStateException("invalid collection type " + field);
     }
   }
 
@@ -1215,7 +1219,7 @@ public final class AutoMatterProcessor extends AbstractProcessor {
 
   private boolean isCollection(final ExecutableElement field) {
     final String returnType = field.getReturnType().toString();
-    return returnType.startsWith("java.util.List<") ||
+    return  returnType.startsWith("java.util.List<") ||
            returnType.startsWith("java.util.Collection<") ||
            returnType.startsWith("java.util.Set<") ||
            returnType.startsWith("java.util.SortedSet<") ||
@@ -1240,14 +1244,18 @@ public final class AutoMatterProcessor extends AbstractProcessor {
         return "unmodifiableNavigableSet";
       case "Map":
         return "unmodifiableMap";
+<<<<<<< /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/main/java/io/norberg/automatter/processor/AutoMatterProcessor.java/left.java
       case "SortedMap":
         return "unmodifiableSortedMap";
       case "NavigableMap":
         return "unmodifiableNavigableMap";
+||||||| /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/main/java/io/norberg/automatter/processor/AutoMatterProcessor.java/base.java
+=======
       case "Collection":
         return "unmodifiableList";
+>>>>>>> /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/main/java/io/norberg/automatter/processor/AutoMatterProcessor.java/right.java
       default:
-        throw new AssertionError();
+      throw new AssertionError();
     }
   }
 
@@ -1264,14 +1272,18 @@ public final class AutoMatterProcessor extends AbstractProcessor {
         return "emptyNavigableSet";
       case "Map":
         return "emptyMap";
+<<<<<<< /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/main/java/io/norberg/automatter/processor/AutoMatterProcessor.java/left.java
       case "SortedMap":
         return "emptySortedMap";
       case "NavigableMap":
         return "emptyNavigableMap";
+||||||| /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/main/java/io/norberg/automatter/processor/AutoMatterProcessor.java/base.java
+=======
       case "Collection":
         return "emptyList";
+>>>>>>> /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/main/java/io/norberg/automatter/processor/AutoMatterProcessor.java/right.java
       default:
-        throw new AssertionError();
+      throw new AssertionError();
     }
   }
 
@@ -1287,15 +1299,25 @@ public final class AutoMatterProcessor extends AbstractProcessor {
       return "NavigableSet";
     } else if (returnType.startsWith("java.util.Map<")) {
       return "Map";
+<<<<<<< /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/main/java/io/norberg/automatter/processor/AutoMatterProcessor.java/left.java
     } else if (returnType.startsWith("java.util.SortedMap<")) {
       return "SortedMap";
     } else if (returnType.startsWith("java.util.NavigableMap<")) {
       return "NavigableMap";
+    } else {
+      throw new AssertionError();
+    }
+||||||| /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/main/java/io/norberg/automatter/processor/AutoMatterProcessor.java/base.java
+    } else {
+      throw new AssertionError();
+    }
+=======
     } else if (returnType.startsWith("java.util.Collection<")) {
       return "Collection";
     } else {
       throw new AssertionError();
     }
+>>>>>>> /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/main/java/io/norberg/automatter/processor/AutoMatterProcessor.java/right.java
   }
 
   private String optionalType(final ExecutableElement field) {

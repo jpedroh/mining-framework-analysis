@@ -41,25 +41,41 @@ public final class CollectionFieldsBuilder {
   private CollectionFieldsBuilder(CollectionFields v) {
     List<String> _strings = v.strings();
     this.strings = (_strings == null) ? null : new ArrayList<String>(_strings);
+<<<<<<< /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/test/resources/expected/CollectionFieldsBuilder.java/left.java
+    Map<? extends String, ? extends Integer> _integers = v.integers();
+    this.integers = (_integers == null) ? null : new HashMap<String, Integer>(_integers);
+    SortedMap<? extends String, ? extends Integer> _sortedIntegers = v.sortedIntegers();
+    this.sortedIntegers = (_sortedIntegers == null) ? null : new TreeMap<String, Integer>(_sortedIntegers);
+    NavigableMap<? extends String, ? extends Integer> _navigableIntegers = v.navigableIntegers();
+    this.navigableIntegers = (_navigableIntegers == null) ? null : new TreeMap<String, Integer>(_navigableIntegers);
+    Set<? extends Long> _numbers = v.numbers();
+||||||| /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/test/resources/expected/CollectionFieldsBuilder.java/base.java
+    Map<? extends String,? extends Integer> _integers = v.integers();
+    this.integers = (_integers == null) ? null : new HashMap<String,Integer>(_integers);
+    Set<? extends Long> _numbers = v.numbers();
+=======
     Map<String, Integer> _integers = v.integers();
     this.integers = (_integers == null) ? null : new HashMap<String, Integer>(_integers);
-    SortedMap<String, Integer> _sortedIntegers = v.sortedIntegers();
-    this.sortedIntegers = (_sortedIntegers == null) ? null : new TreeMap<String, Integer>(_sortedIntegers);
-    NavigableMap<String, Integer> _navigableIntegers = v.navigableIntegers();
-    this.navigableIntegers = (_navigableIntegers == null) ? null : new TreeMap<String, Integer>(_navigableIntegers);
     Set<Long> _numbers = v.numbers();
+>>>>>>> /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/test/resources/expected/CollectionFieldsBuilder.java/right.java
     this.numbers = (_numbers == null) ? null : new HashSet<Long>(_numbers);
-    SortedSet<Long> _sortedNumbers = v.sortedNumbers();
+    SortedSet<? extends Long> _sortedNumbers = v.sortedNumbers();
     this.sortedNumbers = (_sortedNumbers == null) ? null : new TreeSet<Long>(_sortedNumbers);
-    NavigableSet<Long> _navigableNumbers = v.navigableNumbers();
+    NavigableSet<? extends Long> _navigableNumbers = v.navigableNumbers();
     this.navigableNumbers = (_navigableNumbers == null) ? null : new TreeSet<Long>(_navigableNumbers);
   }
 
   private CollectionFieldsBuilder(CollectionFieldsBuilder v) {
     this.strings = (v.strings == null) ? null : new ArrayList<String>(v.strings);
+<<<<<<< /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/test/resources/expected/CollectionFieldsBuilder.java/left.java
     this.integers = (v.integers == null) ? null : new HashMap<String, Integer>(v.integers);
     this.sortedIntegers = (v.sortedIntegers == null) ? null : new TreeMap<String, Integer>(v.sortedIntegers);
     this.navigableIntegers = (v.navigableIntegers == null) ? null : new TreeMap<String, Integer>(v.navigableIntegers);
+||||||| /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/test/resources/expected/CollectionFieldsBuilder.java/base.java
+    this.integers = (v.integers == null) ? null : new HashMap<String,Integer>(v.integers);
+=======
+    this.integers = (v.integers == null) ? null : new HashMap<String, Integer>(v.integers);
+>>>>>>> /usr/src/app/output/danielnorberg/auto-matter/5739d194fb360dde65820538263efddba683785f/processor/src/test/resources/expected/CollectionFieldsBuilder.java/right.java
     this.numbers = (v.numbers == null) ? null : new HashSet<Long>(v.numbers);
     this.sortedNumbers = (v.sortedNumbers == null) ? null : new TreeSet<Long>(v.sortedNumbers);
     this.navigableNumbers = (v.navigableNumbers == null) ? null : new TreeSet<Long>(v.navigableNumbers);
