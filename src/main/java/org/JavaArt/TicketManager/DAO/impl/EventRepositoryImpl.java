@@ -115,25 +115,6 @@ public class EventRepositoryImpl implements EventRepository {
     }
 
     @Override
-    public Event getEventByDate(Date date) {
-        Session session = null;
-        Event event = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            event = (Event) session.createCriteria(Event.class)
-                    .add(Restrictions.eq("date", date));
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Error I/O", JOptionPane.OK_OPTION);
-        } finally {
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
-        return event;
-    }
-
-
-    @Override
     public List<Event> getFutureBookableEvents() {
         Session session = null;
         List<Event> events = new ArrayList<Event>();
@@ -152,6 +133,24 @@ public class EventRepositoryImpl implements EventRepository {
         }
         return events;
     }
+    @Override
+    public Event getEventByDate(Date date) {
+        Session session = null;
+        Event event = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            event = (Event) session.createCriteria(Event.class)
+                    .add(Restrictions.eq("date", date));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error I/O", JOptionPane.OK_OPTION);
+        } finally {
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
+        }
+        return event;
+    }
+
 
 //    @Override
 //    public void deleteEvent(Event event) {
