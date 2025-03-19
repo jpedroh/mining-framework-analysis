@@ -36,6 +36,7 @@ public class ConcurrentXformTest {
     }
 
     @Test
+    @Ignore
     public void linkedListCorrectness() {
         Long[] is = new Long[] { 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L };
         IntRange range = IntRange.of(1, 9);

@@ -18,7 +18,6 @@ import org.organicdesign.fp.Mutable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.organicdesign.fp.experiments.collection.mutable.MutableLinkedList;
 
 public class ConcurrentXform {
@@ -41,6 +40,12 @@ public class ConcurrentXform {
         List<Thread> threads = new ArrayList<>();
 
         for (int i = 0; i < ranges.size(); i++) {
+<<<<<<< /usr/src/app/output/glenkpeterson/j-sicle/5e22f4be3ec0b3915db2bfc84fcb1b583ae76f02/src/main/java/org/organicdesign/fp/experiments/ConcurrentXform.java/left.java
+            // System.out.println("Starting thread: " + i);
+||||||| /usr/src/app/output/glenkpeterson/j-sicle/5e22f4be3ec0b3915db2bfc84fcb1b583ae76f02/src/main/java/org/organicdesign/fp/experiments/ConcurrentXform.java/base.java
+            System.out.println("Starting thread: " + i);
+=======
+>>>>>>> /usr/src/app/output/glenkpeterson/j-sicle/5e22f4be3ec0b3915db2bfc84fcb1b583ae76f02/src/main/java/org/organicdesign/fp/experiments/ConcurrentXform.java/right.java
             IntRange r = ranges.get(i);
             IntRange rIdx = idxRanges.get(i);
             if (i == (ranges.size() - 1)) {
@@ -58,7 +63,7 @@ public class ConcurrentXform {
                     public void run() {
                         final Mutable.IntRef idx = Mutable.IntRef.of((int) rIdx.start());
                         ViewFromIntRange.of(r).forEach(item -> {
-    //                        System.out.println("\tidx: " + idx.value() + " value: " + (Int) i);
+            //                        System.out.println("\tidx: " + idx.value() + " value: " + (Int) i);
                             ret[idx.value()] = item;
                             idx.increment();
                         });
