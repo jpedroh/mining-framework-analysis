@@ -207,7 +207,6 @@ public class EngineTest {
         public AplsLicensingService aplsLicensingService() {
             return mock(AplsLicensingService.class);
         }
-
         @Bean
         public QueueConfigurationDataService queueConfigurationDataService() {
             return mock(QueueConfigurationDataService.class);

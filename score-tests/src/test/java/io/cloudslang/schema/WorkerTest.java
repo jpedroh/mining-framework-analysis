@@ -126,13 +126,13 @@ public class WorkerTest {
 		}
 
 		@Bean
-		AplsLicensingService aplsLicensingService() {
-			return mock(AplsLicensingService.class);
+		public WorkerQueueDetailsContainer workerQueueDetailsContainer() {
+			return mock(WorkerQueueDetailsContainer.class);
 		}
 
 		@Bean
-		public WorkerQueueDetailsContainer workerQueueDetailsContainer() {
-			return mock(WorkerQueueDetailsContainer.class);
+		AplsLicensingService aplsLicensingService() {
+			return mock(AplsLicensingService.class);
 		}
 	}
 
