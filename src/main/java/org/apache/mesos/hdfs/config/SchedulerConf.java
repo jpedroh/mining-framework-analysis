@@ -1,24 +1,18 @@
 package org.apache.mesos.hdfs.config;
-
 import com.google.inject.Singleton;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Properties;
 
-@Singleton
-public class SchedulerConf extends Configured {
-
+@Singleton public class SchedulerConf extends Configured {
   public SchedulerConf(Configuration conf) {
     setConf(conf);
   }
 
   public SchedulerConf() {
-    // The path is configurable via the mesos.conf.path system property
-    // so it can be changed when starting up the scheduler via bash
     Properties props = System.getProperties();
     Path configPath = new Path(props.getProperty("mesos.conf.path", "etc/hadoop/mesos-site.xml"));
     Configuration configuration = new Configuration();
@@ -72,16 +66,16 @@ public class SchedulerConf extends Configured {
 
   public int getTaskHeapSize(String taskName) {
     switch (taskName) {
-      case "zkfc" :
-        return getZkfcHeapSize();
-      case "namenode" :
-        return getNameNodeHeapSize();
-      case "datanode" :
-        return getDataNodeHeapSize();
-      case "journalnode" :
-        return getJournalNodeHeapSize();
-      default :
-        throw new RuntimeException("Invalid taskName=" + taskName);
+      case "zkfc":
+      return getZkfcHeapSize();
+      case "namenode":
+      return getNameNodeHeapSize();
+      case "datanode":
+      return getDataNodeHeapSize();
+      case "journalnode":
+      return getJournalNodeHeapSize();
+      default:
+      throw new RuntimeException("Invalid taskName=" + taskName);
     }
   }
 
@@ -90,19 +84,7 @@ public class SchedulerConf extends Configured {
   }
 
   public String getJvmOpts() {
-    return getConf().get(
-        "mesos.hdfs.jvm.opts", ""
-            + "-XX:+UseConcMarkSweepGC "
-            + "-XX:+CMSClassUnloadingEnabled "
-            + "-XX:+UseTLAB "
-            + "-XX:+AggressiveOpts "
-            + "-XX:+UseCompressedOops "
-            + "-XX:+UseFastEmptyMethods "
-            + "-XX:+UseFastAccessorMethods "
-            + "-Xss256k "
-            + "-XX:+AlwaysPreTouch "
-            + "-XX:+UseParNewGC "
-            + "-Djava.library.path=/usr/lib:/usr/local/lib:lib/native");
+    return getConf().get("mesos.hdfs.jvm.opts", "" + "-XX:+UseConcMarkSweepGC " + "-XX:+CMSClassUnloadingEnabled " + "-XX:+UseTLAB " + "-XX:+AggressiveOpts " + "-XX:+UseCompressedOops " + "-XX:+UseFastEmptyMethods " + "-XX:+UseFastAccessorMethods " + "-Xss256k " + "-XX:+AlwaysPreTouch " + "-XX:+UseParNewGC " + "-Djava.library.path=/usr/lib:/usr/local/lib:lib/native");
   }
 
   public double getExecutorCpus() {
@@ -127,16 +109,16 @@ public class SchedulerConf extends Configured {
 
   public double getTaskCpus(String taskName) {
     switch (taskName) {
-      case "zkfc" :
-        return getZkfcCpus();
-      case "namenode" :
-        return getNameNodeCpus();
-      case "datanode" :
-        return getDataNodeCpus();
-      case "journalnode" :
-        return getJournalNodeCpus();
-      default :
-        throw new RuntimeException("Invalid taskName=" + taskName);
+      case "zkfc":
+      return getZkfcCpus();
+      case "namenode":
+      return getNameNodeCpus();
+      case "datanode":
+      return getDataNodeCpus();
+      case "journalnode":
+      return getJournalNodeCpus();
+      default:
+      throw new RuntimeException("Invalid taskName=" + taskName);
     }
   }
 
@@ -152,12 +134,10 @@ public class SchedulerConf extends Configured {
     return getConf().getLong("mesos.failover.timeout.sec", 31449600);
   }
 
-  // TODO(elingg) Most likely this user name will change to HDFS
   public String getHdfsUser() {
     return getConf().get("mesos.hdfs.user", "root");
   }
 
-  // TODO(elingg) This role needs to be updated.
   public String getHdfsRole() {
     return getConf().get("mesos.hdfs.role", "*");
   }
@@ -206,8 +186,6 @@ public class SchedulerConf extends Configured {
     return hostAddress;
   }
 
-  // The port can be changed by setting the PORT0 environment variable
-  // See /bin/hdfs-mesos for more details
   public int getConfigServerPort() {
     String configServerPortString = System.getProperty("mesos.hdfs.config.server.port");
     if (configServerPortString == null) {
