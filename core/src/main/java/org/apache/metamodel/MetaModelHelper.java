@@ -23,7 +23,6 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
 import org.apache.metamodel.data.CachingDataSetHeader;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.DataSetHeader;
@@ -185,15 +184,96 @@ public final class MetaModelHelper {
         // do a nested loop join, no matter what
         Iterator<DataSet> dsIter = Arrays.asList(fromDataSets).iterator();
 
-
+<<<<<<< /usr/src/app/output/apache/metamodel/c4acebd5d3911bc208c3fd919a8cf7894b371c00/core/src/main/java/org/apache/metamodel/MetaModelHelper.java/left.java
+        List<SelectItem> selectItems = new ArrayList<SelectItem>();
+        for (DataSet dataSet : fromDataSets) {
+            for (int i = 0; i < dataSet.getSelectItems().size(); i++) {
+                SelectItem item = dataSet.getSelectItems().get(i);
+                selectItems.add(item);
+            }
+||||||| /usr/src/app/output/apache/metamodel/c4acebd5d3911bc208c3fd919a8cf7894b371c00/core/src/main/java/org/apache/metamodel/MetaModelHelper.java/base.java
+        List<SelectItem> selectItems = new ArrayList<SelectItem>();
+        for (DataSet dataSet : fromDataSets) {
+            for (int i = 0; i < dataSet.getSelectItems().length; i++) {
+                SelectItem item = dataSet.getSelectItems()[i];
+                selectItems.add(item);
+            }
+=======
         DataSet joined = dsIter.next();
 
         while (dsIter.hasNext()) {
             joined = nestedLoopJoin(dsIter.next(), joined, (whereItems));
 
+>>>>>>> /usr/src/app/output/apache/metamodel/c4acebd5d3911bc208c3fd919a8cf7894b371c00/core/src/main/java/org/apache/metamodel/MetaModelHelper.java/right.java
         }
 
+<<<<<<< /usr/src/app/output/apache/metamodel/c4acebd5d3911bc208c3fd919a8cf7894b371c00/core/src/main/java/org/apache/metamodel/MetaModelHelper.java/left.java
+        int selectItemOffset = 0;
+        List<Object[]> data = new ArrayList<Object[]>();
+        for (int fromDataSetIndex = 0; fromDataSetIndex < fromDataSets.length; fromDataSetIndex++) {
+            DataSet fromDataSet = fromDataSets[fromDataSetIndex];
+            List<SelectItem> fromSelectItems = fromDataSet.getSelectItems();
+            if (fromDataSetIndex == 0) {
+                while (fromDataSet.next()) {
+                    Object[] values = fromDataSet.getRow().getValues();
+                    Object[] row = new Object[selectItems.size()];
+                    System.arraycopy(values, 0, row, selectItemOffset, values.length);
+                    data.add(row);
+                }
+                fromDataSet.close();
+            } else {
+                List<Object[]> fromDataRows = new ArrayList<Object[]>();
+                while (fromDataSet.next()) {
+                    fromDataRows.add(fromDataSet.getRow().getValues());
+                }
+                fromDataSet.close();
+                for (int i = 0; i < data.size(); i = i + fromDataRows.size()) {
+                    Object[] originalRow = data.get(i);
+                    data.remove(i);
+                    for (int j = 0; j < fromDataRows.size(); j++) {
+                        Object[] newRow = fromDataRows.get(j);
+                        System.arraycopy(newRow, 0, originalRow, selectItemOffset, newRow.length);
+                        data.add(i + j, originalRow.clone());
+                    }
+                }
+            }
+            selectItemOffset += fromSelectItems.size();
+        }
+||||||| /usr/src/app/output/apache/metamodel/c4acebd5d3911bc208c3fd919a8cf7894b371c00/core/src/main/java/org/apache/metamodel/MetaModelHelper.java/base.java
+        int selectItemOffset = 0;
+        List<Object[]> data = new ArrayList<Object[]>();
+        for (int fromDataSetIndex = 0; fromDataSetIndex < fromDataSets.length; fromDataSetIndex++) {
+            DataSet fromDataSet = fromDataSets[fromDataSetIndex];
+            SelectItem[] fromSelectItems = fromDataSet.getSelectItems();
+            if (fromDataSetIndex == 0) {
+                while (fromDataSet.next()) {
+                    Object[] values = fromDataSet.getRow().getValues();
+                    Object[] row = new Object[selectItems.size()];
+                    System.arraycopy(values, 0, row, selectItemOffset, values.length);
+                    data.add(row);
+                }
+                fromDataSet.close();
+            } else {
+                List<Object[]> fromDataRows = new ArrayList<Object[]>();
+                while (fromDataSet.next()) {
+                    fromDataRows.add(fromDataSet.getRow().getValues());
+                }
+                fromDataSet.close();
+                for (int i = 0; i < data.size(); i = i + fromDataRows.size()) {
+                    Object[] originalRow = data.get(i);
+                    data.remove(i);
+                    for (int j = 0; j < fromDataRows.size(); j++) {
+                        Object[] newRow = fromDataRows.get(j);
+                        System.arraycopy(newRow, 0, originalRow, selectItemOffset, newRow.length);
+                        data.add(i + j, originalRow.clone());
+                    }
+                }
+            }
+            selectItemOffset += fromSelectItems.length;
+        }
+=======
         return joined;
+>>>>>>> /usr/src/app/output/apache/metamodel/c4acebd5d3911bc208c3fd919a8cf7894b371c00/core/src/main/java/org/apache/metamodel/MetaModelHelper.java/right.java
 
     }
 
@@ -211,8 +291,8 @@ public final class MetaModelHelper {
         }
         List<Row> innerRows = innerLoopDs.toRows();
 
-        List<SelectItem> allItems = new ArrayList<>(outerLoopDs.getSelectItems());
-        allItems.addAll(innerLoopDs.getSelectItems());
+        List<SelectItem> allItems = new ArrayList<>(Arrays.asList(outerLoopDs.getSelectItems()));
+        allItems.addAll(Arrays.asList(innerLoopDs.getSelectItems()));
 
         Set<FilterItem> applicableFilters = applicableFilters(filters, allItems);
 

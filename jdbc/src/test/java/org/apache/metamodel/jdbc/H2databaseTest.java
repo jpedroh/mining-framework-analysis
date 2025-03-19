@@ -545,18 +545,18 @@ public class H2databaseTest extends TestCase {
 
         final Schema schema = dc.getDefaultSchema();
 
-        assertEquals(1, schema.getRelationships().size());
+        assertEquals(1, schema.getRelationships().length);
 
-        Relationship rel = schema.getRelationships().iterator().next();
+        Relationship rel = schema.getRelationships()[0];
 
-        assertEquals("CP1", rel.getForeignColumns().get(0).getName());
-        assertEquals("CP2", rel.getForeignColumns().get(1).getName());
-        assertEquals("CP3", rel.getForeignColumns().get(2).getName());
-        assertEquals("CP4", rel.getForeignColumns().get(3).getName());
+        assertEquals("CP1", rel.getForeignColumns()[0].getName());
+        assertEquals("CP2", rel.getForeignColumns()[1].getName());
+        assertEquals("CP3", rel.getForeignColumns()[2].getName());
+        assertEquals("CP4", rel.getForeignColumns()[3].getName());
 
-        assertEquals("P1", rel.getPrimaryColumns().get(0).getName());
-        assertEquals("P2", rel.getPrimaryColumns().get(1).getName());
-        assertEquals("P3", rel.getPrimaryColumns().get(2).getName());
-        assertEquals("P4", rel.getPrimaryColumns().get(3).getName());
+        assertEquals("P1", rel.getPrimaryColumns()[0].getName());
+        assertEquals("P2", rel.getPrimaryColumns()[1].getName());
+        assertEquals("P3", rel.getPrimaryColumns()[2].getName());
+        assertEquals("P4", rel.getPrimaryColumns()[3].getName());
     }
 }

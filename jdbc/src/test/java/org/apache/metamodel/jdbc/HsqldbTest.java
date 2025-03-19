@@ -145,9 +145,9 @@ public class HsqldbTest extends TestCase {
         Table productsTable = schema.getTableByName("PRODUCTS");
         Table factTable = schema.getTableByName("ORDERFACT");
 
-        Query q = new Query().from(new FromItem(JoinType.INNER, productsTable.getRelationships(factTable).iterator().next())).select(
+        Query q = new Query().from(new FromItem(JoinType.INNER, productsTable.getRelationships(factTable).iterator().next()))
+                .select(
                 productsTable.getColumns().get(0), factTable.getColumns().get(0));
-
         assertEquals(
                 "SELECT \"PRODUCTS\".\"PRODUCTCODE\", \"ORDERFACT\".\"ORDERNUMBER\" FROM PUBLIC.\"PRODUCTS\" INNER JOIN PUBLIC.\"ORDERFACT\" ON \"PRODUCTS\".\"PRODUCTCODE\" = \"ORDERFACT\".\"PRODUCTCODE\"",
                 q.toString());

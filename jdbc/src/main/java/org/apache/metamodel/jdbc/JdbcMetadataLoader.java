@@ -467,7 +467,12 @@ final class JdbcMetadataLoader implements MetadataLoader {
                 logger.error("pkColumn={}", pkColumn);
                 logger.error("fkColumn={}", fkColumn);
             } else {
-
+<<<<<<< /usr/src/app/output/apache/metamodel/c4acebd5d3911bc208c3fd919a8cf7894b371c00/jdbc/src/main/java/org/apache/metamodel/jdbc/JdbcMetadataLoader.java/left.java
+                MutableRelationship.createRelationship(pkColumn, fkColumn);
+||||||| /usr/src/app/output/apache/metamodel/c4acebd5d3911bc208c3fd919a8cf7894b371c00/jdbc/src/main/java/org/apache/metamodel/jdbc/JdbcMetadataLoader.java/base.java
+                MutableRelationship.createRelationship(new Column[] { pkColumn }, new Column[] { fkColumn });
+=======
+            
                 if (!relations.containsKey(pkTable)) {
                     relations.put(pkTable, new HashMap<>());
                 }
@@ -481,11 +486,12 @@ final class JdbcMetadataLoader implements MetadataLoader {
                 // we can now safely add the columns
                 ct.getPkCols().add(pkColumn);
                 ct.getFkCols().add(fkColumn);
+>>>>>>> /usr/src/app/output/apache/metamodel/c4acebd5d3911bc208c3fd919a8cf7894b371c00/jdbc/src/main/java/org/apache/metamodel/jdbc/JdbcMetadataLoader.java/right.java
             }
         }
 
         relations.values().stream().flatMap(map -> map.values().stream()).forEach(ct -> MutableRelationship
-                .createRelationship(ct.getPkCols(), ct.getFkCols()));
+                .createRelationship(ct.getPkCols().toArray(new Column[0]), ct.getFkCols().toArray(new Column[0])));
     }
 
     /**
