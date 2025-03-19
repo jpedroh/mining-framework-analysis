@@ -34,9 +34,9 @@ class FindbugsPluginTest {
 
   @ParameterizedTest
   @CsvSource({
-    "9.7,14",
+    "9.7,24",
     // We expect one more extension (the "sonar.findbugs.analyzeTests" property) when the version is >= 9.8
-    "9.8,15"
+    "9.8,25"
   })
   void testGetExtensions(String version, int expectedExtensionsCount) {
 
@@ -47,6 +47,12 @@ class FindbugsPluginTest {
     FindbugsPlugin plugin = new FindbugsPlugin();
     plugin.define(ctx);
 
+<<<<<<< /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/test/java/org/sonar/plugins/findbugs/FindbugsPluginTest.java/left.java
+    assertEquals(14, ctx.getExtensions().size(), "extensions count");
+||||||| /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/test/java/org/sonar/plugins/findbugs/FindbugsPluginTest.java/base.java
+    assertEquals(24, ctx.getExtensions().size(), "extensions count");
+=======
     assertEquals(expectedExtensionsCount, ctx.getExtensions().size(), "extensions count");
+>>>>>>> /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/test/java/org/sonar/plugins/findbugs/FindbugsPluginTest.java/right.java
   }
 }

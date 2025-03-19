@@ -25,7 +25,13 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+<<<<<<< /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/left.java
 import java.util.Arrays;
+import java.util.Collections;
+||||||| /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/base.java
+=======
+import java.util.Arrays;
+>>>>>>> /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/right.java
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,7 +47,13 @@ import javax.annotation.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sonar.api.PropertyType;
+<<<<<<< /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/left.java
+||||||| /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/base.java
+import org.sonar.api.Startable;
+=======
+import org.sonar.api.Startable;
 import org.sonar.api.Plugin.Context;
+>>>>>>> /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/right.java
 import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.FileSystem;
@@ -66,6 +78,13 @@ import org.sonar.plugins.findbugs.xml.Match;
 import org.sonar.plugins.java.Java;
 import org.sonar.plugins.java.api.JavaResourceLocator;
 
+<<<<<<< /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/left.java
+||||||| /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/base.java
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+=======
+import com.google.common.collect.Lists;
+>>>>>>> /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/right.java
 import com.thoughtworks.xstream.XStream;
 
 import edu.umd.cs.findbugs.ClassScreener;
@@ -432,13 +451,157 @@ public class FindbugsConfiguration {
     return config.getBoolean(FindbugsConstants.ALLOW_UNCOMPILED_CODE).orElse(FindbugsConstants.ALLOW_UNCOMPILED_CODE_VALUE);
   }
 
+<<<<<<< /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/left.java
+  public static List<PropertyDefinition> getPropertyDefinitions() {
+||||||| /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/base.java
+  private File jsr305Lib;
+  private File annotationsLib;
+  private File fbContrib;
+  private File findSecBugs;
+
+  public void copyLibs() {
+    if (jsr305Lib == null) {
+      jsr305Lib = copyLib("/jsr305.jar");
+    }
+    if (annotationsLib == null) {
+      annotationsLib = copyLib("/annotations.jar");
+    }
+    if (fbContrib == null) {
+      fbContrib = copyLib("/sb-contrib.jar");
+    }
+    if (findSecBugs == null) {
+      findSecBugs = copyLib("/findsecbugs-plugin.jar");
+    }
+  }
+
+  @Override
+  public void start() {
+    // do nothing
+  }
+
+  /**
+   * Invoked by PicoContainer to remove temporary files.
+   */
+  @SuppressWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
+  @Override
+  public void stop() {
+    if (jsr305Lib != null) {
+      jsr305Lib.delete();
+    }
+    if (annotationsLib != null) {
+      annotationsLib.delete();
+    }
+    if (fbContrib != null) {
+      fbContrib.delete();
+    }
+
+    if (findSecBugs != null) {
+      findSecBugs.delete();
+    }
+  }
+
+  private File copyLib(String name) {
+    try (InputStream input = getClass().getResourceAsStream(name)) {
+      File dir = new File(fileSystem.workDir(), "findbugs");
+      FileUtils.forceMkdir(dir);
+      File target = new File(dir, name);
+      FileUtils.copyInputStreamToFile(input, target);
+      return target;
+    } catch (IOException e) {
+      throw new IllegalStateException("Fail to extract Findbugs dependency", e);
+    }
+  }
+
+  public File getFbContribJar() {
+    return fbContrib;
+  }
+
+  public File getFindSecBugsJar() {
+    return findSecBugs;
+  }
+
+  public static List<PropertyDefinition> getPropertyDefinitions() {
+=======
   public boolean isAnalyzeTests() {
     return config.getBoolean(FindbugsConstants.ANALYZE_TESTS).orElse(FindbugsConstants.ANALYZE_TESTS_VALUE);
   }
 
+  private File jsr305Lib;
+  private File annotationsLib;
+  private File fbContrib;
+  private File findSecBugs;
+
+  public void copyLibs() {
+    if (jsr305Lib == null) {
+      jsr305Lib = copyLib("/jsr305.jar");
+    }
+    if (annotationsLib == null) {
+      annotationsLib = copyLib("/annotations.jar");
+    }
+    if (fbContrib == null) {
+      fbContrib = copyLib("/sb-contrib.jar");
+    }
+    if (findSecBugs == null) {
+      findSecBugs = copyLib("/findsecbugs-plugin.jar");
+    }
+  }
+
+  @Override
+  public void start() {
+    // do nothing
+  }
+
+  /**
+   * Invoked by PicoContainer to remove temporary files.
+   */
+  @SuppressWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
+  @Override
+  public void stop() {
+    if (jsr305Lib != null) {
+      jsr305Lib.delete();
+    }
+    if (annotationsLib != null) {
+      annotationsLib.delete();
+    }
+    if (fbContrib != null) {
+      fbContrib.delete();
+    }
+
+    if (findSecBugs != null) {
+      findSecBugs.delete();
+    }
+  }
+
+  private File copyLib(String name) {
+    try (InputStream input = getClass().getResourceAsStream(name)) {
+      File dir = new File(fileSystem.workDir(), "findbugs");
+      FileUtils.forceMkdir(dir);
+      File target = new File(dir, name);
+      FileUtils.copyInputStreamToFile(input, target);
+      return target;
+    } catch (IOException e) {
+      throw new IllegalStateException("Fail to extract Findbugs dependency", e);
+    }
+  }
+
+  public File getFbContribJar() {
+    return fbContrib;
+  }
+
+  public File getFindSecBugsJar() {
+    return findSecBugs;
+  }
+
   public static List<PropertyDefinition> getPropertyDefinitions(Context context) {
+>>>>>>> /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/right.java
     String subCategory = "FindBugs";
+<<<<<<< /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/left.java
+    return Collections.unmodifiableList(Arrays.asList(
+||||||| /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/base.java
+    return ImmutableList.of(
+=======
     List<PropertyDefinition> properties = Arrays.asList(
+>>>>>>> /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/right.java
       PropertyDefinition.builder(FindbugsConstants.EFFORT_PROPERTY)
         .defaultValue(FindbugsConstants.EFFORT_DEFAULT_VALUE)
         .category(Java.KEY)
@@ -500,6 +663,11 @@ public class FindbugsConfiguration {
         .description("To analyze only the given files (in FQCN, comma separted) / package patterns")
         .type(PropertyType.STRING)
         .build()      
+<<<<<<< /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/left.java
+      ));
+||||||| /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/base.java
+      );
+=======
       );
     
     if (context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(9, 8))) {
@@ -520,6 +688,7 @@ public class FindbugsConfiguration {
     }
     
     return properties;
+>>>>>>> /usr/src/app/output/sonarsource/sonar-findbugs/185c5314e370b844d643c036c0bebada30bb7de6/src/main/java/org/sonar/plugins/findbugs/FindbugsConfiguration.java/right.java
   }
 
 }
