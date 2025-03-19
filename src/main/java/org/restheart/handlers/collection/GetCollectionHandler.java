@@ -1,22 +1,4 @@
-/*
- * RESTHeart - the data REST API server
- * Copyright (C) 2014 - 2015 SoftInstigate Srl
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.restheart.handlers.collection;
-
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
@@ -38,78 +20,72 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Di Cesare <andrea@softinstigate.com>
  */
 public class GetCollectionHandler extends PipedHttpHandler {
+  private static final Logger LOGGER = LoggerFactory.getLogger(GetCollectionHandler.class);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GetCollectionHandler.class);
+  private final Database dbsDAO;
 
-    private final Database dbsDAO;
-
-    /**
+  /**
      * Creates a new instance of GetCollectionHandler
      */
-    public GetCollectionHandler() {
-        this(new DbsDAO());
-    }
+  public GetCollectionHandler() {
+    this(new DbsDAO());
+  }
 
-    public GetCollectionHandler(Database dbsDAO) {
-        super(null);
-        this.dbsDAO = dbsDAO;
-    }
+  /**
+     * Creates a new instance of GetCollectionHandler
+     */
+  public GetCollectionHandler(Database dbsDAO) {
+    super(null);
+    this.dbsDAO = dbsDAO;
+  }
 
-    /**
+  /**
      *
      * @param exchange
      * @param context
      * @throws Exception
      */
-    @Override
-    public void handleRequest(HttpServerExchange exchange, RequestContext context) throws Exception {
-        DBCollection coll = this.dbsDAO.getCollection(context.getDBName(), context.getCollectionName());
-        long size = -1;
-
-        if (context.isCount()) {
-            size = this.dbsDAO.getCollectionSize(coll, exchange.getQueryParameters().get("filter"));
-        }
-
-        // ***** get data
-        ArrayList<DBObject> data = null;
-
-        try {
-            data = this.dbsDAO.getCollectionData(coll, context.getPage(), context.getPagesize(),
-                    context.getSortBy(), context.getFilter(), context.getCursorAllocationPolicy());
-        } catch (JSONParseException jpe) {
-            // the filter expression is not a valid json string
-            LOGGER.error("invalid filter expression {}", context.getFilter(), jpe);
-            ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_BAD_REQUEST, "wrong request, filter expression is invalid", jpe);
-            return;
-        } catch (MongoException me) {
-            if (me.getMessage().matches(".*Can't canonicalize query.*")) {
-                // error with the filter expression during query execution
-                LOGGER.error("invalid filter expression {}", context.getFilter(), me);
-                ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_BAD_REQUEST, "wrong request, filter expression is invalid", me);
-                return;
-            } else {
-                throw me;
-            }
-        }
-
-        if (exchange.isComplete()) {
-            // if an error occured getting data, the exchange is already closed
-            return;
-        }
-
-        // ***** return NOT_FOUND from here if collection is not existing 
-        // (this is to avoid to check existance via the slow CollectionDAO.checkCollectionExists)
-        if (data.isEmpty() && (context.getCollectionProps() == null || context.getCollectionProps().keySet().isEmpty())) {
-            ResponseHelper.endExchange(exchange, HttpStatus.SC_NOT_FOUND);
-            return;
-        }
-
-        try {
-            exchange.setResponseCode(HttpStatus.SC_OK);
-            new CollectionRepresentationFactory().sendHal(exchange, context, data, size);
-            exchange.endExchange();
-        } catch (IllegalQueryParamenterException ex) {
-            ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_BAD_REQUEST, ex.getMessage(), ex);
-        }
+  @Override public void handleRequest(HttpServerExchange exchange, RequestContext context) throws Exception {
+    DBCollection coll = this.dbsDAO.getCollection(context.getDBName(), context.getCollectionName());
+    long size = -1;
+    if (context.isCount()) {
+      size = this.dbsDAO.getCollectionSize(coll, exchange.getQueryParameters().get("filter"));
     }
+    ArrayList<DBObject> data = null;
+    try {
+      data = this.
+<<<<<<< /usr/src/app/output/softinstigate/restheart/0747dae87d95db10cd2f8c43757649542e6c6d62/src/main/java/org/restheart/handlers/collection/GetCollectionHandler.java/left.java
+      getCollectionData(coll, context.getPage(), context.getPagesize(), context.getSortBy(), context.getFilter(), context.getCursorAllocationPolicy(), context.isDetectObjectIds())
+=======
+      dbsDAO.getCollectionData(coll, context.getPage(), context.getPagesize(), context.getSortBy(), context.getFilter(), context.getCursorAllocationPolicy())
+>>>>>>> /usr/src/app/output/softinstigate/restheart/0747dae87d95db10cd2f8c43757649542e6c6d62/src/main/java/org/restheart/handlers/collection/GetCollectionHandler.java/right.java
+      ;
+    } catch (JSONParseException jpe) {
+      LOGGER.error("invalid filter expression {}", context.getFilter(), jpe);
+      ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_BAD_REQUEST, "wrong request, filter expression is invalid", jpe);
+      return;
+    } catch (MongoException me) {
+      if (me.getMessage().matches(".*Can\'t canonicalize query.*")) {
+        LOGGER.error("invalid filter expression {}", context.getFilter(), me);
+        ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_BAD_REQUEST, "wrong request, filter expression is invalid", me);
+        return;
+      } else {
+        throw me;
+      }
+    }
+    if (exchange.isComplete()) {
+      return;
+    }
+    if (data.isEmpty() && (context.getCollectionProps() == null || context.getCollectionProps().keySet().isEmpty())) {
+      ResponseHelper.endExchange(exchange, HttpStatus.SC_NOT_FOUND);
+      return;
+    }
+    try {
+      exchange.setResponseCode(HttpStatus.SC_OK);
+      new CollectionRepresentationFactory().sendHal(exchange, context, data, size);
+      exchange.endExchange();
+    } catch (IllegalQueryParamenterException ex) {
+      ResponseHelper.endExchangeWithMessage(exchange, HttpStatus.SC_BAD_REQUEST, ex.getMessage(), ex);
+    }
+  }
 }
