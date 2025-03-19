@@ -273,10 +273,10 @@ public class DNSCache extends ConcurrentHashMap<String, List<DNSEntry>> {
     @Override
     public synchronized String toString() {
         final StringBuilder sb = new StringBuilder(2000);
-        sb.append("\t---- cache ----");
-        for (final Map.Entry<String, List<DNSEntry>> entry : this.entrySet()) {
-            sb.append("\n\n\t\tname '").append(entry.getKey()).append("' ");
-            final List<? extends DNSEntry> entryList = entry.getValue();
+        sb.append("\n\t---- cache ----");
+        for(final Map.Entry<String, List<DNSEntry>> entry : this.entrySet()) {
+            sb.append("\n\n\t\tname '").append(entry.getKey()).append('\'');
+            final List<DNSEntry> entryList = entry.getValue();
             if ((entryList != null) && (!entryList.isEmpty())) {
                 synchronized (entryList) {
                     for (final DNSEntry dnsEntry : entryList) {
@@ -284,7 +284,13 @@ public class DNSCache extends ConcurrentHashMap<String, List<DNSEntry>> {
                     }
                 }
             } else {
+<<<<<<< /usr/src/app/output/openhab/jmdns/2c7d1a7405d9d43873f3a78f5373648ef759207e/src/main/java/javax/jmdns/impl/DNSCache.java/left.java
+                sb.append(" : no entries");
+||||||| /usr/src/app/output/openhab/jmdns/2c7d1a7405d9d43873f3a78f5373648ef759207e/src/main/java/javax/jmdns/impl/DNSCache.java/base.java
+                sb.append(" no entries");
+=======
                 sb.append(": no entries");
+>>>>>>> /usr/src/app/output/openhab/jmdns/2c7d1a7405d9d43873f3a78f5373648ef759207e/src/main/java/javax/jmdns/impl/DNSCache.java/right.java
             }
         }
         return sb.toString();

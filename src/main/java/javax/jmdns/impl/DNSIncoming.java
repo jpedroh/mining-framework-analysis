@@ -208,12 +208,27 @@ public final class DNSIncoming extends DNSMessage {
             int numAuthorities = _messageInputStream.readUnsignedShort();
             int numAdditionals = _messageInputStream.readUnsignedShort();
 
+<<<<<<< /usr/src/app/output/openhab/jmdns/2c7d1a7405d9d43873f3a78f5373648ef759207e/src/main/java/javax/jmdns/impl/DNSIncoming.java/left.java
             logger.debug("DNSIncoming() questions:{} answers:{} authorities:{} additionals:{}",
                     numQuestions,
                     numAnswers,
                     numAuthorities,
                     numAdditionals
             );
+||||||| /usr/src/app/output/openhab/jmdns/2c7d1a7405d9d43873f3a78f5373648ef759207e/src/main/java/javax/jmdns/impl/DNSIncoming.java/base.java
+            if (logger.isDebugEnabled()) {
+                logger.debug("DNSIncoming() questions:" + numQuestions + " answers:" + numAnswers + " authorities:" + numAuthorities + " additionals:" + numAdditionals);
+            }
+=======
+            if (logger.isDebugEnabled()) {
+                logger.debug("DNSIncoming() questions:{} answers:{} authorities:{} additionals:{}",
+                        numQuestions,
+                        numAnswers,
+                        numAuthorities,
+                        numAdditionals
+                );
+            }
+>>>>>>> /usr/src/app/output/openhab/jmdns/2c7d1a7405d9d43873f3a78f5373648ef759207e/src/main/java/javax/jmdns/impl/DNSIncoming.java/right.java
 
             // We need some sanity checks
             // A question is at least 5 bytes and answer 11 so check what we have
@@ -358,6 +373,19 @@ public final class DNSIncoming extends DNSMessage {
                 rec = new DNSRecord.Service(domain, recordClass, unique, ttl, priority, weight, port, target);
                 break;
             case TYPE_HINFO:
+<<<<<<< /usr/src/app/output/openhab/jmdns/2c7d1a7405d9d43873f3a78f5373648ef759207e/src/main/java/javax/jmdns/impl/DNSIncoming.java/left.java
+                final StringBuilder sb = new StringBuilder();
+                sb.append(_messageInputStream.readUTF(len));
+                int index = sb.indexOf(" ");
+                String cpu = (index > 0 ? sb.substring(0, index) : sb.toString()).trim();
+                String os = (index > 0 ? sb.substring(index + 1) : "").trim();
+||||||| /usr/src/app/output/openhab/jmdns/2c7d1a7405d9d43873f3a78f5373648ef759207e/src/main/java/javax/jmdns/impl/DNSIncoming.java/base.java
+                StringBuilder buf = new StringBuilder();
+                buf.append(_messageInputStream.readUTF(len));
+                int index = buf.indexOf(" ");
+                String cpu = (index > 0 ? buf.substring(0, index) : buf.toString()).trim();
+                String os = (index > 0 ? buf.substring(index + 1) : "").trim();
+=======
                 // see Section 3.2.2 in https://tools.ietf.org/html/rfc1035
                 // HINFO contains TWO pieces of information CPU and OS, so we cannot parse into one single BLOB
                 final byte[] hinfoBytes = _messageInputStream.readBytes(len);
@@ -376,6 +404,8 @@ public final class DNSIncoming extends DNSMessage {
                     os = ByteWrangler.readUTF(hinfoBytes, off + 1, hinfoBytes[off]);
                     off += hinfoBytes[off] + 1; // skip bytes read for OS
                 }
+
+>>>>>>> /usr/src/app/output/openhab/jmdns/2c7d1a7405d9d43873f3a78f5373648ef759207e/src/main/java/javax/jmdns/impl/DNSIncoming.java/right.java
                 rec = new DNSRecord.HostInformation(domain, recordClass, unique, ttl, cpu, os);
                 break;
             case TYPE_OPT:
@@ -460,10 +490,18 @@ public final class DNSIncoming extends DNSMessage {
                                 break;
                             case Unknown:
                                 if (optionCodeInt >= 65001 && optionCodeInt <= 65534) {
-                                    // RFC 6891 defines this range as used for experimental/local purposes.
+                                     // RFC 6891 defines this range as used for experimental/local purposes.
+<<<<<<< /usr/src/app/output/openhab/jmdns/2c7d1a7405d9d43873f3a78f5373648ef759207e/src/main/java/javax/jmdns/impl/DNSIncoming.java/left.java
+                                    logger.debug("There was an OPT answer using an experimental/local option code: {} data: {}", optionCodeInt, this._hexString(optiondata));
+||||||| /usr/src/app/output/openhab/jmdns/2c7d1a7405d9d43873f3a78f5373648ef759207e/src/main/java/javax/jmdns/impl/DNSIncoming.java/base.java
+                                    if (logger.isDebugEnabled()) {
+                                        logger.debug("There was an OPT answer using an experimental/local option code: " + optionCodeInt + " data: " + this._hexString(optiondata));
+                                    }
+=======
                                     if (logger.isDebugEnabled()) {
                                         logger.debug("There was an OPT answer using an experimental/local option code: {} data: {}", optionCodeInt, this._hexString(optiondata));
                                     }
+>>>>>>> /usr/src/app/output/openhab/jmdns/2c7d1a7405d9d43873f3a78f5373648ef759207e/src/main/java/javax/jmdns/impl/DNSIncoming.java/right.java
                                 } else {
                                     logger.warn("There was an OPT answer. Not currently handled. Option code: {} data: {}", optionCodeInt, this._hexString(optiondata));
                                 }

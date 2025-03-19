@@ -665,6 +665,25 @@ public abstract class DNSRecord extends DNSEntry {
          * (non-Javadoc)
          * @see com.webobjects.discoveryservices.DNSRecord#toString(java.lang.StringBuilder)
          */
+<<<<<<< /usr/src/app/output/openhab/jmdns/2c7d1a7405d9d43873f3a78f5373648ef759207e/src/main/java/javax/jmdns/impl/DNSRecord.java/left.java
+        @Override
+        protected void toString(final StringBuilder sb) {
+            super.toString(sb);
+            sb.append(" text: '");
+
+            final String text = ByteWrangler.readUTF(_text);
+
+            // if the text is longer than 20 characters cut it to 17 chars
+            // and add "..." at the end
+            if (20 < text.length()) {
+                sb.append(text, 0, 17).append("...");
+            } else {
+                sb.append(text);
+            }
+            sb.append('\'');
+        }
+||||||| /usr/src/app/output/openhab/jmdns/2c7d1a7405d9d43873f3a78f5373648ef759207e/src/main/java/javax/jmdns/impl/DNSRecord.java/base.java
+=======
         @Override
         protected void toString(final StringBuilder sb) {
             super.toString(sb);
@@ -691,6 +710,7 @@ public abstract class DNSRecord extends DNSEntry {
             }
             sb.append('\'');
         }
+>>>>>>> /usr/src/app/output/openhab/jmdns/2c7d1a7405d9d43873f3a78f5373648ef759207e/src/main/java/javax/jmdns/impl/DNSRecord.java/right.java
 
     }
 
