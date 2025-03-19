@@ -1,5 +1,4 @@
 package com.wrapper.spotify;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
@@ -21,22 +20,28 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClients;
 import org.apache.http.util.EntityUtils;
-
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.logging.Level;
 
 public class SpotifyHttpManager implements IHttpManager {
-
   private static final int DEFAULT_CACHE_MAX_ENTRIES = 1000;
+
   private static final int DEFAULT_CACHE_MAX_OBJECT_SIZE = 8192;
+
   private static CloseableHttpClient httpClient = CachingHttpClients.custom().build();
+
   private final HttpHost proxy;
+
   private final UsernamePasswordCredentials proxyCredentials;
+
   private final Integer cacheMaxEntries;
+
   private final Integer cacheMaxObjectSize;
 
   /**
@@ -49,51 +54,22 @@ public class SpotifyHttpManager implements IHttpManager {
     this.proxyCredentials = builder.proxyCredentials;
     this.cacheMaxEntries = builder.cacheMaxEntries;
     this.cacheMaxObjectSize = builder.cacheMaxObjectSize;
-
-
-    CacheConfig cacheConfig = CacheConfig.custom()
-            .setMaxCacheEntries(cacheMaxEntries != null ? cacheMaxEntries : DEFAULT_CACHE_MAX_ENTRIES)
-            .setMaxObjectSize(cacheMaxEntries != null ? cacheMaxEntries : DEFAULT_CACHE_MAX_OBJECT_SIZE)
-            .setSharedCache(false)
-            .build();
-
-    ConnectionConfig connectionConfig = ConnectionConfig
-            .custom()
-            .setCharset(Charset.forName("UTF-8"))
-            .build();
-
+    CacheConfig cacheConfig = CacheConfig.custom().setMaxCacheEntries(cacheMaxEntries != null ? cacheMaxEntries : DEFAULT_CACHE_MAX_ENTRIES).setMaxObjectSize(cacheMaxEntries != null ? cacheMaxEntries : DEFAULT_CACHE_MAX_OBJECT_SIZE).setSharedCache(false).build();
+    ConnectionConfig connectionConfig = ConnectionConfig.custom().setCharset(Charset.forName("UTF-8")).build();
     new BasicCredentialsProvider();
     CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
     if (proxy != null) {
-      credentialsProvider.setCredentials(
-              new AuthScope(proxy.getHostName(), proxy.getPort(), null, proxy.getSchemeName()),
-              proxyCredentials
-      );
+      credentialsProvider.setCredentials(new AuthScope(proxy.getHostName(), proxy.getPort(), null, proxy.getSchemeName()), proxyCredentials);
     }
-
-    RequestConfig requestConfig = RequestConfig
-            .custom()
-            .setCookieSpec(CookieSpecs.DEFAULT)
-            .setProxy(proxy)
-            .build();
-
-
-    httpClient = CachingHttpClients
-            .custom()
-            .setCacheConfig(cacheConfig)
-            .setDefaultConnectionConfig(connectionConfig)
-            .setDefaultCredentialsProvider(credentialsProvider)
-            .setDefaultRequestConfig(requestConfig)
-            .build();
+    RequestConfig requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).setProxy(proxy).build();
+    httpClient = CachingHttpClients.custom().setCacheConfig(cacheConfig).setDefaultConnectionConfig(connectionConfig).setDefaultCredentialsProvider(credentialsProvider).setDefaultRequestConfig(requestConfig).build();
   }
 
   public static URI makeUri(String uriString) {
     try {
       return new URI(uriString);
     } catch (URISyntaxException e) {
-      SpotifyApi.LOGGER.log(
-              Level.SEVERE,
-              "URI Syntax Exception for \"" + uriString + "\"");
+      SpotifyApi.LOGGER.log(Level.SEVERE, "URI Syntax Exception for \"" + uriString + "\"");
       return null;
     }
   }
@@ -114,176 +90,156 @@ public class SpotifyHttpManager implements IHttpManager {
     return cacheMaxObjectSize;
   }
 
-  @Override
-  public String get(URI uri, Header[] headers) throws
-          IOException,
-          SpotifyWebApiException {
+  @Override public String get(URI uri, Header[] headers) throws IOException, SpotifyWebApiException {
     assert (uri != null);
     assert (!uri.toString().equals(""));
+    HttpGet httpGet = new HttpGet();
 
-    final HttpGet httpGet = new HttpGet();
-
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/86bf0c7f5b0988b67d0191025981674cc6afe430/src/main/java/com/wrapper/spotify/SpotifyHttpManager.java/left.java
+    if (url.getParametersList() != null && url.getParametersList().size() > 0) {
+      uri = uri + parseQueryStringFromParameters(url.getParametersList());
+    }
+=======
     httpGet.setURI(uri);
+>>>>>>> /usr/src/app/output/thelinmichael/spotify-web-api-java/86bf0c7f5b0988b67d0191025981674cc6afe430/src/main/java/com/wrapper/spotify/SpotifyHttpManager.java/right.java
+
     httpGet.setHeaders(headers);
-
     String responseBody = getResponseBody(execute(httpGet));
-
     httpGet.releaseConnection();
-
     return responseBody;
   }
 
-  @Override
-  public String post(URI uri, Header[] headers, List<NameValuePair> postParameters) throws
-          IOException,
-          SpotifyWebApiException {
+  @Override public String post(URI uri, Header[] headers, List<NameValuePair> postParameters) throws IOException, SpotifyWebApiException {
     assert (uri != null);
     assert (!uri.toString().equals(""));
-
     final HttpPost httpPost = new HttpPost();
-
     httpPost.setURI(uri);
     httpPost.setHeaders(headers);
     httpPost.setEntity(new UrlEncodedFormEntity(postParameters));
-
     String responseBody = getResponseBody(execute(httpPost));
-
     httpPost.releaseConnection();
-
     return responseBody;
   }
 
-  @Override
-  public String put(URI uri, Header[] headers, List<NameValuePair> putParameters) throws
-          IOException,
-          SpotifyWebApiException {
+  @Override public String put(URI uri, Header[] headers, List<NameValuePair> putParameters) throws IOException, SpotifyWebApiException {
     assert (uri != null);
     assert (!uri.toString().equals(""));
-
     final HttpPut httpPut = new HttpPut();
-
     httpPut.setURI(uri);
     httpPut.setHeaders(headers);
     httpPut.setEntity(new UrlEncodedFormEntity(putParameters));
-
     String responseBody = getResponseBody(execute(httpPut));
     httpPut.releaseConnection();
-
     return responseBody;
   }
 
-  @Override
-  public String delete(URI uri, Header[] headers) throws
-          IOException,
-          SpotifyWebApiException {
+  @Override public String delete(URI uri, Header[] headers) throws IOException, SpotifyWebApiException {
     assert (uri != null);
     assert (!uri.toString().equals(""));
-
     final HttpDelete httpDelete = new HttpDelete();
-
     httpDelete.setURI(uri);
     httpDelete.setHeaders(headers);
-
     String responseBody = getResponseBody(execute(httpDelete));
-
     httpDelete.releaseConnection();
-
     return responseBody;
   }
 
-  private HttpResponse execute(HttpRequestBase method) throws
-          IOException {
+  private String parseQueryStringFromParameters(List<Url.Parameter> parameterList) {
+    StringBuilder queryStrBuilder = new StringBuilder();
+    String queryStr;
+    queryStrBuilder.append("?");
+    for (Url.Parameter param : parameterList) {
+      try {
+        queryStrBuilder.append(param.getName()).append("=").append(URLEncoder.encode(param.getValue(), "UTF-8")).append("&");
+      } catch (UnsupportedEncodingException e) {
+        e.printStackTrace();
+      }
+    }
+    queryStr = queryStrBuilder.toString().substring(0, queryStrBuilder.length() - 1);
+    return queryStr;
+  }
+
+  private HttpResponse execute(HttpRequestBase method) throws IOException {
     HttpCacheContext context = HttpCacheContext.create();
     HttpResponse response = httpClient.execute(method, context);
-
     try {
       CacheResponseStatus responseStatus = context.getCacheResponseStatus();
       switch (responseStatus) {
         case CACHE_HIT:
-          SpotifyApi.LOGGER.log(
-                  Level.CONFIG,
-                  "A response was generated from the cache with no requests sent upstream");
-          break;
+        SpotifyApi.LOGGER.log(Level.CONFIG, "A response was generated from the cache with no requests sent upstream");
+        break;
         case CACHE_MODULE_RESPONSE:
-          SpotifyApi.LOGGER.log(
-                  Level.CONFIG,
-                  "The response was generated directly by the caching module");
-          break;
+        SpotifyApi.LOGGER.log(Level.CONFIG, "The response was generated directly by the caching module");
+        break;
         case CACHE_MISS:
-          SpotifyApi.LOGGER.log(
-                  Level.CONFIG,
-                  "The response came from an upstream server");
-          break;
+        SpotifyApi.LOGGER.log(Level.CONFIG, "The response came from an upstream server");
+        break;
         case VALIDATED:
-          SpotifyApi.LOGGER.log(
-                  Level.CONFIG,
-                  "The response was generated from the cache after validating the entry with the origin server");
-          break;
+        SpotifyApi.LOGGER.log(Level.CONFIG, "The response was generated from the cache after validating the entry with the origin server");
+        break;
       }
     } catch (Exception e) {
       SpotifyApi.LOGGER.log(Level.SEVERE, e.getMessage());
     }
-
     return response;
   }
 
-  private String getResponseBody(HttpResponse httpResponse) throws
-          IOException,
-          SpotifyWebApiException {
+  private String getResponseBody(HttpResponse httpResponse) throws IOException, SpotifyWebApiException {
     final StatusLine statusLine = httpResponse.getStatusLine();
     final String responseBody = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
     String errorMessage = statusLine.getReasonPhrase();
-
     try {
       final JsonObject jsonObject = new JsonParser().parse(responseBody).getAsJsonObject();
-
       if (jsonObject.has("error")) {
         if (jsonObject.has("error_description")) {
           errorMessage = jsonObject.get("error_description").getAsString();
-        } else if (jsonObject.get("error").isJsonObject() && jsonObject.getAsJsonObject("error").has("message")) {
-          errorMessage = jsonObject.getAsJsonObject("error").get("message").getAsString();
+        } else {
+          if (jsonObject.get("error").isJsonObject() && jsonObject.getAsJsonObject("error").has("message")) {
+            errorMessage = jsonObject.getAsJsonObject("error").get("message").getAsString();
+          }
         }
       }
     } catch (JsonSyntaxException e) {
-      // Nothing necessary
     }
-
     switch (statusLine.getStatusCode()) {
       case HttpStatus.SC_OK:
-        return responseBody;
+      return responseBody;
       case HttpStatus.SC_CREATED:
-        return responseBody;
+      return responseBody;
       case HttpStatus.SC_ACCEPTED:
-        return responseBody;
+      return responseBody;
       case HttpStatus.SC_NO_CONTENT:
-        throw new NoContentException(statusLine.getReasonPhrase());
+      throw new NoContentException(statusLine.getReasonPhrase());
       case HttpStatus.SC_NOT_MODIFIED:
-        return responseBody;
+      return responseBody;
       case HttpStatus.SC_BAD_REQUEST:
-        throw new BadRequestException(errorMessage);
+      throw new BadRequestException(errorMessage);
       case HttpStatus.SC_UNAUTHORIZED:
-        throw new UnauthorizedException(errorMessage);
+      throw new UnauthorizedException(errorMessage);
       case HttpStatus.SC_FORBIDDEN:
-        throw new ForbiddenException(errorMessage);
+      throw new ForbiddenException(errorMessage);
       case HttpStatus.SC_NOT_FOUND:
-        throw new NotFoundException(errorMessage);
-      case 429: // TOO_MANY_REQUESTS (additional status code, RFC 6585)
-        throw new TooManyRequestsException(errorMessage);
+      throw new NotFoundException(errorMessage);
+      case 429:
+      throw new TooManyRequestsException(errorMessage);
       case HttpStatus.SC_INTERNAL_SERVER_ERROR:
-        throw new InternalServerErrorException(errorMessage);
+      throw new InternalServerErrorException(errorMessage);
       case HttpStatus.SC_BAD_GATEWAY:
-        throw new BadGatewayException(errorMessage);
+      throw new BadGatewayException(errorMessage);
       case HttpStatus.SC_SERVICE_UNAVAILABLE:
-        throw new ServiceUnavailableException(errorMessage);
+      throw new ServiceUnavailableException(errorMessage);
       default:
-        return responseBody;
+      return responseBody;
     }
   }
 
   public static class Builder {
     private HttpHost proxy;
+
     private UsernamePasswordCredentials proxyCredentials;
+
     private Integer cacheMaxEntries;
+
     private Integer cacheMaxObjectSize;
 
     public Builder setProxy(HttpHost proxy) {
