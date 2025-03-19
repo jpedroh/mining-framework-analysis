@@ -1116,26 +1116,35 @@ public class TermTermVectorsFromLucene { //implements VectorStore {
           //random indexing variants
           float globalweight = luceneUtils.getGlobalTermWeight(new Term(field, coterm));
 
-          // bind to appropriate position vector
-          if (flagConfig.positionalmethod() == PositionalMethod.PROXIMITY) {
-            toSuperpose = elementalTermVectors.getVector(coterm).copy();
-            toSuperpose.bind(positionalNumberVectors.getVector(cursorPositionNumber - focusposn));
-          }
+
 
           // calculate permutation required for either Sahlgren (2008) implementation
           // encoding word order, or encoding direction as in Burgess and Lund's HAL
           if (flagConfig.positionalmethod() == PositionalMethod.BASIC
               || flagConfig.positionalmethod() == PositionalMethod.PERMUTATIONPLUSBASIC
-              || flagConfig.positionalmethod() == PositionalMethod.PROXIMITY) {
-            semanticTermVectors.getVector(focusterm).superpose(toSuperpose, globalweight, null);
+              ){semanticTermVectors.getVector(focusterm).superpose(toSuperpose, globalweight, null);
           }
           if (flagConfig.positionalmethod() == PositionalMethod.PERMUTATION
-              || flagConfig.positionalmethod() == PositionalMethod.PERMUTATIONPLUSBASIC) {
-           permutation =  ((PermutationVector) permutationCache.getVector(""+(cursorPositionNumber - focusposn))).getCoordinates();
-            
-            semanticTermVectors.getVector(focusterm).superpose(toSuperpose, globalweight, permutation);
+              || flagConfig.positionalmethod() == PositionalMethod.PERMUTATIONPLUSBASIC
+              || flagConfig.positionalmethod() == PositionalMethod.PROXIMITY) {
+              
+        	   Enumeration<ObjectVector> theVecs = permutationCache.getAllVectors();
+<<<<<<< /usr/src/app/output/semanticvectors/semanticvectors/4058d3dc651ac207d14c6c9392b394552daed5e3/src/main/java/pitt/search/semanticvectors/TermTermVectorsFromLucene.java/left.java
+        	   permutation =  ((PermutationVector) permutationCache.getVector(""+(cursorPositionNumber - focusposn))).getCoordinates();
+||||||| /usr/src/app/output/semanticvectors/semanticvectors/4058d3dc651ac207d14c6c9392b394552daed5e3/src/main/java/pitt/search/semanticvectors/TermTermVectorsFromLucene.java/base.java
+        	   permutation =  ((PermutationVector) permutationCache.getVector(cursorPositionNumber - focusposn)).getCoordinates();
+=======
+        	   permutation =  ((PermutationVector) permutationCache.getVector((int) (cursorPositionNumber - occupiedPositionNumber))).getCoordinates();
+>>>>>>> /usr/src/app/output/semanticvectors/semanticvectors/4058d3dc651ac207d14c6c9392b394552daed5e3/src/main/java/pitt/search/semanticvectors/TermTermVectorsFromLucene.java/right.java
+           semanticTermVectors.getVector(focusterm).superpose(toSuperpose, globalweight, permutation);
           } else if (flagConfig.positionalmethod() == PositionalMethod.DIRECTIONAL) {
+<<<<<<< /usr/src/app/output/semanticvectors/semanticvectors/4058d3dc651ac207d14c6c9392b394552daed5e3/src/main/java/pitt/search/semanticvectors/TermTermVectorsFromLucene.java/left.java
               permutation =  ((PermutationVector) permutationCache.getVector(""+(Math.signum(cursorPositionNumber - focusposn)))).getCoordinates();
+||||||| /usr/src/app/output/semanticvectors/semanticvectors/4058d3dc651ac207d14c6c9392b394552daed5e3/src/main/java/pitt/search/semanticvectors/TermTermVectorsFromLucene.java/base.java
+              permutation =  ((PermutationVector) permutationCache.getVector(Math.signum(cursorPositionNumber - focusposn))).getCoordinates();
+=======
+              permutation =  ((PermutationVector) permutationCache.getVector((int) Math.signum(cursorPositionNumber - occupiedPositionNumber))).getCoordinates();
+>>>>>>> /usr/src/app/output/semanticvectors/semanticvectors/4058d3dc651ac207d14c6c9392b394552daed5e3/src/main/java/pitt/search/semanticvectors/TermTermVectorsFromLucene.java/right.java
               
             semanticTermVectors.getVector(focusterm).superpose(toSuperpose, globalweight, permutation);
           }

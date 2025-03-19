@@ -111,18 +111,28 @@ public class BinaryVector implements Vector {
 
   }
 
+
+
   /**
-   * Returns a new copy of this vector, in dense format.
-   */
+  * Returns a new copy of this vector, in dense format.
+  */
   @SuppressWarnings("unchecked")
   public BinaryVector copy() {
-    BinaryVector copy = new BinaryVector(dimension);
-    copy.bitSet = (FixedBitSet) bitSet.clone();
-    if (!isSparse)
-      copy.votingRecord = (ArrayList<FixedBitSet>) votingRecord.clone();
-    return copy;
+  BinaryVector copy = new BinaryVector(dimension);
+  copy.bitSet = (FixedBitSet) bitSet.clone();
+  if (!isSparse)
+  copy.votingRecord = (ArrayList<FixedBitSet>) votingRecord.clone();
+  if (tempSet != null) {
+  copy.tempSet = tempSet.clone();
   }
+  copy.minimum = minimum;
+  copy.totalNumberOfVotes = new AtomicInteger(totalNumberOfVotes.intValue());
+  copy.unTallied = new AtomicBoolean(unTallied.get());
+  copy.isSparse = isSparse;
 
+  return copy;
+  }
+  
   public String toString() {
     StringBuilder debugString = new StringBuilder("");
     
@@ -169,7 +179,7 @@ public class BinaryVector implements Vector {
 
 
       debugString.append("\nCardinality " + bitSet.cardinality()+"\n");
-      debugString.append("Votes " + totalNumberOfVotes+"\n");
+      debugString.append("Votes " + totalNumberOfVotes.get()+"\n");
       debugString.append("Minimum " + minimum + "\n");
       
       debugString.append("\n");
@@ -334,6 +344,12 @@ public class BinaryVector implements Vector {
     if (weight == 0) return;
 
     // Keep track of number (or cumulative weight) of votes.
+    if ((long) totalNumberOfVotes.get()+ (long) weight > Integer.MAX_VALUE)
+    {
+    	  System.err.println("Overflow error");
+    	  System.err.println(this);
+    }
+    else
     totalNumberOfVotes.set(totalNumberOfVotes.get() + (int) weight);
 
     // Decompose superposition task such that addition of some power of 2 (e.g. 64) is accomplished
@@ -460,7 +476,7 @@ public class BinaryVector implements Vector {
   protected synchronized FixedBitSet concludeVote(int target) {
     int target2 = (int) Math.ceil((double) target / (double) 2);
     target2 = target2 - minimum;
-
+    
     // Unlikely other than in testing: minimum more than half the votes
     if (target2 < 0) {
       FixedBitSet ans = new FixedBitSet(dimension);
@@ -470,9 +486,9 @@ public class BinaryVector implements Vector {
 
     boolean even = (target % 2 == 0);
     FixedBitSet result = concludeVote(target2, votingRecord.size() - 1);
-
+  
     if (even) {
-      setTempSetToExactMatches(target2);
+    	  setTempSetToExactMatches(target2);
       boolean switcher = true;
       // 50% chance of being true with split vote.
       int q = tempSet.nextSetBit(0);
