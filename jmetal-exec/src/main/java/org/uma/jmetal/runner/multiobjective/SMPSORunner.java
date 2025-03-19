@@ -86,13 +86,15 @@ public class SMPSORunner {
             .setMutation(mutation)
             .setMaxIterations(250)
             .setSwarmSize(100)
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/jmetal/jmetal/dabc5d0f5028171da904ada0013d235a1edfbc80/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/SMPSORunner.java/left.java
             //.setRandomGenerator(new MersenneTwisterGenerator())
+||||||| /usr/src/app/output/jmetal/jmetal/dabc5d0f5028171da904ada0013d235a1edfbc80/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/SMPSORunner.java/base.java
+     //       .setRandomGenerator(new MersenneTwisterGenerator())
 =======
      //       .setRandomGenerator(new MersenneTwisterGenerator())
                 //.setSolutionListEvaluator(new MultithreadedSolutionListEvaluator(8, problem)
             .setSolutionListEvaluator(new SequentialSolutionListEvaluator())
->>>>>>> master
+>>>>>>> /usr/src/app/output/jmetal/jmetal/dabc5d0f5028171da904ada0013d235a1edfbc80/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/SMPSORunner.java/right.java
             .build();
 
     AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
