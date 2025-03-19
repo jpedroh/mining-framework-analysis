@@ -296,6 +296,7 @@ public class HeatControl extends FireAbility {
 		return true;
 	}
 	
+<<<<<<< /usr/src/app/output/projectkorra/projectkorra/f877fa16a0ae7077c564a42d9a0bc53a5f34666f/src/com/projectkorra/projectkorra/firebending/HeatControl.java/left.java
 	public static void melt(Player player, final Block block) {
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "HeatControl", block.getLocation())) {
 			return;
@@ -337,7 +338,48 @@ public class HeatControl extends FireAbility {
 				}.runTaskLater(ProjectKorra.plugin, 5 * 20 * 60);
 			}
 		}
-}
+	}
+||||||| /usr/src/app/output/projectkorra/projectkorra/f877fa16a0ae7077c564a42d9a0bc53a5f34666f/src/com/projectkorra/projectkorra/firebending/HeatControl.java/base.java
+	public static void melt(Player player, final Block block) 
+=======
+	public static void melt(Player player, final Block block) {
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "HeatControl", block.getLocation())) {
+			return;
+		} else if (!SurgeWave.canThaw(block)) {
+			SurgeWave.thaw(block);
+			return;
+		} else if (!Torrent.canThaw(block)) {
+			Torrent.thaw(block);
+			return;
+		} else if (WaterArmsSpear.canThaw(block)) {
+			WaterArmsSpear.thaw(block);
+			return;
+		}
+		
+		WaterSpoutWave.thaw(block);
+		WaterCombo.thaw(block);
+		
+		if (isMeltable(block) && !TempBlock.isTempBlock(block) && WaterManipulation.canPhysicsChange(block)) {
+			if (block.getType() == Material.SNOW) {
+				block.setType(Material.AIR);
+				return;
+			} else if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
+				PhaseChange.thaw(block);
+			} else {
+				TempBlock tb = new TempBlock(block, Material.WATER, (byte)0);
+				MELTED_BLOCKS.put(block, tb);
+				
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						MELTED_BLOCKS.get(block).revertBlock();
+						MELTED_BLOCKS.remove(block);
+					}
+				}.runTaskLater(ProjectKorra.plugin, 5 * 20 * 60);
+			}
+		}
+	}
+>>>>>>> /usr/src/app/output/projectkorra/projectkorra/f877fa16a0ae7077c564a42d9a0bc53a5f34666f/src/com/projectkorra/projectkorra/firebending/HeatControl.java/right.java
 	
 	public void solidify(List<Location> area) {
 		if (System.currentTimeMillis() < solidifyLastBlockTime + solidifyDelay) {
