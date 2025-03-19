@@ -1,29 +1,9 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.  See the License for the specific language governing
- * permissions and limitations under the License.
- */
-
 package org.schemarepo.server;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
@@ -37,14 +17,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
 import org.schemarepo.Repository;
 import org.schemarepo.RepositoryUtil;
 import org.schemarepo.SchemaEntry;
 import org.schemarepo.SchemaValidationException;
 import org.schemarepo.Subject;
 import org.schemarepo.SubjectConfig;
-
 import com.sun.jersey.api.NotFoundException;
 
 /**
@@ -52,11 +30,7 @@ import com.sun.jersey.api.NotFoundException;
  *
  * Combine with {@link RepositoryServer} to run an embedded REST server.
  */
-@Singleton
-@Produces(MediaType.TEXT_PLAIN)
-@Path("/")
-public class RESTRepository {
-
+@Singleton @Produces(value = MediaType.TEXT_PLAIN) @Path(value = "/") public class RESTRepository {
   private final Repository repo;
 
   /**
@@ -68,8 +42,7 @@ public class RESTRepository {
    * @param repo
    *          The {@link Repository} to wrap.
    */
-  @Inject
-  public RESTRepository(Repository repo) {
+  @Inject public RESTRepository(Repository repo) {
     this.repo = repo;
   }
 
@@ -77,8 +50,7 @@ public class RESTRepository {
    * @return All subjects in the repository, serialized with
    *         {@link RepositoryUtil#subjectsToString(Iterable)}
    */
-  @GET
-  public String allSubjects() {
+  @GET public String allSubjects() {
     return RepositoryUtil.subjectsToString(repo.subjects());
   }
 
@@ -91,9 +63,7 @@ public class RESTRepository {
    * @return all schemas in the subject. Return a 404 Not Found if there is no
    *         such subject
    */
-  @GET
-  @Path("{subject}/all")
-  public String subjectList(@PathParam("subject") String subject) {
+  @GET @Path(value = "{subject}/all") public String subjectList(@PathParam(value = "subject") String subject) {
     Subject s = repo.lookup(subject);
     if (null == s) {
       throw new NotFoundException();
@@ -101,9 +71,7 @@ public class RESTRepository {
     return RepositoryUtil.schemasToString(s.allEntries());
   }
 
-  @GET
-  @Path("{subject}/config")
-  public String subjectConfig(@PathParam("subject") String subject) {
+  @GET @Path(value = "{subject}/config") public String subjectConfig(@PathParam(value = "subject") String subject) {
     Subject s = repo.lookup(subject);
     if (null == s) {
       throw new NotFoundException();
@@ -114,7 +82,6 @@ public class RESTRepository {
     try {
       props.store(writer, null);
     } catch (IOException e) {
-      // stringWriter can't throw ... but just in case
       throw new RuntimeException(e);
     }
     return writer.toString();
@@ -131,18 +98,14 @@ public class RESTRepository {
    *         subject does not exist, or HTTP 409 if there was a conflict
    *         creating the subject
    */
-  @PUT
-  @Path("{subject}")
-  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-  public Response createSubject(@PathParam("subject") String subject,
-      MultivaluedMap<String, String> configParams) {
+  @PUT @Path(value = "{subject}") @Consumes(value = MediaType.APPLICATION_FORM_URLENCODED) public Response createSubject(@PathParam(value = "subject") String subject, MultivaluedMap<String, String> configParams) {
     if (null == subject) {
       return Response.status(400).build();
     }
     SubjectConfig.Builder builder = new SubjectConfig.Builder();
-    for(Map.Entry<String, List<String>> entry : configParams.entrySet()) {
+    for (Map.Entry<String, List<String>> entry : configParams.entrySet()) {
       List<String> val = entry.getValue();
-      if(val.size() > 0) {
+      if (val.size() > 0) {
         builder.set(entry.getKey(), val.get(0));
       }
     }
@@ -158,9 +121,7 @@ public class RESTRepository {
    * @return A 200 response with {@link SchemaEntry#toString()} as the body, or
    *         a 404 response if either the subject or latest schema is not found.
    */
-  @GET
-  @Path("{subject}/latest")
-  public String latest(@PathParam("subject") String subject) {
+  @GET @Path(value = "{subject}/latest") public String latest(@PathParam(value = "subject") String subject) {
     return exists(getSubject(subject).latest()).toString();
   }
 
@@ -174,10 +135,7 @@ public class RESTRepository {
    * @return A 200 response with the schema as the body, or a 404 response if
    *         the subject or schema is not found
    */
-  @GET
-  @Path("{subject}/id/{id}")
-  public String schemaFromId(@PathParam("subject") String subject,
-      @PathParam("id") String id) {
+  @GET @Path(value = "{subject}/id/{id}") public String schemaFromId(@PathParam(value = "subject") String subject, @PathParam(value = "id") String id) {
     return exists(getSubject(subject).lookupById(id)).getSchema();
   }
 
@@ -191,10 +149,7 @@ public class RESTRepository {
    * @return A 200 response with the id in the body, or a 404 response if the
    *         subject or schema is not found
    */
-  @POST
-  @Path("{subject}/schema")
-  @Consumes(MediaType.TEXT_PLAIN)
-  public String idFromSchema(@PathParam("subject") String subject, String schema) {
+  @POST @Path(value = "{subject}/schema") @Consumes(value = MediaType.TEXT_PLAIN) public String idFromSchema(@PathParam(value = "subject") String subject, String schema) {
     return exists(getSubject(subject).lookupBySchema(schema)).getId();
   }
 
@@ -209,10 +164,7 @@ public class RESTRepository {
    *         forbidden response if the schema fails validation, or a 404 not
    *         found response if the subject does not exist
    */
-  @PUT
-  @Path("{subject}/register")
-  @Consumes(MediaType.TEXT_PLAIN)
-  public Response addSchema(@PathParam("subject") String subject, String schema) {
+  @PUT @Path(value = "{subject}/register") @Consumes(value = MediaType.TEXT_PLAIN) public Response addSchema(@PathParam(value = "subject") String subject, String schema) {
     try {
       return Response.ok(getSubject(subject).register(schema).getId()).build();
     } catch (SchemaValidationException e) {
@@ -236,11 +188,7 @@ public class RESTRepository {
    *         the id does not match the latest id or a 403 forbidden response if
    *         the schema failed validation
    */
-  @PUT
-  @Path("{subject}/register_if_latest/{latestId: .*}")
-  @Consumes(MediaType.TEXT_PLAIN)
-  public Response addSchema(@PathParam("subject") String subject,
-      @PathParam("latestId") String latestId, String schema) {
+  @PUT @Path(value = "{subject}/register_if_latest/{latestId: .*}") @Consumes(value = MediaType.TEXT_PLAIN) public Response addSchema(@PathParam(value = "subject") String subject, @PathParam(value = "latestId") String latestId, String schema) {
     Subject s = getSubject(subject);
     SchemaEntry latest;
     if ("".equals(latestId)) {
@@ -268,16 +216,12 @@ public class RESTRepository {
    * @return a 200 response if the subject exists, or a 404 response if the
    *         subject does not.
    */
-  @GET
-  @Path("{subject}")
-  public Response checkSubject(@PathParam("subject") String subject) {
+  @GET @Path(value = "{subject}") public Response checkSubject(@PathParam(value = "subject") String subject) {
     getSubject(subject);
     return Response.ok().build();
   }
 
-  @GET
-  @Path("{subject}/integral")
-  public String getSubjectIntegralKeys(@PathParam("subject") String subject) {
+  @GET @Path(value = "{subject}/integral") public String getSubjectIntegralKeys(@PathParam(value = "subject") String subject) {
     return Boolean.toString(getSubject(subject).integralKeys());
   }
 
@@ -295,5 +239,4 @@ public class RESTRepository {
     }
     return entry;
   }
-
 }
