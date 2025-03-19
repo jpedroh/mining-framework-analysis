@@ -114,7 +114,6 @@ public class PeerConnectionIT {
     public void shouldSuccessfullySendDataMessage() throws Exception {
         k3po.finish();
     }
-
     /**
      * See <a href="https://tools.ietf.org/html/rfc5766">RFC 5766: Turn Protocol</a>.
      */
@@ -125,7 +124,6 @@ public class PeerConnectionIT {
     public void shouldFailSendingDataMessageReservedChannelNumbber() throws Exception {
         k3po.finish();
     }
-
     /**
      * See <a href="https://tools.ietf.org/html/rfc5766">RFC 5766: Turn Protocol</a>.
      */
@@ -136,7 +134,6 @@ public class PeerConnectionIT {
     public void shouldFailSendingDataMessageTooShortLength() throws Exception {
         k3po.finish();
     }
-
     /**
      * See <a href="https://tools.ietf.org/html/rfc5766">RFC 5766: Turn Protocol</a>.
      */
@@ -147,6 +144,9 @@ public class PeerConnectionIT {
     public void shouldFailSendingDataMessageWrongChannelNumber() throws Exception {
         k3po.finish();
     }
+    /**
+     * See <a href="https://tools.ietf.org/html/rfc5766">RFC 5766: Turn Protocol</a>.
+     */
 
 }
 
