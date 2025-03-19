@@ -202,14 +202,14 @@ public class EnderPlayer extends Entity {
 
 	public void onDisconnect() throws Exception {
 		Utill.broadcastMessage(ChatColor.YELLOW + this.getPlayerName() + " left the game!");
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/sandergielisse/enderstone/7e7c2aae079a09a93b1d3811f8a1111a5e60d991/src/org/enderstone/server/entity/EnderPlayer.java/left.java
 		Main.getInstance().mainWorld.players.remove(this);
+||||||| /usr/src/app/output/sandergielisse/enderstone/7e7c2aae079a09a93b1d3811f8a1111a5e60d991/src/org/enderstone/server/entity/EnderPlayer.java/base.java
 =======
-
 		for (EnderPlayer p : Main.getInstance().onlinePlayers) {
 			p.getNetworkManager().sendPacket(new PacketOutPlayerListItem(this.getPlayerName(), false, (short) 1));
 		}
->>>>>>> sander
+>>>>>>> /usr/src/app/output/sandergielisse/enderstone/7e7c2aae079a09a93b1d3811f8a1111a5e60d991/src/org/enderstone/server/entity/EnderPlayer.java/right.java
 	}
 
 	public void updatePlayers(List<EnderPlayer> onlinePlayers) throws Exception {
