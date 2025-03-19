@@ -1,3 +1,9 @@
+package net.technicpack.launchercore.mirror.secure.rest;
+import net.technicpack.rest.RestfulAPIException;
+import net.technicpack.rest.RestObject;
+import net.technicpack.utilslib.Utils;
+import java.util.logging.Level;
+
 /**
  * This file is part of Technic Launcher Core.
  * Copyright (C) 2013 Syndicate, LLC
@@ -16,38 +22,27 @@
  * as well as a copy of the GNU Lesser General Public License,
  * along with Technic Launcher Core.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package net.technicpack.launchercore.mirror.secure.rest;
-
-import net.technicpack.rest.RestfulAPIException;
-import net.technicpack.rest.RestObject;
-import net.technicpack.utilslib.Utils;
-
-import java.util.logging.Level;
-
 public class JsonWebSecureMirror implements ISecureMirror {
-    private String baseUrl;
-    private String downloadHost;
+  private String baseUrl;
 
-    public JsonWebSecureMirror(String baseUrl, String downloadHost) {
-        this.baseUrl = baseUrl;
-        this.downloadHost = downloadHost;
+  private String downloadHost;
+
+  public JsonWebSecureMirror(String baseUrl, String downloadHost) {
+    this.baseUrl = baseUrl;
+    this.downloadHost = downloadHost;
+  }
+
+  @Override public String getDownloadHost() {
+    return downloadHost;
+  }
+
+  @Override public ValidateResponse validate(ValidateRequest req) {
+    String constructedUrl = baseUrl + "validate?a=" + req.getAccessToken() + "&c=" + req.getClientToken();
+    try {
+      return RestObject.getRestObject(ValidateResponse.class, constructedUrl);
+    } catch (RestfulAPIException ex) {
+      Utils.getLogger().log(Level.SEVERE, ex.getMessage(), ex);
+      return new ValidateResponse(ex.getMessage());
     }
-
-    @Override
-    public String getDownloadHost() {
-        return downloadHost;
-    }
-
-    @Override
-    public ValidateResponse validate(ValidateRequest req) {
-        String constructedUrl = baseUrl + "validate?a=" + req.getAccessToken() + "&c=" + req.getClientToken();
-
-        try {
-            return RestObject.getRestObject(ValidateResponse.class, constructedUrl);
-        } catch (RestfulAPIException ex) {
-            Utils.getLogger().log(Level.SEVERE, ex.getMessage(), ex);
-            return new ValidateResponse(ex.getMessage());
-        }
-    }
+  }
 }
