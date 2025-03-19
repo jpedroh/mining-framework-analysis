@@ -284,9 +284,9 @@ class FindbugsSensorTest extends FindbugsTests {
   void should_execute_findbugs_with_missing_smap_and_source() throws Exception {
     BugInstance bugInstance = getBugInstance("AM_CREATES_EMPTY_ZIP_FILE_ENTRY", 6, true);
     Collection<ReportedBug> collection = Arrays.asList(new ReportedBug(bugInstance));
-    when(executor.execute(activeRules)).thenReturn(collection);
+    when(executor.execute(false, false)).thenReturn(collection);
     JavaResourceLocator javaResourceLocator = mockJavaResourceLocator();
-    when(javaResourceLocator.classFilesToAnalyze()).thenReturn(Collections.singletonList(new File("file")));
+    when(javaResourceLocator.classFilesToAnalyze()).thenReturn(Lists.newArrayList(new File("file")));
     
     // return a class file that does not have SMAP (doesn't exist actually)
     when(byteCodeResourceLocator.findClassFileByClassName("org.sonar.commons.ZipUtils", this.javaResourceLocator)).thenReturn("");
@@ -297,7 +297,7 @@ class FindbugsSensorTest extends FindbugsTests {
     FindbugsSensor sensor = pico.getComponent(FindbugsSensor.class);
     sensor.execute(sensorContext);
 
-    verify(executor).execute(activeRules);
+    verify(executor).execute(false, false);
     verify(sensorContext, never()).newIssue();
   }
   
@@ -305,9 +305,9 @@ class FindbugsSensorTest extends FindbugsTests {
   void should_execute_findbugs_with_smap() throws Exception {
     BugInstance bugInstance = getBugInstance("AM_CREATES_EMPTY_ZIP_FILE_ENTRY", 6, true);
     Collection<ReportedBug> collection = Arrays.asList(new ReportedBug(bugInstance));
-    when(executor.execute(activeRules)).thenReturn(collection);
+    when(executor.execute(false, false)).thenReturn(collection);
     JavaResourceLocator javaResourceLocator = mockJavaResourceLocator();
-    when(javaResourceLocator.classFilesToAnalyze()).thenReturn(Collections.singletonList(new File("file")));
+    when(javaResourceLocator.classFilesToAnalyze()).thenReturn(Lists.newArrayList(new File("file")));
     
     String classFileName = "org/sonar/commons/ZipUtils.class";
     
@@ -322,7 +322,7 @@ class FindbugsSensorTest extends FindbugsTests {
     FindbugsSensor sensor = pico.getComponent(FindbugsSensor.class);
     sensor.execute(sensorContext);
 
-    verify(executor).execute(activeRules);
+    verify(executor).execute(false, false);
     verify(sensorContext, times(1)).newIssue();
   }
 

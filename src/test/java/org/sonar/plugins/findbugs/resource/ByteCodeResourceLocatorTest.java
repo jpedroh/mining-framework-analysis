@@ -11,10 +11,13 @@ import org.sonar.plugins.java.api.JavaResourceLocator;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
