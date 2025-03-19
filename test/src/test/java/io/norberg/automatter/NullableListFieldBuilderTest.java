@@ -1,70 +1,58 @@
 package io.norberg.automatter;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import javax.annotation.Nullable;
 import java.util.List;
-
+import javax.annotation.Nullable;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class NullableListFieldBuilderTest {
-
   public @Rule ExpectedException expectedException = ExpectedException.none();
 
-  @AutoMatter
-  interface NullableLists {
+  @AutoMatter interface NullableLists {
     @Nullable List<String> apples();
   }
 
   NullableListsBuilder builder;
 
-  @Before
-  public void setUp() {
+  @Before public void setUp() {
     builder = new NullableListsBuilder();
   }
 
-  @Test
-  public void testDefaults() {
+  @Test public void testDefaults() {
     final NullableLists lists = builder.build();
     assertThat(lists.apples(), is(nullValue()));
   }
 
-  @Test
-  public void testAddingItemInstantiatesList() {
+  @Test public void testAddingItemInstantiatesList() {
     builder.addApple("red");
     final NullableLists lists = builder.build();
     assertThat(lists.apples(), is(asList("red")));
   }
 
-  @Test
-  public void testAddingItemsInstantiatesList() {
+  @Test public void testAddingItemsInstantiatesList() {
     builder.apples("red", "green");
     final NullableLists lists = builder.build();
     assertThat(lists.apples(), is(asList("red", "green")));
   }
 
-  @Test
-  public void testAddingNullItems() {
+  @Test public void testAddingNullItems() {
     builder.apples("red", null, "green", null);
     final NullableLists lists = builder.build();
     assertThat(lists.apples(), is(asList("red", null, "green", null)));
   }
 
-  @Test
-  public void testSettingNull() {
+  @Test public void testSettingNull() {
     builder.apples("foo", "bar");
     builder.apples((List<String>) null);
     final NullableLists lists = builder.build();
     assertThat(lists.apples(), is(nullValue()));
   }
 
-  @Test
-  public void testAddingNull() {
+  @Test public void testAddingNull() {
     builder.addApple(null);
     final NullableLists lists = builder.build();
     List<String> apples = lists.apples();

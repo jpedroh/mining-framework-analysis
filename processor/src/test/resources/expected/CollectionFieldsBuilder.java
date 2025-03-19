@@ -1,7 +1,5 @@
 package foo;
-
 import io.norberg.automatter.AutoMatter;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,14 +10,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.annotation.Generated;
 
-@Generated("io.norberg.automatter.processor.AutoMatterProcessor")
-public final class CollectionFieldsBuilder {
-
+@Generated(value = { "io.norberg.automatter.processor.AutoMatterProcessor" }) public final class CollectionFieldsBuilder {
   private List<String> strings;
-  private Map<String,Integer> integers;
+
+  private Map<String, Integer> integers;
+
   private Set<Long> numbers;
 
   public CollectionFieldsBuilder() {
@@ -28,15 +25,15 @@ public final class CollectionFieldsBuilder {
   private CollectionFieldsBuilder(CollectionFields v) {
     List<String> _strings = v.strings();
     this.strings = (_strings == null) ? null : new ArrayList<String>(_strings);
-    Map<String,Integer> _integers = v.integers();
-    this.integers = (_integers == null) ? null : new HashMap<String,Integer>(_integers);
+    Map<String, Integer> _integers = v.integers();
+    this.integers = (_integers == null) ? null : new HashMap<String, Integer>(_integers);
     Set<Long> _numbers = v.numbers();
     this.numbers = (_numbers == null) ? null : new HashSet<Long>(_numbers);
   }
 
   private CollectionFieldsBuilder(CollectionFieldsBuilder v) {
     this.strings = (v.strings == null) ? null : new ArrayList<String>(v.strings);
-    this.integers = (v.integers == null) ? null : new HashMap<String,Integer>(v.integers);
+    this.integers = (v.integers == null) ? null : new HashMap<String, Integer>(v.integers);
     this.numbers = (v.numbers == null) ? null : new HashSet<Long>(v.numbers);
   }
 
@@ -49,6 +46,16 @@ public final class CollectionFieldsBuilder {
 
   public CollectionFieldsBuilder strings(List<? extends String> strings) {
     return strings((Collection<? extends String>) strings);
+  }
+
+  public CollectionFieldsBuilder strings(Iterable<? extends String> strings) {
+    if (strings == null) {
+      throw new NullPointerException("strings");
+    }
+    if (strings instanceof Collection) {
+      return strings((Collection<? extends String>) strings);
+    }
+    return strings(strings.iterator());
   }
 
   public CollectionFieldsBuilder strings(Collection<? extends String> strings) {
@@ -64,21 +71,10 @@ public final class CollectionFieldsBuilder {
     return this;
   }
 
-  public CollectionFieldsBuilder strings(Iterable<? extends String> strings) {
-    if (strings == null) {
-      throw new NullPointerException("strings");
-    }
-    if (strings instanceof Collection) {
-      return strings((Collection<? extends String>) strings);
-    }
-    return strings(strings.iterator());
-  }
-
   public CollectionFieldsBuilder strings(Iterator<? extends String> strings) {
     if (strings == null) {
       throw new NullPointerException("strings");
     }
-
     this.strings = new ArrayList<String>();
     while (strings.hasNext()) {
       String item = strings.next();
@@ -108,18 +104,18 @@ public final class CollectionFieldsBuilder {
     return this;
   }
 
-  public Map<String,Integer> integers() {
+  public Map<String, Integer> integers() {
     if (integers == null) {
-      integers = new HashMap<String,Integer>();
+      integers = new HashMap<String, Integer>();
     }
     return integers;
   }
 
-  public CollectionFieldsBuilder integers(Map<? extends String,? extends Integer> integers) {
+  public CollectionFieldsBuilder integers(Map<? extends String, ? extends Integer> integers) {
     if (integers == null) {
       throw new NullPointerException("integers");
     }
-    for (Map.Entry<? extends String,? extends Integer> entry : integers.entrySet()) {
+    for (Map.Entry<? extends String, ? extends Integer> entry : integers.entrySet()) {
       if (entry.getKey() == null) {
         throw new NullPointerException("integers: null key");
       }
@@ -127,7 +123,7 @@ public final class CollectionFieldsBuilder {
         throw new NullPointerException("integers: null value");
       }
     }
-    this.integers = new HashMap<String,Integer>(integers);
+    this.integers = new HashMap<String, Integer>(integers);
     return this;
   }
 
@@ -138,13 +134,12 @@ public final class CollectionFieldsBuilder {
     if (v1 == null) {
       throw new NullPointerException("integers: v1");
     }
-    integers = new HashMap<String,Integer>();
+    integers = new HashMap<String, Integer>();
     integers.put(k1, v1);
     return this;
   }
 
-  public CollectionFieldsBuilder integers(String k1, Integer v1,
-                                          String k2, Integer v2) {
+  public CollectionFieldsBuilder integers(String k1, Integer v1, String k2, Integer v2) {
     integers(k1, v1);
     if (k2 == null) {
       throw new NullPointerException("integers: k2");
@@ -156,9 +151,7 @@ public final class CollectionFieldsBuilder {
     return this;
   }
 
-  public CollectionFieldsBuilder integers(String k1, Integer v1,
-                                          String k2, Integer v2,
-                                          String k3, Integer v3) {
+  public CollectionFieldsBuilder integers(String k1, Integer v1, String k2, Integer v2, String k3, Integer v3) {
     integers(k1, v1, k2, v2);
     if (k3 == null) {
       throw new NullPointerException("integers: k3");
@@ -170,10 +163,7 @@ public final class CollectionFieldsBuilder {
     return this;
   }
 
-  public CollectionFieldsBuilder integers(String k1, Integer v1,
-                                          String k2, Integer v2,
-                                          String k3, Integer v3,
-                                          String k4, Integer v4) {
+  public CollectionFieldsBuilder integers(String k1, Integer v1, String k2, Integer v2, String k3, Integer v3, String k4, Integer v4) {
     integers(k1, v1, k2, v2, k3, v3);
     if (k4 == null) {
       throw new NullPointerException("integers: k4");
@@ -185,11 +175,7 @@ public final class CollectionFieldsBuilder {
     return this;
   }
 
-  public CollectionFieldsBuilder integers(String k1, Integer v1,
-                                          String k2, Integer v2,
-                                          String k3, Integer v3,
-                                          String k4, Integer v4,
-                                          String k5, Integer v5) {
+  public CollectionFieldsBuilder integers(String k1, Integer v1, String k2, Integer v2, String k3, Integer v3, String k4, Integer v4, String k5, Integer v5) {
     integers(k1, v1, k2, v2, k3, v3, k4, v4);
     if (k5 == null) {
       throw new NullPointerException("integers: k5");
@@ -209,7 +195,7 @@ public final class CollectionFieldsBuilder {
       throw new NullPointerException("integer: value");
     }
     if (integers == null) {
-      integers = new HashMap<String,Integer>();
+      integers = new HashMap<String, Integer>();
     }
     integers.put(key, value);
     return this;
@@ -226,6 +212,16 @@ public final class CollectionFieldsBuilder {
     return numbers((Collection<? extends Long>) numbers);
   }
 
+  public CollectionFieldsBuilder numbers(Iterable<? extends Long> numbers) {
+    if (numbers == null) {
+      throw new NullPointerException("numbers");
+    }
+    if (numbers instanceof Collection) {
+      return numbers((Collection<? extends Long>) numbers);
+    }
+    return numbers(numbers.iterator());
+  }
+
   public CollectionFieldsBuilder numbers(Collection<? extends Long> numbers) {
     if (numbers == null) {
       throw new NullPointerException("numbers");
@@ -237,16 +233,6 @@ public final class CollectionFieldsBuilder {
     }
     this.numbers = new HashSet<Long>(numbers);
     return this;
-  }
-
-  public CollectionFieldsBuilder numbers(Iterable<? extends Long> numbers) {
-    if (numbers == null) {
-      throw new NullPointerException("numbers");
-    }
-    if (numbers instanceof Collection) {
-      return numbers((Collection<? extends Long>) numbers);
-    }
-    return numbers(numbers.iterator());
   }
 
   public CollectionFieldsBuilder numbers(Iterator<? extends Long> numbers) {
@@ -283,9 +269,7 @@ public final class CollectionFieldsBuilder {
   }
 
   public CollectionFields build() {
-    return new Value((strings != null) ? Collections.unmodifiableList(new ArrayList<String>(strings)) : Collections.<String>emptyList(),
-                     (integers != null) ? Collections.unmodifiableMap(new HashMap<String,Integer>(integers)) : Collections.<String,Integer>emptyMap(),
-                     (numbers != null) ? Collections.unmodifiableSet(new HashSet<Long>(numbers)) : Collections.<Long>emptySet());
+    return new Value((strings != null) ? Collections.unmodifiableList(new ArrayList<String>(strings)) : Collections.<String>emptyList(), (integers != null) ? Collections.unmodifiableMap(new HashMap<String, Integer>(integers)) : Collections.<String, Integer>emptyMap(), (numbers != null) ? Collections.unmodifiableSet(new HashSet<Long>(numbers)) : Collections.<Long>emptySet());
   }
 
   public static CollectionFieldsBuilder from(CollectionFields v) {
@@ -296,36 +280,28 @@ public final class CollectionFieldsBuilder {
     return new CollectionFieldsBuilder(v);
   }
 
-  private static final class Value
-      implements CollectionFields {
-
+  private static final class Value implements CollectionFields {
     private final List<String> strings;
-    private final Map<String,Integer> integers;
+
+    private final Map<String, Integer> integers;
+
     private final Set<Long> numbers;
 
-    private Value(@AutoMatter.Field("strings") List<String> strings,
-                  @AutoMatter.Field("integers") Map<String,Integer> integers,
-                  @AutoMatter.Field("numbers") Set<Long> numbers) {
+    private Value(@AutoMatter.Field(value = "strings") List<String> strings, @AutoMatter.Field(value = "integers") Map<String, Integer> integers, @AutoMatter.Field(value = "numbers") Set<Long> numbers) {
       this.strings = (strings != null) ? strings : Collections.<String>emptyList();
-      this.integers = (integers != null) ? integers : Collections.<String,Integer>emptyMap();
+      this.integers = (integers != null) ? integers : Collections.<String, Integer>emptyMap();
       this.numbers = (numbers != null) ? numbers : Collections.<Long>emptySet();
     }
 
-    @AutoMatter.Field
-    @Override
-    public List<String> strings() {
+    @AutoMatter.Field @Override public List<String> strings() {
       return strings;
     }
 
-    @AutoMatter.Field
-    @Override
-    public Map<String,Integer> integers() {
+    @AutoMatter.Field @Override public Map<String, Integer> integers() {
       return integers;
     }
 
-    @AutoMatter.Field
-    @Override
-    public Set<Long> numbers() {
+    @AutoMatter.Field @Override public Set<Long> numbers() {
       return numbers;
     }
 
@@ -333,17 +309,14 @@ public final class CollectionFieldsBuilder {
       return new CollectionFieldsBuilder(this);
     }
 
-    @Override
-    public boolean equals(Object o) {
+    @Override public boolean equals(Object o) {
       if (this == o) {
         return true;
       }
       if (!(o instanceof CollectionFields)) {
         return false;
       }
-
       final CollectionFields that = (CollectionFields) o;
-
       if (strings != null ? !strings.equals(that.strings()) : that.strings() != null) {
         return false;
       }
@@ -353,12 +326,10 @@ public final class CollectionFieldsBuilder {
       if (numbers != null ? !numbers.equals(that.numbers()) : that.numbers() != null) {
         return false;
       }
-
       return true;
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
       int result = 1;
       long temp;
       result = 31 * result + (strings != null ? strings.hashCode() : 0);
@@ -367,13 +338,8 @@ public final class CollectionFieldsBuilder {
       return result;
     }
 
-    @Override
-    public String toString() {
-      return "CollectionFields{" +
-             "strings=" + strings +
-             ", integers=" + integers +
-             ", numbers=" + numbers +
-             '}';
+    @Override public String toString() {
+      return "CollectionFields{" + "strings=" + strings + ", integers=" + integers + ", numbers=" + numbers + '}';
     }
   }
 }
