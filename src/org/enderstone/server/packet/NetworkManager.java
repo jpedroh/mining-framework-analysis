@@ -211,6 +211,7 @@ public class NetworkManager extends ChannelHandlerAdapter {
 					try {
 
 						sendPacket(new PacketOutLoginSucces(player.uuid.toString(), player.getPlayerName()));
+
 						sendPacket(new PacketOutJoinGame(player.getEntityId(), (byte) GameMode.SURVIVAL.getId(), (byte) 0, (byte) 1, (byte) 60, "default", false));
 
 						EnderWorld mainWorld = Main.getInstance().mainWorld;
