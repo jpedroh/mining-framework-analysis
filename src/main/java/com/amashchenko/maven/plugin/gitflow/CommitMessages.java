@@ -37,6 +37,7 @@ public class CommitMessages {
     private String tagReleaseMessage;
 
     private String updateDevToAvoidConflitsMessage;
+
     private String updateDevBackPreMergeStateMessage;
 
     public CommitMessages() {
@@ -52,12 +53,13 @@ public class CommitMessages {
         releaseFinishMessage = "Update for next development version";
 
         releaseVersionUpdateMessage = "Update for next development version";
-      
+
         tagHotfixMessage = "Tag hotfix";
         tagReleaseMessage = "Tag release";
 
-        updateDevToAvoidConflitsMessage = "Updating develop poms to master version to avoid merge conflits";
-        updateDevBackPreMergeStateMessage = "Updating develop poms version back to pre-merge state";
+        updateDevToAvoidConflitsMessage = "updating develop poms to master version to avoid merge conflits";
+        updateDevBackPreMergeStateMessage = "updating develop poms version back to pre merge state";
+
     }
 
     /**
