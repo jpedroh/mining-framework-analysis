@@ -1,5 +1,4 @@
 package com.deathrayresearch.outlier;
-
 import com.deathrayresearch.outlier.columns.CategoryColumn;
 import com.deathrayresearch.outlier.columns.Column;
 import com.deathrayresearch.outlier.columns.IntColumn;
@@ -12,21 +11,18 @@ import com.deathrayresearch.outlier.util.ReverseIntComparator;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparator;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import static com.deathrayresearch.outlier.sorting.Sort.Order;
 
 /**
  *
  */
 public class Table implements Relation {
-
   private final String id;
 
   private String name;
@@ -49,35 +45,30 @@ public class Table implements Relation {
    * @param name    The name of the table
    * @param columns One or more columns, all of which must have either the same length or size 0
    */
-  public Table(String name, Column ... columns) {
+  public Table(String name, Column... columns) {
     this(name);
     for (Column column : columns) {
       this.addColumn(column);
     }
   }
 
-  @Override
-  public void addColumn(Column column) {
+  @Override public void addColumn(Column column) {
     columnList.add(column);
   }
 
-  @Override
-  public void setName(String name) {
+  @Override public void setName(String name) {
     this.name = name;
   }
 
-  @Override
-  public Column column(int columnIndex) {
+  @Override public Column column(int columnIndex) {
     return columnList.get(columnIndex);
   }
 
-  @Override
-  public int columnCount() {
+  @Override public int columnCount() {
     return columnList.size();
   }
 
-  @Override
-  public int rowCount() {
+  @Override public int rowCount() {
     int result = 0;
     if (!columnList.isEmpty()) {
       result = columnList.get(0).size();
@@ -85,8 +76,7 @@ public class Table implements Relation {
     return result;
   }
 
-  @Override
-  public List<Column> columns() {
+  @Override public List<Column> columns() {
     return columnList;
   }
 
@@ -118,8 +108,7 @@ public class Table implements Relation {
     return columnIndex;
   }
 
-  @Override
-  public String name() {
+  @Override public String name() {
     return name;
   }
 
@@ -146,13 +135,11 @@ public class Table implements Relation {
     return names;
   }
 
-  @Override
-  public int row(int r) {
+  @Override public int row(int r) {
     return r;
   }
 
-  @Override
-  public String get(int c, int r) {
+  @Override public String get(int c, int r) {
     Column column = column(c);
     return column.getString(r);
   }
@@ -160,8 +147,7 @@ public class Table implements Relation {
   /**
    * Returns a table with the same columns as this table, but no data
    */
-  @Override
-  public Relation emptyCopy() {
+  @Override public Relation emptyCopy() {
     Relation copy = new Table(name);
     for (Column column : columnList) {
       copy.addColumn(column.emptyCopy());
@@ -169,8 +155,7 @@ public class Table implements Relation {
     return copy;
   }
 
-  @Override
-  public void clear() {
+  @Override public void clear() {
     for (Column column : columnList) {
       column.clear();
     }
@@ -225,7 +210,7 @@ public class Table implements Relation {
     return sortOn(key);
   }
 
-  public static Sort getSort(String ... columnNames) {
+  public static Sort getSort(String... columnNames) {
     Sort key = null;
     for (String s : columnNames) {
       if (key == null) {
@@ -267,14 +252,12 @@ public class Table implements Relation {
   public IntComparatorChain getChain(Sort key) {
     Iterator<Map.Entry<String, Sort.Order>> entries = key.iterator();
     Map.Entry<String, Sort.Order> sort = entries.next();
-
     IntComparator comparator;
     if (sort.getValue() == Order.ASCEND) {
       comparator = rowComparator(sort.getKey(), false);
     } else {
       comparator = rowComparator(sort.getKey(), true);
     }
-
     IntComparatorChain chain = new IntComparatorChain(comparator);
     while (entries.hasNext()) {
       sort = entries.next();
@@ -292,15 +275,8 @@ public class Table implements Relation {
    */
   public Table sortOn(IntComparator rowComparator) {
     Table newTable = (Table) emptyCopy();
-
-/*
-    int[] newRows = rows();
-    IntArrays.mergeSort(newRows, rowComparator);
-*/
-
     IntArrayList newRows = new IntArrayList(rows());
     Collections.sort(newRows, rowComparator);
-
     Rows.copyRowsToTable(newRows, this, newTable);
     return newTable;
   }
@@ -320,10 +296,8 @@ public class Table implements Relation {
    * @param reverse    {@code true} if the column should be sorted in reverse
    */
   private IntComparator rowComparator(String columnName, Boolean reverse) {
-
     Column column = this.column(columnName);
     IntComparator rowComparator = column.rowComparator();
-
     if (reverse) {
       return ReverseIntComparator.reverse(rowComparator);
     } else {
@@ -335,23 +309,20 @@ public class Table implements Relation {
     return new Query(this);
   }
 
-  public Query select(String ... columnName) {
+  public Query select(String... columnName) {
     return new Query(this, columnName);
   }
 
   /**
    * Removes the given column
    */
-  @Override
-  public void removeColumn(Column column) {
+  @Override public void removeColumn(Column column) {
     columnList.remove(column);
   }
 
   public Average average(String summarizedColumnName) {
     return new Average(this, summarizedColumnName);
-
   }
-
 
   public Table countBy(String byColumnName) {
     TableGroup group = new TableGroup(this, byColumnName);
@@ -360,7 +331,6 @@ public class Table implements Relation {
     IntColumn countColumn = IntColumn.create("Count", group.size());
     resultTable.addColumn(groupColumn);
     resultTable.addColumn(countColumn);
-
     for (SubTable subTable : group.getSubTables()) {
       int count = subTable.rowCount();
       String groupName = subTable.name();
@@ -373,13 +343,10 @@ public class Table implements Relation {
   public Table sum(IntColumn sumColumn, Column byColumn) {
     TableGroup groupTable = new TableGroup(this, byColumn);
     Table resultTable = new Table(name + " summary");
-
     CategoryColumn groupColumn = CategoryColumn.create("Group", groupTable.size());
     IntColumn sumColumn1 = IntColumn.create("Sum", groupTable.size());
-
     resultTable.addColumn(groupColumn);
     resultTable.addColumn(sumColumn1);
-
     for (SubTable subTable : groupTable.getSubTables()) {
       int sum = subTable.intColumn(sumColumn.name()).sum();
       String groupName = subTable.name();
