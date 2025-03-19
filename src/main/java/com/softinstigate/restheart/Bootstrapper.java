@@ -96,7 +96,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,19 +122,7 @@ public final class Bootstrapper {
      * @param args command line arguments
      */
     public static void main(final String[] args) {
-        try {
-            // read configuration silently, to avoid logging before initializing the logging
-            configuration = FileUtils.getConfiguration(args, true);
-        } catch (ConfigurationException ex) {
-            LOGGER.error(ex.getMessage() + ", exiting...", ex);
-            stopServer();
-            System.exit(-1);
-        }
-        
-        Daemon d = null;
-
         if (!OSChecker.isWindows()) {
-            d = new Daemon.WithoutChdir();
 
             // pid file name include the hash of the configuration file so that for each configuration we can have just one instance running
             // in we would proceed we get a BindException for same port being already used by the running instance
@@ -152,71 +139,50 @@ public final class Bootstrapper {
                 System.exit(-1);
             }
         }
-        
-        initLogging(args, d);
 
+        Daemon d = null;
+        
         if (!OSChecker.isWindows()) {
             d = new Daemon.WithoutChdir();
         } else {
             LOGGER.info("starting RESTHeart ********************************************");
-
-            try {
-                configuration = FileUtils.getConfiguration(args);
-            } catch (ConfigurationException ex) {
-                LOGGER.error(ex.getMessage() + ", exiting...", ex);
-                stopServer();
-                System.exit(-1);
-            }
+            configuration = FileUtils.getConfiguration(args);
 
             if (shouldDemonize(args) && OSChecker.isWindows()) {
                 LOGGER.warn("fork is not supported on Windows");
             }
 
-            logLoggingConfiguration(args, d);
+            initLogging(args, d);
         }
 
-        // we are not on windows and this process is not daemonized
+        // we are not on windows and this process is not daemonizer
         if (d != null && !d.isDaemonized()) {
             LOGGER.info("starting RESTHeart ********************************************");
-
-            try {
-                configuration = FileUtils.getConfiguration(args);
-            } catch (ConfigurationException ex) {
-                LOGGER.error(ex.getMessage() + ", exiting...", ex);
-                stopServer();
-                System.exit(-1);
-            }
-
+            configuration = FileUtils.getConfiguration(args);
             // we have to fork, this is done later by demonizeInCase(args, d), now just log some message
             if (shouldDemonize(args)) {
                 LOGGER.info("stopping logging to console");
                 LOGGER.info("logging to {} with level {}", configuration.getLogFilePath(), configuration.getLogLevel());
                 LOGGER.info("RESTHeart forked **********************************************");
-            } // we don't have to fork, let's create the pid file (otherwise done by Daemon.init() call in demonizeInCase())
+            } 
+            // we don't have to fork, let's create the pid file (otherwise done by Daemon.init() call in demonizeInCase())
             else {
                 LOGGER.info("pid file {}", pidFilePath);
                 FileUtils.createPidFile(pidFilePath);
             }
-
-            logLoggingConfiguration(args, d);
+            
+            initLogging(args, d);
         }
 
-        // we are not on windows and this process is daemonized
+        // we are not on windows and this process is daemonizer
         if (d != null && d.isDaemonized()) {
+            configuration = FileUtils.getConfiguration(args);
+
             pidFilePath = FileUtils.getPidFilePath(FileUtils.getFileAbsoultePathHash(FileUtils.getConfigurationFilePath(args)));
 
+            initLogging(args, d);
+
             LOGGER.info("forking RESTHeart ********************************************");
-
-            logLoggingConfiguration(args, d);
-
-            // re-read configuration, to have warnings and errors logged to file
-            try {
-                configuration = FileUtils.getConfiguration(args);
-            } catch (ConfigurationException ex) {
-                LOGGER.error(ex.getMessage() + ", exiting...", ex);
-                stopServer();
-                System.exit(-1);
-            }
 
             try {
                 LOGGER.info("pid file {}", pidFilePath);
@@ -236,14 +202,7 @@ public final class Bootstrapper {
      * @param confFilePath the path of the configuration file
      */
     public static void startup(final String confFilePath) {
-        try {
-            configuration = FileUtils.getConfiguration(new String[]{confFilePath});
-        } catch (ConfigurationException ex) {
-            LOGGER.error(ex.getMessage() + ", exiting...", ex);
-            stopServer();
-            System.exit(-1);
-        }
-
+        configuration = FileUtils.getConfiguration(new String[]{confFilePath});
         startServer();
     }
 
@@ -261,32 +220,16 @@ public final class Bootstrapper {
             LoggingInitializer.stopConsoleLogging();
             LoggingInitializer.startFileLogging(configuration.getLogFilePath());
         } else if (!shouldDemonize(args)) {
-            if (!configuration.isLogToConsole()) {
-                LoggingInitializer.stopConsoleLogging();
-            } else {
-            }
-
             if (configuration.isLogToFile()) {
-                LoggingInitializer.startFileLogging(configuration.getLogFilePath());
+                LOGGER.info("logging to {} with level {}", configuration.getLogFilePath(), configuration.getLogLevel());
             }
-        }
-    }
 
-    private static void logLoggingConfiguration(final String[] args, final Daemon d) {
-        if (d == null || !d.isDaemonized()) {
-            return;
-        }
-
-        if (!shouldDemonize(args)) {
             if (!configuration.isLogToConsole()) {
                 LOGGER.info("stopping logging to console ");
                 LOGGER.info("***************************************************************");
+                LoggingInitializer.stopConsoleLogging();
             } else {
                 LOGGER.info("logging to console with level {}", configuration.getLogLevel());
-            }
-
-            if (configuration.isLogToFile()) {
-                LOGGER.info("logging to {} with level {}", configuration.getLogFilePath(), configuration.getLogLevel());
             }
         }
     }
@@ -315,7 +258,7 @@ public final class Bootstrapper {
                     stopServer(true);
                     System.exit(0);
                 } catch (Exception ex) {
-                    LOGGER.warn("unable to fork process. Note that forking is only supported on Linux (x86, amd64), Solaris (x86, amd64, sparc, sparcv9) and Mac OS X", ex);
+                    LOGGER.warn("unable to fork process. forking is only supported on Linux (x86, amd64), Solaris (x86, amd64, sparc, sparcv9) and Mac OS X", ex);
                 }
             } else {
                 LOGGER.info("unable to fork process, this is only supported on POSIX compliant OSes");
@@ -326,14 +269,52 @@ public final class Bootstrapper {
     private static void startServer() {
         LOGGER.info("RESTHeart version {}", RESTHEART_VERSION);
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
         String mongoHosts = configuration.getMongoServers().stream()
                 .map(s -> s.get(Configuration.MONGO_HOST_KEY) + ":" + s.get(Configuration.MONGO_PORT_KEY) + " ")
                 .reduce("", String::concat);
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+        LoggingInitializer.setLogLevel(conf.getLogLevel());
+=======
+        LoggingInitializer.setLogLevel(getConf().getLogLevel());
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
         LOGGER.info("initializing mongodb connection pool to {}", mongoHosts);
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+        if (conf.isLogToFile()) {
+            LoggingInitializer.startFileLogging(conf.getLogFilePath());
+        }
+
+        logger.info("starting RESTHeart ********************************************");
+
+        logger.info("RESTHeart version {}", RESTHEART_VERSION);
+
+        String mongoHosts = conf.getMongoServers().stream().map(s -> s.get(Configuration.MONGO_HOST_KEY) + ":" + s.get(Configuration.MONGO_PORT_KEY) + " ").reduce("", String::concat);
+
+        logger.info("initializing mongodb connection pool to {}", mongoHosts);
+=======
+        if (getConf().isLogToFile()) {
+            LoggingInitializer.startFileLogging(getConf().getLogFilePath());
+        }
+
+        logger.info("starting RESTHeart ********************************************");
+
+        logger.info("RESTHeart version {}", RESTHEART_VERSION);
+
+        String mongoHosts = getConf().getMongoServers().stream().map(s -> s.get(Configuration.MONGO_HOST_KEY) + ":" + s.get(Configuration.MONGO_PORT_KEY) + " ").reduce("", String::concat);
+
+        logger.info("initializing mongodb connection pool to {}", mongoHosts);
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
 
         try {
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
             MongoDBClientSingleton.init(configuration);
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+            MongoDBClientSingleton.init(conf);
+=======
+            MongoDBClientSingleton.init(getConf());
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
 
             LOGGER.info("mongodb connection pool initialized");
 
@@ -359,7 +340,35 @@ public final class Bootstrapper {
             }
         });
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
         LOGGER.info("RESTHeart started **********************************************");
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+        if (conf.isLogToFile()) {
+            logger.info("logging to {} with level {}", conf.getLogFilePath(), conf.getLogLevel());
+        }
+
+        if (!conf.isLogToConsole()) {
+            logger.info("stopping logging to console ");
+            LoggingInitializer.stopConsoleLogging();
+        } else {
+            logger.info("logging to console with level {}", conf.getLogLevel());
+        }
+
+        logger.info("RESTHeart started **********************************************");
+=======
+        if (getConf().isLogToFile()) {
+            logger.info("logging to {} with level {}", getConf().getLogFilePath(), getConf().getLogLevel());
+        }
+
+        if (!conf.isLogToConsole()) {
+            logger.info("stopping logging to console ");
+            LoggingInitializer.stopConsoleLogging();
+        } else {
+            logger.info("logging to console with level {}", getConf().getLogLevel());
+        }
+
+        logger.info("RESTHeart started **********************************************");
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
     }
 
     private static void stopServer() {
@@ -407,16 +416,11 @@ public final class Bootstrapper {
             } catch (URISyntaxException | IOException ex) {
                 LOGGER.error("error cleaning up temporary directory {}", TMP_EXTRACTED_FILES.get(k).toString(), ex);
             }
-        });
+        }
+        );
 
         if (pidFilePath != null) {
-            try {
-                if (Files.exists(pidFilePath)) {
-                    Files.delete(pidFilePath);
-                }
-            } catch (IOException ex) {
-                LOGGER.error("failed to delete pid file {}", pidFilePath.toString(), ex);
-            }
+            pidFilePath.toFile().delete();
         }
 
         if (!silent) {
@@ -425,9 +429,17 @@ public final class Bootstrapper {
     }
 
     private static void startCoreSystem() {
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
         if (configuration == null) {
             LOGGER.error("no configuration found. exiting..");
             stopServer();
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+        if (conf == null) {
+            logger.error("no configuration found. exiting..");
+=======
+        if (getConf() == null) {
+            logger.error("no configuration found. exiting..");
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
             System.exit(-1);
         }
 
@@ -439,39 +451,83 @@ public final class Bootstrapper {
 
         IdentityManager identityManager = null;
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
         if (configuration.getIdmImpl() == null) {
             LOGGER.warn("***** no identity manager specified. authentication disabled.");
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+        if (conf.getIdmImpl() == null) {
+            logger.warn("***** no identity manager specified. authentication disabled.");
+=======
+        if (getConf().getIdmImpl() == null) {
+            logger.warn("***** no identity manager specified. authentication disabled.");
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
             identityManager = null;
-
         } else {
             try {
-                Object idm = Class.forName(configuration.getIdmImpl()).getConstructor(Map.class
-                ).newInstance(configuration.getIdmArgs());
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
+                Object idm = Class.forName(configuration.getIdmImpl()).getConstructor(Map.class).newInstance(configuration.getIdmArgs());
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+                Object idm = Class.forName(conf.getIdmImpl()).getConstructor(Map.class).newInstance(conf.getIdmArgs());
+=======
+                Object idm = Class.forName(getConf().getIdmImpl()).getConstructor(Map.class).newInstance(getConf().getIdmArgs());
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
                 identityManager = (IdentityManager) idm;
             } catch (ClassCastException | NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
                 LOGGER.error("error configuring idm implementation {}", configuration.getIdmImpl(), ex);
                 stopServer();
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+                logger.error("error configuring idm implementation {}", conf.getIdmImpl(), ex);
+=======
+                logger.error("error configuring idm implementation {}", getConf().getIdmImpl(), ex);
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
                 System.exit(-3);
             }
         }
 
         AccessManager accessManager = null;
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
         if (configuration.getAmImpl() == null && configuration.getIdmImpl() != null) {
             LOGGER.warn("***** no access manager specified. authenticated users can do anything.");
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+        if (conf.getAmImpl() == null && conf.getIdmImpl() != null) {
+            logger.warn("***** no access manager specified. authenticated users can do anything.");
+=======
+        if (getConf().getAmImpl() == null && getConf().getIdmImpl() != null) {
+            logger.warn("***** no access manager specified. authenticated users can do anything.");
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
             accessManager = null;
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
         } else if (configuration.getAmImpl() == null && configuration.getIdmImpl() == null) {
             LOGGER.warn("***** no access manager specified. users can do anything.");
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+        } else if (conf.getAmImpl() == null && conf.getIdmImpl() == null) {
+            logger.warn("***** no access manager specified. users can do anything.");
+=======
+        } else if (getConf().getAmImpl() == null && getConf().getIdmImpl() == null) {
+            logger.warn("***** no access manager specified. users can do anything.");
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
             accessManager = null;
-
         } else {
             try {
-                Object am = Class.forName(configuration.getAmImpl()).getConstructor(Map.class
-                ).newInstance(configuration.getAmArgs());
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
+                Object am = Class.forName(configuration.getAmImpl()).getConstructor(Map.class).newInstance(configuration.getAmArgs());
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+                Object am = Class.forName(conf.getAmImpl()).getConstructor(Map.class).newInstance(conf.getAmArgs());
+=======
+                Object am = Class.forName(getConf().getAmImpl()).getConstructor(Map.class).newInstance(getConf().getAmArgs());
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
                 accessManager = (AccessManager) am;
             } catch (ClassCastException | NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
                 LOGGER.error("error configuring acess manager implementation {}", configuration.getAmImpl(), ex);
                 stopServer();
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+                logger.error("error configuring acess manager implementation {}", conf.getAmImpl(), ex);
+=======
+                logger.error("error configuring acess manager implementation {}", getConf().getAmImpl(), ex);
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
                 System.exit(-3);
             }
         }
@@ -482,7 +538,13 @@ public final class Bootstrapper {
             KeyManagerFactory kmf;
             KeyStore ks;
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
+            if (configuration.isUseEmbeddedKeystore()) {
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+            if (conf.isUseEmbeddedKeystore()) {
+=======
             if (getConf().isUseEmbeddedKeystore()) {
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
                 char[] storepass = "restheart".toCharArray();
                 char[] keypass = "restheart".toCharArray();
 
@@ -491,22 +553,37 @@ public final class Bootstrapper {
                 sslContext = SSLContext.getInstance("TLS");
                 kmf = KeyManagerFactory.getInstance("SunX509");
                 ks = KeyStore.getInstance("JKS");
-                ks
-                        .load(Bootstrapper.class
-                                .getClassLoader().getResourceAsStream(storename), storepass);
+                ks.load(Bootstrapper.class.getClassLoader().getResourceAsStream(storename), storepass);
 
                 kmf.init(ks, keypass);
-
                 sslContext.init(kmf.getKeyManagers(), null, null);
             } else {
                 sslContext = SSLContext.getInstance("TLS");
                 kmf = KeyManagerFactory.getInstance("SunX509");
                 ks = KeyStore.getInstance("JKS");
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
                 try (FileInputStream fis = new FileInputStream(new File(configuration.getKeystoreFile()))) {
                     ks.load(fis, configuration.getKeystorePassword().toCharArray());
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+                FileInputStream fis = new FileInputStream(new File(conf.getKeystoreFile()));
+=======
+                FileInputStream fis = new FileInputStream(new File(getConf().getKeystoreFile()));
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
                     kmf.init(ks, configuration.getCertPassword().toCharArray());
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+                try {
+                    ks.load(fis, conf.getKeystorePassword().toCharArray());
+
+                    kmf.init(ks, conf.getCertPassword().toCharArray());
+=======
+                try {
+                    ks.load(fis, getConf().getKeystorePassword().toCharArray());
+
+                    kmf.init(ks, getConf().getCertPassword().toCharArray());
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
                     sslContext.init(kmf.getKeyManagers(), null, null);
                 }
             }
@@ -526,25 +603,69 @@ public final class Bootstrapper {
 
         Builder builder = Undertow.builder();
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
         if (configuration.isHttpsListener()) {
             builder.addHttpsListener(configuration.getHttpsPort(), configuration.getHttpHost(), sslContext);
             LOGGER.info("https listener bound at {}:{}", configuration.getHttpsHost(), configuration.getHttpsPort());
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+        if (conf.isHttpsListener()) {
+            builder.addHttpsListener(conf.getHttpsPort(), conf.getHttpHost(), sslContext);
+            logger.info("https listener bound at {}:{}", conf.getHttpsHost(), conf.getHttpsPort());
+=======
+        if (getConf().isHttpsListener()) {
+            builder.addHttpsListener(getConf().getHttpsPort(), getConf().getHttpHost(), sslContext);
+            logger.info("https listener bound at {}:{}", getConf().getHttpsHost(), getConf().getHttpsPort());
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
         }
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
         if (configuration.isHttpListener()) {
             builder.addHttpListener(configuration.getHttpPort(), configuration.getHttpsHost());
             LOGGER.info("http listener bound at {}:{}", configuration.getHttpHost(), configuration.getHttpPort());
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+        if (conf.isHttpListener()) {
+            builder.addHttpListener(conf.getHttpPort(), conf.getHttpsHost());
+            logger.info("http listener bound at {}:{}", conf.getHttpHost(), conf.getHttpPort());
+=======
+        if (getConf().isHttpListener()) {
+            builder.addHttpListener(getConf().getHttpPort(), getConf().getHttpsHost());
+            logger.info("http listener bound at {}:{}", getConf().getHttpHost(), getConf().getHttpPort());
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
         }
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
         if (configuration.isAjpListener()) {
             builder.addAjpListener(configuration.getAjpPort(), configuration.getAjpHost());
             LOGGER.info("ajp listener bound at {}:{}", configuration.getAjpHost(), configuration.getAjpPort());
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+        if (conf.isAjpListener()) {
+            builder.addAjpListener(conf.getAjpPort(), conf.getAjpHost());
+            logger.info("ajp listener bound at {}:{}", conf.getAjpHost(), conf.getAjpPort());
+=======
+        if (getConf().isAjpListener()) {
+            builder.addAjpListener(getConf().getAjpPort(), getConf().getAjpHost());
+            logger.info("ajp listener bound at {}:{}", getConf().getAjpHost(), getConf().getAjpPort());
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
         }
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
         LocalCachesSingleton.init(configuration);
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+        LocalCachesSingleton.init(conf);
+=======
+        LocalCachesSingleton.init(getConf());
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
         if (configuration.isLocalCacheEnabled()) {
             LOGGER.info("local cache enabled");
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+        if (conf.isLocalCacheEnabled()) {
+            logger.info("local cache enabled");
+=======
+        if (getConf().isLocalCacheEnabled()) {
+            logger.info("local cache enabled");
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
         } else {
             LOGGER.info("local cache not enabled");
         }
@@ -552,11 +673,25 @@ public final class Bootstrapper {
         hanldersPipe = getHandlersPipe(identityManager, accessManager);
 
         builder
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
                 .setIoThreads(configuration.getIoThreads())
                 .setWorkerThreads(configuration.getWorkerThreads())
                 .setDirectBuffers(configuration.isDirectBuffers())
                 .setBufferSize(configuration.getBufferSize())
                 .setBuffersPerRegion(configuration.getBuffersPerRegion())
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+                .setIoThreads(conf.getIoThreads())
+                .setWorkerThreads(conf.getWorkerThreads())
+                .setDirectBuffers(conf.isDirectBuffers())
+                .setBufferSize(conf.getBufferSize())
+                .setBuffersPerRegion(conf.getBuffersPerRegion())
+=======
+                .setIoThreads(getConf().getIoThreads())
+                .setWorkerThreads(getConf().getWorkerThreads())
+                .setDirectBuffers(getConf().isDirectBuffers())
+                .setBufferSize(getConf().getBufferSize())
+                .setBuffersPerRegion(getConf().getBuffersPerRegion())
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
                 .setHandler(hanldersPipe);
 
         builder.build().start();
@@ -594,7 +729,13 @@ public final class Bootstrapper {
 
         PathHandler paths = path();
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
         configuration.getMongoMounts().stream().forEach(m -> {
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+        conf.getMongoMounts().stream().forEach(m -> {
+=======
+        getConf().getMongoMounts().stream().forEach(m -> {
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
             String url = (String) m.get(Configuration.MONGO_MOUNT_WHERE_KEY);
             String db = (String) m.get(Configuration.MONGO_MOUNT_WHAT_KEY);
 
@@ -607,18 +748,42 @@ public final class Bootstrapper {
             LOGGER.info("url {} bound to mongodb resource {}", url, db);
         });
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
         pipeStaticResourcesHandlers(configuration, paths, identityManager, accessManager);
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+        pipeStaticResourcesHandlers(conf, paths, identityManager, accessManager);
+=======
+        pipeStaticResourcesHandlers(getConf(), paths, identityManager, accessManager);
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
         pipeApplicationLogicHandlers(configuration, paths, identityManager, accessManager);
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+        pipeApplicationLogicHandlers(conf, paths, identityManager, accessManager);
+=======
+        pipeApplicationLogicHandlers(getConf(), paths, identityManager, accessManager);
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
 
         return new GracefulShutdownHandler(
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
                 new RequestLimitingHandler(new RequestLimit(configuration.getRequestLimit()),
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+                new RequestLimitingHandler(new RequestLimit(conf.getRequestLimit()),
+=======
+                new RequestLimitingHandler(new RequestLimit(getConf().getRequestLimit()),
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
                         new AllowedMethodsHandler(
                                 new BlockingHandler(
                                         new GzipEncodingHandler(
                                                 new ErrorHandler(
                                                         new HttpContinueAcceptingHandler(paths)
+<<<<<<< /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/left.java
                                                 ), configuration.isForceGzipEncoding()
+||||||| /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/base.java
+                                                ), conf.isForceGzipEncoding()
+=======
+                                                ), getConf().isForceGzipEncoding()
+>>>>>>> /usr/src/app/output/softinstigate/restheart/13a166b7e6e32d55615ff38fdda612925db46438/src/main/java/com/softinstigate/restheart/Bootstrapper.java/right.java
                                         )
                                 ), // allowed methods
                                 HttpString.tryFromString(RequestContext.METHOD.GET.name()),
@@ -683,13 +848,11 @@ public final class Bootstrapper {
                                 LOGGER.error("**** to fix, run this command: $ git submodule update --init --recursive");
                             }
                             return;
-
                         }
                     } else {
                         if (!path.startsWith("/")) {
                             // this is to allow specifying the configuration file path relative to the jar (also working when running from classes)
-                            URL location = Bootstrapper.class
-                                    .getProtectionDomain().getCodeSource().getLocation();
+                            URL location = Bootstrapper.class.getProtectionDomain().getCodeSource().getLocation();
                             File locationFile = new File(location.getPath());
                             file = new File(locationFile.getParent() + File.separator + path);
                         } else {
@@ -777,6 +940,6 @@ public final class Bootstrapper {
      * @return the conf
      */
     public static Configuration getConf() {
-        return configuration;
+        return conf;
     }
 }

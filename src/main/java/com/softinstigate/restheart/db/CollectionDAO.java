@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Di Cesare
  */
 public class CollectionDAO {
+
     private static final MongoClient CLIENT = MongoDBClientSingleton.getInstance().getClient();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectionDAO.class);

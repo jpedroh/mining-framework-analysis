@@ -28,7 +28,6 @@ package com.softinstigate.restheart.perftest;
  */
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.softinstigate.restheart.ConfigurationException;
 import com.softinstigate.restheart.db.CollectionDAO;
 import com.softinstigate.restheart.db.DBCursorPool;
 import com.softinstigate.restheart.db.MongoDBClientSingleton;
@@ -48,7 +47,9 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import junit.framework.Assert;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -56,8 +57,6 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  *
@@ -72,10 +71,11 @@ public class LoadGetPT {
     private boolean printData = false;
     private String db;
     private String coll;
-
+    
     private final Path CONF_FILE = new File("./etc/restheart-integrationtest.yml").toPath();
+    
     private Executor httpExecutor;
-
+    
     private final ConcurrentHashMap<Long, Integer> threadPages = new ConcurrentHashMap<>();
 
     /**
@@ -98,13 +98,8 @@ public class LoadGetPT {
             }
         });
 
-        try {
-            MongoDBClientSingleton.init(FileUtils.getConfiguration(CONF_FILE, false));
-        } catch (ConfigurationException ex) {
-            System.out.println(ex.getMessage() + ", exiting...");
-            System.exit(-1);
-        }
-
+        MongoDBClientSingleton.init(FileUtils.getConfiguration(CONF_FILE));
+        
         httpExecutor = Executor.newInstance().authPreemptive(new HttpHost("127.0.0.1", 8080, "http")).auth(new HttpHost("127.0.0.1"), id, pwd);
     }
 
@@ -145,53 +140,53 @@ public class LoadGetPT {
             System.out.println(data);
         }
     }
-
+    
     public void getPagesLinearly() throws Exception {
         Integer page = threadPages.get(Thread.currentThread().getId());
 
         if (page == null) {
-            threadPages.put(Thread.currentThread().getId(), 5000);
-            page = 5000;
+             threadPages.put(Thread.currentThread().getId(), 5000);
+             page = 5000;
         }
-
+        
         String pagedUrl = url + "?page=" + (page % 10000);
-
+        
         page++;
         threadPages.put(Thread.currentThread().getId(), page);
-
-        if (printData) {
+        
+        if (printData)
             System.out.println(Thread.currentThread().getId() + " -> " + pagedUrl);
-        }
-
+        
         Response resp = httpExecutor.execute(Request.Get(new URI(pagedUrl)));
 
         HttpResponse httpResp = resp.returnResponse();
-        assertNotNull(httpResp);
+        Assert.assertNotNull(httpResp);
         HttpEntity entity = httpResp.getEntity();
-        assertNotNull(entity);
+        Assert.assertNotNull(entity);
         StatusLine statusLine = httpResp.getStatusLine();
-        assertNotNull(statusLine);
+        Assert.assertNotNull(statusLine);
 
-        assertEquals("check status code", HttpStatus.SC_OK, statusLine.getStatusCode());
+        Assert.assertEquals("check status code", HttpStatus.SC_OK, statusLine.getStatusCode());
     }
-
+    
     public void getPagesRandomly() throws Exception {
 
-        long rpage = Math.round(Math.random() * 10000);
-
+        long rpage = Math.round(Math.random()*10000);
+        
         String pagedUrl = url + "?page=" + rpage;
-
+        
         //System.out.println(pagedUrl);
+        
         Response resp = httpExecutor.execute(Request.Get(new URI(pagedUrl)));
 
         HttpResponse httpResp = resp.returnResponse();
-        assertNotNull(httpResp);
+        Assert.assertNotNull(httpResp);
         HttpEntity entity = httpResp.getEntity();
-        assertNotNull(entity);
+        Assert.assertNotNull(entity);
         StatusLine statusLine = httpResp.getStatusLine();
-        assertNotNull(statusLine);
+        Assert.assertNotNull(statusLine);
 
-        assertEquals("check status code", HttpStatus.SC_OK, statusLine.getStatusCode());
+        Assert.assertEquals("check status code", HttpStatus.SC_OK, statusLine.getStatusCode());
     }
 
     /**

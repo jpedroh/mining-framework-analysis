@@ -56,7 +56,7 @@ public class RequestContext {
         OPTIONS,
         OTHER
     };
-
+    
     public static final String PAGE_QPARAM_KEY = "page";
     public static final String PAGESIZE_QPARAM_KEY = "pagesize";
     public static final String COUNT_QPARAM_KEY = "count";
@@ -474,22 +474,19 @@ public class RequestContext {
     }
 
     /**
-     *
+     * 
      * @param index
      * @return pathTokens[index] if pathTokens.length > index, else null
      */
     private String getPathTokenAt(int index) {
         return pathTokens.length > index ? pathTokens[index] : null;
     }
-
     /**
-     *
      * @return the cursorAllocationPolicy
      */
     public EAGER_CURSOR_ALLOCATION_POLICY getCursorAllocationPolicy() {
         return cursorAllocationPolicy;
     }
-
     /**
      * @param cursorAllocationPolicy the cursorAllocationPolicy to set
      */
