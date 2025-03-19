@@ -50,17 +50,86 @@ import software.amazon.awssdk.services.sqs.SqsClientBuilder;
 public class SQSConnectionFactory implements ConnectionFactory, QueueConnectionFactory {
     private final ProviderConfiguration providerConfiguration;
     private final Supplier<SqsClient> amazonSQSClientSupplier;
-    
-    /*
 
     /*
      * Creates a default SQSConnectionFactory with a default providerConfiguration
      */
-    
     public SQSConnectionFactory() {
         this(new ProviderConfiguration());
     }
-    
+    public SQSConnectionFactory(ProviderConfiguration providerConfiguration) {
+        this(providerConfiguration, AmazonSQSClientBuilder.standard());
+    }
+    public SQSConnectionFactory(ProviderConfiguration providerConfiguration, final AmazonSQS client) {
+        if (providerConfiguration == null) {
+            throw new IllegalArgumentException("Provider configuration cannot be null");
+        }
+        if (client == null) {
+            throw new IllegalArgumentException("AmazonSQS client cannot be null");
+        }
+        this.providerConfiguration = providerConfiguration;
+        this.amazonSQSClientSupplier = new AmazonSQSClientSupplier() {
+            @Override
+            public AmazonSQS get() {
+                return client;
+            }
+        };
+    }
+    public SQSConnectionFactory(ProviderConfiguration providerConfiguration, final SqsClientBuilder clientBuilder) {
+        if (providerConfiguration == null) {
+            throw new IllegalArgumentException("Provider configuration cannot be null");
+        }
+        if (clientBuilder == null) {
+            throw new IllegalArgumentException("AmazonSQS client builder cannot be null");
+        }
+        this.providerConfiguration = providerConfiguration;
+        this.amazonSQSClientSupplier = new Supplier<SqsClient>() {
+            @Override
+            public SqsClient get() {
+                return clientBuilder.build();
+            }
+        };
+    }
+    @Override
+    public SQSConnection createConnection() throws JMSException {
+        try {
+        	SqsClient amazonSQS = amazonSQSClientSupplier.get();
+            return createConnection(amazonSQS, null);
+        } catch (RuntimeException e) {
+            throw (JMSException) new JMSException("Error creating SQS client: " + e.getMessage()).initCause(e);
+        }
+    }
+    @Override
+    public SQSConnection createConnection(String awsAccessKeyId, String awsSecretKey) throws JMSException {
+        AwsBasicCredentials basicAWSCredentials = AwsBasicCredentials.create(awsAccessKeyId, awsSecretKey);
+        return createConnection(basicAWSCredentials);
+    }
+    public SQSConnection createConnection(AwsCredentials awsCredentials) throws JMSException {
+        AwsCredentialsProvider awsCredentialsProvider = StaticCredentialsProvider.create(awsCredentials);
+        return createConnection(awsCredentialsProvider);
+    }
+    public SQSConnection createConnection(AwsCredentialsProvider awsCredentialsProvider) throws JMSException {
+        try {
+            SqsClient amazonSQS = amazonSQSClientSupplier.get();
+            return createConnection(amazonSQS, awsCredentialsProvider);
+        } catch(Exception e) {
+            throw (JMSException) new JMSException("Error creating SQS client: " + e.getMessage()).initCause(e);
+        }
+    }
+    private SQSConnection createConnection(SqsClient amazonSQS, AwsCredentialsProvider awsCredentialsProvider) throws JMSException {
+        AmazonSQSMessagingClientWrapper amazonSQSClientJMSWrapper = new AmazonSQSMessagingClientWrapper(amazonSQS, awsCredentialsProvider);
+        return new SQSConnection(amazonSQSClientJMSWrapper, providerConfiguration.getNumberOfMessagesToPrefetch());
+    }
+    @Override
+    public QueueConnection createQueueConnection() throws JMSException {
+        return (QueueConnection) createConnection();
+    }
+    @Override
+    public QueueConnection createQueueConnection(String userName, String password) throws JMSException {
+        return (QueueConnection) createConnection(userName, password);
+    }
+    /*
+
     /*
      * Creates a SQSConnectionFactory that uses SqsClientBuilder.standard() for creating SqsClient connections.
      * Every SQSConnection will have its own copy of SqsClient.
@@ -68,7 +137,6 @@ public class SQSConnectionFactory implements ConnectionFactory, QueueConnectionF
     public SQSConnectionFactory(ProviderConfiguration providerConfiguration) {
         this(providerConfiguration, SqsClient.create());
     }
-    
     /*
      * Creates a SQSConnectionFactory that uses the provided SqsClient connection.
      * Every SQSConnection will use the same provided SqsClient.
@@ -88,74 +156,9 @@ public class SQSConnectionFactory implements ConnectionFactory, QueueConnectionF
             }
         };
     }
-    
     /*
      * Creates a SQSConnectionFactory that uses the provided SqsClientBuilder for creating AmazonSQS client connections.
      * Every SQSConnection will have its own copy of AmazonSQS client created through the provided builder.
      */
-    public SQSConnectionFactory(ProviderConfiguration providerConfiguration, final SqsClientBuilder clientBuilder) {
-        if (providerConfiguration == null) {
-            throw new IllegalArgumentException("Provider configuration cannot be null");
-        }
-        if (clientBuilder == null) {
-            throw new IllegalArgumentException("AmazonSQS client builder cannot be null");
-        }
-        this.providerConfiguration = providerConfiguration;
-        this.amazonSQSClientSupplier = new Supplier<SqsClient>() {
-            @Override
-            public SqsClient get() {
-                return clientBuilder.build();
-            }
-        };
-    }
-    
-
-    @Override
-    public SQSConnection createConnection() throws JMSException {
-        try {
-        	SqsClient amazonSQS = amazonSQSClientSupplier.get();
-            return createConnection(amazonSQS, null);
-        } catch (RuntimeException e) {
-            throw (JMSException) new JMSException("Error creating SQS client: " + e.getMessage()).initCause(e);
-        }
-    }
-
-    @Override
-    public SQSConnection createConnection(String awsAccessKeyId, String awsSecretKey) throws JMSException {
-        AwsBasicCredentials basicAWSCredentials = AwsBasicCredentials.create(awsAccessKeyId, awsSecretKey);
-        return createConnection(basicAWSCredentials);
-    }
-
-    public SQSConnection createConnection(AwsCredentials awsCredentials) throws JMSException {
-        AwsCredentialsProvider awsCredentialsProvider = StaticCredentialsProvider.create(awsCredentials);
-        return createConnection(awsCredentialsProvider);
-    }
-    
-    public SQSConnection createConnection(AwsCredentialsProvider awsCredentialsProvider) throws JMSException {
-        try {
-            SqsClient amazonSQS = amazonSQSClientSupplier.get();
-            return createConnection(amazonSQS, awsCredentialsProvider);
-        } catch(Exception e) {
-            throw (JMSException) new JMSException("Error creating SQS client: " + e.getMessage()).initCause(e);
-        }
-    }
-    
-    private SQSConnection createConnection(SqsClient amazonSQS, AwsCredentialsProvider awsCredentialsProvider) throws JMSException {
-        AmazonSQSMessagingClientWrapper amazonSQSClientJMSWrapper = new AmazonSQSMessagingClientWrapper(amazonSQS, awsCredentialsProvider);
-        return new SQSConnection(amazonSQSClientJMSWrapper, providerConfiguration.getNumberOfMessagesToPrefetch());
-    }
-    
-    @Override
-    public QueueConnection createQueueConnection() throws JMSException {
-        return (QueueConnection) createConnection();
-    }
-
-    @Override
-    public QueueConnection createQueueConnection(String userName, String password) throws JMSException {
-        return (QueueConnection) createConnection(userName, password);
-    }
-    
-
-   
     
 }
