@@ -43,8 +43,13 @@ public class AvlNode<T> {
 
   /**
    * Constructor
+<<<<<<< /usr/src/app/output/jmetal/jmetal/31939b2d3174829e8c0a9516aa57be1d1f5eb36a/src/main/java/jmetal/util/avl/AvlNode.java/left.java
    *
    * @param item_
+||||||| /usr/src/app/output/jmetal/jmetal/31939b2d3174829e8c0a9516aa57be1d1f5eb36a/src/main/java/jmetal/util/avl/AvlNode.java/base.java
+   * @param item_
+=======
+>>>>>>> /usr/src/app/output/jmetal/jmetal/31939b2d3174829e8c0a9516aa57be1d1f5eb36a/src/main/java/jmetal/util/avl/AvlNode.java/right.java
    */
   public AvlNode(T item_) {
     this.left_ = null;
