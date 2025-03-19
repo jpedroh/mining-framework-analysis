@@ -14,6 +14,9 @@ import de.hilling.junit.cdi.util.ReflectionsUtils;
 import org.junit.jupiter.api.extension.*;
 import org.mockito.Mockito;
 
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Arrays;
