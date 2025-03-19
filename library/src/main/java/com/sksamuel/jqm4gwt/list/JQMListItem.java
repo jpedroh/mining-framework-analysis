@@ -516,10 +516,22 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
         anchor.getStyle().setPadding(0, Unit.PX);
         checkSplitPadding();
 
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/284907eaffb2061f44cdc7ec3be5cb05209850c9/library/src/main/java/com/sksamuel/jqm4gwt/list/JQMListItem.java/left.java
         CustomFlowPanel groupRoot = new CustomFlowPanel(checkBoxInput == null ? DOM.createDiv() : DOM.createLabel());
         if (checkBoxInput != null) setStyleName(groupRoot.getElement(), "jqm4gwt-li-band");
         JQMCommon.setCorners(groupRoot, false);
         Style st = groupRoot.getElement().getStyle();
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/284907eaffb2061f44cdc7ec3be5cb05209850c9/library/src/main/java/com/sksamuel/jqm4gwt/list/JQMListItem.java/base.java
+        LabelElement label = Document.get().createLabelElement();
+        setStyleName(label, "jqm4gwt-li-checkbox");
+        JQMCommon.setCorners(label, false);
+        Style st = label.getStyle();
+=======
+        LabelElement label = Document.get().createLabelElement();
+        setStyleName(label, "jqm4gwt-li-band");
+        JQMCommon.setCorners(label, false);
+        Style st = label.getStyle();
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/284907eaffb2061f44cdc7ec3be5cb05209850c9/library/src/main/java/com/sksamuel/jqm4gwt/list/JQMListItem.java/right.java
         st.setBorderWidth(0, Unit.PX);
         st.setMarginTop(0, Unit.PX);
         st.setMarginBottom(0, Unit.PX);
