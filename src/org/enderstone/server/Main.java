@@ -113,7 +113,9 @@ public class Main implements Runnable {
 
 	{
 		commands = new CommandMap();
-
+<<<<<<< /usr/src/app/output/sandergielisse/enderstone/3447f49bf49c20e95ab686145f937e780624c1f7/src/org/enderstone/server/Main.java/left.java
+	
+		commands.registerCommand(new AiCommand());
 		commands.registerCommand(new CraftingDebugCommand());
 		commands.registerCommand(new DebugCommand());
 		commands.registerCommand(new GameModeCommand());
@@ -126,8 +128,32 @@ public class Main implements Runnable {
 		commands.registerCommand(new TellCommand());
 		commands.registerCommand(new VersionCommand());
 		commands.registerCommand(new WorldCommand());
+||||||| /usr/src/app/output/sandergielisse/enderstone/3447f49bf49c20e95ab686145f937e780624c1f7/src/org/enderstone/server/Main.java/base.java
+		commands.registerCommand(new TellCommand());
+		commands.registerCommand(new PingCommand());
+		commands.registerCommand(new VersionCommand());
+		commands.registerCommand(new TeleportCommand());
+		commands.registerCommand(new StopCommand());
+		commands.registerCommand(new KillCommand());
+		commands.registerCommand(new QuitCommand());
+		commands.registerCommand(new DebugCommand());
+		commands.registerCommand(new WorldCommand());
 		commands.registerCommand(new CraftingDebugCommand());
 		commands.registerCommand(new LagCommand());
+		commands.registerCommand(new AiCommand());
+=======
+		commands.registerCommand(new TellCommand());
+		commands.registerCommand(new PingCommand());
+		commands.registerCommand(new VersionCommand());
+		commands.registerCommand(new TeleportCommand());
+		commands.registerCommand(new StopCommand());
+		commands.registerCommand(new KillCommand());
+		commands.registerCommand(new QuitCommand());
+		commands.registerCommand(new DebugCommand());
+		commands.registerCommand(new WorldCommand());
+		commands.registerCommand(new CraftingDebugCommand());
+		commands.registerCommand(new LagCommand());
+>>>>>>> /usr/src/app/output/sandergielisse/enderstone/3447f49bf49c20e95ab686145f937e780624c1f7/src/org/enderstone/server/Main.java/right.java
 	}
 
 	private static Main instance;
