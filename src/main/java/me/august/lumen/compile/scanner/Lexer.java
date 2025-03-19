@@ -1,403 +1,421 @@
 package me.august.lumen.compile.scanner;
-
 import me.august.lumen.common.Chars;
 import me.august.lumen.compile.Driver;
 import me.august.lumen.compile.codegen.BuildContext;
 import me.august.lumen.compile.error.SourcePositionProvider;
 import me.august.lumen.compile.scanner.tokens.NumberToken;
 import me.august.lumen.compile.scanner.tokens.StringToken;
-
 import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
-
 import static me.august.lumen.compile.scanner.Type.*;
 
 public class Lexer implements Iterable<Token>, SourcePositionProvider {
+  private static final Map<String, Type> KEYWORDS = new HashMap<>();
 
-    private static final Map<String, Type> KEYWORDS = new HashMap<>();
-
-    static {
-        // looks better than map.put(...) x 100
-        Object[][] pairs = {
-            {"def", DEF_KEYWORD},
-            {"import", IMPORT_KEYWORD},
-            {"class", CLASS_KEYWORD},
-            {"instanceof", INSTANCEOF_KEYWORD}, // to be replaced with `is a` when the lexer supports it
-            {"var", VAR_KEYWORD},
-            {"if", IF_KEYWORD},
-            {"else", ELSE_KEYWORD},
-            {"while", WHILE_KEYWORD},
-            {"stc", STATIC_KEYWORD},
-            {"static", STATIC_KEYWORD},
-            {"as", CAST_KEYWORD},
-
-            {"is", EQ},
-            {"isnt", NE},
-            {"and", LOGIC_AND},
-            {"or", LOGIC_OR},
-
-            {"pb", ACC_PUBLIC},
-            {"public", ACC_PUBLIC},
-            {"pv", ACC_PRIVATE},
-            {"private", ACC_PRIVATE},
-            {"pt", ACC_PROTECTED},
-            {"protected", ACC_PROTECTED},
-            {"pk", ACC_PACKAGE},
-            {"package_private", ACC_PACKAGE},
-
-            {"true", TRUE},
-            {"yes", TRUE},
-            {"on", TRUE},
-            {"false", FALSE},
-            {"no", FALSE},
-            {"off", FALSE},
-            {"null", NULL},
-            {"nil", NULL}
-        };
-        for (Object[] pair : pairs) {
-            KEYWORDS.put((String) pair[0], (Type) pair[1]);
-        }
+  static {
+    Object[][] pairs = { { "def", DEF_KEYWORD }, { "import", IMPORT_KEYWORD }, { "class", CLASS_KEYWORD }, { "instanceof", INSTANCEOF_KEYWORD }, { "var", VAR_KEYWORD }, { "if", IF_KEYWORD }, { "else", ELSE_KEYWORD }, { "while", WHILE_KEYWORD }, { "stc", STATIC_KEYWORD }, { "static", STATIC_KEYWORD }, { "as", CAST_KEYWORD }, { "is", EQ }, { "isnt", NE }, { "and", LOGIC_AND }, { "or", LOGIC_OR }, { "pb", ACC_PUBLIC }, { "public", ACC_PUBLIC }, { "pv", ACC_PRIVATE }, { "private", ACC_PRIVATE }, { "pt", ACC_PROTECTED }, { "protected", ACC_PROTECTED }, { "pk", ACC_PACKAGE }, { "package_private", ACC_PACKAGE }, { "true", TRUE }, { "yes", TRUE }, { "on", TRUE }, { "false", FALSE }, { "no", FALSE }, { "off", FALSE }, { "null", NULL }, { "nil", NULL } };
+    for (Object[] pair : pairs) {
+      KEYWORDS.put((String) pair[0], (Type) pair[1]);
     }
+  }
 
-    private Reader reader;
-    private int pos;
-    private BuildContext build;
+  private Reader reader;
 
-    private Stack<Token> queued = new Stack<>();
+  private int pos;
 
-    public Lexer(Reader reader) {
-        this.reader = reader;
-        this.build = new Driver.CompileBuildContext();
-    }
+  private BuildContext build;
 
-    public Lexer(String src) {
-        this(new StringReader(src));
-    }
+  private Stack<Token> queued = new Stack<>();
 
-    public Lexer(InputStream in) {
-        this(new InputStreamReader(in));
-    }
+  public Lexer(Reader reader) {
+    this.reader = reader;
+    this.build = new Driver.CompileBuildContext();
+  }
 
-    /**
+  public Lexer(String src) {
+    this(new StringReader(src));
+  }
+
+  public Lexer(InputStream in) {
+    this(new InputStreamReader(in));
+  }
+
+  /**
      * Read one character from input
      *
      * @return The next character's ordinal value, or -1 for EOF
      */
-    private int read() {
-        try {
-            pos++;
-            return reader.read();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read character: " + e.getMessage(), e);
-        }
+  private int read() {
+    try {
+      pos++;
+      return reader.read();
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to read character: " + e.getMessage(), e);
     }
+  }
 
-    /**
+  /**
      * Peeks one character ahead of the current position
      *
      * @return The next character's ordinal value, or -1 for EOF
      */
-    private int peek() {
-        try {
-            reader.mark(1);
-            int peek = reader.read();
-            reader.reset();
-            return peek;
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to peek character: " + e.getMessage(), e);
-        }
+  private int peek() {
+    try {
+      reader.mark(1);
+      int peek = reader.read();
+      reader.reset();
+      return peek;
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to peek character: " + e.getMessage(), e);
     }
+  }
 
-    private void mark(int n) {
-        try {
-            reader.mark(n);
-        } catch (IOException ignored) {}
+  private void mark(int n) {
+    try {
+      reader.mark(n);
+    } catch (IOException ignored) {
     }
+  }
 
-    private void reset() {
-        try {
-            reader.reset();
-        } catch (IOException ignored) {}
+  private void reset() {
+    try {
+      reader.reset();
+    } catch (IOException ignored) {
     }
+  }
 
-    /**
+  /**
      * Gets the next token from input
      *
      * @return The next token
      */
-    public Token nextToken() {
-        if (!queued.empty()) return queued.pop();
-
-        while (true) {
-            int read = read();
-            if (read == -1) return token(EOF);
-            char c = (char) read;
-
-            if (c == '(') return token(L_PAREN);
-            else if (c == ')') return token(R_PAREN);
-            else if (c == '{') return token(L_BRACE);
-            else if (c == '}') return token(R_BRACE);
-            else if (c == '[') return token(L_BRACKET);
-            else if (c == ']') return token(R_BRACKET);
-
-            else if (c == ',') return token(COMMA);
-            else if (c == '.') return token(DOT);
-            else if (c == ':') return nextColonOrSep();
-
-            else if (c == '+') return nextPlusOrNumber();
-            else if (c == '-') return nextMinOrNumber();
-            else if (c == '*') return token(MULT);
-            else if (c == '/') return token(DIV);
-            else if (c == '%') return token(REM);
-
-            else if (c == '>') return nextGtOrGteOrShift();
-            else if (c == '<') return nextLtOrLteOrShift();
-
-            else if (c == '|') return nextOr();
-            else if (c == '&') return nextAnd();
-
-            else if (c == '!') return nextNegOrNe();
-            else if (c == '?') return token(QUESTION);
-
-            else if (c == '=') return nextEqOrAssign();
-
-            else if (Chars.isAlpha(c)) return nextIdent(c);
-            else if (Chars.isDigit(c)) return nextNumber(c, false);
-            else if (c == '"' || c == '\'') return nextString(c);
-
-            else if (c == '#') consumeComment();
-            else if (c == ' ' || c == '\r' || c == '\n' || c == '\t') {
-                continue; // ignore whitespace chars
-            } else {
-                build.error("Unexpected character: " + c, this);
-            }
-        }
+  public Token nextToken() {
+    if (!queued.empty()) {
+      return queued.pop();
     }
+    while (true) {
+      int read = read();
+      if (read == -1) {
+        return token(EOF);
+      }
+      char c = (char) read;
+      if (c == '(') {
+        return token(L_PAREN);
+      } else {
+        if (c == ')') {
+          return token(R_PAREN);
+        } else {
+          if (c == '{') {
+            return token(L_BRACE);
+          } else {
+            if (c == '}') {
+              return token(R_BRACE);
+            } else {
+              if (c == '[') {
+                return token(L_BRACKET);
+              } else {
+                if (c == ']') {
+                  return token(R_BRACKET);
+                } else {
+                  if (c == ',') {
+                    return token(COMMA);
+                  } else {
+                    if (c == '.') {
+                      return token(DOT);
+                    } else {
+                      if (c == ':') {
+                        return nextColonOrSep();
+                      } else {
+                        if (c == '+') {
+                          return nextPlusOrNumber();
+                        } else {
+                          if (c == '-') {
+                            return nextMinOrNumber();
+                          } else {
+                            if (c == '*') {
+                              return token(MULT);
+                            } else {
+                              if (c == '/') {
+                                return token(DIV);
+                              } else {
+                                if (c == '%') {
+                                  return token(REM);
+                                } else {
+                                  if (c == '>') {
+                                    return nextGtOrGteOrShift();
+                                  } else {
+                                    if (c == '<') {
+                                      return nextLtOrLteOrShift();
+                                    } else {
+                                      if (c == '|') {
+                                        return nextOr();
+                                      } else {
+                                        if (c == '&') {
+                                          return nextAnd();
+                                        } else {
+                                          if (c == '!') {
+                                            return nextNegOrNe();
+                                          } else {
+                                            if (c == '?') {
+                                              return token(QUESTION);
+                                            } else {
+                                              if (c == '=') {
+                                                return nextEqOrAssign();
+                                              } else {
+                                                if (Chars.isAlpha(c)) {
+                                                  return nextIdent(c);
+                                                } else {
+                                                  if (Chars.isDigit(c)) {
+                                                    return nextNumber(c, false);
+                                                  } else {
+                                                    if (c == '\"' || c == '\'') {
+                                                      return nextString(c);
+                                                    } else {
+                                                      if (c == '#') {
+                                                        consumeComment();
+                                                      } else {
+                                                        if (c == ' ' || c == '\r' || c == '\n' || c == '\t') {
+                                                          continue;
+                                                        } else {
+                                                          build.error("Unexpected character: " + c, this);
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
-    /**
+  /**
      * Constructs a token with the appropriate position
      * and given type
      *
      * @param type The token's type
      * @return The new token
      */
-    private Token token(Type type) {
-        return new Token(null, pos, pos + 1, type);
-    }
+  private Token token(Type type) {
+    return new Token(null, pos, pos + 1, type);
+  }
 
-    /**
+  /**
      * Gets the next String identifier from input,
      * following this regular expression:
      * [a-zA-Z_][\w]*
      *
      * @return The next String identifier
      */
-    private String ident() {
-        StringBuilder sb = new StringBuilder();
-
-        while (true) {
-            int peek = peek();
-            if (peek < 0) break;
-            char c = (char) peek;
-
-            if (Chars.isAlpha(c) || (sb.length() > 1 && Chars.isDigit(c))) {
-                sb.append(c);
-                read();
-            } else {
-                break;
-            }
-        }
-        return sb.toString();
+  private String ident() {
+    StringBuilder sb = new StringBuilder();
+    while (true) {
+      int peek = peek();
+      if (peek < 0) {
+        break;
+      }
+      char c = (char) peek;
+      if (Chars.isAlpha(c) || (sb.length() > 1 && Chars.isDigit(c))) {
+        sb.append(c);
+        read();
+      } else {
+        break;
+      }
     }
+    return sb.toString();
+  }
 
-    /**
+  /**
      * Gets the next token who's string form is an identifier
      *
      * @param firstChar The identifier's first character
      * @return A token with the IDENTIFIER type, or a keyword
      * token if the identifier is defined in the KEYWORDS map
      */
-    private Token nextIdent(char firstChar) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(firstChar);
-
-        int startPos = pos;
-        sb.append(ident());
-        int endPos = pos;
-
-        String ident = sb.toString();
-
-        Token token = new Token(ident, startPos, endPos, null);
-        Type type = KEYWORDS.get(ident);
-        if (type == null) {
-            type = IDENTIFIER;
+  private Token nextIdent(char firstChar) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(firstChar);
+    int startPos = pos;
+    sb.append(ident());
+    int endPos = pos;
+    String ident = sb.toString();
+    Token token = new Token(ident, startPos, endPos, null);
+    Type type = KEYWORDS.get(ident);
+    if (type == null) {
+      type = IDENTIFIER;
+    } else {
+      handleKeyword(type);
+      if (ident.equals("is")) {
+        consumeWhitespace();
+        Token next = nextToken();
+        if (next.getType() == IDENTIFIER && next.getContent().equals("a")) {
+          type = INSTANCEOF_KEYWORD;
         } else {
-            handleKeyword(type);
-            if (ident.equals("is")) {
-                consumeWhitespace();
-                Token next = nextToken();
-
-                // next token is identifier with content 'a'
-                if (next.getType() == IDENTIFIER && next.getContent().equals("a")) {
-                    type = INSTANCEOF_KEYWORD;
-                } else {
-                    queued.push(next);
-                }
-            }
+          queued.push(next);
         }
-        token.setType(type);
-
-        return token;
+      }
     }
+    token.setType(type);
+    return token;
+  }
 
-    /**
+  /**
      * Called when a keyword token is read
      *
      * @param keyword The keyword token's type
      */
-    private void handleKeyword(Type keyword) {
-        if (keyword == IMPORT_KEYWORD) {
-            handleImport();
-        }
+  private void handleKeyword(Type keyword) {
+    if (keyword == IMPORT_KEYWORD) {
+      handleImport();
     }
+  }
 
-    /**
+  /**
      * Called when a token with a IMPORT_KEYWORD
      * type is read
      */
-    private void handleImport() {
-        read(); // consume whitespace
-
-        int startPos = pos;
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(ident());
-
-        while (peek() == '.') {
-            sb.append((char) read());
-            sb.append(ident());
-        }
-
-        int endPos = pos;
-        String importPath = sb.toString();
-        queued.push(new Token(importPath, startPos, endPos, IMPORT_PATH));
+  private void handleImport() {
+    read();
+    int startPos = pos;
+    StringBuilder sb = new StringBuilder();
+    sb.append(ident());
+    while (peek() == '.') {
+      sb.append((char) read());
+      sb.append(ident());
     }
+    int endPos = pos;
+    String importPath = sb.toString();
+    queued.push(new Token(importPath, startPos, endPos, IMPORT_PATH));
+  }
 
-    /**
+  /**
      * The next MIN token or negative NUMBER token.
      * @return A MIN or NUMBER token.
      */
-    private Token nextMinOrNumber() {
-        if (Character.isDigit(peek())) {
-            return nextNumber((char) read(), true);
-        } else {
-            return token(MIN);
-        }
+  private Token nextMinOrNumber() {
+    if (Character.isDigit(peek())) {
+      return nextNumber((char) read(), true);
+    } else {
+      return token(MIN);
     }
+  }
 
-    /**
+  /**
      * The next PLUS token or positive NUMBER token.
      * @return A PLUS or NUMBER token.
      */
-    private Token nextPlusOrNumber() {
-        if (Character.isDigit(peek())) {
-            return nextNumber((char) read(), false);
-        } else {
-            return token(PLUS);
-        }
+  private Token nextPlusOrNumber() {
+    if (Character.isDigit(peek())) {
+      return nextNumber((char) read(), false);
+    } else {
+      return token(PLUS);
     }
+  }
 
-    /**
+  /**
      * Gets the next token in the form of a number
      *
      * @param firstDigit The number's first digit
      * @return A token with the NUMBER type
      */
-    // TODO possibly refactor this mega-method
-    private Token nextNumber(char firstDigit, boolean neg) {
-        // read prefix
-        NumericPrefix prefix = readPrefix(firstDigit);
-        StringBuilder sb = new StringBuilder();
-
-        if (neg) sb.append('-');
-        if (prefix != NumericPrefix.HEX && prefix != NumericPrefix.BIN)
-            sb.append(firstDigit);
-
-        int startPos = pos;
-        int endPos = pos;
-
-        // has decimal point
-        boolean hasDP = false;
-
-        while (true) {
-            int peek = peek();
-            if (peek == -1) break;
-            char c = (char) peek;
-
-            if (Chars.isDigit(c) || c == '.') {
-                if (c == '.') {
-                    if (hasDP)
-                        // TODO proper exception handling
-                        throw new RuntimeException("Already has decimal point");
-                    if (prefix != NumericPrefix.NONE)
-                        // TODO proper exception handling
-                        throw new RuntimeException("Unexpected prefix and decimal point combination");
-                    hasDP = true;
-                }
-                sb.append(c);
-                read();
-                endPos++;
-            } else {
-                break;
-            }
-        }
-
-        // Read exponent
-        boolean hasExp = false;
-        StringBuilder exp = null;
-
-        if (peek() == 'e' || peek() == 'E') {
-            endPos++;
-            hasExp = true;
-            exp = new StringBuilder("e");
-            read(); // consume 'e'
-            while (Character.isDigit(peek())) {
-                endPos++;
-                exp.append((char) read());
-            }
-        }
-
-        NumericSuffix suffix = readSuffix();
-
-        Number val = null;
-        if (!hasDP) {
-            long temp = Long.parseLong(sb.toString());
-            temp = prefix.convertBase(temp);
-            if (temp > Integer.MAX_VALUE || temp < Integer.MIN_VALUE || suffix == NumericSuffix.LONG) {
-                val = temp;
-            } else if (suffix == NumericSuffix.FLOAT || suffix == NumericSuffix.DOUBLE) {
-                hasDP = true;
-            } else {
-                val = (int) temp;
-            }
-        }
-        if (hasDP) {
-            if (hasExp) sb.append(exp);
-            double temp = Double.parseDouble(sb.toString());
-            if (suffix == NumericSuffix.DOUBLE || suffix == NumericSuffix.NONE) {
-                val = temp;
-            } else {
-                val = (float) temp;
-            }
-        }
-
-        return new NumberToken(val, startPos, endPos);
+  private Token nextNumber(char firstDigit, boolean neg) {
+    NumericPrefix prefix = readPrefix(firstDigit);
+    StringBuilder sb = new StringBuilder();
+    if (neg) {
+      sb.append('-');
     }
+    if (prefix != NumericPrefix.HEX && prefix != NumericPrefix.BIN) {
+      sb.append(firstDigit);
+    }
+    int startPos = pos;
+    int endPos = pos;
+    boolean hasDP = false;
+    while (true) {
+      int peek = peek();
+      if (peek == -1) {
+        break;
+      }
+      char c = (char) peek;
+      if (Chars.isDigit(c) || c == '.') {
+        if (c == '.') {
+          if (hasDP) {
+            throw new RuntimeException("Already has decimal point");
+          }
+          if (prefix != NumericPrefix.NONE) {
+            throw new RuntimeException("Unexpected prefix and decimal point combination");
+          }
+          hasDP = true;
+        }
+        sb.append(c);
+        read();
+        endPos++;
+      } else {
+        break;
+      }
+    }
+    boolean hasExp = false;
+    StringBuilder exp = null;
+    if (peek() == 'e' || peek() == 'E') {
+      endPos++;
+      hasExp = true;
+      exp = new StringBuilder("e");
+      read();
+      while (Character.isDigit(peek())) {
+        endPos++;
+        exp.append((char) read());
+      }
+    }
+    NumericSuffix suffix = readSuffix();
+    Number val = null;
+    if (!hasDP) {
+      long temp = Long.parseLong(sb.toString());
+      temp = prefix.convertBase(temp);
+      if (temp > Integer.MAX_VALUE || temp < Integer.MIN_VALUE || suffix == NumericSuffix.LONG) {
+        val = temp;
+      } else {
+        if (suffix == NumericSuffix.FLOAT || suffix == NumericSuffix.DOUBLE) {
+          hasDP = true;
+        } else {
+          val = (int) temp;
+        }
+      }
+    }
+    if (hasDP) {
+      if (hasExp) {
+        sb.append(exp);
+      }
+      double temp = Double.parseDouble(sb.toString());
+      if (suffix == NumericSuffix.DOUBLE || suffix == NumericSuffix.NONE) {
+        val = temp;
+      } else {
+        val = (float) temp;
+      }
+    }
+    return new NumberToken(val, startPos, endPos);
+  }
 
-    /**
+  /**
      * Reads a numeric prefix:
      * 0x, 0X:   HEX
      * 0b, 0B:   BIN
@@ -407,31 +425,35 @@ public class Lexer implements Iterable<Token>, SourcePositionProvider {
      * @param first The first character
      * @return The next numeric prefix
      */
-    private NumericPrefix readPrefix(char first) {
-        mark(2);
-        String s = String.valueOf(first) + (char) read();
-        NumericPrefix prefix;
-        switch (s) {
-            case "0x": case "0X":
-                prefix = NumericPrefix.HEX;
-                reset(); read();
-                break;
-            case "0b":case "0B":
-                prefix = NumericPrefix.BIN;
-                reset(); read();
-                break;
-            default:
-                if (s.charAt(0) == '0' && Character.isDigit(s.charAt(1))) {
-                    prefix = NumericPrefix.OCT;
-                } else {
-                    prefix = NumericPrefix.NONE;
-                }
-                reset();
-        }
-        return prefix;
+  private NumericPrefix readPrefix(char first) {
+    mark(2);
+    String s = String.valueOf(first) + (char) read();
+    NumericPrefix prefix;
+    switch (s) {
+      case "0x":
+      case "0X":
+      prefix = NumericPrefix.HEX;
+      reset();
+      read();
+      break;
+      case "0b":
+      case "0B":
+      prefix = NumericPrefix.BIN;
+      reset();
+      read();
+      break;
+      default:
+      if (s.charAt(0) == '0' && Character.isDigit(s.charAt(1))) {
+        prefix = NumericPrefix.OCT;
+      } else {
+        prefix = NumericPrefix.NONE;
+      }
+      reset();
     }
+    return prefix;
+  }
 
-    /**
+  /**
      * Reads a numeric suffix:
      * l, L: LONG
      * f, F: FLOAT
@@ -440,44 +462,46 @@ public class Lexer implements Iterable<Token>, SourcePositionProvider {
      *
      * @return The next numeric suffix
      */
-    private NumericSuffix readSuffix() {
-        int chr = Character.toUpperCase(peek());
-        switch (chr) {
-            case 'L': return NumericSuffix.LONG;
-            case 'F': return NumericSuffix.FLOAT;
-            case 'D': return NumericSuffix.DOUBLE;
-            default : return NumericSuffix.NONE;
-        }
+  private NumericSuffix readSuffix() {
+    int chr = Character.toUpperCase(peek());
+    switch (chr) {
+      case 'L':
+      return NumericSuffix.LONG;
+      case 'F':
+      return NumericSuffix.FLOAT;
+      case 'D':
+      return NumericSuffix.DOUBLE;
+      default:
+      return NumericSuffix.NONE;
     }
+  }
 
-    /**
+  /**
      * Gets the next token in the form of a
      * double-quote (") or single-quote (') delimited string.
      *
      * @return A token with the STRING type
      */
-    private Token nextString(char quote) {
-        StringBuilder sb = new StringBuilder();
-
-        int startPos = pos;
-        int endPos = pos;
-
-        while (true) {
-            int read = read();
-            if (read == -1) throw new RuntimeException("Unexpected EOF in String literal");
-
-            if (read == quote) {
-                break;
-            } else {
-                sb.append((char) read);
-                endPos++;
-            }
-        }
-
-        return new StringToken(sb.toString(), (quote == '"' ? StringToken.QuoteType.DOUBLE : StringToken.QuoteType.SINGLE), startPos, endPos);
+  private Token nextString(char quote) {
+    StringBuilder sb = new StringBuilder();
+    int startPos = pos;
+    int endPos = pos;
+    while (true) {
+      int read = read();
+      if (read == -1) {
+        throw new RuntimeException("Unexpected EOF in String literal");
+      }
+      if (read == quote) {
+        break;
+      } else {
+        sb.append((char) read);
+        endPos++;
+      }
     }
+    return new StringToken(sb.toString(), (quote == '\"' ? StringToken.QuoteType.DOUBLE : StringToken.QuoteType.SINGLE), startPos, endPos);
+  }
 
-    /**
+  /**
      * Precondition: last read char was '='
      * <p>
      * Differentiates the following tokens:
@@ -486,15 +510,15 @@ public class Lexer implements Iterable<Token>, SourcePositionProvider {
      *
      * @return The next EQ or ASSIGN type token
      */
-    private Token nextEqOrAssign() {
-        if (peek() == '=') { // "=="
-            read(); // consume '='
-            return token(EQ);
-        }
-        return token(ASSIGN);
+  private Token nextEqOrAssign() {
+    if (peek() == '=') {
+      read();
+      return token(EQ);
     }
+    return token(ASSIGN);
+  }
 
-    /**
+  /**
      * Precondition: last read char was '>'
      * <p>
      * Differentiates the following tokens:
@@ -505,26 +529,28 @@ public class Lexer implements Iterable<Token>, SourcePositionProvider {
      *
      * @return The next GT or GTE or SH_R or U_SH_R type token
      */
-    private Token nextGtOrGteOrShift() {
-        Type ty;
-        if (peek() == '=') {
-            read(); // consume '='
-            ty = GTE;
-        } else if (peek() == '>') {
-            read(); // consume 2nd '>'
-            if (peek() == '>') {
-                read(); // consume 3rd '>'
-                ty = U_SH_R;
-            } else {
-                ty = SH_R;
-            }
+  private Token nextGtOrGteOrShift() {
+    Type ty;
+    if (peek() == '=') {
+      read();
+      ty = GTE;
+    } else {
+      if (peek() == '>') {
+        read();
+        if (peek() == '>') {
+          read();
+          ty = U_SH_R;
         } else {
-            ty = GT;
+          ty = SH_R;
         }
-        return token(ty);
+      } else {
+        ty = GT;
+      }
     }
+    return token(ty);
+  }
 
-    /**
+  /**
      * Precondition: last read char was '<'
      * <p>
      * Differentiates the following tokens:
@@ -534,21 +560,23 @@ public class Lexer implements Iterable<Token>, SourcePositionProvider {
      *
      * @return The next LT or LTE or SH_L type token
      */
-    private Token nextLtOrLteOrShift() {
-        Type ty;
-        if (peek() == '=') {
-            read(); // consume '='
-            ty = LTE;
-        } else if (peek() == '<') {
-            read(); // consume 2nd '<'
-            ty = SH_L;
-        } else {
-            ty = LT;
-        }
-        return token(ty);
+  private Token nextLtOrLteOrShift() {
+    Type ty;
+    if (peek() == '=') {
+      read();
+      ty = LTE;
+    } else {
+      if (peek() == '<') {
+        read();
+        ty = SH_L;
+      } else {
+        ty = LT;
+      }
     }
+    return token(ty);
+  }
 
-    /**
+  /**
      * Precondition: last read char was '|'
      * <p>
      * Differentiates the following tokens:
@@ -557,15 +585,15 @@ public class Lexer implements Iterable<Token>, SourcePositionProvider {
      *
      * @return The next LOGIC_OR or BIT_OR type token
      */
-    private Token nextOr() {
-        if (peek() == '|') {
-            read(); // consume '|'
-            return token(LOGIC_OR);
-        }
-        return token(BIT_OR);
+  private Token nextOr() {
+    if (peek() == '|') {
+      read();
+      return token(LOGIC_OR);
     }
+    return token(BIT_OR);
+  }
 
-    /**
+  /**
      * Precondition: last read char was '&'
      * <p>
      * Differentiates the following tokens:
@@ -574,15 +602,15 @@ public class Lexer implements Iterable<Token>, SourcePositionProvider {
      *
      * @return The next LOGIC_AND or BIT_AND type token
      */
-    private Token nextAnd() {
-        if (peek() == '&') {
-            read(); // consume '&'
-            return token(LOGIC_AND);
-        }
-        return token(BIT_AND);
+  private Token nextAnd() {
+    if (peek() == '&') {
+      read();
+      return token(LOGIC_AND);
     }
+    return token(BIT_AND);
+  }
 
-    /**
+  /**
      * Precondition: last read char was '!'
      * <p>
      * Differentiates the following tokens:
@@ -591,15 +619,15 @@ public class Lexer implements Iterable<Token>, SourcePositionProvider {
      *
      * @return The next NEG or NE type token
      */
-    private Token nextNegOrNe() {
-        if (peek() == '=') {
-            read(); // consume '='
-            return token(NE);
-        }
-        return token(NEG);
+  private Token nextNegOrNe() {
+    if (peek() == '=') {
+      read();
+      return token(NE);
     }
+    return token(NEG);
+  }
 
-    /**
+  /**
      * Precondition: last read char was ':'
      * <p>
      * Differentiates the following tokens:
@@ -608,103 +636,106 @@ public class Lexer implements Iterable<Token>, SourcePositionProvider {
      *
      * @return The next COLON or SEP type token
      */
-    private Token nextColonOrSep() {
-        if (peek() == ':') {
-            read(); // consume ':'
-            return token(SEP);
-        }
-        return token(COLON);
+  private Token nextColonOrSep() {
+    if (peek() == ':') {
+      read();
+      return token(SEP);
     }
+    return token(COLON);
+  }
 
-    /**
+  /**
      * Consumes a single-line comment (reads until
      * '\n' is reached) or a multi-line comment (starts
      * with '#*' and ends with '*#').
      */
-    private void consumeComment() {
-        if (peek() == '*') {
-            read();
-            // noinspection StatementWithEmptyBody
-            while (!(read() == '*' && peek() == '#'));
-            read();
-        } else {
-            // noinspection StatementWithEmptyBody
-            while (read() != '\n');
-        }
+  private void consumeComment() {
+    if (peek() == '*') {
+      read();
+      while (!(read() == '*' && peek() == '#')) {
+        ;
+      }
+      read();
+    } else {
+      while (read() != '\n') {
+        ;
+      }
     }
+  }
 
-    private void consumeWhitespace() {
-        while (peek() == ' ') read();
+  private void consumeWhitespace() {
+    while (peek() == ' ') {
+      read();
     }
+  }
 
-    /**
+  /**
      * Iterates over all tokens returned by
      * this Lexer until EOF is reached
      *
      * @return The token iterator
      */
-    @Override
-    public Iterator<Token> iterator() {
-        return new Iterator<Token>() {
-            boolean done = false;
+  @Override public Iterator<Token> iterator() {
+    return new Iterator<Token>() {
+      boolean done = false;
 
-            @Override
-            public boolean hasNext() {
-                return !done;
-            }
+      @Override public boolean hasNext() {
+        return !done;
+      }
 
-            @Override
-            public Token next() {
-                Token next = nextToken();
-                if (next.getType() == EOF) done = true;
-                return next;
-            }
-        };
-    }
+      @Override public Token next() {
+        Token next = nextToken();
+        if (next.getType() == EOF) {
+          done = true;
+        }
+        return next;
+      }
+    };
+  }
 
-    /**
+  /**
      * The current reading position
      *
      * @return The current reading position
      */
-    @Override
-    public int getStart() {
-        return pos;
-    }
+  @Override public int getStart() {
+    return pos;
+  }
 
-    /**
+  /**
      * The current reading position plus one
      *
      * @return The current reading position plus one
      */
-    @Override
-    public int getEnd() {
-        return pos + 1;
+  @Override public int getEnd() {
+    return pos + 1;
+  }
+
+  private enum NumericPrefix {
+    HEX(16),
+    OCT(8),
+    BIN(2),
+    NONE(10)
+    ;
+
+    private int radix;
+
+    NumericPrefix(int radix) {
+      this.radix = radix;
     }
 
-    /**
-     * Represents a numerical prefix. Modifies
-     * the base of the following number.
-     * HEX:  hexadecimal, base 16
-     * OCT:  octal, base 8
-     * BIN:  binary, base 2
-     * NONE: no prefix (decimal, base 10)
-     */
-    private enum NumericPrefix {
-        HEX(16), OCT(8), BIN(2), NONE(10);
-
-        private int radix;
-        NumericPrefix(int radix) {
-            this.radix = radix;
-        }
-
-        public long convertBase(long n) {
-            if (this == NONE) return n;
-            return Long.valueOf(Long.toString(n), radix);
-        }
+    public long convertBase(long n) {
+      if (this == NONE) {
+        return n;
+      }
+      return Long.valueOf(Long.toString(n), radix);
     }
+  }
 
-    private enum NumericSuffix {
-        LONG, FLOAT, DOUBLE, NONE
-    }
+  private enum NumericSuffix {
+    LONG,
+    FLOAT,
+    DOUBLE,
+    NONE
+  }
 }
