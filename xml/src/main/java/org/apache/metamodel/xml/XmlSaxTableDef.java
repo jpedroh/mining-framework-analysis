@@ -107,10 +107,10 @@ public final class XmlSaxTableDef implements Serializable {
         _rowXpath = rowXpath;
         _valueXpaths = valueXpaths;
     }
-    
-    public XmlSaxTableDef(String rowXpath, Collection<String> valueXpaths) {
-        this(rowXpath, valueXpaths.toArray(new String[valueXpaths.size()]));
-    }
+	
+	public XmlSaxTableDef(String rowXpath, Collection<String> valueXpaths) {
+	    this(rowXpath, valueXpaths.toArray(new String[valueXpaths.size()]));
+	}
 
     public String getRowXpath() {
         return _rowXpath;

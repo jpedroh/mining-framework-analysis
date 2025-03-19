@@ -38,9 +38,9 @@ public class ImmutableSchemaTest {
         assertTrue(mutableSchema instanceof MutableSchema);
 
         ImmutableSchema immutableSchema = new ImmutableSchema(mutableSchema);
-
+        
         assertEquals(mutableSchema.getRelationshipCount(), immutableSchema.getRelationshipCount());
-
+        
         assertEquals(immutableSchema, mutableSchema);
     }
 
