@@ -35,7 +35,9 @@
 
 package pitt.search.semanticvectors;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.util.CharArraySet;
@@ -299,7 +301,10 @@ public class SearchBatch {
 		qcnt++;
 		
 		//have Lucene parse the query string, for consistency
-		StandardAnalyzer  analyzer = new StandardAnalyzer(new CharArraySet(new ArrayList<String>(), true));
+		Analyzer analyzer = null;
+		if (!flagConfig.matchcase()) analyzer = new StandardAnalyzer(new CharArraySet(new ArrayList<String>(), true));
+		else analyzer = new WhitespaceAnalyzer();
+		
 		TokenStream stream = analyzer.tokenStream(null, new StringReader(queryString));
 		CharTermAttribute cattr = stream.addAttribute(CharTermAttribute.class);
 		stream.reset();
@@ -310,7 +315,7 @@ public class SearchBatch {
 		
 			String term = cattr.toString();
 			
-			if (!luceneUtils.stoplistContains(term)) 
+			if (luceneUtils == null || !luceneUtils.stoplistContains(term)) 
 			{
 				if (! flagConfig.matchcase()) term = term.toLowerCase();
 				queryTerms.add(term);
@@ -348,7 +353,7 @@ public class SearchBatch {
               queryVecReader, searchVecReader, luceneUtils, flagConfig, queryArgs);
           break;
       case BOUNDPRODUCT:
-        if (queryArgs.length == 2) {
+    	    if (queryArgs.length == 2) {
           vecSearcher = new VectorSearcher.VectorSearcherBoundProduct(
               queryVecReader, boundVecReader, searchVecReader, luceneUtils, flagConfig, queryArgs[0],queryArgs[1]);
         } else {

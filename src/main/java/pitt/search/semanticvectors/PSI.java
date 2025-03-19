@@ -50,6 +50,8 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
+import pitt.search.semanticvectors.LuceneUtils.TermWeight;
+
 /**
  * Generates predication vectors incrementally.Requires as input an index containing 
  * documents with the fields "subject", "predicate" and "object"
@@ -209,7 +211,7 @@ public class PSI {
       oWeight = luceneUtils.getGlobalTermWeight(new Term(OBJECT_FIELD, object));
       // TODO: Explain different weighting for predicates, log(occurrences of predication)
       pWeight = luceneUtils.getLocalTermWeight(luceneUtils.getGlobalTermFreq(term));
-
+     
       Vector subjectSemanticVector = semanticItemVectors.getVector(subject);
       Vector objectSemanticVector = semanticItemVectors.getVector(object);
       Vector subjectElementalVector = elementalItemVectors.getVector(subject);
