@@ -1,5 +1,4 @@
 package com.wrapper.spotify;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -10,7 +9,6 @@ import com.wrapper.spotify.requests.authentication.AuthorizationCodeGrantRequest
 import com.wrapper.spotify.requests.authentication.AuthorizationURLRequest;
 import com.wrapper.spotify.requests.authentication.ClientCredentialsGrantRequest;
 import com.wrapper.spotify.requests.authentication.RefreshAccessTokenRequest;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,7 +16,6 @@ import java.util.List;
  * Instances of the Api class provide access to the Spotify Web API.
  */
 public class Api {
-
   /**
    * The default host of Spotify API calls.
    */
@@ -49,26 +46,31 @@ public class Api {
    * Api instance with the default settings.
    */
   public static final Api DEFAULT_API = Api.builder().build();
+
   private final String clientId;
-  private final String clientSecret;
-  private final String redirectURI;
+
   private HttpManager httpManager = null;
+
+  private final String clientSecret;
+
   private Scheme scheme;
+
+  private final String redirectURI;
+
   private int port;
+
   private String host;
+
   private String accessToken;
+
   private String refreshToken;
 
   private Api(Builder builder) {
     assert (builder.host != null);
     assert (builder.port > 0);
     assert (builder.scheme != null);
-
-
     if (builder.httpManager == null) {
-      this.httpManager = SpotifyHttpManager
-              .builder()
-              .build();
+      this.httpManager = SpotifyHttpManager.builder().build();
     } else {
       this.httpManager = builder.httpManager;
     }
@@ -117,9 +119,7 @@ public class Api {
     return builder;
   }
 
-  public TracksForAlbumRequest.Builder getTracksForAlbum(
-      String albumId
-  ) {
+  public TracksForAlbumRequest.Builder getTracksForAlbum(String albumId) {
     TracksForAlbumRequest.Builder builder = TracksForAlbumRequest.builder();
     setDefaults(builder);
     builder.forAlbum(albumId);
@@ -230,7 +230,12 @@ public class Api {
   public UserRequest.Builder getUser(String userId) {
     UserRequest.Builder builder = UserRequest.builder();
     setDefaults(builder);
+
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/left.java
     userId = UrlUtil.escapeUsername(userId);
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
     builder.username(userId);
     return builder;
   }
@@ -238,7 +243,12 @@ public class Api {
   public UserPlaylistsRequest.Builder getPlaylistsForUser(String userId) {
     UserPlaylistsRequest.Builder builder = UserPlaylistsRequest.builder();
     setDefaults(builder);
+
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/left.java
     userId = UrlUtil.escapeUsername(userId);
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
     builder.username(userId);
     return builder;
   }
@@ -300,7 +310,12 @@ public class Api {
   public PlaylistRequest.Builder getPlaylist(String userId, String playlistId) {
     PlaylistRequest.Builder builder = PlaylistRequest.builder();
     setDefaults(builder);
+
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/left.java
     userId = UrlUtil.escapeUsername(userId);
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
     builder.setPath("/v1/users/" + userId + "/playlists/" + playlistId);
     return builder;
   }
@@ -328,7 +343,12 @@ public class Api {
     final PlaylistCreationRequest.Builder builder = PlaylistCreationRequest.builder();
     setDefaults(builder);
     builder.title(title);
+
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/left.java
     userId = UrlUtil.escapeUsername(userId);
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
     builder.setPath("/v1/users/" + userId + "/playlists");
     return builder;
   }
@@ -356,7 +376,12 @@ public class Api {
   public PlaylistTracksRequest.Builder getPlaylistTracks(String userId, String playlistId) {
     final PlaylistTracksRequest.Builder builder = PlaylistTracksRequest.builder();
     setDefaults(builder);
+
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/left.java
     userId = UrlUtil.escapeUsername(userId);
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
     builder.setPath("/v1/users/" + userId + "/playlists/" + playlistId + "/tracks");
     return builder;
   }
@@ -371,7 +396,12 @@ public class Api {
   public PlaylistTracksRequest.Builder getStarred(String userId) {
     final PlaylistTracksRequest.Builder builder = PlaylistTracksRequest.builder();
     setDefaults(builder);
+
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/left.java
     userId = UrlUtil.escapeUsername(userId);
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
     builder.setPath("/v1/users/" + userId + "/starred/tracks");
     return builder;
   }
@@ -386,14 +416,21 @@ public class Api {
    */
   public AddTrackToPlaylistRequest.Builder addTracksToPlaylist(String userId, String playlistId, String[] trackUris) {
     final AddTrackToPlaylistRequest.Builder builder = AddTrackToPlaylistRequest.builder();
-
     userId = UrlUtil.escapeUsername(userId);
-
     setDefaults(builder);
     builder.setBodyParameter(new JsonParser().parse(new Gson().toJson(trackUris)).getAsJsonArray());
     builder.setPath("/v1/users/" + userId + "/playlists/" + playlistId + "/tracks");
-
     return builder;
+  }
+
+  private void setDefaults(AbstractRequest.Builder builder) {
+    builder.setHttpManager(httpManager);
+    builder.setScheme(scheme);
+    builder.setHost(host);
+    builder.setPort(port);
+    if (accessToken != null) {
+      builder.setHeaderParameter("Authorization", "Bearer " + accessToken);
+    }
   }
 
   /**
@@ -403,9 +440,7 @@ public class Api {
    * @param trackUris URIs of the tracks to add.
    * @return A builder object that can e used to build a request to add tracks to a playlist.
    */
-  public ReplacePlaylistTracksRequest.Builder replacePlaylistsTracks(
-      String userId, String playlistId, String[] trackUris
-  ) {
+  public ReplacePlaylistTracksRequest.Builder replacePlaylistsTracks(String userId, String playlistId, String[] trackUris) {
     final ReplacePlaylistTracksRequest.Builder builder = ReplacePlaylistTracksRequest.builder();
     setDefaults(builder);
     final JsonObject urisObject = new JsonObject();
@@ -426,13 +461,10 @@ public class Api {
    */
   public RemoveTrackFromPlaylistRequest.Builder removeTrackFromPlaylist(String userId, String playlistId, String[] trackUris) {
     final RemoveTrackFromPlaylistRequest.Builder builder = RemoveTrackFromPlaylistRequest.builder();
-
     userId = UrlUtil.escapeUsername(userId);
-
     setDefaults(builder);
     builder.setBodyParameter(new JsonParser().parse(new Gson().toJson(trackUris)).getAsJsonArray());
     builder.setPath("/v1/users/" + userId + "/playlists/" + playlistId + "/tracks");
-
     return builder;
   }
 
@@ -446,7 +478,12 @@ public class Api {
   public ChangePlaylistDetailsRequest.Builder changePlaylistDetails(String userId, String playlistId) {
     final ChangePlaylistDetailsRequest.Builder builder = ChangePlaylistDetailsRequest.builder();
     setDefaults(builder);
+
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/left.java
     userId = UrlUtil.escapeUsername(userId);
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
     builder.setPath("/v1/users/" + userId + "/playlists/" + playlistId);
     return builder;
   }
@@ -530,26 +567,20 @@ public class Api {
    */
   public UtilProtos.Url createAuthorizeURL(String[] scopes, String state, boolean showDialog) {
     final AuthorizationURLRequest.Builder builder = AuthorizationURLRequest.builder();
-
     setDefaults(builder);
-
     builder.clientId(clientId);
     builder.responseType("code");
     builder.redirectURI(redirectURI);
-
     if (scopes != null) {
       builder.scopes(scopes);
     }
-
     if (state != null) {
       builder.state(state);
     }
-
     builder.showDialog(showDialog);
-    
     return builder.build().toUrl();
   }
-  
+
   /**
    * Retrieve a URL where the user can give the application permissions.
    * @param scopes The scopes corresponding to the permissions the application needs
@@ -559,21 +590,16 @@ public class Api {
    */
   public UtilProtos.Url createAuthorizeURL(String[] scopes, String state) {
     final AuthorizationURLRequest.Builder builder = AuthorizationURLRequest.builder();
-
     setDefaults(builder);
-
     builder.clientId(clientId);
     builder.responseType("code");
     builder.redirectURI(redirectURI);
-
     if (scopes != null) {
       builder.scopes(scopes);
     }
-
     if (state != null) {
       builder.state(state);
     }
-
     return builder.build().toUrl();
   }
 
@@ -587,29 +613,16 @@ public class Api {
    */
   public AuthorizationURLRequest.Builder createAuthorizeURL(String[] scopes) {
     final AuthorizationURLRequest.Builder builder = AuthorizationURLRequest.builder();
-
     setDefaults(builder);
-
     builder.clientId(clientId);
     builder.responseType("code");
     builder.redirectURI(redirectURI);
-
     if (scopes != null) {
       builder.scopes(scopes);
     }
-
     return builder;
   }
 
-  private void setDefaults(AbstractRequest.Builder builder) {
-    builder.setHttpManager(httpManager);
-    builder.setScheme(scheme);
-    builder.setHost(host);
-    builder.setPort(port);
-    if (accessToken != null) {
-      builder.setHeaderParameter("Authorization", "Bearer " + accessToken);
-    }
-  }
   public RecommendationsRequest.Builder getRecommendations(String... ids) {
     return getRecommendations(Arrays.asList(ids));
   }
@@ -645,7 +658,7 @@ public class Api {
     builder.category(categoryId);
     return builder;
   }
-  
+
   public void setAccessToken(String accessToken) {
     this.accessToken = accessToken;
   }
@@ -655,15 +668,22 @@ public class Api {
   }
 
   public static class Builder {
-
     private String host = DEFAULT_HOST;
+
     private int port = DEFAULT_PORT;
+
     private HttpManager httpManager = null;
+
     private Scheme scheme = DEFAULT_SCHEME;
+
     private String accessToken;
+
     private String redirectURI;
+
     private String clientId;
+
     private String clientSecret;
+
     private String refreshToken;
 
     public Builder scheme(Scheme scheme) {
@@ -715,11 +735,7 @@ public class Api {
       assert (host != null);
       assert (port > 0);
       assert (scheme != null);
-
       return new Api(this);
     }
-
   }
-
 }
-
