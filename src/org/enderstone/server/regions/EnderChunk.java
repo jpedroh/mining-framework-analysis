@@ -230,7 +230,13 @@ public class EnderChunk {
 					boolean hd = false;
 
 					for (byte block : nibblearray) {
+<<<<<<< /usr/src/app/output/sander2798/enderstone/54c8bca1e4640abc84db7daf009bf67f2168e102/src/org/enderstone/server/regions/EnderChunk.java/left.java
 						byte blockLigth = 15;
+||||||| /usr/src/app/output/sander2798/enderstone/54c8bca1e4640abc84db7daf009bf67f2168e102/src/org/enderstone/server/regions/EnderChunk.java/base.java
+						byte blockLigth = 0;
+=======
+						byte blockLigth = 13;
+>>>>>>> /usr/src/app/output/sander2798/enderstone/54c8bca1e4640abc84db7daf009bf67f2168e102/src/org/enderstone/server/regions/EnderChunk.java/right.java
 						if (hd) {
 							halfData = (byte) ((blockLigth << 4) | halfData);
 							abyte[j++] = halfData;
@@ -256,7 +262,13 @@ public class EnderChunk {
 					boolean hd = false;
 
 					for (short block : nibblearray) {
+<<<<<<< /usr/src/app/output/sander2798/enderstone/54c8bca1e4640abc84db7daf009bf67f2168e102/src/org/enderstone/server/regions/EnderChunk.java/left.java
 						byte skyLigth = (byte) (15);
+||||||| /usr/src/app/output/sander2798/enderstone/54c8bca1e4640abc84db7daf009bf67f2168e102/src/org/enderstone/server/regions/EnderChunk.java/base.java
+						byte skyLigth = (byte) (block == 0 ? 15 : 0);
+=======
+						byte skyLigth = 13;
+>>>>>>> /usr/src/app/output/sander2798/enderstone/54c8bca1e4640abc84db7daf009bf67f2168e102/src/org/enderstone/server/regions/EnderChunk.java/right.java
 						if (hd) {
 							halfData = (byte) ((skyLigth << 4) | halfData);
 							abyte[j++] = halfData;

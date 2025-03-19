@@ -328,10 +328,10 @@ public abstract class Packet {
 		long x = value >> 38;
 		long y = value << 26 >> 52;
 		long z = value << 38 >> 38;
-		return new Location("", x,y,z,0F,0F);
+		return new Location("", x, y, z, 0F, 0F);
 	}
-	
-	public static void writeLocation(Location loc , ByteBuf buf){
+
+	public static void writeLocation(Location loc, ByteBuf buf) {
 		buf.writeLong(((long)loc.getBlockX() & 0x3FFFFFF) << 38 | ((long)loc.getBlockY() & 0xFFF) << 26 | (loc.getBlockZ() & 0x3FFFFFF));
 	}
 
